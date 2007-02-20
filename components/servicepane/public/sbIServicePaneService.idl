@@ -1,0 +1,221 @@
+/* vim: ts=2 sw=2 expandtab
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIServicePaneService.idl
+ * \brief Definition of the sbIServicePaneService interface
+ */
+
+#include "nsISupports.idl"
+
+interface nsIRDFDataSource;
+interface nsIRDFResource;
+interface nsIDOMXULElement;
+interface nsIDOMWindow;
+interface nsISimpleEnumerator;
+
+/**
+ * \interface sbIServicePaneNode
+ * \brief The interface to interact with a particular node in the service pane
+ */
+[scriptable, uuid(d730af19-1b0b-4679-9f22-b41caa4ec59a)]
+interface sbIServicePaneNode : nsISupports
+{
+  /* \brief the uri of this node as an RDF resource */
+  readonly attribute nsIRDFResource resource;
+  
+  /* \brief the uri of this node as a string */
+  readonly attribute AString id;
+  
+  /* \brief can this node have children */
+  readonly attribute boolean isContainer;
+  
+  /* \brief the URL to load when the node is clicked on in the tree */
+  attribute AString url;
+  /* \brief the URL of the image to display in the tree */
+  attribute AString image;
+  /* \brief the name to display in the tree */
+  attribute AString name;
+  /* \brief the tooltip to display when the user hovers over the node in the tree */
+  attribute AString tooltip;
+  /* \brief should the node be hidden in the tree ? */
+  attribute boolean hidden;
+  /* \brief the contract id of the service that owns the node */
+  attribute AString contractid;
+
+  
+  
+  
+  // here's a subset of the W3C DOM Level 1 Core
+  
+  AString getAttributeNS(in AString aNamespace,
+                         in AString aName);
+  AString setAttributeNS(in AString aNamespace,
+                         in AString aName,
+                         in AString aValue);
+  
+  readonly attribute nsISimpleEnumerator childNodes;
+  readonly attribute sbIServicePaneNode firstChild;
+  readonly attribute sbIServicePaneNode lastChild;
+  readonly attribute sbIServicePaneNode nextSibling;
+  readonly attribute sbIServicePaneNode parentNode;
+  readonly attribute sbIServicePaneNode previousSibling;
+  
+  sbIServicePaneNode appendChild (in sbIServicePaneNode aChild);
+  sbIServicePaneNode insertBefore (in sbIServicePaneNode aNewNode,
+                                   in sbIServicePaneNode aAdjacentNode);
+  void removeChild (in sbIServicePaneNode aChild);
+  void replaceChild (in sbIServicePaneNode aNewNode,
+                     in sbIServicePaneNode aOldNode);
+  
+  
+  // potential additions:
+  // readonly attribute ownerDataSource; // like ownerDocument
+  // boolean hasChildNodes();
+  // AString getAttribute(in AString aName);
+  // AString setAttribute(in AString aName, in AString aValue);
+  // AString removeAttribute(in AString aName);
+  // AString removeAttributeNS(in AString aNamespace, in AString aName);
+  // some way to enumerate attributes
+  // readonly attribute AString namespaceURI; // default attribute namespace
+};
+
+/**
+ * \interface sbIServicePaneNodeInternal
+ * \brief this is for internal use by sbServicePaneService.
+ */
+[scriptable, uuid(9bbc6245-475e-464b-834c-9a45d7642f2b)]
+interface sbIServicePaneNodeInternal : sbIServicePaneNode {
+  /**
+   * \brief Remove the child from this node
+   * Remove the child from its parent but do not remove its properties
+   * \param aChild the child node to remove
+   */
+  void unlinkChild (in sbIServicePaneNode aChild);
+  
+  /**
+   * \brief Remove this node from its parent
+   */
+  void unlinkNode ();
+  
+  /**
+   * \brief Remove all the properties and children from a node
+   * Remove all the properties and children from a node. This
+   * effectively removes it from the RDF.
+   */
+  void clearNode ();
+};
+
+/**
+* \interface sbIServicePaneService
+* \brief The interface exposed by the service pane service
+*
+* This allows clients of the the service pane service to interact with it
+* through a JavaScript object interface while it's internally RDF.
+*
+* @halfbaked
+*/
+[scriptable, uuid(597efdd3-b564-4052-a61d-100a5bad7ad7)]
+interface sbIServicePaneService : nsISupports
+{
+  /**
+   * \brief The tree represented as an RDF data source.
+   */
+  readonly attribute nsIRDFDataSource dataSource;
+
+  /**
+   * \brief The root of the tree.
+   */
+  readonly attribute sbIServicePaneNode root;
+
+  /* \brief Add a node to the tree
+   * Create a new node and add it as a child of the specified parent. If a
+   * child with the given id already exists then do not create it, and return
+   * null. Otherwise return a node object.
+   * \param aId an URN to use as the ID, or null if it should be anonymous
+   * \param aParent the desired parent node
+   * \param aContainer should the new node be a container
+   * \return node object, or null if the node couldn't be created
+   */
+  sbIServicePaneNode addNode(in AString aId,
+                             in sbIServicePaneNode aParent,
+                             in boolean aContainer);
+  
+  /* \brief Remove a node and all its children
+   * Remove a node from the tree and all its children and all their childen and
+   * so on.
+   * \param aNode the node to remove
+   */
+  void removeNode(in sbIServicePaneNode aNode);
+  
+  /* \brief Get the node object for the given id
+   * \param aId the ID of the desired node
+   * \return node object, or null if it couldn't be found
+   */
+  sbIServicePaneNode getNode(in AString aId);
+
+  /* \brief Save the state of the tree to disk.
+   * This should go away and be handled magically
+   */
+  void save();
+
+  /* \brief Fill the context menu for the given node
+   * \param aId the id of the node
+   * \param aContextMenu the menu we're trying to fill
+   * \param aParentWindow the toplevel window we're displaying in
+   */
+  void fillContextMenu(in AString aId,
+                       in nsIDOMXULElement aContextMenu,
+                       in nsIDOMWindow aParentWindow);
+};
+
+
+/**
+* \interface sbIServicePaneModule
+* \brief The interface exposed by the service pane backends
+*/
+[scriptable, uuid(a5c003f9-38e1-436a-9c0a-39718999640e)]
+interface sbIServicePaneModule : nsISupports
+{
+  /* \brief Initialize this service pane module
+   * This is where the module should set itself up in the tree if it hasn't
+   * before.
+   * \param aServicePaneService the service pane service instance
+   */
+  void servicePaneInit(in sbIServicePaneService aServicePaneService);
+  
+  /* \brief Fill the context menu for the given node
+   * \param aNode the node that was context-clicked on
+   * \param aContextMenu the menu we're trying to fill
+   * \param aParentWindow the toplevel window we're displaying in
+   */
+  void fillContextMenu(in sbIServicePaneNode aNode,
+                       in nsIDOMXULElement aContextMenu,
+                       in nsIDOMWindow aParentWindow);
+
+};
+
+
