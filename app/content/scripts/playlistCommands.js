@@ -40,7 +40,7 @@ var SBWebPlaylistCommands =
   m_Ids: new Array
   (
     "library_cmd_play",
-//    "library_cmd_edit",
+    "library_cmd_remove",
     "library_cmd_download",
     "library_cmd_subscribe",
     "library_cmd_addtoplaylist",
@@ -55,7 +55,7 @@ var SBWebPlaylistCommands =
   m_Names: new Array
   (
     "&command.play",
-//    "&command.edit",
+    "&command.remove",
     "&command.download",
     "&command.subscribe",
     "&command.addtoplaylist",
@@ -70,7 +70,7 @@ var SBWebPlaylistCommands =
   m_Tooltips: new Array
   (
     "&command.tooltip.play",
-//    "&command.tooltip.edit",
+    "&command.tooltip.remove",
     "&command.tooltip.download",
     "&command.tooltip.subscribe",
     "&command.tooltip.addtoplaylist",
@@ -165,6 +165,9 @@ var SBWebPlaylistCommands =
       case "library_cmd_device": // Not yet implemented
         retval = false;
       break;
+      case "library_cmd_remove":
+        retval = /* this.m_Playlist.description == "library" && */ this.m_Playlist.tree.view.selection.getRangeCount() > 0;
+      break;      
       case "library_cmd_download": // Only download selected tracks from the library, never the whole library
         if ( ( this.m_Playlist.description != "library" ) || ( this.m_Playlist.tree.view.selection.count > 0 ) )
           retval = true;
@@ -203,6 +206,13 @@ var SBWebPlaylistCommands =
           }
           // Repurpose the command to act as if a doubleclick
           this.m_Playlist.sendPlayEvent();
+        break;
+        case "library_cmd_remove":
+          if ( this.m_Playlist.tree.currentIndex != -1 )
+          {
+            // remove the currently select tracks
+            this.m_Playlist.removeTracks();
+          }
         break;
         case "library_cmd_download":
         {
