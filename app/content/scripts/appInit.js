@@ -488,7 +488,7 @@ function SBMigrateDatabase()
   
   queryObject.setDatabaseGUID("songbird");
   queryObject.addQuery("ALTER TABLE library ADD COLUMN origin_url TEXT DEFAULT ''");
-  queryObject.addQuery("INSERT OR REPLACE INTO library_desc VALUES (\"origin_url\", \"Origin URL\", 1, 0, 1, 0, -1, 'text', 1)");
+  queryObject.addQuery("INSERT OR REPLACE INTO library_desc VALUES (\"origin_url\", \"&metadata.origin_url\", 1, 0, 1, 0, -1, 'text', 1)");
   queryObject.addQuery("CREATE UNIQUE INDEX IF NOT EXISTS library_index_origin_url ON library(origin_url)");
   queryObject.addQuery("UPDATE library SET origin_url = url WHERE origin_url = ''");
   
@@ -497,7 +497,7 @@ function SBMigrateDatabase()
   queryObject.resetQuery();
   queryObject.setDatabaseGUID("webplaylist");
   queryObject.addQuery("ALTER TABLE library ADD COLUMN origin_url TEXT DEFAULT ''");
-  queryObject.addQuery("INSERT OR REPLACE INTO library_desc VALUES (\"origin_url\", \"Origin URL\", 1, 0, 1, 0, -1, 'text', 1)");
+  queryObject.addQuery("INSERT OR REPLACE INTO library_desc VALUES (\"origin_url\", \"&metadata.origin_url\", 1, 0, 1, 0, -1, 'text', 1)");
   queryObject.addQuery("CREATE UNIQUE INDEX IF NOT EXISTS library_index_origin_url ON library(origin_url)");
   queryObject.addQuery("UPDATE library SET origin_url = url WHERE origin_url = ''");
   

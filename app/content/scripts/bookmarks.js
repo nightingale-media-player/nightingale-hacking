@@ -173,7 +173,7 @@ var bmManager = {
 
       if(hasExtensionBookmarks) {
         this.extensionsFolderNode = {
-          label: "Extensions",
+          label: "&servicesource.extensions",
           icon: "chrome://songbird/skin/default/icon_folder.png",
           url: "",
           properties: "bookmark",

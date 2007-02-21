@@ -127,10 +127,7 @@ CMediaLibrary.prototype =
       var uuid = ( "&metadata.uuid" );
       var service_uuid = ( "&metadata.service_uuid" );
       var url = ( "&metadata.url" );
-      
-      //XXXAus: This will eventually be translated.
-      //var origin_url = ( "&metadata.origin_url" );
-      var origin_url = "Origin URL";
+      var origin_url = ( "&metadata.origin_url" );
       var content_type = ( "&metadata.content_type" );
       var length = ( "&metadata.length" );
       var artist = ( "&metadata.artist" );

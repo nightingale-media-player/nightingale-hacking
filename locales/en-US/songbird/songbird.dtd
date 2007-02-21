@@ -62,6 +62,7 @@
 <!ENTITY menu.extensions    "Add-ons..." >
 <!ENTITY menu.clearprivatedata "Clear Private Data...">
 <!ENTITY menu.errorconsole "Error Console">
+<!ENTITY menu.dominspector  "DOM Inspector" >
 
 
 <!ENTITY html.context.open  "Open" >
