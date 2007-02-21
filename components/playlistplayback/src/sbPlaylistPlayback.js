@@ -1305,12 +1305,19 @@ PlaylistPlayback.prototype = {
   // what we had so far
   _onPollMetadata: function ( len_ms, pos_ms, core )
   {
+    //XXX lone> this test should probably be reworked, the first time the loop is hit on a track, pos_ms is already > 250,
+    // and it's not obvious that we're actually taking advantage of that. Also, the comment that says "we skip 20 times" is
+    // misleading, the first time the loop hits, that counter is 0, so we haven't skipped 20 times yet (and yes, we're also
+    // taking advantage of that, if we weren't, we'd need to have a _set_metadata_once var or equivalent, to make it so that
+    // the first time the metadata needs to be updated, it's done as soon as possible. as is, it always does it the first time
+    // the loop is hit, and that suits us, but it's really not clear)
+    
     // Wait a bit, and then only ask infrequently
     if ( 
       ( pos_ms > 250 ) && // If we've gone more than a quarter of a second, AND
       ( 
-        ( ( this._metadataPollCount++ % 20 ) == 0 ) || // We skip 20 times, OR
-        ( this._set_metadata ) // Someone says we're supposed to be setting metadata now.
+        ( ( this._metadataPollCount++ % 20 ) == 0 ) /*|| // We skip 20 times, OR
+        ( this._set_metadata ) */// Someone says we're supposed to be setting metadata now.
       )
     ) {
       // Ask, and ye shall receive
