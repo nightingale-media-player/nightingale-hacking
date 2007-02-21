@@ -529,6 +529,10 @@
         this.addedObserver = false;
         
         this._lastviewsummary = "";
+
+        var hsplitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
+        hsplitter.setAttribute("stateid", "horz_splitter_" + this.ref);
+        hsplitter.restoreLastState();
         
         /* 
         // this is wrong, getFilter returns filter *values*, we should use getFilterColumn instead.
@@ -868,8 +872,9 @@
         // Add a splitter
         if ( this.filters.length > 0 )
         {
-          var splitter = document.createElement( "splitter" );
+          var splitter = document.createElement( "smartsplitter" );
           splitter.setAttribute( "id", "filter_splitter" );
+          splitter.setAttribute( "stateid", "filter_splitter_" + this.ref );
           splitter.setAttribute( "state", "open" );
           splitter.setAttribute( "resizebefore", "closest" );
           splitter.setAttribute( "resizeafter", "closest" );

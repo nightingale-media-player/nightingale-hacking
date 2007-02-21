@@ -82,7 +82,10 @@
         <![CDATA[
           var state = this.getAttribute( "state" );
 
-          var root = "splitter." + this.id + ".";
+          var id = this.getAttribute("stateid");
+          if (!id || id == "") id = this.id;
+          
+          var root = "splitter." + id + ".";
           if (this.isTargetBefore()) {
             var resizebefore = this.getResizeBefore();
             if (resizebefore) {
@@ -171,7 +174,9 @@
       <parameter name="sizeonly"/>
       <body>
         <![CDATA[
-          var root = "splitter." + this.id + ".";
+          var id = this.getAttribute("stateid");
+          if (!id || id == "") id = this.id;
+          var root = "splitter." + id + ".";
           if (this.isTargetBefore()) {
             var resizebefore = this.getResizeBefore();
             if (resizebefore) {
