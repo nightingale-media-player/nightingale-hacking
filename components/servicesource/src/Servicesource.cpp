@@ -565,9 +565,17 @@ CServicesource::GetTarget(nsIRDFResource *source,
         // Javascript code is assuming this ordering!
         outstring = NS_LITERAL_STRING( "playlist" );
         nsAutoString data;
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), data);
-        outstring += NS_LITERAL_STRING(" ");
-        outstring += data;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("description"), data);
+        if ( data == NS_LITERAL_STRING("library") )
+        {
+          outstring += NS_LITERAL_STRING(" library"); // Hack to represent libraries
+        }
+        else
+        {
+          resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), data);
+          outstring += NS_LITERAL_STRING(" ");
+          outstring += data;
+        }
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid"), data);
         outstring += NS_LITERAL_STRING(" ");
         outstring += data;
@@ -575,6 +583,9 @@ CServicesource::GetTarget(nsIRDFResource *source,
         outstring += NS_LITERAL_STRING(" ");
         outstring += data;
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("base_type"), data);
+        outstring += NS_LITERAL_STRING(" ");
+        outstring += data;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("description"), data);
         outstring += NS_LITERAL_STRING(" ");
         outstring += data;
       }
@@ -591,8 +602,16 @@ CServicesource::GetTarget(nsIRDFResource *source,
       else if (property == kNC_DBTable)
       {
         nsAutoString data;
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), data);
-        outstring = data;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("description"), data);
+        if ( data == NS_LITERAL_STRING("library") )
+        {
+          outstring = NS_LITERAL_STRING("library"); // Hack to represent libraries
+        }
+        else
+        {
+          resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), data);
+          outstring = data;
+        }
       }
     }
   }
