@@ -299,7 +299,7 @@
   <binding id="label" extends="chrome://songbird/content/bindings/db_controls.xml#base">
 
   <content>
-    <xul:label flex="1" sid="dbedit.label" class="dialog_label" />
+    <xul:label flex="1" sid="dbedit.label" class="dialog_label" crop="center"/>
   </content>
 
   <implementation>
