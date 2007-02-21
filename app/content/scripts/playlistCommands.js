@@ -176,6 +176,9 @@ var SBWebPlaylistCommands =
       case "library_cmd_showdlplaylist":
         retval = this.m_Query.execute() == 0;
       break;
+      case "library_cmd_copylocation":
+        retval = this.m_Playlist.tree.view.selection.currentIndex != -1;
+      break; 
       default:
         retval = true;
       break;
