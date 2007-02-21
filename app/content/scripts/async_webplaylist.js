@@ -224,7 +224,8 @@ try
           var keys = new Array( "title" );
           var values = new Array( gPPS.convertURLToDisplayName( url ) );
           var guid = this.aMediaLibrary.addMedia( url, keys.length, keys, values.length, values, true, false );
-          this.aPlaylist.addByGUID( guid, this.guid, -1, true, false );
+          if ( this.aPlaylist.findByGUID( guid ) == -1 )
+            this.aPlaylist.addByGUID( guid, this.guid, -1, true, false );
           //dump("XXredfive - just AddedByGUID:" + guid + " this.aDBQuery: " + this.aDBQuery + "\n");
           this.inserted.push( url );
           
