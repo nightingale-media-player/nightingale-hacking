@@ -45,6 +45,7 @@ var SBWebPlaylistCommands =
     "library_cmd_subscribe",
     "library_cmd_addtoplaylist",
     "library_cmd_addtolibrary",
+    "library_cmd_copylocation",
     "*separator*",
     "library_cmd_showdlplaylist"
 //    "library_cmd_burntocd"
@@ -59,6 +60,7 @@ var SBWebPlaylistCommands =
     "&command.subscribe",
     "&command.addtoplaylist",
     "&command.addtolibrary",
+    "&command.copylocation",
     "*separator*",
     "&command.showdlplaylist"
 //    "&command.burntocd"
@@ -73,6 +75,7 @@ var SBWebPlaylistCommands =
     "&command.tooltip.subscribe",
     "&command.tooltip.addtoplaylist",
     "&command.tooltip.addtolibrary",
+    "&command.tooltip.copylocation",
     "*separator*",
     "&command.tooltip.showdlplaylist"
 //    "&command.tooltip.burntocd"
@@ -234,6 +237,34 @@ var SBWebPlaylistCommands =
           {
             alert( "SBWebPlaylistCommands Error:" + err );
           }
+        }
+        break;
+        case "library_cmd_copylocation":
+        {
+          var clipboardtext = "";
+          var urlCol = "url";
+          var columnObj = this.m_Playlist.tree.columns.getNamedColumn(urlCol);
+          var rangeCount = this.m_Playlist.tree.view.selection.getRangeCount();
+          for (var i=0; i < rangeCount; i++) 
+          {
+            var start = {};
+            var end = {};
+            this.m_Playlist.tree.view.selection.getRangeAt( i, start, end );
+            for( var c = start.value; c <= end.value; c++ )
+            {
+              if (c >= this.m_Playlist.tree.view.rowCount) 
+              {
+                continue; 
+              }
+              
+              var value = this.m_Playlist.tree.view.getCellText(c, columnObj);
+              if (clipboardtext != "") clipboardtext += "\n";
+              clipboardtext += value;
+            }
+          }
+
+          var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
+          clipboard.copyString(clipboardtext);
         }
         break;
         case "library_cmd_subscribe":
