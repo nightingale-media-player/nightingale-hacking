@@ -35,6 +35,17 @@ const SONGBIRD_PLAYLISTHTML_IID = Components.interfaces.sbIPlaylistReader;
 
 function CPlaylistHTML()
 {
+  this._uriFixup = null;
+  
+  try {
+    var urifixup = Components.classes["@mozilla.org/docshell/urifixup;1"]
+                              .getService(Components.interfaces.nsIURIFixup);
+    this._uriFixup = urifixup;
+  }
+  catch (e) {
+    Components.utils.reportError(e);
+  }
+  
   this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 }
 
@@ -291,7 +302,9 @@ CPlaylistHTML.prototype =
             var aMetaKeys = new Array("title");
             var aMetaValues = new Array( this.gPPS.convertURLToDisplayName( url ) );
 
-            var guid = pLibrary.addMedia( url, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, replace, true );
+            var urlURI = this._uriFixup.createFixupURI(url, 0);
+
+            var guid = pLibrary.addMedia( urlURI.spec, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, replace, true );
             pPlaylist.addByGUID( guid, strGUID, -1, replace, true );
             
             inserted.push( url );
