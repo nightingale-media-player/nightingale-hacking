@@ -76,7 +76,7 @@ var windowDragCallback = {
 // The background image allows us to move the window around the screen
 function onBkgDown( theEvent, popup ) 
 {
-  if (maximized) 
+  if (isMaximized()) 
     return;
   
   if ( (theEvent.target.getAttribute("drag_window") == "true") ||
