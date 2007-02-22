@@ -773,7 +773,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       mIsAtEndOfStream = PR_TRUE;
       mIsPlayingVideo = PR_FALSE;
       if(mFullscreen && mGdkWinFull != NULL) {
-        ReparentToChromeWin(this);
+        mSelfProxy->SetFullscreen(PR_FALSE);
       }
       mCursorIntervalTimer->Cancel();
       break;
