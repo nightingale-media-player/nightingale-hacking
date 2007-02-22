@@ -37,6 +37,89 @@
  */
 
 /**
+ * 
+ */
+function getPlatformString() {
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    return sysInfo.getProperty("name");
+  }
+  catch (e) { }
+  
+  var userAgent = navigator.userAgent;
+  if (userAgent.indexOf("Windows") != -1)
+    return "Windows_NT";
+  
+  return userAgent;
+}
+
+/**
+ * Makes a new URI from a url string
+ */
+function newURI(aURLString)
+{
+  // Must be a string here
+  if (!(aURLString &&
+       (aURLString instanceof String) || typeof(aURLString) == "string"))
+    throw Components.results.NS_ERROR_INVALID_ARG;
+  
+  var ioService =
+    Components.classes["@mozilla.org/network/io-service;1"]
+              .getService(Components.interfaces.nsIIOService);
+  
+  try {
+    return ioService.newURI(aURLString, null, null);
+  }
+  catch (e) { }
+  
+  return null;
+}
+
+/**
+ * Hacks apart a URI to make it acceptable for VLC
+ */
+function getVLCURLFromURI(aURI) {
+  if (!aURI)
+    return null;
+  
+  // Non-file URIs are probably fine as they are.
+  if (!(aURI instanceof Components.interfaces.nsIFileURL))
+    return aURI.spec;
+
+  var fileURL = aURI.QueryInterface(Components.interfaces.nsIFileURL);
+  
+  // Special samba case. Mozilla gives us "file://///" and VLC only understands
+  // "smb://".
+  var smbPath = fileURL.path;
+  if (smbPath.slice(0, 3) ==  "///") {
+    var newSpec = "smb:" + smbPath.slice(1);
+
+    // Validate the new spec
+    var uri = newURI(newSpec);
+    return uri.spec;
+  }
+  
+  var file = fileURL.file;
+  file.normalize();
+  
+  // Normal file for Windows. Mozilla gives us "file:///" and VLC wants a
+  // filesystem path like "C:\fun.mp3".
+  if (getPlatformString == "Windows_NT")
+    return file.path;
+  
+  // Default case. Rebuild the uri to avoid "file://localhost/" messes.
+  var ioService =
+    Components.classes["@mozilla.org/network/io-service;1"]
+              .getService(Components.interfaces.nsIIOService);
+  var fileHandler =
+    ioService.getProtocolHandler("file")
+             .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+  return fileHandler.getURLSpecFromFile(file);
+}
+
+/**
  * \class CoreVLC
  * \brief The CoreWrapper for the VLC Plugin
  * \sa CoreBase
@@ -93,43 +176,16 @@ CoreVLC.prototype.playURL = function (aURL)
   this._lastCalcTime = 0;
   this._startTime = 0;
 
-  this.LOG("theURL: " + aURL);
-
   if (!aURL)
     throw Components.results.NS_ERROR_INVALID_ARG;
+  this.LOG("theURL: " + aURL);
   
-  this._url = aURL;
+  var uri = newURI(aURL);
+  if (!uri)
+    return false;
   
-  var platform;
-  try {
-    var sysInfo =
-      Components.classes["@mozilla.org/system-info;1"]
-                .getService(Components.interfaces.nsIPropertyBag2);
-    platform = sysInfo.getProperty("name");                                          
-  }
-  catch (e) {
-    dump("System-info not available, trying the user agent string.\n");
-    var user_agent = navigator.userAgent;
-    if (user_agent.indexOf("Windows") != -1)
-      platform = "Windows_NT";
-  }
+  this._url = getVLCURLFromURI(uri);
   
-  //Fix paths under windows for VLC.
-  if (platform == "Windows_NT") {
-    var localFileURI = (Components.classes["@mozilla.org/network/simple-uri;1"]).createInstance(Components.interfaces.nsIURI);
-    try {
-      localFileURI.spec = aURL;
-    } catch(e) {}
-  
-    if (localFileURI.scheme == "file") {
-      this._url = localFileURI.path.slice(3);
-      if(this._url.search(/^\/\//) == 0)
-         this._url = "smb://" + this._url;
-      else
-        this._url = this._url.replace(/\//g, '\\');
-    }
-  }
-
   //Encode + signs since VLC will try and decode those as spaces. 
   //Even though they are *VALID* characters for a filename as per URI specifications. :(
   this._url = this._url.replace(/\+/g, '%2b');
