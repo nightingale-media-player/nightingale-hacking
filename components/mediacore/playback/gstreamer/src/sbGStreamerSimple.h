@@ -50,10 +50,10 @@ private:
   SetDefaultCursor(sbGStreamerSimple* gsts);
 
   void
-  SetToFullscreen(sbGStreamerSimple* gsts);
+  ReparentToRootWin(sbGStreamerSimple* gsts);
 
   void
-  UnsetFromFullscreen(sbGStreamerSimple* gsts);
+  ReparentToChromeWin(sbGStreamerSimple* gsts);
 
   PRBool mInitialized;
 
@@ -89,6 +89,8 @@ private:
   nsString  mAlbum;
   nsString  mTitle;
   nsString  mGenre;
+
+  nsCOMPtr<sbIGStreamerSimple> mSelfProxy;
 
 protected:
   /* additional members */

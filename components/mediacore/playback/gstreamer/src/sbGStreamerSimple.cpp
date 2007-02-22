@@ -17,6 +17,8 @@
 #include "nsIBaseWindow.h"
 #include "nsIWidget.h"
 #include "nsIBoxObject.h"
+#include "nsIProxyObjectManager.h"
+#include "nsServiceManagerUtils.h"
 #include "nsStringGlue.h"
 #include "prlog.h"
 
@@ -27,8 +29,10 @@ extern PRLogModuleInfo* gGStreamerLog;
 #define LOG(args)
 #endif
 
-NS_IMPL_ISUPPORTS3(sbGStreamerSimple, sbIGStreamerSimple, nsIDOMEventListener,
-nsITimerCallback)
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbGStreamerSimple,
+                              sbIGStreamerSimple,
+                              nsIDOMEventListener,
+                              nsITimerCallback)
 
 static GstBusSyncReply
 syncHandlerHelper(GstBus* bus, GstMessage* message, gpointer data)
@@ -63,14 +67,11 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mGdkWinFull(NULL),
   mIsAtEndOfStream(PR_TRUE),
   mIsPlayingVideo(PR_FALSE),
+  mFullscreen(PR_FALSE),
   mLastErrorCode(0),
   mVideoOutputElement(nsnull),
-  mDomWindow(nsnull),
-  mFullscreen(PR_FALSE)
+  mDomWindow(nsnull)
 {
-  nsresult rv;
-  mCursorIntervalTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-  NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to create sbGStreamerSimple::mCursorIntervalTimer");
   mArtist.Assign(EmptyString());
   mAlbum.Assign(EmptyString());
   mTitle.Assign(EmptyString());
@@ -103,6 +104,27 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   if(aVideoOutput == nsnull) {
     return NS_ERROR_INVALID_ARG;
   }
+
+  nsCOMPtr<nsIProxyObjectManager> proxyObjMgr = 
+        do_GetService("@mozilla.org/xpcomproxy;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsITimer> timer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = proxyObjMgr->GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                            NS_GET_IID(nsITimer),
+                            timer,
+                            NS_PROXY_ASYNC,
+                            getter_AddRefs(mCursorIntervalTimer));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIGStreamerSimple> gsts(this);
+  rv = proxyObjMgr->GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                            NS_GET_IID(sbIGStreamerSimple),
+                            gsts,
+                            NS_PROXY_ASYNC,
+                            getter_AddRefs(mSelfProxy));
+  NS_ENSURE_SUCCESS(rv, rv); 
 
   mVideoOutputElement = aVideoOutput;
 
@@ -241,7 +263,7 @@ sbGStreamerSimple::GetVolume(double* aVolume)
 }
 
 void
-sbGStreamerSimple::SetToFullscreen(sbGStreamerSimple* gsts)
+sbGStreamerSimple::ReparentToRootWin(sbGStreamerSimple* gsts)
 {
   GdkScreen *fullScreen = NULL;
   GdkWindowAttr attributes;
@@ -273,7 +295,7 @@ sbGStreamerSimple::SetToFullscreen(sbGStreamerSimple* gsts)
 }
 
 void
-sbGStreamerSimple::UnsetFromFullscreen(sbGStreamerSimple* gsts)
+sbGStreamerSimple::ReparentToChromeWin(sbGStreamerSimple* gsts)
 {
   gdk_window_unfullscreen(gsts->mGdkWin);
   gdk_window_reparent(gsts->mGdkWin, gsts->mNativeWin, 0, 0);
@@ -295,7 +317,7 @@ NS_IMETHODIMP
 sbGStreamerSimple::SetFullscreen(PRBool aFullscreen)
 {
   mFullscreen = aFullscreen;
-  if(!mFullscreen) UnsetFromFullscreen(this);
+  if(!mFullscreen && mGdkWinFull != NULL) ReparentToChromeWin(this);
 
   return NS_OK;
 }
@@ -537,7 +559,9 @@ sbGStreamerSimple::Stop()
   gst_element_set_state(mPlay, GST_STATE_NULL);
   mIsAtEndOfStream = PR_TRUE;
   mIsPlayingVideo = PR_FALSE;
-  UnsetFromFullscreen(this);
+  if(mFullscreen && mGdkWinFull != NULL) {
+    ReparentToChromeWin(this);
+  }
   mCursorIntervalTimer->Cancel();
   mLastErrorCode = 0;
 
@@ -610,7 +634,7 @@ sbGStreamerSimple::Notify(nsITimer *aTimer)
     // redraw cursor if mouse is invisible and the mouse has moved
     if (this->mRedrawCursor) {
       this->mRedrawCursor = SetDefaultCursor(this);
-      if(this->mFullscreen) UnsetFromFullscreen(this);
+      if(this->mFullscreen) ReparentToChromeWin(this);
     }
     this->mDelayHide = 10;
     this->mOldCursorX = newCursorX;
@@ -624,7 +648,7 @@ sbGStreamerSimple::Notify(nsITimer *aTimer)
       // otherwise hide the cursor in the video window
       this->mRedrawCursor = SetInvisibleCursor(this);
       if (this->mGdkWinFull == NULL && this->mFullscreen) {
-        SetToFullscreen(this);
+        ReparentToRootWin(this);
       }
     }
   }
@@ -723,6 +747,9 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       mLastErrorCode = error->code;
       mIsAtEndOfStream = PR_TRUE;
       mIsPlayingVideo = PR_FALSE;
+      if(mFullscreen && mGdkWinFull != NULL) {
+        ReparentToChromeWin(this);
+      }
       mCursorIntervalTimer->Cancel();
 
       break;
@@ -745,7 +772,9 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
     case GST_MESSAGE_EOS: {
       mIsAtEndOfStream = PR_TRUE;
       mIsPlayingVideo = PR_FALSE;
-      UnsetFromFullscreen(this);
+      if(mFullscreen && mGdkWinFull != NULL) {
+        ReparentToChromeWin(this);
+      }
       mCursorIntervalTimer->Cancel();
       break;
     }
