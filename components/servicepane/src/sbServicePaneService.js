@@ -108,8 +108,12 @@ ServicePaneNode.prototype.setAttributeNS = function (aNamespace, aName, aValue) 
 ServicePaneNode.prototype.getAttributeNS = function (aNamespace, aName) {
     var property = RDFSVC.GetResource(aNamespace+aName);
     var target = this._dataSource.GetTarget(this.resource, property, true);
-    var value = target.QueryInterface(Ci.nsIRDFLiteral).Value
-    return value;
+    if (target) {
+        var value = target.QueryInterface(Ci.nsIRDFLiteral).Value
+        return value;
+    } else {
+        return null;
+    }
 }
 
 ServicePaneNode.prototype.__defineGetter__ ('url', function () {
@@ -151,6 +155,11 @@ ServicePaneNode.prototype.__defineGetter__ ('hidden', function () {
     return this.getAttributeNS(SP,'Hidden') == 'true'; })
 ServicePaneNode.prototype.__defineSetter__ ('hidden', function (aValue) {
     this.setAttributeNS(SP,'Hidden', aValue?'true':'false'); });
+
+ServicePaneNode.prototype.__defineGetter__ ('isOpen', function () {
+    return this.getAttributeNS(SP,'Open') == 'true'; })
+ServicePaneNode.prototype.__defineSetter__ ('isOpen', function (aValue) {
+    this.setAttributeNS(SP,'Open', aValue?'true':'false'); });
 
 
 
@@ -211,7 +220,7 @@ ServicePaneNode.prototype.__defineGetter__('parentNode',
                 var label = labels.getNext().QueryInterface(Ci.nsIRDFResource);
                 if (RDFCU.IsOrdinalProperty(label)) {
                     return new ServicePaneNode(this._dataSource,
-                            ds.GetSource(label, this.resource, true));
+                            this._dataSource.GetSource(label, this.resource, true));
                 }
             }
             return null;
@@ -271,7 +280,7 @@ ServicePaneNode.prototype.removeChild = function(aChild) {
         throw aChild.id + ' is not in ' + this.id;
     }
     
-    this._container.RemoveElement(aChild.resource);
+    this._container.RemoveElement(aChild.resource, true);
     
     aChild.clearNode();
 }
@@ -472,6 +481,11 @@ function ServicePaneService_addNode(aId, aParent, aContainer) {
     
     /* add the node to the parent */
     aParent.appendChild(node)
+    
+    /* if the node is a container, make it open */
+    if (aContainer) {
+        node.isOpen = true;
+    }
     
     return node;
 }

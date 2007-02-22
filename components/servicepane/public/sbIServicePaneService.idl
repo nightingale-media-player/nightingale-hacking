@@ -63,6 +63,8 @@ interface sbIServicePaneNode : nsISupports
   attribute AString tooltip;
   /* \brief should the node be hidden in the tree ? */
   attribute boolean hidden;
+  /* \brief is the this node open in the tree? */
+  attribute boolean isOpen;
   /* \brief the contract id of the service that owns the node */
   attribute AString contractid;
 

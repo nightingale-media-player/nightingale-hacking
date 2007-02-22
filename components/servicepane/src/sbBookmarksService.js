@@ -30,9 +30,17 @@
  * It provides an interface for creating bookmark nodes in the service pane tree.
  *
  * TODO:
- *  - make the "Bookmarks" name localizable
- *  - load default bookmarks off the internet, somehow
+ *  - move downloading to nsIChannel and friends for better chrome-proofing
+ *  - send version and locale info when requesting new bookmarks
+ *  - handle errors more elegantly in bookmarks downloading
+ *  - handle the adding of bookmarks before the defaults are downloaded
+ *  - allow the server bookmarks list to remove stale entries [bug 2352]
+ *  - move the bookmarks.xml from ian.mckellar.org to songbirdnest.com
+ * PERHAPS:
+ *  - move default bookmarks downloading to after first-run so we can have
+ *    per-locale bookmarks?
  *  - download and cache images
+ *  - add a confirmation dialog for for bookmark deletion
  *  
  */
 
@@ -42,6 +50,9 @@ const Cr = Components.results;
 
 const CONTRACTID = "@songbirdnest.com/servicepane/bookmarks;1"
 const ROOTNODE = "SB:Bookmarks"
+const FOLDER_IMAGE = 'chrome://songbird/skin/default/icon_folder.png';
+const BOOKMARK_IMAGE = 'chrome://songbird/skin/serviceicons/default.ico';
+
 
 function SB_NewDataRemote(a,b) {
     return (new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
@@ -66,22 +77,93 @@ function sbBookmarks_QueryInterface(iid) {
 sbBookmarks.prototype.servicePaneInit = 
 function sbBookmarks_servicePaneInit(sps) {
     this._servicePane = sps;
+    
+    var service = this;
+    
+    // if we don't have a bookmarks node in the tree
     this._bookmarkNode = this._servicePane.getNode(ROOTNODE);
     if (!this._bookmarkNode) {
-        this._bookmarkNode = this._servicePane.addNode(ROOTNODE, sps.root, true);
-        this._bookmarkNode.hidden = false;
-        this._bookmarkNode.name = 'Bookmarks'; // FIXME: get from locale?
-        
-        // FIXME: ADD DEFAULT BOOKMARKS FROM THE INTERNETS
-        
-        // for the time being, lets just add a few hardcoded bookmarks
-        this.addBookmark('http://www.songbirdnest.com/', 'Songbird', 'http://www.songbirdnest.com/favicon.ico');
-        this.addBookmark('http://www.google.com/', 'Google', 'http://www.google.com/favicon.ico');
-        this.addBookmark('http://www.creativecommons.org/', 'Creative Commons', 'http://www.creativecommons.org/favicon.ico');
-        
-        sps.save();
+        // fetch the default set of bookmarks through a series of tubes
+        // FIXME: don't use XHR - use nsIChannel and friends
+        // FIXME: send parameters and/or headers to indicate product version or something
+        var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+                .createInstance(Ci.nsIDOMEventTarget);
+        xhr.addEventListener('load', function(evt) {
+            var root = xhr.responseXML.documentElement;
+            var folders = root.getElementsByTagName('folder');
+            for (var f=0; f<folders.length; f++) {
+                var folder = folders[f];
+                if (!folder.hasAttribute('id') ||
+                        !folder.hasAttribute('name')) {
+                    // the folder is missing required attributes, we must ignore it
+                    continue;
+                }
+                // if this folder already exists, skip.
+                // we'll want to change this behaviour later to support removals
+                // see bug #2352
+                var fnode = sps.getNode(folder.getAttribute('id'));
+                if (fnode) {
+                    // the folder exists, skip it
+                    continue;
+                }
+                // create the folder
+                fnode = sps.addNode(folder.getAttribute('id'), sps.root, true);
+                fnode.name = folder.getAttribute('name');
+                // attach an image
+                if (folder.hasAttribute('image')) {
+                    // if an icon was supplied use it
+                    fnode.image = folder.getAttribute('image');
+                } else {
+                    // otherwise use a default
+                    fnode.image = FOLDER_IMAGE;
+                }
+                fnode.hidden = false;
+                fnode.contractid = CONTRACTID;
+                
+                if (fnode.id == ROOTNODE) {
+                    // we just created the default bookmarks root
+                    // we'll need that later if we want to let the user create
+                    // their own bookmarks
+                    service._bookmarkNode = fnode;
+                }
+                
+                // now, let's create what goes in
+                var bookmarks = folder.getElementsByTagName('bookmark');
+                for (var b=0; b<bookmarks.length; b++) {
+                    var bookmark = bookmarks[b];
+                    if (!bookmark.hasAttribute('url') ||
+                            !bookmark.hasAttribute('name')) {
+                        // missing required attributes
+                        continue;
+                    }
+                    // If the bookmark already exists, then it's somewhere else
+                    // in the tree and we should leave it there untouched.
+                    // I think.
+                    var bnode = sps.getNode(bookmark.getAttribute('url'));
+                    if (bnode) {
+                        continue;
+                    }
+                    // create the bookmark
+                    bnode = sps.addNode(bookmark.getAttribute('url'), fnode, false);
+                    bnode.url = bookmark.getAttribute('url');
+                    bnode.name = bookmark.getAttribute('name');
+                    bnode.image = bookmark.hasAttribute('image')?
+                            bookmark.getAttribute('image') : BOOKMARK_IMAGE;
+                    bnode.hidden = false;
+                    bnode.contractid = CONTRACTID;
+                }
+            }
+            sps.save();
+        }, false);
+        xhr.addEventListener('error', function(evt) {
+            // FIXME: handle errors. if we do nothing here then the user won't
+            //        have bookmarks, but when they start the app again it
+            //        will try to fetch them again.
+        }, false);
+        xhr.QueryInterface(Ci.nsIXMLHttpRequest);
+        xhr.open('GET', 'http://ian.mckellar.org/bookmarks.xml', true);
+        xhr.send(null);
     }
-    dump ('this._bookmarksNode.name='+this._bookmarkNode.name+'\n');
     
     var sbSvc = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
     this._stringBundle = sbSvc.createBundle("chrome://songbird/locale/songbird.properties");
@@ -103,12 +185,33 @@ function sbBookmarks_addBookmark(aURL, aTitle, aIconURL) {
         node.contractid = CONTRACTID;
         node.name = aTitle;
         node.url = aURL;
-        /* FIXME: the icon should be downloaded and cached as a data: url */
+        /* FIXME: the should the icon be downloaded and cached as a data: url */
         node.image = aIconURL;
         
         node.hidden = false;
         
         this._servicePane.save();
+        
+        // check that the supplied image url works, otherwise use the default
+        var observer = {
+            service : null,
+            onStartRequest : function(aRequest,aContext) {
+            },
+            onStopRequest : function(aRequest, aContext, aStatusCode) {
+                if (aStatusCode != 0) {
+                    node.icon = BOOKMARK_ICON;
+                    this.service._servicePane.save();
+                }
+            }
+        };
+        observer.manager = this;
+        var checker = Components.classes["@mozilla.org/network/urichecker;1"]
+            .createInstance(Components.interfaces.nsIURIChecker);
+        var uri = Components.classes["@mozilla.org/network/standard-url;1"]
+            .createInstance(Components.interfaces.nsIURI);
+        uri.spec = aIconURL;
+        checker.init(uri);
+        checker.asyncCheck(observer, null);
     }
     
     return node;
@@ -132,13 +235,10 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
     var item = document.createElement('menuitem');
     item.setAttribute('label',
                       this.getString('bookmark.menu.edit', 'Edit'));
+    var service = this; // so we can get to it from the callback
     item.addEventListener('command',
-    function bookmark_menu_oncommand (event) {
+    function bookmark_edit_oncommand (event) {
         dump ('edit properties of: '+aNode.name+'\n');
-        var data = {};
-        data.in_url = aNode.url;
-        data.in_label = aNode.label;
-        data.in_icon= aNode.icon;
         aParentWindow.QueryInterface(Ci.nsIDOMWindowInternal);
         /* begin code stolen from window_utils.js:SBOpenModalDialog */
         /* FIXME: what's that BackscanPause stuff? */
@@ -146,22 +246,21 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
         var accessibility = SB_NewDataRemote('accessibility.enabled', null).boolValue;
         chromeFeatures += (',titlebar='+accessibility?'yes':'no');
         aParentWindow.openDialog('chrome://songbird/content/xul/editbookmark.xul',
-                                 'edit_bookmark', chromeFeatures, data);
-        /* end stolen code */
-        if (data.result) {
-            aNode.url = data.out_url;
-            aNode.label = data.out_icon;
-            aNode.icon = data.out_label;
-            this._servicePane.save();
-      }         
+                                 'edit_bookmark', chromeFeatures, aNode);
+
+        service._servicePane.save();    
     }, false);
     aContextMenu.appendChild(item);
     
     item = document.createElement('menuitem');
     item.setAttribute('label',
                       this.getString('bookmark.menu.remove', 'Remove'));
-    item.addEventListener('command', function (event) {
+    item.addEventListener('command',
+    function bookmark_delete_oncommand (event) {
         dump ('delete: '+aNode.name+'\n');
+        // FIXME: confirmation dialog, eh??
+        service._servicePane.removeNode(aNode);
+        service._servicePane.save();
     }, false);
     aContextMenu.appendChild(item);
     
