@@ -611,6 +611,17 @@ function javascriptConsole() {
   SBOpenWindow("chrome://global/content/console.xul", "global:console", "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,titlebar");
 }
 
+// Match filenames ending with .xpi or .jar
+function isXPI(filename) {
+  return /\.(xpi|jar)$/i.test(filename);
+}
+
+// Prompt the user to install the given XPI.
+function installXPI(filename) {    
+  xpinstallObj = {};
+  xpinstallObj[filename] = filename;
+  InstallTrigger.install(xpinstallObj);
+}
 
   
 }
