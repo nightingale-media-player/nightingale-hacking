@@ -93,7 +93,8 @@ public:
 
   void DownloadDone(PRUnichar* deviceString,
                     PRUnichar* table,
-                    PRUnichar* index);
+                    PRUnichar* index,
+                    nsresult status);
 
   void DoDeviceConnectCallback(const nsAString& aDeviceString);
 

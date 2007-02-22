@@ -50,6 +50,9 @@
 #include <docshell/nsIURIFixup.h>
 #include <unicharutil/nsUnicharUtils.h>
 
+#include <necko/nsIIOService.h>
+#include <xpcom/nsILocalFile.h>
+
 #include "sbIDatabaseResult.h"
 #include "sbIDatabaseQuery.h"
 
@@ -1140,6 +1143,7 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
   // do not set the source/destination for those existing
   // rows in the transfer table (bug 568). So starting 
   // with row = numExistingRows. 
+  nsCOMPtr<nsIIOService> ioService = do_GetService("@mozilla.org/network/io-service;1");
   for (PRInt32 row = numExistingRows; row < rowcount; row++) {
     nsAutoString updateDataQuery, destinationPathFile, sourcePathFile;
 
@@ -1162,15 +1166,6 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
 #endif
     }
 
-    if (isDestinationGiven) {
-      destinationPathFile = aDestPath;
-#if defined(XP_WIN)
-      destinationPathFile += NS_LITERAL_STRING("\\");
-#else
-      destinationPathFile += NS_LITERAL_STRING("/");
-#endif
-    }
-
     nsAutoString dataString;
     rv = resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("url"),
                                        dataString);
@@ -1182,9 +1177,25 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
     if (!isDestinationGiven)
       destinationPathFile = dataString;
     else {
+      nsCOMPtr<nsILocalFile> destFile;
+      nsCOMPtr<nsIURI> uri;
+      nsCAutoString destinationSpec;
+
+      rv = NS_NewLocalFile(aDestPath, PR_FALSE, getter_AddRefs(destFile));
+      if(NS_FAILED(rv)) return PR_FALSE;
+
       NS_NAMED_LITERAL_STRING(illegalChars, FILE_ILLEGAL_CHARACTERS);
       ReplaceChars(fileName, illegalChars, NS_L('_'));
-      destinationPathFile += fileName;
+
+      rv = destFile->Append(fileName);
+      if(NS_FAILED(rv)) return PR_FALSE;
+
+      rv = ioService->NewFileURI(destFile, getter_AddRefs(uri));
+      if(NS_FAILED(rv)) return PR_FALSE;
+
+      rv = uri->GetSpec(destinationSpec);
+      if(NS_FAILED(rv)) return PR_FALSE;
+      destinationPathFile.Assign(NS_ConvertUTF8toUTF16(destinationSpec));
     }
 
     if (!isSourceGiven)
@@ -1930,21 +1941,35 @@ sbDeviceBase::DeviceEventAsync(PRBool mediaInserted)
 void
 sbDeviceBase::DownloadDone(PRUnichar* deviceString,
                            PRUnichar* table,
-                           PRUnichar* index)
+                           PRUnichar* index,
+                           nsresult status)
 {
   nsString sourceURL, destURL;
+  PRBool haveSrcDst;
+  PRInt32 transferStatus;
+
+  if (NS_SUCCEEDED(status))
+    transferStatus = 1;
+  else
+    transferStatus = 0;
 
   // XXXben Remove me
   nsAutoString strDevice, dbContext;
   if (deviceString)
     strDevice.Assign(deviceString);
 
+  // XXXerik should do something smarter on error.
+  UpdateIOProgress(deviceString, table, index, 100 /* Complete */);
+
   GetContext(strDevice, dbContext);
 
-  if(sbDeviceBase::GetSourceAndDestinationURL(dbContext.get(), table, index, sourceURL, destURL))
-  {
-    DoTransferCompleteCallback(sourceURL, destURL, 1);
+  haveSrcDst = sbDeviceBase::GetSourceAndDestinationURL(dbContext.get(), table, index, sourceURL, destURL);
 
+  if(haveSrcDst)
+    DoTransferCompleteCallback(sourceURL, destURL, transferStatus);
+
+  if(NS_SUCCEEDED(status) && haveSrcDst)
+  {
     const static PRUnichar *aMetaKeys[] = {NS_LITERAL_STRING("title").get()};
     const static PRUint32 nMetaKeyCount = sizeof(aMetaKeys) / sizeof(aMetaKeys[0]);
 

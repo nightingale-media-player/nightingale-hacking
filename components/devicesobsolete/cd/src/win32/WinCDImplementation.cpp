@@ -572,7 +572,7 @@ WinCDObject::UpdateIOProgress(DBInfoForTransfer *ripInfo)
       if (totalSectors && totalSectors == readSectors)
       {
         mParentCDManager->GetBasesbDevice()->UpdateIOProgress((PRUnichar *) GetDeviceString().get(), (PRUnichar *) ripInfo->table.get(), (PRUnichar *) trackIndex.get(), 100);
-        mParentCDManager->GetBasesbDevice()->DownloadDone((PRUnichar *) GetDeviceString().get(), (PRUnichar *) ripInfo->table.get(), (PRUnichar *) trackIndex.get());
+        mParentCDManager->GetBasesbDevice()->DownloadDone((PRUnichar *) GetDeviceString().get(), (PRUnichar *) ripInfo->table.get(), (PRUnichar *) trackIndex.get(), NS_OK);
       }
     }
   }

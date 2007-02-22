@@ -37,6 +37,9 @@
 #include "nsISupportsUtils.h"
 #include "nsIRDFLiteral.h"
 #include "nsIWebProgressListener.h"
+#include <xpcom/nsIInterfaceRequestor.h>
+#include <necko/nsIProgressEventSink.h>
+#include <necko/nsIHttpEventSink.h>
 #include "sbIDownloadDevice.h"
 #include <time.h>
 #include "nsNetUtil.h"
@@ -61,22 +64,34 @@
 
 class sbDownloadDevice;
 
-class sbDownloadListener : public nsIWebProgressListener
+class sbDownloadListener : public nsIWebProgressListener,
+                           public nsIInterfaceRequestor,
+                           public nsIProgressEventSink,
+                           public nsIHttpEventSink
 {
 
 public:
 
   NS_DECL_ISUPPORTS
   NS_DECL_NSIWEBPROGRESSLISTENER
+  NS_DECL_NSIINTERFACEREQUESTOR
+  NS_DECL_NSIPROGRESSEVENTSINK
+  NS_DECL_NSIHTTPEVENTSINK
 
   sbDownloadListener(sbDownloadDevice *downlodingDeviceObject,
                      PRUnichar* deviceString,
                      PRUnichar* table,
-                     PRUnichar* index) : 
+                     PRUnichar* index,
+                     nsCOMPtr<nsIFile> dstFile,
+                     nsCOMPtr<nsIFile> tmpDstFile,
+                     nsCOMPtr<nsIHttpChannel> httpChannel) : 
     mDownlodingDeviceObject(downlodingDeviceObject),
     mDeviceString(deviceString), 
     mTable(table),
     mIndex(index),
+    mDstFile(dstFile),
+    mTmpDstFile(tmpDstFile),
+    mHTTPChannel(httpChannel),
     mShutDown(PR_FALSE),
     mPrevProgVal(0),
     mSuspend(PR_FALSE),
@@ -86,6 +101,9 @@ public:
   }
 
   ~sbDownloadListener() {}
+
+  void UpdateProgress(PRInt64 aProgress,
+                      PRInt64 aMaxProgress);
 
   void ShutDown() {
     mShutDown = PR_TRUE;
@@ -113,6 +131,12 @@ private:
   nsString mTable;
 
   nsString mIndex;
+
+  nsCOMPtr<nsIFile> mDstFile;
+
+  nsCOMPtr<nsIFile> mTmpDstFile;
+
+  nsCOMPtr<nsIHttpChannel> mHTTPChannel;
 
   PRBool mShutDown;
 
@@ -264,6 +288,8 @@ private:
   ~sbDownloadDevice();
 
   sbDownloadListener* mListener;
+
+  nsCOMPtr<nsIFile> mpTmpDownloadDir;
 };
 
 #endif // __DOWNLOAD_DEVICE_H__

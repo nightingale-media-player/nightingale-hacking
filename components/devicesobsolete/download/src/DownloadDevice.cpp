@@ -40,6 +40,8 @@
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsComponentManagerUtils.h>
 #include <necko/nsIURI.h>
+#include <necko/nsISocketTransport.h>
+#include <necko/ftpCore.h>
 #include <webbrowserpersist/nsIWebBrowserPersist.h>
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsServiceManagerUtils.h>
@@ -67,7 +69,91 @@
 #define DOWNLOAD_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("&device.download").get()
 #define DOWNLOAD_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("&device.download").get()
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDownloadListener, nsIWebProgressListener)
+NS_IMPL_THREADSAFE_ISUPPORTS4(sbDownloadListener,
+                              nsIWebProgressListener,
+                              nsIInterfaceRequestor,
+                              nsIProgressEventSink,
+                              nsIHttpEventSink)
+
+NS_IMETHODIMP
+sbDownloadListener::GetInterface(const nsIID & aIID,
+                                 void **aIFace)
+{
+    NS_ENSURE_ARG_POINTER(aIFace);
+
+    *aIFace = nsnull;
+
+    nsresult rv = QueryInterface(aIID, aIFace);
+}
+
+NS_IMETHODIMP
+sbDownloadListener::OnRedirect(nsIHttpChannel *httpChannel,
+                               nsIChannel *newChannel)
+{
+  nsresult rv = NS_OK;
+
+  mHTTPChannel = do_QueryInterface(newChannel, &rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDownloadListener::OnProgress(nsIRequest *request,
+                               nsISupports *ctxt,
+                               PRUint64 aProgress,
+                               PRUint64 aProgressMax)
+{
+  if (mShutDown)
+  {
+    request->Cancel(0);
+    return NS_OK;
+  }
+
+  if (mSuspend)
+  {
+    mSavedRequestObject = request;
+    request->Suspend();
+  }
+
+  UpdateProgress(aProgress, aProgressMax);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDownloadListener::OnStatus(nsIRequest *request,
+                                           nsISupports *ctxt,
+                                           nsresult status,
+                                           const PRUnichar *statusArg)
+{
+  if (mShutDown)
+  {
+    request->Cancel(0);
+    return NS_OK;
+  }
+
+  switch ( status )
+  {
+    // We need to filter out non-error error codes.
+    // Is the only NS_SUCCEEDED value NS_OK?
+    case NS_NET_STATUS_RESOLVING_HOST:
+    case NS_NET_STATUS_BEGIN_FTP_TRANSACTION:
+    case NS_NET_STATUS_END_FTP_TRANSACTION:
+    case NS_NET_STATUS_CONNECTING_TO:
+    case NS_NET_STATUS_CONNECTED_TO:
+    case NS_NET_STATUS_SENDING_TO:
+    case NS_NET_STATUS_RECEIVING_FROM:
+    case NS_NET_STATUS_WAITING_FOR:
+    case nsITransport::STATUS_READING:
+    case nsITransport::STATUS_WRITING:
+      break;
+
+    default:
+      mDownlodingDeviceObject->UpdateIOStatus((PRUnichar *)mDeviceString.get(), (PRUnichar *)mTable.get(), (PRUnichar *)mIndex.get(), statusArg);
+      break;
+  }
+
+
+  return NS_OK;
+}
 
 NS_IMETHODIMP
 sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress,
@@ -84,6 +170,38 @@ sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress,
   // If download done for this file then, initiate the next download
   if (aStateFlags & STATE_STOP)
   {
+    nsresult status = aStatus;
+
+    // Check HTTP response status
+    if (NS_SUCCEEDED(status) && mHTTPChannel)
+    {
+      PRBool requestSucceeded;
+      mHTTPChannel->GetRequestSucceeded(&requestSucceeded);
+      if (!requestSucceeded)
+      {
+#ifdef DEBUG_downloads
+        PRUint32 httpStatus;
+        mHTTPChannel->GetResponseStatus(&httpStatus);
+        printf("HTTP requeset failed with response: %d\n", httpStatus);
+#endif
+        status = NS_ERROR_UNEXPECTED;
+      }
+    }
+
+    // Move the temporary download file to final location
+    if (NS_SUCCEEDED(status))
+    {
+      nsString fileName;
+      nsCOMPtr<nsIFile> fileDir;
+      mDstFile->GetLeafName(fileName);
+      mDstFile->GetParent(getter_AddRefs(fileDir));
+      mTmpDstFile->MoveTo(fileDir, fileName);
+    }
+    else
+    {
+      mTmpDstFile->Remove(PR_FALSE);
+    }
+
     // Copy the data so you're not sending stale pointers
     // ("DownloadDone" deletes this item and frees the strings)
     nsString deviceString = mDeviceString;
@@ -93,8 +211,9 @@ sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress,
     // OK Download complete
     if (mDownlodingDeviceObject)
     {
-      mDownlodingDeviceObject->UpdateIOProgress((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get(), 100 /* Complete */);
-      mDownlodingDeviceObject->DownloadDone((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get());
+      if (NS_SUCCEEDED(aStatus))
+        mDownlodingDeviceObject->UpdateIOProgress((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get(), 100 /* Complete */);
+      mDownlodingDeviceObject->DownloadDone((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get(), status);
     }
   }
 
@@ -121,16 +240,7 @@ sbDownloadListener::OnProgressChange(nsIWebProgress *aWebProgress,
     aRequest->Suspend();
   }
 
-  PRUint32 newProgVal = (PRUint32) ((PRInt64)aCurTotalProgress * (PRInt64)100 / (PRInt64)aMaxSelfProgress);
-
-  // Update progress (0 ... 100)
-  // Check if the update was not done within the last second.
-  if (difftime(time(nsnull), mLastDownloadUpdate))
-  {
-    mLastDownloadUpdate = time(nsnull);
-    mDownlodingDeviceObject->UpdateIOProgress((PRUnichar *)mDeviceString.get(), (PRUnichar *)mTable.get(), (PRUnichar *)mIndex.get(), newProgVal);
-    mPrevProgVal = newProgVal;
-  }
+  UpdateProgress(aCurTotalProgress, aMaxSelfProgress);
   return NS_OK;
 }
 
@@ -178,6 +288,21 @@ sbDownloadListener::OnSecurityChange(nsIWebProgress *aWebProgress,
   return NS_OK;
 }
 
+void
+sbDownloadListener::UpdateProgress(PRInt64 aProgress,
+                                   PRInt64 aMaxProgress)
+{
+  PRUint32 newProgVal = (PRUint32) ((PRInt64)aProgress * (PRInt64)100 / (PRInt64)aMaxProgress);
+
+  // Update progress (0 ... 100)
+  // Check if the update was not done within the last second.
+  if (difftime(time(nsnull), mLastDownloadUpdate))
+  {
+    mLastDownloadUpdate = time(nsnull);
+    mDownlodingDeviceObject->UpdateIOProgress((PRUnichar *)mDeviceString.get(), (PRUnichar *)mTable.get(), (PRUnichar *)mIndex.get(), newProgVal);
+    mPrevProgVal = newProgVal;
+  }
+}
 
 // CLASSES ====================================================================
 NS_IMPL_ISUPPORTS2(sbDownloadDevice, sbIDeviceBase, sbIDownloadDevice)
@@ -201,6 +326,28 @@ sbDownloadDevice::~sbDownloadDevice()
 NS_IMETHODIMP
 sbDownloadDevice::Initialize(PRBool *_retval)
 {
+  // Create temporary directory for download files
+  nsCOMPtr<nsIProperties> pProperties;
+  PRUint32 permissions;
+  PRBool exists;
+
+  pProperties = do_GetService("@mozilla.org/file/directory_service;1");
+  pProperties->Get("TmpD",
+                   NS_GET_IID(nsIFile),
+                   getter_AddRefs(mpTmpDownloadDir));
+  mpTmpDownloadDir->GetPermissions(&permissions);
+  mpTmpDownloadDir->Append(NS_LITERAL_STRING("Songbird"));
+  mpTmpDownloadDir->Exists(&exists);
+  if (!exists)
+    mpTmpDownloadDir->Create(nsIFile::DIRECTORY_TYPE, permissions);
+  mpTmpDownloadDir->Append(NS_LITERAL_STRING("DownloadDevice"));
+  mpTmpDownloadDir->Exists(&exists);
+
+  // Make the temporary download directory an empty one
+  if (exists)
+    mpTmpDownloadDir->Remove(PR_TRUE);
+  mpTmpDownloadDir->Create(nsIFile::DIRECTORY_TYPE, permissions);
+
   // Resume transfer if any pending
   sbDeviceBase::ResumeAbortedTransfer(NULL);
 
@@ -416,14 +563,12 @@ sbDownloadDevice::TransferFile(PRUnichar* deviceString,
   nsString lOrigUrl(destination);
   nsString lUrl(destination);
 
-  //XXXAus: Windows filesystem is not case sensitive.
-#if defined(XP_WIN)
-  ToLowerCase(lOrigUrl);
-  ToLowerCase(lUrl);
-#endif
+  nsCOMPtr<nsIFileProtocolHandler> fileProtocolHandler;
+  nsCOMPtr<nsIFile> linkFile;
 
-  nsCOMPtr<nsILocalFile> linkFile;
-  rv = NS_NewLocalFile(lUrl, PR_FALSE, getter_AddRefs(linkFile));
+  fileProtocolHandler = do_CreateInstance("@mozilla.org/network/protocol;1?name=file");
+  rv = fileProtocolHandler->GetFileFromURLSpec(NS_ConvertUTF16toUTF8(lUrl), getter_AddRefs(linkFile));
+  if(NS_FAILED(rv)) return PR_FALSE;
 
   PRInt32 fileNum = 1;
   PRBool fileExists = PR_TRUE;  
@@ -441,7 +586,8 @@ sbDownloadDevice::TransferFile(PRUnichar* deviceString,
     strNum.AppendLiteral("_");
 
     lUrl.Insert(strNum, extPos);
-    linkFile->InitWithPath(lUrl);
+    rv = fileProtocolHandler->GetFileFromURLSpec(NS_ConvertUTF16toUTF8(lUrl), getter_AddRefs(linkFile));
+    if(NS_FAILED(rv)) return PR_FALSE;
     
     linkFile->Exists(&fileExists);
     fileNum++;
@@ -487,17 +633,45 @@ sbDownloadDevice::TransferFile(PRUnichar* deviceString,
     }
     else
     {
-      linkFile->InitWithPath(lOrigUrl);
+      rv = fileProtocolHandler->GetFileFromURLSpec(NS_ConvertUTF16toUTF8(lOrigUrl), getter_AddRefs(linkFile));
+      if(NS_FAILED(rv)) return PR_FALSE;
     }
   }
 
-  mListener = new sbDownloadListener(this, deviceString, table, index);
+  nsCOMPtr<nsIFile> tmpLinkFile;
+
+  fileNum = 1;
+  do
+  {
+    nsString tmpFilename;
+
+    tmpFilename.AssignLiteral("tmp");
+    tmpFilename.AppendInt(fileNum);
+
+    mpTmpDownloadDir->Clone(getter_AddRefs(tmpLinkFile));
+    tmpLinkFile->Append(tmpFilename);
+
+    tmpLinkFile->Exists(&fileExists);
+    fileNum++;
+  } while (fileExists);
+
+  nsCOMPtr<nsIIOService> pIOService;
+  nsCOMPtr<nsIChannel> pChannel;
+  nsCOMPtr<nsIHttpChannel> pHTTPChannel;
+
+  pIOService = do_GetService("@mozilla.org/network/io-service;1");
+  pIOService->NewChannelFromURI(linkURI, getter_AddRefs(pChannel));
+
+  pHTTPChannel = do_QueryInterface(pChannel, &rv);
+
+  mListener = new sbDownloadListener(this, deviceString, table, index, linkFile, tmpLinkFile, pHTTPChannel);
   mListener->AddRef();
   pBrowser->SetProgressListener(mListener); 
+  pChannel->SetNotificationCallbacks(mListener);
 
   SetCurrentTransferRowNumber(curDownloadRowNumber);
 
-  PRUint32 ret = pBrowser->SaveURI(linkURI, nsnull, nsnull, nsnull, nsnull, linkFile);
+  PRUint32 ret = pBrowser->SaveChannel(pChannel, tmpLinkFile);
 
   return PR_TRUE;
 }
