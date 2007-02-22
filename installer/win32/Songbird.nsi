@@ -150,8 +150,8 @@ NoRequireMSVCP71:
   FindClose $0
   
   ;VLC Configuration File.
-  SetOutPath $APPDATA\SongbirdVLC
-  File songbirdvlcrc
+  ;SetOutPath $APPDATA\SongbirdVLC
+  ;File songbirdvlcrc
   
   ;Back to normal install directory.
   SetOutPath $INSTDIR
@@ -216,7 +216,7 @@ Section "Uninstall"
   Delete $INSTDIR\*.exe
   Delete $INSTDIR\*.ico
 
-  Delete $APPDATA\SongbirdVLC\songbirdvlcrc
+  ;Delete $APPDATA\SongbirdVLC\songbirdvlcrc
   
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; I commented this out, because I don't think we *truly* want to do this. 
