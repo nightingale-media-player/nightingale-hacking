@@ -43,9 +43,7 @@
 #endif
 
 
-#if !defined(XP_UNIX) || defined(XP_MACOSX)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowDragger)
-#endif
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWindowCloak)
 
@@ -59,14 +57,12 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowLayer)
 
 static nsModuleComponentInfo sbIntegration[] =
 {
-#if !defined(XP_UNIX) || defined(XP_MACOSX)
   {
     SONGBIRD_WINDOWDRAGGER_CLASSNAME,
     SONGBIRD_WINDOWDRAGGER_CID,
     SONGBIRD_WINDOWDRAGGER_CONTRACTID,
     CWindowDraggerConstructor
   },
-#endif
 
   {
     SONGBIRD_WINDOWCLOAK_CLASSNAME,

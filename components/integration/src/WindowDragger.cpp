@@ -42,6 +42,9 @@
 #include <Carbon/Carbon.h>
 #include "nsIWidget.h"
 #include "nsIToolkit.h"
+#elif XP_UNIX
+#include <gdk/gdk.h>
+#include <gdk/gdkx.h>
 #endif
 
 
@@ -342,7 +345,72 @@ NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance, sbIWindowDragger
 
   return NS_OK;
 } // BeginWindowDrag
-#endif  // END OS X VERSION
+// END OS X VERSION
+#elif XP_UNIX
+
+CWindowDragger::CWindowDragger()
+{
+    m_callback = NULL;
+}
+
+CWindowDragger::~CWindowDragger()
+{
+}
+
+//-----------------------------------------------------------------------------
+// Start the window dragging.  
+// Notes:
+//      - Ends automatically on mouseup
+//      - dockdistance is ignored for now
+//      - the mouse button that was pressed is just guessed right now.
+//        right now it's always 1 so this isn't a problem
+// Todo:
+//      - detect end of drag operation and call FireCallback();
+NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance, sbIWindowDraggerCallback *cb)
+{
+  m_callback = cb;
+  if (m_callback) NS_ADDREF(m_callback); // it should be safe to pass NULL for no callback
+
+  // Find the current mouse state
+  GdkDisplay* display = gdk_display_get_default();
+  gint x, y;
+  GdkModifierType mask;
+  gdk_display_get_pointer(display, NULL, &x, &y, &mask);
+
+  // OK, this is hard - we need to guess what button was Just Dragged Now
+  // we don't actually know but we can guess
+  gint button = (mask&GDK_BUTTON1_MASK)?1:
+               ((mask&GDK_BUTTON2_MASK)?2:
+               ((mask&GDK_BUTTON3_MASK)?3:
+               ((mask&GDK_BUTTON4_MASK)?4:
+               ((mask&GDK_BUTTON5_MASK)?5:-1))));
+  if (button < 0) {
+    // if we can't work out what button it might be we can't start a drag
+    return NS_ERROR_FAILURE;
+  }
+
+  // Find the currently hovered-over window
+  GdkWindow* mouse_window;
+  int win_x, win_y;
+  mouse_window = gdk_display_get_window_at_pointer(display, &win_x, &win_y);
+  GdkWindow* window;
+  window = gdk_window_get_toplevel(mouse_window);
+
+	
+  // if I were an event, when would I happen?
+  guint32 timestamp = gdk_x11_get_server_time(window);
+
+  // make a drag happen
+  gdk_window_begin_move_drag(window, button, x, y, timestamp);
+
+  // we don't need to hold a reference to the window anymore
+  //g_object_unref (window);
+
+  return NS_OK;
+} // BeginWindowDrag
+// END GTK+ VERSION
+#endif  
+
 
 //-----------------------------------------------------------------------------
 void CWindowDragger::FireCallback() 
