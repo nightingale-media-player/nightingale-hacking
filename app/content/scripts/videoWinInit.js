@@ -67,7 +67,10 @@ function SBVideoInitialize()
     songbird_playingVideo.bindObserver( sb_playing_video_changed, true );
 
     // Set our window constraints
-    SBSetVideoMinMaxCallback();
+    setVideoMinMaxCallback();
+    
+    // Trap ALTF4
+    window.addEventListener("keydown", videoCheckAltF4, true);
     
     // Resize our window from saved pref values
     onWindowLoadSizeAndPosition();
@@ -212,6 +215,10 @@ function SBVideoInitialize()
 
 function SBVideoDeinitialize()
 {
+  // Stop trapping altf4
+  window.removeEventListener("keydown", videoCheckAltF4, true);
+  // Reset window constraints
+  resetVideoMinMaxCallback();
   // Unbind the playing video watcher. (used by the code that uncloaks the video window)
   songbird_playingVideo.unbind();
   songbird_playingVideo = null;
@@ -300,13 +307,12 @@ var SBVideoMinMaxCB =
   
   OnWindowClose: function()
   {
-    setTimeout(onExit, 0);
+    setTimeout(onHideButtonClick, 0);
   },
 
   QueryInterface : function(aIID)
   {
     if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
-        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
         !aIID.equals(Components.interfaces.nsISupports)) 
     {
       throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -316,7 +322,7 @@ var SBVideoMinMaxCB =
   }
 }
 
-function SBSetVideoMinMaxCallback()
+function setVideoMinMaxCallback()
 {
   try {
     var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
@@ -329,6 +335,29 @@ function SBSetVideoMinMaxCallback()
   catch (err) {
     // No component
     dump("Error. No WindowMinMax component available." + err + "\n");
+  }
+}
+
+function resetVideoMinMaxCallback() {
+  try {
+    var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+    if (windowMinMax) {
+      var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+      if (service)
+        service.resetCallback(document);
+    }
+  }
+  catch (err) {
+    // No component
+    dump("Error. No WindowMinMax component available." + err + "\n");
+  }
+}
+
+function videoCheckAltF4(evt)
+{
+  if (evt.keyCode == VK_F4 && evt.altKey) 
+  {
+    onHideButtonClick();
   }
 }
 
