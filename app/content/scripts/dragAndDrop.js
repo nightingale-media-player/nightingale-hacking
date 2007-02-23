@@ -51,12 +51,16 @@ var sbIServiceDropObserver = {
     var flavours = new FlavourSet();
     flavours.appendFlavour("songbird/playlist_selection");
     flavours.appendFlavour("application/x-moz-file","nsIFile");
+    flavours.appendFlavour("text/x-moz-url");
     return flavours;
   },
   
-  onDragOver: function (evt,flavour,session){ },
+  onDragOver: function (evt,flavour,session){ 
+    this._contentType = flavour.contentType;
+  },
   
   onDragExit: function (evt,session) { 
+    this._contentType = null;
   },
   
   onDrop: function (evt,dropdata,session){
@@ -86,10 +90,10 @@ var sbIServiceDropObserver = {
       var item = dataList[i].first;
       var prettyName;
       var rawData = item.data;
-      
       switch (item.flavour.contentType)
       {
         case "application/x-moz-file":
+        case "text/x-moz-url":
         {
           dropFiles(evt, dropdata, session, dest_playlist_service, dest_playlist_name); // implemented in songbird_hacks.js
           return;
@@ -105,6 +109,8 @@ var sbIServiceDropObserver = {
           }
         }
         break;
+        default:
+          dump("ServiceDropObserver: Unknown flavour " + item.flavour.contentType + "\n");
       }
     }
   },
@@ -112,13 +118,10 @@ var sbIServiceDropObserver = {
   canDrop: function(evt, session) {
     if (this.m_curSelectedTarget == -1) return false; // not an item
 
-
-    var flavourSet = this.getSupportedFlavours();
-    var transferData = nsTransferable.get(flavourSet, nsDragAndDrop.getDragData, true);
-    var dropdata = transferData.first.first;
-    switch (dropdata.flavour.contentType)
+    switch (this._contentType)
     {
       case "application/x-moz-file":
+      case "text/x-moz-url":
       {
         var element = this.m_serviceTree.contentView.getItemAtIndex( this.m_curSelectedTarget );
         var properties = element.getAttribute( "properties" ).split(" ");
@@ -135,6 +138,10 @@ var sbIServiceDropObserver = {
       }
       case "songbird/playlist_selection":
       {
+        var flavourSet = this.getSupportedFlavours();
+        var transferData = nsTransferable.get(flavourSet, nsDragAndDrop.getDragData, true);
+        var dropdata = transferData.first.first;
+
         var source_playlist = sbDnDSourceTracker.getDnDSource(dropdata.data);
 
         var element = this.m_serviceTree.contentView.getItemAtIndex( this.m_curSelectedTarget );
