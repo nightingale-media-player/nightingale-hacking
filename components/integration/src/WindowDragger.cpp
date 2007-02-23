@@ -396,15 +396,16 @@ NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance, sbIWindowDragger
   GdkWindow* window;
   window = gdk_window_get_toplevel(mouse_window);
 
+  // if we didn't get a toplevel window then we can't drag
+  if (!GDK_IS_WINDOW(window)) {
+      return NS_ERROR_FAILURE;
+  }
 	
   // if I were an event, when would I happen?
   guint32 timestamp = gdk_x11_get_server_time(window);
 
   // make a drag happen
   gdk_window_begin_move_drag(window, button, x, y, timestamp);
-
-  // we don't need to hold a reference to the window anymore
-  //g_object_unref (window);
 
   return NS_OK;
 } // BeginWindowDrag
