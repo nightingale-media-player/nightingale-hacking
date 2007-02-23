@@ -554,7 +554,7 @@ function onMainPaneLoad()
       
       // If we have not installed a playlist listener, and the web playlist
       // is enabled, install the link url listener.
-      if ( !installed_listener &amp;&amp; enableWebPlaylist)
+      if ( !installed_listener && enableWebPlaylist)
       {
         // wait until the document exists to see if there are any A tags
         if ( ! theMainPane.contentDocument )
