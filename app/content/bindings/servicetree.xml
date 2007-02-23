@@ -374,8 +374,9 @@
             for ( var index = 0; index < rowCount; index++ ) {
               if (tree.view.isContainer(index)) {
                 var item_url = tree.view.getCellText( index, col );
-                SBDataSetBoolValue( "servicetree_opened_" + this.strid + "_" + item_url,
-                                    tree.view.isContainerOpen(index) );
+                // Escape the url so multibyte characters fit into a pref key
+                var key = "servicetree_opened_" + this.strid + "_" + escape(item_url);
+                SBDataSetBoolValue(key, tree.view.isContainerOpen(index));
               }
             }
           }
@@ -399,8 +400,10 @@
             for ( index-- ; index >= 0 ; index-- ) {
               if (tree.view.isContainer(index)) {
                 var itemUrl = tree.view.getCellText(index, col);
+                // Escape the url so multibyte characters fit into a pref key
+                var key = "servicetree_opened_" + this.strid + "_" + escape(itemUrl);
                 if (tree.view.isContainerOpen(index) 
-                      != SBDataGetBoolValue( "servicetree_opened_" + this.strid + "_" + itemUrl )) {
+                      != SBDataGetBoolValue(key)) {
                   tree.view.toggleOpenState(index);
                 }
               }
