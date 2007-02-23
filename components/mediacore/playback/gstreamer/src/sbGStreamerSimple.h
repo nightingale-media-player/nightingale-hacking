@@ -43,6 +43,10 @@ public:
 private:
   ~sbGStreamerSimple();
 
+  NS_IMETHODIMP SetupPlaybin();
+
+  NS_IMETHODIMP DestroyPlaybin();
+
   bool 
   SetInvisibleCursor(sbGStreamerSimple* gsts);
 
@@ -80,6 +84,8 @@ private:
   PRBool mIsPlayingVideo;
   PRBool mFullscreen;
   PRInt32 mLastErrorCode;
+
+  double mLastVolume;
 
   nsCOMPtr<nsIDOMXULElement> mVideoOutputElement;
   nsCOMPtr<nsIDOMWindow> mDomWindow;

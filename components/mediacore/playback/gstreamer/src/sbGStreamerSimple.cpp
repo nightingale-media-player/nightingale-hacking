@@ -69,6 +69,7 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mIsPlayingVideo(PR_FALSE),
   mFullscreen(PR_FALSE),
   mLastErrorCode(0),
+  mLastVolume(0),
   mVideoOutputElement(nsnull),
   mDomWindow(nsnull)
 {
@@ -80,11 +81,7 @@ sbGStreamerSimple::sbGStreamerSimple() :
 
 sbGStreamerSimple::~sbGStreamerSimple()
 {
-  if(mPlay != NULL && GST_IS_ELEMENT(mPlay)) {
-    gst_element_set_state(mPlay, GST_STATE_NULL);
-    gst_object_unref(mPlay);
-    mPlay = NULL;
-  }
+  DestroyPlaybin();
 
   // Do i need to close the video window?
 
@@ -188,26 +185,55 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   mOldCursorY = -1;
   mDelayHide = 10;
   gdk_window_show(mGdkWin);
-  // Set up the playbin
-  mPlay = gst_element_factory_make("playbin", "play");
-  GstElement *audioSink = gst_element_factory_make("gconfaudiosink", "audio-sink");
-  g_object_set(mPlay, "audio-sink", audioSink, NULL);
 
-  mVideoSink = gst_element_factory_make("gconfvideosink", "video-sink");
-  if (mVideoSink == NULL) {
-      mVideoSink = gst_element_factory_make("ximagesink", "video-sink");
-  }
-
-  g_object_set(mPlay, "video-sink", mVideoSink, NULL);
-
-  mBus = gst_element_get_bus(mPlay);
-  gst_bus_set_sync_handler(mBus, &syncHandlerHelper, this);
-
-  // This signal lets us get info about the stream
-  g_signal_connect(mPlay, "notify::stream-info",
-    G_CALLBACK(streamInfoSetHelper), this);
+  rv = SetupPlaybin();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mInitialized = PR_TRUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::SetupPlaybin()
+{
+  if (!mPlay) {
+    mPlay = gst_element_factory_make("playbin", "play");
+    GstElement *audioSink = gst_element_factory_make("gconfaudiosink",
+                                                     "audio-sink");
+    g_object_set(mPlay, "audio-sink", audioSink, NULL);
+ 
+    mVideoSink = gst_element_factory_make("gconfvideosink", "video-sink");
+    if (!mVideoSink) {
+        mVideoSink = gst_element_factory_make("ximagesink", "video-sink");
+    }
+
+    g_object_set(mPlay, "video-sink", mVideoSink, NULL);
+
+    mBus = gst_element_get_bus(mPlay);
+    gst_bus_set_sync_handler(mBus, &syncHandlerHelper, this);
+
+    // This signal lets us get info about the stream
+    g_signal_connect(mPlay, "notify::stream-info",
+      G_CALLBACK(streamInfoSetHelper), this);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::DestroyPlaybin()
+{
+  if (mBus) {
+    gst_bus_set_flushing(mBus, TRUE);
+    mBus = NULL;
+  }
+
+  if (mPlay  && GST_IS_ELEMENT(mPlay)) {
+    gst_element_set_state(mPlay, GST_STATE_NULL);
+    gst_object_unref(mPlay);
+    mPlay = NULL;
+  }
 
   return NS_OK;
 }
@@ -235,9 +261,17 @@ sbGStreamerSimple::GetUri(nsAString& aUri)
 NS_IMETHODIMP
 sbGStreamerSimple::SetUri(const nsAString& aUri)
 {
+  nsresult rv;
+
   if(!mInitialized) {
     return NS_ERROR_NOT_INITIALIZED;
   }
+
+  /*
+   * Mercilessly clobber the playbin and recreate it
+   */
+  rv = RestartPlaybin();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // XXX: What are these glib strings?
   g_object_set(G_OBJECT(mPlay), "uri", NS_ConvertUTF16toUTF8(aUri).get(), NULL);
@@ -330,6 +364,7 @@ sbGStreamerSimple::SetVolume(double aVolume)
   }
 
   g_object_set(mPlay, "volume", aVolume, NULL);
+  mLastVolume = aVolume;
 
   return NS_OK;
 }
@@ -580,6 +615,29 @@ sbGStreamerSimple::Seek(PRUint64 aTimeNanos)
       GstSeekFlags(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT),
       GST_SEEK_TYPE_SET, aTimeNanos,
       GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::RestartPlaybin()
+{
+  nsresult rv;
+
+  LOG(("Restarting playbin..."));
+
+  /*
+   * Destroy and recreate the playbin, then restore the volume
+   */
+
+  rv = DestroyPlaybin();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetupPlaybin();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetVolume(mLastVolume);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
