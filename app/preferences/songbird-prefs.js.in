@@ -150,3 +150,7 @@ pref("browser.preferences.animateFadeIn", true);
 #else
 pref("browser.preferences.animateFadeIn", false);
 #endif
+
+// Enable the web playlist.
+// Extracts A tags and add browser context menu 
+pref("songbird.webplaylist.enabled", "1");

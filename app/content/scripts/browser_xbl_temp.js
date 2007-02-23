@@ -549,8 +549,12 @@ function onMainPaneLoad()
         document.__CURRENTPLAYLIST__ = null;
       }
 
-      // If we have not installed a playlist listener, install an url listener.
-      if ( ! installed_listener )
+      // Should the webplaylist scan and listener binding be performed?
+      var enableWebPlaylist = SBDataGetBoolValue("webplaylist.enabled");
+      
+      // If we have not installed a playlist listener, and the web playlist
+      // is enabled, install the link url listener.
+      if ( !installed_listener &amp;&amp; enableWebPlaylist)
       {
         // wait until the document exists to see if there are any A tags
         if ( ! theMainPane.contentDocument )
@@ -563,8 +567,7 @@ function onMainPaneLoad()
         {
           var playlist_guid = WEB_PLAYLIST_CONTEXT;
           var playlist_table = WEB_PLAYLIST_TABLE;
-          // BIG HACK to show the subscribed playlist instead of scraping for the web playlist
-          var skip = false;
+          // BIG HACK to show the subscribed playlist
           var cur_url = SBDataGetStringValue( "browser.uri" );
           var aPlaylistManager = new sbIPlaylistManager();
           var queryObj = new sbIDatabaseQuery();
@@ -577,7 +580,6 @@ function onMainPaneLoad()
           {
             if ( cur_url == resObj.getRowCellByColumn( i, "description" ) )
             {
-              skip = true;
               var table = resObj.getRowCellByColumn( i, "name" );
               // Bind the Web Playlist UI element to the subscribed playlist instead of scraping.
               theWebPlaylist.bind( "songbird", table, null, SBDefaultCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
@@ -587,7 +589,7 @@ function onMainPaneLoad()
               playlist_table = table;
             }
           }
-          // Otherwise, scrape the document.
+          // scrape the document.
           AsyncWebDocument( theMainPane.contentDocument, playlist_guid, playlist_table );
         } 
 
