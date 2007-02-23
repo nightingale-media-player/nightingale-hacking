@@ -258,6 +258,8 @@
 <!ENTITY hotkeys.remove               "Remove" >
 <!ENTITY hotkeys.prefpane             "Hotkeys" >
 
+<!ENTITY prefpane.addons.label        "Add-ons">
+
 <!ENTITY umsd.prefpane                      "USB" >
 <!ENTITY umsd.no_devices_present            "No USB mass-storage devices are connected." >
 <!ENTITY umsd.music.tab                     "Music" >
