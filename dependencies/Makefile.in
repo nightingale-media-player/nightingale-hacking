@@ -62,14 +62,6 @@ GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
-ifneq ("x86_64", "$(SB_ARCH)")
-
-FLASH_PLUGIN = libflashplayer
-SONGBIRD_COMPONENTS += $(PLUGINS_DIR)/flash/components/flashplayer.xpt
-SONGBIRD_PLUGINS    += $(PLUGINS_DIR)/flash/plugins/$(FLASH_PLUGIN)$(DLL_SUFFIX)
-
-endif
-
 # non-existent variable, VLC no-worky on linux yet...
 ifdef (SB_LINUX_VLC)
 VLC_PLUGIN = libvlcplugin
