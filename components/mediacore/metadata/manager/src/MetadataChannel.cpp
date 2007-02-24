@@ -79,6 +79,7 @@ sbMetadataChannel::~sbMetadataChannel()
 /* void Open (in nsIChannel channel); */
 NS_IMETHODIMP sbMetadataChannel::Open(nsIChannel *channel, sbIMetadataHandler *handler)
 {
+  nsresult rv;
   if ( ! channel || ! handler )
     return NS_ERROR_NULL_POINTER;
 
@@ -94,11 +95,17 @@ NS_IMETHODIMP sbMetadataChannel::Open(nsIChannel *channel, sbIMetadataHandler *h
     PRUint32 loadFlags = nsIRequest::INHIBIT_CACHING | 
       nsIRequest::INHIBIT_PERSISTENT_CACHING |
       nsIRequest::LOAD_BYPASS_CACHE;
-    nsresult rv = request->SetLoadFlags(loadFlags);
+    rv = request->SetLoadFlags(loadFlags);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Setting load flags failed :( Watch out, app will deadlock.");
     if(NS_FAILED(rv))
       return rv;
   }
+
+  nsCOMPtr<nsIInterfaceRequestor> ir = new sbMetadataChannelEventSink(this);
+  NS_ENSURE_TRUE(ir, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = m_Channel->SetNotificationCallbacks(ir);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return m_Channel->AsyncOpen( this, handler );
 }
@@ -420,3 +427,44 @@ sbMetadataChannel::OnStopRequest(nsIRequest *aRequest,
   }
   return NS_OK;
 }
+
+NS_IMETHODIMP
+sbMetadataChannel::SetRedirectedChannel(nsIChannel* aChannel)
+{
+  m_Channel = aChannel;
+
+  return NS_OK;
+}
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbMetadataChannelEventSink,
+                              nsIChannelEventSink,
+                              nsIInterfaceRequestor)
+
+sbMetadataChannelEventSink::sbMetadataChannelEventSink(sbMetadataChannel* aMetadataChannel)
+{
+  mMetadataChannel = aMetadataChannel;
+}
+
+sbMetadataChannelEventSink::~sbMetadataChannelEventSink()
+{
+}
+
+NS_IMETHODIMP
+sbMetadataChannelEventSink::OnChannelRedirect(nsIChannel* oldChannel,
+                                     nsIChannel* newChannel,
+                                     PRUint32 flags)
+{
+  nsresult rv;
+
+  rv = mMetadataChannel->SetRedirectedChannel(newChannel);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMetadataChannelEventSink::GetInterface(const nsIID& uuid, void** aResult)
+{
+  return QueryInterface(uuid, aResult);
+}
+

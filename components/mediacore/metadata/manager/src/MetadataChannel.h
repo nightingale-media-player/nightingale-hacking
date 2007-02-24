@@ -36,6 +36,8 @@
 #include <nscore.h>
 #include <nsStringGlue.h>
 #include <xpcom/nsMemory.h>
+#include <nsIChannelEventSink.h>
+#include <nsIInterfaceRequestor.h>
 #include <nsCOMPtr.h>
 #include "sbIMetadataChannel.h"
 #include <map>
@@ -64,6 +66,8 @@ class sbMetadataChannel : public sbIMetadataChannel
 
   sbMetadataChannel();
   virtual ~sbMetadataChannel();
+
+  NS_IMETHODIMP SetRedirectedChannel(nsIChannel* aChannel);
 
   // Internal constants
   enum sbBufferConstants
@@ -95,6 +99,22 @@ class sbMetadataChannel : public sbIMetadataChannel
   PRUint64 m_BufDeadZoneEnd;
   blockmap_t m_Blocks;
   PRBool   m_Completed;
+};
+
+class sbMetadataChannelEventSink : public nsIChannelEventSink,
+                                   public nsIInterfaceRequestor
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSICHANNELEVENTSINK
+  NS_DECL_NSIINTERFACEREQUESTOR
+
+  sbMetadataChannelEventSink(sbMetadataChannel* aMetadataChannel);
+
+private:
+  ~sbMetadataChannelEventSink();
+
+  sbMetadataChannel* mMetadataChannel;
 };
 
 // Now I have a slightly smaller chance of getting screwed.
