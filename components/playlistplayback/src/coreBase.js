@@ -30,6 +30,13 @@
  * \sa sbICoreWrapper.idl coreFlash.js coreWMP.js coreQT.js coreVLC.js
  */
 
+const nsIRequestObserver = Components.interfaces.nsIRequestObserver;
+
+// From nsNetError.h
+const NS_BINDING_SUCCEEDED = Components.results.NS_OK;
+const NS_BINDING_FAILED    = 0x804b0001;
+const NS_BINDING_ABORTED   = 0x804b0002;
+
 /**
  * \class CoreBase
  * \brief Base class for sbICoreWrapper implementations

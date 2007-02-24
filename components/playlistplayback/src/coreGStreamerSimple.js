@@ -56,6 +56,7 @@ function CoreGStreamerSimple()
                                                      this._mediaUrlSchemes);
   this._videoUrlMatcher = new ExtensionSchemeMatcher(this._videoUrlExtensions,
                                                      []);
+  this._uriChecker = null;
 };
 
 // inherit the prototype from CoreBase
@@ -72,7 +73,7 @@ CoreGStreamerSimple.prototype.playURL = function ( aURL )
     throw Components.results.NS_ERROR_INVALID_ARG;
   }
 
-  this._url = this.sanitizeURL(aURL);
+  aURL = this.sanitizeURL(aURL);
   this._paused = false;
 
   try
@@ -90,13 +91,51 @@ CoreGStreamerSimple.prototype.playURL = function ( aURL )
       }
     }
 
-    this._object.uri = this._url;
-    this._object.play();
+    var ioService =
+      Components.classes["@mozilla.org/network/io-service;1"]
+                .getService(Components.interfaces.nsIIOService);
+
+    var uri = ioService.newURI(aURL, null, null);
+
+    // If this is a local file, just play it
+    if (uri instanceof Components.interfaces.nsIFileURL) {
+      this._object.uri = aURL;
+      this._object.play();
+      return true;
+    }
+    else {
+      // Resolve the network URL
+      return this._resolveRedirectsAndPlay(uri);
+    }
+
   }
   catch(e)
   {
       this.LOG(e);
   }
+
+  return true;
+};
+
+CoreGStreamerSimple.prototype._resolveRedirectsAndPlay = function(aURI) {
+
+  // Cancel any old checkers
+  if (this._uriChecker) {
+    this._uriChecker = null;
+  }
+
+  // Make a new uriChecker and initialize it
+  var uriChecker =
+    Components.classes["@mozilla.org/network/urichecker;1"]
+              .createInstance(Components.interfaces.nsIURIChecker);
+  uriChecker.init(aURI);
+
+  // Save it away so we can cancel if necessary. Can't do this until after the
+  // init call.
+  this._uriChecker = uriChecker;
+
+  // And begin the check
+  uriChecker.asyncCheck(this, null);
 
   return true;
 };
@@ -347,11 +386,37 @@ CoreGStreamerSimple.prototype.getSupportedFileExtensions = function ()
   return new StringArrayEnumerator(this._mediaUrlExtensions);
 }
 
+CoreGStreamerSimple.prototype.onStartRequest = function(request, context)
+{
+  // Nothing to do here.
+};
+
+CoreGStreamerSimple.prototype.onStopRequest = function(request, context, status)
+{
+  if (request != this._uriChecker) {
+    return;
+  }
+
+  if (status == NS_BINDING_SUCCEEDED) {
+    // Clear immediately so we can't try to cancel it anymore
+    this._uriChecker = null;
+
+    var uriChecker =
+      request.QueryInterface(Components.interfaces.nsIURIChecker);
+    var url = uriChecker.baseChannel.URI.spec;
+
+    this._url = url;
+    this._object.uri = url;
+    this._object.play();
+  }
+};
+
 /**
   * See nsISupports.idl
   */
 CoreGStreamerSimple.prototype.QueryInterface = function(iid) {
   if (!iid.equals(Components.interfaces.sbICoreWrapper) &&
+      !iid.equals(nsIRequestObserver) &&
       !iid.equals(Components.interfaces.nsISupports))
     throw Components.results.NS_ERROR_NO_INTERFACE;
   return this;
