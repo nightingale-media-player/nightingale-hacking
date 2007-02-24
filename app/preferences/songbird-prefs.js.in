@@ -1,3 +1,4 @@
+#filter substitution
 // Songbird Default Prefs.
 
 // DON'T CHANGE THIS.  This is not "bones".
@@ -7,7 +8,7 @@ pref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,title
 // Prevent xulrunner from launching multiple instances of Songbird.
 pref("toolkit.singletonWindowType", "Songbird:Main");
 
-pref("general.useragent.extra.songbird", "Songbird/0.2(dev)");
+pref("general.useragent.extra.songbird", "Songbird/@SB_MILESTONE@ (@SB_BUILD_ID@)");
 pref("general.skins.selectedSkin", "rubberducky/0.2");
 
 // Interim "bones" implementation

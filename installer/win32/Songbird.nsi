@@ -8,7 +8,7 @@
 SetCompressor /SOLID lzma
 SetCompressorDictSize 64
 
-!define RELEASE_NAME "Songbird 'Test Flight' 0.2 (Win32)"
+!define RELEASE_NAME "Songbird 0.3pre (Win32)"
 Name "${RELEASE_NAME}"
 Caption "${RELEASE_NAME}"
 
