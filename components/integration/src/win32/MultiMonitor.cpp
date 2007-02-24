@@ -54,6 +54,45 @@ DECLARE_HANDLE(HMONITOR);
 //-----------------------------------------------------------------------------
 /* Implementation file */
 
+void CMultiMonitor::GetMonitorFromWindow(RECT *r, NATIVEWINDOW window, bool excludeTaskbar) {
+#ifdef XP_WIN  
+  if (window != NULL) 
+  {
+    // Load dll dynamically so as to be compatible with older versions of Win32
+    HINSTANCE user32 = LoadLibrary(L"USER32.DLL");
+    if (user32 != NULL) 
+    {
+      HMONITOR (WINAPI *_MonitorFromWindow)(HWND wnd, DWORD dwFlags)=(HMONITOR (WINAPI *)(HWND, DWORD)) GetProcAddress(user32, "MonitorFromWindow");
+      BOOL (WINAPI *_GetMonitorInfoW)(HMONITOR mon, LPMONITORINFO lpmi) = (BOOL (WINAPI *)(HMONITOR, LPMONITORINFO)) GetProcAddress(user32, "GetMonitorInfoW");
+
+      if (_MonitorFromWindow && _GetMonitorInfoW) 
+      {
+        HMONITOR hmon;
+        hmon = _MonitorFromWindow(window, MONITOR_DEFAULTTONULL);
+        if (hmon != NULL) 
+        {
+          MONITORINFOEX mie;
+          memset(&mie, sizeof(mie), 0);
+          mie.cbSize = sizeof(mie);
+          if (_GetMonitorInfoW(hmon, &mie))
+          {
+            if (excludeTaskbar) 
+              *r = mie.rcWork;
+            else 
+              *r = mie.rcMonitor;
+            FreeLibrary(user32);
+            return;
+          }
+        }
+      }
+      FreeLibrary(user32);
+    }
+  }
+  SystemParametersInfo(SPI_GETWORKAREA, 0, r, 0);
+#endif
+}
+
+
 void CMultiMonitor::GetMonitorFromPoint(RECT *r, POINT *pt, bool excludeTaskbar) {
 #ifdef XP_WIN  
   if (pt != NULL) 

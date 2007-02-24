@@ -36,6 +36,7 @@
 #include <dbt.h>
 #include <cguid.h>
 #include <objbase.h>
+#include "MultiMonitor.h"
 #endif
 
 #include <xpcom/nscore.h>
@@ -116,6 +117,24 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
       }
       break;
     }
+
+    // XXXlone> this is a temporary fix, until mozilla handles maximizing (and restoring to a maximized state) on secondary screens
+    case WM_GETMINMAXINFO:
+    {
+      MINMAXINFO* mi = (MINMAXINFO *) lParam;
+      RECT workArea;
+      RECT monitorArea;
+       
+      // Need both the area with and without taskbar, because ptMaxPosition uses local coordinates
+      CMultiMonitor::GetMonitorFromWindow(&workArea, hWnd, TRUE);
+      CMultiMonitor::GetMonitorFromWindow(&monitorArea, hWnd, FALSE);
+
+      mi->ptMaxSize.x = workArea.right - workArea.left;
+      mi->ptMaxSize.y = workArea.bottom - workArea.top;
+      mi->ptMaxPosition.x = workArea.left - monitorArea.left;
+      mi->ptMaxPosition.y = workArea.top - monitorArea.top;
+    }
+    break;
       
     case WM_WINDOWPOSCHANGING:
     {

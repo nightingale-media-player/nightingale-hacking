@@ -53,6 +53,7 @@ typedef struct tagRECT
 
 #endif
 
+#include "../NativeWindowFromNode.h" // for NATIVEWINDOW type
 
 // INCLUDES ===================================================================
 
@@ -62,6 +63,7 @@ class CMultiMonitor
 {
 public:
   static void GetMonitorFromPoint(RECT *r, POINT *pt, bool excludeTaskbar);
+  static void GetMonitorFromWindow(RECT *r, NATIVEWINDOW wnd, bool excludeTaskbar);
 };
 
 #endif // __MULTI_MONITOR_H__
