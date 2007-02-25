@@ -300,6 +300,9 @@ function onBrowserClick(evt)
             .getService(Components.interfaces.nsIIOService)
             .newURI(evt.target.href, null, null));
       externalLoader.loadURI(nsURI, null);
+
+      // Kill the event since we've handled it
+      evt.preventDefault();
     }
   }
 }
