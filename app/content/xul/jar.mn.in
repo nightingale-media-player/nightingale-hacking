@@ -5,6 +5,9 @@ songbird.jar:
 % content  songbird  jar:songbird.jar!/content/songbird/
 #endif
 % overlay chrome://browser/content/preferences/preferences.xul     chrome://songbird/content/xul/preferences/main_overlay.xul
+% overlay chrome://mozapps/content/extensions/extensions.xul                 chrome://songbird/content/xul/extensionManagerOverlay.xul
+% overlay chrome://mozapps/content/extensions/extensions.xul?type=extensions chrome://songbird/content/xul/extensionManagerOverlay.xul
+% overlay chrome://mozapps/content/extensions/extensions.xul?type=themes     chrome://songbird/content/xul/extensionManagerOverlay.xul
 @include_all_to content/songbird/xul/
 
 
