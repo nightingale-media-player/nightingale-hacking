@@ -20,8 +20,8 @@ rm -f ./${SONGBIRD_FILENAME}.tar.gz
 
 # pull everything we want into the installer working dir
 cp -RL ./dist/* ./${SONGBIRD_DIR}
-cp ${DEPTH}/installer/linux/LICENSE.txt ./${SONGBIRD_DIR}
-cp ${DEPTH}/installer/linux/TRADEMARK.txt ./${SONGBIRD_DIR}
+cp ../installer/linux/LICENSE.txt ./${SONGBIRD_DIR}
+cp ../installer/linux/TRADEMARK.txt ./${SONGBIRD_DIR}
 
 # tar and gzip the goods
 tar -c -f ./${SONGBIRD_FILENAME}.tar ./${SONGBIRD_DIR}
