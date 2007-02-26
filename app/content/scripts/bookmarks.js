@@ -400,7 +400,7 @@ var bmManager = {
                   { 
                       label: "Directory",
                       icon: "chrome://songbird/skin/default/logo_16.png",
-                      url: "http://www.songbirdnest.com/directory",
+                      url: "http://www.songbirdnest.com/birdhouse/directory.html",
                       properties: "bookmark",
                       children: []
                   },
