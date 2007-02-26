@@ -575,6 +575,7 @@ function fixWindow(aBoxId, aLabelId)
   const RESIZER_SPACE_SIZE = 9;
 
   const MENU_ID          = "songbird_menu";
+  const LABEL_APPTITLE_ID = "mainwin_app_title";
 
   var platform;
   var accessible;
@@ -867,6 +868,7 @@ function fixWindow(aBoxId, aLabelId)
     hideElement(BUTTON_MAX_ID);
     hideElement(BUTTON_CLOSE_ID);
     moveElement(MENU_ID, null);
+    hideElement(LABEL_APPTITLE_ID);
   } else {
     if (SBDataGetBoolValue("accessibility.enabled")) {
       // switching accessibility to off
