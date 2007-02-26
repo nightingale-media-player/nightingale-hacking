@@ -183,9 +183,6 @@ CoreGStreamerSimple.prototype.stop = function ()
 {
   this._verifyObject();
 
-  if( !this._object.isPlaying )
-    return true;
-
   try
   {
     this._object.stop();
