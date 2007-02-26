@@ -10,23 +10,22 @@
 
 <overlay id="TabsPaneOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript" src="chrome://browser/content/preferences/tabs.js"/>
+  <prefpane id="paneTabs" helpTopic="prefs-tabs" XXXDISABLED_helpURI="chrome://browser/locale/help/help.rdf">
 
-  <prefpane id="paneTabs" helpTopic="prefs-tabs" helpURI="chrome://browser/locale/help/help.rdf">
-    <preferences>
+    <vbox style="height:300px" align="center" pack="center">
+      <label value="No tabs in Songbird, yet..." />
+    </vbox>
+
+    <!--
+        <preferences>
       <preference id="browser.link.open_external"      name="browser.link.open_external"      type="int"/>
       <preference id="browser.link.open_newwindow"     name="browser.link.open_newwindow"     type="int"/>
       <preference id="browser.tabs.autoHide"           name="browser.tabs.autoHide"           type="bool"/>
       <preference id="browser.tabs.loadInBackground"   name="browser.tabs.loadInBackground"   type="bool" inverted="true"/>
       <preference id="browser.tabs.warnOnClose"        name="browser.tabs.warnOnClose"        type="bool"/>
     </preferences>
-    
-    <script type="application/x-javascript" src="chrome://browser/content/preferences/tabs.js"/>
-
-    <hbox align="center" pack="center" flex="1">
-      <label value="No tabs in Songbird, yet..." />
-    </hbox>
-
-    <!--groupbox align="start">
+    <groupbox align="start">
       <caption label="&openExternalLinksIn.label;"/>
       <radiogroup id="tabbedExternalLinks"
                   preference="browser.link.open_external">

@@ -19,7 +19,17 @@
             windowtype="Browser:Preferences"
             title="&prefWindow.titleWin;"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            style="&prefWindow.styleWin;">
+            
+#ifdef XP_WIN
+            style="&prefWindow.styleWin;"
+#else
+#ifdef XP_MACOSX
+            style="&prefWindow.styleMac;"
+#else
+            style="&prefWindow.styleGNOME;"
+#endif
+#endif
+            >
   
     <stringbundle id="bundlePreferences"
                   src="chrome://browser/locale/preferences/preferences.properties"/>
