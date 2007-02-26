@@ -1,5 +1,9 @@
 <!ENTITY brandShortName        "Songbird">
-<!ENTITY brandFullName         "Pioneers of the Inevitable Presents: Songbird">            
-<!ENTITY vendorShortName       "Pioneers of the Inevitable">
+<!ENTITY brandFullName         "Songbird Web Player">            
+<!ENTITY vendorShortName       "POTI, Inc.">
 
-<!ENTITY releaseURL            "http://www.songbirdnest.com/download">
+<!ENTITY window.main.title     "Songbird 0.3pre">
+<!ENTITY window.dev.title      "Songbird 0.3pre">
+
+<!ENTITY bugzillaURL           "http://bugzilla.songbirdnest.com/">
+<!ENTITY supportURL            "http://www.songbirdnest.com/support">

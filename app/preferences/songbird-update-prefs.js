@@ -73,12 +73,18 @@ pref("app.update.incompatible.mode", 0);
 //  .. etc ..
 //
 pref("extensions.update.enabled", true);
-pref("extensions.update.url", "chrome://songbird/locale/songbird.properties");
+pref("extensions.update.url", "chrome://branding/locale/brand.properties");
 pref("extensions.update.interval", 86400);  // Check for updates to Extensions and 
                                             // Feathers every week
 // Non-symmetric (not shared by extensions) extension-specific [update] preferences
-pref("extensions.getMoreExtensionsURL", "chrome://songbird/locale/songbird.properties");
-pref("extensions.getMoreThemesURL", "chrome://songbird/locale/songbird.properties");
+pref("extensions.getMoreExtensionsURL", "chrome://branding/locale/brand.properties");
+pref("extensions.getMoreThemesURL", "chrome://branding/locale/brand.properties");
 
-pref("xpinstall.whitelist.add", "extensions.songbirdnest.com");
-pref("xpinstall.whitelist.add.103", "extensions.songbirdnest.com");
+pref("extensions.blocklist.enabled", true);
+pref("extensions.blocklist.interval", 86400);
+pref("extensions.blocklist.url", "http://addons.songbirdnest.com/blocklist/1/%APP_ID%/%APP_VERSION%/");
+pref("extensions.blocklist.detailsURL", "http://addons.songbirdnest.com/blocklist/");
+pref("extensions.ignoreMTimeChanges", false);
+
+pref("xpinstall.whitelist.add", "addons.songbirdnest.com");
+pref("xpinstall.whitelist.add.103", "addons.songbirdnest.com");

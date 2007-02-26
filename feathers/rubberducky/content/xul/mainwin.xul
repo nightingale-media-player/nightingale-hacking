@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
-<!--?xml-stylesheet href="chrome://songbird/skin/cardinal.css" type="text/css" title="Other Skin"?-->
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
 
 <?xul-overlay href="chrome://songbird/content/xul/popupOverlay.xul"?>
 <?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>

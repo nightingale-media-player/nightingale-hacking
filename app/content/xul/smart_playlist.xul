@@ -29,7 +29,14 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
 <window
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -97,9 +104,9 @@
           <!-- Commented out until we have multi-library functionality. -->
           <!-- hbox class="sb_faceplate" id="smartpl_select_library" align="center">
             <label value="&smart.library;" control="smart_library"/>
-            <menulist id="smart_library_drop" value="&songbird;">
+            <menulist id="smart_library_drop" value="&brandShortName;">
               <menupopup id="smart_library_popup">
-                <menuitem id="smart_library_songbird" label="&songbird;" value="songbird" />
+                <menuitem id="smart_library_songbird" label="&brandShortName;" value="songbird" />
               </menupopup>
             </menulist>
             <spacer flex="1" height="20"/>           

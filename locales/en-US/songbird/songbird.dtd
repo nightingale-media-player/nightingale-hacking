@@ -47,7 +47,7 @@
 <!ENTITY menu.control.jumpto "Jump To..." >
 
 <!ENTITY menu.services        "Services" >
-<!ENTITY menu.services.browse "Browse Add-ons..." >
+<!ENTITY menu.services.browse "Browse Add-Ons..." >
 
 <!ENTITY menu.tools         "Tools" >
 
@@ -59,7 +59,7 @@
 <!ENTITY menu.help.about    "About Songbird..." >
 
 <!ENTITY menu.preferences   "Options..." >
-<!ENTITY menu.extensions    "Add-ons..." >
+<!ENTITY menu.extensions    "Add-Ons..." >
 <!ENTITY menu.clearprivatedata "Clear Private Data...">
 <!ENTITY menu.errorconsole "Error Console">
 <!ENTITY menu.dominspector  "DOM Inspector" >
@@ -180,7 +180,7 @@
 <!ENTITY setup.networkerror3      " or continue Songbird Setup by clicking 'OK'.">
 <!ENTITY setup.metrics.optin      "Send anonymous usage metrics." >
 <!ENTITY setup.metrics.info       "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected.">
-<!ENTITY setup.optionalextensions "Recommended Add-ons">
+<!ENTITY setup.optionalextensions "Recommended Add-Ons">
 <!ENTITY setup.defaultlanguage    "Default Language">
 <!ENTITY setup.privacy            "Privacy">
 <!ENTITY setupprogress.pleasewait "Please wait..." >
@@ -258,7 +258,7 @@
 <!ENTITY hotkeys.remove               "Remove" >
 <!ENTITY hotkeys.prefpane             "Hotkeys" >
 
-<!ENTITY prefpane.addons.label        "Add-ons">
+<!ENTITY prefpane.addons.label        "Add-Ons">
 
 <!ENTITY umsd.prefpane                      "USB" >
 <!ENTITY umsd.no_devices_present            "No USB mass-storage devices are connected." >
@@ -286,7 +286,7 @@
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
 <!ENTITY restartbox.restartlater      "Restart Later" >
 
-<!ENTITY setupprogress.installingextensions "Installing Add-ons" >
+<!ENTITY setupprogress.installingextensions "Installing Add-Ons" >
 
 <!ENTITY menu.updateCmd.label          "Check for Updates...">
 <!ENTITY menu.updateCmd.accessKey      "o">

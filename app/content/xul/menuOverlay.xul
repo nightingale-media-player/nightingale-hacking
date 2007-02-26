@@ -27,7 +27,13 @@
 //
  */
 -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
 
 <overlay id="ovMenu"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -151,11 +157,11 @@
       <menupopup id="help-popup">
         <menuitem id="help.bugz"
                   label="&menu.help.bugz;"
-                  value="&menu.help.bugz.url;"
+                  value="&bugzillaURL;"
                   accesskey="&menu.help.bugz.accesskey;"/>
         <menuitem id="help.topics"
                   label="&menu.help.topics;"
-                  value="&menu.help.topics.url;"
+                  value="&supportURL;"
                   key="help-key" 
                   accesskey="&menu.help.help.accesskey;"/>
         <menuseparator/>
