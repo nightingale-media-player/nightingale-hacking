@@ -104,8 +104,8 @@ function wrapEnumerator(enumerator, iface)
  * the given list and nothing else.
  */
 function assertEnumeratorEqualsArray(enumerator, list) {
-   list = list.concat([]); // Clone list before modifying 
-   for (var item in enumerator) {
+  list = list.concat([]); // Clone list before modifying 
+  for (var item in enumerator) {
     assertEqual(list.indexOf(item.wrappedJSObject) > -1, true);
     list.splice(list.indexOf(item.wrappedJSObject), 1);
   }
@@ -113,12 +113,60 @@ function assertEnumeratorEqualsArray(enumerator, list) {
 }
 
 
+/**
+ * Make sure that the given enumerator contains objects 
+ * with a field matching the given list
+ *
+ * TODO: Rename to something that makes more sense?
+ */
+function assertEnumeratorMatchesFieldArray(enumerator, field, list) {
+  list = list.concat([]); // Clone list before modifying 
+  for (var item in enumerator) {
+    assertEqual(list.indexOf(item[field]) > -1, true);
+    list.splice(list.indexOf(item[field]), 1);
+  }
+  assertEqual(list.length, 0);
+}
+
+
+
+/** 
+ * Make sure that the addon metadata reader is populating
+ * the feathers manager.
+ *
+ * Note: This section will need to be updated to reflect
+ * changes to our feathers install.rdf files.
+ */
+function testAddonMetadataReader()
+{
+  // Verify all skins added properly
+  var skinNames = ["rubberducky/0.2", "dove/0.1"];
+  assertEqual(feathersManager.skinCount, skinNames.length);
+  var enumerator = wrapEnumerator(feathersManager.getSkinDescriptions(),
+                     Components.interfaces.sbISkinDescription);
+  assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
+  
+  // Verify all layouts added properly
+  var layoutURLs = ["chrome://rubberducky/content/xul/mainwin.xul"]
+  assertEqual(feathersManager.layoutCount, layoutURLs.length);
+  enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
+                     Components.interfaces.sbILayoutDescription);
+  assertEnumeratorMatchesFieldArray(enumerator, "url", layoutURLs);
+
+  // Verify mappings
+  enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[0]), 
+                 Components.interfaces.sbISkinDescription);
+  assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
+  
+  // Verify showChrome
+  assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[0]), false );
+}
 
 
 /** 
  * Populate the feathers manager
  */
-function setup()
+function submitFeathers()
 {
   // Register for change callbacks
   feathersManager.addListener(feathersChangeListener);
@@ -126,19 +174,19 @@ function setup()
   // Make some skins
   var skin = new FeathersDescription();
   skin.name = "Blue Skin";
-  skin.provider = "blue/1.0";
+  skin.internalName = "blue/1.0";
   skins.push(skin);
   feathersManager.registerSkin(skin);
 
   skin = new FeathersDescription();
   skin.name = "Red Skin";
-  skin.provider = "red/1.0";
+  skin.internalName = "red/1.0";
   skins.push(skin);
   feathersManager.registerSkin(skin);
 
   skin = new FeathersDescription();
   skin.name = "Orange Skin";
-  skin.provider = "orange/1.0";
+  skin.internalName = "orange/1.0";
   skins.push(skin);
   feathersManager.registerSkin(skin);
   
@@ -157,9 +205,9 @@ function setup()
   
   // Create some mappings
   // Blue -> big, Red -> big, Orange -> mini with chrome
-  feathersManager.assertCompatibility(layouts[1].url, skins[0].provider, false);
-  feathersManager.assertCompatibility(layouts[1].url, skins[1].provider, false);
-  feathersManager.assertCompatibility(layouts[0].url, skins[2].provider, true);
+  feathersManager.assertCompatibility(layouts[1].url, skins[0].internalName, false);
+  feathersManager.assertCompatibility(layouts[1].url, skins[1].internalName, false);
+  feathersManager.assertCompatibility(layouts[0].url, skins[2].internalName, true);
 }
 
 
@@ -177,14 +225,14 @@ function teardown() {
 
   // Remove mappings
   // Blue -> big, Red -> big, Orange -> mini 
-  feathersManager.unassertCompatibility(layouts[1].url, skins[0].provider);
-  feathersManager.unassertCompatibility(layouts[1].url, skins[1].provider);
+  feathersManager.unassertCompatibility(layouts[1].url, skins[0].internalName);
+  feathersManager.unassertCompatibility(layouts[1].url, skins[1].internalName);
   
   // Remove change listener before final modification to confirm
   // that it actually gets unhooked.
   feathersManager.removeListener(feathersChangeListener);
   
-  feathersManager.unassertCompatibility(layouts[0].url, skins[2].provider);
+  feathersManager.unassertCompatibility(layouts[0].url, skins[2].internalName);
 }
 
 
@@ -192,7 +240,28 @@ function teardown() {
  * Test all functionality in sbFeathersManager
  */
 function runTest () {
-  setup();
+  
+  ///////////////////////////////////////////////////
+  // Test skins/layouts registered via extensions  //
+  ///////////////////////////////////////////////////
+
+  testAddonMetadataReader();
+ 
+  // Now remove the extension descriptions in order to 
+  // make testing the registration functions a bit easier
+  enumerator = wrapEnumerator(feathersManager.getSkinDescriptions(),
+                     Components.interfaces.sbISkinDescription);  
+  for (var item in enumerator) feathersManager.unregisterSkin(item);
+  enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
+                     Components.interfaces.sbILayoutDescription);
+  for (var item in enumerator) feathersManager.unregisterLayout(item);
+  
+
+  //////////////////////////////////
+  // Test registration functions  //
+  //////////////////////////////////
+
+  submitFeathers();
   
   // ------------------------
   // Test change notification.  We should have seen 8 update notifications
@@ -209,12 +278,12 @@ function runTest () {
   
   // Verify all layouts added properly
   assertEqual(feathersManager.layoutCount, layouts.length);
-  var enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
+  enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
                      Components.interfaces.sbILayoutDescription);
   assertEnumeratorEqualsArray(enumerator, layouts);
 
   // Test description getters
-  var desc = feathersManager.getSkinDescription(skins[1].provider).wrappedJSObject;
+  var desc = feathersManager.getSkinDescription(skins[1].internalName).wrappedJSObject;
   assertEqual(desc, skins[1]);
   desc = feathersManager.getLayoutDescription(layouts[1].url).wrappedJSObject;
   assertEqual(desc, layouts[1]);
@@ -230,9 +299,9 @@ function runTest () {
   
   // ------------------------
   // Verify showChrome
-  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[2].provider), true );
-  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[1].provider), false );
-  assertEqual( feathersManager.isChromeEnabled(layouts[1].url, skins[1].provider), false );
+  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[2].internalName), true );
+  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[1].internalName), false );
+  assertEqual( feathersManager.isChromeEnabled(layouts[1].url, skins[1].internalName), false );
 
 
   // ------------------------
@@ -242,7 +311,7 @@ function runTest () {
   // First with an invalid pair
   var failed = false;
   try {
-    feathersManager.switchFeathers(layouts[0].url, skins[1].provider);
+    feathersManager.switchFeathers(layouts[0].url, skins[1].internalName);
   } catch (e) {
     failed = true;
   }
@@ -250,7 +319,7 @@ function runTest () {
   // Then with a valid pair.  Expect an onSelect callback.
   feathersChangeListener.expectSkin = skins[0];
   feathersChangeListener.expectLayout = layouts[1];
-  feathersManager.switchFeathers(layouts[1].url, skins[0].provider);
+  feathersManager.switchFeathers(layouts[1].url, skins[0].internalName);
   // Make sure onSelect callback occurred
   assertEqual(feathersChangeListener.expectSkin, null);
   assertEqual(feathersChangeListener.expectLayout, null);
@@ -258,8 +327,9 @@ function runTest () {
   // TODO: Test currentLayout currentSkin
 
 
-  // ------------------------
-  // Get rid of everything we added
+  ////////////////////////////////////
+  // Get rid of everything we added //
+  ////////////////////////////////////
 
   // Reset update counter so we can test teardown
   feathersChangeListener.updateCounter = 0;
@@ -275,18 +345,18 @@ function runTest () {
   // ------------------------
   // Make sure teardown succeeded
   assertEqual(feathersManager.skinCount, 0);
-  var enumerator = feathersManager.getSkinDescriptions();
+  enumerator = feathersManager.getSkinDescriptions();
   assertEqual(enumerator.hasMoreElements(), false); 
 
   assertEqual(feathersManager.layoutCount, 0);
-  var enumerator = feathersManager.getLayoutDescriptions();
+  enumerator = feathersManager.getLayoutDescriptions();
   assertEqual(enumerator.hasMoreElements(), false); 
 
   // ------------------------  
   // Verify mappings are gone
-  var enumerator = feathersManager.getSkinsForLayout(layouts[0].url);
+  enumerator = feathersManager.getSkinsForLayout(layouts[0].url);
   assertEqual(enumerator.hasMoreElements(), false); 
-  var enumerator = feathersManager.getSkinsForLayout(layouts[1].url);
+  enumerator = feathersManager.getSkinsForLayout(layouts[1].url);
   assertEqual(enumerator.hasMoreElements(), false); 
   
   

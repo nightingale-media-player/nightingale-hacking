@@ -57,9 +57,9 @@ interface sbIFeathersManager : nsISupports
   readonly attribute AString currentLayoutURL;
   
   /**
-   * \brief Skin provider string for the active skin
+   * \brief Skin internalName string for the active skin
    */
-  readonly attribute AString currentSkinProvider;
+  readonly attribute AString currentSkinName;
 
 
   /**
@@ -107,10 +107,10 @@ interface sbIFeathersManager : nsISupports
   /**
    * \brief Gets the full skin description associated with a skin identifier
    *
-   * \param aSkinProvider Skin identifier (internalName)
+   * \param aInternalName Skin identifier (provider)
    * \return Skin description
    */
-  sbISkinDescription getSkinDescription(in AString aSkinProvider);
+  sbISkinDescription getSkinDescription(in AString aInternalName);
 
 
 
@@ -134,29 +134,29 @@ interface sbIFeathersManager : nsISupports
   /**
    * \brief Gets the full layout description associated with a layout URL
    *
-   * \param aURL Unique identifier
+   * \param aLayoutURL Unique identifier
    * \return Layout description
    */
-  sbILayoutDescription getLayoutDescription(in AString aURL);
+  sbILayoutDescription getLayoutDescription(in AString aLayoutURL);
 
 
 
   /**
    * \brief Assert compatibility of a skin-layout pair
    *
-   * Indicate that layoutURL and skinProvider can be active at the same time, 
+   * Indicate that layoutURL and internalName can be active at the same time, 
    * and whether the window chrome (titlebar, borders) should be shown.
    *
    * Note that the given skin and xul window IDs do not need to be registered with the
    * feathers manager. 
    *
    * \param aLayoutURL URL for a xul window
-   * \param aSkinProvider Identifier for a skin
+   * \param aInternalName Identifier for a skin
    * \param aShowChrome Whether or not the OS titlebar should be used 
    *        when the skin-window pair is active
    */
   void assertCompatibility(in AString aLayoutURL,
-                           in AString aSkinProvider,
+                           in AString aInternalName,
                            in boolean aShowChrome);
  
 
@@ -164,15 +164,15 @@ interface sbIFeathersManager : nsISupports
   /**
    * \brief Unassert compatibility of a skin-layout pair
    *
-   * Indicate that layoutURL and skinProvider cannot be active at the same time.
+   * Indicate that layoutURL and internalName cannot be active at the same time.
    *
    * TODO: Throw an exception if the mapping is currently in use?
    *
    * \param aLayoutURL URL for a xul window
-   * \param aSkinProvider Identifier for a skin
+   * \param aInternalName Identifier for a skin
    */
   void unassertCompatibility(in AString aLayoutURL,
-                             in AString aSkinProvider);
+                             in AString aInternalName);
  
 
 
@@ -180,11 +180,11 @@ interface sbIFeathersManager : nsISupports
    * \brief Should window chrome be used with the given window-skin pair
    *
    * \param aLayoutURL URL for a xul window
-   * \param aSkinProvider Identifier for a skin
+   * \param aInternalName Identifier for a skin
    * \return True if the given pair should be displayed with native chrome (titlebar, etc.)
    */
   boolean isChromeEnabled(in AString aLayoutURL,
-                          in AString aSkinProvider);
+                          in AString aInternalName);
 
 
 
@@ -209,11 +209,11 @@ interface sbIFeathersManager : nsISupports
    * Note: triggers the onSelectRequest callback
    * 
    * \param aLayoutURL URL for a xul window
-   * \param aSkinProvider Identifier for a skin
+   * \param aInternalName Identifier for a skin
    * \sa sbIFeathersChangeListener
    */
   void switchFeathers(in AString aLayoutURL, 
-                         in AString aSkinProvider);
+                         in AString aInternalName);
 
 
 

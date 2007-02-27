@@ -29,7 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = bundle \
+SUBDIRS = addonmetadata \
+          bundle \
           commandline \
           controller \
           dataremote \

@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>rubberducky@songbirdnest.com</em:id>
@@ -21,12 +22,39 @@
     <em:locked>true</em:locked>
     <em:creator>Pioneers of the Inevitable</em:creator>
 
-    <!-- internalName sets "skin" mode for the extension and prevents
-         declaration of content or overlays. Turning it off for now so that we
-         can put the default bones in with rubberducky. Also adding the
-         <em:hidden> tag to keep it from showing up in the EM. -->
+    <songbird:feathers>
+      <Description>
+        <songbird:skin>
+          <Description>
+            <songbird:name>Rubberducky (default)</songbird:name>
+            <songbird:description>Dark Theme</songbird:description>
+            <songbird:internalName>rubberducky/0.2</songbird:internalName>
+            <songbird:creator>Pioneers of the Inevitable</songbird:creator>
+            <songbird:compatibleLayout>
+              <Description>
+                <songbird:layoutURL>chrome://rubberducky/content/xul/mainwin.xul</songbird:layoutURL>
+                <songbird:showChrome>false</songbird:showChrome>
+              </Description>
+            </songbird:compatibleLayout>
+          </Description>
+        </songbird:skin>
+        <songbird:layout>
+          <Description>
+            <songbird:name>Standard Layout(default)</songbird:name>
+            <songbird:description>Default Songbird layout</songbird:description>
+            <songbird:url>chrome://rubberducky/content/xul/mainwin.xul</songbird:url>
+            <songbird:creator>Pioneers of the Inevitable</songbird:creator>
+            <songbird:compatibleSkin>
+              <Description>
+                <songbird:internalName>rubberducky/0.2</songbird:internalName>
+                <songbird:showChrome>false</songbird:showChrome>
+              </Description>
+            </songbird:compatibleSkin>
+          </Description>
+        </songbird:layout>
+      </Description>
+    </songbird:feathers>
 
-    <!-- <em:internalName>rubberducky/0.2</em:internalName> -->
     <em:hidden>true</em:hidden>
     <em:appManaged>true</em:appManaged>
   </Description>

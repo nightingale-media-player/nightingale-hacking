@@ -45,7 +45,7 @@ interface sbISkinDescription : nsISupports
    * \brief Skin provider name (internalName in install.rdf)
    * The provider name and primary identifier for the skin
    */  
-  readonly attribute AString provider;
+  readonly attribute AString internalName;
  
   /**
    * \brief Human readable name
