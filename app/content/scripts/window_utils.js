@@ -849,7 +849,7 @@ function fixWindow(aBoxId, aLabelId)
       SBDataSetBoolValue("accessibility.enabled", true); 
       // change startup flags for video window
       try {
-        prefs.setCharPref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=yes");  
+        prefs.setCharPref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=yes,dialog=no");  
       } catch (err) {}
     }
 
@@ -875,7 +875,7 @@ function fixWindow(aBoxId, aLabelId)
       SBDataSetBoolValue("accessibility.enabled", false); 
       // change startup flags for video window
       try {
-        prefs.setCharPref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
+        prefs.setCharPref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no,dialog=no");
       } catch (err) {}
     }
   }
