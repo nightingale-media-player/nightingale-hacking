@@ -233,6 +233,11 @@ function doMainwinStart()
     SB_LOG("App Init - Metrics - ", "" + err);
   }
 
+  // Make sure the web playlist is enabled.
+  // This is to protect against cases where the app is shut down
+  // while an extension has the web playlist disabled.
+  SBDataSetBoolValue("webplaylist.enabled", true);
+
   // Get mainwin URL
   var data = SB_NewDataRemote( PREF_BONES_SELECTED, "" );
   var mainwinURL = data.stringValue;
