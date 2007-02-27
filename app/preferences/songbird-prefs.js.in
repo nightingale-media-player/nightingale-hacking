@@ -146,5 +146,6 @@ pref("browser.preferences.animateFadeIn", false);
 #endif
 
 // Enable the web playlist.
-// Extracts A tags and add browser context menu 
+// Extracts A tags and add browser context menu.
+// Note that this pref is reset to "1" on every app start. 
 pref("songbird.webplaylist.enabled", "1");
