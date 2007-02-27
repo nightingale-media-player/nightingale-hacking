@@ -342,14 +342,29 @@ void sbMetadataHandlerWMA::ReadMetadata( const nsString &ms_key, const nsString 
       break;
     case WMT_TYPE_BINARY:
       break;
+    case WMT_TYPE_QWORD:
+      {
+        PRInt64 intVal = *((QWORD*)data);
+
+        // "Duration" comes in 100-nanosecond chunks. Wow.
+        if (ms_key.EqualsLiteral("Duration"))
+          intVal /= 10000;
+
+        value.AppendInt(intVal);
+        datatype = 1;
+      }
+      break;
     case WMT_TYPE_DWORD:
-    case WMT_TYPE_BOOL:
       value.AppendInt( (PRUint32)*(DWORD*)data ); // Whee!
       datatype = 1;
       break;
-    case WMT_TYPE_QWORD:
-      break;
     case WMT_TYPE_WORD:
+      value.AppendInt( (PRInt32)*(WORD*)data );
+      datatype = 1;
+      break;
+    case WMT_TYPE_BOOL:
+      value.AppendInt( (PRInt32)*(BOOL*)data );
+      datatype = 1;
       break;
     case WMT_TYPE_GUID:
       break;
