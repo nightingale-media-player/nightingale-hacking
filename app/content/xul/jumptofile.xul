@@ -153,6 +153,9 @@
     </hbox>
   </vbox>
 
+  <keyset>
+    <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onExit();"/>
+  </keyset>
 
    
 </stack>
