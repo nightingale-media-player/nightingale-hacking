@@ -39,7 +39,7 @@ try
   function onJumpToFileKey(evt) {
     // "popup=yes" causes nasty issues on the mac with the resizers?
     if (!document.__JUMPTO__)
-      SBOpenWindow( "chrome://songbird/content/xul/jumptofile.xul", "jump_to_file", "chrome,toolbar=no,popup=no,resizable=yes", document ); 
+      SBOpenWindow( "chrome://songbird/content/xul/jumptofile.xul", "jump_to_file", "chrome,toolbar=no,popup=no,dialog=no,resizable=yes", document );
     else {
       document.__JUMPTO__.defaultView.focus();
       var textbox = document.__JUMPTO__.getElementById("jumpto.textbox");

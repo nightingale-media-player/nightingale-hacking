@@ -465,7 +465,23 @@ function SBOpenModalDialog( url, param1, param2, param3 )
 function SBOpenWindow( url, param1, param2, param3 )
 {
   var titlebar = ",modal=no";
-  if (SBDataGetBoolValue("accessibility.enabled")) titlebar += ",titlebar=yes"; else titlebar += ",titlebar=no";
+  if (SBDataGetBoolValue("accessibility.enabled")) {
+    titlebar += ",titlebar=yes"; 
+    // if in accessible mode, resizable flag determines whether or not the window is resizable
+  } else {
+    titlebar += ",titlebar=no";
+    // if not in accessible mode, resizable flag does not determine if the window is resizable 
+    // or not, that's determined by the presence or absence of resizers in the xul.
+    // on the other hand, if resizable=yes is present in the flags, that create a border
+    // around the window in OSX, so remove it
+    var flags = param2.split(",");
+    var newflags;
+    for (var i in flags) {
+      if (newflags != "") newflags += ",";
+      if (flags[i] == "resizable=yes") continue;
+    }
+    param2 = newflags;
+  }
 
   param2 += titlebar;
   var retval = window.openDialog( url, param1, param2, param3 );
