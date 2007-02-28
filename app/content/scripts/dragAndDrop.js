@@ -105,7 +105,7 @@ var sbIServiceDropObserver = {
           if (source_playlist != null) 
           {
             source_playlist.addToPlaylistOrLibrary(dest_playlist_name);
-            source_playlist.reportAddedTracks(true);
+            source_playlist.reportAddedTracks(dest_playlist_name != null);
           }
         }
         break;

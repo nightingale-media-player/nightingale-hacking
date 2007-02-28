@@ -2611,6 +2611,7 @@
         <![CDATA[
           var msg;
           if (toplaylist) {
+            // if sending to a playlist, we can have duplicate entries, so dont report that some tracks already existed 
             var totalcount = this._addto_added_count + this._addto_existed_count;
             msg = "" + totalcount + " ";
             switch (totalcount) {
@@ -2620,6 +2621,7 @@
             }
             msg += " " + this.str_playlist.toLowerCase(); 
           } else {
+            // but if sending to a library, there cant be any dups 
             msg = "" + this._addto_added_count + " ";
             switch (totalcount) {
               case 0: msg = this.str_notracksaddedto; break;
@@ -2677,11 +2679,22 @@
               if (this.guid != "songbird")
               {
                 mediaLibrary.getColumnInfo();
-                var destcols = queryObj.getResultObject();
-                
+                var destcols = queryObj.getResultObject(); 
+                var srccols;
+
                 var thisPlaylist = playlistManager.getPlaylist(this.table, this.m_queryObj);
-                thisPlaylist.getColumnInfo();
-                var srccols = this.m_queryObj.getResultObject();
+                if (!thisPlaylist) { // playlist not found ? this is a library then
+                  var _mediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
+                  var _queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
+                  _queryObj = _queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
+                  _queryObj.setDatabaseGUID(this.guid);
+                  _mediaLibrary.setQueryObject(_queryObj);
+                  _mediaLibrary.getColumnInfo();
+                  srccols = _queryObj.getResultObject();
+                } else {
+                  thisPlaylist.getColumnInfo();
+                  srccols = this.m_queryObj.getResultObject();
+                }
                 
                 for (var i=0;i<destcols.getRowCount();i++)
                 {
@@ -2702,7 +2715,7 @@
               var params = Array(mediaLibrary, thePlaylist, urlcolumn, uuidcolumn, metadataintersection_ids, metadataintersection_cols);
               this._addto_added_count = 0;
               this._addto_existed_count = 0;
-              if (this.table != "library" && this.tree.view.selection.getRangeCount() == 0)
+              if (!(this.table == "library" && this.guid == "songbird") && this.tree.view.selection.getRangeCount() == 0)
                 this.processAll(this.processSelection_addToPlaylistOrLibrary, params);
               else
                 this.processSelection(this.processSelection_addToPlaylistOrLibrary, params);
