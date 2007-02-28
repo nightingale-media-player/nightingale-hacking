@@ -180,7 +180,7 @@ var SBWebPlaylistCommands =
         retval = this.m_Query.execute() == 0;
       break;
       case "library_cmd_copylocation":
-        retval = this.m_Playlist.tree.view.selection.currentIndex != -1;
+        retval = this.m_Playlist.tree.view.selection.getRangeCount() > 0;
       break; 
       default:
         retval = true;
