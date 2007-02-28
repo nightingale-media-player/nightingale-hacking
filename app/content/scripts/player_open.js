@@ -608,7 +608,7 @@ function clearPrivateData() {
 }
 
 function javascriptConsole() {
-  SBOpenWindow("chrome://global/content/console.xul", "global:console", "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,titlebar");
+  window.open("chrome://global/content/console.xul", "global:console", "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,titlebar");
 }
 
 // Match filenames ending with .xpi or .jar
