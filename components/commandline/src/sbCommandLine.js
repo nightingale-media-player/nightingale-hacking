@@ -140,7 +140,7 @@ sbCommandLineHandler.prototype = {
       var curarg = cmdLine.getArgument(i);
       if (curarg == "") continue;
       if (curarg.match(/^-/)) {
-        Components.utils.reportError("Warning: unrecognized command line flag " + curarg + "\n");
+        // Components.utils.reportError("Warning: unrecognized command line flag " + curarg + "\n");
         // To emulate the pre-nsICommandLine behavior, we ignore
         // the argument after an unrecognized flag.
         ++i;
