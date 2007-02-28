@@ -478,7 +478,9 @@ function SBOpenWindow( url, param1, param2, param3 )
     var newflags;
     for (var i in flags) {
       if (newflags != "") newflags += ",";
-      if (flags[i] == "resizable=yes") continue;
+      if (flags[i] == "resizable=yes" ||
+          flags[i] == "resizable") 
+        continue;
     }
     param2 = newflags;
   }
