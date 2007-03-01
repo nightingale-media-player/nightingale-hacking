@@ -600,6 +600,7 @@
         {
           this.commands = this.commands.QueryInterface( Components.interfaces.sbIPlaylistCommands );
         }
+        this._deferRefresh = false;
         this.refreshCommands();
         
         // If boolean true, read from the XUL file.
@@ -673,8 +674,8 @@
         var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_popup');
         var before = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_before');
         
-        // If we have a popup, skip it
-        if ( this.popup_shown )
+        // If deferring refresh, skip it
+        if ( this._deferRefresh )
         {
           // make a note that we need to refresh when the popup goes away
           this._needRefresh = true;
@@ -819,6 +820,38 @@
         alert( "playlist.xml - refreshCommands - " + err );
       }
       ]]>
+        </body>
+      </method>
+
+      <method name="setDeferRefresh">
+        <body>
+          <![CDATA[
+            try
+            {
+              this._deferRefresh = true;
+            }
+            catch( err )
+            {
+              alert( "playlist.xml - setDeferRefresh - " + err );
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="clearDeferRefresh">
+        <body>
+          <![CDATA[
+            try
+            {
+              this._deferRefresh = false;
+              if (this._needRefresh)
+                this.refreshCommands(false);
+            }
+            catch( err )
+            {
+              alert( "playlist.xml - clearDeferRefresh - " + err );
+            }
+          ]]>
         </body>
       </method>
 
@@ -2487,7 +2520,7 @@
         <![CDATA[
           try
           {
-            this.popup_shown = true;
+            this.setDeferRefresh();
           }
           catch( err )
           {
@@ -2503,12 +2536,7 @@
         <![CDATA[
           try
           {
-            this.popup_shown = false;
-
-            // Force a refresh of the commands due to bug315 - toolbarbuttons out of sync
-            if (this._needRefresh)
-              this.refreshCommands(false);
-            
+            this.clearDeferRefresh();
           }
           catch( err )
           {
