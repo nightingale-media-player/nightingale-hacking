@@ -34,6 +34,8 @@ target_name = sbLocalDatabaseLibrary
 CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseGUIDArray.cpp \
            sbLocalDatabasePropertyCache.cpp \
+           sbLocalDatabaseTreeView.cpp \
+           sbLocalDatabaseQuery.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
@@ -46,6 +48,8 @@ CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/layout \
+               $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 

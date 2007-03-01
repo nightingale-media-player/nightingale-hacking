@@ -25,6 +25,7 @@
 */
 
 #include "sbLocalDatabaseGUIDArray.h"
+#include "sbLocalDatabaseQuery.h"
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
@@ -50,9 +51,11 @@
 
 #if defined PR_LOGGING
 static const PRLogModuleInfo *gLocalDatabaseGUIDArrayLog = nsnull;
-#define LOG(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_DEBUG, args)
+#define LOG_DEBUG(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_DEBUG, args)
+#define LOG_WARN(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_WARN, args)
 #else
-#define LOG(args)
+#define LOG_DEBUG(args)
+#define LOG_WARN(args)
 #endif
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseGUIDArray, sbILocalDatabaseGUIDArray)
@@ -164,6 +167,20 @@ sbLocalDatabaseGUIDArray::SetIsAsync(PRBool aIsAsync)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetPropertyCache(sbILocalDatabasePropertyCache * *aPropertyCache)
+{
+  *aPropertyCache = mPropertyCache;
+  NS_ADDREF(*aPropertyCache);
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetPropertyCache(sbILocalDatabasePropertyCache * aPropertyCache)
+{
+  mPropertyCache = aPropertyCache;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetLength(PRUint32 *aLength)
 {
   nsresult rv;
@@ -245,6 +262,22 @@ sbLocalDatabaseGUIDArray::GetByIndex(PRUint32 aIndex,
 {
   nsresult rv;
 
+  const PRUnichar* guid;
+  rv = GetByIndexShared(aIndex, &guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  _retval.Assign(guid);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetByIndexShared(PRUint32 aIndex,
+                                           const PRUnichar **aGuid)
+{
+  nsresult rv;
+
+  LOG_DEBUG(("GetByIndexShared %d", aIndex));
+
   if (mValid == PR_FALSE) {
     rv = Initalize();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -254,21 +287,31 @@ sbLocalDatabaseGUIDArray::GetByIndex(PRUint32 aIndex,
     return NS_ERROR_ILLEGAL_VALUE;
   }
 
-  // Check to see if we have this index in cache
+  /*
+   * Check to see if we have this index in cache
+   */
   if (aIndex < mCache.Length()) {
-    nsAString* guid = mCache[aIndex];
+    nsString* guid = mCache[aIndex];
     if (guid) {
-      _retval.Assign(*guid);
+      LOG_DEBUG(("Cache hit, got %s", NS_ConvertUTF16toUTF8(*guid).get()));
+      *aGuid = guid->get();
       return NS_OK;
     }
   }
 
-  // Cache miss
+  LOG_DEBUG(("MISS"));
+
+  /*
+   * Cache miss
+   * TODO: WE can be a little smarter here my moving the fetch window around
+   * to read as many missing guids as we can but still satisfy this request.
+   * Also we should probably track movement to make backwards scrolling more
+   * efficient
+   */
   rv = FetchRows(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAString* guid = mCache[aIndex];
-  _retval.Assign(*guid);
+   *aGuid = mCache[aIndex]->get();
 
   return NS_OK;
 }
@@ -348,13 +391,13 @@ sbLocalDatabaseGUIDArray::Initalize()
   }
 
   if (mNullsFirst) {
-    mQueryX  = mNullQuery;
-    mQueryY  = mPrimarySortQuery;
+    mQueryX  = mNullGuidRangeQuery;
+    mQueryY  = mFullGuidRangeQuery;
     mLengthX = mLength - mNonNullLength;
   }
   else {
-    mQueryX  = mPrimarySortQuery;
-    mQueryY  = mNullQuery;
+    mQueryX  = mFullGuidRangeQuery;
+    mQueryY  = mNullGuidRangeQuery;
     mLengthX = mNonNullLength;
   }
 
@@ -368,11 +411,11 @@ sbLocalDatabaseGUIDArray::UpdateLength()
 {
   nsresult rv;
 
-  rv = RunLengthQuery(mFullLengthQuery, &mLength);
+  rv = RunLengthQuery(mFullCountQuery, &mLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (!mNotNullLengthQuery.IsEmpty()) {
-    rv = RunLengthQuery(mNotNullLengthQuery, &mNonNullLength);
+  if (!mNonNullCountQuery.IsEmpty()) {
+    rv = RunLengthQuery(mNonNullCountQuery, &mNonNullLength);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
@@ -432,290 +475,41 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
    * primary sort for the supplied base table and constraints.
    */
   nsresult rv;
-  nsAutoString sql;
 
-  PRBool isFullLibrary = mBaseTable.Equals(MEDIAITEMS_TABLE);
+  /*
+   * We need four different queries to do the magic here:
+   *
+   * mFullCountQuery - A query that returns the count of the full dataset
+   * with filters applied
+   * mFullGuidRangeQuery - A query that returns a list of guids with filters
+   * applied and sorted by the primary sort
+   * mNonNullCountQuery - A query that returns the count of the rows in the
+   * dataset whose primary sort key value is not null
+   * mNullGuidRangeQuery - A query that returns a list of guids whose primary
+   * sort key value is null with filters applied
+   */
+  sbLocalDatabaseQuery ldq(mBaseTable,
+                           mBaseConstraintColumn,
+                           mBaseConstraintValue,
+                           NS_LITERAL_STRING("member_media_item_id"),
+                           mSorts[0].property,
+                           mSorts[0].ascending,
+                           &mFilters);
+
+  rv = ldq.GetFullCountQuery(mFullCountQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = ldq.GetFullGuidRangeQuery(mFullGuidRangeQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = ldq.GetNonNullCountQuery(mNonNullCountQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = ldq.GetNullGuidRangeQuery(mNullGuidRangeQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString sql;
 
   nsCOMPtr<sbISQLSelectBuilder> builder =
     do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  /*
-   * There are four classes of queries we need to create here:
-   *
-   * 1. Not filtered, full library
-   * 2. Not filtered, partial library
-   * 3. Filtered, full library
-   * 4. Filtered, partial library
-   *
-   * For each class, two queries are created -- one to return the row count
-   * of the query result and one to return a result of a list of guids sorted
-   * by the primary sort key within a range/offset.
-   *
-   * Futhermore, there is a case where additional queries must be created.
-   * When you have a not filtered query where the primary sort property is in
-   * the resource_properties table, we must create additional queries to count
-   * and return the guids for the rows where the primary sort key value is
-   * null.
-   *
-   * Also, note that small changes have to be made in the query depending if
-   * the filter or sort property lives in the main table or in the properties
-   * table.
-   *
-   * Hey, I know this is pretty complicated, but what do you expect if you
-   * want all this complex functionality exposed as a simple array??
-   */
-  if (mFilters.IsEmpty()) {
-    if (isFullLibrary) {
-      /*
-       * 1. Not filtered, full library
-       *
-       * Create the full count query for the full library
-       */
-      rv = builder->SetBaseTableName(mBaseTable);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_base"));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->AddColumn(EmptyString(), COUNT_COLUMN);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->ToString(mFullLengthQuery);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      /*
-       * Create the sort query Add the sort to this query and make it return
-       * guids
-       */
-      rv = builder->ClearColumns();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->AddColumn(NS_LITERAL_STRING("_base"),
-                              NS_LITERAL_STRING("guid"));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = AddPrimarySortToQuery(builder, NS_LITERAL_STRING("_base"));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->SetOffsetIsParameter(PR_TRUE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->SetLimitIsParameter(PR_TRUE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->ToString(mPrimarySortQuery);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->Reset();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      /*
-       * Create the non-null count query for the full library only if it
-       * might be different than the full count.  It might be different when
-       * the primary sort is on a non top level property.
-       */
-      if (!IsTopLevelProperty(mSorts[0].property)) {
-        rv = builder->SetBaseTableName(PROPERTIES_TABLE);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->AddColumn(EmptyString(), COUNT_COLUMN);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        nsCOMPtr<sbISQLBuilderCriterion> criterion;
-        rv = builder->CreateMatchCriterionLong(EmptyString(),
-                                               NS_LITERAL_STRING("property_id"),
-                                               sbISQLSelectBuilder::MATCH_EQUALS,
-                                               GetPropertyId(mSorts[0].property),
-                                               getter_AddRefs(criterion));
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = builder->AddCriterion(criterion);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->ToString(mNotNullLengthQuery);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->Reset();
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        /*
-         * Create the guid range query for rows where the primary sort key
-         * value is null
-         */
-        rv = builder->SetBaseTableName(MEDIAITEMS_TABLE);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_base"));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->AddColumn(NS_LITERAL_STRING("_base"), GUID_COLUMN);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        /*
-         * Left join the properties table to the media items table including
-         * a constraint on the property we are sorting on
-         */
-        nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
-        rv = builder->CreateMatchCriterionTable(NS_LITERAL_STRING("_p0"),
-                                                GUID_COLUMN,
-                                                sbISQLSelectBuilder::MATCH_EQUALS,
-                                                NS_LITERAL_STRING("_base"),
-                                                GUID_COLUMN,
-                                                getter_AddRefs(criterionGuid));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        nsCOMPtr<sbISQLBuilderCriterion> criterionProperty;
-        rv = builder->CreateMatchCriterionLong(NS_LITERAL_STRING("_p0"),
-                                               NS_LITERAL_STRING("property_id"),
-                                               sbISQLSelectBuilder::MATCH_EQUALS,
-                                               GetPropertyId(mSorts[0].property),
-                                               getter_AddRefs(criterionProperty));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->CreateAndCriterion(criterionGuid,
-                                         criterionProperty,
-                                         getter_AddRefs(criterion));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_LEFT,
-                                           PROPERTIES_TABLE,
-                                           NS_LITERAL_STRING("_p0"),
-                                           criterion);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->CreateMatchCriterionNull(NS_LITERAL_STRING("_p0"),
-                                               OBJSORTABLE_COLUMN,
-                                               sbISQLSelectBuilder::MATCH_EQUALS,
-                                               getter_AddRefs(criterion));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->AddCriterion(criterion);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        /*
-         * Order the results by guid so they always appear in the same order
-         */
-        rv = builder->AddOrder(NS_LITERAL_STRING("_p0"), GUID_COLUMN, true);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->SetOffsetIsParameter(PR_TRUE);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->SetLimitIsParameter(PR_TRUE);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->ToString(mNullQuery);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = builder->Reset();
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        /*
-         * Setting this to null means that the not null length is the same as
-         * the total length
-         */
-        mNotNullLengthQuery.Truncate();
-        mNullQuery.Truncate();
-      }
-    }
-    else {
-      /*
-       * 2. Not filtered, partial library
-       *
-       * Create the full count query for the partial library
-       */
-      rv = builder->SetBaseTableName(mBaseTable);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_base"));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->AddColumn(EmptyString(), COUNT_COLUMN);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<sbISQLBuilderCriterion> criterion;
-      rv = builder->CreateMatchCriterionLong(NS_LITERAL_STRING("_base"),
-                                             mBaseConstraintColumn,
-                                             sbISQLSelectBuilder::MATCH_EQUALS,
-                                             mBaseConstraintValue,
-                                             getter_AddRefs(criterion));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->AddCriterion(criterion);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->ToString(mFullLengthQuery);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // TODO: Null count query
-    }
-  }
-  else {
-
-    /*
-     * We don't need a not-null length query since there is a filer applied
-     * that will always eliminate nulls
-     */
-    mNotNullLengthQuery.Truncate();
-    mNullQuery.Truncate();
-
-    rv = builder->AddColumn(EmptyString(), COUNT_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (isFullLibrary) {
-      /*
-       * 3. Filtered, full library
-       */
-      rv = AddFiltersToQuery(builder, EmptyString());
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      /*
-       * 4. Filtered, partial library
-       *
-       * If we are not dealing with the full library, we need to join the base
-       * table then join the media items table so we have a guid column to join
-       * the properties table to
-       */
-      rv = builder->SetBaseTableName(mBaseTable);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_base"));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<sbISQLBuilderCriterion> criterion;
-      rv = builder->CreateMatchCriterionLong(NS_LITERAL_STRING("_base"),
-                                             mBaseConstraintColumn,
-                                             sbISQLSelectBuilder::MATCH_EQUALS,
-                                             mBaseConstraintValue,
-                                             getter_AddRefs(criterion));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->AddCriterion(criterion);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                            MEDIAITEMS_TABLE,
-                            NS_LITERAL_STRING("_mi"),
-                            MEDIAITEMID_COLUMN,
-                            NS_LITERAL_STRING("_base"),
-                            NS_LITERAL_STRING("member_media_item_id"));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = AddFiltersToQuery(builder, NS_LITERAL_STRING("_mi"));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    rv = builder->ToString(mFullLengthQuery);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = builder->Reset();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   /*
    * Generate the resort query, if needed
@@ -994,7 +788,7 @@ sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  LOG(("MakeQuery: %s", NS_ConvertUTF16toUTF8(aSql).get()));
+  LOG_WARN(("MakeQuery: %s", NS_ConvertUTF16toUTF8(aSql).get()));
 
   nsresult rv;
 
@@ -1330,6 +1124,20 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
+
+  /*
+   * If we're paired with a property cache, cache the proeprties for the
+   * range we just fetched
+   */
+  if (mPropertyCache) {
+    const PRUnichar** guids = new const PRUnichar*[lengthDE];
+    for (PRUint32 i = 0; i < lengthDE; i++) {
+      guids[i] = mCache[i + indexD]->get();
+    }
+    rv = mPropertyCache->CacheProperties(guids, lengthDE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    delete guids;
+  }
   return NS_OK;
 }
 
@@ -1347,11 +1155,11 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   NS_ENSURE_ARG_MIN(aCount, 1);
   NS_ENSURE_ARG_MIN(aDestIndexOffset, 0);
 
-  LOG(("ReadRowRange start %d count %d dest offset %d isnull %d\n",
-       aStartIndex,
-       aCount,
-       aDestIndexOffset,
-       aIsNull));
+  LOG_WARN(("ReadRowRange start %d count %d dest offset %d isnull %d\n",
+            aStartIndex,
+            aCount,
+            aDestIndexOffset,
+            aIsNull));
 
   /*
    * Set up the query with limit and offset parameters and run it
@@ -1391,8 +1199,13 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   /*
    * Resize the cache so we can fit the new data
    */
-  NS_ENSURE_TRUE(mCache.SetLength(aDestIndexOffset + aCount),
-                 NS_ERROR_OUT_OF_MEMORY);
+  if (mCache.Length() < aDestIndexOffset + aCount) {
+    LOG_WARN(("SetLength %d to %d",
+              mCache.Length(),
+              aDestIndexOffset + aCount));
+    NS_ENSURE_TRUE(mCache.SetLength(aDestIndexOffset + aCount),
+                   NS_ERROR_OUT_OF_MEMORY);
+  }
 
   nsAutoString lastSortedValue;
   PRInt32 firstIndex = 0;
@@ -1409,6 +1222,8 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + aDestIndexOffset, 1, str),
                    NS_ERROR_OUT_OF_MEMORY);
 
+    LOG_DEBUG(("ReplaceElementsAt %d %s", i + aDestIndexOffset,
+               NS_ConvertUTF16toUTF8(*str).get()));
     if (needsSorting) {
       PRUnichar* value;
       rv = result->GetRowCellPtr(i, 1, &value);
@@ -1431,6 +1246,10 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
       }
     }
   }
+
+  LOG_WARN(("Replaced Elements %d to %d",
+            aDestIndexOffset,
+            rowCount + aDestIndexOffset));
 
   if (needsSorting) {
     rv = SortRows(aDestIndexOffset + firstIndex,
@@ -1474,14 +1293,14 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
   nsresult rv;
   PRInt32 dbOk;
 
-  LOG(("Sorting rows %d to %d on %s, isfirst %d islast %d isonly %d isnull %d\n",
-       aStartIndex,
-       aEndIndex,
-       NS_ConvertUTF16toUTF8(aKey).get(),
-       aIsFirst,
-       aIsLast,
-       aIsOnly,
-       aIsNull));
+  LOG_WARN(("Sorting rows %d to %d on %s, isfirst %d islast %d isonly %d isnull %d\n",
+            aStartIndex,
+            aEndIndex,
+            NS_ConvertUTF16toUTF8(aKey).get(),
+            aIsFirst,
+            aIsLast,
+            aIsOnly,
+            aIsNull));
 
   /*
    * If this is only one row and it is not the first, last, and only row in the
@@ -1678,6 +1497,11 @@ sbLocalDatabaseGUIDArray::GetTopLevelPropertyColumn(const nsAString& aProperty,
     return NS_OK;
   }
 }
+
+/*
+ * NOTE: all the methods below should eventually be replaced with called to the
+ * properties manager
+ */
 
 PRBool
 sbLocalDatabaseGUIDArray::IsTopLevelProperty(const nsAString& aProperty)

@@ -28,6 +28,7 @@
 #define __SBLOCALDATABASEGUIDARRAY_H__
 
 #include "sbILocalDatabaseGUIDArray.h"
+#include "sbILocalDatabasePropertyCache.h"
 
 #include <nsStringGlue.h>
 #include <nsTArray.h>
@@ -35,6 +36,12 @@
 #include <sbIDatabaseQuery.h>
 #include <sbISQLBuilder.h>
 #include <nsDataHashtable.h>
+
+struct FilterSpec {
+  nsString property;
+  nsTArray<nsString> values;
+  PRBool isSearch;
+};
 
 class sbLocalDatabaseGUIDArray : public sbILocalDatabaseGUIDArray
 {
@@ -98,12 +105,6 @@ private:
     PRBool ascending;
   };
 
-  struct FilterSpec {
-    nsString property;
-    nsTArray<nsString> values;
-    PRBool isSearch;
-  };
-
   // Database GUID
   // XXX: This will probably change to a path?
   nsString mDatabaseGUID;
@@ -145,17 +146,17 @@ private:
   nsDataHashtable<nsStringHashKey, PRUint32> mPrimarySortKeyPositionCache;
 
   // Query used to count full length of the array
-  nsString mFullLengthQuery;
+  nsString mFullCountQuery;
 
   // Query used to count full length of the array where the primary sort key
   // is null
-  nsString mNotNullLengthQuery;
+  nsString mNonNullCountQuery;
 
   // Query used to return sorted GUIDs when the primary sort key is non-null
-  nsString mPrimarySortQuery;
+  nsString mFullGuidRangeQuery;
 
   // Query used to return sorted GUIDs when the primary sort key is null
-  nsString mNullQuery;
+  nsString mNullGuidRangeQuery;
 
   // Query used to resort chunks of results
   nsString mResortQuery;
@@ -173,6 +174,9 @@ private:
 
   // How nulls are sorted
   PRBool mNullsFirst;
+
+  // Paired property cache
+  nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
 protected:
   /* additional members */
