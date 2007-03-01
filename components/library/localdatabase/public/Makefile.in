@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbILocalDatabaseSmartMediaList.idl \
              sbILocalDatabaseGUIDArray.idl \
              sbILocalDatabasePropertyCache.idl \
+             sbILocalDatabaseTreeView.idl \
              $(NULL)
 
 XPIDL_MODULE = sbLocalDatabaseLibrary.xpt

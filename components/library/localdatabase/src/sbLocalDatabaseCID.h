@@ -36,3 +36,9 @@
 #define SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID \
   "@songbirdnest.com/Songbird/Library/LocalDatabase/PropertyCache;1"
 
+#define SB_LOCALDATABASE_TREEVIEW_CID \
+  { 0x59003856, 0x426b, 0x4512, \
+  { 0x8d, 0xa8, 0x08, 0x6f, 0x27, 0x4b, 0x37, 0xdc } }
+#define SB_LOCALDATABASE_TREEVIEW_CONTRACTID \
+  "@songbirdnest.com/Songbird/Library/LocalDatabase/TreeView;1"
+

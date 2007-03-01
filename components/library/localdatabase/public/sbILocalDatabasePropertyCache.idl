@@ -47,6 +47,9 @@ interface sbILocalDatabasePropertyCache : nsISupports
                      out unsigned long aPropertyArrayCount,
                      [retval, array, size_is(aPropertyArrayCount)]
                        out sbILocalDatabaseResourcePropertyBag aPropertyArray);
+
+  void cacheProperties([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray,
+                     in unsigned long aGUIDArrayCount);
 };
 
 /**

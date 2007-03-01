@@ -27,10 +27,12 @@
 #include "nsIGenericFactory.h"
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabasePropertyCache.h"
+#include "sbLocalDatabaseTreeView.h"
 #include "sbLocalDatabaseCID.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabasePropertyCache)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseTreeView)
 
 static const nsModuleComponentInfo components[] =
 {
@@ -45,6 +47,12 @@ static const nsModuleComponentInfo components[] =
     SB_LOCALDATABASE_PROPERTYCACHE_CID,
     SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID,
     sbLocalDatabasePropertyCacheConstructor
+	},
+	{
+    "Local Database TreeView",
+    SB_LOCALDATABASE_TREEVIEW_CID,
+    SB_LOCALDATABASE_TREEVIEW_CONTRACTID,
+    sbLocalDatabaseTreeViewConstructor
 	}
 };
 

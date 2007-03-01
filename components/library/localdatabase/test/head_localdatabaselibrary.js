@@ -93,7 +93,12 @@ function createDatabase(databaseGuid) {
     }
     dbq.bindStringParameter(3, b[4]);
     dbq.bindStringParameter(4, b[5]);
-    dbq.bindInt32Parameter(5, b[6]);
+    if(b[5] == "") {
+      dbq.bindNullParameter(5);
+    }
+    else {
+      dbq.bindInt32Parameter(5, b[6]);
+    }
     if(b[7] == "") {
       dbq.bindNullParameter(6);
     }

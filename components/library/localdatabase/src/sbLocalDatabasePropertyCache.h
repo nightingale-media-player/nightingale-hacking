@@ -35,16 +35,10 @@
 #include <nsComponentManagerUtils.h>
 #include <sbIDatabaseQuery.h>
 #include <nsDataHashtable.h>
+#include <nsClassHashtable.h>
+#include <nsInterfaceHashtable.h>
 #include <sbISQLBuilder.h>
-
-struct sbCacheEntry
-{
-  sbCacheEntry() {}
-  sbCacheEntry(sbILocalDatabaseResourcePropertyBag *aPropertyBag) :
-    propertyBag(aPropertyBag) {}
-
-  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> propertyBag;
-};
+#include <nsIStringEnumerator.h>
 
 class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache
 {
@@ -58,26 +52,33 @@ public:
   NS_IMETHODIMP MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
   NS_IMETHODIMP LoadProperties();
   PRUint32 GetPropertyID(const nsAString& aPropertyName);
+  PRBool GetPropertyName(PRUint32 aPropertyID, nsAString& aPropertyName);
 
 private:
   ~sbLocalDatabasePropertyCache();
 
   PRBool mInitialized;
 
+  PRUint32 mNumStaticProperties;
+ 
   // Database GUID
   // XXX: This will probably change to a path?
   nsString mDatabaseGUID;
 
   // Cache the property name list
-  nsDataHashtable<nsUint32HashKey, nsString> mPropertyIDToName;
+  nsClassHashtable<nsUint32HashKey, nsString> mPropertyIDToName;
   nsDataHashtable<nsStringHashKey, PRUint32> mPropertyNameToID;
 
-  // Used to template the select statement
-  nsCOMPtr<sbISQLSelectBuilder> mSelect;
-  nsCOMPtr<sbISQLBuilderCriterionIn> mInCriterion;
+  // Used to template the properties select statement
+  nsCOMPtr<sbISQLSelectBuilder> mPropertiesSelect;
+  nsCOMPtr<sbISQLBuilderCriterionIn> mPropertiesInCriterion;
+
+  // Used to template the media items select statement
+  nsCOMPtr<sbISQLSelectBuilder> mMediaItemsSelect;
+  nsCOMPtr<sbISQLBuilderCriterionIn> mMediaItemsInCriterion;
 
   // Cache for GUID -> property bag
-  nsDataHashtable<nsStringHashKey, sbCacheEntry> mCache;
+  nsInterfaceHashtable<nsStringHashKey, sbILocalDatabaseResourcePropertyBag> mCache;
 };
 
 class sbLocalDatabaseResourcePropertyBag : public sbILocalDatabaseResourcePropertyBag
@@ -95,10 +96,21 @@ private:
   ~sbLocalDatabaseResourcePropertyBag();
 
   sbLocalDatabasePropertyCache* mCache;
-  nsDataHashtable<nsUint32HashKey, nsString> mValueMap;
+  nsClassHashtable<nsUint32HashKey, nsString> mValueMap;
+};
 
-protected:
-  /* additional members */
+class sbTArrayStringEnumerator : public nsIStringEnumerator
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISTRINGENUMERATOR
+
+  sbTArrayStringEnumerator(nsTArray<nsString>* aStringArray);
+private:
+  ~sbTArrayStringEnumerator();
+
+  nsTArray<nsString> mStringArray;
+  PRUint32 mNextIndex;
 };
 
 #endif /* __SBLOCALDATABASEPROPERTYCACHE_H__ */
