@@ -848,8 +848,7 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
   }
   else
   {
-    var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.launchURL( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid );
+    gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid);
   }
 }
 

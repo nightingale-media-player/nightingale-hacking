@@ -183,7 +183,6 @@ try
   function doSyncJumpTo(nofocus) {
     window.arguments[0].__JUMPTO__ = document;
     document.syncJumpTo = syncJumpTo;
-    service_tree = window.arguments[0].__THESERVICETREE__;
     search_widget = window.arguments[0].__SEARCHWIDGET__;
     var source = new sbIPlaylistsource();
     var guid;
@@ -544,7 +543,7 @@ try
         }
       }    
     }
-    if (url != "") service_tree.launchServiceURL(url);
+    if (url != "") gServicePane.loadURL(url);
   }*/
   
   function getPlaylistLabel(guid, table) {

@@ -43,11 +43,10 @@ try
       if (aUriSpec.toLowerCase().indexOf("http:") == 0 ||
           aUriSpec.toLowerCase().indexOf("https:") == 0) {
         // lone> this should open tabs if necessary, rather than override the last url that might have been loaded on the previous handleItem call
-        var theServiceTree = document.getElementById( 'frame_servicetree' );
         if (!theServiceTree.doneInit) {
           theDefaultUrlOverride = aUriSpec; 
         } else {
-          theServiceTree.launchURL( aUriSpec );
+          gServicePane.loadURL( aUriSpec );
         }
       } else {
         if (!_drop_filelist) 

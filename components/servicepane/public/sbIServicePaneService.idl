@@ -192,6 +192,12 @@ interface sbIServicePaneService : nsISupports
   void fillContextMenu(in AString aId,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
+  
+  /* I think we'll need to have this interface too:
+  nsITreeView wrapTreeView(in nsITreeView aTreeView);
+  it will take an existing tree-builder tree view and add some
+  functionality that we want to have
+  */
 };
 
 

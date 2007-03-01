@@ -101,9 +101,10 @@ var theWebPlaylistQuery = null;
 var theNumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
 var theDefaultUrlOverride = null;
 
+var gServicePane = null;
+
 function SBInitialize()
 {
-
   try
   {
     //Whatever migration is required between version, this function takes care of it.
@@ -185,13 +186,13 @@ function SBInitialize()
     }
     
     // Look at all these ugly hacks that need to go away.  (sigh)
-    var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.init(theMainPane, theDefaultUrlOverride);
-    theServiceTree.onPlaylistHide = onBrowserPlaylistHide;
-    theServiceTree.onPlaylistDefaultCommand = onServiceTreeCommand;
+    var gServicePane = document.getElementById('servicepane');
+    gServicePane.browser = theMainPane;
+    gServicePane.onPlaylistHide = onBrowserPlaylistHide;
+    gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
+    // looks like we need to attach this to the window...
+    window.gServicePane = gServicePane
     
-    document.__THESERVICETREE__ = theServiceTree;
-
     document.__SEARCHWIDGET__ = document.getElementById( "search_widget" );
 
     theWebPlaylist = document.getElementById( "playlist_web" );
@@ -233,7 +234,7 @@ function SBUninitialize()
   webPlaylist.removeEventListener("playlist-play", onPlaylistPlay, true);
   webPlaylist.removeEventListener("command", onPlaylistContextMenu, false);
 
-  document.__THESERVICETREE__ = null;
+  gServicePane = null;
   document.__SEARCHWIDGET__ = null;
   document.__CURRENTWEBPLAYLIST__ = null;
 

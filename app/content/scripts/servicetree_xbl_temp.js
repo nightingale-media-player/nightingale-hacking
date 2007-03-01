@@ -113,7 +113,7 @@ var theServiceTreeScanItems = new Array();
 var theServiceTreeScanCount = 0;
 function SBScanServiceTreeNewEntryEditable()
 {
-  var theServiceTree = document.getElementById( "frame_servicetree" );
+  var theServiceTree = document.getElementById( "servicepane" );
   theServiceTreeScanItems.length = 0;
   theServiceTreeScanCount = 0;
   
@@ -132,7 +132,7 @@ function SBScanServiceTreeNewEntryStart()
 
 function SBScanServiceTreeNewEntryCallback()
 {
-  var theServiceTree = document.getElementById( "frame_servicetree" );
+  var theServiceTree = document.getElementById( "sevicepane" );
   
   if ( ++theServiceTreeScanCount > 10 )
   {
@@ -189,7 +189,7 @@ function onServiceEdit( index )
       // reset, this is important
       isServiceEditShowing = false; 
     }
-    var theServiceTree = document.getElementById( "frame_servicetree" );
+    var theServiceTree = document.getElementById( "servicepane" );
     if ( theServiceTree)
     {
       var theServiceTree_tree = theServiceTree.tree;
@@ -272,7 +272,7 @@ function onServiceEditChange( )
 {
   try
   {
-    var theServiceTree = document.getElementById( "frame_servicetree" );
+    var theServiceTree = document.getElementById( "servicepane" );
     if ( theServiceTree)
     {
       var theServiceTree_tree = theServiceTree.tree;
@@ -382,7 +382,7 @@ function SBGetServiceFromUrl( url, nodefault )
   var text = "";
   try
   {
-    var theServiceTree = document.getElementById( "frame_servicetree" );
+    var theServiceTree = document.getElementById( "servicepane" );
     if ( theServiceTree && (url.indexOf("chrome://") == 0) ) // Only if it is a chrome url.
     {
       text += "tree\n";

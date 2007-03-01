@@ -131,11 +131,6 @@ ServicePaneNode.prototype.__defineGetter__ ('name', function () {
 ServicePaneNode.prototype.__defineSetter__ ('name', function (aValue) {
     this.setAttributeNS(NC,'Name', aValue); });
 
-ServicePaneNode.prototype.__defineGetter__ ('url', function () {
-    return this.getAttributeNS(NC,'URL'); })
-ServicePaneNode.prototype.__defineSetter__ ('url', function (aValue) {
-    this.setAttributeNS(NC,'URL', aValue); });
-
 ServicePaneNode.prototype.__defineGetter__ ('tooltip', function () {
     return this.getAttributeNS(NC,'Description'); })
 ServicePaneNode.prototype.__defineSetter__ ('tooltip', function (aValue) {
@@ -155,6 +150,11 @@ ServicePaneNode.prototype.__defineGetter__ ('hidden', function () {
     return this.getAttributeNS(SP,'Hidden') == 'true'; })
 ServicePaneNode.prototype.__defineSetter__ ('hidden', function (aValue) {
     this.setAttributeNS(SP,'Hidden', aValue?'true':'false'); });
+
+ServicePaneNode.prototype.__defineGetter__ ('editable', function () {
+    return this.getAttributeNS(SP,'Editable') == 'true'; })
+ServicePaneNode.prototype.__defineSetter__ ('editable', function (aValue) {
+    this.setAttributeNS(SP,'Editable', aValue?'true':'false'); });
 
 ServicePaneNode.prototype.__defineGetter__ ('isOpen', function () {
     return this.getAttributeNS(SP,'Open') == 'true'; })
@@ -324,7 +324,7 @@ ServicePaneNode.prototype.clearNode = function () {
     }
     
     // then we need to find all our outgoing arcs
-    var arcs = this._dataSource.ArcLabelsOut();
+    var arcs = this._dataSource.ArcLabelsOut(this.resource);
     while (arcs.hasMoreElements()) {
         var arc = arcs.GetNext().QueryInterface(Ci.nsIRDFResource);
         // get the targets
@@ -400,6 +400,16 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
         this._root = this.getNode('SB:Root');
         this._root.hidden = false;
         this.save();
+    }
+    
+    // XXX this is only here till the new data model stuff lands
+    var library = this.getNode('SB:Library');
+    if (!library) {
+        library = this.addNode('SB:Library', this._root, false);
+        library.url = 'chrome://songbird/content/xul/playlist_test.xul?library';
+        library.name = 'Library';
+        library.image = 'chrome://songbird/skin/default/icon_lib_16x16.png';
+        library.hidden = false;
     }
     
     // okay, lets get all the keys
@@ -486,6 +496,9 @@ function ServicePaneService_addNode(aId, aParent, aContainer) {
     if (aContainer) {
         node.isOpen = true;
     }
+    
+    // by default nothing is editable
+    node.editable = false;
     
     return node;
 }

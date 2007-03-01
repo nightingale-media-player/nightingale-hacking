@@ -144,8 +144,7 @@ function doMenu( command ) {
     }
     break;
     case "services.browse":
-      var theServiceTree = document.getElementById( 'frame_servicetree' );
-      theServiceTree.launchURL( "http://extensions.songbirdnest.com/" );
+      gServicePane.loadURL( "http://extensions.songbirdnest.com/");
     break;
     
     default:
@@ -162,8 +161,7 @@ function onMenu( target )
     // ==== Default is to launch the value property if one exists, or do nothing.      
     if ( target.value )
     {
-      var theServiceTree = document.getElementById( 'frame_servicetree' );
-      theServiceTree.launchURL( target.value );
+      gServicePane.loadURL( target.value);
     }
   }
 }

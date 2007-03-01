@@ -92,7 +92,7 @@ var sbWebProgressListener = {
       // save url for reload on next servicetree init
       SBDataSetStringValue( "servicetree.selected_url", cur_uri );  
       // Set the value in the text box (shown or not)
-      var theServiceTree = document.getElementById( "frame_servicetree" );
+      var servicepane = document.getElementById('servicepane');
       var theMainPane = document.getElementById( "frame_main_pane" );
       if ( aRequest && aRequest.name )    
       {
@@ -136,6 +136,7 @@ var sbWebProgressListener = {
         }
 */        
       }
+      /*
       if ( ! theServiceTree.urlFromServicePane )
       {
         // Clear the service tree selection (asynchronously?  is this from out of thread?)
@@ -144,6 +145,7 @@ var sbWebProgressListener = {
                     50 );
       }
       theServiceTree.urlFromServicePane = false;
+      */
       
       // Clear the playlist tree variable so we are not confused.
       thePlaylistTree = null;
@@ -167,7 +169,7 @@ var sbWebProgressListener = {
       // Nothing in the status text
       theStatusText.stringValue = "";
       
-      theServiceTree.current_url = cur_uri;
+      //theServiceTree.current_url = cur_uri;
 
       document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
     }
@@ -234,7 +236,6 @@ function onBrowserStop()
 // onBrowserHome
 function onBrowserHome()
 {
-  var theServiceTree = document.getElementById( 'frame_servicetree' );
   var defaultHomepage = "http://www.songbirdnest.com/birdhouse/";
   
   try {
@@ -249,29 +250,14 @@ function onBrowserHome()
     if(homepage && homepage != "")
       defaultHomepage = homepage;
       
-    theServiceTree.launchServiceURL( defaultHomepage );
+    gServicePane.loadURL(defaultHomepage, true);
   } catch(e) {}
 }
 
 // onBrowserBookmark
 function onBrowserBookmark()
 {
-  try
-  {
-    alert( "Uh... there's no bookmarks service in XULRunner.  We'll implement this soon." );
-/*  
-    var url = SBDataGetStringValue( "browser.uri" );
-    alert(url + "\n" + Components.interfaces.nsIBookmarksService);
-    var bmarks = Components.classes["@mozilla.org/browser/bookmarks-service;1"].getService();
-    bmarks.QueryInterface(Components.interfaces.nsIBookmarksService);
-    bmarks.addBookmarkImmediately(url,url,0,null);
-    alert(url);
-*/    
-  }  
-  catch ( err )
-  {
-    alert( "onBrowserBookmark\n" + err );
-  }
+  bmManager.addBookmark()
 }
 
 
@@ -326,10 +312,8 @@ function onBrowserPlaylist()
   }
   else
   {
-    var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?" +
-                                     WEB_PLAYLIST_TABLE + "," +
-                                     WEB_PLAYLIST_CONTEXT );
+    gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?" +
+                          WEB_PLAYLIST_TABLE + "," + WEB_PLAYLIST_CONTEXT);
   }
 }
 
@@ -376,8 +360,7 @@ function onBrowserDownload()
   }
   else
   {
-    var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid );
+    gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid);
   }
 }
 
@@ -414,8 +397,7 @@ function onHTMLUrlChange( evt )
       theBrowserImageData.stringValue = image;
     }
     // And then go to the url.  Easy, no?
-    var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.launchURL( value );
+    window.gServicePane.loadURL(value);
   }
 }
 
@@ -829,8 +811,7 @@ function onHTMLContextMenu( target )
         // try dealing with media, might just be web content.
         if ( !handleMediaURL(theHTMLContextURL, true, false) )
         {
-          var theServiceTree = document.getElementById( 'frame_servicetree' );
-          theServiceTree.launchURL( theHTMLContextURL );
+          gServicePane.loadURL( theHTMLContextURL );
         }
       break;
       case "html.context.openexternal":

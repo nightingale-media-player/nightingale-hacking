@@ -50,13 +50,10 @@ function openURLSB(url) {
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                       .getService(Components.interfaces.nsIWindowMediator);
   var mainWin = wm.getMostRecentWindow("Songbird:Main");
-  if (mainWin) {
-    var st = mainWin.document.getElementById("frame_servicetree");
-    if (st) {
-      st.launchServiceURL(url);
-      mainWin.focus();
-      return;
-    }
+  if (mainWin && mainWin.window && mainWin.window.gServicePane) {
+    mainWin.window.gServicePane.loadURL(url);
+    mainWin.focus();
+    return;
   }
 
   openURL(url);

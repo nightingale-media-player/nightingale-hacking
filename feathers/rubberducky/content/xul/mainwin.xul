@@ -231,8 +231,8 @@
                   <!-- SERVICE PANE -->
                   <vbox id="frame_servicetree_pane">
                     <hbox flex="1">
-                      <!--  TODO: This is not a frame! change the id. -->
-                      <servicetree id="frame_servicetree" flex="1"/>                  
+                      <!--  NOTE: the id used to be frame_servicetree. -->
+                      <servicepane id="servicepane" flex="1"/>                  
                     </hbox>
                     <!-- Service Pane Button Bar, Buttons for adding a new service or playlist-->
                     <!-- For now just hijacking the file menu implementation.. -->

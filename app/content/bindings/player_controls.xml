@@ -803,8 +803,9 @@
       <body>
         <![CDATA[
           // optional connection
-          var theServiceTree = document.getElementById( 'frame_servicetree' );
-          if (theServiceTree) theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
+          // FIXME: can we access gServicePane from here?
+          var theServiceTree = document.getElementById( 'servicepane' );
+          if (theServiceTree) theServiceTree.loadURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
         ]]>
       </body>
     </method>

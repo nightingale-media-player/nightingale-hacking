@@ -21,6 +21,7 @@ songbird.jar:
   content/songbird/bindings/remote_label.xml      (remote_label.xml)
   content/songbird/bindings/sbextensions.xml      (sbextensions.xml)
   content/songbird/bindings/search.xml            (search.xml)
+  content/songbird/bindings/servicepane.xml       (servicepane.xml)
   content/songbird/bindings/servicetree.xml       (servicetree.xml)
   content/songbird/bindings/statusbar.xml         (statusbar.xml)
   content/songbird/bindings/tageditor.xml         (tageditor.xml)

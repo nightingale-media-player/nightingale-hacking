@@ -455,9 +455,11 @@ function SBOpenModalDialog( url, param1, param2, param3 )
 
   // bonus stuff to shut the mac up.
   var chromeFeatures = ",modal=yes,resizable=no";
-  if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",titlebar=yes"; else chromeFeatures += ",titlebar=no";
+  if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",titlebar=yes";
+  else chromeFeatures += ",titlebar=no";
 
-  param2 += chromeFeatures;   var retval = window.openDialog( url, param1, param2, param3 );
+  param2 += chromeFeatures;
+  var retval = window.openDialog( url, param1, param2, param3 );
   PopBackscanPause();
   return retval;
 }

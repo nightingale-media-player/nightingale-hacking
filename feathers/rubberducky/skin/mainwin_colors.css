@@ -117,23 +117,23 @@ Grey material for the Service Pane.
   color: #cdd4c4;
 }
 
-#frame_service_tree
+.servicepane_tree
 {
   background-color: #686A6A;
   color: #CDD4C4;
 }
 
-#frame_service_tree > treechildren::-moz-tree-row
+.servicepane_tree > treechildren::-moz-tree-row
 {
   background-color: #686A6A;
 }
 
-#frame_service_tree > treechildren::-moz-tree-row( selected )
+.servicepane_tree > treechildren::-moz-tree-row( selected )
 {
   background-color: #FFF;
 }
 
-#frame_service_tree > treechildren::-moz-tree-cell-text( selected )
+.servicepane_tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #333;
 }
@@ -163,8 +163,10 @@ Grey material for the Service Pane.
   border-right-color: #99A195;
 }
 
-
-
+.tree-input {
+  background-color: white;
+  color: black;
+}
 
 
 /** 
@@ -253,13 +255,13 @@ scrollbar > slider
 } 
 
 /* service pane scrollbar*/
-#frame_service_tree scrollbar
+.servicepane_tree scrollbar
 {    
   background-color: #686A6A !important;
   background-image: none !important; 
 } 
 
-#frame_service_tree scrollbar > slider > thumb
+.servicepane_tree scrollbar > slider > thumb
 {   
   -moz-border-top-colors: #999 #666 !important;
   -moz-border-right-colors: #666 #333 !important;
@@ -269,12 +271,12 @@ scrollbar > slider
   background-color: transparent !important;
 } 
 
-#frame_service_tree scrollbar > slider
+.servicepane_tree scrollbar > slider
 {    
   background-color: #686A6A !important; 
 } 
 
-#frame_service_tree scrollbar > scrollbarbutton
+.servicepane_tree scrollbar > scrollbarbutton
 {    
   -moz-border-top-colors: #999 #666 !important;
   -moz-border-right-colors: #666 #333 !important;
@@ -284,8 +286,8 @@ scrollbar > slider
   background-color: transparent !important;
 } 
 
-#frame_service_tree scrollbar > scrollbarbutton:active,
-#frame_service_tree scrollbar > slider > thumb:active
+.servicepane_tree scrollbar > scrollbarbutton:active,
+.servicepane_tree scrollbar > slider > thumb:active
 {    
   -moz-border-bottom-colors: #999 #666 !important;
   -moz-border-left-colors: #666 #333 !important;

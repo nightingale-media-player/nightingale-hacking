@@ -58,13 +58,12 @@ function onCurrentTrack()
     }
   }
   
-  var theServiceTree = document.getElementById( 'frame_servicetree' );
   if (guid == "songbird" && table == "library") { 
-    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
+    gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?library");
   }
   else 
   {
-    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?" + table+ "," + guid);
+    gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?" + table+ "," + guid);
   } 
   theCurrentTrackInterval = setInterval( onCurrentTrack, 500 );
 }
