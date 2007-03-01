@@ -143,7 +143,7 @@ AddonMetadata.prototype = {
    * Copy all nodes and assertions into the main datasource,
    * renaming the install manifest to the id of the extension.
    */
-  _copyManifest:  function processManifest(itemNode, manifestDS) {
+  _copyManifest:  function _copyManifest(itemNode, manifestDS) {
   
     // Copy all resources from the manifest to the main DS
     var resources = manifestDS.GetAllResources();
