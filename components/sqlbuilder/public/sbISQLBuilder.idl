@@ -56,12 +56,29 @@ interface sbISQLBuilder : nsISupports
    */
   attribute AString baseTableAlias;
 
+  /**
+   * \brief Is the query distinct?
+   */
+  attribute boolean distinct;
+
+  /**
+   * \brief Value for the limit clause
+   */
   attribute long limit;
 
+  /**
+   * \brief Is the limit clause a parameter?
+   */
   attribute boolean limitIsParameter;
 
+  /**
+   * \brief Value for the offset clause
+   */
   attribute long offset;
 
+  /**
+   * \brief Is the offset clause a parameter?
+   */
   attribute boolean offsetIsParameter;
 
   /**
@@ -272,6 +289,12 @@ interface sbISQLBuilderCriterionIn : sbISQLBuilderCriterion
    * \param aValue String to add to the list
    */
   void addString(in AString aValue);
+
+  /**
+   * \brief Adds a subquery to the IN list
+   * \param aSubquery Subquery to add to the list
+   */
+  void addSubquery(in sbISQLSelectBuilder aSubquery);
 
   /**
    * \brief Clear In critera list

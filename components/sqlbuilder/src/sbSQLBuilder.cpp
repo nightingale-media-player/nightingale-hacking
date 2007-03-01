@@ -34,6 +34,7 @@
 NS_IMPL_ISUPPORTS1(sbSQLBuilder, sbISQLBuilder)
 
 sbSQLBuilder::sbSQLBuilder() :
+  mIsDistinct(PR_FALSE),
   mLimit(-1),
   mLimitIsParameter(PR_FALSE),
   mOffset(-1),
@@ -64,6 +65,19 @@ NS_IMETHODIMP
 sbSQLBuilder::SetBaseTableAlias(const nsAString& aBaseTableAlias)
 {
   mBaseTableAlias.Assign(aBaseTableAlias);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilder::GetDistinct(PRBool *aDistinct)
+{
+  *aDistinct = mIsDistinct;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbSQLBuilder::SetDistinct(PRBool aDistinct)
+{
+  mIsDistinct = aDistinct;
   return NS_OK;
 }
 
@@ -407,10 +421,15 @@ sbSQLSelectBuilder::ResetInternal()
 NS_IMETHODIMP
 sbSQLSelectBuilder::ToStringInternal(nsAString& _retval)
 {
+  nsresult rv;
   nsAutoString buff;
 
   // Start with a select...
   buff.AssignLiteral("select ");
+
+  if (mIsDistinct) {
+    buff.AppendLiteral("distinct ");
+  }
 
   // Append output column names
   PRUint32 len = mOutputColumns.Length();
@@ -497,7 +516,9 @@ sbSQLSelectBuilder::ToStringInternal(nsAString& _retval)
   if (len > 0) {
     buff.AppendLiteral(" where ");
     for (PRUint32 i = 0; i < len; i++) {
-      nsCOMPtr<sbISQLBuilderCriterion> criterion = mCritera[i];
+      nsCOMPtr<sbISQLBuilderCriterion> criterion =
+        do_QueryInterface(mCritera[i], &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
       nsAutoString str;
       NS_STATIC_CAST(sbSQLBuilderCriterionBase*, criterion.get())->ToString(str);
       buff.Append(str);
@@ -827,6 +848,18 @@ sbSQLBuilderCriterionIn::AddString(const nsAString& aValue)
 }
 
 NS_IMETHODIMP
+sbSQLBuilderCriterionIn::AddSubquery(sbISQLSelectBuilder* aSubquery)
+{
+  sbInItem* ii = mInItems.AppendElement();
+  NS_ENSURE_TRUE(ii, NS_ERROR_OUT_OF_MEMORY);
+
+  ii->type     = eSubquery;
+  ii->subquery = aSubquery;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbSQLBuilderCriterionIn::Clear()
 {
   mInItems.Clear();
@@ -862,6 +895,15 @@ sbSQLBuilderCriterionIn::ToString(nsAString& _retval)
       case eInteger32:
         /* not implemented */
         break;
+      case eSubquery:
+      {
+        nsresult rv;
+        nsAutoString sql;
+        rv = ii.subquery->ToString(sql);
+        NS_ENSURE_SUCCESS(rv, rv);
+        _retval.Append(sql);
+        break;
+      }
     }
 
     if (i + 1 < len) {

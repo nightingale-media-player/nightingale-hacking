@@ -80,6 +80,7 @@ protected:
 
   nsString mBaseTableName;
   nsString mBaseTableAlias;
+  PRBool mIsDistinct;
   PRInt32 mLimit;
   PRBool mLimitIsParameter;
   PRInt32 mOffset;
@@ -88,6 +89,7 @@ protected:
   nsTArray<sbJoinInfo> mJoins;
   nsTArray<sbSubqueryInfo> mSubqueries;
   nsCOMArray<sbISQLBuilderCriterion> mCritera;
+
 };
 
 class sbSQLSelectBuilder : public sbSQLBuilder,
@@ -234,7 +236,8 @@ private:
   enum ParameterType {
     eIsNull,
     eString,
-    eInteger32
+    eInteger32,
+    eSubquery
   };
 
   struct sbInItem
@@ -242,6 +245,7 @@ private:
     ParameterType type;
     nsString stringValue;
     PRInt32 int32Value;
+    nsCOMPtr<sbISQLSelectBuilder> subquery;
   };
 
   nsTArray<sbInItem> mInItems;
