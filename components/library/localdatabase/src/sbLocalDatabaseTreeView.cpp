@@ -76,7 +76,7 @@ sbLocalDatabaseTreeView::Init()
   rv = mArray->AddSort(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#albumName"), PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mArray->SetFetchSize(1000);
+  rv = mArray->SetFetchSize(100);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mPropertyCache = do_CreateInstance(SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID, &rv);

@@ -1074,8 +1074,13 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
   PRUint32 indexB = mLengthX;
   PRUint32 indexC = mLength - 1;
 
-  PRUint32 indexD = aRequestedIndex;
-  PRUint32 indexE = aRequestedIndex + mFetchSize - 1;
+  /*
+   * Divide the array up into cells and figure out what cell to fetch
+   */
+  PRUint32 cell = aRequestedIndex / mFetchSize;
+
+  PRUint32 indexD = cell * mFetchSize;
+  PRUint32 indexE = indexD + mFetchSize - 1;
   if (indexE > indexC) {
     indexE = indexC;
   }
