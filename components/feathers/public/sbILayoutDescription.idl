@@ -54,14 +54,5 @@ interface sbILayoutDescription : nsISupports
    */
   readonly attribute AString name;
 
-  /**
-   * \brief Human readable description
-   */
-  readonly attribute AString description;
-  
-  /**
-   * \brief Author details
-   */  
-  readonly attribute AString creator;
-
+  // TODO: Expand metadata as needed for the UI
 };

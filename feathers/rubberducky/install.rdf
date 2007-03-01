@@ -27,9 +27,7 @@
         <songbird:skin>
           <Description>
             <songbird:name>Rubberducky (default)</songbird:name>
-            <songbird:description>Dark Theme</songbird:description>
             <songbird:internalName>rubberducky/0.2</songbird:internalName>
-            <songbird:creator>Pioneers of the Inevitable</songbird:creator>
             <songbird:compatibleLayout>
               <Description>
                 <songbird:layoutURL>chrome://rubberducky/content/xul/mainwin.xul</songbird:layoutURL>
@@ -41,9 +39,7 @@
         <songbird:layout>
           <Description>
             <songbird:name>Standard Layout(default)</songbird:name>
-            <songbird:description>Default Songbird layout</songbird:description>
             <songbird:url>chrome://rubberducky/content/xul/mainwin.xul</songbird:url>
-            <songbird:creator>Pioneers of the Inevitable</songbird:creator>
             <songbird:compatibleSkin>
               <Description>
                 <songbird:internalName>rubberducky/0.2</songbird:internalName>

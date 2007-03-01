@@ -27,9 +27,7 @@
         <songbird:skin>
           <Description>
             <songbird:name>Dove</songbird:name>
-            <songbird:description>White Theme</songbird:description>
             <songbird:internalName>dove/0.1</songbird:internalName>
-            <songbird:creator>Pioneers of the Inevitable</songbird:creator>
             <songbird:compatibleLayout>
               <Description>
                 <songbird:layoutURL>chrome://rubberducky/content/xul/mainwin.xul</songbird:layoutURL>

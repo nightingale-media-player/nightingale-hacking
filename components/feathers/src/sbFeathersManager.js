@@ -123,8 +123,8 @@ function dumpDS(prefix, ds) {
 function SkinDescription() {};
 SkinDescription.prototype = {
   // TODO Expand?
-  requiredProperties: [ "name", "internalName", "description", "creator" ],
-  optionalProperties: [ "previewImageURL" ],
+  requiredProperties: [ "name", "internalName" ],
+  optionalProperties: [ ],
   
   QueryInterface: function(iid) {
     if (!iid.equals(Components.interfaces.sbISkinDescription)) 
@@ -139,7 +139,7 @@ SkinDescription.prototype = {
 function LayoutDescription() {};
 LayoutDescription.prototype = {
   // TODO Expand?
-  requiredProperties: [ "name", "url", "description", "creator" ],
+  requiredProperties: [ "name", "url" ],
   optionalProperties: [ ],
 
   QueryInterface: function(iid) {

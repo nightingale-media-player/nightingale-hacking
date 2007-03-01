@@ -52,19 +52,7 @@ interface sbISkinDescription : nsISupports
    */
   readonly attribute AString name;
 
-  /**
-   * \brief Human readable description
-   */
-  readonly attribute AString description;
-  
-  /**
-   * \brief Author details
-   */  
-  readonly attribute AString creator;
 
-  /**
-   * \brief URL for a preview image
-   */  
-  readonly attribute AString previewImage;
+  // TODO: Add preview images and other data as UI is created
 
 };
