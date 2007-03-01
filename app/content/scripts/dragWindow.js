@@ -78,7 +78,6 @@ function onBkgDown( theEvent, popup )
 {
   if (isMaximized()) 
     return;
-  
   if ( (theEvent.target.getAttribute("drag_window") == "true") ||
        ( (document.documentElement.getAttribute("spacers_drag_window") == "true") &&
          (theEvent.target.nodeName == "spacer") ) )

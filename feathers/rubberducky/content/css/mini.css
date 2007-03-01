@@ -322,7 +322,7 @@ MINI DASH BOARD
 
 /*
 */
-#mini_volume > progress_slider,
+#mini_volume > sb-progress-slider,
 #mini_volume gripper
 {  
   -moz-appearance: none !important; /* grrrr! */

@@ -34,7 +34,7 @@
 }
 
 #mini_volume > #mini_volume_box,
-#mini_volume > progress_slider,
+#mini_volume > sb-progress-slider,
 #mini_volume gripper,
 #mini_volume_thumb,
 #mini_volume_progress,

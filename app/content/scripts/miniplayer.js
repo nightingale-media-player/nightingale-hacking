@@ -132,8 +132,9 @@ try
     switch (evt.target.nodeName.toLowerCase())
     {
       // Songbird Custom Elements
-      case "player_seekbar":
-      case "player_volume":
+      case "sb-progress-slider":
+      case "sb-player-volume-slider":
+      case "sb-player-seek-slider":
       case "player_repeat":
       case "player_shuffle":
       case "player_playpause":

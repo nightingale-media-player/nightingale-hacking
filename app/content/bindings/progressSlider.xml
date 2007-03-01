@@ -31,7 +31,7 @@
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
-  <binding id="progress_slider">
+  <binding id="progress-slider">
     <content>
       <xul:stack flex="1">
         <children/>

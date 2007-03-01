@@ -41,7 +41,7 @@
   
   
   
-  <binding id="volume" extends="chrome://songbird/content/bindings/progress_slider.xml#progress_slider">
+  <binding id="volume-slider" extends="chrome://songbird/content/bindings/progressSlider.xml#progress-slider">
 
    <handlers>
      <handler event="progressSliderChange" action="this.onTrackVolume();"/>
@@ -124,7 +124,7 @@
               return; 
             this.value = this.remote_volume.intValue;
           } catch (err) {
-            dump("player_controls.xml - onRemoteVolumeChange - " + err + "\n");
+            dump("playerControls.xml - onRemoteVolumeChange - " + err + "\n");
           }
         ]]>
       </body>
@@ -168,7 +168,7 @@
     </constructor>
     <destructor>
       <![CDATA[
-        //SB_LOG("player_controls.js", "mute binding destructor");
+        //SB_LOG("playerControls.js", "mute binding destructor");
         if (this.bindmuteon) {
           this.bindmuteon.unbind();
           this.bindmuteon = null;
@@ -464,7 +464,7 @@
     </constructor>
     <destructor>
       <![CDATA[
-        //SB_LOG("player_controls.js", "repeat binding destructor");
+        //SB_LOG("playerControls.js", "repeat binding destructor");
         if (this.repnonebinding) {
           this.repnonebinding.unbind();
           this.repnonebinding = null;
@@ -542,7 +542,7 @@
     </constructor>
     <destructor>
       <![CDATA[
-        //SB_LOG("player_controls.js", "shuffle binding destructor");
+        //SB_LOG("playerControls.js", "shuffle binding destructor");
         if (this.bindshuffleoff) {
           this.bindshuffleoff.unbind()
           this.bindshuffleoff = null;
@@ -577,7 +577,7 @@
   
   
   
-  <binding id="seekbar" extends="chrome://songbird/content/bindings/progress_slider.xml#progress_slider">
+  <binding id="seek-slider" extends="chrome://songbird/content/bindings/progressSlider.xml#progress-slider">
 
    <handlers>
      <handler event="progressSliderChange" action="this.onTrackSeekbar();"/>
@@ -608,7 +608,7 @@
     </constructor>
     <destructor>
       <![CDATA[
-        //SB_LOG("player_controls.js", "seekbar binding destructor");
+        //SB_LOG("playerControls.js", "seek-slider binding destructor");
         if (this.remote_position) {
           this.remote_position.unbind();
           this.remote_position = null;
@@ -642,7 +642,7 @@
             if (this.trackingPosition) return; // we are the control changing the position, ignore this callback
             this.value = gPPS.position;
           } catch (e) {
-            alert("player_controls.xml - onRemotePositionChange - " + e);
+            alert("playerControls.xml - onRemotePositionChange - " + e);
           }
         ]]>
       </body>
@@ -680,7 +680,7 @@
     </constructor>
     <destructor>
       <![CDATA[
-        //SB_LOG("player_controls.js", "totaltime binding destructor");
+        //SB_LOG("playerControls.js", "totaltime binding destructor");
         if (this.bindtotaltime) {
           this.bindtotaltime.unbind();
           this.bindtotaltime = null;
@@ -743,7 +743,7 @@
     </constructor>
     <destructor>
       <![CDATA[
-        //SB_LOG("player_controls.js", "playpause binding destructor");
+        //SB_LOG("playerControls.js", "playpause binding destructor");
         if (this.pausebinding) {
           this.pausebinding.unbind();
           this.pausebinding = null;
@@ -803,9 +803,8 @@
       <body>
         <![CDATA[
           // optional connection
-          // FIXME: can we access gServicePane from here?
-          var theServiceTree = document.getElementById( 'servicepane' );
-          if (theServiceTree) theServiceTree.loadURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
+          var theServiceTree = document.getElementById( 'frame_servicetree' );
+          if (theServiceTree) theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
         ]]>
       </body>
     </method>
@@ -913,7 +912,7 @@
             }
             this.label.setAttribute("tooltiptext", tip);
           } catch (e) {
-            alert("player_controls.xml - rebuildTip - " + e);
+            alert("playerControls.xml - rebuildTip - " + e);
           }
         ]]>
       </body>
@@ -1027,7 +1026,7 @@
     </constructor>
     <destructor>
       <![CDATA[
-        //SB_LOG("player_controls.js", "scanning binding destructor");
+        //SB_LOG("playerControls.js", "scanning binding destructor");
         if (this.bindvisible) {
           this.bindvisible.unbind();
           this.bindvisible = null;

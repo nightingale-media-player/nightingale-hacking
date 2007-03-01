@@ -69,7 +69,7 @@
           <xul:hbox class="faceplate-seekbar-box" align="center" pack="center">
             <xul:player_timeelapsed anonid="songbird_text_time_elapsed" class="faceplate-text" />
             <!-- TODO: Change seekbar to class based styling and anonid --> 
-            <xul:player_seekbar class="faceplate-seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" flex="1" orient="horizontal"  maxpos="100"/>
+            <xul:sb-player-seek-slider class="faceplate-seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" flex="1" orient="horizontal"  maxpos="100"/>
             <xul:player_totaltime anonid="songbird_text_time_total"  class="faceplate-text" />
           </xul:hbox>
         </xul:vbox>

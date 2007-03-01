@@ -24,10 +24,18 @@
 //
  */
 
-/* Uh... we should maybe have sb_ prefices or something. */
+/* Uh... we should maybe have sb- prefices or something. */
 
-progress_slider {
-  -moz-binding: url("chrome://songbird/content/bindings/progress_slider.xml#progress_slider") !important;
+sb-progress-slider {
+  -moz-binding: url("chrome://songbird/content/bindings/progressSlider.xml#progress-slider") !important;
+}
+
+sb-player-volume-slider {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#volume-slider") !important;
+}
+
+sb-player-seek-slider {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#seek-slider") !important;
 }
 
 smart_conditions {
@@ -82,68 +90,60 @@ remote_label {
   -moz-binding: url("chrome://songbird/content/bindings/remote_label.xml#remote_label") !important;
 }
 
-player_volume {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#volume") !important;
-}
-
 player_mute {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#mute") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#mute") !important;
 }
 
 player_forward {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#forward") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#forward") !important;
 }
 
 player_back {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#back") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#back") !important;
 }
 
 player_repeat {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#repeat") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#repeat") !important;
 }
 
 player_shuffle {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#shuffle") !important;
-}
-
-player_seekbar {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#seekbar") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#shuffle") !important;
 }
 
 player_timeelapsed {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#timeelapsed") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#timeelapsed") !important;
 }
 
 player_totaltime {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#totaltime") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#totaltime") !important;
 }
 
 player_playpause {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#playpause") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#playpause") !important;
 }
 
 player_artist {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#artist") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#artist") !important;
 }
 
 player_title {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#title") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#title") !important;
 }
 
 player_album {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#album") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#album") !important;
 }
 
 player_genre {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#genre") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#genre") !important;
 }
 
 player_numplaylistitems {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#numplaylistitems") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#numplaylistitems") !important;
 }
 
 player_scanning {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#scanning") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#scanning") !important;
 }
 
 tageditor {
@@ -205,15 +205,15 @@ faceplate {
 /* SYSBTNS */
 
 sb-sys-close-button {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#sb-sys-close-button") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-close-button") !important;
 }
 
 sb-sys-maximize-button {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#sb-sys-maximize-button") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-maximize-button") !important;
 }
 
 sb-sys-minimize-button {
-  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#sb-sys-minimize-button") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-minimize-button") !important;
 }
 
 

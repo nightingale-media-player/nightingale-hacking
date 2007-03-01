@@ -72,7 +72,7 @@
         <spacer width="8" drag_window="true"/>
         <hbox drag_window="true">
           <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>
-          <player_volume id="songbird_volume" sliderid="mini_volume_slider" thumbid="mini_volume_thumb" progressid="mini_volume_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
+          <sb-player-volume-slider id="songbird_volume" sliderid="mini_volume_slider" thumbid="mini_volume_thumb" progressid="mini_volume_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
           <spacer width="3" height="5" id="songbird_volume_e"/>
         </hbox>
       </hbox>
@@ -91,7 +91,7 @@
             <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" drag_window="true"/>
             <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>
           </hbox>
-          <player_seekbar id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate" maxpos="100"/>
+          <sb-player-seek-slider id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate" maxpos="100"/>
         </stack>
       </vbox>
       <spacer width="4" height="18" id="mini_dash_e"/>

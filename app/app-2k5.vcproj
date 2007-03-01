@@ -1032,7 +1032,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\player_controls.xml"
+					RelativePath=".\content\bindings\playerControls.xml"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1080,7 +1080,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\progress_slider.xml"
+					RelativePath=".\content\bindings\progressSlider.xml"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

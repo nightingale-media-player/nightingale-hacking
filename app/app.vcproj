@@ -966,7 +966,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\player_controls.xml">
+					RelativePath=".\content\bindings\playerControls.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1008,7 +1008,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\progress_slider.xml">
+					RelativePath=".\content\bindings\progressSlider.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
