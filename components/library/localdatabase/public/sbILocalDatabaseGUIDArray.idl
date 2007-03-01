@@ -32,7 +32,7 @@
 #include "nsISupports.idl"
 
 interface nsIStringEnumerator;
-
+interface sbILocalDatabasePropertyCache;
 /**
 * \interface sbILocalDatabaseGUIDArray
 */
@@ -53,6 +53,8 @@ interface sbILocalDatabaseGUIDArray : nsISupports
 
   readonly attribute unsigned long length;
 
+  attribute sbILocalDatabasePropertyCache propertyCache;
+  
   void addSort(in AString aProperty,
                in boolean aAscending);
 
@@ -65,6 +67,9 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   void clearFilters();
 
   AString getByIndex(in unsigned long aIndex);
+
+  [noscript] void getByIndexShared(in unsigned long aIndex,
+                                  [shared] out wstring aGuid);
 
   void invalidate();
 };
