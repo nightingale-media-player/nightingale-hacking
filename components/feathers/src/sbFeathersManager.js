@@ -36,9 +36,7 @@
 //  * Make skin switching actually do something
 //  * Add function arg assertions (verify description contents)
 //  * add onSwitchCompleted, change onSwitchRequested to allow feedback
-//  * Make a AddonMetadataReader base class?  With what functionality?
 //  * Explore skin/layout versioning issues?
-//  * Make metadata reader a startup component
 // 
  
 const CONTRACTID = "@songbirdnest.com/songbird/feathersmanager;1";
@@ -186,8 +184,7 @@ function AddonMetadataReader() {
        "feathers",
        "skin",
        "layout",
-       "layoutURL" ] );
-
+       "layoutURL" ] );   
 }
 AddonMetadataReader.prototype = {
 
@@ -566,10 +563,6 @@ FeathersManager.prototype = {
   _init: function init() {
     debug("FeathersManager: _init\n");
     // Hmm, don't care?
-    
-    // TODO: move outside of FM?
-    var metadataReader = new AddonMetadataReader();
-    metadataReader.loadFeathers();
   },
   
   _deinit: function deinit() {
@@ -809,6 +802,34 @@ FeathersManager.prototype = {
 
 
 
+/**
+ * nsIObserver that launches the AddonMetadataReader
+ * on the "profile-after-change" event
+ */
+var feathersMetadataLoader = {
+  // watch for XRE startup and shutdown messages 
+  observe: function(subject, topic, data) {
+    var os      = Components.classes["@mozilla.org/observer-service;1"]
+                      .getService(Components.interfaces.nsIObserverService);
+    switch (topic) {
+    case "profile-after-change":
+      // Preferences are initialized, ready to read metadata
+      var metadataReader = new AddonMetadataReader();
+      metadataReader.loadFeathers();
+      os.removeObserver(this, "profile-after-change");
+      break;
+    }
+  },
+
+  QueryInterface: function(iid) {
+    if (!iid.equals(Components.interfaces.nsIObserver) && 
+        !iid.equals(Components.interfaces.nsISupports))
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    return this;
+  }  
+}
+
+
 
 /**
  * ----------------------------------------------------------------------------
@@ -818,15 +839,13 @@ FeathersManager.prototype = {
 var gModule = {
   registerSelf: function(componentManager, fileSpec, location, type) {
     componentManager = componentManager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-    for (var key in this._objects) {
-      var obj = this._objects[key];
-      componentManager.registerFactoryLocation(obj.CID, obj.className, obj.contractID,
+
+    componentManager.registerFactoryLocation(CID, CLASSNAME, CONTRACTID,
                                                fileSpec, location, type);
-    }
     var categoryManager = Components.classes["@mozilla.org/categorymanager;1"]
                                     .getService(Components.interfaces.nsICategoryManager);
-    categoryManager.addCategoryEntry("app-startup", this._objects.feathersmanager.className,
-                                    "service," + this._objects.feathersmanager.contractID, 
+    categoryManager.addCategoryEntry("app-startup", CLASSNAME,
+                                    "service," + CONTRACTID, 
                                     true, true, null);
   },
 
@@ -834,30 +853,28 @@ var gModule = {
     if (!iid.equals(Components.interfaces.nsIFactory))
       throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
 
-    for (var key in this._objects) {
-      if (cid.equals(this._objects[key].CID))
-        return this._objects[key].factory;
+    if (cid.equals(CID)) {
+       return { 
+          createInstance: function(outer, iid) {
+            if (outer != null)
+              throw Components.results.NS_ERROR_NO_AGGREGATION;
+              
+            // Make the feathers manager  
+            var feathersManager = (new FeathersManager()).QueryInterface(iid);
+            
+            // Hook up the observer service to populate the feathers manager
+            // after the profile loads
+            var os      = Components.classes["@mozilla.org/observer-service;1"]
+                                .getService(Components.interfaces.nsIObserverService);
+            // We should wait until the profile has been loaded to start
+            os.addObserver(feathersMetadataLoader, "profile-after-change", false);  
+            
+            return feathersManager;
+          }
+       };
     }
     
     throw Components.results.NS_ERROR_NO_INTERFACE;
-  },
-
-  _makeFactory: #1= function(ctor) {
-    function ci(outer, iid) {
-      if (outer != null)
-        throw Components.results.NS_ERROR_NO_AGGREGATION;
-      return (new ctor()).QueryInterface(iid);
-    } 
-    return { createInstance: ci };
-  },
-  
-  _objects: {
-    // The FeathersManager Component
-    feathersmanager:     { CID        : CID,
-                           contractID : CONTRACTID,
-                           className  : CLASSNAME,
-                           factory    : #1#(FeathersManager)
-                         },
   },
 
   canUnload: function(componentManager) { 
