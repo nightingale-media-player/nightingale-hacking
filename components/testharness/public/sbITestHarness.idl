@@ -57,6 +57,13 @@ interface sbITestHarness : nsISupports
    */
   PRInt32 run();
 
+  /**
+   * \brief Called by the test harness code when a test fails.
+   * 
+   * This allows all tests to run and the the testharness to return failure
+   *   when complete.
+   */
+  void logFailure( in AString aComponentName );
 };
 
 

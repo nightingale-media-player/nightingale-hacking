@@ -52,6 +52,9 @@ sbTestHarness.prototype = {
   // list of directories to scan for test files
   mTestComponents : null,
 
+  // list of all tests that failed
+  mFailedTests: null,
+
   // toplevel default files to always attempt to load
   mHeadSongbird : null,
   mTailSongbird : null,
@@ -196,6 +199,13 @@ sbTestHarness.prototype = {
       }
     }
 
+    if ( this.mFailedTests ) {
+      log("[Test Harness] *** The following tests failed:\n");
+      for ( var index = 0; index < this.mFailedTests.length ; index++ )
+        log("[Test Harness] - " + this.mFailedTests[index] + "\n");
+      throw Cr.NS_ERROR_FAILURE;
+    }
+
     consoleService.unregisterListener(consoleListener);
 
   },
@@ -214,6 +224,12 @@ sbTestHarness.prototype = {
         this.mTestComponents.push(entry.leafName);
       }
     }
+  },
+
+  logFailure: function (aComponentName) {
+    if (! this.mFailedTests)
+      this.mFailedTests = new Array();
+    this.mFailedTests.push(aComponentName);
   },
 
   QueryInterface : function(iid) {
