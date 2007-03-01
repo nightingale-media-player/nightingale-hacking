@@ -30,13 +30,12 @@
  * \sa sbIMediaList.idl
  */
 
-#include "sbILibraryResource.idl"
+#include "sbIMediaItem.idl"
 
 interface nsISimpleEnumerator;
 interface nsITreeView;
 interface nsIPropertyBag;
 interface sbILibrary;
-interface sbIMediaItem;
 interface sbIMediaListListener;
 
 /**
@@ -47,18 +46,13 @@ interface sbIMediaListListener;
 *
 * \sa List of "see also" interfaces
 */
-[scriptable, uuid(9e9684b0-9580-4370-98d4-1d123c65c8aa)]
-interface sbIMediaList : sbILibraryResource
+[scriptable, uuid(3cb74885-8dd7-4261-a300-740da293e339)]
+interface sbIMediaList : sbIMediaItem
 {
   /**
    * \brief The name of the media list
    */
   attribute AString name;
-
-  /**
-   * \brief Library where this media list is stored
-   */
-  readonly attribute sbILibrary library;
 
   /**
    * \brief Contents of the list as a nsISimpleEnumerator of sbIMediaItem
@@ -193,12 +187,4 @@ interface sbIMediaList : sbILibraryResource
    * \param aListener The listener to remove
    */
   void removeListner(in sbIMediaListListener aListener);
-
-  /**
-   * \brief Get a string representation of this media list.  This can be
-   * useful for debugging
-   * \return A string representation of the media list.
-   */
-  AString toString();
 };
-
