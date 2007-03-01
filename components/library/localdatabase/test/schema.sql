@@ -24,7 +24,7 @@ create table media_items (
 create table media_list_types (
   media_list_type_id integer primary key autoincrement, /* implicit index creation */
   name text unique not null, /* implicit index creation */
-  cid text not null
+  contractid text not null
 );
 
 create table properties (
