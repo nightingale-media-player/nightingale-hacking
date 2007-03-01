@@ -80,6 +80,10 @@ CONFIGURE_ARGS += --enable-debug
 ifdef SB_ENABLE_JARS
 CONFIGURE_ARGS += --enable-jars
 endif
+# turn off tests if you really want
+ifndef SB_DISABLE_TESTS
+CONFIGURE_ARGS += --enable-tests
+endif
 endif  # ifdef DEBUG
 
 # release build options
@@ -87,6 +91,10 @@ ifndef DEBUG
 # release builds have jars by default, unless SB_DISABLE_JARS is set
 ifdef SB_DISABLE_JARS 
 CONFIGURE_ARGS += --disable-jars
+endif
+# release builds don't have tests by default
+ifdef SB_ENABLE_TESTS
+CONFIGURE_ARGS += --enable-tests
 endif
 endif #ifndef DEBUG
 

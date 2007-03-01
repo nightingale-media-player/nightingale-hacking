@@ -36,7 +36,7 @@ SUBDIRS = public \
 SUBDIRDEPS = src : public
 
 # XXX make me a configure option
-ifdef DEBUG
+ifdef SB_ENABLE_TESTS
 SUBDIRS += tests
 SUBDIRDEPS2 = tests : src
 endif

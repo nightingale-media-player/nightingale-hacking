@@ -99,6 +99,17 @@ fi
 AC_SUBST(SONGBIRD_OFFICIAL)
 
 #
+#  Check for --enable-tests
+#
+
+AC_ARG_ENABLE(tests,
+              [  --enable-tests      whether or not to build tests (defaults: debug:enabled rel:disabled)])
+if test "$enable_tests" == "yes"; then
+  SB_ENABLE_TESTS=1
+fi
+AC_SUBST(SB_ENABLE_TESTS)
+
+#
 # Check for --enable-update-channel
 #
 

@@ -39,22 +39,21 @@ SUBDIRS = addonmetadata \
           faceplateregistration \
           feathers \
           integration \
+          library \
           mediacore \
           medialibrary \
           metrics \
           playlistplayback \
           playlistsource \
+          property \
+          servicepane \
           servicesource \
           state \
           sqlbuilder \
-          property \
-          library \
-		  servicepane \
           $(NULL)
 
 # XXX make me a configure option
-ifdef DEBUG
-CREATEDIRS += $(SONGBIRD_TESTSDIR)
+ifdef SB_ENABLE_TESTS
 SUBDIRS += testharness
 endif
 
@@ -64,5 +63,7 @@ SUBDIRDEPS3 = playlistsource : medialibrary
 SUBDIRDEPS4 = servicesource : medialibrary
 SUBDIRDEPS5 = devicesobsolete : medialibrary
 SUBDIRDEPS6 = integration : devicesobsolete
+SUBDIRDEPS7 = library : sqlbuilder
+SUBDIRDEPS7 = library : property
 
 include $(topsrcdir)/build/rules.mk
