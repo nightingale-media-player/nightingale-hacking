@@ -201,8 +201,18 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    rv = mBuilder->AddColumn(SORT_ALIAS, OBJSORTABLE_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (IsTopLevelProperty(mPrimarySortProperty)) {
+      nsAutoString columnName;
+      rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, columnName);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = mBuilder->AddColumn(SORT_ALIAS, OBJSORTABLE_COLUMN);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
@@ -274,23 +284,61 @@ sbLocalDatabaseQuery::AddFilters()
 
     if (fs.isSearch) {
 
+      nsAutoString searchTerm;
+      searchTerm.AppendLiteral("%");
+      searchTerm.Append(fs.values[0]);
+      searchTerm.AppendLiteral("%");
+
       // XXX: Lets not support search on top level properties
       if (isTopLevelProperty) {
         return NS_ERROR_INVALID_ARG;
       }
 
-      rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                             PROPERTIES_TABLE,
-                             tableAlias,
-                             GUID_COLUMN,
-                             MEDIAITEMS_ALIAS,
-                             GUID_COLUMN);
-      NS_ENSURE_SUCCESS(rv, rv);
+      /*
+       * If no property is specified, we need to search all properties.  Use
+       * a subquery here to prevent duplicates
+       */
+      if (fs.property.IsEmpty()) {
+        nsCOMPtr<sbISQLSelectBuilder> builder =
+          do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID);
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      // If a property is specified, add it here.  If this is empty, no
-      // property contraint is added for this join which makes it search all
-      // properties
-      if(!fs.property.IsEmpty()) {
+        rv = builder->AddColumn(EmptyString(), GUID_COLUMN);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->SetDistinct(PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->SetBaseTableName(PROPERTIES_TABLE);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = builder->CreateMatchCriterionString(EmptyString(),
+                                                 OBJSORTABLE_COLUMN,
+                                                 sbISQLSelectBuilder::MATCH_LIKE,
+                                                 searchTerm,
+                                                 getter_AddRefs(criterion));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = builder->AddCriterion(criterion);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
+        rv = mBuilder->CreateMatchCriterionIn(MEDIAITEMS_ALIAS,
+                                              GUID_COLUMN,
+                                              getter_AddRefs(inCriterion));
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = inCriterion->AddSubquery(builder);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = mBuilder->AddCriterion(inCriterion);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+      }
+      else {
+        rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                               PROPERTIES_TABLE,
+                               tableAlias,
+                               GUID_COLUMN,
+                               MEDIAITEMS_ALIAS,
+                               GUID_COLUMN);
+        NS_ENSURE_SUCCESS(rv, rv);
+
         rv = mBuilder->CreateMatchCriterionLong(tableAlias,
                                                 NS_LITERAL_STRING("property_id"),
                                                 sbISQLSelectBuilder::MATCH_EQUALS,
@@ -300,23 +348,19 @@ sbLocalDatabaseQuery::AddFilters()
 
         rv = mBuilder->AddCriterion(criterion);
         NS_ENSURE_SUCCESS(rv, rv);
+
+        // Add the search term
+        rv = mBuilder->CreateMatchCriterionString(tableAlias,
+                                                  OBJSORTABLE_COLUMN,
+                                                  sbISQLSelectBuilder::MATCH_LIKE,
+                                                  searchTerm,
+                                                  getter_AddRefs(criterion));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mBuilder->AddCriterion(criterion);
+        NS_ENSURE_SUCCESS(rv, rv);
       }
 
-      // Add the search term
-      nsAutoString searchTerm;
-      searchTerm.AppendLiteral("%");
-      searchTerm.Append(fs.values[0]);
-      searchTerm.AppendLiteral("%");
-
-      rv = mBuilder->CreateMatchCriterionString(tableAlias,
-                                                OBJSORTABLE_COLUMN,
-                                                sbISQLSelectBuilder::MATCH_LIKE,
-                                                searchTerm,
-                                                getter_AddRefs(criterion));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mBuilder->AddCriterion(criterion);
-      NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
       /*
