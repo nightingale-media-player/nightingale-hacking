@@ -1356,47 +1356,50 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
 
   /*
    * Figure out the offset into the result set we should use to copy the query
-   * results into the cache.  If this is the only sort being done for a window
-   * (indicated when aIsOnly is true), we have no reference point to determine
-   * the offset, so we must query for it.  Note that being the first sort
-   * overrides the fact that it is the only sort since you have a reference
-   * if you are the first.
+   * results into the cache.  If the range we are sorting is equal to the
+   * length of the entire array, we know we don't need an offset.
    */
   PRUint32 offset = 0;
-  if (aIsOnly && !aIsFirst) {
-    /*
-     * If we are resorting a null range, we can use the cached non null length
-     * to calculate the offset
+  if(rangeLength != mLength) {
+    /* If this is the only sort being done for a window (indicated when aIsOnly
+     * is true), we have no reference point to determine the offset, so we must
+     * query for it.
      */
-    if (aIsNull) {
-      if (mNullsFirst) {
-        offset = 0;
+    if (aIsOnly) {
+      /*
+       * If we are resorting a null range, we can use the cached non null length
+       * to calculate the offset
+       */
+      if (aIsNull) {
+        if (mNullsFirst) {
+          offset = 0;
+        }
+        else {
+          offset = aStartIndex - mNonNullLength;
+        }
       }
       else {
-        offset = aStartIndex - mNonNullLength;
-      }
-    }
-    else {
-      PRUint32 position;
-      rv = GetPrimarySortKeyPosition(aKey, &position);
-      NS_ENSURE_SUCCESS(rv, rv);
+        PRUint32 position;
+        rv = GetPrimarySortKeyPosition(aKey, &position);
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      offset = aStartIndex - position;
-    }
-  }
-  else {
-    /*
-     * If this range is at the top of the window, set the offset such that
-     * we will copy the tail end of the result set
-     */
-    if (aIsFirst) {
-      offset = rowCount - rangeLength;
+        offset = aStartIndex - position;
+      }
     }
     else {
       /*
-       * Otherwise just copy the entire result set into the cache
+       * If this range is at the top of the window, set the offset such that
+       * we will copy the tail end of the result set
        */
-      offset = 0;
+      if (aIsFirst) {
+        offset = rowCount - rangeLength;
+      }
+      else {
+        /*
+         * Otherwise just copy the entire result set into the cache
+         */
+        offset = 0;
+      }
     }
   }
 
