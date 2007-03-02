@@ -203,7 +203,7 @@ sbTestHarness.prototype = {
       log("[Test Harness] *** The following tests failed:\n");
       for ( var index = 0; index < this.mFailedTests.length ; index++ )
         log("[Test Harness] - " + this.mFailedTests[index] + "\n");
-      throw Cr.NS_ERROR_FAILURE;
+      throw Cr.NS_ERROR_ABORT;
     }
 
     consoleService.unregisterListener(consoleListener);

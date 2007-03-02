@@ -130,7 +130,7 @@ sbCommandLineHandler.prototype = {
       cmdLine.preventDefault = true;
       var testHarness = Cc["@songbirdnest.com/Songbird/TestHarness;1"].getService(Ci.sbITestHarness);
       testHarness.init(tests);
-      testHarness.run();
+      return testHarness.run();
     }
 
     // XXX bug 2186
