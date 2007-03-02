@@ -689,10 +689,10 @@ CServicesource::GetTargets(nsIRDFResource *source,
         {
           sbIDatabaseResult *resultset;
           m_PlaylistsQuery->GetResultObject( &resultset );
-          PRInt32 num_rows;
+          PRUint32 num_rows;
           resultset->GetRowCount( &num_rows );
 
-          for( PRInt32 j = 0; j < num_rows; j++ )
+          for( PRUint32 j = 0; j < num_rows; j++ )
           {
             // Create a new resource for this item
             nsIRDFResource *next_resource;
@@ -755,10 +755,10 @@ CServicesource::GetTargets(nsIRDFResource *source,
 
       sbIDatabaseResult *resultset;
       m_PlaylistsQuery->GetResultObject( &resultset );
-      PRInt32 num_rows;
+      PRUint32 num_rows;
       resultset->GetRowCount( &num_rows );
 
-      for( PRInt32 j = 0; j < num_rows; j++ )
+      for( PRUint32 j = 0; j < num_rows; j++ )
       {
         // Create a new resource for this item
         nsIRDFResource *next_resource;

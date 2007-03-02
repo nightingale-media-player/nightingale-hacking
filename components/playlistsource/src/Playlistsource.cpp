@@ -555,7 +555,12 @@ sbPlaylistsource::GetRefRowCount(const nsAString &aRefName,
   rv = GetQueryResult(aRefName, getter_AddRefs(resultset));
 
   if (NS_SUCCEEDED(rv) && resultset)
-    resultset->GetRowCount(_retval);
+  {
+    PRUint32 rowCount = 0;
+    resultset->GetRowCount(&rowCount);
+
+    *_retval = (PRInt32) rowCount;
+  }
 
   LOG(("   count: %d", *_retval));
   return NS_OK;
@@ -640,7 +645,11 @@ sbPlaylistsource::GetRefColumnCount(const nsAString &aRefName,
   rv = GetQueryResult(aRefName, getter_AddRefs(resultset));
 
   if (NS_SUCCEEDED(rv) && resultset)
-    resultset->GetColumnCount(_retval);
+  {
+    PRUint32 columnCount = 0;
+    resultset->GetColumnCount(&columnCount);
+    *_retval = (PRInt32) columnCount;
+  }
 
   LOG(("   count: %d", *_retval));
   return NS_OK;
@@ -763,7 +772,7 @@ sbPlaylistsource::GetRefRowByColumnValue(const nsAString &aRefName,
 
   // (sigh) Now linear search the info results object for the matching id value
   // to get the result index
-  PRInt32 i = 0, rowcount = 0;
+  PRUint32 i = 0, rowcount = 0;
 
   if(info->m_Resultset) {
     rv = info->m_Resultset->GetRowCount(&rowcount);
@@ -809,7 +818,7 @@ sbPlaylistsource::GetRefRowsByColumnValues(const nsAString &aRefName,
   nsresult rv;
 
   // get the total number of rows in the result set
-  PRInt32 i, rowcount, colindex;
+  PRUint32 i, rowcount, colindex;
   rv = info->m_Resultset->GetRowCount(&rowcount);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -876,7 +885,7 @@ sbPlaylistsource::GetRefColumnValuesByRows(const nsAString &aRefName,
   nsresult rv;
 
   // get the total number of rows in the result set
-  PRInt32 rowcount, colindex;
+  PRUint32 rowcount, colindex;
   rv = info->m_Resultset->GetRowCount(&rowcount);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -931,7 +940,7 @@ sbPlaylistsource::GetRefColumnValueByRow(const nsAString &aRefName,
   nsresult rv;
 
   // get the total number of rows in the result set
-  PRInt32 rowcount;
+  PRUint32 rowcount;
   rv = info->m_Resultset->GetRowCount(&rowcount);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1041,7 +1050,7 @@ sbPlaylistsource::SetSearchString(const nsAString &aRefName,
   NS_ENSURE_TRUE(info->m_Resultset, NS_ERROR_UNEXPECTED);
 
   // Check for 0 columns
-  PRInt32 col_count = 0;
+  PRUint32 col_count = 0;
   nsresult rv  = info->m_Resultset->GetColumnCount(&col_count);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2252,7 +2261,7 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     colresults = resultset;
 
   // First re/create resources for the columns
-  PRInt32 colcount, j;
+  PRUint32 colcount, j;
   rv = colresults->GetColumnCount(&colcount);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2304,12 +2313,12 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
   // Make the array to hold our response
   nsCOMArray<nsIRDFResource> nextItemArray;
 
-  PRInt32 rowcount;
+  PRUint32 rowcount;
   rv = resultset->GetRowCount(&rowcount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 start = 0;
-  PRInt32 size = (PRInt32)info->m_ResList.size();
+  PRUint32 start = 0;
+  PRUint32 size = info->m_ResList.size();
 
   // One column must be a filter list.  (Well, for all practical purposes)
   if (colcount == 1) {
@@ -2323,11 +2332,11 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
       info->m_Values.resize(rowcount);
 
       // Insert nsnull.
-      for (PRInt32 i = size; i < rowcount; i++) {
+      for (PRUint32 i = size; i < rowcount; i++) {
         info->m_ResList[i] = nsnull;
         info->m_Values[i] = nsnull;
       }
-      size = (PRInt32)info->m_ResList.size();
+      size = info->m_ResList.size();
     }
 
     // Grab the first item (or create it if it doesn't yet exist)
@@ -2359,7 +2368,7 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     info->m_Values.resize(rowcount);
 
     // Insert nsnull (so we know later if we're recycling).
-    for (PRInt32 i = size; i < rowcount; i++) {
+    for (PRUint32 i = size; i < rowcount; i++) {
       info->m_ResList[i] = nsnull;
       info->m_Values[i] = nsnull;
     }
@@ -2368,7 +2377,7 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
   // Store the new row resources in the array 
   // (and a map for quick lookup to the row PRInt32 -- STOOOOPID)
 
-  for (PRInt32 i = start; i < rowcount; i++) {
+  for (PRUint32 i = start; i < rowcount; i++) {
     // Only create items if there is a value. Safe because our schema does not
     // allow this to be null for a real playlist.
     PRUnichar* ck;
@@ -2772,7 +2781,7 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Walk through the ResList to put the lookahead values into the rows
-  PRInt32 rows;
+  PRUint32 rows;
   rv = result->GetRowCount(&rows);
   NS_ENSURE_SUCCESS(rv, rv);
 

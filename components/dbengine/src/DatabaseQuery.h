@@ -85,6 +85,7 @@ struct CQueryParameter
 typedef nsTArray<CQueryParameter> bindParameterArray_t;
 
 class CDatabaseEngine;
+class nsIURI;
 
 class CDatabaseQuery : public sbIDatabaseQuery
 {
@@ -105,6 +106,9 @@ protected:
   CDatabaseResult* GetResultObject();
   bindParameterArray_t* GetQueryParameters(PRInt32 aQueryIndex);
 
+  PRLock *m_pLocationURILock;
+  nsCOMPtr<nsIURI> m_LocationURI;
+
   PRBool m_IsPersistentQueryRegistered;
   PRBool m_HasChangedDataOfPersistQuery;
 
@@ -117,7 +121,7 @@ protected:
   PRBool m_AsyncQuery;
   PRBool m_PersistentQuery;
 
-  PRInt32 m_CurrentQuery;
+  PRUint32 m_CurrentQuery;
   PRInt32 m_LastError;
 
   PRLock* m_pQueryResultLock;

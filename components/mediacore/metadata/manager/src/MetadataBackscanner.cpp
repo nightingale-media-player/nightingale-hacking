@@ -431,8 +431,8 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
       //Go through each item, try and read metadata. If at any time we are requested to stop,
       //initiate the stop request and return to wait state.
 
-      PRInt32 currentRow = 0;
-      PRInt32 resultRows = 0;
+      PRUint32 currentRow = 0;
+      PRUint32 resultRows = 0;
       rv = pBackscanner->m_pResultToScan->GetRowCount(&resultRows);
 
       if(resultRows)
@@ -483,7 +483,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
             nsAutoString strKey;
             nsAutoString strValue;
 
-            PRInt32 queryCount = 0;
+            PRUint32 queryCount = 0;
             PRInt32 curValue = 0;
 
             PRBool mustAttachDatabase = PR_FALSE;
@@ -653,7 +653,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   sbMetadataBackscanner *p = NS_REINTERPRET_CAST(sbMetadataBackscanner *, aClosure);
 
   PRBool isQueryRunning = PR_FALSE;
-  PRInt32 queryCount = 0;
+  PRUint32 queryCount = 0;
   p->m_pIntervalQuery->IsExecuting(&isQueryRunning);
   p->m_pIntervalQuery->GetQueryCount(&queryCount);
 
@@ -685,7 +685,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
     nsresult rv = p->m_pIntervalQuery->GetResultObject(getter_AddRefs(p->m_pIntervalResult));
     if(NS_SUCCEEDED(rv))
     {
-      PRInt32 rowCount = 0;
+      PRUint32 rowCount = 0;
       
       p->m_workerHasResultSet = PR_TRUE;
       p->m_pIntervalResult->GetRowCount(&rowCount);
@@ -758,7 +758,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   p->m_pWorkerQuery->IsExecuting(&queryRunning);
   if(queryRunning) return;
   
-  PRInt32 rowCount = 0;
+  PRUint32 rowCount = 0;
   p->m_pIntervalResult->GetRowCount(&rowCount);
 
   if(p->m_workerCurrentRow < rowCount)

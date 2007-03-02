@@ -44,6 +44,7 @@ CPP_SRCS = DatabaseEngineComponent.cpp \
 CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \

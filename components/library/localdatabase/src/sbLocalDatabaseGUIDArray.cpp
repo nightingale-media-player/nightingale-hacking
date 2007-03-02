@@ -449,7 +449,7 @@ sbLocalDatabaseGUIDArray::RunLengthQuery(const nsAString& aSql,
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 rowCount;
+  PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1191,7 +1191,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 rowCount;
+  PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1213,10 +1213,10 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   }
 
   nsAutoString lastSortedValue;
-  PRInt32 firstIndex = 0;
+  PRUint32 firstIndex = 0;
   PRBool isFirstValue = PR_TRUE;
   PRBool isFirstSort = PR_TRUE;
-  for (PRInt32 i = 0; i < rowCount; i++) {
+  for (PRUint32 i = 0; i < rowCount; i++) {
     PRUnichar* guid;
     rv = result->GetRowCellPtr(i, 0, &guid);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1275,7 +1275,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     char* message = PR_smprintf("Did not get the requested number of rows, requested %d got %d", aCount, rowCount);
     NS_WARNING(message);
     PR_smprintf_free(message);
-    for (PRInt32 i = 0; i < aCount - rowCount; i++) {
+    for (PRUint32 i = 0; i < aCount - rowCount; i++) {
       nsString* str = new nsString(NS_LITERAL_STRING("error"));
       NS_ENSURE_TRUE(str, NS_ERROR_OUT_OF_MEMORY);
 
@@ -1340,11 +1340,11 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 rowCount;
+  PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 rangeLength = aEndIndex - aStartIndex + 1;
+  PRUint32 rangeLength = aEndIndex - aStartIndex + 1;
 
   /*
    * Make sure we get at least the number of rows back from the query that
@@ -1404,7 +1404,7 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
    * Copy the rows from the query result into the cache starting at the
    * calculated offset
    */
-  for (PRInt32 i = 0; i < rangeLength; i++) {
+  for (PRUint32 i = 0; i < rangeLength; i++) {
     PRUnichar* guid;
     rv = result->GetRowCellPtr(offset + i, 0, &guid);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1451,7 +1451,7 @@ sbLocalDatabaseGUIDArray::GetPrimarySortKeyPosition(const nsAString& aValue,
     rv = query->GetResultObject(getter_AddRefs(result));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRInt32 rowCount;
+    PRUint32 rowCount;
     rv = result->GetRowCount(&rowCount);
     NS_ENSURE_SUCCESS(rv, rv);
 

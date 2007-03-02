@@ -48,7 +48,7 @@ interface sbIDatabaseResult : nsISupports
    * \return The number of columns in the result. 
    * \sa sbIDatabaseQuery
    */
-  PRInt32 getColumnCount();
+  unsigned long getColumnCount();
 
   /**
    * \brief The name of a particular column.
@@ -57,7 +57,7 @@ interface sbIDatabaseResult : nsISupports
    * \return The name of the column.
    * \sa sbIDatabaseQuery
    */
-  AString getColumnName(in PRInt32 aColumnIndex);
+  AString getColumnName(in unsigned long aColumnIndex);
 
   /**
    * \brief The index of a particular column.
@@ -66,7 +66,7 @@ interface sbIDatabaseResult : nsISupports
    * \return The index of the column.
    * \sa sbIDatabaseQuery
    */
-  PRInt32 getColumnIndex(in AString aColumnIndex);
+  unsigned long getColumnIndex(in AString aColumnName);
 
   /**
    * \brief The number of rows in the result.
@@ -74,7 +74,7 @@ interface sbIDatabaseResult : nsISupports
    * \return The number of rows in the result.
    * \sa sbIDatabaseQuery
    */
-  PRInt32 getRowCount();
+  unsigned long getRowCount();
 
   /**
    * \brief Retrieve the value of a cell at a particular row and column.
@@ -84,7 +84,7 @@ interface sbIDatabaseResult : nsISupports
    * \return The cell value.
    * \sa sbIDatabaseQuery
    */
-  AString getRowCell(in PRInt32 aRowIndex, in PRInt32 aColumnIndex);
+  AString getRowCell(in unsigned long aRowIndex, in unsigned long aColumnIndex);
 
   /**
    * \brief Retrieve the value of a cell at a particular row for a named column.
@@ -94,7 +94,7 @@ interface sbIDatabaseResult : nsISupports
    * \return The cell value.
    * \sa sbIDatabaseQuery
    */
-  AString getRowCellByColumn(in PRInt32 aRowIndex, in AString aColumnName);
+  AString getRowCellByColumn(in unsigned long aRowIndex, in AString aColumnName);
 
   /**
    * \brief [noscript] Get the internal pointer to the column name.
@@ -106,7 +106,7 @@ interface sbIDatabaseResult : nsISupports
    * \return The name of the column.
    * \sa sbIDatabaseQuery
    */
-  [noscript] wstring getColumnNamePtr(in PRInt32 aColumnIndex);
+  [noscript] wstring getColumnNamePtr(in unsigned long aColumnIndex);
 
   /**
    * \brief [noscript] Get the internal pointer to the cell value.
@@ -119,7 +119,7 @@ interface sbIDatabaseResult : nsISupports
    * \return The cell value.
    * \sa sbIDatabaseQuery
    */
-  [noscript] wstring getRowCellPtr(in PRInt32 aRowIndex, in PRInt32 aColumnIndex);
+  [noscript] wstring getRowCellPtr(in unsigned long aRowIndex, in unsigned long aColumnIndex);
 
   /**
    * \brief [noscript] Get the internal pointer to the cell value (by named column).
@@ -132,7 +132,7 @@ interface sbIDatabaseResult : nsISupports
    * \return The cell value.
    * \sa sbIDatabaseQuery
    */
-  [noscript] wstring getRowCellByColumnPtr(in PRInt32 aRowIndex, in AString aColumnName);
+  [noscript] wstring getRowCellByColumnPtr(in unsigned long aRowIndex, in AString aColumnName);
 
   /**
    * \brief [noscript] Free the internally allocated resources of this results object.

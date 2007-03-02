@@ -1062,8 +1062,8 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
     else
     {
       std::vector<nsString> vDBList;
-      PRInt32 nNumDB = 1;
-      PRInt32 nQueryCount = 0;
+      PRUint32 nNumDB = 1;
+      PRUint32 nQueryCount = 0;
       PRBool bFirstRow = PR_TRUE;
 
       //Default return error.
@@ -1073,7 +1073,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
       if(bAllDB)
         nNumDB = pEngine->GetDBGUIDList(vDBList);
 
-      for(PRInt32 i = 0; i < nQueryCount && !pQuery->m_IsAborting; i++)
+      for(PRUint32 i = 0; i < nQueryCount && !pQuery->m_IsAborting; i++)
       {
 
         int retDB = 0;
@@ -1121,7 +1121,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
           }
         }
 
-        for(PRInt32 j = 0; j < nNumDB; j++)
+        for(PRUint32 j = 0; j < nNumDB; j++)
         {
           nsAutoString dbName;
           if(!bAllDB)

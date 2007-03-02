@@ -67,21 +67,21 @@ public:
   NS_DECL_SBIDATABASERESULT
 
   nsresult AddRow(const std::vector<nsString> &vCellValues);
-  nsresult DeleteRow(PRInt32 dbRow);
+  nsresult DeleteRow(PRUint32 dbRow);
 
   nsresult SetColumnNames(const std::vector<nsString> &vColumnNames);
-  nsresult SetColumnName(PRInt32 dbColumn, const nsString &strColumnName);
+  nsresult SetColumnName(PRUint32 dbColumn, const nsString &strColumnName);
 
-  nsresult SetRowCell(PRInt32 dbRow, PRInt32 dbCell, const nsString &strCellValue);
-  nsresult SetRowCells(PRInt32 dbRow, const std::vector<nsString> &vCellValues);
+  nsresult SetRowCell(PRUint32 dbRow, PRUint32 dbCell, const nsString &strCellValue);
+  nsresult SetRowCells(PRUint32 dbRow, const std::vector<nsString> &vCellValues);
 
-  PRInt32 GetColumnIndexFromName(const nsAString &strColumnName);
+  PRUint32 GetColumnIndexFromName(const nsAString &strColumnName);
   void RebuildColumnResolveMap();
 
 protected:
   typedef std::vector<nsString> dbcolumnnames_t;
   typedef std::vector< std::vector<nsString> > dbrowcells_t;
-  typedef std::map<nsString, PRInt32> dbcolumnresolvemap_t;
+  typedef std::map<nsString, PRUint32> dbcolumnresolvemap_t;
   
   dbcolumnnames_t m_ColumnNames;
   PRLock* m_pColumnNamesLock;

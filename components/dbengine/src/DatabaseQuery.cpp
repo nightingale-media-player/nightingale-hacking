@@ -39,6 +39,7 @@
 #include <xpcom/nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <nsAutoLock.h>
+#include <nsNetUtil.h>
 
 #ifdef DEBUG_locks
 #include <nsPrintfCString.h>
@@ -65,6 +66,7 @@ CDatabaseQuery::CDatabaseQuery()
 , m_QueryHasCompleted(PR_FALSE)
 , m_LastBindParameters(nsnull)
 {
+  m_pLocationURILock = PR_NewLock();
   m_pPersistentQueryTableLock = PR_NewLock();
   m_pQueryResultLock = PR_NewLock();
   m_pDatabaseGUIDLock = PR_NewLock();
@@ -74,6 +76,7 @@ CDatabaseQuery::CDatabaseQuery()
   m_pModifiedDataLock = PR_NewLock();
   m_pBindParametersLock = PR_NewLock();
 
+  NS_ASSERTION(m_pLocationURILock, "CDatabaseQuery.m_pLocationURILock failed");
   NS_ASSERTION(m_pPersistentQueryTableLock, "CDatabaseQuery.m_pPersistentQueryTableLock failed");
   NS_ASSERTION(m_pQueryResultLock, "CDatabaseQuery.m_pQueryResultLock failed");
   NS_ASSERTION(m_pDatabaseGUIDLock, "CDatabaseQuery.m_pDatabaseGUIDLock failed");
@@ -114,7 +117,9 @@ CDatabaseQuery::~CDatabaseQuery()
   RemoveAllCallbacks();
 
   NS_IF_RELEASE(m_QueryResult);
-
+  
+  if (m_pLocationURILock)
+    PR_DestroyLock(m_pLocationURILock);
   if (m_pPersistentQueryTableLock)
     PR_DestroyLock(m_pPersistentQueryTableLock);
   if (m_pQueryResultLock)
@@ -134,6 +139,33 @@ CDatabaseQuery::~CDatabaseQuery()
   if (m_pQueryRunningMonitor)
     nsAutoMonitor::DestroyMonitor(m_pQueryRunningMonitor);
 } //dtor
+
+//-----------------------------------------------------------------------------
+/* attribute nsIURI databaseLocation; */
+NS_IMETHODIMP CDatabaseQuery::GetDatabaseLocation(nsIURI * *aDatabaseLocation)
+{
+  //nsAutoLock lock(m_pLocationURILock);
+
+  //nsCAutoString scheme;
+
+  //nsresult rv = m_LocationURI.GetScheme(scheme);
+  //NS_ENSURE_SUCCESS(rv, rv);
+
+  //rv = NS_NewURI(aDatabaseLocation, );
+  //NS_ENSURE_SUCCESS(rv, rv);
+
+  //*aDatabaseLocation = m_LocationURI
+
+  //return rv;
+  
+  return NS_ERROR_NOT_IMPLEMENTED;
+} //GetDatabaseLocation
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP CDatabaseQuery::SetDatabaseLocation(nsIURI * aDatabaseLocation)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+} //SetDatabaseLocation
 
 //-----------------------------------------------------------------------------
 /* void SetAsyncQuery (in PRBool bAsyncQuery); */
@@ -265,7 +297,7 @@ NS_IMETHODIMP CDatabaseQuery::AddQuery(const nsAString &strQuery)
 
 //-----------------------------------------------------------------------------
 /* PRInt32 GetQueryCount (); */
-NS_IMETHODIMP CDatabaseQuery::GetQueryCount(PRInt32 *_retval)
+NS_IMETHODIMP CDatabaseQuery::GetQueryCount(PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   PR_Lock(m_pDatabaseQueryListLock);
@@ -276,7 +308,7 @@ NS_IMETHODIMP CDatabaseQuery::GetQueryCount(PRInt32 *_retval)
 
 //-----------------------------------------------------------------------------
 /* wstring GetQuery (in PRInt32 nIndex); */
-NS_IMETHODIMP CDatabaseQuery::GetQuery(PRInt32 nIndex, nsAString &_retval)
+NS_IMETHODIMP CDatabaseQuery::GetQuery(PRUint32 nIndex, nsAString &_retval)
 {
   NS_ENSURE_ARG_MIN(nIndex, 0);
 
@@ -466,7 +498,7 @@ NS_IMETHODIMP CDatabaseQuery::IsExecuting(PRBool *_retval)
 
 //-----------------------------------------------------------------------------
 /* PRInt32 CurrentQuery (); */
-NS_IMETHODIMP CDatabaseQuery::CurrentQuery(PRInt32 *_retval)
+NS_IMETHODIMP CDatabaseQuery::CurrentQuery(PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = m_CurrentQuery;

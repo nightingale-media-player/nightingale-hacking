@@ -31,6 +31,7 @@
  * \sa sbIDatabaseQuery.idl, DatabaseQuery.h, sbIPlaylist.idl
  */
 #include "nsISupports.idl"
+#include "nsIURI.idl"
 
 interface sbIDatabaseResult;
 
@@ -99,7 +100,7 @@ interface sbIDatabaseQueryCallback : nsISupports
    * \param strQuery The query string that executed
    * \sa sbIDatabaseQuery
    */
-  void onQueryError(in PRInt32 dbError, in AString dbGUID, in AString strQuery);
+  void onQueryError(in long dbError, in AString dbGUID, in AString strQuery);
 
   /**
    * \brief Called for each query that executes
@@ -122,7 +123,7 @@ interface sbIDatabaseQueryCallback : nsISupports
    * \param dbRowTotal The total rows to be filled in the result object
    * \sa sbIDatabaseQuery
    */
-  void onQueryRow(in sbIDatabaseResult dbResultObject, in PRInt32 dbRowResult, in PRInt32 dbRowTotal);
+  void onQueryRow(in sbIDatabaseResult dbResultObject, in unsigned long dbRowResult, in unsigned long dbRowTotal);
 
   /**
    * \brief Called when the query has completed
@@ -172,6 +173,8 @@ interface sbIDatabaseQueryCallback : nsISupports
 [scriptable, uuid(192FE564-1D86-49c8-A31A-5798D62B2525)]
 interface sbIDatabaseQuery : nsISupports
 {
+  attribute nsIURI databaseLocation;
+
   /**
    * \brief Set the query to run asynchronously (ie: execute() does not block)
    *
@@ -200,7 +203,7 @@ interface sbIDatabaseQuery : nsISupports
    *
    * \param bPersistentQuery If true, register as a persistent query (default: false)
    */
-  void setPersistentQuery(in PRBool bPersistentQuery);
+  void setPersistentQuery(in boolean bPersistentQuery);
 
   /**
    * \brief Return whether or not the query should run persistently
@@ -262,14 +265,14 @@ interface sbIDatabaseQuery : nsISupports
    *
    * \return The number of query strings enqueued
    */
-  PRInt32 getQueryCount();
+  unsigned long getQueryCount();
 
   /**
    * \brief Get the query string at the Nth index
    *
    * \param nIndex The index into the queue
    */
-  AString getQuery(in PRInt32 nIndex);
+  AString getQuery(in unsigned long nIndex);
 
   /**
    * \brief Clear out the query and make it all sparkly new
@@ -303,7 +306,7 @@ interface sbIDatabaseQuery : nsISupports
    *
    * \return The error code, or 0 if no error 
    */
-  PRInt32 getLastError();
+  long getLastError();
 
   /**
    * \brief Set the last error on the query
@@ -312,14 +315,14 @@ interface sbIDatabaseQuery : nsISupports
    *
    * \param dbError The error code to insert
    */
-  void setLastError(in PRInt32 dbError);
+  void setLastError(in long dbError);
 
   /**
    * \brief Execute the queries enqueued in the object
    *
    * \return The error value if synchronous, or 0 if async
    */
-  PRInt32 execute();
+  long execute();
 
   /**
    * \brief Wait until the query has finished executing asynchronously
@@ -328,7 +331,7 @@ interface sbIDatabaseQuery : nsISupports
    *
    * \return NS_OK
    */
-  PRInt32 waitForCompletion();
+  long waitForCompletion();
 
   /**
    * \brief Add a sbIDatabaseQueryCallback instance to the query
@@ -349,14 +352,14 @@ interface sbIDatabaseQuery : nsISupports
    *
    * \return true if executing
    */
-  PRBool isExecuting();
+  boolean isExecuting();
 
   /**
    * \brief Return the current index in the queue being indexed
    *
    * \return The current query index 
    */
-  PRInt32 currentQuery();
+  unsigned long currentQuery();
 
   /**
    * \brief Abort a currently executing query
@@ -365,7 +368,7 @@ interface sbIDatabaseQuery : nsISupports
    *
    * \return True, if the query was executing and aborted (false if not executing) 
    */
-  PRBool abort();
+  boolean abort();
 
   /**
    * \brief Binds a UTF8String to the last added query

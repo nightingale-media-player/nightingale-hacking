@@ -549,7 +549,7 @@ sbDeviceBase::GetNextTransferFileEntry(PRInt32 prevIndex,
 
   query->GetResultObject(getter_AddRefs(resultset));
 
-  PRInt32 rowcount = 0;
+  PRUint32 rowcount = 0;
   resultset->GetRowCount( &rowcount );
 
   if ( rowcount )
@@ -610,12 +610,12 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
   PRInt32 sourcePathColumnIndex = -1;
   PRInt32 destinationPathColumnIndex = -1;
   PRUint32 indexColumnIndex = -1;
-  PRInt32 colCount;
+  PRUint32 colCount;
   PRBool transferComplete = PR_TRUE;
 
   // Find the column indexes with the Transfer info
   resultset->GetColumnCount(&colCount);
-  for (PRInt32 colNumber = 0; colNumber < colCount; colNumber ++)
+  for (PRUint32 colNumber = 0; colNumber < colCount; colNumber ++)
   {
     nsAutoString columnName;
     resultset->GetColumnName(colNumber, columnName);
@@ -640,7 +640,7 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
 
     // Now iterate thru the resultset to get the next Transfer
     // information.
-    PRInt32 rowcount;
+    PRUint32 rowcount;
     resultset->GetRowCount( &rowcount );
 
 /*
@@ -745,7 +745,7 @@ sbDeviceBase::UpdateIOProgress(PRUnichar* deviceString,
     query->AddQuery(query_str);
     query->Execute(&ret);
     query->GetResultObject(getter_AddRefs(resultset));
-    PRInt32 numRows = 0;
+    PRUint32 numRows = 0;
     resultset->GetRowCount(&numRows);
     query->ResetQuery();
     if (numRows == 0)
@@ -1020,7 +1020,7 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
 
   // If the transfer table exists then get the number of
   // rows in the existing table.
-  PRInt32 numExistingRows = 0;
+  PRUint32 numExistingRows = 0;
   nsAutoString selectQueryTransferTable;
   selectQueryTransferTable.AssignLiteral("select * from ");
   selectQueryTransferTable += destTable;
@@ -1640,10 +1640,10 @@ sbDeviceBase::ResumeAbortedDownload(const PRUnichar* deviceString)
   query->GetResultObject(getter_AddRefs(resultset));
 
   // Now copy the transfer data
-  PRInt32 rowcount;
+  PRUint32 rowcount;
   resultset->GetRowCount( &rowcount );
 
-  for ( PRInt32 row = 0; row < rowcount; row++ ) {
+  for ( PRUint32 row = 0; row < rowcount; row++ ) {
     nsAutoString progressString;
     resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("progress"), progressString);
     nsresult errorCode;
@@ -1695,10 +1695,10 @@ sbDeviceBase::ResumeAbortedUpload(const PRUnichar* deviceString)
   query->GetResultObject(getter_AddRefs(resultset));
 
   // Now copy the transfer data
-  PRInt32 rowcount;
+  PRUint32 rowcount;
   resultset->GetRowCount( &rowcount );
 
-  for ( PRInt32 row = 0; row < rowcount; row++ )
+  for ( PRUint32 row = 0; row < rowcount; row++ )
   {
     nsAutoString progressString;
     resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("progress"), progressString);

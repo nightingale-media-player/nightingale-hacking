@@ -169,13 +169,13 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
         rv = query->GetResultObject(getter_AddRefs(result));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        PRInt32 rowCount;
+        PRUint32 rowCount;
         rv = result->GetRowCount(&rowCount);
         NS_ENSURE_SUCCESS(rv, rv);
 
         nsAutoString lastGUID;
         nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-        for (PRInt32 row = 0; row < rowCount; row++) {
+        for (PRUint32 row = 0; row < rowCount; row++) {
           PRUnichar* guid;
           rv = result->GetRowCellPtr(row, 0, &guid);
           NS_ENSURE_SUCCESS(rv, rv);
@@ -251,12 +251,12 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
         rv = query->GetResultObject(getter_AddRefs(result));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        PRInt32 rowCount;
+        PRUint32 rowCount;
         rv = result->GetRowCount(&rowCount);
         NS_ENSURE_SUCCESS(rv, rv);
 
         sbILocalDatabaseResourcePropertyBag* bag;
-        for (PRInt32 row = 0; row < rowCount; row++) {
+        for (PRUint32 row = 0; row < rowCount; row++) {
           nsAutoString guid;
           rv = result->GetRowCell(row, 0, guid);
           NS_ENSURE_SUCCESS(rv, rv);
@@ -500,11 +500,11 @@ sbLocalDatabasePropertyCache::LoadProperties()
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 rowCount;
+  PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  for (PRInt32 i = 0; i < rowCount; i++) {
+  for (PRUint32 i = 0; i < rowCount; i++) {
     nsAutoString propertyIDStr;
     rv = result->GetRowCell(i, 0, propertyIDStr);
     NS_ENSURE_SUCCESS(rv, rv);
