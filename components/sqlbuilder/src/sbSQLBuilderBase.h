@@ -78,9 +78,6 @@ protected:
   NS_IMETHOD ToStringInternal(nsAString& _retval) = 0;
   NS_IMETHOD ResetInternal() = 0;
 
-  nsString mBaseTableName;
-  nsString mBaseTableAlias;
-  PRBool mIsDistinct;
   PRInt32 mLimit;
   PRBool mLimitIsParameter;
   PRInt32 mOffset;
@@ -92,7 +89,7 @@ protected:
 
 };
 
-static nsresult
+inline nsresult
 SB_EscapeSQL(nsAString& str)
 {
   nsAutoString dest;

@@ -24,37 +24,47 @@
 //
 */
 
-#ifndef __SBSQLSELECTBUILDER_H__
-#define __SBSQLSELECTBUILDER_H__
+#ifndef __SBSQLINSERTBUILDER_H__
+#define __SBSQLINSERTBUILDER_H__
 
 #include <sbISQLBuilder.h>
 #include "sbSQLBuilderBase.h"
 
 #include <nsStringGlue.h>
-#include <nsTArray.h>
-#include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 
-class sbSQLSelectBuilder : public sbSQLBuilderBase,
-                           public sbISQLSelectBuilder
+class sbSQLInsertBuilder : public sbSQLBuilderBase,
+                           public sbISQLInsertBuilder
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_FORWARD_SBISQLBUILDER(sbSQLBuilderBase::)
-  NS_DECL_SBISQLSELECTBUILDER
+  NS_DECL_SBISQLINSERTBUILDER
 
   NS_IMETHOD ToStringInternal(nsAString& _retval);
   NS_IMETHOD ResetInternal();
 
-  sbSQLSelectBuilder();
 private:
-  nsTArray<sbOrderInfo> mOrders;
+  enum ParameterType {
+    eIsNull,
+    eString,
+    eInteger32,
+    eIsParameter
+  };
 
-  nsString mBaseTableName;
-  nsString mBaseTableAlias;
-  PRBool mIsDistinct;
+  struct sbValueItem
+  {
+    ParameterType type;
+    nsString stringValue;
+    PRInt32 int32Value;
+  };
 
+  nsTArray<sbValueItem> mValueList;
+
+  nsCOMPtr<sbISQLSelectBuilder> mSelect;
+
+  nsString mIntoTableName;
 };
 
-#endif /* __SBSQLSELECTBUILDER_H__ */
+#endif /* __SBSQLINSERTBUILDER_H__ */
 

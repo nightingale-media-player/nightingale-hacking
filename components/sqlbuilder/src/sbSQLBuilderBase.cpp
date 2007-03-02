@@ -34,51 +34,11 @@
 NS_IMPL_ISUPPORTS1(sbSQLBuilderBase, sbISQLBuilder)
 
 sbSQLBuilderBase::sbSQLBuilderBase() :
-  mIsDistinct(PR_FALSE),
   mLimit(-1),
   mLimitIsParameter(PR_FALSE),
   mOffset(-1),
   mOffsetIsParameter(PR_FALSE)
 {
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::GetBaseTableName(nsAString& aBaseTableName)
-{
-  aBaseTableName.Assign(mBaseTableName);
-  return NS_OK;
-}
-NS_IMETHODIMP
-sbSQLBuilderBase::SetBaseTableName(const nsAString& aBaseTableName)
-{
-  mBaseTableName.Assign(aBaseTableName);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::GetBaseTableAlias(nsAString& aBaseTableAlias)
-{
-  aBaseTableAlias.Assign(mBaseTableAlias);
-  return NS_OK;
-}
-NS_IMETHODIMP
-sbSQLBuilderBase::SetBaseTableAlias(const nsAString& aBaseTableAlias)
-{
-  mBaseTableAlias.Assign(aBaseTableAlias);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::GetDistinct(PRBool *aDistinct)
-{
-  *aDistinct = mIsDistinct;
-  return NS_OK;
-}
-NS_IMETHODIMP
-sbSQLBuilderBase::SetDistinct(PRBool aDistinct)
-{
-  mIsDistinct = aDistinct;
-  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -134,33 +94,12 @@ sbSQLBuilderBase::SetOffsetIsParameter(PRBool aOffsetIsParameter)
 }
 
 NS_IMETHODIMP
-sbSQLBuilderBase::AddColumn(const nsAString& aTableName,
-                        const nsAString& aColumnName)
-{
-  sbColumnInfo* ci = mOutputColumns.AppendElement();
-  NS_ENSURE_TRUE(ci, NS_ERROR_OUT_OF_MEMORY);
-
-  ci->tableName  = aTableName;
-  ci->columnName = aColumnName;
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::ClearColumns()
-{
-  mOutputColumns.Clear();
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbSQLBuilderBase::AddJoin(PRUint32 aJoinType,
-                      const nsAString& aJoinedTableName,
-                      const nsAString& aJoinedTableAlias,
-                      const nsAString& aJoinedColumnName,
-                      const nsAString& aJoinToTableName,
-                      const nsAString& aJoinToColumnName)
+                          const nsAString& aJoinedTableName,
+                          const nsAString& aJoinedTableAlias,
+                          const nsAString& aJoinedColumnName,
+                          const nsAString& aJoinToTableName,
+                          const nsAString& aJoinToColumnName)
 {
   sbJoinInfo* ji = mJoins.AppendElement();
   NS_ENSURE_TRUE(ji, NS_ERROR_OUT_OF_MEMORY);
@@ -178,9 +117,9 @@ sbSQLBuilderBase::AddJoin(PRUint32 aJoinType,
 
 NS_IMETHODIMP
 sbSQLBuilderBase::AddJoinWithCriterion(PRUint32 aJoinType,
-                                   const nsAString& aJoinedTableName,
-                                   const nsAString& aJoinedTableAlias,
-                                   sbISQLBuilderCriterion *aCriterion)
+                                       const nsAString& aJoinedTableName,
+                                       const nsAString& aJoinedTableAlias,
+                                       sbISQLBuilderCriterion *aCriterion)
 {
   sbJoinInfo* ji = mJoins.AppendElement();
   NS_ENSURE_TRUE(ji, NS_ERROR_OUT_OF_MEMORY);
@@ -198,7 +137,7 @@ sbSQLBuilderBase::AddJoinWithCriterion(PRUint32 aJoinType,
 
 NS_IMETHODIMP
 sbSQLBuilderBase::AddSubquery(sbISQLSelectBuilder *aSubquery,
-                          const nsAString& aAlias)
+                              const nsAString& aAlias)
 {
   NS_ENSURE_ARG_POINTER(aSubquery);
 
@@ -229,10 +168,10 @@ sbSQLBuilderBase::AddCriterion(sbISQLBuilderCriterion *aCriterion)
 
 NS_IMETHODIMP
 sbSQLBuilderBase::CreateMatchCriterionString(const nsAString& aTableName,
-                                         const nsAString& aSrcColumnName,
-                                         PRUint32 aMatchType,
-                                         const nsAString& aValue,
-                                         sbISQLBuilderCriterion** _retval)
+                                             const nsAString& aSrcColumnName,
+                                             PRUint32 aMatchType,
+                                             const nsAString& aValue,
+                                             sbISQLBuilderCriterion** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -246,10 +185,10 @@ sbSQLBuilderBase::CreateMatchCriterionString(const nsAString& aTableName,
 
 NS_IMETHODIMP
 sbSQLBuilderBase::CreateMatchCriterionLong(const nsAString& aTableName,
-                                       const nsAString& aSrcColumnName,
-                                       PRUint32 aMatchType,
-                                       PRInt32 aValue,
-                                       sbISQLBuilderCriterion **_retval)
+                                           const nsAString& aSrcColumnName,
+                                           PRUint32 aMatchType,
+                                           PRInt32 aValue,
+                                           sbISQLBuilderCriterion **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -263,9 +202,9 @@ sbSQLBuilderBase::CreateMatchCriterionLong(const nsAString& aTableName,
 
 NS_IMETHODIMP
 sbSQLBuilderBase::CreateMatchCriterionNull(const nsAString& aTableName,
-                                       const nsAString& aSrcColumnName,
-                                       PRUint32 aMatchType,
-                                       sbISQLBuilderCriterion **_retval)
+                                           const nsAString& aSrcColumnName,
+                                           PRUint32 aMatchType,
+                                           sbISQLBuilderCriterion **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -279,9 +218,9 @@ sbSQLBuilderBase::CreateMatchCriterionNull(const nsAString& aTableName,
 
 NS_IMETHODIMP
 sbSQLBuilderBase::CreateMatchCriterionParameter(const nsAString& aTableName,
-                                            const nsAString& aSrcColumnName,
-                                            PRUint32 aMatchType,
-                                            sbISQLBuilderCriterion **_retval)
+                                                const nsAString& aSrcColumnName,
+                                                PRUint32 aMatchType,
+                                                sbISQLBuilderCriterion **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -295,11 +234,11 @@ sbSQLBuilderBase::CreateMatchCriterionParameter(const nsAString& aTableName,
 
 NS_IMETHODIMP
 sbSQLBuilderBase::CreateMatchCriterionTable(const nsAString& aLeftTableName,
-                                        const nsAString& aLeftColumnName,
-                                        PRUint32 aMatchType,
-                                        const nsAString& aRightTableName,
-                                        const nsAString& aRightColumnName,
-                                        sbISQLBuilderCriterion **_retval)
+                                            const nsAString& aLeftColumnName,
+                                            PRUint32 aMatchType,
+                                            const nsAString& aRightTableName,
+                                            const nsAString& aRightColumnName,
+                                            sbISQLBuilderCriterion **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -314,8 +253,8 @@ sbSQLBuilderBase::CreateMatchCriterionTable(const nsAString& aLeftTableName,
 
 NS_IMETHODIMP
 sbSQLBuilderBase::CreateMatchCriterionIn(const nsAString& aTableName,
-                                     const nsAString& aSrcColumnName,
-                                     sbISQLBuilderCriterionIn **_retval)
+                                         const nsAString& aSrcColumnName,
+                                         sbISQLBuilderCriterionIn **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -330,8 +269,8 @@ sbSQLBuilderBase::CreateMatchCriterionIn(const nsAString& aTableName,
 
 NS_IMETHODIMP
 sbSQLBuilderBase::CreateAndCriterion(sbISQLBuilderCriterion *aLeft,
-                                 sbISQLBuilderCriterion *aRight,
-                                 sbISQLBuilderCriterion **_retval)
+                                     sbISQLBuilderCriterion *aRight,
+                                     sbISQLBuilderCriterion **_retval)
 {
   NS_ENSURE_ARG_POINTER(aLeft);
   NS_ENSURE_ARG_POINTER(aRight);
@@ -347,8 +286,8 @@ sbSQLBuilderBase::CreateAndCriterion(sbISQLBuilderCriterion *aLeft,
 
 NS_IMETHODIMP
 sbSQLBuilderBase::CreateOrCriterion(sbISQLBuilderCriterion *aLeft,
-                                sbISQLBuilderCriterion *aRight,
-                                sbISQLBuilderCriterion **_retval)
+                                    sbISQLBuilderCriterion *aRight,
+                                    sbISQLBuilderCriterion **_retval)
 {
   NS_ENSURE_ARG_POINTER(aLeft);
   NS_ENSURE_ARG_POINTER(aRight);
@@ -375,8 +314,6 @@ sbSQLBuilderBase::ToString(nsAString& _retval)
   // This allows derived classes to effectivly override the base class'
   // ToString() method and still use NS_FORWARD_SBISQLBUILDER in the header
   // definition
-  ToStringInternal(_retval);
-
-  return NS_OK;
+  return ToStringInternal(_retval);
 }
 

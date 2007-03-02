@@ -27,9 +27,11 @@
 #include "nsIGenericFactory.h"
 #include "sbSQLBuilderBase.h"
 #include "sbSQLSelectBuilder.h"
+#include "sbSQLInsertBuilder.h"
 #include "sbSQLBuilderCID.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLSelectBuilder)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLInsertBuilder)
 
 static const nsModuleComponentInfo components[] =
 {
@@ -38,6 +40,12 @@ static const nsModuleComponentInfo components[] =
     SB_SQLBUILDER_SELECT_CID,
     SB_SQLBUILDER_SELECT_CONTRACTID,
     sbSQLSelectBuilderConstructor
+	},
+	{
+    "SQLBuilder for INSERT statements",
+    SB_SQLBUILDER_INSERT_CID,
+    SB_SQLBUILDER_INSERT_CONTRACTID,
+    sbSQLInsertBuilderConstructor
 	}
 };
 

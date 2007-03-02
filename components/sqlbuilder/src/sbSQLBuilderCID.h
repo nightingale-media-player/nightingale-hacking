@@ -30,3 +30,9 @@
 #define SB_SQLBUILDER_SELECT_CONTRACTID \
   "@songbirdnest.com/Songbird/SQLBuilder/Select;1"
 
+#define SB_SQLBUILDER_INSERT_CID \
+  { 0x8d744125, 0x903b, 0x42bc, \
+  { 0x8b, 0x2f, 0x21, 0xf6, 0xb9, 0x1c, 0x47, 0xe9 } }
+#define SB_SQLBUILDER_INSERT_CONTRACTID \
+  "@songbirdnest.com/Songbird/SQLBuilder/Insert;1"
+

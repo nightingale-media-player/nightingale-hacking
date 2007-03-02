@@ -47,21 +47,6 @@ interface sbISQLSelectBuilder;
 interface sbISQLBuilder : nsISupports
 {
   /**
-   * \brief The query's base table
-   */
-  attribute AString baseTableName;
-
-  /**
-   * \brief The query's base table's alias
-   */
-  attribute AString baseTableAlias;
-
-  /**
-   * \brief Is the query distinct?
-   */
-  attribute boolean distinct;
-
-  /**
    * \brief Value for the limit clause
    */
   attribute long limit;
@@ -80,21 +65,6 @@ interface sbISQLBuilder : nsISupports
    * \brief Is the offset clause a parameter?
    */
   attribute boolean offsetIsParameter;
-
-  /**
-   * \brief Add a column to the output column list
-   * \param aTableName The table name the column belongs to.  To omit the table
-   *        name qualification, use null.
-   * \param aColumnName The name of the column to add to the list
-   */
-  void addColumn(in AString aTableName,
-                 in AString aColumnName);
-
-
-  /**
-   * \brief Clears added columns
-   */
-  void clearColumns();
 
   const unsigned long JOIN_INNER = 0;
   const unsigned long JOIN_LEFT  = 1;
@@ -256,6 +226,35 @@ interface sbISQLBuilder : nsISupports
 interface sbISQLSelectBuilder : sbISQLBuilder
 {
   /**
+   * \brief The query's base table
+   */
+  attribute AString baseTableName;
+
+  /**
+   * \brief The query's base table's alias
+   */
+  attribute AString baseTableAlias;
+
+  /**
+   * \brief Is the query distinct?
+   */
+  attribute boolean distinct;
+
+  /**
+   * \brief Add a column to the output column list
+   * \param aTableName The table name the column belongs to.  To omit the table
+   *        name qualification, use null.
+   * \param aColumnName The name of the column to add to the list
+   */
+  void addColumn(in AString aTableName,
+                 in AString aColumnName);
+
+  /**
+   * \brief Clears added columns
+   */
+  void clearColumns();
+
+  /**
    * \brief Add an order clause to the query
    * \param aTableName Table name the column belongs to
    * \param aColumnName Name of the column to sort
@@ -273,13 +272,19 @@ interface sbISQLSelectBuilder : sbISQLBuilder
 [scriptable, uuid(4674061d-4513-4608-acaa-1d92fbdec424)]
 interface sbISQLInsertBuilder : sbISQLBuilder
 {
-  //void addColumn(in AString aColumn);
+  /**
+   * \brief Add a column to the insert list
+   * \param aColumnName The name of the column to add to the list
+   */
+  void addColumn(in AString aColumnName);
 
   void addValueString(in AString aValue);
 
-  void addValueLong(in AString aValue);
+  void addValueLong(in long aValue);
 
   void addValueNull();
+
+  void addValueParameter();
 
   attribute AString intoTableName;
 

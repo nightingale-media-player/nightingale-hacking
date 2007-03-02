@@ -31,6 +31,71 @@ NS_IMPL_ISUPPORTS_INHERITED1(sbSQLSelectBuilder,
                              sbSQLBuilderBase,
                              sbISQLSelectBuilder)
 
+sbSQLSelectBuilder::sbSQLSelectBuilder() :
+  mIsDistinct(PR_FALSE)
+{
+}
+
+NS_IMETHODIMP
+sbSQLSelectBuilder::GetBaseTableName(nsAString& aBaseTableName)
+{
+  aBaseTableName.Assign(mBaseTableName);
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbSQLSelectBuilder::SetBaseTableName(const nsAString& aBaseTableName)
+{
+  mBaseTableName.Assign(aBaseTableName);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLSelectBuilder::GetBaseTableAlias(nsAString& aBaseTableAlias)
+{
+  aBaseTableAlias.Assign(mBaseTableAlias);
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbSQLSelectBuilder::SetBaseTableAlias(const nsAString& aBaseTableAlias)
+{
+  mBaseTableAlias.Assign(aBaseTableAlias);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLSelectBuilder::GetDistinct(PRBool *aDistinct)
+{
+  *aDistinct = mIsDistinct;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbSQLSelectBuilder::SetDistinct(PRBool aDistinct)
+{
+  mIsDistinct = aDistinct;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLSelectBuilder::AddColumn(const nsAString& aTableName,
+                              const nsAString& aColumnName)
+{
+  sbColumnInfo* ci = mOutputColumns.AppendElement();
+  NS_ENSURE_TRUE(ci, NS_ERROR_OUT_OF_MEMORY);
+
+  ci->tableName  = aTableName;
+  ci->columnName = aColumnName;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLSelectBuilder::ClearColumns()
+{
+  mOutputColumns.Clear();
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbSQLSelectBuilder::AddOrder(const nsAString& aTableName,
                              const nsAString& aColumnName,
