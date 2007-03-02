@@ -65,5 +65,6 @@ SUBDIRDEPS5 = devicesobsolete : medialibrary
 SUBDIRDEPS6 = integration : devicesobsolete
 SUBDIRDEPS7 = library : sqlbuilder
 SUBDIRDEPS8 = library : property
+SUBDIRDEPS9 = integration : devicesobsolete 
 
 include $(topsrcdir)/build/rules.mk
