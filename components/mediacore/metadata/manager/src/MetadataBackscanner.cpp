@@ -53,6 +53,7 @@ extern PRLogModuleInfo* gMetadataLog;
 #endif
 
 #define QUOTE_CHAR '"'
+#define MAX_RETRY_COUNT (33)
 
 // DEFINES ====================================================================
 
@@ -461,10 +462,15 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
 
           if(pBackscanner->m_backscanShouldShutdown) break;
 
+          PRInt32 maxLoop = 0;
           while(completed == PR_FALSE &&
                 !pBackscanner->m_backscanShouldShutdown &&
-                values != 0)
+                values != 0 &&
+                maxLoop < MAX_RETRY_COUNT)
           {
+            //Throttle this operation.
+            PR_Sleep(PR_MillisecondsToInterval(1000));
+
             pHandler->GetCompleted(&completed);
 
             if(pBackscanner->m_backscanShouldShutdown)
@@ -472,7 +478,12 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
               pHandler->Close();
               break;
             }
+
+            maxLoop++;
           }
+
+          if(maxLoop >= MAX_RETRY_COUNT)
+            pHandler->Close();
 
           nsCOMPtr<sbIMetadataValues> pValues;
           if(completed &&
