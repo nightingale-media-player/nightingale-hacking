@@ -24,8 +24,8 @@
 //
 */
 
-#ifndef __SBSQLBUILDER_H__
-#define __SBSQLBUILDER_H__
+#ifndef __SBSQLBUILDERCRITERION_H__
+#define __SBSQLBUILDERCRITERION_H__
 
 #include <sbISQLBuilder.h>
 
@@ -33,79 +33,6 @@
 #include <nsTArray.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
-
-#define QUOTE_CHAR '\''
-
-class sbSQLBuilder : public sbISQLBuilder
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBISQLBUILDER
-
-  sbSQLBuilder();
-protected:
-
-  struct sbColumnInfo
-  {
-    nsString tableName;
-    nsString columnName;
-  };
-
-  struct sbJoinInfo
-  {
-    PRUint32 type;
-    nsString joinedTableName;
-    nsString joinedTableAlias;
-    nsString joinedColumnName;
-    nsString joinToTableName;
-    nsString joinToColumnName;
-    nsCOMPtr<sbISQLBuilderCriterion> criterion;
-  };
-
-  struct sbOrderInfo
-  {
-    nsString tableName;
-    nsString columnName;
-    PRBool ascending;
-  };
-
-  struct sbSubqueryInfo
-  {
-    nsCOMPtr<sbISQLSelectBuilder> subquery;
-    nsString alias;
-  };
-
-  NS_IMETHOD ToStringInternal(nsAString& _retval) = 0;
-  NS_IMETHOD ResetInternal() = 0;
-
-  nsString mBaseTableName;
-  nsString mBaseTableAlias;
-  PRBool mIsDistinct;
-  PRInt32 mLimit;
-  PRBool mLimitIsParameter;
-  PRInt32 mOffset;
-  PRBool mOffsetIsParameter;
-  nsTArray<sbColumnInfo> mOutputColumns;
-  nsTArray<sbJoinInfo> mJoins;
-  nsTArray<sbSubqueryInfo> mSubqueries;
-  nsCOMArray<sbISQLBuilderCriterion> mCritera;
-
-};
-
-class sbSQLSelectBuilder : public sbSQLBuilder,
-                           public sbISQLSelectBuilder
-{
-public:
-  NS_DECL_ISUPPORTS_INHERITED
-  NS_FORWARD_SBISQLBUILDER(sbSQLBuilder::)
-  NS_DECL_SBISQLSELECTBUILDER
-
-  NS_IMETHOD ToStringInternal(nsAString& _retval);
-  NS_IMETHOD ResetInternal();
-
-private:
-  nsTArray<sbOrderInfo> mOrders;
-};
 
 class sbSQLBuilderCriterionBase : public sbISQLBuilderCriterion
 {
@@ -251,29 +178,5 @@ private:
   nsTArray<sbInItem> mInItems;
 };
 
-static nsresult
-SB_EscapeSQL(nsAString& str)
-{
-  nsAutoString dest;
-
-  PRInt32 pos = str.FindChar(QUOTE_CHAR, 0);
-  PRInt32 lastPos = 0;
-  PRBool hasQuote = PR_FALSE;
-  while(pos >= 0) {
-    dest.Append(Substring(str, lastPos, pos - lastPos + 1));
-    dest.Append(QUOTE_CHAR);
-    lastPos = pos + 1;
-    pos = str.FindChar(QUOTE_CHAR, lastPos);
-    hasQuote = PR_TRUE;
-  }
-
-  if (hasQuote) {
-    dest.Append(Substring(str, lastPos, str.Length() - lastPos));
-    str.Assign(dest);
-  }
-
-  return NS_OK;
-}
-
-#endif /* __SBSQLBUILDER_H__ */
+#endif /* __SBSQLBUILDERCRITERION_H__ */
 

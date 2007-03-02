@@ -267,6 +267,26 @@ interface sbISQLSelectBuilder : sbISQLBuilder
 };
 
 /**
+* \interface sbISQLInsertBuilder
+* \brief Interface for building INSERT statements
+*/
+[scriptable, uuid(4674061d-4513-4608-acaa-1d92fbdec424)]
+interface sbISQLInsertBuilder : sbISQLBuilder
+{
+  //void addColumn(in AString aColumn);
+
+  void addValueString(in AString aValue);
+
+  void addValueLong(in AString aValue);
+
+  void addValueNull();
+
+  attribute AString intoTableName;
+
+  attribute sbISQLSelectBuilder select;
+};
+
+/**
 * \interface sbISQLBuilderCriterion
 * \brief Interface for SQL critera.  This interface has no public methods as
 *        it is used only as a return type for the critera creation methods.

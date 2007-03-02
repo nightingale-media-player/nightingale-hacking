@@ -24,22 +24,31 @@
 //
 */
 
-#include "nsIGenericFactory.h"
+#ifndef __SBSQLSELECTBUILDER_H__
+#define __SBSQLSELECTBUILDER_H__
+
+#include <sbISQLBuilder.h>
 #include "sbSQLBuilderBase.h"
-#include "sbSQLSelectBuilder.h"
-#include "sbSQLBuilderCID.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLSelectBuilder)
+#include <nsStringGlue.h>
+#include <nsTArray.h>
+#include <nsCOMArray.h>
+#include <nsCOMPtr.h>
 
-static const nsModuleComponentInfo components[] =
+class sbSQLSelectBuilder : public sbSQLBuilderBase,
+                           public sbISQLSelectBuilder
 {
-	{
-    "SQLBuilder for SELECT statements",
-    SB_SQLBUILDER_SELECT_CID,
-    SB_SQLBUILDER_SELECT_CONTRACTID,
-    sbSQLSelectBuilderConstructor
-	}
+public:
+  NS_DECL_ISUPPORTS_INHERITED
+  NS_FORWARD_SBISQLBUILDER(sbSQLBuilderBase::)
+  NS_DECL_SBISQLSELECTBUILDER
+
+  NS_IMETHOD ToStringInternal(nsAString& _retval);
+  NS_IMETHOD ResetInternal();
+
+private:
+  nsTArray<sbOrderInfo> mOrders;
 };
 
-NS_IMPL_NSGETMODULE("Songbird SQL Statement Builder Module", components)
+#endif /* __SBSQLSELECTBUILDER_H__ */
 

@@ -32,7 +32,9 @@ include $(DEPTH)/build/autodefs.mk
 target_name = sbSQLBuilder
 
 CPP_SRCS = sbSQLBuilderModule.cpp \
-           sbSQLBuilder.cpp \
+           sbSQLBuilderBase.cpp \
+           sbSQLSelectBuilder.cpp \
+           sbSQLBuilderCriterion.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/sqlbuilder/public \
