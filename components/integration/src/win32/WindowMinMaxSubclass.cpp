@@ -48,8 +48,6 @@
 
 #include "sbIDeviceManager.h"
 #include "sbICDDevice.h"
-#include "sbIUSBMassStorageDevice.h"
-
 
 // CLASSES ====================================================================
 //=============================================================================
@@ -326,73 +324,6 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
             PRBool mediaInserted = DBT_DEVICEARRIVAL == wParam;
             rv = cdDevice->OnCDDriveEvent(mediaInserted, &retVal);
           }
-        }
-      }
-
-      // Send an event to the USBDevice, if present.
-      PRBool hasUSBDevice;
-      NS_NAMED_LITERAL_STRING(usbCategory, "Songbird USBMassStorage Device");
-
-      rv = deviceManager->HasDeviceForCategory(usbCategory, &hasUSBDevice);
-      if (NS_SUCCEEDED(rv) && hasUSBDevice)
-      {
-        nsCOMPtr<sbIDeviceBase> baseDevice;
-        rv = deviceManager->GetDeviceByCategory(usbCategory,
-          getter_AddRefs(baseDevice));
-        if (NS_FAILED(rv))
-          break;
-
-        nsCOMPtr<sbIUSBMassStorageDevice> usbDevice =
-          do_QueryInterface(baseDevice, &rv);
-        if (NS_FAILED(rv))
-          break;
- 
-        // Bail if we don't care about the message
-        if (DBT_DEVICEARRIVAL != wParam &&
-            DBT_DEVICEREMOVECOMPLETE != wParam)
-          break;
-
-        nsAutoString strDeviceName, strDeviceGUID;
-        GUID deviceGUID = GUID_NULL;
-        PDEV_BROADCAST_HDR pBroadcastHeader = (PDEV_BROADCAST_HDR) lParam;
-
-        if (pBroadcastHeader->dbch_devicetype == DBT_DEVTYP_VOLUME)
-        {
-          PDEV_BROADCAST_VOLUME pDevBroadcastVolume = 
-            (PDEV_BROADCAST_VOLUME) pBroadcastHeader;
-
-          if(pDevBroadcastVolume->dbcv_devicetype == DBT_DEVTYP_VOLUME)
-          {
-            PRBool retVal = PR_FALSE;
-            wchar_t wszBuf[8] = {0};
-            wsprintf(wszBuf, L"%c:\\",FirstDriveFromMask(pDevBroadcastVolume->dbcv_unitmask));
-            
-            nsDependentString strMountPoint((PRUnichar *)wszBuf);
-            rv = usbDevice->OnUSBDeviceMounted(strMountPoint, &retVal);
-          }
-        }
-
-        if (pBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
-        {
-          PDEV_BROADCAST_DEVICEINTERFACE pDevBroadcastHeader =
-            (PDEV_BROADCAST_DEVICEINTERFACE) pBroadcastHeader;
-
-          strDeviceName.Assign((PRUnichar*)pDevBroadcastHeader->dbcc_name);
-          if (strDeviceName.IsEmpty())
-            break;
-
-          deviceGUID = pDevBroadcastHeader->dbcc_classguid;
-          if (deviceGUID == GUID_NULL)
-            break;
-
-          wchar_t wszGUID[64] = {0};
-          StringFromGUID2(deviceGUID, wszGUID, 63);
-          strDeviceGUID.Assign(wszGUID);
-
-          PRBool retVal;
-          PRBool mediaInserted = DBT_DEVICEARRIVAL == wParam;
-          rv = usbDevice->OnUSBDeviceEvent(mediaInserted, strDeviceName,
-                                           strDeviceGUID, &retVal);
         }
       }
       break;
