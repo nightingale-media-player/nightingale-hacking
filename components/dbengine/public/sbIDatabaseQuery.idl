@@ -31,8 +31,8 @@
  * \sa sbIDatabaseQuery.idl, DatabaseQuery.h, sbIPlaylist.idl
  */
 #include "nsISupports.idl"
-#include "nsIURI.idl"
 
+interface nsIURI;
 interface sbIDatabaseResult;
 
 /**
