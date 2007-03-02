@@ -1358,10 +1358,12 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
    * Figure out the offset into the result set we should use to copy the query
    * results into the cache.  If this is the only sort being done for a window
    * (indicated when aIsOnly is true), we have no reference point to determine
-   * the offset, so we must query for it.
+   * the offset, so we must query for it.  Note that being the first sort
+   * overrides the fact that it is the only sort since you have a reference
+   * if you are the first.
    */
   PRUint32 offset = 0;
-  if (aIsOnly) {
+  if (aIsOnly && !aIsFirst) {
     /*
      * If we are resorting a null range, we can use the cached non null length
      * to calculate the offset
