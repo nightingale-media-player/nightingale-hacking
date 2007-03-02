@@ -300,7 +300,7 @@ sbLocalDatabaseQuery::AddFilters()
        */
       if (fs.property.IsEmpty()) {
         nsCOMPtr<sbISQLSelectBuilder> builder =
-          do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID);
+          do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
         rv = builder->AddColumn(EmptyString(), GUID_COLUMN);
