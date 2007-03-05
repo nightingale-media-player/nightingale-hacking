@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ $# = 0 ]; then
   echo Applies an attachment patch from the Songbird bugzilla

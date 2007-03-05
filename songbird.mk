@@ -29,6 +29,7 @@
 #
 OBJDIRNAME  = compiled
 DISTDIRNAME = dist
+OBJDIR_DEPTH = ..
 
 CWD := $(shell pwd)
 ifeq "$(CWD)" "/"
@@ -124,8 +125,10 @@ RUN_AUTOCONF_CMD = cd $(TOPSRCDIR) && \
 CREATE_OBJ_DIR_CMD = $(MKDIR) -p $(OBJDIR) $(DISTDIR) \
                      $(NULL)
 
+# When calling configure we need to use a relative path so that it will spit
+# out relative paths for our makefiles.
 RUN_CONFIGURE_CMD = cd $(OBJDIR) && \
-                    $(CONFIGURE) $(CONFIGURE_ARGS) \
+                    $(OBJDIR_DEPTH)/configure $(CONFIGURE_ARGS) \
                     $(NULL)
 
 CLEAN_CMD = $(MAKE) -C $(OBJDIR) clean \

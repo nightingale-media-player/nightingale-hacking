@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # bin_files are relative to $objdir/dist/bin/
 bin_files="regxpcom*

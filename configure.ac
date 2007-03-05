@@ -26,7 +26,7 @@
 # Process this file with autoconf to produce a configure script.
 #
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.56)
 AC_INIT(build/rules.mk)
 AC_CONFIG_AUX_DIR(${srcdir}/build/autoconf)
 
@@ -204,7 +204,7 @@ if test -z "$SB_DEPENDENCIES_DIR"; then
   else
     DEPS_SUBDIR=$SB_PLATFORM
   fi
-  SB_DEPENDENCIES_DIR=$srcdir/dependencies/$DEPS_SUBDIR
+  SB_DEPENDENCIES_DIR=dependencies/$DEPS_SUBDIR
 fi
 AC_SUBST(SB_DEPENDENCIES_DIR)
 
@@ -264,8 +264,6 @@ case "$SB_PLATFORM" in
     if test -z "$AR"; then AC_MSG_ERROR(Librarian not found); fi
     AC_CHECK_PROG(RC, rc, rc)
     if test -z "$RC"; then AC_MSG_ERROR(Rc not found); fi
-    AC_CHECK_PROG(MT, mt, mt)
-    if test -z "$MT"; then AC_MSG_ERROR(Mt not found); fi
   ;;
   *)
     AC_CHECK_PROG(LD, ${CC}, ${CC})
@@ -411,26 +409,8 @@ case "$SB_PLATFORM" in
         _CC_SUITE=6
     elif test "$_CC_MAJOR_VERSION" = "13"; then
         _CC_SUITE=7
-    elif test "$_CC_MAJOR_VERSION" = "14"; then
-        _CC_SUITE=8
-        AC_DEFINE(_CRT_SECURE_NO_DEPRECATE)
-        AC_DEFINE(_CRT_NONSTDC_NO_DEPRECATE)
     else
         AC_MSG_ERROR([This version of the MSVC compiler, $CC_VERSION , is unsupported.])
-    fi
-
-    if test "$_CC_SUITE" -ge "8"; then
-            MSMT_TOOL=`${MT} 2>&1|grep 'Microsoft (R) Manifest Tool'`
-            if test -n "MSMT_TOOL"; then
-                    MSMANIFEST_TOOL_VERSION=`echo ${MSMANIFEST_TOOL}|grep -Po "(^|\s)[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?(\s|$)"`
-                    if test -z "MSMANIFEST_TOOL_VERSION"; then
-                            AC_MSG_WARN([Unknown version of the Microsoft (R) Manifest Tool.])
-                    fi
-                    MSMANIFEST_TOOL=1
-                    unset MSMT_TOOL
-            else
-                    AC_MSG_ERROR([Microsoft (R) Manifest Tool must be in your \$PATH.])
-            fi
     fi
 
     # Check linker version
@@ -462,21 +442,21 @@ case "$SB_PLATFORM" in
 
     CFLAGS="$CFLAGS $MSVC_COMPILER_FLAGS -TC"
     CXXFLAGS="$CXXFLAGS $MSVC_COMPILER_FLAGS -TP"
-    CFLAGS_INCLUDE_PREFIX="/I"
+    CFLAGS_INCLUDE_PREFIX="-I"
     CFLAGS_INCLUDE_SUFFIX=""
     LDFLAGS="$LDFLAGS $MSVC_LINKER_FLAGS"
-    LDFLAGS_DLL="/DLL"
+    LDFLAGS_DLL="-DLL"
     LDFLAGS_LIB=""
-    LDFLAGS_OUT_PREFIX="/OUT:\""
+    LDFLAGS_OUT_PREFIX="-OUT:\""
     LDFLAGS_OUT_SUFFIX="\""
-    LDFLAGS_PATH_PREFIX="/LIBPATH:\""
+    LDFLAGS_PATH_PREFIX="-LIBPATH:\""
     LDFLAGS_PATH_SUFFIX="\""
     LDFLAGS_IMPORT_PREFIX=""
     LDFLAGS_IMPORT_SUFFIX="${LIB_SUFFIX}"
     DEFAULT_LIBS="kernel32 user32 gdi32 winmm wsock32 advapi32 comctl32"
     LNFLAGS="-f --symbolic"
-    ARFLAGS="/NOLOGO"
-    ARFLAGS_OUT_PREFIX="/OUT:\""
+    ARFLAGS="-NOLOGO"
+    ARFLAGS_OUT_PREFIX="-OUT:\""
     ARFLAGS_OUT_SUFFIX="\""
     ARFLAGS_PATH_PREFIX=""
     ARFLAGS_PATH_SUFFIX=""
@@ -619,7 +599,7 @@ AC_SUBST(BUILD_ID_FILENAME)
 #
 
 . ${srcdir}/allmakefiles.sh
-echo $MAKEFILES | ${PERL} $SB_DEPENDENCIES_DIR/mozilla/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
+echo $MAKEFILES | ${PERL} $srcdir/$SB_DEPENDENCIES_DIR/mozilla/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
 . ./conftest.sh
 rm -f ./conftest.sh
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 notice() {
   echo $* 1>&2
