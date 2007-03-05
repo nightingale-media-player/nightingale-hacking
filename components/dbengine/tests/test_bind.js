@@ -33,6 +33,32 @@ function runTest () {
   var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
               .createInstance(Ci.sbIDatabaseQuery);
 
+  var ios = Cc["@mozilla.org/network/io-service;1"]
+              .createInstance(Ci.nsIIOService);
+  
+  var dir = Cc["@mozilla.org/file/directory_service;1"]
+              .createInstance(Ci.nsIProperties);
+              
+  var testdir = dir.get("ProfD", Ci.nsIFile);
+  
+  var actualdir = testdir.clone();
+  actualdir.append("db_tests");
+  
+  if(!actualdir.exists())
+  {
+    try {
+      actualdir.create(Ci.nsIFile.DIRECTORY_TYPE, 0700);
+    } catch(e) {
+      //Some failures might be handled later. Some might be ignored.
+      throw e;
+    }
+  }
+  
+  var uri = ios.newFileURI(actualdir);
+  dbq.databaseLocation = uri;
+  
+  assertEqual(dbq.databaseLocation.spec, uri.spec);
+
   dbq.setDatabaseGUID("test_bind");
   dbq.addQuery("drop table bind_test");
   dbq.addQuery("create table bind_test (utf8_column text, " +
@@ -41,7 +67,7 @@ function runTest () {
   dbq.addQuery("insert into bind_test values " +
                "('foo', 'bar', 1234.567, 666, 9876543210)");
   dbq.addQuery("insert into bind_test values " +
-               "('Sigur R√≥s', '√Åg√¶tis Byrjun', -1234.567, -666, -9876543210)");
+               "('Sigur RÛs', '¡gÊtis Byrjun', -1234.567, -666, -9876543210)");
   dbq.execute();
   dbq.waitForCompletion();
   dbq.resetQuery();
@@ -62,7 +88,7 @@ function runTest () {
 
   dbq.resetQuery();
   dbq.addQuery("select * from bind_test where utf8_column = ?");
-  dbq.bindUTF8StringParameter(0, "Sigur R√≥s");
+  dbq.bindUTF8StringParameter(0, "Sigur RÛs");
   execAndAssertCount(dbq, 1);
 
   dbq.resetQuery();
@@ -72,7 +98,7 @@ function runTest () {
 
   dbq.resetQuery();
   dbq.addQuery("select * from bind_test where string_column = ?");
-  dbq.bindStringParameter(0, "√Åg√¶tis Byrjun");
+  dbq.bindStringParameter(0, "¡gÊtis Byrjun");
   execAndAssertCount(dbq, 1);
 
   dbq.resetQuery();

@@ -144,27 +144,70 @@ CDatabaseQuery::~CDatabaseQuery()
 /* attribute nsIURI databaseLocation; */
 NS_IMETHODIMP CDatabaseQuery::GetDatabaseLocation(nsIURI * *aDatabaseLocation)
 {
-  //nsAutoLock lock(m_pLocationURILock);
+  NS_ENSURE_ARG_POINTER(aDatabaseLocation);
 
-  //nsCAutoString scheme;
+  nsresult rv = NS_OK;
+  *aDatabaseLocation = nsnull;
 
-  //nsresult rv = m_LocationURI.GetScheme(scheme);
-  //NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoLock lock(m_pLocationURILock);
+  if(m_LocationURI)
+  {
+    nsCAutoString spec;
 
-  //rv = NS_NewURI(aDatabaseLocation, );
-  //NS_ENSURE_SUCCESS(rv, rv);
+    rv = m_LocationURI->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  //*aDatabaseLocation = m_LocationURI
+    rv = NS_NewURI(aDatabaseLocation, spec);
+  }
 
-  //return rv;
-  
-  return NS_ERROR_NOT_IMPLEMENTED;
+  return rv;
 } //GetDatabaseLocation
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseQuery::SetDatabaseLocation(nsIURI * aDatabaseLocation)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aDatabaseLocation);
+
+  PRBool isFile = PR_FALSE;
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  if(NS_SUCCEEDED(aDatabaseLocation->SchemeIs("file", &isFile)) &&
+     isFile)
+  {
+    nsCAutoString spec;
+    rv = aDatabaseLocation->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIFile> location;
+    rv = NS_GetFileFromURLSpec(spec, getter_AddRefs(location));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool isReadable, isWritable, isDirectory;
+    rv = location->IsDirectory(&isDirectory);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(!isDirectory)
+      return NS_ERROR_INVALID_ARG;
+
+    rv = location->IsReadable(&isReadable);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = location->IsWritable(&isWritable);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(isReadable && isWritable)
+    {
+      nsAutoLock lock(m_pLocationURILock);
+      rv = aDatabaseLocation->Clone(getter_AddRefs(m_LocationURI));
+    }
+  }
+  else
+  {
+    //We only support database files stored locally, for now.
+    rv = NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  return rv;
 } //SetDatabaseLocation
 
 //-----------------------------------------------------------------------------

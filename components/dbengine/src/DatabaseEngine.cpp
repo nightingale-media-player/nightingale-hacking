@@ -43,6 +43,8 @@
 #include <xpcom/nsAppDirectoryServiceDefs.h>
 #include <xpcom/nsDirectoryServiceUtils.h>
 #include <nsUnicharUtils.h>
+#include <nsIURI.h>
+#include <nsNetUtil.h>
 
 #include <nsAutoLock.h>
 
@@ -522,14 +524,14 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
 }
 
 //-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID)
+PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID, CDatabaseQuery *pQuery)
 {
   nsAutoLock lock(m_pDatabasesLock);
 
   sqlite3 *pDB = nsnull;
 
   nsAutoString strFilename;
-  GetDBStorePath(dbGUID, strFilename);
+  GetDBStorePath(dbGUID, pQuery, strFilename);
   
   // Kick sqlite in the pants
   PRInt32 ret = sqlite3_open16(PromiseFlatString(strFilename).get(), &pDB);
@@ -599,16 +601,16 @@ NS_IMETHODIMP CDatabaseEngine::SubmitQuery(CDatabaseQuery * dbQuery, PRInt32 *_r
 }
 
 //-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *dbQuery)
+PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
 {
   PRInt32 ret = 0;
 
-  if(!dbQuery) return 1;
+  if(!pQuery) return 1;
 
   // If the query is already executing, do not add it.  This is to prevent
   // the same query from getting executed simultaneously
   PRBool isExecuting;
-  dbQuery->IsExecuting(&isExecuting);
+  pQuery->IsExecuting(&isExecuting);
   if(isExecuting) {
     return 0;
   }
@@ -616,21 +618,21 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *dbQuery)
   {
     nsAutoMonitor mon(m_pQueryProcessorMonitor);
 
-    dbQuery->AddRef();
-    dbQuery->m_IsExecuting = PR_TRUE;
+    pQuery->AddRef();
+    pQuery->m_IsExecuting = PR_TRUE;
 
-    m_QueryQueue.push_back(dbQuery);
+    m_QueryQueue.push_back(pQuery);
     m_QueryProcessorQueueHasItem = PR_TRUE;
     mon.Notify();
   }
 
   PRBool bAsyncQuery = PR_FALSE;
-  dbQuery->IsAyncQuery(&bAsyncQuery);
+  pQuery->IsAyncQuery(&bAsyncQuery);
 
   if(!bAsyncQuery)
   {
-    dbQuery->WaitForCompletion(&ret);
-    dbQuery->GetLastError(&ret);
+    pQuery->WaitForCompletion(&ret);
+    pQuery->GetLastError(&ret);
   }
 
   return ret;
@@ -870,7 +872,7 @@ nsresult CDatabaseEngine::ClearQueryQueue()
 }
 
 //-----------------------------------------------------------------------------
-sqlite3 *CDatabaseEngine::GetDBByGUID(const nsAString &dbGUID, PRBool bCreateIfNotOpen /*= PR_FALSE*/)
+sqlite3 *CDatabaseEngine::GetDBByGUID(const nsAString &dbGUID, CDatabaseQuery *pQuery, PRBool bCreateIfNotOpen /*= PR_FALSE*/)
 {
   sqlite3 *pRet = nsnull;
 
@@ -878,7 +880,7 @@ sqlite3 *CDatabaseEngine::GetDBByGUID(const nsAString &dbGUID, PRBool bCreateIfN
 
   if(pRet == nsnull)
   {
-    int ret = OpenDB(dbGUID);
+    int ret = OpenDB(dbGUID, pQuery);
     if(ret == SQLITE_OK)
     {
       pRet = FindDBByGUID(dbGUID);
@@ -887,7 +889,6 @@ sqlite3 *CDatabaseEngine::GetDBByGUID(const nsAString &dbGUID, PRBool bCreateIfN
 
   return pRet;
 } //GetDBByGUID
-
 
 //-----------------------------------------------------------------------------
 void CDatabaseEngine::GenerateDBGUIDList()
@@ -1052,7 +1053,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
     }
 
     if(!bAllDB)
-      pDB = pEngine->GetDBByGUID(dbGUID, PR_TRUE);
+      pDB = pEngine->GetDBByGUID(dbGUID, pQuery, PR_TRUE);
 
     if(!pDB && !bAllDB)
     {
@@ -1103,7 +1104,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                                                    (PRUint32)startOffset,
                                                    (PRUint32)(endOffset - startOffset)));
 
-            pSecondDB = pEngine->GetDBByGUID(strSecondDBGUID, PR_TRUE);
+            pSecondDB = pEngine->GetDBByGUID(strSecondDBGUID, pQuery, PR_TRUE);
             if(pSecondDB)
             {
               nsAutoString strDBPath(strSecondDBGUID);
@@ -1112,7 +1113,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
               PRInt32 index = strQuery.Find(strDBPath);
               if(index > -1)
               {
-                pEngine->GetDBStorePath(strSecondDBGUID, strDBPath);
+                pEngine->GetDBStorePath(strSecondDBGUID, pQuery, strDBPath);
                 strQuery.Replace(index, strDBPath.Length(), strDBPath);
               }
 
@@ -1144,7 +1145,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
           else
           {
             dbName.Assign(vDBList[j]);
-            pDB = pEngine->GetDBByGUID(vDBList[j], PR_TRUE);
+            pDB = pEngine->GetDBByGUID(vDBList[j], pQuery, PR_TRUE);
             
             //Just in case there was some kind of bad error while attempting to get the database or create it.
             if ( !pDB ) 
@@ -1599,17 +1600,41 @@ nsresult CDatabaseEngine::CreateDBStorePath()
 }
 
 //-----------------------------------------------------------------------------
-nsresult CDatabaseEngine::GetDBStorePath(const nsAString &dbGUID, nsAString &strPath)
+nsresult CDatabaseEngine::GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery *pQuery, nsAString &strPath)
 {
   nsresult rv = NS_ERROR_FAILURE;
   nsCOMPtr<nsILocalFile> f;
+  nsCOMPtr<nsIURI> uri;
   nsAutoString strDBFile(dbGUID);
 
-  PR_Lock(m_pDBStorePathLock);
-  rv = NS_NewLocalFile(m_DBStorePath, PR_FALSE, getter_AddRefs(f));
-  PR_Unlock(m_pDBStorePathLock);
+  rv = pQuery->GetDatabaseLocation(getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  if(NS_FAILED(rv)) return rv;
+  if(uri)
+  {
+    nsCAutoString spec;
+
+    rv = uri->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIFile> file;
+    rv = NS_GetFileFromURLSpec(spec, getter_AddRefs(file));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString path;
+    rv = file->GetPath(path);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = NS_NewLocalFile(path, PR_FALSE, getter_AddRefs(f));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else
+  {
+    PR_Lock(m_pDBStorePathLock);
+    rv = NS_NewLocalFile(m_DBStorePath, PR_FALSE, getter_AddRefs(f));
+    PR_Unlock(m_pDBStorePathLock);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   strDBFile.AppendLiteral(".db");
   rv = f->Append(strDBFile);

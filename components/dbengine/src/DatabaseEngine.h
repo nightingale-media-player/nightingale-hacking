@@ -92,12 +92,12 @@ protected:
   NS_IMETHOD Init();
   NS_IMETHOD Shutdown();
 
-  PRInt32 OpenDB(const nsAString &dbGUID);
+  PRInt32 OpenDB(const nsAString &dbGUID, CDatabaseQuery *pQuery);
   PRInt32 CloseDB(const nsAString &dbGUID);
 
   PRInt32 DropDB(const nsAString &dbGUID);
 
-  PRInt32 SubmitQueryPrivate(CDatabaseQuery *dbQuery);
+  PRInt32 SubmitQueryPrivate(CDatabaseQuery *pQuery);
 
   void AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const nsACString &strTableName);
   void RemovePersistentQueryPrivate(CDatabaseQuery *pQuery);
@@ -111,7 +111,7 @@ protected:
   nsresult ClearPersistentQueries();
   nsresult ClearQueryQueue();
 
-  sqlite3 *GetDBByGUID(const nsAString &dbGUID, PRBool bCreateIfNotOpen = PR_FALSE);
+  sqlite3 *GetDBByGUID(const nsAString &dbGUID, CDatabaseQuery *pQuery, PRBool bCreateIfNotOpen = PR_FALSE);
   sqlite3 *FindDBByGUID(const nsAString &dbGUID);
 
   void GenerateDBGUIDList();
@@ -134,7 +134,7 @@ private:
   void DoPersistentCallback(CDatabaseQuery *pQuery);
 
   nsresult CreateDBStorePath();
-  nsresult GetDBStorePath(const nsAString &dbGUID, nsAString &strPath);
+  nsresult GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery *pQuery, nsAString &strPath);
 
 private:
   PRLock * m_pDBStorePathLock;
