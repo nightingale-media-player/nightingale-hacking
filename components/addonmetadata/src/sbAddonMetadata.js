@@ -27,8 +27,6 @@
 
 //
 // TODO: 
-//   * Do not load disabled extensions!
-//   * Cache, profile, etc.
 //   * Remove debug dumps
 //
 
@@ -44,12 +42,19 @@ const CID = Components.ID("{a1edd551-0f29-4ce9-aebc-92fbee77f37e}");
 const IID = Components.interfaces.nsIRDFDataSource;
 
 const FILE_INSTALL_MANIFEST = "install.rdf";
+const FILE_EXTENSIONS       = "extensions.rdf";
+const FILE_ADDONMETADATA    = "addon-metadata.rdf";
+
+const PREF_LASTMODIFIED = "songbird.addonmetadata.lastModifiedTime";
+
+const KEY_PROFILEDIR                  = "ProfD";
+
 const RDFURI_INSTALL_MANIFEST_ROOT    = "urn:mozilla:install-manifest";
-const RDFURI_ITEM_ROOT                = "urn:mozilla:item:root"
-const PREFIX_ITEM_URI                 = "urn:mozilla:item:";
+const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root"
+const PREFIX_ADDON_URI                = "urn:songbird:addon:";
 const PREFIX_NS_EM                    = "http://www.mozilla.org/2004/em-rdf#";
 const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
-
+const PREFIX_ITEM_URI                 = "urn:mozilla:item:";
 
 function SONGBIRD_NS(property) {
   return PREFIX_NS_SONGBIRD + property;
@@ -59,10 +64,13 @@ function EM_NS(property) {
   return PREFIX_NS_EM + property;
 }
 
+function ADDON_NS(id) {
+  return PREFIX_ADDON_URI + id;
+}
+
 function ITEM_NS(id) {
   return PREFIX_ITEM_URI + id;
 }
-
 
 
 /**
@@ -71,15 +79,24 @@ function ITEM_NS(id) {
  *        addon install.rdf files.
  */
 function AddonMetadata() {
-  dump("\nAddonMetadata: constructed\n");
+  debug("\nAddonMetadata: constructed\n");
   
   this._RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
                    .getService(Components.interfaces.nsIRDFService);
 
-  
-  this._datasource = Components.classes["@mozilla.org/rdf/datasource;1?name=in-memory-datasource"]
-                               .createInstance(Components.interfaces.nsIRDFDataSource);
-  this._buildDatasource();
+  try {
+
+    // If possible, load the cached datasource from disk. 
+    // Otherwise rebuild it by reading the metadata from all addons
+    if (!this._loadDatasource() || this._isRebuildRequired()) {
+      debug("AddonMetadata: rebuilding addon metadata datasource\n");
+      this._purgeDatasource();
+      this._buildDatasource();
+    }
+    
+  } catch (e) {
+    dump("AddonMetadata: Constructor Error: " + e.toString());
+  }
   
   var os  = Components.classes["@mozilla.org/observer-service;1"]
                       .getService(Components.interfaces.nsIObserverService);
@@ -95,14 +112,124 @@ AddonMetadata.prototype = {
 
   
   /**
+   * Return true if cached addons metadata datasource is no longer valid.
+   * Uses the last modified date on the extension manager's data file to
+   * determine if extensions have changed.
+   */
+  _isRebuildRequired: function _isRebuildRequired() {
+    var emDataFile = this._getProfileFile(FILE_EXTENSIONS);
+    
+    if (!emDataFile.exists()) {      
+      debug("AddonMetadata._isRebuildRequired: " + FILE_EXTENSIONS + " not found\n");
+      return true;
+    }
+
+    var newLastModified = emDataFile.lastModifiedTime.toString();
+
+    // When was the last time we noticed that extensions.rdf had been modified
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                          .getService(Components.interfaces.nsIPrefBranch);
+    var lastModified = 0;
+    try {  
+      lastModified = prefs.getCharPref(PREF_LASTMODIFIED);
+    } catch (e) {}    
+    
+    // If the extensions.rdf hasn't changed, then we don't need to rebuild
+    debug("AddonMetadata._isRebuildRequired: " + lastModified + " == " + newLastModified + "\n");
+    if (lastModified == newLastModified) {
+      return false;
+    }
+        
+    // Store the new last modified time
+    prefs.setCharPref(PREF_LASTMODIFIED, newLastModified);
+
+    debug("AddonMetadata._isRebuildRequired: true\n");
+
+    // Extensions.rdf has changed, so we will need to rebuild the addons datasource.
+    return true;
+  },
+  
+  
+  
+  /**
+   * Attempt to load the data source from disk.  Return false 
+   * if the datasource needs populating. 
+   */
+  _loadDatasource: function _loadDatasource() {
+    debug("\nAddonMetadata: _loadDatasource \n");
+    
+    var file = this._getProfileFile(FILE_ADDONMETADATA);
+    
+    try { 
+      this._datasource = this._getDatasource(file);
+    } catch (e) {
+      // Load did not go ok.  Will need to rebuild
+      return false;
+    }
+    
+    if (!file.exists()) {
+      return false;
+    }
+    
+    return true;
+  },
+  
+
+
+  /**
+   * Clean out the contents of the datasource
+   */
+  _purgeDatasource: function _purgeDatasource() {
+    debug("\nAddonMetadata: _purgeDatasource \n");
+    
+    var file = this._getProfileFile(FILE_ADDONMETADATA);
+    
+    // Make sure the RDF service isn't caching our ds
+    this._RDF.UnregisterDataSource(this._datasource);
+    
+    // Kill the file
+    try { 
+      if (file.exists()) {
+        file.remove(false);
+      }
+    } catch (e) {
+      debug("\nAddonMetadata: _purgeDatasource: Could not remove " 
+            + "addon-metadata.rdf. Bad things may happen.\n");
+    }
+
+    // Reload the datasource.  Since the file no longer exists
+    // this will result in a new empty DS.
+    this._loadDatasource();
+  },
+  
+    
+  
+
+  /**
+   * Given a filename, returns an nsIFile pointing to 
+   * profile/filename
+   */
+  _getProfileFile: function _getProfileFile(filename) {
+    // get profile directory
+    var file = Components.classes["@mozilla.org/file/directory_service;1"]
+                         .getService(Components.interfaces.nsIProperties)
+                         .get("ProfD", Components.interfaces.nsIFile);
+    var localFile = file.QueryInterface(Components.interfaces.nsILocalFile);                         
+    localFile.appendRelativePath(filename)
+    return file;
+  },
+
+
+  
+  /**
    * Populate the datasource with the contents of all 
    * addon install.rdf files.
    */
   _buildDatasource: function _buildDatasource() {
-    dump("\nAddonMetadata: _buildDatasource \n");
+    debug("\nAddonMetadata: _buildDatasource \n");
 
     // Make a container to list all installed extensions
-    var itemRoot = this._RDF.GetResource(RDFURI_ITEM_ROOT);    
+    var itemRoot = this._RDF.GetResource(RDFURI_ADDON_ROOT);    
     var cu = Components.classes["@mozilla.org/rdf/container-utils;1"]
                        .getService(Components.interfaces.nsIRDFContainerUtils);
     var container = cu.MakeSeq(this._datasource, itemRoot);
@@ -115,7 +242,14 @@ AddonMetadata.prototype = {
     for (var i = 0; i < addons.length; i++)
     {
       var id = addons[i].id;
-      dump("\nAddonMetadata:  loading install.rdf for id {" + id +  "}\n");
+            
+      // If the extension is disabled, do not include it in our datasource 
+      if (this._isExtensionDisabled(id))  {
+        debug("\nAddonMetadata:  id {" + id +  "} is disabled.\n");
+        continue;
+      }
+      
+      debug("\nAddonMetadata:  loading install.rdf for id {" + id +  "}\n");
       
       var location = extManager.getInstallLocation(id);
       var installManifestFile = location.getItemFile(id, FILE_INSTALL_MANIFEST);
@@ -126,18 +260,41 @@ AddonMetadata.prototype = {
       }
       
       var manifestDS = this._getDatasource(installManifestFile);
-      var itemNode = this._RDF.GetResource(ITEM_NS(id));
+      var itemNode = this._RDF.GetResource(ADDON_NS(id));
       // Copy the install.rdf metadata into the master datasource
       this._copyManifest(itemNode, manifestDS);
       
       // Add the new install.rdf root to the list of extensions
       container.AppendElement(itemNode);
     }
-    
-    dump("\nAddonMetadata: _buildDatasource complete \n");
+
+    // Save changes  
+    this._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
+                    .Flush();
+    debug("\nAddonMetadata: _buildDatasource complete \n");
   },
   
+  
+  
+  /**
+   * Return true if the given extension GUID has been disabled in the EM
+   */
+  _isExtensionDisabled: function _isExtensionDisabled(id) {
+    var item = this._RDF.GetResource(ITEM_NS(id));
+    var extManager = Components.classes["@mozilla.org/extensions/manager;1"]
+                        .getService(Components.interfaces.nsIExtensionManager);
+    var userDisabled = this._RDF.GetResource(EM_NS("userDisabled"));
+    if (extManager.datasource.hasArcOut(item, userDisabled)) {
+      var target = extManager.datasource.GetTarget(item, userDisabled, true);
+      if (target instanceof Components.interfaces.nsIRDFLiteral){
+        target = target.QueryInterface(Components.interfaces.nsIRDFLiteral);
+        return target.Value == "true";
+      }
+    }                      
+    return false;
+  },
  
+  
   
   /**
    * Copy all nodes and assertions into the main datasource,
@@ -199,7 +356,7 @@ AddonMetadata.prototype = {
 
   
   _deinit: function _deinit() {
-    dump("\nAddonMetadata: deinit\n");
+    debug("\nAddonMetadata: deinit\n");
 
     this._RDF = null;
     this._datasource = null;
@@ -226,7 +383,7 @@ AddonMetadata.prototype = {
          getService(Components.interfaces.nsIConsoleService);
     for (var i = 0; i  < errorList.length; i++) {
       consoleService.logStringMessage("Addon Metadata Reader: " + errorList[i]);
-      dump("AddonMetadataReader: " + errorList[i] + "\n");
+      debug("AddonMetadataReader: " + errorList[i] + "\n");
     }
   },
 

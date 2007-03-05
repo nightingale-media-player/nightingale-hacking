@@ -27,6 +27,7 @@
 /**
  * \brief FeathersManager test file
  */
+ 
 
 
 var feathersManager =  Components.classes['@songbirdnest.com/songbird/feathersmanager;1']

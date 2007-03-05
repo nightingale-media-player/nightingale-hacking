@@ -27,9 +27,13 @@
 /**
  * \brief AddonMetadata test file
  */
+ 
+// TODO:
+//   - Test caching functionality 
+//   - Test enabled/disabled extension functionality
 
-const RDFURI_ITEM_ROOT                = "urn:mozilla:item:root"
-const PREFIX_ITEM_URI                 = "urn:mozilla:item:";
+const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root"
+const PREFIX_ADDON_URI                = "urn:songbird:addon:";
 const PREFIX_NS_EM                    = "http://www.mozilla.org/2004/em-rdf#";
 const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
 
@@ -41,8 +45,8 @@ function EM_NS(property) {
   return PREFIX_NS_EM + property;
 }
 
-function ITEM_NS(id) {
-  return PREFIX_ITEM_URI + id;
+function ADDON_NS(id) {
+  return PREFIX_ADDON_URI + id;
 }
 
 
@@ -91,7 +95,7 @@ function runTest () {
   
   // Find rubberducky in the item container
   var rubberducky = null;
-  var itemRoot = rdfService.GetResource(RDFURI_ITEM_ROOT);    
+  var itemRoot = rdfService.GetResource(RDFURI_ADDON_ROOT);    
   var cu = Components.classes["@mozilla.org/rdf/container-utils;1"]
                      .getService(Components.interfaces.nsIRDFContainerUtils);
   var container = cu.MakeSeq(datasource, itemRoot);
@@ -99,7 +103,7 @@ function runTest () {
 
   while (addons.hasMoreElements()) {
     var addon = addons.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-    if (addon.Value == ITEM_NS("rubberducky@songbirdnest.com")) {
+    if (addon.Value == ADDON_NS("rubberducky@songbirdnest.com")) {
       rubberducky = addon;
       break;
     }

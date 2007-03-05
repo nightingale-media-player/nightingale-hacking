@@ -34,7 +34,6 @@
 // TODO:
 //  * Add doxygen comments
 //  * Make skin switching actually do something
-//  * Add function arg assertions (verify description contents)
 //  * add onSwitchCompleted, change onSwitchRequested to allow feedback
 //  * Explore skin/layout versioning issues?
 // 
@@ -45,7 +44,7 @@ const CID = Components.ID("{99f24350-a67f-11db-befa-0800200c9a66}");
 const IID = Components.interfaces.sbIFeathersManager;
 
 
-const RDFURI_ITEM_ROOT                = "urn:mozilla:item:root" // TODO Rename
+const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root" 
 const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
 
 
@@ -139,13 +138,39 @@ LayoutDescription.prototype = {
   // TODO Expand?
   requiredProperties: [ "name", "url" ],
   optionalProperties: [ ],
-
+  
   QueryInterface: function(iid) {
     if (!iid.equals(Components.interfaces.sbILayoutDescription)) 
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   }
 };
+
+
+/**
+ * Static function that verifies the contents of the given description
+ *
+ * Example:
+ *   try {
+ *     LayoutDescription.verify(layout);
+ *   } catch (e) {
+ *     reportError(e);
+ *   }
+ *
+ */
+LayoutDescription.verify = SkinDescription.verify = function( description ) 
+{
+  for (var i = 0; i < this.prototype.requiredProperties.length; i++) {
+    var property = this.prototype.requiredProperties[i];
+    if (! (typeof(description[property]) == 'string'
+             && description[property].length > 0)) 
+    {
+      throw("Invalid description. '" + property + "' is a required property.");
+    }
+  }
+}
+
+
 
 
 /**
@@ -160,7 +185,7 @@ function AddonMetadataReader() {
   this._feathersManager = Components.classes[CONTRACTID].getService(IID);
     
   this._resources = {
-    root: this._RDF.GetResource(RDFURI_ITEM_ROOT),
+    root: this._RDF.GetResource(RDFURI_ADDON_ROOT),
     // Helper to convert a string array into 
     // RDF resources in this object
     addSongbirdResources: function(list){
@@ -255,6 +280,12 @@ AddonMetadataReader.prototype = {
     // Fill the description object
     this._populateDescription(skin, description, errorList);
     
+    try {
+      SkinDescription.verify(description);
+    } catch (e) {
+      errorList.push(e.toString());
+    }
+    
     // If errors were encountered, then do not submit 
     // to the Feathers Manager
     if (errorList.length > 0) {
@@ -303,6 +334,12 @@ AddonMetadataReader.prototype = {
     
     // Fill the description object
     this._populateDescription(layout, description, errorList);
+    
+    try {
+      LayoutDescription.verify(description);
+    } catch (e) {
+      errorList.push(e.toString());
+    }
     
     // If errors were encountered, then do not submit 
     // to the Feathers Manager
@@ -603,7 +640,7 @@ FeathersManager.prototype = {
   
   
   registerSkin: function registerSkin(skinDesc) {
-    // TODO: Verify desc
+    SkinDescription.verify(skinDesc);
     
     if (this._skins[skinDesc.internalName] == null) {
       this._skinCount++;
@@ -631,7 +668,7 @@ FeathersManager.prototype = {
   
   
   registerLayout: function registerLayout(layoutDesc) {
-    // TODO: Verify desc
+    LayoutDescription.verify(layoutDesc);
    
     if (this._layouts[layoutDesc.url] == null) {
       this._layoutCount++;
@@ -660,7 +697,9 @@ FeathersManager.prototype = {
 
   assertCompatibility: 
   function assertCompatibility(layoutURL, internalName, showChrome) {
-    // TODO verify
+    if (! (typeof(layoutURL) == "string" && typeof(internalName) == 'string')) {
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    }
 
     if (this._mappings[layoutURL] == null) {
       this._mappings[layoutURL] = {};
@@ -737,6 +776,10 @@ FeathersManager.prototype = {
 
 
   addListener: function addListener(listener) {
+    if (! (listener instanceof Components.interfaces.sbIFeathersManagerListener))
+    {
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    }
     this._listeners.push(listener);
   },
   
@@ -806,21 +849,19 @@ FeathersManager.prototype = {
  * nsIObserver that launches the AddonMetadataReader
  * on the "profile-after-change" event
  */
-var feathersMetadataLoader = {
-  // watch for XRE startup and shutdown messages 
+var gFeathersMetadataLoader = {
   observe: function(subject, topic, data) {
     var os      = Components.classes["@mozilla.org/observer-service;1"]
                       .getService(Components.interfaces.nsIObserverService);
     switch (topic) {
     case "profile-after-change":
+      os.removeObserver(this, "profile-after-change");
       // Preferences are initialized, ready to read metadata
       var metadataReader = new AddonMetadataReader();
       metadataReader.loadFeathers();
-      os.removeObserver(this, "profile-after-change");
       break;
     }
   },
-
   QueryInterface: function(iid) {
     if (!iid.equals(Components.interfaces.nsIObserver) && 
         !iid.equals(Components.interfaces.nsISupports))
@@ -866,8 +907,7 @@ var gModule = {
             // after the profile loads
             var os      = Components.classes["@mozilla.org/observer-service;1"]
                                 .getService(Components.interfaces.nsIObserverService);
-            // We should wait until the profile has been loaded to start
-            os.addObserver(feathersMetadataLoader, "profile-after-change", false);  
+            os.addObserver(gFeathersMetadataLoader, "profile-after-change", false);  
             
             return feathersManager;
           }
