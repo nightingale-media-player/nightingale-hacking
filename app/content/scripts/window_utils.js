@@ -36,6 +36,8 @@ var PREF_BONES_SELECTED     = "general.bones.selectedMainWinURL";
 var PREF_FEATHERS_SELECTED  = "general.skins.selectedSkin";
 var BONES_DEFAULT_URL       = "chrome://rubberducky/content/xul/mainwin.xul";
 var FEATHERS_DEFAULT_NAME   = "rubberducky";
+var STATE_MAXIMIZED         = Components.interfaces.nsIDOMChromeWindow.STATE_MAXIMIZED;
+var STATE_MINIMIZED         = Components.interfaces.nsIDOMChromeWindow.STATE_MINIMIZED;
 
 // Lots of things assume the playlist playback service is a global
 var gPPS    = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
