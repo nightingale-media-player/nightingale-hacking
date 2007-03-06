@@ -95,11 +95,14 @@ ServicePaneNode.prototype.__defineGetter__ ('isContainer',
 
 ServicePaneNode.prototype.setAttributeNS = function (aNamespace, aName, aValue) {
     var property = RDFSVC.GetResource(aNamespace+aName);
+    dump('setting '+aNamespace+aName+'\n');
     var target = this._dataSource.GetTarget(this.resource, property, true);
     if (target) {
+        dump(' need to unassert\n');
         this._dataSource.Unassert(this.resource, property, target);
     }
     if (aValue != null) {
+        dump (' value != null, value='+aValue+'\n');
         this._dataSource.Assert(this.resource, property,
                                 RDFSVC.GetLiteral(aValue), true);
     }
@@ -107,9 +110,12 @@ ServicePaneNode.prototype.setAttributeNS = function (aNamespace, aName, aValue) 
 
 ServicePaneNode.prototype.getAttributeNS = function (aNamespace, aName) {
     var property = RDFSVC.GetResource(aNamespace+aName);
+    dump('getting '+aNamespace+aName+'\n');
     var target = this._dataSource.GetTarget(this.resource, property, true);
     if (target) {
+        dump(' there\'s something to return\n')
         var value = target.QueryInterface(Ci.nsIRDFLiteral).Value
+        dump(' and that is: '+value+'\n');
         return value;
     } else {
         return null;
@@ -170,13 +176,15 @@ ServicePaneNode.prototype.__defineGetter__('childNodes',
                 throw this.id+' is not a container';
             }
             var e = this._container.GetElements();
+            var ds = this._dataSource;
             return {
                 hasMoreElements: function() { return e.hasMoreElements(); },
                 getNext: function() {
+                    if (!e.hasMoreElements()) { return null; }
                     var resource = e.getNext();
                     if (!resource) { return null; }
-                    return new ServicePaneNode(this.resource,
-                            resource.QueryInterface(nsIRDFResource));
+                    return new ServicePaneNode(ds,
+                            resource.QueryInterface(Ci.nsIRDFResource));
                 }
             };
         });
@@ -191,7 +199,7 @@ ServicePaneNode.prototype.__defineGetter__('lastChild',
             var enumerator = this.childNodes;
             var node = null;
             while (enumerator.hasMoreElements()) {
-                node = childNodes.getNext();
+                node = enumerator.getNext();
             }
             return node;
         });
@@ -304,7 +312,7 @@ ServicePaneNode.prototype.unlinkChild = function (aChild) {
     if (this._container.IndexOf(aChild.resource) < 0) {
         return;
     }
-    this._container.RemoveElement(aChild.resource);
+    this._container.RemoveElement(aChild.resource, true);
 }
 
 ServicePaneNode.prototype.unlinkNode = function () {
@@ -326,11 +334,11 @@ ServicePaneNode.prototype.clearNode = function () {
     // then we need to find all our outgoing arcs
     var arcs = this._dataSource.ArcLabelsOut(this.resource);
     while (arcs.hasMoreElements()) {
-        var arc = arcs.GetNext().QueryInterface(Ci.nsIRDFResource);
+        var arc = arcs.getNext().QueryInterface(Ci.nsIRDFResource);
         // get the targets
         var targets = this._dataSource.GetTargets(this.resource, arc, true);
         while (targets.hasMoreElements()) {
-            var target = arcs.GetNext().QueryInterface(Ci.nsIRDFNode);
+            var target = targets.getNext().QueryInterface(Ci.nsIRDFNode);
             // and remove them
             this._dataSource.Unassert(this.resource, arc, target);
         }
