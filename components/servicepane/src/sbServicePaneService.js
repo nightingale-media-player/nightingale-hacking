@@ -95,14 +95,11 @@ ServicePaneNode.prototype.__defineGetter__ ('isContainer',
 
 ServicePaneNode.prototype.setAttributeNS = function (aNamespace, aName, aValue) {
     var property = RDFSVC.GetResource(aNamespace+aName);
-    dump('setting '+aNamespace+aName+'\n');
     var target = this._dataSource.GetTarget(this.resource, property, true);
     if (target) {
-        dump(' need to unassert\n');
         this._dataSource.Unassert(this.resource, property, target);
     }
     if (aValue != null) {
-        dump (' value != null, value='+aValue+'\n');
         this._dataSource.Assert(this.resource, property,
                                 RDFSVC.GetLiteral(aValue), true);
     }
@@ -110,12 +107,9 @@ ServicePaneNode.prototype.setAttributeNS = function (aNamespace, aName, aValue) 
 
 ServicePaneNode.prototype.getAttributeNS = function (aNamespace, aName) {
     var property = RDFSVC.GetResource(aNamespace+aName);
-    dump('getting '+aNamespace+aName+'\n');
     var target = this._dataSource.GetTarget(this.resource, property, true);
     if (target) {
-        dump(' there\'s something to return\n')
         var value = target.QueryInterface(Ci.nsIRDFLiteral).Value
-        dump(' and that is: '+value+'\n');
         return value;
     } else {
         return null;
