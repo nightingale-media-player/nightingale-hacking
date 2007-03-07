@@ -89,10 +89,20 @@ sbLocalDatabaseMediaListBase::GetItemByGuid(const nsAString& aGuid,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetItemByIndex(PRInt16 aIndex,
+sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
                                              sbIMediaItem** _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+
+  nsAutoString guid;
+  rv = mFullArray->GetByIndex(aIndex, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
+
+  NS_ADDREF(*_retval = item);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -112,14 +122,14 @@ sbLocalDatabaseMediaListBase::GetItemsByPropertyValues(nsIPropertyBag* aBag,
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
-                                      PRInt16* _retval)
+                                      PRUint32* _retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
-                                          PRInt16* _retval)
+                                          PRUint32* _retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -134,7 +144,13 @@ sbLocalDatabaseMediaListBase::Contains(sbIMediaItem* aMediaItem,
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetIsEmpty(PRBool* aIsEmpty)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+  PRUint32 length;
+  rv = mFullArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aIsEmpty = length == 0;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -150,21 +166,21 @@ sbLocalDatabaseMediaListBase::AddAll(sbIMediaList* aMediaList)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::InsertBefore(PRInt16 aIndex,
+sbLocalDatabaseMediaListBase::InsertBefore(PRUint32 aIndex,
                                            sbIMediaItem* aMediaItem)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::MoveBefore(PRInt16 aFromIndex,
-                                         PRInt16 aToIndex)
+sbLocalDatabaseMediaListBase::MoveBefore(PRUint32 aFromIndex,
+                                         PRUint32 aToIndex)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::MoveLast(PRInt16 aIndex)
+sbLocalDatabaseMediaListBase::MoveLast(PRUint32 aIndex)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -176,7 +192,7 @@ sbLocalDatabaseMediaListBase::Remove(sbIMediaItem* aMediaItem)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::RemoveByIndex(PRInt16 aIndex)
+sbLocalDatabaseMediaListBase::RemoveByIndex(PRUint32 aIndex)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -205,6 +221,7 @@ sbLocalDatabaseMediaListBase::RemoveListner(sbIMediaListListener* aListener)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+// sbIMediaItem
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetLibrary(sbILibrary** aLibrary)
 {

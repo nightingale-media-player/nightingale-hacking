@@ -77,7 +77,7 @@ interface sbIMediaList : sbIMediaItem
    * \param aIndex Index of the media item
    * \return Media item with the requested index or null if not found
    */
-  sbIMediaItem getItemByIndex(in short aIndex);
+  sbIMediaItem getItemByIndex(in unsigned long aIndex);
 
   /**
    * \brief Get a list of media items that match a given property and propery
@@ -105,7 +105,7 @@ interface sbIMediaList : sbIMediaItem
    * \return The index that the media item was first found at, or -1 if not
    * found
    */
-  short indexOf(in sbIMediaItem aMediaItem);
+  unsigned long indexOf(in sbIMediaItem aMediaItem);
 
   /**
    * \brief Get the last index of a media item int he list
@@ -113,7 +113,7 @@ interface sbIMediaList : sbIMediaItem
    * \return The index that the media item was last found at, or -1 if not
    * found
    */
-  short lastIndexOf(in sbIMediaItem aMediaItem);
+  unsigned long lastIndexOf(in sbIMediaItem aMediaItem);
 
   /**
    * \brief Check if the list contains a media item
@@ -144,20 +144,22 @@ interface sbIMediaList : sbIMediaItem
    * \param aIndex Position of item to insert before
    * \param aMediaItem Media item to insert
    */
-  void insertBefore(in short aIndex, in sbIMediaItem aMediaItem);
+  void insertBefore(in unsigned long aIndex,
+                    in sbIMediaItem aMediaItem);
 
   /**
    * \brief Move a media item from one position to another in the list
    * \param aFromIndex Index of media item to move
    * \param aToIndex Index of media item to insert the moved item before
    */
-  void moveBefore(in short aFromIndex, in short aToIndex);
+  void moveBefore(in unsigned long aFromIndex,
+                  in unsigned long aToIndex);
 
   /**
    * \brief Move a media item to the end of the list
    * \param aIndex Index of media item to move
    */
-  void moveLast(in short aIndex);
+  void moveLast(in unsigned long aIndex);
 
   /**
    * \brief Remove a media item from the list
@@ -169,7 +171,7 @@ interface sbIMediaList : sbIMediaItem
    * \brief Remove a media item from the list by index
    * \param aIndex Index of the item to remove
    */
-  void removeByIndex(in short aIndex);
+  void removeByIndex(in unsigned long aIndex);
 
   /**
    * \brief Clear the list

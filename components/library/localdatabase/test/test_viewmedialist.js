@@ -37,5 +37,8 @@ function runTest () {
 
   var view = library.getMediaItem("songbird:view");
   assertList(view, "data_sort_created_asc.txt");
+
+  var item = view.getItemByIndex(0);
+  assertEqual(item.guid, "3E2549C0-AD99-11DB-9321-C22AB7121F49");
 }
 
