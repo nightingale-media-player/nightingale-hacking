@@ -33,9 +33,11 @@
 #define OBJSORTABLE_COLUMN NS_LITERAL_STRING("obj_sortable")
 #define MEDIAITEMID_COLUMN NS_LITERAL_STRING("media_item_id")
 #define PROPERTYID_COLUMN  NS_LITERAL_STRING("property_id")
+#define ORDINAL_COLUMN     NS_LITERAL_STRING("ordinal")
 
-#define PROPERTIES_TABLE NS_LITERAL_STRING("resource_properties")
-#define MEDIAITEMS_TABLE NS_LITERAL_STRING("media_items")
+#define PROPERTIES_TABLE       NS_LITERAL_STRING("resource_properties")
+#define MEDIAITEMS_TABLE       NS_LITERAL_STRING("media_items")
+#define SIMPLEMEDIALISTS_TABLE NS_LITERAL_STRING("simple_media_lists")
 
 #define BASE_ALIAS       NS_LITERAL_STRING("_base")
 #define MEDIAITEMS_ALIAS NS_LITERAL_STRING("_mi")
@@ -43,6 +45,9 @@
 #define GETNOTNULL_ALIAS NS_LITERAL_STRING("_getnotnull")
 #define GETNULL_ALIAS    NS_LITERAL_STRING("_getnull")
 #define SORT_ALIAS       NS_LITERAL_STRING("_sort")
+
+#define ORDINAL_PROPERTY \
+  NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
 
 sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
                                            const nsAString& aBaseConstraintColumn,
@@ -210,8 +215,21 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
-      rv = mBuilder->AddColumn(SORT_ALIAS, OBJSORTABLE_COLUMN);
-      NS_ENSURE_SUCCESS(rv, rv);
+      if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
+        nsAutoString baseTable;
+        rv = mBuilder->GetBaseTableName(baseTable);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (baseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
+          rv = mBuilder->AddColumn(CONSTRAINT_ALIAS,
+                                   ORDINAL_COLUMN);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+      else {
+        rv = mBuilder->AddColumn(SORT_ALIAS, OBJSORTABLE_COLUMN);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 
@@ -449,14 +467,6 @@ sbLocalDatabaseQuery::AddPrimarySort()
     rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    /*
-     * Add the output column for the sorted property so we can later use
-     * this for additional sorting
-     */
-    rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS,
-                            columnName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS,
                             columnName,
                             mPrimarySortAscending);
@@ -464,45 +474,59 @@ sbLocalDatabaseQuery::AddPrimarySort()
   }
   else {
     /*
-     * Add the output column for the sorted property so we can later use
-     * this for additional sorting
+     * If this is the custom sort, sort by the "ordinal" column in the
+     * "simple_media_lists" table.  Make sure that base table is actually
+     * the simple media lists table before proceeding.
      */
-    rv = mBuilder->AddColumn(SORT_ALIAS,
-                             OBJSORTABLE_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
+      nsAutoString baseTable;
+      rv = mBuilder->GetBaseTableName(baseTable);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    /*
-     * Join an instance of the properties table to the base table
-     */
-    rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                           PROPERTIES_TABLE,
-                           SORT_ALIAS,
-                           GUID_COLUMN,
-                           MEDIAITEMS_ALIAS,
-                           GUID_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
+      if (baseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
+        rv = mBuilder->AddOrder(CONSTRAINT_ALIAS,
+                                ORDINAL_COLUMN,
+                                mPrimarySortAscending);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        return NS_ERROR_INVALID_ARG;
+      }
+    }
+    else {
+      /*
+       * Join an instance of the properties table to the base table
+       */
+      rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                             PROPERTIES_TABLE,
+                             SORT_ALIAS,
+                             GUID_COLUMN,
+                             MEDIAITEMS_ALIAS,
+                             GUID_COLUMN);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    /*
-     * Restrict the sort table to the sort property
-     */
-    nsCOMPtr<sbISQLBuilderCriterion> criterion;
-    rv = mBuilder->CreateMatchCriterionLong(SORT_ALIAS,
-                                            PROPERTYID_COLUMN,
-                                            sbISQLSelectBuilder::MATCH_EQUALS,
-                                            GetPropertyId(mPrimarySortProperty),
-                                            getter_AddRefs(criterion));
-    NS_ENSURE_SUCCESS(rv, rv);
+      /*
+       * Restrict the sort table to the sort property
+       */
+      nsCOMPtr<sbISQLBuilderCriterion> criterion;
+      rv = mBuilder->CreateMatchCriterionLong(SORT_ALIAS,
+                                              PROPERTYID_COLUMN,
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              GetPropertyId(mPrimarySortProperty),
+                                              getter_AddRefs(criterion));
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mBuilder->AddCriterion(criterion);
-    NS_ENSURE_SUCCESS(rv, rv);
+      rv = mBuilder->AddCriterion(criterion);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    /*
-     * Add a sort on the primary sort
-     */
-    rv = mBuilder->AddOrder(SORT_ALIAS,
-                            OBJSORTABLE_COLUMN,
-                            mPrimarySortAscending);
-    NS_ENSURE_SUCCESS(rv, rv);
+      /*
+       * Add a sort on the primary sort
+       */
+      rv = mBuilder->AddOrder(SORT_ALIAS,
+                              OBJSORTABLE_COLUMN,
+                              mPrimarySortAscending);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
@@ -529,22 +553,42 @@ sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                           PROPERTIES_TABLE,
-                           GETNOTNULL_ALIAS,
-                           GUID_COLUMN,
-                           MEDIAITEMS_ALIAS,
-                           GUID_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
 
-    rv = mBuilder->CreateMatchCriterionLong(GETNOTNULL_ALIAS,
-                                            PROPERTYID_COLUMN,
-                                            sbISQLSelectBuilder::MATCH_EQUALS,
-                                            GetPropertyId(mPrimarySortProperty),
-                                            getter_AddRefs(criterion));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mBuilder->AddCriterion(criterion);
-    NS_ENSURE_SUCCESS(rv, rv);
+      nsAutoString baseTable;
+      rv = mBuilder->GetBaseTableName(baseTable);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (baseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
+        rv = mBuilder->CreateMatchCriterionNull(CONSTRAINT_ALIAS,
+                                                ORDINAL_COLUMN,
+                                                sbISQLSelectBuilder::MATCH_NOTEQUALS,
+                                                getter_AddRefs(criterion));
+        rv = mBuilder->AddCriterion(criterion);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        return NS_ERROR_INVALID_ARG;
+      }
+    }
+    else {
+      rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                             PROPERTIES_TABLE,
+                             GETNOTNULL_ALIAS,
+                             GUID_COLUMN,
+                             MEDIAITEMS_ALIAS,
+                             GUID_COLUMN);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->CreateMatchCriterionLong(GETNOTNULL_ALIAS,
+                                              PROPERTYID_COLUMN,
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              GetPropertyId(mPrimarySortProperty),
+                                              getter_AddRefs(criterion));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = mBuilder->AddCriterion(criterion);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;

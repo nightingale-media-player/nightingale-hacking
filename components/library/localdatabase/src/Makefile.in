@@ -36,18 +36,31 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabasePropertyCache.cpp \
            sbLocalDatabaseTreeView.cpp \
            sbLocalDatabaseQuery.cpp \
+           sbLocalDatabaseMediaItem.cpp \
+           sbLocalDatabaseLibrary.cpp \
+           sbLocalDatabaseLibraryFactory.cpp \
+           sbLocalDatabaseMediaListBase.cpp \
+           sbLocalDatabaseViewMediaList.cpp \
+           sbLocalDatabaseViewMediaListFactory.cpp \
+           sbLocalDatabaseSimpleMediaList.cpp \
+           sbLocalDatabaseSimpleMediaListFactory.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
+               $(topsrcdir)/components/library/localdatabase/src \
+               $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/dbengine/public \
                $(topsrcdir)/components/dbengine/src \
                $(DEPTH)/components/sqlbuilder/public \
                $(topsrcdir)/components/sqlbuilder/src \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/layout \
+               $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_IDL_DIR) \
@@ -60,6 +73,7 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            plds4 \
                             xpcom \
                             xpcomglue_s \
                             $(NULL)
@@ -79,4 +93,3 @@ endif
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk
-

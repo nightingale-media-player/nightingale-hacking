@@ -24,37 +24,26 @@
 //
 */
 
-/**
- * \file sbILibraryFactory.idl
- * \brief Definition of the sbILibraryFactory interface
- * \sa sbILibrary.idl
- */
+#ifndef __SBLOCALDATABASELIBRARYFACTORY_H__
+#define __SBLOCALDATABASELIBRARYFACTORY_H__
 
-#include "nsISupports.idl"
+#include <sbILibraryFactory.h>
+#include <sbILocalDatabaseLibraryFactory.h>
+#include <nsCOMPtr.h>
+#include <nsStringGlue.h>
 
-interface sbILibrary;
-
-/**
-* \interface sbILibraryFactory
-* \brief Factory for new library instances
-*
-* This interface is used to create new instances of a library
-*
-* \sa sbILibrary
-*/
-[scriptable, uuid(5e49042d-3676-4dc5-8366-24ea5cace552)]
-interface sbILibraryFactory : nsISupports
+class sbLocalDatabaseLibraryFactory : public sbILocalDatabaseLibraryFactory
 {
-  /**
-   * \brief Key to the localized name of the library type this factory creates
-   */
-  readonly attribute AString nameKey;
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBILIBRARYFACTORY
+  NS_DECL_SBILOCALDATABASELIBRARYFACTORY
 
-  /**
-   * \brief Create a new instance of a library
-   * \return New library instance
-   */
-  sbILibrary createLibrary();
+  sbLocalDatabaseLibraryFactory();
 
+private:
+  ~sbLocalDatabaseLibraryFactory();
 };
+
+#endif /* __SBLOCALDATABASELIBRARYFACTORY_H__ */
 

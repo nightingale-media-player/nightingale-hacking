@@ -35,6 +35,8 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_guidarray_sort.js \
                  $(srcdir)/test_guidarray_sortmulti.js \
                  $(srcdir)/test_propertycache.js \
+                 $(srcdir)/test_viewmedialist.js \
+                 $(srcdir)/test_simplemedialist.js \
                  $(srcdir)/head_localdatabaselibrary.js \
                  $(srcdir)/schema.sql \
                  $(srcdir)/media_items.txt \
@@ -46,9 +48,12 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/data_sort_playcount_desc.txt \
                  $(srcdir)/data_sort_contenturl_asc.txt \
                  $(srcdir)/data_sort_contenturl_desc.txt \
+                 $(srcdir)/data_sort_created_asc.txt \
                  $(srcdir)/data_sort_album_asc_track_asc.txt \
                  $(srcdir)/data_sort_album_asc_track_desc.txt \
                  $(srcdir)/data_sort_artist_asc_album_asc_track_asc.txt \
+                 $(srcdir)/data_sort_sml101_ordinal_asc.txt \
+                 $(srcdir)/data_sort_sml101_ordinal_desc.txt \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

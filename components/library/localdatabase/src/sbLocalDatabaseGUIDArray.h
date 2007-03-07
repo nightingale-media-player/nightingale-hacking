@@ -36,6 +36,9 @@
 #include <sbIDatabaseQuery.h>
 #include <sbISQLBuilder.h>
 #include <nsDataHashtable.h>
+#include <nsISimpleEnumerator.h>
+#include <sbILibrary.h>
+#include <sbIMediaItem.h>
 
 struct FilterSpec {
   nsString property;
@@ -180,6 +183,22 @@ private:
 
 protected:
   /* additional members */
+};
+
+class sbGUIDArrayEnumerator : public nsISimpleEnumerator
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISIMPLEENUMERATOR
+
+  sbGUIDArrayEnumerator(sbILibrary* aLibrary,
+                        sbILocalDatabaseGUIDArray* aArray);
+private:
+  ~sbGUIDArrayEnumerator();
+
+  nsCOMPtr<sbILibrary> mLibrary;
+  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
+  PRUint32 mNextIndex;
 };
 
 #endif /* __SBLOCALDATABASEGUIDARRAY_H__ */

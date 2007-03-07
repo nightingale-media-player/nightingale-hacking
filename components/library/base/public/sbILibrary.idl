@@ -78,6 +78,13 @@ interface sbILibrary : sbILibraryResource
   sbIMediaItem createMediaItem();
 
   /**
+   * \brief Get a media item
+   * \param aGuid Guid of media item to get
+   * \return The requested media item
+   */
+  sbIMediaItem getMediaItem(in AString aGuid);
+
+  /**
    * \brief A list of available media list factories, returns an enumerator
    * of sbIMediaListFactory
    */
@@ -96,7 +103,7 @@ interface sbILibrary : sbILibraryResource
    * \param aType Type name for new media list type
    * \param aCid XPCOM contract id for the new media list type
    */
-  void addMediaListFactory(in AString aType, in AString aCid);
+  void addMediaListFactory(in AString aType, in AString aContractId);
 
   /**
    * \brief Import a media list and its contents into this library

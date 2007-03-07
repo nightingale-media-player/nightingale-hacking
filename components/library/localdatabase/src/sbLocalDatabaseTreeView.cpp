@@ -61,7 +61,7 @@ sbLocalDatabaseTreeView::Init()
   mArray = do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mArray->SetDatabaseGUID(NS_LITERAL_STRING("test_10000"));
+  rv = mArray->SetDatabaseGUID(NS_LITERAL_STRING("test_1000"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mArray->SetBaseTable(NS_LITERAL_STRING("media_items"));
@@ -76,13 +76,16 @@ sbLocalDatabaseTreeView::Init()
   rv = mArray->AddSort(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#albumName"), PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mArray->SetFetchSize(100);
+  rv = mArray->AddSort(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#track"), PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mArray->SetFetchSize(1000);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mPropertyCache = do_CreateInstance(SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertyCache->SetDatabaseGUID(NS_LITERAL_STRING("test_10000"));
+  rv = mPropertyCache->SetDatabaseGUID(NS_LITERAL_STRING("test_1000"));
   NS_ENSURE_SUCCESS(rv, rv);
 
 //  rv = mArray->SetPropertyCache(mPropertyCache);

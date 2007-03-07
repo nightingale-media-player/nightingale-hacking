@@ -68,7 +68,7 @@ function createDatabase(databaseGuid) {
   var schema = readFile("schema.sql");
 
   // There seems to be some kind of query length limit so lets break it up
-  var a = schema.split(";");
+  var a = schema.split(/;$/m);
   for(var q in a) {
     dbq.addQuery(a[q]);
   }
@@ -163,6 +163,22 @@ function readFile(fileName) {
   return data;
 }
 
+function createLibrary(databaseGuid) {
+
+  var libraryFactory =
+    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
+      .createInstance(Ci.sbILocalDatabaseLibraryFactory);
+
+  var file = Cc["@mozilla.org/file/directory_service;1"]
+               .getService(Ci.nsIProperties)
+               .get("ProfD", Ci.nsIFile);
+
+  file.append("db");
+  file.append(databaseGuid + ".db");
+
+  return libraryFactory.createLibraryFromDatabase(file);
+}
+
 function makeArray(databaseGUID) {
   var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
@@ -183,6 +199,26 @@ function assertSort(array, dataFile) {
     var b = a[i].split("\t");
     if(array.getByIndex(i) != b[0]) {
       fail("sort failed, index " + i + " got " + array.getByIndex(i) + " expected " + b[0]);
+    }
+  }
+
+}
+
+function assertList(list, dataFile) {
+
+  var data = readFile(dataFile);
+  var a = data.split("\n");
+
+  if(a.length - 1 != list.length) {
+    fail("compare failed, length wrong, got " + list.length + " expected " + (a.length - 1));
+  }
+
+  var e = list.items;
+  for(var i = 0; i < a.length - 1; i++) {
+    var item = e.getNext();
+    var b = a[i].split("\t");
+    if(item.guid != b[0]) {
+      fail("compare failed, index " + i + " got " + item.guid + " expected " + b[0]);
     }
   }
 

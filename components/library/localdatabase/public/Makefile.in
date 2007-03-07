@@ -33,7 +33,11 @@ XPIDL_SRCS = sbILocalDatabaseSmartMediaList.idl \
              sbILocalDatabaseGUIDArray.idl \
              sbILocalDatabasePropertyCache.idl \
              sbILocalDatabaseTreeView.idl \
+             sbILocalDatabaseLibraryFactory.idl \
              $(NULL)
+
+XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \
+                 $(NULL)
 
 XPIDL_MODULE = sbLocalDatabaseLibrary.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)

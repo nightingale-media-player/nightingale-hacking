@@ -90,5 +90,21 @@ function runTest () {
   array.fetchSize = 40;
   assertSort(array, "data_sort_contenturl_desc.txt");
 
+  // Sort a simple media list by the ordinal
+  array = makeArray(databaseGUID);
+  array.baseTable = "simple_media_lists";
+  array.baseConstraintColumn = "media_item_id";
+  array.baseConstraintValue = 101;
+  array.addSort("http://songbirdnest.com/data/1.0#ordinal", true);
+  array.fetchSize = 40;
+  assertSort(array, "data_sort_sml101_ordinal_asc.txt");
+
+  array = makeArray(databaseGUID);
+  array.baseTable = "simple_media_lists";
+  array.baseConstraintColumn = "media_item_id";
+  array.baseConstraintValue = 101;
+  array.addSort("http://songbirdnest.com/data/1.0#ordinal", false);
+  array.fetchSize = 40;
+  assertSort(array, "data_sort_sml101_ordinal_desc.txt");
 }
 

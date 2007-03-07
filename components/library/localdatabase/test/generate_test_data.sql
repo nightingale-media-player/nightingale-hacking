@@ -22,6 +22,9 @@ select guid, content_url from media_items order by content_url asc;
 .output data_sort_contenturl_desc.txt
 select guid, content_url from media_items order by content_url desc;
 ---
+.output data_sort_created_asc.txt
+select guid, created from media_items order by created asc;
+---
 .output data_sort_album_asc_track_asc.txt
 select
 rp0.guid, rp0.obj_sortable || ' ' || rp1.obj_sortable
@@ -62,6 +65,28 @@ rp2.property_id = 6
 order by
 rp0.obj_sortable asc, rp1.obj_sortable asc, rp2.obj_sortable asc;
 select guid, '(null)' from media_items where guid not in (select guid from resource_properties where property_id = 2) order by guid;
+---
+.output data_sort_sml101_ordinal_asc.txt
+select
+guid, ordinal
+from
+media_items mi,
+simple_media_lists sml
+where
+mi.media_item_id = sml.member_media_item_id and
+sml.media_item_id = 101
+order by sml.ordinal asc;
+---
+.output data_sort_sml101_ordinal_desc.txt
+select
+guid, ordinal
+from
+media_items mi,
+simple_media_lists sml
+where
+mi.media_item_id = sml.member_media_item_id and
+sml.media_item_id = 101
+order by sml.ordinal desc;
 ---
 .output stdout
 

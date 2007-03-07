@@ -26,6 +26,7 @@
 
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseQuery.h"
+#include "sbLocalDatabaseMediaItem.h"
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
@@ -1592,5 +1593,49 @@ sbLocalDatabaseGUIDArray::GetPropertyId(const nsAString& aProperty)
   }
 
   return -1;
+}
+
+NS_IMPL_ISUPPORTS1(sbGUIDArrayEnumerator, nsISimpleEnumerator)
+
+sbGUIDArrayEnumerator::sbGUIDArrayEnumerator(sbILibrary* aLibrary,
+                                             sbILocalDatabaseGUIDArray* aArray) :
+  mLibrary(aLibrary),
+  mArray(aArray),
+  mNextIndex(0)
+{
+}
+
+sbGUIDArrayEnumerator::~sbGUIDArrayEnumerator()
+{
+}
+
+NS_IMETHODIMP
+sbGUIDArrayEnumerator::HasMoreElements(PRBool *_retval)
+{
+  nsresult rv;
+
+  PRUint32 length;
+  rv = mArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = mNextIndex < length;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGUIDArrayEnumerator::GetNext(nsISupports **_retval)
+{
+  nsresult rv;
+
+  nsAutoString guid;
+  rv = mArray->GetByIndex(mNextIndex, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item = new sbLocalDatabaseMediaItem(mLibrary, guid);
+  NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
+
+  mNextIndex++;
+  NS_ADDREF(*_retval = item);
+  return NS_OK;
 }
 

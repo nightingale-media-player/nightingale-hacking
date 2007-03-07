@@ -32,6 +32,7 @@
 
 #include "nsISupports.idl"
 
+interface sbILibrary;
 interface sbIMediaList;
 
 /**
@@ -46,8 +47,14 @@ interface sbIMediaList;
 interface sbIMediaListFactory : nsISupports
 {
   /**
+   * \brief Library this factory is creating lists for.  This is set when
+   *        the factory is created
+   */
+  attribute sbILibrary library;
+
+  /**
    * \brief Key to the localized name of the media list type this factory
-   * creates
+   *        creates
    */
   readonly attribute AString nameKey;
 
@@ -56,5 +63,12 @@ interface sbIMediaListFactory : nsISupports
    * \return New media list instance
    */
   sbIMediaList createMediaList();
+
+  /**
+   * \brief Instantiate am existing media list using its guid
+   * \param aGuid The guid of the media list
+   * \return New media list instance
+   */
+  sbIMediaList instantiateMediaList(in AString aGuid);
 };
 

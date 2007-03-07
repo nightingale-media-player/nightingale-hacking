@@ -24,37 +24,29 @@
 //
 */
 
-/**
- * \file sbILibraryFactory.idl
- * \brief Definition of the sbILibraryFactory interface
- * \sa sbILibrary.idl
- */
+#ifndef __SBLOCALDATABASESIMPLEMEDIALIST_H__
+#define __SBLOCALDATABASESIMPLEMEDIALIST_H__
 
-#include "nsISupports.idl"
+#include "sbLocalDatabaseMediaListBase.h"
+#include <sbIMediaList.h>
 
-interface sbILibrary;
+#include <nsStringGlue.h>
 
-/**
-* \interface sbILibraryFactory
-* \brief Factory for new library instances
-*
-* This interface is used to create new instances of a library
-*
-* \sa sbILibrary
-*/
-[scriptable, uuid(5e49042d-3676-4dc5-8366-24ea5cace552)]
-interface sbILibraryFactory : nsISupports
+class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase
 {
-  /**
-   * \brief Key to the localized name of the library type this factory creates
-   */
-  readonly attribute AString nameKey;
+public:
+  NS_DECL_ISUPPORTS_INHERITED
 
-  /**
-   * \brief Create a new instance of a library
-   * \return New library instance
-   */
-  sbILibrary createLibrary();
+  sbLocalDatabaseSimpleMediaList(sbILibrary* aLibrary, const nsAString& aGuid);
 
+  nsresult Init();
+
+private:
+  ~sbLocalDatabaseSimpleMediaList();
+
+protected:
+  nsString mMediaListName;
+  PRLock* mLock;
 };
 
+#endif /* __SBLOCALDATABASESIMPLEMEDIALIST_H__ */

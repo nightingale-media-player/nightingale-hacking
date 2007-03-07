@@ -44,7 +44,7 @@ function runTest () {
   array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
 
   // Full library, unfiltered
-  assertEqual(array.length, 101);
+  assertEqual(array.length, 102);
 
   // Full library, property filtered
   array.addFilter("http://songbirdnest.com/data/1.0#albumName",

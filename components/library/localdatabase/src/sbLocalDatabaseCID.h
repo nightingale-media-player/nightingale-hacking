@@ -42,3 +42,39 @@
 #define SB_LOCALDATABASE_TREEVIEW_CONTRACTID \
   "@songbirdnest.com/Songbird/Library/LocalDatabase/TreeView;1"
 
+#define SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION         \
+  "Local Database Library Factory"
+#define SB_LOCALDATABASE_LIBRARYFACTORY_CID                 \
+  { /* f7035bf4-3eae-4733-991e-ea5800672101 */              \
+    0xf7035bf4,                                             \
+    0x3eae,                                                 \
+    0x4733,                                                 \
+    { 0x99, 0x1e, 0xea, 0x58, 0x00, 0x67, 0x21, 0x01 }      \
+  }
+#define SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID          \
+  "@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"
+
+#define SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_DESCRIPTION \
+  "Local Database Simple Media List Factory"
+#define SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID         \
+  { /* 6b9b9718-05b4-4ee3-ab09-a9d575f4c2aa */              \
+    0x6b9b9718,                                             \
+    0x05b4,                                                 \
+    0x4ee3,                                                 \
+    { 0xab, 0x09, 0xa9, 0xd5, 0x75, 0xf4, 0xc2, 0xaa }      \
+  }
+#define SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CONTRACTID  \
+  "@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1"
+
+#define SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_DESCRIPTION   \
+  "Local Database Simple Media List Factory"
+#define SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CID           \
+  { /* 0b6899a7-0dfd-40f6-92fc-8ad540a73ef1 */              \
+    0x0b6899a7,                                             \
+    0x0dfd,                                                 \
+    0x40f6,                                                 \
+    { 0x92, 0xfc, 0x8a, 0xd5, 0x40, 0xa7, 0x3a, 0xf1 }      \
+  }
+#define SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CONTRACTID    \
+  "@songbirdnest.com/Songbird/Library/LocalDatabase/ViewMediaListFactory;1"
+

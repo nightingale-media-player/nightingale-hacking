@@ -24,37 +24,33 @@
 //
 */
 
-/**
- * \file sbILibraryFactory.idl
- * \brief Definition of the sbILibraryFactory interface
- * \sa sbILibrary.idl
- */
+#ifndef __SBLOCALDATABASEMEDIAITEM_H__
+#define __SBLOCALDATABASEMEDIAITEM_H__
 
-#include "nsISupports.idl"
+#include <sbIMediaItem.h>
+#include <sbILibraryResource.h>
+#include <sbILibrary.h>
+#include <nsCOMPtr.h>
+#include <nsStringGlue.h>
+#include <nsIClassInfo.h>
 
-interface sbILibrary;
-
-/**
-* \interface sbILibraryFactory
-* \brief Factory for new library instances
-*
-* This interface is used to create new instances of a library
-*
-* \sa sbILibrary
-*/
-[scriptable, uuid(5e49042d-3676-4dc5-8366-24ea5cace552)]
-interface sbILibraryFactory : nsISupports
+class sbLocalDatabaseMediaItem : public sbIMediaItem,
+                                 public nsIClassInfo
 {
-  /**
-   * \brief Key to the localized name of the library type this factory creates
-   */
-  readonly attribute AString nameKey;
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBILIBRARYRESOURCE
+  NS_DECL_SBIMEDIAITEM
+  NS_DECL_NSICLASSINFO
 
-  /**
-   * \brief Create a new instance of a library
-   * \return New library instance
-   */
-  sbILibrary createLibrary();
+  sbLocalDatabaseMediaItem(sbILibrary* aLibrary, const nsAString& aGuid);
 
+private:
+  ~sbLocalDatabaseMediaItem();
+
+  nsCOMPtr<sbILibrary> mLibrary;
+  nsString mGuid;
 };
+
+#endif /* __SBLOCALDATABASEMEDIAITEM_H__ */
 

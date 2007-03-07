@@ -25,36 +25,17 @@
 */
 
 /**
- * \file sbILibraryFactory.idl
- * \brief Definition of the sbILibraryFactory interface
- * \sa sbILibrary.idl
+ * \brief Test file
  */
 
-#include "nsISupports.idl"
+function runTest () {
 
-interface sbILibrary;
+  var databaseGUID = "test_localdatabaselibrary";
+  createDatabase(databaseGUID);
 
-/**
-* \interface sbILibraryFactory
-* \brief Factory for new library instances
-*
-* This interface is used to create new instances of a library
-*
-* \sa sbILibrary
-*/
-[scriptable, uuid(5e49042d-3676-4dc5-8366-24ea5cace552)]
-interface sbILibraryFactory : nsISupports
-{
-  /**
-   * \brief Key to the localized name of the library type this factory creates
-   */
-  readonly attribute AString nameKey;
+  var library = createLibrary(databaseGUID);
 
-  /**
-   * \brief Create a new instance of a library
-   * \return New library instance
-   */
-  sbILibrary createLibrary();
-
-};
+  var list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  assertList(list, "data_sort_sml101_ordinal_asc.txt");
+}
 

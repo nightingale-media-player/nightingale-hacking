@@ -61,6 +61,11 @@ interface sbIMediaList : sbIMediaItem
   readonly attribute nsISimpleEnumerator items;
 
   /**
+   * \brief Returns the length of the list
+   */
+  readonly attribute unsigned long length;
+
+  /**
    * \brief Get a media item in the list by guid
    * \param aGuid Guid of the media item
    * \return Media item with the requested guid or null if not found
@@ -85,7 +90,7 @@ interface sbIMediaList : sbIMediaItem
   nsISimpleEnumerator getItemsByPropertyValue(in AString aName, in AString aValue);
 
   /**
-   * \brief Get a list of media items that match a listr of property and
+   * \brief Get a list of media items that match a list of property and
    * propery values
    * \param aBag Property bag describing the item search where the keys map
    * to property names and values map to property values.

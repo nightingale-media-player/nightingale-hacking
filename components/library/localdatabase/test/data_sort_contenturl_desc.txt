@@ -1,4 +1,5 @@
 7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb	foo
+songbird:view	foo
 3E5A4E36-AD99-11DB-9321-C22AB7121F49	file:///home/steve/You%20Shook%20Me%20All%20Night%20Long.mp3
 3E4FF85A-AD99-11DB-9321-C22AB7121F49	file:///home/steve/Work%20for%20It.mp3
 3E63F4C2-AD99-11DB-9321-C22AB7121F49	file:///home/steve/Winterdreams.mp3
