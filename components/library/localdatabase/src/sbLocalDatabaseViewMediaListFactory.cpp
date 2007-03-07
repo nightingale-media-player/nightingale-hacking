@@ -47,7 +47,7 @@ sbLocalDatabaseViewMediaListFactory::~sbLocalDatabaseViewMediaListFactory()
 {
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseViewMediaListFactory::Init()
 {
   return NS_OK;

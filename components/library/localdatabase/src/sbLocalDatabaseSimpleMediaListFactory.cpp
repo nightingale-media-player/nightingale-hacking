@@ -39,7 +39,7 @@ sbLocalDatabaseSimpleMediaListFactory::~sbLocalDatabaseSimpleMediaListFactory()
 {
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseSimpleMediaListFactory::Init()
 {
   return NS_OK;
