@@ -34,7 +34,6 @@ songbird.jar:
   content/songbird/scripts/mainWinInit.js               (mainWinInit.js)  
   content/songbird/scripts/device_temp.js               (device_temp.js)
   content/songbird/scripts/songbird_interfaces.js       (songbird_interfaces.js)
-  content/songbird/scripts/switch_feathers.js           (switch_feathers.js)
   content/songbird/scripts/switch_locale.js             (switch_locale.js)
   content/songbird/scripts/watch_folders.js             (watch_folders.js)
   content/songbird/scripts/servicetree_xbl_temp.js      (servicetree_xbl_temp.js)

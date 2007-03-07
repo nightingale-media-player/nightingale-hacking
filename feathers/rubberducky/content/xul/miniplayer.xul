@@ -100,7 +100,7 @@
       <button id="mini_btn_jump" class="sb_faceplate" oncommand="toggleJumpTo();" tooltiptext="&jumptofile.title;"/>
     </vbox>
     <vbox drag_window="true">
-      <button id="mini_btn_max"  class="sb_faceplate" oncommand="SBMainWindowOpen();" />
+      <sb-feathers-toggle-button id="mini_btn_max" popupanchor="bottomleft" popupalign="topleft" />
     </vbox>
     <vbox drag_window="true">
       <button id="mini_btn_fullscreen"  class="sb_faceplate" oncommand="SBFullscreen();" />

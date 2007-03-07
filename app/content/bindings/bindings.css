@@ -178,6 +178,15 @@ clickholdbutton {
   -moz-binding: url("chrome://songbird/content/bindings/clickholdbutton.xml#clickholdbutton") !important;
 }
 
+menupopup[type="feathers"] {
+  -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-menupopup") !important;
+}
+
+sb-feathers-toggle-button {
+  -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-togglebutton") !important;
+}
+
+
 hotkey {
   -moz-binding: url("chrome://songbird/content/bindings/hotkey.xml#hotkey") !important;
 }

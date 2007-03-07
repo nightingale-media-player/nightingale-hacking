@@ -352,7 +352,8 @@ AddonMetadataReader.prototype = {
     
     // Submit description
     this._feathersManager.registerLayout(description);
-    debug("AddonMetadataReader: registered layout addon " + addon.Value + "\n");    
+    debug("AddonMetadataReader: registered layout " + description.name +
+          " from addon " + addon.Value + "\n");    
     
     // Get compatibility information
     var identifiers, showChromeInstructions;
@@ -370,7 +371,7 @@ AddonMetadataReader.prototype = {
     // Assert compatibility      
     for (var i = 0; i < identifiers.length; i++) {
       this._feathersManager.assertCompatibility(
-               description.layoutURL,
+               description.url,
                identifiers[i], 
                showChromeInstructions[i]);
     }
@@ -563,8 +564,8 @@ function FeathersManager() {
 FeathersManager.prototype = {
   constructor: FeathersManager,
   
-  _currentSkinName: null,
-  _currentLayoutURL: null,
+  _layoutDataRemote: null,
+  _skinDataRemote: null,
   
   // Hash of skin descriptions keyed by internalName (e.g. classic/1.0)
   _skins: null,
@@ -599,7 +600,14 @@ FeathersManager.prototype = {
 
   _init: function init() {
     debug("FeathersManager: _init\n");
-    // Hmm, don't care?
+    
+    // Make dataremotes for the current skin and layout identifiers
+    var createDataRemote =  new Components.Constructor(
+                  "@songbirdnest.com/Songbird/DataRemote;1",
+                  Components.interfaces.sbIDataRemote, "init");
+
+    this._layoutDataRemote = createDataRemote("feathers.selectedLayout", null);
+    this._skinDataRemote = createDataRemote("selectedSkin", "general.skins.");
   },
   
   _deinit: function deinit() {
@@ -608,15 +616,17 @@ FeathersManager.prototype = {
     this._layouts = null;
     this._mappings = null;
     this._listeners = null;
+    this._layoutDataRemote = null;
+    this._skinDataRemote = null;
   },
   
   
   get currentSkinName() {
-    return this._currentSkinName;
+    return this._skinDataRemote.stringValue;
   },
   
   get currentLayoutURL() {
-    return this._currentLayoutURL;
+    return this._layoutDataRemote.stringValue;
   },
   
   get skinCount() {
@@ -692,8 +702,8 @@ FeathersManager.prototype = {
   getLayoutDescription: function getLayoutDescription(url) {
     return this._layouts[url];
   }, 
-  
 
+  
 
   assertCompatibility: 
   function assertCompatibility(layoutURL, internalName, showChrome) {
@@ -707,7 +717,7 @@ FeathersManager.prototype = {
     this._mappings[layoutURL][internalName] = showChrome;
     
     // Notify observers
-    this._onUpdate();    
+    this._onUpdate();
   },
 
   unassertCompatibility: function unassertCompatibility(layoutURL, internalName) {
@@ -715,7 +725,7 @@ FeathersManager.prototype = {
       delete this._mappings[layoutURL][internalName];
       
       // Notify observers
-      this._onUpdate();  
+      this._onUpdate();
     }  
   },
   

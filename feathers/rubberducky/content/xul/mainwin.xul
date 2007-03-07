@@ -119,7 +119,9 @@
               <spacer width="5"/>
               <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" />               
               <spacer flex="1" drag_window="true"/>
-              <button id="sysbtn_minimode" oncommand="SBMiniplayerOpen( );" tooltiptext="&tooltip.miniplayer;"/>
+
+              <sb-feathers-toggle-button id="sysbtn_minimode" popupanchor="bottomright" popupalign="topright" />
+              
               <spacer width="5"/>
               <sb-sys-minimize-button id="sysbtn_minimize"/>
               <spacer width="5"/>
@@ -440,10 +442,6 @@
   <!-- Load the locale switcher -->
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/switch_locale.js" />
-
-  <!-- Load the feathers (skin) switcher -->
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/switch_feathers.js" />
 
   <!-- Generic message box -->
   <script type="application/x-javascript"   

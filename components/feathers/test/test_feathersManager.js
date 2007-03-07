@@ -148,7 +148,8 @@ function testAddonMetadataReader()
   assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
   
   // Verify all layouts added properly
-  var layoutURLs = ["chrome://rubberducky/content/xul/mainwin.xul"]
+  var layoutURLs = [ "chrome://rubberducky/content/xul/mainwin.xul", 
+                     "chrome://rubberducky/content/xul/mini.xul" ]
   assertEqual(feathersManager.layoutCount, layoutURLs.length);
   enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
                      Components.interfaces.sbILayoutDescription);
@@ -157,6 +158,9 @@ function testAddonMetadataReader()
   // Verify mappings
   enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[0]), 
                  Components.interfaces.sbISkinDescription);
+  assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
+  enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[1]), 
+                              Components.interfaces.sbISkinDescription);
   assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
   
   // Verify showChrome

@@ -43,7 +43,7 @@
 
     <content>
         <xul:button sbid="button" xbl:inherits="label,class,id,flex" />
-        <xul:menupopup sbid="popup" xbl:inherits="position,popupanchor,popupalign,class">
+        <xul:menupopup sbid="popup" xbl:inherits="position,popupanchor,popupalign,class,type=menupopuptype,onpopupshowing=onmenushowing">
           <children/>
         </xul:menupopup>        
     </content>
@@ -139,14 +139,16 @@
      
      <handler event="command" phase="capturing">
        <![CDATA[
-       // Suppress button command if the popup was just triggered
-       if (event.target == this && this.popupShowing )  event.stopPropagation();
+       // Suppress button command if the popup was just triggered.
+       // Note that event.originalTarget is needed since event.target will
+       // always be this XBL widget for any anon content.
+       if (event.originalTarget == this.button && this.popupShowing )  event.stopPropagation();
        ]]>
      </handler>
 
      
    </handlers> 
-  </binding>
+  </binding>  
 </bindings>
 
 

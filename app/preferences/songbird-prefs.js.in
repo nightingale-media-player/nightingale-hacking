@@ -15,6 +15,10 @@ pref("general.skins.selectedSkin", "rubberducky/0.2");
 pref("general.bones.selectedMainWinURL", "chrome://rubberducky/content/xul/mainwin.xul");
 pref("general.bones.selectedMiniPlayerURL", "chrome://rubberducky/content/xul/miniplayer.xul");
 
+// TEMP
+pref("songbird.feathers.selectedLayout", "chrome://rubberducky/content/xul/mainwin.xul");
+
+
 // Our skinswitching trick doesn't work unless we shut down the XUL cache.
 pref("nglayout.debug.disable_xul_cache", true);
 
@@ -141,6 +145,10 @@ pref("browser.preferences.instantApply", true);
 
 #ifdef XP_MACOSX
 pref("browser.preferences.animateFadeIn", true);
+
+// TEMP HACK - Mac windows without chrome do not receive events
+// so am forcing accessibility mode until this bug is fixed.
+pref("songbird.accessibility.enabled", "1");
 #else
 pref("browser.preferences.animateFadeIn", false);
 #endif

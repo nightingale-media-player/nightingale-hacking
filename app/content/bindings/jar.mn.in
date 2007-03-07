@@ -4,27 +4,5 @@ songbird.jar:
 #else
 % content  songbird  jar:songbird.jar!/content/songbird/
 #endif
-  content/songbird/bindings/bindings.css          (bindings.css)
-  content/songbird/bindings/calloutbox.xml        (calloutbox.xml)  
-  content/songbird/bindings/clickholdbutton.xml   (clickholdbutton.xml)
-  content/songbird/bindings/conditions.xml        (conditions.xml)
-  content/songbird/bindings/db_controls.xml       (db_controls.xml)
-  content/songbird/bindings/drawer.xml            (drawer.xml)
-  content/songbird/bindings/faceplate.xml         (faceplate.xml)  
-  content/songbird/bindings/filterlist.xml        (filterlist.xml)
-  content/songbird/bindings/folders.xml           (folders.xml)
-  content/songbird/bindings/hotkey.xml            (hotkey.xml)
-  content/songbird/bindings/multistatebutton.xml  (multistatebutton.xml)
-  content/songbird/bindings/playerControls.xml    (playerControls.xml)
-  content/songbird/bindings/playlist.xml          (playlist.xml)
-  content/songbird/bindings/progressSlider.xml    (progressSlider.xml)
-  content/songbird/bindings/remote_label.xml      (remote_label.xml)
-  content/songbird/bindings/sbextensions.xml      (sbextensions.xml)
-  content/songbird/bindings/search.xml            (search.xml)
-  content/songbird/bindings/servicepane.xml       (servicepane.xml)
-  content/songbird/bindings/servicetree.xml       (servicetree.xml)
-  content/songbird/bindings/statusbar.xml         (statusbar.xml)
-  content/songbird/bindings/tageditor.xml         (tageditor.xml)
-  content/songbird/bindings/trackeditor.xml       (trackeditor.xml)
-  content/songbird/bindings/windowregion.xml      (windowregion.xml)
-  content/songbird/bindings/smartsplitter.xml     (smartsplitter.xml)
+@include_all_to content/songbird/bindings/
+

@@ -57,7 +57,7 @@
           <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />
         </menu>
         <menu id="songbird_menu_feathers" label="&menu.feathers;" class="menuitem-iconic" accesskey="&menu.feathers.accesskey;">
-          <menupopup id="feathers.popup" onpopupshowing="fillFeathersList(this);" />
+          <menupopup type="feathers"/>
         </menu>
         <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="menuitem-iconic"/> -->
         <!-- ID changed for OS X nsMenuBarX::AquifyMenuBar -->
