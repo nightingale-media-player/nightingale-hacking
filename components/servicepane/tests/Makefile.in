@@ -32,7 +32,6 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = servicepane
 
 SONGBIRD_TESTS = $(srcdir)/test_servicepane.js \
-				 $(srcdir)/test_bookmarks.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk
