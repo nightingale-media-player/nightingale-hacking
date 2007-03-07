@@ -41,6 +41,17 @@
         flags="dont-build-content"
         flex="1" 
       >
+        <xul:treecols sbid="treeColumns"/>
+
+        <xul:template>
+          <xul:rule>
+            <xul:treechildren>
+              <xul:treeitem uri="rdf:*">
+                <xul:treerow sbid="treeRow"/>
+              </xul:treeitem>
+            </xul:treechildren>
+          </xul:rule>
+        </xul:template>
       </xul:tree>
     </content>
 
@@ -204,19 +215,12 @@
 
     <method name="loadcolumn">
       <body>
-      try
-      {
         if (this.source == null || this.ref == null) 
           return;
-          
+        
         this.removeColumns();
-        this.removeTemplate(); 
+        this.removeRows(); 
         this.addNewContent(this.source, this.ref);
-      }
-      catch( err )
-      {
-        alert( err );
-      }
       </body>
     </method>
 
@@ -226,21 +230,8 @@
       <body>
         <![CDATA[
 
-          // Columns nodes parent
-          var columns_node = document.createElement("treecols");
-
-          // Template nodes parents
-          var template_node = document.createElement("template");
-
-          var rule_node = document.createElement("rule");
-
-          var treechildren_node = document.createElement("treechildren");
-          treechildren_node.setAttribute("flex", "1");
-
-          var treeitem_node = document.createElement("treeitem");
-          treeitem_node.setAttribute("uri", "rdf:*");
-
-          var treerow_node = document.createElement("treerow");
+          var treerow_node =
+            document.getAnonymousElementByAttribute(this, "sbid", "treeRow");
 
           // Fill in the necessary information for the tree column.
           var name = "" + this.column;
@@ -280,21 +271,14 @@
 //            this_column_node.setAttribute("sortDirection","ascending");
 //            this_column_node.setAttribute("sort", "rdf:http://home.netscape.com/NC-rdf#" + name);
 
+            var columns_node =
+              document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
             columns_node.appendChild(this_column_node);
 
             var treecell_node = document.createElement("treecell");
             treecell_node.setAttribute("label", "rdf:http://home.netscape.com/NC-rdf#"+name);
             treerow_node.appendChild(treecell_node);
           }
-
-          // Now add columns and template node hierarchy to the tree
-          this.tree.insertBefore(columns_node, null);
-
-          treeitem_node.appendChild(treerow_node); 
-          treechildren_node.appendChild(treeitem_node);
-          rule_node.appendChild(treechildren_node);
-          template_node.appendChild(rule_node);
-          this.tree.appendChild(template_node);
         ]]>
       </body>
     </method> 
@@ -327,32 +311,37 @@
     <!-- Tree Manipulation Functions -->
 
     <method name="removeColumns">
-      <body>
-          this.removeChildByName("treecols");
-      </body>
+      <body><![CDATA[
+        var treeColumnElement =
+          document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
+        this.removeAllChildren(treeColumnElement);
+      ]]></body>
     </method>
 
-    <method name="removeTemplate">
-      <body>
-          this.removeChildByName("template");
-      </body>
+    <method name="removeRows">
+      <body><![CDATA[
+        var treeRowElement =
+          document.getAnonymousElementByAttribute(this, "sbid", "treeRow");
+        this.removeAllChildren(treeRowElement);
+      ]]></body>
     </method>
-
-    <method name="removeChildByName">
-      <parameter name="childname"/>
-      <body>
-        <![CDATA[
-          var n = this.tree.childNodes.length;
-          for (var i=0;i<this.tree.childNodes.length;i++) {
-            var node = this.tree.childNodes.item(i);
-            if (node.tagName == childname ||
-                node.tagName == "xul:"+childname) {
-              this.tree.removeChild(node);
-              i--;
-            }
-          }
-        ]]>
-      </body>
+    
+    <!-- Removes all children of the given DOM node -->
+    <method name="removeAllChildren">
+      <parameter name="parentNode"/>
+      <body><![CDATA[
+        // Bail out if there are no children
+        if (!parentNode.hasChildNodes())
+          return;
+        
+        // Loop through and remove all the children
+        var childNodes = parentNode.childNodes;
+        var childCount = childNodes.length;
+        for(var index = 0; index < childCount; index++) {
+          var child = childNodes.item(0);
+          parentNode.removeChild(child);
+        }
+      ]]></body>
     </method>
     
     <!-- Selection restore -->
