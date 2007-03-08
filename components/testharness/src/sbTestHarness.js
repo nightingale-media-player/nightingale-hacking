@@ -60,6 +60,8 @@ sbTestHarness.prototype = {
   mTailSongbird : null,
 
   init : function ( aTests ) {
+    // list of test components and possible test names to run.
+    //   e.g. - testcomp:testname+testname,testcomp,testcomp:testname
     if (aTests && aTests != "")
       this.mTestComponents = aTests.split(",");
 
@@ -99,8 +101,13 @@ sbTestHarness.prototype = {
 
       // create a file object pointing to each component dir in turn
       var testDir = this.mTestDir.clone().QueryInterface(Ci.nsILocalFile);
-      var testComp = this.mTestComponents[index];
+      var testCompTests = this.mTestComponents[index].split(":");
+      var testComp = testCompTests.shift();
       testDir.append(testComp);
+
+      if (testCompTests.length !=0) {
+        testCompTests = testCompTests[0].split("+");
+      }
 
       if ( !testDir.exists() || !testDir.isDirectory() )
         continue;
@@ -117,7 +124,7 @@ sbTestHarness.prototype = {
         if (testFile.isDirectory())
           continue;
 
-        // check for test_*.js the parans cause the string to get parsed into
+        // check for test_*.js; the parans cause the string to get parsed into
         //   result as an array
         var regex = /^(test_)(.+)(\.js)$/;
         var result = testFile.leafName.match(regex);
@@ -125,7 +132,23 @@ sbTestHarness.prototype = {
           continue;
           
         // our root string will always be in 2
+        // use this to look for tail_ and head_ files
         var testBase = result[2];
+
+        // Check to see if the caller was specific about the actual tests to
+        // run. If so make sure the testBase matches otherwise don't run it.
+        if (testCompTests.length != 0 ) {
+          var testName;
+          for (testName in testCompTests) {
+            if ( testCompTests[testName] == testBase )
+              break;
+          }
+          // if the above loop didn't find a match skip this test, these
+          //   aren't the droids you're looking for, move along, move along
+          if (testCompTests[testName] != testBase)
+            continue;
+        }
+         
 
         // clone the nsIFile object so we can point to 3 files
         var testFile = testDir.clone().QueryInterface(Ci.nsILocalFile);
@@ -164,7 +187,7 @@ sbTestHarness.prototype = {
 
         // load the test script
         if (testFile.exists()) {
-          consoleService.logStringMessage("*** [" + testBase + "] - Testing...\n");
+          consoleService.logStringMessage("*** [" + testBase + "] - Testing...");
           scriptUri = ioService.newFileURI(testFile);
           jsLoader.loadSubScript( scriptUri.spec, null );
         }
@@ -200,9 +223,9 @@ sbTestHarness.prototype = {
     }
 
     if ( this.mFailedTests ) {
-      log("[Test Harness] *** The following tests failed:\n");
+      log("[Test Harness] *** The following tests failed:");
       for ( var index = 0; index < this.mFailedTests.length ; index++ )
-        log("[Test Harness] - " + this.mFailedTests[index] + "\n");
+        log("[Test Harness] - " + this.mFailedTests[index]);
       throw Cr.NS_ERROR_ABORT;
     }
 

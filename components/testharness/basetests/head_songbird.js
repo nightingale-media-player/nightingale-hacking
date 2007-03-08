@@ -85,7 +85,7 @@ function doMain() {
   if (_quit)
     return;
 
-  _consoleService.logStringMessage("*** [" + _test_name + "] - running event loop\n");
+  _consoleService.logStringMessage("*** [" + _test_name + "] - running event loop");
 
   var tm = Cc["@mozilla.org/thread-manager;1"].createInstance(Ci.nsIThreadManager);
   var mainThread = tm.mainThread;
@@ -106,10 +106,10 @@ function doQuit() {
 function doThrow(text) {
   _fail = true;
   doQuit();
-  log("*** [" + _test_name + "] - CHECK FAILED: " + text + "\n");
+  log("*** [" + _test_name + "] - CHECK FAILED: " + text);
   var frame = Components.stack;
   while (frame != null) {
-    _consoleService.logStringMessage(frame + "\n");
+    _consoleService.logStringMessage(frame);
     frame = frame.caller;
   }
   throw Cr.NS_ERROR_ABORT;

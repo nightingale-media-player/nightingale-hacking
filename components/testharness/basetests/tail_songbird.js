@@ -44,14 +44,14 @@ try {
   doMain();
 } catch (e) {
   _fail = true;
-  log("*** [" + _test_name + " ] - EXCEPTION: " + e + "\n");
+  log("*** [" + _test_name + " ] - EXCEPTION: " + e);
 }
 
 if (_fail) {
   var testHarness = Cc["@songbirdnest.com/Songbird/TestHarness;1"].getService(Ci.sbITestHarness);
   testHarness.logFailure( _test_name );
-  log("*** [" + _test_name + "] - ***** FAIL *****\n");
+  log("*** [" + _test_name + "] - ***** FAIL *****");
 }
 else
-  log("*** [" + _test_name + "] - ***** PASS *****\n");
+  log("*** [" + _test_name + "] - ***** PASS *****");
 
