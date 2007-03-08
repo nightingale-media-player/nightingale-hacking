@@ -226,4 +226,32 @@ sb-sys-minimize-button {
 }
 
 
+/* BROWSER WIDGET */
 
+tabbrowser {
+  -moz-binding: url("chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser") !important;
+}
+
+arrowscrollbox.tabbrowser-arrowscrollbox {
+  -moz-binding: url("chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser-arrowscrollbox") !important;
+}
+
+tabs.tabbrowser-tabs {
+  -moz-binding: url("chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser-tabs") !important;
+}
+
+menupopup.alltabs-popup {
+  -moz-binding: url("chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser-alltabs-popup") !important;  
+}
+
+toolbarbutton.tab-close-button {
+  -moz-binding: url("chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser-close-tab-button") !important;
+}
+
+tab.tabbrowser-tab {
+  -moz-binding: url("chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser-tab") !important;
+}
+
+sb-tabbrowser {
+  -moz-binding: url("chrome://songbird/content/bindings/sb-tabbrowser.xml#sb-tabbrowser") !important;
+}
