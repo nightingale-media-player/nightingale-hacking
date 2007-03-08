@@ -189,7 +189,6 @@ function sbBookmarks_addBookmark(aURL, aTitle, aIconURL) {
         // if we try to add a bookmark the defaults are loaded, lets create the default folder anyway
         this._bookmarkNode = this._servicePane.addNode(ROOTNODE,
                 this._servicePane.root, true);
-        dump('created bookmarknode\n\n\n\n\n\n\n\n\n');
     }
     var node = this._servicePane.addNode(aURL, this._bookmarkNode, false);
     dump ('addBookmark: addNode returned: '+node+'\n');
