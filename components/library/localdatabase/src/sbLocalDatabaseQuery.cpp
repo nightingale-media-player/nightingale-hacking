@@ -529,6 +529,18 @@ sbLocalDatabaseQuery::AddPrimarySort()
     }
   }
 
+  /*
+   * Sort on media_item_id to make the order of the rows always the same
+   * XXX: We could probably remove this in non test builds since it really
+   * does not matter.  The only reason I've added this is because the natural
+   * database ordering seems to change between architectures and this causes
+   * tests to fail that have pre-generated results to test against
+   */
+  rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS,
+                          MEDIAITEMID_COLUMN,
+                          PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 
 }
