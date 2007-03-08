@@ -64,5 +64,7 @@ function runTest () {
   // and then it no longer exists
   assertEqual(BMS.bookmarkExists('http://www.example.com/bookmark'), false);
 
+  var SPS = Components.classes['@songbirdnest.com/servicepane/service;1'].getService(Components.interfaces.sbIServicePaneService);
+  SPS.save();
 }
 

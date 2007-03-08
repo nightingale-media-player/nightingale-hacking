@@ -164,5 +164,7 @@ function runTest () {
   // make sure the nodes are gone
   assertEqual(SPS.getNode(test_root_id), null);
   assertEqual(SPS.getNode(test_node_id), null);
+
+  SPS.save();
 }
 

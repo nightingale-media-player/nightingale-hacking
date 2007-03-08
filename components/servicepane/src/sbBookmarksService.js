@@ -98,16 +98,20 @@ function sbBookmarks_servicePaneInit(sps) {
                     // the folder is missing required attributes, we must ignore it
                     continue;
                 }
-                // if this folder already exists, skip.
-                // we'll want to change this behaviour later to support removals
-                // see bug #2352
+
                 var fnode = sps.getNode(folder.getAttribute('id'));
+                
                 if (fnode) {
-                    // the folder exists, skip it
-                    continue;
+                    if (fnode.getAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported')) {
+                        // don't reimport a folder that's already been imported
+                        continue;
+                    }
+                } else {
+                    // if the folder doesn't exist...
+                    // create the folder
+                    fnode = sps.addNode(folder.getAttribute('id'), sps.root, true);
                 }
-                // create the folder
-                fnode = sps.addNode(folder.getAttribute('id'), sps.root, true);
+                
                 fnode.name = folder.getAttribute('name');
                 // attach an image
                 if (folder.hasAttribute('image')) {
@@ -152,6 +156,8 @@ function sbBookmarks_servicePaneInit(sps) {
                     bnode.hidden = false;
                     bnode.contractid = CONTRACTID;
                 }
+                
+                fnode.setAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported', 'true');
             }
             sps.save();
         }, false);
@@ -179,6 +185,12 @@ function sbBookmarks_getString(aStringId, aDefault) {
 sbBookmarks.prototype.addBookmark =
 function sbBookmarks_addBookmark(aURL, aTitle, aIconURL) {
     dump('sbBookmarks.addBookmark('+aURL.toSource()+','+aTitle.toSource()+','+aIconURL.toSource()+')\n');
+    if (!this._bookmarkNode) {
+        // if we try to add a bookmark the defaults are loaded, lets create the default folder anyway
+        this._bookmarkNode = this._servicePane.addNode(ROOTNODE,
+                this._servicePane.root, true);
+        dump('created bookmarknode\n\n\n\n\n\n\n\n\n');
+    }
     var node = this._servicePane.addNode(aURL, this._bookmarkNode, false);
     dump ('addBookmark: addNode returned: '+node+'\n');
     if (node) {
