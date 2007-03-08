@@ -140,6 +140,7 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Contains(sbIMediaItem* aMediaItem,
                                        PRBool* _retval)
 {
+  /* virtual */
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -245,7 +246,8 @@ sbLocalDatabaseMediaListBase::GetIsMutable(PRBool* IsMutable)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetGuid(nsAString& aGuid)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  aGuid = mGuid;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
