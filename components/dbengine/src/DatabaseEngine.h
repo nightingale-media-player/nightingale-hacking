@@ -48,7 +48,7 @@
 #include <nsCOMArray.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
-#include <xpcom/nsIObserver.h>
+#include <nsIObserver.h>
 
 #include <nsStringGlue.h>
 
@@ -131,7 +131,7 @@ private:
   typedef std::deque<CDatabaseQuery *> queryqueue_t;
 
   void UpdatePersistentQueries(CDatabaseQuery *pQuery);
-  void DoPersistentCallback(CDatabaseQuery *pQuery);
+  void DoSimpleCallback(CDatabaseQuery *pQuery);
 
   nsresult CreateDBStorePath();
   nsresult GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery *pQuery, nsAString &strPath);

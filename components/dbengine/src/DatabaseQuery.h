@@ -40,15 +40,17 @@ class CDatabaseQuery;
 #include <vector>
 #include <set>
 
-#include "sbIDatabaseQuery.h"
-#include "DatabaseResult.h"
-
 #include <prlock.h>
 #include <prmon.h>
 
-#include <xpcom/nsCOMPtr.h>
-#include <nsStringGlue.h>
+#include <nsCOMPtr.h>
 #include <nsTArray.h>
+#include <nsStringGlue.h>
+#include <nsInterfaceHashtable.h>
+#include <nsHashKeys.h>
+
+#include "sbIDatabaseQuery.h"
+#include "DatabaseResult.h"
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEQUERY_CONTRACTID                 \
@@ -101,8 +103,6 @@ public:
   NS_DECL_SBIDATABASEQUERY
 
 protected:
-  void RemoveAllCallbacks();
-
   CDatabaseResult* GetResultObject();
   bindParameterArray_t* GetQueryParameters(PRInt32 aQueryIndex);
 
@@ -137,13 +137,11 @@ protected:
   PRMonitor* m_pQueryRunningMonitor;
   PRBool m_QueryHasCompleted;
 
-  typedef std::vector<sbIDatabaseQueryCallback *> callbacklist_t;
   PRLock* m_pCallbackListLock;
-  callbacklist_t m_CallbackList;
+  nsInterfaceHashtable<nsISupportsHashKey, sbIDatabaseQueryCallback> m_CallbackList;
 
-  typedef std::vector<sbIDatabaseSimpleQueryCallback *> persistentcallbacklist_t;
   PRLock* m_pPersistentCallbackListLock;
-  persistentcallbacklist_t m_PersistentCallbackList;
+  nsInterfaceHashtable<nsISupportsHashKey, sbIDatabaseSimpleQueryCallback> m_PersistentCallbackList;
 
   typedef std::set<nsCString> modifiedtables_t;
   typedef std::map<nsCString, modifiedtables_t> modifieddata_t;

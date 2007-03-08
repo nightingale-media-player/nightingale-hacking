@@ -32,16 +32,16 @@
 // INCLUDES ===================================================================
 #include "DatabaseEngine.h"
 
-#include <xpcom/nsCOMPtr.h>
-#include <xpcom/nsIFile.h>
-#include <xpcom/nsILocalFile.h>
+#include <nsCOMPtr.h>
+#include <nsIFile.h>
+#include <nsILocalFile.h>
 #include <nsStringGlue.h>
 #include <nsThreadUtils.h>
-#include <xpcom/nsIObserverService.h>
-#include <xpcom/nsISimpleEnumerator.h>
-#include <xpcom/nsDirectoryServiceDefs.h>
-#include <xpcom/nsAppDirectoryServiceDefs.h>
-#include <xpcom/nsDirectoryServiceUtils.h>
+#include <nsIObserverService.h>
+#include <nsISimpleEnumerator.h>
+#include <nsDirectoryServiceDefs.h>
+#include <nsAppDirectoryServiceDefs.h>
+#include <nsDirectoryServiceUtils.h>
 #include <nsUnicharUtils.h>
 #include <nsIURI.h>
 #include <nsNetUtil.h>
@@ -51,6 +51,8 @@
 #include <vector>
 #include <prmem.h>
 #include <prtypes.h>
+
+#include <nsCOMArray.h>
 
 #if defined(_WIN32)
   #include <direct.h>
@@ -1461,11 +1463,11 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
       mon.NotifyAll();
     }
 
+    //Check if this query is a persistent query so we can now fire off the callback.
+    pEngine->DoSimpleCallback(pQuery);
+
     //Check if this query changed any data 
     pEngine->UpdatePersistentQueries(pQuery);
-
-    //Check if this query is a persistent query so we can now fire off the callback.
-    pEngine->DoPersistentCallback(pQuery);
 
     NS_IF_RELEASE(pQuery);
   } // while
@@ -1537,37 +1539,50 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
 } //UpdatePersistentQueries
 
 //-----------------------------------------------------------------------------
-void CDatabaseEngine::DoPersistentCallback(CDatabaseQuery *pQuery)
+PR_STATIC_CALLBACK(PLDHashOperator)
+EnumSimpleCallback(nsISupports *key, sbIDatabaseSimpleQueryCallback *data, void *closure)
 {
-  if(pQuery->m_PersistentQuery)
+  nsCOMArray<sbIDatabaseSimpleQueryCallback> *array = NS_STATIC_CAST(nsCOMArray<sbIDatabaseSimpleQueryCallback> *, closure);
+  array->AppendObject(data);
+  return PL_DHASH_NEXT;
+}
+
+//-----------------------------------------------------------------------------
+void CDatabaseEngine::DoSimpleCallback(CDatabaseQuery *pQuery)
+{
+  PRUint32 callbackCount = 0;
+  nsCOMArray<sbIDatabaseSimpleQueryCallback> callbackSnapshot;
+
+  nsCOMPtr<sbIDatabaseResult> pDBResult;
+  nsAutoString strGUID, strQuery;
+
+  pQuery->GetResultObject(getter_AddRefs(pDBResult));
+  pQuery->GetDatabaseGUID(strGUID);
+  pQuery->GetQuery(0, strQuery);
+
+  PR_Lock(pQuery->m_pPersistentCallbackListLock);
+  pQuery->m_PersistentCallbackList.EnumerateRead(EnumSimpleCallback, &callbackSnapshot);
+  PR_Unlock(pQuery->m_pPersistentCallbackListLock);
+  
+  callbackCount = callbackSnapshot.Count();
+  if(!callbackCount) 
+    return;
+  
+  for(PRUint32 i = 0; i < callbackCount; i++)
   {
-    nsCOMPtr<sbIDatabaseResult> pDBResult;
-    nsAutoString strGUID, strQuery;
-
-    pQuery->GetResultObject(getter_AddRefs(pDBResult));
-    pQuery->GetDatabaseGUID(strGUID);
-    pQuery->GetQuery(0, strQuery);
-
-    nsAutoLock lock(pQuery->m_pPersistentCallbackListLock);
-    CDatabaseQuery::persistentcallbacklist_t::const_iterator itCallback = pQuery->m_PersistentCallbackList.begin();
-    CDatabaseQuery::persistentcallbacklist_t::const_iterator itEnd = pQuery->m_PersistentCallbackList.end();
-
-    for(; itCallback != itEnd; itCallback++)
+    nsCOMPtr<sbIDatabaseSimpleQueryCallback> callback = callbackSnapshot.ObjectAt(i);
+    if(callback)
     {
-      if((*itCallback))
+      try
       {
-        try
-        {
-          (*itCallback)->OnQueryEnd(pDBResult, strGUID, strQuery);
-        }
-        catch(...)
-        {
-          //bad monkey!
-        }
+        callback->OnQueryEnd(pDBResult, strGUID, strQuery);
       }
+      catch(...) { }
     }
   }
-} //DoPersistentCallback
+
+  return;
+} //DoSimpleCallback
 
 //-----------------------------------------------------------------------------
 nsresult CDatabaseEngine::CreateDBStorePath()

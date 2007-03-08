@@ -38,8 +38,14 @@
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
+
 #include <nsAutoLock.h>
 #include <nsNetUtil.h>
+
+#include <nsIServiceManager.h>
+#include <nsIProxyObjectManager.h>
+#include <nsThreadUtils.h>
+#include <nsSupportsArray.h>
 
 #ifdef DEBUG_locks
 #include <nsPrintfCString.h>
@@ -51,6 +57,27 @@
 //=============================================================================
 //-----------------------------------------------------------------------------
 NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseQuery, sbIDatabaseQuery)
+
+/* 
+  This functions is *not* part of the frozen linkage. That is why it is duped
+  here 
+*/
+//-----------------------------------------------------------------------------
+nsresult
+SB_GetProxyForObject(nsIEventTarget *target, 
+                     REFNSIID aIID, 
+                     nsISupports* aObj, 
+                     PRInt32 proxyType, 
+                     void** aProxyObject) 
+{
+    nsresult rv;
+    nsCOMPtr<nsIProxyObjectManager> proxyObjMgr = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
+    if (NS_FAILED(rv))
+        return rv;
+ 
+    return proxyObjMgr->GetProxyForObject(target, aIID, aObj,
+                                          proxyType, aProxyObject);
+} //SB_GetProxyForObject
 
 //-----------------------------------------------------------------------------
 CDatabaseQuery::CDatabaseQuery()
@@ -106,6 +133,9 @@ CDatabaseQuery::CDatabaseQuery()
   NS_NEWXPCOM(m_QueryResult, CDatabaseResult);
   NS_ASSERTION(m_QueryResult, "Failed to create DatabaseQuery.m_QueryResult");
   m_QueryResult->AddRef();
+
+  m_PersistentCallbackList.Init();
+  m_CallbackList.Init();
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -113,8 +143,6 @@ CDatabaseQuery::~CDatabaseQuery()
 {
   nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
   if(p) p->RemovePersistentQuery(this);
-  
-  RemoveAllCallbacks();
 
   NS_IF_RELEASE(m_QueryResult);
   
@@ -138,6 +166,9 @@ CDatabaseQuery::~CDatabaseQuery()
     PR_DestroyLock(m_pBindParametersLock);
   if (m_pQueryRunningMonitor)
     nsAutoMonitor::DestroyMonitor(m_pQueryRunningMonitor);
+
+  m_PersistentCallbackList.Clear();
+  m_CallbackList.Clear();
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -261,18 +292,17 @@ NS_IMETHODIMP CDatabaseQuery::IsPersistentQuery(PRBool *_retval)
 NS_IMETHODIMP CDatabaseQuery::AddSimpleQueryCallback(sbIDatabaseSimpleQueryCallback *dbPersistCB)
 {
   NS_ENSURE_ARG_POINTER(dbPersistCB);
+  nsCOMPtr<sbIDatabaseSimpleQueryCallback> proxiedCallback;
+
+  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                                     NS_GET_IID(sbIDatabaseSimpleQueryCallback),
+                                     dbPersistCB,
+                                     NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
+                                     getter_AddRefs(proxiedCallback));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoLock lock(m_pPersistentCallbackListLock);
-
-  size_t nSize = m_PersistentCallbackList.size();
-  for(size_t nCurrent = 0; nCurrent < nSize; nCurrent++)
-  {
-    if(m_PersistentCallbackList[nCurrent] == dbPersistCB)
-      return NS_OK;
-  }
-
-  dbPersistCB->AddRef();
-  m_PersistentCallbackList.push_back(dbPersistCB);
+  m_PersistentCallbackList.Put(dbPersistCB, proxiedCallback);
 
   return NS_OK;
 } //AddPersistentQueryCallback
@@ -284,18 +314,7 @@ NS_IMETHODIMP CDatabaseQuery::RemoveSimpleQueryCallback(sbIDatabaseSimpleQueryCa
   NS_ENSURE_ARG_POINTER(dbPersistCB);
 
   PR_Lock(m_pPersistentCallbackListLock);
-
-  persistentcallbacklist_t::iterator itCallback = m_PersistentCallbackList.begin();
-  for(; itCallback != m_PersistentCallbackList.end(); itCallback++)
-  {
-    if((*itCallback) == dbPersistCB)
-    {
-      (*itCallback)->Release();
-      m_PersistentCallbackList.erase(itCallback);
-      break;
-    }
-  }
-
+  m_PersistentCallbackList.Remove(dbPersistCB);
   PR_Unlock(m_pPersistentCallbackListLock);
 
   return NS_OK;
@@ -493,17 +512,17 @@ NS_IMETHODIMP CDatabaseQuery::AddCallback(sbIDatabaseQueryCallback *dbCallback)
 {
   NS_ENSURE_ARG_POINTER(dbCallback);
 
+  nsCOMPtr<sbIDatabaseSimpleQueryCallback> proxiedCallback;
+
+  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                                     NS_GET_IID(sbIDatabaseSimpleQueryCallback),
+                                     dbCallback,
+                                     NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
+                                     getter_AddRefs(proxiedCallback));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsAutoLock lock(m_pCallbackListLock);
-
-  size_t nSize = m_CallbackList.size();
-  for(size_t nCurrent = 0; nCurrent < nSize; nCurrent++)
-  {
-    if(m_CallbackList[nCurrent] == dbCallback)
-      return NS_OK;
-  }
-
-  dbCallback->AddRef();
-  m_CallbackList.push_back(dbCallback);
+  m_PersistentCallbackList.Put(dbCallback, proxiedCallback);
 
   return NS_OK;
 } //AddCallback
@@ -514,18 +533,9 @@ NS_IMETHODIMP CDatabaseQuery::RemoveCallback(sbIDatabaseQueryCallback *dbCallbac
 {
   NS_ENSURE_ARG_POINTER(dbCallback);
 
-  nsAutoLock lock(m_pCallbackListLock);
-
-  callbacklist_t::iterator itCallback = m_CallbackList.begin();
-  for(; itCallback != m_CallbackList.end(); itCallback++)
-  {
-    if((*itCallback) == dbCallback)
-    {
-      (*itCallback)->Release();
-      m_CallbackList.erase(itCallback);
-      break;
-    }
-  }
+  PR_Lock(m_pCallbackListLock);
+  m_PersistentCallbackList.Remove(dbCallback);
+  PR_Unlock(m_pCallbackListLock);
 
   return NS_OK;
 } //RemoveCallback
@@ -679,26 +689,3 @@ bindParameterArray_t* CDatabaseQuery::GetQueryParameters(PRInt32 aQueryIndex)
   bindParameterArray_t* retval = new bindParameterArray_t(m_BindParameters[aQueryIndex]);
   return retval;
 }
-
-//-----------------------------------------------------------------------------
-void CDatabaseQuery::RemoveAllCallbacks()
-{
-  {
-    nsAutoLock lock(m_pCallbackListLock);
-    callbacklist_t::iterator itCallback = m_CallbackList.begin();
-    for(; itCallback != m_CallbackList.end(); itCallback++)
-      (*itCallback)->Release();
-    m_CallbackList.clear();
-  }
-
-  {
-    nsAutoLock lock(m_pPersistentCallbackListLock);
-    persistentcallbacklist_t::iterator itCallback = m_PersistentCallbackList.begin();
-    for(; itCallback != m_PersistentCallbackList.end(); itCallback++)
-      (*itCallback)->Release();
-    m_PersistentCallbackList.clear();
-  }
-
-  return;
-}
-
