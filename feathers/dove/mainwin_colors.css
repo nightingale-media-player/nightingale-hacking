@@ -170,34 +170,8 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   color: #666 !important;
 }
 
-#sysbtn_close
-{
-  background-color: transparent !important;
-}
-
-#sysbtn_maximize hbox,
-#sysbtn_maximize
-{
-  background-color: transparent !important;  
-}
-
-#sysbtn_maximize > hbox > image,
-#sysbtn_maximize > hbox > label,
-#sysbtn_maximize > hbox
-{
-  background-color: transparent !important;
-}
-
-#sysbtn_maximize > image
-{
-  background-color: transparent !important;
-}
-
-#sysbtn_maximize[checked="true"] > image /* Restore */
-{
-  background-color: transparent !important;
-}
-
+sb-sys-close-button,
+sb-sys-maximize-button,
 #sysbtn_minimize,
 #sysbtn_minimode,
 #sysbtn_hide

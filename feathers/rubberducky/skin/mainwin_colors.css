@@ -182,15 +182,9 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   color: #FFF !important;
 }
 
-#sysbtn_close,
-#sysbtn_maximize hbox,
-#sysbtn_maximize,
-#sysbtn_maximize > hbox > image,
-#sysbtn_maximize > hbox > label,
-#sysbtn_maximize > hbox,
-#sysbtn_maximize > image,
-#sysbtn_maximize[checked="true"] > image, /* Restore */
-#sysbtn_minimize,
+sb-sys-close-button,
+sb-sys-maximize-button,
+sb-sys-minimize-button,
 #sysbtn_minimode,
 #sysbtn_hide
 {

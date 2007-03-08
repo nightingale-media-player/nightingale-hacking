@@ -123,11 +123,11 @@
               <sb-feathers-toggle-button id="sysbtn_minimode" popupanchor="bottomright" popupalign="topright" />
               
               <spacer width="5"/>
-              <sb-sys-minimize-button id="sysbtn_minimize"/>
+              <sb-sys-minimize-button/>
               <spacer width="5"/>
-              <sb-sys-maximize-button id="sysbtn_maximize"/>
+              <sb-sys-maximize-button/>
               <spacer width="5"/>
-              <sb-sys-close-button id="sysbtn_close"/>
+              <sb-sys-close-button/>
             </hbox>
 
             <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->

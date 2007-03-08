@@ -1049,7 +1049,16 @@
     <implementation>
       <constructor>
         this.setAttribute("tooltiptext", "&tooltip.maximize;")
+        this.bindvisible = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
       </constructor>
+      <destructor>
+        <![CDATA[
+          if (this.bindvisible) {
+            this.bindvisible.unbind();
+            this.bindvisible = null;
+          }
+        ]]>
+      </destructor>
     </implementation>
   </binding>
 
@@ -1060,7 +1069,16 @@
     <implementation>
       <constructor>
         this.setAttribute("tooltiptext", "&tooltip.minimize;")
+        this.bindvisible = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
       </constructor>
+      <destructor>
+        <![CDATA[
+          if (this.bindvisible) {
+            this.bindvisible.unbind();
+            this.bindvisible = null;
+          }
+        ]]>
+      </destructor>
     </implementation>
   </binding>
 
@@ -1071,7 +1089,16 @@
     <implementation>
       <constructor>
         this.setAttribute("tooltiptext", "&tooltip.exit;")
+        this.bindvisible = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
       </constructor>
+      <destructor>
+        <![CDATA[
+          if (this.bindvisible) {
+            this.bindvisible.unbind();
+            this.bindvisible = null;
+          }
+        ]]>
+      </destructor>
     </implementation>
   </binding>
 
