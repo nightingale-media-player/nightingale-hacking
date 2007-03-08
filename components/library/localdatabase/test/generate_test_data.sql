@@ -29,36 +29,33 @@ select guid, created from media_items order by created asc, media_item_id asc;
 select
 rp0.guid, rp0.obj_sortable || ' ' || rp1.obj_sortable
 from
-media_items mi
-join resource_properties rp0 on mi.guid = rp0.guid
+resource_properties rp0
 join resource_properties rp1 on rp0.guid = rp1.guid
 where
 rp0.property_id = 2 and
 rp1.property_id = 6
 order by
-rp0.obj_sortable asc, rp1.obj_sortable asc, mi.media_item_id asc;
-select guid, '(null)' from media_items where guid not in (select guid from resource_properties where property_id = 2) order by media_item_id asc;
+rp0.obj_sortable asc, rp1.obj_sortable asc, rp0.guid asc;
+select guid, '(null)' from media_items where guid not in (select guid from resource_properties where property_id = 2) order by guid asc;
 ---
 .output data_sort_album_asc_track_desc.txt
 select
 rp0.guid, rp0.obj_sortable || ' ' || rp1.obj_sortable
 from
-media_items mi
-join resource_properties rp0 on mi.guid = rp0.guid
+resource_properties rp0
 join resource_properties rp1 on rp0.guid = rp1.guid
 where
 rp0.property_id = 2 and
 rp1.property_id = 6
 order by
-rp0.obj_sortable asc, rp1.obj_sortable desc, mi.media_item_id asc;
-select guid, '(null)' from media_items where guid not in (select guid from resource_properties where property_id = 2) order by media_item_id asc;
+rp0.obj_sortable asc, rp1.obj_sortable desc, rp0.guid asc;
+select guid, '(null)' from media_items where guid not in (select guid from resource_properties where property_id = 2) order by guid asc;
 ---
 .output data_sort_artist_asc_album_asc_track_asc.txt
 select
 rp0.guid, rp0.obj_sortable || ' ' || rp1.obj_sortable || ' ' || rp2.obj_sortable
 from
-media_items mi
-join resource_properties rp0 on mi.guid = rp0.guid
+resource_properties rp0
 join resource_properties rp1 on rp0.guid = rp1.guid
 join resource_properties rp2 on rp0.guid = rp2.guid
 where
@@ -66,8 +63,8 @@ rp0.property_id = 3 and
 rp1.property_id = 2 and
 rp2.property_id = 6
 order by
-rp0.obj_sortable asc, rp1.obj_sortable asc, rp2.obj_sortable asc, mi.media_item_id asc;
-select guid, '(null)' from media_items where guid not in (select guid from resource_properties where property_id = 2) order by media_item_id asc;
+rp0.obj_sortable asc, rp1.obj_sortable asc, rp2.obj_sortable asc, rp0.guid asc;
+select guid, '(null)' from media_items where guid not in (select guid from resource_properties where property_id = 2) order by guid asc;
 ---
 .output data_sort_sml101_ordinal_asc.txt
 select

@@ -592,9 +592,9 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
                                            criterion);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        builder->AddOrder(joinedAlias,
-                          OBJSORTABLE_COLUMN,
-                          mSorts[i].ascending);
+        rv = builder->AddOrder(joinedAlias,
+                               OBJSORTABLE_COLUMN,
+                               mSorts[i].ascending);
         NS_ENSURE_SUCCESS(rv, rv);
       }
 
@@ -607,6 +607,15 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = builder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /*
+     * Sort on the base table's guid column so make sure things are sorted the
+     * same on all platforms
+     */
+    rv = builder->AddOrder(NS_LITERAL_STRING("_base"),
+                           GUID_COLUMN,
+                           PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = builder->ToString(mResortQuery);
@@ -622,7 +631,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (IsTopLevelProperty(mSorts[0].property)) {
-      // TODO
+      return NS_ERROR_NOT_IMPLEMENTED;
     }
     else {
       rv = builder->SetBaseTableName(MEDIAITEMS_TABLE);
@@ -700,14 +709,23 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
                                            criterion);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        builder->AddOrder(joinedAlias,
-                          OBJSORTABLE_COLUMN,
-                          mSorts[i].ascending);
+        rv = builder->AddOrder(joinedAlias,
+                               OBJSORTABLE_COLUMN,
+                               mSorts[i].ascending);
         NS_ENSURE_SUCCESS(rv, rv);
 
       }
 
     }
+
+    /*
+     * Sort on the base table's guid column so make sure things are sorted the
+     * same on all platforms
+     */
+    rv = builder->AddOrder(NS_LITERAL_STRING("_base"),
+                           GUID_COLUMN,
+                           PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     rv = builder->ToString(mNullResortQuery);
     NS_ENSURE_SUCCESS(rv, rv);
