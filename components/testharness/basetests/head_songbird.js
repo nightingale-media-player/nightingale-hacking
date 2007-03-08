@@ -97,7 +97,7 @@ function doMain() {
 }
 
 function doQuit() {
-  //dump("*** [" + _test_name + "] - exiting\n");
+  //log("*** [" + _test_name + "] - exiting\n");
 
   _quit = true;
 
@@ -135,12 +135,12 @@ function fail(aMessage) {
 }
 
 function testPending() {
-  //dump("*** [" + _test_name + "] - test pending\n");
+  //log("*** [" + _test_name + "] - test pending\n");
   _tests_pending++;
 }
 
 function testFinished() {
-  //dump("*** [" + _test_name + "] - test finished\n");
+  //log("*** [" + _test_name + "] - test finished\n");
   if (--_tests_pending == 0)
     doQuit();
 }

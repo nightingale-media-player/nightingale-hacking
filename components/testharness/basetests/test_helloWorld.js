@@ -28,7 +28,7 @@
  * \brief Very basic "get it working" unit test
  */
 function runTest () {
-  dump("Hello World\n");
+  log("Hello World\n");
   return Components.results.NS_OK;
 }
 

@@ -38,8 +38,8 @@ reqObserver.prototype = {
   uri: null,
   checker: null,
   onStartRequest: function (req, con) {
-    dump("***    starting uri is: " + this.uri.spec + "\n");
-    dump("*** destination uri is: " + this.checker.baseChannel.URI.spec + "\n");
+    log("***    starting uri is: " + this.uri.spec);
+    log("*** destination uri is: " + this.checker.baseChannel.URI.spec);
     req.cancel(Components.results.NS_ERROR_FAILURE);
   },
   onStopRequest:  function (req, con, stat) {
