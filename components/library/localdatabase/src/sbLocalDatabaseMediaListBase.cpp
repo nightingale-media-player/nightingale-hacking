@@ -122,6 +122,7 @@ sbLocalDatabaseMediaListBase::GetItemsByPropertyValues(nsIPropertyBag* aBag,
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
+                                      PRUint32 aStartFrom,
                                       PRUint32* _retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -129,6 +130,7 @@ sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
+                                          PRUint32 aStartFrom,
                                           PRUint32* _retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;

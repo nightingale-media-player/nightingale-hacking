@@ -29,7 +29,7 @@
 
 #include "sbLocalDatabaseMediaListBase.h"
 #include <sbIMediaList.h>
-
+#include <sbIMediaItem.h>
 #include <nsStringGlue.h>
 
 class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase
@@ -40,6 +40,8 @@ public:
   sbLocalDatabaseSimpleMediaList(sbILibrary* aLibrary, const nsAString& aGuid);
 
   nsresult Init();
+
+  NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);
 
 private:
   ~sbLocalDatabaseSimpleMediaList();

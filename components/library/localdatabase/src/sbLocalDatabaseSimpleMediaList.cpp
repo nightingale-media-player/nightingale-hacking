@@ -94,3 +94,10 @@ sbLocalDatabaseSimpleMediaList::Init()
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::Contains(sbIMediaItem* aMediaItem,
+                                         PRBool* _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+

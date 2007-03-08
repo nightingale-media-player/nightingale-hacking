@@ -31,7 +31,7 @@
 
 #include <sbIMediaList.h>
 #include <sbILibrary.h>
-
+#include <sbIMediaItem.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -44,6 +44,8 @@ public:
                                const nsAString& aGuid);
 
   nsresult Init();
+
+  NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);
 
 private:
   ~sbLocalDatabaseViewMediaList();

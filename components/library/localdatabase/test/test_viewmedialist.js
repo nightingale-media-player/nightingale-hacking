@@ -40,5 +40,11 @@ function runTest () {
 
   var item = view.getItemByIndex(0);
   assertEqual(item.guid, "3E2549C0-AD99-11DB-9321-C22AB7121F49");
+
+  var contains = view.contains(view);
+  assertEqual(contains, true);
+  // TODO: test when this method fails, but how can i generate a media item
+  // that is not in the view media list?
+
 }
 

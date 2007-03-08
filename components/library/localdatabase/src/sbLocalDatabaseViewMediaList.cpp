@@ -80,3 +80,33 @@ sbLocalDatabaseViewMediaList::Init()
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseViewMediaList::Contains(sbIMediaItem* aMediaItem,
+                                       PRBool* _retval)
+{
+  nsresult rv;
+
+  sbLocalDatabaseLibrary* library =
+    NS_STATIC_CAST(sbLocalDatabaseLibrary*, mLibrary.get());
+
+  nsAutoString guid;
+  rv = aMediaItem->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 mediaItemId;
+  rv = library->GetMediaItemIdForGuid(guid, &mediaItemId);
+  if (rv == NS_OK) {
+    *_retval = PR_TRUE;
+  }
+  else {
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      *_retval = PR_FALSE;
+    }
+    else {
+      return rv;
+    }
+  }
+
+  return NS_OK;
+}
+
