@@ -27,7 +27,7 @@
 #ifndef __SBLOCALDATABASEMEDIALISTBASE_H__
 #define __SBLOCALDATABASEMEDIALISTBASE_H__
 
-#include <nsClassHashTable.h>
+#include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsStringGlue.h>
