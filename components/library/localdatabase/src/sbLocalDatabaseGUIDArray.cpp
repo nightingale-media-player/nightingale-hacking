@@ -377,16 +377,16 @@ sbLocalDatabaseGUIDArray::Initalize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   switch (nullSort) {
-    case sbIProperty::SORT_NULL_SMALL:
+    case sbIPropertyInfo::SORT_NULL_SMALL:
       mNullsFirst = mSorts[0].ascending;
     break;
-    case sbIProperty::SORT_NULL_BIG:
+    case sbIPropertyInfo::SORT_NULL_BIG:
       mNullsFirst = !mSorts[0].ascending;
     break;
-    case sbIProperty::SORT_NULL_FIRST:
+    case sbIPropertyInfo::SORT_NULL_FIRST:
       mNullsFirst = PR_TRUE;
     break;
-    case sbIProperty::SORT_NULL_LAST:
+    case sbIPropertyInfo::SORT_NULL_LAST:
       mNullsFirst = PR_FALSE;
     break;
   }
@@ -1560,10 +1560,10 @@ sbLocalDatabaseGUIDArray::GetPropertyNullSort(const nsAString& aProperty,
   if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#trackName") ||
       aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#artistName") ||
       aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#albumName")) {
-    *_retval = sbIProperty::SORT_NULL_BIG;
+    *_retval = sbIPropertyInfo::SORT_NULL_BIG;
   }
   else {
-    *_retval = sbIProperty::SORT_NULL_SMALL;
+    *_retval = sbIPropertyInfo::SORT_NULL_SMALL;
   }
 
   return NS_OK;

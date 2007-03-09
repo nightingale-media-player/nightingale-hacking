@@ -33,7 +33,7 @@
 #include "nsISupports.idl"
 
 interface nsIStringEnumerator;
-interface sbIProperty;
+interface sbIPropertyInfo;
 
 /**
 * \interface sbIPropertiesManager
@@ -41,9 +41,9 @@ interface sbIProperty;
 *
 * Components should register properties with this service at startup.
 *
-* \sa sbIProperty
+* \sa sbIPropertyInfo
 */
-[scriptable, uuid(c0a9d8fe-cb62-49f8-b4e4-bd98626798cc)]
+[scriptable, uuid(4325d6c4-4eaf-4324-8f91-a5865ac22008)]
 interface sbIPropertiesManager : nsISupports
 {
   /**
@@ -51,23 +51,23 @@ interface sbIPropertiesManager : nsISupports
    * \param aName Name of the property
    * \return Property object for the given property, null if not found
    */
-  sbIProperty getProperty(in AString aName);
+  sbIPropertyInfo getPropertyInfo(in AString aName);
 
   /**
    * \brief Add a property into the system
-   * \param aProperty Property to add into the system.  An exception is thrown
-   * if the property's name is not unique
+   * \param aPropertyInfo Property to add into the system.  An exception is
+   *        thrown if the property's name is not unique
    */
-  void addProperty(in sbIProperty aProperty);
+  void addPropertyInfo(in sbIPropertyInfo aPropertyInfo);
 };
 
 /**
-* \interface sbIProperty
+* \interface sbIPropertyInfo
 * \brief System wide metadata property
 * \sa sbIPropertyManager
 */
-[scriptable, uuid(b01575d3-9c1a-49d0-ba70-61589cb10b65)]
-interface sbIProperty : nsISupports
+[scriptable, uuid(3024b398-5c89-4122-8327-3bf9673e22dd)]
+interface sbIPropertyInfo : nsISupports
 {
   const unsigned long SORT_NULL_SMALL = 0;
   const unsigned long SORT_NULL_BIG   = 1;

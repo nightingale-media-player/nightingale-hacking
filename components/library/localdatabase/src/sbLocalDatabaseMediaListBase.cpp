@@ -25,11 +25,83 @@
 */
 
 #include "sbLocalDatabaseMediaListBase.h"
-#include "sbLocalDatabaseGUIDArray.h"
 
-#include <nsISimpleEnumerator.h>
-#include <nsMemory.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsIProperty.h>
+#include <nsIPropertyBag.h>
+#include <nsISimpleEnumerator.h>
+#include <nsIStringEnumerator.h>
+#include <nsIVariant.h>
+#include <nsComponentManagerUtils.h>
+#include <nsMemory.h>
+
+#include <sbIMediaList.h>
+#include <sbIPropertyArray.h>
+#include "sbLocalDatabaseCID.h"
+#include "sbLocalDatabaseGUIDArray.h"
+#include "sbLocalDatabasePropertyCache.h"
+
+#define DEFAULT_SORT_PROPERTY \
+  NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
+#define DEFAULT_FETCH_SIZE 1000
+
+#define SB_CONTINUE_IF_FALSE(_expr)                        \
+  PR_BEGIN_MACRO                                           \
+    if (!(_expr)) {                                        \
+      NS_WARNING("SB_CONTINUE_IF_FALSE triggered");        \
+      continue;                                            \
+    }                                                      \
+  PR_END_MACRO
+
+#define SB_CONTINUE_IF_FAILED(_rv)                         \
+  SB_CONTINUE_IF_FALSE(NS_SUCCEEDED(_rv))
+
+static nsresult
+NewGUIDArrayWithCopiedAttributes(sbILocalDatabaseGUIDArray* aOriginal,
+                                 sbILocalDatabaseGUIDArray** _retval)
+{
+  nsresult rv;
+  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray =
+    do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString databaseGuid;
+  rv = aOriginal->GetDatabaseGUID(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->SetDatabaseGUID(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString baseTable;
+  rv = aOriginal->GetBaseTable(baseTable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->SetBaseTable(baseTable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString constraintColumn;
+  rv = aOriginal->GetBaseConstraintColumn(constraintColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->SetBaseConstraintColumn(constraintColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 constraintValue;
+  rv = aOriginal->GetBaseConstraintValue(&constraintValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->SetBaseConstraintValue(constraintValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->AddSort(DEFAULT_SORT_PROPERTY, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->SetFetchSize(DEFAULT_FETCH_SIZE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = guidArray);
+  return NS_OK;
+}
 
 NS_IMPL_ISUPPORTS4(sbLocalDatabaseMediaListBase,
                    sbILibraryResource,
@@ -105,19 +177,159 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
   return NS_OK;
 }
 
+/**
+ * See sbIMediaList
+ */
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetItemsByPropertyValue(const nsAString& aName,
                                                       const nsAString& aValue,
                                                       nsISimpleEnumerator** _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  // A property name must be specified.
+  NS_ENSURE_TRUE(!aName.IsEmpty(), NS_ERROR_INVALID_ARG);
+
+  // Make a single-item string array to hold our property value.
+  sbStringArray valueArray(1);
+  nsString* value = valueArray.AppendElement();
+  NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
+
+  value->Assign(aValue);
+
+  // Make a string enumerator for it.
+  nsCOMPtr<nsIStringEnumerator> valueEnum =
+    new sbTArrayStringEnumerator(&valueArray);
+  NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
+
+  // Make a new GUID array to talk to the database.
+  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
+  nsresult rv =
+    NewGUIDArrayWithCopiedAttributes(mFullArray, getter_AddRefs(guidArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Set the filter.
+  rv = guidArray->AddFilter(aName, valueEnum, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // And make an enumerator to return the filtered items.
+  nsCOMPtr<nsISimpleEnumerator> items =
+    new sbGUIDArrayEnumerator(mLibrary, guidArray);
+  NS_ENSURE_TRUE(items, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = items);
+  return NS_OK;
 }
 
+/**
+ * See sbIMediaList
+ */
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetItemsByPropertyValues(nsIPropertyBag* aBag,
+sbLocalDatabaseMediaListBase::GetItemsByPropertyValues(sbIPropertyArray* aProperties,
                                                        nsISimpleEnumerator** _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  PRUint32 propertyCount;
+  nsresult rv = aProperties->GetLength(&propertyCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // It doesn't make sense to call this method without specifying any properties
+  // so it is probably a caller error if we have none.
+  NS_ENSURE_STATE(propertyCount);
+
+  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
+  rv = NewGUIDArrayWithCopiedAttributes(mFullArray, getter_AddRefs(guidArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // The guidArray needs AddFilter called only once per property with an
+  // enumerator that contains all the values. We were given an array of
+  // name/value pairs, so this is a little tricky. We make a hash table that
+  // uses the property name for a key and an array of values as its data. Then
+  // we load the arrays in a loop and finally call AddFilter as an enumeration
+  // function.
+  
+  sbStringArrayHash propertyHash;
+  
+  // Init with the propertyCount as the number of buckets to create. This will
+  // probably be too many, but it's likely less than the default of 16.
+  propertyHash.Init(propertyCount);
+
+  // Load the hash table with properties from the array.
+  for (PRUint32 index = 0; index < propertyCount; index++) {
+
+    // Get the property.
+    nsCOMPtr<nsIProperty> property;
+    rv = aProperties->GetPropertyAt(index, getter_AddRefs(property));
+    SB_CONTINUE_IF_FAILED(rv);
+
+    // Get the value.
+    nsCOMPtr<nsIVariant> value;
+    rv = property->GetValue(getter_AddRefs(value));
+    SB_CONTINUE_IF_FAILED(rv);
+
+    // Make sure the value is a string type, otherwise bail.
+    PRUint16 dataType;
+    rv = value->GetDataType(&dataType);
+    SB_CONTINUE_IF_FAILED(rv);
+
+    if (dataType != nsIDataType::VTYPE_ASTRING) {
+      NS_WARNING("Wrong data type passed in a properties array!");
+      continue;
+    }
+
+    // Get the name of the property. This will be the key for the hash table.
+    nsAutoString propertyName;
+    rv = property->GetName(propertyName);
+    SB_CONTINUE_IF_FAILED(rv);
+
+    // Get the string array associated with the key. If it doesn't yet exist
+    // then we need to create it.
+    sbStringArray* stringArray;
+    PRBool arrayExists = propertyHash.Get(propertyName, &stringArray);
+    if (!arrayExists) {
+      NS_NEWXPCOM(stringArray, sbStringArray);
+      SB_CONTINUE_IF_FALSE(stringArray);
+
+      // Try to add the array to the hash table.
+      PRBool success = propertyHash.Put(propertyName, stringArray);
+      if (!success) {
+        NS_WARNING("Failed to add string array to property hash!");
+        
+        // Make sure to delete the new array, otherwise it will leak.
+        NS_DELETEXPCOM(stringArray);
+        continue;
+      }
+    }
+    NS_ASSERTION(stringArray, "Must have a valid pointer here!");
+
+    // Now we need a slot for the property value.
+    nsString* valueString = stringArray->AppendElement();
+    SB_CONTINUE_IF_FALSE(valueString);
+
+    // And finally assign it.
+    rv = value->GetAsAString(*valueString);
+    SB_CONTINUE_IF_FAILED(rv);
+  }
+
+  // Now that our hash table is set up we call AddFilter for each property name
+  // and all its associated values.
+  PRUint32 filterCount =
+    propertyHash.EnumerateRead(AddFilterToGUIDArrayEnumerator, guidArray);
+  
+  // Make sure we actually added some filters here. Otherwise something went
+  // wrong and the results are not going to be what the caller expects.
+  PRUint32 hashCount = propertyHash.Count();
+  NS_ENSURE_STATE(filterCount == hashCount);
+
+  // Finally make an enumerator to return the filtered items.
+  nsCOMPtr<nsISimpleEnumerator> items =
+    new sbGUIDArrayEnumerator(mLibrary, guidArray);
+  NS_ENSURE_TRUE(items, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = items);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -430,5 +642,40 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
+}
+
+/**
+ * This method enumerates a hash table and calls AddFilter on a GUIDArray once 
+ * for each key. It constructs a string enumerator for the string array that
+ * the hash table contains.
+ *
+ * This method expects to be handed an sbILocalDatabaseGUIDArray pointer as its
+ * aUserData parameter.
+ */
+/* static */ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseMediaListBase::AddFilterToGUIDArrayEnumerator(nsStringHashKey::KeyType aKey,
+                                                             sbStringArray* aEntry,
+                                                             void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null userData!");
+  
+  // Make a string enumerator for the string array.
+  nsCOMPtr<nsIStringEnumerator> valueEnum =
+    new sbTArrayStringEnumerator(aEntry);
+  
+  // If we failed then we're probably out of memory. Hope we do better on the
+  // next key?
+  NS_ENSURE_TRUE(valueEnum, PL_DHASH_NEXT);
+
+  // Unbox the guidArray.
+  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray =
+    NS_STATIC_CAST(sbILocalDatabaseGUIDArray*, aUserData);
+  
+  // Set the filter.
+  nsresult rv = guidArray->AddFilter(aKey, valueEnum, PR_FALSE);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "AddFilter failed!");
+
+  return PL_DHASH_NEXT;
 }
 

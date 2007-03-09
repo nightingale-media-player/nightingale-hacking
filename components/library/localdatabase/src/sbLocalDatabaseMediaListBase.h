@@ -27,17 +27,23 @@
 #ifndef __SBLOCALDATABASEMEDIALISTBASE_H__
 #define __SBLOCALDATABASEMEDIALISTBASE_H__
 
+#include <nsClassHashTable.h>
+#include <nsCOMPtr.h>
+#include <nsHashKeys.h>
+#include <nsStringGlue.h>
+#include <nsTArray.h>
+
+#include <sbILibrary.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbIMediaList.h>
-#include <sbILibrary.h>
 
-#include <nsCOMPtr.h>
-#include <nsISimpleEnumerator.h>
-#include <nsStringGlue.h>
 
 class sbLocalDatabaseMediaListBase : public sbIMediaList,
                                      public nsIClassInfo
 {
+  typedef nsTArray<nsString> sbStringArray;
+  typedef nsClassHashtable<nsStringHashKey, sbStringArray> sbStringArrayHash;
+
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILIBRARYRESOURCE
@@ -48,6 +54,13 @@ public:
   sbLocalDatabaseMediaListBase(sbILibrary* aLibrary, const nsAString& aGuid);
 
   NS_IMETHODIMP Init();
+
+private:
+
+  static PLDHashOperator PR_CALLBACK
+    AddFilterToGUIDArrayEnumerator(nsStringHashKey::KeyType aKey,
+                                   sbStringArray* aEntry,
+                                   void* aUserData);
 
 protected:
   /*
@@ -77,4 +90,3 @@ protected:
 };
 
 #endif /* __SBLOCALDATABASEMEDIALISTBASE_H__ */
-

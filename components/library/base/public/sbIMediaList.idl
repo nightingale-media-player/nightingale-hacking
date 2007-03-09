@@ -32,11 +32,13 @@
 
 #include "sbIMediaItem.idl"
 
+interface nsIArray;
 interface nsISimpleEnumerator;
 interface nsITreeView;
 interface nsIPropertyBag;
 interface sbILibrary;
 interface sbIMediaListListener;
+interface sbIPropertyArray;
 
 /**
 * \interface sbIMediaList
@@ -97,7 +99,7 @@ interface sbIMediaList : sbIMediaItem
    * \return List of found media items as a nsISimpleEnumerator containing
    * sbIMediaItem objects
    */
-  nsISimpleEnumerator getItemsByPropertyValues(in nsIPropertyBag aBag);
+  nsISimpleEnumerator getItemsByPropertyValues(in sbIPropertyArray aProperties);
 
   /**
    * \brief Get the first index of a media item int he list

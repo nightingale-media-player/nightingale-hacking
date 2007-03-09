@@ -29,10 +29,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbIPropertiesManager.idl \
+XPIDL_SRCS = sbIPropertyArray.idl \
+             sbIPropertyFactory.idl \
+             sbIPropertiesManager.idl \
              $(NULL)
 
-XPIDL_MODULE = sbPropertiesManager.xpt
+XPIDL_MODULE = sbProperties.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
