@@ -182,15 +182,8 @@
         null
       </field>
       <field name="arrowKeysShouldWrap" readonly="true">
-      /*
-#ifdef XP_MACOSX
-        true
-#else
-     */
-        false
-        /*
-#endif
-       */
+        /* true for Mac, false for everyone else */
+        window.navigator.platform.match(/^Mac/) == 'Mac'
       </field>
       <field name="mAddProgressListenerWasCalled">
         false
@@ -2335,14 +2328,13 @@
           if (('shiftKey' in aEvent && aEvent.shiftKey) ||
               ('altKey' in aEvent && aEvent.altKey))
             return;
-          /*
-#ifdef XP_MACOSX
-          if ('metaKey' in aEvent && aEvent.metaKey) {
-#else
-         */
-          if (('ctrlKey' in aEvent && aEvent.ctrlKey) &&
-              !('metaKey' in aEvent && aEvent.metaKey)) {
-            if (aEvent.keyCode == KeyEvent.DOM_VK_F4 &&
+          
+          var isMac = window.navigator.platform.match(/^Mac/) == 'Mac';
+          if ( (isMac && 'metaKey' in aEvent && aEvent.metaKey) ||
+              (!isMac &&
+               ('ctrlKey' in aEvent && aEvent.ctrlKey) &&
+              !('metaKey' in aEvent && aEvent.metaKey)) ) {
+            if (!isMac && aEvent.keyCode == KeyEvent.DOM_VK_F4 &&
                 this.tabbrowser.mTabBox.handleCtrlPageUpDown) {
               this.tabbrowser.removeCurrentTab();
 
@@ -2350,10 +2342,9 @@
               aEvent.preventDefault();
               return;
             }
-            /*
-#endif
-           */
-            if (aEvent.target.localName == "tabbrowser") {
+
+            if (aEvent.target.localName == "tabbrowser" ||
+                aEvent.target.localName == "sb-tabbrowser") {
               switch (aEvent.keyCode) {
                 case KeyEvent.DOM_VK_UP:
                   this.tabbrowser.moveTabBackward();
