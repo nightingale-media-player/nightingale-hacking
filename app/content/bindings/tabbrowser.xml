@@ -1587,6 +1587,8 @@
               // In tabbed mode, mTabProgressListener is used which will iterate over all listeners.
               this.enterTabbedMode();
             }
+            
+            aListener.QueryInterface(Components.interfaces.nsIWebProgressListener);
 
             this.mProgressListeners.push(aListener);
 

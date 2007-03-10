@@ -279,7 +279,7 @@
                     </vbox>
 
 
-                    <browser id="frame_main_pane" x_type="content-primary" type="content" flex="1"/>
+                    <sb-tabbrowser id="frame_main_pane" flex="1" />
 
                     <smartsplitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
                       <grippy/>

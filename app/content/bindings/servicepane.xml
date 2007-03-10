@@ -193,7 +193,20 @@
                             /* FIXME: this default home page should be stored elsewhere */
                             start = "http://www.songbirdnest.com/birdhouse/";
                         }
-                        this.loadURL(start);
+                        var service_pane_tree = this;
+                        // loading the first URL needs to be deferred.
+                        window.setTimeout(function () {
+                            service_pane_tree.loadURL(start);
+                            // make sure the tabbrowser's browser is scrollable.
+                            // I don't know why I have to do this.
+                            var nsIScrollable = Components.interfaces.nsIScrollable;
+                            var scrollable = service_pane_tree.mBrowser.webNavigation.QueryInterface(nsIScrollable);
+                            scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_Y,
+                                                                      nsIScrollable.Scrollbar_Auto);
+                            scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_X,
+                                                                      nsIScrollable.Scrollbar_Auto);
+
+                        }, 0);
                         this.mLoadedFirstURL = true;
                     }
                 ]]></setter>
@@ -240,7 +253,10 @@
                         SBDataSetStringValue("servicetree.selected_url", aURL);
                         try {
                             this.mBrowser.stop();
-                            this.mBrowser.loadURI(this.mCurrentURL, null, null);
+                            this.mBrowser.webNavigation.loadURI(this.mCurrentURL, Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
+                            
+
+                            
                         }
                         catch (err) {
                             var err_url = "chrome://songbird/content/html/cannot_load.html";
