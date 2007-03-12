@@ -97,5 +97,10 @@ function runTest () {
     view.getItemsByPropertyValues(propertyArray);
   
   assertEqual(countItems(filteredListEnumerator), 1);
+  
+  //Test getIemByIndex, indexOf, lastIndexOf, contains.
+  
+  var contained = view.contains(null);
+  assertEqual(contained, false);
 }
 
