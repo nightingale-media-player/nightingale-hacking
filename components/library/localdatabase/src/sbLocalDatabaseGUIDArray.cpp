@@ -27,6 +27,7 @@
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseQuery.h"
 #include "sbLocalDatabaseMediaItem.h"
+#include "sbLocalDatabasePropertyCache.h"
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
@@ -342,6 +343,64 @@ sbLocalDatabaseGUIDArray::Invalidate()
   return NS_OK;
 }
 
+/**
+ * Copy all the base properties of the guid array. This method will fail if any
+ * of the clone operations fail.
+ */
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  sbLocalDatabaseGUIDArray* newArray;
+  NS_NEWXPCOM(newArray, sbLocalDatabaseGUIDArray);
+  NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = newArray->SetDatabaseGUID(mDatabaseGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = newArray->SetBaseTable(mBaseTable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = newArray->SetBaseConstraintColumn(mBaseConstraintColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = newArray->SetBaseConstraintValue(mBaseConstraintValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = newArray->SetFetchSize(mFetchSize);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = newArray->SetPropertyCache(mPropertyCache);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 sortCount = mSorts.Length();
+  for (PRUint32 index = 0; index < sortCount; index++) {
+    const SortSpec refSpec = mSorts.ElementAt(index);
+    rv = newArray->AddSort(refSpec.property, refSpec.ascending);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRUint32 filterCount = mFilters.Length();
+  for (PRUint32 index = 0; index < filterCount; index++) {
+    const FilterSpec refSpec = mFilters.ElementAt(index);
+
+    nsTArray<nsString>* stringArray =
+      NS_CONST_CAST(nsTArray<nsString>*, &refSpec.values);
+    NS_ENSURE_STATE(stringArray);
+
+    nsCOMPtr<nsIStringEnumerator> enumerator =
+      new sbTArrayStringEnumerator(stringArray);
+    NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = newArray->AddFilter(refSpec.property, enumerator, refSpec.isSearch);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ADDREF(*_retval = newArray);
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::Initalize()
 {
@@ -349,12 +408,12 @@ sbLocalDatabaseGUIDArray::Initalize()
 
   // Make sure we have a database and a base table
   if (mDatabaseGUID.IsEmpty() || mBaseTable.IsEmpty()) {
-    return NS_ERROR_INVALID_ARG;
+    return NS_ERROR_UNEXPECTED;
   }
 
   // Make sure we have at least one sort
   if (mSorts.Length() == 0) {
-    return NS_ERROR_INVALID_ARG;
+    return NS_ERROR_UNEXPECTED;
   }
 
   if (mValid == PR_TRUE) {

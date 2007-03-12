@@ -56,53 +56,6 @@
 #define SB_CONTINUE_IF_FAILED(_rv)                         \
   SB_CONTINUE_IF_FALSE(NS_SUCCEEDED(_rv))
 
-static nsresult
-NewGUIDArrayWithCopiedAttributes(sbILocalDatabaseGUIDArray* aOriginal,
-                                 sbILocalDatabaseGUIDArray** _retval)
-{
-  nsresult rv;
-  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray =
-    do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = aOriginal->GetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = guidArray->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString baseTable;
-  rv = aOriginal->GetBaseTable(baseTable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = guidArray->SetBaseTable(baseTable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString constraintColumn;
-  rv = aOriginal->GetBaseConstraintColumn(constraintColumn);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = guidArray->SetBaseConstraintColumn(constraintColumn);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 constraintValue;
-  rv = aOriginal->GetBaseConstraintValue(&constraintValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = guidArray->SetBaseConstraintValue(constraintValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = guidArray->AddSort(DEFAULT_SORT_PROPERTY, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = guidArray->SetFetchSize(DEFAULT_FETCH_SIZE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*_retval = guidArray);
-  return NS_OK;
-}
-
 NS_IMPL_ISUPPORTS4(sbLocalDatabaseMediaListBase,
                    sbILibraryResource,
                    sbIMediaItem,
@@ -204,8 +157,11 @@ sbLocalDatabaseMediaListBase::GetItemsByPropertyValue(const nsAString& aName,
 
   // Make a new GUID array to talk to the database.
   nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
-  nsresult rv =
-    NewGUIDArrayWithCopiedAttributes(mFullArray, getter_AddRefs(guidArray));
+  nsresult rv = mFullArray->Clone(getter_AddRefs(guidArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Clone copies the filters... which we don't want.
+  rv = guidArray->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Set the filter.
@@ -240,7 +196,11 @@ sbLocalDatabaseMediaListBase::GetItemsByPropertyValues(sbIPropertyArray* aProper
   NS_ENSURE_STATE(propertyCount);
 
   nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
-  rv = NewGUIDArrayWithCopiedAttributes(mFullArray, getter_AddRefs(guidArray));
+  rv = mFullArray->Clone(getter_AddRefs(guidArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Clone copies the filters... which we don't want.
+  rv = guidArray->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // The guidArray needs AddFilter called only once per property with an

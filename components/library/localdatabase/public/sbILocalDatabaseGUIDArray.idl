@@ -72,5 +72,7 @@ interface sbILocalDatabaseGUIDArray : nsISupports
                                   [shared] out wstring aGuid);
 
   void invalidate();
+
+  sbILocalDatabaseGUIDArray clone();
 };
 

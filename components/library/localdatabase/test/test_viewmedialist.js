@@ -28,6 +28,16 @@
  * \brief Test file
  */
 
+function countItems(enumerator) {
+  var count = 0;
+  while (enumerator.hasMoreElements()) {
+    var item = enumerator.getNext().QueryInterface(Ci.sbIMediaItem);
+    assertNotEqual(item, null);
+    count++;
+  }
+  return count;
+}
+
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
@@ -46,5 +56,46 @@ function runTest () {
   // TODO: test when this method fails, but how can i generate a media item
   // that is not in the view media list?
 
+  var titleProperty = "http://songbirdnest.com/data/1.0#trackName";
+  var albumProperty = "http://songbirdnest.com/data/1.0#albumName";
+  var genreProperty = "http://songbirdnest.com/data/1.0#genre";
+  
+  var filteredListEnumerator =
+    view.getItemsByPropertyValue(titleProperty, "Train of Thought");
+  
+  assertEqual(countItems(filteredListEnumerator), 1);
+  
+  filteredListEnumerator =
+    view.getItemsByPropertyValue(albumProperty, "Back in Black");
+
+  assertEqual(countItems(filteredListEnumerator), 10);
+  
+  filteredListEnumerator =
+    view.getItemsByPropertyValue(genreProperty, "KJaskjjbfjJDBs");
+    
+  assertEqual(countItems(filteredListEnumerator), 0);
+
+  var propertyArray =
+    Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"].
+    createInstance(Ci.sbIPropertyArray);
+  
+  propertyArray.appendProperty(albumProperty, "Back in Black");
+  filteredListEnumerator =
+    view.getItemsByPropertyValues(propertyArray);
+    
+  assertEqual(countItems(filteredListEnumerator), 10);
+  
+  propertyArray.appendProperty(titleProperty, "Rock and Roll Ain't Noise Pollution");
+  propertyArray.appendProperty(titleProperty, "Shake a Leg");
+  filteredListEnumerator =
+    view.getItemsByPropertyValues(propertyArray);
+
+  assertEqual(countItems(filteredListEnumerator), 2);
+  
+  propertyArray.removeElementAt(1);
+  filteredListEnumerator =
+    view.getItemsByPropertyValues(propertyArray);
+  
+  assertEqual(countItems(filteredListEnumerator), 1);
 }
 
