@@ -114,22 +114,22 @@
             <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
             <!-- TODO: Clean up.  Leaving as is until the mac topbar is changed -->
             <hbox id="songbird_top">
-              <image id="app_icon" ondblclick="quitApp( );"/>
-              <label id="mainwin_app_title" value="&window.dev.title;" />
+              <sb-sys-osx-buttons/>
+              <sb-sys-icon/>
+              <spacer width="5"/>
+              <sb-sys-title/>
               <spacer width="5"/>
               <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" />               
               <spacer flex="1" drag_window="true"/>
-
-              <sb-feathers-toggle-button id="sysbtn_minimode" popupanchor="bottomright" popupalign="topright" />
-              
-              <spacer width="5"/>
-              <sb-sys-minimize-button/>
-              <spacer width="5"/>
-              <sb-sys-maximize-button/>
-              <spacer width="5"/>
-              <sb-sys-close-button/>
+              <sb-feathers-toggle-button sbid="feathers" id="sysbtn_minimode" popupanchor="bottomright" popupalign="topright" />
+              <sb-sys-buttons/>
+              <sb-sys-osx-feathers/>
             </hbox>
-
+            
+            <!-- Waiting for the menubar to be overlayed into a sb-sys-menubar element
+            <sb-sys-titlebar/>
+            -->
+            
             <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
             <!-- TODO: Fix mini.xul and then duplicate here.  Better yet, use an overlay/include/iframe. -->
             <hbox id="frame_mini" hidden="true" drag_window="true">

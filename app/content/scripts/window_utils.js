@@ -578,16 +578,6 @@ function fixWindow(aBoxId, aLabelId)
   const HBOX_TITLE_ID    = "titleBox";
   const HBOX_MINI_ID     = "miniBox";
 
-  const BUTTON_CLOSE_ID  = "sysbtn_close";
-  const BUTTON_MIN_ID    = "sysbtn_minimize";
-  const BUTTON_MAX_ID    = "sysbtn_maximize";
-  const BUTTON_MINI_ID   = "sysbtn_minimode";
-  const BUTTON_HIDE_ID   = "sysbtn_hide";
-  const BUTTON_APP_ID    = "app_icon";
-
-  const CLASS_SYSBTNS    = "sb_faceplate";
-  const CLASS_HBOX_OSX   = "mac";
-  
   // Constants for resizer manipulation
   const HBOX_RESIZERS_TOP_ID    = "frame_resizers_top";
   const HBOX_RESIZERS_LEFT_ID   = "frame_resizers_left";
@@ -674,147 +664,6 @@ function fixWindow(aBoxId, aLabelId)
       }
     }
 
-    // Get the titlebar
-    var topBar = document.getElementById(aBoxId);
-    topBar.align = "center";
-    
-    // Get the title label
-    var topLabel = document.getElementById(aLabelId);
-    topBar.removeChild(topLabel);
-
-    // Remove the app icon, if it exists
-    var appIcon = document.getElementById(BUTTON_APP_ID);
-    if (appIcon)
-      topBar.removeChild(appIcon);
-
-    // Get the close, minimize, and maximize buttons
-    var closeButton = document.getElementById(BUTTON_CLOSE_ID);
-    var minButton = document.getElementById(BUTTON_MIN_ID);
-    var maxButton = document.getElementById(BUTTON_MAX_ID);  
-
-    // Get the miniplayer button
-    var miniButton = document.getElementById(BUTTON_MINI_ID);
-    if (miniButton)
-      topBar.removeChild(miniButton);
-
-    // And then there's the 'hide' button on the video window
-    var hideButton = document.getElementById(BUTTON_HIDE_ID);
-
-    // Create a new hbox to hold the system buttons
-    var controlBox = document.createElement("hbox");
-    controlBox.id = HBOX_CONTROLS_ID;
-    controlBox.align = "center";
-    controlBox.setAttribute("class", CLASS_HBOX_OSX);
-
-    // Add buttons and spacers to controlBox, removing them from the original
-    // hbox. Also yank tooltips, as OS X assumes you know what the buttons do.
-
-    // The hide button is to be used rather than the close button on the video
-    // window.
-    if (hideButton) {
-      closeButton = hideButton;
-      closeButton.removeAttribute("tooltiptext");
-      closeButton.id = BUTTON_CLOSE_ID;
-      topBar.removeChild(hideButton);
-    }
-    else if (closeButton) {
-      topBar.removeChild(closeButton);
-      closeButton.removeAttribute("tooltiptext");
-    }
-    else
-      closeButton = createNewSysButton("button", BUTTON_CLOSE_ID);
-    controlBox.appendChild(closeButton);
-
-    controlBox.appendChild(createNewSpacer());
-
-    if (minButton) {
-      topBar.removeChild(minButton);
-      minButton.removeAttribute("tooltiptext");
-    }
-    else
-      minButton = createNewSysButton("button", BUTTON_MIN_ID);
-    controlBox.appendChild(minButton);
-    
-    controlBox.appendChild(createNewSpacer());
-    
-    if (maxButton) {
-      topBar.removeChild(maxButton);
-      maxButton.removeAttribute("tooltiptext");
-    }
-    else
-      maxButton = createNewSysButton("checkbox", BUTTON_MAX_ID);
-    controlBox.appendChild(maxButton);
-    
-    // Make a stack so that the title stays centered regardless of the buttons
-    var topStack = document.createElement("stack");
-    topStack.flex = 1;
-    
-    // Move all the other stuff out of topBar and into the stack. This seems
-    // silly, but we have to save the menu bar...
-    var oldContentsBox = topBar.cloneNode(true);
-    topStack.appendChild(oldContentsBox);
-    
-    // Now clear the contents of topBar
-    var childList = topBar.childNodes;
-    var childCount = childList.length;
-    for (var index = 0; index < childCount; index++) {
-      var child = childList.item(0);
-      topBar.removeChild(child);
-    }
-    
-    // And replace with our new stack
-    topBar.appendChild(topStack);
-    
-    // Make the button hbox
-    var buttonBox = document.createElement("hbox");
-    buttonBox.flex = 1;
-    
-    // Make the text hbox
-    var titleBox = document.createElement("hbox");
-    titleBox.id = HBOX_TITLE_ID;
-    titleBox.flex = 1;
-    titleBox.align = "center";
-    
-    // Add the hboxes to the stack
-    topStack.appendChild(titleBox);
-    topStack.appendChild(buttonBox);
-
-    // Insert the new control box
-    buttonBox.appendChild(controlBox);
-    
-    // Create spacers to center the titlebar text
-    var leftSpacer = document.createElement("spacer");
-    var rightSpacer = document.createElement("spacer");
-    leftSpacer.flex = rightSpacer.flex = 1;
-    
-    // Construct the new titlebar
-    titleBox.appendChild(leftSpacer);
-    titleBox.appendChild(topLabel);
-    titleBox.appendChild(rightSpacer);
-
-    // Add some space between the control box and the mini button
-    var bigSpacer = document.createElement("spacer");
-    bigSpacer.flex = 1;
-    buttonBox.appendChild(bigSpacer);
-
-    // Add a miniplayer button?
-    if (miniButton) {
-      miniButton.removeAttribute("tooltiptext");
-
-      // Create a new hbox for the mini button
-      var miniBox = document.createElement("hbox");
-      miniBox.id = HBOX_MINI_ID;
-      miniBox.align = "center";
-      miniBox.setAttribute("class", CLASS_HBOX_OSX);
-
-      // Add the miniButton
-      miniBox.appendChild(miniButton);
-    
-      // Add to the topBar with a spacer
-      buttonBox.appendChild(createNewSpacer());
-      buttonBox.appendChild(miniBox);
-    }
-    
     // Now for the resizers...
     var resizersTopBox = document.getElementById(HBOX_RESIZERS_TOP_ID);
     var resizersLeftBox = document.getElementById(HBOX_RESIZERS_LEFT_ID);
@@ -882,15 +731,6 @@ function fixWindow(aBoxId, aLabelId)
     hideRealResizers();
     showFakeResizers();
     
-    // make some modifications to the dom
-    hideElement(aLabelId);
-    hideElement(BUTTON_APP_ID);
-    hideElement(BUTTON_MINI_ID);
-    hideElement(BUTTON_MIN_ID);
-    hideElement(BUTTON_MAX_ID);
-    hideElement(BUTTON_CLOSE_ID);
-    moveElement(MENU_ID, null);
-    hideElement(LABEL_APPTITLE_ID);
   } else {
     if (SBDataGetBoolValue("accessibility.enabled")) {
       // switching accessibility to off
@@ -901,7 +741,6 @@ function fixWindow(aBoxId, aLabelId)
       } catch (err) {}
     }
   }
-    
 }
 
 function hideRealResizers() {

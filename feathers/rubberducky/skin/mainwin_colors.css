@@ -176,7 +176,8 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 ************************************************************************************************************************************************
 */
 
-#mainwin_app_title,
+sb-sys-title,
+sb-sys-dialog-titlebar,
 #video_window_title
 {
   color: #FFF !important;

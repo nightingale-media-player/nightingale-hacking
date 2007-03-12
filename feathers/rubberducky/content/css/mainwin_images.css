@@ -78,9 +78,9 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 */
 
 /*  Topbar Icon */
-#app_icon
+sb-sys-icon
 {
-  background-image: url(chrome://songbird/skin/default/app_close.png) ;
+  list-style-image: url(chrome://songbird/skin/default/app_close.png) ;
 }
 
 /*  Close Window */
@@ -89,7 +89,7 @@ sb-sys-close-button
   list-style-image: url(chrome://songbird/skin/default/sysbtn_close_9x9.png) ;
 }
 
-/*  Maximize */
+/*  Maximize - Evict the checkbox guts, just use it for click handling */
 sb-sys-maximize-button > .checkbox-label-box
 {
   display: none;
@@ -135,77 +135,77 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 */
 
 
-.mac > sb-sys-maximize-button
+sb-sys-osx-buttons > sb-sys-maximize-button
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_max_normal_15x15mac.png) ; 
 }
-.mac > sb-sys-maximize-button[checked="true"] /* Restore */
+sb-sys-osx-buttons > sb-sys-maximize-button[checked="true"] /* Restore */
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_max_normal_15x15mac.png) ;
 }
-.mac > sb-sys-maximize-button:hover
+sb-sys-osx-buttons:hover > sb-sys-maximize-button
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_max_hover_15x15mac.png) ;
 }
-.mac > sb-sys-maximize-button:active
+sb-sys-osx-buttons > sb-sys-maximize-button:active
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_max_active_15x15mac.png) ;
 }
-.mac > sb-sys-maximize-button[disabled="true"]
+sb-sys-osx-buttons > sb-sys-maximize-button[disabled="true"]
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_max_disabled_15x15mac.png) ;
 }
 
 
-.mac > sb-sys-minimize-button
+sb-sys-osx-buttons > sb-sys-minimize-button
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_min_normal_15x15mac.png) ;  
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_min_normal_15x15mac.png) ;  
 }
-.mac > sb-sys-minimize-button:hover
+sb-sys-osx-buttons:hover > sb-sys-minimize-button
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_min_hover_15x15mac.png) ;
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_min_hover_15x15mac.png) ;
 }
-.mac > sb-sys-minimize-button:active
+sb-sys-osx-buttons > sb-sys-minimize-button:active
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_min_active_15x15mac.png) ;
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_min_active_15x15mac.png) ;
 }
-.mac > sb-sys-minimize-button[disabled="true"]
+sb-sys-osx-buttons > sb-sys-minimize-button[disabled="true"]
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_min_disabled_15x15mac.png) ;
-}
-
-.mac > sb-sys-close-button
-{
-  background-image: url(chrome://songbird/skin/default/sysbtn_cl_normal_15x15mac.png) ;
-}
-.mac > sb-sys-close-button:hover
-{
-  background-image: url(chrome://songbird/skin/default/sysbtn_cl_hover_15x15mac.png) ;
-}
-.mac > sb-sys-close-button:active
-{
-  background-image: url(chrome://songbird/skin/default/sysbtn_cl_active_15x15mac.png) ;
-}
-.mac > sb-sys-close-button[disabled="true"]
-{
-  background-image: url(chrome://songbird/skin/default/sysbtn_cl_disabled_15x15mac.png) ;
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_min_disabled_15x15mac.png) ;
 }
 
-.mac > #sysbtn_minimode
+sb-sys-osx-buttons > sb-sys-close-button
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_mini_normal_25x15mac.png) ;  
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_cl_normal_15x15mac.png) ;
 }
-.mac > #sysbtn_minimode:hover
+sb-sys-osx-buttons:hover > sb-sys-close-button
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_mini_hover_25x15mac.png) ;
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_cl_hover_15x15mac.png) ;
 }
-.mac > #sysbtn_minimode:active
+sb-sys-osx-buttons > sb-sys-close-button:active
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_mini_active_25x15mac.png) ;
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_cl_active_15x15mac.png) ;
 }
-.mac > #sysbtn_minimode[disabled="true"]
+sb-sys-osx-buttons > sb-sys-close-button[disabled="true"]
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_mini_disabled_15x15mac.png) ;
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_cl_disabled_15x15mac.png) ;
+}
+
+sb-sys-osx-feathers > sb-feathers-toggle-button
+{
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_mini_normal_25x15mac.png) ;  
+}
+sb-sys-osx-feathers > sb-feathers-toggle-button:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_mini_hover_25x15mac.png) ;
+}
+sb-sys-osx-feathers > sb-feathers-toggle-button:active
+{
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_mini_active_25x15mac.png) ;
+}
+sb-sys-osx-feathers > sb-feathers-toggle-button[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_mini_disabled_15x15mac.png) ;
 }
 /* END CHROME **/
 

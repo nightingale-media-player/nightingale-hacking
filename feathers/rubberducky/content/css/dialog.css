@@ -187,6 +187,7 @@ TOP BAR
 ************************************************************************************************************************************************
 */
 
+sb-sys-dialog-titlebar,
 #window_top   /* Title  */
 {
   border-bottom: 1px solid !important; /* this draws the line under the title bar */

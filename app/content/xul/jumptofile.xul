@@ -78,16 +78,8 @@
         </vbox>
         
         <vbox class="sb_faceplate" id="chrome_bkgd" flex="1" drag_window="true">
-          <menubar id="jumpto_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
-        
-          <hbox id="window_top" class="sb_faceplate" drag_window="true">
-            <label id="app_title" value="&jumptofile.title;" class="sb_faceplate" drag_window="true"/>
-            <spacer width="5" drag_window="true"/>                    
-            <spacer flex="1" drag_window="true"/>           
-            <spacer width="5" drag_window="true"/>
-            <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
-          </hbox>
-
+          <sb-sys-dialog-titlebar value="&jumptofile.title;"/>
+          
           <spacer height="5" drag_window="true"/>
 
           <hbox align="center">

@@ -108,6 +108,7 @@ window
   background: #FFF !important;
 }
 
+sb-sys-dialog-titlebar,
 #window_top   /* Title box */
 {
   border-bottom: 1px solid #eee !important; /* this draws the line under the title bar */
