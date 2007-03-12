@@ -50,6 +50,7 @@ NS_IMETHODIMP sbTestHarnessConsoleListener::Observe(nsIConsoleMessage *aMessage)
   nsAutoString message;
   aMessage->GetMessage(getter_Copies(message));
   printf("<unit-test> %s\n", NS_ConvertUTF16toUTF8(message).get());
+  fflush( stdout );
   return NS_OK;
 }
 
