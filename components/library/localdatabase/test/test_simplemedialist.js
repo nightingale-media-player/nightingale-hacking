@@ -28,6 +28,16 @@
  * \brief Test file
  */
 
+function countItems(enumerator) {
+  var count = 0;
+  while (enumerator.hasMoreElements()) {
+    var item = enumerator.getNext().QueryInterface(Ci.sbIMediaItem);
+    assertNotEqual(item, null);
+    count++;
+  }
+  return count;
+}
+
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
@@ -37,5 +47,46 @@ function runTest () {
 
   var list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   assertList(list, "data_sort_sml101_ordinal_asc.txt");
-}
+  
+  var titleProperty = "http://songbirdnest.com/data/1.0#trackName";
+  var albumProperty = "http://songbirdnest.com/data/1.0#albumName";
+  var genreProperty = "http://songbirdnest.com/data/1.0#genre";
+  
+  var filteredListEnumerator =
+    list.getItemsByPropertyValue(titleProperty, "Train of Thought");
+  
+  assertEqual(countItems(filteredListEnumerator), 1);
+  
+  filteredListEnumerator =
+    list.getItemsByPropertyValue(albumProperty, "Back in Black");
 
+  assertEqual(countItems(filteredListEnumerator), 10);
+  
+  filteredListEnumerator =
+    list.getItemsByPropertyValue(genreProperty, "KJaskjjbfjJDBs");
+    
+  assertEqual(countItems(filteredListEnumerator), 0);
+
+  var propertyArray =
+    Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"].
+    createInstance(Ci.sbIPropertyArray);
+  
+  propertyArray.appendProperty(albumProperty, "Back in Black");
+  filteredListEnumerator =
+    list.getItemsByPropertyValues(propertyArray);
+    
+  assertEqual(countItems(filteredListEnumerator), 10);
+  
+  propertyArray.appendProperty(titleProperty, "Rock and Roll Ain't Noise Pollution");
+  propertyArray.appendProperty(titleProperty, "Shake a Leg");
+  filteredListEnumerator =
+    list.getItemsByPropertyValues(propertyArray);
+
+  assertEqual(countItems(filteredListEnumerator), 2);
+  
+  propertyArray.removeElementAt(1);
+  filteredListEnumerator =
+    list.getItemsByPropertyValues(propertyArray);
+  
+  assertEqual(countItems(filteredListEnumerator), 1);
+}
