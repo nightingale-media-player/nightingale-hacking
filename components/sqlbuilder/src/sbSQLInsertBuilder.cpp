@@ -27,8 +27,8 @@
 #include "sbSQLInsertBuilder.h"
 
 NS_IMPL_ISUPPORTS_INHERITED1(sbSQLInsertBuilder,
-                           sbSQLBuilderBase,
-                           sbISQLInsertBuilder)
+                             sbSQLBuilderBase,
+                             sbISQLInsertBuilder)
 
 NS_IMETHODIMP
 sbSQLInsertBuilder::AddColumn(const nsAString& aColumnName)
@@ -115,7 +115,7 @@ sbSQLInsertBuilder::SetSelect(sbISQLSelectBuilder* aSelect)
 }
 
 NS_IMETHODIMP
-sbSQLInsertBuilder::ResetInternal()
+sbSQLInsertBuilder::Reset()
 {
   mSelect = nsnull;
   mValueList.Clear();
@@ -124,7 +124,7 @@ sbSQLInsertBuilder::ResetInternal()
 }
 
 NS_IMETHODIMP
-sbSQLInsertBuilder::ToStringInternal(nsAString& _retval)
+sbSQLInsertBuilder::ToString(nsAString& _retval)
 {
   nsresult rv;
   nsAutoString buff;

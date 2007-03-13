@@ -46,25 +46,25 @@ void
 sbSQLBuilderCriterionBase::AppendMatchTo(nsAString& aStr)
 {
   switch(mMatchType) {
-    case sbISQLBuilder::MATCH_EQUALS:
+    case sbISQLWhereBuilder::MATCH_EQUALS:
       aStr.AppendLiteral(" = ");
       break;
-    case sbISQLBuilder::MATCH_NOTEQUALS:
+    case sbISQLWhereBuilder::MATCH_NOTEQUALS:
       aStr.AppendLiteral(" != ");
       break;
-    case sbISQLBuilder::MATCH_GREATER:
+    case sbISQLWhereBuilder::MATCH_GREATER:
       aStr.AppendLiteral(" > ");
       break;
-    case sbISQLBuilder::MATCH_GREATEREQUAL:
+    case sbISQLWhereBuilder::MATCH_GREATEREQUAL:
       aStr.AppendLiteral(" >= ");
       break;
-    case sbISQLBuilder::MATCH_LESS:
+    case sbISQLWhereBuilder::MATCH_LESS:
       aStr.AppendLiteral(" < ");
       break;
-    case sbISQLBuilder::MATCH_LESSEQUAL:
+    case sbISQLWhereBuilder::MATCH_LESSEQUAL:
       aStr.AppendLiteral(" <= ");
       break;
-    case sbISQLBuilder::MATCH_LIKE:
+    case sbISQLWhereBuilder::MATCH_LIKE:
       aStr.AppendLiteral(" like ");
       break;
     default:
@@ -176,7 +176,7 @@ sbSQLBuilderCriterionNull::ToString(nsAString& _retval)
 {
   AppendTableColumnTo(_retval);
 
-  if (mMatchType == sbISQLBuilder::MATCH_EQUALS) {
+  if (mMatchType == sbISQLWhereBuilder::MATCH_EQUALS) {
     _retval.AppendLiteral(" is null");
   }
   else {

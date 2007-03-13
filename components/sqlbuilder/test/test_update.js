@@ -24,21 +24,33 @@
 //
 */
 
-#define SB_SQLBUILDER_SELECT_CID \
-  { 0x588687d7, 0x3123, 0x418a, \
-  { 0xb6, 0xba, 0xcc, 0x54, 0xb1, 0x06, 0x6c, 0x8a } }
-#define SB_SQLBUILDER_SELECT_CONTRACTID \
-  "@songbirdnest.com/Songbird/SQLBuilder/Select;1"
+/**
+ * \brief Test file
+ */
 
-#define SB_SQLBUILDER_INSERT_CID \
-  { 0x8d744125, 0x903b, 0x42bc, \
-  { 0x8b, 0x2f, 0x21, 0xf6, 0xb9, 0x1c, 0x47, 0xe9 } }
-#define SB_SQLBUILDER_INSERT_CONTRACTID \
-  "@songbirdnest.com/Songbird/SQLBuilder/Insert;1"
+function runTest () {
 
-#define SB_SQLBUILDER_UPDATE_CID \
-  { 0xdbaf00cb, 0xbb40, 0x47a1, \
-  { 0xa7, 0xa9, 0xaa, 0x88, 0xd4, 0x50, 0x6e, 0x9e } }
-#define SB_SQLBUILDER_UPDATE_CONTRACTID \
-  "@songbirdnest.com/Songbird/SQLBuilder/Update;1"
+  var sql;
+  var u;
+  var c;
+
+  u = newUpdate();
+  u.tableName = "bbc";
+  u.addAssignmentString("country", "France");
+  u.addAssignmentParameter("population");
+  c = u.createMatchCriterionLong(null, "population",
+                                 Ci.sbISQLBuilder.MATCH_GREATEREQUAL,
+                                 200000000);
+  u.addCriterion(c);
+  sql = "update bbc set country = 'France', population = ? where population >= 200000000";
+  assertEqual(sql, u.toString());
+
+  return Components.results.NS_OK;
+
+}
+
+function newUpdate() {
+  return Cc["@songbirdnest.com/Songbird/SQLBuilder/Update;1"]
+           .createInstance(Ci.sbISQLUpdateBuilder);
+}
 

@@ -36,6 +36,19 @@
 
 #define QUOTE_CHAR '\''
 
+#define NS_FORWARD_SBISQLBUILDER_WITHOUT_TOSTRING_RESET(_to) \
+  NS_IMETHOD GetLimit(PRInt32 *aLimit) { return _to GetLimit(aLimit); } \
+  NS_IMETHOD SetLimit(PRInt32 aLimit) { return _to SetLimit(aLimit); } \
+  NS_IMETHOD GetLimitIsParameter(PRBool *aLimitIsParameter) { return _to GetLimitIsParameter(aLimitIsParameter); } \
+  NS_IMETHOD SetLimitIsParameter(PRBool aLimitIsParameter) { return _to SetLimitIsParameter(aLimitIsParameter); } \
+  NS_IMETHOD GetOffset(PRInt32 *aOffset) { return _to GetOffset(aOffset); } \
+  NS_IMETHOD SetOffset(PRInt32 aOffset) { return _to SetOffset(aOffset); } \
+  NS_IMETHOD GetOffsetIsParameter(PRBool *aOffsetIsParameter) { return _to GetOffsetIsParameter(aOffsetIsParameter); } \
+  NS_IMETHOD SetOffsetIsParameter(PRBool aOffsetIsParameter) { return _to SetOffsetIsParameter(aOffsetIsParameter); } \
+  NS_IMETHOD AddJoin(PRUint32 aJoinType, const nsAString & aJoinedTableName, const nsAString & aJoinedTableAlias, const nsAString & aJoinedColumnName, const nsAString & aJoinToTableName, const nsAString & aJoinToColumnName) { return _to AddJoin(aJoinType, aJoinedTableName, aJoinedTableAlias, aJoinedColumnName, aJoinToTableName, aJoinToColumnName); } \
+  NS_IMETHOD AddJoinWithCriterion(PRUint32 aJoinType, const nsAString & aJoinedTableName, const nsAString & aJoinedTableAlias, sbISQLBuilderCriterion *aCriterion) { return _to AddJoinWithCriterion(aJoinType, aJoinedTableName, aJoinedTableAlias, aCriterion); } \
+  NS_IMETHOD AddSubquery(sbISQLSelectBuilder *aSubquery, const nsAString & aAlias) { return _to AddSubquery(aSubquery, aAlias); } \
+
 class sbSQLBuilderBase : public sbISQLBuilder
 {
 public:
@@ -62,30 +75,18 @@ protected:
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
   };
 
-  struct sbOrderInfo
-  {
-    nsString tableName;
-    nsString columnName;
-    PRBool ascending;
-  };
-
   struct sbSubqueryInfo
   {
     nsCOMPtr<sbISQLSelectBuilder> subquery;
     nsString alias;
   };
 
-  NS_IMETHOD ToStringInternal(nsAString& _retval) = 0;
-  NS_IMETHOD ResetInternal() = 0;
-
   PRInt32 mLimit;
   PRBool mLimitIsParameter;
   PRInt32 mOffset;
   PRBool mOffsetIsParameter;
-  nsTArray<sbColumnInfo> mOutputColumns;
   nsTArray<sbJoinInfo> mJoins;
   nsTArray<sbSubqueryInfo> mSubqueries;
-  nsCOMArray<sbISQLBuilderCriterion> mCritera;
 
 };
 

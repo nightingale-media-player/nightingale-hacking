@@ -33,8 +33,10 @@ target_name = sbSQLBuilder
 
 CPP_SRCS = sbSQLBuilderModule.cpp \
            sbSQLBuilderBase.cpp \
+           sbSQLWhereBuilder.cpp \
            sbSQLSelectBuilder.cpp \
            sbSQLInsertBuilder.cpp \
+           sbSQLUpdateBuilder.cpp \
            sbSQLBuilderCriterion.cpp \
            $(NULL)
 

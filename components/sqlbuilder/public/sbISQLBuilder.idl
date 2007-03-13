@@ -46,6 +46,14 @@ interface sbISQLSelectBuilder;
 [scriptable, uuid(9286bd63-ffb4-44e6-a3e6-a6cf8f457cb1)]
 interface sbISQLBuilder : nsISupports
 {
+  const unsigned long MATCH_EQUALS       = 0;
+  const unsigned long MATCH_NOTEQUALS    = 1;
+  const unsigned long MATCH_GREATER      = 2;
+  const unsigned long MATCH_GREATEREQUAL = 3;
+  const unsigned long MATCH_LESS         = 4;
+  const unsigned long MATCH_LESSEQUAL    = 5;
+  const unsigned long MATCH_LIKE         = 6;
+
   /**
    * \brief Value for the limit clause
    */
@@ -108,25 +116,29 @@ interface sbISQLBuilder : nsISupports
   void addSubquery(in sbISQLSelectBuilder aSubquery,
                    in AString aAlias);
 
- /**
-   * \brief Add a criteria constraint to the query
-   * \param aCriterion The Criterion to add
+  /**
+   * \brief Clears out query configuration to this instance can be reused
    */
-  void addCriterion(in sbISQLBuilderCriterion aCriterion);
+  void reset();
 
   /**
    * \brief Return the generated SQL statement for the query
    * \return The generated SQL statement
    */
   AString toString();
+};
 
-  const unsigned long MATCH_EQUALS       = 0;
-  const unsigned long MATCH_NOTEQUALS    = 1;
-  const unsigned long MATCH_GREATER      = 2;
-  const unsigned long MATCH_GREATEREQUAL = 3;
-  const unsigned long MATCH_LESS         = 4;
-  const unsigned long MATCH_LESSEQUAL    = 5;
-  const unsigned long MATCH_LIKE         = 6;
+/**
+* \interface sbISQLWhereBuilder
+*/
+[scriptable, uuid(7a35ea83-e75f-4299-935c-9a678e74c13f)]
+interface sbISQLWhereBuilder : sbISQLBuilder
+{
+ /**
+   * \brief Add a criteria constraint to the query
+   * \param aCriterion The Criterion to add
+   */
+  void addCriterion(in sbISQLBuilderCriterion aCriterion);
 
   /**
    * \brief Create a match criterion with an AString datatype
@@ -212,10 +224,7 @@ interface sbISQLBuilder : nsISupports
   sbISQLBuilderCriterion createOrCriterion(in sbISQLBuilderCriterion aLeft,
                                            in sbISQLBuilderCriterion aRight);
 
-  /**
-   * \brief Clears out query configuration to this instance can be reused
-   */
-  void reset();
+
 };
 
 /**
@@ -223,7 +232,7 @@ interface sbISQLBuilder : nsISupports
 * \brief Interface for building SELECT statements
 */
 [scriptable, uuid(b91ae93b-9c1e-427c-a751-5c0c19fcdbc3)]
-interface sbISQLSelectBuilder : sbISQLBuilder
+interface sbISQLSelectBuilder : sbISQLWhereBuilder
 {
   /**
    * \brief The query's base table
@@ -289,6 +298,21 @@ interface sbISQLInsertBuilder : sbISQLBuilder
   attribute AString intoTableName;
 
   attribute sbISQLSelectBuilder select;
+};
+
+/**
+ * \interface sbISQLSelectBuilder
+ * \brief Interface for building UPDATE statements
+ */
+[scriptable, uuid(68991dbd-83f0-4df9-b3f6-89d0982ed491)]
+interface sbISQLUpdateBuilder : sbISQLWhereBuilder
+{
+  attribute AString tableName;
+
+  void addAssignmentString(in AString aColumnName,
+                           in AString aValue);
+
+  void addAssignmentParameter(in AString aColumnName);
 };
 
 /**

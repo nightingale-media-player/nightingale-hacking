@@ -24,8 +24,8 @@
 //
 */
 
-#ifndef __SBSQLSELECTBUILDER_H__
-#define __SBSQLSELECTBUILDER_H__
+#ifndef __SBSQLUPDATEBUILDER_H__
+#define __SBSQLUPDATEBUILDER_H__
 
 #include <sbISQLBuilder.h>
 #include "sbSQLWhereBuilder.h"
@@ -33,40 +33,42 @@
 
 #include <nsStringGlue.h>
 #include <nsTArray.h>
-#include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 
-class sbSQLSelectBuilder : public sbSQLWhereBuilder,
-                           public sbISQLSelectBuilder
+class sbSQLUpdateBuilder : public sbSQLWhereBuilder,
+                           public sbISQLUpdateBuilder
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  // defined in sbSQLBuilderBase.h
   NS_FORWARD_SBISQLBUILDER_WITHOUT_TOSTRING_RESET(sbSQLBuilderBase::)
   NS_FORWARD_SBISQLWHEREBUILDER(sbSQLWhereBuilder::)
-  NS_DECL_SBISQLSELECTBUILDER
+  NS_DECL_SBISQLUPDATEBUILDER
 
   // override sbISQLBuilder::ToString and sbISQLBuilder::Reset
   NS_IMETHOD ToString(nsAString& _result);
   NS_IMETHOD Reset();
 
-  sbSQLSelectBuilder();
+  sbSQLUpdateBuilder();
 private:
-  struct sbOrderInfo
-  {
-    nsString tableName;
-    nsString columnName;
-    PRBool ascending;
+  enum AssignmentType {
+    eIsNull,
+    eString,
+    eInteger32,
+    eParameter
   };
 
-  nsTArray<sbOrderInfo> mOrders;
-  nsTArray<sbColumnInfo> mOutputColumns;
+  struct Assignment
+  {
+    AssignmentType type;
+    nsString columnName;
+    nsString stringValue;
+    PRInt32 int32Value;
+  };
 
-  nsString mBaseTableName;
-  nsString mBaseTableAlias;
-  PRBool mIsDistinct;
+  nsString mTableName;
+  nsTArray<Assignment> mAssignments;
 
 };
 
-#endif /* __SBSQLSELECTBUILDER_H__ */
+#endif /* __SBSQLUPDATEBUILDER_H__ */
 

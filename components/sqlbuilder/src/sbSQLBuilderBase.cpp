@@ -157,163 +157,20 @@ sbSQLBuilderBase::AddSubquery(sbISQLSelectBuilder *aSubquery,
 }
 
 NS_IMETHODIMP
-sbSQLBuilderBase::AddCriterion(sbISQLBuilderCriterion *aCriterion)
-{
-  NS_ENSURE_ARG_POINTER(aCriterion);
-
-  mCritera.AppendObject(aCriterion);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::CreateMatchCriterionString(const nsAString& aTableName,
-                                             const nsAString& aSrcColumnName,
-                                             PRUint32 aMatchType,
-                                             const nsAString& aValue,
-                                             sbISQLBuilderCriterion** _retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterion =
-    new sbSQLBuilderCriterionString(aTableName, aSrcColumnName, aMatchType, aValue);
-  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*_retval = criterion);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::CreateMatchCriterionLong(const nsAString& aTableName,
-                                           const nsAString& aSrcColumnName,
-                                           PRUint32 aMatchType,
-                                           PRInt32 aValue,
-                                           sbISQLBuilderCriterion **_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterion =
-    new sbSQLBuilderCriterionLong(aTableName, aSrcColumnName, aMatchType, aValue);
-  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*_retval = criterion);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::CreateMatchCriterionNull(const nsAString& aTableName,
-                                           const nsAString& aSrcColumnName,
-                                           PRUint32 aMatchType,
-                                           sbISQLBuilderCriterion **_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterion =
-    new sbSQLBuilderCriterionNull(aTableName, aSrcColumnName, aMatchType);
-  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*_retval = criterion);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::CreateMatchCriterionParameter(const nsAString& aTableName,
-                                                const nsAString& aSrcColumnName,
-                                                PRUint32 aMatchType,
-                                                sbISQLBuilderCriterion **_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterion =
-    new sbSQLBuilderCriterionParameter(aTableName, aSrcColumnName, aMatchType);
-  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*_retval = criterion);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::CreateMatchCriterionTable(const nsAString& aLeftTableName,
-                                            const nsAString& aLeftColumnName,
-                                            PRUint32 aMatchType,
-                                            const nsAString& aRightTableName,
-                                            const nsAString& aRightColumnName,
-                                            sbISQLBuilderCriterion **_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterion =
-    new sbSQLBuilderCriterionTable(aLeftTableName, aLeftColumnName, aMatchType,
-                                   aRightTableName, aRightColumnName);
-  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*_retval = criterion);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::CreateMatchCriterionIn(const nsAString& aTableName,
-                                         const nsAString& aSrcColumnName,
-                                         sbISQLBuilderCriterionIn **_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsCOMPtr<sbISQLBuilderCriterionIn> criterion =
-    new sbSQLBuilderCriterionIn(aTableName, aSrcColumnName);
-  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*_retval = criterion);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::CreateAndCriterion(sbISQLBuilderCriterion *aLeft,
-                                     sbISQLBuilderCriterion *aRight,
-                                     sbISQLBuilderCriterion **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aLeft);
-  NS_ENSURE_ARG_POINTER(aRight);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterion =
-    new sbSQLBuilderCriterionAnd(aLeft, aRight);
-  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*_retval = criterion);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLBuilderBase::CreateOrCriterion(sbISQLBuilderCriterion *aLeft,
-                                    sbISQLBuilderCriterion *aRight,
-                                    sbISQLBuilderCriterion **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aLeft);
-  NS_ENSURE_ARG_POINTER(aRight);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterion =
-    new sbSQLBuilderCriterionOr(aLeft, aRight);
-  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*_retval = criterion);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbSQLBuilderBase::Reset()
 {
-  return ResetInternal();
+  mLimit = -1;
+  mLimitIsParameter = PR_FALSE;
+  mOffset = -1;
+  mOffsetIsParameter = PR_FALSE;
+  mJoins.Clear();
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbSQLBuilderBase::ToString(nsAString& _retval)
 {
-  // Foward this method call to the derived class' ToStringInternal() method.
-  // This allows derived classes to effectivly override the base class'
-  // ToString() method and still use NS_FORWARD_SBISQLBUILDER in the header
-  // definition
-  return ToStringInternal(_retval);
+  // not meant to be implemented by base class
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 

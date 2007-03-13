@@ -25,10 +25,11 @@
 */
 
 #include "sbSQLSelectBuilder.h"
+#include "sbSQLWhereBuilder.h"
 #include "sbSQLBuilderCriterion.h"
 
 NS_IMPL_ISUPPORTS_INHERITED1(sbSQLSelectBuilder,
-                             sbSQLBuilderBase,
+                             sbSQLWhereBuilder,
                              sbISQLSelectBuilder)
 
 sbSQLSelectBuilder::sbSQLSelectBuilder() :
@@ -112,16 +113,11 @@ sbSQLSelectBuilder::AddOrder(const nsAString& aTableName,
 }
 
 NS_IMETHODIMP
-sbSQLSelectBuilder::ResetInternal()
+sbSQLSelectBuilder::Reset()
 {
   mBaseTableName.Truncate();
   mBaseTableAlias.Truncate();
-  mLimit = -1;
-  mLimitIsParameter = PR_FALSE;
-  mOffset = -1;
-  mOffsetIsParameter = PR_FALSE;
   mOutputColumns.Clear();
-  mJoins.Clear();
   mSubqueries.Clear();
   mCritera.Clear();
   mOrders.Clear();
@@ -130,7 +126,7 @@ sbSQLSelectBuilder::ResetInternal()
 }
 
 NS_IMETHODIMP
-sbSQLSelectBuilder::ToStringInternal(nsAString& _retval)
+sbSQLSelectBuilder::ToString(nsAString& _retval)
 {
   nsresult rv;
   nsAutoString buff;
@@ -222,22 +218,8 @@ sbSQLSelectBuilder::ToStringInternal(nsAString& _retval)
     }
   }
 
-  // Append the where clause if there are criterea
-  len = mCritera.Count();
-  if (len > 0) {
-    buff.AppendLiteral(" where ");
-    for (PRUint32 i = 0; i < len; i++) {
-      nsCOMPtr<sbISQLBuilderCriterion> criterion =
-        do_QueryInterface(mCritera[i], &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      nsAutoString str;
-      NS_STATIC_CAST(sbSQLBuilderCriterionBase*, criterion.get())->ToString(str);
-      buff.Append(str);
-      if (i + 1 < len) {
-        buff.AppendLiteral(" and ");
-      }
-    }
-  }
+  rv = AppendWhere(buff);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Append order by clause
   len = mOrders.Length();

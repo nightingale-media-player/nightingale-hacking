@@ -24,49 +24,31 @@
 //
 */
 
-#ifndef __SBSQLSELECTBUILDER_H__
-#define __SBSQLSELECTBUILDER_H__
+#ifndef __SBSQLWHEREBUILDER_H__
+#define __SBSQLWHEREBUILDER_H__
 
 #include <sbISQLBuilder.h>
-#include "sbSQLWhereBuilder.h"
 #include "sbSQLBuilderBase.h"
 
 #include <nsStringGlue.h>
-#include <nsTArray.h>
-#include <nsCOMArray.h>
 #include <nsCOMPtr.h>
+#include <nsCOMArray.h>
 
-class sbSQLSelectBuilder : public sbSQLWhereBuilder,
-                           public sbISQLSelectBuilder
+class sbSQLWhereBuilder : public sbSQLBuilderBase,
+                          public sbISQLWhereBuilder
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  // defined in sbSQLBuilderBase.h
-  NS_FORWARD_SBISQLBUILDER_WITHOUT_TOSTRING_RESET(sbSQLBuilderBase::)
-  NS_FORWARD_SBISQLWHEREBUILDER(sbSQLWhereBuilder::)
-  NS_DECL_SBISQLSELECTBUILDER
+  NS_DECL_SBISQLWHEREBUILDER
 
-  // override sbISQLBuilder::ToString and sbISQLBuilder::Reset
-  NS_IMETHOD ToString(nsAString& _result);
+protected:
   NS_IMETHOD Reset();
 
-  sbSQLSelectBuilder();
-private:
-  struct sbOrderInfo
-  {
-    nsString tableName;
-    nsString columnName;
-    PRBool ascending;
-  };
+  nsresult AppendWhere(nsAString& aBuffer);
 
-  nsTArray<sbOrderInfo> mOrders;
-  nsTArray<sbColumnInfo> mOutputColumns;
-
-  nsString mBaseTableName;
-  nsString mBaseTableAlias;
-  PRBool mIsDistinct;
+  nsCOMArray<sbISQLBuilderCriterion> mCritera;
 
 };
 
-#endif /* __SBSQLSELECTBUILDER_H__ */
+#endif /* __SBSQLWHEREBUILDER_H__ */
 

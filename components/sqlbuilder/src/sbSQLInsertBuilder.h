@@ -38,11 +38,13 @@ class sbSQLInsertBuilder : public sbSQLBuilderBase,
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  NS_FORWARD_SBISQLBUILDER(sbSQLBuilderBase::)
+  // defined in sbSQLBuilderBase.h
+  NS_FORWARD_SBISQLBUILDER_WITHOUT_TOSTRING_RESET(sbSQLBuilderBase::)
   NS_DECL_SBISQLINSERTBUILDER
 
-  NS_IMETHOD ToStringInternal(nsAString& _retval);
-  NS_IMETHOD ResetInternal();
+  // override sbISQLBuilder::ToString and sbISQLBuilder::Reset
+  NS_IMETHOD ToString(nsAString& _retval);
+  NS_IMETHOD Reset();
 
 private:
   enum ParameterType {
@@ -59,6 +61,7 @@ private:
     PRInt32 int32Value;
   };
 
+  nsTArray<sbColumnInfo> mOutputColumns;
   nsTArray<sbValueItem> mValueList;
 
   nsCOMPtr<sbISQLSelectBuilder> mSelect;

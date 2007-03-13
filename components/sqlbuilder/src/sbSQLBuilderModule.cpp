@@ -28,25 +28,33 @@
 #include "sbSQLBuilderBase.h"
 #include "sbSQLSelectBuilder.h"
 #include "sbSQLInsertBuilder.h"
+#include "sbSQLUpdateBuilder.h"
 #include "sbSQLBuilderCID.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLSelectBuilder)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLInsertBuilder)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLUpdateBuilder)
 
 static const nsModuleComponentInfo components[] =
 {
-	{
+  {
     "SQLBuilder for SELECT statements",
     SB_SQLBUILDER_SELECT_CID,
     SB_SQLBUILDER_SELECT_CONTRACTID,
     sbSQLSelectBuilderConstructor
-	},
-	{
+  },
+  {
     "SQLBuilder for INSERT statements",
     SB_SQLBUILDER_INSERT_CID,
     SB_SQLBUILDER_INSERT_CONTRACTID,
     sbSQLInsertBuilderConstructor
-	}
+  },
+  {
+    "SQLBuilder for UPDATE statements",
+    SB_SQLBUILDER_UPDATE_CID,
+    SB_SQLBUILDER_UPDATE_CONTRACTID,
+    sbSQLUpdateBuilderConstructor
+  }
 };
 
 NS_IMPL_NSGETMODULE("Songbird SQL Statement Builder Module", components)
