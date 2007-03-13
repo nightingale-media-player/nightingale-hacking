@@ -84,6 +84,9 @@ NS_IMETHODIMP
 sbLocalDatabaseViewMediaList::Contains(sbIMediaItem* aMediaItem,
                                        PRBool* _retval)
 {
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
   nsresult rv;
 
   sbLocalDatabaseLibrary* library =

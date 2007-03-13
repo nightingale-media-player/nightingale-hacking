@@ -125,6 +125,7 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
 
   nsCOMPtr<sbIMediaItem> item;
   rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = item);
   return NS_OK;
@@ -297,7 +298,32 @@ sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
                                       PRUint32 aStartFrom,
                                       PRUint32* _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  PRUint32 count;
+  nsresult rv = mFullArray->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(count >= 1, NS_ERROR_UNEXPECTED);
+
+  NS_ENSURE_ARG_MAX(aStartFrom, count - 1);
+
+  nsAutoString testGUID;
+  rv = aMediaItem->GetGuid(testGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 index = aStartFrom; index < count; index++) {
+    nsAutoString itemGUID;
+    rv = mFullArray->GetByIndex(index, itemGUID);
+    SB_CONTINUE_IF_FAILED(rv);
+
+    if (testGUID.Equals(itemGUID)) {
+      *_retval = index;
+      return NS_OK;
+    }
+  }
+  return NS_ERROR_NOT_AVAILABLE;
 }
 
 NS_IMETHODIMP
@@ -305,23 +331,48 @@ sbLocalDatabaseMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
                                           PRUint32 aStartFrom,
                                           PRUint32* _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  PRUint32 count;
+  nsresult rv = mFullArray->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(count >= 1, NS_ERROR_UNEXPECTED);
+
+  NS_ENSURE_ARG_MAX(aStartFrom, count - 1);
+
+  nsAutoString testGUID;
+  rv = aMediaItem->GetGuid(testGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 index = count - 1; index >= aStartFrom; index--) {
+    nsAutoString itemGUID;
+    rv = mFullArray->GetByIndex(index, itemGUID);
+    SB_CONTINUE_IF_FAILED(rv);
+
+    if (testGUID.Equals(itemGUID)) {
+      *_retval = index;
+      return NS_OK;
+    }
+  }
+  return NS_ERROR_NOT_AVAILABLE;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Contains(sbIMediaItem* aMediaItem,
                                        PRBool* _retval)
 {
-  /* virtual */
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetIsEmpty(PRBool* aIsEmpty)
 {
-  nsresult rv;
+  NS_ENSURE_ARG_POINTER(aIsEmpty);
+
   PRUint32 length;
-  rv = mFullArray->GetLength(&length);
+  nsresult rv = mFullArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aIsEmpty = length == 0;
@@ -400,7 +451,11 @@ sbLocalDatabaseMediaListBase::RemoveListner(sbIMediaListListener* aListener)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetLibrary(sbILibrary** aLibrary)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_STATE(mLibrary);
+
+  NS_ADDREF(*aLibrary = mLibrary);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -512,6 +567,21 @@ sbLocalDatabaseMediaListBase::ToString(nsAString& _retval)
   buff.AppendLiteral("}");
 
   _retval = buff;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::Equals(sbIMediaItem* aOtherItem,
+                                     PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(aOtherItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoString otherGUID;
+  nsresult rv = aOtherItem->GetGuid(otherGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = mGuid.Equals(otherGUID);
   return NS_OK;
 }
 

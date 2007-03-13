@@ -190,6 +190,21 @@ sbLocalDatabaseMediaItem::ToString(nsAString& _retval)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::Equals(sbIMediaItem* aOtherItem,
+                                 PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(aOtherItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoString otherGUID;
+  nsresult rv = aOtherItem->GetGuid(otherGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = mGuid.Equals(otherGUID);
+  return NS_OK;
+}
+
 // sbILibraryResource
 // XXX - Can this be agg'd?
 NS_IMETHODIMP

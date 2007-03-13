@@ -52,6 +52,7 @@ function runTest () {
   var albumProperty = "http://songbirdnest.com/data/1.0#albumName";
   var genreProperty = "http://songbirdnest.com/data/1.0#genre";
   
+  // Test getItemsByProperty(s)
   var filteredListEnumerator =
     list.getItemsByPropertyValue(titleProperty, "Train of Thought");
   
@@ -89,4 +90,46 @@ function runTest () {
     list.getItemsByPropertyValues(propertyArray);
   
   assertEqual(countItems(filteredListEnumerator), 1);
+  
+  //Test getIemByIndex, indexOf, lastIndexOf.
+  var mediaItem = list.getItemByIndex(8);
+  assertNotEqual(mediaItem, null);
+  
+  var mediaItemIndex = list.indexOf(mediaItem, 0);
+  assertEqual(mediaItemIndex, 8);
+  
+  var indexOfException;
+  try {
+    mediaItemIndex = list.indexOf(mediaItem, 10);
+  } catch (e) {
+    indexOfException = e;
+  }
+  assertEqual(indexOfException.result, Cr.NS_ERROR_NOT_AVAILABLE);
+  
+  var indexOfException2;
+  try {
+    mediaItemIndex = list.indexOf(mediaItem, 45);
+  } catch (e) {
+    indexOfException2 = e;
+  }
+  assertEqual(indexOfException2.result, Cr.NS_ERROR_INVALID_ARG);
+
+  mediaItemIndex = list.lastIndexOf(mediaItem, 0);
+  assertEqual(mediaItemIndex, 8);
+  
+  var lastIndexOfException;
+  try {
+    mediaItemIndex = list.lastIndexOf(mediaItem, 10);
+  } catch (e) {
+    lastIndexOfException = e;
+  }
+  assertEqual(lastIndexOfException.result, Cr.NS_ERROR_NOT_AVAILABLE);
+  
+  var lastIndexOfException2;
+  try {
+    mediaItemIndex = list.lastIndexOf(mediaItem, 45);
+  } catch (e) {
+    lastIndexOfException2 = e;
+  }
+  assertEqual(lastIndexOfException2.result, Cr.NS_ERROR_INVALID_ARG);
 }

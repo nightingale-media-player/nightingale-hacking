@@ -97,5 +97,47 @@ function runTest () {
     view.getItemsByPropertyValues(propertyArray);
   
   assertEqual(countItems(filteredListEnumerator), 1);
+  //Test getIemByIndex, indexOf, lastIndexOf.
+  
+  var mediaItem = view.getItemByIndex(8);
+  assertNotEqual(mediaItem, null);
+  
+  var mediaItemIndex = view.indexOf(mediaItem, 0);
+  assertEqual(mediaItemIndex, 8);
+  
+  var indexOfException;
+  try {
+    mediaItemIndex = view.indexOf(mediaItem, 10);
+  } catch (e) {
+    indexOfException = e;
+  }
+  assertEqual(indexOfException.result, Cr.NS_ERROR_NOT_AVAILABLE);
+  
+  var indexOfException2;
+  try {
+    mediaItemIndex = view.indexOf(mediaItem, 45000);
+  } catch (e) {
+    indexOfException2 = e;
+  }
+  assertEqual(indexOfException2.result, Cr.NS_ERROR_INVALID_ARG);
+
+  mediaItemIndex = view.lastIndexOf(mediaItem, 0);
+  assertEqual(mediaItemIndex, 8);
+  
+  var lastIndexOfException;
+  try {
+    mediaItemIndex = view.lastIndexOf(mediaItem, 10);
+  } catch (e) {
+    lastIndexOfException = e;
+  }
+  assertEqual(lastIndexOfException.result, Cr.NS_ERROR_NOT_AVAILABLE);
+  
+  var lastIndexOfException2;
+  try {
+    mediaItemIndex = view.lastIndexOf(mediaItem, 45000);
+  } catch (e) {
+    lastIndexOfException2 = e;
+  }
+  assertEqual(lastIndexOfException2.result, Cr.NS_ERROR_INVALID_ARG);
 }
 

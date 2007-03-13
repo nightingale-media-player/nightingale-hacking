@@ -129,5 +129,9 @@ interface sbIMediaItem : sbILibraryResource
    * \return A string representation of the media item
    */
   AString toString();
-};
 
+  /**
+   * \brief Tests the equality of two media items.
+   */
+  boolean equals(in sbIMediaItem aOtherItem);
+};

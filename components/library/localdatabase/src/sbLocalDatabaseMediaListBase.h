@@ -86,7 +86,6 @@ protected:
    * list this instance represents.
    */
   nsCOMPtr<sbILocalDatabaseGUIDArray> mFullArray;
-
 };
 
 #endif /* __SBLOCALDATABASEMEDIALISTBASE_H__ */
