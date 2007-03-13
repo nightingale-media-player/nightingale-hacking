@@ -62,6 +62,11 @@
 #define strnicmp strncasecmp
 #endif
 
+//Sometimes min is not defined.
+#if !defined(min) 
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
 #define USE_SQLITE_FULL_DISK_CACHING  1
 #define SQLITE_MAX_RETRIES            666
 #define QUERY_PROCESSOR_THREAD_COUNT  4
@@ -1647,7 +1652,7 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
 
                   itE = pQuery->m_UpdatedRowIDs.end();
                   itEE = (*itQueries)->m_SelectedRowIDs.end();
-                    
+
                   intersect.resize(min(pQuery->m_UpdatedRowIDs.size(), (*itQueries)->m_SelectedRowIDs.size()));
                   std::set_intersection(itS, itE, itSS, itEE, intersect.begin());
                   
