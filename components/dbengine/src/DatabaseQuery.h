@@ -40,6 +40,8 @@ class CDatabaseQuery;
 #include <vector>
 #include <set>
 
+#include <sqlite3.h>
+
 #include <prlock.h>
 #include <prmon.h>
 
@@ -93,7 +95,7 @@ class CDatabaseQuery : public sbIDatabaseQuery
 {
 friend class CDatabaseEngine;
 friend int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger);
-friend void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, PRInt64 nRowID);
+friend void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, sqlite_int64 nRowID);
 
 public:
   CDatabaseQuery();
