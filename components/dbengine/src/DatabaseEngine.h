@@ -68,6 +68,7 @@
 extern CDatabaseEngine *gEngine;
 
 // FUNCTIONS ==================================================================
+void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, sqlite_int64 nRowID);
 int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger);
 
 // CLASSES ====================================================================

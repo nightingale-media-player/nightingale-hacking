@@ -77,7 +77,7 @@
 PRLogModuleInfo *gDatabaseEngineLog;
 #endif
 
-void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, PRInt64 nRowID)
+void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, sqlite_int64 nRowID)
 {
   CDatabaseQuery *pQuery = reinterpret_cast<CDatabaseQuery *>(pData);
 
