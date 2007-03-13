@@ -164,6 +164,7 @@ sbSQLBuilderBase::Reset()
   mOffset = -1;
   mOffsetIsParameter = PR_FALSE;
   mJoins.Clear();
+  mSubqueries.Clear();
   return NS_OK;
 }
 

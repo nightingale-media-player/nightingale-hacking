@@ -115,11 +115,11 @@ sbSQLSelectBuilder::AddOrder(const nsAString& aTableName,
 NS_IMETHODIMP
 sbSQLSelectBuilder::Reset()
 {
+  sbSQLWhereBuilder::Reset();
   mBaseTableName.Truncate();
   mBaseTableAlias.Truncate();
+  mIsDistinct = PR_FALSE;
   mOutputColumns.Clear();
-  mSubqueries.Clear();
-  mCritera.Clear();
   mOrders.Clear();
 
   return NS_OK;
