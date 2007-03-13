@@ -362,13 +362,6 @@ NS_IMETHODIMP CDatabaseQuery::SetPersistentQuery(PRBool bPersistentQuery)
     p->RemovePersistentQuery(this);    
   }
 
-  if(bPersistentQuery)
-  {
-    m_PersistExecOnInsert = PR_TRUE;
-    m_PersistExecOnUpdate = PR_TRUE;
-    m_PersistExecOnDelete = PR_TRUE;
-  }
-
   m_PersistentQuery = bPersistentQuery;
 
   return NS_OK;

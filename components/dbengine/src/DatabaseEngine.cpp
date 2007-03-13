@@ -1637,9 +1637,7 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
                 else if((*itQueries)->m_PersistExecOnUpdate && updatedRowCount)
                 {
                   CDatabaseQuery::dbrowids_t::iterator itS, itE, itSS, itEE;
-                  
                   CDatabaseQuery::dbrowids_t intersect;
-                  CDatabaseQuery::dbrowids_t::iterator itR = intersect.begin();
 
                   PR_Lock(pQuery->m_pUpdatedRowIDsLock);
                   PR_Lock((*itQueries)->m_pSelectedRowIDsLock);
@@ -1650,7 +1648,8 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
                   itE = pQuery->m_UpdatedRowIDs.end();
                   itEE = (*itQueries)->m_SelectedRowIDs.end();
                     
-                  std::set_intersection(itS, itE, itSS, itEE, itR);
+                  intersect.resize(min(pQuery->m_UpdatedRowIDs.size(), (*itQueries)->m_SelectedRowIDs.size()));
+                  std::set_intersection(itS, itE, itSS, itEE, intersect.begin());
                   
                   mustExec = intersect.size();
                   
