@@ -49,6 +49,7 @@
 #include <nsAutoLock.h>
 
 #include <vector>
+#include <algorithm>
 #include <prmem.h>
 #include <prtypes.h>
 
@@ -75,6 +76,37 @@
 #ifdef PR_LOGGING
 PRLogModuleInfo *gDatabaseEngineLog;
 #endif
+
+void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, PRInt64 nRowID)
+{
+  CDatabaseQuery *pQuery = reinterpret_cast<CDatabaseQuery *>(pData);
+
+  switch(nOp)
+  {
+    case SQLITE_INSERT:
+    {
+      nsAutoLock lock(pQuery->m_pInsertedRowIDsLock);
+      pQuery->m_InsertedRowIDs.push_back(nRowID);
+    }
+    break;
+
+    case SQLITE_UPDATE:
+    {
+      nsAutoLock lock(pQuery->m_pUpdatedRowIDsLock);
+      pQuery->m_UpdatedRowIDs.push_back(nRowID);
+    }
+    break;
+
+    case SQLITE_DELETE:
+    {
+      nsAutoLock lock(pQuery->m_pDeletedRowIDsLock);
+      pQuery->m_DeletedRowIDs.push_back(nRowID);
+    }
+    break;
+  }
+
+  return;
+}
 
 int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger)
 {
@@ -368,7 +400,7 @@ CDatabaseEngine::CDatabaseEngine()
 , m_pQueryProcessorMonitor(nsnull)
 , m_QueryProcessorShouldShutdown(PR_FALSE)
 , m_QueryProcessorQueueHasItem(PR_FALSE)
-, m_pPersistentQueriesLock(nsnull)
+, m_pPersistentQueriesMonitor(nsnull)
 , m_AttemptShutdownOnDestruction(PR_FALSE)
 {
 #ifdef PR_LOGGING
@@ -388,8 +420,8 @@ CDatabaseEngine::CDatabaseEngine()
     PR_DestroyLock(m_pDatabaseLocksLock);
   if (m_pQueryProcessorMonitor)
     nsAutoMonitor::DestroyMonitor(m_pQueryProcessorMonitor);
-  if (m_pPersistentQueriesLock)
-    PR_DestroyLock(m_pPersistentQueriesLock);
+  if (m_pPersistentQueriesMonitor)
+    nsAutoMonitor::DestroyMonitor(m_pPersistentQueriesMonitor);
   if (m_pDBStorePathLock)
     PR_DestroyLock(m_pDBStorePathLock);
 } //dtor
@@ -429,8 +461,10 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   m_pDatabaseLocksLock = PR_NewLock();
   NS_ENSURE_TRUE(m_pDatabaseLocksLock, NS_ERROR_OUT_OF_MEMORY);
 
-  m_pPersistentQueriesLock = PR_NewLock();
-  NS_ENSURE_TRUE(m_pPersistentQueriesLock, NS_ERROR_OUT_OF_MEMORY);
+  m_pPersistentQueriesMonitor = 
+    nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pPersistentQueriesMonitor");
+
+  NS_ENSURE_TRUE(m_pPersistentQueriesMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   m_pDBStorePathLock = PR_NewLock();
   NS_ENSURE_TRUE(m_pDBStorePathLock, NS_ERROR_OUT_OF_MEMORY);
@@ -651,7 +685,7 @@ NS_IMETHODIMP CDatabaseEngine::AddPersistentQuery(CDatabaseQuery * dbQuery, cons
 //-----------------------------------------------------------------------------
 void CDatabaseEngine::AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const nsACString &strTableName)
 {
-  nsAutoLock lock(m_pPersistentQueriesLock);
+  nsAutoMonitor mon(m_pPersistentQueriesMonitor);
 
   nsAutoString strDBGUID;
   pQuery->GetDatabaseGUID(strDBGUID);
@@ -722,7 +756,7 @@ void CDatabaseEngine::RemovePersistentQueryPrivate(CDatabaseQuery *pQuery)
   if(!pQuery->m_IsPersistentQueryRegistered)
     return;
 
-  nsAutoLock lock(m_pPersistentQueriesLock);
+  nsAutoMonitor mon(m_pPersistentQueriesMonitor);
 
   nsCAutoString tableName;
   nsAutoString strDBGUID;
@@ -1008,6 +1042,8 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
   NS_NAMED_LITERAL_STRING(strAttachToken, "ATTACH DATABASE \"");
   NS_NAMED_LITERAL_STRING(strStartToken, "AS \"");
   NS_NAMED_LITERAL_STRING(strEndToken, "\"");
+  NS_NAMED_LITERAL_STRING(strSelectToken, "SELECT");
+  NS_NAMED_LITERAL_STRING(strWhereToken, "WHERE");
 
   CDatabaseQuery *pQuery = nsnull;
 
@@ -1042,6 +1078,9 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
     sqlite3 *pDB = nsnull;
     sqlite3 *pSecondDB = nsnull;
     nsAutoString dbGUID;
+    PRBool bPersistent = PR_FALSE;
+
+    bPersistent = pQuery->m_PersistentQuery;
     pQuery->GetDatabaseGUID(dbGUID);
 
     PR_LOG(gDatabaseEngineLog, PR_LOG_WARNING,
@@ -1089,13 +1128,16 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
         pQuery->GetQuery(i, strQuery);
         pParameters = pQuery->GetQueryParameters(i);
 
-        PRInt32 attachOffset = strQuery.Find(strAttachToken);
+        //To enable the ATTACH statement to work, we must parse out the
+        //database GUID and replace it with the full path to the database
+        //file the query wishes to attach.
+        PRInt32 attachOffset = strQuery.Find(strAttachToken, 0, CaseInsensitiveCompare);
         if(attachOffset > -1)
         {
-          PRInt32 startOffset = strQuery.Find(strStartToken, attachOffset);
+          PRInt32 startOffset = strQuery.Find(strStartToken, attachOffset, CaseInsensitiveCompare);
           if(startOffset > -1)
           {
-            PRInt32 endOffset = strQuery.Find(strEndToken, startOffset);
+            PRInt32 endOffset = strQuery.Find(strEndToken, startOffset, CaseInsensitiveCompare);
             
             if(pSecondDB) {
               pEngine->UnlockDatabase(pSecondDB);
@@ -1124,6 +1166,24 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
           }
         }
 
+        if(bPersistent)
+        {
+          //To enable per-row change notification persistent query callbacks we
+          //must always select the rowid column and store it to compare with the 
+          //rowid's that do get changed. We are notified of rowid's that are modified
+          //using the sqlite3_update_hook function that we call to register a callback
+          //that enables tracking of all data update in the database.
+          PRInt32 selectOffset = strQuery.Find(strSelectToken, 0, CaseInsensitiveCompare);
+          if(selectOffset > -1)
+          {
+            nsAutoString str;
+            str.AssignLiteral("rowid, ");
+
+            //Make sure we get the row id column first.
+            strQuery.Insert(str, selectOffset + strSelectToken.Length() + 1);          
+          }
+        }
+
         for(PRUint32 j = 0; j < nNumDB; j++)
         {
           nsAutoString dbName;
@@ -1131,7 +1191,9 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
           {
             pQuery->GetDatabaseGUID(dbName);
             pEngine->LockDatabase(pDB);
+
             retDB = sqlite3_set_authorizer(pDB, SQLiteAuthorizer, pQuery);
+            sqlite3_update_hook(pDB, SQLiteUpdateHook, pQuery);
 
 #if defined(HARD_SANITY_CHECK)
             if(retDB != SQLITE_OK)
@@ -1154,7 +1216,9 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
               continue;
             
             pEngine->LockDatabase(pDB);
+
             retDB = sqlite3_set_authorizer(pDB, SQLiteAuthorizer, pQuery);
+            sqlite3_update_hook(pDB, SQLiteUpdateHook, pQuery);
 
 #if defined(HARD_SANITY_CHECK)
             if(retDB != SQLITE_OK)
@@ -1256,8 +1320,18 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 
                     std::vector<nsString> vColumnNames;
                     vColumnNames.reserve(nCount);
+                    
+                    int i = 0;
+                    if(bPersistent)
+                    {
+                      PR_Lock(pQuery->m_pSelectedRowIDsLock);
+                      pQuery->m_SelectedRowIDs.clear();
+                      PR_Unlock(pQuery->m_pSelectedRowIDsLock);
 
-                    for(int i = 0; i < nCount; i++)
+                      i = 1;
+                    }
+
+                    for(; i < nCount; i++)
                     {
                       PRUnichar *p = (PRUnichar *)sqlite3_column_name16(pStmt, i);
                       nsString strColumnName;
@@ -1278,7 +1352,18 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                          ("DBE: Result row %d:",
                          totalRows));
 
-                  for(int i = 0; i < nCount; i++)
+                  int i = 0;
+                  if(bPersistent)
+                  {
+                    PRInt64 nRowID = sqlite3_column_int64(pStmt, 0);
+                    PR_Lock(pQuery->m_pSelectedRowIDsLock);
+                    pQuery->m_SelectedRowIDs.push_back(nRowID);
+                    PR_Unlock(pQuery->m_pSelectedRowIDsLock);
+
+                    i = 1;
+                  }
+
+                  for(; i < nCount; i++)
                   {
                     PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, i);
                     nsString strCellValue;
@@ -1418,10 +1503,14 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                 if(foundIndex > -1)
                   strTableName.SetLength((PRUint32)foundIndex);
 
-                // XXXben This makes an nsCAutoString... Is that ok? Otherwise need a new CString
                 pEngine->AddPersistentQuery(pQuery, NS_ConvertUTF16toUTF8(strTableName));
               }
+
+              PR_Lock(pQuery->m_pSelectedRowIDsLock);
+              pQuery->m_SelectedRowIDs.clear();
+              PR_Unlock(pQuery->m_pSelectedRowIDsLock);
             }
+
             CDatabaseResult *pRes = pQuery->GetResultObject();
             pRes->ClearResultSet();
           }
@@ -1479,30 +1568,105 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
   NS_NAMED_LITERAL_STRING(strAllToken, "*");
   NS_NAMED_LITERAL_CSTRING(cstrAllToken, "*");
 
+  //Make sure the query has changed persistent query data.
+  //Also make sure that the query is not a persistent on itself.
+  //This is to avoid circular processing nightmares.
   if(pQuery->m_HasChangedDataOfPersistQuery && 
      !pQuery->m_PersistentQuery)
   {
+    PRBool mustExec = PR_FALSE;
+
+    //Stash the number of deleted, inserted and updated rows.
+    PRUint32 deletedRowCount = 0;
+    PRUint32 insertedRowCount = 0;
+    PRUint32 updatedRowCount = 0;
+
+    PR_Lock(pQuery->m_pInsertedRowIDsLock);
+    insertedRowCount = pQuery->m_InsertedRowIDs.size();
+    PR_Unlock(pQuery->m_pInsertedRowIDsLock);
+
+    PR_Lock(pQuery->m_pUpdatedRowIDsLock);
+    updatedRowCount = pQuery->m_UpdatedRowIDs.size();
+    PR_Unlock(pQuery->m_pUpdatedRowIDsLock);
+
+    PR_Lock(pQuery->m_pDeletedRowIDsLock);
+    deletedRowCount = pQuery->m_DeletedRowIDs.size();
+    PR_Unlock(pQuery->m_pDeletedRowIDsLock);
+
     nsAutoLock lock(pQuery->m_pModifiedDataLock);
     CDatabaseQuery::modifieddata_t::const_iterator itDB = pQuery->m_ModifiedData.begin();
 
+    //For each database the query has modified
     for(; itDB != pQuery->m_ModifiedData.end(); itDB++)
     {
-      nsAutoLock pqLock(m_pPersistentQueriesLock);
+      //Is there a persistent query registered for this database guid?
+      nsAutoMonitor mon(m_pPersistentQueriesMonitor);
       querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.find(itDB->first);
 
       if(itPersistentQueries != m_PersistentQueries.end())
       {
         nsCAutoString strTableName;
         CDatabaseQuery::modifiedtables_t::const_iterator i = itDB->second.begin();
+
+        //For each table modified in said database by the query
         for (; i != itDB->second.end(); ++i )
         {
+          //Is the persitent query registered for this database also looking
+          //for changes in said table?
           tablepersistmap_t::iterator itTableQuery = itPersistentQueries->second.find((*i));
           if(itTableQuery != itPersistentQueries->second.end())
           {
+            //Get all queries that are registered for this database/table pair.
             querylist_t::iterator itQueries = itTableQuery->second.begin();
             for(; itQueries != itTableQuery->second.end(); itQueries++)
             {
-              SubmitQueryPrivate((*itQueries));
+              //Does the persistent query wish to use selective persistent updating?
+              if((*itQueries)->m_PersistExecSelectiveMode)
+              {
+                //If any rows were inserted or deleted, we must execute the query
+                //because there is no way to determine if a rowid selected was affected
+                //or not. Or how it's insertion or removal affects what is already
+                //present.
+                if( ((*itQueries)->m_PersistExecOnDelete && deletedRowCount) || 
+                  ((*itQueries)->m_PersistExecOnInsert && insertedRowCount) )
+                {
+                  SubmitQueryPrivate((*itQueries));
+                }
+                //If any rows are updated, create an intersection to find out
+                //if the persistent query's result rowids were affected.
+                else if((*itQueries)->m_PersistExecOnUpdate && updatedRowCount)
+                {
+                  CDatabaseQuery::dbrowids_t::iterator itS, itE, itSS, itEE;
+                  
+                  CDatabaseQuery::dbrowids_t intersect;
+                  CDatabaseQuery::dbrowids_t::iterator itR = intersect.begin();
+
+                  PR_Lock(pQuery->m_pUpdatedRowIDsLock);
+                  PR_Lock((*itQueries)->m_pSelectedRowIDsLock);
+
+                  itS = pQuery->m_UpdatedRowIDs.begin();
+                  itSS = (*itQueries)->m_SelectedRowIDs.begin();
+
+                  itE = pQuery->m_UpdatedRowIDs.end();
+                  itEE = (*itQueries)->m_SelectedRowIDs.end();
+                    
+                  std::set_intersection(itS, itE, itSS, itEE, itR);
+                  
+                  mustExec = intersect.size();
+                  
+                  PR_Unlock((*itQueries)->m_pSelectedRowIDsLock);
+                  PR_Unlock(pQuery->m_pUpdatedRowIDsLock);
+                  
+                  //persistent query rowids were affected, submit
+                  //the query for execution.
+                  if(mustExec)
+                    SubmitQueryPrivate((*itQueries));
+                }
+              }
+              else
+              {
+                SubmitQueryPrivate((*itQueries));
+              }
             }
           }
         }
@@ -1520,8 +1684,46 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
             querylist_t::iterator itQueries = itTableQuery->second.begin();
             for(; itQueries != itTableQuery->second.end(); itQueries++)
             {
-              (*itQueries)->SetDatabaseGUID(strAllToken);
-              SubmitQueryPrivate((*itQueries));
+              if((*itQueries)->m_PersistExecSelectiveMode)
+              {
+                if( ((*itQueries)->m_PersistExecOnDelete && deletedRowCount) || 
+                    ((*itQueries)->m_PersistExecOnInsert && insertedRowCount) )
+                {
+                  (*itQueries)->SetDatabaseGUID(strAllToken);
+                  SubmitQueryPrivate((*itQueries));
+                }
+                else if((*itQueries)->m_PersistExecOnUpdate && updatedRowCount)
+                {
+                  CDatabaseQuery::dbrowids_t::iterator itS, itE, itSS, itEE;
+
+                  CDatabaseQuery::dbrowids_t intersect;
+                  CDatabaseQuery::dbrowids_t::iterator itR = intersect.begin();
+
+                  PR_Lock(pQuery->m_pUpdatedRowIDsLock);
+                  PR_Lock((*itQueries)->m_pSelectedRowIDsLock);
+
+                  itS = pQuery->m_UpdatedRowIDs.begin();
+                  itSS = (*itQueries)->m_SelectedRowIDs.begin();
+
+                  itE = pQuery->m_UpdatedRowIDs.end();
+                  itEE = (*itQueries)->m_SelectedRowIDs.end();
+
+                  std::set_intersection(itS, itE, itSS, itEE, itR);
+
+                  mustExec = intersect.size();
+
+                  PR_Unlock((*itQueries)->m_pSelectedRowIDsLock);
+                  PR_Unlock(pQuery->m_pUpdatedRowIDsLock);
+
+                  if(mustExec)
+                    SubmitQueryPrivate((*itQueries));
+                }
+              }
+              else
+              {
+                (*itQueries)->SetDatabaseGUID(strAllToken);
+                SubmitQueryPrivate((*itQueries));
+              }
             }
           }
         }
@@ -1529,12 +1731,22 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
     }
   }
 
-  {
-    PR_Lock(pQuery->m_pModifiedDataLock);
-    pQuery->m_HasChangedDataOfPersistQuery = PR_FALSE;
-    pQuery->m_ModifiedData.clear();
-    PR_Unlock(pQuery->m_pModifiedDataLock);
-  }
+  PR_Lock(pQuery->m_pModifiedDataLock);
+  pQuery->m_HasChangedDataOfPersistQuery = PR_FALSE;
+  pQuery->m_ModifiedData.clear();
+  PR_Unlock(pQuery->m_pModifiedDataLock);
+
+  PR_Lock(pQuery->m_pInsertedRowIDsLock);
+  pQuery->m_InsertedRowIDs.clear();
+  PR_Unlock(pQuery->m_pInsertedRowIDsLock);
+
+  PR_Lock(pQuery->m_pUpdatedRowIDsLock);
+  pQuery->m_UpdatedRowIDs.clear();
+  PR_Unlock(pQuery->m_pUpdatedRowIDsLock);
+
+  PR_Lock(pQuery->m_pDeletedRowIDsLock);
+  pQuery->m_DeletedRowIDs.clear();
+  PR_Unlock(pQuery->m_pDeletedRowIDsLock);
 
 } //UpdatePersistentQueries
 

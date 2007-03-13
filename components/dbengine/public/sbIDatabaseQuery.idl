@@ -173,7 +173,59 @@ interface sbIDatabaseQueryCallback : nsISupports
 [scriptable, uuid(192FE564-1D86-49c8-A31A-5798D62B2525)]
 interface sbIDatabaseQuery : nsISupports
 {
+  /**
+   * \brief Set a specific folder/directory URI for the database.
+   *
+   * Set a specific folder URI where you wish your database to reside.
+   * For example, you could set the location to be the following:
+   * 'file:///C:/MyDB/'
+   *
+   * Note that the directory is not created for you and must exist by
+   * the time execute() is called on the query.
+   */
   attribute nsIURI databaseLocation;
+
+  /**
+   * \brief Use selective persistent query update scheme.
+   *
+   * If this is enabled, a persistent query will only
+   * get re-executed when data is inserted, deleted or
+   * updated in such a way that it affects the result of the
+   * persistent query.
+   *
+   * This disabled by default.
+   */
+  attribute boolean persistExecSelectiveMode;
+  
+  /**
+   * A persistent query would use persistExecOnInsert to
+   * dictate whether it wishes to be re-executed when data
+   * is inserted.
+   *
+   * This is enabled by default but requires that persistExecSelectiveMode
+   * be enabled for it to be taken into account.
+   */
+  attribute boolean persistExecOnInsert;
+  
+  /**
+   * A persistent query would use persistExecOnUpdate to
+   * dictate whether it wishes to be re-executed when data
+   * in it's selection set is updated.
+   *
+   * This is enabled by default but requires that persistExecSelectiveMode
+   * be enabled for it to be taken into account.
+   */
+  attribute boolean persistExecOnUpdate;
+  
+  /**
+   * A persistent query would use persistExecOnDelete to
+   * dictate whether it wishes to be re-executed when data
+   * is deleted.
+   *
+   * This is enabled by default but requires that persistExecSelectiveMode
+   * be enabled for it to be taken into account.
+   */
+  attribute boolean persistExecOnDelete;
 
   /**
    * \brief Set the query to run asynchronously (ie: execute() does not block)

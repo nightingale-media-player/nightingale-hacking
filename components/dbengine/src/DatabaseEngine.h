@@ -155,7 +155,7 @@ private:
   queryqueue_t m_QueryQueue;
   PRBool m_QueryProcessorQueueHasItem;
 
-  PRLock* m_pPersistentQueriesLock;
+  PRMonitor* m_pPersistentQueriesMonitor;
   querypersistmap_t m_PersistentQueries;
 
   PRBool m_AttemptShutdownOnDestruction;

@@ -93,6 +93,7 @@ class CDatabaseQuery : public sbIDatabaseQuery
 {
 friend class CDatabaseEngine;
 friend int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger);
+friend void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, PRInt64 nRowID);
 
 public:
   CDatabaseQuery();
@@ -111,6 +112,11 @@ protected:
 
   PRBool m_IsPersistentQueryRegistered;
   PRBool m_HasChangedDataOfPersistQuery;
+
+  PRBool m_PersistExecSelectiveMode;
+  PRBool m_PersistExecOnInsert;
+  PRBool m_PersistExecOnUpdate;
+  PRBool m_PersistExecOnDelete;
 
   PRLock* m_pPersistentQueryTableLock;
   nsCString m_PersistentQueryTable;
@@ -145,9 +151,22 @@ protected:
 
   typedef std::set<nsCString> modifiedtables_t;
   typedef std::map<nsCString, modifiedtables_t> modifieddata_t;
+  typedef std::vector< PRInt64 > dbrowids_t;
   
   PRLock* m_pModifiedDataLock;
   modifieddata_t m_ModifiedData;
+
+  PRLock *m_pSelectedRowIDsLock;
+  dbrowids_t m_SelectedRowIDs;
+
+  PRLock *m_pInsertedRowIDsLock;
+  dbrowids_t m_InsertedRowIDs;
+
+  PRLock *m_pUpdatedRowIDsLock;
+  dbrowids_t m_UpdatedRowIDs;
+
+  PRLock *m_pDeletedRowIDsLock;
+  dbrowids_t m_DeletedRowIDs;
 
   PRLock* m_pBindParametersLock;
   nsTArray<bindParameterArray_t> m_BindParameters;

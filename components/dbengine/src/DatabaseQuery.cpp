@@ -83,6 +83,10 @@ SB_GetProxyForObject(nsIEventTarget *target,
 CDatabaseQuery::CDatabaseQuery()
 : m_IsPersistentQueryRegistered(PR_FALSE)
 , m_HasChangedDataOfPersistQuery(PR_FALSE)
+, m_PersistExecSelectiveMode(PR_FALSE)
+, m_PersistExecOnInsert(PR_TRUE)
+, m_PersistExecOnUpdate(PR_TRUE)
+, m_PersistExecOnDelete(PR_TRUE)
 , m_IsAborting(PR_FALSE)
 , m_IsExecuting(PR_FALSE)
 , m_AsyncQuery(PR_FALSE)
@@ -101,6 +105,10 @@ CDatabaseQuery::CDatabaseQuery()
   m_pCallbackListLock = PR_NewLock();
   m_pPersistentCallbackListLock = PR_NewLock();
   m_pModifiedDataLock = PR_NewLock();
+  m_pSelectedRowIDsLock = PR_NewLock();
+  m_pInsertedRowIDsLock = PR_NewLock();
+  m_pUpdatedRowIDsLock = PR_NewLock();
+  m_pDeletedRowIDsLock = PR_NewLock();
   m_pBindParametersLock = PR_NewLock();
 
   NS_ASSERTION(m_pLocationURILock, "CDatabaseQuery.m_pLocationURILock failed");
@@ -110,7 +118,11 @@ CDatabaseQuery::CDatabaseQuery()
   NS_ASSERTION(m_pDatabaseQueryListLock, "CDatabaseQuery.m_pDatabaseQueryListLock failed");
   NS_ASSERTION(m_pCallbackListLock, "CDatabaseQuery.m_pCallbackListLock failed");
   NS_ASSERTION(m_pPersistentCallbackListLock, "CDatabaseQuery.m_pPersistentCallbackListLock failed");
+  NS_ASSERTION(m_pSelectedRowIDsLock, "CDatabaseQuery.m_pModifiedRowIDsLock failed");
   NS_ASSERTION(m_pModifiedDataLock, "CDatabaseQuery.m_pModifiedDataLock failed");
+  NS_ASSERTION(m_pInsertedRowIDsLock, "CDatabaseQuery.m_pModifiedRowIDsLock failed");
+  NS_ASSERTION(m_pUpdatedRowIDsLock, "CDatabaseQuery.m_pModifiedRowIDsLock failed");
+  NS_ASSERTION(m_pDeletedRowIDsLock, "CDatabaseQuery.m_pModifiedRowIDsLock failed");
   NS_ASSERTION(m_pQueryRunningMonitor, "CDatabaseQuery.m_pQueryRunningMonitor failed");
   NS_ASSERTION(m_pBindParametersLock, "CDatabaseQuery.m_pBindParametersLock failed");
 
@@ -148,22 +160,43 @@ CDatabaseQuery::~CDatabaseQuery()
   
   if (m_pLocationURILock)
     PR_DestroyLock(m_pLocationURILock);
+
   if (m_pPersistentQueryTableLock)
     PR_DestroyLock(m_pPersistentQueryTableLock);
+
   if (m_pQueryResultLock)
     PR_DestroyLock(m_pQueryResultLock);
+
   if (m_pDatabaseGUIDLock)
     PR_DestroyLock(m_pDatabaseGUIDLock);
+
   if (m_pDatabaseQueryListLock)
     PR_DestroyLock(m_pDatabaseQueryListLock);
+
   if (m_pCallbackListLock)
     PR_DestroyLock(m_pCallbackListLock);
+
   if (m_pPersistentCallbackListLock)
     PR_DestroyLock(m_pPersistentCallbackListLock);
+
   if (m_pModifiedDataLock)
     PR_DestroyLock(m_pModifiedDataLock);
+
+  if (m_pSelectedRowIDsLock)
+    PR_DestroyLock(m_pSelectedRowIDsLock);
+
+  if (m_pInsertedRowIDsLock)
+    PR_DestroyLock(m_pInsertedRowIDsLock);
+
+  if (m_pUpdatedRowIDsLock)
+    PR_DestroyLock(m_pUpdatedRowIDsLock);
+
+  if (m_pDeletedRowIDsLock)
+    PR_DestroyLock(m_pDeletedRowIDsLock);
+
   if (m_pBindParametersLock)
     PR_DestroyLock(m_pBindParametersLock);
+
   if (m_pQueryRunningMonitor)
     nsAutoMonitor::DestroyMonitor(m_pQueryRunningMonitor);
 
@@ -242,6 +275,62 @@ NS_IMETHODIMP CDatabaseQuery::SetDatabaseLocation(nsIURI * aDatabaseLocation)
 } //SetDatabaseLocation
 
 //-----------------------------------------------------------------------------
+/* attribute boolean persistExecSelectiveMode; */
+NS_IMETHODIMP CDatabaseQuery::GetPersistExecSelectiveMode(PRBool *aPersistExecSelectiveMode)
+{
+  NS_ENSURE_ARG_POINTER(aPersistExecSelectiveMode);
+  *aPersistExecSelectiveMode = m_PersistExecSelectiveMode;
+  return NS_OK;
+}
+NS_IMETHODIMP CDatabaseQuery::SetPersistExecSelectiveMode(PRBool aPersistExecSelectiveMode)
+{
+  m_PersistExecSelectiveMode = aPersistExecSelectiveMode;
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+/* attribute boolean persistExecOnInsert; */
+NS_IMETHODIMP CDatabaseQuery::GetPersistExecOnInsert(PRBool *aPersistExecOnInsert)
+{
+  NS_ENSURE_ARG_POINTER(aPersistExecOnInsert);
+  *aPersistExecOnInsert = m_PersistExecOnInsert;
+  return NS_OK;
+}
+NS_IMETHODIMP CDatabaseQuery::SetPersistExecOnInsert(PRBool aPersistExecOnInsert)
+{
+  m_PersistExecOnInsert = aPersistExecOnInsert;
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+/* attribute boolean persistExecOnUpdate; */
+NS_IMETHODIMP CDatabaseQuery::GetPersistExecOnUpdate(PRBool *aPersistExecOnUpdate)
+{
+  NS_ENSURE_ARG_POINTER(aPersistExecOnUpdate);
+  *aPersistExecOnUpdate = m_PersistExecOnUpdate;
+  return NS_OK;
+}
+NS_IMETHODIMP CDatabaseQuery::SetPersistExecOnUpdate(PRBool aPersistExecOnUpdate)
+{
+  m_PersistExecOnUpdate = aPersistExecOnUpdate;
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+/* attribute boolean persistExecOnDelete; */
+NS_IMETHODIMP CDatabaseQuery::GetPersistExecOnDelete(PRBool *aPersistExecOnDelete)
+{
+  NS_ENSURE_ARG_POINTER(aPersistExecOnDelete);
+  *aPersistExecOnDelete = m_PersistExecOnDelete;
+  return NS_OK;
+}
+NS_IMETHODIMP CDatabaseQuery::SetPersistExecOnDelete(PRBool aPersistExecOnDelete)
+{
+  m_PersistExecOnDelete = aPersistExecOnDelete;
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
 /* void SetAsyncQuery (in PRBool bAsyncQuery); */
 NS_IMETHODIMP CDatabaseQuery::SetAsyncQuery(PRBool bAsyncQuery)
 {
@@ -271,6 +360,13 @@ NS_IMETHODIMP CDatabaseQuery::SetPersistentQuery(PRBool bPersistentQuery)
     bPersistentQuery == PR_FALSE)
   {
     p->RemovePersistentQuery(this);    
+  }
+
+  if(bPersistentQuery)
+  {
+    m_PersistExecOnInsert = PR_TRUE;
+    m_PersistExecOnUpdate = PR_TRUE;
+    m_PersistExecOnDelete = PR_TRUE;
   }
 
   m_PersistentQuery = bPersistentQuery;
