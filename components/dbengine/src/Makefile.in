@@ -65,9 +65,10 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 ifeq (macosx,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += sqlite3 \
-                               unicharutil_external_s \
-							   $(NULL)
+  DYNAMIC_LIB_STATIC_IMPORTS += $(SQLITE_DIR)/lib/libsqlite3 \
+                                $(NULL)
+  DYNAMIC_LIB_EXTRA_IMPORTS +=  unicharutil_external_s \
+				$(NULL)
 endif
 
 ifeq (linux,$(SB_PLATFORM))
