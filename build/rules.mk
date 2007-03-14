@@ -56,12 +56,8 @@ clean_targets += make_subdirs
 endif
 
 ifdef XPIDL_SRCS
-ifndef XPIDL_HEADER_SRCS
-XPIDL_HEADER_SRCS = $(XPIDL_SRCS)
-endif
-ifndef XPIDL_TYPELIB_SRCS
-XPIDL_TYPELIB_SRCS = $(XPIDL_SRCS)
-endif
+XPIDL_HEADER_SRCS += $(XPIDL_SRCS)
+XPIDL_TYPELIB_SRCS += $(XPIDL_SRCS)
 endif
 
 ifdef XPIDL_HEADER_SRCS
