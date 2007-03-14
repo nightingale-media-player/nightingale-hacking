@@ -33,36 +33,61 @@
 #include "nsISupports.idl"
 
 interface sbIMediaItem;
+interface sbIMediaList;
 
 /**
 * \interface sbIMediaListListener
-* \brief Interface used to listen to changes to a media list
+* \brief Interface used to listen to changes to a media list.
 *
-* Implementors of this interface can listen to changes in a media list
+* Implementors of this interface can listen to changes in a media list.
 *
 * \sa sbIMediaList
-*
-* @halfbaked
 */
 [scriptable, uuid(7ed06a74-6df1-4483-b222-fdaaf6ffcd5e)]
 interface sbIMediaListListener : nsISupports
 {
   /**
-   * \brief Called when a media item is added to the list
-   * \param aMediaItem The new media item
+   * \brief Called when a media item is added to the list.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The new media item.
    */
-  void onAdd(in sbIMediaItem aMediaItem);
+  void onItemAdded(in sbIMediaList aMediaList,
+                   in sbIMediaItem aMediaItem);
 
   /**
-   * \brief Called when a media item is removed from the list
-   * \param aMediaItem The removed media item
+   * \brief Called when a media item is removed from the list.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The removed media item.
    */
-  void onRemove(in sbIMediaItem aMediaItem);
+  void onItemRemoved(in sbIMediaList aMediaList,
+                     in sbIMediaItem aMediaItem);
 
   /**
-   * \brief Called when a media item in the list is updated
-   * \param aMediaItem The updated media item
+   * \brief Called when a media list is cleared.
    */
-  void onUpdate(in sbIMediaItem aMediaItem);
+  void onListCleared(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Called when the library is about to perform multiple operations at
+   *        once.
+   *
+   * This notification can be used to optimize behavior. The consumer may
+   * choose to ignore further onItemAdded or onItemRemoved notifications until
+   * the onBatchEnd notification is received.
+   *
+   * \param aMediaList The list that has changed.
+   */
+  void onBatchBegin(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Called when the library has finished performing multiple operations
+   *        at once.
+   *
+   * This notification can be used to optimize behavior. The consumer may
+   * choose to stop ignoring onItemAdded or onItemRemoved notifications after
+   * receiving this notification.
+   *
+   * \param aMediaList The list that has changed.
+   */
+  void onBatchEnd(in sbIMediaList aMediaList);
 };
-

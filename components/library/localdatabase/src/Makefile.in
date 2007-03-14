@@ -54,6 +54,7 @@ CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
                $(topsrcdir)/components/dbengine/src \
                $(DEPTH)/components/sqlbuilder/public \
                $(topsrcdir)/components/sqlbuilder/src \
+               $(topsrcdir)/components/include \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/layout \

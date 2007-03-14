@@ -240,6 +240,61 @@ function assertList(list, data) {
 
 }
 
+function TestMediaListListener() {
+}
+TestMediaListListener.prototype = {
+  _addedItem: null,
+  _removedItem: null,
+  _batchBeginLibrary: null,
+  _batchEndLibrary: null,
+  
+  get addedItem() {
+    return this._addedItem;
+  },
+  
+  get removedItem() {
+    return this._removedItem;
+  },
+  
+  get batchBeginLibrary() {
+    return this._batchBeginLibrary;
+  },
+  
+  get batchEndLibrary() {
+    return this._batchEndLibrary;
+  },
+  
+  reset: function reset() {
+    this._addedItem = null;
+    this._removedItem = null;
+    this._batchBeginLibrary = null;
+    this._batchEndLibrary = null;
+  },
+  
+  onItemAdded: function onItemAdded(item) {
+    this._addedItem = item;
+  },
+  
+  onItemRemoved: function onItemRemoved(item) {
+    this._removedItem = item;
+  },
+  
+  onBatchBegin: function onBatchBegin(library) {
+    this._batchBeginLibrary = library;
+  },
+  
+  onBatchEnd: function onBatchEnd(library) {
+    this._batchEndLibrary = library;
+  },
+  
+  QueryInterface: function QueryInterface(iid) {
+    if (!iid.equals(Ci.sbIMediaListListener) &&
+        !iid.equals(Ci.nsISupports))
+      throw Cr.NS_ERROR_NO_INTERFACE;
+    return this;
+  }  
+}
+
 function readList(dataFile) {
 
   var data = readFile(dataFile);
@@ -252,4 +307,3 @@ function readList(dataFile) {
 
   return b;
 }
-

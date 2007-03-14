@@ -43,9 +43,10 @@
 #include <nsNetUtil.h>
 
 #include <nsIServiceManager.h>
-#include <nsIProxyObjectManager.h>
 #include <nsThreadUtils.h>
 #include <nsSupportsArray.h>
+
+#include <sbProxyUtils.h>
 
 #ifdef DEBUG_locks
 #include <nsPrintfCString.h>
@@ -57,27 +58,6 @@
 //=============================================================================
 //-----------------------------------------------------------------------------
 NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseQuery, sbIDatabaseQuery)
-
-/* 
-  This functions is *not* part of the frozen linkage. That is why it is duped
-  here 
-*/
-//-----------------------------------------------------------------------------
-nsresult
-SB_GetProxyForObject(nsIEventTarget *target, 
-                     REFNSIID aIID, 
-                     nsISupports* aObj, 
-                     PRInt32 proxyType, 
-                     void** aProxyObject) 
-{
-    nsresult rv;
-    nsCOMPtr<nsIProxyObjectManager> proxyObjMgr = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
-    if (NS_FAILED(rv))
-        return rv;
- 
-    return proxyObjMgr->GetProxyForObject(target, aIID, aObj,
-                                          proxyType, aProxyObject);
-} //SB_GetProxyForObject
 
 //-----------------------------------------------------------------------------
 CDatabaseQuery::CDatabaseQuery()

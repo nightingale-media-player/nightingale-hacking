@@ -123,8 +123,8 @@ function runTest () {
     view.getItemsByPropertyValues(propertyArray);
   
   assertEqual(countItems(filteredListEnumerator), 1);
-  //Test getIemByIndex, indexOf, lastIndexOf.
   
+  //Test getIemByIndex, indexOf, lastIndexOf.
   var mediaItem = view.getItemByIndex(8);
   assertNotEqual(mediaItem, null);
   
@@ -165,5 +165,7 @@ function runTest () {
     lastIndexOfException2 = e;
   }
   assertEqual(lastIndexOfException2.result, Cr.NS_ERROR_INVALID_ARG);
+  
+  // Test listeners
 }
 

@@ -32,18 +32,20 @@
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
+#include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbIMediaList.h>
-
+#include <sbIMediaListListener.h>
 
 class sbLocalDatabaseMediaListBase : public sbIMediaList,
                                      public nsIClassInfo
 {
   typedef nsTArray<nsString> sbStringArray;
   typedef nsClassHashtable<nsStringHashKey, sbStringArray> sbStringArrayHash;
+  typedef nsInterfaceHashtableMT<nsISupportsHashKey, sbIMediaListListener> sbMediaListListenersTableMT;
 
 public:
   NS_DECL_ISUPPORTS
@@ -57,12 +59,79 @@ public:
 
   NS_IMETHODIMP Init();
 
+protected:
+  // Enumerate listeners and call OnItemAdded
+  nsresult NotifyListenersItemAdded(sbIMediaItem* aItem);
+
+  // Enumerate listeners and call OnItemRemoved
+  nsresult NotifyListenersItemRemoved(sbIMediaItem* aItem);
+
+  // Enumerate listeners and call OnListCleared
+  nsresult NotifyListenersListCleared();
+
+  // Enumerate listeners and call OnBatchBegin
+  nsresult NotifyListenersBatchBegin();
+
+  // Enumerate listeners and call OnBatchEnd
+  nsresult NotifyListenersBatchEnd();
+
 private:
 
+  struct MediaListCallbackInfo {
+
+    MediaListCallbackInfo(sbIMediaList* aList, sbIMediaItem* aItem)
+    : list(aList),
+      item(aItem) { }
+
+    nsCOMPtr<sbIMediaList> list;
+    nsCOMPtr<sbIMediaItem> item;
+  };
+
+  // This callback is meant to be used with an sbStringArrayHash.
+  // aUserData should be a sbILocalDatabaseGUIDArray pointer.
   static PLDHashOperator PR_CALLBACK
-    AddFilterToGUIDArrayEnumerator(nsStringHashKey::KeyType aKey,
-                                   sbStringArray* aEntry,
-                                   void* aUserData);
+    AddFilterToGUIDArrayCallback(nsStringHashKey::KeyType aKey,
+                                 sbStringArray* aEntry,
+                                 void* aUserData);
+
+  // This callback is meant to be used with mListenerProxyTable.
+  // aUserData should be a MediaListCallbackInfo pointer.
+  static PLDHashOperator PR_CALLBACK
+    ItemAddedCallback(nsISupportsHashKey::KeyType aKey,
+                      sbIMediaListListener* aEntry,
+                      void* aUserData);
+
+  // This callback is meant to be used with mListenerProxyTable.
+  // aUserData should be a MediaListCallbackInfo pointer.
+  static PLDHashOperator PR_CALLBACK
+    ItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
+                        sbIMediaListListener* aEntry,
+                        void* aUserData);
+
+  // This callback is meant to be used with mListenerProxyTable.
+  // aUserData should be an sbIMediaList pointer.
+  static PLDHashOperator PR_CALLBACK
+    ListClearedCallback(nsISupportsHashKey::KeyType aKey,
+                        sbIMediaListListener* aEntry,
+                        void* aUserData);
+
+  // This callback is meant to be used with mListenerProxyTable.
+  // aUserData should be an sbIMediaList pointer.
+  static PLDHashOperator PR_CALLBACK
+    BatchBeginCallback(nsISupportsHashKey::KeyType aKey,
+                       sbIMediaListListener* aEntry,
+                       void* aUserData);
+
+  // This callback is meant to be used with mListenerProxyTable.
+  // aUserData should be an sbIMediaList pointer.
+  static PLDHashOperator PR_CALLBACK
+    BatchEndCallback(nsISupportsHashKey::KeyType aKey,
+                     sbIMediaListListener* aEntry,
+                     void* aUserData);
+
+  // Called to initialize the proxy table. Returns PR_TRUE on success, PR_FALSE
+  // otherwise.
+  inline PRBool InitializeListenerProxyTable();
 
 protected:
   /*
@@ -88,6 +157,10 @@ protected:
    * list this instance represents.
    */
   nsCOMPtr<sbILocalDatabaseGUIDArray> mFullArray;
+
+private:
+  // A thread-safe hash table that holds a mapping of listeners to proxies.
+  sbMediaListListenersTableMT mListenerProxyTable;
 };
 
 #endif /* __SBLOCALDATABASEMEDIALISTBASE_H__ */

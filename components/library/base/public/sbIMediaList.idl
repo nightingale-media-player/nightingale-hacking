@@ -211,5 +211,5 @@ interface sbIMediaList : sbIMediaItem
    * \brief Remove a listener from this media list
    * \param aListener The listener to remove
    */
-  void removeListner(in sbIMediaListListener aListener);
+  void removeListener(in sbIMediaListListener aListener);
 };
