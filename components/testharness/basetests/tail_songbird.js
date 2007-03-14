@@ -39,6 +39,7 @@
 
 try {
   testPending();
+  var d1 = new Date();
   runTest();
   testFinished();
   doMain();
@@ -46,6 +47,11 @@ try {
   _fail = true;
   log("*** [" + _test_name + " ] - EXCEPTION: " + e);
 }
+
+var d2 = new Date();
+var dur = d2.getTime() - d1.getTime();
+var durString = dur/1000 + "s" 
+log("*** [" + _test_name + "] - " + durString);
 
 if (_fail) {
   var testHarness = Cc["@songbirdnest.com/Songbird/TestHarness;1"].getService(Ci.sbITestHarness);
