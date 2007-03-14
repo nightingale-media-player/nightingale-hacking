@@ -761,6 +761,8 @@ void CDatabaseEngine::RemovePersistentQueryPrivate(CDatabaseQuery *pQuery)
   if(!pQuery->m_IsPersistentQueryRegistered)
     return;
 
+  pQuery->m_IsPersistentQueryRegistered = PR_FALSE;
+
   nsAutoMonitor mon(m_pPersistentQueriesMonitor);
 
   nsCAutoString tableName;
@@ -880,6 +882,8 @@ nsresult CDatabaseEngine::CloseAllDB()
 //-----------------------------------------------------------------------------
 nsresult CDatabaseEngine::ClearPersistentQueries()
 {
+  nsAutoMonitor mon(m_pPersistentQueriesMonitor);
+
   querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.begin();
   for(; itPersistentQueries != m_PersistentQueries.end(); itPersistentQueries++)
   {
@@ -889,6 +893,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
       querylist_t::iterator itQueries = itTableQuery->second.begin();
       for( ; itQueries != itTableQuery->second.end(); itQueries++)
       {
+        (*itQueries)->m_IsPersistentQueryRegistered = PR_FALSE;
         NS_IF_RELEASE((*itQueries));
       }
     }
