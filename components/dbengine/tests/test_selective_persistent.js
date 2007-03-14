@@ -106,6 +106,8 @@ function runTest () {
 
   dbq.setPersistentQuery(true);
   dbq.addSimpleQueryCallback(dbqc);
+  dbq.persistExecSelectiveMode = true;
+  dbq.persistExecOnUpdate = true;
   
   dbq.addQuery("select * from persistent where value = 'testing... 1'");
   dbq.execute();
