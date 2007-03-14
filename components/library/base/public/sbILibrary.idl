@@ -73,9 +73,10 @@ interface sbILibrary : sbILibraryResource
 
   /**
    * \brief Creates a new media item
+   * \prarm aContentUri The URI pointing to the content of the new media item
    * \return A new, persisted media item
    */
-  sbIMediaItem createMediaItem();
+  sbIMediaItem createMediaItem(in nsIURI aContentUri);
 
   /**
    * \brief Get a media item

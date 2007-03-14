@@ -31,7 +31,7 @@
 
 #include <sbIMediaListListener.h>
 #include <sbILibrary.h>
-
+#include <nsISimpleEnumerator.h>
 #include <nsComponentManagerUtils.h>
 
 #define DEFAULT_SORT_PROPERTY \
@@ -41,7 +41,7 @@
 NS_IMPL_ISUPPORTS_INHERITED0(sbLocalDatabaseViewMediaList,
                              sbLocalDatabaseMediaListBase)
 
-sbLocalDatabaseViewMediaList::sbLocalDatabaseViewMediaList(sbILibrary* aLibrary,
+sbLocalDatabaseViewMediaList::sbLocalDatabaseViewMediaList(sbILocalDatabaseLibrary* aLibrary,
                                                            const nsAString& aGuid) :
   sbLocalDatabaseMediaListBase(aLibrary, aGuid)
 {
@@ -59,11 +59,9 @@ sbLocalDatabaseViewMediaList::Init()
   mFullArray = do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLocalDatabaseLibrary* library =
-    NS_STATIC_CAST(sbLocalDatabaseLibrary*, mLibrary.get());
-
   nsAutoString databaseGuid;
-  library->GetDatabaseGuid(databaseGuid);
+  rv = mLibrary->GetDatabaseGuid(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mFullArray->SetDatabaseGUID(databaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -81,6 +79,25 @@ sbLocalDatabaseViewMediaList::Init()
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseViewMediaList::GetItemByGuid(const nsAString& aGuid,
+                                            sbIMediaItem** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = library->GetMediaItem(aGuid, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = item);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseViewMediaList::Contains(sbIMediaItem* aMediaItem,
                                        PRBool* _retval)
 {
@@ -89,16 +106,17 @@ sbLocalDatabaseViewMediaList::Contains(sbIMediaItem* aMediaItem,
 
   nsresult rv;
 
-  sbLocalDatabaseLibrary* library =
-    NS_STATIC_CAST(sbLocalDatabaseLibrary*, mLibrary.get());
-
+  /*
+   * Simply use the GetMediaItemIdForGuid method on the library to determine
+   * if this item is in the database
+   */
   nsAutoString guid;
   rv = aMediaItem->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 mediaItemId;
-  rv = library->GetMediaItemIdForGuid(guid, &mediaItemId);
-  if (rv == NS_OK) {
+  rv = mLibrary->GetMediaItemIdForGuid(guid, &mediaItemId);
+  if (NS_SUCCEEDED(rv)) {
     *_retval = PR_TRUE;
   }
   else {
@@ -111,5 +129,88 @@ sbLocalDatabaseViewMediaList::Contains(sbIMediaItem* aMediaItem,
   }
 
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseViewMediaList::Add(sbIMediaItem* aMediaItem)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  nsresult rv;
+
+  /*
+   * If the media item's library and this list's library are the same, this
+   * item must already be in this database
+   */
+  nsCOMPtr<sbILibrary> itemLibrary;
+  rv = aMediaItem->GetLibrary(getter_AddRefs(itemLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (itemLibrary == library) {
+    return NS_ERROR_INVALID_ARG;
+  }
+
+  /*
+   * Otherwise, we might want to transfer this item into this database, but
+   * we need to figure out the rules for this in the future
+   */
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseViewMediaList::AddAll(sbIMediaList* aMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  nsresult rv;
+
+  nsCOMPtr<nsISimpleEnumerator> items;
+  rv = aMediaList->GetItems(getter_AddRefs(items));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddSome(items);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseViewMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+
+  nsresult rv;
+
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * See documentation for Add()
+   */
+  PRBool hasMoreElements;
+  while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMoreElements)) &&
+         hasMoreElements) {
+
+    nsCOMPtr<nsISupports> supports;
+    rv = aMediaItems->GetNext(getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILibrary> itemLibrary;
+    rv = item->GetLibrary(getter_AddRefs(itemLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (itemLibrary == library) {
+      return NS_ERROR_INVALID_ARG;
+    }
+
+  }
+
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 

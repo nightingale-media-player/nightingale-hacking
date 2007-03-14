@@ -67,7 +67,7 @@ NS_IMPL_CI_INTERFACE_GETTER3(sbLocalDatabaseMediaListBase,
                              sbIMediaItem,
                              sbIMediaList)
 
-sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILibrary* aLibrary,
+sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
                                                            const nsAString& aGuid) :
   mLibrary(aLibrary),
   mGuid(aGuid)
@@ -89,6 +89,8 @@ sbLocalDatabaseMediaListBase::SetName(const nsAString& aName)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetItems(nsISimpleEnumerator** aItems)
 {
+  NS_ENSURE_ARG_POINTER(aItems);
+
   nsCOMPtr<nsISimpleEnumerator> items =
     new sbGUIDArrayEnumerator(mLibrary, mFullArray);
   NS_ENSURE_TRUE(items, NS_ERROR_OUT_OF_MEMORY);
@@ -117,14 +119,19 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
                                              sbIMediaItem** _retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
+
   nsresult rv;
 
   nsAutoString guid;
   rv = mFullArray->GetByIndex(aIndex, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIMediaItem> item;
-  rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
+  rv = library->GetMediaItem(guid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = item);
@@ -382,12 +389,21 @@ sbLocalDatabaseMediaListBase::GetIsEmpty(PRBool* aIsEmpty)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Add(sbIMediaItem* aMediaItem)
 {
+  // not meant to be implemented by base class
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::AddAll(sbIMediaList* aMediaList)
 {
+  // not meant to be implemented by base class
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
+{
+  // not meant to be implemented by base class
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -424,6 +440,12 @@ sbLocalDatabaseMediaListBase::RemoveByIndex(PRUint32 aIndex)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::RemoveSome(nsISimpleEnumerator* aMediaItems)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Clear()
 {
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -454,7 +476,11 @@ sbLocalDatabaseMediaListBase::GetLibrary(sbILibrary** aLibrary)
   NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_STATE(mLibrary);
 
-  NS_ADDREF(*aLibrary = mLibrary);
+  nsresult rv;
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*aLibrary = library);
   return NS_OK;
 }
 

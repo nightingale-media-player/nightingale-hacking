@@ -40,9 +40,29 @@ StringArrayEnumerator.prototype.hasMore = function() {
 StringArrayEnumerator.prototype.getNext = function() {
   return this._array[this._current++];
 }
-  
+
 StringArrayEnumerator.prototype.QueryInterface = function(iid) {
   if (!iid.equals(Components.interfaces.nsIStringEnumerator) &&
+      !iid.equals(Components.interfaces.nsISupports))
+    throw Components.results.NS_ERROR_NO_INTERFACE;
+  return this;
+};
+
+function SimpleArrayEnumerator(aArray) {
+  this._array = aArray;
+  this._current = 0;
+}
+
+SimpleArrayEnumerator.prototype.hasMoreElements = function() {
+  return this._current < this._array.length;
+}
+
+SimpleArrayEnumerator.prototype.getNext = function() {
+  return this._array[this._current++];
+}
+
+SimpleArrayEnumerator.prototype.QueryInterface = function(iid) {
+  if (!iid.equals(Components.interfaces.nsISimpleEnumerator) &&
       !iid.equals(Components.interfaces.nsISupports))
     throw Components.results.NS_ERROR_NO_INTERFACE;
   return this;

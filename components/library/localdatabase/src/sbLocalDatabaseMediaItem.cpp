@@ -29,13 +29,16 @@
 #include <nsMemory.h>
 #include <nsIProgrammingLanguage.h>
 
-NS_IMPL_ISUPPORTS2(sbLocalDatabaseMediaItem, sbIMediaItem, nsIClassInfo)
+NS_IMPL_ISUPPORTS3(sbLocalDatabaseMediaItem,
+                   sbILibraryResource,
+                   sbIMediaItem,
+                   nsIClassInfo)
 
 NS_IMPL_CI_INTERFACE_GETTER2(sbLocalDatabaseMediaItem,
                              sbILibraryResource,
                              sbIMediaItem)
 
-sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem(sbILibrary* aLibrary,
+sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem(sbILocalDatabaseLibrary* aLibrary,
                                                    const nsAString& aGuid) :
  mLibrary(aLibrary),
  mGuid(aGuid)
@@ -49,7 +52,12 @@ sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetLibrary(sbILibrary** aLibrary)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_IF_ADDREF(*aLibrary = library);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -229,7 +237,18 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName,
                                       nsAString& _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+
+  if (!mProperties) {
+    rv = mLibrary->GetPropertiesForGuid(mGuid,
+                                        getter_AddRefs(mProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = mProperties->GetProperty(aName, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP

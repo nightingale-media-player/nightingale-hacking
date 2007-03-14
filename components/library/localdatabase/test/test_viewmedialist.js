@@ -56,6 +56,32 @@ function runTest () {
   // TODO: test when this method fails, but how can i generate a media item
   // that is not in the view media list?
 
+  try {
+    view.add(item);
+    fail("No exception thrown");
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
+  }
+
+  var e = new SimpleArrayEnumerator([item]);
+  try {
+    view.addSome(e);
+    fail("No exception thrown");
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
+  }
+
+  var list = view.getItemByGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  try {
+    view.addAll(list);
+    fail("No exception thrown");
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
+  }
+
   var titleProperty = "http://songbirdnest.com/data/1.0#trackName";
   var albumProperty = "http://songbirdnest.com/data/1.0#albumName";
   var genreProperty = "http://songbirdnest.com/data/1.0#genre";

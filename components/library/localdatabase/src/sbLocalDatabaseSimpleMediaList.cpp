@@ -31,7 +31,11 @@
 
 #include <sbIMediaListListener.h>
 #include <sbILibrary.h>
-#include <sbIMediaListListener.h>
+#include <sbISQLBuilder.h>
+#include <sbSQLBuilderCID.h>
+#include <sbIDatabaseQuery.h>
+#include <DatabaseQuery.h>
+#include <sbIDatabaseResult.h>
 
 #include <nsComponentManagerUtils.h>
 
@@ -42,7 +46,7 @@
 NS_IMPL_ISUPPORTS_INHERITED0(sbLocalDatabaseSimpleMediaList,
                              sbLocalDatabaseMediaListBase)
 
-sbLocalDatabaseSimpleMediaList::sbLocalDatabaseSimpleMediaList(sbILibrary* aLibrary,
+sbLocalDatabaseSimpleMediaList::sbLocalDatabaseSimpleMediaList(sbILocalDatabaseLibrary* aLibrary,
                                                                const nsAString& aGuid) :
   sbLocalDatabaseMediaListBase(aLibrary, aGuid)
 {
@@ -60,18 +64,16 @@ sbLocalDatabaseSimpleMediaList::Init()
   mFullArray = do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLocalDatabaseLibrary* library =
-    NS_STATIC_CAST(sbLocalDatabaseLibrary*, mLibrary.get());
-
   /*
    * Get the media_item_id for this simple media list
    */
   PRUint32 mediaItemId;
-  rv = library->GetMediaItemIdForGuid(mGuid, &mediaItemId);
+  rv = mLibrary->GetMediaItemIdForGuid(mGuid, &mediaItemId);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString databaseGuid;
-  library->GetDatabaseGuid(databaseGuid);
+  rv = mLibrary->GetDatabaseGuid(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mFullArray->SetDatabaseGUID(databaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -91,12 +93,146 @@ sbLocalDatabaseSimpleMediaList::Init()
   rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  /*
+   * Create the query used by contains to see if a guid is in this list
+   */
+  nsCOMPtr<sbISQLSelectBuilder> builder =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(NS_LITERAL_STRING("_mi"),
+                          NS_LITERAL_STRING("media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_mi"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                        NS_LITERAL_STRING("simple_media_lists"),
+                        NS_LITERAL_STRING("_sml"),
+                        NS_LITERAL_STRING("member_media_item_id"),
+                        NS_LITERAL_STRING("_mi"),
+                        NS_LITERAL_STRING("media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_mi"),
+                                              NS_LITERAL_STRING("guid"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionLong(NS_LITERAL_STRING("_sml"),
+                                         NS_LITERAL_STRING("media_item_id"),
+                                         sbISQLSelectBuilder::MATCH_EQUALS,
+                                         mediaItemId,
+                                         getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mGetMediaItemIdForGuidQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create insertion query
+/*
+  nsCOMPtr<sbISQLInsertBuilder> insert =
+    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+
+  rv = insert->SetIntoTableName(NS_LITERAL_STRING("simple_media_lists"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("member_media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("ordinal"));
+  NS_ENSURE_SUCCESS(rv, rv);
+*/
+
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetItemByGuid(const nsAString& aGuid,
+                                              sbIMediaItem** _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::Contains(sbIMediaItem* aMediaItem,
                                          PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+  PRInt32 dbOk;
+
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString databaseGuid;
+  rv = mLibrary->GetDatabaseGuid(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mGetMediaItemIdForGuidQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString guid;
+  rv = aMediaItem->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = rowCount > 0;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::Add(sbIMediaItem* aMediaItem)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::AddAll(sbIMediaList* aMediaList)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }

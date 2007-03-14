@@ -14,7 +14,7 @@ create table media_items (
   media_item_id integer primary key autoincrement,  /* implicit index creation */
   guid text unique not null, /* implicit index creation */
   created integer not null,
-  updated integer,
+  updated integer not null,
   content_url text not null,
   content_mime_type text,
   content_length integer,
@@ -47,9 +47,9 @@ create index idx_resource_properties_property_id_obj_sortable_guid on resource_p
 create table simple_media_lists (
   media_item_id integer not null,
   member_media_item_id integer not null,
-  ordinal integer not null
+  ordinal integer not null collate tree
 );
-create index idx_simple_media_lists_media_item_id_member_media_item_id on simple_media_lists (media_item_id, member_media_item_id);
+create index idx_simple_media_lists_media_item_id_member_media_item_id on simple_media_lists (media_item_id, member_media_item_id, ordinal);
 
 /* static data */
 

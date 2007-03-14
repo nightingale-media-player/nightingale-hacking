@@ -40,10 +40,17 @@
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
+#include <nsID.h>
+#include <nsIURI.h>
+#include <prtime.h>
+#include <nsMemory.h>
+#include <nsIUUIDGenerator.h>
 
 #include <stdio.h>
 
-NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibrary, sbILibrary)
+NS_IMPL_ISUPPORTS2(sbLocalDatabaseLibrary,
+                   sbILibrary,
+                   sbILocalDatabaseLibrary)
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid) :
   mDatabaseGuid(aDatabaseGuid)
@@ -54,7 +61,8 @@ sbLocalDatabaseLibrary::~sbLocalDatabaseLibrary()
 {
 }
 
-nsresult
+// sbILocalDatabaseLibrary
+NS_IMETHODIMP
 sbLocalDatabaseLibrary::Init()
 {
   nsresult rv;
@@ -127,10 +135,47 @@ sbLocalDatabaseLibrary::Init()
   rv = builder->ToString(mGetMediaItemIdForGuidQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  /*
+   * Build new media item query
+   */
+  nsCOMPtr<sbISQLInsertBuilder> insert =
+    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->SetIntoTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("guid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("created"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("updated"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("content_url"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->ToString(mInsertMediaItemQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetContractIdForGuid(const nsAString& aGuid,
                                              nsACString &aContractId)
 {
@@ -160,10 +205,6 @@ sbLocalDatabaseLibrary::GetContractIdForGuid(const nsAString& aGuid,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
-  rv = query->WaitForCompletion(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -186,7 +227,7 @@ sbLocalDatabaseLibrary::GetContractIdForGuid(const nsAString& aGuid,
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGuid,
                                               PRUint32* aMediaItemId)
 {
@@ -213,10 +254,6 @@ sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGuid,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
-  rv = query->WaitForCompletion(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -240,12 +277,47 @@ sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGuid,
   return NS_OK;
 }
 
-void
+NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetDatabaseGuid(nsAString& aDatabaseGuid)
 {
   aDatabaseGuid = mDatabaseGuid;
+  return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetPropertiesForGuid(const nsAString& aGuid,
+                                             sbILocalDatabaseResourcePropertyBag** aPropertyBag)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyBag);
+
+  nsresult rv;
+
+  const PRUnichar** guids = new const PRUnichar*[1];
+  guids[0] = PromiseFlatString(aGuid).get();
+
+  PRUint32 count;
+  sbILocalDatabaseResourcePropertyBag** bags;
+  rv = mPropertyCache->GetProperties(guids, 1, &count, &bags);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aPropertyBag = nsnull;
+  if (count > 0 && bags[0]) {
+    NS_ADDREF(*aPropertyBag = bags[0]);
+  }
+
+  nsMemory::Free(bags);
+  delete[] guids;
+
+  if (*aPropertyBag) {
+    return NS_OK;
+  }
+  else {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+}
+
+// sbILibrary
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetDevice(sbIDevice** aDevice)
 {
@@ -265,15 +337,96 @@ sbLocalDatabaseLibrary::Resolve(nsIURI *aUri, nsIChannel **_retval)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::CreateMediaItem(sbIMediaItem **_retval)
+sbLocalDatabaseLibrary::CreateMediaItem(nsIURI *aUri,
+                                        sbIMediaItem **_retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aUri);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+  PRInt32 dbOk;
+
+  /*
+   * Generate a new guid
+   */
+  nsCOMPtr<nsIUUIDGenerator> uuidGen =
+    do_GetService("@mozilla.org/uuid-generator;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsID id;
+  rv = uuidGen->GenerateUUIDInPlace(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCAutoString guidUtf8(id.ToString());
+  nsAutoString fullGuid;
+  fullGuid = NS_ConvertUTF8toUTF16(guidUtf8);
+
+  const nsAString& guid = Substring(fullGuid, 1, fullGuid.Length() - 2);
+
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(mDatabaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mInsertMediaItemQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Set guid
+   */
+  rv = query->BindStringParameter(0, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Set create and update.  Make a string of the current time in milliseconds
+   */
+  char buf[20];
+  int len = snprintf(buf, sizeof(buf), "%ld",
+                     PRUint64((PR_Now() / PR_USEC_PER_MSEC)));
+  buf[sizeof(buf) - 1] = '\0';
+  nsAutoString create = NS_ConvertASCIItoUTF16(buf, len);
+
+  rv = query->BindStringParameter(1, create);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(2, create);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Set content url
+   */
+  nsCAutoString uriUtf8;
+  rv = aUri->GetSpec(uriUtf8);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString uri;
+  uri = NS_ConvertUTF8toUTF16(uriUtf8);
+
+  rv = query->BindStringParameter(3, uri);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  sbLocalDatabaseMediaItem* item = new sbLocalDatabaseMediaItem(this, guid);
+  NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = item);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGuid, 
                                      sbIMediaItem **_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
+
   nsresult rv;
 
   /*
@@ -319,6 +472,8 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetMediaListFactory(const nsAString& aType,
                                             sbIMediaListFactory** _retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
+
   nsresult rv;
   // TODO: This is totally fake, needs to look up name in the list of
   // registered factories, etc.

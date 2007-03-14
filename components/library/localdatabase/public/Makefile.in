@@ -36,6 +36,9 @@ XPIDL_SRCS = sbILocalDatabaseSmartMediaList.idl \
              sbILocalDatabaseLibraryFactory.idl \
              $(NULL)
 
+XPIDL_HEADER_SRCS += sbILocalDatabaseLibrary.idl \
+                     $(NULL)
+
 XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \
                  $(NULL)
 

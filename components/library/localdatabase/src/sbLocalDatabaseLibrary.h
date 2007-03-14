@@ -28,30 +28,21 @@
 #define __SBLOCALDATABASELIBRARY_H__
 
 #include <sbILibrary.h>
+#include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
-class sbLocalDatabaseLibrary : public sbILibrary
+class sbLocalDatabaseLibrary : public sbILibrary,
+                               public sbILocalDatabaseLibrary
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILIBRARYRESOURCE
   NS_DECL_SBILIBRARY
+  NS_DECL_SBILOCALDATABASELIBRARY
 
   sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid);
-
-  nsresult Init();
-  void GetDatabaseGuid(nsAString& aDatabaseGuid);
-
-  nsresult GetContractIdForGuid(const nsAString& aGuid,
-                                nsACString &aContractId);
-
-  nsresult GetMediaItemIdForGuid(const nsAString& aGuid,
-                                 PRUint32* aMediaItemId);
-
-  nsresult InstantiateMediaItem(const nsAString& aGuid,
-                                sbIMediaItem** aMediaItem);
 
 private:
   ~sbLocalDatabaseLibrary();
@@ -61,6 +52,7 @@ private:
 
   nsString mGetContractIdForGuidQuery;
   nsString mGetMediaItemIdForGuidQuery;
+  nsString mInsertMediaItemQuery;
 };
 
 #endif /* __SBLOCALDATABASELIBRARY_H__ */

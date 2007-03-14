@@ -47,35 +47,47 @@ function runTest () {
 
   var list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   assertList(list, "data_sort_sml101_ordinal_asc.txt");
-  
+
+  var item = list.getItemByIndex(0);
+  assertEqual(item.guid, "3E586C1A-AD99-11DB-9321-C22AB7121F49");
+
+  // Test contains
+  item = library.getMediaItem("3E586C1A-AD99-11DB-9321-C22AB7121F49");
+  var contains = list.contains(item);
+  assertEqual(contains, true);
+
+  item = library.getMediaItem("3E6DD1C2-AD99-11DB-9321-C22AB7121F49");
+  contains = list.contains(item);
+  assertEqual(contains, false);
+
   var titleProperty = "http://songbirdnest.com/data/1.0#trackName";
   var albumProperty = "http://songbirdnest.com/data/1.0#albumName";
   var genreProperty = "http://songbirdnest.com/data/1.0#genre";
-  
+
   // Test getItemsByProperty(s)
   var filteredListEnumerator =
     list.getItemsByPropertyValue(titleProperty, "Train of Thought");
-  
+
   assertEqual(countItems(filteredListEnumerator), 1);
-  
+
   filteredListEnumerator =
     list.getItemsByPropertyValue(albumProperty, "Back in Black");
 
   assertEqual(countItems(filteredListEnumerator), 10);
-  
+
   filteredListEnumerator =
     list.getItemsByPropertyValue(genreProperty, "KJaskjjbfjJDBs");
-    
+
   assertEqual(countItems(filteredListEnumerator), 0);
 
   var propertyArray =
     Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"].
     createInstance(Ci.sbIPropertyArray);
-  
+
   propertyArray.appendProperty(albumProperty, "Back in Black");
   filteredListEnumerator =
     list.getItemsByPropertyValues(propertyArray);
-    
+
   assertEqual(countItems(filteredListEnumerator), 10);
   
   propertyArray.appendProperty(titleProperty, "Rock and Roll Ain't Noise Pollution");
@@ -84,11 +96,11 @@ function runTest () {
     list.getItemsByPropertyValues(propertyArray);
 
   assertEqual(countItems(filteredListEnumerator), 2);
-  
+
   propertyArray.removeElementAt(1);
   filteredListEnumerator =
     list.getItemsByPropertyValues(propertyArray);
-  
+
   assertEqual(countItems(filteredListEnumerator), 1);
   
   //Test getIemByIndex, indexOf, lastIndexOf.

@@ -31,6 +31,7 @@
 
 #include <sbIMediaList.h>
 #include <sbILibrary.h>
+#include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
@@ -40,12 +41,16 @@ class sbLocalDatabaseViewMediaList : public sbLocalDatabaseMediaListBase
 public:
   NS_DECL_ISUPPORTS_INHERITED
 
-  sbLocalDatabaseViewMediaList(sbILibrary* aLibrary,
+  sbLocalDatabaseViewMediaList(sbILocalDatabaseLibrary* aLibrary,
                                const nsAString& aGuid);
 
   nsresult Init();
 
+  NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
   NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);
+  NS_IMETHOD Add(sbIMediaItem *aMediaItem);
+  NS_IMETHOD AddAll(sbIMediaList *aMediaList);
+  NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems);
 
 private:
   ~sbLocalDatabaseViewMediaList();

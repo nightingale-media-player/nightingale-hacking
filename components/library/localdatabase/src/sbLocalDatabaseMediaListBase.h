@@ -27,12 +27,13 @@
 #ifndef __SBLOCALDATABASEMEDIALISTBASE_H__
 #define __SBLOCALDATABASEMEDIALISTBASE_H__
 
+#include <sbILocalDatabaseLibrary.h>
+#include <sbLocalDatabaseLibrary.h>
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
-
 #include <sbILibrary.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbIMediaList.h>
@@ -51,7 +52,8 @@ public:
   NS_DECL_SBIMEDIALIST
   NS_DECL_NSICLASSINFO
 
-  sbLocalDatabaseMediaListBase(sbILibrary* aLibrary, const nsAString& aGuid);
+  sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
+                               const nsAString& aGuid);
 
   NS_IMETHODIMP Init();
 
@@ -66,7 +68,7 @@ protected:
   /*
    * The library this media list instance belogs to
    */
-  nsCOMPtr<sbILibrary> mLibrary;
+  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
 
   /*
    * The guid of this media list

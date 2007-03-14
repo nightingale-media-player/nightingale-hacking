@@ -146,6 +146,12 @@ interface sbIMediaList : sbIMediaItem
   void addAll(in sbIMediaList aMediaList);
 
   /**
+   * \brief Adds media items suppled by the provided enumerator
+   * \param aMediaItems An enumerator returning sbIMediaItem objects
+   */
+  void addSome(in nsISimpleEnumerator aMediaItems);
+
+  /**
    * \brief Insert a media item before the specified media item
    * \param aIndex Position of item to insert before
    * \param aMediaItem Media item to insert
@@ -178,6 +184,12 @@ interface sbIMediaList : sbIMediaItem
    * \param aIndex Index of the item to remove
    */
   void removeByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Removed media items suppled by the provided enumerator
+   * \param aMediaItems An enumerator returning sbIMediaItem objects
+   */
+  void removeSome(in nsISimpleEnumerator aMediaItems);
 
   /**
    * \brief Clear the list

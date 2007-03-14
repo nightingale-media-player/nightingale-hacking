@@ -48,12 +48,16 @@ sbLocalDatabaseSimpleMediaListFactory::Init()
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaListFactory::GetLibrary(sbILibrary** aLibrary)
 {
+  NS_ENSURE_ARG_POINTER(aLibrary);
+
   *aLibrary = mLibrary;
   return NS_OK;
 }
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaListFactory::SetLibrary(sbILibrary* aLibrary)
 {
+  NS_ENSURE_ARG_POINTER(aLibrary);
+
   mLibrary = aLibrary;
   return NS_OK;
 }
@@ -75,15 +79,17 @@ NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaListFactory::InstantiateMediaList(const nsAString& aGuid,
                                                             sbIMediaList** _retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
+
   nsresult rv;
+
+  nsCOMPtr<sbILocalDatabaseLibrary> library = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   /*
    * Make sure the supplied media list guid can be created by this factory
    * by looking its factory contract id up in the database
    */
-  sbLocalDatabaseLibrary* library =
-    NS_STATIC_CAST(sbLocalDatabaseLibrary*, mLibrary.get());
-
   nsCAutoString contractId;
   rv = library->GetContractIdForGuid(aGuid, contractId);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -93,7 +99,7 @@ sbLocalDatabaseSimpleMediaListFactory::InstantiateMediaList(const nsAString& aGu
   }
 
   sbLocalDatabaseSimpleMediaList* list =
-    new sbLocalDatabaseSimpleMediaList(mLibrary, aGuid);
+    new sbLocalDatabaseSimpleMediaList(library, aGuid);
   NS_ENSURE_TRUE(list, NS_ERROR_OUT_OF_MEMORY);
 
   rv = list->Init();

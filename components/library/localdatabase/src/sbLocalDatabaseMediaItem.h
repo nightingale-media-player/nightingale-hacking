@@ -27,9 +27,13 @@
 #ifndef __SBLOCALDATABASEMEDIAITEM_H__
 #define __SBLOCALDATABASEMEDIAITEM_H__
 
+#include "sbLocalDatabaseLibrary.h"
+
 #include <sbIMediaItem.h>
 #include <sbILibraryResource.h>
 #include <sbILibrary.h>
+#include <sbILocalDatabaseLibrary.h>
+#include <sbILocalDatabasePropertyCache.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <nsIClassInfo.h>
@@ -43,13 +47,15 @@ public:
   NS_DECL_SBIMEDIAITEM
   NS_DECL_NSICLASSINFO
 
-  sbLocalDatabaseMediaItem(sbILibrary* aLibrary, const nsAString& aGuid);
+  sbLocalDatabaseMediaItem(sbILocalDatabaseLibrary* aLibrary,
+                           const nsAString& aGuid);
 
 private:
   ~sbLocalDatabaseMediaItem();
 
-  nsCOMPtr<sbILibrary> mLibrary;
+  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
   nsString mGuid;
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> mProperties;
 };
 
 #endif /* __SBLOCALDATABASEMEDIAITEM_H__ */
