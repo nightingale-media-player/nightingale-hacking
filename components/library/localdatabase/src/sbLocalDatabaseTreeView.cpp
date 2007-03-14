@@ -142,7 +142,7 @@ sbLocalDatabaseTreeView::FetchProperties()
   }
 
   nsMemory::Free(bags);
-  delete guids;
+  delete[] guids;
   mFetchList.Clear();
 
   rv = mTreeBoxObject->Invalidate();
