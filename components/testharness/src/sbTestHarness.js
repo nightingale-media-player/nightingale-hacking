@@ -185,15 +185,15 @@ sbTestHarness.prototype = {
           jsLoader.loadSubScript( scriptUri.spec, null );
         }
 
+        // _test_name defined in the head_songbird.js file and is used in tail_songbird.js
+        _test_name = testComp + " - " + testBase;
+
         // load the test script
         if (testFile.exists()) {
-          consoleService.logStringMessage("*** [" + testBase + "] - Testing...");
+          consoleService.logStringMessage("*** [" + _test_name + "] - Testing...");
           scriptUri = ioService.newFileURI(testFile);
           jsLoader.loadSubScript( scriptUri.spec, null );
         }
-
-        // _test_name defined in the head_songbird.js file and is used in tail_songbird.js
-        _test_name = testBase;
 
         // top level tail file to always load - calls run_test()
         if (this.mTailSongbird.exists()) {
