@@ -51,8 +51,8 @@ function runTest () {
 
   assertEqual(created.getTime() == updated.getTime(), true);
   // Compare the dates with a little slack -- they should be very close
-  assertEqual(now - created < 1000, true);
-  assertEqual(now - updated < 1000, true);
+  assertEqual(now - created < 5000, true);
+  assertEqual(now - updated < 5000, true);
 
   // Make sure we are getting different guids
   var item2 = library.createMediaItem(uri);
