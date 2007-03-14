@@ -390,6 +390,134 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
   return ret;
 } //SQLiteAuthorizer
 
+/*
+ * Parse a path string in the form of "n1.n2.n3..." where n is an integer.
+ * Returns the next integer in the list while advancing the pos pointer to
+ * the start of the next integer.  If the end of the list is reached, pos
+ * is set to null
+ */
+static int tree_collate_func_next_num(const char* start,
+                                      char** pos,
+                                      int length,
+                                      int eTextRep,
+                                      int width)
+{
+  // If we are at the end of the string, set pos to null
+  const char* end = start + length;
+  if (*pos == end || *pos == NULL) {
+    *pos = NULL;
+    return 0;
+  }
+
+  int num = 0;
+  int sign = 1;
+
+  while (*pos < end) {
+
+    // Extract the ASCII value of the digit from the encoded byte(s)
+    char c;
+    switch(eTextRep) {
+      case SQLITE_UTF16BE:
+        c = *(*pos + 1);
+        break;
+      case SQLITE_UTF16LE:
+      case SQLITE_UTF8:
+        c = **pos;
+        break;
+      default:
+        return 0;
+    }
+
+    // If we see a period, we're done.  Also advance the pointer so the next
+    // call starts on the first digit
+    if (c == '.') {
+      *pos += width;
+      break;
+    }
+
+    // If we encounter a hyphen, treat this as a negative number.  Otherwise,
+    // include the digit in the current number
+    if (c == '-') {
+      sign = -1;
+    }
+    else {
+      num = (num * 10) + (c - '0');
+    }
+    *pos += width;
+  }
+
+  return num * sign;
+}
+
+static int tree_collate_func(void *pCtx,
+                             int nA,
+                             const void *zA,
+                             int nB,
+                             const void *zB,
+                             int eTextRep)
+{
+  const char* cA = (const char*) zA;
+  const char* cB = (const char*) zB;
+  char* pA = (char*) cA;
+  char* pB = (char*) cB;
+
+  int width = eTextRep == SQLITE_UTF8 ? 1 : 2;
+
+  /*
+   * Compare each number in each string until either the numbers are different
+   * or we run out of numbers to compare
+   */
+  int a = tree_collate_func_next_num(cA, &pA, nA, eTextRep, width);
+  int b = tree_collate_func_next_num(cB, &pB, nB, eTextRep, width);
+
+  while (pA != NULL && pB != NULL) {
+    if (a != b) {
+      return a < b ? -1 : 1;
+    }
+    a = tree_collate_func_next_num(cA, &pA, nA, eTextRep, width);
+    b = tree_collate_func_next_num(cB, &pB, nB, eTextRep, width);
+  }
+
+  /*
+   * At this point, if the lengths are the same, the strings are the same
+   */
+  if (nA == nB) {
+    return 0;
+  }
+
+  /*
+   * Otherwise, the longer string is always smaller
+   */
+  return nA > nB ? -1 : 1;
+}
+
+static int tree_collate_func_utf16be(void *pCtx,
+                                     int nA,
+                                     const void *zA,
+                                     int nB,
+                                     const void *zB)
+{
+  return tree_collate_func(pCtx, nA, zA, nB, zB, SQLITE_UTF16BE);
+}
+
+static int tree_collate_func_utf16le(void *pCtx,
+                                     int nA,
+                                     const void *zA,
+                                     int nB,
+                                     const void *zB)
+{
+  return tree_collate_func(pCtx, nA, zA, nB, zB, SQLITE_UTF16LE);
+}
+
+static int tree_collate_func_utf8(void *pCtx,
+                                  int nA,
+                                  const void *zA,
+                                  int nB,
+                                  const void *zB)
+{
+  return tree_collate_func(pCtx, nA, zA, nB, zB, SQLITE_UTF8);
+}
+
 NS_IMPL_THREADSAFE_ISUPPORTS2(CDatabaseEngine, sbIDatabaseEngine, nsIObserver)
 NS_IMPL_THREADSAFE_ISUPPORTS1(QueryProcessorThread, nsIRunnable)
 
@@ -580,30 +708,49 @@ PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID, CDatabaseQuery *pQuery)
   // Remember what we just loaded
   if(ret == SQLITE_OK)
   {
-    m_Databases.insert(std::make_pair(PromiseFlatString(dbGUID), pDB));
+    ret  = sqlite3_create_collation(pDB,
+                                    "tree",
+                                    SQLITE_UTF16BE,
+                                    NULL,
+                                    tree_collate_func_utf16be);
+    ret |= sqlite3_create_collation(pDB,
+                                    "tree",
+                                    SQLITE_UTF16LE,
+                                    NULL,
+                                    tree_collate_func_utf16le);
+    ret |= sqlite3_create_collation(pDB,
+                                    "tree",
+                                    SQLITE_UTF8,
+                                    NULL,
+                                    tree_collate_func_utf8);
 
+    if(ret == SQLITE_OK)
     {
-      nsAutoLock lock(m_pDatabasesGUIDListLock);
-      PRBool found = PR_FALSE;
-      PRInt32 size = m_DatabasesGUIDList.size(), current = 0;
-      for(; current < size; current++) {
-        if(m_DatabasesGUIDList[current] == dbGUID)
-          found = PR_TRUE;
+      m_Databases.insert(std::make_pair(PromiseFlatString(dbGUID), pDB));
+
+      {
+        nsAutoLock lock(m_pDatabasesGUIDListLock);
+        PRBool found = PR_FALSE;
+        PRInt32 size = m_DatabasesGUIDList.size(), current = 0;
+        for(; current < size; current++) {
+          if(m_DatabasesGUIDList[current] == dbGUID)
+            found = PR_TRUE;
+        }
+
+        if(!found)
+          m_DatabasesGUIDList.push_back(PromiseFlatString(dbGUID));
       }
 
-      if(!found)
-        m_DatabasesGUIDList.push_back(PromiseFlatString(dbGUID));
-    }
-
 #if defined(USE_SQLITE_FULL_DISK_CACHING)
-    sqlite3_busy_timeout(pDB, 60000);
+      sqlite3_busy_timeout(pDB, 60000);
 
-    char *strErr = nsnull;
-    sqlite3_exec(pDB, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
-    if(strErr) sqlite3_free(strErr);
+      char *strErr = nsnull;
+      sqlite3_exec(pDB, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
+      if(strErr) sqlite3_free(strErr);
 #endif
 
-    NS_ASSERTION( ret == SQLITE_OK, "CDatabaseEngine: Couldn't create/open database!");
+      NS_ASSERTION( ret == SQLITE_OK, "CDatabaseEngine: Couldn't create/open database!");
+    }
   }
 
   return ret;

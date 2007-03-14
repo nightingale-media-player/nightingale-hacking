@@ -33,6 +33,7 @@ SONGBIRD_TEST_COMPONENT = dbengine
 
 SONGBIRD_TESTS = $(srcdir)/test_bind.js \
                  $(srcdir)/test_proxy.js \
+                 $(srcdir)/test_tree_collate.js \
                  $(srcdir)/test_selective_persistent.js \
                  $(NULL)
 
