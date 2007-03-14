@@ -104,13 +104,8 @@ function createDatabase(databaseGuid) {
     var b = a[i].split("\t");
     dbq.addQuery("insert into media_items (guid, created, updated, content_url, content_mime_type, content_length, media_list_type_id) values (?, ?, ?, ?, ?, ?, ?)");
     dbq.bindStringParameter(0, b[1]);
-    dbq.bindInt32Parameter(1, b[2]);
-    if(b[3] == "") {
-      dbq.bindNullParameter(2);
-    }
-    else {
-      dbq.bindInt32Parameter(2, b[3]);
-    }
+    dbq.bindInt64Parameter(1, b[2]);
+    dbq.bindInt64Parameter(2, b[3]);
     dbq.bindStringParameter(3, b[4]);
     dbq.bindStringParameter(4, b[5]);
     if(b[5] == "") {
