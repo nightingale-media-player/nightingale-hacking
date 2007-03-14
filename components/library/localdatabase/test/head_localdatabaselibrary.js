@@ -77,9 +77,6 @@ function createDatabase(databaseGuid) {
 
   file.append("db");
   file.append(databaseGuid + ".db");
-  if(file.exists()) {
-    file.remove(false);
-  }
 
   var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
               .createInstance(Ci.sbIDatabaseQuery);
@@ -219,23 +216,40 @@ function assertSort(array, dataFile) {
 
 }
 
-function assertList(list, dataFile) {
+function assertList(list, data) {
 
-  var data = readFile(dataFile);
-  var a = data.split("\n");
+  var a;
+  if (data instanceof Array) {
+    a = data;
+  }
+  else {
+    a = readList(data);
+  }
 
-  if(a.length - 1 != list.length) {
+  if(a.length != list.length) {
     fail("compare failed, length wrong, got " + list.length + " expected " + (a.length - 1));
   }
 
   var e = list.items;
-  for(var i = 0; i < a.length - 1; i++) {
+  for(var i = 0; i < a.length; i++) {
     var item = e.getNext();
-    var b = a[i].split("\t");
-    if(item.guid != b[0]) {
-      fail("compare failed, index " + i + " got " + item.guid + " expected " + b[0]);
+    if(item.guid != a[i]) {
+      fail("compare failed, index " + i + " got " + item.guid + " expected " + a[i]);
     }
   }
 
+}
+
+function readList(dataFile) {
+
+  var data = readFile(dataFile);
+  var a = data.split("\n");
+
+  var b = [];
+  for(var i = 0; i < a.length - 1; i++) {
+    b.push(a[i].split("\t")[0]);
+  }
+
+  return b;
 }
 
