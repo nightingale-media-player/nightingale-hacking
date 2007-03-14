@@ -386,7 +386,7 @@ NS_IMETHODIMP CDatabaseQuery::AddSimpleQueryCallback(sbIDatabaseSimpleQueryCallb
   nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                      NS_GET_IID(sbIDatabaseSimpleQueryCallback),
                                      dbPersistCB,
-                                     NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                     NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
                                      getter_AddRefs(proxiedCallback));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -606,7 +606,7 @@ NS_IMETHODIMP CDatabaseQuery::AddCallback(sbIDatabaseQueryCallback *dbCallback)
   nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                      NS_GET_IID(sbIDatabaseSimpleQueryCallback),
                                      dbCallback,
-                                     NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                     NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
                                      getter_AddRefs(proxiedCallback));
   NS_ENSURE_SUCCESS(rv, rv);
 

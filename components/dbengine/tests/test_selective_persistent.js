@@ -37,14 +37,9 @@ function dbqCallback() {
 dbqCallback.prototype = {
   onQueryEnd: function(resultObject, dbGUID, query) {
     assertEqual(resultObject.getRowCount(), 1);
-    
-    if(gCallbackCount > 0)
-    {
-      assertEqual(resultObject.getRowCell(0, 0), "test 99");
-      testFinished();
-    }
-      
     gCallbackCount++;
+    
+    testFinished();
   }
 };
 
@@ -111,6 +106,8 @@ function runTest () {
   
   dbq.addQuery("select * from persistent where value = 'testing... 1'");
   dbq.execute();
+  
+  testPending();
   
   dbqu.addQuery("update persistent set name = 'test 99' where name = 'test 1'");
   dbqu.execute();
