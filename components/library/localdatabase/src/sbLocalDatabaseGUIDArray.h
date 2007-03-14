@@ -37,7 +37,7 @@
 #include <sbISQLBuilder.h>
 #include <nsDataHashtable.h>
 #include <nsISimpleEnumerator.h>
-#include <sbILibrary.h>
+#include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
 
 struct FilterSpec {
@@ -55,6 +55,14 @@ public:
   sbLocalDatabaseGUIDArray();
 
 private:
+
+  struct ArrayItem {
+    ArrayItem(const nsAString& aGuid) : guid(aGuid) {} ;
+    ArrayItem(const PRUnichar* aGuid) : guid(aGuid) {} ;
+    nsString guid;
+    nsString sortPropertyValue;
+  };
+
   ~sbLocalDatabaseGUIDArray();
 
   NS_IMETHOD Initalize();
@@ -101,6 +109,8 @@ private:
                              PRUint32 aDestIndexOffset,
                              PRBool isNull);
 
+  NS_IMETHODIMP GetByIndexInternal(PRUint32 aIndex, ArrayItem** _retval);
+
   PRInt32 GetPropertyId(const nsAString& aProperty);
 
   struct SortSpec {
@@ -143,7 +153,7 @@ private:
   nsTArray<FilterSpec> mFilters;
 
   // Ordered array of GUIDs
-  nsTArray<nsString*> mCache;
+  nsTArray<ArrayItem*> mCache;
 
   // Cache of primary sort key positions
   nsDataHashtable<nsStringHashKey, PRUint32> mPrimarySortKeyPositionCache;
@@ -191,12 +201,12 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISIMPLEENUMERATOR
 
-  sbGUIDArrayEnumerator(sbILibrary* aLibrary,
+  sbGUIDArrayEnumerator(sbILocalDatabaseLibrary* aLibrary,
                         sbILocalDatabaseGUIDArray* aArray);
 private:
   ~sbGUIDArrayEnumerator();
 
-  nsCOMPtr<sbILibrary> mLibrary;
+  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
   nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
   PRUint32 mNextIndex;
 };

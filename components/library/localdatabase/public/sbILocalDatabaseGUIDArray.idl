@@ -71,6 +71,8 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   [noscript] void getByIndexShared(in unsigned long aIndex,
                                   [shared] out wstring aGuid);
 
+  AString getSortPropertyValueByIndex(in unsigned long aIndex);
+
   void invalidate();
 
   sbILocalDatabaseGUIDArray clone();

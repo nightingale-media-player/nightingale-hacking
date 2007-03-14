@@ -264,11 +264,11 @@ sbLocalDatabaseGUIDArray::GetByIndex(PRUint32 aIndex,
 {
   nsresult rv;
 
-  const PRUnichar* guid;
-  rv = GetByIndexShared(aIndex, &guid);
+  ArrayItem* item;
+  rv = GetByIndexInternal(aIndex, &item);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  _retval.Assign(guid);
+  _retval.Assign(item->guid);
   return NS_OK;
 }
 
@@ -278,43 +278,26 @@ sbLocalDatabaseGUIDArray::GetByIndexShared(PRUint32 aIndex,
 {
   nsresult rv;
 
-  LOG_DEBUG(("GetByIndexShared %d", aIndex));
-
-  if (mValid == PR_FALSE) {
-    rv = Initalize();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  if (aIndex >= mLength) {
-    return NS_ERROR_ILLEGAL_VALUE;
-  }
-
-  /*
-   * Check to see if we have this index in cache
-   */
-  if (aIndex < mCache.Length()) {
-    nsString* guid = mCache[aIndex];
-    if (guid) {
-      LOG_DEBUG(("Cache hit, got %s", NS_ConvertUTF16toUTF8(*guid).get()));
-      *aGuid = guid->get();
-      return NS_OK;
-    }
-  }
-
-  LOG_DEBUG(("MISS"));
-
-  /*
-   * Cache miss
-   * TODO: WE can be a little smarter here my moving the fetch window around
-   * to read as many missing guids as we can but still satisfy this request.
-   * Also we should probably track movement to make backwards scrolling more
-   * efficient
-   */
-  rv = FetchRows(aIndex);
+  ArrayItem* item;
+  rv = GetByIndexInternal(aIndex, &item);
   NS_ENSURE_SUCCESS(rv, rv);
 
-   *aGuid = mCache[aIndex]->get();
+   *aGuid = item->guid.get();
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetSortPropertyValueByIndex(PRUint32 aIndex,
+                                                      nsAString& _retval)
+{
+  nsresult rv;
+
+  ArrayItem* item;
+  rv = GetByIndexInternal(aIndex, &item);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  _retval.Assign(item->sortPropertyValue);
   return NS_OK;
 }
 
@@ -327,9 +310,9 @@ sbLocalDatabaseGUIDArray::Invalidate()
 
   PRUint32 len = mCache.Length();
   for (PRUint32 i = 0; i < len; i++) {
-    const nsString* str = mCache[i];
-    if (str) {
-      delete str;
+    const ArrayItem* item = mCache[i];
+    if (item) {
+      delete item;
     }
   }
   mCache.Clear();
@@ -1215,11 +1198,11 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
   if (mPropertyCache) {
     const PRUnichar** guids = new const PRUnichar*[lengthDE];
     for (PRUint32 i = 0; i < lengthDE; i++) {
-      guids[i] = mCache[i + indexD]->get();
+      guids[i] = mCache[i + indexD]->guid.get();
     }
     rv = mPropertyCache->CacheProperties(guids, lengthDE);
     NS_ENSURE_SUCCESS(rv, rv);
-    delete guids;
+    delete[] guids;
   }
   return NS_OK;
 }
@@ -1299,18 +1282,19 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     rv = result->GetRowCellPtr(i, 0, &guid);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString* str = new nsString(guid);
-    NS_ENSURE_TRUE(str, NS_ERROR_OUT_OF_MEMORY);
+    ArrayItem* item = new ArrayItem(guid);
+    NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
-    NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + aDestIndexOffset, 1, str),
+    NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + aDestIndexOffset, 1, item),
                    NS_ERROR_OUT_OF_MEMORY);
 
     LOG_DEBUG(("ReplaceElementsAt %d %s", i + aDestIndexOffset,
-               NS_ConvertUTF16toUTF8(*str).get()));
+               NS_ConvertUTF16toUTF8(item->guid).get()));
     if (needsSorting) {
       PRUnichar* value;
       rv = result->GetRowCellPtr(i, 1, &value);
       NS_ENSURE_SUCCESS(rv, rv);
+      item->sortPropertyValue = value;
       if (isFirstValue || !lastSortedValue.Equals(value)) {
         if (!isFirstValue) {
           rv = SortRows(aDestIndexOffset + firstIndex,
@@ -1354,10 +1338,10 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     NS_WARNING(message);
     PR_smprintf_free(message);
     for (PRUint32 i = 0; i < aCount - rowCount; i++) {
-      nsString* str = new nsString(NS_LITERAL_STRING("error"));
-      NS_ENSURE_TRUE(str, NS_ERROR_OUT_OF_MEMORY);
+      ArrayItem* item = new ArrayItem(NS_LITERAL_STRING("error"));
+      NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
-      NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + rowCount + aDestIndexOffset, 1, str),
+      NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + rowCount + aDestIndexOffset, 1, item),
                      NS_ERROR_OUT_OF_MEMORY);
     }
   }
@@ -1490,7 +1474,7 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
     rv = result->GetRowCellPtr(offset + i, 0, &guid);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mCache[i + aStartIndex]->Assign(guid);
+    mCache[i + aStartIndex]->guid = guid;
   }
 
   return NS_OK;
@@ -1586,6 +1570,52 @@ sbLocalDatabaseGUIDArray::GetTopLevelPropertyColumn(const nsAString& aProperty,
   }
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
+                                             ArrayItem** _retval)
+{
+  nsresult rv;
+
+  LOG_DEBUG(("GetByIndexInternal %d", aIndex));
+
+  if (mValid == PR_FALSE) {
+    rv = Initalize();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (aIndex >= mLength) {
+    return NS_ERROR_ILLEGAL_VALUE;
+  }
+
+  /*
+   * Check to see if we have this index in cache
+   */
+  if (aIndex < mCache.Length()) {
+    ArrayItem* item = mCache[aIndex];
+    if (item) {
+      LOG_DEBUG(("Cache hit, got %s", NS_ConvertUTF16toUTF8(item->guid).get()));
+      *_retval = item;
+      return NS_OK;
+    }
+  }
+
+  LOG_DEBUG(("MISS"));
+
+  /*
+   * Cache miss
+   * TODO: WE can be a little smarter here my moving the fetch window around
+   * to read as many missing guids as we can but still satisfy this request.
+   * Also we should probably track movement to make backwards scrolling more
+   * efficient
+   */
+  rv = FetchRows(aIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+   *_retval = mCache[aIndex];
+
+  return NS_OK;
+}
+
 /*
  * NOTE: all the methods below should eventually be replaced with called to the
  * properties manager
@@ -1674,7 +1704,7 @@ sbLocalDatabaseGUIDArray::GetPropertyId(const nsAString& aProperty)
 
 NS_IMPL_ISUPPORTS1(sbGUIDArrayEnumerator, nsISimpleEnumerator)
 
-sbGUIDArrayEnumerator::sbGUIDArrayEnumerator(sbILibrary* aLibrary,
+sbGUIDArrayEnumerator::sbGUIDArrayEnumerator(sbILocalDatabaseLibrary* aLibrary,
                                              sbILocalDatabaseGUIDArray* aArray) :
   mLibrary(aLibrary),
   mArray(aArray),
