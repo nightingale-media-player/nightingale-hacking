@@ -47,6 +47,7 @@
 #include <nsIUUIDGenerator.h>
 
 #include <stdio.h>
+#include <prprf.h>
 
 NS_IMPL_ISUPPORTS2(sbLocalDatabaseLibrary,
                    sbILibrary,
@@ -386,7 +387,7 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI *aUri,
    * Set create and update.  Make a string of the current time in milliseconds
    */
   char buf[20];
-  int len = snprintf(buf, sizeof(buf), "%ld",
+  int len = PR_snprintf(buf, sizeof(buf), "%ld",
                      PRUint64((PR_Now() / PR_USEC_PER_MSEC)));
   buf[sizeof(buf) - 1] = '\0';
   nsAutoString create = NS_ConvertASCIItoUTF16(buf, len);
