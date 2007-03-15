@@ -52,33 +52,39 @@ window
 }
 
 .chrome_iframe_bkgd,
+.chrome_bkgd,
 #chrome_bkgd
 {
   background-color: #FFF !important; /* color of the Main Window **/
 }
 
+.chrome_nw,
 #chrome_nw
 {
   -moz-border-top-colors: #eee #ececec !important;
   -moz-border-left-colors: #eee #ececec !important;
   background-color: #FFF !important;
 }
+.chrome_n,
 #chrome_n
 {
   -moz-border-top-colors: #eee #ececec !important;
   background-color: #FFF !important;
 }
+.chrome_ne,
 #chrome_ne
 {
   -moz-border-top-colors: #eee #ececec !important;
   -moz-border-right-colors: #eee #ececec !important;
   background-color: #FFF !important;
 }
+.chrome_e,
 #chrome_e
 {
   -moz-border-right-colors: #eee #ececec !important;
   background-color: #FFF !important;
 }
+.chrome_se,
 #chrome_se
 {
   -moz-border-bottom-colors: #eee #ececec !important;
@@ -86,16 +92,19 @@ window
   background-color: #FFF !important;
 }
 
+.chrome_s,
 #chrome_s
 {
   -moz-border-bottom-colors: #ececec #ececec !important;
   background-color: #FFF !important;
 }
+.chrome_w,
 #chrome_w
 {
   -moz-border-left-colors: #eee #ececec !important;
   background-color: #FFF !important;
 }
+.chrome_sw,
 #chrome_sw
 {
   -moz-border-bottom-colors: #ececec #ececec !important;

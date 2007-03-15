@@ -40,117 +40,56 @@
  onload="onLoadJumpToFile();"
  onunload="onUnloadJumpToFile();"
 >
-  
-<stack flex="1">
-
-  <vbox class="sb_faceplate, dialog" flex="1" id="jumpto_frame">
-    <hbox class="sb_faceplate">
-        <image id="chrome_nw" class="sb_faceplate"/>
-        <image id="chrome_n" class="sb_faceplate" flex="1"/>
-        <image id="chrome_ne" class="sb_faceplate"/>
-    </hbox>
-    <hbox class="sb_faceplate" flex="1">
-        <image id="chrome_w" class="sb_faceplate"/>
-        <spacer flex="1"/>
-        <image id="chrome_e" class="sb_faceplate"/>
-    </hbox>
-    <hbox class="sb_faceplate">
-        <image id="chrome_sw" class="sb_faceplate"/>
-        <image id="chrome_s" class="sb_faceplate" flex="1"/>
-        <image id="chrome_se" class="sb_faceplate"/>
-    </hbox>
-  </vbox>
-  
-  <vbox class="sb_faceplate" flex="1">
-    <hbox class="sb_faceplate" id="frame_top_resizers">
-      <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="topleft" style="cursor: nw-resize;"/>
-      <resizer oncommand="onWindowResizeComplete()" id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
-      <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
-    </hbox>
-    <hbox class="sb_faceplate" flex="1">
-    
-      <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
-      
-        <vbox class="sb_faceplate">
-          <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
-          <resizer oncommand="onWindowResizeComplete()" id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
-          <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
-        </vbox>
-        
-        <vbox class="sb_faceplate" id="chrome_bkgd" flex="1" drag_window="true">
-          <sb-sys-dialog-titlebar value="&jumptofile.title;"/>
-          
-          <spacer height="5" drag_window="true"/>
-
-          <hbox align="center">
-            <menulist id="playable_list" 
-              value="1" 
-              label="poo" 
-              x_editable="false" 
-              oncommand="onPlaylistlistSelect(event)" 
-              onmousedown="eatEvent(event);" onmouseup="eatEvent(event);"
-              flex="1"
-            >
-              <menupopup 
-                datasources="rdf:Servicesource" 
-                ref="NC:ServicesourcePlayable"
-              >
-                <menuitem id="current_play_queue" label="-"/>
-                <template>
-                  <rule>
-                    <menuitem uri="rdf:*"
-                      id="rdf:http://home.netscape.com/NC-rdf#Label" 
-                      label="rdf:http://home.netscape.com/NC-rdf#Label"
-                      value="rdf:http://home.netscape.com/NC-rdf#URL"
-                      class="menuitem-iconic"
-                      image="rdf:http://home.netscape.com/NC-rdf#Icon"
-                      guid="rdf:http://home.netscape.com/NC-rdf#DBGUID"
-                      table="rdf:http://home.netscape.com/NC-rdf#DBTable"
-                    />
-                  </rule>
-                </template>
-              </menupopup>
-            </menulist>
-          </hbox>
-
-          <spacer height="5"/>
-
-          <hbox align="center">
-            <label id="jumpto_search_label" class="dialog_label" value="&jumptofile.search;" />
-            <textbox class="dialog_textbox" id="jumpto.textbox" flex="1" onkeypress="onSearchKeypress(event);" />
-          </hbox>
-          
-          <spacer height="5"/>
-
-          <hbox flex="1">
-            <playlist class="dialog_playlist" id="jumpto.playlist" flex="1" onkeypress="onListKeypress(event);" />
-          </hbox>
-
-          <spacer height="5"/> 
-
-        </vbox>      
-      
-        <vbox class="sb_faceplate">
-          <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
-          <resizer oncommand="onWindowResizeComplete()" id="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
-          <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomright" style="cursor: se-resize;"/>
-        </vbox>
-        
-      </hbox> <!-- frame_middle_resizers -->
-    </hbox>
-    <hbox class="sb_faceplate" id="frame_bottom_resizers">
-      <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="bottomleft" style="cursor: sw-resize;"/>
-      <resizer oncommand="onWindowResizeComplete()" id="frame_resize_t" dir="bottom" style="cursor: s-resize;" flex="1"/>
-      <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="bottomright" style="cursor: se-resize;"/>
-    </hbox>
-  </vbox>
+  <sb-sys-outer-frame id="jumpto_frame" flex="1">
+    <vbox class="sb_faceplate" id="chrome_bkgd" flex="1" drag_window="true">
+      <sb-sys-dialog-titlebar/>
+      <spacer height="5" drag_window="true"/>
+      <hbox align="center">
+        <menulist id="playable_list" 
+          value="1" 
+          label="poo" 
+          x_editable="false" 
+          oncommand="onPlaylistlistSelect(event)" 
+          onmousedown="eatEvent(event);" onmouseup="eatEvent(event);"
+          flex="1"
+        >
+          <menupopup 
+            datasources="rdf:Servicesource" 
+            ref="NC:ServicesourcePlayable"
+          >
+            <menuitem id="current_play_queue" label="-"/>
+            <template>
+              <rule>
+                <menuitem uri="rdf:*"
+                  id="rdf:http://home.netscape.com/NC-rdf#Label" 
+                  label="rdf:http://home.netscape.com/NC-rdf#Label"
+                  value="rdf:http://home.netscape.com/NC-rdf#URL"
+                  class="menuitem-iconic"
+                  image="rdf:http://home.netscape.com/NC-rdf#Icon"
+                  guid="rdf:http://home.netscape.com/NC-rdf#DBGUID"
+                  table="rdf:http://home.netscape.com/NC-rdf#DBTable"
+                />
+              </rule>
+            </template>
+          </menupopup>
+        </menulist>
+      </hbox>
+      <spacer height="5"/>
+      <hbox align="center">
+        <label id="jumpto_search_label" class="dialog_label" value="&jumptofile.search;" />
+        <textbox class="dialog_textbox" id="jumpto.textbox" flex="1" onkeypress="onSearchKeypress(event);" />
+      </hbox>
+      <spacer height="5"/>
+      <hbox flex="1">
+        <playlist class="dialog_playlist" id="jumpto.playlist" flex="1" onkeypress="onListKeypress(event);" />
+      </hbox>
+      <spacer height="5"/> 
+    </vbox>      
+  </sb-sys-outer-frame>
 
   <keyset>
     <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onExit();"/>
   </keyset>
-
-   
-</stack>
   
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/songbird_interfaces.js" />

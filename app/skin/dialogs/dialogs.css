@@ -77,11 +77,13 @@ THE DIALOG CHROME
 These pieces paint the resizeable window for dialogs.
 *******************************************************************************************
 */
+.chrome_bkgd,
 #chrome_bkgd
 {
   -moz-appearance: none !important; 
 }
 
+.chrome_n,
 #chrome_n
 {
   -moz-appearance: none !important;
@@ -90,6 +92,7 @@ These pieces paint the resizeable window for dialogs.
   width: 9px !important; 
 }
 
+.chrome_nw,
 #chrome_nw
 {
   -moz-appearance: none !important;
@@ -99,6 +102,7 @@ These pieces paint the resizeable window for dialogs.
   width: 9px !important;   
 }
 
+.chrome_ne,
 #chrome_ne
 {
   -moz-appearance: none !important; 
@@ -108,6 +112,7 @@ These pieces paint the resizeable window for dialogs.
   width: 9px !important;
 }
 
+.chrome_w,
 #chrome_w
 {
   -moz-appearance: none !important; 
@@ -116,6 +121,7 @@ These pieces paint the resizeable window for dialogs.
   width: 9px !important;
 }
 
+.chrome_e,
 #chrome_e
 {
   -moz-appearance: none !important; 
@@ -124,6 +130,7 @@ These pieces paint the resizeable window for dialogs.
   width: 9px !important;
 }
 
+.chrome_sw,
 #chrome_sw
 {
   -moz-appearance: none !important; 
@@ -133,6 +140,7 @@ These pieces paint the resizeable window for dialogs.
   width: 9px !important;
 }
 
+.chrome_s,
 #chrome_s
 {
   -moz-appearance: none !important; 
@@ -141,6 +149,7 @@ These pieces paint the resizeable window for dialogs.
   width: 9px !important;
 }
 
+.chrome_se,
 #chrome_se
 {
   -moz-appearance: none !important; 
@@ -156,8 +165,11 @@ THE DIALOG CHROME IMAGES
 **************************************
 */
 #cheezy_window_top,
+.chrome_bkgd,
 #chrome_bkgd,
+.chrome_e,
 #chrome_e,
+.chrome_w,
 #chrome_w
 {
   background-image: url(chrome://songbird/skin/default/chrm_bkgd.png) !important; /** <img src="chrm_bkgd.png"> */
@@ -165,8 +177,11 @@ THE DIALOG CHROME IMAGES
 }
 
 /** chrm_n.png creates an offset by 9 pixels to make up for the 9px height of the top frame */
+.chrome_nw,
 #chrome_nw,
+.chrome_n,
 #chrome_n,
+.chrome_ne,
 #chrome_ne
 {
   background-image: url(chrome://songbird/skin/default/chrm_n.png) !important; /** <img src="chrm_n.png"> */

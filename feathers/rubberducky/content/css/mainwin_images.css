@@ -735,24 +735,28 @@ These let the user resize the frames in your box model.
 RESIZERS
 ************************************************************************************************************************************************
 */ 
+.frame_resize_t,
 #frame_resize_t
 {  
   background-image: none ;
   list-style-image: none ;
 }
 
+.frame_resize_to,
 #frame_resize_to
 {  
   background-image: none ;
   list-style-image: none ;
 }
 
+.frame_resize_m,
 #frame_resize_m
 {
   background-image: none ;
   list-style-image: none ;
 }
 
+.frame_resize_mo,
 #frame_resize_mo
 {  
   background-image: none ;

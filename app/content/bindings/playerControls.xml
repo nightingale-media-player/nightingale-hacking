@@ -1323,6 +1323,205 @@
     </implementation>
   </binding>
 
+  <binding id="sb-sys-outer-frame">
+    <content>
+      <xul:stack flex="1">
+
+        <xul:vbox flex="1">
+          <xul:hbox>
+              <xul:image class="chrome_nw"/>
+              <xul:image class="chrome_n" flex="1"/>
+              <xul:image class="chrome_ne"/>
+          </xul:hbox>
+          <xul:hbox flex="1">
+              <xul:image class="chrome_w"/>
+              <xul:spacer flex="1"/>
+              <xul:image class="chrome_e"/>
+          </xul:hbox>
+          <xul:hbox>
+              <xul:image class="chrome_sw"/>
+              <xul:image class="chrome_s" flex="1"/>
+              <xul:image class="chrome_se"/>
+          </xul:hbox>
+        </xul:vbox>
+        
+        <xul:vbox flex="1">
+          <xul:hbox>
+            <xul:resizer hidden="true" sbid="r1" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="topleft" style="cursor: nw-resize;"/>
+            <xul:xresizer hidden="true" sbid="x1" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="topleft"/>
+            <xul:resizer hidden="true" sbid="r2" oncommand="onWindowResizeComplete()" class="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
+            <xul:xresizer hidden="true" sbid="x2" oncommand="onWindowResizeComplete()" class="frame_resize_t" dir="top" flex="1"/>
+            <xul:resizer hidden="true" sbid="r3" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
+            <xul:xresizer hidden="true" sbid="x3" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="topright"/>
+          </xul:hbox>
+          <xul:hbox flex="1">
+            <xul:vbox>
+              <xul:resizer hidden="true" sbid="r4" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
+              <xul:xresizer hidden="true" sbid="x4" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="topleft"/>
+              <xul:resizer hidden="true" sbid="r5" oncommand="onWindowResizeComplete()" class="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
+              <xul:xresizer hidden="true" sbid="x5" oncommand="onWindowResizeComplete()" class="frame_resize_m" dir="left" flex="1"/>
+              <xul:resizer hidden="true" sbid="r6" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
+              <xul:xresizer hidden="true" sbid="x6" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="bottomleft"/>
+            </xul:vbox>
+
+            <children/>
+                  
+            <xul:vbox>
+              <xul:resizer hidden="true" sbid="r7" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
+              <xul:xresizer hidden="true" sbid="x7" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="topright"/>
+              <xul:resizer hidden="true" sbid="r8" oncommand="onWindowResizeComplete()" class="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
+              <xul:xresizer hidden="true" sbid="x8" oncommand="onWindowResizeComplete()" class="frame_resize_m" dir="right" flex="1"/>
+              <xul:resizer hidden="true" sbid="r9" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="bottomright" style="cursor: se-resize;"/>
+              <xul:xresizer hidden="true" sbid="x9" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="bottomright"/>
+            </xul:vbox>
+          </xul:hbox>
+          <xul:hbox>
+            <xul:resizer hidden="true" sbid="r10" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="bottomleft" style="cursor: sw-resize;"/>
+            <xul:xresizer hidden="true" sbid="x10" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="bottomleft"/>
+            <xul:resizer hidden="true" sbid="r11" oncommand="onWindowResizeComplete()" class="frame_resize_t" dir="bottom" style="cursor: s-resize;" flex="1"/>
+            <xul:xresizer hidden="true" sbid="x11" oncommand="onWindowResizeComplete()" class="frame_resize_t" dir="bottom" flex="1"/>
+            <xul:resizer hidden="true" sbid="r12" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="bottomright" style="cursor: se-resize;"/>
+            <xul:xresizer hidden="true" sbid="x12" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="bottomright"/>
+          </xul:hbox>
+        </xul:vbox>
+
+      </xul:stack>
+              
+    </content>
+    <implementation>
+      <constructor>
+        <![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          var plucked = SBDataGetBoolValue( "accessibility.enabled" );
+          if ( plucked )
+            // If plucked, everything stays hidden.
+            hideFrame();
+          else if ( sysInfo.getProperty("name") == "Darwin" )
+            // If mac, do magic stuff to just the bottom-right
+            this.enableMac();
+          else
+            // Otherwise, fix yer frame, mate!
+            this.enableResizers();
+        ]]>
+      </constructor>
+      
+      <destructor>
+        <![CDATA[
+        ]]>
+      </destructor>
+      
+      <method name="hideFrame">
+        <body>
+          <![CDATA[
+            // This is actually the default state, but let's be thorough
+            for ( var i = 1; i <= 12; i++ ) {
+              document.getAnonymousElementByAttribute(this, 'sbid', 'r' + i ).setAttribute( "hidden", "true" ); 
+              document.getAnonymousElementByAttribute(this, 'sbid', 'x' + i ).setAttribute( "hidden", "true" ); 
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="enableMac">
+        <body>
+          <![CDATA[
+            // We want to disable all but one of the bottom right resizers (#12)
+            this.disableResizers();
+            
+            // And then mess with it, if we need to.
+            var resizers = this.getAttribute( "resizers" );
+            if ( resizers != "none" )
+            {
+              // Enable it
+              this.enableResizer( 12 );
+              
+              // Set it to a mac attribute for skinning
+              var r12 = document.getAnonymousElementByAttribute( this, 'sbid', 'r12' ); 
+              r12.setAttribute( "mac", "true" );
+              
+              // And constrain its direction if required to do so
+              if ( resizers == "vert" ) {
+                r12.setAttribute( "dir", "bottom" );
+                r12.setAttribute( "style", "cursor: s-resize;" );
+              }
+              if ( resizers == "horiz" ) {
+                r12.setAttribute( "dir", "right" );
+                r12.setAttribute( "style", "cursor: e-resize;" );
+              }
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="enableResizers">
+        <body>
+          <![CDATA[
+            switch ( this.getAttribute("resizers") ) {
+              case "none":
+                this.disableResizers();
+                break;
+              case "vert":
+                this.disableResizers();
+                this.enableResizer(1);
+                this.enableResizer(2);
+                this.enableResizer(3);
+                this.enableResizer(10);
+                this.enableResizer(11);
+                this.enableResizer(12);
+                break;
+              case "horiz":
+                this.disableResizers();
+                this.enableResizer(4);
+                this.enableResizer(5);
+                this.enableResizer(6);
+                this.enableResizer(7);
+                this.enableResizer(8);
+                this.enableResizer(9);
+                break;
+              default:
+                for ( var i = 1; i <= 12; i++ ) {
+                  this.enableResizer(i);
+                }
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="disableResizers">
+        <body>
+          <![CDATA[
+            for ( var i = 1; i <= 12; i++ ) {
+              this.disableResizer(i);
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="enableResizer">
+        <parameter name="aIndex"/>
+        <body>
+          <![CDATA[
+            document.getAnonymousElementByAttribute(this, 'sbid', 'r' + aIndex ).setAttribute( "hidden", "false" ); 
+            document.getAnonymousElementByAttribute(this, 'sbid', 'x' + aIndex ).setAttribute( "hidden", "true" ); 
+          ]]>
+        </body>
+      </method>
+
+      <method name="disableResizer">
+        <parameter name="aIndex"/>
+        <body>
+          <![CDATA[
+            document.getAnonymousElementByAttribute(this, 'sbid', 'r' + aIndex ).setAttribute( "hidden", "true" ); 
+            document.getAnonymousElementByAttribute(this, 'sbid', 'x' + aIndex ).setAttribute( "hidden", "false" ); 
+          ]]>
+        </body>
+      </method>
+
+
+    </implementation>
+  </binding>
+
 
 <!-- EOF -->
 </bindings>

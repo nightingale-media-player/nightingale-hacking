@@ -253,6 +253,10 @@ sb-sys-titlebar {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-titlebar") !important;
 }
 
+sb-sys-outer-frame {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-outer-frame") !important;
+}
+
 
 /* BROWSER WIDGET */
 

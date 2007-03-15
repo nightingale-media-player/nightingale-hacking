@@ -93,6 +93,7 @@ window
 }
 
 .chrome_iframe_bkgd,
+.chrome_bkgd,
 #chrome_bkgd
 {
   background-color: #000 !important; /* color of the Main Window **/
@@ -103,28 +104,33 @@ window
   background-color: transparent !important; 
 }
 
+.chrome_nw,
 #chrome_nw
 {
   -moz-border-top-colors: #7a7c7c #333 !important;
   -moz-border-left-colors: #686a6a #333 !important;
   background-color: #000 !important;
 }
+.chrome_n,
 #chrome_n
 {
   -moz-border-top-colors: #7a7c7c #333 !important;
   background-color: #000 !important;
 }
+.chrome_ne,
 #chrome_ne
 {
   -moz-border-top-colors: #7a7c7c #333 !important;
   -moz-border-right-colors: #505154 #333 !important;
   background-color: #000 !important;
 }
+.chrome_e,
 #chrome_e
 {
   -moz-border-right-colors: #505154 #333 !important;
   background-color: #000 !important;
 }
+.chrome_se,
 #chrome_se
 {
   -moz-border-bottom-colors: #333 #333 !important;
@@ -132,16 +138,19 @@ window
   background-color: #000 !important;
 }
 
+.chrome_s,
 #chrome_s
 {
   -moz-border-bottom-colors: #333 #333 !important;
   background-color: #000 !important;
 }
+.chrome_w,
 #chrome_w
 {
   -moz-border-left-colors: #686a6a #333 !important;
   background-color: #000 !important;
 }
+.chrome_sw,
 #chrome_sw
 {
   -moz-border-bottom-colors: #333 #333 !important;

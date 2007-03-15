@@ -144,9 +144,13 @@ RESIZERS
 */ 
 
 /** TODO Rename **/
+.frame_resize_t,
 #frame_resize_t,
+.frame_resize_to,
 #frame_resize_to,
+.frame_resize_m,
 #frame_resize_m,
+.frame_resize_mo,
 #frame_resize_mo
 {
   height: 9px !important;
