@@ -2178,8 +2178,381 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</FileConfiguration>
 			</File>
 		</Filter>
+		<Filter
+			Name="skin"
+			Filter="">
+			<File
+				RelativePath=".\skin\Makefile.in">
+			</File>
+			<Filter
+				Name="branding"
+				Filter="">
+				<File
+					RelativePath=".\skin\branding\Makefile.in">
+				</File>
+			</Filter>
+			<Filter
+				Name="global"
+				Filter="">
+			</Filter>
+			<Filter
+				Name="dialogs"
+				Filter="">
+				<File
+					RelativePath=".\skin\dialogs\dialogs.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\dialogs\$(InputFileName)"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\dialogs\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\dialogs\$(InputFileName)"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\dialogs\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\dialogs\jar.mn.in">
+				</File>
+				<File
+					RelativePath=".\skin\dialogs\Makefile.in">
+				</File>
+			</Filter>
+			<Filter
+				Name="service-icons"
+				Filter="">
+				<File
+					RelativePath=".\skin\service-icons\amazon.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\cdbaby.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\connect.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\default.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\dogpile.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\elbows.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\emusic.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\google.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\groovesalad.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\insound.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\jar.mn.in">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\Makefile.in">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\ninjam_gui_win.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\odeo.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\radiotime.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\shoutcast.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\singingfish.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\songbird.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\u2.ico">
+				</File>
+				<File
+					RelativePath=".\skin\service-icons\yahoo.ico">
+				</File>
+			</Filter>
+			<Filter
+				Name="bindings"
+				Filter="">
+				<File
+					RelativePath=".\skin\bindings\bindings.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\callout.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\faceplate.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\filterlist.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\jar.mn.in">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\Makefile.in">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\player_controls.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\playlist.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\scrollbar.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\search.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\servicetree.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\smartsplitter.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+		</Filter>
+		<File
+			RelativePath=".\app.rc">
+		</File>
 		<File
 			RelativePath="..\build\msvc\application.ini">
+		</File>
+		<File
+			RelativePath=".\resource.h">
 		</File>
 		<File
 			RelativePath=".\xulrunner\updater.ini">

@@ -87,9 +87,6 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 					RelativePath=".\content\css\base_styles.css">
 				</File>
 				<File
-					RelativePath=".\content\css\dialog.css">
-				</File>
-				<File
 					RelativePath=".\content\css\mainwin.css">
 				</File>
 				<File
