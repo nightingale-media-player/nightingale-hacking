@@ -66,10 +66,9 @@ interface sbILocalDatabaseGUIDArray : nsISupports
 
   void clearFilters();
 
-  AString getByIndex(in unsigned long aIndex);
+  boolean isIndexCached(in unsigned long aIndex);
 
-  [noscript] void getByIndexShared(in unsigned long aIndex,
-                                  [shared] out wstring aGuid);
+  AString getByIndex(in unsigned long aIndex);
 
   AString getSortPropertyValueByIndex(in unsigned long aIndex);
 

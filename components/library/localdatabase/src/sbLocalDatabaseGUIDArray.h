@@ -65,51 +65,51 @@ private:
 
   ~sbLocalDatabaseGUIDArray();
 
-  NS_IMETHOD Initalize();
+  nsresult Initalize();
 
-  NS_IMETHOD UpdateLength();
+  nsresult UpdateLength();
 
-  NS_IMETHODIMP RunLengthQuery(const nsAString& aSql,
-                               PRUint32* _retval);
+  nsresult RunLengthQuery(const nsAString& aSql,
+                          PRUint32* _retval);
 
-  NS_IMETHOD UpdateQueries();
+  nsresult UpdateQueries();
 
   PRBool IsTopLevelProperty(const nsAString& aProperty);
 
-  NS_IMETHODIMP GetPrimarySortKeyPosition(const nsAString& aValue,
-                                          PRUint32 *_retval);
+  nsresult GetPrimarySortKeyPosition(const nsAString& aValue,
+                                     PRUint32 *_retval);
 
-  NS_IMETHODIMP GetTopLevelPropertyColumn(const nsAString& aProperty,
-                                          nsAString& columnName);
+  nsresult GetTopLevelPropertyColumn(const nsAString& aProperty,
+                                     nsAString& columnName);
 
-  NS_IMETHODIMP GetPropertyNullSort(const nsAString& aProperty,
-                                    PRUint32 *_retval);
+  nsresult GetPropertyNullSort(const nsAString& aProperty,
+                               PRUint32 *_retval);
 
-  NS_IMETHODIMP MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
+  nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
 
-  NS_IMETHODIMP AddFiltersToQuery(sbISQLSelectBuilder *aBuilder,
-                                  const nsAString& baseAlias);
+  nsresult AddFiltersToQuery(sbISQLSelectBuilder *aBuilder,
+                             const nsAString& baseAlias);
 
-  NS_IMETHODIMP AddPrimarySortToQuery(sbISQLSelectBuilder *aBuilder,
-                                      const nsAString& baseAlias);
+  nsresult AddPrimarySortToQuery(sbISQLSelectBuilder *aBuilder,
+                                 const nsAString& baseAlias);
 
-  NS_IMETHODIMP FetchRows(PRUint32 aRequestedIndex);
+  nsresult FetchRows(PRUint32 aRequestedIndex);
 
-  NS_IMETHODIMP SortRows(PRUint32 aStartIndex,
-                         PRUint32 aEndIndex,
-                         const nsAString& aKey,
-                         PRBool aIsFirst,
-                         PRBool aIsLast,
-                         PRBool aIsOnly,
-                         PRBool isNull);
+  nsresult SortRows(PRUint32 aStartIndex,
+                    PRUint32 aEndIndex,
+                    const nsAString& aKey,
+                    PRBool aIsFirst,
+                    PRBool aIsLast,
+                    PRBool aIsOnly,
+                    PRBool isNull);
 
-  NS_IMETHODIMP ReadRowRange(const nsAString& aSql,
-                             PRUint32 aStartIndex,
-                             PRUint32 aCount,
-                             PRUint32 aDestIndexOffset,
-                             PRBool isNull);
+  nsresult ReadRowRange(const nsAString& aSql,
+                        PRUint32 aStartIndex,
+                        PRUint32 aCount,
+                        PRUint32 aDestIndexOffset,
+                        PRBool isNull);
 
-  NS_IMETHODIMP GetByIndexInternal(PRUint32 aIndex, ArrayItem** _retval);
+  nsresult GetByIndexInternal(PRUint32 aIndex, ArrayItem** _retval);
 
   PRInt32 GetPropertyId(const nsAString& aProperty);
 
