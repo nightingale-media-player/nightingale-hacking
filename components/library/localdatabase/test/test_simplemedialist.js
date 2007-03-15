@@ -144,11 +144,4 @@ function runTest () {
     lastIndexOfException2 = e;
   }
   assertEqual(lastIndexOfException2.result, Cr.NS_ERROR_INVALID_ARG);
-  
-  // Test listeners
-  var listener1 = new TestMediaListListener();
-  list.addListener(listener1);
-  
-  list.addItem(mediaItem);
-  var listener2 = new TestMediaListListener();
 }
