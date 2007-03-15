@@ -214,51 +214,51 @@ faceplate {
 /* SYSBTNS */
 
 sb-sys-close-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-close-button") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-close-button") !important;
 }
 
 sb-sys-hide-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-hide-button") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-hide-button") !important;
 }
 
 sb-sys-maximize-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-maximize-button") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-maximize-button") !important;
 }
 
 sb-sys-minimize-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-minimize-button") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-minimize-button") !important;
 }
 
 sb-sys-buttons {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-buttons") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-buttons") !important;
 }
 
 sb-sys-osx-buttons {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-osx-buttons") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-osx-buttons") !important;
 }
 
 sb-sys-osx-feathers {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-osx-feathers") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-osx-feathers") !important;
 }
 
 sb-sys-icon {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-icon") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-icon") !important;
 }
 
 sb-sys-title {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-title") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-title") !important;
 }
 
 sb-sys-dialog-titlebar {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-dialog-titlebar") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-dialog-titlebar") !important;
 }
 
 sb-sys-titlebar {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-titlebar") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-titlebar") !important;
 }
 
 sb-sys-outer-frame {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-outer-frame") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-outer-frame") !important;
 }
 
 
