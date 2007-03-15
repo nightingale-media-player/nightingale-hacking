@@ -35,6 +35,7 @@ XPIDL_SRCS = sbILocalDatabaseSmartMediaList.idl \
              sbILocalDatabaseTreeView.idl \
              sbILocalDatabaseLibraryFactory.idl \
              sbILocalDatabaseLibrary.idl \
+             sbILocalDatabaseMediaItem.idl \
              $(NULL)
 
 #XPIDL_HEADER_SRCS += sbILocalDatabaseLibrary.idl \

@@ -216,11 +216,8 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
     }
     else {
       if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
-        nsAutoString baseTable;
-        rv = mBuilder->GetBaseTableName(baseTable);
-        NS_ENSURE_SUCCESS(rv, rv);
 
-        if (baseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
+        if (mBaseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
           rv = mBuilder->AddColumn(CONSTRAINT_ALIAS,
                                    ORDINAL_COLUMN);
           NS_ENSURE_SUCCESS(rv, rv);

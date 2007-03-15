@@ -388,7 +388,7 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI *aUri,
    */
   char buf[20];
   int len = PR_snprintf(buf, sizeof(buf), "%lld",
-                     PRUint64((PR_Now() / PR_USEC_PER_MSEC)));
+                        PRUint64((PR_Now() / PR_USEC_PER_MSEC)));
   buf[sizeof(buf) - 1] = '\0';
   nsAutoString create = NS_ConvertASCIItoUTF16(buf, len);
 

@@ -29,19 +29,22 @@
 #include <nsMemory.h>
 #include <nsIProgrammingLanguage.h>
 
-NS_IMPL_ISUPPORTS3(sbLocalDatabaseMediaItem,
+NS_IMPL_ISUPPORTS4(sbLocalDatabaseMediaItem,
                    sbILibraryResource,
                    sbIMediaItem,
+                   sbILocalDatabaseMediaItem,
                    nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER2(sbLocalDatabaseMediaItem,
+NS_IMPL_CI_INTERFACE_GETTER3(sbLocalDatabaseMediaItem,
                              sbILibraryResource,
-                             sbIMediaItem)
+                             sbIMediaItem,
+                             sbILocalDatabaseMediaItem)
 
 sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem(sbILocalDatabaseLibrary* aLibrary,
                                                    const nsAString& aGuid) :
  mLibrary(aLibrary),
- mGuid(aGuid)
+ mGuid(aGuid),
+ mMediaItemId(0)
 {
 }
 
@@ -49,6 +52,7 @@ sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
 {
 }
 
+// sbIMediaItem
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetLibrary(sbILibrary** aLibrary)
 {
@@ -210,6 +214,19 @@ sbLocalDatabaseMediaItem::Equals(sbIMediaItem* aOtherItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   *_retval = mGuid.Equals(otherGUID);
+  return NS_OK;
+}
+
+// sbILocalDatabaseMediaItem
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::GetMediaItemId(PRUint32 *_retval)
+{
+  if (mMediaItemId == 0) {
+    nsresult rv = mLibrary->GetMediaItemIdForGuid(mGuid, &mMediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  *_retval = mMediaItemId;
   return NS_OK;
 }
 

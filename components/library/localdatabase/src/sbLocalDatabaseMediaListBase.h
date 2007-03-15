@@ -29,6 +29,7 @@
 
 #include <sbILocalDatabaseLibrary.h>
 #include <sbLocalDatabaseLibrary.h>
+#include <sbLocalDatabaseMediaItem.h>
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
@@ -41,6 +42,7 @@
 #include <sbIMediaListListener.h>
 
 class sbLocalDatabaseMediaListBase : public sbIMediaList,
+                                     public sbILocalDatabaseMediaItem,
                                      public nsIClassInfo
 {
   typedef nsTArray<nsString> sbStringArray;
@@ -52,6 +54,7 @@ public:
   NS_DECL_SBILIBRARYRESOURCE
   NS_DECL_SBIMEDIAITEM
   NS_DECL_SBIMEDIALIST
+  NS_DECL_SBILOCALDATABASEMEDIAITEM
   NS_DECL_NSICLASSINFO
 
   sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
@@ -134,28 +137,24 @@ private:
   inline PRBool InitializeListenerProxyTable();
 
 protected:
-  /*
-   * The library this media list instance belogs to
-   */
+
+  // The library this media list instance belogs to
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
 
-  /*
-   * The guid of this media list
-   */
+  // The guid of this media list
   nsString mGuid;
 
-  /*
-   * The mViewArray is the guid array that represents the contents of the
-   * media list when viewed in the UI.  This is the array that gets updated
-   * from calls through the sbI*ableMediaList interfaces.  The contents of this
-   * array does not affect the API level list manupulation methods
-   */
+  // The media item id of the media list
+  PRUint32 mMediaItemId;
+
+  // The mViewArray is the guid array that represents the contents of the
+  // media list when viewed in the UI.  This is the array that gets updated
+  // from calls through the sbI*ableMediaList interfaces.  The contents of this
+  // array does not affect the API level list manupulation methods
   nsCOMPtr<sbILocalDatabaseGUIDArray> mViewArray;
 
-  /*
-   * The mFullArray is a cached version of the full contents of the media
-   * list this instance represents.
-   */
+  // The mFullArray is a cached version of the full contents of the media
+  // list this instance represents.
   nsCOMPtr<sbILocalDatabaseGUIDArray> mFullArray;
 
 private:

@@ -47,7 +47,7 @@ create index idx_resource_properties_property_id_obj_sortable_guid on resource_p
 create table simple_media_lists (
   media_item_id integer not null,
   member_media_item_id integer not null,
-  ordinal integer not null collate tree
+  ordinal text not null collate tree
 );
 create index idx_simple_media_lists_media_item_id_member_media_item_id on simple_media_lists (media_item_id, member_media_item_id, ordinal);
 

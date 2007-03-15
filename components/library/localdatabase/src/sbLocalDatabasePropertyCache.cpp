@@ -84,7 +84,7 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache() :
 {
   mNumStaticProperties = sizeof(kStaticProperties) / sizeof(kStaticProperties[0]);
 
-  #ifdef PR_LOGGING
+#ifdef PR_LOGGING
   if (!gLocalDatabasePropertyCacheLog) {
     gLocalDatabasePropertyCacheLog = PR_NewLogModule("LocalDatabasePropertyCache");
   }

@@ -32,6 +32,7 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
 #include <nsStringGlue.h>
+#include <prlock.h>
 
 class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase
 {
@@ -43,16 +44,52 @@ public:
 
   nsresult Init();
 
+  // override base class
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
   NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);
   NS_IMETHOD Add(sbIMediaItem *aMediaItem);
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems);
+  NS_IMETHOD InsertBefore(PRUint32 aIndex, sbIMediaItem* aMediaItem);
+  NS_IMETHOD MoveBefore(PRUint32 aFromIndex, PRUint32 aToIndex);
+  NS_IMETHOD MoveLast(PRUint32 aIndex);
 
 private:
   ~sbLocalDatabaseSimpleMediaList();
 
+  nsresult ExecuteAggregateQuery(const nsAString& aQuery, nsAString& aValue);
+
+  nsresult UpdateOrdinalByIndex(PRUint32 aIndex, const nsAString& aOrdinal);
+
+  nsresult GetNextOrdinal(nsAString& aValue);
+
+  nsresult GetBeforeOrdinal(PRUint32 aIndex, nsAString& aValue);
+
+  nsresult AddToLastPathSegment(nsAString& aPath, PRInt32 aToAdd);
+
+  PRUint32 CountLevels(const nsAString& aPath);
+
+  // Query to get the media item id for a given guid, constrained to the
+  // items within this simple media list
   nsString mGetMediaItemIdForGuidQuery;
+
+  // Query to insert a new item into this list
+  nsString mInsertIntoListQuery;
+
+  // Query to update the ordinal of a media item in this list
+  nsString mUpdateListItemOrdinalQuery;
+
+  // Get last ordinal
+  nsString mGetLastOrdinalQuery;
+
+  // Get first ordinal
+  nsString mGetFirstOrdinalQuery;
+
+  // This lock is used to make sure determining a new item's ordinal is atomic
+  // with the database insert
+  static PRLock* sListUpdateLock;
+  static PRInt32 sInstanceCount;
+  static PRInt32 sLockFailed;
 };
 
 #endif /* __SBLOCALDATABASESIMPLEMEDIALIST_H__ */

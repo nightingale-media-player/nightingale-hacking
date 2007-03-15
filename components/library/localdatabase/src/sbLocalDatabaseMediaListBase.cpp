@@ -57,21 +57,24 @@
 #define SB_CONTINUE_IF_FAILED(_rv)                         \
   SB_CONTINUE_IF_FALSE(NS_SUCCEEDED(_rv))
 
-NS_IMPL_ISUPPORTS4(sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS5(sbLocalDatabaseMediaListBase,
                    sbILibraryResource,
                    sbIMediaItem,
+                   sbILocalDatabaseMediaItem,
                    sbIMediaList,
                    nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER3(sbLocalDatabaseMediaListBase,
+NS_IMPL_CI_INTERFACE_GETTER4(sbLocalDatabaseMediaListBase,
                              sbILibraryResource,
                              sbIMediaItem,
+                             sbILocalDatabaseMediaItem,
                              sbIMediaList)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
                                                            const nsAString& aGuid) :
   mLibrary(aLibrary),
-  mGuid(aGuid)
+  mGuid(aGuid),
+  mMediaItemId(0)
 {
 }
 
@@ -590,7 +593,7 @@ sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
   nsresult rv = mFullArray->GetLength(&count);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ENSURE_TRUE(count >= 1, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(count >= 1, NS_ERROR_NOT_AVAILABLE);
 
   NS_ENSURE_ARG_MAX(aStartFrom, count - 1);
 
@@ -623,7 +626,7 @@ sbLocalDatabaseMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
   nsresult rv = mFullArray->GetLength(&count);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ENSURE_TRUE(count >= 1, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(count >= 1, NS_ERROR_NOT_AVAILABLE);
 
   NS_ENSURE_ARG_MAX(aStartFrom, count - 1);
 
@@ -950,6 +953,20 @@ sbLocalDatabaseMediaListBase::Equals(sbIMediaItem* aOtherItem,
   *_retval = mGuid.Equals(otherGUID);
   return NS_OK;
 }
+
+// sbILocalDatabaseMediaItem
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetMediaItemId(PRUint32 *_retval)
+{
+  if (mMediaItemId == 0) {
+    nsresult rv = mLibrary->GetMediaItemIdForGuid(mGuid, &mMediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  *_retval = mMediaItemId;
+  return NS_OK;
+}
+
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetUri(nsIURI** aUri)

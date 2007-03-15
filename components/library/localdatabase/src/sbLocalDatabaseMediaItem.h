@@ -33,18 +33,21 @@
 #include <sbILibraryResource.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
+#include <sbILocalDatabaseMediaItem.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <nsIClassInfo.h>
 
 class sbLocalDatabaseMediaItem : public sbIMediaItem,
+                                 public sbILocalDatabaseMediaItem,
                                  public nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILIBRARYRESOURCE
   NS_DECL_SBIMEDIAITEM
+  NS_DECL_SBILOCALDATABASEMEDIAITEM
   NS_DECL_NSICLASSINFO
 
   sbLocalDatabaseMediaItem(sbILocalDatabaseLibrary* aLibrary,
@@ -55,6 +58,7 @@ private:
 
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
   nsString mGuid;
+  PRUint32 mMediaItemId;
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> mProperties;
 };
 

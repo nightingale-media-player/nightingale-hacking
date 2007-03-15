@@ -36,7 +36,7 @@ interface sbILocalDatabaseResourcePropertyBag;
 
 /**
 * \interface sbILocalDatabaseLibrary
-* \brief Interal use only
+* \brief Internal use only
 */
 [uuid(2fbd49f8-3c95-437b-b3ac-efaeefb86d6a)]
 interface sbILocalDatabaseLibrary : nsISupports
