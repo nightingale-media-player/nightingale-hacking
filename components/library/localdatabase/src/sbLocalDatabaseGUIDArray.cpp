@@ -259,6 +259,22 @@ sbLocalDatabaseGUIDArray::ClearFilters()
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::IsIndexCached(PRUint32 aIndex,
+                                        PRBool *_retval)
+{
+  if (aIndex < mCache.Length()) {
+    ArrayItem* item = mCache[aIndex];
+    if (item) {
+      *_retval = PR_TRUE;
+      return NS_OK;
+    }
+  }
+
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetByIndex(PRUint32 aIndex,
                                      nsAString& _retval)
 {
@@ -269,21 +285,6 @@ sbLocalDatabaseGUIDArray::GetByIndex(PRUint32 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   _retval.Assign(item->guid);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetByIndexShared(PRUint32 aIndex,
-                                           const PRUnichar **aGuid)
-{
-  nsresult rv;
-
-  ArrayItem* item;
-  rv = GetByIndexInternal(aIndex, &item);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-   *aGuid = item->guid.get();
-
   return NS_OK;
 }
 
@@ -384,7 +385,7 @@ sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::Initalize()
 {
   nsresult rv;
@@ -449,7 +450,7 @@ sbLocalDatabaseGUIDArray::Initalize()
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::UpdateLength()
 {
   nsresult rv;
@@ -468,7 +469,7 @@ sbLocalDatabaseGUIDArray::UpdateLength()
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::RunLengthQuery(const nsAString& aSql,
                                          PRUint32* _retval)
 {
@@ -509,7 +510,7 @@ sbLocalDatabaseGUIDArray::RunLengthQuery(const nsAString& aSql,
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::UpdateQueries()
 {
 
@@ -843,7 +844,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
  return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
                                     sbIDatabaseQuery** _retval)
 {
@@ -870,7 +871,7 @@ sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::AddFiltersToQuery(sbISQLSelectBuilder *aBuilder,
                                             const nsAString& baseAlias)
 {
@@ -1022,7 +1023,7 @@ sbLocalDatabaseGUIDArray::AddFiltersToQuery(sbISQLSelectBuilder *aBuilder,
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::AddPrimarySortToQuery(sbISQLSelectBuilder *aBuilder,
                                                 const nsAString& baseAlias)
 {
@@ -1097,7 +1098,7 @@ sbLocalDatabaseGUIDArray::AddPrimarySortToQuery(sbISQLSelectBuilder *aBuilder,
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
 {
   nsresult rv;
@@ -1207,7 +1208,7 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
                                        PRUint32 aStartIndex,
                                        PRUint32 aCount,
@@ -1285,17 +1286,18 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     ArrayItem* item = new ArrayItem(guid);
     NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
+    PRUnichar* value;
+    rv = result->GetRowCellPtr(i, 1, &value);
+    NS_ENSURE_SUCCESS(rv, rv);
+    item->sortPropertyValue = value;
+
     NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + aDestIndexOffset, 1, item),
                    NS_ERROR_OUT_OF_MEMORY);
 
     LOG_DEBUG(("ReplaceElementsAt %d %s", i + aDestIndexOffset,
                NS_ConvertUTF16toUTF8(item->guid).get()));
     if (needsSorting) {
-      PRUnichar* value;
-      rv = result->GetRowCellPtr(i, 1, &value);
-      NS_ENSURE_SUCCESS(rv, rv);
-      item->sortPropertyValue = value;
-      if (isFirstValue || !lastSortedValue.Equals(value)) {
+      if (isFirstValue || !lastSortedValue.Equals(item->sortPropertyValue)) {
         if (!isFirstValue) {
           rv = SortRows(aDestIndexOffset + firstIndex,
                         aDestIndexOffset + i - 1,
@@ -1307,7 +1309,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
           NS_ENSURE_SUCCESS(rv, rv);
           isFirstSort = PR_FALSE;
         }
-        lastSortedValue.Assign(value);
+        lastSortedValue.Assign(item->sortPropertyValue);
         firstIndex = i;
         isFirstValue = PR_FALSE;
       }
@@ -1348,7 +1350,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
                                    PRUint32 aEndIndex,
                                    const nsAString& aKey,
@@ -1480,7 +1482,7 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::GetPrimarySortKeyPosition(const nsAString& aValue,
                                                     PRUint32 *_retval)
 {
@@ -1536,7 +1538,7 @@ sbLocalDatabaseGUIDArray::GetPrimarySortKeyPosition(const nsAString& aValue,
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::GetTopLevelPropertyColumn(const nsAString& aProperty,
                                                     nsAString& columnName)
 {
@@ -1570,7 +1572,7 @@ sbLocalDatabaseGUIDArray::GetTopLevelPropertyColumn(const nsAString& aProperty,
   }
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
                                              ArrayItem** _retval)
 {
@@ -1583,9 +1585,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if (aIndex >= mLength) {
-    return NS_ERROR_ILLEGAL_VALUE;
-  }
+  NS_ENSURE_ARG_MAX(aIndex, mLength);
 
   /*
    * Check to see if we have this index in cache
@@ -1639,7 +1639,7 @@ sbLocalDatabaseGUIDArray::IsTopLevelProperty(const nsAString& aProperty)
 
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseGUIDArray::GetPropertyNullSort(const nsAString& aProperty,
                                               PRUint32 *_retval)
 {
