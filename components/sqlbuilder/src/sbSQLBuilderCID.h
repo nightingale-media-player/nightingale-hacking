@@ -42,3 +42,9 @@
 #define SB_SQLBUILDER_UPDATE_CONTRACTID \
   "@songbirdnest.com/Songbird/SQLBuilder/Update;1"
 
+#define SB_SQLBUILDER_DELETE_CID \
+  { 0x908dd5de, 0xd31b, 0x469d, \
+  { 0xa0, 0x1a, 0xbf, 0xba, 0x69, 0xe7, 0x75, 0xaf } }
+#define SB_SQLBUILDER_DELETE_CONTRACTID \
+  "@songbirdnest.com/Songbird/SQLBuilder/Delete;1"
+

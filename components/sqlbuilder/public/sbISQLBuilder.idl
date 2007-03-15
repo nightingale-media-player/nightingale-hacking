@@ -287,16 +287,37 @@ interface sbISQLInsertBuilder : sbISQLBuilder
    */
   void addColumn(in AString aColumnName);
 
+  /**
+   * \brief Add a string value to the value list
+   * \param aValue String value to add
+   */
   void addValueString(in AString aValue);
 
+  /**
+   * \brief Add a long value to the value list
+   * \param aValue Long value to add
+   */
   void addValueLong(in long aValue);
 
+  /**
+   * \brief Add a null to the value list
+   */
   void addValueNull();
 
+  /**
+   * \brief Add a parameter to the value list
+   */
   void addValueParameter();
 
+  /**
+   * \brief Table to insert into
+   */
   attribute AString intoTableName;
 
+  /**
+   * \brief Select statement to use as the source of data for the insert.
+   *        This can be used in place of the value list.
+   */
   attribute sbISQLSelectBuilder select;
 };
 
@@ -307,12 +328,37 @@ interface sbISQLInsertBuilder : sbISQLBuilder
 [scriptable, uuid(68991dbd-83f0-4df9-b3f6-89d0982ed491)]
 interface sbISQLUpdateBuilder : sbISQLWhereBuilder
 {
+  /**
+   * \brief Table to update
+   */
   attribute AString tableName;
 
+  /**
+   * \brief Add a string assignment to the set clause
+   * \param aColumnName Column to set
+   * \param aValue String value to set the column to
+   */
   void addAssignmentString(in AString aColumnName,
                            in AString aValue);
 
+  /**
+   * \brief Add a parameter assignment to the set clause
+   * \param aColumnName Column to set
+   */
   void addAssignmentParameter(in AString aColumnName);
+};
+
+/**
+ * \interface sbISQLSelectBuilder
+ * \brief Interface for building DELETE statements
+ */
+[scriptable, uuid(73a18b36-2eee-429e-9cda-1f4428c3afb5)]
+interface sbISQLDeleteBuilder : sbISQLWhereBuilder
+{
+  /**
+   * \brief Table to delete from
+   */
+  attribute AString tableName;
 };
 
 /**

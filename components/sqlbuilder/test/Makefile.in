@@ -36,6 +36,7 @@ SONGBIRD_TESTS = $(srcdir)/test_misc.js \
                  $(srcdir)/test_join.js \
                  $(srcdir)/test_insert.js \
                  $(srcdir)/test_update.js \
+                 $(srcdir)/test_delete.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

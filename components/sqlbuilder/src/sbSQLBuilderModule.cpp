@@ -29,11 +29,13 @@
 #include "sbSQLSelectBuilder.h"
 #include "sbSQLInsertBuilder.h"
 #include "sbSQLUpdateBuilder.h"
+#include "sbSQLDeleteBuilder.h"
 #include "sbSQLBuilderCID.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLSelectBuilder)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLInsertBuilder)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLUpdateBuilder)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLDeleteBuilder)
 
 static const nsModuleComponentInfo components[] =
 {
@@ -54,6 +56,12 @@ static const nsModuleComponentInfo components[] =
     SB_SQLBUILDER_UPDATE_CID,
     SB_SQLBUILDER_UPDATE_CONTRACTID,
     sbSQLUpdateBuilderConstructor
+  },
+  {
+    "SQLBuilder for DELETE statements",
+    SB_SQLBUILDER_DELETE_CID,
+    SB_SQLBUILDER_DELETE_CONTRACTID,
+    sbSQLDeleteBuilderConstructor
   }
 };
 

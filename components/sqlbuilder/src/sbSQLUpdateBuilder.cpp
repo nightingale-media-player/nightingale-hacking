@@ -26,7 +26,6 @@
 
 #include "sbSQLUpdateBuilder.h"
 #include "sbSQLWhereBuilder.h"
-#include "sbSQLBuilderCriterion.h"
 
 NS_IMPL_ISUPPORTS_INHERITED1(sbSQLUpdateBuilder,
                              sbSQLWhereBuilder,

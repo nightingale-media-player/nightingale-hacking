@@ -37,6 +37,7 @@ CPP_SRCS = sbSQLBuilderModule.cpp \
            sbSQLSelectBuilder.cpp \
            sbSQLInsertBuilder.cpp \
            sbSQLUpdateBuilder.cpp \
+           sbSQLDeleteBuilder.cpp \
            sbSQLBuilderCriterion.cpp \
            $(NULL)
 
