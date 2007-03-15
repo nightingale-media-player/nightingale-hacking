@@ -144,11 +144,6 @@ try
   }
   
   function onLoadJumpToFile() {
-    try {
-      fixWindow("window_top", "app_title"); 
-    }
-    catch (e) { }
-
     if (!SBDataGetBoolValue("jumpto.nosavestate")) {
       SBDataSetIntValue("jumpto.visible", 1)
     }

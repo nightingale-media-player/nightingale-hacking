@@ -149,8 +149,7 @@ These pieces paint the resizeable window for Songbird.
   background: #FFF !important;
 }
 
-.chrome_bkgd,
-#chrome_bkgd
+.sb-sys-outer-frame-chrome-bkgd
 {
   background-image: url(default/chrome_bkgd.png) !important; /** <img src="default/chrome_bkgd.png"> */
   background-color: transparent !important;
@@ -1272,7 +1271,7 @@ THE MAIN PANE
   height: 10px !important;
 }
 
-#frame_resize_t
+#sb-sys-outer-frame-resizer-t
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 9px !important;
@@ -1281,7 +1280,7 @@ THE MAIN PANE
   list-style-image: none !important;
 }
 
-#frame_resize_to
+#sb-sys-outer-frame-resizer-to
 {
   -moz-appearance: none !important; /* grrrr! */
   width: 16px !important;
@@ -1291,7 +1290,7 @@ THE MAIN PANE
   list-style-image: none !important;
 }
 
-#frame_resize_m
+#sb-sys-outer-frame-resizer-m
 {
   -moz-appearance: none !important; /* grrrr! */
   width: 9px !important;  
@@ -1299,7 +1298,7 @@ THE MAIN PANE
   list-style-image: none !important;
 }
 
-#frame_resize_mo
+#sb-sys-outer-frame-resizer-mo
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 16px !important;

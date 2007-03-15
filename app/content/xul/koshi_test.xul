@@ -43,66 +43,23 @@
  spacers_drag_window="true"
 >
   
-<windowregion/>
+  <windowregion/>
 
-<stack flex="1">
-
-  <vbox class="sb_faceplate" flex="1" ="onBkgDown( event );" onmouseup="onBkgUp();">
-    <hbox class="sb_faceplate">
-        <image id="chrome_nw" class="sb_faceplate"/>
-        <image id="chrome_n" class="sb_faceplate" flex="1"/>
-        <image id="chrome_ne" class="sb_faceplate"/>
-    </hbox>
-    <hbox class="sb_faceplate" flex="1">
-        <image id="chrome_w" class="sb_faceplate"/>
-        <spacer ="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
-        <image id="chrome_e" class="sb_faceplate"/>
-    </hbox>
-    <hbox class="sb_faceplate">
-        <image id="chrome_sw" class="sb_faceplate"/>
-        <image id="chrome_s" class="sb_faceplate" flex="1"/>
-        <image id="chrome_se" class="sb_faceplate"/>
-    </hbox>
-  </vbox>
-
-  <vbox class="sb_faceplate">
-    <hbox class="sb_faceplate">
-      <spacer height="8" ="onBkgDown( event );" onmouseup="onBkgUp();"/> 
-    </hbox>
-    <hbox class="sb_faceplate" flex="1">
-      <spacer width="8" ="onBkgDown( event );" onmouseup="onBkgUp();" />
-      <vbox class="sb_faceplate chrome_bkgd" flex="1">        
+  <sb-sys-outer-frame resizers="none" flex="1">
+    <sb-sys-dialog-titlebar/>
       
-        <hbox id="window_top" class="sb_faceplate" >
-          <label id="app_title" value="&watchfolder.title;" class="sb_faceplate" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
-          <spacer width="5" ="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
-          <spacer flex="1" ="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-          <spacer width="5" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
-          <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
-        </hbox>
-        
-        <label class="dialog_label" value="&watchfolder.folderlist;" />
-        <spacer height="1" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
-        <watch_folders id="watch_folders" browse="&window.browse;" flex="1"/>
-        <spacer height="6" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
-        
-        <hbox>
-          <spacer flex="1" ="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-          <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-          <spacer width="5" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
-          <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
-        </hbox>
-        
-      </vbox>
-      <spacer width="8" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
+    <label class="dialog_label" value="&watchfolder.folderlist;" />
+    <spacer height="1" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
+    <watch_folders id="watch_folders" browse="&window.browse;" flex="1"/>
+    <spacer height="6" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
+    
+    <hbox>
+      <spacer flex="1" ="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <spacer width="5" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
     </hbox>
-    <hbox class="sb_faceplate" id="frame_bottom_resizers">
-      <x_resizer id="frame_resize_to" dir="bottomleft" x_style="cursor: sw-resize;"/>
-      <x_resizer id="frame_resize_t" dir="bottom" x_style="cursor: s-resize;" flex="1"/>
-      <x_resizer id="frame_resize_to" dir="bottomright" x_style="cursor: se-resize;"/>
-    </hbox>
-  </vbox>
-</stack>
+  </sb-sys-outer-frame>
   
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/dragWindow.js" />

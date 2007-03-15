@@ -144,14 +144,18 @@ RESIZERS
 */ 
 
 /** TODO Rename **/
-.frame_resize_t,
-#frame_resize_t,
-.frame_resize_to,
-#frame_resize_to,
-.frame_resize_m,
-#frame_resize_m,
-.frame_resize_mo,
-#frame_resize_mo
+.sb-sys-outer-frame-resizer-t,
+.sb-sys-outer-frame-resizer-tl,
+.sb-sys-outer-frame-resizer-tr,
+.sb-sys-outer-frame-resizer-b,
+.sb-sys-outer-frame-resizer-bl,
+.sb-sys-outer-frame-resizer-br,
+.sb-sys-outer-frame-resizer-lt,
+.sb-sys-outer-frame-resizer-l,
+.sb-sys-outer-frame-resizer-lb,
+.sb-sys-outer-frame-resizer-rt,
+.sb-sys-outer-frame-resizer-r,
+.sb-sys-outer-frame-resizer-rb
 {
   height: 9px !important;
   width: 9px !important;

@@ -1110,11 +1110,33 @@
     </implementation>
   </binding>
 
+  <binding id="sb-sys-hide-button" extends="chrome://global/content/bindings/button.xml#button">
+    <handlers>
+      <handler event="command" action="onHideButtonClick();"/>
+    </handlers>
+    <implementation>
+      <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.hide;")
+        if ( this.getAttribute("hidden") != "true" ) // not hidden already
+          this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._visibilityBinding) {
+            this._visibilityBinding.unbind();
+            this._visibilityBinding = null;
+          }
+        ]]>
+      </destructor>
+    </implementation>
+  </binding>
+
   <binding id="sb-sys-buttons">
     <content>
       <xul:sb-sys-minimize-button sbid="mini"/>
       <xul:sb-sys-maximize-button sbid="maxi"/>
       <xul:sb-sys-close-button sbid="close" xbl:inherits="type"/>
+      <xul:sb-sys-hide-button sbid="hide" hidden="true"/>
     </content>
     <implementation>
       <constructor>
@@ -1128,10 +1150,18 @@
             // Hidden when "Plucked" ("accessibility.enabled" == "1")
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
 
-          if ( this.getAttribute( "type" ) == "dialog" ) {
-            // Hidden if we only want to show the close.
-            document.getAnonymousElementByAttribute(this, 'sbid', 'mini').setAttribute( "hidden", "true" );
-            document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "hidden", "true" );
+          switch ( this.getAttribute( "type" ) )
+          {
+            case "dialog":
+              // Hidden if we only want to show the close.
+              document.getAnonymousElementByAttribute(this, 'sbid', 'mini').setAttribute( "hidden", "true" );
+              document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "hidden", "true" );
+              break;
+            case "hide":
+              // Switch if this box should hide instead of close.
+              document.getAnonymousElementByAttribute(this, 'sbid', 'close').setAttribute( "hidden", "true" );
+              document.getAnonymousElementByAttribute(this, 'sbid', 'hide').setAttribute( "hidden", "false" );
+              break;
           }
         ]]>
       </constructor>
@@ -1148,6 +1178,7 @@
 
   <binding id="sb-sys-osx-buttons">
     <content>
+      <xul:sb-sys-hide-button sbid="hide" hidden="true"/>
       <xul:sb-sys-close-button sbid="close" xbl:inherits="type"/>
       <xul:sb-sys-minimize-button sbid="mini"/>
       <xul:sb-sys-maximize-button sbid="maxi"/>
@@ -1164,10 +1195,19 @@
             // Hidden when "Plucked" ("accessibility.enabled" == "1")
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
             
-          if ( this.getAttribute( "type" ) == "dialog" ) {
-            // Hidden if we only want to show the close.
-            document.getAnonymousElementByAttribute(this, 'sbid', 'mini').setAttribute( "hidden", "true" );
-            document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "hidden", "true" );
+          var type = this.getAttribute( "type" );
+          switch ( type )
+          {
+            case "dialog":
+              // Hidden if we only want to show the close.
+              document.getAnonymousElementByAttribute(this, 'sbid', 'mini').setAttribute( "hidden", "true" );
+              document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "hidden", "true" );
+              break;
+            case "hide":
+              // Switch if this box should hide instead of close.
+              document.getAnonymousElementByAttribute(this, 'sbid', 'close').setAttribute( "hidden", "true" );
+              document.getAnonymousElementByAttribute(this, 'sbid', 'hide').setAttribute( "hidden", "false" );
+              break;
           }
         ]]>
       </constructor>
@@ -1225,7 +1265,7 @@
           if ( value.length == 0 )
           {
             // Then set us to the title of the window.          
-            document.getAnonymousElementByAttribute(this, 'sbid', 'title').setAttribute( "value", window.title ); 
+            document.getAnonymousElementByAttribute(this, 'sbid', 'title').setAttribute( "value", document.title ); 
             // TODO: Watch the title attribute and reflect it here?
           }
         ]]>
@@ -1293,12 +1333,12 @@
           <xul:sb-sys-title xbl:inherits="value"/> 
         </xul:hbox>
         <xul:hbox>
-          <xul:sb-sys-osx-buttons/>
+          <xul:sb-sys-osx-buttons xbl:inherits="type"/>
           <xul:sb-sys-icon/>
           <xul:sb-sys-title sbid="hide_mac" xbl:inherits="value"/> 
           <xul:sb-sys-menubar/>
           <xul:spacer flex="1"/>
-          <xul:sb-sys-buttons/>
+          <xul:sb-sys-buttons xbl:inherits="type"/>
         </xul:hbox>
       </xul:stack>
     </content>
@@ -1329,65 +1369,72 @@
 
         <xul:vbox flex="1">
           <xul:hbox>
-              <xul:image class="chrome_nw"/>
-              <xul:image class="chrome_n" flex="1"/>
-              <xul:image class="chrome_ne"/>
+              <xul:image sbid="c1" class="sb-sys-outer-frame-chrome-nw"/>
+              <xul:image sbid="c2" class="sb-sys-outer-frame-chrome-n" flex="1"/>
+              <xul:image sbid="c3" class="sb-sys-outer-frame-chrome-ne"/>
           </xul:hbox>
           <xul:hbox flex="1">
-              <xul:image class="chrome_w"/>
+              <xul:image sbid="c4" class="sb-sys-outer-frame-chrome-w"/>
               <xul:spacer flex="1"/>
-              <xul:image class="chrome_e"/>
+              <xul:image sbid="c5" class="sb-sys-outer-frame-chrome-e"/>
           </xul:hbox>
           <xul:hbox>
-              <xul:image class="chrome_sw"/>
-              <xul:image class="chrome_s" flex="1"/>
-              <xul:image class="chrome_se"/>
+              <xul:image sbid="c6" class="sb-sys-outer-frame-chrome-sw"/>
+              <xul:image sbid="c7" class="sb-sys-outer-frame-chrome-s" flex="1"/>
+              <xul:image sbid="c8" class="sb-sys-outer-frame-chrome-se"/>
           </xul:hbox>
         </xul:vbox>
         
         <xul:vbox flex="1">
           <xul:hbox>
-            <xul:resizer hidden="true" sbid="r1" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="topleft" style="cursor: nw-resize;"/>
-            <xul:xresizer hidden="true" sbid="x1" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="topleft"/>
-            <xul:resizer hidden="true" sbid="r2" oncommand="onWindowResizeComplete()" class="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
-            <xul:xresizer hidden="true" sbid="x2" oncommand="onWindowResizeComplete()" class="frame_resize_t" dir="top" flex="1"/>
-            <xul:resizer hidden="true" sbid="r3" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
-            <xul:xresizer hidden="true" sbid="x3" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="topright"/>
+            <xul:resizer hidden="true" sbid="r1" class="sb-sys-outer-frame-resizer-tl" dir="topleft" style="cursor: nw-resize;"/>
+            <xul:spacer hidden="true" sbid="x1" class="sb-sys-outer-frame-resizer-tl"/>
+            <xul:resizer hidden="true" sbid="r2" class="sb-sys-outer-frame-resizer-t" dir="top" style="cursor: n-resize;" flex="1"/>
+            <xul:spacer hidden="true" sbid="x2" class="sb-sys-outer-frame-resizer-t" flex="1"/>
+            <xul:resizer hidden="true" sbid="r3" class="sb-sys-outer-frame-resizer-tr" dir="topright" style="cursor: ne-resize;"/>
+            <xul:spacer hidden="true" sbid="x3" class="sb-sys-outer-frame-resizer-tr"/>
           </xul:hbox>
           <xul:hbox flex="1">
             <xul:vbox>
-              <xul:resizer hidden="true" sbid="r4" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
-              <xul:xresizer hidden="true" sbid="x4" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="topleft"/>
-              <xul:resizer hidden="true" sbid="r5" oncommand="onWindowResizeComplete()" class="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
-              <xul:xresizer hidden="true" sbid="x5" oncommand="onWindowResizeComplete()" class="frame_resize_m" dir="left" flex="1"/>
-              <xul:resizer hidden="true" sbid="r6" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
-              <xul:xresizer hidden="true" sbid="x6" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="bottomleft"/>
+              <xul:resizer hidden="true" sbid="r4" class="sb-sys-outer-frame-resizer-lt" dir="topleft" style="cursor: nw-resize;"/>
+              <xul:spacer hidden="true" sbid="x4" class="sb-sys-outer-frame-resizer-lt"/>
+              <xul:resizer hidden="true" sbid="r5" class="sb-sys-outer-frame-resizer-l" dir="left" style="cursor: w-resize;" flex="1"/>
+              <xul:spacer hidden="true" sbid="x5" class="sb-sys-outer-frame-resizer-l" flex="1"/>
+              <xul:resizer hidden="true" sbid="r6" class="sb-sys-outer-frame-resizer-lb" dir="bottomleft" style="cursor: sw-resize;"/>
+              <xul:spacer hidden="true" sbid="x6" class="sb-sys-outer-frame-resizer-lb"/>
             </xul:vbox>
 
-            <children/>
+            <xul:vbox class="chrome_bkgd" flex="1">
+              <children/>
+            </xul:vbox>
                   
             <xul:vbox>
-              <xul:resizer hidden="true" sbid="r7" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
-              <xul:xresizer hidden="true" sbid="x7" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="topright"/>
-              <xul:resizer hidden="true" sbid="r8" oncommand="onWindowResizeComplete()" class="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
-              <xul:xresizer hidden="true" sbid="x8" oncommand="onWindowResizeComplete()" class="frame_resize_m" dir="right" flex="1"/>
-              <xul:resizer hidden="true" sbid="r9" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="bottomright" style="cursor: se-resize;"/>
-              <xul:xresizer hidden="true" sbid="x9" oncommand="onWindowResizeComplete()" class="frame_resize_mo" dir="bottomright"/>
+              <xul:resizer hidden="true" sbid="r7" class="sb-sys-outer-frame-resizer-rt" dir="topright" style="cursor: ne-resize;"/>
+              <xul:spacer hidden="true" sbid="x7" class="sb-sys-outer-frame-resizer-rt"/>
+              <xul:resizer hidden="true" sbid="r8" class="sb-sys-outer-frame-resizer-r" dir="right" style="cursor: e-resize;" flex="1"/>
+              <xul:spacer hidden="true" sbid="x8" class="sb-sys-outer-frame-resizer-r" flex="1"/>
+              <xul:resizer hidden="true" sbid="r9" class="sb-sys-outer-frame-resizer-rb" dir="bottomright" style="cursor: se-resize;"/>
+              <xul:spacer hidden="true" sbid="x9" class="sb-sys-outer-frame-resizer-rb"/>
             </xul:vbox>
           </xul:hbox>
           <xul:hbox>
-            <xul:resizer hidden="true" sbid="r10" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="bottomleft" style="cursor: sw-resize;"/>
-            <xul:xresizer hidden="true" sbid="x10" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="bottomleft"/>
-            <xul:resizer hidden="true" sbid="r11" oncommand="onWindowResizeComplete()" class="frame_resize_t" dir="bottom" style="cursor: s-resize;" flex="1"/>
-            <xul:xresizer hidden="true" sbid="x11" oncommand="onWindowResizeComplete()" class="frame_resize_t" dir="bottom" flex="1"/>
-            <xul:resizer hidden="true" sbid="r12" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="bottomright" style="cursor: se-resize;"/>
-            <xul:xresizer hidden="true" sbid="x12" oncommand="onWindowResizeComplete()" class="frame_resize_to" dir="bottomright"/>
+            <xul:resizer hidden="true" sbid="r10" class="sb-sys-outer-frame-resizer-bl" dir="bottomleft" style="cursor: sw-resize;"/>
+            <xul:spacer hidden="true" sbid="x10" class="sb-sys-outer-frame-resizer-bl"/>
+            <xul:resizer hidden="true" sbid="r11" class="sb-sys-outer-frame-resizer-b" dir="bottom" style="cursor: s-resize;" flex="1"/>
+            <xul:spacer hidden="true" sbid="x11" class="sb-sys-outer-frame-resizer-b" flex="1"/>
+            <xul:resizer hidden="true" sbid="r12" class="sb-sys-outer-frame-resizer-br" dir="bottomright" style="cursor: se-resize;"/>
+            <xul:spacer hidden="true" sbid="x12" class="sb-sys-outer-frame-resizer-br"/>
           </xul:hbox>
         </xul:vbox>
 
       </xul:stack>
-              
     </content>
+              
+   <handlers>
+    <handler event="resize" action="onWindowResizeComplete()"/>
+    <handler event="draggesture" action="//TODO: Drag on spacers, if dragging is allowed."/>
+   </handlers>
+    
     <implementation>
       <constructor>
         <![CDATA[
@@ -1517,7 +1564,6 @@
           ]]>
         </body>
       </method>
-
 
     </implementation>
   </binding>

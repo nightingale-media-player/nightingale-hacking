@@ -92,11 +92,6 @@ function localesBundleDataReady() {
 function initFirstRun() 
 {
   try {
-    fixWindow("window_top", "app_title"); 
-  }
-  catch (e) { }
-  
-  try {
     var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
     firstrun_bundle = new sbIBundle();
     firstrun_bundle.bundleId = "firstrun";

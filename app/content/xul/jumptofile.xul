@@ -41,50 +41,47 @@
  onunload="onUnloadJumpToFile();"
 >
   <sb-sys-outer-frame id="jumpto_frame" flex="1">
-    <vbox class="sb_faceplate" id="chrome_bkgd" flex="1" drag_window="true">
-      <sb-sys-dialog-titlebar/>
-      <spacer height="5" drag_window="true"/>
-      <hbox align="center">
-        <menulist id="playable_list" 
-          value="1" 
-          label="poo" 
-          x_editable="false" 
-          oncommand="onPlaylistlistSelect(event)" 
-          onmousedown="eatEvent(event);" onmouseup="eatEvent(event);"
-          flex="1"
+    <spacer height="5" drag_window="true"/>
+    <hbox align="center">
+      <menulist id="playable_list" 
+        value="1" 
+        label="poo" 
+        x_editable="false" 
+        oncommand="onPlaylistlistSelect(event)" 
+        onmousedown="eatEvent(event);" onmouseup="eatEvent(event);"
+        flex="1"
+      >
+        <menupopup 
+          datasources="rdf:Servicesource" 
+          ref="NC:ServicesourcePlayable"
         >
-          <menupopup 
-            datasources="rdf:Servicesource" 
-            ref="NC:ServicesourcePlayable"
-          >
-            <menuitem id="current_play_queue" label="-"/>
-            <template>
-              <rule>
-                <menuitem uri="rdf:*"
-                  id="rdf:http://home.netscape.com/NC-rdf#Label" 
-                  label="rdf:http://home.netscape.com/NC-rdf#Label"
-                  value="rdf:http://home.netscape.com/NC-rdf#URL"
-                  class="menuitem-iconic"
-                  image="rdf:http://home.netscape.com/NC-rdf#Icon"
-                  guid="rdf:http://home.netscape.com/NC-rdf#DBGUID"
-                  table="rdf:http://home.netscape.com/NC-rdf#DBTable"
-                />
-              </rule>
-            </template>
-          </menupopup>
-        </menulist>
-      </hbox>
-      <spacer height="5"/>
-      <hbox align="center">
-        <label id="jumpto_search_label" class="dialog_label" value="&jumptofile.search;" />
-        <textbox class="dialog_textbox" id="jumpto.textbox" flex="1" onkeypress="onSearchKeypress(event);" />
-      </hbox>
-      <spacer height="5"/>
-      <hbox flex="1">
-        <playlist class="dialog_playlist" id="jumpto.playlist" flex="1" onkeypress="onListKeypress(event);" />
-      </hbox>
-      <spacer height="5"/> 
-    </vbox>      
+          <menuitem id="current_play_queue" label="-"/>
+          <template>
+            <rule>
+              <menuitem uri="rdf:*"
+                id="rdf:http://home.netscape.com/NC-rdf#Label" 
+                label="rdf:http://home.netscape.com/NC-rdf#Label"
+                value="rdf:http://home.netscape.com/NC-rdf#URL"
+                class="menuitem-iconic"
+                image="rdf:http://home.netscape.com/NC-rdf#Icon"
+                guid="rdf:http://home.netscape.com/NC-rdf#DBGUID"
+                table="rdf:http://home.netscape.com/NC-rdf#DBTable"
+              />
+            </rule>
+          </template>
+        </menupopup>
+      </menulist>
+    </hbox>
+    <spacer height="5"/>
+    <hbox align="center">
+      <label id="jumpto_search_label" class="dialog_label" value="&jumptofile.search;" />
+      <textbox class="dialog_textbox" id="jumpto.textbox" flex="1" onkeypress="onSearchKeypress(event);" />
+    </hbox>
+    <spacer height="5"/>
+    <hbox flex="1">
+      <playlist class="dialog_playlist" id="jumpto.playlist" flex="1" onkeypress="onListKeypress(event);" />
+    </hbox>
+    <spacer height="5"/> 
   </sb-sys-outer-frame>
 
   <keyset>

@@ -430,7 +430,6 @@ function SBNewSmartPlaylist( guid, table )
   smart_playlist.table = table
   // Open the window
   SBOpenModalDialog( "chrome://songbird/content/xul/smart_playlist.xul", "", "chrome,centerscreen", smart_playlist ); 
-  
   if ( smart_playlist.retval == "ok" )
   {
     SBScanServiceTreeNewEntryStart(); // And this once you know you really did?

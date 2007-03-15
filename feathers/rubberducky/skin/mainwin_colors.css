@@ -88,7 +88,7 @@ These pieces paint the resizeable window for Songbird.
   background-color: #000 !important; /* color of the Main Window **/
 }
 
-.chrome_iframe_bkgd
+.chrome_iframe_bkgd,
 {
   background-color: #000 !important; /* color of the Main Window **/
 }
@@ -187,7 +187,7 @@ sb-sys-close-button,
 sb-sys-maximize-button,
 sb-sys-minimize-button,
 #sysbtn_minimode,
-#sysbtn_hide
+sb-sys-hide-button
 {
   background-color: transparent !important;
 }

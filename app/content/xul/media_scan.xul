@@ -47,79 +47,42 @@
   <!-- Astounding complexity! -->
    
 
-<windowregion/>
+  <windowregion/>
 
-<stack flex="1">
-
-  <vbox class="sb_faceplate, dialog" flex="1">
-    <hbox class="sb_faceplate">
-        <image id="chrome_nw" class="sb_faceplate"/>
-        <image id="chrome_n" class="sb_faceplate" flex="1"/>
-        <image id="chrome_ne" class="sb_faceplate"/>
+  <sb-sys-outer-frame resizers="none" flex="1">
+    <sb-sys-dialog-titlebar/>
+      
+    <spacer flex="1"/>
+    <hbox style="overflow: hidden;"> 
+      <spacer flex="1"/>
+      <label id="songbird_media_scan_title" class="dialog_label" value="" control="songbird_media_scan"/>
+      <spacer flex="1"/>
+    </hbox> 
+    <hbox style="overflow: hidden;"> 
+      <spacer flex="1"/>
+      <label id="songbird_media_scan_label" class="dialog_label" value="" control="songbird_media_scan"/>
+      <spacer flex="1"/>
+    </hbox> 
+    <hbox>
+      <spacer flex="1"/>
+      <progressmeter id="songbird_media_scan" flex="1"/>
+      <spacer flex="1"/>
     </hbox>
-    <hbox class="sb_faceplate" flex="1">
-        <image id="chrome_w" class="sb_faceplate"/>
-        <spacer flex="1"/>
-        <image id="chrome_e" class="sb_faceplate"/>
+    <hbox>
+      <spacer flex="1"/>
+      <checkbox class="dialog_checkbox dialog_label" id="watch_check" label="&media_scan.watch;" />
+      <spacer flex="1"/>
     </hbox>
-    <hbox class="sb_faceplate">
-        <image id="chrome_sw" class="sb_faceplate"/>
-        <image id="chrome_s" class="sb_faceplate" flex="1"/>
-        <image id="chrome_se" class="sb_faceplate"/>
+      
+    <hbox>
+      <spacer flex="1"/>           
+      <button id="button_ok" label="&window.ok;" disabled="true" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <spacer width="5"/>
+      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+      <spacer flex="1"/>  
     </hbox>
-  </vbox>
-
-  <vbox class="sb_faceplate" flex="1">
-    
-    <hbox class="sb_faceplate" flex="1">
-    <spacer width="9"/>
-      <vbox class="sb_faceplate" flex="1">
-      <spacer height="9"/>
-      <vbox class="sb_faceplate" flex="1" id="chrome_bkgd">              
-        <hbox id="window_top" class="sb_faceplate" >          
-          <label id="app_title" value="&media_scan.title;" class="sb_faceplate"/>
-          <spacer width="5"/>                    
-          <spacer flex="1"/>           
-          <spacer width="5"/>
-          <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
-        </hbox>
-        <spacer flex="1"/>
-        <hbox style="overflow: hidden;"> 
-          <spacer flex="1"/>
-          <label id="songbird_media_scan_title" class="dialog_label" value="" control="songbird_media_scan"/>
-          <spacer flex="1"/>
-        </hbox> 
-        <hbox style="overflow: hidden;"> 
-          <spacer flex="1"/>
-          <label id="songbird_media_scan_label" class="dialog_label" value="" control="songbird_media_scan"/>
-          <spacer flex="1"/>
-        </hbox> 
-        <hbox>
-          <spacer flex="1"/>
-          <progressmeter id="songbird_media_scan" flex="1"/>
-          <spacer flex="1"/>
-        </hbox>
-        <hbox>
-          <spacer flex="1"/>
-          <checkbox class="dialog_checkbox dialog_label" id="watch_check" label="&media_scan.watch;" />
-          <spacer flex="1"/>
-        </hbox>
-         
-        <hbox>
-          <spacer flex="1"/>           
-          <button id="button_ok" label="&window.ok;" disabled="true" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-          <spacer width="5"/>
-          <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
-          <spacer flex="1"/>  
-        </hbox>
-        <spacer flex="1"/> 
-      </vbox>
-      <spacer height="9"/>
-      </vbox>
-      <spacer width="9"/>
-    </hbox>
-  </vbox>
-</stack>  
+    <spacer flex="1"/> 
+  </sb-sys-outer-frame>  
   
   
   <!-- And intrepid instructions! -->  

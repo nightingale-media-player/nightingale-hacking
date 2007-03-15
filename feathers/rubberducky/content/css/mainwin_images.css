@@ -122,9 +122,9 @@ sb-sys-minimize-button
 }
 
 /*  Hide (Video Window) */
-#sysbtn_hide
+sb-sys-hide-button
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_hide_9x9.png) ;
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_hide_9x9.png) ;
 }
 
 /** 
@@ -735,29 +735,24 @@ These let the user resize the frames in your box model.
 RESIZERS
 ************************************************************************************************************************************************
 */ 
-.frame_resize_t,
-#frame_resize_t
-{  
-  background-image: none ;
-  list-style-image: none ;
-}
-
-.frame_resize_to,
-#frame_resize_to
-{  
-  background-image: none ;
-  list-style-image: none ;
-}
-
-.frame_resize_m,
-#frame_resize_m
-{
-  background-image: none ;
-  list-style-image: none ;
-}
-
-.frame_resize_mo,
-#frame_resize_mo
+.sb-sys-outer-frame-chrome-bkgd,
+.sb-sys-outer-frame-chrome-e,
+.sb-sys-outer-frame-chrome-w,
+.sb-sys-outer-frame-chrome-nw,
+.sb-sys-outer-frame-chrome-n,
+.sb-sys-outer-frame-chrome-ne,
+.sb-sys-outer-frame-resizer-t,
+.sb-sys-outer-frame-resizer-tl,
+.sb-sys-outer-frame-resizer-tr,
+.sb-sys-outer-frame-resizer-b,
+.sb-sys-outer-frame-resizer-bl,
+.sb-sys-outer-frame-resizer-br,
+.sb-sys-outer-frame-resizer-lt,
+.sb-sys-outer-frame-resizer-l,
+.sb-sys-outer-frame-resizer-lb,
+.sb-sys-outer-frame-resizer-rt,
+.sb-sys-outer-frame-resizer-r,
+.sb-sys-outer-frame-resizer-rb
 {  
   background-image: none ;
   list-style-image: none ;

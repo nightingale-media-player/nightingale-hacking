@@ -118,11 +118,6 @@ function SBInitialize()
 
   dump("SBInitialize *** \n");
   
-  try {
-    fixWindow("songbird_top", "mainwin_app_title"); 
-  }
-  catch(e) { }
-
   window.focus();
 
   try

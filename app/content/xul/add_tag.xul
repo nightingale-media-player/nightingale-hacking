@@ -44,57 +44,20 @@
 >
   
   <windowregion/>
-  <stack flex="1">
-
-  <vbox class="sb_faceplate, dialog" flex="1">
-    <hbox class="sb_faceplate">
-        <image id="chrome_nw" class="sb_faceplate"/>
-        <image id="chrome_n" class="sb_faceplate" flex="1"/>
-        <image id="chrome_ne" class="sb_faceplate"/>
-    </hbox>
-    <hbox class="sb_faceplate" flex="1">
-        <image id="chrome_w" class="sb_faceplate"/>
-        <spacer flex="1"/>
-        <image id="chrome_e" class="sb_faceplate"/>
-    </hbox>
-    <hbox class="sb_faceplate">
-        <image id="chrome_sw" class="sb_faceplate"/>
-        <image id="chrome_s" class="sb_faceplate" flex="1"/>
-        <image id="chrome_se" class="sb_faceplate"/>
-    </hbox>
-  </vbox>
-
-  <vbox class="sb_faceplate" flex="1">
-    <hbox class="sb_faceplate">
-      <spacer height="8"/> 
-    </hbox>
-    <hbox class="sb_faceplate" flex="1">
-    <spacer width="8" />
-      <vbox class="sb_faceplate" flex="1" id="chrome_bkgd">        
-        <hbox id="window_top" class="sb_faceplate" >
-          <label id="app_title" value="&trackeditor.addtag.title;" class="sb_faceplate"/>
-          <spacer width="5"/>                    
-          <spacer flex="1"/>           
-          <spacer width="5"/>
-          <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
-        </hbox>
-        <spacer height="8"/>
-        <label id="songbird_addtag_label" value="&trackeditor.addtag.tag;"/>
-        <textbox class="dialog_textbox" id="songbird_addtag_name"/>
-        <spacer height="5"/> 
-        <hbox>
-          <spacer flex="1"/>           
-          <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-          <spacer width="5"/>
-          <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
-          <spacer flex="1"/>  
-        </hbox> 
-      </vbox>
-    <spacer width="8"/>
-    </hbox>
-    <spacer height="10"/> 
-  </vbox>
-</stack>
+  <sb-sys-outer-frame resizers="none" flex="1">
+    <sb-sys-dialog-titlebar/>
+    <spacer height="8"/>
+    <label id="songbird_addtag_label" value="&trackeditor.addtag.tag;"/>
+    <textbox class="dialog_textbox" id="songbird_addtag_name"/>
+    <spacer height="5"/> 
+    <hbox>
+      <spacer flex="1"/>           
+      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <spacer width="5"/>
+      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+      <spacer flex="1"/>  
+    </hbox> 
+  </sb-sys-outer-frame>
   
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
@@ -113,11 +76,6 @@
     
     function initFocus()
     {
-      try {
-        fixWindow("window_top", "app_title");
-      }
-      catch (e) { }
-
       var textbox = document.getElementById("songbird_addtag_name");
       if (textbox) textbox.focus();
     }

@@ -43,65 +43,22 @@
  spacers_drag_window="true"
 >
   
-<windowregion/>
-<stack flex="1">
+  <windowregion/>
+  <sb-sys-outer-frame resizers="none" flex="1">
+    <sb-sys-dialog-titlebar/>
 
-  <vbox class="sb_faceplate, dialog" flex="1">
-    <hbox class="sb_faceplate">
-        <image id="chrome_nw" class="sb_faceplate"/>
-        <image id="chrome_n" class="sb_faceplate" flex="1"/>
-        <image id="chrome_ne" class="sb_faceplate"/>
+    <label class="dialog_label" value="&watchfolder.folderlist;" />
+    <spacer height="1"/>
+    <watch_folders id="watch_folders" browse="&window.browse;" flex="1"/>
+    <spacer height="6"/>
+    
+    <hbox>
+      <spacer flex="1"/>           
+      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <spacer width="5"/>
+      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
     </hbox>
-    <hbox class="sb_faceplate" flex="1">
-        <image id="chrome_w" class="sb_faceplate"/>
-        <spacer flex="1"/>
-        <image id="chrome_e" class="sb_faceplate"/>
-    </hbox>
-    <hbox class="sb_faceplate">
-        <image id="chrome_sw" class="sb_faceplate"/>
-        <image id="chrome_s" class="sb_faceplate" flex="1"/>
-        <image id="chrome_se" class="sb_faceplate"/>
-    </hbox>
-  </vbox>
-
-  <vbox class="sb_faceplate">
-    <hbox class="sb_faceplate">
-      <spacer height="8"/> 
-    </hbox>
-    <hbox class="sb_faceplate" flex="1">
-      <spacer width="8" />
-      <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">        
-      
-        <hbox id="window_top" class="sb_faceplate" >
-          <label id="app_title" value="&watchfolder.title;" class="sb_faceplate"/>
-          <spacer width="5"/>                    
-          <spacer flex="1"/>           
-          <spacer width="5"/>
-          <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
-        </hbox>
-        
-        <label class="dialog_label" value="&watchfolder.folderlist;" />
-        <spacer height="1"/>
-        <watch_folders id="watch_folders" browse="&window.browse;" flex="1"/>
-        <spacer height="6"/>
-        
-        <hbox>
-          <spacer flex="1"/>           
-          <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-          <spacer width="5"/>
-          <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
-        </hbox>
-        
-      </vbox>
-      <spacer width="8"/>
-    </hbox>
-    <hbox class="sb_faceplate" id="frame_bottom_resizers">
-      <x_resizer id="frame_resize_to" dir="bottomleft" x_style="cursor: sw-resize;"/>
-      <x_resizer id="frame_resize_t" dir="bottom" x_style="cursor: s-resize;" flex="1"/>
-      <x_resizer id="frame_resize_to" dir="bottomright" x_style="cursor: se-resize;"/>
-    </hbox>
-  </vbox>
-</stack>
+  </sb-sys-outer-frame>
   
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/dragWindow.js" />
@@ -118,11 +75,6 @@
     var theWatchFolderManager = null;
     function doLoad() 
     {
-      try {
-        fixWindow("window_top", "app_title");
-      }
-      catch (e) { }
-
       try
       {
         if(!theWatchFolderManager)

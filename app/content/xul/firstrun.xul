@@ -20,120 +20,81 @@
  flex="1"
 >
   
-<windowregion/>
-  <stack flex="1">
+  <windowregion/>
+  <sb-sys-outer-frame resizers="none" flex="1">
+    <sb-sys-dialog-titlebar/>
+    <spacer height="8"/>
 
-    <vbox class="sb_faceplate, dialog" flex="1">
-      <hbox class="sb_faceplate">
-          <image id="chrome_nw" class="sb_faceplate"/>
-          <image id="chrome_n" class="sb_faceplate" flex="1"/>
-          <image id="chrome_ne" class="sb_faceplate"/>
+    <hbox>
+      <spacer width="386" height="80" class="firstrun_image" />
+    </hbox>
+
+    <spacer height="5"/> 
+
+    <vbox class="formgrouping">
+      <label value="&setup.defaultlanguage;" class="dialog_label"/>
+      <hbox>
+        <menulist id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
+          <menupopup>
+          </menupopup>
+        </menulist>
       </hbox>
-      <hbox class="sb_faceplate" flex="1">
-          <image id="chrome_w" class="sb_faceplate"/>
-          <spacer flex="1"/>
-          <image id="chrome_e" class="sb_faceplate"/>
-      </hbox>
-      <hbox class="sb_faceplate">
-          <image id="chrome_sw" class="sb_faceplate"/>
-          <image id="chrome_s" class="sb_faceplate" flex="1"/>
-          <image id="chrome_se" class="sb_faceplate"/>
+    </vbox>
+      
+    <spacer height="5"/> 
+
+    <vbox class="formgrouping" flex="1">
+      <label value="&setup.optionalextensions;" class="dialog_label"/>
+      <spacer id="extensions.replacedcontent.top" height="0"/>
+      <vbox id="error_message" hidden="true">
+        <html:body class="dialog_label" style="cursor:default;">&setup.networkerror1;<html:a id="connection_href" onclick="openConnectionSettings(event);" style="text-decoration: underline; cursor:pointer;">&setup.networkerror2;</html:a>&setup.networkerror3;</html:body>
+      </vbox>
+      <vbox id="please_wait" hidden="false">
+        <spacer height="3"/>
+        <hbox align="center" hidden="false">
+          <spacer width="8"/>
+          <spacer width="16" height="16" id="spinner_spin" class="spinner_spin" />
+          <spacer width="2"/>
+          <label class="dialog_label" value="&setup.retrievingxpilist;"/>
+        </hbox>
+        <spacer height="3"/>
+      </vbox>
+      <spacer id="extensions.replacedcontent.bottom" height="0"/>
+      <spacer height="5"/>
+      <hbox>
+        <sbextensions flex="1" id="songbird.extensionlist"/>
       </hbox>
     </vbox>
 
-    <vbox class="sb_faceplate" flex="1" >
-      <hbox class="sb_faceplate">
-        <spacer height="8"/> 
-      </hbox>
-      <hbox class="sb_faceplate" flex="1">
-        <spacer width="8" />
-        <vbox class="sb_faceplate" flex="1" id="chrome_bkgd">        
-          <hbox id="window_top" class="sb_faceplate" >
-            <label id="app_title" value="&setup.title;" class="sb_faceplate"/>
-            <spacer width="5"/>                    
-            <spacer flex="1"/>           
-            <spacer width="5"/>
-            <button id="sysbtn_close" class="sb_faceplate" oncommand="quitApp();" tooltiptext="&tooltip.exit;"/>
-          </hbox>
+    <spacer height="5"/> 
 
-          <spacer height="8"/>
-
-          <hbox>
-            <spacer width="386" height="80" class="firstrun_image" />
-          </hbox>
-
-          <spacer height="5"/> 
-
-          <vbox class="formgrouping">
-            <label value="&setup.defaultlanguage;" class="dialog_label"/>
-            <hbox>
-              <menulist id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
-                <menupopup>
-                </menupopup>
-              </menulist>
-            </hbox>
-          </vbox>
-            
-          <spacer height="5"/> 
-
-          <vbox class="formgrouping" flex="1">
-            <label value="&setup.optionalextensions;" class="dialog_label"/>
-            <spacer id="extensions.replacedcontent.top" height="0"/>
-            <vbox id="error_message" hidden="true">
-              <html:body class="dialog_label" style="cursor:default;">&setup.networkerror1;<html:a id="connection_href" onclick="openConnectionSettings(event);" style="text-decoration: underline; cursor:pointer;">&setup.networkerror2;</html:a>&setup.networkerror3;</html:body>
-            </vbox>
-            <vbox id="please_wait" hidden="false">
-              <spacer height="3"/>
-              <hbox align="center" hidden="false">
-                <spacer width="8"/>
-                <spacer width="16" height="16" id="spinner_spin" class="spinner_spin" />
-                <spacer width="2"/>
-                <label class="dialog_label" value="&setup.retrievingxpilist;"/>
-              </hbox>
-              <spacer height="3"/>
-            </vbox>
-            <spacer id="extensions.replacedcontent.bottom" height="0"/>
-            <spacer height="5"/>
-            <hbox>
-              <sbextensions flex="1" id="songbird.extensionlist"/>
-            </hbox>
-          </vbox>
-
-          <spacer height="5"/> 
-
-          <vbox id="metrics_vbox" class="formgrouping" width="386">
-            <label value="&setup.privacy;" class="dialog_label"/>
-            <checkbox id="metrics_optout" class="dialog_checkbox dialog_label" checked="true" label="&setup.metrics.optin;"/>
-            <description class="dialog_label">&setup.metrics.info;</description>
-          </vbox>
-            
-          <spacer height="5"/> 
-
-          <hbox>
-            <spacer flex="1"/>
-            <button id="ok_button" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-          </hbox> 
-
-        </vbox>
-        <spacer width="8"/>
-      </hbox>
-      <spacer height="10"/> 
+    <vbox id="metrics_vbox" class="formgrouping" width="386">
+      <label value="&setup.privacy;" class="dialog_label"/>
+      <checkbox id="metrics_optout" class="dialog_checkbox dialog_label" checked="true" label="&setup.metrics.optin;"/>
+      <description class="dialog_label">&setup.metrics.info;</description>
     </vbox>
-  </stack>
+      
+    <spacer height="5"/> 
 
- <script type="application/x-javascript"
-   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
- <script type="application/x-javascript"
-   src="chrome://songbird/content/scripts/songbird_interfaces.js" />
- <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/dragWindow.js" />
+    <hbox>
+      <spacer flex="1"/>
+      <button id="ok_button" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+    </hbox> 
+  </sb-sys-outer-frame>
+
+  <script type="application/x-javascript"
+    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript"
+    src="chrome://songbird/content/scripts/songbird_interfaces.js" />
+  <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/window_utils.js" />
- <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/firstrun.js"/>
- <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/messagebox.js"/>
- <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/switch_locale.js"/>
+    src="chrome://songbird/content/scripts/window_utils.js" />
+  <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/firstrun.js"/>
+  <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/messagebox.js"/>
+  <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/switch_locale.js"/>
 
 </window>

@@ -38,69 +38,25 @@
  hidechrome="true"
  onkeypress="if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doOK() ) onExit(); }"
  x_ondialogaccept="return doOK();"
-
-  
  spacers_drag_window="true"
- onload="try { fixWindow('window_top', 'app_title'); } catch (e) { }"
 >
-<!-- Astounding complexity! -->    
-<windowregion/>
-<stack flex="1">
-
-  <vbox class="sb_faceplate, dialog" flex="1">
-    <hbox class="sb_faceplate">
-        <image id="chrome_nw" class="sb_faceplate"/>
-        <image id="chrome_n" class="sb_faceplate" flex="1"/>
-        <image id="chrome_ne" class="sb_faceplate"/>
+  <windowregion/>
+  <sb-sys-outer-frame resizers="none" flex="1">
+    <sb-sys-dialog-titlebar/>
+    <spacer height="8"/>
+    <hbox class="sb_faceplate" >
+      <spacer flex="1"/>           
+      <label id="songbird_playlist_label" class="dialog_label sb_faceplate" value="&exists.exists;"/>
+      <spacer flex="1"/>           
     </hbox>
-    <hbox class="sb_faceplate" flex="1">
-        <image id="chrome_w" class="sb_faceplate"/>
-        <spacer flex="1"/>
-        <image id="chrome_e" class="sb_faceplate"/>
+    <spacer height="18"/> 
+    <hbox>
+      <spacer flex="1"/>           
+      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <spacer flex="1"/>           
     </hbox>
-    <hbox class="sb_faceplate">
-        <image id="chrome_sw" class="sb_faceplate"/>
-        <image id="chrome_s" class="sb_faceplate" flex="1"/>
-        <image id="chrome_se" class="sb_faceplate"/>
-    </hbox>
-  </vbox>
-
-  <vbox class="sb_faceplate" flex="1">
-    <spacer height="8"/> 
-    <hbox class="sb_faceplate" flex="1">
-      <spacer width="8" />
-      <vbox class="sb_faceplate" flex="1" id="chrome_bkgd">        
-        <hbox id="window_top" class="sb_faceplate" >
-          <label id="app_title" value="&exists.title;" class="sb_faceplate"/>
-          <spacer width="5"/>                    
-          <spacer flex="1"/>           
-          <spacer width="5"/>
-          <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
-        </hbox>
-        <spacer height="8"/>
-        <hbox class="sb_faceplate" >
-          <spacer flex="1"/>           
-          <label id="songbird_playlist_label" class="dialog_label sb_faceplate" value="&exists.exists;"/>
-          <spacer flex="1"/>           
-        </hbox>
-        <spacer height="18"/> 
-        <hbox>
-          <spacer flex="1"/>           
-          <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-          <spacer flex="1"/>           
-        </hbox>
-      </vbox>
-      <spacer width="8"/>
-    </hbox>
-    <spacer height="8"/> 
-  </vbox>
+  </sb-sys-outer-frame>
   
-</stack>
-  
-
-
-  
-  <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript"  

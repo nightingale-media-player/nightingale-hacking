@@ -46,117 +46,52 @@
  spacers_drag_window="true"
 >
 
-<windowregion/>
-<stack flex="1">
-
-  <vbox class="sb_faceplate, dialog" flex="1">
-    <hbox class="sb_faceplate">
-        <image id="chrome_nw" class="sb_faceplate"/>
-        <image id="chrome_n" class="sb_faceplate" flex="1"/>
-        <image id="chrome_ne" class="sb_faceplate"/>
-    </hbox>
-    <hbox class="sb_faceplate" flex="1">
-        <image id="chrome_w" class="sb_faceplate"/>
-        <spacer flex="1"/>
-        <image id="chrome_e" class="sb_faceplate"/>
-    </hbox>
-    <hbox class="sb_faceplate">
-        <image id="chrome_sw" class="sb_faceplate"/>
-        <image id="chrome_s" class="sb_faceplate" flex="1"/>
-        <image id="chrome_se" class="sb_faceplate"/>
-    </hbox>
-  </vbox>
+  <windowregion/>
   
-  <vbox class="sb_faceplate" flex="1">
-    <hbox class="sb_faceplate" id="frame_top_resizers">
-      <x_resizer id="frame_resize_to" dir="topleft" x_style="cursor: nw-resize;"/>
-      <x_resizer id="frame_resize_t" dir="top" x_style="cursor: n-resize;" flex="1"/>
-      <x_resizer id="frame_resize_to" dir="topright" x_style="cursor: ne-resize;"/>
-    </hbox>
-    <hbox class="sb_faceplate" flex="1">
+  <sb-sys-outer-frame resizers="none" flex="1">
+    <sb-sys-dialog-titlebar/>
     
-    <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
-      
-        <vbox class="sb_faceplate">
-          <x_resizer id="frame_resize_mo" dir="topleft" x_style="cursor: nw-resize;"/>
-          <x_resizer id="frame_resize_m" dir="left" x_style="cursor: w-resize;" flex="1"/>
-          <x_resizer id="frame_resize_mo" dir="bottomleft" x_style="cursor: sw-resize;"/>
-        </vbox>
-        
-        <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
-        
-          <hbox id="window_top" class="sb_faceplate" >
-            <label id="app_title" value="&subscribe.title;" class="sb_faceplate"/>
-            <spacer width="5"/>                    
-            <spacer flex="1"/>           
-            <spacer width="5"/>
-            <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
-          </hbox>
-        
-          <vbox flex="1">
-            
-            <hbox align="center">
-              <label class="dialog_label" value="URL:"/>
-              <textbox class="dialog_textbox" id="subscribe_url" />
-            </hbox>
-            <spacer height="5"/>
-            <hbox class="sb_faceplate" align="center">
-            <spacer width="40"/>
-            <label class="dialog_label" id="auto_subscribe_label" label="&subscribe.autocheck;"/>
-            <textbox class="dialog_textbox" id="subscribe_interval" />
-            <menulist id="subscribe_interval_unit" >
-              <menupopup id="subscribe_interval_unit_popup">
-                <menuitem id="subscribe_interval_days" label="&subscribe.days;" value="days"/>
-                <menuitem id="subscribe_interval_hours" label="&subscribe.hours;" value="hours"/>
-                <menuitem id="subscribe_interval_minutes" label="&subscribe.minutes;" value="minutes" />
-              </menupopup>
-            </menulist>
-            </hbox>
-            <spacer height="10"/>             
-            <label class="dialog_label" value="&subscribe.destinationfolder;"/>
-            <hbox>
-              <textbox class="dialog_textbox" id="subscribe_folder_path" flex="1"/>
-              <button id="button_browse" label="&window.browse;" class="dialog_button sb_faceplate"
-                      oncommand="doBrowse();"/>
-            </hbox>        
-          </vbox>
-          
-          <spacer height="8"/>           
-          
-          <hbox>
-            <spacer flex="1"/>           
-            <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate"
-                    oncommand="if ( doOK() ) onExit( );"/>
-            <spacer width="5"/>
-            <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate"
-                    oncommand="if ( doCancel() ) onExit( );"/>
-          </hbox>
-                
-        </vbox>
-      
-        <vbox class="sb_faceplate">
-          <x_resizer id="frame_resize_mo" dir="topright" x_style="cursor: ne-resize;"/>
-          <x_resizer id="frame_resize_m" dir="right" x_style="cursor: e-resize;" flex="1"/>
-          <x_resizer id="frame_resize_mo" dir="bottomright" x_style="cursor: se-resize;"/>
-        </vbox>
-        
-      </hbox> <!-- frame_middle_resizers -->
+    <hbox align="center">
+      <label class="dialog_label" value="URL:"/>
+      <textbox class="dialog_textbox" id="subscribe_url" />
     </hbox>
-    <hbox class="sb_faceplate" id="frame_bottom_resizers">
-      <x_resizer id="frame_resize_to" dir="bottomleft" x_style="cursor: sw-resize;"/>
-      <x_resizer id="frame_resize_t" dir="bottom" x_style="cursor: s-resize;" flex="1"/>
-      <x_resizer id="frame_resize_to" dir="bottomright" x_style="cursor: se-resize;"/>
+    <spacer height="5"/>
+    <hbox class="sb_faceplate" align="center">
+    <spacer width="40"/>
+    <label class="dialog_label" id="auto_subscribe_label" label="&subscribe.autocheck;"/>
+    <textbox class="dialog_textbox" id="subscribe_interval" />
+    <menulist id="subscribe_interval_unit" >
+      <menupopup id="subscribe_interval_unit_popup">
+        <menuitem id="subscribe_interval_days" label="&subscribe.days;" value="days"/>
+        <menuitem id="subscribe_interval_hours" label="&subscribe.hours;" value="hours"/>
+        <menuitem id="subscribe_interval_minutes" label="&subscribe.minutes;" value="minutes" />
+      </menupopup>
+    </menulist>
     </hbox>
-  </vbox>
-</stack>
+    <spacer height="10"/>             
+    <label class="dialog_label" value="&subscribe.destinationfolder;"/>
+    <hbox>
+      <textbox class="dialog_textbox" id="subscribe_folder_path" flex="1"/>
+      <button id="button_browse" label="&window.browse;" class="dialog_button sb_faceplate" oncommand="doBrowse();"/>
+    </hbox>        
+    <spacer height="8"/>           
+    <hbox>
+      <spacer flex="1"/>           
+      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate"
+              oncommand="if ( doOK() ) onExit( );"/>
+      <spacer width="5"/>
+      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate"
+              oncommand="if ( doCancel() ) onExit( );"/>
+    </hbox>
+  </sb-sys-outer-frame>
  
-<!-- SCRIPTS -->
-<script type="application/x-javascript" src="chrome://songbird/content/scripts/dragWindow.js" />
-<script type="application/x-javascript" src="chrome://songbird/content/scripts/window_utils.js" />
-<script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-<script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird_interfaces.js" />
-<script type="application/x-javascript" src="chrome://songbird/content/scripts/dynamic_playlist_updater.js" />
-<script type="application/x-javascript" src="chrome://songbird/content/scripts/messagebox.js" />
+  <!-- SCRIPTS -->
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/dragWindow.js" />
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/window_utils.js" />
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird_interfaces.js" />
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/dynamic_playlist_updater.js" />
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/messagebox.js" />
 
   <script>
   <![CDATA[
@@ -171,11 +106,6 @@
 
     function doLoad()
     {
-      try {
-        fixWindow("window_top", "app_title");
-      }
-      catch (err) { }
-
       const SUBSCRIBE_FOLDER_KEY = "download.folder";
       try
       {

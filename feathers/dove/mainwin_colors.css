@@ -174,7 +174,7 @@ sb-sys-close-button,
 sb-sys-maximize-button,
 #sysbtn_minimize,
 #sysbtn_minimode,
-#sysbtn_hide
+sb-sys-hide-button
 {
   background-color: transparent !important;
 }

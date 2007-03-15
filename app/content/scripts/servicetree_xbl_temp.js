@@ -113,15 +113,22 @@ var theServiceTreeScanItems = new Array();
 var theServiceTreeScanCount = 0;
 function SBScanServiceTreeNewEntryEditable()
 {
-  var theServiceTree = document.getElementById( "servicepane" );
-  theServiceTreeScanItems.length = 0;
-  theServiceTreeScanCount = 0;
-  
-  // Go get all the current service tree urls.
-  var theServiceTree_tree = theServiceTree.tree;
-  for ( var i = 0; i < theServiceTree_tree.view.rowCount; i++ )
+  try
   {
-    theServiceTreeScanItems.push( theServiceTree_tree.contentView.getItemAtIndex( i ).getAttribute( "url" ) );
+    var theServiceTree = document.getElementById( "servicepane" );
+    theServiceTreeScanItems.length = 0;
+    theServiceTreeScanCount = 0;
+    
+    // Go get all the current service tree urls.
+    var theServiceTree_tree = theServiceTree.tree;
+    for ( var i = 0; i < theServiceTree_tree.view.rowCount; i++ )
+    {
+      theServiceTreeScanItems.push( theServiceTree_tree.contentView.getItemAtIndex( i ).getAttribute( "url" ) );
+    }
+  } 
+  catch ( e ) 
+  {
+    dump("ERROR - Service tree stuff isn't hooked up!\n" + e );
   }
 }
 
@@ -132,49 +139,56 @@ function SBScanServiceTreeNewEntryStart()
 
 function SBScanServiceTreeNewEntryCallback()
 {
-  var theServiceTree = document.getElementById( "sevicepane" );
-  
-  if ( ++theServiceTreeScanCount > 10 )
+  try
   {
-    return; // don't loop more than 1 second.
-  }
-  
-  // Go through all the current service tree items.
-  var done = false;
-  var theServiceTree_tree = theServiceTree.tree;
-  for ( var i = 0; i < theServiceTree_tree.view.rowCount; i++ )
-  {
-    var found = false;
-    var url = theServiceTree_tree.contentView.getItemAtIndex( i ).getAttribute( "url" );
-    // Match them against the scan items
-    for ( var j = 0; j < theServiceTreeScanItems.length; j++ )
+    var theServiceTree = document.getElementById( "sevicepane" );
+    
+    if ( ++theServiceTreeScanCount > 10 )
     {
-      if ( url == theServiceTreeScanItems[ j ] )
+      return; // don't loop more than 1 second.
+    }
+    
+    // Go through all the current service tree items.
+    var done = false;
+    var theServiceTree_tree = theServiceTree.tree;
+    for ( var i = 0; i < theServiceTree_tree.view.rowCount; i++ )
+    {
+      var found = false;
+      var url = theServiceTree_tree.contentView.getItemAtIndex( i ).getAttribute( "url" );
+      // Match them against the scan items
+      for ( var j = 0; j < theServiceTreeScanItems.length; j++ )
       {
-        found = true;
+        if ( url == theServiceTreeScanItems[ j ] )
+        {
+          found = true;
+          break;
+        }
+      }
+      // Right now, only songbird playlists are editable.
+      if ( ( ! found ) && ( url.indexOf( ",songbird" ) != -1 ) )
+      {
+  /*    
+        // This must be the new one?
+        theServiceTree_tree.view.selection.currentIndex = i;
+        
+        // HACK: flag to prevent the empty playlist from launching on select
+        theServiceTree_tree.newPlaylistCreated = true;
+        theServiceTree_tree.view.selection.select( i );
+        theServiceTree_tree.newPlaylistCreated = false;
+  */      
+        onServiceEdit(i);
+        done = true;
         break;
       }
     }
-    // Right now, only songbird playlists are editable.
-    if ( ( ! found ) && ( url.indexOf( ",songbird" ) != -1 ) )
+    if ( ! done )
     {
-/*    
-      // This must be the new one?
-      theServiceTree_tree.view.selection.currentIndex = i;
-      
-      // HACK: flag to prevent the empty playlist from launching on select
-      theServiceTree_tree.newPlaylistCreated = true;
-      theServiceTree_tree.view.selection.select( i );
-      theServiceTree_tree.newPlaylistCreated = false;
-*/      
-      onServiceEdit(i);
-      done = true;
-      break;
+      setTimeout( SBScanServiceTreeNewEntryCallback, 100 );
     }
-  }
-  if ( ! done )
+  } 
+  catch ( e ) 
   {
-    setTimeout( SBScanServiceTreeNewEntryCallback, 100 );
+    dump("ERROR - Service tree stuff isn't hooked up!\n" + e );
   }
 }
 

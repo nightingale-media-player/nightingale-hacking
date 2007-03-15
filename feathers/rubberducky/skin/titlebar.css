@@ -137,7 +137,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   background-repeat: no-repeat !important;
 }
 
-#sysbtn_hide
+sb-sys-hide-button
 {
   width: 9px !important;
   height: 9px !important;

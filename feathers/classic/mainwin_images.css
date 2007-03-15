@@ -1284,17 +1284,6 @@ These let the user resize the frames in your box model.  These must be specified
 }
 /* END SPLITTERS **/
 
-#frame_resize_mo
-{
- -moz-appearance:none !important;
-  background-image: none !important;
-}
-
-
-
-
-
-
 /** 
 **********************************************************************************
 The following styles are for the specific dialog boxes themselves.
@@ -1477,7 +1466,7 @@ checkbox
   -moz-user-focus: normal !important;
 }
 
-#chrome_bkgd
+.sb-sys-outer-frame-chrome-bkgd
 {
   padding: 10px !important;
 }

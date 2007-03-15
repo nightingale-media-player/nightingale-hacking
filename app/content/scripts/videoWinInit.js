@@ -195,9 +195,6 @@ function SBVideoInitialize()
       */
     }
 
-    // Make sure we actually have a media core
-    SBMediaCoreCheck();
-
     // If we are a top level window, hide us.
     if ( window.parent == window )
     {
@@ -206,6 +203,9 @@ function SBVideoInitialize()
         SBHideCoreWindow();
       }
     }
+
+    // Make sure we actually have a media core
+    SBMediaCoreCheck();
   }
   catch( err )
   {

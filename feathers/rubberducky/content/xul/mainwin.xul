@@ -67,282 +67,226 @@
   
   <popupset id="popupset_main" />
 
-
-  <stack flex="1" id="window_parent"
+  <sb-sys-outer-frame id="window_parent" flex="1"
     ondragover="nsDragAndDrop.dragOver( event, SBDropObserver )"
     ondragdrop="nsDragAndDrop.drop( event, SBDropObserver )"
   >
-    <!-- Can be used to place images around windows. Currently unused -->
-    <vbox flex="1" id="mainwin_chrome_box">
-      <hbox >
-        <image id="mainwin_chrome_nw"/>
-        <image id="mainwin_chrome_n" flex="1"/>
-        <image id="mainwin_chrome_ne"/>
-      </hbox>
-      <hbox flex="1">
-        <image id="mainwin_chrome_w" />
-        <spacer flex="1"/>
-        <image id="mainwin_chrome_e" />
-      </hbox>
-      <hbox >
-        <image id="mainwin_chrome_sw" />
-        <image id="mainwin_chrome_s"  flex="1"/>
-        <image id="mainwin_chrome_se" />
-      </hbox>
-    </vbox>
+    <!-- ?! XBL has hbox orientation for its children, no matter what.  Grr. -->
+    <vbox flex="1" drag_window="true">
 
-    <vbox flex="1">
-  
-      <hbox id="frame_resizers_top">
-        <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="topleft" style="cursor: nw-resize;"/>
-        <resizer oncommand="onWindowResizeComplete()" id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
-        <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
+      <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
+      <!-- TODO: Change to sb-sys-tilebar, can't do that till the menu overlay works -->
+      <hbox id="songbird_top">
+        <sb-sys-osx-buttons/>
+        <sb-sys-icon/>
+        <spacer width="5"/>
+        <sb-sys-title/>
+        <spacer width="5"/>
+        <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" />               
+        <spacer flex="1" drag_window="true"/>
+        <sb-feathers-toggle-button sbid="feathers" id="sysbtn_minimode" popupanchor="bottomright" popupalign="topright" />
+        <sb-sys-buttons/>
+        <sb-sys-osx-feathers/>
+      </hbox>
+      
+      <!-- Waiting for the menubar to be overlayed into a sb-sys-menubar element
+      <sb-sys-titlebar/>
+      -->
+      
+      <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
+      <!-- TODO: Fix mini.xul and then duplicate here.  Better yet, use an overlay/include/iframe. -->
+      <hbox id="frame_mini" hidden="true" drag_window="true">
+        <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
+        <player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/>
+        <player_forward id="mini_btn_fwd" class="sb_faceplate miniplayer" />
+
+        <vbox id="mini_volume" drag_window="true">
+          <hbox id="mini_volume_box" drag_window="true">
+            <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off"/>
+            <spacer width="8"/>
+            <hbox>
+              <spacer width="3" height="5" id="songbird_volume_w"/>
+              <sb-player-volume-slider id="songbird_volume" sliderid="mini_volume_slider" thumbid="mini_volume_thumb" progressid="mini_volume_progress" orient="horizontal" class="miniplayer" maxpos="100"/>
+              <spacer width="3" height="5" id="songbird_volume_e"/>
+            </hbox>
+          </hbox>
+        </vbox>
+
+        <hbox flex="1" drag_window="true">
+          <spacer width="4" height="18" id="mini_dash_w"/>
+          <vbox id="mini_dash" flex="1" drag_window="true">
+            <stack>
+              <hbox id="mini_text_time" class="sb_faceplate" flex="1" drag_window="true">
+                <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right" drag_window="true"/>
+                <spacer width="20" drag_window="true"/>
+                <player_title id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1" drag_window="true"/>
+                <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" drag_window="true"/>
+                <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" drag_window="true"/>
+                <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>
+              </hbox>
+              <sb-player-seek-slider id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate" maxpos="100"/>
+            </stack>
+          </vbox>
+          <spacer width="4" height="18" id="mini_dash_e"/>
+        </hbox>
+        <hbox hidden="true">
+          <player_repeat class="sb_faceplate" repid="mini_btn_rep1" rep1id="mini_btn_repa" repallid="mini_btn_rep" hidden="true"/>
+          <player_shuffle class="sb_faceplate" shuffleonid="mini_btn_shuf_on" shuffleoffid="mini_btn_shuf" hidden="true"/>
+          <button id="mini_btn_help"    class="sb_faceplate" oncommand="onHelp( );" hidden="true" />
+          <button id="mini_btn_min"     class="sb_faceplate" oncommand="onMinimize( );" hidden="true" />
+          <button id="mini_btn_max"     class="sb_faceplate" oncommand="SBMainWindowOpen( );" hidden="true" />
+          <button id="mini_btn_exit"    class="sb_faceplate" oncommand="quitApp( );" hidden="true" />
+        </hbox>
       </hbox>
 
-      <vbox id="frame_outer_pane" flex="1">
 
-        <hbox id="frame_middle_resizers" flex="1">
+      <!-- inner_frame -->
+      <vbox id="frame_inner_pane" flex="1" drag_window="true">
+        
+        <!-- CONTROL PANE -->
+        <hbox id="frame_control_pane" pack="center" align="center" drag_window="true">
 
-          <vbox id="frame_resizers_left">
-            <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
-            <resizer oncommand="onWindowResizeComplete()" id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
-            <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
+          <vbox id="control_left_box" pack="center" align="center" drag_window="true">
+            <!-- PLAY BUTTONS -->
+            <hbox id="playbutton_box" pack="center" align="center">
+              <player_back id="songbird_btn_back"   tooltiptext="&tooltip.control.back;" />
+              <player_playpause id="songbird_btn_play_pause" playid="songbird_btn_play" pauseid="songbird_btn_pause" />
+              <player_forward id="songbird_btn_fwd" tooltiptext="&tooltip.control.fwd;" /> 
+            </hbox>
+            <hbox id="volume_box" pack="center" align="center">
+              <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off"/>   
+              <spacer id="songbird_volume_w"/>
+              <sb-player-volume-slider id="songbird_volume" sliderid="songbird_volume_slider" thumbid="songbird_volume_thumb" progressid="songbird_volume_progress" flex="1" orient="horizontal" maxpos="100" tooltiptext="&tooltip.control.volume;"/>
+              <spacer id="songbird_volume_e"/>
+            </hbox>
           </vbox>
 
-          <vbox flex="1" drag_window="true">
+          <spacer id="control_middle_spacer" flex="1"/>
 
-            <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
-            <!-- TODO: Clean up.  Leaving as is until the mac topbar is changed -->
-            <hbox id="songbird_top">
-              <sb-sys-osx-buttons/>
-              <sb-sys-icon/>
-              <spacer width="5"/>
-              <sb-sys-title/>
-              <spacer width="5"/>
-              <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" />               
-              <spacer flex="1" drag_window="true"/>
-              <sb-feathers-toggle-button sbid="feathers" id="sysbtn_minimode" popupanchor="bottomright" popupalign="topright" />
-              <sb-sys-buttons/>
-              <sb-sys-osx-feathers/>
-            </hbox>
+          <hbox id="control_right_box">
+          
+            <!-- REPEAT/SHUFFLE -->
+            <vbox id="face_left_box" >
+              <player_repeat  repid="songbird_btn_rep" rep1id="songbird_btn_rep1" repallid="songbird_btn_repall" />
+              <player_shuffle  shuffleonid="songbird_btn_shuf_on" shuffleoffid="songbird_btn_shuf" />
+            </vbox>
             
-            <!-- Waiting for the menubar to be overlayed into a sb-sys-menubar element
-            <sb-sys-titlebar/>
-            -->
-            
-            <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
-            <!-- TODO: Fix mini.xul and then duplicate here.  Better yet, use an overlay/include/iframe. -->
-            <hbox id="frame_mini" hidden="true" drag_window="true">
-              <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
-              <player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/>
-              <player_forward id="mini_btn_fwd" class="sb_faceplate miniplayer" />
 
-              <vbox id="mini_volume" drag_window="true">
-                <hbox id="mini_volume_box" drag_window="true">
-                  <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off"/>
-                  <spacer width="8"/>
-                  <hbox>
-                    <spacer width="3" height="5" id="songbird_volume_w"/>
-                    <sb-player-volume-slider id="songbird_volume" sliderid="mini_volume_slider" thumbid="mini_volume_thumb" progressid="mini_volume_progress" orient="horizontal" class="miniplayer" maxpos="100"/>
-                    <spacer width="3" height="5" id="songbird_volume_e"/>
-                  </hbox>
+            <faceplate id="main_faceplate" flex="1" /> <!-- drag_window="true" makes the slider inside the faceplate drag the window, how come ? -->
+                              
+
+            <!-- CURRENT TRACK / NEXT SERVICE -->
+            <vbox id="face_right_box">
+              <button id="songbird_btn_curr" oncommand="onCurrentTrack( );" tooltiptext="&tooltip.control.curtrack;"/>
+              <clickholdbutton id="songbird_btn_next" popupanchor="topleft" popupalign="bottomleft" oncommand="onFaceplateMenu(event.target)"/>
+            </vbox>
+          </hbox>
+
+          <spacer flex="1"/>
+        </hbox>
+
+        <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane"
+        >
+          <grippy/>
+        </smartsplitter>
+
+        <vbox id="frame_middle_pane" flex="1">
+          <hbox id="frame_middle_pane_hbox" flex="1">
+
+            <!-- SERVICE PANE -->
+            <vbox id="frame_servicetree_pane">
+              <!--  NOTE: the id used to be frame_servicetree. -->
+              <servicepane id="servicepane" flex="1"/>                  
+            </vbox>
+
+            <smartsplitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="collapse.servicepane">
+              <grippy/>
+            </smartsplitter>
+
+            <!-- MAIN PANE -->
+            <vbox flex="1" id="main_pane_border">
+            
+              <vbox id="frame_main_pane_html" hidden="false" >
+                <!-- WEB BAR -->
+                <hbox id="browser_toolbar" align="center" flex="1">
+                  <button disabled="true" id="browser_back" oncommand="onBrowserBack();" tooltiptext="&tooltip.browser.back;"/>
+                  <button disabled="true" id="browser_fwd" oncommand="onBrowserFwd();" tooltiptext="&tooltip.browser.fwd;"/>
+                  <button disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="&tooltip.browser.refresh;"/>
+                  <button disabled="false" id="browser_stop" oncommand="onBrowserStop();" tooltiptext="&tooltip.browser.stop;"/>
+                  <button disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>
+                  <button disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
+
+                  <!-- ADDRESS BOX -->
+                  <textbox id="browser_url" flex="6"  align="center" x_onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" onfocus="onHTMLURLFocus( event );">
+                    <image id="browser_url_image" src=""/>
+                  </textbox>
+
+                  <smartsplitter id="search_splitter" state="open">
+                    <grippy/>
+                  </smartsplitter>    
+                                      
+                  <!-- SEARCH WIDGET -->
+                  <search
+                    id="search_widget" 
+                    listid="search_service_list"
+                    buttonid="search_service_button"
+                    flex="1"
+                  />
+                  
+                  <!-- SPINNER -->
+                  <spacer style="min-width: 5px !important;" width="5" height="16"/>
+                  <spacer width="16" height="16" id="spinner_spin" class="spinner_spin" hidden="true"/>
+                  <spacer width="16" height="16" id="spinner_stopped" class="spinner_stopped" hidden="true"/>
+                  <spacer style="min-width: 8px !important;" width="8" height="16"/>
                 </hbox>
               </vbox>
 
-              <hbox flex="1" drag_window="true">
-                <spacer width="4" height="18" id="mini_dash_w"/>
-                <vbox id="mini_dash" flex="1" drag_window="true">
-                  <stack>
-                    <hbox id="mini_text_time" class="sb_faceplate" flex="1" drag_window="true">
-                      <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right" drag_window="true"/>
-                      <spacer width="20" drag_window="true"/>
-                      <player_title id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1" drag_window="true"/>
-                      <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" drag_window="true"/>
-                      <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" drag_window="true"/>
-                      <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>
-                    </hbox>
-                    <sb-player-seek-slider id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate" maxpos="100"/>
-                  </stack>
-                </vbox>
-                <spacer width="4" height="18" id="mini_dash_e"/>
-              </hbox>
-              <hbox hidden="true">
-                <player_repeat class="sb_faceplate" repid="mini_btn_rep1" rep1id="mini_btn_repa" repallid="mini_btn_rep" hidden="true"/>
-                <player_shuffle class="sb_faceplate" shuffleonid="mini_btn_shuf_on" shuffleoffid="mini_btn_shuf" hidden="true"/>
-                <button id="mini_btn_help"    class="sb_faceplate" oncommand="onHelp( );" hidden="true" />
-                <button id="mini_btn_min"     class="sb_faceplate" oncommand="onMinimize( );" hidden="true" />
-                <button id="mini_btn_max"     class="sb_faceplate" oncommand="SBMainWindowOpen( );" hidden="true" />
-                <button id="mini_btn_exit"    class="sb_faceplate" oncommand="quitApp( );" hidden="true" />
-              </hbox>
-            </hbox>
 
+              <sb-tabbrowser id="frame_main_pane" flex="1" />
 
-            <!-- inner_frame -->
-            <vbox id="frame_inner_pane" flex="1" drag_window="true">
-              
-              <!-- CONTROL PANE -->
-              <hbox id="frame_control_pane" pack="center" align="center" drag_window="true">
-
-                <vbox id="control_left_box" pack="center" align="center" drag_window="true">
-                  <!-- PLAY BUTTONS -->
-                  <hbox id="playbutton_box" pack="center" align="center">
-                    <player_back id="songbird_btn_back"   tooltiptext="&tooltip.control.back;" />
-                    <player_playpause id="songbird_btn_play_pause" playid="songbird_btn_play" pauseid="songbird_btn_pause" />
-                    <player_forward id="songbird_btn_fwd" tooltiptext="&tooltip.control.fwd;" /> 
-                  </hbox>
-                  <hbox id="volume_box" pack="center" align="center">
-                    <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off"/>   
-                    <spacer id="songbird_volume_w"/>
-                    <sb-player-volume-slider id="songbird_volume" sliderid="songbird_volume_slider" thumbid="songbird_volume_thumb" progressid="songbird_volume_progress" flex="1" orient="horizontal" maxpos="100" tooltiptext="&tooltip.control.volume;"/>
-                    <spacer id="songbird_volume_e"/>
-                  </hbox>
-                </vbox>
-
-                <spacer id="control_middle_spacer" flex="1"/>
-
-                <hbox id="control_right_box">
-                
-                  <!-- REPEAT/SHUFFLE -->
-                  <vbox id="face_left_box" >
-                    <player_repeat  repid="songbird_btn_rep" rep1id="songbird_btn_rep1" repallid="songbird_btn_repall" />
-                    <player_shuffle  shuffleonid="songbird_btn_shuf_on" shuffleoffid="songbird_btn_shuf" />
-                  </vbox>
-                  
-
-                  <faceplate id="main_faceplate" flex="1" /> <!-- drag_window="true" makes the slider inside the faceplate drag the window, how come ? -->
-                                    
-
-                  <!-- CURRENT TRACK / NEXT SERVICE -->
-                  <vbox id="face_right_box">
-                    <button id="songbird_btn_curr" oncommand="onCurrentTrack( );" tooltiptext="&tooltip.control.curtrack;"/>
-                    <clickholdbutton id="songbird_btn_next" popupanchor="topleft" popupalign="bottomleft" oncommand="onFaceplateMenu(event.target)"/>
-                  </vbox>
-                </hbox>
-
-                <spacer flex="1"/>
-              </hbox>
-
-              <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane"
-              >
+              <smartsplitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
                 <grippy/>
               </smartsplitter>
-
-              <vbox id="frame_middle_pane" flex="1">
-                <hbox id="frame_middle_pane_hbox" flex="1">
-
-                  <!-- SERVICE PANE -->
-                  <vbox id="frame_servicetree_pane">
-                    <!--  NOTE: the id used to be frame_servicetree. -->
-                    <servicepane id="servicepane" flex="1"/>                  
-                  </vbox>
-
-                  <smartsplitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="collapse.servicepane">
-                    <grippy/>
-                  </smartsplitter>
-
-                  <!-- MAIN PANE -->
-                  <vbox flex="1" id="main_pane_border">
-                  
-                    <vbox id="frame_main_pane_html" hidden="false" >
-                      <!-- WEB BAR -->
-                      <hbox id="browser_toolbar" align="center" flex="1">
-                        <button disabled="true" id="browser_back" oncommand="onBrowserBack();" tooltiptext="&tooltip.browser.back;"/>
-                        <button disabled="true" id="browser_fwd" oncommand="onBrowserFwd();" tooltiptext="&tooltip.browser.fwd;"/>
-                        <button disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="&tooltip.browser.refresh;"/>
-                        <button disabled="false" id="browser_stop" oncommand="onBrowserStop();" tooltiptext="&tooltip.browser.stop;"/>
-                        <button disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>
-                        <button disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
-
-                        <!-- ADDRESS BOX -->
-                        <textbox id="browser_url" flex="6"  align="center" x_onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" onfocus="onHTMLURLFocus( event );">
-                          <image id="browser_url_image" src=""/>
-                        </textbox>
-
-                        <smartsplitter id="search_splitter" state="open">
-                          <grippy/>
-                        </smartsplitter>    
-                                            
-                        <!-- SEARCH WIDGET -->
-                        <search
-                          id="search_widget" 
-                          listid="search_service_list"
-                          buttonid="search_service_button"
-                          flex="1"
-                        />
-                        
-                        <!-- SPINNER -->
-                        <spacer style="min-width: 5px !important;" width="5" height="16"/>
-                        <spacer width="16" height="16" id="spinner_spin" class="spinner_spin" hidden="true"/>
-                        <spacer width="16" height="16" id="spinner_stopped" class="spinner_stopped" hidden="true"/>
-                        <spacer style="min-width: 8px !important;" width="8" height="16"/>
-                      </hbox>
-                    </vbox>
-
-
-                    <sb-tabbrowser id="frame_main_pane" flex="1" />
-
-                    <smartsplitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
-                      <grippy/>
-                    </smartsplitter>
-                    
-                    
-                    <vbox id="playlist_web_vbox" height="200" hidden="true" minheight="0" _resize_height="200">
-                    
-                      <callout-once id="calloutbox_web_playlist" hidden="true">
-                        <label value="&callout.firstwebplaylist;"/>
-                      </callout-once>
-
-                      <playlist 
-                        id="playlist_web" 
-                        height="105"
-                        flex="1"
-                        hidden="true"
-                        enableColumnDrag="true"
-                        minheight="0"
-                        _resize_height="105"
-                      />
-                    </vbox>
-                  </vbox>
-                </hbox>
-              </vbox>
-              <!-- frame_middle_pane -->
               
-              <!-- STATUS PANE -->
-              <hbox id="frame_status_pane" drag_window="true">
-                <hbox id="status_status_box" flex="1">
-                  <sbstatustext id="status_text" value=" " crop="end" flex="1" drag_window="true"/>
-                  <player_numplaylistitems id="library_text" value=" " crop="end"/>
-                  <player_scanning id="scanning_text" value=" " crop="end"/>
-                </hbox>
-                <hbox id="status_progress_box" drag_window="true">
-                  <progressmeter id="status_progress" mode="undetermined" hidden="false"/>
-                </hbox>
-              </hbox>
+              
+              <vbox id="playlist_web_vbox" height="200" hidden="true" minheight="0" _resize_height="200">
+              
+                <callout-once id="calloutbox_web_playlist" hidden="true">
+                  <label value="&callout.firstwebplaylist;"/>
+                </callout-once>
 
+                <playlist 
+                  id="playlist_web" 
+                  height="105"
+                  flex="1"
+                  hidden="true"
+                  enableColumnDrag="true"
+                  minheight="0"
+                  _resize_height="105"
+                />
+              </vbox>
             </vbox>
-            <!-- inner_frame -->
-          </vbox>
-
-          <vbox id="frame_resizers_right">
-            <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
-            <resizer oncommand="onWindowResizeComplete()" id="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
-            <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomright" style="cursor: se-resize;"/>
-          </vbox>
-
+          </hbox>
+        </vbox>
+        <!-- frame_middle_pane -->
+        
+        <!-- STATUS PANE -->
+        <hbox id="frame_status_pane" drag_window="true">
+          <hbox id="status_status_box" flex="1">
+            <sbstatustext id="status_text" value=" " crop="end" flex="1" drag_window="true"/>
+            <player_numplaylistitems id="library_text" value=" " crop="end"/>
+            <player_scanning id="scanning_text" value=" " crop="end"/>
+          </hbox>
+          <hbox id="status_progress_box" drag_window="true">
+            <progressmeter id="status_progress" mode="undetermined" hidden="false"/>
+          </hbox>
         </hbox>
-        <!-- frame_middle_resizers -->
 
       </vbox>
-      <!-- frame_outer_pane -->
-
-      <hbox id="frame_resizers_bottom">
-        <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="bottomleft" style="cursor: sw-resize;"/>
-        <resizer oncommand="onWindowResizeComplete()" id="frame_resize_t" dir="bottom" style="cursor: s-resize;" flex="1"/>
-        <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="bottomright" style="cursor: se-resize;"/>
-      </hbox>
+      <!-- inner_frame -->
     </vbox>
 
-  </stack>
+  </sb-sys-outer-frame>
 
   <commandset id="mainCommandSet" />
   

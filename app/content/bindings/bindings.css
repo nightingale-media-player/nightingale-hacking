@@ -217,6 +217,10 @@ sb-sys-close-button {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-close-button") !important;
 }
 
+sb-sys-hide-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-hide-button") !important;
+}
+
 sb-sys-maximize-button {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#sb-sys-maximize-button") !important;
 }

@@ -60,11 +60,6 @@ var polling_interval;
 
 function onLoad()
 {
-  try {
-    fixWindow("window_top", "app_title"); 
-  }
-  catch (e) { }
-
   if ( ( typeof( window.arguments[0] ) != 'undefined' ) && ( typeof( window.arguments[0].URL ) != 'undefined' ) )
   {
     try
