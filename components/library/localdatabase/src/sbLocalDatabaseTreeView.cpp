@@ -238,10 +238,8 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
   }
   else {
     if (bind.Equals(NS_LITERAL_STRING("guid"))) {
-      const PRUnichar* guid;
-      rv = mArray->GetByIndexShared(row, &guid);
+      rv = mArray->GetByIndex(row, _retval);
       NS_ENSURE_SUCCESS(rv, rv);
-      _retval.Assign(guid);
     }
     else {
       nsAutoString guid;
