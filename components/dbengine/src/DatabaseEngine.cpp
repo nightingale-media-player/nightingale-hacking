@@ -1551,23 +1551,18 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                 case SQLITE_MISUSE:
                 {
 #if defined(HARD_SANITY_CHECK)
-#if defined(XP_WIN)
-                  OutputDebugStringA("SQLITE: MISUSE\n");
-                  OutputDebugStringW(PromiseFlatString(strQuery).get());
-                  OutputDebugStringW(L"\n");
+                  NS_WARNING("SQLITE: MISUSE\n");
+                  NS_LossyConvertUTF16toASCII str(PromiseFlatString(strQuery).get());
+                  nsCAutoString log;
+
+                  log.Append(str);
+                  log.AppendLiteral("\n");
+                  NS_WARNING(log.get());
 
                   const char *szErr = sqlite3_errmsg(pDB);
-                  OutputDebugStringA(szErr);
-                  OutputDebugStringA("\n");
-#endif
-
-                  {
-                    const char *szErr = sqlite3_errmsg(pDB);
-                    nsCAutoString log;
-                    log.Append(szErr);
-                    log.AppendLiteral("\n");
-                    NS_WARNING(log.get());
-                  }
+                  log.Assign(szErr);
+                  log.AppendLiteral("\n");
+                  NS_WARNING(log.get());
 #endif
                 }
                 break;
