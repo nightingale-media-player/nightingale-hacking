@@ -40,6 +40,8 @@ interface nsIStringEnumerator;
 [scriptable, uuid(8711c7e2-8190-47f9-96d6-f19d2eed7b2b)]
 interface sbILocalDatabasePropertyCache : nsISupports
 {
+  attribute boolean cacheWritePending;
+
   attribute AString databaseGUID;
 
   void getProperties([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray,
@@ -48,8 +50,17 @@ interface sbILocalDatabasePropertyCache : nsISupports
                      [retval, array, size_is(aPropertyArrayCount)]
                        out sbILocalDatabaseResourcePropertyBag aPropertyArray);
 
+  void setProperties([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray,
+                     in unsigned long aGUIDArrayCount,
+                     [array, size_is(aPropertyArrayCount)] in 
+                       sbILocalDatabaseResourcePropertyBag aPropertyArray,
+                     in unsigned long aPropertyArrayCount,
+                     in boolean aWriteThroughNow);
+
   void cacheProperties([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray,
                      in unsigned long aGUIDArrayCount);
+
+  void write();
 };
 
 /**
@@ -58,8 +69,13 @@ interface sbILocalDatabasePropertyCache : nsISupports
 [scriptable, uuid(a6721ecf-d0e6-4216-94f6-147b2ee2932f)]
 interface sbILocalDatabaseResourcePropertyBag : nsISupports
 {
+  readonly attribute boolean writePending;
   readonly attribute nsIStringEnumerator names;
 
   AString getProperty(in AString aName);
+  void setProperty(in AString aName, in AString aValue);
+
+  void write();
 };
+
 

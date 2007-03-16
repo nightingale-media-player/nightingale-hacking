@@ -95,6 +95,17 @@ sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
 }
 
+NS_IMETHODIMP 
+sbLocalDatabasePropertyCache::GetCacheWritePending(PRBool *aCacheWritePending)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP 
+sbLocalDatabasePropertyCache::SetCacheWritePending(PRBool aCacheWritePending)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 NS_IMETHODIMP
 sbLocalDatabasePropertyCache::GetDatabaseGUID(nsAString& aDatabaseGUID)
 {
@@ -337,6 +348,25 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
   *aPropertyArray = propertyBagArray;
 
   return NS_OK;
+}
+
+
+NS_IMETHODIMP 
+sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray, 
+                                            PRUint32 aGUIDArrayCount, 
+                                            sbILocalDatabaseResourcePropertyBag **aPropertyArray, 
+                                            PRUint32 aPropertyArrayCount, 
+                                            PRBool aWriteThroughNow)
+{
+  //XXX: Fill this in.
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP 
+sbLocalDatabasePropertyCache::Write()
+{
+  //XXX: Fill this in.
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
@@ -604,6 +634,13 @@ PropertyBagKeysToArray(const PRUint32& aPropertyID,
   }
 }
 
+NS_IMETHODIMP 
+sbLocalDatabaseResourcePropertyBag::GetWritePending(PRBool *aWritePending)
+{
+  //XXX: Fill this in.
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::GetNames(nsIStringEnumerator **aNames)
 {
@@ -661,6 +698,20 @@ sbLocalDatabaseResourcePropertyBag::GetProperty(const nsAString& aName,
   return NS_ERROR_ILLEGAL_VALUE;
 }
 
+NS_IMETHODIMP 
+sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName, 
+                                                const nsAString & aValue)
+{
+  //XXX: Fill this in.
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
+{
+  //XXX: Fill this in.
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
                                              const nsAString& aValue)
@@ -704,4 +755,5 @@ sbTArrayStringEnumerator::GetNext(nsAString& _retval)
     return NS_ERROR_NOT_AVAILABLE;
   }
 }
+
 

@@ -33,12 +33,21 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
-class sbLocalDatabaseLibrary : public sbILibrary,
+#include <sbLocalDatabaseResourceProperty.h>
+
+class sbLocalDatabaseLibrary : public sbLocalDatabaseResourceProperty,
+                               public sbILibrary,
                                public sbILocalDatabaseLibrary
 {
 public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBILIBRARYRESOURCE
+  NS_DECL_ISUPPORTS_INHERITED
+
+  //When using inheritence, you must forward all interfaces implemented
+  //by the base class, else you will get "pure virtual function was not defined"
+  //style errors.
+  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseResourceProperty::)
+  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseResourceProperty::)
+
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
 

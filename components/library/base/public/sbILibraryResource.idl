@@ -61,6 +61,18 @@ interface sbILibraryResource : nsISupports
   readonly attribute long updated;
 
   /**
+   * \brief If this is enabled anytime setProperty is called it will
+   * cause the property to immediately be updated.
+   */
+  attribute boolean writeThrough;
+  
+  /**
+   * \brief Indicates if there is a pending write operation.
+   * This boolean is meaningless if you have writeThrough enabled.
+   */
+  readonly attribute boolean writePending;
+
+  /**
    * \brief Get the value of a property of this resource
    * \param aName Name of the property to get
    * \return Value of the requested property
@@ -78,8 +90,14 @@ interface sbILibraryResource : nsISupports
    * Bulk get/set?
    */
 /*
-  getProperties(?);
+  getProperties();
   setProperties(?);
 */
+
+  /**
+   * \brief Finish all pending write operations.
+   */
+  void write();
 };
+
 

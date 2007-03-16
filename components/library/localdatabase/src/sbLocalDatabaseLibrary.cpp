@@ -49,12 +49,13 @@
 #include <stdio.h>
 #include <prprf.h>
 
-NS_IMPL_ISUPPORTS2(sbLocalDatabaseLibrary,
-                   sbILibrary,
-                   sbILocalDatabaseLibrary)
+NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseLibrary,
+                             sbLocalDatabaseResourceProperty,
+                             sbILibrary,
+                             sbILocalDatabaseLibrary)
 
-sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid) :
-  mDatabaseGuid(aDatabaseGuid)
+sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid) 
+:  mDatabaseGuid(aDatabaseGuid)
 {
 }
 
@@ -76,6 +77,8 @@ sbLocalDatabaseLibrary::Init()
 
   rv = mPropertyCache->SetDatabaseGUID(mDatabaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  sbLocalDatabaseResourceProperty::Init(mPropertyCache, mDatabaseGuid);
 
   /*
    * Build some queries
@@ -282,6 +285,14 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetDatabaseGuid(nsAString& aDatabaseGuid)
 {
   aDatabaseGuid = mDatabaseGuid;
+  return NS_OK;
+}
+
+/* readonly attribute sbILocalDatabasePropertyCache propertyCache; */
+NS_IMETHODIMP sbLocalDatabaseLibrary::GetPropertyCache(sbILocalDatabasePropertyCache * *aPropertyCache)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyCache);
+  NS_ADDREF(*aPropertyCache = mPropertyCache);
   return NS_OK;
 }
 
@@ -539,38 +550,3 @@ sbLocalDatabaseLibrary::TidyUp()
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
-
-// sbILibraryResource
-// XXX - Can this be agg'd?
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetUri(nsIURI** aUri)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetCreated(PRInt32* aCreated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetUpdated(PRInt32* aUpdated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetProperty(const nsAString& aName,
-                                    nsAString& _retval)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::SetProperty(const nsAString& aName,
-                                    const nsAString& aValue)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-

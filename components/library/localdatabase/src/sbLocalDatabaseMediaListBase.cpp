@@ -57,12 +57,12 @@
 #define SB_CONTINUE_IF_FAILED(_rv)                         \
   SB_CONTINUE_IF_FALSE(NS_SUCCEEDED(_rv))
 
-NS_IMPL_ISUPPORTS5(sbLocalDatabaseMediaListBase,
-                   sbILibraryResource,
-                   sbIMediaItem,
-                   sbILocalDatabaseMediaItem,
-                   sbIMediaList,
-                   nsIClassInfo)
+NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseMediaListBase,
+                             sbLocalDatabaseResourceProperty,
+                             sbIMediaItem,
+                             sbILocalDatabaseMediaItem,
+                             sbIMediaList,
+                             nsIClassInfo)
 
 NS_IMPL_CI_INTERFACE_GETTER4(sbLocalDatabaseMediaListBase,
                              sbILibraryResource,
@@ -71,10 +71,11 @@ NS_IMPL_CI_INTERFACE_GETTER4(sbLocalDatabaseMediaListBase,
                              sbIMediaList)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
-                                                           const nsAString& aGuid) :
-  mLibrary(aLibrary),
-  mGuid(aGuid),
-  mMediaItemId(0)
+                                                           const nsAString& aGuid) 
+: sbLocalDatabaseResourceProperty(aLibrary, aGuid)
+, mLibrary(aLibrary)
+, mGuid(aGuid)
+, mMediaItemId(0)
 {
 }
 
@@ -965,39 +966,6 @@ sbLocalDatabaseMediaListBase::GetMediaItemId(PRUint32 *_retval)
 
   *_retval = mMediaItemId;
   return NS_OK;
-}
-
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetUri(nsIURI** aUri)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetCreated(PRInt32* aCreated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetUpdated(PRInt32* aUpdated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetProperty(const nsAString& aName,
-                                          nsAString& _retval)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::SetProperty(const nsAString& aName,
-                                          const nsAString& aValue)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 // nsIClassInfo

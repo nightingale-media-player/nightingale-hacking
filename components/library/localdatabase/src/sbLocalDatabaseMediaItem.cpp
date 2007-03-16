@@ -29,11 +29,11 @@
 #include <nsMemory.h>
 #include <nsIProgrammingLanguage.h>
 
-NS_IMPL_ISUPPORTS4(sbLocalDatabaseMediaItem,
-                   sbILibraryResource,
-                   sbIMediaItem,
-                   sbILocalDatabaseMediaItem,
-                   nsIClassInfo)
+NS_IMPL_ISUPPORTS_INHERITED3(sbLocalDatabaseMediaItem,
+                             sbLocalDatabaseResourceProperty,
+                             sbIMediaItem,
+                             sbILocalDatabaseMediaItem,
+                             nsIClassInfo)
 
 NS_IMPL_CI_INTERFACE_GETTER3(sbLocalDatabaseMediaItem,
                              sbILibraryResource,
@@ -41,10 +41,11 @@ NS_IMPL_CI_INTERFACE_GETTER3(sbLocalDatabaseMediaItem,
                              sbILocalDatabaseMediaItem)
 
 sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem(sbILocalDatabaseLibrary* aLibrary,
-                                                   const nsAString& aGuid) :
- mLibrary(aLibrary),
- mGuid(aGuid),
- mMediaItemId(0)
+                                                   const nsAString& aGuid) 
+: sbLocalDatabaseResourceProperty(aLibrary, aGuid)
+, mLibrary(aLibrary)
+, mGuid(aGuid)
+, mMediaItemId(0)
 {
 }
 
@@ -230,51 +231,6 @@ sbLocalDatabaseMediaItem::GetMediaItemId(PRUint32 *_retval)
   return NS_OK;
 }
 
-// sbILibraryResource
-// XXX - Can this be agg'd?
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetUri(nsIURI** aUri)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetCreated(PRInt32* aCreated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetUpdated(PRInt32* aUpdated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName,
-                                      nsAString& _retval)
-{
-  nsresult rv;
-
-  if (!mProperties) {
-    rv = mLibrary->GetPropertiesForGuid(mGuid,
-                                        getter_AddRefs(mProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = mProperties->GetProperty(aName, _retval);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
-                                      const nsAString& aValue)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
 // nsIClassInfo
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetInterfaces(PRUint32* count, nsIID*** array)
@@ -331,4 +287,3 @@ sbLocalDatabaseMediaItem::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
-

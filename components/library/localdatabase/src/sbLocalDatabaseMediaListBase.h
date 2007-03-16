@@ -41,7 +41,10 @@
 #include <sbIMediaList.h>
 #include <sbIMediaListListener.h>
 
-class sbLocalDatabaseMediaListBase : public sbIMediaList,
+#include "sbLocalDatabaseResourceProperty.h"
+
+class sbLocalDatabaseMediaListBase : public sbLocalDatabaseResourceProperty,
+                                     public sbIMediaList,
                                      public sbILocalDatabaseMediaItem,
                                      public nsIClassInfo
 {
@@ -50,8 +53,14 @@ class sbLocalDatabaseMediaListBase : public sbIMediaList,
   typedef nsInterfaceHashtableMT<nsISupportsHashKey, sbIMediaListListener> sbMediaListListenersTableMT;
 
 public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBILIBRARYRESOURCE
+  NS_DECL_ISUPPORTS_INHERITED
+
+  //When using inheritence, you must forward all interfaces implemented
+  //by the base class, else you will get "pure virtual function was not defined"
+  //style errors.
+  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseResourceProperty::)
+  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseResourceProperty::)
+
   NS_DECL_SBIMEDIAITEM
   NS_DECL_SBIMEDIALIST
   NS_DECL_SBILOCALDATABASEMEDIAITEM

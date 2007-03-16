@@ -25,33 +25,21 @@
 */
 
 /**
- * \file sbILocalDatabaseLibrary.idl
- * \brief Definition of the sbILocalDatabaseLibrary interfaces
+ * \file sbILocalDatabaseResourceProperty.idl
+ * \brief Definition of the sbILocalDatabaseResourceProperty interface
  */
 
 #include "nsISupports.idl"
+#include "sbILibraryResource.idl"
 
-interface sbIMediaItem;
 interface sbILocalDatabasePropertyCache;
-interface sbILocalDatabaseResourcePropertyBag;
 
 /**
-* \interface sbILocalDatabaseLibrary
-* \brief Internal use only
+* \interface sbILocalDatabaseResourceProperty
 */
-[uuid(2fbd49f8-3c95-437b-b3ac-efaeefb86d6a)]
-interface sbILocalDatabaseLibrary : nsISupports
+[scriptable, uuid(64BCF7AC-099B-4d26-A019-674449AB7C35)]
+interface sbILocalDatabaseResourceProperty : sbILibraryResource
 {
-  readonly attribute AString databaseGuid;
-  readonly attribute sbILocalDatabasePropertyCache propertyCache;
-
-  void init();
-
-  ACString getContractIdForGuid(in AString aGuid);
-
-  unsigned long getMediaItemIdForGuid(in AString aGuid);
-
-  sbILocalDatabaseResourcePropertyBag getPropertiesForGuid(in AString aGuid);
+  void init(in sbILocalDatabasePropertyCache aPropertyCache,
+            in AString aGuid);
 };
-
-
