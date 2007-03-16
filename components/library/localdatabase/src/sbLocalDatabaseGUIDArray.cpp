@@ -303,6 +303,20 @@ sbLocalDatabaseGUIDArray::GetSortPropertyValueByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetMediaItemIdByIndex(PRUint32 aIndex,
+                                                PRUint32* _retval)
+{
+  nsresult rv;
+
+  ArrayItem* item;
+  rv = GetByIndexInternal(aIndex, &item);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = item->mediaItemId;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::Invalidate()
 {
   if (mValid == PR_FALSE) {
@@ -1279,17 +1293,23 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   PRBool isFirstValue = PR_TRUE;
   PRBool isFirstSort = PR_TRUE;
   for (PRUint32 i = 0; i < rowCount; i++) {
-    PRUnichar* guid;
-    rv = result->GetRowCellPtr(i, 0, &guid);
+    nsAutoString mediaItemIdStr;
+    rv = result->GetRowCell(i, 0, mediaItemIdStr);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    ArrayItem* item = new ArrayItem(guid);
-    NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
+    PRUint32 mediaItemId = mediaItemIdStr.ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUnichar* guid;
+    rv = result->GetRowCellPtr(i, 1, &guid);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     PRUnichar* value;
-    rv = result->GetRowCellPtr(i, 1, &value);
+    rv = result->GetRowCellPtr(i, 2, &value);
     NS_ENSURE_SUCCESS(rv, rv);
-    item->sortPropertyValue = value;
+
+    ArrayItem* item = new ArrayItem(mediaItemId, guid, value);
+    NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
     NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + aDestIndexOffset, 1, item),
                    NS_ERROR_OUT_OF_MEMORY);
@@ -1340,7 +1360,9 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     NS_WARNING(message);
     PR_smprintf_free(message);
     for (PRUint32 i = 0; i < aCount - rowCount; i++) {
-      ArrayItem* item = new ArrayItem(NS_LITERAL_STRING("error"));
+      ArrayItem* item = new ArrayItem(0,
+                                      NS_LITERAL_STRING("error"),
+                                      NS_LITERAL_STRING("error"));
       NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
       NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + rowCount + aDestIndexOffset, 1, item),
@@ -1585,7 +1607,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  NS_ENSURE_ARG_MAX(aIndex, mLength);
+  NS_ENSURE_ARG_MAX(aIndex, mLength - 1);
 
   /*
    * Check to see if we have this index in cache

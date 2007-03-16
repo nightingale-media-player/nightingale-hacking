@@ -254,5 +254,42 @@ function runTest () {
   a.push(guid);
   assertList(list, a);
 
+  // Test remove
+  item = library.getMediaItem("3E586C1A-AD99-11DB-9321-C22AB7121F49");
+  assertEqual(list.contains(item), true);
+  oldlength = list.length;
+  list.remove(item);
+  assertEqual(list.contains(item), false);
+  assertEqual(list.length, oldlength - 1);
+
+  item = list.getItemByIndex(0);
+  oldlength = list.length;
+  assertEqual(list.contains(item), true);
+  list.removeByIndex(0);
+  assertEqual(list.contains(item), false);
+  assertEqual(list.length, oldlength - 1);
+
+  // test bad index
+  try {
+    list.removeByIndex(list.length);
+    fail("NS_ERROR_ILLEGAL_VALUE not thrown");
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_ILLEGAL_VALUE);
+  }
+
+  var toRemove = [
+    list.getItemByIndex(0),
+    list.getItemByIndex(1),
+    list.getItemByIndex(2),
+    list.getItemByIndex(3),
+    list.getItemByIndex(4)
+  ];
+  oldlength = list.length;
+  toRemove.forEach(function(item) { assertEqual(list.contains(item), true); });
+  list.removeSome(new SimpleArrayEnumerator(toRemove));
+  toRemove.forEach(function(item) { assertEqual(list.contains(item), false); });
+  assertEqual(list.length, oldlength - toRemove.length);
+
 }
 

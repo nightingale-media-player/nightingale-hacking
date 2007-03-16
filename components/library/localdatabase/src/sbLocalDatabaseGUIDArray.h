@@ -57,8 +57,25 @@ public:
 private:
 
   struct ArrayItem {
-    ArrayItem(const nsAString& aGuid) : guid(aGuid) {} ;
-    ArrayItem(const PRUnichar* aGuid) : guid(aGuid) {} ;
+    ArrayItem(PRUint32 aMediaItemId,
+              const nsAString& aGuid,
+              const nsAString& aValue) :
+      mediaItemId(aMediaItemId),
+      guid(aGuid),
+      sortPropertyValue(aValue)
+    {
+    };
+
+    ArrayItem(PRUint32 aMediaItemId,
+              const PRUnichar* aGuid,
+              const PRUnichar* aValue) :
+      mediaItemId(aMediaItemId),
+      guid(aGuid),
+      sortPropertyValue(aValue)
+    {
+    };
+
+    PRUint32 mediaItemId;
     nsString guid;
     nsString sortPropertyValue;
   };

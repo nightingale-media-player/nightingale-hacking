@@ -53,6 +53,10 @@ public:
   NS_IMETHOD InsertBefore(PRUint32 aIndex, sbIMediaItem* aMediaItem);
   NS_IMETHOD MoveBefore(PRUint32 aFromIndex, PRUint32 aToIndex);
   NS_IMETHOD MoveLast(PRUint32 aIndex);
+  NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
+  NS_IMETHOD RemoveByIndex(PRUint32 aIndex);
+  NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);
+  NS_IMETHOD Clear();
 
 private:
   ~sbLocalDatabaseSimpleMediaList();
@@ -60,6 +64,8 @@ private:
   nsresult ExecuteAggregateQuery(const nsAString& aQuery, nsAString& aValue);
 
   nsresult UpdateOrdinalByIndex(PRUint32 aIndex, const nsAString& aOrdinal);
+
+  nsresult DeleteItemByMediaItemId(PRUint32 aMediaItemId);
 
   nsresult GetNextOrdinal(nsAString& aValue);
 
@@ -78,6 +84,12 @@ private:
 
   // Query to update the ordinal of a media item in this list
   nsString mUpdateListItemOrdinalQuery;
+
+  // Query to delete an item from the list
+  nsString mDeleteListItemQuery;
+
+  // Query to delete the entire contents of the list
+  nsString mDeleteAllQuery;
 
   // Get last ordinal
   nsString mGetLastOrdinalQuery;

@@ -72,6 +72,8 @@ interface sbILocalDatabaseGUIDArray : nsISupports
 
   AString getSortPropertyValueByIndex(in unsigned long aIndex);
 
+  unsigned long getMediaItemIdByIndex(in unsigned long aIndex);
+
   void invalidate();
 
   sbILocalDatabaseGUIDArray clone();

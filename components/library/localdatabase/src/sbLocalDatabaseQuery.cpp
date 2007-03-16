@@ -198,6 +198,9 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
 {
   nsresult rv;
 
+  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, GUID_COLUMN);
   NS_ENSURE_SUCCESS(rv, rv);
 

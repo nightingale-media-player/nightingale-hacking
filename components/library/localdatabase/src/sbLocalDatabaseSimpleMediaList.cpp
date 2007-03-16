@@ -247,6 +247,55 @@ sbLocalDatabaseSimpleMediaList::Init()
   rv = update->ToString(mUpdateListItemOrdinalQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Create item delete query
+  nsCOMPtr<sbISQLDeleteBuilder> deleteb =
+    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
+
+  rv = deleteb->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->CreateMatchCriterionLong(EmptyString(),
+                                         NS_LITERAL_STRING("media_item_id"),
+                                         sbISQLSelectBuilder::MATCH_EQUALS,
+                                         mediaItemId,
+                                         getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->CreateMatchCriterionParameter(EmptyString(),
+                                              NS_LITERAL_STRING("member_media_item_id"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->ToString(mDeleteListItemQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create delete all query
+  rv = deleteb->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->CreateMatchCriterionLong(EmptyString(),
+                                         NS_LITERAL_STRING("media_item_id"),
+                                         sbISQLSelectBuilder::MATCH_EQUALS,
+                                         mediaItemId,
+                                         getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->ToString(mDeleteAllQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -593,6 +642,160 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::Remove(sbIMediaItem* aMediaItem)
+{
+  // Serialize list changes
+  nsAutoLock lock(sListUpdateLock);
+
+  nsresult rv;
+
+  nsCOMPtr<sbILocalDatabaseMediaItem> ldbmi =
+    do_QueryInterface(aMediaItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 mediaItemId;
+  rv = ldbmi->GetMediaItemId(&mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DeleteItemByMediaItemId(mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Invalidate the cached list
+  rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
+{
+  // Serialize list changes
+  nsAutoLock lock(sListUpdateLock);
+
+  nsresult rv;
+
+  PRUint32 mediaItemId;
+  rv = mFullArray->GetMediaItemIdByIndex(aIndex, &mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DeleteItemByMediaItemId(mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Invalidate the cached list
+  rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+
+  // Serialize list changes
+  nsAutoLock lock(sListUpdateLock);
+
+  nsresult rv;
+  PRInt32 dbOk;
+
+  // Prep the query
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString databaseGuid;
+  rv = mLibrary->GetDatabaseGuid(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("begin"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasMoreElements;
+  while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMoreElements)) &&
+         hasMoreElements) {
+
+    nsCOMPtr<nsISupports> supports;
+    rv = aMediaItems->GetNext(getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->AddQuery(mDeleteListItemQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILocalDatabaseMediaItem> ldbmi =
+      do_QueryInterface(item, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 mediaItemId;
+    rv = ldbmi->GetMediaItemId(&mediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt32Parameter(0, mediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = query->AddQuery(NS_LITERAL_STRING("commit"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  // Invalidate the cached list
+  rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::Clear()
+{
+  // Serialize list changes
+  nsAutoLock lock(sListUpdateLock);
+
+  nsresult rv;
+  PRInt32 dbOk;
+
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString databaseGuid;
+  rv = mLibrary->GetDatabaseGuid(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mDeleteAllQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  // Invalidate the cached list
+  rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 nsresult
 sbLocalDatabaseSimpleMediaList::ExecuteAggregateQuery(const nsAString& aQuery,
                                                       nsAString& aValue)
@@ -647,12 +850,8 @@ sbLocalDatabaseSimpleMediaList::UpdateOrdinalByIndex(PRUint32 aIndex,
   PRInt32 dbOk;
 
   // Get the media item id of the item we are moving
-  nsAutoString guid;
-  rv = mFullArray->GetByIndex(aIndex, guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRUint32 mediaItemId;
-  rv = mLibrary->GetMediaItemIdForGuid(guid, &mediaItemId);
+  rv = mFullArray->GetMediaItemIdByIndex(aIndex, &mediaItemId);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Update the item at the from index with the new ordinal
@@ -677,6 +876,39 @@ sbLocalDatabaseSimpleMediaList::UpdateOrdinalByIndex(PRUint32 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindInt32Parameter(1, mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseSimpleMediaList::DeleteItemByMediaItemId(PRUint32 aMediaItemId)
+{
+  nsresult rv;
+  PRInt32 dbOk;
+
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString databaseGuid;
+  rv = mLibrary->GetDatabaseGuid(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mDeleteListItemQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt32Parameter(0, aMediaItemId);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->Execute(&dbOk);
