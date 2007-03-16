@@ -167,5 +167,67 @@ function runTest () {
   assertEqual(lastIndexOfException2.result, Cr.NS_ERROR_INVALID_ARG);
   
   // Test listeners
+
+  // Test remove
+  var databaseGUID = "test_localdatabaselibrary";
+  createDatabase(databaseGUID);
+
+  library = createLibrary(databaseGUID);
+
+  item = library.getMediaItem("3E2549C0-AD99-11DB-9321-C22AB7121F49");
+  assertEqual(view.contains(item), true);
+  var oldlength = view.length;
+  view.remove(item);
+  assertEqual(view.contains(item), false);
+  assertEqual(view.length, oldlength - 1);
+
+  item = view.getItemByIndex(0);
+  oldlength = view.length;
+  assertEqual(view.contains(item), true);
+  view.removeByIndex(0);
+  assertEqual(view.contains(item), false);
+  assertEqual(view.length, oldlength - 1);
+
+  // test bad index
+  try {
+    view.removeByIndex(view.length);
+    fail("NS_ERROR_ILLEGAL_VALUE not thrown");
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_ILLEGAL_VALUE);
+  }
+
+  var toRemove = [
+    view.getItemByIndex(0),
+    view.getItemByIndex(1),
+    view.getItemByIndex(2),
+    view.getItemByIndex(3),
+    view.getItemByIndex(4)
+  ];
+  oldlength = view.length;
+  toRemove.forEach(function(item) { assertEqual(view.contains(item), true); });
+  view.removeSome(new SimpleArrayEnumerator(toRemove));
+  toRemove.forEach(function(item) { assertEqual(view.contains(item), false); });
+  assertEqual(view.length, oldlength - toRemove.length);
+
+  // Remove an item that is part of a list
+  list = view.getItemByGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  item = list.getItemByIndex(0);
+  oldlength = list.length;
+  view.remove(item);
+  // XXX: SK - Need to do this until invalidation listener is hooked up
+  list = view.getItemByGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  assertEqual(list.contains(item), false);
+  assertEqual(list.length, oldlength - 1);
+
+  // Remove a list
+  oldlength = view.length;
+  view.remove(list);
+  assertEqual(view.contains(list), false);
+  assertEqual(view.length, oldlength - 1);
+
+  // Test clear
+  view.clear();
+  assertEqual(view.length, 0);
 }
 

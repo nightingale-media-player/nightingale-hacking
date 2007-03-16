@@ -35,6 +35,7 @@
 #include <sbIMediaItem.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
+#include <prlock.h>
 
 class sbLocalDatabaseViewMediaList : public sbLocalDatabaseMediaListBase
 {
@@ -46,14 +47,34 @@ public:
 
   nsresult Init();
 
+  // override base class
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
   NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);
   NS_IMETHOD Add(sbIMediaItem *aMediaItem);
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems);
+  NS_IMETHOD InsertBefore(PRUint32 aIndex, sbIMediaItem* aMediaItem);
+  NS_IMETHOD MoveBefore(PRUint32 aFromIndex, PRUint32 aToIndex);
+  NS_IMETHOD MoveLast(PRUint32 aIndex);
+  NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
+  NS_IMETHOD RemoveByIndex(PRUint32 aIndex);
+  NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);
+  NS_IMETHOD Clear();
 
 private:
   ~sbLocalDatabaseViewMediaList();
+
+  nsresult DeleteItemByMediaItemId(PRUint32 aMediaItemId);
+
+  nsresult CreateQueries();
+
+  // Query to delete a single item from the view
+  nsString mDeleteItemQuery;
+
+  // Query to clear the entire list
+  nsString mDeleteAllQuery;
+
+  PRLock* mListUpdateLock;
 };
 
 #endif /* __SBLOCALDATABASEVIEWMEDIALIST_H__ */

@@ -50,6 +50,14 @@ create table simple_media_lists (
   ordinal text not null collate tree
 );
 create index idx_simple_media_lists_media_item_id_member_media_item_id on simple_media_lists (media_item_id, member_media_item_id, ordinal);
+/* note the empty comment blocks at the end of the lines in the body of the
+   trigger need to be there to prevent the parser from splitting on the
+   line ending semicolon */
+create trigger tgr_media_items_simple_media_lists_delete before delete on media_items
+begin
+  delete from simple_media_lists where member_media_item_id = OLD.media_item_id or media_item_id = OLD.media_item_id; /**/
+  delete from resource_properties where guid = OLD.guid; /**/
+end;
 
 /* static data */
 
