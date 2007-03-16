@@ -37,8 +37,6 @@
 //                  - mig
 //
 
-// The global progress filter, set in SBInitialize and released in SBUnitialize
-var gProgressFilter = null;
 
 // This functionality should be encapsulated into its own xbl.
 function NumItemsPoll()
@@ -102,6 +100,7 @@ var theNumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
 var theDefaultUrlOverride = null;
 
 var gServicePane = null;
+var gBrowser = null;
 
 function SBInitialize()
 {
@@ -155,35 +154,12 @@ function SBInitialize()
       SBDataSetBoolValue("firstrun.scancomplete", true);
     }
 
-    // Install listeners on the main pane. - This is the browser xul element from mainwin.xul
-    var theMainPane = document.getElementById("frame_main_pane");
-    if (!mainpane_listener_set)
-    {
-      mainpane_listener_set = false;
-      if (theMainPane.addEventListener) {
-        // Initialize the global progress filter
-        if (!gProgressFilter) {
-          gProgressFilter = Components.classes[BROWSER_FILTER_CONTRACTID]
-                                      .createInstance(nsIWebProgress);
-        }
-        // And add our own filter to it
-        gProgressFilter.addProgressListener(sbWebProgressListener,
-                                            nsIWebProgress.NOTIFY_ALL);
-        theMainPane.addProgressListener(gProgressFilter);
-
-        // Trap clicks on links with target=_blank or _new
-        // and launch them in the default browser.
-        // Note: _new isn't valid.. but seems to be used frequently
-        // so we might as well support it.
-        theMainPane.addEventListener("click", onBrowserClick, true);
-
-      }
-    }
+    // This is the sb-tabbrowser xul element from mainwin.xul
+    gBrowser = document.getElementById("frame_main_pane");
     
     // Look at all these ugly hacks that need to go away.  (sigh)
-    var gServicePane = document.getElementById('servicepane');
-    gServicePane.browser = theMainPane;
-    gServicePane.onPlaylistHide = onBrowserPlaylistHide;
+    gServicePane = document.getElementById('servicepane');
+    gServicePane.browser = gBrowser; // FIXME: this should be set via a XUL XML attribute
     gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
     // looks like we need to attach this to the window...
     window.gServicePane = gServicePane

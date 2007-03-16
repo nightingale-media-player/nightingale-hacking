@@ -239,10 +239,12 @@
                   <spacer style="min-width: 8px !important;" width="8" height="16"/>
                 </hbox>
               </vbox>
-
-
-              <sb-tabbrowser id="frame_main_pane" flex="1" />
-
+              <sb-tabbrowser id="frame_main_pane" flex="1"
+                             servicepane="servicepane"
+                             search="search_widget"
+                             playlist="playlist_web"
+                             contentcontextmenu="html_context_menu"
+                             />
               <smartsplitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
                 <grippy/>
               </smartsplitter>

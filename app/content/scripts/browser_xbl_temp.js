@@ -42,150 +42,14 @@ var theBrowserImageData = SB_NewDataRemote( "browser.url.image", null );
 var theBrowserUriData = SB_NewDataRemote( "browser.uri", null );
 var theShowWebPlaylistData = SB_NewDataRemote( "browser.playlist.show", null );
 
-var sbWebProgressListener = {
 
-  QueryInterface : function(aIID) {
-    if (!aIID.equals(Components.interfaces.nsIWebProgressListener) &&
-        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !aIID.equals(Components.interfaces.nsISupports)) 
-    {
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-    return this;
-  },
-
-  onStateChange : function( aWebProgress, aRequest, aState, aStatus ) 
-  {
-    const nsIWebProgressListener =
-      Components.interfaces.nsIWebProgressListener;
-
-    if (aState & nsIWebProgressListener.STATE_START) {
-      // Start the spinner if necessary
-      thePaneLoadingData.boolValue = true;
-    }
-    else if (aState & nsIWebProgressListener.STATE_STOP) {
-      // Stop the spinner if necessary
-      thePaneLoadingData.boolValue = false;
-
-      // Notfiy that the page is done loading
-      onMainPaneLoad();
-    }
-  },
-  
-  onStatusChange : function( aWebProgress, aRequest, aLocation ) 
-  {
-  },
-  
-  onProgressChange : function( aWebProgress, aRequest, aLocation ) 
-  {
-  },
-  
-  onSecurityChange : function( aWebProgress, aRequest, aLocation ) 
-  {
-  },
-  
-  onLocationChange : function( aWebProgress, aRequest, aLocation ) 
-  {
-    try
-    {
-      var cur_uri = aLocation.asciiSpec;
-      // save url for reload on next servicetree init
-      SBDataSetStringValue( "servicetree.selected_url", cur_uri );  
-      // Set the value in the text box (shown or not)
-      var servicepane = document.getElementById('servicepane');
-      var theMainPane = document.getElementById( "frame_main_pane" );
-      if ( aRequest && aRequest.name )    
-      {
-        // Set the box
-        theBrowserUriData.stringValue = cur_uri;
-        theBrowserUrlData.stringValue = SBGetServiceFromUrl( cur_uri ) ;
-        var image = SBGetServiceImageFromUrl( cur_uri );
-        if ( image.length )
-        {
-          theBrowserImageData.stringValue = image;
-        }
-        
-        // Set the buttons based on the session history.
-        if ( theMainPane.webNavigation.sessionHistory )
-        {
-          // Check the buttons
-          theCanGoBackData.boolValue = theMainPane.webNavigation.canGoBack;
-          theCanGoFwdData.boolValue = theMainPane.webNavigation.canGoForward;
-        }
-        else
-        {
-          // Error?
-        }
-
-/*        
-        // Hide or show the HTML box based upon whether or not the loaded page is .xul (lame heuristic)
-        var theHTMLBox = document.getElementById( "frame_main_pane_html" );
-        if ( theHTMLBox )
-        {
-          if ( cur_uri.indexOf(".xul") != -1 )
-          {
-            if ( SBDataGetIntValue( "option.htmlbar" ) == 0 )
-            {
-              theHTMLBox.setAttribute( "hidden", "true" );
-            }
-          }
-          else
-          {
-            theHTMLBox.setAttribute( "hidden", "false" );
-          }
-        }
-*/        
-      }
-      /*
-      if ( ! theServiceTree.urlFromServicePane )
-      {
-        // Clear the service tree selection (asynchronously?  is this from out of thread?)
-        setTimeout( "document.getElementById( 'frame_servicetree' ).tree.view.selection.currentIndex = -1;" +
-                    "document.getElementById( 'frame_servicetree' ).tree.view.selection.clearSelection();",
-                    50 );
-      }
-      theServiceTree.urlFromServicePane = false;
-      */
-      
-      // Clear the playlist tree variable so we are not confused.
-      thePlaylistTree = null;
-      theLibraryPlaylist = null;
-      // hack, to let play buttons find the visible playlist if needed
-      document.__CURRENTPLAYLIST__ = null;
-      
-      // Clear the tracking variable
-      mainpane_listener_set = false;
-      
-      // Disable the "add to playlist" button until we see that there is anything to add.
-      theCanAddToPlaylistData.boolValue = false;
-      onBrowserPlaylistHide();
-
-      // Clear the playlist tree variable so we are not confused.
-      thePlaylistTree = null;
-      theLibraryPlaylist = null;
-      // hack, to let play buttons find the visible playlist if needed
-      document.__CURRENTPLAYLIST__ = null;
-      
-      // Nothing in the status text
-      theStatusText.stringValue = "";
-      
-      //theServiceTree.current_url = cur_uri;
-
-      document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
-    }
-    catch ( err )
-    {
-      alert( "onLocationChange\n\n" + err );
-    }
-  }
-}; // sbWebProgressListener definition
 
 // onBrowserBack
 function onBrowserBack()
 {
   // Disable the "add to playlist" button until we see that there is anything to add.
   theCanAddToPlaylistData.boolValue = false;
-  onBrowserPlaylistHide();
+  gBrowser.hidePlaylist();
   var theMainPane = document.getElementById( "frame_main_pane" );
   mainpane_listener_set = false;
   theMainPane.goBack();
@@ -196,7 +60,7 @@ function onBrowserFwd()
 {
   // Disable the "add to playlist" button until we see that there is anything to add.
   theCanAddToPlaylistData.boolValue = false;
-  onBrowserPlaylistHide();
+  gBrowser.hidePlaylist();
   var theMainPane = document.getElementById( "frame_main_pane" );
   mainpane_listener_set = false;
   theMainPane.goForward();
@@ -262,36 +126,7 @@ function onBrowserBookmark()
 
 
 
-// onBrowserClick
-// Catches links with target=_blank and opens them with the default browser.
-// Added as a click listener to theMainPane.
-function onBrowserClick(evt)
-{
-  if (evt.target && evt.button == 0 && evt.target.tagName == "A") {
 
-    //dump("\n\n\nClick in main pane: "
-    //    + "tag " + evt.target.tagName + "\n"
-    //    + "href "  + evt.target.href + "\n" 
-    //    + "target " + evt.target.target
-    //    + "\n\n\n");  
-        
-    var is_media = gPPS.isMediaURL( evt.target.href );
-    var is_playlist = gPPS.isPlaylistURL( evt.target.href );
-    if (!is_media && !is_playlist && (evt.target.target == "_blank" || evt.target.target == "_new")) {
-      var externalLoader = (Components
-            .classes["@mozilla.org/uriloader/external-protocol-service;1"]
-            .getService(Components.interfaces.nsIExternalProtocolService));
-      var nsURI = (Components
-            .classes["@mozilla.org/network/io-service;1"]
-            .getService(Components.interfaces.nsIIOService)
-            .newURI(evt.target.href, null, null));
-      externalLoader.loadURI(nsURI, null);
-
-      // Kill the event since we've handled it
-      evt.preventDefault();
-    }
-  }
-}
 
 function onBrowserPlaylist()
 {
@@ -364,21 +199,6 @@ function onBrowserDownload()
   }
 }
 
-function onBrowserPlaylistHide()
-{
-  //SB_LOG("songbird_hack.js", "onBrowserPlaylistHide");
-  // Hide the web table if it exists
-  theShowWebPlaylistData.boolValue = false;
- 
-  // And unhook the playlist from the database
-  var theTree = document.getElementById( "playlist_web" );
-  if ( theTree )
-  {
-    var source = new sbIPlaylistsource();
-    theTree.datasources = "";
-    theTree.ref = "";
-  }
-}
 
 // onHTMLUrlChange
 function onHTMLUrlChange( evt )
@@ -390,8 +210,8 @@ function onHTMLUrlChange( evt )
     value = SBGetUrlFromService( value );
     // And then put it back in the box as a service
     theBrowserUriData.stringValue = value;
-    theBrowserUrlData.stringValue = SBGetServiceFromUrl( value );
-    var image = SBGetServiceImageFromUrl( value );
+    theBrowserUrlData.stringValue = gServicePane.getURLName( value );
+    var image = gServicePane.getURLImage( value );
 //    if ( image.length )
     {
       theBrowserImageData.stringValue = image;
@@ -463,142 +283,7 @@ var thePlaylistTree;
 var theCurrentMainPaneDocument = null;
 function onMainPaneLoad()
 {
-  //SB_LOG("songbird_hack.js", "onMainPaneLoad");
-  try
-  {
-    if ( ! mainpane_listener_set )
-    {
-      var theMainPane = document.getElementById( "frame_main_pane" );
-      if ( typeof( theMainPane ) == 'undefined' )
-      {
-        //SB_LOG("songbird_hack.js", "onMainPaneLoad - returning early, no browser object yet");
-        return;
-      }
-      
-      //
-      //
-      // HORRIBLE SECURITY HACK TO GET THE PLAYLIST TREE AND INJECT FUN EVENT HANDLERS 
-      //
-      //
-      var installed_listener = false;
-      var playlist = theMainPane.contentDocument.getElementById( "playlist_test" );
-      if (playlist) {
-        // Crack the security if necessary
-        if ( playlist.wrappedJSObject )
-          playlist = playlist.wrappedJSObject;
 
-        // Wait until after the bind call?
-        if ( playlist.ref == "" )
-        {
-          //SB_LOG("songbird_hack.js", "onMainPaneLoad - setting timeout(2), haven't loaded yet");
-          // Try again in 250 ms?
-          setTimeout( onMainPaneLoad, 250 );
-          return;
-        }
-
-        // hack, to let play buttons find the visible playlist if needed
-        document.__CURRENTPLAYLIST__ = playlist;
-
-        // Drag and Drop tracker object
-        playlist.setDnDSourceTracker(sbDnDSourceTracker);
-
-        // Events on the playlist object itself.            
-        playlist.addEventListener( "playlist-edit", onPlaylistEdit, true );
-        playlist.addEventListener( "playlist-editor", onPlaylistEditor, true );
-        playlist.addEventListener( "playlist-play", onPlaylistPlay, true );
-        playlist.addEventListener( "playlist-burntocd", onPlaylistBurnToCD, true );
-        playlist.addEventListener( "playlist-noplaylist", onPlaylistNoPlaylist, true );
-        playlist.addEventListener( "playlist-filterchange", onPlaylistFilterChange, true );
-        playlist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
-
-        // Remember some values
-        theLibraryPlaylist = playlist;
-        thePlaylistTree = playlist = playlist.tree;
-        thePlaylistRef.stringValue = playlist.getAttribute( "ref" ); // is this set yet?
-
-        // Set the current selection
-        theLibraryPlaylist.syncPlaylistIndex(false);
-
-        // And remember that we did this
-        installed_listener = true;
-
-        mainpane_listener_set = true;
-        
-        if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
-      }
-      else {
-        //SB_LOG("songbird_hack.js", "onMainPaneLoad - no playlist_test setting playlists to null");
-        thePlaylistTree = null;
-        theLibraryPlaylist = null;
-        // hack, to let play buttons find the visible playlist if needed
-        document.__CURRENTPLAYLIST__ = null;
-      }
-
-      // Should the webplaylist scan and listener binding be performed?
-      var enableWebPlaylist = SBDataGetBoolValue("webplaylist.enabled");
-      
-      // If we have not installed a playlist listener, and the web playlist
-      // is enabled, install the link url listener.
-      if ( !installed_listener && enableWebPlaylist)
-      {
-        // wait until the document exists to see if there are any A tags
-        if ( ! theMainPane.contentDocument )
-        {
-          //SB_LOG("songbird_hack.js", "onMainPaneLoad - setting timeout(3), no document");
-          setTimeout( onMainPaneLoad, 2500 );
-          return;
-        }
-        else if ( theMainPane.contentDocument.getElementsByTagName('A').length != 0 )
-        {
-          var playlist_guid = WEB_PLAYLIST_CONTEXT;
-          var playlist_table = WEB_PLAYLIST_TABLE;
-          // BIG HACK to show the subscribed playlist
-          var cur_url = SBDataGetStringValue( "browser.uri" );
-          var aPlaylistManager = new sbIPlaylistManager();
-          var queryObj = new sbIDatabaseQuery();
-          queryObj.setAsyncQuery(false);
-          queryObj.setDatabaseGUID("songbird");      
-          aPlaylistManager.getDynamicPlaylistList(queryObj);
-          var resObj = queryObj.getResultObject();
-          var i, rows = resObj.getRowCount();
-          for ( i = 0; i < rows; i++ )
-          {
-            if ( cur_url == resObj.getRowCellByColumn( i, "description" ) )
-            {
-              var table = resObj.getRowCellByColumn( i, "name" );
-              // Bind the Web Playlist UI element to the subscribed playlist instead of scraping.
-              theWebPlaylist.bind( "songbird", table, null, SBDefaultCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
-              // Show/hide them
-              SBDataSetBoolValue( "browser.playlist.show", true );
-              playlist_guid = "songbird";
-              playlist_table = table;
-            }
-          }
-          // scrape the document.
-          AsyncWebDocument( theMainPane.contentDocument, playlist_guid, playlist_table );
-        } 
-
-
-        // XXXlone -- we need this to happen so that the playlist gets initialized if it wasn't ready yet but is coming up soon !
-        // unfortunately, if the page is not going to be a playlist, but is a document with no A element, we'll keep hitting this code
-        // and rerun this function every 2.5s, forever. We need to detect that a page is a not a playlist in the process of being loaded 
-        // so that we can avoid issuing a setTimeout(onMainPaneLoad, 2500) in this case, but ONLY in this case.
-        else 
-        {
-          setTimeout( onMainPaneLoad, 2500 );
-          return;
-        }
-        // XXXlone -- end case where page is going to be a playlist but contentDocument does not yet contains a playlist
-
-        mainpane_listener_set = true;
-      }
-    }
-  }
-  catch( err )
-  {
-    alert( err );
-  }
-  //SB_LOG("songbird_hack.js", "onMainPaneLoad - leaving");
 }
 
 function onMainPaneUnload()

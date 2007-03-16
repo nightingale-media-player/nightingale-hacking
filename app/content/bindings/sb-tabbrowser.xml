@@ -8,13 +8,344 @@
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser">
-    <implementation>
-      <constructor>
-      </constructor>
+    <implementation implements="nsIWebProgressListener">
+      <constructor><![CDATA[
+        this.addProgressListener(this,
+            Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
+            Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
+      ]]></constructor>
+      <destructor><![CDATA[
+        this.removeProgressListener(this);
+      ]]></destructor>
+
+      <field name="_servicepane">null</field>
+      <property name="servicepane">
+        <getter><![CDATA[
+          if (!this._servicepane) {
+            this._servicepane =
+                document.getElementById(this.getAttribute('servicepane'));
+          }
+          return this._servicepane;
+        ]]></getter>
+      </property>
+      
+      
+      <field name="_search">null</field>
+      <property name="search">
+        <getter><![CDATA[
+          if (!this._search) {
+            this._search =
+                document.getElementById(this.getAttribute('search'));
+          }
+          return this._search;
+        ]]></getter>
+      </property>
+      
+      <field name="_playlist">null</field>
+      <property name="playlist">
+        <getter><![CDATA[
+          if (!this._playlist) {
+            this._playlist =
+                document.getElementById(this.getAttribute('playlist'));
+          }
+          return this._playlist;
+        ]]></getter>
+      </property>
+      
+      <field name="mainpane_listener_set">false</field>
+      
+      <!-- the function formerly known as onBrowserPlaylistHide and onPlaylistHide -->
+      <method name="hidePlaylist">
+        <body><![CDATA[
+          // Hide the web table if it exists
+          SBDataSetBoolValue('browser.playlist.show', false);
+         
+          // And unhook the playlist from the database
+          if (this.playlist) {
+            this.playlist.datasources = "";
+            this.playlist.ref = "";
+          }
+        ]]></body>
+      </method>
+      
+      <method name="_loaded">
+        <body><![CDATA[
+        dump('running _loaded\n');
+          try {
+            if (!this.mainpane_listener_set)
+            {
+
+              //
+              //
+              // HORRIBLE SECURITY HACK TO GET THE PLAYLIST TREE AND INJECT FUN EVENT HANDLERS 
+              //
+              //
+              var installed_listener = false;
+              var playlist = this.contentDocument?this.contentDocument.getElementById( "playlist_test" ):null;
+              if (playlist) {
+                // Crack the security if necessary
+                if ( playlist.wrappedJSObject )
+                  playlist = playlist.wrappedJSObject;
+        
+                // Wait until after the bind call?
+                if ( playlist.ref == "" )
+                {
+                  // Try again in 250 ms?
+                  //setTimeout(this._loaded, 250);
+                  return;
+                }
+        
+                // hack, to let play buttons find the visible playlist if needed
+                document.__CURRENTPLAYLIST__ = playlist;
+        
+                // Drag and Drop tracker object
+                playlist.setDnDSourceTracker(sbDnDSourceTracker);
+        
+                // Events on the playlist object itself.
+                playlist.addEventListener("playlist-edit", onPlaylistEdit, true);
+                playlist.addEventListener("playlist-editor", onPlaylistEditor, true);
+                playlist.addEventListener("playlist-play", onPlaylistPlay, true);
+                playlist.addEventListener("playlist-burntocd", onPlaylistBurnToCD, true);
+                playlist.addEventListener("playlist-noplaylist", onPlaylistNoPlaylist, true);
+                playlist.addEventListener("playlist-filterchange", onPlaylistFilterChange, true);
+                playlist.addEventListener("command", onPlaylistContextMenu, false );  // don't force it!
+        
+                // Remember some values
+                theLibraryPlaylist = playlist;
+                thePlaylistTree = playlist = playlist.tree;
+                thePlaylistRef.stringValue = playlist.getAttribute( "ref" ); // is this set yet?
+        
+                // Set the current selection
+                theLibraryPlaylist.syncPlaylistIndex(false);
+        
+                // And remember that we did this
+                installed_listener = true;
+        
+                this.mainpane_listener_set = true;
+                
+                if (document.__JUMPTO__) {
+                  document.__JUMPTO__.syncJumpTo();
+                }
+              }
+              else {
+                thePlaylistTree = null;
+                theLibraryPlaylist = null;
+                // hack, to let play buttons find the visible playlist if needed
+                document.__CURRENTPLAYLIST__ = null;
+              }
+        
+              // Should the webplaylist scan and listener binding be performed?
+              var enableWebPlaylist = SBDataGetBoolValue("webplaylist.enabled");
+              
+              // If we have not installed a playlist listener, and the web playlist
+              // is enabled, install the link url listener.
+              if ( !installed_listener && enableWebPlaylist) {
+                // wait until the document exists to see if there are any A tags
+                if (!this.contentDocument) {
+                  //setTimeout(this._loaded, 2500);
+                  return;
+                } else if (this.contentDocument.getElementsByTagName('A').length != 0 ) {
+                  var playlist_guid = WEB_PLAYLIST_CONTEXT;
+                  var playlist_table = WEB_PLAYLIST_TABLE;
+                  // BIG HACK to show the subscribed playlist
+                  var cur_url = SBDataGetStringValue( "browser.uri" );
+                  var aPlaylistManager = new sbIPlaylistManager();
+                  var queryObj = new sbIDatabaseQuery();
+                  queryObj.setAsyncQuery(false);
+                  queryObj.setDatabaseGUID("songbird");      
+                  aPlaylistManager.getDynamicPlaylistList(queryObj);
+                  var resObj = queryObj.getResultObject();
+                  var i, rows = resObj.getRowCount();
+                  for ( i = 0; i < rows; i++ ) {
+                    if ( cur_url == resObj.getRowCellByColumn( i, "description" ) ) {
+                      var table = resObj.getRowCellByColumn( i, "name" );
+                      // Bind the Web Playlist UI element to the subscribed playlist instead of scraping.
+                      theWebPlaylist.bind( "songbird", table, null, SBDefaultCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
+                      // Show/hide them
+                      SBDataSetBoolValue( "browser.playlist.show", true );
+                      playlist_guid = "songbird";
+                      playlist_table = table;
+                    }
+                  }
+                  // scrape the document.
+                  AsyncWebDocument(this.contentDocument, playlist_guid, playlist_table );
+                } 
+        
+        
+                // XXXlone -- we need this to happen so that the playlist gets initialized if it wasn't ready yet but is coming up soon !
+                // unfortunately, if the page is not going to be a playlist, but is a document with no A element, we'll keep hitting this code
+                // and rerun this function every 2.5s, forever. We need to detect that a page is a not a playlist in the process of being loaded 
+                // so that we can avoid issuing a setTimeout(onMainPaneLoad, 2500) in this case, but ONLY in this case.
+                else {
+                  var tb = this;
+                  //setTimeout(function(){tb._loaded()}, 2500 );
+                  return;
+                }
+                // XXXlone -- end case where page is going to be a playlist but contentDocument does not yet contains a playlist
+        
+                this.mainpane_listener_set = true;
+              }
+            }
+          } catch( err ) {
+            dump(err.toSource()+'\n');
+            alert( 'sb-tabbrowser::_loaded: '+err );
+          }
+        ]]></body>
+      </method>
+
+      
+      <!-- implementation of nsIWebProgressListener -->
+      <method name="onLocationChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aLocation" />
+        <body><![CDATA[
+          try {
+            var cur_uri = aLocation.asciiSpec;
+            // save url for reload on next servicetree init
+            //SBDataSetStringValue("servicetree.selected_url", cur_uri);  
+            // Set the value in the text box (shown or not)
+
+            if (aRequest && aRequest.name) {
+              // Set the box
+              SBDataSetStringValue('browser.uri', cur_uri);
+              if (this.servicepane) {
+                var url = this.servicepane.getURLName(cur_uri);
+                if (!url) {
+                  url = cur_uri;
+                }
+                SBDataSetStringValue('browser.url.text', url);
+                var image = this.servicepane.getURLImage(cur_uri);
+                if (image && image.length) {
+                  SBDataSetStringValue('browser.url.image', image);
+                }
+              }
+              
+              // Set the buttons based on the session history.
+              if (this.webNavigation.sessionHistory) {
+                // Check the buttons
+                SBDataSetBoolValue('browser.cangoback',
+                                   this.webNavigation.canGoBack);
+                SBDataSetBoolValue('browser.cangoforward',
+                                   this.webNavigation.canGoForward);
+              }
+            }
+            
+            // Clear the playlist tree variable so we are not confused.
+            thePlaylistTree = null;
+            theLibraryPlaylist = null;
+            // hack, to let play buttons find the visible playlist if needed
+            document.__CURRENTPLAYLIST__ = null;
+            
+            // Clear the tracking variable
+            this.mainpane_listener_set = false;
+            
+            // Disable the "add to playlist" button until we see that there is anything to add.
+            SBDataSetBoolValue('browser.canplaylist', false);
+            this.hidePlaylist();
+      
+            // Clear the playlist tree variable so we are not confused.
+            thePlaylistTree = null;
+            theLibraryPlaylist = null;
+            // hack, to let play buttons find the visible playlist if needed
+            document.__CURRENTPLAYLIST__ = null;
+            
+            // Nothing in the status text
+            theStatusText.stringValue = "";
+            
+            this.search.loadSearchStringForCurrentUrl();
+          }
+          catch ( err )
+          {
+            alert( "sb-tabbrowser::onLocationChange\n\n" + err );
+          }
+        ]]></body>
+      </method>
+      
+      <method name="onProgressChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aCurSelfProgress" />
+        <parameter name="aMaxSelfProgress" />
+        <parameter name="aCurTotalProgress" />
+        <parameter name="aMaxTotalProgress" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
+        ]]></body>
+      </method>
+      
+      <method name="onSecurityChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
+        ]]></body>
+      </method>
+
+      <method name="onStateChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <parameter name="aStatus" />
+        <body><![CDATA[
+          const nsIWebProgressListener =
+            Components.interfaces.nsIWebProgressListener;
+      
+          if (aState & nsIWebProgressListener.STATE_START) {
+            // Start the spinner if necessary
+            thePaneLoadingData.boolValue = true;
+            
+            // cancel the previous page scan
+            CancelAsyncWebDocument();
+
+          }
+          else if (aState & nsIWebProgressListener.STATE_STOP) {
+            // Stop the spinner if necessary
+            thePaneLoadingData.boolValue = false;
+      
+            // Notfiy that the page is done loading
+            this._loaded();
+          }
+        ]]></body>
+      </method>
+
+      <method name="onStatusChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <parameter name="aMessage" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
+        ]]></body>
+      </method>
+      
     </implementation>
     
     <handlers>
+      <handler event="click" phase="capturing"><![CDATA[
+        // Catches links with target=_blank and opens them with the default browser.
+        if (event.target && event.button == 0 && event.target.tagName == "A") {
+              
+          var is_media = gPPS.isMediaURL( event.target.href );
+          var is_playlist = gPPS.isPlaylistURL( event.target.href );
+          if (!is_media && !is_playlist && (event.target.target == "_blank" || event.target.target == "_new")) {
+            var externalLoader = (Components
+                  .classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                  .getService(Components.interfaces.nsIExternalProtocolService));
+            var nsURI = (Components
+                  .classes["@mozilla.org/network/io-service;1"]
+                  .getService(Components.interfaces.nsIIOService)
+                  .newURI(event.target.href, null, null));
+            externalLoader.loadURI(nsURI, null);
+      
+            // Kill the event since we've handled it
+            event.preventDefault();
+          }
+        }
+      ]]></handler>
     </handlers>
   </binding>
+
 
 </bindings>

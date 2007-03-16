@@ -79,7 +79,7 @@ try
         //  UGH.  MUST REWRITE ENTIRE WORLD.
         if ( thePlaylistTree ) {
           this.cancel(); 
-          onBrowserPlaylistHide();
+          gBrowser.hidePlaylist();
         } 
 
         // check is clearInterval has been called (see sbIAsyncForLoop.js:66)
@@ -200,7 +200,7 @@ try
           {
             if ( this.guid == WEB_PLAYLIST_CONTEXT )
             {
-              // When we first find media, flip the webplaylist. 
+              // When we first find media, flip the webplaylist.
               this.aPlaylistManager.deletePlaylist( WEB_PLAYLIST_TABLE, this.aDBQuery );
               this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE + "_library", WEB_PLAYLIST_LIBRARY_NAME, "library", "library", this.aDBQuery );
               this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
@@ -209,6 +209,7 @@ try
               // Then pretend like we clicked on it.
               if ( !thePlaylistTree )
                 onBrowserPlaylist();
+                
             }
             else
             {
@@ -224,9 +225,10 @@ try
           var keys = new Array( "title" );
           var values = new Array( gPPS.convertURLToDisplayName( url ) );
           var guid = this.aMediaLibrary.addMedia( url, keys.length, keys, values.length, values, true, false );
-          if ( this.aPlaylist.findByGUID( guid ) == -1 )
+          if ( this.aPlaylist.findByGUID( guid ) == -1 ) {
             this.aPlaylist.addByGUID( guid, this.guid, -1, true, false );
           //dump("XXredfive - just AddedByGUID:" + guid + " this.aDBQuery: " + this.aDBQuery + "\n");
+          }
           this.inserted.push( url );
           
           //A***

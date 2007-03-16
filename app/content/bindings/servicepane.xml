@@ -58,9 +58,6 @@
             <property name="browser"
                       onget="return this.mTreePane.browser;"
                       onset="this.mTreePane.browser = val;" />
-            <property name="onPlaylistHide"
-                      onget="return this.mTreePane.onPlaylistHide;"
-                      onset="this.mTreePane.onPlaylistHide = val;" />
             <property name="onPlaylistDefaultCommand"
                       onget="return this.mTreePane.onPlaylistDefaultCommand;"
                       onset="this.mTreePane.onPlaylistDefaultCommand = val;" />
@@ -71,6 +68,17 @@
                     this.mTreePane.loadURL(aURL);
                 ]]></body>
             </method>
+            
+            <method name="getURLName">
+                <parameter name="aURL"/>
+                <body><![CDATA[return this.mTreePane.getURLName(aURL);]]></body>
+            </method>
+            
+            <method name="getURLImage">
+                <parameter name="aURL"/>
+                <body><![CDATA[return this.mTreePane.getURLImage(aURL);]]></body>
+            </method>
+            
             <!-- FIXME: what is this property for? -->
             <property name="doneInit" onget="return true;" />
         </implementation>
@@ -160,6 +168,23 @@
                 // remove the builder listener
                 this.mTree.builder.removeListener(This);
             ]]></destructor>
+
+            <method name="getURLName">
+                <parameter name="aURL"/>
+                <body><![CDATA[
+                    var node = this.mService.getNode(aURL);
+                    return node ? node.name : null;
+                ]]></body>
+            </method>
+            
+            <method name="getURLImage">
+                <parameter name="aURL"/>
+                <body><![CDATA[
+                    var node = this.mService.getNode(aURL);
+                    return node ? node.image : null;
+                ]]></body>
+            </method>
+            
             <method name="getNodeForRow">
                 <parameter name="row" />
                 <body><![CDATA[
@@ -211,23 +236,14 @@
                     }
                 ]]></setter>
             </property>
-            <field name="onPlaylistHide">null</field>
-            <field name="onPlaylistDefaultCommand">null</field>            
-            
-            <method name="loadURL">
+            <field name="onPlaylistDefaultCommand">null</field>
+
+            <method name="highlightURL">
                 <parameter name="aURL" />
                 <body><![CDATA[
-                    if (!aURL ||
-                        !aURL.indexOf ||
-                        !aURL.length ||
-                        this.mCurrentURL == aURL) {
-                        // if no URL was supplied there's nothing for us to do
+                    if (!aURL) {
                         return;
                     }
-                    
-                    // cancel the previous page scan
-                    CancelAsyncWebDocument();
-                    
                     // we're going to try to highlight the bookmark in the
                     // sidebar
                     var node = this.mService.getNode(aURL);
@@ -241,21 +257,33 @@
                         }
                     }
                     
-                    // now, lets actually load the page in the browser
-      
-                    // see songbird_hack.js for onPlaylistHide()
-                    if (this.onPlaylistHide) {
-                        this.onPlaylistHide();
+                    this.mCurrentURL = aURL;
+                    SBDataSetStringValue("servicetree.selected_url", aURL);
+                ]]></body>
+            </method>
+            
+            <method name="loadURL">
+                <parameter name="aURL" />
+                <body><![CDATA[
+                    dump('(loadURL?)\n');
+                    if (!aURL ||
+                        !aURL.indexOf ||
+                        !aURL.length/* ||
+                        this.mCurrentURL == aURL*/) {
+                        // if no URL was supplied there's nothing for us to do
+                        return;
                     }
+                    
+                    dump('loadURL: '+aURL+'\n');
 
                     if (this.mBrowser) {
-                        this.mCurrentURL = aURL;
-                        SBDataSetStringValue("servicetree.selected_url", aURL);
+                        this.mBrowser.hidePlaylist();
+
                         try {
                             this.mBrowser.stop();
-                            this.mBrowser.webNavigation.loadURI(this.mCurrentURL, Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
+                            this.mBrowser.webNavigation.loadURI(aURL, Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
                             
-
+                            dump('told the browser\n');
                             
                         }
                         catch (err) {
@@ -294,18 +322,7 @@
                      * one we requested then we should deselect the tree.
                      */
                     dump('onLocationChange\n');
-                    var newURL = aLocation.spec;
-                    if (newURL != this.mCurrentURL) {
-                        dump('newURL: "'+newURL+'"\n');
-                        dump('this.mCurrentURL: "'+this.mCurrentURL+'"\n');
-                        dump('deselect tree!\n');
-                        /* FIXME: why was this done "async" in browser_xbl_temp.js? */
-                        this.mTree.view.selection.currentIndex = -1;
-                        this.mTree.view.selection.clearSelection();
-                        
-                        // update mCurrentURL
-                        this.mCurrentURL = newURL;
-                    }
+                    this.highlightURL(aLocation.spec);
                 ]]></body>
             </method>
             <method name="onStatusChange">
@@ -322,6 +339,7 @@
                 <body />
             </method>
             
+
             <!-- implementation of nsIXULBuilderListener -->
             <method name="didRebuild">
                 <parameter name="aBuilder" />
@@ -383,6 +401,8 @@
             <handler event="select"><![CDATA[
                 var node = this.getNodeForRow(this.mTree.currentIndex);
                 if (node && node.url) {
+                    this.highlightURL(node.url);
+                    
                     dump('url: '+node.url+'\n');
                     this.loadURL(node.url);
                 } else {
