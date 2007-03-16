@@ -9,15 +9,8 @@ pref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,title
 pref("toolkit.singletonWindowType", "Songbird:Main");
 
 pref("general.useragent.extra.songbird", "Songbird/@SB_MILESTONE@ (@SB_BUILD_ID@)");
+
 pref("general.skins.selectedSkin", "rubberducky/0.2");
-
-// Interim "bones" implementation
-pref("general.bones.selectedMainWinURL", "chrome://rubberducky/content/xul/mainwin.xul");
-pref("general.bones.selectedMiniPlayerURL", "chrome://rubberducky/content/xul/miniplayer.xul");
-
-// TEMP
-pref("songbird.feathers.selectedLayout", "chrome://rubberducky/content/xul/mainwin.xul");
-
 
 // Our skinswitching trick doesn't work unless we shut down the XUL cache.
 pref("nglayout.debug.disable_xul_cache", true);

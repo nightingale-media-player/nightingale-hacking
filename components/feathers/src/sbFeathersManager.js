@@ -33,7 +33,6 @@
 //
 // TODO:
 //  * Add doxygen comments
-//  * Make skin switching actually do something
 //  * add onSwitchCompleted, change onSwitchRequested to allow feedback
 //  * Explore skin/layout versioning issues?
 // 
@@ -47,7 +46,15 @@ const IID = Components.interfaces.sbIFeathersManager;
 const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root" 
 const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
 
+// Fallback layouts/skin, used in revertFeathers.
+// Changes to the shipped feathers must be reflected here
+// and in test_feathersManager.js
+const DEFAULT_MAIN_LAYOUT_URL         = "chrome://rubberducky/content/xul/mainwin.xul";
+const DEFAULT_SECONDARY_LAYOUT_URL    = "chrome://rubberducky/content/xul/miniplayer.xul";
+const DEFAULT_SKIN_NAME               = "rubberducky/0.2";
 
+const WINDOWTYPE_SONGBIRD_PLAYER      = "Songbird:Main";
+const WINDOWTYPE_SONGBIRD_CORE        = "Songbird:Core";
 
 /**
  * /class ArrayEnumerator
@@ -65,7 +72,7 @@ ArrayEnumerator.prototype = {
     return this.data[this.index++];
   },
   
-  hasMoreElements: function() {            
+  hasMoreElements: function() {
     if (this.index < this.data.length)
       return true;
     else
@@ -180,7 +187,7 @@ LayoutDescription.verify = SkinDescription.verify = function( description )
 function AddonMetadataReader() {
   debug("AddonMetadataReader: ctor\n");
   this._RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                        .getService(Components.interfaces.nsIRDFService);                             
+                        .getService(Components.interfaces.nsIRDFService);
   this._datasource = this._RDF.GetDataSourceBlocking("rdf:addon-metadata");
   this._feathersManager = Components.classes[CONTRACTID].getService(IID);
     
@@ -209,7 +216,7 @@ function AddonMetadataReader() {
        "feathers",
        "skin",
        "layout",
-       "layoutURL" ] );   
+       "layoutURL" ] );
 }
 AddonMetadataReader.prototype = {
 
@@ -551,8 +558,6 @@ function FeathersManager() {
 
   var os      = Components.classes["@mozilla.org/observer-service;1"]
                       .getService(Components.interfaces.nsIObserverService);
-  // We should wait until the profile has been loaded to start
-  os.addObserver(this, "profile-after-change", false);
   // We need to unhook things on shutdown
   os.addObserver(this, "xpcom-shutdown", false);
   
@@ -566,6 +571,12 @@ FeathersManager.prototype = {
   
   _layoutDataRemote: null,
   _skinDataRemote: null,
+
+  _previousLayoutDataRemote: null,
+  _previousSkinDataRemote: null,
+  
+  _showChromeDataRemote: null,
+
   
   // Hash of skin descriptions keyed by internalName (e.g. classic/1.0)
   _skins: null,
@@ -597,17 +608,51 @@ FeathersManager.prototype = {
   _layoutCount: 0,
   _skinCount: 0,
   
+  _initialized: false,
+  
 
+  /**
+   * Initializes dataremotes and triggers the AddonMetadataReader
+   * to explore installed extensions and register any feathers.
+   *
+   * Note that this function is not run until a get method is called
+   * on the feathers manager.  This is to defer loading the metadata
+   * as long as possible and avoid impacting startup time.
+   * 
+   */
   _init: function init() {
+  
+    // If already initialized do nothing
+    if (this._initialized) {
+      return;
+    }
+  
     debug("FeathersManager: _init\n");
     
-    // Make dataremotes for the current skin and layout identifiers
+    // Make dataremotes to persist feathers settings
     var createDataRemote =  new Components.Constructor(
                   "@songbirdnest.com/Songbird/DataRemote;1",
                   Components.interfaces.sbIDataRemote, "init");
 
     this._layoutDataRemote = createDataRemote("feathers.selectedLayout", null);
     this._skinDataRemote = createDataRemote("selectedSkin", "general.skins.");
+    
+    this._previousLayoutDataRemote = createDataRemote("feathers.previousLayout", null);
+    this._previousSkinDataRemote = createDataRemote("feathers.previousSkin", null);
+    
+    // TODO: Rename accessibility.enabled?
+    this._showChromeDataRemote = createDataRemote("accessibility.enabled", null);
+    
+    // Load the feathers metadata
+    var metadataReader = new AddonMetadataReader();
+    metadataReader.loadFeathers();
+    
+    // If no layout url has been specified, set to default
+    if (this._layoutDataRemote.stringValue == "") {
+      this._layoutDataRemote.stringValue = DEFAULT_MAIN_LAYOUT_URL;
+    }
+    
+    this._initialized = true;
   },
   
   _deinit: function deinit() {
@@ -618,31 +663,40 @@ FeathersManager.prototype = {
     this._listeners = null;
     this._layoutDataRemote = null;
     this._skinDataRemote = null;
+    this._previousLayoutDataRemote = null;
+    this._previousSkinDataRemote = null;
+    this._showChromeDataRemote = null;
   },
-  
+    
   
   get currentSkinName() {
+    this._init();
     return this._skinDataRemote.stringValue;
   },
   
   get currentLayoutURL() {
+    this._init();
     return this._layoutDataRemote.stringValue;
   },
   
   get skinCount() {
+    this._init();
     return this._skinCount;
   },
   
   get layoutCount() {
+    this._init();
     return this._layoutCount;
   },
 
   getSkinDescriptions: function getSkinDescriptions() {
+    this._init();      
     // Copy all the descriptions into an array, and then return an enumerator
     return new ArrayEnumerator( [this._skins[key] for (key in this._skins)] );
   },
 
   getLayoutDescriptions: function getLayoutDescriptions() {
+    this._init();        
     // Copy all the descriptions into an array, and then return an enumerator
     return new ArrayEnumerator( [this._layouts[key] for (key in this._layouts)] );
   },
@@ -672,6 +726,7 @@ FeathersManager.prototype = {
   },
 
   getSkinDescription: function getSkinDescription(internalName) {
+    this._init();
     return this._skins[internalName];
   },
   
@@ -700,6 +755,7 @@ FeathersManager.prototype = {
   },
     
   getLayoutDescription: function getLayoutDescription(url) {
+    this._init();
     return this._layouts[url];
   }, 
 
@@ -710,7 +766,7 @@ FeathersManager.prototype = {
     if (! (typeof(layoutURL) == "string" && typeof(internalName) == 'string')) {
       throw Components.results.NS_ERROR_INVALID_ARG;
     }
-
+    dump("FeathersManager.assertCompatibility: " + layoutURL + ", " + internalName + "  -- " + showChrome + "\n");
     if (this._mappings[layoutURL] == null) {
       this._mappings[layoutURL] = {};
     }
@@ -732,6 +788,7 @@ FeathersManager.prototype = {
 
 
   isChromeEnabled: function isChromeEnabled(layoutURL, internalName) {
+    this._init();
     if (this._mappings[layoutURL]) {
       return this._mappings[layoutURL][internalName] == true;
     }
@@ -742,6 +799,8 @@ FeathersManager.prototype = {
 
 
   getSkinsForLayout: function getSkinsForLayout(layoutURL) {
+    this._init();
+
     var skins = [];
     
     // Find skin descriptions that are compatible with the given layout.
@@ -759,28 +818,84 @@ FeathersManager.prototype = {
 
 
   switchFeathers: function switchFeathers(layoutURL, internalName) {
+    this._init();
+
     layoutDescription = this.getLayoutDescription(layoutURL);
     skinDescription = this.getSkinDescription(internalName);
     
     // Make sure we know about the requested skin and layout
     if (layoutDescription == null || skinDescription == null) {
-      throw("Unknown layout/skin passed to switchFeathers");
+      throw new Components.Exception("Unknown layout/skin passed to switchFeathers");
     }
     
     // Check compatibility.
     // True/false refer to the showChrome value, so check for undefined
     // to determine compatibility.
     if (this._mappings[layoutURL][internalName] === undefined) {
-      throw("Skin [" + internalName + "] and Layout [" + layoutURL +
+      throw new Components.Exception("Skin [" + internalName + "] and Layout [" + layoutURL +
             " are not compatible");
     } 
     
+    // If the given pair is currently active, then do nothing
+    if (layoutURL == this.currentLayoutURL 
+        && internalName == this.currentSkinName)
+    {
+      debug("FeathersManager.switchFeathers: already active: " + layoutURL + ", " + internalName + "\n");
+      return;
+    }
+    
+    
     // Notify that a select is about to occur
     this._onSelect(layoutDescription, skinDescription);
+        
+    dump("FeathersManager.switchFeathers: " + layoutURL + ", " + internalName + "\n");
     
-    // TODO!
-    // Can we get away with killing the main window, or do we have to completely restart?
-    // Modify dataremotes and keep a copy of the previous values.
+    // Remember the current feathers so that we can revert later if needed
+    this._previousLayoutDataRemote.stringValue = this.currentLayoutURL;
+    this._previousSkinDataRemote.stringValue = this.currentSkinName;
+    
+    // TODO: do we need a "pending restart" type option?
+    
+    // Set new values
+    this._layoutDataRemote.stringValue = layoutURL;
+    this._skinDataRemote.stringValue = internalName;
+    
+    this._reloadPlayerWindow();
+  },
+  
+  
+  
+  revertFeathers: function revertFeathers() {
+    this._init();      
+  
+    // Attempt to switch to the previously selected feathers
+    var fallback;
+    try {
+      this.switchFeathers(this._previousLayoutDataRemote.stringValue,
+                          this._previousSkinDataRemote.stringValue);
+    } catch (e) {
+      fallback = true;
+    }
+    
+    // If the switch failed then fallback to the default
+    if (fallback) {
+      // Use the main default unless it is currently
+      // active. This way if the user reverts for the
+      // first time they will end up in the miniplayer.
+      var layoutURL = DEFAULT_MAIN_LAYOUT_URL;
+      if (this.currentLayoutURL == layoutURL) {
+        layoutURL = DEFAULT_SECONDARY_LAYOUT_URL;
+      }
+      try {
+        this.switchFeathers(layoutURL, DEFAULT_SKIN_NAME);
+      } catch (e) {
+        throw("FeathersManager.revertFeathers: Unable to revert to the " +
+              "fallback feathers [" + layoutURL + "], [" + DEFAULT_SKIN_NAME +
+              "].  This should never happen. Someone modified the " +
+              " default feathers and forgot to change sbFeathersManager.js\n" +
+              " Error: " + e.toString() + "\n");  
+      }
+    }
   },
 
 
@@ -801,6 +916,76 @@ FeathersManager.prototype = {
     }
   },
 
+
+  _reloadPlayerWindow: function _reloadPlayerWindow() {
+
+    var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                   .getService(Components.interfaces.nsIWindowMediator);
+
+    // The core window (plugin host) is the only window which cannot be shut down
+    var coreWindow = windowMediator.getMostRecentWindow(WINDOWTYPE_SONGBIRD_CORE);  
+    
+    // If no core window exists, then we are probably in test mode.
+    // Therefore do nothing.
+    if (coreWindow == null) {
+      dump("FeathersManager._reloadPlayerWindow: unable to find window of type Songbird:Core. Test mode?\n");
+      return;
+    }
+
+    // Close all open windows other than the core.
+    // This is needed in order to reset window chrome settings.
+    var playerWindows = windowMediator.getEnumerator(null);
+    while (playerWindows.hasMoreElements()) {
+      var window = playerWindows.getNext();
+      if (window != coreWindow) {
+        // Ask nicely.  The window should be able to cancel the onunload if
+        // it chooses.
+        window.close();
+      }
+    }
+            
+    // Determine window features.  If chrome is enabled, make resizable.
+    // Otherwise remove the titlebar.
+    var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";    
+    var showChrome = this.isChromeEnabled(this.currentLayoutURL, this.currentSkinName);
+    if (showChrome) {
+       chromeFeatures += ",resizable=yes";
+    } else {
+       chromeFeatures += ",titlebar=no";
+    }
+    
+    // Set the global chrome (window border and title) flag
+    this._setChromeEnabled(showChrome);
+    
+    // Open the new player window
+    var newMainWin = coreWindow.open(this.currentLayoutURL, "", chromeFeatures);
+    newMainWin.focus();
+  },
+
+      
+  _setChromeEnabled: function _setChromeEnabled(enabled) {
+
+    // Set the global chrome (window border and title) flag
+    this._showChromeDataRemote.boolValue = enabled;
+
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                          .getService(Components.interfaces.nsIPrefBranch);
+
+    // Set the flags used to open the core window on startup.
+    // Do a replacement in order to preserve whatever other features 
+    // were specified.
+    try {
+      var titlebarRegEx = /(titlebar=)(no|yes)/;
+      var replacement = (enabled) ? "$1yes" : "$1no";
+      var defaultChromeFeatures = prefs.getCharPref("toolkit.defaultChromeFeatures");
+      prefs.setCharPref("toolkit.defaultChromeFeatures",
+              defaultChromeFeatures.replace(titlebarRegEx, replacement));
+    } catch (e) {
+      dump("\nFeathersManager._setChromeEnabled: Error setting defaultChromeFeatures pref! " +
+            e.toString + "\n");
+    }
+  },      
+      
 
   _onUpdate: function onUpdate() {
     this._listeners.forEach( function (listener) {
@@ -827,12 +1012,6 @@ FeathersManager.prototype = {
     var os      = Components.classes["@mozilla.org/observer-service;1"]
                       .getService(Components.interfaces.nsIObserverService);
     switch (topic) {
-    case "profile-after-change":
-      os.removeObserver(this, "profile-after-change");
-      
-      // Preferences are initialized, ready to start the service
-      this._init();
-      break;
     case "xpcom-shutdown":
       os.removeObserver(this, "xpcom-shutdown");
       this._deinit();
@@ -855,31 +1034,6 @@ FeathersManager.prototype = {
 
 
 
-/**
- * nsIObserver that launches the AddonMetadataReader
- * on the "profile-after-change" event
- */
-var gFeathersMetadataLoader = {
-  observe: function(subject, topic, data) {
-    var os      = Components.classes["@mozilla.org/observer-service;1"]
-                      .getService(Components.interfaces.nsIObserverService);
-    switch (topic) {
-    case "profile-after-change":
-      os.removeObserver(this, "profile-after-change");
-      // Preferences are initialized, ready to read metadata
-      var metadataReader = new AddonMetadataReader();
-      metadataReader.loadFeathers();
-      break;
-    }
-  },
-  QueryInterface: function(iid) {
-    if (!iid.equals(Components.interfaces.nsIObserver) && 
-        !iid.equals(Components.interfaces.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }  
-}
-
 
 
 /**
@@ -893,11 +1047,6 @@ var gModule = {
 
     componentManager.registerFactoryLocation(CID, CLASSNAME, CONTRACTID,
                                                fileSpec, location, type);
-    var categoryManager = Components.classes["@mozilla.org/categorymanager;1"]
-                                    .getService(Components.interfaces.nsICategoryManager);
-    categoryManager.addCategoryEntry("app-startup", CLASSNAME,
-                                    "service," + CONTRACTID, 
-                                    true, true, null);
   },
 
   getClassObject: function(componentManager, cid, iid) {
@@ -911,15 +1060,7 @@ var gModule = {
               throw Components.results.NS_ERROR_NO_AGGREGATION;
               
             // Make the feathers manager  
-            var feathersManager = (new FeathersManager()).QueryInterface(iid);
-            
-            // Hook up the observer service to populate the feathers manager
-            // after the profile loads
-            var os      = Components.classes["@mozilla.org/observer-service;1"]
-                                .getService(Components.interfaces.nsIObserverService);
-            os.addObserver(gFeathersMetadataLoader, "profile-after-change", false);  
-            
-            return feathersManager;
+            return (new FeathersManager()).QueryInterface(iid);;
           }
        };
     }

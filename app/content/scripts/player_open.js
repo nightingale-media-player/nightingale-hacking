@@ -240,37 +240,7 @@ try
     }
   }
   
-function switchFeathers(aFeathersName)
-{
-  // Figure out if we're being asked to switch to what we already are
-  var currentFeathers = getPref("getCharPref", PREF_FEATHERS_SELECTED,
-                                FEATHERS_DEFAULT_NAME);
-  if (currentFeathers == aFeathersName)
-    return;
 
-  // Change the feathers (XUL skin) -- this only changes colors on the
-  // currently loaded windows, not images. Hence the magic below.
-  setPref("setCharPref", PREF_FEATHERS_SELECTED, aFeathersName);  
-
-  // Get mainwin URL
-  var mainWinURL = getPref("getCharPref", PREF_BONES_SELECTED,
-                           BONES_DEFAULT_URL);
-  
-  // Save our current values before flipping out.
-  onWindowSaveSizeAndPosition();
-  
-  // Open the new window
-
-  var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";
-  // can't test with accessibility.enabled here because the value hasn't been set yet (will be set after SBInitialize on the new window)
-  if (aFeathersName.indexOf("/plucked") < 0) chromeFeatures += ",titlebar=no"; else chromeFeatures += ",resizable=yes";
-
-  var newMainWin = window.open(mainWinURL, "", chromeFeatures);
-  newMainWin.focus();
-
-  // Kill this window
-  onExit(true);
-}
 
 // Help
 function onHelp()
@@ -405,19 +375,6 @@ function SBNewPlaylist()
   }
 }
 
-function SBMiniplayerOpen()
-{
-  // Get miniplayer URL
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  var miniwin = "chrome://rubberducky/content/xul/miniplayer.xul";
-  try {
-    miniwin = prefs.getCharPref("general.bones.selectedMiniPlayerURL", miniwin);  
-  } catch (err) {}
-
-  // Open the window
-  window.open( miniwin, "", "chrome,titlebar=no,resizable=no" );
-  onExit();
-}
 
 function SBNewSmartPlaylist( guid, table )
 {

@@ -36,7 +36,7 @@
             </songbird:compatibleLayout>
             <songbird:compatibleLayout>
               <Description>
-                <songbird:layoutURL>chrome://rubberducky/content/xul/mini.xul</songbird:layoutURL>
+                <songbird:layoutURL>chrome://rubberducky/content/xul/miniplayer.xul</songbird:layoutURL>
                 <songbird:showChrome>false</songbird:showChrome>
               </Description>
             </songbird:compatibleLayout>            

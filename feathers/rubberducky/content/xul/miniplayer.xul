@@ -45,7 +45,6 @@
 
  id="mini"
  title="&window.dev.title;"
- hidechrome="true"
  windowtype="Songbird:Main"
  onload="{centerWindowOnScreen();SBInitialize();}"
  onunload="SBUninitialize();"
@@ -58,7 +57,7 @@
 >
   <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript"   
-   src="chrome://global/content/dialogOverlay.js" />
+   src="chrome://global/content/dialogOverlay.js" /> 
 
   <hbox id="frame_mini" flex="1" drag_window="true">
     <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
@@ -111,7 +110,7 @@
 
   <keyset>
     <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey(event);"/>
-    <key id="mainwin-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="SBMainWindowOpen();"/>
+    <key id="mainwin-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="revertFeathers();"/>
   </keyset>
 
   <!-- Load the interface code -->

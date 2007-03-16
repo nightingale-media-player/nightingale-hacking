@@ -74,9 +74,6 @@ function doMenu( command ) {
     break;
 */    
 
-    case "file.window":
-      SBMiniplayerOpen();
-    break;
     case "file.koshi":
       SBKoshiOpen();
     break;

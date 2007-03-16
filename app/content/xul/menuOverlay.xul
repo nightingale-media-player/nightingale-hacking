@@ -52,7 +52,6 @@
         <menuitem id="file.dlfolder" class="menuitem-iconic" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
         <menuitem id="file.watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
         <menuseparator/>
-        <menuitem id="file.window" key="miniplayer-key" class="menuitem-iconic" label="&menu.file.mini;" accesskey="&menu.file.mini.accesskey;"/>
         <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
           <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />
         </menu>

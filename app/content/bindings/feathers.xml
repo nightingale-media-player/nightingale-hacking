@@ -27,7 +27,6 @@
  */
 -->
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -49,6 +48,14 @@
                                      .getService(Components.interfaces.sbIFeathersManager);
           this._currentLayout = null;
           this._currentSkin = null;
+          
+          // Get the songbird string bundle.  Can't use dtd to localize dynamically
+          // generated menuitems.
+          var stringBundleService =
+              Components.classes["@mozilla.org/intl/stringbundle;1"]
+                        .getService(Components.interfaces.nsIStringBundleService);
+          this._stringBundle = stringBundleService.createBundle( 
+                      "chrome://songbird/locale/songbird.properties" );
         ]]>
       </constructor>
 
@@ -56,7 +63,8 @@
         <![CDATA[
           this._feathersManager = null;
           this._currentLayout = null;
-          this._currentSkin = null;          
+          this._currentSkin = null;
+          this._stringBundle = null;
         ]]>
       </destructor>
 
@@ -82,10 +90,26 @@
         <parameter name="item"/>
         <body>
           <![CDATA[
-            var layoutURL = item.getAttribute("layoutURL"); 
-            var skinName = item.getAttribute("skinName");
-            dump("Feathers-menupopup XBL: Selecting "  +layoutURL+ " " +skinName+ "\n");
-            this._feathersManager.switchFeathers(layoutURL, skinName);
+            switch (item.getAttribute("name")) {
+
+              case "feathers.getmore":
+                var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
+                                          .getService(Components.interfaces.nsIURLFormatter);
+                var getMoreURL = formatter.formatURLPref("extensions.getMoreThemesURL");
+                gServicePane.loadURL(getMoreURL);
+                break;
+                
+              case "feathers.item":
+                var layoutURL = item.getAttribute("layoutURL"); 
+                var skinName = item.getAttribute("skinName");
+                dump("Feathers-menupopup XBL: Selecting "  +layoutURL+ " " +skinName+ "\n");
+                this._feathersManager.switchFeathers(layoutURL, skinName);
+                break;
+                
+              default:
+                dump("feathers.xml: feathers menu oncommand: unknown menu item\n");
+                break;
+            }          
           ]]>
         </body>
       </method>
@@ -144,6 +168,12 @@
                 this.appendChild(layoutMenu);
               }
               
+              // If the current window has a browser/servicepane, then add a link
+              // to get more feathers.
+              // NOTE: This is brittle. Please change this once we have a proper API.
+              if (typeof(gServicePane) != "undefined") {
+                this._appendGetMoreFeathers();
+              }
             } catch (e) {
               dump( "Feathers MenuPopup XBL: Error in _buildFeathersMenu: " + e.toString()  + "\n");
             }
@@ -172,7 +202,7 @@
               menu.setAttribute("checked", "true");
             }
             */
-            var menupopup = document.createElement("menupopup");      
+            var menupopup = document.createElement("menupopup");
             menu.appendChild(menupopup);
 
             return menu;
@@ -187,8 +217,9 @@
         <parameter name="skin"/>
         <body>
           <![CDATA[
-            var item = document.createElement("menuitem");              
+            var item = document.createElement("menuitem");
             item.setAttribute("label", skin.name);
+            item.setAttribute("name", "feathers.item");
             item.setAttribute("skinName", skin.internalName);
             item.setAttribute("layoutURL", layout.url);
             item.setAttribute("type", "radio");
@@ -202,7 +233,30 @@
         </body>
       </method>
 
+      
+      <!-- Adds a "Get More" menu item that links to the addons site -->
+      <method name="_appendGetMoreFeathers">
+        <body>
+          <![CDATA[
+            this.appendChild(document.createElement("menuseparator"));
+            var item = document.createElement("menuitem");
 
+            var getMoreText;
+            try {
+              getMoreText = this._stringBundle.GetStringFromName("feathers.getmore");
+            } catch (e) { 
+              getMoreText="Error";
+              dump("\n\n\nfeathers.xml:  Error getting menu text from songbird.properties" +
+                   " bundle\n"+ e + "\n"); 
+            }
+            
+            item.setAttribute("label", getMoreText);
+            item.setAttribute("name", "feathers.getmore");
+            this.appendChild(item);
+          ]]>
+        </body>
+      </method>
+      
 
       <!-- Helper to convert an nsISimpleEnumerator into a js array -->
       <method name="_enumToArray">
@@ -260,7 +314,6 @@
    it will attempt to revert to the previously selected feathers.
    
    TODO:
-   * Kill SBMiniplayerOpen
    * Kill #sysbtn_minimode
    * Add a localized tooltip
    * Get rid of inherited ID
@@ -297,12 +350,10 @@
           <![CDATA[
             dump("Feathers-toggle XBL: reverting to previous feathers\n");  
             
-            // For now just launch the mini :(
-            SBMiniplayerOpen();
-            
-            // TODO: Ask the feathers manager to switch to the previously
-            //       used skin-layout.
-            // this._feathersManager.revertFeathers();
+             
+            // Ask the feathers manager to switch to the previously
+            // used skin-layout.
+            this._feathersManager.revertFeathers();
           ]]>
         </body>
       </method>

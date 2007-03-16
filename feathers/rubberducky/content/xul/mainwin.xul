@@ -134,7 +134,6 @@
           <player_shuffle class="sb_faceplate" shuffleonid="mini_btn_shuf_on" shuffleoffid="mini_btn_shuf" hidden="true"/>
           <button id="mini_btn_help"    class="sb_faceplate" oncommand="onHelp( );" hidden="true" />
           <button id="mini_btn_min"     class="sb_faceplate" oncommand="onMinimize( );" hidden="true" />
-          <button id="mini_btn_max"     class="sb_faceplate" oncommand="SBMainWindowOpen( );" hidden="true" />
           <button id="mini_btn_exit"    class="sb_faceplate" oncommand="quitApp( );" hidden="true" />
         </hbox>
       </hbox>
@@ -294,7 +293,7 @@
     <key id="newplaylist-key" modifiers="accel" key="&menu.file.new.key;" oncommand="doMenu('file.new');"/>
     <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('file.file');"/>
     <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('file.url');"/>
-    <key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/>
+    <!--<key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/> -->
     <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
     <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />
     <key id="copy-key" modifiers="accel" key="&menu.edit.copy.key;" />

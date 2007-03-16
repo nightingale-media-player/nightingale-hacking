@@ -30,6 +30,14 @@
  
 
 
+// Fallback layouts/skin, used in revertFeathers.
+// Changes to the shipped feathers must be reflected here
+// and in sbFeathersManager.js
+const DEFAULT_MAIN_LAYOUT_URL         = "chrome://rubberducky/content/xul/mainwin.xul";
+const DEFAULT_SECONDARY_LAYOUT_URL    = "chrome://rubberducky/content/xul/miniplayer.xul";
+const DEFAULT_SKIN_NAME               = "rubberducky/0.2";
+
+
 var feathersManager =  Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
                                  .getService(Components.interfaces.sbIFeathersManager);
 
@@ -38,6 +46,44 @@ var skins = [];
 
 // List of layout descriptions used in the test cases
 var layouts = [];
+
+
+// Make dataremotes to tweak feathers settings
+var createDataRemote =  new Components.Constructor(
+              "@songbirdnest.com/Songbird/DataRemote;1",
+              Components.interfaces.sbIDataRemote, "init");
+
+var layoutDataRemote = createDataRemote("feathers.selectedLayout", null);
+var skinDataRemote = createDataRemote("selectedSkin", "general.skins.");
+var previousLayoutDataRemote = createDataRemote("feathers.previousLayout", null);
+var previousSkinDataRemote = createDataRemote("feathers.previousSkin", null);
+
+var originalDataRemoteValues = [];
+
+
+/**
+ * Store the original values of all FeathersManager dataremotes
+ * so that we can restore them once the tests are complete
+ */
+function saveDataRemotes() {
+  originalDataRemoteValues.push(layoutDataRemote.stringValue);
+  originalDataRemoteValues.push(skinDataRemote.stringValue);
+  originalDataRemoteValues.push(previousLayoutDataRemote.stringValue);  
+  originalDataRemoteValues.push(previousSkinDataRemote.stringValue);  
+}
+
+/**
+ * Restore saved FeathersManager dataremote values.
+ * This is so that changes made during testing do not
+ * end up in your profile.
+ */
+function restoreDataRemotes() {
+  layoutDataRemote.stringValue = originalDataRemoteValues.shift();
+  skinDataRemote.stringValue = originalDataRemoteValues.shift();
+  previousLayoutDataRemote.stringValue = originalDataRemoteValues.shift(); 
+  previousSkinDataRemote.stringValue = originalDataRemoteValues.shift();
+}
+
 
 
 
@@ -141,15 +187,14 @@ function assertEnumeratorMatchesFieldArray(enumerator, field, list) {
 function testAddonMetadataReader()
 {
   // Verify all skins added properly
-  var skinNames = ["rubberducky/0.2", "dove/0.1"];
+  var skinNames = [DEFAULT_SKIN_NAME, "dove/0.1"];
   assertEqual(feathersManager.skinCount, skinNames.length);
   var enumerator = wrapEnumerator(feathersManager.getSkinDescriptions(),
                      Components.interfaces.sbISkinDescription);
   assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
   
   // Verify all layouts added properly
-  var layoutURLs = [ "chrome://rubberducky/content/xul/mainwin.xul", 
-                     "chrome://rubberducky/content/xul/mini.xul" ]
+  var layoutURLs = [ DEFAULT_MAIN_LAYOUT_URL, DEFAULT_SECONDARY_LAYOUT_URL ]
   assertEqual(feathersManager.layoutCount, layoutURLs.length);
   enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
                      Components.interfaces.sbILayoutDescription);
@@ -165,6 +210,26 @@ function testAddonMetadataReader()
   
   // Verify showChrome
   assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[0]), false );
+}
+
+
+/** 
+ * Try revert using the default feathers
+ */
+function testDefaultRevert() {
+  // Set feathers dataremotes to some junk value 
+  previousLayoutDataRemote.stringValue = "somethingrandom";
+  layoutDataRemote.stringValue = "somethingelse";
+  
+  // Confirm that revert switches us to the primary fallback
+  feathersManager.revertFeathers();
+  assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
+  assertEqual(layoutDataRemote.stringValue, DEFAULT_MAIN_LAYOUT_URL);
+  
+  // Now revert again, taking us to the secondary fallback
+  feathersManager.revertFeathers();
+  assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
+  assertEqual(layoutDataRemote.stringValue, DEFAULT_SECONDARY_LAYOUT_URL);
 }
 
 
@@ -241,16 +306,29 @@ function teardown() {
 }
 
 
+
+
+
 /**
  * Test all functionality in sbFeathersManager
  */
 function runTest () {
+  
+  saveDataRemotes();
+  
+  layoutDataRemote.stringValue = "";
+  skinDataRemote.stringValue = "";
+  previousLayoutDataRemote.stringValue = "";
+  previousSkinDataRemote.stringValue = "";
+  
   
   ///////////////////////////////////////////////////
   // Test skins/layouts registered via extensions  //
   ///////////////////////////////////////////////////
 
   testAddonMetadataReader();
+  
+  testDefaultRevert();
  
   // Now remove the extension descriptions in order to 
   // make testing the registration functions a bit easier
@@ -310,7 +388,12 @@ function runTest () {
 
 
   // ------------------------
-  // Test selection mechanism
+  // Test feathers select and revert
+  
+  // Manually set the current feathers so that we can test revert
+  layoutDataRemote.stringValue = layouts[0].url;
+  skinDataRemote.stringValue = skins[2].internalName;
+  
   // TODO Actually select!
   
   // First with an invalid pair
@@ -320,6 +403,8 @@ function runTest () {
   } catch (e) {
     failed = true;
   }
+  assertEqual(failed, true);
+
 
   // Then with a valid pair.  Expect an onSelect callback.
   feathersChangeListener.expectSkin = skins[0];
@@ -328,9 +413,16 @@ function runTest () {
   // Make sure onSelect callback occurred
   assertEqual(feathersChangeListener.expectSkin, null);
   assertEqual(feathersChangeListener.expectLayout, null);
-
-  // TODO: Test currentLayout currentSkin
-
+  
+  
+  // Now revert, expecting the values manually set above.
+  feathersChangeListener.expectSkin = skins[2];
+  feathersChangeListener.expectLayout = layouts[0];
+  feathersManager.revertFeathers();
+  // Make sure onSelect callback occurred
+  assertEqual(feathersChangeListener.expectSkin, null);
+  assertEqual(feathersChangeListener.expectLayout, null);
+    
 
   ////////////////////////////////////
   // Get rid of everything we added //
@@ -364,8 +456,7 @@ function runTest () {
   enumerator = feathersManager.getSkinsForLayout(layouts[1].url);
   assertEqual(enumerator.hasMoreElements(), false); 
   
+  restoreDataRemotes();
   
   return Components.results.NS_OK;
 }
-
-

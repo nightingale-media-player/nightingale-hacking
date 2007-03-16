@@ -238,22 +238,19 @@ function doMainwinStart()
   // while an extension has the web playlist disabled.
   SBDataSetBoolValue("webplaylist.enabled", true);
 
-  // Get mainwin URL
-  var data = SB_NewDataRemote( PREF_BONES_SELECTED, "" );
-  var mainwinURL = data.stringValue;
-  if ( mainwinURL == "" )
-    mainwinURL = BONES_DEFAULT_URL;
-  
-
-  // save it for later restarts and down the road if we want to allow
-  // file->new window
-  data.stringValue = mainwinURL;
+  var feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
+                                   .getService(Components.interfaces.sbIFeathersManager);
+  var mainwinURL = feathersManager.currentLayoutURL;
+  var showChrome = feathersManager.isChromeEnabled(mainwinURL, feathersManager.currentSkinName);
 
   var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";
-  if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",resizable=yes"; else chromeFeatures += ",titlebar=no";
-
-  var mainWin = window.open(mainwinURL, "mainwin", chromeFeatures);
+  if (showChrome) {
+    chromeFeatures += ",resizable=yes"; 
+  } else  {
+    chromeFeatures += ",titlebar=no";
+  }
   
+  var mainWin = window.open(mainwinURL, "", chromeFeatures);
   mainWin.focus();
 }
 

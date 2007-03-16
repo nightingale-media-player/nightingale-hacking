@@ -75,15 +75,32 @@ try
       document.getElementById("mini_btn_max").setAttribute("hidden", "true");
       document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
     }
-    
+     
     if ( (platform == "Darwin") || (platform == "Linux") ){
       document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
     } else {
-      document.getElementById("mini").setAttribute("style", "background-color: transparent !important;"); // Only on windows. (Bug 1656)
+
+      // Need to know if this window has a titlebar.
+      // Jump through some hoops to get at nsIWebBrowserChrome.chromeFlags
+      window.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+      var webnav = window.getInterface(Components.interfaces.nsIWebNavigation);
+      var treeItem = webnav.QueryInterface(Components.interfaces.nsIDocShellTreeItem);
+      var treeOwner = treeItem.treeOwner;
+      var requestor = treeOwner.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+      var windowChrome = requestor.getInterface(Components.interfaces.nsIWebBrowserChrome);
+
+      // Phew... now, do we have a titlebar?
+      var hasTitlebar = windowChrome.chromeFlags & windowChrome.CHROME_TITLEBAR;
+
+      // If no titlebar, then make the background transparent.
+      // Only on windows. (Bug 1656)
+      if (!hasTitlebar) {                                           
+        document.getElementById("mini").setAttribute("style", "background-color: transparent !important;"); 
+      }
     }
     
     window.addEventListener( "keydown", checkAltF4, true );
-    
+ 
     onWindowLoadSizeAndPosition();
   }
   
@@ -194,7 +211,7 @@ try
         return;
     }  
   
-    SBMainWindowOpen();
+    revertFeathers();
   }
 
   function onMiniplayerKeypress( evt )
@@ -349,5 +366,17 @@ function SBMiniDropped()
     // add it to the db and play it.
     var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
     PPS.playAndImportURL(theDropPath); // if the url is already in the lib, it is not added twice
+  }
+}
+
+
+function revertFeathers() 
+{
+  // The miniplayer currently does dual duty as the video window controls.
+  // If not embedded in the video window, allow reverting back into other feathers.
+  if ( location.indexOf("?video") == -1 )  {
+    var feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
+                                    .getService(Components.interfaces.sbIFeathersManager);
+    feathersManager.revertFeathers();
   }
 }

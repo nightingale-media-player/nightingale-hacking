@@ -32,10 +32,6 @@
 
 // Useful constants
 var CORE_WINDOWTYPE         = "Songbird:Core";
-var PREF_BONES_SELECTED     = "general.bones.selectedMainWinURL";
-var PREF_FEATHERS_SELECTED  = "general.skins.selectedSkin";
-var BONES_DEFAULT_URL       = "chrome://rubberducky/content/xul/mainwin.xul";
-var FEATHERS_DEFAULT_NAME   = "rubberducky";
 var STATE_MAXIMIZED         = Components.interfaces.nsIDOMChromeWindow.STATE_MAXIMIZED;
 var STATE_MINIMIZED         = Components.interfaces.nsIDOMChromeWindow.STATE_MINIMIZED;
 
@@ -539,28 +535,6 @@ function quitApp( skipSave )
     SBDataSetBoolValue("metrics_ignorenextstartup", false);
     const V_ATTEMPT = 2;
     as.quit(V_ATTEMPT);
-  }
-}
-
-function SBMainWindowOpen()
-{
-  var location = "" + window.location; // Grrr.  Dumb objects.
-  if ( location.indexOf("?video") == -1 )
-  {
-    // Get mainwin URL
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    var mainwin = "chrome://rubberducky/content/xul/mainwin.xul";
-    try {
-      mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
-    } catch (err) {}
-   
-    // Open the window
-
-    var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";
-    if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",resizable=yes"; else chromeFeatures += ",titlebar=no";
-
-    window.open( mainwin, "", chromeFeatures );
-    onExit();
   }
 }
 
