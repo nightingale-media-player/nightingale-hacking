@@ -152,14 +152,14 @@ try
       case "sb-progress-slider":
       case "sb-player-volume-slider":
       case "sb-player-seek-slider":
-      case "player_repeat":
-      case "player_shuffle":
-      case "player_playpause":
-      case "player_back":
-      case "player_forward":
-      case "player_mute":
-      case "player_numplaylistitems":
-      case "player_scaning":
+      case "sb-player-repeat-button":
+      case "sb-player-shuffle-button":
+      case "sb-player-playpause-button":
+      case "sb-player-back-button":
+      case "sb-player-forward-button":
+      case "sb-player-mute-button":
+      case "sb-player-numplaylistitems-label":
+      case "sb-player-scanning-label":
       case "dbedit_textbox":
       case "dbedit_menulist":
       case "exttrackeditor":

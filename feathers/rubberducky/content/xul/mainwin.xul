@@ -96,17 +96,17 @@
       <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
       <!-- TODO: Fix mini.xul and then duplicate here.  Better yet, use an overlay/include/iframe. -->
       <hbox id="frame_mini" hidden="true" drag_window="true">
-        <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
-        <player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/>
-        <player_forward id="mini_btn_fwd" class="sb_faceplate miniplayer" />
+        <sb-player-back-button id="mini_btn_back" class="sb_faceplate miniplayer" />
+        <sb-player-playpause-button id="mini_btn_playpause" class="miniplayer" popupanchor="topleft" popupalign="bottomleft"/>
+        <sb-player-forward-button id="mini_btn_fwd" class="sb_faceplate miniplayer" />
 
         <vbox id="mini_volume" drag_window="true">
           <hbox id="mini_volume_box" drag_window="true">
-            <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off"/>
+            <sb-player-mute-button id="mute" />
             <spacer width="8"/>
             <hbox>
               <spacer width="3" height="5" id="songbird_volume_w"/>
-              <sb-player-volume-slider id="songbird_volume" sliderid="mini_volume_slider" thumbid="mini_volume_thumb" progressid="mini_volume_progress" orient="horizontal" class="miniplayer" maxpos="100"/>
+              <sb-player-volume-slider id="songbird_volume" orient="horizontal" class="miniplayer" maxpos="100"/>
               <spacer width="3" height="5" id="songbird_volume_e"/>
             </hbox>
           </hbox>
@@ -117,21 +117,21 @@
           <vbox id="mini_dash" flex="1" drag_window="true">
             <stack>
               <hbox id="mini_text_time" class="sb_faceplate" flex="1" drag_window="true">
-                <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right" drag_window="true"/>
+                <sb-player-artist-label id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right" drag_window="true"/>
                 <spacer width="20" drag_window="true"/>
-                <player_title id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1" drag_window="true"/>
-                <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" drag_window="true"/>
+                <sb-player-title-label id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1" drag_window="true"/>
+                <sb-player-timeelapsed-label id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" drag_window="true"/>
                 <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" drag_window="true"/>
-                <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>
+                <sb-player-totaltime-label id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>
               </hbox>
-              <sb-player-seek-slider id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate" maxpos="100"/>
+              <sb-player-seek-slider id="mini_seekbar" orient="horizontal" class="sb_faceplate" maxpos="100"/>
             </stack>
           </vbox>
           <spacer width="4" height="18" id="mini_dash_e"/>
         </hbox>
         <hbox hidden="true">
-          <player_repeat class="sb_faceplate" repid="mini_btn_rep1" rep1id="mini_btn_repa" repallid="mini_btn_rep" hidden="true"/>
-          <player_shuffle class="sb_faceplate" shuffleonid="mini_btn_shuf_on" shuffleoffid="mini_btn_shuf" hidden="true"/>
+          <sb-player-repeat-button hidden="true"/>
+          <sb-player-shuffle-button hidden="true"/>
           <button id="mini_btn_help"    class="sb_faceplate" oncommand="onHelp( );" hidden="true" />
           <button id="mini_btn_min"     class="sb_faceplate" oncommand="onMinimize( );" hidden="true" />
           <button id="mini_btn_exit"    class="sb_faceplate" oncommand="quitApp( );" hidden="true" />
@@ -148,14 +148,14 @@
           <vbox id="control_left_box" pack="center" align="center" drag_window="true">
             <!-- PLAY BUTTONS -->
             <hbox id="playbutton_box" pack="center" align="center">
-              <player_back id="songbird_btn_back"   tooltiptext="&tooltip.control.back;" />
-              <player_playpause id="songbird_btn_play_pause" playid="songbird_btn_play" pauseid="songbird_btn_pause" />
-              <player_forward id="songbird_btn_fwd" tooltiptext="&tooltip.control.fwd;" /> 
+              <sb-player-back-button id="songbird_btn_back" />
+              <sb-player-playpause-button id="songbird_btn_play_pause" popupanchor="topleft" popupalign="bottomleft"/>
+              <sb-player-forward-button id="songbird_btn_fwd" /> 
             </hbox>
             <hbox id="volume_box" pack="center" align="center">
-              <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off"/>   
+              <sb-player-mute-button id="mute" />
               <spacer id="songbird_volume_w"/>
-              <sb-player-volume-slider id="songbird_volume" sliderid="songbird_volume_slider" thumbid="songbird_volume_thumb" progressid="songbird_volume_progress" flex="1" orient="horizontal" maxpos="100" tooltiptext="&tooltip.control.volume;"/>
+              <sb-player-volume-slider id="songbird_volume" flex="1" orient="horizontal" maxpos="100"/>
               <spacer id="songbird_volume_e"/>
             </hbox>
           </vbox>
@@ -166,18 +166,18 @@
           
             <!-- REPEAT/SHUFFLE -->
             <vbox id="face_left_box" >
-              <player_repeat  repid="songbird_btn_rep" rep1id="songbird_btn_rep1" repallid="songbird_btn_repall" />
-              <player_shuffle  shuffleonid="songbird_btn_shuf_on" shuffleoffid="songbird_btn_shuf" />
+              <sb-player-repeat-button/>
+              <sb-player-shuffle-button/>
             </vbox>
             
 
-            <faceplate id="main_faceplate" flex="1" /> <!-- drag_window="true" makes the slider inside the faceplate drag the window, how come ? -->
+            <sb-player-faceplate id="main_faceplate" flex="1" />
                               
 
             <!-- CURRENT TRACK / NEXT SERVICE -->
             <vbox id="face_right_box">
-              <button id="songbird_btn_curr" oncommand="onCurrentTrack( );" tooltiptext="&tooltip.control.curtrack;"/>
-              <clickholdbutton id="songbird_btn_next" popupanchor="topleft" popupalign="bottomleft" oncommand="onFaceplateMenu(event.target)"/>
+              <sb-player-curtrack-button id="songbird_btn_curr"/>
+              <sb-player-cyclefaceplate-button id="songbird_btn_next" faceplate="main_faceplate" cycle="next" popupanchor="topleft" popupalign="bottomleft" />
             </vbox>
           </hbox>
 
@@ -275,8 +275,8 @@
         <hbox id="frame_status_pane" drag_window="true">
           <hbox id="status_status_box" flex="1">
             <sbstatustext id="status_text" value=" " crop="end" flex="1" drag_window="true"/>
-            <player_numplaylistitems id="library_text" value=" " crop="end"/>
-            <player_scanning id="scanning_text" value=" " crop="end"/>
+            <sb-player-numplaylistitems-label id="library_text" value=" " crop="end"/>
+            <sb-player-scanning-label id="scanning_text" value=" " crop="end"/>
           </hbox>
           <hbox id="status_progress_box" drag_window="true">
             <progressmeter id="status_progress" mode="undetermined" hidden="false"/>
@@ -396,7 +396,6 @@
    src="chrome://songbird/content/scripts/bookmarks_proxy.js" />
 
 </window>
-
 
 
 

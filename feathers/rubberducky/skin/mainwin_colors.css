@@ -186,7 +186,7 @@ sb-sys-dialog-titlebar,
 sb-sys-close-button,
 sb-sys-maximize-button,
 sb-sys-minimize-button,
-#sysbtn_minimode,
+.sb-feathers-toggle-button > .clickhold-button,
 sb-sys-hide-button
 {
   background-color: transparent !important;
@@ -714,7 +714,7 @@ Contains the Main Playback Controls and the Dashboard.
 
 
 /* the seekbar slider */
-#songbird_seekbar_thumb
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb
 {
   background-color: #a2aa9e !important;
   border: 1px solid !important;
@@ -724,7 +724,7 @@ Contains the Main Playback Controls and the Dashboard.
   -moz-border-left-colors: #ccd4c7 !important;
 }
 
-#songbird_seekbar_thumb:active
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb:active
 {
   -moz-border-bottom-colors: #ccd4c7 !important;
   -moz-border-left-colors: #888f85 !important;
@@ -751,12 +751,12 @@ Contains the Main Playback Controls and the Dashboard.
   -moz-border-right-colors: #1F292B !important;
 }
 
-.faceplate-progressmeter .progress-bar
+.faceplate-progressmeter > .progress-bar
 {
   background-color: #1F292B !important;
 }
 
-.faceplate-progressmeter .progress-remainder
+.faceplate-progressmeter > .progress-remainder
 {
   background-color: #a3ab9f !important;
 }
@@ -848,18 +848,15 @@ SEARCH WIDGET
 /** 
 ************************************************************************************************************************************************
 VOLUME
-Mute and Slider
 ************************************************************************************************************************************************
 */
-#mute_off,
-#mute_on,
 #volume_box,
-#songbird_volume > sb-progress-slider,
-#songbird_volume gripper,
-#songbird_volume_thumb,
-#songbird_volume_progress,
-#songbird_volume_progress > .progress-bar,
-#songbird_volume_progress > .progress-remainder,
+sb-player-volume-slider,
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb > gripper,
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb,
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter,
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar,
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder,
 #songbird_volume_e,
 #songbird_volume_w
 {

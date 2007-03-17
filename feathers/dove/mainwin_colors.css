@@ -835,165 +835,167 @@ Play/Pause, Previous (back), Next (forward)
 {
   background-color: transparent !important;
 }
-#songbird_btn_play
+
+.sb-player-play-button-play
 {  
   background-color: transparent !important;
 }
 
-#songbird_btn_play[disabled="true"]
+.sb-player-play-button-play[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_play:hover
+.sb-player-play-button-play:hover
 {
   background-color: transparent !important;
 }
-#songbird_btn_play:active
+.sb-player-play-button-play:active
 {
   background-color: transparent !important;
 }
 
 /* the pause button */
-#songbird_btn_pause
+
+.sb-player-pause-button-pause
 {
   background-color: transparent !important;
 }
-#songbird_btn_pause[disabled="true"]
+.sb-player-pause-button-pause[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_pause:hover
+.sb-player-pause-button-pause:hover
 {
   background-color: transparent !important;
 }
-#songbird_btn_pause:active
+.sb-player-pause-button-pause:active
 {
   background-color: transparent !important;
 }
 
 /* the back button */
 
-#songbird_btn_back
+sb-player-back-button
 {
   background-color: transparent !important;
 }
-#songbird_btn_back[disabled="true"]
+sb-player-back-button[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_back:hover
+sb-player-back-button:hover
 {
   background-color: transparent !important;
 }
-#songbird_btn_back:active
+sb-player-back-button:active
 {
   background-color: transparent !important;
 }
 
 /* the fwd button */
-#songbird_btn_fwd
+sb-player-forward-button
 {
   background-color: transparent !important;
 }
-#songbird_btn_fwd[disabled="true"]
+sb-player-forward-button[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_fwd:hover
+sb-player-forward-button:hover
 {
   background-color: transparent !important;
 }
-#songbird_btn_fwd:active
+sb-player-forward-button:active
 {
   background-color: transparent !important;
 }
 
 /* the curr button */
-#songbird_btn_curr
+.sb-player-curtrack-button
 {
   background-color: transparent !important;
 }
-#songbird_btn_curr[disabled="true"]
+.sb-player-curtrack-button[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_curr:hover
+.sb-player-curtrack-button:hover
 {
   background-color: transparent !important;
 }
-#songbird_btn_curr:active
+.sb-player-curtrack-button:active
 {
   background-color: transparent !important;
 }
 
 /* the next button */
-#songbird_btn_next
+.sb-player-cyclefaceplate-button-cycle
 {
   background-color: transparent !important;
 }
-#songbird_btn_next[disabled="true"]
+.sb-player-cyclefaceplate-button-cycle[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_next:hover
+.sb-player-cyclefaceplate-button-cycle:hover
 {
   background-color: transparent !important;
 }
-#songbird_btn_next:active
+.sb-player-cyclefaceplate-button-cycle:active
 {
   background-color: transparent !important;
 }
 
 /* the rep1 button */
-#songbird_btn_rep
+.sb-player-repeat-button-repnone
 {
   background-color: transparent !important;
 }
-#songbird_btn_rep[disabled="true"]
+.sb-player-repeat-button-repnone[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_rep:hover[disabled="true"]
+.sb-player-repeat-button-repnone:hover[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_rep:active
+.sb-player-repeat-button-repnone:active
 {
   background-color: transparent !important;
 }
 
 /* the rep1_on button */
-#songbird_btn_rep1
+.sb-player-repeat-button-rep1
 {
   background-color: transparent !important;
 }
-#songbird_btn_rep1[disabled="true"]
+.sb-player-repeat-button-rep1[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_rep1:hover[disabled="true"]
+.sb-player-repeat-button-rep1:hover[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_rep1:active
+.sb-player-repeat-button-rep1:active
 {
   background-color: transparent !important;
 }
 
 /* the repall button */
-#songbird_btn_repall
+.sb-player-repeat-button-repall
 {
   background-color: transparent !important;
 }
-#songbird_btn_repall[disabled="true"]
+.sb-player-repeat-button-repall[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_repall:hover[disabled="true"]
+.sb-player-repeat-button-repall:hover[disabled="true"]
 {
   background-color: transparent !important;
 }
-#songbird_btn_repall:active
+.sb-player-repeat-button-repall:active
 {
   background-color: transparent !important;
 }
@@ -1125,8 +1127,8 @@ VOLUME
 Mute and Slider
 ************************************************************************************************************************************************
 */
-#mute_off,
-#mute_on,
+.sb-player-mute-button-muteoff,
+.sb-player-mute-button-muteon,
 #volume_box,
 #songbird_volume > sb-progress-slider,
 #songbird_volume gripper,

@@ -46,6 +46,12 @@
 <!ENTITY menu.control.repx  "Repeat None" >
 <!ENTITY menu.control.jumpto "Jump To..." >
 
+<!ENTITY menu.control.play.button      "Play" >
+<!ENTITY menu.control.playpause.button "Play/Pause" >
+<!ENTITY menu.control.pause.button     "Pause" >
+<!ENTITY menu.control.resume.button    "Resume" >
+<!ENTITY menu.control.stop.button      "Stop" >
+
 <!ENTITY menu.services        "Services" >
 <!ENTITY menu.services.browse "Browse Add-Ons..." >
 
@@ -89,6 +95,8 @@
 <!ENTITY tooltip.control.back     "Previous Track" >
 <!ENTITY tooltip.control.play     "Play" >
 <!ENTITY tooltip.control.pause    "Pause" >
+<!ENTITY tooltip.control.resume   "Resume" >
+<!ENTITY tooltip.control.stop     "Stop" >
 <!ENTITY tooltip.control.fwd      "Next Track" >
 <!ENTITY tooltip.control.mute     "Mute" >
 <!ENTITY tooltip.control.volume   "Volume" >

@@ -323,6 +323,7 @@
     <content>
       <xul:clickholdbutton anonid="clickhold"  
                  xbl:inherits="position,popupanchor,popupalign,id"
+                 class="sb-feathers-toggle-button"
                  menupopuptype="feathers"/>
     </content>
     <implementation type="application/x-javascript">

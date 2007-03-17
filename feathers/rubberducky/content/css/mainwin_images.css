@@ -116,9 +116,9 @@ sb-sys-minimize-button
 }
 
 /*  Mini */
-#sysbtn_minimode
+.sb-feathers-toggle-button
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_minimode_9x9.png) ; 
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_minimode_9x9.png) ; 
 }
 
 /*  Hide (Video Window) */
@@ -812,27 +812,27 @@ Contains the Main Playback Controls and the Dashboard.
 }
 
 /* the seekbar slider */
-#songbird_seekbar_thumb
+#songbird_seekbar_thumba
 {
   background-color: #1F292B ;
   background-image: none ;
   border: 1px solid #a7afa2 ;
 }
-#songbird_seekbar_thumb > gripper
+#songbird_seekbar_thumba > gripper
 {
   height: 10px ;
 }
-#songbird_seekbar_progress
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
 {
   height: 10px ;
 }
-#songbird_seekbar_progress > .progress-bar
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar
 {
   background-color: #1F292B ;
   background-image: none ;
   height: 10px ;
 }
-#songbird_seekbar_progress > .progress-remainder
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder
 {
   background-image: none ;
   background-color: #a2aa9e ;
@@ -854,200 +854,202 @@ Play/Pause, Previous (back), Next (forward)
 */
 
 /* the play button */
-#songbird_btn_play
+
+.sb-player-play-button-play 
 {  
   list-style-image: url(chrome://songbird/skin/default/play_normal.png); 
 }
-#songbird_btn_play[disabled="true"]
+.sb-player-play-button-play[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/play_active.png);
 }
-#songbird_btn_play:hover
+.sb-player-play-button-play:hover
 {
   list-style-image: url(chrome://songbird/skin/default/play_normal.png);
 }
-#songbird_btn_play:active
+.sb-player-play-button-play:active
 {
   list-style-image: url(chrome://songbird/skin/default/play_active.png);
 }
 
 /* the pause button */
-#songbird_btn_pause
+
+.sb-player-pause-button-pause
 {
   list-style-image: url(chrome://songbird/skin/default/pause_normal.png);
 }
-#songbird_btn_pause[disabled="true"]
+.sb-player-pause-button-pause[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/pause_normal.png);
 }
-#songbird_btn_pause:hover
+.sb-player-pause-button-pause:hover
 {
   list-style-image: url(chrome://songbird/skin/default/pause_normal.png);
 }
-#songbird_btn_pause:active
+.sb-player-pause-button-pause:active
 {
   list-style-image: url(chrome://songbird/skin/default/pause_active.png)
 }
 
 /* the back button */
 
-#songbird_btn_back
+sb-player-back-button
 {
   list-style-image: url(chrome://songbird/skin/default/back_normal.png); 
 }
-#songbird_btn_back[disabled="true"]
+sb-player-back-button[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/back_disabled.png);
 }
-#songbird_btn_back:hover
+sb-player-back-button:hover
 {
   list-style-image: url(chrome://songbird/skin/default/back_normal.png); 
 }
-#songbird_btn_back:active
+sb-player-back-button:active
 {
   list-style-image: url(chrome://songbird/skin/default/back_active.png)
 }
 
 /* the fwd button */
-#songbird_btn_fwd
+sb-player-forward-button
 {
   list-style-image: url(chrome://songbird/skin/default/forward_normal.png);
 }
-#songbird_btn_fwd[disabled="true"]
+sb-player-forward-button[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/forward_disabled.png);
 }
-#songbird_btn_fwd:hover
+sb-player-forward-button:hover
 {
   list-style-image: url(chrome://songbird/skin/default/forward_normal.png);
 }
-#songbird_btn_fwd:active
+sb-player-forward-button:active
 {
   list-style-image: url(chrome://songbird/skin/default/forward_active.png);
 }
 
 /* the curr button */
-#songbird_btn_curr
+.sb-player-curtrack-button
 {
   list-style-image: url(chrome://songbird/skin/default/currenttrack_normal.png) ;
 }
-#songbird_btn_curr[disabled="true"]
+.sb-player-curtrack-button[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/currenttrack_disabled.png) ;
 }
-#songbird_btn_curr:hover
+.sb-player-curtrack-button:hover
 {
   list-style-image: url(chrome://songbird/skin/default/currenttrack_normal.png) ;
 }
-#songbird_btn_curr:active
+.sb-player-curtrack-button:active
 {
   list-style-image: url(chrome://songbird/skin/default/currenttrack_active.png) ;
 }
 
 /* the next button */
-#songbird_btn_next
+.sb-player-cyclefaceplate-button-cycle
 {
   list-style-image: url(chrome://songbird/skin/default/nextsvc_normal.png) ;
 }
-#songbird_btn_next[disabled="true"]
+.sb-player-cyclefaceplate-button-cycle[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/nextsvc_disabled.png) ;
 }
-#songbird_btn_next:hover
+.sb-player-cyclefaceplate-button-cycle:hover
 {
   list-style-image: url(chrome://songbird/skin/default/nextsvc_normal.png) ;
 }
-#songbird_btn_next:active
+.sb-player-cyclefaceplate-button-cycle:active
 {
   list-style-image: url(chrome://songbird/skin/default/nextsvc_active.png) ;
 }
 
 /* the rep1 button */
-#songbird_btn_rep
+.sb-player-repeat-button-repnone
 {
   list-style-image: url(chrome://songbird/skin/default/rep1_normal.png) ;
 }
-#songbird_btn_rep[disabled="true"]
+.sb-player-repeat-button-repnone[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/rep1_disabled.png) ;
 }
-#songbird_btn_rep:hover[disabled="true"]
+.sb-player-repeat-button-repnone:hover[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/rep1_normal.png) ;
 }
-#songbird_btn_rep:active
+.sb-player-repeat-button-repnone:active
 {
   list-style-image: url(chrome://songbird/skin/default/rep1_active.png) ;
 }
 
 /* the rep1_on button */
-#songbird_btn_rep1
+.sb-player-repeat-button-rep1
 {
   list-style-image: url(chrome://songbird/skin/default/rep1_on_normal.png) ;
 }
-#songbird_btn_rep1[disabled="true"]
+.sb-player-repeat-button-rep1[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/rep1_on_disabled.png) ;
 }
-#songbird_btn_rep1:hover[disabled="true"]
+.sb-player-repeat-button-rep1:hover[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/rep1_on_normal.png) ;
 }
-#songbird_btn_rep1:active
+.sb-player-repeat-button-rep1:active
 {
   list-style-image: url(chrome://songbird/skin/default/rep1_on_active.png) ;
 }
 
 /* the repall button */
-#songbird_btn_repall
+.sb-player-shuffle-button-repall
 {
   list-style-image: url(chrome://songbird/skin/default/repall_normal.png) ;
 }
-#songbird_btn_repall[disabled="true"]
+.sb-player-shuffle-button-repall[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/repall_disabled.png) ;
 }
-#songbird_btn_repall:hover[disabled="true"]
+.sb-player-shuffle-button-repall:hover[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/repall_normal.png) ;
 }
-#songbird_btn_repall:active
+.sb-player-shuffle-button-repall:active
 {
   list-style-image: url(chrome://songbird/skin/default/repall_active.png) ;
 }
 
 /* the shuf button */
-#songbird_btn_shuf
+.sb-player-shuffle-button-shuffleoff
 {
   list-style-image: url(chrome://songbird/skin/default/shuf_normal.png) ;
 }
-#songbird_btn_shuf[disabled="true"]
+.sb-player-shuffle-button-shuffleoff[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/shuf_disabled.png) ;
 }
-#songbird_btn_shuf:hover[disabled="true"]
+.sb-player-shuffle-button-shuffleoff:hover[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/shuf_normal.png) ;
 }
-#songbird_btn_shuf:active
+.sb-player-shuffle-button-shuffleoff:active
 {
   list-style-image: url(chrome://songbird/skin/default/shuf_active.png) ;
 }
 
 /* the shuf_on button */
-#songbird_btn_shuf_on
+.sb-player-repeat-button-shuffleon
 {
   list-style-image: url(chrome://songbird/skin/default/shuf_on_normal.png) ;
 }
-#songbird_btn_shuf_on[disabled="true"]
+.sb-player-repeat-button-shuffleon[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/shuf_disabled.png) ;
 }
-#songbird_btn_shuf_on:hover[disabled="true"]
+.sb-player-repeat-button-shuffleon:hover[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/shuf_normal.png) ;
 }
-#songbird_btn_shuf_on:active
+.sb-player-repeat-button-shuffleon:active
 {
   list-style-image: url(chrome://songbird/skin/default/shuf_on_active.png) ;
 }
@@ -1188,31 +1190,33 @@ VOLUME
 Mute and Slider
 ************************************************************************************************************************************************
 */
-#mute_off
+.sb-player-mute-button-muteoff > .clickhold-button
 {
   list-style-image: url(chrome://songbird/skin/default/mute_off.png);
+  background-color: transparent !important;
 }
 
-#mute_on
+.sb-player-mute-button-muteon > .clickhold-button
 {
   list-style-image: url(chrome://songbird/skin/default/mute_on.png);
+  background-color: transparent !important;
 }
 
-#songbird_volume_thumb
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb
 {
   background-image: url(chrome://songbird/skin/default/volume_thumb.png) ;
 }
 
-#songbird_volume_thumb:active
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb:active
 {
   background-image: url(chrome://songbird/skin/default/volume_thumb_active.png) ;
 }
 
-#songbird_volume_progress > .progress-bar
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar
 {
   background-image: url(chrome://songbird/skin/default/volume_progress_bar.png) ;
 }
-#songbird_volume_progress > .progress-remainder
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder
 {
   background-image: url(chrome://songbird/skin/default/volume_progress_remainder.png) ;
 }

@@ -228,8 +228,9 @@ PlaylistPlayback.prototype = {
   /**
    * All the data remotes we probably mess with
    */
-  _playButton:         null,
   _playURL:            null,
+  _playing:            null,
+  _paused:             null,
   _seenPlaying:        null,
   _playingVideo:       null,
   _lastVolume:         null,
@@ -297,13 +298,24 @@ PlaylistPlayback.prototype = {
 
     // HOLY SMOKES we use lots of data elements.
   
-    // Play/Pause image toggle
-    this._playButton            = createDataRemote("faceplate.play", null);
-    //string current           
+    // string current           
     this._playURL               = createDataRemote("faceplate.play.url", null);
-    //actually playing         
+    // whether the core is playing or not (if the core is paused, it is *also* playing, this remote indicates that the core is not stopped)
+    this._playing               = createDataRemote("faceplate.playing", null);
+    // whether the paused or not (if it is paused, it is also playing). 
+    this._paused                = createDataRemote("faceplate.paused", null);
+    
+    // note:
+    // an autoswitching play/pause button should decide upon its state in one of two ways :
+    // show_play_button = !playing || paused; show_pause_button = !show_play_button;
+    // or
+    // show_pause_button = playing && !paused; show_play_button = !show_pause_button;
+    
+    // whether we are actually playing
     this._seenPlaying           = createDataRemote("faceplate.seenplaying", null);
+    // whether we are playing a video file or an audio file
     this._playingVideo          = createDataRemote("faceplate.playingvideo", null);
+    // current volume
     this._volume                = createDataRemote("faceplate.volume", null);
     //t/f                      
     this._muteData              = createDataRemote("faceplate.mute", null);
@@ -334,6 +346,8 @@ PlaylistPlayback.prototype = {
     // Set startup defaults
     this._metadataPos.intValue = 0;
     this._metadataLen.intValue = 0;
+    this._playing.boolValue = false;
+    this._paused.boolValue = false;
     this._seenPlaying.boolValue = false;
     this._playingVideo.boolValue = false;
     this._metadataPosText.stringValue = "0:00";
@@ -354,7 +368,6 @@ PlaylistPlayback.prototype = {
     this._statusStyle.stringValue = "";
     this._playingRef.stringValue = "";
     this._playURL.stringValue = ""; 
-    this._playButton.boolValue = true; // Start on.
 
     // if they have not been set they will be the empty string.
     if ( this._shuffle.stringValue == "")
@@ -370,6 +383,7 @@ PlaylistPlayback.prototype = {
     // And we have to let them go when we are done else all hell breaks loose.
     this._playButton.unbind();
     this._playURL.unbind();
+    this._playing.unbind();
     this._seenPlaying.unbind();
     this._playingVideo.unbind();
     this._volume.unbind();
@@ -1204,7 +1218,7 @@ PlaylistPlayback.prototype = {
   _startPlayerLoop: function () {
     this._stopPlayerLoop();
     this._started = true;
-    this._seenPlaying.boolValue = false;
+    this._playing.boolValue = false;
     this._lookForPlayingCount = 0;
     this._timer.initWithCallback( this, 250, 1 ) // TYPE_REPEATING_SLACK
   },
@@ -1252,7 +1266,7 @@ PlaylistPlayback.prototype = {
       this._onPollVolume( core );
       this._onPollMute( core );
       this._onPollTimeText( len, pos );
-      this._onPollButtons( len, pos, core );
+      this._onPollStates( len, pos, core );
       this._onPollCompleted( len, pos, core );
       this._onPollVideo( core );
     }       
@@ -1292,12 +1306,10 @@ PlaylistPlayback.prototype = {
       }
   },
 
-  // Routes core playback status changes to the play/pause button ui data remote
-  _onPollButtons: function ( len, pos, core ) {
-    if ( core.getPlaying() && ( ! core.getPaused() ) && ( this._isFLAC() || len > 0.0 || pos > 0.0 ) )
-      this._playButton.boolValue = false;
-    else
-      this._playButton.boolValue = true;
+  // Routes core playback status changes to the playing/paused ui data remote
+  _onPollStates: function ( len, pos, core ) {
+    this._playing.boolValue = core.getPlaying();
+    this._paused.boolValue = core.getPaused();
   },
 
   // Routes metadata (and their possible updates) to the metadata ui data remotes

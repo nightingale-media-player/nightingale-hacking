@@ -42,8 +42,8 @@
   <binding id="clickholdbutton">
 
     <content>
-        <xul:button sbid="button" xbl:inherits="label,class,id,flex" />
-        <xul:menupopup sbid="popup" xbl:inherits="position,popupanchor,popupalign,class,type=menupopuptype,onpopupshowing=onmenushowing">
+        <xul:button sbid="button" class="clickhold-button" xbl:inherits="label,flex,disabled" />
+        <xul:menupopup sbid="popup" class="clickhold-menupopup" xbl:inherits="position,popupanchor,popupalign,type=menupopuptype,onpopupshowing=onmenushowing,onpopupshown=onmenushown,onpopuphiding=onmenuhiding">
           <children/>
         </xul:menupopup>        
     </content>
@@ -103,6 +103,10 @@
      <handler event="popupshown">
        <![CDATA[
        
+       // we cannot cancel the menu earlier (for instance, in delayPopup, or showPopup) 
+       // because some menus only add their menuitems in onpopupshowing
+       if (event.target.childNodes.length == 0) this.popup.hidePopup();
+
        // Centered?
        // If we want to use anchoring (which we do) then we can only
        // position via css.

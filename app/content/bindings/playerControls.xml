@@ -51,6 +51,7 @@
   <implementation>
 
     <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.control.volume;")
       <![CDATA[
         this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                     .getService(Components.interfaces.sbIPlaylistPlayback);
@@ -142,13 +143,11 @@
 
 
 
-  <binding id="mute">
+  <binding id="mute-button">
   
    <content>
-     <xul:stack xbl:inherits="class=class" >
-       <xul:button sbid="mute_off" xbl:inherits="class=class,id=muteoffid" oncommand="onMute( );" tooltiptext="&tooltip.control.mute;"/>
-       <xul:button sbid="mute_on"  xbl:inherits="class=class,id=muteonid" oncommand="onMute( );" tooltiptext="&tooltip.control.mute;"/>
-     </xul:stack>
+     <xul:clickholdbutton class="sb-player-mute-button-muteoff sb-player-button" sbid="mute-off" oncommand="onMute();" tooltiptext="&tooltip.control.mute;"/>
+     <xul:clickholdbutton class="sb-player-mute-button-muteon sb-player-button"  sbid="mute-on"  oncommand="onMute();" tooltiptext="&tooltip.control.mute;"/>
    </content>
 
   <implementation>
@@ -180,8 +179,8 @@
       ]]>
     </destructor>
 
-    <field name="mute_on">document.getAnonymousElementByAttribute(this, 'sbid', 'mute_on');</field>
-    <field name="mute_off">document.getAnonymousElementByAttribute(this, 'sbid', 'mute_off');</field>
+    <field name="mute_on">document.getAnonymousElementByAttribute(this, 'sbid', 'mute-on');</field>
+    <field name="mute_off">document.getAnonymousElementByAttribute(this, 'sbid', 'mute-off');</field>
 
     <method name="onMute">
       <body>
@@ -212,7 +211,7 @@
   
   
   
-  <binding id="forward" extends="chrome://global/content/bindings/button.xml#button">
+  <binding id="forward-button" extends="chrome://global/content/bindings/button.xml#button">
 
    <handlers>
      <handler event="mousedown" action="this.onFwdMouseDown();"/>
@@ -224,6 +223,7 @@
   <implementation>
 
     <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.control.fwd;")
       <![CDATA[
         this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 
@@ -325,7 +325,7 @@
   
   
   
-  <binding id="back" extends="chrome://global/content/bindings/button.xml#button">
+  <binding id="back-button" extends="chrome://global/content/bindings/button.xml#button">
 
    <handlers>
      <handler event="mousedown" action="this.onBackMouseDown();"/>
@@ -337,6 +337,7 @@
   <implementation>
 
     <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.control.back;")
       <![CDATA[
         this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 
@@ -438,13 +439,25 @@
 
 
 
-  <binding id="repeat">
+  <binding id="repeat-button">
   
    <content>
      <xul:stack xbl:inherits="class=class" >
-       <xul:button sbid="repeat_none" xbl:inherits="class=class,id=repid" oncommand="onRepeat( );" tooltiptext="&menu.control.repx;"/>
-       <xul:button sbid="repeat_1" xbl:inherits="class=class,id=rep1id" oncommand="onRepeat( );" tooltiptext="&menu.control.rep1;"/>
-       <xul:button sbid="repeat_all" xbl:inherits="class=class,id=repallid" oncommand="onRepeat( );" tooltiptext="&menu.control.repa;"/>
+       <xul:clickholdbutton sbid="repeat_none" class="sb-player-repeat-button-repnone sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repx;">
+         <xul:menuitem id="menu_repeat_none" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
+         <xul:menuitem id="menu_repeat_1" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
+         <xul:menuitem id="menu_repeat_all" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
+       </xul:clickholdbutton>
+       <xul:clickholdbutton sbid="repeat_1" class="sb-player-repeat-button-rep1 sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.rep1;">
+         <xul:menuitem id="menu_repeat_none" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
+         <xul:menuitem id="menu_repeat_1" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
+         <xul:menuitem id="menu_repeat_all" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
+       </xul:clickholdbutton>
+       <xul:clickholdbutton sbid="repeat_all" class="sb-player-repeat-button-repall sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repa;">
+         <xul:menuitem id="menu_repeat_none" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
+         <xul:menuitem id="menu_repeat_1" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
+         <xul:menuitem id="menu_repeat_all" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
+       </xul:clickholdbutton>
      </xul:stack>
    </content>
 
@@ -483,22 +496,36 @@
     <field name="repeat_none">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_none');</field>
     <field name="repeat_1">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_1');</field>
     <field name="repeat_all">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_all');</field>
-    
+
     <method name="onRepeat">
+      <parameter name="target"/>
       <body>
         <![CDATA[
-          // Rob decided to change the order.  Woo.
           var value = 0;
-          switch ( this.remote_repeat.intValue )
+          switch(target.id) 
           {
-            case 0:
-              value = 2;
-              break;
-            case 1:
+            case "menu_repeat_none": 
               value = 0;
               break;
-            case 2:
+            case "menu_repeat_1": 
               value = 1;
+              break;
+            case "menu_repeat_all": 
+              value = 2;
+              break;
+            default:
+              switch ( this.remote_repeat.intValue )
+              {
+                case 0:
+                  value = 2;
+                  break;
+                case 1:
+                  value = 0;
+                  break;
+                case 2:
+                  value = 1;
+                  break;
+              }
               break;
           }
           this.remote_repeat.intValue = value;
@@ -518,12 +545,12 @@
 
 
 
-  <binding id="shuffle">
+  <binding id="shuffle-button">
   
    <content>
      <xul:stack xbl:inherits="class=class" >
-       <xul:button sbid="shuffle_off" xbl:inherits="class=class,id=shuffleoffid" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuf_off;"/>
-       <xul:button sbid="shuffle_on" xbl:inherits="class=class,id=shuffleonid" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
+       <xul:clickholdbutton sbid="shuffle_off" class="sb-player-shuffle-button-shuffleoff sb-player-button" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuf_off;"/>
+       <xul:clickholdbutton sbid="shuffle_on" class="sb-player-shuffle-button-shuffleon sb-player-button" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
      </xul:stack>
    </content>
 
@@ -660,10 +687,10 @@
 
 
 
-  <binding id="totaltime">
+  <binding id="totaltime-label">
   
    <content>
-     <xul:label sbid="timelabel" xbl:inherits="id=id,class=class,align=align,crop=crop,disabled=disabled,flex=flex" onmousedown="onTotalDown();"/> 
+     <xul:label sbid="timelabel" xbl:inherits="class,align,crop,disabled,flex" onmousedown="onTotalDown();"/> 
    </content>
 
   <implementation>
@@ -710,17 +737,144 @@
 
 
 
-  <!-- PLAY/PAUSE CONTROL -->
+  <!-- PLAYPAUSE/PLAY/PAUSE/STOP CONTROLS -->
 
 
+  <binding id="play-control-base">
+
+    <implementation>
+
+      <constructor>
+        <![CDATA[
+          this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                      .getService(Components.interfaces.sbIPlaylistPlayback);
+        // Create and bind data remotes
+        this.remote_seenPlaying = SB_NewDataRemote( "faceplate.seenplaying", null );
+        this.remote_playingRef =  SB_NewDataRemote( "playing.ref", null ); 
+        this.remote_playlistIndex =  SB_NewDataRemote( "playlist.index", null ); 
+        ]]>
+      </constructor>
+      <destructor>
+        this.gPPS = null;
+        if (this.remote_seenPlaying) {
+          this.remote_seenPlaying.unbind();
+          this.remote_seenPlaying = null;
+        }
+        if (this.remote_playingRef) {
+          this.remote_playingRef.unbind();
+          this.remote_playingRef = null;
+        }
+        if (this.remote_playlistIndex) {
+          this.remote_playlistIndex.unbind();
+          this.remote_playlistIndex = null;
+        }
+      </destructor>
+                     
+      <method name="playbackPlay">
+        <body>
+          <![CDATA[
+            var ref = "";
+            if (this.gPPS.started ||
+                (this.remote_playingRef.stringValue != "" &&
+                  this.remote_playlistIndex.stringValue != "") ) {
+              if (this.gPPS.paused) {
+                gPPS.play();
+              } else {
+                // player is buffering (or stopped!), because the play button is visible (not started) yet 
+                // pause is not set and the player is started.  start the playlist again at the current spot
+                this.gPPS.playRef( this.remote_playingRef.stringValue, this.remote_playlistIndex.intValue );
+              }
+            } else {
+              var ref = "";
+              var playlist = this.getCurrentPlaylist();
+              if (playlist) {
+                ref = playlist.ref;
+              } 
+              if (ref == "") {
+                this.loadLibrary();
+                this.gPPS.play(); // let gpps handle default playback.
+              } else {
+                this.gPPS.playRef(ref, -1);
+              }
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="loadLibrary">
+        <body>
+          <![CDATA[
+            // optional connection
+            if (gServicePane) gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
+          ]]>
+        </body>
+      </method>
+
+      <method name="getCurrentPlaylist">
+        <body>
+          <![CDATA[
+            var pl = document.__CURRENTPLAYLIST__;
+            if (!pl) pl = document.__CURRENTWEBPLAYLIST__;
+            if (!pl) return null;
+            if ( pl.wrappedJSObject )
+              pl = pl.wrappedJSObject;
+            return pl;
+          ]]>
+        </body>
+      </method>
+
+      <method name="playbackPause">
+        <body>
+          <![CDATA[
+            if ( this.remote_seenPlaying.boolValue ) {
+              this.gPPS.pause();
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="playbackStop">
+        <body>
+          <![CDATA[
+            this.gPPS.stop();
+          ]]>
+        </body>
+      </method>
+      
+    </implementation>
+
+  </binding>
 
 
-  <binding id="playpause">
+  <!-- a play button, always enabled because it is legitimate to restart playback in the middle of playback -->
+
+  <binding id="play-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
   
    <content>
-     <xul:stack xbl:inherits="class=class,flex=flex">
-       <xul:button sbid="play" xbl:inherits="id=playid,class=class" oncommand="onPlay( );" tooltiptext="&tooltip.control.play;" />
-       <xul:button sbid="pause" xbl:inherits="id=pauseid,class=class" oncommand="onPause( );" tooltiptext="&tooltip.control.play;" />
+     <xul:clickholdbutton sbid="play" class="sb-player-play-button-play sb-player-button" oncommand="onPlay();" tooltiptext="&tooltip.control.play;"/>
+   </content>
+
+  <implementation>
+
+    <method name="onPlay">
+      <body>
+        this.playbackPlay();
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+
+  <!-- a pause/restore button -->
+
+  <binding id="pause-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
+  
+   <content>
+     <xul:stack xbl:inherits="class=class" >
+       <xul:clickholdbutton sbid="pause" class="sb-player-pause-button-pause sb-player-button" oncommand="onPause();" label="&menu.control.pause.button;"/>
+       <xul:clickholdbutton sbid="resume" class="sb-player-pause-button-resume sb-player-button" oncommand="onPause();" label="&menu.control.resume.button;"/>
      </xul:stack>
    </content>
 
@@ -728,62 +882,61 @@
 
     <constructor>
       <![CDATA[
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                    .getService(Components.interfaces.sbIPlaylistPlayback);
+        // Create and bind the data remotes
+        this.remote_playing = SB_NewDataRemote( "faceplate.playing", null );
+        this.remote_paused = SB_NewDataRemote( "faceplate.paused", null );
 
-        // Create and bind data remotes
-        this.remote_seenPlaying = SB_NewDataRemote( "faceplate.seenplaying", null );
-        this.remote_playingRef =  SB_NewDataRemote( "playing.ref", null ); 
-        this.remote_playlistIndex =  SB_NewDataRemote( "playlist.index", null ); 
+        this.on_state_change = { 
+          _that: null, 
+          observe: function( aSubject, aTopic, aData ) { this._that.onStateChange(); } 
+        };
+        this.on_state_change._that = this;
+        
+        this.remote_playing.bindObserver(this.on_state_change, false);
+        this.remote_paused.bindObserver(this.on_state_change, false);
 
-        // Bind to the hidden attribute for each field
-        this.playbinding = SBDataBindElementAttribute( "faceplate.play", this.play, "hidden", true, true );
-        this.pausebinding = SBDataBindElementAttribute( "faceplate.play", this.pause, "hidden", true );
       ]]>
     </constructor>
     <destructor>
       <![CDATA[
-        //SB_LOG("playerControls.js", "playpause binding destructor");
-        if (this.pausebinding) {
-          this.pausebinding.unbind();
-          this.pausebinding = null;
+        if (this.remote_playing) {
+          this.remote_playing.unbind();
+          this.remote_playing = null;
+          this.on_state_change._that = null;
+          this.on_state_change = null;
         }
-        if (this.playbinding) {
-          this.playbinding.unbind();
-          this.playbinding = null;
+        if (this.remote_paused) {
+          this.remote_paused.unbind();
+          this.remote_paused = null;
+          this.on_state_change._that = null;
+          this.on_state_change = null;
         }
       ]]>
     </destructor>
 
-    <field name="play">document.getAnonymousElementByAttribute(this, 'sbid', 'play');</field>
     <field name="pause">document.getAnonymousElementByAttribute(this, 'sbid', 'pause');</field>
-    
-    <method name="onPlay">
+    <field name="resume">document.getAnonymousElementByAttribute(this, 'sbid', 'resume');</field>
+
+    <method name="onStateChange">
       <body>
         <![CDATA[
-          var ref = "";
-          if (this.gPPS.started ||
-               (this.remote_playingRef.stringValue != "" &&
-                this.remote_playlistIndex.stringValue != "") ) {
-            if (this.gPPS.paused) {
-              gPPS.play();
-            } else {
-              // player is buffering (or stopped!), because the play button is visible (not started) yet 
-              // pause is not set and the player is started.  start the playlist again at the current spot
-              this.gPPS.playRef( this.remote_playingRef.stringValue, this.remote_playlistIndex.intValue );
-            }
+          if (!this.remote_playing.boolValue) {
+            // if we are not playing, disable both buttons, pause button will be made visible by default
+            this.pause.setAttribute("disabled", "true");
+            this.resume.setAttribute("disabled", "true");
           } else {
-            var ref = "";
-            var playlist = this.getCurrentPlaylist();
-            if (playlist) {
-              ref = playlist.ref;
-            } 
-            if (ref == "") {
-              this.loadLibrary();
-              this.gPPS.play(); // let gpps handle default playback.
-            } else {
-              this.gPPS.playRef(ref, -1);
-            }
+            // otherwise enable both buttons
+            this.pause.removeAttribute("disabled");
+            this.resume.removeAttribute("disabled");
+          }
+          if (this.remote_paused.boolValue) {
+            // if we are paused (which implies that our buttons have been enabled), show only the resume button
+            this.pause.removeAttribute("hidden");
+            this.resume.setAttribute("hidden", "true");
+          } else {
+            // otherwise show the pause button. if the core is actually stopped, then the pause button will have been disabled
+            this.pause.setAttribute("hidden", "true");
+            this.resume.removeAttribute("hidden");
           }
         ]]>
       </body>
@@ -791,37 +944,183 @@
 
     <method name="onPause">
       <body>
+        this.playbackPause();
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+  <!-- a stop button that enables itself when the core is playing, and disables itself when the core is stopped -->
+
+  <binding id="stop-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
+  
+   <content>
+     <xul:stack xbl:inherits="class=class" >
+       <xul:clickholdbutton sbid="stop" class="sb-player-stop-button-stop sb-player-button" oncommand="onStop();" label="&menu.control.stop.button;"/>
+     </xul:stack>
+   </content>
+
+  <implementation>
+
+    <constructor>
+      <![CDATA[
+        // Create and bind the data remotes
+        this.bindstop = SBDataBindElementAttribute( "faceplate.playing", this.stop, "disabled", true, false);
+      ]]>
+    </constructor>
+    <destructor>
+      <![CDATA[
+        if (this.bindstop) {
+          this.bindstop.unbind();
+          this.bindstop = null;
+        }
+      ]]>
+    </destructor>
+
+    <field name="stop">document.getAnonymousElementByAttribute(this, 'sbid', 'stop');</field>
+
+    <method name="onStop">
+      <body>
+        this.playbackStop();
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+  <binding id="playpause-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
+  
+   <content>
+     <xul:clickholdbutton sbid="play" 
+                         class="sb-player-play-button-play sb-player-button" 
+                         oncommand="onPlayPause(event.target);" 
+                         tooltiptext="&tooltip.control.play;" 
+                         xbl:inherits="position,popupanchor,popupalign"
+                         onmenushowing="syncMenus();">
+       <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
+       <xul:menuitem id="menu_pause" class="menuitem-iconic" label="&menu.control.pause.button;"/>
+       <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
+     </xul:clickholdbutton>
+     <xul:clickholdbutton sbid="pause" 
+                         class="sb-player-pause-button-pause sb-player-button" 
+                         oncommand="onPlayPause(event.target);" 
+                         tooltiptext="&tooltip.control.pause;" 
+                         xbl:inherits="position,popupanchor,popupalign"
+                         onmenushowing="syncMenus();">
+       <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
+       <xul:menuitem id="menu_pause" class="menuitem-iconic" label="&menu.control.pause.button;"/>
+       <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
+     </xul:clickholdbutton>
+   </content>
+
+  <implementation>
+
+    <constructor>
+      <![CDATA[
+        // observer for DataRemote 
+        this.on_state_change = { 
+          _that: null, 
+          observe: function( aSubject, aTopic, aData ) { this._that.onStateChanged(); } 
+        };
+        this.on_state_change._that = this;
+        this.remote_playing = SB_NewDataRemote("faceplate.playing", null);
+        this.remote_paused = SB_NewDataRemote("faceplate.paused", null);
+        this.remote_playing.bindObserver(this.on_state_change, false);
+        this.remote_paused.bindObserver(this.on_state_change, false);
+      ]]>
+    </constructor>
+    <destructor>
+      <![CDATA[
+      ]]>
+    </destructor>
+
+    <field name="play">document.getAnonymousElementByAttribute(this, 'sbid', 'play');</field>
+    <field name="pause">document.getAnonymousElementByAttribute(this, 'sbid', 'pause');</field>
+
+    <method name="onStateChanged">
+      <body>
         <![CDATA[
-          if ( this.remote_seenPlaying.boolValue ) {
-            this.gPPS.pause();
+          if (this.remote_playing.boolValue && !this.remote_paused.boolValue) { 
+            this.play.hidden = true; 
+            this.pause.hidden = false; 
+          } else { 
+            this.play.hidden = false; 
+            this.pause.hidden = true; 
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="syncMenus">
+      <body>
+        this.syncMenu(this.play);
+        this.syncMenu(this.pause);
+      </body>
+    </method>
+    
+    <method name="syncMenu">
+      <parameter name="parent"/>
+      <body>
+        <![CDATA[
+          for (var i=0;i<parent.childNodes.length;i++) {
+            var node = parent.childNodes[i];
+            switch (node.id) {
+              case "menu_play":
+                // play is disabled if we are already playing but we are not also paused (playing remains true while we are paused!)
+                node.disabled = this.gPPS.playing && !this.gPPS.paused;
+                break;
+              case "menu_pause":
+                // pause is disabled if we are already paused, or if we are stopped
+                node.disabled = this.gPPS.paused || !this.gPPS.playing;
+                break;
+              case "menu_stop":
+                // stop is disabled if we are already stopped (ie, the playbutton is visible, but we are not paused)
+                node.disabled = !this.gPPS.playing;
+                break;
+            }
           }
         ]]>
       </body>
     </method>
 
-    <method name="loadLibrary">
+    <method name="onPlay">
       <body>
-        <![CDATA[
-          // optional connection
-          var theServiceTree = document.getElementById( 'frame_servicetree' );
-          if (theServiceTree) theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
-        ]]>
-      </body>
-    </method>
-
-    <method name="getCurrentPlaylist">
-      <body>
-        <![CDATA[
-          var pl = document.__CURRENTPLAYLIST__;
-          if (!pl) pl = document.__CURRENTWEBPLAYLIST__;
-          if (!pl) return null;
-          if ( pl.wrappedJSObject )
-            pl = pl.wrappedJSObject;
-          return pl;
-        ]]>
+        this.playbackPlay();
       </body>
     </method>
     
+    <method name="onPause">
+      <body>
+        this.playbackPause();
+      </body>
+    </method>
+
+    <method name="onStop">
+      <body>
+        this.playbackStop();
+      </body>
+    </method>
+    
+    <method name="onPlayPause">
+      <parameter name="target"/>
+      <body>
+        <![CDATA[
+          var sbid = target.getAttribute("sbid");
+          if (sbid == "play") this.onPlay();
+          else if (sbid == "pause") this.onPause();
+          else {
+            switch (target.id) {
+              case "menu_play": this.onPlay(); break; 
+              case "menu_pause": this.onPause(); break;
+              case "menu_stop": this.onStop(); break;
+            }
+          }
+        ]]>
+      </body>
+    </method>
 
    </implementation>
  
@@ -836,7 +1135,7 @@
 
 
 
-  <binding id="artist" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  <binding id="artist-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
   <implementation>
 
@@ -856,7 +1155,7 @@
 
 
 
-  <binding id="title" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  <binding id="title-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
   <implementation>
 
@@ -930,7 +1229,7 @@
 
 
 
-  <binding id="album" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  <binding id="album-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
   <implementation>
 
@@ -950,7 +1249,7 @@
 
 
 
-  <binding id="timeelapsed" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  <binding id="timeelapsed-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
   <implementation>
 
@@ -970,7 +1269,7 @@
 
 
 
-  <binding id="genre" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  <binding id="genre-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
   <implementation>
 
@@ -985,12 +1284,36 @@
 
 
 
+  <!-- CUSTOM DISPLAY -->
+
+
+
+  <binding id="custom-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-compound-label">
+  
+  <implementation>
+
+    <constructor>
+      
+      // this is a special version of a remote compound label, it takes its value from the preferences
+      // and can be configured by the user from a preference pane
+      
+      this.setAttribute("value", SBDataGetStringValue("custom.display"));
+    
+    </constructor>
+
+   </implementation>
+ 
+  </binding>
+
+
+
+
   <!-- NUM PLAYLIST ITEMS DISPLAY -->
 
 
 
 
-  <binding id="numplaylistitems" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  <binding id="numplaylistitems-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
   <implementation>
 
@@ -1010,7 +1333,7 @@
 
 
 
-  <binding id="scanning" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  <binding id="scanning-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
   <implementation>
 
@@ -1019,7 +1342,7 @@
         this.data  = "backscan.status";
 
         // Create and bind data remote
-        this._visibilityBinding = SBDataBindElementAttribute( "backscan.status", this.label, "hidden", true, false, "value == ''" );
+        this.bindvisible = SBDataBindElementAttribute( "backscan.status", this.label, "hidden", true, false, "value == ''" );
 
         this.setAttribute("onmousedown", "SBDataSetIntValue('backscan.paused', SBDataGetIntValue('backscan.paused') == 0 );");
       ]]>
@@ -1027,9 +1350,9 @@
     <destructor>
       <![CDATA[
         //SB_LOG("playerControls.js", "scanning binding destructor");
-        if (this._visibilityBinding) {
-          this._visibilityBinding.unbind();
-          this._visibilityBinding = null;
+        if (this.bindvisible) {
+          this.bindvisible.unbind();
+          this.bindvisible = null;
         }
       ]]>
     </destructor>
@@ -1037,7 +1360,83 @@
    </implementation>
  
   </binding>
+  
+  
+  
+  <!-- JUMP TO CURRENT TRACK BUTTON -->
+  
+  
+  <binding id="curtrack-button">
+    
+    <content>
+      <xul:clickholdbutton oncommand="onCurrentTrack( );" class="sb-player-curtrack-button sb-player-button" tooltiptext="&tooltip.control.curtrack;"/>
+    </content>
+    
+    <implementation>
+    
+      <constructor>
+        this.interval = null;
+      </constructor>
+      
+      <destructor>
+        if (this.interval) {
+          clearInterval(this.interval);
+          this.interval = null;
+        }
+      </destructor>
+      
+      <method name="onCurrentTrack">
+        <body>
+          <![CDATA[
+            if (this.interval) {
+              clearInterval(this.interval);
+              this.interval = null;
+            }
+            var guid;
+            var table;
+            var ref = SBDataGetStringValue("playing.ref");
+            if (ref != "") {
+              source_ref = ref;
+              var source = new sbIPlaylistsource();
+              guid = source.getRefGUID( ref );
+              table = source.getRefTable( ref );
+            } else {
+              source_ref = "NC:songbird_library";
+              guid = "songbird";
+              table = "library";
+            }
+            
+            var curplaylist = document.__CURRENTPLAYLIST__;
+            if (curplaylist && curplaylist.ref == source_ref) {
+              curplaylist.syncPlaylistIndex(true);
+              return;
+            }
+            
+            this.loadView(guid, table);
 
+            var controller = this;
+            var callback = function() { controller.onCurrentTrack(); };
+            this.interval = setInterval(callback, 500); 
+          ]]>
+        </body>
+      </method>
+      
+      <method name="loadView">
+        <parameter name="guid"/>
+        <parameter name="table"/>
+        <body>
+          <![CDATA[
+            // optional connection
+            if (gServicePane) {
+              if (guid == "songbird" && table == "library")
+                gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?library");
+              else 
+                gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?" + table+ "," + guid);
+            }
+          ]]>
+        </body>
+      </method>
+      
 
 <!-- EOF -->
 </bindings>

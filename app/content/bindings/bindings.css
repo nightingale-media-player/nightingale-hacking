@@ -86,64 +86,92 @@ sbstatustext {
   -moz-binding: url("chrome://songbird/content/bindings/statusbar.xml#sbstatustext") !important;
 }
 
-remote_label {
-  -moz-binding: url("chrome://songbird/content/bindings/remote_label.xml#remote_label") !important;
+sb-remote-label {
+  -moz-binding: url("chrome://songbird/content/bindings/remoteLabel.xml#remote-label") !important;
 }
 
-player_mute {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#mute") !important;
+sb-remote-multi-label {
+  -moz-binding: url("chrome://songbird/content/bindings/remoteLabel.xml#remote-multi-label") !important;
 }
 
-player_forward {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#forward") !important;
+sb-remote-compound-label {
+  -moz-binding: url("chrome://songbird/content/bindings/remoteLabel.xml#remote-compound-label") !important;
 }
 
-player_back {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#back") !important;
+sb-player-mute-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#mute-button") !important;
 }
 
-player_repeat {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#repeat") !important;
+sb-player-forward-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#forward-button") !important;
 }
 
-player_shuffle {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#shuffle") !important;
+sb-player-back-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#back-button") !important;
 }
 
-player_timeelapsed {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#timeelapsed") !important;
+sb-player-repeat-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#repeat-button") !important;
 }
 
-player_totaltime {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#totaltime") !important;
+sb-player-shuffle-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#shuffle-button") !important;
 }
 
-player_playpause {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#playpause") !important;
+sb-player-timeelapsed-label {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#timeelapsed-label") !important;
 }
 
-player_artist {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#artist") !important;
+sb-player-totaltime-label {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#totaltime-label") !important;
 }
 
-player_title {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#title") !important;
+sb-player-play-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#play-button") !important;
 }
 
-player_album {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#album") !important;
+sb-player-playpause-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#playpause-button") !important;
 }
 
-player_genre {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#genre") !important;
+sb-player-pause-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#pause-button") !important;
 }
 
-player_numplaylistitems {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#numplaylistitems") !important;
+sb-player-stop-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#stop-button") !important;
 }
 
-player_scanning {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#scanning") !important;
+sb-player-artist-label {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#artist-label") !important;
+}
+
+sb-player-title-label {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#title-label") !important;
+}
+
+sb-player-album-label {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#album-label") !important;
+}
+
+sb-player-genre-label {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#genre-label") !important;
+}
+
+sb-player-custom-label {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#custom-label") !important;
+}
+
+sb-player-numplaylistitems-label {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#numplaylistitems-label") !important;
+}
+
+sb-player-scanning-label {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#scanning-label") !important;
+}
+
+sb-player-curtrack-button {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#curtrack-button") !important;
 }
 
 tageditor {
@@ -207,8 +235,12 @@ contentdrawer {
   -moz-binding: url("chrome://songbird/content/bindings/drawer.xml#contentdrawer") !important;
 }
 
-faceplate {
+sb-player-faceplate {
   -moz-binding: url("chrome://songbird/content/bindings/faceplate.xml#faceplate") !important;
+}
+
+sb-player-cyclefaceplate-button {
+  -moz-binding: url("chrome://songbird/content/bindings/faceplate.xml#cyclefaceplate") !important;
 }
 
 /* SYSBTNS */

@@ -70,7 +70,11 @@ These base styles are basically here to tell other -moz styles from spoiling our
 
 
 /** TODO: Remove / condense / rename **/
-.sb_faceplate, .sb_faceplate_dialog
+.sb_faceplate, 
+.sb_faceplate_dialog,
+.sb-player-button,
+.sb-player-button > .clickhold-button,
+.sb-feathers-toggle-button > .clickhold-button
 {
   -moz-appearance: none !important; /* grrrr! */
   -moz-background-clip: padding !important;

@@ -61,17 +61,17 @@
 
   <hbox id="frame_mini" flex="1" drag_window="true">
     <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
-    <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
-    <player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/>
-    <player_forward id="mini_btn_fwd" class="sb_faceplate miniplayer" />
+    <sb-player-back-button id="mini_btn_back" class="sb_faceplate miniplayer" />
+    <sb-player-playpause-button id="mini_btn_playpause" class="miniplayer" popupanchor="topleft" popupalign="bottomleft"/>
+    <sb-player-forward-button id="mini_btn_fwd" class="sb_faceplate miniplayer" />
 
     <vbox id="mini_volume" drag_window="true">
       <hbox id="mini_volume_box" class="sb_faceplate" drag_window="true">
-        <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off" class="sb_faceplate"/>
+        <sb-player-mute-button id="mute" class="sb_faceplate"/>
         <spacer width="8" drag_window="true"/>
         <hbox drag_window="true">
           <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>
-          <sb-player-volume-slider id="songbird_volume" sliderid="mini_volume_slider" thumbid="mini_volume_thumb" progressid="mini_volume_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
+          <sb-player-volume-slider id="songbird_volume" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
           <spacer width="3" height="5" id="songbird_volume_e"/>
         </hbox>
       </hbox>
@@ -83,14 +83,14 @@
       <vbox id="mini_dash" flex="1" drag_window="true">
         <stack>
           <hbox id="mini_text_time" class="sb_faceplate" flex="1" drag_window="true">
-            <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right" drag_window="true"/>
+            <sb-player-artist-label id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right" drag_window="true"/>
             <spacer width="20" height="5" class="sb_faceplate" drag_window="true"/>
-            <player_title id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1" drag_window="true"/>
-            <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" drag_window="true"/>
+            <sb-player-title-label id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1" drag_window="true"/>
+            <sb-player-timeelapsed-label id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" drag_window="true"/>
             <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" drag_window="true"/>
-            <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>
+            <sb-player-totaltime-label id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>
           </hbox>
-          <sb-player-seek-slider id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate" maxpos="100"/>
+          <sb-player-seek-slider id="mini_seekbar" orient="horizontal" class="sb_faceplate" maxpos="100"/>
         </stack>
       </vbox>
       <spacer width="4" height="18" id="mini_dash_e"/>
@@ -99,7 +99,7 @@
       <button id="mini_btn_jump" class="sb_faceplate" oncommand="toggleJumpTo();" tooltiptext="&jumptofile.title;"/>
     </vbox>
     <vbox drag_window="true">
-      <sb-feathers-toggle-button id="mini_btn_max" popupanchor="bottomleft" popupalign="topleft" />
+      <sb-feathers-toggle-button id="sysbtn_mainmode" popupanchor="bottomleft" popupalign="topleft" class="miniplayer"/>
     </vbox>
     <vbox drag_window="true">
       <button id="mini_btn_fullscreen"  class="sb_faceplate" oncommand="SBFullscreen();" />

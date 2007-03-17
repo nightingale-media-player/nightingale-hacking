@@ -138,7 +138,6 @@ function SBInitialize()
     
     setMinMaxCallback();
     initJumpToFileHotkey();
-    initFaceplateButton();
 
     if (window.addEventListener)
       window.addEventListener("keydown", checkAltF4, true);
@@ -194,8 +193,6 @@ function SBInitialize()
 
 function SBUninitialize()
 {
-  shutdownFaceplateButton();
-  
   window.removeEventListener("keydown", checkAltF4, true);
   
   var mainPane = document.getElementById("frame_main_pane");

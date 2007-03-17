@@ -77,31 +77,29 @@ FACEPLATE
 
 
 
-/*** TODO Convert seekbar to class based styling **/ 
-
 /* the seekbar slider */
-#songbird_seekbar_slider
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider
 {
   height: 10px;
 }
 
-#songbird_seekbar_thumb
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb 
 {
   width: 21px;
   height: 8px;
   border: 1px solid;
 }
-#songbird_seekbar_thumb > gripper
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb  > gripper
 {
   height: 8px;
 }
-#songbird_seekbar_progress
+sb-player-seek-slider.faceplate-seekbar > .sb-progress-slider-progressmeter
 {
   height: 10px;
   margin: 0px;
 }
-#songbird_seekbar_progress > .progress-bar,
-#songbird_seekbar_progress > .progress-remainder
+sb-player-seek-slider.faceplate-seekbar > .sb-progress-slider-progressmeter > .progress-bar,
+sb-player-seek-slider.faceplate-seekbar > .sb-progress-slider-progressmeter > .progress-remainder
 {
   height: 10px;
 }

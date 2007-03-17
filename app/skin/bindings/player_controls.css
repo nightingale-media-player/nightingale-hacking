@@ -72,16 +72,18 @@ VOLUME
 Mute and Slider
 ************************************************************************************************************************************************
 */
-player_mute > stack > button {
+.sb-player-mute-button > sb-player-mute-button-muteoff > .clickhold-button,
+.sb-player-mute-button > sb-player-mute-button-muteon > .clickhold-button 
+{
   min-width: 0px;
   margin: 0px 5px 3px 0px !important;
 }
 
-player_mute .button-text {
+.sb-player-mute-button .button-text {
   display: none;
 }
 
-#songbird_volume
+sb-player-volume-slider
 {
   margin-top: 2px !important;
   margin-bottom: 1px !important; 
@@ -89,10 +91,10 @@ player_mute .button-text {
   height: 14px !important;
 }
 
-#songbird_volume progressmeter,
-#songbird_volume slider,
-#songbird_volume thumb,
-#songbird_volume gripper
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter,
+sb-player-volume-slider > stack > .sb-progress-slider-slider,
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb,
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb > gripper
 {  
   padding: 0px !important;
   margin: 0px !important;
@@ -102,13 +104,13 @@ player_mute .button-text {
   -moz-appearance: none !important;
 }
 
-#songbird_volume_thumb
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb
 {
   width: 36px !important;
   height: 14px !important;
 }
 
-#songbird_volume_progress
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter
 {
   top: 0px !important;
   left: 0px !important; /* previously 20px, 1 thumb-width in */
