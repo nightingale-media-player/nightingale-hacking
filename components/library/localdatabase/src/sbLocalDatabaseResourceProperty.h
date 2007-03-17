@@ -48,6 +48,8 @@ public:
   virtual ~sbLocalDatabaseResourceProperty();
 
 protected:
+  nsresult GetPropertyBag();
+
   PRBool mWriteThrough;
   PRBool mWritePending;
 

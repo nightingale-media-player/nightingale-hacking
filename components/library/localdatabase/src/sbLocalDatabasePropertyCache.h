@@ -37,6 +37,7 @@
 #include <nsDataHashtable.h>
 #include <nsClassHashtable.h>
 #include <nsInterfaceHashtable.h>
+#include <nsTHashtable.h>
 #include <sbISQLBuilder.h>
 #include <nsIStringEnumerator.h>
 
@@ -96,7 +97,11 @@ private:
   ~sbLocalDatabaseResourcePropertyBag();
 
   sbLocalDatabasePropertyCache* mCache;
+  
   nsClassHashtable<nsUint32HashKey, nsString> mValueMap;
+
+  PRBool mWritePending;
+  nsTHashtable<nsUint32HashKey> mDirty;
 };
 
 class sbTArrayStringEnumerator : public nsIStringEnumerator

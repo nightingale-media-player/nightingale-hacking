@@ -604,9 +604,11 @@ sbLocalDatabasePropertyCache::GetPropertyName(PRUint32 aPropertyID,
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseResourcePropertyBag,
                    sbILocalDatabaseResourcePropertyBag)
 
-sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache) :
-  mCache(aCache)
+sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache) 
+: mCache(aCache)
+, mWritePending(PR_FALSE)
 {
+  mDirty.Init();
 }
 
 sbLocalDatabaseResourcePropertyBag::~sbLocalDatabaseResourcePropertyBag()
@@ -637,8 +639,9 @@ PropertyBagKeysToArray(const PRUint32& aPropertyID,
 NS_IMETHODIMP 
 sbLocalDatabaseResourcePropertyBag::GetWritePending(PRBool *aWritePending)
 {
-  //XXX: Fill this in.
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aWritePending);
+  *aWritePending = mWritePending;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -702,14 +705,35 @@ NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName, 
                                                 const nsAString & aValue)
 {
-  //XXX: Fill this in.
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = NS_ERROR_INVALID_ARG;
+  PRUint32 propertyID = mCache->GetPropertyID(aName);
+
+  if(propertyID > 0) {
+     rv = PutValue(propertyID, aValue);
+     NS_ENSURE_SUCCESS(rv, rv);
+     
+     mWritePending = PR_TRUE;
+     mDirty.PutEntry(propertyID);
+  }
+
+  return rv;
 }
 
 NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
 {
-  //XXX: Fill this in.
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = NS_OK;
+
+  if(mWritePending) {
+    //Look at dirty list.
+    //mCache->SetProperties for all dirty props.
+        
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mWritePending = PR_FALSE;
+    mDirty.Clear();
+  }
+
+  return rv;
 }
 
 NS_IMETHODIMP

@@ -78,8 +78,6 @@ sbLocalDatabaseLibrary::Init()
   rv = mPropertyCache->SetDatabaseGUID(mDatabaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLocalDatabaseResourceProperty::Init(mPropertyCache, mDatabaseGuid);
-
   /*
    * Build some queries
    */
@@ -175,6 +173,8 @@ sbLocalDatabaseLibrary::Init()
 
   rv = insert->ToString(mInsertMediaItemQuery);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  sbLocalDatabaseResourceProperty::InitResourceProperty(mPropertyCache, mDatabaseGuid);
 
   return NS_OK;
 }

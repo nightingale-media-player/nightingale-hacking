@@ -40,6 +40,6 @@ interface sbILocalDatabasePropertyCache;
 [scriptable, uuid(64BCF7AC-099B-4d26-A019-674449AB7C35)]
 interface sbILocalDatabaseResourceProperty : sbILibraryResource
 {
-  void init(in sbILocalDatabasePropertyCache aPropertyCache,
-            in AString aGuid);
+  void initResourceProperty(in sbILocalDatabasePropertyCache aPropertyCache,
+                            in AString aGuid);
 };
