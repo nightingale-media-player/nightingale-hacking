@@ -179,15 +179,16 @@ try
           if (gServicePane) gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
         }
         
-        if ( thePlaylistRef.stringValue.length )
+        var playlistref = SBDataGetStringValue('playlist.ref');
+        if ( playlistref.length )
         {
           // Feed the new filter into the list.
           var source = new sbIPlaylistsource();
           // Wait until it is done executing
-          if ( ! source.isQueryExecuting( thePlaylistRef.stringValue ) )
+          if ( ! source.isQueryExecuting( playlistref ) )
           {
             // ...before attempting to override.
-            source.setSearchString( thePlaylistRef.stringValue, widget.list.label, true /* reset the filters */ );
+            source.setSearchString( playlistref, widget.list.label, true /* reset the filters */ );
             theLastSearchEventTarget = null;
             if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
             return;

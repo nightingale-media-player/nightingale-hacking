@@ -50,9 +50,8 @@ function onBrowserBack()
   // Disable the "add to playlist" button until we see that there is anything to add.
   theCanAddToPlaylistData.boolValue = false;
   gBrowser.hidePlaylist();
-  var theMainPane = document.getElementById( "frame_main_pane" );
-  mainpane_listener_set = false;
-  theMainPane.goBack();
+  gBrowser.mainpane_listener_set = false;
+  gBrowser.goBack();
 }
 
 // onBrowserFwd
@@ -61,9 +60,8 @@ function onBrowserFwd()
   // Disable the "add to playlist" button until we see that there is anything to add.
   theCanAddToPlaylistData.boolValue = false;
   gBrowser.hidePlaylist();
-  var theMainPane = document.getElementById( "frame_main_pane" );
-  mainpane_listener_set = false;
-  theMainPane.goForward();
+  gBrowser.mainpane_listener_set = false;
+  gBrowser.goForward();
 }
 
 // onBrowserRefresh
@@ -71,9 +69,8 @@ function onBrowserRefresh()
 {
   try
   {
-    var theMainPane = document.getElementById( "frame_main_pane" );
-    mainpane_listener_set = false;
-    theMainPane.reload();
+    gBrowser.mainpane_listener_set = false;
+    gBrowser.reload();
   }
   catch( err )
   {
@@ -89,7 +86,7 @@ function onBrowserStop()
     //SB_LOG("songbird_hack.js", "onBrowserStop");
     var theMainPane = document.getElementById( "frame_main_pane" );
     theMainPane.stop();
-    mainpane_listener_set = false;
+    gBrowser.mainpane_listener_set = false;
   }
   catch( err )
   {
@@ -274,10 +271,6 @@ function onHTMLUrlKeypress( evt )
   }
 }
 
-var mainpane_listener_set = false;
-var thePlaylistRef = SB_NewDataRemote( "playlist.ref", null );
-var thePaneLoadingData = SB_NewDataRemote( "faceplate.loading", null );
-thePaneLoadingData.boolValue = false;
 var thePlaylistTree;
 
 var theCurrentMainPaneDocument = null;

@@ -13,6 +13,7 @@
         this.addProgressListener(this,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
             Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
+        this.loading = false;
       ]]></constructor>
       <destructor><![CDATA[
         this.removeProgressListener(this);
@@ -51,6 +52,11 @@
           return this._playlist;
         ]]></getter>
       </property>
+      
+      <field name="_loading">SB_NewDataRemote("faceplate.loading", null)</field>
+      <property name="loading"
+                onget="return this._loading.boolValue"
+                onset="this._loading.boolValue = val;" />
       
       <field name="mainpane_listener_set">false</field>
       
@@ -113,7 +119,7 @@
                 // Remember some values
                 theLibraryPlaylist = playlist;
                 thePlaylistTree = playlist = playlist.tree;
-                thePlaylistRef.stringValue = playlist.getAttribute( "ref" ); // is this set yet?
+                SBDataSetStringValue('playlist.ref', playlist.getAttribute( "ref" )); // is this set yet?
         
                 // Set the current selection
                 theLibraryPlaylist.syncPlaylistIndex(false);
@@ -294,7 +300,7 @@
       
           if (aState & nsIWebProgressListener.STATE_START) {
             // Start the spinner if necessary
-            thePaneLoadingData.boolValue = true;
+            this.loading = true;
             
             // cancel the previous page scan
             CancelAsyncWebDocument();
@@ -302,7 +308,7 @@
           }
           else if (aState & nsIWebProgressListener.STATE_STOP) {
             // Stop the spinner if necessary
-            thePaneLoadingData.boolValue = false;
+            this.loading = false;
       
             // Notfiy that the page is done loading
             this._loaded();
