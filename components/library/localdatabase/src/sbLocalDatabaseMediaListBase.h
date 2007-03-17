@@ -27,8 +27,6 @@
 #ifndef __SBLOCALDATABASEMEDIALISTBASE_H__
 #define __SBLOCALDATABASEMEDIALISTBASE_H__
 
-#include <sbILocalDatabaseLibrary.h>
-#include <sbLocalDatabaseLibrary.h>
 #include <sbLocalDatabaseMediaItem.h>
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
@@ -36,12 +34,40 @@
 #include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <prmon.h>
+#include <prlock.h>
+
 #include <sbILibrary.h>
 #include <sbILocalDatabaseGUIDArray.h>
+#include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListListener.h>
-
+#include "sbLocalDatabaseGUIDArray.h"
+#include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabaseResourceProperty.h"
+
+// Macros to help early returns within loops.
+#define SB_CONTINUE_IF_FALSE(_expr)                                            \
+  PR_BEGIN_MACRO                                                               \
+    if (!(_expr)) {                                                            \
+      NS_WARNING("SB_CONTINUE_IF_FALSE triggered");                            \
+      continue;                                                                \
+    }                                                                          \
+  PR_END_MACRO
+
+#define SB_CONTINUE_IF_FAILED(_rv)                                             \
+  SB_CONTINUE_IF_FALSE(NS_SUCCEEDED(_rv))
+
+// This macro is for derived classes that want to ensure safe access to
+// mFullArray.
+#define SB_MEDIALIST_LOCK_AND_ENSURE_MUTABLE()                                 \
+  PR_BEGIN_MACRO                                                               \
+    nsAutoMonitor mon(mMonitor);                                               \
+    if (mLockedEnumerationActive) {                                            \
+      NS_ERROR("Operation not permitted during a locked enumeration");         \
+      return NS_ERROR_FAILURE;                                                 \
+    }                                                                          \
+  PR_END_MACRO
 
 class sbLocalDatabaseMediaListBase : public sbLocalDatabaseResourceProperty,
                                      public sbIMediaList,
@@ -68,6 +94,7 @@ public:
 
   sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
                                const nsAString& aGuid);
+  ~sbLocalDatabaseMediaListBase();
 
   NS_IMETHODIMP Init();
 
@@ -145,6 +172,19 @@ private:
   // otherwise.
   inline PRBool InitializeListenerProxyTable();
 
+  nsresult EnumerateAllItemsInternal(sbIMediaListEnumerationListener* aEnumerationListener);
+
+  nsresult EnumerateItemsByPropertyInternal(const nsAString& aName,
+                                            nsIStringEnumerator* aValueEnum,
+                                            sbIMediaListEnumerationListener* aEnumerationListener);
+
+  nsresult EnumerateItemsByPropertiesInternal(sbStringArrayHash* aPropertiesHash,
+                                              sbIMediaListEnumerationListener* aEnumerationListener);
+
+  // Called for the enumeration methods.
+  nsresult EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnumerator,
+                                  sbIMediaListEnumerationListener* aListener);
+
 protected:
 
   // The library this media list instance belogs to
@@ -166,9 +206,18 @@ protected:
   // list this instance represents.
   nsCOMPtr<sbILocalDatabaseGUIDArray> mFullArray;
 
+  // A monitor that prevents changes to the media list.
+  PRMonitor* mMonitor;
+
+  PRBool mLockedEnumerationActive;
+
 private:
   // A thread-safe hash table that holds a mapping of listeners to proxies.
   sbMediaListListenersTableMT mListenerProxyTable;
+
+  // This lock protects the code that checks for existing entries in the proxy
+  // table.
+  PRLock* mListenerProxyTableLock;
 };
 
 #endif /* __SBLOCALDATABASEMEDIALISTBASE_H__ */

@@ -178,54 +178,12 @@ sbLocalDatabaseViewMediaList::Add(sbIMediaItem* aMediaItem)
 NS_IMETHODIMP
 sbLocalDatabaseViewMediaList::AddAll(sbIMediaList* aMediaList)
 {
-  NS_ENSURE_ARG_POINTER(aMediaList);
-
-  nsresult rv;
-
-  nsCOMPtr<nsISimpleEnumerator> items;
-  rv = aMediaList->GetItems(getter_AddRefs(items));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AddSome(items);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseViewMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
 {
-  NS_ENSURE_ARG_POINTER(aMediaItems);
-
-  nsresult rv;
-
-  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  /*
-   * See documentation for Add()
-   */
-  PRBool hasMoreElements;
-  while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMoreElements)) &&
-         hasMoreElements) {
-
-    nsCOMPtr<nsISupports> supports;
-    rv = aMediaItems->GetNext(getter_AddRefs(supports));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbILibrary> itemLibrary;
-    rv = item->GetLibrary(getter_AddRefs(itemLibrary));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (itemLibrary == library) {
-      return NS_ERROR_INVALID_ARG;
-    }
-
-  }
-
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 

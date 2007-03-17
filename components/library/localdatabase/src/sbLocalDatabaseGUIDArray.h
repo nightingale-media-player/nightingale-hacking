@@ -220,9 +220,10 @@ public:
 
   sbGUIDArrayEnumerator(sbILocalDatabaseLibrary* aLibrary,
                         sbILocalDatabaseGUIDArray* aArray);
-private:
+
   ~sbGUIDArrayEnumerator();
 
+private:
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
   nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
   PRUint32 mNextIndex;

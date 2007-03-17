@@ -78,4 +78,3 @@ private:
 };
 
 #endif /* __SBLOCALDATABASEVIEWMEDIALIST_H__ */
-

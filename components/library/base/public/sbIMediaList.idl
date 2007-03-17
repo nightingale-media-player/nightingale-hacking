@@ -33,10 +33,11 @@
 #include "sbIMediaItem.idl"
 
 interface nsIArray;
+interface nsIPropertyBag;
 interface nsISimpleEnumerator;
 interface nsITreeView;
-interface nsIPropertyBag;
 interface sbILibrary;
+interface sbIMediaListEnumerationListener;
 interface sbIMediaListListener;
 interface sbIPropertyArray;
 
@@ -55,12 +56,6 @@ interface sbIMediaList : sbIMediaItem
    * \brief The name of the media list
    */
   attribute AString name;
-
-  /**
-   * \brief Contents of the list as a nsISimpleEnumerator of sbIMediaItem
-   * objects
-   */
-  readonly attribute nsISimpleEnumerator items;
 
   /**
    * \brief Returns the length of the list
@@ -82,24 +77,61 @@ interface sbIMediaList : sbIMediaItem
   sbIMediaItem getItemByIndex(in unsigned long aIndex);
 
   /**
-   * \brief Get a list of media items that match a given property and propery
-   * value
-   * \param aName Property name to search
-   * \param aValue Property value to search
-   * \return List of found media items as a nsISimpleEnumerator containing
-   * sbIMediaItem objects
+   * \brief This flag means that the list being enumerated is a copy that may
+   *        become out of date.
+   *
+   * Use this flag if you don't care whether or not other threads change the
+   * list's contents. The listener may make changes to the list at any time but
+   * those changes will not be reflected in the enumeration sequence.
    */
-  nsISimpleEnumerator getItemsByPropertyValue(in AString aName, in AString aValue);
+  const unsigned short ENUMERATIONTYPE_SNAPSHOT = 0;
 
   /**
-   * \brief Get a list of media items that match a list of property and
-   * propery values
-   * \param aBag Property bag describing the item search where the keys map
-   * to property names and values map to property values.
-   * \return List of found media items as a nsISimpleEnumerator containing
-   * sbIMediaItem objects
+   * \brief This flag means that the list is protected from changes by other
+   *        threads during the enumeration.
+   *
+   * Use this flag if you need to be certain that the contents of the list are
+   * not changed during enumeration. Note that all other threads will block
+   * until the enumeration is complete. Furthermore, changes made to list from
+   * the listener are not permitted until the listener has received the
+   * onEnumerationEnd notification.
    */
-  nsISimpleEnumerator getItemsByPropertyValues(in sbIPropertyArray aProperties);
+  const unsigned short ENUMERATIONTYPE_LOCKING  = 1;
+
+  /**
+   * \brief Enumerate all items in the list.
+   *
+   * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
+   * \param aEnumerationListener - The enumeration listener.
+   */
+  void enumerateAllItems(in sbIMediaListEnumerationListener aEnumerationListener,
+                         in unsigned short aEnumerationType);
+
+  /**
+   * \brief Enumerate the media items in the list that match a given property
+   *        name and value.
+   *
+   * \param aName - Property name to search.
+   * \param aValue - Property value to search.
+   * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
+   * \param aEnumerationListener - The enumeration listener.
+   */
+  void enumerateItemsByProperty(in AString aPropertyName,
+                                in AString aPropertyValue,
+                                in sbIMediaListEnumerationListener aEnumerationListener,
+                                in unsigned short aEnumerationType);
+
+  /**
+   * \brief Enumerate the media items that match a list of property names and
+   *        values.
+   *
+   * \param aProperties - A list of property name/value pairs.
+   * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
+   * \param aEnumerationListener - The enumeration listener.
+   */
+  void enumerateItemsByProperties(in sbIPropertyArray aProperties,
+                                  in sbIMediaListEnumerationListener aEnumerationListener,
+                                  in unsigned short aEnumerationType);
 
   /**
    * \brief Get the first index of a media item int he list

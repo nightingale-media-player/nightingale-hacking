@@ -41,9 +41,9 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseLibraryFactory.cpp \
            sbLocalDatabaseMediaListBase.cpp \
            sbLocalDatabaseResourceProperty.cpp \
+           sbLocalDatabaseSimpleMediaList.cpp \
            sbLocalDatabaseViewMediaList.cpp \
            sbLocalDatabaseViewMediaListFactory.cpp \
-           sbLocalDatabaseSimpleMediaList.cpp \
            sbLocalDatabaseSimpleMediaListFactory.cpp \
            $(NULL)
 

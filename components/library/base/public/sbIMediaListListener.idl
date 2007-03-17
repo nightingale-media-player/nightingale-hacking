@@ -91,3 +91,41 @@ interface sbIMediaListListener : nsISupports
    */
   void onBatchEnd(in sbIMediaList aMediaList);
 };
+
+/**
+* \interface sbIMediaListEnumerationListener
+* \brief Interface used to enumerate the items in a media list.
+* \sa sbIMediaList
+*/
+[scriptable, uuid(2f7c9d1b-ef9c-4522-af72-1acbeeddd366)]
+interface sbIMediaListEnumerationListener : nsISupports
+{
+  /**
+   * \brief Called when enumeration is about to begin.
+   *
+   * \param aMediaList - The media list that is being enumerated.
+   *
+   * \return true to begin enumeration, false to cancel.
+   */
+  boolean onEnumerationBegin(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Called once for each item in the enumeration.
+   *
+   * \param aMediaList - The media list that is being enumerated.
+   * \param aMediaItem - The media item.
+   *
+   * \return true to continue enumeration, false to cancel.
+   */
+  boolean onEnumeratedItem(in sbIMediaList aMediaList,
+                           in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Called when enumeration has completed.
+   *
+   * \param aMediaList - The media list that is being enumerated.
+   * \param aStatusCode - A code to determine if the enumeration was successful.
+   */
+  void onEnumerationEnd(in sbIMediaList aMediaList,
+                        in nsresult aStatusCode);
+};

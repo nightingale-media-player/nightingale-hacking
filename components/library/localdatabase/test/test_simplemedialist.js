@@ -65,43 +65,50 @@ function runTest () {
   var genreProperty = "http://songbirdnest.com/data/1.0#genre";
 
   // Test getItemsByProperty(s)
-  var filteredListEnumerator =
-    list.getItemsByPropertyValue(titleProperty, "Train of Thought");
-
-  assertEqual(countItems(filteredListEnumerator), 1);
-
-  filteredListEnumerator =
-    list.getItemsByPropertyValue(albumProperty, "Back in Black");
-
-  assertEqual(countItems(filteredListEnumerator), 10);
-
-  filteredListEnumerator =
-    list.getItemsByPropertyValue(genreProperty, "KJaskjjbfjJDBs");
-
-  assertEqual(countItems(filteredListEnumerator), 0);
+  var enumerationListener = new TestMediaListEnumerationListener();
+  
+  list.enumerateItemsByProperty(titleProperty, "Train of Thought",
+                                enumerationListener,
+                                Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 1);
+  enumerationListener.reset();
+  
+  list.enumerateItemsByProperty(albumProperty, "Back in Black",
+                                enumerationListener,
+                                Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 10);
+  enumerationListener.reset();
+  
+  list.enumerateItemsByProperty(genreProperty, "KJaskjjbfjJDBs",
+                                enumerationListener,
+                                Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 0);
+  enumerationListener.reset();
 
   var propertyArray =
     Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"].
     createInstance(Ci.sbIPropertyArray);
-
   propertyArray.appendProperty(albumProperty, "Back in Black");
-  filteredListEnumerator =
-    list.getItemsByPropertyValues(propertyArray);
-
-  assertEqual(countItems(filteredListEnumerator), 10);
-
+  
+  list.enumerateItemsByProperties(propertyArray, enumerationListener,
+                                  Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 10);
+  enumerationListener.reset();
+  
   propertyArray.appendProperty(titleProperty, "Rock and Roll Ain't Noise Pollution");
   propertyArray.appendProperty(titleProperty, "Shake a Leg");
-  filteredListEnumerator =
-    list.getItemsByPropertyValues(propertyArray);
 
-  assertEqual(countItems(filteredListEnumerator), 2);
+  list.enumerateItemsByProperties(propertyArray, enumerationListener,
+                                  Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 2);
+  enumerationListener.reset();
 
   propertyArray.removeElementAt(1);
-  filteredListEnumerator =
-    list.getItemsByPropertyValues(propertyArray);
-
-  assertEqual(countItems(filteredListEnumerator), 1);
+  
+  list.enumerateItemsByProperties(propertyArray, enumerationListener,
+                                  Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 1);
+  enumerationListener.reset();
   
   //Test getIemByIndex, indexOf, lastIndexOf.
   var mediaItem = list.getItemByIndex(8);
@@ -180,7 +187,11 @@ function runTest () {
   assertEqual(list.length, oldlength + 3 + view.length);
 
   // And add it again
-  list.addSome(view.items);
+  var simpleEnumerator = new TestMediaListEnumerationListener();
+  view.enumerateAllItems(simpleEnumerator,
+                         Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  list.addSome(simpleEnumerator);
+  
   a.forEach(function(e) { data.push(e); });
   assertList(list, data);
   assertEqual(list.length, oldlength + 3 + view.length + view.length);

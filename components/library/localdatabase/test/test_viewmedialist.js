@@ -63,7 +63,7 @@ function runTest () {
   catch(e) {
     assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
   }
-
+/*
   var e = new SimpleArrayEnumerator([item]);
   try {
     view.addSome(e);
@@ -81,56 +81,63 @@ function runTest () {
   catch(e) {
     assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
   }
-
+*/
   var titleProperty = "http://songbirdnest.com/data/1.0#trackName";
   var albumProperty = "http://songbirdnest.com/data/1.0#albumName";
   var genreProperty = "http://songbirdnest.com/data/1.0#genre";
   
-  var filteredListEnumerator =
-    view.getItemsByPropertyValue(titleProperty, "Train of Thought");
+  var enumerationListener = new TestMediaListEnumerationListener();
   
-  assertEqual(countItems(filteredListEnumerator), 1);
+  view.enumerateItemsByProperty(titleProperty, "Train of Thought",
+                                enumerationListener,
+                                Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 1);
+  enumerationListener.reset();
   
-  filteredListEnumerator =
-    view.getItemsByPropertyValue(albumProperty, "Back in Black");
-
-  assertEqual(countItems(filteredListEnumerator), 10);
+  view.enumerateItemsByProperty(albumProperty, "Back in Black",
+                                enumerationListener,
+                                Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 10);
+  enumerationListener.reset();
   
-  filteredListEnumerator =
-    view.getItemsByPropertyValue(genreProperty, "KJaskjjbfjJDBs");
-    
-  assertEqual(countItems(filteredListEnumerator), 0);
+  view.enumerateItemsByProperty(genreProperty, "KJaskjjbfjJDBs",
+                                enumerationListener,
+                                Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 0);
+  enumerationListener.reset();
 
   var propertyArray =
     Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"].
     createInstance(Ci.sbIPropertyArray);
-  
   propertyArray.appendProperty(albumProperty, "Back in Black");
-  filteredListEnumerator =
-    view.getItemsByPropertyValues(propertyArray);
-    
-  assertEqual(countItems(filteredListEnumerator), 10);
+  
+  view.enumerateItemsByProperties(propertyArray, enumerationListener,
+                                  Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 10);
+  enumerationListener.reset();
   
   propertyArray.appendProperty(titleProperty, "Rock and Roll Ain't Noise Pollution");
   propertyArray.appendProperty(titleProperty, "Shake a Leg");
-  filteredListEnumerator =
-    view.getItemsByPropertyValues(propertyArray);
 
-  assertEqual(countItems(filteredListEnumerator), 2);
-  
+  view.enumerateItemsByProperties(propertyArray, enumerationListener,
+                                  Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 2);
+  enumerationListener.reset();
+
   propertyArray.removeElementAt(1);
-  filteredListEnumerator =
-    view.getItemsByPropertyValues(propertyArray);
   
-  assertEqual(countItems(filteredListEnumerator), 1);
-  
+  view.enumerateItemsByProperties(propertyArray, enumerationListener,
+                                  Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  assertEqual(enumerationListener.count, 1);
+  enumerationListener.reset();
+
   //Test getIemByIndex, indexOf, lastIndexOf.
   var mediaItem = view.getItemByIndex(8);
   assertNotEqual(mediaItem, null);
   
   var mediaItemIndex = view.indexOf(mediaItem, 0);
   assertEqual(mediaItemIndex, 8);
-  
+
   var indexOfException;
   try {
     mediaItemIndex = view.indexOf(mediaItem, 10);

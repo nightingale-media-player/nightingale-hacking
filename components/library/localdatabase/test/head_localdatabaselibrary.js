@@ -230,14 +230,18 @@ function assertList(list, data) {
     fail("compare failed, length wrong, got " + list.length + " expected " + (a.length - 1));
   }
 
-  var e = list.items;
-  for(var i = 0; i < a.length; i++) {
-    var item = e.getNext();
-    if(item.guid != a[i]) {
-      fail("compare failed, index " + i + " got " + item.guid + " expected " + a[i]);
+  var listener = new TestMediaListEnumerationListener();
+  
+  listener.enumItemFunction = function onItem(list, item) {
+    if (item.guid != a[this.count]) {
+      fail("compare failed, index " + this.count + " got " + item.guid +
+            " expected " + a[this.count]);
+      return false;
     }
-  }
-
+    return true;
+  };
+  
+  list.enumerateAllItems(listener, Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
 }
 
 function TestMediaListListener() {
@@ -293,6 +297,99 @@ TestMediaListListener.prototype = {
       throw Cr.NS_ERROR_NO_INTERFACE;
     return this;
   }  
+}
+
+function TestMediaListEnumerationListener() {
+  this._items = [];
+}
+TestMediaListEnumerationListener.prototype = {
+  _result: Cr.NS_OK,
+  _enumBeginFunction: null,
+  _enumItemFunction: null,
+  _enumEndFunction: null,
+  _enumerationComplete: false,
+  _items: null,
+  _index: 0,
+  
+  onEnumerationBegin: function onEnumerationBegin(list) {
+    if (this._enumBeginFunction)
+      return this._enumBeginFunction(list);
+      
+    return true;
+  },
+  
+  onEnumeratedItem: function onEnumeratedItem(list, item) {
+    var retval = true;
+    
+    if (this._enumItemFunction)
+      retval = this._enumItemFunction(list, item);
+      
+    if (retval) {
+      this._items.push(item);
+    }
+      
+    return retval;
+  },
+  
+  onEnumerationEnd: function onEnumerationEnd(list, result) {
+    if (this._enumEndFunction)
+      this._enumEndFunction(list, result);
+    this._result = result;
+    this._enumerationComplete = true;
+  },
+  
+  reset: function reset() {
+    this._result = Cr.NS_OK;
+    this._enumeratedItemCount = 0;
+    this._enumBeginFunction = null;
+    this._enumItemFunction = null;
+    this._enumEndFunction = null;
+    this._items = [];
+    this._index = 0;
+    this._enumerationComplete = false;
+  },
+  
+  hasMoreElements: function hasMoreElements() {
+    if (!this._enumerationComplete)
+      throw Cr.NS_ERROR_NOT_AVAILABLE;
+      
+    return this._index < this._items.length;
+  },
+  
+  getNext: function getNext() {
+    if (!this._enumerationComplete)
+      throw Cr.NS_ERROR_NOT_AVAILABLE;
+      
+    return this._items[this._index++];
+  },
+
+  set enumBeginFunction(val) {
+    this._enumBeginFunction = val;
+  },
+  
+  set enumItemFunction(val) {
+    this._enumItemFunction = val;
+  },
+
+  set enumEndFunction(val) {
+    this._enumEndFunction = val;
+  },
+
+  get result() {
+    return this._result;
+  },
+  
+  get count() {
+    return this._items.length;
+  },
+    
+  QueryInterface: function QueryInterface(iid) {
+    if (!iid.equals(Ci.sbIMediaListEnumerationListener) &&
+        !iid.equals(Ci.nsISimpleEnumerator) &&
+        !iid.equals(Ci.nsISupports))
+      throw Cr.NS_ERROR_NO_INTERFACE;
+    return this;
+  }
 }
 
 function readList(dataFile) {

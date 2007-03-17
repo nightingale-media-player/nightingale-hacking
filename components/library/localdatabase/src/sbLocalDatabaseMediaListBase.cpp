@@ -26,36 +26,21 @@
 
 #include "sbLocalDatabaseMediaListBase.h"
 
+#include <nsAutoLock.h>
+#include <nsComponentManagerUtils.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIProperty.h>
 #include <nsIPropertyBag.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
 #include <nsIVariant.h>
-#include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 
 #include <sbIMediaList.h>
 #include <sbIPropertyArray.h>
 #include "sbLocalDatabaseCID.h"
-#include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabasePropertyCache.h"
 #include <sbProxyUtils.h>
-
-#define DEFAULT_SORT_PROPERTY \
-  NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
-#define DEFAULT_FETCH_SIZE 1000
-
-#define SB_CONTINUE_IF_FALSE(_expr)                        \
-  PR_BEGIN_MACRO                                           \
-    if (!(_expr)) {                                        \
-      NS_WARNING("SB_CONTINUE_IF_FALSE triggered");        \
-      continue;                                            \
-    }                                                      \
-  PR_END_MACRO
-
-#define SB_CONTINUE_IF_FAILED(_rv)                         \
-  SB_CONTINUE_IF_FALSE(NS_SUCCEEDED(_rv))
 
 NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseMediaListBase,
                              sbLocalDatabaseResourceProperty,
@@ -71,12 +56,30 @@ NS_IMPL_CI_INTERFACE_GETTER4(sbLocalDatabaseMediaListBase,
                              sbIMediaList)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
-                                                           const nsAString& aGuid) 
-: sbLocalDatabaseResourceProperty(aLibrary, aGuid)
-, mLibrary(aLibrary)
-, mGuid(aGuid)
-, mMediaItemId(0)
+                                                           const nsAString& aGuid)
+: sbLocalDatabaseResourceProperty(aLibrary, aGuid),
+  mLibrary(aLibrary),
+  mGuid(aGuid),
+  mMediaItemId(0),
+  mLockedEnumerationActive(PR_FALSE)
 {
+  mMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseMediaListBase::mMonitor");
+  NS_ASSERTION(mMonitor, "Failed to create monitor!");
+
+  mListenerProxyTableLock =
+    nsAutoLock::NewLock("sbLocalDatabaseMediaListBase::mListenerProxyTableLock");
+  NS_ASSERTION(mListenerProxyTableLock, "Failed to create lock!");
+}
+
+sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
+{
+  if (mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
+  }
+
+  if (mListenerProxyTableLock) {
+    nsAutoLock::DestroyLock(mListenerProxyTableLock);
+  }
 }
 
 /**
@@ -286,6 +289,73 @@ sbLocalDatabaseMediaListBase::InitializeListenerProxyTable()
 }
 
 /**
+ * Internal method that may be inside the monitor.
+ */
+nsresult
+sbLocalDatabaseMediaListBase::EnumerateAllItemsInternal(sbIMediaListEnumerationListener* aEnumerationListener)
+{
+  sbGUIDArrayEnumerator enumerator(mLibrary, mFullArray);
+  return EnumerateItemsInternal(&enumerator, aEnumerationListener);
+}
+
+/**
+ * Internal method that may be inside the monitor.
+ */
+nsresult
+sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& aName,
+                                                               nsIStringEnumerator* aValueEnum,
+                                                               sbIMediaListEnumerationListener* aEnumerationListener)
+{
+  // Make a new GUID array to talk to the database.
+  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
+  nsresult rv = mFullArray->Clone(getter_AddRefs(guidArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Clone copies the filters... which we don't want.
+  rv = guidArray->ClearFilters();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the filter.
+  rv = guidArray->AddFilter(aName, aValueEnum, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // And make an enumerator to return the filtered items.
+  sbGUIDArrayEnumerator enumerator(mLibrary, guidArray);
+
+  return EnumerateItemsInternal(&enumerator, aEnumerationListener);
+}
+
+/**
+ * Internal method that may be inside the monitor.
+ */
+nsresult
+sbLocalDatabaseMediaListBase::EnumerateItemsByPropertiesInternal(sbStringArrayHash* aPropertiesHash,
+                                                                 sbIMediaListEnumerationListener* aEnumerationListener)
+{
+  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
+  nsresult rv = mFullArray->Clone(getter_AddRefs(guidArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Clone copies the filters... which we don't want.
+  rv = guidArray->ClearFilters();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Now that our hash table is set up we call AddFilter for each property
+  // name and all its associated values.
+  PRUint32 filterCount =
+    aPropertiesHash->EnumerateRead(AddFilterToGUIDArrayCallback, guidArray);
+  
+  // Make sure we actually added some filters here. Otherwise something went
+  // wrong and the results are not going to be what the caller expects.
+  PRUint32 hashCount = aPropertiesHash->Count();
+  NS_ENSURE_TRUE(filterCount == hashCount, NS_ERROR_UNEXPECTED);
+
+  // Finally make an enumerator to return the filtered items.
+  sbGUIDArrayEnumerator enumerator(mLibrary, guidArray);
+  return EnumerateItemsInternal(&enumerator, aEnumerationListener);
+}
+
+/**
  * \brief Notifies all listeners that an item has been added to the list.
  */
 nsresult
@@ -356,6 +426,42 @@ sbLocalDatabaseMediaListBase::NotifyListenersBatchEnd()
   return NS_OK;
 }
 
+/**
+ * \brief Enumerates the items to the given listener.
+ */
+nsresult
+sbLocalDatabaseMediaListBase::EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnumerator,
+                                                     sbIMediaListEnumerationListener* aListener)
+{
+  // Loop until we explicitly return.
+  while (PR_TRUE) {
+
+    PRBool hasMore;
+    nsresult rv = aEnumerator->HasMoreElements(&hasMore);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!hasMore) {
+      return NS_OK;
+    }
+    
+    nsCOMPtr<sbIMediaItem> item;
+    rv = aEnumerator->GetNext(getter_AddRefs(item));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool continueEnumerating;
+    rv = aListener->OnEnumeratedItem(this, item, &continueEnumerating);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Stop enumerating if the listener requested it.
+    if (NS_SUCCEEDED(rv) && !continueEnumerating) {
+      return NS_ERROR_ABORT;
+    }
+  }
+
+  NS_NOTREACHED("Uh, how'd we get here?");
+  return NS_ERROR_UNEXPECTED;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
 {
@@ -369,24 +475,16 @@ sbLocalDatabaseMediaListBase::SetName(const nsAString& aName)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetItems(nsISimpleEnumerator** aItems)
-{
-  NS_ENSURE_ARG_POINTER(aItems);
-
-  nsCOMPtr<nsISimpleEnumerator> items =
-    new sbGUIDArrayEnumerator(mLibrary, mFullArray);
-  NS_ENSURE_TRUE(items, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*aItems = items);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetLength(PRUint32* aLength)
 {
-  nsresult rv;
-  rv = mFullArray->GetLength(aLength);
+  NS_ENSURE_ARG_POINTER(aLength);
+
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = mFullArray->GetLength(aLength);
   NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -394,7 +492,18 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetItemByGuid(const nsAString& aGuid,
                                             sbIMediaItem** _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = library->GetMediaItem(aGuid, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = item);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -406,8 +515,13 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
   nsresult rv;
 
   nsAutoString guid;
-  rv = mFullArray->GetByIndex(aIndex, guid);
-  NS_ENSURE_SUCCESS(rv, rv);
+  {
+    NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
+    nsAutoMonitor mon(mMonitor);
+
+    rv = mFullArray->GetByIndex(aIndex, guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -424,11 +538,75 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
  * See sbIMediaList
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetItemsByPropertyValue(const nsAString& aName,
-                                                      const nsAString& aValue,
-                                                      nsISimpleEnumerator** _retval)
+sbLocalDatabaseMediaListBase::EnumerateAllItems(sbIMediaListEnumerationListener* aEnumerationListener,
+                                                PRUint16 aEnumerationType)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_ARG_POINTER(aEnumerationListener);
+
+  nsresult rv;
+
+  switch (aEnumerationType) {
+
+    case sbIMediaList::ENUMERATIONTYPE_LOCKING: {
+      NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
+      nsAutoMonitor mon(mMonitor);
+
+      // Don't reenter!
+      NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
+      mLockedEnumerationActive = PR_TRUE;
+
+      PRBool beginEnumeration;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+
+      if (NS_SUCCEEDED(rv)) {
+        if (beginEnumeration) {
+          rv = EnumerateAllItemsInternal(aEnumerationListener);
+        }
+        else {
+          // The user cancelled the enumeration.
+          rv = NS_ERROR_ABORT;
+        }
+      }
+
+      mLockedEnumerationActive = PR_FALSE;
+
+    } break; // ENUMERATIONTYPE_LOCKING
+
+    case sbIMediaList::ENUMERATIONTYPE_SNAPSHOT: {
+      PRBool beginEnumeration;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+
+      if (NS_SUCCEEDED(rv)) {
+        if (beginEnumeration) {
+          rv = EnumerateAllItemsInternal(aEnumerationListener);
+        }
+        else {
+          // The user cancelled the enumeration.
+          rv = NS_ERROR_ABORT;
+        }
+      }
+    } break; // ENUMERATIONTYPE_SNAPSHOT
+
+    default: {
+      NS_NOTREACHED("Invalid enumeration type");
+      rv = NS_ERROR_INVALID_ARG;
+    } break;
+  }
+
+  aEnumerationListener->OnEnumerationEnd(this, rv);
+  return NS_OK;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aName,
+                                                       const nsAString& aValue,
+                                                       sbIMediaListEnumerationListener* aEnumerationListener,
+                                                       PRUint16 aEnumerationType)
+{
+  NS_ENSURE_ARG_POINTER(aEnumerationListener);
 
   // A property name must be specified.
   NS_ENSURE_TRUE(!aName.IsEmpty(), NS_ERROR_INVALID_ARG);
@@ -445,25 +623,59 @@ sbLocalDatabaseMediaListBase::GetItemsByPropertyValue(const nsAString& aName,
     new sbTArrayStringEnumerator(&valueArray);
   NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
 
-  // Make a new GUID array to talk to the database.
-  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
-  nsresult rv = mFullArray->Clone(getter_AddRefs(guidArray));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv;
 
-  // Clone copies the filters... which we don't want.
-  rv = guidArray->ClearFilters();
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  // Set the filter.
-  rv = guidArray->AddFilter(aName, valueEnum, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
+  switch (aEnumerationType) {
 
-  // And make an enumerator to return the filtered items.
-  nsCOMPtr<nsISimpleEnumerator> items =
-    new sbGUIDArrayEnumerator(mLibrary, guidArray);
-  NS_ENSURE_TRUE(items, NS_ERROR_OUT_OF_MEMORY);
+    case sbIMediaList::ENUMERATIONTYPE_LOCKING: {
+      NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
+      nsAutoMonitor mon(mMonitor);
 
-  NS_ADDREF(*_retval = items);
+      // Don't reenter!
+      NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
+      mLockedEnumerationActive = PR_TRUE;
+
+      PRBool beginEnumeration;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+
+      if (NS_SUCCEEDED(rv)) {
+        if (beginEnumeration) {
+          rv = EnumerateItemsByPropertyInternal(aName, valueEnum,
+                                                aEnumerationListener);
+        }
+        else {
+          // The user cancelled the enumeration.
+          rv = NS_ERROR_ABORT;
+        }
+      }
+
+      mLockedEnumerationActive = PR_FALSE;
+
+    } break; // ENUMERATIONTYPE_LOCKING
+
+    case sbIMediaList::ENUMERATIONTYPE_SNAPSHOT: {
+      PRBool beginEnumeration;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+
+      if (NS_SUCCEEDED(rv)) {
+        if (beginEnumeration) {
+          rv = EnumerateItemsByPropertyInternal(aName, valueEnum,
+                                                aEnumerationListener);
+        }
+        else {
+          // The user cancelled the enumeration.
+          rv = NS_ERROR_ABORT;
+        }
+      }
+    } break; // ENUMERATIONTYPE_SNAPSHOT
+
+    default: {
+      NS_NOTREACHED("Invalid enumeration type");
+      rv = NS_ERROR_INVALID_ARG;
+    } break;
+  }
+
+  aEnumerationListener->OnEnumerationEnd(this, rv);
   return NS_OK;
 }
 
@@ -471,11 +683,12 @@ sbLocalDatabaseMediaListBase::GetItemsByPropertyValue(const nsAString& aName,
  * See sbIMediaList
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetItemsByPropertyValues(sbIPropertyArray* aProperties,
-                                                       nsISimpleEnumerator** _retval)
+sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProperties,
+                                                         sbIMediaListEnumerationListener* aEnumerationListener,
+                                                         PRUint16 aEnumerationType)
 {
   NS_ENSURE_ARG_POINTER(aProperties);
-  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_ARG_POINTER(aEnumerationListener);
 
   PRUint32 propertyCount;
   nsresult rv = aProperties->GetLength(&propertyCount);
@@ -484,14 +697,6 @@ sbLocalDatabaseMediaListBase::GetItemsByPropertyValues(sbIPropertyArray* aProper
   // It doesn't make sense to call this method without specifying any properties
   // so it is probably a caller error if we have none.
   NS_ENSURE_STATE(propertyCount);
-
-  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
-  rv = mFullArray->Clone(getter_AddRefs(guidArray));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Clone copies the filters... which we don't want.
-  rv = guidArray->ClearFilters();
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // The guidArray needs AddFilter called only once per property with an
   // enumerator that contains all the values. We were given an array of
@@ -563,22 +768,57 @@ sbLocalDatabaseMediaListBase::GetItemsByPropertyValues(sbIPropertyArray* aProper
     SB_CONTINUE_IF_FAILED(rv);
   }
 
-  // Now that our hash table is set up we call AddFilter for each property name
-  // and all its associated values.
-  PRUint32 filterCount =
-    propertyHash.EnumerateRead(AddFilterToGUIDArrayCallback, guidArray);
-  
-  // Make sure we actually added some filters here. Otherwise something went
-  // wrong and the results are not going to be what the caller expects.
-  PRUint32 hashCount = propertyHash.Count();
-  NS_ENSURE_STATE(filterCount == hashCount);
+  switch (aEnumerationType) {
 
-  // Finally make an enumerator to return the filtered items.
-  nsCOMPtr<nsISimpleEnumerator> items =
-    new sbGUIDArrayEnumerator(mLibrary, guidArray);
-  NS_ENSURE_TRUE(items, NS_ERROR_OUT_OF_MEMORY);
+    case sbIMediaList::ENUMERATIONTYPE_LOCKING: {
+      NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
+      nsAutoMonitor mon(mMonitor);
 
-  NS_ADDREF(*_retval = items);
+      // Don't reenter!
+      NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
+      mLockedEnumerationActive = PR_TRUE;
+
+      PRBool beginEnumeration;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+
+      if (NS_SUCCEEDED(rv)) {
+        if (beginEnumeration) {
+          rv = EnumerateItemsByPropertiesInternal(&propertyHash,
+                                                  aEnumerationListener);
+        }
+        else {
+          // The user cancelled the enumeration.
+          rv = NS_ERROR_ABORT;
+        }
+      }
+
+      mLockedEnumerationActive = PR_FALSE;
+
+    } break; // ENUMERATIONTYPE_LOCKING
+
+    case sbIMediaList::ENUMERATIONTYPE_SNAPSHOT: {
+      PRBool beginEnumeration;
+      rv = aEnumerationListener->OnEnumerationBegin(this, &beginEnumeration);
+
+      if (NS_SUCCEEDED(rv)) {
+        if (beginEnumeration) {
+          rv = EnumerateItemsByPropertiesInternal(&propertyHash,
+                                                  aEnumerationListener);
+        }
+        else {
+          // The user cancelled the enumeration.
+          rv = NS_ERROR_ABORT;
+        }
+      }
+    } break; // ENUMERATIONTYPE_SNAPSHOT
+
+    default: {
+      NS_NOTREACHED("Invalid enumeration type");
+      rv = NS_ERROR_INVALID_ARG;
+    } break;
+  }
+
+  aEnumerationListener->OnEnumerationEnd(this, rv);
   return NS_OK;
 }
 
@@ -591,11 +831,15 @@ sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
   NS_ENSURE_ARG_POINTER(_retval);
 
   PRUint32 count;
+
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
+  nsAutoMonitor mon(mMonitor);
+
   nsresult rv = mFullArray->GetLength(&count);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ENSURE_TRUE(count >= 1, NS_ERROR_NOT_AVAILABLE);
-
+  // Do some sanity checking.
+  NS_ENSURE_TRUE(count > 0, NS_ERROR_UNEXPECTED);
   NS_ENSURE_ARG_MAX(aStartFrom, count - 1);
 
   nsAutoString testGUID;
@@ -612,6 +856,7 @@ sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
       return NS_OK;
     }
   }
+
   return NS_ERROR_NOT_AVAILABLE;
 }
 
@@ -623,12 +868,15 @@ sbLocalDatabaseMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
 
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
+  nsAutoMonitor mon(mMonitor);
+
   PRUint32 count;
   nsresult rv = mFullArray->GetLength(&count);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ENSURE_TRUE(count >= 1, NS_ERROR_NOT_AVAILABLE);
-
+  // Do some sanity checking.
+  NS_ENSURE_TRUE(count > 0, NS_ERROR_UNEXPECTED);
   NS_ENSURE_ARG_MAX(aStartFrom, count - 1);
 
   nsAutoString testGUID;
@@ -659,6 +907,9 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetIsEmpty(PRBool* aIsEmpty)
 {
   NS_ENSURE_ARG_POINTER(aIsEmpty);
+
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
+  nsAutoMonitor mon(mMonitor);
 
   PRUint32 length;
   nsresult rv = mFullArray->GetLength(&length);
@@ -749,6 +1000,9 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::AddListener(sbIMediaListListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
+  NS_ENSURE_TRUE(mListenerProxyTableLock, NS_ERROR_FAILURE);
+
+  nsAutoLock lock(mListenerProxyTableLock);
 
   // We must have the hash table initialized to continue.
   PRBool tableInitialized = InitializeListenerProxyTable();
@@ -785,6 +1039,9 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::RemoveListener(sbIMediaListListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
+  NS_ENSURE_TRUE(mListenerProxyTableLock, NS_ERROR_FAILURE);
+
+  nsAutoLock lock(mListenerProxyTableLock);
 
   // Our table had better be initialized by now.
   if (!mListenerProxyTable.IsInitialized()) {

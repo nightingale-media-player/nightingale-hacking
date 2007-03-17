@@ -45,6 +45,118 @@
   NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
 #define DEFAULT_FETCH_SIZE 1000
 
+NS_IMPL_ISUPPORTS1(sbSimpleMediaListEnumerationListener, sbIMediaListEnumerationListener)
+
+/**
+ * See sbIMediaListListener.idl
+ */
+NS_IMETHODIMP
+sbSimpleMediaListEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaList,
+                                                         PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  NS_ASSERTION(aMediaList != mFriendList,
+               "Can't enumerate our friend media list!");
+
+  NS_ENSURE_TRUE(mFriendList, NS_ERROR_FAILURE);
+
+  nsresult rv = mFriendList->GetNextOrdinal(mOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Prep the query
+  mDBQuery = do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString databaseGuid;
+  rv = mFriendList->mLibrary->GetDatabaseGuid(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDBQuery->SetDatabaseGUID(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDBQuery->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDBQuery->AddQuery(NS_LITERAL_STRING("begin"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // All good for enumerating.
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+/**
+ * See sbIMediaListListener.idl
+ */
+NS_IMETHODIMP
+sbSimpleMediaListEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList,
+                                                       sbIMediaItem* aMediaItem,
+                                                       PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  NS_ASSERTION(aMediaList != mFriendList,
+               "Can't enumerate our friend media list!");
+
+  nsresult rv = mDBQuery->AddQuery(mFriendList->mInsertIntoListQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabaseMediaItem> ldbmi =
+    do_QueryInterface(aMediaItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 mediaItemId;
+  rv = ldbmi->GetMediaItemId(&mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDBQuery->BindInt32Parameter(0, mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDBQuery->BindStringParameter(1, mOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Increment the ordinal
+  rv = mFriendList->AddToLastPathSegment(mOrdinal, 1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mItemsEnumerated++;
+
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+/**
+ * See sbIMediaListListener.idl
+ */
+NS_IMETHODIMP
+sbSimpleMediaListEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
+                                                       nsresult aStatusCode)
+{
+  NS_ASSERTION(aMediaList != mFriendList,
+               "Can't enumerate our friend media list!");
+
+  mResult = aStatusCode;
+
+  NS_ENSURE_TRUE(mItemsEnumerated, NS_ERROR_UNEXPECTED);
+
+  nsresult rv = mDBQuery->AddQuery(NS_LITERAL_STRING("commit"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbSuccess;
+  rv = mDBQuery->Execute(&dbSuccess);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
+
+  // Invalidate the cached list
+  rv = mFriendList->mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
 NS_IMPL_ISUPPORTS_INHERITED0(sbLocalDatabaseSimpleMediaList,
                              sbLocalDatabaseMediaListBase)
 
@@ -361,54 +473,20 @@ sbLocalDatabaseSimpleMediaList::Add(sbIMediaItem* aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
-  // Serialize list changes
-  nsAutoLock lock(sListUpdateLock);
+  SB_MEDIALIST_LOCK_AND_ENSURE_MUTABLE();
 
-  nsresult rv;
-  PRInt32 dbOk;
+  sbSimpleMediaListEnumerationListener listener(this);
 
-  nsAutoString ordinal;
-  rv = GetNextOrdinal(ordinal);
+  PRBool beginEnumeration;
+  nsresult rv = listener.OnEnumerationBegin(nsnull, &beginEnumeration);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(beginEnumeration, NS_ERROR_ABORT);
+
+  PRBool continueEnumerating;
+  rv = listener.OnEnumeratedItem(nsnull, aMediaItem, &continueEnumerating);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Run the insert query
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(mInsertIntoListQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILocalDatabaseMediaItem> ldbmi =
-    do_QueryInterface(aMediaItem, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 mediaItemId;
-  rv = ldbmi->GetMediaItemId(&mediaItemId);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindInt32Parameter(0, mediaItemId);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(1, ordinal);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  // Invalidate the cached list
-  rv = mFullArray->Invalidate();
+  rv = listener.OnEnumerationEnd(nsnull, NS_OK);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -419,15 +497,13 @@ sbLocalDatabaseSimpleMediaList::AddAll(sbIMediaList* aMediaList)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
-  nsresult rv;
+  SB_MEDIALIST_LOCK_AND_ENSURE_MUTABLE();
 
-  nsCOMPtr<nsISimpleEnumerator> items;
-  rv = aMediaList->GetItems(getter_AddRefs(items));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AddSome(items);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  sbSimpleMediaListEnumerationListener listener(this);
+  nsresult rv =
+    aMediaList->EnumerateAllItems(&listener,
+                                  sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  
   return NS_OK;
 }
 
@@ -436,77 +512,32 @@ sbLocalDatabaseSimpleMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
 
-  // Serialize list changes
-  nsAutoLock lock(sListUpdateLock);
+  SB_MEDIALIST_LOCK_AND_ENSURE_MUTABLE();
 
-  nsresult rv;
-  PRInt32 dbOk;
+  sbSimpleMediaListEnumerationListener listener(this);
 
-  nsAutoString ordinal;
-  rv = GetNextOrdinal(ordinal);
+  PRBool beginEnumeration;
+  nsresult rv = listener.OnEnumerationBegin(nsnull, &beginEnumeration);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(beginEnumeration, NS_ERROR_ABORT);
 
-  // Prep the query
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(NS_LITERAL_STRING("begin"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool hasMoreElements;
-  while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMoreElements)) &&
-         hasMoreElements) {
-
+  PRBool hasMore;
+  while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> supports;
     rv = aMediaItems->GetNext(getter_AddRefs(supports));
-    NS_ENSURE_SUCCESS(rv, rv);
+    SB_CONTINUE_IF_FAILED(rv);
 
     nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+    SB_CONTINUE_IF_FAILED(rv);
 
-    rv = query->AddQuery(mInsertIntoListQuery);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbILocalDatabaseMediaItem> ldbmi =
-      do_QueryInterface(item, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRUint32 mediaItemId;
-    rv = ldbmi->GetMediaItemId(&mediaItemId);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = query->BindInt32Parameter(0, mediaItemId);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = query->BindStringParameter(1, ordinal);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Increment the ordinal
-    rv = AddToLastPathSegment(ordinal, 1);
-    NS_ENSURE_SUCCESS(rv, rv);
-
+    PRBool continueEnumerating;
+    rv = listener.OnEnumeratedItem(nsnull, item, &continueEnumerating);
+    if (NS_FAILED(rv) || !continueEnumerating) {
+      break;
+    }
   }
 
-  rv = query->AddQuery(NS_LITERAL_STRING("commit"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  // Invalidate the cached list
-  rv = mFullArray->Invalidate();
+  rv = listener.OnEnumerationEnd(nsnull, NS_OK);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

@@ -29,14 +29,19 @@
 
 #include "sbLocalDatabaseMediaListBase.h"
 #include <sbIMediaList.h>
+#include <sbIMediaListListener.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
 #include <nsStringGlue.h>
 #include <prlock.h>
 
+class sbSimpleMediaListEnumerationListener;
+
 class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase
 {
 public:
+  friend class sbSimpleMediaListEnumerationListener;
+
   NS_DECL_ISUPPORTS_INHERITED
 
   sbLocalDatabaseSimpleMediaList(sbILocalDatabaseLibrary* aLibrary,
@@ -104,5 +109,26 @@ private:
   static PRInt32 sLockFailed;
 };
 
-#endif /* __SBLOCALDATABASESIMPLEMEDIALIST_H__ */
+class sbSimpleMediaListEnumerationListener : public sbIMediaListEnumerationListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
+  sbSimpleMediaListEnumerationListener(sbLocalDatabaseSimpleMediaList* aList)
+  : mFriendList(aList),
+    mResult(NS_OK),
+    mItemsEnumerated(0)
+  {
+    NS_ASSERTION(mFriendList, "Null pointer!");
+  }
+
+private:
+  sbLocalDatabaseSimpleMediaList* mFriendList;
+  nsCOMPtr<sbIDatabaseQuery> mDBQuery;
+  nsString mOrdinal;
+  nsresult mResult;
+  PRUint32 mItemsEnumerated;
+};
+
+#endif /* __SBLOCALDATABASESIMPLEMEDIALIST_H__ */
