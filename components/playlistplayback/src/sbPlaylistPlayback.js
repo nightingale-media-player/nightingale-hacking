@@ -381,7 +381,6 @@ PlaylistPlayback.prototype = {
   
   _releaseDataRemotes: function() {
     // And we have to let them go when we are done else all hell breaks loose.
-    this._playButton.unbind();
     this._playURL.unbind();
     this._playing.unbind();
     this._seenPlaying.unbind();
