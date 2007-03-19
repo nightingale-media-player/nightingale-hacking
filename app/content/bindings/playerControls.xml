@@ -27,7 +27,7 @@
  */
 -->
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -1436,7 +1436,8 @@
           ]]>
         </body>
       </method>
-      
 
-<!-- EOF -->
+    </implementation>
+  </binding>
+  <!-- EOF -->
 </bindings>
