@@ -79,8 +79,9 @@ static sbStaticProperty kStaticProperties[] = {
   }
 };
 
-sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache() :
-  mInitialized(PR_FALSE)
+sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache() 
+: mInitialized(PR_FALSE)
+, mWritePending(PR_FALSE)
 {
   mNumStaticProperties = sizeof(kStaticProperties) / sizeof(kStaticProperties[0]);
 
@@ -96,14 +97,12 @@ sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 }
 
 NS_IMETHODIMP 
-sbLocalDatabasePropertyCache::GetCacheWritePending(PRBool *aCacheWritePending)
+sbLocalDatabasePropertyCache::GetWritePending(PRBool *aWritePending)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-NS_IMETHODIMP 
-sbLocalDatabasePropertyCache::SetCacheWritePending(PRBool aCacheWritePending)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aWritePending);
+  *aWritePending = mWritePending;
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -197,7 +196,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
            */
           if (row == 0 || !lastGUID.Equals(guid)) {
             lastGUID = guid;
-            bag = new sbLocalDatabaseResourcePropertyBag(this);
+            bag = new sbLocalDatabaseResourcePropertyBag(this, lastGUID);
             rv = NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag.get())
                                   ->Init();
             NS_ENSURE_SUCCESS(rv, rv);
@@ -273,7 +272,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
           NS_ENSURE_SUCCESS(rv, rv);
 
           if (!mCache.Get(guid, &bag)) {
-            bag = new sbLocalDatabaseResourcePropertyBag(this);
+            bag = new sbLocalDatabaseResourcePropertyBag(this, guid);
             rv = NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag)
                                   ->Init();
             NS_ENSURE_SUCCESS(rv, rv);
@@ -358,13 +357,53 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
                                             PRUint32 aPropertyArrayCount, 
                                             PRBool aWriteThroughNow)
 {
-  //XXX: Fill this in.
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aGUIDArray);
+  NS_ENSURE_ARG_POINTER(aPropertyArray);
+  NS_ENSURE_TRUE(aGUIDArrayCount == aPropertyArrayCount, NS_ERROR_INVALID_ARG);
+
+  nsresult rv = NS_OK;
+
+  for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
+    nsAutoString guid(aGUIDArray[i]);
+    sbILocalDatabaseResourcePropertyBag* bag = nsnull;
+
+    if(mCache.Get(guid, &bag) && bag) {
+      nsCOMPtr<nsIStringEnumerator> names;
+      rv = aPropertyArray[i]->GetNames(getter_AddRefs(names));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool hasMore = PR_FALSE;
+      nsAutoString name, value;
+
+      while(NS_SUCCEEDED(names->HasMore(&hasMore)) && hasMore) {
+        rv = names->GetNext(name);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = aPropertyArray[i]->GetProperty(name, value);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag)
+          ->SetProperty(name, value);
+      }
+
+      mDirty.PutEntry(guid);
+    }
+  }
+
+  if(aWriteThroughNow) {
+    rv = Write();
+  }
+
+  return rv;
 }
 
 NS_IMETHODIMP 
 sbLocalDatabasePropertyCache::Write()
 {
+  //Enumerate dirty GUIDs
+
+  //Enumerate dirty properties for this GUID.
+
   //XXX: Fill this in.
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -439,6 +478,21 @@ sbLocalDatabasePropertyCache::Init()
   rv = mMediaItemsSelect->AddOrder(EmptyString(),
                                    NS_LITERAL_STRING("guid"),
                                    PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Create property insert and update query builder
+   */
+  mPropertiesInsert = do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mPropertiesUpdate = do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Create media item property update query builder.
+   */
+  mMediaItemsUpdate = do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = LoadProperties();
@@ -578,6 +632,15 @@ sbLocalDatabasePropertyCache::LoadProperties()
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabasePropertyCache::AddDirtyGUID(const nsAString &aGuid)
+{
+  nsAutoString guid(aGuid);
+  mDirty.PutEntry(guid);
+
+  return NS_OK;
+}
+
 PRUint32
 sbLocalDatabasePropertyCache::GetPropertyID(const nsAString& aPropertyName)
 {
@@ -604,9 +667,11 @@ sbLocalDatabasePropertyCache::GetPropertyName(PRUint32 aPropertyID,
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseResourcePropertyBag,
                    sbILocalDatabaseResourcePropertyBag)
 
-sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache) 
+sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache,
+                                                                       const nsAString &aGuid)
 : mCache(aCache)
 , mWritePending(PR_FALSE)
+, mGuid(aGuid)
 {
   mDirty.Init();
 }
@@ -634,6 +699,13 @@ PropertyBagKeysToArray(const PRUint32& aPropertyID,
   else {
     return PL_DHASH_STOP;
   }
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseResourcePropertyBag::GetGuid(nsAString &aGuid)
+{
+  aGuid = mGuid;
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -712,8 +784,13 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName,
      rv = PutValue(propertyID, aValue);
      NS_ENSURE_SUCCESS(rv, rv);
      
-     mWritePending = PR_TRUE;
-     mDirty.PutEntry(propertyID);
+     if(!mWritePending) {
+       rv = mCache->AddDirtyGUID(mGuid);
+       NS_ENSURE_SUCCESS(rv, rv);
+
+       mWritePending = PR_TRUE;
+       mDirty.PutEntry(propertyID);
+     }
   }
 
   return rv;
@@ -724,13 +801,10 @@ NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
   nsresult rv = NS_OK;
 
   if(mWritePending) {
-    //Look at dirty list.
-    //mCache->SetProperties for all dirty props.
-        
+    rv = mCache->Write();
     NS_ENSURE_SUCCESS(rv, rv);
 
     mWritePending = PR_FALSE;
-    mDirty.Clear();
   }
 
   return rv;
@@ -744,6 +818,21 @@ sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
   NS_ENSURE_TRUE(mValueMap.Put(aPropertyID, value),
                  NS_ERROR_OUT_OF_MEMORY);
   value.forget();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseResourcePropertyBag::EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator, 
+                                                   void *aClosure)
+{
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseResourcePropertyBag::SetDirty(PRBool aDirty)
+{
+  mWritePending = aDirty;
   return NS_OK;
 }
 

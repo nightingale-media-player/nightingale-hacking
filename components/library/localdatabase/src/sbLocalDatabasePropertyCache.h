@@ -49,9 +49,12 @@ public:
 
   sbLocalDatabasePropertyCache();
 
-  NS_IMETHODIMP Init();
-  NS_IMETHODIMP MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
-  NS_IMETHODIMP LoadProperties();
+  NS_IMETHOD Init();
+  NS_IMETHOD MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
+  NS_IMETHOD LoadProperties();
+
+  NS_IMETHOD AddDirtyGUID(const nsAString &aGuid);
+  
   PRUint32 GetPropertyID(const nsAString& aPropertyName);
   PRBool GetPropertyName(PRUint32 aPropertyID, nsAString& aPropertyName);
 
@@ -59,11 +62,13 @@ private:
   ~sbLocalDatabasePropertyCache();
 
   PRBool mInitialized;
+  PRBool mWritePending;
 
   PRUint32 mNumStaticProperties;
  
   // Database GUID
   // XXX: This will probably change to a path?
+  // XXXAus: I would rather expose a way to get the path from the GUID in the DBEngine :)
   nsString mDatabaseGUID;
 
   // Cache the property name list
@@ -78,8 +83,22 @@ private:
   nsCOMPtr<sbISQLSelectBuilder> mMediaItemsSelect;
   nsCOMPtr<sbISQLBuilderCriterionIn> mMediaItemsInCriterion;
 
+  // Used to template the properties insert statement
+  nsCOMPtr<sbISQLInsertBuilder> mPropertiesInsert;
+
+  //Used to template the properties update statement
+  nsCOMPtr<sbISQLUpdateBuilder> mPropertiesUpdate;
+  nsCOMPtr<sbISQLBuilderCriterion> mPropertiesUpdateCriterion;
+
+  // Used to template the media item property update statement
+  nsCOMPtr<sbISQLUpdateBuilder> mMediaItemsUpdate;
+  nsCOMPtr<sbISQLBuilderCriterion> mMediaItemsUpdateCriterion;
+
   // Cache for GUID -> property bag
   nsInterfaceHashtable<nsStringHashKey, sbILocalDatabaseResourcePropertyBag> mCache;
+
+  // Dirty GUID's
+  nsTHashtable<nsStringHashKey> mDirty;
 };
 
 class sbLocalDatabaseResourcePropertyBag : public sbILocalDatabaseResourcePropertyBag
@@ -88,10 +107,14 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASERESOURCEPROPERTYBAG
 
-  sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache);
+  sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache,
+                                     const nsAString& aGuid);
 
-  NS_IMETHODIMP Init();
-  NS_IMETHODIMP PutValue(PRUint32 aPropertyID, const nsAString& aValue);
+  NS_IMETHOD Init();
+  NS_IMETHOD PutValue(PRUint32 aPropertyID, const nsAString& aValue);
+
+  NS_IMETHOD EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator, void *aClosure);
+  NS_IMETHOD SetDirty(PRBool aDirty);
 
 private:
   ~sbLocalDatabaseResourcePropertyBag();
@@ -100,7 +123,10 @@ private:
   
   nsClassHashtable<nsUint32HashKey, nsString> mValueMap;
 
-  PRBool mWritePending;
+  PRBool    mWritePending;
+  nsString  mGuid;
+
+  // Dirty Property ID's
   nsTHashtable<nsUint32HashKey> mDirty;
 };
 

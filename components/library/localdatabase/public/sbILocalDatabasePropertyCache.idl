@@ -40,7 +40,7 @@ interface nsIStringEnumerator;
 [scriptable, uuid(8711c7e2-8190-47f9-96d6-f19d2eed7b2b)]
 interface sbILocalDatabasePropertyCache : nsISupports
 {
-  attribute boolean cacheWritePending;
+  readonly attribute boolean writePending;
 
   attribute AString databaseGUID;
 
@@ -69,6 +69,7 @@ interface sbILocalDatabasePropertyCache : nsISupports
 [scriptable, uuid(a6721ecf-d0e6-4216-94f6-147b2ee2932f)]
 interface sbILocalDatabaseResourcePropertyBag : nsISupports
 {
+  readonly attribute AString guid;
   readonly attribute boolean writePending;
   readonly attribute nsIStringEnumerator names;
 
