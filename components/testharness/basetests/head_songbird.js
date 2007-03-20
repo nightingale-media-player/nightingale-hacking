@@ -115,6 +115,17 @@ function doThrow(text) {
   throw Cr.NS_ERROR_ABORT;
 }
 
+function assertFalse(aTest, aMessage) {
+  if (aTest) {
+    var msg = (aMessage != null) ? ( " : " +  aMessage ) : "";
+    doThrow(aTest + msg);  
+  }
+}
+
+function assertTrue(aTest, aMessage) {
+  assertFalse(!aTest, aMessage);
+}
+
 function assertEqual( aExpected, aActual, aMessage) {
   if (aExpected != aActual) {
     var msg = (aMessage != null) ? ( " : " +  aMessage ) : "";
