@@ -1391,7 +1391,7 @@ sbLocalDatabaseMediaListBase::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 NS_IMPL_ISUPPORTS1(sbDatabaseResultStringEnumerator, nsIStringEnumerator)
 
 // nsIStringEnumerator
-NS_IMETHODIMP
+nsresult
 sbDatabaseResultStringEnumerator::Init()
 {
   nsresult rv = mDatabaseResult->GetRowCount(&mLength);
