@@ -32,7 +32,8 @@
 
 #include "nsISupports.idl"
 
-interface nsIRDFDatasource;
+interface nsIRDFDataSource;
+interface nsISimpleEnumerator;
 interface sbILibrary;
 interface sbILibraryFactory;
 
@@ -65,15 +66,32 @@ interface sbILibraryManager : nsISupports
   void registerLibrary(in sbILibrary aLibrary);
 
   /**
+   * \brief Runtime removal of a library
+   * \param aLibrary Library to unregister
+   */
+  void unregisterLibrary(in sbILibrary aLibrary);
+
+  /**
    * \brief Runtime registration of a library factory
    * \param aLibraryFactory Library factory to register
    */
-  void registerLibraryFactory(in sbILibraryFactory aLibraryFactory);
+  void registerLibraryFactory(in sbILibraryFactory aLibraryFactory,
+                              in AString aType);
+
+  /**
+   * \brief Returns a simple enumerator to enumerate all registered libraries.
+   */
+  nsISimpleEnumerator getLibraryEnumerator();
+
+  /**
+   * \brief Returns a simple enumerator to enumerate all registered library
+   *        factories.
+   */
+  nsISimpleEnumerator getLibraryFactoryEnumerator();
 
   /**
    * \brief RDF datasource that exposes the currently active libraries and
    * library factories
    */
-  readonly attribute nsIRDFDatasource datasource;
+  readonly attribute nsIRDFDataSource dataSource;
 };
-
