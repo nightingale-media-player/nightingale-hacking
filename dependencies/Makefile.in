@@ -79,7 +79,7 @@ endif
 
 ifeq (macosx,$(SB_PLATFORM))
 
-tasks: all runtimelibs vlcplugin
+all : runtimelibs vlcplugin
 
 GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
@@ -113,3 +113,9 @@ EXECUTABLE = $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
 endif
 
 include $(topsrcdir)/build/rules.mk
+
+# Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
+all :
+	$(MKDIR) -p $(SONGBIRD_EXTENSIONSDIR)
+	$(MV) -f $(SONGBIRD_XULRUNNERDIR)/extensions/* $(SONGBIRD_EXTENSIONSDIR)
+	$(RM) -rf $(SONGBIRD_XULRUNNERDIR)/extensions
