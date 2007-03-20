@@ -33,7 +33,7 @@
 #include "nsISupports.idl"
 
 interface nsIStringEnumerator;
-interface nsIPropertyBag;
+interface sbIPropertyArray;
 
 /**
 * \interface sbISearchableMediaList
@@ -55,7 +55,7 @@ interface sbISearchableMediaList : nsISupports
   /**
    * \brief The current search
    */
-  readonly attribute nsIPropertyBag currentSearch;
+  readonly attribute sbIPropertyArray currentSearch;
 
   /**
    * \brief Set a new search
@@ -63,7 +63,7 @@ interface sbISearchableMediaList : nsISupports
    * properties and the values are the search value for each property.  A
    * null key will search all searchable properties with its value.
    */
-  void setSearch(in nsIPropertyBag aSearch);
+  void setSearch(in sbIPropertyArray aSearch);
 
   /**
    * \brief Clear the search

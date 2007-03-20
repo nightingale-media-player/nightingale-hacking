@@ -71,10 +71,6 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
 
 }
 
-sbLocalDatabaseQuery::~sbLocalDatabaseQuery()
-{
-}
-
 NS_IMETHODIMP
 sbLocalDatabaseQuery::GetFullCountQuery(nsAString& aQuery)
 {

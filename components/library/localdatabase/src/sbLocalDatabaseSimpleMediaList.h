@@ -45,7 +45,10 @@ public:
   NS_DECL_ISUPPORTS_INHERITED
 
   sbLocalDatabaseSimpleMediaList(sbILocalDatabaseLibrary* aLibrary,
-                                 const nsAString& aGuid);
+                                 const nsAString& aGuid) :
+    sbLocalDatabaseMediaListBase(aLibrary, aGuid)
+  {
+  }
 
   nsresult Init();
 
@@ -64,8 +67,6 @@ public:
   NS_IMETHOD Clear();
 
 private:
-  ~sbLocalDatabaseSimpleMediaList();
-
   nsresult ExecuteAggregateQuery(const nsAString& aQuery, nsAString& aValue);
 
   nsresult UpdateOrdinalByIndex(PRUint32 aIndex, const nsAString& aOrdinal);
@@ -79,6 +80,8 @@ private:
   nsresult AddToLastPathSegment(nsAString& aPath, PRInt32 aToAdd);
 
   PRUint32 CountLevels(const nsAString& aPath);
+
+  nsresult CreateQueries();
 
   // Query to get the media item id for a given guid, constrained to the
   // items within this simple media list
@@ -101,12 +104,6 @@ private:
 
   // Get first ordinal
   nsString mGetFirstOrdinalQuery;
-
-  // This lock is used to make sure determining a new item's ordinal is atomic
-  // with the database insert
-  static PRLock* sListUpdateLock;
-  static PRInt32 sInstanceCount;
-  static PRInt32 sLockFailed;
 };
 
 class sbSimpleMediaListEnumerationListener : public sbIMediaListEnumerationListener

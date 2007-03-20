@@ -39,29 +39,91 @@
 #include <nsISimpleEnumerator.h>
 #include <nsComponentManagerUtils.h>
 #include <nsAutoLock.h>
+#include <nsIURI.h>
 
 #define DEFAULT_SORT_PROPERTY \
   NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created")
 #define DEFAULT_FETCH_SIZE 1000
 
+NS_IMPL_ISUPPORTS1(sbViewMediaListEnumerationListener,
+                   sbIMediaListEnumerationListener)
+
+/**
+ * See sbIMediaListListener.idl
+ */
+NS_IMETHODIMP
+sbViewMediaListEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaList,
+                                                       PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  NS_ASSERTION(aMediaList != mFriendList,
+               "Can't enumerate our friend media list!");
+
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+/**
+ * See sbIMediaListListener.idl
+ */
+NS_IMETHODIMP
+sbViewMediaListEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList,
+                                                     sbIMediaItem* aMediaItem,
+                                                     PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  NS_ASSERTION(aMediaList != mFriendList,
+               "Can't enumerate our friend media list!");
+
+  nsCOMPtr<sbILibrary> fromLibrary;
+  rv = aMediaItem->GetLibrary(getter_AddRefs(fromLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> toLibrary;
+  rv = aMediaList->GetLibrary(getter_AddRefs(toLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the media item is not in the view, add it
+  PRBool equals;
+  rv = fromLibrary->Equals(toLibrary, &equals);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!equals) {
+    rv = mFriendList->AddItemToLocalDatabase(aMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mShouldInvalidate = PR_TRUE;
+  }
+
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+/**
+ * See sbIMediaListListener.idl
+ */
+NS_IMETHODIMP
+sbViewMediaListEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
+                                                     nsresult aStatusCode)
+{
+  nsresult rv;
+
+  NS_ASSERTION(aMediaList != mFriendList,
+               "Can't enumerate our friend media list!");
+
+  if (mShouldInvalidate) {
+    rv = mFriendList->mFullArray->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 NS_IMPL_ISUPPORTS_INHERITED0(sbLocalDatabaseViewMediaList,
                              sbLocalDatabaseMediaListBase)
-
-sbLocalDatabaseViewMediaList::sbLocalDatabaseViewMediaList(sbILocalDatabaseLibrary* aLibrary,
-                                                           const nsAString& aGuid) :
-  sbLocalDatabaseMediaListBase(aLibrary, aGuid)
-{
-  mListUpdateLock = PR_NewLock();
-  NS_ASSERTION(mListUpdateLock, "Failed to create lock!");
-}
-
-sbLocalDatabaseViewMediaList::~sbLocalDatabaseViewMediaList()
-{
-  if (mListUpdateLock) {
-    PR_DestroyLock(mListUpdateLock);
-    mListUpdateLock = nsnull;
-  }
-}
 
 nsresult
 sbLocalDatabaseViewMediaList::Init()
@@ -85,6 +147,9 @@ sbLocalDatabaseViewMediaList::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mFullArray->Clone(getter_AddRefs(mViewArray));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();
@@ -151,6 +216,8 @@ sbLocalDatabaseViewMediaList::Add(sbIMediaItem* aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+
   nsresult rv;
 
   /*
@@ -164,27 +231,74 @@ sbLocalDatabaseViewMediaList::Add(sbIMediaItem* aMediaItem)
   nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (itemLibrary == library) {
+  PRBool equals;
+  rv = itemLibrary->Equals(library, &equals);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (equals) {
     return NS_ERROR_INVALID_ARG;
   }
 
-  /*
-   * Otherwise, we might want to transfer this item into this database, but
-   * we need to figure out the rules for this in the future
-   */
-  return NS_ERROR_NOT_IMPLEMENTED;
+  // Import this item into this library
+  rv = AddItemToLocalDatabase(aMediaItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Invalidate the cached list
+  rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseViewMediaList::AddAll(sbIMediaList* aMediaList)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+
+  sbViewMediaListEnumerationListener listener(this);
+  nsresult rv =
+    aMediaList->EnumerateAllItems(&listener,
+                                  sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseViewMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+
+  sbViewMediaListEnumerationListener listener(this);
+
+  PRBool beginEnumeration;
+  nsresult rv = listener.OnEnumerationBegin(nsnull, &beginEnumeration);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(beginEnumeration, NS_ERROR_ABORT);
+
+  PRBool hasMore;
+  while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> supports;
+    rv = aMediaItems->GetNext(getter_AddRefs(supports));
+    SB_CONTINUE_IF_FAILED(rv);
+
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+    SB_CONTINUE_IF_FAILED(rv);
+
+    PRBool continueEnumerating;
+    rv = listener.OnEnumeratedItem(this, item, &continueEnumerating);
+    if (NS_FAILED(rv) || !continueEnumerating) {
+      break;
+    }
+  }
+
+  rv = listener.OnEnumerationEnd(nsnull, NS_OK);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -215,8 +329,7 @@ sbLocalDatabaseViewMediaList::Remove(sbIMediaItem* aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
-  // Serialize list changes
-  nsAutoLock lock(mListUpdateLock);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsresult rv;
 
@@ -244,8 +357,7 @@ sbLocalDatabaseViewMediaList::Remove(sbIMediaItem* aMediaItem)
 NS_IMETHODIMP
 sbLocalDatabaseViewMediaList::RemoveByIndex(PRUint32 aIndex)
 {
-  // Serialize list changes
-  nsAutoLock lock(mListUpdateLock);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsresult rv;
 
@@ -271,8 +383,7 @@ sbLocalDatabaseViewMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
 
-  // Serialize list changes
-  nsAutoLock lock(mListUpdateLock);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsresult rv;
   PRInt32 dbOk;
@@ -341,8 +452,7 @@ sbLocalDatabaseViewMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
 NS_IMETHODIMP
 sbLocalDatabaseViewMediaList::Clear()
 {
-  // Serialize list changes
-  nsAutoLock lock(mListUpdateLock);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsresult rv;
   PRInt32 dbOk;
@@ -442,6 +552,71 @@ sbLocalDatabaseViewMediaList::CreateQueries()
 
   rv = deleteb->ToString(mDeleteAllQuery);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create distinct property values query
+  nsCOMPtr<sbISQLSelectBuilder> builder =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("properties"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_p"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetDistinct(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(NS_LITERAL_STRING("_rp"),
+                          NS_LITERAL_STRING("obj"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                        NS_LITERAL_STRING("resource_properties"),
+                        NS_LITERAL_STRING("_rp"),
+                        NS_LITERAL_STRING("property_id"),
+                        NS_LITERAL_STRING("_p"),
+                        NS_LITERAL_STRING("property_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_p"),
+                                              NS_LITERAL_STRING("property_name"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddOrder(NS_LITERAL_STRING("_rp"),
+                         NS_LITERAL_STRING("obj_sortable"),
+                         PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mDistinctPropertyValuesQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseViewMediaList::AddItemToLocalDatabase(sbIMediaItem* aMediaItem)
+{
+  nsresult rv;
+
+  // Create a new media item and copy all the properties
+  nsCOMPtr<nsIURI> contentUri;
+  rv = aMediaItem->GetUri(getter_AddRefs(contentUri));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> newItem;
+  rv = library->CreateMediaItem(contentUri, getter_AddRefs(newItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // TODO: Copy properties
 
   return NS_OK;
 }

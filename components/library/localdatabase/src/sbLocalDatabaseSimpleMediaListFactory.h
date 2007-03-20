@@ -38,13 +38,9 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTFACTORY
 
-  sbLocalDatabaseSimpleMediaListFactory();
-
   nsresult Init();
 
 private:
-  ~sbLocalDatabaseSimpleMediaListFactory();
-
   nsCOMPtr<sbILibrary> mLibrary;
 
 };

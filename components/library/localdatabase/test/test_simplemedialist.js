@@ -41,8 +41,6 @@ function countItems(enumerator) {
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
-  createDatabase(databaseGUID);
-
   var library = createLibrary(databaseGUID);
 
   var list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
@@ -198,7 +196,6 @@ function runTest () {
 
   // Test insertBefore.  These tests seem a bit random but they are testing
   // all the code paths in sbLocalDatabaseSimpleMediaList::GetBeforeOrdinal
-  createDatabase(databaseGUID);
   library = createLibrary(databaseGUID);
   list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   a = readList("data_sort_sml101_ordinal_asc.txt");
@@ -243,7 +240,6 @@ function runTest () {
   }
 
   // Test moveBefore
-  createDatabase(databaseGUID);
   library = createLibrary(databaseGUID);
   list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   a = readList("data_sort_sml101_ordinal_asc.txt");
@@ -302,5 +298,8 @@ function runTest () {
   toRemove.forEach(function(item) { assertEqual(list.contains(item), false); });
   assertEqual(list.length, oldlength - toRemove.length);
 
+  // Test clear
+  list.clear();
+  assertEqual(list.length, 0);
 }
 

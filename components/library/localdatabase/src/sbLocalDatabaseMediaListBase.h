@@ -36,12 +36,14 @@
 #include <nsTArray.h>
 #include <prmon.h>
 #include <prlock.h>
-
+#include <nsIStringEnumerator.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListListener.h>
+#include <sbIFilterableMediaList.h>
+#include <sbIDatabaseResult.h>
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabaseResourceProperty.h"
@@ -60,9 +62,9 @@
 
 // This macro is for derived classes that want to ensure safe access to
 // mFullArray.
-#define SB_MEDIALIST_LOCK_AND_ENSURE_MUTABLE()                                 \
+#define SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE()                       \
   PR_BEGIN_MACRO                                                               \
-    nsAutoMonitor mon(mMonitor);                                               \
+    nsAutoMonitor mon(mFullArrayMonitor);                                      \
     if (mLockedEnumerationActive) {                                            \
       NS_ERROR("Operation not permitted during a locked enumeration");         \
       return NS_ERROR_FAILURE;                                                 \
@@ -72,6 +74,7 @@
 class sbLocalDatabaseMediaListBase : public sbLocalDatabaseResourceProperty,
                                      public sbIMediaList,
                                      public sbILocalDatabaseMediaItem,
+                                     public sbIFilterableMediaList,
                                      public nsIClassInfo
 {
   typedef nsTArray<nsString> sbStringArray;
@@ -90,13 +93,12 @@ public:
   NS_DECL_SBIMEDIAITEM
   NS_DECL_SBIMEDIALIST
   NS_DECL_SBILOCALDATABASEMEDIAITEM
+  NS_DECL_SBIFILTERABLEMEDIALIST
   NS_DECL_NSICLASSINFO
 
   sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
                                const nsAString& aGuid);
   ~sbLocalDatabaseMediaListBase();
-
-  NS_IMETHODIMP Init();
 
 protected:
   // Enumerate listeners and call OnItemAdded
@@ -190,9 +192,6 @@ protected:
   // The library this media list instance belogs to
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
 
-  // The guid of this media list
-  nsString mGuid;
-
   // The media item id of the media list
   PRUint32 mMediaItemId;
 
@@ -206,10 +205,16 @@ protected:
   // list this instance represents.
   nsCOMPtr<sbILocalDatabaseGUIDArray> mFullArray;
 
-  // A monitor that prevents changes to the media list.
-  PRMonitor* mMonitor;
+  // A monitor for changes to the media list.
+  PRMonitor* mFullArrayMonitor;
+
+  // A monitor for changes in the view filter
+  PRMonitor* mViewFilterMonitor;
 
   PRBool mLockedEnumerationActive;
+
+  // Query to return list of values for a given property
+  nsString mDistinctPropertyValuesQuery;
 
 private:
   // A thread-safe hash table that holds a mapping of listeners to proxies.
@@ -218,6 +223,26 @@ private:
   // This lock protects the code that checks for existing entries in the proxy
   // table.
   PRLock* mListenerProxyTableLock;
+};
+
+class sbDatabaseResultStringEnumerator : public nsIStringEnumerator
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISTRINGENUMERATOR
+
+  sbDatabaseResultStringEnumerator(sbIDatabaseResult* aDatabaseResult) :
+    mDatabaseResult(aDatabaseResult),
+    mNextIndex(0),
+    mLength(0)
+  {
+  }
+
+  nsresult Init();
+private:
+  nsCOMPtr<sbIDatabaseResult> mDatabaseResult;
+  PRUint32 mNextIndex;
+  PRUint32 mLength;
 };
 
 #endif /* __SBLOCALDATABASEMEDIALISTBASE_H__ */

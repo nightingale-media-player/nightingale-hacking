@@ -33,7 +33,7 @@
 #include "nsISupports.idl"
 
 interface nsIStringEnumerator;
-interface nsIArray;
+interface sbIPropertyArray;
 
 /**
 * \interface sbIFilterableMediaList
@@ -57,32 +57,28 @@ interface sbIFilterableMediaList : nsISupports
    * \brief Returns an array of all of the possible values for the
    * given property.
    * \param aPropertyName The property name to return values for
-   * \return An nsIArray of nsISupportsString object of the values for the
-   * given property
+   * \return A string enumerator containing all the possible values for the
+   *         given property
    */
-  nsIArray getFilterValues(in AString aPropertyName);
+  nsIStringEnumerator getFilterValues(in AString aPropertyName);
 
   /**
    * \brief Set a new filter configuration.
-   * \param aProperties Array of nsISupportsString objects that describes the
-   * property to be used for each filter.  The filters are applied in the
-   * same order as the array.
-   * \param aValueEnumerators Array of nsIStringEnumerator objects that supply
-   * the value list for each filter property specified in the aProperty
-   * parameter.  A null value (or an emtpy enumerator) represents no filtering
-   * on the corresponding property.
+   * \param aPropertyArray Array of name value pairs used to filter the list
+   *        The filters are applied in the same order as the array.  An empty
+   *        value means no filtering on the corresponding property
    */
-  void setFilters(in nsIArray aProperties, in nsIArray aValueEnumerators);
+  void setFilters(in sbIPropertyArray aPropertyArray);
 
   /**
    * \brief Update an existing filter
-   * \param aPropertyName Property name that specifies which filter to update
-   * \param nsIStingEnumerator Enumerator of the new values for the filter.
-   * A null value (or an emtpy enumerator) represents no filtering on the
-   * specified property.
+   * \param aPropertyName Array of name value pairs to update the current
+   *        filter configuration with.  Properties that appear in this array
+   *        will first be removed from the filter then re-added with the
+   *        new configuration.  An emptuy value means to remove all filtering
+   *        on the corresponding property.
    */
-  void updateFilter(in AString aPropertyName,
-                    in nsIStringEnumerator aValueEnumerator);
+  void updateFilter(in sbIPropertyArray aPropertyArray);
 
   /**
    * \brief Clears the current filter configuration

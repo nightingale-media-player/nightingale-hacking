@@ -54,20 +54,13 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseLibrary,
                              sbILibrary,
                              sbILocalDatabaseLibrary)
 
-sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid) 
-:  mDatabaseGuid(aDatabaseGuid)
-{
-}
-
-sbLocalDatabaseLibrary::~sbLocalDatabaseLibrary()
-{
-}
-
 // sbILocalDatabaseLibrary
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::Init()
 {
   nsresult rv;
+  PRInt32 dbOk;
+
   // Maybe check to this that this db is valid, etc?
   // Check version and migrate if needed?
 
@@ -78,103 +71,64 @@ sbLocalDatabaseLibrary::Init()
   rv = mPropertyCache->SetDatabaseGUID(mDatabaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /*
-   * Build some queries
-   */
+  rv = CreateQueries();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read our library guid
   nsCOMPtr<sbISQLSelectBuilder> builder =
     do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->AddColumn(NS_LITERAL_STRING("_mlt"),
-                          NS_LITERAL_STRING("factory_contractid"));
+  rv = builder->AddColumn(EmptyString(),
+                          NS_LITERAL_STRING("value"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_mi"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_LEFT,
-                        NS_LITERAL_STRING("media_list_types"),
-                        NS_LITERAL_STRING("_mlt"),
-                        NS_LITERAL_STRING("media_list_type_id"),
-                        NS_LITERAL_STRING("_mi"),
-                        NS_LITERAL_STRING("media_list_type_id"));
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("library_metadata"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbISQLBuilderCriterion> criterion;
-  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_mi"),
-                                              NS_LITERAL_STRING("guid"),
-                                              sbISQLSelectBuilder::MATCH_EQUALS,
-                                              getter_AddRefs(criterion));
+  rv = builder->CreateMatchCriterionString(EmptyString(),
+                                           NS_LITERAL_STRING("name"),
+                                           sbISQLSelectBuilder::MATCH_EQUALS,
+                                           NS_LITERAL_STRING("resource-guid"),
+                                           getter_AddRefs(criterion));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->AddCriterion(criterion);
+  nsAutoString sql;
+  rv = builder->ToString(sql);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->ToString(mGetContractIdForGuidQuery);
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->Reset();
+  rv = query->SetDatabaseGUID(mDatabaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("media_item_id"));
+  rv = query->SetAsyncQuery(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  rv = query->AddQuery(sql);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->CreateMatchCriterionParameter(EmptyString(),
-                                              NS_LITERAL_STRING("guid"),
-                                              sbISQLSelectBuilder::MATCH_EQUALS,
-                                              getter_AddRefs(criterion));
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->AddCriterion(criterion);
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->ToString(mGetMediaItemIdForGuidQuery);
+  NS_ENSURE_FALSE(rowCount == 0, NS_ERROR_UNEXPECTED);
+
+  rv = result->GetRowCell(0, 0, mGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /*
-   * Build new media item query
-   */
-  nsCOMPtr<sbISQLInsertBuilder> insert =
-    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->SetIntoTableName(NS_LITERAL_STRING("media_items"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddColumn(NS_LITERAL_STRING("guid"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddColumn(NS_LITERAL_STRING("created"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddColumn(NS_LITERAL_STRING("updated"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddColumn(NS_LITERAL_STRING("content_url"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddValueParameter();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddValueParameter();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddValueParameter();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddValueParameter();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->ToString(mInsertMediaItemQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbLocalDatabaseResourceProperty::InitResourceProperty(mPropertyCache, mDatabaseGuid);
+  sbLocalDatabaseResourceProperty::InitResourceProperty(mPropertyCache, mGuid);
 
   return NS_OK;
 }
@@ -521,13 +475,6 @@ sbLocalDatabaseLibrary::AddMediaListFactory(const nsAString& aType,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::ImportMediaList(sbIMediaList* aMediaList,
-                                        sbIMediaList** _retval)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
 sbLocalDatabaseLibrary::BeginBatch(PRBool aIsAsync)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -550,3 +497,104 @@ sbLocalDatabaseLibrary::TidyUp()
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
+
+nsresult
+sbLocalDatabaseLibrary::CreateQueries()
+{
+  nsresult rv;
+
+  // Build some queries
+  nsCOMPtr<sbISQLSelectBuilder> builder =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(NS_LITERAL_STRING("_mlt"),
+                          NS_LITERAL_STRING("factory_contractid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_mi"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_LEFT,
+                        NS_LITERAL_STRING("media_list_types"),
+                        NS_LITERAL_STRING("_mlt"),
+                        NS_LITERAL_STRING("media_list_type_id"),
+                        NS_LITERAL_STRING("_mi"),
+                        NS_LITERAL_STRING("media_list_type_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_mi"),
+                                              NS_LITERAL_STRING("guid"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mGetContractIdForGuidQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionParameter(EmptyString(),
+                                              NS_LITERAL_STRING("guid"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mGetMediaItemIdForGuidQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Build new media item query
+  nsCOMPtr<sbISQLInsertBuilder> insert =
+    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->SetIntoTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("guid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("created"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("updated"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("content_url"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->ToString(mInsertMediaItemQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

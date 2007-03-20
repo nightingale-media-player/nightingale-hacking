@@ -68,11 +68,6 @@ interface sbIMediaItem : sbILibraryResource
   readonly attribute boolean isMutable;
 
   /**
-   * \brief Guid of the media item
-   */
-  readonly attribute AString guid;
-
-  /**
    * \brief Creation time of the media item as a unix timestamp.
    *
    * Note that this is the creation time of the media item itself, not the
@@ -129,9 +124,4 @@ interface sbIMediaItem : sbILibraryResource
    * \return A string representation of the media item
    */
   AString toString();
-
-  /**
-   * \brief Tests the equality of two media items.
-   */
-  boolean equals(in sbIMediaItem aOtherItem);
 };

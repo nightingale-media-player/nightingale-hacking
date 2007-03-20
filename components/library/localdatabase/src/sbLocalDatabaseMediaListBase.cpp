@@ -35,6 +35,9 @@
 #include <nsIStringEnumerator.h>
 #include <nsIVariant.h>
 #include <nsMemory.h>
+#include <sbSQLBuilderCID.h>
+#include <sbIDatabaseQuery.h>
+#include <DatabaseQuery.h>
 
 #include <sbIMediaList.h>
 #include <sbIPropertyArray.h>
@@ -42,29 +45,33 @@
 #include "sbLocalDatabasePropertyCache.h"
 #include <sbProxyUtils.h>
 
-NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS_INHERITED5(sbLocalDatabaseMediaListBase,
                              sbLocalDatabaseResourceProperty,
                              sbIMediaItem,
                              sbILocalDatabaseMediaItem,
+                             sbIFilterableMediaList,
                              sbIMediaList,
                              nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER4(sbLocalDatabaseMediaListBase,
+NS_IMPL_CI_INTERFACE_GETTER5(sbLocalDatabaseMediaListBase,
                              sbILibraryResource,
                              sbIMediaItem,
                              sbILocalDatabaseMediaItem,
+                             sbIFilterableMediaList,
                              sbIMediaList)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
                                                            const nsAString& aGuid)
 : sbLocalDatabaseResourceProperty(aLibrary, aGuid),
   mLibrary(aLibrary),
-  mGuid(aGuid),
   mMediaItemId(0),
   mLockedEnumerationActive(PR_FALSE)
 {
-  mMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseMediaListBase::mMonitor");
-  NS_ASSERTION(mMonitor, "Failed to create monitor!");
+  mFullArrayMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseMediaListBase::mFullArrayMonitor");
+  NS_ASSERTION(mFullArrayMonitor, "Failed to create monitor!");
+
+  mViewFilterMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseMediaListBase::mViewFilterMonitor");
+  NS_ASSERTION(mViewFilterMonitor, "Failed to create monitor!");
 
   mListenerProxyTableLock =
     nsAutoLock::NewLock("sbLocalDatabaseMediaListBase::mListenerProxyTableLock");
@@ -73,8 +80,12 @@ sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibra
 
 sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
 {
-  if (mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
+  if (mFullArrayMonitor) {
+    nsAutoMonitor::DestroyMonitor(mFullArrayMonitor);
+  }
+
+  if (mViewFilterMonitor) {
+    nsAutoMonitor::DestroyMonitor(mViewFilterMonitor);
   }
 
   if (mListenerProxyTableLock) {
@@ -479,10 +490,24 @@ sbLocalDatabaseMediaListBase::GetLength(PRUint32* aLength)
 {
   NS_ENSURE_ARG_POINTER(aLength);
 
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
-  nsAutoMonitor mon(mMonitor);
+  NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
+  nsAutoMonitor mon(mFullArrayMonitor);
 
   nsresult rv = mFullArray->GetLength(aLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetFilteredLength(PRUint32* aLength)
+{
+  NS_ENSURE_ARG_POINTER(aLength);
+
+  NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
+  nsAutoMonitor mon(mFullArrayMonitor);
+
+  nsresult rv = mViewArray->GetLength(aLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -516,10 +541,38 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
 
   nsAutoString guid;
   {
-    NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
-    nsAutoMonitor mon(mMonitor);
+    NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
+    nsAutoMonitor mon(mFullArrayMonitor);
 
     rv = mFullArray->GetByIndex(aIndex, guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = library->GetMediaItem(guid, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = item);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetItemByFilteredIndex(PRUint32 aIndex,
+                                                     sbIMediaItem** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  nsAutoString guid;
+  {
+    NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
+    nsAutoMonitor mon(mFullArrayMonitor);
+
+    rv = mViewArray->GetByIndex(aIndex, guid);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -548,8 +601,8 @@ sbLocalDatabaseMediaListBase::EnumerateAllItems(sbIMediaListEnumerationListener*
   switch (aEnumerationType) {
 
     case sbIMediaList::ENUMERATIONTYPE_LOCKING: {
-      NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
-      nsAutoMonitor mon(mMonitor);
+      NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
+      nsAutoMonitor mon(mFullArrayMonitor);
 
       // Don't reenter!
       NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
@@ -628,8 +681,8 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aName,
   switch (aEnumerationType) {
 
     case sbIMediaList::ENUMERATIONTYPE_LOCKING: {
-      NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
-      nsAutoMonitor mon(mMonitor);
+      NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
+      nsAutoMonitor mon(mFullArrayMonitor);
 
       // Don't reenter!
       NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
@@ -771,8 +824,8 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
   switch (aEnumerationType) {
 
     case sbIMediaList::ENUMERATIONTYPE_LOCKING: {
-      NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
-      nsAutoMonitor mon(mMonitor);
+      NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
+      nsAutoMonitor mon(mFullArrayMonitor);
 
       // Don't reenter!
       NS_ENSURE_FALSE(mLockedEnumerationActive, NS_ERROR_FAILURE);
@@ -832,8 +885,8 @@ sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
 
   PRUint32 count;
 
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
-  nsAutoMonitor mon(mMonitor);
+  NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
+  nsAutoMonitor mon(mFullArrayMonitor);
 
   nsresult rv = mFullArray->GetLength(&count);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -868,8 +921,8 @@ sbLocalDatabaseMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
-  nsAutoMonitor mon(mMonitor);
+  NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
+  nsAutoMonitor mon(mFullArrayMonitor);
 
   PRUint32 count;
   nsresult rv = mFullArray->GetLength(&count);
@@ -908,8 +961,8 @@ sbLocalDatabaseMediaListBase::GetIsEmpty(PRBool* aIsEmpty)
 {
   NS_ENSURE_ARG_POINTER(aIsEmpty);
 
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_FAILURE);
-  nsAutoMonitor mon(mMonitor);
+  NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
+  nsAutoMonitor mon(mFullArrayMonitor);
 
   PRUint32 length;
   nsresult rv = mFullArray->GetLength(&length);
@@ -922,21 +975,21 @@ sbLocalDatabaseMediaListBase::GetIsEmpty(PRBool* aIsEmpty)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Add(sbIMediaItem* aMediaItem)
 {
-  // Not meant to be implemented by base class.
+  NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::AddAll(sbIMediaList* aMediaList)
 {
-  // Not meant to be implemented by base class.
+  NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
 {
-  // not meant to be implemented by base class
+  NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -944,7 +997,7 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::InsertBefore(PRUint32 aIndex,
                                            sbIMediaItem* aMediaItem)
 {
-  // Not meant to be implemented by base class.
+  NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -952,41 +1005,42 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::MoveBefore(PRUint32 aFromIndex,
                                          PRUint32 aToIndex)
 {
-  // Not meant to be implemented by base class.
+  NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::MoveLast(PRUint32 aIndex)
 {
-  // Not meant to be implemented by base class.
+  NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Remove(sbIMediaItem* aMediaItem)
 {
-  // Not meant to be implemented by base class.
+  NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::RemoveByIndex(PRUint32 aIndex)
 {
-  // Not meant to be implemented by base class.
+  NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::RemoveSome(nsISimpleEnumerator* aMediaItems)
 {
+  NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Clear()
 {
-  // Not meant to be implemented by base class.
+  NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -1098,13 +1152,6 @@ sbLocalDatabaseMediaListBase::GetIsMutable(PRBool* IsMutable)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetGuid(nsAString& aGuid)
-{
-  aGuid = mGuid;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetMediaCreated(PRInt32* MediaCreated)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -1197,21 +1244,6 @@ sbLocalDatabaseMediaListBase::ToString(nsAString& _retval)
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::Equals(sbIMediaItem* aOtherItem,
-                                     PRBool* _retval)
-{
-  NS_ENSURE_ARG_POINTER(aOtherItem);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsAutoString otherGUID;
-  nsresult rv = aOtherItem->GetGuid(otherGUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  *_retval = mGuid.Equals(otherGUID);
-  return NS_OK;
-}
-
 // sbILocalDatabaseMediaItem
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetMediaItemId(PRUint32 *_retval)
@@ -1223,6 +1255,80 @@ sbLocalDatabaseMediaListBase::GetMediaItemId(PRUint32 *_retval)
 
   *_retval = mMediaItemId;
   return NS_OK;
+}
+
+// sbIFilterableMediaList
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetFilterableProperties(nsIStringEnumerator** aFilterableProperties)
+{
+  NS_ENSURE_ARG_POINTER(aFilterableProperties);
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetFilterValues(const nsAString& aPropertyName,
+                                              nsIStringEnumerator** _retval)
+{
+  nsresult rv;
+  PRInt32 dbOk;
+
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString databaseGuid;
+  rv = mLibrary->GetDatabaseGuid(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mDistinctPropertyValuesQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, aPropertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbDatabaseResultStringEnumerator* values =
+    new sbDatabaseResultStringEnumerator(result);
+  NS_ENSURE_TRUE(values, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = values->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = values);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::SetFilters(sbIPropertyArray* aPropertyArray)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::UpdateFilter(sbIPropertyArray* aPropertyArray)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::ClearFilter()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 // nsIClassInfo
@@ -1281,3 +1387,33 @@ sbLocalDatabaseMediaListBase::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
+
+NS_IMPL_ISUPPORTS1(sbDatabaseResultStringEnumerator, nsIStringEnumerator)
+
+// nsIStringEnumerator
+NS_IMETHODIMP
+sbDatabaseResultStringEnumerator::Init()
+{
+  nsresult rv = mDatabaseResult->GetRowCount(&mLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDatabaseResultStringEnumerator::HasMore(PRBool *_retval)
+{
+  *_retval = mNextIndex < mLength;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDatabaseResultStringEnumerator::GetNext(nsAString& _retval)
+{
+  nsresult rv = mDatabaseResult->GetRowCell(mNextIndex, 0, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mNextIndex++;
+
+  return NS_OK;
+}
+

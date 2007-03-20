@@ -31,7 +31,7 @@
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
-  createDatabase(databaseGUID);
+  var library = createLibrary(databaseGUID);
 
   var cache = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/PropertyCache;1"]
                 .createInstance(Ci.sbILocalDatabasePropertyCache);

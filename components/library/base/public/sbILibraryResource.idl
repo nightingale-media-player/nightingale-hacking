@@ -51,6 +51,11 @@ interface sbILibraryResource : nsISupports
   readonly attribute nsIURI uri;
 
   /**
+   * \brief The guid of this resource
+   */
+  readonly attribute AString guid;
+
+  /**
    * \brief The creation time of this resource as a unix timestamp
    */
   readonly attribute long created;
@@ -98,6 +103,11 @@ interface sbILibraryResource : nsISupports
    * \brief Finish all pending write operations.
    */
   void write();
+
+  /**
+   * \brief Tests the equality of two library resources.
+   */
+  boolean equals(in sbILibraryResource aOtherLibraryResource);
 };
 
 

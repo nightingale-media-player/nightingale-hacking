@@ -41,8 +41,6 @@ function countItems(enumerator) {
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
-  createDatabase(databaseGUID);
-
   var library = createLibrary(databaseGUID);
 
   var view = library.getMediaItem("songbird:view");
@@ -63,25 +61,15 @@ function runTest () {
   catch(e) {
     assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
   }
-/*
+
+  // Note that these next two tests never fail since items that already exist
+  // in the database are silently skipped
   var e = new SimpleArrayEnumerator([item]);
-  try {
-    view.addSome(e);
-    fail("No exception thrown");
-  }
-  catch(e) {
-    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
-  }
+  view.addSome(e);
 
   var list = view.getItemByGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
-  try {
-    view.addAll(list);
-    fail("No exception thrown");
-  }
-  catch(e) {
-    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
-  }
-*/
+  view.addAll(list);
+
   var titleProperty = "http://songbirdnest.com/data/1.0#trackName";
   var albumProperty = "http://songbirdnest.com/data/1.0#albumName";
   var genreProperty = "http://songbirdnest.com/data/1.0#genre";
@@ -176,9 +164,6 @@ function runTest () {
   // Test listeners
 
   // Test remove
-  var databaseGUID = "test_localdatabaselibrary";
-  createDatabase(databaseGUID);
-
   library = createLibrary(databaseGUID);
 
   item = library.getMediaItem("3E2549C0-AD99-11DB-9321-C22AB7121F49");

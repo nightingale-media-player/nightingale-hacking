@@ -62,12 +62,15 @@ public:
   NS_DECL_NSICLASSINFO
 
   sbLocalDatabaseMediaItem(sbILocalDatabaseLibrary* aLibrary,
-                           const nsAString& aGuid);
+                           const nsAString& aGuid)
+  : sbLocalDatabaseResourceProperty(aLibrary, aGuid),
+    mMediaItemId(0),
+    mLibrary(aLibrary)
+  {
+  }
 
 protected:
-  virtual ~sbLocalDatabaseMediaItem();
 
-  nsString mGuid;
   PRUint32 mMediaItemId;
 
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;

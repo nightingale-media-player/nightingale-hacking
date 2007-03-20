@@ -31,7 +31,7 @@
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
-  createDatabase(databaseGUID);
+  var library = createLibrary(databaseGUID);
   var array;
 
   // Try a variety of fetch sizes to expose edge cases

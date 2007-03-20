@@ -25,33 +25,17 @@
 */
 
 /**
- * \file sbILocalDatabaseLibrary.idl
- * \brief Definition of the sbILocalDatabaseLibrary interfaces
+ * \brief Test file
  */
 
-#include "nsISupports.idl"
+function runTest () {
 
-interface sbIMediaItem;
-interface sbILocalDatabasePropertyCache;
-interface sbILocalDatabaseResourcePropertyBag;
+  var one = createLibrary("multilibrary_one");
+  var two = createLibrary("multilibrary_two");
 
-/**
-* \interface sbILocalDatabaseLibrary
-* \brief Internal use only
-*/
-[scriptable, uuid(2fbd49f8-3c95-437b-b3ac-efaeefb86d6a)]
-interface sbILocalDatabaseLibrary : nsISupports
-{
-  readonly attribute AString databaseGuid;
-  readonly attribute sbILocalDatabasePropertyCache propertyCache;
+  var twoView = two.getMediaItem("songbird:view");
+  var item = one.getMediaItem("3E2549C0-AD99-11DB-9321-C22AB7121F49");
 
-  void init();
-
-  ACString getContractIdForGuid(in AString aGuid);
-
-  unsigned long getMediaItemIdForGuid(in AString aGuid);
-
-  sbILocalDatabaseResourcePropertyBag getPropertiesForGuid(in AString aGuid);
-};
-
+  //twoView.add(item);
+}
 

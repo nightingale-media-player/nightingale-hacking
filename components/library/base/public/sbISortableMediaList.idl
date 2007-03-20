@@ -33,7 +33,7 @@
 #include "nsISupports.idl"
 
 interface nsIStringEnumerator;
-interface nsIPropertyBag;
+interface sbIPropertyArray;
 
 /**
 * \interface sbISortableMediaList
@@ -54,16 +54,15 @@ interface sbISortableMediaList : nsISupports
   /**
    * \brief The current sort
    */
-  readonly attribute nsIPropertyBag currentSort;
+  readonly attribute sbIPropertyArray currentSort;
 
   /**
    * \brief Set a new sort for the media list
    * \param aSort A property bag containing the sort parameters.  The keys
-   * map to sortable properties and the value for each key is a boolean where
-   * true is ascending and false is descending.  The sort is applied in the
-   * order they appear in the bag (XXX: does the bag preserve order?)
+   * map to sortable properties and the value for each key is either "a" for
+   * ascending or "d" for decending.
    */
-  void setSort(in nsIPropertyBag aSort);
+  void setSort(in sbIPropertyArray aSort);
 
   /**
    * \brief Clear the sort

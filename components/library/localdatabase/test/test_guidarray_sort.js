@@ -31,7 +31,8 @@
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
-  createDatabase(databaseGUID);
+  var library = createLibrary(databaseGUID);
+  var listId = library.QueryInterface(Ci.sbILocalDatabaseLibrary).getMediaItemIdForGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   var array;
 
   // One level sort, small fetch size, ascending
@@ -94,7 +95,7 @@ function runTest () {
   array = makeArray(databaseGUID);
   array.baseTable = "simple_media_lists";
   array.baseConstraintColumn = "media_item_id";
-  array.baseConstraintValue = 101;
+  array.baseConstraintValue = listId;
   array.addSort("http://songbirdnest.com/data/1.0#ordinal", true);
   array.fetchSize = 40;
   assertSort(array, "data_sort_sml101_ordinal_asc.txt");
@@ -102,7 +103,7 @@ function runTest () {
   array = makeArray(databaseGUID);
   array.baseTable = "simple_media_lists";
   array.baseConstraintColumn = "media_item_id";
-  array.baseConstraintValue = 101;
+  array.baseConstraintValue = listId;
   array.addSort("http://songbirdnest.com/data/1.0#ordinal", false);
   array.fetchSize = 40;
   assertSort(array, "data_sort_sml101_ordinal_desc.txt");

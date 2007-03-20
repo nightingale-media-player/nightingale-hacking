@@ -31,14 +31,6 @@
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseSimpleMediaListFactory, sbIMediaListFactory)
 
-sbLocalDatabaseSimpleMediaListFactory::sbLocalDatabaseSimpleMediaListFactory()
-{
-}
-
-sbLocalDatabaseSimpleMediaListFactory::~sbLocalDatabaseSimpleMediaListFactory()
-{
-}
-
 nsresult
 sbLocalDatabaseSimpleMediaListFactory::Init()
 {

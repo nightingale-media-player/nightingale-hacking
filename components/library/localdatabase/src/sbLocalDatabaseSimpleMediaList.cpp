@@ -160,37 +160,6 @@ sbSimpleMediaListEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
 NS_IMPL_ISUPPORTS_INHERITED0(sbLocalDatabaseSimpleMediaList,
                              sbLocalDatabaseMediaListBase)
 
-PRLock* sbLocalDatabaseSimpleMediaList::sListUpdateLock = nsnull;
-PRInt32 sbLocalDatabaseSimpleMediaList::sInstanceCount = 0;
-PRInt32 sbLocalDatabaseSimpleMediaList::sLockFailed = 0;
-
-sbLocalDatabaseSimpleMediaList::sbLocalDatabaseSimpleMediaList(sbILocalDatabaseLibrary* aLibrary,
-                                                               const nsAString& aGuid) :
-  sbLocalDatabaseMediaListBase(aLibrary, aGuid)
-{
-  // Carefully initialize the static lock
-  PRInt32 count = PR_AtomicIncrement(&sInstanceCount);
-  if (count == 1) {
-    sListUpdateLock = PR_NewLock();
-    if (!sListUpdateLock) {
-      PR_AtomicIncrement(&sLockFailed);
-    }
-  }
-  while (!sListUpdateLock && !sLockFailed) {
-    // Wait!!
-    PR_Sleep(10);
-  }
-}
-
-sbLocalDatabaseSimpleMediaList::~sbLocalDatabaseSimpleMediaList()
-{
-  PRInt32 count = PR_AtomicDecrement(&sInstanceCount);
-  if (count == 0) {
-    PR_DestroyLock(sListUpdateLock);
-    sListUpdateLock = nsnull;
-  }
-}
-
 nsresult
 sbLocalDatabaseSimpleMediaList::Init()
 {
@@ -225,187 +194,10 @@ sbLocalDatabaseSimpleMediaList::Init()
   rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // The following builder is shared between queries that operate on the
-  // items in this list
-  nsCOMPtr<sbISQLSelectBuilder> builder =
-    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  rv = mFullArray->Clone(getter_AddRefs(mViewArray));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbISQLBuilderCriterion> criterion;
-
-  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_mi"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                        NS_LITERAL_STRING("simple_media_lists"),
-                        NS_LITERAL_STRING("_sml"),
-                        NS_LITERAL_STRING("member_media_item_id"),
-                        NS_LITERAL_STRING("_mi"),
-                        NS_LITERAL_STRING("media_item_id"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->CreateMatchCriterionLong(NS_LITERAL_STRING("_sml"),
-                                         NS_LITERAL_STRING("media_item_id"),
-                                         sbISQLSelectBuilder::MATCH_EQUALS,
-                                         mediaItemId,
-                                         getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create get last ordinal query
-  rv = builder->ClearColumns();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddColumn(EmptyString(),
-                          NS_LITERAL_STRING("max(ordinal)"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->ToString(mGetLastOrdinalQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create get first ordinal query
-  rv = builder->ClearColumns();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddColumn(EmptyString(),
-                          NS_LITERAL_STRING("min(ordinal)"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->ToString(mGetFirstOrdinalQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create the query used by contains to see if a guid is in this list
-  rv = builder->ClearColumns();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddColumn(NS_LITERAL_STRING("_mi"),
-                          NS_LITERAL_STRING("media_item_id"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_mi"),
-                                              NS_LITERAL_STRING("guid"),
-                                              sbISQLSelectBuilder::MATCH_EQUALS,
-                                              getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->ToString(mGetMediaItemIdForGuidQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create insertion query
-  nsCOMPtr<sbISQLInsertBuilder> insert =
-    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
-
-  rv = insert->SetIntoTableName(NS_LITERAL_STRING("simple_media_lists"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddColumn(NS_LITERAL_STRING("media_item_id"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddColumn(NS_LITERAL_STRING("member_media_item_id"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddColumn(NS_LITERAL_STRING("ordinal"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddValueLong(mediaItemId);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddValueParameter();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->AddValueParameter();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = insert->ToString(mInsertIntoListQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create ordinal update query
-  nsCOMPtr<sbISQLUpdateBuilder> update =
-    do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
-
-  rv = update->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = update->AddAssignmentParameter(NS_LITERAL_STRING("ordinal"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = update->CreateMatchCriterionLong(EmptyString(),
-                                        NS_LITERAL_STRING("media_item_id"),
-                                        sbISQLSelectBuilder::MATCH_EQUALS,
-                                        mediaItemId,
-                                        getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = update->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = update->CreateMatchCriterionParameter(EmptyString(),
-                                             NS_LITERAL_STRING("member_media_item_id"),
-                                             sbISQLSelectBuilder::MATCH_EQUALS,
-                                             getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = update->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = update->ToString(mUpdateListItemOrdinalQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create item delete query
-  nsCOMPtr<sbISQLDeleteBuilder> deleteb =
-    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
-
-  rv = deleteb->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deleteb->CreateMatchCriterionLong(EmptyString(),
-                                         NS_LITERAL_STRING("media_item_id"),
-                                         sbISQLSelectBuilder::MATCH_EQUALS,
-                                         mediaItemId,
-                                         getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deleteb->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deleteb->CreateMatchCriterionParameter(EmptyString(),
-                                              NS_LITERAL_STRING("member_media_item_id"),
-                                              sbISQLSelectBuilder::MATCH_EQUALS,
-                                              getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deleteb->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deleteb->ToString(mDeleteListItemQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create delete all query
-  rv = deleteb->Reset();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deleteb->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deleteb->CreateMatchCriterionLong(EmptyString(),
-                                         NS_LITERAL_STRING("media_item_id"),
-                                         sbISQLSelectBuilder::MATCH_EQUALS,
-                                         mediaItemId,
-                                         getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deleteb->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deleteb->ToString(mDeleteAllQuery);
+  rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -473,7 +265,7 @@ sbLocalDatabaseSimpleMediaList::Add(sbIMediaItem* aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
-  SB_MEDIALIST_LOCK_AND_ENSURE_MUTABLE();
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   sbSimpleMediaListEnumerationListener listener(this);
 
@@ -497,13 +289,14 @@ sbLocalDatabaseSimpleMediaList::AddAll(sbIMediaList* aMediaList)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
-  SB_MEDIALIST_LOCK_AND_ENSURE_MUTABLE();
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   sbSimpleMediaListEnumerationListener listener(this);
   nsresult rv =
     aMediaList->EnumerateAllItems(&listener,
                                   sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
-  
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -512,7 +305,7 @@ sbLocalDatabaseSimpleMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
 
-  SB_MEDIALIST_LOCK_AND_ENSURE_MUTABLE();
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   sbSimpleMediaListEnumerationListener listener(this);
 
@@ -552,8 +345,7 @@ sbLocalDatabaseSimpleMediaList::InsertBefore(PRUint32 aIndex,
   nsresult rv;
   PRInt32 dbOk;
 
-  // Serialize list changes
-  nsAutoLock lock(sListUpdateLock);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   PRUint32 length;
   rv = mFullArray->GetLength(&length);
@@ -617,8 +409,7 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
     return NS_OK;
   }
 
-  // Serialize list changes
-  nsAutoLock lock(sListUpdateLock);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsresult rv;
 
@@ -647,8 +438,7 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
 {
-  // Serialize list changes
-  nsAutoLock lock(sListUpdateLock);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsresult rv;
 
@@ -676,8 +466,9 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::Remove(sbIMediaItem* aMediaItem)
 {
-  // Serialize list changes
-  nsAutoLock lock(sListUpdateLock);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsresult rv;
 
@@ -702,8 +493,7 @@ sbLocalDatabaseSimpleMediaList::Remove(sbIMediaItem* aMediaItem)
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
 {
-  // Serialize list changes
-  nsAutoLock lock(sListUpdateLock);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsresult rv;
 
@@ -726,8 +516,7 @@ sbLocalDatabaseSimpleMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
 
-  // Serialize list changes
-  nsAutoLock lock(sListUpdateLock);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsresult rv;
   PRInt32 dbOk;
@@ -793,8 +582,7 @@ sbLocalDatabaseSimpleMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::Clear()
 {
-  // Serialize list changes
-  nsAutoLock lock(sListUpdateLock);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsresult rv;
   PRInt32 dbOk;
@@ -1090,5 +878,200 @@ sbLocalDatabaseSimpleMediaList::CountLevels(const nsAString& aPath)
     foundpos = aPath.FindChar('.', foundpos + 1);
   }
   return count;
+}
+
+nsresult
+sbLocalDatabaseSimpleMediaList::CreateQueries()
+{
+  nsresult rv;
+
+  PRUint32 mediaItemId;
+  rv = GetMediaItemId(&mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // The following builder is shared between queries that operate on the
+  // items in this list
+  nsCOMPtr<sbISQLSelectBuilder> builder =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_mi"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                        NS_LITERAL_STRING("simple_media_lists"),
+                        NS_LITERAL_STRING("_sml"),
+                        NS_LITERAL_STRING("member_media_item_id"),
+                        NS_LITERAL_STRING("_mi"),
+                        NS_LITERAL_STRING("media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionLong(NS_LITERAL_STRING("_sml"),
+                                         NS_LITERAL_STRING("media_item_id"),
+                                         sbISQLSelectBuilder::MATCH_EQUALS,
+                                         mediaItemId,
+                                         getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create get last ordinal query
+  rv = builder->ClearColumns();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(),
+                          NS_LITERAL_STRING("max(ordinal)"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mGetLastOrdinalQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create get first ordinal query
+  rv = builder->ClearColumns();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(),
+                          NS_LITERAL_STRING("min(ordinal)"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mGetFirstOrdinalQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create the query used by contains to see if a guid is in this list
+  rv = builder->ClearColumns();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(NS_LITERAL_STRING("_mi"),
+                          NS_LITERAL_STRING("media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_mi"),
+                                              NS_LITERAL_STRING("guid"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mGetMediaItemIdForGuidQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create insertion query
+  nsCOMPtr<sbISQLInsertBuilder> insert =
+    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+
+  rv = insert->SetIntoTableName(NS_LITERAL_STRING("simple_media_lists"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("member_media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("ordinal"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueLong(mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->ToString(mInsertIntoListQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create ordinal update query
+  nsCOMPtr<sbISQLUpdateBuilder> update =
+    do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
+
+  rv = update->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = update->AddAssignmentParameter(NS_LITERAL_STRING("ordinal"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = update->CreateMatchCriterionLong(EmptyString(),
+                                        NS_LITERAL_STRING("media_item_id"),
+                                        sbISQLSelectBuilder::MATCH_EQUALS,
+                                        mediaItemId,
+                                        getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = update->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = update->CreateMatchCriterionParameter(EmptyString(),
+                                             NS_LITERAL_STRING("member_media_item_id"),
+                                             sbISQLSelectBuilder::MATCH_EQUALS,
+                                             getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = update->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = update->ToString(mUpdateListItemOrdinalQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create item delete query
+  nsCOMPtr<sbISQLDeleteBuilder> deleteb =
+    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
+
+  rv = deleteb->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->CreateMatchCriterionLong(EmptyString(),
+                                         NS_LITERAL_STRING("media_item_id"),
+                                         sbISQLSelectBuilder::MATCH_EQUALS,
+                                         mediaItemId,
+                                         getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->CreateMatchCriterionParameter(EmptyString(),
+                                              NS_LITERAL_STRING("member_media_item_id"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->ToString(mDeleteListItemQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create delete all query
+  rv = deleteb->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->CreateMatchCriterionLong(EmptyString(),
+                                         NS_LITERAL_STRING("media_item_id"),
+                                         sbISQLSelectBuilder::MATCH_EQUALS,
+                                         mediaItemId,
+                                         getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->ToString(mDeleteAllQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 

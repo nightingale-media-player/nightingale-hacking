@@ -63,6 +63,11 @@ interface sbIMediaList : sbIMediaItem
   readonly attribute unsigned long length;
 
   /**
+   * \brief Returns the length of filtered view of this list
+   */
+  readonly attribute unsigned long filteredLength;
+
+  /**
    * \brief Get a media item in the list by guid
    * \param aGuid Guid of the media item
    * \return Media item with the requested guid or null if not found
@@ -72,9 +77,16 @@ interface sbIMediaList : sbIMediaItem
   /**
    * \brief Get a media item in the list by index
    * \param aIndex Index of the media item
-   * \return Media item with the requested index or null if not found
+   * \return Media item with the requested index
    */
   sbIMediaItem getItemByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Get a media item in the filtered view of this list by index
+   * \param aIndex Filtered index of the media item
+   * \return Media item with the requested index
+   */
+  sbIMediaItem getItemByFilteredIndex(in unsigned long aIndex);
 
   /**
    * \brief This flag means that the list being enumerated is a copy that may

@@ -51,10 +51,13 @@ public:
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
 
-  sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid);
+  sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid) :
+    mDatabaseGuid(aDatabaseGuid)
+  {
+  }
 
 private:
-  ~sbLocalDatabaseLibrary();
+  nsresult CreateQueries();
 
   nsString mDatabaseGuid;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
@@ -62,6 +65,9 @@ private:
   nsString mGetContractIdForGuidQuery;
   nsString mGetMediaItemIdForGuidQuery;
   nsString mInsertMediaItemQuery;
+
+  // This library's resource guid
+  nsString mGuid;
 };
 
 #endif /* __SBLOCALDATABASELIBRARY_H__ */

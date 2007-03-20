@@ -192,6 +192,13 @@ sbLocalDatabaseResourceProperty::GetUri(nsIURI * *aUri)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseResourceProperty::GetGuid(nsAString& aGuid)
+{
+  aGuid = mGuid;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseResourceProperty::GetCreated(PRInt32 *aCreated)
 {
   NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
@@ -292,3 +299,19 @@ nsresult sbLocalDatabaseResourceProperty::GetPropertyBag()
 
   return rv;
 }
+
+NS_IMETHODIMP
+sbLocalDatabaseResourceProperty::Equals(sbILibraryResource* aOtherLibraryResource,
+                                        PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(aOtherLibraryResource);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoString otherGUID;
+  nsresult rv = aOtherLibraryResource->GetGuid(otherGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = mGuid.Equals(otherGUID);
+  return NS_OK;
+}
+

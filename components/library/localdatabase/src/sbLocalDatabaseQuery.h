@@ -45,8 +45,6 @@ public:
                        PRBool aPrimarySortAscending,
                        nsTArray<FilterSpec>* aFilters);
 
-  ~sbLocalDatabaseQuery();
-
   NS_IMETHODIMP GetFullCountQuery(nsAString& aQuery);
   NS_IMETHODIMP GetFullGuidRangeQuery(nsAString& aQuery);
   NS_IMETHODIMP GetNonNullCountQuery(nsAString& aQuery);

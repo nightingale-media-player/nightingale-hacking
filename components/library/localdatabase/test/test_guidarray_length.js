@@ -31,7 +31,8 @@
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
-  createDatabase(databaseGUID);
+  var library = createLibrary(databaseGUID);
+  var listId = library.QueryInterface(Ci.sbILocalDatabaseLibrary).getMediaItemIdForGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   var a;
 
   var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
@@ -114,7 +115,7 @@ function runTest () {
   // Length tests on simple media list
   array.baseTable = "simple_media_lists";
   array.baseConstraintColumn = "media_item_id";
-  array.baseConstraintValue = 101;
+  array.baseConstraintValue = listId;
 
   // Simple media list, unfiltered
   assertEqual(array.length, 20);

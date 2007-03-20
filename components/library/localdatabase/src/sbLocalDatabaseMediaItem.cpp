@@ -40,19 +40,6 @@ NS_IMPL_CI_INTERFACE_GETTER3(sbLocalDatabaseMediaItem,
                              sbIMediaItem,
                              sbILocalDatabaseMediaItem)
 
-sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem(sbILocalDatabaseLibrary* aLibrary,
-                                                   const nsAString& aGuid) 
-: sbLocalDatabaseResourceProperty(aLibrary, aGuid)
-, mLibrary(aLibrary)
-, mGuid(aGuid)
-, mMediaItemId(0)
-{
-}
-
-sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
-{
-}
-
 // sbIMediaItem
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetLibrary(sbILibrary** aLibrary)
@@ -75,13 +62,6 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetIsMutable(PRBool* aIsMutable)
 {
   *aIsMutable = PR_TRUE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetGuid(nsAString& aGuid)
-{
-  aGuid = mGuid;
   return NS_OK;
 }
 
@@ -200,21 +180,6 @@ sbLocalDatabaseMediaItem::ToString(nsAString& _retval)
   buff.AppendLiteral("}");
 
   _retval = buff;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::Equals(sbIMediaItem* aOtherItem,
-                                 PRBool* _retval)
-{
-  NS_ENSURE_ARG_POINTER(aOtherItem);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsAutoString otherGUID;
-  nsresult rv = aOtherItem->GetGuid(otherGUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  *_retval = mGuid.Equals(otherGUID);
   return NS_OK;
 }
 

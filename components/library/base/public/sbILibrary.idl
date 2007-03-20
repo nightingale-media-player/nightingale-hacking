@@ -107,13 +107,6 @@ interface sbILibrary : sbILibraryResource
   void addMediaListFactory(in AString aType, in AString aContractId);
 
   /**
-   * \brief Import a media list and its contents into this library
-   * \param aMediaList Foreign media list to import into this library
-   * \return A reference to the media list after it has been imported
-   */
-  sbIMediaList importMediaList(in sbIMediaList aMediaList);
-
-  /**
    * \brief Begin a batch operation
    * \param aIsAsync Specify if the batch operation is to execute
    * asynchronously

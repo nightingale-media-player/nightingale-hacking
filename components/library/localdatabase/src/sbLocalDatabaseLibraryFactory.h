@@ -39,10 +39,9 @@ public:
   NS_DECL_SBILIBRARYFACTORY
   NS_DECL_SBILOCALDATABASELIBRARYFACTORY
 
-  sbLocalDatabaseLibraryFactory();
-
 private:
-  ~sbLocalDatabaseLibraryFactory();
+  nsresult InitalizeLibrary(const nsAString& aDatabaseGuid);
+
 };
 
 #endif /* __SBLOCALDATABASELIBRARYFACTORY_H__ */

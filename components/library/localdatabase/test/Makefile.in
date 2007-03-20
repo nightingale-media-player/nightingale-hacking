@@ -38,6 +38,8 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_viewmedialist.js \
                  $(srcdir)/test_simplemedialist.js \
                  $(srcdir)/test_library.js \
+                 $(srcdir)/test_multilibrary.js \
+                 $(srcdir)/test_filterable.js \
                  $(srcdir)/head_localdatabaselibrary.js \
                  $(srcdir)/schema.sql \
                  $(srcdir)/media_items.txt \

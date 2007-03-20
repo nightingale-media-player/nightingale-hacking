@@ -91,12 +91,21 @@ function createDatabase(databaseGuid) {
   }
   dbq.execute();
   dbq.waitForCompletion();
-  dbq.resetQuery();
 
+  loadData(databaseGuid);
+}
+
+function loadData(databaseGuid) {
+
+  var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+              .createInstance(Ci.sbIDatabaseQuery);
+
+  dbq.setDatabaseGUID(databaseGuid);
+  dbq.setAsyncQuery(false);
   dbq.addQuery("begin");
 
   var data = readFile("media_items.txt");
-  a = data.split("\n");
+  var a = data.split("\n");
   for(var i = 0; i < a.length - 1; i++) {
     var b = a[i].split("\t");
     dbq.addQuery("insert into media_items (guid, created, updated, content_url, content_mime_type, content_length, media_list_type_id) values (?, ?, ?, ?, ?, ?, ?)");
@@ -134,15 +143,14 @@ function createDatabase(databaseGuid) {
   a = data.split("\n");
   for(var i = 0; i < a.length - 1; i++) {
     var b = a[i].split("\t");
-    dbq.addQuery("insert into simple_media_lists (media_item_id, member_media_item_id, ordinal) values (?, ?, ?)");
-    dbq.bindInt32Parameter(0, b[0]);
-    dbq.bindInt32Parameter(1, b[1]);
+    dbq.addQuery("insert into simple_media_lists (media_item_id, member_media_item_id, ordinal) values ((select media_item_id from media_items where guid = ?), (select media_item_id from media_items where guid = ?), ?)");
+    dbq.bindStringParameter(0, b[0]);
+    dbq.bindStringParameter(1, b[1]);
     dbq.bindInt32Parameter(2, b[2]);
   }
 
   dbq.addQuery("commit");
   dbq.execute();
-  dbq.waitForCompletion();
   dbq.resetQuery();
 
 }
@@ -188,7 +196,14 @@ function createLibrary(databaseGuid) {
   file.append("db");
   file.append(databaseGuid + ".db");
 
-  return libraryFactory.createLibraryFromDatabase(file);
+  var library = libraryFactory.createLibraryFromDatabase(file);
+  try {
+    library.getMediaItem("songbird:view").clear();
+  }
+  catch(e) {
+  }
+  loadData(databaseGuid);
+  return library;
 }
 
 function makeArray(databaseGUID) {

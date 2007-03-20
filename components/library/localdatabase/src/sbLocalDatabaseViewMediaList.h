@@ -33,6 +33,7 @@
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
+#include <sbIMediaListListener.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <prlock.h>
@@ -40,10 +41,15 @@
 class sbLocalDatabaseViewMediaList : public sbLocalDatabaseMediaListBase
 {
 public:
+  friend class sbViewMediaListEnumerationListener;
+
   NS_DECL_ISUPPORTS_INHERITED
 
   sbLocalDatabaseViewMediaList(sbILocalDatabaseLibrary* aLibrary,
-                               const nsAString& aGuid);
+                               const nsAString& aGuid) :
+    sbLocalDatabaseMediaListBase(aLibrary, aGuid)
+  {
+  }
 
   nsresult Init();
 
@@ -62,19 +68,35 @@ public:
   NS_IMETHOD Clear();
 
 private:
-  ~sbLocalDatabaseViewMediaList();
-
   nsresult DeleteItemByMediaItemId(PRUint32 aMediaItemId);
 
   nsresult CreateQueries();
+
+  nsresult AddItemToLocalDatabase(sbIMediaItem* aMediaItem);
 
   // Query to delete a single item from the view
   nsString mDeleteItemQuery;
 
   // Query to clear the entire list
   nsString mDeleteAllQuery;
+};
 
-  PRLock* mListUpdateLock;
+class sbViewMediaListEnumerationListener : public sbIMediaListEnumerationListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+
+  sbViewMediaListEnumerationListener(sbLocalDatabaseViewMediaList* aList)
+  : mFriendList(aList),
+    mShouldInvalidate(PR_FALSE)
+  {
+    NS_ASSERTION(mFriendList, "Null pointer!");
+  }
+
+private:
+  sbLocalDatabaseViewMediaList* mFriendList;
+  PRBool mShouldInvalidate;
 };
 
 #endif /* __SBLOCALDATABASEVIEWMEDIALIST_H__ */
