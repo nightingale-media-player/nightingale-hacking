@@ -32,7 +32,6 @@
  
 //
 // TODO:
-//  * Add doxygen comments
 //  * add onSwitchCompleted, change onSwitchRequested to allow feedback
 //  * Explore skin/layout versioning issues?
 // 
@@ -185,15 +184,13 @@ LayoutDescription.verify = SkinDescription.verify = function( description )
 
 
 
-
 /**
- *
+ * /class AddonMetadataReader
  * Responsible for reading addon metadata and performing 
  * registration with FeathersManager
- *
  */
 function AddonMetadataReader() {
-  debug("AddonMetadataReader: ctor\n");
+  //debug("AddonMetadataReader: ctor\n");
   this._RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
                         .getService(Components.interfaces.nsIRDFService);
   this._datasource = this._RDF.GetDataSourceBlocking("rdf:addon-metadata");
@@ -242,7 +239,7 @@ AddonMetadataReader.prototype = {
    * Populate FeathersManager using addon metadata
    */
   loadFeathers: function loadFeathers() {
-    debug("AddonMetadataReader: loadFeathers\n");
+    //debug("AddonMetadataReader: loadFeathers\n");
     
     // Get addon list
     var containerUtils = Components.classes["@mozilla.org/rdf/container-utils;1"]
@@ -253,7 +250,7 @@ AddonMetadataReader.prototype = {
     // Search all addons for feathers metadata
     while (addons.hasMoreElements()) {
       var addon = addons.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-      debug("AddonMetadataReader.loadFeathers: - processing " + addon.Value + "\n");
+      //debug("AddonMetadataReader.loadFeathers: - processing " + addon.Value + "\n");
       try {
       
         if (this._datasource.hasArcOut(addon, this._resources.feathers)) {
@@ -312,8 +309,8 @@ AddonMetadataReader.prototype = {
     
     // Submit description
     this._feathersManager.registerSkin(description);
-    debug("AddonMetadataReader: registered skin " + description.internalName
-            + " from addon " + addon.Value + " \n");
+    //debug("AddonMetadataReader: registered skin " + description.internalName
+    //        + " from addon " + addon.Value + " \n");
     
     // Get compatibility information
     var identifiers, showChromeInstructions;
@@ -367,8 +364,8 @@ AddonMetadataReader.prototype = {
     
     // Submit description
     this._feathersManager.registerLayout(description);
-    debug("AddonMetadataReader: registered layout " + description.name +
-          " from addon " + addon.Value + "\n");    
+    //debug("AddonMetadataReader: registered layout " + description.name +
+    //     " from addon " + addon.Value + "\n");    
     
     // Get compatibility information
     var identifiers, showChromeInstructions;
@@ -455,7 +452,7 @@ AddonMetadataReader.prototype = {
    * \param property String property to be copied
    */  
   _getProperty: function _getProperty(source, property) {
-    debug("AddonMetadataReader._getProperty " + source.Value + " " + property + "\n");
+    //debug("AddonMetadataReader._getProperty " + source.Value + " " + property + "\n");
     var target = this._datasource.GetTarget(source, this._resources[property], true);
     if ( target instanceof Components.interfaces.nsIRDFInt
          || target instanceof Components.interfaces.nsIRDFLiteral 
@@ -523,9 +520,9 @@ AddonMetadataReader.prototype = {
       showChromeInstructions.push(showChrome);
     }
     
-    debug("AddonMetadataReader: found " + identifiers.length + " " 
-          + resourceName + " rule(s) for addon " 
-          + addon.Value + "\n");
+    //debug("AddonMetadataReader: found " + identifiers.length + " " 
+    //      + resourceName + " rule(s) for addon " 
+    //      + addon.Value + "\n");
 
     return [identifiers, showChromeInstructions];
   },
@@ -564,6 +561,8 @@ AddonMetadataReader.prototype = {
  *
  * Acts as a registry for skins and layout (known as feathers)
  * and manages compatibility and selection.
+ *
+ * \sa sbIFeathersManager
  */
 function FeathersManager() {
 
@@ -637,8 +636,6 @@ FeathersManager.prototype = {
     if (this._initialized) {
       return;
     }
-  
-    debug("FeathersManager: _init\n");
     
     // Make dataremotes to persist feathers settings
     var createDataRemote =  new Components.Constructor(
@@ -666,8 +663,10 @@ FeathersManager.prototype = {
     this._initialized = true;
   },
   
+  /**
+   * Called on xpcom-shutdown
+   */
   _deinit: function deinit() {
-    debug("FeathersManager: _deinit\n");
     this._skins = null;
     this._layouts = null;
     this._mappings = null;
@@ -679,18 +678,27 @@ FeathersManager.prototype = {
     this._showChromeDataRemote = null;
   },
     
-  
+  /**
+   * \sa sbIFeathersManager
+   */
   get currentSkinName() {
     this._init();
     return this._skinDataRemote.stringValue;
   },
   
+  
+  /**
+   * \sa sbIFeathersManager
+   */  
   get currentLayoutURL() {
     this._init();
     return this._layoutDataRemote.stringValue;
   },
   
   
+  /**
+   * \sa sbIFeathersManager
+   */  
   get previousSkinName() {
     this._init();
     
@@ -706,6 +714,10 @@ FeathersManager.prototype = {
     return DEFAULT_SKIN_NAME;
   },
   
+  
+  /**
+   * \sa sbIFeathersManager
+   */  
   get previousLayoutURL() {
     this._init();
     
@@ -731,22 +743,35 @@ FeathersManager.prototype = {
   },
  
  
+  /**
+   * \sa sbIFeathersManager
+   */ 
   get skinCount() {
     this._init();
     return this._skinCount;
   },
   
+  /**
+   * \sa sbIFeathersManager
+   */  
   get layoutCount() {
     this._init();
     return this._layoutCount;
   },
 
+
+  /**
+   * \sa sbIFeathersManager
+   */
   getSkinDescriptions: function getSkinDescriptions() {
     this._init();      
     // Copy all the descriptions into an array, and then return an enumerator
     return new ArrayEnumerator( [this._skins[key] for (key in this._skins)] );
   },
 
+  /**
+   * \sa sbIFeathersManager
+   */
   getLayoutDescriptions: function getLayoutDescriptions() {
     this._init();        
     // Copy all the descriptions into an array, and then return an enumerator
@@ -754,7 +779,9 @@ FeathersManager.prototype = {
   },
   
   
-  
+  /**
+   * \sa sbIFeathersManager
+   */  
   registerSkin: function registerSkin(skinDesc) {
     SkinDescription.verify(skinDesc);
     
@@ -767,6 +794,9 @@ FeathersManager.prototype = {
     this._onUpdate();
   },
 
+  /**
+   * \sa sbIFeathersManager
+   */
   unregisterSkin: function unregisterSkin(skinDesc) {
     if (this._skins[skinDesc.internalName]) {
       delete this._skins[skinDesc.internalName];
@@ -777,13 +807,18 @@ FeathersManager.prototype = {
     }
   },
 
+  /**
+   * \sa sbIFeathersManager
+   */
   getSkinDescription: function getSkinDescription(internalName) {
     this._init();
     return this._skins[internalName];
   },
   
   
-  
+  /**
+   * \sa sbIFeathersManager
+   */  
   registerLayout: function registerLayout(layoutDesc) {
     LayoutDescription.verify(layoutDesc);
    
@@ -796,6 +831,9 @@ FeathersManager.prototype = {
     this._onUpdate();
   },
 
+  /**
+   * \sa sbIFeathersManager
+   */
   unregisterLayout: function unregisterLayout(layoutDesc) {
     if (this._layouts[layoutDesc.url]) {
       delete this._layouts[layoutDesc.url];
@@ -806,19 +844,23 @@ FeathersManager.prototype = {
     }  
   },
     
+  /**
+   * \sa sbIFeathersManager
+   */    
   getLayoutDescription: function getLayoutDescription(url) {
     this._init();
     return this._layouts[url];
   }, 
 
   
-
+  /**
+   * \sa sbIFeathersManager
+   */
   assertCompatibility: 
   function assertCompatibility(layoutURL, internalName, showChrome) {
     if (! (typeof(layoutURL) == "string" && typeof(internalName) == 'string')) {
       throw Components.results.NS_ERROR_INVALID_ARG;
     }
-    dump("FeathersManager.assertCompatibility: " + layoutURL + ", " + internalName + "  -- " + showChrome + "\n");
     if (this._mappings[layoutURL] == null) {
       this._mappings[layoutURL] = {};
     }
@@ -828,6 +870,9 @@ FeathersManager.prototype = {
     this._onUpdate();
   },
 
+  /**
+   * \sa sbIFeathersManager
+   */
   unassertCompatibility: function unassertCompatibility(layoutURL, internalName) {
     if (this._mappings[layoutURL]) {
       delete this._mappings[layoutURL][internalName];
@@ -838,7 +883,9 @@ FeathersManager.prototype = {
   },
   
 
-
+  /**
+   * \sa sbIFeathersManager
+   */
   isChromeEnabled: function isChromeEnabled(layoutURL, internalName) {
     this._init();
     if (this._mappings[layoutURL]) {
@@ -849,7 +896,9 @@ FeathersManager.prototype = {
   },
 
 
-
+  /**
+   * \sa sbIFeathersManager
+   */
   getSkinsForLayout: function getSkinsForLayout(layoutURL) {
     this._init();
 
@@ -868,7 +917,9 @@ FeathersManager.prototype = {
   },
 
 
-
+  /**
+   * \sa sbIFeathersManager
+   */
   switchFeathers: function switchFeathers(layoutURL, internalName) {
     this._init();
 
@@ -899,15 +950,11 @@ FeathersManager.prototype = {
     
     // Notify that a select is about to occur
     this._onSelect(layoutDescription, skinDescription);
-        
-    dump("FeathersManager.switchFeathers: " + layoutURL + ", " + internalName + "\n");
     
     // Remember the current feathers so that we can revert later if needed
     this._previousLayoutDataRemote.stringValue = this.currentLayoutURL;
     this._previousSkinDataRemote.stringValue = this.currentSkinName;
-    
-    // TODO: do we need a "pending restart" type option?
-    
+        
     // Set new values
     this._layoutDataRemote.stringValue = layoutURL;
     this._skinDataRemote.stringValue = internalName;
@@ -916,7 +963,9 @@ FeathersManager.prototype = {
   },
   
   
-  
+  /**
+   * \sa sbIFeathersManager
+   */  
   addListener: function addListener(listener) {
     if (! (listener instanceof Components.interfaces.sbIFeathersManagerListener))
     {
@@ -925,7 +974,9 @@ FeathersManager.prototype = {
     this._listeners.push(listener);
   },
   
-  
+  /**
+   * \sa sbIFeathersManager
+   */  
   removeListener: function removeListener(listener) {
     var index = this._listeners.indexOf(listener);
     if (index > -1) {
@@ -934,6 +985,10 @@ FeathersManager.prototype = {
   },
 
 
+  /**
+   * Close all player windows (except the plugin host)
+   * and then relaunch the main window
+   */
   _reloadPlayerWindow: function _reloadPlayerWindow() {
 
     var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
@@ -980,6 +1035,10 @@ FeathersManager.prototype = {
   },
 
       
+  /**
+   * Indicates to the rest of the system whether or not to 
+   * enable titlebars when opening windows
+   */
   _setChromeEnabled: function _setChromeEnabled(enabled) {
 
     // Set the global chrome (window border and title) flag
@@ -1004,6 +1063,9 @@ FeathersManager.prototype = {
   },      
       
 
+  /**
+   * Broadcasts an update event to all registered listeners
+   */
   _onUpdate: function onUpdate() {
     this._listeners.forEach( function (listener) {
       listener.onFeathersUpdate();
@@ -1011,6 +1073,9 @@ FeathersManager.prototype = {
   },
 
 
+  /**
+   * Broadcasts an select (feathers switch) event to all registered listeners
+   */
   _onSelect: function onSelect(layoutDesc, skinDesc) {
     // Verify args
     layoutDesc = layoutDesc.QueryInterface(Components.interfaces.sbILayoutDescription);
@@ -1024,7 +1089,9 @@ FeathersManager.prototype = {
 
       
 
-  // watch for XRE startup and shutdown messages 
+  /**
+   * Called by the observer service. Looks for XRE shutdown messages 
+   */
   observe: function(subject, topic, data) {
     var os      = Components.classes["@mozilla.org/observer-service;1"]
                       .getService(Components.interfaces.nsIObserverService);

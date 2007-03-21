@@ -91,7 +91,7 @@ function runTest () {
                                .getService(Components.interfaces.nsIRDFService);
   var datasource = rdfService.GetDataSourceBlocking("rdf:addon-metadata");
     
-  dumpDS("AddonMetadataTest DataSource: ", datasource);
+  // dumpDS("AddonMetadataTest DataSource: ", datasource);
   
   // Find rubberducky in the item container
   var rubberducky = null;

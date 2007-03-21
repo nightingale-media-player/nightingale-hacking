@@ -25,11 +25,6 @@
  */
  
 
-//
-// TODO: 
-//   * Remove debug dumps
-//
-
 /**
  * \file sbAddonMetadata.js
  * \brief Provides an nsIRDFDataSource with the contents of all 
@@ -79,7 +74,7 @@ function ITEM_NS(id) {
  *        addon install.rdf files.
  */
 function AddonMetadata() {
-  debug("\nAddonMetadata: constructed\n");
+  //debug("\nAddonMetadata: constructed\n");
   
   this._RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
                    .getService(Components.interfaces.nsIRDFService);
@@ -89,7 +84,7 @@ function AddonMetadata() {
     // If possible, load the cached datasource from disk. 
     // Otherwise rebuild it by reading the metadata from all addons
     if (!this._loadDatasource() || this._isRebuildRequired()) {
-      debug("AddonMetadata: rebuilding addon metadata datasource\n");
+      //debug("AddonMetadata: rebuilding addon metadata datasource\n");
       this._purgeDatasource();
       this._buildDatasource();
     }
@@ -120,7 +115,7 @@ AddonMetadata.prototype = {
     var emDataFile = this._getProfileFile(FILE_EXTENSIONS);
     
     if (!emDataFile.exists()) {      
-      debug("AddonMetadata._isRebuildRequired: " + FILE_EXTENSIONS + " not found\n");
+      //debug("AddonMetadata._isRebuildRequired: " + FILE_EXTENSIONS + " not found\n");
       return true;
     }
 
@@ -135,7 +130,7 @@ AddonMetadata.prototype = {
     } catch (e) {}    
     
     // If the extensions.rdf hasn't changed, then we don't need to rebuild
-    debug("AddonMetadata._isRebuildRequired: " + lastModified + " == " + newLastModified + "\n");
+    //debug("AddonMetadata._isRebuildRequired: " + lastModified + " == " + newLastModified + "\n");
     if (lastModified == newLastModified) {
       return false;
     }
@@ -143,7 +138,7 @@ AddonMetadata.prototype = {
     // Store the new last modified time
     prefs.setCharPref(PREF_LASTMODIFIED, newLastModified);
 
-    debug("AddonMetadata._isRebuildRequired: true\n");
+    //debug("AddonMetadata._isRebuildRequired: true\n");
 
     // Extensions.rdf has changed, so we will need to rebuild the addons datasource.
     return true;
@@ -156,7 +151,7 @@ AddonMetadata.prototype = {
    * if the datasource needs populating. 
    */
   _loadDatasource: function _loadDatasource() {
-    debug("\nAddonMetadata: _loadDatasource \n");
+    //debug("\nAddonMetadata: _loadDatasource \n");
     
     var file = this._getProfileFile(FILE_ADDONMETADATA);
     
@@ -180,7 +175,7 @@ AddonMetadata.prototype = {
    * Clean out the contents of the datasource
    */
   _purgeDatasource: function _purgeDatasource() {
-    debug("\nAddonMetadata: _purgeDatasource \n");
+    //debug("\nAddonMetadata: _purgeDatasource \n");
     
     var file = this._getProfileFile(FILE_ADDONMETADATA);
     
@@ -226,7 +221,7 @@ AddonMetadata.prototype = {
    * addon install.rdf files.
    */
   _buildDatasource: function _buildDatasource() {
-    debug("\nAddonMetadata: _buildDatasource \n");
+    //debug("\nAddonMetadata: _buildDatasource \n");
 
     // Make a container to list all installed extensions
     var itemRoot = this._RDF.GetResource(RDFURI_ADDON_ROOT);    
@@ -245,11 +240,11 @@ AddonMetadata.prototype = {
             
       // If the extension is disabled, do not include it in our datasource 
       if (this._isExtensionDisabled(id))  {
-        debug("\nAddonMetadata:  id {" + id +  "} is disabled.\n");
+        //debug("\nAddonMetadata:  id {" + id +  "} is disabled.\n");
         continue;
       }
       
-      debug("\nAddonMetadata:  loading install.rdf for id {" + id +  "}\n");
+      //debug("\nAddonMetadata:  loading install.rdf for id {" + id +  "}\n");
       
       var location = extManager.getInstallLocation(id);
       var installManifestFile = location.getItemFile(id, FILE_INSTALL_MANIFEST);
@@ -271,7 +266,7 @@ AddonMetadata.prototype = {
     // Save changes  
     this._datasource.QueryInterface(Components.interfaces.nsIRDFRemoteDataSource)
                     .Flush();
-    debug("\nAddonMetadata: _buildDatasource complete \n");
+    //debug("\nAddonMetadata: _buildDatasource complete \n");
   },
   
   
@@ -356,7 +351,7 @@ AddonMetadata.prototype = {
 
   
   _deinit: function _deinit() {
-    debug("\nAddonMetadata: deinit\n");
+    //debug("\nAddonMetadata: deinit\n");
 
     this._RDF = null;
     this._datasource = null;
