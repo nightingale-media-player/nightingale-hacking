@@ -61,7 +61,7 @@ interface sbISearchableMediaList : nsISupports
    * \brief Set a new search
    * \param aSearch A property bag of search parameters.  The keys map to
    * properties and the values are the search value for each property.  A
-   * null key will search all searchable properties with its value.
+   * key with value "*" will search all properties.
    */
   void setSearch(in sbIPropertyArray aSearch);
 

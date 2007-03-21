@@ -37,7 +37,7 @@ function runTest () {
                 .createInstance(Ci.sbILocalDatabasePropertyCache);
   cache.databaseGUID = databaseGUID;
 
-  var db = loadDatabase();
+  var db = loadMockDatabase();
 
   /*
    * Request guids in 20 guid chunks
@@ -79,58 +79,5 @@ function runTest () {
     }
   }
 
-}
-
-function loadDatabase() {
-  var data = readFile("media_items.txt");
-  var a = data.split("\n");
-
-  var sp = [
-    "http://songbirdnest.com/data/1.0#created",
-    "http://songbirdnest.com/data/1.0#updated",
-    "http://songbirdnest.com/data/1.0#contentUrl",
-    "http://songbirdnest.com/data/1.0#contentMimeType",
-    "http://songbirdnest.com/data/1.0#contentLength"
-  ];
-
-  var db = {};
-
-  for(var i = 0; i < a.length - 1; i++) {
-    var b = a[i].split("\t");
-    var item = db[b[1]];
-    if(!item) {
-      item = {};
-      db[b[1]] = item;
-    }
-
-    for(var j = 0; j < sp.length; j++) {
-      item[sp[j]] = b[j + 2];
-    }
-  }
-
-  var props = [
-    "http://songbirdnest.com/data/1.0#trackName",
-    "http://songbirdnest.com/data/1.0#albumName",
-    "http://songbirdnest.com/data/1.0#artistName",
-    "http://songbirdnest.com/data/1.0#duration",
-    "http://songbirdnest.com/data/1.0#genre",
-    "http://songbirdnest.com/data/1.0#track",
-    "http://songbirdnest.com/data/1.0#year",
-    "http://songbirdnest.com/data/1.0#discNumber",
-    "http://songbirdnest.com/data/1.0#totalDiscs",
-    "http://songbirdnest.com/data/1.0#totalTracks",
-    "http://songbirdnest.com/data/1.0#lastPlayTime",
-    "http://songbirdnest.com/data/1.0#playCount"
-  ];
-
-  data = readFile("resource_properties.txt");
-  a = data.split("\n");
-  for(var i = 0; i < a.length - 1; i++) {
-    var b = a[i].split("\t");
-    var item = db[b[0]];
-    item[props[parseInt(b[1]) - 1]] = b[2];
-  }
-
-  return db;
 }
 

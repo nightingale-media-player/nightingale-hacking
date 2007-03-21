@@ -43,6 +43,7 @@
 #include <sbIMediaList.h>
 #include <sbIMediaListListener.h>
 #include <sbIFilterableMediaList.h>
+#include <sbISearchableMediaList.h>
 #include <sbIDatabaseResult.h>
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseLibrary.h"
@@ -75,6 +76,7 @@ class sbLocalDatabaseMediaListBase : public sbLocalDatabaseResourceProperty,
                                      public sbIMediaList,
                                      public sbILocalDatabaseMediaItem,
                                      public sbIFilterableMediaList,
+                                     public sbISearchableMediaList,
                                      public nsIClassInfo
 {
   typedef nsTArray<nsString> sbStringArray;
@@ -94,6 +96,7 @@ public:
   NS_DECL_SBIMEDIALIST
   NS_DECL_SBILOCALDATABASEMEDIAITEM
   NS_DECL_SBIFILTERABLEMEDIALIST
+  NS_DECL_SBISEARCHABLEMEDIALIST
   NS_DECL_NSICLASSINFO
 
   sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
@@ -187,6 +190,12 @@ private:
   nsresult EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnumerator,
                                   sbIMediaListEnumerationListener* aListener);
 
+  nsresult UpdateFiltersInternal(sbIPropertyArray* aPropertyArray,
+                                 PRBool aReplace);
+
+  nsresult UpdateViewArrayConfiguration();
+
+
 protected:
 
   // The library this media list instance belogs to
@@ -208,8 +217,8 @@ protected:
   // A monitor for changes to the media list.
   PRMonitor* mFullArrayMonitor;
 
-  // A monitor for changes in the view filter
-  PRMonitor* mViewFilterMonitor;
+  // A lock for changes in the view filter
+  PRLock* mViewArrayLock;
 
   PRBool mLockedEnumerationActive;
 
@@ -223,6 +232,12 @@ private:
   // This lock protects the code that checks for existing entries in the proxy
   // table.
   PRLock* mListenerProxyTableLock;
+
+  // Map of current view filter configuration
+  sbStringArrayHash mViewFilters;
+
+  // Current search filter configuration
+  nsCOMPtr<sbIPropertyArray> mViewSearches;
 };
 
 class sbDatabaseResultStringEnumerator : public nsIStringEnumerator

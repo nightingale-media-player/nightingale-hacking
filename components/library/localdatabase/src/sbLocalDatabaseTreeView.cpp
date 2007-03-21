@@ -61,7 +61,7 @@ sbLocalDatabaseTreeView::Init()
   mArray = do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mArray->SetDatabaseGUID(NS_LITERAL_STRING("test_1000"));
+  rv = mArray->SetDatabaseGUID(NS_LITERAL_STRING("test_localdatabaselibrary"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mArray->SetBaseTable(NS_LITERAL_STRING("media_items"));
@@ -85,7 +85,7 @@ sbLocalDatabaseTreeView::Init()
   mPropertyCache = do_CreateInstance(SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertyCache->SetDatabaseGUID(NS_LITERAL_STRING("test_1000"));
+  rv = mPropertyCache->SetDatabaseGUID(NS_LITERAL_STRING("test_localdatabaselibrary"));
   NS_ENSURE_SUCCESS(rv, rv);
 
 //  rv = mArray->SetPropertyCache(mPropertyCache);
@@ -187,7 +187,7 @@ sbLocalDatabaseTreeView::ResetFilters()
     nsCOMPtr<nsIStringEnumerator> searchEnum =
       new sbTArrayStringEnumerator(&search);
     NS_ENSURE_TRUE(searchEnum, NS_ERROR_OUT_OF_MEMORY);
-    rv = mArray->AddFilter(EmptyString(), searchEnum, PR_TRUE);
+    rv = mArray->AddFilter(NS_LITERAL_STRING("*"), searchEnum, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

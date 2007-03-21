@@ -29,15 +29,71 @@
  */
 
 function runTest () {
-/*
+
   var library = createLibrary("test_filterable");
 
+  // Tests with view media list
   var view = library.getMediaItem("songbird:view");
-
   var e = view.getFilterValues("http://songbirdnest.com/data/1.0#albumName");
+
+  var array = [];
   while(e.hasMore()) {
-    dump(e.getNext() + "\n");
+    array.push(e.getNext());
   }
-*/
+  assertArray(array, "data_filterable_view_album.txt");
+
+  var pa = createPropertyArray();
+  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
+  view.setFilters(pa);
+  assertEqual(view.filteredLength, 10);
+
+  // shows replace
+  pa = createPropertyArray();
+  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "Accept");
+  view.setFilters(pa);
+  assertEqual(view.filteredLength, 15);
+
+  pa = createPropertyArray();
+  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
+  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "Accept");
+  view.setFilters(pa);
+  assertEqual(view.filteredLength, 25);
+
+  pa = createPropertyArray();
+  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "a-ha");
+  view.updateFilters(pa);
+  assertEqual(view.filteredLength, 35);
+
+  pa = createPropertyArray();
+  pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "Back in Black");
+  view.updateFilters(pa);
+  assertEqual(view.filteredLength, 10);
+
+  pa = createPropertyArray();
+  pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "Restless and Wild/Balls to the Wall");
+  view.updateFilters(pa);
+  assertEqual(view.filteredLength, 25);
+
+  view.removeFilters(pa);
+  assertEqual(view.filteredLength, 10);
+
+  // Test with simple media list
+  var list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  var e = list.getFilterValues("http://songbirdnest.com/data/1.0#albumName");
+  array = [];
+  while(e.hasMore()) {
+    array.push(e.getNext());
+  }
+  assertArray(array, "data_filterable_sml101_album.txt");
+
+  pa = createPropertyArray();
+  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
+  list.setFilters(pa);
+  assertEqual(list.filteredLength, 10);
+
 }
-  
+
+function createPropertyArray() {
+  return Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"].createInstance(Ci.sbIPropertyArray);
+}
+

@@ -40,11 +40,14 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_library.js \
                  $(srcdir)/test_multilibrary.js \
                  $(srcdir)/test_filterable.js \
+                 $(srcdir)/test_searchable.js \
                  $(srcdir)/head_localdatabaselibrary.js \
                  $(srcdir)/schema.sql \
                  $(srcdir)/media_items.txt \
                  $(srcdir)/resource_properties.txt \
                  $(srcdir)/simple_media_lists.txt \
+                 $(srcdir)/data_filterable_view_album.txt \
+                 $(srcdir)/data_filterable_sml101_album.txt \
                  $(srcdir)/data_sort_trackname_asc.txt \
                  $(srcdir)/data_sort_trackname_desc.txt \
                  $(srcdir)/data_sort_playcount_asc.txt \

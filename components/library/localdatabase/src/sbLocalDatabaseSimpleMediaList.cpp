@@ -1072,6 +1072,74 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   rv = deleteb->ToString(mDeleteAllQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Create distinct property values query
+  rv = builder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetDistinct(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(NS_LITERAL_STRING("_rp"),
+                          NS_LITERAL_STRING("obj"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_mi"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                        NS_LITERAL_STRING("simple_media_lists"),
+                        NS_LITERAL_STRING("_sml"),
+                        NS_LITERAL_STRING("member_media_item_id"),
+                        NS_LITERAL_STRING("_mi"),
+                        NS_LITERAL_STRING("media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionLong(NS_LITERAL_STRING("_sml"),
+                                         NS_LITERAL_STRING("media_item_id"),
+                                         sbISQLSelectBuilder::MATCH_EQUALS,
+                                         mediaItemId,
+                                         getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                        NS_LITERAL_STRING("resource_properties"),
+                        NS_LITERAL_STRING("_rp"),
+                        NS_LITERAL_STRING("guid"),
+                        NS_LITERAL_STRING("_mi"),
+                        NS_LITERAL_STRING("guid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                        NS_LITERAL_STRING("properties"),
+                        NS_LITERAL_STRING("_p"),
+                        NS_LITERAL_STRING("property_id"),
+                        NS_LITERAL_STRING("_rp"),
+                        NS_LITERAL_STRING("property_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_p"),
+                                              NS_LITERAL_STRING("property_name"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddOrder(NS_LITERAL_STRING("_rp"),
+                         NS_LITERAL_STRING("obj_sortable"),
+                         PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mDistinctPropertyValuesQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

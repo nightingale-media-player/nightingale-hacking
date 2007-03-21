@@ -309,10 +309,10 @@ sbLocalDatabaseQuery::AddFilters()
       }
 
       /*
-       * If no property is specified, we need to search all properties.  Use
-       * a subquery here to prevent duplicates
+       * If the "*" property is specified, we need to search all properties.
+       * Use a subquery here to prevent duplicates
        */
-      if (fs.property.IsEmpty()) {
+      if (fs.property.EqualsLiteral("*")) {
         nsCOMPtr<sbISQLSelectBuilder> builder =
           do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
         NS_ENSURE_SUCCESS(rv, rv);

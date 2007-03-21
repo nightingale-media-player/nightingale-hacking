@@ -65,24 +65,32 @@ interface sbIFilterableMediaList : nsISupports
   /**
    * \brief Set a new filter configuration.
    * \param aPropertyArray Array of name value pairs used to filter the list
-   *        The filters are applied in the same order as the array.  An empty
-   *        value means no filtering on the corresponding property
+   *        For each distinct property, the list of values in the filter for
+   *        that property will be replaced with the supplied values.  An empty
+   *        value will remove the property from the list of filters.
    */
   void setFilters(in sbIPropertyArray aPropertyArray);
 
   /**
    * \brief Update an existing filter
-   * \param aPropertyName Array of name value pairs to update the current
-   *        filter configuration with.  Properties that appear in this array
-   *        will first be removed from the filter then re-added with the
-   *        new configuration.  An emptuy value means to remove all filtering
-   *        on the corresponding property.
+   * \param aPropertyName Array of name value pairs to used to update the
+   *        current filter configuration.  For each distinct property, the list
+   *        of values in the filter for that propery will be appended to with
+   *        the supplied values.
    */
-  void updateFilter(in sbIPropertyArray aPropertyArray);
+  void updateFilters(in sbIPropertyArray aPropertyArray);
+
+  /**
+   * \brief Remove property values from an existing filter
+   * \param aPropertyName Array of name value pairs to remove property value
+   *        pairs from the filter.  Each property value pair in the array
+   *        will be removed from the filter if it exists.
+   */
+  void removeFilters(in sbIPropertyArray aPropertyArray);
 
   /**
    * \brief Clears the current filter configuration
    */
-  void clearFilter();
+  void clearFilters();
 };
 

@@ -231,6 +231,22 @@ function assertSort(array, dataFile) {
 
 }
 
+function assertArray(array, dataFile) {
+
+  var data = readFile(dataFile);
+  var a = data.split("\n");
+
+  if(a.length - 1 != array.length) {
+    fail("length wrong, got " + array.length + " expected " + (a.length - 1));
+  }
+
+  for(var i = 0; i < a.length - 1; i++) {
+    if(array[i] != a[i]) {
+      fail("sort failed, index " + i + " got " + array[i] + " expected " + a[i]);
+    }
+  }
+}
+
 function assertList(list, data) {
 
   var a;
@@ -407,15 +423,70 @@ TestMediaListEnumerationListener.prototype = {
   }
 }
 
-function readList(dataFile) {
+function readList(dataFile, index) {
 
   var data = readFile(dataFile);
   var a = data.split("\n");
+  index = index || 0;
 
   var b = [];
   for(var i = 0; i < a.length - 1; i++) {
-    b.push(a[i].split("\t")[0]);
+    b.push(a[i].split("\t")[index]);
   }
 
   return b;
 }
+
+function loadMockDatabase() {
+  var data = readFile("media_items.txt");
+  var a = data.split("\n");
+
+  var sp = [
+    "http://songbirdnest.com/data/1.0#created",
+    "http://songbirdnest.com/data/1.0#updated",
+    "http://songbirdnest.com/data/1.0#contentUrl",
+    "http://songbirdnest.com/data/1.0#contentMimeType",
+    "http://songbirdnest.com/data/1.0#contentLength"
+  ];
+
+  var db = {};
+
+  for(var i = 0; i < a.length - 1; i++) {
+    var b = a[i].split("\t");
+    var item = db[b[1]];
+    if(!item) {
+      item = {};
+      db[b[1]] = item;
+    }
+
+    for(var j = 0; j < sp.length; j++) {
+      item[sp[j]] = b[j + 2];
+    }
+  }
+
+  var props = [
+    "http://songbirdnest.com/data/1.0#trackName",
+    "http://songbirdnest.com/data/1.0#albumName",
+    "http://songbirdnest.com/data/1.0#artistName",
+    "http://songbirdnest.com/data/1.0#duration",
+    "http://songbirdnest.com/data/1.0#genre",
+    "http://songbirdnest.com/data/1.0#track",
+    "http://songbirdnest.com/data/1.0#year",
+    "http://songbirdnest.com/data/1.0#discNumber",
+    "http://songbirdnest.com/data/1.0#totalDiscs",
+    "http://songbirdnest.com/data/1.0#totalTracks",
+    "http://songbirdnest.com/data/1.0#lastPlayTime",
+    "http://songbirdnest.com/data/1.0#playCount"
+  ];
+
+  data = readFile("resource_properties.txt");
+  a = data.split("\n");
+  for(var i = 0; i < a.length - 1; i++) {
+    var b = a[i].split("\t");
+    var item = db[b[0]];
+    item[props[parseInt(b[1]) - 1]] = b[2];
+  }
+
+  return db;
+}
+
