@@ -61,6 +61,15 @@ interface sbIFeathersManager : nsISupports
    */
   readonly attribute AString currentSkinName;
 
+  /**
+   * \brief URL for the previously active or default layout
+   */
+  readonly attribute AString previousLayoutURL;
+  
+  /**
+   * \brief Skin internalName string for the previously active or default skin
+   */
+  readonly attribute AString previousSkinName;
 
   /**
    * \brief Enumerator for all registered sbISkinDescription objects
@@ -215,18 +224,6 @@ interface sbIFeathersManager : nsISupports
    */
   void switchFeathers(in AString aLayoutURL, 
                          in AString aInternalName);
-
-
-  /**
-   * \brief Switch to the previously selected window-skin pair
-   *        or fall back to the default.
-   *
-   * Attempts to switch to the feathers that were active 
-   * prior to the current selection. If this fails it will
-   * fall back to the default window and skin, or if that is 
-   * already in use, the alternate default and skin.
-   */
-  void revertFeathers();
 
 
   /**

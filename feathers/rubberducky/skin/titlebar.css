@@ -130,13 +130,6 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   background-repeat: no-repeat !important;
 }
 
-#sysbtn_minimode
-{
-  width: 9px !important;
-  height: 9px !important;
-  background-repeat: no-repeat !important;
-}
-
 sb-sys-hide-button
 {
   width: 9px !important;
@@ -242,7 +235,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   padding: 0px !important;
   background-repeat: no-repeat !important;
 }
-.mac > #sysbtn_minimode
+.mac > .sb-feathers-toggle-button
 {  
   width: 25px !important;
   height: 17px !important;

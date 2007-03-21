@@ -72,7 +72,7 @@ try
       if (platform == "Darwin")
         document.getElementById("mini_btn_fullscreen").setAttribute("hidden", "true");
 
-      document.getElementById("mini_btn_max").setAttribute("hidden", "true");
+      document.getElementById("sysbtn_mainmode").setAttribute("hidden", "true");
       document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
     }
      

@@ -46,7 +46,7 @@ const IID = Components.interfaces.sbIFeathersManager;
 const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root" 
 const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
 
-// Fallback layouts/skin, used in revertFeathers.
+// Fallback layouts/skin, used by previousSkinName and previousLayoutURL
 // Changes to the shipped feathers must be reflected here
 // and in test_feathersManager.js
 const DEFAULT_MAIN_LAYOUT_URL         = "chrome://rubberducky/content/xul/mainwin.xul";
@@ -55,6 +55,9 @@ const DEFAULT_SKIN_NAME               = "rubberducky/0.2";
 
 const WINDOWTYPE_SONGBIRD_PLAYER      = "Songbird:Main";
 const WINDOWTYPE_SONGBIRD_CORE        = "Songbird:Core";
+
+
+
 
 /**
  * /class ArrayEnumerator
@@ -180,9 +183,14 @@ LayoutDescription.verify = SkinDescription.verify = function( description )
 
 
 
+
+
+
 /**
+ *
  * Responsible for reading addon metadata and performing 
  * registration with FeathersManager
+ *
  */
 function AddonMetadataReader() {
   debug("AddonMetadataReader: ctor\n");
@@ -547,6 +555,9 @@ AddonMetadataReader.prototype = {
 
 
 
+
+
+
 /**
  * /class FeathersManager
  * /brief Coordinates the loading of feathers
@@ -679,6 +690,47 @@ FeathersManager.prototype = {
     return this._layoutDataRemote.stringValue;
   },
   
+  
+  get previousSkinName() {
+    this._init();
+    
+    // Test to make sure the previous skin exists
+    var skin = this.getSkinDescription(this._previousSkinDataRemote.stringValue);
+    
+    // If the skin exists, then return the skin name
+    if (skin) {
+      return skin.internalName;
+    }
+    
+    // Otherwise, return the default skin
+    return DEFAULT_SKIN_NAME;
+  },
+  
+  get previousLayoutURL() {
+    this._init();
+    
+    // Test to make sure the previous layout exists
+    var layout = this.getLayoutDescription(this._previousLayoutDataRemote.stringValue);
+    
+    // If the layout exists, then return the url/identifier
+    if (layout) {
+      return layout.url;
+    }
+    
+    // Otherwise, return the default 
+    
+    // Use the main default unless it is currently
+    // active. This way if the user reverts for the
+    // first time they will end up in the miniplayer.
+    var layoutURL = DEFAULT_MAIN_LAYOUT_URL;
+    if (this.currentLayoutURL == layoutURL) {
+      layoutURL = DEFAULT_SECONDARY_LAYOUT_URL;
+    }
+    
+    return layoutURL;    
+  },
+ 
+ 
   get skinCount() {
     this._init();
     return this._skinCount;
@@ -865,41 +917,6 @@ FeathersManager.prototype = {
   
   
   
-  revertFeathers: function revertFeathers() {
-    this._init();      
-  
-    // Attempt to switch to the previously selected feathers
-    var fallback;
-    try {
-      this.switchFeathers(this._previousLayoutDataRemote.stringValue,
-                          this._previousSkinDataRemote.stringValue);
-    } catch (e) {
-      fallback = true;
-    }
-    
-    // If the switch failed then fallback to the default
-    if (fallback) {
-      // Use the main default unless it is currently
-      // active. This way if the user reverts for the
-      // first time they will end up in the miniplayer.
-      var layoutURL = DEFAULT_MAIN_LAYOUT_URL;
-      if (this.currentLayoutURL == layoutURL) {
-        layoutURL = DEFAULT_SECONDARY_LAYOUT_URL;
-      }
-      try {
-        this.switchFeathers(layoutURL, DEFAULT_SKIN_NAME);
-      } catch (e) {
-        throw("FeathersManager.revertFeathers: Unable to revert to the " +
-              "fallback feathers [" + layoutURL + "], [" + DEFAULT_SKIN_NAME +
-              "].  This should never happen. Someone modified the " +
-              " default feathers and forgot to change sbFeathersManager.js\n" +
-              " Error: " + e.toString() + "\n");  
-      }
-    }
-  },
-
-
-
   addListener: function addListener(listener) {
     if (! (listener instanceof Components.interfaces.sbIFeathersManagerListener))
     {

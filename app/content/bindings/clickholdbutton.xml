@@ -42,7 +42,7 @@
   <binding id="clickholdbutton">
 
     <content>
-        <xul:button sbid="button" class="clickhold-button" xbl:inherits="label,flex,disabled" />
+        <xul:button sbid="button" class="clickhold-button" xbl:inherits="label,flex,disabled,tooltiptext" />
         <xul:menupopup sbid="popup" class="clickhold-menupopup" xbl:inherits="position,popupanchor,popupalign,type=menupopuptype,onpopupshowing=onmenushowing,onpopupshown=onmenushown,onpopuphiding=onmenuhiding">
           <children/>
         </xul:menupopup>        
@@ -102,10 +102,22 @@
    <handlers>
      <handler event="popupshown">
        <![CDATA[
+       // Note that if the menuitems were built by a binding then they will show up
+       // as the originalTarget, not the target of the event.
+       var target = (event.originalTarget) ? event.originalTarget : event.target;
+
+       // If this popupshown event comes from a sub-popupmenu
+       // then ignore it.
+       if (target != this.popup) {
+         return;
+       }
        
+       // If the menupopup does not contain any items, then we should not show it.
        // we cannot cancel the menu earlier (for instance, in delayPopup, or showPopup) 
-       // because some menus only add their menuitems in onpopupshowing
-       if (event.target.childNodes.length == 0) this.popup.hidePopup();
+       // because some menus only add their menuitems in onpopupshowing.
+       if (target.childNodes.length == 0) {
+         this.popup.hidePopup();
+       }
 
        // Centered?
        // If we want to use anchoring (which we do) then we can only
@@ -115,11 +127,36 @@
        //this.popup.style.marginLeft = offset + "px";
        //this.popup.style.visibility = "visible";
        
+       // While the popup is showing we want to disable the tooltiptext
+       // on the clickhold button.  If we don't then the tooltip will
+       // appear beside each menu item.
+       var tooltip = this.getAttribute("tooltiptext");
+       if (tooltip != "") {
+         this.originalTooltip = tooltip;
+         this.setAttribute("tooltiptext", "");
+       }
+       
        this.popupShowing = true;
         ]]>
      </handler>
      <handler event="popuphiding">
        <![CDATA[
+       
+       // Note that if the menuitems were built by a binding then they will show up
+       // as the originalTarget, not the target of the event.
+       var target = (event.originalTarget) ? event.originalTarget : event.target;
+
+       // If this popuphiding event comes from a sub-popupmenu
+       // then ignore it.
+       if (target != this.popup) {
+         return;
+       }
+
+       // When the menupopup hides we need to restore the tooltip
+       if (this.originalTooltip) {
+         this.setAttribute("tooltiptext", this.originalTooltip);
+       }
+
        this.popupShowing = false;
         ]]>
      </handler>

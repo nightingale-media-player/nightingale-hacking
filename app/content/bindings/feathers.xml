@@ -102,7 +102,6 @@
               case "feathers.item":
                 var layoutURL = item.getAttribute("layoutURL"); 
                 var skinName = item.getAttribute("skinName");
-                dump("Feathers-menupopup XBL: Selecting "  +layoutURL+ " " +skinName+ "\n");
                 this._feathersManager.switchFeathers(layoutURL, skinName);
                 break;
                 
@@ -136,7 +135,6 @@
         <body>
           <![CDATA[
             try {  
-              dump("Feathers-menupopup XBL: rebuilding feathers menu.\n");
               
               this._currentLayout = this._feathersManager.currentLayoutURL; 
               this._currentSkin = this._feathersManager.currentSkinName;
@@ -312,17 +310,11 @@
   <!--
    Clickhold button that embeds the feathers-menupopup menu. When clicked
    it will attempt to revert to the previously selected feathers.
-   
-   TODO:
-   * Kill #sysbtn_minimode
-   * Add a localized tooltip
-   * Get rid of inherited ID
-   
   -->
   <binding id="feathers-togglebutton">
     <content>
       <xul:clickholdbutton anonid="clickhold"  
-                 xbl:inherits="position,popupanchor,popupalign,id"
+                 xbl:inherits="position,popupanchor,popupalign"
                  class="sb-feathers-toggle-button"
                  menupopuptype="feathers"/>
     </content>
@@ -331,6 +323,8 @@
         <![CDATA[
           this._feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
                                      .getService(Components.interfaces.sbIFeathersManager);
+                                     
+          this._applyClickholdTooltip();
         ]]>
       </constructor>
 
@@ -341,20 +335,77 @@
       </destructor>
 
       <!--
-        Called when a child menuitem is selected.  Attempts 
-        to switch feathers based on the properties of the
-        menuitem.
+        Called when the clickhold button is clicked.  
       -->
       <method name="onCommand">
         <parameter name="target"/>
         <body>
           <![CDATA[
-            dump("Feathers-toggle XBL: reverting to previous feathers\n");  
+            // Get the previously active (or default) skin and layout
+            var layoutURL = this._feathersManager.previousLayoutURL;
+            var skinName = this._feathersManager.previousSkinName;
             
+            // Attempt to switch feathers
+            try {
+              this._feathersManager.switchFeathers(layoutURL, skinName);
+            } catch (e) {
+              dump("feathers.xml#feathers-togglebutton: Unable to revert to the " +
+                   "fallback feathers [" + layoutURL + "], [" + skinName +
+                   "].  This should never happen. Someone modified the " +
+                   " default feathers and forgot to change sbFeathersManager.js\n" +
+                   " Error: " + e.toString() + "\n");  
+            }
              
-            // Ask the feathers manager to switch to the previously
-            // used skin-layout.
-            this._feathersManager.revertFeathers();
+          ]]>
+        </body>
+      </method>
+            
+      <!--
+        Creates a tooltip for the clickhold button.
+      -->
+      <method name="_applyClickholdTooltip">
+        <body>
+          <![CDATA[
+            // Get the songbird string bundle. 
+            var stringBundleService =
+                Components.classes["@mozilla.org/intl/stringbundle;1"]
+                          .getService(Components.interfaces.nsIStringBundleService);
+            var stringBundle = stringBundleService.createBundle( 
+                 "chrome://songbird/locale/songbird.properties" );             
+             
+            // Try to create the tooltip
+            var tooltip;
+            try {
+              tooltip = stringBundle.GetStringFromName("feathers.switchfeathers");              
+            } catch (e) { 
+              tooltip="[Localization Error] Switch Feathers";
+              dump("\n\n\nfeathers.xml:  Error getting clickhold tooltip from " +
+                   "songbird.properties bundle\n"+ e + "\n"); 
+            }
+
+            // Get the clickhold
+            var clickhold = document.getAnonymousElementByAttribute(this,
+                                                       'anonid', 'clickhold');
+
+
+            // Now add to the tooltip the feathers that will be selected
+            // when the button is pressed.
+
+            // Requesting the previous feathers will trigger the FeathersManager's
+            // lazily metadata loading.
+            // We do not want to block the UI from appearing, so we delay the final  
+            // tooltip creation step until after the binding is constructed.
+            
+            var finishClickholdTooltip = function finishClickholdTooltip(feathersManager) {
+              // Figure out which feathers were previously active
+              var skin = feathersManager.getSkinDescription(
+                              feathersManager.previousSkinName);
+              var layout = feathersManager.getLayoutDescription(
+                              feathersManager.previousLayoutURL);
+              tooltip += " (" + layout.name + " / " + skin.name + ")";
+              clickhold.setAttribute("tooltiptext", tooltip);  
+            };
+            setTimeout(finishClickholdTooltip, 500, this._feathersManager);
           ]]>
         </body>
       </method>

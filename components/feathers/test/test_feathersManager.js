@@ -30,7 +30,7 @@
  
 
 
-// Fallback layouts/skin, used in revertFeathers.
+// Fallback layouts/skin, used by previousSkinName and previousLayoutURL
 // Changes to the shipped feathers must be reflected here
 // and in sbFeathersManager.js
 const DEFAULT_MAIN_LAYOUT_URL         = "chrome://rubberducky/content/xul/mainwin.xul";
@@ -222,12 +222,14 @@ function testDefaultRevert() {
   layoutDataRemote.stringValue = "somethingelse";
   
   // Confirm that revert switches us to the primary fallback
-  feathersManager.revertFeathers();
+  feathersManager.switchFeathers(feathersManager.previousLayoutURL,
+                                 feathersManager.previousSkinName);
   assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
   assertEqual(layoutDataRemote.stringValue, DEFAULT_MAIN_LAYOUT_URL);
   
   // Now revert again, taking us to the secondary fallback
-  feathersManager.revertFeathers();
+  feathersManager.switchFeathers(feathersManager.previousLayoutURL,
+                                 feathersManager.previousSkinName);
   assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
   assertEqual(layoutDataRemote.stringValue, DEFAULT_SECONDARY_LAYOUT_URL);
 }
@@ -418,7 +420,8 @@ function runTest () {
   // Now revert, expecting the values manually set above.
   feathersChangeListener.expectSkin = skins[2];
   feathersChangeListener.expectLayout = layouts[0];
-  feathersManager.revertFeathers();
+  feathersManager.switchFeathers(feathersManager.previousLayoutURL,
+                                 feathersManager.previousSkinName);
   // Make sure onSelect callback occurred
   assertEqual(feathersChangeListener.expectSkin, null);
   assertEqual(feathersChangeListener.expectLayout, null);

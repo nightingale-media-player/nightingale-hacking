@@ -115,7 +115,7 @@ sb-sys-minimize-button
   list-style-image: url(chrome://songbird/skin/default/sysbtn_minimize_9x9.png) ;  
 }
 
-/*  Mini */
+/*  Switch Feathers */
 .sb-feathers-toggle-button
 {
   list-style-image: url(chrome://songbird/skin/default/sysbtn_minimode_9x9.png) ; 
