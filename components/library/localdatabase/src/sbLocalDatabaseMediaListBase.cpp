@@ -80,7 +80,8 @@ sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibra
     nsAutoLock::NewLock("sbLocalDatabaseMediaListBase::mListenerProxyTableLock");
   NS_ASSERTION(mListenerProxyTableLock, "Failed to create lock!");
 
-  NS_ASSERTION(mViewFilters.Init(), "Failed to init view filter table");
+  PRBool success = mViewFilters.Init();
+  NS_ASSERTION(success, "Failed to init view filter table");
 }
 
 sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
@@ -1566,6 +1567,7 @@ sbLocalDatabaseMediaListBase::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
       // then we need to create it.
       sbStringArray* stringArray;
       PRBool arrayExists = mViewFilters.Get(propertyName, &stringArray);
+
       if (!arrayExists) {
         NS_NEWXPCOM(stringArray, sbStringArray);
         NS_ENSURE_TRUE(stringArray, NS_ERROR_OUT_OF_MEMORY);
