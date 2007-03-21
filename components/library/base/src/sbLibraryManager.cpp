@@ -499,8 +499,10 @@ sbLibraryManager::Observe(nsISupports* aSubject,
       observerService->RemoveObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
     }
 
-    // Tell all the registered libraries to shutdown.
-    mLibraryTable.EnumerateRead(ShutdownAllLibrariesCallback, nsnull);
+    if (mLibraryTable.IsInitialized() && mLibraryTable.Count()) {
+      // Tell all the registered libraries to shutdown.
+      mLibraryTable.EnumerateRead(ShutdownAllLibrariesCallback, nsnull);
+    }
   }
 
   return NS_OK;
