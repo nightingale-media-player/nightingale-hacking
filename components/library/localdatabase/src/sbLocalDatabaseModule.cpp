@@ -24,20 +24,23 @@
 //
 */
 
-#include "nsIGenericFactory.h"
-#include "sbLocalDatabaseGUIDArray.h"
-#include "sbLocalDatabasePropertyCache.h"
-#include "sbLocalDatabaseTreeView.h"
-#include "sbLocalDatabaseLibraryFactory.h"
-#include "sbLocalDatabaseSimpleMediaListFactory.h"
-#include "sbLocalDatabaseViewMediaListFactory.h"
+#include <nsIGenericFactory.h>
+
 #include "sbLocalDatabaseCID.h"
+#include "sbLocalDatabaseGUIDArray.h"
+#include "sbLocalDatabaseLibraryFactory.h"
+#include "sbLocalDatabaseLibraryLoader.h"
+#include "sbLocalDatabasePropertyCache.h"
+#include "sbLocalDatabaseSimpleMediaListFactory.h"
+#include "sbLocalDatabaseTreeView.h"
+#include "sbLocalDatabaseViewMediaListFactory.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabasePropertyCache)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseTreeView)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryFactory)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseLibraryLoader, Init)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabasePropertyCache)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseSimpleMediaListFactory, Init)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseTreeView)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseViewMediaListFactory, Init)
 
 static const nsModuleComponentInfo components[] =
@@ -49,28 +52,35 @@ static const nsModuleComponentInfo components[] =
     sbLocalDatabaseGUIDArrayConstructor
 	},
 	{
-    "Local Database Property Cache",
-    SB_LOCALDATABASE_PROPERTYCACHE_CID,
-    SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID,
-    sbLocalDatabasePropertyCacheConstructor
-	},
-	{
-    "Local Database TreeView",
-    SB_LOCALDATABASE_TREEVIEW_CID,
-    SB_LOCALDATABASE_TREEVIEW_CONTRACTID,
-    sbLocalDatabaseTreeViewConstructor
-	},
-	{
     SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION,
     SB_LOCALDATABASE_LIBRARYFACTORY_CID,
     SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID,
     sbLocalDatabaseLibraryFactoryConstructor
 	},
 	{
+    SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION,
+    SB_LOCALDATABASE_LIBRARYLOADER_CID,
+    SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID,
+    sbLocalDatabaseLibraryLoaderConstructor,
+    sbLocalDatabaseLibraryLoader::RegisterSelf
+	},
+	{
+    "Local Database Property Cache",
+    SB_LOCALDATABASE_PROPERTYCACHE_CID,
+    SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID,
+    sbLocalDatabasePropertyCacheConstructor
+	},
+	{
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_DESCRIPTION,
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID,
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CONTRACTID,
     sbLocalDatabaseSimpleMediaListFactoryConstructor
+	},
+	{
+    "Local Database TreeView",
+    SB_LOCALDATABASE_TREEVIEW_CID,
+    SB_LOCALDATABASE_TREEVIEW_CONTRACTID,
+    sbLocalDatabaseTreeViewConstructor
 	},
 	{
     SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_DESCRIPTION,
@@ -80,5 +90,4 @@ static const nsModuleComponentInfo components[] =
 	}
 };
 
-NS_IMPL_NSGETMODULE("Songbird Local Database Module", components)
-
+NS_IMPL_NSGETMODULE(Songbird Local Database Module, components)

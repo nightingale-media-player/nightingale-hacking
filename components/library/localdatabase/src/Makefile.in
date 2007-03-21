@@ -33,6 +33,7 @@ target_name = sbLocalDatabaseLibrary
 
 CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseGUIDArray.cpp \
+           sbLocalDatabaseLibraryLoader.cpp \
            sbLocalDatabasePropertyCache.cpp \
            sbLocalDatabaseTreeView.cpp \
            sbLocalDatabaseQuery.cpp \
@@ -50,6 +51,7 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
 CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
                $(topsrcdir)/components/library/localdatabase/src \
                $(DEPTH)/components/library/base/public \
+               $(topsrcdir)/components/library/base/src \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/dbengine/public \
                $(topsrcdir)/components/dbengine/src \

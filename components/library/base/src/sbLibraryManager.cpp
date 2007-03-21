@@ -22,7 +22,7 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 /** 
 * \file  sbLibraryManager.cpp
