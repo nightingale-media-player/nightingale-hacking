@@ -1313,15 +1313,89 @@
 
 
 
-  <binding id="numplaylistitems-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
+  <binding id="numplaylistitems-label" xextends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
-  <implementation>
+    <content>
+      <xul:label sbid="label" xbl:inherits="id,class,value,align,crop,disabled,flex"/> 
+    </content>
 
-    <constructor>
-      this.data  = "playlist.numitems";
-    </constructor>
+    <implementation>
+      <constructor>
+        this._source = new sbIPlaylistsource();
+        this.setInterval();
+      </constructor>
 
-   </implementation>
+      <destructor>
+        clearInterval( this._interval );
+      </destructor>
+
+      <method name="setInterval">
+        <body>
+          <![CDATA[
+            this._interval = setInterval( this.onInterval, 500, this );
+          ]]>
+        </body>
+      </method>
+ 
+      <method name="onInterval">
+        <parameter name="that"/>
+        <body>
+          <![CDATA[
+            // Look at what I do to have the correct 'this' pointer!  Woo!
+            that.doInterval();
+          ]]>
+        </body>
+      </method>
+ 
+      <method name="doInterval">
+        <body>
+          <![CDATA[
+          
+          try
+          {
+            // Display the number of items in the currently viewed playlist.
+            var tree_ref = "";
+            var display_string = "";
+            // thePlaylistTree is non-null when a playlist is showing.
+            if ( thePlaylistTree )
+            {
+              tree_ref = thePlaylistTree.getAttribute( "ref" );
+            }
+            else if ( theWebPlaylistQuery )
+            {
+              // If there is a web playlist query, then we can pop the webplaylist.
+              var mediafound = SBString( "faceplate.mediafound", "Media Found" );
+              var pct = parseInt( SBDataGetIntValue( "webplaylist.current" ) * 100 / SBDataGetIntValue( "webplaylist.total" ) );
+              if ( pct < 100 )
+              {
+                display_string = mediafound + " " + pct + "%";
+              }
+              else
+              {
+                tree_ref = theWebPlaylist.ref;
+              }
+            }
+            
+            if ( tree_ref.length )
+            {
+              var rows = this._source.getRefRowCount( tree_ref );
+              if ( rows > 0 )
+              {
+                var items = SBString( "faceplate.items", "items" );
+                display_string = rows + " " + items;
+              }
+            }
+            
+            this.setAttribute( "value", display_string );
+          }
+          catch ( err )
+          {
+            alert( "PFU - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+    </implementation>
  
   </binding>
 

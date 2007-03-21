@@ -38,65 +38,12 @@
 //
 
 
-// This functionality should be encapsulated into its own xbl.
-function NumItemsPoll()
-{
-  try
-  {
-    // Display the number of items in the currently viewed playlist.
-    var tree_ref = "";
-    var display_string = "";
-    // thePlaylistTree is non-null when a playlist is showing.
-    if ( thePlaylistTree )
-    {
-      tree_ref = thePlaylistTree.getAttribute( "ref" );
-    }
-    else if ( theWebPlaylistQuery )
-    {
-      // If there is a web playlist query, then we can pop the webplaylist.
-      var mediafound = "Media Found"; 
-      try {
-        mediafound = theSongbirdStrings.getString("faceplate.mediafound");
-      } catch(e) { /* ignore error, we have a default string*/ }
-      var pct = parseInt( SBDataGetIntValue( "webplaylist.current" ) * 100 / SBDataGetIntValue( "webplaylist.total" ) );
-      if ( pct < 100 )
-      {
-        display_string = mediafound + " " + pct + "%";
-      }
-      else
-      {
-        tree_ref = theWebPlaylist.ref;
-      }
-    }
-    
-    if ( tree_ref.length )
-    {
-      var rows = thePollPlaylistService.getRefRowCount( tree_ref );
-      if ( rows > 0 )
-      {
-        var items = "items";
-        try {
-          items = theSongbirdStrings.getString("faceplate.items");
-        } catch(e) { /* ignore error, we have a default string*/ }
-        display_string = rows + " " + items;
-      }
-    }
-    
-    theNumPlaylistItemsRemote.stringValue = display_string;
-  }
-  catch ( err )
-  {
-    alert( "PFU - " + err );
-  }
-}    
-
 //
 // Mainwin Initialization
 //
 var thePollPlaylistService = null;
 var theWebPlaylist = null;
 var theWebPlaylistQuery = null;
-var theNumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
 var theDefaultUrlOverride = null;
 
 var gServicePane = null;
@@ -178,12 +125,6 @@ function SBInitialize()
       metadataBackscanner.start();
       
     } catch(err) { dump(err); }
-    
-    // Poll the playlist source every 500ms to drive the display update (STOOOOPID! This should be encapsulated)
-    thePollPlaylistService = new sbIPlaylistsource();
-    theNumPlaylistItemsRemote.stringValue = "";
-    setInterval( NumItemsPoll, 500 );
-    
   }
   catch(err)
   {
@@ -227,7 +168,6 @@ function SBUninitialize()
   thePollPlaylistService = null;
   theWebPlaylist = null;
   theWebPlaylistQuery = null;
-  theNumPlaylistItemsRemote = null;
 }
 
 var SBWindowMinMaxCB = 

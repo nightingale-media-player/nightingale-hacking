@@ -132,8 +132,7 @@ THE STATUS PANE
 ************************************************************************************************************************************************
 */ 
 
-#status_progress_box,
-#status_progress,
+sb-status-progressmeter,
 .progress-bar 
 { 
    -moz-appearance: none !important; /* grrrr! */ 
@@ -1477,7 +1476,7 @@ Status Bar
 ******************************************************************
 */
 
-#status_text
+sb-status-label
 {
   margin-left: 5px !important;
 }

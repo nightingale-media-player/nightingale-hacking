@@ -696,19 +696,22 @@ THE STATUS PANE
 ************************************************************************************************************************************************
 */ 
 
-#status_progress { 
+sb-status-progressmeter { 
    background-color: #ececec !important; 
 } 
 
-#status_progress .progress-bar { 
+sb-status-progressmeter .progress-bar { 
    background-color: #ccc !important;
 } 
   
-#status_progress[mode="undetermined"] { 
+sb-status-progressmeter[mode="undetermined"] { 
   background-color: #999 !important;
 } 
   
-#status_text, #library_text, #scanning_text
+sb-status-label, 
+#library_text, 
+sb-player-scanning-label, 
+sb-player-numplaylistitems-label
 {
   color: #666 !important;
 }

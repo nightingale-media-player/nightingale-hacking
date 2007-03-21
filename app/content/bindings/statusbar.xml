@@ -34,21 +34,52 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
 
 
+  <binding id="sb-status-bar">
+    <content>
+      <xul:statusbar id="status-bar" flex="1">
+        <xul:statusbarpanel id="statusbar-display" flex="1">
+          <xul:sb-status-label id="sb-status-bar-status-label" class="sb-status-bar-status-label" value=" " crop="end"/>
+        </xul:statusbarpanel>
+        <xul:sb-player-numplaylistitems-label id="sb-status-bar-numplaylistitems-label" class="sb-status-bar-numplaylistitems-label" crop="end"/>
+        <xul:sb-player-scanning-label id="sb-status-bar-scanning-label" class="sb-status-bar-scanning-label" crop="end"/>
+        <xul:statusbarpanel class="statusbarpanel-progress" id="statusbar-progresspanel">
+          <xul:sb-status-progressmeter id="sb-status-bar-status-progressmeter" class="sb-status-bar-status-progressmeter" mode="undetermined"/>
+        </xul:statusbarpanel>
+      </xul:statusbar>
+    </content>
+    <implementation>
+    </implementation>
+  </binding>
+  
+
+  <binding id="sb-status-progressmeter" extends="chrome://global/content/bindings/progressmeter.xml#progressmeter">
+    <implementation>
+      <constructor>
+        <![CDATA[
+          this._binding = SBDataBindElementProperty ( "faceplate.loading", this, "mode", false, false, "if ( value == '1' ) value = 'undetermined'; else value = ''; value;" );
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._binding) {
+            this._binding.unbind();
+            this._binding = null;
+          }
+        ]]>
+      </destructor>
+    </implementation>
+  </binding>
 
 
   <!-- STATUS TEXT DISPLAY -->
-
-
-
-
-  <binding id="sbstatustext">
-
+  <binding id="sb-status-label">
+  
    <content>
      <xul:description sbid="desc" xbl:inherits="id=id,class=class,value=value,align=align,crop=crop,disabled=disabled,flex=flex,style=style" /> 
    </content>
 
    <implementation>
-
+   
      <constructor>
        <![CDATA[
          // Create and bind data remotes
@@ -96,11 +127,11 @@
          <![CDATA[
           // if there is an override, use it
           if (this.override_descbinding.stringValue != "") {
-            this.desc.value = this.override_descbinding.stringValue;
+            this.desc.value = this.override_descbinding.stringValue + " ";
             this.desc.setAttribute("style", this.override_stylebinding.stringValue);
           } else {
             // otherwise use the normal status text
-            this.desc.value = this.descbinding.stringValue;
+            this.desc.value = this.descbinding.stringValue + " ";
             this.desc.setAttribute("style", this.stylebinding.stringValue);
           }
          ]]>
@@ -150,4 +181,7 @@
   </binding>
 
 </bindings>
+
+
+
 

@@ -674,19 +674,25 @@ THE STATUS PANE
 ************************************************************************************************************************************************
 */ 
 
-#status_progress { 
-   background-color: #333 !important; 
+sb-status-progressmeter { 
+  background-color: #333 !important; 
+  color: #eee !important; 
 } 
 
-#status_progress .progress-bar { 
-   background-color: #666 !important;
+sb-status-progressmeter .progress-bar { 
+  background-color: #666 !important;
+  color: #eee !important; 
 } 
   
-#status_progress[mode="undetermined"] { 
+sb-status-progressmeter[mode="undetermined"] { 
   background-color: #333 !important;
+  color: #eee !important; 
 } 
   
-#status_text, #library_text, #scanning_text
+sb-status-label, 
+#library_text, 
+sb-player-scanning-label, 
+sb-player-numplaylistitems-label
 {
   color: #999 !important;
 }
@@ -916,5 +922,7 @@ Callout box used to give extra information
 {
   background-color: #fff !important;         
 }
+
+
 
 

@@ -82,10 +82,6 @@ sbextensions {
   -moz-binding: url("chrome://songbird/content/bindings/sbextensions.xml#sbextensions") !important;
 }
 
-sbstatustext {
-  -moz-binding: url("chrome://songbird/content/bindings/statusbar.xml#sbstatustext") !important;
-}
-
 sb-remote-label {
   -moz-binding: url("chrome://songbird/content/bindings/remoteLabel.xml#remote-label") !important;
 }
@@ -291,6 +287,20 @@ sb-sys-titlebar {
 
 sb-sys-outer-frame {
   -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-outer-frame") !important;
+}
+
+/* STATUS */
+
+sb-status-label {
+  -moz-binding: url("chrome://songbird/content/bindings/statusbar.xml#sb-status-label") !important;
+}
+
+sb-status-progressmeter {
+  -moz-binding: url("chrome://songbird/content/bindings/statusbar.xml#sb-status-progressmeter") !important;
+}
+
+sb-status-bar {
+  -moz-binding: url("chrome://songbird/content/bindings/statusbar.xml#sb-status-bar") !important;
 }
 
 

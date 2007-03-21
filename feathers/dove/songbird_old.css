@@ -1610,7 +1610,7 @@ SEARCH WIDGET
 
 /* Status Pane */
 
-#status_progress_box
+sb-status-progressmeter_box
 {
   -moz-appearance:none !important;
   height: 5px !important;
@@ -1618,7 +1618,7 @@ SEARCH WIDGET
   overflow: hidden !important;
 }
 
-#status_progress { 
+sb-status-progressmeter { 
    -moz-appearance: none !important; /* grrrr! */ 
    margin: 2px 0px 0px 0px !important;
    background-color: #FFF !important; 
@@ -1626,16 +1626,19 @@ SEARCH WIDGET
    min-width: 100px !important; 
 } 
 
-#status_progress .progress-bar { 
+sb-status-progressmeter .progress-bar { 
    -moz-appearance: none !important; /* grrrr! */ 
    background-color: #666 !important;
 } 
   
-#status_progress[mode="undetermined"] { 
+sb-status-progressmeter[mode="undetermined"] { 
   background-color: #FFF !important;
 } 
   
-#status_text, #library_text, #scanning_text
+sb-status-label, 
+#library_text, 
+sb-player-scanning-label, 
+sb-player-numplaylistitems-label
 {
   color: #808583 !important;
 }

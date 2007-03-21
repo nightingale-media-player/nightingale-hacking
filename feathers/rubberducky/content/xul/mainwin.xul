@@ -272,17 +272,7 @@
         <!-- frame_middle_pane -->
         
         <!-- STATUS PANE -->
-        <hbox id="frame_status_pane" drag_window="true">
-          <hbox id="status_status_box" flex="1">
-            <sbstatustext id="status_text" value=" " crop="end" flex="1" drag_window="true"/>
-            <sb-player-numplaylistitems-label id="library_text" value=" " crop="end"/>
-            <sb-player-scanning-label id="scanning_text" value=" " crop="end"/>
-          </hbox>
-          <hbox id="status_progress_box" drag_window="true">
-            <progressmeter id="status_progress" mode="undetermined" hidden="false"/>
-          </hbox>
-        </hbox>
-
+        <sb-status-bar/>
       </vbox>
       <!-- inner_frame -->
     </vbox>
@@ -392,6 +382,8 @@
    src="chrome://songbird/content/scripts/bookmarks_proxy.js" />
 
 </window>
+
+
 
 
 

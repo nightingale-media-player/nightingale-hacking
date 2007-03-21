@@ -114,26 +114,18 @@ THE MAIN PANE
 THE STATUS PANE
 ************************************************************************************************************************************************
 */ 
-#frame_status_pane
+sb-status-bar
 {
   margin: 3px 0px 0px 0px;
 }
 
-#status_status_box 
+sb-status-progressmeter
 {
-  margin: 3px 0px 0px 0px;
-}
-
-#status_progress_box
-{
-  width: 100px;
-  overflow: hidden;
-}
-
-#status_progress { 
    margin: 2px 0px 0px 0px;
    border: none;
+   width: 100px; 
    min-width: 100px; 
+   max-width: 100px; 
 } 
 
 
@@ -286,5 +278,7 @@ SPINNER for the browser to show network activity.
 
 
                         
+
+
 
 
