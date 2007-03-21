@@ -85,7 +85,7 @@ sbViewMediaListEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILibrary> toLibrary;
-  rv = aMediaList->GetLibrary(getter_AddRefs(toLibrary));
+  rv = mFriendList->GetLibrary(getter_AddRefs(toLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If the media item is not in the view, add it
@@ -289,7 +289,7 @@ sbLocalDatabaseViewMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
     SB_CONTINUE_IF_FAILED(rv);
 
     PRBool continueEnumerating;
-    rv = listener.OnEnumeratedItem(this, item, &continueEnumerating);
+    rv = listener.OnEnumeratedItem(nsnull, item, &continueEnumerating);
     if (NS_FAILED(rv) || !continueEnumerating) {
       break;
     }
