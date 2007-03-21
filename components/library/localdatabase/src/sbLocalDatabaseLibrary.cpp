@@ -498,6 +498,12 @@ sbLocalDatabaseLibrary::TidyUp()
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::Shutdown()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 nsresult
 sbLocalDatabaseLibrary::CreateQueries()
 {

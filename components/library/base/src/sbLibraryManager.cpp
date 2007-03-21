@@ -34,6 +34,9 @@
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsEnumeratorUtils.h>
+#include <nsIAppStartupNotifier.h>
+#include <nsIObserver.h>
+#include <nsIObserverService.h>
 #include <nsIRDFDataSource.h>
 #include <nsISimpleEnumerator.h>
 #include <nsServiceManagerUtils.h>
@@ -55,7 +58,10 @@ static PRLogModuleInfo* gLibraryManagerLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-NS_IMPL_ISUPPORTS1(sbLibraryManager, sbILibraryManager)
+#define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
+
+NS_IMPL_ISUPPORTS2(sbLibraryManager, sbILibraryManager,
+                                     nsIObserver)
 
 sbLibraryManager::sbLibraryManager()
 {
@@ -70,6 +76,25 @@ sbLibraryManager::sbLibraryManager()
 sbLibraryManager::~sbLibraryManager()
 {
   TRACE(("LibraryManager[0x%x] - Destroyed", this));
+}
+
+/**
+ * \brief Register with the Observer Service to find out about app shutdown.
+ */
+NS_METHOD
+sbLibraryManager::Init()
+{
+  TRACE(("sbLibraryManager[0x%x] - Init", this));
+
+  nsresult rv;
+  nsCOMPtr<nsIObserverService> observerService = 
+    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = observerService->AddObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 /**
@@ -149,6 +174,29 @@ sbLibraryManager::AssertAllLibrariesCallback(nsStringHashKey::KeyType aKey,
 
   nsresult rv = AssertLibrary(ds, aEntry);
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+/**
+ * \brief This callback notifies all registered libraries that they should
+ *        shutdown.
+ *
+ * \param aKey      - An nsAString representing the GUID of the library.
+ * \param aEntry    - An sbILibrary entry.
+ * \param aUserData - Should be null.
+ *
+ * \return PL_DHASH_NEXT always
+ */
+/* static */ PLDHashOperator PR_CALLBACK
+sbLibraryManager::ShutdownAllLibrariesCallback(nsStringHashKey::KeyType aKey,
+                                               sbILibrary* aEntry,
+                                               void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in hashtable!");
+
+  nsresult rv = aEntry->Shutdown();
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A library's shutdown method failed!");
 
   return PL_DHASH_NEXT;
 }
@@ -427,5 +475,33 @@ sbLibraryManager::GetDataSource(nsIRDFDataSource** aDataSource)
   }
 
   NS_ADDREF(*aDataSource = mDataSource);
+  return NS_OK;
+}
+
+/**
+ * See nsIObserver.idl
+ */
+NS_IMETHODIMP
+sbLibraryManager::Observe(nsISupports* aSubject,
+                          const char* aTopic,
+                          const PRUnichar *aData)
+{
+  TRACE(("LibraryManager[0x%x] - Observe: %s", this, aTopic));
+
+  if (strcmp(aTopic, NS_PROFILE_SHUTDOWN_OBSERVER_ID) == 0) {
+
+    nsresult rv;
+    nsCOMPtr<nsIObserverService> observerService = 
+      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+
+    // Remove ourselves from the observer service.
+    if (NS_SUCCEEDED(rv)) {
+      observerService->RemoveObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
+    }
+
+    // Tell all the registered libraries to shutdown.
+    mLibraryTable.EnumerateRead(ShutdownAllLibrariesCallback, nsnull);
+  }
+
   return NS_OK;
 }

@@ -38,6 +38,7 @@
 #include <nsHashKeys.h>
 #include <nsIGenericFactory.h>
 #include <nsInterfaceHashtable.h>
+#include <nsIObserver.h>
 
 #define SONGBIRD_LIBRARYMANAGER_DESCRIPTION                \
   "Songbird Library Manager"
@@ -57,13 +58,20 @@ class nsIRDFDataSource;
 class sbILibrary;
 class sbILibraryFactory;
 
-class sbLibraryManager : public sbILibraryManager
+class sbLibraryManager : public sbILibraryManager,
+                         public nsIObserver
 {
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_NSIOBSERVER
   NS_DECL_SBILIBRARYMANAGER
 
   sbLibraryManager();
+
+  /**
+   * See sbLibraryManager.cpp
+   */
+  NS_METHOD Init();
 
 private:
   ~sbLibraryManager();
@@ -91,6 +99,14 @@ private:
     AssertAllLibrariesCallback(nsStringHashKey::KeyType aKey,
                                sbILibrary* aEntry,
                                void* aUserData);
+
+  /**
+   * See sbLibraryManager.cpp
+   */
+  static PLDHashOperator PR_CALLBACK
+    ShutdownAllLibrariesCallback(nsStringHashKey::KeyType aKey,
+                                 sbILibrary* aEntry,
+                                 void* aUserData);
 
   /**
    * See sbLibraryManager.cpp

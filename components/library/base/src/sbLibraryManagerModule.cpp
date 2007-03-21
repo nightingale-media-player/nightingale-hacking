@@ -32,7 +32,7 @@
 #include <nsIGenericFactory.h>
 #include "sbLibraryManager.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryManager);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLibraryManager, Init);
 
 static nsModuleComponentInfo components[] =
 {

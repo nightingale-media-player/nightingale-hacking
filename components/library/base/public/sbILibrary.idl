@@ -138,5 +138,10 @@ interface sbILibrary : sbILibraryResource
    * temporary items
    */
   void tidyUp();
-};
 
+  /**
+   * \brief Called when the library should clean up in preparation for shutdown
+   *        of the application.
+   */
+  void shutdown();
+};
