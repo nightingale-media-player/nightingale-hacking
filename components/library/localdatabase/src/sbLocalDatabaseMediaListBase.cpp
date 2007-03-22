@@ -445,6 +445,37 @@ sbLocalDatabaseMediaListBase::NotifyListenersBatchEnd()
   return NS_OK;
 }
 
+/* inline */ NS_METHOD
+sbLocalDatabaseMediaListBase::MakeStandardQuery(sbIDatabaseQuery** _retval)
+{
+  nsresult rv;
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString databaseGuid;
+  rv = mLibrary->GetDatabaseGuid(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(databaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> databaseLocation;
+  rv = mLibrary->GetDatabaseLocation(getter_AddRefs(databaseLocation));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (databaseLocation) {
+    rv = query->SetDatabaseLocation(databaseLocation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = query);
+  return NS_OK;
+}
+
 /**
  * \brief Enumerates the items to the given listener.
  */
@@ -1285,18 +1316,8 @@ sbLocalDatabaseMediaListBase::GetFilterValues(const nsAString& aPropertyName,
   nsresult rv;
   PRInt32 dbOk;
 
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mDistinctPropertyValuesQuery);

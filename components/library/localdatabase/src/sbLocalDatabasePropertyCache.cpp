@@ -25,12 +25,14 @@
 */
 
 #include "sbLocalDatabasePropertyCache.h"
-#include <prlog.h>
+
 #include <DatabaseQuery.h>
-#include <sbSQLBuilderCID.h>
-#include <nsMemory.h>
 #include <nsCOMArray.h>
+#include <nsIURI.h>
+#include <nsMemory.h>
 #include <nsStringEnumerator.h>
+#include <prlog.h>
+#include <sbSQLBuilderCID.h>
 
 #define INIT if (!mInitialized) { rv = Init(); NS_ENSURE_SUCCESS(rv, rv); }
 
@@ -117,6 +119,25 @@ sbLocalDatabasePropertyCache::SetDatabaseGUID(const nsAString& aDatabaseGUID)
 {
   mDatabaseGUID = aDatabaseGUID;
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabasePropertyCache::GetDatabaseLocation(nsIURI** aDatabaseLocation)
+{
+  NS_ENSURE_ARG_POINTER(aDatabaseLocation);
+  NS_ENSURE_TRUE(mDatabaseLocation, NS_ERROR_NOT_AVAILABLE);
+
+  NS_ADDREF(*aDatabaseLocation = mDatabaseLocation);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabasePropertyCache::SetDatabaseLocation(nsIURI* aDatabaseLocation)
+{
+  NS_ENSURE_ARG_POINTER(aDatabaseLocation);
+
+  mDatabaseLocation = aDatabaseLocation;
   return NS_OK;
 }
 
@@ -521,6 +542,11 @@ sbLocalDatabasePropertyCache::MakeQuery(const nsAString& aSql,
   rv = query->SetDatabaseGUID(mDatabaseGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if (mDatabaseLocation) {
+    rv = query->SetDatabaseLocation(mDatabaseLocation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
   rv = query->SetAsyncQuery(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 

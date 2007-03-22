@@ -40,6 +40,8 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
 
+class nsIURI;
+
 struct FilterSpec {
   nsString property;
   nsTArray<nsString> values;
@@ -136,8 +138,10 @@ private:
   };
 
   // Database GUID
-  // XXX: This will probably change to a path?
   nsString mDatabaseGUID;
+
+  // Database Location
+  nsCOMPtr<nsIURI> mDatabaseLocation;
 
   // Query base table
   nsString mBaseTable;

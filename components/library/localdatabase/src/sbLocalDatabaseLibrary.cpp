@@ -41,6 +41,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsID.h>
+#include <nsIFile.h>
 #include <nsIURI.h>
 #include <prtime.h>
 #include <nsMemory.h>
@@ -98,14 +99,8 @@ sbLocalDatabaseLibrary::Init()
   rv = builder->ToString(sql);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(mDatabaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(sql);
@@ -133,6 +128,30 @@ sbLocalDatabaseLibrary::Init()
   return NS_OK;
 }
 
+/* inline */ NS_METHOD
+sbLocalDatabaseLibrary::MakeStandardQuery(sbIDatabaseQuery** _retval)
+{
+  nsresult rv;
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(mDatabaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Set the location (if it was specified in the constructor)
+  if (mDatabaseLocation) {
+    rv = query->SetDatabaseLocation(mDatabaseLocation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = query);
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetContractIdForGuid(const nsAString& aGuid,
                                              nsACString &aContractId)
@@ -143,14 +162,8 @@ sbLocalDatabaseLibrary::GetContractIdForGuid(const nsAString& aGuid,
   /*
    * We could probably cache the result of this method
    */
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(mDatabaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mGetContractIdForGuidQuery);
@@ -192,14 +205,8 @@ sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGuid,
   nsresult rv;
   PRInt32 dbOk;
 
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(mDatabaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mGetMediaItemIdForGuidQuery);
@@ -239,6 +246,22 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetDatabaseGuid(nsAString& aDatabaseGuid)
 {
   aDatabaseGuid = mDatabaseGuid;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetDatabaseLocation(nsIURI** aDatabaseLocation)
+{
+  NS_ENSURE_ARG_POINTER(aDatabaseLocation);
+
+  if (!mDatabaseLocation) {
+    *aDatabaseLocation = nsnull;
+    return NS_OK;
+  }
+
+  nsresult rv = mDatabaseLocation->Clone(aDatabaseLocation);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -329,14 +352,8 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI *aUri,
 
   const nsAString& guid = Substring(fullGuid, 1, fullGuid.Length() - 2);
 
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(mDatabaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mInsertMediaItemQuery);

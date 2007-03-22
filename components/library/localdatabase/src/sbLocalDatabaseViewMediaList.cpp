@@ -140,6 +140,15 @@ sbLocalDatabaseViewMediaList::Init()
   rv = mFullArray->SetDatabaseGUID(databaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIURI> databaseLocation;
+  rv = mLibrary->GetDatabaseLocation(getter_AddRefs(databaseLocation));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (databaseLocation) {
+    rv = mFullArray->SetDatabaseLocation(databaseLocation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = mFullArray->SetBaseTable(NS_LITERAL_STRING("media_items"));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -389,18 +398,8 @@ sbLocalDatabaseViewMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
   PRInt32 dbOk;
 
   // Prep the query
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(NS_LITERAL_STRING("begin"));
@@ -457,18 +456,8 @@ sbLocalDatabaseViewMediaList::Clear()
   nsresult rv;
   PRInt32 dbOk;
 
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mDeleteAllQuery);
@@ -491,18 +480,8 @@ sbLocalDatabaseViewMediaList::DeleteItemByMediaItemId(PRUint32 aMediaItemId)
   nsresult rv;
   PRInt32 dbOk;
 
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mDeleteItemQuery);

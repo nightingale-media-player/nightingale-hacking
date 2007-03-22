@@ -68,20 +68,37 @@ SimpleArrayEnumerator.prototype.QueryInterface = function(iid) {
   return this;
 };
 
-function createDatabase(databaseGuid) {
+function createDatabase(databaseGuid, databaseLocation) {
 
-  // delete the database if it exists
-  var file = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("ProfD", Ci.nsIFile);
-
-  file.append("db");
+  var directory;
+  if (databaseLocation) {
+    directory = databaseLocation.QueryInterface(Ci.nsIFileURL).file;
+  }
+  else {
+    directory = Cc["@mozilla.org/file/directory_service;1"].
+                getService(Ci.nsIProperties).
+                get("ProfD", Ci.nsIFile);
+    directory.append("db");
+  }
+  
+  var file = directory.clone();
   file.append(databaseGuid + ".db");
+  
+  if (file.exists()) {
+    try {
+      file.remove(false);
+    } catch (e) { }
+  }
 
   var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
               .createInstance(Ci.sbIDatabaseQuery);
 
   dbq.setDatabaseGUID(databaseGuid);
+  
+  if (databaseLocation) {
+    dbq.databaseLocation = databaseLocation;
+  }
+  
   var schema = readFile("schema.sql");
 
   // There seems to be some kind of query length limit so lets break it up
@@ -92,15 +109,18 @@ function createDatabase(databaseGuid) {
   dbq.execute();
   dbq.waitForCompletion();
 
-  loadData(databaseGuid);
+  loadData(databaseGuid, databaseLocation);
 }
 
-function loadData(databaseGuid) {
+function loadData(databaseGuid, databaseLocation) {
 
   var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
               .createInstance(Ci.sbIDatabaseQuery);
 
   dbq.setDatabaseGUID(databaseGuid);
+  if (databaseLocation) {
+    dbq.databaseLocation = databaseLocation;
+  }
   dbq.setAsyncQuery(false);
   dbq.addQuery("begin");
 
@@ -183,26 +203,32 @@ function readFile(fileName) {
   return data;
 }
 
-function createLibrary(databaseGuid) {
+function createLibrary(databaseGuid, databaseLocation) {
+
+  var directory;
+  if (databaseLocation) {
+    directory = databaseLocation.QueryInterface(Ci.nsIFileURL).file;
+  }
+  else {
+    directory = Cc["@mozilla.org/file/directory_service;1"].
+                getService(Ci.nsIProperties).
+                get("ProfD", Ci.nsIFile);
+    directory.append("db");
+  }
+  
+  var file = directory.clone();
+  file.append(databaseGuid + ".db");
 
   var libraryFactory =
     Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
       .createInstance(Ci.sbILocalDatabaseLibraryFactory);
-
-  var file = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("ProfD", Ci.nsIFile);
-
-  file.append("db");
-  file.append(databaseGuid + ".db");
-
   var library = libraryFactory.createLibraryFromDatabase(file);
   try {
     library.getMediaItem("songbird:view").clear();
   }
   catch(e) {
   }
-  loadData(databaseGuid);
+  loadData(databaseGuid, databaseLocation);
   return library;
 }
 
@@ -491,3 +517,16 @@ function loadMockDatabase() {
   return db;
 }
 
+function newFileURI(file) {
+  var ioService = Cc["@mozilla.org/network/io-service;1"].
+                  getService(Ci.nsIIOService);
+  
+  return ioService.newFileURI(file);
+}
+
+function newURI(spec) {
+  var ioService = Cc["@mozilla.org/network/io-service;1"].
+                  getService(Ci.nsIIOService);
+  
+  return ioService.newURI(spec, null, null);
+}

@@ -33,6 +33,7 @@
 
 interface sbILocalDatabaseResourcePropertyBag;
 interface nsIStringEnumerator;
+interface nsIURI;
 
 /**
 * \interface sbILocalDatabasePropertyCache
@@ -43,6 +44,7 @@ interface sbILocalDatabasePropertyCache : nsISupports
   readonly attribute boolean writePending;
 
   attribute AString databaseGUID;
+  attribute nsIURI databaseLocation;
 
   void getProperties([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray,
                      in unsigned long aGUIDArrayCount,

@@ -97,6 +97,31 @@ sbLocalDatabaseGUIDArray::SetDatabaseGUID(const nsAString& aDatabaseGUID)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetDatabaseLocation(nsIURI** aDatabaseLocation)
+{
+  NS_ENSURE_ARG_POINTER(aDatabaseLocation);
+
+  // Okay if it's null.
+  if (!mDatabaseLocation) {
+    *aDatabaseLocation = nsnull;
+    return NS_OK;
+  }
+
+  nsresult rv = mDatabaseLocation->Clone(aDatabaseLocation);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetDatabaseLocation(nsIURI* aDatabaseLocation)
+{
+  mDatabaseLocation = aDatabaseLocation;
+
+  return Invalidate();
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetBaseTable(nsAString& aBaseTable)
 {
   aBaseTable = mBaseTable;
@@ -355,6 +380,9 @@ sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
   NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = newArray->SetDatabaseGUID(mDatabaseGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = newArray->SetDatabaseLocation(mDatabaseLocation);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = newArray->SetBaseTable(mBaseTable);
@@ -874,6 +902,11 @@ sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
 
   rv = query->SetDatabaseGUID(mDatabaseGUID);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mDatabaseLocation) {
+    rv = query->SetDatabaseLocation(mDatabaseLocation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = query->SetAsyncQuery(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);

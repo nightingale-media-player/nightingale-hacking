@@ -31,6 +31,7 @@
 
 #include "nsISupports.idl"
 
+interface nsIURI;
 interface sbIMediaItem;
 interface sbILocalDatabasePropertyCache;
 interface sbILocalDatabaseResourcePropertyBag;
@@ -43,6 +44,14 @@ interface sbILocalDatabaseResourcePropertyBag;
 interface sbILocalDatabaseLibrary : nsISupports
 {
   readonly attribute AString databaseGuid;
+
+  /**
+   * \brief Returns the folder in which the database is stored.
+   *
+   * This can be null to indicate that the library lives in the default location
+   */
+  readonly attribute nsIURI databaseLocation;
+
   readonly attribute sbILocalDatabasePropertyCache propertyCache;
 
   void init();

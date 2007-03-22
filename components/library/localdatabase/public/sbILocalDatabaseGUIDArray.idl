@@ -32,7 +32,9 @@
 #include "nsISupports.idl"
 
 interface nsIStringEnumerator;
+interface nsIURI;
 interface sbILocalDatabasePropertyCache;
+
 /**
 * \interface sbILocalDatabaseGUIDArray
 */
@@ -40,6 +42,8 @@ interface sbILocalDatabasePropertyCache;
 interface sbILocalDatabaseGUIDArray : nsISupports
 {
   attribute AString databaseGUID;
+
+  attribute nsIURI databaseLocation;
 
   attribute AString baseTable;
 

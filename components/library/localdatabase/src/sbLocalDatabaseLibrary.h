@@ -27,13 +27,16 @@
 #ifndef __SBLOCALDATABASELIBRARY_H__
 #define __SBLOCALDATABASELIBRARY_H__
 
+#include <sbLocalDatabaseResourceProperty.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
-#include <sbILocalDatabasePropertyCache.h>
-#include <nsCOMPtr.h>
-#include <nsStringGlue.h>
 
-#include <sbLocalDatabaseResourceProperty.h>
+#include <nsCOMPtr.h>
+#include <nsIURI.h>
+#include <nsStringGlue.h>
+#include <sbILocalDatabasePropertyCache.h>
+
+class sbIDatabaseQuery;
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseResourceProperty,
                                public sbILibrary,
@@ -42,24 +45,41 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseResourceProperty,
 public:
   NS_DECL_ISUPPORTS_INHERITED
 
-  //When using inheritence, you must forward all interfaces implemented
-  //by the base class, else you will get "pure virtual function was not defined"
-  //style errors.
+  // When using inheritence, you must forward all interfaces implemented
+  // by the base class, else you will get "pure virtual function was not
+  // defined" style errors.
   NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseResourceProperty::)
   NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseResourceProperty::)
 
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
 
-  sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid) :
+  // This constructor assumes the database file lives in the 'ProfD/db'
+  // directory.
+  sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid)
+  : mDatabaseGuid(aDatabaseGuid)
+  {
+    NS_ASSERTION(!mDatabaseGuid.IsEmpty(), "No GUID!");
+  }
+
+  // Use this constructor to specify a location for the database file.
+  sbLocalDatabaseLibrary(nsIURI* aDatabaseLocation,
+                         const nsAString& aDatabaseGuid)
+  : mDatabaseLocation(aDatabaseLocation),
     mDatabaseGuid(aDatabaseGuid)
   {
+    NS_ASSERTION(mDatabaseLocation, "Null pointer!");
+    NS_ASSERTION(!mDatabaseGuid.IsEmpty(), "No GUID!");
   }
 
 private:
   nsresult CreateQueries();
 
+  inline NS_METHOD MakeStandardQuery(sbIDatabaseQuery** _retval);
+
   nsString mDatabaseGuid;
+  nsCOMPtr<nsIURI> mDatabaseLocation;
+
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
   nsString mGetContractIdForGuidQuery;
@@ -71,4 +91,3 @@ private:
 };
 
 #endif /* __SBLOCALDATABASELIBRARY_H__ */
-

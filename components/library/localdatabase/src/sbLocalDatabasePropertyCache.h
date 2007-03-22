@@ -41,6 +41,8 @@
 #include <sbISQLBuilder.h>
 #include <nsIStringEnumerator.h>
 
+class nsIURI;
+
 class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache
 {
 public:
@@ -67,9 +69,10 @@ private:
   PRUint32 mNumStaticProperties;
  
   // Database GUID
-  // XXX: This will probably change to a path?
-  // XXXAus: I would rather expose a way to get the path from the GUID in the DBEngine :)
   nsString mDatabaseGUID;
+
+  // Database Location
+  nsCOMPtr<nsIURI> mDatabaseLocation;
 
   // Cache the property name list
   nsClassHashtable<nsUint32HashKey, nsString> mPropertyIDToName;

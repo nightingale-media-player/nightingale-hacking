@@ -32,6 +32,8 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
+class nsIFile;
+
 class sbLocalDatabaseLibraryFactory : public sbILocalDatabaseLibraryFactory
 {
 public:
@@ -40,8 +42,7 @@ public:
   NS_DECL_SBILOCALDATABASELIBRARYFACTORY
 
 private:
-  nsresult InitalizeLibrary(const nsAString& aDatabaseGuid);
-
+  NS_METHOD InitalizeLibrary(nsIFile* aDatabaseFile);
 };
 
 #endif /* __SBLOCALDATABASELIBRARYFACTORY_H__ */

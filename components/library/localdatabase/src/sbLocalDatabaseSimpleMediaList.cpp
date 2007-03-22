@@ -65,17 +65,7 @@ sbSimpleMediaListEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaLis
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Prep the query
-  mDBQuery = do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mFriendList->mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mDBQuery->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mDBQuery->SetAsyncQuery(PR_FALSE);
+  rv = mFriendList->MakeStandardQuery(getter_AddRefs(mDBQuery));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDBQuery->AddQuery(NS_LITERAL_STRING("begin"));
@@ -179,6 +169,15 @@ sbLocalDatabaseSimpleMediaList::Init()
   rv = mFullArray->SetDatabaseGUID(databaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIURI> databaseLocation;
+  rv = mLibrary->GetDatabaseLocation(getter_AddRefs(databaseLocation));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (databaseLocation) {
+    rv = mFullArray->SetDatabaseLocation(databaseLocation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = mFullArray->SetBaseTable(NS_LITERAL_STRING("simple_media_lists"));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -220,18 +219,8 @@ sbLocalDatabaseSimpleMediaList::Contains(sbIMediaItem* aMediaItem,
   nsresult rv;
   PRInt32 dbOk;
 
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mGetMediaItemIdForGuidQuery);
@@ -358,18 +347,8 @@ sbLocalDatabaseSimpleMediaList::InsertBefore(PRUint32 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Run the insert query
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mInsertIntoListQuery);
@@ -522,18 +501,8 @@ sbLocalDatabaseSimpleMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
   PRInt32 dbOk;
 
   // Prep the query
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(NS_LITERAL_STRING("begin"));
@@ -587,18 +556,8 @@ sbLocalDatabaseSimpleMediaList::Clear()
   nsresult rv;
   PRInt32 dbOk;
 
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mDeleteAllQuery);
@@ -622,18 +581,8 @@ sbLocalDatabaseSimpleMediaList::ExecuteAggregateQuery(const nsAString& aQuery,
   nsresult rv;
   PRInt32 dbOk;
 
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(aQuery);
@@ -674,18 +623,8 @@ sbLocalDatabaseSimpleMediaList::UpdateOrdinalByIndex(PRUint32 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Update the item at the from index with the new ordinal
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mUpdateListItemOrdinalQuery);
@@ -710,18 +649,8 @@ sbLocalDatabaseSimpleMediaList::DeleteItemByMediaItemId(PRUint32 aMediaItemId)
   nsresult rv;
   PRInt32 dbOk;
 
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString databaseGuid;
-  rv = mLibrary->GetDatabaseGuid(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(databaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_FALSE);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mDeleteListItemQuery);
