@@ -34,22 +34,14 @@ var WEB_PLAYLIST_TABLE_NAME   = "&device.webplaylist";
 var WEB_PLAYLIST_LIBRARY_NAME = "&device.weblibrary";
 
 
-var theCanGoBackData = SB_NewDataRemote( "browser.cangoback", null );
-var theCanGoFwdData = SB_NewDataRemote( "browser.cangofwd", null );
-var theCanAddToPlaylistData = SB_NewDataRemote( "browser.canplaylist", null );
-var theBrowserUrlData = SB_NewDataRemote( "browser.url.text", null );
-var theBrowserImageData = SB_NewDataRemote( "browser.url.image", null );
-var theBrowserUriData = SB_NewDataRemote( "browser.uri", null );
-var theShowWebPlaylistData = SB_NewDataRemote( "browser.playlist.show", null );
-
 
 
 // onBrowserBack
 function onBrowserBack()
 {
   // Disable the "add to playlist" button until we see that there is anything to add.
-  theCanAddToPlaylistData.boolValue = false;
-  gBrowser.hidePlaylist();
+  SBDataSetBoolValue("browser.canplaylist", false);
+  gBrowser.showWebPlaylist = false;
   gBrowser.mainpane_listener_set = false;
   gBrowser.goBack();
 }
@@ -58,8 +50,8 @@ function onBrowserBack()
 function onBrowserFwd()
 {
   // Disable the "add to playlist" button until we see that there is anything to add.
-  theCanAddToPlaylistData.boolValue = false;
-  gBrowser.hidePlaylist();
+  SBDataSetBoolValue("browser.canplaylist", false);
+  gBrowser.showWebPlaylist = false;
   gBrowser.mainpane_listener_set = false;
   gBrowser.goForward();
 }
@@ -140,7 +132,7 @@ function onBrowserPlaylist()
     }
     
     // Show/hide them
-    theShowWebPlaylistData.boolValue = true;
+    gBrowser.showWebPlaylist = true;
   }
   else
   {
@@ -188,7 +180,7 @@ function onBrowserDownload()
     }
     
     // Show/hide them
-    theShowWebPlaylistData.boolValue = true;
+    gBrowser.showWebPlaylist = true;
   }
   else
   {
@@ -206,13 +198,10 @@ function onHTMLUrlChange( evt )
     // Make sure the value is an url
     value = SBGetUrlFromService( value );
     // And then put it back in the box as a service
-    theBrowserUriData.stringValue = value;
-    theBrowserUrlData.stringValue = gServicePane.getURLName( value );
-    var image = gServicePane.getURLImage( value );
-//    if ( image.length )
-    {
-      theBrowserImageData.stringValue = image;
-    }
+    SBDataSetStringValue("browser.uri", value);
+    SBDataSetStringValue("browser.url.text", gServicePane.getURLName(value));
+    SBDataSetStringValue("browser.url.image", gServicePane.getURLImage(value));
+
     // And then go to the url.  Easy, no?
     window.gServicePane.loadURL(value);
   }
@@ -273,254 +262,15 @@ function onHTMLUrlKeypress( evt )
 
 var thePlaylistTree;
 
-var theCurrentMainPaneDocument = null;
-function onMainPaneLoad()
-{
 
-}
 
-function onMainPaneUnload()
-{
-  //SB_LOG("songbird_hack.js", "onMainPaneUnload");
-  try
-  {
-  }
-  catch( err )
-  {
-    alert( err );
-  }
-}
 
-function GetHREFFromEvent( evt )
-{
-  var the_href = "";
-  try
-  {
-    var node = evt.target;
-    while ( node ) // Walk up from the event target to find the A? 
-    {
-      if ( node.href )
-      {
-        the_href = node.href;
-        break;
-      }
-      node = node.parentNode;
-    }
-  }
-  catch ( err )
-  {
-    alert( err );
-  }
-  return the_href;
-}
 
-// Catch a contextual on a media url and attempt to play it
-function onLinkOver( evt )
-{
-  var the_url = GetHREFFromEvent( evt )
-  theStatusText.stringValue = the_url;
-  if ( gPPS.isMediaURL( the_url ) || gPPS.isPlaylistURL( the_url ) )
-  {
-    theStatusStyle.stringValue = "font-weight: bold;";
-  }
-  else
-  {
-    theStatusStyle.stringValue = "font-weight: normal;";
-  }
-}
 
-// Catch a contextual on a media url and attempt to play it
-function onLinkOut( evt )
-{
-  theStatusText.stringValue = "";
-}
 
-// Catch a contextual on a media url and attempt to play it
-var theHTMLContextURL = null;
-function onLinkContext( evt )
-{
-  try
-  {
-    var theMainPane = document.getElementById( "frame_main_pane" );
-    var theHTMLPopup = document.getElementById( "html_context_menu" );
-    theHTMLContextURL = GetHREFFromEvent( evt );
-    
-    // Disable "Add" if the url isn't media or is already there.
-    var disabled = "true";
-    if ( gPPS.isMediaURL( theHTMLContextURL ) && ! SBUrlExistsInDatabase( theHTMLContextURL ) )
-    {
-      disabled = "false"
-    }
-    document.getElementById( "html.context.add" ).setAttribute( "disabled", disabled );
-    
-/*  // Allow the user to try to add any link as a playlist.
 
-    // Disable "Add as Playlist" if the url isn't a playlist (NOTE: any HTML url will go as playlist)
-    disabled = "true";
-    if ( gPPS.isPlaylistURL( theHTMLContextURL ) )
-    {
-      disabled = "false"
-    }
-    document.getElementById( "html.context.playlist" ).setAttribute( "disabled", disabled );
-*/    
-    theHTMLPopup.showPopup( theMainPane, theMainPane.boxObject.screenX + evt.clientX + 5, theMainPane.boxObject.screenY + evt.clientY, "context", null, null );
-  }
-  catch ( err )
-  {
-    alert( err );
-  }
-}
 
-function playExternalUrl(the_url, tryweb) 
-{
-  //SB_LOG("songbird_hack.js", "playExternalUrl: " + the_url);
-  var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-  // figure out if the url is in the webplaylist
-  if (tryweb && theWebPlaylist && !theWebPlaylist.hidden) 
-  {
-    var row = theWebPlaylist.findRowIdByUrl(the_url);
-    if (row != -1) 
-    {
-      // if so, play the ref, from that entry's index
-      PPS.playRef("NC:webplaylist_webplaylist", row);
-    }
-  } else {
-    // otherwise, play the url as external (added to the db, plays the library from that point on)
-    PPS.playAndImportURL(the_url); // if the url is already in the lib, it is not added twice
-    if (document.__SEARCHWIDGET__) document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
-  }
-}
 
-function handleMediaURL( aURL, aShouldBeginPlayback, forcePlaylist )
-{
-  var retval = false;
-  try
-  {
-    // Stick playlists in the service pane (for now).
-    if ( forcePlaylist || gPPS.isPlaylistURL( aURL ) )
-    {
-      var playlistReader = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
-                           .createInstance(Components.interfaces.sbIPlaylistReaderManager);
-      var playlistReaderListener = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
-                           .createInstance(Components.interfaces.sbIPlaylistReaderListener);
-
-      // if we can find it in the service pane already then we shouldn't add it again.
-      var queryObj = new sbIDatabaseQuery();
-      queryObj.setDatabaseGUID("songbird");
-      var playlistManager = new sbIPlaylistManager();
-      playlistManager.getAllPlaylistList( queryObj );
-      var resultset = queryObj.getResultObject();
-      for ( var index = 0; index < resultset.getRowCount(); index++ )
-      {
-        // if we match don't add it, just play it.
-        if ( aURL == resultset.getRowCellByColumn( index, "description" ) )
-        {
-          gPPS.playTable(resultset.getRowCellByColumn(index, "service_uuid"),
-                         resultset.getRowCellByColumn(index, "name"),
-                         0);
-          return true;
-        }
-      }
-
-      // Create this closure here to prevent this object from getting garbage
-      // collected too soon.  The playlist reader uses the nsIWebBrowserPersist
-      // component that does _not_ addref this listener :(
-      var playlist_observer = {
-        observe: function ( aSubject, aTopic, aData ) {
-          if (aTopic.indexOf("error") != -1) {
-            var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                                          .getService(Components.interfaces.nsIPromptService);
-            promptService.alert(null,
-                                "Playlist Error",
-                                "Unable to read playlist file -- please try again later.");
-          }
-          else {
-            SBScanServiceTreeNewEntryStart();
-          }
-        }
-      };
-
-      SBScanServiceTreeNewEntryEditable();
-
-      playlistReaderListener.playWhenLoaded = aShouldBeginPlayback;
-      playlistReaderListener.observer = playlist_observer;
-      playlistReaderListener.mediaMimetypesOnly = true;
-      playlistReader.autoLoad( aURL,
-                               "songbird", 
-                               gPPS.convertURLToDisplayName( aURL ),
-                               "http",
-                               aURL,
-                               "", 
-                               playlistReaderListener );
-      retval = true;
-    }
-    // Everything else gets played directly.
-    else if ( gPPS.isMediaURL( aURL ) )
-    {
-      playExternalUrl(aURL, true);
-      retval = true;
-    }
-  }
-  catch ( err )
-  {
-    alert("songbird_hack.js: handleMediaURL(" + aURL + "); " + err );
-  }
-  return retval;
-}
-
-// Catch a click on a media url and attempt to play it
-function onMediaClick( evt )
-{
-  handleMediaURL( GetHREFFromEvent(evt), true, false );
-  evt.stopPropagation();
-  evt.preventDefault();
-}
-
-// Menubar handling
-function onHTMLContextMenu( target )
-{
-  if ( theHTMLContextURL )
-  {
-    var v = target.getAttribute( "id" );
-    switch ( v )
-    {
-      case "html.context.open":
-        // can be track or playlist
-        // try dealing with media, might just be web content.
-        if ( !handleMediaURL(theHTMLContextURL, true, false) )
-        {
-          gServicePane.loadURL( theHTMLContextURL );
-        }
-      break;
-      case "html.context.openexternal":
-          var externalLoader = (Components
-                   .classes["@mozilla.org/uriloader/external-protocol-service;1"]
-                  .getService(Components.interfaces.nsIExternalProtocolService));
-          var nsURI = (Components
-                  .classes["@mozilla.org/network/io-service;1"]
-                  .getService(Components.interfaces.nsIIOService)
-                  .newURI(theHTMLContextURL, null, null));
-          externalLoader.loadURI(nsURI, null);
-      break;
-      case "html.context.play":
-        // can be track or playlist
-        handleMediaURL(theHTMLContextURL, true, false);
-      break;
-      case "html.context.add":
-        gPPS.importURL(theHTMLContextURL);
-      break;
-      case "html.context.playlist":
-        // Add playlists to the service pane (force it as a playlist)
-        handleMediaURL(theHTMLContextURL, false, true);
-      break;
-      case "html.context.copytoclipboard":
-        var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
-        clipboard.copyString(theHTMLContextURL);
-      break;
-    }
-    theHTMLContextURL = null; // clear it because now we're done.
-  }
-}
 
 function focusSearch() 
 {

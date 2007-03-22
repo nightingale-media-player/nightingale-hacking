@@ -844,7 +844,7 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
     }
     
     // Show/hide them
-    theShowWebPlaylistData.SetValue( true );
+    gBrowser.showWebPlaylist = true;
   }
   else
   {

@@ -36,7 +36,7 @@
   <popupset id="popupset_main">
   
     <!-- CONTEXT MENU FOR THE MAIN PANE HTML LINKS -->
-    <popup id="html_context_menu" oncommand="onHTMLContextMenu(event.target)">
+    <popup id="html_context_menu" oncommand="gBrowser.onHTMLContextMenu(event.target)">
       <menuitem id="html.context.open" label="&html.context.open;"/>
       <menuitem id="html.context.openexternal" label="&html.context.openexternal;"/>
       <menuitem id="html.context.play" label="&html.context.play;"/>

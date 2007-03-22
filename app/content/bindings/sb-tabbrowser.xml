@@ -13,11 +13,21 @@
         this.addProgressListener(this,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
             Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
+        /* FIXME: how should this work?
+        this._progressFilter.addProgressListener(this,
+            Components.interfaces.nsIProgressListener.NOTIFY_ALL);
+        this.addProgressListener(this._progressFilter);
+        */
         this.loading = false;
       ]]></constructor>
       <destructor><![CDATA[
         this.removeProgressListener(this);
       ]]></destructor>
+      
+      <field name="_progressFilter">
+        Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
+            .createInstance(Components.interfaces.nsIWebProgress)
+      </field>
 
       <field name="_servicepane">null</field>
       <property name="servicepane">
@@ -60,19 +70,26 @@
       
       <field name="mainpane_listener_set">false</field>
       
-      <!-- the function formerly known as onBrowserPlaylistHide and onPlaylistHide -->
-      <method name="hidePlaylist">
-        <body><![CDATA[
-          // Hide the web table if it exists
-          SBDataSetBoolValue('browser.playlist.show', false);
-         
-          // And unhook the playlist from the database
-          if (this.playlist) {
-            this.playlist.datasources = "";
-            this.playlist.ref = "";
+      <property name="showWebPlaylist">
+        <getter><![CDATA[
+          // the value is stored in a data remote
+          return SBDataGetBoolValue('browser.playlist.show');
+        ]]></getter>
+        <setter><![CDATA[
+          // boolify the value that's passed in
+          var value = (val)?true:false;
+          // set the value in the data remote
+          SBDataSetBoolValue('browser.playlist.show', value);
+          
+          if (!value) {
+            // if we're hiding the web playlist then unhook it from the UI
+            if (this.playlist) {
+              this.playlist.datasources = "";
+              this.playlist.ref = "";
+            }
           }
-        ]]></body>
-      </method>
+        ]]></setter>
+      </property>
       
       <method name="_loaded">
         <body><![CDATA[
@@ -168,7 +185,7 @@
                       // Bind the Web Playlist UI element to the subscribed playlist instead of scraping.
                       theWebPlaylist.bind( "songbird", table, null, SBDefaultCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
                       // Show/hide them
-                      SBDataSetBoolValue( "browser.playlist.show", true );
+                      this.showWebPlaylist = true;
                       playlist_guid = "songbird";
                       playlist_table = table;
                     }
@@ -178,7 +195,7 @@
                 } 
         
         
-                // XXXlone -- we need this to happen so that the playlist gets initialized if it wasn't ready yet but is coming up soon !
+                // XXXlone - we need this to happen so that the playlist gets initialized if it wasn't ready yet but is coming up soon 
                 // unfortunately, if the page is not going to be a playlist, but is a document with no A element, we'll keep hitting this code
                 // and rerun this function every 2.5s, forever. We need to detect that a page is a not a playlist in the process of being loaded 
                 // so that we can avoid issuing a setTimeout(onMainPaneLoad, 2500) in this case, but ONLY in this case.
@@ -187,7 +204,7 @@
                   //setTimeout(function(){tb._loaded()}, 2500 );
                   return;
                 }
-                // XXXlone -- end case where page is going to be a playlist but contentDocument does not yet contains a playlist
+                // XXXlone - end case where page is going to be a playlist but contentDocument does not yet contains a playlist
         
                 this.mainpane_listener_set = true;
               }
@@ -206,7 +223,20 @@
         <parameter name="aRequest" />
         <parameter name="aLocation" />
         <body><![CDATA[
+        
+
+          
+        
           try {
+            // for some reason we need to do this dance to get scrollbars to
+            // show up
+            var nsIScrollable = Components.interfaces.nsIScrollable;
+            var scrollable = this.webNavigation.QueryInterface(nsIScrollable);        
+            scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_Y,
+                                                      nsIScrollable.Scrollbar_Auto);
+            scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_X,
+                                                      nsIScrollable.Scrollbar_Auto);
+          
             var cur_uri = aLocation.asciiSpec;
             // save url for reload on next servicetree init
             //SBDataSetStringValue("servicetree.selected_url", cur_uri);  
@@ -248,7 +278,7 @@
             
             // Disable the "add to playlist" button until we see that there is anything to add.
             SBDataSetBoolValue('browser.canplaylist', false);
-            this.hidePlaylist();
+            this.showWebPlaylist = false;
       
             // Clear the playlist tree variable so we are not confused.
             thePlaylistTree = null;
@@ -326,6 +356,251 @@
         ]]></body>
       </method>
       
+      
+      <!-- a bunch of methods from browser_xbl_temp.js / songbird_hack.js.
+           I'm not convinced they belong here, but till we refactor a couple
+           more things there's nowhere better for them to go. -->
+      <method name="playExternalUrl">
+        <parameter name="the_url" />
+        <parameter name="tryweb" />
+        <body><![CDATA[
+          //SB_LOG("songbird_hack.js", "playExternalUrl: " + the_url);
+          var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+          // figure out if the url is in the webplaylist
+          if (tryweb && theWebPlaylist && !theWebPlaylist.hidden) 
+          {
+            var row = theWebPlaylist.findRowIdByUrl(the_url);
+            if (row != -1) 
+            {
+              // if so, play the ref, from that entry's index
+              PPS.playRef("NC:webplaylist_webplaylist", row);
+            }
+          } else {
+            // otherwise, play the url as external (added to the db, plays the library from that point on)
+            PPS.playAndImportURL(the_url); // if the url is already in the lib, it is not added twice
+            if (document.__SEARCHWIDGET__) document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
+          }
+        ]]></body>
+      </method>
+      
+      <method name="handleMediaURL">
+        <parameter name="aURL" />
+        <parameter name="aShouldBeginPlayback" />
+        <parameter name="forcePlaylist" />
+        <body><![CDATA[
+          var retval = false;
+          try
+          {
+            // Stick playlists in the service pane (for now).
+            if ( forcePlaylist || gPPS.isPlaylistURL( aURL ) )
+            {
+              var playlistReader = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+                                   .createInstance(Components.interfaces.sbIPlaylistReaderManager);
+              var playlistReaderListener = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
+                                   .createInstance(Components.interfaces.sbIPlaylistReaderListener);
+        
+              // if we can find it in the service pane already then we shouldn't add it again.
+              var queryObj = new sbIDatabaseQuery();
+              queryObj.setDatabaseGUID("songbird");
+              var playlistManager = new sbIPlaylistManager();
+              playlistManager.getAllPlaylistList( queryObj );
+              var resultset = queryObj.getResultObject();
+              for ( var index = 0; index < resultset.getRowCount(); index++ )
+              {
+                // if we match don't add it, just play it.
+                if ( aURL == resultset.getRowCellByColumn( index, "description" ) )
+                {
+                  gPPS.playTable(resultset.getRowCellByColumn(index, "service_uuid"),
+                                 resultset.getRowCellByColumn(index, "name"),
+                                 0);
+                  return true;
+                }
+              }
+        
+              // Create this closure here to prevent this object from getting garbage
+              // collected too soon.  The playlist reader uses the nsIWebBrowserPersist
+              // component that does _not_ addref this listener :(
+              var playlist_observer = {
+                observe: function ( aSubject, aTopic, aData ) {
+                  if (aTopic.indexOf("error") != -1) {
+                    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                                  .getService(Components.interfaces.nsIPromptService);
+                    promptService.alert(null,
+                                        "Playlist Error",
+                                        "Unable to read playlist file - please try again later.");
+                  }
+                  else {
+                    SBScanServiceTreeNewEntryStart();
+                  }
+                }
+              };
+        
+              SBScanServiceTreeNewEntryEditable();
+        
+              playlistReaderListener.playWhenLoaded = aShouldBeginPlayback;
+              playlistReaderListener.observer = playlist_observer;
+              playlistReaderListener.mediaMimetypesOnly = true;
+              playlistReader.autoLoad( aURL,
+                                       "songbird", 
+                                       gPPS.convertURLToDisplayName( aURL ),
+                                       "http",
+                                       aURL,
+                                       "", 
+                                       playlistReaderListener );
+              retval = true;
+            }
+            // Everything else gets played directly.
+            else if ( gPPS.isMediaURL( aURL ) )
+            {
+              this.playExternalUrl(aURL, true);
+              retval = true;
+            }
+          }
+          catch ( err )
+          {
+            alert("sb-tabbrowser::handleMediaURL(" + aURL + "); " + err );
+          }
+          return retval;
+        ]]></body>
+      </method>
+      
+      
+      <!-- context menu handler -->
+      <method name="onHTMLContextMenu">
+        <parameter name="target" />
+        <body><![CDATA[
+          if ( this.theHTMLContextURL ) {
+            var v = target.getAttribute( "id" );
+            switch ( v ) {
+              case "html.context.open":
+                // can be track or playlist
+                // try dealing with media, might just be web content.
+                if ( !this.handleMediaURL(this.theHTMLContextURL, true, false) )
+                {
+                  gServicePane.loadURL( this.theHTMLContextURL );
+                }
+              break;
+              case "html.context.openexternal":
+                  var externalLoader = (Components
+                           .classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                          .getService(Components.interfaces.nsIExternalProtocolService));
+                  var nsURI = (Components
+                          .classes["@mozilla.org/network/io-service;1"]
+                          .getService(Components.interfaces.nsIIOService)
+                          .newURI(this.theHTMLContextURL, null, null));
+                  externalLoader.loadURI(nsURI, null);
+              break;
+              case "html.context.play":
+                // can be track or playlist
+                this.handleMediaURL(this.theHTMLContextURL, true, false);
+              break;
+              case "html.context.add":
+                gPPS.importURL(this.theHTMLContextURL);
+              break;
+              case "html.context.playlist":
+                // Add playlists to the service pane (force it as a playlist)
+                this.handleMediaURL(this.theHTMLContextURL, false, true);
+              break;
+              case "html.context.copytoclipboard":
+                var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
+                clipboard.copyString(this.theHTMLContextURL);
+              break;
+            }
+            this.theHTMLContextURL = null; // clear it because now we're done.
+          }
+        ]]></body>
+      </method>
+      
+      <!-- this method extracts the target url of click event targetted at html -->
+      <method name="GetHREFFromEvent">
+        <parameter name="evt" />
+        <body><![CDATA[
+          var the_href = "";
+          try
+          {
+            var node = evt.target;
+            while ( node ) // Walk up from the event target to find the A? 
+            {
+              if ( node.href )
+              {
+                the_href = node.href;
+                break;
+              }
+              node = node.parentNode;
+            }
+          }
+          catch ( err )
+          {
+            alert( err );
+          }
+          return the_href;
+        ]]></body>
+      </method>
+      
+      <field name="theHTMLContextURL">null</field>
+      <!-- used in async_webplaylist.js -->
+      <method name="onLinkOver">
+        <parameter name="evt" />
+        <body><![CDATA[
+          // Catch a contextual on a media url and attempt to play it
+          var the_url = this.GetHREFFromEvent( evt )
+          theStatusText.stringValue = the_url;
+          if ( gPPS.isMediaURL( the_url ) || gPPS.isPlaylistURL( the_url ) )
+          {
+            theStatusStyle.stringValue = "font-weight: bold;";
+          }
+          else
+          {
+            theStatusStyle.stringValue = "font-weight: normal;";
+          }
+        ]]></body>
+      </method>
+      <!-- used in async_webplaylist.js -->
+      <method name="onLinkOut">
+        <parameter name="evt" />
+        <body><![CDATA[
+          // Catch a contextual on a media url and attempt to play it
+          theStatusText.stringValue = "";
+        ]]></body>
+      </method>
+      <!-- used in async_webplaylist.js -->
+      <method name="onLinkContext">
+        <parameter name="evt" />
+        <body><![CDATA[
+          // Catch a contextual on a media url and attempt to play it
+          try
+          {
+            var theHTMLPopup = document.getElementById( "html_context_menu" );
+            this.theHTMLContextURL = this.GetHREFFromEvent( evt );
+            
+            // Disable "Add" if the url isn't media or is already there.
+            var disabled = "true";
+            if ( gPPS.isMediaURL( this.theHTMLContextURL ) && ! SBUrlExistsInDatabase( this.theHTMLContextURL ) )
+            {
+              disabled = "false"
+            }
+            document.getElementById( "html.context.add" ).setAttribute( "disabled", disabled );
+            
+            theHTMLPopup.showPopup(this, this.boxObject.screenX + evt.clientX + 5,
+                                   this.boxObject.screenY + evt.clientY,
+                                   "context", null, null );
+          }
+          catch ( err )
+          {
+            alert( err );
+          }
+        ]]></body>
+      </method>
+      <!-- used in async_webplaylist.js -->
+      <method name="onMediaClick">
+        <parameter name="evt" />
+        <body><![CDATA[
+          // Catch a click on a media url and attempt to play it
+          this.handleMediaURL(this.GetHREFFromEvent(evt), true, false);
+          evt.stopPropagation();
+          evt.preventDefault();
+        ]]></body>
+      </method>
     </implementation>
     
     <handlers>

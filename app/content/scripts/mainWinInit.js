@@ -58,10 +58,6 @@ function SBInitialize()
   }
   catch(e) { }
 
-  const BROWSER_FILTER_CONTRACTID =
-    "@mozilla.org/appshell/component/browser-status-filter;1";
-  const nsIWebProgress = Components.interfaces.nsIWebProgress;
-
   dump("SBInitialize *** \n");
   
   window.focus();
@@ -99,13 +95,13 @@ function SBInitialize()
       setTimeout( SBScanMedia, 1000 );
       SBDataSetBoolValue("firstrun.scancomplete", true);
     }
-
+    
     // This is the sb-tabbrowser xul element from mainwin.xul
     gBrowser = document.getElementById("frame_main_pane");
     
     // Look at all these ugly hacks that need to go away.  (sigh)
     gServicePane = document.getElementById('servicepane');
-    gServicePane.browser = gBrowser; // FIXME: this should be set via a XUL XML attribute
+    
     gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
     // looks like we need to attach this to the window...
     window.gServicePane = gServicePane
@@ -137,7 +133,6 @@ function SBUninitialize()
   window.removeEventListener("keydown", checkAltF4, true);
   
   var mainPane = document.getElementById("frame_main_pane");
-  mainPane.removeProgressListener(gProgressFilter);
 
   var webPlaylist = document.getElementById("playlist_web");
   webPlaylist.removeEventListener("playlist-play", onPlaylistPlay, true);
@@ -146,10 +141,6 @@ function SBUninitialize()
   gServicePane = null;
   document.__SEARCHWIDGET__ = null;
   document.__CURRENTWEBPLAYLIST__ = null;
-
-  // Make sure to destroy the global progress filter
-  if (gProgressFilter)
-    gProgressFilter = null;
 
   resetJumpToFileHotkey();
   closeJumpTo();

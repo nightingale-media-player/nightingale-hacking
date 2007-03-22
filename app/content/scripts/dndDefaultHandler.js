@@ -204,7 +204,7 @@ function SBDroppedEntry()
 
     if (firstDrop) {
       firstDrop = false;
-      playExternalUrl(theDropPath, false);
+      gBrowser.playExternalUrl(theDropPath, false);
     }
   }
 }

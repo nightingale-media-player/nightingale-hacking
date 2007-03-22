@@ -79,7 +79,7 @@ try
         //  UGH.  MUST REWRITE ENTIRE WORLD.
         if ( thePlaylistTree ) {
           this.cancel(); 
-          gBrowser.hidePlaylist();
+          gBrowser.showWebPlaylist = false;
         } 
 
         // check is clearInterval has been called (see sbIAsyncForLoop.js:66)
@@ -98,9 +98,12 @@ try
           if ( url )
             loop_break = this.HandleUrl( url );
           // Add our event listeners to anything that's a link.
-          this.a_array[ this.i ].addEventListener( "contextmenu", onLinkContext, true );
-          this.a_array[ this.i ].addEventListener( "mouseover", onLinkOver, true );
-          this.a_array[ this.i ].addEventListener( "mouseout", onLinkOut, true );
+          this.a_array[ this.i ].addEventListener( "contextmenu",
+              function (evt) {gBrowser.onLinkContext(evt)}, true );
+          this.a_array[ this.i ].addEventListener( "mouseover",
+              function (evt) {gBrowser.onLinkOver(evt)}, true );
+          this.a_array[ this.i ].addEventListener( "mouseout",
+              function (evt) {gBrowser.onLinkOut(evt)}, true );
         }
         // "Embed" tags
         if ( 
@@ -152,7 +155,6 @@ try
     href_loop.guid = aGuid;
     href_loop.table = aTable;
     href_loop.doc = theDocument;
-    href_loop.data = theCanAddToPlaylistData;
     href_loop.a_array = theDocument.getElementsByTagName('A');
     href_loop.embed_array = theDocument.getElementsByTagName('EMBED');
     href_loop.object_array = theDocument.getElementsByTagName('OBJECT');
@@ -175,12 +177,14 @@ try
       var is_playlist = gPPS.isPlaylistURL( url );
       if ( is_playlist )
       {
-        this.a_array[ this.i ].addEventListener( "click", onMediaClick, true );
+        this.a_array[ this.i ].addEventListener( "click",
+            function(evt){gBrowser.onMediaClick(evt)}, true );
       }
       else if ( is_media )
       {
         SBDataSetIntValue( "webplaylist.current", this.i + 1 );
-        this.a_array[ this.i ].addEventListener( "click", onMediaClick, true );
+        this.a_array[ this.i ].addEventListener( "click",
+            function(evt){gBrowser.onMediaClick(evt)}, true );
         this.installed_listener = true;
         
         // Don't insert it if we already did.
@@ -204,7 +208,7 @@ try
               this.aPlaylistManager.deletePlaylist( WEB_PLAYLIST_TABLE, this.aDBQuery );
               this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE + "_library", WEB_PLAYLIST_LIBRARY_NAME, "library", "library", this.aDBQuery );
               this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
-              this.data.boolValue = true;
+              SBDataSetBoolValue("browser.canplaylist", true);
               theWebPlaylistQuery = this.aDBQuery;
               // Then pretend like we clicked on it.
               if ( !thePlaylistTree )

@@ -38,7 +38,7 @@
             <xul:vbox class="servicepane_box" flex="1">
                 <xul:vbox flex="1">
                     <xul:vbox style="-moz-binding:url(#treepane)" flex="1"
-                              anonid="treepane" />
+                              anonid="treepane" xbl:inherits="browser"/>
                     <xul:vbox style="-moz-binding:url(#toolbar)"
                               anonid="toolbar" />
                 </xul:vbox>
@@ -55,9 +55,6 @@
                 this.mToolbar = document.getAnonymousElementByAttribute(this, 'anonid', 'toolbar');
                 this.mExtensions = document.getAnonymousElementByAttribute(this, 'anonid', 'extensions');
             ]]></constructor>
-            <property name="browser"
-                      onget="return this.mTreePane.browser;"
-                      onset="this.mTreePane.browser = val;" />
             <property name="onPlaylistDefaultCommand"
                       onget="return this.mTreePane.onPlaylistDefaultCommand;"
                       onset="this.mTreePane.onPlaylistDefaultCommand = val;" />
@@ -157,14 +154,31 @@
                 this.mTree.builder.addListener(this);
                 this.mTree.builder.rebuild();
                 
-                this.mBrowser = null;
                 this.mLoadedFirstURL = false;
                 this.mCurrentURL = null;
+                
+                /* we want to do some initialization after the window has loaded */
+                var sp = this;
+                function windowOnLoad() {
+                    sp.browser.addProgressListener(sp,
+                            Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
+                    
+                    var start = SBDataGetStringValue("servicetree.selected_url");
+                    if (!start) {
+                        /* FIXME: this default home page should be stored elsewhere */
+                        start = "http://www.songbirdnest.com/birdhouse/";
+                    }
+                    sp.loadURL(start);
 
+                    sp.mLoadedFirstURL = true;
+                    window.removeEventListener('load', windowOnLoad, false);
+                }
+                window.addEventListener('load', windowOnLoad, false);
+                
             ]]></constructor>
             <destructor><![CDATA[
-                // clear the browser (which clears the progress listener)
-                this.browser = null;
+                // remove the progress listener
+                this.browser.removeProgressListener(this);
                 // remove the builder listener
                 this.mTree.builder.removeListener(This);
             ]]></destructor>
@@ -196,45 +210,15 @@
                     return this.mService.getNode(id);
                 ]]></body>
             </method>
+            <field name="_browser">null</field>
             <property name="browser">
                 <getter><![CDATA[
-                    return this.mBrowser;
+                    if (!this._browser) {
+                        this._browser = document.getElementById(this.getAttribute('browser'));
+                    }
+                    return this._browser;
                 ]]></getter>
-                <setter><![CDATA[
-                    if (this.mBrowser) {
-                        // remove the listener from the old browser
-                        this.mBrowser.removeProgressListener(this);
-                    }
-                    this.mBrowser = val;
-                    if (this.mBrowser) {
-                        // add a web progress listener to the new browser
-                        // right now we only care about onLocationChange
-                        this.mBrowser.addProgressListener(this,
-                            Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
-                    }
-                    if (this.mBrowser && !this.mLoadedFirstURL) {
-                        var start = SBDataGetStringValue("servicetree.selected_url");
-                        if (!start) {
-                            /* FIXME: this default home page should be stored elsewhere */
-                            start = "http://www.songbirdnest.com/birdhouse/";
-                        }
-                        var service_pane_tree = this;
-                        // loading the first URL needs to be deferred.
-                        window.setTimeout(function () {
-                            service_pane_tree.loadURL(start);
-                            // make sure the tabbrowser's browser is scrollable.
-                            // I don't know why I have to do this.
-                            var nsIScrollable = Components.interfaces.nsIScrollable;
-                            var scrollable = service_pane_tree.mBrowser.webNavigation.QueryInterface(nsIScrollable);
-                            scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_Y,
-                                                                      nsIScrollable.Scrollbar_Auto);
-                            scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_X,
-                                                                      nsIScrollable.Scrollbar_Auto);
 
-                        }, 0);
-                        this.mLoadedFirstURL = true;
-                    }
-                ]]></setter>
             </property>
             <field name="onPlaylistDefaultCommand">null</field>
 
@@ -276,12 +260,12 @@
                     
                     dump('loadURL: '+aURL+'\n');
 
-                    if (this.mBrowser) {
-                        this.mBrowser.hidePlaylist();
+                    if (this.browser) {
+                        this.browser.showWebPlaylist = false;
 
                         try {
-                            this.mBrowser.stop();
-                            this.mBrowser.webNavigation.loadURI(aURL, Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
+                            this.browser.stop();
+                            this.browser.webNavigation.loadURI(aURL, Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
                             
                             dump('told the browser\n');
                             
