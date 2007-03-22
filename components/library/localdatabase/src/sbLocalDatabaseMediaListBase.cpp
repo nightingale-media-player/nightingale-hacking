@@ -46,21 +46,23 @@
 #include "sbLocalDatabasePropertyCache.h"
 #include <sbProxyUtils.h>
 
-NS_IMPL_ISUPPORTS_INHERITED6(sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS_INHERITED7(sbLocalDatabaseMediaListBase,
                              sbLocalDatabaseResourceProperty,
                              sbIMediaItem,
                              sbILocalDatabaseMediaItem,
                              sbIFilterableMediaList,
                              sbISearchableMediaList,
+                             sbISortableMediaList,
                              sbIMediaList,
                              nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseMediaListBase,
+NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseMediaListBase,
                              sbILibraryResource,
                              sbIMediaItem,
                              sbILocalDatabaseMediaItem,
                              sbIFilterableMediaList,
                              sbISearchableMediaList,
+                             sbISortableMediaList,
                              sbIMediaList)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
@@ -1502,6 +1504,72 @@ sbLocalDatabaseMediaListBase::ClearSearch()
   return NS_OK;
 }
 
+// sbISortableMediaList
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetSortableProperties(nsIStringEnumerator** aSortableProperties)
+{
+  NS_ENSURE_ARG_POINTER(aSortableProperties);
+  // To be implemented by property manager?
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetCurrentSort(sbIPropertyArray** aCurrentSort)
+{
+  NS_ENSURE_ARG_POINTER(aCurrentSort);
+
+  nsresult rv;
+
+  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
+  nsAutoLock lock(mViewArrayLock);
+
+  if (!mViewSort) {
+    mViewSort = do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ADDREF(*aCurrentSort = mViewSort);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::SetSort(sbIPropertyArray* aSort)
+{
+  NS_ENSURE_ARG_POINTER(aSort);
+
+  nsresult rv;
+
+  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
+  nsAutoLock lock(mViewArrayLock);
+
+  mViewSort = aSort;
+
+  rv = UpdateViewArrayConfiguration();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::ClearSort()
+{
+  nsresult rv;
+
+  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
+  nsAutoLock lock(mViewArrayLock);
+
+  if (mViewSort) {
+    rv = mViewSort->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = UpdateViewArrayConfiguration();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 /**
  * \brief Updates the internal filter map with a contents of a property bag.
  *        In replace mode, the value list for each distinct property in the
@@ -1523,7 +1591,8 @@ sbLocalDatabaseMediaListBase::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
   NS_ENSURE_STATE(propertyCount);
 
   nsTHashtable<nsStringHashKey> seenProperties;
-  NS_ENSURE_TRUE(seenProperties.Init(), NS_ERROR_OUT_OF_MEMORY);
+  PRBool success = seenProperties.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   for (PRUint32 index = 0; index < propertyCount; index++) {
 
@@ -1573,7 +1642,7 @@ sbLocalDatabaseMediaListBase::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
         NS_ENSURE_TRUE(stringArray, NS_ERROR_OUT_OF_MEMORY);
 
         // Try to add the array to the hash table.
-        PRBool success = mViewFilters.Put(propertyName, stringArray);
+        success = mViewFilters.Put(propertyName, stringArray);
         NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
       }
 
@@ -1582,8 +1651,8 @@ sbLocalDatabaseMediaListBase::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
         // string array
         if (!seenProperties.GetEntry(propertyName)) {
           stringArray->Clear();
-          NS_ENSURE_TRUE(seenProperties.PutEntry(propertyName),
-                         NS_ERROR_OUT_OF_MEMORY);
+          nsStringHashKey* successKey = seenProperties.PutEntry(propertyName);
+          NS_ENSURE_TRUE(successKey, NS_ERROR_OUT_OF_MEMORY);
         }
       }
 
@@ -1637,8 +1706,8 @@ sbLocalDatabaseMediaListBase::UpdateViewArrayConfiguration()
       NS_ENSURE_SUCCESS(rv, rv);
 
       sbStringArray valueArray(1);
-      NS_ENSURE_TRUE(valueArray.AppendElement(stringValue),
-                     NS_ERROR_OUT_OF_MEMORY);
+      nsString* successString = valueArray.AppendElement(stringValue);
+      NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
 
       nsCOMPtr<nsIStringEnumerator> valueEnum =
         new sbTArrayStringEnumerator(&valueArray);
@@ -1647,6 +1716,51 @@ sbLocalDatabaseMediaListBase::UpdateViewArrayConfiguration()
       rv = mViewArray->AddFilter(propertyName, valueEnum, PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+  }
+
+  // Update sort
+  rv = mViewArray->ClearSorts();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasSorts = PR_FALSE;
+  if (mViewSort) {
+    PRUint32 propertyCount;
+    rv = mViewSort->GetLength(&propertyCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 index = 0; index < propertyCount; index++) {
+
+      nsCOMPtr<nsIProperty> property;
+      rv = mViewSort->GetPropertyAt(index, getter_AddRefs(property));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIVariant> value;
+      rv = property->GetValue(getter_AddRefs(value));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString propertyName;
+      rv = property->GetName(propertyName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString stringValue;
+      rv = value->GetAsAString(stringValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mViewArray->AddSort(propertyName, stringValue.EqualsLiteral("a"));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      hasSorts = PR_TRUE;
+    }
+  }
+
+  // If no sport is specified, use the default sort
+  if (!hasSorts) {
+    nsAutoString defaultProperty;
+    rv = GetDefaultSortProperty(defaultProperty);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mViewArray->AddSort(defaultProperty, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Invalidate the view array

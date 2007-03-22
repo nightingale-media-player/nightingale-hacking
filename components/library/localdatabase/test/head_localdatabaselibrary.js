@@ -241,8 +241,9 @@ function assertArray(array, dataFile) {
   }
 
   for(var i = 0; i < a.length - 1; i++) {
-    if(array[i] != a[i]) {
-      fail("sort failed, index " + i + " got " + array[i] + " expected " + a[i]);
+    var dataValue = a[i].split("\t")[0];
+    if(array[i] != dataValue) {
+      fail("sort failed, index " + i + " got " + array[i] + " expected " + dataValue);
     }
   }
 }

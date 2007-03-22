@@ -67,6 +67,8 @@ public:
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);
   NS_IMETHOD Clear();
 
+  NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty);
+
 private:
   nsresult DeleteItemByMediaItemId(PRUint32 aMediaItemId);
 

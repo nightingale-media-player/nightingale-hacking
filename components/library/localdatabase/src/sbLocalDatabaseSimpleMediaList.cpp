@@ -1143,3 +1143,10 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetDefaultSortProperty(nsAString& aProperty)
+{
+  aProperty.Assign(DEFAULT_SORT_PROPERTY);
+  return NS_OK;
+}
+

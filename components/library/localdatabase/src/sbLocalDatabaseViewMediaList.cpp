@@ -621,3 +621,10 @@ sbLocalDatabaseViewMediaList::AddItemToLocalDatabase(sbIMediaItem* aMediaItem)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseViewMediaList::GetDefaultSortProperty(nsAString& aProperty)
+{
+  aProperty.Assign(DEFAULT_SORT_PROPERTY);
+  return NS_OK;
+}
+

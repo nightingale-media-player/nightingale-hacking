@@ -44,6 +44,7 @@
 #include <sbIMediaListListener.h>
 #include <sbIFilterableMediaList.h>
 #include <sbISearchableMediaList.h>
+#include <sbISortableMediaList.h>
 #include <sbIDatabaseResult.h>
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseLibrary.h"
@@ -77,6 +78,7 @@ class sbLocalDatabaseMediaListBase : public sbLocalDatabaseResourceProperty,
                                      public sbILocalDatabaseMediaItem,
                                      public sbIFilterableMediaList,
                                      public sbISearchableMediaList,
+                                     public sbISortableMediaList,
                                      public nsIClassInfo
 {
   typedef nsTArray<nsString> sbStringArray;
@@ -97,6 +99,7 @@ public:
   NS_DECL_SBILOCALDATABASEMEDIAITEM
   NS_DECL_SBIFILTERABLEMEDIALIST
   NS_DECL_SBISEARCHABLEMEDIALIST
+  NS_DECL_SBISORTABLEMEDIALIST
   NS_DECL_NSICLASSINFO
 
   sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
@@ -119,6 +122,7 @@ protected:
   // Enumerate listeners and call OnBatchEnd
   nsresult NotifyListenersBatchEnd();
 
+  NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty) = 0;
 private:
 
   struct MediaListCallbackInfo {
@@ -238,6 +242,10 @@ private:
 
   // Current search filter configuration
   nsCOMPtr<sbIPropertyArray> mViewSearches;
+
+  // Current sort filter configuration
+  nsCOMPtr<sbIPropertyArray> mViewSort;
+
 };
 
 class sbDatabaseResultStringEnumerator : public nsIStringEnumerator

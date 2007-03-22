@@ -66,6 +66,8 @@ public:
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);
   NS_IMETHOD Clear();
 
+  NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty);
+
 private:
   nsresult ExecuteAggregateQuery(const nsAString& aQuery, nsAString& aValue);
 
