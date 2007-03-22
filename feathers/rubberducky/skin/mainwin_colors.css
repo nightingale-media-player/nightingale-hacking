@@ -783,12 +783,12 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 /* the box with the url image and the url textbox */
 
 
-#browser_url_image
+.locationbar-image
 {
   background-color: transparent;
 }
 
-#browser_url[focused="true"]
+.locationbar-textbox[focused="true"]
 {
   background-color: #99A195;
   color: #FFF;

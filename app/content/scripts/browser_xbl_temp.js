@@ -189,76 +189,7 @@ function onBrowserDownload()
 }
 
 
-// onHTMLUrlChange
-function onHTMLUrlChange( evt )
-{
-  var value = evt.target.value;
-  if ( value && value.length )
-  {
-    // Make sure the value is an url
-    value = SBGetUrlFromService( value );
-    // And then put it back in the box as a service
-    SBDataSetStringValue("browser.uri", value);
-    SBDataSetStringValue("browser.url.text", gServicePane.getURLName(value));
-    SBDataSetStringValue("browser.url.image", gServicePane.getURLImage(value));
 
-    // And then go to the url.  Easy, no?
-    window.gServicePane.loadURL(value);
-  }
-}
-
-function onHTMLURLFocus (evt) 
-{
-  var url = document.getElementById("browser_url");
-  var text = url.value;
-  url.selectionStart = 0;
-  url.selectionEnd = text.length;
-  url.setAttribute("savefocus", text);
-}
-
-function onHTMLURLRestore( evt ) 
-{
-  var url = document.getElementById("browser_url");
-  if ( url.getAttribute("savefocus") != "" )
-  {
-    url.value = url.getAttribute("savefocus");
-    url.setAttribute("savefocus", "");
-  }
-}
-
-function onHTMLUrlKeypress( evt )
-{
-  switch ( evt.keyCode )
-  {
-    case 27: // Esc
-      var oldval = evt.target.getAttribute("savefocus");
-      onHTMLURLRestore(evt);
-      evt.target.setAttribute("savefocus", oldval);
-      break;
-      
-    case 13: // Enter
-      evt.target.setAttribute("savefocus", "");
-      evt.target.value = SBTabcompleteService( evt.target.value );
-      onHTMLUrlChange( evt );
-/*      
-      evt.target.selectionStart = 0;
-      evt.target.selectionEnd = evt.target.value.length;
-*/      
-      break;
-          
-/*      
-    case 9:  // Tab
-      var value = SBTabcompleteService( evt.target.value );
-      if ( value != evt.target.value )
-      {
-        alert ( value + " != " + evt.target.value )
-        evt.target.value = value;
-        onHTMLUrlChange( evt );
-      }
-      break;
-*/      
-  }
-}
 
 var thePlaylistTree;
 
@@ -278,8 +209,3 @@ function focusSearch()
   search_widget.onFirstMousedown(); // Sets focus.  Clears "search" text.
 }
 
-function focusLocationBar()
-{
-  var location_bar = document.getElementById( "browser_url" );
-  location_bar.focus();
-}

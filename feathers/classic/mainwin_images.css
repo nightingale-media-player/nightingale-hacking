@@ -787,7 +787,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 /* the box with the url image and the url textbox */
 
 
-#browser_url_image
+.locationbar-image
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 16px !important;
@@ -806,7 +806,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   border-left: 2px solid !important;
 }
 
-#browser_url,
+.locationbar-textbox,
 .mainwin_location
 {
   margin: 0px 0px 0px 5px !important;

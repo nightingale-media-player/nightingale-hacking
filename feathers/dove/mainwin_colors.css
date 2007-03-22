@@ -1055,18 +1055,18 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   color: #CCC !important;
 }
 
-#browser_url_image
+.locationbar-image
 {
   background-color: transparent !important;
 }
 
-#browser_url
+.locationbar-textbox
 {
   background-color: transparent !important;
   color: #333 !important;  
 }
 
-#browser_url input:focus
+.locationbar-textbox input:focus
 {
   background-color: #EEE !important;
   color: #333 !important;

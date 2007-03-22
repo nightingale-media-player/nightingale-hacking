@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!DOCTYPE bindings PUBLIC "-//MOZILLA//DTD XBL V1.0//EN" "http://www.mozilla.org/xbl">
+<!--
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+-->
+<bindings
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="sb-locationbar-textbox">
+    <content>
+      <xul:textbox anonid="textbox" class="locationbar-textbox" flex="6" align="center">
+        <!--
+                   id="browser_url" flex="6"  align="center"
+                   onkeypress="onHTMLUrlKeypress( event );"
+                   onfocus="onHTMLURLFocus( event );">
+                   -->
+        <children/>
+        <xul:image anonid="image" class="locationbar-image"
+            src="" />
+        <!--id="browser_url_image" src=""/>-->
+      </xul:textbox>
+    </content>
+    
+    <implementation>
+      <constructor><![CDATA[
+        // get widgets
+        this._textbox = document.getAnonymousElementByAttribute(this, 'anonid', 'textbox');
+        this._image = document.getAnonymousElementByAttribute(this, 'anonid', 'image');
+        
+        // initial savefocus is ''?
+        this._saveFocus = '';
+        
+        // set up dataremotes
+        this._dataText = SBDataBindElementProperty("browser.url.text", this._textbox, "value");
+        this._dataImage = SBDataBindElementProperty("browser.url.image", this._image, "src");
+      ]]></constructor>
+      
+      <property name="value"
+                onget="return this._textbox.value;"
+                onset="this._textbox.value=val;" />
+      
+      <method name="focus">
+        <body><![CDATA[
+          this._textbox.focus();
+        ]]></body>
+      </method>
+
+    </implementation>
+    
+    <handlers>
+      <handler event="focus"><![CDATA[
+        this._saveFocus = this._textbox.value;
+        this._textbox.selectionStart = 0;
+        this._textbox.selectionEnd = this._saveFocus.length;
+      ]]></handler>
+      
+      <handler event="keypress"><![CDATA[
+        switch (event.keyCode) {
+          case 27: // Esc
+            if (this._saveFocus != '') {
+              this.value = this._saveFocus;
+            }
+            break;
+            
+          case 13: // Enter
+            this._saveFocus == '';
+            this.value = SBTabcompleteService(this.value);
+
+            var value = this.value;
+            if (value && value.length) {
+              // Make sure the value is an url
+              value = SBGetUrlFromService( value );
+              // And then put it back in the box as a service
+              SBDataSetStringValue("browser.uri", value);
+              SBDataSetStringValue("browser.url.text", gServicePane.getURLName(value));
+              SBDataSetStringValue("browser.url.image", gServicePane.getURLImage(value));
+          
+              // And then go to the url.  Easy, no?
+              window.gServicePane.loadURL(value);
+            }
+            break; 
+        }
+      ]]></handler>
+    </handlers>
+  </binding>
+
+</bindings>

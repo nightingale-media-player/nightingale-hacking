@@ -203,7 +203,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 
 
 /* the box with the url image and the url textbox */
-#browser_url
+.locationbar-textbox
 {
   margin: 2px;
   padding: 0px;
@@ -220,7 +220,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 }
 
 
-#browser_url_image
+.locationbar-image
 {
   height: 16px;
   width: 16px;

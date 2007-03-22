@@ -162,7 +162,7 @@
   margin: 0px !important;
 }
 
-tabbrowser > tabbox > tabpanels {
+sb-tabbrowser > tabbox > tabpanels {
   -moz-appearance: none !important;
 }
 

@@ -2096,7 +2096,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 
 /* the browser buttons */
 
-#browser_url
+.locationbar-textbox
 {
   margin: 2px 0px 2px 0px !important;
   padding-top: 4px !important;
@@ -2118,7 +2118,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 */
 }
 
-#browser_url_image
+.locationbar-image
 {
   margin: 2px 0px 2px 0px !important;
   padding: 4px 2px 2px 2px !important;

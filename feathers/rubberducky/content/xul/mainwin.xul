@@ -216,9 +216,10 @@
                   <button disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
 
                   <!-- ADDRESS BOX -->
-                  <textbox id="browser_url" flex="6"  align="center" x_onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" onfocus="onHTMLURLFocus( event );">
-                    <image id="browser_url_image" src=""/>
-                  </textbox>
+                  <sb-locationbar-textbox id="location_bar"
+                                          flex="6" align="center"
+                                          browser="frame_main_pane" />
+
 
                   <smartsplitter id="search_splitter" state="open">
                     <grippy/>
@@ -294,7 +295,7 @@
     <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
     <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
     <key id="search-key" modifiers="accel" key="&search.key;" oncommand="focusSearch();"/>
-    <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="focusLocationBar();"/>
+    <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
     <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>
   </keyset>
 

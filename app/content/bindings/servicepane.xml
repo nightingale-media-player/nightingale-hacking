@@ -180,7 +180,7 @@
                 // remove the progress listener
                 this.browser.removeProgressListener(this);
                 // remove the builder listener
-                this.mTree.builder.removeListener(This);
+                this.mTree.builder.removeListener(this);
             ]]></destructor>
 
             <method name="getURLName">
