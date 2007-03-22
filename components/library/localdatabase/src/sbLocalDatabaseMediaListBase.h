@@ -124,7 +124,7 @@ protected:
 
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty) = 0;
 
-  inline NS_METHOD MakeStandardQuery(sbIDatabaseQuery** _retval);
+  NS_METHOD MakeStandardQuery(sbIDatabaseQuery** _retval);
 
 private:
 

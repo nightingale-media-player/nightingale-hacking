@@ -445,7 +445,7 @@ sbLocalDatabaseMediaListBase::NotifyListenersBatchEnd()
   return NS_OK;
 }
 
-/* inline */ NS_METHOD
+NS_METHOD
 sbLocalDatabaseMediaListBase::MakeStandardQuery(sbIDatabaseQuery** _retval)
 {
   nsresult rv;
