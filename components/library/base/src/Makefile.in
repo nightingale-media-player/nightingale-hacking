@@ -31,7 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 target := sbLibraryManager
 ifdef DEBUG
-target := $(add-suffix _d,$(target))
+target := $(addsuffix _d,$(target))
 endif
 
 CPP_SRCS = sbLibraryManager.cpp \
