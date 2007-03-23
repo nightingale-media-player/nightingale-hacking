@@ -110,7 +110,7 @@ endif
 include $(topsrcdir)/build/rules.mk
 
 # Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
-xulrunner_extensions = $(notdir $(wildcard $(SONGBIRD_XULRUNNERDIR)/extensions/*))
+xulrunner_extensions := $(notdir $(wildcard $(SONGBIRD_XULRUNNERDIR)/extensions/*))
 
 all::
 	$(MKDIR) -p $(SONGBIRD_EXTENSIONSDIR)
@@ -120,7 +120,7 @@ ifneq (,$(xulrunner_extensions))
     $(MV) -f $(SONGBIRD_XULRUNNERDIR)/extensions/$$item $(SONGBIRD_EXTENSIONSDIR); \
   done
 endif
+	$(RM) -rf $(SONGBIRD_XULRUNNERDIR)/extensions
 
 all::
 	$(RM) -f $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
-	$(RM) -rf $(SONGBIRD_XULRUNNERDIR)/extensions
