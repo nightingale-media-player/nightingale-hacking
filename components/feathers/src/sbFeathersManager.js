@@ -1004,15 +1004,32 @@ FeathersManager.prototype = {
       return;
     }
 
-    // Close all open windows other than the core.
+    // Close all open windows other than the core, dominspector, and venkman.
     // This is needed in order to reset window chrome settings.
     var playerWindows = windowMediator.getEnumerator(null);
     while (playerWindows.hasMoreElements()) {
       var window = playerWindows.getNext();
+      
       if (window != coreWindow) {
-        // Ask nicely.  The window should be able to cancel the onunload if
-        // it chooses.
-        window.close();
+        
+        // Don't close domi or other debug windows... that's just annoying
+        var isDebugWindow = false;
+        try {    
+          var windowElement = window.document.documentElement;
+          var windowID = windowElement.getAttribute("id");
+          if (windowID == "JSConsoleWindow" || 
+              windowID == "winInspectorMain" || 
+              windowID == "venkman-window") 
+          {
+            isDebugWindow = true;
+          }
+        } catch (e) {}
+        
+        if (!isDebugWindow) {
+          // Ask nicely.  The window should be able to cancel the onunload if
+          // it chooses.
+          window.close();
+        }
       }
     }
             
