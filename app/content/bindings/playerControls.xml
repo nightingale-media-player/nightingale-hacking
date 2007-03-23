@@ -667,7 +667,7 @@
         <![CDATA[
           try {
             if (this.trackingPosition) return; // we are the control changing the position, ignore this callback
-            this.value = gPPS.position;
+            this.value = this.gPPS.position;
           } catch (e) {
             alert("playerControls.xml - onRemotePositionChange - " + e);
           }
@@ -720,7 +720,7 @@
     <method name="onTotalDown">
       <body>
         <![CDATA[
-          var len = gPPS.length;
+          var len = this.gPPS.length;
           if ( len > 0 )
             this.remote_showRemaining.boolValue = !this.remote_showRemaining.boolValue;
           // If you try to toggle it while it is zero, you lose the state.
@@ -778,7 +778,7 @@
                 (this.remote_playingRef.stringValue != "" &&
                   this.remote_playlistIndex.stringValue != "") ) {
               if (this.gPPS.paused) {
-                gPPS.play();
+                this.gPPS.play();
               } else {
                 // player is buffering (or stopped!), because the play button is visible (not started) yet 
                 // pause is not set and the player is started.  start the playlist again at the current spot
