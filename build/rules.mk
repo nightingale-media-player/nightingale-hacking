@@ -180,13 +180,13 @@ endif
 # Right now this system is not compatible with parallel make.
 .NOTPARALLEL : all clean
 
-all:   $(targets) \
-       garbage \
-       $(NULL)
+all::   $(targets) \
+        garbage \
+        $(NULL)
 
-clean: $(clean_targets) \
-       create_dirs_clean \
-       $(NULL)
+clean:: $(clean_targets) \
+        create_dirs_clean \
+        $(NULL)
 
 #------------------------------------------------------------------------------
 # Update Makefiles
@@ -201,7 +201,7 @@ endif
 # SUBMAKEFILES: List of Makefiles for next level down.
 #   This is used to update or create the Makefiles before invoking them.
 ifneq ($(SUBDIRS),)
-SUBMAKEFILES            := $(addsuffix /Makefile, $(SUBDIRS))
+SUBMAKEFILES := $(addsuffix /Makefile, $(SUBDIRS))
 endif
 
 $(SUBMAKEFILES): % : $(srcdir)/%.in
@@ -213,7 +213,7 @@ Makefile: Makefile.in
 makefiles: $(SUBMAKEFILES)
 ifneq (,$(SUBDIRS))
 	@for d in $(SUBDIRS); do \
-                $(MAKE) -C $$d $@; \
+    $(MAKE) -C $$d $@; \
 	done
 endif
 
@@ -733,11 +733,12 @@ endif
                              
 preferences_preprocess:
 	@$(MKDIR) -p $(SONGBIRD_PREFERENCESDIR)
-	for item in $(PREFERENCES); \
-    do $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
-      $(PREF_PPFLAGS) $(ACDEFINES) $(PPDEFINES) -- $(srcdir)/$$item > \
-      $(SONGBIRD_PREFERENCESDIR)/`basename $$item $(PREFERENCES_STRIP_SUFFIXES)`; \
-    done
+	for item in $(PREFERENCES); do \
+	  target=$(SONGBIRD_PREFERENCESDIR)/`basename $$item $(PREFERENCES_STRIP_SUFFIXES)`; \
+	  $(CYGWIN_WRAPPER) $(RM) -f $$target; \
+    $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(PREF_PPFLAGS) $(ACDEFINES) \
+      $(PPDEFINES) -- $(srcdir)/$$item > $$target; \
+  done
 .PHONY : preferences_preprocess
 endif #PREFERENCES
 
@@ -749,15 +750,16 @@ ifdef APPINI
 
 appini_preprocess: $(SONGBIRD_DISTDIR)/application.ini
 
+appini_target = $(SONGBIRD_DISTDIR)/application.ini
+
 $(SONGBIRD_DISTDIR)/application.ini: $(APPINI)
-	@$(MKDIR) -p $(SONGBIRD_DISTDIR)
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
-    $(ACDEFINES) $(PPDEFINES) -- $(srcdir)/$(APPINI) > \
-    $(SONGBIRD_DISTDIR)/application.ini; \
-    $(NULL)
+	$(CYGWIN_WRAPPER) $(RM) -f $(appini_target)
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DISTDIR)
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
+    $(srcdir)/$(APPINI) > $(appini_target)
 
 clean_appini:
-	$(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DISTDIR)/application.ini
+	$(CYGWIN_WRAPPER) $(RM) -f $(appini_target)
 
 .PHONY : appini_preprocess clean_appini
 
@@ -867,19 +869,15 @@ jar_manifest_in = $(JAR_MANIFEST).in
 endif
 
 $(JAR_MANIFEST): $(jar_manifest_in)
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
-    $(ACDEFINES) $(PPDEFINES) -- $(srcdir)/$(jar_manifest_in) | \
-    $(PERL) $(SCRIPTS_DIR)/expand-jar-mn.pl $(srcdir) > \
-    ./$(JAR_MANIFEST) \
-    $(NULL)
+	$(CYGWIN_WRAPPER) $(RM) -f $(JAR_MANIFEST)
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
+    $(srcdir)/$(jar_manifest_in) | \
+    $(PERL) $(SCRIPTS_DIR)/expand-jar-mn.pl $(srcdir) > $(JAR_MANIFEST)
 
 make_jar: $(JAR_MANIFEST)
 	@$(CYGWIN_WRAPPER) $(MKDIR) -p $(TARGET_DIR)
-	@$(PERL) -I$(MOZSDK_SCRIPTS_DIR) \
-           $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
-           $(MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES)\
-           < $(jar_manifest_file) \
-           $(NULL)
+	@$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
+      $(MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(jar_manifest_file)
 	@$(CYGWIN_WRAPPER) $(RM) -rf $(TARGET_DIR)/stage
 	@$(MANIFEST_MOVE_CMD)
 	@$(EXTENSION_PACKAGING_CMD)
@@ -888,7 +886,7 @@ clean_jar_postprocess:
 	$(CYGWIN_WRAPPER) $(RM) -f ./$(JAR_MANIFEST)
 
 # We want the preprocessor to run every time regrdless of whether or not
-# $(jar_manifest_in) as changed because defines may change as well.
+# $(jar_manifest_in) has changed because defines may change as well.
 
 .PHONY : make_jar clean_jar_postprocess $(JAR_MANIFEST)
 endif

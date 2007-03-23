@@ -29,12 +29,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
+GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
+
 ifeq (windows,$(SB_PLATFORM))
 FLASH_PLUGIN = NPSWF32
 VLC_PLUGIN = npvlc
-
-GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
-GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
@@ -57,9 +57,6 @@ endif
 
 ifeq (linux,$(SB_PLATFORM))
 
-GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
-GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
-
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
 # non-existent variable, VLC no-worky on linux yet...
@@ -79,10 +76,8 @@ endif
 
 ifeq (macosx,$(SB_PLATFORM))
 
-all : runtimelibs vlcplugin
+all:: runtimelibs vlcplugin
 
-GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
-GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
 
 runtimelibs::
@@ -115,7 +110,17 @@ endif
 include $(topsrcdir)/build/rules.mk
 
 # Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
-all :
+xulrunner_extensions = $(notdir $(wildcard $(SONGBIRD_XULRUNNERDIR)/extensions/*))
+
+all::
 	$(MKDIR) -p $(SONGBIRD_EXTENSIONSDIR)
-	$(MV) -f $(SONGBIRD_XULRUNNERDIR)/extensions/* $(SONGBIRD_EXTENSIONSDIR)
+ifneq (,$(xulrunner_extensions))
+	for item in $(xulrunner_extensions); do \
+    $(RM) -rf $(SONGBIRD_EXTENSIONSDIR)/$$item; \
+    $(MV) -f $(SONGBIRD_XULRUNNERDIR)/extensions/$$item $(SONGBIRD_EXTENSIONSDIR); \
+  done
+endif
+
+all::
+	$(RM) -f $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
 	$(RM) -rf $(SONGBIRD_XULRUNNERDIR)/extensions
