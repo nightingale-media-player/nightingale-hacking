@@ -92,7 +92,7 @@
 
           <!-- Playlist Toolbar -->
           <xul:hbox id="playlist_toolbar_bkg" sbid="playlist_toolbar">
-            <xul:hbox id="playlist_toolbar" sbid="toolbar_parent" flex="1" oncommand="onToolbarCommand( event )">
+            <xul:hbox id="playlist_toolbar" sbid="toolbar_parent" flex="1" oncommand="onToolbarCommand( event )" style="overflow: hidden;">
             </xul:hbox>
           </xul:hbox>
 
