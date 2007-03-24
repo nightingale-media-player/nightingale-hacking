@@ -62,10 +62,10 @@ scrollbar[orient="vertical"]
 thumb,
 scrollbarbutton {
   border: 2px solid;
-  -moz-border-top-colors: ThreeDLightShadow ThreeDHighlight;
-  -moz-border-right-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-bottom-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-left-colors: ThreeDLightShadow ThreeDHighlight;
+  border-top: 1px solid #999;
+  border-right: 1px solid #333;
+  border-bottom: 1px solid #333;
+  border-left: 1px solid #999; 
   background-color: -moz-Dialog;
 }
 
@@ -98,10 +98,10 @@ scrollbarbutton {
 }
 
 scrollbarbutton:hover:active, scrollbarbutton[active="true"] {
-  -moz-border-top-colors: ThreeDShadow -moz-Dialog;
-  -moz-border-right-colors: ThreeDShadow -moz-Dialog;
-  -moz-border-bottom-colors: ThreeDShadow -moz-Dialog;
-  -moz-border-left-colors: ThreeDShadow -moz-Dialog;
+  border-top: 1px solid #333;
+  border-right: 1px solid #999;
+  border-bottom: 1px solid #999;
+  border-left: 1px solid #333; 
   background-position: 1px 2px;
 }
 
@@ -177,11 +177,10 @@ scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"][disabled="true"
 
   html|div thumb,
   html|div scrollbarbutton {
-    border: 2px solid;
-    -moz-border-top-colors: ThreeDLightShadow ThreeDHighlight;
-    -moz-border-right-colors: ThreeDDarkShadow ThreeDShadow;
-    -moz-border-bottom-colors: ThreeDDarkShadow ThreeDShadow;
-    -moz-border-left-colors: ThreeDLightShadow ThreeDHighlight;
+    border-top: 1px solid #999;
+  border-right: 1px solid #333;
+  border-bottom: 1px solid #333;
+  border-left: 1px solid #999; 
     background-color: -moz-Dialog;
   }
 
@@ -214,10 +213,10 @@ scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"][disabled="true"
   }
 
   html|div scrollbarbutton:hover:active, html|div scrollbarbutton[active="true"] {
-    -moz-border-top-colors: ThreeDShadow -moz-Dialog;
-    -moz-border-right-colors: ThreeDShadow -moz-Dialog;
-    -moz-border-bottom-colors: ThreeDShadow -moz-Dialog;
-    -moz-border-left-colors: ThreeDShadow -moz-Dialog;
+    border-top: 1px solid #999;
+  border-right: 1px solid #333;
+  border-bottom: 1px solid #333;
+  border-left: 1px solid #999; 
     background-position: 1px 2px;
   }
 
