@@ -208,12 +208,12 @@
               <vbox id="frame_main_pane_html" hidden="false" >
                 <!-- WEB BAR -->
                 <hbox id="browser_toolbar" align="center" flex="1">
-                  <button disabled="true" id="browser_back" oncommand="onBrowserBack();" tooltiptext="&tooltip.browser.back;"/>
-                  <button disabled="true" id="browser_fwd" oncommand="onBrowserFwd();" tooltiptext="&tooltip.browser.fwd;"/>
-                  <button disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="&tooltip.browser.refresh;"/>
-                  <button disabled="false" id="browser_stop" oncommand="onBrowserStop();" tooltiptext="&tooltip.browser.stop;"/>
-                  <button disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>
-                  <button disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
+                  <button disabled="true" id="browser_back" oncommand="gBrowser.goBack();" tooltiptext="&tooltip.browser.back;"/>
+                  <button disabled="true" id="browser_fwd" oncommand="gBrowser.goForward();" tooltiptext="&tooltip.browser.fwd;"/>
+                  <button disabled="false" id="browser_refresh" oncommand="gBrowser.reload();" tooltiptext="&tooltip.browser.refresh;"/>
+                  <button disabled="false" id="browser_stop" oncommand="gBrowser.stop();" tooltiptext="&tooltip.browser.stop;"/>
+                  <button disabled="false" id="browser_home" oncommand="gBrowser.goHome();" tooltiptext="&tooltip.browser.home;"/>
+                  <button disabled="false" id="browser_bookmark" oncommand="bmManager.addBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
 
                   <!-- ADDRESS BOX -->
                   <sb-locationbar-textbox id="location_bar"
@@ -294,7 +294,7 @@
     <key id="selectall-key" modifiers="accel" key="A" />
     <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
     <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
-    <key id="search-key" modifiers="accel" key="&search.key;" oncommand="focusSearch();"/>
+    <key id="search-key" modifiers="accel" key="&search.key;" oncommand="document.getElementById('search_widget').onFirstMousedown();"/>
     <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
     <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>
   </keyset>
@@ -343,8 +343,6 @@
 
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/playlist_xbl_temp.js" />
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/browser_xbl_temp.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/servicetree_xbl_temp.js" />
   <script type="application/x-javascript"   

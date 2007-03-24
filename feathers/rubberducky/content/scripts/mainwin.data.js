@@ -172,7 +172,7 @@ try
     {
       if ( widget.is_songbird )
       {
-        if ( !thePlaylistTree && !theLastSearchEventTarget )
+        if ( !gBrowser.playlistTree && !theLastSearchEventTarget )
         {
           if (gServicePane) gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
         }

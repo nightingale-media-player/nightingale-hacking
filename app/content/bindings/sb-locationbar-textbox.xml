@@ -34,15 +34,9 @@
   <binding id="sb-locationbar-textbox">
     <content>
       <xul:textbox anonid="textbox" class="locationbar-textbox" flex="6" align="center">
-        <!--
-                   id="browser_url" flex="6"  align="center"
-                   onkeypress="onHTMLUrlKeypress( event );"
-                   onfocus="onHTMLURLFocus( event );">
-                   -->
         <children/>
         <xul:image anonid="image" class="locationbar-image"
             src="" />
-        <!--id="browser_url_image" src=""/>-->
       </xul:textbox>
     </content>
     

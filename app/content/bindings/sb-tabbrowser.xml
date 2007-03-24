@@ -115,6 +115,14 @@
         ]]></setter>
       </property>
       
+      <!-- replacing thePlaylistTree with gBrowser.playlistTree -->
+      <field name="playlistTree">null</field>
+      
+      <!-- these were globals in browser_xbl_temp -->
+      <field name="WEB_PLAYLIST_CONTEXT">"webplaylist"</field>
+      <field name="WEB_PLAYLIST_TABLE">"webplaylist"</field>
+
+      
       <method name="_loaded">
         <body><![CDATA[
         dump('running _loaded\n');
@@ -159,7 +167,7 @@
         
                 // Remember some values
                 theLibraryPlaylist = playlist;
-                thePlaylistTree = playlist = playlist.tree;
+                this.playlistTree = playlist = playlist.tree;
                 SBDataSetStringValue('playlist.ref', playlist.getAttribute( "ref" )); // is this set yet?
         
                 // Set the current selection
@@ -175,7 +183,7 @@
                 }
               }
               else {
-                thePlaylistTree = null;
+                this.playlistTree = null;
                 theLibraryPlaylist = null;
                 // hack, to let play buttons find the visible playlist if needed
                 document.__CURRENTPLAYLIST__ = null;
@@ -192,8 +200,8 @@
                   //setTimeout(this._loaded, 2500);
                   return;
                 } else if (this.contentDocument.getElementsByTagName('A').length != 0 ) {
-                  var playlist_guid = WEB_PLAYLIST_CONTEXT;
-                  var playlist_table = WEB_PLAYLIST_TABLE;
+                  var playlist_guid = this.WEB_PLAYLIST_CONTEXT;
+                  var playlist_table = this.WEB_PLAYLIST_TABLE;
                   // BIG HACK to show the subscribed playlist
                   var cur_url = SBDataGetStringValue( "browser.uri" );
                   var aPlaylistManager = new sbIPlaylistManager();
@@ -292,7 +300,7 @@
             }
             
             // Clear the playlist tree variable so we are not confused.
-            thePlaylistTree = null;
+            this.playlistTree = null;
             theLibraryPlaylist = null;
             // hack, to let play buttons find the visible playlist if needed
             document.__CURRENTPLAYLIST__ = null;
@@ -305,7 +313,7 @@
             this.showWebPlaylist = false;
       
             // Clear the playlist tree variable so we are not confused.
-            thePlaylistTree = null;
+            this.playlistTree = null;
             theLibraryPlaylist = null;
             // hack, to let play buttons find the visible playlist if needed
             document.__CURRENTPLAYLIST__ = null;
@@ -314,6 +322,13 @@
             theStatusText.stringValue = "";
             
             this.search.loadSearchStringForCurrentUrl();
+            
+            // set the context-menu based on the chromeyness of the location
+            if (aLocation.scheme == 'chrome') {
+              this.mCurrentBrowser.contextMenu = null;
+            } else {
+              this.mCurrentBrowser.contextMenu = this.getAttribute('contentcontextmenu');
+            }
           }
           catch ( err )
           {
@@ -625,6 +640,146 @@
           evt.preventDefault();
         ]]></body>
       </method>
+      
+      
+      <!-- override navigation methods from tabbrowser for fun and profit -->
+      <!-- I'm not convinced these are actually required -->
+      <method name="goBack">
+        <body><![CDATA[
+          // Disable the "add to playlist" button until we see that there is anything to add.
+          SBDataSetBoolValue("browser.canplaylist", false);
+          this.showWebPlaylist = false;
+          this.mainpane_listener_set = false;
+          return this.mCurrentBrowser.goBack();
+        ]]></body>
+      </method>
+      <method name="goForward">
+        <body><![CDATA[
+          // Disable the "add to playlist" button until we see that there is anything to add.
+          SBDataSetBoolValue("browser.canplaylist", false);
+          this.showWebPlaylist = false;
+          this.mainpane_listener_set = false;
+          return this.mCurrentBrowser.goForward();
+        ]]></body>
+      </method>
+      <method name="reload">
+        <body><![CDATA[
+          this.mainpane_listener_set = false;
+          return this.mCurrentBrowser.reload();
+        ]]></body>
+      </method>
+      <method name="stop">
+        <body><![CDATA[
+          return this.mCurrentBrowser.stop();
+          this.mainpane_listener_set = false;
+        ]]></body>
+      </method>
+      <property name="homePage">
+        <getter><![CDATA[
+          var homepage = null;
+          var defaultHomepage = "http://www.songbirdnest.com/birdhouse/";
+          
+          try {
+            var prefs = Components.classes["@mozilla.org/preferences-service;1"].
+                getService(Components.interfaces.nsIPrefBranch);
+            
+            if (prefs.getPrefType("browser.startup.homepage") == prefs.PREF_STRING){
+              homepage = prefs.getCharPref("browser.startup.homepage");
+            }
+          } catch (e) { }
+          
+          if (homepage == null || homepage == '') {
+            homepage = "http://www.songbirdnest.com/birdhouse/";
+          }
+          
+          return homepage
+        ]]></getter>
+        <setter><![CDATA[
+          var prefs = Components.classes["@mozilla.org/preferences-service;1"].
+              getService(Components.interfaces.nsIPrefBranch);
+          
+          prefs.setCharPref("browser.startup.homepage", val);
+        ]]></setter>
+      </property>
+      <method name="goHome">
+        <body><![CDATA[
+          this.loadURI(this.homePage, null, null);
+        ]]></body>
+      </method>
+
+      <method name="onBrowserPlaylist">
+        <body><![CDATA[
+          metrics_inc("player", "urlslurp", null);
+          if (!this.playlistTree)
+          {
+            if (!theWebPlaylist.source ||
+                theWebPlaylist.source.getRefGUID(theWebPlaylist.ref) != this.WEB_PLAYLIST_CONTEXT ||
+                theWebPlaylist.source.getRefTable(theWebPlaylist.ref) != this.WEB_PLAYLIST_TABLE)
+            {
+              SBWebPlaylistCommands.m_Playlist = theWebPlaylist;
+              theWebPlaylist.bind( this.WEB_PLAYLIST_CONTEXT, this.WEB_PLAYLIST_TABLE, null, SBWebPlaylistCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
+            }
+            
+            // Show/hide them
+            this.showWebPlaylist = true;
+          }
+          else
+          {
+            this.loadURI( "chrome://songbird/content/xul/playlist_test.xul?" +
+                                  this.WEB_PLAYLIST_TABLE + "," + this.WEB_PLAYLIST_CONTEXT,
+                                  null, null);
+          }
+        ]]></body>
+      </method>
+
+      <method name="onBrowserDownload">
+        <body><![CDATA[
+          metrics_inc("player", "downloads", null);
+        
+          // Work to figure out guid and table
+          var guid = theDownloadContext.stringValue;
+          var table = theDownloadTable.stringValue;
+          var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
+                                          getService(Components.interfaces.sbIDeviceManager);
+          if (deviceManager)
+          {
+            var downloadCategory = 'Songbird Download Device';
+            if (deviceManager.hasDeviceForCategory(downloadCategory))
+            {
+              var downloadDevice =
+                deviceManager.getDeviceByCategory(downloadCategory);
+              SBDownloadCommands.m_Device = downloadDevice;
+              guid = downloadDevice.getContext('');
+              table = "download";
+            }
+          }
+          
+          // Actual functionality
+          if (!this.playlistTree)
+          {
+            // Errrr, nope?
+            if ( ( guid == "" ) || ( table == "" ) )
+            {
+              return;
+            }
+        
+            if (!theWebPlaylist.source ||
+                theWebPlaylist.source.getRefGUID(theWebPlaylist.ref) != guid ||
+                theWebPlaylist.source.getRefTable(theWebPlaylist.ref) != table)
+            {
+              theWebPlaylist.bind( guid, table, null, SBDownloadCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
+            }
+            
+            // Show/hide them
+            this.showWebPlaylist = true;
+          }
+          else
+          {
+            this.loadURI( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid, null, null);
+          }
+        ]]></body>
+        </method>
+
     </implementation>
     
     <handlers>

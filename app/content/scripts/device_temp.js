@@ -194,7 +194,7 @@ var SBCDCommands =
                 }
                 onCDRip( this.m_DeviceName, this.m_Context, this.m_Table, filterCol, filterVals.length, filterVals, this.m_Device);
                 // And show the download table in the chrome playlist.
-                //onBrowserDownload();
+                //gBrowser.onBrowserDownload();
             }
             catch( err )          
             {
@@ -827,7 +827,7 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
     table = cdDevice.getUploadTable(deviceString);
 
   // Actual functionality
-  if ( ! thePlaylistTree )
+  if (!gBrowser.playlistTree)
   {
     // Errrr, nope?
     if ( ( guid == "" ) || ( table == "" ) )

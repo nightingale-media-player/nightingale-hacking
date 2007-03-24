@@ -33,7 +33,7 @@ function onPlaylistKeypress( evt )
   switch ( evt.keyCode )
   {
     case 13: // Return
-      SBPlayPlaylistIndex( thePlaylistTree.currentIndex );
+      SBPlayPlaylistIndex(gBrowser.playlistTree.currentIndex );
       break;
   }
 }
@@ -96,19 +96,19 @@ function onPlaylistFilterChange() {
 
 function onPlaylistDblClick( evt )
 {
-  if ( typeof( thePlaylistTree ) == 'undefined' )
+  if ( typeof(gBrowser.playlistTree) == 'undefined' )
   {
     alert( "DOM?" );
     return;
   }
   var obj = {}, row = {}, col = {}; 
-  thePlaylistTree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
+  gBrowser.playlistTree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
   // If the "obj" has a value, it is a cell?
   if ( obj.value )
   {
-    if ( thePlaylistTree.currentIndex != -1 )
+    if ( gBrowser.playlistTree.currentIndex != -1 )
     {
-      SBPlayPlaylistIndex( thePlaylistTree.currentIndex );
+      SBPlayPlaylistIndex( gBrowser.playlistTree.currentIndex );
     }
   }
 }

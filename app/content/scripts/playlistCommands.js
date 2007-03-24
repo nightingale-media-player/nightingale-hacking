@@ -244,7 +244,7 @@ var SBWebPlaylistCommands =
 
             onBrowserTransfer( this.m_Playlist.guid, this.m_Playlist.table, filterCol, filterVals.length, filterVals );
             // And show the download table in the chrome playlist.
-            onBrowserDownload();
+            gBrowser.onBrowserDownload();
           }
           catch( err )          
           {
@@ -309,7 +309,7 @@ var SBWebPlaylistCommands =
         break;
         case "library_cmd_showdlplaylist":
         {
-          onBrowserDownload();
+          gBrowser.onBrowserDownload();
         }
         break;
       }
@@ -690,7 +690,7 @@ var SBDownloadCommands =
         break;
         case "library_cmd_showwebplaylist":
         {
-          onBrowserPlaylist();
+          gBrowser.onBrowserPlaylist();
         }
         break;
       }

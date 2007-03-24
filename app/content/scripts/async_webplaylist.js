@@ -77,7 +77,7 @@ try
        {
         // Do not run while the "main" playlist is up?  This is so gross.
         //  UGH.  MUST REWRITE ENTIRE WORLD.
-        if ( thePlaylistTree ) {
+        if (gBrowser.playlistTree) {
           this.cancel(); 
           gBrowser.showWebPlaylist = false;
         } 
@@ -211,9 +211,9 @@ try
               SBDataSetBoolValue("browser.canplaylist", true);
               theWebPlaylistQuery = this.aDBQuery;
               // Then pretend like we clicked on it.
-              if ( !thePlaylistTree )
-                onBrowserPlaylist();
-                
+              if (!gBrowser.playlistTree) {
+                gBrowser.onBrowserPlaylist();
+              }
             }
             else
             {
