@@ -69,7 +69,7 @@
     <vbox flex="1" class="formgrouping"><!-- start of grouping -->
       <vbox flex="1">
         <hbox align="center">
-          <checkbox class="dialog_checkbox" id="smart_match_check" label="&smart.match;" checked="false"/>
+          <checkbox id="smart_match_check" label="&smart.match;" checked="false"/>
           <menulist id="smart_any_list" value="any">
             <menupopup id="smart_any_list_popup" >
               <menuitem id="smart_any_list_any" label="&smart.any;" value="any" />
@@ -98,7 +98,7 @@
       <spacer height="5"/>  
       
       <hbox class="sb_faceplate" align="center">
-        <checkbox class="dialog_checkbox" id="smart_songs_check" label="&smart.limit;" checked="false"/>
+        <checkbox id="smart_songs_check" label="&smart.limit;" checked="false"/>
         <textbox class="dialog_textbox" id="smart_songs_count" value="20"/>
         <menulist id="smart_songs_list" value="&smart.songs;">
           <menupopup id="smart_songs_list_popup">
@@ -136,9 +136,9 @@
     
     <hbox>
       <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <button label="&window.ok;" oncommand="if ( doOK() ) onExit( );"/>
       <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/> 
+      <button label="&window.cancel;" oncommand="if ( doCancel() ) onExit( );"/> 
     </hbox>
   </sb-sys-outer-frame>
  
