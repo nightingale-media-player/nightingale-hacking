@@ -79,93 +79,6 @@ selected-highlight  #99a195
 ************************************************************************************************************************************************
 */ 
 
-
-/** 
-******************************************************************************************
-THE DIALOG CHROME
-These pieces paint the resizeable window for dialogs.
-*******************************************************************************************
-*/
-window
-{
-  -moz-appearance: none !important; 
-  background-color: #000 !important; /* color of the Main Window **/
-}
-
-.sb-sys-outer-frame-chrome-bkgd
-{
-  background-color: #000 !important; /* color of the Main Window **/
-}
-
-.chrome_iframe_bkgd,
-{
-  background-color: transparent !important; 
-}
-
-.sb-sys-outer-frame-chrome-nw
-{
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  -moz-border-left-colors: #686a6a #333 !important;
-  background-color: #000 !important;
-}
-.sb-sys-outer-frame-chrome-n
-{
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  background-color: #000 !important;
-}
-.sb-sys-outer-frame-chrome-ne
-{
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  -moz-border-right-colors: #505154 #333 !important;
-  background-color: #000 !important;
-}
-.sb-sys-outer-frame-chrome-e
-{
-  -moz-border-right-colors: #505154 #333 !important;
-  background-color: #000 !important;
-}
-.sb-sys-outer-frame-chrome-se
-{
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-right-colors: #505154 #333 !important;
-  background-color: #000 !important;
-}
-
-.sb-sys-outer-frame-chrome-s
-{
-  -moz-border-bottom-colors: #333 #333 !important;
-  background-color: #000 !important;
-}
-.sb-sys-outer-frame-chrome-w
-{
-  -moz-border-left-colors: #686a6a #333 !important;
-  background-color: #000 !important;
-}
-.sb-sys-outer-frame-chrome-sw
-{
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-left-colors: #686a6a #333 !important;
-  background-color: #000 !important;
-}
-
-.iframe_bkgd
-{
-  background: transparent !important;
-}
-
-sb-sys-dialog-titlebar,
-#window_top   /* Title box */
-{
-  border-bottom: 1px solid #3B3C3F !important; /* this draws the line under the title bar */
-  background-color: Transparent !important;
-}
-
-#app_title,
-label.dialog_box
-{
-  color: #fff !important;
-}
-
 .dialog_label
 {
   color: #fff !important;
@@ -500,11 +413,6 @@ checkbox {
   background-color: transparent !important;
 }
 
-.checkbox-label-box {
-  border: 1px solid transparent;
-}
-
-
 .checkbox-label {
   color: #FFF !important;
   background-color: Transparent !important;
@@ -524,12 +432,12 @@ checkbox[disabled="true"] .checkbox-label {
 /* ::::: checkmark image ::::: */
 
 .checkbox-check {
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #000 !important; 
-  background-image: none !important;
+  border-top: 1px solid #535751;
+  border-left: 1px solid #535751;
+  border-right: 1px solid #99A195;
+  border-bottom: 1px solid #99A195;
+  background-color: #000; 
+  background-image: none;
 }
   
 checkbox:hover:active .checkbox-check {
@@ -541,7 +449,6 @@ checkbox:hover:active .checkbox-check {
 
 checkbox[checked="true"] .checkbox-check 
 {
-  -moz-appearance: none !important;
   background-color: #000 !important;
   background-image: url("default/check_fff.png") !important;
 }
@@ -803,17 +710,21 @@ MENULIST
 menulist
 { 
   background-color: #242527 !important;
-  border: 1px solid #4F5052 !important; 
-  color: #FFF !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important; 
+  border-top: 1px solid #535751;
+  border-left: 1px solid #535751;
+  border-right: 1px solid #99A195;
+  border-bottom: 1px solid #99A195; 
 } 
 
 .menulist-label
 {
   color: #fff !important;
+}
+
+.menulist-label-box
+{
+  background-color: #242527 !important;
+  border: none !important;
 }
 .dropmarker-icon
 {
