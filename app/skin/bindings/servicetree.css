@@ -27,58 +27,47 @@
 
 /** 
 ************************************************************************************************************************************************
-THE SERVICETREE
-Displays playlists, libraries and bookmarks in a single column tree
+THIS IS A REFERENCE ONLY!
 ************************************************************************************************************************************************
-*/
-
-
-servicetree > tree
+.servicepane_tree > tree
 {
   margin: 0px;
   padding: 6px 0px 0px 0px;
   border: none;
 }
 
-servicetree > tree > treechildren::-moz-tree-row,
-servicetree > tree > treechildren::-moz-tree-cell
+.servicepane_tree > tree > treechildren::-moz-tree-row,
+.servicepane_tree > tree > treechildren::-moz-tree-cell
 { 
   margin: 0px;
   padding: 0px;
   border: none;
 }
 
-servicetree > tree > treechildren::-moz-tree-row( selected )
+.servicepane_tree > tree > treechildren::-moz-tree-row( selected )
 {
   -moz-border-radius: 5px;
 }
 
-servicetree > tree > treechildren::-moz-tree-cell-text( selected )
+.servicepane_tree > tree > treechildren::-moz-tree-cell-text( selected )
 {
   font-weight: bold;
 }
 
-servicetree > tree > treechildren::-moz-tree-cell-text
+.servicepane_tree > tree > treechildren::-moz-tree-cell-text
 {
   margin: 0px 0px 0px 3px;
 }
 
-servicetree > tree > treechildren::-moz-tree-twisty
+.servicepane_tree > tree > treechildren::-moz-tree-twisty
 {
   -moz-appearance: none;
   margin: 0px 3px 0px 0px;
   padding: 0px;
 }
+*/
 
 
-/** TODO Turn this into a class, remove the id **/
-#frame_service_tree_label
-{
-  border: none;
-  margin: 0px;
-  padding: 0px;
-  height: 0px !important;  /** crush the column header **/
-}
 
 
 

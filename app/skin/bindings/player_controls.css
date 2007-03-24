@@ -44,7 +44,6 @@ Play/Pause, Previous (back), Next (forward)
 {  
   margin: 0px;
   padding: 0px;
-  min-width: 0px;
   border: none;
 }
 
@@ -60,7 +59,6 @@ Play/Pause, Previous (back), Next (forward)
 #face_left_box button,
 #face_right_box button
 {
-  min-width: 0px;
   margin: 2px 5px 2px 5px;
 }
 
@@ -75,8 +73,9 @@ Mute and Slider
 .sb-player-mute-button > sb-player-mute-button-muteoff > .clickhold-button,
 .sb-player-mute-button > sb-player-mute-button-muteon > .clickhold-button 
 {
-  min-width: 0px;
   margin: 0px 5px 3px 0px !important;
+  height: 9px;
+  width: 9px;
 }
 
 .sb-player-mute-button .button-text {
