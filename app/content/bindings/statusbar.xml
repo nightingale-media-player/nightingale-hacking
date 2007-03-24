@@ -38,7 +38,7 @@
     <content>
       <xul:statusbar id="status-bar" flex="1">
         <xul:statusbarpanel id="statusbar-display" flex="1">
-          <xul:sb-status-label id="sb-status-bar-status-label" class="sb-status-bar-status-label" value=" " crop="end"/>
+          <xul:sb-status-label id="sb-status-bar-status-label" class="sb-status-bar-status-label" value=" " flex="1" crop="end"/>
         </xul:statusbarpanel>
         <xul:sb-player-numplaylistitems-label id="sb-status-bar-numplaylistitems-label" class="sb-status-bar-numplaylistitems-label" crop="end"/>
         <xul:sb-player-scanning-label id="sb-status-bar-scanning-label" class="sb-status-bar-scanning-label" crop="end"/>
