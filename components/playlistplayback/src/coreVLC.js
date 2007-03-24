@@ -130,6 +130,7 @@ function CoreVLC()
   this._startTime = 0;
   this._lastCalcTime = 0;
   this._fileTime = 0;
+  this._savedTime = 0;
   
   this._object = null;
   this._id = "";
@@ -195,7 +196,7 @@ CoreVLC.prototype.playURL = function (aURL)
   this._object.playlist.playItem(item);
   
   this._lastCalcTime = new Date();
-  this._startTime = new Date();
+  this._startTime = this._lastCalcTime.getTime();
   
   dump("\ncoreVLC playing " + this._url + " as item " + item + "\n");
   
@@ -217,6 +218,15 @@ CoreVLC.prototype.play = function()
     return false;
 
   this._object.playlist.play();
+
+  if(this._paused && this._savedTime)
+  {
+    var currentTime = new Date();
+    
+    this._startTime = currentTime.getTime() -  this._savedTime;
+    this._savedTime = 0;
+  }
+
   this._paused = false;
 
   return true;
@@ -233,6 +243,7 @@ CoreVLC.prototype.stop = function()
   this._fileTime = 0;
   this._lastCalcTime = 0;
   this._startTime = 0;
+  this._savedTime = 0;
 
   return this._object.playlist.isPlaying == false;
 };
@@ -249,7 +260,13 @@ CoreVLC.prototype.pause = function()
     return false;
     
   this._paused = true;
- 
+
+  if(this._fileTime)
+  {
+    var currentTime = new Date();
+    this._savedTime = currentTime.getTime() - this._startTime;
+  }
+
   return true;
 };
 
@@ -298,12 +315,12 @@ CoreVLC.prototype.getVolume = function()
 
   /**
   * Valid volumes are from 0 to 255.
-  * VLC uses a 0-200 scale, so volumes are adjusted accordingly.
-  * If you going beyond 100 VLC will amplify the signal.
+  * VLC uses a 0-49 scale, so volumes are adjusted accordingly.
+  * If you going beyond 49 VLC will amplify the signal.
   * And it does so poorly, without clipping or compressing the signal.
   */
   var scaledVolume = this._object.audio.volume;
-  var retVolume = Math.round(scaledVolume / 100 * 255);
+  var retVolume = Math.round(scaledVolume / 49 * 255);
   
   return retVolume;
 };
@@ -314,7 +331,7 @@ CoreVLC.prototype.setVolume = function(volume)
   if ( (volume < 0) || (volume > 255) )
     throw Components.results.NS_ERROR_INVALID_ARG;
     
-  var scaledVolume = Math.round(volume / 255 * 100);
+  var scaledVolume = Math.round(volume / 255 * 49);
   
   this._object.audio.volume = scaledVolume;
 };
@@ -362,17 +379,24 @@ CoreVLC.prototype.getPosition = function()
     if (!this._startTime)
       return 0;
     
-    var currentTime = new Date();
-    var deltaTime = currentTime.getTime() - this._startTime.getTime();
-    
-    if( currentPos > 0  && (currentTime.getTime() - this._lastCalcTime.getTime() > 5000))
+    if(!this._paused)
     {
-      var posMul = 1 / currentPos;
-      this._fileTime = posMul * deltaTime;
-      this._lastCalcTime = currentTime;
+      var currentTime = new Date();
+      var deltaTime = currentTime.getTime() - this._startTime;
+      
+      if( currentPos > 0  && (currentTime.getTime() - this._lastCalcTime.getTime() > 5000))
+      {
+        var posMul = 1 / currentPos;
+        this._fileTime = posMul * deltaTime;
+        this._lastCalcTime = currentTime;
+      }
+      
+      currentPos = deltaTime;
     }
-    
-    currentPos = deltaTime;
+    else
+    {
+      currentPos = this._savedTime;
+    }
   }
   else
   {
