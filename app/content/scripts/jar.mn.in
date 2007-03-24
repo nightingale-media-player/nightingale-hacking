@@ -23,6 +23,7 @@ songbird.jar:
   content/songbird/scripts/mousewheel_volume.js         (mousewheel_volume.js)
   content/songbird/scripts/player_open.js               (player_open.js)
   content/songbird/scripts/extensionManagerOverlay.js   (extensionManagerOverlay.js)
+  content/songbird/scripts/updateOverlay.js             (updateOverlay.js)
   content/songbird/scripts/restartbox.js                (restartbox.js)
   content/songbird/scripts/sbIAsyncForLoop.js           (sbIAsyncForLoop.js)
   content/songbird/scripts/sbIDOMEval.js                (sbIDOMEval.js)
@@ -45,6 +46,4 @@ songbird.jar:
   content/songbird/scripts/dragWindow.js                (dragWindow.js)
   content/songbird/scripts/cmdline.js                   (cmdline.js)
   content/songbird/scripts/preferences/hotkeys.js       (preferences/hotkeys.js)
-  
-  
   
