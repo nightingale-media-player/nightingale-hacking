@@ -62,7 +62,6 @@ Love the box.
 
 #frame_servicetree_pane /* aka The Service Pane, The Left Pane **/
 {
-  -moz-border-radius: 5px;
   border: 1px solid;
   margin: 0px;
   padding: 0px;
@@ -168,7 +167,7 @@ Contains the Main Playback Controls and the Dashboard.
 
 #playbutton_box
 {
-  width: 130px;
+  width: 104px;
   height: 36px;
 }
 
