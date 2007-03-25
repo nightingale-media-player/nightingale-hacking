@@ -42,7 +42,7 @@
     </groupbox>
 
     <!-- this one is hidden, we use it to translate hotkey ids into localized hotkey keystroke -->
-    <sb-hotkey-textbox id="hotkey.hotkeytool" hidden="true"/>
+    <sb-hotkey-textbox id="hotkey-hotkeytool" hidden="true"/>
 
   </prefpane>
 
