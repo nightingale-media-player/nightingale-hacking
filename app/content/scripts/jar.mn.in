@@ -45,4 +45,4 @@ songbird.jar:
   content/songbird/scripts/dragWindow.js                (dragWindow.js)
   content/songbird/scripts/cmdline.js                   (cmdline.js)
   content/songbird/scripts/preferences/hotkeys.js       (preferences/hotkeys.js)
-  
+  content/songbird/scripts/balloonTip.js                (balloonTip.js)

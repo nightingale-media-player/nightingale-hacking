@@ -252,11 +252,6 @@
               
               
               <vbox id="playlist_web_vbox" height="200" hidden="true" minheight="0" _resize_height="200">
-              
-                <callout-once id="calloutbox_web_playlist" hidden="true">
-                  <label value="&callout.firstwebplaylist;"/>
-                </callout-once>
-
                 <playlist 
                   id="playlist_web" 
                   height="105"
@@ -379,6 +374,9 @@
    src="chrome://songbird/content/scripts/bookmarks.js" />
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/bookmarks_proxy.js" />
+
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/balloonTip.js" />
 
 </window>
 

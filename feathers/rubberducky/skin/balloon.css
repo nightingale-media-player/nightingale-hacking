@@ -1,0 +1,187 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+************************************************************************************************************************************************
+BALLOON TIPS
+************************************************************************************************************************************************
+*/
+
+#balloonTip {
+  background-color: #000 !important; 
+  background-image: none !important;
+  /* background-color: transparent !important; */
+}
+
+.balloontip-frame-nw {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(20px 12px 26px 0px);
+  background-color: transparent;
+}
+
+.balloontip-frame-n {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(20px 41px 26px 35px);
+  background-color: transparent;
+}
+
+.balloontip-frame-ne {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(20px 76px 26px 64px);
+  background-color: transparent;
+}
+
+.balloontip-frame-w {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(28px 6px 32px 0px);
+  background-color: transparent;
+}
+
+.balloontip-frame-e {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(28px 76px 32px 70px);
+  background-color: transparent;
+}
+
+.balloontip-frame-sw {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(34px 12px 40px 0px);
+  background-color: transparent;
+}
+
+.balloontip-frame-s {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(34px 41px 40px 35px);
+  background-color: transparent;
+}
+
+.balloontip-frame-se {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(34px 76px 40px 64px);
+  background-color: transparent;
+}
+
+.balloontip-header-topspacer {
+  height: 8px;
+}
+
+.balloontip-header-bottomspacer {
+  height: 12px;
+}
+
+.balloontip-leftspacer {
+  width: 6px;
+}
+
+.balloontip-rightspacer {
+  width: 4px;
+}
+
+.balloontip-bottomspacer {
+  height: 4px;
+}
+
+.balloontip-title-spacer {
+  width: 0px;
+}
+
+.balloontip-close-button {
+  -moz-appearance: none !important; /* grrrr! */
+  -moz-background-clip: padding !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  min-width: 0px !important;
+  min-height: 0px !important;
+  border-width: 0px !important;
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(0px 95px 16px 79px);
+  background-color: transparent;
+}
+
+.balloontip-close-button:hover {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(17px 95px 33px 79px);
+  background-color: transparent;
+}
+
+.balloontip-close-button:active {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(34px 95px 50px 79px);
+  background-color: transparent;
+}
+
+.balloontip-arrow-nw {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(0px 33px 26px 13px);
+  background-color: transparent;
+}
+
+.balloontip-arrow-ne {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(0px 63px 26px 43px);
+  background-color: transparent;
+}
+
+.balloontip-arrow-sw {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(34px 33px 60px 13px);
+  background-color: transparent;
+}
+
+.balloontip-arrow-se {
+  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  -moz-image-region: rect(34px 63px 60px 43px);
+  background-color: transparent;
+}
+
+.balloontip-frame-c {
+  /* background-image: url(chrome://songbird/skin/default/balloon_bkg.png); */
+  background-color: #FDFFD5 !important;
+}
+
+.balloon-label,
+.balloon-text-description {
+  color: black;
+}
+
+.balloon-icon-songbird {
+  list-style-image: url(chrome://songbird/skin/default/logo_16.png);
+  background-color: transparent !important;
+}
+
+.balloontip-title {
+  font-weight: bold;
+}
+
+.balloontip-checkbox-topspacer {
+  height: 4px;
+}
+
+.balloontip-checkbox > .checkbox-label-box > .checkbox-label {
+  color: black !important;
+  background-color: transparent !important;
+}

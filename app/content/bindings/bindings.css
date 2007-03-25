@@ -215,14 +215,6 @@ hotkey {
   -moz-binding: url("chrome://songbird/content/bindings/hotkey.xml#hotkey") !important;
 }
 
-callout {
-  -moz-binding: url("chrome://songbird/content/bindings/calloutbox.xml#callout") !important;
-}
-
-callout-once {
-  -moz-binding: url("chrome://songbird/content/bindings/calloutbox.xml#callout-once") !important;
-}
-
 textdrawer {
   -moz-binding: url("chrome://songbird/content/bindings/drawer.xml#textdrawer") !important;
 }

@@ -45,6 +45,7 @@
         this.loading = false;
       ]]></constructor>
       <destructor><![CDATA[
+        this.closeBalloonTip();
         this.removeProgressListener(this);
       ]]></destructor>
       
@@ -106,11 +107,16 @@
           SBDataSetBoolValue('browser.playlist.show', value);
           
           if (!value) {
+            // if the balloontip for the webplaylist is shown, close it
+            this.closeBalloonTip();
             // if we're hiding the web playlist then unhook it from the UI
             if (this.playlist) {
               this.playlist.datasources = "";
               this.playlist.ref = "";
             }
+          } else {
+            // open the balloontip if needed
+            this.openBalloonTip();
           }
         ]]></setter>
       </property>
@@ -121,7 +127,6 @@
       <!-- these were globals in browser_xbl_temp -->
       <field name="WEB_PLAYLIST_CONTEXT">"webplaylist"</field>
       <field name="WEB_PLAYLIST_TABLE">"webplaylist"</field>
-
       
       <method name="_loaded">
         <body><![CDATA[
@@ -779,6 +784,34 @@
           }
         ]]></body>
         </method>
+
+      <method name="openBalloonTip">
+        <body><![CDATA[
+          if (!SBDataGetBoolValue("balloontip.firstwebplaylist.shown")) {
+            this.balloontip = new BalloonTip; 
+            var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+            var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+            var title = "Found media."
+            var text = "Songbird has found the following playable tracks."
+            try {
+              title = songbirdStrings.GetStringFromName("balloontip.firstwebplaylist.title");
+              text = songbirdStrings.GetStringFromName("balloontip.firstwebplaylist.text");
+            } catch (e) { }
+            this.balloontip.showText(text, this.playlist, title, 'balloon-icon-songbird', null, -1);
+            SBDataSetBoolValue("balloontip.firstwebplaylist.shown", true);
+          }
+        ]]></body>
+      </method>
+      
+      <method name="closeBalloonTip">
+        <body><![CDATA[
+          if (this.balloontip) {
+            this.balloontip.closeTip();
+            this.balloontip = null;
+          }
+        ]]></body>
+      </method>
+      
 
     </implementation>
     

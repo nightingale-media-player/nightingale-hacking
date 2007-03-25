@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/balloon.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<window
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="balloonTip"
+ buttons="none"
+ title="&songbird;"
+ onload="initBalloon();"
+ hidechrome="true"
+ windowtype="Songbird:BalloonTip"
+>
+
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+   
+  <!-- note: for size calculation purposes, it is required that all four arrows be visible by default -->
+
+  <hbox>
+      <vbox>
+        <spacer flex="1"/>
+        <image class="balloontip-frame-nw"/>
+      </vbox>
+      <image class="balloontip-arrow-nw" id="anchor-nw"/>
+      <vbox flex="1">
+        <spacer flex="1"/>
+        <hbox>
+          <image class="balloontip-frame-n" flex="1" id="frame-n"/>
+        </hbox>
+      </vbox>
+      <image class="balloontip-arrow-ne" id="anchor-ne"/>
+      <vbox>
+        <spacer flex="1"/>
+        <image class="balloontip-frame-ne"/>
+      </vbox>
+  </hbox>
+  <hbox flex="1">
+      <image class="balloontip-frame-w"/>
+      <vbox flex="1" class="balloontip-frame-c">
+        <spacer class="balloontip-header-topspacer"/>
+        <hbox>
+          <image id="balloontip-title-image"/>
+          <spacer class="balloontip-title-spacer"/>
+          <label id="balloontip-title-label" class="balloontip-title"/>
+          <spacer flex="1"/>
+          <button class="balloontip-close-button" oncommand="closeBalloon();"/>
+        </hbox>
+        <spacer class="balloontip-header-bottomspacer"/>
+        <hbox>
+          <spacer class="balloontip-leftspacer"/>
+          <vbox id="balloontip-content-container" flex="1"/>
+          <spacer class="balloontip-rightspacer"/>
+        </hbox>
+        <vbox id="balloontip-checkbox-container">
+          <spacer class="balloontip-checkbox-topspacer"/>
+          <checkbox class="balloontip-checkbox" id="balloontip-content-checkbox"/>
+        </vbox>
+        <spacer class="balloontip-bottomspacer"/>
+      </vbox>
+      <image class="balloontip-frame-e"/>
+  </hbox>
+  <hbox>
+      <vbox>
+        <image class="balloontip-frame-sw"/>
+        <spacer flex="1"/>
+      </vbox>
+      <image class="balloontip-arrow-sw" id="anchor-sw"/>
+      <vbox flex="1">
+        <hbox>
+          <image class="balloontip-frame-s" flex="1" id="frame-s"/>
+        </hbox>
+        <spacer flex="1"/>
+      </vbox>
+      <image class="balloontip-arrow-se" id="anchor-se"/>
+      <vbox>
+        <image class="balloontip-frame-se"/>
+        <spacer flex="1"/>
+      </vbox>
+  </hbox>
+
+  <script>
+    <![CDATA[
+      var balloonTipObject = window.arguments[0];
+
+      // Notify balloontip object that the window is being created
+      balloonTipObject.onCreateTip(window);
+
+      // Set content
+      
+      var container = document.getElementById("balloontip-content-container");
+
+      var child;
+      var binding = balloonTipObject.bindingUrl;
+      if (binding.substr(0, 9) != "chrome://") {
+        child = document.createElement(binding);
+      } else {
+        child = document.createElement("vbox");
+        child.setAttribute("flex", "1");
+        child.setAttribute("style", "-moz-binding:url(" + binding + ")");
+      }
+      for (var i in balloonTipObject.bindingAttribute) {
+        var attr = balloonTipObject.bindingAttribute[i];
+        var value = balloonTipObject.bindingAttributeValue[i];
+        if (attr && value) child.setAttribute(attr, value);
+      }
+      container.appendChild(child);
+      
+      if (balloonTipObject.titleImageClass) {
+        var image = document.getElementById("balloontip-title-image");
+        image.setAttribute("class", balloonTipObject.titleImageClass);
+      }
+
+      if (balloonTipObject.titleValue) {
+        var label = document.getElementById("balloontip-title-label");
+        label.setAttribute("value", balloonTipObject.titleValue);
+        document.getElementById("balloonTip").setAttribute("title", balloonTipObject.titleValue);
+      }
+      
+      if (!balloonTipObject.checkboxLabel) {
+        var checkboxContainer = document.getElementById("balloontip-checkbox-container");
+        checkboxContainer.setAttribute("hidden", "true");
+      } else {
+        var checkbox = document.getElementById("balloontip-content-checkbox");
+        checkbox.setAttribute("label", balloonTipObject.checkboxLabel);
+        balloonTipObject.checkboxElement = checkbox;
+      }
+      
+      // Close button
+      function closeBalloon() {
+        balloonTipObject.closeTip();
+      }
+      
+      // Size/position init
+      function initBalloon() {
+        setTimeout(function(obj) { obj.computePositionAndOrientation(); }, 0, balloonTipObject);
+      }
+    ]]>
+  </script>
+
+</window>

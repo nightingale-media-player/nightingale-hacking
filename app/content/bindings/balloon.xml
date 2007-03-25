@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+          
+  <!--
+  
+  In order to autowrap, a description object requires to have its content inserted as text child, 
+  and not as value attribute. This object converts a value attribute into text content. 
+  
+  This is mainly useful when instantiating balloontips, to specify the autowrapping text as an 
+  attribute parameter. Note that it is still required to have a width parameter in order to limit 
+  the  horizontal size of the content, or the text will not wrap.
+  
+  -->        
+  
+  <binding id="balloon-text">
+
+  <content>
+    <xul:description sid="desc" class="balloon-text-description"/>
+  </content>
+
+  <implementation>
+
+    <constructor>
+      this.description.textContent = this.getAttribute("value");
+    </constructor>
+
+    <field name="description">document.getAnonymousElementByAttribute(this, 'sid', 'desc');</field>
+
+    <property name="value">
+      <getter>
+        return this.description.textContent;
+      </getter>
+      <setter>
+        this.description.textContent = val;
+      </setter>
+    </property>
+
+   </implementation>
+ 
+  </binding>
+
+</bindings>

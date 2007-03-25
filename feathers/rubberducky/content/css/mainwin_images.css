@@ -1263,22 +1263,3 @@ sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-
   background-image: url(chrome://songbird/skin/default/volume_w.png) ;
 }
 
-
-
-
-
-/** 
-************************************************************************************************************************************************
-HELP CALLOUT
-Callout box used to give extra information
-************************************************************************************************************************************************
-*/
-
-
-
-#callout_bar_arrow
-{
-  background-image: url(chrome://songbird/skin/default/help_downarrow.png) ;
-}
-
-             
