@@ -144,9 +144,7 @@
             // if the override was set, start a timeout for reseting it
             if (this.override_descbinding.stringValue != "") {
               this.resetTimeout();
-              var controller = this;
-              this.callback = function() { controller.resetOverride(); };
-              this.timeout = setTimeout(this.callback, 5000); 
+              this.timeout = setTimeout(function(obj) { obj.resetOverride(); }, 5000, this); 
             }
             this.onStatusChange();
          ]]>

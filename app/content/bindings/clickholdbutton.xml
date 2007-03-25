@@ -86,12 +86,7 @@
        <parameter name="delay"/>
        <body>
          <![CDATA[
-         var controller = this;
-         var onTimeout = function()
-         {
-            controller.showPopup();
-         };
-         this.popupInterval = setTimeout(onTimeout, delay);
+         this.popupInterval = setTimeout(function(obj) { obj.showPopup(); }, delay, this);
          ]]>
        </body>
      </method>

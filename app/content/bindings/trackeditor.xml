@@ -102,9 +102,7 @@
             if (func) {
               func(this.basedoc, this.dirtyobject, this.mainfocusobject);
             } else {
-              var controller = this;
-              var callback = function() { controller.setObjectsToContentDoc(); };
-              setTimeout(callback, 0); 
+              setTimeout(function(obj) { obj.setObjectsToContentDoc(); }, 0, this); 
             }
           }
         ]]>

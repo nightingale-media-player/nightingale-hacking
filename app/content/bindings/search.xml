@@ -498,9 +498,7 @@
           if (this.theCurrentSearchSelection != this.theSongbirdSearchSelection) {
             this.theLastWebSearchString = this.list.label;
           }
-          var controller = this;
-          var callback = function() { controller.loadSearchStringForCurrentUrl(); };
-          setTimeout(callback, 100); 
+          setTimeout(function(obj) { obj.loadSearchStringForCurrentUrl(); }, 100, this); 
         ]]>
       </body>
     </method>

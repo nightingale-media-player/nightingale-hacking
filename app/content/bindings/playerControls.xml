@@ -1487,10 +1487,7 @@
             }
             
             this.loadView(guid, table);
-
-            var controller = this;
-            var callback = function() { controller.onCurrentTrack(); };
-            this.interval = setInterval(callback, 500); 
+            this.interval = setInterval(function(obj) { obj.onCurrentTrack(); }, 500, this); 
           ]]>
         </body>
       </method>

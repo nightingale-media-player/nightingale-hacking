@@ -376,9 +376,7 @@
     <handlers>
       <handler event="keypress">
         <![CDATA[
-          var controller = this;
-          var callback = function() { controller.checkForChange(); };
-          setTimeout(callback, 0); 
+          setTimeout(function(obj) { obj.checkForChange(); }, 0, this); 
         ]]>
       </handler>
     </handlers>
@@ -469,16 +467,12 @@
     <handlers>
       <handler event="keypress">
         <![CDATA[
-          var controller = this;
-          var callback = function() { controller.checkForChange(); };
-          setTimeout(callback, 0); 
+          setTimeout(function(obj) { obj.checkForChange(); }, 0, this); 
         ]]>
       </handler>
       <handler event="popuphidden">
         <![CDATA[
-          var controller = this;
-          var callback = function() { controller.checkForChange(); };
-          setTimeout(callback, 0); 
+          setTimeout(function(obj) { obj.checkForChange(); }, 0, this); 
         ]]>
       </handler>
     </handlers>

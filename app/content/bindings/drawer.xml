@@ -162,9 +162,7 @@
               this.anim_complete_event = "opendrawer";
               
               // Start our animation loop
-              var controller = this;
-              var callback = function() { controller.animationCallback(); };
-              this.interval = setInterval(callback, 0); 
+              this.interval = setInterval(function(obj) { obj.animationCallback(); }, 0, this); 
             }
           }
           catch ( err )
@@ -224,9 +222,7 @@
               this.anim_complete_event = "closedrawer";
               
               // Start our animation loop
-              var controller = this;
-              var callback = function() { controller.animationCallback(); };
-              this.interval = setInterval(callback, 0); 
+              this.interval = setInterval(function(obj) { obj.animationCallback(); }, 0, this); 
               }
           }
           catch ( err )
