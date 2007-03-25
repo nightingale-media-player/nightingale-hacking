@@ -40,10 +40,10 @@
 
 
   
-  <binding id="hotkey">
+  <binding id="hotkey-textbox">
 
   <content>
-    <xul:textbox flex="1" sid="hotkey.textbox" xbl:inherits="class=class,disabled=disabled,hidden=hidden" />
+    <xul:textbox flex="1" sid="hotkey.textbox" class="sb-hotkey-textbox-textbox" xbl:inherits="class,disabled,hidden" />
   </content>
 
   <implementation>
@@ -508,5 +508,6 @@
   </binding>
 
 </bindings>
+
 
 

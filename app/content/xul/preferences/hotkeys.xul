@@ -34,7 +34,7 @@
       </hbox>
       <hbox align="center">
         <label value="&hotkeys.hotkey;" id="hotkey.hotkeylabel"/>
-        <hotkey id="hotkey.hotkey" flex="1"/>
+        <sb-hotkey-textbox id="hotkey.hotkey" flex="1"/>
         <button id="hotkey.add" label="&hotkeys.add;" oncommand="gHotkeysPane.addHotkey();"/>
         <button id="hotkey.set" label="&hotkeys.set;" oncommand="gHotkeysPane.setHotkey();"/>
         <button id="hotkey.remove" label="&hotkeys.remove;" oncommand="gHotkeysPane.removeHotkey();"/>
@@ -42,7 +42,7 @@
     </groupbox>
 
     <!-- this one is hidden, we use it to translate hotkey ids into localized hotkey keystroke -->
-    <hotkey id="hotkey.hotkeytool" hidden="true"/>
+    <sb-hotkey-textbox id="hotkey.hotkeytool" hidden="true"/>
 
   </prefpane>
 
