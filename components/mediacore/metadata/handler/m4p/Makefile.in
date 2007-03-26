@@ -22,24 +22,13 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../../..
+DEPTH = ../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = id3 \
-          ogg \
-          mp4 \
-          $(NULL)
-
-ifeq (windows,$(SB_PLATFORM))
-SUBDIRS += wma
-endif
-
-ifneq (linux,$(SB_PLATFORM))
-SUBDIRS += m4p
-endif
+SUBDIRS = src
 
 include $(topsrcdir)/build/rules.mk
