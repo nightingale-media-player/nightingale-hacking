@@ -24,29 +24,20 @@
 //
 */
 
-function dumpObj(objName, obj) {
-  var string = "********************\n" + objName + ":\n";
-  var exception;
-  try {
-    for (var attrib in obj)
-      string += "\t" + attrib + ": " + obj[attrib] + "\n";
-  } catch (e) {
-    exception = e;
-  }
-  dump(string);
-  if (exception)
-    dump("!!!\n" + exception + "\n!!!\n");
-  dump("********************\n");
-}
-
 var AddonsPrefPane = {
 
   load: function load() {
+    // We need to wait until the IFrame loads completely
     var addonsIFrame = document.getElementById("addonsFrame");
-    var addonsDocument = addonsIFrame.contentDocument;
-    // XXXBen addonsDocument should now let us access the EM window... But it
-    //        has a null namespaceURI and can't find any elements by id. Great.
-    //        Fix this later.
-  }
+    addonsIFrame.addEventListener("load", this.onEMLoad, true);
+  },
   
+  onEMLoad: function onEMLoad() {
+    // Kill the resizer
+    var addonsIFrame = document.getElementById("addonsFrame");
+    var addonsDoc = addonsIFrame.contentDocument;
+    var resizerBox = addonsDoc.getElementById("resizerBox");
+    if (resizerBox)
+      resizerBox.style.display = "none";
+  }
 };

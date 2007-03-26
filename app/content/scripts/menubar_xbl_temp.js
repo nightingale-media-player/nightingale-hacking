@@ -108,7 +108,7 @@ function doMenu( command ) {
       toggleJumpTo();
     break;
     case "menu.extensions":
-      SBExtensionsManagerOpen();
+      SBOpenPreferences("paneAddons");
     break;
     case "menu_preferences":
       SBOpenPreferences();
