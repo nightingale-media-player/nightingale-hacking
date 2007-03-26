@@ -453,7 +453,7 @@ case "$SB_PLATFORM" in
     LDFLAGS_PATH_SUFFIX="\""
     LDFLAGS_IMPORT_PREFIX=""
     LDFLAGS_IMPORT_SUFFIX="${LIB_SUFFIX}"
-    DEFAULT_LIBS="kernel32 user32 gdi32 winmm wsock32 advapi32 comctl32"
+    DEFAULT_LIBS="kernel32 user32 gdi32 winmm wsock32 advapi32 comctl32 ole32 oleaut32"
     LNFLAGS="-f --symbolic"
     ARFLAGS="-NOLOGO"
     ARFLAGS_OUT_PREFIX="-OUT:\""

@@ -33,12 +33,7 @@
 #define __METADATA_HANDLER_WMA_H__
 
 // INCLUDES ===================================================================
-#include <necko/nsIChannel.h>
-#include <necko/nsIResumableChannel.h>
-#include <xpcom/nsXPCOM.h>
-#include <xpcom/nsCOMPtr.h>
-#include <xpcom/nsServiceManagerUtils.h>
-#include <xpcom/nsComponentManagerUtils.h>
+#include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
 #include "sbIMetadataHandler.h"
@@ -55,8 +50,8 @@
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
-struct IWMSyncReader;
-struct IWMHeaderInfo3;
+
+class nsIChannel;
 
 class sbMetadataHandlerWMA : public sbIMetadataHandler
 {
@@ -64,17 +59,18 @@ class sbMetadataHandlerWMA : public sbIMetadataHandler
   NS_DECL_SBIMETADATAHANDLER
 
   sbMetadataHandlerWMA();
-  virtual ~sbMetadataHandlerWMA();
 
 protected:
-  nsCOMPtr<sbIMetadataValues> m_Values;
-  nsCOMPtr<sbIMetadataChannel> m_ChannelHandler;
-  nsCOMPtr<nsIChannel> m_Channel;
-  PRBool               m_Completed;
+  ~sbMetadataHandlerWMA();
 
-  IWMSyncReader * m_pReader;
-  void ReadMetadata( const nsString &ms_key, const nsString &sb_key, IWMHeaderInfo3 *hi3 );
+  nsCOMPtr<sbIMetadataValues>  m_Values;
+  nsCOMPtr<sbIMetadataChannel> m_ChannelHandler;
+  nsCOMPtr<nsIChannel>         m_Channel;
+  PRBool                       m_Completed;
+  PRBool                       m_COMInitialized;
+
+  NS_METHOD ReadMetadataWMFSDK(const nsAString& aFilePath, PRInt32* _retval);
+  NS_METHOD ReadMetadataWMP(const nsAString& aFilePath, PRInt32* _retval);
 };
 
 #endif // __METADATA_HANDLER_WMA_H__
-

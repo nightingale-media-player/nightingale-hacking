@@ -35,22 +35,19 @@ else
 target_name = sbMetadataHandlerWMA
 endif
 
-ifeq (windows,$(SB_PLATFORM))
-CPP_EXTRA_DEFS = -DWMALIB_LINKOPTION=3 \
-                 $(NULL)
-endif
-
 CPP_SRCS = MetadataHandlerWMA.cpp \
            MetadataHandlerWMAComponent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(WMALIB_DIR)/include \
+               $(DEPS_DIR)/wmpsdk/include \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
@@ -60,18 +57,12 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
-DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
+DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            unicharutil_external_s \
+                            WMVCORE \
                             xpcom \
                             xpcomglue_s \
                             $(NULL)
-
-ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += WMVCORE \
-                               ole32 \
-                               unicharutil_external_s \
-                               $(NULL)
-endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(WMALIB_DIR)/lib \
                            $(MOZSDK_LIB_DIR) \
