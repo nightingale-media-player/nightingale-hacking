@@ -14,7 +14,11 @@
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 
  <prefWindow id="BrowserPreferences">
-  <prefpane id="paneHotkeys" label="&hotkeys.prefpane;" insertafter="paneContent" src="chrome://songbird/content/xul/preferences/hotkeys.xul" />
+  <prefpane id="paneHotkeys" label="&hotkeys.prefpane;" insertafter="paneContent"
+            src="chrome://songbird/content/xul/preferences/hotkeys.xul" />
+  <prefpane id="paneAddons" label="&prefpane.addons.label;" insertafter="paneTabs"
+            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            src="chrome://songbird/content/xul/preferences/addons.xul"/>
  </prefWindow>
 
 </overlay>
