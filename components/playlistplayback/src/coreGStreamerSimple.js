@@ -52,6 +52,8 @@ function CoreGStreamerSimple()
   this._videoUrlExtensions = ["wmv", "asf", "avi", "mov", "mpg", "m4v", "mp4",
                               "mp2", "mpeg", "mkv", "ogm"];
 
+  this._unsupportedExtensions = [];
+
   this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
                                                      this._mediaUrlSchemes);
   this._videoUrlMatcher = new ExtensionSchemeMatcher(this._videoUrlExtensions,
@@ -413,6 +415,22 @@ CoreGStreamerSimple.prototype.getSupportedFileExtensions = function ()
 {
   return new StringArrayEnumerator(this._mediaUrlExtensions);
 }
+
+CoreVLC.CoreGStreamerSimple.getSupportForFileExtension = function(aFileExtension)
+{
+  // Strip the beginning '.' if it exists and make it lowercase
+  var extension =
+    aFileExtension.charAt(0) == "." ? aFileExtension.slice(1) : aFileExtension;
+  extension = extension.toLowerCase();
+  
+  // TODO: do something smarter here
+  if (this._mediaUrlExtensions.indexOf(extension) > -1)
+    return sbICoreWrapper.SUPPORT_GENERIC;
+  else if (this._unsupportedExtensions.indexOf(extension) > -1)
+    return sbICoreWrapper.SUPPORT_NOT_SUPPORTED;
+  
+  return sbICoreWrapper.SUPPORT_UNKNOWN;
+};
 
 CoreGStreamerSimple.prototype.onStartRequest = function(request, context)
 {

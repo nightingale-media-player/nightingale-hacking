@@ -31,11 +31,21 @@
  */
 
 const nsIRequestObserver = Components.interfaces.nsIRequestObserver;
+const nsIIOService = Components.interfaces.nsIIOService;
+const nsISupports  = Components.interfaces.nsISupports;
+
+const sbICoreWrapper      = Components.interfaces.sbICoreWrapper;
+const sbIPlaylistPlayback = Components.interfaces.sbIPlaylistPlayback;
 
 // From nsNetError.h
 const NS_BINDING_SUCCEEDED = Components.results.NS_OK;
 const NS_BINDING_FAILED    = 0x804b0001;
 const NS_BINDING_ABORTED   = 0x804b0002;
+
+const IOSERVICE_CONTRACTID = "@mozilla.org/network/io-service;1";
+
+const PLAYLISTPLAYBACK_CONTRACTID = 
+  "@songbirdnest.com/Songbird/PlaylistPlayback;1"
 
 /**
  * \class CoreBase

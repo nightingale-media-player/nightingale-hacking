@@ -138,14 +138,17 @@ function CoreVLC()
   this._url = "";
   this._paused = false;
 
-  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "aac",
+  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "aac", "mva",
                               "wma", "wmv", "asx", "asf", "avi",  "mov", "mpg",
                               "mp4", "mp2", "mpeg", "mpga", "mpega", "mkv",
-                              "mka", "ogm", "mpe", "qt", "aiff", "aif", "m4a"];
+                              "mka", "ogm", "mpe", "qt", "aiff", "aif", "m4a",
+                              "m4v"];
   this._mediaUrlSchemes = ["mms", "rstp"];
 
   this._videoUrlExtensions = ["wmv", "asx", "asf", "avi", "mov", "qt", "mpg",
-                              "mp4", "mp2", "mpeg", "mpe", "mkv", "ogm"];
+                              "m4v", "mp4", "mp2", "mpeg", "mpe", "mkv", "ogm"];
+
+  this._unsupportedExtensions = [];
 
   this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
                                                      this._mediaUrlSchemes);
@@ -584,10 +587,26 @@ CoreVLC.prototype.deactivate = function ()
   this._active = false;
 };
 
+CoreVLC.prototype.getSupportForFileExtension = function(aFileExtension)
+{
+  // Strip the beginning '.' if it exists and make it lowercase
+  var extension =
+    aFileExtension.charAt(0) == "." ? aFileExtension.slice(1) : aFileExtension;
+  extension = extension.toLowerCase();
+  
+  // TODO: do something smarter here
+  if (this._mediaUrlExtensions.indexOf(extension) > -1)
+    return sbICoreWrapper.SUPPORT_GENERIC;
+  else if (this._unsupportedExtensions.indexOf(extension) > -1)
+    return sbICoreWrapper.SUPPORT_NOT_SUPPORTED;
+  
+  return sbICoreWrapper.SUPPORT_UNKNOWN;
+};
+
 CoreVLC.prototype.QueryInterface = function(iid) 
 {
-  if (!iid.equals(Components.interfaces.sbICoreWrapper) &&
-      !iid.equals(Components.interfaces.nsISupports))
+  if (!iid.equals(sbICoreWrapper) &&
+      !iid.equals(nsISupports))
     throw Components.results.NS_ERROR_NO_INTERFACE;
     
   return this;

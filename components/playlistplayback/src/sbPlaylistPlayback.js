@@ -34,23 +34,13 @@
 const SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistPlayback;1";
 const SONGBIRD_PLAYLISTPLAYBACK_CLASSNAME = "Songbird Playlist Playback Interface";
 const SONGBIRD_PLAYLISTPLAYBACK_CID = Components.ID("{000e2465-58b7-4922-bdfb-9ab1492c6037}");
-const SONGBIRD_PLAYLISTPLAYBACK_IID = Components.interfaces.sbIPlaylistPlayback;
 
 // Songbird ContractID Stuff
 const SONGBIRD_COREWRAPPER_CONTRACTID = "@songbirdnest.com/Songbird/CoreWrapper;1";
-const SONGBIRD_COREWRAPPER_IID = Components.interfaces.sbICoreWrapper;
-
 const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbirdnest.com/Songbird/DataRemote;1";
-const SONGBIRD_DATAREMOTE_IID = Components.interfaces.sbIDataRemote;
-
 const SONGBIRD_DATABASEQUERY_CONTRACTID = "@songbirdnest.com/Songbird/DatabaseQuery;1";
-const SONGBIRD_DATABASEQUERY_IID = Components.interfaces.sbIDatabaseQuery;
-
 const SONGBIRD_MEDIALIBRARY_CONTRACTID = "@songbirdnest.com/Songbird/MediaLibrary;1";
-const SONGBIRD_MEDIALIBRARY_IID = Components.interfaces.sbIMediaLibrary;
-
 const SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistReaderManager;1";
-const SONGBIRD_PLAYLISTREADERMANAGER_IID = Components.interfaces.sbIPlaylistReaderManager;
 
 // String Bundles
 const URI_SONGBIRD_PROPERTIES = "chrome://songbird/locale/songbird.properties";
@@ -61,11 +51,15 @@ const DB_TEST_GUID = "testdb-0000";
 // Other junk
 const MINIMUM_FILE_SIZE = 64000;
 
-// Regular consts
-// These MUST match those in the idl.
-const REPEAT_MODE_OFF = 0;
-const REPEAT_MODE_ONE = 1;
-const REPEAT_MODE_ALL = 2;
+// Interfaces
+const sbICoreWrapper           = Components.interfaces.sbICoreWrapper;
+const sbIDatabaseQuery         = Components.interfaces.sbIDatabaseQuery;
+const sbIDataRemote            = Components.interfaces.sbIDataRemote;
+const sbIMediaLibrary          = Components.interfaces.sbIMediaLibrary;
+const sbIPlaylistPlayback      = Components.interfaces.sbIPlaylistPlayback;
+const sbIPlaylistReaderManager = Components.interfaces.sbIPlaylistReaderManager;
+
+const DEBUG = false;
 
 /**
  * ----------------------------------------------------------------------------
@@ -88,9 +82,11 @@ var gOS         = null;
  *          The string to write to the error console..
  */  
 function LOG(string) {
+  if (DEBUG) {
     debug("***sbPlaylistPlayback*** " + string + "\n");
     if (gConsole)
       gConsole.logStringMessage(string);
+  }
 } // LOG
 
 /**
@@ -163,7 +159,7 @@ function getFileExtensionFromURI(aURI)
  */
 function coreSupportsExtension(aCore, aExtension)
 {
-  if (!aCore.QueryInterface(SONGBIRD_COREWRAPPER_IID))
+  if (!aCore.QueryInterface(sbICoreWrapper))
     throw Components.results.NS_ERROR_INVALID_ARG;
   if (!((aExtension instanceof String) || (typeof(aExtension) == "string")))
     throw Components.results.NS_ERROR_INVALID_ARG;
@@ -341,7 +337,7 @@ PlaylistPlayback.prototype = {
   _attachDataRemotes: function() {
     LOG("Attaching DataRemote objects");
     // This will create the component and call init with the args
-    var createDataRemote = new Components.Constructor( SONGBIRD_DATAREMOTE_CONTRACTID, SONGBIRD_DATAREMOTE_IID, "init");
+    var createDataRemote = new Components.Constructor( SONGBIRD_DATAREMOTE_CONTRACTID, sbIDataRemote, "init");
 
     // HOLY SMOKES we use lots of data elements.
   
@@ -420,7 +416,7 @@ PlaylistPlayback.prototype = {
     if ( this._shuffle.stringValue == "")
       this._shuffle.boolValue = false; // start with no shuffle
     if ( this._repeat.stringValue == "" )
-      this._repeat.intValue = REPEAT_MODE_OFF; // start with no repeat
+      this._repeat.intValue = sbIPlaylistPlayback.REPEAT_MODE_OFF; // start with no repeat
     if ( this._volume.stringValue == "" )
       this._volume.intValue = 128;
     this._requestedVolume = this._calculatedVolume = this._volume.intValue;
@@ -623,7 +619,7 @@ PlaylistPlayback.prototype = {
     }
     
     // This is a new core, so test and add it
-    if (!core.QueryInterface(SONGBIRD_COREWRAPPER_IID))
+    if (!core.QueryInterface(sbICoreWrapper))
       throw Components.results.NS_ERROR_NOINTERFACE;
     
     // Set initial data
@@ -678,10 +674,15 @@ PlaylistPlayback.prototype = {
   
   _swapCore: function _swapCore(aNewCoreIndex) {
     
+    var coreCount = this._cores.length;
+    
+    // If we have no cores left then there is nothing to do here.
+    if (coreCount == 0)
+      return;
+
     // Make sure the given index is valid before we do anything. -1 means we
     // have no cores left.
-    var coreCount = this._cores.length;
-    if (coreCount == 0 || aNewCoreIndex > coreCount - 1)
+    if (aNewCoreIndex < 0 || aNewCoreIndex > coreCount - 1)
       throw Components.results.NS_ERROR_INVALID_ARG;
     
     if (this._currentCoreIndex > -1) {
@@ -714,44 +715,47 @@ PlaylistPlayback.prototype = {
     
     var extension = getFileExtensionFromURI(aURI);
     
-    // See if the currently selected core can handle it before we do anything
-    // else.
-    if (coreSupportsExtension(selectedCore, extension)) {
-      if (arguments.length > 1)
-        aCoreFound = true;
-      return selectedCore;      
-    }
+    LOG("_selectCoreForURI: extension = " + extension);
     
-    // Search for an appropriate core
+    var coreSupport =
+      this._callMethodOnAllCores("getSupportForFileExtension", [extension]);
+    LOG("_selectCoreForURI: coreSupport = " + coreSupport);
     
-    var coreCount = this._cores.length;
+    var newCoreIndex = -1;
     
-    // Build a list of core indices to test
-    var indices = [];
-    for (var index = this._currentCoreIndex - 1; index >= 0; index--)
-      indices.push(index);
-    for (var index = this._currentCoreIndex + 1; index <= coreCount - 1; index++)
-      indices.push(index);
-
-    // And test each core
-    var indicesLength = indices.length;
-    for (var indicesIndex = 0; indicesIndex < indicesLength; indicesIndex++) {
-      var core = this._cores[indices[indicesIndex]];
-      if (coreSupportsExtension(core, extension)) {
-        this.selectCore(core);
-        if (arguments.length > 1)
-          aCoreFound = true;
-        return core;
+    // The order of this array matters!
+    var supportTypes = [sbICoreWrapper.SUPPORT_EXPLICIT,
+                        sbICoreWrapper.SUPPORT_GENERIC,
+                        sbICoreWrapper.SUPPORT_UNKNOWN];
+    var supportTypesCount = supportTypes.length;
+    
+    // Loop through our results and look for the best support available.
+    for (var typeIndex = 0; typeIndex < supportTypesCount; typeIndex++) {
+      var supportType = supportTypes[typeIndex];
+      var coreIndex = coreSupport.indexOf(supportType);
+      if (coreIndex > -1) {
+      LOG("_selectCoreForURI: supportType = " + supportType);
+        newCoreIndex = coreIndex;
+        break;
       }
     }
-    
-    // Uh oh, no core wanted this file. Leave the currently selected core in
-    // place, but set the error flag.
-    LOG("_selectCoreForURI failed!");
+
+    LOG("_selectCoreForURI: newCoreIndex = " + newCoreIndex);
+
+    // Set the error flag if we didn't find any cores that support the
+    // extension.
     if (arguments.length > 1)
-      aCoreFound = false;
+      aCoreFound = (newCoreIndex > -1);
+
+    // Use our current core if we didn't find any cores that support the
+    // extension. This is kinda silly and we may want to do something smarter.
+    if (newCoreIndex == -1)
+      newCoreIndex = this._currentCoreIndex;
     
-    return selectedCore;
+    // Select the new core.
+    var newCore = this._cores[newCoreIndex];
+    this.selectCore(newCore);
+    return newCore;
   },
   
   /**
@@ -1238,7 +1242,7 @@ PlaylistPlayback.prototype = {
       // Cache our manager, but not at construction!
       if ( this._playlistReaderManager == null )
         this._playlistReaderManager = Components.classes[SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID]
-                                      .createInstance(SONGBIRD_PLAYLISTREADERMANAGER_IID);
+                                      .createInstance(sbIPlaylistReaderManager);
     
       // Tell it what filters to be using
       var filterlist = "";
@@ -1691,7 +1695,7 @@ PlaylistPlayback.prototype = {
       // Are we confused?
       if ( cur_index != -1 ) {
         // Are we REPEAT ONE?
-        if ( this._repeat.intValue == REPEAT_MODE_ONE ) {
+        if ( this._repeat.intValue == sbIPlaylistPlayback.REPEAT_MODE_ONE ) {
           next_index = cur_index;
         }
         // Are we SHUFFLE?
@@ -1709,7 +1713,7 @@ PlaylistPlayback.prototype = {
           // Are we at the end?
           if ( next_index >= num_items ) 
             // Are we REPEAT ALL?
-            if ( this._repeat.intValue == REPEAT_MODE_ALL )
+            if ( this._repeat.intValue == sbIPlaylistPlayback.REPEAT_MODE_ALL )
               next_index = 0; // Start over
             else
               next_index = -1; // Give up
@@ -1750,10 +1754,10 @@ PlaylistPlayback.prototype = {
   
   _importURLInLibrary: function( aURL )
   {
-    var library = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(SONGBIRD_MEDIALIBRARY_IID);
+    var library = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(sbIMediaLibrary);
 
     // set up the database query object
-    var queryObj = Components.classes[SONGBIRD_DATABASEQUERY_CONTRACTID].createInstance(SONGBIRD_DATABASEQUERY_IID);
+    var queryObj = Components.classes[SONGBIRD_DATABASEQUERY_CONTRACTID].createInstance(sbIDatabaseQuery);
     queryObj.setDatabaseGUID("songbird");
     library.setQueryObject(queryObj);
 
@@ -1774,11 +1778,11 @@ PlaylistPlayback.prototype = {
   
   // Updates the database with metadata changes
   _setURLMetadata: function( aURL, aTitle, aLength, aAlbum, aArtist, aGenre, boolSync, aDBQuery, execute ) {
-    var aLibrary = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(SONGBIRD_MEDIALIBRARY_IID);
+    var aLibrary = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(sbIMediaLibrary);
 
     if ( aDBQuery == null ) {
       //aDBQuery = new sbIDatabaseQuery();
-      aDBQuery = Components.classes[SONGBIRD_DATABASEQUERY_CONTRACTID].createInstance(SONGBIRD_DATABASEQUERY_IID);
+      aDBQuery = Components.classes[SONGBIRD_DATABASEQUERY_CONTRACTID].createInstance(sbIDatabaseQuery);
       aDBQuery.setAsyncQuery(true);
       aDBQuery.setDatabaseGUID(this._source.getRefGUID(this._playingRef.stringValue));
     }
@@ -1874,7 +1878,7 @@ PlaylistPlayback.prototype = {
    * QueryInterface is always last, it has no trailing comma.
    */
   QueryInterface: function(iid) {
-    if (!iid.equals(SONGBIRD_PLAYLISTPLAYBACK_IID) &&
+    if (!iid.equals(sbIPlaylistPlayback) &&
         !iid.equals(Components.interfaces.nsIObserver) && 
         !iid.equals(Components.interfaces.nsITimerCallback) && 
         !iid.equals(Components.interfaces.nsISupports))

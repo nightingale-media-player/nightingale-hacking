@@ -805,11 +805,11 @@ MAKE_JARS_FLAGS = -s $(srcdir) \
 # PREVENT_JARS is defined.
 
 ifdef DEBUG
-ifndef FORCE_JARS
+ifneq (1,$(FORCE_JARS))
 USING_FLAT_JARS=1
 endif
 else # DEBUG
-ifdef PREVENT_JARS
+ifeq (1,$(PREVENT_JARS))
 USING_FLAT_JARS=1
 endif
 endif # DEBUG
