@@ -30,22 +30,26 @@
  * \sa sbICoreWrapper.idl coreBase.js
  */
 
+/**
+* Makes a new URI from a url string
+ */
 function newURI(aURLString)
 {
-  if (!aURLString)
-    return null;
-
+  // Must be a string here
+  if (!(aURLString &&
+        (aURLString instanceof String) || typeof(aURLString) == "string"))
+    throw Components.results.NS_ERROR_INVALID_ARG;
+  
   var ioService =
     Components.classes["@mozilla.org/network/io-service;1"]
-              .getService(Components.interfaces.nsIIOService);
-  var uri = null;
+    .getService(Components.interfaces.nsIIOService);
+  
   try {
-    // newURI will throw if the url is malformed
-    uri = ioService.newURI(aURLString, null, null);
+    return ioService.newURI(aURLString, null, null);
   }
   catch (e) { }
-
-  return uri;
+  
+  return null;
 }
 
 /**
@@ -71,7 +75,7 @@ QuickTimeCore.prototype.playURL = function (aURL) {
   var uri = newURI(aURL);
   this._object.currentURI = uri;
 
-  if(this._object.playing || this._object.paused)
+  if (this._object.playing || this._object.paused)
     this._object.stop();
 
   this._object.position = 0;
@@ -169,6 +173,16 @@ QuickTimeCore.prototype.isVideoURL = function (aURL) {
   return this._object.isVideoURI(uri);
 };
 
+QuickTimeCore.prototype.getPlayingVideo = function () {
+  this._verifyObject();
+  return this._object.currentURIHasVideo;
+};
+
+QuickTimeCore.prototype.getSupportedFileExtensions = function () {
+  this._verifyObject();
+  return this._object.supportedFileTypes;
+};
+
 /**
   * See nsISupports.idl
   */
@@ -184,12 +198,12 @@ QuickTimeCore.prototype.QueryInterface = function(iid) {
  * Global variables and autoinitialization.
  * ----------------------------------------------------------------------------
  */
-var gQuickTimeCore = new QuickTimeCore();
 
 /**
-  * This is the function called from a document onload handler to bind everything as playback.
-  */
-function QuickTimeCoreInit(aId)
+ * This is the function called from a document onload handler to bind
+ * everything as playback.
+ */
+function QuickTimeCoreInit(aId, aSelect)
 {
   var quicktime =
     Components.classes["@songbirdnest.com/Songbird/Playback/QuickTime;1"]
@@ -197,11 +211,13 @@ function QuickTimeCoreInit(aId)
   var videoElement = document.getElementById(aId);
   quicktime.targetElement = videoElement;
   
-  gQuickTimeCore.setObject(quicktime);
-  gQuickTimeCore.setId("QuickTime1");
+  var coreWrapper = new QuickTimeCore();
   
+  coreWrapper.setObject(quicktime);
+  coreWrapper.setId("QuickTime1");
+
   var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
-  pps.addCore(gQuickTimeCore, true);
+  var select = (aSelect == true) ? true : false;
+  pps.addCore(coreWrapper, select);
 };
-

@@ -138,14 +138,14 @@ function CoreVLC()
   this._url = "";
   this._paused = false;
 
-  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "aac", "m4a", "m4v",
+  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "aac",
                               "wma", "wmv", "asx", "asf", "avi",  "mov", "mpg",
                               "mp4", "mp2", "mpeg", "mpga", "mpega", "mkv",
-                              "mka", "ogm", "mpe", "qt", "aiff", "aif"];
+                              "mka", "ogm", "mpe", "qt", "aiff", "aif", "m4a"];
   this._mediaUrlSchemes = ["mms", "rstp"];
 
   this._videoUrlExtensions = ["wmv", "asx", "asf", "avi", "mov", "qt", "mpg",
-                              "m4v", "mp4", "mp2", "mpeg", "mpe", "mkv", "ogm"];
+                              "mp4", "mp2", "mpeg", "mpe", "mkv", "ogm"];
 
   this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
                                                      this._mediaUrlSchemes);
@@ -413,7 +413,7 @@ CoreVLC.prototype.setPosition = function(position)
 
   if (this._object.playlist.itemCount <= 0 
       || this._object.input.state == CoreVLC.INPUT_STATES.IDLE)
-    return null;
+    return;
 
   if (this._object.playlist.itemCount > 0)
     this._object.input.time = position; 
@@ -542,17 +542,47 @@ CoreVLC.prototype._verifyCategoryKey = function (cat, key)
 CoreVLC.prototype.isMediaURL = function( aURL )
 {
   return this._mediaUrlMatcher.match(aURL);
-}
+};
 
 CoreVLC.prototype.isVideoURL = function ( aURL )
 {
   return this._videoUrlMatcher.match(aURL);
-}
+};
 
 CoreVLC.prototype.getSupportedFileExtensions = function ()
 {
   return new StringArrayEnumerator(this._mediaUrlExtensions);
-}
+};
+
+CoreVLC.prototype.activate = function ()
+{
+  if (this._active)
+    return;
+  
+  this._verifyObject();
+  try {
+    var videoElement =
+      this._object.QueryInterface(Components.interfaces.nsIDOMElement);
+    videoElement.removeAttribute("hidden");
+  }
+  catch (err) { }
+  
+  this._active = true;
+};
+
+CoreVLC.prototype.deactivate = function ()
+{
+  if (!this._active)
+    return;
+  
+  this.stop();
+  
+  var videoElement =
+    this._object.QueryInterface(Components.interfaces.nsIDOMElement);
+  videoElement.setAttribute("hidden", true);
+  
+  this._active = false;
+};
 
 CoreVLC.prototype.QueryInterface = function(iid) 
 {
@@ -572,7 +602,7 @@ try {
   var gCoreVLC = new CoreVLC();
 }
 catch (err) {
-  dump("ERROR!!! coreVLC failed to create properly.");
+  dump("ERROR!!! coreVLC failed to create properly.\n");
 }
 
 /**

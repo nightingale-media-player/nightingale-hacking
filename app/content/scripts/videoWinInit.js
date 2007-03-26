@@ -77,20 +77,6 @@ function SBVideoInitialize()
 
     /*
     */
-    var theWMPInstance = document.getElementById( "core_wm" );
-    var theWMPBox = document.getElementById( "box_wm" );
-
-    /*
-      // XXXben Swap this block with the next for the new QuickTime core.
-      var theQTBox = document.getElementById( "box_qt" );
-    */
-    /**/
-    var theQTInstance = document.getElementById( "core_qt_document" );
-    var theQTBox = document.getElementById( "box_qt" );
-    /**/
-    
-    /*
-    */
     var theVLCInstance = document.getElementById( "core_vlc" );
     var theVLCBox = document.getElementById( "box_vlc" );
 
@@ -99,12 +85,6 @@ function SBVideoInitialize()
     var theGSTInstance = document.getElementById( "box_gstreamer_simple" );
     var theGSTBox = document.getElementById( "box_gstreamer_simple" );
 
-    /*
-    var theFLInstance = document.getElementById( "core_flash_frame" );
-    var theFLBox = document.getElementById( "box_flash" );
-    var theTotemInstance = document.getElementById( "core_totem_frame" );
-    var theTotemBox = document.getElementById( "box_totem" );
-    */
     var theGStreamerSimpleBox = document.getElementById( "box_gstreamer_simple" );
 
     var platform;
@@ -131,16 +111,17 @@ function SBVideoInitialize()
     //
     
     if (platform == "Windows_NT") {
-      //Windows, prefer VLC.
+      // Windows, prefer VLC.
 
       // Initialize with VLC
       CoreVLCDocumentInit( "core_vlc" );
 
       //InitPlaybackCoreFlash( "core_flash_frame" );
-      // Hide Quicktime
-      if (theQTBox) theQTBox.hidden = true;
+        
       // Hide GStreamer
-      if (theGSTBox) theGSTBox.hidden = true;
+      if (theGSTBox)
+        theGSTBox.hidden = true;
+        
       /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
@@ -152,24 +133,15 @@ function SBVideoInitialize()
       var quitMenuItem = document.getElementById("menu_FileQuitItem");
       quitMenuItem.removeAttribute("hidden");
 
-      //MacOSX, prefer VLC.
+      // MacOSX, prefer VLC.
 
       // Initialize with VLC
       CoreVLCDocumentInit( "core_vlc" );
 
-      /*
-        // XXXben Swap this block with the next for the new QuickTime core.
-        QuickTimeCoreInit("box_qt");
-      */
-      /**/
-      // Initialize with Quicktime
-      //CoreQTDocumentInit( "core_qt_document" );
-      /**/
-      
-      // Hide Quicktime
-      if (theQTBox) theQTBox.hidden = true;
       // Hide GStreamer
-      if (theGSTBox) theGSTBox.hidden = true;
+      if (theGSTBox)
+        theGSTBox.hidden = true;
+        
       /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
@@ -185,10 +157,11 @@ function SBVideoInitialize()
       //InitPlaybackCoreFlash( "core_flash_frame" );
       //CoreTotemDocumentInit( "core_totem_frame" );
       CoreGStreamerSimpleDocumentInit( "box_gstreamer_simple" );
+      
       // Hide VLC
-      if (theVLCBox) theVLCBox.hidden = true;
-      // Hide Quicktime
-      if (theQTBox) theQTBox.hidden = true;
+      if (theVLCBox)
+        theVLCBox.hidden = true;
+        
       /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;

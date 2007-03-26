@@ -32,8 +32,10 @@
  *     coreWMP.js flashcore.fla sbPlaylistPlayback.js
  */
 #include "nsISupports.idl"
-#include "nsIDOMHTMLObjectElement.idl"
-#include "nsIStringEnumerator.idl"
+
+interface nsIDOMHTMLElement;
+interface nsIDOMHTMLObjectElement;
+interface nsIStringEnumerator;
 
 /**
  * \interface sbICoreWrapper
@@ -195,15 +197,6 @@ interface sbICoreWrapper : nsISupports
   AString getMetadata(in AString aKey);
 
   /**
-   * \brief Called when the core is swapping.
-   * Allows the core to do any cleaning up it needs to. Also stops the
-   *   playback of any media.
-   * \return void
-   */
-  void onSwapCore();
-
- 
-  /**
    * \brief Check to see if an url points to media content
    * This checks for a number of known file extensions and prefixes to see
    *   if the URL contains them and is therefore media.
@@ -231,6 +224,21 @@ interface sbICoreWrapper : nsISupports
    * \return an nsIStringEnumerator containting the list of extensions
    */
   nsIStringEnumerator getSupportedFileExtensions();
-
+  
+  /**
+   * \brief Called when the core is about to be selected. A good chance to
+   *        initialize, show a video window, etc.
+   */
+  void activate();
+  
+  /**
+   * \brief Called when the core is about to be deselected. Cores should hide
+   *        their video window, perform cleanup, etc.
+   */
+  void deactivate();
+  
+  /**
+   * \brief Whether or not the core is currently active.
+   */
+  boolean getActive();
 };
-

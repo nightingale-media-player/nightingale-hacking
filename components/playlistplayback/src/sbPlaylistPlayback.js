@@ -88,11 +88,9 @@ var gOS         = null;
  *          The string to write to the error console..
  */  
 function LOG(string) {
-/*
-    dump("***sbPlaylistPlayback*** " + string + "\n");
+    debug("***sbPlaylistPlayback*** " + string + "\n");
     if (gConsole)
       gConsole.logStringMessage(string);
-*/
 } // LOG
 
 /**
@@ -136,6 +134,48 @@ function newURI(aURLString)
   catch (e) { }
   
   return null;
+}
+
+/**
+ * Returns the extension (without '.') from a URI object
+ */
+function getFileExtensionFromURI(aURI)
+{
+  if (!aURI.QueryInterface(Components.interfaces.nsIURI))
+     throw Components.results.NS_ERROR_INVALID_ARG;
+  
+  var extension = null;
+  try {
+    var url = aURI.QueryInterface(Components.interfaces.nsIURL);
+    extension = url.fileExtension;
+  }
+  catch (e) {
+    var spec = aURI.spec;
+    var result = spec.match(/\.([^\.\s]+)$/);
+    if (result)
+      extension = result[1];
+  }
+  return extension;
+}
+
+/**
+ * Determines whether or not the given core supports the given extension.
+ */
+function coreSupportsExtension(aCore, aExtension)
+{
+  if (!aCore.QueryInterface(SONGBIRD_COREWRAPPER_IID))
+    throw Components.results.NS_ERROR_INVALID_ARG;
+  if (!((aExtension instanceof String) || (typeof(aExtension) == "string")))
+    throw Components.results.NS_ERROR_INVALID_ARG;
+
+  var extensionsEnum = aCore.getSupportedFileExtensions();
+  while (extensionsEnum.hasMore()) {
+    var supportedExtension = extensionsEnum.getNext();
+    LOG("coreSupportsExtension (" + aCore.getId() + ") - " + supportedExtension);
+    if (aExtension.toLowerCase() == supportedExtension.toLowerCase())
+      return true;
+  }
+  return false;
 }
 
 /**
@@ -288,6 +328,13 @@ PlaylistPlayback.prototype = {
   
   _deinit: function() {
     this._releaseDataRemotes();
+    
+    var coreCount = this._cores.length;
+    for (var index = 0; index < coreCount; index++) {
+      var core = this._cores[0];
+      this.removeCore(core);
+    }
+    
     LOG("Songbird PlaylistPlayback Service unloaded successfully");
   },
 
@@ -413,11 +460,9 @@ PlaylistPlayback.prototype = {
    * Tries to pick a valid core if one is removed.
    * Right now it just picks the first in the list (DUMB)
    */
-  _chooseCore : function() {
-    if (this._cores.length > 0)
-      this._currentCoreIndex = 0;
-    else
-      this._currentCoreIndex = -1;
+  _chooseNewCore : function() {
+    var newIndex = this._cores.length > 0 ? 0 : -1;
+    this._swapCore(newIndex);
   },
 
 
@@ -464,7 +509,7 @@ PlaylistPlayback.prototype = {
     // after setting the value in the core, ask for the the value and store
     //   it so we can verify in the getter. Some cores may use a different
     //   scale for volume and we do not want rounding to change the volume.
-    core.setVolume(val);
+    this._callMethodOnAllCores("setVolume", [val]);
     this._requestedVolume = val;
     this._calculatedVolume = core.getVolume();
     this._onPollVolume();
@@ -482,11 +527,11 @@ PlaylistPlayback.prototype = {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    core.setMute(val);
+    this._callMethodOnAllCores("setMute", [val]);
     // some cores set their volume to 0 on setMute(true), but do not restore
     // the volume when mute is turned off, this fixes the problem
     if (val == false) {
-      core.setVolume(this._calculatedVolume);
+      this._callMethodOnAllCores("setVolume", [this._calculatedVolume]);
     }
     // if the core is not playing, the loop is not running, but we still want
     //     the new mute state (and possibly volume) to be routed to all the
@@ -563,49 +608,173 @@ PlaylistPlayback.prototype = {
   // ---------------------------------------------
 
   // Add a core to the array. Optionally select it.
-  addCore: function(core, select) {
-    LOG("addCore: core.id = " + core.getId());
-    for (var i = 0; i < this._cores.length; i++) {
-      if (this._cores[i] == core)
+  addCore: function addCore(core, select) {
+    LOG("addCore: core.id = " + core.getId() + "; select = " + select);
+    
+    // See if we've already added this core
+    var coreCount = this._cores.length;
+    for (var i = 0; i < coreCount; i++) {
+      var alreadySeenCore = this._cores[i];
+      if (alreadySeenCore == core) {
         if (select)
-          this._currentCoreIndex = i;
+          this._swapCore(i);
         return;
-    }
-    LOG("addCore: new core");
-    var testCore = core;
-    if (testCore.QueryInterface(SONGBIRD_COREWRAPPER_IID)) {
-      LOG("addCore: new core has valid interface");
-      this._cores.push(core);
-      if (select) {
-        LOG("addCore: selecting new core");
-        this._currentCoreIndex = 0;
       }
-      core.setMute(this._muteData.boolValue);
-      core.setVolume(this._volume.intValue);
     }
-    else
-      throw Components.results.NS_ERROR_INVALID_ARG;
+    
+    // This is a new core, so test and add it
+    if (!core.QueryInterface(SONGBIRD_COREWRAPPER_IID))
+      throw Components.results.NS_ERROR_NOINTERFACE;
+    
+    // Set initial data
+    core.setMute(this._muteData.boolValue);
+    
+    var volume = this._volume.intValue;
+    if (volume < 0)
+      volume = 0;
+    else if (volume > 255)
+      volume = 255;
+    
+    core.setVolume(volume);
+    
+    // Add to the list
+    this._cores.push(core);
+    
+    // Update index
+    if (select)
+      this._swapCore(coreCount);
   },
   
-  removeCore: function(core) {
+  removeCore: function removeCore(core) {
     LOG("removeCore with core.getId = " + core.getId());
-    for (var i = 0; i < this._cores.length; i++) {
+    
+    var coreCount = this._cores.length;
+    for (var i = 0; i < coreCount; i++) {
+      
       if (this._cores[i] == core) {
+        // Remove the core from our list
         this._cores.splice(i, 1);
-        if (i == this._currentCoreIndex)
-          this._chooseCore();
-        else if (i < this._currentCoreIndex)
-          this._currentCoreIndex--;
+        
+        if (i == this._currentCoreIndex) {
+          // If that was our current core then we need a new one...
+          this._chooseNewCore();          
+        }
+        else if (i < this._currentCoreIndex) {
+          // Otherwise just decrement our index - no swapping necessary
+          this._currentCoreIndex--;          
+        }
+        
         return;
       }
     }
+    
+    LOG("core wasn't in the list!");
   },
 
-  selectCore: function(core) {
-    LOG("selectCore with core.getId = " + core.getId());
+  selectCore: function selectCore(core) {
+    // Cheat and rely on the behavior of the add method
     this.addCore(core, true);
   },
+  
+  _swapCore: function _swapCore(aNewCoreIndex) {
+    
+    // Make sure the given index is valid before we do anything. -1 means we
+    // have no cores left.
+    var coreCount = this._cores.length;
+    if (coreCount == 0 || aNewCoreIndex > coreCount - 1)
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    
+    if (this._currentCoreIndex > -1) {
+      // Tell the old core that it is being swapped out
+      var oldCore = this._cores[this._currentCoreIndex];
+      oldCore.deactivate();
+    }
+    
+    if (aNewCoreIndex > -1) {
+      // Try to show the new video element
+      var newCore = this._cores[aNewCoreIndex];
+      newCore.activate();        
+    }
 
+    // Select the new one
+    this._currentCoreIndex = aNewCoreIndex;
+  },
+  
+  /**
+   * Tries to find a core that can handle the given extension. Selects and
+   * returns the core and sets the optional aCoreFound argument to true. If no
+   * core is found then previously selected core will be returned and no change
+   * in selection will occur. In such a case the aCoreFound variable will be set
+   * to false.
+   */
+  _selectCoreForURI: function _selectCoreForURI(aURI, aCoreFound) {
+    var selectedCore = this.core;
+    if (!selectedCore)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    
+    var extension = getFileExtensionFromURI(aURI);
+    
+    // See if the currently selected core can handle it before we do anything
+    // else.
+    if (coreSupportsExtension(selectedCore, extension)) {
+      if (arguments.length > 1)
+        aCoreFound = true;
+      return selectedCore;      
+    }
+    
+    // Search for an appropriate core
+    
+    var coreCount = this._cores.length;
+    
+    // Build a list of core indices to test
+    var indices = [];
+    for (var index = this._currentCoreIndex - 1; index >= 0; index--)
+      indices.push(index);
+    for (var index = this._currentCoreIndex + 1; index <= coreCount - 1; index++)
+      indices.push(index);
+
+    // And test each core
+    var indicesLength = indices.length;
+    for (var indicesIndex = 0; indicesIndex < indicesLength; indicesIndex++) {
+      var core = this._cores[indices[indicesIndex]];
+      if (coreSupportsExtension(core, extension)) {
+        this.selectCore(core);
+        if (arguments.length > 1)
+          aCoreFound = true;
+        return core;
+      }
+    }
+    
+    // Uh oh, no core wanted this file. Leave the currently selected core in
+    // place, but set the error flag.
+    LOG("_selectCoreForURI failed!");
+    if (arguments.length > 1)
+      aCoreFound = false;
+    
+    return selectedCore;
+  },
+  
+  /**
+   * Use this function to call the same method on all cores. Useful for setting
+   * things like volume.
+   *
+   * \param aMethodName The name of the method to call on each core
+   * \param aArgArray An array of arguments to pass to the method
+   *
+   * \return Returns an array of the return values from the method on each core
+   */
+  _callMethodOnAllCores: function _callMethodOnAllCores(aMethodName, aArgArray) {
+    var returnVals = [];
+    var coreCount = this._cores.length;
+    for (var index = 0; index < coreCount; index++) {
+      var core = this._cores[index];
+      var method = core[aMethodName];
+      LOG("_callMethodOnAllCores: " + aMethodName + "(" + aArgArray + ")");
+      returnVals[index] = method.apply(core, aArgArray);
+    }
+    return returnVals;    
+  },
+  
   play: function() {
     var core = this.core;
     if (!core)
@@ -860,7 +1029,7 @@ PlaylistPlayback.prototype = {
       }
       this.metrics_inc("play.attempt", core.getId(), null);
     } catch( err ) {
-      dump( "playURL:\n" + err + "\n" );
+      debug( "playURL:\n" + err + "\n" );
       return false;
     }
     return true;
@@ -1028,20 +1197,23 @@ PlaylistPlayback.prototype = {
   },
 
   isMediaURL: function(aURL) {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    aURL = aURL.toLowerCase();
-    return core.isMediaURL(aURL);
+    var coreCount = this._cores.length;
+    for (var index = 0; index < coreCount; index++) {
+      var core = this._cores[index];
+      if (core.isMediaURL(aURL.toLowerCase()))
+        return true;
+    }
+    return false;
   },
 
-  isVideoURL: function ( aURL )
-  {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    aURL = aURL.toLowerCase();
-    return core.isVideoURL(aURL);
+  isVideoURL: function (aURL) {
+    var coreCount = this._cores.length;
+    for (var index = 0; index < coreCount; index++) {
+      var core = this._cores[index];
+      if (core.isVideoURL(aURL.toLowerCase()))
+        return true;
+    }
+    return false;
   },
 
   isPlaylistURL: function(aURL) {

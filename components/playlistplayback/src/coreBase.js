@@ -54,6 +54,7 @@ CoreBase.prototype =
   _id      : "",
   _playing : false,
   _paused  : false,
+  _active  : false,
 
   _verifyObject: function () {
     if ( this._object == null ) {
@@ -76,23 +77,35 @@ CoreBase.prototype =
   },
 
   setObject : function (aObject) {
-    if (this._object != aObject) {
-      //
-      // swapCore not impl yet
-      //if (this._object)
-      //  this.swapCore();
-      //
+    if (this._object != aObject)
       this._object = aObject;
-    }
+  },
+  
+  activate : function activate() {
+    if (this._active)
+      return;
+    
+    this._verifyObject();
+    this._active = true;
   },
 
-  onSwapCore: function() {
+  deactivate : function deactivate() {
+    if (!this._active)
+      return;
+    
     this._verifyObject();
     try {
-      this._object.Stop();
-    } catch(err) {
-      LOG(err);
+      this.stop();
     }
+    catch (err) {
+      this.LOG(err);
+    }
+    
+    this._active = false;
+  },
+
+  getActive : function getActive() {
+    return this._active;
   },
 
   /**
