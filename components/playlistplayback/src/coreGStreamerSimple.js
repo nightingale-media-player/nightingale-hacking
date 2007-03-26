@@ -349,6 +349,37 @@ CoreGStreamerSimple.prototype.getMetadata = function ( key )
       case "genre":
         rv = this._object.genre;
       break;
+      case "url": {
+      // Special case for URL... Need to make sure we hand back a complete URI.
+       var ioService =
+          Components.classes[IOSERVICE_CONTRACTID].getService(nsIIOService);
+        var uri;
+        try {
+          // See if it is a file, first.
+          var file =
+            Components.classes["@mozilla.org/file/local;1"]
+                      .createInstance(Components.interfaces.nsILocalFile);
+          file.initWithPath(this._object.uri);
+          var fileHandler =
+            ioService.getProtocolHandler("file")
+                     .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+          var url = fileHandler.getURLSpecFromFile(file);
+          uri = ioService.newURI(url, null, null);
+        }
+        catch (err) { }
+        
+        if (!uri) {
+          try {
+            // See if it is a regular URI
+            uri = ioService.newURI(this._object.uri, null, null);
+          }
+          catch (err) { };
+        }
+        
+        if (uri)
+          rv = uri.spec;
+      }
+      break;
       default:
         rv = "";
       break;

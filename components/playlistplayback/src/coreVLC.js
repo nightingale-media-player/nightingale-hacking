@@ -474,8 +474,33 @@ CoreVLC.prototype.getMetadata = function(key)
       break;
 
       case "url":
-        if(this._verifyCategoryKey(metaInfoCat, "URL"))
-          retval += this._object.metadata.get( metaInfoCat, "URL" );
+        var ioService =
+          Components.classes[IOSERVICE_CONTRACTID].getService(nsIIOService);
+        var uri;
+        try {
+          // See if it is a file, first.
+          var file =
+            Components.classes["@mozilla.org/file/local;1"]
+                      .createInstance(Components.interfaces.nsILocalFile);
+          file.initWithPath(this._url);
+          var fileHandler =
+            ioService.getProtocolHandler("file")
+                     .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+          var url = fileHandler.getURLSpecFromFile(file);
+          uri = ioService.newURI(url, null, null);
+        }
+        catch (err) { }
+        
+        if (!uri) {
+          try {
+            // See if it is a regular URI
+            uri = ioService.newURI(this._url, null, null);
+          }
+          catch (err) { };
+        }
+        
+        if (uri)
+          retval += uri.spec;
       break;
     } 
   } catch (e) {

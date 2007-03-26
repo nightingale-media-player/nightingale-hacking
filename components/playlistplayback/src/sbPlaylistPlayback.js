@@ -503,10 +503,7 @@ PlaylistPlayback.prototype = {
   },
   
   get position() {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return core.getPosition();
+    return this.core.getPosition();
   },
 
   set position(val) {
@@ -1331,6 +1328,13 @@ PlaylistPlayback.prototype = {
         ( this._set_metadata ) */// Someone says we're supposed to be setting metadata now.
       )
     ) {
+
+      // Sometimes the core is a little slower than we are and it returns
+      // metadata for the previous song after we are already playing the next.
+      // Make sure we're in sync and bail if not.
+      if (core.getMetadata("url") != this._playURL.stringValue)
+        return;
+
       // Ask, and ye shall receive
       var title = "" + core.getMetadata("title");
       var album = "" + core.getMetadata("album");
