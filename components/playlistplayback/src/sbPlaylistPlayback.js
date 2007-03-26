@@ -174,6 +174,47 @@ function coreSupportsExtension(aCore, aExtension)
   return false;
 }
 
+
+/**
+ * A wrapper to turn a JS array into an nsIStringEnumerator.
+ */
+function StringArrayEnumerator(aArray) {
+  this._array = aArray;
+  this._current = 0;
+}
+
+StringArrayEnumerator.prototype = {
+
+  constructor: StringArrayEnumerator,
+  
+  _array: null,
+  _current: 0,
+
+  /**
+   * See nsIStringEnumerator.idl
+   */
+  hasMore: function hasMore() {
+    return this._current < this._array.length;
+  },
+  
+  /**
+   * See nsIStringEnumerator.idl
+   */
+  getNext: function getNext() {
+    return this._array[this._current++];
+  },
+
+  /**
+   * See nsISupports.idl
+   */
+  QueryInterface: function QueryInterface(iid) {
+    if (!iid.equals(Components.interfaces.nsIStringEnumerator) &&
+        !iid.equals(Components.interfaces.nsISupports))
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    return this;
+  }
+};
+
 /**
  * ----------------------------------------------------------------------------
  * The PlaylistPlayback Component
@@ -1268,10 +1309,17 @@ PlaylistPlayback.prototype = {
   },
 
   getSupportedFileExtensions: function () {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return core.getSupportedFileExtensions();
+    var supportedExtensions = [];
+    function appendExtensions(aElement, aIndex, aArray) {
+      while (aElement.hasMore())
+        supportedExtensions.push(aElement.getNext());      
+    }
+    
+    var enumerators =
+      this._callMethodOnAllCores("getSupportedFileExtensions", []);
+    enumerators.forEach(appendExtensions);
+
+    return new StringArrayEnumerator(supportedExtensions);
   },
 
   stripHoursFromTimeString: function ( aTimeString )
