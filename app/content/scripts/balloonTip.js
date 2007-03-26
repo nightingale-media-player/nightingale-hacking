@@ -121,11 +121,6 @@ BalloonTip.prototype = {
     this.originalDocument = document;
     this.originalWindow = window;
     this.checkboxLabel = aCheckboxLabel;
-    // Generate a random id for that window, so that opening a new balloontip does not reuse any
-    // tip window that is already visible on the screen
-    var aUUIDGenerator = (Components.classes["@mozilla.org/uuid-generator;1"]).createInstance();
-    aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
-    var id = aUUIDGenerator.generateUUID();
     // 'alwaysRaised' does not work on Linux or Mac, only use it on Windows.
     // 'popup' makes the window always on top on linux, which is the next best
     // way of ensuring that the tip window stays on top (although it makes it
@@ -140,7 +135,7 @@ BalloonTip.prototype = {
       default: raisedflag = ""; break;
     }
     // Open the window (cloaked)
-    this.tipWindow = window.openDialog("chrome://songbird/content/xul/balloonTip.xul", id, "chrome,modal=no,titlebar=no,resizable=no"+raisedflag, this);
+    this.tipWindow = window.openDialog("chrome://songbird/content/xul/balloonTip.xul", "_blank", "chrome,modal=no,titlebar=no,resizable=no"+raisedflag, this);
     this.initTimeStamp = new Date().getTime();
     if (this.autoCloseTimeout) setTimeout( function(obj) { obj.onAutoCloseTimeout(); }, this.autoCloseTimeout * 1000, this );
   },
