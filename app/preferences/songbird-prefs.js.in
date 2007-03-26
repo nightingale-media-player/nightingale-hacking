@@ -140,3 +140,6 @@ pref("songbird.webplaylist.enabled", "1");
 pref("browser.chrome.site_icons", true);
 pref("browser.chrome.favicons", true);
 
+// Override the window XPInstall opens on extension install
+pref("xpinstall.dialog.progress.type.chrome", "Browser:Preferences");
+pref("xpinstall.dialog.progress.type.skin", "Browser:Preferences");
