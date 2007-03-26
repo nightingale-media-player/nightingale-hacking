@@ -175,7 +175,7 @@ CoreVLC.prototype.constructor = CoreVLC();
 CoreVLC.prototype.playURL = function (aURL)
 {
   this._verifyObject();
-
+  
   this._fileTime = 0;
   this._lastCalcTime = 0;
   this._startTime = 0;
@@ -596,11 +596,11 @@ CoreVLC.prototype.getSupportForFileExtension = function(aFileExtension)
   
   // TODO: do something smarter here
   if (this._mediaUrlExtensions.indexOf(extension) > -1)
-    return sbICoreWrapper.SUPPORT_GENERIC;
+    return 1;
   else if (this._unsupportedExtensions.indexOf(extension) > -1)
-    return sbICoreWrapper.SUPPORT_NOT_SUPPORTED;
+    return -1;
   
-  return sbICoreWrapper.SUPPORT_UNKNOWN;
+  return 0; // We are the default handler for whomever.
 };
 
 CoreVLC.prototype.QueryInterface = function(iid) 

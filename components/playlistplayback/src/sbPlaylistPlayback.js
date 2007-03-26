@@ -755,7 +755,10 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     
     var extension = getFileExtensionFromURI(aURI);
-    
+    // HACK ALERT - some streams do not have file extensions but we need
+    //              to pass an arg to comply with XPIDL. see bug 2565.
+    if (! extension)
+      extension = " ";   
     LOG("_selectCoreForURI: extension = " + extension);
     
     var coreSupport =
@@ -763,24 +766,16 @@ PlaylistPlayback.prototype = {
     LOG("_selectCoreForURI: coreSupport = " + coreSupport);
     
     var newCoreIndex = -1;
-    
-    // The order of this array matters!
-    var supportTypes = [sbICoreWrapper.SUPPORT_EXPLICIT,
-                        sbICoreWrapper.SUPPORT_GENERIC,
-                        sbICoreWrapper.SUPPORT_UNKNOWN];
-    var supportTypesCount = supportTypes.length;
-    
-    // Loop through our results and look for the best support available.
-    for (var typeIndex = 0; typeIndex < supportTypesCount; typeIndex++) {
-      var supportType = supportTypes[typeIndex];
-      var coreIndex = coreSupport.indexOf(supportType);
-      if (coreIndex > -1) {
-      LOG("_selectCoreForURI: supportType = " + supportType);
-        newCoreIndex = coreIndex;
-        break;
+
+    // Things vote so later things may outvote and supercede earlier things
+    var highVal = -1;
+    for ( var i = 0; i < coreSupport.length; i++ ) {
+      if ( typeof( coreSupport[ i ] ) != 'undefined' && highVal < coreSupport[ i ] ) {
+        highVal = coreSupport[ i ];
+        newCoreIndex = i;
       }
     }
-
+    
     LOG("_selectCoreForURI: newCoreIndex = " + newCoreIndex);
 
     // Set the error flag if we didn't find any cores that support the
@@ -812,10 +807,14 @@ PlaylistPlayback.prototype = {
     var returnVals = [];
     var coreCount = this._cores.length;
     for (var index = 0; index < coreCount; index++) {
+      var retval = null;
       var core = this._cores[index];
       var method = core[aMethodName];
       LOG("_callMethodOnAllCores: " + aMethodName + "(" + aArgArray + ")");
-      returnVals[index] = method.apply(core, aArgArray);
+      try {
+        retval = method.apply(core, aArgArray); // Ben likes to throw.
+      } catch (e) {}
+      returnVals[index] = retval;
     }
     return returnVals;    
   },
@@ -1311,8 +1310,10 @@ PlaylistPlayback.prototype = {
   getSupportedFileExtensions: function () {
     var supportedExtensions = [];
     function appendExtensions(aElement, aIndex, aArray) {
-      while (aElement.hasMore())
-        supportedExtensions.push(aElement.getNext());      
+      if ( aElement ) {
+        while (aElement.hasMore())
+          supportedExtensions.push(aElement.getNext());
+      }
     }
     
     var enumerators =

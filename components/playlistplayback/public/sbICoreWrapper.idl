@@ -243,15 +243,7 @@ interface sbICoreWrapper : nsISupports
   boolean getActive();
 
   /**
-   * Possible return values for getSupportForFileExtension.
-   */
-  const unsigned long SUPPORT_NOT_SUPPORTED = 0;
-  const unsigned long SUPPORT_UNKNOWN       = 1;
-  const unsigned long SUPPORT_GENERIC       = 2;
-  const unsigned long SUPPORT_EXPLICIT      = 3;
-
-  /**
    * 
    */
-  unsigned long getSupportForFileExtension(in AString aFileExtension);
+  long getSupportForFileExtension(in AString aFileExtension);
 };
