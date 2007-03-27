@@ -146,8 +146,8 @@
   <binding id="mute-button">
   
    <content>
-     <xul:clickholdbutton class="sb-player-mute-button-muteoff sb-player-button" sbid="mute-off" oncommand="onMute();" tooltiptext="&tooltip.control.mute;"/>
-     <xul:clickholdbutton class="sb-player-mute-button-muteon sb-player-button"  sbid="mute-on"  oncommand="onMute();" tooltiptext="&tooltip.control.mute;"/>
+     <xul:sb-clickhold-button class="sb-player-mute-button-muteoff sb-player-button" sbid="mute-off" oncommand="onMute();" tooltiptext="&tooltip.control.mute;"/>
+     <xul:sb-clickhold-button class="sb-player-mute-button-muteon sb-player-button"  sbid="mute-on"  oncommand="onMute();" tooltiptext="&tooltip.control.mute;"/>
    </content>
 
   <implementation>
@@ -443,21 +443,21 @@
   
    <content>
      <xul:stack xbl:inherits="class=class" >
-       <xul:clickholdbutton sbid="repeat_none" class="sb-player-repeat-button-repnone sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repx;">
+       <xul:sb-clickhold-button sbid="repeat_none" class="sb-player-repeat-button-repnone sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repx;">
          <xul:menuitem id="menu_repeat_none" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
          <xul:menuitem id="menu_repeat_1" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
          <xul:menuitem id="menu_repeat_all" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
-       </xul:clickholdbutton>
-       <xul:clickholdbutton sbid="repeat_1" class="sb-player-repeat-button-rep1 sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.rep1;">
+       </xul:sb-clickhold-button>
+       <xul:sb-clickhold-button sbid="repeat_1" class="sb-player-repeat-button-rep1 sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.rep1;">
          <xul:menuitem id="menu_repeat_none" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
          <xul:menuitem id="menu_repeat_1" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
          <xul:menuitem id="menu_repeat_all" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
-       </xul:clickholdbutton>
-       <xul:clickholdbutton sbid="repeat_all" class="sb-player-repeat-button-repall sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repa;">
+       </xul:sb-clickhold-button>
+       <xul:sb-clickhold-button sbid="repeat_all" class="sb-player-repeat-button-repall sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repa;">
          <xul:menuitem id="menu_repeat_none" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
          <xul:menuitem id="menu_repeat_1" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
          <xul:menuitem id="menu_repeat_all" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
-       </xul:clickholdbutton>
+       </xul:sb-clickhold-button>
      </xul:stack>
    </content>
 
@@ -549,8 +549,8 @@
   
    <content>
      <xul:stack xbl:inherits="class=class" >
-       <xul:clickholdbutton sbid="shuffle_off" class="sb-player-shuffle-button-shuffleoff sb-player-button" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuf_off;"/>
-       <xul:clickholdbutton sbid="shuffle_on" class="sb-player-shuffle-button-shuffleon sb-player-button" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
+       <xul:sb-clickhold-button sbid="shuffle_off" class="sb-player-shuffle-button-shuffleoff sb-player-button" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuf_off;"/>
+       <xul:sb-clickhold-button sbid="shuffle_on" class="sb-player-shuffle-button-shuffleon sb-player-button" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
      </xul:stack>
    </content>
 
@@ -851,7 +851,7 @@
   <binding id="play-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
   
    <content>
-     <xul:clickholdbutton sbid="play" class="sb-player-play-button-play sb-player-button" oncommand="onPlay();" tooltiptext="&tooltip.control.play;"/>
+     <xul:sb-clickhold-button sbid="play" class="sb-player-play-button-play sb-player-button" oncommand="onPlay();" tooltiptext="&tooltip.control.play;"/>
    </content>
 
   <implementation>
@@ -873,8 +873,8 @@
   
    <content>
      <xul:stack xbl:inherits="class=class" >
-       <xul:clickholdbutton sbid="pause" class="sb-player-pause-button-pause sb-player-button" oncommand="onPause();" label="&menu.control.pause.button;"/>
-       <xul:clickholdbutton sbid="resume" class="sb-player-pause-button-resume sb-player-button" oncommand="onPause();" label="&menu.control.resume.button;"/>
+       <xul:sb-clickhold-button sbid="pause" class="sb-player-pause-button-pause sb-player-button" oncommand="onPause();" label="&menu.control.pause.button;"/>
+       <xul:sb-clickhold-button sbid="resume" class="sb-player-pause-button-resume sb-player-button" oncommand="onPause();" label="&menu.control.resume.button;"/>
      </xul:stack>
    </content>
 
@@ -958,7 +958,7 @@
   
    <content>
      <xul:stack xbl:inherits="class=class" >
-       <xul:clickholdbutton sbid="stop" class="sb-player-stop-button-stop sb-player-button" oncommand="onStop();" label="&menu.control.stop.button;"/>
+       <xul:sb-clickhold-button sbid="stop" class="sb-player-stop-button-stop sb-player-button" oncommand="onStop();" label="&menu.control.stop.button;"/>
      </xul:stack>
    </content>
 
@@ -994,7 +994,7 @@
   <binding id="playpause-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
   
    <content>
-     <xul:clickholdbutton sbid="play" 
+     <xul:sb-clickhold-button sbid="play" 
                          class="sb-player-play-button-play sb-player-button" 
                          oncommand="onPlayPause(event.target);" 
                          tooltiptext="&tooltip.control.play;" 
@@ -1003,8 +1003,8 @@
        <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
        <xul:menuitem id="menu_pause" class="menuitem-iconic" label="&menu.control.pause.button;"/>
        <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
-     </xul:clickholdbutton>
-     <xul:clickholdbutton sbid="pause" 
+     </xul:sb-clickhold-button>
+     <xul:sb-clickhold-button sbid="pause" 
                          class="sb-player-pause-button-pause sb-player-button" 
                          oncommand="onPlayPause(event.target);" 
                          tooltiptext="&tooltip.control.pause;" 
@@ -1013,7 +1013,7 @@
        <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
        <xul:menuitem id="menu_pause" class="menuitem-iconic" label="&menu.control.pause.button;"/>
        <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
-     </xul:clickholdbutton>
+     </xul:sb-clickhold-button>
    </content>
 
   <implementation>
@@ -1443,7 +1443,7 @@
   <binding id="curtrack-button">
     
     <content>
-      <xul:clickholdbutton oncommand="onCurrentTrack( );" class="sb-player-curtrack-button sb-player-button" tooltiptext="&tooltip.control.curtrack;"/>
+      <xul:sb-clickhold-button oncommand="onCurrentTrack( );" class="sb-player-curtrack-button sb-player-button" tooltiptext="&tooltip.control.curtrack;"/>
     </content>
     
     <implementation>

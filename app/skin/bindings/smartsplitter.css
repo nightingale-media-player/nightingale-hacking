@@ -49,7 +49,7 @@ TODO: Remove these from all xul
 /** Careful, this actually refers to splitters inserted into 
     hboxes.  That is, splitters that are visually vertical and slide
     left-right.  **/    
-smartsplitter:not([orient="vertical"])
+sb-smart-splitter:not([orient="vertical"])
 {
   width: 7px;
   min-width: 7px;
@@ -61,7 +61,7 @@ smartsplitter:not([orient="vertical"])
   cursor: w-resize;
 }
 
-smartsplitter[orient="vertical"],
+sb-smart-splitter[orient="vertical"],
 #playlist_web_split > grippy
 {
   width: 50px !important;
@@ -74,7 +74,7 @@ smartsplitter[orient="vertical"],
   cursor: n-resize;
 }
 
-smartsplitter[state="collapsed"],
+sb-smart-splitter[state="collapsed"],
 splitter[state="collapsed"]
 {
   width: 10px;

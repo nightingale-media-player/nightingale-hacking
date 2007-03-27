@@ -271,7 +271,7 @@ SERVICE PANE
 
 /** Bind images to the button and button-popup on the Service Pane */
 /** NOTE: IDs containing periods are bad.. */
-clickholdbutton[id="file.new"]
+sb-clickhold-button[id="file.new"]
 {
   list-style-image: url(chrome://songbird/skin/default/icon_playlist_16x16.png) ;
 }

@@ -184,10 +184,10 @@
           <spacer flex="1"/>
         </hbox>
 
-        <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane"
+        <sb-smart-splitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane"
         >
           <grippy/>
-        </smartsplitter>
+        </sb-smart-splitter>
 
         <vbox id="frame_middle_pane" flex="1">
           <hbox id="frame_middle_pane_hbox" flex="1">
@@ -198,9 +198,9 @@
               <servicepane id="servicepane" flex="1" browser="frame_main_pane" />                  
             </vbox>
 
-            <smartsplitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="collapse.servicepane">
+            <sb-smart-splitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="collapse.servicepane">
               <grippy/>
-            </smartsplitter>
+            </sb-smart-splitter>
 
             <!-- MAIN PANE -->
             <vbox flex="1" id="main_pane_border">
@@ -221,9 +221,9 @@
                                           browser="frame_main_pane" />
 
 
-                  <smartsplitter id="search_splitter" state="open">
+                  <sb-smart-splitter id="search_splitter" state="open">
                     <grippy/>
-                  </smartsplitter>    
+                  </sb-smart-splitter>    
                                       
                   <!-- SEARCH WIDGET -->
                   <search
@@ -246,9 +246,9 @@
                              playlist="playlist_web"
                              contentcontextmenu="html_context_menu"
                              />
-              <smartsplitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
+              <sb-smart-splitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
                 <grippy/>
-              </smartsplitter>
+              </sb-smart-splitter>
               
               
               <vbox id="playlist_web_vbox" height="200" hidden="true" minheight="0" _resize_height="200">

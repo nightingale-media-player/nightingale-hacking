@@ -46,7 +46,7 @@
           <xul:hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
           </xul:hbox>
 
-          <xul:smartsplitter
+          <xul:sb-smart-splitter
             id="horz_splitter"
             sbid="filter_splitter"
             state="open"
@@ -58,7 +58,7 @@
             metricsid="collapse.library" 
           >
             <xul:grippy/>
-          </xul:smartsplitter>
+          </xul:sb-smart-splitter>
 
           <!-- Playlist Tree -->
           <xul:tree 
@@ -919,7 +919,7 @@
         // Add a splitter
         if ( this.filters.length > 0 )
         {
-          var splitter = document.createElement( "smartsplitter" );
+          var splitter = document.createElement( "sb-smart-splitter" );
           splitter.setAttribute( "id", "filter_splitter" );
           splitter.setAttribute( "stateid", "filter_splitter_" + this.ref );
           splitter.setAttribute( "state", "open" );

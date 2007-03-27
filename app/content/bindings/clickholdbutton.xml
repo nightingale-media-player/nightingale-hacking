@@ -39,7 +39,7 @@
    * A normal button, except that clicking and holding triggers a popup menu.
    */
   -->
-  <binding id="clickholdbutton">
+  <binding id="clickhold-button">
 
     <content>
         <xul:button sbid="button" class="clickhold-button" xbl:inherits="label,flex,disabled,tooltiptext" />

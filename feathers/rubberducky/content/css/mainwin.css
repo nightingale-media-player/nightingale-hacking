@@ -87,7 +87,7 @@ Currently a single clickhold button below the service tree
 }
 
 /** Offset menu to account for rounded button **/
-#frame_service_buttonbar clickholdbutton menupopup
+#frame_service_buttonbar sb-clickhold-button menupopup
 {
  margin-left: 8px;
 }

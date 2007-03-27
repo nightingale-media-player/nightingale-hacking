@@ -198,12 +198,12 @@ dbedit_menulist {
   -moz-binding: url("chrome://songbird/content/bindings/db_controls.xml#menulist") !important;
 }
 
-smartsplitter {
-  -moz-binding: url("chrome://songbird/content/bindings/smartsplitter.xml#smartsplitter") !important;
+sb-smart-splitter {
+  -moz-binding: url("chrome://songbird/content/bindings/smartsplitter.xml#smart-splitter") !important;
 }
 
-clickholdbutton {
-  -moz-binding: url("chrome://songbird/content/bindings/clickholdbutton.xml#clickholdbutton") !important;
+sb-clickhold-button {
+  -moz-binding: url("chrome://songbird/content/bindings/clickholdbutton.xml#clickhold-button") !important;
 }
 
 menupopup[type="feathers"] {

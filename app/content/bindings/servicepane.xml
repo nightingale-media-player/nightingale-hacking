@@ -42,9 +42,9 @@
                     <xul:vbox style="-moz-binding:url(#toolbar)"
                               anonid="toolbar" />
                 </xul:vbox>
-                <xul:smartsplitter>
+                <xul:sb-smart-splitter>
                     <xul:grippy/>
-                </xul:smartsplitter>
+                </xul:sb-smart-splitter>
                 <xul:vbox style="-moz-binding:url(#extensions)" flex="1"
                           anonid="extensions" />
             </xul:vbox>
@@ -410,11 +410,11 @@
             <!-- For now just hijacking the file menu implementation.. -->
             <!-- TODO: over state, up arrow, remove periods from all IDs -->
             <xul:hbox id="frame_service_buttonbar">
-                <xul:clickholdbutton id="file.new"  flex="1" label="&menu.file.new;" popupanchor="topleft" popupalign="bottomleft">
+                <xul:sb-clickhold-button id="file.new"  flex="1" label="&menu.file.new;" popupanchor="topleft" popupalign="bottomleft">
                     <xul:menuitem id="file.new" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
                     <xul:menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
                     <xul:menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
-                </xul:clickholdbutton>
+                </xul:sb-clickhold-button>
             </xul:hbox>
         </content>   
     </binding>

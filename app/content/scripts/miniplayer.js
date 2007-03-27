@@ -166,11 +166,11 @@ try
       case "servicetree":
       case "playlist":
       case "search":
-      case "smartsplitter":
+      case "sb-smart-splitter":
       case "sbextensions":
       case "smart_conditions":
       case "watch_folders":
-      case "clickholdbutton":
+      case "sb-clickhold-button":
       // XUL Elements
       case "splitter":
       case "grippy":

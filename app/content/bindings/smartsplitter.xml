@@ -35,7 +35,7 @@
 
 
  
-  <binding id="smartsplitter" extends="xul:splitter">
+  <binding id="smart-splitter" extends="xul:splitter">
   
   <implementation>
 
@@ -224,7 +224,7 @@
       <body>
         <![CDATA[
           // The orient attribute is automatically set to 
-          // "vertical" when the smartsplitter is placed in 
+          // "vertical" when the sb-smart-splitter is placed in 
           // a vbox
           var or = this.getAttribute("orient");
           if (or == "vert" || or == "vertical") return true;

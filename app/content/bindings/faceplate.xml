@@ -393,7 +393,7 @@
   
   <binding id="cyclefaceplate">
     <content>
-      <xul:clickholdbutton sbid="button" 
+      <xul:sb-clickhold-button sbid="button" 
                            popupanchor="topleft" 
                            popupalign="bottomleft" 
                            onmenushowing="buildMenu();" 

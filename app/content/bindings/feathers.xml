@@ -313,7 +313,7 @@
   -->
   <binding id="feathers-togglebutton">
     <content>
-      <xul:clickholdbutton anonid="clickhold"  
+      <xul:sb-clickhold-button anonid="clickhold"  
                  xbl:inherits="position,popupanchor,popupalign"
                  class="sb-feathers-toggle-button"
                  menupopuptype="feathers"/>
