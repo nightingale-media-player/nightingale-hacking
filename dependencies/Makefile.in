@@ -110,17 +110,16 @@ endif
 include $(topsrcdir)/build/rules.mk
 
 # Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
-xulrunner_extensions := $(notdir $(wildcard $(SONGBIRD_XULRUNNERDIR)/extensions/*))
+xulrunner_extensions = $(notdir $(wildcard $(SONGBIRD_XULRUNNERDIR)/extensions/*))
 
-all::
+all:: copy-extensions
+
+.PHONY : copy-extensions
+copy-extensions : gunzip_file
+	@echo $(xulrunner_extensions)
 	$(MKDIR) -p $(SONGBIRD_EXTENSIONSDIR)
-ifneq (,$(xulrunner_extensions))
 	for item in $(xulrunner_extensions); do \
     $(RM) -rf $(SONGBIRD_EXTENSIONSDIR)/$$item; \
     $(MV) -f $(SONGBIRD_XULRUNNERDIR)/extensions/$$item $(SONGBIRD_EXTENSIONSDIR); \
   done
-endif
 	$(RM) -rf $(SONGBIRD_XULRUNNERDIR)/extensions
-
-all::
-	$(RM) -f $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
