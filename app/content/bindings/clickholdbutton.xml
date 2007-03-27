@@ -107,12 +107,16 @@
          return;
        }
        
+    
        // If the menupopup does not contain any items, then we should not show it.
        // we cannot cancel the menu earlier (for instance, in delayPopup, or showPopup) 
        // because some menus only add their menuitems in onpopupshowing.
-       if (target.childNodes.length == 0) {
-         this.popup.hidePopup();
-       }
+       try {
+         // Ugh, dig into menupopup > arrowscrollbox > scrollbox > box to count children
+         if (target.childNodes[0].childNodes[1].childNodes[0].length == 0) {
+           this.popup.hidePopup();
+         }
+       } catch (e) {}
 
        // Centered?
        // If we want to use anchoring (which we do) then we can only
