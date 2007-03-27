@@ -59,6 +59,13 @@ private:
     PRBool ascending;
   };
 
+  struct sbGroupInfo
+  {
+    nsString tableName;
+    nsString columnName;
+  };
+
+  nsTArray<sbGroupInfo> mGroups;
   nsTArray<sbOrderInfo> mOrders;
   nsTArray<sbColumnInfo> mOutputColumns;
 

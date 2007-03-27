@@ -113,6 +113,19 @@ sbSQLSelectBuilder::AddOrder(const nsAString& aTableName,
 }
 
 NS_IMETHODIMP
+sbSQLSelectBuilder::AddGroupBy(const nsAString& aTableName,
+                               const nsAString& aColumnName)
+{
+  sbGroupInfo* gi = mGroups.AppendElement();
+  NS_ENSURE_TRUE(gi, NS_ERROR_OUT_OF_MEMORY);
+
+  gi->tableName  = aTableName;
+  gi->columnName = aColumnName;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbSQLSelectBuilder::Reset()
 {
   sbSQLWhereBuilder::Reset();
@@ -220,6 +233,23 @@ sbSQLSelectBuilder::ToString(nsAString& _retval)
 
   rv = AppendWhere(buff);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Append group by clause
+  len = mGroups.Length();
+  if (len > 0) {
+    buff.AppendLiteral(" group by ");
+    for (PRUint32 i = 0; i < len; i++) {
+      const sbGroupInfo& gi = mGroups[i];
+      if (!gi.tableName.IsEmpty()) {
+        buff.Append(gi.tableName);
+        buff.AppendLiteral(".");
+      }
+      buff.Append(gi.columnName);
+      if (i + 1 < len) {
+        buff.AppendLiteral(", ");
+      }
+    }
+  }
 
   // Append order by clause
   len = mOrders.Length();

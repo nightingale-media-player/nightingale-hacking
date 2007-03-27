@@ -272,6 +272,16 @@ interface sbISQLSelectBuilder : sbISQLWhereBuilder
   void addOrder(in AString aTableName,
                 in AString aColumnName,
                 in boolean aAscending);
+
+
+  /**
+   * \brief Add an group by clause to the query
+   * \param aTableName Table name the column belongs to
+   * \param aColumnName Name of the column to group on
+   */
+  void addGroupBy(in AString aTableName,
+                  in AString aColumnName);
+
 };
 
 /**
