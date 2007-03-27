@@ -1,0 +1,116 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbICascadeFilterSet.idl
+ * \brief Definition of the sbICascadeFilterSet interface
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+interface sbIMediaList;
+
+[scriptable, uuid(6b0f6a50-07c9-40e1-9392-2714b9bf2fa3)]
+interface sbICascadeFilterSetListener : nsISupports
+{
+  void onChange();
+
+  void onValuesChange(in unsigned short aIndex);
+};
+
+/**
+* \interface sbICascadeFilterSet
+* \brief Cascade filter management for a media list
+*
+* \sa sbICascadeFilterSetListener
+*/
+[scriptable, uuid(3ef6dd65-aa7f-4e05-b6db-f355dfeff7f3)]
+interface sbICascadeFilterSet : nsISupports
+{
+  /**
+   * \brief Add a new property value filter to the end of the cascade
+   * \param aProperty Property that this filter will filter
+   * \return The index of the newly created filter
+   */
+  unsigned short appendFilter(in AString aProperty);
+
+  /**
+   * \brief Add a new text search filter to the end of the cascade
+   * \param aPropertyArray Array of property that this text search filter will
+   *        search over.  Use a single element array with the value "*" to
+   *        indicate all properties are to be searched.
+   * \param aPropertyArrayCount The length of the aPropertyArray array
+   * \return The index of the newly created filter
+   */
+  unsigned short appendSearch([array, size_is(aPropertyArrayCount)] in wstring aPropertyArray,
+                              in unsigned long aPropertyArrayCount);
+
+  /**
+   * \brief Remove a filter from the cascade
+   * \param aIndex Index of the filter to be removed
+   */
+  void remove(in unsigned short aIndex);
+
+  /**
+   * \brief Set the configuration of a filter
+   * \param aIndex Index of the filter to be configured
+   * \param aValueArray Array of values used to constrain the filter.  Note
+   *        that only the first item in the array is used to constrain a
+   *        text search filter.  Send a zero-length array to reset the filter.
+   * \param aValueArrayCount length of the aValueArray array
+   */
+  void set(in unsigned short aIndex,
+          [array, size_is(aValueArrayCount)] in wstring aValueArray,
+          in unsigned long aValueArrayCount);
+
+  /**
+   * \brief Get the list of possible values for a filter
+   * \param aIndex Index of the filter
+   * \return A string enumerator of the values of the filter
+   */
+  nsIStringEnumerator getValues(in unsigned short aIndex);
+
+  /**
+   * \brief Get the number of possible values for a filter
+   * \param aIndex Index of the filter
+   * \return The number of possible values for a filter
+   */
+  unsigned long getLength(in unsigned short aIndex);
+
+  /**
+   * \brief Add a listener to get notified of filter configuration changes
+   * \param aListener Listener to receive change notifications
+   */
+  void addListener(in sbICascadeFilterSetListener aListener);
+
+  /**
+   * \brief Remove listener from notification list
+   * \param aListener Listener to remove
+   */
+  void removeListener(in sbICascadeFilterSetListener aListener);
+};
+

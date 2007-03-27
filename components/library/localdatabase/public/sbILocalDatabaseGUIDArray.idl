@@ -55,6 +55,8 @@ interface sbILocalDatabaseGUIDArray : nsISupports
 
   attribute boolean isAsync;
 
+  attribute boolean isDistinct;
+
   readonly attribute unsigned long length;
 
   attribute sbILocalDatabasePropertyCache propertyCache;

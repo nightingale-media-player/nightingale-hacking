@@ -74,7 +74,7 @@ media_items mi,
 simple_media_lists sml
 where
 mi.media_item_id = sml.member_media_item_id and
-sml.media_item_id = 101
+sml.media_item_id = (select media_item_id from media_items where guid = '7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb')
 order by sml.ordinal asc;
 ---
 .output data_sort_sml101_ordinal_desc.txt
@@ -85,8 +85,43 @@ media_items mi,
 simple_media_lists sml
 where
 mi.media_item_id = sml.member_media_item_id and
-sml.media_item_id = 101
+sml.media_item_id = (select media_item_id from media_items where guid = '7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb')
 order by sml.ordinal desc;
+---
+.output data_distinct_artist.txt
+select
+distinct obj
+from
+resource_properties
+where
+property_id = 3
+order by
+obj_sortable asc;
+---
+.output data_distinct_contentlength.txt
+select
+distinct content_length
+from
+media_items
+where
+content_length is not null
+order by
+content_length asc;
+---
+.output data_distinct_sml101_album.txt
+select
+distinct rp.obj
+from
+media_items mi,
+simple_media_lists sml,
+resource_properties rp
+where
+mi.media_item_id = sml.member_media_item_id and
+sml.media_item_id = (select media_item_id from media_items where guid = '7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb') and
+rp.guid = mi.guid and
+rp.property_id = 2
+order by
+rp.obj_sortable asc;
 ---
 .output stdout
 

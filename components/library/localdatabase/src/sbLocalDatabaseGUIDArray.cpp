@@ -65,9 +65,11 @@ NS_IMPL_ISUPPORTS1(sbLocalDatabaseGUIDArray, sbILocalDatabaseGUIDArray)
 sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mBaseConstraintValue(0),
   mFetchSize(DEFAULT_FETCH_SIZE),
-  mAsync(PR_FALSE),
   mLength(0),
-  mValid(PR_FALSE)
+  mAsync(PR_FALSE),
+  mIsDistinct(PR_FALSE),
+  mValid(PR_FALSE),
+  mNullsFirst(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseGUIDArrayLog) {
@@ -154,6 +156,7 @@ sbLocalDatabaseGUIDArray::SetBaseConstraintColumn(const nsAString& aBaseConstrai
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetBaseConstraintValue(PRUint32 *aBaseConstraintValue)
 {
+  NS_ENSURE_ARG_POINTER(aBaseConstraintValue);
   *aBaseConstraintValue = mBaseConstraintValue;
 
   return NS_OK;
@@ -169,6 +172,7 @@ sbLocalDatabaseGUIDArray::SetBaseConstraintValue(PRUint32 aBaseConstraintValue)
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetFetchSize(PRUint32 *aFetchSize)
 {
+  NS_ENSURE_ARG_POINTER(aFetchSize);
   *aFetchSize = mFetchSize;
 
   return NS_OK;
@@ -194,14 +198,29 @@ sbLocalDatabaseGUIDArray::SetIsAsync(PRBool aIsAsync)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetPropertyCache(sbILocalDatabasePropertyCache * *aPropertyCache)
+sbLocalDatabaseGUIDArray::GetIsDistinct(PRBool *aIsDistinct)
 {
+  NS_ENSURE_ARG_POINTER(aIsDistinct);
+  *aIsDistinct = mIsDistinct;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetIsDistinct(PRBool aIsDistinct)
+{
+  mIsDistinct = aIsDistinct;
+  return Invalidate();
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetPropertyCache(sbILocalDatabasePropertyCache** aPropertyCache)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyCache);
   *aPropertyCache = mPropertyCache;
   NS_ADDREF(*aPropertyCache);
   return NS_OK;
 }
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::SetPropertyCache(sbILocalDatabasePropertyCache * aPropertyCache)
+sbLocalDatabaseGUIDArray::SetPropertyCache(sbILocalDatabasePropertyCache* aPropertyCache)
 {
   mPropertyCache = aPropertyCache;
   return NS_OK;
@@ -210,6 +229,7 @@ sbLocalDatabaseGUIDArray::SetPropertyCache(sbILocalDatabasePropertyCache * aProp
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetLength(PRUint32 *aLength)
 {
+  NS_ENSURE_ARG_POINTER(aLength);
   nsresult rv;
 
   if (mValid == PR_FALSE) {
@@ -287,6 +307,8 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::IsIndexCached(PRUint32 aIndex,
                                         PRBool *_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
+
   if (aIndex < mCache.Length()) {
     ArrayItem* item = mCache[aIndex];
     if (item) {
@@ -331,6 +353,8 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetMediaItemIdByIndex(PRUint32 aIndex,
                                                 PRUint32* _retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
+
   nsresult rv;
 
   ArrayItem* item;
@@ -398,6 +422,9 @@ sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = newArray->SetPropertyCache(mPropertyCache);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = newArray->SetIsDistinct(mIsDistinct);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 sortCount = mSorts.Length();
@@ -580,7 +607,8 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
                            NS_LITERAL_STRING("member_media_item_id"),
                            mSorts[0].property,
                            mSorts[0].ascending,
-                           &mFilters);
+                           &mFilters,
+                           mIsDistinct);
 
   rv = ldq.GetFullCountQuery(mFullCountQuery);
   NS_ENSURE_SUCCESS(rv, rv);

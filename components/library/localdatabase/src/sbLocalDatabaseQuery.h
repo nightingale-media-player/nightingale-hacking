@@ -43,29 +43,36 @@ public:
                        const nsAString& aBaseForeignKeyColumn,
                        const nsAString& aPrimarySortProperty,
                        PRBool aPrimarySortAscending,
-                       nsTArray<FilterSpec>* aFilters);
+                       nsTArray<FilterSpec>* aFilters,
+                       PRBool aIsDistinct);
 
-  NS_IMETHODIMP GetFullCountQuery(nsAString& aQuery);
-  NS_IMETHODIMP GetFullGuidRangeQuery(nsAString& aQuery);
-  NS_IMETHODIMP GetNonNullCountQuery(nsAString& aQuery);
-  NS_IMETHODIMP GetNullGuidRangeQuery(nsAString& aQuery);
+  NS_METHOD GetFullCountQuery(nsAString& aQuery);
+  NS_METHOD GetFullGuidRangeQuery(nsAString& aQuery);
+  NS_METHOD GetNonNullCountQuery(nsAString& aQuery);
+  NS_METHOD GetNullGuidRangeQuery(nsAString& aQuery);
 
 private:
 
-  NS_IMETHODIMP AddCountColumns();
-  NS_IMETHODIMP AddGuidColumns(PRBool aIsNull);
-  NS_IMETHODIMP AddBaseTable();
-  NS_IMETHODIMP AddFilters();
-  NS_IMETHODIMP AddRange();
-  NS_IMETHODIMP AddPrimarySort();
-  NS_IMETHODIMP AddNonNullPrimarySortConstraint();
-  NS_IMETHODIMP AddJoinToGetNulls();
+  NS_METHOD AddCountColumns();
+  NS_METHOD AddGuidColumns(PRBool aIsNull);
+  NS_METHOD AddBaseTable();
+  NS_METHOD AddFilters();
+  NS_METHOD AddRange();
+  NS_METHOD AddPrimarySort();
+  NS_METHOD AddNonNullPrimarySortConstraint();
+  NS_METHOD AddJoinToGetNulls();
+  NS_METHOD AddDistinctConstraint();
+  NS_METHOD AddDistinctGroupBy();
 
-  NS_IMETHODIMP GetTopLevelPropertyColumn(const nsAString& aProperty,
-                                          nsAString& columnName);
+  NS_METHOD GetTopLevelPropertyColumn(const nsAString& aProperty,
+                                      nsAString& columnName);
   PRInt32 GetPropertyId(const nsAString& aProperty);
 
   PRBool IsTopLevelProperty(const nsAString& aProperty);
+
+  static void MaxExpr(const nsAString& aAlias,
+                      const nsAString& aColumn,
+                      nsAString& aExpr);
 
   nsString mBaseTable;
   nsString mBaseConstraintColumn;
@@ -74,6 +81,7 @@ private:
   nsString mPrimarySortProperty;
   PRBool mPrimarySortAscending;
   nsTArray<FilterSpec>* mFilters;
+  PRBool mIsDistinct;
 
   nsCOMPtr<sbISQLSelectBuilder> mBuilder;
   PRBool mIsFullLibrary;

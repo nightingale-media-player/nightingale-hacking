@@ -65,7 +65,7 @@ interface sbIMediaListFactory : nsISupports
   sbIMediaList createMediaList();
 
   /**
-   * \brief Instantiate am existing media list using its guid
+   * \brief Instantiate an existing media list using its guid
    * \param aGuid The guid of the media list
    * \return New media list instance
    */

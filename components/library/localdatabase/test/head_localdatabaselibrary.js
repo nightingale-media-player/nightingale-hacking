@@ -68,50 +68,6 @@ SimpleArrayEnumerator.prototype.QueryInterface = function(iid) {
   return this;
 };
 
-function createDatabase(databaseGuid, databaseLocation) {
-
-  var directory;
-  if (databaseLocation) {
-    directory = databaseLocation.QueryInterface(Ci.nsIFileURL).file;
-  }
-  else {
-    directory = Cc["@mozilla.org/file/directory_service;1"].
-                getService(Ci.nsIProperties).
-                get("ProfD", Ci.nsIFile);
-    directory.append("db");
-  }
-  
-  var file = directory.clone();
-  file.append(databaseGuid + ".db");
-  
-  if (file.exists()) {
-    try {
-      file.remove(false);
-    } catch (e) { }
-  }
-
-  var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
-              .createInstance(Ci.sbIDatabaseQuery);
-
-  dbq.setDatabaseGUID(databaseGuid);
-  
-  if (databaseLocation) {
-    dbq.databaseLocation = databaseLocation;
-  }
-  
-  var schema = readFile("schema.sql");
-
-  // There seems to be some kind of query length limit so lets break it up
-  var a = schema.split(/;$/m);
-  for(var q in a) {
-    dbq.addQuery(a[q]);
-  }
-  dbq.execute();
-  dbq.waitForCompletion();
-
-  loadData(databaseGuid, databaseLocation);
-}
-
 function loadData(databaseGuid, databaseLocation) {
 
   var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]

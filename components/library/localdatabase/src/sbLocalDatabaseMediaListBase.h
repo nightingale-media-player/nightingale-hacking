@@ -37,6 +37,7 @@
 #include <prmon.h>
 #include <prlock.h>
 #include <nsIStringEnumerator.h>
+#include <sbICascadeFilterSet.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabaseLibrary.h>
@@ -231,6 +232,9 @@ protected:
 
   // Query to return list of values for a given property
   nsString mDistinctPropertyValuesQuery;
+
+  // This list's cacade filter set
+  nsCOMPtr<sbICascadeFilterSet> mCascadeFilterSet;
 
 private:
   // A thread-safe hash table that holds a mapping of listeners to proxies.

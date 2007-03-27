@@ -871,10 +871,6 @@ sbTArrayStringEnumerator::sbTArrayStringEnumerator(nsTArray<nsString>* aStringAr
   mStringArray.InsertElementsAt(0, *aStringArray);
 }
 
-sbTArrayStringEnumerator::~sbTArrayStringEnumerator()
-{
-}
-
 NS_IMETHODIMP
 sbTArrayStringEnumerator::HasMore(PRBool *_retval)
 {

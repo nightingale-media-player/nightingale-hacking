@@ -23,7 +23,7 @@ create table media_items (
 
 create table media_list_types (
   media_list_type_id integer primary key autoincrement, /* implicit index creation */
-  name text unique not null, /* implicit index creation */
+  type text unique not null, /* implicit index creation */
   factory_contractid text not null
 );
 
@@ -74,6 +74,6 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#lastPlayTime');
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#playCount');
 
-insert into media_list_types (name, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
-insert into media_list_types (name, factory_contractid) values ('view',   '@songbirdnest.com/Songbird/Library/LocalDatabase/ViewMediaListFactory;1');
+insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
+insert into media_list_types (type, factory_contractid) values ('view',   '@songbirdnest.com/Songbird/Library/LocalDatabase/ViewMediaListFactory;1');
 

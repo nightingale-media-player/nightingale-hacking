@@ -494,18 +494,22 @@ sbLocalDatabaseLibrary::AddMediaListFactory(const nsAString& aType,
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::BeginBatch(PRBool aIsAsync)
 {
+  // this should increment a counter to allow for nested batches
+
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::CancelBatch()
 {
+  // this should increment a counter to allow for nested batches
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::EndBatch()
 {
+  // this should decrement a counter to allow for nested batches
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 

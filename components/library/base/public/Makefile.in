@@ -40,6 +40,7 @@ XPIDL_SRCS = sbIFilterableMediaList.idl \
              sbILibraryResource.idl \
              sbISearchableMediaList.idl \
              sbISortableMediaList.idl \
+             sbICascadeFilterSet.idl \
              $(NULL)
 
 XPIDL_MODULE = sbLibraryBase.xpt

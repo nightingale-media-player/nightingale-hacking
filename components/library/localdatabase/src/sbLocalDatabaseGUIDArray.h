@@ -155,17 +155,11 @@ private:
   // Number of rows to featch on cache miss
   PRUint32 mFetchSize;
 
-  // Do things async
-  PRBool mAsync;
-
   // Length of complete array
   PRUint32 mLength;
 
   // Length of non-null portion of the array
   PRUint32 mNonNullLength;
-
-  // Is the cache valid
-  PRBool mValid;
 
   // Current sort configuration
   nsTArray<SortSpec> mSorts;
@@ -206,11 +200,20 @@ private:
   nsString mQueryY;
   PRUint32 mLengthX;
 
-  // How nulls are sorted
-  PRBool mNullsFirst;
-
   // Paired property cache
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
+
+  // Do things async
+  PRPackedBool mAsync;
+
+  // Get distinct values?
+  PRPackedBool mIsDistinct;
+
+  // Is the cache valid
+  PRPackedBool mValid;
+
+  // How nulls are sorted
+  PRPackedBool mNullsFirst;
 
 protected:
   /* additional members */

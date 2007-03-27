@@ -40,6 +40,7 @@ interface sbILibrary;
 interface sbIMediaListEnumerationListener;
 interface sbIMediaListListener;
 interface sbIPropertyArray;
+interface sbICascadeFilterSet;
 
 /**
 * \interface sbIMediaList
@@ -244,6 +245,11 @@ interface sbIMediaList : sbIMediaItem
    * \brief Get a treeview that will display this media list
    */
   readonly attribute nsITreeView treeView;
+
+  /**
+   * \brief Get the cascade filter set for this view instance
+   */
+  readonly attribute sbICascadeFilterSet cascadeFilterSet;
 
   /**
    * \brief Add a listener to this media list

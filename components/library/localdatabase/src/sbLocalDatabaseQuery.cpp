@@ -30,6 +30,7 @@
 
 #define COUNT_COLUMN       NS_LITERAL_STRING("count(1)")
 #define GUID_COLUMN        NS_LITERAL_STRING("guid")
+#define OBJ_COLUMN         NS_LITERAL_STRING("obj")
 #define OBJSORTABLE_COLUMN NS_LITERAL_STRING("obj_sortable")
 #define MEDIAITEMID_COLUMN NS_LITERAL_STRING("media_item_id")
 #define PROPERTYID_COLUMN  NS_LITERAL_STRING("property_id")
@@ -45,6 +46,7 @@
 #define GETNOTNULL_ALIAS NS_LITERAL_STRING("_getnotnull")
 #define GETNULL_ALIAS    NS_LITERAL_STRING("_getnull")
 #define SORT_ALIAS       NS_LITERAL_STRING("_sort")
+#define DISTINCT_ALIAS   NS_LITERAL_STRING("_d")
 
 #define ORDINAL_PROPERTY \
   NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
@@ -55,14 +57,16 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
                                            const nsAString& aBaseForeignKeyColumn,
                                            const nsAString& aPrimarySortProperty,
                                            PRBool aPrimarySortAscending,
-                                           nsTArray<FilterSpec>* aFilters) :
+                                           nsTArray<FilterSpec>* aFilters,
+                                           PRBool aIsDistinct) :
   mBaseTable(aBaseTable),
   mBaseConstraintColumn(aBaseConstraintColumn),
   mBaseConstraintValue(aBaseConstraintValue),
   mBaseForeignKeyColumn(aBaseForeignKeyColumn),
   mPrimarySortProperty(aPrimarySortProperty),
   mPrimarySortAscending(aPrimarySortAscending),
-  mFilters(aFilters)
+  mFilters(aFilters),
+  mIsDistinct(aIsDistinct)
 {
   mIsFullLibrary = mBaseTable.Equals(MEDIAITEMS_TABLE);
 
@@ -71,7 +75,7 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
 
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::GetFullCountQuery(nsAString& aQuery)
 {
   nsresult rv;
@@ -81,6 +85,11 @@ sbLocalDatabaseQuery::GetFullCountQuery(nsAString& aQuery)
 
   rv = AddBaseTable();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mIsDistinct) {
+    rv = AddDistinctConstraint();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddFilters();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -94,7 +103,7 @@ sbLocalDatabaseQuery::GetFullCountQuery(nsAString& aQuery)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::GetFullGuidRangeQuery(nsAString& aQuery)
 {
   nsresult rv;
@@ -107,6 +116,11 @@ sbLocalDatabaseQuery::GetFullGuidRangeQuery(nsAString& aQuery)
 
   rv = AddFilters();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mIsDistinct) {
+    rv = AddDistinctGroupBy();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPrimarySort();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -123,10 +137,16 @@ sbLocalDatabaseQuery::GetFullGuidRangeQuery(nsAString& aQuery)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::GetNonNullCountQuery(nsAString& aQuery)
 {
   nsresult rv;
+
+  // There are no non-null rows in a distinct count query
+  if (mIsDistinct) {
+    aQuery = EmptyString();
+    return NS_OK;
+  }
 
   rv = AddCountColumns();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -149,10 +169,16 @@ sbLocalDatabaseQuery::GetNonNullCountQuery(nsAString& aQuery)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
 {
   nsresult rv;
+
+  // There are no non-null rows in a distinct count query
+  if (mIsDistinct) {
+    aQuery = EmptyString();
+    return NS_OK;
+  }
 
   rv = AddGuidColumns(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -178,27 +204,61 @@ sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::AddCountColumns()
 {
   nsresult rv;
 
-  rv = mBuilder->AddColumn(EmptyString(), COUNT_COLUMN);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mIsDistinct) {
+    if (IsTopLevelProperty(mPrimarySortProperty)) {
+        nsAutoString columnName;
+        rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsAutoString count;
+        count.AssignLiteral("count(distinct _mi.");
+        count.Append(columnName);
+        count.AppendLiteral(")");
+
+        rv = mBuilder->AddColumn(EmptyString(), count);
+        NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = mBuilder->AddColumn(EmptyString(),
+                               NS_LITERAL_STRING("count(distinct _d.obj)"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  else {
+    rv = mBuilder->AddColumn(EmptyString(), COUNT_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
 {
   nsresult rv;
 
-  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mIsDistinct) {
+    nsAutoString buff;
+    MaxExpr(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN, buff);
+    rv = mBuilder->AddColumn(EmptyString(), buff);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, GUID_COLUMN);
-  NS_ENSURE_SUCCESS(rv, rv);
+    MaxExpr(MEDIAITEMS_ALIAS, GUID_COLUMN, buff);
+    rv = mBuilder->AddColumn(EmptyString(), buff);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, GUID_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   if (aIsNull) {
     rv = mBuilder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
@@ -223,8 +283,14 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
         }
       }
       else {
-        rv = mBuilder->AddColumn(SORT_ALIAS, OBJSORTABLE_COLUMN);
-        NS_ENSURE_SUCCESS(rv, rv);
+        if (mIsDistinct) {
+          rv = mBuilder->AddColumn(SORT_ALIAS, OBJ_COLUMN);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        else {
+          rv = mBuilder->AddColumn(SORT_ALIAS, OBJSORTABLE_COLUMN);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
     }
   }
@@ -232,7 +298,7 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::AddBaseTable()
 {
   nsresult rv;
@@ -278,7 +344,7 @@ sbLocalDatabaseQuery::AddBaseTable()
   return NS_OK;
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::AddFilters()
 {
   nsresult rv;
@@ -433,10 +499,27 @@ sbLocalDatabaseQuery::AddFilters()
 
   }
 
+  // If this is a top level distinct query, make sure the primary sort property
+  // is never null
+  if (mIsDistinct && IsTopLevelProperty(mPrimarySortProperty)) {
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    nsAutoString columnName;
+    rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
+                                            columnName,
+                                            sbISQLSelectBuilder::MATCH_NOTEQUALS,
+                                            getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBuilder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::AddRange()
 {
   nsresult rv;
@@ -450,7 +533,7 @@ sbLocalDatabaseQuery::AddRange()
   return NS_OK;
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::AddPrimarySort()
 {
   nsresult rv;
@@ -541,7 +624,7 @@ sbLocalDatabaseQuery::AddPrimarySort()
 
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
 {
   nsresult rv;
@@ -602,7 +685,81 @@ sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
   return NS_OK;
 }
 
-NS_IMETHODIMP
+NS_METHOD
+sbLocalDatabaseQuery::AddDistinctConstraint()
+{
+  nsresult rv;
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+
+  // When doing a distict query, add a constraint so we only select media items
+  // that have a value for the primary sort
+  if (IsTopLevelProperty(mPrimarySortProperty)) {
+    nsAutoString columnName;
+    rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
+                                            columnName,
+                                            sbISQLSelectBuilder::MATCH_NOTEQUALS,
+                                            getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBuilder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                           PROPERTIES_TABLE,
+                           DISTINCT_ALIAS,
+                           GUID_COLUMN,
+                           MEDIAITEMS_ALIAS,
+                           GUID_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->CreateMatchCriterionLong(DISTINCT_ALIAS,
+                                            PROPERTYID_COLUMN,
+                                            sbISQLSelectBuilder::MATCH_EQUALS,
+                                            GetPropertyId(mPrimarySortProperty),
+                                            getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBuilder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+NS_METHOD
+sbLocalDatabaseQuery::AddDistinctGroupBy()
+{
+  nsresult rv;
+
+  if (IsTopLevelProperty(mPrimarySortProperty)) {
+    nsAutoString columnName;
+    rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->AddGroupBy(MEDIAITEMS_ALIAS, columnName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
+
+      if (mBaseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
+        rv = mBuilder->AddGroupBy(CONSTRAINT_ALIAS,
+                                  ORDINAL_COLUMN);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+    else {
+      rv = mBuilder->AddGroupBy(SORT_ALIAS, OBJ_COLUMN);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_METHOD
 sbLocalDatabaseQuery::AddJoinToGetNulls()
 {
   nsresult rv;
@@ -710,7 +867,7 @@ sbLocalDatabaseQuery::GetPropertyId(const nsAString& aProperty)
   return -1;
 }
 
-NS_IMETHODIMP
+NS_METHOD
 sbLocalDatabaseQuery::GetTopLevelPropertyColumn(const nsAString& aProperty,
                                                 nsAString& columnName)
 {
@@ -742,5 +899,20 @@ sbLocalDatabaseQuery::GetTopLevelPropertyColumn(const nsAString& aProperty,
     columnName = retval;
     return NS_OK;
   }
+}
+
+void
+sbLocalDatabaseQuery::MaxExpr(const nsAString& aAlias,
+                              const nsAString& aColumn,
+                              nsAString& aExpr)
+{
+  nsAutoString buff;
+  buff.AssignLiteral("max(");
+  buff.Append(aAlias);
+  buff.AppendLiteral(".");
+  buff.Append(aColumn);
+  buff.AppendLiteral(")");
+
+  aExpr = buff;
 }
 

@@ -65,8 +65,8 @@ public:
   // Use this constructor to specify a location for the database file.
   sbLocalDatabaseLibrary(nsIURI* aDatabaseLocation,
                          const nsAString& aDatabaseGuid)
-  : mDatabaseLocation(aDatabaseLocation),
-    mDatabaseGuid(aDatabaseGuid)
+  : mDatabaseGuid(aDatabaseGuid),
+    mDatabaseLocation(aDatabaseLocation)
   {
     NS_ASSERTION(mDatabaseLocation, "Null pointer!");
     NS_ASSERTION(!mDatabaseGuid.IsEmpty(), "No GUID!");

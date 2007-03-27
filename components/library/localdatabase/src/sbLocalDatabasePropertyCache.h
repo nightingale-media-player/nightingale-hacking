@@ -140,8 +140,8 @@ public:
   NS_DECL_NSISTRINGENUMERATOR
 
   sbTArrayStringEnumerator(nsTArray<nsString>* aStringArray);
+
 private:
-  ~sbTArrayStringEnumerator();
 
   nsTArray<nsString> mStringArray;
   PRUint32 mNextIndex;

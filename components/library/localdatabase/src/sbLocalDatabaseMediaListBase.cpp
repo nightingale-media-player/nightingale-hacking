@@ -45,6 +45,7 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabasePropertyCache.h"
 #include <sbProxyUtils.h>
+#include <sbLocalDatabaseCascadeFilterSet.h>
 
 NS_IMPL_ISUPPORTS_INHERITED7(sbLocalDatabaseMediaListBase,
                              sbLocalDatabaseResourceProperty,
@@ -1087,6 +1088,29 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetTreeView(nsITreeView** aTreeView)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetCascadeFilterSet(sbICascadeFilterSet** aCascadeFilterSet)
+{
+  nsresult rv;
+
+  if (!mCascadeFilterSet) {
+    nsAutoPtr<sbLocalDatabaseCascadeFilterSet> cascadeFilterSet(new sbLocalDatabaseCascadeFilterSet());
+    NS_ENSURE_TRUE(cascadeFilterSet, NS_ERROR_OUT_OF_MEMORY);
+
+    nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
+    rv = mFullArray->Clone(getter_AddRefs(guidArray));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = cascadeFilterSet->Init(this, guidArray);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mCascadeFilterSet = cascadeFilterSet.forget();
+  }
+
+  NS_ADDREF(*aCascadeFilterSet = mCascadeFilterSet);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
