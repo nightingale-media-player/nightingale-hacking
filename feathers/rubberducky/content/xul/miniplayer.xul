@@ -83,9 +83,11 @@
       <vbox id="mini_dash" flex="1" drag_window="true">
         <stack>
           <hbox id="mini_text_time" class="sb_faceplate" flex="1" drag_window="true">
-            <sb-player-artist-label id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right" drag_window="true"/>
-            <spacer width="20" height="5" class="sb_faceplate" drag_window="true"/>
-            <sb-player-title-label id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1" drag_window="true"/>
+            <sb-autoscroll fitalign="left" spacing="8" flex="1">
+              <sb-player-artist-label id="mini_text_artist" class="sb_faceplate" autotip="1"/>
+              <spacer width="20" height="5" class="sb_faceplate" />
+              <sb-player-title-label id="mini_text_title" class="sb_faceplate" autotip="1" />
+            </sb-autoscroll>
             <sb-player-timeelapsed-label id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" drag_window="true"/>
             <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" drag_window="true"/>
             <sb-player-totaltime-label id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>

@@ -70,6 +70,10 @@ windowregionrect {
   -moz-binding: url("chrome://songbird/content/bindings/windowregion.xml#windowregionrect") !important;
 }
 
+sb-autoscroll {
+  -moz-binding: url("chrome://songbird/content/bindings/autoscroll.xml#autoscroll") !important;
+}
+
 servicepane {
   -moz-binding: url("chrome://songbird/content/bindings/servicepane.xml#servicepane") !important;
 }
