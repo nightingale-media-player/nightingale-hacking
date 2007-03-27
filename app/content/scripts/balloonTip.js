@@ -182,6 +182,7 @@ BalloonTip.prototype = {
 
   // Closed the balloontip
   closeTip: function() {
+    if (!this.tipWindow) return;
     // Optional user callback
     if (this.onCloseCallback) this.onCloseCallback(this, this.checkboxElement);
     // Cleanup
