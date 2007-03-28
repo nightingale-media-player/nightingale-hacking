@@ -87,7 +87,7 @@ These pieces paint the resizeable window for Songbird.
 window
 {
   -moz-appearance: none !important; 
-  background-color: black !important; /* color of the Main Window **/
+  background-color: #321 !important; /* color of the Main Window **/
   border: none;
 }
 
