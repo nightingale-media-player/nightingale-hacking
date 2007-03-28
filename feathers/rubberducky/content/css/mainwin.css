@@ -182,74 +182,16 @@ Contains the Main Playback Controls and the Dashboard.
  width: 500px;
 }
 
-
-
-/**
-************************************************************************************************************************************************
-WEB BAR
-Browser Toolbar, Address Box, and Url-Slurper Button
-************************************************************************************************************************************************
-*/
-
-
-#browser_toolbar
+#face_left_box
 {
-  border-bottom: 1px solid; 
-  height: 35px;
-  padding-left: 2px;
+  margin: 0px 5px 0px 0px;
+  padding: 5px 0px 0px 0px;
 }
-
-
-
-/* the box with the url image and the url textbox */
-.locationbar-textbox
+#face_right_box
 {
-  margin: 2px;
-  padding: 0px;
-  border: 1px solid;
-  -moz-border-radius: 5px;
-  border-top-color: #535751;
-  border-left-color: #535751;
-  border-right-color: #99A195;
-  border-bottom-color: #99A195;
-  background-color: #000; 
-  height: 30px;
-  min-height: 30px;
-  color: #FFF;
+  margin: 0px 0px 0px 5px;
+  padding: 5px 0px 0px 0px;
 }
-
-
-.locationbar-image
-{
-  height: 16px;
-  width: 16px;
-  max-height: 16px !important;
-  max-width: 16px !important;
-  min-height: 16px !important;
-  min-width: 16px !important;
-  margin: 3px 5px 3px 5px;
-}
-
-
-#browser_toolbar button 
-{
-  height: 30px;
-  width: 30px;  
-  padding: 0px;
-  margin: 2px 0px 2px 2px;
-  border: 1px solid;
-  min-width: 0px;
-}
-
-#browser_toolbar .button-text
-{
-  display: none;  
-}
- 
-/* END WEB BAR */
-
-
-
 /** 
 ************************************************************************************************************************************************
 SPINNER for the browser to show network activity.
