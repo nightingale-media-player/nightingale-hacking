@@ -1086,6 +1086,19 @@ sb-player-forward-button[disabled="true"]
 {
   list-style-image: url(chrome://songbird/skin/default/shuf_on_active.png);
 }
+
+/* Jump-to */
+sb-player-jumpto-button 
+{
+  list-style-image: url(chrome://songbird/skin/default/icon_lib_16x16.png) !important;
+}
+
+/* Fullscreen */
+sb-player-fullscreen-button
+{
+  list-style-image: url(chrome://songbird/skin/default/sysbtn_fullscreen_9x9.png) !important;
+}
+
 /* END CONTROL BOX **/
 
 /** 

@@ -67,7 +67,7 @@ try
       setMinMaxCallback();
       document.getElementById("mini_btn_fullscreen").setAttribute("hidden", "true");
     } else {
-      document.getElementById("mini_close").hidden = true;
+      document.getElementById("mini_btn_close").hidden = true;
 
       if (platform == "Darwin")
         document.getElementById("mini_btn_fullscreen").setAttribute("hidden", "true");
@@ -128,11 +128,6 @@ try
   // XUL Event Methods
   //
   
-  function SBFullscreen() 
-  {
-    gPPS.goFullscreen();
-  }
-
 
   function checkAltF4(evt)
   {

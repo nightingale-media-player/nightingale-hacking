@@ -1510,5 +1510,76 @@
 
     </implementation>
   </binding>
+  
+  
+  
+  
+   
+  <!-- TOGGLE JUMP TO WINDOW -->
+  
+  <binding id="jumpto-button" extends="chrome://global/content/bindings/button.xml#button">
+    
+    <handlers>
+      <handler event="command" action="this.onCommand();"/>
+    </handlers>
+    
+    <implementation>
+    
+      <constructor>
+        this.setAttribute("tooltiptext", "&jumptofile.title;")
+      </constructor>
+      
+      <method name="onCommand">
+        <body>
+          <![CDATA[
+            // At this point there isn't much we can do other than hope that
+            // jumptofile.js has been included in the window
+            // TODO this will need to change once jumptofile has been refactored
+            try {
+              toggleJumpTo();
+            } catch (e) {
+              var msg = "sb-player-jumpto-button: unable to call toggleJumpTo.\n" +
+                        "Please make sure this window includes jumptofile.js.\n";
+              dump(msg);
+              Components.utils.reportError(msg);
+            }
+          ]]>
+        </body>
+      </method>
+      
+    </implementation>
+  </binding>
+
+
+  <!-- ENTER FULLSCREEN MODE (WHEN PLAYING VIDEO) -->
+  
+  <binding id="fullscreen-button" extends="chrome://global/content/bindings/button.xml#button">
+    
+    <handlers>
+      <handler event="command" action="this.onCommand();"/>
+    </handlers>
+    
+    <implementation>
+    
+      <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.fullscreen;")
+      </constructor>
+      
+      <method name="onCommand">
+        <body>
+          <![CDATA[
+            var playlistPlayback = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                                             .getService(Components.interfaces.sbIPlaylistPlayback);
+            playlistPlayback.goFullscreen();
+          ]]>
+        </body>
+      </method>
+      
+    </implementation>
+  </binding>
+  
+
+  
+  
   <!-- EOF -->
 </bindings>

@@ -48,7 +48,6 @@
  windowtype="Songbird:Main"
  onload="{centerWindowOnScreen();SBInitialize();}"
  onunload="SBUninitialize();"
- class="sb_faceplate"
  onkeypress="onMiniplayerKeypress( event );"
  ondragover="nsDragAndDrop.dragOver( event, SBMiniDropObserver );"
  ondragdrop="nsDragAndDrop.drop( event, SBMiniDropObserver );"
@@ -59,54 +58,50 @@
   <script type="application/x-javascript"   
    src="chrome://global/content/dialogOverlay.js" /> 
 
-  <hbox id="frame_mini" flex="1" drag_window="true">
+  <hbox id="frame_mini" flex="1" drag_window="true" align="center" pack="center">
     <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
-    <sb-player-back-button id="mini_btn_back" class="sb_faceplate miniplayer" />
+
+    <!-- TODO: What does this do? Keep the mac happy?  If so, should be a useable menu  -->
+    <menubar id="mini_menu" hidden="false"  oncommand="onMenu(event.target)"/>
+
+    <!-- PLAYBACK CONTROLS -->
+    <sb-player-back-button id="mini_btn_back" class="miniplayer" />
     <sb-player-playpause-button id="mini_btn_playpause" class="miniplayer" popupanchor="topleft" popupalign="bottomleft"/>
-    <sb-player-forward-button id="mini_btn_fwd" class="sb_faceplate miniplayer" />
+    <sb-player-forward-button id="mini_btn_fwd" class="miniplayer" />
 
-    <vbox id="mini_volume" drag_window="true">
-      <hbox id="mini_volume_box" class="sb_faceplate" drag_window="true">
-        <sb-player-mute-button id="mute" class="sb_faceplate"/>
-        <spacer width="8" drag_window="true"/>
-        <hbox drag_window="true">
-          <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>
-          <sb-player-volume-slider id="songbird_volume" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
-          <spacer width="3" height="5" id="songbird_volume_e"/>
-        </hbox>
-      </hbox>
-    </vbox>
-
-    <hbox flex="1" drag_window="true">
-      <menubar id="mini_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
-      <spacer width="4" height="18" id="mini_dash_w" drag_window="true"/>
-      <vbox id="mini_dash" flex="1" drag_window="true">
-        <stack>
-          <hbox id="mini_text_time" class="sb_faceplate" flex="1" drag_window="true">
-            <sb-autoscroll fitalign="left" spacing="8" flex="1">
-              <sb-player-artist-label id="mini_text_artist" class="sb_faceplate" autotip="1"/>
-              <spacer width="20" height="5" class="sb_faceplate" />
-              <sb-player-title-label id="mini_text_title" class="sb_faceplate" autotip="1" />
-            </sb-autoscroll>
-            <sb-player-timeelapsed-label id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" drag_window="true"/>
-            <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" drag_window="true"/>
-            <sb-player-totaltime-label id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>
-          </hbox>
-          <sb-player-seek-slider id="mini_seekbar" orient="horizontal" class="sb_faceplate" maxpos="100"/>
-        </stack>
-      </vbox>
-      <spacer width="4" height="18" id="mini_dash_e"/>
+    <!-- VOLUME -->
+    <sb-player-mute-button id="mini_btn_mute" class="miniplayer"/>
+    <hbox id="mini_volume_box" pack="center" align="center" drag_window="true">
+      <spacer id="songbird_volume_w" />
+      <sb-player-volume-slider id="songbird_volume" flex="1" orient="horizontal" class="miniplayer" maxpos="100"/>
+      <spacer id="songbird_volume_e"/>
     </hbox>
-    <vbox drag_window="true">
-      <button id="mini_btn_jump" class="sb_faceplate" oncommand="toggleJumpTo();" tooltiptext="&jumptofile.title;"/>
+
+    <!-- THE DASHBOARD -->
+    <image id="mini_dash_w" drag_window="true"/>
+    <vbox id="mini_dash" flex="1" drag_window="true">
+      <stack>
+        <hbox id="mini_dash_text_box"  flex="1" drag_window="true">
+          <sb-autoscroll fitalign="left" spacing="8" flex="1">
+            <sb-player-artist-label id="mini_text_artist" autotip="1"/>
+            <spacer width="20" height="5"/>
+            <sb-player-title-label id="mini_text_title" autotip="1" />
+          </sb-autoscroll>
+          <sb-player-timeelapsed-label id="mini_text_time_elapsed" value="0:00"  drag_window="true"/>
+          <label id="mini_text_time_t_txt"   value=" / "  drag_window="true"/>
+          <sb-player-totaltime-label id="mini_text_time_total" value="0:00"  drag_window="true"/>
+        </hbox>
+        <sb-player-seek-slider id="mini_seekbar" orient="horizontal"  maxpos="100"/>
+      </stack>
     </vbox>
-    <vbox drag_window="true">
-      <sb-feathers-toggle-button id="sysbtn_mainmode" popupanchor="bottomleft" popupalign="topleft" class="miniplayer"/>
-    </vbox>
-    <vbox drag_window="true">
-      <button id="mini_btn_fullscreen"  class="sb_faceplate" oncommand="SBFullscreen();" />
-    </vbox>
-    <button id="mini_close" class="sb_faceplate" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
+    <image id="mini_dash_e" drag_window="true"/>
+
+    <!-- WINDOW CONTROLS -->
+    <sb-player-jumpto-button id="mini_btn_jump" class="miniplayer"/>    
+    <sb-feathers-toggle-button id="sysbtn_mainmode" popupanchor="bottomleft" popupalign="topleft" class="miniplayer sb-player-button"/>
+    <sb-player-fullscreen-button id="mini_btn_fullscreen" class="miniplayer"/>
+    <sb-sys-close-button id="mini_btn_close" class="miniplayer"/>
+    
     <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="right" style="cursor: w-resize;"/>
   </hbox>
 

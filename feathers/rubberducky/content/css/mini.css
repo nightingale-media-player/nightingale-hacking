@@ -41,38 +41,34 @@ window#mini
   background-color: none !important; /* Only transparent on windows. (Bug 1656) */
   width: 800px !important;
   min-width: 390px ! important;
+  min-height: 25px;
+  max-height: 25px;
 }
 
 #frame_mini
 {
-  -moz-appearance: none !important;
   -moz-border-radius: 10px !important;
-  background-color: #000 !important;
-  padding: 2px 2px 1px 2px !important;
+  background-color: red !important;  /** TODO Remove red */
+  padding: 2px 0px 2px px !important;
   height: 22px;
-  border-top: 1px solid #333;
-  border-right: 1px solid #333;
-  border-bottom: 1px solid #333;
-  border-left: 1px solid #333;
+  border: 1px solid #333;
 }
 
 #mini_resize_w,
 #mini_resize_e
 {
-  -moz-appearance: none;
-  height: 10px !important;
-  width: 1px !important;
+  height: 10px;
+  width: 2px;
 }
 
 /** 
 ************************************************************************************************************************************************
-Back, Play, Pause, Forward Buttons
+Player Controls (Back, Play, Pause, Forward Buttons)
 ************************************************************************************************************************************************
 */
 
+
 /* the back button */
-
-
 sb-player-back-button.miniplayer
 {
   list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
@@ -81,90 +77,59 @@ sb-player-back-button.miniplayer
 }
 sb-player-back-button.miniplayer:hover
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(18px 50px 36px 0px);
-  background-color: transparent;
 }
 sb-player-back-button.miniplayer[disabled="true"]
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(0px 50px 18px 0px);
-  background-color: transparent;
 }
 sb-player-back-button.miniplayer:active
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(36px 50px 54px 0px);
-  background-color: transparent;
 }
 
+
 /* the play button */
-
-
-
-
 .miniplayer > .sb-player-play-button-play
 {
   list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(0px 120px 18px 50px);
   background-color: transparent;
 }
-
 .miniplayer > .sb-player-play-button-play:hover
 {
-  width: 70px;
-  height: 18px;
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(18px 120px 36px 50px);
-  background-color: transparent;
 }
-
 .miniplayer > .sb-player-play-button-play[disabled="true"]
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(0px 120px 18px 50px);
-  background-color: transparent;
 }
-
 .miniplayer > .sb-player-play-button-play:active
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(36px 120px 54px 50px);
-  background-color: transparent;
 }
+
 
 /* the pause button */
-
 .miniplayer > .sb-player-pause-button-pause
 {
-  width: 70px;
-  height: 18px;
   list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(0px 190px 18px 120px);
-  margin: 0px 1px 0px 1px;
   background-color: transparent;
 }
-
 .miniplayer > .sb-player-pause-button-pause:hover
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(18px 190px 36px 120px);
-  background-color: transparent;
 }
-
 .miniplayer > .sb-player-pause-button-pause[disabled="true"]
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(0px 190px 18px 120px);
-  background-color: transparent;
 }
-
 .miniplayer > .sb-player-pause-button-pause:active
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(36px 190px 54px 120px);
-  background-color: transparent;
 }
+
 
 /* the fwd button */
 sb-player-forward-button.miniplayer
@@ -175,21 +140,22 @@ sb-player-forward-button.miniplayer
 }
 sb-player-forward-button.miniplayer:hover
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(18px 240px 36px 190px);
-  background-color: transparent;
 }
 sb-player-forward-button.miniplayer[disabled="true"]
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(0px 240px 18px 190px);
-  background-color: transparent;
 }
 sb-player-forward-button.miniplayer:active
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
   -moz-image-region: rect(36px 240px 54px 190px);
-  background-color: transparent;
+}
+
+
+/* volume */
+#mini_volume_box
+{
+  padding-top: 3px;
 }
 
 
@@ -201,40 +167,24 @@ MINI DASH BOARD
 
 #mini_dash
 {
-  -moz-appearance: none !important; /* grrrr! */
-  height: 18px !important;
-  background-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard.png) !important;
-  background-repeat: repeat-x !important;
-  padding: 0px 3px 0px 3px !important;
+  height: 18px;
+  background-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard.png);
+  background-repeat: repeat-x;
+  padding: 0px 3px 0px 3px;
 }
 
 #mini_dash_e
 {
-  -moz-appearance: none !important; /* grrrr! */
-  width: 4px !important;
-  height: 18px !important;
-  background-repeat: no-repeat !important;
-  background-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard_e.png) !important;
+  list-style-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard_e.png) !important;
 }
 
 #mini_dash_w
 {
-  -moz-appearance: none !important; /* grrrr! */
-  height: 18px !important;
-  width: 4px !important;
-  background-repeat: no-repeat !important;
-  background-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard_w.png) !important;
+  list-style-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard_w.png) !important;
 }
 
 /* the artist and title */
 #mini_text_title
-{
-  -moz-box-align: baseline !important;
-  font-family: tahoma, arial !important;
-  min-width: 1px !important;
-  color: #E4EADF !important;
-  overflow: hidden;
-}
 #mini_text_time,
 #mini_text_artist,
 #mini_text_album,
@@ -242,30 +192,25 @@ MINI DASH BOARD
 #mini_text_time_elapsed,
 #mini_text_time_t_txt
 {
-  -moz-box-align: baseline !important;
-  font-family: tahoma, arial, cursor !important;
-  width: auto !important;
-  height: 16px !important;
-  color: #E4EADF !important;
+  -moz-box-align: baseline;
+  width: auto;
+  height: 16px;
+  color: #E4EADF;
   overflow: hidden;
 }
 
-#mini_text_time
-{
-  
-}
+/** TODO can this be minimized **/
 
 /* the seekbar slider */
 #songbird_seekbar_slider.miniplayer
 {
-  -moz-appearance: none !important; /* grrrr! */
   height: 4px !important;
   width: auto !important;
 }
 
 sb-player-seek-slider#mini_seekbar
 {
-  border: 0px solid red !important;
+  border: 0px solid red !important;   /** TODO wtf **/
   -moz-appearance: none !important;
   height: 4px !important;
   margin-top: 12px !important;
@@ -312,141 +257,21 @@ sb-player-seek-slider.miniplayer > stack > .sb-progress-slider-progressmeter > .
 
 
 
-/* volume */
-
-#mini_volume > #mini_volume_box
-{
-  -moz-appearance: none!important;
-  width: 145px !important;
-  height: 18px !important;
-  background-color: #000 !important;
-  padding: 2px 0px 2px 7px !important;
-}
-
-/*
+/** 
+************************************************************************************************************************************************
+MINI WINDOW CONTROLS
+************************************************************************************************************************************************
 */
-#mini_volume > sb-progress-slider,
-#mini_volume gripper
-{  
-  -moz-appearance: none !important; /* grrrr! */
-  background-image: none !important;
-  list-style-image: none !important;
-  padding: 0 0 0 0 !important;
-  border: none !important;
-  background-color: #000 !important;
-  height: 14px !important;
-}
 
-sb-player-volume-slider.miniplayer > stack > .sb-progress-slider-slider > thumb
-{
-  width: 36px !important;
-  height: 14px !important;
-  background-image: url(chrome://songbird/skin/default/volume_thumb.png) !important;
-  background-color: #000 !important;
-  background-repeat: no-repeat !important;
-}
 
-sb-player-volume-slider.miniplayer > stack > .sb-progress-slider-slider > thumb:active
-{
-  background-image: url(chrome://songbird/skin/default/volume_thumb_active.png) !important;
-}
-
-sb-player-volume-slider.miniplayer > stack > .sb-progress-slider-progressmeter
-{
-  top: 0px !important;
-  left: 0px !important; /* previously 20px, 1 thumb-width in */
-  width: 104px !important; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
-  height: 14px !important;
-  background-color: #000 !important;
-}
-sb-player-volume-slider.miniplayer > stack > .sb-progress-slider-progressmeter > .progress-bar
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-image: url(chrome://songbird/skin/default/volume_progress_bar.png) !important;
-  background-color: #000 !important;
-}
-sb-player-volume-slider.miniplayer > stack > .sb-progress-slider-progressmeter > .progress-remainder
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-image: url(chrome://songbird/skin/default/volume_progress_remainder.png) !important;
-  background-color: #000 !important;
-}
-
-#mini_volume_e
-{
-  background-image: url(chrome://songbird/skin/default/volume_e.png) !important;
-  margin: 0px 0px 0px 0px !important;
-  height: 5px !important;
-  width: 3px !important;
-  background-repeat: no-repeat !important;
-  background-color: #000 !important;
-}
-#mini_volume_w
-{
-  background-image: url(chrome://songbird/skin/default/volume_w.png) !important;
-  margin: 0px 0px 0px 0px !important;
-  height: 5px !important;
-  width: 3px !important;
-  background-repeat: no-repeat !important;
-  background-color: #000 !important;
-}
-
-sb-player-mute-button > .sb-player-mute-button-muteoff > .clickhold-button,
-sb-player-mute-button > .sb-player-mute-button-muteon > .clickhold-button
-{
-  min-width: 16px;
-  min-height: 16px;
-  width: 16px;
-  height: 16px;
-  border: 1px solid red;
-  margin: 0;
-  border: none;
-}
 /* Restore */
 .miniplayer > .sb-feathers-toggle-button
 {
-  width: 16px !important;
-  height: 16px !important;
-  margin-left: 3px !important;
-  list-style-image: url(chrome://songbird/skin/mini/mini.btn.max.png) !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-  background-position: center center;
+  list-style-image: url(chrome://songbird/skin/mini/mini.btn.max.png);
 }
 
-/* Fullscreen */
-#mini_btn_fullscreen
+/*  Close Window */
+sb-sys-close-button.miniplayer
 {
-  width: 16px !important;
-  height: 16px !important;
-  margin-left: 3px !important;
-  background-image: url(chrome://songbird/skin/default/sysbtn_fullscreen_9x9.png) !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-  background-position: center center;
+  list-style-image: url(chrome://songbird/skin/mini/mini.btn.close.png) ;
 }
-
-/* Jump-to */
-#mini_btn_jump
-{
-  width: 16px !important;
-  height: 16px !important;
-  margin-left: 3px !important;
-  background-image: url(chrome://songbird/skin/default/icon_lib_16x16.png) !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-  background-position: center center;
-}
-
-/* Close */
-#mini_close
-{  
-  width: 16px !important;
-  height: 16px !important;
-  background-image: url(chrome://songbird/skin/mini/mini.btn.close.png) !important;
-  background-repeat: no-repeat !important;
-  background-position: center center;
-  background-color: transparent !important;
-}
-
-
