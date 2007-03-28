@@ -28,22 +28,13 @@
 #define __SBLOCALDATABASEVIEWMEDIALISTFACTORY_H__
 
 #include <sbIMediaListFactory.h>
-#include <nsCOMPtr.h>
 #include <nsStringGlue.h>
-#include <sbILibrary.h>
 
 class sbLocalDatabaseViewMediaListFactory : public sbIMediaListFactory
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTFACTORY
-
-  nsresult Init();
-
-private:
-  nsCOMPtr<sbILibrary> mLibrary;
-
-  nsString mGetQuery;
 };
 
 #endif /* __SBLOCALDATABASEVIEWMEDIALISTFACTORY_H__ */

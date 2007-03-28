@@ -29,18 +29,19 @@
 #include "sbLocalDatabaseMediaItem.h"
 #include "sbLocalDatabasePropertyCache.h"
 
-#include <nsCOMPtr.h>
-#include <nsStringGlue.h>
-#include <nsComponentManagerUtils.h>
-#include <nsIStringEnumerator.h>
-#include <sbISQLBuilder.h>
-#include <sbSQLBuilderCID.h>
-#include <sbIDatabaseQuery.h>
 #include <DatabaseQuery.h>
-#include <sbIDatabaseResult.h>
-#include <sbIPropertiesManager.h>
+#include <nsComponentManagerUtils.h>
+#include <nsCOMPtr.h>
+#include <nsIStringEnumerator.h>
+#include <nsIURI.h>
+#include <nsStringGlue.h>
 #include <prlog.h>
 #include <prprf.h>
+#include <sbSQLBuilderCID.h>
+#include <sbIDatabaseQuery.h>
+#include <sbIDatabaseResult.h>
+#include <sbIPropertiesManager.h>
+#include <sbISQLBuilder.h>
 
 #define DEFAULT_FETCH_SIZE 20
 

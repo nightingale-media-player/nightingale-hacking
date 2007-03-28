@@ -33,6 +33,7 @@
 #include <nsIPropertyBag.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
+#include <nsIURI.h>
 #include <nsIVariant.h>
 #include <nsMemory.h>
 #include <sbSQLBuilderCID.h>

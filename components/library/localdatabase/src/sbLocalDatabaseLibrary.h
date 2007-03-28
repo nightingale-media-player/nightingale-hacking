@@ -31,17 +31,48 @@
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
 
+#include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
-#include <nsIURI.h>
+#include <nsDataHashTable.h>
+#include <nsHashKeys.h>
+#include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
-#include <sbILocalDatabasePropertyCache.h>
+#include <sbIMediaListFactory.h>
 
+class nsIURI;
 class sbIDatabaseQuery;
+class sbILocalDatabasePropertyCache;
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseResourceProperty,
                                public sbILibrary,
                                public sbILocalDatabaseLibrary
 {
+  struct sbMediaListFactoryInfo {
+    sbMediaListFactoryInfo()
+    : typeID(0)
+    { }
+
+    sbMediaListFactoryInfo(PRUint32 aTypeID, sbIMediaListFactory* aFactory)
+    : typeID(aTypeID),
+      factory(aFactory)
+    { }
+
+    PRUint32 typeID;
+    nsCOMPtr<sbIMediaListFactory> factory;
+  };
+
+  typedef nsClassHashtable<nsStringHashKey, sbMediaListFactoryInfo>
+          sbMediaListFactoryInfoTable;
+
+  typedef nsInterfaceHashtable<nsStringHashKey, sbIMediaItem>
+          sbMediaItemTable;
+
+  typedef nsDataHashtable<nsStringHashKey, nsString>
+          sbGUIDToTypesMap;
+
+  typedef nsDataHashtable<nsStringHashKey, PRUint32>
+          sbGUIDToIDMap;
+
 public:
   NS_DECL_ISUPPORTS_INHERITED
 
@@ -56,38 +87,60 @@ public:
 
   // This constructor assumes the database file lives in the 'ProfD/db'
   // directory.
-  sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid)
-  : mDatabaseGuid(aDatabaseGuid)
-  {
-    NS_ASSERTION(!mDatabaseGuid.IsEmpty(), "No GUID!");
-  }
+  sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid);
 
   // Use this constructor to specify a location for the database file.
   sbLocalDatabaseLibrary(nsIURI* aDatabaseLocation,
-                         const nsAString& aDatabaseGuid)
-  : mDatabaseGuid(aDatabaseGuid),
-    mDatabaseLocation(aDatabaseLocation)
-  {
-    NS_ASSERTION(mDatabaseLocation, "Null pointer!");
-    NS_ASSERTION(!mDatabaseGuid.IsEmpty(), "No GUID!");
-  }
+                         const nsAString& aDatabaseGuid);
 
 private:
   nsresult CreateQueries();
 
   inline NS_METHOD MakeStandardQuery(sbIDatabaseQuery** _retval);
 
+  inline void GetNowString(nsAString& _retval);
+
+  NS_METHOD CreateNewItemInDatabase(const PRUint32 aMediaItemTypeID,
+                                    const nsAString& aURISpecOrPrefix,
+                                    nsAString& _retval);
+
+  //NS_METHOD LoadRegisteredMediaListFactories();
+
+  NS_METHOD GetTypeForGUID(const nsAString& aGUID,
+                           nsAString& _retval);
+
+  // This callback is meant to be used with mMediaListFactoryTable.
+  // aUserData should be a nsTArray<nsString> pointer.
+  static PLDHashOperator PR_CALLBACK
+    AddTypesToArrayCallback(nsStringHashKey::KeyType aKey,
+                            sbMediaListFactoryInfo* aEntry,
+                            void* aUserData);
+
+  NS_METHOD RegisterDefaultMediaListFactories();
+
+private:
+
   nsString mDatabaseGuid;
   nsCOMPtr<nsIURI> mDatabaseLocation;
 
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
-  nsString mGetContractIdForGuidQuery;
-  nsString mGetMediaItemIdForGuidQuery;
+  nsString mGetTypeForGUIDQuery;
+  nsString mGetMediaItemIdForGUIDQuery;
   nsString mInsertMediaItemQuery;
+  nsString mMediaListFactoriesQuery;
+  nsString mInsertMediaListFactoryQuery;
 
   // This library's resource guid
   nsString mGuid;
+
+  sbMediaListFactoryInfoTable mMediaListFactoryTable;
+
+  sbMediaItemTable mMediaItemTable;
+
+  sbGUIDToTypesMap mCachedTypeTable;
+
+  sbGUIDToIDMap mCachedIDTable;
 };
 
 #endif /* __SBLOCALDATABASELIBRARY_H__ */

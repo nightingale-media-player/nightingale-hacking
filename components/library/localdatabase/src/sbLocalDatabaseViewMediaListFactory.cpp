@@ -25,104 +25,57 @@
 */
 
 #include "sbLocalDatabaseViewMediaListFactory.h"
+
+#include <nsAutoPtr.h>
+#include <sbIMediaList.h>
 #include "sbLocalDatabaseViewMediaList.h"
-#include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabaseCID.h"
 
-#include <nsComponentManagerUtils.h>
-#include <sbISQLBuilder.h>
-#include <sbSQLBuilderCID.h>
-#include <sbIMediaList.h>
-#include <sbIDatabaseQuery.h>
-#include <DatabaseQuery.h>
-#include <sbIDatabaseResult.h>
+#define SB_VIEW_MEDIALIST_FACTORY_TYPE "view"
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseViewMediaListFactory, sbIMediaListFactory)
 
-nsresult
-sbLocalDatabaseViewMediaListFactory::Init()
+NS_IMETHODIMP
+sbLocalDatabaseViewMediaListFactory::GetType(nsAString& aType)
 {
+  aType.AssignLiteral(SB_VIEW_MEDIALIST_FACTORY_TYPE);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseViewMediaListFactory::GetLibrary(sbILibrary** aLibrary)
+sbLocalDatabaseViewMediaListFactory::GetContractID(nsACString& aContractID)
 {
-  NS_ENSURE_ARG_POINTER(aLibrary);
-
-  *aLibrary = mLibrary;
-  return NS_OK;
-}
-NS_IMETHODIMP
-sbLocalDatabaseViewMediaListFactory::SetLibrary(sbILibrary* aLibrary)
-{
-  NS_ENSURE_ARG_POINTER(aLibrary);
-
-  mLibrary = aLibrary;
+  aContractID.AssignLiteral(SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CONTRACTID);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseViewMediaListFactory::GetNameKey(nsAString& aNameKey)
-{
-  aNameKey.AssignLiteral("view");
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseViewMediaListFactory::CreateMediaList(sbIMediaList** _retval)
+sbLocalDatabaseViewMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
+                                                     sbIMediaList** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsresult rv;
-
-  // TODO: actually create a new thing in the db
-
-  nsCOMPtr<sbILocalDatabaseLibrary> library = do_QueryInterface(mLibrary, &rv);
+  nsCOMPtr<sbILibrary> library;
+  nsresult rv = aInner->GetLibrary(getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLocalDatabaseViewMediaList* list =
-    new sbLocalDatabaseViewMediaList(library, EmptyString());
-  NS_ENSURE_TRUE(list, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = list->Init();
+  // This should always succeed because no one else will be making instances of
+  // this class.
+  nsCOMPtr<sbILocalDatabaseLibrary> localLibrary =
+    do_QueryInterface(library, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*_retval = list);
+  nsAutoString guid;
+  rv = aInner->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoPtr<sbLocalDatabaseViewMediaList> newMediaList = 
+    new sbLocalDatabaseViewMediaList(localLibrary, guid);
+  NS_ENSURE_TRUE(newMediaList, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = newMediaList->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = newMediaList.forget());
   return NS_OK;
 }
-
-NS_IMETHODIMP
-sbLocalDatabaseViewMediaListFactory::InstantiateMediaList(const nsAString& aGuid,
-                                                          sbIMediaList** _retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsresult rv;
-
-  nsCOMPtr<sbILocalDatabaseLibrary> library = do_QueryInterface(mLibrary, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  /*
-   * Make sure the supplied media list guid can be created by this factory
-   * by looking its factory contract id up in the database
-   */
-  nsCAutoString contractId;
-  rv = library->GetContractIdForGuid(aGuid, contractId);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!contractId.EqualsLiteral(SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CONTRACTID)) {
-    return NS_ERROR_NO_INTERFACE;
-  }
-
-  sbLocalDatabaseViewMediaList* list =
-    new sbLocalDatabaseViewMediaList(library, aGuid);
-  NS_ENSURE_TRUE(list, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = list->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*_retval = list);
-  return NS_OK;
-}
-

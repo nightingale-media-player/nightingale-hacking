@@ -29,6 +29,11 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibrary.h"
 
+#include <nsAutoLock.h>
+#include <nsComponentManagerUtils.h>
+#include <nsCOMPtr.h>
+#include <nsISimpleEnumerator.h>
+#include <nsIURI.h>
 #include <sbIMediaListListener.h>
 #include <sbILibrary.h>
 #include <sbISQLBuilder.h>
@@ -37,9 +42,6 @@
 #include <DatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <pratom.h>
-#include <nsComponentManagerUtils.h>
-#include <nsAutoLock.h>
-#include <nsISimpleEnumerator.h>
 
 #define DEFAULT_SORT_PROPERTY \
   NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
