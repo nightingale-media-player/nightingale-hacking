@@ -78,7 +78,6 @@ sb-smart-splitter[state="collapsed"],
 splitter[state="collapsed"]
 {
   width: 10px;
-  -moz-border-radius: 3px;
   border: 1px solid;
 }
 
