@@ -32,43 +32,40 @@
 
 #include "nsISupports.idl"
 
-interface sbILibrary;
+interface sbIMediaItem;
 interface sbIMediaList;
 
 /**
-* \interface sbIMediaListFactory
-* \brief Factory for new media list instances
-*
-* This interface is used to create new instances of a media list
-*
-* \sa sbIMediaList
-*/
-[scriptable, uuid(71c4da9b-22ff-4116-a94b-a9965fcb8af8)]
+ * \interface sbIMediaListFactory
+ * \brief Factory for new media list instances
+ *
+ * This interface is used to create new instances of a media list. 
+ *
+ * \sa sbIMediaList
+ */
+[scriptable, uuid(c3e4bb1e-1051-4027-913b-f57c31039b97)]
 interface sbIMediaListFactory : nsISupports
 {
   /**
-   * \brief Library this factory is creating lists for.  This is set when
-   *        the factory is created
+   * \brief A human-readable string identifying the type of media list that will
+   *        be created by this factory.
    */
-  attribute sbILibrary library;
+  readonly attribute AString type;
 
   /**
-   * \brief Key to the localized name of the media list type this factory
-   *        creates
+   * \brief The contract ID through which an instance of this class can be
+   *        created.
    */
-  readonly attribute AString nameKey;
+  readonly attribute ACString contractID;
 
   /**
-   * \brief Create a new instance of a media list
-   * \return New media list instance
+   * \brief Create a new instance of a media list based on the template
+   *        sbIMediaItem provided.
+   *
+   * \param aInner - An sbIMediaItem created by the library
+   *
+   * \return A object implementing the sbIMediaItem interface.
    */
-  sbIMediaList createMediaList();
-
-  /**
-   * \brief Instantiate an existing media list using its guid
-   * \param aGuid The guid of the media list
-   * \return New media list instance
-   */
-  sbIMediaList instantiateMediaList(in AString aGuid);
+  sbIMediaList createMediaList(in sbIMediaItem aInner);
 };
 

@@ -45,7 +45,7 @@
 #include <sbILibrary.h>
 #include <sbILibraryFactory.h>
 
-/*
+/**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbLibraryManager:5
  */

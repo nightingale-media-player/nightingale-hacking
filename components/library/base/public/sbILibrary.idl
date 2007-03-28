@@ -33,7 +33,7 @@
 #include "sbILibraryResource.idl"
 
 interface nsIChannel;
-interface nsISimpleEnumerator;
+interface nsIStringEnumerator;
 interface nsIURI;
 interface sbIDevice;
 interface sbIMediaItem;
@@ -79,6 +79,15 @@ interface sbILibrary : sbILibraryResource
   sbIMediaItem createMediaItem(in nsIURI aContentUri);
 
   /**
+   * \brief Creates a new media list
+   *
+   * \param aType - The type of media list to create.
+   * 
+   * \return A new media list.
+   */
+  sbIMediaList createMediaList(in AString aType);
+
+  /**
    * \brief Get a media item
    * \param aGuid Guid of media item to get
    * \return The requested media item
@@ -86,25 +95,16 @@ interface sbILibrary : sbILibraryResource
   sbIMediaItem getMediaItem(in AString aGuid);
 
   /**
-   * \brief A list of available media list factories, returns an enumerator
-   * of sbIMediaListFactory
+   * \brief A list of available media list types.
    */
-  readonly attribute nsISimpleEnumerator mediaListFactories;
-
-  /**
-   * \brief Get a specific media list factory
-   * \param aType Media list factory type.  Every library should support the
-   * "view" and "simple" types.
-   * \return Media list factory for the specified type
-   */
-  sbIMediaListFactory getMediaListFactory(in AString aType);
+  readonly attribute nsIStringEnumerator mediaListTypes;
 
   /**
    * \brief Register a new media list type at run time
-   * \param aType Type name for new media list type
-   * \param aCid XPCOM contract id for the new media list type
+   *
+   * \param aFactory - The factory that will create the media list
    */
-  void addMediaListFactory(in AString aType, in AString aContractId);
+  void registerMediaListFactory(in sbIMediaListFactory aFactory);
 
   /**
    * \brief Begin a batch operation
