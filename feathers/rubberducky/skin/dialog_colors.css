@@ -746,10 +746,6 @@ menulist:focus > hbox
 menulist[disabled="true"]
 {
   -moz-border-radius: 3px !important;
-  -moz-border-top-colors: #333 #333 !important;
-  -moz-border-left-colors: #333 #333 !important;
-  -moz-border-right-colors: #333 #333 !important;
-  -moz-border-bottom-colors: #333 #333 !important;
   color: #666 !important;
 }
 
@@ -762,11 +758,7 @@ menulist[disabled="true"]
 
 .menulist-editable-box
 {
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  background-color: #000 !important;
+  background-color: transparent;
 }
 
 .menulist-editable-input[disabled="true"]

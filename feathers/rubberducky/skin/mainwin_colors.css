@@ -87,51 +87,19 @@ These pieces paint the resizeable window for Songbird.
 window
 {
   -moz-appearance: none !important; 
-  background-color: #321 !important; /* color of the Main Window **/
+  background-color: black !important; /* color of the Main Window **/
   border: none;
 }
 
-
-
-.chrome_iframe_bkgd
-{
-  background-color: transparent !important; 
-}
-
-.sb-sys-outer-frame-chrome-nw
-{
-  background-color: transparent !important;
-}
-.sb-sys-outer-frame-chrome-n
-{
-  background-color: transparent !important;
-}
-.sb-sys-outer-frame-chrome-ne
-{
-  background-color: transparent !important;
-}
-.sb-sys-outer-frame-chrome-e
-{
-  background-color: transparent !important;
-}
-.sb-sys-outer-frame-chrome-se
-{
-  background-color: transparent !important;
-}
-
-.sb-sys-outer-frame-chrome-s
-{
-  background-color: transparent !important;
-}
-.sb-sys-outer-frame-chrome-w
-{
-  background-color: transparent !important;
-}
-.sb-sys-outer-frame-chrome-sw
-{
-  background-color: transparent !important;
-}
-
+.chrome_iframe_bkgd,
+.sb-sys-outer-frame-chrome-nw,
+.sb-sys-outer-frame-chrome-n,
+.sb-sys-outer-frame-chrome-ne,
+.sb-sys-outer-frame-chrome-e,
+.sb-sys-outer-frame-chrome-se,
+.sb-sys-outer-frame-chrome-s,
+.sb-sys-outer-frame-chrome-w,
+.sb-sys-outer-frame-chrome-sw,
 .iframe_bkgd
 {
   background: transparent !important;
@@ -147,7 +115,7 @@ sb-sys-dialog-titlebar,
 #app_title,
 label.dialog_box
 {
-  color: #fff !important;
+  color: #fffff1 !important;
 }
 
 .plain
@@ -168,7 +136,7 @@ Grey material for the Service Pane.
 #frame_servicetree_pane
 {
   -moz-border-radius: 4px;
-  background-color: #686A6A;
+  background-color: #686a6a;
   border-top-color: #7a7c7c;
   border-left-color: #474848;
   border-bottom-color: #474848;
@@ -204,7 +172,7 @@ Grey material for the Service Pane.
 #frame_service_buttonbar button
 {
   border-color: #808282 !important;
-  background-color: #686A6A;
+  background-color: transparent;
   color: #99A195; 
 }
 
@@ -499,7 +467,7 @@ THE PLAYLIST
 
 playlist
 {
-  background-color: #000 !important;
+  background-color: transparent !important;
 }
 
 playlist > stack > vbox
@@ -521,7 +489,7 @@ playlist > stack > vbox > hbox#playlist_toolbar_bkg
 
 playlist > stack > vbox > hbox
 {
-  background-color: #000 !important;
+  background-color: transparent !important;
 }
 
 treechildren::-moz-tree-column(insertafter)
@@ -617,10 +585,7 @@ button[disabled="true"]:hover
 {
   border-color: #000 !important;
   background-color: #000 !important;
-  -moz-border-top-colors: none;
-  -moz-border-right-colors: none;
-  -moz-border-bottom-colors: none;
-  -moz-border-left-colors: none;  
+  border: 1px solid transparent;
   color: #333 !important;
 }
 
@@ -677,7 +642,7 @@ These let the user resize the frames in your box model.
 .vert_splitter,
 #filter_splitter
 {
-  background-color: #686A6A !important;
+  background-color: #333 !important;
   border-left: 1px solid #666 !important;
   border-right: 1px solid #000 !important;
 }
@@ -685,7 +650,7 @@ These let the user resize the frames in your box model.
 .vert_splitter:active,
 #filter_splitter:active
 {
-  background-color: #686A6A !important;
+  background-color: #333 !important;
   border-left: 1px solid #000 !important;
   border-right: 1px solid #666 !important;
 }
@@ -699,7 +664,7 @@ These let the user resize the frames in your box model.
 .vert_splitter[state="collapsed"],
 #vert_splitter[state="collapsed"]
 {
-  background-color: #686A6A !important;
+  background-color: #333 !important;
   border: 1px solid #666 !important;
 }
 
@@ -874,20 +839,62 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 .locationbar-image
 {
   background-color: transparent;
+  height: 16px;
+  width: 16px;
+  max-height: 16px !important;
+  max-width: 16px !important;
+  min-height: 16px !important;
+  min-width: 16px !important;
+  margin: 3px 5px 3px 5px;
 }
 
+
+#browser_toolbar
+{
+  height: 35px;
+  padding-left: 2px;
+  border-bottom: 1px solid #808583; 
+  background-color: transparent;
+}
+
+/* the box with the url image and the url textbox */
+.locationbar-textbox
+{
+  margin: 2px;
+  padding: 0px;
+  border: 1px solid;
+  -moz-border-radius: 5px;
+  border-top-color: #535751;
+  border-left-color: #535751;
+  border-right-color: #99A195;
+  border-bottom-color: #99A195;
+  background-color: transparent; 
+  height: 30px;
+  min-height: 30px;
+  color: #FFF;
+}
 .locationbar-textbox[focused="true"]
 {
   background-color: #99A195;
   color: #FFF;
 }
 
-#browser_toolbar
+#browser_toolbar button 
 {
-  border-bottom: 1px solid #808583; 
-  background-color: transparent;
+  height: 30px;
+  width: 30px;  
+  padding: 0px;
+  margin: 2px 0px 2px 2px;
+  border: 1px solid;
+  min-width: 0px;
 }
 
+#browser_toolbar .button-text
+{
+  display: none;  
+}
+ 
+/* END WEB BAR */
 /* END WEB BAR */
 /** 
 ************************************************************************************************************************************************
@@ -916,13 +923,13 @@ SEARCH WIDGET
   border-left-color: #535751 !important;
   border-right-color: #99A195 !important;
   border-bottom-color: #99A195 !important;
-  background-color: #000 !important; 
+  background-color: transparent; 
   color: #FFF !important;
 }
 
 #search_widget input
 {
-  background-color: #000 !important;
+  background-color: transparent;
   color: #fff !important;
 }
 
