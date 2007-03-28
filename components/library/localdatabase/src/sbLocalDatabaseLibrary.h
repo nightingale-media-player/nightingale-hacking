@@ -33,7 +33,7 @@
 
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
-#include <nsDataHashTable.h>
+#include <nsDataHashtable.h>
 #include <nsHashKeys.h>
 #include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
