@@ -71,10 +71,6 @@ button[type="default"] {
 
 button[disabled="true"] {
   color: #777777 !important;
-  -moz-border-top-colors: #cccccc #eeeeee #fdfdfd;
-  -moz-border-right-colors: #cccccc #d9d9d9;
-  -moz-border-bottom-colors: #cccccc #eeeeee #fdfdfd;
-  -moz-border-left-colors: #cccccc #d9d9d9;
 }
 
 /* ::::: menu/menu-button buttons ::::: */
