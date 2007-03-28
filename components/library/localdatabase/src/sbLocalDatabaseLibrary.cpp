@@ -822,8 +822,8 @@ sbLocalDatabaseLibrary::RegisterMediaListFactory(sbIMediaListFactory* aFactory)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Make a new object to hold this info.
-  nsAutoPtr<sbMediaListFactoryInfo> factoryInfo =
-    new sbMediaListFactoryInfo(newTypeID, aFactory);
+  nsAutoPtr<sbMediaListFactoryInfo>
+    factoryInfo(new sbMediaListFactoryInfo(newTypeID, aFactory));
   NS_ENSURE_TRUE(factoryInfo, NS_ERROR_OUT_OF_MEMORY);
 
   // And add it to our hash table.
