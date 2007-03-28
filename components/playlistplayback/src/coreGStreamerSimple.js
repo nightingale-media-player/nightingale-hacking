@@ -416,7 +416,7 @@ CoreGStreamerSimple.prototype.getSupportedFileExtensions = function ()
   return new StringArrayEnumerator(this._mediaUrlExtensions);
 }
 
-CoreVLC.CoreGStreamerSimple.getSupportForFileExtension = function(aFileExtension)
+CoreGStreamerSimple.prototype.getSupportForFileExtension = function(aFileExtension)
 {
   // Strip the beginning '.' if it exists and make it lowercase
   var extension =
