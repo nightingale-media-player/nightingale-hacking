@@ -901,7 +901,7 @@
         <xul:label flex="1" xbl:inherits="value=label,crop,accesskey" crop="right" class="tab-text"/>
       </xul:hbox>
       <xul:toolbarbutton anonid="close-button" class="tab-close-button" tabindex="-1"/>
-        <xul:hbox class="tab-image-right" xbl:inherits="selected"/>
+      <xul:hbox class="tab-image-right" xbl:inherits="selected"/>
     </content>
   </binding>
   
@@ -949,7 +949,7 @@
                 <xul:toolbarbutton class="tabs-alltabs-button"
                                    type="menu"
                                    anonid="alltabs-button"
-                                   tooltipstring="&tags.listAllTabs;">
+                                   tooltipstring="&tabs.listAllTabs;">
                   <xul:menupopup class="tabs-alltabs-popup"
                                  anonid="alltabs-popup" position="after_end"/>
                 </xul:toolbarbutton>
