@@ -472,7 +472,7 @@ case "$SB_PLATFORM" in
     MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
     XULRUNNERDIR="/XUL.framework"
 
-    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
+    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
     else
@@ -519,7 +519,7 @@ case "$SB_PLATFORM" in
     AC_SUBST(GSTREAMER_CFLAGS)
     AC_SUBST(GTK_CFLAGS)
 
-    GCC_COMPILER_FLAGS="-c -g -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
+    GCC_COMPILER_FLAGS="-c -g -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -f-no-rtti -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline"
     else
