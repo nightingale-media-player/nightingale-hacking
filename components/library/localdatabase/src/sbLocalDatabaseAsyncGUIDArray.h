@@ -35,9 +35,9 @@
 #include <nsIRunnable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <prlock.h>
+#include <prmon.h>
 
-class PRLock;
-class PRMonitor;
 class nsIThread;
 
 // These need compilation unit scoping so both classes can use them
