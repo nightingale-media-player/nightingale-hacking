@@ -38,20 +38,31 @@ Anything with #mini refers to the skin of the mini player.
 
 window#mini  
 { 
-  background-color: none !important; /* Only transparent on windows. (Bug 1656) */
   width: 800px !important;
   min-width: 390px ! important;
-  min-height: 25px;
-  max-height: 25px;
+  
+  /** HACK! Force height to get around Bug 2851 (Mini grows by 1px on every load) **/
+  min-height: 24px;
+  max-height: 24px;
+  
+  /** Get rid of the gradient that is applied to all windows */
+  background-image:none;
+  
+  /* Only transparent on windows. (Bug 1656) */
+  background-color: transparent !important;
 }
 
 #frame_mini
 {
   -moz-border-radius: 10px !important;
-  background-color: red !important;  /** TODO Remove red */
-  padding: 2px 0px 2px px !important;
+  background-color: #321 !important;  /** Main player color. TODO fix? */
+  padding: 2px 0px 2px 0px !important;
   height: 22px;
   border: 1px solid #333;
+  
+  /** HACK! Without this line the desktop will show through around all text.
+      See Mozilla bug 371919. Remove ASAP. */
+  -moz-opacity: 0.99; 
 }
 
 #mini_resize_w,
@@ -152,13 +163,6 @@ sb-player-forward-button.miniplayer:active
 }
 
 
-/* volume */
-#mini_volume_box
-{
-  padding-top: 3px;
-}
-
-
 /** 
 ************************************************************************************************************************************************
 MINI DASH BOARD
@@ -183,76 +187,62 @@ MINI DASH BOARD
   list-style-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard_w.png) !important;
 }
 
-/* the artist and title */
-#mini_text_title
-#mini_text_time,
-#mini_text_artist,
-#mini_text_album,
-#mini_text_time_total,
-#mini_text_time_elapsed,
-#mini_text_time_t_txt
+/* Artist and title, etc. */
+.mini_dash_text
 {
   -moz-box-align: baseline;
   width: auto;
   height: 16px;
+  margin: 0px;
+  padding: 0px;
   color: #E4EADF;
   overflow: hidden;
 }
 
+
+
+
 /** TODO can this be minimized **/
 
+/** Make a fake slider groove underneath the dash text.
+    This is to allow the text to hang over the slider
+    without messing with click handling **/
+#mini_dash_grove_spacer
+{
+  height: 4px;
+  width: auto;
+  margin-top: 12px !important;
+  background-color: #5a5c5c !important;  
+}
+
 /* the seekbar slider */
-#songbird_seekbar_slider.miniplayer
+#mini_seekbar
 {
   height: 4px !important;
   width: auto !important;
-}
-
-sb-player-seek-slider#mini_seekbar
-{
-  border: 0px solid red !important;   /** TODO wtf **/
-  -moz-appearance: none !important;
-  height: 4px !important;
+  border: 0px !important;
   margin-top: 12px !important;
 }
 
-sb-player-seek-slider#mini_seekbar > stack > .sb-progress-slider-slider > thumb
+#mini_seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb
 {
-  -moz-appearance: none !important; /* grrrr! */
   width: 11px !important;
   height: 4px !important;
   background-image: url(chrome://songbird/skin/mini/seekbar_thumb.png) !important;
   background-color: transparent !important;
   background-repeat: no-repeat !important;
+  border: 0px !important;
+  margin: 0px;
+  padding: 0px;  
 }
-sb-player-seek-slider#mini_seekbar > stack > .sb-progress-slider-slider > thumb > gripper
+#mini_seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb > gripper
 {
-  -moz-appearance: none !important; /* grrrr! */
   height: 4px !important;
 }
-sb-player-seek-slider.miniplayer > stack > .sb-progress-slider-progressmeter
+#mini_seekbar > stack > .sb-progress-slider-progressmeter
 {
-  -moz-appearance: none !important;
   height: 4px !important;
-}
-sb-player-seek-slider.miniplayer > stack > .sb-progress-slider-progressmeter > .progress-bar
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #5a5c5c !important;
-  height: 4px !important;
-}
-sb-player-seek-slider.miniplayer > stack > .sb-progress-slider-progressmeter > .progress-remainder
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #5a5c5c !important;  
-  height: 4px !important;
-}
-#songbird_seekbar.miniplayer
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 4px !important;
-  border: none !important;
-  background-color: transparent !important;
+  border: 0px !important;
 }
 
 
@@ -275,3 +265,36 @@ sb-sys-close-button.miniplayer
 {
   list-style-image: url(chrome://songbird/skin/mini/mini.btn.close.png) ;
 }
+
+
+
+/** 
+************************************************************************************************************************************************
+SPACING
+************************************************************************************************************************************************
+*/
+
+#mini_btn_playpause {
+  margin: 0px 1px 0px 1px !important;
+}
+
+#mini_btn_mute 
+{
+  margin: 0px 5px 0px 5px;
+}
+
+#mini_volume_box
+{
+  margin: 0px 10px 0px 5px;
+}
+
+sb-player-jumpto-button.miniplayer
+{
+  margin: 0px 0px 0px 5px;  
+}
+
+#mini_dash_autoscroll_box 
+{
+  margin-right:10px;
+}
+

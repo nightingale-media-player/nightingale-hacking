@@ -182,6 +182,10 @@ sb-player-fullscreen-button {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#fullscreen-button") !important;
 }
 
+sb-mini-player-controls {
+  -moz-binding: url("chrome://songbird/content/bindings/miniPlayer.xml#sb-mini-player-controls") !important;
+}
+
 tageditor {
   -moz-binding: url("chrome://songbird/content/bindings/tageditor.xml#tageditor") !important;
 }

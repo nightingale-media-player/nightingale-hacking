@@ -83,25 +83,27 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider
   height: 10px;
 }
 
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb 
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb 
 {
   width: 21px;
   height: 8px;
   border: 1px solid;
 }
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb  > gripper
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb  > gripper
 {
   height: 8px;
 }
-sb-player-seek-slider.faceplate-seekbar > .sb-progress-slider-progressmeter
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
 {
-  height: 10px;
+  height: 8px;
   margin: 0px;
+  padding: 0px;
+  border: 0px !important;
 }
-sb-player-seek-slider.faceplate-seekbar > .sb-progress-slider-progressmeter > .progress-bar,
-sb-player-seek-slider.faceplate-seekbar > .sb-progress-slider-progressmeter > .progress-remainder
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar,
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder
 {
-  height: 10px;
+  height: 8px;
 }
 
 

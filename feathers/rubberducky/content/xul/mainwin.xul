@@ -94,48 +94,9 @@
       -->
       
       <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
-      <!-- TODO: Fix mini.xul and then duplicate here.  Better yet, use an overlay/include/iframe. -->
       <hbox id="frame_mini" hidden="true" drag_window="true">
-        <sb-player-back-button id="mini_btn_back" class="sb_faceplate miniplayer" />
-        <sb-player-playpause-button id="mini_btn_playpause" class="miniplayer" popupanchor="topleft" popupalign="bottomleft"/>
-        <sb-player-forward-button id="mini_btn_fwd" class="sb_faceplate miniplayer" />
-
-        <vbox id="mini_volume" drag_window="true">
-          <hbox id="mini_volume_box" drag_window="true">
-            <sb-player-mute-button id="mute" />
-            <spacer width="8"/>
-            <hbox>
-              <spacer width="3" height="5" id="songbird_volume_w"/>
-              <sb-player-volume-slider id="songbird_volume" orient="horizontal" class="miniplayer" maxpos="100"/>
-              <spacer width="3" height="5" id="songbird_volume_e"/>
-            </hbox>
-          </hbox>
-        </vbox>
-
-        <hbox flex="1" drag_window="true">
-          <spacer width="4" height="18" id="mini_dash_w"/>
-          <vbox id="mini_dash" flex="1" drag_window="true">
-            <stack>
-              <hbox id="mini_text_time" class="sb_faceplate" flex="1" drag_window="true">
-                <sb-player-artist-label id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right" drag_window="true"/>
-                <spacer width="20" drag_window="true"/>
-                <sb-player-title-label id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1" drag_window="true"/>
-                <sb-player-timeelapsed-label id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" drag_window="true"/>
-                <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" drag_window="true"/>
-                <sb-player-totaltime-label id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>
-              </hbox>
-              <sb-player-seek-slider id="mini_seekbar" orient="horizontal" class="sb_faceplate" maxpos="100"/>
-            </stack>
-          </vbox>
-          <spacer width="4" height="18" id="mini_dash_e"/>
-        </hbox>
-        <hbox hidden="true">
-          <sb-player-repeat-button hidden="true"/>
-          <sb-player-shuffle-button hidden="true"/>
-          <button id="mini_btn_help"    class="sb_faceplate" oncommand="onHelp( );" hidden="true" />
-          <button id="mini_btn_min"     class="sb_faceplate" oncommand="onMinimize( );" hidden="true" />
-          <button id="mini_btn_exit"    class="sb_faceplate" oncommand="quitApp( );" hidden="true" />
-        </hbox>
+        <!-- MINI PLAYER DISPLAY AND CONTROLS -->
+        <sb-mini-player-controls flex="1"/>
       </hbox>
 
 

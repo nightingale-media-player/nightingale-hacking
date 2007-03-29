@@ -24,193 +24,104 @@
 //
  */
 
-//
-// Remote Initialization
-//
 
-try
-{
+/**
+ * Miniplayer controller.  Handles events and controls
+ * platform specific presentation details.
+ */
+var gMiniplayer = {
 
-  // Hooray for event handlers!
-  function myPlaybackEvent( key, value )
+
+  ///////////////////////////
+  // Window Event Handling //
+  ///////////////////////////
+
+  /**
+   * Called when the window loads.  Sets up listeners and 
+   * configures the look of the window.
+   */
+  onLoad: function onLoad()
   {
-  }
-
-  //
-  // Core Wrapper Initialization (in XUL, this must happen after the entire page loads). 
-  //
-
-  function SBInitialize()
-  {
-    // initialize player controls for this faceplate  
-    window.focus();
+    dump("\nMiniplayer." + arguments.callee.name + "\n");
     
+    window.focus();        
     window.dockDistance = 10;
 
-    var platform;
-    try {
-      var sysInfo =
-        Components.classes["@mozilla.org/system-info;1"]
-                  .getService(Components.interfaces.nsIPropertyBag2);
-      platform = sysInfo.getProperty("name");                                          
-    }
-    catch (e) {
-      dump("System-info not available, trying the user agent string.\n");
-      var user_agent = navigator.userAgent;
-      if (user_agent.indexOf("Mac OS X") != -1)
-        platform = "Darwin";
-    }
+    // Note, most listeners are hardcoded in miniplayer.xul
 
-    var location = "" + window.location; // Grrr.  Dumb objects.
-    if ( location.indexOf("?video") == -1 ) {
-      initJumpToFileHotkey();
-      setMinMaxCallback();
-      document.getElementById("mini_btn_fullscreen").setAttribute("hidden", "true");
-    } else {
-      document.getElementById("mini_btn_close").hidden = true;
+    // Hook up the jumpto hotkey. Note that this function is
+    // defined in jumptofile.js
+    initJumpToFileHotkey();
+    
+    // Prevent window from being resized inappropriately
+    this._setMinMaxCallback();
 
-      if (platform == "Darwin")
-        document.getElementById("mini_btn_fullscreen").setAttribute("hidden", "true");
-
-      document.getElementById("sysbtn_mainmode").setAttribute("hidden", "true");
-      document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
-    }
      
-    if ( (platform == "Darwin") || (platform == "Linux") ){
-      document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
+    // Perform platform specific customization
+    var platform = this._getPlatform();
+    if ( (platform == "Darwin") || (platform == "Linux") ) {
+      // Square the frame and remove the border.
+      document.getElementById("frame_mini").setAttribute("style", 
+          "-moz-border-radius: 0px !important; border-color: transparent !important;"); 
     } else {
 
-      // Need to know if this window has a titlebar.
-      // Jump through some hoops to get at nsIWebBrowserChrome.chromeFlags
-      window.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
-      var webnav = window.getInterface(Components.interfaces.nsIWebNavigation);
-      var treeItem = webnav.QueryInterface(Components.interfaces.nsIDocShellTreeItem);
-      var treeOwner = treeItem.treeOwner;
-      var requestor = treeOwner.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
-      var windowChrome = requestor.getInterface(Components.interfaces.nsIWebBrowserChrome);
-
-      // Phew... now, do we have a titlebar?
-      var hasTitlebar = windowChrome.chromeFlags & windowChrome.CHROME_TITLEBAR;
+      // TODO! Must revisit this soon
 
       // If no titlebar, then make the background transparent.
       // Only on windows. (Bug 1656)
-      if (!hasTitlebar) {                                           
+      if (!this._hasTitlebar()) {                                           
         document.getElementById("mini").setAttribute("style", "background-color: transparent !important;"); 
       }
     }
     
-    window.addEventListener( "keydown", checkAltF4, true );
- 
+    // Restore the previous size and position of the miniplayer    
     onWindowLoadSizeAndPosition();
-  }
+  },
   
-  function SBUninitialize()
+  
+  
+  
+  /**
+   * Called when the window is closing. Removes all listeners.
+   */
+  onUnload: function onUnload()
   {
-    var location = "" + window.location; // Grrr.  Dumb objects.
-    if ( location.indexOf("?video") == -1 ) {
-      resetJumpToFileHotkey();
-      closeJumpTo();
-      try {
-        var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
-        if (windowMinMax) {
-          var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
-          if (service)
-            service.resetCallback(document);
-        }
-      }
-      catch(err) {
-        dump("Error. miniplayer.js: SBUnitialize() \n" + err + "\n");
+    dump("\nMiniplayer." + arguments.callee.name + "\n");  
+  
+    resetJumpToFileHotkey();
+    closeJumpTo();
+    try {
+      var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+      if (windowMinMax) {
+        var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+        if (service)
+          service.resetCallback(document);
       }
     }
-  }
-   
-  //
-  // XUL Event Methods
-  //
+    catch(err) {
+      dump("Error. miniplayer.js: onUnload() \n" + err + "\n");
+    }
+  },
   
-
-  function checkAltF4(evt)
+    
+  /**
+   * Handles keyboard shortcuts
+   */
+  onKeypress: function onKeypress( evt )
   {
+    dump("\nMiniplayer." + arguments.callee.name + "\n");
+  
+    // Did the user press Alt-F4?
     if (evt.keyCode == 0x73 && evt.altKey) 
     {
       evt.preventDefault();
       quitApp();
-    }
-  }
-  
-  
-  function onDblClick( evt ) 
-  {
-    switch (evt.target.nodeName.toLowerCase())
-    {
-      // Songbird Custom Elements
-      case "sb-progress-slider":
-      case "sb-player-volume-slider":
-      case "sb-player-seek-slider":
-      case "sb-player-repeat-button":
-      case "sb-player-shuffle-button":
-      case "sb-player-playpause-button":
-      case "sb-player-back-button":
-      case "sb-player-forward-button":
-      case "sb-player-mute-button":
-      case "sb-player-numplaylistitems-label":
-      case "sb-player-scanning-label":
-      case "dbedit_textbox":
-      case "dbedit_menulist":
-      case "exttrackeditor":
-      case "servicetree":
-      case "playlist":
-      case "search":
-      case "sb-smart-splitter":
-      case "sbextensions":
-      case "smart_conditions":
-      case "watch_folders":
-      case "sb-clickhold-button":
-      // XUL Elements
-      case "splitter":
-      case "grippy":
-      case "button":
-      case "toolbarbutton":
-      case "scrollbar":
-      case "slider":
-      case "thumb":
-      case "checkbox":
-      case "resizer":
-      case "textbox":
-      case "tree":
-      case "listbox":
-      case "listitem":
-      case "menu":
-      case "menulist":
-      case "menuitem":
-      case "menupopup":
-      case "menuseparator":
-      // HTML Elements
-      case "img":
-      case "input":
-      case "select":
-      case "option":
-      case "object":
-      case "embed":
-      case "body":
-      case "html":
-      case "div":
-      case "a":
-      case "ul":
-      case "ol":
-      case "dl":
-      case "dt":
-      case "dd":
-      case "li":
-      case "#text":
-        return;
+      return;
     }  
   
-    revertFeathers();
-  }
-
-  function onMiniplayerKeypress( evt )
-  {
+    // TODO Does this not interfere with global hotkeys?
+    // Should this be a consistent thing that anyone can use?
+  
     switch ( evt.keyCode )
     {
       case 37: // Arrow Left
@@ -236,10 +147,105 @@ try
           onPlay( );
         break;
     }
-  }
+  },
+    
 
-  var SBWindowMinMaxCB = 
+  /**
+   * Handles double clicking. Double clicking on most surfaces 
+   * takes the user back to their previous feathers
+   */
+  onDblClick: function onDblClick( evt ) 
   {
+    dump("\nMiniplayer." + arguments.callee.name + "\n");  
+  
+    // TODO this will have to change when the drag_window code is updated.
+    // The drag_window code currently doesn't work with xbled elements    
+  
+    // If the clicked element can be used to drag the window
+    // then interpret a double click as "switch back to main mode"
+    if (evt.target.getAttribute("drag_window") == "true") {
+      this.revertFeathers();
+    }
+  },  
+  
+  
+  /**
+   * Triggers the feathers toggle button
+   */
+  revertFeathers: function revertFeathers() 
+  {
+    dump("\nMiniplayer." + arguments.callee.name + "\n");
+  
+    var feathersButton = document.getElementById("mini_btn_feathers");
+    feathersButton.doCommand();
+  },
+
+
+
+  ///////////////////////////
+  // Drag and Drop Support //
+  ///////////////////////////
+
+
+
+  /**
+   * Return mimetype-ish information indicating what is supported
+   */
+  getSupportedFlavours: function getSupportedFlavours() 
+  {
+    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
+                            .getService(Components.interfaces.nsIConsoleService);
+    consoleService.logStringMessage("get flavours");
+    var flavours = new FlavourSet();
+    
+    // TODO does this work under linux? I'm thinking no.
+    
+    flavours.appendFlavour("application/x-moz-file","nsIFile");
+    //  flavours.appendFlavour("application/x-moz-url");
+    return flavours;
+  },
+
+  /**
+   * Called when an object is dragged over the miniplayer
+   */  
+  onDragOver: function onDragOver( evt, flavour, session )
+  {
+    // Don't care...
+  },
+
+
+  /**
+   * Called when an object is released over the miniplayer
+   */    
+  onDrop: function onDrop( evt, dropdata, session )
+  {
+    if ( dropdata.data != "" )
+    {
+      // if it has a path property
+      if ( dropdata.data.path )
+      {
+        var path = dropdata.data.path;
+        var isDir = dropdata.data.isDirectory();
+        
+        // Handle drop on next frame
+        setTimeout( function(obj) { obj._handleDrop(path, isDir) }, 10, this); 
+      }
+    }
+  },
+  
+  
+  ////////////////////////////
+  // Window Min/Max Support //
+  ////////////////////////////
+  
+  
+  
+  /**
+   * Implements sbIWindowMinMaxCallback and is submitted to sbIWindowMinMax.
+   * Prevents the window from being resized beyond given limits.
+   */
+  _minMaxHandler: {
+  
     // Shrink until the box doesn't match the window, then stop.
     _minwidth: -1,
     GetMinWidth: function()
@@ -284,94 +290,99 @@ try
       
       return this;
     }
-  }
+  },
+  
+  
+  
+  //////////////////////
+  // Helper Functions //
+  //////////////////////
+  
 
-  function setMinMaxCallback()
+  /**
+   * Installs our sbIWindowMinMaxCallback to sbIWindowMinMax,
+   * preventing the window from being resized inappropriately 
+   */
+  _setMinMaxCallback: function _setMinMaxCallback()
   {
     try {
       var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
       if (windowMinMax) {
         var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
         if (service)
-          service.setCallback(document, SBWindowMinMaxCB);
+          service.setCallback(document, this._minMaxHandler);
       }
     }
     catch (err) {
       // No component
       dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
     }
-  }
-}
-catch ( err )
-{
-  alert( err );
-}
+  },
 
-var theDropPath = "";
-var theDropIsDir = false;
-var SBMiniDropObserver = 
-{
-  getSupportedFlavours : function () 
-  {
-    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                            .getService(Components.interfaces.nsIConsoleService);
-    consoleService.logStringMessage("get flavours");
-    var flavours = new FlavourSet();
-    flavours.appendFlavour("application/x-moz-file","nsIFile");
-//    flavours.appendFlavour("application/x-moz-url");
-    return flavours;
-  },
-  onDragOver: function ( evt, flavour, session )
-  {
-    alert("whoo?");
-  },
-  onDrop: function ( evt, dropdata, session )
-  {
-    alert("woot!");
-    if ( dropdata.data != "" )
+  
+  
+  /**
+   * Helper function that acts on a dropped item.
+   * Called just after an object is dropped on the player.
+   */   
+  _handleDrop: function _handleDrop(path, isDir) {
+    if ( isDir )
     {
-      // if it has a path property
-      if ( dropdata.data.path )
-      {
-        theDropPath = dropdata.data.path;
-        theDropIsDir = dropdata.data.isDirectory();
-        setTimeout( SBMiniDropped, 10 ); // Next frame
-        
-      }
+      SBDataSetBoolValue( "media_scan.open", true );
+      theMediaScanIsOpen.boolValue = true;
+      // otherwise, fire off the media scan page.
+      var media_scan_data = new Object();
+      media_scan_data.URL = path;
+      media_scan_data.retval = "";
+      // Open the non-modal dialog
+      SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
+      SBDataSetBoolValue( "media_scan.open", false );
     }
-  }
-};
-
-function SBMiniDropped()
-{
-  if ( theDropIsDir )
-  {
-    SBDataSetBoolValue( "media_scan.open", true );
-    theMediaScanIsOpen.boolValue = true;
-    // otherwise, fire off the media scan page.
-    var media_scan_data = new Object();
-    media_scan_data.URL = theDropPath;
-    media_scan_data.retval = "";
-    // Open the non-modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
-    SBDataSetBoolValue( "media_scan.open", false );
-  }
-  else if ( gPPS.isMediaURL( theDropPath ) )
-  {
-    // add it to the db and play it.
-    var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-    PPS.playAndImportURL(theDropPath); // if the url is already in the lib, it is not added twice
-  }
-}
+    else if ( gPPS.isMediaURL( path ) )
+    {
+      // add it to the db and play it.
+      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      PPS.playAndImportURL(path); // if the url is already in the lib, it is not added twice
+    }
+  },
 
 
-function revertFeathers() 
-{
-  // The miniplayer currently does dual duty as the video window controls.
-  // If not embedded in the video window, allow reverting back into other feathers.
-  if ( location.indexOf("?video") == -1 )  {
-    var feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
-                                    .getService(Components.interfaces.sbIFeathersManager);
-    feathersManager.revertFeathers();
+  /**
+   * Figure out which operating system we are on
+   */  
+  _getPlatform: function _getPlatform() {
+    var platform;
+    try {
+      var sysInfo =
+        Components.classes["@mozilla.org/system-info;1"]
+                  .getService(Components.interfaces.nsIPropertyBag2);
+      platform = sysInfo.getProperty("name");                                          
+    }
+    catch (e) {
+      dump("System-info not available, trying the user agent string.\n");
+      var user_agent = navigator.userAgent;
+      if (user_agent.indexOf("Mac OS X") != -1)
+        platform = "Darwin";
+    }
+    return platform;
+  },
+  
+  
+  /**
+   * Has this window been opened with a titlebar?
+   */
+  _hasTitlebar: function _hasTitlebar() {
+
+    // Jump through some hoops to get at nsIWebBrowserChrome.chromeFlags
+    window.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+    var webnav = window.getInterface(Components.interfaces.nsIWebNavigation);
+    var treeItem = webnav.QueryInterface(Components.interfaces.nsIDocShellTreeItem);
+    var treeOwner = treeItem.treeOwner;
+    var requestor = treeOwner.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+    var windowChrome = requestor.getInterface(Components.interfaces.nsIWebBrowserChrome);
+
+    // Phew... now, do we have a titlebar?
+    return windowChrome.chromeFlags & windowChrome.CHROME_TITLEBAR;
   }
-}
+
+}  // End of gMiniplayer

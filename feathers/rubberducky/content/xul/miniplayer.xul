@@ -46,17 +46,20 @@
  id="mini"
  title="&window.dev.title;"
  windowtype="Songbird:Main"
- onload="{centerWindowOnScreen();SBInitialize();}"
- onunload="SBUninitialize();"
- onkeypress="onMiniplayerKeypress( event );"
- ondragover="nsDragAndDrop.dragOver( event, SBMiniDropObserver );"
- ondragdrop="nsDragAndDrop.drop( event, SBMiniDropObserver );"
- ondblclick="onDblClick(event);"
+ 
+ onload="gMiniplayer.onLoad();"
+ onunload="gMiniplayer.onUnload();"
+ onkeypress="gMiniplayer.onKeypress(event);"
+ ondragover="nsDragAndDrop.dragOver( event, gMiniplayer );"
+ ondragdrop="nsDragAndDrop.drop( event, gMiniplayer );"
+ ondblclick="gMiniplayer.onDblClick(event);"
+ 
  spacers_drag_window="true"
 >
   <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript"   
    src="chrome://global/content/dialogOverlay.js" /> 
+
 
   <hbox id="frame_mini" flex="1" drag_window="true" align="center" pack="center">
     <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
@@ -64,42 +67,12 @@
     <!-- TODO: What does this do? Keep the mac happy?  If so, should be a useable menu  -->
     <menubar id="mini_menu" hidden="false"  oncommand="onMenu(event.target)"/>
 
-    <!-- PLAYBACK CONTROLS -->
-    <sb-player-back-button id="mini_btn_back" class="miniplayer" />
-    <sb-player-playpause-button id="mini_btn_playpause" class="miniplayer" popupanchor="topleft" popupalign="bottomleft"/>
-    <sb-player-forward-button id="mini_btn_fwd" class="miniplayer" />
-
-    <!-- VOLUME -->
-    <sb-player-mute-button id="mini_btn_mute" class="miniplayer"/>
-    <hbox id="mini_volume_box" pack="center" align="center" drag_window="true">
-      <spacer id="songbird_volume_w" />
-      <sb-player-volume-slider id="songbird_volume" flex="1" orient="horizontal" class="miniplayer" maxpos="100"/>
-      <spacer id="songbird_volume_e"/>
-    </hbox>
-
-    <!-- THE DASHBOARD -->
-    <image id="mini_dash_w" drag_window="true"/>
-    <vbox id="mini_dash" flex="1" drag_window="true">
-      <stack>
-        <hbox id="mini_dash_text_box"  flex="1" drag_window="true">
-          <sb-autoscroll fitalign="left" spacing="8" flex="1">
-            <sb-player-artist-label id="mini_text_artist" autotip="1"/>
-            <spacer width="20" height="5"/>
-            <sb-player-title-label id="mini_text_title" autotip="1" />
-          </sb-autoscroll>
-          <sb-player-timeelapsed-label id="mini_text_time_elapsed" value="0:00"  drag_window="true"/>
-          <label id="mini_text_time_t_txt"   value=" / "  drag_window="true"/>
-          <sb-player-totaltime-label id="mini_text_time_total" value="0:00"  drag_window="true"/>
-        </hbox>
-        <sb-player-seek-slider id="mini_seekbar" orient="horizontal"  maxpos="100"/>
-      </stack>
-    </vbox>
-    <image id="mini_dash_e" drag_window="true"/>
+    <!-- PLAYER DISPLAY AND CONTROLS -->
+    <sb-mini-player-controls flex="1"/>
 
     <!-- WINDOW CONTROLS -->
     <sb-player-jumpto-button id="mini_btn_jump" class="miniplayer"/>    
-    <sb-feathers-toggle-button id="sysbtn_mainmode" popupanchor="bottomleft" popupalign="topleft" class="miniplayer sb-player-button"/>
-    <sb-player-fullscreen-button id="mini_btn_fullscreen" class="miniplayer"/>
+    <sb-feathers-toggle-button id="mini_btn_feathers" popupanchor="bottomleft" popupalign="topleft" class="miniplayer sb-player-button"/>
     <sb-sys-close-button id="mini_btn_close" class="miniplayer"/>
     
     <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="right" style="cursor: w-resize;"/>
@@ -107,7 +80,7 @@
 
   <keyset>
     <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey(event);"/>
-    <key id="mainwin-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="revertFeathers();"/>
+    <key id="mainwin-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="gMiniplayer.revertFeathers();"/>
   </keyset>
 
   <!-- Load the interface code -->
@@ -120,14 +93,26 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_open.js"/>
 
-  <!-- Load the demo-specific scripts -->
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/miniplayer.js" />
+
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/jumptofile.js" />
+  
+  <!-- Drag and drop -->
+  <script type="application/x-javascript" 
+   src="chrome://global/content/nsDragAndDrop.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://global/content/nsTransferable.js"/>
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/dragAndDrop.js" />
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/dndSourceTracker.js" />
+
+  <!-- Helpers -->
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/window_utils.js" />
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/jumptofile.js" />
 
 </window>

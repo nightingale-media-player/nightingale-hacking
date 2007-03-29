@@ -116,7 +116,9 @@
     <spacer height="5"/>
     <hbox>
       <spacer width="5"/>
-      <iframe id="video_controls" src="chrome://rubberducky/content/xul/miniplayer.xul?video" flex="1"/>         
+      <sb-mini-player-controls flex="1"/>
+      <sb-player-jumpto-button id="video_btn_jump" class="miniplayer"/>    
+      <sb-player-fullscreen-button id="video_btn_fullscreen" class="miniplayer"/>    
       <spacer width="5"/>
     </hbox>
   </sb-sys-outer-frame>

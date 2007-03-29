@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+            
+  
+  <binding id="sb-mini-player-controls">
+
+  <content>
+
+    <!-- PLAYBACK CONTROLS -->
+    <xul:sb-player-back-button id="mini_btn_back" class="miniplayer sb-player-button" />
+    <xul:sb-player-playpause-button id="mini_btn_playpause" class="miniplayer sb-player-button" popupanchor="topleft" popupalign="bottomleft"/>
+    <xul:sb-player-forward-button id="mini_btn_fwd" class="miniplayer sb-player-button" />
+
+    <!-- VOLUME -->
+    <xul:hbox id="mini_volume_box" pack="center" align="center" drag_window="true">
+      <xul:sb-player-mute-button id="mini_btn_mute" class="miniplayer"/>
+      <xul:spacer id="songbird_volume_w" />
+      <xul:sb-player-volume-slider id="songbird_volume" flex="1" orient="horizontal" class="miniplayer" maxpos="100"/>
+      <xul:spacer id="songbird_volume_e"/>
+    </xul:hbox>
+    
+    <!-- THE DASHBOARD -->
+    <xul:image id="mini_dash_w" drag_window="true"/>
+    <xul:vbox id="mini_dash" flex="1" drag_window="true">
+      <xul:stack>
+        <xul:spacer id="mini_dash_grove_spacer" flex="1" />
+        <xul:hbox id="mini_dash_text_box"  flex="1" drag_window="true">
+          <xul:sb-autoscroll id="mini_dash_autoscroll_box" fitalign="left" spacing="8" flex="1">
+            <xul:sb-player-artist-label id="mini_text_artist" class="mini_dash_text" autotip="1"/>
+            <xul:spacer id="mini_text_spacer" width="20" height="5"/>
+            <xul:sb-player-title-label id="mini_text_title" class="mini_dash_text" autotip="1" />
+          </xul:sb-autoscroll>
+          <xul:sb-player-timeelapsed-label id="mini_text_time_elapsed" value="0:00"  drag_window="true" class="mini_dash_text"/>
+          <xul:label id="mini_text_time_t_txt"   value=" / "  drag_window="true" class="mini_dash_text"/>
+          <xul:sb-player-totaltime-label id="mini_text_time_total" value="0:00"  drag_window="true" class="mini_dash_text"/>
+        </xul:hbox>
+        <xul:sb-player-seek-slider id="mini_seekbar" orient="horizontal"  maxpos="100" class="miniplayer"/>
+      </xul:stack>
+    </xul:vbox>
+    <xul:image id="mini_dash_e" drag_window="true"/>
+    
+  </content>
+ 
+  </binding>
+
+</bindings>

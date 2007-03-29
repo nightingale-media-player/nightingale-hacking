@@ -1562,7 +1562,14 @@
     <implementation>
     
       <constructor>
-        this.setAttribute("tooltiptext", "&tooltip.fullscreen;")
+        this.setAttribute("tooltiptext", "&tooltip.fullscreen;");
+        
+        // Mac fullscreen coming soon.
+        var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                                .getService(Components.interfaces.nsIPropertyBag2);
+        if ( sysInfo.getProperty("name") == "Darwin" ) {
+          this.setAttribute("hidden", "true");
+        }
       </constructor>
       
       <method name="onCommand">

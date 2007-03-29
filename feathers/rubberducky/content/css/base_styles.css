@@ -86,8 +86,18 @@ These base styles are basically here to tell other -moz styles from spoiling our
   border-width: 0px !important;
   font-family: tahoma, arial !important; /*arial is the fallback font*/
   font-size: 11px !important;
+   -moz-border-radius: 0px;
 }
 
+
+
+.sb-player-button > button > .button-box > .button-text,
+.sb-player-button > .button-box > .button-text,
+.sb-player-button > button > .button-box > .button-icon,
+.sb-player-button > .button-box > .button-icon
+{
+  margin: 0px !important;  /* In this case important is needed */
+}
 
 window,
 dialog 
