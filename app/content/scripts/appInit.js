@@ -243,6 +243,15 @@ function doMainwinStart()
   var mainwinURL = feathersManager.currentLayoutURL;
   var showChrome = feathersManager.isChromeEnabled(mainwinURL, feathersManager.currentSkinName);
 
+  // TEMP fix for the Mac to enable the titlebar on the main window.
+  var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                          .getService(Components.interfaces.nsIPropertyBag2);
+  platform = sysInfo.getProperty("name");
+  
+  if (platform == "Darwin") {
+    showChrome = true;
+  }
+  
   var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";
   if (showChrome) {
     chromeFeatures += ",resizable=yes"; 
