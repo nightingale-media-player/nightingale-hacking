@@ -44,6 +44,14 @@ NS_IMPL_CI_INTERFACE_GETTER4(sbLocalDatabaseMediaItem,
                              sbILocalDatabaseMediaItem,
                              nsISupportsWeakReference)
 
+sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem(sbILocalDatabaseLibrary* aLibrary,
+                          const nsAString& aGuid)
+: sbLocalDatabaseResourceProperty(aLibrary, aGuid),
+  mMediaItemId(0),
+  mLibrary(aLibrary)
+{
+}
+
 // sbIMediaItem
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetLibrary(sbILibrary** aLibrary)

@@ -45,6 +45,7 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_sortable.js \
                  $(srcdir)/test_cascadefilterset.js \
                  $(srcdir)/test_dblocation.js \
+                 $(srcdir)/test_mediaitem.js \
                  $(srcdir)/head_localdatabaselibrary.js \
                  $(srcdir)/media_items.txt \
                  $(srcdir)/resource_properties.txt \
