@@ -72,6 +72,7 @@
 
 
 <!ENTITY html.context.open  "Open" >
+<!ENTITY html.context.opentab  "Open in New Tab" >
 <!ENTITY html.context.openexternal  "Open with Default Browser" >
 <!ENTITY html.context.play  "Play" >
 <!ENTITY html.context.add   "Add to library" >
@@ -318,3 +319,6 @@
 <!ENTITY trackeditor.key               "E" >
 <!ENTITY sanitize.key                  "Del" >
 
+
+<!ENTITY tabs.closeTab "Close tab">
+<!ENTITY tabs.listAllTabs "List all tabs">

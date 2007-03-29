@@ -1,5 +1,10 @@
 <?xml version="1.0"?>
-<!DOCTYPE bindings PUBLIC "-//MOZILLA//DTD XBL V1.0//EN" "http://www.mozilla.org/xbl">
+<!DOCTYPE bindings PUBLIC "-//MOZILLA//DTD XBL V1.0//EN" "http://www.mozilla.org/xbl"
+[
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%songbirdDTD;
+]
+>
 <!--
 //
 // BEGIN SONGBIRD GPL
@@ -25,6 +30,7 @@
 // END SONGBIRD GPL
 //
 -->
+
 <bindings
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xbl="http://www.mozilla.org/xbl"
@@ -43,17 +49,68 @@
         this.addProgressListener(this._progressFilter);
         */
         this.loading = false;
+        
+        /* we need to track when events change */
+        this.tabChangeEventListener = {
+          tabbrowser: this,
+          timer_period: 200, // fire after 1/5th of a second
+          timer: null,
+          handleEvent: function(event) {
+            if (event.attrName == 'selectedIndex' &&
+                event.prevValue != event.newValue &&
+                !this.timer) {
+              this.timer = Components.classes['@mozilla.org/timer;1']
+                  .createInstance(Components.interfaces.nsITimer);
+              this.timer.initWithCallback(this, this.timer_period,
+                  Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+              
+            }
+          },
+          notify: function(timer) {
+            this.tabbrowser._loaded();
+            this.timer = null;
+          },
+        };
+        this.mTabBox.addEventListener("DOMAttrModified",
+            this.tabChangeEventListener, false);
       ]]></constructor>
       <destructor><![CDATA[
         this.closeBalloonTip();
         this.removeProgressListener(this);
+        if (this.tabChangeEventListener) {
+          if (this.tabChangeEventListener.timer) {
+            this.tabChangeEventListener.timer.cancel();
+          }
+          this.mTabBox.removeEventListener("DOMAttrModified",
+              this.tabChangeEventListener, false);
+        }
       ]]></destructor>
       
       <field name="_progressFilter">
         Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
             .createInstance(Components.interfaces.nsIWebProgress)
       </field>
-
+      
+      <method name="loadURIFromEvent">
+        <parameter name="aURI"/>
+        <parameter name="aEvent"/>
+        <parameter name="aReferrerURI"/>
+        <parameter name="aCharset"/>
+        <body><![CDATA[
+          // load a URI but take into account what the key modifiers and
+          // mouse buttons are
+          var isMac = window.navigator.platform.match(/^Mac/) == 'Mac';
+          var middleButton = aEvent?(aEvent.button == 1):false;
+          var modifierKey = aEvent?(isMac?aEvent.metaKey:aEvent.ctrlKey):false;
+          
+          if (middleButton || modifierKey) {
+            this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
+          } else {
+            this.loadURI(aURI, aReferrerURI, aCharset);
+          }
+        ]]></body>
+      </method>
+      
       <field name="_servicepane">null</field>
       <property name="servicepane">
         <getter><![CDATA[
@@ -252,7 +309,6 @@
           }
         ]]></body>
       </method>
-
       
       <!-- implementation of nsIWebProgressListener -->
       <method name="onLocationChange">
@@ -260,10 +316,6 @@
         <parameter name="aRequest" />
         <parameter name="aLocation" />
         <body><![CDATA[
-        
-
-          
-        
           try {
             // for some reason we need to do this dance to get scrollbars to
             // show up
@@ -280,20 +332,6 @@
             // Set the value in the text box (shown or not)
 
             if (aRequest && aRequest.name) {
-              // Set the box
-              SBDataSetStringValue('browser.uri', cur_uri);
-              if (this.servicepane) {
-                var url = this.servicepane.getURLName(cur_uri);
-                if (!url) {
-                  url = cur_uri;
-                }
-                SBDataSetStringValue('browser.url.text', url);
-                var image = this.servicepane.getURLImage(cur_uri);
-                if (image && image.length) {
-                  SBDataSetStringValue('browser.url.image', image);
-                }
-              }
-              
               // Set the buttons based on the session history.
               if (this.webNavigation.sessionHistory) {
                 // Check the buttons
@@ -521,9 +559,19 @@
                 // try dealing with media, might just be web content.
                 if ( !this.handleMediaURL(this.theHTMLContextURL, true, false) )
                 {
-                  gServicePane.loadURL( this.theHTMLContextURL );
+                  // should we add the referrer?
+                  this.loadURI(this.theHTMLContextURL, null, null);
                 }
               break;
+              case "html.context.opentab":
+                // can be track or playlist
+                // try dealing with media, might just be web content.
+                if ( !this.handleMediaURL(this.theHTMLContextURL, true, false) )
+                {
+                  // should we add the referrer?
+                  this.loadOneTab(this.theHTMLContextURL, null, null, null, null, null);
+                }
+                break;
               case "html.context.openexternal":
                   var externalLoader = (Components
                            .classes["@mozilla.org/uriloader/external-protocol-service;1"]
@@ -840,5 +888,81 @@
     </handlers>
   </binding>
 
+
+  <!-- these are from globalBindings.xml -->
+  <binding id="tabbrowser-tab" extends="chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser-tab">
+    <content closetabtext="&tabs.closeTab;">
+      <xul:hbox class="tab-image-left" xbl:inherits="selected"/>
+      <xul:hbox flex="1" class="tab-image-middle" align="center" xbl:inherits="selected">
+        <xul:stack class="tab-icon">
+          <xul:image xbl:inherits="validate,src=image" class="tab-icon-image"/>
+          <xul:image class="tab-extra-status"/>
+        </xul:stack>
+        <xul:label flex="1" xbl:inherits="value=label,crop,accesskey" crop="right" class="tab-text"/>
+      </xul:hbox>
+      <xul:toolbarbutton anonid="close-button" class="tab-close-button" tabindex="-1"/>
+        <xul:hbox class="tab-image-right" xbl:inherits="selected"/>
+    </content>
+  </binding>
+  
+   <binding id="tabbrowser-tabs"  
+            extends="chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser-tabs">
+    <content>
+      <xul:stack flex="1" class="tabs-stack">
+        <xul:vbox>
+          <xul:spacer flex="1"/>
+          <xul:hbox class="tabs-bottom" align="center"/>
+        </xul:vbox>
+        <xul:vbox>
+          <xul:hbox>
+            <xul:stack>
+              <xul:spacer class="tabs-left"/>
+            </xul:stack>
+            <xul:arrowscrollbox anonid="arrowscrollbox" orient="horizontal" flex="1" style="min-width: 1px;" class="tabbrowser-arrowscrollbox">
+              <children/>
+            </xul:arrowscrollbox>
+            <xul:stack align="center" pack="end">
+              <!-- XXXsspitzer hack
+                   this extra hbox with position: relative
+                   is needed to work around two bugs.
+                   see bugs #346307 and #346035 
+              -->
+              <xul:hbox style="position: relative;">
+                <xul:hbox flex="1" class="tabs-alltabs-box" 
+                          anonid="alltabs-box"/>
+              </xul:hbox>
+              <!-- XXXsspitzer hack
+                   this extra hbox with position: relative
+                   is needed to work around two bugs.
+                   see bugs #346307 and #346035 
+              -->
+              <xul:hbox style="position: relative;">
+                <xul:hbox flex="1" class="tabs-alltabs-box-animate" 
+                          anonid="alltabs-box-animate"/>
+              </xul:hbox>
+              <!-- XXXsspitzer hack
+                   this extra hbox with position: relative
+                   is needed to work around two bugs.
+                   see bugs #346307 and #346035 
+              -->
+              <xul:hbox style="position: relative;">
+                <xul:toolbarbutton class="tabs-alltabs-button"
+                                   type="menu"
+                                   anonid="alltabs-button"
+                                   tooltipstring="&tags.listAllTabs;">
+                  <xul:menupopup class="tabs-alltabs-popup"
+                                 anonid="alltabs-popup" position="after_end"/>
+                </xul:toolbarbutton>
+              </xul:hbox>
+            </xul:stack>
+            <xul:hbox class="tabs-closebutton-box" align="center" pack="end" anonid="tabstrip-closebutton">
+              <xul:toolbarbutton class="close-button tabs-closebutton"/>
+            </xul:hbox>
+          </xul:hbox>
+          <xul:spacer class="tabs-bottom-spacer"/>
+        </xul:vbox>
+      </xul:stack>
+    </content>
+  </binding>
 
 </bindings>

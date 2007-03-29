@@ -33,14 +33,18 @@
 
   <binding id="sb-locationbar-textbox">
     <content>
-      <xul:textbox anonid="textbox" class="locationbar-textbox" flex="6" align="center">
+      <xul:textbox anonid="textbox" class="locationbar-textbox"
+                   type="autocomplete"
+                   autocompletesearch="history"
+                   enablehistory="true"
+                   flex="6" align="center">
         <children/>
         <xul:image anonid="image" class="locationbar-image"
             src="" />
       </xul:textbox>
     </content>
     
-    <implementation>
+    <implementation implements="nsIWebProgressListener">
       <constructor><![CDATA[
         // get widgets
         this._textbox = document.getAnonymousElementByAttribute(this, 'anonid', 'textbox');
@@ -52,15 +56,105 @@
         // set up dataremotes
         this._dataText = SBDataBindElementProperty("browser.url.text", this._textbox, "value");
         this._dataImage = SBDataBindElementProperty("browser.url.image", this._image, "src");
+        
+        
+        /* we want to do some initialization after the window has loaded */
+        var self = this;
+        function windowOnLoad() {
+            self.browser.addProgressListener(self,
+                    Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
+            window.removeEventListener('load', windowOnLoad, false);
+        }
+        window.addEventListener('load', windowOnLoad, false);
       ]]></constructor>
+      <destructor><![CDATA[
+        this.browser.removeProgressListener(this);
+      ]]></destructor>
+      
+      <field name="_browser">null</field>
+      <property name="browser" readonly="true">
+        <getter><![CDATA[
+          if (!this._browser) {
+            this._browser = document.getElementById(this.getAttribute('browser'));
+          }
+          return this._browser;
+        ]]></getter>
+      </property>
       
       <property name="value"
                 onget="return this._textbox.value;"
                 onset="this._textbox.value=val;" />
       
+      <property name="uri">
+        <getter><![CDATA[
+          return SBDataGetStringValue("browser.uri");
+        ]]></getter>
+        <setter><![CDATA[
+          // set the dataremote uri to the right value
+          SBDataSetStringValue("browser.uri", val);
+          // populate the ui with a little help from our servicepane
+          var text = gServicePane.getURLName(val);
+          SBDataSetStringValue("browser.url.text", text?text:val);
+          var image = gServicePane.getURLImage(val)
+          SBDataSetStringValue("browser.url.image", image?image:'');
+        ]]></setter>
+      </property>
+      
       <method name="focus">
         <body><![CDATA[
           this._textbox.focus();
+        ]]></body>
+      </method>
+      
+      <!-- nsIWebProgressListener implementation -->
+      <method name="onLocationChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aLocation" />
+        <body><![CDATA[
+          // when the tabbrowser location changes update the location bar
+          this.uri = aLocation.spec;
+        ]]></body>
+      </method>
+      
+      <method name="onProgressChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aCurSelfProgress" />
+        <parameter name="aMaxSelfProgress" />
+        <parameter name="aCurTotalProgress" />
+        <parameter name="aMaxTotalProgress" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
+        ]]></body>
+      </method>
+      
+      <method name="onSecurityChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
+        ]]></body>
+      </method>
+
+      <method name="onStateChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <parameter name="aStatus" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
+        ]]></body>
+      </method>
+
+      <method name="onStatusChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <parameter name="aMessage" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
         ]]></body>
       </method>
 
@@ -90,10 +184,7 @@
               // Make sure the value is an url
               value = SBGetUrlFromService( value );
               // And then put it back in the box as a service
-              SBDataSetStringValue("browser.uri", value);
-              SBDataSetStringValue("browser.url.text", gServicePane.getURLName(value));
-              SBDataSetStringValue("browser.url.image", gServicePane.getURLImage(value));
-          
+              this.uri = SBGetUrlFromService( value );
               // And then go to the url.  Easy, no?
               window.gServicePane.loadURL(value);
             }

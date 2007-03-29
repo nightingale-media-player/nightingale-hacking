@@ -73,33 +73,6 @@ try
         
       MainwinAdd( SBDataBindElementAttribute( "jumpto.visible", "control.jumpto", "checked", true ) );
       
-      // Set up the trigger for the webplaylist callout 
-      var webplaylistCalloutTrigger = SB_NewDataRemote( "browser.playlist.show", null );
-      var webplaylistCalloutObserver = { 
-          observe: function( aSubject, aTopic, aData ) { 
-            try {
-              var callout = document.getElementById('calloutbox_web_playlist'); 
-              // If closed, never show again
-              if (callout.hasBeenClosed) {
-                return;
-              }
-              if (aSubject.boolValue) {
-                callout.show();
-              } else {
-                callout.hide();
-              }
-            } catch (e) {
-              dump("\nCouldn't trigger web playlist callout box: \n" + e + "\n");
-            }
-          } 
-      };
-      webplaylistCalloutTrigger.bindObserver(webplaylistCalloutObserver, true);
-      MainwinAdd( webplaylistCalloutTrigger );
-      
-      // Must null out the dataremote so that we to avoid creating a cycle with the observer.
-      // (Otherwise observer has the dataremote in scope)
-      webplaylistCalloutTrigger = null;
-      
       
       // Options
 //      MainwinAdd( SBDataBindElementAttribute( "option.htmlbar", "file.htmlbar", "checked", true ) );

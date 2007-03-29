@@ -139,6 +139,15 @@ pref("songbird.webplaylist.enabled", "1");
 // for tabbrowsing
 pref("browser.chrome.site_icons", true);
 pref("browser.chrome.favicons", true);
+pref("browser.tabs.loadInBackground", false);
+pref("browser.chrome.site_icons", true);
+pref("browser.chrome.favicons", true);
+pref("browser.chrome.image_icons.max_size", 1024);
+pref("browser.tabs.forceHide", false);
+pref("browser.tabs.warnOnClose", false);
+pref("browser.tabs.autoHide", true);
+pref("browser.tabs.selectOwnerOnClose", true);
+
 
 // Override the window XPInstall opens on extension install
 pref("xpinstall.dialog.progress.type.chrome", "Browser:Preferences");

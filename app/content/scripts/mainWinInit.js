@@ -48,6 +48,7 @@ var theDefaultUrlOverride = null;
 
 var gServicePane = null;
 var gBrowser = null;
+function getBrowser() { return gBrowser; }
 
 function SBInitialize()
 {

@@ -248,6 +248,7 @@
             
             <method name="loadURL">
                 <parameter name="aURL" />
+                <parameter name="aEvent" />
                 <body><![CDATA[
                     dump('(loadURL?)\n');
                     if (!aURL ||
@@ -265,12 +266,11 @@
 
                         try {
                             this.browser.stop();
-                            this.browser.webNavigation.loadURI(aURL, Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
-                            
-                            dump('told the browser\n');
+                            this.browser.loadURIFromEvent(aURL, aEvent, null, null);
                             
                         }
                         catch (err) {
+                            dump('error: '+err+'\n');
                             var err_url = "chrome://songbird/content/html/cannot_load.html";
                             if (aURL != err_url) {
                                 this.loadURL(err_url);
@@ -382,13 +382,13 @@
             event.preventDefault();
             
             ]]></handler>
-            <handler event="select"><![CDATA[
+            <handler event="click"><![CDATA[
                 var node = this.getNodeForRow(this.mTree.currentIndex);
                 if (node && node.url) {
                     this.highlightURL(node.url);
                     
                     dump('url: '+node.url+'\n');
-                    this.loadURL(node.url);
+                    this.loadURL(node.url, event);
                 } else {
                     /* FIXME: implement non-go-to-url behaviour */
                 }
