@@ -1,0 +1,71 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILocalDatabaseAsyncGUIDArray.idl
+ * \brief Definition of the sbILocalDatabaseAsyncGUIDArray interfaces
+ */
+#include "nsISupports.idl"
+#include "sbILocalDatabaseGUIDArray.idl"
+
+/**
+ * \interface sbILocalDatabaseAsyncGUIDArrayListener
+ */
+[scriptable, uuid(08af2324-3aa1-4162-9da3-caa4169247ca)]
+interface sbILocalDatabaseAsyncGUIDArrayListener : nsISupports
+{
+  void onGetLength(in unsigned long aLength,
+                   in nsresult aResult);
+
+  void onGetByIndex(in AString aGUID,
+                    in nsresult aResult);
+
+  void onGetSortPropertyValueByIndex(in AString aGUID,
+                                     in nsresult aResult);
+
+  void onGetMediaItemIdByIndex(in unsigned long aMediaItemId,
+                               in nsresult aResult);
+};
+
+/**
+ * \interface sbILocalDatabaseAsyncGUIDArray
+ *
+ * An asynchronous wrapper around an existing GUID array.
+ */
+[scriptable, uuid(b1e017b3-6417-4f37-9685-3d3a09efbe99)]
+interface sbILocalDatabaseAsyncGUIDArray : sbILocalDatabaseGUIDArray
+{
+  void setListener(in sbILocalDatabaseAsyncGUIDArrayListener aListener);
+
+  void getLengthAsync();
+
+  void getByIndexAsync(in unsigned long aIndex);
+
+  void getSortPropertyValueByIndexAsync(in unsigned long aIndex);
+
+  void getMediaItemIdByIndexAsync(in unsigned long aIndex);
+};
+

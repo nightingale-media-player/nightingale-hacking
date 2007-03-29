@@ -61,13 +61,12 @@ static const PRLogModuleInfo *gLocalDatabaseGUIDArrayLog = nsnull;
 #define LOG_WARN(args)
 #endif
 
-NS_IMPL_ISUPPORTS1(sbLocalDatabaseGUIDArray, sbILocalDatabaseGUIDArray)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseGUIDArray, sbILocalDatabaseGUIDArray)
 
 sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mBaseConstraintValue(0),
   mFetchSize(DEFAULT_FETCH_SIZE),
   mLength(0),
-  mAsync(PR_FALSE),
   mIsDistinct(PR_FALSE),
   mValid(PR_FALSE),
   mNullsFirst(PR_FALSE)
@@ -185,17 +184,6 @@ sbLocalDatabaseGUIDArray::SetFetchSize(PRUint32 aFetchSize)
   mFetchSize = aFetchSize;
 
   return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetIsAsync(PRBool *aIsAsync)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::SetIsAsync(PRBool aIsAsync)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP

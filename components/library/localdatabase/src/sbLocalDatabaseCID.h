@@ -23,7 +23,8 @@
 // END SONGBIRD GPL
 //
 */
-
+#define SB_LOCALDATABASE_GUIDARRAY_DESCRIPTION                        \
+  "Local Database GUID Array"
 #define SB_LOCALDATABASE_GUIDARRAY_CONTRACTID                         \
   "@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"
 #define SB_LOCALDATABASE_GUIDARRAY_CID                                \
@@ -32,6 +33,18 @@
     0xb214,                                                           \
     0x46be,                                                           \
     { 0x90, 0x83, 0xd3, 0x94, 0xea, 0x6a, 0xb0, 0x18 }                \
+  }
+
+#define SB_LOCALDATABASE_ASYNCGUIDARRAY_DESCRIPTION                   \
+  "Local Database Async GUID Array"
+#define SB_LOCALDATABASE_ASYNCGUIDARRAY_CONTRACTID                    \
+  "@songbirdnest.com/Songbird/Library/LocalDatabase/AsyncGUIDArray;1"
+#define SB_LOCALDATABASE_ASYNCGUIDARRAY_CID                           \
+  { /* 590b758a-aa00-41e4-8b41-4ef002a6b31d */                        \
+    0x590b758a,                                                       \
+    0xaa00,                                                           \
+    0x41e4,                                                           \
+    { 0x8b, 0x41, 0x4e, 0xf0, 0x02, 0xa6, 0xb3, 0x1d }                \
   }
 
 #define SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION                   \

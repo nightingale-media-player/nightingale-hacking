@@ -28,6 +28,7 @@
 
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseGUIDArray.h"
+#include "sbLocalDatabaseAsyncGUIDArray.h"
 #include "sbLocalDatabaseLibraryFactory.h"
 #include "sbLocalDatabaseLibraryLoader.h"
 #include "sbLocalDatabasePropertyCache.h"
@@ -42,52 +43,59 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabasePropertyCache)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSimpleMediaListFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseTreeView)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseViewMediaListFactory)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseAsyncGUIDArray, Init)
 
 static const nsModuleComponentInfo components[] =
 {
-	{
-    "Local Database GUID Array",
+  {
+    SB_LOCALDATABASE_GUIDARRAY_DESCRIPTION,
     SB_LOCALDATABASE_GUIDARRAY_CID,
     SB_LOCALDATABASE_GUIDARRAY_CONTRACTID,
     sbLocalDatabaseGUIDArrayConstructor
-	},
-	{
+  },
+  {
+    SB_LOCALDATABASE_ASYNCGUIDARRAY_DESCRIPTION,
+    SB_LOCALDATABASE_ASYNCGUIDARRAY_CID,
+    SB_LOCALDATABASE_ASYNCGUIDARRAY_CONTRACTID,
+    sbLocalDatabaseAsyncGUIDArrayConstructor
+  },
+  {
     SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION,
     SB_LOCALDATABASE_LIBRARYFACTORY_CID,
     SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID,
     sbLocalDatabaseLibraryFactoryConstructor
-	},
-	{
+  },
+  {
     SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION,
     SB_LOCALDATABASE_LIBRARYLOADER_CID,
     SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID,
     sbLocalDatabaseLibraryLoaderConstructor,
     sbLocalDatabaseLibraryLoader::RegisterSelf
-	},
-	{
+  },
+  {
     "Local Database Property Cache",
     SB_LOCALDATABASE_PROPERTYCACHE_CID,
     SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID,
     sbLocalDatabasePropertyCacheConstructor
-	},
-	{
+  },
+  {
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_DESCRIPTION,
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID,
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CONTRACTID,
     sbLocalDatabaseSimpleMediaListFactoryConstructor
-	},
-	{
+  },
+  {
     "Local Database TreeView",
     SB_LOCALDATABASE_TREEVIEW_CID,
     SB_LOCALDATABASE_TREEVIEW_CONTRACTID,
     sbLocalDatabaseTreeViewConstructor
-	},
-	{
+  },
+  {
     SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_DESCRIPTION,
     SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CID,
     SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CONTRACTID,
     sbLocalDatabaseViewMediaListFactoryConstructor
-	}
+  }
 };
 
 NS_IMPL_NSGETMODULE(Songbird Local Database Module, components)

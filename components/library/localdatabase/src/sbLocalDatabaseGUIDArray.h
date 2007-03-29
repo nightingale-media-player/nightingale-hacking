@@ -203,9 +203,6 @@ private:
   // Paired property cache
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
-  // Do things async
-  PRPackedBool mAsync;
-
   // Get distinct values?
   PRPackedBool mIsDistinct;
 

@@ -36,8 +36,8 @@ interface nsIURI;
 interface sbILocalDatabasePropertyCache;
 
 /**
-* \interface sbILocalDatabaseGUIDArray
-*/
+ * \interface sbILocalDatabaseGUIDArray
+ */
 [scriptable, uuid(4499865f-b4f3-4e6d-90ed-0004ff38a49f)]
 interface sbILocalDatabaseGUIDArray : nsISupports
 {
@@ -52,8 +52,6 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   attribute unsigned long baseConstraintValue;
 
   attribute unsigned long fetchSize;
-
-  attribute boolean isAsync;
 
   attribute boolean isDistinct;
 
