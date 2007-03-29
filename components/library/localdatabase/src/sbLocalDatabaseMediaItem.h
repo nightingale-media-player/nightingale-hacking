@@ -27,33 +27,34 @@
 #ifndef __SBLOCALDATABASEMEDIAITEM_H__
 #define __SBLOCALDATABASEMEDIAITEM_H__
 
-#include "sbLocalDatabaseLibrary.h"
-
 #include <sbIMediaItem.h>
+
+#include <nsCOMPtr.h>
+#include <nsIClassInfo.h>
+#include <nsStringGlue.h>
+#include <nsWeakReference.h>
 #include <sbILibraryResource.h>
-#include <sbILibrary.h>
-#include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabaseMediaItem.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILocalDatabaseResourceProperty.h>
-#include <nsCOMPtr.h>
-#include <nsStringGlue.h>
-#include <nsIClassInfo.h>
-
 #include "sbLocalDatabaseResourceProperty.h"
+#include <sbIMediaItem.h>
+
+class sbILocalDatabaseLibrary;
 
 class sbLocalDatabaseMediaItem : public sbLocalDatabaseResourceProperty,
                                  public sbIMediaItem,
                                  public sbILocalDatabaseMediaItem,
-                                 public nsIClassInfo
+                                 public nsIClassInfo,
+                                 public nsSupportsWeakReference
                                  
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
 
-  //When using inheritance, you must forward all interfaces implemented
-  //by the base class, else you will get "pure virtual function was not defined"
-  //style errors.
+  // When using inheritance, you must forward all interfaces implemented
+  // by the base class, else you will get "pure virtual function was not
+  // defined"style errors.
   NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseResourceProperty::)
   NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseResourceProperty::)
   

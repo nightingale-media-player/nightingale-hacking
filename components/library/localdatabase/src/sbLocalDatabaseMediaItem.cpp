@@ -28,17 +28,21 @@
 
 #include <nsMemory.h>
 #include <nsIProgrammingLanguage.h>
+#include <sbILibrary.h>
+#include <sbILocalDatabaseLibrary.h>
 
-NS_IMPL_ISUPPORTS_INHERITED3(sbLocalDatabaseMediaItem,
+NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseMediaItem,
                              sbLocalDatabaseResourceProperty,
                              sbIMediaItem,
                              sbILocalDatabaseMediaItem,
-                             nsIClassInfo)
+                             nsIClassInfo,
+                             nsISupportsWeakReference)
 
-NS_IMPL_CI_INTERFACE_GETTER3(sbLocalDatabaseMediaItem,
+NS_IMPL_CI_INTERFACE_GETTER4(sbLocalDatabaseMediaItem,
                              sbILibraryResource,
                              sbIMediaItem,
-                             sbILocalDatabaseMediaItem)
+                             sbILocalDatabaseMediaItem,
+                             nsISupportsWeakReference)
 
 // sbIMediaItem
 NS_IMETHODIMP

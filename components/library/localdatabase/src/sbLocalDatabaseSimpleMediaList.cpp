@@ -47,7 +47,8 @@
   NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
 #define DEFAULT_FETCH_SIZE 1000
 
-NS_IMPL_ISUPPORTS1(sbSimpleMediaListEnumerationListener, sbIMediaListEnumerationListener)
+NS_IMPL_ISUPPORTS1(sbSimpleMediaListEnumerationListener,
+                   sbIMediaListEnumerationListener)
 
 /**
  * See sbIMediaListListener.idl
@@ -149,8 +150,9 @@ sbSimpleMediaListEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
 }
 
 
-NS_IMPL_ISUPPORTS_INHERITED0(sbLocalDatabaseSimpleMediaList,
-                             sbLocalDatabaseMediaListBase)
+NS_IMPL_ISUPPORTS_INHERITED1(sbLocalDatabaseSimpleMediaList,
+                             sbLocalDatabaseMediaListBase,
+                             nsISupportsWeakReference)
 
 nsresult
 sbLocalDatabaseSimpleMediaList::Init()

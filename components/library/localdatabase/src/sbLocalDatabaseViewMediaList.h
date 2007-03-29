@@ -36,9 +36,11 @@
 #include <sbIMediaListListener.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
+#include <nsWeakReference.h>
 #include <prlock.h>
 
-class sbLocalDatabaseViewMediaList : public sbLocalDatabaseMediaListBase
+class sbLocalDatabaseViewMediaList : public sbLocalDatabaseMediaListBase,
+                                     public nsSupportsWeakReference
 {
 public:
   friend class sbViewMediaListEnumerationListener;

@@ -49,12 +49,12 @@
 #include <nsIFile.h>
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
+#include <nsWeakReference.h>
 #include <prlog.h>
 #include <prprf.h>
 #include <prtime.h>
 #include <nsMemory.h>
 #include <nsIUUIDGenerator.h>
-
 
 #define NS_UUID_GENERATOR_CONTRACTID "@mozilla.org/uuid-generator;1"
 
@@ -78,6 +78,8 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif
+
+#define LOG_SUBMESSAGE_SPACE "                                 - "
 
 static char* kInsertQueryColumns[] = {
   "guid",
@@ -353,7 +355,7 @@ sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
   nsString cachedType;
   PRBool alreadyCached = mCachedTypeTable.Get(aGUID, &cachedType);
   if (alreadyCached) {
-    LOG(("                                 - Found type in cache!"));
+    LOG((LOG_SUBMESSAGE_SPACE "Found type in cache!"));
     _retval.Assign(cachedType);
     return NS_OK;
   }
@@ -696,19 +698,33 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
          NS_LossyConvertUTF16toASCII(aGUID).get()));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsCOMPtr<sbIMediaItem> mediaItem;
-  PRBool alreadyCreated = mMediaItemTable.Get(aGUID, getter_AddRefs(mediaItem));
+  nsWeakPtr weakMediaItem;
+  PRBool alreadyCreated = mMediaItemTable.Get(aGUID, getter_AddRefs(weakMediaItem));
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> strongMediaItem;
+
   if (alreadyCreated) {
-    NS_ADDREF(*_retval = mediaItem);
-    return NS_OK;
+    strongMediaItem = do_QueryReferent(weakMediaItem, &rv);
+    if (NS_SUCCEEDED(rv)) {
+      // This item is still owned by someone so we don't have to create it again
+      LOG((LOG_SUBMESSAGE_SPACE "Found live weak reference in cache"));
+      NS_ADDREF(*_retval = strongMediaItem);
+      return NS_OK;
+    }
+
+    // Our cached item has died... Remove it from the hash table and create it
+    // all over again.
+    LOG((LOG_SUBMESSAGE_SPACE "Found dead weak reference in cache"));
+    mMediaItemTable.Remove(aGUID);
   }
 
-  mediaItem = new sbLocalDatabaseMediaItem(this, aGUID);
-  NS_ENSURE_TRUE(mediaItem, NS_ERROR_OUT_OF_MEMORY);
+  strongMediaItem = new sbLocalDatabaseMediaItem(this, aGUID);
+  NS_ENSURE_TRUE(strongMediaItem, NS_ERROR_OUT_OF_MEMORY);
 
   // Get the type for the guid.
   nsAutoString type;
-  nsresult rv = GetTypeForGUID(aGUID, type);
+  rv = GetTypeForGUID(aGUID, type);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!type.IsEmpty()) {
@@ -720,18 +736,24 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
     NS_ASSERTION(factoryInfo->factory, "Null factory!");
 
     nsCOMPtr<sbIMediaList> mediaList;
-    rv = factoryInfo->factory->CreateMediaList(mediaItem, getter_AddRefs(mediaList));
+    rv = factoryInfo->factory->CreateMediaList(strongMediaItem,
+                                               getter_AddRefs(mediaList));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mediaItem = do_QueryInterface(mediaList, &rv);
+    // Replace the new media item. If the media list cared about it then it
+    // should have added a reference to keep it alive.
+    strongMediaItem = do_QueryInterface(mediaList, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Cache this mediaItem so we won't create it again.
-  PRBool success = mMediaItemTable.Put(aGUID, mediaItem);
+  weakMediaItem = do_GetWeakReference(strongMediaItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Cache this media item so we won't create it again.
+  PRBool success = mMediaItemTable.Put(aGUID, weakMediaItem);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
-  NS_ADDREF(*_retval = mediaItem);
+  NS_ADDREF(*_retval = strongMediaItem);
   return NS_OK;
 }
 

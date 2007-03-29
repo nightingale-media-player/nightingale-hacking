@@ -40,6 +40,7 @@
 #include <sbIMediaListFactory.h>
 
 class nsIURI;
+class nsIWeakReference;
 class sbIDatabaseQuery;
 class sbILocalDatabasePropertyCache;
 
@@ -64,7 +65,7 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseResourceProperty,
   typedef nsClassHashtable<nsStringHashKey, sbMediaListFactoryInfo>
           sbMediaListFactoryInfoTable;
 
-  typedef nsInterfaceHashtable<nsStringHashKey, sbIMediaItem>
+  typedef nsInterfaceHashtable<nsStringHashKey, nsIWeakReference>
           sbMediaItemTable;
 
   typedef nsDataHashtable<nsStringHashKey, nsString>

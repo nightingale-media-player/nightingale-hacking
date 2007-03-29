@@ -122,8 +122,9 @@ sbViewMediaListEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED0(sbLocalDatabaseViewMediaList,
-                             sbLocalDatabaseMediaListBase)
+NS_IMPL_ISUPPORTS_INHERITED1(sbLocalDatabaseViewMediaList,
+                             sbLocalDatabaseMediaListBase,
+                             nsISupportsWeakReference)
 
 nsresult
 sbLocalDatabaseViewMediaList::Init()
