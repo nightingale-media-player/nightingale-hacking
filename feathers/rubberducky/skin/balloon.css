@@ -31,9 +31,8 @@ BALLOON TIPS
 */
 
 #balloonTip {
-  background-color: #000 !important; 
   background-image: none !important;
-  /* background-color: transparent !important; */
+  background-color: transparent !important;
 }
 
 .balloontip-frame-nw {
@@ -159,7 +158,7 @@ BALLOON TIPS
 }
 
 .balloontip-frame-c {
-  /* background-image: url(chrome://songbird/skin/default/balloon_bkg.png); */
+  -moz-opacity: 0.99;
   background-color: #FDFFD5 !important;
 }
 
