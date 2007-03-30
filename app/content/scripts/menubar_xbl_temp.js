@@ -141,7 +141,7 @@ function doMenu( command ) {
     }
     break;
     case "services.browse":
-      gServicePane.loadURL( "http://extensions.songbirdnest.com/");
+      gBrowser.loadURI( "http://extensions.songbirdnest.com/");
     break;
     
     default:
@@ -158,7 +158,7 @@ function onMenu( target )
     // ==== Default is to launch the value property if one exists, or do nothing.      
     if ( target.value )
     {
-      gServicePane.loadURL( target.value);
+      gBrowser.loadURI( target.value);
     }
   }
 }

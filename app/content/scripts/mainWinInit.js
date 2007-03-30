@@ -44,7 +44,6 @@
 var thePollPlaylistService = null;
 var theWebPlaylist = null;
 var theWebPlaylistQuery = null;
-var theDefaultUrlOverride = null;
 
 var gServicePane = null;
 var gBrowser = null;
@@ -105,7 +104,7 @@ function SBInitialize()
     
     gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
     // looks like we need to attach this to the window...
-    window.gServicePane = gServicePane
+    window.gBrowser = gBrowser;
     
     document.__SEARCHWIDGET__ = document.getElementById( "search_widget" );
 
@@ -140,6 +139,7 @@ function SBUninitialize()
   webPlaylist.removeEventListener("command", onPlaylistContextMenu, false);
 
   gServicePane = null;
+  gBrowser = null;
   document.__SEARCHWIDGET__ = null;
   document.__CURRENTWEBPLAYLIST__ = null;
 

@@ -538,7 +538,7 @@ try
         }
       }    
     }
-    if (url != "") gServicePane.loadURL(url);
+    if (url != "") gBrowser.loadURI(url);
   }*/
   
   function getPlaylistLabel(guid, table) {

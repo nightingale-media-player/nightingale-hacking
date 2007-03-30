@@ -96,7 +96,7 @@
                 var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
                                           .getService(Components.interfaces.nsIURLFormatter);
                 var getMoreURL = formatter.formatURLPref("extensions.getMoreThemesURL");
-                gServicePane.loadURL(getMoreURL);
+                gBrowser.loadURI(getMoreURL);
                 break;
                 
               case "feathers.item":
@@ -169,7 +169,7 @@
               // If the current window has a browser/servicepane, then add a link
               // to get more feathers.
               // NOTE: This is brittle. Please change this once we have a proper API.
-              if (typeof(gServicePane) != "undefined") {
+              if (typeof(gBrowser) != "undefined") {
                 this._appendGetMoreFeathers();
               }
             } catch (e) {

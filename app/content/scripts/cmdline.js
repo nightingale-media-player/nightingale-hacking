@@ -43,10 +43,11 @@ try
       if (aUriSpec.toLowerCase().indexOf("http:") == 0 ||
           aUriSpec.toLowerCase().indexOf("https:") == 0) {
         // lone> this should open tabs if necessary, rather than override the last url that might have been loaded on the previous handleItem call
-        if (!theServiceTree.doneInit) {
-          theDefaultUrlOverride = aUriSpec; 
+        if (!gServicePane.doneInit) {
+          // put the requested url into our dataremote
+          SBDataSetStringValue("servicetree.selected_url", aUriSpec);
         } else {
-          gServicePane.loadURL( aUriSpec );
+          gBrowser.loadURI(aUriSpec);
         }
       } else {
         if (!_drop_filelist) 

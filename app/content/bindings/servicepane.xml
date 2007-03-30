@@ -76,8 +76,7 @@
                 <body><![CDATA[return this.mTreePane.getURLImage(aURL);]]></body>
             </method>
             
-            <!-- FIXME: what is this property for? -->
-            <property name="doneInit" onget="return true;" />
+            <field name="doneInit">false</field>
         </implementation>
      </binding>
     
@@ -154,7 +153,6 @@
                 this.mTree.builder.addListener(this);
                 this.mTree.builder.rebuild();
                 
-                this.mLoadedFirstURL = false;
                 this.mCurrentURL = null;
                 
                 /* we want to do some initialization after the window has loaded */
@@ -170,7 +168,7 @@
                     }
                     sp.loadURL(start);
 
-                    sp.mLoadedFirstURL = true;
+                    gServicePane.doneInit = true;
                     window.removeEventListener('load', windowOnLoad, false);
                 }
                 window.addEventListener('load', windowOnLoad, false);
@@ -266,7 +264,7 @@
 
                         try {
                             this.browser.stop();
-                            this.browser.loadURIFromEvent(aURL, aEvent, null, null);
+                            this.browser.loadURI(aURL, null, null, aEvent);
                             
                         }
                         catch (err) {

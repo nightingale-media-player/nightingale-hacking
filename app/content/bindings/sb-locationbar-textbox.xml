@@ -186,7 +186,7 @@
               // And then put it back in the box as a service
               this.uri = SBGetUrlFromService( value );
               // And then go to the url.  Easy, no?
-              window.gServicePane.loadURL(value);
+              window.gBrowser.loadURI(value);
             }
             break; 
         }

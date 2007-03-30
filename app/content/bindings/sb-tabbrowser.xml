@@ -86,31 +86,67 @@
         }
       ]]></destructor>
       
+
+      <!-- the public interface for loading URLs.
+           this overrides the implementation in tabbrowser.xml#tabbrowser
+           it takes the existing aURI, aReferrerURI and aCharset arguments
+           and optionally an aEvent handler
+           -->
+      <method name="loadURI">
+        <parameter name="aURI"/>
+        <parameter name="aReferrerURI"/>
+        <parameter name="aCharset"/>
+        <parameter name="aEvent"/>
+        <body>
+          <![CDATA[
+            var where = "current";
+            if (aEvent) {
+              // if an event as supplied infer where we want to load this URI
+              //
+              var isMac = window.navigator.platform.match(/^Mac/) == 'Mac';
+              var middleButton = aEvent?(aEvent.button == 1):false;
+              var modifierKey = aEvent?(isMac?aEvent.metaKey:aEvent.ctrlKey):false;
+              
+              if (middleButton || modifierKey) {
+                this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
+              } else {
+                this.loadURI(aURI, aReferrerURI, aCharset);
+              }
+            }
+            
+            
+            
+            // Policy goes here
+            
+            // no policy is good policy?
+            
+            
+            // Now, actually open the URI
+            if (where == "tab") {
+              this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
+            } else if (where == "external") {
+              var externalLoader = (Components
+                    .classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                    .getService(Components.interfaces.nsIExternalProtocolService));
+              var nsURI = (Components
+                    .classes["@mozilla.org/network/io-service;1"]
+                    .getService(Components.interfaces.nsIIOService)
+                    .newURI(aURI, aCharset, null));
+              externalLoader.loadURI(nsURI, null);
+            } else if (where == "current") {
+              this.mCurrentBrowser.loadURI(aURI, aReferrerURI, aCharset);
+            } else {
+              // eek! unknown target
+            }
+          ]]>
+        </body>
+      </method>
+
       <field name="_progressFilter">
         Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
             .createInstance(Components.interfaces.nsIWebProgress)
       </field>
-      
-      <method name="loadURIFromEvent">
-        <parameter name="aURI"/>
-        <parameter name="aEvent"/>
-        <parameter name="aReferrerURI"/>
-        <parameter name="aCharset"/>
-        <body><![CDATA[
-          // load a URI but take into account what the key modifiers and
-          // mouse buttons are
-          var isMac = window.navigator.platform.match(/^Mac/) == 'Mac';
-          var middleButton = aEvent?(aEvent.button == 1):false;
-          var modifierKey = aEvent?(isMac?aEvent.metaKey:aEvent.ctrlKey):false;
-          
-          if (middleButton || modifierKey) {
-            this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
-          } else {
-            this.loadURI(aURI, aReferrerURI, aCharset);
-          }
-        ]]></body>
-      </method>
-      
+
       <field name="_servicepane">null</field>
       <property name="servicepane">
         <getter><![CDATA[

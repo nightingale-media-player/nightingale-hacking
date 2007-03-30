@@ -50,8 +50,8 @@ function openURLSB(url) {
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                       .getService(Components.interfaces.nsIWindowMediator);
   var mainWin = wm.getMostRecentWindow("Songbird:Main");
-  if (mainWin && mainWin.window && mainWin.window.gServicePane) {
-    mainWin.window.gServicePane.loadURL(url);
+  if (mainWin && mainWin.window && mainWin.window.gBrowser) {
+    mainWin.window.gBrowser.loadURI(url);
     mainWin.focus();
     return;
   }

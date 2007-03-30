@@ -848,7 +848,7 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
   }
   else
   {
-    gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid);
+    gBrowser.loadURI( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid);
   }
 }
 

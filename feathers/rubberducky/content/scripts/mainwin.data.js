@@ -147,7 +147,7 @@ try
       {
         if ( !gBrowser.playlistTree && !theLastSearchEventTarget )
         {
-          if (gServicePane) gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
+          if (gBrowser) gBrowser.loadURI( "chrome://songbird/content/xul/playlist_test.xul?library" );
         }
         
         var playlistref = SBDataGetStringValue('playlist.ref');

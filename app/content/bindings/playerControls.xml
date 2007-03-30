@@ -805,7 +805,7 @@
         <body>
           <![CDATA[
             // optional connection
-            if (gServicePane) gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
+            if (gBrowser) gBrowser.loadURI("chrome://songbird/content/xul/playlist_test.xul?library" );
           ]]>
         </body>
       </method>
@@ -1498,11 +1498,11 @@
         <body>
           <![CDATA[
             // optional connection
-            if (gServicePane) {
+            if (gBrowser) {
               if (guid == "songbird" && table == "library")
-                gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?library");
+                gBrowser.loadURI( "chrome://songbird/content/xul/playlist_test.xul?library");
               else 
-                gServicePane.loadURL( "chrome://songbird/content/xul/playlist_test.xul?" + table+ "," + guid);
+                gBrowser.loadURI( "chrome://songbird/content/xul/playlist_test.xul?" + table+ "," + guid);
             }
           ]]>
         </body>

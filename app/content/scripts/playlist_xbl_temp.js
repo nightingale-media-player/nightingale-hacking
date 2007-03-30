@@ -87,7 +87,7 @@ function onPlaylistBurnToCD( evt )
 
 function onPlaylistNoPlaylist() 
 { 
-  gServicePane.loadURL( 'chrome://songbird/content/xul/playlist_test.xul?library' ); 
+  gBrowser.loadURI( 'chrome://songbird/content/xul/playlist_test.xul?library' ); 
 }
 
 function onPlaylistFilterChange() {
@@ -332,7 +332,7 @@ function onSearchTerm( target, in_term )
   }
   if ( search_url.length )
   {
-    gServicePane.loadURL( search_url );
+    gBrowser.loadURI( search_url );
   }
 }
 
