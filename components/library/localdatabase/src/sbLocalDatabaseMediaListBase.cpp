@@ -82,8 +82,7 @@ sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibra
   PRBool success = mViewFilters.Init();
   NS_ASSERTION(success, "Failed to init view filter table");
 
-  nsresult rv;
-  sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener(&rv);
+  nsresult rv = sbLocalDatabaseMediaListListener::Init();
   NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to initialize base listener");
 }
 

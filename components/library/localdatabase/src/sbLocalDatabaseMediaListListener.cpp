@@ -35,15 +35,6 @@
 
 sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener()
 {
-  NS_WARNING("You should really use the other constructor (that takes an "
-             "nsresult) to safely use this class.");
-  Init();
-}
-
-sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener(nsresult* aInitStatus)
-{
-  NS_ASSERTION(aInitStatus, "Null pointer!");
-  *aInitStatus = Init();
 }
 
 sbLocalDatabaseMediaListListener::~sbLocalDatabaseMediaListListener()

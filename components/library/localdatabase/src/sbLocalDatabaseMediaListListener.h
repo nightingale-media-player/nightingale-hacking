@@ -52,14 +52,11 @@ class sbLocalDatabaseMediaListListener
   };
 
 public:
-  // Default constructor. You should really use the next constructor to be
-  // safe.
   sbLocalDatabaseMediaListListener();
-
-  // Constructor that give a status result. Don't use if this returns failure.
-  sbLocalDatabaseMediaListListener(nsresult* aInitStatus);
-
   ~sbLocalDatabaseMediaListListener();
+
+  // Initialize the instance.
+  nsresult Init();
 
 protected:
   // Add a listener to the hash table.
@@ -90,9 +87,6 @@ protected:
   nsresult NotifyListenersBatchEnd(sbIMediaList* aList);
 
 private:
-  // Initialize the instance.
-  nsresult Init();
-
   // This callback is meant to be used with mListenerProxyTable.
   // aUserData should be a MediaListCallbackInfo pointer.
   static PLDHashOperator PR_CALLBACK
