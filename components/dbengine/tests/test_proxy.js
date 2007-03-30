@@ -39,7 +39,8 @@ dbqCallback.prototype = {
     assertEqual(resultObject.getRowCount(), 2);
     
     gComplete++;
-    if(gComplete > 1)
+    
+    if(gComplete == 2)
       testFinished();
   }
 };
