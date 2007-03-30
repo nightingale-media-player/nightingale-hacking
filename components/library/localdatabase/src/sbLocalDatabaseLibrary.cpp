@@ -117,6 +117,11 @@ sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(nsIURI* aDatabaseLocation,
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Constructed", this));
   NS_ASSERTION(mDatabaseLocation, "Null pointer!");
   NS_ASSERTION(!mDatabaseGuid.IsEmpty(), "No GUID!");
+
+  // Initialize our base class.
+  nsresult rv;
+  sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener(&rv);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Base class failed to initialize!");
 }
 
 NS_IMETHODIMP
@@ -128,10 +133,6 @@ sbLocalDatabaseLibrary::Init()
 
   // Maybe check to this that this db is valid, etc?
   // Check version and migrate if needed?
-
-  // Initialize our base class.
-  sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener(&rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   mPropertyCache =
     do_CreateInstance(SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID, &rv);
