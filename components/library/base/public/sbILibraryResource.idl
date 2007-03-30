@@ -46,11 +46,6 @@ interface nsIURI;
 interface sbILibraryResource : nsISupports
 {
   /**
-   * \brief A unique uri for this resource
-   */
-  readonly attribute nsIURI uri;
-
-  /**
    * \brief The guid of this resource
    */
   readonly attribute AString guid;

@@ -31,7 +31,6 @@
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
-#include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <prmon.h>
@@ -50,6 +49,7 @@
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabaseResourceProperty.h"
+#include "sbLocalDatabaseMediaListListener.h"
 
 // Macros to help early returns within loops.
 #define SB_CONTINUE_IF_FALSE(_expr)                                            \
@@ -75,6 +75,7 @@
   PR_END_MACRO
 
 class sbLocalDatabaseMediaListBase : public sbLocalDatabaseResourceProperty,
+                                     public sbLocalDatabaseMediaListListener,
                                      public sbIMediaList,
                                      public sbILocalDatabaseMediaItem,
                                      public sbIFilterableMediaList,
@@ -84,7 +85,6 @@ class sbLocalDatabaseMediaListBase : public sbLocalDatabaseResourceProperty,
 {
   typedef nsTArray<nsString> sbStringArray;
   typedef nsClassHashtable<nsStringHashKey, sbStringArray> sbStringArrayHash;
-  typedef nsInterfaceHashtableMT<nsISupportsHashKey, sbIMediaListListener> sbMediaListListenersTableMT;
 
 public:
   NS_DECL_ISUPPORTS_INHERITED
@@ -108,36 +108,11 @@ public:
   ~sbLocalDatabaseMediaListBase();
 
 protected:
-  // Enumerate listeners and call OnItemAdded
-  nsresult NotifyListenersItemAdded(sbIMediaItem* aItem);
-
-  // Enumerate listeners and call OnItemRemoved
-  nsresult NotifyListenersItemRemoved(sbIMediaItem* aItem);
-
-  // Enumerate listeners and call OnListCleared
-  nsresult NotifyListenersListCleared();
-
-  // Enumerate listeners and call OnBatchBegin
-  nsresult NotifyListenersBatchBegin();
-
-  // Enumerate listeners and call OnBatchEnd
-  nsresult NotifyListenersBatchEnd();
-
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty) = 0;
 
-  NS_METHOD MakeStandardQuery(sbIDatabaseQuery** _retval);
+  nsresult MakeStandardQuery(sbIDatabaseQuery** _retval);
 
 private:
-
-  struct MediaListCallbackInfo {
-
-    MediaListCallbackInfo(sbIMediaList* aList, sbIMediaItem* aItem)
-    : list(aList),
-      item(aItem) { }
-
-    nsCOMPtr<sbIMediaList> list;
-    nsCOMPtr<sbIMediaItem> item;
-  };
 
   // This callback is meant to be used with an sbStringArrayHash.
   // aUserData should be a sbILocalDatabaseGUIDArray pointer.
@@ -145,45 +120,6 @@ private:
     AddFilterToGUIDArrayCallback(nsStringHashKey::KeyType aKey,
                                  sbStringArray* aEntry,
                                  void* aUserData);
-
-  // This callback is meant to be used with mListenerProxyTable.
-  // aUserData should be a MediaListCallbackInfo pointer.
-  static PLDHashOperator PR_CALLBACK
-    ItemAddedCallback(nsISupportsHashKey::KeyType aKey,
-                      sbIMediaListListener* aEntry,
-                      void* aUserData);
-
-  // This callback is meant to be used with mListenerProxyTable.
-  // aUserData should be a MediaListCallbackInfo pointer.
-  static PLDHashOperator PR_CALLBACK
-    ItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
-                        sbIMediaListListener* aEntry,
-                        void* aUserData);
-
-  // This callback is meant to be used with mListenerProxyTable.
-  // aUserData should be an sbIMediaList pointer.
-  static PLDHashOperator PR_CALLBACK
-    ListClearedCallback(nsISupportsHashKey::KeyType aKey,
-                        sbIMediaListListener* aEntry,
-                        void* aUserData);
-
-  // This callback is meant to be used with mListenerProxyTable.
-  // aUserData should be an sbIMediaList pointer.
-  static PLDHashOperator PR_CALLBACK
-    BatchBeginCallback(nsISupportsHashKey::KeyType aKey,
-                       sbIMediaListListener* aEntry,
-                       void* aUserData);
-
-  // This callback is meant to be used with mListenerProxyTable.
-  // aUserData should be an sbIMediaList pointer.
-  static PLDHashOperator PR_CALLBACK
-    BatchEndCallback(nsISupportsHashKey::KeyType aKey,
-                     sbIMediaListListener* aEntry,
-                     void* aUserData);
-
-  // Called to initialize the proxy table. Returns PR_TRUE on success, PR_FALSE
-  // otherwise.
-  inline PRBool InitializeListenerProxyTable();
 
   nsresult EnumerateAllItemsInternal(sbIMediaListEnumerationListener* aEnumerationListener);
 
@@ -237,13 +173,6 @@ protected:
   nsCOMPtr<sbICascadeFilterSet> mCascadeFilterSet;
 
 private:
-  // A thread-safe hash table that holds a mapping of listeners to proxies.
-  sbMediaListListenersTableMT mListenerProxyTable;
-
-  // This lock protects the code that checks for existing entries in the proxy
-  // table.
-  PRLock* mListenerProxyTableLock;
-
   // Map of current view filter configuration
   sbStringArrayHash mViewFilters;
 
@@ -252,7 +181,6 @@ private:
 
   // Current sort filter configuration
   nsCOMPtr<sbIPropertyArray> mViewSort;
-
 };
 
 class sbDatabaseResultStringEnumerator : public nsIStringEnumerator

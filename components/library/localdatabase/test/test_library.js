@@ -61,5 +61,13 @@ function runTest () {
   assertEqual(view.getItemByGuid(item1.guid).guid, item1.guid);
   assertEqual(view.getItemByGuid(item2.guid).guid, item2.guid);
 
+  var libraryList = library.QueryInterface(Ci.sbIMediaList);
+  
+  var listListener = new TestMediaListListener();
+  libraryList.addListener(listListener);
+
+  libraryList.add(item1);
+
+  assertEqual(listListener.addedItem, item1);
 }
 

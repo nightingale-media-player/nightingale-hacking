@@ -173,7 +173,7 @@ NS_IMETHODIMP sbLocalDatabaseResourceProperty::Write()
 
   return NS_ERROR_NOT_IMPLEMENTED;
 }
-
+/*
 NS_IMETHODIMP
 sbLocalDatabaseResourceProperty::GetUri(nsIURI * *aUri)
 {
@@ -190,7 +190,7 @@ sbLocalDatabaseResourceProperty::GetUri(nsIURI * *aUri)
  
   return rv;
 }
-
+*/
 NS_IMETHODIMP
 sbLocalDatabaseResourceProperty::GetGuid(nsAString& aGuid)
 {

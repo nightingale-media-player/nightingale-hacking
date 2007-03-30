@@ -89,10 +89,12 @@ static char* kInsertQueryColumns[] = {
   "media_list_type_id"
 };
 
-NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseLibrary,
+NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseLibrary,
                              sbLocalDatabaseResourceProperty,
                              sbILibrary,
-                             sbILocalDatabaseLibrary)
+                             sbILocalDatabaseLibrary,
+                             sbIMediaList,
+                             sbIMediaItem)
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid)
 : mDatabaseGuid(aDatabaseGuid)
@@ -126,6 +128,10 @@ sbLocalDatabaseLibrary::Init()
 
   // Maybe check to this that this db is valid, etc?
   // Check version and migrate if needed?
+
+  // Initialize our base class.
+  sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mPropertyCache =
     do_CreateInstance(SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID, &rv);
@@ -206,695 +212,6 @@ sbLocalDatabaseLibrary::Init()
   success = mCachedIDTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   return NS_OK;
-}
-
-/**
- * \brief A simple routine to construct a sbIDatabaseQuery object with some
- *        generic initialization.
- */
-/* inline */ NS_METHOD
-sbLocalDatabaseLibrary::MakeStandardQuery(sbIDatabaseQuery** _retval)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - MakeStandardQuery()", this));
-  nsresult rv;
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(mDatabaseGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  // Set the location (if it was specified in the constructor)
-  if (mDatabaseLocation) {
-    rv = query->SetDatabaseLocation(mDatabaseLocation);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = query->SetAsyncQuery(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*_retval = query);
-  return NS_OK;
-}
-
-/**
- * \brief Make a string of the current time in milliseconds.
- */
-/* inline */ void
-sbLocalDatabaseLibrary::GetNowString(nsAString& _retval) {
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetNowString()", this));
-  char buf[30];
-  PRUint32 len = PR_snprintf(buf, sizeof(buf), "%lld",
-                             (PRUint64)(PR_Now() / PR_USEC_PER_MSEC));
-  _retval.Assign(NS_ConvertASCIItoUTF16(buf, len));
-}
-
-/**
- * \brief Creates a new item in the database for the CreateMediaItem and
- *        CreateMediaList methods.
- *
- * \param aItemType - An integer specifying the type of item to create. This
- *                    will be zero for normal media items and nonzero for all
- *                    media lists.
- * \param aURISpecOrPrefix - The URI spec for media items or the URI prefix for
- *                           media lists.
- * \param _retval - The GUID that was generated, set only if the function
- *                  succeeds.
- */
-NS_METHOD
-sbLocalDatabaseLibrary::CreateNewItemInDatabase(const PRUint32 aMediaItemTypeID,
-                                                const nsAString& aURISpecOrPrefix,
-                                                nsAString& _retval)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateNewItemInDatabase(%d, %s)", this,
-         aMediaItemTypeID, NS_LossyConvertUTF16toASCII(aURISpecOrPrefix).get()));
-  // Construct a Query for this operation.
-  nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(mInsertMediaItemQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Make a new GUID for the new media list.
-  nsCOMPtr<nsIUUIDGenerator> uuidGen =
-    do_GetService(NS_UUID_GENERATOR_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsID id;
-  rv = uuidGen->GenerateUUIDInPlace(&id);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString guid(NS_ConvertUTF8toUTF16(id.ToString()));
-  guid.Assign(Substring(guid, 1, guid.Length() - 2));
-
-  // ToString adds curly braces to the GUID which we don't want.
-  rv = query->BindStringParameter(0, guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Set created and updated timestamps.
-  nsAutoString createdTimeString;
-  GetNowString(createdTimeString);
-
-  rv = query->BindStringParameter(1, createdTimeString);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(2, createdTimeString);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Set the new URI spec and media item type.
-  if (aMediaItemTypeID == SB_MEDIAITEM_TYPEID) {
-    // This is a regular media item so use the spec that was passed in.
-    rv = query->BindStringParameter(3, aURISpecOrPrefix);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Media items don't have a media_list_type_id.
-    rv = query->BindNullParameter(4);
-    NS_ENSURE_SUCCESS(rv, rv);
- }
-  else {
-    // This is a media list, so use the value that was passed in as a prefix
-    // for the GUID.
-    nsAutoString newSpec;
-    newSpec.Assign(aURISpecOrPrefix);
-    newSpec.Append(guid);
-
-    rv = query->BindStringParameter(3, newSpec);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Record the media list type.
-    rv = query->BindInt32Parameter(4, aMediaItemTypeID);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  PRInt32 dbOk;
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  _retval.Assign(guid);
-  return NS_OK;
-}
-
-/**
- * \brief Returns the media list type for the given GUID.
- *
- * \param aGUID - The GUID to look up.
- *
- * \return The media list type. May return an empty string if the GUID
- *         represents a non-media list entry.
- */
-NS_METHOD
-sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
-                                       nsAString& _retval)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetTypeForGUID(%s)", this,
-         NS_LossyConvertUTF16toASCII(aGUID).get()));
-
-  // See if we have already cached this GUID's type.
-  nsString cachedType;
-  PRBool alreadyCached = mCachedTypeTable.Get(aGUID, &cachedType);
-  if (alreadyCached) {
-    LOG((LOG_SUBMESSAGE_SPACE "Found type in cache!"));
-    _retval.Assign(cachedType);
-    return NS_OK;
-  }
-
-  nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(mGetTypeForGUIDQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(0, aGUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt32 dbresult;
-  rv = query->Execute(&dbresult);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbresult, dbresult);
-
-  nsCOMPtr<sbIDatabaseResult> result;
-  rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 rowCount;
-  rv = result->GetRowCount(&rowCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ENSURE_TRUE(rowCount, NS_ERROR_NOT_AVAILABLE);
-
-  nsString type;
-  rv = result->GetRowCell(0, 0, type);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Cache this GUID's type.
-  PRBool success = mCachedTypeTable.Put(aGUID, type);
-  NS_WARN_IF_FALSE(success, "Failed to cache this GUID's type");
-
-  _retval.Assign(type);
-  return NS_OK;
-}
-
-/**
- * \brief Adds the types of all registered media list factories to an array.
- */
-/* static */ PLDHashOperator PR_CALLBACK
-sbLocalDatabaseLibrary::AddTypesToArrayCallback(nsStringHashKey::KeyType aKey,
-                                                sbMediaListFactoryInfo* aEntry,
-                                                void* aUserData)
-{
-  NS_ASSERTION(aEntry, "Null entry in the hash?!");
-  NS_ASSERTION(aUserData, "Null userData!");
-
-#ifdef PR_LOGGING
-  NS_ASSERTION(aEntry->factory, "Null factory!");
-
-  nsCAutoString contractID;
-  aEntry->factory->GetContractID(contractID);
-
-  TRACE(("LocalDatabaseLibrary - AddTypesToArrayCallback(%s, %s)",
-         NS_LossyConvertUTF16toASCII(aKey).get(), contractID.get()));
-#endif
-  
-  // Make a string enumerator for the string array.
-  nsTArray<nsString>* array =
-    NS_STATIC_CAST(nsTArray<nsString>*, aUserData);
-  NS_ENSURE_TRUE(array, PL_DHASH_STOP);
-  
-  nsString* newElement = array->AppendElement(aKey);
-  NS_ENSURE_TRUE(newElement, PL_DHASH_STOP);
-
-  return PL_DHASH_NEXT;
-}
-
-/**
- * \brief Registers this library's default media list factories.
- */
-NS_METHOD
-sbLocalDatabaseLibrary::RegisterDefaultMediaListFactories()
-{
-  nsCOMPtr<sbIMediaListFactory> factory;
-  NS_NEWXPCOM(factory, sbLocalDatabaseSimpleMediaListFactory);
-  NS_ENSURE_TRUE(factory, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv = RegisterMediaListFactory(factory);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_NEWXPCOM(factory, sbLocalDatabaseViewMediaListFactory);
-  NS_ENSURE_TRUE(factory, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = RegisterMediaListFactory(factory);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetContractIdForGuid(const nsAString& aGUID,
-                                             nsACString& aContractID)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetContractIdForGuid(%s)", this,
-         NS_LossyConvertUTF16toASCII(aGUID).get()));
-  nsAutoString mediaType;
-  nsresult rv = GetTypeForGUID(aGUID, mediaType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mediaType.IsEmpty()) {
-    // This is a regular media item with no contractID.
-    aContractID.Truncate();
-    return NS_OK;
-  }
-
-  sbMediaListFactoryInfo* factoryInfo;
-  PRBool typeRegistered = mMediaListFactoryTable.Get(mediaType, &factoryInfo);
-  NS_ENSURE_TRUE(typeRegistered, NS_ERROR_UNEXPECTED);
-
-  NS_ASSERTION(factoryInfo->factory, "Null factory pointer!");
-  nsCAutoString contractID;
-  rv = factoryInfo->factory->GetContractID(contractID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  aContractID.Assign(contractID);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGUID,
-                                              PRUint32* aMediaItemID)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetMediaItemIdForGuid(%s)", this,
-         NS_LossyConvertUTF16toASCII(aGUID).get()));
-  NS_ENSURE_ARG_POINTER(aMediaItemID);
-
-  PRUint32 cachedID;
-  PRBool alreadyCached = mCachedIDTable.Get(aGUID, &cachedID);
-  if (alreadyCached) {
-    LOG(("                                 - Found ID in cache!"));
-    *aMediaItemID = cachedID;
-    return NS_OK;
-  }
-
-  nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(mGetMediaItemIdForGUIDQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(0, aGUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt32 dbresult;
-  rv = query->Execute(&dbresult);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbresult, NS_ERROR_FAILURE);
-
-  nsCOMPtr<sbIDatabaseResult> result;
-  rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 rowCount;
-  rv = result->GetRowCount(&rowCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ENSURE_TRUE(rowCount, NS_ERROR_UNEXPECTED);
-
-  nsAutoString idString;
-  rv = result->GetRowCell(0, 0, idString);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 id = idString.ToInteger(&rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Cache this GUID's type.
-  PRBool success = mCachedIDTable.Put(aGUID, id);
-  NS_WARN_IF_FALSE(success, "Failed to cache this GUID's ID");
-
-  *aMediaItemID = id;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetDatabaseGuid(nsAString& aDatabaseGuid)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetDatabaseGuid()", this));
-  aDatabaseGuid = mDatabaseGuid;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetDatabaseLocation(nsIURI** aDatabaseLocation)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetDatabaseLocation()", this));
-  NS_ENSURE_ARG_POINTER(aDatabaseLocation);
-
-  if (!mDatabaseLocation) {
-    *aDatabaseLocation = nsnull;
-    return NS_OK;
-  }
-
-  nsresult rv = mDatabaseLocation->Clone(aDatabaseLocation);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetPropertyCache(sbILocalDatabasePropertyCache * *aPropertyCache)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetPropertyCache()", this));
-  NS_ENSURE_ARG_POINTER(aPropertyCache);
-  NS_ADDREF(*aPropertyCache = mPropertyCache);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetPropertiesForGuid(const nsAString& aGuid,
-                                             sbILocalDatabaseResourcePropertyBag** aPropertyBag)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetPropertiesForGuid(%s)", this,
-         NS_LossyConvertUTF16toASCII(aGuid).get()));
-  NS_ENSURE_ARG_POINTER(aPropertyBag);
-
-  nsresult rv;
-
-  const PRUnichar** guids = new const PRUnichar*[1];
-  guids[0] = PromiseFlatString(aGuid).get();
-
-  PRUint32 count;
-  sbILocalDatabaseResourcePropertyBag** bags;
-  rv = mPropertyCache->GetProperties(guids, 1, &count, &bags);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  *aPropertyBag = nsnull;
-  if (count > 0 && bags[0]) {
-    NS_ADDREF(*aPropertyBag = bags[0]);
-  }
-
-  nsMemory::Free(bags);
-  delete[] guids;
-
-  if (*aPropertyBag) {
-    return NS_OK;
-  }
-  else {
-    return NS_ERROR_NOT_AVAILABLE;
-  }
-
-}
-
-// sbILibrary
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetDevice(sbIDevice** aDevice)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetDevice()", this));
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetSupportsForeignMediaItems(PRBool *aSupportsForeignMediaItems)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetSupportsForeignMediaItems()", this));
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::Resolve(nsIURI *aUri, nsIChannel **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aUri);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsCAutoString spec;
-  nsresult rv = aUri->GetSpec(spec);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - Resolve(%s)", this, spec.get()));
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::CreateMediaItem(nsIURI *aUri,
-                                        sbIMediaItem **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aUri);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  // TODO: Check for duplicates?
-
-  nsCAutoString spec;
-  nsresult rv = aUri->GetSpec(spec);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateMediaItem(%s)", this,
-         spec.get()));
-
-  nsAutoString guid;
-  rv = CreateNewItemInDatabase(SB_MEDIAITEM_TYPEID, NS_ConvertUTF8toUTF16(spec),
-                               guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaItem> mediaItem;
-  rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*_retval = mediaItem);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
-                                        sbIMediaList **_retval)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateMediaList(%s)", this,
-         NS_LossyConvertUTF16toASCII(aType).get()));
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  sbMediaListFactoryInfo* factoryInfo;
-  PRBool validType = mMediaListFactoryTable.Get(aType, &factoryInfo);
-  NS_ENSURE_TRUE(validType, NS_ERROR_INVALID_ARG);
-
-  nsAutoString guid;
-  nsresult rv = CreateNewItemInDatabase(factoryInfo->typeID, aType, guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaItem> mediaItem;
-  rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*_retval = mediaList);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
-                                     sbIMediaItem **_retval)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetMediaItem(%s)", this,
-         NS_LossyConvertUTF16toASCII(aGUID).get()));
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsWeakPtr weakMediaItem;
-  PRBool alreadyCreated = mMediaItemTable.Get(aGUID, getter_AddRefs(weakMediaItem));
-
-  nsresult rv;
-  nsCOMPtr<sbIMediaItem> strongMediaItem;
-
-  if (alreadyCreated) {
-    strongMediaItem = do_QueryReferent(weakMediaItem, &rv);
-    if (NS_SUCCEEDED(rv)) {
-      // This item is still owned by someone so we don't have to create it again
-      LOG((LOG_SUBMESSAGE_SPACE "Found live weak reference in cache"));
-      NS_ADDREF(*_retval = strongMediaItem);
-      return NS_OK;
-    }
-
-    // Our cached item has died... Remove it from the hash table and create it
-    // all over again.
-    LOG((LOG_SUBMESSAGE_SPACE "Found dead weak reference in cache"));
-    mMediaItemTable.Remove(aGUID);
-  }
-
-  strongMediaItem = new sbLocalDatabaseMediaItem(this, aGUID);
-  NS_ENSURE_TRUE(strongMediaItem, NS_ERROR_OUT_OF_MEMORY);
-
-  // Get the type for the guid.
-  nsAutoString type;
-  rv = GetTypeForGUID(aGUID, type);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!type.IsEmpty()) {
-    // This must be a media list, so get the appropriate factory.
-    sbMediaListFactoryInfo* factoryInfo;
-    PRBool success = mMediaListFactoryTable.Get(type, &factoryInfo);
-    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-    NS_ASSERTION(factoryInfo->factory, "Null factory!");
-
-    nsCOMPtr<sbIMediaList> mediaList;
-    rv = factoryInfo->factory->CreateMediaList(strongMediaItem,
-                                               getter_AddRefs(mediaList));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Replace the new media item. If the media list cared about it then it
-    // should have added a reference to keep it alive.
-    strongMediaItem = do_QueryInterface(mediaList, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  weakMediaItem = do_GetWeakReference(strongMediaItem, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Cache this media item so we won't create it again.
-  PRBool success = mMediaItemTable.Put(aGUID, weakMediaItem);
-  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-  NS_ADDREF(*_retval = strongMediaItem);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetMediaListTypes(nsIStringEnumerator** aMediaListTypes)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetMediaListTypes(%s)", this));
-  NS_ENSURE_ARG_POINTER(aMediaListTypes);
-
-  // Array to hold all the registered types.
-  nsTArray<nsString> typeArray;
-
-  PRUint32 keyCount = mMediaListFactoryTable.Count();
-  PRUint32 enumCount =
-    mMediaListFactoryTable.EnumerateRead(AddTypesToArrayCallback, &typeArray);
-  NS_ENSURE_TRUE(enumCount == keyCount, NS_ERROR_FAILURE);
-
-  nsCOMPtr<nsIStringEnumerator> enumerator =
-    new sbTArrayStringEnumerator(&typeArray);
-  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*aMediaListTypes = enumerator);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::RegisterMediaListFactory(sbIMediaListFactory* aFactory)
-{
-  NS_ENSURE_ARG_POINTER(aFactory);
-
-  nsAutoString type;
-  nsresult rv = aFactory->GetType(type);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - RegisterMediaListFactory(%s)", this,
-         NS_LossyConvertUTF16toASCII(type).get()));
-
-  // Bail if we've already registered this type.
-  PRBool alreadyRegistered = mMediaListFactoryTable.Get(type, nsnull);
-  if (alreadyRegistered) {
-    NS_WARNING("Registering a media list factory that was already registered!");
-    return NS_OK;
-  }
-
-  // Make a query to insert it into the database.
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(mInsertMediaListFactoryQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(0, type);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCAutoString contractID;
-  rv = aFactory->GetContractID(contractID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(1, NS_ConvertASCIItoUTF16(contractID));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt32 dbresult;
-  rv = query->Execute(&dbresult);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbresult, dbresult);
-
-  // Get the newly created typeID for the factory.
-  rv = query->ResetQuery();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(NS_LITERAL_STRING("select last_insert_rowid()"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->Execute(&dbresult);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbresult, dbresult);
-
-  nsCOMPtr<sbIDatabaseResult> result;
-  rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString newTypeIDString;
-  rv = result->GetRowCell(0, 0, newTypeIDString);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 newTypeID = newTypeIDString.ToInteger(&rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Make a new object to hold this info.
-  nsAutoPtr<sbMediaListFactoryInfo>
-    factoryInfo(new sbMediaListFactoryInfo(newTypeID, aFactory));
-  NS_ENSURE_TRUE(factoryInfo, NS_ERROR_OUT_OF_MEMORY);
-
-  // And add it to our hash table.
-  PRBool success = mMediaListFactoryTable.Put(type, factoryInfo);
-  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-  factoryInfo.forget();
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::BeginBatch(PRBool aIsAsync)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - BeginBatch(%s)", this,
-    aIsAsync ? NS_LITERAL_CSTRING("true").get() :
-               NS_LITERAL_CSTRING("false").get()));
-  // this should increment a counter to allow for nested batches
-
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::CancelBatch()
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - CancelBatch()", this));
-  // this should increment a counter to allow for nested batches
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::EndBatch()
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - EndBatch()", this));
-  // this should decrement a counter to allow for nested batches
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::TidyUp()
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - TidyUp()", this));
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::Shutdown()
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
-  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 nsresult
@@ -1032,5 +349,1185 @@ sbLocalDatabaseLibrary::CreateQueries()
   rv = insert->ToString(mInsertMediaListFactoryQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+/**
+ * \brief A simple routine to construct a sbIDatabaseQuery object with some
+ *        generic initialization.
+ */
+/* inline */ nsresult
+sbLocalDatabaseLibrary::MakeStandardQuery(sbIDatabaseQuery** _retval)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - MakeStandardQuery()", this));
+  nsresult rv;
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(mDatabaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Set the location (if it was specified in the constructor)
+  if (mDatabaseLocation) {
+    rv = query->SetDatabaseLocation(mDatabaseLocation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = query);
+  return NS_OK;
+}
+
+/**
+ * \brief Make a string of the current time in milliseconds.
+ */
+/* inline */ void
+sbLocalDatabaseLibrary::GetNowString(nsAString& _retval) {
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetNowString()", this));
+  char buf[30];
+  PRUint32 len = PR_snprintf(buf, sizeof(buf), "%lld",
+                             (PRUint64)(PR_Now() / PR_USEC_PER_MSEC));
+  _retval.Assign(NS_ConvertASCIItoUTF16(buf, len));
+}
+
+/**
+ * \brief Creates a new item in the database for the CreateMediaItem and
+ *        CreateMediaList methods.
+ *
+ * \param aItemType - An integer specifying the type of item to create. This
+ *                    will be zero for normal media items and nonzero for all
+ *                    media lists.
+ * \param aURISpecOrPrefix - The URI spec for media items or the URI prefix for
+ *                           media lists.
+ * \param _retval - The GUID that was generated, set only if the function
+ *                  succeeds.
+ */
+nsresult
+sbLocalDatabaseLibrary::CreateNewItemInDatabase(const PRUint32 aMediaItemTypeID,
+                                                const nsAString& aURISpecOrPrefix,
+                                                nsAString& _retval)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateNewItemInDatabase(%d, %s)", this,
+         aMediaItemTypeID, NS_LossyConvertUTF16toASCII(aURISpecOrPrefix).get()));
+  // Construct a Query for this operation.
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mInsertMediaItemQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Make a new GUID for the new media list.
+  nsCOMPtr<nsIUUIDGenerator> uuidGen =
+    do_GetService(NS_UUID_GENERATOR_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsID id;
+  rv = uuidGen->GenerateUUIDInPlace(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString guid(NS_ConvertUTF8toUTF16(id.ToString()));
+  guid.Assign(Substring(guid, 1, guid.Length() - 2));
+
+  // ToString adds curly braces to the GUID which we don't want.
+  rv = query->BindStringParameter(0, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set created and updated timestamps.
+  nsAutoString createdTimeString;
+  GetNowString(createdTimeString);
+
+  rv = query->BindStringParameter(1, createdTimeString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(2, createdTimeString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the new URI spec and media item type.
+  if (aMediaItemTypeID == SB_MEDIAITEM_TYPEID) {
+    // This is a regular media item so use the spec that was passed in.
+    rv = query->BindStringParameter(3, aURISpecOrPrefix);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Media items don't have a media_list_type_id.
+    rv = query->BindNullParameter(4);
+    NS_ENSURE_SUCCESS(rv, rv);
+ }
+  else {
+    // This is a media list, so use the value that was passed in as a prefix
+    // for the GUID.
+    nsAutoString newSpec;
+    newSpec.Assign(aURISpecOrPrefix);
+    newSpec.Append(guid);
+
+    rv = query->BindStringParameter(3, newSpec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Record the media list type.
+    rv = query->BindInt32Parameter(4, aMediaItemTypeID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  _retval.Assign(guid);
+  return NS_OK;
+}
+
+/**
+ * \brief Returns the media list type for the given GUID.
+ *
+ * \param aGUID - The GUID to look up.
+ *
+ * \return The media list type. May return an empty string if the GUID
+ *         represents a non-media list entry.
+ */
+nsresult
+sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
+                                       nsAString& _retval)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetTypeForGUID(%s)", this,
+         NS_LossyConvertUTF16toASCII(aGUID).get()));
+
+  // See if we have already cached this GUID's type.
+  nsString cachedType;
+  PRBool alreadyCached = mCachedTypeTable.Get(aGUID, &cachedType);
+  if (alreadyCached) {
+    LOG((LOG_SUBMESSAGE_SPACE "Found type in cache!"));
+    _retval.Assign(cachedType);
+    return NS_OK;
+  }
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mGetTypeForGUIDQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, aGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, dbresult);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(rowCount, NS_ERROR_NOT_AVAILABLE);
+
+  nsString type;
+  rv = result->GetRowCell(0, 0, type);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Cache this GUID's type.
+  PRBool success = mCachedTypeTable.Put(aGUID, type);
+  NS_WARN_IF_FALSE(success, "Failed to cache this GUID's type");
+
+  _retval.Assign(type);
+  return NS_OK;
+}
+
+/**
+ * \brief Adds the types of all registered media list factories to an array.
+ */
+/* static */ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseLibrary::AddTypesToArrayCallback(nsStringHashKey::KeyType aKey,
+                                                sbMediaListFactoryInfo* aEntry,
+                                                void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null userData!");
+
+#ifdef PR_LOGGING
+  NS_ASSERTION(aEntry->factory, "Null factory!");
+
+  nsCAutoString contractID;
+  aEntry->factory->GetContractID(contractID);
+
+  TRACE(("LocalDatabaseLibrary - AddTypesToArrayCallback(%s, %s)",
+         NS_LossyConvertUTF16toASCII(aKey).get(), contractID.get()));
+#endif
+  
+  // Make a string enumerator for the string array.
+  nsTArray<nsString>* array =
+    NS_STATIC_CAST(nsTArray<nsString>*, aUserData);
+  NS_ENSURE_TRUE(array, PL_DHASH_STOP);
+  
+  nsString* newElement = array->AppendElement(aKey);
+  NS_ENSURE_TRUE(newElement, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+/**
+ * \brief Registers this library's default media list factories.
+ */
+nsresult
+sbLocalDatabaseLibrary::RegisterDefaultMediaListFactories()
+{
+  nsCOMPtr<sbIMediaListFactory> factory;
+  NS_NEWXPCOM(factory, sbLocalDatabaseSimpleMediaListFactory);
+  NS_ENSURE_TRUE(factory, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = RegisterMediaListFactory(factory);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_NEWXPCOM(factory, sbLocalDatabaseViewMediaListFactory);
+  NS_ENSURE_TRUE(factory, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = RegisterMediaListFactory(factory);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
+ * See sbILocalDatabaseLibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetContractIdForGuid(const nsAString& aGUID,
+                                             nsACString& aContractID)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetContractIdForGuid(%s)", this,
+         NS_LossyConvertUTF16toASCII(aGUID).get()));
+  nsAutoString mediaType;
+  nsresult rv = GetTypeForGUID(aGUID, mediaType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mediaType.IsEmpty()) {
+    // This is a regular media item with no contractID.
+    aContractID.Truncate();
+    return NS_OK;
+  }
+
+  sbMediaListFactoryInfo* factoryInfo;
+  PRBool typeRegistered = mMediaListFactoryTable.Get(mediaType, &factoryInfo);
+  NS_ENSURE_TRUE(typeRegistered, NS_ERROR_UNEXPECTED);
+
+  NS_ASSERTION(factoryInfo->factory, "Null factory pointer!");
+  nsCAutoString contractID;
+  rv = factoryInfo->factory->GetContractID(contractID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  aContractID.Assign(contractID);
+  return NS_OK;
+}
+
+/**
+ * See sbILocalDatabaseLibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGUID,
+                                              PRUint32* aMediaItemID)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetMediaItemIdForGuid(%s)", this,
+         NS_LossyConvertUTF16toASCII(aGUID).get()));
+  NS_ENSURE_ARG_POINTER(aMediaItemID);
+
+  PRUint32 cachedID;
+  PRBool alreadyCached = mCachedIDTable.Get(aGUID, &cachedID);
+  if (alreadyCached) {
+    LOG(("                                 - Found ID in cache!"));
+    *aMediaItemID = cachedID;
+    return NS_OK;
+  }
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mGetMediaItemIdForGUIDQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, aGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(rowCount, NS_ERROR_UNEXPECTED);
+
+  nsAutoString idString;
+  rv = result->GetRowCell(0, 0, idString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 id = idString.ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Cache this GUID's type.
+  PRBool success = mCachedIDTable.Put(aGUID, id);
+  NS_WARN_IF_FALSE(success, "Failed to cache this GUID's ID");
+
+  *aMediaItemID = id;
+  return NS_OK;
+}
+
+/**
+ * See sbILocalDatabaseLibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetDatabaseGuid(nsAString& aDatabaseGuid)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetDatabaseGuid()", this));
+  aDatabaseGuid = mDatabaseGuid;
+  return NS_OK;
+}
+
+/**
+ * See sbILocalDatabaseLibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetDatabaseLocation(nsIURI** aDatabaseLocation)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetDatabaseLocation()", this));
+  NS_ENSURE_ARG_POINTER(aDatabaseLocation);
+
+  if (!mDatabaseLocation) {
+    *aDatabaseLocation = nsnull;
+    return NS_OK;
+  }
+
+  nsresult rv = mDatabaseLocation->Clone(aDatabaseLocation);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
+ * See sbILocalDatabaseLibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetPropertyCache(sbILocalDatabasePropertyCache** aPropertyCache)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetPropertyCache()", this));
+  NS_ENSURE_ARG_POINTER(aPropertyCache);
+  NS_ADDREF(*aPropertyCache = mPropertyCache);
+  return NS_OK;
+}
+
+/**
+ * See sbILocalDatabaseLibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetPropertiesForGuid(const nsAString& aGuid,
+                                             sbILocalDatabaseResourcePropertyBag** aPropertyBag)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetPropertiesForGuid(%s)", this,
+         NS_LossyConvertUTF16toASCII(aGuid).get()));
+  NS_ENSURE_ARG_POINTER(aPropertyBag);
+
+  nsresult rv;
+
+  const PRUnichar** guids = new const PRUnichar*[1];
+  guids[0] = PromiseFlatString(aGuid).get();
+
+  PRUint32 count;
+  sbILocalDatabaseResourcePropertyBag** bags;
+  rv = mPropertyCache->GetProperties(guids, 1, &count, &bags);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aPropertyBag = nsnull;
+  if (count > 0 && bags[0]) {
+    NS_ADDREF(*aPropertyBag = bags[0]);
+  }
+
+  nsMemory::Free(bags);
+  delete[] guids;
+
+  if (*aPropertyBag) {
+    return NS_OK;
+  }
+  else {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetDevice(sbIDevice** aDevice)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetDevice()", this));
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetSupportsForeignMediaItems(PRBool* aSupportsForeignMediaItems)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetSupportsForeignMediaItems()", this));
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::Resolve(nsIURI* aUri,
+                                nsIChannel** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aUri);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCAutoString spec;
+  nsresult rv = aUri->GetSpec(spec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - Resolve(%s)", this, spec.get()));
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
+                                        sbIMediaItem** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aUri);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  // TODO: Check for duplicates?
+
+  nsCAutoString spec;
+  nsresult rv = aUri->GetSpec(spec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateMediaItem(%s)", this,
+         spec.get()));
+
+  nsAutoString guid;
+  rv = CreateNewItemInDatabase(SB_MEDIAITEM_TYPEID, NS_ConvertUTF8toUTF16(spec),
+                               guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbLocalDatabaseMediaListListener::NotifyListenersItemAdded(this, mediaItem);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "NotifyListenersItemAdded failed!");
+
+  NS_ADDREF(*_retval = mediaItem);
+  return NS_OK;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
+                                        sbIMediaList** _retval)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateMediaList(%s)", this,
+         NS_LossyConvertUTF16toASCII(aType).get()));
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  sbMediaListFactoryInfo* factoryInfo;
+  PRBool validType = mMediaListFactoryTable.Get(aType, &factoryInfo);
+  NS_ENSURE_TRUE(validType, NS_ERROR_INVALID_ARG);
+
+  nsAutoString guid;
+  nsresult rv = CreateNewItemInDatabase(factoryInfo->typeID, aType, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbLocalDatabaseMediaListListener::NotifyListenersItemAdded(this, mediaItem);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "NotifyListenersItemAdded failed!");
+
+  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = mediaList);
+  return NS_OK;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
+                                     sbIMediaItem** _retval)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetMediaItem(%s)", this,
+         NS_LossyConvertUTF16toASCII(aGUID).get()));
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsWeakPtr weakMediaItem;
+  PRBool alreadyCreated =
+    mMediaItemTable.Get(aGUID, getter_AddRefs(weakMediaItem));
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> strongMediaItem;
+
+  if (alreadyCreated) {
+    strongMediaItem = do_QueryReferent(weakMediaItem, &rv);
+    if (NS_SUCCEEDED(rv)) {
+      // This item is still owned by someone so we don't have to create it again
+      LOG((LOG_SUBMESSAGE_SPACE "Found live weak reference in cache"));
+      NS_ADDREF(*_retval = strongMediaItem);
+      return NS_OK;
+    }
+
+    // Our cached item has died... Remove it from the hash table and create it
+    // all over again.
+    LOG((LOG_SUBMESSAGE_SPACE "Found dead weak reference in cache"));
+    mMediaItemTable.Remove(aGUID);
+  }
+
+  strongMediaItem = new sbLocalDatabaseMediaItem(this, aGUID);
+  NS_ENSURE_TRUE(strongMediaItem, NS_ERROR_OUT_OF_MEMORY);
+
+  // Get the type for the guid.
+  nsAutoString type;
+  rv = GetTypeForGUID(aGUID, type);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!type.IsEmpty()) {
+    // This must be a media list, so get the appropriate factory.
+    sbMediaListFactoryInfo* factoryInfo;
+    PRBool success = mMediaListFactoryTable.Get(type, &factoryInfo);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+    NS_ASSERTION(factoryInfo->factory, "Null factory!");
+
+    nsCOMPtr<sbIMediaList> mediaList;
+    rv = factoryInfo->factory->CreateMediaList(strongMediaItem,
+                                               getter_AddRefs(mediaList));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Replace the new media item. If the media list cared about it then it
+    // should have added a reference to keep it alive.
+    strongMediaItem = do_QueryInterface(mediaList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  weakMediaItem = do_GetWeakReference(strongMediaItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Cache this media item so we won't create it again.
+  PRBool success = mMediaItemTable.Put(aGUID, weakMediaItem);
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  NS_ADDREF(*_retval = strongMediaItem);
+  return NS_OK;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetMediaListTypes(nsIStringEnumerator** aMediaListTypes)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetMediaListTypes(%s)", this));
+  NS_ENSURE_ARG_POINTER(aMediaListTypes);
+
+  // Array to hold all the registered types.
+  nsTArray<nsString> typeArray;
+
+  PRUint32 keyCount = mMediaListFactoryTable.Count();
+  PRUint32 enumCount =
+    mMediaListFactoryTable.EnumerateRead(AddTypesToArrayCallback, &typeArray);
+  NS_ENSURE_TRUE(enumCount == keyCount, NS_ERROR_FAILURE);
+
+  nsCOMPtr<nsIStringEnumerator> enumerator =
+    new sbTArrayStringEnumerator(&typeArray);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*aMediaListTypes = enumerator);
+  return NS_OK;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::RegisterMediaListFactory(sbIMediaListFactory* aFactory)
+{
+  NS_ENSURE_ARG_POINTER(aFactory);
+
+  nsAutoString type;
+  nsresult rv = aFactory->GetType(type);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - RegisterMediaListFactory(%s)", this,
+         NS_LossyConvertUTF16toASCII(type).get()));
+
+  // Bail if we've already registered this type.
+  PRBool alreadyRegistered = mMediaListFactoryTable.Get(type, nsnull);
+  if (alreadyRegistered) {
+    NS_WARNING("Registering a media list factory that was already registered!");
+    return NS_OK;
+  }
+
+  // Make a query to insert it into the database.
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mInsertMediaListFactoryQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, type);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCAutoString contractID;
+  rv = aFactory->GetContractID(contractID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(1, NS_ConvertASCIItoUTF16(contractID));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, dbresult);
+
+  // Get the newly created typeID for the factory.
+  rv = query->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("select last_insert_rowid()"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, dbresult);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString newTypeIDString;
+  rv = result->GetRowCell(0, 0, newTypeIDString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 newTypeID = newTypeIDString.ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Make a new object to hold this info.
+  nsAutoPtr<sbMediaListFactoryInfo>
+    factoryInfo(new sbMediaListFactoryInfo(newTypeID, aFactory));
+  NS_ENSURE_TRUE(factoryInfo, NS_ERROR_OUT_OF_MEMORY);
+
+  // And add it to our hash table.
+  PRBool success = mMediaListFactoryTable.Put(type, factoryInfo);
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  factoryInfo.forget();
+  return NS_OK;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::BeginBatch(PRBool aIsAsync)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - BeginBatch(%s)", this,
+    aIsAsync ? NS_LITERAL_CSTRING("true").get() :
+               NS_LITERAL_CSTRING("false").get()));
+  // this should increment a counter to allow for nested batches
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::CancelBatch()
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - CancelBatch()", this));
+  // this should increment a counter to allow for nested batches
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::EndBatch()
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - EndBatch()", this));
+  // this should decrement a counter to allow for nested batches
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::TidyUp()
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - TidyUp()", this));
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::Shutdown()
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetName(nsAString& aName)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::SetName(const nsAString& aName)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetLength(PRUint32* aLength)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetFilteredLength(PRUint32* aFilteredLength)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetItemByGuid(const nsAString& aGuid,
+                                      sbIMediaItem** _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetItemByIndex(PRUint32 aIndex,
+                                       sbIMediaItem** _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetItemByFilteredIndex(PRUint32 aIndex,
+                                               sbIMediaItem** _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::EnumerateAllItems(sbIMediaListEnumerationListener* aEnumerationListener,
+                                          PRUint16 aEnumerationType)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::EnumerateItemsByProperty(const nsAString& aPropertyName,
+                                                 const nsAString& aPropertyValue,
+                                                 sbIMediaListEnumerationListener* aEnumerationListener,
+                                                 PRUint16 aEnumerationType)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::EnumerateItemsByProperties(sbIPropertyArray* aProperties,
+                                                   sbIMediaListEnumerationListener* aEnumerationListener,
+                                                   PRUint16 aEnumerationType)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::IndexOf(sbIMediaItem* aMediaItem,
+                                PRUint32 aStartFrom,
+                                PRUint32* _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::LastIndexOf(sbIMediaItem* aMediaItem,
+                                    PRUint32 aStartFrom,
+                                    PRUint32* _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::Contains(sbIMediaItem* aMediaItem,
+                                 PRBool* _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetIsEmpty(PRBool* aIsEmpty)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
+{
+  return NotifyListenersItemAdded(this, aMediaItem);
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::AddAll(sbIMediaList* aMediaList)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::AddSome(nsISimpleEnumerator* aMediaItems)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::InsertBefore(PRUint32 aIndex,
+                                     sbIMediaItem* aMediaItem)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::MoveBefore(PRUint32 aFromIndex,
+                                   PRUint32 aToIndex)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::MoveLast(PRUint32 aIndex)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::Remove(sbIMediaItem* aMediaItem)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::RemoveByIndex(PRUint32 aIndex)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::RemoveSome(nsISimpleEnumerator* aMediaItems)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::Clear()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetTreeView(nsITreeView** aTreeView)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetCascadeFilterSet(sbICascadeFilterSet** aCascadeFilterSet)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::AddListener(sbIMediaListListener* aListener)
+{
+  return sbLocalDatabaseMediaListListener::AddListener(aListener);
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::RemoveListener(sbIMediaListListener* aListener)
+{
+  return sbLocalDatabaseMediaListListener::RemoveListener(aListener);
+}
+
+/**
+ * See sbIMediaItem
+ */
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetLibrary(sbILibrary** aLibrary)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetOriginLibrary(sbILibrary** aOriginLibrary)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetIsMutable(PRBool* aIsMutable)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetMediaCreated(PRInt32* aMediaCreated)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::SetMediaCreated(PRInt32 aMediaCreated)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetMediaUpdated(PRInt32* aMediaUpdated)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::SetMediaUpdated(PRInt32 aMediaUpdated)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::TestIsAvailable(nsIObserver* aObserver)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetContentSrc(nsIURI** aContentSrc)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::SetContentSrc(nsIURI* aContentSrc)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetContentLength(PRInt32* aContentLength)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::SetContentLength(PRInt32 aContentLength)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetContentType(nsAString& aContentType)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::SetContentType(const nsAString& aContentType)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::OpenInputStream(PRUint32 aOffset,
+                                        nsIInputStream** _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::OpenOutputStream(PRUint32 aOffset,
+                                         nsIOutputStream** _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::ToString(nsAString& _retval)
+{
+  _retval.Truncate();
   return NS_OK;
 }

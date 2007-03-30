@@ -42,7 +42,7 @@ public:
   NS_DECL_SBILOCALDATABASELIBRARYFACTORY
 
 private:
-  NS_METHOD InitalizeLibrary(nsIFile* aDatabaseFile);
+  nsresult InitalizeLibrary(nsIFile* aDatabaseFile);
 };
 
 #endif /* __SBLOCALDATABASELIBRARYFACTORY_H__ */

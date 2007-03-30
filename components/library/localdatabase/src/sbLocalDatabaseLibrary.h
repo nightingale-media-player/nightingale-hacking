@@ -27,9 +27,11 @@
 #ifndef __SBLOCALDATABASELIBRARY_H__
 #define __SBLOCALDATABASELIBRARY_H__
 
-#include <sbLocalDatabaseResourceProperty.h>
+#include "sbLocalDatabaseResourceProperty.h"
+#include "sbLocalDatabaseMediaListListener.h"
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
+#include <sbIMediaList.h>
 
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
@@ -45,8 +47,10 @@ class sbIDatabaseQuery;
 class sbILocalDatabasePropertyCache;
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseResourceProperty,
+                               public sbLocalDatabaseMediaListListener,
                                public sbILibrary,
-                               public sbILocalDatabaseLibrary
+                               public sbILocalDatabaseLibrary,
+                               public sbIMediaList
 {
   struct sbMediaListFactoryInfo {
     sbMediaListFactoryInfo()
@@ -86,6 +90,9 @@ public:
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
 
+  NS_DECL_SBIMEDIALIST
+  NS_DECL_SBIMEDIAITEM
+
   // This constructor assumes the database file lives in the 'ProfD/db'
   // directory.
   sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid);
@@ -97,18 +104,18 @@ public:
 private:
   nsresult CreateQueries();
 
-  inline NS_METHOD MakeStandardQuery(sbIDatabaseQuery** _retval);
+  inline nsresult MakeStandardQuery(sbIDatabaseQuery** _retval);
 
   inline void GetNowString(nsAString& _retval);
 
-  NS_METHOD CreateNewItemInDatabase(const PRUint32 aMediaItemTypeID,
-                                    const nsAString& aURISpecOrPrefix,
-                                    nsAString& _retval);
+  nsresult CreateNewItemInDatabase(const PRUint32 aMediaItemTypeID,
+                                   const nsAString& aURISpecOrPrefix,
+                                   nsAString& _retval);
 
-  //NS_METHOD LoadRegisteredMediaListFactories();
+  //nsresult LoadRegisteredMediaListFactories();
 
-  NS_METHOD GetTypeForGUID(const nsAString& aGUID,
-                           nsAString& _retval);
+  nsresult GetTypeForGUID(const nsAString& aGUID,
+                          nsAString& _retval);
 
   // This callback is meant to be used with mMediaListFactoryTable.
   // aUserData should be a nsTArray<nsString> pointer.
@@ -117,10 +124,9 @@ private:
                             sbMediaListFactoryInfo* aEntry,
                             void* aUserData);
 
-  NS_METHOD RegisterDefaultMediaListFactories();
+  nsresult RegisterDefaultMediaListFactories();
 
 private:
-
   nsString mDatabaseGuid;
   nsCOMPtr<nsIURI> mDatabaseLocation;
 
@@ -142,6 +148,7 @@ private:
   sbGUIDToTypesMap mCachedTypeTable;
 
   sbGUIDToIDMap mCachedIDTable;
+
 };
 
 #endif /* __SBLOCALDATABASELIBRARY_H__ */

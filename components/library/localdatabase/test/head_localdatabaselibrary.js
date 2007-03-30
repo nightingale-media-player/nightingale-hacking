@@ -263,8 +263,9 @@ function TestMediaListListener() {
 TestMediaListListener.prototype = {
   _addedItem: null,
   _removedItem: null,
-  _batchBeginLibrary: null,
-  _batchEndLibrary: null,
+  _updatedItem: null,
+  _batchBeginList: null,
+  _batchEndList: null,
   
   get addedItem() {
     return this._addedItem;
@@ -274,35 +275,44 @@ TestMediaListListener.prototype = {
     return this._removedItem;
   },
   
-  get batchBeginLibrary() {
-    return this._batchBeginLibrary;
+  get updatedItem() {
+    return this._updatedItem;
   },
   
-  get batchEndLibrary() {
-    return this._batchEndLibrary;
+  get batchBeginList() {
+    return this._batchBeginList;
+  },
+  
+  get batchEndList() {
+    return this._batchEndList;
   },
   
   reset: function reset() {
     this._addedItem = null;
     this._removedItem = null;
-    this._batchBeginLibrary = null;
-    this._batchEndLibrary = null;
+    this._updatedItem = null;
+    this._batchBeginList = null;
+    this._batchEndList = null;
   },
   
-  onItemAdded: function onItemAdded(item) {
+  onItemAdded: function onItemAdded(list, item) {
     this._addedItem = item;
   },
   
-  onItemRemoved: function onItemRemoved(item) {
+  onItemRemoved: function onItemRemoved(list, item) {
     this._removedItem = item;
   },
   
-  onBatchBegin: function onBatchBegin(library) {
-    this._batchBeginLibrary = library;
+  onItemUpdated: function onItemUpdated(list, item) {
+    this._updatedItem = item;
+  },
+
+  onBatchBegin: function onBatchBegin(list) {
+    this._batchBeginList = list;
   },
   
-  onBatchEnd: function onBatchEnd(library) {
-    this._batchEndLibrary = library;
+  onBatchEnd: function onBatchEnd(list) {
+    this._batchEndList = list;
   },
   
   QueryInterface: function QueryInterface(iid) {

@@ -45,7 +45,6 @@
 #include <sbPropertiesCID.h>
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabasePropertyCache.h"
-#include <sbProxyUtils.h>
 #include <sbLocalDatabaseCascadeFilterSet.h>
 
 NS_IMPL_ISUPPORTS_INHERITED7(sbLocalDatabaseMediaListBase,
@@ -80,12 +79,12 @@ sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibra
   mViewArrayLock = nsAutoLock::NewLock("sbLocalDatabaseMediaListBase::mViewArrayLock");
   NS_ASSERTION(mViewArrayLock, "Failed to create lock!");
 
-  mListenerProxyTableLock =
-    nsAutoLock::NewLock("sbLocalDatabaseMediaListBase::mListenerProxyTableLock");
-  NS_ASSERTION(mListenerProxyTableLock, "Failed to create lock!");
-
   PRBool success = mViewFilters.Init();
   NS_ASSERTION(success, "Failed to init view filter table");
+
+  nsresult rv;
+  sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener(&rv);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to initialize base listener");
 }
 
 sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
@@ -96,10 +95,6 @@ sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
 
   if (mViewArrayLock) {
     nsAutoLock::DestroyLock(mViewArrayLock);
-  }
-
-  if (mListenerProxyTableLock) {
-    nsAutoLock::DestroyLock(mListenerProxyTableLock);
   }
 }
 
@@ -138,175 +133,6 @@ sbLocalDatabaseMediaListBase::AddFilterToGUIDArrayCallback(nsStringHashKey::KeyT
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "AddFilter failed!");
 
   return PL_DHASH_NEXT;
-}
-
-/**
- * \brief Notifies all registered listeners that an item has been added to the
- *        media list.
- *
- * \param aKey      - An sbIMediaListListener.
- * \param aEntry    - An sbIMediaListListener proxy.
- * \param aUserData - A MediaListCallbackInfo pointer.
- *
- * \return PL_DHASH_NEXT
- */
-PLDHashOperator PR_CALLBACK
-sbLocalDatabaseMediaListBase::ItemAddedCallback(nsISupportsHashKey::KeyType aKey,
-                                                sbIMediaListListener* aEntry,
-                                                void* aUserData)
-{
-  NS_ASSERTION(aKey && aEntry, "Nulls in the hash table!");
-
-  MediaListCallbackInfo* info =
-    NS_STATIC_CAST(MediaListCallbackInfo*, aUserData);
-  NS_ENSURE_TRUE(info, PL_DHASH_NEXT);
-
-  NS_ASSERTION(info->list && info->item, "Bad MediaListCallbackInfo!");
-
-  nsCOMPtr<sbIMediaListListener> listener = aEntry;
-  nsresult rv = listener->OnItemAdded(info->list, info->item);
-
-  // We don't really care if some listener impl returns failure, but warn for
-  // good measure.
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnItemAdded returned a failure code");
-
-  return PL_DHASH_NEXT;
-}
-
-/**
- * \brief Notifies all registered listeners that an item has been removed from
- *        the media list.
- *
- * \param aKey      - An sbIMediaListListener.
- * \param aEntry    - An sbIMediaListListener proxy.
- * \param aUserData - A MediaListCallbackInfo pointer.
- *
- * \return PL_DHASH_NEXT
- */
-PLDHashOperator PR_CALLBACK
-sbLocalDatabaseMediaListBase::ItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
-                                                  sbIMediaListListener* aEntry,
-                                                  void* aUserData)
-{
-  NS_ASSERTION(aKey && aEntry, "Nulls in the hash table!");
-
-  MediaListCallbackInfo* info =
-    NS_STATIC_CAST(MediaListCallbackInfo*, aUserData);
-  NS_ENSURE_TRUE(info, PL_DHASH_NEXT);
-
-  NS_ASSERTION(info->list && info->item, "Bad MediaListCallbackInfo!");
-
-  nsCOMPtr<sbIMediaListListener> listener = aEntry;
-  nsresult rv = listener->OnItemRemoved(info->list, info->item);
-
-  // We don't really care if some listener impl returns failure, but warn for
-  // good measure.
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnItemRemoved returned a failure code");
-
-  return PL_DHASH_NEXT;
-}
-
-/**
- * \brief Notifies all registered listeners that an item has been removed from
- *        the media list.
- *
- * \param aKey      - An sbIMediaListListener.
- * \param aEntry    - An sbIMediaListListener proxy.
- * \param aUserData - An sbIMediaListPointer.
- *
- * \return PL_DHASH_NEXT
- */
-PLDHashOperator PR_CALLBACK
-sbLocalDatabaseMediaListBase::ListClearedCallback(nsISupportsHashKey::KeyType aKey,
-                                                  sbIMediaListListener* aEntry,
-                                                  void* aUserData)
-{
-  NS_ASSERTION(aKey && aEntry, "Nulls in the hash table!");
-
-  nsCOMPtr<sbIMediaList> list = NS_STATIC_CAST(sbIMediaList*, aUserData);
-  NS_ENSURE_TRUE(list, PL_DHASH_NEXT);
-
-  nsCOMPtr<sbIMediaListListener> listener = aEntry;
-  nsresult rv = listener->OnListCleared(list);
-
-  // We don't really care if some listener impl returns failure, but warn for
-  // good measure.
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnListCleared returned a failure code");
-
-  return PL_DHASH_NEXT;
-}
-
-/**
- * \brief Notifies all registered listeners that multiple items are about to be
- *        changed at once.
- *
- * \param aKey      - An sbIMediaListListener.
- * \param aEntry    - An sbIMediaListListener proxy.
- * \param aUserData - An sbIMediaListPointer.
- *
- * \return PL_DHASH_NEXT
- */
-PLDHashOperator PR_CALLBACK
-sbLocalDatabaseMediaListBase::BatchBeginCallback(nsISupportsHashKey::KeyType aKey,
-                                                 sbIMediaListListener* aEntry,
-                                                 void* aUserData)
-{
-  NS_ASSERTION(aKey && aEntry, "Nulls in the hash table!");
-
-  nsCOMPtr<sbIMediaList> list = NS_STATIC_CAST(sbIMediaList*, aUserData);
-  NS_ENSURE_TRUE(list, PL_DHASH_NEXT);
-
-  nsCOMPtr<sbIMediaListListener> listener = aEntry;
-  nsresult rv = listener->OnBatchBegin(list);
-
-  // We don't really care if some listener impl returns failure, but warn for
-  // good measure.
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnBatchBegin returned a failure code");
-
-  return PL_DHASH_NEXT;
-}
-
-/**
- * \brief Notifies all registered listeners that multiple items have been
- *        changed.
- *
- * \param aKey      - An sbIMediaListListener.
- * \param aEntry    - An sbIMediaListListener proxy.
- * \param aUserData - An sbIMediaListPointer.
- *
- * \return PL_DHASH_NEXT
- */
-PLDHashOperator PR_CALLBACK
-sbLocalDatabaseMediaListBase::BatchEndCallback(nsISupportsHashKey::KeyType aKey,
-                                               sbIMediaListListener* aEntry,
-                                               void* aUserData)
-{
-  NS_ASSERTION(aKey && aEntry, "Nulls in the hash table!");
-
-  nsCOMPtr<sbIMediaList> list = NS_STATIC_CAST(sbIMediaList*, aUserData);
-  NS_ENSURE_TRUE(list, PL_DHASH_NEXT);
-
-  nsCOMPtr<sbIMediaListListener> listener = aEntry;
-  nsresult rv = listener->OnBatchBegin(list);
-
-  // We don't really care if some listener impl returns failure, but warn for
-  // good measure.
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnBatchEnd returned a failure code");
-
-  return PL_DHASH_NEXT;
-}
-
-/**
- * \brief Initializes the listener proxy table if it isn't already.
- */
-/* inline */ PRBool
-sbLocalDatabaseMediaListBase::InitializeListenerProxyTable()
-{
-  if (!mListenerProxyTable.IsInitialized() && !mListenerProxyTable.Init()) {
-    return PR_FALSE;
-  }
-
-  return PR_TRUE;
 }
 
 /**
@@ -376,78 +202,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertiesInternal(sbStringArrayHa
   return EnumerateItemsInternal(&enumerator, aEnumerationListener);
 }
 
-/**
- * \brief Notifies all listeners that an item has been added to the list.
- */
 nsresult
-sbLocalDatabaseMediaListBase::NotifyListenersItemAdded(sbIMediaItem* aItem)
-{
-  NS_ENSURE_ARG_POINTER(aItem);
-
-  if (mListenerProxyTable.IsInitialized()) {
-    MediaListCallbackInfo info(this, aItem);
-    mListenerProxyTable.EnumerateRead(ItemAddedCallback, &info);
-  }
-
-  return NS_OK;
-}
-
-/**
- * \brief Notifies all listeners that an item has been removed from the list.
- */
-nsresult
-sbLocalDatabaseMediaListBase::NotifyListenersItemRemoved(sbIMediaItem* aItem)
-{
-  NS_ENSURE_ARG_POINTER(aItem);
-
-  if (mListenerProxyTable.IsInitialized()) {
-    MediaListCallbackInfo info(this, aItem);
-    mListenerProxyTable.EnumerateRead(ItemRemovedCallback, &info);
-  }
-
-  return NS_OK;
-}
-
-/**
- * \brief Notifies all listeners that the list has been cleared.
- */
-nsresult
-sbLocalDatabaseMediaListBase::NotifyListenersListCleared()
-{
-  if (mListenerProxyTable.IsInitialized()) {
-    mListenerProxyTable.EnumerateRead(ListClearedCallback, this);
-  }
-
-  return NS_OK;
-}
-
-/**
- * \brief Notifies all listeners that multiple items are about to be changed.
- */
-nsresult
-sbLocalDatabaseMediaListBase::NotifyListenersBatchBegin()
-{
-  if (mListenerProxyTable.IsInitialized()) {
-    mListenerProxyTable.EnumerateRead(BatchBeginCallback, this);
-  }
-
-  return NS_OK;
-}
-
-/**
- * \brief Notifies all listeners that multiple items have been changed.
- */
-nsresult
-sbLocalDatabaseMediaListBase::NotifyListenersBatchEnd()
-{
-  if (mListenerProxyTable.IsInitialized()) {
-    mListenerProxyTable.EnumerateRead(BatchEndCallback, this);
-  }
-
-  return NS_OK;
-}
-
-NS_METHOD
 sbLocalDatabaseMediaListBase::MakeStandardQuery(sbIDatabaseQuery** _retval)
 {
   nsresult rv;
@@ -1117,75 +872,13 @@ sbLocalDatabaseMediaListBase::GetCascadeFilterSet(sbICascadeFilterSet** aCascade
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::AddListener(sbIMediaListListener* aListener)
 {
-  NS_ENSURE_ARG_POINTER(aListener);
-  NS_ENSURE_TRUE(mListenerProxyTableLock, NS_ERROR_FAILURE);
-
-  nsAutoLock lock(mListenerProxyTableLock);
-
-  // We must have the hash table initialized to continue.
-  PRBool tableInitialized = InitializeListenerProxyTable();
-  NS_ENSURE_TRUE(tableInitialized, NS_ERROR_FAILURE);
-
-  // See if we have already added this listener.
-  sbIMediaListListener* previousProxy;
-  PRBool success = mListenerProxyTable.Get(aListener, &previousProxy);
-  if (success && previousProxy) {
-    // The listener has already been added, so do nothing more. But warn in
-    // debug builds.
-    NS_WARNING("Attempted to add a listener twice!");
-    return NS_OK;
-  }
-
-  // Make a proxy for the listener that will always send callbacks to the
-  // current thread.
-  nsCOMPtr<sbIMediaListListener> proxy;
-  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
-                                     NS_GET_IID(sbIMediaListListener),
-                                     aListener,
-                                     NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                                     getter_AddRefs(proxy));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Add the proxy to the hash table, using the listener as the key.
-  success = mListenerProxyTable.Put(aListener, proxy);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  return NS_OK;
+  return sbLocalDatabaseMediaListListener::AddListener(aListener);
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::RemoveListener(sbIMediaListListener* aListener)
 {
-  NS_ENSURE_ARG_POINTER(aListener);
-  NS_ENSURE_TRUE(mListenerProxyTableLock, NS_ERROR_FAILURE);
-
-  nsAutoLock lock(mListenerProxyTableLock);
-
-  // Our table had better be initialized by now.
-  if (!mListenerProxyTable.IsInitialized()) {
-    NS_WARNING("You can't remove a listener until you add one!");
-
-    // Go ahead and return success.
-    return NS_OK;
-  }
-
-#ifdef DEBUG
-  // Check to make sure that this listener has actually been added. Only do
-  // this in debug builds because the Remove method doesn't return any success
-  // information and always succeeds..
-  sbIMediaListListener* previousProxy;
-  PRBool success = mListenerProxyTable.Get(aListener, &previousProxy);
-  if (success && !previousProxy) {
-    // The listener was never added so there's nothing else to do here. But
-    // warn in debug builds.
-    NS_WARNING("Attempted to remove a listener that was never added!");
-    return NS_OK;
-  }
-#endif
-
-  mListenerProxyTable.Remove(aListener);
-
-  return NS_OK;
+  return sbLocalDatabaseMediaListListener::RemoveListener(aListener);
 }
 
 // sbIMediaItem

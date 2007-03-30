@@ -81,7 +81,7 @@ sbLibraryManager::~sbLibraryManager()
 /**
  * \brief Register with the Observer Service to find out about app shutdown.
  */
-NS_METHOD
+nsresult
 sbLibraryManager::Init()
 {
   TRACE(("sbLibraryManager[0x%x] - Init", this));
@@ -209,7 +209,7 @@ sbLibraryManager::ShutdownAllLibrariesCallback(nsStringHashKey::KeyType aKey,
  *
  * \return NS_OK on success
  */
-/* static */ NS_METHOD
+/* static */ nsresult
 sbLibraryManager::AssertLibrary(nsIRDFDataSource* aDataSource,
                                 sbILibrary* aLibrary)
 {
@@ -225,7 +225,7 @@ sbLibraryManager::AssertLibrary(nsIRDFDataSource* aDataSource,
  *
  * \return NS_OK on success
  */
-/* static */ NS_METHOD
+/* static */ nsresult
 sbLibraryManager::UnassertLibrary(nsIRDFDataSource* aDataSource,
                                   sbILibrary* aLibrary)
 {
@@ -239,7 +239,7 @@ sbLibraryManager::UnassertLibrary(nsIRDFDataSource* aDataSource,
  *
  * \return NS_OK on success
  */
-NS_METHOD
+nsresult
 sbLibraryManager::GenerateDataSource()
 {
   NS_ASSERTION(!mDataSource, "GenerateDataSource called twice!");

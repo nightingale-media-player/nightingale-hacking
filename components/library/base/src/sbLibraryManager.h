@@ -71,7 +71,7 @@ public:
   /**
    * See sbLibraryManager.cpp
    */
-  NS_METHOD Init();
+  nsresult Init();
 
 private:
   ~sbLibraryManager();
@@ -111,19 +111,19 @@ private:
   /**
    * See sbLibraryManager.cpp
    */
-  static NS_METHOD AssertLibrary(nsIRDFDataSource* aDataSource,
-                                 sbILibrary* aLibrary);
+  static nsresult AssertLibrary(nsIRDFDataSource* aDataSource,
+                                sbILibrary* aLibrary);
 
   /**
    * See sbLibraryManager.cpp
    */
-  static NS_METHOD UnassertLibrary(nsIRDFDataSource* aDataSource,
-                                   sbILibrary* aLibrary);
+  static nsresult UnassertLibrary(nsIRDFDataSource* aDataSource,
+                                  sbILibrary* aLibrary);
 
   /**
    * See sbLibraryManager.cpp
    */
-  NS_METHOD GenerateDataSource();
+  nsresult GenerateDataSource();
 
 private:
   /**

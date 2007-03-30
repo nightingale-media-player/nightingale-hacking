@@ -47,12 +47,12 @@ public:
                                 const char* aType,
                                 const nsModuleComponentInfo *aInfo);
 
-  NS_METHOD Init();
+  nsresult Init();
 
 private:
   ~sbLocalDatabaseLibraryLoader();
 
-  NS_METHOD LoadLibraries();
+  nsresult LoadLibraries();
 };
 
 #endif /* __SB_LOCALDATABASELIBRARYLOADER_H__ */

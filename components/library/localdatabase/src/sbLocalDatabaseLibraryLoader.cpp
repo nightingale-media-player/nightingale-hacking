@@ -70,7 +70,7 @@ sbLocalDatabaseLibraryLoader::~sbLocalDatabaseLibraryLoader()
  * \brief Register this component with the Category Manager for instantiaition
  *        on startup.
  */
-/* static */ NS_METHOD
+/* static */ nsresult
 sbLocalDatabaseLibraryLoader::RegisterSelf(nsIComponentManager* aCompMgr,
                                            nsIFile* aPath,
                                            const char* aLoaderStr,
@@ -95,7 +95,7 @@ sbLocalDatabaseLibraryLoader::RegisterSelf(nsIComponentManager* aCompMgr,
  * \brief Register with the Observer Service to keep the instance alive until
  *        a profile has been loaded.
  */
-NS_METHOD
+nsresult
 sbLocalDatabaseLibraryLoader::Init()
 {
   TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - Init", this));
@@ -116,7 +116,7 @@ sbLocalDatabaseLibraryLoader::Init()
 /**
  * \brief Load all of the libraries we need for startup.
  */
-NS_METHOD
+nsresult
 sbLocalDatabaseLibraryLoader::LoadLibraries()
 {
   TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - LoadLibraries", this));

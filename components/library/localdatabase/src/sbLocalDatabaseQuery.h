@@ -46,26 +46,26 @@ public:
                        nsTArray<FilterSpec>* aFilters,
                        PRBool aIsDistinct);
 
-  NS_METHOD GetFullCountQuery(nsAString& aQuery);
-  NS_METHOD GetFullGuidRangeQuery(nsAString& aQuery);
-  NS_METHOD GetNonNullCountQuery(nsAString& aQuery);
-  NS_METHOD GetNullGuidRangeQuery(nsAString& aQuery);
+  nsresult GetFullCountQuery(nsAString& aQuery);
+  nsresult GetFullGuidRangeQuery(nsAString& aQuery);
+  nsresult GetNonNullCountQuery(nsAString& aQuery);
+  nsresult GetNullGuidRangeQuery(nsAString& aQuery);
 
 private:
 
-  NS_METHOD AddCountColumns();
-  NS_METHOD AddGuidColumns(PRBool aIsNull);
-  NS_METHOD AddBaseTable();
-  NS_METHOD AddFilters();
-  NS_METHOD AddRange();
-  NS_METHOD AddPrimarySort();
-  NS_METHOD AddNonNullPrimarySortConstraint();
-  NS_METHOD AddJoinToGetNulls();
-  NS_METHOD AddDistinctConstraint();
-  NS_METHOD AddDistinctGroupBy();
+  nsresult AddCountColumns();
+  nsresult AddGuidColumns(PRBool aIsNull);
+  nsresult AddBaseTable();
+  nsresult AddFilters();
+  nsresult AddRange();
+  nsresult AddPrimarySort();
+  nsresult AddNonNullPrimarySortConstraint();
+  nsresult AddJoinToGetNulls();
+  nsresult AddDistinctConstraint();
+  nsresult AddDistinctGroupBy();
 
-  NS_METHOD GetTopLevelPropertyColumn(const nsAString& aProperty,
-                                      nsAString& columnName);
+  nsresult GetTopLevelPropertyColumn(const nsAString& aProperty,
+                                     nsAString& columnName);
   PRInt32 GetPropertyId(const nsAString& aProperty);
 
   PRBool IsTopLevelProperty(const nsAString& aProperty);

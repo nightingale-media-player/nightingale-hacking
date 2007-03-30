@@ -39,6 +39,7 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseTreeView.cpp \
            sbLocalDatabaseQuery.cpp \
            sbLocalDatabaseMediaItem.cpp \
+           sbLocalDatabaseMediaListListener.cpp \
            sbLocalDatabaseLibrary.cpp \
            sbLocalDatabaseLibraryFactory.cpp \
            sbLocalDatabaseMediaListBase.cpp \

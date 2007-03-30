@@ -39,7 +39,7 @@
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseCascadeFilterSet,
                    sbICascadeFilterSet);
 
-NS_METHOD
+nsresult
 sbLocalDatabaseCascadeFilterSet::Init(sbIMediaList* aMediaList,
                                       sbILocalDatabaseGUIDArray* aProtoArray)
 {
@@ -226,7 +226,7 @@ sbLocalDatabaseCascadeFilterSet::RemoveListener(sbICascadeFilterSetListener* aLi
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
 {
   NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);

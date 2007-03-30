@@ -197,7 +197,7 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
 {
   nsresult rv;

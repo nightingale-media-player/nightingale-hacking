@@ -75,7 +75,7 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
 
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::GetFullCountQuery(nsAString& aQuery)
 {
   nsresult rv;
@@ -103,7 +103,7 @@ sbLocalDatabaseQuery::GetFullCountQuery(nsAString& aQuery)
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::GetFullGuidRangeQuery(nsAString& aQuery)
 {
   nsresult rv;
@@ -137,7 +137,7 @@ sbLocalDatabaseQuery::GetFullGuidRangeQuery(nsAString& aQuery)
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::GetNonNullCountQuery(nsAString& aQuery)
 {
   nsresult rv;
@@ -169,7 +169,7 @@ sbLocalDatabaseQuery::GetNonNullCountQuery(nsAString& aQuery)
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
 {
   nsresult rv;
@@ -204,7 +204,7 @@ sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::AddCountColumns()
 {
   nsresult rv;
@@ -237,7 +237,7 @@ sbLocalDatabaseQuery::AddCountColumns()
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
 {
   nsresult rv;
@@ -298,7 +298,7 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::AddBaseTable()
 {
   nsresult rv;
@@ -344,7 +344,7 @@ sbLocalDatabaseQuery::AddBaseTable()
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::AddFilters()
 {
   nsresult rv;
@@ -519,7 +519,7 @@ sbLocalDatabaseQuery::AddFilters()
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::AddRange()
 {
   nsresult rv;
@@ -533,7 +533,7 @@ sbLocalDatabaseQuery::AddRange()
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::AddPrimarySort()
 {
   nsresult rv;
@@ -624,7 +624,7 @@ sbLocalDatabaseQuery::AddPrimarySort()
 
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
 {
   nsresult rv;
@@ -685,7 +685,7 @@ sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::AddDistinctConstraint()
 {
   nsresult rv;
@@ -728,7 +728,7 @@ sbLocalDatabaseQuery::AddDistinctConstraint()
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::AddDistinctGroupBy()
 {
   nsresult rv;
@@ -759,7 +759,7 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
   return NS_OK;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::AddJoinToGetNulls()
 {
   nsresult rv;
@@ -867,7 +867,7 @@ sbLocalDatabaseQuery::GetPropertyId(const nsAString& aProperty)
   return -1;
 }
 
-NS_METHOD
+nsresult
 sbLocalDatabaseQuery::GetTopLevelPropertyColumn(const nsAString& aProperty,
                                                 nsAString& columnName)
 {

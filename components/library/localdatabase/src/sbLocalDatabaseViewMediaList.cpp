@@ -586,7 +586,7 @@ sbLocalDatabaseViewMediaList::AddItemToLocalDatabase(sbIMediaItem* aMediaItem)
 
   // Create a new media item and copy all the properties
   nsCOMPtr<nsIURI> contentUri;
-  rv = aMediaItem->GetUri(getter_AddRefs(contentUri));
+  rv = aMediaItem->GetContentSrc(getter_AddRefs(contentUri));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);

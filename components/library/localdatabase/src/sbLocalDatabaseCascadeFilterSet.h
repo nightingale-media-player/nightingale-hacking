@@ -43,11 +43,11 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBICASCADEFILTERSET
 
-  NS_METHOD Init(sbIMediaList* aMediaList,
-                 sbILocalDatabaseGUIDArray* aProtoArray);
+  nsresult Init(sbIMediaList* aMediaList,
+                sbILocalDatabaseGUIDArray* aProtoArray);
 
 private:
-  NS_METHOD ConfigureArray(PRUint32 aIndex);
+  nsresult ConfigureArray(PRUint32 aIndex);
 
   struct sbFilterSpec {
     PRBool isSearch;
