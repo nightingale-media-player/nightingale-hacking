@@ -398,7 +398,7 @@
               <xul:spacer hidden="true" sbid="x6" class="sb-sys-outer-frame-resizer-lb"/>
             </xul:vbox>
 
-            <xul:vbox class="chrome_bkgd" flex="1">
+            <xul:vbox class="chrome_bkgd" flex="1" style="overflow: hidden !important;">
               <children/>
             </xul:vbox>
                   
