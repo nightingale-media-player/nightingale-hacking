@@ -33,6 +33,7 @@
 #include <nsStringEnumerator.h>
 #include <prlog.h>
 #include <sbSQLBuilderCID.h>
+#include <sbDatabaseResultStringEnumerator.h>
 
 #define INIT if (!mInitialized) { rv = Init(); NS_ENSURE_SUCCESS(rv, rv); }
 
@@ -98,7 +99,7 @@ sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbLocalDatabasePropertyCache::GetWritePending(PRBool *aWritePending)
 {
   NS_ENSURE_ARG_POINTER(aWritePending);
@@ -890,5 +891,4 @@ sbTArrayStringEnumerator::GetNext(nsAString& _retval)
     return NS_ERROR_NOT_AVAILABLE;
   }
 }
-
 

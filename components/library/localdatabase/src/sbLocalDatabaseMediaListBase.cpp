@@ -39,7 +39,7 @@
 #include <sbSQLBuilderCID.h>
 #include <sbIDatabaseQuery.h>
 #include <DatabaseQuery.h>
-
+#include <sbIMediaListView.h>
 #include <sbIMediaList.h>
 #include <sbIPropertyArray.h>
 #include <sbPropertiesCID.h>
@@ -47,23 +47,17 @@
 #include "sbLocalDatabasePropertyCache.h"
 #include <sbLocalDatabaseCascadeFilterSet.h>
 
-NS_IMPL_ISUPPORTS_INHERITED7(sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseMediaListBase,
                              sbLocalDatabaseResourceProperty,
                              sbIMediaItem,
                              sbILocalDatabaseMediaItem,
-                             sbIFilterableMediaList,
-                             sbISearchableMediaList,
-                             sbISortableMediaList,
                              sbIMediaList,
                              nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseMediaListBase,
+NS_IMPL_CI_INTERFACE_GETTER4(sbLocalDatabaseMediaListBase,
                              sbILibraryResource,
                              sbIMediaItem,
                              sbILocalDatabaseMediaItem,
-                             sbIFilterableMediaList,
-                             sbISearchableMediaList,
-                             sbISortableMediaList,
                              sbIMediaList)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
@@ -76,12 +70,6 @@ sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibra
   mFullArrayMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseMediaListBase::mFullArrayMonitor");
   NS_ASSERTION(mFullArrayMonitor, "Failed to create monitor!");
 
-  mViewArrayLock = nsAutoLock::NewLock("sbLocalDatabaseMediaListBase::mViewArrayLock");
-  NS_ASSERTION(mViewArrayLock, "Failed to create lock!");
-
-  PRBool success = mViewFilters.Init();
-  NS_ASSERTION(success, "Failed to init view filter table");
-
   nsresult rv = sbLocalDatabaseMediaListListener::Init();
   NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to initialize base listener");
 }
@@ -90,10 +78,6 @@ sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
 {
   if (mFullArrayMonitor) {
     nsAutoMonitor::DestroyMonitor(mFullArrayMonitor);
-  }
-
-  if (mViewArrayLock) {
-    nsAutoLock::DestroyLock(mViewArrayLock);
   }
 }
 
@@ -295,20 +279,6 @@ sbLocalDatabaseMediaListBase::GetLength(PRUint32* aLength)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetFilteredLength(PRUint32* aLength)
-{
-  NS_ENSURE_ARG_POINTER(aLength);
-
-  NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
-  nsAutoMonitor mon(mFullArrayMonitor);
-
-  nsresult rv = mViewArray->GetLength(aLength);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetItemByGuid(const nsAString& aGuid,
                                             sbIMediaItem** _retval)
 {
@@ -340,34 +310,6 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
     nsAutoMonitor mon(mFullArrayMonitor);
 
     rv = mFullArray->GetByIndex(aIndex, guid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaItem> item;
-  rv = library->GetMediaItem(guid, getter_AddRefs(item));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*_retval = item);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetItemByFilteredIndex(PRUint32 aIndex,
-                                                     sbIMediaItem** _retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsresult rv;
-
-  nsAutoString guid;
-  {
-    NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
-    nsAutoMonitor mon(mFullArrayMonitor);
-
-    rv = mViewArray->GetByIndex(aIndex, guid);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -840,35 +782,6 @@ sbLocalDatabaseMediaListBase::Clear()
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetTreeView(nsITreeView** aTreeView)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetCascadeFilterSet(sbICascadeFilterSet** aCascadeFilterSet)
-{
-  nsresult rv;
-
-  if (!mCascadeFilterSet) {
-    nsAutoPtr<sbLocalDatabaseCascadeFilterSet> cascadeFilterSet(new sbLocalDatabaseCascadeFilterSet());
-    NS_ENSURE_TRUE(cascadeFilterSet, NS_ERROR_OUT_OF_MEMORY);
-
-    nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
-    rv = mFullArray->Clone(getter_AddRefs(guidArray));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = cascadeFilterSet->Init(this, guidArray);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mCascadeFilterSet = cascadeFilterSet.forget();
-  }
-
-  NS_ADDREF(*aCascadeFilterSet = mCascadeFilterSet);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::AddListener(sbIMediaListListener* aListener)
 {
   return sbLocalDatabaseMediaListListener::AddListener(aListener);
@@ -878,6 +791,13 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::RemoveListener(sbIMediaListListener* aListener)
 {
   return sbLocalDatabaseMediaListListener::RemoveListener(aListener);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::CreateView(sbIMediaListView** _retval)
+{
+  NS_NOTREACHED("Not meant to be implemented in this base class");
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 // sbIMediaItem
@@ -1013,501 +933,6 @@ sbLocalDatabaseMediaListBase::GetMediaItemId(PRUint32 *_retval)
   return NS_OK;
 }
 
-// sbIFilterableMediaList
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetFilterableProperties(nsIStringEnumerator** aFilterableProperties)
-{
-  NS_ENSURE_ARG_POINTER(aFilterableProperties);
-
-  // Get this from the property manager?
-  return NS_ERROR_NOT_IMPLEMENTED;
-
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetFilterValues(const nsAString& aPropertyName,
-                                              nsIStringEnumerator** _retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsresult rv;
-  PRInt32 dbOk;
-
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(mDistinctPropertyValuesQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(0, aPropertyName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  nsCOMPtr<sbIDatabaseResult> result;
-  rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbDatabaseResultStringEnumerator* values =
-    new sbDatabaseResultStringEnumerator(result);
-  NS_ENSURE_TRUE(values, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = values->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*_retval = values);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::SetFilters(sbIPropertyArray* aPropertyArray)
-{
-  NS_ENSURE_ARG_POINTER(aPropertyArray);
-
-  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
-  nsAutoLock lock(mViewArrayLock);
-
-  nsresult rv = UpdateFiltersInternal(aPropertyArray, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::UpdateFilters(sbIPropertyArray* aPropertyArray)
-{
-  NS_ENSURE_ARG_POINTER(aPropertyArray);
-
-  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
-  nsAutoLock lock(mViewArrayLock);
-
-  nsresult rv = UpdateFiltersInternal(aPropertyArray, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::RemoveFilters(sbIPropertyArray* aPropertyArray)
-{
-  NS_ENSURE_ARG_POINTER(aPropertyArray);
-
-  nsresult rv;
-
-  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
-  nsAutoLock lock(mViewArrayLock);
-
-  PRUint32 propertyCount;
-  rv = aPropertyArray->GetLength(&propertyCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // ensure we got something
-  NS_ENSURE_STATE(propertyCount);
-
-  PRBool dirty = PR_FALSE;
-  for (PRUint32 index = 0; index < propertyCount; index++) {
-
-    // Get the property.
-    nsCOMPtr<nsIProperty> property;
-    rv = aPropertyArray->GetPropertyAt(index, getter_AddRefs(property));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the value.
-    nsCOMPtr<nsIVariant> value;
-    rv = property->GetValue(getter_AddRefs(value));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Make sure the value is a string type, otherwise bail.
-    PRUint16 dataType;
-    rv = value->GetDataType(&dataType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    NS_ENSURE_TRUE(dataType == nsIDataType::VTYPE_ASTRING,
-                   NS_ERROR_INVALID_ARG);
-
-    // Get the name of the property. This will be the key for the hash table.
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the property value
-    nsAutoString valueString;
-    rv = value->GetAsAString(valueString);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    sbStringArray* stringArray;
-    PRBool arrayExists = mViewFilters.Get(propertyName, &stringArray);
-    // If there is an array for this property, search the array for the value
-    // and remove it
-    if (arrayExists) {
-      PRUint32 length = stringArray->Length();
-      // Do this backwards so we don't have to deal with the array shifting
-      // on us.  Also, be sure to remove multiple copies of the same string.
-      for (PRInt32 i = length - 1; i >= 0; i--) {
-        if (stringArray->ElementAt(i).Equals(valueString)) {
-          stringArray->RemoveElementAt(i);
-          dirty = PR_TRUE;
-        }
-      }
-    }
-  }
-
-  if (dirty) {
-    rv = UpdateViewArrayConfiguration();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::ClearFilters()
-{
-  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
-  nsAutoLock lock(mViewArrayLock);
-
-  mViewFilters.Clear();
-
-  nsresult rv = UpdateViewArrayConfiguration();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-// sbISearchableMediaList
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetSearchableProperties(nsIStringEnumerator** aSearchableProperties)
-{
-  NS_ENSURE_ARG_POINTER(aSearchableProperties);
-  // To be implemented by property manager?
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetCurrentSearch(sbIPropertyArray** aCurrentSearch)
-{
-  NS_ENSURE_ARG_POINTER(aCurrentSearch);
-
-  nsresult rv;
-
-  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
-  nsAutoLock lock(mViewArrayLock);
-
-  if (!mViewSearches) {
-    mViewSearches = do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_ADDREF(*aCurrentSearch = mViewSearches);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::SetSearch(sbIPropertyArray* aSearch)
-{
-  NS_ENSURE_ARG_POINTER(aSearch);
-
-  nsresult rv;
-
-  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
-  nsAutoLock lock(mViewArrayLock);
-
-  mViewSearches = aSearch;
-
-  rv = UpdateViewArrayConfiguration();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::ClearSearch()
-{
-  nsresult rv;
-
-  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
-  nsAutoLock lock(mViewArrayLock);
-
-  if (mViewSearches) {
-    rv = mViewSearches->Clear();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = UpdateViewArrayConfiguration();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-// sbISortableMediaList
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetSortableProperties(nsIStringEnumerator** aSortableProperties)
-{
-  NS_ENSURE_ARG_POINTER(aSortableProperties);
-  // To be implemented by property manager?
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetCurrentSort(sbIPropertyArray** aCurrentSort)
-{
-  NS_ENSURE_ARG_POINTER(aCurrentSort);
-
-  nsresult rv;
-
-  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
-  nsAutoLock lock(mViewArrayLock);
-
-  if (!mViewSort) {
-    mViewSort = do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_ADDREF(*aCurrentSort = mViewSort);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::SetSort(sbIPropertyArray* aSort)
-{
-  NS_ENSURE_ARG_POINTER(aSort);
-
-  nsresult rv;
-
-  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
-  nsAutoLock lock(mViewArrayLock);
-
-  mViewSort = aSort;
-
-  rv = UpdateViewArrayConfiguration();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::ClearSort()
-{
-  nsresult rv;
-
-  NS_ENSURE_TRUE(mViewArrayLock, NS_ERROR_FAILURE);
-  nsAutoLock lock(mViewArrayLock);
-
-  if (mViewSort) {
-    rv = mViewSort->Clear();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = UpdateViewArrayConfiguration();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-/**
- * \brief Updates the internal filter map with a contents of a property bag.
- *        In replace mode, the value list for each distinct property in the
- *        bag is first cleared before the values in the bag are added.  When
- *        not in replace mode, the new values in the bag are simply appended
- *        to each property's list of values.
- */
-nsresult
-sbLocalDatabaseMediaListBase::UpdateFiltersInternal(sbIPropertyArray* aPropertyArray,
-                                                    PRBool aReplace)
-{
-  nsresult rv;
-
-  PRUint32 propertyCount;
-  rv = aPropertyArray->GetLength(&propertyCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // ensure we got something
-  NS_ENSURE_STATE(propertyCount);
-
-  nsTHashtable<nsStringHashKey> seenProperties;
-  PRBool success = seenProperties.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  for (PRUint32 index = 0; index < propertyCount; index++) {
-
-    // Get the property.
-    nsCOMPtr<nsIProperty> property;
-    rv = aPropertyArray->GetPropertyAt(index, getter_AddRefs(property));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the value.
-    nsCOMPtr<nsIVariant> value;
-    rv = property->GetValue(getter_AddRefs(value));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Make sure the value is a string type, otherwise bail.
-    PRUint16 dataType;
-    rv = value->GetDataType(&dataType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    NS_ENSURE_TRUE(dataType == nsIDataType::VTYPE_ASTRING,
-                   NS_ERROR_INVALID_ARG);
-
-    // Get the name of the property. This will be the key for the hash table.
-    nsAutoString propertyName;
-    rv = property->GetName(propertyName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the property value
-    nsAutoString valueString;
-    rv = value->GetAsAString(valueString);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // If the string is empty and we are replacing, we should delete the
-    // property from the hash
-    if (valueString.IsEmpty()) {
-      if (aReplace) {
-        mViewFilters.Remove(propertyName);
-      }
-    }
-    else {
-      // Get the string array associated with the key. If it doesn't yet exist
-      // then we need to create it.
-      sbStringArray* stringArray;
-      PRBool arrayExists = mViewFilters.Get(propertyName, &stringArray);
-
-      if (!arrayExists) {
-        NS_NEWXPCOM(stringArray, sbStringArray);
-        NS_ENSURE_TRUE(stringArray, NS_ERROR_OUT_OF_MEMORY);
-
-        // Try to add the array to the hash table.
-        success = mViewFilters.Put(propertyName, stringArray);
-        NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-      }
-
-      if (aReplace) {
-        // If this is the first time we've seen this property, clear the
-        // string array
-        if (!seenProperties.GetEntry(propertyName)) {
-          stringArray->Clear();
-          nsStringHashKey* successKey = seenProperties.PutEntry(propertyName);
-          NS_ENSURE_TRUE(successKey, NS_ERROR_OUT_OF_MEMORY);
-        }
-      }
-
-      // Now we need a slot for the property value.
-      nsString* valueStringPtr = stringArray->AppendElement();
-      NS_ENSURE_TRUE(valueStringPtr, NS_ERROR_OUT_OF_MEMORY);
-
-      valueStringPtr->Assign(valueString);
-    }
-  }
-
-  rv = UpdateViewArrayConfiguration();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-nsresult
-sbLocalDatabaseMediaListBase::UpdateViewArrayConfiguration()
-{
-  nsresult rv;
-
-  // Update filters
-  rv = mViewArray->ClearFilters();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mViewFilters.EnumerateRead(AddFilterToGUIDArrayCallback, mViewArray);
-
-  // Update searches
-  if (mViewSearches) {
-    PRUint32 propertyCount;
-    rv = mViewSearches->GetLength(&propertyCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    for (PRUint32 index = 0; index < propertyCount; index++) {
-
-      nsCOMPtr<nsIProperty> property;
-      rv = mViewSearches->GetPropertyAt(index, getter_AddRefs(property));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<nsIVariant> value;
-      rv = property->GetValue(getter_AddRefs(value));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsAutoString propertyName;
-      rv = property->GetName(propertyName);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsAutoString stringValue;
-      rv = value->GetAsAString(stringValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      sbStringArray valueArray(1);
-      nsString* successString = valueArray.AppendElement(stringValue);
-      NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
-
-      nsCOMPtr<nsIStringEnumerator> valueEnum =
-        new sbTArrayStringEnumerator(&valueArray);
-      NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
-
-      rv = mViewArray->AddFilter(propertyName, valueEnum, PR_TRUE);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
-  // Update sort
-  rv = mViewArray->ClearSorts();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool hasSorts = PR_FALSE;
-  if (mViewSort) {
-    PRUint32 propertyCount;
-    rv = mViewSort->GetLength(&propertyCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    for (PRUint32 index = 0; index < propertyCount; index++) {
-
-      nsCOMPtr<nsIProperty> property;
-      rv = mViewSort->GetPropertyAt(index, getter_AddRefs(property));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<nsIVariant> value;
-      rv = property->GetValue(getter_AddRefs(value));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsAutoString propertyName;
-      rv = property->GetName(propertyName);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsAutoString stringValue;
-      rv = value->GetAsAString(stringValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      mViewArray->AddSort(propertyName, stringValue.EqualsLiteral("a"));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      hasSorts = PR_TRUE;
-    }
-  }
-
-  // If no sport is specified, use the default sort
-  if (!hasSorts) {
-    nsAutoString defaultProperty;
-    rv = GetDefaultSortProperty(defaultProperty);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mViewArray->AddSort(defaultProperty, PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Invalidate the view array
-  rv = mViewArray->Invalidate();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 // nsIClassInfo
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetInterfaces(PRUint32* count, nsIID*** array)
@@ -1563,34 +988,5 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
-}
-
-NS_IMPL_ISUPPORTS1(sbDatabaseResultStringEnumerator, nsIStringEnumerator)
-
-// nsIStringEnumerator
-nsresult
-sbDatabaseResultStringEnumerator::Init()
-{
-  nsresult rv = mDatabaseResult->GetRowCount(&mLength);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDatabaseResultStringEnumerator::HasMore(PRBool *_retval)
-{
-  *_retval = mNextIndex < mLength;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDatabaseResultStringEnumerator::GetNext(nsAString& _retval)
-{
-  nsresult rv = mDatabaseResult->GetRowCell(mNextIndex, 0, _retval);
-  NS_ENSURE_SUCCESS(rv, rv);
-  mNextIndex++;
-
-  return NS_OK;
 }
 

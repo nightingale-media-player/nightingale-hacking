@@ -78,9 +78,6 @@ class sbLocalDatabaseMediaListBase : public sbLocalDatabaseResourceProperty,
                                      public sbLocalDatabaseMediaListListener,
                                      public sbIMediaList,
                                      public sbILocalDatabaseMediaItem,
-                                     public sbIFilterableMediaList,
-                                     public sbISearchableMediaList,
-                                     public sbISortableMediaList,
                                      public nsIClassInfo
 {
   typedef nsTArray<nsString> sbStringArray;
@@ -98,9 +95,6 @@ public:
   NS_DECL_SBIMEDIAITEM
   NS_DECL_SBIMEDIALIST
   NS_DECL_SBILOCALDATABASEMEDIAITEM
-  NS_DECL_SBIFILTERABLEMEDIALIST
-  NS_DECL_SBISEARCHABLEMEDIALIST
-  NS_DECL_SBISORTABLEMEDIALIST
   NS_DECL_NSICLASSINFO
 
   sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
@@ -134,12 +128,6 @@ private:
   nsresult EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnumerator,
                                   sbIMediaListEnumerationListener* aListener);
 
-  nsresult UpdateFiltersInternal(sbIPropertyArray* aPropertyArray,
-                                 PRBool aReplace);
-
-  nsresult UpdateViewArrayConfiguration();
-
-
 protected:
 
   // The library this media list instance belogs to
@@ -148,12 +136,6 @@ protected:
   // The media item id of the media list
   PRUint32 mMediaItemId;
 
-  // The mViewArray is the guid array that represents the contents of the
-  // media list when viewed in the UI.  This is the array that gets updated
-  // from calls through the sbI*ableMediaList interfaces.  The contents of this
-  // array does not affect the API level list manupulation methods
-  nsCOMPtr<sbILocalDatabaseGUIDArray> mViewArray;
-
   // The mFullArray is a cached version of the full contents of the media
   // list this instance represents.
   nsCOMPtr<sbILocalDatabaseGUIDArray> mFullArray;
@@ -161,46 +143,7 @@ protected:
   // A monitor for changes to the media list.
   PRMonitor* mFullArrayMonitor;
 
-  // A lock for changes in the view filter
-  PRLock* mViewArrayLock;
-
   PRBool mLockedEnumerationActive;
-
-  // Query to return list of values for a given property
-  nsString mDistinctPropertyValuesQuery;
-
-  // This list's cacade filter set
-  nsCOMPtr<sbICascadeFilterSet> mCascadeFilterSet;
-
-private:
-  // Map of current view filter configuration
-  sbStringArrayHash mViewFilters;
-
-  // Current search filter configuration
-  nsCOMPtr<sbIPropertyArray> mViewSearches;
-
-  // Current sort filter configuration
-  nsCOMPtr<sbIPropertyArray> mViewSort;
-};
-
-class sbDatabaseResultStringEnumerator : public nsIStringEnumerator
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSISTRINGENUMERATOR
-
-  sbDatabaseResultStringEnumerator(sbIDatabaseResult* aDatabaseResult) :
-    mDatabaseResult(aDatabaseResult),
-    mNextIndex(0),
-    mLength(0)
-  {
-  }
-
-  nsresult Init();
-private:
-  nsCOMPtr<sbIDatabaseResult> mDatabaseResult;
-  PRUint32 mNextIndex;
-  PRUint32 mLength;
 };
 
 #endif /* __SBLOCALDATABASEMEDIALISTBASE_H__ */

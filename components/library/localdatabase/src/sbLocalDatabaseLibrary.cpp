@@ -35,11 +35,13 @@
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
+#include <sbIMediaListView.h>
 #include <sbISQLBuilder.h>
 #include <sbSQLBuilderCID.h>
 #include <sbIDatabaseQuery.h>
 #include <DatabaseQuery.h>
 #include <sbIDatabaseResult.h>
+#include <sbLocalDatabaseMediaListView.h>
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -63,6 +65,9 @@
 #define SB_MEDIALIST_FACTORY_DEFAULT_TYPE 1
 #define SB_MEDIALIST_FACTORY_URI_PREFIX   "medialist('"
 #define SB_MEDIALIST_FACTORY_URI_SUFFIX   "')"
+
+#define DEFAULT_SORT_PROPERTY \
+  NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created")
 
 #define countof(_array) sizeof(_array) / sizeof(_array[0])
 
@@ -1135,15 +1140,6 @@ sbLocalDatabaseLibrary::GetLength(PRUint32* aLength)
  * See sbIMediaList
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetFilteredLength(PRUint32* aFilteredLength)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaList
- */
-NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetItemByGuid(const nsAString& aGuid,
                                       sbIMediaItem** _retval)
 {
@@ -1156,16 +1152,6 @@ sbLocalDatabaseLibrary::GetItemByGuid(const nsAString& aGuid,
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetItemByIndex(PRUint32 aIndex,
                                        sbIMediaItem** _retval)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaList
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetItemByFilteredIndex(PRUint32 aIndex,
-                                               sbIMediaItem** _retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -1336,22 +1322,32 @@ sbLocalDatabaseLibrary::Clear()
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/**
- * See sbIMediaList
- */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetTreeView(nsITreeView** aTreeView)
+sbLocalDatabaseLibrary::CreateView(sbIMediaListView** _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
+  NS_ENSURE_ARG_POINTER(_retval);
 
-/**
- * See sbIMediaList
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetCascadeFilterSet(sbICascadeFilterSet** aCascadeFilterSet)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaList> mediaList =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseLibrary*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString prop;
+  prop.Assign(DEFAULT_SORT_PROPERTY);
+
+  nsAutoPtr<sbLocalDatabaseMediaListView>
+    view(new sbLocalDatabaseMediaListView(this,
+                                          mediaList,
+                                          prop,
+                                          0));
+  NS_ENSURE_TRUE(view, NS_ERROR_OUT_OF_MEMORY);
+  rv = view->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = view.forget());
+
+  return NS_OK;
 }
 
 /**

@@ -30,7 +30,7 @@
 #include <nsComponentManagerUtils.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
-#include <sbIMediaList.h>
+#include <sbIMediaListView.h>
 #include <sbISQLBuilder.h>
 #include <sbSQLBuilderCID.h>
 #include <sbLocalDatabasePropertyCache.h>
@@ -40,15 +40,15 @@ NS_IMPL_ISUPPORTS1(sbLocalDatabaseCascadeFilterSet,
                    sbICascadeFilterSet);
 
 nsresult
-sbLocalDatabaseCascadeFilterSet::Init(sbIMediaList* aMediaList,
+sbLocalDatabaseCascadeFilterSet::Init(sbIMediaListView* aMediaListView,
                                       sbILocalDatabaseGUIDArray* aProtoArray)
 {
-  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaListView);
   NS_ENSURE_ARG_POINTER(aProtoArray);
 
   nsresult rv;
 
-  mMediaList = aMediaList;
+  mMediaListView = aMediaListView;
 
   mProtoArray = aProtoArray;
 

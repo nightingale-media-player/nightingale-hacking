@@ -36,11 +36,12 @@ interface nsIArray;
 interface nsIPropertyBag;
 interface nsISimpleEnumerator;
 interface nsITreeView;
+interface sbICascadeFilterSet;
 interface sbILibrary;
 interface sbIMediaListEnumerationListener;
 interface sbIMediaListListener;
+interface sbIMediaListView;
 interface sbIPropertyArray;
-interface sbICascadeFilterSet;
 
 /**
 * \interface sbIMediaList
@@ -64,11 +65,6 @@ interface sbIMediaList : sbIMediaItem
   readonly attribute unsigned long length;
 
   /**
-   * \brief Returns the length of filtered view of this list
-   */
-  readonly attribute unsigned long filteredLength;
-
-  /**
    * \brief Get a media item in the list by guid
    * \param aGuid Guid of the media item
    * \return Media item with the requested guid or null if not found
@@ -81,13 +77,6 @@ interface sbIMediaList : sbIMediaItem
    * \return Media item with the requested index
    */
   sbIMediaItem getItemByIndex(in unsigned long aIndex);
-
-  /**
-   * \brief Get a media item in the filtered view of this list by index
-   * \param aIndex Filtered index of the media item
-   * \return Media item with the requested index
-   */
-  sbIMediaItem getItemByFilteredIndex(in unsigned long aIndex);
 
   /**
    * \brief This flag means that the list being enumerated is a copy that may
@@ -242,16 +231,6 @@ interface sbIMediaList : sbIMediaItem
   void clear();
 
   /**
-   * \brief Get a treeview that will display this media list
-   */
-  readonly attribute nsITreeView treeView;
-
-  /**
-   * \brief Get the cascade filter set for this view instance
-   */
-  readonly attribute sbICascadeFilterSet cascadeFilterSet;
-
-  /**
    * \brief Add a listener to this media list
    * \param aListener The listener to add
    */
@@ -262,4 +241,11 @@ interface sbIMediaList : sbIMediaItem
    * \param aListener The listener to remove
    */
   void removeListener(in sbIMediaListListener aListener);
+
+  /**
+   * \brief Create a new view for this list
+   * \return The new view
+   */
+  sbIMediaListView createView();
 };
+

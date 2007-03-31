@@ -29,19 +29,21 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibrary.h"
 
+#include <DatabaseQuery.h>
 #include <nsAutoLock.h>
-#include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
+#include <nsComponentManagerUtils.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIURI.h>
-#include <sbIMediaListListener.h>
-#include <sbILibrary.h>
-#include <sbISQLBuilder.h>
-#include <sbSQLBuilderCID.h>
-#include <sbIDatabaseQuery.h>
-#include <DatabaseQuery.h>
-#include <sbIDatabaseResult.h>
 #include <pratom.h>
+#include <sbIDatabaseQuery.h>
+#include <sbIDatabaseResult.h>
+#include <sbILibrary.h>
+#include <sbIMediaListListener.h>
+#include <sbIMediaListView.h>
+#include <sbISQLBuilder.h>
+#include <sbLocalDatabaseMediaListView.h>
+#include <sbSQLBuilderCID.h>
 
 #define DEFAULT_SORT_PROPERTY \
   NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
@@ -195,9 +197,6 @@ sbLocalDatabaseSimpleMediaList::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mFullArray->Clone(getter_AddRefs(mViewArray));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();
@@ -575,6 +574,34 @@ sbLocalDatabaseSimpleMediaList::Clear()
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListView** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  nsAutoString defaultSortProperty;
+  rv = GetDefaultSortProperty(defaultSortProperty);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 mediaItemId;
+  rv = GetMediaItemId(&mediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoPtr<sbLocalDatabaseMediaListView>
+    view(new sbLocalDatabaseMediaListView(mLibrary,
+                                          this,
+                                          defaultSortProperty,
+                                          mediaItemId));
+  NS_ENSURE_TRUE(view, NS_ERROR_OUT_OF_MEMORY);
+  rv = view->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = view.forget());
   return NS_OK;
 }
 
@@ -1003,74 +1030,6 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deleteb->ToString(mDeleteAllQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create distinct property values query
-  rv = builder->Reset();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->SetDistinct(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddColumn(NS_LITERAL_STRING("_rp"),
-                          NS_LITERAL_STRING("obj"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_mi"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                        NS_LITERAL_STRING("simple_media_lists"),
-                        NS_LITERAL_STRING("_sml"),
-                        NS_LITERAL_STRING("member_media_item_id"),
-                        NS_LITERAL_STRING("_mi"),
-                        NS_LITERAL_STRING("media_item_id"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->CreateMatchCriterionLong(NS_LITERAL_STRING("_sml"),
-                                         NS_LITERAL_STRING("media_item_id"),
-                                         sbISQLSelectBuilder::MATCH_EQUALS,
-                                         mediaItemId,
-                                         getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                        NS_LITERAL_STRING("resource_properties"),
-                        NS_LITERAL_STRING("_rp"),
-                        NS_LITERAL_STRING("guid"),
-                        NS_LITERAL_STRING("_mi"),
-                        NS_LITERAL_STRING("guid"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                        NS_LITERAL_STRING("properties"),
-                        NS_LITERAL_STRING("_p"),
-                        NS_LITERAL_STRING("property_id"),
-                        NS_LITERAL_STRING("_rp"),
-                        NS_LITERAL_STRING("property_id"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_p"),
-                                              NS_LITERAL_STRING("property_name"),
-                                              sbISQLSelectBuilder::MATCH_EQUALS,
-                                              getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddOrder(NS_LITERAL_STRING("_rp"),
-                         NS_LITERAL_STRING("obj_sortable"),
-                         PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->ToString(mDistinctPropertyValuesQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

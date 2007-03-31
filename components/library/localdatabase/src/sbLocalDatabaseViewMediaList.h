@@ -68,6 +68,7 @@ public:
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex);
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);
   NS_IMETHOD Clear();
+  NS_IMETHOD CreateView(sbIMediaListView** _retval);
 
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty);
 

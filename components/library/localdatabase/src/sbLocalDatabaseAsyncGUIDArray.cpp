@@ -500,16 +500,17 @@ CommandProcessor::Run()
             break;
 
             case eGetByIndex:
-              rv = listener->OnGetByIndex(EmptyString(), NS_ERROR_ABORT);
+              rv = listener->OnGetByIndex(0, EmptyString(), NS_ERROR_ABORT);
             break;
 
             case eGetSortPropertyValueByIndex:
-              rv = listener->OnGetSortPropertyValueByIndex(EmptyString(),
+              rv = listener->OnGetSortPropertyValueByIndex(0,
+                                                           EmptyString(),
                                                            NS_ERROR_ABORT);
             break;
 
             case eGetMediaItemIdByIndex:
-              rv = listener->OnGetMediaItemIdByIndex(0, NS_ERROR_ABORT);
+              rv = listener->OnGetMediaItemIdByIndex(0, 0, NS_ERROR_ABORT);
             break;
 
             default:
@@ -558,7 +559,7 @@ CommandProcessor::Run()
 
             nsAutoString guid;
             nsresult innerResult = inner->GetByIndex(cs.index, guid);
-            rv = listener->OnGetByIndex(guid, innerResult);
+            rv = listener->OnGetByIndex(cs.index, guid, innerResult);
           }
         break;
 
@@ -570,7 +571,9 @@ CommandProcessor::Run()
             nsAutoString value;
             nsresult innerResult = inner->GetSortPropertyValueByIndex(cs.index,
                                                                       value);
-            rv = listener->OnGetSortPropertyValueByIndex(value, innerResult);
+            rv = listener->OnGetSortPropertyValueByIndex(cs.index,
+                                                         value,
+                                                         innerResult);
           }
         break;
 
@@ -582,7 +585,9 @@ CommandProcessor::Run()
             PRUint32 mediaItemId;
             nsresult innerResult = inner->GetMediaItemIdByIndex(cs.index,
                                                                 &mediaItemId);
-            rv = listener->OnGetMediaItemIdByIndex(mediaItemId, innerResult);
+            rv = listener->OnGetMediaItemIdByIndex(cs.index,
+                                                   mediaItemId,
+                                                   innerResult);
           }
         break;
 

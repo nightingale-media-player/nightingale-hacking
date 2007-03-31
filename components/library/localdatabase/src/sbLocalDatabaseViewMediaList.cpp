@@ -159,9 +159,6 @@ sbLocalDatabaseViewMediaList::Init()
   rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->Clone(getter_AddRefs(mViewArray));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -475,6 +472,12 @@ sbLocalDatabaseViewMediaList::Clear()
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseViewMediaList::CreateView(sbIMediaListView** _retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 nsresult
 sbLocalDatabaseViewMediaList::DeleteItemByMediaItemId(PRUint32 aMediaItemId)
 {
@@ -531,49 +534,6 @@ sbLocalDatabaseViewMediaList::CreateQueries()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deleteb->ToString(mDeleteAllQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create distinct property values query
-  nsCOMPtr<sbISQLSelectBuilder> builder =
-    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->SetBaseTableName(NS_LITERAL_STRING("properties"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->SetBaseTableAlias(NS_LITERAL_STRING("_p"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->SetDistinct(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddColumn(NS_LITERAL_STRING("_rp"),
-                          NS_LITERAL_STRING("obj"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                        NS_LITERAL_STRING("resource_properties"),
-                        NS_LITERAL_STRING("_rp"),
-                        NS_LITERAL_STRING("property_id"),
-                        NS_LITERAL_STRING("_p"),
-                        NS_LITERAL_STRING("property_id"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_p"),
-                                              NS_LITERAL_STRING("property_name"),
-                                              sbISQLSelectBuilder::MATCH_EQUALS,
-                                              getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddOrder(NS_LITERAL_STRING("_rp"),
-                         NS_LITERAL_STRING("obj_sortable"),
-                         PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->ToString(mDistinctPropertyValuesQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

@@ -40,13 +40,16 @@ interface sbILocalDatabaseAsyncGUIDArrayListener : nsISupports
   void onGetLength(in unsigned long aLength,
                    in nsresult aResult);
 
-  void onGetByIndex(in AString aGUID,
+  void onGetByIndex(in unsigned long aIndex,
+                    in AString aGUID,
                     in nsresult aResult);
 
-  void onGetSortPropertyValueByIndex(in AString aGUID,
+  void onGetSortPropertyValueByIndex(in unsigned long aIndex,
+                                     in AString aGUID,
                                      in nsresult aResult);
 
-  void onGetMediaItemIdByIndex(in unsigned long aMediaItemId,
+  void onGetMediaItemIdByIndex(in unsigned long aIndex,
+                               in unsigned long aMediaItemId,
                                in nsresult aResult);
 };
 

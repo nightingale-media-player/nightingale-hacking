@@ -93,16 +93,6 @@
     { 0xab, 0x09, 0xa9, 0xd5, 0x75, 0xf4, 0xc2, 0xaa }               \
   }
 
-#define SB_LOCALDATABASE_TREEVIEW_CONTRACTID                         \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/TreeView;1"
-#define SB_LOCALDATABASE_TREEVIEW_CID                                \
-  { /* 59003856-426b-4512-8da8-086f274b37dc */                       \
-    0x59003856,                                                      \
-    0x426b,                                                          \
-    0x4512,                                                          \
-    { 0x8d, 0xa8, 0x08, 0x6f, 0x27, 0x4b, 0x37, 0xdc }               \
-  }
-
 #define SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_DESCRIPTION            \
   "Local Database Simple Media List Factory"
 #define SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CONTRACTID             \

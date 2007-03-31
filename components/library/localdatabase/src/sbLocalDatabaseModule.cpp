@@ -33,7 +33,6 @@
 #include "sbLocalDatabaseLibraryLoader.h"
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
-#include "sbLocalDatabaseTreeView.h"
 #include "sbLocalDatabaseViewMediaListFactory.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
@@ -41,7 +40,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseLibraryLoader, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabasePropertyCache)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSimpleMediaListFactory)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseTreeView)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseViewMediaListFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseAsyncGUIDArray, Init)
 
@@ -83,12 +81,6 @@ static const nsModuleComponentInfo components[] =
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID,
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CONTRACTID,
     sbLocalDatabaseSimpleMediaListFactoryConstructor
-  },
-  {
-    "Local Database TreeView",
-    SB_LOCALDATABASE_TREEVIEW_CID,
-    SB_LOCALDATABASE_TREEVIEW_CONTRACTID,
-    sbLocalDatabaseTreeViewConstructor
   },
   {
     SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_DESCRIPTION,

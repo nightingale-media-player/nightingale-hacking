@@ -33,7 +33,8 @@
 #include <nsTArray.h>
 #include <sbICascadeFilterSet.h>
 #include <sbILocalDatabaseGUIDArray.h>
-#include <sbIMediaList.h>
+
+class sbIMediaListView;
 
 class sbLocalDatabaseCascadeFilterSet : public sbICascadeFilterSet
 {
@@ -43,7 +44,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBICASCADEFILTERSET
 
-  nsresult Init(sbIMediaList* aMediaList,
+  nsresult Init(sbIMediaListView* aMediaListView,
                 sbILocalDatabaseGUIDArray* aProtoArray);
 
 private:
@@ -57,7 +58,7 @@ private:
     nsCOMPtr<sbILocalDatabaseGUIDArray> array;
   };
 
-  nsCOMPtr<sbIMediaList> mMediaList;
+  nsCOMPtr<sbIMediaListView> mMediaListView;
 
   nsCOMPtr<sbILocalDatabaseGUIDArray> mProtoArray;
 

@@ -52,7 +52,7 @@ ArrayListener.prototype.onGetLength = function(length, rv)
   this.gotLength = true;
 }
 
-ArrayListener.prototype.onGetByIndex = function(guid, rv)
+ArrayListener.prototype.onGetByIndex = function(index, guid, rv)
 {
   log("ArrayListener.prototype.onGetByIndex");
   this.guid = guid;
@@ -60,14 +60,14 @@ ArrayListener.prototype.onGetByIndex = function(guid, rv)
   this.gotGuid = true;
 }
 
-ArrayListener.prototype.onGetSortPropertyValueByIndex = function(value, rv)
+ArrayListener.prototype.onGetSortPropertyValueByIndex = function(index, value, rv)
 {
   this.value = value;
   this.rv = rv;
   this.gotValue = true;
 }
 
-ArrayListener.prototype.onGetMediaItemIdByIndex = function(mediaItemId, rv)
+ArrayListener.prototype.onGetMediaItemIdByIndex = function(index, mediaItemId, rv)
 {
   this.mediaItemId = mediaItemId;
   this.rv = rv;
@@ -240,9 +240,6 @@ var loop;
 var testMediaItemId;
 
 function runTest () {
-
-  // XXX: disable for now
-  return;
 
   var databaseGUID = "test_asyncguidarray";
   var library = createLibrary(databaseGUID);

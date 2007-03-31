@@ -33,7 +33,8 @@ function runTest () {
   var library = createLibrary("test_sortable");
 
   // Tests with view media list
-  var view = library.getMediaItem("songbird:view");
+  var list = library.QueryInterface(Ci.sbIMediaList);
+  var view = list.createView();
   assertFilteredSort(view, "data_sort_created_asc.txt");
 
   var pa = createPropertyArray();
@@ -58,13 +59,14 @@ function runTest () {
   assertFilteredSort(view, "data_sort_created_asc.txt");
 
   // Test with simple media list
-  var list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
-  assertFilteredSort(list, "data_sort_sml101_ordinal_asc.txt");
+  list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  view = list.createView();
+  assertFilteredSort(view, "data_sort_sml101_ordinal_asc.txt");
 
   pa = createPropertyArray();
   pa.appendProperty("http://songbirdnest.com/data/1.0#ordinal", "a");
-  list.setSort(pa);
-  assertFilteredSort(list, "data_sort_sml101_ordinal_asc.txt");
+  view.setSort(pa);
+  assertFilteredSort(view, "data_sort_sml101_ordinal_asc.txt");
 }
 
 function createPropertyArray() {
@@ -74,8 +76,8 @@ function createPropertyArray() {
 function assertFilteredSort(list, dataFile) {
 
   var a = [];
-  for (var i = 0; i < list.filteredLength; i++) {
-    a.push(list.getItemByFilteredIndex(i).guid);
+  for (var i = 0; i < list.length; i++) {
+    a.push(list.getItemByIndex(i).guid);
   }
 
   assertArray(a, dataFile);

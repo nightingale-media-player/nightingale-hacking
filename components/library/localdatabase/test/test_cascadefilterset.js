@@ -31,7 +31,8 @@
 function runTest () {
 
   var library = createLibrary("test_cascademediaset");
-  var view = library.getMediaItem("songbird:view");
+  var list = library.QueryInterface(Ci.sbIMediaList)
+  var view = list.createView();
   var cfs = view.cascadeFilterSet;
 
   // A simulation of an everything search, artist, album cascase

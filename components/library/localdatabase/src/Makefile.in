@@ -49,6 +49,8 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseViewMediaListFactory.cpp \
            sbLocalDatabaseSimpleMediaListFactory.cpp \
            sbLocalDatabaseCascadeFilterSet.cpp \
+           sbLocalDatabaseMediaListView.cpp \
+           sbDatabaseResultStringEnumerator.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \

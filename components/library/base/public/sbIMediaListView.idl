@@ -1,0 +1,76 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIMediaListView.idl
+ * \brief Definition of the sbIMediaListView interface
+ * \sa sbIMediaListView.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsITreeView;
+interface sbICascadeFilterSet;
+interface sbIMediaItem;
+interface sbIMediaList;
+
+/**
+* \interface sbIMediaListView
+* \brief A distinct view on a given media list
+*
+* \sa sbIMediaList
+*/
+[scriptable, uuid(8e28e517-9518-49aa-98d5-7f994872f87b)]
+interface sbIMediaListView : nsISupports
+{
+  /**
+   * \brief The media list this view is on
+   */
+  readonly attribute sbIMediaList mediaList;
+
+  /**
+   * \brief Returns the length of filtered view of this list
+   */
+  readonly attribute unsigned long length;
+
+  /**
+   * \brief Get a treeview that will display this media list view
+   */
+  readonly attribute nsITreeView treeView;
+
+  /**
+   * \brief Get the cascade filter set for this media list view
+   */
+  readonly attribute sbICascadeFilterSet cascadeFilterSet;
+
+  /**
+   * \brief Get a media item in the filtered view of this list by index
+   * \param aIndex Filtered index of the media item
+   * \return Media item with the requested index
+   */
+  sbIMediaItem getItemByIndex(in unsigned long aIndex);
+};
+

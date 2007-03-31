@@ -33,22 +33,24 @@ function runTest () {
   var library = createLibrary("test_searchable");
 
   // Tests with view media list
-  var view = library.getMediaItem("songbird:view");
+  var list = library.QueryInterface(Ci.sbIMediaList);
+  var view = list.createView();
 
   var pa = createPropertyArray();
   pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
   view.setSearch(pa);
-  assertEqual(view.filteredLength, 10);
+  assertEqual(view.length, 10);
 
   // Test with simple media list
-  var list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  view = list.createView();
   pa = createPropertyArray();
   pa.appendProperty("*", "AC/DC");
-  list.setSearch(pa);
-  assertEqual(list.filteredLength, 10);
+  view.setSearch(pa);
+  assertEqual(view.length, 10);
 
-  list.clearSearch();
-  assertEqual(list.filteredLength, 20);
+  view.clearSearch();
+  assertEqual(view.length, 20);
 }
 
 function createPropertyArray() {
