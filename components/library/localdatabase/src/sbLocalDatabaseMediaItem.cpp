@@ -78,12 +78,18 @@ static sbStaticProperty kStaticProperties[] = {
   }
 };
 
-NS_IMPL_ISUPPORTS6(sbLocalDatabaseMediaItem, nsIClassInfo,
-                                             nsISupportsWeakReference,
-                                             sbILibraryResource,
-                                             sbILocalDatabaseResourceProperty,
-                                             sbILocalDatabaseMediaItem,
-                                             sbIMediaItem)
+NS_IMPL_ADDREF(sbLocalDatabaseMediaItem)
+NS_IMPL_RELEASE(sbLocalDatabaseMediaItem)
+
+NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaItem)
+  NS_INTERFACE_MAP_ENTRY(nsIClassInfo)
+  NS_INTERFACE_MAP_ENTRY(nsISupportsWeakReference)
+  NS_INTERFACE_MAP_ENTRY(sbILibraryResource)
+  NS_INTERFACE_MAP_ENTRY(sbILocalDatabaseResourceProperty)
+  NS_INTERFACE_MAP_ENTRY(sbILocalDatabaseMediaItem)
+  NS_INTERFACE_MAP_ENTRY(sbIMediaItem)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbILibraryResource)
+NS_INTERFACE_MAP_END
 
 NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseMediaItem, nsIClassInfo,
                                                        nsISupportsWeakReference,
@@ -95,9 +101,9 @@ NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseMediaItem, nsIClassInfo,
 sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
 : mMediaItemId(0),
   mLibrary(nsnull),
-  mGuidLock(nsnull),
   mPropertyCacheLock(nsnull),
   mPropertyBagLock(nsnull),
+  mGuidLock(nsnull),
   mWriteThrough(PR_FALSE),
   mWritePending(PR_FALSE)
 {
