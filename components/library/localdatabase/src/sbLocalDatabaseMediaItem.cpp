@@ -84,11 +84,11 @@ NS_IMPL_RELEASE(sbLocalDatabaseMediaItem)
 NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaItem)
   NS_INTERFACE_MAP_ENTRY(nsIClassInfo)
   NS_INTERFACE_MAP_ENTRY(nsISupportsWeakReference)
-  NS_INTERFACE_MAP_ENTRY(sbILibraryResource)
   NS_INTERFACE_MAP_ENTRY(sbILocalDatabaseResourceProperty)
   NS_INTERFACE_MAP_ENTRY(sbILocalDatabaseMediaItem)
   NS_INTERFACE_MAP_ENTRY(sbIMediaItem)
-  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbILibraryResource)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbILibraryResource, sbIMediaItem)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIMediaItem)
 NS_INTERFACE_MAP_END
 
 NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseMediaItem, nsIClassInfo,

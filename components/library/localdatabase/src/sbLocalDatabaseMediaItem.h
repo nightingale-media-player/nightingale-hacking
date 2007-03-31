@@ -44,7 +44,6 @@ class sbILocalDatabaseResourcePropertyBag;
 
 class sbLocalDatabaseMediaItem : public nsSupportsWeakReference,
                                  public nsIClassInfo,
-                                 public sbILibraryResource,
                                  public sbILocalDatabaseResourceProperty,
                                  public sbILocalDatabaseMediaItem,
                                  public sbIMediaItem
