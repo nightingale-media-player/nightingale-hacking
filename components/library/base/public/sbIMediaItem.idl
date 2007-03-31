@@ -67,6 +67,9 @@ interface sbIMediaItem : sbILibraryResource
    */
   readonly attribute boolean isMutable;
 
+
+// Convenience Attributes (these should thunk directly to the sbILibraryResource::G/SetProperty calls)
+
   /**
    * \brief Creation time of the media item as a unix timestamp.
    *
@@ -84,12 +87,6 @@ interface sbIMediaItem : sbILibraryResource
   attribute long mediaUpdated;
 
   /**
-   * \brief Test if this media item is available for playback
-   * \param aObserver An observer that is notified with the item's availabilty
-   */
-  void testIsAvailable(in nsIObserver aObserver);
-
-  /**
    * \brief A nsIURI that resolves to the content of the media item
    */
   attribute nsIURI contentSrc;
@@ -104,6 +101,15 @@ interface sbIMediaItem : sbILibraryResource
    * type (should this be renamed?)
    */
   attribute AString contentType;
+
+
+// Useful Functions
+
+  /**
+   * \brief Test if this media item is available for playback
+   * \param aObserver An observer that is notified with the item's availabilty
+   */
+  void testIsAvailable(in nsIObserver aObserver);
 
   /**
    * \brief Get an input stream to the content of the media item

@@ -30,6 +30,7 @@
 #include <nsIProgrammingLanguage.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
+#include <nsNetUtil.h>
 
 NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseMediaItem,
                              sbLocalDatabaseResourceProperty,
@@ -80,91 +81,128 @@ sbLocalDatabaseMediaItem::GetIsMutable(PRBool* aIsMutable)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetMediaCreated(PRInt32* aMediaCreated)
 {
-  /*
-   * TODO: Forward this to the resource property stuff
-   */
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aMediaCreated);
+
+  nsAutoString str;
+  nsresult rv = sbLocalDatabaseResourceProperty::GetProperty( NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created"), str );
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  *aMediaCreated = str.ToInteger(&rv);
+
+  return rv;
 }
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetMediaCreated(PRInt32 aMediaCreated)
 {
-  /*
-   * TODO: Forward this to the resource property stuff
-   */
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoString str;
+  str.AppendInt( aMediaCreated );
+
+  nsresult rv = sbLocalDatabaseResourceProperty::SetProperty( NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#updated"), str );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return rv;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetMediaUpdated(PRInt32* aMediaUpdated)
 {
-  /*
-   * TODO: Forward this to the resource property stuff
-   */
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aMediaUpdated);
+
+  nsAutoString str;
+  nsresult rv = sbLocalDatabaseResourceProperty::GetProperty( NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#updated"), str );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aMediaUpdated = str.ToInteger(&rv);
+
+  return rv;
 }
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetMediaUpdated(PRInt32 aMediaUpdated)
 {
-  /*
-   * TODO: Forward this to the resource property stuff
-   */
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
+  nsAutoString str;
+  str.AppendInt( aMediaUpdated );
 
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::TestIsAvailable(nsIObserver* aObserver)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = sbLocalDatabaseResourceProperty::SetProperty( NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#updated"), str );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return rv;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetContentSrc(nsIURI** aContentSrc)
 {
-  /*
-   * TODO: Forward this to the resource property stuff
-   */
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aContentSrc);
+
+  nsAutoString str;
+  nsresult rv = sbLocalDatabaseResourceProperty::GetProperty( NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentUrl"), str );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = NS_NewURI(aContentSrc, str);
+ 
+  return rv;
 }
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetContentSrc(nsIURI* aContentSrc)
 {
-  /*
-   * TODO: Forward this to the resource property stuff
-   */
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aContentSrc);
+
+  nsCAutoString cstr;
+  nsresult rv = aContentSrc->GetSpec( cstr );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbLocalDatabaseResourceProperty::SetProperty( NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentUrl"), NS_ConvertUTF8toUTF16(cstr) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return rv;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetContentLength(PRInt32* aContentLength)
 {
-  /*
-   * TODO: Forward this to the resource property stuff
-   */
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aContentLength);
+
+  nsAutoString str;
+  nsresult rv = sbLocalDatabaseResourceProperty::GetProperty( NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentLength"), str );
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  *aContentLength = str.ToInteger(&rv);
+
+  return rv;
 }
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetContentLength(PRInt32 aContentLength)
 {
-  /*
-   * TODO: Forward this to the resource property stuff
-   */
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoString str;
+  str.AppendInt( aContentLength );
+
+  nsresult rv = sbLocalDatabaseResourceProperty::SetProperty( NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentLength"), str );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return rv;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetContentType(nsAString& aContentType)
 {
-  /*
-   * TODO: Forward this to the resource property stuff
-   */
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = sbLocalDatabaseResourceProperty::GetProperty( NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentMimeType"), aContentType );
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return rv;
 }
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetContentType(const nsAString& aContentType)
 {
-  /*
-   * TODO: Forward this to the resource property stuff
-   */
+  nsresult rv = sbLocalDatabaseResourceProperty::SetProperty( NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentMimeType"), aContentType );
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return rv;
+}
+
+
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::TestIsAvailable(nsIObserver* aObserver)
+{
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
