@@ -194,7 +194,6 @@ sbLocalDatabaseMediaListView::GetLength(PRUint32* aFilteredLength)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::GetTreeView(nsITreeView** aTreeView)
 {
-/*
   NS_ENSURE_ARG_POINTER(aTreeView);
 
   if (!mTreeView) {
@@ -211,11 +210,14 @@ sbLocalDatabaseMediaListView::GetTreeView(nsITreeView** aTreeView)
     nsAutoPtr<sbLocalDatabaseTreeView> treeView(new sbLocalDatabaseTreeView(this, mArray));
     NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
 
+    rv = treeView->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     mTreeView = treeView.forget();
   }
 
   NS_ADDREF(*aTreeView = mTreeView);
-*/
+
   return NS_OK;
 }
 
@@ -234,7 +236,10 @@ sbLocalDatabaseMediaListView::GetCascadeFilterSet(sbICascadeFilterSet** aCascade
     rv = mArray->Clone(getter_AddRefs(guidArray));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = cascadeFilterSet->Init(this, mArray);
+    nsCOMPtr<sbILocalDatabaseGUIDArray> array = do_QueryInterface(mArray, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = cascadeFilterSet->Init(this, array);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mCascadeFilterSet = cascadeFilterSet.forget();

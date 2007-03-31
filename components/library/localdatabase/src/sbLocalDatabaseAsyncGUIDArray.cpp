@@ -53,7 +53,8 @@ static PRLogModuleInfo* gLocalDatabaseAsyncGUIDArrayLog = nsnull;
 
 static const char kShutdownMessage[] = "xpcom-shutdown-threads";
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabaseAsyncGUIDArray,
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbLocalDatabaseAsyncGUIDArray,
+                              sbILocalDatabaseGUIDArray,
                               sbILocalDatabaseAsyncGUIDArray,
                               nsIObserver)
 
