@@ -194,6 +194,7 @@ sbLocalDatabaseMediaListView::GetLength(PRUint32* aFilteredLength)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::GetTreeView(nsITreeView** aTreeView)
 {
+/*
   NS_ENSURE_ARG_POINTER(aTreeView);
 
   if (!mTreeView) {
@@ -217,7 +218,7 @@ sbLocalDatabaseMediaListView::GetTreeView(nsITreeView** aTreeView)
   }
 
   NS_ADDREF(*aTreeView = mTreeView);
-
+*/
   return NS_OK;
 }
 
