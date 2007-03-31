@@ -1810,11 +1810,13 @@ sbGUIDArrayEnumerator::GetNext(nsISupports **_retval)
   rv = mArray->GetByIndex(mNextIndex, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaItem> item = new sbLocalDatabaseMediaItem(mLibrary, guid);
+  nsAutoPtr<sbLocalDatabaseMediaItem> item(new sbLocalDatabaseMediaItem());
   NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
+  rv = item->Init(mLibrary, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mNextIndex++;
-  NS_ADDREF(*_retval = item);
+  NS_ADDREF(*_retval = NS_ISUPPORTS_CAST(sbIMediaItem*, item.forget()));
   return NS_OK;
 }
-

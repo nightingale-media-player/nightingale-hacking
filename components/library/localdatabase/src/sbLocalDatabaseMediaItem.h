@@ -27,49 +27,62 @@
 #ifndef __SBLOCALDATABASEMEDIAITEM_H__
 #define __SBLOCALDATABASEMEDIAITEM_H__
 
+#include <sbILibraryResource.h>
+#include <sbILocalDatabaseResourceProperty.h>
+#include <sbILocalDatabaseMediaItem.h>
 #include <sbIMediaItem.h>
+#include <nsIClassInfo.h>
+#include <nsWeakReference.h>
 
 #include <nsCOMPtr.h>
-#include <nsIClassInfo.h>
 #include <nsStringGlue.h>
-#include <nsWeakReference.h>
-#include <sbILibraryResource.h>
-#include <sbILocalDatabaseMediaItem.h>
-#include <sbILocalDatabasePropertyCache.h>
-#include <sbILocalDatabaseResourceProperty.h>
-#include "sbLocalDatabaseResourceProperty.h"
-#include <sbIMediaItem.h>
+#include <prlock.h>
 
 class sbILocalDatabaseLibrary;
+class sbILocalDatabasePropertyCache;
+class sbILocalDatabaseResourcePropertyBag;
 
-class sbLocalDatabaseMediaItem : public sbLocalDatabaseResourceProperty,
-                                 public sbIMediaItem,
-                                 public sbILocalDatabaseMediaItem,
+class sbLocalDatabaseMediaItem : public nsSupportsWeakReference,
                                  public nsIClassInfo,
-                                 public nsSupportsWeakReference
-                                 
+                                 public sbILibraryResource,
+                                 public sbILocalDatabaseResourceProperty,
+                                 public sbILocalDatabaseMediaItem,
+                                 public sbIMediaItem
 {
 public:
-  NS_DECL_ISUPPORTS_INHERITED
-
-  // When using inheritance, you must forward all interfaces implemented
-  // by the base class, else you will get "pure virtual function was not
-  // defined"style errors.
-  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseResourceProperty::)
-  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseResourceProperty::)
-  
-  NS_DECL_SBIMEDIAITEM
-  NS_DECL_SBILOCALDATABASEMEDIAITEM
+  NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
+  NS_DECL_SBILIBRARYRESOURCE
+  NS_DECL_SBILOCALDATABASERESOURCEPROPERTY
+  NS_DECL_SBILOCALDATABASEMEDIAITEM
+  NS_DECL_SBIMEDIAITEM
 
-  sbLocalDatabaseMediaItem(sbILocalDatabaseLibrary* aLibrary,
-                            const nsAString& aGuid);
-protected:
+  sbLocalDatabaseMediaItem();
+
+  virtual ~sbLocalDatabaseMediaItem();
+
+  nsresult Init(sbILocalDatabaseLibrary* aLibrary,
+                const nsAString& aGuid);
+
+private:
+  nsresult GetPropertyBag();
+
+private:
+  PRLock* mPropertyCacheLock;
+  nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
+
+  PRLock* mPropertyBagLock;
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> mPropertyBag;
+
+  PRLock*   mGuidLock;
+  nsString  mGuid;
 
   PRUint32 mMediaItemId;
 
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
+
+  PRPackedBool mWriteThrough;
+  PRPackedBool mWritePending;
 };
 
 #endif /* __SBLOCALDATABASEMEDIAITEM_H__ */
-

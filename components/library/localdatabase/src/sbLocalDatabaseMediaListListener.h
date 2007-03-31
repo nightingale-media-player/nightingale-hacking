@@ -28,10 +28,10 @@
 #define __SB_LOCALDATABASE_MEDIALISTLISTENER_H__
 
 #include <nsCOMPtr.h>
-#include <nsHashKeys.h>
 #include <nsInterfaceHashtable.h>
 #include <prlock.h>
 
+class nsISupportsHashKey;
 class sbIMediaItem;
 class sbIMediaList;
 class sbIMediaListListener;
@@ -55,10 +55,10 @@ public:
   sbLocalDatabaseMediaListListener();
   ~sbLocalDatabaseMediaListListener();
 
+protected:
   // Initialize the instance.
   nsresult Init();
 
-protected:
   // Add a listener to the hash table.
   nsresult AddListener(sbIMediaListListener* aListener);
 

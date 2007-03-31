@@ -94,18 +94,18 @@ static char* kInsertQueryColumns[] = {
   "media_list_type_id"
 };
 
-NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseLibrary,
-                             sbLocalDatabaseResourceProperty,
-                             sbILibrary,
-                             sbILocalDatabaseLibrary,
-                             sbIMediaList,
-                             sbIMediaItem)
+NS_IMPL_ISUPPORTS_INHERITED3(sbLocalDatabaseLibrary, sbLocalDatabaseMediaItem,
+                                                     sbILibrary,
+                                                     sbILocalDatabaseLibrary,
+                                                     sbIMediaList)
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid)
 : mDatabaseGuid(aDatabaseGuid)
 {
 #ifdef PR_LOGGING
-  gLibraryLog = PR_NewLogModule("sbLocalDatabaseLibrary");
+  if (!gLibraryLog) {
+    gLibraryLog = PR_NewLogModule("sbLocalDatabaseLibrary");
+  }
 #endif
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Constructed", this));
   NS_ASSERTION(!mDatabaseGuid.IsEmpty(), "No GUID!");
@@ -133,9 +133,6 @@ sbLocalDatabaseLibrary::Init()
 
   // Maybe check to this that this db is valid, etc?
   // Check version and migrate if needed?
-
-  rv = sbLocalDatabaseMediaListListener::Init();
-  NS_ENSURE_SUCCESS(rv, rv);
 
   mPropertyCache =
     do_CreateInstance(SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID, &rv);
@@ -195,7 +192,7 @@ sbLocalDatabaseLibrary::Init()
   rv = result->GetRowCell(0, 0, mGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLocalDatabaseResourceProperty::InitResourceProperty(mPropertyCache, mGuid);
+  rv = InitResourceProperty(mPropertyCache, mGuid);
 
   // Initialize the media list factory table.
   PRBool success = mMediaListFactoryTable.Init();
@@ -215,6 +212,16 @@ sbLocalDatabaseLibrary::Init()
   // Initialize the cached ID table.
   success = mCachedIDTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  // Initialize our base classes
+  rv = sbLocalDatabaseMediaListListener::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXben You can't call Init here unless this library's mPropertyCache ahs
+  //        been created.
+  rv = sbLocalDatabaseMediaItem::Init(this, mDatabaseGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -910,8 +917,14 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
     mMediaItemTable.Remove(aGUID);
   }
 
-  strongMediaItem = new sbLocalDatabaseMediaItem(this, aGUID);
-  NS_ENSURE_TRUE(strongMediaItem, NS_ERROR_OUT_OF_MEMORY);
+  nsAutoPtr<sbLocalDatabaseMediaItem>
+    newMediaItem(new sbLocalDatabaseMediaItem());
+  NS_ENSURE_TRUE(newMediaItem, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = newMediaItem->Init(this, aGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  strongMediaItem = newMediaItem.forget();
 
   // Get the type for the guid.
   nsAutoString type;
@@ -1366,163 +1379,4 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::RemoveListener(sbIMediaListListener* aListener)
 {
   return sbLocalDatabaseMediaListListener::RemoveListener(aListener);
-}
-
-/**
- * See sbIMediaItem
- */
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetLibrary(sbILibrary** aLibrary)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetOriginLibrary(sbILibrary** aOriginLibrary)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetIsMutable(PRBool* aIsMutable)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetMediaCreated(PRInt32* aMediaCreated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::SetMediaCreated(PRInt32 aMediaCreated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetMediaUpdated(PRInt32* aMediaUpdated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::SetMediaUpdated(PRInt32 aMediaUpdated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::TestIsAvailable(nsIObserver* aObserver)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetContentSrc(nsIURI** aContentSrc)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::SetContentSrc(nsIURI* aContentSrc)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetContentLength(PRInt32* aContentLength)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::SetContentLength(PRInt32 aContentLength)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetContentType(nsAString& aContentType)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::SetContentType(const nsAString& aContentType)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::OpenInputStream(PRUint32 aOffset,
-                                        nsIInputStream** _retval)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::OpenOutputStream(PRUint32 aOffset,
-                                         nsIOutputStream** _retval)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::ToString(nsAString& _retval)
-{
-  _retval.Truncate();
-  return NS_OK;
 }

@@ -31,9 +31,11 @@
 #include <sbIMediaListListener.h>
 
 #include <nsAutoLock.h>
+#include <nsHashKeys.h>
 #include <sbProxyUtils.h>
 
 sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener()
+: mListenerProxyTableLock(nsnull)
 {
 }
 
@@ -47,9 +49,23 @@ sbLocalDatabaseMediaListListener::~sbLocalDatabaseMediaListListener()
 nsresult
 sbLocalDatabaseMediaListListener::Init()
 {
-  mListenerProxyTableLock =
-    nsAutoLock::NewLock("sbLocalDatabaseMediaListBase::mListenerProxyTableLock");
-  NS_ENSURE_TRUE(mListenerProxyTableLock, NS_ERROR_OUT_OF_MEMORY);
+  NS_WARN_IF_FALSE(!mListenerProxyTableLock &&
+                   !mListenerProxyTable.IsInitialized(),
+                   "You're calling Init more than once!");
+
+  // Initialize our lock.
+  if (!mListenerProxyTableLock) {
+    mListenerProxyTableLock =
+      nsAutoLock::NewLock("sbLocalDatabaseMediaListListener::"
+                          "mListenerProxyTableLock");
+    NS_ENSURE_TRUE(mListenerProxyTableLock, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  // Initialize our hash table.
+  if (!mListenerProxyTable.IsInitialized()) {
+    PRBool success = mListenerProxyTable.Init();
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+  }
 
   return NS_OK;
 }
@@ -57,17 +73,11 @@ sbLocalDatabaseMediaListListener::Init()
 nsresult
 sbLocalDatabaseMediaListListener::AddListener(sbIMediaListListener* aListener)
 {
+  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+               "You haven't called Init yet!");
   NS_ENSURE_ARG_POINTER(aListener);
-  NS_ENSURE_TRUE(mListenerProxyTableLock, NS_ERROR_FAILURE);
 
   nsAutoLock lock(mListenerProxyTableLock);
-
-  // We must have the hash table initialized to continue.
-  PRBool tableInitialized = mListenerProxyTable.IsInitialized();
-  if (!tableInitialized) {
-    tableInitialized = mListenerProxyTable.Init();
-    NS_ENSURE_TRUE(tableInitialized, NS_ERROR_FAILURE);
-  }
 
   // See if we have already added this listener.
   sbIMediaListListener* previousProxy;
@@ -99,20 +109,14 @@ sbLocalDatabaseMediaListListener::AddListener(sbIMediaListListener* aListener)
 nsresult
 sbLocalDatabaseMediaListListener::RemoveListener(sbIMediaListListener* aListener)
 {
+  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+               "You haven't called Init yet!");
   NS_ENSURE_ARG_POINTER(aListener);
-  NS_ENSURE_TRUE(mListenerProxyTableLock, NS_ERROR_FAILURE);
 
-  nsAutoLock lock(mListenerProxyTableLock);
-
-  // Our table had better be initialized by now.
-  if (!mListenerProxyTable.IsInitialized()) {
-    NS_WARNING("You can't remove a listener until you add one!");
-
-    // Go ahead and return success.
-    return NS_OK;
-  }
 
 #ifdef DEBUG
+  nsAutoLock lock(mListenerProxyTableLock);
+
   // Check to make sure that this listener has actually been added. Only do
   // this in debug builds because the Remove method doesn't return any success
   // information and always succeeds..
@@ -138,12 +142,13 @@ nsresult
 sbLocalDatabaseMediaListListener::NotifyListenersItemAdded(sbIMediaList* aList,
                                                            sbIMediaItem* aItem)
 {
+  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+               "You haven't called Init yet!");
+  NS_ENSURE_ARG_POINTER(aList);
   NS_ENSURE_ARG_POINTER(aItem);
 
-  if (mListenerProxyTable.IsInitialized()) {
-    MediaListCallbackInfo info(aList, aItem);
-    mListenerProxyTable.EnumerateRead(ItemAddedCallback, &info);
-  }
+  MediaListCallbackInfo info(aList, aItem);
+  mListenerProxyTable.EnumerateRead(ItemAddedCallback, &info);
 
   return NS_OK;
 }
@@ -155,12 +160,13 @@ nsresult
 sbLocalDatabaseMediaListListener::NotifyListenersItemRemoved(sbIMediaList* aList,
                                                              sbIMediaItem* aItem)
 {
+  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+               "You haven't called Init yet!");
+  NS_ENSURE_ARG_POINTER(aList);
   NS_ENSURE_ARG_POINTER(aItem);
 
-  if (mListenerProxyTable.IsInitialized()) {
-    MediaListCallbackInfo info(aList, aItem);
-    mListenerProxyTable.EnumerateRead(ItemRemovedCallback, &info);
-  }
+  MediaListCallbackInfo info(aList, aItem);
+  mListenerProxyTable.EnumerateRead(ItemRemovedCallback, &info);
 
   return NS_OK;
 }
@@ -172,6 +178,9 @@ nsresult
 sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(sbIMediaList* aList,
                                                              sbIMediaItem* aItem)
 {
+  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+               "You haven't called Init yet!");
+  NS_ENSURE_ARG_POINTER(aList);
   NS_ENSURE_ARG_POINTER(aItem);
 
   if (mListenerProxyTable.IsInitialized()) {
@@ -188,9 +197,11 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(sbIMediaList* aList
 nsresult
 sbLocalDatabaseMediaListListener::NotifyListenersListCleared(sbIMediaList* aList)
 {
-  if (mListenerProxyTable.IsInitialized()) {
-    mListenerProxyTable.EnumerateRead(ListClearedCallback, aList);
-  }
+  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+               "You haven't called Init yet!");
+  NS_ENSURE_ARG_POINTER(aList);
+
+  mListenerProxyTable.EnumerateRead(ListClearedCallback, aList);
 
   return NS_OK;
 }
@@ -201,9 +212,11 @@ sbLocalDatabaseMediaListListener::NotifyListenersListCleared(sbIMediaList* aList
 nsresult
 sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(sbIMediaList* aList)
 {
-  if (mListenerProxyTable.IsInitialized()) {
-    mListenerProxyTable.EnumerateRead(BatchBeginCallback, aList);
-  }
+  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+               "You haven't called Init yet!");
+  NS_ENSURE_ARG_POINTER(aList);
+
+  mListenerProxyTable.EnumerateRead(BatchBeginCallback, aList);
 
   return NS_OK;
 }
@@ -214,9 +227,11 @@ sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(sbIMediaList* aList)
 nsresult
 sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(sbIMediaList* aList)
 {
-  if (mListenerProxyTable.IsInitialized()) {
-    mListenerProxyTable.EnumerateRead(BatchEndCallback, aList);
-  }
+  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+               "You haven't called Init yet!");
+  NS_ENSURE_ARG_POINTER(aList);
+
+  mListenerProxyTable.EnumerateRead(BatchEndCallback, aList);
 
   return NS_OK;
 }

@@ -27,7 +27,7 @@
 #ifndef __SBLOCALDATABASELIBRARY_H__
 #define __SBLOCALDATABASELIBRARY_H__
 
-#include "sbLocalDatabaseResourceProperty.h"
+#include "sbLocalDatabaseMediaItem.h"
 #include "sbLocalDatabaseMediaListListener.h"
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
@@ -46,7 +46,7 @@ class nsIWeakReference;
 class sbIDatabaseQuery;
 class sbILocalDatabasePropertyCache;
 
-class sbLocalDatabaseLibrary : public sbLocalDatabaseResourceProperty,
+class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaItem,
                                public sbLocalDatabaseMediaListListener,
                                public sbILibrary,
                                public sbILocalDatabaseLibrary,
@@ -81,17 +81,16 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseResourceProperty,
 public:
   NS_DECL_ISUPPORTS_INHERITED
 
-  // When using inheritence, you must forward all interfaces implemented
-  // by the base class, else you will get "pure virtual function was not
-  // defined" style errors.
-  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseResourceProperty::)
-  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseResourceProperty::)
+  // Use our base class for these
+  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaItem::)
+  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseMediaItem::)
+  NS_FORWARD_SBILOCALDATABASEMEDIAITEM(sbLocalDatabaseMediaItem::)
+  NS_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaItem::)
 
+  // This class implements these.
+  NS_DECL_SBIMEDIALIST
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
-
-  NS_DECL_SBIMEDIALIST
-  NS_DECL_SBIMEDIAITEM
 
   // This constructor assumes the database file lives in the 'ProfD/db'
   // directory.
