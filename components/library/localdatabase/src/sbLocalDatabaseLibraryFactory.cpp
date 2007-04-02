@@ -37,6 +37,7 @@
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbILibrary.h>
+#include <sbILocalDatabasePropertyCache.h>
 #include <sbISQLBuilder.h>
 
 #include <DatabaseQuery.h>
