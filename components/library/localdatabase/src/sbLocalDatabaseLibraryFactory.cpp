@@ -26,23 +26,25 @@
 
 #include "sbLocalDatabaseLibraryFactory.h"
 
-#include <DatabaseQuery.h>
 #include <nsIFile.h>
-#include <nsILocalFile.h>
 #include <nsIIOService.h>
+#include <nsILocalFile.h>
 #include <nsIProperties.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
 #include <nsIUUIDGenerator.h>
 #include <nsIXMLHttpRequest.h>
-#include <nsNetUtil.h>
-#include <nsServiceManagerUtils.h>
-#include <nsComponentManagerUtils.h>
-#include <nsXPCOMCID.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
-#include <sbISQLBuilder.h>
 #include <sbILibrary.h>
+#include <sbISQLBuilder.h>
+
+#include <DatabaseQuery.h>
+#include <nsAutoPtr.h>
+#include <nsComponentManagerUtils.h>
+#include <nsNetUtil.h>
+#include <nsServiceManagerUtils.h>
+#include <nsXPCOMCID.h>
 #include "sbLocalDatabaseLibrary.h"
 #include <sbSQLBuilderCID.h>
 
@@ -186,14 +188,13 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
                      ioService);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLocalDatabaseLibrary* library =
-    new sbLocalDatabaseLibrary(databaseLocation, NS_ConvertUTF8toUTF16(utf8GUID));
+  nsAutoPtr<sbLocalDatabaseLibrary> library(new sbLocalDatabaseLibrary());
   NS_ENSURE_TRUE(library, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = library->Init();
+  rv = library->Init(NS_ConvertUTF8toUTF16(utf8GUID), databaseLocation);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*_retval = library);
+  NS_ADDREF(*_retval = library.forget());
   return NS_OK;
 }
 

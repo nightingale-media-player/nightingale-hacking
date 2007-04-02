@@ -98,8 +98,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBas
                                                      sbILibrary,
                                                      sbILocalDatabaseLibrary)
 
-sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid)
-: mDatabaseGuid(aDatabaseGuid)
+sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
 {
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
@@ -107,32 +106,25 @@ sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid)
   }
 #endif
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Constructed", this));
-  NS_ASSERTION(!mDatabaseGuid.IsEmpty(), "No GUID!");
 }
 
-sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(nsIURI* aDatabaseLocation,
-                                               const nsAString& aDatabaseGuid)
-: mDatabaseGuid(aDatabaseGuid),
-  mDatabaseLocation(aDatabaseLocation)
-{
-#ifdef PR_LOGGING
-  gLibraryLog = PR_NewLogModule("sbLocalDatabaseLibrary");
-#endif
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - Constructed", this));
-  NS_ASSERTION(mDatabaseLocation, "Null pointer!");
-  NS_ASSERTION(!mDatabaseGuid.IsEmpty(), "No GUID!");
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::Init()
+nsresult
+sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
+                             nsIURI* aDatabaseLocation)
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Init()", this));
-  nsresult rv;
-  PRInt32 dbOk;
 
   // Maybe check to this that this db is valid, etc?
   // Check version and migrate if needed?
 
+  // We need a valid GUID to go any further.
+  NS_ENSURE_FALSE(aDatabaseGuid.IsEmpty(), NS_ERROR_INVALID_ARG);
+  mDatabaseGuid.Assign(aDatabaseGuid);
+
+  // This may be null.
+  mDatabaseLocation = aDatabaseLocation;
+
+  nsresult rv;
   mPropertyCache =
     do_CreateInstance(SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -174,6 +166,7 @@ sbLocalDatabaseLibrary::Init()
   rv = query->AddQuery(sql);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);

@@ -54,8 +54,6 @@ interface sbILocalDatabaseLibrary : nsISupports
 
   readonly attribute sbILocalDatabasePropertyCache propertyCache;
 
-  void init();
-
   ACString getContractIdForGuid(in AString aGuid);
 
   unsigned long getMediaItemIdForGuid(in AString aGuid);

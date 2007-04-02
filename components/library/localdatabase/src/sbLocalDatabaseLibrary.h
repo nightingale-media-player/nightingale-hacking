@@ -89,15 +89,12 @@ public:
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
 
-  // This constructor assumes the database file lives in the 'ProfD/db'
-  // directory.
-  sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid);
-
-  // Use this constructor to specify a location for the database file.
-  sbLocalDatabaseLibrary(nsIURI* aDatabaseLocation,
-                         const nsAString& aDatabaseGuid);
+  sbLocalDatabaseLibrary();
 
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty);
+
+  nsresult Init(const nsAString& aDatabaseGuid,
+                nsIURI* aDatabaseLocation = nsnull);
 
 private:
   nsresult CreateQueries();
@@ -109,8 +106,6 @@ private:
   nsresult CreateNewItemInDatabase(const PRUint32 aMediaItemTypeID,
                                    const nsAString& aURISpecOrPrefix,
                                    nsAString& _retval);
-
-  //nsresult LoadRegisteredMediaListFactories();
 
   nsresult GetTypeForGUID(const nsAString& aGUID,
                           nsAString& _retval);
@@ -136,8 +131,11 @@ private:
   nsString mMediaListFactoriesQuery;
   nsString mInsertMediaListFactoryQuery;
 
-  // This library's resource guid
-  nsString mGuid;
+  // Query to delete a single item from the view
+  nsString mDeleteItemQuery;
+
+  // Query to clear the entire list
+  nsString mDeleteAllQuery;
 
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
 

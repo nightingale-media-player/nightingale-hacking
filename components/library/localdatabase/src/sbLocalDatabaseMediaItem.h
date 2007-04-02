@@ -71,6 +71,8 @@ protected:
 
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
 
+  nsString  mGuid;
+
 private:
   PRLock* mPropertyCacheLock;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
@@ -79,7 +81,6 @@ private:
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> mPropertyBag;
 
   PRLock*   mGuidLock;
-  nsString  mGuid;
 
   PRPackedBool mWriteThrough;
   PRPackedBool mWritePending;
