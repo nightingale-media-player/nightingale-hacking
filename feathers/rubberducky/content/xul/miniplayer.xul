@@ -114,5 +114,9 @@
    src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/window_utils.js" />
-
+   
+  <!-- Extension Overlay Support -->
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/overlayLoader.js" />
+   
 </window>

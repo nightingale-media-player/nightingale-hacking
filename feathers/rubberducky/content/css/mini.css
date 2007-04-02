@@ -26,15 +26,12 @@
 
 
 
-/** TODO this file hasn't been cleaned at all.  Probably best to reimplement
-    from scratch **/
-
 /** 
 ************************************************************************************************************************************************
 MINI PLAYER SKIN
-Anything with #mini refers to the skin of the mini player.
 ************************************************************************************************************************************************
 */  
+
 
 window#mini  
 { 
@@ -65,6 +62,8 @@ window#mini
   -moz-opacity: 0.99; 
 }
 
+
+/* the horizontal resizers */
 #mini_resize_w,
 #mini_resize_e
 {
@@ -165,10 +164,11 @@ sb-player-forward-button.miniplayer:active
 
 /** 
 ************************************************************************************************************************************************
-MINI DASH BOARD
+MINI DASHBOARD
 ************************************************************************************************************************************************
 */
 
+/* Dashboard background box */
 #mini_dash
 {
   height: 18px;
@@ -177,11 +177,11 @@ MINI DASH BOARD
   padding: 0px 3px 0px 3px;
 }
 
+/* Dashboard edges (rounded corners) */
 #mini_dash_e
 {
   list-style-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard_e.png) !important;
 }
-
 #mini_dash_w
 {
   list-style-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard_w.png) !important;
@@ -200,9 +200,6 @@ MINI DASH BOARD
 }
 
 
-
-
-/** TODO can this be minimized **/
 
 /** Make a fake slider groove underneath the dash text.
     This is to allow the text to hang over the slider
@@ -223,7 +220,6 @@ MINI DASH BOARD
   border: 0px !important;
   margin-top: 12px !important;
 }
-
 #mini_seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb
 {
   width: 11px !important;

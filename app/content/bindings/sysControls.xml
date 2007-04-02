@@ -33,12 +33,7 @@
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
-<!-- SYSBTNS -->
-<!-- TODO:
-            1 - wait for matt to finish migrating overlays to be pulled into the document.
-            2 - wrap all of the items into a single titlebar that properly centers the title on mac.
-            3 - create a similar dialog titlebar that uses a value attribute on a label for the title.
--->            
+          
   <binding id="sb-sys-maximize-button" extends="chrome://global/content/bindings/checkbox.xml#checkbox-baseline">
     <handlers>
       <!-- Grrr, apparently you use "CheckboxStateChange" instead of "command" from inside an XBL.  Of course.  Obviously. -->
@@ -284,7 +279,8 @@
         <xul:hbox>
           <xul:sb-sys-osx-buttons type="dialog"/>
           <xul:sb-sys-title sbid="hide_mac" xbl:inherits="value"/> 
-          <xul:menubar/>
+          <!-- TODO: allow external menu? -->
+          <xul:menubar />  
           <xul:spacer flex="1"/>
           <xul:sb-sys-buttons type="dialog"/>
         </xul:hbox>
@@ -330,7 +326,7 @@
           <xul:sb-sys-osx-buttons xbl:inherits="type"/>
           <xul:sb-sys-icon/>
           <xul:sb-sys-title sbid="hide_mac" xbl:inherits="value"/> 
-          <xul:sb-sys-menubar/>
+          <children />
           <xul:spacer flex="1"/>
           <xul:sb-sys-buttons xbl:inherits="type"/>
         </xul:hbox>

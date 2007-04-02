@@ -14,7 +14,6 @@
 <?xul-overlay href="chrome://songbird/content/xul/popupOverlay.xul"?>
 <?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
 
-
 <!--
 /*
 //
@@ -75,23 +74,15 @@
     <vbox flex="1" drag_window="true">
 
       <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
-      <!-- TODO: Change to sb-sys-tilebar, can't do that till the menu overlay works -->
-      <hbox id="songbird_top">
-        <sb-sys-osx-buttons/>
-        <sb-sys-icon/>
-        <spacer width="5"/>
-        <sb-sys-title/>
-        <spacer width="5"/>
-        <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" />               
-        <spacer flex="1" drag_window="true"/>
-        <sb-feathers-toggle-button sbid="feathers" id="sysbtn_minimode" popupanchor="bottomright" popupalign="topright" />
-        <sb-sys-buttons/>
-        <sb-sys-osx-feathers/>
-      </hbox>
+      <sb-sys-titlebar>
       
-      <!-- Waiting for the menubar to be overlayed into a sb-sys-menubar element
-      <sb-sys-titlebar/>
-      -->
+        <!-- Note: This menu must have the id "songbird_menu", as it is the overlay
+             target of menuOverlay.xul.  This cannot be put inside of a binding
+             as that would break OSX menu handling. 
+             See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
+          -->
+        <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" />  
+      </sb-sys-titlebar>
       
       <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
       <hbox id="frame_mini" hidden="true" drag_window="true">
@@ -338,6 +329,10 @@
 
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/balloonTip.js" />
+
+  <!-- Extension Overlay Support -->
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/overlayLoader.js" />
 
 </window>
 

@@ -179,7 +179,6 @@
   
   <keyset>
     <key id="sanitize-key" modifiers="accel,shift" key="&sanitize.key;" oncommand="doMenu('menu.clearprivatedata');"/>
-    <key id="dominspector-key" modifiers="accel,shift" key="&menu.file.dominspector;" oncommand="doMenu('menu.dominspector');"/>
   </keyset>
 
 </overlay>
