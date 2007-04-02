@@ -26,8 +26,11 @@
 
 #include "sbLocalDatabaseViewMediaListFactory.h"
 
-#include <nsAutoPtr.h>
 #include <sbIMediaList.h>
+#include <sbILibrary.h>
+#include <sbILocalDatabaseLibrary.h>
+
+#include <nsAutoPtr.h>
 #include "sbLocalDatabaseViewMediaList.h"
 #include "sbLocalDatabaseCID.h"
 
@@ -70,10 +73,10 @@ sbLocalDatabaseViewMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoPtr<sbLocalDatabaseViewMediaList>
-    newMediaList(new sbLocalDatabaseViewMediaList(localLibrary, guid));
+    newMediaList(new sbLocalDatabaseViewMediaList());
   NS_ENSURE_TRUE(newMediaList, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = newMediaList->Init();
+  rv = newMediaList->Init(localLibrary, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = newMediaList.forget());

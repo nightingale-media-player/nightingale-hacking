@@ -28,32 +28,28 @@
 #define __SBLOCALDATABASEVIEWMEDIALIST_H__
 
 #include "sbLocalDatabaseMediaListBase.h"
-
-#include <sbIMediaList.h>
-#include <sbILibrary.h>
-#include <sbILocalDatabaseLibrary.h>
-#include <sbIMediaItem.h>
 #include <sbIMediaListListener.h>
+
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
-#include <nsWeakReference.h>
 #include <prlock.h>
 
-class sbLocalDatabaseViewMediaList : public sbLocalDatabaseMediaListBase,
-                                     public nsSupportsWeakReference
+class sbIMediaItem;
+class sbIMediaList;
+class sbILibrary;
+class sbILocalDatabaseLibrary;
+
+class sbLocalDatabaseViewMediaList : public sbLocalDatabaseMediaListBase
 {
 public:
   friend class sbViewMediaListEnumerationListener;
 
   NS_DECL_ISUPPORTS_INHERITED
 
-  sbLocalDatabaseViewMediaList(sbILocalDatabaseLibrary* aLibrary,
-                               const nsAString& aGuid) :
-    sbLocalDatabaseMediaListBase(aLibrary, aGuid)
-  {
-  }
+  sbLocalDatabaseViewMediaList() { };
 
-  nsresult Init();
+  nsresult Init(sbILocalDatabaseLibrary* aLibrary,
+                const nsAString& aGuid);
 
   // override base class
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
@@ -79,6 +75,7 @@ private:
 
   nsresult AddItemToLocalDatabase(sbIMediaItem* aMediaItem);
 
+private:
   // Query to delete a single item from the view
   nsString mDeleteItemQuery;
 

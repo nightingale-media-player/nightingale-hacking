@@ -26,10 +26,13 @@
 
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
 
+#include <sbIDatabaseQuery.h>
+#include <sbILibrary.h>
+#include <sbILocalDatabaseLibrary.h>
+#include <sbIMediaItem.h>
+
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
-#include <sbILibrary.h>
-#include <sbIMediaItem.h>
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseSimpleMediaList.h"
 
@@ -80,10 +83,10 @@ sbLocalDatabaseSimpleMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoPtr<sbLocalDatabaseSimpleMediaList>
-    newMediaList(new sbLocalDatabaseSimpleMediaList(localLibrary, guid));
+    newMediaList(new sbLocalDatabaseSimpleMediaList());
   NS_ENSURE_TRUE(newMediaList, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = newMediaList->Init();
+  rv = newMediaList->Init(localLibrary, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = newMediaList.forget());

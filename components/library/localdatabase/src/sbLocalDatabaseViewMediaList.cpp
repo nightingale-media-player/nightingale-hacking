@@ -25,21 +25,24 @@
 */
 
 #include "sbLocalDatabaseViewMediaList.h"
-#include "sbLocalDatabaseCID.h"
-#include "sbLocalDatabaseLibrary.h"
-#include "sbLocalDatabaseMediaListBase.h"
 
-#include <sbIMediaListListener.h>
+#include <nsISimpleEnumerator.h>
+#include <nsIURI.h>
 #include <sbILibrary.h>
+#include <sbILocalDatabaseGUIDArray.h>
+#include <sbILocalDatabaseLibrary.h>
+#include <sbIMediaItem.h>
+#include <sbIMediaList.h>
 #include <sbISQLBuilder.h>
+
+#include "sbLocalDatabaseCID.h"
+
+#include <nsAutoLock.h>
 #include <sbSQLBuilderCID.h>
 #include <sbIDatabaseQuery.h>
 #include <DatabaseQuery.h>
 #include <sbIDatabaseResult.h>
-#include <nsISimpleEnumerator.h>
 #include <nsComponentManagerUtils.h>
-#include <nsAutoLock.h>
-#include <nsIURI.h>
 
 #define DEFAULT_SORT_PROPERTY \
   NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created")
@@ -122,14 +125,15 @@ sbViewMediaListEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbLocalDatabaseViewMediaList,
-                             sbLocalDatabaseMediaListBase,
-                             nsISupportsWeakReference)
+NS_IMPL_ISUPPORTS_INHERITED0(sbLocalDatabaseViewMediaList,
+                             sbLocalDatabaseMediaListBase)
 
 nsresult
-sbLocalDatabaseViewMediaList::Init()
+sbLocalDatabaseViewMediaList::Init(sbILocalDatabaseLibrary* aLibrary,
+                                  const nsAString& aGuid)
 {
-  nsresult rv;
+  nsresult rv = sbLocalDatabaseMediaListBase::Init(aLibrary, aGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mFullArray = do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);

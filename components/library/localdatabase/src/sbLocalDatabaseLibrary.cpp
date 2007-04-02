@@ -94,10 +94,9 @@ static char* kInsertQueryColumns[] = {
   "media_list_type_id"
 };
 
-NS_IMPL_ISUPPORTS_INHERITED3(sbLocalDatabaseLibrary, sbLocalDatabaseMediaItem,
+NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
                                                      sbILibrary,
-                                                     sbILocalDatabaseLibrary,
-                                                     sbIMediaList)
+                                                     sbILocalDatabaseLibrary)
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary(const nsAString& aDatabaseGuid)
 : mDatabaseGuid(aDatabaseGuid)
@@ -214,12 +213,9 @@ sbLocalDatabaseLibrary::Init()
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   // Initialize our base classes
-  rv = sbLocalDatabaseMediaListListener::Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // XXXben You can't call Init here unless this library's mPropertyCache ahs
+  // XXXben You can't call Init here unless this library's mPropertyCache has
   //        been created.
-  rv = sbLocalDatabaseMediaItem::Init(this, mDatabaseGuid);
+  rv = sbLocalDatabaseMediaListBase::Init(this, mDatabaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1379,4 +1375,11 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::RemoveListener(sbIMediaListListener* aListener)
 {
   return sbLocalDatabaseMediaListListener::RemoveListener(aListener);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetDefaultSortProperty(nsAString& aProperty)
+{
+  aProperty.Assign(DEFAULT_SORT_PROPERTY);
+  return NS_OK;
 }

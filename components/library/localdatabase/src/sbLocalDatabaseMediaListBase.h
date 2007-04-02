@@ -27,29 +27,17 @@
 #ifndef __SBLOCALDATABASEMEDIALISTBASE_H__
 #define __SBLOCALDATABASEMEDIALISTBASE_H__
 
-#include <sbLocalDatabaseMediaItem.h>
+#include "sbLocalDatabaseMediaItem.h"
+#include "sbLocalDatabaseMediaListListener.h"
+#include <nsIClassInfo.h>
+#include <sbIMediaList.h>
+
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
-#include <nsHashKeys.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <prmon.h>
 #include <prlock.h>
-#include <nsIStringEnumerator.h>
-#include <sbICascadeFilterSet.h>
-#include <sbILibrary.h>
-#include <sbILocalDatabaseGUIDArray.h>
-#include <sbILocalDatabaseLibrary.h>
-#include <sbIMediaList.h>
-#include <sbIMediaListListener.h>
-#include <sbIFilterableMediaList.h>
-#include <sbISearchableMediaList.h>
-#include <sbISortableMediaList.h>
-#include <sbIDatabaseResult.h>
-#include "sbLocalDatabaseGUIDArray.h"
-#include "sbLocalDatabaseLibrary.h"
-#include "sbLocalDatabaseResourceProperty.h"
-#include "sbLocalDatabaseMediaListListener.h"
 
 // Macros to help early returns within loops.
 #define SB_CONTINUE_IF_FALSE(_expr)                                            \
@@ -74,11 +62,17 @@
     }                                                                          \
   PR_END_MACRO
 
-class sbLocalDatabaseMediaListBase : public sbLocalDatabaseResourceProperty,
+class nsIStringEnumerator;
+class nsStringHashKey;
+class sbGUIDArrayEnumerator;
+class sbIDatabaseQuery;
+class sbILocalDatabaseGUIDArray;
+class sbILocalDatabaseLibrary;
+class sbIMediaListEnumerationListener;
+
+class sbLocalDatabaseMediaListBase : public sbLocalDatabaseMediaItem,
                                      public sbLocalDatabaseMediaListListener,
-                                     public sbIMediaList,
-                                     public sbILocalDatabaseMediaItem,
-                                     public nsIClassInfo
+                                     public sbIMediaList
 {
   typedef nsTArray<nsString> sbStringArray;
   typedef nsClassHashtable<nsStringHashKey, sbStringArray> sbStringArrayHash;
@@ -86,20 +80,19 @@ class sbLocalDatabaseMediaListBase : public sbLocalDatabaseResourceProperty,
 public:
   NS_DECL_ISUPPORTS_INHERITED
 
-  //When using inheritence, you must forward all interfaces implemented
-  //by the base class, else you will get "pure virtual function was not defined"
-  //style errors.
-  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseResourceProperty::)
-  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseResourceProperty::)
+  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseMediaItem::)
+  NS_FORWARD_SBILOCALDATABASEMEDIAITEM(sbLocalDatabaseMediaItem::)
+  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaItem::)
+  NS_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaItem::)
 
-  NS_DECL_SBIMEDIAITEM
   NS_DECL_SBIMEDIALIST
-  NS_DECL_SBILOCALDATABASEMEDIAITEM
   NS_DECL_NSICLASSINFO
 
-  sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
-                               const nsAString& aGuid);
+  sbLocalDatabaseMediaListBase();
   ~sbLocalDatabaseMediaListBase();
+
+  nsresult Init(sbILocalDatabaseLibrary* aLibrary,
+                const nsAString& aGuid);
 
 protected:
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty) = 0;
@@ -129,12 +122,6 @@ private:
                                   sbIMediaListEnumerationListener* aListener);
 
 protected:
-
-  // The library this media list instance belogs to
-  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
-
-  // The media item id of the media list
-  PRUint32 mMediaItemId;
 
   // The mFullArray is a cached version of the full contents of the media
   // list this instance represents.

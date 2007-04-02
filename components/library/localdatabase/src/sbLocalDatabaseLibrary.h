@@ -27,8 +27,7 @@
 #ifndef __SBLOCALDATABASELIBRARY_H__
 #define __SBLOCALDATABASELIBRARY_H__
 
-#include "sbLocalDatabaseMediaItem.h"
-#include "sbLocalDatabaseMediaListListener.h"
+#include "sbLocalDatabaseMediaListBase.h"
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaList.h>
@@ -46,11 +45,9 @@ class nsIWeakReference;
 class sbIDatabaseQuery;
 class sbILocalDatabasePropertyCache;
 
-class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaItem,
-                               public sbLocalDatabaseMediaListListener,
+class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
                                public sbILibrary,
-                               public sbILocalDatabaseLibrary,
-                               public sbIMediaList
+                               public sbILocalDatabaseLibrary
 {
   struct sbMediaListFactoryInfo {
     sbMediaListFactoryInfo()
@@ -82,10 +79,10 @@ public:
   NS_DECL_ISUPPORTS_INHERITED
 
   // Use our base class for these
-  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaItem::)
-  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseMediaItem::)
-  NS_FORWARD_SBILOCALDATABASEMEDIAITEM(sbLocalDatabaseMediaItem::)
-  NS_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaItem::)
+  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaListBase::)
+  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseMediaListBase::)
+  NS_FORWARD_SBILOCALDATABASEMEDIAITEM(sbLocalDatabaseMediaListBase::)
+  NS_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaListBase::)
 
   // This class implements these.
   NS_DECL_SBIMEDIALIST
@@ -99,6 +96,8 @@ public:
   // Use this constructor to specify a location for the database file.
   sbLocalDatabaseLibrary(nsIURI* aDatabaseLocation,
                          const nsAString& aDatabaseGuid);
+
+  NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty);
 
 private:
   nsresult CreateQueries();

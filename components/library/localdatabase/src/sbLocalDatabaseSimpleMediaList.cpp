@@ -25,7 +25,17 @@
 */
 
 #include "sbLocalDatabaseSimpleMediaList.h"
-#include "sbLocalDatabaseMediaListBase.h"
+
+#include <nsISimpleEnumerator.h>
+#include <nsIURI.h>
+#include <sbIDatabaseQuery.h>
+#include <sbIDatabaseResult.h>
+#include <sbILibrary.h>
+#include <sbILocalDatabaseGUIDArray.h>
+#include <sbIMediaListListener.h>
+#include <sbIMediaListView.h>
+#include <sbISQLBuilder.h>
+
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibrary.h"
 
@@ -33,15 +43,7 @@
 #include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
-#include <nsISimpleEnumerator.h>
-#include <nsIURI.h>
 #include <pratom.h>
-#include <sbIDatabaseQuery.h>
-#include <sbIDatabaseResult.h>
-#include <sbILibrary.h>
-#include <sbIMediaListListener.h>
-#include <sbIMediaListView.h>
-#include <sbISQLBuilder.h>
 #include <sbLocalDatabaseMediaListView.h>
 #include <sbSQLBuilderCID.h>
 
@@ -152,14 +154,15 @@ sbSimpleMediaListEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
 }
 
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbLocalDatabaseSimpleMediaList,
-                             sbLocalDatabaseMediaListBase,
-                             nsISupportsWeakReference)
+NS_IMPL_ISUPPORTS_INHERITED0(sbLocalDatabaseSimpleMediaList,
+                             sbLocalDatabaseMediaListBase)
 
 nsresult
-sbLocalDatabaseSimpleMediaList::Init()
+sbLocalDatabaseSimpleMediaList::Init(sbILocalDatabaseLibrary* aLibrary,
+                                     const nsAString& aGuid)
 {
-  nsresult rv;
+  nsresult rv = sbLocalDatabaseMediaListBase::Init(aLibrary, aGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mFullArray = do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);

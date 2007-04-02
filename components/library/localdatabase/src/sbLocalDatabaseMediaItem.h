@@ -66,6 +66,11 @@ public:
 private:
   nsresult GetPropertyBag();
 
+protected:
+  PRUint32 mMediaItemId;
+
+  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
+
 private:
   PRLock* mPropertyCacheLock;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
@@ -75,10 +80,6 @@ private:
 
   PRLock*   mGuidLock;
   nsString  mGuid;
-
-  PRUint32 mMediaItemId;
-
-  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
 
   PRPackedBool mWriteThrough;
   PRPackedBool mWritePending;

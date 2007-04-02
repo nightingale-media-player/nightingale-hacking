@@ -28,33 +28,30 @@
 #define __SBLOCALDATABASESIMPLEMEDIALIST_H__
 
 #include "sbLocalDatabaseMediaListBase.h"
-#include <sbIMediaList.h>
 #include <sbIMediaListListener.h>
-#include <sbILocalDatabaseLibrary.h>
-#include <sbIMediaItem.h>
-#include <nsStringGlue.h>
-#include <nsWeakReference.h>
 
+#include <nsStringGlue.h>
 #include <prlock.h>
 
-class sbSimpleMediaListEnumerationListener;
+class nsISimpleEnumerator;
+class sbILocalDatabaseLibrary;
+class sbIMediaItem;
+class sbIMediaList;
 class sbIMediaListView;
+class sbIDatabaseQuery;
+class sbSimpleMediaListEnumerationListener;
 
-class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase,
-                                       public nsSupportsWeakReference
+class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase
 {
 public:
   friend class sbSimpleMediaListEnumerationListener;
 
   NS_DECL_ISUPPORTS_INHERITED
 
-  sbLocalDatabaseSimpleMediaList(sbILocalDatabaseLibrary* aLibrary,
-                                 const nsAString& aGuid) :
-    sbLocalDatabaseMediaListBase(aLibrary, aGuid)
-  {
-  }
+  sbLocalDatabaseSimpleMediaList() { };
 
-  nsresult Init();
+  nsresult Init(sbILocalDatabaseLibrary* aLibrary,
+                const nsAString& aGuid);
 
   // override base class
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);

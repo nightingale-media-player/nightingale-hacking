@@ -26,8 +26,6 @@
 
 #include "sbLocalDatabaseMediaListBase.h"
 
-#include <nsAutoLock.h>
-#include <nsComponentManagerUtils.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIProperty.h>
 #include <nsIPropertyBag.h>
@@ -35,43 +33,54 @@
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
 #include <nsIVariant.h>
+#include <sbICascadeFilterSet.h>
+#include <sbIDatabaseQuery.h>
+#include <sbIDatabaseResult.h>
+#include <sbIFilterableMediaList.h>
+#include <sbILibrary.h>
+#include <sbILocalDatabaseGUIDArray.h>
+#include <sbILocalDatabaseLibrary.h>
+#include <sbIMediaList.h>
+#include <sbIMediaListListener.h>
+#include <sbIMediaListView.h>
+#include <sbIPropertyArray.h>
+#include <sbISearchableMediaList.h>
+#include <sbISortableMediaList.h>
+
+#include <DatabaseQuery.h>
+#include <nsAutoLock.h>
+#include <nsComponentManagerUtils.h>
+#include <nsHashKeys.h>
 #include <nsMemory.h>
 #include <sbSQLBuilderCID.h>
-#include <sbIDatabaseQuery.h>
-#include <DatabaseQuery.h>
-#include <sbIMediaListView.h>
-#include <sbIMediaList.h>
-#include <sbIPropertyArray.h>
 #include <sbPropertiesCID.h>
+#include "sbLocalDatabaseCascadeFilterSet.h"
 #include "sbLocalDatabaseCID.h"
+#include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabasePropertyCache.h"
-#include <sbLocalDatabaseCascadeFilterSet.h>
+#include "sbLocalDatabaseResourceProperty.h"
 
-NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseMediaListBase,
-                             sbLocalDatabaseResourceProperty,
-                             sbIMediaItem,
-                             sbILocalDatabaseMediaItem,
-                             sbIMediaList,
-                             nsIClassInfo)
+NS_IMPL_ADDREF(sbLocalDatabaseMediaListBase)
+NS_IMPL_RELEASE(sbLocalDatabaseMediaListBase)
 
-NS_IMPL_CI_INTERFACE_GETTER4(sbLocalDatabaseMediaListBase,
+NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaListBase)
+  NS_INTERFACE_MAP_ENTRY(nsIClassInfo)
+  NS_INTERFACE_MAP_ENTRY(sbIMediaList)
+NS_INTERFACE_MAP_END_INHERITING(sbLocalDatabaseMediaItem)
+
+NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseMediaListBase,
+                             nsIClassInfo,
+                             nsISupportsWeakReference,
                              sbILibraryResource,
-                             sbIMediaItem,
+                             sbILocalDatabaseResourceProperty,
                              sbILocalDatabaseMediaItem,
+                             sbIMediaItem,
                              sbIMediaList)
 
-sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase(sbILocalDatabaseLibrary* aLibrary,
-                                                           const nsAString& aGuid)
-: sbLocalDatabaseResourceProperty(aLibrary, aGuid),
-  mLibrary(aLibrary),
-  mMediaItemId(0),
+sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
+: mFullArrayMonitor(nsnull),
   mLockedEnumerationActive(PR_FALSE)
 {
-  mFullArrayMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseMediaListBase::mFullArrayMonitor");
-  NS_ASSERTION(mFullArrayMonitor, "Failed to create monitor!");
-
-  nsresult rv = sbLocalDatabaseMediaListListener::Init();
-  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to initialize base listener");
 }
 
 sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
@@ -79,6 +88,24 @@ sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
   if (mFullArrayMonitor) {
     nsAutoMonitor::DestroyMonitor(mFullArrayMonitor);
   }
+}
+
+nsresult
+sbLocalDatabaseMediaListBase::Init(sbILocalDatabaseLibrary* aLibrary,
+                                   const nsAString& aGuid)
+{
+  mFullArrayMonitor =
+    nsAutoMonitor::NewMonitor("sbLocalDatabaseMediaListBase::mFullArrayMonitor");
+  NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  // Initialize our base classes
+  nsresult rv = sbLocalDatabaseMediaListListener::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbLocalDatabaseMediaItem::Init(aLibrary, aGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 /**
@@ -798,139 +825,6 @@ sbLocalDatabaseMediaListBase::CreateView(sbIMediaListView** _retval)
 {
   NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-// sbIMediaItem
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetLibrary(sbILibrary** aLibrary)
-{
-  NS_ENSURE_ARG_POINTER(aLibrary);
-  NS_ENSURE_STATE(mLibrary);
-
-  nsresult rv;
-  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*aLibrary = library);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetOriginLibrary(sbILibrary** aOriginLibrary)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetIsMutable(PRBool* IsMutable)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetMediaCreated(PRInt32* MediaCreated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::SetMediaCreated(PRInt32 aMediaCreated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetMediaUpdated(PRInt32* MediaUpdated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::SetMediaUpdated(PRInt32 aMediaUpdated)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::TestIsAvailable(nsIObserver* Observer)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetContentSrc(nsIURI** aContentSrc)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::SetContentSrc(nsIURI * aContentSrc)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetContentLength(PRInt32* ContentLength)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::SetContentLength(PRInt32 aContentLength)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetContentType(nsAString& aContentType)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::SetContentType(const nsAString& aContentType)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::OpenInputStream(PRUint32 aOffset,
-                                              nsIInputStream** _retval)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::OpenOutputStream(PRUint32 aOffset,
-                                               nsIOutputStream** _retval)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::ToString(nsAString& _retval)
-{
-  nsAutoString buff;
-
-  buff.AppendLiteral("MediaList {guid: ");
-  buff.Append(mGuid);
-  buff.AppendLiteral("}");
-
-  _retval = buff;
-  return NS_OK;
-}
-
-// sbILocalDatabaseMediaItem
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetMediaItemId(PRUint32 *_retval)
-{
-  if (mMediaItemId == 0) {
-    nsresult rv = mLibrary->GetMediaItemIdForGuid(mGuid, &mMediaItemId);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  *_retval = mMediaItemId;
-  return NS_OK;
 }
 
 // nsIClassInfo
