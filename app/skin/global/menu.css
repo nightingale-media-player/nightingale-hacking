@@ -210,7 +210,7 @@ menulist > menupopup > menuitem[_moz-menuactive="true"][selected="true"]:not([di
 menuseparator {
   margin: 5px 0 4px 0;
   padding: 1px 0 !important;
-  border-top: 1px solid #d9d9d9;
+  border-top: 1px solid;
 }
 
 /* ::::: menulist popup ::::: */

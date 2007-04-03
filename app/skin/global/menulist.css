@@ -56,8 +56,6 @@ menulist {
   -moz-appearance: menulist-text;
   -moz-box-align: center;
   -moz-box-pack: center;
-  background-color: #CCCCCC;
-border: 1px solid blue;
 }
 
 .menulist-label {
@@ -93,18 +91,16 @@ menulist[editable="true"] {
 }
 
 menulist[editable="true"] > .menulist-dropmarker {
-  -moz-border-left-colors: #000000 #CCCCCC #FFFFFF;
-  -moz-border-radius: 2px;
+  border-left: # 1px solid;
 }
 
 menulist[editable="true"][open="true"] > .menulist-dropmarker {
-  -moz-border-left-colors: #000000 #454545 #555555;
+  border-left: 1px solid;
 }
 
 .menulist-editable-box {
   margin: -1px 1px -2px -5px;
   padding: 0 2px;
-  border: 1px solid #CCCCCC;
   background-color: -moz-Field;
   color: -moz-FieldText;
   -moz-box-align: center;
