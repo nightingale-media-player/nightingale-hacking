@@ -53,7 +53,7 @@
 >
   <windowregion/>
 
-  <sb-sys-outer-frame resizers="none" flex="1">
+  <sb-sys-outer-frame resizers="none" overflow="true" flex="1">
     <sb-sys-dialog-titlebar/>
     <!-- Commented out until we have multi-library functionality. -->
     <!-- hbox class="sb_faceplate" id="smartpl_select_library" align="center">

@@ -394,7 +394,7 @@
               <xul:spacer hidden="true" sbid="x6" class="sb-sys-outer-frame-resizer-lb"/>
             </xul:vbox>
 
-            <xul:vbox class="chrome_bkgd" flex="1" style="overflow: hidden !important;">
+            <xul:vbox id="children" sbid="children" class="chrome_bkgd" flex="1" style="overflow: hidden !important;">
               <children/>
             </xul:vbox>
                   
@@ -440,6 +440,9 @@
           else
             // Otherwise, fix yer frame, mate!
             this.enableResizers();
+            
+          if ( this.getAttribute("overflow") == "true" )
+            document.getAnonymousElementByAttribute(this, 'sbid', 'children').setAttribute( "style", "" ); 
         ]]>
       </constructor>
       

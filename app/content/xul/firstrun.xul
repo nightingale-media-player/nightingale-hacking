@@ -21,7 +21,7 @@
 >
   
   <windowregion/>
-  <sb-sys-outer-frame resizers="none" flex="1">
+  <sb-sys-outer-frame resizers="none" overflow="true" flex="1">
     <sb-sys-dialog-titlebar/>
     <spacer height="8"/>
 

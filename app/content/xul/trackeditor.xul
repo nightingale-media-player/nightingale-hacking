@@ -50,7 +50,7 @@
   
   <windowregion/>
 
-  <sb-sys-outer-frame id="trackeditor_frame" resizers="horiz" flex="1">
+  <sb-sys-outer-frame id="trackeditor_frame" resizers="horiz" overflow="true" flex="1">
     <sb-sys-dialog-titlebar/>
     <menubar id="trackeditor_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
     

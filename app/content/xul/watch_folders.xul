@@ -44,7 +44,7 @@
 >
   
   <windowregion/>
-  <sb-sys-outer-frame resizers="none" flex="1">
+  <sb-sys-outer-frame resizers="none" overflow="true" flex="1">
     <sb-sys-dialog-titlebar/>
 
     <label class="dialog_label" value="&watchfolder.folderlist;" />
