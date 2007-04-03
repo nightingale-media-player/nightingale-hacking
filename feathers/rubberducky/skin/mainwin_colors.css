@@ -26,52 +26,26 @@
 
 /** 
 ************************************************************************************************************************************************
-MAINWIN COLORS
+MAINWIN COLORS For dark backgrounds.
+This css file specifies the color styles for everything in the main application window.  There are 13 unique colors specified as follows:
 
-This css files specifies the color styles for everything in the main application window.  
-There are three schemes that control the colors in Songbird, the Main Window and its buttons, the Service Pane, and the Filterlists.
-To achieve a three-dimensional effect, it's important to remember that a user understands their desktop to be lit from the
-upper left corner or directly from above.  Consequently, use the light colors on the top and left borders and dark colors on the 
-right and bottom borders to achieve a dimensional appearance.
+#fffff1; /** Light Color Brightest   effective white
+#B3BAAC; /** Light Color 1           light greyish green 1
+#8A8F84; /** Light Color 2           light greyish green 2
+#202220; /** Dark Color 1            cool charcoal grey 1
+#0f100f; /** Dark Color 2            cool charcoal grey 2
 
-Rubberducky is Songbird's black skin.  
-The following ARE NOT CLASS NAMES.
+Dark Borders
+border-top: #99A194; /** Dark Border 1
+border-left: #99A195; /** Dark Border 2
+border-bottom-: #333332; /** Dark Border 3
+border-right: #333333; /** Dark Border 4
 
-Body Material - Rubberducky
--------------------------------
-bright-highlight    #7a7c7c - upperleft borders
-highlight           #686a6a - upperleft borders
-hover               #fff    - text
-foreground          #ccc    - text
-button              #333    - skin
-shadow              #505154 - lowerright borders
-darkshadow          #333    - lowerright borders
-background          #000    - skin
-Disabled:
-bright-highlight    #444
-highlight           #444
-foreground          #505154
-button              #333
-shadow              #505154
-darkshadow          #333
-background          #000
-
-Service Pane - Rubberducky
--------------------------------
-bright-highlight    #7a7c7c
-highlight           #999
-foreground          #cdd4c4
-button              #686a6a
-shadow              #444
-darkshadow          #333
-background          #000
-
-Filterlists - Rubberducky
--------------------------------
-filterlist-light    #343d42
-filterlist-dark     #1d272d
-selected            #4a4e48
-selected-highlight  #99a195
+Light Borders
+border-top: #7a7c7c; /** Light Border 1
+border-left: #474948; /** Light Border 2
+border-bottom: #474848; /** Light Border 3
+border-right: #474849; /** Light Border 4
 
 ************************************************************************************************************************************************
 */ 
@@ -79,15 +53,15 @@ selected-highlight  #99a195
 
 /** 
 ************************************************************************************************************************************************
-THE WINDOW CHROME
-These pieces paint the resizeable window for Songbird.
+WINDOW CHROME
+These rules paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */ 
 
 window
 {
   -moz-appearance: none !important; 
-  background-color: #321 !important; /* color of the Main Window **/
+  background-color: #1f150a; /* color of the Main Window coffee:#1f150a **/
   border: none;
 }
 
@@ -102,167 +76,39 @@ window
 .sb-sys-outer-frame-chrome-sw,
 .iframe_bkgd
 {
-  background: transparent !important;
+  background: transparent;
 }
 
 sb-sys-dialog-titlebar,
-#window_top   /* Title box */
+#window_top   /* Title bar */
 {
-  border-bottom: 1px solid #3B3C3F !important; /* this draws the line under the title bar */
-  background-color: Transparent !important;
+  border: none;
+  background-color: Transparent;
 }
 
 #app_title,
 label.dialog_box
 {
-  color: #fffff1 !important;
+  color: #fffff1; /** Light Color Brightest */
 }
 
 .plain
 {
-  background-color: Transparent;
+  background-color: transparent;
   margin: 0;
   padding: 0;
   border: none;
 }
 
-
 /** 
-************************************************************************************************************************************************
-SERVICE PANE
-Grey material for the Service Pane.
-************************************************************************************************************************************************
-*/ 
-#frame_servicetree_pane
-{
-  -moz-border-radius: 4px;
-  background-color: #686a6a;
-  border-top-color: #7a7c7c;
-  border-left-color: #474848;
-  border-bottom-color: #474848;
-  border-right-color: #474848;
-  color: #cdd4c4;
-}
-
-.servicepane_tree
-{
-  background-color: transparent;
-  color: #CDD4C4;
-  margin: 5px 0px 0px 0px;
-  border: none;
-}
-
-.servicepane_tree > treechildren::-moz-tree-row
-{
-  background-color: transparent;
-  margin: 0;
-  border: none;
-}
-
-.servicepane_tree > treechildren::-moz-tree-row( selected )
-{
-  background-color: #FFF;
-}
-
-.servicepane_tree > treechildren::-moz-tree-cell-text( selected )
-{
-  color: #333;
-}
-
-#frame_service_buttonbar button
-{
-  border-color: #808282 !important;
-  background-color: transparent;
-  color: #99A195; 
-}
-
-#frame_service_buttonbar button:hover
-{
-  border-top-color: #99A195;
-  border-left-color: #99A195;
-  border-bottom-color: #333;
-  border-right-color: #333;
-  background-color: #686A6A;
-  color: #fff !important; 
-}
-
-#frame_service_buttonbar button:active
-{
-  border-top-color: #333;
-  border-left-color: #333;
-  border-bottom-color: #99A195;
-  border-right-color: #99A195;
-}
-
-.tree-input {
-  background-color: white;
-  color: black;
-}
-/* service pane scrollbar*/
-.servicepane_tree scrollbar
-{    
-  background-color: transparent !important;
-  background-image: none !important; 
-} 
-
-.servicepane_tree scrollbar > slider > thumb
-{   
-  -moz-border-radius: 2px;
-  border-top: 1px solid #999;
-  border-right: 1px solid #333;
-  border-bottom: 1px solid #333;
-  border-left: 1px solid #999;  
-  background-color: transparent !important;
-} 
-
-.servicepane_tree scrollbar > slider
-{    
-  background-color: transparent !important; 
-} 
-
-.servicepane_tree scrollbar > scrollbarbutton
-{    
-  -moz-border-radius: 2px;
-  border-top: 1px solid #999;
-  border-right: 1px solid #333;
-  border-bottom: 1px solid #333;
-  border-left: 1px solid #999; 
-  background-color: transparent !important;
-} 
-
-.servicepane_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-.servicepane_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
-.servicepane_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-.servicepane_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{     
-  border-top: 1px solid #999;
-  border-right: 1px solid #333;
-  border-bottom: 1px solid #333;
-  border-left: 1px solid #999;  
-  background-color: transparent !important;  
-  background-position: center center !important; 
-} 
-.servicepane_tree scrollbar > scrollbarbutton:active,
-.servicepane_tree scrollbar > slider > thumb:active
-{    
-  border-top: 1px solid #333;
-  border-right: 1px solid #999;
-  border-bottom: 1px solid #999;
-  border-left: 1px solid #333; 
-} 
-
-/** 
-************************************************************************************************************************************************
-CHROME - Top Bar
-Minimize, Maximize, Restore, and Switch to Mini-Mode
-************************************************************************************************************************************************
+TITLE BAR
 */
 
 sb-sys-title,
 sb-sys-dialog-titlebar,
 #video_window_title
 {
-  color: #FFF !important;
+  color: #fffff1; /** Light Color Brightest */
 }
 
 sb-sys-close-button,
@@ -295,8 +141,135 @@ sb-sys-hide-button
 {  
   background-color: Transparent;
 }
-/* END CHROME **/
+/* END WINDOW CHROME **/
 
+/** 
+************************************************************************************************************************************************
+SERVICE PANE - a.k.a the Left Pane
+The Service Pane is the primary area for navigating through services and content. It serves as the primary GUI entry point to content and services.
+************************************************************************************************************************************************
+*/ 
+
+#frame_servicetree_pane
+{
+  color: #B3BAAC; /** Light Color 1 */
+  -moz-border-radius: 4px;
+  background-color: #0f100f; /** Dark Color 2 */
+  border-top-color: #7a7c7c; /** Light Border 1*/
+  border-left-color: #474948; /** Light Border 2*/
+  border-bottom-color: #474848; /** Light Border 3*/
+  border-right-color: #474849; /** Light Border 4*/
+}
+
+.servicepane_tree
+{
+  color: #B3BAAC; /** Light Color 1 */
+  background-color: transparent;
+  margin: 5px 0px 0px 0px;
+  border: none;
+}
+
+.servicepane_tree > treechildren::-moz-tree-row
+{
+  background-color: transparent;
+  margin: 0;
+  border: none;
+}
+
+.servicepane_tree > treechildren::-moz-tree-row( selected )
+{
+  background-color: #8A8F84; /** Light Color 2 */
+}
+
+.servicepane_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #0f100f; /** Dark Color 2 */
+}
+
+#frame_service_buttonbar button
+{
+  border: 1px solid;
+  border-top-color: #7a7c7c; /** Light Border 1*/
+  border-left-color: #474948; /** Light Border 2*/
+  border-bottom-color: #474848; /** Light Border 3*/
+  border-right-color: #474849; /** Light Border 4*/
+  background-color: transparent;
+  color: #B3BAAC; /** Light Color 1 */
+}
+
+#frame_service_buttonbar button:hover
+{
+  border-top-color: #7a7c7c; /** Light Border 1*/
+  border-left-color: #474948; /** Light Border 2*/
+  border-bottom-color: #474848; /** Light Border 3*/
+  border-right-color: #474849; /** Light Border 4*/
+  color: #fff !important; 
+}
+
+#frame_service_buttonbar button:active
+{
+  border-top-color: #7a7c7c; /** Light Border 1*/
+  border-left-color: #474948; /** Light Border 2*/
+  border-bottom-color: #474848; /** Light Border 3*/
+  border-right-color: #474849; /** Light Border 4*/
+}
+
+.tree-input {
+  background-color: #fffff1; /** Light Color Brightest */
+  color: #202220; /** Dark Color 1*/
+}
+/* service pane scrollbar*/
+.servicepane_tree scrollbar
+{    
+  background-color: transparent !important;
+  background-image: none !important; 
+} 
+
+.servicepane_tree scrollbar > slider > thumb
+{   
+  -moz-border-radius: 2px;
+  border-top-color: #7a7c7c; /** Light Border 1*/
+  border-left-color: #474948; /** Light Border 2*/
+  border-bottom-color: #474848; /** Light Border 3*/
+  border-right-color: #474849; /** Light Border 4*/
+  background-color: transparent !important;
+} 
+
+.servicepane_tree scrollbar > slider
+{    
+  background-color: transparent !important; 
+} 
+
+.servicepane_tree scrollbar > scrollbarbutton
+{    
+  -moz-border-radius: 2px;
+  border-top-color: #7a7c7c; /** Light Border 1*/
+  border-left-color: #474948; /** Light Border 2*/
+  border-bottom-color: #474848; /** Light Border 3*/
+  border-right-color: #474849; /** Light Border 4*/
+  background-color: transparent !important;
+} 
+
+.servicepane_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+.servicepane_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
+.servicepane_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+.servicepane_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{     
+  border-top-color: #7a7c7c; /** Light Border 1*/
+  border-left-color: #474948; /** Light Border 2*/
+  border-bottom-color: #474848; /** Light Border 3*/
+  border-right-color: #474849; /** Light Border 4*/
+  background-color: transparent !important;  
+  background-position: center center !important; 
+} 
+.servicepane_tree scrollbar > scrollbarbutton:active,
+.servicepane_tree scrollbar > slider > thumb:active
+{    
+  border-top-color: #474848; /** Light Border */
+  border-left-color: #474948; /** Light Border */
+  border-bottom-color: #7a7c7c; /** Light Border */
+  border-right-color: #474849; /** Light Border */
+} 
 
 /** 
 ************************************************************************************************************************************************
@@ -306,6 +279,7 @@ SCROLLBARS
 
 scrollbar
 {   
+  -moz-border-radius: 2px;
   background-color: transparent !important;
   background-image: none !important; 
 } 
@@ -315,10 +289,11 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 {     
-  border-top: 1px solid #666;
-  border-right: 1px solid #000;
-  border-bottom: 1px solid #000;
-  border-left: 1px solid #666; 
+  -moz-border-radius: 2px;
+  border-top-color: #99A194; /** Dark Border 1*/
+  border-left-color: #99A195; /** Dark Border 2*/
+  border-bottom-color: #333332; /** Dark Border 3*/
+  border-right-color: #333333; /** Dark Border 4*/
   background-color: transparent !important;  
   background-position: center center !important; 
 } 
@@ -326,10 +301,11 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 scrollbar > scrollbarbutton:active,
 scrollbar > slider > thumb:active
 {   	
-  border-top: 1px solid #666;
-  border-right: 1px solid #000;
-  border-bottom: 1px solid #000;
-  border-left: 1px solid #666; 
+  -moz-border-radius: 2px;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A194; /** Dark Border 1*/
+  border-right-color: #99A195; /** Dark Border 2*/
 } 
  
 scrollbar > slider > thumb > gripper
@@ -339,21 +315,20 @@ scrollbar > slider > thumb > gripper
 
 scrollbar > slider > thumb
 {   
-  border-top: 1px solid #666;
-  border-right: 1px solid #000;
-  border-bottom: 1px solid #000;
-  border-left: 1px solid #666; 
+  -moz-border-radius: 2px;
+  border-top-color: #99A194; /** Dark Border 1*/
+  border-left-color: #99A195; /** Dark Border 2*/
+  border-bottom-color: #333332; /** Dark Border 3*/
+  border-right-color: #333333; /** Dark Border 4*/ 
   background-color: transparent;
 } 
 
 scrollbar > slider
 {   
-  background-color: #000 !important;
+  background-color: transparent !important;
 } 
 
 /* END SCROLLBARS **/
-
-
 
 /** 
 ************************************************************************************************************************************************
@@ -364,46 +339,36 @@ A List Tree is a sortable column list with striping rows.
 tree treecol
 {
   background-image: url(default/treecol.png) !important;
-  color: #99A194 !important;  
-  -moz-border-right-colors: #333 !important;
+  color: #B3BAAC; /** Light Color 1 */
+  border-right-color: #333333; /** Dark Border 4*/ 
   background-color: transparent !important;
 }
 
 treecol[dragging="true"]
 {
-  background-color: #1d272d !important;
-  color: #666 !important;
+  background-color: transparent !important; /** Dark Color 2 */
+  color: #B3BAAC; /** Light Color 1 */
+  opacity: .3;
 }
 
 treecol[insertafter="true"] 
 {
-  border-right: 2px solid !important;
-  -moz-border-right-colors: #686a6a !important;
+  border-right: 5px solid transparent !important; 
 }
 
-treecol[insertbefore="true"] 
-{
-  border-left: 2px solid !important;
-  -moz-border-left-colors: #686a6a !important;
-}
+
 
 /* column picker **/
 tree .tree-columnpicker-icon
 {
-  -moz-border-top-colors: #000 #000 !important;
-  -moz-border-right-colors: #000 #000 !important;
-  -moz-border-bottom-colors: #000 #000 !important;
-  -moz-border-left-colors: #000 #000 !important;
+  border: 1px solid transparent;
   list-style-image: url(default/column_picker.png) !important;
   background-color: transparent !important;
 }
 
 tree .treecol-image /* puts a little piece to fill in next to the column picker **/
 {
-  -moz-border-top-colors: #000 #000 !important;
-  -moz-border-right-colors: #000 #000 !important;
-  -moz-border-bottom-colors: #000 #000 !important;
-  -moz-border-left-colors: #000 #000 !important;
+  border: 1px solid transparent;
   background-image: url(default/treecol.png) !important;
   background-color: transparent !important;
 }
@@ -424,39 +389,39 @@ filterlist > tree
 
 filterlist > tree > treechildren::-moz-tree-row
 {
-  background-color: #1d272d;
+  background-color: transparent;
 }
 
 
 /* striping */
 filterlist > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #1d272d;
+  background-color: #202220; /** Dark Color 1 */
 }
 
 filterlist > tree > treechildren::-moz-tree-row( even )
 {
-  background-color: #343d42;
+  background-color: #0f100f; /** Dark Color 2 */
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #4A4E48;
+  background-color: #8A8F84; /** Light Color 2 */
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected, focus )
 {
-  background-color: #99A195;
+  background-color: #B3BAAC; /** Light Color 1 */
 }
 
 filterlist > tree > treechildren::-moz-tree-cell-text
 {
-  color: #EEE;
+  color: #fffff1; /** Light Color Brightest */
 }
 
 filterlist > tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #FFF;
+  color: #0f100f; /** Dark Color 2 */
 }
 
 /** 
@@ -484,7 +449,7 @@ playlist > stack > vbox
 #playlist_toolbar_bkg,
 playlist > stack > vbox > hbox#playlist_toolbar_bkg
 { 
-  border-top: 1px solid #686a6a;
+  border-top: 1px solid transparent;
 }
 
 playlist > stack > vbox > hbox
@@ -494,141 +459,195 @@ playlist > stack > vbox > hbox
 
 treechildren::-moz-tree-column(insertafter)
 {
-  border-right: 2px solid #7a7c7c !important;
+  border-right: 2px solid transparent !important;
 }
 
 treechildren::-moz-tree-column(insertbefore)
 {
-  border-left: 2px solid #7a7c7c !important;
+  border-right: 2px solid transparent !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-row
 {
-  border: 0px solid #000 !important;
+  border: 0px solid transparent !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #1d272d !important;
+  background-color: #202220; /** Dark Color 1 */
 }
 
 #playlist_tree >  treechildren::-moz-tree-row( even )
 {
-  background-color: #343d42 !important;
+  background-color: #0f100f; /** Dark Color 2 */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell
 {
-  border-right: 1px solid #505154 !important;
+  border-right: 1px solid #202220 !important; /** Dark Color 1 */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell(insertafter)
 {
-  border-right: 2px solid #7a7c7c !important;
+  border-right: 5px solid #202220 !important; /** Dark Color 1 */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell(insertbefore)
 {
-  border-left: 2px solid #7a7c7c !important;
+  border-left: 5px solid transparent !important; 
 }
 
 #playlist_tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #4A4E48 !important;
+  background-color: #8A8F84; /** Light Color 2 */
 }
 #playlist_tree > treechildren::-moz-tree-row( selected, focus )
 {
-  background-color: #99A195 !important;
+  background-color: #B3BAAC; /** Light Color 1 */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell-text
 {
-  color: #CCC !important;
+  color: #B3BAAC; /** Light Color 1 */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #FFF !important;
+  color: #0f100f; /** Dark Color 2 */
 }
 
 #playlist_tree > treechildren::-moz-tree-progressmeter
 {
- background-color: #333 !important;
- color: #eee !important;
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #B3BAAC; /** Light Color 1 */
 }
 
 #playlist_tree > treechildren::-moz-tree-progressmeter( odd )
 {
- color: #eee !important;
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #B3BAAC; /** Light Color 1 */
+}
+
+#playlist_tree > treechildren::-moz-tree-progressmeter( selected )
+{
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #0f100f; /** Dark Color 2 */
 }
 
 #playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
-  background-color: #676D65 !important;
+  background-color: #8A8F84; /** Light Color 2 */
 }
-
 
 /** 
 ************************************************************************************************************************************************
-THE TOOLBAR
-The Toolbar is a way for a user to discover pertinent contextual menu 
-features without having to know how to right-click.  You'll see styles
-for both the toolbar buttons and the corresponding entries in the 
-contextual menu.
+BUTTONS
 ************************************************************************************************************************************************
 */ 
 
-/* the generic style for all playlist toolbarbuttons */
-button[disabled="true"],
-button[disabled="true"]:active,
-button[disabled="true"]:hover
-{
-  border-color: #000 !important;
-  background-color: #000 !important;
-  border: 1px solid transparent;
-  color: #333 !important;
-}
-
 button
 {
-  border-color: #333 !important;
-  background-color: #333;
+  background-color: transparent;
   color: #99A195;  
-  border: 1px solid transparent;
+  border: 1px solid;
+  border-top-color: #99A194; /** Dark Border 1*/
+  border-left-color: #99A195; /** Dark Border 2*/
+  border-bottom-color: #333332; /** Dark Border 3*/
+  border-right-color: #333333; /** Dark Border 4*/ 
 }
 
 button:hover
 {
-  border-top-color: #99A195 !important;
-  border-left-color: #99A195 !important;
-  border-bottom-color: #535751 !important;
-  border-right-color: #535751 !important;
+  border: 1px solid;
+  border-top-color: #7a7c7c; /** Light Border 1 */
+  border-left-color: #474948; /** Light Border 2 */
+  border-bottom-color: #474848; /** Light Border 3 */
+  border-right-color: #474849; /** Light Border 4 */
   color: #FFF;  
 }
 
 button:active
 {
-  border-top-color: #535751 !important;
-  border-left-color: #535751 !important;
-  border-bottom-color: #99A195 !important;
-  border-right-color: #99A195 !important;
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A195; /** Dark Border 2*/
+  border-right-color: #99A194; /** Dark Border 1*/
+}
+
+button[disabled="true"],
+button[disabled="true"]:active,
+button[disabled="true"]:hover
+{
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: #0f100f; /** Dark Color 2 */
+}
+
+/** 
+************************************************************************************************************************************************
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
+************************************************************************************************************************************************
+*/
+
+/* The Top Menu (File, Edit, Etc...) **/
+#songbird_menu > menu > label
+{
+  background-color: transparent !important;
+  color: #8A8F84; /** Light Color 2 */
+}
+
+#songbird_menu > menu:hover,
+#songbird_menu > menu:hover > label,
+#songbird_menu > menu[open],
+#songbird_menu > menu[open] > label,
+#songbird_menu > menu[_moz-menuactive="true"],
+#songbird_menu > menu[_moz-menuactive="true"] > label
+{
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #fffff1; /** Light Color Brightest */
+}
+
+/* The Basic Menu Styles **/
+
+menupopup, 
+popup
+{
+  border: 3px solid #0f100f;
+  background-color: #0f100f; /** Dark Color 2 */
+  color: #fffff1; /** Light Color Brightest */
+}
+
+menuseparator
+{
+  border-top-color: #202220; /** Dark Color 1 */
+}
+
+menuitem[_moz-menuactive="true"],  
+popup > menuitem[_moz-menuactive="true"],
+popup > menu[_moz-menuactive="true"],
+menupopup > menu[_moz-menuactive="true"],
+menuitem[selected="true"]
+{
+  background-color: #0f100f; /** Dark Color 2 */
+  color: #fffff1; /** Light Color Brightest */
 }
 
 menuitem[disabled="true"],
 menuitem[disabled="true"]:hover
 {
-  color: #99A195 !important;
+  color: #202220; /** Dark Color 1 */
 }
-menuitem
+menuitem,
+menupopup > menu,
+popup > menu
 {
-  color: #FFF !important;  
+  color: #B3BAAC; /** Light Color 1 */
 }
 menuitem:hover
 {
-  color: #505154 !important;
+  color: #fffff1; /** Light Color Brightest */ 
 }
-
-
 
 /** 
 ************************************************************************************************************************************************
@@ -642,17 +661,17 @@ These let the user resize the frames in your box model.
 .vert_splitter,
 #filter_splitter
 {
-  background-color: #333 !important;
-  border-left: 1px solid #666 !important;
-  border-right: 1px solid #000 !important;
+  background-color: transparent;
+  border-left: 1px solid #666;
+  border-right: 1px solid #000;
 }
 
 .vert_splitter:active,
 #filter_splitter:active
 {
-  background-color: #333 !important;
-  border-left: 1px solid #000 !important;
-  border-right: 1px solid #666 !important;
+  background-color: transparent;
+  border-left: 1px solid #000;
+  border-right: 1px solid #666;
 }
 
 #vert_splitter,
@@ -664,46 +683,44 @@ These let the user resize the frames in your box model.
 .vert_splitter[state="collapsed"],
 #vert_splitter[state="collapsed"]
 {
-  background-color: #333 !important;
-  border: 1px solid #666 !important;
+  background-color: transparent;
+  border: 1px solid #666;
 }
 
 .horz_splitter,
 #horz_splitter,
 #playlist_web_split
 {
-  background-color: #333 !important;
-  -moz-border-top-colors: #666 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-left-colors: #333 !important;
-  -moz-border-right-colors: #333 !important;
-  border: 1px solid !important;  
+  background-color: transparent;
+  border-top: 1px solid #666;
+  border-bottom: 1px solid #000;
+  border-left: 1px solid #333;
+  border-right: 1px solid #333;
 }
 
 .horz_splitter:active,
 #horz_splitter:active,
 #playlist_web_split:active
 {
-  background-color: #333 !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-bottom-colors: #666 !important;
-  border: 1px solid !important;  
+  background-color: transparent;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #666;
 }
 
 #control_pane_splitter
 {
-  background-color: transparent !important;
+  background-color: transparent;
 }
 
 #control_pane_splitter[state="collapsed"]
 {
-  background-color: transparent !important;
+  background-color: transparent;
 }
 
 #horz_splitter[state="collapsed"],
 #playlist_web_split[state="collapsed"]
 {
-  background-color: #333 !important;
+  background-color: transparent;
 }
 /* END SPLITTERS **/
 
@@ -764,13 +781,9 @@ tooltip
 
 /** 
 ************************************************************************************************************************************************
-CONTROL BOX
-Contains the Main Playback Controls and the Dashboard.
+FACEPLATE
 ************************************************************************************************************************************************
 */
-
-/* DASHBOARD **/
-
 
 /* the seekbar slider */
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb
@@ -853,30 +866,30 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 {
   height: 35px;
   padding-left: 2px;
-  border-bottom: 1px solid #808583; 
+  border-bottom: 1px solid transparent; 
   background-color: transparent;
 }
 
 /* the box with the url image and the url textbox */
 .locationbar-textbox
 {
+  height: 30px;
+  min-height: 30px;
   margin: 2px;
   padding: 0px;
   border: 1px solid;
   -moz-border-radius: 5px;
-  border-top-color: #535751;
-  border-left-color: #535751;
-  border-right-color: #99A195;
-  border-bottom-color: #99A195;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A194; /** Dark Border 1*/
+  border-right-color: #99A195; /** Dark Border 2*/
   background-color: transparent; 
-  height: 30px;
-  min-height: 30px;
-  color: #FFF;
+  color: #fffff1; /** Light Color Brightest */
 }
 .locationbar-textbox[focused="true"]
 {
-  background-color: #99A195;
-  color: #FFF;
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #fffff1; /** Light Color Brightest */
 }
 
 #browser_toolbar button 
@@ -885,7 +898,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   width: 30px;  
   padding: 0px;
   margin: 2px 0px 2px 2px;
-  border: 1px solid;
   min-width: 0px;
 }
 
@@ -916,28 +928,29 @@ SEARCH WIDGET
   background-color: transparent;
 }
 
-#search_widget
+#search_widget /* TODO - Fix menulist so this rule works. */
 {
-  border: 1px solid !important;
-  border-top-color: #535751 !important;
-  border-left-color: #535751 !important;
-  border-right-color: #99A195 !important;
-  border-bottom-color: #99A195 !important;
+  border: 1px solid;
+  -moz-border-radius: 5px;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A194; /** Dark Border 1*/
+  border-right-color: #99A195; /** Dark Border 2*/
   background-color: transparent; 
-  color: #FFF !important;
+  color: #fffff1; /** Light Color Brightest */
 }
 
 #search_widget input
 {
   background-color: transparent;
-  color: #fff !important;
+  color: #fffff1; /** Light Color Brightest */
 }
 
 
 #search_widget input:focus
 {
-  background-color: #99A195 !important;
-  color: #FFF !important;
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #fffff1; /** Light Color Brightest */
 }
 
 .button-menu-dropmarker
@@ -963,38 +976,4 @@ sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-
 {
   background-color: transparent !important;
 }
-/*
-Body
-bright-highlight    #7a7c7c 
-highlight           #99a195
-hover               #fff
-foreground          #ccc
-body                #333
-shadow              #505154
-darkshadow          #333
-background          #000
 
-Service Pane
-bright-highlight    #7a7c7c
-highlight           #999
-foreground          #cdd4c4
-body                #686a6a
-shadow              #444
-darkshadow          #333
-background          #000
-
-Filterlists
-filterlist-light    #343d42
-filterlist-dark     #1d272d
-selected            #4a4e48
-selected-highlight  #99a195
-
-Disabled
-bright-highlight    #444
-highlight           #444
-foreground          #505154
-body                #333
-shadow              #505154
-darkshadow          #333
-background          #000
-**/

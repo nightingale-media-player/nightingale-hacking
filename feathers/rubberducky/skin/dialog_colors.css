@@ -328,6 +328,67 @@ BUTTONS for dialogs and forms.
   -moz-border-right-colors: #99A195 !important;
 }
 
+/** 
+************************************************************************************************************************************************
+MENULIST
+************************************************************************************************************************************************
+*/
+
+menulist,
+.menulist-label-box
+{ 
+  -moz-border-radius: 2px !important;
+  background-color: transparent;
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A195; /** Dark Border 2*/
+  border-right-color: #99A194; /** Dark Border 1*/ 
+} 
+
+.menulist-label
+{
+  color: #fffff1; /** Light Color Brightest */
+}
+
+.dropmarker-icon
+{
+  list-style-image: url(chrome://songbird/skin/default/chrome_scroll_down.png) !important;
+  background-color: transparent !important;
+}
+
+menulist:focus
+{
+  background-color: #4a4d47; /** Dark Color 1 */
+  color: #fffff1; /** Light Color Brightest */ 
+}
+
+menulist:focus > hbox
+{
+  background-color: #4a4d47; /** Dark Color 1 */
+}
+
+menulist[disabled="true"]
+{
+  color: #666 !important;
+}
+
+.menulist-editable-input,
+.menulist-editable-box
+{
+  color: #fff !important;
+  background-color: transparent !important;
+}
+
+.menulist-editable-box
+{
+  background-color: transparent;
+}
+
+.menulist-editable-input[disabled="true"]
+{
+  color: #666 !important;
+}
 
 /** 
 *************************************************************************
@@ -602,169 +663,7 @@ ADD TO PLAYLIST
   color: #FFF !important;
 }
 
-/** 
-************************************************************************************************************************************************
-MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
-************************************************************************************************************************************************
-*/
-/** 
-*****************************************************************************************
-THE MENUS
-Poppin' Fresh.
-*****************************************************************************************
-*/
 
-/* The Top Menu (File, Edit, Etc...) Styles **/
-
-#songbird_menu > menu > label
-{
-  background-color: transparent !important;
-  color: #999 !important;
-}
-
-#songbird_menu > menu:hover,
-#songbird_menu > menu:hover > label,
-#songbird_menu > menu[open],
-#songbird_menu > menu[open] > label,
-#songbird_menu > menu[_moz-menuactive="true"],
-#songbird_menu > menu[_moz-menuactive="true"] > label
-{
-  background-color: #666 !important; /* I feel SUPER important! */
-  color: #EEE !important;
-}
-
-/* The Basic Menu Styles **/
-
-menupopup, 
-popup
-{
-  -moz-border-top-colors: #333 #333 !important;
-  -moz-border-right-colors: #333 #333 !important;
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-left-colors: #333 #333 !important;
-  background-color: #333 !important;
-  color: #FFF !important;
-}
-
-menuseparator
-{
-  border-top: 1px solid #999 !important;
-  border-bottom: 1px solid #333 !important;
-}
-
-menupopup > menu,
-popup > menu
-{
-  background-color: #333 !important;
-  color: #FFF !important;
-}
-
-popup, menuitem, popup > menuitem
-{
-  color: #FFF !important;
-}
-
-menuitem[_moz-menuactive="true"],  
-popup > menuitem[_moz-menuactive="true"],
-popup > menu[_moz-menuactive="true"],
-menupopup > menu[_moz-menuactive="true"]
-{
-  background-color: #4A4E48 !important;
-  color: #FFF !important;
-}
-
-.menu-right[_moz-menuactive="true"] 
-{
-  list-style-image: url(default/menu-arrow-hover.png) !important;
-}
-
-.menu-right
-{   
-  list-style-image: url(default/menu-arrow.png) !important;
-}
-
-menuitem[selected="true"]
-{
-  background-color: #4A4E48 !important;
-  color: #FFF !important;
-}
-
-menuitem[checked="true"] > hbox[checked="true"] 
-{ 
-  list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
-}
-
-menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
-{ 
-  list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
-}
-
-/** 
-************************************************************************************************************************************************
-MENULIST
-************************************************************************************************************************************************
-*/
-
-menulist
-{ 
-  background-color: #242527 !important;
-  border-top: 1px solid #535751;
-  border-left: 1px solid #535751;
-  border-right: 1px solid #99A195;
-  border-bottom: 1px solid #99A195; 
-} 
-
-.menulist-label
-{
-  color: #fff !important;
-}
-
-.menulist-label-box
-{
-  background-color: #242527 !important;
-  border: none !important;
-}
-.dropmarker-icon
-{
-  list-style-image: url(chrome://songbird/skin/default/chrome_scroll_down.png) !important;
-  background-color: transparent !important;
-}
-
-menulist:focus
-{
-  background-color: #4A4E48 !important;
-  color: #fff !important;
-}
-
-menulist:focus > hbox
-{
-  background-color: #4A4E48 !important;
-}
-
-menulist[disabled="true"]
-{
-  -moz-border-radius: 3px !important;
-  color: #666 !important;
-}
-
-.menulist-editable-input,
-.menulist-editable-box
-{
-  color: #fff !important;
-  background-color: transparent !important;
-}
-
-.menulist-editable-box
-{
-  background-color: transparent;
-}
-
-.menulist-editable-input[disabled="true"]
-{
-  color: #666 !important;
-}
 
 /** 
 ************************************************************************************************************************************************
