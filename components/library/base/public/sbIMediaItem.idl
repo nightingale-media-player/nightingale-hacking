@@ -76,7 +76,7 @@ interface sbIMediaItem : sbILibraryResource
    * Note that this is the creation time of the media item itself, not the
    * creation time of the item's content
    */
-  attribute long mediaCreated;
+  attribute long long mediaCreated;
 
   /**
    * \brief Last modification time of the media item as a unix timestamp.
@@ -84,7 +84,7 @@ interface sbIMediaItem : sbILibraryResource
    * Note that this is the last modification time of the media item itself, not
    * the creation time of the item's content
    */
-  attribute long mediaUpdated;
+  attribute long long mediaUpdated;
 
   /**
    * \brief A nsIURI that resolves to the content of the media item

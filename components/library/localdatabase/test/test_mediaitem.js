@@ -71,12 +71,14 @@ function testSet( item, attrib, value ) {
   }
 }
 
-function testAvailable( item, available ) {
+function testAvailable( item, available, completion ) {
   // Make an observer.
   var is_available_observer = {
     _available: available,
+    _completion: completion,
     observe: function( aSubject, aTopic, aData ) { 
       assertEqual( aData, this._available );
+      this._completion();
     },
     QueryInterface: function(iid) {
       if (!iid.equals(Components.interfaces.nsIObserver) && 
@@ -104,8 +106,8 @@ function runTest () {
 //  testGet( item, "originLibrary", testlib );  // -- Not yet implemented.
 
   // These are obviously testing incorrect values, I'll fix them before I commit.
-  testGet( item, "mediaCreated", 0x7FFFFFFF );
-  testGet( item, "mediaUpdated", 0x7FFFFFFF );  
+  testGet( item, "mediaCreated", 1169855962000 );
+  testGet( item, "mediaUpdated", 1169855962000 );  
   testGet( item, "contentSrc", "file:///home/steve/Hells%20Bells.mp3" );  
   testGet( item, "contentLength", 0x21C );  
   testGet( item, "contentType", "audio/mpeg" );  

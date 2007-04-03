@@ -36,6 +36,14 @@
 #include <nsXPCOM.h>
 #include <prprf.h>
 
+
+static void AppendInt(nsAString &str, PRInt64 val)
+{
+  char buf[32];
+  PR_snprintf(buf, sizeof(buf), "%lld", val);
+  str.Append(NS_ConvertASCIItoUTF16(buf));
+}
+
 struct sbStaticProperty {
   const char* mName;
   const char* mColumn;
@@ -508,16 +516,15 @@ sbLocalDatabaseMediaItem::GetIsMutable(PRBool* aIsMutable)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetMediaCreated(PRInt32* aMediaCreated)
+sbLocalDatabaseMediaItem::GetMediaCreated(PRInt64* aMediaCreated)
 {
   NS_ENSURE_ARG_POINTER(aMediaCreated);
 
-  nsAutoString str;
+  nsAutoString str, str2;
   nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created"), str);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  *aMediaCreated = str.ToInteger(&rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+
+  PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aMediaCreated);
 
   return NS_OK;
 }
@@ -526,12 +533,12 @@ sbLocalDatabaseMediaItem::GetMediaCreated(PRInt32* aMediaCreated)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::SetMediaCreated(PRInt32 aMediaCreated)
+sbLocalDatabaseMediaItem::SetMediaCreated(PRInt64 aMediaCreated)
 {
   nsAutoString str;
-  str.AppendInt(aMediaCreated);
+  AppendInt(str, aMediaCreated);
 
-  nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#updated"), str);
+  nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created"), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -541,7 +548,7 @@ sbLocalDatabaseMediaItem::SetMediaCreated(PRInt32 aMediaCreated)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetMediaUpdated(PRInt32* aMediaUpdated)
+sbLocalDatabaseMediaItem::GetMediaUpdated(PRInt64* aMediaUpdated)
 {
   NS_ENSURE_ARG_POINTER(aMediaUpdated);
 
@@ -549,8 +556,7 @@ sbLocalDatabaseMediaItem::GetMediaUpdated(PRInt32* aMediaUpdated)
   nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#updated"), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  *aMediaUpdated = str.ToInteger(&rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aMediaUpdated);
 
   return NS_OK;
 }
@@ -559,10 +565,10 @@ sbLocalDatabaseMediaItem::GetMediaUpdated(PRInt32* aMediaUpdated)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::SetMediaUpdated(PRInt32 aMediaUpdated)
+sbLocalDatabaseMediaItem::SetMediaUpdated(PRInt64 aMediaUpdated)
 {
   nsAutoString str;
-  str.AppendInt(aMediaUpdated);
+  AppendInt(str, aMediaUpdated);
 
   nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#updated"), str);
   NS_ENSURE_SUCCESS(rv, rv);
