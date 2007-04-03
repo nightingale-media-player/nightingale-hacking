@@ -31,8 +31,6 @@ This CSS files specifies the size and position of the Main Window UI.
 ************************************************************************************************************************************************
 */ 
 
-
-
 /** 
 ************************************************************************************************************************************************
 THE LAYOUT for the Main Application Window
@@ -69,7 +67,6 @@ Love the box.
 }
 
 
-
 /** 
 ************************************************************************************************************************************************
 THE SERVICE TREE TOOLBAR
@@ -91,7 +88,6 @@ Currently a single clickhold button below the service tree
 {
  margin-left: 8px;
 }
-
 
 
 /** 
@@ -155,7 +151,7 @@ RESIZERS
 
 /** 
 ************************************************************************************************************************************************
-CONTROL BOX
+TOP PANE
 Contains the Main Playback Controls and the Dashboard.
 ************************************************************************************************************************************************
 */
@@ -184,13 +180,20 @@ Contains the Main Playback Controls and the Dashboard.
 
 #face_left_box
 {
-  margin: 0px 5px 0px 0px;
-  padding: 5px 0px 0px 0px;
+  margin: 0px 10px 0px 0px;
+  padding: 1px 0px 0px 0px;
 }
+
+sb-player-shuffle-button,
+sb-player-cyclefaceplate-button
+{
+  margin: 10px 0px 0px 0px;
+}
+
 #face_right_box
 {
-  margin: 0px 0px 0px 5px;
-  padding: 5px 0px 0px 0px;
+  margin: 0px 0px 0px 10px;
+  padding: 1px 0px 0px 0px;
 }
 /** 
 ************************************************************************************************************************************************

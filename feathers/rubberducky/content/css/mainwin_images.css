@@ -32,61 +32,60 @@ All other styles affecting the elements below are found in songbird.css.
 ************************************************************************************************************************************************
 */
 
-
-
-
 /** 
 ************************************************************************************************************************************************
-SCROLLBARS
-************************************************************************************************************************************************
-*/ 
-scrollbar
-{   
-  background-image: none ;
-}
-scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
-{   
-  background-image: url(chrome://songbird/skin/default/chrome_scroll_up.png) ;
-} 
-scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{   
-  background-image: url(chrome://songbird/skin/default/chrome_scroll_down.png) ;
-} 
-
-
-/** 
-************************************************************************************************************************************************
-THE WINDOW CHROME
+WINDOW CHROME
+There is one image for the light effect on every window, including nested ones.
 ************************************************************************************************************************************************
 */
 
 window
 {
-  background-image: url(chrome://songbird/skin/default/chrm_bkgd.png) ; 
-  background-repeat: repeat-x ;  
+  background-image: url(chrome://songbird/skin/default/chrm_bkgd.png); 
+  background-repeat: repeat-x;  
 }
+/* END WINDOW CHROME **/
   
-
-
+  
 /** 
 ************************************************************************************************************************************************
-CHROME - Top Bar
-Minimize, Maximize, Restore, and Switch to Mini-Mode
+TOP PANE
+The Top Pane provides information and controls that are global to the
+current Songbird experience. Some sections of the Top Pane such as the 
+Top Pane Toolbar, are highly customizable by developers while other parts 
+should have minimal customization. Contains the Main Playback Controls 
+and the Faceplate.
 ************************************************************************************************************************************************
+*/
+
+/** 
+TITLE BAR
+There are two different title bars for Songbird.  One for Windows, one for Mac OS.
+*/
+
+/**
+Windows Title Bar
 */
 
 /*  Topbar Icon */
 sb-sys-icon
 {
-  list-style-image: url(chrome://songbird/skin/default/app_close.png) ;
+  list-style-image: url(chrome://songbird/skin/default/logo_16_white.png) ;
 }
 
-/*  Close Window */
-sb-sys-close-button
+/*  Switch Feathers */
+.sb-feathers-toggle-button
 {
-  list-style-image: url(chrome://songbird/skin/default/sysbtn_close_9x9.png) ;
+  list-style-image: url(chrome://songbird/skin/default/sysbtns_win.png);
+  -moz-image-region: rect(0px 9px 9px 0px);
+}
+
+/*  Minimize */
+sb-sys-minimize-button
+{
+  list-style-image: url(chrome://songbird/skin/default/sysbtns_win.png);
+  -moz-image-region: rect(0px 18px 9px 9px);
+  margin-left: 7px;
 }
 
 /*  Maximize - Evict the checkbox guts, just use it for click handling */
@@ -96,45 +95,59 @@ sb-sys-maximize-button > .checkbox-label-box
 }
 sb-sys-maximize-button > .checkbox-check
 {
-  visibility: hidden;
+  display: none;
 }
 sb-sys-maximize-button
 {
+  margin: 2px 0px 0px 7px;
+  background-image: url(chrome://songbird/skin/default/sysbtns_win.png); 
+  background-position: -18px 0px; 
   background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url(chrome://songbird/skin/default/sysbtn_maximize_9x9.png) ; 
+  height: 9px;  
+  width: 9px;
 }
-sb-sys-maximize-button[checked="true"] /* Restore */
+/* Restore */
+sb-sys-maximize-button[checked="true"] 
 {
-  background-image: url(chrome://songbird/skin/default/sysbtn_restore_9x9.png) ;
+  margin: 2px 0px 0px 7px;
+  background-image: url(chrome://songbird/skin/default/sysbtns_win.png);
+  background-position: -54px 0px; 
+  background-repeat: no-repeat;
+  height: 9px;  
+  width: 9px;
 }
 
-/*  Minimize */
-sb-sys-minimize-button
+/*  Close Window */
+sb-sys-close-button
 {
-  list-style-image: url(chrome://songbird/skin/default/sysbtn_minimize_9x9.png) ;  
-}
-
-/*  Switch Feathers */
-.sb-feathers-toggle-button
-{
-  list-style-image: url(chrome://songbird/skin/default/sysbtn_minimode_9x9.png) ; 
+  margin-left: 7px;
+  list-style-image: url(chrome://songbird/skin/default/sysbtns_win.png);
+  -moz-image-region: rect(0px 36px 9px 27px);
 }
 
 /*  Hide (Video Window) */
 sb-sys-hide-button
 {
-  list-style-image: url(chrome://songbird/skin/default/sysbtn_hide_9x9.png) ;
+  list-style-image: url(chrome://songbird/skin/default/sysbtns_win.png);
+  -moz-image-region: rect(0px 54px 9px 45px);
+}
+
+/* Fullscreen (Video Window) */
+sb-player-fullscreen-button
+{
+  list-style-image: url(chrome://songbird/skin/default/sysbtns_win.png);
+  -moz-image-region: rect(0px 45px 9px 36px);
+}
+
+/* Jump-to in the Mini */
+sb-player-jumpto-button 
+{
+  list-style-image: url(chrome://songbird/skin/default/icon_lib_16x16.png); /* Design Note, use the library icon to let the user know how to access it while in mini-mode */
 }
 
 /** 
-************************************************************************************************************************************************
-MAC OSX SPECIFIC CHROME - Top Bar
-Minimize, Maximize, Restore, and Switch to Mini-Mode
-************************************************************************************************************************************************
+Mac OS Title Bar
 */
-
-
 sb-sys-osx-buttons > sb-sys-maximize-button
 {
   list-style-image: url(chrome://songbird/skin/default/sysbtns_mac.png);
@@ -160,7 +173,6 @@ sb-sys-osx-buttons > sb-sys-maximize-button[disabled="true"]
   list-style-image: url(chrome://songbird/skin/default/sysbtns_mac.png) ; 
   -moz-image-region: rect(45px 15px 60px 0px); 
 }
-
 
 sb-sys-osx-buttons > sb-sys-minimize-button
 {
@@ -224,11 +236,342 @@ sb-sys-osx-feathers > sb-feathers-toggle-button[disabled="true"]
   list-style-image: url(chrome://songbird/skin/default/sysbtns_mac.png) ; 
   -moz-image-region: rect(45px 70px 60px 45px); 
 }
-/* END CHROME **/
+
+/** 
+FACEPLATE
+*/
+
+.faceplate-left-spacer
+{
+  background-image: url(chrome://songbird/skin/default/faceplate_left.png);
+  background-repeat: no-repeat;
+}
+.faceplate-right-spacer
+{
+  background-image: url(chrome://songbird/skin/default/faceplate_right.png);
+  background-repeat: no-repeat;
+}
+
+
+.faceplate-bkgd-box
+{
+  background-image: url(chrome://songbird/skin/default/faceplate_bkgd.png);
+  background-repeat: repeat-x;
+}
+
+.faceplate-intro-image
+{
+  list-style-image: url(chrome://songbird/skin/default/faceplate.png);
+}
+
+/* the seekbar slider */
+#songbird_seekbar_thumb
+{
+  background-color: #1F292B;
+  background-image: none;
+  border: 1px solid #a7afa2;
+}
+#songbird_seekbar_thumb > gripper
+{
+  height: 10px ;
+}
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
+{
+  height: 10px ;
+}
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar
+{
+  background-color: #1F292B;
+  background-image: none;
+  height: 10px;
+}
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder
+{
+  background-image: none;
+  background-color: #a2aa9e;
+  height: 10px;
+}
+#songbird_seekbar
+{
+  -moz-appearance: none ;
+  border: 1px solid #1F292B ;
+  height: 10px;
+}
+
+
+/** 
+PLAYBACK SHUTTLE CONTROLS
+Play/Pause, Previous (back), Next (forward)
+*/
+
+/* the play button */
+
+.sb-player-play-button-play 
+{  
+  list-style-image: url(chrome://songbird/skin/default/player_controls.png); 
+  -moz-image-region: rect(0px 68px 36px 32px);
+}
+.sb-player-play-button-play:hover
+{
+  -moz-image-region: rect(36px 68px 72px 32px);
+}
+.sb-player-play-button-play:active
+{
+  -moz-image-region: rect(72px 68px 108px 32px);
+}
+.sb-player-play-button-play[disabled="true"]
+{
+  -moz-image-region: rect(0px 68px 36px 32px);
+}
+
+/* the pause button */
+
+.sb-player-pause-button-pause
+{
+  list-style-image: url(chrome://songbird/skin/default/player_controls.png); 
+  -moz-image-region: rect(0px 104px 36px 68px);
+}
+.sb-player-pause-button-pause:hover
+{ 
+  -moz-image-region: rect(36px 104px 72px 68px);
+}
+.sb-player-pause-button-pause:active
+{
+  -moz-image-region: rect(72px 104px 108px 68px);
+}
+.sb-player-pause-button-pause[disabled="true"]
+{ 
+  -moz-image-region: rect(0px 104px 36px 68px);
+}
+
+/* the back button */
+
+sb-player-back-button
+{
+  list-style-image: url(chrome://songbird/skin/default/player_controls.png); 
+  -moz-image-region: rect(0px 32px 32px 0px);
+}
+sb-player-back-button:hover
+{ 
+  -moz-image-region: rect(32px 32px 64px 0px);
+}
+sb-player-back-button:active
+{ 
+  -moz-image-region: rect(64px 32px 96px 0px);
+}
+sb-player-back-button[disabled="true"]
+{ 
+  -moz-image-region: rect(0px 32px 32px 0px);
+}
+
+/* the fwd button */
+sb-player-forward-button
+{
+  list-style-image: url(chrome://songbird/skin/default/player_controls.png); 
+  -moz-image-region: rect(0px 136px 32px 104px);
+}
+sb-player-forward-button:hover
+{ 
+  -moz-image-region: rect(32px 136px 64px 104px);
+}
+sb-player-forward-button:active
+{ 
+  -moz-image-region: rect(64px 136px 96px 104px);
+}
+sb-player-forward-button[disabled="true"]
+{
+  -moz-image-region: rect(0px 136px 32px 104px);
+}
+
+/** 
+FACEPLATE BUTTONS
+*/
+
+/* the curr button */
+.sb-player-curtrack-button
+{
+  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
+  -moz-image-region: rect(40px 105px 60px 70px);
+}
+.sb-player-curtrack-button[disabled="true"]
+{
+  -moz-image-region: rect(40px 105px 60px 70px);
+}
+.sb-player-curtrack-button:hover
+{
+  -moz-image-region: rect(40px 105px 60px 70px);
+}
+.sb-player-curtrack-button:active
+{
+  -moz-image-region: rect(60px 105px 80px 70px);
+}
+
+/* the next button */
+.sb-player-cyclefaceplate-button-cycle
+{
+  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
+  -moz-image-region: rect(0px 105px 20px 70px);
+}
+.sb-player-cyclefaceplate-button-cycle[disabled="true"]
+{
+  -moz-image-region: rect(0px 105px 20px 70px);
+}
+.sb-player-cyclefaceplate-button-cycle:hover
+{
+  -moz-image-region: rect(0px 105px 20px 70px);
+}
+.sb-player-cyclefaceplate-button-cycle:active
+{
+  -moz-image-region: rect(20px 105px 40px 70px);
+}
+
+/* the rep1 button */
+.sb-player-repeat-button-repnone
+{
+  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
+  -moz-image-region: rect(0px 35px 20px 0px);
+}
+.sb-player-repeat-button-repnone[disabled="true"]
+{
+  -moz-image-region: rect(0px 35px 20px 0px);
+}
+.sb-player-repeat-button-repnone:hover[disabled="true"]
+{
+  -moz-image-region: rect(0px 35px 20px 0px);
+}
+.sb-player-repeat-button-repnone:active
+{
+  -moz-image-region: rect(20px 35px 40px 0px);
+}
+
+/* the rep1_on button */
+.sb-player-repeat-button-rep1
+{
+  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
+  -moz-image-region: rect(40px 35px 60px 0px);
+}
+.sb-player-repeat-button-rep1[disabled="true"]
+{
+  -moz-image-region: rect(40px 35px 60px 0px);
+}
+.sb-player-repeat-button-rep1:hover[disabled="true"]
+{
+  -moz-image-region: rect(40px 35px 60px 0px);
+}
+.sb-player-repeat-button-rep1:active
+{
+  -moz-image-region: rect(60px 35px 80px 0px);
+}
+
+/* the repall button */
+.sb-player-repeat-button-repall
+{
+  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
+  -moz-image-region: rect(80px 35px 100px 0px);
+}
+.sb-player-repeat-button-repall[disabled="true"]
+{
+  -moz-image-region: rect(80px 35px 100px 0px);
+}
+.sb-player-repeat-button-repall:hover[disabled="true"]
+{
+  -moz-image-region: rect(80px 35px 100px 0px);
+}
+.sb-player-repeat-button-repall:active
+{
+  -moz-image-region: rect(100px 35px 120px 0px);
+}
+
+/* the shuf button */
+.sb-player-shuffle-button-shuffleoff
+{
+  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
+  -moz-image-region: rect(0px 70px 20px 35px);
+}
+.sb-player-shuffle-button-shuffleoff[disabled="true"]
+{
+  -moz-image-region: rect(0px 70px 20px 35px);
+}
+.sb-player-shuffle-button-shuffleoff:hover[disabled="true"]
+{
+  -moz-image-region: rect(0px 70px 20px 35px);
+}
+.sb-player-shuffle-button-shuffleoff:active
+{
+  -moz-image-region: rect(20px 70px 40px 35px);
+}
+
+/* the shuf_on button */
+.sb-player-shuffle-button-shuffleon
+{
+  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
+  -moz-image-region: rect(40px 70px 60px 35px);
+}
+.sb-player-shuffle-button-shuffleon[disabled="true"]
+{
+  -moz-image-region: rect(40px 70px 60px 35px);
+}
+.sb-player-shuffle-button-shuffleon:hover[disabled="true"]
+{
+  -moz-image-region: rect(40px 70px 60px 35px);
+}
+.sb-player-shuffle-button-shuffleon:active
+{
+  -moz-image-region: rect(60px 70px 80px 35px);
+}
+
+/** 
+VOLUME
+Mute and Slider
+*/
+.sb-player-mute-button-muteoff > .clickhold-button
+{
+  list-style-image: url(chrome://songbird/skin/default/mute_off.png);
+  background-color: transparent !important;
+}
+
+.sb-player-mute-button-muteon > .clickhold-button
+{
+  list-style-image: url(chrome://songbird/skin/default/mute_on.png);
+  background-color: transparent !important;
+}
+
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb
+{
+  background-image: url(chrome://songbird/skin/default/volume_thumb.png);
+  background-position: 0px 0px;
+}
+
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb:active
+{
+  background-image: url(chrome://songbird/skin/default/volume_thumb.png) ;
+  background-position: 0px 14px;
+}
+
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar
+{
+  background-image: url(chrome://songbird/skin/default/volume_progress_bar.png) ;
+}
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder
+{
+  background-image: url(chrome://songbird/skin/default/volume_progress_remainder.png) ;
+}
+
+#songbird_volume_e
+{
+  background-image: url(chrome://songbird/skin/default/volume_e.png) ;
+}
+#songbird_volume_w
+{
+  background-image: url(chrome://songbird/skin/default/volume_w.png) ;
+}
+
+/* END TOP PANE **/
 
 /** 
 ************************************************************************************************************************************************
-SERVICE PANE
+SERVICE PANE - a.k.a the Left Pane
+The Service Pane is the primary area for navigating through services and content. It serves as the primary GUI entry point to content and services.
 ************************************************************************************************************************************************
 */ 
 
@@ -288,11 +631,6 @@ sb-clickhold-button[id="file.new"]
   list-style-image: url(chrome://songbird/skin/default/icon_dynplaylist_16x16.png) ;
 }
 
-
-
-
-
-
 /* END SERVICE PANE **/
 
 /** 
@@ -311,7 +649,7 @@ tree .tree-columnpicker-icon
 {
   list-style-image: url(chrome://songbird/skin/default/column_picker.png) ;
 }
-tree .treecol-image /* puts a little piece to fill in next to the column picker **/
+tree .treecol-image /* puts a little gradient piece to fill in next to the column picker **/
 {
   background-image: url(chrome://songbird/skin/default/treecol.png) ;
 }
@@ -325,7 +663,6 @@ Organize your collection with genre/artist/album filterlists.
 
 filterlist
 {
-  /*background-image: url(chrome://songbird/skin/default/bkgd_clouds.png);*/
 }
 
 /** 
@@ -336,8 +673,9 @@ THE PLAYLIST
 
 playlist
 {
-  /*background-image: url(chrome://songbird/skin/default/bkgd_flowers.png) ;**/
+  background-image: url(chrome://songbird/skin/default/pattern_asanoha.png); /* Put a Background behind your filterlists for extra style. */
 }
+
 /* END THE LISTS **/
 
 /** 
@@ -353,9 +691,15 @@ contextual menu.
 /* 
   These are the actual command elements created,
   a toolbarbutton and a menuitem for each command id.
-
   You should attach each command's icon, here.
 */
+
+#playlist_toolbar_bkg
+{ 
+  background-image: url(chrome://songbird/skin/default/treecol.png);
+  background-repeat: repeat-x;
+  border-top: 1px solid transparent;
+}
 
 /* Toolbar: Play Button */
 button#library_cmd_play
@@ -773,361 +1117,10 @@ These let the user resize the frames in your box model.
 }
 /* END SPLITTERS **/
 
-/** 
-************************************************************************************************************************************************
-RESIZERS
-************************************************************************************************************************************************
-*/ 
-.sb-sys-outer-frame-chrome-bkgd,
-.sb-sys-outer-frame-chrome-e,
-.sb-sys-outer-frame-chrome-w,
-.sb-sys-outer-frame-chrome-nw,
-.sb-sys-outer-frame-chrome-n,
-.sb-sys-outer-frame-chrome-ne,
-.sb-sys-outer-frame-resizer-t,
-.sb-sys-outer-frame-resizer-tl,
-.sb-sys-outer-frame-resizer-tr,
-.sb-sys-outer-frame-resizer-b,
-.sb-sys-outer-frame-resizer-bl,
-.sb-sys-outer-frame-resizer-br,
-.sb-sys-outer-frame-resizer-lt,
-.sb-sys-outer-frame-resizer-l,
-.sb-sys-outer-frame-resizer-lb,
-.sb-sys-outer-frame-resizer-rt,
-.sb-sys-outer-frame-resizer-r,
-.sb-sys-outer-frame-resizer-rb
-{  
-  background-image: none ;
-  list-style-image: none ;
-}
-
-#resize
-{
-  background-image: none ;
-  list-style-image: none ;
-}
-
-
 
 /** 
 ************************************************************************************************************************************************
-SPINNER for the browser to show network activity.
-************************************************************************************************************************************************
-*/
-.spinner_spin
-{
-  background-image: url(chrome://songbird/skin/default/spinner_spin.gif) ;
-}
-.spinner_stopped
-{
-  background-image: url(chrome://songbird/skin/default/spinner_stopped.gif) ;
-}
-
-/** 
-************************************************************************************************************************************************
-CONTROL BOX
-Contains the Main Playback Controls and the Dashboard.
-************************************************************************************************************************************************
-*/
-
-/* DASHBOARD **/
-
-
-
-.faceplate-left-spacer
-{
-  background-image: url(chrome://songbird/skin/default/faceplate_left.png);
-  background-repeat: no-repeat;
-}
-.faceplate-right-spacer
-{
-  background-image: url(chrome://songbird/skin/default/faceplate_right.png);
-  background-repeat: no-repeat;
-}
-
-
-.faceplate-bkgd-box
-{
-  background-image: url(chrome://songbird/skin/default/faceplate_bkgd.png);
-  background-repeat: repeat-x;
-}
-
-.faceplate-intro-image
-{
-  list-style-image: url(chrome://songbird/skin/default/faceplate.png);
-}
-
-/* the seekbar slider */
-#songbird_seekbar_thumb
-{
-  background-color: #1F292B;
-  background-image: none;
-  border: 1px solid #a7afa2;
-}
-#songbird_seekbar_thumb > gripper
-{
-  height: 10px ;
-}
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
-{
-  height: 10px ;
-}
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar
-{
-  background-color: #1F292B;
-  background-image: none;
-  height: 10px;
-}
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder
-{
-  background-image: none;
-  background-color: #a2aa9e;
-  height: 10px;
-}
-#songbird_seekbar
-{
-  -moz-appearance: none ;
-  border: 1px solid #1F292B ;
-  height: 10px;
-}
-
-
-/** 
-************************************************************************************************************************************************
-Main Playback Controls
-Play/Pause, Previous (back), Next (forward)
-************************************************************************************************************************************************
-*/
-
-/* the play button */
-
-.sb-player-play-button-play 
-{  
-  list-style-image: url(chrome://songbird/skin/default/player_controls.png); 
-  -moz-image-region: rect(0px 68px 36px 32px);
-}
-.sb-player-play-button-play:hover
-{
-  -moz-image-region: rect(36px 68px 72px 32px);
-}
-.sb-player-play-button-play:active
-{
-  -moz-image-region: rect(72px 68px 108px 32px);
-}
-.sb-player-play-button-play[disabled="true"]
-{
-  -moz-image-region: rect(0px 68px 36px 32px);
-}
-
-/* the pause button */
-
-.sb-player-pause-button-pause
-{
-  list-style-image: url(chrome://songbird/skin/default/player_controls.png); 
-  -moz-image-region: rect(0px 104px 36px 68px);
-}
-.sb-player-pause-button-pause:hover
-{ 
-  -moz-image-region: rect(36px 104px 72px 68px);
-}
-.sb-player-pause-button-pause:active
-{
-  -moz-image-region: rect(72px 104px 108px 68px);
-}
-.sb-player-pause-button-pause[disabled="true"]
-{ 
-  -moz-image-region: rect(0px 104px 36px 68px);
-}
-
-/* the back button */
-
-sb-player-back-button
-{
-  list-style-image: url(chrome://songbird/skin/default/player_controls.png); 
-  -moz-image-region: rect(0px 32px 32px 0px);
-}
-sb-player-back-button:hover
-{ 
-  -moz-image-region: rect(32px 32px 64px 0px);
-}
-sb-player-back-button:active
-{ 
-  -moz-image-region: rect(64px 32px 96px 0px);
-}
-sb-player-back-button[disabled="true"]
-{ 
-  -moz-image-region: rect(0px 32px 32px 0px);
-}
-
-/* the fwd button */
-sb-player-forward-button
-{
-  list-style-image: url(chrome://songbird/skin/default/player_controls.png); 
-  -moz-image-region: rect(0px 136px 32px 104px);
-}
-sb-player-forward-button:hover
-{ 
-  -moz-image-region: rect(32px 136px 64px 104px);
-}
-sb-player-forward-button:active
-{ 
-  -moz-image-region: rect(64px 136px 96px 104px);
-}
-sb-player-forward-button[disabled="true"]
-{
-  -moz-image-region: rect(0px 136px 32px 104px);
-}
-
-/* the curr button */
-.sb-player-curtrack-button
-{
-  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
-  -moz-image-region: rect(40px 105px 60px 70px);
-}
-.sb-player-curtrack-button[disabled="true"]
-{
-  -moz-image-region: rect(40px 105px 60px 70px);
-}
-.sb-player-curtrack-button:hover
-{
-  -moz-image-region: rect(40px 105px 60px 70px);
-}
-.sb-player-curtrack-button:active
-{
-  -moz-image-region: rect(60px 105px 80px 70px);
-}
-
-/* the next button */
-.sb-player-cyclefaceplate-button-cycle
-{
-  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
-  -moz-image-region: rect(0px 105px 20px 70px);
-}
-.sb-player-cyclefaceplate-button-cycle[disabled="true"]
-{
-  -moz-image-region: rect(0px 105px 20px 70px);
-}
-.sb-player-cyclefaceplate-button-cycle:hover
-{
-  -moz-image-region: rect(0px 105px 20px 70px);
-}
-.sb-player-cyclefaceplate-button-cycle:active
-{
-  -moz-image-region: rect(20px 105px 40px 70px);
-}
-
-/* the rep1 button */
-.sb-player-repeat-button-repnone
-{
-  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
-  -moz-image-region: rect(0px 35px 20px 0px);
-}
-.sb-player-repeat-button-repnone[disabled="true"]
-{
-  -moz-image-region: rect(0px 35px 20px 0px);
-}
-.sb-player-repeat-button-repnone:hover[disabled="true"]
-{
-  -moz-image-region: rect(0px 35px 20px 0px);
-}
-.sb-player-repeat-button-repnone:active
-{
-  -moz-image-region: rect(20px 35px 40px 0px);
-}
-
-/* the rep1_on button */
-.sb-player-repeat-button-rep1
-{
-  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
-  -moz-image-region: rect(40px 35px 60px 0px);
-}
-.sb-player-repeat-button-rep1[disabled="true"]
-{
-  -moz-image-region: rect(40px 35px 60px 0px);
-}
-.sb-player-repeat-button-rep1:hover[disabled="true"]
-{
-  -moz-image-region: rect(40px 35px 60px 0px);
-}
-.sb-player-repeat-button-rep1:active
-{
-  -moz-image-region: rect(60px 35px 80px 0px);
-}
-
-/* the repall button */
-.sb-player-repeat-button-repall
-{
-  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
-  -moz-image-region: rect(80px 35px 100px 0px);
-}
-.sb-player-repeat-button-repall[disabled="true"]
-{
-  -moz-image-region: rect(80px 35px 100px 0px);
-}
-.sb-player-repeat-button-repall:hover[disabled="true"]
-{
-  -moz-image-region: rect(80px 35px 100px 0px);
-}
-.sb-player-repeat-button-repall:active
-{
-  -moz-image-region: rect(100px 35px 120px 0px);
-}
-
-/* the shuf button */
-.sb-player-shuffle-button-shuffleoff
-{
-  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
-  -moz-image-region: rect(0px 70px 20px 35px);
-}
-.sb-player-shuffle-button-shuffleoff[disabled="true"]
-{
-  -moz-image-region: rect(0px 70px 20px 35px);
-}
-.sb-player-shuffle-button-shuffleoff:hover[disabled="true"]
-{
-  -moz-image-region: rect(0px 70px 20px 35px);
-}
-.sb-player-shuffle-button-shuffleoff:active
-{
-  -moz-image-region: rect(20px 70px 40px 35px);
-}
-
-/* the shuf_on button */
-.sb-player-shuffle-button-shuffleon
-{
-  list-style-image: url(chrome://songbird/skin/default/rep_shuf_cur_next.png);
-  -moz-image-region: rect(40px 70px 60px 35px);
-}
-.sb-player-shuffle-button-shuffleon[disabled="true"]
-{
-  -moz-image-region: rect(40px 70px 60px 35px);
-}
-.sb-player-shuffle-button-shuffleon:hover[disabled="true"]
-{
-  -moz-image-region: rect(40px 70px 60px 35px);
-}
-.sb-player-shuffle-button-shuffleon:active
-{
-  -moz-image-region: rect(60px 70px 80px 35px);
-}
-
-/* Jump-to */
-sb-player-jumpto-button 
-{
-  list-style-image: url(chrome://songbird/skin/default/icon_lib_16x16.png) !important;
-}
-
-/* Fullscreen */
-sb-player-fullscreen-button
-{
-  list-style-image: url(chrome://songbird/skin/default/sysbtn_fullscreen_9x9.png) !important;
-}
-
-/* END CONTROL BOX **/
-
-/** 
-************************************************************************************************************************************************
-WEB BAR
+WEB BAR IMAGES
 Browser Toolbar, Address Box, and Url-Slurper Button
 ************************************************************************************************************************************************
 */
@@ -1262,47 +1255,101 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 
 /** 
 ************************************************************************************************************************************************
-VOLUME
-Mute and Slider
+SCROLLBARS
+************************************************************************************************************************************************
+*/ 
+.scrollbutton-up,
+.scrollbutton-down
+{   
+  background-image: none ;
+}
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
+.scrollbutton-up
+{   
+  background-image: url(chrome://songbird/skin/default/chrome_scroll_up.png) !important; /* up arrow */
+} 
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"],
+.scrollbutton-down
+{   
+  background-image: url(chrome://songbird/skin/default/chrome_scroll_down.png) !important ; /* down arrow */
+} 
+
+/* NOTE on the arrow images: I'm using !important here because I don't want to nuke the default black arrow in the global skin.  I just want to put a light arrow in for this dark color scheme.  If you're using a light scheme, this rule is unnecessary. */
+
+/** 
+************************************************************************************************************************************************
+RESIZERS
+************************************************************************************************************************************************
+*/ 
+.sb-sys-outer-frame-chrome-bkgd,
+.sb-sys-outer-frame-chrome-e,
+.sb-sys-outer-frame-chrome-w,
+.sb-sys-outer-frame-chrome-nw,
+.sb-sys-outer-frame-chrome-n,
+.sb-sys-outer-frame-chrome-ne,
+.sb-sys-outer-frame-resizer-t,
+.sb-sys-outer-frame-resizer-tl,
+.sb-sys-outer-frame-resizer-tr,
+.sb-sys-outer-frame-resizer-b,
+.sb-sys-outer-frame-resizer-bl,
+.sb-sys-outer-frame-resizer-br,
+.sb-sys-outer-frame-resizer-lt,
+.sb-sys-outer-frame-resizer-l,
+.sb-sys-outer-frame-resizer-lb,
+.sb-sys-outer-frame-resizer-rt,
+.sb-sys-outer-frame-resizer-r,
+.sb-sys-outer-frame-resizer-rb
+{  
+  background-image: none ;
+  list-style-image: none ;
+}
+
+#resize
+{
+  background-image: none ;
+  list-style-image: none ;
+}
+
+/** 
+************************************************************************************************************************************************
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
 ************************************************************************************************************************************************
 */
-.sb-player-mute-button-muteoff > .clickhold-button
-{
-  list-style-image: url(chrome://songbird/skin/default/mute_off.png);
-  background-color: transparent !important;
+
+menuitem[checked="true"] > hbox[checked="true"] 
+{ 
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
 }
 
-.sb-player-mute-button-muteon > .clickhold-button
-{
-  list-style-image: url(chrome://songbird/skin/default/mute_on.png);
-  background-color: transparent !important;
+menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
+{ 
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
 }
 
-sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb
+.menu-right[_moz-menuactive="true"] 
 {
-  background-image: url(chrome://songbird/skin/default/volume_thumb.png);
+  list-style-image: url(default/menu-arrow-hover.png) !important;
 }
 
-sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb:active
-{
-  background-image: url(chrome://songbird/skin/default/volume_thumb_active.png) ;
+.menu-right
+{   
+  list-style-image: url(default/menu-arrow.png) !important;
 }
 
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar
+/** 
+************************************************************************************************************************************************
+SPINNER for the browser to show network activity.
+************************************************************************************************************************************************
+*/
+.spinner_spin
 {
-  background-image: url(chrome://songbird/skin/default/volume_progress_bar.png) ;
+  background-image: url(chrome://songbird/skin/default/spinner_spin.gif) ;
 }
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder
+.spinner_stopped
 {
-  background-image: url(chrome://songbird/skin/default/volume_progress_remainder.png) ;
+  background-image: url(chrome://songbird/skin/default/spinner_stopped.gif) ;
 }
-
-#songbird_volume_e
-{
-  background-image: url(chrome://songbird/skin/default/volume_e.png) ;
-}
-#songbird_volume_w
-{
-  background-image: url(chrome://songbird/skin/default/volume_w.png) ;
-}
-
