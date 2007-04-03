@@ -17,11 +17,32 @@ lib_files="*plds4.*
 "
 
 # symbol_files are relative to $objdir
-symbol_files="xpcom/stub/xpcom.pdb
+symbol_files="intl/unicharutil/util/nsunicharutils.pdb
+              js/src/js3250.pdb
               toolkit/library/xul.pdb
+              xpcom/glue/nsarrayenumerator.pdb
+              xpcom/glue/nsautolock.pdb
+              xpcom/glue/nscomarray.pdb
+              xpcom/glue/nscomponentmanagerutils.pdb
+              xpcom/glue/nscomptr.pdb
+              xpcom/glue/nscrtglue.pdb
+              xpcom/glue/nsenumeratorutils.pdb
+              xpcom/glue/nsgenericfactory.pdb
+              xpcom/glue/nsid.pdb
+              xpcom/glue/nsiinterfacerequestorutils.pdb
+              xpcom/glue/nsisupportsimpl.pdb
+              xpcom/glue/nsmemory.pdb
+              xpcom/glue/nsquicksort.pdb
+              xpcom/glue/nsstringapi.pdb
+              xpcom/glue/nstarray.pdb
+              xpcom/glue/nsthashtable.pdb
+              xpcom/glue/nsthreadutils.pdb
+              xpcom/glue/nsvoidarray.pdb
+              xpcom/glue/nsweakreference.pdb
+              xpcom/glue/pldhash.pdb
+              xpcom/stub/xpcom.pdb
               xulrunner/app/xulrunner.pdb
               xulrunner/stub/xulrunner-stub.pdb
-              js/src/js3250.pdb
 "
 
 # update_bin_files are relative to $objdir/dist/host/bin/
