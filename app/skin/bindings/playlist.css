@@ -130,23 +130,8 @@ contextual menu.
   border: none !important;
 }
 
-#playlist_toolbar_bkg,
-playlist > stack > vbox > hbox#playlist_toolbar_bkg
-{
-  -moz-border-radius-bottomright: 3px !important;
-  -moz-border-radius-bottomleft: 3px !important;  
-  border-top: 1px solid;
-}
 
-/* the generic style for all playlist toolbarbuttons */
-#playlist_toolbar > button
-{
-  -moz-border-radius: 5px;
-  border: 1px solid;
-  padding: 0px 5px 0px 0px !important;
-  margin: 2px 0px 2px 2px !important;
-  height: 25px;  
-}
+
 
 
                         
