@@ -56,11 +56,11 @@ interface sbIMediaItem : sbILibraryResource
    */
   readonly attribute sbILibrary library;
 
-  /**
+  /*
    * \brief The library that this media item is linked from.  This is to aid
    * in support of foreign media items
-   */
   readonly attribute sbILibrary originLibrary;
+   */
 
   /**
    * \brief Can the media item be changed?

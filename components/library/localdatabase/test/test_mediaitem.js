@@ -103,7 +103,7 @@ function runTest () {
   // Basic tests on retrieving its info...
   testGet( item, "library", testlib );  
   testGet( item, "isMutable", true );  
-//  testGet( item, "originLibrary", testlib );  // -- Not yet implemented.
+//  testGet( item, "originLibrary", testlib );  // -- Not to be implemented??
 
   // These are obviously testing incorrect values, I'll fix them before I commit.
   testGet( item, "mediaCreated", 1169855962000 );

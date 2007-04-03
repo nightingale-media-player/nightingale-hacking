@@ -493,14 +493,14 @@ sbLocalDatabaseMediaItem::GetLibrary(sbILibrary** aLibrary)
   return NS_OK;
 }
 
-/**
+/*
  * See sbIMediaItem
- */
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetOriginLibrary(sbILibrary** aOriginLibrary)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
+ */
 
 /**
  * See sbIMediaItem
