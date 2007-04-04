@@ -32,6 +32,7 @@
 #include <sbILocalDatabaseMediaItem.h>
 #include <sbIMediaItem.h>
 #include <nsIClassInfo.h>
+#include <nsIRequestObserver.h>
 #include <nsWeakReference.h>
 
 #include <nsCOMPtr.h>
@@ -44,6 +45,7 @@ class sbILocalDatabaseResourcePropertyBag;
 
 class sbLocalDatabaseMediaItem : public nsSupportsWeakReference,
                                  public nsIClassInfo,
+                                 public nsIRequestObserver,
                                  public sbILocalDatabaseResourceProperty,
                                  public sbILocalDatabaseMediaItem,
                                  public sbIMediaItem
@@ -51,6 +53,7 @@ class sbLocalDatabaseMediaItem : public nsSupportsWeakReference,
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
+  NS_DECL_NSIREQUESTOBSERVER
   NS_DECL_SBILIBRARYRESOURCE
   NS_DECL_SBILOCALDATABASERESOURCEPROPERTY
   NS_DECL_SBILOCALDATABASEMEDIAITEM

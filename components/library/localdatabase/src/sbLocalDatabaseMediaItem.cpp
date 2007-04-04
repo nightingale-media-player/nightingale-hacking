@@ -31,6 +31,8 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
 
+#include <nsIObserver.h>
+#include <nsIURIChecker.h>
 #include <nsAutoLock.h>
 #include <nsNetUtil.h>
 #include <nsXPCOM.h>
@@ -92,6 +94,7 @@ NS_IMPL_RELEASE(sbLocalDatabaseMediaItem)
 NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaItem)
   NS_INTERFACE_MAP_ENTRY(nsIClassInfo)
   NS_INTERFACE_MAP_ENTRY(nsISupportsWeakReference)
+  NS_INTERFACE_MAP_ENTRY(nsIRequestObserver)
   NS_INTERFACE_MAP_ENTRY(sbILocalDatabaseResourceProperty)
   NS_INTERFACE_MAP_ENTRY(sbILocalDatabaseMediaItem)
   NS_INTERFACE_MAP_ENTRY(sbIMediaItem)
@@ -99,8 +102,9 @@ NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaItem)
   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIMediaItem)
 NS_INTERFACE_MAP_END
 
-NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseMediaItem, nsIClassInfo,
+NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseMediaItem, nsIClassInfo,
                                                        nsISupportsWeakReference,
+                                                       nsIRequestObserver,
                                                        sbILibraryResource,
                                                        sbILocalDatabaseResourceProperty,
                                                        sbILocalDatabaseMediaItem,
@@ -676,15 +680,6 @@ sbLocalDatabaseMediaItem::SetContentType(const nsAString& aContentType)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::TestIsAvailable(nsIObserver* aObserver)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
 sbLocalDatabaseMediaItem::OpenInputStream(PRUint32 aOffset,
                                           nsIInputStream** _retval)
 {
@@ -714,5 +709,60 @@ sbLocalDatabaseMediaItem::ToString(nsAString& _retval)
   buff.AppendLiteral("}");
 
   _retval = buff;
+  return NS_OK;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::TestIsAvailable(nsIObserver* aObserver)
+{
+  // Create a URI Checker interface
+  nsresult rv;
+  nsCOMPtr<nsIURIChecker> pURIChecker = do_CreateInstance("@mozilla.org/network/urichecker;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set it up with the URI in question
+  nsCOMPtr<nsIURI> pURI;
+  rv = this->GetContentSrc( getter_AddRefs(pURI) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = pURIChecker->Init( pURI );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Do an async check with the given observer as the context
+  rv = pURIChecker->AsyncCheck( this, aObserver );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
+ * See nsIRequestObserver
+ */
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::OnStartRequest( nsIRequest *aRequest, nsISupports *aContext )
+{
+  // We don't care.  It's about to check if available.
+  return NS_OK;
+}
+
+/**
+ * See nsIRequestObserver
+ */
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::OnStopRequest( nsIRequest *aRequest, nsISupports *aContext, PRUint32 aStatus )
+{
+  // Get the target observer
+  nsresult rv;
+  nsCOMPtr<nsIObserver> observer = do_QueryInterface( aContext, &rv );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Tell it whether we succeed or fail
+  nsAutoString data = ( aStatus == NS_BINDING_SUCCEEDED ) ? 
+    NS_LITERAL_STRING( "true" ) : NS_LITERAL_STRING( "false" );
+  observer->Observe( aRequest, "available", data.get() );
+
   return NS_OK;
 }

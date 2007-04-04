@@ -61,24 +61,34 @@ function testGet( item, attrib, value ) {
 
 function testSet( item, attrib, value ) {
   item[ attrib ] = value;
-  var test_value = item[ attrib ];
-  if ( test_value.spec ) { // for nsURI return values, you must compare spec?
-    log( "!!!!!!! item." + attrib + " = " + test_value.spec );
-    assertEqual( test_value.spec, value );
-  } else {
-    log( "!!!!!!! item." + attrib + " = " + test_value );
-    assertEqual( test_value, value );
-  }
+  testGet( item, attrib, value );
 }
 
-function testAvailable( item, available, completion ) {
-  // Make an observer.
+function testAvailable( library, url, available, completion ) {
+  // Create a new item with the given url
+  var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+  var uriSpec = url;
+  var uri = ios.newURI(uriSpec, null, null);
+  var item = library.createMediaItem(uri);
+
+  // Make an observer to receive results of the availability test.
+  // This one is complicated because I want to chain tests.
   var is_available_observer = {
+    _item: item,
     _available: available,
     _completion: completion,
-    observe: function( aSubject, aTopic, aData ) { 
-      assertEqual( aData, this._available );
-      this._completion();
+    observe: function( aSubject, aTopic, aData ) {
+      if ( aTopic == "available" ) {
+        log( "(sbIMediaItem::TestIsAvailable) " + this._item.contentSrc.spec + ": " + aTopic + " == " + aData );
+        assertEqual( aData, this._available );
+        if ( this._completion != null )
+          try {
+            this._completion();
+          } catch ( e ) {
+            assertEqual( e, null ); // Fail the tests on a throw.
+          }
+        testFinished();
+      }
     },
     QueryInterface: function(iid) {
       if (!iid.equals(Components.interfaces.nsIObserver) && 
@@ -87,9 +97,10 @@ function testAvailable( item, available, completion ) {
       return this;
     }
   }
-  item.testIsAvailable( is_available_observer );
   
-  // How do I wait the tests to get back my observer call?
+  // Start the test, tell the testharness to wait for us.
+  item.testIsAvailable( is_available_observer );
+  testPending();
 }
 
 function runTest () {
@@ -103,46 +114,37 @@ function runTest () {
   // Basic tests on retrieving its info...
   testGet( item, "library", testlib );  
   testGet( item, "isMutable", true );  
-//  testGet( item, "originLibrary", testlib );  // -- Not to be implemented??
-
-  // These are obviously testing incorrect values, I'll fix them before I commit.
   testGet( item, "mediaCreated", 1169855962000 );
   testGet( item, "mediaUpdated", 1169855962000 );  
   testGet( item, "contentSrc", "file:///home/steve/Hells%20Bells.mp3" );  
   testGet( item, "contentLength", 0x21C );  
   testGet( item, "contentType", "audio/mpeg" );  
-  
-/* -- Not yet implemented.
-  // How can I make sure this is always available?
-  // Use an HTTP resource that we control?
-  testAvailable( item, true ); 
-*/
-
 /* -- SetProperty is not yet implemented by aus, so these don't work.
-
   // Slightly more complicated tests for setting its info
-  testSet( item, "mediaCreated", 0xbaadf00d );
-  testSet( item, "mediaUpdated", 0xbaadf00d );
+  testSet( item, "mediaCreated", 0x1337baadf00d );
+  testSet( item, "mediaUpdated", 0x1337baadf00d );
   testSet( item, "contentSrc", "file://poo" );
   testSet( item, "contentLength", 0xbaadf00d );
   testSet( item, "contentType", "x-media/x-poo" );
 */
   
 /* -- Not yet implemented.
-  // Now it should no longer be available
-  testAvailable( item, false ); 
-*/
-
-/* -- Not yet implemented.
-
   var inputStream = item.openInputStream( 0 );
   assertNotEqual(inputStream, null);
   // ??? Then what?
-
   var ouputStream = item.openOuputStream( 0 );
   assertNotEqual(ouputStream, null);
   // ??? Then what?
-  
 */
-}
 
+  // Async tests of availability for a (supposedly!) known url.
+  testAvailable( testlib, "http://stashbox.org/796/zadornov.mp3", "true", 
+    function() {
+      testAvailable( testlib, "http://stashbox.org/poo/poo.mp3", "false" /* , 
+        function() {
+          testAvailable( testlib, "file:///c:/boot.ini", "true" ); // Works on Win32
+        } */
+      );
+    }
+  ); 
+}
