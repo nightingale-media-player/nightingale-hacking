@@ -328,6 +328,7 @@
           <xul:sb-sys-title sbid="hide_mac" xbl:inherits="value"/> 
           <children />
           <xul:spacer flex="1"/>
+          <xul:sb-feathers-toggle-button sbid="feathers" id="sysbtn_minimode" popupanchor="bottomright" popupalign="topright" />
           <xul:sb-sys-buttons xbl:inherits="type"/>
         </xul:hbox>
       </xul:stack>
