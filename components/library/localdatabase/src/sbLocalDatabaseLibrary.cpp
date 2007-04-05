@@ -129,7 +129,7 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
     do_CreateInstance(SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertyCache->SetDatabaseGUID(mDatabaseGuid);
+  rv = mPropertyCache->Init(mDatabaseGuid, aDatabaseLocation);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();

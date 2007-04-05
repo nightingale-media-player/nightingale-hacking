@@ -35,7 +35,7 @@ function runTest () {
 
   var cache = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/PropertyCache;1"]
                 .createInstance(Ci.sbILocalDatabasePropertyCache);
-  cache.databaseGUID = databaseGUID;
+  cache.init(databaseGUID, null);
 
   var db = loadMockDatabase();
 

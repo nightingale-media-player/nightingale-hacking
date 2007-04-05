@@ -52,23 +52,23 @@ public:
 
   sbLocalDatabasePropertyCache();
 
-  NS_IMETHOD Init();
-  NS_IMETHOD MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
-  NS_IMETHOD LoadProperties();
+  nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
+  nsresult LoadProperties();
 
-  NS_IMETHOD AddDirtyGUID(const nsAString &aGuid);
-  
+  nsresult AddDirtyGUID(const nsAString &aGuid);
+
   PRUint32 GetPropertyID(const nsAString& aPropertyName);
   PRBool GetPropertyName(PRUint32 aPropertyID, nsAString& aPropertyName);
 
   PRBool IsTopLevelProperty(PRUint32 aPropertyID);
-  NS_IMETHOD PropertyRequiresInsert(const nsAString &aGuid, PRUint32 aPropertyID, PRBool *aInsert);
+  nsresult PropertyRequiresInsert(const nsAString &aGuid, PRUint32 aPropertyID, PRBool *aInsert);
   void   GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn); 
 
 private:
   ~sbLocalDatabasePropertyCache();
 
-  PRBool mInitialized;
+  PRBool mInitalized;
+
   PRBool mWritePending;
 
   PRUint32 mNumStaticProperties;
@@ -120,14 +120,15 @@ public:
   sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache,
                                      const nsAString& aGuid);
 
-  NS_IMETHOD Init();
-  NS_IMETHOD PutValue(PRUint32 aPropertyID, const nsAString& aValue);
+  ~sbLocalDatabaseResourcePropertyBag();
 
-  NS_IMETHOD EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, void *aClosure, PRUint32 *aDirtyCount);
-  NS_IMETHOD SetDirty(PRBool aDirty);
+  nsresult Init();
+  nsresult PutValue(PRUint32 aPropertyID, const nsAString& aValue);
+
+  nsresult EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, void *aClosure, PRUint32 *aDirtyCount);
+  nsresult SetDirty(PRBool aDirty);
 
 private:
-  ~sbLocalDatabaseResourcePropertyBag();
 
   sbLocalDatabasePropertyCache* mCache;
   nsClassHashtableMT<nsUint32HashKey, nsString> mValueMap;
