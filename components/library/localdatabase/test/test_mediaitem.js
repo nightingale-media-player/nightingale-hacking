@@ -27,6 +27,10 @@
 /**
  * \brief Test file
  */
+var OUTPUT_URL = "file:///C:/test_mediaitem.out";
+var INPUT_URL_EXISTS = "http://stashbox.org/796/zadornov.mp3";
+var INPUT_URL_NOT_EXIST = "http://stashbox.org/poo/poo.mp3";
+
 
 /**
  * Makes a new URI from a url string
@@ -50,6 +54,10 @@ function newURI(aURLString)
   return null;
 }
 
+function createItem( library, url ) {
+  return library.createMediaItem(newURI(url));
+}
+
 function testGet( item, attrib, value ) {
   var test_value = item[ attrib ];
   if ( test_value.spec ) { // for nsURI return values, you must compare spec?
@@ -65,11 +73,7 @@ function testSet( item, attrib, value ) {
 }
 
 function testAvailable( library, url, available, completion ) {
-  // Create a new item with the given url
-  var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-  var uriSpec = url;
-  var uri = ios.newURI(uriSpec, null, null);
-  var item = library.createMediaItem(uri);
+  var item = createItem( library, url );
 
   // Make an observer to receive results of the availability test.
   // This one is complicated because I want to chain tests.
@@ -79,7 +83,7 @@ function testAvailable( library, url, available, completion ) {
     _completion: completion,
     observe: function( aSubject, aTopic, aData ) {
       if ( aTopic == "available" ) {
-        log( "(sbIMediaItem::TestIsAvailable) " + this._item.contentSrc.spec + ": " + aTopic + " == " + aData );
+        log( "(sbIMediaItem::TestIsAvailable) COMPLETE " + this._item.contentSrc.spec + ": " + aTopic + " == " + aData );
         assertEqual( aData, this._available );
         if ( this._completion != null )
           try {
@@ -101,6 +105,7 @@ function testAvailable( library, url, available, completion ) {
   // Start the test, tell the testharness to wait for us.
   item.testIsAvailable( is_available_observer );
   testPending();
+  log( "(sbIMediaItem::TestIsAvailable) START    " + url );
 }
 
 function runTest () {
@@ -128,19 +133,25 @@ function runTest () {
   testSet( item, "contentType", "x-media/x-poo" );
 */
   
-/* -- Not yet implemented.
-  var inputStream = item.openInputStream( 0 );
+  var inputItem = testlib.createMediaItem( newURI(INPUT_URL_EXISTS) );
+/* -- Implemented, not yet written to test
+  var inputChannel = inputItem.openInputStreamAsync();
+  assertNotEqual(inputChannel, null);
+  // ??? Then what?
+  var inputStream = inputItem.openInputStream();
   assertNotEqual(inputStream, null);
   // ??? Then what?
-  var ouputStream = item.openOuputStream( 0 );
-  assertNotEqual(ouputStream, null);
-  // ??? Then what?
 */
+  
+  var outputItem = testlib.createMediaItem( newURI(OUTPUT_URL) );
+  var outputStream = outputItem.openOutputStream();
+  assertNotEqual(outputStream, null);
+  // ??? Then what?
 
   // Async tests of availability for a (supposedly!) known url.
-  testAvailable( testlib, "http://stashbox.org/796/zadornov.mp3", "true", 
+  testAvailable( testlib, INPUT_URL_EXISTS, "true", 
     function() {
-      testAvailable( testlib, "http://stashbox.org/poo/poo.mp3", "false" /* , 
+      testAvailable( testlib, INPUT_URL_NOT_EXIST, "false" /* , 
         function() {
           testAvailable( testlib, "file:///c:/boot.ini", "true" ); // Works on Win32
         } */

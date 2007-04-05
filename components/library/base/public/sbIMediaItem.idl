@@ -34,6 +34,8 @@
 
 interface nsIObserver;
 interface nsIURI;
+interface nsIChannel;
+interface nsIStreamListener;
 interface nsIInputStream;
 interface nsIOutputStream;
 interface sbILibrary;
@@ -112,18 +114,27 @@ interface sbIMediaItem : sbILibraryResource
   void testIsAvailable(in nsIObserver aObserver);
 
   /**
-   * \brief Get an input stream to the content of the media item
-   * \param aOffset Offset (in bytes) to start reading the content
+   * \brief Asynchronously get an input stream to the content of the media item
+   *
+   * NOTE: If the listener can also QI to an nsIInterfaceRequestor, it will be
+   * assigned to the internal channel's notificationCallbacks property.
+   *
+   * \param aListener Provide an nsIStreamListener to receive streaming data.
+   * \param aContext Value passed to the stream listener to provide context.
+   */
+  nsIChannel openInputStreamAsync(in nsIStreamListener aListener, in nsISupports aContext);
+
+  /**
+   * \brief Synchronously get an input stream to the content of the media item
    * \return The input stream
    */
-  nsIInputStream openInputStream(in unsigned long aOffset);
+  nsIInputStream openInputStream();
 
   /**
    * \brief Get an output stream to the content of the media item
-   * \param aOffset Offset (in bytes) to start writing to the content
    * \return The output stream
    */
-  nsIOutputStream openOutputStream(in unsigned long aOffset);
+  nsIOutputStream openOutputStream();
 
   /**
    * \brief Get a string representation of the media item, useful for debugging

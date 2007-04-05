@@ -33,6 +33,7 @@
 
 #include <nsIObserver.h>
 #include <nsIURIChecker.h>
+#include <nsIFileURL.h>
 #include <nsAutoLock.h>
 #include <nsNetUtil.h>
 #include <nsXPCOM.h>
@@ -680,20 +681,116 @@ sbLocalDatabaseMediaItem::SetContentType(const nsAString& aContentType)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::OpenInputStream(PRUint32 aOffset,
-                                          nsIInputStream** _retval)
+sbLocalDatabaseMediaItem::OpenInputStreamAsync(nsIStreamListener *aListener, nsISupports *aContext, nsIChannel** _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  // Get our URI
+  nsCOMPtr<nsIURI> pURI;
+  rv = this->GetContentSrc( getter_AddRefs(pURI) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the IO service
+  nsCOMPtr<nsIIOService> pIOService;
+  pIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Make a new channel
+  rv = pIOService->NewChannelFromURI(pURI, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set notification callbacks if possible
+  nsCOMPtr<nsIInterfaceRequestor> pIIR = do_QueryInterface( aListener );
+  if ( pIIR )
+    (*_retval)->SetNotificationCallbacks( pIIR );
+
+  // Open the channel to read asynchronously
+  return (*_retval)->AsyncOpen( aListener, aContext );
 }
 
 /**
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::OpenOutputStream(PRUint32 aOffset,
-                                           nsIOutputStream** _retval)
+sbLocalDatabaseMediaItem::OpenInputStream(nsIInputStream** _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  // Get our URI
+  nsCOMPtr<nsIURI> pURI;
+  rv = this->GetContentSrc( getter_AddRefs(pURI) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the IO service
+  nsCOMPtr<nsIIOService> pIOService;
+  pIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Make a new channel
+  nsCOMPtr<nsIChannel> pChannel;
+  rv = pIOService->NewChannelFromURI(pURI, getter_AddRefs(pChannel));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return pChannel->Open(_retval);
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::OpenOutputStream(nsIOutputStream** _retval)
+{
+  nsresult rv;
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<nsIURI> pURI;
+  rv = this->GetContentSrc( getter_AddRefs(pURI) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Why are these private functions on web browser persist not static inline methods somewhere?
+
+  // From nsWebBrowserPersist.cpp#1160 - nsWebBrowserPersist::GetLocalFileFromURI( 
+  nsCOMPtr<nsILocalFile> localFile;
+  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(pURI, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    nsCOMPtr<nsIFile> file;
+    rv = fileURL->GetFile(getter_AddRefs(file));
+    if (NS_SUCCEEDED(rv))
+      localFile = do_QueryInterface(file, &rv);
+  }
+
+  if (localFile) {
+    // From nsWebBrowserPersist.cpp#2282 - nsWebBrowserPersist::MakeOutputStreamFromFile( 
+    nsCOMPtr<nsIFileOutputStream> fileOutputStream =
+        do_CreateInstance(NS_LOCALFILEOUTPUTSTREAM_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+    
+    rv = fileOutputStream->Init(localFile, -1, -1, 0);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    NS_ENSURE_SUCCESS(CallQueryInterface(fileOutputStream, _retval), NS_ERROR_FAILURE);
+    (*_retval)->AddRef();
+  }
+  else {
+#if 0
+    // From nsWebBrowserPersist.cpp#2311 - nsWebBrowserPersist::MakeOutputStreamFromURI( 
+    PRUint32 segsize = 8192;
+    PRUint32 maxsize = PRUint32(-1);
+    nsCOMPtr<nsIStorageStream> storStream;
+    nsresult rv = NS_NewStorageStream(segsize, maxsize, getter_AddRefs(storStream));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ENSURE_SUCCESS(CallQueryInterface(storStream, _retval), NS_ERROR_FAILURE);
+    (*_retval)->AddRef();
+    // ??? Note that this never uses pURI?!?  WTF?
+#else
+    *_retval = nsnull;
+#endif
+  }
+  
+  return rv;
 }
 
 /**
