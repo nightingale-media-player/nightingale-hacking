@@ -31,7 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbIPropertyArray.idl \
              sbIPropertyFactory.idl \
-             sbIPropertiesManager.idl \
+             sbIPropertyManager.idl \
              $(NULL)
 
 XPIDL_MODULE = sbProperties.xpt

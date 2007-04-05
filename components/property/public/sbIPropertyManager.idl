@@ -1,0 +1,256 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIPropertiesManager.idl
+ * \brief Definition of the sbIPropertiesManager interface
+ * \sa List of "see also" files
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+interface sbIPropertyInfo;
+interface nsIURI;
+
+/**
+* \interface sbIPropertiesManager
+* \brief Manager for system wide metadata properties
+*
+* Components should register properties with this service at startup.
+*
+* \sa sbIPropertyInfo
+*/
+[scriptable, uuid(4325d6c4-4eaf-4324-8f91-a5865ac22008)]
+interface sbIPropertyManager : nsISupports
+{
+  /**
+   * \brief Get a property object from its name
+   * \param aName Name of the property
+   * \return Property object for the given property, null if not found
+   */
+  sbIPropertyInfo getPropertyInfo(in AString aName);
+
+  /**
+   * \brief Add a property into the system
+   * \param aPropertyInfo Property to add into the system.  An exception is
+   *        thrown if the property's name is not unique
+   */
+  void addPropertyInfo(in sbIPropertyInfo aPropertyInfo);
+};
+
+/**
+* \interface sbIPropertyInfo
+* \brief System wide metadata property
+* \sa sbIPropertyManager
+*/
+[scriptable, uuid(3024b398-5c89-4122-8327-3bf9673e22dd)]
+interface sbIPropertyInfo : nsISupports
+{
+  const unsigned long SORT_NULL_SMALL = 0;
+  const unsigned long SORT_NULL_BIG   = 1;
+  const unsigned long SORT_NULL_FIRST = 2;
+  const unsigned long SORT_NULL_LAST  = 3;
+  
+  /**
+   * \brief 
+   */
+  attribute unsigned long nullSort;
+
+  /**
+   * \brief Unique name for this property
+   */
+  attribute AString name;
+
+  /**
+   * \brief The type property.
+   */
+  attribute AString type;
+
+  /**
+   * \brief Bundle key name for the localized name of this property
+   */
+  attribute AString displayKey;
+
+  /**
+   * \brief Display this property using the suggested base
+   * widget available for tree children. 
+   * Example: 'progress'.
+   */
+  attribute AString displayUsingSimpleType;
+
+  /**
+   * \brief Display this property using the suggested XBL
+   * widget identified by the following URI.
+   */
+  attribute nsIURI displayUsingXBLWidget;
+
+
+  /**
+   * \brief True if this property has a selection list
+   */
+  //attribute boolean hasValues;
+
+  /**
+   * \brief An enumerator of selection list values
+   */
+  //attribute nsIStringEnumerator values;
+
+  /**
+   * \brief Display units (I.S. compliant please). This unit is appended
+   * at the end of the formatted string returned by sbIPropertyInfo::format().
+   * \note More information here: http://www.unc.edu/~rowlett/units/sipm.html
+   */
+  attribute AString units;
+
+  /**
+   * \brief Validates the string for this property type
+   * \param aValue Value to validate
+   * \return True if the value is valid for this property, otherwise false
+   */
+  boolean validate(in AString aValue);
+
+  /**
+   * \brief Formats the value for display
+   * \param aValue Value to format
+   * \return The formatted value
+   */
+  AString format(in AString aValue);
+
+  /**
+   * \brief Formats the value to enable proper sorting.
+   * \param aValue Value to format.
+   * \return The formatted sorting value.
+   */
+  AString makeSortable(in AString aValue);
+};
+
+[scriptable, uuid(CEFF6B77-4B4D-48d0-816F-26EC1992A5B2)]
+interface sbITextPropertyInfo : sbIPropertyInfo
+{
+  /**
+   * \brief Minimum length of string.
+   */
+  attribute unsigned long minLength;
+
+  /**
+   * \brief Maximum length of string.
+   */
+  attribute unsigned long maxLength;
+
+  /**
+   * \brief Must be lowercase (only valid for languages where this applies)
+   */
+  attribute boolean enforceLowercase;
+};
+
+[scriptable, uuid(EB35ECA3-A9EC-4e01-A9AF-152C72086E68)]
+interface sbINumberPropertyInfo : sbIPropertyInfo
+{
+  /**
+   * \brief Unsigned octal representation (eg. 16, or 14 decimal).
+   */
+  const unsigned long RADIX_8  = 8;
+
+  /**
+   * \brief Signed decimal representation (eg. 14 decimal)
+   */
+  const unsigned long RADIX_10 = 10;
+
+  /**
+   * \brief Unsigned hex representation (eg. 0x0E, or 14 decimal)
+   */
+  const unsigned long RADIX_16 = 16;
+
+  /**
+   * \brief Minimum value allowed.
+   */
+  attribute long long minValue;
+
+  /** 
+   * \brief Minimum value allowed.
+   */
+  attribute long long maxValue;
+
+  /**
+   * \brief Radix.
+   */
+  attribute unsigned long radix;
+};
+
+[scriptable, uuid(B8D0B930-8AAB-4afa-969D-3A5DCA7EA536)]
+interface sbIURIPropertyInfo : sbIPropertyInfo
+{
+  /**
+   * \brief Constrain URI to a specific scheme as per RFC 2396.
+   * Some quick examples: file, http, ftp.
+   */
+  attribute AString constrainScheme;
+};
+
+[scriptable, uuid(DF7D6D96-DB92-4e30-9F5A-01088F3D7DC5)]
+interface sbIDatetimePropertyInfo : sbIPropertyInfo
+{
+  const long TIMETYPE_UNINITIALIZED = -1;
+  const long TIMETYPE_DATE = 0; /*eg. 2007-03-28 , in localized format*/
+  
+  /**
+   * \brief HH:mm:ss.ms, in localized format
+   */
+  const long TIMETYPE_TIME = 1; 
+  
+  /**
+   * \brief As returned by the ANSI C function time().
+   */
+  const long TIMETYPE_DATETIME = 2; 
+
+  /**
+   * \brief You must initialize this attribute before using this object.
+   * If you do not, all methods on this object will return 
+   * NS_ERROR_NOT_INITIALIZED.
+   */
+  attribute long timeType;
+
+  /**
+   * \brief A minimum time value to enforce when validating. If you do not
+   * wish to use this, set it to 0. 
+   *
+   * You must set this attribute in order for this object to function properly.
+   * If you do not, all methods on this object will return 
+   * NS_ERROR_NOT_INITIALIZED.
+   */
+  attribute long long minTime;
+
+  /**
+   * \brief A maximum time value to enforce when validating. If you do not
+   * wish to use this, set it to 0.
+   *
+   * You must set this attribute in order for this object to function properly.
+   * If you do not, all methods on this object will return
+   * NS_ERROR_NOT_INITIALIZED.
+   */
+  attribute long long maxTime;
+};
