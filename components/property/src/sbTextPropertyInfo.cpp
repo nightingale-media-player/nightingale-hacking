@@ -36,6 +36,7 @@ NS_IMPL_RELEASE_INHERITED(sbTextPropertyInfo, sbPropertyInfo);
 NS_INTERFACE_MAP_BEGIN(sbTextPropertyInfo);
 NS_INTERFACE_MAP_ENTRY(sbITextPropertyInfo);
 NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbIPropertyInfo, sbITextPropertyInfo);
+NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbITextPropertyInfo);
 NS_INTERFACE_MAP_END_INHERITING(sbPropertyInfo);
 
 sbTextPropertyInfo::sbTextPropertyInfo()
