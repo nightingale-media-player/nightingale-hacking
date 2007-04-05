@@ -69,7 +69,8 @@
     }                                                                          \
   PR_END_MACRO
 #else /* DEBUG */
-#define ASSERT_LIST_IS_LIBRARY() PR_BEGIN_MACRO /* nothing */ PR_END_MACRO
+#define ASSERT_LIST_IS_LIBRARY(_mediaList)                                     \
+  PR_BEGIN_MACRO /* nothing */ PR_END_MACRO
 #endif /* DEBUG */
 
 NS_IMPL_ISUPPORTS1(sbSimpleMediaListInsertingEnumerationListener,
