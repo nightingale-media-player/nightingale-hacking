@@ -40,7 +40,7 @@
 #include <sbSQLBuilderCID.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
-#include <sbIPropertiesManager.h>
+#include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 
 #define DEFAULT_FETCH_SIZE 20

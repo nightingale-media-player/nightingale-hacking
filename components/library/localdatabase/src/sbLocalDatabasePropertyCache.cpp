@@ -31,6 +31,7 @@
 #include <nsIURI.h>
 #include <nsMemory.h>
 #include <nsStringEnumerator.h>
+#include <nsUnicharUtils.h>
 #include <prlog.h>
 #include <sbSQLBuilderCID.h>
 #include <sbDatabaseResultStringEnumerator.h>
@@ -420,15 +421,163 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
   return rv;
 }
 
+PR_STATIC_CALLBACK(PLDHashOperator)
+EnumDirtyGuids(nsStringHashKey *aKey, void *aClosure)
+{
+  nsTArray<nsString> *dirtyGuids = NS_STATIC_CAST(nsTArray<nsString> *, aClosure);
+  dirtyGuids->AppendElement(aKey->GetKey());
+  return PL_DHASH_NEXT;
+}
+
+PR_STATIC_CALLBACK(PLDHashOperator)
+EnumDirtyProps(nsUint32HashKey *aKey, void *aClosure)
+{
+  nsTArray<PRUint32> *dirtyProps = NS_STATIC_CAST(nsTArray<PRUint32> *, aClosure);
+  dirtyProps->AppendElement(aKey->GetKey());
+  return PL_DHASH_NEXT;
+}
+
 NS_IMETHODIMP 
 sbLocalDatabasePropertyCache::Write()
 {
+  nsresult rv = NS_OK;
+  nsTArray<nsString> dirtyGuids;
+  
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeQuery(NS_LITERAL_STRING("begin"), getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Enumerate dirty GUIDs
+  PRUint32 dirtyGuidCount = mDirty.EnumerateEntries(EnumDirtyGuids, (void *) &dirtyGuids);
 
-  //Enumerate dirty properties for this GUID.
+  //For each GUID, there's a property bag that needs to be processed as well.
+  for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
+    sbILocalDatabaseResourcePropertyBag* bag;
+    if (mCache.Get(dirtyGuids[i], &bag)) {
+      nsTArray<PRUint32> dirtyProps;
+      sbLocalDatabaseResourcePropertyBag* bagLocal = 
+        NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag *, bag);
 
-  //XXX: Fill this in.
-  return NS_ERROR_NOT_IMPLEMENTED;
+      PRUint32 dirtyPropsCount = 0;
+      rv = bagLocal->EnumerateDirty(EnumDirtyProps, (void *) &dirtyProps, &dirtyPropsCount);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      //Enumerate dirty properties for this GUID.
+      nsAutoString value;
+      for(PRUint32 j = 0; j < dirtyPropsCount; j++) {
+        nsAutoString sql;
+        bagLocal->GetPropertyByID(dirtyProps[j], value);
+        
+        //Top level properties need to be treated differently, so check for them.
+        if(IsTopLevelProperty(dirtyProps[j])) {
+
+          rv = mMediaItemsUpdate->SetTableName(NS_LITERAL_STRING("media_items"));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          nsAutoString column;
+          GetColumnForPropertyID(dirtyProps[j], column);
+
+          rv = mMediaItemsUpdate->AddAssignmentString(column, value);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          nsCOMPtr<sbISQLBuilderCriterion> criterion;
+          rv = mMediaItemsUpdate->CreateMatchCriterionParameter(dirtyGuids[i], 
+                                                                NS_LITERAL_STRING("guid"),
+                                                                sbISQLBuilder::MATCH_EQUALS,
+                                                                getter_AddRefs(criterion));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = mMediaItemsUpdate->AddCriterion(criterion);
+          NS_ENSURE_SUCCESS(rv, rv);
+          
+          rv = mMediaItemsUpdate->ToString(sql);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = query->AddQuery(sql);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        else { //Regular properties all go in the same spot.
+          nsAutoString sortable;
+
+          //XXX: Replace with PropertyManager makeSortable.
+          ToLowerCase(value, sortable);
+          CompressWhitespace(sortable);
+
+          //Check if we need to insert or update the property.
+          PRBool bNeedInsert = PR_FALSE;
+          PropertyRequiresInsert(dirtyGuids[i], dirtyProps[j], &bNeedInsert);
+          if(bNeedInsert) {
+            rv = mPropertiesInsert->ToString(sql);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->AddQuery(sql);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindStringParameter(0, dirtyGuids[i]);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindInt32Parameter(1, dirtyProps[j]);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindStringParameter(2, value);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindStringParameter(3, sortable);
+            NS_ENSURE_SUCCESS(rv, rv);
+          } 
+          else {
+            rv = mPropertiesUpdate->ToString(sql);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->AddQuery(sql);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindStringParameter(0, value);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindStringParameter(1, sortable);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindStringParameter(2, dirtyGuids[i]);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = query->BindInt32Parameter(3, dirtyProps[j]);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+        }
+      }
+    }
+  }
+
+  if(dirtyGuidCount)
+  {
+    PRInt32 dbOk;
+
+    rv = query->AddQuery(NS_LITERAL_STRING("commit"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->Execute(&dbOk);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+    rv = query->WaitForCompletion(&dbOk);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+    for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
+      sbILocalDatabaseResourcePropertyBag* bag;
+      if (mCache.Get(dirtyGuids[i], &bag)) {
+        sbLocalDatabaseResourcePropertyBag* bagLocal = 
+          NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag *, bag);
+        bagLocal->SetDirty(PR_FALSE);
+      }
+    }
+    
+    //Clear dirty guid hastable.
+    mDirty.Clear();
+  }
+
+  return rv;
 }
 
 NS_IMETHODIMP
@@ -467,14 +616,14 @@ sbLocalDatabasePropertyCache::Init()
                                    PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /*
-   * Create simple media_items query with in list of guids
-   */
   rv = mPropertiesSelect->AddOrder(EmptyString(),
                                    NS_LITERAL_STRING("property_id"),
                                    PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  /*
+   * Create simple media_items query with in list of guids
+   */
   mMediaItemsSelect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -504,24 +653,119 @@ sbLocalDatabasePropertyCache::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   /*
-   * Create property insert and update query builder
+   * Create property insert query builder
+   *
+   * INSERT INTO resource_properties (guid, property_id, obj, obj_sortable) VALUES (?, ?, ?, ?)
    */
   mPropertiesInsert = do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mPropertiesInsert->SetIntoTableName(NS_LITERAL_STRING("resource_properties"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesInsert->AddColumn(NS_LITERAL_STRING("guid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesInsert->AddColumn(NS_LITERAL_STRING("property_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesInsert->AddColumn(NS_LITERAL_STRING("obj"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesInsert->AddColumn(NS_LITERAL_STRING("obj_sortable"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesInsert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesInsert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesInsert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesInsert->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Create property update query builder.
+   *
+   * UPDATE resource_properties SET obj = ?, obj_sortable = ? WHERE guid = ? AND property_id = ?
+   */
   mPropertiesUpdate = do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesUpdate->SetTableName(NS_LITERAL_STRING("resource_properties"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesUpdate->AddAssignmentParameter(NS_LITERAL_STRING("obj"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesUpdate->AddAssignmentParameter(NS_LITERAL_STRING("obj_sortable"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionLeft;
+  rv = mPropertiesUpdate->CreateMatchCriterionParameter(EmptyString(), 
+                                                        NS_LITERAL_STRING("guid"),
+                                                        sbISQLBuilder::MATCH_EQUALS,
+                                                        getter_AddRefs(criterionLeft));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionRight;
+  rv = mPropertiesUpdate->CreateMatchCriterionParameter(EmptyString(),
+                                                        NS_LITERAL_STRING("property_id"),
+                                                        sbISQLBuilder::MATCH_EQUALS,
+                                                        getter_AddRefs(criterionRight));
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionAnd;
+  rv = mPropertiesUpdate->CreateAndCriterion(criterionLeft, criterionRight, getter_AddRefs(criterionAnd));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesUpdate->AddCriterion(criterionAnd);
   NS_ENSURE_SUCCESS(rv, rv);
 
   /*
    * Create media item property update query builder.
+   * This one can't be prepared in advance.
    */
   mMediaItemsUpdate = do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Create query used to verify if we need to insert or update a property
+   */
+  mPropertyInsertSelect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertyInsertSelect->SetBaseTableName(NS_LITERAL_STRING("resource_properties"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertyInsertSelect->AddColumn(EmptyString(), NS_LITERAL_STRING("guid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertyInsertSelect->CreateMatchCriterionParameter(EmptyString(), 
+                                                            NS_LITERAL_STRING("guid"),
+                                                            sbISQLBuilder::MATCH_EQUALS,
+                                                            getter_AddRefs(criterionLeft));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertyInsertSelect->CreateMatchCriterionParameter(EmptyString(),
+                                                            NS_LITERAL_STRING("property_id"),
+                                                            sbISQLBuilder::MATCH_EQUALS,
+                                                            getter_AddRefs(criterionRight));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertyInsertSelect->CreateAndCriterion(criterionLeft, criterionRight, getter_AddRefs(criterionAnd));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertyInsertSelect->AddCriterion(criterionAnd);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = LoadProperties();
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ENSURE_TRUE(mCache.Init(1000), NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(mDirty.Init(1000), NS_ERROR_OUT_OF_MEMORY);
 
   mInitialized = PR_TRUE;
   return NS_OK;
@@ -691,6 +935,78 @@ sbLocalDatabasePropertyCache::GetPropertyName(PRUint32 aPropertyID,
   return PR_FALSE;
 }
 
+PRBool 
+sbLocalDatabasePropertyCache::IsTopLevelProperty(PRUint32 aPropertyID)
+{
+  //XXX: This should use the property manager when it becomes available.
+  PRUint32 numTopLevelProps = sizeof(kStaticProperties) / sizeof(sbStaticProperty); 
+  for(PRUint32 i = 0; i < numTopLevelProps; i++) {
+    if(kStaticProperties[i].mID == aPropertyID)
+      return PR_TRUE;
+  }
+  return PR_FALSE;
+}
+
+NS_IMETHODIMP
+sbLocalDatabasePropertyCache::PropertyRequiresInsert(const nsAString &aGuid, PRUint32 aPropertyID, PRBool *aInsert)
+{
+  NS_ENSURE_ARG_POINTER(aInsert);
+  *aInsert = PR_TRUE;
+
+  nsAutoString sql;
+  nsresult rv = mPropertyInsertSelect->ToString(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeQuery(sql, getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, aGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt32Parameter(1, aPropertyID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  rv = query->WaitForCompletion(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(rowCount > 0) {
+    *aInsert = PR_FALSE;
+  }
+
+  return NS_OK;
+}
+
+void
+sbLocalDatabasePropertyCache::GetColumnForPropertyID(PRUint32 aPropertyID, 
+                                                     nsAString &aColumn)
+{
+  //XXX: This needs to use the property manager when it becomes available.
+  PRUint32 numTopLevelProps = sizeof(kStaticProperties) / sizeof(sbStaticProperty); 
+  for(PRUint32 i = 0; i < numTopLevelProps; i++) {
+    if(kStaticProperties[i].mID == aPropertyID) {
+      NS_ConvertUTF8toUTF16 column(kStaticProperties[i].mColumn);
+      aColumn = column;
+      return;
+    }
+  }
+  return;
+}
+
 // sbILocalDatabaseResourcePropertyBag
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseResourcePropertyBag,
                               sbILocalDatabaseResourcePropertyBag)
@@ -714,7 +1030,7 @@ sbLocalDatabaseResourcePropertyBag::~sbLocalDatabaseResourcePropertyBag()
 NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::Init()
 {
-  NS_ENSURE_TRUE(mValueMap.Init(), NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(mValueMap.Init(1000), NS_ERROR_OUT_OF_MEMORY);
 
   mLock = nsAutoLock::NewLock("sbLocalDatabaseResourcePropertyBag::mLock");
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
@@ -806,9 +1122,16 @@ sbLocalDatabaseResourcePropertyBag::GetProperty(const nsAString& aName,
   nsAutoLock lock(mLock);
 
   PRUint32 propertyID = mCache->GetPropertyID(aName);
-  if(propertyID > 0) {
+  return GetPropertyByID(propertyID, _retval);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyID,
+                                                    nsAString& _retval)
+{
+  if(aPropertyID > 0) {
     nsString* value;
-    if (mValueMap.Get(propertyID, &value)) {
+    if (mValueMap.Get(aPropertyID, &value)) {
       _retval = *value;
       return NS_OK;
     }
@@ -821,22 +1144,27 @@ NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName, 
                                                 const nsAString & aValue)
 {
+  nsresult rv = NS_ERROR_INVALID_ARG;
+  PRUint32 propertyID = mCache->GetPropertyID(aName);
+  return SetPropertyByID(propertyID, aValue);
+}
+
+NS_IMETHODIMP 
+sbLocalDatabaseResourcePropertyBag::SetPropertyByID(PRUint32 aPropertyID, 
+                                                    const nsAString & aValue)
+{
   nsAutoLock lock(mLock);
 
   nsresult rv = NS_ERROR_INVALID_ARG;
-  PRUint32 propertyID = mCache->GetPropertyID(aName);
-
-  if(propertyID > 0) {
-     rv = PutValue(propertyID, aValue);
+  if(aPropertyID > 0) {
+     rv = PutValue(aPropertyID, aValue);
      NS_ENSURE_SUCCESS(rv, rv);
      
-     if(!mWritePending) {
-       rv = mCache->AddDirtyGUID(mGuid);
-       NS_ENSURE_SUCCESS(rv, rv);
+     rv = mCache->AddDirtyGUID(mGuid);
+     NS_ENSURE_SUCCESS(rv, rv);
 
-       mWritePending = PR_TRUE;
-       mDirty.PutEntry(propertyID);
-     }
+     mWritePending = PR_TRUE;
+     mDirty.PutEntry(aPropertyID);
   }
 
   return rv;
@@ -858,6 +1186,8 @@ NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
   return rv;
 }
 
+#include <windows.h>
+
 NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
                                              const nsAString& aValue)
@@ -866,21 +1196,31 @@ sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
   NS_ENSURE_TRUE(mValueMap.Put(aPropertyID, value),
                  NS_ERROR_OUT_OF_MEMORY);
   value.forget();
+
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseResourcePropertyBag::EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator, 
-                                                   void *aClosure)
+sbLocalDatabaseResourcePropertyBag::EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, 
+                                                   void *aClosure, 
+                                                   PRUint32 *aDirtyCount)
 {
+  NS_ENSURE_ARG_POINTER(aClosure);
+  NS_ENSURE_ARG_POINTER(aDirtyCount);
 
+  *aDirtyCount = mDirty.EnumerateEntries(aEnumFunc, aClosure);
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::SetDirty(PRBool aDirty)
 {
+  if(mWritePending && !aDirty) {
+    mDirty.Clear();
+  }
+
   mWritePending = aDirty;
+
   return NS_OK;
 }
 

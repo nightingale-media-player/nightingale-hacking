@@ -76,7 +76,10 @@ interface sbILocalDatabaseResourcePropertyBag : nsISupports
   readonly attribute nsIStringEnumerator names;
 
   AString getProperty(in AString aName);
+  AString getPropertyByID(in unsigned long aPropertyID);
+
   void setProperty(in AString aName, in AString aValue);
+  void setPropertyByID(in unsigned long aPropertyID, in AString aValue);
 
   void write();
 };

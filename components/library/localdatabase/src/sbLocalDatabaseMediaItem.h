@@ -28,8 +28,8 @@
 #define __SBLOCALDATABASEMEDIAITEM_H__
 
 #include <sbILibraryResource.h>
-#include <sbILocalDatabaseResourceProperty.h>
 #include <sbILocalDatabaseMediaItem.h>
+#include <sbILocalDatabaseResourceProperty.h>
 #include <sbIMediaItem.h>
 #include <nsIClassInfo.h>
 #include <nsIRequestObserver.h>

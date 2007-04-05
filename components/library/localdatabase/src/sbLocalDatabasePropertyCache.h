@@ -61,6 +61,10 @@ public:
   PRUint32 GetPropertyID(const nsAString& aPropertyName);
   PRBool GetPropertyName(PRUint32 aPropertyID, nsAString& aPropertyName);
 
+  PRBool IsTopLevelProperty(PRUint32 aPropertyID);
+  NS_IMETHOD PropertyRequiresInsert(const nsAString &aGuid, PRUint32 aPropertyID, PRBool *aInsert);
+  void   GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn); 
+
 private:
   ~sbLocalDatabasePropertyCache();
 
@@ -92,14 +96,16 @@ private:
 
   //Used to template the properties update statement
   nsCOMPtr<sbISQLUpdateBuilder> mPropertiesUpdate;
-  nsCOMPtr<sbISQLBuilderCriterion> mPropertiesUpdateCriterion;
 
   // Used to template the media item property update statement
   nsCOMPtr<sbISQLUpdateBuilder> mMediaItemsUpdate;
-  nsCOMPtr<sbISQLBuilderCriterion> mMediaItemsUpdateCriterion;
+
+  // Used to template the query used to verify if we need to insert or
+  // update a perticular property.
+  nsCOMPtr<sbISQLSelectBuilder> mPropertyInsertSelect;
 
   // Cache for GUID -> property bag
-  nsInterfaceHashtable<nsStringHashKey, sbILocalDatabaseResourcePropertyBag> mCache;
+  nsInterfaceHashtableMT<nsStringHashKey, sbILocalDatabaseResourcePropertyBag> mCache;
 
   // Dirty GUID's
   nsTHashtable<nsStringHashKey> mDirty;
@@ -117,15 +123,14 @@ public:
   NS_IMETHOD Init();
   NS_IMETHOD PutValue(PRUint32 aPropertyID, const nsAString& aValue);
 
-  NS_IMETHOD EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator, void *aClosure);
+  NS_IMETHOD EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, void *aClosure, PRUint32 *aDirtyCount);
   NS_IMETHOD SetDirty(PRBool aDirty);
 
 private:
   ~sbLocalDatabaseResourcePropertyBag();
 
   sbLocalDatabasePropertyCache* mCache;
-  
-  nsClassHashtable<nsUint32HashKey, nsString> mValueMap;
+  nsClassHashtableMT<nsUint32HashKey, nsString> mValueMap;
 
   PRBool    mWritePending;
   nsString  mGuid;

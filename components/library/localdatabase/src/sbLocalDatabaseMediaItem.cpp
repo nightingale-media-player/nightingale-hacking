@@ -310,7 +310,7 @@ sbLocalDatabaseMediaItem::GetGuid(nsAString& aGuid)
  * See sbILibraryResource
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetCreated(PRInt32* aCreated)
+sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
 {
   NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
@@ -321,7 +321,7 @@ sbLocalDatabaseMediaItem::GetCreated(PRInt32* aCreated)
   nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropCreated].mName), str);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  *aCreated = str.ToInteger(&rv);
+  PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aCreated);
 
   return rv;
 }
@@ -330,7 +330,7 @@ sbLocalDatabaseMediaItem::GetCreated(PRInt32* aCreated)
  * See sbILibraryResource
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetUpdated(PRInt32* aUpdated)
+sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
 {
   NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
@@ -341,7 +341,7 @@ sbLocalDatabaseMediaItem::GetUpdated(PRInt32* aUpdated)
   nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropUpdated].mName), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  *aUpdated = str.ToInteger(&rv);
+  PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aUpdated);
 
   return rv;
 }
@@ -387,7 +387,18 @@ sbLocalDatabaseMediaItem::Write()
   NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = NS_OK;
+
+  if(mWritePending) {
+    nsAutoLock lock(mPropertyBagLock);
+
+    rv = mPropertyBag->Write();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mWritePending = PR_FALSE;
+  }
+
+  return rv;
 }
 
 /**
@@ -425,7 +436,26 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
   NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = GetPropertyBag();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoLock lock(mPropertyBagLock);
+
+  rv = NS_ERROR_NOT_AVAILABLE;
+  if(mPropertyBag) {
+    rv = mPropertyBag->SetProperty(aName, aValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(mWriteThrough) {
+      rv = mPropertyBag->Write();
+      mWritePending = PR_FALSE;
+    }
+    else {
+      mWritePending = PR_TRUE;
+    }
+  }
+
+  return rv;
 }
 
 
@@ -450,6 +480,7 @@ sbLocalDatabaseMediaItem::Equals(sbILibraryResource* aOtherLibraryResource,
 /**
  * See sbILocalDatabaseResourceProperty
  */
+//XXXAus: This method is junk if we don't have a LDBRP base class anymore.
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::InitResourceProperty(sbILocalDatabasePropertyCache* aPropertyCache, 
                                                const nsAString& aGuid)
@@ -525,7 +556,7 @@ sbLocalDatabaseMediaItem::GetMediaCreated(PRInt64* aMediaCreated)
 {
   NS_ENSURE_ARG_POINTER(aMediaCreated);
 
-  nsAutoString str, str2;
+  nsAutoString str;
   nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created"), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -561,7 +592,10 @@ sbLocalDatabaseMediaItem::GetMediaUpdated(PRInt64* aMediaUpdated)
   nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#updated"), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aMediaUpdated);
+  NS_ENSURE_TRUE(
+    PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aMediaUpdated),
+    NS_ERROR_FAILURE
+  );
 
   return NS_OK;
 }
@@ -622,7 +656,7 @@ sbLocalDatabaseMediaItem::SetContentSrc(nsIURI* aContentSrc)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetContentLength(PRInt32* aContentLength)
+sbLocalDatabaseMediaItem::GetContentLength(PRInt64* aContentLength)
 {
   NS_ENSURE_ARG_POINTER(aContentLength);
 
@@ -630,8 +664,9 @@ sbLocalDatabaseMediaItem::GetContentLength(PRInt32* aContentLength)
   nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentLength"), str);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  *aContentLength = str.ToInteger(&rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(
+    PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aContentLength),
+    NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -640,10 +675,10 @@ sbLocalDatabaseMediaItem::GetContentLength(PRInt32* aContentLength)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::SetContentLength(PRInt32 aContentLength)
+sbLocalDatabaseMediaItem::SetContentLength(PRInt64 aContentLength)
 {
   nsAutoString str;
-  str.AppendInt(aContentLength);
+  AppendInt(str, aContentLength);
 
   nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentLength"), str);
   NS_ENSURE_SUCCESS(rv, rv);

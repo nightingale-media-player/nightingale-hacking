@@ -53,12 +53,12 @@ interface sbILibraryResource : nsISupports
   /**
    * \brief The creation time of this resource as a unix timestamp
    */
-  readonly attribute long created;
+  readonly attribute long long created;
 
   /**
    * \brief The last update time of this resource as a unix timestamp
    */
-  readonly attribute long updated;
+  readonly attribute long long updated;
 
   /**
    * \brief If this is enabled anytime setProperty is called it will

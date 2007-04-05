@@ -58,7 +58,6 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabasePropertyCache.h"
-#include "sbLocalDatabaseResourceProperty.h"
 
 NS_IMPL_ADDREF(sbLocalDatabaseMediaListBase)
 NS_IMPL_RELEASE(sbLocalDatabaseMediaListBase)

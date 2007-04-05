@@ -69,7 +69,15 @@ function testGet( item, attrib, value ) {
 
 function testSet( item, attrib, value ) {
   item[ attrib ] = value;
-  testGet( item, attrib, value );
+
+  var test_value = item[ attrib ];
+  if ( test_value.spec ) { // for nsURI return values, you must compare spec?
+    log( "!!!!!!! item." + attrib + " = " + test_value.spec );
+    assertEqual( test_value.spec, value.spec );
+  } else {
+    log( "!!!!!!! item." + attrib + " = " + test_value );
+    assertEqual( test_value, value );
+  }
 }
 
 function testAvailable( library, url, available, completion ) {
@@ -124,14 +132,17 @@ function runTest () {
   testGet( item, "contentSrc", "file:///home/steve/Hells%20Bells.mp3" );  
   testGet( item, "contentLength", 0x21C );  
   testGet( item, "contentType", "audio/mpeg" );  
-/* -- SetProperty is not yet implemented by aus, so these don't work.
+
+/* -- SetProperty is not yet implemented by aus, so these don't work. */
   // Slightly more complicated tests for setting its info
   testSet( item, "mediaCreated", 0x1337baadf00d );
   testSet( item, "mediaUpdated", 0x1337baadf00d );
-  testSet( item, "contentSrc", "file://poo" );
+  var newSrc = newURI("file:///poo/MyTrack.mp3");
+  testSet( item, "contentSrc", newSrc);
   testSet( item, "contentLength", 0xbaadf00d );
   testSet( item, "contentType", "x-media/x-poo" );
-*/
+  
+  item.write();
   
   var inputItem = testlib.createMediaItem( newURI(INPUT_URL_EXISTS) );
 /* -- Implemented, not yet written to test
@@ -139,13 +150,9 @@ function runTest () {
   assertNotEqual(inputChannel, null);
   // ??? Then what?
   var inputStream = inputItem.openInputStream();
-  assertNotEqual(inputStream, null);
-  // ??? Then what?
   
   var outputItem = testlib.createMediaItem( newURI(OUTPUT_URL) );
   var outputStream = outputItem.openOutputStream();
-  assertNotEqual(outputStream, null);
-  // ??? Then what?
 */
 
   // Async tests of availability for a (supposedly!) known url.

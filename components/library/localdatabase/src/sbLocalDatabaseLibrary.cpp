@@ -184,8 +184,6 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   rv = result->GetRowCell(0, 0, mGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = InitResourceProperty(mPropertyCache, mGuid);
-
   // Initialize the media list factory table.
   PRBool success = mMediaListFactoryTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);

@@ -96,7 +96,7 @@ interface sbIMediaItem : sbILibraryResource
   /**
    * \brief Size (in bytes) of the content of the media item
    */
-  attribute long contentLength;
+  attribute long long contentLength;
 
   /**
    * \brief Content type of the content of the media item, typically a mime
