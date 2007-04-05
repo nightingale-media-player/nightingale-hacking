@@ -34,7 +34,7 @@
 #include <nsStringGlue.h>
 
 class sbTextPropertyInfo : public sbPropertyInfo,
-                           public sbITextPropertyInfo
+                           public sbITextPropertyInfo,
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED

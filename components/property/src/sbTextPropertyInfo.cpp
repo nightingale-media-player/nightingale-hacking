@@ -25,8 +25,10 @@
 */
 
 #include "sbTextPropertyInfo.h"
+
 #include <nsAutoLock.h>
 #include <nsUnicharUtils.h>
+#include <nsMemory.h>
 
 NS_IMPL_ADDREF_INHERITED(sbTextPropertyInfo, sbPropertyInfo);
 NS_IMPL_RELEASE_INHERITED(sbTextPropertyInfo, sbPropertyInfo);
