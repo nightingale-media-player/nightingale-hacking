@@ -108,6 +108,7 @@ private:
   nsInterfaceHashtableMT<nsStringHashKey, sbILocalDatabaseResourcePropertyBag> mCache;
 
   // Dirty GUID's
+  PRLock* mDirtyLock;
   nsTHashtable<nsStringHashKey> mDirty;
 };
 
@@ -137,9 +138,8 @@ private:
   nsString  mGuid;
 
   // Dirty Property ID's
+  PRLock* mDirtyLock;
   nsTHashtable<nsUint32HashKey> mDirty;
-
-  PRLock* mLock;
 };
 
 class sbTArrayStringEnumerator : public nsIStringEnumerator
