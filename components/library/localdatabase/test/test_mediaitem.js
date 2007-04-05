@@ -141,12 +141,12 @@ function runTest () {
   var inputStream = inputItem.openInputStream();
   assertNotEqual(inputStream, null);
   // ??? Then what?
-*/
   
   var outputItem = testlib.createMediaItem( newURI(OUTPUT_URL) );
   var outputStream = outputItem.openOutputStream();
   assertNotEqual(outputStream, null);
   // ??? Then what?
+*/
 
   // Async tests of availability for a (supposedly!) known url.
   testAvailable( testlib, INPUT_URL_EXISTS, "true", 
