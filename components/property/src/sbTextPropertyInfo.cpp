@@ -28,10 +28,13 @@
 #include <nsAutoLock.h>
 #include <nsUnicharUtils.h>
 
-NS_IMPL_ISUPPORTS_INHERITED2(sbTextPropertyInfo,
-                             sbPropertyInfo,
-                             sbIPropertyInfo,
-                             sbITextPropertyInfo)
+NS_IMPL_ADDREF_INHERITED(sbTextPropertyInfo, sbPropertyInfo);
+NS_IMPL_RELEASE_INHERITED(sbTextPropertyInfo, sbPropertyInfo);
+
+NS_INTERFACE_MAP_BEGIN(sbTextPropertyInfo);
+NS_INTERFACE_MAP_ENTRY(sbITextPropertyInfo);
+NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbIPropertyInfo, sbITextPropertyInfo);
+NS_INTERFACE_MAP_END_INHERITING(sbPropertyInfo);
 
 sbTextPropertyInfo::sbTextPropertyInfo()
 : mMinMaxLock(nsnull)

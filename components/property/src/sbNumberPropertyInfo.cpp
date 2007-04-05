@@ -95,10 +95,13 @@ const char *GetSortableFmtFromRadix(PRUint32 aRadix)
   return fmt;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED2(sbNumberPropertyInfo,
-                             sbPropertyInfo,
-                             sbIPropertyInfo,
-                             sbINumberPropertyInfo)
+NS_IMPL_ADDREF_INHERITED(sbNumberPropertyInfo, sbPropertyInfo);
+NS_IMPL_RELEASE_INHERITED(sbNumberPropertyInfo, sbPropertyInfo);
+
+NS_INTERFACE_MAP_BEGIN(sbNumberPropertyInfo);
+NS_INTERFACE_MAP_ENTRY(sbINumberPropertyInfo);
+NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbIPropertyInfo, sbINumberPropertyInfo);
+NS_INTERFACE_MAP_END_INHERITING(sbPropertyInfo);
 
 sbNumberPropertyInfo::sbNumberPropertyInfo()
 : mMinMaxValueLock(nsnull)

@@ -36,7 +36,6 @@
 #include <nsIIOService.h>
 
 class sbURIPropertyInfo : public sbPropertyInfo,
-                          public sbIPropertyInfo,
                           public sbIURIPropertyInfo
 {
 public:

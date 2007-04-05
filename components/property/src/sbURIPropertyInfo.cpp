@@ -30,10 +30,13 @@
 #include <nsServiceManagerUtils.h>
 #include <nsNetUtil.h>
 
-NS_IMPL_ISUPPORTS_INHERITED2(sbURIPropertyInfo,
-                             sbPropertyInfo,
-                             sbIPropertyInfo,
-                             sbIURIPropertyInfo)
+NS_IMPL_ADDREF_INHERITED(sbURIPropertyInfo, sbPropertyInfo);
+NS_IMPL_RELEASE_INHERITED(sbURIPropertyInfo, sbPropertyInfo);
+
+NS_INTERFACE_MAP_BEGIN(sbURIPropertyInfo);
+NS_INTERFACE_MAP_ENTRY(sbIURIPropertyInfo);
+NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbIPropertyInfo, sbIURIPropertyInfo);
+NS_INTERFACE_MAP_END_INHERITING(sbPropertyInfo);
 
 sbURIPropertyInfo::sbURIPropertyInfo()
 : mURISchemeConstraintLock(nsnull)

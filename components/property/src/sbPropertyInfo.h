@@ -50,6 +50,9 @@ NS_IMETHOD SetDisplayUsingXBLWidget(nsIURI * aDisplayUsingXBLWidget) { return _t
 NS_IMETHOD GetUnits(nsAString & aUnits) { return _to GetUnits(aUnits); } \
 NS_IMETHOD SetUnits(const nsAString & aUnits) { return _to SetUnits(aUnits); }
 
+#define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
+  NS_STATIC_CAST(sbIPropertyInfo*, NS_STATIC_CAST(__unambiguousBase, __expr))
+
 class sbPropertyInfo : public sbIPropertyInfo
 {
 public:

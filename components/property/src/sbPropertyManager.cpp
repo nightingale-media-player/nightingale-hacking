@@ -201,7 +201,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(textProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty = nsnull;
 
@@ -211,7 +211,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#albumName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(textProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty = nsnull;
 
@@ -221,7 +221,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#artistName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(textProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty = nsnull;
 
@@ -235,7 +235,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#genre"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(textProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty = nsnull;
 
@@ -247,7 +247,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetMinValue(1);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(numberProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty = nsnull;
 
@@ -259,7 +259,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetMinValue(1877);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(numberProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty = nsnull;
 
@@ -269,7 +269,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(numberProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty = nsnull;
 
@@ -279,7 +279,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(numberProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty = nsnull;
 
@@ -289,7 +289,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(numberProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty = nsnull;
 
@@ -299,7 +299,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(numberProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty = nsnull;
 
@@ -309,7 +309,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(textProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty = nsnull;
   
@@ -319,7 +319,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(textProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty = nsnull;
 
@@ -329,7 +329,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(textProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty = nsnull;
 
@@ -339,7 +339,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(textProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty = nsnull;
 
@@ -349,7 +349,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(textProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty = nsnull;
 
@@ -359,7 +359,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = uriProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(uriProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIURIPropertyInfo *, uriProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   uriProperty = nsnull;
 
@@ -373,7 +373,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(numberProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty = nsnull;
 
@@ -383,7 +383,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(numberProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty = nsnull;
 
@@ -393,7 +393,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(numberProperty);
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty = nsnull;
 

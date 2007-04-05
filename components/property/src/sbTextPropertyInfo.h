@@ -34,7 +34,6 @@
 #include <nsStringGlue.h>
 
 class sbTextPropertyInfo : public sbPropertyInfo,
-                           public sbIPropertyInfo,
                            public sbITextPropertyInfo
 {
 public:
