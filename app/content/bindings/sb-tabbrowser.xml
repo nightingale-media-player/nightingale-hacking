@@ -97,9 +97,10 @@
         <parameter name="aReferrerURI"/>
         <parameter name="aCharset"/>
         <parameter name="aEvent"/>
+        <parameter name="aDefaultLocation"/>
         <body>
           <![CDATA[
-            var where = "current";
+            var where = aDefaultLocation?aDefaultLocation:'current';
             if (aEvent) {
               // if an event as supplied infer where we want to load this URI
               //
@@ -108,18 +109,30 @@
               var modifierKey = aEvent?(isMac?aEvent.metaKey:aEvent.ctrlKey):false;
               
               if (middleButton || modifierKey) {
-                this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
-              } else {
-                this.loadURI(aURI, aReferrerURI, aCharset);
+                where = "tab";
+              }
+            }
+            
+            // make sure the referrer is an nsIURI
+            if (aReferrerURI == '') {
+              aReferrerURI = null;
+            } else {
+              if (typeof(aReferrerURI) == 'string') {
+                aReferrerURI = (Components
+                    .classes["@mozilla.org/network/io-service;1"]
+                    .getService(Components.interfaces.nsIIOService)
+                    .newURI(aReferrerURI, aCharset, null));
               }
             }
             
             
-            
             // Policy goes here
             
-            // no policy is good policy?
-            
+            // check to see if tabs are allowed
+            if (where == 'tab' &&
+                !this._prefsService.getBoolPref('browser.tabs.enabled')) {
+              where = 'current';
+            }
             
             // Now, actually open the URI
             if (where == "tab") {
@@ -141,10 +154,16 @@
           ]]>
         </body>
       </method>
-
+      
+      
       <field name="_progressFilter">
         Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
             .createInstance(Components.interfaces.nsIWebProgress)
+      </field>
+      
+      <field name="_prefsService">
+        Components.classes["@mozilla.org/preferences-service;1"].
+                getService(Components.interfaces.nsIPrefBranch);
       </field>
 
       <field name="_servicepane">null</field>
@@ -769,11 +788,8 @@
           var defaultHomepage = "http://www.songbirdnest.com/birdhouse/";
           
           try {
-            var prefs = Components.classes["@mozilla.org/preferences-service;1"].
-                getService(Components.interfaces.nsIPrefBranch);
-            
-            if (prefs.getPrefType("browser.startup.homepage") == prefs.PREF_STRING){
-              homepage = prefs.getCharPref("browser.startup.homepage");
+            if (this._prefsService.getPrefType("browser.startup.homepage") == prefs.PREF_STRING) {
+              homepage = this._prefsService.getCharPref("browser.startup.homepage");
             }
           } catch (e) { }
           
@@ -784,10 +800,7 @@
           return homepage
         ]]></getter>
         <setter><![CDATA[
-          var prefs = Components.classes["@mozilla.org/preferences-service;1"].
-              getService(Components.interfaces.nsIPrefBranch);
-          
-          prefs.setCharPref("browser.startup.homepage", val);
+          this._prefsService.setCharPref("browser.startup.homepage", val);
         ]]></setter>
       </property>
       <method name="goHome">
@@ -872,7 +885,7 @@
       <method name="openBalloonTip">
         <body><![CDATA[
           if (!SBDataGetBoolValue("balloontip.firstwebplaylist.shown")) {
-            this.balloontip = new BalloonTip; 
+            this.balloontip = new BalloonTip;
             var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
             var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
             var title = "Found media."
@@ -900,26 +913,100 @@
     </implementation>
     
     <handlers>
-      <handler event="click" phase="capturing"><![CDATA[
-        // Catches links with target=_blank and opens them with the default browser.
-        if (event.target && event.button == 0 && event.target.tagName == "A") {
-              
-          var is_media = gPPS.isMediaURL( event.target.href );
-          var is_playlist = gPPS.isPlaylistURL( event.target.href );
-          if (!is_media && !is_playlist && (event.target.target == "_blank" || event.target.target == "_new")) {
-            var externalLoader = (Components
-                  .classes["@mozilla.org/uriloader/external-protocol-service;1"]
-                  .getService(Components.interfaces.nsIExternalProtocolService));
-            var nsURI = (Components
-                  .classes["@mozilla.org/network/io-service;1"]
-                  .getService(Components.interfaces.nsIIOService)
-                  .newURI(event.target.href, null, null));
-            externalLoader.loadURI(nsURI, null);
-      
-            // Kill the event since we've handled it
-            event.preventDefault();
+      <handler event="click"><![CDATA[
+        // inspired by contentAreaClick in ffox browser.js
+        if (!event.isTrusted || event.getPreventDefault()) {
+          return true;
+        }
+        
+        var target = event.target;
+        var linkNode = null;
+        
+        if (target instanceof HTMLAnchorElement ||
+            target instanceof HTMLAreaElement ||
+            target instanceof HTMLLinkElement) {
+          if (target.hasAttribute("href")) {
+            linkNode = target;
+          }
+     
+          // backwards compat - use the outermost link node
+          var parent = target.parentNode;
+          while (parent) {
+            if (parent instanceof HTMLAnchorElement ||
+                parent instanceof HTMLAreaElement ||
+                parent instanceof HTMLLinkElement) {
+                if (parent.hasAttribute("href")) {
+                  linkNode = parent;
+                }
+            }
+            parent = parent.parentNode;
+          }
+        } else {
+          linkNode = event.originalTarget;
+          while (linkNode && !(linkNode instanceof HTMLAnchorElement)) {
+            linkNode = linkNode.parentNode;
+          }
+          // <a> cannot be nested.  So if we find an anchor without an
+          // href, there is no useful <a> around the target
+          if (linkNode && !linkNode.hasAttribute("href")) {
+            linkNode = null;
           }
         }
+        
+        
+        var wrapper = null;
+        var href = null;
+        var target = null;
+        if (linkNode) {
+          href = linkNode.href;
+          if (linkNode.hasAttribute('target')) {
+            target = linkNode.getAttribute('target');
+          }
+        } else {
+          // Try simple XLink
+          var realHref, baseURI;
+          linkNode = target;
+          while (linkNode) {
+            if (linkNode.nodeType == Node.ELEMENT_NODE) {
+              wrapper = linkNode;
+     
+              realHref = wrapper.getAttributeNS("http://www.w3.org/1999/xlink", "href");
+              if (realHref) {
+                href = realHref;
+                baseURI = wrapper.baseURI
+              }
+            }
+            linkNode = linkNode.parentNode;
+          }
+          if (href) {
+            var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                .getService(Components.interfaces.nsIIOService);
+            var base = ioService.newURI(baseURI, null, null);
+            href = ioService.newURI(base.resolve(href), null, null).spec;
+          }
+        }
+        
+        if (href) {
+          // get the document that this event originated in
+          var doc = event.target.ownerDocument;
+          
+          var secMan = Components.classes["@mozilla.org/scriptsecuritymanager;1"]
+              .getService(Components.interfaces.nsIScriptSecurityManager);
+          secMan.checkLoadURIStrWithPrincipal(doc.nodePrincipal, href,
+              Components.interfaces.nsIScriptSecurityManager.STANDARD);
+          
+          // get the referrer if we can
+          var referrer = doc ? doc.documentURIObject : null;
+          
+          var where = 'current';
+          if (target == '_blank' || target == '_new') {
+            where = 'tab';
+          }
+          
+          this.loadURI(href, referrer, null, event, where);
+          event.stopPropagation();
+        }
+        return true;
       ]]></handler>
     </handlers>
   </binding>
