@@ -88,7 +88,7 @@ function doTest(array) {
 
       var tester = function() {
         if (listener.gotLength) {
-          if (listener.rv == Cr.NS_OK && listener.length == 102) {
+          if (listener.rv == Cr.NS_OK && listener.length == 101) {
             return 1;
           }
           else {

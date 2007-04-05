@@ -39,16 +39,22 @@ class sbIMediaItem;
 class sbIMediaList;
 class sbIMediaListView;
 class sbIDatabaseQuery;
-class sbSimpleMediaListEnumerationListener;
+class sbSimpleMediaListInsertingEnumerationListener;
+class sbSimpleMediaListRemovingEnumerationListener;
 
-class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase
+class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase,
+                                       public sbIMediaListListener
 {
 public:
-  friend class sbSimpleMediaListEnumerationListener;
+  friend class sbSimpleMediaListInsertingEnumerationListener;
+  friend class sbSimpleMediaListRemovingEnumerationListener;
 
   NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_SBIMEDIALISTLISTENER
 
-  sbLocalDatabaseSimpleMediaList() { };
+  sbLocalDatabaseSimpleMediaList()
+  : mBatchRemoveListener(nsnull)
+  { }
 
   nsresult Init(sbILocalDatabaseLibrary* aLibrary,
                 const nsAString& aGuid);
@@ -87,6 +93,7 @@ private:
 
   nsresult CreateQueries();
 
+private:
   // Query to get the media item id for a given guid, constrained to the
   // items within this simple media list
   nsString mGetMediaItemIdForGuidQuery;
@@ -108,18 +115,19 @@ private:
 
   // Get first ordinal
   nsString mGetFirstOrdinalQuery;
+
+  sbSimpleMediaListRemovingEnumerationListener* mBatchRemoveListener;
 };
 
-class sbSimpleMediaListEnumerationListener : public sbIMediaListEnumerationListener
+class sbSimpleMediaListInsertingEnumerationListener : public sbIMediaListEnumerationListener
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
-  sbSimpleMediaListEnumerationListener(sbLocalDatabaseSimpleMediaList* aList)
+  sbSimpleMediaListInsertingEnumerationListener(sbLocalDatabaseSimpleMediaList* aList)
   : mFriendList(aList),
-    mResult(NS_OK),
-    mItemsEnumerated(0)
+    mItemEnumerated(PR_FALSE)
   {
     NS_ASSERTION(mFriendList, "Null pointer!");
   }
@@ -128,8 +136,26 @@ private:
   sbLocalDatabaseSimpleMediaList* mFriendList;
   nsCOMPtr<sbIDatabaseQuery> mDBQuery;
   nsString mOrdinal;
-  nsresult mResult;
-  PRUint32 mItemsEnumerated;
+  PRBool mItemEnumerated;
+};
+
+class sbSimpleMediaListRemovingEnumerationListener : public sbIMediaListEnumerationListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+
+  sbSimpleMediaListRemovingEnumerationListener(sbLocalDatabaseSimpleMediaList* aList)
+  : mFriendList(aList),
+    mItemEnumerated(PR_FALSE)
+  {
+    NS_ASSERTION(mFriendList, "Null pointer!");
+  }
+
+private:
+  sbLocalDatabaseSimpleMediaList* mFriendList;
+  nsCOMPtr<sbIDatabaseQuery> mDBQuery;
+  PRBool mItemEnumerated;
 };
 
 #endif /* __SBLOCALDATABASESIMPLEMEDIALIST_H__ */

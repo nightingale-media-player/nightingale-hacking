@@ -75,5 +75,4 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#playCount');
 
 insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
-insert into media_list_types (type, factory_contractid) values ('view',   '@songbirdnest.com/Songbird/Library/LocalDatabase/ViewMediaListFactory;1');
 

@@ -33,14 +33,12 @@
 #include "sbLocalDatabaseLibraryLoader.h"
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
-#include "sbLocalDatabaseViewMediaListFactory.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseLibraryLoader, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabasePropertyCache)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSimpleMediaListFactory)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseViewMediaListFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseAsyncGUIDArray, Init)
 
 static const nsModuleComponentInfo components[] =
@@ -81,12 +79,6 @@ static const nsModuleComponentInfo components[] =
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID,
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CONTRACTID,
     sbLocalDatabaseSimpleMediaListFactoryConstructor
-  },
-  {
-    SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_DESCRIPTION,
-    SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CID,
-    SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CONTRACTID,
-    sbLocalDatabaseViewMediaListFactoryConstructor
   }
 };
 

@@ -34,6 +34,9 @@
 #include <nsHashKeys.h>
 #include <sbProxyUtils.h>
 
+#define SB_ENSURE_TRUE_VOID(_arg) \
+  NS_ENSURE_TRUE((_arg), /* void */)
+
 sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener()
 : mListenerProxyTableLock(nsnull)
 {
@@ -138,102 +141,88 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbIMediaListListener* aListener
 /**
  * \brief Notifies all listeners that an item has been added to the list.
  */
-nsresult
+void
 sbLocalDatabaseMediaListListener::NotifyListenersItemAdded(sbIMediaList* aList,
                                                            sbIMediaItem* aItem)
 {
   NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
                "You haven't called Init yet!");
-  NS_ENSURE_ARG_POINTER(aList);
-  NS_ENSURE_ARG_POINTER(aItem);
+  SB_ENSURE_TRUE_VOID(aList);
+  SB_ENSURE_TRUE_VOID(aItem);
 
   MediaListCallbackInfo info(aList, aItem);
   mListenerProxyTable.EnumerateRead(ItemAddedCallback, &info);
-
-  return NS_OK;
 }
 
 /**
  * \brief Notifies all listeners that an item has been removed from the list.
  */
-nsresult
+void
 sbLocalDatabaseMediaListListener::NotifyListenersItemRemoved(sbIMediaList* aList,
                                                              sbIMediaItem* aItem)
 {
   NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
                "You haven't called Init yet!");
-  NS_ENSURE_ARG_POINTER(aList);
-  NS_ENSURE_ARG_POINTER(aItem);
+  SB_ENSURE_TRUE_VOID(aList);
+  SB_ENSURE_TRUE_VOID(aItem);
 
   MediaListCallbackInfo info(aList, aItem);
   mListenerProxyTable.EnumerateRead(ItemRemovedCallback, &info);
-
-  return NS_OK;
 }
 
 /**
  * \brief Notifies all listeners that an item has been updated.
  */
-nsresult
+void
 sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(sbIMediaList* aList,
                                                              sbIMediaItem* aItem)
 {
   NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
                "You haven't called Init yet!");
-  NS_ENSURE_ARG_POINTER(aList);
-  NS_ENSURE_ARG_POINTER(aItem);
+  SB_ENSURE_TRUE_VOID(aList);
+  SB_ENSURE_TRUE_VOID(aItem);
 
-  if (mListenerProxyTable.IsInitialized()) {
-    MediaListCallbackInfo info(aList, aItem);
-    mListenerProxyTable.EnumerateRead(ItemRemovedCallback, &info);
-  }
-
-  return NS_OK;
+  MediaListCallbackInfo info(aList, aItem);
+  mListenerProxyTable.EnumerateRead(ItemRemovedCallback, &info);
 }
 
 /**
  * \brief Notifies all listeners that the list has been cleared.
  */
-nsresult
+void
 sbLocalDatabaseMediaListListener::NotifyListenersListCleared(sbIMediaList* aList)
 {
   NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
                "You haven't called Init yet!");
-  NS_ENSURE_ARG_POINTER(aList);
+  SB_ENSURE_TRUE_VOID(aList);
 
   mListenerProxyTable.EnumerateRead(ListClearedCallback, aList);
-
-  return NS_OK;
 }
 
 /**
  * \brief Notifies all listeners that multiple items are about to be changed.
  */
-nsresult
+void
 sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(sbIMediaList* aList)
 {
   NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
                "You haven't called Init yet!");
-  NS_ENSURE_ARG_POINTER(aList);
+  SB_ENSURE_TRUE_VOID(aList);
 
   mListenerProxyTable.EnumerateRead(BatchBeginCallback, aList);
-
-  return NS_OK;
 }
 
 /**
  * \brief Notifies all listeners that multiple items have been changed.
  */
-nsresult
+void
 sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(sbIMediaList* aList)
 {
   NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
                "You haven't called Init yet!");
-  NS_ENSURE_ARG_POINTER(aList);
+  SB_ENSURE_TRUE_VOID(aList);
 
   mListenerProxyTable.EnumerateRead(BatchEndCallback, aList);
-
-  return NS_OK;
 }
 
 /**
@@ -415,7 +404,7 @@ sbLocalDatabaseMediaListListener::BatchEndCallback(nsISupportsHashKey::KeyType a
   NS_ENSURE_TRUE(list, PL_DHASH_NEXT);
 
   nsCOMPtr<sbIMediaListListener> listener = aEntry;
-  nsresult rv = listener->OnBatchBegin(list);
+  nsresult rv = listener->OnBatchEnd(list);
 
   // We don't really care if some listener impl returns failure, but warn for
   // good measure.

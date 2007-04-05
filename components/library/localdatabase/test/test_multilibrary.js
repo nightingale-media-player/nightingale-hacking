@@ -33,9 +33,9 @@ function runTest () {
   var one = createLibrary("multilibrary_one");
   var two = createLibrary("multilibrary_two");
 
-  var twoView = two.getMediaItem("songbird:view");
+  var twoList = two.QueryInterface(Ci.sbIMediaList);
   var item = one.getMediaItem("3E2549C0-AD99-11DB-9321-C22AB7121F49");
 
-  //twoView.add(item);
+  //twoList.add(item);
 }
 

@@ -176,7 +176,7 @@ function runTest () {
   assertList(list, data);
 
   // Add the entire database to the list
-  var view = library.getMediaItem("songbird:view");
+  var view = library.QueryInterface(Ci.sbIMediaList);
   var a = readList("data_sort_created_asc.txt");
 
   list.addAll(view);

@@ -30,9 +30,10 @@
 #include "sbLocalDatabaseMediaListBase.h"
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
-#include <sbIMediaList.h>
+#include <sbIMediaListListener.h>
 
 #include <nsClassHashtable.h>
+#include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
 #include <nsHashKeys.h>
@@ -42,13 +43,38 @@
 
 class nsIURI;
 class nsIWeakReference;
+class sbAutoBatchHelper;
 class sbIDatabaseQuery;
 class sbILocalDatabasePropertyCache;
+class sbLibraryInsertingEnumerationListener;
+class sbLibraryRemovingEnumerationListener;
+
+// These are the methods from sbLocalDatabaseMediaListBase that we're going to
+// override in sbLocalDatabaseLibrary. Most of them are from sbIMediaList.
+#define SB_DECL_MEDIALISTBASE_OVERRIDES                                         \
+  NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);     \
+  NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);               \
+  NS_IMETHOD Add(sbIMediaItem* aMediaItem);                                     \
+  NS_IMETHOD AddAll(sbIMediaList* aMediaList);                                  \
+  NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);                         \
+  NS_IMETHOD InsertBefore(PRUint32 aIndex, sbIMediaItem* aMediaItem);           \
+  NS_IMETHOD MoveBefore(PRUint32 aFromIndex, PRUint32 aToIndex);                \
+  NS_IMETHOD MoveLast(PRUint32 aIndex);                                         \
+  NS_IMETHOD Remove(sbIMediaItem* aMediaItem);                                  \
+  NS_IMETHOD RemoveByIndex(PRUint32 aIndex);                                    \
+  NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);                      \
+  NS_IMETHOD Clear();                                                           \
+  NS_IMETHOD CreateView(sbIMediaListView** _retval);                            \
+  /* nothing */
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
                                public sbILibrary,
                                public sbILocalDatabaseLibrary
 {
+  friend class sbAutoBatchHelper;
+  friend class sbLibraryInsertingEnumerationListener;
+  friend class sbLibraryRemovingEnumerationListener;
+
   struct sbMediaListFactoryInfo {
     sbMediaListFactoryInfo()
     : typeID(0)
@@ -77,19 +103,15 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
 
 public:
   NS_DECL_ISUPPORTS_INHERITED
-
-  // Use our base class for these
-  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaListBase::)
-  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseMediaListBase::)
-  NS_FORWARD_SBILOCALDATABASEMEDIAITEM(sbLocalDatabaseMediaListBase::)
-  NS_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaListBase::)
-
-  // This class implements these.
-  NS_DECL_SBIMEDIALIST
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
+  NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaListBase::)
+
+  // Include our overrides.
+  SB_DECL_MEDIALISTBASE_OVERRIDES
 
   sbLocalDatabaseLibrary();
+  ~sbLocalDatabaseLibrary();
 
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty);
 
@@ -119,8 +141,19 @@ private:
 
   nsresult RegisterDefaultMediaListFactories();
 
+  nsresult DeleteDatabaseItem(const nsAString& aGuid);
+
+  nsresult AddItemToLocalDatabase(sbIMediaItem* aMediaItem);
+
 private:
+  // This is the GUID used by the DBEngine to uniquely identify the sqlite
+  // database file we'll be using. Don't confuse it with mGuid (inherited from
+  // sbLocalDatabaseMediaItem) - that one represents the GUID that uniquely
+  // identifies this "media item" in the sqlite database.
   nsString mDatabaseGuid;
+
+  // Location of the database file. This may be null to indicate that the file
+  // lives in the default DBEngine database store.
   nsCOMPtr<nsIURI> mDatabaseLocation;
 
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
@@ -131,11 +164,14 @@ private:
   nsString mMediaListFactoriesQuery;
   nsString mInsertMediaListFactoryQuery;
 
-  // Query to delete a single item from the view
+  // Query to delete a single item from the library.
   nsString mDeleteItemQuery;
 
-  // Query to clear the entire list
+  // Query to clear the entire library.
   nsString mDeleteAllQuery;
+
+  // Query to grab the media list factory type ID based on its type string.
+  nsString mGetFactoryIDForTypeQuery;
 
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
 
@@ -144,7 +180,75 @@ private:
   sbGUIDToTypesMap mCachedTypeTable;
 
   sbGUIDToIDMap mCachedIDTable;
+};
 
+/**
+ * class sbLibraryInsertingEnumerationListener
+ */
+class sbLibraryInsertingEnumerationListener : public sbIMediaListEnumerationListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+
+  sbLibraryInsertingEnumerationListener(sbLocalDatabaseLibrary* aLibrary)
+  : mFriendLibrary(aLibrary),
+    mShouldInvalidate(PR_FALSE)
+  {
+    NS_ASSERTION(mFriendLibrary, "Null pointer!");
+  }
+
+private:
+  sbLocalDatabaseLibrary* mFriendLibrary;
+  PRBool mShouldInvalidate;
+};
+
+/**
+ * class sbLibraryRemovingEnumerationListener
+ */
+class sbLibraryRemovingEnumerationListener : public sbIMediaListEnumerationListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+
+  sbLibraryRemovingEnumerationListener(sbLocalDatabaseLibrary* aLibrary)
+  : mFriendLibrary(aLibrary),
+    mItemEnumerated(PR_FALSE)
+  {
+    NS_ASSERTION(mFriendLibrary, "Null pointer!");
+  }
+
+private:
+  sbLocalDatabaseLibrary* mFriendLibrary;
+  nsCOMPtr<sbIDatabaseQuery> mDBQuery;
+  PRPackedBool mItemEnumerated;
+};
+
+/**
+ * \class sbAutoBatchHelper
+ *
+ * \brief Simple class to make sure we notify listeners that a batch operation
+ *        has completed every time they are notified that a batch operation
+ *        has begun.
+ */
+class sbAutoBatchHelper
+{
+public:
+  sbAutoBatchHelper(sbLocalDatabaseLibrary* aLibrary)
+  : mLibrary(aLibrary)
+  {
+    NS_ASSERTION(mLibrary, "Null pointer!");
+    mLibrary->NotifyListenersBatchBegin(mLibrary);
+  }
+
+  ~sbAutoBatchHelper()
+  {
+    mLibrary->NotifyListenersBatchEnd(mLibrary);
+  }
+
+private:
+  sbLocalDatabaseLibrary* mLibrary;
 };
 
 #endif /* __SBLOCALDATABASELIBRARY_H__ */

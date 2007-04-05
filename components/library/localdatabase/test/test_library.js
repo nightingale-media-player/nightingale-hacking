@@ -40,6 +40,7 @@ function runTest () {
   var uriSpec = "file:///foo";
   var uri = ios.newURI(uriSpec, null, null);
 
+  
   var item1 = library.createMediaItem(uri);
   var now = new Date();
   assertEqual(item1.getProperty(SB_NS + "contentUrl"), uriSpec);
@@ -57,17 +58,56 @@ function runTest () {
   assertNotEqual(item1.guid, item2.guid);
 
   // Test that they items were added to the library view the view list
-  var view = library.getMediaItem("songbird:view");
-  assertEqual(view.getItemByGuid(item1.guid).guid, item1.guid);
-  assertEqual(view.getItemByGuid(item2.guid).guid, item2.guid);
-
   var libraryList = library.QueryInterface(Ci.sbIMediaList);
+  assertEqual(libraryList.getItemByGuid(item1.guid).guid, item1.guid);
+  assertEqual(libraryList.getItemByGuid(item2.guid).guid, item2.guid);
   
   var listListener = new TestMediaListListener();
   libraryList.addListener(listListener);
 
-  libraryList.add(item1);
+  var uri2 = ios.newURI("file:///bar", null, null);
+  var item3 = library.createMediaItem(uri2);
 
-  assertEqual(listListener.addedItem, item1);
+  assertEqual(listListener.addedItem, item3);
+  
+  libraryList.remove(item1);
+  assertEqual(listListener.removedItem, item1);
+  
+  // Test if removing items from the library also remove items from the
+  // playlist.
+  var enumerationListener = new TestMediaListEnumerationListener();
+  
+  var list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  assertEqual(list.length, 20);
+  
+  list.enumerateAllItems(enumerationListener,
+                         Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+  
+  var listCount = enumerationListener.count;
+  assertTrue(listCount > 0);
+  
+  listListener.reset();
+  
+  var removedItemCount = 0;
+  listListener.onItemRemoved = function onItemRemoved(list, item) {
+    removedItemCount++;
+  }
+  
+  libraryList.removeSome(enumerationListener.QueryInterface(Ci.nsISimpleEnumerator));
+  
+  assertEqual(removedItemCount, listCount);
+  
+  assertEqual(list.length, 0);
+  
+  // Now test if clearing the library also clears the playlist.
+  library = createLibrary(databaseGUID);
+  list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  
+  assertEqual(list.length, 20);
+  
+  libraryList = library.QueryInterface(Ci.sbIMediaList);
+  libraryList.clear();
+  
+  assertEqual(list.length, 0);
+
 }
-

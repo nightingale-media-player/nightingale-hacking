@@ -92,16 +92,3 @@
     0x4ee3,                                                          \
     { 0xab, 0x09, 0xa9, 0xd5, 0x75, 0xf4, 0xc2, 0xaa }               \
   }
-
-#define SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_DESCRIPTION            \
-  "Local Database Simple Media List Factory"
-#define SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CONTRACTID             \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/ViewMediaListFactory;1"
-#define SB_LOCALDATABASE_VIEWMEDIALISTFACTORY_CID                    \
-  { /* 0b6899a7-0dfd-40f6-92fc-8ad540a73ef1 */                       \
-    0x0b6899a7,                                                      \
-    0x0dfd,                                                          \
-    0x40f6,                                                          \
-    { 0x92, 0xfc, 0x8a, 0xd5, 0x40, 0xa7, 0x3a, 0xf1 }               \
-  }
-

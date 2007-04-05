@@ -66,25 +66,25 @@ protected:
   nsresult RemoveListener(sbIMediaListListener* aListener);
 
   // Enumerate listeners and call OnItemAdded
-  nsresult NotifyListenersItemAdded(sbIMediaList* aList,
-                                    sbIMediaItem* aItem);
+  void NotifyListenersItemAdded(sbIMediaList* aList,
+                                sbIMediaItem* aItem);
 
   // Enumerate listeners and call OnItemRemoved
-  nsresult NotifyListenersItemRemoved(sbIMediaList* aList,
-                                      sbIMediaItem* aItem);
+  void NotifyListenersItemRemoved(sbIMediaList* aList,
+                                  sbIMediaItem* aItem);
 
   // Enumerate listeners and call OnItemRemoved
-  nsresult NotifyListenersItemUpdated(sbIMediaList* aList,
-                                      sbIMediaItem* aItem);
+  void NotifyListenersItemUpdated(sbIMediaList* aList,
+                                  sbIMediaItem* aItem);
 
   // Enumerate listeners and call OnListCleared
-  nsresult NotifyListenersListCleared(sbIMediaList* aList);
+  void NotifyListenersListCleared(sbIMediaList* aList);
 
   // Enumerate listeners and call OnBatchBegin
-  nsresult NotifyListenersBatchBegin(sbIMediaList* aList);
+  void NotifyListenersBatchBegin(sbIMediaList* aList);
 
   // Enumerate listeners and call OnBatchEnd
-  nsresult NotifyListenersBatchEnd(sbIMediaList* aList);
+  void NotifyListenersBatchEnd(sbIMediaList* aList);
 
 private:
   // This callback is meant to be used with mListenerProxyTable.
