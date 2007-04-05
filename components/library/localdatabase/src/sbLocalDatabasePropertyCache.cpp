@@ -34,6 +34,7 @@
 #include <prlog.h>
 #include <sbSQLBuilderCID.h>
 #include <sbDatabaseResultStringEnumerator.h>
+#include <nsAutoLock.h>
 
 #define INIT if (!mInitialized) { rv = Init(); NS_ENSURE_SUCCESS(rv, rv); }
 
@@ -691,8 +692,8 @@ sbLocalDatabasePropertyCache::GetPropertyName(PRUint32 aPropertyID,
 }
 
 // sbILocalDatabaseResourcePropertyBag
-NS_IMPL_ISUPPORTS1(sbLocalDatabaseResourcePropertyBag,
-                   sbILocalDatabaseResourcePropertyBag)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseResourcePropertyBag,
+                              sbILocalDatabaseResourcePropertyBag)
 
 sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache,
                                                                        const nsAString &aGuid)
@@ -705,12 +706,19 @@ sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDa
 
 sbLocalDatabaseResourcePropertyBag::~sbLocalDatabaseResourcePropertyBag()
 {
+  if (mLock) {
+    nsAutoLock::DestroyLock(mLock);
+  }
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::Init()
 {
   NS_ENSURE_TRUE(mValueMap.Init(), NS_ERROR_OUT_OF_MEMORY);
+
+  mLock = nsAutoLock::NewLock("sbLocalDatabaseResourcePropertyBag::mLock");
+  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+
   return NS_OK;
 }
 
@@ -731,6 +739,8 @@ PropertyBagKeysToArray(const PRUint32& aPropertyID,
 NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::GetGuid(nsAString &aGuid)
 {
+  nsAutoLock lock(mLock);
+
   aGuid = mGuid;
   return NS_OK;
 }
@@ -739,6 +749,9 @@ NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::GetWritePending(PRBool *aWritePending)
 {
   NS_ENSURE_ARG_POINTER(aWritePending);
+
+  nsAutoLock lock(mLock);
+
   *aWritePending = mWritePending;
   return NS_OK;
 }
@@ -747,6 +760,8 @@ NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::GetNames(nsIStringEnumerator **aNames)
 {
   NS_ENSURE_ARG_POINTER(aNames);
+
+  nsAutoLock lock(mLock);
 
   nsTArray<PRUint32> propertyIDs;
   mValueMap.EnumerateRead(PropertyBagKeysToArray, &propertyIDs);
@@ -788,6 +803,8 @@ NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::GetProperty(const nsAString& aName,
                                                 nsAString& _retval)
 {
+  nsAutoLock lock(mLock);
+
   PRUint32 propertyID = mCache->GetPropertyID(aName);
   if(propertyID > 0) {
     nsString* value;
@@ -804,6 +821,8 @@ NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName, 
                                                 const nsAString & aValue)
 {
+  nsAutoLock lock(mLock);
+
   nsresult rv = NS_ERROR_INVALID_ARG;
   PRUint32 propertyID = mCache->GetPropertyID(aName);
 
@@ -825,6 +844,8 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName,
 
 NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
 {
+  nsAutoLock lock(mLock);
+
   nsresult rv = NS_OK;
 
   if(mWritePending) {

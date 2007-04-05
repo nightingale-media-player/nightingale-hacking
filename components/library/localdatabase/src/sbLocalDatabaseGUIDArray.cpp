@@ -392,34 +392,46 @@ sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
   NS_NEWXPCOM(newArray, sbLocalDatabaseGUIDArray);
   NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = newArray->SetDatabaseGUID(mDatabaseGUID);
+  nsresult rv = CloneInto(newArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = newArray->SetDatabaseLocation(mDatabaseLocation);
+  NS_ADDREF(*_retval = newArray);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::CloneInto(sbILocalDatabaseGUIDArray* aDest)
+{
+  NS_ENSURE_ARG_POINTER(aDest);
+
+  nsresult rv = aDest->SetDatabaseGUID(mDatabaseGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = newArray->SetBaseTable(mBaseTable);
+  rv = aDest->SetDatabaseLocation(mDatabaseLocation);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = newArray->SetBaseConstraintColumn(mBaseConstraintColumn);
+  rv = aDest->SetBaseTable(mBaseTable);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = newArray->SetBaseConstraintValue(mBaseConstraintValue);
+  rv = aDest->SetBaseConstraintColumn(mBaseConstraintColumn);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = newArray->SetFetchSize(mFetchSize);
+  rv = aDest->SetBaseConstraintValue(mBaseConstraintValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = newArray->SetPropertyCache(mPropertyCache);
+  rv = aDest->SetFetchSize(mFetchSize);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = newArray->SetIsDistinct(mIsDistinct);
+  rv = aDest->SetPropertyCache(mPropertyCache);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aDest->SetIsDistinct(mIsDistinct);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 sortCount = mSorts.Length();
   for (PRUint32 index = 0; index < sortCount; index++) {
     const SortSpec refSpec = mSorts.ElementAt(index);
-    rv = newArray->AddSort(refSpec.property, refSpec.ascending);
+    rv = aDest->AddSort(refSpec.property, refSpec.ascending);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -435,11 +447,10 @@ sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
       new sbTArrayStringEnumerator(stringArray);
     NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = newArray->AddFilter(refSpec.property, enumerator, refSpec.isSearch);
+    rv = aDest->AddFilter(refSpec.property, enumerator, refSpec.isSearch);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  NS_ADDREF(*_retval = newArray);
   return NS_OK;
 }
 

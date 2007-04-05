@@ -90,8 +90,8 @@ private:
   // Queue of pending commands
   sbCommandQueue mQueue;
 
-  // This lock protects methods that are called synchronously
-  PRLock* mSyncLock;
+  // This monitor protects methods that are called synchronously
+  PRMonitor* mSyncMonitor;
 
   // Monitor over mQueue and calls to InitalizeThread()
   PRMonitor* mQueueMonitor;

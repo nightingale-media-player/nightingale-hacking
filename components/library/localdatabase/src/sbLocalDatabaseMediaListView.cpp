@@ -162,7 +162,7 @@ sbLocalDatabaseMediaListView::Init()
   rv = mArray->AddSort(mDefaultSortProperty, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mArray->SetFetchSize(DEFAULT_FETCH_SIZE);
+  rv = mArray->SetFetchSize(1000);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();
@@ -194,7 +194,7 @@ sbLocalDatabaseMediaListView::GetLength(PRUint32* aFilteredLength)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::GetTreeView(nsITreeView** aTreeView)
 {
-/*
+
   NS_ENSURE_ARG_POINTER(aTreeView);
 
   if (!mTreeView) {
@@ -208,17 +208,17 @@ sbLocalDatabaseMediaListView::GetTreeView(nsITreeView** aTreeView)
     rv = mArray->SetPropertyCache(propertyCache);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoPtr<sbLocalDatabaseTreeView> treeView(new sbLocalDatabaseTreeView(this, mArray));
+    nsAutoPtr<sbLocalDatabaseTreeView> treeView(new sbLocalDatabaseTreeView());
     NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = treeView->Init();
+    rv = treeView->Init(this, mArray, mDefaultSortProperty, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mTreeView = treeView.forget();
   }
 
   NS_ADDREF(*aTreeView = mTreeView);
-*/
+
   return NS_OK;
 }
 
@@ -233,14 +233,11 @@ sbLocalDatabaseMediaListView::GetCascadeFilterSet(sbICascadeFilterSet** aCascade
     nsAutoPtr<sbLocalDatabaseCascadeFilterSet> cascadeFilterSet(new sbLocalDatabaseCascadeFilterSet());
     NS_ENSURE_TRUE(cascadeFilterSet, NS_ERROR_OUT_OF_MEMORY);
 
-    nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
-    rv = mArray->Clone(getter_AddRefs(guidArray));
+    nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> guidArray;
+    rv = mArray->CloneAsyncArray(getter_AddRefs(guidArray));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbILocalDatabaseGUIDArray> array = do_QueryInterface(mArray, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = cascadeFilterSet->Init(this, array);
+    rv = cascadeFilterSet->Init(mLibrary, this, guidArray);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mCascadeFilterSet = cascadeFilterSet.forget();
@@ -731,6 +728,12 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
   rv = mArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // If we have an active tree view, rebuild it
+  if (mTreeView) {
+    sbLocalDatabaseTreeView* view = NS_STATIC_CAST(sbLocalDatabaseTreeView*, mTreeView.get());
+    rv = view->Rebuild();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   return NS_OK;
 }
 

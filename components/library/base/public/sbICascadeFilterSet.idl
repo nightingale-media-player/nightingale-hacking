@@ -32,6 +32,7 @@
 #include "nsISupports.idl"
 
 interface nsIStringEnumerator;
+interface nsITreeView;
 interface sbIMediaList;
 
 [scriptable, uuid(6b0f6a50-07c9-40e1-9392-2714b9bf2fa3)]
@@ -39,7 +40,7 @@ interface sbICascadeFilterSetListener : nsISupports
 {
   void onChange();
 
-  void onValuesChange(in unsigned short aIndex);
+  void onValuesChanged(in unsigned short aIndex);
 };
 
 /**
@@ -84,8 +85,8 @@ interface sbICascadeFilterSet : nsISupports
    * \param aValueArrayCount length of the aValueArray array
    */
   void set(in unsigned short aIndex,
-          [array, size_is(aValueArrayCount)] in wstring aValueArray,
-          in unsigned long aValueArrayCount);
+           [array, size_is(aValueArrayCount)] in wstring aValueArray,
+           in unsigned long aValueArrayCount);
 
   /**
    * \brief Get the list of possible values for a filter
@@ -93,6 +94,21 @@ interface sbICascadeFilterSet : nsISupports
    * \return A string enumerator of the values of the filter
    */
   nsIStringEnumerator getValues(in unsigned short aIndex);
+
+  /**
+   * \brief Get a single value of a filter list
+   * \param aIndex Index of the filter
+   * \param aValueIndex Index of the value to get within the specified filter
+   * \return The requested value
+   */
+  AString getValueAt(in unsigned short aIndex, in unsigned long aValueIndex);
+
+  /**
+   * \brief Get a nsITreeView to display the specified filter's contents
+   * \param aIndex Index of the filter
+   * \return An nsITreeView
+   */
+  nsITreeView getTreeView(in unsigned short aIndex);
 
   /**
    * \brief Get the number of possible values for a filter

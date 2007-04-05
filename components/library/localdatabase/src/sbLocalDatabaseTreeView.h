@@ -27,52 +27,116 @@
 #ifndef __SBLOCALDATABASETREEVIEW_H__
 #define __SBLOCALDATABASETREEVIEW_H__
 
-#include "sbILocalDatabaseGUIDArray.h"
-#include "sbILocalDatabaseTreeView.h"
-#include "sbILocalDatabasePropertyCache.h"
-#include <nsITreeView.h>
-#include <nsITreeSelection.h>
-#include <nsITreeBoxObject.h>
 #include <nsCOMPtr.h>
-#include <nsStringGlue.h>
+#include <nsDataHashtable.h>
+#include <nsITreeView.h>
 #include <nsInterfaceHashtable.h>
+#include <nsStringGlue.h>
 #include <nsTArray.h>
-#include <nsITimer.h>
+#include <sbILocalDatabaseAsyncGUIDArray.h>
+#include <sbILocalDatabasePropertyCache.h>
 
-class sbLocalDatabaseTreeView : public sbILocalDatabaseTreeView,
-                                public nsITreeView,
-                                public nsITimerCallback
+class nsITreeBoxObject;
+class nsITreeSelection;
+class sbILocalDatabasePropertyCache;
+class sbIMediaListView;
+
+class sbLocalDatabaseTreeView : public nsITreeView,
+                                public sbILocalDatabaseAsyncGUIDArrayListener
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_SBILOCALDATABASETREEVIEW
   NS_DECL_NSITREEVIEW
-  NS_DECL_NSITIMERCALLBACK
+  NS_DECL_SBILOCALDATABASEASYNCGUIDARRAYLISTENER
 
   sbLocalDatabaseTreeView();
 
-private:
   ~sbLocalDatabaseTreeView();
 
-  NS_IMETHODIMP FetchProperties();
+  nsresult Init(sbIMediaListView* aListView,
+                sbILocalDatabaseAsyncGUIDArray* aArray,
+                const nsAString& aSortProperty,
+                PRBool aSortDirectionIsAscending);
 
-  NS_IMETHODIMP GetPropertyForTreeColumn(nsITreeColumn* aTreeColumn,
-                                         nsAString& aProperty);
-  NS_IMETHODIMP ResetFilters();
+  nsresult Rebuild();
 
-  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
+private:
+  enum PageCacheStatus {
+    eNotCached,
+    ePending,
+    eCached
+  };
+
+  nsresult UpdateRowCount(PRUint32 aRowCount);
+
+  nsresult GetPropertyForTreeColumn(nsITreeColumn* aTreeColumn,
+                                    nsAString& aProperty);
+
+  nsresult GetPropertyBag(const nsAString& aGuid,
+                          PRUint32 aIndex,
+                          sbILocalDatabaseResourcePropertyBag** _retval);
+
+  nsresult GetPageCachedStatus(PRUint32 aIndex, PageCacheStatus* aStatus);
+
+  nsresult SetPageCachedStatus(PRUint32 aIndex, PageCacheStatus aStatus);
+
+  nsresult SetSort(const nsAString& aProperty, PRBool aDirection);
+
+  void InvalidateCache();
+
+  // The media list view that this tree view is a view of
+  nsCOMPtr<sbIMediaListView> mMediaListView;
+
+  // The async guid array given to us by our view
+  nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
+
+  // The cached row count of the async guid array
+  PRUint32 mCachedRowCount;
+
+  // The fetch size of the guid array.  This is used to compute the size of
+  // our pages when tracking their cached status
+  PRUint32 mFetchSize;
+
+  // Cache that maps row index number to a property bag of properties
+  nsInterfaceHashtable<nsUint32HashKey, sbILocalDatabaseResourcePropertyBag> mRowCache;
+
+  // Tracks the cache status of each page as determined by the fetch size of
+  // the guid array.  Note that the values in this hash table are actually
+  // from the PageCacheStatus enum defined above.
+  nsDataHashtable<nsUint32HashKey, PRUint32> mPageCacheStatus;
+
+  // The property cache that is linked with the guid array
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
+
+  // Current sort property
+  nsString mCurrentSortProperty;
+
+  // This variable along with  mGetByIndexAsyncPending manage which row index
+  // is "on deck" to be requested.  If mNextGetByIndexAsync is not -1 when a
+  // request completes, it is automatically requested next.  This makes sure
+  // that we only have one pending request to the guid array at a time.
+  PRInt32 mNextGetByIndexAsync;
+
+  // Stuff the tree view needs to track
   nsCOMPtr<nsITreeSelection> mSelection;
   nsCOMPtr<nsITreeBoxObject> mTreeBoxObject;
 
-  nsInterfaceHashtable<nsStringHashKey, sbILocalDatabaseResourcePropertyBag> mCache;
-  nsTArray<nsString> mFetchList;
-  nsCOMPtr<nsITimer> mFetchTimer;
-  PRBool mFetchTimerScheduled;
+  // True if the cached row count is no longer valid
+  PRPackedBool mCachedRowCountDirty;
 
-  nsString mSortProperty;
-  PRBool   mSortDirection;
-  nsString mSearch;
+  // True if a row count request from the async guid array is pending
+  PRPackedBool mCachedRowCountPending;
+
+  // Array busy flag that is managed by the onStateChange() callback on the
+  // listener.  When this is true, you will block when you call a non-async
+  // method on the guid array
+  PRPackedBool mIsArrayBusy;
+
+  // Current sort direction
+  PRPackedBool mCurrentSortDirectionIsAscending;
+
+  // See mNextGetByIndexAsync
+  PRPackedBool mGetByIndexAsyncPending;
 };
 
 #endif /* __SBLOCALDATABASETREEVIEW_H__ */

@@ -54,7 +54,6 @@ ArrayListener.prototype.onGetLength = function(length, rv)
 
 ArrayListener.prototype.onGetByIndex = function(index, guid, rv)
 {
-  log("ArrayListener.prototype.onGetByIndex");
   this.guid = guid;
   this.rv = rv;
   this.gotGuid = true;
@@ -72,6 +71,10 @@ ArrayListener.prototype.onGetMediaItemIdByIndex = function(index, mediaItemId, r
   this.mediaItemId = mediaItemId;
   this.rv = rv;
   this.gotMediaItemId = true;
+}
+
+ArrayListener.prototype.onStateChange = function(state)
+{
 }
 
 function doTest(array) {

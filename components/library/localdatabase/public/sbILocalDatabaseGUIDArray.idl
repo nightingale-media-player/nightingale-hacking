@@ -81,5 +81,7 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   void invalidate();
 
   sbILocalDatabaseGUIDArray clone();
+
+  void cloneInto(in sbILocalDatabaseGUIDArray aDest);
 };
 

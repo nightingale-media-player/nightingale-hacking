@@ -32,9 +32,14 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <sbICascadeFilterSet.h>
-#include <sbILocalDatabaseGUIDArray.h>
+#include <nsTHashtable.h>
+#include <nsHashKeys.h>
 
+class nsITreeView;
+class sbILocalDatabaseAsyncGUIDArray;
+class sbILocalDatabaseLibrary;
 class sbIMediaListView;
+class sbIPropertyArray;
 
 class sbLocalDatabaseCascadeFilterSet : public sbICascadeFilterSet
 {
@@ -44,8 +49,9 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBICASCADEFILTERSET
 
-  nsresult Init(sbIMediaListView* aMediaListView,
-                sbILocalDatabaseGUIDArray* aProtoArray);
+  nsresult Init(sbILocalDatabaseLibrary* aLibrary,
+                sbIMediaListView* aMediaListView,
+                sbILocalDatabaseAsyncGUIDArray* aProtoArray);
 
 private:
   nsresult ConfigureArray(PRUint32 aIndex);
@@ -55,16 +61,31 @@ private:
     nsString property;
     sbStringArray propertyList;
     sbStringArray values;
-    nsCOMPtr<sbILocalDatabaseGUIDArray> array;
+    nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> array;
+    nsCOMPtr<nsITreeView> treeView;
   };
 
+  // This callback is meant to be used with mListeners.
+  // aUserData should be a sbICascadeFilterSetListener pointer.
+  static PLDHashOperator PR_CALLBACK
+    OnValuesChangedCallback(nsISupportsHashKey* aKey,
+                            void* aUserData);
+
+  // The library this filter set is associated with
+  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
+
+  // The media list view this filter set is associated with
   nsCOMPtr<sbIMediaListView> mMediaListView;
 
-  nsCOMPtr<sbILocalDatabaseGUIDArray> mProtoArray;
+  // Prototypical array that is cloned to provide each filter's data
+  nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mProtoArray;
 
+  // Current filter configuration
   nsTArray<sbFilterSpec> mFilters;
-};
 
+  // Change listeners
+  nsTHashtable<nsISupportsHashKey> mListeners;
+};
 
 class sbGUIDArrayPrimraySortEnumerator : public nsIStringEnumerator
 {
@@ -72,10 +93,10 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISTRINGENUMERATOR
 
-  sbGUIDArrayPrimraySortEnumerator(sbILocalDatabaseGUIDArray* aArray);
+  sbGUIDArrayPrimraySortEnumerator(sbILocalDatabaseAsyncGUIDArray* aArray);
 
 private:
-  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
+  nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
   PRUint32 mNextIndex;
 };
 

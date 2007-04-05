@@ -27,7 +27,8 @@
 #include "sbSQLBuilderCriterion.h"
 #include "sbSQLBuilderBase.h"
 
-NS_IMPL_ISUPPORTS1(sbSQLBuilderCriterionBase, sbISQLBuilderCriterion)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbSQLBuilderCriterionBase,
+                              sbISQLBuilderCriterion)
 
 sbSQLBuilderCriterionBase::sbSQLBuilderCriterionBase(const nsAString& aTableName,
                                                      const nsAString& aColumnName,

@@ -78,8 +78,8 @@ sbLocalDatabaseAsyncGUIDArray::~sbLocalDatabaseAsyncGUIDArray() {
 
   ShutdownThread();
 
-  if (mSyncLock) {
-    nsAutoLock::DestroyLock(mSyncLock);
+  if (mSyncMonitor) {
+    nsAutoMonitor::DestroyMonitor(mSyncMonitor);
   }
 
   if (mQueueMonitor) {
@@ -97,8 +97,8 @@ sbLocalDatabaseAsyncGUIDArray::Init()
   mInner = do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mSyncLock = nsAutoLock::NewLock("sbLocalDatabaseAsyncGUIDArray::mSyncLock");
-  NS_ENSURE_TRUE(mSyncLock, NS_ERROR_OUT_OF_MEMORY);
+  mSyncMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseAsyncGUIDArray::mSyncMonitor");
+  NS_ENSURE_TRUE(mSyncMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   mQueueMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseAsyncGUIDArray::mQueueMonitor");
   NS_ENSURE_TRUE(mQueueMonitor, NS_ERROR_OUT_OF_MEMORY);
@@ -177,7 +177,7 @@ NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::SetListener(sbILocalDatabaseAsyncGUIDArrayListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   nsresult rv;
   rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
@@ -214,6 +214,27 @@ sbLocalDatabaseAsyncGUIDArray::GetMediaItemIdByIndexAsync(PRUint32 aIndex)
   return EnqueueCommand(eGetMediaItemIdByIndex, aIndex);
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::CloneAsyncArray(sbILocalDatabaseAsyncGUIDArray** _retval)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  sbLocalDatabaseAsyncGUIDArray* newArray;
+  NS_NEWXPCOM(newArray, sbLocalDatabaseAsyncGUIDArray);
+  NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = newArray->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mInner->CloneInto(newArray);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = newArray);
+  return NS_OK;
+}
+
 // nsIObserver
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::Observe(nsISupports *aSubject,
@@ -239,14 +260,14 @@ sbLocalDatabaseAsyncGUIDArray::Observe(nsISupports *aSubject,
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetDatabaseGUID(nsAString& aDatabaseGUID)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetDatabaseGUID(aDatabaseGUID);
 }
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::SetDatabaseGUID(const nsAString& aDatabaseGUID)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->SetDatabaseGUID(aDatabaseGUID);
 }
@@ -254,14 +275,14 @@ sbLocalDatabaseAsyncGUIDArray::SetDatabaseGUID(const nsAString& aDatabaseGUID)
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetDatabaseLocation(nsIURI** aDatabaseLocation)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetDatabaseLocation(aDatabaseLocation);
 }
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::SetDatabaseLocation(nsIURI* aDatabaseLocation)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->SetDatabaseLocation(aDatabaseLocation);
 }
@@ -269,14 +290,14 @@ sbLocalDatabaseAsyncGUIDArray::SetDatabaseLocation(nsIURI* aDatabaseLocation)
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetBaseTable(nsAString& aBaseTable)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetBaseTable(aBaseTable);
 }
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::SetBaseTable(const nsAString& aBaseTable)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->SetBaseTable(aBaseTable);
 }
@@ -284,14 +305,14 @@ sbLocalDatabaseAsyncGUIDArray::SetBaseTable(const nsAString& aBaseTable)
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetBaseConstraintColumn(nsAString& aBaseConstraintColumn)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetBaseConstraintColumn(aBaseConstraintColumn);
 }
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::SetBaseConstraintColumn(const nsAString& aBaseConstraintColumn)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->SetBaseConstraintColumn(aBaseConstraintColumn);
 }
@@ -299,14 +320,14 @@ sbLocalDatabaseAsyncGUIDArray::SetBaseConstraintColumn(const nsAString& aBaseCon
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetBaseConstraintValue(PRUint32* aBaseConstraintValue)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetBaseConstraintValue(aBaseConstraintValue);
 }
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::SetBaseConstraintValue(PRUint32 aBaseConstraintValue)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->SetBaseConstraintValue(aBaseConstraintValue);
 }
@@ -314,14 +335,14 @@ sbLocalDatabaseAsyncGUIDArray::SetBaseConstraintValue(PRUint32 aBaseConstraintVa
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetFetchSize(PRUint32* aFetchSize)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetFetchSize(aFetchSize);
 }
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::SetFetchSize(PRUint32 aFetchSize)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->SetFetchSize(aFetchSize);
 }
@@ -329,14 +350,14 @@ sbLocalDatabaseAsyncGUIDArray::SetFetchSize(PRUint32 aFetchSize)
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetIsDistinct(PRBool* aIsDistinct)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetIsDistinct(aIsDistinct);
 }
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::SetIsDistinct(PRBool aIsDistinct)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->SetIsDistinct(aIsDistinct);
 }
@@ -344,7 +365,7 @@ sbLocalDatabaseAsyncGUIDArray::SetIsDistinct(PRBool aIsDistinct)
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetLength(PRUint32* aLength)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetLength(aLength);
 }
@@ -352,14 +373,14 @@ sbLocalDatabaseAsyncGUIDArray::GetLength(PRUint32* aLength)
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetPropertyCache(sbILocalDatabasePropertyCache** aPropertyCache)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetPropertyCache(aPropertyCache);
 }
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::SetPropertyCache(sbILocalDatabasePropertyCache* aPropertyCache)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->SetPropertyCache(aPropertyCache);
 }
@@ -368,7 +389,7 @@ NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::AddSort(const nsAString& aProperty,
                                        PRBool aAscending)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->AddSort(aProperty, aAscending);
 }
@@ -376,7 +397,7 @@ sbLocalDatabaseAsyncGUIDArray::AddSort(const nsAString& aProperty,
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::ClearSorts()
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->ClearSorts();
 }
@@ -386,7 +407,7 @@ sbLocalDatabaseAsyncGUIDArray::AddFilter(const nsAString& aProperty,
                                          nsIStringEnumerator* aValues,
                                          PRBool aIsSearch)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->AddFilter(aProperty, aValues, aIsSearch);
 }
@@ -394,7 +415,7 @@ sbLocalDatabaseAsyncGUIDArray::AddFilter(const nsAString& aProperty,
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::ClearFilters()
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->ClearFilters();
 }
@@ -403,7 +424,7 @@ NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::IsIndexCached(PRUint32 aIndex,
                                              PRBool* _retval)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->IsIndexCached(aIndex, _retval);
 }
@@ -412,7 +433,7 @@ NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetByIndex(PRUint32 aIndex,
                                           nsAString& _retval)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetByIndex(aIndex, _retval);
 }
@@ -421,7 +442,7 @@ NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetSortPropertyValueByIndex(PRUint32 aIndex,
                                                            nsAString& _retval)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetSortPropertyValueByIndex(aIndex, _retval);
 }
@@ -430,7 +451,7 @@ NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetMediaItemIdByIndex(PRUint32 aIndex,
                                                      PRUint32* _retval)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetMediaItemIdByIndex(aIndex, _retval);
 }
@@ -438,7 +459,7 @@ sbLocalDatabaseAsyncGUIDArray::GetMediaItemIdByIndex(PRUint32 aIndex,
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::Invalidate()
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->Invalidate();
 }
@@ -446,9 +467,17 @@ sbLocalDatabaseAsyncGUIDArray::Invalidate()
 NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
 {
-  nsAutoLock lock(mSyncLock);
+  nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->Clone(_retval);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::CloneInto(sbILocalDatabaseGUIDArray* aDest)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->CloneInto(aDest);
 }
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(CommandProcessor, nsIRunnable)
@@ -489,7 +518,7 @@ CommandProcessor::Run()
 
       if (mFriendArray->mThreadShouldExit) {
 
-        nsAutoLock lock(mFriendArray->mSyncLock);
+        nsAutoMonitor monitor(mFriendArray->mSyncMonitor);
 
         // For each remaining item on the queue, send errors
         nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> listener(mFriendArray->mProxiedListener);
@@ -535,11 +564,14 @@ CommandProcessor::Run()
 
     // Sync lock here so we don't run over synchronous usage of the array
     {
-      nsAutoLock lock(mFriendArray->mSyncLock);
+      nsAutoMonitor monitor(mFriendArray->mSyncMonitor);
 
       // Just for convenience
       nsCOMPtr<sbILocalDatabaseGUIDArray> inner(mFriendArray->mInner);
       nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> listener(mFriendArray->mProxiedListener);
+
+      rv = listener->OnStateChange(sbILocalDatabaseAsyncGUIDArrayListener::STATE_BUSY);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Listener notification failed");
 
       switch (cs.type) {
         case eGetLength:
@@ -597,6 +629,9 @@ CommandProcessor::Run()
           rv = NS_ERROR_UNEXPECTED;
         break;
       }
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Listener notification failed");
+
+      rv = listener->OnStateChange(sbILocalDatabaseAsyncGUIDArrayListener::STATE_IDLE);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Listener notification failed");
     }
   }

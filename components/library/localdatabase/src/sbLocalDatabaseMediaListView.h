@@ -31,6 +31,7 @@
 #include <nsClassHashtable.h>
 #include <nsIClassInfo.h>
 #include <nsIStringEnumerator.h>
+#include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <sbIFilterableMediaList.h>
 #include <sbIMediaListView.h>
@@ -61,7 +62,7 @@ public:
   NS_DECL_SBISORTABLEMEDIALIST
   NS_DECL_NSICLASSINFO
 
-  sbLocalDatabaseMediaListView(sbILocalDatabaseLibrary*,
+  sbLocalDatabaseMediaListView(sbILocalDatabaseLibrary* aLibrary,
                                sbIMediaList* aMediaList,
                                nsAString& aDefaultSortProperty,
                                PRUint32 aMediaListId);

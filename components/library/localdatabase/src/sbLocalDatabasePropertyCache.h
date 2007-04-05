@@ -42,6 +42,7 @@
 #include <nsIStringEnumerator.h>
 
 class nsIURI;
+class PRLock;
 
 class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache
 {
@@ -131,6 +132,8 @@ private:
 
   // Dirty Property ID's
   nsTHashtable<nsUint32HashKey> mDirty;
+
+  PRLock* mLock;
 };
 
 class sbTArrayStringEnumerator : public nsIStringEnumerator

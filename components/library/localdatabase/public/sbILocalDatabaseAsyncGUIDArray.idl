@@ -51,6 +51,11 @@ interface sbILocalDatabaseAsyncGUIDArrayListener : nsISupports
   void onGetMediaItemIdByIndex(in unsigned long aIndex,
                                in unsigned long aMediaItemId,
                                in nsresult aResult);
+
+  const unsigned long STATE_BUSY = 0x00000001;
+  const unsigned long STATE_IDLE = 0x00000002;
+
+  void onStateChange(in unsigned long aState);
 };
 
 /**
@@ -70,5 +75,7 @@ interface sbILocalDatabaseAsyncGUIDArray : sbILocalDatabaseGUIDArray
   void getSortPropertyValueByIndexAsync(in unsigned long aIndex);
 
   void getMediaItemIdByIndexAsync(in unsigned long aIndex);
+
+  sbILocalDatabaseAsyncGUIDArray cloneAsyncArray();
 };
 
