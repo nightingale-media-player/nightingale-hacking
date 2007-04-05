@@ -33,10 +33,12 @@
 NS_IMPL_ADDREF_INHERITED(sbURIPropertyInfo, sbPropertyInfo);
 NS_IMPL_RELEASE_INHERITED(sbURIPropertyInfo, sbPropertyInfo);
 
-NS_INTERFACE_MAP_BEGIN(sbURIPropertyInfo);
-NS_INTERFACE_MAP_ENTRY(sbIURIPropertyInfo);
-NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbIPropertyInfo, sbIURIPropertyInfo);
-NS_INTERFACE_MAP_END_INHERITING(sbPropertyInfo);
+NS_INTERFACE_TABLE_HEAD(sbURIPropertyInfo)
+NS_INTERFACE_TABLE_BEGIN
+NS_INTERFACE_TABLE_ENTRY(sbURIPropertyInfo, sbIURIPropertyInfo)
+NS_INTERFACE_TABLE_ENTRY_AMBIGUOUS(sbURIPropertyInfo, sbIPropertyInfo, sbIURIPropertyInfo)
+NS_INTERFACE_TABLE_END
+NS_INTERFACE_TABLE_TAIL_INHERITING(sbPropertyInfo)
 
 sbURIPropertyInfo::sbURIPropertyInfo()
 : mURISchemeConstraintLock(nsnull)

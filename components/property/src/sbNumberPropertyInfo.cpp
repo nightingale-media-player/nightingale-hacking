@@ -98,10 +98,12 @@ const char *GetSortableFmtFromRadix(PRUint32 aRadix)
 NS_IMPL_ADDREF_INHERITED(sbNumberPropertyInfo, sbPropertyInfo);
 NS_IMPL_RELEASE_INHERITED(sbNumberPropertyInfo, sbPropertyInfo);
 
-NS_INTERFACE_MAP_BEGIN(sbNumberPropertyInfo);
-NS_INTERFACE_MAP_ENTRY(sbINumberPropertyInfo);
-NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbIPropertyInfo, sbINumberPropertyInfo);
-NS_INTERFACE_MAP_END_INHERITING(sbPropertyInfo);
+NS_INTERFACE_TABLE_HEAD(sbNumberPropertyInfo)
+NS_INTERFACE_TABLE_BEGIN
+NS_INTERFACE_TABLE_ENTRY(sbNumberPropertyInfo, sbINumberPropertyInfo)
+NS_INTERFACE_TABLE_ENTRY_AMBIGUOUS(sbNumberPropertyInfo, sbIPropertyInfo, sbINumberPropertyInfo)
+NS_INTERFACE_TABLE_END
+NS_INTERFACE_TABLE_TAIL_INHERITING(sbPropertyInfo)
 
 sbNumberPropertyInfo::sbNumberPropertyInfo()
 : mMinMaxValueLock(nsnull)

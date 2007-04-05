@@ -29,11 +29,12 @@
 NS_IMPL_ADDREF_INHERITED(sbDatetimePropertyInfo, sbPropertyInfo);
 NS_IMPL_RELEASE_INHERITED(sbDatetimePropertyInfo, sbPropertyInfo);
 
-NS_INTERFACE_MAP_BEGIN(sbDatetimePropertyInfo);
-NS_INTERFACE_MAP_ENTRY(sbIDatetimePropertyInfo);
-NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbIPropertyInfo, sbIDatetimePropertyInfo);
-NS_INTERFACE_MAP_END_INHERITING(sbPropertyInfo);
-
+NS_INTERFACE_TABLE_HEAD(sbDatetimePropertyInfo)
+NS_INTERFACE_TABLE_BEGIN
+NS_INTERFACE_TABLE_ENTRY(sbDatetimePropertyInfo, sbIDatetimePropertyInfo)
+NS_INTERFACE_TABLE_ENTRY_AMBIGUOUS(sbDatetimePropertyInfo, sbIPropertyInfo, sbIDatetimePropertyInfo)
+NS_INTERFACE_TABLE_END
+NS_INTERFACE_TABLE_TAIL_INHERITING(sbPropertyInfo)
 
 sbDatetimePropertyInfo::sbDatetimePropertyInfo()
 : mTimeTypeLock(nsnull)
