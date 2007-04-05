@@ -26,10 +26,14 @@
 
 #include "sbDatetimePropertyInfo.h"
 
-NS_IMPL_ISUPPORTS_INHERITED2(sbDatetimePropertyInfo,
-                             sbPropertyInfo,
-                             sbIPropertyInfo,
-                             sbIDatetimePropertyInfo)
+NS_IMPL_ADDREF_INHERITED(sbDatetimePropertyInfo, sbPropertyInfo);
+NS_IMPL_RELEASE_INHERITED(sbDatetimePropertyInfo, sbPropertyInfo);
+
+NS_INTERFACE_MAP_BEGIN(sbDatetimePropertyInfo);
+NS_INTERFACE_MAP_ENTRY(sbIDatetimePropertyInfo);
+NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbIPropertyInfo, sbIDatetimePropertyInfo);
+NS_INTERFACE_MAP_END_INHERITING(sbPropertyInfo);
+
 
 sbDatetimePropertyInfo::sbDatetimePropertyInfo()
 : mTimeTypeLock(nsnull)

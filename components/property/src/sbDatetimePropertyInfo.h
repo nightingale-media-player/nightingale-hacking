@@ -36,7 +36,6 @@
 #include <nsAutoLock.h>
 
 class sbDatetimePropertyInfo : public sbPropertyInfo,
-                               public sbIPropertyInfo,
                                public sbIDatetimePropertyInfo
 
 {
