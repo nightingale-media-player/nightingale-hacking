@@ -1186,8 +1186,6 @@ NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
   return rv;
 }
 
-#include <windows.h>
-
 NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
                                              const nsAString& aValue)
