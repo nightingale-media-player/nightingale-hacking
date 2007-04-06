@@ -27,10 +27,32 @@
 /**
  * \brief Test file
  */
-var OUTPUT_URL = "file:///C:/test_mediaitem.out";
-var INPUT_URL_EXISTS = "http://stashbox.org/796/zadornov.mp3";
-var INPUT_URL_NOT_EXIST = "http://stashbox.org/poo/poo.mp3";
+ 
+var URL_AVAILABLE = "http://stashbox.org/796/zadornov.mp3";
+var URL_NOT_AVAILABLE = "http://stashbox.org/poo/poo.mp3";
+var TEST_STRING = "The quick brown fox jumps over the lazy dog.  Bitches."
 
+
+
+function read_stream(stream, count) {
+  /* assume stream has non-ASCII data */
+  var wrapper =
+      Cc["@mozilla.org/binaryinputstream;1"].
+      createInstance(Ci.nsIBinaryInputStream);
+  wrapper.setInputStream(stream);
+  /* JS methods can be called with a maximum of 65535 arguments, and input
+     streams don't have to return all the data they make .available() when
+     asked to .read() that number of bytes. */
+  var data = [];
+  while (count > 0) {
+    var bytes = wrapper.readByteArray(Math.min(65535, count));
+    data.push(String.fromCharCode.apply(null, bytes));
+    count -= bytes.length;
+    if (bytes.length == 0)
+      do_throw("Nothing read from input stream!");
+  }
+  return data.join('');
+}
 
 /**
  * Makes a new URI from a url string
@@ -54,30 +76,47 @@ function newURI(aURLString)
   return null;
 }
 
+function newFileURI(file)
+{
+  var ioService =
+    Components.classes["@mozilla.org/network/io-service;1"]
+              .getService(Components.interfaces.nsIIOService);
+  try {
+    return ioService.newFileURI(file);
+  }
+  catch (e) { }
+  
+  return null;
+}
+
+function newTempURI( name ) {
+  var file = Components.classes["@mozilla.org/file/directory_service;1"]
+                      .getService(Components.interfaces.nsIProperties)
+                      .get("TmpD", Components.interfaces.nsIFile);
+  file.append(name);
+  file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0664);
+  var retval = newFileURI(file);
+  log( "newTempURI = " + retval.spec );
+  return retval;
+}
+
 function createItem( library, url ) {
   return library.createMediaItem(newURI(url));
 }
 
 function testGet( item, attrib, value ) {
   var test_value = item[ attrib ];
-  if ( test_value.spec ) { // for nsURI return values, you must compare spec?
-    assertEqual( test_value.spec, value );
-  } else {
-    assertEqual( test_value, value );
-  }
+  // for nsURI return values, you must compare spec?
+  if ( test_value.spec )
+    test_value = test_value.spec;
+  if ( value.spec )
+    value = value.spec;
+  assertEqual( test_value, value );
 }
 
 function testSet( item, attrib, value ) {
   item[ attrib ] = value;
-
-  var test_value = item[ attrib ];
-  if ( test_value.spec ) { // for nsURI return values, you must compare spec?
-    log( "!!!!!!! item." + attrib + " = " + test_value.spec );
-    assertEqual( test_value.spec, value.spec );
-  } else {
-    log( "!!!!!!! item." + attrib + " = " + test_value );
-    assertEqual( test_value, value );
-  }
+  testGet( item, attrib, value );
 }
 
 function testAvailable( library, url, available, completion ) {
@@ -116,6 +155,68 @@ function testAvailable( library, url, available, completion ) {
   log( "(sbIMediaItem::TestIsAvailable) START    " + url );
 }
 
+function testIsAvailable( ioItem ) {
+  var databaseGUID = "test_localdatabaselibrary";
+  var testlib = createLibrary(databaseGUID);
+  // Async tests of availability for a (supposedly!) known url.
+  testAvailable( testlib, ioItem.contentSrc.spec, "true", 
+    function() {
+      testAvailable( testlib, URL_NOT_AVAILABLE, "false", 
+        function() {
+          testAvailable( testlib, URL_AVAILABLE, "true" );
+        }
+      );
+    }
+  ); 
+}
+
+function testAsyncRead(ioItem) {
+  var listener = {
+    _item: ioItem,
+    
+    /**
+    * See nsIStreamListener.idl
+    */
+    onDataAvailable: function LLL_onDataAvailable(request, context, inputStream, 
+                                                  sourceOffset, count) {
+      // Once we have enough bytes, read it.                                                  
+      if ((count + sourceOffset) >= TEST_STRING.length) {
+        this._value = read_stream(inputStream, (count + sourceOffset));
+      }
+    },
+    
+    /**
+    * See nsIRequestObserver.idl
+    */
+    onStartRequest: function LLL_onStartRequest(request, context) {
+    },
+    
+    /**
+    * See nsIRequestObserver.idl
+    */
+    onStopRequest: function LLL_onStopReqeust(request, context, status) {
+      // Test this and go on to the next tests.
+      assertEqual( this._value, TEST_STRING );
+      testIsAvailable( this._item );
+      testFinished();
+    },
+    /**
+    * See nsISupports.idl
+    */
+    QueryInterface: function LLL_QueryInterface(iid) {
+      if (iid.equals(Ci.nsIStreamListener) ||
+          iid.equals(Ci.nsIRequestObserver)||
+          iid.equals(Ci.nsISupports))
+        return this;
+      throw Cr.NS_ERROR_NO_INTERFACE;
+    }
+  }
+  var inputChannel = ioItem.openInputStreamAsync(listener, null);
+  assertNotEqual(inputChannel, null);
+  listener._inputChannel = inputChannel;
+  testPending();
+}
+
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
@@ -133,7 +234,6 @@ function runTest () {
   testGet( item, "contentLength", 0x21C );  
   testGet( item, "contentType", "audio/mpeg" );  
 
-/* -- SetProperty is not yet implemented by aus, so these don't work. */
   // Slightly more complicated tests for setting its info
   testSet( item, "mediaCreated", 0x1337baadf00d );
   testSet( item, "mediaUpdated", 0x1337baadf00d );
@@ -141,28 +241,30 @@ function runTest () {
   testSet( item, "contentSrc", newSrc);
   testSet( item, "contentLength", 0xbaadf00d );
   testSet( item, "contentType", "x-media/x-poo" );
-  
   item.write();
   
-  var inputItem = testlib.createMediaItem( newURI(INPUT_URL_EXISTS) );
-/* -- Implemented, not yet written to test
-  var inputChannel = inputItem.openInputStreamAsync();
-  assertNotEqual(inputChannel, null);
-  // ??? Then what?
-  var inputStream = inputItem.openInputStream();
+  // Open up a temp file through this interface
+  var ioItem = testlib.createMediaItem( newTempURI("test_mediaitem") );
+  assertNotEqual(ioItem, null);
+  var outputStream = ioItem.openOutputStream();
+  assertNotEqual(outputStream, null);
   
-  var outputItem = testlib.createMediaItem( newURI(OUTPUT_URL) );
-  var outputStream = outputItem.openOutputStream();
-*/
-
-  // Async tests of availability for a (supposedly!) known url.
-  testAvailable( testlib, INPUT_URL_EXISTS, "true", 
-    function() {
-      testAvailable( testlib, INPUT_URL_NOT_EXIST, "false" /* , 
-        function() {
-          testAvailable( testlib, "file:///c:/boot.ini", "true" ); // Works on Win32
-        } */
-      );
-    }
-  ); 
+  // Write some junk to it and close.
+  var count = outputStream.write( TEST_STRING, TEST_STRING.length );
+  assertEqual(count, TEST_STRING.length);
+  outputStream.flush();
+  outputStream.close();
+  
+  // Reopen it for input, and see if we read the same junk back.
+  var inputStream = ioItem.openInputStream().QueryInterface(Components.interfaces.nsILineInputStream);
+  assertNotEqual(inputStream, null);
+  var out = {};
+  inputStream.readLine( out );
+  assertEqual(out.value, TEST_STRING);
+  inputStream.close();
+  
+  // Async test, pauses the test system.
+  testAsyncRead(ioItem);
+  // This passes control to testIsAvailable() when it completes.
 }
+
