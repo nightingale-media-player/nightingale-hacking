@@ -187,7 +187,7 @@ function assertEnumeratorMatchesFieldArray(enumerator, field, list) {
 function testAddonMetadataReader()
 {
   // Verify all skins added properly
-  var skinNames = [DEFAULT_SKIN_NAME, "dove/0.1"];
+  var skinNames = [DEFAULT_SKIN_NAME, "dove/0.1", "plucked/0.1"];
   assertEqual(feathersManager.skinCount, skinNames.length);
   var enumerator = wrapEnumerator(feathersManager.getSkinDescriptions(),
                      Components.interfaces.sbISkinDescription);

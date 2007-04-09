@@ -27,7 +27,7 @@
         <songbird:skin>
           <Description>
             <songbird:name>Plucked</songbird:name>
-            <songbird:internalName>plucked</songbird:internalName>
+            <songbird:internalName>plucked/0.1</songbird:internalName>
             <songbird:compatibleLayout>
               <Description>
                 <songbird:layoutURL>chrome://rubberducky/content/xul/mainwin.xul</songbird:layoutURL>
