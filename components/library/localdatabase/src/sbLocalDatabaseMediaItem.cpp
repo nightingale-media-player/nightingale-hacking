@@ -103,7 +103,7 @@ NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaItem)
   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIMediaItem)
 NS_INTERFACE_MAP_END
 
-NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseMediaItem, nsIClassInfo,
+NS_IMPL_CI_INTERFACE_GETTER5(sbLocalDatabaseMediaItem, nsIClassInfo,
                                                        nsISupportsWeakReference,
                                                        nsIRequestObserver,
                                                        sbILibraryResource,
