@@ -1,11 +1,11 @@
 plucked.jar:
 #ifdef USING_FLAT_JARS
-% skin  songbird  plucked  plucked/feathers/plucked/songbird/skin/
-% skin  plucked  plucked  plucked/feathers/plucked/songbird/skin/
+% skin  songbird  plucked/0.1  plucked/feathers/plucked/songbird/skin/
+% skin  plucked  plucked/0.1  plucked/feathers/plucked/songbird/skin/
 % content  plucked  plucked/feathers/plucked/songbird/content/
 #else
-% skin  songbird  plucked  jar:plucked.jar!/feathers/plucked/songbird/skin/
-% skin  plucked  plucked  jar:plucked.jar!/feathers/plucked/songbird/skin/
+% skin  songbird  plucked/0.1  jar:plucked.jar!/feathers/plucked/songbird/skin/
+% skin  plucked  plucked/0.1  jar:plucked.jar!/feathers/plucked/songbird/skin/
 % content  plucked   jar:plucked.jar!/feathers/plucked/songbird/content/
 #endif
 @include_all_to feathers/plucked/songbird/
