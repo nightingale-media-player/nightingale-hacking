@@ -528,11 +528,6 @@ The following styles are for the specific dialog boxes themselves.
 *FIRST RUN dialog, aka, the Bundle Picker.
 **********************************************************************************
 */
-.sbextensions_box
-{
-  background-color: transparent !important;
-  color: #CCC !important;
-}
 
 richlistbox
 {
@@ -574,16 +569,19 @@ SMART PLAYLIST BUILDER
 *******************************************************************
 */
 
-.drawer_box,
-.smart_condition_box
+.drawer-box
 {
   border: 1px solid #3B3C3F !important;
 }
 
-.drawer_box,
-.smart_condition_box
+.drawer-box
 {
   border: 1px solid #99A195 !important;
+}
+
+sb-extensions-drawer > .drawer-box
+{
+  border: none !important;
 }
 
 

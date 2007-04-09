@@ -41,7 +41,7 @@
   
   
   
-  <binding id="tageditor" extends="chrome://songbird/content/bindings/drawer.xml#drawer">
+  <binding id="tageditor" extends="chrome://songbird/content/bindings/drawer.xml#drawer-single">
 
   <implementation>
 
@@ -63,21 +63,12 @@
       </body>
     </method>
 
-    <method name="insertDrawerContent">
+    <method name="createDrawerContent">
      <body>
        var ret = document.createElement("hbox");
        ret.setAttribute("class", "sb_faceplate");
-       ret.setAttribute("height", this.getContentSize());
-       
        this.appendControls(ret);
-       
        return ret;
-     </body>
-    </method>
-
-    <method name="getContentSize">
-     <body>
-       return 150;
      </body>
     </method>
 

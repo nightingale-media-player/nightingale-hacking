@@ -27,581 +27,52 @@
  */
 -->
 
+<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
   <binding id="folders">
+  
     <content>
-      <xul:vbox class="smart_condition_box" sbid="parent" flex="1" oncommand="onCommand( event );">
-        <xul:spacer sbid="first" height="3"/>
-        
-        <!-- stuff gets stuffed here -->
-        
-        <xul:spacer sbid="before" height="3"/>
-      </xul:vbox>
-
+      <xul:sb-multi-drawer sbid="drawer" header="false" flex="1" xbl:inherits="maxvisibleitems">
+        <xul:hbox class="watch-folders-item-box" align="center" flex="1">
+          <xul:textbox drawer-prop-map="value=folder" class="watch-folders-textbox dialog_textbox" flex="1"/>
+          <xul:button label="&window.browse;" class="sb_faceplate backless_button" sbid="browse"/>
+          <xul:button label="-" class="watch-folders-minus sb_faceplate backless_button" sbtype="remove-drawer-item"/>
+          <xul:button label="+" class="watch-folders-plus sb_faceplate backless_button" sbtype="add-drawer-item"/>
+        </xul:hbox>
+      </xul:sb-multi-drawer>
     </content>
 
     <implementation>
 
-      <constructor>
-      <![CDATA[
-      try
-      {
-      }
-      catch ( err )
-      {
-        alert( "conditions constructor - " + err );
-      }
-      ]]>
-      </constructor>
-      <destructor>
-      </destructor>
+      <field name="drawer">document.getAnonymousElementByAttribute(this, 'sbid', 'drawer');</field>
 
-      <field name="tracking">false</field>
-      <field name="before">document.getAnonymousElementByAttribute(this, 'sbid', 'before');</field>
-      <field name="first">document.getAnonymousElementByAttribute(this, 'sbid', 'first');</field>
-      <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
-      <field name="size">30</field> <!-- This is approximate.  The skin will determine its actual value and we have to recalculate it. -->
-      <field name="distance">0</field>
-      <field name="current">0</field>
-      <field name="anim_start">0</field>
-      <field name="anim_time">0.2</field>
-      <field name="anim_complete">null</field>
-      <field name="anim_growsize">null</field>
-      <field name="interval">null</field>
-      <field name="in_array">new Array()</field>
-      <field name="in_count">0</field>
-
-      <method name="animateNewFolder">
-        <parameter name="before"/>
+      <method name="setFolders">
+        <parameter name="folders"/>
         <body>
-          <![CDATA[
-          try
-          {
-            // No animations until we finish
-            if ( ! this.tracking )
-            {
-              // If null, put it at the "end"
-              if ( ! before )
-              {
-                before = this.before;
-              }
-              
-              // Make the growbox
-              var growbox = document.createElement( "box" );
-              growbox.setAttribute( "flex", "1" );
-              growbox.setAttribute( "sbtype", "growbox" );
-              this.parent.insertBefore( growbox, before );
-              
-              // Set our animation values
-              this.tracking = true;
-              this.distance = this.size;
-              this.current = 0;
-              this.anim_start = new Date().getTime();
-              this.anim_time = 0.2;
-              this.anim_complete = this.onGrowComplete;
-              this.anim_growsize = null;
-              document.__SB_FOLDERS__ = this;
-              
-              // Start our animation loop
-              this.interval = setInterval( this.animationCallback, 0 );
-            }
-          }
-          catch ( err )
-          {
-            alert( "animateNewFolder - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="removeFolder">
-        <parameter name="cond"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            // No animations until we finish
-            if ( ! this.tracking )
-            {
-              // Make the growbox
-              var growbox = document.createElement( "box" );
-              growbox.setAttribute( "flex", "1" );
-              growbox.setAttribute( "sbtype", "growbox" );
-              this.parent.insertBefore( growbox, cond );
-              
-              // Remove the condition
-              this.parent.removeChild( cond );
-              
-              // Set our animation values
-              this.tracking = true;
-              this.distance = - this.size; // removing!
-              this.current = 0;
-              this.anim_start = new Date().getTime();
-              this.anim_time = 0.2;
-              this.anim_complete = this.onShrinkComplete;
-              this.anim_growsize = null;
-              document.__SB_FOLDERS__ = this;
-              
-              // Start our animation loop
-              this.interval = setInterval( this.animationCallback, 0 ); // as fast as possible for a quarter second
-            }
-          }
-          catch ( err )
-          {
-            alert( "animateNewFolder - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="animationCallback">
-        <body>
-          <![CDATA[
-          try
-          {
-            var that = document.__SB_FOLDERS__;
-            
-            if ( that.tracking )
-            {
-              // Calculate size to resize window based on timer interpolation
-              var elapsed = ( new Date().getTime() - that.anim_start ) / 1000;
-              var interpolate = elapsed / that.anim_time;
-              var size = parseInt( ( that.distance * interpolate ) - that.current + 0.5 );
-              
-              // We have to track a "current" because we do not resize the window via absolute values
-              if ( Math.abs( that.current + size ) > Math.abs( that.distance ) )
-                size = that.distance - that.current;
-              window.resizeBy( 0, size );
-              that.current += size;
-
-              // Are we done?
-              if ( that.current == that.distance )
-              {
-                if ( that.anim_complete )
-                {
-                  that.anim_complete( that );
-                }
-                
-                // Set our values back
-                that.tracking = false;
-                that.distance = 0;
-                that.current = 0;
-                clearInterval( that.interval );
-              }
-              else if ( that.anim_growsize )
-              {
-                // Find the grow box
-                var grow_nodes = that.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-                if ( grow_nodes.length != 1 )
-                {
-                  // ??? really bad?
-                }
-                var growbox = grow_nodes.item( 0 );
-                if ( growbox.boxObject.height > that.size )
-                {
-                  var count = parseInt( growbox.boxObject.height / that.size );
-                  for ( var i = 0; i < count; i++ )
-                  {
-                    that.anim_growsize( that );
-                  }
-                }
-              }
-            }
-            else
-            {
-              clearInterval( that.interval );
-            }
-          }
-          catch ( err )
-          {
-            alert( "animateNewFolder - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="onGrowComplete">
-        <parameter name="that"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            // Find the grow box
-            var grow_nodes = that.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-            if ( grow_nodes.length != 1 )
-            {
-              // ??? really bad?
-            }
-            var growbox = grow_nodes.item( 0 );
-            
-            // Replace the grow box with the condition item
-            if ( growbox )
-            {
-              that.insertFolder( growbox );
-              that.parent.removeChild( growbox );
-            }
-          }
-          catch ( err )
-          {
-            alert( "onGrowComplete - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="onShrinkComplete">
-        <parameter name="that"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            // Find the grow box
-            var grow_nodes = that.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-            if ( grow_nodes.length != 1 )
-            {
-              // ??? really bad?
-            }
-            var growbox = grow_nodes.item( 0 );
-            
-            // Replace the grow box with the condition item
-            if ( growbox )
-            {
-              that.parent.removeChild( growbox );
-            }
-          }
-          catch ( err )
-          {
-            alert( "onShrinkComplete - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="insertFolder">
-        <parameter name="before"/>
-        <parameter name="value"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            // If null, put it at the "end"
-            if ( ! before )
-            {
-              before = this.before;
-            }
-            
-            // Make the parent hbox
-            var hbox = document.createElement( "hbox" );
-            hbox.setAttribute( "sbtype", "folder_box" );
-            hbox.setAttribute( "align", "center" );
-            
-            // Make the text box
-            var textbox = document.createElement( "textbox" );
-            textbox.setAttribute( "sbtype", "value" );
-            textbox.setAttribute( "class", "smart_condition_value dialog_textbox" );
-            textbox.setAttribute( "flex", "1" );
-            
-            // Make the browse button
-            var browse_str = this.getAttribute( "browse" );
-            if ( browse_str == "" )
-            {
-              browse_str = "Browse..."; // phth
-            }
-            var browse = document.createElement( "button" );
-            browse.setAttribute( "class", "sb_faceplate backless_button" );
-            browse.setAttribute( "sbtype", "browse" );
-            browse.setAttribute( "label", browse_str );
-            
-            // Make the add/subtract buttons
-            var minus = document.createElement( "button" );
-            minus.setAttribute( "class", "smart_condition_minus sb_faceplate backless_button" );
-            minus.setAttribute( "sbtype", "minus" );
-            minus.setAttribute( "width", "10" );
-            minus.setAttribute( "label", "-" );
-            var plus = document.createElement( "button" );
-            plus.setAttribute( "class", "smart_condition_plus sb_faceplate backless_button" );
-            plus.setAttribute( "sbtype", "plus" );
-            plus.setAttribute( "width", "10" );
-            plus.setAttribute( "label", "+" );
-            
-            // Hook them up.
-            hbox.appendChild( textbox );
-            hbox.appendChild( browse );
-            hbox.appendChild( minus );
-            hbox.appendChild( plus );
-            this.parent.insertBefore( hbox, before );
-            
-            // See if we've miscalculated and fix it.
-            var box_size = hbox.boxObject.height;
-            if ( box_size != this.size ) // Ooops!
-            {
-              // Get the growbox
-              var grow_nodes = this.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-              if ( grow_nodes.length != 1 ) {
-                // ??? really bad?
-              }
-              var growbox = grow_nodes.item( 0 );
-              // If the growbox has a height here, we miscalculated the animation
-              var miscalculation = - growbox.boxObject.height;
-              // So correct it
-              window.resizeBy( 0, miscalculation );
-              // Then update our "current" and "distance" calculations to
-              // reflect the size correction (for multiple insertions).
-              this.current += miscalculation;
-              this.distance = this.distance * box_size / this.size;
-              // Remember the correct box size from here out
-              this.size = box_size;
-            }
-            
-            // Set the value based on the incoming data
-            if ( value )
-            {
-              textbox.value = value;
-            }
-            {
-              // If there is no incoming condition, focus the textbox
-              textbox.focus();
-            }
-          }
-          catch ( err )
-          {
-            alert( "insertFolder - " + err );
-          }
-          ]]>
+          this.drawer.setState(folders);
         </body>
       </method>
       
-      <method name="setFolders">
-        <parameter name="array"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            // No animations until we finish
-            if ( ( ! this.tracking ) && ( array.length > 0 ) )
-            {
-              var before = this.before;
-              
-              this.in_array = array;
-              this.in_count = 0;
-              
-              // Make the growbox
-              var growbox = document.createElement( "box" );
-              growbox.setAttribute( "flex", "1" );
-              growbox.setAttribute( "sbtype", "growbox" );
-              this.parent.insertBefore( growbox, before );
-              
-              const USE_ANIMATION = true;
-              
-              if ( USE_ANIMATION )
-              {              
-                // Set our animation values
-                this.tracking = true;
-                this.distance = this.size * array.length;
-                this.current = 0;
-                this.anim_start = new Date().getTime();
-                this.anim_time = 0.2 * array.length; // Math.sqrt( 0.2 * array.length ); // Tends towards 1 second.
-                this.anim_complete = this.onGrowSizeComplete;
-                this.anim_growsize = this.onGrowSize;
-                document.__SB_FOLDERS__ = this;
-                
-                // Start our animation loop
-                this.interval = setInterval( this.animationCallback, 0 );
-              }
-              else
-              {
-                // Just slap the gullies in there.
-                for ( var i = 0; i < array.length; i++ )
-                {
-                  this.onGrowSize( this );
-                }
-                this.parent.removeChild( growbox );
-              }
-            }
-          }
-          catch ( err )
-          {
-            alert( "setFolders - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="onGrowSize">
-        <parameter name="that"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            // Find the grow box
-            var grow_nodes = that.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-            if ( grow_nodes.length != 1 )
-            {
-              // ??? really bad?
-            }
-            var growbox = grow_nodes.item( 0 );
-            
-            // Insert a folder
-            if ( growbox )
-            {
-              if ( this.in_count < this.in_array.length )
-              {
-                that.insertFolder( growbox, that.in_array[ that.in_count ]  );
-                that.in_count++;
-              }
-            }
-          }
-          catch ( err )
-          {
-            alert( "onGrowSize - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="onGrowSizeComplete">
-        <parameter name="that"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            // Find the grow box
-            var grow_nodes = that.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-            if ( grow_nodes.length != 1 )
-            {
-              // ??? really bad?
-            }
-            var growbox = grow_nodes.item( 0 );
-            if ( growbox )
-            {
-              // This crazy math says to do divided height + 1 
-              var count = parseInt( ( growbox.boxObject.height + ( that.size - 1 ) ) / that.size );
-              for ( var i = 0; i < count; i++ )
-              {
-                that.onGrowSize( that );
-              }
-              that.parent.removeChild( growbox );
-            }
-          }
-          catch ( err )
-          {
-            alert( "onGrowSizeComplete - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
       <method name="getFolders">
         <body>
-          <![CDATA[
-          var retval = new Array();
-          try
-          {
-            for ( var nextElement = this.first.nextSibling; nextElement != this.before; nextElement = nextElement.nextSibling )
-            {
-              if ( ( nextElement.getAttribute ) && ( nextElement.getAttribute( "sbtype" ) == "folder_box" ) )
-              {
-                var folder = this.getFolder( nextElement );
-                if ( folder != "" )
-                {
-                  retval.push( folder );
-                }
-              }
-            }
-          }
-          catch ( err )
-          {
-            alert( "getFolders - " + err );
-          }
-          return retval;
-          ]]>
+          return this.drawer.getState();
         </body>
       </method>
-
-      <method name="getFolder">
-        <parameter name="hbox"/>
+      
+      <method name="newFolder">
         <body>
-          <![CDATA[
-          var retval = "";
-          try
-          {
-            var value = null;
-            for ( var i = 0; i < hbox.childNodes.length; i++ )
-            {
-              var node = hbox.childNodes.item( i );
-              var sbtype = node.getAttribute( "sbtype" );
-              switch ( sbtype )
-              {
-                case "value":
-                  value = node;
-                  break;
-              }
-            }
-            
-            if ( value && ( value.value.length > 0 ) )
-            {
-              retval = value.value;
-            }
-          }
-          catch ( err )
-          {
-            alert( "getFolder - " + err );
-          }
-          return retval;
-          ]]>
-        </body>
-      </method>
-
-      <method name="onCommand">
-        <parameter name="evt"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            if ( evt.target )
-            { 
-              var sbtype = evt.target.getAttribute( "sbtype" );
-              switch ( sbtype )
-              {
-                case "browse":
-                  var folder = this.doBrowse();
-                  if ( folder.length > 0 )
-                  {
-                    var val_nodes = evt.target.parentNode.getElementsByAttribute( 'sbtype', 'value' );
-                    if ( val_nodes.length > 0 )
-                    {
-                      val_nodes.item( 0 ).setAttribute( "value", folder );
-                    }
-                  }
-                  break;
-                case "plus":
-                  this.animateNewFolder( evt.target.parentNode.nextSibling );
-                  break;
-                case "minus":
-                  var condition_nodes = this.parent.getElementsByAttribute( 'sbtype', 'folder_box' );
-                  if ( condition_nodes.length > 1 )
-                  {
-                    this.removeFolder( evt.target.parentNode );
-                  }
-                  break;
-              }
-            }
-          }
-          catch ( err )
-          {
-            alert( "onCommand - " + err );
-          }
-          ]]>
+          this.drawer.addItem();
         </body>
       </method>
 
       <method name="doBrowse">
         <body>
           <![CDATA[
-          retval = "";
+          var retval = "";
           try
           {
             const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
@@ -616,7 +87,7 @@
           }
           catch ( err )
           {
-            alert( "onCommand - " + err );
+            alert( "doBrowse - " + err );
           }
           return retval;
           ]]>
@@ -624,6 +95,21 @@
       </method>
 
     </implementation>
+
+    <handlers>
+      <handler event="command">
+        <![CDATA[
+        if (event.originalTarget.getAttribute("sbid") == "browse") {
+          var item = this.drawer.getItem(event.originalTarget);
+          if (item) {
+            var folderstr = this.doBrowse();
+            if ( folderstr.length > 0 )
+              this.drawer.setItemState(item, { folder: folderstr } );
+          }
+        }
+        ]]>
+      </handler>
+    </handlers>
  
   </binding>
 

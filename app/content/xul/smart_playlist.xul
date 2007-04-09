@@ -80,19 +80,7 @@
           <spacer flex="1"/>           
         </hbox>
         <spacer height="2"/>
-        
-        <!-- all the magic, baby -->  
-        <!-- eventually we will have to declare different condition types for string, int, date, etc -->
-        <smart_conditions id="smart_conditions" flex="1"
-          num_conditions="6"
-          condition1="&smart.contains;"
-          condition2="&smart.not_contain;"
-          condition3="&smart.is;"
-          condition4="&smart.is_not;"
-          condition5="&smart.starts;"
-          condition6="&smart.ends;"
-        />
-          
+        <sb-smart-conditions-drawer id="smart_conditions" flex="1" maxvisibleitems="5"/>
       </vbox>
       
       <spacer height="5"/>  
@@ -150,8 +138,12 @@
   <![CDATA[
     function doLoad()
     {
+      setTimeout(loadConditions);
+    }
+    
+    function loadConditions()
+    {
       document.getElementById( "smart_match_check" ).checked = true;
-      
       try
       {
         var smartConditions = document.getElementById( "smart_conditions" );
@@ -235,11 +227,12 @@
         }
         if ( use_new )
         {
-          smartConditions.animateNewCondition();
+          smartConditions.newCondition();
         }
       }
       catch(err) { alert(err); }
     }
+    
     function doOK()
     {
       const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");

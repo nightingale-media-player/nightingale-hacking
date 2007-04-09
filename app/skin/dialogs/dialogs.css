@@ -297,13 +297,20 @@ SMART PLAYLIST BUILDER
   margin: 10px 0px 0px 0px !important;
 }
 
-.drawer_box,
-.smart_condition_box
+.drawer-box
 {
   -moz-border-radius: 5px !important; 
   border: 1px solid !important;
   margin: 0px 0px 10px 0px !important;
   padding: 5px 5px 5px 0px !important;
+}
+
+sb-extensions-drawer > .drawer-box
+{
+  -moz-border-radius: 0px !important; 
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
 }
 
 #smart_playlist_name_label
@@ -322,11 +329,16 @@ SMART PLAYLIST BUILDER
   width: 40px !important;
 }
 
-.drawer_box,
-.smart_condition_box
+.drawer-box
 {
   border: 1px solid !important;
   -moz-border-radius: 5px !important; 
+}
+
+sb-extensions-drawer > .drawer-box
+{
+  -moz-border-radius: 0px !important; 
+  border: none !important;
 }
 
 /** 
@@ -642,4 +654,29 @@ iframe#video_controls
   width: 700px !important;
 }
 
+/* DRAWERS */
 
+sb-trackeditor-drawer > .drawer-box > .drawer-content
+{
+  height: 170px !important;
+}
+
+sb-exttrackeditor-drawer > .drawer-box > .drawer-content
+{
+  height: 225px !important;
+}
+
+sb-tageditor-drawer > .drawer-box > .drawer-content
+{
+  height: 150px !important;
+}
+
+sb-watch-folders-drawer > sb-multi-drawer > .drawer-box > .drawer-content-item
+{
+  height: 28px !important;
+}
+
+sb-smart-conditions-drawer > sb-multi-drawer > .drawer-box > .drawer-content-item
+{
+  height: 28px !important;
+}

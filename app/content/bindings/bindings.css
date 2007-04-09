@@ -38,11 +38,11 @@ sb-player-seek-slider {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#seek-slider") !important;
 }
 
-smart_conditions {
+sb-smart-conditions-drawer {
   -moz-binding: url("chrome://songbird/content/bindings/conditions.xml#conditions") !important;
 }
 
-watch_folders {
+sb-watch-folders-drawer {
   -moz-binding: url("chrome://songbird/content/bindings/folders.xml#folders") !important;
 }
 
@@ -82,7 +82,7 @@ servicetree {
   -moz-binding: url("chrome://songbird/content/bindings/servicetree.xml#servicetree") !important;
 }
 
-sbextensions {
+sb-extensions-drawer {
   -moz-binding: url("chrome://songbird/content/bindings/sbextensions.xml#sbextensions") !important;
 }
 
@@ -186,15 +186,15 @@ sb-mini-player-controls {
   -moz-binding: url("chrome://songbird/content/bindings/miniPlayer.xml#sb-mini-player-controls") !important;
 }
 
-tageditor {
+sb-tageditor-drawer {
   -moz-binding: url("chrome://songbird/content/bindings/tageditor.xml#tageditor") !important;
 }
 
-trackeditor {
+sb-trackeditor-drawer {
   -moz-binding: url("chrome://songbird/content/bindings/trackeditor.xml#trackeditor") !important;
 }
 
-exttrackeditor {
+sb-exttrackeditor-drawer {
   -moz-binding: url("chrome://songbird/content/bindings/trackeditor.xml#exttrackeditor") !important;
 }
 
@@ -226,17 +226,16 @@ sb-feathers-toggle-button {
   -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-togglebutton") !important;
 }
 
-
 sb-hotkey-textbox {
   -moz-binding: url("chrome://songbird/content/bindings/hotkey.xml#hotkey-textbox") !important;
 }
 
-textdrawer {
-  -moz-binding: url("chrome://songbird/content/bindings/drawer.xml#textdrawer") !important;
+sb-drawer {
+  -moz-binding: url("chrome://songbird/content/bindings/drawer.xml#drawer-single") !important;
 }
 
-contentdrawer {
-  -moz-binding: url("chrome://songbird/content/bindings/drawer.xml#contentdrawer") !important;
+sb-multi-drawer {
+  -moz-binding: url("chrome://songbird/content/bindings/drawer.xml#drawer-multi") !important;
 }
 
 sb-player-faceplate {

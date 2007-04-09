@@ -534,18 +534,19 @@ SMART PLAYLIST BUILDER
 *******************************************************************
 */
 
-.drawer_box,
-.smart_condition_box
+.drawer-box,
 {
   border: 1px solid #ccc !important;
 }
 
-.smart_condition_plus
+.smart-condition-plus,
+.watch-folders-plus
 {
   /* if you want an icon */
 }
 
-.smart_condition_minus
+.smart-condition-minus,
+.watch-folders-minus
 {
   /* if you want an icon */
 }

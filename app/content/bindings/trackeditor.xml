@@ -41,7 +41,7 @@
   
   
   
-  <binding id="trackeditor" extends="chrome://songbird/content/bindings/drawer.xml#drawer">
+  <binding id="trackeditor" extends="chrome://songbird/content/bindings/drawer.xml#drawer-single">
 
   <implementation>
 
@@ -75,11 +75,10 @@
       </body>
     </method>
 
-    <method name="insertDrawerContent">
+    <method name="createDrawerContent">
      <body>
        var ret = document.createElement("iframe");
        ret.setAttribute("src", "chrome://songbird/content/xul/trackeditor_form.xul");
-       ret.setAttribute("height", this.getContentSize());
        return ret;
      </body>
     </method>
@@ -139,12 +138,6 @@
       </body>
     </method>
 
-    <method name="getContentSize">
-     <body>
-       return 225;
-     </body>
-    </method>
-   
    </implementation>
  
   </binding>
@@ -157,7 +150,7 @@
   
   
   
-  <binding id="exttrackeditor" extends="chrome://songbird/content/bindings/drawer.xml#drawer">
+  <binding id="exttrackeditor" extends="chrome://songbird/content/bindings/drawer.xml#drawer-single">
 
   <implementation>
 
@@ -191,12 +184,11 @@
       </setter>
     </property>
 
-    <method name="insertDrawerContent">
+    <method name="createDrawerContent">
      <body>
        // fixed size parent for the drawer content
        var ret = document.createElement("hbox");
        ret.setAttribute("class", "sb_faceplate");
-       ret.setAttribute("height", this.getContentSize());
        
        // scrollable container for the controls
        var container = document.createElement("vbox");
@@ -210,12 +202,6 @@
        return ret;
      </body>
     </method> 
-
-    <method name="getContentSize">
-     <body>
-       return 225;
-     </body>
-    </method>
 
     <method name="apply">
       <body>

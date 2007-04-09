@@ -62,7 +62,7 @@
       <spacer id="extensions.replacedcontent.bottom" height="0"/>
       <spacer height="5"/>
       <hbox>
-        <sbextensions flex="1" id="songbird.extensionlist"/>
+        <sb-extensions-drawer flex="1" id="songbird.extensionlist"/>
       </hbox>
     </vbox>
 

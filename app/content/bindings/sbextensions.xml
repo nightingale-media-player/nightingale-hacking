@@ -31,18 +31,17 @@
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
-  <binding id="sbextensions" extends="chrome://songbird/content/bindings/drawer.xml#drawer">
+  <binding id="sbextensions" extends="chrome://songbird/content/bindings/drawer.xml#drawer-single">
 
     <implementation>
 
      <constructor>
        this.header.setAttribute("hidden", "true");
-       this.parent.setAttribute("class", "");
      </constructor>
 
       <field name="bundleInterface">null</field>
 
-      <method name="insertDrawerContent">
+      <method name="createDrawerContent">
         <body>
           <![CDATA[
           try
@@ -50,15 +49,14 @@
             // Make the extension droplist
             var listbox = document.createElement( "richlistbox" );
             listbox.setAttribute( "sbid", "extensions_list" );
-            listbox.setAttribute( "height", this.size );
             listbox.setAttribute("suppressonselect", "true");
-            listbox.setAttribute("class", "sb_faceplate");
+            listbox.setAttribute("class", "sb_faceplate sb-extensions-list");
             
             return listbox;
           }
           catch ( err )
           {
-            alert( "insertDrawerContent - " + err );
+            alert( "createDrawerContent - " + err );
           }
           return null;
           ]]>

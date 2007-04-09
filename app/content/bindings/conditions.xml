@@ -27,20 +27,36 @@
  */
 -->
 
+<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
   <binding id="conditions">
-    <content>
-      <xul:vbox class="smart_condition_box" sbid="parent" flex="1" oncommand="onCommand( event );">
-        <xul:spacer sbid="first" height="3"/>
-        
-        <!-- stuff gets stuffed here -->
-        
-        <xul:spacer sbid="before" height="3"/>
-      </xul:vbox>
 
+    <content>
+      <xul:sb-multi-drawer sbid="drawer" header="false" flex="1" xbl:inherits="maxvisibleitems">
+        <xul:hbox class="smart-condition-item-box" align="center" flex="1">
+          <xul:menulist class="smart-condition-list" flex="1" value="artist" drawer-prop-map="value=metadata">
+            <xul:menupopup class="smart-condition-popup" sbid="metadatapopup">
+            </xul:menupopup>
+          </xul:menulist>
+          <xul:menulist class="smart-condition-list" flex="1" value="0" drawer-prop-map="value=condition">
+            <xul:menupopup class="smart-condition-popup">
+              <xul:menuitem class="smart-condition-item" label="&smart.contains;" value="0"/>
+              <xul:menuitem class="smart-condition-item" label="&smart.not_contain;" value="1"/>
+              <xul:menuitem class="smart-condition-item" label="&smart.is;" value="2"/>
+              <xul:menuitem class="smart-condition-item" label="&smart.is_not;" value="3"/>
+              <xul:menuitem class="smart-condition-item" label="&smart.starts;" value="4"/>
+              <xul:menuitem class="smart-condition-item" label="&smart.ends;" value="5"/>
+            </xul:menupopup>
+          </xul:menulist>
+          <xul:textbox class="smart-condition-value dialog_textbox" flex="1" drawer-prop-map="value=value"/>
+          <xul:button label="-" class="smart_condition_minus sb_faceplate backless_button" sbtype="remove-drawer-item"/>
+          <xul:button label="+" class="smart_condition_plus sb_faceplate backless_button" sbtype="add-drawer-item"/>
+        </xul:hbox>
+      </xul:sb-multi-drawer>
     </content>
 
     <implementation>
@@ -48,15 +64,7 @@
       <constructor>
       <![CDATA[
       try {
-        // Load the conditions from the xml?
-        this.conditions = new Array();
-        var numConditions = parseInt( this.getAttribute( "num_conditions" ) );
-        for ( var index = 0; index < numConditions; index++ ) {
-          var condition = this.getAttribute( "condition" + ( index + 1 ) );
-          this.conditions.push( condition );
-        }
-        
-        // Scan the metadata
+        // Scan the metadata and fill the metadata popup with appropriate items
         this.fillMetadata();
       }
       catch ( err ) {
@@ -67,372 +75,24 @@
       <destructor>
       </destructor>
 
-      <field name="tracking">false</field>
-      <field name="before">document.getAnonymousElementByAttribute(this, 'sbid', 'before');</field>
-      <field name="first">document.getAnonymousElementByAttribute(this, 'sbid', 'first');</field>
-      <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
-      <field name="size">30</field>
-      <field name="distance">0</field>
-      <field name="current">0</field>
-      <field name="anim_start">0</field>
-      <field name="anim_time">0.2</field>
-      <field name="anim_complete">null</field>
-      <field name="anim_growsize">null</field>
-      <field name="interval">null</field>
-      <field name="metadata">new Array()</field>
-      <field name="conditions">null</field>
-      <field name="in_conditions">null</field>
-      <field name="in_count">0</field>
-      <field name="first_windowsize">false</field>
+      <field name="drawer">document.getAnonymousElementByAttribute(this, 'sbid', 'drawer');</field>
 
-      <method name="animateNewCondition">
-        <parameter name="aBefore"/>
+      <method name="setConditions">
+        <parameter name="conditions"/>
         <body>
-          <![CDATA[
-          try {
-            // No animations until we finish
-            if ( ! this.tracking ) {
-              // If null, put it at the "end"
-              if ( ! aBefore ) {
-                aBefore = this.before;
-              }
-              
-              // Make the growbox
-              var growbox = document.createElement( "box" );
-              growbox.setAttribute( "flex", "1" );
-              growbox.setAttribute( "sbtype", "growbox" );
-              this.parent.insertBefore( growbox, aBefore );
-              
-              // Set our animation values
-              this.tracking = true;
-              this.distance = this.size;
-              this.current = 0;
-              this.anim_start = new Date().getTime();
-              this.anim_time = 0.2;
-              this.anim_complete = this.onGrowComplete;
-              this.anim_growsize = null;
-              document.__SB_CONDITIONS__ = this;
-              
-              // Start our animation loop
-              this.interval = setInterval( this.animationCallback, 0 );
-            }
-          }
-          catch ( err ) {
-            alert( "animateNewCondition - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="removeCondition">
-        <parameter name="aCond"/>
-        <body>
-          <![CDATA[
-          try {
-            // No animations until we finish
-            if ( ! this.tracking ) {
-              // Make the growbox
-              var growbox = document.createElement( "box" );
-              growbox.setAttribute( "flex", "1" );
-              growbox.setAttribute( "sbtype", "growbox" );
-              this.parent.insertBefore( growbox, aCond );
-              
-              // Remove the condition
-              this.parent.removeChild( aCond );
-              
-              // Set our animation values
-              this.tracking = true;
-              this.distance = - this.size; // removing!
-              this.current = 0;
-              this.anim_start = new Date().getTime();
-              this.anim_time = 0.2;
-              this.anim_complete = this.onShrinkComplete;
-              this.anim_growsize = null;
-              document.__SB_CONDITIONS__ = this;
-              
-              // Start our animation loop
-              this.interval = setInterval( this.animationCallback, 0 ); // as fast as possible for a quarter second
-            }
-          }
-          catch ( err ) {
-            alert( "animateNewCondition - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="animationCallback">
-        <body>
-          <![CDATA[
-          try {
-            var target = document.__SB_CONDITIONS__;
-            
-            if ( target.tracking ) {
-              // Calculate size to resize window based on timer interpolation
-              var elapsed = ( new Date().getTime() - target.anim_start ) / 1000;
-              var interpolate = elapsed / target.anim_time;
-              var size = parseInt( ( target.distance * interpolate ) - target.current + 0.5 );
-              
-              // We have to track a "current" because we do not resize the window via absolute values
-              if ( Math.abs( target.current + size ) > Math.abs( target.distance ) )
-                size = target.distance - target.current;
-              window.resizeBy( 0, size );
-              target.current += size;
-
-              // Find the grow box
-              var grow_nodes = target.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-              if ( grow_nodes.length != 1 ) {
-                // ??? really bad?
-                return;
-              }
-              // If the growbox has grown outside of our control, correct for that!
-              var growbox = grow_nodes.item( 0 );
-              
-              // Are we done?
-              if ( target.current == target.distance ) {
-                if ( target.anim_complete ) {
-                  target.anim_complete( target );
-                }
-                
-                // Set our values back
-                target.tracking = false;
-                target.distance = 0;
-                target.current = 0;
-                clearInterval( target.interval );
-              }
-              else if ( target.anim_growsize ) {
-                if ( growbox.boxObject.height > target.size ) {
-                  var count = parseInt( growbox.boxObject.height / target.size );
-                  for ( var index = 0; index < count; index++ ) {
-                    target.anim_growsize( target );
-                  }
-                }
-              }
-            }
-            else {
-              clearInterval( target.interval );
-            }
-          }
-          catch ( err ) {
-            alert( "animateNewCondition - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="onGrowComplete">
-        <parameter name="aTarget"/>
-        <body>
-          <![CDATA[
-          try {
-            // Find the grow box
-            var grow_nodes = aTarget.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-            if ( grow_nodes.length != 1 ) {
-              // ??? really bad?
-            }
-            var growbox = grow_nodes.item( 0 );
-            
-            // Replace the grow box with the condition item
-            if ( growbox ) {
-              aTarget.insertCondition( growbox );
-              aTarget.parent.removeChild( growbox );
-            }
-          }
-          catch ( err ) {
-            alert( "onGrowComplete - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="onShrinkComplete">
-        <parameter name="aTarget"/>
-        <body>
-          <![CDATA[
-          try {
-            // Find the grow box
-            var grow_nodes = aTarget.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-            if ( grow_nodes.length != 1 ) {
-              // ??? really bad?
-            }
-            var growbox = grow_nodes.item( 0 );
-            
-            // Replace the grow box with the condition item
-            if ( growbox ) {
-              aTarget.parent.removeChild( growbox );
-            }
-          }
-          catch ( err ) {
-            alert( "onShrinkComplete - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="insertCondition">
-        <parameter name="aBefore"/>
-        <parameter name="aCondition"/>
-        <body>
-          <![CDATA[
-          try {
-            // If null, put it at the "end"
-            if ( ! aBefore ) {
-              aBefore = this.before;
-            }
-            
-            // Make the parent hbox
-            var hbox = document.createElement( "hbox" );
-            hbox.setAttribute( "sbtype", "condition_box" );
-            hbox.setAttribute( "align", "center" );
-            
-            // Make the metadata droplist
-            var meta_menulist = document.createElement( "menulist" );
-            meta_menulist.setAttribute( "sbtype", "metadata" );
-            meta_menulist.setAttribute( "class", "smart_condition" );
-            meta_menulist.setAttribute( "value", "artist" );
-
-            // Make the metadata popup
-            var meta_menupopup = document.createElement( "menupopup" );
-            meta_menupopup.setAttribute( "class", "smart_condition_popup" );
-            this.addMetadataItems( meta_menupopup );
-  
-            // Make the condition droplist
-            var cond_menulist = document.createElement( "menulist" );
-            cond_menulist.setAttribute( "class", "smart_condition" );
-            cond_menulist.setAttribute( "sbtype", "condition" );
-            cond_menulist.setAttribute( "value", "0" );
-
-            // Make the condition popup
-            var cond_menupopup = document.createElement( "menupopup" );
-            cond_menupopup.setAttribute( "class", "smart_condition_popup" );
-            this.addConditionItems( cond_menupopup );
-
-            // Make the text box
-            var textbox = document.createElement( "textbox" );
-            textbox.setAttribute( "sbtype", "value" );
-            textbox.setAttribute( "class", "smart_condition_value dialog_textbox" );
-            textbox.setAttribute( "flex", "1" );
-            
-            // Make the buttons
-            var minus = document.createElement( "button" );
-            minus.setAttribute( "class", "smart_condition_minus sb_faceplate backless_button" );
-            minus.setAttribute( "sbtype", "minus" );
-            minus.setAttribute( "width", "10" );
-            minus.setAttribute( "label", "-" );
-            var plus = document.createElement( "button" );
-            plus.setAttribute( "class", "smart_condition_plus sb_faceplate backless_button" );
-            plus.setAttribute( "sbtype", "plus" );
-            plus.setAttribute( "width", "10" );
-            plus.setAttribute( "label", "+" );
-            
-            // Hook them up.
-            meta_menulist.appendChild( meta_menupopup );
-            cond_menulist.appendChild( cond_menupopup );
-            hbox.appendChild( meta_menulist );
-            hbox.appendChild( cond_menulist );
-            hbox.appendChild( textbox );
-            hbox.appendChild( minus );
-            hbox.appendChild( plus );
-            this.parent.insertBefore( hbox, aBefore );
-            
-            // See if we've miscalculated and fix it.
-            var box_size = hbox.boxObject.height;
-            if ( box_size != this.size ) // Ooops!
-            {
-              // Get the growbox
-              var grow_nodes = this.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-              if ( grow_nodes.length != 1 ) {
-                // ??? really bad?
-              }
-              var growbox = grow_nodes.item( 0 );
-              // If the growbox has a height here, we miscalculated the animation
-              var miscalculation = - growbox.boxObject.height;
-              // So correct it
-              window.resizeBy( 0, miscalculation );
-              // Then update our "current" and "distance" calculations to
-              // reflect the size correction (for multiple insertions).
-              this.current += miscalculation;
-              this.distance = parseInt( ( ( parseInt( this.distance / this.size ) ) * box_size ) + 0.5 );
-              // Remember the correct box size from here out
-              this.size = box_size;
-            }
-            
-            // Set the values based on the incoming condition data
-            if ( aCondition ) {
-              // Select the meta_menulist
-              var meta_selection = null;
-              for ( var index = 0; index < meta_menupopup.childNodes.length; index++ ) {
-                var node = meta_menupopup.childNodes.item( index );
-                var column = node.getAttribute( "column" );
-                // If this is the column in the metadata
-                if ( column == aCondition.metadata ) {
-                  meta_selection = node;
-                }
-              }
-              if ( meta_selection ) {
-                meta_menulist.value = meta_selection.value;
-              
-                // Select the cond_menulist
-                cond_menulist.value = aCondition.condition;
-                
-                // Set the textbox
-                textbox.value = aCondition.value;
-              }
-            }
-            else {
-              // If there is no incoming condition, focus the textbox
-              textbox.focus();
-            }
-          }
-          catch ( err ) {
-            alert( "insertCondition - " + err );
-          }
-          ]]>
+          this.drawer.setState(conditions);
         </body>
       </method>
       
-      <method name="addMetadataItems">
-        <parameter name="aPopup"/>
+      <method name="getConditions">
         <body>
-          <![CDATA[
-          try {
-            for ( var index = 0; index < this.metadata.length; index++ ) {
-              // Make the metadata item
-              var meta_menuitem = document.createElement( "menuitem" );
-              meta_menuitem.setAttribute( "class", "smart_condition_item" );
-              meta_menuitem.setAttribute( "label", this.metadata[ index ].name );
-              meta_menuitem.setAttribute( "column", this.metadata[ index ].column );
-              meta_menuitem.setAttribute( "value", this.metadata[ index ].column );
-              
-              aPopup.appendChild( meta_menuitem );
-            }
-          }
-          catch ( err ) {
-            alert( "addMetadataItems - " + err );
-          }
-          ]]>
+          return this.drawer.getState();
         </body>
       </method>
       
-      <method name="addConditionItems">
-        <parameter name="aPopup"/>
+      <method name="newCondition">
         <body>
-          <![CDATA[
-          try {
-            for ( var index = 0; index < this.conditions.length; index++ ) {
-              // Make the conditions item
-              var cond_menuitem = document.createElement( "menuitem" );
-              cond_menuitem.setAttribute( "class", "smart_condition_item" );
-              cond_menuitem.setAttribute( "label", this.conditions[ index ] );
-              cond_menuitem.setAttribute( "value", index );
-              
-              aPopup.appendChild( cond_menuitem );
-            }
-          }
-          catch ( err ) {
-            alert( "addConditionItems - " + err );
-          }
-          ]]>
+          this.drawer.addItem();
         </body>
       </method>
       
@@ -441,7 +101,8 @@
           <![CDATA[
           try {
             // Erase?
-            this.metadata.length = 0;
+            var metadata = new Array();
+            var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'metadatapopup');
 
             // Load up the string bundle
             var src = "chrome://songbird/locale/songbird.properties";
@@ -495,208 +156,24 @@
                 }
                 
                 if ( ( obj.column != "row_id" ) && ( obj.column != "id" ) ) {
-                  this.metadata.push( obj );
+                  metadata.push( obj );
                 }
               }
+            }
+
+            for ( var index = 0; index < metadata.length; index++ ) {
+              // Make the metadata item
+              var meta_menuitem = document.createElement( "menuitem" );
+              meta_menuitem.setAttribute( "class", "smart-condition-item" );
+              meta_menuitem.setAttribute( "label", metadata[ index ].name );
+              meta_menuitem.setAttribute( "column", metadata[ index ].column );
+              meta_menuitem.setAttribute( "value", metadata[ index ].column );
+              
+              popup.appendChild( meta_menuitem );
             }
           }
           catch ( err ) {
             alert( "fillMetadata - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="setConditions">
-        <parameter name="aArray"/>
-        <body>
-          <![CDATA[
-          try {
-            // No animations until we finish
-            if ( ( ! this.tracking ) && ( aArray.length > 0 ) ) {
-              this.in_conditions = aArray;
-              this.in_count = 0;
-              
-              // Make the growbox
-              var growbox = document.createElement( "box" );
-              growbox.setAttribute( "flex", "1" );
-              growbox.setAttribute( "sbtype", "growbox" );
-              this.parent.insertBefore( growbox, this.before );
-              
-              const USE_ANIMATION = true;
-              
-              if ( USE_ANIMATION ) {
-           
-                // Set our animation values
-                this.tracking = true;
-                this.distance = this.size * aArray.length;
-                this.current = 0;
-                this.anim_start = new Date().getTime();
-                this.anim_time = 0.2 * aArray.length; // Math.sqrt( 0.2 * aArray.length ); // Tends towards 1 second.
-                this.anim_complete = this.onGrowSizeComplete;
-                this.anim_growsize = this.onGrowSize;
-                document.__SB_CONDITIONS__ = this;
-                
-                // Start our animation loop
-                this.interval = setInterval( this.animationCallback, 0 );
-              }
-              else {
-                // Just slap the gullies in there.
-                for ( var index = 0; index < aArray.length; index++ ) {
-                  this.onGrowSize( this );
-                }
-                this.parent.removeChild( growbox );
-              }
-            }
-          }
-          catch ( err ) {
-            alert( "setConditions - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="onGrowSize">
-        <parameter name="aTarget"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            // Find the grow box
-            var grow_nodes = aTarget.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-            if ( grow_nodes.length != 1 ) {
-              // ??? really bad?
-            }
-            var growbox = grow_nodes.item( 0 );
-            
-            // Insert a condition
-            if ( growbox ) {
-              if ( this.in_count < this.in_conditions.length ) {
-                aTarget.insertCondition( growbox, aTarget.in_conditions[ aTarget.in_count ]  );
-                aTarget.in_count++;
-              }
-            }
-          }
-          catch ( err ) {
-            alert( "onGrowSize - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="onGrowSizeComplete">
-        <parameter name="aTarget"/>
-        <body>
-          <![CDATA[
-          try {
-            // Find the grow box
-            var grow_nodes = aTarget.parent.getElementsByAttribute( 'sbtype', 'growbox' );
-            if ( grow_nodes.length != 1 ) {
-              // ??? really bad?
-            }
-            var growbox = grow_nodes.item( 0 );
-            if ( growbox ) {
-              // This crazy math says to do divided height + 1 
-              var count = parseInt( ( growbox.boxObject.height + ( aTarget.size - 1 ) ) / aTarget.size );
-              for ( var index = 0; index < count; index++ ) {
-                aTarget.onGrowSize( aTarget );
-              }
-              aTarget.parent.removeChild( growbox );
-            }
-          }
-          catch ( err ) {
-            alert( "onGrowSizeComplete - " + err );
-          }
-          ]]>
-        </body>
-      </method>
-
-      <method name="getConditions">
-        <body>
-          <![CDATA[
-          var retval = new Array();
-          try {
-            for ( var nextElement = this.first.nextSibling; nextElement != this.before; nextElement = nextElement.nextSibling ) {
-              if ( ( nextElement.getAttribute ) && ( nextElement.getAttribute( "sbtype" ) == "condition_box" ) ) {
-                var condition = this.getCondition( nextElement );
-                if ( condition ) {
-                  retval.push( condition );
-                }
-              }
-            }
-          }
-          catch ( err ) {
-            alert( "getConditions - " + err );
-          }
-          return retval;
-          ]]>
-        </body>
-      </method>
-
-      <method name="getCondition">
-        <parameter name="aHbox"/>
-        <body>
-          <![CDATA[
-          var retval = null;
-          try {
-            var metadata = null;
-            var condition = null;
-            var value = null;
-            for ( var index = 0; index < aHbox.childNodes.length; index++ ) {
-              var node = aHbox.childNodes.item( index );
-              var sbtype = node.getAttribute( "sbtype" );
-              switch ( sbtype ) {
-                case "metadata":
-                  metadata = node;
-                  break;
-                case "condition":
-                  condition = node;
-                  break;
-                case "value":
-                  value = node;
-                  break;
-              }
-            }
-            
-            if ( metadata && condition && value && ( value.value.length > 0 ) ) {
-              var obj = {};
-              obj.metadata = metadata.selectedItem.getAttribute( "column" );
-              obj.condition = condition.selectedIndex;
-              obj.condition_name = condition.selectedItem.label;
-              obj.value = value.value;
-              retval = obj;
-            }
-          }
-          catch ( err ) {
-            alert( "getCondition - " + err );
-          }
-          return retval;
-          ]]>
-        </body>
-      </method>
-
-      <method name="onCommand">
-        <parameter name="aEvent"/>
-        <body>
-          <![CDATA[
-          try {
-            if ( aEvent.target ) {
-              var sbtype = aEvent.target.getAttribute( "sbtype" );
-              switch ( sbtype ) {
-                case "plus":
-                  this.animateNewCondition( aEvent.target.parentNode.nextSibling );
-                  break;
-                case "minus":
-                  var condition_nodes = this.parent.getElementsByAttribute( 'sbtype', 'condition' );
-                  if ( condition_nodes.length > 1 ) {
-                    this.removeCondition( aEvent.target.parentNode );
-                  }
-                  break;
-              }
-            }
-          }
-          catch ( err ) {
-            alert( "onCommand - " + err );
           }
           ]]>
         </body>

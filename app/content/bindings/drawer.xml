@@ -41,27 +41,7 @@
   
   
   
-  <binding id="drawer">
-
-    <content>
-      
-      <xul:vbox class="drawer_box" sbid="parent" flex="1">
-        
-        <xul:hbox sbid="header">
-          <xul:vbox flex="1">
-            <xul:spacer flex="1"/>
-            <xul:label class="dialog_box" xbl:inherits="value=title"/>
-            <xul:spacer flex="1"/>
-          </xul:vbox>
-          <xul:spacer flex="1"/>
-          <xul:button class="dialog_button" sbid="drawer_openclose" label="+" oncommand="toggleDrawer();"/>
-        </xul:hbox>
-            
-        <!-- stuff gets stuffed here -->
-        
-        <xul:spacer sbid="before" height="1"/>
-      </xul:vbox>
-    </content>
+  <binding id="drawer-base">
 
    <implementation type="application/x-javascript">
 
@@ -77,12 +57,7 @@
            if (this.hflex)
              this.hflex.setAttribute("flex", "0");
          }
-         if (this.getAttribute("header") == "false") {
-           this.header.setAttribute("hidden", "true");
-         }
-         if (this.getAttribute("border") == "false") {
-           this.parent.setAttribute("class", "");
-         }
+         setTimeout(function(obj) { obj.start(); }, 0, this);
        ]]>
      </constructor>
      <destructor>
@@ -91,6 +66,7 @@
       <field name="tracking">false</field>
       <field name="before">document.getAnonymousElementByAttribute(this, 'sbid', 'before');</field>
       <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
+      <field name="template">document.getAnonymousElementByAttribute(this, 'sbid', 'template');</field>
       <field name="header">document.getAnonymousElementByAttribute(this, 'sbid', 'header');</field>
       <field name="openclosebutton">document.getAnonymousElementByAttribute(this, 'sbid', 'drawer_openclose');</field>
       <field name="size">0</field>  <!-- height of the added content box -->
@@ -101,120 +77,138 @@
       <field name="anim_complete">null</field>
       <field name="interval">null</field>
       <field name="first_windowsize">false</field>
-      <field name="state">"closed"</field>
       <field name="bundleInterface">null</field>
       <field name="boxid">null</field>
       <field name="hflex">null</field>
+      <field name="init">0</field>
+      <field name="accumsize">0</field>
 
-      <method name="toggleDrawer">
+      <method name="start">
         <body>
-          <![CDATA[
-          try
-          {
-            if (this.state == "closed") this.openDrawer();
-            else this.closeDrawer();
+          try {
+            this.init = 1;
+            this.onInit();
+          } catch (e) {
           }
-          catch ( err )
-          {
-            alert( "drawer.xml - toggleDrawer - " + err );
-          }
-          ]]>
         </body>
       </method>
 
-      <method name="openDrawer">
+      <method name="growDrawer">
         <parameter name="now"/>
         <parameter name="replacedheight"/>
+        <parameter name="contentsize"/>
+        <parameter name="before"/>
         <body>
           <![CDATA[
           try
           {
-            if (this.state == "open") return;
-            if (!replacedheight) replacedheight = 0;
-            var size=this.getAttribute("contentheight");
-            if (!size) {
-              try {
-                size = this.getContentSize();
-              } catch (e) { }
-            }
-            this.size = Math.max(size, replacedheight);
             // No animations until we finish
             if ( ! this.tracking )
             {
-              this.state = "open";
+              if (!this.maxheight) {
+                var maxheight1 = parseInt(this.getAttribute("maxheight"));
+                var maxheight2 = -1;
+                try {
+                  maxheight2 = this.getMaxHeight();
+                } catch (e) { }
+                if (maxheight1 && maxheight2) this.maxheight = Math.min(maxheight1, maxheight2);
+                else if (maxheight1) this.maxheight = maxheight1;
+                else if (maxheight2) this.maxheight = maxheight2;
+                else this.maxheight = -1;  
+                if (!this.maxheight) {
+                  try {
+                    this.maxheight = this.getMaxHeight();
+                  } catch (e) {
+                    this.maxheight = -1;
+                  }
+                }
+              }
+              var size = Math.max(contentsize, replacedheight);
+              // total size of content
+              this.accumsize += size;
+              // is there a max size ?
+              if (this.maxheight != -1) {
+                // is our content gonna be bigger ?
+                var diff = this.accumsize - this.maxheight;
+                if (diff > 0) {
+                  // reduce growing by diff
+                  size -= diff;
+                  if (size < 0) size = 0;
+                }
+              }
               if (this.openclosebutton) this.openclosebutton.label = "-";
-              
               if (this.hflex) this.hflex.setAttribute("flex", "1");
 
               // Make the growbox
               this.growbox = document.createElement( "box" );
               this.growbox.setAttribute( "flex", "1" );
               this.growbox.setAttribute( "sbid", this.boxid );
-              this.parent.insertBefore( this.growbox, this.before );
+              this.parent.insertBefore( this.growbox, before );
               
               // Set our animation values
               this.tracking = true;
-              this.distance = this.size - replacedheight;
+              this.distance = size - replacedheight;
               this.current = 0;
               this.anim_start = now ? -9999 : new Date().getTime();
               this.anim_time = 0.2;
               this.anim_complete = this.onGrowComplete;
               this.anim_complete_event = "opendrawer";
-              
+
               // Start our animation loop
-              this.interval = setInterval(function(obj) { obj.animationCallback(); }, 0, this); 
+              if (!now && size != 0) this.interval = setInterval(function(obj) { obj.animationCallback(); }, 0, this); 
+              else this.animationCallback();
             }
           }
           catch ( err )
           {
-            alert( "drawer.xml - openDrawer - " + err );
+            alert( "drawer.xml - growDrawer - " + err );
           }
           ]]>
         </body>
       </method>
 
-      <method name="closeDrawer">
+      <method name="shrinkDrawer">
         <parameter name="now"/>
         <parameter name="replacedheight"/>
+        <parameter name="contentsize"/>
+        <parameter name="content"/>
         <body>
           <![CDATA[
           try
           {
-            if (this.state == "closed") return;
-            if (!replacedheight) replacedheight = 0;
-            var size=this.getAttribute("contentheight");
-            if (!size) {
-              try {
-                size = this.getContentSize();
-              } catch (e) { }
-            }
-            this.size = Math.max(size, replacedheight);
-            this.state = "closed";
-            if (this.openclosebutton) this.openclosebutton.label = "+";
             // No animations until we finish
             if ( ! this.tracking )
             {
-             if (this.hflex) this.hflex.setAttribute("flex", "1");
+              var size = Math.max(contentsize, replacedheight);
+              // total size of content
+              this.accumsize -= size;
+              // is there a max size ?
+              if (this.maxheight != -1) {
+                // if we are still bigger than the max, dont change actual height
+                if (this.accumsize >= this.maxheight) size = 0;
+                else {
+                  // otherwise shrink by as much as possible, but no more than diff with maxheight
+                  var diff = this.maxheight - this.accumsize;
+                  if (diff > 0) {
+                    size = Math.min(size, diff);
+                  }
+                }
+              }
+              if (this.openclosebutton) this.openclosebutton.label = "+";
+              if (this.hflex) this.hflex.setAttribute("flex", "1");
 
               // Make the growbox
               this.growbox = document.createElement( "box" );
               this.growbox.setAttribute( "flex", "1" );
               this.growbox.setAttribute( "sbid", this.boxid );
-              this.parent.insertBefore( this.growbox, this.content );
+              this.parent.insertBefore( this.growbox, content );
 
               // Remove the content
-              this.parent.removeChild( this.content );
-              this.content = null;
+              this.removeContent(content);
 
-              try 
-              {
-                this.onContentRemoved();
-              }
-              catch (e) { }
-              
               // Set our animation values
               this.tracking = true;
-              this.distance = - (this.size-replacedheight); // removing!
+              this.distance = - (size-replacedheight); // removing!
               this.current = 0;
               this.anim_start = now ? -9999 : new Date().getTime();
               this.anim_time = 0.2;
@@ -222,12 +216,13 @@
               this.anim_complete_event = "closedrawer";
               
               // Start our animation loop
-              this.interval = setInterval(function(obj) { obj.animationCallback(); }, 0, this); 
+              if (!now) this.interval = setInterval(function(obj) { obj.animationCallback(); }, 0, this); 
+              else this.animationCallback();
               }
           }
           catch ( err )
           {
-            alert( "drawer.xml - closeDrawer - " + err );
+            alert( "drawer.xml - shrinkDrawer - " + err );
           }
           ]]>
         </body>
@@ -272,6 +267,14 @@
                 this.current = 0;
                 clearInterval( this.interval );
                 this.interval = null;
+                
+                if (this.maxheight != -1) {
+                  if (this.accumsize >= this.maxheight) {
+                    this.parent.setAttribute("style", "height: " + this.maxheight + "px; overflow: auto;");
+                  } else {
+                    this.parent.removeAttribute("style");
+                  }
+                }
               }
             }
             else
@@ -329,27 +332,27 @@
         </body>
       </method>
 
-      <method name="insertContent">
+      <method name="cloneBindingChildren">
         <body>
-          <![CDATA[
-          try
-          {
-            this.content = this.insertDrawerContent();
-            this.parent.insertBefore( this.content, this.before );
-            try 
-            {
-              this.onContentInserted();
-            }
-            catch (e) { }
+        <![CDATA[
+          var box = document.createElement("hbox");
+          // clone children
+          var children = this.childNodes;
+          for (var i=0;i<children.length;i++) {
+            var object = children[i].cloneNode(true);
+            box.appendChild(object);
           }
-          catch ( err )
-          {
-            alert( "drawer.xml - insertContent - " + err );
-          }
-          ]]>
+          return box;
+        ]]>
         </body>
       </method>
       
+      <method name="getContentSize">
+        <body>
+          return this.contentsize;
+        </body>
+      </method>
+
       <method name="getContent">
         <body>
           return this.content;
@@ -368,76 +371,448 @@
  
   </binding>
 
-  <!-- TEXTDRAWER CONTROL -->
+  <!-- SINGLE CONTENT DRAWER BASE -->
 
-  <binding id="textdrawer" extends="chrome://songbird/content/bindings/drawer.xml#drawer">
+  <binding id="drawer-single" extends="chrome://songbird/content/bindings/drawer.xml#drawer-base">
+
+    <content>
+      
+      <xul:vbox class="drawer-box" sbid="parent" flex="1">
+       
+        <xul:hbox sbid="header">
+          <xul:vbox flex="1">
+            <xul:spacer flex="1"/>
+            <xul:label class="dialog_box" xbl:inherits="value=title"/>
+            <xul:spacer flex="1"/>
+          </xul:vbox>
+          <xul:spacer flex="1"/>
+          <xul:button class="dialog_button" sbid="drawer_openclose" label="+" oncommand="toggleDrawer();"/>
+        </xul:hbox>
+            
+        <xul:vbox hidden="true" sbid="template" class="drawer-content">
+          <children/>
+        </xul:vbox>        
+
+        <!-- stuff gets stuffed here -->
+
+        <xul:spacer sbid="before" height="1"/>
+
+      </xul:vbox>
+    </content>
 
     <implementation>
 
-     <constructor>
-       this.header.setAttribute("hidden", "true");
-       this.parent.setAttribute("class", "");
-     </constructor>
+      <constructor>
+        this.state = "closed";
+        if (this.getAttribute("header") == "false") {
+          this.header.setAttribute("hidden", "true");
+        }
+      </constructor>
 
-      <method name="insertDrawerContent">
+      <property name="state"
+                onget="return this.getAttribute('state')"
+                onset="this.setAttribute('state', val);" />
+
+      <method name="toggleDrawer">
+        <parameter name="now"/>
+        <parameter name="replacedheight"/>
         <body>
           <![CDATA[
           try
           {
-            // Make the extension droplist
-            var description = document.createElement( "description" );
-            description.textContent = this.getAttribute("value");
-            return description;
+            if (!replacedheight) replacedheight = 0;
+            if (this.state == "closed") {
+              if (!this.drawercontent) {
+                this.computeContentHeight();
+                this.drawercontent = this.createDrawerContent();
+                var eclass = this.drawercontent.getAttribute("class");
+                if (eclass) eclass += " "; else eclass = "";
+                eclass += "drawer-content";
+                this.drawercontent.setAttribute("class", eclass);
+                this.drawercontent.setAttribute("style", "height: " + this.getContentSize() + "px; overflow: hidden;");
+              }
+              this.state = "open";
+              this.growDrawer(now, replacedheight, this.contentsize);
+            } else {
+              this.state = "closed";
+              this.shrinkDrawer(now, replacedheight, this.contentsize, this.content);
+              this.content = null;
+              this.drawercontent = null;
+              this.contentsize = 0;
+            }
           }
           catch ( err )
           {
-            alert( "insertDrawerContent - " + err );
+            alert( "drawer.xml - toggleDrawer - " + err );
           }
-          return null;
           ]]>
         </body>
       </method>
 
-    </implementation>
- 
-  </binding>
+      <method name="openDrawer">
+        <parameter name="now"/>
+        <parameter name="replacedheight"/>
+        <body>
+          if (this.state == "closed") {
+            this.toggleDrawer(now, replacedheight);
+          }
+        </body>
+      </method>
 
+      <method name="closeDrawer">
+        <parameter name="now"/>
+        <parameter name="replacedheight"/>
+        <body>
+          if (this.state == "open") {
+            this.toggleDrawer(now, replacedheight);
+          }
+        </body>
+      </method>
 
-  <!-- CONTENTDRAWER CONTROL -->
-
-
-  <binding id="contentdrawer" extends="chrome://songbird/content/bindings/drawer.xml#drawer">
-
-    <implementation>
-
-      <method name="insertDrawerContent">
+      <method name="insertContent">
+        <parameter name="before"/>
         <body>
           <![CDATA[
           try
           {
-            var height=this.getAttribute("contentheight");
-            if (!height) {
+            try 
+            {
+              this.content = this.drawercontent;
+              this.parent.insertBefore( this.content, before );
+            }
+            catch (e) { }
+            try 
+            {
+              this.onContentInserted(this.content);
+            }
+            catch (e) { }
+          }
+          catch ( err )
+          {
+            dump( "drawer.xml - insertContent - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="removeContent">
+        <parameter name="content"/>
+        <body>
+          <![CDATA[
+            try
+            {
+              this.parent.removeChild( content );
+              try 
+              {
+                this.onContentRemoved(content);
+              }
+              catch (e) { }
+            }
+            catch ( err )
+            {
+              dump( "drawer.xml - insertContent - " + err );
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="computeContentHeight">
+        <body>
+        <![CDATA[
+          var height;
+          try {
+            height = this.getContentSize();
+          } catch (e) {
+          }
+          if (!height || height == 0) {
+            if (!this.init) {
+              Components.utils.reportError("sb-multi-drawer: templatized drawer cannot compute its height before binding is initialized, use setTimeout");
+            }
+            height = window.getComputedStyle(this.template, "").height;
+            if (!height || height == "auto") {
+              Components.utils.reportError("sb-drawer: no css height defined for drawer content");
+              height = "25";
+            }
+            this.contentsize = parseInt(height);
+            height = window.getComputedStyle(this.template, "").marginTop;
+            if (height && height != "none") this.contentsize += parseInt(height);
+            height = window.getComputedStyle(this.template, "").marginBottom;
+            if (height && height != "none") this.contentsize += parseInt(height);
+          } else {
+            this.contentsize = height;
+          }
+        ]]>
+        </body>
+      </method>
+
+    </implementation>
+
+  </binding>
+
+  <!-- MULTI CONTENT DRAWER BASE -->
+
+  <binding id="drawer-multi" extends="chrome://songbird/content/bindings/drawer.xml#drawer-base">
+
+    <content>
+      
+      <xul:vbox class="drawer-box" sbid="parent" flex="1">
+        
+        <xul:vbox hidden="true" sbid="template" class="drawer-content-item">
+          <children/>
+        </xul:vbox>        
+
+        <!-- stuff gets stuffed here -->
+
+        <xul:spacer sbid="before" height="1"/>
+
+      </xul:vbox>
+    </content>
+
+    <implementation>
+
+      <constructor>
+        this.itemsize = -1;
+      </constructor>
+
+      <method name="start">
+        <body>
+          this.computeItemHeight();
+          this.init = 1;
+          try {
+            this.onInit();
+          } catch (e) {
+          }
+        </body>
+      </method>
+      
+      <method name="addItem">
+        <parameter name="now"/>
+        <parameter name="before"/>
+        <parameter name="state"/>
+        <body>
+          if (!this.init) {
+            Components.utils.reportError("sb-multi-drawer: templatized drawer cannot compute its items height before binding is initialized, use setTimeout");
+          }
+          this.nextlabelstate = state ? state : this.defaultstate;
+          this.growDrawer(now, 0, this.itemsize, before ? before : this.before);
+        </body>
+      </method>
+
+      <method name="removeItem">
+        <parameter name="now"/>
+        <parameter name="item"/>
+        <body>
+          this.shrinkDrawer(now, 0, this.itemsize, item);
+        </body>
+      </method>
+
+      <method name="removeAllItems">
+        <body>
+         <![CDATA[
+          var item_nodes = this.parent.getElementsByAttribute( "sbtype", "drawer-item" );
+          for (var i=0;i<item_nodes.length;i++) { 
+            var item = item_nodes[i];
+            this.shrinkDrawer( true, 0, this.itemsize, item );
+          }
+         ]]>
+        </body>
+      </method>
+
+      <method name="setState">
+        <parameter name="statearray"/>
+        <parameter name="defaultstate"/>
+        <body>
+         <![CDATA[
+          this.defaultstate = defaultstate;
+          this.removeAllItems();
+          var n = statearray.length;
+          for (var i=0; i<n; i++)
+            this.addItem(true);
+          var item_nodes = this.parent.getElementsByAttribute( "sbtype", "drawer-item" );
+          for (i=0;i<item_nodes.length;i++) { 
+            if (i >= n) break; // should never happen
+            this.setItemState(item_nodes[i], statearray[i]);
+          }
+         ]]>
+        </body>
+      </method>
+
+      <method name="setItemState">
+        <parameter name="item_element"/>
+        <parameter name="state"/>
+        <body>
+         <![CDATA[
+          try {
+            var propmap_str = item_element.getAttribute("drawer-prop-map");
+            var propmap_array = propmap_str.split(",");
+            for (var p in propmap_array) {
+              var pair = propmap_array[p].split("=");
+              var elementproperty = pair[0];
+              var stateproperty = pair[1];
               try {
-                height = this.getContentSize();
+                var value = state[stateproperty];
+                if (value) item_element[elementproperty] = value;
               } catch (e) { }
             }
-            var ret = document.createElement("iframe");
-            ret.setAttribute("src", this.getAttribute("uri"));
-            ret.setAttribute("height", height);
-            return ret;
+            var attrmap_str = item_element.getAttribute("drawer-attr-map");
+            var attrmap_array = attrmap_str.split(",");
+            for (var p in attrmap_array) {
+              var pair = attrmap_array[p].split("=");
+              var elementattribute = pair[0];
+              var stateproperty = pair[1];
+              try {
+                var value = state[stateproperty];
+                if (value) item_element.setAttribute(elementattribute, value);
+              } catch (e) { }
+            }
+          } catch (e) {
           }
-          catch ( err )
-          {
-            alert( "contentdrawer - insertDrawerContent - " + err );
+          for (var i=0;i<item_element.childNodes.length;i++) 
+            this.setItemState(item_element.childNodes[i], state)
+         ]]>
+        </body>
+      </method>
+
+      <method name="getState">
+        <body>
+         <![CDATA[
+          var state = [];
+          var item_nodes = this.parent.getElementsByAttribute( "sbtype", "drawer-item" );
+          for (var i=0;i<item_nodes.length;i++) {
+            var obj = {};
+            this.getItemState(item_nodes[i], obj);
+            state.push(obj);
           }
-          return null;
+          return state;
+         ]]>
+        </body>
+      </method>
+
+      <method name="getItemState">
+        <parameter name="item_element"/>
+        <parameter name="state"/>
+        <body>
+         <![CDATA[
+          try {
+            var propmap_str = item_element.getAttribute("drawer-prop-map");
+            var propmap_array = propmap_str.split(",");
+            for (var p in propmap_array) {
+              var pair = propmap_array[p].split("=");
+              var elementproperty = pair[0];
+              var stateproperty = pair[1];
+              var value = item_element[elementproperty];
+              state[stateproperty] = value;
+            }
+            var attrmap_str = item_element.getAttribute("drawer-attr-map");
+            var attrmap_array = attrmap_str.split(",");
+            for (var p in attrmap_array) {
+              var pair = attrmap_array[p].split("=");
+              var elementattribute = pair[0];
+              var stateproperty = pair[1];
+              var value = item_element.getAttribute(elementattribute);
+              state[stateproperty] = value;
+            }
+          } catch (e) {
+          }
+          for (var i=0;i<item_element.childNodes.length;i++) 
+            this.getItemState(item_element.childNodes[i], state)
+         ]]>
+        </body>
+      </method>
+      
+      <method name="getItem">
+        <parameter name="element"/>
+        <body>
+          <![CDATA[
+            while (element && element != document) {
+              if (element.getAttribute("sbtype") == "drawer-item") return element;
+              element = element.parentNode;
+            }
+            return null;
           ]]>
         </body>
       </method>
 
+      <method name="insertContent">
+        <parameter name="before"/>
+        <body>
+          this.lastcreateditem = this.createDrawerContent();
+          this.lastcreateditem.setAttribute("style", "height: " + this.itemsize + "px; overflow: hidden;");
+          this.lastcreateditem.setAttribute("sbtype", "drawer-item");
+          this.parent.insertBefore( this.lastcreateditem, before );
+          if (this.nextlabelstate) this.setItemState(this.lastcreateditem, this.nextlabelstate);
+          this.nextlabelstate = null;
+        </body>
+      </method>
+
+      <method name="removeContent">
+        <parameter name="content"/>
+        <body>
+          this.parent.removeChild( content );
+        </body>
+      </method>
+
+      <method name="computeItemHeight">
+        <body>
+        <![CDATA[
+          var height = window.getComputedStyle(this.template, "").height;
+          if (!height || height == "auto") {
+            Components.utils.reportError("sb-multi-drawer: no css height defined for content template");
+            height = "25";
+          }
+          this.itemsize = parseInt(height);
+          height = window.getComputedStyle(this.template, "").marginTop;
+          if (height && height != "none") this.itemsize += parseInt(height);
+          height = window.getComputedStyle(this.template, "").marginBottom;
+          if (height && height != "none") this.itemsize += parseInt(height);
+        ]]>
+        </body>
+      </method>
+
+      <method name="getMaxHeight">
+        <body>
+        <![CDATA[
+          var maxvisitems = parseInt(this.getAttribute("maxvisibleitems"));
+          if (!maxvisitems) return -1;
+          return maxvisitems * this.itemsize;
+        ]]>
+        </body>
+      </method>
+
+      <method name="createDrawerContent">
+        <body>
+          return this.cloneBindingChildren();
+        </body>
+      </method>
+
     </implementation>
- 
+
+   <handlers>
+     <handler event="command">
+      <![CDATA[
+      try {
+        if ( event.originalTarget ) {
+          var sbtype = event.originalTarget.getAttribute( "sbtype" );
+          switch ( sbtype ) {
+            case "add-drawer-item":
+              this.addItem(false, event.originalTarget.parentNode.parentNode.nextSibling);
+              break;
+            case "remove-drawer-item":
+              var item_nodes = this.parent.getElementsByAttribute( "sbtype", "drawer-item" );
+              if ( item_nodes.length > 1 ) {
+                this.removeItem(false, event.originalTarget.parentNode.parentNode);
+              }
+              break;
+          }
+        }
+      }
+      catch ( err ) {
+        alert( "onCommand - " + err );
+      }
+      ]]>
+     </handler>
+   </handlers>
+
   </binding>
 
-</bindings>
 

@@ -63,16 +63,16 @@
     <spacer height="8" drag_window="true"/>
     
     <hbox id="trackeditor.hflex">
-      <trackeditor id="trackeditor.trackeditor" hflex="trackeditor.hflex" title="&trackeditor.trackdata;" flex="1" />
+      <sb-trackeditor-drawer id="trackeditor.trackeditor" hflex="trackeditor.hflex" title="&trackeditor.trackdata;" flex="1" />
     </hbox>
     
     <hbox id="exttrackeditor.hflex">
-      <exttrackeditor id="trackeditor.exttrackeditor" hflex="exttrackeditor.hflex" title="&trackeditor.exttrackdata;" flex="1" 
+      <sb-exttrackeditor-drawer id="trackeditor.exttrackeditor" hflex="exttrackeditor.hflex" title="&trackeditor.exttrackdata;" flex="1" 
         exclude="uuid;url;title;artist;album;genre;length"/>
     </hbox>
 <!--
     <hbox id="tageditor.hflex">
-      <tageditor id="trackeditor.tageditor" hflex="tageditor.hflex" title="&trackeditor.tags;" flex="1" />
+      <sb-tageditor-drawer id="trackeditor.tageditor" hflex="tageditor.hflex" title="&trackeditor.tags;" flex="1" />
     </hbox>
 -->          
     <spacer height="5"/>
