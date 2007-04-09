@@ -204,7 +204,7 @@ MINI DASHBOARD
 /** Make a fake slider groove underneath the dash text.
     This is to allow the text to hang over the slider
     without messing with click handling **/
-#mini_dash_grove_spacer
+#mini_dash_groove_spacer
 {
   height: 4px;
   width: auto;

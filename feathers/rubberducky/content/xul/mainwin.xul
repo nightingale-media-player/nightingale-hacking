@@ -45,7 +45,6 @@
 
 <window
   id="frame_outer"
-  hidechrome="true"
   class="mainwin"
   onload="SBInitialize();onSBMainwinDataLoad();"
   onunload="SBUninitialize();onSBMainwinDataUnload();"
