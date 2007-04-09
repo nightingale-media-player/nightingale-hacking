@@ -49,8 +49,7 @@ CascadeListener.prototype.reset = function()
 function runTest () {
 
   var library = createLibrary("test_cascademediaset");
-  var list = library.QueryInterface(Ci.sbIMediaList)
-  var view = list.createView();
+  var view = library.createView();
   var cfs = view.cascadeFilterSet;
 
   var listener = new CascadeListener();

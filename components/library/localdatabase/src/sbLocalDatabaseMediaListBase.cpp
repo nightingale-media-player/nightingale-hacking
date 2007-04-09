@@ -67,12 +67,10 @@ NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaListBase)
   NS_INTERFACE_MAP_ENTRY(sbIMediaList)
 NS_INTERFACE_MAP_END_INHERITING(sbLocalDatabaseMediaItem)
 
-NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseMediaListBase,
+NS_IMPL_CI_INTERFACE_GETTER5(sbLocalDatabaseMediaListBase,
                              nsIClassInfo,
                              nsISupportsWeakReference,
                              sbILibraryResource,
-                             sbILocalDatabaseResourceProperty,
-                             sbILocalDatabaseMediaItem,
                              sbIMediaItem,
                              sbIMediaList)
 

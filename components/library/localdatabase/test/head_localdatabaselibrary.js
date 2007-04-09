@@ -180,7 +180,7 @@ function createLibrary(databaseGuid, databaseLocation) {
       .createInstance(Ci.sbILocalDatabaseLibraryFactory);
   var library = libraryFactory.createLibraryFromDatabase(file);
   try {
-    library.QueryInterface(Ci.sbIMediaList).clear();
+    library.clear();
   }
   catch(e) {
   }

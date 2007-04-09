@@ -38,6 +38,7 @@
 #include <nsDataHashtable.h>
 #include <nsHashKeys.h>
 #include <nsInterfaceHashtable.h>
+#include <nsIClassInfo.h>
 #include <nsStringGlue.h>
 #include <sbIMediaListFactory.h>
 
@@ -107,6 +108,7 @@ public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
+  NS_DECL_NSICLASSINFO
   NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaListBase::)
 
   // Include our overrides.

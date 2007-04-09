@@ -33,7 +33,7 @@ function runTest () {
   var library = createLibrary("test_filterable");
 
   // Tests with view media list
-  var list = library.QueryInterface(Ci.sbIMediaList)
+  var list = library;
   var view = list.createView();
   var e = view.getFilterValues("http://songbirdnest.com/data/1.0#albumName");
 

@@ -26,7 +26,9 @@
 
 #include "sbLocalDatabaseLibrary.h"
 
+#include <nsIClassInfo.h>
 #include <nsIFile.h>
+#include <nsIProgrammingLanguage.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
@@ -261,9 +263,18 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS_INHERITED3(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
                                                      sbILibrary,
-                                                     sbILocalDatabaseLibrary)
+                                                     sbILocalDatabaseLibrary,
+                                                     nsIClassInfo)
+
+NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseLibrary,
+                             nsIClassInfo,
+                             nsISupportsWeakReference,
+                             sbILibraryResource,
+                             sbIMediaItem,
+                             sbIMediaList,
+                             sbILibrary);
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
 {
@@ -1765,3 +1776,60 @@ sbLocalDatabaseLibrary::GetDefaultSortProperty(nsAString& aProperty)
   aProperty.AssignLiteral(DEFAULT_SORT_PROPERTY);
   return NS_OK;
 }
+
+// nsIClassInfo
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetInterfaces(PRUint32* count, nsIID*** array)
+{
+  return NS_CI_INTERFACE_GETTER_NAME(sbLocalDatabaseLibrary)(count, array);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetHelperForLanguage(PRUint32 language,
+                                             nsISupports** _retval)
+{
+  *_retval = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetContractID(char** aContractID)
+{
+  *aContractID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetClassDescription(char** aClassDescription)
+{
+  *aClassDescription = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetClassID(nsCID** aClassID)
+{
+  *aClassID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetImplementationLanguage(PRUint32* aImplementationLanguage)
+{
+  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetFlags(PRUint32 *aFlags)
+{
+  *aFlags = 0;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
+{
+  return NS_ERROR_NOT_AVAILABLE;
+}
+

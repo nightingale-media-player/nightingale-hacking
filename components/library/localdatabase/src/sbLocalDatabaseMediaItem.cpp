@@ -107,8 +107,6 @@ NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseMediaItem, nsIClassInfo,
                                                        nsISupportsWeakReference,
                                                        nsIRequestObserver,
                                                        sbILibraryResource,
-                                                       sbILocalDatabaseResourceProperty,
-                                                       sbILocalDatabaseMediaItem,
                                                        sbIMediaItem)
 
 sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()

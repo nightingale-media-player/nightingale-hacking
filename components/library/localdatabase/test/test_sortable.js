@@ -33,7 +33,7 @@ function runTest () {
   var library = createLibrary("test_sortable");
 
   // Tests with the library
-  var list = library.QueryInterface(Ci.sbIMediaList);
+  var list = library;
   var view = list.createView();
   assertFilteredSort(view, "data_sort_created_asc.txt");
 

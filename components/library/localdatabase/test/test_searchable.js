@@ -33,7 +33,7 @@ function runTest () {
   var library = createLibrary("test_searchable");
 
   // Tests with view media list
-  var list = library.QueryInterface(Ci.sbIMediaList);
+  var list = library;
   var view = list.createView();
 
   var pa = createPropertyArray();

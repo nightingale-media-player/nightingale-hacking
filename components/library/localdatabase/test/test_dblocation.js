@@ -66,7 +66,6 @@ function runTest () {
   assertNotEqual(item1.guid, item2.guid);
 
   // Test that they items were added to the library
-  var libraryList = library.QueryInterface(Ci.sbIMediaList);
-  assertEqual(libraryList.getItemByGuid(item1.guid).guid, item1.guid);
-  assertEqual(libraryList.getItemByGuid(item2.guid).guid, item2.guid);
+  assertEqual(library.getItemByGuid(item1.guid).guid, item1.guid);
+  assertEqual(library.getItemByGuid(item2.guid).guid, item2.guid);
 }

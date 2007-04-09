@@ -58,19 +58,18 @@ function runTest () {
   assertNotEqual(item1.guid, item2.guid);
 
   // Test that they items were added to the library view the view list
-  var libraryList = library.QueryInterface(Ci.sbIMediaList);
-  assertEqual(libraryList.getItemByGuid(item1.guid).guid, item1.guid);
-  assertEqual(libraryList.getItemByGuid(item2.guid).guid, item2.guid);
+  assertEqual(library.getItemByGuid(item1.guid).guid, item1.guid);
+  assertEqual(library.getItemByGuid(item2.guid).guid, item2.guid);
   
   var listListener = new TestMediaListListener();
-  libraryList.addListener(listListener);
+  library.addListener(listListener);
 
   var uri2 = ios.newURI("file:///bar", null, null);
   var item3 = library.createMediaItem(uri2);
 
   assertEqual(listListener.addedItem, item3);
   
-  libraryList.remove(item1);
+  library.remove(item1);
   assertEqual(listListener.removedItem, item1);
   
   // Test if removing items from the library also remove items from the
@@ -93,7 +92,7 @@ function runTest () {
     removedItemCount++;
   }
   
-  libraryList.removeSome(enumerationListener.QueryInterface(Ci.nsISimpleEnumerator));
+  library.removeSome(enumerationListener.QueryInterface(Ci.nsISimpleEnumerator));
   
   assertEqual(removedItemCount, listCount);
   
@@ -105,8 +104,7 @@ function runTest () {
   
   assertEqual(list.length, 20);
   
-  libraryList = library.QueryInterface(Ci.sbIMediaList);
-  libraryList.clear();
+  library.clear();
   
   assertEqual(list.length, 0);
 
@@ -118,10 +116,8 @@ function runTest () {
   listListener = new TestMediaListListener();
   list.addListener(listListener);
   
-  libraryList = library.QueryInterface(Ci.sbIMediaList);
-  
   var libraryListener = new TestMediaListListener();
-  libraryList.addListener(libraryListener);
+  library.addListener(libraryListener);
   
   item.contentType = "foo/foo";
   
@@ -136,11 +132,10 @@ function runTest () {
   listListener = new TestMediaListListener();
   list.addListener(listListener);
   
-  libraryList = library.QueryInterface(Ci.sbIMediaList);
-  item = libraryList.getItemByGuid("3E63F4C2-AD99-11DB-9321-C22AB7121F49");
+  item = library.getItemByGuid("3E63F4C2-AD99-11DB-9321-C22AB7121F49");
   
   libraryListener = new TestMediaListListener();
-  libraryList.addListener(libraryListener);
+  library.addListener(libraryListener);
   
   item.contentType = "foo/foo";
   
