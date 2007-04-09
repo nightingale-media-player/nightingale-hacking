@@ -32,7 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = dove \
           rubberducky \
           classic \
-          plucked \          
+          plucked \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
