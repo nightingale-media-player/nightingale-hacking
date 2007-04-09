@@ -27,22 +27,26 @@
 #ifndef __SBLOCALDATABASEPROPERTYCACHE_H__
 #define __SBLOCALDATABASEPROPERTYCACHE_H__
 
-#include "sbILocalDatabasePropertyCache.h"
-
-#include <nsStringGlue.h>
-#include <nsCOMPtr.h>
-#include <nsTArray.h>
-#include <nsComponentManagerUtils.h>
-#include <sbIDatabaseQuery.h>
-#include <nsDataHashtable.h>
-#include <nsClassHashtable.h>
-#include <nsInterfaceHashtable.h>
-#include <nsTHashtable.h>
-#include <sbISQLBuilder.h>
 #include <nsIStringEnumerator.h>
+#include <sbILocalDatabasePropertyCache.h>
+
+#include <nsClassHashtable.h>
+#include <nsCOMPtr.h>
+#include <nsDataHashtable.h>
+#include <nsInterfaceHashtable.h>
+#include <nsStringGlue.h>
+#include <nsTArray.h>
+#include <nsTHashtable.h>
+
+struct PRLock;
 
 class nsIURI;
-class PRLock;
+class sbIDatabaseQuery;
+class sbLocalDatabaseLibrary;
+class sbISQLBuilderCriterionIn;
+class sbISQLInsertBuilder;
+class sbISQLSelectBuilder;
+class sbISQLUpdateBuilder;
 
 class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache
 {
@@ -51,6 +55,11 @@ public:
   NS_DECL_SBILOCALDATABASEPROPERTYCACHE
 
   sbLocalDatabasePropertyCache();
+
+  // This is public so that it can be used with nsAutoPtr and friends.
+  ~sbLocalDatabasePropertyCache();
+
+  nsresult Init(sbLocalDatabaseLibrary* aLibrary);
 
   nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
   nsresult LoadProperties();
@@ -65,10 +74,6 @@ public:
   void   GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn); 
 
 private:
-  ~sbLocalDatabasePropertyCache();
-
-  PRBool mInitalized;
-
   PRBool mWritePending;
 
   PRUint32 mNumStaticProperties;
@@ -110,6 +115,10 @@ private:
   // Dirty GUID's
   PRLock* mDirtyLock;
   nsTHashtable<nsStringHashKey> mDirty;
+
+  // Backstage pass to our parent library. Can't use an nsRefPtr because the
+  // library owns us and that would create a cycle.
+  sbLocalDatabaseLibrary* mLibrary;
 };
 
 class sbLocalDatabaseResourcePropertyBag : public sbILocalDatabaseResourcePropertyBag
@@ -157,4 +166,3 @@ private:
 };
 
 #endif /* __SBLOCALDATABASEPROPERTYCACHE_H__ */
-

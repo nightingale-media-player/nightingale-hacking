@@ -31,13 +31,11 @@
 #include "sbLocalDatabaseAsyncGUIDArray.h"
 #include "sbLocalDatabaseLibraryFactory.h"
 #include "sbLocalDatabaseLibraryLoader.h"
-#include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseLibraryLoader, Init)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabasePropertyCache)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSimpleMediaListFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseAsyncGUIDArray, Init)
 
@@ -69,12 +67,6 @@ static const nsModuleComponentInfo components[] =
     sbLocalDatabaseLibraryLoader::RegisterSelf
   },
   {
-    "Local Database Property Cache",
-    SB_LOCALDATABASE_PROPERTYCACHE_CID,
-    SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID,
-    sbLocalDatabasePropertyCacheConstructor
-  },
-  {
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_DESCRIPTION,
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID,
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CONTRACTID,
@@ -82,4 +74,4 @@ static const nsModuleComponentInfo components[] =
   }
 };
 
-NS_IMPL_NSGETMODULE(Songbird Local Database Module, components)
+NS_IMPL_NSGETMODULE(Songbird Local Database Library Module, components)

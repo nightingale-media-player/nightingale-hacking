@@ -33,15 +33,11 @@ function runTest () {
   var databaseGUID = "test_localdatabaselibrary";
   var library = createLibrary(databaseGUID);
 
-  var cache = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/PropertyCache;1"]
-                .createInstance(Ci.sbILocalDatabasePropertyCache);
-  cache.init(databaseGUID, null);
-
+  var cache = library.QueryInterface(Ci.sbILocalDatabaseLibrary).propertyCache;
+  
   var db = loadMockDatabase();
 
-  /*
-   * Request guids in 20 guid chunks
-   */
+  // Request guids in 20 guid chunks
   var guidList = [];
   for(var guid in db) {
     guidList.push(guid);
@@ -62,9 +58,7 @@ function runTest () {
     }
   }
 
-  /*
-   * Request the whole db one guid at a time
-   */
+  // Request the whole db one guid at a time
   for(var guid in db) {
     var item = db[guid];
 
@@ -80,4 +74,3 @@ function runTest () {
   }
 
 }
-

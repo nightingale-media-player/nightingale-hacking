@@ -48,6 +48,7 @@ class sbIDatabaseQuery;
 class sbILocalDatabasePropertyCache;
 class sbLibraryInsertingEnumerationListener;
 class sbLibraryRemovingEnumerationListener;
+class sbLocalDatabasePropertyCache;
 
 // These are the methods from sbLocalDatabaseMediaListBase that we're going to
 // override in sbLocalDatabaseLibrary. Most of them are from sbIMediaList.
@@ -74,6 +75,7 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
   friend class sbAutoBatchHelper;
   friend class sbLibraryInsertingEnumerationListener;
   friend class sbLibraryRemovingEnumerationListener;
+  friend class sbLocalDatabasePropertyCache;
 
   struct sbMediaListFactoryInfo {
     sbMediaListFactoryInfo()

@@ -110,4 +110,41 @@ function runTest () {
   
   assertEqual(list.length, 0);
 
+  // Test that modifying a media item notifies the library and playlist.
+  library = createLibrary(databaseGUID);
+  list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  var item = list.getItemByIndex(8);
+  
+  listListener = new TestMediaListListener();
+  list.addListener(listListener);
+  
+  libraryList = library.QueryInterface(Ci.sbIMediaList);
+  
+  var libraryListener = new TestMediaListListener();
+  libraryList.addListener(libraryListener);
+  
+  item.contentType = "foo/foo";
+  
+  assertEqual(listListener.updatedItem, item);
+  assertEqual(libraryListener.updatedItem, item);
+  
+  // Test that modifying an item doesn't notify lists that don't contain the
+  // item.
+  library = createLibrary(databaseGUID);
+  list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
+  
+  listListener = new TestMediaListListener();
+  list.addListener(listListener);
+  
+  libraryList = library.QueryInterface(Ci.sbIMediaList);
+  item = libraryList.getItemByGuid("3E63F4C2-AD99-11DB-9321-C22AB7121F49");
+  
+  libraryListener = new TestMediaListListener();
+  libraryList.addListener(libraryListener);
+  
+  item.contentType = "foo/foo";
+  
+  assertNotEqual(listListener.updatedItem, item);
+  assertEqual(libraryListener.updatedItem, item);
+
 }

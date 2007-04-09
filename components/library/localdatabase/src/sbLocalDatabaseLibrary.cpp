@@ -49,6 +49,7 @@
 #include <nsID.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
+#include <nsXPCOM.h>
 #include <nsWeakReference.h>
 #include <prlog.h>
 #include <prprf.h>
@@ -123,10 +124,10 @@ NS_IMETHODIMP
 sbLibraryInsertingEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaList,
                                                           PRBool* _retval)
 {
-  // aMediaList may be null, so don't NS_ENSURE it here.
-  NS_ENSURE_ARG_POINTER(_retval);
+  if (_retval) {
+    *_retval = PR_TRUE;
+  }
 
-  *_retval = PR_TRUE;
   return NS_OK;
 }
 
@@ -138,9 +139,7 @@ sbLibraryInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList
                                                         sbIMediaItem* aMediaItem,
                                                         PRBool* _retval)
 {
-  // aMediaList may be null, so don't NS_ENSURE it here.
   NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
   nsCOMPtr<sbILibrary> fromLibrary;
@@ -155,12 +154,16 @@ sbLibraryInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList
   if (!equals) {
     rv = mFriendLibrary->AddItemToLocalDatabase(aMediaItem);
     NS_ENSURE_SUCCESS(rv, rv);
-    mShouldInvalidate = PR_TRUE;
 
     mFriendLibrary->NotifyListenersItemAdded(mFriendLibrary, aMediaItem);
+
+    mShouldInvalidate = PR_TRUE;
   }
 
-  *_retval = PR_TRUE;
+  if (_retval) {
+    *_retval = PR_TRUE;
+  }
+
   return NS_OK;
 }
 
@@ -171,12 +174,10 @@ NS_IMETHODIMP
 sbLibraryInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
                                                         nsresult aStatusCode)
 {
-  // aMediaList may be null, so don't NS_ENSURE it here.
-
-  nsresult rv;
   if (mShouldInvalidate) {
     NS_ASSERTION(mFriendLibrary->mFullArray, "Uh, no full array?!");
-    rv = mFriendLibrary->mFullArray->Invalidate();
+
+    nsresult rv = mFriendLibrary->mFullArray->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -316,12 +317,14 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mPropertyCache =
-    do_CreateInstance(SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID, &rv);
+  nsAutoPtr<sbLocalDatabasePropertyCache>
+    propCache(new sbLocalDatabasePropertyCache());
+  NS_ENSURE_TRUE(propCache, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = propCache->Init(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertyCache->Init(mDatabaseGuid, aDatabaseLocation);
-  NS_ENSURE_SUCCESS(rv, rv);
+  mPropertyCache = propCache.forget();
 
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1045,7 +1048,7 @@ sbLocalDatabaseLibrary::GetPropertiesForGuid(const nsAString& aGuid,
     NS_ADDREF(*aPropertyBag = bags[0]);
   }
 
-  nsMemory::Free(bags);
+  NS_Free(bags);
   delete[] guids;
 
   if (*aPropertyBag) {

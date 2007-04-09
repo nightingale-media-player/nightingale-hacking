@@ -26,16 +26,21 @@
 
 #include "sbLocalDatabasePropertyCache.h"
 
-#include <DatabaseQuery.h>
-#include <nsCOMArray.h>
 #include <nsIURI.h>
-#include <nsMemory.h>
+#include <sbIDatabaseQuery.h>
+#include <sbISQLBuilder.h>
+
+#include <DatabaseQuery.h>
+#include <nsAutoLock.h>
+#include <nsCOMArray.h>
+#include <nsComponentManagerUtils.h>
 #include <nsStringEnumerator.h>
 #include <nsUnicharUtils.h>
+#include <nsXPCOM.h>
 #include <prlog.h>
+#include "sbDatabaseResultStringEnumerator.h"
+#include "sbLocalDatabaseLibrary.h"
 #include <sbSQLBuilderCID.h>
-#include <sbDatabaseResultStringEnumerator.h>
-#include <nsAutoLock.h>
 
 #define MAX_IN_LENGTH 5000
 
@@ -89,7 +94,7 @@ static sbStaticProperty kStaticProperties[] = {
 };
 
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache() 
-: mInitalized(PR_FALSE),
+: mLibrary(nsnull),
   mWritePending(PR_FALSE)
 {
   mNumStaticProperties = sizeof(kStaticProperties) / sizeof(kStaticProperties[0]);
@@ -112,27 +117,27 @@ sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 NS_IMETHODIMP
 sbLocalDatabasePropertyCache::GetWritePending(PRBool *aWritePending)
 {
-  NS_ASSERTION(mInitalized, "You didn't initalize!");
+  NS_ASSERTION(mLibrary, "You didn't initalize!");
   NS_ENSURE_ARG_POINTER(aWritePending);
   *aWritePending = mWritePending;
 
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbLocalDatabasePropertyCache::Init(const nsAString& aDatabaseGuid,
-                                   nsIURI* aDatabaseLocation)
+nsresult
+sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
 {
-  NS_ASSERTION(!mInitalized, "Already initalized!");
+  NS_ASSERTION(!mLibrary, "Already initalized!");
+  NS_ENSURE_ARG_POINTER(aLibrary);
 
-  nsresult rv;
+  nsresult rv = aLibrary->GetDatabaseGuid(mDatabaseGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  mDatabaseGUID = aDatabaseGuid;
-  mDatabaseLocation = aDatabaseLocation;
+  rv = aLibrary->GetDatabaseLocation(getter_AddRefs(mDatabaseLocation));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  /*
-   * Simple select from properties table with an in list of guids
-   */
+  // Simple select from properties table with an in list of guids
+
   mPropertiesSelect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -166,9 +171,8 @@ sbLocalDatabasePropertyCache::Init(const nsAString& aDatabaseGuid,
                                    PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /*
-   * Create simple media_items query with in list of guids
-   */
+  // Create simple media_items query with in list of guids
+
   mMediaItemsSelect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -197,11 +201,9 @@ sbLocalDatabasePropertyCache::Init(const nsAString& aDatabaseGuid,
                                    PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /*
-   * Create property insert query builder
-   *
-   * INSERT INTO resource_properties (guid, property_id, obj, obj_sortable) VALUES (?, ?, ?, ?)
-   */
+  // Create property insert query builder:
+  //  INSERT INTO resource_properties (guid, property_id, obj, obj_sortable) VALUES (?, ?, ?, ?)
+
   mPropertiesInsert = do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -232,11 +234,9 @@ sbLocalDatabasePropertyCache::Init(const nsAString& aDatabaseGuid,
   rv = mPropertiesInsert->AddValueParameter();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /*
-   * Create property update query builder.
-   *
-   * UPDATE resource_properties SET obj = ?, obj_sortable = ? WHERE guid = ? AND property_id = ?
-   */
+  // Create property update query builder:
+  //   UPDATE resource_properties SET obj = ?, obj_sortable = ? WHERE guid = ? AND property_id = ?
+
   mPropertiesUpdate = do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -269,16 +269,14 @@ sbLocalDatabasePropertyCache::Init(const nsAString& aDatabaseGuid,
   rv = mPropertiesUpdate->AddCriterion(criterionAnd);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /*
-   * Create media item property update query builder.
-   * This one can't be prepared in advance.
-   */
+  // Create media item property update query builder.
+  // This one can't be prepared in advance.
+
   mMediaItemsUpdate = do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /*
-   * Create query used to verify if we need to insert or update a property
-   */
+  // Create query used to verify if we need to insert or update a property
+
   mPropertyInsertSelect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -315,7 +313,7 @@ sbLocalDatabasePropertyCache::Init(const nsAString& aDatabaseGuid,
   success = mDirty.Init(1000);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  mInitalized = PR_TRUE;
+  mLibrary = aLibrary;
 
   return NS_OK;
 }
@@ -324,7 +322,7 @@ NS_IMETHODIMP
 sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
                                               PRUint32 aGUIDArrayCount)
 {
-  NS_ASSERTION(mInitalized, "You didn't initalize!");
+  NS_ASSERTION(mLibrary, "You didn't initalize!");
   nsresult rv;
 
   /*
@@ -515,7 +513,7 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
                                             PRUint32 *aPropertyArrayCount,
                                             sbILocalDatabaseResourcePropertyBag ***aPropertyArray)
 {
-  NS_ASSERTION(mInitalized, "You didn't initalize!");
+  NS_ASSERTION(mLibrary, "You didn't initalize!");
   nsresult rv;
 
   NS_ENSURE_ARG_POINTER(aPropertyArrayCount);
@@ -533,7 +531,7 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
   if (aGUIDArrayCount > 0) {
 
     propertyBagArray = (sbILocalDatabaseResourcePropertyBag **)
-      nsMemory::Alloc((sizeof (sbILocalDatabaseResourcePropertyBag *)) * *aPropertyArrayCount);
+      NS_Alloc((sizeof (sbILocalDatabaseResourcePropertyBag *)) * *aPropertyArrayCount);
 
     for (PRUint32 i = 0; i < aGUIDArrayCount; i++) {
       nsAutoString guid(aGUIDArray[i]);
@@ -564,12 +562,14 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
                                             PRUint32 aPropertyArrayCount, 
                                             PRBool aWriteThroughNow)
 {
-  NS_ASSERTION(mInitalized, "You didn't initalize!");
+  NS_ASSERTION(mLibrary, "You didn't initalize!");
   NS_ENSURE_ARG_POINTER(aGUIDArray);
   NS_ENSURE_ARG_POINTER(aPropertyArray);
   NS_ENSURE_TRUE(aGUIDArrayCount == aPropertyArrayCount, NS_ERROR_INVALID_ARG);
 
   nsresult rv = NS_OK;
+
+  sbAutoBatchHelper batchHelper(mLibrary);
 
   for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
     nsAutoString guid(aGUIDArray[i]);
@@ -626,7 +626,7 @@ EnumDirtyProps(nsUint32HashKey *aKey, void *aClosure)
 NS_IMETHODIMP 
 sbLocalDatabasePropertyCache::Write()
 {
-  NS_ASSERTION(mInitalized, "You didn't initalize!");
+  NS_ASSERTION(mLibrary, "You didn't initalize!");
 
   nsresult rv = NS_OK;
   nsTArray<nsString> dirtyGuids;
@@ -908,9 +908,17 @@ nsresult
 sbLocalDatabasePropertyCache::AddDirtyGUID(const nsAString &aGuid)
 {
   nsAutoString guid(aGuid);
-  nsAutoLock lock(mDirtyLock);
 
-  mDirty.PutEntry(guid);
+  {
+    nsAutoLock lock(mDirtyLock);
+    mDirty.PutEntry(guid);
+  }
+
+  nsCOMPtr<sbIMediaItem> item;
+  nsresult rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
+  if (NS_SUCCEEDED(rv)) {
+    mLibrary->NotifyListenersItemUpdated(mLibrary, item);
+  }
 
   return NS_OK;
 }

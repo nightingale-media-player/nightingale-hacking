@@ -183,7 +183,7 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(sbIMediaList* aList
   SB_ENSURE_TRUE_VOID(aItem);
 
   MediaListCallbackInfo info(aList, aItem);
-  mListenerProxyTable.EnumerateRead(ItemRemovedCallback, &info);
+  mListenerProxyTable.EnumerateRead(ItemUpdatedCallback, &info);
 }
 
 /**

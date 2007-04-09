@@ -43,8 +43,6 @@ interface sbILocalDatabasePropertyCache : nsISupports
 {
   readonly attribute boolean writePending;
 
-  void init(in AString aDatabaseGuid, in nsIURI aDatabaseLocation);
-
   void getProperties([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray,
                      in unsigned long aGUIDArrayCount,
                      out unsigned long aPropertyArrayCount,

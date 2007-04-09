@@ -71,16 +71,6 @@
   { 0x98, 0x27, 0x9c, 0x22, 0xd3, 0xe9, 0xf9, 0x2d }                 \
 }
 
-#define SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID                    \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/PropertyCache;1"
-#define SB_LOCALDATABASE_PROPERTYCACHE_CID                           \
-  { /* 870f0667-029c-4f2b-a6ec-36cad2f622f0 */                       \
-    0x870f0667,                                                      \
-    0x029c,                                                          \
-    0x4f2b,                                                          \
-    { 0xa6, 0xec, 0x36, 0xca, 0xd2, 0xf6, 0x22, 0xf9 }               \
-  }
-
 #define SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_DESCRIPTION          \
   "Local Database Simple Media List Factory"
 #define SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CONTRACTID           \
