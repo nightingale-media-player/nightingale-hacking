@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+
+<window 
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+
+ id="test"
+ title="Element Test"
+>
+   
+<!-- 
+   These are the widgets from http://developer.mozilla.org/en/docs/XUL:ControlsGuide 
+   This page is to be used for testing the default widget styles 
+  -->
+  
+<html:div>
+   
+<button label="Save" accesskey="S"/>
+
+<button type="menu" label="View">
+  <menupopup>
+    <menuitem label="List"/>
+    <menuitem label="Details"/>
+  </menupopup>
+</button>
+
+<button type="menu-button" label="New">
+  <menupopup>
+    <menuitem label="New Document"/>
+    <menuitem label="New Image"/>
+  </menupopup>
+</button>
+
+<checkbox label="Show Toolbar Labels" checked="true"/>
+
+<colorpicker color="#FF0000"/>
+
+<colorpicker type="button" color="#CC0080"/>
+
+<datepicker value="2007/03/26"/>
+
+<datepicker type="grid" value="2007/02/20"/>
+
+<datepicker type="popup" value="2008/08/24"/>
+
+<description>
+  This is a description tag
+</description>
+
+<groupbox>
+  <caption label="Group box"/>
+</groupbox>
+
+<label control="volume" value="I'm a label"/>
+
+<listbox>
+  <listitem label="Chocolate"/>
+  <listitem label="Jelly Beans"/>
+</listbox>
+
+
+<menulist>
+  <menupopup>
+    <menulist label="Lions" value="l"/>
+    <menuitem label="Tigers" value="t"/>
+    <menuitem label="Bears" value="b"/>
+  </menupopup>
+</menulist>
+
+<menulist editable="true">
+  <menupopup>
+    <menuitem label="Elephants" value="Elephants"/>
+    <menuitem label="Kangaroos" value="Kangaroos"/>
+    <menuitem label="Bats" value="Bats"/>
+  </menupopup>
+</menulist>
+
+<progressmeter value="40"/>
+
+<radiogroup>
+  <radio label="Light" value="light"/>
+  <radio label="Heavy" value="heavy"/>
+</radiogroup>
+
+<richlistbox>
+  <richlistitem>
+    <image src="http://upload.wikimedia.org/wikipedia/en/8/82/Misc-tpvgames.gif"/>
+  </richlistitem>
+  <richlistitem>
+    <image src="http://upload.wikimedia.org/wikipedia/en/thumb/8/8f/SNive.gif/19px-SNive.gif"/>
+  </richlistitem>
+</richlistbox>
+
+<scale min="1" max="10"/>
+
+<textbox value="firefox"/>
+
+<textbox multiline="true"/>
+
+<textbox type="autocomplete" autocompletesearch="history"/>
+
+<textbox type="number" min="1" max="20"/>
+
+<textbox type="password">woo</textbox>
+
+<timepicker value="12:05"/>
+   
+<toolbarbutton label="Reload"/>   
+
+<toolbarbutton type="menu" label="Show">
+  <menupopup>
+    <menuitem label="Toolbars"/>
+    <menuitem label="Status Bar"/>
+  </menupopup>
+</toolbarbutton>
+
+<toolbarbutton type="menu-button" label="Open">
+  <menupopup>
+    <menuitem label="Open Changed Files"/>
+    <menuitem label="Open All"/>
+  </menupopup>
+</toolbarbutton>
+
+<tree style="min-height:100px; min-width:300px">
+  <treecols>
+    <treecol label="Name" flex="1"/>
+    <treecol label="Size" flex="1"/>
+  </treecols>
+  <treechildren>
+    <treeitem>
+      <treerow>
+        <treecell label="Popcorn"/>
+        <treecell label="Large"/>
+      </treerow>
+    </treeitem>
+    <treeitem>
+      <treerow>
+        <treecell label="Root Beer"/>
+        <treecell label="Small"/>
+      </treerow>
+    </treeitem>
+  </treechildren>
+</tree>
+
+</html:div>
+   
+</window>
