@@ -38,18 +38,12 @@
     <content>
       <xul:sb-multi-drawer sbid="drawer" header="false" flex="1" xbl:inherits="maxvisibleitems">
         <xul:hbox class="smart-condition-item-box" align="center" flex="1">
-          <xul:menulist class="smart-condition-list" flex="1" value="artist" drawer-prop-map="value=metadata">
-            <xul:menupopup class="smart-condition-popup" sbid="metadatapopup">
+          <xul:menulist sbid="metadatapopup" class="smart-condition-list" flex="1" value="artist" drawer-prop-map="value=metadata">
+            <xul:menupopup class="smart-condition-popup">
             </xul:menupopup>
           </xul:menulist>
-          <xul:menulist class="smart-condition-list" flex="1" value="0" drawer-prop-map="value=condition">
+          <xul:menulist sbid="conditionpopup" class="smart-condition-list" flex="1" value="0" drawer-prop-map="value=condition,label=condition_name">
             <xul:menupopup class="smart-condition-popup">
-              <xul:menuitem class="smart-condition-item" label="&smart.contains;" value="0"/>
-              <xul:menuitem class="smart-condition-item" label="&smart.not_contain;" value="1"/>
-              <xul:menuitem class="smart-condition-item" label="&smart.is;" value="2"/>
-              <xul:menuitem class="smart-condition-item" label="&smart.is_not;" value="3"/>
-              <xul:menuitem class="smart-condition-item" label="&smart.starts;" value="4"/>
-              <xul:menuitem class="smart-condition-item" label="&smart.ends;" value="5"/>
             </xul:menupopup>
           </xul:menulist>
           <xul:textbox class="smart-condition-value dialog_textbox" flex="1" drawer-prop-map="value=value"/>
@@ -58,6 +52,10 @@
         </xul:hbox>
       </xul:sb-multi-drawer>
     </content>
+    
+    <handlers>
+      <handler event="select" action="onSelect(event);"/>
+    </handlers>
 
     <implementation>
 
@@ -66,6 +64,7 @@
       try {
         // Scan the metadata and fill the metadata popup with appropriate items
         this.fillMetadata();
+        // This should pop the select event and cause us to fill the conditions popup
       }
       catch ( err ) {
         alert( "conditions constructor - " + err );
@@ -76,6 +75,36 @@
       </destructor>
 
       <field name="drawer">document.getAnonymousElementByAttribute(this, 'sbid', 'drawer');</field>
+      <field name="conditionsText">
+      <![CDATA[
+      new Array(
+        "&smart.text.contains",
+        "&smart.text.not_contain",
+        "&smart.text.is",
+        "&smart.text.is_not",
+        "&smart.text.starts",
+        "&smart.text.ends"
+      );
+      ]]>
+      </field>
+      <field name="conditionsInt">
+      <![CDATA[
+      new Array(
+        "&smart.int.equal",
+        "&smart.int.less",
+        "&smart.int.greater"
+      );
+      ]]>
+      </field>
+      <field name="conditionsDate">
+      <![CDATA[
+      new Array(
+        "&smart.date.on",
+        "&smart.date.before",
+        "&smart.date.after"
+      );
+      ]]>
+      </field>
 
       <method name="setConditions">
         <parameter name="conditions"/>
@@ -96,35 +125,52 @@
         </body>
       </method>
       
+      <method name="generateMenuPopup">
+        <parameter name="aParent"/>
+        <parameter name="aMenuitemArray"/>
+        <body>
+          <![CDATA[
+            // Clear the current set of menuitems
+            aParent.removeAllItems();
+          
+            // And generate a new set of menuitem children
+            for ( var index = 0; index < aMenuitemArray.length; index++ ) {
+              var obj = aMenuitemArray[ index ];
+              var name;
+              
+              // We accept either {name, value} array or string array
+              if ( obj.name ) {
+                name = obj.name;
+              } else {
+                name = "" + obj;
+                obj = {};
+              }
+              
+              // Cook out the translated value if requested
+              if ( name[0] == "&" ) {
+                name = SBString( name.substr( 1, name.length ), name );
+              }
+              
+              // And append the menutitem to the list (and make it pretty)
+              aParent.appendItem( name, ( obj.value ) ? obj.value : index ).setAttribute( "class", "smart-condition-item" );              
+            }
+            
+            // Select the first item in the list?
+            aParent.value = 0;
+          ]]>
+        </body>
+      </method>
+      
       <method name="fillMetadata">
         <body>
           <![CDATA[
-          try {
             // Erase?
             var metadata = new Array();
-            var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'metadatapopup');
 
-            // Load up the string bundle
-            var src = "chrome://songbird/locale/songbird.properties";
-            var stringBundleService =
-                Components.classes["@mozilla.org/intl/stringbundle;1"]
-                .getService(Components.interfaces.nsIStringBundleService);
-            var stringbundle = stringBundleService.createBundle( src );
-                
-            // Go fill the metadata array with the current library columns
-            // XXXredfive
-            //const DBQuery = new Components.Constructor("@songbirdnest.com/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");        
-            //var metadataDBQuery = new DBQuery();
-            //metadataDBQuery = metadataDBQuery.QueryInterface( Components.interfaces.sbIDatabaseQuery );
-
+            // Figure out what metadata properties are available for creating a smart playlist
             var metadataDBQuery =
                 Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
                 .createInstance( Components.interfaces.sbIDatabaseQuery );
-
-            //const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");        
-            //var mediaLibrary = new MediaLibrary();
-            //mediaLibrary = mediaLibrary.QueryInterface( Components.interfaces.sbIMediaLibrary );
-
             var mediaLibrary =
                 Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"]
                 .createInstance( Components.interfaces.sbIMediaLibrary );
@@ -144,41 +190,50 @@
               if ( visible == "1" ) {
                 var obj = {};
                 obj.name = resultset.getRowCellByColumn( index, kName );
-                obj.column = resultset.getRowCellByColumn( index, kColumn );
+                obj.value = resultset.getRowCellByColumn( index, kColumn );
                 
-                if ( obj.name && obj.name[ 0 ] == "&" ) {
-                  try {
-                    obj.name = stringbundle.GetStringFromName( obj.name.substr( 1, obj.name.length ) );
-                  }
-                  catch( err ) {
-                    alert( "fillMetadata - " + err );
-                  }
-                }
-                
-                if ( ( obj.column != "row_id" ) && ( obj.column != "id" ) ) {
+                if ( ( obj.value != "row_id" ) && ( obj.value != "id" ) ) {
                   metadata.push( obj );
                 }
               }
             }
-
-            for ( var index = 0; index < metadata.length; index++ ) {
-              // Make the metadata item
-              var meta_menuitem = document.createElement( "menuitem" );
-              meta_menuitem.setAttribute( "class", "smart-condition-item" );
-              meta_menuitem.setAttribute( "label", metadata[ index ].name );
-              meta_menuitem.setAttribute( "column", metadata[ index ].column );
-              meta_menuitem.setAttribute( "value", metadata[ index ].column );
-              
-              popup.appendChild( meta_menuitem );
-            }
-          }
-          catch ( err ) {
-            alert( "fillMetadata - " + err );
-          }
+            var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'metadatapopup');
+            this.generateMenuPopup( popup, metadata );
           ]]>
         </body>
       </method>
 
+      <method name="onSelect">
+        <parameter name="event"/>
+        <body>
+        <![CDATA[
+          if ( event.originalTarget.getAttribute( "sbid" ) == "metadatapopup" )
+          {
+            var metadatapopup = event.originalTarget;
+            var conditionspopup = metadatapopup.nextSibling;
+            var metadata = metadatapopup.value;
+            
+            var conditionsArray = this.conditionsText;
+            switch( metadata )
+            {
+              case "length":
+              case "disc_no":
+              case "disc_total":
+              case "track_no":
+              case "track_total":
+              case "rating":
+                conditionsArray = this.conditionsInt;
+                break;
+              case "year":
+                conditionsArray = this.conditionsDate;
+                break;
+            }
+            this.generateMenuPopup( conditionspopup, conditionsArray );
+          }
+        ]]>
+        </body>
+      </method>
+        
     </implementation>
  
   </binding>

@@ -285,8 +285,8 @@
       var description = "Smart Playlist";
       var aSmartPlaylist = aPlaylistManager.createSmartPlaylist(name, readable_name, description, "User", library, limit, limit_type, selected_by, match, queryObj);
       
-      // For now, just display a debug box
       /*
+      // Hooray for debug texts!
       var text = "Library GUID: " + library + "\n";
       text += "Limit: " + use_limit + " - " + limit + "\n";
       text += "Limit Type: " + limit_type + "\n";
@@ -295,23 +295,11 @@
       text += conditions_array.length + " condition" + ( (conditions_array.length == 1) ? "" : "s" ) + ":\r\n";
       */
       
-      var conditionName = "";
       for ( var i in conditions_array )
       {
         var node = conditions_array[ i ];
-        //text += " ---- " + node.metadata + " " + node.condition_name + "(" + node.condition + ") " + node.value + "\r\n";
-        
-        switch(node.condition)
-        {
-          case 0: conditionName = "contains"; break;
-          case 1: conditionName = "does not contain"; break;
-          case 2: conditionName = "is"; break;
-          case 3: conditionName = "is not"; break;
-          case 4: conditionName = "starts with"; break;
-          case 5: conditionName = "ends with"; break;
-        }
-        
-        aSmartPlaylist.addConstraint(node.metadata, conditionName, node.value, false);
+      //  text += " ---- " + node.metadata + " " + node.condition_name + "(" + node.condition + ") " + node.value + "\r\n";
+        aSmartPlaylist.addConstraint(node.metadata, node.condition_name, node.value, false);
       }
       //alert( text );
       
