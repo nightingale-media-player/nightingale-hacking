@@ -263,18 +263,20 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED3(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
+                                                     nsIClassInfo,
+                                                     sbIDatabaseSimpleQueryCallback,
                                                      sbILibrary,
-                                                     sbILocalDatabaseLibrary,
-                                                     nsIClassInfo)
+                                                     sbILocalDatabaseLibrary)
 
-NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseLibrary,
+NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseLibrary,
                              nsIClassInfo,
                              nsISupportsWeakReference,
+                             sbIDatabaseSimpleQueryCallback,
+                             sbILibrary,
                              sbILibraryResource,
                              sbIMediaItem,
-                             sbIMediaList,
-                             sbILibrary);
+                             sbIMediaList);
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
 {
@@ -1393,46 +1395,33 @@ sbLocalDatabaseLibrary::RegisterMediaListFactory(sbIMediaListFactory* aFactory)
  * See sbILibrary
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::BeginBatch(PRBool aIsAsync)
+sbLocalDatabaseLibrary::Optimize()
 {
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - BeginBatch(%s)", this,
-    aIsAsync ? NS_LITERAL_CSTRING("true").get() :
-               NS_LITERAL_CSTRING("false").get()));
-  // this should increment a counter to allow for nested batches
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - Optimize()", this));
 
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-/**
- * See sbILibrary
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::CancelBatch()
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - CancelBatch()", this));
-  // this should increment a counter to allow for nested batches
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
+  rv = query->SetAsyncQuery(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-/**
- * See sbILibrary
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::EndBatch()
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - EndBatch()", this));
-  // this should decrement a counter to allow for nested batches
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
+  rv = query->AddQuery(NS_LITERAL_STRING("VACUUM"));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-/**
- * See sbILibrary
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::TidyUp()
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - TidyUp()", this));
-  return NS_ERROR_NOT_IMPLEMENTED;
+  rv = query->AddQuery(NS_LITERAL_STRING("ANALYZE"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddSimpleQueryCallback(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
+  
+  return NS_OK;
 }
 
 /**
@@ -1742,6 +1731,9 @@ sbLocalDatabaseLibrary::Clear()
   return NS_OK;
 }
 
+/**
+ * See sbIMediaList
+ */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::CreateView(sbIMediaListView** _retval)
 {
@@ -1777,13 +1769,31 @@ sbLocalDatabaseLibrary::GetDefaultSortProperty(nsAString& aProperty)
   return NS_OK;
 }
 
-// nsIClassInfo
+/**
+ * See sbIDatabaseSimpleQueryCallback
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::OnQueryEnd(sbIDatabaseResult* aDBResultObject,
+                                   const nsAString& aDBGUID,
+                                   const nsAString& aQuery)
+{
+  NS_ASSERTION(aQuery.Find("VACUUM") != -1, "Got the wrong callback!");
+
+  return NS_OK;
+}
+
+/**
+ * See nsIClassInfo
+ */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetInterfaces(PRUint32* count, nsIID*** array)
 {
   return NS_CI_INTERFACE_GETTER_NAME(sbLocalDatabaseLibrary)(count, array);
 }
 
+/**
+ * See nsIClassInfo
+ */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetHelperForLanguage(PRUint32 language,
                                              nsISupports** _retval)
@@ -1792,6 +1802,9 @@ sbLocalDatabaseLibrary::GetHelperForLanguage(PRUint32 language,
   return NS_OK;
 }
 
+/**
+ * See nsIClassInfo
+ */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetContractID(char** aContractID)
 {
@@ -1799,6 +1812,9 @@ sbLocalDatabaseLibrary::GetContractID(char** aContractID)
   return NS_OK;
 }
 
+/**
+ * See nsIClassInfo
+ */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetClassDescription(char** aClassDescription)
 {
@@ -1806,6 +1822,9 @@ sbLocalDatabaseLibrary::GetClassDescription(char** aClassDescription)
   return NS_OK;
 }
 
+/**
+ * See nsIClassInfo
+ */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetClassID(nsCID** aClassID)
 {
@@ -1813,6 +1832,9 @@ sbLocalDatabaseLibrary::GetClassID(nsCID** aClassID)
   return NS_OK;
 }
 
+/**
+ * See nsIClassInfo
+ */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetImplementationLanguage(PRUint32* aImplementationLanguage)
 {
@@ -1820,6 +1842,9 @@ sbLocalDatabaseLibrary::GetImplementationLanguage(PRUint32* aImplementationLangu
   return NS_OK;
 }
 
+/**
+ * See nsIClassInfo
+ */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetFlags(PRUint32 *aFlags)
 {
@@ -1827,9 +1852,11 @@ sbLocalDatabaseLibrary::GetFlags(PRUint32 *aFlags)
   return NS_OK;
 }
 
+/**
+ * See nsIClassInfo
+ */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
-

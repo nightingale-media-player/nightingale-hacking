@@ -28,6 +28,7 @@
 #define __SBLOCALDATABASELIBRARY_H__
 
 #include "sbLocalDatabaseMediaListBase.h"
+#include "sbIDatabaseQuery.h"
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaListListener.h>
@@ -45,7 +46,6 @@
 class nsIURI;
 class nsIWeakReference;
 class sbAutoBatchHelper;
-class sbIDatabaseQuery;
 class sbILocalDatabasePropertyCache;
 class sbLibraryInsertingEnumerationListener;
 class sbLibraryRemovingEnumerationListener;
@@ -70,6 +70,7 @@ class sbLocalDatabasePropertyCache;
   /* nothing */
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
+                               public sbIDatabaseSimpleQueryCallback,
                                public sbILibrary,
                                public sbILocalDatabaseLibrary
 {
@@ -106,6 +107,7 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
 
 public:
   NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_SBIDATABASESIMPLEQUERYCALLBACK
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
   NS_DECL_NSICLASSINFO

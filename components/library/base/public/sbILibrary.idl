@@ -107,25 +107,6 @@ interface sbILibrary : sbILibraryResource
   void registerMediaListFactory(in sbIMediaListFactory aFactory);
 
   /**
-   * \brief Begin a batch operation
-   * \param aIsAsync Specify if the batch operation is to execute
-   * asynchronously
-   */
-  void beginBatch(in boolean aIsAsync);
-
-  /**
-   * \brief Cancel current batch operation.  Changes made in the current
-   * batch operation should not be applied
-   */
-  void cancelBatch();
-
-  /**
-   * \brief End the current batch operation.  Changes made in the current
-   * batch operation should be applied
-   */
-  void endBatch();
-
-  /**
    * Hints for transfer service to possibly add a transcode step
    */
 /*
@@ -134,10 +115,11 @@ interface sbILibrary : sbILibraryResource
 */
 
   /**
-   * \brief Remove unsupported media list types, unknown property types, and
-   * temporary items
+   * \brief Called when the library should remove unsupported media list types,
+   *        unknown property types, temporary items, or otherwise optimize its
+   *        performance or size.
    */
-  void tidyUp();
+  void optimize();
 
   /**
    * \brief Called when the library should clean up in preparation for shutdown
