@@ -5,10 +5,10 @@
      xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
-    <em:id>dove@songbirdnest.com</em:id>
+    <em:id>basic-layouts@songbirdnest.com</em:id>
     <em:version>1.0</em:version>
 
-    <!-- Songbird --> 
+    <!-- Songbird -->
     <em:targetApplication>
       <Description>
         <em:id>songbird@songbirdnest.com</em:id>
@@ -17,36 +17,40 @@
       </Description>
     </em:targetApplication>
 
-    <em:name>Dove</em:name>
-    <em:description>Dove Feathers</em:description>
+    <em:name>Songbird Basic Layout</em:name>
+    <em:description>The standard layout for the Songbird player</em:description>
     <em:locked>true</em:locked>
     <em:creator>Pioneers of the Inevitable</em:creator>
 
     <songbird:feathers>
       <Description>
-        <songbird:skin>
+        <songbird:layout>
           <Description>
-            <songbird:name>Dove</songbird:name>
-            <songbird:internalName>dove/0.1</songbird:internalName>
-            <songbird:compatibleLayout>
+            <songbird:name>Basic Player</songbird:name>
+            <songbird:url>chrome://songbird/content/feathers/basic-layouts/xul/mainwin.xul</songbird:url>
+            <songbird:compatibleSkin>
               <Description>
-                <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/mainwin.xul</songbird:layoutURL>
+                <songbird:internalName>rubberducky/0.2</songbird:internalName>
                 <songbird:showChrome>false</songbird:showChrome>
               </Description>
-            </songbird:compatibleLayout>
-            <songbird:compatibleLayout>
-              <Description>
-                <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul</songbird:layoutURL>
-                <songbird:showChrome>false</songbird:showChrome>
-              </Description>
-            </songbird:compatibleLayout>            
+            </songbird:compatibleSkin>
           </Description>
-        </songbird:skin>
+        </songbird:layout>
+        <songbird:layout>
+          <Description>
+            <songbird:name>Mini Player</songbird:name>
+            <songbird:url>chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul</songbird:url>
+            <songbird:compatibleSkin>
+              <Description>
+                <songbird:internalName>rubberducky/0.2</songbird:internalName>
+                <songbird:showChrome>false</songbird:showChrome>
+              </Description>
+            </songbird:compatibleSkin>
+          </Description>
+        </songbird:layout>        
       </Description>
     </songbird:feathers>
-    
-    
-    <em:internalName>dove/0.1</em:internalName>
+
     <em:hidden>true</em:hidden>
     <em:appManaged>true</em:appManaged>
   </Description>

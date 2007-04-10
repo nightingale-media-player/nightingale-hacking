@@ -29,7 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = dove \
+SUBDIRS = basic-layouts \
+          dove \
           rubberducky \
           classic \
           plucked \

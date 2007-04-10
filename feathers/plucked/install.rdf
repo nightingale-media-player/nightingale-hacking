@@ -30,11 +30,11 @@
             <songbird:internalName>plucked/0.1</songbird:internalName>
             <songbird:compatibleLayout>
               <Description>
-                <songbird:layoutURL>chrome://rubberducky/content/xul/mainwin.xul</songbird:layoutURL>
+                <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/mainwin.xul</songbird:layoutURL>
                 <songbird:showChrome>true</songbird:showChrome>
               </Description>
               <Description>
-                <songbird:layoutURL>chrome://rubberducky/content/xul/miniplayer.xul</songbird:layoutURL>
+                <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul</songbird:layoutURL>
                 <songbird:showChrome>true</songbird:showChrome>
               </Description>              
             </songbird:compatibleLayout>

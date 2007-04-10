@@ -405,7 +405,7 @@
               tooltip += " (" + layout.name + " / " + skin.name + ")";
               clickhold.setAttribute("tooltiptext", tooltip);  
             };
-            setTimeout(finishClickholdTooltip, 500, this._feathersManager);
+            setTimeout(finishClickholdTooltip, 1000, this._feathersManager);
           ]]>
         </body>
       </method>

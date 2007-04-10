@@ -29,14 +29,19 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTENSION_UUID = rubberducky@songbirdnest.com
+EXTENSION_UUID = basic-layouts@songbirdnest.com
 EXTENSION_DIR  = $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
 
-JAR_MANIFEST = jar.mn
+SUBDIRS = content
 
 include $(topsrcdir)/build/rules.mk
 
 all:: extinstall
+
+#
+# A stub extension is placed in the extensions folder, but the
+# content is placed in chrome/songbird.jar
+#
 
 extinstall :
 	@$(CYGWIN_WRAPPER)	$(MKDIR) -p $(EXTENSION_DIR)

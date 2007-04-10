@@ -22,24 +22,13 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTENSION_UUID = rubberducky@songbirdnest.com
-EXTENSION_DIR  = $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
-
 JAR_MANIFEST = jar.mn
 
 include $(topsrcdir)/build/rules.mk
-
-all:: extinstall
-
-extinstall :
-	@$(CYGWIN_WRAPPER)	$(MKDIR) -p $(EXTENSION_DIR)
-	$(CYGWIN_WRAPPER)	$(CP)	-f $(srcdir)/install.rdf $(EXTENSION_DIR)
-
-.PHONY : extinstall

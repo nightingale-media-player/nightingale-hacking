@@ -30,36 +30,12 @@
             <songbird:internalName>rubberducky/0.2</songbird:internalName>
             <songbird:compatibleLayout>
               <Description>
-                <songbird:layoutURL>chrome://rubberducky/content/xul/mainwin.xul</songbird:layoutURL>
+                <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/mainwin.xul</songbird:layoutURL>
                 <songbird:showChrome>false</songbird:showChrome>
               </Description>
             </songbird:compatibleLayout>
           </Description>
         </songbird:skin>
-        <songbird:layout>
-          <Description>
-            <songbird:name>Standard Player</songbird:name>
-            <songbird:url>chrome://rubberducky/content/xul/mainwin.xul</songbird:url>
-            <songbird:compatibleSkin>
-              <Description>
-                <songbird:internalName>rubberducky/0.2</songbird:internalName>
-                <songbird:showChrome>false</songbird:showChrome>
-              </Description>
-            </songbird:compatibleSkin>
-          </Description>
-        </songbird:layout>
-        <songbird:layout>
-          <Description>
-            <songbird:name>Mini Player</songbird:name>
-            <songbird:url>chrome://rubberducky/content/xul/miniplayer.xul</songbird:url>
-            <songbird:compatibleSkin>
-              <Description>
-                <songbird:internalName>rubberducky/0.2</songbird:internalName>
-                <songbird:showChrome>false</songbird:showChrome>
-              </Description>
-            </songbird:compatibleSkin>
-          </Description>
-        </songbird:layout>        
       </Description>
     </songbird:feathers>
 

@@ -33,8 +33,8 @@
 // Fallback layouts/skin, used by previousSkinName and previousLayoutURL
 // Changes to the shipped feathers must be reflected here
 // and in sbFeathersManager.js
-const DEFAULT_MAIN_LAYOUT_URL         = "chrome://rubberducky/content/xul/mainwin.xul";
-const DEFAULT_SECONDARY_LAYOUT_URL    = "chrome://rubberducky/content/xul/miniplayer.xul";
+const DEFAULT_MAIN_LAYOUT_URL         = "chrome://songbird/content/feathers/basic-layouts/xul/mainwin.xul";
+const DEFAULT_SECONDARY_LAYOUT_URL    = "chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul";
 const DEFAULT_SKIN_NAME               = "rubberducky/0.2";
 
 
@@ -194,7 +194,7 @@ function testAddonMetadataReader()
   assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
   
   // Verify all layouts added properly
-  var layoutURLs = [ DEFAULT_MAIN_LAYOUT_URL, DEFAULT_SECONDARY_LAYOUT_URL ]
+  var layoutURLs = [ DEFAULT_MAIN_LAYOUT_URL, DEFAULT_SECONDARY_LAYOUT_URL ];
   assertEqual(feathersManager.layoutCount, layoutURLs.length);
   enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
                      Components.interfaces.sbILayoutDescription);

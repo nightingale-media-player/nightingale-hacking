@@ -1,0 +1,12 @@
+songbird.jar:
+#ifdef USING_FLAT_JARS
+% content  songbird  songbird/content/songbird/
+#else
+% content  songbird  jar:songbird.jar!/content/songbird/
+#endif
+@include_all_to content/songbird/feathers/basic-layouts/
+* content/songbird/feathers/basic-layouts/xul/mainwin.xul              (xul/mainwin.xul)
+
+# Because these layouts are essential to the app they are packaged in 
+# songbird.jar.  The URL for mainwin.xul will be:
+#    chrome://songbird/content/feathers/basic-layouts/xul/mainwin.xul
