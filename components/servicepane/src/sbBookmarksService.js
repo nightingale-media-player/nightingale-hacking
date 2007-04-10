@@ -50,8 +50,8 @@ const Cr = Components.results;
 
 const CONTRACTID = "@songbirdnest.com/servicepane/bookmarks;1"
 const ROOTNODE = "SB:Bookmarks"
-const FOLDER_IMAGE = 'chrome://songbird/skin/default/icon_folder.png';
-const BOOKMARK_IMAGE = 'chrome://songbird/skin/serviceicons/default.ico';
+const FOLDER_IMAGE = 'chrome://songbird/skin/icons/icon_folder.png';
+const BOOKMARK_IMAGE = 'chrome://service-icons/skin/default.ico';
 
 
 function SB_NewDataRemote(a,b) {

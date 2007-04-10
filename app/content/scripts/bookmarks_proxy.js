@@ -423,7 +423,7 @@ ServicesourceProxy.prototype = {
         icon = icon.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
         
         // If icon is a folder, then we don't want to display it
-        if (icon != "chrome://songbird/skin/default/icon_folder.png") {
+        if (icon != "chrome://songbird/skin/icons/icon_folder.png") {
           selectedItems.push(item);
         } 
       // No icon.. probably a playlist

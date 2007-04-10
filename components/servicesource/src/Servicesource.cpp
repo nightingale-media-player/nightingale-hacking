@@ -140,8 +140,8 @@ static nsString     gParentLabels[ NUM_PARENTS ] =
 
 static nsString     gParentIcons[ NUM_PARENTS ] =
 {
-  NS_LITERAL_STRING("chrome://songbird/skin/default/logo_16.png"),
-  NS_LITERAL_STRING("chrome://songbird/skin/default/icon_lib_16x16.png"),
+  NS_LITERAL_STRING("chrome://songbird-branding/skin/logo_16.png"),
+  NS_LITERAL_STRING("chrome://songbird/skin/icons/icon_lib_16x16.png"),
 };
 
 static nsString     gParentUrls[ NUM_PARENTS ] =
@@ -523,7 +523,7 @@ CServicesource::GetTarget(nsIRDFResource *source,
       else if (property == kNC_Icon)
       {
         // These icons come from the skin.
-//        outstring = NS_LITERAL_STRING( "chrome://songbird/skin/default/icon_lib_16x16.png" );
+//        outstring = NS_LITERAL_STRING( "chrome://songbird/skin/icons/icon_lib_16x16.png" );
       }
       else if (property == kNC_URL)
       {

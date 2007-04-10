@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = bindings \
+          branding \
           dialogs \
           global \
           service-icons \

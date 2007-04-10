@@ -106,13 +106,6 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 					RelativePath=".\content\xul\miniplayer.xul">
 				</File>
 			</Filter>
-			<Filter
-				Name="bindings"
-				Filter="">
-				<File
-					RelativePath=".\content\bindings\bindings.xml">
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="skin"
@@ -777,9 +770,6 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 		</Filter>
 		<File
 			RelativePath=".\_exclude">
-		</File>
-		<File
-			RelativePath=".\bindings.xml">
 		</File>
 		<File
 			RelativePath=".\install.rdf">

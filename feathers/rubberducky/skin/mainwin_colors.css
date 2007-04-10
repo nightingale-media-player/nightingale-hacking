@@ -338,7 +338,6 @@ A List Tree is a sortable column list with striping rows.
 */ 
 tree treecol
 {
-  background-image: url(default/treecol.png) !important;
   color: #B3BAAC; /** Light Color 1 */
   border-right-color: #333333; /** Dark Border 4*/ 
   background-color: transparent !important;
@@ -362,14 +361,12 @@ treecol[insertafter="true"]
 tree .tree-columnpicker-icon
 {
   border: 1px solid transparent;
-  list-style-image: url(default/column_picker.png) !important;
   background-color: transparent !important;
 }
 
 tree .treecol-image /* puts a little piece to fill in next to the column picker **/
 {
   border: 1px solid transparent;
-  background-image: url(default/treecol.png) !important;
   background-color: transparent !important;
 }
 

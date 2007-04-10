@@ -166,7 +166,7 @@ A List Tree is a sortable column list with striping rows.
 */ 
 playlist.dialog_playlist tree treecol
 {
-  background-image: url(chrome://songbird/skin/default/treecol.png) !important;
+  background-image: url(chrome://songbird/skin/tree/treecol.png) !important;
   color: #99A194 !important;  
   -moz-border-right-colors: #333 !important;
   background-color: #000 !important;
@@ -179,7 +179,7 @@ playlist.dialog_playlist tree .tree-columnpicker-icon
   -moz-border-right-colors: #000 #000 !important;
   -moz-border-bottom-colors: #000 #000 !important;
   -moz-border-left-colors: #000 #000 !important;
-  list-style-image: url(chrome://songbird/skin/default/column_picker.png) !important;
+  list-style-image: url(chrome://songbird/skin/tree/column_picker.png) !important;
   background-color: transparent !important;
 }
 playlist.dialog_playlist tree .treecol-image /* puts a little piece to fill in next to the column picker **/
@@ -188,7 +188,7 @@ playlist.dialog_playlist tree .treecol-image /* puts a little piece to fill in n
   -moz-border-right-colors: #000 #000 !important;
   -moz-border-bottom-colors: #000 #000 !important;
   -moz-border-left-colors: #000 #000 !important;
-  background-image: url(chrome://songbird/skin/default/treecol.png) !important;
+  background-image: url(chrome://songbird/skin/tree/treecol.png) !important;
   background-color: transparent !important;
 }
 
@@ -201,7 +201,7 @@ THE PLAYLIST
 playlist.dialog_playlist
 {
   background-color: #000 !important;
-  background-image: url(default/bkgd_flowers.png) !important;
+  background-image: url(backgrounds/bkgd_flowers.png) !important;
 }
 
 playlist.dialog_playlist > stack > vbox
@@ -353,7 +353,7 @@ menulist,
 
 .dropmarker-icon
 {
-  list-style-image: url(chrome://songbird/skin/default/chrome_scroll_down.png) !important;
+  list-style-image: url(chrome://songbird/skin/scrollbox/chrome_scroll_down.png) !important;
   background-color: transparent !important;
 }
 
@@ -511,12 +511,12 @@ checkbox:hover:active .checkbox-check {
 checkbox[checked="true"] .checkbox-check 
 {
   background-color: #000 !important;
-  background-image: url("default/check_fff.png") !important;
+  background-image: url("checkbox/check_fff.png") !important;
 }
 
 checkbox[checked="true"][disabled="true"] .checkbox-check {
   background-color: #000 !important;
-  background-image: url("default/check_fff.png") !important;
+  background-image: url("checkbox/check_fff.png") !important;
 }
 /* END CHECKBOXES **/
 /** 
@@ -687,7 +687,7 @@ VIDEO WINDOW
 
 #video_chrome_bkgd
 {
-  background-image: url(chrome://songbird/skin/default//chrm_bkgd.png) !important;
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient.png) !important;
 }
 
 iframe#video_controls

@@ -81,7 +81,7 @@ Player Controls (Back, Play, Pause, Forward Buttons)
 /* the back button */
 sb-player-back-button.miniplayer
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
   -moz-image-region: rect(0px 50px 18px 0px);
   background-color: transparent;
 }
@@ -102,7 +102,7 @@ sb-player-back-button.miniplayer:active
 /* the play button */
 .miniplayer > .sb-player-play-button-play
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
   -moz-image-region: rect(0px 120px 18px 50px);
   background-color: transparent;
 }
@@ -123,7 +123,7 @@ sb-player-back-button.miniplayer:active
 /* the pause button */
 .miniplayer > .sb-player-pause-button-pause
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
   -moz-image-region: rect(0px 190px 18px 120px);
   background-color: transparent;
 }
@@ -144,7 +144,7 @@ sb-player-back-button.miniplayer:active
 /* the fwd button */
 sb-player-forward-button.miniplayer
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini_player_controls.png);
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
   -moz-image-region: rect(0px 240px 18px 190px);
   background-color: transparent;
 }
@@ -172,7 +172,7 @@ MINI DASHBOARD
 #mini_dash
 {
   height: 18px;
-  background-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard.png);
+  background-image: url(chrome://songbird/skin/miniplayer/mini.bkg.dashboard.png);
   background-repeat: repeat-x;
   padding: 0px 3px 0px 3px;
 }
@@ -180,11 +180,11 @@ MINI DASHBOARD
 /* Dashboard edges (rounded corners) */
 #mini_dash_e
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard_e.png) !important;
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini.bkg.dashboard_e.png) !important;
 }
 #mini_dash_w
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard_w.png) !important;
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini.bkg.dashboard_w.png) !important;
 }
 
 /* Artist and title, etc. */
@@ -224,7 +224,7 @@ MINI DASHBOARD
 {
   width: 11px !important;
   height: 4px !important;
-  background-image: url(chrome://songbird/skin/mini/seekbar_thumb.png) !important;
+  background-image: url(chrome://songbird/skin/miniplayer/seekbar_thumb.png) !important;
   background-color: transparent !important;
   background-repeat: no-repeat !important;
   border: 0px !important;
@@ -253,13 +253,13 @@ MINI WINDOW CONTROLS
 /* Restore */
 .miniplayer > .sb-feathers-toggle-button
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini.btn.max.png);
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.max.png);
 }
 
 /*  Close Window */
 sb-sys-close-button.miniplayer
 {
-  list-style-image: url(chrome://songbird/skin/mini/mini.btn.close.png) ;
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.close.png) ;
 }
 
 

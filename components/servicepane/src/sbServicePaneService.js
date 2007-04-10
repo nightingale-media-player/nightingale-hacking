@@ -410,7 +410,7 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
         library = this.addNode('SB:Library', this._root, false);
         library.url = 'chrome://songbird/content/xul/playlist_test.xul?library';
         library.name = 'Library';
-        library.image = 'chrome://songbird/skin/default/icon_lib_16x16.png';
+        library.image = 'chrome://songbird/skin/icons/icon_lib_16x16.png';
         library.hidden = false;
     }
     

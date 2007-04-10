@@ -36,49 +36,49 @@ BALLOON TIPS
 }
 
 .balloontip-frame-nw {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(20px 12px 26px 0px);
   background-color: transparent;
 }
 
 .balloontip-frame-n {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(20px 41px 26px 35px);
   background-color: transparent;
 }
 
 .balloontip-frame-ne {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(20px 76px 26px 64px);
   background-color: transparent;
 }
 
 .balloontip-frame-w {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(28px 6px 32px 0px);
   background-color: transparent;
 }
 
 .balloontip-frame-e {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(28px 76px 32px 70px);
   background-color: transparent;
 }
 
 .balloontip-frame-sw {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(34px 12px 40px 0px);
   background-color: transparent;
 }
 
 .balloontip-frame-s {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(34px 41px 40px 35px);
   background-color: transparent;
 }
 
 .balloontip-frame-se {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(34px 76px 40px 64px);
   background-color: transparent;
 }
@@ -116,43 +116,43 @@ BALLOON TIPS
   min-width: 0px !important;
   min-height: 0px !important;
   border-width: 0px !important;
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(0px 95px 16px 79px);
   background-color: transparent;
 }
 
 .balloontip-close-button:hover {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(17px 95px 33px 79px);
   background-color: transparent;
 }
 
 .balloontip-close-button:active {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(34px 95px 50px 79px);
   background-color: transparent;
 }
 
 .balloontip-arrow-nw {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(0px 33px 26px 13px);
   background-color: transparent;
 }
 
 .balloontip-arrow-ne {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(0px 63px 26px 43px);
   background-color: transparent;
 }
 
 .balloontip-arrow-sw {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(34px 33px 60px 13px);
   background-color: transparent;
 }
 
 .balloontip-arrow-se {
-  list-style-image: url(chrome://songbird/skin/default/balloon.png);
+  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
   -moz-image-region: rect(34px 63px 60px 43px);
   background-color: transparent;
 }
@@ -168,7 +168,7 @@ BALLOON TIPS
 }
 
 .balloon-icon-songbird {
-  list-style-image: url(chrome://songbird/skin/default/logo_16.png);
+  list-style-image: url(chrome://songbird-branding/skin/logo_16.png);
   background-color: transparent !important;
 }
 

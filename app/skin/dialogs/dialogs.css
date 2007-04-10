@@ -279,12 +279,12 @@ richlistitem > label
 
 .spinner_spin
 {
-  background-image: url(chrome://songbird/skin/default/spinner_spin.gif) !important;
+  background-image: url(chrome://songbird/skin/icons/spinner_spin.gif) !important;
 }
 
 .firstrun_image
 {
-  background-image: url(chrome://songbird/skin/default/firstrun.png) !important;
+  background-image: url(chrome://songbird-branding/skin/firstrun.png) !important;
 }
 
 /** 
@@ -477,7 +477,7 @@ Poppin' Fresh.
   margin: 0px 0px 0px 0px !important;
   height: 9px !important;
   width: 7px !important;
-  list-style-image: url(chrome://songbird/skin/default/menu-arrow-hover.png) !important;
+  list-style-image: url(chrome://songbird/skin/menu/menu-arrow-hover.png) !important;
   background-repeat: no-repeat !important;
 }
 
@@ -486,7 +486,7 @@ Poppin' Fresh.
   margin: 0px 0px 0px 0px !important;
   height: 9px !important;
   width: 7px !important;
-  list-style-image: url(chrome://songbird/skin/default/menu-arrow.png) !important;
+  list-style-image: url(chrome://songbird/skin/menu/menu-arrow.png) !important;
   background-repeat: no-repeat !important;
 }
 
@@ -496,7 +496,7 @@ menuitem[checked="true"] > hbox[checked="true"]
   height: 7px !important;
   width: 7px !important;
   list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
+  background-image: url(chrome://songbird/skin/checkbox/check_fff.png) !important;
   background-repeat: no-repeat !important;
 }
 
@@ -506,7 +506,7 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
   height: 7px !important;
   width: 7px !important;
   list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
+  background-image: url(chrome://songbird/skin/checkbox/check_fff.png) !important;
   background-repeat: no-repeat !important;
 }
 
