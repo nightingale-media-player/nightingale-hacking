@@ -42,18 +42,22 @@
                     <xul:vbox style="-moz-binding:url(#toolbar)"
                               anonid="toolbar" />
                 </xul:vbox>
+                <!--
                 <xul:sb-smart-splitter>
                     <xul:grippy/>
                 </xul:sb-smart-splitter>
                 <xul:vbox style="-moz-binding:url(#extensions)" flex="1"
                           anonid="extensions" />
+                -->
             </xul:vbox>
         </content>
         <implementation>
             <constructor><![CDATA[
                 this.mTreePane = document.getAnonymousElementByAttribute(this, 'anonid', 'treepane');
                 this.mToolbar = document.getAnonymousElementByAttribute(this, 'anonid', 'toolbar');
+                /*
                 this.mExtensions = document.getAnonymousElementByAttribute(this, 'anonid', 'extensions');
+                */
             ]]></constructor>
             <property name="onPlaylistDefaultCommand"
                       onget="return this.mTreePane.onPlaylistDefaultCommand;"
