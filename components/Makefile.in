@@ -43,6 +43,7 @@ SUBDIRS = addonmetadata \
           mediacore \
           medialibrary \
           metrics \
+          moz \
           playlistplayback \
           playlistsource \
           property \
@@ -65,5 +66,6 @@ SUBDIRDEPS5 = devicesobsolete : medialibrary
 SUBDIRDEPS6 = integration : devicesobsolete
 SUBDIRDEPS7 = library : sqlbuilder
 SUBDIRDEPS8 = library : property
+SUBDIRDEPS9 = library : moz
 
 include $(topsrcdir)/build/rules.mk

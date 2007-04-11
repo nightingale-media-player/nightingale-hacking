@@ -42,6 +42,7 @@
 #include <sbIDatabaseResult.h>
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
+#include <sbTArrayStringEnumerator.h>
 
 #define DEFAULT_FETCH_SIZE 20
 

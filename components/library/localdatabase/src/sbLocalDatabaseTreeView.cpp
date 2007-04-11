@@ -26,6 +26,7 @@
 
 #include "sbLocalDatabaseTreeView.h"
 #include "sbLocalDatabaseCID.h"
+#include <sbTArrayStringEnumerator.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsIDOMElement.h>

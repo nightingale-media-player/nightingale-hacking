@@ -151,18 +151,4 @@ private:
   nsTHashtable<nsUint32HashKey> mDirty;
 };
 
-class sbTArrayStringEnumerator : public nsIStringEnumerator
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSISTRINGENUMERATOR
-
-  sbTArrayStringEnumerator(nsTArray<nsString>* aStringArray);
-
-private:
-
-  nsTArray<nsString> mStringArray;
-  PRUint32 mNextIndex;
-};
-
 #endif /* __SBLOCALDATABASEPROPERTYCACHE_H__ */

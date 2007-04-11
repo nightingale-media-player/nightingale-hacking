@@ -49,6 +49,7 @@
 #include <sbLocalDatabasePropertyCache.h>
 #include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
+#include <sbTArrayStringEnumerator.h>
 
 #define DEFAULT_FETCH_SIZE 1000
 

@@ -62,6 +62,7 @@
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
 #include <sbSQLBuilderCID.h>
+#include <sbTArrayStringEnumerator.h>
 
 #define NS_UUID_GENERATOR_CONTRACTID "@mozilla.org/uuid-generator;1"
 

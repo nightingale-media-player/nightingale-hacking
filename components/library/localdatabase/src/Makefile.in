@@ -61,6 +61,7 @@ CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/sqlbuilder/public \
                $(topsrcdir)/components/sqlbuilder/src \
                $(topsrcdir)/components/include \
+               $(topsrcdir)/components/moz/strings/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/layout \
@@ -88,6 +89,13 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
+ifdef DEBUG
+moz_utils = sbMozStringUtils_d
+else
+moz_utils = sbMozStringUtils
+endif
+
+DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/$(moz_utils)
 
 ifneq (linux,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s

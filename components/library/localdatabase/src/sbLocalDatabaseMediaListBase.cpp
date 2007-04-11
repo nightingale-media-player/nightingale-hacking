@@ -53,6 +53,7 @@
 #include <nsHashKeys.h>
 #include <nsMemory.h>
 #include <sbSQLBuilderCID.h>
+#include <sbTArrayStringEnumerator.h>
 #include <sbPropertiesCID.h>
 #include "sbLocalDatabaseCascadeFilterSet.h"
 #include "sbLocalDatabaseCID.h"

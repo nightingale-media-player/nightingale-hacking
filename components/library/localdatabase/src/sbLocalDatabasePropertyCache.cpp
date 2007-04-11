@@ -41,6 +41,7 @@
 #include "sbDatabaseResultStringEnumerator.h"
 #include "sbLocalDatabaseLibrary.h"
 #include <sbSQLBuilderCID.h>
+#include <sbTArrayStringEnumerator.h>
 
 #define MAX_IN_LENGTH 5000
 
@@ -1224,34 +1225,5 @@ sbLocalDatabaseResourcePropertyBag::SetDirty(PRBool aDirty)
   mWritePending = aDirty;
 
   return NS_OK;
-}
-
-NS_IMPL_ISUPPORTS1(sbTArrayStringEnumerator,
-                   nsIStringEnumerator)
-
-sbTArrayStringEnumerator::sbTArrayStringEnumerator(nsTArray<nsString>* aStringArray) :
-  mNextIndex(0)
-{
-  mStringArray.InsertElementsAt(0, *aStringArray);
-}
-
-NS_IMETHODIMP
-sbTArrayStringEnumerator::HasMore(PRBool *_retval)
-{
-  *_retval = mNextIndex < mStringArray.Length();
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbTArrayStringEnumerator::GetNext(nsAString& _retval)
-{
-  if (mNextIndex < mStringArray.Length()) {
-    _retval = mStringArray[mNextIndex];
-    mNextIndex++;
-    return NS_OK;
-  }
-  else {
-    return NS_ERROR_NOT_AVAILABLE;
-  }
 }
 

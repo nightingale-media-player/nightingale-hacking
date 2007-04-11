@@ -41,6 +41,7 @@
 #include <sbLocalDatabasePropertyCache.h>
 #include <sbLocalDatabaseTreeView.h>
 #include <sbSQLBuilderCID.h>
+#include <sbTArrayStringEnumerator.h>
 #include <sbIPropertyArray.h>
 #include <sbPropertiesCID.h>
 
