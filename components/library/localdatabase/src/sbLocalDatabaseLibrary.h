@@ -28,7 +28,7 @@
 #define __SBLOCALDATABASELIBRARY_H__
 
 #include "sbLocalDatabaseMediaListBase.h"
-#include "sbIDatabaseQuery.h"
+#include <sbIDatabaseQuery.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaListListener.h>
@@ -36,15 +36,13 @@
 #include <nsClassHashtable.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
-#include <nsDataHashtable.h>
-#include <nsHashKeys.h>
-#include <nsInterfaceHashtable.h>
 #include <nsIClassInfo.h>
 #include <nsStringGlue.h>
 #include <sbIMediaListFactory.h>
 
 class nsIURI;
 class nsIWeakReference;
+class nsStringHashKey;
 class sbAutoBatchHelper;
 class sbILocalDatabasePropertyCache;
 class sbLibraryInsertingEnumerationListener;
@@ -93,17 +91,25 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
     nsCOMPtr<sbIMediaListFactory> factory;
   };
 
+  struct sbMediaItemInfo {
+    sbMediaItemInfo()
+    : itemID(0),
+      hasItemID(PR_FALSE),
+      hasListType(PR_FALSE)
+    { }
+
+    PRUint32 itemID;
+    nsString listType;
+    nsCOMPtr<nsIWeakReference> weakRef;
+    PRPackedBool hasItemID;
+    PRPackedBool hasListType;
+  };
+
   typedef nsClassHashtable<nsStringHashKey, sbMediaListFactoryInfo>
           sbMediaListFactoryInfoTable;
 
-  typedef nsInterfaceHashtable<nsStringHashKey, nsIWeakReference>
-          sbMediaItemTable;
-
-  typedef nsDataHashtable<nsStringHashKey, nsString>
-          sbGUIDToTypesMap;
-
-  typedef nsDataHashtable<nsStringHashKey, PRUint32>
-          sbGUIDToIDMap;
+  typedef nsClassHashtable<nsStringHashKey, sbMediaItemInfo>
+          sbMediaItemInfoTable;
 
 public:
   NS_DECL_ISUPPORTS_INHERITED
@@ -181,11 +187,7 @@ private:
 
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
 
-  sbMediaItemTable mMediaItemTable;
-
-  sbGUIDToTypesMap mCachedTypeTable;
-
-  sbGUIDToIDMap mCachedIDTable;
+  sbMediaItemInfoTable mMediaItemTable;
 };
 
 /**

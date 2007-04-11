@@ -48,6 +48,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <nsHashKeys.h>
 #include <nsID.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
@@ -223,10 +224,8 @@ sbLibraryRemovingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList,
   nsresult rv = aMediaItem->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Remove from our caches
+  // Remove from our cache.
   mFriendLibrary->mMediaItemTable.Remove(guid);
-  mFriendLibrary->mCachedTypeTable.Remove(guid);
-  mFriendLibrary->mCachedIDTable.Remove(guid);
 
   rv = mDBQuery->AddQuery(mFriendLibrary->mDeleteItemQuery);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -414,14 +413,6 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
 
   // Initialize the media item table.
   success = mMediaItemTable.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-  // Initialize the cached type table.
-  success = mCachedTypeTable.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-  // Initialize the cached ID table.
-  success = mCachedIDTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -761,11 +752,21 @@ sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
          NS_LossyConvertUTF16toASCII(aGUID).get()));
 
   // See if we have already cached this GUID's type.
-  nsString cachedType;
-  PRBool alreadyCached = mCachedTypeTable.Get(aGUID, &cachedType);
-  if (alreadyCached) {
+  sbMediaItemInfo* itemInfo;
+  if (!mMediaItemTable.Get(aGUID, &itemInfo)) {
+    // Make a new itemInfo for this GUID.
+    nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
+    NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
+
+    PRBool success = mMediaItemTable.Put(aGUID, newItemInfo);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+    itemInfo = newItemInfo.forget();
+  }
+  else if (itemInfo->hasListType) {
     LOG((LOG_SUBMESSAGE_SPACE "Found type in cache!"));
-    _retval.Assign(cachedType);
+
+    _retval.Assign(itemInfo->listType);
     return NS_OK;
   }
 
@@ -798,9 +799,8 @@ sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
   rv = result->GetRowCell(0, 0, type);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Cache this GUID's type.
-  PRBool success = mCachedTypeTable.Put(aGUID, type);
-  NS_WARN_IF_FALSE(success, "Failed to cache this GUID's type");
+  itemInfo->listType.Assign(type);
+  itemInfo->hasListType = PR_TRUE;
 
   _retval.Assign(type);
   return NS_OK;
@@ -943,11 +943,20 @@ sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGUID,
          NS_LossyConvertUTF16toASCII(aGUID).get()));
   NS_ENSURE_ARG_POINTER(aMediaItemID);
 
-  PRUint32 cachedID;
-  PRBool alreadyCached = mCachedIDTable.Get(aGUID, &cachedID);
-  if (alreadyCached) {
+  sbMediaItemInfo* itemInfo;
+  if (!mMediaItemTable.Get(aGUID, &itemInfo)) {
+    // Make a new itemInfo for this GUID.
+    nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
+    NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
+
+    PRBool success = mMediaItemTable.Put(aGUID, newItemInfo);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+    itemInfo = newItemInfo.forget();
+  }
+  else if (itemInfo->hasItemID) {
     LOG(("                                 - Found ID in cache!"));
-    *aMediaItemID = cachedID;
+    *aMediaItemID = itemInfo->itemID;
     return NS_OK;
   }
 
@@ -985,9 +994,8 @@ sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGUID,
   PRUint32 id = idString.ToInteger(&rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Cache this GUID's type.
-  PRBool success = mCachedIDTable.Put(aGUID, id);
-  NS_WARN_IF_FALSE(success, "Failed to cache this GUID's ID");
+  itemInfo->itemID = id;
+  itemInfo->hasItemID = PR_TRUE;
 
   *aMediaItemID = id;
   return NS_OK;
@@ -1189,15 +1197,22 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
          NS_LossyConvertUTF16toASCII(aGUID).get()));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsWeakPtr weakMediaItem;
-  PRBool alreadyCreated =
-    mMediaItemTable.Get(aGUID, getter_AddRefs(weakMediaItem));
-
   nsresult rv;
   nsCOMPtr<sbIMediaItem> strongMediaItem;
 
-  if (alreadyCreated) {
-    strongMediaItem = do_QueryReferent(weakMediaItem, &rv);
+  sbMediaItemInfo* itemInfo;
+  if (!mMediaItemTable.Get(aGUID, &itemInfo)) {
+    // Make a new itemInfo for this GUID.
+    nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
+    NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
+
+    PRBool success = mMediaItemTable.Put(aGUID, newItemInfo);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+    itemInfo = newItemInfo.forget();
+  }
+  else if (itemInfo->weakRef) {
+    strongMediaItem = do_QueryReferent(itemInfo->weakRef, &rv);
     if (NS_SUCCEEDED(rv)) {
       // This item is still owned by someone so we don't have to create it
       // again. Add a ref and let it live a little longer.
@@ -1211,7 +1226,7 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
     // Our cached item has died... Remove it from the hash table and create it
     // all over again.
     LOG((LOG_SUBMESSAGE_SPACE "Found dead weak reference in cache"));
-    mMediaItemTable.Remove(aGUID);
+    itemInfo->weakRef = nsnull;
   }
 
   nsAutoPtr<sbLocalDatabaseMediaItem>
@@ -1225,8 +1240,15 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
 
   // Get the type for the guid.
   nsAutoString type;
-  rv = GetTypeForGUID(aGUID, type);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (itemInfo->hasListType) {
+    type.Assign(itemInfo->listType);
+  }
+  else {
+    rv = GetTypeForGUID(aGUID, type);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ASSERTION(itemInfo->hasListType, "Should have set a list type there!");
 
   if (!type.IsEmpty()) {
     // This must be a media list, so get the appropriate factory.
@@ -1247,12 +1269,8 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  weakMediaItem = do_GetWeakReference(strongMediaItem, &rv);
+  itemInfo->weakRef = do_GetWeakReference(strongMediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Cache this media item so we won't create it again.
-  PRBool success = mMediaItemTable.Put(aGUID, weakMediaItem);
-  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   NS_ADDREF(*_retval = strongMediaItem);
   return NS_OK;
@@ -1708,10 +1726,8 @@ sbLocalDatabaseLibrary::Clear()
 
   NotifyListenersListCleared(this);
 
-  // Remove from our caches
+  // Clear our cache
   mMediaItemTable.Clear();
-  mCachedTypeTable.Clear();
-  mCachedIDTable.Clear();
 
   nsCOMPtr<sbIDatabaseQuery> query;
   nsresult rv = MakeStandardQuery(getter_AddRefs(query));
