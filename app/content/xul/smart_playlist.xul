@@ -219,7 +219,7 @@
                   
                   conditionsArray.push(node);
                 }
-                smartConditions.setConditions(conditionsArray);
+                smartConditions.conditions = conditionsArray;
                 use_new = false; // Don't make a new one, we loaded the previous conditions.
               }
             }
@@ -255,8 +255,7 @@
       var match = use_match ? document.getElementById( "smart_any_list" ).value : "";
       
       // Go ask the dumb conditions object what it has inside it.
-      var conditions = document.getElementById( "smart_conditions" );
-      var conditions_array = conditions.getConditions();
+      var conditions_array = document.getElementById( "smart_conditions" ).conditions;
 
       queryObj.setAsyncQuery(false);
       queryObj.setDatabaseGUID(library);      

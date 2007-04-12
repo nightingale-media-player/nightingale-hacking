@@ -106,19 +106,15 @@
       ]]>
       </field>
 
-      <method name="setConditions">
-        <parameter name="conditions"/>
-        <body>
-          this.drawer.setState(conditions);
-        </body>
-      </method>
-      
-      <method name="getConditions">
-        <body>
+      <property name="conditions">
+        <getter>
           return this.drawer.getState();
-        </body>
-      </method>
-      
+        </getter>
+        <setter>
+          this.drawer.setState(val);
+        </setter>
+      </property>
+
       <method name="newCondition">
         <body>
           this.drawer.addItem();
