@@ -55,7 +55,7 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
    * 
    */
   attribute boolean limit;
-}
+};
 
 /**
 * \interface sbILocalDatabaseSmartMediaList
