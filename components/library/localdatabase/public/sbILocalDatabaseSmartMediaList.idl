@@ -82,12 +82,12 @@ interface sbILocalDatabaseSmartMediaList : nsISupports
   /**
    * \brief Limit the total amount of items in the smart media list.
    */
-  attribute itemLimit;
+  attribute long itemLimit;
 
   /**
    * \brief Randomly select the items out of the entire result set.
    */
-  attribute randomSelection;
+  attribute boolean randomSelection;
 
   /**
    * \brief Add a condition or limiting condition.
