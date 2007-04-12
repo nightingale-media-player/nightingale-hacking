@@ -1,0 +1,164 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+
+/** 
+************************************************************************************************************************************************
+THIS IS A REFERENCE ONLY!
+************************************************************************************************************************************************
+.servicepane_tree > tree
+{
+  margin: 0px;
+  padding: 6px 0px 0px 0px;
+  border: none;
+}
+
+.servicepane_tree > tree > treechildren::-moz-tree-row,
+.servicepane_tree > tree > treechildren::-moz-tree-cell
+{ 
+  margin: 0px;
+  padding: 0px;
+  border: none;
+}
+
+.servicepane_tree > tree > treechildren::-moz-tree-row( selected )
+{
+  -moz-border-radius: 5px;
+}
+
+.servicepane_tree > tree > treechildren::-moz-tree-cell-text( selected )
+{
+  font-weight: bold;
+}
+
+.servicepane_tree > tree > treechildren::-moz-tree-cell-text
+{
+  margin: 0px 0px 0px 3px;
+}
+
+.servicepane_tree > tree > treechildren::-moz-tree-twisty
+{
+  -moz-appearance: none;
+  margin: 0px 3px 0px 0px;
+  padding: 0px;
+}
+*/
+
+
+/** 
+************************************************************************************************************************************************
+SERVICE PANE - a.k.a the Left Pane
+The Service Pane is the primary area for navigating through services and content. It serves as the primary GUI entry point to content and services.
+************************************************************************************************************************************************
+*/ 
+
+/* Twisty and Shouty **/
+.servicepane_tree > treechildren::-moz-tree-twisty(open)
+{
+  list-style-image: url(chrome://songbird/skin/tree/twisty_open.png);
+}
+.servicepane_tree > treechildren::-moz-tree-twisty(closed)
+{
+  list-style-image: url(chrome://songbird/skin/tree/twisty_closed.png);
+}
+
+/* Service Pane Icons **/
+.servicepane_tree > treechildren::-moz-tree-image( playlist )
+{
+  list-style-image: url(chrome://songbird/skin/icons/icon_playlist_16x16.png) ;
+}
+
+.servicepane_tree > treechildren::-moz-tree-image( playlist smart )
+{
+  list-style-image: url(chrome://songbird/skin/icons/icon_smplaylist_16x16.png) ;
+}
+
+.servicepane_tree > treechildren::-moz-tree-image( playlist dynamic )
+{
+  list-style-image: url(chrome://songbird/skin/icons/icon_dynplaylist_16x16.png) ;
+}
+
+.servicepane_tree > treechildren::-moz-tree-image( playlist download )
+{
+  list-style-image: url(chrome://songbird/skin/icons/icon_downloads_16x16.png) ;
+}
+
+.servicepane_tree > treechildren::-moz-tree-image( playlist webplaylist )
+{
+  list-style-image: url(chrome://songbird/skin/icons/icon_webplaylist_16x16.png) ;
+}
+
+
+/** 
+************************************************************************************************************************************************
+THE SERVICE TREE TOOLBAR
+Currently a single clickhold button below the service tree
+************************************************************************************************************************************************
+*/
+
+
+#frame_service_buttonbar button
+{
+  border: 1px solid; 
+  padding: 0px;
+  margin: 2px;
+  height: 25px;  
+}
+
+/** Offset menu to account for rounded button **/
+#frame_service_buttonbar sb-clickhold-button menupopup
+{
+ margin-left: 8px;
+}
+
+
+
+
+/** TODO This needs to be cleaned up / removed **/
+
+/** Bind images to the button and button-popup on the Service Pane */
+/** NOTE: IDs containing periods are bad... */
+sb-clickhold-button[id="file.new"]
+{
+  list-style-image: url(chrome://songbird/skin/icons/icon_playlist_16x16.png) ;
+}
+
+.menuitem-iconic[id="file.new"]  {
+  list-style-image: url(chrome://songbird/skin/icons/icon_playlist_16x16.png) ;
+}
+
+.menuitem-iconic[id="file.smart"] {
+  list-style-image: url(chrome://songbird/skin/icons/icon_smplaylist_16x16.png) ;
+}
+
+.menuitem-iconic[id="file.remote"]{
+  list-style-image: url(chrome://songbird/skin/icons/icon_dynplaylist_16x16.png) ;
+}
+
+                        
+                        
+
+

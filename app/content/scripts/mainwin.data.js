@@ -65,8 +65,6 @@ try
       MainwinAdd( SBDataBindElementAttribute( "browser.cangoback", "browser_back", "disabled", true, true ) );
       MainwinAdd( SBDataBindElementAttribute( "browser.cangofwd", "browser_fwd", "disabled", true, true ) );
       MainwinAdd( SBDataBindElementAttribute( "faceplate.loading", "browser_stop", "disabled", true, true ) );
-      //MainwinAdd( SBDataBindElementAttribute( "browser.canplaylist", "browser_playlist", "disabled", true, true ) );
-      //MainwinAdd( SBDataBindElementAttribute( "browser.hasdownload", "browser_download", "disabled", true, true ) );
       MainwinAdd( SBDataBindElementProperty ( "browser.playlist.show", "playlist_web", "hidden", true, true ) );
       MainwinAdd( SBDataBindElementProperty ( "browser.playlist.show", "playlist_web_split", "hidden", true, true ) );
       MainwinAdd( SBDataBindElementProperty ( "browser.playlist.show", "playlist_web_vbox", "hidden", true, true ) );

@@ -64,8 +64,8 @@
   <hbox id="frame_mini" flex="1" drag_window="true" align="center" pack="center">
     <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
 
-    <!-- TODO: What does this do? Keep the mac happy?  If so, should be a useable menu  -->
-    <menubar id="mini_menu" hidden="false"  oncommand="onMenu(event.target)"/>
+    <!-- Magic stub menu to keep OS X happy  -->
+    <menubar id="mini_menu" hidden="false" />
 
     <!-- PLAYER DISPLAY AND CONTROLS -->
     <sb-mini-player-controls flex="1"/>

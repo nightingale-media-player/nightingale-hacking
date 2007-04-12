@@ -191,6 +191,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\xul\balloonTip.xul">
+				</File>
+				<File
 					RelativePath=".\content\xul\control_pane.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -750,6 +753,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				Name="bindings"
 				Filter="">
 				<File
+					RelativePath=".\content\bindings\balloon.xml">
+				</File>
+				<File
 					RelativePath=".\content\bindings\bindings.css">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -877,6 +883,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\feathers.xml">
 				</File>
 				<File
 					RelativePath=".\content\bindings\filterlist.xml">

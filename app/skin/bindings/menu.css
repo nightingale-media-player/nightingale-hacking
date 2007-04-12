@@ -24,30 +24,34 @@
 //
  */
 
+
+
 /** 
 ************************************************************************************************************************************************
-XBL WIDGET STYLES
+EXTRA MENUS, CONTEXTUAL MENUS, and MENUPOP-UP STYLES
 ************************************************************************************************************************************************
-*/ 
+*/
 
+/** TODO: why do we use background over list style image? **/
 
+menuitem[checked="true"] > hbox[checked="true"] 
+{ 
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/checkbox/check_fff.png) !important;
+}
 
-@import url(faceplate.css); 
-@import url(filterlist.css); 
-@import url(menu.css); 
-@import url(miniplayer.css); 
-@import url(player_controls.css); 
-@import url(playlist.css); 
-@import url(playlist_commands.css);
-@import url(scrollbar.css); 
-@import url(search.css); 
-@import url(servicepane.css); 
-@import url(smartsplitter.css); 
-@import url(spinner.css); 
-@import url(statusbar.css); 
-@import url(syscontrols.css); 
-@import url(tree.css); 
-@import url(webtoolbar.css); 
+menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
+{ 
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/checkbox/check_fff.png) !important;
+}
 
+.menu-right[_moz-menuactive="true"] 
+{
+  list-style-image: url(menu/menu-arrow-hover.png) !important;
+}
 
-
+.menu-right
+{   
+  list-style-image: url(menu/menu-arrow.png) !important;
+}

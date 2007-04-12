@@ -99,9 +99,9 @@
           <vbox id="control_left_box" pack="center" align="center" drag_window="true">
             <!-- PLAY BUTTONS -->
             <hbox id="playbutton_box" pack="center" align="center">
-              <sb-player-back-button id="songbird_btn_back" />
+              <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>
               <sb-player-playpause-button id="songbird_btn_play_pause" popupanchor="topleft" popupalign="bottomleft"/>
-              <sb-player-forward-button id="songbird_btn_fwd" /> 
+              <sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" /> 
             </hbox>
             <hbox id="volume_box" pack="center" align="center">
               <sb-player-mute-button id="mute" />
@@ -135,8 +135,7 @@
           <spacer flex="1"/>
         </hbox>
 
-        <sb-smart-splitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane"
-        >
+        <sb-smart-splitter id="control_pane_splitter"  state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane">
           <grippy/>
         </sb-smart-splitter>
 
@@ -149,7 +148,7 @@
               <servicepane id="servicepane" flex="1" browser="frame_main_pane" />                  
             </vbox>
 
-            <sb-smart-splitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="collapse.servicepane">
+            <sb-smart-splitter id="servicepane_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="collapse.servicepane">
               <grippy/>
             </sb-smart-splitter>
 
@@ -197,7 +196,7 @@
                              playlist="playlist_web"
                              contentcontextmenu="html_context_menu"
                              />
-              <sb-smart-splitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
+              <sb-smart-splitter id="playlist_web_split" hidden="true" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
                 <grippy/>
               </sb-smart-splitter>
               

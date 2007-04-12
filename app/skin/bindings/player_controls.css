@@ -31,38 +31,264 @@ Play/Pause, Previous (back), Next (forward)
 ************************************************************************************************************************************************
 */
 
-/** TODO: Improve selector efficiency! **/
 
 
-#songbird_btn_play_pause 
+/** the sb-player-button class is used to get an image-only button
+    with no borders or padding.  **/
+
+.sb-player-button,
+.sb-player-button > .clickhold-button
 {
-  margin-left: 2px;
-  margin-right: 2px;
+  -moz-appearance: none !important;
+  -moz-background-clip: padding !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  min-width: 0px !important;
+  min-height: 0px !important;
 }
 
-#frame_control_pane button
-{  
-  margin: 0px;
-  padding: 0px;
-  border: none;
-}
-
-
-#playbutton_box .button-text,
-#face_left_box .button-text,
-#face_right_box .button-text
-{  
-  display: none;
-}
-
-/* the faceplate buttons */
-#face_left_box button,
-#face_right_box button
+.sb-player-button > button > .button-box > .button-text,
+.sb-player-button > .button-box > .button-text,
+.sb-player-button > button > .button-box > .button-icon,
+.sb-player-button > .button-box > .button-icon
 {
-  margin: 2px 5px 2px 5px;
+  margin: 0px !important;  
 }
 
-/* END CONTROL BOX **/
+
+
+
+
+
+/* the play button */
+
+.sb-player-play-button-play 
+{  
+  list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
+  -moz-image-region: rect(0px 68px 36px 32px);
+}
+.sb-player-play-button-play:hover
+{
+  -moz-image-region: rect(36px 68px 72px 32px);
+}
+.sb-player-play-button-play:active
+{
+  -moz-image-region: rect(72px 68px 108px 32px);
+}
+.sb-player-play-button-play[disabled="true"]
+{
+  -moz-image-region: rect(0px 68px 36px 32px);
+}
+
+/* the pause button */
+
+.sb-player-pause-button-pause
+{
+  list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
+  -moz-image-region: rect(0px 104px 36px 68px);
+}
+.sb-player-pause-button-pause:hover
+{ 
+  -moz-image-region: rect(36px 104px 72px 68px);
+}
+.sb-player-pause-button-pause:active
+{
+  -moz-image-region: rect(72px 104px 108px 68px);
+}
+.sb-player-pause-button-pause[disabled="true"]
+{ 
+  -moz-image-region: rect(0px 104px 36px 68px);
+}
+
+/* the back button */
+
+sb-player-back-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
+  -moz-image-region: rect(0px 32px 32px 0px);
+}
+sb-player-back-button:hover
+{ 
+  -moz-image-region: rect(32px 32px 64px 0px);
+}
+sb-player-back-button:active
+{ 
+  -moz-image-region: rect(64px 32px 96px 0px);
+}
+sb-player-back-button[disabled="true"]
+{ 
+  -moz-image-region: rect(0px 32px 32px 0px);
+}
+
+/* the fwd button */
+sb-player-forward-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/player_controls.png); 
+  -moz-image-region: rect(0px 136px 32px 104px);
+}
+sb-player-forward-button:hover
+{ 
+  -moz-image-region: rect(32px 136px 64px 104px);
+}
+sb-player-forward-button:active
+{ 
+  -moz-image-region: rect(64px 136px 96px 104px);
+}
+sb-player-forward-button[disabled="true"]
+{
+  -moz-image-region: rect(0px 136px 32px 104px);
+}
+
+
+
+
+
+
+
+
+
+/** 
+FACEPLATE BUTTONS
+*/
+
+/* the curr button */
+.sb-player-curtrack-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/faceplate_controls.png);
+  -moz-image-region: rect(40px 105px 60px 70px);
+}
+.sb-player-curtrack-button[disabled="true"]
+{
+  -moz-image-region: rect(40px 105px 60px 70px);
+}
+.sb-player-curtrack-button:hover
+{
+  -moz-image-region: rect(40px 105px 60px 70px);
+}
+.sb-player-curtrack-button:active
+{
+  -moz-image-region: rect(60px 105px 80px 70px);
+}
+
+/* the next button */
+.sb-player-cyclefaceplate-button-cycle
+{
+  list-style-image: url(chrome://songbird/skin/buttons/faceplate_controls.png);
+  -moz-image-region: rect(0px 105px 20px 70px);
+}
+.sb-player-cyclefaceplate-button-cycle[disabled="true"]
+{
+  -moz-image-region: rect(0px 105px 20px 70px);
+}
+.sb-player-cyclefaceplate-button-cycle:hover
+{
+  -moz-image-region: rect(0px 105px 20px 70px);
+}
+.sb-player-cyclefaceplate-button-cycle:active
+{
+  -moz-image-region: rect(20px 105px 40px 70px);
+}
+
+/* the rep1 button */
+.sb-player-repeat-button-repnone
+{
+  list-style-image: url(chrome://songbird/skin/buttons/faceplate_controls.png);
+  -moz-image-region: rect(0px 35px 20px 0px);
+}
+.sb-player-repeat-button-repnone[disabled="true"]
+{
+  -moz-image-region: rect(0px 35px 20px 0px);
+}
+.sb-player-repeat-button-repnone:hover[disabled="true"]
+{
+  -moz-image-region: rect(0px 35px 20px 0px);
+}
+.sb-player-repeat-button-repnone:active
+{
+  -moz-image-region: rect(20px 35px 40px 0px);
+}
+
+/* the rep1_on button */
+.sb-player-repeat-button-rep1
+{
+  list-style-image: url(chrome://songbird/skin/buttons/faceplate_controls.png);
+  -moz-image-region: rect(40px 35px 60px 0px);
+}
+.sb-player-repeat-button-rep1[disabled="true"]
+{
+  -moz-image-region: rect(40px 35px 60px 0px);
+}
+.sb-player-repeat-button-rep1:hover[disabled="true"]
+{
+  -moz-image-region: rect(40px 35px 60px 0px);
+}
+.sb-player-repeat-button-rep1:active
+{
+  -moz-image-region: rect(60px 35px 80px 0px);
+}
+
+/* the repall button */
+.sb-player-repeat-button-repall
+{
+  list-style-image: url(chrome://songbird/skin/buttons/faceplate_controls.png);
+  -moz-image-region: rect(80px 35px 100px 0px);
+}
+.sb-player-repeat-button-repall[disabled="true"]
+{
+  -moz-image-region: rect(80px 35px 100px 0px);
+}
+.sb-player-repeat-button-repall:hover[disabled="true"]
+{
+  -moz-image-region: rect(80px 35px 100px 0px);
+}
+.sb-player-repeat-button-repall:active
+{
+  -moz-image-region: rect(100px 35px 120px 0px);
+}
+
+/* the shuf button */
+.sb-player-shuffle-button-shuffleoff
+{
+  list-style-image: url(chrome://songbird/skin/buttons/faceplate_controls.png);
+  -moz-image-region: rect(0px 70px 20px 35px);
+}
+.sb-player-shuffle-button-shuffleoff[disabled="true"]
+{
+  -moz-image-region: rect(0px 70px 20px 35px);
+}
+.sb-player-shuffle-button-shuffleoff:hover[disabled="true"]
+{
+  -moz-image-region: rect(0px 70px 20px 35px);
+}
+.sb-player-shuffle-button-shuffleoff:active
+{
+  -moz-image-region: rect(20px 70px 40px 35px);
+}
+
+/* the shuf_on button */
+.sb-player-shuffle-button-shuffleon
+{
+  list-style-image: url(chrome://songbird/skin/buttons/faceplate_controls.png);
+  -moz-image-region: rect(40px 70px 60px 35px);
+}
+.sb-player-shuffle-button-shuffleon[disabled="true"]
+{
+  -moz-image-region: rect(40px 70px 60px 35px);
+}
+.sb-player-shuffle-button-shuffleon:hover[disabled="true"]
+{
+  -moz-image-region: rect(40px 70px 60px 35px);
+}
+.sb-player-shuffle-button-shuffleon:active
+{
+  -moz-image-region: rect(60px 70px 80px 35px);
+}
+
+
+
+
+
 
 /** 
 ************************************************************************************************************************************************
@@ -73,14 +299,24 @@ Mute and Slider
 .sb-player-mute-button > sb-player-mute-button-muteoff > .clickhold-button,
 .sb-player-mute-button > sb-player-mute-button-muteon > .clickhold-button 
 {
-  margin: 0px 5px 3px 0px !important;
-  height: 9px;
-  width: 9px;
+  margin: 0px 5px 3px 0px;
+  background-color: transparent;
 }
 
 .sb-player-mute-button .button-text {
   display: none;
 }
+
+.sb-player-mute-button-muteoff > .clickhold-button
+{
+  list-style-image: url(chrome://songbird/skin/volume/mute_off.png);
+}
+.sb-player-mute-button-muteon > .clickhold-button
+{
+  list-style-image: url(chrome://songbird/skin/volume/mute_on.png);
+}
+
+
 
 sb-player-volume-slider
 {
@@ -103,20 +339,51 @@ sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb > gripper
   -moz-appearance: none !important;
 }
 
+/** The thumb does not respond to list-style-image, so we are forced to 
+    use a background. We put both states in one image and then change
+    the background-position in order to prevent flickering when changing
+    states. **/
 sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb
 {
-  width: 36px !important;
-  height: 14px !important;
+  width: 36px;
+  height: 14px;
+  background-image: url(chrome://songbird/skin/volume/volume_thumb.png);
+  background-position: 0px 0px;  
+}
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb:active
+{
+  background-image: url(chrome://songbird/skin/volume/volume_thumb.png);
+  background-position: 0px 14px;
 }
 
 sb-player-volume-slider > stack > .sb-progress-slider-progressmeter
 {
   top: 0px !important;
-  left: 0px !important; /* previously 20px, 1 thumb-width in */
-  width: 104px !important; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
+  left: 0px !important; 
+  width: 104px !important;
   height: 14px !important;
 }
 
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar
+{
+  background-image: url(chrome://songbird/skin/volume/volume_progress_bar.png) ;
+}
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder
+{
+  background-image: url(chrome://songbird/skin/volume/volume_progress_remainder.png) ;
+}
+
+
+/** Optional rounded corners for the volume bar. */
+/** TODO: These should really be inside the binding */
+#songbird_volume_e
+{
+  background-image: url(chrome://songbird/skin/volume/volume_e.png);
+}
+#songbird_volume_w
+{
+  background-image: url(chrome://songbird/skin/volume/volume_w.png);
+}
 #songbird_volume_e,
 #songbird_volume_w
 {
@@ -127,8 +394,3 @@ sb-player-volume-slider > stack > .sb-progress-slider-progressmeter
   width: 3px !important;
   background-repeat: no-repeat !important;
 }
-
-
-                        
-
-

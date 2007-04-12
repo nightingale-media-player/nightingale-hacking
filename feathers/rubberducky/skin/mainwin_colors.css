@@ -671,14 +671,14 @@ These let the user resize the frames in your box model.
   border-right: 1px solid #666;
 }
 
-#vert_splitter,
+#servicepane_splitter,
 #search_splitter
 {
   background-color: transparent;
 }
 
 .vert_splitter[state="collapsed"],
-#vert_splitter[state="collapsed"]
+#servicepane_splitter[state="collapsed"]
 {
   background-color: transparent;
   border: 1px solid #666;
@@ -820,15 +820,18 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > t
   -moz-border-right-colors: #1F292B !important;
 }
 
-.faceplate-progressmeter > .progress-bar
+.faceplate-progressmeter > .progress-bar,
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar
 {
-  background-color: #1F292B !important;
+  background-color: #1F292B;
 }
 
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder,
 .faceplate-progressmeter > .progress-remainder
 {
-  background-color: #a3ab9f !important;
+  background-color: #a3ab9f;
 }
+
 
 #frame_control_pane button
 {

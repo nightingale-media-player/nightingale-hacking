@@ -69,25 +69,58 @@ Love the box.
 
 /** 
 ************************************************************************************************************************************************
-THE SERVICE TREE TOOLBAR
-Currently a single clickhold button below the service tree
+WINDOW CHROME
+There is one image for the light effect on every window, including nested ones.
 ************************************************************************************************************************************************
 */
 
-
-#frame_service_buttonbar button
+window
 {
-  border: 1px solid; 
-  padding: 0px;
-  margin: 2px;
-  height: 25px;  
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient.png); 
+  background-repeat: repeat-x;  
+}
+/* END WINDOW CHROME **/
+  
+
+
+
+
+/** 
+************************************************************************************************************************************************
+THE PLAYLIST
+************************************************************************************************************************************************
+*/ 
+
+/* Put a Background behind your filterlists for extra style. */
+playlist
+{
+  background-image: url(chrome://songbird/skin/backgrounds/asanoha.png); 
 }
 
-/** Offset menu to account for rounded button **/
-#frame_service_buttonbar sb-clickhold-button menupopup
+
+
+/** 
+************************************************************************************************************************************************
+SPLITTERS
+************************************************************************************************************************************************
+*/
+
+#servicepane_splitter[state="collapsed"]
 {
- margin-left: 8px;
+  margin-right: 7px;
 }
+
+#control_pane_splitter
+{
+  margin: 3px 0px 3px 0px;
+}
+#control_pane_splitter[state="collapsed"]
+{
+  margin: 3px 3px 3px 3px;
+}
+
+
+
 
 
 /** 
@@ -103,50 +136,6 @@ THE MAIN PANE
   border: 1px solid;
 }
 
-
-/** 
-************************************************************************************************************************************************
-THE STATUS PANE
-************************************************************************************************************************************************
-*/ 
-sb-status-bar
-{
-  margin: 3px 0px 0px 0px;
-}
-
-sb-status-progressmeter
-{
-   margin: 2px 0px 0px 0px;
-   border: none;
-   width: 100px; 
-   min-width: 100px; 
-   max-width: 100px; 
-} 
-
-
-/** 
-************************************************************************************************************************************************
-RESIZERS
-************************************************************************************************************************************************
-*/ 
-
-/** TODO Rename **/
-.sb-sys-outer-frame-resizer-t,
-.sb-sys-outer-frame-resizer-tl,
-.sb-sys-outer-frame-resizer-tr,
-.sb-sys-outer-frame-resizer-b,
-.sb-sys-outer-frame-resizer-bl,
-.sb-sys-outer-frame-resizer-br,
-.sb-sys-outer-frame-resizer-lt,
-.sb-sys-outer-frame-resizer-l,
-.sb-sys-outer-frame-resizer-lb,
-.sb-sys-outer-frame-resizer-rt,
-.sb-sys-outer-frame-resizer-r,
-.sb-sys-outer-frame-resizer-rb
-{
-  height: 9px !important;
-  width: 9px !important;
-}
 
 
 /** 
@@ -166,6 +155,14 @@ Contains the Main Playback Controls and the Dashboard.
   width: 104px;
   height: 36px;
 }
+
+
+#songbird_btn_play_pause 
+{
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
 
 #volume_box
 {
@@ -195,26 +192,15 @@ sb-player-cyclefaceplate-button
   margin: 0px 0px 0px 10px;
   padding: 1px 0px 0px 0px;
 }
-/** 
-************************************************************************************************************************************************
-SPINNER for the browser to show network activity.
-************************************************************************************************************************************************
-*/
 
-/** TODO should probably become an XBL widget? **/
-
-.spinner_spin,
-.spinner_stopped
+/* the faceplate buttons */
+#face_left_box button,
+#face_right_box button
 {
-  background-repeat: no-repeat;
-  margin: 10px 0px 10px 0px;
-  min-height: 16px;
-  max-height: 16px;
-  min-width: 16px;
-  max-width: 16px;
-  height: 16px;
-  width: 16px;
+  margin: 2px 5px 2px 5px;
 }
+
+
 
 
 

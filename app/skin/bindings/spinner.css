@@ -1,0 +1,60 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+ 
+ 
+/** 
+************************************************************************************************************************************************
+SPINNER 
+Used to indicate that the system is busy doing something
+************************************************************************************************************************************************
+*/
+
+/** TODO:  This should be XBLed up and made to work more like the firefox throbber.
+           See http://lxr.mozilla.org/seamonkey/source/browser/themes/pinstripe/browser/browser.css#1162
+ **/
+
+.spinner_spin,
+.spinner_stopped
+{
+  background-repeat: no-repeat;
+  margin: 10px 0px 10px 0px;
+  min-height: 16px;
+  max-height: 16px;
+  min-width: 16px;
+  max-width: 16px;
+  height: 16px;
+  width: 16px;
+}
+
+.spinner_spin
+{
+  background-image: url(chrome://songbird/skin/icons/spinner_spin.gif) ;
+}
+.spinner_stopped
+{
+  background-image: url(chrome://songbird/skin/icons/spinner_stopped.gif) ;
+}
+

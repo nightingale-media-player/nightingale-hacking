@@ -24,30 +24,58 @@
 //
  */
 
+
+
+/** Use styled rather than native scroll bars **/
+@import url("chrome://global/skin/xulscrollbars.css");
+
+
+
 /** 
 ************************************************************************************************************************************************
-XBL WIDGET STYLES
+THE WINDOW
+These base styles are basically here to tell other -moz styles from spoiling our lovely UI. 
+!important is necessary to make sure these styles override any OS-specific styles as well.
 ************************************************************************************************************************************************
 */ 
 
 
 
-@import url(faceplate.css); 
-@import url(filterlist.css); 
-@import url(menu.css); 
-@import url(miniplayer.css); 
-@import url(player_controls.css); 
-@import url(playlist.css); 
-@import url(playlist_commands.css);
-@import url(scrollbar.css); 
-@import url(search.css); 
-@import url(servicepane.css); 
-@import url(smartsplitter.css); 
-@import url(spinner.css); 
-@import url(statusbar.css); 
-@import url(syscontrols.css); 
-@import url(tree.css); 
-@import url(webtoolbar.css); 
+/** TO BE FIXED **/
 
+
+* {
+  -moz-appearance: none !important;
+}
+
+
+
+window,
+dialog 
+{
+  font-family: tahoma, helvetica, arial !important; /*arial is the fallback font*/
+  font-size: 11px !important;
+}
+
+
+
+/** TODO: Remove / condense / rename **/
+/*
+.sb_faceplate, 
+.sb_faceplate_dialog
+{
+  -moz-appearance: none !important; 
+  -moz-background-clip: padding !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  min-width: 0px !important;
+  min-height: 0px !important;
+  border-width: 0px !important;
+  font-family: tahoma, arial !important; 
+  font-size: 11px !important;
+   -moz-border-radius: 0px;
+}
+*/
 
 

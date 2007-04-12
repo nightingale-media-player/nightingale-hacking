@@ -32,6 +32,7 @@ FACEPLATE
 ************************************************************************************************************************************************
 */
 
+/** Rounded corners for the faceplate **/
 .faceplate-left-spacer,
 .faceplate-right-spacer
 {
@@ -39,28 +40,39 @@ FACEPLATE
   height: 50px;
   background-repeat: no-repeat;
 }
+.faceplate-left-spacer
+{
+  background-image: url(chrome://songbird/skin/faceplate/faceplate_left.png);
+}
+.faceplate-right-spacer
+{
+  background-image: url(chrome://songbird/skin/faceplate/faceplate_right.png);
+}
 
 
-.faceplate-bkgd-box,
 .faceplate-box
 {
   height: 50px;
 }
+
+.faceplate-bkgd-box
+{
+  height: 50px;
+  background-image: url(chrome://songbird/skin/faceplate/faceplate_bkgd.png);
+  background-repeat: repeat-x;
+}
+
+.faceplate-intro-image
+{
+  list-style-image: url(chrome://songbird-branding/skin/faceplate.png);
+}
+
 
 .faceplate-seekbar-box
 {
  padding-left: 10px;
  padding-right: 10px;
 }
-
-.faceplate-album-box,
-.faceplate-artist-box
-{
-  height: 14px;
-  padding: 0px;
-  margin: 0px;
-}
-
 
 .faceplate-progressmeter,
 .faceplate-seekbar
@@ -69,16 +81,11 @@ FACEPLATE
   height: 10px;
 }
 
-.faceplate-text
-{
-  width: auto;
-  overflow: hidden;
-}
-
 
 
 /* the seekbar slider */
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider,
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
 {
   height: 10px;
 }
@@ -103,7 +110,21 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressme
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar,
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder
 {
-  height: 8px;
+  height: 10px;
 }
 
+
+.faceplate-album-box,
+.faceplate-artist-box
+{
+  height: 14px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.faceplate-text
+{
+  width: auto;
+  overflow: hidden;
+}
 

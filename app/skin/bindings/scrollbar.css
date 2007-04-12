@@ -81,7 +81,28 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
   width: 16px !important;
 } 
 
-                        
+.scrollbutton-up,
+.scrollbutton-down
+{   
+  background-image: none;
+}
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
+.scrollbutton-up
+{   
+  background-image: url(chrome://songbird/skin/scrollbox/chrome_scroll_up.png) !important; /* up arrow */
+} 
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"],
+.scrollbutton-down
+{   
+  background-image: url(chrome://songbird/skin/scrollbox/chrome_scroll_down.png) !important ; /* down arrow */
+} 
+
+/* NOTE Mig or Koshi said: on the arrow images: I'm using !important here because 
+   I don't want to nuke the default black arrow in the global skin. I just want 
+   to put a light arrow in for this dark color scheme.  If you're using a light 
+   scheme, this rule is unnecessary. */
                         
 
 

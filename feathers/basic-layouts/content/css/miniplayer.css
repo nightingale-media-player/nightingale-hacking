@@ -1,0 +1,97 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+************************************************************************************************************************************************
+MINIPLAYER SIZE & POSITION
+This CSS files specifies the size and position of the Mini Window UI.
+Note that most of the miniplayer is actually in the miniplayer.xml XBL binding
+and is styled by chrome://songbird-bindings/skin/miniplayer.css
+************************************************************************************************************************************************
+*/ 
+
+
+
+
+window#mini  
+{ 
+  width: 800px !important;
+  min-width: 390px ! important;
+  
+  /** HACK! Force height to get around Bug 2851 (Mini grows by 1px on every load) **/
+  min-height: 24px;
+  max-height: 24px;
+  
+  /** Get rid of the gradient that is applied to all windows */
+  background-image:none;
+  
+  /* Only transparent on windows. (Bug 1656) */
+  background-color: transparent !important;
+}
+
+#frame_mini
+{
+  -moz-border-radius: 10px !important;
+  background-color: #321 !important;  /** Main player color. TODO fix? */
+  padding: 2px 0px 2px 0px !important;
+  height: 22px;
+  border: 1px solid #333;
+  
+  /** HACK! Without this line the desktop will show through around all text.
+      See Mozilla bug 371919. Remove ASAP. */
+  -moz-opacity: 0.99; 
+}
+
+
+/* the horizontal resizers */
+#mini_resize_w,
+#mini_resize_e
+{
+  height: 10px;
+  width: 2px;
+}
+
+
+/* Restore */
+.miniplayer > .sb-feathers-toggle-button
+{
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.max.png);
+}
+
+/*  Close Window */
+sb-sys-close-button.miniplayer
+{
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.close.png) ;
+}
+
+                        
+sb-player-jumpto-button.miniplayer
+{
+  margin: 0px 0px 0px 5px;  
+}
+
+
+

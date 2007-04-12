@@ -1,0 +1,258 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+
+/** 
+************************************************************************************************************************************************
+THE PLAYLIST COMMANDS
+Playlist toolbar and context menu items.
+************************************************************************************************************************************************
+*/ 
+
+
+/** NOTE:  At some point someone split the menuitem hover states out 
+    with [active="true"]... I'm not sure why though, as this doesn't seem to do
+    anything.  If for some reason cross platform issues come up, try putting
+    that back.  --matt **/
+
+#playlist_toolbar_bkg
+{ 
+  background-image: url(chrome://songbird/skin/tree/treecol.png);
+  background-repeat: repeat-x;
+  border-top: 1px solid transparent;
+}
+
+/* Toolbar: Play Button */
+#library_cmd_play
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 11px 8px 0px);
+}
+#library_cmd_play:hover
+{
+  -moz-image-region: rect(8px 11px 16px 0px);
+}
+#library_cmd_play[disabled="true"]
+{
+  -moz-image-region: rect(16px 11px 24px 0px);
+}
+
+
+/* Toolbar: remove Button */
+#library_cmd_remove
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 22px 8px 8px);
+}
+#library_cmd_remove:hover
+{
+  -moz-image-region: rect(8px 22px 16px 11px);
+}
+#library_cmd_remove[disabled="true"]
+{
+  -moz-image-region: rect(16px 22px 24px 11px);
+}
+
+
+/* Toolbar: edit Button */
+#library_cmd_edit
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 33px 8px 22px);
+}
+#library_cmd_edit:hover
+{
+  -moz-image-region: rect(8px 33px 16px 22px);
+}
+#library_cmd_edit[disabled="true"]
+{
+  -moz-image-region: rect(16px 33px 24px 22px);
+}
+
+
+/* Toolbar: addtoplaylist Button */
+#library_cmd_addtoplaylist
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 44px 8px 33px);
+}
+#library_cmd_addtoplaylist:hover
+{
+  -moz-image-region: rect(8px 44px 16px 33px);
+}
+#library_cmd_addtoplaylist[disabled="true"]
+{
+  -moz-image-region: rect(16px 44px 24px 33px);
+}
+
+
+/* Toolbar: burntocd Button */
+#library_cmd_burntocd
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 55px 8px 44px);
+}
+#library_cmd_burntocd:hover
+{
+  -moz-image-region: rect(8px 55px 16px 44px);
+}
+#library_cmd_burntocd[disabled="true"]
+{
+  -moz-image-region: rect(16px 55px 24px 44px);
+}
+
+
+/* Toolbar: device Button */
+#library_cmd_device
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 66px 8px 55px);
+}
+#library_cmd_device:hover
+{
+  -moz-image-region: rect(8px 66px 16px 55px);
+}
+#library_cmd_device[disabled="true"]
+{
+  -moz-image-region: rect(16px 66px 24px 55px);
+}
+
+
+/* Toolbar: addtolibrary Button */
+#library_cmd_addtolibrary
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 77px 8px 66px);
+}
+#library_cmd_addtolibrary[active="true"]:hover
+{
+  -moz-image-region: rect(8px 77px 16px 66px);
+}
+#library_cmd_addtolibrary[disabled="true"]
+{
+  -moz-image-region: rect(16px 77px 24px 66px);
+}
+
+
+/* Toolbar: download Button */
+#library_cmd_download
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 88px 8px 77px);
+}
+#library_cmd_download:hover
+{
+  -moz-image-region: rect(8px 88px 16px 77px);
+}
+#library_cmd_download[disabled="true"]
+{
+  -moz-image-region: rect(16px 88px 24px 77px);
+}
+
+
+/* Toolbar: subscribe Button */
+#library_cmd_subscribe
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 121px 8px 110px);
+}
+#library_cmd_subscribe:hover
+{
+  -moz-image-region: rect(8px 121px 16px 110px);
+}
+#library_cmd_subscribe[disabled="true"]
+{
+  -moz-image-region: rect(16px 121px 24px 110px);
+}
+
+
+/* Toolbar: pause Button */
+#library_cmd_pause
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 99px 8px 88px);
+}
+#library_cmd_pause:hover
+{
+  -moz-image-region: rect(8px 99px 16px 88px);
+}
+#library_cmd_pause[disabled="true"]
+{
+  -moz-image-region: rect(16px 99px 24px 88px);
+}
+
+
+/* Toolbar: resume Button */
+#library_cmd_resume
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 11px 8px 0px);
+}
+#library_cmd_resume:hover
+{
+  -moz-image-region: rect(8px 11px 16px 0px);
+}
+#library_cmd_resume[disabled="true"]
+{
+  -moz-image-region: rect(16px 11px 24px 0px);
+}
+
+
+/* Toolbar: switch to downloads Button */
+#library_cmd_showdlplaylist
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 110px 8px 99px);
+}
+#library_cmd_showdlplaylist:hover
+{
+  -moz-image-region: rect(8px 110px 16px 99px);
+}
+#library_cmd_showdlplaylist[disabled="true"]
+{
+  -moz-image-region: rect(16px 110px 24px 99px);
+}
+
+
+/* Toolbar: switch to webplaylist Button */
+#library_cmd_showwebplaylist
+{
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  -moz-image-region: rect(0px 132px 8px 121px);
+}
+#library_cmd_showwebplaylist:hover
+{
+  -moz-image-region: rect(8px 132px 16px 121px);
+}
+#library_cmd_showwebplaylist[disabled="true"]
+{
+  -moz-image-region: rect(16px 132px 24px 121px);
+}
+
+                        
+                        
+
+

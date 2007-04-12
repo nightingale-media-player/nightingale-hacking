@@ -32,105 +32,55 @@ These let the user resize the frames in your box model.
 ************************************************************************************************************************************************
 */ 
 
-/* Splitters to resize the panes */
 
-
-/*
-TODO: Remove these from all xul
-.vert_splitter,
-#search_splitter,
-#vert_splitter,
-#filter_splitter
-*/
-
-
-/** TODO: This shouldn't be required...  modify the binding **/ 
-
-/** Careful, this actually refers to splitters inserted into 
-    hboxes.  That is, splitters that are visually vertical and slide
-    left-right.  **/    
+   
+sb-smart-splitter 
+{
+  background-repeat: no-repeat;
+  background-position: center center;
+  border: 0px solid transparent; 
+  width: 7px;
+  height: 7px;
+}
+   
+   
 sb-smart-splitter:not([orient="vertical"])
 {
-  width: 7px;
-  min-width: 7px;
-  max-width: 7px;
-  height: 50px;  /**WTF?**/
-  background-repeat: no-repeat;
-  background-position: center center;
-  border: none;
   cursor: w-resize;
 }
-
-sb-smart-splitter[orient="vertical"],
-#playlist_web_split > grippy
+sb-smart-splitter[orient="vertical"]
 {
-  width: 50px;
-  height: 7px;
-  min-height: 7px;
-  max-height: 7px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  border: 0px solid transparent;
   cursor: n-resize;
 }
 
-sb-smart-splitter[state="collapsed"],
-splitter[state="collapsed"]
-{
-  width: 10px;
-  border: 1px solid;
-}
 
-/** Service pane splitter TODO: RENAME! **/
-#vert_splitter[state="collapsed"]
-{
-  margin-right: 7px;
+/** Match global/splitter.css rule for vertical splitter grippies **/
+sb-smart-splitter[orient="vertical"] > grippy {
+  margin: 1px 0px;
+  min-width: 42px;
+  min-height: 5px;
 }
 
 
-#control_pane_splitter
+/** Normal open smartsplitters just have a single dot **/
+splitter,
+splitter[orient="vertical"],
+sb-smart-splitter
 {
-  width: 50px;
-  height: 7px;
-  min-height: 7px;
-  max-height: 7px; /* Mac doesn't want to respect my height value without this? */
-  background-repeat: no-repeat;
-  background-position: center center;
-  border: none;
-  margin: 3px 0px 3px 0px;
-  cursor: n-resize;
+  background: url(chrome://songbird/skin/splitter/grippy.png) transparent no-repeat center; 
 }
 
-#control_pane_splitter[state="collapsed"]
+/** Note: This is a closed smartsplitter that moves side to side **/
+splitter:not([orient="vertical"])[state="collapsed"],
+sb-smart-splitter:not([orient="vertical"])[state="collapsed"]
 {
-  width: 50px;
-  height: 7px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  border: none;
-  margin: 3px 3px 3px 3px;
-  cursor: n-resize;
+  background: url(chrome://songbird/skin/splitter/grippy_collapsed_vertical.png) transparent no-repeat center;
 }
 
-#horz_splitter[state="collapsed"]
+/** Note: This is a closed smartsplitter that moves up and down **/
+splitter[state="collapsed"][orient="vertical"],
+sb-smart-splitter[state="collapsed"][orient="vertical"]
 {
-  height: 7px;
-  min-height: 7px;
-  max-height: 7px;
+  background: url(chrome://songbird/skin/splitter/grippy_collapsed_horizontal.png) transparent no-repeat center;
 }
-
-#playlist_web_split[state="collapsed"]
-{
-  height: 7px;
-  min-height: 7px;
-  max-height: 7px;
-}
-
-
-
-
-
-
-                        
-
 

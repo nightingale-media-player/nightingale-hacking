@@ -28,48 +28,10 @@
 
 /** 
 ************************************************************************************************************************************************
-MINI PLAYER SKIN
+MINI PLAYER CONTROLS BINDING SKIN
 ************************************************************************************************************************************************
 */  
 
-
-window#mini  
-{ 
-  width: 800px !important;
-  min-width: 390px ! important;
-  
-  /** HACK! Force height to get around Bug 2851 (Mini grows by 1px on every load) **/
-  min-height: 24px;
-  max-height: 24px;
-  
-  /** Get rid of the gradient that is applied to all windows */
-  background-image:none;
-  
-  /* Only transparent on windows. (Bug 1656) */
-  background-color: transparent !important;
-}
-
-#frame_mini
-{
-  -moz-border-radius: 10px !important;
-  background-color: #321 !important;  /** Main player color. TODO fix? */
-  padding: 2px 0px 2px 0px !important;
-  height: 22px;
-  border: 1px solid #333;
-  
-  /** HACK! Without this line the desktop will show through around all text.
-      See Mozilla bug 371919. Remove ASAP. */
-  -moz-opacity: 0.99; 
-}
-
-
-/* the horizontal resizers */
-#mini_resize_w,
-#mini_resize_e
-{
-  height: 10px;
-  width: 2px;
-}
 
 /** 
 ************************************************************************************************************************************************
@@ -282,11 +244,6 @@ SPACING
 #mini_volume_box
 {
   margin: 0px 10px 0px 5px;
-}
-
-sb-player-jumpto-button.miniplayer
-{
-  margin: 0px 0px 0px 5px;  
 }
 
 #mini_dash_autoscroll_box 

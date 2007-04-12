@@ -24,30 +24,24 @@
 //
  */
 
+
+
 /** 
 ************************************************************************************************************************************************
-XBL WIDGET STYLES
+Extra tree styles
 ************************************************************************************************************************************************
 */ 
+treecol
+{
+  background-image: url(chrome://songbird/skin/tree/treecol.png) ;
+}
 
-
-
-@import url(faceplate.css); 
-@import url(filterlist.css); 
-@import url(menu.css); 
-@import url(miniplayer.css); 
-@import url(player_controls.css); 
-@import url(playlist.css); 
-@import url(playlist_commands.css);
-@import url(scrollbar.css); 
-@import url(search.css); 
-@import url(servicepane.css); 
-@import url(smartsplitter.css); 
-@import url(spinner.css); 
-@import url(statusbar.css); 
-@import url(syscontrols.css); 
-@import url(tree.css); 
-@import url(webtoolbar.css); 
-
-
-
+/* column picker **/
+.tree-columnpicker-icon
+{
+  list-style-image: url(chrome://songbird/skin/tree/column_picker.png) ;
+}
+.treecol-image /* puts a little gradient piece to fill in next to the column picker **/
+{
+  background-image: url(chrome://songbird/skin/tree/treecol.png) ;
+}
