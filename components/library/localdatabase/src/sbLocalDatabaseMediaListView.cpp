@@ -53,9 +53,10 @@
 
 #define DEFAULT_FETCH_SIZE 1000
 
-NS_IMPL_ISUPPORTS5(sbLocalDatabaseMediaListView,
+NS_IMPL_ISUPPORTS6(sbLocalDatabaseMediaListView,
                    sbIMediaListView,
                    sbIFilterableMediaList,
+                   sbILocalDatabaseMediaListView,
                    sbISearchableMediaList,
                    sbISortableMediaList,
                    nsIClassInfo)
@@ -268,6 +269,19 @@ sbLocalDatabaseMediaListView::GetItemByIndex(PRUint32 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = item);
+  return NS_OK;
+}
+
+// sbILocalDatabaseMediaListView
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::GetOrdinalByIndex(PRUint32 aIndex,
+                                                nsAString& _retval)
+{
+  nsresult rv;
+
+  rv = mArray->GetOrdinalByIndex(aIndex, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

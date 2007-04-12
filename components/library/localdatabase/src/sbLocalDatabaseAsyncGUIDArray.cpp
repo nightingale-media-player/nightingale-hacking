@@ -457,6 +457,15 @@ sbLocalDatabaseAsyncGUIDArray::GetMediaItemIdByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetOrdinalByIndex(PRUint32 aIndex,
+                                                 nsAString& _retval)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetOrdinalByIndex(aIndex, _retval);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::Invalidate()
 {
   nsAutoMonitor monitor(mSyncMonitor);
@@ -478,6 +487,23 @@ sbLocalDatabaseAsyncGUIDArray::CloneInto(sbILocalDatabaseGUIDArray* aDest)
   nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->CloneInto(aDest);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
+                                                     PRUint32* _retval)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetFirstIndexByPrefix(aValue, _retval);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::RemoveByIndex(PRUint32 aIndex)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->RemoveByIndex(aIndex);
 }
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(CommandProcessor, nsIRunnable)

@@ -208,7 +208,7 @@ interface sbIMediaList : sbIMediaItem
   void moveLast(in unsigned long aIndex);
 
   /**
-   * \brief Remove a media item from the list
+   * \brief Remove the first occurrence of the given media item from the list
    * \param aMediaItem Media item to remove
    */
   void remove(in sbIMediaItem aMediaItem);

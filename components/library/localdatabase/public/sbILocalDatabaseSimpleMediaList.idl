@@ -1,0 +1,54 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILocalDatabaseSimpleMediaList.idl
+ * \brief Definition of the sbILocalDatabaseSimpleMediaList interface
+ * \sa sbIMediaList.idl
+ */
+
+#include "nsISupports.idl"
+
+/**
+* \interface sbILocalDatabaseSimpleMediaList
+* \brief Simple media list specific methods
+*
+* Methods and attributes that are specific to the simple media list are
+* implemented here.
+*
+* \sa sbIMediaList
+*/
+[scriptable, uuid(72c5d04f-6c75-4155-adb8-b2e5755714d1)]
+interface sbILocalDatabaseSimpleMediaList : nsISupports
+{
+  /**
+   * \brief Remove an item from the list by its ordinal.
+   * \param aIndex Index of the item to be removed
+   * \param aOrdinal Ordinal of the item to be removed
+   */
+  void removeItemByOrdinal(in AString aOrdinal);
+};
+

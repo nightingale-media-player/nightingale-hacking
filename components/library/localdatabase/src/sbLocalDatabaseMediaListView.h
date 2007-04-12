@@ -34,6 +34,7 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <sbIFilterableMediaList.h>
+#include <sbILocalDatabaseMediaListView.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
 #include <sbISearchableMediaList.h>
@@ -50,6 +51,7 @@ class sbIMediaList;
 
 class sbLocalDatabaseMediaListView : public sbIMediaListView,
                                      public sbIFilterableMediaList,
+                                     public sbILocalDatabaseMediaListView,
                                      public sbISearchableMediaList,
                                      public sbISortableMediaList,
                                      public nsIClassInfo
@@ -58,6 +60,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTVIEW
   NS_DECL_SBIFILTERABLEMEDIALIST
+  NS_DECL_SBILOCALDATABASEMEDIALISTVIEW
   NS_DECL_SBISEARCHABLEMEDIALIST
   NS_DECL_SBISORTABLEMEDIALIST
   NS_DECL_NSICLASSINFO

@@ -78,10 +78,16 @@ interface sbILocalDatabaseGUIDArray : nsISupports
 
   unsigned long getMediaItemIdByIndex(in unsigned long aIndex);
 
+  AString getOrdinalByIndex(in unsigned long aIndex);
+
   void invalidate();
 
   sbILocalDatabaseGUIDArray clone();
 
   void cloneInto(in sbILocalDatabaseGUIDArray aDest);
+
+  void removeByIndex(in unsigned long aIndex);
+
+  unsigned long getFirstIndexByPrefix(in AString aPrefix);
 };
 

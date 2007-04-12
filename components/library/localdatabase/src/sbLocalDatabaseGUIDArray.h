@@ -61,25 +61,30 @@ private:
   struct ArrayItem {
     ArrayItem(PRUint32 aMediaItemId,
               const nsAString& aGuid,
-              const nsAString& aValue) :
+              const nsAString& aValue,
+              const nsAString& aOrdinal) :
       mediaItemId(aMediaItemId),
       guid(aGuid),
-      sortPropertyValue(aValue)
+      sortPropertyValue(aValue),
+      ordinal(aOrdinal)
     {
     };
 
     ArrayItem(PRUint32 aMediaItemId,
               const PRUnichar* aGuid,
-              const PRUnichar* aValue) :
+              const PRUnichar* aValue,
+              const PRUnichar* aOrdinal) :
       mediaItemId(aMediaItemId),
       guid(aGuid),
-      sortPropertyValue(aValue)
+      sortPropertyValue(aValue),
+      ordinal(aOrdinal)
     {
     };
 
     PRUint32 mediaItemId;
     nsString guid;
     nsString sortPropertyValue;
+    nsString ordinal;
   };
 
   ~sbLocalDatabaseGUIDArray();

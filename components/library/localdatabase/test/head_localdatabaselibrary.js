@@ -241,7 +241,7 @@ function assertList(list, data) {
   }
 
   if(a.length != list.length) {
-    fail("compare failed, length wrong, got " + list.length + " expected " + (a.length - 1));
+    fail("compare failed, length wrong, got " + list.length + " expected " + a.length);
   }
 
   var listener = new TestMediaListEnumerationListener();

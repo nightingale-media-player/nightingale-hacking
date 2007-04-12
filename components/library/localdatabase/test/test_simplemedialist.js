@@ -189,7 +189,7 @@ function runTest () {
   view.enumerateAllItems(simpleEnumerator,
                          Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
   list.addSome(simpleEnumerator);
-  
+
   a.forEach(function(e) { data.push(e); });
   assertList(list, data);
   assertEqual(list.length, oldlength + 3 + view.length + view.length);
@@ -301,5 +301,54 @@ function runTest () {
   // Test clear
   list.clear();
   assertEqual(list.length, 0);
+
+  // Test duplicate items in list
+  library = createLibrary(databaseGUID);
+  var item1 = library.createMediaItem(newURI("file:///foo"));
+  var item2 = library.createMediaItem(newURI("file:///foo"));
+  list = library.createMediaList("simple");
+
+  a = [item1.guid, item2.guid, item1.guid, item2.guid];
+  list.add(item1);
+  list.add(item2);
+  list.add(item1);
+  list.add(item2);
+  assertList(list, a);
+
+  list.removeByIndex(2);
+  a = [item1.guid, item2.guid, item2.guid];
+  assertList(list, a);
+
+  list.removeByIndex(2);
+  a = [item1.guid, item2.guid];
+  assertList(list, a);
+
+  // Test that removal actually deletes the first instance
+  list = library.createMediaList("simple");
+  list.add(item1);
+  list.add(item2);
+  list.add(item1);
+  list.add(item2);
+  list.add(item2);
+  list.add(item1);
+  list.add(item2);
+  list.add(item2);
+  list.add(item2);
+
+  a = [item1.guid, item2.guid, item1.guid, item2.guid, item2.guid, item1.guid, item2.guid, item2.guid, item2.guid];
+  assertList(list, a);
+
+  list.remove(item1);
+  a = [item2.guid, item1.guid, item2.guid, item2.guid, item1.guid, item2.guid, item2.guid, item2.guid];
+  assertList(list, a);
+
+  list.remove(item1);
+  a = [item2.guid, item2.guid, item2.guid, item1.guid, item2.guid, item2.guid, item2.guid];
+  assertList(list, a);
+
+  list.remove(item1);
+  a = [item2.guid, item2.guid, item2.guid, item2.guid, item2.guid, item2.guid];
+  assertList(list, a);
+
 }
 

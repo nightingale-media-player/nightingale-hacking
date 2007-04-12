@@ -205,6 +205,46 @@ sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
 }
 
 nsresult
+sbLocalDatabaseQuery::GetPrefixSearchQuery(const nsAString& aValue,
+                                           nsAString& aQuery)
+{
+  nsresult rv;
+
+  rv = AddCountColumns();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddBaseTable();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mIsDistinct) {
+    rv = AddDistinctConstraint();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = AddFilters();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPrimarySort();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  rv = mBuilder->CreateMatchCriterionString(SORT_ALIAS,
+                                            OBJ_COLUMN,
+                                            sbISQLSelectBuilder::MATCH_LESS,
+                                            aValue,
+                                            getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mBuilder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mBuilder->ToString(aQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbLocalDatabaseQuery::AddCountColumns()
 {
   nsresult rv;
@@ -293,6 +333,18 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
         }
       }
     }
+  }
+
+  // If this query is on the simple media list table, add the ordinal
+  // as the next column
+  if (mBaseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
+    rv = mBuilder->AddColumn(CONSTRAINT_ALIAS,
+                             ORDINAL_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mBuilder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;

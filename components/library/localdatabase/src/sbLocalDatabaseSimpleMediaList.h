@@ -28,6 +28,7 @@
 #define __SBLOCALDATABASESIMPLEMEDIALIST_H__
 
 #include "sbLocalDatabaseMediaListBase.h"
+#include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaListListener.h>
 
 #include <nsStringGlue.h>
@@ -43,6 +44,7 @@ class sbSimpleMediaListInsertingEnumerationListener;
 class sbSimpleMediaListRemovingEnumerationListener;
 
 class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase,
+                                       public sbILocalDatabaseSimpleMediaList,
                                        public sbIMediaListListener
 {
 public:
@@ -51,6 +53,7 @@ public:
 
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_SBIMEDIALISTLISTENER
+  NS_DECL_SBILOCALDATABASESIMPLEMEDIALIST
 
   sbLocalDatabaseSimpleMediaList()
   : mBatchRemoveListener(nsnull)
@@ -104,11 +107,17 @@ private:
   // Query to update the ordinal of a media item in this list
   nsString mUpdateListItemOrdinalQuery;
 
+  // Query to get the guid of an item on this list by its ordinal
+  nsString mGetMediaItemGuidForOrdinalQuery;
+
   // Query to delete an item from the list
-  nsString mDeleteListItemQuery;
+  nsString mDeleteFirstListItemQuery;
 
   // Query to delete the entire contents of the list
   nsString mDeleteAllQuery;
+
+  // Query to delete an item with a given ordinal
+  nsString mDeleteListItemByOrdinalQuery;
 
   // Get last ordinal
   nsString mGetLastOrdinalQuery;

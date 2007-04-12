@@ -219,7 +219,7 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMe
     do_QueryInterface(aMediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDBQuery->AddQuery(mFriendList->mDeleteListItemQuery);
+  rv = mDBQuery->AddQuery(mFriendList->mDeleteFirstListItemQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 mediaItemId;
@@ -260,11 +260,14 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
   // Invalidate the cached list
   rv = mFriendList->mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbLocalDatabaseSimpleMediaList,
+NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseSimpleMediaList,
                              sbLocalDatabaseMediaListBase,
-                             sbIMediaListListener)
+                             sbIMediaListListener,
+                             sbILocalDatabaseSimpleMediaList)
 
 nsresult
 sbLocalDatabaseSimpleMediaList::Init(sbILocalDatabaseLibrary* aLibrary,
@@ -586,11 +589,30 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
 
   nsresult rv;
 
-  nsCOMPtr<sbIMediaItem> item;
-  rv = GetItemByIndex(aIndex, getter_AddRefs(item));
+  nsAutoString ordinal;
+  rv = mFullArray->GetSortPropertyValueByIndex(aIndex, ordinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = Remove(item);
+  nsCOMPtr<sbIMediaItem> item;
+  rv = GetItemByIndex(aIndex, getter_AddRefs(item));
+  NotifyListenersItemRemoved(this, item);
+
+  nsCOMPtr<sbIDatabaseQuery> dbQuery;
+  rv = MakeStandardQuery(getter_AddRefs(dbQuery));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbQuery->AddQuery(mDeleteListItemByOrdinalQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbQuery->BindStringParameter(0, ordinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbSuccess;
+  rv = dbQuery->Execute(&dbSuccess);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
+
+  rv = mFullArray->RemoveByIndex(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -681,6 +703,74 @@ sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListView** _retval)
   return NS_OK;
 }
 
+// sbILocalDatabaseSimpleMediaList
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::RemoveItemByOrdinal(const nsAString& aOrdinal)
+{
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+
+  nsresult rv;
+  PRInt32 dbOk;
+
+  // Get the GUID for the item at the specified ordinal
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mGetMediaItemGuidForOrdinalQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, aOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (rowCount == 0) {
+    return NS_ERROR_UNEXPECTED;
+  }
+
+  nsAutoString guid;
+  rv = result->GetRowCell(0, 0, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the item and notify we're going to delete it
+  nsCOMPtr<sbIMediaItem> item;
+  rv = GetItemByGuid(guid, getter_AddRefs(item));
+  NotifyListenersItemRemoved(this, item);
+
+  // Delete the item by ordinal
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mDeleteListItemByOrdinalQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, aOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, NS_ERROR_FAILURE);
+
+  // XXX: Perhaps we could look up the index of the item and just remove
+  // it from the cache rather than a full invalidate?
+  rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 nsresult
 sbLocalDatabaseSimpleMediaList::ExecuteAggregateQuery(const nsAString& aQuery,
                                                       nsAString& aValue)
@@ -760,7 +850,7 @@ sbLocalDatabaseSimpleMediaList::DeleteItemByMediaItemId(PRUint32 aMediaItemId)
   rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->AddQuery(mDeleteListItemQuery);
+  rv = query->AddQuery(mDeleteFirstListItemQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindInt32Parameter(0, aMediaItemId);
@@ -999,6 +1089,29 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   rv = builder->ToString(mGetMediaItemIdForGuidQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Create get guid by ordinal query
+  rv = builder->ClearColumns();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(NS_LITERAL_STRING("_mi"),
+                          NS_LITERAL_STRING("guid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->RemoveCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_sml"),
+                                              NS_LITERAL_STRING("ordinal"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mGetMediaItemGuidForOrdinalQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Create insertion query
   nsCOMPtr<sbISQLInsertBuilder> insert =
     do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
@@ -1059,8 +1172,20 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   rv = update->ToString(mUpdateListItemOrdinalQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Create item delete query
-  nsCOMPtr<sbISQLDeleteBuilder> deleteb =
+  // Create first item delete query
+  // delete from
+  //   simple_media_lists
+  // where
+  //   media_item_id = x and
+  //   ordinal in (
+  //     select
+  //       ordinal
+  //     from
+  //       simple_media_lists
+  //     where
+  //       member_media_item_id = ?
+  //     order by ordinal limit 1)
+  nsCOMPtr<sbISQLDeleteBuilder> deleteb = 
     do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
 
   rv = deleteb->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
@@ -1076,8 +1201,75 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   rv = deleteb->AddCriterion(criterion);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = deleteb->CreateMatchCriterionParameter(EmptyString(),
+  // Build the subquery
+  rv = builder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("rowid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("simple_media_lists"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionParameter(EmptyString(),
                                               NS_LITERAL_STRING("member_media_item_id"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionLong(EmptyString(),
+                                         NS_LITERAL_STRING("media_item_id"),
+                                         sbISQLSelectBuilder::MATCH_EQUALS,
+                                         mediaItemId,
+                                         getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddOrder(EmptyString(), NS_LITERAL_STRING("ordinal"), PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetLimit(1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
+  rv = deleteb->CreateMatchCriterionIn(EmptyString(),
+                                       NS_LITERAL_STRING("rowid"),
+                                       getter_AddRefs(inCriterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = inCriterion->AddSubquery(builder);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->AddCriterion(inCriterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->ToString(mDeleteFirstListItemQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create item delete by ordinal query
+  rv = deleteb->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->CreateMatchCriterionLong(EmptyString(),
+                                         NS_LITERAL_STRING("media_item_id"),
+                                         sbISQLSelectBuilder::MATCH_EQUALS,
+                                         mediaItemId,
+                                         getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteb->CreateMatchCriterionParameter(EmptyString(),
+                                              NS_LITERAL_STRING("ordinal"),
                                               sbISQLSelectBuilder::MATCH_EQUALS,
                                               getter_AddRefs(criterion));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1085,7 +1277,7 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   rv = deleteb->AddCriterion(criterion);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = deleteb->ToString(mDeleteListItemQuery);
+  rv = deleteb->ToString(mDeleteListItemByOrdinalQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create delete all query

@@ -356,6 +356,20 @@ sbLocalDatabaseGUIDArray::GetMediaItemIdByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetOrdinalByIndex(PRUint32 aIndex,
+                                            nsAString& _retval)
+{
+  nsresult rv;
+
+  ArrayItem* item;
+  rv = GetByIndexInternal(aIndex, &item);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  _retval.Assign(item->ordinal);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::Invalidate()
 {
   if (mValid == PR_FALSE) {
@@ -452,6 +466,89 @@ sbLocalDatabaseGUIDArray::CloneInto(sbILocalDatabaseGUIDArray* aDest)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
+{
+  nsresult rv;
+
+  if (mValid == PR_FALSE) {
+    rv = Initalize();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ENSURE_ARG_MAX(aIndex, mLength - 1);
+
+  // Remove the specified element from the cache
+  mCache.RemoveElementAt(aIndex);
+
+  // Adjust the null length of the array.  Made sure we decrement the non
+  // null lengths only if the removed element lies within that area
+  if (mNullsFirst) {
+    if (aIndex < mNonNullLength) {
+      mNonNullLength--;
+    }
+  }
+  else {
+    if (aIndex > mLength - mNonNullLength - 1) {
+      mNonNullLength--;
+    }
+  }
+
+  // Finally, adjust the size of the full array
+  mLength--;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
+                                                PRUint32* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  if (mValid == PR_FALSE) {
+    rv = Initalize();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  sbLocalDatabaseQuery ldq(mBaseTable,
+                           mBaseConstraintColumn,
+                           mBaseConstraintValue,
+                           NS_LITERAL_STRING("member_media_item_id"),
+                           mSorts[0].property,
+                           mSorts[0].ascending,
+                           &mFilters,
+                           mIsDistinct);
+
+  nsAutoString query;
+  rv = ldq.GetPrefixSearchQuery(aValue, query);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 index;
+  rv = RunLengthQuery(query, &index);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the result is equal to the non null length, we know it was not found
+  if (index == mNonNullLength) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  // Check to see if the returned index actually starts with the requested
+  // prefix
+  nsAutoString value;
+  rv = GetSortPropertyValueByIndex(index, value);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!StringBeginsWith(value, aValue)) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  *_retval = index;
   return NS_OK;
 }
 
@@ -1370,7 +1467,11 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     rv = result->GetRowCellPtr(i, 2, &value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    ArrayItem* item = new ArrayItem(mediaItemId, guid, value);
+    PRUnichar* ordinal;
+    rv = result->GetRowCellPtr(i, 3, &ordinal);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    ArrayItem* item = new ArrayItem(mediaItemId, guid, value, ordinal);
     NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
     NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + aDestIndexOffset, 1, item),
@@ -1424,7 +1525,8 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     for (PRUint32 i = 0; i < aCount - rowCount; i++) {
       ArrayItem* item = new ArrayItem(0,
                                       NS_LITERAL_STRING("error"),
-                                      NS_LITERAL_STRING("error"));
+                                      NS_LITERAL_STRING("error"),
+                                      EmptyString());
       NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
       NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + rowCount + aDestIndexOffset, 1, item),
