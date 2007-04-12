@@ -73,6 +73,12 @@
         };
         this.mTabBox.addEventListener("DOMAttrModified",
             this.tabChangeEventListener, false);
+        
+        this.webNavigation.sessionHistory =
+            Components.classes["@mozilla.org/browser/shistory;1"]
+            .createInstance(Components.interfaces.nsISHistory);
+        this.browsers[0].removeAttribute("disablehistory");
+        
       ]]></constructor>
       <destructor><![CDATA[
         this.closeBalloonTip();
@@ -381,20 +387,9 @@
             scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_X,
                                                       nsIScrollable.Scrollbar_Auto);
           
-            var cur_uri = aLocation.asciiSpec;
-            // save url for reload on next servicetree init
-            //SBDataSetStringValue("servicetree.selected_url", cur_uri);  
-            // Set the value in the text box (shown or not)
-
-            if (aRequest && aRequest.name) {
-              // Set the buttons based on the session history.
-              if (this.webNavigation.sessionHistory) {
-                // Check the buttons
-                SBDataSetBoolValue('browser.cangoback',
-                                   this.webNavigation.canGoBack);
-                SBDataSetBoolValue('browser.cangoforward',
-                                   this.webNavigation.canGoForward);
-              }
+            if (this.webNavigation.sessionHistory) {
+              SBDataSetBoolValue('browser.cangoback', this.webNavigation.canGoBack);
+              SBDataSetBoolValue('browser.cangofwd', this.webNavigation.canGoForward);
             }
             
             // Clear the playlist tree variable so we are not confused.
