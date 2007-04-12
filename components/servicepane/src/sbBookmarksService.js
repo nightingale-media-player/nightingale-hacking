@@ -159,6 +159,13 @@ function sbBookmarks_servicePaneInit(sps) {
                 
                 fnode.setAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported', 'true');
             }
+            
+            // try to import json bookmarks from 0.2.5
+            try {
+                service.migrateLegacyBookmarks();
+            } catch (e) {
+            }
+
             sps.save();
         }, false);
         xhr.addEventListener('error', function(evt) {
@@ -180,6 +187,48 @@ function sbBookmarks_getString(aStringId, aDefault) {
         return this._stringBundle.GetStringFromName(aStringId);
     } catch (e) {
         return aDefault;
+    }
+}
+sbBookmarks.prototype.migrateLegacyBookmarks =
+function sbBookmarks_migrateLegacyBookmarks() {
+    try {
+        var prefsService =
+                Components.classes["@mozilla.org/preferences-service;1"].
+                getService(Components.interfaces.nsIPrefBranch);
+        var LEGACY_BOOKMARKS_PREF = 'songbird.bookmarks.serializedTree';
+        if (prefsService.prefHasUserValue(LEGACY_BOOKMARKS_PREF)) {
+            var json = '(' + prefsService.getCharPref(LEGACY_BOOKMARKS_PREF) + ')';
+            var bms = eval(json);
+            for (var i in bms.children) {
+                var folder = bms.children[i];
+                if (folder.label == '&servicesource.bookmarks') {
+                    for (var j in folder.children) {
+                        var bm = folder.children[j];
+                        if (bm.properties != 'bookmark') {
+                            continue;
+                        }
+                        var node = this._servicePane.getNode(bm.url);
+                        if (node) {
+                            // this bookmark already existed.
+                            // we want to set the title to the old
+                            node.name = bm.label;
+                        } else {
+                            // the bookmark does not exist. We need to create it
+                            var icon = 'chrome://service-icons/skin/default.ico';
+                            // only import the icon if its from the web
+                            if (bm.icon.match(/^http/)) {
+                                icon = bm.icon;
+                            }
+                            this.addBookmark(bm.url, bm.label, icon);
+                        }
+                    }
+                    break;
+                }
+            }
+            // let's clear that pref
+            prefsService.clearUserPref(LEGACY_BOOKMARKS_PREF);
+        }
+    } catch (e) {
     }
 }
 sbBookmarks.prototype.addBookmark =
