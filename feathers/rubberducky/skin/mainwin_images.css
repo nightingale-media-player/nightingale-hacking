@@ -24,38 +24,33 @@
 //
  */
 
+
 /** 
 ************************************************************************************************************************************************
-= Songbird CSS Architecture =
+WINDOW CHROME
+There is one image for the light effect on every window, including nested ones.
+************************************************************************************************************************************************
+*/
+window
+{
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient.png); 
+  background-repeat: repeat-x;  
+}
+/* END WINDOW CHROME **/
+  
 
-TODO: Write some background
 
+
+
+/** 
+************************************************************************************************************************************************
+THE PLAYLIST
 ************************************************************************************************************************************************
 */ 
 
- /** 
-************************************************************************************************************************************************
-CASCADE!
-You can only use the @ at the top of the file.
-************************************************************************************************************************************************
-*/ 
-
-
-
-/** Include base Songbird styles used to reskin all elements.
-    This sheet attempts to remove all OS native styling. **/
-@import url("chrome://global/skin/songbird-base-styles.css");
-
-@import url(chrome://songbird-bindings/skin/bindings.css); 
-@import url(chrome://songbird-dialogs/skin/dialogs.css); 
-
-@import url(chrome://songbird/content/feathers/basic-layouts/css/base_styles.css); 
-
-@import url(chrome://songbird/content/feathers/basic-layouts/css/mainwin.css); /* size and positioning for the main application window **/
-@import url(chrome://songbird/content/feathers/basic-layouts/css/miniplayer.css); /* css for the mini player **/
-
-@import url(mainwin_images.css); /* extra images for the mainwin **/
-@import url(mainwin_colors.css); /* colors for the main application window colors **/
-@import url(dialog_colors.css); /* colors for the dialog window colors **/
-
+/* Put a Background behind your filterlists for extra style. */
+playlist
+{
+  background-image: url(chrome://songbird/skin/backgrounds/asanoha.png); 
+}
 
