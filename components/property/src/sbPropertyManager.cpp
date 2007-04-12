@@ -43,8 +43,8 @@
 #include <sbTArrayStringEnumerator.h>
 
 struct sbStaticProperty {
-  const PRUnichar* mName;
-  const PRUnichar* mColumn;
+  const wchar_t* mName;
+  const wchar_t* mColumn;
   PRUint32    mID;
 };
 
