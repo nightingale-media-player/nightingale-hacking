@@ -162,7 +162,6 @@ NS_IMETHODIMP sbNumberPropertyInfo::Validate(const nsAString & aValue, PRBool *_
 
 NS_IMETHODIMP sbNumberPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
 {
-  PRBool valid = PR_FALSE;
   PRInt64 value = 0;
   NS_ConvertUTF16toUTF8 narrow(aValue);
 

@@ -218,10 +218,10 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 {
   nsresult rv;
   
-  nsAutoPtr<sbDatetimePropertyInfo> datetimeProperty = nsnull;
-  nsAutoPtr<sbNumberPropertyInfo> numberProperty = nsnull;
-  nsAutoPtr<sbTextPropertyInfo> textProperty = nsnull;
-  nsAutoPtr<sbURIPropertyInfo> uriProperty = nsnull;
+  nsAutoPtr<sbDatetimePropertyInfo> datetimeProperty;
+  nsAutoPtr<sbNumberPropertyInfo> numberProperty;
+  nsAutoPtr<sbTextPropertyInfo> textProperty;
+  nsAutoPtr<sbURIPropertyInfo> uriProperty;
 
   //Date created
   datetimeProperty = new sbDatetimePropertyInfo();
