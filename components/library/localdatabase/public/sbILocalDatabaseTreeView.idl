@@ -34,10 +34,22 @@
 /**
 * \interface sbILocalDatabaseTreeView
 */
-[scriptable, uuid(78a7ccc7-3186-4324-9d3e-cf528c24f072)]
+[scriptable, uuid(c1e4e564-8e8d-4052-b4c2-7f4716061ffb)]
 interface sbILocalDatabaseTreeView : nsISupports
 {
-  attribute AString search;
-  void init();
+  /**
+   * \brief Calculates the first row index based on a series of keystrokes.
+   *
+   * This method helps optimize the behavior of the tree view. When keyboard
+   * input occurs we want to select the next row that matches the keys that
+   * were pressed.
+   *
+   * \param aKeyString - The accumulated keystrokes to be matched.
+   *
+   * \return The index of the next row that matches the keystrokes. -1 if the
+   *         keystrokes do not match any row. The returned row index may be
+   *         equal to the value passed in to aCurrentIndex.
+   */
+  long getNextRowIndexForKeyNavigation(in AString aKeyString);
 };
 

@@ -213,7 +213,7 @@ sbLocalDatabaseMediaListView::GetTreeView(nsITreeView** aTreeView)
     nsAutoPtr<sbLocalDatabaseTreeView> treeView(new sbLocalDatabaseTreeView());
     NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = treeView->Init(this, mArray, mDefaultSortProperty, PR_TRUE);
+    rv = treeView->Init(this, mArray, mViewSort);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mTreeView = treeView.forget();

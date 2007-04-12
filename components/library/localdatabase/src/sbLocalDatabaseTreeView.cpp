@@ -25,22 +25,25 @@
 */
 
 #include "sbLocalDatabaseTreeView.h"
-#include "sbLocalDatabaseCID.h"
-#include <sbTArrayStringEnumerator.h>
 
-#include <nsComponentManagerUtils.h>
 #include <nsIDOMElement.h>
 #include <nsITreeBoxObject.h>
 #include <nsITreeColumns.h>
 #include <nsITreeSelection.h>
-#include <nsMemory.h>
-#include <prlog.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbIMediaListView.h>
-#include <sbISortableMediaList.h>
-#include <sbLocalDatabasePropertyCache.h>
 #include <sbIPropertyArray.h>
+#include <sbISortableMediaList.h>
+
+#include <nsComponentManagerUtils.h>
+#include <nsThreadUtils.h>
+#include <nsUnicharUtils.h>
+#include <nsUnitConversion.h>
+#include <prlog.h>
+#include "sbLocalDatabasePropertyCache.h"
+#include "sbLocalDatabaseCID.h"
 #include <sbPropertiesCID.h>
+#include <sbTArrayStringEnumerator.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -55,9 +58,10 @@ static PRLogModuleInfo* gLocalDatabaseTreeViewLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-NS_IMPL_ISUPPORTS2(sbLocalDatabaseTreeView,
+NS_IMPL_ISUPPORTS3(sbLocalDatabaseTreeView,
+                   nsITreeView,
                    sbILocalDatabaseAsyncGUIDArrayListener,
-                   nsITreeView)
+                   sbILocalDatabaseTreeView)
 
 sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mCachedRowCount(0),
@@ -81,8 +85,7 @@ sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
 nsresult
 sbLocalDatabaseTreeView::Init(sbIMediaListView* aMediaListView,
                               sbILocalDatabaseAsyncGUIDArray* aArray,
-                              const nsAString& aSortProperty,
-                              PRBool aSortDirectionIsAscending)
+                              sbIPropertyArray* aCurrentSort)
 {
   NS_ENSURE_ARG_POINTER(aArray);
 
@@ -107,12 +110,6 @@ sbLocalDatabaseTreeView::Init(sbIMediaListView* aMediaListView,
 
   success = mPageCacheStatus.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-  mCurrentSortProperty             = aSortProperty;
-  mCurrentSortDirectionIsAscending = aSortDirectionIsAscending;
-
-  rv = SetSort(mCurrentSortProperty, mCurrentSortDirectionIsAscending);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -844,3 +841,63 @@ sbLocalDatabaseTreeView::PerformActionOnCell(const PRUnichar* action,
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+/**
+ * See sbILocalDatabaseTreeView
+ */
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetNextRowIndexForKeyNavigation(const nsAString& aKeyString,
+                                                         PRInt32* _retval)
+{
+  NS_ASSERTION(NS_IsMainThread(), "wrong thread");
+  NS_ENSURE_FALSE(aKeyString.IsEmpty(), NS_ERROR_INVALID_ARG);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoString keyString(aKeyString);
+  PRUint32 keyStringLength = keyString.Length();
+
+  ToLowerCase(keyString);
+
+  PRInt32 comparison = 1, lastRow = -1;
+  PRUint32 index = 0, rowsSeen = 0;
+
+  nsresult rv;
+  for (; (comparison == 1) && (rowsSeen < mRowCache.Count()); index++) {
+
+    nsCOMPtr<sbILocalDatabaseResourcePropertyBag> propertyBag;
+
+    if (mRowCache.Get(index, getter_AddRefs(propertyBag))) {
+      // We have already cached this row.
+
+      // Get the sort property value for the row.
+      nsAutoString thisString;
+      rv = mArray->GetSortPropertyValueByIndex(index, thisString);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // See how it compares to our key string.
+      comparison = keyString.Compare(Substring(thisString, 0, keyStringLength));
+
+      if (comparison != 0) {
+        // The string didn't match, but remember that this row was cached.
+        lastRow = index;
+        rowsSeen++;
+
+        // And keep churning.
+        continue;
+      }
+
+      // We know that we've found the right spot if the row immediately
+      // preceeding this one was cached yet did not match or if this is the
+      // first row.
+      if ((lastRow == index - 1) || !index) {
+        *_retval = index;
+        return NS_OK;
+      }
+
+    }
+  }
+
+  // TODO: Ask the database for a deeper search.
+
+  *_retval = -1;
+  return NS_OK;
+}

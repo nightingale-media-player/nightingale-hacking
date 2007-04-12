@@ -26,8 +26,6 @@
 
 #include "sbLocalDatabaseCascadeFilterSet.h"
 
-#include <DatabaseQuery.h>
-#include <nsComponentManagerUtils.h>
 #include <nsISimpleEnumerator.h>
 #include <nsITreeView.h>
 #include <sbIDatabaseQuery.h>
@@ -36,14 +34,17 @@
 #include <sbILocalDatabaseAsyncGUIDArray.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaListView.h>
+#include <sbIPropertyArray.h>
 #include <sbISearchableMediaList.h>
 #include <sbISQLBuilder.h>
-#include <sbLocalDatabasePropertyCache.h>
-#include <sbLocalDatabaseTreeView.h>
+
+#include <DatabaseQuery.h>
+#include <nsComponentManagerUtils.h>
+#include "sbLocalDatabasePropertyCache.h"
+#include "sbLocalDatabaseTreeView.h"
+#include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
-#include <sbIPropertyArray.h>
-#include <sbPropertiesCID.h>
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseCascadeFilterSet,
                    sbICascadeFilterSet);
@@ -312,7 +313,14 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
     nsAutoPtr<sbLocalDatabaseTreeView> treeView(new sbLocalDatabaseTreeView());
     NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = treeView->Init(nsnull, fs.array, fs.property, PR_TRUE);
+    nsCOMPtr<sbIPropertyArray> propArray =
+      do_CreateInstance("@songbirdnest.com/Songbird/Properties/PropertyArray;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = propArray->AppendProperty(fs.property, NS_LITERAL_STRING("a"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = treeView->Init(nsnull, fs.array, propArray);
     NS_ENSURE_SUCCESS(rv, rv);
 
     fs.treeView = treeView.forget();

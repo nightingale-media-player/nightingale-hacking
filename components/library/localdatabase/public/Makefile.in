@@ -29,20 +29,18 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbILocalDatabaseSmartMediaList.idl \
+XPIDL_SRCS = sbILocalDatabaseAsyncGUIDArray.idl \
              sbILocalDatabaseGUIDArray.idl \
-             sbILocalDatabasePropertyCache.idl \
-             sbILocalDatabaseLibraryFactory.idl \
              sbILocalDatabaseLibrary.idl \
-             sbILocalDatabaseResourceProperty.idl \
+             sbILocalDatabaseLibraryFactory.idl \
              sbILocalDatabaseMediaItem.idl \
-             sbILocalDatabaseAsyncGUIDArray.idl \
+             sbILocalDatabasePropertyCache.idl \
+             sbILocalDatabaseResourceProperty.idl \
+             sbILocalDatabaseSmartMediaList.idl \
+             sbILocalDatabaseTreeView.idl \
              sbILocalDatabaseSimpleMediaList.idl \
              sbILocalDatabaseMediaListView.idl \
              $(NULL)
-
-#XPIDL_HEADER_SRCS += sbILocalDatabaseLibrary.idl \
-#                     $(NULL)
 
 XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \
                  $(NULL)

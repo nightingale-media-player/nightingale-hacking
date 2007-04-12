@@ -27,27 +27,32 @@
 #ifndef __SBLOCALDATABASETREEVIEW_H__
 #define __SBLOCALDATABASETREEVIEW_H__
 
+#include <nsITreeView.h>
+#include <sbILocalDatabaseAsyncGUIDArray.h>
+#include <sbILocalDatabaseTreeView.h>
+
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
-#include <nsITreeView.h>
 #include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
-#include <sbILocalDatabaseAsyncGUIDArray.h>
-#include <sbILocalDatabasePropertyCache.h>
 
 class nsITreeBoxObject;
 class nsITreeSelection;
 class sbILocalDatabasePropertyCache;
+class sbILocalDatabaseResourcePropertyBag;
 class sbIMediaListView;
+class sbIPropertyArray;
 
 class sbLocalDatabaseTreeView : public nsITreeView,
-                                public sbILocalDatabaseAsyncGUIDArrayListener
+                                public sbILocalDatabaseAsyncGUIDArrayListener,
+                                public sbILocalDatabaseTreeView
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSITREEVIEW
   NS_DECL_SBILOCALDATABASEASYNCGUIDARRAYLISTENER
+  NS_DECL_SBILOCALDATABASETREEVIEW
 
   sbLocalDatabaseTreeView();
 
@@ -55,8 +60,7 @@ public:
 
   nsresult Init(sbIMediaListView* aListView,
                 sbILocalDatabaseAsyncGUIDArray* aArray,
-                const nsAString& aSortProperty,
-                PRBool aSortDirectionIsAscending);
+                sbIPropertyArray* aCurrentSort);
 
   nsresult Rebuild();
 
@@ -84,6 +88,7 @@ private:
 
   void InvalidateCache();
 
+private:
   // The media list view that this tree view is a view of
   nsCOMPtr<sbIMediaListView> mMediaListView;
 
