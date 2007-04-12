@@ -32,7 +32,10 @@
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
-
+#include <nsDateTimeFormatCID.h>
+#include <nsIDateTimeFormat.h>
+#include <nsILocale.h>
+#include <nsILocaleService.h>
 #include <nsAutoLock.h>
 
 class sbDatetimePropertyInfo : public sbPropertyInfo,
@@ -52,12 +55,22 @@ public:
   NS_IMETHOD MakeSortable(const nsAString & aValue, nsAString & _retval);
   
 protected:
+  PRBool  mDurationInversed;
+  PRBool  mDurationDisplayMillisec;
+
   PRLock* mTimeTypeLock;
   PRInt32 mTimeType;
 
   PRLock* mMinMaxTimeLock;
   PRInt64 mMinTime;
   PRInt64 mMaxTime;
+
+  PRLock* mAppLocaleLock;
+  nsCOMPtr<nsILocale> mAppLocale;
+  
+  PRLock* mDateTimeFormatLock;
+  nsCOMPtr<nsIDateTimeFormat> mDateTimeFormat;
+
 };
 
 #endif /* __SBDATETIMEPROPERTYINFO_H__ */

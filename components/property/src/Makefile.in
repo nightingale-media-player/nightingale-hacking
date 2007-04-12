@@ -48,8 +48,10 @@ CPP_SRCS = sbSimpleProperty.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/moz/strings/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/locale \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
@@ -71,6 +73,14 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
+
+ifdef DEBUG
+moz_utils = sbMozStringUtils_d
+else
+moz_utils = sbMozStringUtils
+endif
+
+DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/$(moz_utils)
 
 ifeq (macosx,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS +=  unicharutil_external_s \

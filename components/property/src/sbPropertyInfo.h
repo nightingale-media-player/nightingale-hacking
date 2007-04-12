@@ -28,6 +28,7 @@
 #define __SBPROPERTYINFO_H__
 
 #include <sbIPropertyManager.h>
+#include <sbIPropertyArray.h>
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
@@ -37,6 +38,8 @@
 #define NS_FORWARD_SBIPROPERTYINFO_NOVALIDATE_NOFORMAT(_to) \
 NS_IMETHOD GetNullSort(PRUint32 *aNullSort) { return _to GetNullSort(aNullSort); } \
 NS_IMETHOD SetNullSort(PRUint32 aNullSort) { return _to SetNullSort(aNullSort); } \
+NS_IMETHOD GetSortProfile(sbIPropertyArray * *aSortProfile) { return _to GetSortProfile(aSortProfile); } \
+NS_IMETHOD SetSortProfile(sbIPropertyArray * aSortProfile) { return _to SetSortProfile(aSortProfile); } \
 NS_IMETHOD GetName(nsAString & aName) { return _to GetName(aName); } \
 NS_IMETHOD SetName(const nsAString & aName) { return _to SetName(aName); } \
 NS_IMETHOD GetType(nsAString & aType) { return _to GetType(aType); } \
@@ -64,6 +67,9 @@ public:
 
 protected:
   PRUint32  mNullSort;
+
+  PRLock*   mSortProfileLock;
+  nsCOMPtr<sbIPropertyArray> mSortProfile;
 
   PRLock*   mNameLock;
   nsString  mName;

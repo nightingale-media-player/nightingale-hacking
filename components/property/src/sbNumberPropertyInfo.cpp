@@ -199,7 +199,6 @@ NS_IMETHODIMP sbNumberPropertyInfo::Format(const nsAString & aValue, nsAString &
 NS_IMETHODIMP sbNumberPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv;
-  PRBool valid = PR_FALSE;
   PRInt64 value = 0;
   NS_ConvertUTF16toUTF8 narrow(aValue);
 

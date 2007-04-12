@@ -115,6 +115,7 @@ function testGet( item, attrib, value ) {
 }
 
 function testSet( item, attrib, value ) {
+  log("testSet: " + attrib + " -> " + value);
   item[ attrib ] = value;
   testGet( item, attrib, value );
 }

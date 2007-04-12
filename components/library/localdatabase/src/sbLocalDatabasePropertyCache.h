@@ -43,6 +43,7 @@ struct PRLock;
 class nsIURI;
 class sbIDatabaseQuery;
 class sbLocalDatabaseLibrary;
+class sbIPropertyManager;
 class sbISQLBuilderCriterionIn;
 class sbISQLInsertBuilder;
 class sbISQLSelectBuilder;
@@ -71,8 +72,10 @@ public:
 
   PRBool IsTopLevelProperty(PRUint32 aPropertyID);
   nsresult PropertyRequiresInsert(const nsAString &aGuid, PRUint32 aPropertyID, PRBool *aInsert);
-  void   GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn); 
 
+  void GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn);
+  nsresult InsertPropertyNameInLibrary(const nsAString& aPropertyName);
+  
 private:
   PRBool mWritePending;
 
@@ -96,6 +99,10 @@ private:
   nsCOMPtr<sbISQLSelectBuilder> mMediaItemsSelect;
   nsCOMPtr<sbISQLBuilderCriterionIn> mMediaItemsInCriterion;
 
+  // Used to template the properties table insert that generates
+  // the property ID for the property in the current library.
+  nsCOMPtr<sbISQLInsertBuilder> mPropertiesTableInsert;
+
   // Used to template the properties insert statement
   nsCOMPtr<sbISQLInsertBuilder> mPropertiesInsert;
 
@@ -106,7 +113,7 @@ private:
   nsCOMPtr<sbISQLUpdateBuilder> mMediaItemsUpdate;
 
   // Used to template the query used to verify if we need to insert or
-  // update a perticular property.
+  // update a peculiar property.
   nsCOMPtr<sbISQLSelectBuilder> mPropertyInsertSelect;
 
   // Cache for GUID -> property bag
@@ -119,6 +126,8 @@ private:
   // Backstage pass to our parent library. Can't use an nsRefPtr because the
   // library owns us and that would create a cycle.
   sbLocalDatabaseLibrary* mLibrary;
+
+  nsCOMPtr<sbIPropertyManager> mPropertyManager;
 };
 
 class sbLocalDatabaseResourcePropertyBag : public sbILocalDatabaseResourcePropertyBag
@@ -142,6 +151,8 @@ private:
 
   sbLocalDatabasePropertyCache* mCache;
   nsClassHashtableMT<nsUint32HashKey, nsString> mValueMap;
+
+  nsCOMPtr<sbIPropertyManager> mPropertyManager;
 
   PRBool    mWritePending;
   nsString  mGuid;

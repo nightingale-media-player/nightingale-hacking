@@ -24,13 +24,14 @@
 //
 */
 
-#include "sbTextPropertyInfo.h"
+#include "sbPropertyInfo.h"
 #include <nsAutoLock.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyInfo, sbIPropertyInfo)
 
 sbPropertyInfo::sbPropertyInfo()
 : mNullSort(sbIPropertyInfo::SORT_NULL_SMALL)
+, mSortProfileLock(nsnull)
 , mNameLock(nsnull)
 , mTypeLock(nsnull)
 , mDisplayKeyLock(nsnull)
@@ -38,6 +39,10 @@ sbPropertyInfo::sbPropertyInfo()
 , mDisplayUsingXBLWidgetLock(nsnull)
 , mUnitsLock(nsnull)
 {
+  mSortProfileLock = PR_NewLock();
+  NS_ASSERTION(mSortProfileLock, 
+    "sbPropertyInfo::mSortProfileLock failed to create lock!");
+
   mNameLock = PR_NewLock();
   NS_ASSERTION(mNameLock, 
     "sbPropertyInfo::mNameLock failed to create lock!");
@@ -66,6 +71,10 @@ sbPropertyInfo::sbPropertyInfo()
 
 sbPropertyInfo::~sbPropertyInfo()
 {
+  if(mSortProfileLock) {
+    PR_DestroyLock(mSortProfileLock);
+  }
+
   if(mNameLock) {
     PR_DestroyLock(mNameLock);
   }
@@ -100,6 +109,26 @@ NS_IMETHODIMP sbPropertyInfo::GetNullSort(PRUint32 *aNullSort)
 {
   NS_ENSURE_ARG_POINTER(aNullSort);
   *aNullSort = mNullSort;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::SetSortProfile(sbIPropertyArray * aSortProfile)
+{
+  NS_ENSURE_ARG_POINTER(aSortProfile);
+  
+  nsAutoLock lock(mSortProfileLock);
+  mSortProfile = aSortProfile;
+
+  return NS_OK;
+}
+NS_IMETHODIMP sbPropertyInfo::GetSortProfile(sbIPropertyArray * *aSortProfile)
+{
+  NS_ENSURE_ARG_POINTER(aSortProfile);
+
+  nsAutoLock lock(mSortProfileLock);
+  *aSortProfile = mSortProfile;
+  NS_ADDREF(*aSortProfile);
+
   return NS_OK;
 }
 

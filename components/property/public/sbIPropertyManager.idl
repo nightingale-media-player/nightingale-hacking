@@ -35,6 +35,7 @@
 interface nsIStringEnumerator;
 interface sbIPropertyInfo;
 interface nsIURI;
+interface sbIPropertyArray;
 
 /**
 * \interface sbIPropertiesManager
@@ -47,6 +48,12 @@ interface nsIURI;
 [scriptable, uuid(4325d6c4-4eaf-4324-8f91-a5865ac22008)]
 interface sbIPropertyManager : nsISupports
 {
+  /**
+   * \brief An enumerator containing the names of all
+   * registered properties.
+   */
+  readonly attribute nsIStringEnumerator propertyNames;
+
   /**
    * \brief Get a property object from its name
    * \param aName Name of the property
@@ -76,9 +83,17 @@ interface sbIPropertyInfo : nsISupports
   const unsigned long SORT_NULL_LAST  = 3;
   
   /**
-   * \brief 
+   * \brief Set where NULL values get sorted to.
    */
   attribute unsigned long nullSort;
+
+  /**
+   * \brief Sort profile to be used.
+   * This is a list of columns to sort by for a peculiar 
+   * property. For example, when sorting by artist, you typically want to sort
+   * by Artist, Album and Track No.
+   */
+  attribute sbIPropertyArray sortProfile;
 
   /**
    * \brief Unique name for this property
@@ -148,7 +163,7 @@ interface sbIPropertyInfo : nsISupports
   AString makeSortable(in AString aValue);
 };
 
-[scriptable, uuid(CEFF6B77-4B4D-48d0-816F-26EC1992A5B2)]
+[scriptable, uuid(ceff6b77-4b4d-48d0-816f-26ec1992a5b2)]
 interface sbITextPropertyInfo : sbIPropertyInfo
 {
   /**
@@ -167,7 +182,7 @@ interface sbITextPropertyInfo : sbIPropertyInfo
   attribute boolean enforceLowercase;
 };
 
-[scriptable, uuid(EB35ECA3-A9EC-4e01-A9AF-152C72086E68)]
+[scriptable, uuid(eb35eca3-a9ec-4e01-a9af-152c72086e68)]
 interface sbINumberPropertyInfo : sbIPropertyInfo
 {
   /**
@@ -201,7 +216,7 @@ interface sbINumberPropertyInfo : sbIPropertyInfo
   attribute unsigned long radix;
 };
 
-[scriptable, uuid(B8D0B930-8AAB-4afa-969D-3A5DCA7EA536)]
+[scriptable, uuid(b8d0b930-8aab-4afa-969d-3a5dca7ea536)]
 interface sbIURIPropertyInfo : sbIPropertyInfo
 {
   /**
@@ -211,21 +226,42 @@ interface sbIURIPropertyInfo : sbIPropertyInfo
   attribute AString constrainScheme;
 };
 
-[scriptable, uuid(DF7D6D96-DB92-4e30-9F5A-01088F3D7DC5)]
+/**
+ * \interface sbIDatetimePropertyInfo
+ *
+ */
+[scriptable, uuid(df7d6d96-db92-4e30-9f5a-01088f3d7dc5)]
 interface sbIDatetimePropertyInfo : sbIPropertyInfo
 {
   const long TIMETYPE_UNINITIALIZED = -1;
-  const long TIMETYPE_DATE = 0; /*eg. 2007-03-28 , in localized format*/
+
+  /**
+   * \brief 2007-03-28 , in localized format
+   */
+  const long TIMETYPE_DATE = 0; 
   
   /**
-   * \brief HH:mm:ss.ms, in localized format
+   * \brief HH:mm:ss.ms, in localized format. Limited to 24 hour days.
+   * \sa TIMETYPE_DURATION
    */
   const long TIMETYPE_TIME = 1; 
   
   /**
-   * \brief As returned by the ANSI C function time().
+   * \brief Long date format, 2007-03-28 12:33:01 , no milliseconds.
    */
-  const long TIMETYPE_DATETIME = 2; 
+  const long TIMETYPE_DATETIME = 2;
+
+  /**
+   * \brief Duration, represented in HH:mm:ss.ms, in localized format.
+   * May exceed 24 hours.
+   */
+  const long TIMETYPE_DURATION = 3;
+
+  /**
+   * \brief Timestamp format, respects unix time, microsecond format.
+   * \note This is also the internal storage type for this property.
+   */
+  const long TIMETYPE_TIMESTAMP = 4;
 
   /**
    * \brief You must initialize this attribute before using this object.
@@ -253,4 +289,15 @@ interface sbIDatetimePropertyInfo : sbIPropertyInfo
    * NS_ERROR_NOT_INITIALIZED.
    */
   attribute long long maxTime;
+
+  /**
+   * \brief Causes TIMETYPE_DURATION to display from -xx:xx:xx to 0 instead of
+   * 0 to xx:xx:xx.
+   */
+  attribute boolean durationInverse;
+
+  /**
+   * \brief Cause TIMETYPE_DURATION to display milliseconds.
+   */
+  attribute boolean durationWithMilliseconds;
 };

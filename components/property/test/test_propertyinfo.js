@@ -178,6 +178,30 @@ function testUriInfo() {
 function testDatetimeInfo() {
   var datetimeInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Datetime;1"]
                       .createInstance(Ci.sbIDatetimePropertyInfo);
+                      
+  datetimeInfo.name = "DatetimeInfo";
+  assertEqual(datetimeInfo.type, "datetime");
+  
+  var sample = "0";
+  datetimeInfo.timeType = Ci.sbIDatetimePropertyInfo.TIMETYPE_DATETIME;
+  
+  assertEqual(datetimeInfo.validate(sample), true);
+  log(datetimeInfo.format(sample));
+  
+  sample = "12431235123412499";
+  assertEqual(datetimeInfo.validate(sample), true);
+  log(datetimeInfo.format(sample));
+  
+  datetimeInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Datetime;1"]
+                      .createInstance(Ci.sbIDatetimePropertyInfo);
+  
+  datetimeInfo.name = "DatetimeInfoDuration";
+  datetimeInfo.timeType = Ci.sbIDatetimePropertyInfo.TIMETYPE_DURATION;
+  sample = "12431235123412499";
+  log(datetimeInfo.format(sample));
+  
+  datetimeInfo.durationWithMilliseconds = true;
+  log(datetimeInfo.format(sample));
 }
 
 function runTest () {

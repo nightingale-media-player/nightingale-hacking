@@ -32,6 +32,31 @@
 
 #include "nsISupports.idl"
 
+[scriptable, uuid(1E41DDE1-D6A0-4e12-91E8-A5D47E0332F4)]
+interface sbILocalDatabaseSmartMediaListCondition : nsISupports
+{
+  /**
+   * \brief The name of the property used in this condition.
+   */
+  attribute AString propertyName;
+
+  /**
+   * \brief The operator used in this condition
+   * \sa sbIPropertyInfo
+   */
+  attribute AString operator;
+
+  /**
+   * \brief 
+   */
+  attribute AString value;
+
+  /**
+   * 
+   */
+  attribute boolean limit;
+}
+
 /**
 * \interface sbILocalDatabaseSmartMediaList
 * \brief Smart media list specific methods
@@ -47,6 +72,42 @@ interface sbILocalDatabaseSmartMediaList : nsISupports
   /**
    * \brief The SQL query used to build the smart media list
    */
-  attribute AString currentQuery;
-};
+  readonly attribute AString currentQuery;
 
+  /**
+   * \brief The number of conditions added to this smart playlist.
+   */
+  readonly attribute long conditionCount;
+
+  /**
+   * \brief Limit the total amount of items in the smart media list.
+   */
+  attribute itemLimit;
+
+  /**
+   * \brief Randomly select the items out of the entire result set.
+   */
+  attribute randomSelection;
+
+  /**
+   * \brief Add a condition or limiting condition.
+   */
+  long addCondition(in sbILocalDatabaseSmartMediaListCondition aCondition);
+  
+  /**
+   * \brief Remove a condition.
+   */
+  void removeCondition(in long aConditionIndex);
+
+  /**
+   * \brief Get the condition at the specified index. Indexes start at 0.
+   * The last item is at conditionCount - 1.
+   */
+  sbILocalDatabaseSmartMediaListCondition getConditionAt(in long aConditionIndex);
+
+  /**
+   * \brief Rebuild the smart media list contents from the conditions specificied.
+   * You should call this after you add/modify/remove any conditions.
+   */
+  void rebuild();
+};

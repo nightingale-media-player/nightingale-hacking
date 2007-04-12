@@ -33,6 +33,7 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
+#include <nsTArray.h>
 #include <nsInterfaceHashtable.h>
 
 class nsModuleComponentInfo;
@@ -61,7 +62,9 @@ public:
 
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
-
+  
+  PRLock* mPropNamesLock;
+  nsTArray<nsString> mPropNames;
 };
 
 #endif /* __SBPROPERTYMANAGER_H__ */
