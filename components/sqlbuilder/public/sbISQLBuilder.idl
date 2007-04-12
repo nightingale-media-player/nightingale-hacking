@@ -140,6 +140,12 @@ interface sbISQLWhereBuilder : sbISQLBuilder
    */
   void addCriterion(in sbISQLBuilderCriterion aCriterion);
 
+ /**
+   * \brief Remve a criteria constraint from the query
+   * \param aCriterion The Criterion to remvoe
+   */
+  void removeCriterion(in sbISQLBuilderCriterion aCriterion);
+
   /**
    * \brief Create a match criterion with an AString datatype
    * \param aTableName The table name the column in the criterion belongs to

@@ -43,6 +43,19 @@ sbSQLWhereBuilder::AddCriterion(sbISQLBuilderCriterion *aCriterion)
 }
 
 NS_IMETHODIMP
+sbSQLWhereBuilder::RemoveCriterion(sbISQLBuilderCriterion *aCriterion)
+{
+  NS_ENSURE_ARG_POINTER(aCriterion);
+
+  PRBool success = mCritera.RemoveObject(aCriterion);
+  if (!success) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbSQLWhereBuilder::CreateMatchCriterionString(const nsAString& aTableName,
                                               const nsAString& aSrcColumnName,
                                               PRUint32 aMatchType,
