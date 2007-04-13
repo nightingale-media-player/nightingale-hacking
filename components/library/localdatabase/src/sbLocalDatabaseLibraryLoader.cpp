@@ -131,33 +131,6 @@ sbLocalDatabaseLibraryLoader::LoadLibraries()
     do_GetService(SONGBIRD_LIBRARYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // TODO: Figure out how we are going to do all of this fo reals
-
-  nsCOMPtr<sbILocalDatabaseLibraryFactory> factory =
-    do_CreateInstance(SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIProperties> ds =
-    do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsILocalFile> file;
-  rv = ds->Get("ProfD", NS_GET_IID(nsILocalFile), getter_AddRefs(file));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = file->AppendRelativePath(NS_LITERAL_STRING("db"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = file->AppendRelativePath(NS_LITERAL_STRING("test_localdatabaselibrary.db"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILibrary> library;
-  rv = factory->CreateLibraryFromDatabase(file, getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = libraryManager->RegisterLibrary(library);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
