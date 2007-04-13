@@ -59,7 +59,6 @@ DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/moz/strings/src/$(moz_utils)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plc4  \
                             plds4  \
                             xpcom \
                             xpcomglue_s \
