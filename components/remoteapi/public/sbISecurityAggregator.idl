@@ -1,0 +1,55 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * \file sbISecurityAggregator.idl
+ * \brief Defines a marker interface for objects that aggregate
+ *        the security mixin
+ *
+ * \sa nsISecurityCheckedComponent.idl
+ * \sa sbISecurityMixin.idl
+ * \sa sbIRemotePlayer.idl
+ * \sa sbRemotePlayer.js
+ * \sa sbSecurityMixin.cpp
+ * \sa sbSecurityMixin.h
+ */
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbISecurityAggregator
+ * \brief A marker interface for objects that aggregate the security mixin.
+ *
+ * \sa nsISecurityCheckedComponent
+ * \sa sbISecurityMixin 
+ * \sa sbRemotePlayer
+ * \sa sbSecurityMixin
+ */
+[scriptable, uuid(5a8b35b1-0625-4a2b-98c0-f1714a6675e1)]
+interface sbISecurityAggregator : nsISupports
+{
+};
+

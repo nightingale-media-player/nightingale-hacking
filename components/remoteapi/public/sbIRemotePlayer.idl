@@ -1,0 +1,151 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * \file sbIRemotePlayer.idl
+ * \brief Definition of the sbIRemotePlayer Interface
+ * \sa sbSongbird.js 
+ */
+
+#include "nsISupports.idl"
+#include "nsIArray.idl"
+
+interface nsIDOMElement;
+interface nsIObserver;
+interface sbIDataRemote;
+interface sbIMediaList;
+
+/**
+ * \interface sbIRemotePlayer
+ *
+ * This interface is a composition of many of our other interfaces with the
+ *  goal of exposing a more web-friendly interface to web sites. The defines
+ *  our "Remote API" the websites can call to get information about and interact
+ *  with Sonbird.
+ */
+[scriptable, uuid(40964944-5243-4a16-886b-14c1cbaa79d9)]
+interface sbIRemotePlayer : nsISupports
+{
+  /**
+   * \brief The name of the player
+   */
+  readonly attribute AString name;
+
+  /**
+   * \brief An array of sbIMediaLists
+   */
+  readonly attribute nsIArray playlists;
+
+  /**
+   * \brief The current web playlist
+   */
+  readonly attribute sbIMediaList webplaylist;
+
+  /**
+   * \brief The name of the artist for the currently playing track
+   */
+  readonly attribute AString currentArtist;
+
+  /**
+   * \brief The name of the album for the currently playing track
+   */
+  readonly attribute AString currentAlbum;
+
+  /**
+   * \brief The name of the currently playing track
+   */
+  readonly attribute AString currentTrack;
+
+  /**
+   * \brief Bind the value of a property to the value of Songbird metadata/state
+   */
+  sbIDataRemote bindElementProperty( in AString aKey,
+                                     in nsIDOMElement aElement,
+                                     in AString aProperty,
+                                     in boolean aIsBool,
+                                     in boolean aIsNot,
+                                     in AString aEvalString );
+
+  /**
+   * \brief Bind the value of an attribute to the value of Songbird metadata/state
+   */
+  sbIDataRemote bindElementAttribute( in AString aKey,
+                                      in nsIDOMElement aElement,
+                                      in AString aAttribute,
+                                      in boolean aIsBool,
+                                      in boolean aIsNot,
+                                      in AString aEvalString );
+
+  /**
+   * \brief Bind an observer to get called on changes to Songbird metadata/state
+   */
+  sbIDataRemote bindObserver( in AString aKey,
+                              in nsIObserver aObserver,
+                              in boolean aSuppressFirst );
+
+  /**
+   * \brief Unbind an observer.
+   * This MUST be called in an onunload() handler before the page goes away
+   *   or the code will be continue running.
+   * Pass in the return value from one of the bind calls.
+   *
+   * XXXredfive - this functionality will move into the Songbird object so it
+   *              will happen automatically on page unload instead of relying
+   *              on the webpage author to do it.
+   */
+  void unbind( in sbIDataRemote aDataremote );
+
+  /**
+   * \brief Being playback at the current location
+   */
+  boolean play();
+
+  /**
+   * \brief Play an media file by URL
+   */
+  boolean playURL(in AString aURL);
+
+  /**
+   * \brief Stop playback. Sets position to beginning.
+   */
+  boolean stop();
+
+  /**
+   * \brief Stop playback, leaves position at current location.
+   */
+  boolean pause();
+
+  /**
+   * \brief Skip to the next track and begin playing
+   */
+  boolean next();
+
+  /**
+   * \brief Skip to the previous track and begin playing
+   */
+  boolean previous();
+};
+

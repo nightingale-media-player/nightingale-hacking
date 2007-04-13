@@ -1,0 +1,111 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: 04</title>
+    <script>
+      var dr = null;
+      function load() {
+        var changeColor = function(aData) {
+	  dump("changeColor: " + aData);
+          var regexAF = /^[a-fA-F]/;
+          var regexGM = /^[g-mG-M]/;
+          var regexNS = /^[n-sN-s]/;
+          var regexTZ = /^[t-zT-Z]/;
+  
+	  var el = document.getElementById("test-body");
+
+          // sometimes we get called when there is no el
+          if (el == null)
+            return;
+  
+	  if (aData.match(regexAF)) {
+	    el.style.backgroundColor = "red";
+	  } else if (aData.match(regexGM)) {
+	    el.style.backgroundColor = "blue";
+	  } else if (aData.match(regexNS)) {
+	    el.style.backgroundColor = "green";
+	  } else if (aData.match(regexTZ)) {
+	    el.style.backgroundColor = "black";
+	  } else {
+	    el.style.backgroundColor = "red";
+	  }
+        }
+
+        // observer for DataRemote
+        var obs = {
+          observe: function ( aSubject, aTopic, aData) {
+	    changeColor(aData);
+	  }
+        }
+        dr = songbird.bindObserver("metadata.artist", obs, false);
+      }
+      
+      function unload() {
+        // dataremotes aren't exposed, can't do this
+        //dr.unbind();
+        songbird.unbind(dr);
+      }
+    </script>
+  </head>
+  <body id="test-body" onload="load();" onunload="unload();">
+    <h1>Binding of metadata to a js nsIObserver</h1>
+    <p> Create and bind an observer to the value of the artist metadata field.
+        When the field changes, change the color of the background of the
+	webpage. </p>
+    <table border="solid">
+      <tr>
+        <td> First letter of artist is </td>
+	<td> background color </td>
+      </tr>
+      <tr>
+        <td>a-f</td>
+	<td>red</td>
+      </tr>
+      <tr>
+        <td>g-m</td>
+	<td>blue</td>
+      </tr>
+      <tr>
+        <td>n-s</td>
+	<td>green</td>
+      </tr>
+      <tr>
+        <td>t-z</td>
+	<td>black</td>
+      </tr>
+    </table>
+    <br />
+    <script>
+
+    </script>
+    
+  </body>
+</html>
+

@@ -1,0 +1,77 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: 03</title>
+    <script>
+      // create a global dataremote
+      var dr = new DataRemote();
+
+      function load() {
+        var output = function (message) {
+          var myDiv = document.getElementById("test-div");
+          myDiv.appendChild(document.createTextNode(message));
+          myDiv.appendChild(document.createElement("br"));
+        }
+
+        var obs = {
+          observe: function ( one, two, three ){
+            output(three)
+          }
+        }
+
+        dr.init("metadata.artist", null);
+        dr.bindObserver(obs, false );
+      }
+      
+      function unload() {
+	dr.unbind();
+      }
+    </script>
+  </head>
+
+  <body onload="load();"
+        onunload="unload();">
+
+    <h1>Bind Dataremote Directly</h1>
+    <p>Create a DataRemote direclty and attempt to bind it to a function defined in page.
+       This test should fail. If it does not we are allow access of ALL dataremotes to the
+       world and should be sacked.</p>
+    <p>For reference, the function modifies the page by appending text nodes
+       with the artist name currently playing. When allowed to work this method
+       works fine without losing the document.</p>
+    <br />
+
+    <div id="test-div">
+      Test Div into which the artist name would be inserted.
+    </div>
+    
+  </body>
+</html>
+

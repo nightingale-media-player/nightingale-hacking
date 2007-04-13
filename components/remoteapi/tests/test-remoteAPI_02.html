@@ -1,0 +1,81 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: 02</title>
+
+    <script>
+      var dr1 = null;
+      var dr2 = null;
+      var dr3 = null;
+      var dr4 = null;
+
+      function load() {
+        // Get the button elements from the document
+        var btn1 = document.getElementById("test_button1");
+        var btn2 = document.getElementById("test_button2");
+        var btn3 = document.getElementById("test_button3");
+        var btn4 = document.getElementById("test_button4");
+
+        // Bind them to the value of the data remotes
+        dr1 = songbird.bindElementAttribute("metadata.artist", btn1, "value", false, false, null);
+        dr2 = songbird.bindElementProperty("metadata.album", btn2, "value", false, false, null);
+        dr3 = songbird.bindElementProperty("metadata.title", btn3, "value", false, false, null);
+        dr4 = songbird.bindElementProperty("metadata.composer", btn4, "value", false, false, null);
+      }
+
+      function unload() {
+        songbird.unbind(dr1);
+        songbird.unbind(dr2);
+        songbird.unbind(dr3);
+        songbird.unbind(dr4);
+      }
+    </script>
+  </head>
+
+  <body onload="load();" onunload="unload();">
+
+    <h1>Binding of metadata to html objects.</h1>
+    <p> Bind the value of a button to the playing artist, by attribute;
+        playing album by property; playing composer by property. Skip tracks
+	to see the data change. The composer should currently (4/2/7) fail as
+	it is not a key supported for access by the songbird object.</p>
+    <br />
+    <form>
+      <input type="button" id="test_button1" value="metadata.artist" /> - this should have artist
+      <br />
+      <input type="button" id="test_button2" value="metadata.album" /> - this should have album
+      <br />
+      <input type="button" id="test_button3" value="metadata.title" /> - this should have the track title
+      <br />
+      <input type="button" id="test_button4" value="metadata.composer" /> - this should fail
+    </form>
+  </body>
+</html>
+

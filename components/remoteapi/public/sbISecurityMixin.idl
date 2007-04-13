@@ -1,0 +1,62 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * \file sbISecurityMixin.idl
+ * \brief 
+ * \sa nsISecurityCheckedComponent.idl
+ * \sa sbISecurityAggregator.idl
+ * \sa sbSecurityMixin.cpp
+ * \sa sbSecurityMixin.h
+ */
+
+#include "nsISupports.idl"
+#include "sbISecurityAggregator.idl"
+
+/**
+ * \interface sbISecurityMixin
+ * \brief An interface for setting up nsISecurityCheckedComponent security checks.
+ *
+ * Implemented by objects that provide the nsISecurityCheckedComponent
+ *   functionality to allow other classes to aggregate (or compose) that
+ *   functionality in without implementing it directly.
+ *
+ * \sa nsISecurityCheckedComponent
+ */
+[scriptable, uuid(5cec48db-adc8-477f-b919-120b4d378378)]
+interface sbISecurityMixin : nsISupports
+{
+  /**
+   * \brief
+   */
+  void init(in sbISecurityAggregator aOuter,
+            [const, array, size_is(aInterfacesLength)] in nsIIDPtr aInterfacesArray, in unsigned long aInterfacesLength,
+            [const, array, size_is(aMethodsLength)] in wstring aMethodsArray, in unsigned long aMethodsLength,
+            [const, array, size_is(aRPropsLength)] in wstring aRPropsArray, in unsigned long aRPropsLength,
+            [const, array, size_is(aWPropsLength)] in wstring aWPropsArray, in unsigned long aWPropsLength);
+
+};
+

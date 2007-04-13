@@ -32,10 +32,14 @@
  * \sa sbIDataRemote.idl  sbIDataRemote.js
  */
 
+var Cr = Components.results;
+var Ci = Components.interfaces;
+var Cc = Components.classes;
+
 const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbirdnest.com/Songbird/DataRemote;1";
-const SONGBIRD_DATAREMOTE_CLASSNAME = "Songbird Data Remote Service Interface";
-const SONGBIRD_DATAREMOTE_CID = Components.ID("{9e6c2f00-b727-443f-88a6-1f4e2beb65cd}");
-const SONGBIRD_DATAREMOTE_IID = Components.interfaces.sbIDataRemote;
+const SONGBIRD_DATAREMOTE_CLASSNAME = "Songbird Data Remote Service";
+const SONGBIRD_DATAREMOTE_CID = Components.ID("{950952aa-cb6b-4806-b39a-307b1b1eadb6}");
+const SONGBIRD_DATAREMOTE_IID = Ci.sbIDataRemote;
 
 function DataRemote() {
   // Nothing here...
@@ -60,7 +64,7 @@ DataRemote.prototype = {
   init: function(aKey, aRoot) {
     // Only allow initialization once per object
     if (this._initialized)
-      throw Components.results.NS_ERROR_UNEXPECTED;
+      throw Cr.NS_ERROR_UNEXPECTED;
       
     // Set the strings
     if (aRoot == null) {
@@ -76,12 +80,12 @@ DataRemote.prototype = {
     }
 
     // get the prefbranch for our root from the pref service
-    var prefsService = Components.classes["@mozilla.org/preferences-service;1"]
-                       .getService(Components.interfaces.nsIPrefService);
+    var prefsService = Cc["@mozilla.org/preferences-service;1"]
+                       .getService(Ci.nsIPrefService);
     this._prefBranch = prefsService.getBranch(this._root)
-                  .QueryInterface(Components.interfaces.nsIPrefBranch2);
+                  .QueryInterface(Ci.nsIPrefBranch2);
     if (!this._prefBranch)
-      throw Components.results.NS_ERROR_FAILURE;
+      throw Cr.NS_ERROR_FAILURE;
 
     this._initialized = true;
   },
@@ -89,7 +93,7 @@ DataRemote.prototype = {
   // only needs to be called if we have bound an attribute, property or observer
   unbind: function() {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
     if (this._prefBranch && this._observing)
       this._prefBranch.removeObserver( this._key, this );
 
@@ -103,7 +107,7 @@ DataRemote.prototype = {
       
   bindObserver: function(aObserver, aSuppressFirst) {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
 
     // Clear and reinsert ourselves as an observer.
     if ( this._observing )
@@ -130,7 +134,7 @@ DataRemote.prototype = {
      
   bindProperty: function(aElement, aProperty, aIsBool, aIsNot, aEvalString) {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
 
     if (!aIsBool)
       aIsBool = false;
@@ -163,7 +167,7 @@ DataRemote.prototype = {
         
   bindAttribute: function(aElement, aAttribute, aIsBool, aIsNot, aEvalString) {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
 
     if (!aIsBool)
       aIsBool = false;
@@ -196,14 +200,14 @@ DataRemote.prototype = {
 
   get stringValue() {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
 
     return this._getValue();
   },
 
   set stringValue(aStringValue) {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
 
     // Make sure there is a string object to pass.
     if (aStringValue == null)
@@ -213,14 +217,14 @@ DataRemote.prototype = {
 
   get boolValue() {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
 
     return (this._makeIntValue(this._getValue()) != 0);
   },
 
   set boolValue(aBoolValue) {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
 
     // convert the bool to a numeric string for easy getBoolValue calls.
     aBoolValue = aBoolValue ? "1" : "0";
@@ -229,14 +233,14 @@ DataRemote.prototype = {
 
   get intValue() {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
 
     return this._makeIntValue(this._getValue());
   },
 
   set intValue(aIntValue) {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
 
     this._setValue(aIntValue + "");
   },
@@ -246,11 +250,11 @@ DataRemote.prototype = {
     // assume we are being called after the init check in another method.
 
     // Make a unicode string, assign the value, set it into the preferences.
-    var sString = Components.classes["@mozilla.org/supports-string;1"]
-                            .createInstance(Components.interfaces.nsISupportsString);
+    var sString = Cc["@mozilla.org/supports-string;1"]
+                            .createInstance(Ci.nsISupportsString);
     sString.data = aValueStr;
     this._prefBranch.setComplexValue(this._key,
-                                Components.interfaces.nsISupportsString,
+                                Ci.nsISupportsString,
                                 sString);
   },
 
@@ -260,7 +264,7 @@ DataRemote.prototype = {
 
     var retval = "";
     try {
-      var prefValue = this._prefBranch.getComplexValue(this._key, Components.interfaces.nsISupportsString);
+      var prefValue = this._prefBranch.getComplexValue(this._key, Ci.nsISupportsString);
       if (prefValue != "") {
         retval = prefValue.data;
       }
@@ -286,7 +290,7 @@ DataRemote.prototype = {
   // aData:    the domain (key)
   observe: function(aSubject, aTopic, aData) {
     if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      throw Cr.NS_ERROR_NOT_INITIALIZED;
     
     // Early bail conditions
     if (aData != this._key)
@@ -349,15 +353,44 @@ DataRemote.prototype = {
     }
   },
 
-  /**
-   * See nsISupports.idl
-   */
+  // nsIClassInfo
+  getInterfaces: function( count ) {
+     var ifaces = [ SONGBIRD_DATAREMOTE_IID,
+                    Ci.nsIClassInfo,
+                    Ci.nsIObserver,
+                    Ci.nsISupportsWeakReference ];
+      count.value = ifaces.length;
+      return ifaces;
+  },
+ 
+  get classDescription() {
+      return SONGBIRD_DATAREMOTE_CLASSNAME;
+  },
+
+  get contractID() {
+      return SONGBIRD_DATAREMOTE_CONTRACTID;
+  },
+
+  get classID() {
+      return SONGBIRD_DATAREMOTE_CID;
+  },
+
+  getHelperForLanguage: function( language ) { return null; },
+
+  implementationLanguage: Ci.nsIProgrammingLanguage.JAVASCRIPT,
+
+  // needs to be DOM_OBJECT to allow remoteAPI to access it.
+  flags: Ci.nsIClassInfo.DOM_OBJECT,
+
+  // nsISupports
   QueryInterface: function(iid) {
     if (!iid.equals(SONGBIRD_DATAREMOTE_IID) &&
-        !iid.equals(Components.interfaces.nsIObserver) && 
-        !iid.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !iid.equals(Components.interfaces.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
+        !iid.equals(Ci.nsIClassInfo) && 
+        !iid.equals(Ci.nsIObserver) && 
+        !iid.equals(Ci.nsISupportsWeakReference) &&
+        !iid.equals(Ci.nsISupports)) {
+      throw Cr.NS_ERROR_NO_INTERFACE;
+    }
     return this;
   }
 }; // DataRemote.prototype
@@ -369,54 +402,57 @@ DataRemote.prototype.constructor = DataRemote;
  * ----------------------------------------------------------------------------
  * Registration for XPCOM
  * ----------------------------------------------------------------------------
- * Adapted from nsUpdateService.js
  */
-var gModule = {
-  registerSelf: function(componentManager, fileSpec, location, type) {
-    componentManager = componentManager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-    for (var key in this._objects) {
-      var obj = this._objects[key];
-      componentManager.registerFactoryLocation(obj.CID, obj.className, obj.contractID,
-                                               fileSpec, location, type);
-    }
+
+const gDataRemoteModule = {
+  registerSelf: function(compMgr, fileSpec, location, type) {
+    compMgr = compMgr.QueryInterface(Ci.nsIComponentRegistrar);
+    compMgr.registerFactoryLocation(SONGBIRD_DATAREMOTE_CID,
+                                    SONGBIRD_DATAREMOTE_CLASSNAME,
+                                    SONGBIRD_DATAREMOTE_CONTRACTID,
+                                    fileSpec,
+                                    location,
+                                    type);
   },
 
-  getClassObject: function(componentManager, cid, iid) {
-    if (!iid.equals(Components.interfaces.nsIFactory))
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-
-    for (var key in this._objects) {
-      if (cid.equals(this._objects[key].CID))
-        return this._objects[key].factory;
-    }
-    
-    throw Components.results.NS_ERROR_NO_INTERFACE;
+  unregisterSelf : function (compMgr, location, type) {
+    compMgr.QueryInterface(Ci.nsIComponentRegistrar);
+    compMgr.unregisterFactoryLocation(SONGBIRD_DATAREMOTE_CID, location);
   },
 
-  _makeFactory: #1= function(ctor) {
-    function ci(outer, iid) {
+  getClassObject : function (compMgr, cid, iid) {
+    if (!cid.equals(SONGBIRD_DATAREMOTE_CID))
+      throw Cr.NS_ERROR_NO_INTERFACE;
+
+    if (!iid.equals(Ci.nsIFactory))
+      throw Cr.NS_ERROR_NOT_IMPLEMENTED;
+
+    return this.mFactory;
+  },
+
+  mFactory : {
+    createInstance : function (outer, iid) {
       if (outer != null)
-        throw Components.results.NS_ERROR_NO_AGGREGATION;
-      return (new ctor()).QueryInterface(iid);
-    } 
-    return { createInstance: ci };
-  },
-  
-  _objects: {
-    // The DataRemote Component
-    dataremote: { CID        : SONGBIRD_DATAREMOTE_CID,
-                  contractID : SONGBIRD_DATAREMOTE_CONTRACTID,
-                  className  : SONGBIRD_DATAREMOTE_CLASSNAME,
-                  factory    : #1#(DataRemote)
-                },
+        throw Cr.NS_ERROR_NO_AGGREGATION;
+      
+      return (new DataRemote()).QueryInterface(iid);
+    }
   },
 
-  canUnload: function(componentManager) { 
+  canUnload: function(compMgr) { 
     return true; 
-  }
-}; // gModule
+  },
 
-function NSGetModule(comMgr, fileSpec) {
-  return gModule;
+  QueryInterface : function (iid) {
+    if ( !iid.equals(Ci.nsIModule) ||
+         !iid.equals(Ci.nsISupports) )
+      throw Cr.NS_ERROR_NO_INTERFACE;
+    return this;
+  }
+
+}; // gDataRemoteModule
+
+function NSGetModule(compMgr, fileSpec) {
+  return gDataRemoteModule;
 } // NSGetModule
 

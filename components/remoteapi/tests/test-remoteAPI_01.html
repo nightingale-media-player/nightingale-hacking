@@ -1,0 +1,82 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: 01</title>
+  </head>
+  <body>
+    <h1>Songbird Global object creation property access</h1>
+    <ol>
+      <li> Request the current artist, album and track title from the songbird
+        object.
+      </li>
+      <li> Attempt to set the value of current artist, it should fail. Because
+           the idl states that property as readonly the security check isn't 
+           even performed and a warning is generated, try/catch blocks won't
+           catch the warning. If the property is not readonly but blocked by
+           the security mixin then you will get an exception and can try/catch
+           it.</li>
+      <li> Get the current artist again to prove it hasn't been changed.
+      </li>
+    </ol>
+    <br />
+    <script>
+      // Property Access
+      document.writeln("The currently playing artist is:<br />");
+      document.writeln(songbird.currentArtist);
+      document.writeln("<br />");
+      document.writeln("<br />The currently playing track is:<br />");
+      document.writeln(songbird.currentTrack);
+      document.writeln("<br />");
+      document.writeln("<br />The currently playing album is:<br />");
+      document.writeln(songbird.currentAlbum);
+      document.writeln("<br />");
+      document.writeln("<br />");
+
+      // Property Modification
+      document.writeln("Try setting the artist (should fail - check jsconsole for output ). <br />");
+      try {
+        songbird.currentArtist = "This is a test.";
+      }
+      catch (err) {
+        document.writeln("Setting currentArtist threw an error: " + err + "<br />");
+      }
+
+      // get the property again
+      document.writeln("The currently playing artist is (should be the same as above):<br />");
+      document.writeln("<br />");
+      document.writeln(songbird.currentArtist);
+      document.writeln("<br />");
+      document.writeln("<br />");
+
+    </script>
+    
+  </body>
+</html>
+

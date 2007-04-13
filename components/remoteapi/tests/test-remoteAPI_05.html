@@ -1,0 +1,80 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: 05</title>
+    <script>
+      // global dataremote
+      var dr = null;
+
+      function load() {
+        // Get the div element from the document
+        var textfield = document.getElementById("artist-text");
+
+        // Bind it to the value of the dataremote
+        dr = songbird.bindElementAttribute("metadata.artist", textfield, "value", false, false, null);
+      }
+
+      function unload() {
+        // disconnect the dataremote, no closures here
+        songbird.unbind(dr);
+      }
+
+    </script>
+  </head>
+  <body onload="load();" onunload="unload();">
+    <h1>Playback Control.</h1>
+    <p> Expose playback controls through a webpage interface. Display the
+        some artist metadata to show success of the playback calls.  </p>
+    <br />
+    <form>
+      <input type="button" id="play_button" value="play"
+             onclick="songbird.play();" /> 
+      <br />
+      <input type="button" id="stop_button" value="stop"
+             onclick="songbird.stop();" /> 
+      <br />
+      <input type="button" id="pause_button" value="pause"
+             onclick="songbird.pause();" /> 
+      <br />
+      <input type="button" id="previous_button" value="prev"
+             onclick="songbird.previous();" /> 
+      <br />
+      <input type="button" id="next_button" value="next"
+             onclick="songbird.next();" /> 
+      <br />
+      <input type="button" id="playURL_button" value="playURL"
+             onclick="songbird.playURL('http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3')" />
+      <br />
+      Below is the textfield to show the artist:<br />
+      <input type="text" id="artist-text" value="" length="30" />
+    </form>
+  </body>
+</html>
+

@@ -47,6 +47,7 @@ SUBDIRS = addonmetadata \
           playlistplayback \
           playlistsource \
           property \
+          remoteapi \
           servicepane \
           servicesource \
           state \
@@ -67,5 +68,7 @@ SUBDIRDEPS6 = integration : devicesobsolete
 SUBDIRDEPS7 = library : sqlbuilder
 SUBDIRDEPS8 = library : moz
 SUBDIRDEPS9 = library : property
+SUBDIRDEPS10 = remoteapi : medialibrary
+SUBDIRDEPS11 = remoteapi : moz
 
 include $(topsrcdir)/build/rules.mk
