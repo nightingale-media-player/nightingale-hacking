@@ -905,7 +905,7 @@ var SBDefaultCommands =
             else
             {
               // Edit the context cell
-              this.m_Playlist.sendEditEvent();
+              this.m_Playlist.startCellEditing();
             }
           }
         break;
