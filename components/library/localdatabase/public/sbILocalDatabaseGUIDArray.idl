@@ -80,6 +80,8 @@ interface sbILocalDatabaseGUIDArray : nsISupports
 
   AString getOrdinalByIndex(in unsigned long aIndex);
 
+  AString getGuidByIndex(in unsigned long aIndex);
+
   void invalidate();
 
   sbILocalDatabaseGUIDArray clone();
