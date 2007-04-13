@@ -997,7 +997,7 @@ sbLocalDatabaseMediaListView::CreateQueries()
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseMediaListView::Invalidate()
 {
   nsresult rv;
