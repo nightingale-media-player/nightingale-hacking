@@ -94,7 +94,6 @@ function findFirstIndexByPrefix(array, prefix) {
   var re = new RegExp("^" + prefix);
   for (var i = 0; i < length; i++) {
     var value = array.getSortPropertyValueByIndex(i);
-    log("**** " + value + "\n");
     if (value.match(re)) {
       return i;
     }
