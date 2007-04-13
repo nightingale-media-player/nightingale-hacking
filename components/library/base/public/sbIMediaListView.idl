@@ -72,5 +72,13 @@ interface sbIMediaListView : nsISupports
    * \return Media item with the requested index
    */
   sbIMediaItem getItemByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Given an index of an item in the filtered list, get the index of
+   *        the same item in the unfiltered list
+   * \param aIndex Filtered index of the media item
+   * \return Index of the same item in the unfiltered list
+   */
+  unsigned long getUnfilteredIndex(in unsigned long aIndex);
 };
 

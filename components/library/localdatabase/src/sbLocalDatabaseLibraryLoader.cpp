@@ -29,10 +29,15 @@
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
 #include <nsIObserverService.h>
+#include <nsILocalFile.h>
+#include <nsIProperties.h>
 #include <nsServiceManagerUtils.h>
 #include <prlog.h>
 #include <sbLibraryManager.h>
+#include <sbILibrary.h>
+#include <sbILocalDatabaseLibraryFactory.h>
 #include "sbLocalDatabaseCID.h"
+#include <nsComponentManagerUtils.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -126,19 +131,32 @@ sbLocalDatabaseLibraryLoader::LoadLibraries()
     do_GetService(SONGBIRD_LIBRARYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /* For each library, do this:
+  // TODO: Figure out how we are going to do all of this fo reals
 
-  nsCOMPtr<sbILibraryFactory> factory = do_CreateInstance(..., &rv);
+  nsCOMPtr<sbILocalDatabaseLibraryFactory> factory =
+    do_CreateInstance(SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIProperties> ds =
+    do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsILocalFile> file;
+  rv = ds->Get("ProfD", NS_GET_IID(nsILocalFile), getter_AddRefs(file));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = file->AppendRelativePath(NS_LITERAL_STRING("db"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = file->AppendRelativePath(NS_LITERAL_STRING("test_localdatabaselibrary.db"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILibrary> library;
-  rv = factory->CreateLibrary(getter_AddRefs(library));
+  rv = factory->CreateLibraryFromDatabase(file, getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = libraryManager->RegisterLibrary(library);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  */
 
   return NS_OK;
 }

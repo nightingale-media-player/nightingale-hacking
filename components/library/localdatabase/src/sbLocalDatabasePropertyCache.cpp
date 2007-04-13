@@ -99,8 +99,8 @@ static sbStaticProperty kStaticProperties[] = {
 };
 
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache() 
-: mLibrary(nsnull),
-  mWritePending(PR_FALSE)
+: mWritePending(PR_FALSE),
+  mLibrary(nsnull)
 {
   mNumStaticProperties = sizeof(kStaticProperties) / sizeof(kStaticProperties[0]);
 
@@ -344,6 +344,9 @@ NS_IMETHODIMP
 sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
                                               PRUint32 aGUIDArrayCount)
 {
+  TRACE(("sbLocalDatabasePropertyCache[0x%.8x] - CacheProperties(%d)", this,
+         aGUIDArrayCount));
+
   NS_ASSERTION(mLibrary, "You didn't initalize!");
   nsresult rv;
 
@@ -526,6 +529,9 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
 
   }
 
+  TRACE(("sbLocalDatabasePropertyCache[0x%.8x] - CacheProperties() - Misses %d", this,
+         numMisses));
+
   return NS_OK;
 }
 
@@ -541,16 +547,16 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
   NS_ENSURE_ARG_POINTER(aPropertyArrayCount);
   NS_ENSURE_ARG_POINTER(aPropertyArray);
 
-  rv = CacheProperties(aGUIDArray, aGUIDArrayCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   /*
    * Build the output array using cache lookups
    */
-  sbILocalDatabaseResourcePropertyBag **propertyBagArray = nsnull;
+  sbILocalDatabaseResourcePropertyBag** propertyBagArray = nsnull;
 
   *aPropertyArrayCount = aGUIDArrayCount;
   if (aGUIDArrayCount > 0) {
+
+    rv = CacheProperties(aGUIDArray, aGUIDArrayCount);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     propertyBagArray = (sbILocalDatabaseResourcePropertyBag **)
       NS_Alloc((sizeof (sbILocalDatabaseResourcePropertyBag *)) * *aPropertyArrayCount);
@@ -568,7 +574,7 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
     }
   }
   else {
-    *propertyBagArray = nsnull;
+    propertyBagArray = nsnull;
   }
 
   *aPropertyArray = propertyBagArray;
@@ -1160,26 +1166,13 @@ sbLocalDatabaseResourcePropertyBag::GetNames(nsIStringEnumerator **aNames)
   }
 
   nsTArray<nsString> propertyNames;
-/*
-  XXX: these commented out bits are waiting for NS_NewAdoptingStringEnumerator
-       to be included in the glue
-  nsStringArray *array = new nsStringArray(len);
-  NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
-*/
   for (PRUint32 i = 0; i < len; i++) {
     nsAutoString propertyName;
     PRBool success = mCache->GetPropertyName(propertyIDs[i], propertyName);
     NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-/*
-    NS_ENSURE_TRUE(array->InsertStringAt(propertyName, i),
-                   NS_ERROR_OUT_OF_MEMORY);
-*/
     propertyNames.AppendElement(propertyName);
   }
 
-/*
-  NS_NewAdoptingStringEnumerator(aNames, array);
-*/
   *aNames = new sbTArrayStringEnumerator(&propertyNames);
   NS_ENSURE_TRUE(*aNames, NS_ERROR_OUT_OF_MEMORY);
   NS_ADDREF(*aNames);
@@ -1193,14 +1186,13 @@ sbLocalDatabaseResourcePropertyBag::GetProperty(const nsAString& aName,
 {
   PRUint32 propertyID = mCache->GetPropertyID(aName);
 
-  nsAutoString value;
-  
-  nsresult rv = GetPropertyByID(propertyID, value);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  _retval = value;
-    
-  return NS_OK;
+  nsresult rv = GetPropertyByID(propertyID, _retval);
+  if (NS_SUCCEEDED(rv)) {
+    return NS_OK;
+  }
+  else {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
 }
 
 NS_IMETHODIMP

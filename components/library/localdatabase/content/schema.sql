@@ -76,3 +76,5 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 
 insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
 
+insert into library_metadata (name, value) values ('version', '0.3.0');
+

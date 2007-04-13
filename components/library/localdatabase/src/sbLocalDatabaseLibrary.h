@@ -137,9 +137,10 @@ private:
 
   inline void GetNowString(nsAString& _retval);
 
-  nsresult CreateNewItemInDatabase(const PRUint32 aMediaItemTypeID,
-                                   const nsAString& aURISpecOrPrefix,
-                                   nsAString& _retval);
+  nsresult AddNewItemQuery(sbIDatabaseQuery* aQuery,
+                           const PRUint32 aMediaItemTypeID,
+                           const nsAString& aURISpecOrPrefix,
+                           nsAString& _retval);
 
   nsresult GetTypeForGUID(const nsAString& aGUID,
                           nsAString& _retval);
@@ -230,6 +231,7 @@ public:
 private:
   sbLocalDatabaseLibrary* mFriendLibrary;
   nsCOMPtr<sbIDatabaseQuery> mDBQuery;
+  nsCOMArray<sbIMediaItem> mNotificationList;
   PRPackedBool mItemEnumerated;
 };
 

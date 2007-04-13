@@ -32,6 +32,7 @@
 
 #include "sbILibraryResource.idl"
 
+interface nsIArray;
 interface nsIChannel;
 interface nsIStringEnumerator;
 interface nsIURI;
@@ -126,4 +127,12 @@ interface sbILibrary : sbILibraryResource
    *        of the application.
    */
   void shutdown();
+
+  /**
+   * \brief Create many media items from a list of URIs
+   * \param aURIArray nsIArray of nsIURI objects
+   * \return nsIArray of the new sbIMediaItem objects
+   */
+  nsIArray batchCreateMediaItems(in nsIArray aURIArray);
 };
+

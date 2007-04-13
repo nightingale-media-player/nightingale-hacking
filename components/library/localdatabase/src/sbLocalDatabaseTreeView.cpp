@@ -117,6 +117,8 @@ sbLocalDatabaseTreeView::Init(sbIMediaListView* aMediaListView,
 nsresult
 sbLocalDatabaseTreeView::Rebuild()
 {
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - Rebuild()", this));
+
   InvalidateCache();
 
   PRUint32 oldRowCount = mCachedRowCount;
@@ -183,7 +185,7 @@ sbLocalDatabaseTreeView::GetPropertyBag(const nsAString& aGuid,
   NS_Free(bags);
 
   if (!bag) {
-    NS_WARNING("Linked property cache did not cache row!");
+    NS_WARNING("Could not find properties for guid!");
     return NS_ERROR_UNEXPECTED;
   }
 
@@ -299,6 +301,10 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
   nsresult rv;
 
   if (NS_SUCCEEDED(aResult)) {
+    // DOES NOT WORK
+    if (mCachedRowCountDirty) {
+      return NS_OK;
+    }
 
     // Now we know that the page this row is in has been fully cached by
     // the guid array, cache the entire page in our cache
@@ -738,7 +744,8 @@ sbLocalDatabaseTreeView::GetCellValue(PRInt32 row,
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
 {
-  NS_ENSURE_ARG_POINTER(tree);
+  // XXX: nsTreeBoxObject calls this method with a null to break a cycle so
+  // we can't NS_ENSURE_ARG_POINTER(tree)
 
   mTreeBoxObject = tree;
   return NS_OK;
@@ -800,7 +807,14 @@ sbLocalDatabaseTreeView::SetCellValue(PRInt32 row,
 {
   NS_ENSURE_ARG_POINTER(col);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  PRInt32 colIndex;
+  nsresult rv = col->GetIndex(&colIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetCellValue(%d, %d %s)", this,
+         row, colIndex, NS_LossyConvertUTF16toASCII(value).get()));
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -810,7 +824,59 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
 {
   NS_ENSURE_ARG_POINTER(col);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  PRInt32 colIndex;
+  nsresult rv = col->GetIndex(&colIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetCellText(%d, %d %s)", this,
+         row, colIndex, NS_LossyConvertUTF16toASCII(value).get()));
+
+  nsAutoString bind;
+  rv = GetPropertyForTreeColumn(col, bind);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString guid;
+  rv = mArray->GetByIndex(row, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+  rv = GetPropertyBag(guid, row, getter_AddRefs(bag));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString oldValue;
+  rv = bag->GetProperty(bind, oldValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!value.Equals(oldValue)) {
+    rv = bag->SetProperty(bind, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = bag->Write();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // If this property is involved in the current sort, then we need to
+    // dump our row cache, invalidate our array, and refresh the tree.
+    // Otherwise we can just invalidate the cell
+    // XXX: need to get the full sort from the property manager
+  if (mCurrentSortProperty.Equals(bind)) {
+      InvalidateCache();
+      rv = mArray->Invalidate();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (mTreeBoxObject) {
+        rv = mTreeBoxObject->Invalidate();
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+    else {
+      if (mTreeBoxObject) {
+        rv = mTreeBoxObject->InvalidateCell(row, col);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP

@@ -212,7 +212,9 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMe
 {
   NS_ASSERTION(aMediaItem, "Null pointer!");
 
-  mFriendList->NotifyListenersItemRemoved(mFriendList, aMediaItem);
+  // Remember this media item for later so we can notify with it
+  PRBool success = mNotificationList.AppendObject(aMediaItem);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv;
   nsCOMPtr<sbILocalDatabaseMediaItem> ldbmi =
@@ -244,22 +246,28 @@ NS_IMETHODIMP
 sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
                                                                nsresult aStatusCode)
 {
-  if (!mItemEnumerated) {
-    NS_WARNING("OnEnumerationEnd called with no items enumerated");
-    return NS_OK;
+  nsresult rv;
+
+  if (mItemEnumerated) {
+    rv = mDBQuery->AddQuery(NS_LITERAL_STRING("commit"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt32 dbSuccess;
+    rv = mDBQuery->Execute(&dbSuccess);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
   }
-
-  nsresult rv = mDBQuery->AddQuery(NS_LITERAL_STRING("commit"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt32 dbSuccess;
-  rv = mDBQuery->Execute(&dbSuccess);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
 
   // Invalidate the cached list
   rv = mFriendList->mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Notify our listeners
+  PRUint32 count = mNotificationList.Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    mFriendList->NotifyListenersItemRemoved(mFriendList,
+                                            mNotificationList[i]);
+  }
 
   return NS_OK;
 }
@@ -632,6 +640,7 @@ sbLocalDatabaseSimpleMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
 
   PRBool hasMore;
   while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
+
     nsCOMPtr<nsISupports> supports;
     rv = aMediaItems->GetNext(getter_AddRefs(supports));
     SB_CONTINUE_IF_FAILED(rv);
@@ -704,71 +713,45 @@ sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListView** _retval)
 }
 
 // sbILocalDatabaseSimpleMediaList
-
 NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::RemoveItemByOrdinal(const nsAString& aOrdinal)
+sbLocalDatabaseSimpleMediaList::GetIndexByOrdinal(const nsAString& aOrdinal,
+                                                  PRUint32* _retval)
 {
-  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+  NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
-  PRInt32 dbOk;
 
-  // Get the GUID for the item at the specified ordinal
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeStandardQuery(getter_AddRefs(query));
+  // First, search the cache for this ordinal
+  PRUint32 length;
+  rv = mFullArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->AddQuery(mGetMediaItemGuidForOrdinalQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < length; i++) {
+    PRBool isCached;
+    rv = mFullArray->IsIndexCached(i, &isCached);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->BindStringParameter(0, aOrdinal);
-  NS_ENSURE_SUCCESS(rv, rv);
+    if (isCached) {
+      nsAutoString ordinal;
+      rv = mFullArray->GetOrdinalByIndex(i, ordinal);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, NS_ERROR_FAILURE);
-
-  nsCOMPtr<sbIDatabaseResult> result;
-  rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 rowCount;
-  rv = result->GetRowCount(&rowCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (rowCount == 0) {
-    return NS_ERROR_UNEXPECTED;
+      if (ordinal.Equals(aOrdinal)) {
+        *_retval = i;
+        return NS_OK;
+      }
+    }
   }
 
-  nsAutoString guid;
-  rv = result->GetRowCell(0, 0, guid);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Not cached, search the database
+  PRUint32 index;
+  rv = mFullArray->GetFirstIndexByPrefix(aOrdinal, &index);
+  if (NS_SUCCEEDED(rv)) {
+    *_retval = index;
+    return NS_OK;
+  }
 
-  // Get the item and notify we're going to delete it
-  nsCOMPtr<sbIMediaItem> item;
-  rv = GetItemByGuid(guid, getter_AddRefs(item));
-  NotifyListenersItemRemoved(this, item);
-
-  // Delete the item by ordinal
-  rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(mDeleteListItemByOrdinalQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(0, aOrdinal);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, NS_ERROR_FAILURE);
-
-  // XXX: Perhaps we could look up the index of the item and just remove
-  // it from the cache rather than a full invalidate?
-  rv = mFullArray->Invalidate();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
+  return NS_ERROR_NOT_AVAILABLE;
 }
 
 nsresult
@@ -1087,29 +1070,6 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = builder->ToString(mGetMediaItemIdForGuidQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create get guid by ordinal query
-  rv = builder->ClearColumns();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddColumn(NS_LITERAL_STRING("_mi"),
-                          NS_LITERAL_STRING("guid"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->RemoveCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->CreateMatchCriterionParameter(NS_LITERAL_STRING("_sml"),
-                                              NS_LITERAL_STRING("ordinal"),
-                                              sbISQLSelectBuilder::MATCH_EQUALS,
-                                              getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = builder->ToString(mGetMediaItemGuidForOrdinalQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create insertion query

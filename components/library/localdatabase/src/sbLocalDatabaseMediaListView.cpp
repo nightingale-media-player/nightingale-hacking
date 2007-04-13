@@ -41,6 +41,7 @@
 #include <sbILibrary.h>
 #include <sbILocalDatabaseAsyncGUIDArray.h>
 #include <sbILocalDatabaseLibrary.h>
+#include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbISQLBuilder.h>
@@ -55,14 +56,15 @@
 
 NS_IMPL_ISUPPORTS6(sbLocalDatabaseMediaListView,
                    sbIMediaListView,
+                   sbIMediaListListener,
                    sbIFilterableMediaList,
-                   sbILocalDatabaseMediaListView,
                    sbISearchableMediaList,
                    sbISortableMediaList,
                    nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER5(sbLocalDatabaseMediaListView,
+NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseMediaListView,
                              sbIMediaListView,
+                             sbIMediaListListener,
                              sbIFilterableMediaList,
                              sbISearchableMediaList,
                              sbISortableMediaList,
@@ -112,7 +114,8 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbILocalDatabaseLibra
   mLibrary(aLibrary),
   mMediaList(aMediaList),
   mDefaultSortProperty(aDefaultSortProperty),
-  mMediaListId(aMediaListId)
+  mMediaListId(aMediaListId),
+  mBatchCount(0)
 {
   PRBool success = mViewFilters.Init();
   NS_ASSERTION(success, "Failed to init view filter table");
@@ -120,6 +123,9 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbILocalDatabaseLibra
 
 sbLocalDatabaseMediaListView::~sbLocalDatabaseMediaListView()
 {
+  if (mMediaList) {
+    mMediaList->RemoveListener(this);
+  }
 }
 
 nsresult
@@ -168,6 +174,10 @@ sbLocalDatabaseMediaListView::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // We listen to our media list
+  rv = mMediaList->AddListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -272,15 +282,44 @@ sbLocalDatabaseMediaListView::GetItemByIndex(PRUint32 aIndex,
   return NS_OK;
 }
 
-// sbILocalDatabaseMediaListView
 NS_IMETHODIMP
-sbLocalDatabaseMediaListView::GetOrdinalByIndex(PRUint32 aIndex,
-                                                nsAString& _retval)
+sbLocalDatabaseMediaListView::GetUnfilteredIndex(PRUint32 aIndex,
+                                                 PRUint32* _retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
+
   nsresult rv;
 
-  rv = mArray->GetOrdinalByIndex(aIndex, _retval);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // If this view is on the library, we know we only have unique items so
+  // we can get the guid of the item at the given index and use that to find
+  // the unfiltered index
+  if (mMediaListId == 0) {
+    nsAutoString guid;
+    rv = mArray->GetGuidByIndex(aIndex, guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaItem> item;
+    rv = mMediaList->GetItemByGuid(guid, getter_AddRefs(item));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mMediaList->IndexOf(item, 0, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+  }
+  else {
+    // Otherwise, get the ordinal for this item and use it to get the item
+    // from the full media list
+    nsAutoString ordinal;
+    rv = mArray->GetOrdinalByIndex(aIndex, ordinal);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> sml =
+      do_QueryInterface(mMediaList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = sml->GetIndexByOrdinal(ordinal, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -550,6 +589,76 @@ sbLocalDatabaseMediaListView::ClearSort()
   return NS_OK;
 }
 
+// sbIMediaListListener
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
+                                          sbIMediaItem* aMediaItem)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::OnItemRemoved(sbIMediaList* aMediaList,
+                                            sbIMediaItem* aMediaItem)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  if (mBatchCount > 0) {
+    return NS_OK;
+  }
+
+  nsresult rv;
+
+  // Invalidate the view array
+  rv = Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
+                                            sbIMediaItem* aMediaItem)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::OnBatchBegin(sbIMediaList* aMediaList)
+{
+  mBatchCount++;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
+{
+  mBatchCount--;
+
+  if (mBatchCount == 0) {
+    // Invalidate the view array
+    nsresult rv = Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 /**
  * \brief Updates the internal filter map with a contents of a property bag.
  *        In replace mode, the value list for each distinct property in the
@@ -740,15 +849,8 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
   }
 
   // Invalidate the view array
-  rv = mArray->Invalidate();
-  NS_ENSURE_SUCCESS(rv, rv);
+  rv = Invalidate();
 
-  // If we have an active tree view, rebuild it
-  if (mTreeView) {
-    sbLocalDatabaseTreeView* view = NS_STATIC_CAST(sbLocalDatabaseTreeView*, mTreeView.get());
-    rv = view->Rebuild();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
   return NS_OK;
 }
 
@@ -892,6 +994,24 @@ sbLocalDatabaseMediaListView::CreateQueries()
   rv = builder->ToString(mDistinctPropertyValuesQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::Invalidate()
+{
+  nsresult rv;
+
+  // Invalidate the view array
+  rv = mArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If we have an active tree view, rebuild it
+  if (mTreeView) {
+    sbLocalDatabaseTreeView* view = NS_STATIC_CAST(sbLocalDatabaseTreeView*, mTreeView.get());
+    rv = view->Rebuild();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   return NS_OK;
 }
 

@@ -32,6 +32,7 @@
 #include <sbIMediaListListener.h>
 
 #include <nsStringGlue.h>
+#include <nsCOMArray.h>
 #include <prlock.h>
 
 class nsISimpleEnumerator;
@@ -107,9 +108,6 @@ private:
   // Query to update the ordinal of a media item in this list
   nsString mUpdateListItemOrdinalQuery;
 
-  // Query to get the guid of an item on this list by its ordinal
-  nsString mGetMediaItemGuidForOrdinalQuery;
-
   // Query to delete an item from the list
   nsString mDeleteFirstListItemQuery;
 
@@ -164,6 +162,7 @@ public:
 private:
   sbLocalDatabaseSimpleMediaList* mFriendList;
   nsCOMPtr<sbIDatabaseQuery> mDBQuery;
+  nsCOMArray<sbIMediaItem> mNotificationList;
   PRBool mItemEnumerated;
 };
 

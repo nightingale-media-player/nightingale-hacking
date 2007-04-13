@@ -825,6 +825,20 @@ sbLocalDatabaseMediaListBase::CreateView(sbIMediaListView** _retval)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::BeginUpdateBatch()
+{
+  sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(this);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::EndUpdateBatch()
+{
+  sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(this);
+  return NS_OK;
+}
+
 // nsIClassInfo
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetInterfaces(PRUint32* count, nsIID*** array)

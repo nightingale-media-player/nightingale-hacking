@@ -34,7 +34,7 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <sbIFilterableMediaList.h>
-#include <sbILocalDatabaseMediaListView.h>
+#include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
 #include <sbISearchableMediaList.h>
@@ -50,8 +50,8 @@ class sbILocalDatabaseLibrary;
 class sbIMediaList;
 
 class sbLocalDatabaseMediaListView : public sbIMediaListView,
+                                     public sbIMediaListListener,
                                      public sbIFilterableMediaList,
-                                     public sbILocalDatabaseMediaListView,
                                      public sbISearchableMediaList,
                                      public sbISortableMediaList,
                                      public nsIClassInfo
@@ -59,8 +59,8 @@ class sbLocalDatabaseMediaListView : public sbIMediaListView,
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTVIEW
+  NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_SBIFILTERABLEMEDIALIST
-  NS_DECL_SBILOCALDATABASEMEDIALISTVIEW
   NS_DECL_SBISEARCHABLEMEDIALIST
   NS_DECL_SBISORTABLEMEDIALIST
   NS_DECL_NSICLASSINFO
@@ -90,6 +90,8 @@ private:
   nsresult UpdateViewArrayConfiguration();
 
   nsresult CreateQueries();
+
+  nsresult Invalidate();
 
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
 
@@ -126,6 +128,9 @@ private:
 
   // Query to return list of values for a given property
   nsString mDistinctPropertyValuesQuery;
+
+  // Batch nesting count
+  PRUint32 mBatchCount;
 };
 
 #endif /* __SB_LOCALDATABASEMEDIALISTVIEW_H__ */

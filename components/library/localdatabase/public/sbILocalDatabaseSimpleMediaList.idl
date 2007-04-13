@@ -45,10 +45,10 @@
 interface sbILocalDatabaseSimpleMediaList : nsISupports
 {
   /**
-   * \brief Remove an item from the list by its ordinal.
-   * \param aIndex Index of the item to be removed
-   * \param aOrdinal Ordinal of the item to be removed
+   * \brief Get the index of an item in this list by its ordinal.
+   * \param aOrdinal The ordinal to look up the index by
+   * \return The index of the item with the given ordinal
    */
-  void removeItemByOrdinal(in AString aOrdinal);
+  unsigned long getIndexByOrdinal(in AString aOrdinal);
 };
 

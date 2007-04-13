@@ -26,8 +26,10 @@
 
 #include "sbLocalDatabaseLibrary.h"
 
+#include <nsArrayUtils.h>
 #include <nsIClassInfo.h>
 #include <nsIFile.h>
+#include <nsIMutableArray.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
@@ -218,7 +220,9 @@ sbLibraryRemovingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList,
 {
   NS_ASSERTION(aMediaItem, "Null pointer!");
 
-  mFriendLibrary->NotifyListenersItemRemoved(mFriendLibrary, aMediaItem);
+  // Remember this media item for later so we can notify with it
+  PRBool success = mNotificationList.AppendObject(aMediaItem);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsAutoString guid;
   nsresult rv = aMediaItem->GetGuid(guid);
@@ -259,6 +263,13 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
 
   rv = mFriendLibrary->mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Notify our listeners
+  PRUint32 count = mNotificationList.Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    mFriendLibrary->NotifyListenersItemRemoved(mFriendLibrary,
+                                               mNotificationList[i]);
+  }
 
   return NS_OK;
 }
@@ -662,18 +673,17 @@ sbLocalDatabaseLibrary::GetNowString(nsAString& _retval) {
  *                  succeeds.
  */
 nsresult
-sbLocalDatabaseLibrary::CreateNewItemInDatabase(const PRUint32 aMediaItemTypeID,
-                                                const nsAString& aURISpecOrPrefix,
-                                                nsAString& _retval)
+sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
+                                        const PRUint32 aMediaItemTypeID,
+                                        const nsAString& aURISpecOrPrefix,
+                                        nsAString& _retval)
 {
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateNewItemInDatabase(%d, %s)", this,
-         aMediaItemTypeID, NS_LossyConvertUTF16toASCII(aURISpecOrPrefix).get()));
-  // Construct a Query for this operation.
-  nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_ARG_POINTER(aQuery);
 
-  rv = query->AddQuery(mInsertMediaItemQuery);
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - AddNewItemQuery(%d, %s)", this,
+         aMediaItemTypeID, NS_LossyConvertUTF16toASCII(aURISpecOrPrefix).get()));
+
+  nsresult rv = aQuery->AddQuery(mInsertMediaItemQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Make a new GUID for the new media list.
@@ -689,27 +699,27 @@ sbLocalDatabaseLibrary::CreateNewItemInDatabase(const PRUint32 aMediaItemTypeID,
   guid.Assign(Substring(guid, 1, guid.Length() - 2));
 
   // ToString adds curly braces to the GUID which we don't want.
-  rv = query->BindStringParameter(0, guid);
+  rv = aQuery->BindStringParameter(0, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set created and updated timestamps.
   nsAutoString createdTimeString;
   GetNowString(createdTimeString);
 
-  rv = query->BindStringParameter(1, createdTimeString);
+  rv = aQuery->BindStringParameter(1, createdTimeString);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->BindStringParameter(2, createdTimeString);
+  rv = aQuery->BindStringParameter(2, createdTimeString);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the new URI spec and media item type.
   if (aMediaItemTypeID == SB_MEDIAITEM_TYPEID) {
     // This is a regular media item so use the spec that was passed in.
-    rv = query->BindStringParameter(3, aURISpecOrPrefix);
+    rv = aQuery->BindStringParameter(3, aURISpecOrPrefix);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Media items don't have a media_list_type_id.
-    rv = query->BindNullParameter(4);
+    rv = aQuery->BindNullParameter(4);
     NS_ENSURE_SUCCESS(rv, rv);
  }
   else {
@@ -719,18 +729,13 @@ sbLocalDatabaseLibrary::CreateNewItemInDatabase(const PRUint32 aMediaItemTypeID,
     newSpec.Assign(aURISpecOrPrefix);
     newSpec.Append(guid);
 
-    rv = query->BindStringParameter(3, newSpec);
+    rv = aQuery->BindStringParameter(3, newSpec);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Record the media list type.
-    rv = query->BindInt32Parameter(4, aMediaItemTypeID);
+    rv = aQuery->BindInt32Parameter(4, aMediaItemTypeID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  PRInt32 dbOk;
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   _retval.Assign(guid);
   return NS_OK;
@@ -1139,10 +1144,21 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
   TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateMediaItem(%s)", this,
          spec.get()));
 
-  nsAutoString guid;
-  rv = CreateNewItemInDatabase(SB_MEDIAITEM_TYPEID, NS_ConvertUTF8toUTF16(spec),
-                               guid);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString guid;
+  rv = AddNewItemQuery(query,
+                       SB_MEDIAITEM_TYPEID,
+                       NS_ConvertUTF8toUTF16(spec),
+                       guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
@@ -1169,9 +1185,18 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   PRBool validType = mMediaListFactoryTable.Get(aType, &factoryInfo);
   NS_ENSURE_TRUE(validType, NS_ERROR_INVALID_ARG);
 
-  nsAutoString guid;
-  nsresult rv = CreateNewItemInDatabase(factoryInfo->typeID, aType, guid);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString guid;
+  rv = AddNewItemQuery(query, factoryInfo->typeID, aType, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
@@ -1451,6 +1476,85 @@ sbLocalDatabaseLibrary::Shutdown()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::BatchCreateMediaItems(nsIArray* aURIList,
+                                              nsIArray** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aURIList);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItems()", this));
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("begin"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsTArray<nsString> addedGuids;
+
+  PRUint32 listLength;
+  rv = aURIList->GetLength(&listLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < listLength; i++) {
+
+    nsCOMPtr<nsIURI> uri = do_QueryElementAt(aURIList, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCAutoString spec;
+    rv = uri->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString guid;
+    rv = AddNewItemQuery(query,
+                         SB_MEDIAITEM_TYPEID,
+                         NS_ConvertUTF8toUTF16(spec),
+                         guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    TRACE(("LocalDatabaseLibrary[0x%.8x] - Load() Loaded(%s, %s)", this,
+           spec.get(), NS_LossyConvertUTF16toASCII(guid).get()));
+
+    nsString* success = addedGuids.AppendElement(guid);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  rv = query->AddQuery(NS_LITERAL_STRING("commit"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  {
+    sbAutoBatchHelper batchHelper(this);
+
+    PRUint32 length = addedGuids.Length();
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIMediaItem> mediaItem;
+      rv = GetMediaItem(addedGuids[i], getter_AddRefs(mediaItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = array->AppendElement(mediaItem, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      NotifyListenersItemAdded(this, mediaItem);
+    }
+  }
+
+  NS_ADDREF(*_retval = array);
+  return NS_OK;
 }
 
 /**

@@ -40,6 +40,7 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_propertycache.js \
                  $(srcdir)/test_simplemedialist.js \
                  $(srcdir)/test_library.js \
+                 $(srcdir)/test_library_batchcreate.js \
                  $(srcdir)/test_multilibrary.js \
                  $(srcdir)/test_filterable.js \
                  $(srcdir)/test_searchable.js \
@@ -47,6 +48,7 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_cascadefilterset.js \
                  $(srcdir)/test_dblocation.js \
                  $(srcdir)/test_mediaitem.js \
+                 $(srcdir)/test_medialistview.js \
                  $(srcdir)/head_localdatabaselibrary.js \
                  $(srcdir)/media_items.txt \
                  $(srcdir)/resource_properties.txt \

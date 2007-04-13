@@ -247,5 +247,17 @@ interface sbIMediaList : sbIMediaItem
    * \return The new view
    */
   sbIMediaListView createView();
+
+  /**
+   * \brief Notify listeners that a batch update is about to begin.  Listeners
+   *        may choose to ignore other notifications until the batch is
+   *        complete.
+   */
+  void beginUpdateBatch();
+
+  /**
+    * \brief Notify listeners that a batch update is complete
+    */
+  void endUpdateBatch();
 };
 
