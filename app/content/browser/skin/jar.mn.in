@@ -1,8 +1,0 @@
-classic.jar:
-#ifdef USING_FLAT_JARS
-% skin  browser classic/1.0  classic/feathers/classic/browser/
-#else
-% skin  browser classic/1.0  jar:classic.jar!/feathers/classic/browser/
-#endif
-  feathers/classic/browser/preferences/Options.png      (classic/browser/preferences/Options.png)
-  feathers/classic/browser/preferences/preferences.css  (classic/browser/preferences/preferences.css)
