@@ -259,7 +259,7 @@ function sbBookmarks_addBookmark(aURL, aTitle, aIconURL) {
             },
             onStopRequest : function(aRequest, aContext, aStatusCode) {
                 if (aStatusCode != 0) {
-                    node.icon = BOOKMARK_ICON;
+                    node.icon = BOOKMARK_IMAGE;
                     this.service._servicePane.save();
                 }
             }
