@@ -229,7 +229,7 @@ sbLocalDatabaseQuery::GetPrefixSearchQuery(const nsAString& aValue,
 
   nsCOMPtr<sbISQLBuilderCriterion> criterion;
   rv = mBuilder->CreateMatchCriterionString(SORT_ALIAS,
-                                            OBJ_COLUMN,
+                                            OBJSORTABLE_COLUMN,
                                             sbISQLSelectBuilder::MATCH_LESS,
                                             aValue,
                                             getter_AddRefs(criterion));

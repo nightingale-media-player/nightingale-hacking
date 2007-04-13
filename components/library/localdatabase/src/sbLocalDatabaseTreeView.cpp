@@ -846,58 +846,95 @@ sbLocalDatabaseTreeView::PerformActionOnCell(const PRUnichar* action,
  */
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::GetNextRowIndexForKeyNavigation(const nsAString& aKeyString,
+                                                         PRUint32 aStartFrom,
                                                          PRInt32* _retval)
 {
   NS_ASSERTION(NS_IsMainThread(), "wrong thread");
   NS_ENSURE_FALSE(aKeyString.IsEmpty(), NS_ERROR_INVALID_ARG);
   NS_ENSURE_ARG_POINTER(_retval);
 
+  // If we don't know how many rows should be in this table then bail.
+  // Otherwise the algorithm below can loop forever.
+  if (mCachedRowCountDirty) {
+    NS_WARNING("We don't know how many rows are available. Bailing.");
+    *_retval = -1;
+    return NS_OK;
+  }
+
   nsAutoString keyString(aKeyString);
   PRUint32 keyStringLength = keyString.Length();
 
+  // Make sure that this is lowercased. The obj_sortable table should always be
+  // lowercased.
   ToLowerCase(keyString);
 
-  PRInt32 comparison = 1, lastRow = -1;
-  PRUint32 index = 0, rowsSeen = 0;
+  // Most folks will use this function to check the very next row in the tree.
+  // Try that before doing the cache search or the costly database search.
+  nsAutoString testString;
+  nsresult rv = mArray->GetSortPropertyValueByIndex(aStartFrom, testString);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  nsresult rv;
-  for (; (comparison == 1) && (rowsSeen < mRowCache.Count()); index++) {
+  if (!keyString.Compare(Substring(testString, 0, keyStringLength))) {
+    *_retval = aStartFrom;
+    return NS_OK;
+  }
 
-    nsCOMPtr<sbILocalDatabaseResourcePropertyBag> propertyBag;
+  // Now search the cache. This will be way faster than the database search.
+  PRInt32 comparison, lastRow;
+  PRUint32 rowsSeen, index;
 
-    if (mRowCache.Get(index, getter_AddRefs(propertyBag))) {
-      // We have already cached this row.
+  // Three conditions to bail:
+  //   1. The test string is no longer larger than the key string.
+  //   2. We have iterated past the maximum number of rows in the list.
+  //   3. We have passed all the rows currently cached.
+  for (comparison = 1, lastRow = -1, rowsSeen = 0, index = aStartFrom + 1;
+       comparison == 1 && index < mCachedRowCount && rowsSeen < mRowCache.Count();
+       index++) {
 
-      // Get the sort property value for the row.
-      nsAutoString thisString;
-      rv = mArray->GetSortPropertyValueByIndex(index, thisString);
-      NS_ENSURE_SUCCESS(rv, rv);
+    if (!mRowCache.Get(index, nsnull)) {
+      // We haven't cached this row yet so continue.
+      continue;
+    }
 
-      // See how it compares to our key string.
-      comparison = keyString.Compare(Substring(thisString, 0, keyStringLength));
+    // Get the sort property value for the row.
+    rv = mArray->GetSortPropertyValueByIndex(index, testString);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      if (comparison != 0) {
-        // The string didn't match, but remember that this row was cached.
-        lastRow = index;
-        rowsSeen++;
+    // See how it compares to our key string.
+    comparison = keyString.Compare(Substring(testString, 0, keyStringLength));
 
-        // And keep churning.
-        continue;
-      }
+    if (comparison != 0) {
+      // The string didn't match, but remember that this row was cached.
+      lastRow = index;
+      rowsSeen++;
 
-      // We know that we've found the right spot if the row immediately
-      // preceeding this one was cached yet did not match or if this is the
-      // first row.
-      if ((lastRow == index - 1) || !index) {
-        *_retval = index;
-        return NS_OK;
-      }
+      // And keep churning.
+      continue;
+    }
 
+    // We know that we've found the right spot if the row immediately
+    // preceeding this one was cached yet did not match or if this is the
+    // first row to be searched.
+    if ((lastRow == index - 1) || (index == aStartFrom)) {
+      *_retval = index;
+      return NS_OK;
     }
   }
 
-  // TODO: Ask the database for a deeper search.
+  // We didn't find a sure spot in the cache, so ask the database for the real
+  // answer.
+  rv = mArray->GetFirstIndexByPrefix(keyString, &index);
+  if (NS_FAILED(rv) || (index < aStartFrom)) {
+    *_retval = -1;
+    return NS_OK;
+  }
 
-  *_retval = -1;
+  // We're going to assume that the caller wants to look at the row we're about
+  // to return. Trick the GUID array into caching the page that it's on so that
+  // the data will arrive faster.
+  rv = mArray->GetByIndexAsync(index);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "GetByIndexAsync");
+
+  *_retval = (PRInt32)index;
   return NS_OK;
 }

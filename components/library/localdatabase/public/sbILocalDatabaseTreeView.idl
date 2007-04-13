@@ -45,11 +45,13 @@ interface sbILocalDatabaseTreeView : nsISupports
    * were pressed.
    *
    * \param aKeyString - The accumulated keystrokes to be matched.
+   * \param aStartFrom - The index from which to start searching
    *
    * \return The index of the next row that matches the keystrokes. -1 if the
    *         keystrokes do not match any row. The returned row index may be
-   *         equal to the value passed in to aCurrentIndex.
+   *         equal to the value passed in to aStartFrom.
    */
-  long getNextRowIndexForKeyNavigation(in AString aKeyString);
+  long getNextRowIndexForKeyNavigation(in AString aKeyString,
+                                       in unsigned long aStartFrom);
 };
 
