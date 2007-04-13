@@ -466,6 +466,15 @@ sbLocalDatabaseAsyncGUIDArray::GetOrdinalByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetGuidByIndex(PRUint32 aIndex,
+                                         nsAString& _retval)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetGuidByIndex(aIndex, _retval);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::Invalidate()
 {
   nsAutoMonitor monitor(mSyncMonitor);

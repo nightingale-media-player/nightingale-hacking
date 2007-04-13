@@ -74,7 +74,7 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseGUIDArrayLog) {
-    gLocalDatabaseGUIDArrayLog = PR_NewLogModule("LocalDatabaseGUIDArray");
+    gLocalDatabaseGUIDArrayLog = PR_NewLogModule("sbLocalDatabaseGUIDArray");
   }
 #endif
 }
@@ -370,6 +370,20 @@ sbLocalDatabaseGUIDArray::GetOrdinalByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetGuidByIndex(PRUint32 aIndex,
+                                         nsAString& _retval)
+{
+  nsresult rv;
+
+  ArrayItem* item;
+  rv = GetByIndexInternal(aIndex, &item);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  _retval.Assign(item->guid);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::Invalidate()
 {
   if (mValid == PR_FALSE) {
@@ -510,6 +524,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
+  PRInt32 dbOk;
 
   if (mValid == PR_FALSE) {
     rv = Initalize();
@@ -525,12 +540,37 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
                            &mFilters,
                            mIsDistinct);
 
-  nsAutoString query;
-  rv = ldq.GetPrefixSearchQuery(aValue, query);
+  nsAutoString sql;
+  rv = ldq.GetPrefixSearchQuery(aValue, sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeQuery(sql, getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (rowCount == 0) {
+    *_retval = 0;
+    return NS_OK;
+  }
+
+  nsAutoString indexStr;
+  rv = result->GetRowCell(0, 0, indexStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 index;
-  rv = RunLengthQuery(query, &index);
+  index = indexStr.ToInteger(&rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If the result is equal to the non null length, we know it was not found
@@ -1764,7 +1804,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
 {
   nsresult rv;
 
-  LOG_DEBUG(("GetByIndexInternal %d", aIndex));
+  LOG_DEBUG(("GetByIndexInternal %d %d", aIndex, mLength));
 
   if (mValid == PR_FALSE) {
     rv = Initalize();
