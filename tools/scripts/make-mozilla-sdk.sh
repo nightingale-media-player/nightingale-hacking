@@ -21,6 +21,7 @@ symbol_files="intl/unicharutil/util/nsunicharutils.pdb
               js/src/js3250.pdb
               toolkit/library/xul.pdb
               xpcom/glue/nsarrayenumerator.pdb
+              xpcom/glue/nsarrayutils.pdb
               xpcom/glue/nsautolock.pdb
               xpcom/glue/nscomarray.pdb
               xpcom/glue/nscomponentmanagerutils.pdb
