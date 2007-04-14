@@ -64,7 +64,7 @@ search {
 
 
 /** Firefox SearchBar. Built from dependencies/vendor/mozilla/components/search/ **/
-firefox-searchbar {
+searchbar {
   -moz-binding: url("chrome://browser/content/search/search.xml#searchbar");
 }
 

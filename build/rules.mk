@@ -139,6 +139,10 @@ ifdef SONGBIRD_PLUGINS
 targets += copy_sb_plugins
 endif
 
+ifdef SONGBIRD_SEARCHPLUGINS
+targets += copy_sb_searchplugins
+endif
+
 ifdef SONGBIRD_SCRIPTS
 targets += copy_sb_scripts
 endif
@@ -671,6 +675,15 @@ copy_sb_plugins:
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
 .PHONY : copy_sb_plugins
 endif #SONGBIRD_PLUGINS
+
+#-----------------------
+
+ifdef SONGBIRD_SEARCHPLUGINS
+copy_sb_searchplugins:
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_SEARCHPLUGINSDIR)
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_SEARCHPLUGINS) $(SONGBIRD_SEARCHPLUGINSDIR)
+.PHONY : copy_sb_searchplugins
+endif #SONGBIRD_SEARCHPLUGINS
 
 #-----------------------
 

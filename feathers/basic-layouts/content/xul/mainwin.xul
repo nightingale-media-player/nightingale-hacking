@@ -175,6 +175,8 @@
                     <grippy/>
                   </sb-smart-splitter>    
                                       
+                  <searchbar id="searchbar" flex="1"/>                                      
+                                      
                   <!-- SEARCH WIDGET -->
                   <search
                     id="search_widget" 

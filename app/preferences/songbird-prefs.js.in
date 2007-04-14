@@ -153,3 +153,44 @@ pref("browser.tabs.selectOwnerOnClose", true);
 // Override the window XPInstall opens on extension install
 pref("xpinstall.dialog.progress.type.chrome", "Browser:Preferences");
 pref("xpinstall.dialog.progress.type.skin", "Browser:Preferences");
+
+
+//
+// Search Preferences
+//
+
+// search engines URL
+pref("browser.search.searchEnginesURL",      "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/firefox/%VERSION%/search-engines/");
+
+// pointer to the default engine name
+pref("browser.search.defaultenginename",      "chrome://browser-region/locale/region.properties");
+
+// disable logging for the search service by default
+pref("browser.search.log", false);
+
+// Ordering of Search Engines in the Engine list. 
+pref("browser.search.order.1",                "chrome://browser-region/locale/region.properties");
+pref("browser.search.order.2",                "chrome://browser-region/locale/region.properties");
+
+// search bar results always open in a new tab
+pref("browser.search.openintab", false);
+
+// send ping to the server to update
+pref("browser.search.update", true);
+
+// disable logging for the search service update system by default
+pref("browser.search.update.log", false);
+
+// Check whether we need to perform engine updates every 6 hours
+pref("browser.search.updateinterval", 6);
+
+// enable search suggestions by default
+pref("browser.search.suggest.enabled", true);
+
+
+#ifdef XP_UNIX
+pref("browser.urlbar.clickSelectsAll", false);
+#else
+pref("browser.urlbar.clickSelectsAll", true);
+#endif
+
