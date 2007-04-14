@@ -62,6 +62,13 @@ search {
   -moz-binding: url("chrome://songbird/content/bindings/search.xml#search") !important;
 }
 
+
+/** Firefox SearchBar. Built from dependencies/vendor/mozilla/components/search/ **/
+firefox-searchbar {
+  -moz-binding: url("chrome://browser/content/search/search.xml#searchbar");
+}
+
+
 multistatebutton {
   -moz-binding: url("chrome://songbird/content/bindings/multistatebutton.xml#multistatebutton") !important;
 }

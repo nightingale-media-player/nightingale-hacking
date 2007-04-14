@@ -101,6 +101,7 @@ dependencies/vendor/mozilla/browser/locales/Makefile
 dependencies/vendor/mozilla/browser/themes/Makefile
 dependencies/vendor/mozilla/browser/themes/pinstripe/browser/Makefile
 dependencies/vendor/mozilla/browser/themes/winstripe/browser/Makefile
+dependencies/vendor/mozilla/browser/components/search/Makefile
 "
 
 
