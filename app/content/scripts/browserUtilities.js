@@ -808,6 +808,4 @@ window.addEventListener("load",
   }, 
   false);
 
-  
-
                 

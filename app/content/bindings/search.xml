@@ -574,5 +574,166 @@
    </implementation>
  
   </binding>
+  
+  
+  
+  
+  <!-- Web and Library Search Widget.  
+  
+       Extends the Firefox searchbar widget to intercept Songbird library searches
+       and add "search as you type" functionality.
+       
+       See dependencies/vendor/mozilla/browser/components/search/content/search.xml
+       
+       TODO:
+         - Metrics
+         - Context based suggestions
+    -->
+  <binding id="sb-searchbar"
+           extends="chrome://browser/content/search/search.xml#searchbar">
+    <implementation>
+
+      <!-- Temporary legacy fields to keep onSearchTerm and onSBMainwinSearchEvent happy -->
+      <!-- TODO: Remove  -->
+      <field name="cur_service">"search.popup.songbird"</field>
+      <property name="is_songbird">
+        <getter>
+          return this.songbirdSearchSelected;
+        </getter>
+      </property>
+      <property name="list">
+        <getter>
+          return { label: this.value };
+        </getter>
+      </property>    
+    
+    
+      <!-- True if queries from the current search engine 
+           should be handled by Songbird -->
+      <property name="songbirdSearchSelected">
+        <getter><![CDATA[  
+          return this.currentEngine.alias == "Songbird:Library";
+        ]]></getter>
+      </property>  
+
+
+      <!-- When true, causes searches to be sent automatically after
+           a short delay -->
+      <property name="searchOnEditIdle">
+        <getter><![CDATA[  
+          return this.songbirdSearchSelected;
+        ]]></getter>
+      </property>  
+      
+                
+      <!-- Override the method responsible for executing searches
+           so that we can splice in library support -->      
+      <method name="doSearch">
+        <parameter name="aData"/>
+        <parameter name="aWhere"/>
+        <body><![CDATA[
+          // If the current search should be handled by songbird,
+          // then dispatch it via an event
+          if (this.songbirdSearchSelected) 
+          {
+            this._doLibrarySearch(aData);
+          }
+          // Otherwiser hand it off the standard FF way.
+          else
+          {
+            // null parameter below specifies HTML response for search
+            var submission = this.currentEngine.getSubmission(aData, null);
+            openUILinkIn(submission.uri.spec, aWhere, null, submission.postData);
+          }          
+        ]]></body>
+      </method>    
+          
+      <!-- Dispatch the given query string to the Songbird library/playlist -->
+      <method name="_doLibrarySearch">
+        <parameter name="aQuery"/>
+        <body><![CDATA[              
+          // Add your eggs here...
+          if ( aQuery == "migmigmig" )  { alert( ".gge retsaE" ); } 
+          else if ( aQuery == "mattmattmatt" )  { alert( "Eggstereast." ); } 
+                    
+          var e = document.createEvent("Events");
+          e.initEvent("search", false, true);
+          this.dispatchEvent(e);
+        ]]></body>
+      </method>      
+      
+      <!-- Called when a Songbird search is selected, and a short delay has passed since
+           the last keystroke.  Provides "search as you type" functionality. -->
+      <method name="_onSearchEditIdle">
+        <body>
+        <![CDATA[
+          if (this.searchOnEditIdle)
+          {
+            this._doLibrarySearch(this.value);
+
+            // TODO: do something with metrics
+            //metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
+          }
+        ]]>
+        </body>
+      </method>      
+    </implementation>
+    
+    <handlers>
+    
+      <!-- Starts the idle search timer after keypress when 
+           this.searchOnEditIdle is true
+        -->
+      <handler event="keypress"><![CDATA[
+
+        if (!this.searchOnEditIdle) {
+          return;
+        }
+          
+        switch ( event.keyCode )
+        {
+          case 9:  // Tab
+          case 19: // Break
+          case 37: // Arrows
+          case 38:
+          case 39:
+          case 40:
+          case 35: // End
+          case 36: // Home
+          case 45: // Insert
+          case 33: // PgUp
+          case 34: // PgDn
+          case 112:// F1-F12
+          case 113:
+          case 114:
+          case 115:
+          case 116:
+          case 117:
+          case 118:
+          case 119:
+          case 120:
+          case 121:
+          case 122:
+          case 123:
+          case 27: // Esc
+          case 13: // Return
+            break;      
+          default:
+            if ( this._editIdleInterval )
+            {
+              clearInterval( this._editIdleInterval );
+            }
+            this._editIdleInterval = setInterval( 
+              function(o) { 
+                clearInterval( o._editIdleInterval );
+                o._onSearchEditIdle(); 
+              }, 1000, this);
+            break;      
+        }
+      ]]></handler>    
+    </handlers>
+  </binding>  
+  
+  
 
 </bindings>

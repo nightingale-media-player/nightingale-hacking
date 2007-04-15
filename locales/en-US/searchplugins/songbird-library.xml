@@ -1,0 +1,10 @@
+<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+<ShortName>Library</ShortName>
+<Alias>Songbird:Library</Alias>
+<Description>Songbird Library</Description>
+<InputEncoding>UTF-8</InputEncoding>
+<Image width="16" height="16">chrome://songbird/skin/icons/icon_lib_16x16.png</Image>
+<!-- NOTE: This is a stub.  sb-searchbar uses the Alias field to intercept searches for this plugin -->
+<Url type="text/html" method="GET" template="http://www.songbirdnest.com/firefox"/>
+<SearchForm>http://www.songbirdnest.com/firefox</SearchForm>
+</SearchPlugin>

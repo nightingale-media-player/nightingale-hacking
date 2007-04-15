@@ -275,7 +275,7 @@ function onPlaylistContextMenu( evt )
     alert( err );
   }
 }
-
+// TODO Remove
 function onSearchTerm( target, in_term )
 {
   var search_url = "";
