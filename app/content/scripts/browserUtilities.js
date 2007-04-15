@@ -1,52 +1,55 @@
-# -*- Mode: Java; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
-# ***** BEGIN LICENSE BLOCK *****
-# Version: MPL 1.1/GPL 2.0/LGPL 2.1
-#
-# The contents of this file are subject to the Mozilla Public License Version
-# 1.1 (the "License"); you may not use this file except in compliance with
-# the License. You may obtain a copy of the License at
-# http://www.mozilla.org/MPL/
-#
-# Software distributed under the License is distributed on an "AS IS" basis,
-# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-# for the specific language governing rights and limitations under the
-# License.
-#
-# The Original Code is mozilla.org code.
-#
-# The Initial Developer of the Original Code is
-# Netscape Communications Corporation.
-# Portions created by the Initial Developer are Copyright (C) 1998
-# the Initial Developer. All Rights Reserved.
-#
-# Contributor(s):
-#   Alec Flett <alecf@netscape.com>
-#
-# Alternatively, the contents of this file may be used under the terms of
-# either the GNU General Public License Version 2 or later (the "GPL"), or
-# the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
-# in which case the provisions of the GPL or the LGPL are applicable instead
-# of those above. If you wish to allow use of your version of this file only
-# under the terms of either the GPL or the LGPL, and not to allow others to
-# use your version of this file under the terms of the MPL, indicate your
-# decision by deleting the provisions above and replace them with the notice
-# and other provisions required by the GPL or the LGPL. If you do not delete
-# the provisions above, a recipient may use your version of this file under
-# the terms of any one of the MPL, the GPL or the LGPL.
-#
-# ***** END LICENSE BLOCK *****
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+ 
+/************************************************************************************
+ * Firefox Browser Compatibility Functions. 
+ * See http://lxr.mozilla.org/seamonkey/source/browser/base/content/utilityOverlay.js
+ ***********************************************************************************/
 
-/**
- * Communicator Shared Utility Library
- * for shared application glue for the Communicator suite of applications
- **/
+/*
+ * Songbird Dependencies:
+ *    getPlatformString() from window_utils.js
+ *    gBrowser
+ *    About() in player_open.js
+ */
+
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+
 
 var goPrefWindow = 0;
 var gBidiUI = false;
 
 function getBrowserURL()
 {
-  return "chrome://browser/content/browser.xul";
+  throw("browserUtilities.js: :  getBrowserURL() is not implemented in Songbird!");
 }
 
 function goToggleToolbar( id, elementID )
@@ -69,7 +72,7 @@ function getTopWin()
 {
   var windowManager = Components.classes['@mozilla.org/appshell/window-mediator;1']
                                 .getService(Components.interfaces.nsIWindowMediator);
-  return windowManager.getMostRecentWindow("navigator:browser");
+  return windowManager.getMostRecentWindow("Songbird:Main");
 }
 
 function openTopWin( url )
@@ -160,11 +163,8 @@ function whereToOpenLink( e, ignoreButton, ignoreAlt )
 
   // Don't do anything special with right-mouse clicks.  They're probably clicks on context menu items.
 
-#ifdef XP_MACOSX
-  if (meta || (middle && middleUsesTabs)) {
-#else
-  if (ctrl || (middle && middleUsesTabs)) {
-#endif
+  var modifier = (getPlatformString() == "Darwin") ? meta : ctrl;
+  if (modifier || (middle && middleUsesTabs)) {
     if (shift)
       return "tabshifted";
     else
@@ -204,25 +204,39 @@ function openUILinkIn( url, where, allowThirdPartyFixup, postData, referrerUrl )
     return;
   }
 
-  var w = getTopWin();
 
-  if (!w || where == "window") {
-    openDialog(getBrowserURL(), "_blank", "chrome,all,dialog=no", url,
-               null, referrerUrl, postData, allowThirdPartyFixup);
+  var w = getTopWin();
+  //if (!w || where == "window") {
+  //  openDialog(getBrowserURL(), "_blank", "chrome,all,dialog=no", url,
+  //             null, referrerUrl, postData, allowThirdPartyFixup);
+  //  return;
+  //}
+  if (where == "window") {
+    dump("browserUtilities.js.openUILinkIn() Warning: Songbird does not support where=window.\n");
+  }
+
+
+  var loadInBackground = getBoolPref("browser.tabs.loadBookmarksInBackground", false);
+ 
+  var browser = w.gBrowser;
+ 
+  // Make sure we have a browser to talk to
+  // TODO: Look for other windows?
+  if (typeof(browser) == "undefined") {
+    dump("\n\n\nbrowserUtilities.openUILinkIn() Error: no browser available!\n\n\n");  
     return;
   }
 
-  var loadInBackground = getBoolPref("browser.tabs.loadBookmarksInBackground", false);
-
+  // Songbird defaults to tab
   switch (where) {
   case "current":
-    w.loadURI(url, referrerUrl, postData, allowThirdPartyFixup);
+    browser.loadURI(url, referrerUrl, postData, allowThirdPartyFixup);
     break;
   case "tabshifted":
     loadInBackground = !loadInBackground;
     // fall through
   case "tab":
-    var browser = w.getBrowser();
+  default:
     browser.loadOneTab(url, referrerUrl, null, postData, loadInBackground,
                        allowThirdPartyFixup || false);
     break;
@@ -350,43 +364,16 @@ function isBidiEnabled() {
   return rv;
 }
 
+
 function openAboutDialog()
 {
-#ifdef XP_MACOSX
-  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                     .getService(Components.interfaces.nsIWindowMediator);
-  var win = wm.getMostRecentWindow("Browser:About");
-  if (win)
-    win.focus();
-  else {
-    // XXXmano: define minimizable=no although it does nothing on OS X
-    // (see Bug 287162); remove this comment once Bug 287162 is fixed...
-    window.open("chrome://browser/content/aboutDialog.xul", "About",
-                "chrome, resizable=no, minimizable=no");
-  }
-#else
-  window.openDialog("chrome://browser/content/aboutDialog.xul", "About", "modal,centerscreen,chrome,resizable=no");
-#endif
+  // *sigh*
+  About();
 }
 
 function openPreferences(paneID)
 {
-  var instantApply = getBoolPref("browser.preferences.instantApply", false);
-  var features = "chrome,titlebar,toolbar,centerscreen" + (instantApply ? ",dialog=no" : ",modal");
-
-  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                     .getService(Components.interfaces.nsIWindowMediator);
-  var win = wm.getMostRecentWindow("Browser:Preferences");
-  if (win) {
-    win.focus();
-    if (paneID) {
-      var pane = win.document.getElementById(paneID);
-      win.document.documentElement.showPane(pane);
-    }
-  }
-  else
-    openDialog("chrome://browser/content/preferences/preferences.xul",
-               "Preferences", features, paneID);
+  SBOpenPreferences(paneID);
 }
 
 /**
@@ -398,11 +385,7 @@ function openPreferences(paneID)
  */
 function openReleaseNotes(event)
 {
-  var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
-                            .getService(Components.interfaces.nsIURLFormatter);
-  var relnotesURL = formatter.formatURLPref("app.releaseNotesURL");
-  
-  openUILink(relnotesURL, event, false, true);
+  throw("browserUtilities.js: openReleaseNotes() is not implemented in Songbird!");
 }
   
 /**
@@ -428,59 +411,7 @@ function checkForUpdates()
 
 function buildHelpMenu()
 {
-  // Enable/disable the "Report Web Forgery" menu item.  safebrowsing object
-  // may not exist in OSX
-  if (typeof safebrowsing != "undefined")
-    safebrowsing.setReportPhishingMenu();
-
-  var updates = 
-      Components.classes["@mozilla.org/updates/update-service;1"].
-      getService(Components.interfaces.nsIApplicationUpdateService);
-  var um = 
-      Components.classes["@mozilla.org/updates/update-manager;1"].
-      getService(Components.interfaces.nsIUpdateManager);
-
-  // Disable the UI if the update enabled pref has been locked by the 
-  // administrator or if we cannot update for some other reason
-  var checkForUpdates = document.getElementById("checkForUpdates");
-  var canUpdate = updates.canUpdate;
-  checkForUpdates.setAttribute("disabled", !canUpdate);
-  if (!canUpdate)
-    return; 
-
-  var strings = document.getElementById("bundle_browser");
-  var activeUpdate = um.activeUpdate;
-  
-  // If there's an active update, substitute its name into the label
-  // we show for this item, otherwise display a generic label.
-  function getStringWithUpdateName(key) {
-    if (activeUpdate && activeUpdate.name)
-      return strings.getFormattedString(key, [activeUpdate.name]);
-    return strings.getString(key + "Fallback");
-  }
-  
-  // By default, show "Check for Updates..."
-  var key = "default";
-  if (activeUpdate) {
-    switch (activeUpdate.state) {
-    case "downloading":
-      // If we're downloading an update at present, show the text:
-      // "Downloading Firefox x.x..." otherwise we're paused, and show
-      // "Resume Downloading Firefox x.x..."
-      key = updates.isDownloading ? "downloading" : "resume";
-      break;
-    case "pending":
-      // If we're waiting for the user to restart, show: "Apply Downloaded
-      // Updates Now..."
-      key = "pending";
-      break;
-    }
-  }
-  checkForUpdates.label = getStringWithUpdateName("updatesItem_" + key);
-  if (um.activeUpdate && updates.isDownloading)
-    checkForUpdates.setAttribute("loading", "true");
-  else
-    checkForUpdates.removeAttribute("loading");
+  throw("browserUtilities.js: buildHelpMenu() is not implemented in Songbird!");
 }
 
 function isElementVisible(aElement)
@@ -546,36 +477,337 @@ function openNewTabWith(aURL, aDocument, aPostData, aEvent,
   if (aEvent && aEvent.shiftKey)
     loadInBackground = !loadInBackground;
 
+  // TODO: Does Songbird need this?
+ 
   // As in openNewWindowWith(), we want to pass the charset of the
   // current document over to a new tab. 
-  var wintype = document.documentElement.getAttribute("windowtype");
+  //var wintype = document.documentElement.getAttribute("windowtype");
   var originCharset;
-  if (wintype == "navigator:browser")
-    originCharset = window.content.document.characterSet;
+  //if (wintype == "navigator:browser")
+  //  originCharset = window.content.document.characterSet;
 
   // open link in new tab
   var referrerURI = aDocument ? aDocument.documentURIObject : null;
-  var browser = top.document.getElementById("content");
-  browser.loadOneTab(aURL, referrerURI, originCharset, aPostData,
+  //var browser = top.document.getElementById("content");
+  if (typeof(browser) == "undefined") {
+    dump("\n\n\nbrowserUtilities.openNewTabWith() Error: no browser available!\n\n\n");  
+    return;
+  }
+  gBrowser.loadOneTab(aURL, referrerURI, originCharset, aPostData,
                      loadInBackground, aAllowThirdPartyFixup || false);
 }
 
 function openNewWindowWith(aURL, aDocument, aPostData, aAllowThirdPartyFixup)
 {
-  if (aDocument)
-    urlSecurityCheck(aURL, aDocument.nodePrincipal);
-
-  // if and only if the current window is a browser window and it has a
-  // document with a character set, then extract the current charset menu
-  // setting from the current document and use it to initialize the new browser
-  // window...
-  var charsetArg = null;
-  var wintype = document.documentElement.getAttribute("windowtype");
-  if (wintype == "navigator:browser")
-    charsetArg = "charset=" + window.content.document.characterSet;
-
-  var referrerURI = aDocument ? aDocument.documentURIObject : null;
-  window.openDialog(getBrowserURL(), "_blank", "chrome,all,dialog=no",
-                    aURL, charsetArg, referrerURI, aPostData,
-                    aAllowThirdPartyFixup);
+  dump("\n\n\nbrowserUtilities.openNewWindowWith() Warning: Songbird does not support new windows.\n\n\n");  
 }
+
+
+
+
+/************************************************************************************
+ * Firefox BrowserSearch Object
+ * Responsible for:
+ *   - Detecting search capabilities embedded in web pages
+ *   - Launching the "get more search plugins" page
+ * See http://lxr.mozilla.org/seamonkey/source/browser/base/content/browser.js
+ ***********************************************************************************/
+
+// TODO:  Move to separate file?
+
+
+// From browser.js
+function getBrowser()
+{
+  return gBrowser;
+}
+
+// From browser.js
+function loadURI(uri, referrer, postData, allowThirdPartyFixup)
+{
+  try {
+    if (postData === undefined)
+      postData = null;
+    var flags = nsIWebNavigation.LOAD_FLAGS_NONE;
+    if (allowThirdPartyFixup) {
+      flags = nsIWebNavigation.LOAD_FLAGS_ALLOW_THIRD_PARTY_FIXUP;
+    }
+    getWebNavigation().loadURI(uri, flags, referrer, postData, null);
+  } catch (e) {
+  }
+}
+
+// From browser.js
+function getWebNavigation()
+{
+  try {
+    return gBrowser.webNavigation;
+  } catch (e) {
+    return null;
+  }
+}
+
+
+
+const BrowserSearch = {
+
+  /**
+   * Initialize the BrowserSearch
+   */
+  init: function() {
+    gBrowser.addEventListener("DOMLinkAdded", 
+                              function (event) { BrowserSearch.onLinkAdded(event); }, 
+                              false);
+                              
+    // Songbird modification.  Listen for location changes
+    // in order to update the list of available search engines
+    gBrowser.addProgressListener(this.webProgressListener,
+            Components.interfaces.nsIWebProgress.NOTIFY_ALL);  
+  },
+
+  /**
+   * A new <link> tag has been discovered - check to see if it advertises
+   * a OpenSearch engine.
+   */
+  onLinkAdded: function(event) {
+    // XXX this event listener can/should probably be combined with the onLinkAdded
+    // listener in tabbrowser.xml.  See comments in FeedHandler.onLinkAdded().
+    const target = event.target;
+    var etype = target.type;
+    const searchRelRegex = /(^|\s)search($|\s)/i;
+    const searchHrefRegex = /^(https?|ftp):\/\//i;
+
+    if (!etype)
+      return;
+      
+    // Bug 349431: If the engine has no suggested title, ignore it rather
+    // than trying to find an alternative.
+    if (!target.title)
+      return;
+
+    if (etype == "application/opensearchdescription+xml" &&
+        searchRelRegex.test(target.rel) && searchHrefRegex.test(target.href))
+    {
+      const targetDoc = target.ownerDocument;
+      // Set the attribute of the (first) search-engine button.
+      var searchButton = document.getAnonymousElementByAttribute(this.getSearchBar(),
+                                  "anonid", "searchbar-engine-button");
+      if (searchButton) {
+        var browser = gBrowser.getBrowserForDocument(targetDoc);
+         // Append the URI and an appropriate title to the browser data.
+        var iconURL = null;
+        if (gBrowser.shouldLoadFavIcon(browser.currentURI))
+          iconURL = browser.currentURI.prePath + "/favicon.ico";
+
+        var hidden = false;
+        // If this engine (identified by title) is already in the list, add it
+        // to the list of hidden engines rather than to the main list.
+        // XXX This will need to be changed when engines are identified by URL;
+        // see bug 335102.
+         var searchService =
+            Components.classes["@mozilla.org/browser/search-service;1"]
+                      .getService(Components.interfaces.nsIBrowserSearchService);
+        if (searchService.getEngineByName(target.title))
+          hidden = true;
+
+        var engines = [];
+        if (hidden) {
+          if (browser.hiddenEngines)
+            engines = browser.hiddenEngines;
+        }
+        else {
+          if (browser.engines)
+            engines = browser.engines;
+        }
+
+        engines.push({ uri: target.href,
+                       title: target.title,
+                       icon: iconURL });
+
+         if (hidden) {
+           browser.hiddenEngines = engines;
+         }
+         else {
+           browser.engines = engines;
+           if (browser == gBrowser || browser == gBrowser.mCurrentBrowser)
+             this.updateSearchButton();
+         }
+      }
+    }
+  },
+
+  /**
+   * Update the browser UI to show whether or not additional engines are 
+   * available when a page is loaded or the user switches tabs to a page that 
+   * has search engines. 
+   */
+  updateSearchButton: function() {
+    var searchButton = document.getAnonymousElementByAttribute(this.getSearchBar(),
+                                "anonid", "searchbar-engine-button");
+    if (!searchButton)
+      return;
+    var engines = gBrowser.mCurrentBrowser.engines;
+    if (!engines || engines.length == 0) {
+      if (searchButton.hasAttribute("addengines"))
+        searchButton.removeAttribute("addengines");
+    }
+    else {
+      searchButton.setAttribute("addengines", "true");
+    }
+  },
+
+  /**
+   * Gives focus to the search bar, if it is present on the toolbar, or loads
+   * the default engine's search form otherwise. For Mac, opens a new window
+   * or focuses an existing window, if necessary.
+   */
+  webSearch: function BrowserSearch_webSearch() {
+    var searchBar = this.getSearchBar();
+    if (searchBar) {
+      searchBar.select();
+      searchBar.focus();
+    } else {
+      var ss = Cc["@mozilla.org/browser/search-service;1"].
+               getService(Ci.nsIBrowserSearchService);
+      var searchForm = ss.defaultEngine.searchForm;
+      loadURI(searchForm, null, null, false);
+    }
+  },
+
+  /**
+   * Loads a search results page, given a set of search terms. Uses the current
+   * engine if the search bar is visible, or the default engine otherwise.
+   *
+   * @param searchText
+   *        The search terms to use for the search.
+   *
+   * @param useNewTab
+   *        Boolean indicating whether or not the search should load in a new
+   *        tab.
+   */
+  loadSearch: function BrowserSearch_search(searchText, useNewTab) {
+    var ss = Cc["@mozilla.org/browser/search-service;1"].
+             getService(Ci.nsIBrowserSearchService);
+    var engine;
+  
+    // If the search bar is visible, use the current engine, otherwise, fall
+    // back to the default engine.
+    if (this.getSearchBar())
+      engine = ss.currentEngine;
+    else
+      engine = ss.defaultEngine;
+  
+    var submission = engine.getSubmission(searchText, null); // HTML response
+
+    // getSubmission can return null if the engine doesn't have a URL
+    // with a text/html response type.  This is unlikely (since
+    // SearchService._addEngineToStore() should fail for such an engine),
+    // but let's be on the safe side.
+    if (!submission)
+      return;
+  
+    if (useNewTab) {
+      getBrowser().loadOneTab(submission.uri.spec, null, null,
+                              submission.postData, null, false);
+    } else
+      loadURI(submission.uri.spec, null, submission.postData, false);
+  },
+
+  /**
+   * Returns the search bar element if it is present in the toolbar and not
+   * hidden, null otherwise.
+   */
+  getSearchBar: function BrowserSearch_getSearchBar() {
+    var searchBar = document.getElementById("searchbar");
+    if (searchBar && isElementVisible(searchBar))
+      return searchBar;
+
+    return null;
+  },
+
+  loadAddEngines: function BrowserSearch_loadAddEngines() {
+    // Hardcode Songbird to load the page in a tab
+    var where = "tab";
+    var regionBundle = document.getElementById("bundle_browser_region");
+    
+    var formatter = Cc["@mozilla.org/toolkit/URLFormatterService;1"].getService(Ci.nsIURLFormatter);
+    var searchEnginesURL = formatter.formatURLPref("browser.search.searchEnginesURL");
+    
+    openUILinkIn(searchEnginesURL, where);
+  },
+
+
+  /**
+   * Get rid of the engine lists on the current browser.
+   *
+   * Note: In Firefox this is done by nsBrowserStatusHandler.onStateChange
+   */
+  resetFoundEngineList: function BrowserSearch_resetFoundEngineList() {
+    
+    // Clear out engine list
+    gBrowser.mCurrentBrowser.engines = null;  
+    
+    // Why don't we have to clear hiddenEngines? 
+  },
+  
+  
+  /**
+   * nsIWebProgressListener to monitor browser changes 
+   * and notify BrowserSearch
+   *
+   * Note: This is Songbird addition.
+   */  
+  webProgressListener:
+  {
+  
+    onLocationChange: function(aWebProgress, aRequest, aLocation) 
+    {
+    
+      // Update search button to reflect available engines.
+      // Note: In firefox this is called by browser.js asyncUpdateUI()
+      BrowserSearch.updateSearchButton();
+    },
+
+    onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus){     
+      // Figure out if this is a new network request
+      var networkStartingFlags = Ci.nsIWebProgressListener.STATE_START 
+                                 | Ci.nsIWebProgressListener.STATE_IS_NETWORK;        
+      var isStarting = (networkStartingFlags & aStateFlags) == networkStartingFlags;
+     
+      // When loading new page, reset search engine list 
+      if (isStarting && aRequest && aWebProgress.DOMWindow == content) {
+        BrowserSearch.resetFoundEngineList();        
+      }
+    },
+    
+    onProgressChange: function(aWebProgress, aRequest, aCurSelfProgress,
+                              aMaxSelfProgress, aCurTotalProgress,
+                              aMaxTotalProgress) {},
+    onStatusChange: function(aWebProgress, aRequest, aStatus, aMessage) {},
+    onSecurityChange: function(aWebProgress, aRequest, state) {},
+
+    QueryInterface: function(aIID)
+    {
+      if (aIID.equals(Components.interfaces.nsIWebProgressListener)
+          || aIID.equals(Components.interfaces.nsISupports)
+          || aIID.equals(Components.interfaces.nsISupportsWeakReference))
+      {
+          return this;
+      }
+      throw Components.results.NS_NOINTERFACE;
+    }
+  }                
+}
+
+
+// Initialize the searchbar on load
+window.addEventListener("load", 
+  function() {
+    dump("\n\nBrowserSearch.init()\n\n");
+    BrowserSearch.init();
+  }, 
+  false);
+
+  
+
+                

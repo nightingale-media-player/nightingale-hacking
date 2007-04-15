@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
-
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
 
@@ -287,6 +286,10 @@
    src="chrome://songbird/content/scripts/async_webplaylist.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/device_temp.js" />
+
+  <!-- Firefox compatibility functions -->
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/browserUtilities.js" />
 
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/playlist_xbl_temp.js" />

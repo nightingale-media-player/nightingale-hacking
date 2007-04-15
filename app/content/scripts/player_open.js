@@ -477,6 +477,8 @@ function SBSubscribe( url, guid, table, readable_name )
   }
 }
 
+
+// TODO: This function should be renamed.  See openAboutDialog in browserUtilities.js
 function About( )
 {
   // Make a magic data object to get passed to the dialog
