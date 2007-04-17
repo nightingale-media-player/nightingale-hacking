@@ -1160,6 +1160,20 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
+  // Add the new media item into cache
+  nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
+  NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
+
+  newItemInfo->hasListType = PR_TRUE;
+
+  NS_ASSERTION(!mMediaItemTable.Get(guid, nsnull),
+               "Guid already exists!");
+
+  PRBool success = mMediaItemTable.Put(guid, newItemInfo);
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  newItemInfo.forget();
+
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1197,6 +1211,21 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  // Add the new media list into cache
+  nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
+  NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
+
+  newItemInfo->listType.Assign(aType);
+  newItemInfo->hasListType = PR_TRUE;
+
+  NS_ASSERTION(!mMediaItemTable.Get(guid, nsnull),
+               "Guid already exists!");
+
+  PRBool success = mMediaItemTable.Put(guid, newItemInfo);
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  newItemInfo.forget();
 
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
@@ -1554,6 +1583,8 @@ sbLocalDatabaseLibrary::BatchCreateMediaItems(nsIArray* aURIList,
 
       PRBool success = mMediaItemTable.Put(addedGuids[i], newItemInfo);
       NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+      newItemInfo.forget();
 
       nsCOMPtr<sbIMediaItem> mediaItem;
       rv = GetMediaItem(addedGuids[i], getter_AddRefs(mediaItem));
