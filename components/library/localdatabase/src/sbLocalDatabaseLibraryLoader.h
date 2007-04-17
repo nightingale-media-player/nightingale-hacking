@@ -29,12 +29,47 @@
 
 #include <nsIObserver.h>
 
+#include <nsClassHashtable.h>
+#include <nsHashKeys.h>
+#include <nsStringGlue.h>
+
 class nsIComponentManager;
 class nsIFile;
+class nsIPrefBranch;
+class nsIPrefService;
+class sbILibraryManager;
+class sbLibraryInfo;
+class sbLocalDatabaseLibraryFactory;
+
 struct nsModuleComponentInfo;
 
 class sbLocalDatabaseLibraryLoader : public nsIObserver
 {
+  struct sbLoaderInfo
+  {
+    sbLoaderInfo(sbILibraryManager* aLibraryManager,
+                 sbLocalDatabaseLibraryFactory* aLibraryFactory)
+    : libraryManager(aLibraryManager),
+      libraryFactory(aLibraryFactory),
+      registeredLibraryCount(0)
+    { }
+
+    sbILibraryManager*             libraryManager;
+    sbLocalDatabaseLibraryFactory* libraryFactory;
+    PRUint32                       registeredLibraryCount;
+  };
+
+  struct sbLibraryExistsInfo
+  {
+    sbLibraryExistsInfo(const nsAString& aDatabaseGUID)
+    : databaseGUID(aDatabaseGUID),
+      index(-1)
+    { }
+
+    nsString databaseGUID;
+    PRInt32  index;
+  };
+
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSIOBSERVER
@@ -52,7 +87,39 @@ public:
 private:
   ~sbLocalDatabaseLibraryLoader();
 
+  nsresult RealInit();
+
   nsresult LoadLibraries();
+
+  nsresult EnsureDefaultLibraries();
+
+  nsresult EnsureDefaultLibrary(const nsACString& aLibraryGUIDPref,
+                                const nsAString& aDefaultGUID);
+
+  sbLibraryInfo* CreateDefaultLibraryInfo(const nsACString& aPrefKey,
+                                          const nsAString& aGUID);
+
+  static void RemovePrefBranch(const nsACString& aPrefBranch);
+
+  static PLDHashOperator PR_CALLBACK
+    LoadLibrariesCallback(nsUint32HashKey::KeyType aKey,
+                          sbLibraryInfo* aEntry,
+                          void* aUserData);
+
+  static PLDHashOperator PR_CALLBACK
+    LibraryExistsCallback(nsUint32HashKey::KeyType aKey,
+                          sbLibraryInfo* aEntry,
+                          void* aUserData);
+
+  static PLDHashOperator PR_CALLBACK
+    VerifyEntriesCallback(nsUint32HashKey::KeyType aKey,
+                          nsAutoPtr<sbLibraryInfo>& aEntry,
+                          void* aUserData);
+
+private:
+  nsClassHashtable<nsUint32HashKey, sbLibraryInfo> mLibraryInfoTable;
+  PRUint32 mNextLibraryIndex;
+  nsCOMPtr<nsIPrefBranch> mRootBranch;
 };
 
 #endif /* __SB_LOCALDATABASELIBRARYLOADER_H__ */

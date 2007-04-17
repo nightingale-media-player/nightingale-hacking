@@ -33,6 +33,7 @@
 #include <nsStringGlue.h>
 
 class nsIFile;
+class nsILocalFile;
 
 class sbLocalDatabaseLibraryFactory : public sbILocalDatabaseLibraryFactory
 {
@@ -40,6 +41,8 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILIBRARYFACTORY
   NS_DECL_SBILOCALDATABASELIBRARYFACTORY
+
+  already_AddRefed<nsILocalFile> GetFileForGUID(const nsAString& aGUID);
 
 private:
   nsresult InitalizeLibrary(nsIFile* aDatabaseFile);

@@ -42,33 +42,36 @@ function countEnumeratedItems(enumerator) {
 function runTest () {
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
                        getService(Ci.sbILibraryManager);
+  var enumerator = libraryManager.getLibraryEnumerator();
+  
+  var baseLibraryCount = countEnumeratedItems(enumerator);
 
   var library1 = createLibrary("test_library-base1");
   
   libraryManager.registerLibrary(library1);
-  var enumerator = libraryManager.getLibraryEnumerator();
-  assertEqual(countEnumeratedItems(enumerator), 1);
+  enumerator = libraryManager.getLibraryEnumerator();
+  assertEqual(countEnumeratedItems(enumerator), baseLibraryCount + 1);
   
   libraryManager.unregisterLibrary(library1);
   enumerator = libraryManager.getLibraryEnumerator();
-  assertEqual(countEnumeratedItems(enumerator), 0);
+  assertEqual(countEnumeratedItems(enumerator), baseLibraryCount);
 
   libraryManager.registerLibrary(library1);
   libraryManager.registerLibrary(library1);
   enumerator = libraryManager.getLibraryEnumerator();
-  assertEqual(countEnumeratedItems(enumerator), 1);
+  assertEqual(countEnumeratedItems(enumerator), baseLibraryCount + 1);
 
   libraryManager.unregisterLibrary(library1);
   libraryManager.unregisterLibrary(library1);
   enumerator = libraryManager.getLibraryEnumerator();
-  assertEqual(countEnumeratedItems(enumerator), 0);
+  assertEqual(countEnumeratedItems(enumerator), baseLibraryCount);
 
   var library2 = createLibrary("test_library-base2");
 
   libraryManager.registerLibrary(library1);
   libraryManager.registerLibrary(library2);
   enumerator = libraryManager.getLibraryEnumerator();
-  assertEqual(countEnumeratedItems(enumerator), 2);
+  assertEqual(countEnumeratedItems(enumerator), baseLibraryCount + 2);
   
   var getLibraryException;
   try {
@@ -80,4 +83,7 @@ function runTest () {
   
   var testLibrary = libraryManager.getLibrary(library1.guid);
   assertEqual(testLibrary, library1);
+  
+  var mainLibrary = libraryManager.mainLibrary;
+  assertTrue(mainLibrary);
 }

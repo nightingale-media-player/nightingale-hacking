@@ -94,4 +94,9 @@ interface sbILibraryManager : nsISupports
    * library factories
    */
   readonly attribute nsIRDFDataSource dataSource;
+
+  /**
+   * \brief Returns the main library.
+   */
+  readonly attribute sbILibrary mainLibrary;
 };

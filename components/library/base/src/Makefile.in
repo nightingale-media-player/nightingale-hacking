@@ -43,6 +43,7 @@ CPP_INCLUDES = $(DEPTH)/components/library/base/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/rdf \
                $(MOZSDK_INCLUDE_DIR)/xpcom \

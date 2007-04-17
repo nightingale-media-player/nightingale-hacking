@@ -58,14 +58,8 @@
 static nsresult
 CreateDirectory(nsIFile* aDirectory)
 {
-  PRBool isDirectory;
-  nsresult rv = aDirectory->IsDirectory(&isDirectory);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ENSURE_TRUE(isDirectory, NS_ERROR_FILE_NOT_DIRECTORY);
-
   PRBool exists;
-  rv = aDirectory->Exists(&exists);
+  nsresult rv = aDirectory->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (exists) {
@@ -109,6 +103,29 @@ IsDirectoryWritable(nsIFile* aDirectory)
   return PR_TRUE;
 }
 
+static already_AddRefed<nsILocalFile>
+GetDBFolder()
+{
+  nsresult rv;
+  nsCOMPtr<nsIProperties> ds =
+    do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  nsILocalFile* file;
+  rv = ds->Get("ProfD", NS_GET_IID(nsILocalFile), (void**)&file);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  rv = file->AppendRelativePath(NS_LITERAL_STRING("db"));
+  if (NS_FAILED(rv)) {
+    NS_WARNING("AppendRelativePath failed!");
+
+    NS_RELEASE(file);
+    return nsnull;
+  }
+
+  return file;
+}
+
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryFactory,
                    sbILocalDatabaseLibraryFactory)
 
@@ -123,27 +140,15 @@ sbLocalDatabaseLibraryFactory::CreateLibrary(sbILibrary** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsresult rv;
+  nsCOMPtr<nsILocalFile> file = GetDBFolder();
+  NS_ENSURE_TRUE(file, NS_ERROR_FAILURE);
 
-  nsCOMPtr<nsIProperties> ds =
-    do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv);
+  nsresult rv = file->AppendRelativePath(DEFAULT_LIBRARY_NAME);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsILocalFile> file;
-  rv = ds->Get("ProfD", NS_GET_IID(nsILocalFile), getter_AddRefs(file));
+  rv = CreateLibraryFromDatabase(file, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = file->AppendRelativePath(NS_LITERAL_STRING("db"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = file->AppendRelativePath(DEFAULT_LIBRARY_NAME);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILibrary> library;
-  rv = CreateLibraryFromDatabase(file, getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*_retval = library);
   return NS_OK;
 }
 
@@ -350,4 +355,22 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   return NS_OK;
+}
+
+already_AddRefed<nsILocalFile>
+sbLocalDatabaseLibraryFactory::GetFileForGUID(const nsAString& aGUID)
+{
+  nsCOMPtr<nsILocalFile> file = GetDBFolder();
+  NS_ENSURE_TRUE(file, nsnull);
+
+  nsAutoString filename(aGUID);
+  filename.AppendLiteral(".db");
+
+  nsresult rv = file->AppendRelativePath(filename);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  nsILocalFile* _retval;
+  NS_ADDREF(_retval = file);
+
+  return _retval;
 }

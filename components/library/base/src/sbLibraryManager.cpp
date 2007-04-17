@@ -30,20 +30,24 @@
 */
 #include "sbLibraryManager.h"
 
+#include <nsIAppStartupNotifier.h>
+#include <nsIObserver.h>
+#include <nsIObserverService.h>
+#include <nsIPrefBranch.h>
+#include <nsIPrefService.h>
+#include <nsIRDFDataSource.h>
+#include <nsISimpleEnumerator.h>
+#include <nsISupportsPrimitives.h>
+#include <sbILibrary.h>
+#include <sbILibraryFactory.h>
+
 #include <nsArrayEnumerator.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsEnumeratorUtils.h>
-#include <nsIAppStartupNotifier.h>
-#include <nsIObserver.h>
-#include <nsIObserverService.h>
-#include <nsIRDFDataSource.h>
-#include <nsISimpleEnumerator.h>
 #include <nsServiceManagerUtils.h>
 #include <prlog.h>
 #include <rdf.h>
-#include <sbILibrary.h>
-#include <sbILibraryFactory.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -475,6 +479,33 @@ sbLibraryManager::GetDataSource(nsIRDFDataSource** aDataSource)
   }
 
   NS_ADDREF(*aDataSource = mDataSource);
+  return NS_OK;
+}
+
+/**
+ * See sbILibraryManager.idl
+ */
+NS_IMETHODIMP
+sbLibraryManager::GetMainLibrary(sbILibrary** _retval)
+{
+  nsresult rv;
+  nsCOMPtr<nsIPrefBranch> prefService =
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupportsString> supportsString;
+  rv = prefService->GetComplexValue(SB_PREF_MAIN_LIBRARY,
+                                    NS_GET_IID(nsISupportsString),
+                                    getter_AddRefs(supportsString));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString mainLibraryGUID;
+  rv = supportsString->GetData(mainLibraryGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetLibrary(mainLibraryGUID, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

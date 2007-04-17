@@ -54,6 +54,16 @@
   { 0x89, 0xe7, 0x1c, 0xd4, 0x89, 0xf1, 0x8b, 0xb9 }       \
 }
 
+#define SB_PREFBRANCH_LIBRARY    "songbird.library."
+
+#define SB_PREF_MAIN_LIBRARY     SB_PREFBRANCH_LIBRARY "main"
+#define SB_PREF_WEB_LIBRARY      SB_PREFBRANCH_LIBRARY "web"
+#define SB_PREF_DOWNLOAD_LIBRARY SB_PREFBRANCH_LIBRARY "download"
+
+#define SB_GUID_MAIN_LIBRARY     "main@library.songbirdnest.com"
+#define SB_GUID_WEB_LIBRARY      "web@library.songbirdnest.com"
+#define SB_GUID_DOWNLOAD_LIBRARY "download@library.songbirdnest.com"
+
 class nsIRDFDataSource;
 class sbILibrary;
 class sbILibraryFactory;

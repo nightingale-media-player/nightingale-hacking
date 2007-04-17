@@ -70,6 +70,7 @@ CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
                $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
