@@ -36,13 +36,14 @@ interface nsIRDFDataSource;
 interface nsISimpleEnumerator;
 interface sbILibrary;
 interface sbILibraryFactory;
+interface sbILibraryManagerListener;
 
 /**
 * \interface sbILibraryManager
 * \brief Manages the lifecycle of libraries in the system
 * \sa sbILibrary
 */
-[scriptable, uuid(6fcdb1c0-73ee-40bd-9e54-a53d2bae58be)]
+[scriptable, uuid(27f5ebe3-5b02-4658-8916-546d0a798b5f)]
 interface sbILibraryManager : nsISupports
 {
   /**
@@ -88,6 +89,16 @@ interface sbILibraryManager : nsISupports
    *        factories.
    */
   nsISimpleEnumerator getLibraryFactoryEnumerator();
+
+  /**
+   * \brief
+   */
+  void addListener(in sbILibraryManagerListener aListener);
+
+  /**
+   * \brief
+   */
+  void removeListener(in sbILibraryManagerListener aListener);
 
   /**
    * \brief RDF datasource that exposes the currently active libraries and

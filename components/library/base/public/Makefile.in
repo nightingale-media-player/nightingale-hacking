@@ -33,6 +33,7 @@ XPIDL_SRCS = sbIFilterableMediaList.idl \
              sbILibrary.idl \
              sbILibraryFactory.idl \
              sbILibraryManager.idl \
+             sbILibraryManagerListener.idl \
              sbIMediaItem.idl \
              sbIMediaList.idl \
              sbIMediaListView.idl \
@@ -50,4 +51,3 @@ XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk
-

@@ -39,6 +39,7 @@
 #include <nsIGenericFactory.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIObserver.h>
+#include <nsTHashtable.h>
 
 #define SONGBIRD_LIBRARYMANAGER_DESCRIPTION                \
   "Songbird Library Manager"
@@ -121,6 +122,19 @@ private:
   /**
    * See sbLibraryManager.cpp
    */
+  static PLDHashOperator PR_CALLBACK
+    NotifyListenersLibraryRegisteredCallback(nsISupportsHashKey* aKey,
+                                             void* aUserData);
+
+  /**
+   * See sbLibraryManager.cpp
+   */
+  static PLDHashOperator PR_CALLBACK
+    NotifyListenersLibraryUnregisteredCallback(nsISupportsHashKey* aKey,
+                                               void* aUserData);
+  /**
+   * See sbLibraryManager.cpp
+   */
   static nsresult AssertLibrary(nsIRDFDataSource* aDataSource,
                                 sbILibrary* aLibrary);
 
@@ -134,6 +148,16 @@ private:
    * See sbLibraryManager.cpp
    */
   nsresult GenerateDataSource();
+
+  /**
+   * See sbLibraryManager.cpp
+   */
+  void NotifyListenersLibraryRegistered(sbILibrary* aLibrary);
+
+  /**
+   * See sbLibraryManager.cpp
+   */
+  void NotifyListenersLibraryUnregistered(sbILibrary* aLibrary);
 
 private:
   /**
@@ -151,6 +175,11 @@ private:
    *        registered libraries.
    */
   nsCOMPtr<nsIRDFDataSource> mDataSource;
+
+  /**
+   * \brief A list of listeners.
+   */
+  nsTHashtable<nsISupportsHashKey> mListeners;
 };
 
 #endif /* __SB_LIBRARYMANAGER_H__ */

@@ -40,6 +40,7 @@
 #include <nsISupportsPrimitives.h>
 #include <sbILibrary.h>
 #include <sbILibraryFactory.h>
+#include <sbILibraryManagerListener.h>
 
 #include <nsArrayEnumerator.h>
 #include <nsCOMArray.h>
@@ -89,6 +90,9 @@ nsresult
 sbLibraryManager::Init()
 {
   TRACE(("sbLibraryManager[0x%x] - Init", this));
+
+  PRBool success = mListeners.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   nsresult rv;
   nsCOMPtr<nsIObserverService> observerService = 
@@ -238,6 +242,44 @@ sbLibraryManager::UnassertLibrary(nsIRDFDataSource* aDataSource,
 }
 
 /**
+ * \brief This method notifies listeners that a library has been registered.
+ */
+/* static */ PLDHashOperator PR_CALLBACK
+sbLibraryManager::NotifyListenersLibraryRegisteredCallback(nsISupportsHashKey* aKey,
+                                                           void* aUserData)
+{
+  NS_ASSERTION(aKey, "Nulls in the hashtable!");
+  nsresult rv;
+  nsCOMPtr<sbILibraryManagerListener> listener =
+    do_QueryInterface(aKey->GetKey(), &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
+
+  sbILibrary* library = NS_STATIC_CAST(sbILibrary*, aUserData);
+  NS_ASSERTION(library, "Null pointer!");
+
+  listener->OnLibraryRegistered(library);
+}
+
+/**
+ * \brief This method notifies listeners that a library has been unregistered.
+ */
+/* static */ PLDHashOperator PR_CALLBACK
+sbLibraryManager::NotifyListenersLibraryUnregisteredCallback(nsISupportsHashKey* aKey,
+                                                             void* aUserData)
+{
+  NS_ASSERTION(aKey, "Nulls in the hashtable!");
+  nsresult rv;
+  nsCOMPtr<sbILibraryManagerListener> listener =
+    do_QueryInterface(aKey->GetKey(), &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
+
+  sbILibrary* library = NS_STATIC_CAST(sbILibrary*, aUserData);
+  NS_ASSERTION(library, "Null pointer!");
+
+  listener->OnLibraryUnregistered(library);
+}
+
+/**
  * \brief This method generates an in-memory datasource and sets it up with all
  *        the currently registered libraries.
  *
@@ -267,6 +309,36 @@ sbLibraryManager::GenerateDataSource()
   NS_ENSURE_TRUE(enumCount == libraryCount, NS_ERROR_FAILURE);
 
   return NS_OK;
+}
+
+/**
+ * \brief This method causes the listeners to be enumerated when a library has
+ *        been registered with the Library Manager.
+ *
+ * \param aLibrary - The library that has been added.
+ *
+ * \return NS_OK on success
+ */
+void
+sbLibraryManager::NotifyListenersLibraryRegistered(sbILibrary* aLibrary)
+{
+  mListeners.EnumerateEntries(NotifyListenersLibraryRegisteredCallback,
+                              aLibrary);
+}
+
+/**
+ * \brief This method causes the listeners to be enumerated when a library has
+ *        been unregistered from the Library Manager.
+ *
+ * \param aLibrary - The library that has been removed.
+ *
+ * \return NS_OK on success
+ */
+void
+sbLibraryManager::NotifyListenersLibraryUnregistered(sbILibrary* aLibrary)
+{
+  mListeners.EnumerateEntries(NotifyListenersLibraryUnregisteredCallback,
+                              aLibrary);
 }
 
 /**
@@ -461,6 +533,43 @@ sbLibraryManager::GetLibraryFactoryEnumerator(nsISimpleEnumerator** _retval)
   NS_ENSURE_TRUE(enumCount == factoryCount, NS_ERROR_FAILURE);
 
   return NS_NewArrayEnumerator(_retval, factoryArray);
+}
+
+/**
+ * See sbILibraryManager.idl
+ */
+NS_IMETHODIMP
+sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+#ifdef DEBUG
+  nsISupportsHashKey* exists = mListeners.GetEntry(aListener);
+  if (exists) {
+    NS_WARNING("Trying to add a listener twice!");
+  }
+#endif
+
+  nsISupportsHashKey* success = mListeners.PutEntry(aListener);
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
+/**
+ * See sbILibraryManager.idl
+ */
+NS_IMETHODIMP
+sbLibraryManager::RemoveListener(sbILibraryManagerListener* aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+#ifdef DEBUG
+  nsISupportsHashKey* exists = mListeners.GetEntry(aListener);
+  NS_WARN_IF_FALSE(exists, "Trying to remove a listener that was never added!");
+#endif
+
+  mListeners.RemoveEntry(aListener);
+
+  return NS_OK;
 }
 
 /**
