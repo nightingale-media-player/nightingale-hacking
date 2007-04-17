@@ -27,6 +27,7 @@
 #include "sbLocalDatabaseLibraryLoader.h"
 
 #include <nsICategoryManager.h>
+#include <nsIFile.h>
 #include <nsIGenericFactory.h>
 #include <nsILocalFile.h>
 #include <nsIObserverService.h>
@@ -40,6 +41,7 @@
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsTHashtable.h>
+#include <nsXPCOMCID.h>
 #include <prlog.h>
 #include <sbLibraryManager.h>
 #include "sbLocalDatabaseCID.h"
@@ -642,9 +644,15 @@ sbLibraryInfo::SetDatabaseLocation(nsILocalFile* aLocation)
 {
   NS_ENSURE_ARG_POINTER(aLocation);
 
-  nsresult rv = mPrefBranch->SetComplexValue(mLocationKey.get(),
-                                             NS_GET_IID(nsILocalFile),
-                                             aLocation);
+  nsresult rv;
+  nsCOMPtr<nsIFile> file = do_QueryInterface(aLocation, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCAutoString filePath;
+  rv = file->GetNativePath(filePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPrefBranch->SetCharPref(mLocationKey.get(), filePath.get());
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -653,13 +661,20 @@ sbLibraryInfo::SetDatabaseLocation(nsILocalFile* aLocation)
 already_AddRefed<nsILocalFile>
 sbLibraryInfo::GetDatabaseLocation()
 {
-  nsILocalFile* location;
-  nsresult rv = mPrefBranch->GetComplexValue(mLocationKey.get(),
-                                             NS_GET_IID(nsILocalFile),
-                                             (void**)&location);
+  nsresult rv;
+  nsCOMPtr<nsILocalFile> location = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  return location;
+  nsCAutoString filePath;
+  rv = mPrefBranch->GetCharPref(mLocationKey.get(), getter_Copies(filePath));
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  rv = location->InitWithNativePath(filePath);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  nsILocalFile* _retval;
+  NS_ADDREF(_retval = location);
+  return _retval;
 }
 
 nsresult
