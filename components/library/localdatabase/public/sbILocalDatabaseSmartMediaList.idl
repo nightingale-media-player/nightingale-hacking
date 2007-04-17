@@ -31,6 +31,7 @@
  */
 
 #include "nsISupports.idl"
+#include "sbIMediaList.idl"
 
 [scriptable, uuid(1E41DDE1-D6A0-4e12-91E8-A5D47E0332F4)]
 interface sbILocalDatabaseSmartMediaListCondition : nsISupports
@@ -47,12 +48,23 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
   attribute AString operator;
 
   /**
-   * \brief 
+   * \brief The left value for this condition.
+   * Only the operator BETWEEN requires a rightValue as well.
    */
-  attribute AString value;
+  attribute AString leftValue;
 
   /**
-   * 
+   * \brief The right value for this condition.
+   * This value is only used in conjunction with the BETWEEN operator.
+   * Trying to set this value when using a different operator will not fail
+   * but will be ignored.
+   */
+  attribute AString rightValue;
+
+  /**
+   * \brief This condition is a global limit. For example,
+   * if you were to use the contentSize property, you can limit
+   * the total size of the smart media list in bytes.
    */
   attribute boolean limit;
 };
@@ -67,8 +79,15 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
 * \sa sbIMediaList
 */
 [scriptable, uuid(50443d21-eae9-4563-a72d-c6f6b1ea499c)]
-interface sbILocalDatabaseSmartMediaList : nsISupports
+interface sbILocalDatabaseSmartMediaList : sbIMediaList
 {
+  /**
+   * \brief Initialize the smart media list.
+   * \note If this method is not called, the smart media list
+   * calls will all fail.
+   */
+  void init(in sbIMediaItem aItem);
+
   /**
    * \brief The SQL query used to build the smart media list
    */

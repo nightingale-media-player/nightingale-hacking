@@ -26,6 +26,32 @@
 
 #include "sbPropertyInfo.h"
 #include <nsAutoLock.h>
+#include <sbCOMArraySimpleEnumerator.h>
+
+NS_IMPL_ISUPPORTS1(sbPropertyOperator, sbIPropertyOperator)
+
+sbPropertyOperator::sbPropertyOperator(const nsAString& aOperator,
+                                       const nsAString& aOperatorReadable)
+: mOperator(aOperator)
+, mOperatorReadable(aOperatorReadable)
+{
+}
+
+sbPropertyOperator::~sbPropertyOperator()
+{
+}
+
+NS_IMETHODIMP sbPropertyOperator::GetOperator(nsAString & aOperator)
+{
+  aOperator = mOperator;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyOperator::GetOperatorReadable(nsAString & aOperatorReadable)
+{
+  aOperatorReadable = mOperatorReadable;
+  return NS_OK;
+}
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyInfo, sbIPropertyInfo)
 
@@ -38,6 +64,7 @@ sbPropertyInfo::sbPropertyInfo()
 , mDisplayUsingSimpleTypeLock(nsnull)
 , mDisplayUsingXBLWidgetLock(nsnull)
 , mUnitsLock(nsnull)
+, mOperatorsLock(nsnull)
 {
   mSortProfileLock = PR_NewLock();
   NS_ASSERTION(mSortProfileLock, 
@@ -67,6 +94,9 @@ sbPropertyInfo::sbPropertyInfo()
   NS_ASSERTION(mUnitsLock, 
     "sbPropertyInfo::mUnitsLock failed to create lock!");
 
+  mOperatorsLock = PR_NewLock();
+  NS_ASSERTION(mOperatorsLock,
+    "sbPropertyInfo::mOperatorsLock failed to create lock!");
 }
 
 sbPropertyInfo::~sbPropertyInfo()
@@ -98,6 +128,64 @@ sbPropertyInfo::~sbPropertyInfo()
   if(mUnitsLock) {
     PR_DestroyLock(mUnitsLock);
   }
+
+  if(mOperatorsLock) {
+    PR_DestroyLock(mOperatorsLock);
+  }
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_EQUALS(nsAString & aOPERATOR_EQUALS)
+{
+  aOPERATOR_EQUALS = NS_LITERAL_STRING("=");
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_NOTEQUALS(nsAString & aOPERATOR_NOTEQUALS)
+{
+  aOPERATOR_NOTEQUALS = NS_LITERAL_STRING("!=");  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_GREATER(nsAString & aOPERATOR_GREATER)
+{
+  aOPERATOR_GREATER = NS_LITERAL_STRING(">");  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_GREATEREQUAL(nsAString & aOPERATOR_GREATEREQUAL)
+{
+  aOPERATOR_GREATEREQUAL = NS_LITERAL_STRING(">=");  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_LESS(nsAString & aOPERATOR_LESS)
+{
+  aOPERATOR_LESS = NS_LITERAL_STRING("<");  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_LESSEQUAL(nsAString & aOPERATOR_LESSEQUAL)
+{
+  aOPERATOR_LESSEQUAL = NS_LITERAL_STRING("<=");  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_CONTAINS(nsAString & aOPERATOR_CONTAINS)
+{
+  aOPERATOR_CONTAINS = NS_LITERAL_STRING("%?%");  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_BEGINSWITH(nsAString & aOPERATOR_BEGINSWITH)
+{
+  aOPERATOR_BEGINSWITH = NS_LITERAL_STRING("?%");  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_ENDSWITH(nsAString & aOPERATOR_ENDSWITH)
+{
+  aOPERATOR_ENDSWITH = NS_LITERAL_STRING("%?");  
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::SetNullSort(PRUint32 aNullSort)
@@ -252,6 +340,37 @@ NS_IMETHODIMP sbPropertyInfo::SetUnits(const nsAString & aUnits)
   }
 
   return NS_ERROR_ALREADY_INITIALIZED;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOperators(nsISimpleEnumerator * *aOperators)
+{
+  NS_ENSURE_ARG_POINTER(aOperators);
+
+  nsAutoLock lock(mOperatorsLock);
+  *aOperators = new sbCOMArraySimpleEnumerator(mOperators);
+
+  NS_ENSURE_TRUE(*aOperators, NS_ERROR_OUT_OF_MEMORY);
+  NS_ADDREF(*aOperators);
+
+  return NS_OK;
+}
+NS_IMETHODIMP sbPropertyInfo::SetOperators(nsISimpleEnumerator * aOperators)
+{
+  NS_ENSURE_ARG_POINTER(aOperators);
+
+  nsAutoLock lock(mOperatorsLock);
+  mOperators.Clear();
+
+  PRBool hasMore = PR_FALSE;
+  nsCOMPtr<nsISupports> object;
+
+  while( NS_SUCCEEDED(aOperators->HasMoreElements(&hasMore)) && 
+         hasMore  &&
+         NS_SUCCEEDED(aOperators->GetNext(getter_AddRefs(object)))) {
+    mOperators.AppendObject(object);
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)

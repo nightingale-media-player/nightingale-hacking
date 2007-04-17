@@ -967,7 +967,7 @@ sbLocalDatabasePropertyCache::GetPropertyID(const nsAString& aPropertyName)
 {
   PRUint32 retval;
   if (!mPropertyNameToID.Get(aPropertyName, &retval)) {
-    retval = 0;
+    InsertPropertyNameInLibrary(aPropertyName);
   }
   return retval;
 }
@@ -1227,6 +1227,10 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName,
   rv = propertyInfo->Validate(aValue, &valid);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
+
+  if(propertyID == 0) {
+    mCache->InsertPropertyNameInLibrary(aName);
+  }
 
   return SetPropertyByID(propertyID, aValue);
 }

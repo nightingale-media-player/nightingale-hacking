@@ -210,6 +210,28 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPro
     NS_ADDREF(*_retval);
     return NS_OK;
   }
+  else {
+    //Create default property (text) for new property name encountered.
+    nsresult rv;
+    nsAutoPtr<sbTextPropertyInfo> textProperty;
+
+    textProperty = new sbTextPropertyInfo();
+    NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
+    rv = textProperty->SetName(aName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
+    NS_ENSURE_SUCCESS(rv, rv);
+    textProperty.forget();
+
+    //This is the only safe way to hand off the instance because the hash table
+    //may have changed and returning the instance pointer above may yield a 
+    //stale pointer and cause a crash.
+    if(mPropInfoHashtable.Get(aName, _retval)) {
+      NS_ADDREF(*_retval);
+      return NS_OK;
+    }
+  }
 
   return NS_ERROR_NOT_AVAILABLE;
 }
@@ -222,6 +244,16 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   nsAutoPtr<sbNumberPropertyInfo> numberProperty;
   nsAutoPtr<sbTextPropertyInfo> textProperty;
   nsAutoPtr<sbURIPropertyInfo> uriProperty;
+
+  //Storage Guid
+  textProperty = new sbTextPropertyInfo();
+  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
+  rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#storageGuid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
+  NS_ENSURE_SUCCESS(rv, rv);
+  textProperty.forget();
 
   //Date created
   datetimeProperty = new sbDatetimePropertyInfo();

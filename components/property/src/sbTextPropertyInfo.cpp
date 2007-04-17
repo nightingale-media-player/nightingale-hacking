@@ -27,6 +27,7 @@
 #include "sbTextPropertyInfo.h"
 
 #include <nsAutoLock.h>
+#include <nsAutoPtr.h>
 #include <nsUnicharUtils.h>
 #include <nsMemory.h>
 
@@ -56,6 +57,8 @@ sbTextPropertyInfo::sbTextPropertyInfo()
   mEnforceLowercaseLock = PR_NewLock();
   NS_ASSERTION(mEnforceLowercaseLock, 
     "sbTextPropertyInfo::mMinMaxLock failed to create lock!");
+
+  InitializeOperators();
 }
 
 sbTextPropertyInfo::~sbTextPropertyInfo()
@@ -67,6 +70,39 @@ sbTextPropertyInfo::~sbTextPropertyInfo()
   if(mEnforceLowercaseLock) {
     PR_DestroyLock(mEnforceLowercaseLock);
   }
+}
+
+void sbTextPropertyInfo::InitializeOperators()
+{
+  nsAutoString op;
+  nsAutoPtr<sbPropertyOperator> propOp;
+
+  sbPropertyInfo::GetOPERATOR_CONTAINS(op);
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.contains"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_BEGINSWITH(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.starts"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_ENDSWITH(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.ends"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.is"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.is_not"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  return;
 }
 
 NS_IMETHODIMP sbTextPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)

@@ -44,6 +44,8 @@ public:
   sbTextPropertyInfo();
   virtual ~sbTextPropertyInfo();
 
+  void InitializeOperators();
+
   NS_IMETHOD Validate(const nsAString & aValue, PRBool *_retval);
   NS_IMETHOD Format(const nsAString & aValue, nsAString & _retval);
   NS_IMETHOD MakeSortable(const nsAString & aValue, nsAString & _retval);

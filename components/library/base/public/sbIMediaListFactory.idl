@@ -64,7 +64,7 @@ interface sbIMediaListFactory : nsISupports
    *
    * \param aInner - An sbIMediaItem created by the library
    *
-   * \return A object implementing the sbIMediaItem interface.
+   * \return A object implementing the sbIMediaList interface.
    */
   sbIMediaList createMediaList(in sbIMediaItem aInner);
 };

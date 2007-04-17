@@ -26,8 +26,10 @@
 
 #include "sbNumberPropertyInfo.h"
 #include <nsAutoLock.h>
-
+#include <nsAutoPtr.h>
 #include <prprf.h>
+
+#include <sbTArrayStringEnumerator.h>
 
 /*static inline*/
 PRBool IsValidRadix(PRUint32 aRadix) 
@@ -122,6 +124,8 @@ sbNumberPropertyInfo::sbNumberPropertyInfo()
   mRadixLock = PR_NewLock();
   NS_ASSERTION(mRadixLock, 
     "sbNumberPropertyInfo::mRadixLock failed to create lock!");
+
+  InitializeOperators();
 }
 
 sbNumberPropertyInfo::~sbNumberPropertyInfo()
@@ -132,6 +136,39 @@ sbNumberPropertyInfo::~sbNumberPropertyInfo()
   if(mRadixLock) {
     PR_DestroyLock(mRadixLock);
   }
+}
+
+void sbNumberPropertyInfo::InitializeOperators()
+{
+  nsAutoString op;
+  nsAutoPtr<sbPropertyOperator> propOp;
+  
+  sbPropertyInfo::GetOPERATOR_GREATER(op);
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.greater"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.greaterequal"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_LESS(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.less"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.lessequal"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.equal"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+  
+  return;
 }
 
 NS_IMETHODIMP sbNumberPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)

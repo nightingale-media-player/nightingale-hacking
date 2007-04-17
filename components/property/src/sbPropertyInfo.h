@@ -31,11 +31,20 @@
 #include <sbIPropertyArray.h>
 
 #include <nsCOMPtr.h>
-#include <nsStringGlue.h>
-
 #include <nsIURI.h>
+#include <nsStringGlue.h>
+#include <nsCOMArray.h>
 
 #define NS_FORWARD_SBIPROPERTYINFO_NOVALIDATE_NOFORMAT(_to) \
+NS_IMETHOD GetOPERATOR_EQUALS(nsAString & aOPERATOR_EQUALS) { return _to GetOPERATOR_EQUALS(aOPERATOR_EQUALS); } \
+NS_IMETHOD GetOPERATOR_NOTEQUALS(nsAString & aOPERATOR_NOTEQUALS) { return _to GetOPERATOR_NOTEQUALS(aOPERATOR_NOTEQUALS); } \
+NS_IMETHOD GetOPERATOR_GREATER(nsAString & aOPERATOR_GREATER) { return _to GetOPERATOR_GREATER(aOPERATOR_GREATER); } \
+NS_IMETHOD GetOPERATOR_GREATEREQUAL(nsAString & aOPERATOR_GREATEREQUAL) { return _to GetOPERATOR_GREATEREQUAL(aOPERATOR_GREATEREQUAL); } \
+NS_IMETHOD GetOPERATOR_LESS(nsAString & aOPERATOR_LESS) { return _to GetOPERATOR_LESS(aOPERATOR_LESS); } \
+NS_IMETHOD GetOPERATOR_LESSEQUAL(nsAString & aOPERATOR_LESSEQUAL) { return _to GetOPERATOR_LESSEQUAL(aOPERATOR_LESSEQUAL); } \
+NS_IMETHOD GetOPERATOR_CONTAINS(nsAString & aOPERATOR_CONTAINS) { return _to GetOPERATOR_CONTAINS(aOPERATOR_CONTAINS); } \
+NS_IMETHOD GetOPERATOR_BEGINSWITH(nsAString & aOPERATOR_BEGINSWITH) { return _to GetOPERATOR_BEGINSWITH(aOPERATOR_BEGINSWITH); } \
+NS_IMETHOD GetOPERATOR_ENDSWITH(nsAString & aOPERATOR_ENDSWITH) { return _to GetOPERATOR_ENDSWITH(aOPERATOR_ENDSWITH); } \
 NS_IMETHOD GetNullSort(PRUint32 *aNullSort) { return _to GetNullSort(aNullSort); } \
 NS_IMETHOD SetNullSort(PRUint32 aNullSort) { return _to SetNullSort(aNullSort); } \
 NS_IMETHOD GetSortProfile(sbIPropertyArray * *aSortProfile) { return _to GetSortProfile(aSortProfile); } \
@@ -51,10 +60,28 @@ NS_IMETHOD SetDisplayUsingSimpleType(const nsAString & aDisplayUsingSimpleType) 
 NS_IMETHOD GetDisplayUsingXBLWidget(nsIURI * *aDisplayUsingXBLWidget) { return _to GetDisplayUsingXBLWidget(aDisplayUsingXBLWidget); } \
 NS_IMETHOD SetDisplayUsingXBLWidget(nsIURI * aDisplayUsingXBLWidget) { return _to SetDisplayUsingXBLWidget(aDisplayUsingXBLWidget); } \
 NS_IMETHOD GetUnits(nsAString & aUnits) { return _to GetUnits(aUnits); } \
-NS_IMETHOD SetUnits(const nsAString & aUnits) { return _to SetUnits(aUnits); }
+NS_IMETHOD SetUnits(const nsAString & aUnits) { return _to SetUnits(aUnits); } \
+NS_IMETHOD GetOperators(nsISimpleEnumerator * *aOperators) { return _to GetOperators(aOperators); } \
+NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperators(aOperators); }
 
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
   NS_STATIC_CAST(sbIPropertyInfo*, NS_STATIC_CAST(__unambiguousBase, __expr))
+
+class sbPropertyOperator : public sbIPropertyOperator
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIPROPERTYOPERATOR
+
+  sbPropertyOperator(const nsAString& aOperator,
+                     const nsAString& aOperatorReadable);
+  ~sbPropertyOperator();
+
+protected:
+  nsString mOperator;
+  nsString mOperatorReadable;
+
+};
 
 class sbPropertyInfo : public sbIPropertyInfo
 {
@@ -88,7 +115,9 @@ protected:
 
   PRLock*   mUnitsLock;
   nsString  mUnits;
-
+  
+  PRLock*   mOperatorsLock;
+  nsCOMArray<nsISupports> mOperators;
 };
 
 #endif /* __SBPROPERTYINFO_H__ */

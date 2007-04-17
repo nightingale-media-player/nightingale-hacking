@@ -32,6 +32,7 @@
 
 #include "nsISupports.idl"
 
+interface nsISimpleEnumerator;
 interface nsIStringEnumerator;
 interface sbIPropertyInfo;
 interface nsIURI;
@@ -70,6 +71,24 @@ interface sbIPropertyManager : nsISupports
 };
 
 /**
+ * \interface sbIPropertyOperator
+ * \brief 
+ */
+[scriptable, uuid(2C334049-EFCD-40ed-99F8-A96D541569E5)]
+interface sbIPropertyOperator : nsISupports
+{
+  /**
+   * \brief 
+   */
+  readonly attribute AString operator;
+
+  /**
+   * \brief 
+   */
+  readonly attribute AString operatorReadable;
+};
+
+/**
 * \interface sbIPropertyInfo
 * \brief System wide metadata property
 * \sa sbIPropertyManager
@@ -77,9 +96,34 @@ interface sbIPropertyManager : nsISupports
 [scriptable, uuid(3024b398-5c89-4122-8327-3bf9673e22dd)]
 interface sbIPropertyInfo : nsISupports
 {
+  readonly attribute AString OPERATOR_EQUALS;
+  readonly attribute AString OPERATOR_NOTEQUALS;
+  readonly attribute AString OPERATOR_GREATER;
+  readonly attribute AString OPERATOR_GREATEREQUAL;
+  readonly attribute AString OPERATOR_LESS;
+  readonly attribute AString OPERATOR_LESSEQUAL;
+  readonly attribute AString OPERATOR_CONTAINS;
+  readonly attribute AString OPERATOR_BEGINSWITH;
+  readonly attribute AString OPERATOR_ENDSWITH;
+
+  /**
+   * \brief Causes null values to be infinitely small.
+   */
   const unsigned long SORT_NULL_SMALL = 0;
+
+  /**
+   * \brief Causes null values to be infinitely large.
+   */
   const unsigned long SORT_NULL_BIG   = 1;
+
+  /**
+   * \brief Null values always first.
+   */
   const unsigned long SORT_NULL_FIRST = 2;
+
+  /**
+   * \brief Null values always last.
+   */
   const unsigned long SORT_NULL_LAST  = 3;
   
   /**
@@ -89,6 +133,7 @@ interface sbIPropertyInfo : nsISupports
 
   /**
    * \brief Sort profile to be used.
+   *
    * This is a list of columns to sort by for a peculiar 
    * property. For example, when sorting by artist, you typically want to sort
    * by Artist, Album and Track No.
@@ -123,7 +168,6 @@ interface sbIPropertyInfo : nsISupports
    */
   attribute nsIURI displayUsingXBLWidget;
 
-
   /**
    * \brief True if this property has a selection list
    */
@@ -140,6 +184,11 @@ interface sbIPropertyInfo : nsISupports
    * \note More information here: http://www.unc.edu/~rowlett/units/sipm.html
    */
   attribute AString units;
+
+  /**
+   * \brief Contains sbIPropertyOperator 's.
+   */
+  attribute nsISimpleEnumerator operators;
 
   /**
    * \brief Validates the string for this property type
@@ -211,7 +260,7 @@ interface sbINumberPropertyInfo : sbIPropertyInfo
   attribute long long maxValue;
 
   /**
-   * \brief Radix.
+   * \brief Radix (must be 8, 10 or 16).
    */
   attribute unsigned long radix;
 };

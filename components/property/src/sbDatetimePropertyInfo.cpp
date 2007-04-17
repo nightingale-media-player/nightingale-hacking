@@ -26,6 +26,7 @@
 
 #include "sbDatetimePropertyInfo.h"
 
+#include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 
@@ -90,6 +91,39 @@ sbDatetimePropertyInfo::~sbDatetimePropertyInfo()
   if(mDateTimeFormatLock) {
     PR_DestroyLock(mDateTimeFormatLock);
   }
+}
+
+void sbDatetimePropertyInfo::InitializeOperators()
+{
+  nsAutoString op;
+  nsAutoPtr<sbPropertyOperator> propOp;
+
+  sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.on"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onbefore"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onafter"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_LESS(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.before"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_GREATER(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.after"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  return;
 }
 
 NS_IMETHODIMP sbDatetimePropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
