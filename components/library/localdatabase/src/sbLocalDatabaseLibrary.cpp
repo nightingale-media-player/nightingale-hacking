@@ -1542,6 +1542,19 @@ sbLocalDatabaseLibrary::BatchCreateMediaItems(nsIArray* aURIList,
 
     PRUint32 length = addedGuids.Length();
     for (PRUint32 i = 0; i < length; i++) {
+      // We know the GUID and the type of these new media items so preload
+      // the cache with this information
+      nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
+      NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
+
+      newItemInfo->hasListType = PR_TRUE;
+
+      NS_ASSERTION(!mMediaItemTable.Get(addedGuids[i], nsnull),
+                   "Guid already exists!");
+
+      PRBool success = mMediaItemTable.Put(addedGuids[i], newItemInfo);
+      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
       nsCOMPtr<sbIMediaItem> mediaItem;
       rv = GetMediaItem(addedGuids[i], getter_AddRefs(mediaItem));
       NS_ENSURE_SUCCESS(rv, rv);
