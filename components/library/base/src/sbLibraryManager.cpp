@@ -248,6 +248,8 @@ sbLibraryManager::UnassertLibrary(nsIRDFDataSource* aDataSource,
 sbLibraryManager::NotifyListenersLibraryRegisteredCallback(nsISupportsHashKey* aKey,
                                                            void* aUserData)
 {
+  TRACE(("LibraryManager[static] - NotifyListenersLibraryRegisteredCallback"));
+
   NS_ASSERTION(aKey, "Nulls in the hashtable!");
   nsresult rv;
   nsCOMPtr<sbILibraryManagerListener> listener =
@@ -258,6 +260,8 @@ sbLibraryManager::NotifyListenersLibraryRegisteredCallback(nsISupportsHashKey* a
   NS_ASSERTION(library, "Null pointer!");
 
   listener->OnLibraryRegistered(library);
+  
+  return PL_DHASH_NEXT;
 }
 
 /**
@@ -267,6 +271,8 @@ sbLibraryManager::NotifyListenersLibraryRegisteredCallback(nsISupportsHashKey* a
 sbLibraryManager::NotifyListenersLibraryUnregisteredCallback(nsISupportsHashKey* aKey,
                                                              void* aUserData)
 {
+  TRACE(("LibraryManager[static] - NotifyListenersLibraryUnregisteredCallback"));
+
   NS_ASSERTION(aKey, "Nulls in the hashtable!");
   nsresult rv;
   nsCOMPtr<sbILibraryManagerListener> listener =
@@ -277,6 +283,8 @@ sbLibraryManager::NotifyListenersLibraryUnregisteredCallback(nsISupportsHashKey*
   NS_ASSERTION(library, "Null pointer!");
 
   listener->OnLibraryUnregistered(library);
+  
+  return PL_DHASH_NEXT;
 }
 
 /**
@@ -322,6 +330,7 @@ sbLibraryManager::GenerateDataSource()
 void
 sbLibraryManager::NotifyListenersLibraryRegistered(sbILibrary* aLibrary)
 {
+  TRACE(("LibraryManager[0x%x] - NotifyListenersLibraryRegistered", this));
   mListeners.EnumerateEntries(NotifyListenersLibraryRegisteredCallback,
                               aLibrary);
 }
@@ -337,6 +346,7 @@ sbLibraryManager::NotifyListenersLibraryRegistered(sbILibrary* aLibrary)
 void
 sbLibraryManager::NotifyListenersLibraryUnregistered(sbILibrary* aLibrary)
 {
+  TRACE(("LibraryManager[0x%x] - NotifyListenersLibraryUnregistered", this));
   mListeners.EnumerateEntries(NotifyListenersLibraryUnregisteredCallback,
                               aLibrary);
 }
@@ -565,6 +575,7 @@ sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
 NS_IMETHODIMP
 sbLibraryManager::RemoveListener(sbILibraryManagerListener* aListener)
 {
+  TRACE(("LibraryManager[0x%x] - RemoveListener", this));
   NS_ENSURE_ARG_POINTER(aListener);
 #ifdef DEBUG
   nsISupportsHashKey* exists = mListeners.GetEntry(aListener);
