@@ -337,13 +337,7 @@ MENULIST
 menulist,
 .menulist-label-box
 { 
-  -moz-border-radius: 2px !important;
-  background-color: transparent;
-  border: 1px solid;
-  border-top-color: #333332; /** Dark Border 3*/
-  border-left-color: #333333; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/ 
+  
 } 
 
 .menulist-label
@@ -358,16 +352,14 @@ menulist,
 }
 
 menulist:focus
-{
-  background-color: #4a4d47; /** Dark Color 1 */
-  color: #fffff1; /** Light Color Brightest */ 
+{ 
 }
 
 menulist:focus > hbox
 {
-  background-color: #4a4d47; /** Dark Color 1 */
+  border: none;
 }
-
+  
 menulist[disabled="true"]
 {
   color: #666 !important;
@@ -390,46 +382,7 @@ menulist[disabled="true"]
   color: #666 !important;
 }
 
-/** 
-*************************************************************************
-TEXTBOXES for dialogs and forms.
-***************************************************************************
-*/
-.dialog_textbox
-{
-  border: 2px solid !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #000 !important; 
-  color: #FFF !important;
-}
 
-.dialog_textbox input
-{
-  border-top: 2px solid #000 !important;
-  border-left: 2px solid #000 !important;
-  background-color: #000 !important; 
-  color: #FFF !important;
-}
-
-.dialog_textbox input:focus
-{
-  border-top: 2px solid #4A4E48 !important;
-  border-left: 2px solid #4A4E48 !important;
-  background-color: #4A4E48 !important; 
-}
-
-.dialog_textbox[disabled="true"]
-{
-  border: 2px solid !important;
-  -moz-border-top-colors: #333 #222 !important;
-  -moz-border-left-colors: #333 #222 !important;
-  -moz-border-right-colors: #333 #222 !important;
-  -moz-border-bottom-colors: #333 #222 !important;
-  color: #666 !important;
-}
 
 /** 
 *******************************************************************************
@@ -529,39 +482,7 @@ The following styles are for the specific dialog boxes themselves.
 **********************************************************************************
 */
 
-richlistbox
-{
-  background: transparent !important;
-  
-}
 
-richlistitem[selected="true"]
-{
-  background: transparent !important;
-  color: #fff !important;
-}
-
-richlistitem > checkbox,
-richlistitem > checkbox[selected="false"]
-{
-  background: transparent !important;
-}
-richlistitem:focus > checkbox,
-richlistitem:focus > checkbox[selected="true"]
-{
-  background: transparent !important;  
-}
-
-richlistitem > label
-{
-  background: transparent !important;
-  color: #ccc !important;
-}
-richlistitem[selected="true"] > label
-{
-  background: transparent !important;  
-  color: #ccc !important;
-}
 
 /** 
 *****************************************************************************************************

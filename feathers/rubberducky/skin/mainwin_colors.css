@@ -203,7 +203,7 @@ The Service Pane is the primary area for navigating through services and content
   border-left-color: #474948; /** Light Border 2*/
   border-bottom-color: #474848; /** Light Border 3*/
   border-right-color: #474849; /** Light Border 4*/
-  color: #fff !important; 
+  color: #fffff1; /** Light Color Brightest */
 }
 
 #frame_service_buttonbar button:active
@@ -345,7 +345,7 @@ tree treecol
 
 treecol[dragging="true"]
 {
-  background-color: transparent !important; /** Dark Color 2 */
+  background-color: transparent !important;
   color: #B3BAAC; /** Light Color 1 */
   opacity: .3;
 }
@@ -541,7 +541,7 @@ treechildren::-moz-tree-column(insertbefore)
 BUTTONS
 ************************************************************************************************************************************************
 */ 
-
+dropmarker,
 button
 {
   background-color: transparent;
@@ -551,15 +551,17 @@ button
   border-left-color: #99A195; /** Dark Border 2*/
   border-bottom-color: #333332; /** Dark Border 3*/
   border-right-color: #333333; /** Dark Border 4*/ 
+  -moz-border-radius: 5px;
+}
+
+.button-text {
+  margin: 2px 2px 4px 2px !important;
+  text-align: center;
 }
 
 button:hover
 {
-  border: 1px solid;
-  border-top-color: #7a7c7c; /** Light Border 1 */
-  border-left-color: #474948; /** Light Border 2 */
-  border-bottom-color: #474848; /** Light Border 3 */
-  border-right-color: #474849; /** Light Border 4 */
+  border: 1px solid #7a7c7c; /** Light Border 1 */
   color: #FFF;  
 }
 
@@ -579,6 +581,12 @@ button[disabled="true"]:hover
   background-color: transparent;
   border: 1px solid transparent;
   color: #0f100f; /** Dark Color 2 */
+}
+
+button > dropmarker.button-menubutton-dropmarker,
+toolbarbutton > dropmarker.toolbarbutton-menubutton-dropmarker
+{
+  border-left: 1px solid #333332 !important; /** Dark Border 3*/
 }
 
 /** 
@@ -620,16 +628,6 @@ menuseparator
   border-top-color: #202220; /** Dark Color 1 */
 }
 
-menuitem[_moz-menuactive="true"],  
-popup > menuitem[_moz-menuactive="true"],
-popup > menu[_moz-menuactive="true"],
-menupopup > menu[_moz-menuactive="true"],
-menuitem[selected="true"]
-{
-  background-color: #0f100f; /** Dark Color 2 */
-  color: #fffff1; /** Light Color Brightest */
-}
-
 menuitem[disabled="true"],
 menuitem[disabled="true"]:hover
 {
@@ -641,9 +639,19 @@ popup > menu
 {
   color: #B3BAAC; /** Light Color 1 */
 }
-menuitem:hover
+menuitem:hover,
+menupopup > menu:hover,
+popup > menu:hover
 {
-  color: #fffff1; /** Light Color Brightest */ 
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #fffff1 !important; /** Light Color Brightest */ 
+}
+
+menuitem:hover > label,
+menupopup > menu:hover > label,
+popup > menu:hover > label
+{
+  color: #fffff1 !important; /** Light Color Brightest */ 
 }
 
 /** 
@@ -785,51 +793,48 @@ FACEPLATE
 /* the seekbar slider */
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb
 {
-  background-color: #a2aa9e !important;
+  -moz-border-radius: 5px;
+  background-color: #202220; /** Dark Color 1 */
   border: 1px solid !important;
-  -moz-border-top-colors: #ccd4c7 !important;
-  -moz-border-right-colors: #888f85 !important;
-  -moz-border-bottom-colors: #888f85 !important;
-  -moz-border-left-colors: #ccd4c7 !important;
+  border-top: #ccd4c7 !important;
+  border-right: #888f85 !important;
+  border-bottom: #888f85 !important;
+  border-left: #ccd4c7 !important;
 }
 
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb:active
 {
-  -moz-border-bottom-colors: #ccd4c7 !important;
-  -moz-border-left-colors: #888f85 !important;
-  -moz-border-top-colors: #888f85 !important;
-  -moz-border-right-colors: #ccd4c7 !important;
+  border-bottom: #ccd4c7 !important;
+  border-left: #888f85 !important;
+  border-top: #888f85 !important;
+  border-right: #ccd4c7 !important;
 }
 
 .faceplate-seekbar
 {
-  border: 1px solid #1F292B !important;
+  border: none;
 }
 
 .faceplate-text
 {
-  color: #1F292B !important;
+  color: #0f100f; /** Dark Color 2 */
 }
 
 .faceplate-progressmeter
 {
-  border: 1px solid !important;
-  -moz-border-bottom-colors: #1F292B !important;
-  -moz-border-left-colors: #1F292B !important;
-  -moz-border-top-colors: #1F292B !important;
-  -moz-border-right-colors: #1F292B !important;
+  border: none;
 }
 
 .faceplate-progressmeter > .progress-bar,
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar
 {
-  background-color: #1F292B;
+  background-color: #8A8F84;
 }
 
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder,
 .faceplate-progressmeter > .progress-remainder
 {
-  background-color: #a3ab9f;
+  background-color: #B3BAAC;
 }
 
 
@@ -975,5 +980,140 @@ sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-
 #songbird_volume_w
 {
   background-color: transparent !important;
+}
+
+/** 
+************************************************************************************************************************************************
+MISC
+************************************************************************************************************************************************
+*/
+
+button.button-menubutton-button,
+button.button-menubutton-button:active
+{
+  border: none !important;
+  padding: 0;
+  margin: 0;
+}
+
+description,
+groupbox,
+label
+{
+  color: #B3BAAC; /** Light Color 1 */
+}
+
+.groupbox-body
+{
+  border: 1px solid #333332; /** Dark Border 3*/
+  -moz-border-radius: 5px;
+}
+
+listbox
+{
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A195; /** Dark Border 2*/
+  border-right-color: #99A194; /** Dark Border 1*/
+  -moz-border-radius: 5px;
+}
+
+listitem[selected="true"]
+{
+  background-color: #B3BAAC; /** Light Color 1*/
+  color: #0f100f; /** Dark Color 2 */
+}
+
+listitem[selected="true"] > listcell > .listcell-label
+{
+  color: #0f100f; /** Dark Color 2 */
+}
+
+tree
+{
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A195; /** Dark Border 2*/
+  border-right-color: #99A194; /** Dark Border 1*/
+  -moz-border-radius: 5px;
+}
+
+tree treecol
+{
+  background-color: transparent;
+  border: 0px solid transparent !important;
+}
+
+treechildren::-moz-tree-row
+{
+  border: 0px solid transparent !important;
+}
+
+treechildren::-moz-tree-row( odd )
+{
+  background-color: #202220; /** Dark Color 1 */
+}
+
+treechildren::-moz-tree-row( even )
+{
+  background-color: #0f100f; /** Dark Color 2 */
+}
+
+treechildren::-moz-tree-cell
+{
+  border-right: 1px solid #202220 !important; /** Dark Color 1 */
+}
+
+treechildren::-moz-tree-cell(insertafter)
+{
+  border-right: 5px solid #202220 !important; /** Dark Color 1 */
+}
+
+treechildren::-moz-tree-cell(insertbefore)
+{
+  border-left: 5px solid transparent !important; 
+}
+
+treechildren::-moz-tree-row( selected )
+{
+  background-color: #8A8F84; /** Light Color 2 */
+}
+
+treechildren::-moz-tree-row( selected, focus )
+{
+  background-color: #B3BAAC; /** Light Color 1 */
+}
+
+treechildren::-moz-tree-cell-text
+{
+  color: #B3BAAC; /** Light Color 1 */
+}
+
+treechildren::-moz-tree-cell-text( selected )
+{
+  color: #0f100f; /** Dark Color 2 */
+}
+
+treechildren::-moz-tree-progressmeter
+{
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #B3BAAC; /** Light Color 1 */
+}
+treechildren::-moz-tree-progressmeter( odd )
+{
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #B3BAAC; /** Light Color 1 */
+}
+treechildren::-moz-tree-progressmeter( selected )
+{
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #0f100f; /** Dark Color 2 */
+}
+
+treechildren::-moz-tree-progressmeter( selected, focus )
+{
+  background-color: #8A8F84; /** Light Color 2 */
 }
 
