@@ -665,3 +665,24 @@ function getCurrentPlaylist(disallowwebplaylist) {
   return pl;
 }
 
+/**
+ * Makes a new URI from a url string
+ */
+function newURI(aURLString)
+{
+  // Must be a string here
+  if (!(aURLString &&
+       (aURLString instanceof String) || typeof(aURLString) == "string"))
+    throw Components.results.NS_ERROR_INVALID_ARG;
+  
+  var ioService =
+    Components.classes["@mozilla.org/network/io-service;1"]
+              .getService(Components.interfaces.nsIIOService);
+  
+  try {
+    return ioService.newURI(aURLString, null, null);
+  }
+  catch (e) { }
+  
+  return null;
+}

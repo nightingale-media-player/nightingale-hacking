@@ -269,30 +269,14 @@ try
   
   function LocalLoad()
   {
-    // XXX: Replace this with a library manager lookup
-    var file = Components.classes["@mozilla.org/file/directory_service;1"].
-                 getService(Components.interfaces.nsIProperties).
-                 get("ProfD", Components.interfaces.nsIFile);
-    file.append("db");
-    file.append("test_localdatabaselibrary.db");
-    var libraryFactory =
-      Components.classes["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
-        .createInstance(Components.interfaces.sbILocalDatabaseLibraryFactory);
-    var library = libraryFactory.createLibraryFromDatabase(file);
-
-    var playlist = document.getElementById("playlist_test");
-    SBLibraryCommands.m_Playlist = playlist;
-    playlist.bind(library.QueryInterface(Components.interfaces.sbIMediaList).createView(), SBLibraryCommands);
-
-/*
     try
     { 
       // Default values, in case we get confused
-      var table = "library";
-      var guid = "songbird";
+      var libraryGUID = "main@library.songbirdnest.com";
+      var mediaListGUID = "library";
       var data = SBDataGetStringValue( "browser.uri" );
 
-      // Cook the table from the magic browser uri?
+      // Cook the mediaListGUID from the magic browser uri?
       var qm = data.lastIndexOf( '?' );
       if ( qm > -1 )
       {
@@ -300,38 +284,63 @@ try
         var divider = str.lastIndexOf( ',' );
         if ( divider > -1 )
         {
-          table = str.substr( 0, divider );
-          guid = str.substr( divider + 1, str.length );
+          mediaListGUID = str.substr( 0, divider );
+          libraryGUID = str.substr( divider + 1, str.length );
         }
         else
         {
-          table = str;
+          mediaListGUID = str;
         }
       }
       
-      if ( ( table.length > 0 ) && ( guid.length > 0 ) )
+      // Assuming we have any clue
+      if ( ( mediaListGUID.length > 0 ) && ( libraryGUID.length > 0 ) )
       {
-        // If we're a library, we want metadata filters
+        // TODO: If we're a library, we want metadata filters
         var filters = null;
-        if ( table == "library" )
+        if ( mediaListGUID == "library" )
         {
           filters = new Array(
                                 "artist",
                                 "album" 
                              );
         }
+
+        // Get the correct sbILibrary
+        var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"].
+                              getService(Components.interfaces.sbILibraryManager);
+        var library = libraryManager.getLibrary( libraryGUID );
         
-        // Tell the playlist to bind to the database table with filterlists and commands
-        var playlist = document.getElementById("playlist_test");
-        SBLibraryCommands.m_Playlist = playlist;
-        playlist.bind( guid, table, filters, SBLibraryCommands );
+        // Then the sbIMediaList
+        var mediaList = null;
+        if ( mediaListGUID == "library" )
+          mediaList = library
+        else
+          mediaList = library.getMediaItem( mediaListGUID );
+          
+        // Doublecheck that you actually have what you think you have.
+        if ( mediaList )
+        {
+          mediaList = mediaList.QueryInterface(Components.interfaces.sbIMediaList);
+        }
+        
+        // And if you do, use it.  
+        if ( mediaList )
+        {
+          var playlist = document.getElementById("playlist_test");
+          SBLibraryCommands.m_Playlist = playlist;
+          playlist.bind(mediaList.createView(), SBLibraryCommands);
+        }
+        else
+        {
+          // Bad bad bad.
+        }
       }      
     }
     catch ( err )
     {
       alert( err );
     }
-*/
   }
 }
 catch ( err )

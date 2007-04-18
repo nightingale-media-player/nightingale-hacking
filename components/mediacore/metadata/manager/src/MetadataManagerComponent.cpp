@@ -30,18 +30,20 @@
 */
 
 #include "nsIGenericFactory.h"
-#include "MetadataBackscanner.h"
 #include "MetadataManager.h"
 #include "MetadataValues.h"
 #include "MetadataChannel.h"
+#include "MetadataBackscanner.h"
+#include "MetadataJobManager.h"
+#include "MetadataJob.h"
 #include "prlog.h"
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataManager, sbMetadataManager::GetSingleton)
-
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataValues)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataChannel)
-
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataBackscanner, sbMetadataBackscanner::GetSingleton)
+NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataJobManager, sbMetadataJobManager::GetSingleton)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataJob)
 
 static nsModuleComponentInfo sbMetadataManagerComponent[] =
 {
@@ -71,6 +73,20 @@ static nsModuleComponentInfo sbMetadataManagerComponent[] =
     SONGBIRD_METADATABACKSCANNER_CID,
     SONGBIRD_METADATABACKSCANNER_CONTRACTID,
     sbMetadataBackscannerConstructor
+  },
+
+  {
+    SONGBIRD_METADATAJOBMANAGER_CLASSNAME,
+    SONGBIRD_METADATAJOBMANAGER_CID,
+    SONGBIRD_METADATAJOBMANAGER_CONTRACTID,
+    sbMetadataJobManagerConstructor
+  },
+
+  {
+    SONGBIRD_METADATAJOB_CLASSNAME,
+    SONGBIRD_METADATAJOB_CID,
+    SONGBIRD_METADATAJOB_CONTRACTID,
+    sbMetadataJobConstructor
   }
 };
 
@@ -96,6 +112,9 @@ sbMetadataManagerComponentDestructor(nsIModule* module)
   
   NS_IF_RELEASE(gBackscanner);
   gBackscanner = nsnull;
+  
+  NS_IF_RELEASE(gMetadataJobManager);
+  gMetadataJobManager = nsnull;
 }
 
 NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR("SongbirdMetadataManagerComponent",

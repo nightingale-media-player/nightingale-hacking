@@ -32,7 +32,9 @@
 #include "nsISupports.idl"
 
 interface nsIURI;
+interface nsIArray;
 interface sbIMediaItem;
+interface sbIDatabaseQuery;
 interface sbILocalDatabasePropertyCache;
 interface sbILocalDatabaseResourcePropertyBag;
 
@@ -59,6 +61,19 @@ interface sbILocalDatabaseLibrary : nsISupports
   unsigned long getMediaItemIdForGuid(in AString aGuid);
 
   sbILocalDatabaseResourcePropertyBag getPropertiesForGuid(in AString aGuid);
+
+  /**
+   * \brief Return a filled query to create many media items from a list of URIs
+   *
+   * Note: You must call sbILibrary::batchNotifyAdded() on the returned list 
+   * after the query fully completes!
+   *
+   * \param aURLCount The number of items in the url array.
+   * \param aURLArray An array of strings of urls to media
+   * \param aGUIDArray [out] An array of strings of guids for the new media items
+   * \return sbIDatabaseQuery The composed query
+   */
+  sbIDatabaseQuery batchCreateMediaItemsQuery(in PRUint32 aURLCount, [array, size_is (aURLCount)] in wstring aURLArray, out nsIArray aGUIDArray ); 
 };
 
 

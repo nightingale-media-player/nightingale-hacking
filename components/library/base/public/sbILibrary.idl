@@ -129,10 +129,24 @@ interface sbILibrary : sbILibraryResource
   void shutdown();
 
   /**
-   * \brief Create many media items from a list of URIs
+   * \brief Create many media items from a list of URIs, and notify their addition.
    * \param aURIArray nsIArray of nsIURI objects
    * \return nsIArray of the new sbIMediaItem objects
    */
   nsIArray batchCreateMediaItems(in nsIArray aURIArray);
+
+  /**
+   * \brief Get many media items from a list of guid strings
+   * \param aURIArray nsIArray of GUID strings.
+   * \return nsIArray of the new sbIMediaItem objects
+   */
+  nsIArray batchGetMediaItems(in nsIArray aGUIDArray);
+
+  /**
+   * \brief Notify the world that the array is added
+   * \param aURIArray nsIArray of sbIMediaItem
+   */
+  void batchNotifyAdded(in nsIArray aMediaItemArray);
+
 };
 

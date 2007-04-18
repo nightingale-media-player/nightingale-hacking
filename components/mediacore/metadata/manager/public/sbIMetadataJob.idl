@@ -1,0 +1,77 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+* \file sbIMetadataJob.idl
+* \brief The Metadata Backscanner scans unscanned media items for new metadata.
+*/
+#include "nsISupports.idl"
+
+interface nsIArray;
+/**
+* \interface sbIMetadataJob sbIMetadataJob.h
+* \brief Metadata Job represents the status of a running metadata scanning task
+*
+* You get an sbIMetadataJob by calling sbIMetadataJobManager::newJob()
+* with an nsIArray of sbIMediaItem.
+* 
+* \sa sbIMediaLibrary, sbIMediaItem, sbIMetadataJobManager
+*/
+[scriptable, uuid(C38FD6BD-3335-4392-A3DE-1855ECEDA4F8)]
+interface sbIMetadataJob : nsISupports
+{
+  /**
+   * \brief The tableName for this task, used by the manager.
+   */
+  readonly attribute AString tableName;
+  /**
+   * \brief Total number of items to be scanned.
+   */
+  readonly attribute unsigned long itemsTotal;
+  /**
+   * \brief Total number of items scanned so far.
+   */
+  readonly attribute unsigned long itemsCompleted;
+
+  /**
+   * \brief Initialize a task with a specific guid and, optionally, an nsIArray of sbMediaItems
+   *
+   * The metadata task will track its progress through a database table 
+   * so it can depend on its information always available upon app restart.
+   *
+   * \param aTableName The table name assigned to this task.
+   * \param aMediaItemsArray An array filled with media items to be scanned.
+   * \param aSleepMS How much of an interval/sleep per loop in and out of thread.
+   */
+  void init( in AString aTableName, in nsIArray aMediaItemsArray, in unsigned long aSleepMS );
+
+  /**
+   * \brief Cancel a task 
+   *
+   * Stop all metadata processing.  Thread shuts down gently.
+   */
+  void cancel();
+};

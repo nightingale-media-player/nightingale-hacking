@@ -1,0 +1,82 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+* \file sbIMetadataJobManager.idl
+* \brief The Metadata Backscanner scans unscanned media items for new metadata.
+*/
+#include "nsISupports.idl"
+
+interface nsIArray;
+interface sbIMetadataJob;
+
+/**
+* \interface sbIMetadataJobManager sbIMetadataJobManager.h
+* \brief Metadata Job Manager scans local and remote tracks for metadata in own-thread and in main-thread
+*
+* To qualify as local media the URI for the piece of media must
+* begin with the following scheme: 
+* 
+* - file://.
+*
+* Remote media is scanned from the main thread using timer based
+* workers.
+*
+* An nsIArray of sbIMediaItem are passed to this interface to begin
+* a metadata scan task.  An sbIMetadataJob element will be returned
+* to the calling interface.
+*
+* The Metadata Job Manager is a service and should be called
+* via do_GetService.  Because it relies upon starting timers into the
+* main thread, newJob() may only be called from the main thread.
+* 
+* \sa sbIMediaLibrary, sbIMediaItem, sbIMetadataJob
+*/
+[scriptable, uuid(883C63A5-8195-4294-8D41-A21FE16A0D7C)]
+interface sbIMetadataJobManager : nsISupports
+{
+  /**
+   * \brief Start a new task scanning the given array of media items.
+   *
+   * This task will launch a new metadata task and return 
+   * the task object for monitoring.
+   *
+   * You can construct the required array like so:
+\verbatim
+      var toScan = Components.classes["@mozilla.org/array;1"]
+        .createInstance(Components.interfaces.nsIMutableArray);
+
+      for (var i = 0; i < 100; i++)
+        toScan.appendElement(myMediaItems[i], false);
+
+      var myJob = theMetadataJobManager.newJob(toScan);
+\endverbatim
+   *
+   * \param aMediaItemsArray An array filled with media items to be scanned.
+   * \param aSleepMS How much of an interval/sleep per loop in and out of thread.
+   */
+  sbIMetadataJob newJob( in nsIArray aMediaItemsArray, in unsigned long aSleepMS );
+};
