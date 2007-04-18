@@ -28,6 +28,84 @@
  * \brief Basic service pane unit tests
  */
 
+function DBG(s) { dump('DBG:test_servicepane: '+s+'\n'); }
+
+function removeIfExists(SPS, ids) {
+  for (var i=0; i<ids.length; i++) {
+    var id = ids[i];
+    DBG('removeIfExists id='+id+'\n');
+    var node = SPS.getNode(id);
+    if (node) {
+      SPS.removeNode(node);
+    }
+  }
+}
+
+function testInsertBefore (SPS) {
+  DBG('testInsertBefore starts');
+  
+  // clear the old nodes
+  removeIfExists(SPS, ['test:insertBefore:container',
+                       'test:insertBefore:one',
+                       'test:insertBefore:two',
+                       'test:insertBefore:three']);
+  
+  DBG('testInsertBefore - creating the container');
+  // create a container
+  var container = SPS.addNode('test:insertBefore:container', SPS.root, true);
+  
+  DBG('testInsertBefore - created the container: '+container);
+  
+  // add three items
+  var one = SPS.addNode('test:insertBefore:one', container, false);
+  var two = SPS.addNode('test:insertBefore:two', container, false);
+  var three = SPS.addNode('test:insertBefore:three', container, false);
+  
+  DBG('testInsertBefore - created the nodes');
+  
+  // make sure they're all in the right place
+  assertEqual(one.parentNode.id, container.id);
+  assertEqual(two.parentNode.id, container.id);
+  assertEqual(three.parentNode.id, container.id);
+  
+  // make sure they're in the right order
+  assertEqual(one.previousSibling, null);
+  assertEqual(one.nextSibling.id, two.id);
+  assertEqual(two.previousSibling.id, one.id);
+  assertEqual(two.nextSibling.id, three.id);
+  assertEqual(three.previousSibling.id, two.id);
+  assertEqual(three.nextSibling, null);
+  
+  DBG('testInsertBefore - everything seems to be in the right order');
+  
+  // now we have:
+  // test:insertBefore:container
+  //   test:insertBefore:one
+  //   test:insertBefore:two
+  //   test:insertBefore:three
+  
+  // lets insert test:insertBefore:one before test:insertBefore:three
+  container.insertBefore(one, three);
+  
+  DBG('testInsertBefore - reordered the nodes');
+  
+  // now we should have
+  // test:insertBefore:container
+  //   test:insertBefore:two
+  //   test:insertBefore:one
+  //   test:insertBefore:three
+  
+  // let's make sure they're in the right order
+  assertEqual(two.previousSibling, null);
+  assertEqual(two.nextSibling.id, one.id);
+  assertEqual(one.previousSibling.id, two.id);
+  assertEqual(one.nextSibling.id, three.id);
+  assertEqual(three.previousSibling.id, one.id);
+  assertEqual(three.nextSibling, null);
+  
+  DBG('testInsertBefore ends');
+}
+
 
 function runTest () {
   var SPS = Components.classes['@songbirdnest.com/servicepane/service;1'].getService(Components.interfaces.sbIServicePaneService);
@@ -136,6 +214,8 @@ function runTest () {
   // insert it before the other node
   test_root.insertBefore(test_node_2, test_node);
   assertEqual(test_node_2.nextSibling.id, test_node.id);
+  
+  testInsertBefore(SPS);
 
   // test replaceChild
   test_container.appendChild(test_node);

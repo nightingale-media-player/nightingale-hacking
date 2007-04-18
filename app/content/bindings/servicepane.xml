@@ -91,6 +91,7 @@
             <xul:tree class="servicepane_tree" anonid="tree" flex="1"
                       datasources="rdf:null" ref="SB:Root"
                       hidecolumnpicker="true" seltype="single"
+                      flags="dont-build-content"
                       editable="true"
                       >
                 <!-- hide the column header - is there a better way? -->
@@ -133,7 +134,7 @@
                 <xul:popup anonid="popup" class="sb_faceplate" />
             </xul:popupset>
         </content>
-        <implementation implements="nsIWebProgressListener,nsIXULBuilderListener">
+        <implementation implements="nsIWebProgressListener,nsIXULBuilderListener,nsIXULTreeBuilderObserver">
             <constructor><![CDATA[
                 // get the tree node
                 this.mTree = document.getAnonymousElementByAttribute(this, 'anonid', 'tree');
@@ -156,6 +157,14 @@
                 // register for builder callbacks
                 this.mTree.builder.addListener(this);
                 this.mTree.builder.rebuild();
+                
+                var xtb = this.mTree.builderView;
+                try {
+                    xtb = xtb.QueryInterface(Components.interfaces.nsIXULTreeBuilder);
+                    xtb.addObserver(this);
+                } catch (e) {
+                    alert(e);
+                }
                 
                 this.mCurrentURL = null;
                 
@@ -207,8 +216,7 @@
                     if (row < 0) {
                         return null;
                     }
-                    var element = this.mTree.contentView.getItemAtIndex(row);
-                    var id = element.getAttribute('id');
+                    var id = this.mTree.builderView.getResourceAtIndex(row).Value;
                     return this.mService.getNode(id);
                 ]]></body>
             </method>
@@ -220,9 +228,13 @@
                     }
                     return this._browser;
                 ]]></getter>
-
             </property>
             <field name="onPlaylistDefaultCommand">null</field>
+            <field name="_dragService"><![CDATA[
+                Components.classes["@mozilla.org/widget/dragservice;1"]
+                        .getService(Components.interfaces.nsIDragService);
+            ]]></field>
+            
 
             <method name="highlightURL">
                 <parameter name="aURL" />
@@ -350,6 +362,67 @@
                 <parameter name="aBuilder" />
                 <body />
             </method>
+
+
+            <!-- implementation of nsIXULTreeBuilderObserver -->
+            <method name="canDrop">
+                <parameter name="aIndex" />
+                <parameter name="aOrientation" />
+                <body><![CDATA[
+                    var node = this.getNodeForRow(aIndex);
+                    var session = this._dragService.getCurrentSession();
+                    return this.mService.canDrop(node.id, session, aOrientation);
+                ]]></body>
+            </method>
+            <method name="onCycleCell">
+                <parameter name="aRow" />
+                <parameter name="aColID" />
+                <body><![CDATA[
+                ]]></body>
+            </method>
+            <method name="onCycleHeader">
+                <parameter name="aColID" />
+                <parameter name="aElt" />
+                <body><![CDATA[
+                ]]></body>
+            </method>
+            <method name="onDrop">
+                <parameter name="aRow" />
+                <parameter name="aOrientation" />
+                <body><![CDATA[
+                    var node = this.getNodeForRow(aRow);
+                    var session = this._dragService.getCurrentSession();
+                    this.mService.onDrop(node.id, session, aOrientation);
+                    this.mTree.builder.rebuild();
+                ]]></body>
+            </method>
+            <method name="onPerformAction">
+                <parameter name="aAction" />
+                <body><![CDATA[
+                ]]></body>
+            </method>
+            <method name="onPerformActionOnCell">
+                <parameter name="aAction" />
+                <parameter name="aRow" />
+                <parameter name="aColID" />
+                <body><![CDATA[
+                ]]></body>
+            </method>            
+            <method name="onPerformAction">
+                <parameter name="aAction" />
+                <parameter name="aRow" />
+                <body><![CDATA[
+                ]]></body>
+            </method>
+            <method name="onSelectionChanged">
+                <body><![CDATA[
+                ]]></body>
+            </method>
+            <method name="onToggleOpenState">
+                <parameter name="aIndex" />
+                <body><![CDATA[
+                ]]></body>
+            </method>                
         </implementation>
         <handlers>
             <handler event="contextmenu"><![CDATA[
@@ -399,6 +472,27 @@
                 var node = this.getNodeForRow(this.mTree.currentIndex);
                 if (node && node.isContainer) {
                     node.isOpen = this.mTree.view.isContainerOpen(this.mTree.currentIndex);
+                }
+            ]]></handler>
+            
+            <!-- drag and drop handling -->
+            <handler event="draggesture"><![CDATA[
+                var row = { }
+                var col = { }
+                var child = { }
+                this.mTree.treeBoxObject.getCellAt(event.pageX, event.pageY, row, col, child);
+                var node = this.getNodeForRow(row.value);
+                
+                var transferable = {};
+                if (this.mService.onDragGesture(node.id, transferable)) {
+                    transferable = transferable.value;
+                    var transArray = Components.classes["@mozilla.org/supports-array;1"].
+                            createInstance(Components.interfaces.nsISupportsArray);
+                    transArray.AppendElement(transferable);
+                    this._dragService.invokeDragSession(event.target, transArray,
+                            null, this._dragService.DRAGDROP_ACTION_COPY +
+                            this._dragService.DRAGDROP_ACTION_MOVE);
+                    event.preventDefault();
                 }
             ]]></handler>
         </handlers>

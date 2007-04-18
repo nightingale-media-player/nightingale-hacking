@@ -263,13 +263,17 @@ ServicePaneNode.prototype.insertBefore = function(aNewNode, aAdjacentNode) {
         throw this.id + ' is not a container';
     }
     
-    var index = this._container.IndexOf(aAdjacentNode.resource);
-    if (index < 0) {
+    if (this.id != aAdjacentNode.parentNode.id) {
         throw aAdjacentNode.id + ' is not in ' + this.id;
     }
     
+    // unlink the node we're moving from where it is currently
     aNewNode.unlinkNode();
     
+    // work out where it should go
+    var index = this._container.IndexOf(aAdjacentNode.resource);
+    
+    // add it back in there
     this._container.InsertElementAt(aNewNode.resource, index, true);
 }
 
@@ -403,17 +407,7 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
         this._root.hidden = false;
         this.save();
     }
-    
-    // XXX this is only here till the new data model stuff lands
-    var library = this.getNode('SB:Library');
-    if (!library) {
-        library = this.addNode('SB:Library', this._root, false);
-        library.url = 'chrome://songbird/content/xul/playlist_test.xul?library';
-        library.name = 'Library';
-        library.image = 'chrome://songbird/skin/icons/icon_lib_16x16.png';
-        library.hidden = false;
-    }
-    
+
     // okay, lets get all the keys
     this._modules = [];
     var module_keys = [];
@@ -511,11 +505,17 @@ function ServicePaneService_removeNode(aNode) {
         throw Ce('you need to supply a node to removeNode');
     }
     
-    var parent = aNode.parentNode;
-    if (!parent) {
+    if (aNode.id == this._root.id) {
         throw Ce("you can't remove the root node");
     }
-    parent.removeChild(aNode);
+    
+    if(aNode.parentNode) {
+        // remove the node from it's parent
+        aNode.parentNode.removeChild(aNode);
+    } else {
+        // or if it's an orphan call the internal function to clear it out
+        aNode.clearNode();
+    }
 }
 ServicePaneService.prototype.getNode =
 function ServicePaneService_getNode(aId) {
@@ -541,6 +541,46 @@ function ServicePaneService_fillContextMenu(aId, aContextMenu, aParentWindow) {
     var node = this.getNode(aId);
     for (var i=0; i<this._modules.length; i++) {
         this._modules[i].fillContextMenu(node, aContextMenu, aParentWindow);
+    }
+}
+ServicePaneService.prototype.canDrop =
+function ServicePaneService_canDrop(aId, aDragSession, aOrientation) {
+    var node = this.getNode(aId);
+    if (!node) {
+        return false;
+    }
+    if (node.contractid) {
+        var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
+        if (module) {
+            return module.canDrop(node, aDragSession, aOrientation);
+        }
+    }
+    return false;
+}
+ServicePaneService.prototype.onDrop =
+function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
+    var node = this.getNode(aId);
+    if (!node) {
+        return false;
+    }
+    if (node.contractid) {
+        var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
+        if (module) {
+            module.onDrop(node, aDragSession, aOrientation);
+        }
+    }
+}
+ServicePaneService.prototype.onDragGesture =
+function ServicePaneService_onDragGesture(aId, aTransferable) {
+    var node = this.getNode(aId);
+    if (!node) {
+        return false;
+    }
+    if (node.contractid) {
+        var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
+        if (module) {
+            return module.onDragGesture(node, aTransferable);
+        }
     }
 }
 

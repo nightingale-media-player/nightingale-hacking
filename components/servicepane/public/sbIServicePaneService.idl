@@ -36,6 +36,8 @@ interface nsIRDFResource;
 interface nsIDOMXULElement;
 interface nsIDOMWindow;
 interface nsISimpleEnumerator;
+interface nsIDragSession;
+interface nsITransferable;
 
 /**
  * \interface sbIServicePaneNode
@@ -198,6 +200,16 @@ interface sbIServicePaneService : nsISupports
   it will take an existing tree-builder tree view and add some
   functionality that we want to have
   */
+  
+  /* drag and drop support */
+  PRBool canDrop(in AString aID,
+                 in nsIDragSession aDragSession,
+                 in PRInt32 aOrientation);
+  void onDrop(in AString aID,
+              in nsIDragSession aDragSession,
+              in PRInt32 aOrientation);
+  PRBool onDragGesture(in AString aID,
+                       out nsITransferable aTransferable);
 };
 
 
@@ -224,6 +236,14 @@ interface sbIServicePaneModule : nsISupports
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
 
+  PRBool canDrop(in sbIServicePaneNode aNode,
+                 in nsIDragSession aDragSession,
+                 in PRInt32 aOrientation);
+  void onDrop(in sbIServicePaneNode aNode,
+              in nsIDragSession aDragSession,
+              in PRInt32 aOrientation);
+  PRBool onDragGesture(in sbIServicePaneNode aNode,
+                       out nsITransferable aTransferable);
 };
 
 
