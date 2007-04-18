@@ -88,14 +88,16 @@
 <listbox>
   <listitem label="Chocolate"/>
   <listitem label="Jelly Beans"/>
+  <listitem label="Licorice"/>
+  <listitem label="Taffy"/>
+  <listitem label="Bubblegum"/>
 </listbox>
-
 
 <menulist>
   <menupopup>
-    <menulist label="Lions" value="l"/>
-    <menuitem label="Tigers" value="t"/>
-    <menuitem label="Bears" value="b"/>
+    <menuitem label="Lions" value="a"/>
+    <menuitem label="Tigers" value="b"/>
+    <menuitem label="Bears" value="c"/>
   </menupopup>
 </menulist>
 
@@ -109,9 +111,16 @@
 
 <progressmeter value="40"/>
 
+<progressmeter value="100" mode="undetermined" />
+
 <radiogroup>
-  <radio label="Light" value="light"/>
-  <radio label="Heavy" value="heavy"/>
+  <radio label="Light" value="light" selected="true" />
+  <radio label="Heavy" value="heavy"/>  
+</radiogroup>
+
+<radiogroup>
+  <radio label="Medium" value="23" disabled="true" />
+  <radio label="And Then Some" value="71" selected="true" disabled="true"/>
 </radiogroup>
 
 <richlistbox>
@@ -121,13 +130,18 @@
   <richlistitem>
     <image src="http://upload.wikimedia.org/wikipedia/en/thumb/8/8f/SNive.gif/19px-SNive.gif"/>
   </richlistitem>
+  <richlistitem>
+    <label value="Kiyo Miyazawa"/>    
+  </richlistitem>
 </richlistbox>
 
 <scale min="1" max="10"/>
 
+<scale min="1" max="10" orient="vertical" />
+
 <textbox value="firefox"/>
 
-<textbox multiline="true"/>
+<textbox multiline="true" value="firefox"/>
 
 <textbox type="autocomplete" autocompletesearch="history"/>
 
