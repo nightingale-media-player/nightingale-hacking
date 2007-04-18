@@ -419,6 +419,8 @@ sbLibraryManager::RegisterLibrary(sbILibrary* aLibrary)
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to update dataSource!");
   }
 
+  NotifyListenersLibraryRegistered(aLibrary);
+
   return NS_OK;
 }
 
@@ -442,6 +444,8 @@ sbLibraryManager::UnregisterLibrary(sbILibrary* aLibrary)
     NS_WARNING("Unregistering a library that was never registered!");
     return NS_OK;
   }
+
+  NotifyListenersLibraryUnregistered(aLibrary);
 
   if (mDataSource) {
     rv = UnassertLibrary(mDataSource, aLibrary);
