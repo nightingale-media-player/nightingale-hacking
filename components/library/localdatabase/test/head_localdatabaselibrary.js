@@ -496,19 +496,3 @@ function newURI(spec) {
   
   return ioService.newURI(spec, null, null);
 }
-
-var oldScriptTimeout = -1;
-function setScriptTimeout(seconds) {
-  var prefs = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefBranch);
-  oldScriptTimeout = prefs.getIntPref("dom.max_chrome_script_run_time");
-  prefs.setIntPref("dom.max_chrome_script_run_time", seconds);
-}
-
-function restoreScriptTimeout() {
-  if (oldScriptTimeout > -1) {
-    var prefs = Cc["@mozilla.org/preferences-service;1"].
-                getService(Ci.nsIPrefBranch);
-    prefs.setIntPref("dom.max_chrome_script_run_time", oldScriptTimeout);
-  }
-}

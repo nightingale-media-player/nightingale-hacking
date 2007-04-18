@@ -41,9 +41,12 @@ const SONGBIRD_TESTHARNESS_CLASSNAME = "Songbird Unit Test Test-Harness";
 const SONGBIRD_TESTHARNESS_CID = Components.ID("{fd541a71-0e71-48aa-9dd1-971df86d1e01}");
 const SONGBIRD_TESTHARNESS_IID = Ci.sbITestHarness;
 
-const SONGBIRD_DEFAULT_DIR = "basetests"
-const SONGBIRD_HEAD_FILE = "head_songbird.js"
-const SONGBIRD_TAIL_FILE = "tail_songbird.js"
+const SONGBIRD_DEFAULT_DIR = "basetests";
+const SONGBIRD_HEAD_FILE = "head_songbird.js";
+const SONGBIRD_TAIL_FILE = "tail_songbird.js";
+
+const NS_PREFSERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
+const NS_SCRIPT_TIMEOUT_PREF = "dom.max_chrome_script_run_time";
 
 function sbTestHarness() { }
 
@@ -58,6 +61,22 @@ sbTestHarness.prototype = {
   // toplevel default files to always attempt to load
   mHeadSongbird : null,
   mTailSongbird : null,
+  
+  mOldScriptTimeout: -1,
+
+  _disableScriptTimeout : function() {
+    var prefs = Cc[NS_PREFSERVICE_CONTRACTID].getService(Ci.nsIPrefBranch);
+    
+    mOldScriptTimeout = prefs.getIntPref(NS_SCRIPT_TIMEOUT_PREF);
+    prefs.setIntPref(NS_SCRIPT_TIMEOUT_PREF, 0);
+  },
+
+  _enableScriptTimeout : function() {
+    if (mOldScriptTimeout > -1) {
+      var prefs = Cc[NS_PREFSERVICE_CONTRACTID].getService(Ci.nsIPrefBranch);
+      prefs.setIntPref(NS_SCRIPT_TIMEOUT_PREF, mOldScriptTimeout);
+    }
+  },
 
   init : function ( aTests ) {
     // list of test components and possible test names to run.
@@ -81,6 +100,8 @@ sbTestHarness.prototype = {
     this.mTailSongbird = this.mTestDir.clone().QueryInterface(Ci.nsILocalFile);
     this.mTailSongbird.append(SONGBIRD_DEFAULT_DIR);
     this.mTailSongbird.append(SONGBIRD_TAIL_FILE);
+    
+    this._disableScriptTimeout();
   },
 
   run : function () {
@@ -236,6 +257,7 @@ sbTestHarness.prototype = {
     }
 
     consoleService.unregisterListener(consoleListener);
+    this._enableScriptTimeout();
 
   },
 
