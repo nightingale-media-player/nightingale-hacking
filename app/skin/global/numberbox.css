@@ -45,9 +45,19 @@ textbox[type="number"] {
   -moz-appearance: none;
   -moz-box-align: center;
   padding: 0 !important;
-  border: none;
-  background-color: transparent;
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A195; /** Dark Border 2*/
+  border-right-color: #99A194; /** Dark Border 1*/
+  -moz-border-radius: 5px;
+  background-color: #202220; /** Dark Color 1 */ 
   cursor: default;
+}
+
+textbox[type="number"][focused="true"] 
+{
+  background-color: #0f100f; /** Dark Color 2 */
 }
 
 html|*.numberbox-input {
@@ -58,13 +68,7 @@ html|*.numberbox-input {
   -moz-appearance: textfield;
   cursor: text;
   margin-right: 4px;
-  border: 3px solid;
-  -moz-border-top-colors: transparent #888888 #000000;
-  -moz-border-right-colors: transparent #FFFFFF #000000;
-  -moz-border-bottom-colors: transparent #FFFFFF #000000;
-  -moz-border-left-colors: transparent #888888 #000000;
-  -moz-border-radius-topright: 2px;
-  -moz-border-radius-bottomleft: 2px;
-  background-color: -moz-Field;
+  border: none;
+  background-color: transparent;
   color: -moz-FieldText;
 }

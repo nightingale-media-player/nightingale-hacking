@@ -55,14 +55,7 @@ groupbox {
 }
 
 .groupbox-body {
-  padding: 5px 5px 0px 5px;
-  border: 3px solid transparent;
-  -moz-border-top-colors: #9b9b9b #c8c8c8 #e1e1e1 ;
-  -moz-border-right-colors: #c4c4c4 #e1e1e1 #e4e4e4;
-  -moz-border-bottom-colors: #d6d6d6 #e2e2e2 #e4e4e4;
-  -moz-border-left-colors: #c4c4c4 #e1e1e1 #e4e4e4;
-  background: url("chrome://global/skin/10pct_transparent_grey.png") repeat !important;
-  -moz-border-radius: 3px;
+  padding: 5px 5px 5px 5px;
   margin: 0px;
 
 }

@@ -47,11 +47,12 @@
 
 listbox {
   margin: 2px 4px;
-  border-top: 1px solid #A1A1A1;
-  border-right: 1px solid #C3C3C3;
-  border-bottom: 1px solid #DDDDDD;
-  border-left: 1px solid #C3C3C3;
-  background-color: #FFFFFF;
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A195; /** Dark Border 2*/
+  border-right-color: #99A194; /** Dark Border 1*/
+  background-color: #202220; /** Dark Color 1 */ 
   color: -moz-FieldText;
 }
 
@@ -68,15 +69,17 @@ listitem {
 }
 
 listbox:focus > listitem[selected="true"][current="true"] {
+  background-color: #0f100f; /** Dark Color 2 */
 }
 
 listitem[selected="true"] {
-  background-color: -moz-mac-secondaryhighlight;
-  color: -moz-DialogText;
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #0f100f; /** Dark Color 2 */
 }
 
+listbox:focus,
 listbox:focus > listitem[selected="true"] {  
-   background-color: -moz-mac-alternateprimaryhighlight;
+   background-color: #0f100f; /** Dark Color 2 */
    color: #FFFFFF;
 }
 

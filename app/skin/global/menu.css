@@ -51,7 +51,6 @@ menuitem {
   -moz-box-align: center;
   color: MenuText;
   font: -moz-pull-down-menu;
-  list-style-image: none;
   -moz-image-region: auto;
 }
 
@@ -88,13 +87,13 @@ menuitem[_moz-menuactive="true"][disabled="true"] {
 }
 
 .menu-iconic-left {
-  margin: 2px 4px 1px 18px !important;
+  margin: 0px 3px 0px 0px !important;
+  min-width: 16px;
+  min-height: 16px;
   color: inherit;
 }
 
 .menu-iconic-icon {
-  width: 16px;
-  height: 16px;
   list-style-image: inherit;
 }
 
@@ -108,17 +107,17 @@ menuitem[type="radio"] > .menu-iconic-left {
 .menu-right {
   margin: 0px 8px 0px 6px;
   width: 8px;
-  list-style-image: url("chrome://global/skin/menu/menu-arrow.gif");
+  list-style-image: url(chrome://global/skin/menu/menu-arrow.gif);
   -moz-image-region: auto;
 }
 
 .menu-right[_moz-menuactive="true"] {
-  list-style-image: url("chrome://global/skin/menu/menu-arrow-hov.gif");
+  list-style-image: url(chrome://global/skin/menu/menu-arrow-hov.gif);
   -moz-image-region: auto;
 }
 
 .menu-right[disabled="true"] {
-  list-style-image: url("chrome://global/skin/menu/menu-arrow-dis.gif") !important;
+  list-style-image: url(chrome://global/skin/menu/menu-arrow-dis.gif);
   -moz-image-region: auto;
 }
 
@@ -189,21 +188,22 @@ menulist > menupopup > menu > .menu-iconic-left {
 menuitem[checked="true"], 
 menulist > menupopup > menuitem[selected="true"],
 .menulist-menupopup > menuitem[selected="true"] {
-  list-style-image: url("chrome://global/skin/menu/menu-check.png");
-  -moz-image-region: auto;
+  list-style-image: url(chrome://songbird/skin/checkbox/checkmark.png);
+  -moz-image-region: rect(0px 7px 7px 0px);
 }
 
 menuitem[checked="true"][disabled="true"] {
-  list-style-image: url("chrome://global/skin/menu/menu-check-dis.png");
-  -moz-image-region: auto;
+  list-style-image: url(chrome://songbird/skin/checkbox/checkmark.png);
+  -moz-image-region: rect(14px 7px 21px 0px);
 }
 
 menuitem[checked="true"][_moz-menuactive="true"]:not([disabled="true"]), 
 menulist > menupopup > menuitem[_moz-menuactive="true"][selected="true"]:not([disabled="true"]),
 .menulist-menupopup > menuitem[_moz-menuactive="true"][selected="true"]:not([disabled="true"]) {
-  list-style-image: url("chrome://global/skin/menu/menu-check-hov.png") !important;
-  -moz-image-region: auto;
+  list-style-image: url(chrome://songbird/skin/checkbox/checkmark.png);
+  -moz-image-region: rect(7px 7px 14px 0px);
 }
+
 
 /* ::::: menuseparator ::::: */
 

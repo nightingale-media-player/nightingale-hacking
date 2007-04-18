@@ -45,13 +45,11 @@
 /* ::::: progressmeter ::::: */
 
 progressmeter {
-  -moz-appearance: progressbar;
   margin: 2px 4px;
   min-width: 128px;
   height: 12px;
+  -moz-border-radius: 5px;
 }
-
-
 
 .progress-remainder[flex="100"], .progress-remainder[flex="0"] {
 
@@ -78,11 +76,18 @@ progressmeter {
 }
 
 
-/* :::::: download progress meter :::::::: */
-
-#progress, #progress0 {
-	  vertical-align: baseline !important;
-          -moz-appearance: progressbar;
-           border-left: 1px solid #cccccc;
-  border-right: 1px solid #cccccc;
+.progress-bar
+{
+  background-color: #1F292B;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-bottomleft: 5px;
 }
+
+.progress-remainder
+{
+  background-color: #a3ab9f;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-bottomright: 5px;
+}
+
+

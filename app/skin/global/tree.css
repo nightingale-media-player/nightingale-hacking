@@ -52,7 +52,7 @@ tree {
   border-bottom: 1px solid #DDDDDD;
   border-left: 1px solid #C3C3C3;
   color: -moz-DialogText;
-  background-color: #FFFFFF;
+  background-color: transparent;
 }
 
 /* ::::: tree focusring ::::: */
@@ -401,12 +401,12 @@ treechildren::-moz-tree-cell-text(selected, editing) {
 }
 
 .tree-input {
-  -moz-appearance: none;
-   border: 1px solid Highlight;
-  -moz-border-top-colors: Highlight;
-  -moz-border-bottom-colors: Highlight;
-  -moz-border-left-colors: Highlight;
-  -moz-border-right-colors: Highlight;
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A195; /** Dark Border 2*/
+  border-right-color: #99A194; /** Dark Border 1*/
+  -moz-border-radius: 5px;
   margin: 0 0 0 -3px;
   padding: 1px;
 }
@@ -464,3 +464,5 @@ treecol
   height: 20px !important;
   border-width: 0px 1px 0px 0px !important;
 }
+
+

@@ -48,11 +48,18 @@
 /* ::::: textbox ::::: */
 
 textbox {
-  -moz-appearance: none;
   cursor: text;
   margin: 4px 4px;
   border: 1px solid;
-  padding: 0px;
+  padding: 2px 2px 2px 3px;
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A195; /** Dark Border 2*/
+  border-right-color: #99A194; /** Dark Border 1*/
+  -moz-border-radius: 5px;
+  background-color: #202220; /** Dark Color 1 */ 
+  color: #fffff1; /** Light Color Brightest */
 }
     
 html|*.textbox-input, 
@@ -61,19 +68,21 @@ html|*.textbox-textarea {
   border: none !important;
   padding: 0px !important;
   background-color: inherit;
-  color: inherit;
+  color: #fffff1; /** Light Color Brightest */
   font: inherit;
 }
 
 /* ..... focused state ..... */
 
-textbox[focused="true"] {
+textbox[focused="true"] 
+{
+  background-color: #0f100f; /** Dark Color 2 */
 }
 
 /* ..... readonly state ..... */
 
-textbox[readonly="true"] {
-}
+textbox[readonly="true"] 
+
 
 /* ..... disabled state ..... */
 
@@ -95,3 +104,5 @@ textbox.plain {
 
 #search-box {
 }
+
+

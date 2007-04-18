@@ -51,7 +51,9 @@ radio {
   -moz-appearance: radio-container;
   -moz-box-align: center;
   margin: 2px 2px 2px 2px;
+  padding: 2px;
   -moz-user-focus: ignore;
+  border: 1px solid transparent;
 }
 
 .radio-label-box {
@@ -78,30 +80,38 @@ radio[disabled="true"] {
 
 .radio-check, .radio-check-box1 {
   -moz-appearance: radio;
-  width: 14px;
+  width: 12px;
   height: 12px;
-  background: url("chrome://global/skin/radio/radio.gif") no-repeat;
+  background: url(chrome://songbird/skin/radio/radio.png);
 }
-  
+
+radio[focused="true"]
+{
+  border: 1px dotted #99A195; /** Dark Border 2 */
+}
+
 radio:hover:active > .radio-check {
-  background-image: url("chrome://global/skin/radio/radio-act.gif");
+  background: url(chrome://songbird/skin/radio/radio-act.png);
 }
 
 radio[disabled="true"] > .radio-check {
-  background-image: url("chrome://global/skin/radio/radio-dis.gif") !important;
+  background: url(chrome://songbird/skin/radio/radio-dis.png);
 }
 
 /* ..... selected state ..... */
 
 radio[selected="true"] > .radio-check {
-  background-image: url("chrome://global/skin/radio/radio-check.gif");
+  background: url(chrome://songbird/skin/radio/radio-check.png);
+}
+radio[selected="true"][focused="true"] > .radio-check {
+  background: url(chrome://songbird/skin/radio/radio-check-focus.png);
 }
 
 radio[selected="true"]:hover:active > .radio-check {
-  background-image: url("chrome://global/skin/radio/radio-check-act.gif");
+  background: url(chrome://songbird/skin/radio/radio-check-act.png);
 }
 
 radio[selected="true"][disabled="true"] > .radio-check {
-  background-image: url("chrome://global/skin/radio/radio-check-dis.gif") !important
+  background: url(chrome://songbird/skin/radio/radio-check-dis.png);
 }
 

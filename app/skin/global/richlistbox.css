@@ -40,22 +40,30 @@
 
 richlistbox {
   margin: 2px 4px;
-  background-color: -moz-Field;
-  color: -moz-FieldText;
+  color: #B3BAAC; /** Light Color 1 */
+  -moz-border-radius: 5px;
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A195; /** Dark Border 2*/
+  border-right-color: #99A194; /** Dark Border 1*/
+  background-color: #202220; /** Dark Color 1 */ 
 }
 
 richlistbox[disabled="true"] {
-  color: GrayText;
+  opacity: .7;
 }
 
-richlistitem[selected="true"] {
-  background-color: -moz-Dialog;
-  color: -moz-DialogText;
+richlistitem[selected="true"]
+{
+  background-color: #B3BAAC; /** Light Color 1*/
+  color: #0f100f !important; /** Dark Color 2 */
 }
 
-richlistbox:focus > richlistitem[selected="true"] {
-  background-color: Highlight;
-  color: HighlightText;
+richlistbox:focus > richlistitem[selected="true"] 
+{
+  background-color: #B3BAAC; /** Light Color 1*/
+  color: #0f100f; /** Dark Color 2 */
 }
 
 richlistbox[seltype="multiple"]:focus > richlistitem[current="true"] {
@@ -64,6 +72,6 @@ richlistbox[seltype="multiple"]:focus > richlistitem[current="true"] {
 }
 
 richlistbox[seltype="multiple"]:focus > richlistitem[current="true"][selected="true"] {
-  outline: 1px dotted #F3D982; /* TODO: find a suitable system color */
+  outline: 1px dotted #474948; /** Light Border 2*/
 }
 

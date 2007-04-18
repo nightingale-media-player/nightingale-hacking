@@ -48,7 +48,6 @@
 
 textbox {
   cursor: default;
-  padding: 0;
 }
 
 /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
@@ -77,10 +76,14 @@ textbox.padded {
 popup[type="autocomplete"],
 .autocomplete-history-popup {
   padding: 0px !important;
-  background-color: -moz-Field !important;
+  background-color: #0f100f; /** Dark Color 2 */
   font: icon;
   -moz-appearance: none;
-  border-top: 1px solid #C3C3C3 !important;
+}
+
+popup[type="autocomplete"] > tree > treecols > hbox
+{
+  height: 0px;
 }
 
 .autocomplete-history-popup {

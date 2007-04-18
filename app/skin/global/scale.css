@@ -2,45 +2,53 @@
 
 /* ::::: scale ::::: */
 
+scale
+{
+  border: 1px solid #7a7c7c; /** Light Border 1 */
+  -moz-border-radius: 5px;
+}
+
 .scale-slider {
-  -moz-appearance: scale-horizontal;
-  background: url("chrome://global/skin/scale/scale-tray-horiz.gif") 0% 50% repeat-x;
+  background: url("chrome://global/skin/scale/scale-tray-horiz.png") 0% 50% repeat-x;
   margin: 2px 4px;
   width: 100px;
 }
 
 .scale-slider[orient="vertical"]
 {
-  -moz-appearance: scale-vertical;
-  background: url("chrome://global/skin/scale/scale-tray-vert.gif") 50% 0% repeat-y;
+   background: url("chrome://global/skin/scale/scale-tray-vert.png") 50% 0% repeat-y;
   margin: 4px 2px;
-  width: auto;
+  width: 10px;
   height: 100px;
 }
 
 /* ::::: scale thumb ::::: */
 
 .scale-thumb {
-  -moz-appearance: scalethumb-horizontal;
-  border: 2px solid;
-  -moz-border-top-colors: ThreeDLightShadow ThreeDHighlight;
-  -moz-border-right-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-bottom-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-left-colors: ThreeDLightShadow ThreeDHighlight;
-  background-color: -moz-Dialog;
-  min-width: 30px;
-  min-height: 15px;
+  min-width: 10px;
+  min-height: 10px;
+  -moz-border-radius: 5px;
+  background-color: #202220; /** Dark Color 1 */
+  border: 1px solid !important;
+  border-top: #ccd4c7 !important;
+  border-right: #888f85 !important;
+  border-bottom: #888f85 !important;
+  border-left: #ccd4c7 !important;
+  padding: 0;
+  margin: 0;
 }
 
 .scale-thumb[orient="vertical"] {
-  -moz-appearance: scalethumb-vertical;
-  min-width: 15px;
-  min-height: 30px;
+  min-width: 10px;
+  min-height: 10px;
+  -moz-border-radius: 5px;
+  background-color: #202220; /** Dark Color 1 */
+  border: 1px solid !important;
+  border-top: #ccd4c7 !important;
+  border-right: #888f85 !important;
+  border-bottom: #888f85 !important;
+  border-left: #ccd4c7 !important;
 }
 
 .scale-thumb[disabled="true"] {
-  -moz-border-top-colors: ThreeDHighlight ThreeDLightShadow !important;
-  -moz-border-right-colors: ThreeDDarkShadow ThreeDShadow !important;
-  -moz-border-bottom-colors: ThreeDDarkShadow ThreeDShadow !important;
-  -moz-border-left-colors: ThreeDHighlight ThreeDLightShadow !important;
 }

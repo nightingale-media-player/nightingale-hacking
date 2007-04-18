@@ -47,15 +47,27 @@
 /* :::::::::: menulist :::::::::: */
 
 menulist {
-  -moz-appearance: menulist;
   margin: 2px 4px;
   min-height: 20px !important;
+  -moz-border-radius: 5px !important;
+  background-color: #202220; /** Dark Color 1 */ 
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A195; /** Dark Border 2*/
+  border-right-color: #99A194; /** Dark Border 1*/ 
+}
+
+menulist:focus,
+menulist[focused="true"] 
+{
+  background-color: #0f100f; /** Dark Color 2 */
 }
 
 .menulist-label-box {
   -moz-appearance: menulist-text;
   -moz-box-align: center;
-  -moz-box-pack: center;
+  -moz-box-pack: center;  
 }
 
 .menulist-label {
@@ -68,10 +80,11 @@ menulist {
   -moz-margin-start: 1ex !important;
 }
 
+
 /* ..... dropmarker ..... */
 
 .menulist-dropmarker {
-  display: none;
+  
 }
 
 /* ..... disabled state ..... */
@@ -90,27 +103,33 @@ menulist[editable="true"] {
   -moz-user-focus: normal;
 }
 
-menulist[editable="true"] > .menulist-dropmarker {
-  border-left: 1px solid;
+menulist[editable="true"] > .menulist-dropmarker 
+{
+  
 }
 
 menulist[editable="true"][open="true"] > .menulist-dropmarker {
-  border-left: 1px solid;
 }
 
-.menulist-editable-box {
+/*TODO: Delete old moz rule*/
+/*.menulist-editable-box {
   margin: -1px 1px -2px -5px;
   padding: 0 2px;
   background-color: -moz-Field;
   color: -moz-FieldText;
   -moz-box-align: center;
+}*/
+
+.menulist-editable-input,
+.menulist-editable-box
+{
+  border: none !important;
+  padding: 2px 0px 0px 3px !important;
+  margin: 0px 0px 0px 0px !important;
+  -moz-box-align: stretch !important; /* this is set to "center" on the mac.  yay. */
 }
 
 menulist[editable="true"][focused="true"] > .menulist-editable-box {
-  -moz-border-top-colors: -moz-mac-focusring -moz-mac-focusring #000000;
-  -moz-border-right-colors: -moz-mac-focusring -moz-mac-focusring #000000;
-  -moz-border-bottom-colors: -moz-mac-focusring -moz-mac-focusring #000000;
-  -moz-border-left-colors: -moz-mac-focusring -moz-mac-focusring #000000;
 }
 
 html|*.menulist-editable-input {
@@ -128,10 +147,6 @@ html|*.menulist-editable-input {
   -moz-box-pack: center;
   margin: 0;
   border: 2px solid;
-  -moz-border-top-colors: ThreeDLightShadow ThreeDHighlight;
-  -moz-border-right-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-bottom-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-left-colors: ThreeDLightShadow ThreeDHighlight;
   background-color: -moz-Dialog;
 }
 
@@ -149,14 +164,11 @@ html|*.menulist-editable-input {
 }
 
 .menulist-compact[open="true"] {
-  -moz-border-top-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-right-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-bottom-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-left-colors: ThreeDDarkShadow ThreeDShadow;
-  background-color: ThreeDShadow;
 }
 
 
 listbox menulist:not([disabled]) {
   color: #000;
 }
+
+

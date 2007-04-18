@@ -90,6 +90,16 @@ button[type="menu-button"] {
   margin: 1px;
 }
 
+/* ::::: menu/menu-button button dropmarkers ::::: */
+
+button > dropmarker.button-menubutton-dropmarker
+{
+  border-left: 1px solid #333332 !important; /** Dark Border 3*/
+  padding: 0px 5px 0px 5px;
+  height: 13px;
+  -moz-border-radius: 0px !important;
+}
+
 /* ::::: plain buttons ::::: */
 
 button.plain {
@@ -114,3 +124,5 @@ button.plain {
 .dialog-button {
 	font: menu;
 }
+
+
