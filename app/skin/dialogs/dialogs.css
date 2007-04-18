@@ -142,12 +142,7 @@ label.dialog_box
   width:  350px !important;
 }
 
-/* Dialog Form Elements */
 
-progressmeter
-{
-	border: none !important;
-}
 
 /* dialog buttons */
 .dialog_button 
@@ -266,17 +261,6 @@ The following styles are for the specific dialog boxes themselves.
 **********************************************************************************
 */
 
-richlistbox
-{
-  padding: 10px 10px 10px 10px !important;
-  
-}
-
-richlistitem > label
-{
-  margin: 2px 0px 0px -3px !important;
-}
-
 .spinner_spin
 {
   background-image: url(chrome://songbird/skin/icons/spinner_spin.gif) !important;
@@ -351,7 +335,7 @@ MEDIA SCAN
 #media_scan 
 { 
   width: 600px !important;
-  height: 120px !important;
+  height: 220px !important;
 } 
 
 /** 
@@ -470,61 +454,19 @@ Poppin' Fresh.
   width: 14px !important;
 }
 
-/* The Basic Menu Styles **/
-
-.menu-right[_moz-menuactive="true"] 
-{
-  margin: 0px 0px 0px 0px !important;
-  height: 9px !important;
-  width: 7px !important;
-  list-style-image: url(chrome://songbird/skin/menu/menu-arrow-hover.png) !important;
-  background-repeat: no-repeat !important;
-}
-
-.menu-right
-{    
-  margin: 0px 0px 0px 0px !important;
-  height: 9px !important;
-  width: 7px !important;
-  list-style-image: url(chrome://songbird/skin/menu/menu-arrow.png) !important;
-  background-repeat: no-repeat !important;
-}
-
-menuitem[checked="true"] > hbox[checked="true"] 
-{  
-  margin: 9px 0px 0px 7px !important;
-  height: 7px !important;
-  width: 7px !important;
-  list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/checkbox/check_fff.png) !important;
-  background-repeat: no-repeat !important;
-}
-
-menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
-{  
-  margin: 9px 0px 0px 7px !important;
-  height: 7px !important;
-  width: 7px !important;
-  list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/checkbox/check_fff.png) !important;
-  background-repeat: no-repeat !important;
-}
-
 /* sub menu elements should be indented to match other menuitem-iconic items in a menu */
 menu.menuitem-iconic > label  {
   margin-left: 21px !important;
 }
 
-/* All menuitem icons are 16x16 */
-menuitem .menu-iconic-icon
+/* All menuitem icons are 16x16 
+#local-menupopup menuitem .menu-iconic-icon 
 {
   height: 16px !important;
   min-height: 16px !important;
-  min-height: 16px !important;
   width: 16px !important;
   min-width: 16px !important;
-  max-width: 16px !important;
-}
+}*/
 
 /* Unless it's a command */
 menuitem[sbtype="command"] .menu-iconic-icon
@@ -537,69 +479,7 @@ menuitem[sbtype="command"] .menu-iconic-icon
   max-width: 11px !important;
 }
 
-/** 
-************************************************************************************************************************************************
-MENULIST
-************************************************************************************************************************************************
-*/
 
-menu,
-menuitem,
-menupop
-{
-  font-size: 11px !important;
-  font: inherit !important;
-}
-
-menulist
-{ 
-  border: 1px solid !important;
-  -moz-border-radius: 3px !important;
-} 
-.dropmarker-icon
-{
-  width:6px !important;
-  height:4px !important;
-  min-width:6px !important;
-  min-height:4px !important;
-  max-width:6px !important;
-  max-height:4px !important;
-  margin: 9px 0px 9px 0px !important;
-}
-.menulist-dropmarker
-{
-  -moz-appearance: none !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-  width:24px !important;
-  height:24px !important;
-  min-width:24px !important;
-  min-height:24px !important;
-  max-width:24px !important;
-  max-height:24px !important;
-  margin: 0px 0px 0px 0px !important;
-  background-position: center center !important;
-  border: none !important;
-}
-
-menulist[disabled="true"]
-{
-  -moz-border-radius: 3px !important;
-}
-
-menulist[disabled="true"] > dropmarker
-{
-  opacity: 0.5 !important;
-}
-
-.menulist-editable-input,
-.menulist-editable-box
-{
-  border: none !important;
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  -moz-box-align: stretch !important; /* this is set to "center" on the mac.  yay. */
-}
 
 
 /** 
