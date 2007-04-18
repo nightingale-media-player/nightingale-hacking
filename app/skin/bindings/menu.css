@@ -32,26 +32,21 @@ EXTRA MENUS, CONTEXTUAL MENUS, and MENUPOP-UP STYLES
 ************************************************************************************************************************************************
 */
 
-/** TODO: why do we use background over list style image? **/
 
-menuitem[checked="true"] > hbox[checked="true"] 
-{ 
-  list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/checkbox/check_fff.png) !important;
-}
-
-menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
-{ 
-  list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/checkbox/check_fff.png) !important;
-}
 
 .menu-right[_moz-menuactive="true"] 
 {
-  list-style-image: url(menu/menu-arrow-hover.png) !important;
+  list-style-image: url(chrome://songbird/skin/menu/menu-arrow.png);
 }
 
 .menu-right
 {   
-  list-style-image: url(menu/menu-arrow.png) !important;
+  list-style-image: url(chrome://songbird/skin/menu/menu-arrow.png);
+  opacity: .5;
+}
+
+menuitem:hover > .menu-right
+{   
+  list-style-image: url(chrome://songbird/skin/menu/menu-arrow.png);
+  opacity: 1;
 }
