@@ -1,0 +1,70 @@
+Index: netwerk/base/public/nsINetUtil.idl
+===================================================================
+RCS file: /cvsroot/mozilla/netwerk/base/public/nsINetUtil.idl,v
+retrieving revision 1.4
+diff -u -p -r1.4 nsINetUtil.idl
+--- netwerk/base/public/nsINetUtil.idl	31 May 2006 17:57:13 -0000	1.4
++++ netwerk/base/public/nsINetUtil.idl	19 Apr 2007 20:13:04 -0000
+@@ -44,7 +44,7 @@ interface nsIURI;
+ /**
+  * nsINetUtil provides various network-related utility methods.
+  */
+-[scriptable, uuid(c2bf4fea-7f9f-44a4-a7e0-8b323fdcc5d5)]
++[scriptable, uuid(7701f947-e4aa-431c-aec6-6bb304193460)]
+ interface nsINetUtil : nsISupports
+ {
+   /**
+@@ -73,7 +73,7 @@ interface nsINetUtil : nsISupports
+ 
+   /** Leave alphanumeric characters and forward slashes intact,
+       %XX-escape all others */
+-  const unsigned long ESCAPE_URL_PATH = 3;
++  const unsigned long ESCAPE_URL_PATH = 4;
+ 
+   /**
+    * escape a string with %00-style escaping
+@@ -81,6 +81,11 @@ interface nsINetUtil : nsISupports
+   ACString escapeString(in ACString aString, in unsigned long aEscapeType);
+ 
+   /**
++   * unescape a %00-style escaped string
++   */
++  ACString unescapeString(in ACString aString);
++
++  /**
+    * Test whether the given URI's handler has the given protocol flags.
+    *
+    * @param aURI the URI in question
+Index: netwerk/base/src/nsIOService.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/netwerk/base/src/nsIOService.cpp,v
+retrieving revision 1.194
+diff -u -p -r1.194 nsIOService.cpp
+--- netwerk/base/src/nsIOService.cpp	20 Mar 2007 01:58:19 -0000	1.194
++++ netwerk/base/src/nsIOService.cpp	19 Apr 2007 20:13:04 -0000
+@@ -69,6 +69,7 @@
+ #include "nsINestedURI.h"
+ #include "nsNetUtil.h"
+ #include "nsThreadUtils.h"
++#include "nsAutoPtr.h"
+ 
+ #if defined(XP_WIN)
+ #include "nsNativeConnectionHelper.h"
+@@ -957,3 +958,17 @@ nsIOService::EscapeString(const nsACStri
+ 
+   return NS_OK;
+ }
++
++NS_IMETHODIMP
++nsIOService::UnescapeString(const nsACString& aString, nsACString& aResult)
++{
++  nsAutoPtr<char> stringCopy = ToNewCString(aString);
++  NS_ENSURE_TRUE(stringCopy, NS_ERROR_OUT_OF_MEMORY);
++  
++  nsAutoPtr<char> resultString = nsUnescape(stringCopy);
++  NS_ENSURE_TRUE(resultString, NS_ERROR_OUT_OF_MEMORY);
++  
++  aResult.Assign(resultString);
++  
++  return NS_OK;
++}
