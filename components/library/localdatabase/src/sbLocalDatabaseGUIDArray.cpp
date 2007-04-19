@@ -531,21 +531,11 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  sbLocalDatabaseQuery ldq(mBaseTable,
-                           mBaseConstraintColumn,
-                           mBaseConstraintValue,
-                           NS_LITERAL_STRING("member_media_item_id"),
-                           mSorts[0].property,
-                           mSorts[0].ascending,
-                           &mFilters,
-                           mIsDistinct);
-
-  nsAutoString sql;
-  rv = ldq.GetPrefixSearchQuery(aValue, sql);
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeQuery(mPrefixSearchQuery, getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeQuery(sql, getter_AddRefs(query));
+  rv = query->BindStringParameter(0, aValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->Execute(&dbOk);
@@ -755,6 +745,10 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
   rv = ldq.GetNonNullCountQuery(mNonNullCountQuery);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = ldq.GetNullGuidRangeQuery(mNullGuidRangeQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // This query is used for the prefix search
+  rv = ldq.GetPrefixSearchQuery(mPrefixSearchQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString sql;

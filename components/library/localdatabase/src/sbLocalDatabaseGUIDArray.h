@@ -197,6 +197,9 @@ private:
   // Query used to resort a chunk of results with a null primary sort key
   nsString mNullResortQuery;
 
+  // Query used to search for the position of a value in the primary sort
+  nsString mPrefixSearchQuery;
+
   // Query used to find the position of a primary sort key in the library
   nsString mPrimarySortKeyPositionQuery;
 
