@@ -115,7 +115,8 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbILocalDatabaseLibra
   mMediaList(aMediaList),
   mDefaultSortProperty(aDefaultSortProperty),
   mMediaListId(aMediaListId),
-  mBatchCount(0)
+  mBatchCount(0),
+  mInvalidatePending(PR_FALSE)
 {
   PRBool success = mViewFilters.Init();
   NS_ASSERTION(success, "Failed to init view filter table");
@@ -597,6 +598,15 @@ sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
+  if (mBatchCount > 0) {
+    mInvalidatePending = PR_TRUE;
+    return NS_OK;
+  }
+
+  // Invalidate the view array
+  nsresult rv = Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -608,13 +618,12 @@ sbLocalDatabaseMediaListView::OnItemRemoved(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
   if (mBatchCount > 0) {
+    mInvalidatePending = PR_TRUE;
     return NS_OK;
   }
 
-  nsresult rv;
-
   // Invalidate the view array
-  rv = Invalidate();
+  nsresult rv = Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -651,9 +660,13 @@ sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
   mBatchCount--;
 
   if (mBatchCount == 0) {
-    // Invalidate the view array
-    nsresult rv = Invalidate();
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (mInvalidatePending) {
+      // Invalidate the view array
+      nsresult rv = Invalidate();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mInvalidatePending = PR_FALSE;
+    }
   }
 
   return NS_OK;

@@ -131,6 +131,9 @@ private:
 
   // Batch nesting count
   PRUint32 mBatchCount;
+
+  // True when we should invalidate when batching ends
+  PRBool mInvalidatePending;
 };
 
 #endif /* __SB_LOCALDATABASEMEDIALISTVIEW_H__ */
