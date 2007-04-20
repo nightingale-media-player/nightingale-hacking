@@ -86,7 +86,7 @@ private:
 
   nsresult SetSort(const nsAString& aProperty, PRBool aDirection);
 
-  void InvalidateCache();
+  nsresult InvalidateCache();
 
   // The media list view that this tree view is a view of
   nsCOMPtr<sbIMediaListView> mMediaListView;
@@ -127,6 +127,9 @@ private:
 
   // Listener
   nsCOMPtr<sbIMediaListViewTreeViewObserver> mObserver;
+
+  // Temporary cache of visible rows while refreshing
+  nsInterfaceHashtable<nsUint32HashKey, sbILocalDatabaseResourcePropertyBag> mDirtyRowCache;
 
   // True if the cached row count is no longer valid
   PRPackedBool mCachedRowCountDirty;
