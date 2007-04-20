@@ -50,7 +50,7 @@ public:
   nsresult GetFullGuidRangeQuery(nsAString& aQuery);
   nsresult GetNonNullCountQuery(nsAString& aQuery);
   nsresult GetNullGuidRangeQuery(nsAString& aQuery);
-  nsresult GetPrefixSearchQuery(const nsAString& aValue, nsAString& aQuery);
+  nsresult GetPrefixSearchQuery(nsAString& aQuery);
 
 private:
 

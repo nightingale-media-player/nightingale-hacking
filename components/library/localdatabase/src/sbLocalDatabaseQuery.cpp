@@ -205,8 +205,7 @@ sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
 }
 
 nsresult
-sbLocalDatabaseQuery::GetPrefixSearchQuery(const nsAString& aValue,
-                                           nsAString& aQuery)
+sbLocalDatabaseQuery::GetPrefixSearchQuery(nsAString& aQuery)
 {
   nsresult rv;
 
@@ -228,11 +227,10 @@ sbLocalDatabaseQuery::GetPrefixSearchQuery(const nsAString& aValue,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbISQLBuilderCriterion> criterion;
-  rv = mBuilder->CreateMatchCriterionString(SORT_ALIAS,
-                                            OBJSORTABLE_COLUMN,
-                                            sbISQLSelectBuilder::MATCH_LESS,
-                                            aValue,
-                                            getter_AddRefs(criterion));
+  rv = mBuilder->CreateMatchCriterionParameter(SORT_ALIAS,
+                                               OBJSORTABLE_COLUMN,
+                                               sbISQLSelectBuilder::MATCH_LESS,
+                                               getter_AddRefs(criterion));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mBuilder->AddCriterion(criterion);
