@@ -74,6 +74,9 @@
             ondblclick="_onPlaylistDblClick(event);"
             oncontextmenu="_onPlaylistContextClick(event);"
             onkeypress="_onPlaylistKeypress(event);"
+            ondraggesture="_onDragGesture(event);"
+            ondragover="_onDragOver(event);"
+            ondragdrop="_onDragDrop(event);"
           >
             <treecols sbid="treecols"/>
             <treechildren/>
@@ -165,70 +168,25 @@
                                   this._onColumnMutationClosure,
                                   false);
 
+  // Load the drag and drop helper, if needed
+  if (typeof(nsDragAndDrop) == "undefined") {
+    var jsLoader = this._Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(this._Ci.mozIJSSubScriptLoader);
+    jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", null);
+  }
+
+  // Some strings
+  this._str_tracksaddedto =
+    this._getString("library.tracksaddedto", "tracks added to");
+  this._str_trackaddedto =
+    this._getString("library.trackaddedto", "track added to");
+  this._str_notracksaddedto =
+    this._getString("library.notracksaddedto", "No tracks added to");
+  this._str_trackalreadypresent =
+    this._getString("library.trackalreadypresent", "track already present");
+  this._str_tracksalreadypresent =
+    this._getString("library.tracksalreadypresent", "tracks already present");
 ]]>
-
-<!--        
-        <![CDATA[
-      try
-      {
-        // Load the javascript we want to use
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/messagebox.js", this );
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/dragAndDrop.js", this );
-        jsLoader.loadSubScript( "chrome://global/content/nsDragAndDrop.js", this );
-        jsLoader.loadSubScript( "chrome://global/content/nsTransferable.js", this );
-
-        // register to get the willRebuild and didRebuild messages
-        this.tree.builder.addListener(this);
-
-        // These are all the possible column ids whose cell content we can use as unique ids (for saveSelection/restoreSelection)
-        this._selection_key_array = Array("id", "uuid", "playlist_uuid", "playlist_id", "row_id");
-
-        this._lastviewsummary = "";
-        this.lastfiltersstate = "open";
-
-        this.bindDataRemotes();
-        if ( this._constructed ) dump("playlist.xml - constructor - THIS SHOULD NEVER GET CALLED\n"); // ???
-        this._constructed = true; // ???
-
-        this._onFilterDblClickClosure = function(event) {
-          self.onFilterDblClick(event);
-        };
-        this._onPlaylistDblClickClosure = function(event) {
-          self.onPlaylistDblClick(event);
-        };
-        this._onDragClosure = function(event) {
-          self.onDrag(event);
-        };
-        this.addEventListener("dblclick", this._onPlaylistDblClickClosure, false);
-        this.addEventListener("draggesture", this._onDragClosure, false);
-
-        var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-        var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-        this.str_tracksaddedto = "tracks added to"
-        this.str_trackaddedto = "track added to"
-        this.str_notracksaddedto = "No tracks added to"
-        this.str_library = "Library";
-        this.str_playlist = "Playlist";
-        this.str_trackalreadypresent = "track already present";
-        this.str_tracksalreadypresent = "tracks already present";
-        try {
-          this.str_tracksaddedto = songbirdStrings.GetStringFromName("library.tracksaddedto");
-          this.str_trackaddedto = songbirdStrings.GetStringFromName("library.trackaddedto");
-          this.str_notracksaddedto = songbirdStrings.GetStringFromName("library.notracksaddedto");
-          this.str_trackalreadypresent = songbirdStrings.GetStringFromName("library.trackalreadypresent");
-          this.str_tracksalreadypresent = songbirdStrings.GetStringFromName("library.tracksalreadypresent");
-          this.str_library = songbirdStrings.GetStringFromName("library");
-          this.str_playlist = songbirdStrings.GetStringFromName("playlist");
-        } catch (err) { /* ignore error, we have default strings */ }
-      }
-      catch ( err )
-      {
-        dump( "playlist.xml - constructor - " + err );
-      }
-      ]]>
--->
       </constructor>
 
       <destructor>
@@ -237,70 +195,13 @@
   this._treecols.removeEventListener("DOMAttrModified",
                                      this._onColumnMutationClosure,
                                       false);
+
+  for (var s = 0; s < this._splitters.length; s++) {
+    this._splitters[s].removeEventListener("mousemove", this._onFilterSplitterMove, true);
+    this._splitters[s].removeEventListener("mousedown", this._onFilterSplitterDown, true);
+    this._splitters[s].removeEventListener("mouseup", this._onFilterSplitterUp, true);
+  }
 ]]>
-      <!--
-      <![CDATA[
-/*
-        //SB_LOG("playlist.xml", "destroying [" + this.ref + "]");
-      try {
-        if ( ! this._constructed )
-        {
-          dump("playlist.xml - destructor - THIS SHOULD NEVER GET CALLED\n");
-          return; // ???
-        }
-
-        var e = document.createEvent("Events");
-        e.initEvent("playlist-destroy", false, true);
-        this.dispatchEvent(e);
-
-        for (var s=0;s<this.splitters.length;s++) {
-          this.splitters[s].removeEventListener("mousemove", this.onFilterSplitterMove, true);
-          this.splitters[s].removeEventListener("mousedown", this.onFilterSplitterDown, true);
-          this.splitters[s].removeEventListener("mouseup", this.onFilterSplitterUp, true);
-        }
-        this.splitters = null;
-
-        // no more didRebuild/willRebuild messages
-        if (this.tree.builder)
-          this.tree.builder.removeListener(this);
-
-        // remove ourself from watching the tree's view (toggle state, selection notification... )
-        if (this.tree.view && this.addedObserver) {
-          this.tree.view.removeObserver(this);
-          this.addedObserver = false;
-        }
-
-        if (this.m_dndSourceTracker)
-          this.m_dndSourceTracker.unregisterDnDSource(this);
-
-        // detach mouse listeners from drag list
-        this.stopWatchingDragObjects();
-
-        // detach from the DataRemote
-        this.unbindDataRemotes();
-
-        this._constructed = false; // ???
-        this.m_queryObj = null;
-        this._commands = null;
-
-        this.removeEventListener("dblclick", this._onPlaylistDblClickClosure, false);
-        this.removeEventListener("draggesture", this._onDragClosure, false);
-
-        for(var i=0;i<this.filters.length;i++) {
-          var filter = this.filters[i];
-          filter.removeEventListener("dblclick", this._onFilterDblClickClosure, true);
-          filter.removeEventListener("filterlist-filterchange", this.sendFilterChangeEvent, true);
-        }
-        this._onPlaylistDblClickClosure = null;
-        this._onDragClosure - null;
-        this._onFilterDblClickClosure = null;
-
-      } catch (err) {
-        dump("playlist.xml - destructor: " + err + "\n");
-      }
-*/
-      ]]>
--->
       </destructor>
 
       <!-- The media list view this playlist is showing -->
@@ -346,6 +247,13 @@
       <field name="_context_x">-1</field>
       <field name="_context_y">-1</field>
 
+      <!-- Array of the splitters between each filter list -->
+      <field name="_splitters">new Array();</field>
+
+      <!-- Used to implement draggable smart splitters -->
+      <field name="_down">0</field>
+      <field name="_lastpos">0</field>
+
       <!--
       <field name="context_item"></field>
       <field name="popup_showing">false</field>
@@ -355,8 +263,6 @@
       <field name="base_type">""</field>
       <field name="description">""</field>
       <field name="readable_name">""</field>
-      <field name="filters">new Array();</field>
-      <field name="splitters">new Array();</field>
       <field name="m_Library">null</field>
       <field name="m_PlaylistManager">null</field>
       <field name="source">null</field>
@@ -368,14 +274,25 @@
       <field name="restoring_selection">false</field>
       <field name="_addto_added_count">0</field>
       <field name="_addto_existed_count">0</field>
-      <field name="m_dndSourceTracker">null</field>
       <field name="paused_scanning">false</field>
       <field name="sortorder">""</field>
       <field name="sortdirection">""</field>
 -->
+
+      <!-- Drag and Drop flavors -->
+      <field name="_TYPE_X_SB_MEDIAITEM"            readonly="true">
+        "application/x-sb-media-item"
+      </field>
+      <field name="_TYPE_X_SB_MEDIAITEM_ENUMERATOR" readonly="true">
+        "application/x-sb-media-item-enumerator"
+      </field>
+
       <field name="_Cc"     readonly="true">Components.classes</field>
       <field name="_Ci"     readonly="true">Components.interfaces</field>
-      <field name="_XUL_NS" readonly="true">"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"</field>
+      <field name="_Cr"     readonly="true">Components.results</field>
+      <field name="_XUL_NS" readonly="true">
+        "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      </field>
 
       <!-- Initialization and Control -->
       <method name="bind">
@@ -389,54 +306,57 @@
   // Set the tree's view to the tree of the supplied media list view
   this.mediaListView = mediaListView;
   this.tree.view = mediaListView.treeView;
-/*
 
-        var hsplitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
-        hsplitter.setAttribute("stateid", "horz_splitter_" + this.ref);
-        hsplitter.restoreLastState();
+  // Attach our observer
+  var mediaListViewTreeView = mediaListView.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
 
-        / *
-        // this is wrong, getFilter returns filter *values*, we should use getFilterColumn instead.
-        // also, some usage of playlist.xml may not want autocreation of filterlists from the source,
-        // so, disable this code until we have a use case that makes it clear if/how we should autoreload the filters
+  var self = this;
+  mediaListViewTreeView.observer = {
+    canDrop: function(index, orientation) {
+      return true;
+    },
+    drop: function(row, orientation) {
+      self._dropOnTree(row, orientation);
+    }
+  };
 
-        // If the source says we have filters, use them.
-        if ( filters == null )
-        {
-          var num = this.source.getNumFilters( ref );
-          if ( num > 0 )
-          {
-            filters = new Array();
-            for ( var i = 0; i < num; i++ )
-            {
-              filters.push( this.source.getFilter( ref, i ) );
-            }
-          }
-        }
-        * /
+  // Create the filters
+  var parent = document.getAnonymousElementByAttribute(this, "sbid", "filter_parent");
+  this._removeAllChildren(parent);
 
-        if ( filters && filters.length )
-        {
-          for ( var i = 0; i < filters.length; ++i )
-          {
-            this.addFilter( filters[ i ], feed );
-          }
-        }
-        else
-        {
-          // These should be hidden
-          var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_parent');
-          parent.hidden = true;
-          var splitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
-          splitter.hidden = true;
-        }
+  var cfs = mediaListView.cascadeFilterSet;
+  var length = cfs.length;
+  for (var i = 0; i < length; i++) {
+    var filterlist = document.createElementNS(this._XUL_NS, "filterlist2");
+    filterlist.setAttribute("enableColumnDrag", "false");
+    filterlist.setAttribute("hidecolumnpicker", "true");
+    filterlist.setAttribute("flex", "1");
+    parent.appendChild(filterlist);
+    filterlist.bind(cfs, i);
 
-        // Tell the playlist source to feed the filters.
-        if ( feed )
-        {
-          this.source.executeFeed( ref );
-        }
-*/
+    if (i < length - 1) {
+      var splitter = document.createElement("sb-smart-splitter");
+      splitter.setAttribute("id", "filter_splitter" );
+//      splitter.setAttribute("stateid", "filter_splitter_" + this.ref );
+      splitter.setAttribute("state", "open");
+      splitter.setAttribute("resizebefore", "closest");
+      splitter.setAttribute("resizeafter", "closest");
+      splitter.setAttribute("collapse", "before");
+
+      var grippy = document.createElement( "grippy" );
+      splitter.appendChild(grippy);
+      parent.appendChild(splitter);
+
+      splitter.addEventListener("mousemove", this._onFilterSplitterMove, true);
+      splitter.addEventListener("mousedown", this._onFilterSplitterDown, true);
+      splitter.addEventListener("mouseup", this._onFilterSplitterUp, true);
+
+      this._splitters.push(splitter);
+    }
+
+  }
+
+
         // Clear out the old commands
         var toolbar = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
         toolbar.hidden = true;
@@ -562,6 +482,7 @@
   // Get the list of columns from the property manager and add them to the
   // tree
   var allColumns = [
+    "http://songbirdnest.com/data/1.0#ordinal",
     "http://songbirdnest.com/data/1.0#artistName",
     "http://songbirdnest.com/data/1.0#albumName",
     "http://songbirdnest.com/data/1.0#trackName",
@@ -901,345 +822,55 @@
   }
   this._menuitems.length = 0; // clear the array??
 ]]>
-        </body>
-      </method>
-<!--
-      <method name="addFilter">
-        <parameter name="meta_column"/>
-        <parameter name="feed"/>
-        <body>
-          <![CDATA[
-      try
-      {
-        // These should be shown
-        var thesplitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
-        thesplitter.hidden = false;
-        var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_parent');
-        parent.hidden = false;
+      </body>
+    </method>
 
-        // Add a splitter
-        if ( this.filters.length > 0 )
-        {
-          var splitter = document.createElement( "sb-smart-splitter" );
-          splitter.setAttribute( "id", "filter_splitter" );
-          splitter.setAttribute( "stateid", "filter_splitter_" + this.ref );
-          splitter.setAttribute( "state", "open" );
-          splitter.setAttribute( "resizebefore", "closest" );
-          splitter.setAttribute( "resizeafter", "closest" );
-          splitter.setAttribute( "collapse", "before" );
-
-          var grippy = document.createElement( "grippy" );
-
-          splitter.appendChild( grippy );
-          parent.appendChild( splitter );
-
-          splitter.addEventListener("mousemove", this.onFilterSplitterMove, true);
-          splitter.addEventListener("mousedown", this.onFilterSplitterDown, true);
-          splitter.addEventListener("mouseup", this.onFilterSplitterUp, true);
-
-          this.splitters.push( splitter);
-        }
-
-        // Add a filterlist
-        var filterlist = document.createElement( "filterlist" );
-        filterlist.setAttribute( "id", meta_column + "_filter" );
-        filterlist.setAttribute( "enableColumnDrag", "false" );
-        filterlist.setAttribute( "hidecolumnpicker", "true" );
-        filterlist.setAttribute( "flex", "1" );
-
-        parent.appendChild( filterlist );
-
-        // The ref for the filter contains the column header identifier
-        var ref = this.ref + "_" + meta_column;
-
-        // This preps the Playlistsource for the XUL Tree Builder to hook up
-        // and only listen to changes to this ref.
-        this.source.incomingObserver( ref, filterlist );
-
-        // There is a VERY delicate ordering here that breaks if you start
-        // moving things around. If you do, make sure you test thoroughly.
-        filterlist.source = this.source;
-        filterlist.index = this.filters.length;
-        filterlist.column = meta_column;
-        filterlist.datasources = "rdf:playlist";
-        filterlist.playlist = this;
-        filterlist.ref_pl = this.ref;
-
-        // setting the ref causes a rebuild of the filter and a
-        // select to happen, which calls setFilter, so you BETTER have index,
-        // ref and column set before setting the ref.
-        filterlist.ref = ref;
-
-        filterlist.addEventListener( "dblclick", this._onFilterDblClickClosure, true );
-        filterlist.addEventListener( "filterlist-filterchange", this.sendFilterChangeEvent, true );
-
-        // We still need to call setFilter here despite it getting called from
-        // the setting of ref above, otherwise the filters will not draw
-        if ( feed )
-        {
-          this.source.setFilter( this.ref,
-                                 filterlist.index,
-                                 "",
-                                 filterlist.ref,
-                                 filterlist.column );
-        }
-
-        filterlist.builder.refresh();
-
-        this.filters.push( filterlist );
-        thesplitter.restoreLastState( true );
-      }
-      catch( err )
-      {
-        alert( "playlist.xml - addFilter - " + err );
-      }
-      ]]>
-        </body>
-      </method>
--->
-
-<!--
-    <method name="onFilterSplitterMove">
+    <method name="_onFilterSplitterMove">
       <parameter name="event"/>
       <body>
         <![CDATA[
           var state = this.getAttribute( "state" );
-          if (state != "collapsed" && this.down && this.lastPos) {
-            if (event.screenX > this.lastPos) { this.setAttribute("collapse", "after"); }
-            if (event.screenX < this.lastPos) { this.setAttribute("collapse", "before"); }
+          if (state != "collapsed" && this._down && this._lastPos) {
+            if (event.screenX > this._lastPos) { this.setAttribute("collapse", "after"); }
+            if (event.screenX < this._lastPos) { this.setAttribute("collapse", "before"); }
           }
-          this.lastPos = event.screenX;
+          this._lastPos = event.screenX;
         ]]>
       </body>
     </method>
 
-    <method name="onFilterSplitterUp">
+    <method name="_onFilterSplitterUp">
       <body>
-        this.down = 0;
-        this.lastPos = null;
+        this._down = 0;
+        this._lastPos = null;
       </body>
     </method>
 
-    <method name="onFilterSplitterDown">
+    <method name="_onFilterSplitterDown">
       <body>
-        this.down = 1;
+        this._down = 1;
       </body>
     </method>
--->
 
-      <!-- Tree Manipulation Functions -->
+    <!-- Removes all children of the given DOM node -->
+    <method name="_removeAllChildren">
+      <parameter name="parentNode"/>
+      <body>
+<![CDATA[
+  // Bail out if there are no children
+  if (!parentNode.hasChildNodes())
+    return;
 
-      <method name="removeColumns">
-        <body><![CDATA[
-          var treeColumnElement =
-            document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
-          this.removeAllChildren(treeColumnElement);
-        ]]></body>
-      </method>
-
-      <method name="removeRows">
-        <body><![CDATA[
-          var treeRowElement =
-            document.getAnonymousElementByAttribute(this, "sbid", "treeRow");
-          this.removeAllChildren(treeRowElement);
-        ]]></body>
-      </method>
-
-      <!-- Removes all children of the given DOM node -->
-      <method name="removeAllChildren">
-        <parameter name="parentNode"/>
-        <body><![CDATA[
-          // Bail out if there are no children
-          if (!parentNode.hasChildNodes())
-            return;
-
-          // Loop through and remove all the children
-          var childNodes = parentNode.childNodes;
-          var childCount = childNodes.length;
-          for(var index = 0; index < childCount; index++) {
-            var child = childNodes.item(0);
-            parentNode.removeChild(child);
-          }
-        ]]></body>
-      </method>
-
-      <!-- Selection save/restore - HACK -->
-
-      <method name="saveSelection">
-        <body>
-          <![CDATA[
-          try
-          {
-            if (this.tree.columns && this.tree.columns.count > 0 && this.tree.view.rowCount > 0) {
-              var column
-              // pick a column whose content we will use as unique identifier
-              for (var k=0;k<this._selection_key_array.length;k++)
-              {
-                column = this.tree.columns.getNamedColumn(this._selection_key_array[k]);
-                if (column != null)
-                {
-                  this._selection_key = this._selection_key_array[k];
-                  break;
-                }
-              }
-              // save selection array, this is potentially slow if many items are selected
-              if (column != null) {
-                this._saved_selection = Array();
-                this._saved_selection.position = Array();
-                this._saved_selection.all = false;
-                this._saved_selection.ranges = Array();
-                this._saved_nitems = this.tree.view.rowCount;
-                this._saved_order = this.source.getOrder(this.ref); // save the old order, if it is empty and the new is empty as well then we will be able to reselect much faster
-                var rangeCount = this.tree.view.selection.getRangeCount();
-                for (var i=0; i < rangeCount; i++) {
-                  var start = {};
-                  var end = {};
-                  this.tree.view.selection.getRangeAt( i, start, end );
-                  if (start.value == -1 || end.value == -1) {
-                    continue;
-                  }
-                  this._saved_selection.ranges.push([start.value, end.value]);
-                  if (start.value == 0 && end.value == this.tree.view.rowCount-1) this._saved_selection.all = true;
-                  else {
-                    for( var c = start.value; c <= end.value; c++ )
-                    {
-                      if (c >= this.tree.view.rowCount)
-                      {
-                        return; //alert( "playlist.xml - saveSelection - selection item c (" + c + ") is not in range! (rowCount = " + this.tree.view.rowCount + ")");
-                      }
-                      try
-                      {
-                        var value = this.tree.view.getCellText( c, column );
-                      }
-                      catch ( e )
-                      {
-                        alert( "Error? " + column + " - " + c + "\r\n" + e );
-                        return;  // wtf?!
-                      }
-                      this._saved_selection.push(value);
-                      this._saved_selection.position.push(c);
-                    }
-                  }
-                }
-                // did our selection just get screwed for no reason ? this happens when all selection ranges are invalid ! eek !!
-                if (rangeCount > 0 && this._saved_selection.length == 0) {
-                  // fix the internal selection ranges, or we'll keep getting (-1,-1)'s :(
-                  this.tree.view.selection.clearSelection();
-                }
-              }
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - saveSelection" + err );
-          }
-        ]]>
-        </body>
-      </method>
-
-      <method name="restoreSelection">
-        <body>
-          <![CDATA[
-          try
-          {
-            this.restoring_selection = true;
-
-            //dump("start restore\n");
-            if (this._saved_selection != null &&
-                this._saved_selection.ranges &&
-                this._saved_selection.ranges.length > 0 &&
-                this.tree.columns &&
-                this.tree.columns.count > 0 &&
-                this.tree.view.rowCount > 0) {
-
-              // use the key we picked in saveSelection
-              var column = this.tree.columns.getNamedColumn(this._selection_key);
-              if (column != null) {
-
-                // restore selection from array
-
-                // first try to restore from selection ranges. this can only be done for unsorted
-                // playlists, because sorted playlists may move the items in a rebuild.
-                // an exception to this is when *all* items are selected, then it doesn't matter if
-                // the items moved since all should be reselected (but this is only true if the number
-                // of items did not change)
-
-                if ((this._saved_order == "" && this.source.getOrder(this.ref) == "") ||
-                    (this._saved_selection.all && this._saved_nitems == this.tree.view.rowCount)) {
-
-                  while (this._saved_selection.ranges.length > 0) {
-                    var item = this._saved_selection.ranges.pop();
-                    var start = item[0];
-                    var end = item[1];
-                    this.tree.view.selection.rangedSelect(start, end, true);
-                  }
-
-                } else {
-
-                  // next try to restore based on the item's position in the list.
-                  // for each item, check that the unique value is still the one it was
-
-                  var by_position_failed = false;
-
-                  while (this._saved_selection.length > 0) {
-                    var value = this._saved_selection.pop();
-                    var row = this._saved_selection.position.pop();
-
-                    // Dumb tryblock because sometimes getCellText throws an error on an "Invalid Value"?
-                    var failed = false;
-                    var cell = "";
-                    try {
-                      cell = this.tree.view.getCellText( row, column );
-                    } catch (e) {
-                      dump( "WARNING: playlist.xml<restoreSelection>: " +
-                            "getCellText(" + row + ", " + column + ") FAILED, " +
-                            "this.tree.view.rowCount = " + this.tree.view.rowCount + "\n");
-                      failed = true;
-                    }
-
-                    if (!failed && value == cell) {
-                      // the item at that position is still the right item, select it
-                      this.tree.view.selection.rangedSelect(row, row, true);
-                    } else {
-                      // an item has changed position, put it back in the list and stop trusting item positions
-                      this._saved_selection.push(value);
-                      this._saved_selection.position.push(row);
-                      by_position_failed = true;
-                      break;
-                    }
-                  }
-
-                  if (by_position_failed) {
-
-                    // last, if neither of the previous method succeeded (which implies some items moved around),
-                    // ask the playlist source to find the previously recorded values and return an array of new rows
-                    // this is potentially slow for really big libraries on slow machines
-
-                    var nrows = {};
-                    var rows = this.source.getRefRowsByColumnValues(this.ref, this._selection_key, this._saved_selection.length, this._saved_selection, nrows);
-
-                    for (var i=0;i<nrows.value;i++) {
-                      var row = rows[i];
-                      if (row == -1) continue;
-                      this.tree.view.selection.rangedSelect(row, row, true);
-                    }
-                  }
-                }
-              }
-            }
-
-            //dump("end restore\n");
-
-            this.restoring_selection = false;
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - restoreSelection - " + err );
-          }
-        ]]>
-        </body>
-      </method>
-
+  // Loop through and remove all the children
+  var childNodes = parentNode.childNodes;
+  var childCount = childNodes.length;
+  for(var index = 0; index < childCount; index++) {
+    var child = childNodes.item(0);
+    parentNode.removeChild(child);
+  }
+]]>
+      </body>
+    </method>
       <method name="findCell">
         <parameter name="column"/>
         <parameter name="value"/>
@@ -1735,70 +1366,51 @@
     <method name="_onPlaylistClick">
       <parameter name="evt"/>
       <body>
-        <![CDATA[
-          try
+<![CDATA[
+  try
+  {
+    if ( evt.button == 0 && this.tree.currentIndex != -1 )
+    {
+      var obj = {}, row = {}, col = {};
+      this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
+      // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
+      if ( obj.value )
+      {
+        if (this.tree.view.isEditable(row.value, col.value))
+        {
+          // Remember the row and column
+          this.edit_row = row.value;
+          this.edit_col = col.value;
+          if (this.edit_col.id == "rating")
           {
-            dump("onPlaylistClick\n");
-
-            if ( evt.button == 0 && this.tree.currentIndex != -1 )
+            var width = this.edit_col.element.boxObject.width;
+            var dist = evt.screenX - this.edit_col.element.boxObject.screenX;
+            // 4 pixels offsets
+            width -= 8;
+            dist -= 4;
+            var ret = Math.round(dist / width * 100);
+            if (ret < 0) ret = 0; if (ret > 100) ret = 100;
+            this.setCellRating(this.edit_row, this.edit_col, ret);
+          }
+          else if ( this.tree.currentIndex == this._lastClickIndex  )
+          {
+            var delay = evt.timeStamp - this._lastClickTimestamp;
+            if ( delay > 1000 && delay < 2000 )
             {
-              var obj = {}, row = {}, col = {};
-              this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
-              // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
-              if ( obj.value )
-              {
-                if (this.tree.view.isEditable(row.value, col.value))
-                {
-                  // Remember the row and column
-                  this.edit_row = row.value;
-                  this.edit_col = col.value;
-                  if (this.edit_col.id == "rating")
-                  {
-                    var width = this.edit_col.element.boxObject.width;
-                    var dist = evt.screenX - this.edit_col.element.boxObject.screenX;
-                    // 4 pixels offsets
-                    width -= 8;
-                    dist -= 4;
-                    var ret = Math.round(dist / width * 100);
-                    if (ret < 0) ret = 0; if (ret > 100) ret = 100;
-                    this.setCellRating(this.edit_row, this.edit_col, ret);
-                  }
-                  else if ( this.tree.currentIndex == this._lastClickIndex  )
-                  {
-                    var delay = evt.timeStamp - this._lastClickTimestamp;
-                    if ( delay > 1000 && delay < 2000 )
-                    {
-                      this.startCellEditing();
-                    }
-                  }
-                }
-              }
+              this.startCellEditing();
             }
-            this._lastClickIndex = this.tree.currentIndex;
-            this._lastClickTimestamp = evt.timeStamp;
           }
-          catch( err )
-          {
-            alert( "playlist.xml - onPlaylistClick - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="onPlaylistScroll">
-      <parameter name="evt"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            alert( "Scroll:" + evt );
-            this.hidePlaylistEdit();
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onPlaylistScroll - " + err );
-          }
-        ]]>
+        }
+      }
+    }
+    this._lastClickIndex = this.tree.currentIndex;
+    this._lastClickTimestamp = evt.timeStamp;
+  }
+  catch( err )
+  {
+    alert( "playlist.xml - onPlaylistClick - " + err );
+  }
+]]>
       </body>
     </method>
 
@@ -1863,332 +1475,118 @@
       </body>
     </method>
 
-    <method name="onPlaylistEditChange">
-      <body>
-        <![CDATA[
-          try
-          {
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onPlaylistEditChange - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="onPlaylistEditKeypress">
-      <body>
-        <![CDATA[
-          try
-          {
-            alert( "key" );
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onPlaylistEditKeypress - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="addToPlaylist">
-      <body>
-        <![CDATA[
-          try
-          {
-            // Make a data object to get the playlist to add to from the dialog
-            var add_to_playlist_data = new Object();
-            // Open the modal dialog
-            var chromeFeatures = "chrome,centerscreen"
-            SBOpenModalDialog("chrome://songbird/content/xul/add_to_playlist.xul", "add_to_playlist", chromeFeatures, add_to_playlist_data );
-            if ( add_to_playlist_data.retval == "ok" )
-            {
-              // add them !
-              var playlist = add_to_playlist_data.playlist;
-              this.addToPlaylistOrLibrary(playlist);
-              this.reportAddedTracks(true);
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - addToPlaylist - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="addToLibrary">
-      <body>
-        <![CDATA[
-          try
-          {
-            this.addToPlaylistOrLibrary();
-            this.reportAddedTracks(false);
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - addToPlaylist - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="reportAddedTracks">
-      <parameter name="toplaylist"/>
-      <body>
-        <![CDATA[
-          var msg;
-          if (toplaylist) {
-            // if sending to a playlist, we can have duplicate entries, so dont report that some tracks already existed
-            var totalcount = this._addto_added_count + this._addto_existed_count;
-            msg = "" + totalcount + " ";
-            switch (totalcount) {
-              case 0: msg = this.str_notracksaddedto; break;
-              case 1: msg += this.str_trackaddedto; break;
-              default: msg += this.str_tracksaddedto; break;
-            }
-            msg += " " + this.str_playlist.toLowerCase();
-          } else {
-            // but if sending to a library, there cant be any dups
-            msg = "" + this._addto_added_count + " ";
-            switch (totalcount) {
-              case 0: msg = this.str_notracksaddedto; break;
-              case 1: msg += this.str_trackaddedto; break;
-              default: msg += this.str_tracksaddedto; break;
-            }
-            msg += " " + this.str_library.toLowerCase();
-            if (this._addto_existed_count > 0) msg += " (" + this._addto_existed_count + " " + ((this._addto_existed_count > 1) ? this.str_tracksalreadypresent : this.str_trackalreadypresent) + ")";
-          }
-          SBDataSetStringValue("faceplate.status.override.text", "");
-          SBDataSetStringValue("faceplate.status.override.text", msg);
-          SBDataSetStringValue("faceplate.status.override.style", "font-weight: bold;");
-        ]]>
-      </body>
-    </method>
-
-    <method name="addToPlaylistOrLibrary">
-      <parameter name="playlist"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            var MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-            var mediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
-
-            var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
-            queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-            queryObj.setDatabaseGUID("songbird");
-
-            mediaLibrary.setQueryObject(queryObj);
-
-            var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-            var playlistManager = new PlaylistManager();
-            playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
-
-            var thePlaylist;
-            if (playlist != null) thePlaylist = playlistManager.getPlaylist(playlist, queryObj);
-
-            if (playlist != null && thePlaylist == null)
-            {
-              alert("playlist.xml - addToPlaylistOrLibrary - Playlist '" + playlist + "' not found!");
-              return;
-            }
-
-            // Add the tracks to it
-            var urlcolumn = this.tree.columns.getNamedColumn("url");
-            var uuidcolumn = this.tree.columns.getNamedColumn("uuid");
-            if (urlcolumn) // it is okay if uuidcolumn does not exist, but url is our fallback
-            {
-              var metadataintersection_ids = Array();
-              var metadataintersection_cols = Array();
-
-              // are the tracks coming from a different db ? if so, compute the intersection of metadata columns between the source
-              // and destination db, so that the insertion can use it later to insert the proper data in the destination db
-              if (this.guid != "songbird")
-              {
-                mediaLibrary.getColumnInfo();
-                var destcols = queryObj.getResultObject();
-                var srccols;
-
-                var thisPlaylist = playlistManager.getPlaylist(this.table, this.m_queryObj);
-                if (!thisPlaylist) { // playlist not found ? this is a library then
-                  var _mediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
-                  var _queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
-                  _queryObj = _queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-                  _queryObj.setDatabaseGUID(this.guid);
-                  _mediaLibrary.setQueryObject(_queryObj);
-                  _mediaLibrary.getColumnInfo();
-                  srccols = _queryObj.getResultObject();
-                } else {
-                  thisPlaylist.getColumnInfo();
-                  srccols = this.m_queryObj.getResultObject();
-                }
-
-                for (var i=0;i<destcols.getRowCount();i++)
-                {
-                  var columnid = destcols.getRowCell(i, 0);
-                  if (columnid == "uuid" || columnid == "url" || columnid == "service_uuid" || columnid == "id" || columnid == "row_id") continue;
-                  for (var j=0;j<srccols.getRowCount();j++)
-                  {
-                    if (columnid == srccols.getRowCell(j, 0))
-                    {
-                      metadataintersection_ids.push(columnid);
-                      metadataintersection_cols.push(this.tree.columns.getNamedColumn(columnid));
-                      break;
-                    }
-                  }
-                }
-              }
-              queryObj.resetQuery();
-              var params = Array(mediaLibrary, thePlaylist, urlcolumn, uuidcolumn, metadataintersection_ids, metadataintersection_cols);
-              this._addto_added_count = 0;
-              this._addto_existed_count = 0;
-              if (!(this.table == "library" && this.guid == "songbird") && this.tree.view.selection.getRangeCount() == 0)
-                this.processAll(this.processSelection_addToPlaylistOrLibrary, params);
-              else
-                this.processSelection(this.processSelection_addToPlaylistOrLibrary, params);
-
-              queryObj.execute();
-            }
-            else
-            {
-              alert("playlist.xml - addToPlaylistOrLibrary - no url column");
-              return;
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - addToPlaylistOrLibrary - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="_processSelection">
-      <parameter name="func"/>
-      <parameter name="params"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            var first = -1;
-            this.processSelection_rowcount = 0;
-            var rangeCount = this.tree.view.selection.getRangeCount();
-            for (var i=0; i < rangeCount; i++)
-            {
-              var start = {};
-              var end = {};
-              this.tree.view.selection.getRangeAt( i, start, end );
-              if (end.value != -1 && start.value != -1) this.processSelection_rowcount += (end.value-start.value)+1;
-              if (first == -1 || start.value < first) first = start.value;
-              for( var c = start.value; c <= end.value; c++ )
-              {
-                if (c > this.tree.view.rowCount)
-                {
-                  continue;
-                }
-                func.apply(this, [c, params]);
-              }
-            }
-            this.tree.view.selection.clearSelection();
-            return first;
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - processSelection - " + err );
-          }
-          return -1;
-        ]]>
-      </body>
-    </method>
-
-    <method name="processAll">
-      <parameter name="func"/>
-      <parameter name="params"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            var rowCount = this.tree.view.rowCount;
-            for (var i=0; i < rowCount; i++)
-            {
-              func(this, i, params);
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - processAll - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="processSelection_addToPlaylistOrLibrary">
-      <parameter name="_this"/>
+    <method name="_addItem">
       <parameter name="item"/>
-      <parameter name="params"/>
+      <parameter name="row"/>
+      <parameter name="orientation"/>
       <body>
-        <![CDATA[
-          try
-          {
-            var mediaLibrary = params[0];
-            var thePlaylist = params[1];
-            var urlcolumn = params[2];
-            var uuidcolumn = params[3];
-            var metadataintersection_ids = params[4];
-            var metadataintersection_cols = params[5];
+<![CDATA[
+  var ml = this.mediaListView.mediaList;
+  var oldLength = ml.length;
 
-            var guid;
+  // If this media lists supports ordering, insert the item where it was
+  // dropped
+  if (ml instanceof this._Ci.sbIOrderableMediaList) {
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE &&
+        oldLength > 0 && row >= 0 && row < oldLength) {
+      ml.insertBefore(row, item);
+    }
+    else {
+      ml.add(item);
+    }
+  }
+  else {
+    ml.add(item);
+  }
 
-            // metadataintersection is empty if the destination library is the same as the source library
-            if (uuidcolumn && metadataintersection_cols.length == 0)
-            {
-              guid = _this.tree.view.getCellText( item, uuidcolumn );
-              _this._addto_existed_count++;
-            }
-            else
-            {
-              var url = _this.tree.view.getCellText( item, urlcolumn );
-              if (metadataintersection_cols.length != 0)
-              {
-                var values = new Array();
-                var r = mediaLibrary.findByURL(url);
-                if (r && r != "")
-                {
-                  _this._addto_existed_count++;
-                }
-                else
-                {
-                  _this._addto_added_count++;
-                }
-                // source playlist has its own library, use the intersection of available metadata in source and
-                // destination libraries as the metadata for the insertion in the the destination library
-                for (var i=0;i<metadataintersection_cols.length;i++)
-                {
-                  values.push(_this.tree.view.getCellText( item, metadataintersection_cols[i] ));
-                }
-                guid = mediaLibrary.addMedia( url, metadataintersection_ids.length, metadataintersection_ids, values.length, values, false, true );
-              }
-              else
-              {
-                // item is already in destination library, but we didnt have a uuid column,
-                // ask the library for the guid associated with this url
-                guid = mediaLibrary.addMedia( url, 0, null, 0, null, false, true );
-                _this._addto_existed_count++;
-              }
-            }
+  var added = ml.length - oldLength;
+  this._reportAddedTracks(added, 1 - added);
+]]>
+      </body>
+    </method>
 
-            if (thePlaylist)
-            {
-              thePlaylist.addByGUID( guid, "songbird", -1, false, true );
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - processSelection_addToPlaylistOrLibrary - " + err );
-          }
-        ]]>
+    <method name="_addItems">
+      <parameter name="enumerator"/>
+      <body>
+<![CDATA[
+  // Count the number of items we are about to add so we can message the user
+  // property
+  var items = [];
+  while (enumerator.hasMoreElements()) {
+    items.push(enumerator.getNext());
+  }
+  var count = items.length;
+
+  var self = this;
+  var tempEnumerator = {
+    _items: items,
+    _nextIndex: 0,
+    hasMoreElements: function() {
+      return this._nextIndex < this._items.length;
+    },
+    getNext: function() {
+      var item = this._items[this._nextIndex];
+      this._nextIndex++;
+      return item;
+    },
+    QueryInterface : function(iid) {
+      if (iid.equals(self._Ci.nsISimpleEnumerator) ||
+          iid.equals(self._Ci.nsISupports))
+        return this;
+      throw self._Cr.NS_NOINTERFACE;
+    }
+  }
+
+  var ml = this.mediaListView.mediaList;
+  var oldLength = ml.length;
+  ml.addSome(tempEnumerator);
+  var added = ml.length - oldLength;
+  this._reportAddedTracks(added, count - added);
+]]>
+      </body>
+    </method>
+
+    <method name="_reportAddedTracks">
+      <parameter name="countAdded"/>
+      <parameter name="countAlreadyPresent"/>
+      <body>
+<![CDATA[
+  var msg = countAdded + " ";
+
+  // Start message with xxx added to...
+  switch (countAdded) {
+    case 0:  msg += this._str_notracksaddedto; break;
+    case 1:  msg += this._str_trackaddedto;    break;
+    default: msg += this._str_tracksaddedto;   break;
+  }
+
+  // Append media list name
+  var name = "";
+  try {
+    name = this.mediaListView.mediaList.name;
+  }
+  catch(e) {
+    // No name, leave it blank
+  }
+
+  msg += " " + name;
+
+  // Append the message about already present items (if any)
+  if (countAlreadyPresent > 0) {
+    msg += " (" + countAlreadyPresent + " ";
+    if (countAlreadyPresent == 1) {
+      msg += this._str_trackalreadypresent;
+    }
+    else {
+      msg += this._str_tracksalreadypresent;
+    }
+    msg += ")";
+  }
+
+  SBDataSetStringValue("faceplate.status.override.text", "");
+  SBDataSetStringValue("faceplate.status.override.text", msg);
+  SBDataSetStringValue("faceplate.status.override.style", "font-weight: bold;");
+]]>
       </body>
     </method>
 
@@ -2196,15 +1594,6 @@
       <body>
 <![CDATA[
   var ml = this.mediaListView.mediaList;
-
-  // Check to see if our media list is a sbILocalDatabaseSimpleMediaList
-  var sml;
-  try {
-    sml = ml.QueryInterface(this._Ci.sbILocalDatabaseSimpleMediaList);
-  }
-  catch(e) {
-    // do nothing
-  }
 
   ml.beginUpdateBatch();
 
@@ -2217,20 +1606,8 @@
       var end = {};
       this.tree.view.selection.getRangeAt(i, start, end);
       for (var j = end.value; j >= start.value; j--) {
-        if (sml) {
-          // Get the ordinal of the item from the view
-          var ordinal = sml.getOrdinalByIndex(j);
-
-          // Remove the item from the underlying list by ordinal
-          sml.removeByOrdinal(ordinal);
-        }
-        else {
-          // Delete the item from the list using its guid
-          var ldbmlv = this.mediaListView.QueryInterface(this._Ci.sbILocalDatabaseMediaListView);
-          var guid = ldbmlv.getGuidByIndex(j);
-          var item = ml.getItemByGuid(guid);
-          ml.remove(item);
-        }
+        var index = this.mediaListView.getUnfilteredIndex(j);
+        ml.removeByIndex(index);
       }
     }
   }
@@ -2238,174 +1615,6 @@
     ml.endUpdateBatch();
   }
 ]]>
-      </body>
-    </method>
-
-    <method name="setDnDSourceTracker">
-      <parameter name="tracker"/>
-      <body>
-        if (this.m_dndSourceTracker == tracker)
-        {
-          return;
-        }
-        else
-        {
-          if (this.m_dndSourceTracker != null)
-          {
-            this.m_dndSourceTracker.unregisterDnDSource(this);
-            this.m_dndSourceTracker = null;
-          }
-        }
-        this.m_dndSourceTracker = tracker;
-        if (tracker != null) tracker.registerDnDSource(this);
-      </body>
-    </method>
-
-    <method name="getDnDSourceIndex">
-      <body>
-        if (this.m_dndSourceTracker != null) return this.m_dndSourceTracker.getDnDSourceIndex(this);
-        return -1;
-      </body>
-    </method>
-
-    <method name="onDrag">
-      <parameter name="evt"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            //
-            //  Do something interesting to indicate the drag of a column?
-            //
-
-            // Disable dragging from the download playlist
-            if(this.guid == "downloadDB") {
-              return;
-            }
-
-            if( this.pointInTreeRows( this.tree, evt.clientX, evt.clientY ) )
-            {
-              // Heheh, only drag if you're dragging a cell.  Otherwise, don't screw with the scrollbar
-
-              // also, if we are dragging from the inside of the tree body, only accept to start the dnd if there is a selection
-              // this will avoid empty dragdrops when dragging from below the last item (if there is a selection, dragging
-              // from bellow the last item does not cancel the selection)
-              if (this.tree.view.selection.getRangeCount() != 0) {
-                this.nsDragAndDrop.startDrag(evt, this.sbIPlaylistDragObserver);
-              }
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onDrag - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="getViewSummary">
-      <body>
-        <![CDATA[
-          var ret = "";
-          try
-          {
-            if (this.source && this.ref != "")
-            {
-              ret = this.guid + ";" + this.table;
-              var n = this.source.getNumFilters(this.ref);
-              ret += ";" + n;
-              for (var i=0;i<n;i++)
-                ret += ";" + this.source.getFilter(this.ref, i);
-              ret += "|" + this.source.getSearchString(this.ref);
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - getViewSummary - " + err );
-          }
-          return ret;
-        ]]>
-      </body>
-    </method>
-
-    <method name="syncPlaylistIndex">
-      <parameter name="scroll"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            // if this playlist is the currently playing one, set selection to the playing item
-            // lone> should this really be testing this.playingRef ?? why not this.ref ?
-            if ( this.playlistRef && this.playlistRef.stringValue == this.playingRef.stringValue )
-            {
-              var url = this.playUrl.stringValue;
-              var row = this.findUrl(url);
-              if (row != -1)
-              {
-                this.tree.view.selection.clearSelection();
-                this.tree.view.selection.rangedSelect(row, row, true);
-                if (scroll)
-                {
-                  var box = this.tree.treeBoxObject;
-                  box.ensureRowIsVisible(row);
-                }
-              }
-            }
-          }
-          catch (err)
-          {
-            alert( "playlist.xml - onPlayUrlChange - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="findUrl">
-      <parameter name="url"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            if ( this.tree.columns ) {
-              var urlcolumn = this.tree.columns.getNamedColumn("url");
-              if (urlcolumn != null)
-              {
-                var row = this.findCell(urlcolumn, url);
-                return row;
-              }
-            }
-          }
-          catch (err)
-          {
-            alert( "playlist.xml - findUrl - " + err );
-          }
-          return -1;
-        ]]>
-      </body>
-    </method>
-
-    <method name="findRowIdByUrl">
-      <parameter name="url"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            var i = this.findUrl(url);
-            if (i != -1) {
-              var idcolumn = this.tree.columns.getNamedColumn("row_id");
-              if (idcolumn != null)
-              {
-                var rowid = this.tree.view.getCellText( i, idcolumn );
-                return rowid - 1;
-              }
-            }
-          }
-          catch (err)
-          {
-            alert( "playlist.xml - findRowIdByUrl - " + err );
-          }
-          return -1;
-        ]]>
       </body>
     </method>
 
@@ -2446,43 +1655,6 @@
       </body>
     </method>
 
-
-    <method name="ensurePlaylistExists">
-      <body>
-        <![CDATA[
-        var found = true;
-        if (this.table.length > 0 && this.guid.length > 0) {
-          found = false;
-          var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
-          queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-          queryObj.setDatabaseGUID(this.guid);
-          var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-          var playlistManager = new PlaylistManager();
-          playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
-          playlistManager.getAllPlaylistList( queryObj );
-          var resultset = queryObj.getResultObject();
-          if (this.table == "library")
-            found = true;
-          else
-            for ( var i = 0; i < resultset.getRowCount(); i++ ) {
-              if ( this.table == resultset.getRowCellByColumn( i, "name" ) ) {
-                found = true;
-                break;
-              }
-            }
-
-          if ( !found )
-          {
-            var e = document.createEvent("Events");
-            e.initEvent("playlist-noplaylist", false, true);
-            this.dispatchEvent(e);
-          }
-        }
-        return found;
-        ]]>
-        </body>
-      </method>
-
     <method name="syncColumnSortIndicator">
       <body>
         <![CDATA[
@@ -2496,51 +1668,6 @@
               }
             }
           }
-        ]]>
-      </body>
-    </method>
-
-    <method name="bindDataRemotes">
-      <body>
-        <![CDATA[
-          // Create and bind data remotes
-          this.playingRef = SB_NewDataRemote( "playing.ref", null );
-          this.playlistRef = SB_NewDataRemote( "playlist.ref", null );
-          this.playUrl = SB_NewDataRemote( "faceplate.play.url", null );
-        ]]>
-      </body>
-    </method>
-
-    <method name="unbindDataRemotes">
-      <body>
-        <![CDATA[
-          if (this.playUrl) {
-            this.playUrl.unbind();
-            this.playUrl = null;
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="resetFilterLists">
-      <body>
-        <![CDATA[
-          var n = this.filters.length;
-          for (var i=0;i<n;i++) {
-            this.source.setFilter( this.ref, i, "", this.filters[i].ref, this.filters[i].column);
-          }
-          this.source.executeFeed( this.ref );
-        ]]>
-      </body>
-    </method>
-
-    <method name="sendFilterChangeEvent">
-      <parameter name="event"/>
-      <body>
-        <![CDATA[
-          var e = document.createEvent("Events");
-          e.initEvent("playlist-filterchange", false, true);
-          this.dispatchEvent(e);
         ]]>
       </body>
     </method>
@@ -2606,6 +1733,25 @@
         </body>
       </method>
 
+      <method name="_getSelectionRows">
+        <body>
+<![CDATA[
+  var selection = this.tree.view.selection;
+  var rc = selection.getRangeCount();
+  var rows = [];
+  for (var i = 0; i < rc; ++i) {
+    var min = { }, max = { };
+    selection.getRangeAt(i, min, max);
+
+    for (var j = min.value; j <= max.value; ++j) {
+      rows.push(j);
+    }
+  }
+  return rows;
+]]>
+        </body>
+      </method>
+
       <method name="_di">
         <parameter name="o"/>
         <body>
@@ -2618,6 +1764,229 @@
    catch(e) {
    }
  }
+]]>
+        </body>
+      </method>
+
+      <!-- Drag and Drop -->
+      <method name="_onDragGesture">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  if (event.target.localName == "treechildren") {
+    nsDragAndDrop.startDrag(event, this);
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="_onDragOver">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  if (event.target.localName == "treechildren") {
+    nsDragAndDrop.dragOver(event, this);
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="_onDragDrop">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  // Note that drop is handled by the tree observer.  This is so we can know
+  // what row and orientation the drop happened at.
+  event.stopPropagation();
+]]>
+        </body>
+      </method>
+
+      <method name="_dropOnTree">
+        <parameter name="row"/>
+        <parameter name="orientation"/>
+        <body>
+<![CDATA[
+  // Note that this is called by our tree observer
+  var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+                    .getService(this._Ci.sbIDndSourceTracker);
+
+  var data = this._getTransferDataForFlavor(this._TYPE_X_SB_MEDIAITEM);
+  if (data) {
+    var item = dnd.getSourceSupports(data);
+    this._addItem(item, row, orientation);
+  }
+  else {
+    data = this._getTransferDataForFlavor(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR);
+    if (data) {
+      var enumerator = dnd.getSourceSupports(data);
+      this._addItems(enumerator.QueryInterface(this._Ci.nsISimpleEnumerator),
+                     row, orientation);
+    }
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="_getTransferDataForFlavor">
+        <parameter name="flavor"/>
+        <body>
+<![CDATA[
+  var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
+                            .getService(this._Ci.nsIDragService);
+  var session = dragService.getCurrentSession();
+
+  var transfer = this._Cc["@mozilla.org/widget/transferable;1"]
+                         .createInstance(this._Ci.nsITransferable);
+
+  if (session.isDataFlavorSupported(flavor)) {
+    transfer.addDataFlavor(flavor);
+    session.getData(transfer, 0);
+    var data = {};
+    transfer.getTransferData(flavor, data, {});
+    return data.value;
+  }
+
+  return null;
+]]>
+        </body>
+      </method>
+
+      <method name="onDragStart">
+        <parameter name="event"/>
+        <parameter name="xferData"/>
+        <parameter name="dragAction"/> 
+        <body>
+<![CDATA[
+  try {
+    dump("onDragStart " + event + " " + xferData + " " + dragAction + "\n");
+
+    var rows = this._getSelectionRows();
+    if (rows.length == 0) {
+      // Nothing selected, don't drag
+      throw this._Cr.NS_OK;
+    }
+
+    var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+                      .getService(this._Ci.sbIDndSourceTracker);
+    dnd.reset();
+
+    xferData.data = new TransferDataSet();
+    var data = new TransferData();
+
+    // If only one item is selected, use the media item flavor
+    if (rows.length == 1) {
+      var listIndex = this.mediaListView.getUnfilteredIndex(rows[0]);
+      var item = this.mediaListView.mediaList.getItemByIndex(listIndex);
+
+      // Add the single media item flavor
+      var handle = dnd.registerSource(item);
+      data.addDataForFlavour(this._TYPE_X_SB_MEDIAITEM, handle);
+
+      // Add a simple enumerator with the single item flavor
+      var self = this;
+      var enumerator = {
+        _item: item,
+        hasMoreElements: function() {
+          return this._item != null;
+        },
+        getNext: function() {
+          var i = this._item;
+          this._item = null;
+          return i;
+        },
+        QueryInterface : function(iid) {
+          if (iid.equals(self._Ci.nsISimpleEnumerator) ||
+              iid.equals(self._Ci.nsISupports))
+            return this;
+          throw self._Cr.NS_NOINTERFACE;
+        }
+      }
+      handle = dnd.registerSource(enumerator);
+      data.addDataForFlavour(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR, handle);
+
+      // Add the url of the item as well
+      // XXX: Probably want to make sure that this is a local file that exists
+      // before providing this flavor
+      //data.addDataForFlavour("text/x-moz-url", item.contentSrc);
+    }
+    else {
+      // Otherwise, add an emumerator of the selection
+      var self = this;
+      var enumerator = {
+        _rows: rows,
+        _view: this.mediaListView,
+        _nextIndex: 0,
+        hasMoreElements: function() {
+          return this._nextIndex < this._rows.length;
+        },
+        getNext: function() {
+          var i = this._view.getUnfilteredIndex(this._rows[this._nextIndex]);
+          var item = this._view.mediaList.getItemByIndex(i);
+          this._nextIndex++;
+          return item;
+        },
+        QueryInterface : function(iid) {
+          if (iid.equals(self._Ci.nsISimpleEnumerator) ||
+              iid.equals(self._Ci.nsISupports))
+            return this;
+          throw self._Cr.NS_NOINTERFACE;
+        }
+      }
+      handle = dnd.registerSource(enumerator);
+      data.addDataForFlavour(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR, handle);
+    }
+    xferData.data.push(data);
+
+    dragAction.action = this._Ci.nsIDragService.DRAGDROP_ACTION_COPY;
+  }
+  catch(e) {
+    // The drag and drop helper swallows exceptions, so report them and
+    // rethrow
+    Components.utils.reportError(e);
+    throw e;
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="canDrop">
+        <parameter name="event"/>
+        <parameter name="session"/>
+        <body>
+<![CDATA[
+  if (session.isDataFlavorSupported(this._TYPE_X_SB_MEDIAITEM) ||
+      session.isDataFlavorSupported(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR) ||
+      session.isDataFlavorSupported("application/x-moz-file") ||
+      session.isDataFlavorSupported("text/x-moz-url")) {
+    return true;
+  }
+  else {
+    return false;
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="onDragOver">
+        <parameter name="event"/>
+        <parameter name="flavor"/>
+        <parameter name="session"/>
+        <body>
+<![CDATA[
+]]>
+        </body>
+      </method>
+
+      <method name="getSupportedFlavours">
+        <body>
+<![CDATA[
+  var flavorSet = new FlavourSet();
+  flavorSet.appendFlavour(this._TYPE_X_SB_MEDIAITEM);
+  flavorSet.appendFlavour(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR);
+  flavorSet.appendFlavour("application/x-moz-file", "nsIFile");
+  flavorSet.appendFlavour("text/x-moz-url");
+  return flavorSet;
 ]]>
         </body>
       </method>
