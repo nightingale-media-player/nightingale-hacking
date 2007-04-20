@@ -1403,7 +1403,8 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
    * If we're paired with a property cache, cache the proeprties for the
    * range we just fetched
    */
-  if (mPropertyCache) {
+/*
+   if (mPropertyCache) {
     const PRUnichar** guids = new const PRUnichar*[lengthDE];
     for (PRUint32 i = 0; i < lengthDE; i++) {
       guids[i] = mCache[i + indexD]->guid.get();
@@ -1412,7 +1413,8 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
     NS_ENSURE_SUCCESS(rv, rv);
     delete[] guids;
   }
-  return NS_OK;
+*/
+return NS_OK;
 }
 
 nsresult
