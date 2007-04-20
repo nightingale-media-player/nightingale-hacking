@@ -58,6 +58,10 @@ filterlist {
   -moz-binding: url("chrome://songbird/content/bindings/filterlist.xml#filterlist") !important;
 }
 
+filterlist2 {
+  -moz-binding: url("chrome://songbird/content/bindings/filterlist2.xml#filterlist2") !important;
+}
+
 search {
   -moz-binding: url("chrome://songbird/content/bindings/search.xml#search") !important;
 }
