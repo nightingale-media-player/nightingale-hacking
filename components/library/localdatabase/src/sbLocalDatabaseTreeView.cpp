@@ -111,6 +111,9 @@ sbLocalDatabaseTreeView::Init(sbIMediaListView* aMediaListView,
   success = mPageCacheStatus.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
+  success = mDirtyRowCache.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
   return NS_OK;
 }
 
@@ -119,20 +122,16 @@ sbLocalDatabaseTreeView::Rebuild()
 {
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - Rebuild()", this));
 
-  InvalidateCache();
+  // Invalidate our cache and force a row recount
+  nsresult rv = InvalidateCache();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 oldRowCount = mCachedRowCount;
-  mCachedRowCount = 0;
   mCachedRowCountDirty = PR_TRUE;
+  mCachedRowCountPending = PR_FALSE;
 
-  if (mTreeBoxObject) {
-    nsresult rv = mTreeBoxObject->BeginUpdateBatch();
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mTreeBoxObject->RowCountChanged(0, -oldRowCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mTreeBoxObject->EndUpdateBatch();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  PRInt32 count;
+  rv = GetRowCount(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -146,11 +145,17 @@ sbLocalDatabaseTreeView::UpdateRowCount(PRUint32 aRowCount)
     mCachedRowCountDirty = PR_FALSE;
     mCachedRowCountPending = PR_FALSE;
 
+    // Change the number of rows in the tree by the difference between the
+    // new row count and the old cached row count.  We still need to invalidate
+    // the whole tree since we don't know where the row changes too place.
+    PRInt32 delta = aRowCount - oldRowCount;
     nsresult rv = mTreeBoxObject->BeginUpdateBatch();
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = mTreeBoxObject->RowCountChanged(0, -oldRowCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mTreeBoxObject->RowCountChanged(0, mCachedRowCount);
+    if (delta != 0) {
+      rv = mTreeBoxObject->RowCountChanged(oldRowCount, delta);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    rv = mTreeBoxObject->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mTreeBoxObject->EndUpdateBatch();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -257,7 +262,8 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
     rv = mArray->AddSort(aProperty, aDirection);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  InvalidateCache();
+  rv = InvalidateCache();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if (mTreeBoxObject) {
     rv = mTreeBoxObject->Invalidate();
@@ -267,11 +273,35 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
   return NS_OK;
 }
 
-void
+nsresult
 sbLocalDatabaseTreeView::InvalidateCache()
 {
+  // Copy the visible pages into our temporary dirty row cache so we have
+  // something to show the user while the tree is rebuilding
+  mDirtyRowCache.Clear();
+  if (mTreeBoxObject) {
+    PRInt32 first;
+    PRInt32 last;
+    nsresult rv = mTreeBoxObject->GetFirstVisibleRow(&first);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mTreeBoxObject->GetLastVisibleRow(&last);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (first >= 0 && last >= 0) {
+      for (PRUint32 row = first; row <= (PRUint32) last; row++) {
+        sbILocalDatabaseResourcePropertyBag* bag;
+        if (mRowCache.Get(row, &bag)) {
+          PRBool success = mDirtyRowCache.Put(row, bag);
+          NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+        }
+      }
+    }
+
+  }
   mRowCache.Clear();
   mPageCacheStatus.Clear();
+
+  return NS_OK;
 }
 
 // sbILocalDatabaseAsyncGUIDArrayListener
@@ -300,16 +330,12 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
 
   nsresult rv;
 
-  if (NS_SUCCEEDED(aResult)) {
-    // DOES NOT WORK
-    if (mCachedRowCountDirty) {
-      return NS_OK;
-    }
+  if (NS_SUCCEEDED(aResult) && !mCachedRowCountDirty) {
 
     // Now we know that the page this row is in has been fully cached by
     // the guid array, cache the entire page in our cache
     PRUint32 start = (aIndex / mFetchSize) * mFetchSize;
-    PRUint32 end = start + mFetchSize;
+    PRUint32 end = start + mFetchSize - 1;
     if (end > mCachedRowCount) {
       end = mCachedRowCount - 1;
     }
@@ -320,7 +346,27 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
     for (PRUint32 i = 0; i < length; i++) {
       nsAutoString guid;
       rv = mArray->GetByIndex(i + start, guid);
-      NS_ENSURE_SUCCESS(rv, rv);
+      if (NS_FAILED(rv)) {
+
+        // If this fails, this means that the underlying array has changed and
+        // we don't know it yet.  This is pretty bad and I would like to
+        // figure out a nicer way to detect besides just handing the error.
+
+        // Free the memory in the guid array up to the last guid that was
+        // allocated, then delete the array itself.
+        for (PRUint32 j = 0; j < i; j++) {
+          delete guids[j];
+        }
+        delete[] guids;
+
+        // Mark this page as not cached
+        rv = SetPageCachedStatus(aIndex, eNotCached);
+        NS_ENSURE_SUCCESS(rv, rv);
+        mGetByIndexAsyncPending = PR_FALSE;
+
+        NS_WARNING("Array changed out from under us - need to make this better");
+        return NS_OK;
+      }
       guids[i] = ToNewUnicode(guid);
     }
 
@@ -345,6 +391,9 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
     }
     NS_Free(bags);
 
+    TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetByIndex - "
+           "InvalidateRange(%d, %d)", this, start, end));
+
     rv = mTreeBoxObject->InvalidateRange(start, end);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -361,7 +410,15 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
       mGetByIndexAsyncPending = PR_TRUE;
     }
 
+    return NS_OK;
   }
+
+  // If we get here, there was some kind of error getting the rows from the
+  // array.  Mark the requested row as not cached.
+  rv = SetPageCachedStatus(aIndex, eNotCached);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mGetByIndexAsyncPending = PR_FALSE;
 
   return NS_OK;
 }
@@ -463,6 +520,10 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
       _retval.Assign(EmptyString());
     }
     else {
+      if (_retval.Equals(EmptyString())) {
+        TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetCellText - "
+               "Empty value at %d", this, row));
+      }
       NS_ENSURE_SUCCESS(rv, rv);
     }
     return NS_OK;
@@ -506,14 +567,39 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
         NS_ENSURE_SUCCESS(rv, rv);
         mGetByIndexAsyncPending = PR_TRUE;
       }
-      _retval.Assign(EmptyString());
+
+      // Try our dirty cache so we can show something
+      if (mDirtyRowCache.Get(row, &bag)) {
+        rv = bag->GetProperty(bind, _retval);
+        if(rv == NS_ERROR_ILLEGAL_VALUE) {
+          _retval.Assign(EmptyString());
+        }
+        else {
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+      else {
+        _retval.Assign(EmptyString());
+      }
     }
     break;
 
     // The page this row is in is pending, so just return a blank
     case ePending:
     {
-      _retval.Assign(EmptyString());
+      // Try our dirty cache so we can show something
+      if (mDirtyRowCache.Get(row, &bag)) {
+        rv = bag->GetProperty(bind, _retval);
+        if(rv == NS_ERROR_ILLEGAL_VALUE) {
+          _retval.Assign(EmptyString());
+        }
+        else {
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+      else {
+        _retval.Assign(EmptyString());
+      }
     }
     break;
   }
@@ -878,8 +964,9 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
     // dump our row cache, invalidate our array, and refresh the tree.
     // Otherwise we can just invalidate the cell
     // XXX: need to get the full sort from the property manager
-  if (mCurrentSortProperty.Equals(bind)) {
-      InvalidateCache();
+    if (mCurrentSortProperty.Equals(bind)) {
+      rv = InvalidateCache();
+      NS_ENSURE_SUCCESS(rv, rv);
       rv = mArray->Invalidate();
       NS_ENSURE_SUCCESS(rv, rv);
 
