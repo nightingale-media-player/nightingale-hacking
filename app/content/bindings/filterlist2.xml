@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="filterlist2">
+    <content>
+      <xul:tree
+        xbl:inherits="enableColumnDrag=enableColumnDrag,hidecolumnpicker=hidecolumnpicker"
+        id="filter_tree"
+        flex="1"
+        onselect="_onFilterListSelect(event);"
+      >
+        <xul:treecols sbid="treeColumns"/>
+        <xul:treechildren/>
+      </xul:tree>
+    </content>
+
+    <implementation type="application/x-javascript" name="songbird_filterlist2">
+
+      <constructor>
+      </constructor>
+
+      <destructor>
+      </destructor>
+
+      <field name="tree">document.getAnonymousElementByAttribute(this, 'id', 'filter_tree');</field>
+
+      <!-- The filter set this filter is part of -->
+      <field name="cfs">null</field>
+
+      <!-- The index of the filter within the set -->
+      <field name="index">null</field>
+
+      <!-- Property and property info this filter list is filtering -->
+      <field name="_property">null</field>
+      <field name="_propertyInfo">null</field>
+
+      <field name="_XUL_NS" readonly="true">
+        "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      </field>
+      <field name="_Cc"     readonly="true">Components.classes</field>
+      <field name="_Ci"     readonly="true">Components.interfaces</field>
+      <field name="_Cr"     readonly="true">Components.results</field>
+
+      <method name="bind">
+        <parameter name="cfs"/>
+        <parameter name="index"/>
+        <body>
+<![CDATA[
+  this.cfs = cfs;
+  this.index = index;
+  this._property = cfs.getProperty(index);
+  this.tree.view = cfs.getTreeView(index);
+
+  // Get the property info for the property
+  var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                   .getService(this._Ci.sbIPropertyManager);
+  this._propertyInfo = pm.getPropertyInfo(this._property);
+
+  // Add the column for the property to the tree
+  var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
+
+  var treecol = document.createElementNS(this._XUL_NS, "treecol");
+  treecol.setAttribute("bind", this._property);
+  treecol.setAttribute("label", this._property);
+  treecol.setAttribute("flex", "1");
+  treeColumns.appendChild(treecol);
+
+  // Remove our selection if we are updated
+  var self = this;
+  this.cfs.addListener({
+    onChange: function() {
+    },
+    onValuesChanged: function(index) {
+      if (index == self.index) {
+        self.tree.view.selection.clearSelection();
+      }
+    }
+  });
+]]>
+        </body>
+      </method>
+
+      <method name="_onFilterListSelect">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  var sel = this.tree.view.selection;
+  var values = [];
+  var rangeCount = sel.getRangeCount();
+  for (var i = 0; i < rangeCount; i++) {
+    var min = {};
+    var max = {};
+    sel.getRangeAt(i, min, max);
+    for (var j = min.value; j <= max.value; j++) {
+      var value = this.cfs.getValueAt(this.index, j);
+      values.push(this._propertyInfo.makeSortable(value));
+    }
+  }
+  this.cfs.set(this.index, values, values.length);
+]]>
+        </body>
+      </method>
+
+    </implementation>
+
+  </binding>
+
+</bindings>
+
