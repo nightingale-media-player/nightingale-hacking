@@ -52,6 +52,8 @@ const CONTRACTID = "@songbirdnest.com/servicepane/bookmarks;1"
 const ROOTNODE = "SB:Bookmarks"
 const FOLDER_IMAGE = 'chrome://songbird/skin/icons/icon_folder.png';
 const BOOKMARK_IMAGE = 'chrome://service-icons/skin/default.ico';
+const BOOKMARK_DRAG_TYPE = 'text/x-sb-bookmark';
+const MOZ_URL_DRAG_TYPE = 'text/x-moz-url';
 
 
 function SB_NewDataRemote(a,b) {
@@ -239,9 +241,18 @@ function sbBookmarks_addBookmark(aURL, aTitle, aIconURL) {
         this._bookmarkNode = this._servicePane.addNode(ROOTNODE,
                 this._servicePane.root, true);
     }
-    var node = this._servicePane.addNode(aURL, this._bookmarkNode, false);
+    return this.addBookmarkAt(aURL, aTitle, aIconURL, this._bookmarkNode, null);
+}
+
+sbBookmarks.prototype.addBookmarkAt =
+function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
+    var node = this._servicePane.addNode(aURL, aParent, false);
     dump ('addBookmark: addNode returned: '+node+'\n');
     if (node) {
+        if (aBefore) {
+            dump ('reordering so that '+node.id+' is before '+aBefore.id+'\n');
+            aParent.insertBefore(node, aBefore);
+        }
         node.contractid = CONTRACTID;
         node.name = aTitle;
         node.url = aURL;
@@ -323,7 +334,120 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
         service._servicePane.save();
     }, false);
     aContextMenu.appendChild(item);
+}
+sbBookmarks.prototype.canDrop =
+function sbBookmarks_canDrop(aNode, aDragSession, aOrientation) {
+    if (aNode.isContainer) {
+        if (aOrientation != 0) {
+            // for folders you can only drop on the folder, not before or after
+            return false;
+        }
+    }
+    if (aDragSession.isDataFlavorSupported(MOZ_URL_DRAG_TYPE) ||
+            aDragSession.isDataFlavorSupported(BOOKMARK_DRAG_TYPE)) {
+        return true;
+
+    }
+    return false;
+}
+sbBookmarks.prototype._getDragData =
+function sbBookmarks__getDragData(aDragSession, aDataType) {
+    // create an nsITransferable
+    var transferable = Components.classes["@mozilla.org/widget/transferable;1"].
+            createInstance(Components.interfaces.nsITransferable);
+    // specify what kind of data we want it to contain
+    transferable.addDataFlavor(aDataType);
+    // ask the drag session to fill the transferable with that data
+    aDragSession.getData(transferable, 0);
+    // get the data from the transferable
+    var data = {};
+    var dataLength = {};
+    transferable.getTransferData(aDataType, data, dataLength);
+    // it's always a string. always.
+    data = data.value.QueryInterface(Components.interfaces.nsISupportsString);
+    return data.toString();
+}
+sbBookmarks.prototype.onDrop =
+function sbBookmarks_onDrop(aNode, aDragSession, aOrientation) {
+    if (aDragSession.isDataFlavorSupported(BOOKMARK_DRAG_TYPE)) {
+        var value = this._getDragData(aDragSession, BOOKMARK_DRAG_TYPE);
+        // this represents a node already in the tree
+        var node = this._servicePane.getNode(value);
+        if (!node) {
+            return;
+        }
+        // were we dropped on a folder
+        if (aNode.isContainer) {
+            // append it
+            aNode.appendChild(node);
+        } else {
+            // we were dropped on an item - before or after?
+            if (aOrientation == 1) {
+                // after...
+                var after = aNode.nextSibling;
+                if (after) {
+                    // there is a node after
+                    aNode.parentNode.insertBefore(node, after);
+                } else {
+                    // that was the last one - just append
+                    aNode.parentNode.appendChild(node);
+                }
+            } else {
+                // before - that's easy
+                aNode.parentNode.insertBefore(node, aNode);
+            }
+        }
+    } else if (aDragSession.isDataFlavorSupported(MOZ_URL_DRAG_TYPE)) {
+        var data = this._getDragData(aDragSession, MOZ_URL_DRAG_TYPE).split('\n');
+        var url = data[0];
+        var text = data[1];
+        var parent, before=null;
+        if (aNode.isContainer) {
+            parent = aNode;
+        } else {
+            parent = aNode.parentNode;
+            before = aNode;
+            if (aOrientation == 1) {
+                // after
+                before = aNode.nextSibling;
+            }
+        }
+        this.addBookmarkAt(url, text, BOOKMARK_IMAGE, parent, before);
+    }
+}
+sbBookmarks.prototype._addDragData =
+function sbBookmarks__addDragData (aTransferable, aData, aDataType) {
+    aTransferable.addDataFlavor(aDataType);
+    var text = Components.classes["@mozilla.org/supports-string;1"].
+       createInstance(Components.interfaces.nsISupportsString);
+    text.data = aData;
+    // double the length - it's unicode - this is stupid
+    aTransferable.setTransferData(aDataType, text, text.data.length*2)
+}
+sbBookmarks.prototype.onDragGesture =
+function sbBookmarks_onDragGesture(aNode, aTransferable) {
+    if (aNode.isContainer) {
+        // you can't drag folders - that should be handled at the
+        // service pane service layer
+        return false;
+    }
+    // create an nsITransferable
+    var trans = Components.classes["@mozilla.org/widget/transferable;1"].
+       createInstance(Components.interfaces.nsITransferable);
+       
+    // attach magic text/x-sb-bookmark data
+    // this is just for draging within the service pane bookmarks
+    this._addDragData(trans, aNode.id, BOOKMARK_DRAG_TYPE);
     
+    // attach a text/x-moz-url
+    // this is for dragging to other places
+    this._addDragData(trans, aNode.url+'\n'+aNode.name, MOZ_URL_DRAG_TYPE);
+    
+    // pass the nsITransferable back
+    aTransferable.value = trans;
+    
+    // and say yet - lets do this drag
+    return true;
 }
 
 
