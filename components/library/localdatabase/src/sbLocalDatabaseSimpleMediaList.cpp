@@ -494,8 +494,6 @@ sbLocalDatabaseSimpleMediaList::InsertBefore(PRUint32 aIndex,
 
   NS_ENSURE_ARG_MAX(aIndex, length - 1);
 
-  NotifyListenersItemAdded(this, aMediaItem);
-
   nsAutoString ordinal;
   rv = GetBeforeOrdinal(aIndex, ordinal);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -529,6 +527,8 @@ sbLocalDatabaseSimpleMediaList::InsertBefore(PRUint32 aIndex,
   // Invalidate the cached list
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  NotifyListenersItemAdded(this, aMediaItem);
 
   return NS_OK;
 }
