@@ -53,6 +53,18 @@ interface sbICascadeFilterSetListener : nsISupports
 interface sbICascadeFilterSet : nsISupports
 {
   /**
+   * \bried Number of filters in the set
+   */
+  readonly attribute unsigned short length;
+
+  /**
+   * \brief Get the property for a filter by index
+   * \param aIndex Index of the filter
+   * \return The property for the given filter index
+   */
+  AString getProperty(in unsigned short aIndex);
+
+  /**
    * \brief Add a new property value filter to the end of the cascade
    * \param aProperty Property that this filter will filter
    * \return The index of the newly created filter

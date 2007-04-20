@@ -81,6 +81,27 @@ sbLocalDatabaseCascadeFilterSet::Init(sbILocalDatabaseLibrary* aLibrary,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::GetLength(PRUint16* aLength)
+{
+  NS_ENSURE_ARG_POINTER(aLength);
+
+  *aLength = mFilters.Length();
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::GetProperty(PRUint16 aIndex,
+                                             nsAString& _retval)
+{
+  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+
+  _retval = mFilters[aIndex].property;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::AppendFilter(const nsAString& aProperty,
                                               PRUint16 *_retval)
 {
