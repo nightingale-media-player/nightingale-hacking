@@ -414,10 +414,11 @@ sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName,
 
   nsAutoLock lock(mPropertyBagLock);
 
-  rv = NS_ERROR_NOT_AVAILABLE;
-  if(mPropertyBag)
-  {
+  if(mPropertyBag) {
     rv = mPropertyBag->GetProperty(aName, _retval);
+    if (NS_SUCCEEDED(rv) || rv == NS_ERROR_ILLEGAL_VALUE) {
+      return rv;
+    }
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
