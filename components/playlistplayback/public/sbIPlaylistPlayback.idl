@@ -39,6 +39,7 @@
 
 interface sbIPlaylist;
 interface sbICoreWrapper;
+interface sbIMediaListView;
 
 /**
  * \interface sbIPlaylistPlayback
@@ -52,7 +53,7 @@ interface sbICoreWrapper;
  * \sa sbICoreWrapper sbIPlaylist
  * An interface that describes the PlaylistPlayback Service
  */
-[scriptable, uuid(190b1e87-8769-43b4-a362-4065eb6730e5)]
+[scriptable, uuid(3bc03c4c-7432-429d-96dd-7aad81a7fcdf)]
 interface sbIPlaylistPlayback : nsIObserver
 {
   // --------------------------------------------------------------------------
@@ -413,6 +414,8 @@ interface sbIPlaylistPlayback : nsIObserver
    * \return false if import or playback was not successful
    */
   boolean playAndImportURL(in AString aURL);
+
+  boolean playView(in sbIMediaListView aView, in PRInt32 aIndex);
 
   /**
    * \brief Adds a piece of media to the library.

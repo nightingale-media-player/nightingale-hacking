@@ -58,6 +58,7 @@ const sbIDataRemote            = Components.interfaces.sbIDataRemote;
 const sbIMediaLibrary          = Components.interfaces.sbIMediaLibrary;
 const sbIPlaylistPlayback      = Components.interfaces.sbIPlaylistPlayback;
 const sbIPlaylistReaderManager = Components.interfaces.sbIPlaylistReaderManager;
+const sbIMediaListView         = Components.interfaces.sbIMediaListView;
 
 const DEBUG = false;
 
@@ -406,6 +407,7 @@ PlaylistPlayback.prototype = {
     this._playingRef            = createDataRemote("playing.ref", null);
     this._playlistRef           = createDataRemote("playlist.ref", null);
     this._playlistIndex         = createDataRemote("playlist.index", null);
+    this._playingView           = null;
     this._repeat                = createDataRemote("playlist.repeat", null);
     this._shuffle               = createDataRemote("playlist.shuffle", null);
     this._showRemaining         = createDataRemote("faceplate.showremainingtime", null);
@@ -834,7 +836,13 @@ PlaylistPlayback.prototype = {
       if (core.getPaused()) {
         core.play()
       } else {
-        this.playRef( this._playingRef.stringValue, this._playlistIndex.intValue );
+        // XXXnewlib
+        if (this._playingView) {
+          this.playView( this._playingView, this._playlistIndex.intValue );
+        }
+        else {
+          this.playRef( this._playingRef.stringValue, this._playlistIndex.intValue );
+        }
       }
     }
     // Otherwise figure out the default action
@@ -869,6 +877,9 @@ PlaylistPlayback.prototype = {
 
     // pull metadata and filters from aSourceRef
     this._updateCurrentInfo(aSourceRef, aIndex);
+
+    // XXXnewlib: we're playing a ref now, not a view
+    this._playingView = null;
 
     // Then play it
     var retval = this.playURL(this._playURL.stringValue);
@@ -985,6 +996,38 @@ PlaylistPlayback.prototype = {
     // Find the index and play the ref.
     var index = this._source.getRefRowByColumnValue(ppRef, "uuid", aMediaUUID);
     return this.playRef( ppRef, index );
+  },
+
+  playView: function(aView, aIndex) {
+    // XXXnewlib
+    if (!(aView && aIndex && aIndex >= 0))
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    this._playingView = aView;
+
+    if (aIndex < 0) {
+      aIndex = 0;
+      // See if we should shuffle on it
+      if ( this._shuffle.boolValue ) {
+        var num_items = this._playingView.length;
+        var rand = num_items * Math.random();
+        aIndex = Math.floor( rand );
+      }
+    }
+
+    // pull metadata and filters from aSourceRef
+    this._updateCurrentInfoFromView(aView, aIndex);
+
+    // Then play it
+    var retval = this.playURL(this._playURL.stringValue);
+
+    // Hide the intro box and show the normal faceplate box
+    this._faceplateState.boolValue = true;
+ 
+    return retval;
   },
 
   // PRE: aDatabaseID and aTable must be valid
@@ -1696,49 +1739,53 @@ PlaylistPlayback.prototype = {
     var cur_index = this._playlistIndex.intValue; // this._findCurrentIndex;
     var cur_ref = this._playingRef.stringValue;
     var cur_url = this._playURL.stringValue;
-    
+
     // If we haven't played anything yet, do the default
     if (cur_ref == "") {
       this.play();
       return;
     }
-    
-    // Doublecheck that filters match what they were when we last played something.  
-    var panic = false;
-    var num_filters = this._source.getNumFilters( cur_ref );
-    if (this.filters.length != num_filters + 2)
-      panic = true;
-    else if ( this.filters[0] != this._source.getSearchString( cur_ref ) )
-      panic = true;
-    else if ( this.filters[1] != this._source.getOrder( cur_ref ) )
-      panic = true;
-    else if (num_filters > 0) {
-      for (var i = 0; i < num_filters; i++) {
-        // If they are not the same, just return from this.  No more play for you!
-        var filter = this._source.getFilter( cur_ref, i );
-        if (this.filters[i + 2] != filter)
-          panic = true; // WHOA, now what?  Try to use the current url!
+
+    // XXXnewlib
+    if (!this._playingView) {
+      // Doublecheck that filters match what they were when we last played something.  
+      var panic = false;
+      var num_filters = this._source.getNumFilters( cur_ref );
+      if (this.filters.length != num_filters + 2)
+        panic = true;
+      else if ( this.filters[0] != this._source.getSearchString( cur_ref ) )
+        panic = true;
+      else if ( this.filters[1] != this._source.getOrder( cur_ref ) )
+        panic = true;
+      else if (num_filters > 0) {
+        for (var i = 0; i < num_filters; i++) {
+          // If they are not the same, just return from this.  No more play for you!
+          var filter = this._source.getFilter( cur_ref, i );
+          if (this.filters[i + 2] != filter)
+            panic = true; // WHOA, now what?  Try to use the current url!
+        }
+      }
+      
+      if (panic) {
+        // So, we are in panic mode.  The filters have changed.
+        var index = this._source.getRefRowByColumnValue(cur_ref, "url", cur_url);
+        dump("PANIC!!!! " + cur_url + " - " + index + "\n");
+        // If we can find the current url in the current list, use that as the index
+        if (index != -1)
+          cur_index = index;
+        else
+          return; // Otherwise, stop playback.
       }
     }
-    
-    if (panic) {
-      // So, we are in panic mode.  The filters have changed.
-      var index = this._source.getRefRowByColumnValue(cur_ref, "url", cur_url);
-      dump("PANIC!!!! " + cur_url + " - " + index + "\n");
-      // If we can find the current url in the current list, use that as the index
-      if (index != -1)
-        cur_index = index;
-      else
-        return; // Otherwise, stop playback.
-    }
-    
+
     this._playlistIndex.intValue = cur_index;
 
     LOG( "current index: " + cur_index );
     
     if ( cur_index > -1 ) {
       // Play the next playlist entry tree index (or whatever, based upon state.)
-      var num_items = this._source.getRefRowCount( cur_ref );
+      // XXXnewlib
+      var num_items = this._playingView ? this._playingView.length : this._source.getRefRowCount( cur_ref );
       LOG( num_items + " items in the current playlist" );
       var next_index = -1;
       // Are we confused?
@@ -1772,7 +1819,13 @@ PlaylistPlayback.prototype = {
       // If we think we want to play a track, do so.
       LOG( "next index: " + next_index );
       if ( next_index != -1 ) {
-        this.playRef( cur_ref, next_index );
+        // XXXnewlib
+        if (this._playingView) {
+          this.playView( this._playingView, next_index );
+        }
+        else {
+          this.playRef( cur_ref, next_index );
+        }
       } else {
         this.stop();
       }        
@@ -1868,16 +1921,15 @@ PlaylistPlayback.prototype = {
   _updateCurrentInfo: function(aSourceRef, aIndex)
   {
     // These define what is _actually_ playing
-    this._playingRef.stringValue = aSourceRef;
+
     this._playlistIndex.intValue = aIndex;
-    
-    // And from those, we ask the Playlistsource to tell us who to play
+    this._playingRef.stringValue = aSourceRef;
     var url = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "url" );
     var title = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "title" );
     var artist = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "artist" );
     var album = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "album" );
     var genre = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "genre" );
-    
+
     // Clear the data remotes
     this._playURL.stringValue = "";
     this._metadataURL.stringValue = "";
@@ -1894,7 +1946,7 @@ PlaylistPlayback.prototype = {
     this._metadataArtist.stringValue = artist;
     this._metadataAlbum.stringValue = album;
     this._metadataGenre.stringValue = genre;
-    
+
     // Record what the filters on the ref are for a check in _playNextPrev()
     this.num_filters = this._source.getNumFilters( aSourceRef );
     this.filters = new Array();
@@ -1904,7 +1956,39 @@ PlaylistPlayback.prototype = {
       this.filters.push( this._source.getFilter( aSourceRef, i ) );
     };
   },
-  
+
+  _updateCurrentInfoFromView: function(aView, aIndex)
+  {
+    // XXXnewlib
+    this._playingRef.stringValue = aView.mediaList.guid;
+    this._playlistIndex.intValue = aIndex;
+
+    var item   = aView.getItemByIndex(aIndex);
+    var base   = "http://songbirdnest.com/data/1.0#";
+    var url    = item.contentSrc.spec;
+    var title  = item.getProperty(base + "trackName");
+    var artist = item.getProperty(base + "artistName");
+    var album  = item.getProperty(base + "albumName");
+    var genre  = item.getProperty(base + "genre");
+
+    // Clear the data remotes
+    this._playURL.stringValue = "";
+    this._metadataURL.stringValue = "";
+    this._metadataTitle.stringValue = "";
+    this._metadataArtist.stringValue = "";
+    this._metadataAlbum.stringValue = "";
+    this._metadataGenre.stringValue = "";
+    this._metadataLen.intValue = 0;
+    
+    // Set the data remotes to indicate what is about to play
+    this._playURL.stringValue = url;
+    this._metadataURL.stringValue = url;
+    this._metadataTitle.stringValue = title;
+    this._metadataArtist.stringValue = artist;
+    this._metadataAlbum.stringValue = album;
+    this._metadataGenre.stringValue = genre;
+  },
+
   _restartApp: function() {
     // this is being watched by the main document in order to implement it
     this._restartAppNow.boolValue = true;
