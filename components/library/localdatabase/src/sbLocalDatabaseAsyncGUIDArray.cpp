@@ -151,7 +151,8 @@ sbLocalDatabaseAsyncGUIDArray::EnqueueCommand(CommandType aType,
   NS_ENSURE_STATE(mProxiedListener);
   NS_ENSURE_FALSE(mThreadShutDown, NS_ERROR_ABORT);
 
-  TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - EnqueueCommand", this));
+  TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - EnqueueCommand(%d, %d)",
+         this, aType, aIndex));
 
   {
     nsAutoMonitor mon(mQueueMonitor);
@@ -533,7 +534,7 @@ CommandProcessor::Run()
 {
   nsresult rv;
 
-  TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Background Thread Start", this));
+  TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Background Thread Start", mFriendArray));
 
   while (PR_TRUE) {
 
@@ -612,7 +613,7 @@ CommandProcessor::Run()
         case eGetLength:
           {
             TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - "
-                   "Background GetLength", this));
+                   "Background GetLength", mFriendArray));
 
             PRUint32 length;
             nsresult innerResult = inner->GetLength(&length);
@@ -623,7 +624,7 @@ CommandProcessor::Run()
         case eGetByIndex:
           {
             TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - "
-                   "Background GetByIndex", this));
+                   "Background GetByIndex", mFriendArray));
 
             nsAutoString guid;
             nsresult innerResult = inner->GetByIndex(cs.index, guid);
@@ -634,7 +635,7 @@ CommandProcessor::Run()
         case eGetSortPropertyValueByIndex:
           {
             TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - "
-                   "Background GetSortPropertyValueByIndex", this));
+                   "Background GetSortPropertyValueByIndex", mFriendArray));
 
             nsAutoString value;
             nsresult innerResult = inner->GetSortPropertyValueByIndex(cs.index,
@@ -648,7 +649,7 @@ CommandProcessor::Run()
         case eGetMediaItemIdByIndex:
           {
             TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - "
-                   "Background GetMediaItemIdByIndex", this));
+                   "Background GetMediaItemIdByIndex", mFriendArray));
 
             PRUint32 mediaItemId;
             nsresult innerResult = inner->GetMediaItemIdByIndex(cs.index,
@@ -671,7 +672,7 @@ CommandProcessor::Run()
     }
   }
 
-  TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Background Thread End", this));
+  TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Background Thread End", mFriendArray));
 
   return NS_OK;
 }
