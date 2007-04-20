@@ -95,6 +95,10 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray, PRUint32 aSleepMS, sbIM
   nsCOMPtr<sbIMetadataJob> task = do_CreateInstance("@songbirdnest.com/Songbird/MetadataJob;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsAutoString tableName = NS_LITERAL_STRING("TempTableName");
+  rv = task->Init(tableName, aMediaItemsArray, aSleepMS);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // TODO:
   //  - Create a guid
   //  - Add the task guid to the tracking table

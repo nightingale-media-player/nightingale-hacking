@@ -69,6 +69,8 @@
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
+class sbIMediaItem;
+
 class sbMetadataJob : public sbIMetadataJob
 {
 public:
@@ -78,20 +80,69 @@ public:
   sbMetadataJob();
   virtual ~sbMetadataJob();
 
+  static void MetadataJobTimer(nsITimer *aTimer, void *aClosure)
+  {
+    ((sbMetadataJob*)aClosure)->RunTimer();
+  }
   static nsresult PR_CALLBACK MetadataJobProcessor(sbMetadataJob* pMetadataJob)
   {
-    pMetadataJob->ThreadStart();
+    return pMetadataJob->RunThread();
   }
 
-  static void MetadataJobTimerInterval(nsITimer *aTimer, void *aClosure);
-  static void MetadataJobTimerWorker(nsITimer *aTimer, void *aClosure);
+  static inline nsString DATABASE_GUID() { return NS_LITERAL_STRING( "sbMetadataJob" ); }
 
 protected:
-  void ThreadStart();
+  struct jobitem_t
+  {
+    jobitem_t(
+      nsString _library_guid = nsString(),
+      nsString _item_guid = nsString(),
+      nsString _url = nsString(),
+      nsString _worker_thread = nsString(),
+      nsString _is_scanned = nsString(),
+      sbIMetadataHandler *_handler = nsnull
+    ) :
+      library_guid( _library_guid ),
+      item_guid( _item_guid ),
+      url( _url ),
+      worker_thread( _worker_thread ),
+      is_scanned( _is_scanned ),
+      handler( _handler )
+    {}
+
+    nsString library_guid;
+    nsString item_guid;
+    nsString url;
+    nsString worker_thread;
+    nsString is_scanned;
+    nsCOMPtr<sbIMetadataHandler> handler;
+  };
+
+  nsresult RunTimer();
+  nsresult CancelTimer();
+  nsresult RunThread();
+  nsresult CancelThread();
+
+  nsresult AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, sbIMediaItem *aMediaItem  );
+  nsresult GetNextItem( sbIDatabaseQuery *aQuery, PRBool isWorkerThread, jobitem_t **_retval );
+  nsresult SetItemComplete( sbIDatabaseQuery *aQuery, jobitem_t *aItem );
+  nsresult StartHandlerForItem( jobitem_t *aItem );
+  nsresult AddMetadataToItem( jobitem_t *aItem );
+
+#define MDJ_CRACK( f, s )
+  inline nsAutoString f ( sbIDatabaseResult *i ) { nsAutoString str; i->GetRowCellByColumn(0, NS_LITERAL_STRING( s ), str); return str; }
+MDJ_CRACK( LG, "library_guid" );
+MDJ_CRACK( IG, "item_guid" );
+MDJ_CRACK( URL, "url" );
+MDJ_CRACK( WT, "worker_thread" );
+MDJ_CRACK( IS, "is_scanned" );
 
   nsString                      mTableName;
-  nsCOMPtr<sbIDatabaseQuery>    mQuery;
+  PRUint32                      mSleepMS;
+  nsCOMPtr<sbIDatabaseQuery>    mMainThreadQuery;
+  nsCOMPtr<sbIDatabaseQuery>    mWorkerThreadQuery;
   PRBool                        mShouldShutdown;
+  nsCOMPtr<nsITimer>            mTimer;
   nsCOMPtr<nsIThread>           mThread;
   nsCOMPtr<sbIMetadataManager>  mMetadataManager;
 };
@@ -108,8 +159,7 @@ public:
 
     NS_IMETHOD Run()
     {
-      sbMetadataJob::MetadataJobProcessor(m_pMetadataJob);
-      return NS_OK;
+      return sbMetadataJob::MetadataJobProcessor(m_pMetadataJob);
     }
 
 protected:

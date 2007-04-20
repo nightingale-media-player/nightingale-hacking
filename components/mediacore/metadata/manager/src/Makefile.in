@@ -46,7 +46,10 @@ CPP_SRCS = MetadataManager.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/medialibrary/public \
+               $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/dbengine/public \
+               $(DEPTH)/components/sqlbuilder/public \
+               $(topsrcdir)/components/sqlbuilder/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \

@@ -25,7 +25,7 @@
  */
 
 var PROFILE_TIME = false;
-var USE_NEW_API = true;
+var USE_NEW_API = false;
 var theGUIDSArray = {};
 var theSongbirdLibrary = null;
 
@@ -113,9 +113,9 @@ function onPollScan()
 
       theLabel.value = SBString("media_scan.composing", "Composing Query...");
       onScanComplete();
-      document.getElementById("button_ok").removeAttribute( "disabled" );
+      document.getElementById("button_ok").removeAttribute( "hidden" );
       document.getElementById("button_ok").focus();
-      document.getElementById("button_cancel").setAttribute( "disabled", "true" );
+      document.getElementById("button_cancel").setAttribute( "hidden", "true" );
     }   
     else
     {
@@ -202,6 +202,8 @@ function onScanComplete( )
           return;
         }
         
+        msDBQuery = new sbIDatabaseQuery();
+        
         msDBQuery.resetQuery();
         msDBQuery.setAsyncQuery( true );
         msDBQuery.setDatabaseGUID( theTargetDatabase );
@@ -212,7 +214,7 @@ function onScanComplete( )
         var i = 0, count = 0, total = 0;
         total = aMediaScanQuery.getFileCount();
 
-        msDBQuery.setQuery( "start" );
+        msDBQuery.addQuery( "start" );
 
         for ( i = 0, count = 0; i < total; i++ )
         {
@@ -229,13 +231,13 @@ function onScanComplete( )
           
           if ( ( ( i + 1 ) % 500 ) == 0 )
           {
-            msDBQuery.setQuery( "commit" );
-            msDBQuery.setQuery( "start" );
+            msDBQuery.addQuery( "commit" );
+            msDBQuery.addQuery( "start" );
           }
         }
         theTotalItems = total;;
 
-        msDBQuery.setQuery( "commit" );
+        msDBQuery.addQuery( "commit" );
         
         count = msDBQuery.getQueryCount();
         if ( count )

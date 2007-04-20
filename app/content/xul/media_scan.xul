@@ -76,7 +76,7 @@
       
     <hbox>
       <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;" disabled="true" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <button id="button_ok" label="&window.ok;" hidden="true" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
       <spacer width="5"/>
       <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
       <spacer flex="1"/>  
