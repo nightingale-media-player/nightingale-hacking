@@ -1,0 +1,67 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIOrderableMediaList.idl
+ * \brief Definition of the sbIOrderableMediaList interface
+ * \sa sbIMediaList.idl
+ */
+
+#include "nsISupports.idl"
+
+interface sbIMediaItem;
+
+/**
+* \interface sbIOrderableMediaList
+* \brief Media lists that implement this interface support custom ordering
+* \sa sbIMediaList
+*/
+[scriptable, uuid(a4736e01-789d-43d8-890f-17cc328a1cce)]
+interface sbIOrderableMediaList : nsISupports
+{
+  /**
+   * \brief Insert a media item before the specified media item
+   * \param aIndex Position of item to insert before
+   * \param aMediaItem Media item to insert
+   */
+  void insertBefore(in unsigned long aIndex,
+                    in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Move a media item from one position to another in the list
+   * \param aFromIndex Index of media item to move
+   * \param aToIndex Index of media item to insert the moved item before
+   */
+  void moveBefore(in unsigned long aFromIndex,
+                  in unsigned long aToIndex);
+
+  /**
+   * \brief Move a media item to the end of the list
+   * \param aIndex Index of media item to move
+   */
+  void moveLast(in unsigned long aIndex);
+};
+

@@ -38,6 +38,8 @@ class sbIMediaListListener;
 
 class sbLocalDatabaseMediaListListener
 {
+  friend class sbAutoBatchHelper;
+
   typedef nsInterfaceHashtableMT<nsISupportsHashKey, sbIMediaListListener>
           sbMediaListListenersTableMT;
 

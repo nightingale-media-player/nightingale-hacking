@@ -45,6 +45,7 @@
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
 #include <sbISQLBuilder.h>
+#include <nsITimer.h>
 
 #include <DatabaseQuery.h>
 #include <nsAutoLock.h>
@@ -106,13 +107,6 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 
 #define countof(_array) (sizeof(_array) / sizeof(_array[0]))
 
-#define SB_NOT_AVAILABLE_IN_LIBRARY()                                          \
-  PR_BEGIN_MACRO                                                               \
-    NS_NOTREACHED("The library maintains an unordered list of items and so "   \
-                  "this method is not implemented");                           \
-    return NS_ERROR_NOT_IMPLEMENTED;                                           \
-  PR_END_MACRO
-
 static char* kInsertQueryColumns[] = {
   "guid",
   "created",
@@ -162,7 +156,9 @@ sbLibraryInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList
     rv = mFriendLibrary->AddItemToLocalDatabase(aMediaItem);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mFriendLibrary->NotifyListenersItemAdded(mFriendLibrary, aMediaItem);
+    // Remember this media item for later so we can notify with it
+    PRBool success = mNotificationList.AppendObject(aMediaItem);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
     mShouldInvalidate = PR_TRUE;
   }
@@ -186,6 +182,13 @@ sbLibraryInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList
 
     nsresult rv = mFriendLibrary->mFullArray->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Notify our listeners
+  PRUint32 count = mNotificationList.Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    mFriendLibrary->NotifyListenersItemAdded(mFriendLibrary,
+                                             mNotificationList[i]);
   }
 
   return NS_OK;
@@ -1715,8 +1718,9 @@ sbLocalDatabaseLibrary::BatchNotifyAdded(nsIArray *aMediaItemArray) {
     // And notify the world that we changed this.
     NotifyListenersItemAdded(this, mediaItem);
   }
-}
 
+  return NS_OK;
+}
 
 /**
  * See sbIMediaList
@@ -1861,35 +1865,6 @@ sbLocalDatabaseLibrary::AddSome(nsISimpleEnumerator* aMediaItems)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
-}
-
-/**
- * See sbIMediaList
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::InsertBefore(PRUint32 aIndex,
-                                     sbIMediaItem* aMediaItem)
-{
-  SB_NOT_AVAILABLE_IN_LIBRARY();
-}
-
-/**
- * See sbIMediaList
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::MoveBefore(PRUint32 aFromIndex,
-                                   PRUint32 aToIndex)
-{
-  SB_NOT_AVAILABLE_IN_LIBRARY();
-}
-
-/**
- * See sbIMediaList
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::MoveLast(PRUint32 aIndex)
-{
-  SB_NOT_AVAILABLE_IN_LIBRARY();
 }
 
 /**
@@ -2142,3 +2117,4 @@ sbLocalDatabaseLibrary::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
+

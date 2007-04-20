@@ -37,6 +37,7 @@
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
+#include <nsITimer.h>
 #include <nsStringGlue.h>
 #include <sbIMediaListFactory.h>
 
@@ -44,6 +45,7 @@ class nsIURI;
 class nsIWeakReference;
 class nsStringHashKey;
 class sbAutoBatchHelper;
+class sbIBatchCreateMediaItemsListener;
 class sbILocalDatabasePropertyCache;
 class sbLibraryInsertingEnumerationListener;
 class sbLibraryRemovingEnumerationListener;
@@ -57,9 +59,6 @@ class sbLocalDatabasePropertyCache;
   NS_IMETHOD Add(sbIMediaItem* aMediaItem);                                     \
   NS_IMETHOD AddAll(sbIMediaList* aMediaList);                                  \
   NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);                         \
-  NS_IMETHOD InsertBefore(PRUint32 aIndex, sbIMediaItem* aMediaItem);           \
-  NS_IMETHOD MoveBefore(PRUint32 aFromIndex, PRUint32 aToIndex);                \
-  NS_IMETHOD MoveLast(PRUint32 aIndex);                                         \
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);                                  \
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex);                                    \
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);                      \
@@ -72,10 +71,10 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
                                public sbILibrary,
                                public sbILocalDatabaseLibrary
 {
-  friend class sbAutoBatchHelper;
   friend class sbLibraryInsertingEnumerationListener;
   friend class sbLibraryRemovingEnumerationListener;
   friend class sbLocalDatabasePropertyCache;
+  friend class sbBatchCreateTimerCallback;
 
   struct sbMediaListFactoryInfo {
     sbMediaListFactoryInfo()
@@ -189,7 +188,11 @@ private:
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
 
   sbMediaItemInfoTable mMediaItemTable;
+
+  nsCOMPtr<nsITimer> mBatchCreateTimer;
+  nsCOMPtr<nsITimerCallback> mBatchCreateTimerCallback;
 };
+
 
 /**
  * class sbLibraryInsertingEnumerationListener
@@ -210,6 +213,7 @@ public:
 private:
   sbLocalDatabaseLibrary* mFriendLibrary;
   PRBool mShouldInvalidate;
+  nsCOMArray<sbIMediaItem> mNotificationList;
 };
 
 /**
@@ -233,32 +237,6 @@ private:
   nsCOMPtr<sbIDatabaseQuery> mDBQuery;
   nsCOMArray<sbIMediaItem> mNotificationList;
   PRPackedBool mItemEnumerated;
-};
-
-/**
- * \class sbAutoBatchHelper
- *
- * \brief Simple class to make sure we notify listeners that a batch operation
- *        has completed every time they are notified that a batch operation
- *        has begun.
- */
-class sbAutoBatchHelper
-{
-public:
-  sbAutoBatchHelper(sbLocalDatabaseLibrary* aLibrary)
-  : mLibrary(aLibrary)
-  {
-    NS_ASSERTION(mLibrary, "Null pointer!");
-    mLibrary->NotifyListenersBatchBegin(mLibrary);
-  }
-
-  ~sbAutoBatchHelper()
-  {
-    mLibrary->NotifyListenersBatchEnd(mLibrary);
-  }
-
-private:
-  sbLocalDatabaseLibrary* mLibrary;
 };
 
 #endif /* __SBLOCALDATABASELIBRARY_H__ */

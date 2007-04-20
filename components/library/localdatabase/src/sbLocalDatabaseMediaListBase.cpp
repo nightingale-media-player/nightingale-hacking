@@ -26,7 +26,6 @@
 
 #include "sbLocalDatabaseMediaListBase.h"
 
-#include <nsIProgrammingLanguage.h>
 #include <nsIProperty.h>
 #include <nsIPropertyBag.h>
 #include <nsISimpleEnumerator.h>
@@ -64,16 +63,8 @@ NS_IMPL_ADDREF(sbLocalDatabaseMediaListBase)
 NS_IMPL_RELEASE(sbLocalDatabaseMediaListBase)
 
 NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaListBase)
-  NS_INTERFACE_MAP_ENTRY(nsIClassInfo)
   NS_INTERFACE_MAP_ENTRY(sbIMediaList)
 NS_INTERFACE_MAP_END_INHERITING(sbLocalDatabaseMediaItem)
-
-NS_IMPL_CI_INTERFACE_GETTER5(sbLocalDatabaseMediaListBase,
-                             nsIClassInfo,
-                             nsISupportsWeakReference,
-                             sbILibraryResource,
-                             sbIMediaItem,
-                             sbIMediaList)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
 : mFullArrayMonitor(nsnull),
@@ -280,13 +271,20 @@ sbLocalDatabaseMediaListBase::EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnu
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoString str;
+  nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#mediaListName"), str);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::SetName(const nsAString& aName)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentUrl"), aName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -756,29 +754,6 @@ sbLocalDatabaseMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::InsertBefore(PRUint32 aIndex,
-                                           sbIMediaItem* aMediaItem)
-{
-  NS_NOTREACHED("Not meant to be implemented in this base class");
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::MoveBefore(PRUint32 aFromIndex,
-                                         PRUint32 aToIndex)
-{
-  NS_NOTREACHED("Not meant to be implemented in this base class");
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::MoveLast(PRUint32 aIndex)
-{
-  NS_NOTREACHED("Not meant to be implemented in this base class");
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Remove(sbIMediaItem* aMediaItem)
 {
   NS_NOTREACHED("Not meant to be implemented in this base class");
@@ -837,62 +812,5 @@ sbLocalDatabaseMediaListBase::EndUpdateBatch()
 {
   sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(this);
   return NS_OK;
-}
-
-// nsIClassInfo
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetInterfaces(PRUint32* count, nsIID*** array)
-{
-  return NS_CI_INTERFACE_GETTER_NAME(sbLocalDatabaseMediaListBase)(count, array);
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetHelperForLanguage(PRUint32 language,
-                                                   nsISupports** _retval)
-{
-  *_retval = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetContractID(char** aContractID)
-{
-  *aContractID = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetClassDescription(char** aClassDescription)
-{
-  *aClassDescription = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetClassID(nsCID** aClassID)
-{
-  *aClassID = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetImplementationLanguage(PRUint32* aImplementationLanguage)
-{
-  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetFlags(PRUint32 *aFlags)
-{
-// not yet  *aFlags = nsIClassInfo::THREADSAFE;
-  *aFlags = 0;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
-{
-  return NS_ERROR_NOT_AVAILABLE;
 }
 

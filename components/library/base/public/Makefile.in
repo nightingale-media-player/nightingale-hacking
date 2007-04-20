@@ -39,7 +39,9 @@ XPIDL_SRCS = sbIFilterableMediaList.idl \
              sbIMediaListView.idl \
              sbIMediaListFactory.idl \
              sbIMediaListListener.idl \
+             sbIMediaListViewTreeView.idl \
              sbILibraryResource.idl \
+             sbIOrderableMediaList.idl \
              sbISearchableMediaList.idl \
              sbISortableMediaList.idl \
              sbICascadeFilterSet.idl \

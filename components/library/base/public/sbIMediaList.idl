@@ -186,28 +186,6 @@ interface sbIMediaList : sbIMediaItem
   void addSome(in nsISimpleEnumerator aMediaItems);
 
   /**
-   * \brief Insert a media item before the specified media item
-   * \param aIndex Position of item to insert before
-   * \param aMediaItem Media item to insert
-   */
-  void insertBefore(in unsigned long aIndex,
-                    in sbIMediaItem aMediaItem);
-
-  /**
-   * \brief Move a media item from one position to another in the list
-   * \param aFromIndex Index of media item to move
-   * \param aToIndex Index of media item to insert the moved item before
-   */
-  void moveBefore(in unsigned long aFromIndex,
-                  in unsigned long aToIndex);
-
-  /**
-   * \brief Move a media item to the end of the list
-   * \param aIndex Index of media item to move
-   */
-  void moveLast(in unsigned long aIndex);
-
-  /**
    * \brief Remove the first occurrence of the given media item from the list
    * \param aMediaItem Media item to remove
    */

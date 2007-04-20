@@ -61,7 +61,7 @@ static PRLogModuleInfo* gLocalDatabaseTreeViewLog = nsnull;
 NS_IMPL_ISUPPORTS3(sbLocalDatabaseTreeView,
                    nsITreeView,
                    sbILocalDatabaseAsyncGUIDArrayListener,
-                   sbILocalDatabaseTreeView)
+                   sbIMediaListViewTreeView)
 
 sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mCachedRowCount(0),
@@ -448,7 +448,8 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
   rv = GetPropertyForTreeColumn(col, bind);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (bind.Equals(NS_LITERAL_STRING("row"))) {
+  // If this is an ordinal column, return just the row number
+  if (bind.Equals(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal"))) {
     _retval.AppendInt(row);
     return NS_OK;
   }
@@ -675,13 +676,32 @@ sbLocalDatabaseTreeView::CanDrop(PRInt32 index,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - CanDrop(%d, %d)", this,
+         index, orientation));
+
+  if (mObserver) {
+    nsresult rv = mObserver->CanDrop(index, orientation, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    *_retval = PR_FALSE;
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::Drop(PRInt32 row, PRInt32 orientation)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - Drop(%d, %d)", this,
+         row, orientation));
+
+  if (mObserver) {
+    nsresult rv = mObserver->Drop(row, orientation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -908,7 +928,7 @@ sbLocalDatabaseTreeView::PerformActionOnCell(const PRUnichar* action,
 }
 
 /**
- * See sbILocalDatabaseTreeView
+ * See sbIMediaListViewTreeView
  */
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::GetNextRowIndexForKeyNavigation(const nsAString& aKeyString,
@@ -981,7 +1001,7 @@ sbLocalDatabaseTreeView::GetNextRowIndexForKeyNavigation(const nsAString& aKeySt
     // We know that we've found the right spot if the row immediately
     // preceeding this one was cached yet did not match or if this is the
     // first row to be searched.
-    if ((lastRow == index - 1) || (index == aStartFrom)) {
+    if ((lastRow == ((PRInt32) index) - 1) || (index == aStartFrom)) {
       *_retval = index;
       return NS_OK;
     }
@@ -1004,3 +1024,29 @@ sbLocalDatabaseTreeView::GetNextRowIndexForKeyNavigation(const nsAString& aKeySt
   *_retval = (PRInt32)index;
   return NS_OK;
 }
+
+/**
+ * See sbIMediaListViewTreeView
+ */
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::SetObserver(sbIMediaListViewTreeViewObserver* aObserver)
+{
+  NS_ENSURE_ARG_POINTER(aObserver);
+
+  mObserver = aObserver;
+
+  return NS_OK;
+}
+
+/**
+ * See sbIMediaListViewTreeView
+ */
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetObserver(sbIMediaListViewTreeViewObserver** aObserver)
+{
+  NS_ENSURE_ARG_POINTER(aObserver);
+
+  NS_IF_ADDREF(*aObserver = mObserver);
+  return NS_OK;
+}
+

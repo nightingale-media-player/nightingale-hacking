@@ -26,6 +26,7 @@
 
 #include "sbLocalDatabaseSimpleMediaList.h"
 
+#include <nsIProgrammingLanguage.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIURI.h>
 #include <sbIDatabaseQuery.h>
@@ -43,6 +44,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <nsMemory.h>
 #include <pratom.h>
 #include <sbLocalDatabaseMediaListView.h>
 #include <sbSQLBuilderCID.h>
@@ -117,7 +119,9 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
   NS_ASSERTION(aMediaList != mFriendList,
                "Can't enumerate our friend media list!");
 
-  mFriendList->NotifyListenersItemAdded(mFriendList, aMediaItem);
+  // Remember this media item for later so we can notify with it
+  PRBool success = mNotificationList.AppendObject(aMediaItem);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = mDBQuery->AddQuery(mFriendList->mInsertIntoListQuery);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -175,6 +179,13 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
   // Invalidate the cached list
   rv = mFriendList->mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Notify our listeners
+  PRUint32 count = mNotificationList.Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    mFriendList->NotifyListenersItemAdded(mFriendList,
+                                          mNotificationList[i]);
+  }
 
   return NS_OK;
 }
@@ -272,10 +283,22 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseSimpleMediaList,
+NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseSimpleMediaList,
                              sbLocalDatabaseMediaListBase,
+                             nsIClassInfo,
                              sbIMediaListListener,
+                             sbIOrderableMediaList,
                              sbILocalDatabaseSimpleMediaList)
+
+NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseSimpleMediaList,
+                             nsIClassInfo,
+                             nsISupportsWeakReference,
+                             sbIMediaListListener,
+                             sbILibraryResource,
+                             sbIMediaItem,
+                             sbIMediaList,
+                             sbILocalDatabaseSimpleMediaList,
+                             sbIOrderableMediaList);
 
 nsresult
 sbLocalDatabaseSimpleMediaList::Init(sbILocalDatabaseLibrary* aLibrary,
@@ -410,6 +433,8 @@ sbLocalDatabaseSimpleMediaList::AddAll(sbIMediaList* aMediaList)
 
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
+  sbAutoBatchHelper batchHelper(this);
+
   sbSimpleMediaListInsertingEnumerationListener listener(this);
   nsresult rv =
     aMediaList->EnumerateAllItems(&listener,
@@ -430,6 +455,8 @@ sbLocalDatabaseSimpleMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
 
   nsresult rv = listener.OnEnumerationBegin(nsnull, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  sbAutoBatchHelper batchHelper(this);
 
   PRBool hasMore;
   while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
@@ -466,6 +493,8 @@ sbLocalDatabaseSimpleMediaList::InsertBefore(PRUint32 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ENSURE_ARG_MAX(aIndex, length - 1);
+
+  NotifyListenersItemAdded(this, aMediaItem);
 
   nsAutoString ordinal;
   rv = GetBeforeOrdinal(aIndex, ordinal);
@@ -1401,3 +1430,60 @@ sbLocalDatabaseSimpleMediaList::OnBatchEnd(sbIMediaList* aMediaList)
 
   return NS_OK;
 }
+
+// nsIClassInfo
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetInterfaces(PRUint32* count, nsIID*** array)
+{
+  return NS_CI_INTERFACE_GETTER_NAME(sbLocalDatabaseSimpleMediaList)(count, array);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetHelperForLanguage(PRUint32 language,
+                                                     nsISupports** _retval)
+{
+  *_retval = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetContractID(char** aContractID)
+{
+  *aContractID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetClassDescription(char** aClassDescription)
+{
+  *aClassDescription = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetClassID(nsCID** aClassID)
+{
+  *aClassID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetImplementationLanguage(PRUint32* aImplementationLanguage)
+{
+  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetFlags(PRUint32 *aFlags)
+{
+  *aFlags = nsIClassInfo::THREADSAFE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
+{
+  return NS_ERROR_NOT_AVAILABLE;
+}
+

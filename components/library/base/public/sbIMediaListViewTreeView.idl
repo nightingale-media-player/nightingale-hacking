@@ -1,0 +1,75 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILibraryTreeView.idl
+ */
+
+#include "nsISupports.idl"
+
+/**
+* \interface sbIMediaListViewTreeViewObserver
+* \brief Observer to implement the nsITreeView methods that a
+*        sbIMediaListViewTreeView does not.
+*/
+[scriptable, uuid(d34060ad-5aff-46b1-8029-b446e57b59df)]
+interface sbIMediaListViewTreeViewObserver : nsISupports
+{
+  const long DROP_BEFORE = -1;
+  const long DROP_ON = 0;
+  const long DROP_AFTER = 1;
+
+  boolean canDrop(in long index, in long orientation);
+  void drop(in long row, in long orientation);
+};
+
+/**
+* \interface sbIMediaListViewTreeView
+* \brief A tree view that views a media list view
+*/
+[scriptable, uuid(53b15ff3-e26c-43ce-9edd-120ac083edad)]
+interface sbIMediaListViewTreeView : nsISupports
+{
+  /**
+   * \brief Calculates the first row index based on a series of keystrokes.
+   *
+   * This method helps optimize the behavior of the tree view. When keyboard
+   * input occurs we want to select the next row that matches the keys that
+   * were pressed.
+   *
+   * \param aKeyString - The accumulated keystrokes to be matched.
+   * \param aStartFrom - The index from which to start searching
+   *
+   * \return The index of the next row that matches the keystrokes. -1 if the
+   *         keystrokes do not match any row. The returned row index may be
+   *         equal to the value passed in to aStartFrom.
+   */
+  long getNextRowIndexForKeyNavigation(in AString aKeyString,
+                                       in unsigned long aStartFrom);
+
+  attribute sbIMediaListViewTreeViewObserver observer;
+};
+

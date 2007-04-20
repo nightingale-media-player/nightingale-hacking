@@ -30,6 +30,8 @@
 #include "sbLocalDatabaseMediaListBase.h"
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaListListener.h>
+#include <sbIOrderableMediaList.h>
+#include <nsIClassInfo.h>
 
 #include <nsStringGlue.h>
 #include <nsCOMArray.h>
@@ -46,15 +48,18 @@ class sbSimpleMediaListRemovingEnumerationListener;
 
 class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase,
                                        public sbILocalDatabaseSimpleMediaList,
-                                       public sbIMediaListListener
+                                       public sbIMediaListListener,
+                                       public sbIOrderableMediaList
 {
 public:
   friend class sbSimpleMediaListInsertingEnumerationListener;
   friend class sbSimpleMediaListRemovingEnumerationListener;
 
   NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_NSICLASSINFO
   NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_SBILOCALDATABASESIMPLEMEDIALIST
+  NS_DECL_SBIORDERABLEMEDIALIST
 
   sbLocalDatabaseSimpleMediaList()
   : mBatchRemoveListener(nsnull)
@@ -69,9 +74,6 @@ public:
   NS_IMETHOD Add(sbIMediaItem *aMediaItem);
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems);
-  NS_IMETHOD InsertBefore(PRUint32 aIndex, sbIMediaItem* aMediaItem);
-  NS_IMETHOD MoveBefore(PRUint32 aFromIndex, PRUint32 aToIndex);
-  NS_IMETHOD MoveLast(PRUint32 aIndex);
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex);
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);
@@ -143,6 +145,7 @@ private:
   sbLocalDatabaseSimpleMediaList* mFriendList;
   nsCOMPtr<sbIDatabaseQuery> mDBQuery;
   nsString mOrdinal;
+  nsCOMArray<sbIMediaItem> mNotificationList;
   PRBool mItemEnumerated;
 };
 

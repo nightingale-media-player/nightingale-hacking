@@ -29,7 +29,7 @@
 
 #include <nsITreeView.h>
 #include <sbILocalDatabaseAsyncGUIDArray.h>
-#include <sbILocalDatabaseTreeView.h>
+#include <sbIMediaListViewTreeView.h>
 
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
@@ -46,13 +46,13 @@ class sbIPropertyArray;
 
 class sbLocalDatabaseTreeView : public nsITreeView,
                                 public sbILocalDatabaseAsyncGUIDArrayListener,
-                                public sbILocalDatabaseTreeView
+                                public sbIMediaListViewTreeView
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSITREEVIEW
   NS_DECL_SBILOCALDATABASEASYNCGUIDARRAYLISTENER
-  NS_DECL_SBILOCALDATABASETREEVIEW
+  NS_DECL_SBIMEDIALISTVIEWTREEVIEW
 
   sbLocalDatabaseTreeView();
 
@@ -88,7 +88,6 @@ private:
 
   void InvalidateCache();
 
-private:
   // The media list view that this tree view is a view of
   nsCOMPtr<sbIMediaListView> mMediaListView;
 
@@ -125,6 +124,9 @@ private:
   // Stuff the tree view needs to track
   nsCOMPtr<nsITreeSelection> mSelection;
   nsCOMPtr<nsITreeBoxObject> mTreeBoxObject;
+
+  // Listener
+  nsCOMPtr<sbIMediaListViewTreeViewObserver> mObserver;
 
   // True if the cached row count is no longer valid
   PRPackedBool mCachedRowCountDirty;

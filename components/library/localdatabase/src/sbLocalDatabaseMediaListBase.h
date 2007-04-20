@@ -86,7 +86,6 @@ public:
   NS_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaItem::)
 
   NS_DECL_SBIMEDIALIST
-  NS_DECL_NSICLASSINFO
 
   sbLocalDatabaseMediaListBase();
   ~sbLocalDatabaseMediaListBase();
@@ -131,6 +130,32 @@ protected:
   PRMonitor* mFullArrayMonitor;
 
   PRBool mLockedEnumerationActive;
+};
+
+/**
+ * \class sbAutoBatchHelper
+ *
+ * \brief Simple class to make sure we notify listeners that a batch operation
+ *        has completed every time they are notified that a batch operation
+ *        has begun.
+ */
+class sbAutoBatchHelper
+{
+public:
+  sbAutoBatchHelper(sbLocalDatabaseMediaListBase* aList)
+  : mList(aList)
+  {
+    NS_ASSERTION(aList, "Null pointer!");
+    mList->NotifyListenersBatchBegin(mList);
+  }
+
+  ~sbAutoBatchHelper()
+  {
+    mList->NotifyListenersBatchEnd(mList);
+  }
+
+private:
+  sbLocalDatabaseMediaListBase* mList;
 };
 
 #endif /* __SBLOCALDATABASEMEDIALISTBASE_H__ */
