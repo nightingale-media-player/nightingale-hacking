@@ -578,7 +578,7 @@
   
   
   
-  <!-- Web and Library Search Widget.  
+  <!-- Search widget for web and internal searches
   
        Extends the Firefox searchbar widget to intercept Songbird library searches
        and add "search as you type" functionality.
@@ -587,7 +587,7 @@
        
        TODO:
          - Metrics
-         - Context based suggestions
+         - Localization?
     -->
   <binding id="sb-searchbar"
            extends="chrome://browser/content/search/search.xml#searchbar">
@@ -598,78 +598,279 @@
       <field name="cur_service">"search.popup.songbird"</field>
       <property name="is_songbird">
         <getter>
-          return this.songbirdSearchSelected;
+          if (this._songbirdSearchEngine == null) {
+            this._songbirdSearchEngine = this.searchService.getEngineByAlias("songbird-internal-search");
+          } 
+          return this._songbirdSearchEngine;
         </getter>
       </property>
       <property name="list">
         <getter>
-          return { label: this.value };
+          return { label: this.getSearch() };
         </getter>
       </property>    
-    
-    
-      <!-- True if queries from the current search engine 
-           should be handled by Songbird -->
-      <property name="songbirdSearchSelected">
-        <getter><![CDATA[  
-          return this.currentEngine.alias == "Songbird:Library";
-        ]]></getter>
-      </property>  
+
+      
 
 
+      <!-- Map of engine names to booleans.
+           Used to determine which engines send searches
+           on input idle. -->
+      <field name="_liveSearchEngines">new Object();</field>
+      
+      <!-- Map of engine names to display strings.
+           Used by overrideEngineDisplayText() -->
+      <field name="_engineDisplayText">new Object();</field>
+      
       <!-- When true, causes searches to be sent automatically after
-           a short delay -->
-      <property name="searchOnEditIdle">
-        <getter><![CDATA[  
-          return this.songbirdSearchSelected;
+           a short delay -->      
+      <property name="liveSearchMode">
+        <getter><![CDATA[ 
+          return this.isInLiveSearchMode(this.currentEngine);
         ]]></getter>
       </property>  
       
-                
-      <!-- Override the method responsible for executing searches
-           so that we can splice in library support -->      
-      <method name="doSearch">
-        <parameter name="aData"/>
-        <parameter name="aWhere"/>
-        <body><![CDATA[
-          // If the current search should be handled by songbird,
-          // then dispatch it via an event
-          if (this.songbirdSearchSelected) 
-          {
-            this._doLibrarySearch(aData);
+      
+      
+      
+      <!-- Replace base currentEngine setter so that changing engines immediately
+           executes the current query -->
+      <property name="currentEngine"
+                onset="">
+        <getter><![CDATA[
+          var currentEngine = this.searchService.currentEngine;
+          // Return a dummy engine if there is no currentEngine
+          return currentEngine || {name:"", uri:null};
+        ]]></getter>
+        <setter><![CDATA[
+
+          this.searchService.currentEngine = val; 
+
+          // Set the live search indicator attribute
+          // according to the state of the new engine
+          if (this.liveSearchMode) {
+            this.setAttribute("livesearchmode", "true");
+          } else {
+            if (this.hasAttribute("livesearchmode")) {
+               this.removeAttribute("livesearchmode");
+            }   
           }
-          // Otherwiser hand it off the standard FF way.
-          else
+
+          // If there was a query, then run it immediately
+          if (this.value != "" & this.getAttribute("empty") != "true") 
           {
-            // null parameter below specifies HTML response for search
-            var submission = this.currentEngine.getSubmission(aData, null);
-            openUILinkIn(submission.uri.spec, aWhere, null, submission.postData);
-          }          
+            // Pretend the user hit enter
+            this.handleSearchCommand(null);
+          }
+          
+          return val;
+        ]]></setter>        
+      </property>      
+      
+      
+      
+      
+      <!-- Get the current search query.
+           Use this function to avoid being confused by the 
+           default display text that is shown when no search
+           is active (greyed out "Google" for example).
+        -->
+      <method name="getSearch">
+        <body><![CDATA[
+        
+          if (this.getAttribute("empty") == "true") {
+            return "";
+          }
+          
+          return this.value;
         ]]></body>
       </method>    
-          
-      <!-- Dispatch the given query string to the Songbird library/playlist -->
-      <method name="_doLibrarySearch">
-        <parameter name="aQuery"/>
-        <body><![CDATA[              
-          // Add your eggs here...
-          if ( aQuery == "migmigmig" )  { alert( ".gge retsaE" ); } 
-          else if ( aQuery == "mattmattmatt" )  { alert( "Eggstereast." ); } 
+
+
+      
+
+      <!-- Overrides the text displayed when a given engine is active
+           and nothing has been entered in the textbox.  
+           Setting aText null causes the default text to be restored
+        -->
+      <method name="setEngineDisplayText">
+        <parameter name="aEngine"/>
+        <parameter name="aText"/>
+        <body><![CDATA[
+           // Add text to the engine name -> text map
+           this._engineDisplayText[aEngine.name] = aText;
+           
+           // Replace the standard display text function
+           // with our own
+           this._replaceDisplayCurrentEngine();
+        ]]></body>
+      </method>    
+
+
+
+
+      <!-- Has the given engine been flagged for live search -->
+      <method name="isInLiveSearchMode">
+        <parameter name="aEngine"/>
+        <body><![CDATA[         
+          if (aEngine.name && aEngine.name in this._liveSearchEngines 
+              && this._liveSearchEngines[aEngine.name] == true)
+          {
+            return true;
+          }
+          return false;
+        ]]></body>
+      </method>    
+
+
+
+
+
+      <!-- Flag the given engine for live search ("search as you type")
+        -->   
+      <method name="setLiveSearchMode">
+        <parameter name="aEngine"/>
+        <parameter name="aEnabled"/>
+        <body><![CDATA[
+          this._liveSearchEngines[aEngine.name] = aEnabled;
+        
+          // If the given engine is currently active then 
+          // set the livesearch indicator attribute appropriately.          
+          // This can be used to apply a special CSS style.
+          if (this.currentEngine == aEngine) {
+            this.setAttribute("livesearchmode", (aEnabled) ? "true" : "false");
+          }
+        ]]></body>
+      </method>    
+
+
+    
+      
+
+      <!-- Override the method responsible for executing searches
+           so that we can splice in internal search support 
+        -->   
+      <method name="handleSearchCommand">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          var textBox = this._textbox;
+          var textValue = this.getSearch();
+
+          // Go-button clicks in live search mode clear the search terms
+          if (this.liveSearchMode && aEvent 
+              && aEvent.originalTarget.getAttribute("anonid") == "search-go-button")
+          {
+            this.value = "";
+            this._sendSearchEvent();
+            return;
+          }
+
+          // Save the current value in the form history
+          if (textValue) {
+            textBox._formHistSvc.addEntry(textBox.getAttribute("autocompletesearchparam"),
+                                          textValue);
+          }
                     
+          // Add your eggs here...
+          if ( textValue == "migmigmig" )  { alert( ".gge retsaE" ); } 
+          else if ( textValue == "mattmattmatt" )  { alert( "Eggstereast." ); } 
+          
+          
+          // If this engine has been tagged with "songbird:sendevent"
+          // then instead of treating it like a normal search engine
+          // we just fire off an event using the Alias of the engine.
+          // This is to allow for programmatic searches
+          if (this.currentEngine.tags.indexOf("songbird:sendevent") >= 0) 
+          {
+            this._sendSearchEvent();
+          }
+          // Otherwise run the search as mozilla would
+          else 
+          {
+
+            var where = "current";
+            if (aEvent && aEvent.originalTarget.getAttribute("anonid") == "search-go-button")
+              where = whereToOpenLink(aEvent, false, true);
+            else {
+              var newTabPref = textBox._prefBranch.getBoolPref("browser.search.openintab");
+              if ((aEvent && aEvent.altKey) ^ newTabPref)
+                where = "tab";
+            }
+          
+            this.doSearch(textValue, where);
+          }
+          
+        ]]></body>
+      </method>
+
+          
+          
+      <!-- Dispatch an event with the alias of the current search engine -->
+      <method name="_sendSearchEvent">
+        <body><![CDATA[              
           var e = document.createEvent("Events");
-          e.initEvent("search", false, true);
+          if (this.currentEngine.alias) {
+            e.initEvent(this.currentEngine.alias, false, true);
+          }
           this.dispatchEvent(e);
         ]]></body>
       </method>      
+      
+      
+      <!-- Ensure that the FF default _displayCurrentEngine
+           function has been replaced with our own.
+           This allows overriding of the default display text.
+           Since we want to avoid forking the mozilla search.xml
+           we do this at runtime. Yay javascript.           
+        -->
+      <method name="_replaceDisplayCurrentEngine">
+        <body><![CDATA[
+          // If the function has already been replaced 
+          // then do nothing.
+          if (this._textbox._originalDisplayCurrentEngine) {
+            return;
+          }
+          
+          // Save the original function so that we can use it for 
+          // cases when the engine text has not been overridden
+          this._textbox._originalDisplayCurrentEngine = 
+                    this._textbox._displayCurrentEngine;
+          
+          // Replace textbox function with one that will 
+          // first check this._engineDisplayText
+          this._textbox._displayCurrentEngine = function() {
+            // See FF searchbar.xml _displayCurrentEngine
+            var searchbar = this._getParentSearchbar();
+            var text = searchbar._engineDisplayText[searchbar.currentEngine.name];
+
+            // If no override text has been provided, then use the 
+            // original display text function
+            if (text == null) {
+              this._originalDisplayCurrentEngine();
+              return;
+            }
+           
+            // Otherwise set the textbox to display
+            // the given text.
+            searchbar.setAttribute("empty", "true");
+            var searchTextbox = this;
+            setTimeout(function() {
+              if (searchbar.getAttribute("empty") == "true")
+                searchTextbox.value = text;
+            }, 0);
+          };
+        ]]></body>
+      </method>        
+      
       
       <!-- Called when a Songbird search is selected, and a short delay has passed since
            the last keystroke.  Provides "search as you type" functionality. -->
       <method name="_onSearchEditIdle">
         <body>
         <![CDATA[
-          if (this.searchOnEditIdle)
+          if (this.liveSearchMode)
           {
-            this._doLibrarySearch(this.value);
+            this._sendSearchEvent();
 
             // TODO: do something with metrics
             //metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
@@ -680,13 +881,44 @@
     </implementation>
     
     <handlers>
-    
-      <!-- Starts the idle search timer after keypress when 
-           this.searchOnEditIdle is true
+
+      <!-- Capture focus on the autocomplete textbox so that we can
+           immediately pop out the autocomplete box 
         -->
+      <handler event="focus" phase="capturing"><![CDATA[
+        const target = event.originalTarget;
+        if (target.getAttribute("class").indexOf("autocomplete-textbox") != -1) {
+          
+          // Make sure the songbird autocomplete source has been added
+          // to the textbox.
+          if (!this._textbox._hasSongbirdAutoCompleter) {
+            this._textbox.setAttribute("autocompletesearch", 
+                      "search-autocomplete songbird-autocomplete");
+            this._textbox._hasSongbirdAutoCompleter = true;
+          } 
+          
+          // If the textbox is empty then show the autocomplete
+          if (this.getAttribute("empty") == "true") {          
+
+            // Defer launching the popup so that we don't end up 
+            // refocusing and textbox and screwing up the 
+            // text displayed on empty=true
+            if (!this._waitingForPopup) {
+              this._waitingForPopup = true;
+              setTimeout(function(o) { 
+                  o._textbox.toggleHistoryPopup(); 
+                  o._waitingForPopup = false;
+                }, 10, this);
+            }
+          }                  
+        }
+      ]]></handler>
+
+    
+      <!-- Starts the idle search timer after keypress when in live search mode  -->
       <handler event="keypress"><![CDATA[
 
-        if (!this.searchOnEditIdle) {
+        if (!this.liveSearchMode) {
           return;
         }
           

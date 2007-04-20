@@ -1,0 +1,14 @@
+<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+<ShortName>Songbird</ShortName>
+<Description>Songbird Library Search</Description>
+<InputEncoding>UTF-8</InputEncoding>
+<Image width="16" height="16">chrome://songbird-branding/skin/logo_16.png</Image>
+<Url type="text/html" method="GET" template="http://unused"/>
+<!-- HACK: Instead of searching the web the search box witll fire an event with the alias of this search engine. 
+     Be aware that this method is not frozen, and is guaranteed to change at some point in the future. 
+     Note that engines with songbird:sendevent are hidden on startup, and need to be programmatically shown.     
+     See BrowserSearch and sb-search.xml for more information.
+  -->
+<Alias>songbird-internal-search</Alias>
+<Tags>songbird:sendevent</Tags>
+</SearchPlugin>

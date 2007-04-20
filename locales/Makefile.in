@@ -32,10 +32,14 @@ include $(DEPTH)/build/autodefs.mk
 JAR_MANIFEST = jar.mn
 
 # Everybody gets English for now...
-SONGBIRD_SEARCHPLUGINS = $(srcdir)/en-US/searchplugins/google.xml \
+SONGBIRD_SEARCHPLUGINS = $(srcdir)/en-US/searchplugins/dogpile.xml \
+                         $(srcdir)/en-US/searchplugins/elbows.xml \
+                         $(srcdir)/en-US/searchplugins/google.xml \
+                         $(srcdir)/en-US/searchplugins/google-lyrics.xml \
+                         $(srcdir)/en-US/searchplugins/mefeedia.xml \
+                         $(srcdir)/en-US/searchplugins/songbird-internal-search.xml \
+                         $(srcdir)/en-US/searchplugins/wikipedia.xml \
                          $(srcdir)/en-US/searchplugins/yahoo.xml \
-                         $(srcdir)/en-US/searchplugins/creativecommons.xml \
-                         $(srcdir)/en-US/searchplugins/songbird-library.xml \
                          $(NULL)
 
 

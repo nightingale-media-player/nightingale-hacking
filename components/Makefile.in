@@ -49,6 +49,7 @@ SUBDIRS = addonmetadata \
           playlistsource \
           property \
           remoteapi \
+          search \
           servicepane \
           servicesource \
           state \

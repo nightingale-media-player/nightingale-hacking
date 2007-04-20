@@ -289,45 +289,6 @@ function onSearchTerm( target, in_term )
       case "search.popup.songbird":
         onSearchEditIdle();
       break;
-      case "search.popup.creativecommons":
-        search_url = "http://search.creativecommons.com/?q=" + term;
-      break;
-      case "search.popup.mefeedia":
-        search_url = "http://www.mefeedia.com/search.php?object=feed&q=" + term;
-      break;
-      case "search.popup.google":
-        search_url = "http://www.google.com/musicsearch?q=" + term + "&sa=Search";
-      break;
-      case "search.popup.wiki":
-        search_url = "http://en.wikipedia.org/wiki/Special:Search?search=" + term;
-      break;
-      case "search.popup.yahoo":
-        search_url = "http://audio.search.yahoo.com/search/audio?ei=UTF-8&fr=sfp&p=" + term;
-      break;
-      case "search.popup.emusic":
-        search_url = "http://www.emusic.com/search.html?mode=x&QT=" + term + "&fref=150554";
-      break;
-      case "search.popup.insound":
-        search_url = "http://search.insound.com/search/searchmain.jsp?searchby=meta&query=" + term + "&fromindex=1&submit.x=0&submit.y=0";
-      break;
-      case "search.popup.odeo":
-        search_url = "http://odeo.com/search/query/?q=" + term + "&Search.x=0&Search.y=0";
-      break;
-      case "search.popup.shoutcast":
-        search_url = "http://www.shoutcast.com/directory/?s=" + term;
-      break;
-      case "search.popup.radiotime":
-        search_url = "http://radiotime.com/Search.aspx?query=" + term;
-      break;        
-      case "search.popup.elbows":
-        search_url = "http://elbo.ws/mp3s/" + term;
-      break;
-      case "search.popup.dogpile":
-        search_url = "http://www.dogpile.com/info.dogpl/search/redir.htm?r_fcid=414&r_fcp=top&advanced=1&top=1&nde=1&qcat=audio&q_all=" + term + "&q_phrase=&q_any=&q_not=&duration=long&ffmt=mp3&tviewby=1&qk=40&adultfilter=none&bottomadvancedsubmit=Go+Fetch%21";
-      break;
-      case "lyrics.popup.google":
-        search_url = "http://www.google.com/search?q=lyrics " + term + "&sa=Search&client=pub-4053348708517670&forid=1&ie=ISO-8859-1&oe=ISO-8859-1&hl=en&GALT:#333333;GL:1;DIV:#37352E;VLC:000000;AH:center;BGC:C6B396;LBGC:8E866F;ALC:000000;LC:000000;T:44423A;GFNT:663333;GIMP:663333;FORID:1;";
-      break;
     }
   }
   if ( search_url.length )

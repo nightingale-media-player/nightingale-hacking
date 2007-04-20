@@ -562,7 +562,12 @@ const BrowserSearch = {
     // Songbird modification.  Listen for location changes
     // in order to update the list of available search engines
     gBrowser.addProgressListener(this.webProgressListener,
-            Components.interfaces.nsIWebProgress.NOTIFY_ALL);  
+            Components.interfaces.nsIWebProgress.NOTIFY_ALL); 
+
+    // Show the songbird search engine
+    // (All songbird: tagged engines are hidden on startup )
+    var songbirdSearch = this.getSongbirdSearchEngine();
+    songbirdSearch.hidden = false;
   },
 
   /**
@@ -636,6 +641,7 @@ const BrowserSearch = {
     }
   },
 
+  
   /**
    * Update the browser UI to show whether or not additional engines are 
    * available when a page is loaded or the user switches tabs to a page that 
@@ -656,6 +662,133 @@ const BrowserSearch = {
     }
   },
 
+  _previousSearchEngine: null,
+  _previousSearch: "",
+  
+  /**
+   * Update the state of the search box based on the current
+   * browser location
+   */
+  updateSearchMode: function() {
+ 
+    // If a media list is open in the current tab,
+    // then we will need to restore the search filter state
+    if (this._isMediaListShowing()) 
+    {
+      this._switchToInternalSearch();
+    }
+    // Must be showing a regular page.  
+    // May need to deactivate the songbird search.
+    else 
+    {
+      this._switchToWebSearch();
+    }
+  },
+
+
+  /**
+   * Set up the search box to act as a filter for the current media list
+   */
+  _switchToInternalSearch: function() {
+    var searchBar = this.getSearchBar()
+    var songbirdEngine = this.getSongbirdSearchEngine();
+     
+    // Unless we are already in songbird live search mode,
+    // remember the current search settings so we can 
+    // restore them when the user returns to a standard 
+    // web page
+    if (!searchBar.isInLiveSearchMode(songbirdEngine)
+        && searchBar.currentEngine != songbirdEngine) 
+    {
+      this._previousSearchEngine = searchBar.currentEngine;
+      this._previousSearch =  searchBar.getSearch();
+    }
+    
+    // Find out what search is filtering this medialist
+    // TODO: Ask the browser?
+    var queryString = "";
+          
+    // Change the text displayed on empty query to reflect
+    // the current search context.
+    searchBar.setEngineDisplayText(songbirdEngine, this._getMediaListDisplayName());
+    
+    // Activate live search mode for the songbird search engine
+    searchBar.setLiveSearchMode(songbirdEngine, true);
+    
+    // Switch to the songbird search engine...
+    // but first remove any query text so as not to cause 
+    // the engine to immediately submit the query
+    searchBar.value = "";
+    searchBar.currentEngine = songbirdEngine;
+    
+    // Set the query to match the state of the media list
+    searchBar.value = queryString;
+  },
+  
+  
+  /**
+   * Restore web search mode
+   */
+  _switchToWebSearch: function() {
+    var searchBar = this.getSearchBar()
+    var songbirdEngine = this.getSongbirdSearchEngine();
+     
+    // If the songbird engine is in live search mode then 
+    // turn that feature off and restore the default
+    // display text.
+    if (searchBar.isInLiveSearchMode(songbirdEngine)) 
+    {
+      searchBar.setLiveSearchMode(songbirdEngine, false);
+      searchBar.setEngineDisplayText(songbirdEngine, null);
+      
+      // If songbird is also the active search engine, then 
+      // we need to restore the engine active prior to us
+      // entering songbird live search mode
+      if (searchBar.currentEngine == songbirdEngine) 
+      {
+        // TODO: If there is no previous engine
+        // then we should switch to the web default
+        
+        // Switch to the previous search engine...
+        // but first remove any query text so as not to cause 
+        // the engine to immediately submit the query
+        searchBar.value = "";
+        searchBar.currentEngine = this._previousSearchEngine;
+        
+        // Restore the old query
+        searchBar.value = this._previousSearch;
+        
+        this._previousSearchEngine = null;
+        this._previousSearch = "";
+      }
+    }
+  },  
+  
+  
+  /**
+   * Return true if the active tab is displaying a songbird media list.
+   */
+  _isMediaListShowing: function() {
+    var uri = gBrowser.mCurrentBrowser.currentURI.spec;
+    return uri.indexOf("playlist_test") >= 0;
+  },
+  
+
+  /**
+   * Come up with a context hint string to display in the empty
+   * searchbox when in media search mode.
+   * TODO: Implement properly, localize, etc.
+   */
+  _getMediaListDisplayName: function() {
+    var uri = gBrowser.mCurrentBrowser.currentURI.spec;
+    // TODO: Localize
+    if (uri.indexOf("library")) {
+      return "Library";
+    }
+    return "Playlist";
+  },  
+    
+  
   /**
    * Gives focus to the search bar, if it is present on the toolbar, or loads
    * the default engine's search form otherwise. For Mac, opens a new window
@@ -718,12 +851,28 @@ const BrowserSearch = {
    * hidden, null otherwise.
    */
   getSearchBar: function BrowserSearch_getSearchBar() {
+    // TODO: This isn't going to work once the searchbar goes inside a binding
     var searchBar = document.getElementById("searchbar");
     if (searchBar && isElementVisible(searchBar))
       return searchBar;
 
     return null;
   },
+  
+  /**
+   * Returns the Songbird internal search engine
+   */
+  getSongbirdSearchEngine: function BrowserSearch_getSongbirdSearchEngine() {
+    // TODO: Something...  at least make this a const.
+    var songbirdEngine = this.getSearchBar()
+                             .searchService
+                             .getEngineByAlias("songbird-internal-search");
+    if (!songbirdEngine) {
+      dump("\n\nError: The Songbird internal search engine could not be found. \n");
+      return null;
+    }  
+    return songbirdEngine;
+  },  
 
   loadAddEngines: function BrowserSearch_loadAddEngines() {
     // Hardcode Songbird to load the page in a tab
@@ -766,6 +915,10 @@ const BrowserSearch = {
       // Update search button to reflect available engines.
       // Note: In firefox this is called by browser.js asyncUpdateUI()
       BrowserSearch.updateSearchButton();
+      
+      // Update mode depending on location
+      // (Library vs Website)
+      BrowserSearch.updateSearchMode();
     },
 
     onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus){     
@@ -803,7 +956,6 @@ const BrowserSearch = {
 // Initialize the searchbar on load
 window.addEventListener("load", 
   function() {
-    dump("\n\nBrowserSearch.init()\n\n");
     BrowserSearch.init();
   }, 
   false);

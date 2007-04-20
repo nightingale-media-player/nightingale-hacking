@@ -76,7 +76,7 @@ try
 //      MainwinAdd( SBDataBindElementAttribute( "option.htmlbar", "file.htmlbar", "checked", true ) );
 
       // Events
-      document.addEventListener( "search", onSBMainwinSearchEvent, true ); // this didn't work when we put it directly on the widget?
+      document.addEventListener( "songbird-internal-search", onSBMainwinSearchEvent, true ); // this didn't work when we put it directly on the widget?
       
 //      SBInitPlayerLoop();
     }
@@ -114,7 +114,7 @@ try
     {
       alert( err );
     }
-    document.removeEventListener("search", onSBMainwinSearchEvent, true);
+    document.removeEventListener("songbird-internal-search", onSBMainwinSearchEvent, true);
   }
   
   //

@@ -25,9 +25,26 @@
  */
 
 
+.searchbar-textbox {
+  width: 4em;
+  min-width: 4em;
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+.searchbar-box 
+{
+  -moz-border-radius: 5px !important;
+  border: 1px solid !important; 
+}
+
+
+
+
 /** 
 ************************************************************************************************************************************************
-SEARCH WIDGET
+OLD SEARCH WIDGET
+TODO: Get rid of this before 0.3 is released
 ************************************************************************************************************************************************
 */
 

@@ -1,0 +1,70 @@
+Index: toolkit/components/autocomplete/src/nsAutoCompleteController.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/components/autocomplete/src/nsAutoCompleteController.cpp,v
+retrieving revision 1.53
+diff -u -8 -p -r1.53 nsAutoCompleteController.cpp
+--- toolkit/components/autocomplete/src/nsAutoCompleteController.cpp	7 Dec 2006 12:59:02 -0000	1.53
++++ toolkit/components/autocomplete/src/nsAutoCompleteController.cpp	19 Apr 2007 20:09:31 -0000
+@@ -1364,45 +1364,60 @@ nsAutoCompleteController::GetResultValue
+     result->GetErrorDescription(_retval);
+   } else if (searchResult == nsIAutoCompleteResult::RESULT_SUCCESS) {
+     result->GetValueAt(rowIndex, _retval);
+   }
+   
+   return NS_OK;
+ }
+ 
++/**
++ * Given the index of a row in the autocomplete popup, find the
++ * corresponding nsIAutoCompleteSearch index, and sub-index into 
++ * the search's results list.
++ */
+ nsresult
+ nsAutoCompleteController::RowIndexToSearch(PRInt32 aRowIndex, PRInt32 *aSearchIndex, PRInt32 *aItemIndex)
+ {
+   *aSearchIndex = -1;
+   *aItemIndex = -1;
+   
+   PRUint32 count;
+   mSearches->Count(&count);
+   PRUint32 index = 0;
++
++  // Move index through the results of each registered nsIAutoCompleteSearch 
++  // until we find the given row
+   for (PRUint32 i = 0; i < count; ++i) {
+     nsCOMPtr<nsIAutoCompleteResult> result;
+     mResults->GetElementAt(i, getter_AddRefs(result));
+     if (!result)
+       continue;
+       
+     PRUint16 searchResult;
+     result->GetSearchResult(&searchResult);
+     
+-    PRUint32 rowCount = 1;
++    // Find out how many results were provided by the 
++    // current nsIAutoCompleteSearch
++    PRUint32 rowCount = 0;
+     if (searchResult == nsIAutoCompleteResult::RESULT_SUCCESS) {
+       result->GetMatchCount(&rowCount);
+     }
+     
+-    if (index + rowCount-1 >= (PRUint32) aRowIndex) {
++    // If the given row index is within the results range 
++    // of the current nsIAutoCompleteSearch then return the
++    // search index and sub-index into the results array
++    if ((rowCount != 0) && (index + rowCount-1 >= (PRUint32) aRowIndex)) {
+       *aSearchIndex = i;
+       *aItemIndex = aRowIndex - index;
+       return NS_OK;
+     }
+ 
++    // Advance the popup table index cursor past the
++    // results of the current search.
+     index += rowCount;
+   }
+ 
+   return NS_OK;
+ }
+ 
+ nsIWidget*
+ nsAutoCompleteController::GetPopupWidget()

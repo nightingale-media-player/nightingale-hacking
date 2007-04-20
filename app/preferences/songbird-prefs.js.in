@@ -163,14 +163,14 @@ pref("xpinstall.dialog.progress.type.skin", "Browser:Preferences");
 pref("browser.search.searchEnginesURL",      "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/firefox/%VERSION%/search-engines/");
 
 // pointer to the default engine name
-pref("browser.search.defaultenginename",      "chrome://browser-region/locale/region.properties");
+pref("browser.search.defaultenginename",      "chrome://branding/locale/brand.properties");
 
 // disable logging for the search service by default
 pref("browser.search.log", false);
 
 // Ordering of Search Engines in the Engine list. 
-pref("browser.search.order.1",                "chrome://browser-region/locale/region.properties");
-pref("browser.search.order.2",                "chrome://browser-region/locale/region.properties");
+pref("browser.search.order.1",                "chrome://branding/locale/brand.properties");
+pref("browser.search.order.2",                "chrome://branding/locale/brand.properties");
 
 // search bar results always open in a new tab
 pref("browser.search.openintab", false);
