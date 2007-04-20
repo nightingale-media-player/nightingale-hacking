@@ -1191,7 +1191,7 @@ sbLocalDatabaseResourcePropertyBag::GetProperty(const nsAString& aName,
     return NS_OK;
   }
   else {
-    return NS_ERROR_NOT_AVAILABLE;
+    return NS_ERROR_ILLEGAL_VALUE;
   }
 }
 
