@@ -1,42 +1,10 @@
-? bug304048v1.patch
-? bug304048v2-plusdebugging.patch
-? compiled
-? confdefs.h
-? extensions/inspector/resources/content/tasksOverlay-songbird.xul
-Index: caps/include/nsScriptSecurityManager.h
-===================================================================
-RCS file: /cvsroot/mozilla/caps/include/nsScriptSecurityManager.h,v
-retrieving revision 1.101
-diff -u -p -r1.101 nsScriptSecurityManager.h
---- caps/include/nsScriptSecurityManager.h	14 Nov 2006 22:46:45 -0000	1.101
-+++ caps/include/nsScriptSecurityManager.h	16 Mar 2007 03:19:32 -0000
-@@ -69,7 +69,7 @@ struct ClassPolicy;
- class ClassInfoData;
- class DomainPolicy;
- 
--#if defined(DEBUG_mstoltz) || defined(DEBUG_caillon)
-+#if defined(DEBUG_mstoltz) || defined(DEBUG_caillon) || defined(DEBUG_redfive)
- #define DEBUG_CAPS_HACKER
- #endif
- 
-@@ -77,6 +77,10 @@ class DomainPolicy;
- #define DEBUG_CAPS_CheckPropertyAccessImpl
- #define DEBUG_CAPS_LookupPolicy
- #define DEBUG_CAPS_CheckComponentPermissions
-+#define DEBUG_CAPS_CanCreateWrapper
-+#define DEBUG_CAPS_CanCreateInstance
-+#define DEBUG_CAPS_CanGetService
-+#define DEBUG_CAPS_DomainPolicyLifeCycle
- #endif
- 
- #if 0
 Index: caps/src/nsScriptSecurityManager.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/caps/src/nsScriptSecurityManager.cpp,v
 retrieving revision 1.317
 diff -u -p -r1.317 nsScriptSecurityManager.cpp
 --- caps/src/nsScriptSecurityManager.cpp	9 Feb 2007 04:52:44 -0000	1.317
-+++ caps/src/nsScriptSecurityManager.cpp	16 Mar 2007 03:19:32 -0000
++++ caps/src/nsScriptSecurityManager.cpp	20 Apr 2007 17:49:56 -0000
 @@ -485,6 +485,13 @@ nsScriptSecurityManager::CheckObjectAcce
      if (!ssm)
          return JS_FALSE;
@@ -115,7 +83,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/idl/nsIXPConnect.idl,v
 retrieving revision 1.47
 diff -u -p -r1.47 nsIXPConnect.idl
 --- js/src/xpconnect/idl/nsIXPConnect.idl	4 Jan 2007 22:31:26 -0000	1.47
-+++ js/src/xpconnect/idl/nsIXPConnect.idl	16 Mar 2007 03:19:38 -0000
++++ js/src/xpconnect/idl/nsIXPConnect.idl	20 Apr 2007 17:49:56 -0000
 @@ -674,6 +674,17 @@ interface nsIXPConnect : nsISupports
      void flagSystemFilenamePrefix(in string aFilenamePrefix);
  
@@ -140,7 +108,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/XPCDispConvert.cpp,v
 retrieving revision 1.14
 diff -u -p -r1.14 XPCDispConvert.cpp
 --- js/src/xpconnect/src/XPCDispConvert.cpp	5 Apr 2006 21:34:16 -0000	1.14
-+++ js/src/xpconnect/src/XPCDispConvert.cpp	16 Mar 2007 03:19:38 -0000
++++ js/src/xpconnect/src/XPCDispConvert.cpp	20 Apr 2007 17:49:56 -0000
 @@ -331,6 +331,7 @@ JSBool XPCDispConvert::JSToCOM(XPCCallCo
                  obj, 
                  &NSID_IDISPATCH,
@@ -152,11 +120,11 @@ diff -u -p -r1.14 XPCDispConvert.cpp
 Index: js/src/xpconnect/src/nsXPConnect.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/nsXPConnect.cpp,v
-retrieving revision 1.97
-diff -u -p -r1.97 nsXPConnect.cpp
---- js/src/xpconnect/src/nsXPConnect.cpp	11 Mar 2007 18:17:11 -0000	1.97
-+++ js/src/xpconnect/src/nsXPConnect.cpp	16 Mar 2007 03:19:38 -0000
-@@ -907,7 +907,7 @@ nsXPConnect::WrapJS(JSContext * aJSConte
+retrieving revision 1.102
+diff -u -p -r1.102 nsXPConnect.cpp
+--- js/src/xpconnect/src/nsXPConnect.cpp	20 Apr 2007 08:01:01 -0000	1.102
++++ js/src/xpconnect/src/nsXPConnect.cpp	20 Apr 2007 17:49:56 -0000
+@@ -1075,7 +1075,7 @@ nsXPConnect::WrapJS(JSContext * aJSConte
  
      nsresult rv;
      if(!XPCConvert::JSObject2NativeInterface(ccx, result, aJSObj,
@@ -165,7 +133,7 @@ diff -u -p -r1.97 nsXPConnect.cpp
          return rv;
      return NS_OK;
  }
-@@ -933,7 +933,7 @@ nsXPConnect::WrapJSAggregatedToNative(ns
+@@ -1101,7 +1101,7 @@ nsXPConnect::WrapJSAggregatedToNative(ns
  
      nsresult rv;
      if(!XPCConvert::JSObject2NativeInterface(ccx, result, aJSObj,
@@ -174,7 +142,7 @@ diff -u -p -r1.97 nsXPConnect.cpp
          return rv;
      return NS_OK;
  }
-@@ -1854,6 +1854,30 @@ nsXPConnect::FlagSystemFilenamePrefix(co
+@@ -2022,6 +2022,30 @@ nsXPConnect::FlagSystemFilenamePrefix(co
      return NS_OK;
  }
  
@@ -211,7 +179,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcconvert.cpp,v
 retrieving revision 1.111
 diff -u -p -r1.111 xpcconvert.cpp
 --- js/src/xpconnect/src/xpcconvert.cpp	28 Feb 2007 02:33:05 -0000	1.111
-+++ js/src/xpconnect/src/xpcconvert.cpp	16 Mar 2007 03:19:39 -0000
++++ js/src/xpconnect/src/xpcconvert.cpp	20 Apr 2007 17:49:56 -0000
 @@ -1029,7 +1029,7 @@ XPCConvert::JSData2Native(XPCCallContext
              }
  
@@ -259,11 +227,11 @@ diff -u -p -r1.111 xpcconvert.cpp
 Index: js/src/xpconnect/src/xpcprivate.h
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcprivate.h,v
-retrieving revision 1.205
-diff -u -p -r1.205 xpcprivate.h
---- js/src/xpconnect/src/xpcprivate.h	18 Feb 2007 20:05:31 -0000	1.205
-+++ js/src/xpconnect/src/xpcprivate.h	16 Mar 2007 03:19:39 -0000
-@@ -2283,6 +2283,12 @@ public:
+retrieving revision 1.206
+diff -u -p -r1.206 xpcprivate.h
+--- js/src/xpconnect/src/xpcprivate.h	16 Mar 2007 12:52:47 -0000	1.206
++++ js/src/xpconnect/src/xpcprivate.h	20 Apr 2007 17:49:57 -0000
+@@ -2284,6 +2284,12 @@ public:
                   REFNSIID aIID,
                   nsISupports* aOuter,
                   nsXPCWrappedJS** wrapper);
@@ -276,7 +244,7 @@ diff -u -p -r1.205 xpcprivate.h
  
      nsISomeInterface* GetXPTCStub() { return mXPTCStub; }
      JSObject* GetJSObject() const {return mJSObj;}
-@@ -2451,6 +2457,7 @@ public:
+@@ -2452,6 +2458,7 @@ public:
                                             void** dest, JSObject* src,
                                             const nsID* iid,
                                             nsISupports* aOuter,
@@ -290,7 +258,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcwrappedjs.cpp,v
 retrieving revision 1.52
 diff -u -p -r1.52 xpcwrappedjs.cpp
 --- js/src/xpconnect/src/xpcwrappedjs.cpp	9 Mar 2007 13:11:30 -0000	1.52
-+++ js/src/xpconnect/src/xpcwrappedjs.cpp	16 Mar 2007 03:19:39 -0000
++++ js/src/xpconnect/src/xpcwrappedjs.cpp	20 Apr 2007 17:49:57 -0000
 @@ -414,6 +414,62 @@ return_wrapper:
      return NS_OK;
  }
