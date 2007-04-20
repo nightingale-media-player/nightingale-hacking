@@ -129,8 +129,8 @@ protected:
   nsresult StartHandlerForItem( jobitem_t *aItem );
   nsresult AddMetadataToItem( jobitem_t *aItem );
 
-#define MDJ_CRACK( f, s )
-  inline nsAutoString f ( sbIDatabaseResult *i ) { nsAutoString str; i->GetRowCellByColumn(0, NS_LITERAL_STRING( s ), str); return str; }
+#define MDJ_CRACK( function, string ) \
+  inline static nsAutoString function ( sbIDatabaseResult *i ) { nsAutoString str; i->GetRowCellByColumn(0, NS_LITERAL_STRING( string ), str); return str; }
 MDJ_CRACK( LG, "library_guid" );
 MDJ_CRACK( IG, "item_guid" );
 MDJ_CRACK( URL, "url" );
