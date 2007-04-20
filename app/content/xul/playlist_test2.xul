@@ -327,9 +327,15 @@ try
         // And if you do, use it.  
         if ( mediaList )
         {
+          var view = mediaList.createView();
+          var filter = view.cascadeFilterSet;
+          //filter.appendSearch(["*"], 1);
+          filter.appendFilter("http://songbirdnest.com/data/1.0#genre");
+          filter.appendFilter("http://songbirdnest.com/data/1.0#artistName");
+          filter.appendFilter("http://songbirdnest.com/data/1.0#albumName");
           var playlist = document.getElementById("playlist_test");
           SBLibraryCommands.m_Playlist = playlist;
-          playlist.bind(mediaList.createView(), SBLibraryCommands);
+          playlist.bind(view, SBLibraryCommands);
         }
         else
         {
