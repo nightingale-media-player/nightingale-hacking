@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbServicePaneService.js \
 		      $(srcdir)/sbBookmarksService.js \
+		      $(srcdir)/sbLibraryServicePaneService.js \
 		      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
