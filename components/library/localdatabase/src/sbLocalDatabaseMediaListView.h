@@ -37,8 +37,10 @@
 #include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
 #include <sbISearchableMediaList.h>
 #include <sbISortableMediaList.h>
+#include <sbPropertiesCID.h>
 
 class nsITreeView;
 class nsIURI;
@@ -94,6 +96,9 @@ private:
   nsresult Invalidate();
 
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
+
+  // Property Manager
+  nsCOMPtr<sbIPropertyManager> mPropMan;
 
   // The media list this view is of
   nsCOMPtr<sbIMediaList> mMediaList;

@@ -28,6 +28,7 @@
 
 #include <DatabaseQuery.h>
 #include <nsComponentManagerUtils.h>
+#include <nsServiceManagerUtils.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIProperty.h>
 #include <nsITreeView.h>
@@ -87,7 +88,7 @@ sbLocalDatabaseMediaListView::AddFilterToGUIDArrayCallback(nsStringHashKey::KeyT
 {
   NS_ASSERTION(aEntry, "Null entry in the hash?!");
   NS_ASSERTION(aUserData, "Null userData!");
-  
+
   // Make a string enumerator for the string array.
   nsCOMPtr<nsIStringEnumerator> valueEnum =
     new sbTArrayStringEnumerator(aEntry);
@@ -133,6 +134,9 @@ nsresult
 sbLocalDatabaseMediaListView::Init()
 {
   nsresult rv;
+
+  mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mArray = do_CreateInstance(SB_LOCALDATABASE_ASYNCGUIDARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -446,11 +450,19 @@ sbLocalDatabaseMediaListView::RemoveFilters(sbIPropertyArray* aPropertyArray)
     // If there is an array for this property, search the array for the value
     // and remove it
     if (arrayExists) {
+      nsCOMPtr<sbIPropertyInfo> info;
+      rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString sortableValue;
+      rv = info->MakeSortable(valueString, sortableValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       PRUint32 length = stringArray->Length();
       // Do this backwards so we don't have to deal with the array shifting
       // on us.  Also, be sure to remove multiple copies of the same string.
       for (PRInt32 i = length - 1; i >= 0; i--) {
-        if (stringArray->ElementAt(i).Equals(valueString)) {
+        if (stringArray->ElementAt(i).Equals(sortableValue)) {
           stringArray->RemoveElementAt(i);
           dirty = PR_TRUE;
         }
@@ -758,11 +770,19 @@ sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
         }
       }
 
+      nsCOMPtr<sbIPropertyInfo> info;
+      rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString sortableValue;
+      rv = info->MakeSortable(valueString, sortableValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       // Now we need a slot for the property value.
       nsString* valueStringPtr = stringArray->AppendElement();
       NS_ENSURE_TRUE(valueStringPtr, NS_ERROR_OUT_OF_MEMORY);
 
-      valueStringPtr->Assign(valueString);
+      valueStringPtr->Assign(sortableValue);
     }
   }
 
@@ -807,8 +827,16 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
       rv = value->GetAsAString(stringValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
+      nsCOMPtr<sbIPropertyInfo> info;
+      rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString sortableValue;
+      rv = info->MakeSortable(stringValue, sortableValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       sbStringArray valueArray(1);
-      nsString* successString = valueArray.AppendElement(stringValue);
+      nsString* successString = valueArray.AppendElement(sortableValue);
       NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
 
       nsCOMPtr<nsIStringEnumerator> valueEnum =

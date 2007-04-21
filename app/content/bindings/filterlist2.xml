@@ -123,7 +123,7 @@
     sel.getRangeAt(i, min, max);
     for (var j = min.value; j <= max.value; j++) {
       var value = this.cfs.getValueAt(this.index, j);
-      values.push(this._propertyInfo.makeSortable(value));
+      values.push(value);
     }
   }
   this.cfs.set(this.index, values, values.length);

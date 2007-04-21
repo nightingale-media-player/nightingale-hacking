@@ -43,12 +43,14 @@
 #include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
 #include <sbISearchableMediaList.h>
 #include <sbISortableMediaList.h>
 
 #include <DatabaseQuery.h>
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
+#include <nsServiceManagerUtils.h>
 #include <nsHashKeys.h>
 #include <nsMemory.h>
 #include <sbSQLBuilderCID.h>
@@ -424,19 +426,32 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aName,
   // A property name must be specified.
   NS_ENSURE_TRUE(!aName.IsEmpty(), NS_ERROR_INVALID_ARG);
 
+  nsresult rv;
+
+  // Get the sortable format of the value
+  nsCOMPtr<sbIPropertyManager> propMan =
+    do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> info;
+  rv = propMan->GetPropertyInfo(aName, getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString sortableValue;
+  rv = info->MakeSortable(aValue, sortableValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Make a single-item string array to hold our property value.
   sbStringArray valueArray(1);
   nsString* value = valueArray.AppendElement();
   NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
 
-  value->Assign(aValue);
+  value->Assign(sortableValue);
 
   // Make a string enumerator for it.
   nsCOMPtr<nsIStringEnumerator> valueEnum =
     new sbTArrayStringEnumerator(&valueArray);
   NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv;
 
   switch (aEnumerationType) {
 
@@ -517,12 +532,16 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
   // uses the property name for a key and an array of values as its data. Then
   // we load the arrays in a loop and finally call AddFilter as an enumeration
   // function.
-  
+
   sbStringArrayHash propertyHash;
-  
+
   // Init with the propertyCount as the number of buckets to create. This will
   // probably be too many, but it's likely less than the default of 16.
   propertyHash.Init(propertyCount);
+
+  nsCOMPtr<sbIPropertyManager> propMan =
+    do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Load the hash table with properties from the array.
   for (PRUint32 index = 0; index < propertyCount; index++) {
@@ -576,8 +595,17 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
     nsString* valueString = stringArray->AppendElement();
     SB_CONTINUE_IF_FALSE(valueString);
 
-    // And finally assign it.
-    rv = value->GetAsAString(*valueString);
+    // Make the value sortable and assign it
+    nsCOMPtr<sbIPropertyInfo> info;
+    rv = propMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
+    SB_CONTINUE_IF_FAILED(rv);
+
+    nsAutoString stringValue;
+    rv = value->GetAsAString(stringValue);
+    SB_CONTINUE_IF_FAILED(rv);
+
+    nsAutoString sortableValue;
+    rv = info->MakeSortable(stringValue, *valueString);
     SB_CONTINUE_IF_FAILED(rv);
   }
 

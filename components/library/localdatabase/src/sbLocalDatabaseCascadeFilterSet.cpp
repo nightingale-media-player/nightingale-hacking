@@ -35,11 +35,13 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
 #include <sbISearchableMediaList.h>
 #include <sbISQLBuilder.h>
 
 #include <DatabaseQuery.h>
 #include <nsComponentManagerUtils.h>
+#include <nsServiceManagerUtils.h>
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseTreeView.h"
 #include <sbPropertiesCID.h>
@@ -341,7 +343,7 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
     rv = propArray->AppendProperty(fs.property, NS_LITERAL_STRING("a"));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = treeView->Init(nsnull, fs.array, propArray);
+    rv = treeView->Init(mMediaListView, fs.array, propArray);
     NS_ENSURE_SUCCESS(rv, rv);
 
     fs.treeView = treeView.forget();
@@ -394,6 +396,10 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
   rv = fs.array->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIPropertyManager> propMan =
+    do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Apply the filters of each upstream filter to this filter
   for (PRUint32 i = 0; i < aIndex; i++) {
     const sbFilterSpec& upstream = mFilters[i];
@@ -403,9 +409,25 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
       if(upstream.isSearch) {
 
         for (PRUint32 j = 0; j < upstream.propertyList.Length(); j++) {
+
+          nsCOMPtr<sbIPropertyInfo> info;
+          rv = propMan->GetPropertyInfo(upstream.propertyList[j],
+                                        getter_AddRefs(info));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          sbStringArray sortableValues;
+          for (PRUint32 k = 0; k < upstream.values.Length(); k++) {
+            nsAutoString sortableValue;
+            rv = info->MakeSortable(upstream.values[k], sortableValue);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            nsString* success = sortableValues.AppendElement(sortableValue);
+            NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+          }
+
           nsCOMPtr<nsIStringEnumerator> values =
             new sbTArrayStringEnumerator(NS_CONST_CAST(sbStringArray*,
-                                                       &upstream.values));
+                                                       &sortableValues));
           NS_ENSURE_TRUE(values, NS_ERROR_OUT_OF_MEMORY);
 
           rv = fs.array->AddFilter(upstream.propertyList[j],
@@ -417,9 +439,23 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
 
       }
       else {
+        nsCOMPtr<sbIPropertyInfo> info;
+        rv = propMan->GetPropertyInfo(upstream.property, getter_AddRefs(info));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        sbStringArray sortableValues;
+        for (PRUint32 k = 0; k < upstream.values.Length(); k++) {
+          nsAutoString sortableValue;
+          rv = info->MakeSortable(upstream.values[k], sortableValue);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          nsString* success = sortableValues.AppendElement(sortableValue);
+          NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+        }
+
         nsCOMPtr<nsIStringEnumerator> values =
           new sbTArrayStringEnumerator(NS_CONST_CAST(sbStringArray*,
-                                                     &upstream.values));
+                                                     &sortableValues));
         NS_ENSURE_TRUE(values, NS_ERROR_OUT_OF_MEMORY);
 
         rv = fs.array->AddFilter(upstream.property,

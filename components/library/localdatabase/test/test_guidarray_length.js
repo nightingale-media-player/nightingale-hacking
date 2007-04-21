@@ -49,17 +49,17 @@ function runTest () {
 
   // Full library, property filtered
   array.addFilter("http://songbirdnest.com/data/1.0#albumName",
-                  new StringArrayEnumerator(["Back in Black"]),
+                  new StringArrayEnumerator(["back in black"]),
                   false);
   assertEqual(array.length, 10);
   // Add another filter level
   array.addFilter("http://songbirdnest.com/data/1.0#artistName",
-                  new StringArrayEnumerator(["AC/DC"]),
+                  new StringArrayEnumerator(["ac/dc"]),
                   false);
   assertEqual(array.length, 10);
   // And another
   array.addFilter("http://songbirdnest.com/data/1.0#trackName",
-                  new StringArrayEnumerator(["Hells Bells"]),
+                  new StringArrayEnumerator(["hells bells"]),
                   false);
   assertEqual(array.length, 1);
   array.clearFilters();
@@ -85,29 +85,29 @@ function runTest () {
                                              "file:///home/steve/You%20Shook%20Me%20All%20Night%20Long.mp3"]),
                   false);
   array.addFilter("http://songbirdnest.com/data/1.0#artistName",
-                  new StringArrayEnumerator(["AC/DC"]),
+                  new StringArrayEnumerator(["ac/dc"]),
                   false);
   assertEqual(array.length, 2);
   array.clearFilters();
 
   // Full library, property search
   array.addFilter("http://songbirdnest.com/data/1.0#artistName",
-                  new StringArrayEnumerator(["AC"]),
+                  new StringArrayEnumerator(["ac"]),
                   true);
   assertEqual(array.length, 47);
   // Add another search
   array.addFilter("http://songbirdnest.com/data/1.0#albumName",
-                  new StringArrayEnumerator(["Back"]),
+                  new StringArrayEnumerator(["back"]),
                   true);
   assertEqual(array.length, 10);
   array.clearFilters();
 
   // Full library, mixed property filter and search
   array.addFilter("http://songbirdnest.com/data/1.0#artistName",
-                  new StringArrayEnumerator(["AC/DC"]),
+                  new StringArrayEnumerator(["ac/dc"]),
                   false);
   array.addFilter("http://songbirdnest.com/data/1.0#trackName",
-                  new StringArrayEnumerator(["Hell"]),
+                  new StringArrayEnumerator(["hell"]),
                   true);
   assertEqual(array.length, 1);
   array.clearFilters();
@@ -122,12 +122,12 @@ function runTest () {
 
   // Simple media list, property filtered
   array.addFilter("http://songbirdnest.com/data/1.0#artistName",
-                  new StringArrayEnumerator(["AC/DC"]),
+                  new StringArrayEnumerator(["ac/dc"]),
                   false);
   assertEqual(array.length, 10);
   // Add a filter
   array.addFilter("http://songbirdnest.com/data/1.0#albumName",
-                  new StringArrayEnumerator(["Back in Black"]),
+                  new StringArrayEnumerator(["back in black"]),
                   false);
   assertEqual(array.length, 10);
   array.clearFilters();
@@ -155,29 +155,29 @@ function runTest () {
                                              "file:///home/steve/Train%20of%20Thought.mp3"]),
                   false);
   array.addFilter("http://songbirdnest.com/data/1.0#albumName",
-                  new StringArrayEnumerator(["Back in Black"]),
+                  new StringArrayEnumerator(["back in black"]),
                   false);
   assertEqual(array.length, 2);
   array.clearFilters();
 
   // Simple media list, property search
   array.addFilter("http://songbirdnest.com/data/1.0#artistName",
-                  new StringArrayEnumerator(["AC"]),
+                  new StringArrayEnumerator(["ac"]),
                   true);
   assertEqual(array.length, 10);
   // Add another search
   array.addFilter("http://songbirdnest.com/data/1.0#albumName",
-                  new StringArrayEnumerator(["Back"]),
+                  new StringArrayEnumerator(["back"]),
                   true);
   assertEqual(array.length, 10);
   array.clearFilters();
 
   // Simple media list, mixed property filter and search
   array.addFilter("http://songbirdnest.com/data/1.0#artistName",
-                  new StringArrayEnumerator(["AC/DC"]),
+                  new StringArrayEnumerator(["ac/dc"]),
                   false);
   array.addFilter("http://songbirdnest.com/data/1.0#trackName",
-                  new StringArrayEnumerator(["Hell"]),
+                  new StringArrayEnumerator(["hell"]),
                   true);
   assertEqual(array.length, 1);
   array.clearFilters();

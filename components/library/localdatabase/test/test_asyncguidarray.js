@@ -132,7 +132,7 @@ function doTest(array) {
       var tester = function() {
         if (listener.gotValue) {
           if (listener.rv == Cr.NS_OK &&
-              listener.value == "AC Black") {
+              listener.value == "ac black") {
             return 1;
           }
           else {
