@@ -268,6 +268,21 @@
 <!ENTITY hotkeys.remove               "Remove" >
 <!ENTITY hotkeys.prefpane             "Hotkeys" >
 
+<!ENTITY rapi.prefpane.title             "RemoteAPI" >
+<!ENTITY rapi.prefpane.text              "This is cool text that talks about the cool RemoteAPI and what it does for websites, and users" >
+<!ENTITY rapi.disable_metadata.label     "Block website access to track metadata" >
+<!ENTITY rapi.disable_metadata.accesskey "m" >
+<!ENTITY rapi.disable_controls.label     "Block website access to playback controls" >
+<!ENTITY rapi.disable_controls.accesskey "p" >
+<!ENTITY rapi.disable_binding.label      "Block website ability to bind to metadata" >
+<!ENTITY rapi.disable_binding.accesskey  "b" >
+<!ENTITY rapi.greylist.label1             "Configure Metadata" >
+<!ENTITY rapi.greylist.accesskey1         "C" >
+<!ENTITY rapi.greylist.label2             "Configure Playback" >
+<!ENTITY rapi.greylist.accesskey2         "o" >
+<!ENTITY rapi.greylist.label3             "Configure Binding" >
+<!ENTITY rapi.greylist.accesskey3         "g" >
+
 <!ENTITY prefpane.addons.label        "Add-Ons">
 
 <!ENTITY umsd.prefpane                      "USB" >

@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE overlay SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<overlay id="RemoteAPIPaneOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <prefpane id="paneRemoteAPI" >
+
+    <preferences id="remoteAPIPreferences">
+      <preference id="songbird.rapi.disable_metadata"  name="songbird.rapi.disable_metadata"  type="bool"/>
+      <preference id="songbird.rapi.disable_controls"  name="songbird.rapi.disable_controls"  type="bool"/>
+      <preference id="songbird.rapi.disable_binding"   name="songbird.rapi.disable_binding"   type="bool"/>
+    </preferences>
+    
+    <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/remoteAPI.js"/>
+
+    <groupbox id="rapiGroup">
+      <description>
+        &rapi.prefpane.text;
+      </description>
+      <grid id="rapiContentGrid">
+        <columns>
+          <column flex="1"/>
+          <column/>
+        </columns>
+        <rows id="rapiRows-1">
+
+          <row id="rapiMetadataRow" align="center">
+            <vbox align="start">
+              <checkbox id="metadataPolicy"
+                        preference="songbird.rapi.disable_metadata"
+                        label="&rapi.disable_metadata.label;"
+                        accesskey="&rapi.disable_metadata.accesskey;"/>
+            </vbox>
+            <button id="metadataPolicyButton"
+                    label="&rapi.greylist.label1;"
+                    accesskey="&rapi.greylist.accesskey1;"
+                    oncommand="gRemoteAPIPane.showMetadataWhitelist();"/>
+          </row>
+
+          <row id="rapiControlsRow" align="center">
+            <vbox align="start">
+              <checkbox id="controlsPolicy"
+                        preference="songbird.rapi.disable_controls"
+                        label="&rapi.disable_controls.label;"
+                        accesskey="&rapi.disable_controls.accesskey;" />
+            </vbox>
+            <button id="controlsPolicyButton"
+                    label="&rapi.greylist.label2;"
+                    accesskey="&rapi.greylist.accesskey2;"
+                    oncommand="gRemoteAPIPane.showControlsWhitelist();"/>
+          </row>
+
+          <row id="rapiBindingRow" align="center">
+            <vbox align="start">
+              <checkbox id="bindingPolicy"
+                        preference="songbird.rapi.disable_binding"
+                        label="&rapi.disable_binding.label;"
+                        accesskey="&rapi.disable_binding.accesskey;" />
+            </vbox>
+            <button id="bindingPolicyButton"
+                    label="&rapi.greylist.label3;"
+                    accesskey="&rapi.greylist.accesskey3;"
+                    oncommand="gRemoteAPIPane.showBindingWhitelist();"/>
+          </row>
+
+        </rows>
+      </grid>
+    </groupbox>
+
+  </prefpane>
+
+</overlay>

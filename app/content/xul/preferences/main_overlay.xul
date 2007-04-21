@@ -1,4 +1,31 @@
 <?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
 
 <?xml-stylesheet href="chrome://songbird-dialogs/skin/preferences.css"?>
 
@@ -11,12 +38,24 @@
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird_interfaces.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 
+  <stringbundle id="bundlePreferences"
+                src="chrome://songbird/locale/songbird.properties"/>
+
  <prefWindow id="BrowserPreferences">
-  <prefpane id="paneHotkeys" label="&hotkeys.prefpane;" insertafter="paneContent"
+  <prefpane id="paneHotkeys"
+            label="&hotkeys.prefpane;"
+            insertafter="paneContent"
             src="chrome://songbird/content/xul/preferences/hotkeys.xul" />
-  <prefpane id="paneAddons" label="&prefpane.addons.label;" insertafter="paneTabs"
+  <prefpane id="paneAddons"
+            label="&prefpane.addons.label;"
+            insertafter="paneTabs"
             image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
-            src="chrome://songbird/content/xul/preferences/addons.xul"/>
+            src="chrome://songbird/content/xul/preferences/addons.xul" />
+  <prefpane id="paneRemoteAPI" 
+            label="&rapi.prefpane.title;" 
+            insertafter="paneAddons"
+            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            src="chrome://songbird/content/xul/preferences/remoteAPI.xul" />
  </prefWindow>
 
 </overlay>

@@ -194,3 +194,10 @@ pref("browser.urlbar.clickSelectsAll", false);
 pref("browser.urlbar.clickSelectsAll", true);
 #endif
 
+//
+// RemoteAPI prefs
+//
+
+pref("songbird.rapi.disable_metadata", true);
+pref("songbird.rapi.disable_controls", true);
+pref("songbird.rapi.disable_binding", true);
