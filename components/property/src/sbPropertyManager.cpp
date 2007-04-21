@@ -34,6 +34,7 @@
 #include <nsIGenericFactory.h>
 #include <nsIObserverService.h>
 #include <nsAutoPtr.h>
+#include <nsIStringBundle.h>
 
 #include "sbDatetimePropertyInfo.h"
 #include "sbNumberPropertyInfo.h"
@@ -41,6 +42,10 @@
 #include "sbURIPropertyInfo.h"
 
 #include <sbTArrayStringEnumerator.h>
+
+#if !defined(SB_STRING_BUNDLE_CHROME_URL)
+  #define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
+#endif
 
 struct sbStaticProperty {
   const wchar_t* mName;
@@ -236,6 +241,48 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPro
   return NS_ERROR_NOT_AVAILABLE;
 }
 
+NS_IMETHODIMP sbPropertyManager::CreateBundle(const char *aURLSpec, 
+                                              nsIStringBundle **_retval)
+{
+  NS_ENSURE_ARG_POINTER(aURLSpec);
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = nsnull;
+  
+  nsresult rv;
+  nsCOMPtr<nsIStringBundleService> stringBundleService = 
+    do_GetService(NS_STRINGBUNDLE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIStringBundle> stringBundle; 
+  rv = stringBundleService->CreateBundle(aURLSpec, 
+                                         getter_AddRefs(stringBundle));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = stringBundle;
+  NS_ADDREF(*_retval);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyManager::GetStringFromName(nsIStringBundle *aBundle, 
+                                                   const nsAString & aName, 
+                                                   nsAString & _retval)
+{
+  NS_ENSURE_ARG_POINTER(aBundle);
+
+  PRUnichar *value = nsnull;
+  nsAutoString name(aName);
+  
+  nsresult rv = aBundle->GetStringFromName(name.get(), &value);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
+  
+  _retval.Assign(value);
+  nsMemory::Free(value);
+
+  return NS_OK;
+}
+
 NS_METHOD sbPropertyManager::CreateSystemProperties()
 {
   nsresult rv;
@@ -245,6 +292,11 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   nsAutoPtr<sbTextPropertyInfo> textProperty;
   nsAutoPtr<sbURIPropertyInfo> uriProperty;
 
+  nsAutoString displayValue;
+  nsCOMPtr<nsIStringBundle> stringBundle;
+  rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   //Storage Guid
   textProperty = new sbTextPropertyInfo();
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
@@ -262,10 +314,18 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
   rv = datetimeProperty->SetTimeType(sbIDatetimePropertyInfo::TIMETYPE_DATETIME);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.date_created"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = datetimeProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } 
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIDatetimePropertyInfo *, datetimeProperty));
   NS_ENSURE_SUCCESS(rv, rv);
+  
   datetimeProperty.forget();
+  displayValue = EmptyString();
 
   //Date updated
   datetimeProperty = new sbDatetimePropertyInfo();
@@ -274,6 +334,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
   rv = datetimeProperty->SetTimeType(sbIDatetimePropertyInfo::TIMETYPE_DATETIME);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.date_updated"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = datetimeProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIDatetimePropertyInfo *, datetimeProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -285,6 +351,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = uriProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentUrl"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.content_url"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = uriProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIURIPropertyInfo *, uriProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   uriProperty.forget();
@@ -294,6 +366,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentMimeType"));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.content_mime_type"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = textProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -307,6 +385,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetMinValue(-1);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.content_length"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty.forget();
@@ -316,6 +400,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#trackName"));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.track_name"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = textProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -327,6 +417,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#albumName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.album_name"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = textProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty.forget();
@@ -336,6 +432,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#artistName"));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.artist_name"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = textProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -349,6 +451,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = datetimeProperty->SetTimeType(sbIDatetimePropertyInfo::TIMETYPE_DURATION);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.date_created"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = datetimeProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIDatetimePropertyInfo *, datetimeProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   datetimeProperty.forget();
@@ -357,6 +465,11 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   textProperty = new sbTextPropertyInfo();
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#genre"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.genre"), displayValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = textProperty->SetDisplayName(displayValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
@@ -371,6 +484,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetMinValue(1);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.track_no"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty.forget();
@@ -383,6 +502,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetMinValue(1877);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.year"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty.forget();
@@ -392,6 +517,14 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#discNumber"));
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = numberProperty->SetMinValue(1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.disc_no"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -402,6 +535,14 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#totalDiscs"));
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = numberProperty->SetMinValue(1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.total_discs"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -412,6 +553,14 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#totalTracks"));
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = numberProperty->SetMinValue(1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.total_tracks"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -427,6 +576,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetMaxValue(1);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.is_part_of_compilation"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty.forget();
@@ -436,6 +591,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#producerName"));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.producer"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = textProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -447,6 +608,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#composerName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.composer"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = textProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty.forget();
@@ -456,6 +623,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#lyricistName"));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.lyricist"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = textProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -467,6 +640,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#lyrics"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.lyrics"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = textProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty.forget();
@@ -477,6 +656,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#recordLabelName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.record_label_name"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = textProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty.forget();
@@ -486,6 +671,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = uriProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#albumArtUrl"));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.album_art_url"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = uriProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIURIPropertyInfo *, uriProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -499,6 +690,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = datetimeProperty->SetTimeType(sbIDatetimePropertyInfo::TIMETYPE_DATETIME);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.last_play_time"), displayValue);
+  if(NS_SUCCEEDED(rv)) { 
+    rv = datetimeProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIDatetimePropertyInfo *, datetimeProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   datetimeProperty.forget();
@@ -509,6 +706,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#playCount"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.play_count"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   numberProperty.forget();
@@ -518,6 +721,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
   rv = numberProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#skipCount"));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.skip_count"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -532,6 +741,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
   rv = numberProperty->SetMaxValue(100);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.rating"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
   NS_ENSURE_SUCCESS(rv, rv);

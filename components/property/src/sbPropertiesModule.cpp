@@ -41,6 +41,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyArray)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyFactory);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyManager, Init);
 
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyOperator);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDatetimePropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbNumberPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTextPropertyInfo);
@@ -66,6 +67,12 @@ static const nsModuleComponentInfo components[] =
     SB_PROPERTYMANAGER_CONTRACTID,
     sbPropertyManagerConstructor,
     sbPropertyManager::RegisterSelf
+  },
+  {
+    SB_PROPERTYOPERATOR_DESCRIPTION,
+    SB_PROPERTYOPERATOR_CID,
+    SB_PROPERTYOPERATOR_CONTRACTID,
+    sbPropertyOperatorConstructor
   },
   {
     SB_DATETIMEPROPERTYINFO_DESCRIPTION,

@@ -28,28 +28,60 @@
 #include <nsAutoLock.h>
 #include <sbCOMArraySimpleEnumerator.h>
 
-NS_IMPL_ISUPPORTS1(sbPropertyOperator, sbIPropertyOperator)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyOperator, sbIPropertyOperator)
+
+sbPropertyOperator::sbPropertyOperator()
+: mLock(nsnull)
+, mInitialized(PR_FALSE)
+{
+  mLock = PR_NewLock();
+  NS_ASSERTION(mLock, "sbPropertyOperator::mLock failed to create lock!");
+}
 
 sbPropertyOperator::sbPropertyOperator(const nsAString& aOperator,
                                        const nsAString& aOperatorReadable)
-: mOperator(aOperator)
+: mLock(nsnull)
+, mInitialized(PR_TRUE)
+, mOperator(aOperator)
 , mOperatorReadable(aOperatorReadable)
 {
+  mLock = PR_NewLock();
+  NS_ASSERTION(mLock, "sbPropertyOperator::mLock failed to create lock!");
 }
 
 sbPropertyOperator::~sbPropertyOperator()
 {
+  if(mLock) {
+    PR_DestroyLock(mLock);
+  }
 }
 
 NS_IMETHODIMP sbPropertyOperator::GetOperator(nsAString & aOperator)
 {
+  nsAutoLock lock(mLock);
   aOperator = mOperator;
+
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyOperator::GetOperatorReadable(nsAString & aOperatorReadable)
 {
+  nsAutoLock lock(mLock);
   aOperatorReadable = mOperatorReadable;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyOperator::Init(const nsAString & aOperator, const nsAString & aOperatorReadable)
+{
+  nsAutoLock lock(mLock);
+  NS_ENSURE_TRUE(mInitialized == PR_FALSE, NS_ERROR_ALREADY_INITIALIZED);
+  
+  mOperator = aOperator;
+  mOperatorReadable = aOperatorReadable;
+  
+  mInitialized = PR_TRUE;
+
   return NS_OK;
 }
 
@@ -60,7 +92,7 @@ sbPropertyInfo::sbPropertyInfo()
 , mSortProfileLock(nsnull)
 , mNameLock(nsnull)
 , mTypeLock(nsnull)
-, mDisplayKeyLock(nsnull)
+, mDisplayNameLock(nsnull)
 , mDisplayUsingSimpleTypeLock(nsnull)
 , mDisplayUsingXBLWidgetLock(nsnull)
 , mUnitsLock(nsnull)
@@ -78,9 +110,9 @@ sbPropertyInfo::sbPropertyInfo()
   NS_ASSERTION(mTypeLock, 
     "sbPropertyInfo::mTypeLock failed to create lock!");
 
-  mDisplayKeyLock = PR_NewLock();
-  NS_ASSERTION(mDisplayKeyLock, 
-    "sbPropertyInfo::mDisplayKeyLock failed to create lock!");
+  mDisplayNameLock = PR_NewLock();
+  NS_ASSERTION(mDisplayNameLock, 
+    "sbPropertyInfo::mDisplayNameLock failed to create lock!");
 
   mDisplayUsingSimpleTypeLock = PR_NewLock();
   NS_ASSERTION(mDisplayUsingSimpleTypeLock, 
@@ -113,8 +145,8 @@ sbPropertyInfo::~sbPropertyInfo()
     PR_DestroyLock(mTypeLock);
   }
 
-  if(mDisplayKeyLock) {
-    PR_DestroyLock(mDisplayKeyLock);
+  if(mDisplayNameLock) {
+    PR_DestroyLock(mDisplayNameLock);
   }
 
   if(mDisplayUsingSimpleTypeLock) {
@@ -256,18 +288,26 @@ NS_IMETHODIMP sbPropertyInfo::SetType(const nsAString &aType)
   return NS_ERROR_ALREADY_INITIALIZED;
 }
 
-NS_IMETHODIMP sbPropertyInfo::GetDisplayKey(nsAString & aDisplayKey)
+NS_IMETHODIMP sbPropertyInfo::GetDisplayName(nsAString & aDisplayName)
 {
-  nsAutoLock lock(mDisplayKeyLock);
-  aDisplayKey = mDisplayKey;
+  nsAutoLock lock(mDisplayNameLock);
+  
+  if(mDisplayName.IsEmpty()) {
+    nsAutoLock lock(mNameLock);
+    aDisplayName = mName;
+  }
+  else {
+    aDisplayName = mDisplayName;
+  }
+
   return NS_OK;
 }
-NS_IMETHODIMP sbPropertyInfo::SetDisplayKey(const nsAString &aKey)
+NS_IMETHODIMP sbPropertyInfo::SetDisplayName(const nsAString &aDisplayName)
 {
-  nsAutoLock lock(mDisplayKeyLock);
+  nsAutoLock lock(mDisplayNameLock);
 
-  if(mDisplayKey.IsEmpty()) {
-    mDisplayKey = aKey;
+  if(mDisplayName.IsEmpty()) {
+    mDisplayName = aDisplayName;
     return NS_OK;
   }
 

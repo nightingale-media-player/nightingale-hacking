@@ -34,9 +34,11 @@
 
 interface nsISimpleEnumerator;
 interface nsIStringEnumerator;
-interface sbIPropertyInfo;
+interface nsIStringBundle;
 interface nsIURI;
+interface sbIPropertyInfo;
 interface sbIPropertyArray;
+
 
 /**
 * \interface sbIPropertiesManager
@@ -68,6 +70,17 @@ interface sbIPropertyManager : nsISupports
    *        thrown if the property's name is not unique
    */
   void addPropertyInfo(in sbIPropertyInfo aPropertyInfo);
+  
+  /**
+   * \brief Helper to get a string bundle.
+   */
+  nsIStringBundle createBundle(in string aURLSpec);
+   
+  /**
+   * \brief Helper to get a display value, using a string name, from a bundle.
+   */
+  AString getStringFromName(in nsIStringBundle aBundle, in AString aName);
+   
 };
 
 /**
@@ -78,14 +91,21 @@ interface sbIPropertyManager : nsISupports
 interface sbIPropertyOperator : nsISupports
 {
   /**
-   * \brief 
+   * \brief The operator.
    */
   readonly attribute AString operator;
 
   /**
-   * \brief 
+   * \brief The operator readable string or
+   * language property name.
    */
   readonly attribute AString operatorReadable;
+
+  /**
+   * \brief Initialize the operator.
+   * \note This method may not be called more than once.
+   */
+  void Init(in AString aOperator, in aString aOperatorReadable);
 };
 
 /**
@@ -153,7 +173,7 @@ interface sbIPropertyInfo : nsISupports
   /**
    * \brief Bundle key name for the localized name of this property
    */
-  attribute AString displayKey;
+  attribute AString displayName;
 
   /**
    * \brief Display this property using the suggested base

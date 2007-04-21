@@ -59,7 +59,7 @@ public:
 
   NS_METHOD Init();
   NS_METHOD CreateSystemProperties();
-
+  
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
   

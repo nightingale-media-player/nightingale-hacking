@@ -53,8 +53,8 @@ NS_IMETHOD GetName(nsAString & aName) { return _to GetName(aName); } \
 NS_IMETHOD SetName(const nsAString & aName) { return _to SetName(aName); } \
 NS_IMETHOD GetType(nsAString & aType) { return _to GetType(aType); } \
 NS_IMETHOD SetType(const nsAString & aType) { return _to SetType(aType); } \
-NS_IMETHOD GetDisplayKey(nsAString & aDisplayKey) { return _to GetDisplayKey(aDisplayKey); } \
-NS_IMETHOD SetDisplayKey(const nsAString & aDisplayKey) { return _to SetDisplayKey(aDisplayKey); } \
+NS_IMETHOD GetDisplayName(nsAString & aDisplayName) { return _to GetDisplayName(aDisplayName); } \
+NS_IMETHOD SetDisplayName(const nsAString & aDisplayName) { return _to SetDisplayName(aDisplayName); } \
 NS_IMETHOD GetDisplayUsingSimpleType(nsAString & aDisplayUsingSimpleType) { return _to GetDisplayUsingSimpleType(aDisplayUsingSimpleType); } \
 NS_IMETHOD SetDisplayUsingSimpleType(const nsAString & aDisplayUsingSimpleType) { return _to SetDisplayUsingSimpleType(aDisplayUsingSimpleType); } \
 NS_IMETHOD GetDisplayUsingXBLWidget(nsIURI * *aDisplayUsingXBLWidget) { return _to GetDisplayUsingXBLWidget(aDisplayUsingXBLWidget); } \
@@ -73,11 +73,15 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIPROPERTYOPERATOR
 
+  sbPropertyOperator();
   sbPropertyOperator(const nsAString& aOperator,
                      const nsAString& aOperatorReadable);
   ~sbPropertyOperator();
 
 protected:
+  PRLock*  mLock;
+  PRBool   mInitialized;
+ 
   nsString mOperator;
   nsString mOperatorReadable;
 
@@ -104,8 +108,8 @@ protected:
   PRLock*   mTypeLock;
   nsString  mType;
 
-  PRLock*   mDisplayKeyLock;
-  nsString  mDisplayKey;
+  PRLock*   mDisplayNameLock;
+  nsString  mDisplayName;
 
   PRLock*   mDisplayUsingSimpleTypeLock;
   nsString  mDisplayUsingSimpleType;

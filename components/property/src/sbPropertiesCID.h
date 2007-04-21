@@ -60,6 +60,19 @@
 #define SB_PROPERTYMANAGER_CONTRACTID                      \
   "@songbirdnest.com/Songbird/Properties/PropertyManager;1"
 
+#define SB_PROPERTYOPERATOR_DESCRIPTION                    \
+  "Songbird Datetime Property Info Implementation"
+#define SB_PROPERTYOPERATOR_CID                            \
+  { /*{B2829D86-A53A-45fc-943E-03CB6DD83E4D}*/             \
+    0xb2829d86,                                            \
+    0xa53a,                                                \
+    0x45fc,                                                \
+    { 0x94, 0x3e, 0x3, 0xcb, 0x6d, 0xd8, 0x3e, 0x4d }      \
+  }
+
+#define SB_PROPERTYOPERATOR_CONTRACTID                     \
+  "@songbirdnest.com/Songbird/Properties/Operator;1"
+
 #define SB_DATETIMEPROPERTYINFO_DESCRIPTION                \
   "Songbird Datetime Property Info Implementation"
 #define SB_DATETIMEPROPERTYINFO_CID                        \

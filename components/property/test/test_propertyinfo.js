@@ -54,8 +54,8 @@ function testTextInfo() {
     assertEqual(err.result, Cr.NS_ERROR_ALREADY_INITIALIZED);
   }
   
-  textInfo.displayKey = "&textinfo.name";
-  assertEqual(textInfo.displayKey, "&textinfo.name");
+  textInfo.displayName = "My Display Name";
+  assertEqual(textInfo.displayName, "My Display Name");
   
   var sample = "some text";
   assertEqual(textInfo.validate(sample), true);
