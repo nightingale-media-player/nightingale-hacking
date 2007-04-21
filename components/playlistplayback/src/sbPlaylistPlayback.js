@@ -1420,7 +1420,7 @@ PlaylistPlayback.prototype = {
     }
     else if ( aURL.lastIndexOf('\\') != -1 )
     {
-      urlDisplay = urlDisplay.substring( urlDisplay.lastIndexOf('\\') + 1, urlDisplay.length );
+      urlDisplay = aURL.substring( aURL.lastIndexOf('\\') + 1, aURL.length );
     }
 
     if ( ! urlDisplay.length )
