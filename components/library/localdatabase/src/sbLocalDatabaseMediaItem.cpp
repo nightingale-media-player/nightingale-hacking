@@ -89,8 +89,8 @@ static sbStaticProperty kStaticProperties[] = {
   }
 };
 
-NS_IMPL_ADDREF(sbLocalDatabaseMediaItem)
-NS_IMPL_RELEASE(sbLocalDatabaseMediaItem)
+NS_IMPL_THREADSAFE_ADDREF(sbLocalDatabaseMediaItem)
+NS_IMPL_THREADSAFE_RELEASE(sbLocalDatabaseMediaItem)
 
 NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaItem)
   NS_INTERFACE_MAP_ENTRY(nsIClassInfo)

@@ -61,8 +61,8 @@
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabasePropertyCache.h"
 
-NS_IMPL_ADDREF(sbLocalDatabaseMediaListBase)
-NS_IMPL_RELEASE(sbLocalDatabaseMediaListBase)
+NS_IMPL_THREADSAFE_ADDREF(sbLocalDatabaseMediaListBase)
+NS_IMPL_THREADSAFE_RELEASE(sbLocalDatabaseMediaListBase)
 
 NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaListBase)
   NS_INTERFACE_MAP_ENTRY(sbIMediaList)
