@@ -41,8 +41,10 @@ class nsITreeBoxObject;
 class nsITreeSelection;
 class sbILocalDatabasePropertyCache;
 class sbILocalDatabaseResourcePropertyBag;
+class sbIMediaList;
 class sbIMediaListView;
 class sbIPropertyArray;
+class sbIPropertyManager;
 
 class sbLocalDatabaseTreeView : public nsITreeView,
                                 public sbILocalDatabaseAsyncGUIDArrayListener,
@@ -87,6 +89,9 @@ private:
   nsresult SetSort(const nsAString& aProperty, PRBool aDirection);
 
   nsresult InvalidateCache();
+
+  // Cached property manager
+  nsCOMPtr<sbIPropertyManager> mPropMan;
 
   // The media list view that this tree view is a view of
   nsCOMPtr<sbIMediaListView> mMediaListView;

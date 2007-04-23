@@ -32,10 +32,14 @@
 #include <nsITreeSelection.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbIMediaListView.h>
+#include <sbIMediaList.h>
+#include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
 #include <sbISortableMediaList.h>
 
 #include <nsComponentManagerUtils.h>
+#include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsUnicharUtils.h>
 #include <nsUnitConversion.h>
@@ -90,6 +94,9 @@ sbLocalDatabaseTreeView::Init(sbIMediaListView* aMediaListView,
   NS_ENSURE_ARG_POINTER(aArray);
 
   nsresult rv;
+
+  mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // This can be null if we are not linked to a media list view
   mMediaListView = aMediaListView;
@@ -511,6 +518,10 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
     return NS_OK;
   }
 
+  nsCOMPtr<sbIPropertyInfo> info;
+  rv = mPropMan->GetPropertyInfo(bind, getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Check our local map cache of property bags and return the cell value if
   // we have it cached
   sbILocalDatabaseResourcePropertyBag* bag;
@@ -520,10 +531,10 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
       _retval.Assign(EmptyString());
     }
     else {
-      if (_retval.Equals(EmptyString())) {
-        TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetCellText - "
-               "Empty value at %d", this, row));
-      }
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Format the value for display
+      rv = info->Format(_retval, _retval);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     return NS_OK;
@@ -602,6 +613,12 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
       }
     }
     break;
+  }
+
+  if (!_retval.Equals(EmptyString())) {
+    // Format the value for display
+    rv = info->Format(_retval, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
