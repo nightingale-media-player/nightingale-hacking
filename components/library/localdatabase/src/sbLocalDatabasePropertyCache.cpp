@@ -62,7 +62,7 @@ static PRLogModuleInfo *gLocalDatabasePropertyCacheLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-NS_IMPL_ISUPPORTS1(sbLocalDatabasePropertyCache, sbILocalDatabasePropertyCache)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabasePropertyCache, sbILocalDatabasePropertyCache)
 
 struct sbStaticProperty {
   const PRUnichar* mName;
@@ -1226,6 +1226,15 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName,
   PRBool valid = PR_FALSE;
   rv = propertyInfo->Validate(aValue, &valid);
   NS_ENSURE_SUCCESS(rv, rv);
+
+#if defined(PR_LOGGING)
+  if(NS_UNLIKELY(!valid)) {
+    LOG(("Failed to set property %s with value %s", 
+      NS_ConvertUTF16toUTF8(aName).get(),
+      NS_ConvertUTF16toUTF8(aValue).get()));
+  }
+#endif
+
   NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
 
   if(propertyID == 0) {

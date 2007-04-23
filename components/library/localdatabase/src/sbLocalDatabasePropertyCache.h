@@ -88,8 +88,8 @@ private:
   nsCOMPtr<nsIURI> mDatabaseLocation;
 
   // Cache the property name list
-  nsClassHashtable<nsUint32HashKey, nsString> mPropertyIDToName;
-  nsDataHashtable<nsStringHashKey, PRUint32> mPropertyNameToID;
+  nsClassHashtableMT<nsUint32HashKey, nsString> mPropertyIDToName;
+  nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyNameToID;
 
   // Used to template the properties select statement
   nsCOMPtr<sbISQLSelectBuilder> mPropertiesSelect;
