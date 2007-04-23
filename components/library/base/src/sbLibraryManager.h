@@ -34,6 +34,7 @@
 
 #include <sbILibraryManager.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsIGenericFactory.h>
@@ -163,12 +164,12 @@ private:
   /**
    * \brief A hashtable that holds all the registered libraries.
    */
-  nsInterfaceHashtable<nsStringHashKey, sbILibrary> mLibraryTable;
+  nsInterfaceHashtableMT<nsStringHashKey, sbILibrary> mLibraryTable;
 
   /**
    * \brief A hashtable that holds all the registered library factories.
    */
-  nsInterfaceHashtable<nsStringHashKey, sbILibraryFactory> mFactoryTable;
+  nsInterfaceHashtableMT<nsStringHashKey, sbILibraryFactory> mFactoryTable;
 
   /**
    * \brief An in-memory datasource that contains information about the
@@ -179,6 +180,7 @@ private:
   /**
    * \brief A list of listeners.
    */
+  PRLock* mListenersLock;
   nsTHashtable<nsISupportsHashKey> mListeners;
 };
 

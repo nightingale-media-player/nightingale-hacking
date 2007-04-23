@@ -65,10 +65,12 @@ static PRLogModuleInfo* gLibraryManagerLog = nsnull;
 
 #define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
 
-NS_IMPL_ISUPPORTS2(sbLibraryManager, sbILibraryManager,
-                                     nsIObserver)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbLibraryManager, 
+                              sbILibraryManager,
+                              nsIObserver)
 
 sbLibraryManager::sbLibraryManager()
+: mListenersLock(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gLibraryManagerLog)
@@ -80,6 +82,10 @@ sbLibraryManager::sbLibraryManager()
 
 sbLibraryManager::~sbLibraryManager()
 {
+  if(mListenersLock) {
+    PR_DestroyLock(mListenersLock);
+  }
+
   TRACE(("LibraryManager[0x%x] - Destroyed", this));
 }
 
@@ -93,6 +99,9 @@ sbLibraryManager::Init()
 
   PRBool success = mListeners.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  mListenersLock = PR_NewLock();
+  NS_ENSURE_TRUE(mListenersLock, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv;
   nsCOMPtr<nsIObserverService> observerService = 
@@ -331,6 +340,8 @@ void
 sbLibraryManager::NotifyListenersLibraryRegistered(sbILibrary* aLibrary)
 {
   TRACE(("LibraryManager[0x%x] - NotifyListenersLibraryRegistered", this));
+  
+  nsAutoLock lock(mListenersLock);
   mListeners.EnumerateEntries(NotifyListenersLibraryRegisteredCallback,
                               aLibrary);
 }
@@ -347,6 +358,8 @@ void
 sbLibraryManager::NotifyListenersLibraryUnregistered(sbILibrary* aLibrary)
 {
   TRACE(("LibraryManager[0x%x] - NotifyListenersLibraryUnregistered", this));
+  
+  nsAutoLock lock(mListenersLock);
   mListeners.EnumerateEntries(NotifyListenersLibraryUnregisteredCallback,
                               aLibrary);
 }
@@ -556,6 +569,8 @@ NS_IMETHODIMP
 sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
+  nsAutoLock lock(mListenersLock);
+
 #ifdef DEBUG
   nsISupportsHashKey* exists = mListeners.GetEntry(aListener);
   if (exists) {
@@ -577,6 +592,8 @@ sbLibraryManager::RemoveListener(sbILibraryManagerListener* aListener)
 {
   TRACE(("LibraryManager[0x%x] - RemoveListener", this));
   NS_ENSURE_ARG_POINTER(aListener);
+  nsAutoLock lock(mListenersLock);
+
 #ifdef DEBUG
   nsISupportsHashKey* exists = mListeners.GetEntry(aListener);
   NS_WARN_IF_FALSE(exists, "Trying to remove a listener that was never added!");
