@@ -28,30 +28,25 @@
 #define __SBLOCALDATABASELIBRARYFACTORY_H__
 
 #include <sbILibraryFactory.h>
+#include <sbILocalDatabaseLibraryFactory.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
-#define SB_LOCALDATABASE_LIBRARYFACTORY_TYPE               \
-  SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION
-
 class nsIFile;
 class nsILocalFile;
-class sbILibrary;
 
-class sbLocalDatabaseLibraryFactory : public sbILibraryFactory
+class sbLocalDatabaseLibraryFactory : public sbILocalDatabaseLibraryFactory
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILIBRARYFACTORY
+  NS_DECL_SBILOCALDATABASELIBRARYFACTORY
 
   already_AddRefed<nsILocalFile> GetFileForGUID(const nsAString& aGUID);
-
-  nsresult CreateLibraryFromDatabase(nsIFile* aDatabase,
-                                     sbILibrary** _retval,
-                                     nsIPropertyBag2* aCreationParameters = nsnull);
 
 private:
   nsresult InitalizeLibrary(nsIFile* aDatabaseFile);
 };
 
 #endif /* __SBLOCALDATABASELIBRARYFACTORY_H__ */
+

@@ -36,13 +36,10 @@
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryFactory)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryLoader)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseLibraryLoader, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSimpleMediaListFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseAsyncGUIDArray, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSmartMediaListFactory)
-
-SB_LIBRARY_LOADER_REGISTRATION(sbLocalDatabaseLibraryLoader,
-                               SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION)
 
 static const nsModuleComponentInfo components[] =
 {
@@ -69,8 +66,7 @@ static const nsModuleComponentInfo components[] =
     SB_LOCALDATABASE_LIBRARYLOADER_CID,
     SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID,
     sbLocalDatabaseLibraryLoaderConstructor,
-    sbLocalDatabaseLibraryLoaderRegisterSelf,
-    sbLocalDatabaseLibraryLoaderUnregisterSelf
+    sbLocalDatabaseLibraryLoader::RegisterSelf
   },
   {
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_DESCRIPTION,

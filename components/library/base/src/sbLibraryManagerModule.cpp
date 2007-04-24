@@ -40,9 +40,8 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_LIBRARYMANAGER_CLASSNAME,
     SONGBIRD_LIBRARYMANAGER_CID,
     SONGBIRD_LIBRARYMANAGER_CONTRACTID,
-    sbLibraryManagerConstructor,
-    sbLibraryManager::RegisterSelf
+    sbLibraryManagerConstructor
   }
 };
 
-NS_IMPL_NSGETMODULE(Songbird Library Manager, components)
+NS_IMPL_NSGETMODULE(SONGBIRD_LIBRARYMANAGER_DESCRIPTION, components)

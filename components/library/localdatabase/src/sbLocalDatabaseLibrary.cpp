@@ -31,7 +31,6 @@
 #include <nsIFile.h>
 #include <nsIMutableArray.h>
 #include <nsIProgrammingLanguage.h>
-#include <nsIPropertyBag2.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
 #include <nsISupportsPrimitives.h>
@@ -39,7 +38,6 @@
 #include <nsIUUIDGenerator.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
-#include <sbILibraryFactory.h>
 #include <sbILibraryResource.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabasePropertyCache.h>
@@ -318,23 +316,16 @@ sbLocalDatabaseLibrary::~sbLocalDatabaseLibrary()
 
 nsresult
 sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
-                             nsIPropertyBag2* aCreationParameters,
-                             sbILibraryFactory* aFactory,
                              nsIURI* aDatabaseLocation)
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Init()", this));
-  NS_ENSURE_FALSE(aDatabaseGuid.IsEmpty(), NS_ERROR_INVALID_ARG);
-  NS_ENSURE_ARG_POINTER(aCreationParameters);
-  NS_ENSURE_ARG_POINTER(aFactory);
 
   // Maybe check to this that this db is valid, etc?
   // Check version and migrate if needed?
 
+  // We need a valid GUID to go any further.
+  NS_ENSURE_FALSE(aDatabaseGuid.IsEmpty(), NS_ERROR_INVALID_ARG);
   mDatabaseGuid.Assign(aDatabaseGuid);
-
-  mCreationParameters = aCreationParameters;
-
-  mFactory = aFactory;
 
   // This may be null.
   mDatabaseLocation = aDatabaseLocation;
@@ -1124,34 +1115,6 @@ sbLocalDatabaseLibrary::GetSupportsForeignMediaItems(PRBool* aSupportsForeignMed
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - GetSupportsForeignMediaItems()", this));
   return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * See sbILibrary
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetCreationParameters(nsIPropertyBag2** aCreationParameters)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetCreationParameters()", this));
-  NS_ENSURE_ARG_POINTER(aCreationParameters);
-  NS_ENSURE_STATE(mCreationParameters);
-
-  NS_ADDREF(*aCreationParameters = mCreationParameters);
-  return NS_OK;
-}
-
-/**
- * See sbILibrary
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetFactory(sbILibraryFactory** aFactory)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetFactory()", this));
-  NS_ENSURE_ARG_POINTER(aFactory);
-  NS_ENSURE_STATE(mFactory);
-
-  NS_ADDREF(*aFactory = mFactory);
-  return NS_OK;
 }
 
 /**

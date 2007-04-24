@@ -25,36 +25,24 @@
 */
 
 /**
- * \file sbILibraryFactory.idl
- * \brief Definition of the sbILibraryFactory interface
- * \sa sbILibrary.idl
+ * \file sbILocalDatabaseLibraryFactory.idl
+ * \brief Definition of the sbILocalDatabaseLibraryFactory interfaces
  */
 
-#include "nsISupports.idl"
+#include "sbILibraryFactory.idl"
 
-interface sbILibrary;
+interface nsIFile;
 
 /**
-* \interface sbILibraryFactory
-* \brief Factory for new library instances
-*
-* This interface is used to create new instances of a library
-*
-* \sa sbILibrary
+* \interface sbILocalDatabaseLibraryFactory
 */
-[scriptable, uuid(5e49042d-3676-4dc5-8366-24ea5cace552)]
-interface sbILibraryFactory : nsISupports
+[scriptable, uuid(fe3a94c0-34fd-4196-b939-1af3fa2d18da)]
+interface sbILocalDatabaseLibraryFactory : sbILibraryFactory
 {
   /**
-   * \brief Key to the localized name of the library type this factory creates
-   */
-  readonly attribute AString nameKey;
-
-  /**
-   * \brief Create a new instance of a library
+   * \brief Create a new instance of a library from a database
    * \return New library instance
    */
-  sbILibrary createLibrary();
-
+  sbILibrary createLibraryFromDatabase(in nsIFile aDatabase);
 };
 

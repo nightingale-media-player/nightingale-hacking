@@ -42,35 +42,35 @@ function countEnumeratedItems(enumerator) {
 function runTest () {
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
                        getService(Ci.sbILibraryManager);
-  var enumerator = libraryManager.getLibraries();
+  var enumerator = libraryManager.getLibraryEnumerator();
   
   var baseLibraryCount = countEnumeratedItems(enumerator);
 
   var library1 = createLibrary("test_library-base1");
   
-  libraryManager.registerLibrary(library1, false);
-  enumerator = libraryManager.getLibraries();
+  libraryManager.registerLibrary(library1);
+  enumerator = libraryManager.getLibraryEnumerator();
   assertEqual(countEnumeratedItems(enumerator), baseLibraryCount + 1);
   
   libraryManager.unregisterLibrary(library1);
-  enumerator = libraryManager.getLibraries();
+  enumerator = libraryManager.getLibraryEnumerator();
   assertEqual(countEnumeratedItems(enumerator), baseLibraryCount);
 
-  libraryManager.registerLibrary(library1, false);
-  libraryManager.registerLibrary(library1, false);
-  enumerator = libraryManager.getLibraries();
+  libraryManager.registerLibrary(library1);
+  libraryManager.registerLibrary(library1);
+  enumerator = libraryManager.getLibraryEnumerator();
   assertEqual(countEnumeratedItems(enumerator), baseLibraryCount + 1);
 
   libraryManager.unregisterLibrary(library1);
   libraryManager.unregisterLibrary(library1);
-  enumerator = libraryManager.getLibraries();
+  enumerator = libraryManager.getLibraryEnumerator();
   assertEqual(countEnumeratedItems(enumerator), baseLibraryCount);
 
   var library2 = createLibrary("test_library-base2");
 
-  libraryManager.registerLibrary(library1, false);
-  libraryManager.registerLibrary(library2, false);
-  enumerator = libraryManager.getLibraries();
+  libraryManager.registerLibrary(library1);
+  libraryManager.registerLibrary(library2);
+  enumerator = libraryManager.getLibraryEnumerator();
   assertEqual(countEnumeratedItems(enumerator), baseLibraryCount + 2);
   
   var getLibraryException;
@@ -86,29 +86,4 @@ function runTest () {
   
   var mainLibrary = libraryManager.mainLibrary;
   assertTrue(mainLibrary);
-  
-  enumerator = libraryManager.getStartupLibraries();
-  var baseStartupLibraryCount = countEnumeratedItems(enumerator);
-  assertTrue(baseStartupLibraryCount >= 3);
-
-  var library3 = createLibrary("test_library-base3");
-  libraryManager.registerLibrary(library3, true);
-  enumerator = libraryManager.getStartupLibraries();
-  assertEqual(countEnumeratedItems(enumerator), baseStartupLibraryCount + 1);
-
-  libraryManager.setLibraryLoadsAtStartup(library3, false);
-  enumerator = libraryManager.getStartupLibraries();
-  assertEqual(countEnumeratedItems(enumerator), baseStartupLibraryCount);
-  
-  libraryManager.setLibraryLoadsAtStartup(library2, true);
-  assertTrue(libraryManager.getLibraryLoadsAtStartup(library2));
-  
-  enumerator = libraryManager.getStartupLibraries();
-  assertEqual(countEnumeratedItems(enumerator), baseStartupLibraryCount + 1);
-
-  libraryManager.setLibraryLoadsAtStartup(library2, false);
-  assertFalse(libraryManager.getLibraryLoadsAtStartup(library2));
-  
-  enumerator = libraryManager.getStartupLibraries();
-  assertEqual(countEnumeratedItems(enumerator), baseStartupLibraryCount);
 }

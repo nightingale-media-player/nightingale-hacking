@@ -41,13 +41,11 @@
 #include <nsStringGlue.h>
 #include <sbIMediaListFactory.h>
 
-class nsIPropertyBag2;
 class nsIURI;
 class nsIWeakReference;
 class nsStringHashKey;
 class sbAutoBatchHelper;
 class sbIBatchCreateMediaItemsListener;
-class sbILibraryFactory;
 class sbILocalDatabasePropertyCache;
 class sbLibraryInsertingEnumerationListener;
 class sbLibraryRemovingEnumerationListener;
@@ -129,8 +127,6 @@ public:
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty);
 
   nsresult Init(const nsAString& aDatabaseGuid,
-                nsIPropertyBag2* aCreationParameters,
-                sbILibraryFactory* aFactory,
                 nsIURI* aDatabaseLocation = nsnull);
 
 private:
@@ -195,9 +191,6 @@ private:
 
   nsCOMPtr<nsITimer> mBatchCreateTimer;
   nsCOMPtr<nsITimerCallback> mBatchCreateTimerCallback;
-
-  nsCOMPtr<nsIPropertyBag2> mCreationParameters;
-  nsCOMPtr<sbILibraryFactory> mFactory;
 };
 
 

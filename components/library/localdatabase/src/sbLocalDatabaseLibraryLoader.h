@@ -27,35 +27,36 @@
 #ifndef __SB_LOCALDATABASELIBRARYLOADER_H__
 #define __SB_LOCALDATABASELIBRARYLOADER_H__
 
-#include <sbILibraryLoader.h>
+#include <nsIObserver.h>
 
 #include <nsClassHashtable.h>
 #include <nsHashKeys.h>
-#include <nsIPrefBranch.h>
 #include <nsStringGlue.h>
 
 class nsIComponentManager;
 class nsIFile;
-class nsILocalFile;
+class nsIPrefBranch;
 class nsIPrefService;
 class sbILibraryManager;
-class sbLibraryLoaderInfo;
+class sbLibraryInfo;
 class sbLocalDatabaseLibraryFactory;
 
 struct nsModuleComponentInfo;
 
-class sbLocalDatabaseLibraryLoader : public sbILibraryLoader
+class sbLocalDatabaseLibraryLoader : public nsIObserver
 {
   struct sbLoaderInfo
   {
     sbLoaderInfo(sbILibraryManager* aLibraryManager,
                  sbLocalDatabaseLibraryFactory* aLibraryFactory)
     : libraryManager(aLibraryManager),
-      libraryFactory(aLibraryFactory)
+      libraryFactory(aLibraryFactory),
+      registeredLibraryCount(0)
     { }
 
     sbILibraryManager*             libraryManager;
     sbLocalDatabaseLibraryFactory* libraryFactory;
+    PRUint32                       registeredLibraryCount;
   };
 
   struct sbLibraryExistsInfo
@@ -71,14 +72,22 @@ class sbLocalDatabaseLibraryLoader : public sbILibraryLoader
 
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_SBILIBRARYLOADER
+  NS_DECL_NSIOBSERVER
 
   sbLocalDatabaseLibraryLoader();
+
+  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
+                                nsIFile* aPath,
+                                const char* aLoaderStr,
+                                const char* aType,
+                                const nsModuleComponentInfo *aInfo);
 
   nsresult Init();
 
 private:
   ~sbLocalDatabaseLibraryLoader();
+
+  nsresult RealInit();
 
   nsresult LoadLibraries();
 
@@ -87,56 +96,30 @@ private:
   nsresult EnsureDefaultLibrary(const nsACString& aLibraryGUIDPref,
                                 const nsAString& aDefaultGUID);
 
-  sbLibraryLoaderInfo* CreateDefaultLibraryInfo(const nsACString& aPrefKey,
-                                                const nsAString& aGUID);
-
-  PRUint32 GetNextLibraryIndex();
+  sbLibraryInfo* CreateDefaultLibraryInfo(const nsACString& aPrefKey,
+                                          const nsAString& aGUID);
 
   static void RemovePrefBranch(const nsACString& aPrefBranch);
 
   static PLDHashOperator PR_CALLBACK
     LoadLibrariesCallback(nsUint32HashKey::KeyType aKey,
-                          sbLibraryLoaderInfo* aEntry,
+                          sbLibraryInfo* aEntry,
                           void* aUserData);
 
   static PLDHashOperator PR_CALLBACK
     LibraryExistsCallback(nsUint32HashKey::KeyType aKey,
-                          sbLibraryLoaderInfo* aEntry,
+                          sbLibraryInfo* aEntry,
                           void* aUserData);
 
   static PLDHashOperator PR_CALLBACK
     VerifyEntriesCallback(nsUint32HashKey::KeyType aKey,
-                          nsAutoPtr<sbLibraryLoaderInfo>& aEntry,
+                          nsAutoPtr<sbLibraryInfo>& aEntry,
                           void* aUserData);
 
 private:
-  nsClassHashtable<nsUint32HashKey, sbLibraryLoaderInfo> mLibraryInfoTable;
+  nsClassHashtable<nsUint32HashKey, sbLibraryInfo> mLibraryInfoTable;
+  PRUint32 mNextLibraryIndex;
   nsCOMPtr<nsIPrefBranch> mRootBranch;
-};
-
-class sbLibraryLoaderInfo
-{
-public:
-  sbLibraryLoaderInfo() { }
-
-  nsresult Init(const nsACString& aPrefKey);
-
-  nsresult SetDatabaseGUID(const nsAString& aGUID);
-  void GetDatabaseGUID(nsAString& _retval);
-
-  nsresult SetDatabaseLocation(nsILocalFile* aLocation);
-  already_AddRefed<nsILocalFile> GetDatabaseLocation();
-
-  nsresult SetLoadAtStartup(PRBool aLoadAtStartup);
-  PRBool GetLoadAtStartup();
-
-  void GetPrefBranch(nsACString& _retval);
-
-private:
-  nsCOMPtr<nsIPrefBranch> mPrefBranch;
-  nsCString mGUIDKey;
-  nsCString mLocationKey;
-  nsCString mStartupKey;
 };
 
 #endif /* __SB_LOCALDATABASELIBRARYLOADER_H__ */

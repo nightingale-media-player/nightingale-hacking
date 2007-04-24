@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbILocalDatabaseAsyncGUIDArray.idl \
              sbILocalDatabaseGUIDArray.idl \
              sbILocalDatabaseLibrary.idl \
+             sbILocalDatabaseLibraryFactory.idl \
              sbILocalDatabaseMediaItem.idl \
              sbILocalDatabasePropertyCache.idl \
              sbILocalDatabaseResourceProperty.idl \

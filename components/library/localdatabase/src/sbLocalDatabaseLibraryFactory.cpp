@@ -30,11 +30,9 @@
 #include <nsIIOService.h>
 #include <nsILocalFile.h>
 #include <nsIProperties.h>
-#include <nsIPropertyBag2.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
 #include <nsIUUIDGenerator.h>
-#include <nsIWritablePropertyBag2.h>
 #include <nsIXMLHttpRequest.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
@@ -48,14 +46,11 @@
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCID.h>
-#include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibrary.h"
 #include <sbSQLBuilderCID.h>
 
-#define DEFAULT_LIBRARY_NAME NS_LITERAL_STRING("defaultlibrary.db")
-#define NS_HASH_PROPERTY_BAG_CONTRACTID "@mozilla.org/hash-property-bag;1"
-#define PROPERTY_KEY_DATABASEFILE "databaseFile"
 #define SCHEMA_URL "chrome://songbird/content/library/localdatabase/schema.sql"
+#define DEFAULT_LIBRARY_NAME NS_LITERAL_STRING("defaultlibrary.db")
 
 #define PERMISSIONS_FILE      0644
 #define PERMISSIONS_DIRECTORY 0755
@@ -131,54 +126,35 @@ GetDBFolder()
   return file;
 }
 
-NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryFactory, sbILibraryFactory)
+NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryFactory,
+                   sbILocalDatabaseLibraryFactory)
 
 NS_IMETHODIMP
-sbLocalDatabaseLibraryFactory::GetType(nsAString& aType)
+sbLocalDatabaseLibraryFactory::GetNameKey(nsAString& aNameKey)
 {
-  aType.AssignLiteral(SB_LOCALDATABASE_LIBRARYFACTORY_TYPE);
-  return NS_OK;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseLibraryFactory::GetContractID(nsACString& aContractID)
+sbLocalDatabaseLibraryFactory::CreateLibrary(sbILibrary** _retval)
 {
-  aContractID.AssignLiteral(SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibraryFactory::CreateLibrary(nsIPropertyBag2* aCreationParameters,
-                                             sbILibrary** _retval)
-{
-  NS_ENSURE_ARG_POINTER(aCreationParameters);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsCOMPtr<nsILocalFile> file;
-  nsresult rv =
-    aCreationParameters->GetPropertyAsInterface(NS_LITERAL_STRING(PROPERTY_KEY_DATABASEFILE),
-                                                NS_GET_IID(nsILocalFile),
-                                                getter_AddRefs(file));
-  if (NS_FAILED(rv)) {
-    NS_WARNING("You passed in a property bag with the wrong data!");
+  nsCOMPtr<nsILocalFile> file = GetDBFolder();
+  NS_ENSURE_TRUE(file, NS_ERROR_FAILURE);
 
-    file = GetDBFolder();
-    NS_ENSURE_TRUE(file, NS_ERROR_FAILURE);
+  nsresult rv = file->AppendRelativePath(DEFAULT_LIBRARY_NAME);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = file->AppendRelativePath(DEFAULT_LIBRARY_NAME);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = CreateLibraryFromDatabase(file, _retval, aCreationParameters);
+  rv = CreateLibraryFromDatabase(file, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
-                                                         sbILibrary** _retval,
-                                                         nsIPropertyBag2* aCreationParameters)
+                                                         sbILibrary** _retval)
 {
   NS_ENSURE_ARG_POINTER(aDatabase);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -221,24 +197,8 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   nsAutoPtr<sbLocalDatabaseLibrary> library(new sbLocalDatabaseLibrary());
   NS_ENSURE_TRUE(library, NS_ERROR_OUT_OF_MEMORY);
 
-  nsCOMPtr<nsIPropertyBag2> creationParams = aCreationParameters;
-  if (!creationParams) {
-    nsCOMPtr<nsIWritablePropertyBag2> bag =
-      do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING(PROPERTY_KEY_DATABASEFILE),
-                                     aDatabase);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    creationParams = do_QueryInterface(bag, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = library->Init(NS_ConvertUTF8toUTF16(utf8GUID), creationParams, this,
-                     databaseLocation);
+  rv = library->Init(NS_ConvertUTF8toUTF16(utf8GUID), databaseLocation);
   NS_ENSURE_SUCCESS(rv, rv);
-
 
   NS_ADDREF(*_retval = library.forget());
   return NS_OK;

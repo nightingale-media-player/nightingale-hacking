@@ -32,19 +32,15 @@
 #ifndef __SB_LIBRARYMANAGER_H__
 #define __SB_LIBRARYMANAGER_H__
 
-#include <nsIObserver.h>
-#include <nsWeakReference.h>
-#include <sbILibrary.h>
 #include <sbILibraryManager.h>
 
-#include <nsCategoryCache.h>
 #include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
-#include <nsClassHashtable.h>
+#include <nsIGenericFactory.h>
+#include <nsInterfaceHashtable.h>
+#include <nsIObserver.h>
 #include <nsTHashtable.h>
-#include <prlock.h>
-#include <sbILibraryLoader.h>
 
 #define SONGBIRD_LIBRARYMANAGER_DESCRIPTION                \
   "Songbird Library Manager"
@@ -70,33 +66,13 @@
 #define SB_GUID_WEB_LIBRARY      "web@library.songbirdnest.com"
 #define SB_GUID_DOWNLOAD_LIBRARY "download@library.songbirdnest.com"
 
-class nsIComponentManager;
-class nsIFile;
 class nsIRDFDataSource;
+class sbILibrary;
 class sbILibraryFactory;
-class sbILibraryLoader;
-
-struct nsModuleComponentInfo;
 
 class sbLibraryManager : public sbILibraryManager,
-                         public nsIObserver,
-                         public nsSupportsWeakReference
+                         public nsIObserver
 {
-  struct sbLibraryInfo {
-    sbLibraryInfo(PRBool aLoadAtStartup = PR_FALSE)
-    : loadAtStartup(aLoadAtStartup),
-      loader(nsnull)
-    { }
-
-    nsCOMPtr<sbILibrary> library;
-
-    // Don't need an owning ref here because we already have one in
-    // mLoaderCache.
-    sbILibraryLoader* loader;
-
-    PRBool loadAtStartup;
-  };
-
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSIOBSERVER
@@ -104,66 +80,96 @@ public:
 
   sbLibraryManager();
 
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
-
+  /**
+   * See sbLibraryManager.cpp
+   */
   nsresult Init();
 
 private:
   ~sbLibraryManager();
 
+  /**
+   * See sbLibraryManager.cpp
+   */
   static PLDHashOperator PR_CALLBACK
     AddLibrariesToCOMArrayCallback(nsStringHashKey::KeyType aKey,
-                                   sbLibraryInfo* aEntry,
+                                   sbILibrary* aEntry,
                                    void* aUserData);
 
+  /**
+   * See sbLibraryManager.cpp
+   */
   static PLDHashOperator PR_CALLBACK
-    AddStartupLibrariesToCOMArrayCallback(nsStringHashKey::KeyType aKey,
-                                          sbLibraryInfo* aEntry,
-                                          void* aUserData);
+    AddFactoriesToCOMArrayCallback(nsStringHashKey::KeyType aKey,
+                                   sbILibraryFactory* aEntry,
+                                   void* aUserData);
 
+  /**
+   * See sbLibraryManager.cpp
+   */
   static PLDHashOperator PR_CALLBACK
     AssertAllLibrariesCallback(nsStringHashKey::KeyType aKey,
-                               sbLibraryInfo* aEntry,
+                               sbILibrary* aEntry,
                                void* aUserData);
 
+  /**
+   * See sbLibraryManager.cpp
+   */
   static PLDHashOperator PR_CALLBACK
     ShutdownAllLibrariesCallback(nsStringHashKey::KeyType aKey,
-                                 sbLibraryInfo* aEntry,
+                                 sbILibrary* aEntry,
                                  void* aUserData);
 
+  /**
+   * See sbLibraryManager.cpp
+   */
   static PLDHashOperator PR_CALLBACK
     NotifyListenersLibraryRegisteredCallback(nsISupportsHashKey* aKey,
                                              void* aUserData);
 
+  /**
+   * See sbLibraryManager.cpp
+   */
   static PLDHashOperator PR_CALLBACK
     NotifyListenersLibraryUnregisteredCallback(nsISupportsHashKey* aKey,
                                                void* aUserData);
-
+  /**
+   * See sbLibraryManager.cpp
+   */
   static nsresult AssertLibrary(nsIRDFDataSource* aDataSource,
                                 sbILibrary* aLibrary);
 
+  /**
+   * See sbLibraryManager.cpp
+   */
   static nsresult UnassertLibrary(nsIRDFDataSource* aDataSource,
                                   sbILibrary* aLibrary);
 
+  /**
+   * See sbLibraryManager.cpp
+   */
   nsresult GenerateDataSource();
 
+  /**
+   * See sbLibraryManager.cpp
+   */
   void NotifyListenersLibraryRegistered(sbILibrary* aLibrary);
 
+  /**
+   * See sbLibraryManager.cpp
+   */
   void NotifyListenersLibraryUnregistered(sbILibrary* aLibrary);
-
-  void InvokeLoaders();
-
-  sbILibraryLoader* FindLoaderForLibrary(sbILibrary* aLibrary);
 
 private:
   /**
    * \brief A hashtable that holds all the registered libraries.
    */
-  nsClassHashtableMT<nsStringHashKey, sbLibraryInfo> mLibraryTable;
+  nsInterfaceHashtableMT<nsStringHashKey, sbILibrary> mLibraryTable;
+
+  /**
+   * \brief A hashtable that holds all the registered library factories.
+   */
+  nsInterfaceHashtableMT<nsStringHashKey, sbILibraryFactory> mFactoryTable;
 
   /**
    * \brief An in-memory datasource that contains information about the
@@ -174,16 +180,8 @@ private:
   /**
    * \brief A list of listeners.
    */
+  PRLock* mListenersLock;
   nsTHashtable<nsISupportsHashKey> mListeners;
-
-  /**
-   * \brief A list of library loaders registered through the Category Manager.
-   */
-  nsCategoryCache<sbILibraryLoader> mLoaderCache;
-
-  nsCOMPtr<sbILibraryLoader> mCurrentLoader;
-
-  PRLock* mLock;
 };
 
 #endif /* __SB_LIBRARYMANAGER_H__ */
