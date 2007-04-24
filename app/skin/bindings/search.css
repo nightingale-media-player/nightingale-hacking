@@ -24,87 +24,98 @@
 //
  */
 
+/**
+ * The Songbird web & internal search box.
+ * Note that this widget inherits from the FireFox binding.
+ * See dependencies/vendor/mozilla/browser/components/search/content/search.xml
+ * and app/content/bindings/search.xml
+ */
 
+/* Make the search bar match the general textbox style */
+searchbar
+{
+  height: 30px;
+  min-height: 30px;
+  margin: 2px;
+  padding: 0px;
+  border: 1px solid;
+  -moz-border-radius: 5px;
+}
+
+
+.searchbar-engine-image {
+  margin-left: 2px;
+}
+.searchbar-dropmarker-image {
+  list-style-image: url("chrome://songbird/skin/menu/dropmarker.png");
+  -moz-margin-start: 3px; 
+}
+
+
+/** This rule changes the dropmarker image when new search engines are available.
+    Koshi, do you want to do an animated pulse type thing, or would that be too distracting?
+.searchbar-engine-button[addengines="true"] > stack > hbox > .searchbar-dropmarker-image
+  list-style-image: url("chrome://songbird/skin/menu/dropmarker.png");
+} 
+**/
+
+
+/** Get rid of the default border on the search engine chooser **/
+.searchbar-engine-button, 
+.searchbar-engine-button:hover,
+.searchbar-engine-button:active,
+.searchbar-engine-button:focus
+{
+  border: none;
+}
+
+
+/** Get rid of the default textbox styles **/
 .searchbar-textbox {
   width: 4em;
   min-width: 4em;
-  margin-right: 0px;
-  margin-left: 0px;
-}
-
-.searchbar-box 
-{
-  -moz-border-radius: 5px !important;
-  border: 1px solid !important; 
-}
-
-
-
-
-/** 
-************************************************************************************************************************************************
-OLD SEARCH WIDGET
-TODO: Get rid of this before 0.3 is released
-************************************************************************************************************************************************
-*/
-
-#search_widget
-{
-  width: auto !important;
-  min-width: 0px !important;
-  height: 30px;
-  min-height: 30px;
-  border: 1px solid !important; 
-  -moz-border-radius: 5px !important;
-  margin: 2px 2px 2px 2px !important; 
-  padding: 2px;
-} 
-
-
-#search_widget .menulist-editable-box
-{
-  margin: 0px !important;
   border: none !important;
+  margin: 0px;
+  padding: 2px 0px 0px 0px;
 }
 
-#search_widget .menulist-editable-input,
-#search_widget .menulist-editable-input:focus
+
+/** Normal go button */
+.search-go-button {
+  list-style-image: url("chrome://songbird/skin/search/search-go-button.png");
+  border: 0px !important;
+  padding: 0px;
+  -moz-image-region: rect(0px 25px 22px 0px);
+}
+.search-go-button:hover {
+  -moz-image-region: rect(0px 50px 22px 25px);
+}
+.search-go-button[disabled="true"] {
+  -moz-image-region: rect(0px, 75px, 22px, 50px);
+}
+.search-go-button:hover:active {
+  -moz-image-region: rect(0px, 100px, 22px, 75px);
+}
+toolbarbutton.search-go-button > .toolbarbutton-text {
+  display: none; /* hide label */
+}
+
+/** Go button in cancel search mode.  
+    This occurs when live search (library filtering) is active, and
+    the search box is not empty.
+  */
+searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-box > .search-go-button-stack > .search-go-button 
 {
-  border: none !important;
+  -moz-image-region: rect(22px 25px 44px 0px);
 }
-
-#search_widget .button-icon
-{
-  margin: 0px 0px 0px 5px !important;  
+searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-box > .search-go-button-stack > .search-go-button:hover {
+  -moz-image-region: rect(22px 50px 44px 25px);
 }
-
-#search_widget menulist,
-#search_widget button
-{
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-  min-width: 0px !important;
-  min-height: 0px !important;
+searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-box > .search-go-button-stack > .search-go-button[disabled="true"] {
+  -moz-image-region: rect(22px, 75px, 44px, 50px);
 }
-
-#search_service_list
-{
-  width: 100px !important;
-  min-width: 50px !important;
-  margin: 3px 0px 3px 5px !important; 
+searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-box > .search-go-button-stack > .search-go-button:hover:active {
+  -moz-image-region: rect(22px, 100px, 44px, 75px);
 }
-
-
-#search_widget input
-{
-  padding-top: 2px !important;
-}
-
-
-
-
-
-                        
 
 

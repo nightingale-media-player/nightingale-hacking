@@ -648,13 +648,7 @@
 
           // Set the live search indicator attribute
           // according to the state of the new engine
-          if (this.liveSearchMode) {
-            this.setAttribute("livesearchmode", "true");
-          } else {
-            if (this.hasAttribute("livesearchmode")) {
-               this.removeAttribute("livesearchmode");
-            }   
-          }
+          this.updateLiveSearchAttribute();
 
           // If there was a query, then run it immediately
           if (this.value != "" & this.getAttribute("empty") != "true") 
@@ -738,13 +732,25 @@
           // set the livesearch indicator attribute appropriately.          
           // This can be used to apply a special CSS style.
           if (this.currentEngine == aEngine) {
-            this.setAttribute("livesearchmode", (aEnabled) ? "true" : "false");
+            this.updateLiveSearchAttribute();
           }
         ]]></body>
       </method>    
 
 
-    
+
+      <!-- Update the livesearchmode element attribute.
+           This attribute is set true when the current search
+           engine is in live search mode and the user has
+           entered at least one character in the search box.
+        -->   
+      <method name="updateLiveSearchAttribute">
+        <body><![CDATA[
+          var enable = (this.liveSearchMode && this.getSearch() != "");
+          this.setAttribute("livesearchmode", (enable) ? "true" : "false");                  
+        ]]></body>
+      </method> 
+          
       
 
       <!-- Override the method responsible for executing searches
@@ -762,6 +768,7 @@
           {
             this.value = "";
             this._sendSearchEvent();
+            this.updateLiveSearchAttribute();
             return;
           }
 
@@ -874,6 +881,8 @@
 
             // TODO: do something with metrics
             //metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
+            
+            this.updateLiveSearchAttribute();
           }
         ]]>
         </body>
@@ -887,6 +896,9 @@
         -->
       <handler event="focus" phase="capturing"><![CDATA[
         const target = event.originalTarget;
+        
+        this.setAttribute("focused", "true");
+        
         if (target.getAttribute("class").indexOf("autocomplete-textbox") != -1) {
           
           // Make sure the songbird autocomplete source has been added
@@ -913,6 +925,12 @@
           }                  
         }
       ]]></handler>
+      
+      <handler event="blur" phase="capturing"><![CDATA[
+        if (this.hasAttribute("focused")) {
+          this.removeAttribute("focused");        
+        }  
+      ]]></handler>      
 
     
       <!-- Starts the idle search timer after keypress when in live search mode  -->
