@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbIFilterableMediaList.idl \
              sbILibrary.idl \
              sbILibraryFactory.idl \
+             sbILibraryLoader.idl \
              sbILibraryManager.idl \
              sbILibraryManagerListener.idl \
              sbIMediaItem.idl \

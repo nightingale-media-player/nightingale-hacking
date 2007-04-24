@@ -31,7 +31,7 @@
 function runTest () {
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
                        getService(Ci.sbILibraryManager);
-  var enumerator = libraryManager.getLibraryEnumerator();
+  var enumerator = libraryManager.getLibraries();
   
   var libraryCount = 0;
   while (enumerator.hasMoreElements()) {
@@ -40,7 +40,7 @@ function runTest () {
   }
   assertTrue(libraryCount >= 3);
   
-  enumerator = libraryManager.getLibraryEnumerator();
+  enumerator = libraryManager.getLibraries();
   var library = enumerator.getNext();
   assertTrue(library);  
 }

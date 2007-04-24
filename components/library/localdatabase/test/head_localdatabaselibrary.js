@@ -177,8 +177,11 @@ function createLibrary(databaseGuid, databaseLocation) {
 
   var libraryFactory =
     Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
-      .createInstance(Ci.sbILocalDatabaseLibraryFactory);
-  var library = libraryFactory.createLibraryFromDatabase(file);
+      .createInstance(Ci.sbILibraryFactory);
+  var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
+                createInstance(Ci.nsIWritablePropertyBag2);
+  hashBag.setPropertyAsInterface("databaseFile", file);
+  var library = libraryFactory.createLibrary(hashBag);
   try {
     library.clear();
   }

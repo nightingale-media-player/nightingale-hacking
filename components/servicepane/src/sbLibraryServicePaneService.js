@@ -52,6 +52,7 @@ function sbLibraryServicePane() {
 sbLibraryServicePane.prototype.QueryInterface = 
 function sbLibraryServicePane_QueryInterface(iid) {
   if (!iid.equals(Ci.nsISupports) &&
+    !iid.equals(Ci.nsIObserver) &&
     !iid.equals(Ci.sbIServicePaneModule) &&
     !iid.equals(Ci.sbILibraryManagerListener)) {
     throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -63,21 +64,10 @@ function sbLibraryServicePane_servicePaneInit(sps) {
   // keep track of the service pane service
   this._servicePane = sps;
   
-  // get the library manager
-  this._libraryManager =
-      Components.classes['@songbirdnest.com/Songbird/library/Manager;1']
-      .getService(Components.interfaces.sbILibraryManager);
-  
-  this._libraryManager.addListener(this);
-  // FIXME: remove listener on destruction?
-  
-  var libraries = this._libraryManager.getLibraryEnumerator();
-  while (libraries.hasMoreElements()) {
-    var library = libraries.getNext();
-    library.QueryInterface(Components.interfaces.sbILibrary);
-    dump (' L: '+library+'\n');
-    this._ensureLibraryNodeExists(library);
-  }
+  // register for notification that the library manager is initialized
+  var obs = Cc["@mozilla.org/observer-service;1"].
+            getService(Ci.nsIObserverService);
+  obs.addObserver(this, "songbird-library-manager-ready", false);
 }
 sbLibraryServicePane.prototype.fillContextMenu =
 function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow) {
@@ -106,7 +96,6 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.image = 'chrome://songbird/skin/icons/icon_lib_16x16.png';
     node.hidden = false;
     node.contractid = CONTRACTID;
-    node.hideURL = true;
     
     // we want to put it above the first non-library item
     // yes this rule is kind of arbitary.
@@ -169,6 +158,29 @@ function sbLibraryServicePane_onBatchBegin(aMediaList) {
 sbLibraryServicePane.prototype.onBatchEnd =
 function sbLibraryServicePane_onBatchEnd(aMediaList) {
 }
+sbLibraryServicePane.prototype.observe = /* for nsIObserver */
+function sbLibraryServicePane_observe(subject, topic, data) {
+  if (topic == "songbird-library-manager-ready") {
+    var obs = Cc["@mozilla.org/observer-service;1"].
+              getService(Ci.nsIObserverService);
+    obs.removeObserver(this, "songbird-library-manager-ready");
+    
+    // get the library manager
+    this._libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
+                           getService(Ci.sbILibraryManager);
+    
+    this._libraryManager.addListener(this);
+    // FIXME: remove listener on destruction?
+    
+    var libraries = this._libraryManager.getLibraries();
+    while (libraries.hasMoreElements()) {
+      var library = libraries.getNext().QueryInterface(Ci.sbILibrary);
+      dump (' L: '+library+'\n');
+      this._ensureLibraryNodeExists(library);
+    }
+  }
+}
+
 
 /**
  * /brief XPCOM initialization code
