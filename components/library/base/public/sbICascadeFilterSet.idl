@@ -58,13 +58,6 @@ interface sbICascadeFilterSet : nsISupports
   readonly attribute unsigned short length;
 
   /**
-   * \brief Get the property for a filter by index
-   * \param aIndex Index of the filter
-   * \return The property for the given filter index
-   */
-  AString getProperty(in unsigned short aIndex);
-
-  /**
    * \brief Add a new property value filter to the end of the cascade
    * \param aProperty Property that this filter will filter
    * \return The index of the newly created filter
@@ -127,7 +120,14 @@ interface sbICascadeFilterSet : nsISupports
    * \param aIndex Index of the filter
    * \return The number of possible values for a filter
    */
-  unsigned long getLength(in unsigned short aIndex);
+  unsigned long getValueCount(in unsigned short aIndex);
+  
+  /**
+   * \brief Get the property for a filter by index
+   * \param aIndex Index of the filter
+   * \return The property for the given filter index
+   */
+  AString getProperty(in unsigned short aIndex);
 
   /**
    * \brief Add a listener to get notified of filter configuration changes

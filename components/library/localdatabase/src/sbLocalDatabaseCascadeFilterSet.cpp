@@ -355,8 +355,8 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseCascadeFilterSet::GetLength(PRUint16 aIndex,
-                                           PRUint32 *_retval)
+sbLocalDatabaseCascadeFilterSet::GetValueCount(PRUint16 aIndex,
+                                               PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
