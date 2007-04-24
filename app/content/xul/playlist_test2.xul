@@ -409,7 +409,7 @@ try
           var view = mediaList.createView();
           var filter = view.cascadeFilterSet;
           //filter.appendSearch(["*"], 1);
-          filter.appendFilter("http://songbirdnest.com/data/1.0#genre");
+          filter.appendFilter("http://songbirdnest.com/data/1.0#year");
           filter.appendFilter("http://songbirdnest.com/data/1.0#artistName");
           filter.appendFilter("http://songbirdnest.com/data/1.0#albumName");
           var playlist = document.getElementById("playlist_test");
