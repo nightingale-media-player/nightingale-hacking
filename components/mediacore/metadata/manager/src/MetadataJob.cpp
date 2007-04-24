@@ -28,7 +28,7 @@
 * \file MetadataJob.cpp
 * \brief 
 */
-#include <windows.h>
+
 // INCLUDES ===================================================================
 #include <nspr.h>
 #include <nscore.h>
