@@ -46,6 +46,14 @@ sb-watch-folders-drawer {
   -moz-binding: url("chrome://songbird/content/bindings/folders.xml#folders") !important;
 }
 
+sb-commands-menuitems {
+  -moz-binding: url("chrome://songbird/content/bindings/sb-commands.xml#commands-menuitems") !important;
+}
+
+sb-commands-toolbar {
+  -moz-binding: url("chrome://songbird/content/bindings/sb-commands.xml#commands-toolbar") !important;
+}
+
 playlist {
   -moz-binding: url("chrome://songbird/content/bindings/playlist.xml#playlist") !important;
 }

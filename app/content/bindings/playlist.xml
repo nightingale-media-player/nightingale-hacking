@@ -91,10 +91,7 @@
           </xul:tree>
 
           <!-- Playlist Toolbar -->
-          <xul:hbox id="playlist_toolbar_bkg" sbid="playlist_toolbar">
-            <xul:hbox id="playlist_toolbar" sbid="toolbar_parent" flex="1" oncommand="onToolbarCommand( event )" style="overflow: hidden;">
-            </xul:hbox>
-          </xul:hbox>
+          <sb-commands-toolbar sbid="playlist_toolbar"/>
 
           <!-- Popupset -->
           <xul:popupset>
@@ -106,6 +103,7 @@
               onpopuphidden="onPopupHidden( event );"
               oncommand="onPlaylistContextMenu( event );"
             >
+              <xul:sb-commands-menuitems sbid="playlist_popup_commands"/>
               <xul:menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
               <xul:menu id="playlist.context.search" label="&playlist.context.search;">
                 <xul:menupopup id="playlist.popup.search">
@@ -317,8 +315,6 @@
       <field name="filters">new Array();</field>
       <field name="splitters">new Array();</field>
       <field name="commands"></field>
-      <field name="toolbarbuttons">new Array();</field>
-      <field name="menuitems">new Array();</field>
       <field name="stringbundle">null</field>
       <field name="m_Library">null</field>
       <field name="m_PlaylistManager">null</field>
@@ -342,6 +338,8 @@
       <field name="paused_scanning">false</field>
       <field name="sortorder">""</field>
       <field name="sortdirection">""</field>
+      <field name="toolbar">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');</field>
+      <field name="commandmenuitems">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_popup_commands');</field>
 
       <property name="ref">
         <getter>
@@ -588,32 +586,13 @@
           this.source.executeFeed( ref );
         }
 
-        // Clear out the old commands
-        var toolbar = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
-        toolbar.hidden = true;
-        
-        if (!this.forcedcommands) 
-        {
-          // And add the new ones
-          this.commands = commands;
-          // See if there is one registered specifically for this table
-          var cmds = this.source.getPlaylistCommands( this.guid, this.table, this.type );
-          if ( cmds )
-          {
-            this.commands = cmds;
-          }
-        } 
-        else 
-        {
-          this.commands = this.forcedcommands; 
-        }
-        // Make sure it does what we think it does.
-        if ( this.commands )
-        {
-          this.commands = this.commands.QueryInterface( Components.interfaces.sbIPlaylistCommands );
-        }
-        this._deferRefresh = false;
-        this.refreshCommands();
+        // Clear out the old commands and add the new ones
+        this.toolbar.hidden = true;
+        this.toolbar.bind(this, commands);
+        this.toolbar.refreshCommands();
+
+        this.commandmenuitems.bind(this, commands);
+        this.commandmenuitems.refreshCommands();
         
         // If boolean true, read from the XUL file.
         if ( resize == true )
@@ -657,214 +636,15 @@
         <parameter name="stateonly"/>
         <body>
           <![CDATA[
-      try
-      {
-        // Sometimes we get here before the tree is properly built.  That's bad.
-        if (this.tree.view == null) 
-        {
-          // So if we're supposed to build the items here, remember that and quit.
-          if (!stateonly)
-            this._laststateonly = false;
-          return;
-        }
-        // And build them the next time it's time to refresh (this function gets called alot)
-        if (!this._laststateonly)
-        {
-          stateonly = false;
-          this._laststateonly = true;
-        }
-        
-        // Convert null to bool.
-        if (!stateonly)
-          stateonly = false;
-          
-        // If our internal objects are out of sync, rebuild.
-        if (this.toolbarbuttons.length == 0 || this.menuitems.length == 0 || this.toolbarbuttons.length != this.commands.getNumCommands()) 
-          stateonly = false;
-          
-        // Get the parents
-        var toolbar = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
-        var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'toolbar_parent');
-        var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_popup');
-        var before = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_before');
-        
-        // If deferring refresh, skip it
-        if ( this._deferRefresh )
-        {
-          // make a note that we need to refresh when the popup goes away
-          this._needRefresh = true;
-          // So if we're supposed to build the items here, remember that and quit.
-          if (!stateonly)
-            this._laststateonly = false;
-          return;
-        }
-        this._needRefresh = false;
-        
-        if (!stateonly) {
-          toolbar.hidden = true;
-          // Remove old elements
-          this.removeCommands();
-        }
-        
-        if ( this.commands )
-        {
-          // Once we get here, tell the commands who we are.
-          if (!stateonly) this.commands.setPlaylist( this );
-          
-          // And make all the new stuff
-          var num = this.commands.getNumCommands();
-          for ( var i = 0; i < num; i++ )
+          try
           {
-            var toolbarbutton;
-            var menuitem;
-            if (!stateonly)
-            {
-              // If we get here, show the toolbar
-              toolbar.hidden = false;
-              
-              // What id?
-              var obj_id = this.commands.getCommandId( i );
-              
-              var toolbarbutton_type = "button";
-              var menuitem_type = "menuitem";
-              
-              if ( obj_id == "*separator*" )
-              {
-                toolbarbutton_type = "spacer";
-                menuitem_type = "menuseparator";
-              }
-            
-              // Create a toolbarbutton
-              toolbarbutton = document.createElement( toolbarbutton_type );
-              toolbarbutton.setAttribute( "id", obj_id );
-              toolbarbutton.setAttribute( "sbtype", "command" ); // to find it easily, later
-              toolbarbutton.setAttribute( "class", "sb_faceplate" ); // Make them fully skinned buttons.
-
-              // And a menuitem
-              menuitem = document.createElement( menuitem_type );
-              menuitem.setAttribute( "id", obj_id );
-              menuitem.setAttribute( "sbtype", "command" );
-              menuitem.setAttribute( "class", "menuitem-iconic" ); // Icons are set in the css using the id
-              
-              // No label unless you have a label
-              var cmd_text = this.commands.getCommandText( i );
-              if ( cmd_text.length > 0 )
-              {
-                if ( cmd_text[ 0 ] == "&" )
-                {
-                  try
-                  {
-                    cmd_text = this.stringbundle.GetStringFromName( cmd_text.substr( 1, cmd_text.length ) );
-                  }
-                  catch( err )
-                  {
-                    dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
-                  }
-                }
-                toolbarbutton.setAttribute( "label", cmd_text );
-                menuitem.setAttribute( "label", cmd_text );
-              }
-
-              // No label unless you have a label
-              var cmd_flex = this.commands.getCommandFlex( i );
-              if ( cmd_flex > 0 )
-              {
-                toolbarbutton.setAttribute( "flex", cmd_flex );
-//                menuitem.setAttribute( "flex", cmd_flex );
-              }
-
-              // No tooltip unless you have a tooltip
-              var tooltip_text = this.commands.getCommandToolTipText( i );
-              if ( tooltip_text.length > 0 )
-              {
-                if ( tooltip_text[ 0 ] == "&" )
-                {
-                  try
-                  {
-                    tooltip_text = this.stringbundle.GetStringFromName( tooltip_text.substr( 1, tooltip_text.length ) );
-                  }
-                  catch( err )
-                  {
-                    dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
-                  }
-                }
-                /*
-                    These cause the crashy if they're up while updating.  :(
-                
-                  toolbarbutton.setAttribute( "tooltiptext", tooltip_text );
-                  menuitem.setAttribute( "tooltiptext", tooltip_text );
-                */
-              }
-            }
-            else
-            {
-              toolbarbutton = this.toolbarbuttons[i];
-              menuitem = this.menuitems[i];
-            }
-
-            if ( this.commands.getCommandEnabled( i ) )
-            {
-              toolbarbutton.setAttribute( "disabled", "false" );
-              menuitem.setAttribute( "disabled", "false" );
-            }
-            else
-            {
-              toolbarbutton.setAttribute( "disabled", "true" );
-              menuitem.setAttribute( "disabled", "true" );
-            }
-            
-            // Add them to the parents
-            if (!stateonly)
-            {
-              this.toolbarbuttons.push( toolbarbutton );
-              this.menuitems.push( menuitem );
-              parent.appendChild( toolbarbutton );
-              popup.insertBefore( menuitem, before );
-            }
+            this.toolbar.refreshCommands(stateonly);
+            this.commandmenuitems.refreshCommands(stateonly);
           }
-
-          if ( this.toolbarbuttons.length != this.commands.getNumCommands() )
+          catch( err )
           {
-            dump( "ERROR: TOOLBARBUTTONS OUT OF SYNCH!\n" );
+            alert( "playlist.xml - refreshCommands - " + err );
           }
-        }
-      }
-      catch( err )
-      {
-        alert( "playlist.xml - refreshCommands - " + err );
-      }
-      ]]>
-        </body>
-      </method>
-
-      <method name="setDeferRefresh">
-        <body>
-          <![CDATA[
-            try
-            {
-              this._deferRefresh = true;
-            }
-            catch( err )
-            {
-              alert( "playlist.xml - setDeferRefresh - " + err );
-            }
-          ]]>
-        </body>
-      </method>
-
-      <method name="clearDeferRefresh">
-        <body>
-          <![CDATA[
-            try
-            {
-              this._deferRefresh = false;
-              if (this._needRefresh)
-                this.refreshCommands(false);
-            }
-            catch( err )
-            {
-              alert( "playlist.xml - clearDeferRefresh - " + err );
-            }
           ]]>
         </body>
       </method>
@@ -872,34 +652,16 @@
       <method name="removeCommands">
         <body>
           <![CDATA[
-        try
-        {
-          // Delete the toolbar commands
-          var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'toolbar_parent');
-          var command_nodes = parent.getElementsByAttribute( 'sbtype', 'command' );
-          // command_nodes is a live array, removing children from parent auto removes items from it
-          while ( command_nodes.length > 0 ) 
+          try
           {
-            var node = command_nodes.item( 0 );
-            parent.removeChild(node);
+            this.toolbar.removeCommands();
+            this.commandmenuitems.removeCommands();
           }
-          this.toolbarbuttons.length = 0; // clear the array??
-        
-          // Delete the popup commands
-          var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_popup');
-          command_nodes = popup.getElementsByAttribute( 'sbtype', 'command' );
-          while ( command_nodes.length > 0 ) 
+          catch ( err )
           {
-            var node = command_nodes.item( 0 );
-            popup.removeChild(node);
+            alert( "playlist.xml - removeCommands - " + err );
           }
-          this.menuitems.length = 0; // clear the array??
-        }
-        catch ( err )
-        {
-          alert( "playlist.xml - removeElementsByAttribute - " + err );
-        }
-        ]]>
+          ]]>
         </body>
       </method>
 
@@ -2013,27 +1775,6 @@
         </body>
       </method>
 
-      <!-- Tree event listeners -->
-
-      <method name="onToolbarCommand">
-        <parameter name="evt"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            if ( this.commands )
-            {
-              this.commands.onCommand( evt );
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onToolbarCommand - " + err );
-          }
-        ]]>
-        </body>
-      </method>
-
       <method name="onPlaylistDblClick">
         <parameter name="evt"/>
         <body>
@@ -2133,7 +1874,7 @@
           <![CDATA[
           try {
             // If there is no actual commands, do not allow the context menu to pop.
-            if (!this.commands || this.commands.getNumCommands() == 0) return;
+            if (!this.commandmenuitems.commands || this.commandmenuitems.commands.getNumCommands() == 0) return;
             
             const COLUMN_TITLE = "title";
             const CONTEXT_IDS = ["playlist_context_before",
@@ -2442,13 +2183,6 @@
             }
             this.context_item = document.getAnonymousElementByAttribute(this, 'id', evt.target.id);
             metrics_inc("playlist.context", this.context_item.getAttribute("id"), null);
-            if ( evt.target.getAttribute( "sbtype" ) == "command" )
-            {
-              if ( this.commands ) // I hope so!
-              {
-                this.commands.onCommand( evt );
-              }
-            }
           }
           catch( err )
           {
@@ -2521,7 +2255,7 @@
         <![CDATA[
           try
           {
-            this.setDeferRefresh();
+            this.commandmenuitems.setDeferRefresh();
           }
           catch( err )
           {
@@ -2537,7 +2271,7 @@
         <![CDATA[
           try
           {
-            this.clearDeferRefresh();
+            this.commandmenuitems.clearDeferRefresh();
           }
           catch( err )
           {

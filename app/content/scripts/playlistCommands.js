@@ -37,6 +37,21 @@ var SBWebPlaylistCommands =
   
   m_Query: null,
 
+  m_Types: new Array
+  (
+    "action",
+    "action",
+    "action",
+    "action",
+    "action",
+    "action",
+    "action",
+    "separator",
+    "action"
+//    "action"
+//    "action"
+  ),
+
   m_Ids: new Array
   (
     "library_cmd_play",
@@ -82,7 +97,7 @@ var SBWebPlaylistCommands =
 //    "&command.tooltip.device"
   ),
 
-  getNumCommands: function()
+  getNumCommands: function( aSubmenu, aHost )
   {
     if ( 
         ( this.m_Tooltips.length != this.m_Ids.length ) ||
@@ -93,44 +108,85 @@ var SBWebPlaylistCommands =
       alert( "PlaylistCommands - Array lengths do not match!" );
       return 0;
     }
-    return this.m_Ids.length;
+    return this.m_Ids.length - ((aHost == "toolbar") ? 1 : 0);
   },
 
-  getCommandId: function( index )
+  getCommandId: function( aSubmenu, aIndex, aHost )
   {
-    if ( index >= this.m_Ids.length )
+    if (aHost == "toolbar" && aIndex > 5) aIndex++;
+    if ( aIndex >= this.m_Ids.length )
     {
       return "";
     }
-    return this.m_Ids[ index ];
+    return this.m_Ids[ aIndex ];
   },
 
-  getCommandText: function( index )
+  getCommandType: function( aSubmenu, aIndex, aHost )
   {
-    if ( index >= this.m_Names.length )
+    if (aHost == "toolbar" && aIndex > 5) aIndex++;
+    if ( aIndex >= this.m_Types.length )
     {
       return "";
     }
-    return this.m_Names[ index ];
+    return this.m_Types[ aIndex ];
   },
 
-  getCommandFlex: function( index )
+  getCommandText: function( aSubmenu, aIndex, aHost )
   {
-    if ( this.m_Ids[ index ] == "*separator*" ) return 1;
+    if (aHost == "toolbar" && aIndex > 5) aIndex++;
+    if ( aIndex >= this.m_Names.length )
+    {
+      return "";
+    }
+    return this.m_Names[ aIndex ];
+  },
+
+  getCommandFlex: function( aSubmenu, aIndex, aHost )
+  {
+    if (aHost == "toolbar" && aIndex > 5) aIndex++;
+    if ( this.m_Types[ aIndex ] == "separator" ) return 1;
     return 0;
   },
-
-  getCommandToolTipText: function( index )
+  
+  getCommandValue: function( aSubmenu, aIndex, aHost )
   {
-    if ( index >= this.m_Tooltips.length )
+    if (aHost == "toolbar" && aIndex > 5) aIndex++;
+    return "";
+  },
+
+  getCommandFlag: function( aSubmenu, aIndex, aHost )
+  {
+    if (aHost == "toolbar" && aIndex > 5) aIndex++;
+    return false;
+  },
+
+  getCommandChoiceItem: function( aChoiceMenu, aHost )
+  {
+    return "";
+  },
+
+  getCommandToolTipText: function( aSubmenu, aIndex, aHost )
+  {
+    if (aHost == "toolbar" && aIndex > 5) aIndex++;
+    if ( aIndex >= this.m_Tooltips.length )
     {
       return "";
     }
-    return this.m_Tooltips[ index ];
+    return this.m_Tooltips[ aIndex ];
   },
 
-  getCommandEnabled: function( index )
+  instantiateCustomCommand: function( aId, aHost ) 
   {
+    return null;
+  },
+
+  refreshCustomCommand: function( aElement, aId, aHost ) 
+  {
+  },
+
+  getCommandEnabled: function( aSubmenu, aIndex, aHost )
+  {
+    if (aHost == "toolbar" && aIndex > 5) aIndex++;
     // First time, make a query to be able to check for the existence of the 
     // download playlist
     if ( this.m_Query == null )
@@ -160,7 +216,7 @@ var SBWebPlaylistCommands =
     }
   
     var retval = false;
-    switch ( this.m_Ids[index] )
+    switch ( this.m_Ids[aIndex] )
     {
       case "library_cmd_device": // Not yet implemented
         retval = false;
@@ -189,13 +245,13 @@ var SBWebPlaylistCommands =
     return retval;
   },
 
-  onCommand: function( event )
+  onCommand: function( id, value, host )
   {
-    if ( event.target && event.target.id )
+    if ( id )
     {
       // Was it from the toolbarbutton?
-      var tbb = ( event.target.tagName == "button" || event.target.tagName == "xul:button" );
-      switch( event.target.id )
+      var tbb = ( host == "toolbar" );
+      switch( id )
       {
         case "library_cmd_play":
           // If the user hasn't selected anything, select the first thing for him.
@@ -236,9 +292,9 @@ var SBWebPlaylistCommands =
                   continue; 
                 }
                 
-                var value = this.m_Playlist.tree.view.getCellText(c, columnObj);
+                var val = this.m_Playlist.tree.view.getCellText(c, columnObj);
                 
-                filterVals.push(value);
+                filterVals.push(val);
               }
             }
 
@@ -270,9 +326,9 @@ var SBWebPlaylistCommands =
                 continue; 
               }
               
-              var value = this.m_Playlist.tree.view.getCellText(c, columnObj);
+              var val = this.m_Playlist.tree.view.getCellText(c, columnObj);
               if (clipboardtext != "") clipboardtext += "\n";
-              clipboardtext += value;
+              clipboardtext += val;
             }
           }
 
@@ -328,7 +384,7 @@ var SBWebPlaylistCommands =
     return obj;
   },
   
-  setPlaylist: function( playlist )
+  setMediaList: function( playlist )
   {
     // Ah.  Sometimes, things are being secure.
     if ( playlist.wrappedJSObject )
@@ -518,6 +574,15 @@ var SBDownloadCommands =
   m_Playlist: null,
   m_Device: null,
 
+  m_Types: new Array
+  (
+    "action",
+    "action",
+    "action",
+    "separator",
+    "action"
+  ),
+  
   m_Ids: new Array
   (
     "library_cmd_play",
@@ -545,7 +610,7 @@ var SBDownloadCommands =
     "&command.tooltip.showwebplaylist"
   ),
 
-  getNumCommands: function()
+  getNumCommands: function( aSubmenu, aHost )
   {
     if ( 
         ( this.m_Tooltips.length != this.m_Ids.length ) ||
@@ -559,88 +624,121 @@ var SBDownloadCommands =
     return this.m_Ids.length;
   },
 
-  getCommandId: function( index )
+  getCommandType: function( aSubmenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Types.length )
+    {
+      return "";
+    }
+    return this.m_Types[ aIndex ];
+  },
+
+  getCommandId: function( aSubmenu, aIndex, aHost )
   {
     // Ah! magic number - what does it mean???
-    if ( index == 2 ) 
+    if ( aIndex == 2 ) 
     {
       if ( this.m_Device )
       {
         if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
         {
-          this.m_Ids[ index ] = "library_cmd_resume";
+          this.m_Ids[ aIndex ] = "library_cmd_resume";
         }
         else
         {
-          this.m_Ids[ index ] = "library_cmd_pause";
+          this.m_Ids[ aIndex ] = "library_cmd_pause";
         }
       }
     }
-    if ( index >= this.m_Ids.length )
+    if ( aIndex >= this.m_Ids.length )
     {
       return "";
     }
-    return this.m_Ids[ index ];
+    return this.m_Ids[ aIndex ];
   },
 
-  getCommandText: function( index )
+  getCommandText: function( aSubmenu, aIndex, aHost )
   {
-    if ( index == 2 )
+    if ( aIndex == 2 )
     {
       if ( this.m_Device )
       {
         if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
         {
-          this.m_Names[ index ] = "&command.resumedl";
+          this.m_Names[ aIndex ] = "&command.resumedl";
         }
         else
         {
-          this.m_Names[ index ] = "&command.pausedl";
+          this.m_Names[ aIndex ] = "&command.pausedl";
         }
       }
     }
-    if ( index >= this.m_Names.length )
+    if ( aIndex >= this.m_Names.length )
     {
       return "";
     }
-    return this.m_Names[ index ];
+    return this.m_Names[ aIndex ];
   },
 
-  getCommandFlex: function( index )
+  getCommandFlex: function( aSubmenu, aIndex, aHost )
   {
-    if ( this.m_Ids[ index ] == "*separator*" ) return 1;
+    if ( this.m_Types[ aIndex ] == "separator" ) return 1;
     return 0;
   },
 
-  getCommandToolTipText: function( index )
+  getCommandValue: function( aSubmenu, aIndex, aHost )
   {
-    if ( index == 2 )
+    return "";
+  },
+
+  getCommandFlag: function( aSubmenu, aIndex, aHost )
+  {
+    return false;
+  },
+
+  getCommandChoiceItem: function( aChoiceMenu, aHost )
+  {
+    return "";
+  },
+
+  getCommandToolTipText: function( aSubmenu, aIndex, aHost )
+  {
+    if ( aIndex == 2 )
     {
       if ( this.m_Device )
       {
         if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
         {
-          this.m_Tooltips[ index ] = "&command.tooltip.resume";
+          this.m_Tooltips[ aIndex ] = "&command.tooltip.resume";
         }
         else
         {
-          this.m_Tooltips[ index ] = "&command.tooltip.pause";
+          this.m_Tooltips[ aIndex ] = "&command.tooltip.pause";
         }
       }
     }
-    if ( index >= this.m_Tooltips.length )
+    if ( aIndex >= this.m_Tooltips.length )
     {
       return "";
     }
-    return this.m_Tooltips[ index ];
+    return this.m_Tooltips[ aIndex ];
   },
 
-  getCommandEnabled: function( index )
+  instantiateCustomCommand: function( aId, aHost ) 
+  {
+    return null;
+  },
+
+  refreshCustomCommand: function( aElement, aId, aHost ) 
+  {
+  },
+
+  getCommandEnabled: function( aSubmenu, aIndex, aHost )
   {
     var retval = false;
     if ( this.m_Device )
     {
-      switch( index )
+      switch( aIndex )
       {
         case 2:
           retval = ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOADING ) || ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
@@ -653,13 +751,13 @@ var SBDownloadCommands =
     return retval;
   },
 
-  onCommand: function( event )
+  onCommand: function( id, value, host )
   {
-    if ( this.m_Device && event.target && event.target.id )
+    if ( this.m_Device && id )
     {
       // Was it from the toolbarbutton?
-      var tbb = ( event.target.tagName == "button" || event.target.tagName == "xul:button" );
-      switch( event.target.id )
+      var tbb = ( host == "toolbar" );
+      switch( id )
       {
         case "library_cmd_play":
           if ( this.m_Playlist.tree.currentIndex != -1 )
@@ -710,7 +808,7 @@ var SBDownloadCommands =
     return obj;
   },
   
-  setPlaylist: function( playlist )
+  setMediaList: function( playlist )
   {
     // Ah.  Sometimes, things are being secure.
     if ( playlist.wrappedJSObject )
@@ -767,6 +865,16 @@ var SBDefaultCommands =
 {
   m_Playlist: null,
 
+  m_Types: new Array
+  (
+    "action",
+    "action",
+    "action",
+    "action",
+    "action",
+    "action"
+  ),
+  
   m_Ids: new Array
   (
     "library_cmd_play",
@@ -797,7 +905,7 @@ var SBDefaultCommands =
     "&command.tooltip.device"
   ),
 
-  getNumCommands: function()
+  getNumCommands: function( aSubmenu, aHost )
   {
     if ( 
         ( this.m_Tooltips.length != this.m_Ids.length ) ||
@@ -811,40 +919,73 @@ var SBDefaultCommands =
     return this.m_Ids.length;
   },
 
-  getCommandId: function( index )
+  getCommandType: function( aSubmenu, aIndex, aHost )
   {
-    if ( index >= this.m_Ids.length )
+    if ( aIndex >= this.m_Types.length )
     {
       return "";
     }
-    return this.m_Ids[ index ];
+    return this.m_Types[ aIndex ];
   },
 
-  getCommandText: function( index )
+  getCommandId: function( aSubmenu, aIndex, aHost )
   {
-    if ( index >= this.m_Names.length )
+    if ( aIndex >= this.m_Ids.length )
     {
       return "";
     }
-    return this.m_Names[ index ];
+    return this.m_Ids[ aIndex ];
   },
 
-  getCommandFlex: function( index )
+  getCommandText: function( aSubmenu, aIndex, aHost )
   {
-    if ( this.m_Ids[ index ] == "*separator*" ) return 1;
+    if ( aIndex >= this.m_Names.length )
+    {
+      return "";
+    }
+    return this.m_Names[ aIndex ];
+  },
+
+  getCommandFlex: function( aSubmenu, aIndex, aHost )
+  {
+    if ( this.m_Typess[ aIndex ] == "separator" ) return 1;
     return 0;
   },
 
-  getCommandToolTipText: function( index )
+  getCommandValue: function( aSubmenu, aIndex, aHost )
   {
-    if ( index >= this.m_Tooltips.length )
+    return "";
+  },
+
+  getCommandFlag: function( aSubmenu, aIndex, aHost )
+  {
+    return false;
+  },
+
+  getCommandChoiceItem: function( aChoiceMenu, aHost )
+  {
+    return "";
+  },
+
+  getCommandToolTipText: function( aSubmenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Tooltips.length )
     {
       return "";
     }
-    return this.m_Tooltips[ index ];
+    return this.m_Tooltips[ aIndex ];
   },
 
-  getCommandEnabled: function( index )
+  instantiateCustomCommand: function( aId, aHost ) 
+  {
+    return null;
+  },
+
+  refreshCustomCommand: function( aElement, aId, aHost ) 
+  {
+  },
+
+  getCommandEnabled: function( aSubmenu, aIndex, aHost )
   {
     var playlist = this.m_Playlist;
     
@@ -852,7 +993,7 @@ var SBDefaultCommands =
     if ( ! playlist )
       return false;
 
-    var command = this.m_Ids[index];    
+    var command = this.m_Ids[aIndex];    
 
     switch ( command )
     {
@@ -879,13 +1020,13 @@ var SBDefaultCommands =
     return playlist.tree.view.selection.getRangeCount() > 0;
   },
 
-  onCommand: function( event )
+  onCommand: function( id, value, host )
   {
-    if ( event.target && event.target.id )
+    if ( id )
     {
       // Was it from the toolbarbutton?
-      var tbb = ( event.target.tagName == "button" || event.target.tagName == "xul:button" );
-      switch( event.target.id )
+      var tbb = ( host == "toolbar" );
+      switch( id )
       {
         case "library_cmd_play":
           if ( this.m_Playlist.tree.currentIndex != -1 )
@@ -946,7 +1087,7 @@ var SBDefaultCommands =
     return obj;
   },
   
-  setPlaylist: function( playlist )
+  setMediaList: function( playlist )
   {
     // Ah.  Sometimes, things are being secure.
     if ( playlist.wrappedJSObject )

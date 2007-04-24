@@ -51,37 +51,61 @@ try
   {
     m_Playlist: null,
 
-    getNumCommands: function()
+    getNumCommands: function( aSubMenu, aHost )
     {
       return 0;
     },
 
-    getCommandId: function( index )
-    {
-      return -1;
-    },
-
-    getCommandText: function( index )
+    getCommandId: function( aSubMenu, aIndex, aHost )
     {
       return "";
     },
 
-    getCommandFlex: function( index )
-    {
-      return 0;
-    },
-
-    getCommandToolTipText: function( index )
+    getCommandText: function( aSubMenu, aIndex, aHost )
     {
       return "";
     },
 
-    getCommandEnabled: function( index )
+    getCommandFlex: function( aSubMenu, aIndex, aHost )
     {
       return 0;
     },
 
-    onCommand: function( event )
+    getCommandValue: function( aSubMenu, aIndex, aHost )
+    {
+      return "";
+    },
+
+    getCommandFlag: function( aSubMenu, aIndex, aHost )
+    {
+      return false;
+    },
+
+    getCommandChoiceItem: function( aChoiceMenu, aHost )
+    {
+      return "";
+    },
+
+    getCommandToolTipText: function( aSubMenu, aIndex, aHost )
+    {
+      return "";
+    },
+
+    instantiateCustomCommand: function( aId, aHost ) 
+    {
+      return null;
+    },
+
+    refreshCustomCommand: function( aElement, aId, aHost ) 
+    {
+    },
+
+    getCommandEnabled: function( aSubMenu, aIndex, aHost )
+    {
+      return 0;
+    },
+
+    onCommand: function( id, value, host)
     {
     },
     
@@ -97,7 +121,7 @@ try
       return obj;
     },
     
-    setPlaylist: function( playlist )
+    setMediaList: function( playlist )
     {
       // Ah.  Sometimes, things are being secure.
       if ( playlist.wrappedJSObject )

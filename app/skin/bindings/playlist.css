@@ -35,10 +35,8 @@ THE PLAYLIST
 playlist,
 playlist > stack > vbox,
 #playlist_tree,
-#playlist_toolbar,
-#playlist_toolbar_bkg,
-playlist > stack > vbox > hbox#playlist_toolbar_bkg,
-playlist > stack > vbox > hbox,
+.playlist-toolbar,
+.playlist-toolbar-bkg,
 #playlist_tree > treechildren::-moz-tree-row( selected, focus ),
 #playlist_tree > treechildren::-moz-tree-progressmeter,
 #playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
@@ -67,7 +65,7 @@ playlist > stack > vbox
   padding: 0px 0px 0px 0px !important;
 }
 
-playlist > stack > vbox > hbox
+.playlist-toolbar-bkg
 {
   height: 27px !important;
 }
@@ -125,7 +123,7 @@ contextual menu.
 ************************************************************************************************************************************************
 */ 
 
-#playlist_toolbar
+.playlist-toolbar
 {
   border: none !important;
 }

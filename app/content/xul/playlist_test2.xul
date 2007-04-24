@@ -65,92 +65,171 @@ try
   {
     m_Playlist: null,
 
-    m_Ids: new Array
-    (
-      "library_cmd_play",
-      "library_cmd_remove",
-      "library_cmd_edit",
-      "library_cmd_addtoplaylist",
-      "library_cmd_burntocd",
-      "library_cmd_device"
-    ),
-    
-    m_Names: new Array
-    (
-      "&command.play",
-      "&command.remove",
-      "&command.edit",
-      "&command.addtoplaylist",
-      "&command.burntocd",
-      "&command.device"
-    ),
-    
-    m_Tooltips: new Array
-    (
-      "&command.tooltip.play",
-      "&command.tooltip.remove",
-      "&command.tooltip.edit",
-      "&command.tooltip.addtoplaylist",
-      "&command.tooltip.burntocd",
-      "&command.tooltip.device"
-    ),
-  
-    getNumCommands: function()
+    m_root_commands :
     {
+      m_Types: new Array
+      (
+        "action",
+        "action",
+        "action",
+        "action",
+        "action",
+        "action"
+      ),
+
+      m_Ids: new Array
+      (
+        "library_cmd_play",
+        "library_cmd_remove",
+        "library_cmd_edit",
+        "library_cmd_addtoplaylist",
+        "library_cmd_burntocd",
+        "library_cmd_device"
+      ),
+      
+      m_Names: new Array
+      (
+        "&command.play",
+        "&command.remove",
+        "&command.edit",
+        "&command.addtoplaylist",
+        "&command.burntocd",
+        "&command.device"
+      ),
+      
+      m_Tooltips: new Array
+      (
+        "&command.tooltip.play",
+        "&command.tooltip.remove",
+        "&command.tooltip.edit",
+        "&command.tooltip.addtoplaylist",
+        "&command.tooltip.burntocd",
+        "&command.tooltip.device"
+      )
+    },
+
+    _getMenu: function(aSubMenu)
+    {
+      var cmds;
+      switch (aSubMenu) {
+        //case "submenu1": 
+          //cmds = this.m_submenu1_commands;
+          //break;
+        default:
+          cmds = this.m_root_commands;
+          break;
+      }
+      return cmds;
+    },   
+  
+    getNumCommands: function( aSubMenu, aHost )
+    {
+      var cmds = this._getMenu(aSubMenu);
       if ( 
-          ( this.m_Tooltips.length != this.m_Ids.length ) ||
-          ( this.m_Names.length != this.m_Ids.length ) ||
-          ( this.m_Tooltips.length != this.m_Names.length )
+          ( cmds.m_Tooltips.length != cmds.m_Ids.length ) ||
+          ( cmds.m_Names.length != cmds.m_Ids.length ) ||
+          ( cmds.m_Tooltips.length != cmds.m_Names.length )
          )
       {
         alert( "PlaylistCommands - Array lengths do not match!" );
         return 0;
       }
-      return this.m_Ids.length;
+      return cmds.m_Ids.length;
     },
   
-    getCommandId: function( index )
+    getCommandType: function( aSubMenu, aIndex, aHost )
     {
-      if ( index >= this.m_Ids.length )
+      var cmds = this._getMenu(aSubMenu);
+      if ( aIndex >= cmds.m_Ids.length )
       {
         return "";
       }
-      return this.m_Ids[ index ];
+      return cmds.m_Types[ aIndex ];
     },
   
-    getCommandText: function( index )
+    getCommandId: function( aSubMenu, aIndex, aHost )
     {
-      if ( index >= this.m_Names.length )
+      var cmds = this._getMenu(aSubMenu);
+      if ( aIndex >= cmds.m_Ids.length )
       {
         return "";
       }
-      return this.m_Names[ index ];
+      return cmds.m_Ids[ aIndex ];
     },
   
-    getCommandFlex: function( index )
+    getCommandText: function( aSubMenu, aIndex, aHost )
     {
-      if ( this.m_Ids[ index ] == "*separator*" ) return 1;
+      var cmds = this._getMenu(aSubMenu);
+      if ( aIndex >= cmds.m_Names.length )
+      {
+        return "";
+      }
+      return cmds.m_Names[ aIndex ];
+    },
+  
+    getCommandFlex: function( aSubMenu, aIndex, aHost )
+    {
+      var cmds = this._getMenu(aSubMenu);
+      if ( cmds.m_Types[ aIndex ] == "separator" ) return 1;
       return 0;
     },
 
-    getCommandToolTipText: function( index )
+    getCommandToolTipText: function( aSubMenu, aIndex, aHost )
     {
-      if ( index >= this.m_Tooltips.length )
+      var cmds = this._getMenu(aSubMenu);
+      if ( aIndex >= cmds.m_Tooltips.length )
       {
         return "";
       }
-      return this.m_Tooltips[ index ];
+      return cmds.m_Tooltips[ aIndex ];
     },
   
-    getCommandEnabled: function( index )
+    getCommandValue: function( aSubMenu, aIndex, aHost )
     {
+      var cmds = this._getMenu(aSubMenu);
+      switch (cmds.m_Ids[aIndex]) {
+        // ...
+        // return command value
+      }
+      return "";
+    },
+  
+    getCommandFlag: function( aSubMenu, aIndex, aHost ) {
+      var cmds = this._getMenu(aSubMenu);
+      switch (cmds.m_Ids[aIndex]) {
+        // ...
+        // return flag value
+      }
+      return false;
+    },
+  
+    getCommandChoiceItem: function( aChoiceMenu, aHost ) {
+      switch (aChoiceMenu) {
+        // ...
+        // return id_of_selecteditem;
+      }
+      return "";
+    },
+
+    instantiateCustomCommand: function( aId, aHost ) 
+    {
+      return null;
+    },
+
+    refreshCustomCommand: function( aElement, aId, aHost ) 
+    {
+    },
+  
+    getCommandEnabled: function( aSubMenu, aIndex, aHost )
+    {
+      var cmds = this._getMenu(aSubMenu);
       var playlist = this.m_Playlist;
       
       // Bail out early if we don't have our playlist somehow
       if ( ! playlist )
         return false;
 
-      var command = this.m_Ids[index];    
+      var command = cmds.m_Ids[aIndex];    
 
       switch ( command )
       {
@@ -177,13 +256,13 @@ try
       return playlist.tree.view.selection.getRangeCount() > 0;
     },
   
-    onCommand: function( event )
+    onCommand: function( id, value, host )
     {
-      if ( event.target && event.target.id )
+      if ( id )
       {
         // Was it from the toolbarbutton?
-        var tbb = ( event.target.tagName == "button" || event.target.tagName == "xul:button" );
-        switch( event.target.id )
+        var tbb = ( host == "toolbar" );
+        switch( id )
         {
           case "library_cmd_play":
             if ( this.m_Playlist.tree.currentIndex != -1 )

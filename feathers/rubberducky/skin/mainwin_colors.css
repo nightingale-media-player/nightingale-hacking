@@ -443,13 +443,13 @@ playlist > stack > vbox
   background-color: transparent !important;  
 }
 
-#playlist_toolbar_bkg,
-playlist > stack > vbox > hbox#playlist_toolbar_bkg
+.playlist-toolbar-bkg,
+playlist > stack > vbox > sb-commands-toolbar > .playlist-toolbar-bkg
 { 
   border-top: 1px solid transparent;
 }
 
-playlist > stack > vbox > hbox
+.playlist-toolbar-bkg
 {
   background-color: transparent !important;
 }

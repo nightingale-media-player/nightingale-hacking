@@ -1,0 +1,835 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="commands-base">
+
+    <implementation type="application/x-javascript">
+
+      <constructor>
+        <![CDATA[
+          this._deferRefresh = false;
+          this._needRefresh = false;
+          this._laststateonly = false;
+          // Load up the string bundle
+          var src = "chrome://songbird/locale/songbird.properties";
+          var stringBundleService =
+              Components.classes["@mozilla.org/intl/stringbundle;1"]
+              .getService(Components.interfaces.nsIStringBundleService);
+          this.stringbundle = stringBundleService.createBundle( src );
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          this.commands = null;
+        ]]>
+      </destructor>
+
+      <field name="commands">null</field>
+      <field name="playlist">null</field>
+      
+      <method name="bind">
+        <parameter name="playlist"/>
+        <parameter name="commands"/>
+        <body>
+        <![CDATA[
+          try {
+            this.playlist = playlist;
+            // And add the new ones
+            this.commands = commands;
+            if (!this.commands) 
+            {
+              // See if there is one registered specifically for this table
+              var source = Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
+                                      .getService( Components.interfaces.sbIPlaylistsource );
+              var cmds = source.getPlaylistCommands( this.playlist.guid, this.playlist.table, this.playlist.type );
+              if ( cmds )
+              {
+                this.commands = cmds;
+              }
+            }
+            // Make sure it does what we think it does.
+            if ( this.commands )
+            {
+              this.commands = this.commands.QueryInterface( Components.interfaces.sbIPlaylistCommands );
+            }
+          } catch (e) {
+              alert( "sb-commands.xml - bind - " + err );
+          }
+        ]]>
+        </body>
+      </method>
+
+      <method name="setDeferRefresh">
+        <body>
+          <![CDATA[
+            try
+            {
+              this._deferRefresh = true;
+            }
+            catch( err )
+            {
+              alert( "sb-commands.xml - setDeferRefresh - " + err );
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="clearDeferRefresh">
+        <body>
+          <![CDATA[
+            try
+            {
+              this._deferRefresh = false;
+              if (this._needRefresh)
+                this.refreshCommands(false);
+            }
+            catch( err )
+            {
+              alert( "sb-commands.xml - clearDeferRefresh - " + err );
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="refreshCommands">
+        <parameter name="stateonly"/>
+        <body>
+          <![CDATA[
+          try
+          {
+            // Sometimes we get here before the tree is properly built.  That's bad.
+            if (!this.playlist || this.playlist.tree.view == null) 
+            {
+              // So if we're supposed to build the items here, remember that and quit.
+              if (!stateonly)
+                this._laststateonly = false;
+              return;
+            }
+            // And build them the next time it's time to refresh (this function gets called alot)
+            if (!this._laststateonly)
+            {
+              stateonly = false;
+              this._laststateonly = true;
+            }
+            
+            // Convert null to bool.
+            if (!stateonly)
+              stateonly = false;
+              
+            // If our internal objects are out of sync, rebuild.
+            var forcerebuild = false;
+            try {
+              forcerebuild = this.shouldForceRebuild();
+            } catch (e) { }
+            if (forcerebuild)
+              stateonly = false;
+
+            // If deferring refresh, skip it
+            if ( this._deferRefresh )
+            {
+              // make a note that we need to refresh when the popup goes away
+              this._needRefresh = true;
+              // So if we're supposed to build the items here, remember that and quit.
+              if (!stateonly)
+                this._laststateonly = false;
+              return;
+            }
+            this._needRefresh = false;
+
+            this.doRefreshCommands(stateonly);
+          }
+          catch( err )
+          {
+            alert( "sb-commands.xml - refreshCommands - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="removeCommands">
+        <body>
+          <![CDATA[
+          try {
+            this.doRemoveCommands();
+          } catch (e) {
+            alert( "sb-commands.xml - doRemoveCommands not implemented ? - " + err );
+          }
+        ]]>
+        </body>
+      </method>
+
+    </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- COMMANDS TOOLBAR -->
+
+
+
+
+  <binding id="commands-toolbar" extends="chrome://songbird/content/bindings/sb-commands.xml#commands-base">
+  
+    <content>
+      <xul:hbox class="playlist-toolbar-bkg" sbid="background" flex="1">
+        <xul:hbox class="playlist-toolbar" sbid="parent" flex="1" oncommand="onToolbarCommand( event )" style="overflow: hidden;">
+        </xul:hbox>
+      </xul:hbox>
+    </content>
+
+    <implementation type="application/x-javascript">
+
+    <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
+    <field name="toolbarbuttons">new Array();</field>
+    
+    <method name="shouldForceRebuild">
+      <body>
+        // If our internal objects are out of sync, rebuild.
+        return (this.toolbarbuttons.length == 0); 
+      </body>
+    </method>
+    
+    <method name="doRefreshCommands">
+      <parameter name="stateonly"/>
+      <body>
+        <![CDATA[
+        try
+        {
+          if (!stateonly) {
+            this.hidden = true;
+            this.removeCommands();
+          }
+          
+          if ( this.commands )
+          {
+            // Once we get here, tell the commands who we are.
+            if (!stateonly) this.commands.setMediaList( this.playlist );
+
+            this.refreshCommandItems(stateonly, null, this.parent, null, 0, false);
+          }
+        }
+        catch( err )
+        {
+          alert( "sb-commands.xml - toolbar - doRefreshCommands - " + err );
+        }
+        ]]>
+      </body>
+    </method>
+
+    
+    <method name="refreshCommandItems">
+      <parameter name="stateonly"/>
+      <parameter name="menu"/>
+      <parameter name="parentnode"/>
+      <parameter name="before"/>
+      <parameter name="depth"/>
+      <parameter name="radioitems"/>
+      <body>
+        <![CDATA[
+          try {
+            // And make all the new stuff
+            var num = this.commands.getNumCommands(menu, "toolbar");
+            if (stateonly) num = this.toolbarbuttons.length;
+            for ( var i = 0; i < num; i++ )
+            {
+              var toolbarbutton;
+              if (!stateonly)
+              {
+                // If we get here, show the toolbar
+                toolbar.hidden = false;
+                
+                var obj_type;
+                if (radioitems) obj_type = "choiceitem";
+                else obj_type = this.commands.getCommandType( menu, i, "toolbar" );
+
+                // What id?
+                var obj_id = this.commands.getCommandId( menu, i, "toolbar" );
+                
+                var toolbarbutton_type;
+                var toolbarbutton_typeattr;
+                if (radioitems) toolbarbutton_typeattr = "checkbox";
+                var custom = false;
+                
+                if (menu && menu != "") {
+                  switch (obj_type) {
+                    case "custom": 
+                    case "value":
+                      // ignore this item
+                      toolbarbutton_type = null;
+                      break;
+                    case "separator":
+                      toolbarbutton_type = "menuseparator";
+                      break;
+                    case "submenu":
+                    case "choice":
+                      if (depth == 0) toolbarbutton_type = "menupopup";
+                      else toolbarbutton_type = "menu";
+                      break;
+                    case "flag":
+                    case "choiceitem":
+                      toolbarbutton_typeattr = "checkbox";
+                      // Fallthru
+                    case "action":
+                    default:
+                      toolbarbutton_type = "menuitem";
+                      break;
+                  }
+                } else {
+                  switch (obj_type) {
+                    case "custom": 
+                      custom = true;
+                      break;
+                    case "separator":
+                      toolbarbutton_type = "spacer";
+                      break;
+                    case "choice":
+                      toolbarbutton_type = "menulist";
+                      break;
+                    case "submenu":
+                      toolbarbutton_type = "button";
+                      toolbarbutton_typeattr = "menu";
+                      break;
+                    case "value":
+                      toolbarbutton_type = "textbox";
+                      break;
+                    case "flag":
+                    case "choiceitem":
+                      toolbarbutton_typeattr = "checkbox";
+                      // Fallthru
+                    case "action":
+                    default:
+                      toolbarbutton_type = "button";
+                      break;
+                  }
+                }
+              
+                if (!toolbarbutton_type && !custom) continue;
+                
+                // Create a toolbarbutton
+                if (custom) {
+                  toolbarbutton = this.commands.instantiateCustomCommand(obj_id, "toolbar");
+                } else {
+                  toolbarbutton = document.createElement( toolbarbutton_type );
+                }
+                var label = toolbarbutton;
+                var topelement = toolbarbutton;
+                toolbarbutton.setAttribute( "id", obj_id );
+                if (toolbarbutton_type == "menuitem") { toolbarbutton.setAttribute( "class", "menuitem-iconic" ); } // Icons are set in the css using the id
+                //else toolbarbutton.setAttribute( "class", "sb_faceplate" ); // Make them fully skinned buttons.
+                if (toolbarbutton_typeattr) toolbarbutton.setAttribute( "type", toolbarbutton_typeattr ); 
+                if (toolbarbutton_type == "textbox") {
+                  var hbox = document.createElement("hbox");
+                  var textlabel = document.createElement("label");
+                  var separator = document.createElement("spacer");
+                  hbox.setAttribute("align", "center");
+                  hbox.appendChild(textlabel);
+                  hbox.appendChild(separator);
+                  hbox.appendChild(toolbarbutton);
+                  toolbarbutton.setAttribute("value", "");
+                  toolbarbutton.setAttribute( "sbtype", "command-textbox" ); // to find it easily, later
+                  topelement = hbox;
+                  label = textlabel;
+                }
+
+                topelement.setAttribute( "sbtype", "command" ); // to find it easily, later
+                //label.setAttribute( "class", "sb_faceplate" ); // Make them fully skinned buttons.
+                if (!custom) {
+                  // No label unless you have a label
+                  var cmd_text = this.commands.getCommandText( menu, i, "toolbar" );
+                  if ( cmd_text.length > 0 )
+                  {
+                    if ( cmd_text[ 0 ] == "&" )
+                    {
+                      try
+                      {
+                        cmd_text = this.stringbundle.GetStringFromName( cmd_text.substr( 1, cmd_text.length ) );
+                      }
+                      catch( err )
+                      {
+                        dump("error sb-commands.xml - toolbar - doRefreshCommands() - getStringFromName: " + err + "\n");
+                      }
+                    }
+                    if (label.tagName == "label") label.setAttribute( "value", cmd_text+":");
+                    else if (label.tagName == "menulist") { /*do nothing*/ }
+                    else label.setAttribute( "label", cmd_text );
+                  }
+
+                  var cmd_flex = false;
+                  if (toolbarbutton_type != "menu" && toolbarbutton_type != "menuitem") cmd_flex = this.commands.getCommandFlex( menu, i, "toolbar" );
+                  
+                  if ( cmd_flex > 0 )
+                  {
+                    toolbarbutton.setAttribute( "flex", cmd_flex );
+                  }
+
+                  // No tooltip unless you have a tooltip
+                  var tooltip_text = this.commands.getCommandToolTipText( menu, i, "toolbar" );
+                  if ( tooltip_text.length > 0 )
+                  {
+                    if ( tooltip_text[ 0 ] == "&" )
+                    {
+                      try
+                      {
+                        tooltip_text = this.stringbundle.GetStringFromName( tooltip_text.substr( 1, tooltip_text.length ) );
+                      }
+                      catch( err )
+                      {
+                        dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
+                      }
+                    }
+                    /*
+                        This causes the crashy if it's up while updating.  :(
+                    
+                      toolbarbutton.setAttribute( "tooltiptext", tooltip_text );
+                    */
+                  }
+                }
+                
+                toolbarbutton.commandtype = obj_type;
+                toolbarbutton.commanddepth = depth;
+                toolbarbutton.commandmenu = menu;
+                toolbarbutton.commandindex = i;
+                toolbarbutton.commandcustom = custom;
+              }
+              else
+              {
+                toolbarbutton = this.toolbarbuttons[i];
+              }
+
+              if ( this.commands.getCommandEnabled( toolbarbutton.commandmenu, toolbarbutton.commandindex, "toolbar" ) )
+              {
+                toolbarbutton.removeAttribute( "disabled" );
+              }
+              else
+              {
+                toolbarbutton.setAttribute( "disabled", "true" );
+              }
+
+              // Add it to the parent
+              if (!stateonly)
+              {
+                this.toolbarbuttons.push( toolbarbutton );
+                if (!before) parentnode.appendChild(topelement);
+                else parentnode.insertBefore( topelement, before);
+                if (obj_type == "submenu" || obj_type == "choice") {
+                  var parent = toolbarbutton;
+                  var menupopup = document.createElement("menupopup");
+                  toolbarbutton.appendChild(menupopup);
+                  parent = menupopup;
+                  this.refreshCommandItems(stateonly, this.commands.getCommandId(menu, i, "toolbar"), parent, null, depth+1, (obj_type == "choice"));
+                }
+              }
+              
+              if (toolbarbutton.commandtype == "flag") {
+                toolbarbutton.setAttribute("checked", this.commands.getCommandFlag( toolbarbutton.commandmenu, toolbarbutton.commandindex, "toolbar" ));
+              }
+
+              if (toolbarbutton.commandtype == "value") {
+                var val = this.commands.getCommandValue( toolbarbutton.commandmenu, toolbarbutton.commandindex, "toolbar" );
+                toolbarbutton.value = val;
+              }
+              if (toolbarbutton.commandtype == "choiceitem") {
+                if (toolbarbutton.commanddepth > 1) {
+                  toolbarbutton.setAttribute("checked", this.commands.getCommandChoiceItem( toolbarbutton.commandmenu, "toolbar" ) == toolbarbutton.id);
+                } else {
+                  if (this.commands.getCommandChoiceItem( toolbarbutton.commandmenu, "toolbar" ) == toolbarbutton.id) {
+                    var e = toolbarbutton;
+                    while (e && e.tagName != "menulist") { e = e.parentNode; }
+                    if (e) e.selectedIndex = toolbarbutton.commandindex;
+                  }
+                }
+              }
+              if (toolbarbutton.commandcustom) {
+                this.commands.refreshCustomCommand(toolbarbutton.id, "toolbar");
+              }
+
+            }
+          } catch (e) {
+            alert("sb-commands.xml - toolbar - " + e);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="doRemoveCommands">
+      <body>
+        <![CDATA[
+          try {
+            // Delete the toolbar commands
+            var command_nodes = this.parent.getElementsByAttribute( 'sbtype', 'command' );
+            // command_nodes is a live array, removing children from parent auto removes items from it
+            while ( command_nodes.length > 0 ) 
+            {
+              var node = command_nodes.item( 0 );
+              this.parent.removeChild(node);
+            }
+            this.toolbarbuttons.length = 0; // clear the array??
+          } catch (e) {
+            alert("sb-commands.xml - toolbar - " + e);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onToolbarCommand">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+        try
+        {
+          if ( this.commands )
+          {
+            this.commands.onCommand( evt.originalTarget.id, null, "toolbar" );
+            var type = evt.originalTarget.commandtype;
+            if (type == "flag" || type == "choiceitem") this.refreshCommands(true);
+          }
+        }
+        catch( err )
+        {
+          alert( "sb-commands.xml - toolbar - onToolbarCommand - " + err );
+        }
+      ]]>
+      </body>
+    </method>
+
+    </implementation>
+    
+    <handlers>
+      <handler event="keypress">
+        <![CDATA[
+        try
+        {
+          var element = event.originalTarget;
+          if (event.keyCode == 13 && element.tagName == "html:input") {
+            while (1) {
+              var sbtype = element.getAttribute("sbtype");
+              if (sbtype == "command-textbox") break;
+              else if (sbtype && sbtype != "") return;
+              element = element.parentNode;
+            }
+            this.commands.onCommand( element.id, element.value, "toolbar" );
+          }
+        }
+        catch( err )
+        {
+          alert( err )
+        }
+        ]]>
+      </handler>
+    </handlers>
+ 
+  </binding>
+
+
+
+
+  <!-- COMMANDS POPUP -->
+
+
+
+
+  <binding id="commands-menuitems" extends="chrome://songbird/content/bindings/sb-commands.xml#commands-base">
+
+    <implementation type="application/x-javascript">
+    
+    <destructor>
+      <![CDATA[
+        if (this.parentpopup) {
+          this.parentpopup.removeEventListener("command", this.oncommand, true);
+          this.oncommand._that = null;
+          this.oncommand = null;
+        }
+      ]]>
+    </destructor>
+
+    <field name="menuitems">new Array();</field>
+
+    <method name="shouldForceRebuild">
+      <body>
+        // If our internal objects are out of sync, rebuild.
+        return (this.menuitems.length == 0);
+      </body>
+    </method>
+
+    <method name="getParentPopup">
+      <body>
+        <![CDATA[
+          var e = this;
+          while (e && e != document) {
+            if (e.tagName == "popup" || e.tagName == "xul:popup" ||
+                e.tagName == "menupopup" || e.tagName == "xul:menupopup") return e;
+            e = e.parentNode;
+          }
+          return null;
+        ]]>
+      </body>
+    </method>
+
+    <method name="doRefreshCommands">
+      <parameter name="stateonly"/>
+      <body>
+        <![CDATA[
+        try
+        {
+          if (!stateonly) {
+            this.removeCommands();
+          }
+
+          if ( this.commands )
+          {
+            var popup = this.getParentPopup();
+            if (!this.parentpopup) {
+              this.parentpopup = popup;
+              this.oncommand = { 
+                _that: null, 
+                handleEvent: function( event ) { this._that.onMenuCommand(event); } 
+              }; this.oncommand._that = this; 
+              popup.addEventListener("command", this.oncommand, true);
+            }
+            var before = this;
+            
+            if (popup) {
+
+              // Once we get here, tell the commands who we are.
+              if (!stateonly) this.commands.setMediaList( this.playlist );
+              
+              this.refreshCommandItems(stateonly, null, popup, before, 0, false);
+            }
+          }
+        }
+        catch( err )
+        {
+          alert( "sb-commands.xml - popup - doRefreshCommands - " + err );
+        }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="refreshCommandItems">
+      <parameter name="stateonly"/>
+      <parameter name="menu"/>
+      <parameter name="parentnode"/>
+      <parameter name="before"/>
+      <parameter name="depth"/>
+      <parameter name="radioitems"/>
+      <body>
+        <![CDATA[
+          try {
+            // And make all the new stuff
+            var num = this.commands.getNumCommands(menu, "menu");
+            if (stateonly) num = this.menuitems.length;
+            for ( var i = 0; i < num; i++ )
+            {
+              var menuitem;
+
+              // What type?
+              var obj_type;
+              if (radioitems) obj_type = "choiceitem";
+              else obj_type = this.commands.getCommandType( menu, i, "menu" );
+
+              if (!stateonly)
+              {
+                // What id?
+                var obj_id = this.commands.getCommandId( menu, i, "menu" );
+                
+                var menuitem_type;
+                
+                switch (obj_type) {  
+                  case "separator":
+                    menuitem_type = "menuseparator";
+                    break;
+                  case "submenu":
+                  case "choice":
+                    menuitem_type = "menu";
+                    break;
+                  case "custom":
+                  case "value":
+                    menuitem_type = "";
+                    break;
+                  case "action":
+                  case "choiceitem":
+                  case "flag":
+                  default:
+                    menuitem_type = "menuitem";
+                    break;
+                }
+                
+                if (menuitem_type == "") continue;
+              
+                // And a menuitem
+                menuitem = document.createElement( menuitem_type );
+                menuitem.setAttribute( "id", obj_id );
+                menuitem.setAttribute( "sbtype", "command" );
+                menuitem.setAttribute( "class", "menuitem-iconic" ); // Icons are set in the css using the id
+                if (obj_type == "flag" || radioitems) menuitem.setAttribute("type", "checkbox");
+                
+                // No label unless you have a label
+                var cmd_text = this.commands.getCommandText( menu, i, "menu" );
+                if ( cmd_text.length > 0 )
+                {
+                  if ( cmd_text[ 0 ] == "&" )
+                  {
+                    try
+                    {
+                      cmd_text = this.stringbundle.GetStringFromName( cmd_text.substr( 1, cmd_text.length ) );
+                    }
+                    catch( err )
+                    {
+                      dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
+                    }
+                  }
+                  menuitem.setAttribute( "label", cmd_text );
+                }
+
+                // No tooltip unless you have a tooltip
+                var tooltip_text = this.commands.getCommandToolTipText( menu, i, "menu" );
+                if ( tooltip_text.length > 0 )
+                {
+                  if ( tooltip_text[ 0 ] == "&" )
+                  {
+                    try
+                    {
+                      tooltip_text = this.stringbundle.GetStringFromName( tooltip_text.substr( 1, tooltip_text.length ) );
+                    }
+                    catch( err )
+                    {
+                      dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
+                    }
+                  }
+                  /*
+                      This causes the crashy if it's up while updating.  :(
+                  
+                    menuitem.setAttribute( "tooltiptext", tooltip_text );
+                  */
+                }
+                
+                menuitem.commandtype = obj_type;
+                menuitem.commandmenu = menu;
+                menuitem.commandindex = i;
+              }
+              else
+              {
+                menuitem = this.menuitems[i];
+              }
+
+              if ( this.commands.getCommandEnabled( menuitem.commandmenu, menuitem.commandindex, "menu" ) )
+                menuitem.setAttribute( "disabled", "false" );
+              else
+                menuitem.setAttribute( "disabled", "true" );
+                
+              if (menuitem.commandtype == "flag") {
+                menuitem.setAttribute("checked", this.commands.getCommandFlag( menuitem.commandmenu, menuitem.commandindex, "menu" ));
+              }
+              if (menuitem.commandtype == "choiceitem") {
+                menuitem.setAttribute("checked", (menuitem.id == this.commands.getCommandChoiceItem( menuitem.commandmenu, "menu" )));
+              }
+              
+              // Add it to the parent
+              if (!stateonly)
+              {
+                this.menuitems.push( menuitem );
+                if (!before) parentnode.appendChild(menuitem);
+                else parentnode.insertBefore( menuitem, before);
+                if (obj_type == "submenu" || obj_type == "choice") {
+                  var menupopup = document.createElement("menupopup");
+                  menuitem.appendChild(menupopup);
+                  if (this.commands.getCommandId(menu, i, "menu") == null) {
+                    alert("null submenu: menu = " + menu + ", index = " + i);
+                  }
+                  this.refreshCommandItems(stateonly, this.commands.getCommandId(menu, i, "menu"), menupopup, null, depth+1, (obj_type == "choice"));
+                }
+              }
+            }
+          } catch (e) {
+            alert("sb-commands.xml - popup - " + e);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="doRemoveCommands">
+      <body>
+        <![CDATA[
+          try {
+            // Delete the popup commands
+            var popup = this.getParentPopup();
+            if (popup) {
+              var command_nodes = popup.getElementsByAttribute( 'sbtype', 'command' );
+              while ( command_nodes.length > 0 ) 
+              {
+                var node = command_nodes.item( 0 );
+                popup.removeChild(node);
+              }
+              this.menuitems.length = 0; // clear the array??
+            }
+          } catch (e) {
+            alert("sb-commands.xml - popup - " + e);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onMenuCommand">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+        try
+        {
+          if ( this.commands )
+          {
+            this.commands.onCommand( evt.originalTarget.id, null, "menu" );
+            var type = evt.originalTarget.commandtype;
+            if (type == "flag" || type == "choiceitem") this.refreshCommands(true);
+          }
+        }
+        catch( err )
+        {
+          alert( "sb-commands.xml - toolbar - onToolbarCommand - " + err );
+        }
+      ]]>
+      </body>
+    </method>
+
+
+    </implementation>
+ 
+  </binding>
+
+
+</bindings>
+

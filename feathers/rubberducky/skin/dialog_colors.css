@@ -215,13 +215,13 @@ playlist.dialog_playlist > stack > vbox
   background-color: transparent !important;  
 }
 
-.dialog_playlist #playlist_toolbar_bkg,
-playlist.dialog_playlist > stack > vbox > hbox#playlist_toolbar_bkg
+.dialog_playlist .playlist-toolbar-bkg,
+playlist.dialog_playlist > stack > vbox > sb-commands-toolbar > .playlist-toolbar-bkg
 { 
   border-top: 1px solid #686a6a;
 }
 
-playlist.dialog_playlist > stack > vbox > hbox.dialog_playlist
+playlist.dialog_playlist > stack > vbox > sb-commands-toolbar > .playlist-toolbar-bkg
 {
   background-color: #000 !important;
 }

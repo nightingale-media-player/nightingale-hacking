@@ -66,7 +66,7 @@ duplicate: function() {
 * 
 * \sa playlist.xml, playlist_test.xul
 */
-[scriptable, uuid(47bc06b4-44c5-11db-9652-00e08161165f)]
+[scriptable, uuid(7a630e7f-ad12-4bee-ae24-aa9a491c4807)]
 interface sbIPlaylistCommands : nsISupports 
 {
   /**
@@ -79,7 +79,7 @@ interface sbIPlaylistCommands : nsISupports
   *
   * \param node The playlist object
   */
-  void setPlaylist( in nsIDOMNode node );
+  void setMediaList( in nsIDOMNode aNode );
 
   /**
   * \brief Return the number of command elements to be displayed.
@@ -89,9 +89,22 @@ interface sbIPlaylistCommands : nsISupports
   * The other functions will be called in turn with the index value that
   * represents each specific command element
   *
+  * \param submenu The submenu for which the data is being requested
   * \return The number of commands to be created
   */
-  PRInt32 getNumCommands( );
+  PRInt32 getNumCommands( in AString aSubMenu, in AString aHost );
+
+  /**
+  * \brief Return the type of the requested command element index
+  *
+  * Each command id has a type, these can be 'action', 'separator', 
+  * 'value', and 'submenu'.
+  *
+  * \param submenu The submenu for which the data is being requested
+  * \param index The index of the element for which the data is being requested
+  * \return The string for the command id
+  */
+  AString getCommandType( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
 
   /**
   * \brief Return the id string for the requested command element index
@@ -103,10 +116,11 @@ interface sbIPlaylistCommands : nsISupports
   *
   * "*separator*" - Create a menuseparator or an empty box
   *
+  * \param submenu The submenu for which the data is being requested
   * \param index The index of the element for which the data is being requested
   * \return The string for the command id
   */
-  AString getCommandId( in PRInt32 index );
+  AString getCommandId( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
 
   /**
   * \brief Return the human readable text for the requested command element index
@@ -115,10 +129,11 @@ interface sbIPlaylistCommands : nsISupports
   * string will be used as an index into the current localization's properties
   * file.
   *
+  * \param submenu The submenu for which the data is being requested
   * \param index The index of the element for which the data is being requested
   * \return The string for the displayed text
   */
-  AString getCommandText( in PRInt32 index );
+  AString getCommandText( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
 
   /**
   * \brief Return the flex value for the requested command element index
@@ -127,10 +142,11 @@ interface sbIPlaylistCommands : nsISupports
   * then right-justify all the command buttons after it.  By default, command
   * buttons will adjust their width to the width of their human readable text.
   *
+  * \param submenu The submenu for which the data is being requested
   * \param index The index of the element for which the data is being requested
   * \return The value for the flex
   */
-  PRInt32 getCommandFlex( in PRInt32 index );
+  PRInt32 getCommandFlex( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
 
   /**
   * \brief Return the human readable text for the requested command element's tooltip
@@ -139,11 +155,12 @@ interface sbIPlaylistCommands : nsISupports
   * string will be used as an index into the current localization's properties
   * file.
   *
+  * \param submenu The submenu for which the data is being requested
   * \todo The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip.
   * \param index The index of the element for which the data is being requested
   * \return The string for the tooltip
   */
-  AString getCommandToolTipText( in PRInt32 index );
+  AString getCommandToolTipText(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
 
   /**
   * \brief Return the enabled state for the requested command element index
@@ -152,10 +169,60 @@ interface sbIPlaylistCommands : nsISupports
   * this method will be called to allow the code to enable or disable commands
   * based upon the state of the playlist.
   *
+  * \param submenu The submenu for which the data is being requested
   * \param index The index of the element for which the data is being requested
   * \return True if the command should display as enabled
   */
-  PRBool getCommandEnabled( in PRInt32 index );
+  PRBool getCommandEnabled(in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+
+  /**
+  * \brief Return the value of the flag for the requested command element index
+  *
+  * The requested elements are always of type 'flag'
+
+  * \param submenu The submenu for which the data is being requested
+  * \param index The index of the element for which the data is being requested
+  * \return The value for the flag
+  */
+  PRBool getCommandFlag( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+
+  /**
+  * \brief Return the value of the requested command element index
+  *
+  * The requested elements are always of type 'value'
+
+  * \param submenu The submenu for which the data is being requested
+  * \param index The index of the element for which the data is being requested
+  * \return The value for the command
+  */
+  AString getCommandValue( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+
+  /**
+  * \brief Return the selected item for choice list of the requested command element index
+  *
+  * The requested elements are always of type 'choice'
+
+  * \param submenu The submenu for which the data is being requested
+  * \param index The index of the element for which the data is being requested
+  * \return The id of the choice item
+  */
+  AString getCommandChoiceItem( in AString aChoiceMenu, in AString aHost );
+  
+  /**
+  * \brief Instantiate the custom element associated with the requested command
+  *
+  * \param aID The id of the custom command whose instantiation is being requested
+  * \param aHost The command host type that made the request
+  */
+  nsIDOMNode instantiateCustomCommand( in AString aID, in AString aHost );
+
+  /**
+  * \brief Refresh the custom element associated with the requested command
+  *
+  * \param aID The id of the custom command element whose refreshing is being requested
+  * \param aHost The command host type that made the request
+  */
+  void refreshCustomCommand( in nsIDOMNode aCustomCommandElement, in AString aId, in AString aHost );
 
   /**
   * \brief Handle the fact that a command was activated
@@ -165,7 +232,7 @@ interface sbIPlaylistCommands : nsISupports
   *
   * \param event The event generated by the user's action
   */
-  void onCommand( in nsIDOMEvent event );
+  void onCommand( in AString id, in AString value, in AString aHost );
 
   /**
   * \brief Duplicate the command object
