@@ -34,6 +34,14 @@ sbTArrayStringEnumerator::sbTArrayStringEnumerator(nsTArray<nsString>* aStringAr
   mStringArray.InsertElementsAt(0, *aStringArray);
 };
 
+sbTArrayStringEnumerator::sbTArrayStringEnumerator(nsTArray<nsCString>* aStringArray) :
+  mNextIndex(0)
+{
+  for ( PRUint32 index = 0; index < aStringArray->Length(); index ++ ) {
+    mStringArray.AppendElement(NS_ConvertUTF8toUTF16((*aStringArray)[index]));
+  }
+};
+
 NS_IMETHODIMP
 sbTArrayStringEnumerator::HasMore(PRBool *_retval)
 {
@@ -53,5 +61,4 @@ sbTArrayStringEnumerator::GetNext(nsAString& _retval)
     return NS_ERROR_NOT_AVAILABLE;
   }
 };
-
 

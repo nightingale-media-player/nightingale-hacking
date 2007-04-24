@@ -41,6 +41,7 @@ public:
   NS_DECL_NSISTRINGENUMERATOR
 
   sbTArrayStringEnumerator(nsTArray<nsString>* aStringArray);
+  sbTArrayStringEnumerator(nsTArray<nsCString>* aStringArray);
 
 private:
   nsTArray<nsString> mStringArray;
