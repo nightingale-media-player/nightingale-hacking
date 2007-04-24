@@ -271,8 +271,12 @@ TestMediaListListener.prototype = {
     return this._addedItem;
   },
   
-  get removedItem() {
-    return this._removedItem;
+  get removedItemBefore() {
+    return this._removedItemBefore;
+  },
+  
+  get removedItemAfter() {
+    return this._removedItemAfter;
   },
   
   get updatedItem() {
@@ -299,8 +303,12 @@ TestMediaListListener.prototype = {
     this._addedItem = item;
   },
   
-  onItemRemoved: function onItemRemoved(list, item) {
-    this._removedItem = item;
+  onBeforeItemRemoved: function onBeforeItemRemoved(list, item) {
+    this._removedItemBefore = item;
+  },
+  
+  onAfterItemRemoved: function onAfterItemRemoved(list, item) {
+    this._removedItemAfter = item;
   },
   
   onItemUpdated: function onItemUpdated(list, item) {
