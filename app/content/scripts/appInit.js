@@ -50,9 +50,16 @@ appInit.onUnload = function()
   window.removeEventListener("unload", appInit.onUnload, false);
   SBAppDeinitialize();
   SBRestarterDeinitialize();
+  // TEMP: shutdown the metadata job manager
+  theMetadataJobManager.stop();
 }
 appInit.onScriptInit = function()
 {
+  // TEMP: startup the metadata job manager
+  theMetadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                                .getService(Components.interfaces.sbIMetadataJobManager);
+
+
   // !!!
   // !!! THIS FUNCTION GETS CALLED AT THE BOTTOM OF THIS MODULE FILE !!!
   // !!!
@@ -515,7 +522,10 @@ function SBMigrateDatabase()
   queryObject.execute();
 }
 
+var theMetadataJobManager = null;
+
 // !!!
 // !!! THIS FUNCTION MUST BE CALLED AT THE BOTTOM OF THIS MODULE OR ELSE BAD THINGS HAPPEN !!!
 // !!!
 appInit.onScriptInit();
+

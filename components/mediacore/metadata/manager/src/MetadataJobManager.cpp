@@ -32,20 +32,19 @@
 // INCLUDES ===================================================================
 #include <nspr.h>
 #include <nscore.h>
-#include <nsAutoLock.h>
 
 #include <unicharutil/nsUnicharUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsIObserverService.h>
-#include <xpcom/nsCRTGlue.h>
-#include <pref/nsIPrefService.h>
-#include <pref/nsIPrefBranch2.h>
-#include <nsISupportsPrimitives.h>
-#include <nsThreadUtils.h>
-#include <nsMemory.h>
+
+#include <sbISQLBuilder.h>
+#include <sbSQLBuilderCID.h>
+
+#include <sbIDataRemote.h>
 
 #include "MetadataJobManager.h"
+#include "MetadataJob.h"
 
 #include "prlog.h"
 #ifdef PR_LOGGING
@@ -64,10 +63,12 @@ sbMetadataJobManager::sbMetadataJobManager()
 {
   nsresult rv;
 
+  // TODO:
+  // - Get us instantiated at startup, somehow?
   nsCOMPtr<nsIObserverService> observerService =
     do_GetService("@mozilla.org/observer-service;1", &rv);
   if(NS_SUCCEEDED(rv)) {
-    observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID, PR_FALSE);
+    observerService->AddObserver(this, "xpcom-shutdown", PR_FALSE);
   }
   else {
     NS_ERROR("Unable to register xpcom-shutdown observer");
@@ -75,11 +76,19 @@ sbMetadataJobManager::sbMetadataJobManager()
 
   mQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
   NS_ASSERTION(mQuery, "Unable to create sbMetadataJobManager::mQuery");
+  mQuery->SetDatabaseGUID( sbMetadataJob::DATABASE_GUID() );
+  mQuery->SetAsyncQuery( PR_FALSE );
 
-  // TODO (maybe on some startup event?):
-  //  - Create the database
-  //  - Create the task tracking table
-  //  - Read and initialize any tasks in the tracking table
+  nsCOMPtr< sbIDataRemote > dataDisplayString = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1" );
+  NS_ASSERTION(dataDisplayString, "Unable to create sbMetadataJob::dataCurrentMetadataJobs");
+  dataDisplayString->Init( NS_LITERAL_STRING("songbird.backscan.status"), NS_LITERAL_STRING("") );
+  dataDisplayString->SetStringValue( NS_LITERAL_STRING("") );
+  nsCOMPtr< sbIDataRemote > dataCurrentMetadataJobs = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1" );
+  NS_ASSERTION(dataCurrentMetadataJobs, "Unable to create sbMetadataJob::dataCurrentMetadataJobs");
+  dataCurrentMetadataJobs->Init( NS_LITERAL_STRING("songbird.backscan.concurrent"), NS_LITERAL_STRING("") );
+  dataCurrentMetadataJobs->SetIntValue( 0 );
+
+  rv = InitCurrentTasks();
 }
 
 sbMetadataJobManager::~sbMetadataJobManager()
@@ -95,24 +104,62 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray, PRUint32 aSleepMS, sbIM
   nsCOMPtr<sbIMetadataJob> task = do_CreateInstance("@songbirdnest.com/Songbird/MetadataJob;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString tableName = NS_LITERAL_STRING("TempTableName");
-  rv = task->Init(tableName, aMediaItemsArray, aSleepMS);
+  // Create a resource guid for this job.
+  nsCOMPtr<nsIUUIDGenerator> uuidGen =
+    do_GetService("@mozilla.org/uuid-generator;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsID id;
+  rv = uuidGen->GenerateUUIDInPlace(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCAutoString guidUtf8(id.ToString());
+  nsAutoString fullGuid;
+  fullGuid = NS_ConvertUTF8toUTF16(guidUtf8);
+  nsAutoString tableName = sbMetadataJob::DATABASE_GUID(); // Can't start a table name with a number
+  tableName.AppendLiteral( "_" );
+  tableName += Substring(fullGuid, 1, 8); // Or have dashes.  :(
+  tableName += Substring(fullGuid, 10, 4);
+  tableName += Substring(fullGuid, 15, 4);
+  tableName += Substring(fullGuid, 20, 4);
+  tableName += Substring(fullGuid, 25, 12);
+
+  // Compose the insert string to the master table
+  nsAutoString insertItem;
+  nsCOMPtr<sbISQLInsertBuilder> insert =
+    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = insert->SetIntoTableName( sbMetadataJob::DATABASE_GUID() );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = insert->AddColumn( NS_LITERAL_STRING("job_guid") );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = insert->AddValueString( tableName );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = insert->AddColumn( NS_LITERAL_STRING("ms_delay") );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = insert->AddValueLong( aSleepMS );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = insert->ToString( insertItem );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = ExecuteQuery( insertItem );      
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // TODO:
-  //  - Create a guid
-  //  - Add the task guid to the tracking table
-  //  - Initialize the task
+  // Kick off the task with the proper data
+  rv = task->Init(tableName, aMediaItemsArray, aSleepMS);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ADDREF( task.get() ); // Keep a reference around to it so it doesn't die when we ask its thread to die.
+  mJobArray.AppendObject( task );
 
   NS_ADDREF(*_retval = task);
   return NS_OK;
 }
 
 
-void sbMetadataJobManager::Stop()
+NS_IMETHODIMP sbMetadataJobManager::Stop()
 {
-  // TODO:
-  //  - Cancel all outstanding tasks
+  for ( PRUint32 i = 0; i < mJobArray.Count(); i++ )
+  {
+    mJobArray[ i ]->Cancel();
+  }
+  return NS_OK;
 }
 
 sbMetadataJobManager * sbMetadataJobManager::GetSingleton()
@@ -139,7 +186,7 @@ NS_IMETHODIMP
 sbMetadataJobManager::Observe(nsISupports *aSubject, const char *aTopic,
                                const PRUnichar *aData)
 {
-  if(!strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID)) {
+  if(!strcmp(aTopic, "xpcom-shutdown")) {
     nsresult rv;
 
     PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Metadata Job Manager shutting down..."));
@@ -149,9 +196,72 @@ sbMetadataJobManager::Observe(nsISupports *aSubject, const char *aTopic,
     nsCOMPtr<nsIObserverService> observerService =
       do_GetService("@mozilla.org/observer-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
+    observerService->RemoveObserver(this, "xpcom-shutdown");
   }
   return NS_OK;
 }
 
+nsresult sbMetadataJobManager::InitCurrentTasks()
+{
+  nsresult rv;
+
+  // Compose the create table query string
+  nsAutoString createTable;
+  createTable.AppendLiteral( "CREATE TABLE " );
+  createTable += sbMetadataJob::DATABASE_GUID();
+  createTable.AppendLiteral( " (job_guid TEXT NOT NULL PRIMARY KEY, ms_delay INTEGER NOT NULL)" );
+  rv = ExecuteQuery( createTable );      
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Compose the select query string
+  nsAutoString selectTable;
+  selectTable.AppendLiteral( "SELECT * FROM " );
+  selectTable += sbMetadataJob::DATABASE_GUID();
+  rv = ExecuteQuery( selectTable );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the results
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = mQuery->GetResultObject( getter_AddRefs(result) );
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Launch the unfinished tasks
+  for ( PRUint32 i = 0; i < rowCount; i++ )
+  {
+    nsAutoString tableName, strSleep;
+    rv = result->GetRowCell(i, 0, tableName);
+    rv = result->GetRowCell(i, 1, strSleep);
+    NS_ENSURE_SUCCESS(rv, rv);
+    PRUint32 aSleep = strSleep.ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMetadataJob> task = do_CreateInstance("@songbirdnest.com/Songbird/MetadataJob;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = task->Init(tableName, nsnull, aSleep);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_IF_ADDREF( task.get() );
+    mJobArray.AppendObject( task ); // Keep a reference around to it.
+  }
+
+  return rv;
+}
+
+nsresult sbMetadataJobManager::ExecuteQuery( const nsAString &aQueryStr )
+{
+  nsresult rv;
+  // Setup and execute it
+  rv = mQuery->SetAsyncQuery( PR_FALSE );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mQuery->AddQuery( aQueryStr );
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRBool error;
+  return mQuery->Execute( &error );
+}
 

@@ -38,12 +38,14 @@
 #include <prmon.h>
 
 #include <nsStringGlue.h>
+#include <nsCOMArray.h>
 #include <nsITimer.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
 #include <nsCOMPtr.h>
 #include <xpcom/nsIObserver.h>
 #include <nsIStringBundle.h>
+#include <nsIUUIDGenerator.h>
 
 #include "sbIDatabaseQuery.h"
 #include "sbIDatabaseResult.h"
@@ -80,9 +82,11 @@ class sbMetadataJobManager : public sbIMetadataJobManager, public nsIObserver
   static sbMetadataJobManager *GetSingleton();
 
 protected:
-  void Stop( void );
+  nsresult InitCurrentTasks();
+  nsresult ExecuteQuery( const nsAString &aQueryStr );
 
   nsCOMPtr< sbIDatabaseQuery >  mQuery;
+  nsCOMArray< sbIMetadataJob >  mJobArray;
 };
 
 extern sbMetadataJobManager *gMetadataJobManager;

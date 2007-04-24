@@ -79,4 +79,10 @@ interface sbIMetadataJobManager : nsISupports
    * \param aSleepMS How much of an interval/sleep per loop in and out of thread.
    */
   sbIMetadataJob newJob( in nsIArray aMediaItemsArray, in unsigned long aSleepMS );
+
+  /**
+   * \brief Shuts down the job manager and cancels any outstanding tasks.
+   *
+   */
+  void stop();
 };

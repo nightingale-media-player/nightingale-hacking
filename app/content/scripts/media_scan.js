@@ -25,7 +25,7 @@
  */
 
 var PROFILE_TIME = false;
-var USE_NEW_API = false;
+var USE_NEW_API = true;
 var theGUIDSArray = {};
 var theSongbirdLibrary = null;
 
@@ -114,6 +114,7 @@ function onPollScan()
       theLabel.value = SBString("media_scan.composing", "Composing Query...");
       onScanComplete();
       document.getElementById("button_ok").removeAttribute( "hidden" );
+      document.getElementById("button_ok").setAttribute( "disabled", "true" );
       document.getElementById("button_ok").focus();
       document.getElementById("button_cancel").setAttribute( "hidden", "true" );
     }   
@@ -135,6 +136,9 @@ function onPollScan()
 
 function onScanComplete( )
 {
+  clearInterval( polling_interval );
+  polling_interval = null;
+
   theProgress.removeAttribute( "mode" );
 
   if ( aMediaScanQuery.getFileCount() )
@@ -266,6 +270,11 @@ function onScanComplete( )
 }
 
 function onPollComplete() {
+  clearInterval( polling_interval );
+  polling_interval = null;
+  
+  document.getElementById("button_ok").removeAttribute( "disabled" );
+  
   if ( USE_NEW_API ) {
 
     if ( PROFILE_TIME )
@@ -303,9 +312,18 @@ function onPollComplete() {
 
     // Create a metadata task    
     var metadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                                 .createInstance(Components.interfaces.sbIMetadataJobManager);
+                                 .getService(Components.interfaces.sbIMetadataJobManager);
     var metadataJob = metadataJobManager.newJob( mediaItems, 5 );
     
+    if ( PROFILE_TIME )
+    {
+      timethen = new Date();
+      alert( "Launch Metadata - " + ( timethen.getTime() - start ) / 1000 + "s" );
+      
+      timenow = new Date();
+      start = timenow.getTime();
+    }
+
     // TODO:
     //  - Add items to theTargetPlaylist if it was requested.
     
@@ -367,6 +385,8 @@ function onPollQuery()
 
 function doOK()
 {
+  if ( polling_interval != null ) return;
+
   if (document.getElementById("watch_check").checked) {
     var wfManager = new CWatchFolderManager();
     // XXXredfive - componentize WatchFolderManager
@@ -384,4 +404,5 @@ function doCancel()
   document.defaultView.close();
   return true;
 }
+
 

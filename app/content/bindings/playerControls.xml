@@ -1413,23 +1413,75 @@
 
     <constructor>
       <![CDATA[
+        this.setAttribute( "hidden", "true" );
         this.data  = "backscan.status";
 
-        // Create and bind data remote
-        this.bindvisible = SBDataBindElementAttribute( "backscan.status", this.label, "hidden", true, false, "value == ''" );
+        // See if we want to pop our balloon tip.
+        this.on_value_change = { 
+          _that: null, 
+          observe: function( aSubject, aTopic, aData ) { this._that.onValue( aData ); } 
+        };
+        this.on_value_change._that = this;
+        this.bindvalue = SB_NewDataRemote("backscan.concurrent", null);
+        this.bindvalue.bindObserver( this.on_value_change, false );
 
-        this.setAttribute("onmousedown", "SBDataSetIntValue('backscan.paused', SBDataGetIntValue('backscan.paused') == 0 );");
+//        this.setAttribute("onmousedown", "SBDataSetIntValue('backscan.paused', SBDataGetIntValue('backscan.paused') == 0 );");
       ]]>
     </constructor>
     <destructor>
       <![CDATA[
-        //SB_LOG("playerControls.js", "scanning binding destructor");
         if (this.bindvisible) {
           this.bindvisible.unbind();
           this.bindvisible = null;
         }
+        if (this.bindvalue) {
+          this.bindvalue.unbind();
+          this.bindvalue = null;
+        }
       ]]>
     </destructor>
+    
+    <method name="onValue">
+      <parameter name="aData"/>
+      <body>
+        <![CDATA[
+          if ( parseInt( aData ) > 0  )
+          {
+            this.setAttribute( "hidden", "false" );
+            if ( ! SBDataGetBoolValue( "balloontip.backscan.shown" ) )
+            {
+              this.balloon = new BalloonTip();
+              this.balloon.onCloseCallback = this.onBalloonClose;
+              var title = SBString("balloontip.backscan.title", "Scanning For Metadata");
+              var text = SBString("balloontip.backscan.text", "This indicates that Songbird is scanning the files in your Library to import their Metadata Tags.");
+              this.balloon.showText(text, this, title, 'balloon-icon-songbird', null);
+              this.balloon._that = this;
+              SBDataSetBoolValue( "balloontip.backscan.shown", true )
+            }
+          }
+          else
+          {
+            if ( ! this.balloon )
+              this.setAttribute( "hidden", "true" );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="onBalloonClose">
+      <parameter name="aBalloonInstance"/>
+      <parameter name="aCheckboxState"/>
+      <body>
+        <![CDATA[
+          var that = aBalloonInstance._that;
+          if ( SBDataGetIntValue("backscan.concurrent") < 1 )
+            that.setAttribute( "hidden", "true" );
+            
+          that.balloon = null;
+        ]]>
+      </body>
+    </method>
+ 
 
    </implementation>
  

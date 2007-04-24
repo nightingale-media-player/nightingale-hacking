@@ -739,7 +739,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
     strValue.AppendLiteral(" ...");
     strCurrentValue->SetData(strValue);
 
-    pBranch->SetComplexValue("backscan.status", NS_GET_IID(nsISupportsString), strCurrentValue);
+//    pBranch->SetComplexValue("backscan.status", NS_GET_IID(nsISupportsString), strCurrentValue);
 
     nsMemory::Free(value);
   }
@@ -747,7 +747,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   {
     strValue = EmptyString();
     strCurrentValue->SetData(strValue);
-    pBranch->SetComplexValue("backscan.status", NS_GET_IID(nsISupportsString), strCurrentValue);
+//    pBranch->SetComplexValue("backscan.status", NS_GET_IID(nsISupportsString), strCurrentValue);
     
     if(p->m_activeCount < 0)
       p->m_activeCount = 0;
@@ -932,5 +932,6 @@ sbMetadataBackscanner::Observe(nsISupports *aSubject, const char *aTopic,
   }
   return NS_OK;
 }
+
 
 

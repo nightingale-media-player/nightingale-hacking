@@ -38,16 +38,21 @@
 #include <prmon.h>
 
 #include <nsStringGlue.h>
+#include <nsTArray.h>
+#include <nsCOMArray.h>
+#include <nsCOMPtr.h>
 #include <nsITimer.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
-#include <nsCOMPtr.h>
+#include <nsIStringBundle.h>
 #include <xpcom/nsIObserver.h>
 #include <nsIStringBundle.h>
+#include <nsInterfaceHashtable.h>
 
+#include "sbILibraryManager.h"
 #include "sbIDatabaseQuery.h"
 #include "sbIDatabaseResult.h"
-
+#include "sbIDataRemote.h"
 #include "sbIMetadataManager.h"
 #include "sbIMetadataHandler.h"
 #include "sbIMetadataJob.h"
@@ -70,9 +75,12 @@
 
 // CLASSES ====================================================================
 class sbIMediaItem;
+class MetadataJobProcessorThread;
 
 class sbMetadataJob : public sbIMetadataJob
 {
+  friend MetadataJobProcessorThread;
+
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMETADATAJOB
@@ -83,10 +91,6 @@ public:
   static void MetadataJobTimer(nsITimer *aTimer, void *aClosure)
   {
     ((sbMetadataJob*)aClosure)->RunTimer();
-  }
-  static nsresult PR_CALLBACK MetadataJobProcessor(sbMetadataJob* pMetadataJob)
-  {
-    return pMetadataJob->RunThread();
   }
 
   static inline nsString DATABASE_GUID() { return NS_LITERAL_STRING( "sbMetadataJob" ); }
@@ -120,31 +124,48 @@ protected:
 
   nsresult RunTimer();
   nsresult CancelTimer();
-  nsresult RunThread();
-  nsresult CancelThread();
+  nsresult RunThread( PRBool * bShutdown );
+  nsresult FinishJob();
 
-  nsresult AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, sbIMediaItem *aMediaItem  );
-  nsresult GetNextItem( sbIDatabaseQuery *aQuery, PRBool isWorkerThread, jobitem_t **_retval );
-  nsresult SetItemComplete( sbIDatabaseQuery *aQuery, jobitem_t *aItem );
-  nsresult StartHandlerForItem( jobitem_t *aItem );
-  nsresult AddMetadataToItem( jobitem_t *aItem );
+  static nsresult AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsString aTableName, sbIMediaItem *aMediaItem  );
+  static nsresult GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableName, PRBool isWorkerThread, jobitem_t **_retval );
+  static nsresult SetItemIsScanned( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
+  static nsresult SetItemIsWrittenAndDelete( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
+  static nsresult SetItemsAreWrittenAndDelete( sbIDatabaseQuery *aQuery, nsString aTableName, nsTArray< jobitem_t * > &aItemArray );
+  static nsresult SetItemIs( const nsAString &aColumnString, sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
+  static nsresult ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTableName );
+  static nsresult StartHandlerForItem( jobitem_t *aItem );
+  static nsresult AddMetadataToItem( jobitem_t *aItem, PRBool aShouldFlush );
+  static nsresult AddDefaultMetadataToItem( jobitem_t *aItem, PRBool aShouldFlush );
+  static nsString CreateDefaultItemName( const nsString &aURLString );
+
+  void IncrementDataRemote();
+  void DecrementDataRemote();
 
 #define MDJ_CRACK( function, string ) \
-  inline static nsAutoString function ( sbIDatabaseResult *i ) { nsAutoString str; i->GetRowCellByColumn(0, NS_LITERAL_STRING( string ), str); return str; }
+  static inline nsAutoString function ( sbIDatabaseResult *i ) { nsAutoString str; i->GetRowCellByColumn(0, NS_LITERAL_STRING( string ), str); return str; }
 MDJ_CRACK( LG, "library_guid" );
 MDJ_CRACK( IG, "item_guid" );
 MDJ_CRACK( URL, "url" );
 MDJ_CRACK( WT, "worker_thread" );
 MDJ_CRACK( IS, "is_scanned" );
 
+  nsCOMArray<sbIMediaItem>      mInitArray;
+  PRUint32                      mInitCount;
+  nsString                      mStatusDisplayString;
+  nsCOMPtr<sbIDataRemote>       mDataStatusDisplay;
+  nsCOMPtr<sbIDataRemote>       mDataCurrentMetadataJobs;
   nsString                      mTableName;
   PRUint32                      mSleepMS;
   nsCOMPtr<sbIDatabaseQuery>    mMainThreadQuery;
-  nsCOMPtr<sbIDatabaseQuery>    mWorkerThreadQuery;
-  PRBool                        mShouldShutdown;
   nsCOMPtr<nsITimer>            mTimer;
   nsCOMPtr<nsIThread>           mThread;
-  nsCOMPtr<sbIMetadataManager>  mMetadataManager;
+  nsTArray<jobitem_t *>         mTimerWorkers;
+  nsCOMPtr<MetadataJobProcessorThread> mMetatataJobProcessor;
+  PRBool                        mInitCompleted;
+  PRBool                        mInitExecuted;
+  PRBool                        mTimerCompleted;
+  PRBool                        mThreadCompleted;
 };
 
 class MetadataJobProcessorThread : public nsIRunnable
@@ -152,18 +173,22 @@ class MetadataJobProcessorThread : public nsIRunnable
 public:
   NS_DECL_ISUPPORTS
 
-    MetadataJobProcessorThread(sbMetadataJob* pMetadataJob) {
-      NS_ASSERTION(pMetadataJob, "Null pointer!");
-      m_pMetadataJob = pMetadataJob;
-    }
+  MetadataJobProcessorThread(sbMetadataJob* pMetadataJob) {
+    NS_ASSERTION(pMetadataJob, "Null pointer!");
+    mMetadataJob = pMetadataJob;
+    mShutdown = PR_FALSE;
+  }
 
-    NS_IMETHOD Run()
-    {
-      return sbMetadataJob::MetadataJobProcessor(m_pMetadataJob);
-    }
+  NS_IMETHOD Run()
+  {
+    mMetadataJob->mThreadCompleted = PR_FALSE;
+    nsresult rv = mMetadataJob->RunThread( &mShutdown );
+    mMetadataJob->mThreadCompleted = PR_TRUE;
+    return rv;
+  }
 
-protected:
-  sbMetadataJob* m_pMetadataJob;
+  sbMetadataJob* mMetadataJob;
+  PRBool mShutdown;
 };
 
 #endif // __METADATA_JOB_H__
