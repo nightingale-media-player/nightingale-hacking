@@ -55,13 +55,20 @@ interface sbIMediaListListener : nsISupports
                    in sbIMediaItem aMediaItem);
 
   /**
-   * \brief Called when a media item is removed from the list.
+   * \brief Called before a media item is removed from the list.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The media item to be removed
+   */
+  void onBeforeItemRemoved(in sbIMediaList aMediaList,
+                     in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Called after a media item is removed from the list.
    * \param aMediaList The list that has changed.
    * \param aMediaItem The removed media item.
    */
-  void onItemRemoved(in sbIMediaList aMediaList,
-                     in sbIMediaItem aMediaItem);
-
+  void onAfterItemRemoved(in sbIMediaList aMediaList,
+                          in sbIMediaItem aMediaItem);
 
   /**
    * \brief Called when a media item is changed.

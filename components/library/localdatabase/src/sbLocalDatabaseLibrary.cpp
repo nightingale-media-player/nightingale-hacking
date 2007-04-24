@@ -260,6 +260,13 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   nsresult rv = mDBQuery->AddQuery(NS_LITERAL_STRING("commit"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Notify our listeners of before removal
+  PRUint32 count = mNotificationList.Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    mFriendLibrary->NotifyListenersBeforeItemRemoved(mFriendLibrary,
+                                                     mNotificationList[i]);
+  }
+
   PRInt32 dbSuccess;
   rv = mDBQuery->Execute(&dbSuccess);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -268,10 +275,9 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   rv = mFriendLibrary->mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Notify our listeners
-  PRUint32 count = mNotificationList.Count();
+  // Notify our listeners of after removal
   for (PRUint32 i = 0; i < count; i++) {
-    mFriendLibrary->NotifyListenersItemRemoved(mFriendLibrary,
+    mFriendLibrary->NotifyListenersAfterItemRemoved(mFriendLibrary,
                                                mNotificationList[i]);
   }
 

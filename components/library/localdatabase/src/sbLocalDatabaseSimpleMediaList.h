@@ -61,10 +61,6 @@ public:
   NS_DECL_SBILOCALDATABASESIMPLEMEDIALIST
   NS_DECL_SBIORDERABLEMEDIALIST
 
-  sbLocalDatabaseSimpleMediaList()
-  : mBatchRemoveListener(nsnull)
-  { }
-
   nsresult Init(sbILocalDatabaseLibrary* aLibrary,
                 const nsAString& aGuid);
 
@@ -125,7 +121,8 @@ private:
   // Get first ordinal
   nsString mGetFirstOrdinalQuery;
 
-  sbSimpleMediaListRemovingEnumerationListener* mBatchRemoveListener;
+  // Keep a list of guids that should be notified after removal
+  nsTHashtable<nsStringHashKey> mShouldNotifyAfterRemove;
 };
 
 class sbSimpleMediaListInsertingEnumerationListener : public sbIMediaListEnumerationListener

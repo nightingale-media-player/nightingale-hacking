@@ -155,10 +155,27 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemAdded(sbIMediaList* aList,
 }
 
 /**
+ * \brief Notifies all listeners that an item is about to be removed from the
+ *        list.
+ */
+void
+sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(sbIMediaList* aList,
+                                                                   sbIMediaItem* aItem)
+{
+  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+               "You haven't called Init yet!");
+  SB_ENSURE_TRUE_VOID(aList);
+  SB_ENSURE_TRUE_VOID(aItem);
+
+  MediaListCallbackInfo info(aList, aItem);
+  mListenerProxyTable.EnumerateRead(BeforeItemRemovedCallback, &info);
+}
+
+/**
  * \brief Notifies all listeners that an item has been removed from the list.
  */
 void
-sbLocalDatabaseMediaListListener::NotifyListenersItemRemoved(sbIMediaList* aList,
+sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(sbIMediaList* aList,
                                                              sbIMediaItem* aItem)
 {
   NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
@@ -167,7 +184,7 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemRemoved(sbIMediaList* aList
   SB_ENSURE_TRUE_VOID(aItem);
 
   MediaListCallbackInfo info(aList, aItem);
-  mListenerProxyTable.EnumerateRead(ItemRemovedCallback, &info);
+  mListenerProxyTable.EnumerateRead(AfterItemRemovedCallback, &info);
 }
 
 /**
@@ -259,6 +276,39 @@ sbLocalDatabaseMediaListListener::ItemAddedCallback(nsISupportsHashKey::KeyType 
 }
 
 /**
+ * \brief Notifies all registered listeners that an item is about to be removed
+ *        from the media list.
+ *
+ * \param aKey      - An sbIMediaListListener.
+ * \param aEntry    - An sbIMediaListListener proxy.
+ * \param aUserData - A MediaListCallbackInfo pointer.
+ *
+ * \return PL_DHASH_NEXT
+ */
+PLDHashOperator PR_CALLBACK
+sbLocalDatabaseMediaListListener::BeforeItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
+                                                            sbIMediaListListener* aEntry,
+                                                            void* aUserData)
+{
+  NS_ASSERTION(aKey && aEntry, "Nulls in the hash table!");
+
+  MediaListCallbackInfo* info =
+    NS_STATIC_CAST(MediaListCallbackInfo*, aUserData);
+  NS_ENSURE_TRUE(info, PL_DHASH_NEXT);
+
+  NS_ASSERTION(info->list && info->item, "Bad MediaListCallbackInfo!");
+
+  nsCOMPtr<sbIMediaListListener> listener = aEntry;
+  nsresult rv = listener->OnBeforeItemRemoved(info->list, info->item);
+
+  // We don't really care if some listener impl returns failure, but warn for
+  // good measure.
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnBeforeItemRemoved returned a failure code");
+
+  return PL_DHASH_NEXT;
+}
+
+/**
  * \brief Notifies all registered listeners that an item has been removed from
  *        the media list.
  *
@@ -269,7 +319,7 @@ sbLocalDatabaseMediaListListener::ItemAddedCallback(nsISupportsHashKey::KeyType 
  * \return PL_DHASH_NEXT
  */
 PLDHashOperator PR_CALLBACK
-sbLocalDatabaseMediaListListener::ItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
+sbLocalDatabaseMediaListListener::AfterItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
                                                       sbIMediaListListener* aEntry,
                                                       void* aUserData)
 {
@@ -282,11 +332,11 @@ sbLocalDatabaseMediaListListener::ItemRemovedCallback(nsISupportsHashKey::KeyTyp
   NS_ASSERTION(info->list && info->item, "Bad MediaListCallbackInfo!");
 
   nsCOMPtr<sbIMediaListListener> listener = aEntry;
-  nsresult rv = listener->OnItemRemoved(info->list, info->item);
+  nsresult rv = listener->OnAfterItemRemoved(info->list, info->item);
 
   // We don't really care if some listener impl returns failure, but warn for
   // good measure.
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnItemRemoved returned a failure code");
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnAfterItemRemoved returned a failure code");
 
   return PL_DHASH_NEXT;
 }

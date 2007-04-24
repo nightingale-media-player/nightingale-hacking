@@ -70,7 +70,8 @@ function runTest () {
   assertEqual(listListener.addedItem, item3);
   
   library.remove(item1);
-  assertEqual(listListener.removedItem, item1);
+  assertEqual(listListener.removedItemBefore, item1);
+  assertEqual(listListener.removedItemAfter, item1);
   
   // Test if removing items from the library also remove items from the
   // playlist.
@@ -88,7 +89,7 @@ function runTest () {
   listListener.reset();
   
   var removedItemCount = 0;
-  listListener.onItemRemoved = function onItemRemoved(list, item) {
+  listListener.onAfterItemRemoved = function onAfterItemRemoved(list, item) {
     removedItemCount++;
   }
   

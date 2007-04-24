@@ -623,7 +623,19 @@ sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListView::OnItemRemoved(sbIMediaList* aMediaList,
+sbLocalDatabaseMediaListView::OnBeforeItemRemoved(sbIMediaList* aMediaList,
+                                                  sbIMediaItem* aMediaItem)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  // Don't care
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                             sbIMediaItem* aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -647,6 +659,15 @@ sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  if (mBatchCount > 0) {
+    mInvalidatePending = PR_TRUE;
+    return NS_OK;
+  }
+
+  // Invalidate the view array
+  nsresult rv = Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

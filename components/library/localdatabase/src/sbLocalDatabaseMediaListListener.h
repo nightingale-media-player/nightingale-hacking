@@ -71,8 +71,12 @@ protected:
   void NotifyListenersItemAdded(sbIMediaList* aList,
                                 sbIMediaItem* aItem);
 
-  // Enumerate listeners and call OnItemRemoved
-  void NotifyListenersItemRemoved(sbIMediaList* aList,
+  // Enumerate listeners and call OnBeforeItemRemoved
+  void NotifyListenersBeforeItemRemoved(sbIMediaList* aList,
+                                        sbIMediaItem* aItem);
+
+  // Enumerate listeners and call OnAfterItemRemoved
+  void NotifyListenersAfterItemRemoved(sbIMediaList* aList,
                                   sbIMediaItem* aItem);
 
   // Enumerate listeners and call OnItemRemoved
@@ -99,7 +103,14 @@ private:
   // This callback is meant to be used with mListenerProxyTable.
   // aUserData should be a MediaListCallbackInfo pointer.
   static PLDHashOperator PR_CALLBACK
-    ItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
+    BeforeItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
+                              sbIMediaListListener* aEntry,
+                              void* aUserData);
+
+  // This callback is meant to be used with mListenerProxyTable.
+  // aUserData should be a MediaListCallbackInfo pointer.
+  static PLDHashOperator PR_CALLBACK
+    AfterItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
                         sbIMediaListListener* aEntry,
                         void* aUserData);
 

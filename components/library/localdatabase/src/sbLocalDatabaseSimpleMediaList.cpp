@@ -259,6 +259,13 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
 {
   nsresult rv;
 
+  // Notify our listeners before removal
+  PRUint32 count = mNotificationList.Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    mFriendList->NotifyListenersBeforeItemRemoved(mFriendList,
+                                                  mNotificationList[i]);
+  }
+
   if (mItemEnumerated) {
     rv = mDBQuery->AddQuery(NS_LITERAL_STRING("commit"));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -273,10 +280,9 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
   rv = mFriendList->mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Notify our listeners
-  PRUint32 count = mNotificationList.Count();
+  // Notify our listeners after removal
   for (PRUint32 i = 0; i < count; i++) {
-    mFriendList->NotifyListenersItemRemoved(mFriendList,
+    mFriendList->NotifyListenersAfterItemRemoved(mFriendList,
                                             mNotificationList[i]);
   }
 
@@ -354,6 +360,9 @@ sbLocalDatabaseSimpleMediaList::Init(sbILocalDatabaseLibrary* aLibrary,
 
   rv = libraryList->AddListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool success = mShouldNotifyAfterRemove.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -632,7 +641,7 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
 
   nsCOMPtr<sbIMediaItem> item;
   rv = GetItemByIndex(aIndex, getter_AddRefs(item));
-  NotifyListenersItemRemoved(this, item);
+  NotifyListenersBeforeItemRemoved(this, item);
 
   nsCOMPtr<sbIDatabaseQuery> dbQuery;
   rv = MakeStandardQuery(getter_AddRefs(dbQuery));
@@ -651,6 +660,8 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
 
   rv = mFullArray->RemoveByIndex(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  NotifyListenersAfterItemRemoved(this, item);
 
   return NS_OK;
 }
@@ -1308,6 +1319,8 @@ sbLocalDatabaseSimpleMediaList::OnItemAdded(sbIMediaList* aMediaList,
 {
   ASSERT_LIST_IS_LIBRARY(aMediaList);
 
+  // We don't care if an item was added to the library
+
   return NS_OK;
 }
 
@@ -1315,7 +1328,7 @@ sbLocalDatabaseSimpleMediaList::OnItemAdded(sbIMediaList* aMediaList,
  * See sbIMediaListListener
  */
 NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::OnItemRemoved(sbIMediaList* aMediaList,
+sbLocalDatabaseSimpleMediaList::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                               sbIMediaItem* aMediaItem)
 {
   ASSERT_LIST_IS_LIBRARY(aMediaList);
@@ -1329,26 +1342,42 @@ sbLocalDatabaseSimpleMediaList::OnItemRemoved(sbIMediaList* aMediaList,
     return NS_OK;
   }
 
-  // If we're in batch mode just add to our batch listener.
-  if (mBatchRemoveListener) {
-    rv = mBatchRemoveListener->OnEnumeratedItem(nsnull, aMediaItem, nsnull);
+  // NOTE: We don't actually have to remove items from this list when they are
+  // removed from the library since this is taken care of by a database trigger
+
+  // Notify our listeners that the item is about to be removed
+  NotifyListenersBeforeItemRemoved(this, aMediaItem);
+
+  // Remember the guid of this item so we can do the after notification as well
+  nsAutoString guid;
+  rv = aMediaItem->GetGuid(guid);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    return NS_OK;
+  nsStringHashKey* success = mShouldNotifyAfterRemove.PutEntry(guid);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::OnAfterItemRemoved(sbIMediaList* aMediaList,
+                                                   sbIMediaItem* aMediaItem)
+{
+  nsAutoString guid;
+  nsresult rv = aMediaItem->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mShouldNotifyAfterRemove.GetEntry(guid)) {
+
+    mShouldNotifyAfterRemove.RemoveEntry(guid);
+    // Invalidate the cached list
+    // XXX: Should this be batch aware?
+    nsresult rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+    // Notify our listeners that the item was removed
+    NotifyListenersAfterItemRemoved(this, aMediaItem);
   }
-
-  // Otherwise Use our enumeration helper to make all these remove calls use the
-  // same code.
-  sbSimpleMediaListRemovingEnumerationListener listener(this);
-
-  rv = listener.OnEnumerationBegin(nsnull, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = listener.OnEnumeratedItem(nsnull, aMediaItem, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = listener.OnEnumerationEnd(nsnull, NS_OK);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1385,7 +1414,17 @@ sbLocalDatabaseSimpleMediaList::OnListCleared(sbIMediaList* aMediaList)
 {
   ASSERT_LIST_IS_LIBRARY(aMediaList);
 
-  return Clear();
+  // NOTE: We don't actually have to remove items from this list when the
+  // library is cleared since this is taken care of by a database trigger
+
+  // Invalidate the cached list
+  nsresult rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Notify our listeners that the list was cleared
+  NotifyListenersListCleared(this);
+
+  return NS_OK;
 }
 
 /**
@@ -1396,16 +1435,8 @@ sbLocalDatabaseSimpleMediaList::OnBatchBegin(sbIMediaList* aMediaList)
 {
   ASSERT_LIST_IS_LIBRARY(aMediaList);
 
-  NS_ASSERTION(!mBatchRemoveListener, "This should be null!");
-
-  nsAutoPtr<sbSimpleMediaListRemovingEnumerationListener>
-    listener(new sbSimpleMediaListRemovingEnumerationListener(this));
-  NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv = listener->OnEnumerationBegin(nsnull, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mBatchRemoveListener = listener.forget();
+  // Just pass through to our listeners
+  NotifyListenersBatchBegin(this);
 
   return NS_OK;
 }
@@ -1418,15 +1449,8 @@ sbLocalDatabaseSimpleMediaList::OnBatchEnd(sbIMediaList* aMediaList)
 {
   ASSERT_LIST_IS_LIBRARY(aMediaList);
 
-  NS_ASSERTION(mBatchRemoveListener, "This shouldn't be null!");
-
-  nsresult rv = mBatchRemoveListener->OnEnumerationEnd(nsnull, NS_OK);
-
-  // Don't return early until deleting this!
-  delete mBatchRemoveListener;
-  mBatchRemoveListener = nsnull;
-
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Just pass through to our listeners
+  NotifyListenersBatchEnd(this);
 
   return NS_OK;
 }
