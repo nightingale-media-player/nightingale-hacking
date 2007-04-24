@@ -79,7 +79,7 @@ class MetadataJobProcessorThread;
 
 class sbMetadataJob : public sbIMetadataJob
 {
-  friend MetadataJobProcessorThread;
+  friend class MetadataJobProcessorThread;
 
 public:
   NS_DECL_ISUPPORTS
