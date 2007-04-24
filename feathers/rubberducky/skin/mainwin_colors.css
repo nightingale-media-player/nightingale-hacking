@@ -888,12 +888,12 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   border-left-color: #333333; /** Dark Border 4*/
   border-bottom-color: #99A194; /** Dark Border 1*/
   border-right-color: #99A195; /** Dark Border 2*/
-  background-color: transparent; 
+  background-color: #202220; /** Dark Color 1 */ 
   color: #fffff1; /** Light Color Brightest */
 }
 .locationbar-textbox[focused="true"]
 {
-  background-color: #8A8F84; /** Light Color 2 */
+  background-color: #0f100f; /** Dark Color 2 */
   color: #fffff1; /** Light Color Brightest */
 }
 
@@ -912,55 +912,61 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 }
  
 /* END WEB BAR */
-/* END WEB BAR */
+
 /** 
 ************************************************************************************************************************************************
 SEARCH WIDGET
+Note that this widget inherits from the FireFox binding.
+See dependencies/vendor/mozilla/browser/components/search/content/search.xml
+and app/content/bindings/search.xml
 ************************************************************************************************************************************************
 */
 
-#search_service_button
-{
-  background-color: transparent;
-  -moz-border-top-colors: none;
-  -moz-border-right-colors: none;
-  -moz-border-bottom-colors: none;
-  -moz-border-left-colors: none;
-}
 
-#search_service_list
+/* Make the search bar match the general textbox style */
+searchbar
 {
-  background-color: transparent;
-}
-
-#search_widget /* TODO - Fix menulist so this rule works. */
-{
-  border: 1px solid;
-  -moz-border-radius: 5px;
   border-top-color: #333332; /** Dark Border 3*/
   border-left-color: #333333; /** Dark Border 4*/
   border-bottom-color: #99A194; /** Dark Border 1*/
   border-right-color: #99A195; /** Dark Border 2*/
-  background-color: transparent; 
+  background-color: #202220; /** Dark Color 1 */  
   color: #fffff1; /** Light Color Brightest */
 }
-
-#search_widget input
+searchbar[focused="true"] 
 {
-  background-color: transparent;
-  color: #fffff1; /** Light Color Brightest */
+  background-color: #0f100f; /** Dark Color 2 */
 }
 
 
-#search_widget input:focus
+/** Change the background color when a live search is active 
+    (search box is filtering a media list)
+ **/
+searchbar:not([empty="true"])[livesearchmode="true"]
 {
-  background-color: #8A8F84; /** Light Color 2 */
-  color: #fffff1; /** Light Color Brightest */
+  background-color: #8A8F84; /** Light Color 2 */  
 }
 
-.button-menu-dropmarker
+
+/** When a search engine is detected on the current browser page, light up the
+    search engine menu
+    TODO: Change this!
+ **/
+.searchbar-engine-button[addengines="true"] 
 {
+  background-color: red;  /** Koshi please change this **/
+} 
+
+
+/** Get rid of the default textbox styles **/
+.searchbar-textbox {
   background-color: transparent !important;
+}
+
+/** Dim the text that is displayed when no search has been entered **/
+searchbar[empty="true"] > hbox > hbox > .searchbar-textbox > hbox > hbox > .textbox-input
+{
+  color: #8A8F84; /** Light Color 2 */  
 }
 
 
