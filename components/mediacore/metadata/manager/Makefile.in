@@ -31,8 +31,10 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = public \
           src \
+          test \
           $(NULL)
 
 SUBDIRDEPS = src : public
+SUBDIRDEPS2 = test : src
 
 include $(topsrcdir)/build/rules.mk
