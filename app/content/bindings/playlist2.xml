@@ -168,6 +168,10 @@
                                   this._onColumnMutationClosure,
                                   false);
 
+  // Install our special keyNavigate function. The signature must match the
+  // keyNavigate method in tree.xml.
+  this.tree.keyNavigate = this._treeKeyNavigate;
+  
   // Load the drag and drop helper, if needed
   if (typeof(nsDragAndDrop) == "undefined") {
     var jsLoader = this._Cc["@mozilla.org/moz/jssubscript-loader;1"]
@@ -1143,41 +1147,40 @@
         <parameter name="evt"/>
         <body>
           <![CDATA[
-          try
-          {
             //dump("charcode = " + evt.charCode + " - keycode = " + evt.keyCode + "\n");
-            if (evt.charCode == 97 && evt.ctrlKey) {  // ctrl-a
+            
+            // Handle Ctrl-a
+            if (evt.charCode == 'a'.charCodeAt(0) && evt.ctrlKey) {
               this.tree.view.selection.selectAll();
-            } else {
-              switch ( evt.keyCode )
-              {
-                case KeyEvent.DOM_VK_DELETE:
-                case KeyEvent.DOM_VK_BACK_SPACE:
-                  if ( this.tree.currentIndex != -1 )
-                  {
-                    this._removeSelectedTracks();
-                  }
-                  break;
-                case KeyEvent.DOM_VK_RETURN:
-                case KeyEvent.DOM_VK_ENTER:
-                  if ( this.tree.currentIndex != -1 )
-                  {
-                    this.sendPlayEvent();
-                  }
-                  break;
-                case KeyEvent.DOM_VK_ESCAPE:
-                  {
-                    this.sendEscEvent();
-                  }
-                  break;
-              }
+              return;
             }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onPlaylistKeypress - " + err );
-          }
-        ]]>
+            
+            switch (evt.keyCode) {
+              // Remove entries for these keys.
+              case evt.DOM_VK_DELETE:
+              case evt.DOM_VK_BACK_SPACE:
+                if (this.tree.currentIndex != -1) {
+                  this._removeSelectedTracks();
+                }
+                break;
+                
+              // Start playback for these keys.
+              case evt.DOM_VK_RETURN:
+              case evt.DOM_VK_ENTER:
+                if (this.tree.currentIndex != -1) {
+                  this.sendPlayEvent();
+                }
+                break;
+              
+              // Handle escape.
+              case evt.DOM_VK_ESCAPE:
+                this.sendEscEvent();
+                break;
+              
+              default:
+                break;
+            }
+          ]]>
         </body>
       </method>
 
@@ -1989,6 +1992,48 @@
   return flavorSet;
 ]]>
         </body>
+      </method>
+
+      <method name="_treeKeyNavigate">
+        <parameter name="event"/>
+        <body><![CDATA[
+          // Watch out, 'this' here refers to the tree (_incrementalString and
+          // _lastKeyTime are members of the tree).
+
+          var key = String.fromCharCode(event.charCode).toLowerCase();
+          if (event.timeStamp - this._lastKeyTime > 500)
+            this._incrementalString = key;
+          else
+            this._incrementalString += key;
+          this._lastKeyTime = event.timeStamp;
+
+          var incrementalString = this._incrementalString;
+
+          // Grab our special interface for the lookup.
+          var view =
+            this.view.QueryInterface(Components.interfaces.sbIMediaListViewTreeView);
+
+          var currentIndex = this.currentIndex;
+          var start = 1;
+
+          if (incrementalString.length > 1) {
+            start = 0;
+
+            if (currentIndex < 0) {
+              currentIndex = 0;
+            }
+          }
+
+          var index =
+            view.getNextRowIndexForKeyNavigation(incrementalString,
+                                                 currentIndex + start);
+
+          if (index == -1) {
+            index = view.getNextRowIndexForKeyNavigation(incrementalString, 0);
+          }
+          return index;
+
+        ]]></body>
       </method>
 
     </implementation>
