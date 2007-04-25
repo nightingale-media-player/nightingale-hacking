@@ -450,7 +450,7 @@ public:
       mList->EndUpdateBatch();
   }
 
-  SetList(sbIMediaList* aList)
+  void SetList(sbIMediaList* aList)
   {
     mList = aList;
     if ( mList )
