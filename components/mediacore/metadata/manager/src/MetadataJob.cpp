@@ -53,6 +53,7 @@
 #include <sbILibraryManager.h>
 #include <sbILibraryResource.h>
 #include <sbIMediaItem.h>
+#include <sbIMediaList.h>
 #include <sbISQLBuilder.h>
 #include <sbSQLBuilderCID.h>
 
@@ -434,9 +435,49 @@ nsresult sbMetadataJob::CancelTimer()
   return mTimer->Cancel();
 }
 
+
+static class sbMetadataBatchHelper
+{
+public:
+  sbMetadataBatchHelper(sbIMediaList* aList = nsnull)
+  {
+    SetList( aList );
+  }
+
+  ~sbMetadataBatchHelper()
+  {
+    if ( mList )
+      mList->EndUpdateBatch();
+  }
+
+  SetList(sbIMediaList* aList)
+  {
+    mList = aList;
+    if ( mList )
+      mList->BeginUpdateBatch();
+  }
+
+  void Flush()
+  {
+    if ( mList )
+    {
+      mList->EndUpdateBatch();
+      mList->BeginUpdateBatch();
+    }
+  }
+
+private:
+  nsCOMPtr<sbIMediaList> mList;
+};
+
+
 nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 {
   nsresult rv;
+
+  nsCOMPtr<sbILibrary> library; // To be able to call Write()
+  nsCOMPtr<sbIMediaList> mediaList; // To be able to call BeginUpdateBatch()
+  sbMetadataBatchHelper batchHelper;
 
   nsString aTableName = mTableName;
 
@@ -447,7 +488,6 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
   WorkerThreadQuery->SetAsyncQuery( PR_FALSE );
 
   nsTArray< sbMetadataJob::jobitem_t * > writePending;
-  nsAutoString lastLibraryGUID; // So we can flush on the last library.
   for ( int count = 0; !(*bShutdown); count++ )
   {
     PRBool flush = ! (( count + 1 ) % NUM_ITEMS_BEFORE_FLUSH); 
@@ -471,28 +511,40 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
     TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - GetNextItem( %s )", this, alert.get()));
 #endif
 
-    if ( item->library_guid.EqualsLiteral("") )
-      break;
+    if ( !library )
+    {
+      nsCOMPtr<sbILibraryManager> libraryManager;
+      libraryManager = do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      nsCOMPtr<sbILibrary> library;
+      rv = libraryManager->GetLibrary( item->library_guid, getter_AddRefs(library) );
+      NS_ENSURE_SUCCESS(rv, rv);
+      mediaList = do_QueryInterface( library, &rv ); 
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    lastLibraryGUID = item->library_guid;
+      batchHelper.SetList( mediaList );
+    }
+
 
     // Create the metadata handler and launch it
     rv = StartHandlerForItem( item );
     if ( NS_SUCCEEDED(rv) )
     {
-      // Wait for it to complete
+      // Wait at least a half second for it to complete
       PRBool completed;
       int counter = 0;
-      for ( item->handler->GetCompleted( &completed ); !completed && !(*bShutdown); item->handler->GetCompleted( &completed ), counter++ )
+      for ( item->handler->GetCompleted( &completed ); !completed && !(*bShutdown) && counter < 25; item->handler->GetCompleted( &completed ), counter++ )
       {
-        // TODO: Have to run the message pump while I sleep?
-        PR_Sleep( PR_MillisecondsToInterval( 20 ) );
+        // Run at most 10 messages.
+        PRBool event = PR_FALSE;
+        int evtcounter = 0;
+        for ( mThread->ProcessNextEvent( PR_FALSE, &event ); event && evtcounter < 10; mThread->ProcessNextEvent( PR_FALSE, &event ), evtcounter++ )
+          PR_Sleep( PR_MillisecondsToInterval( 0 ) );
 
-        // Break after a few tries?
-        if ( counter > 10 )
-          break;
+        PR_Sleep( PR_MillisecondsToInterval( 20 ) ); // Sleep at least 20ms
       }
 
+      // Make an sbIMediaItem and push the metadata into it
       rv = AddMetadataToItem( item, flush );
     }
     // Ignore errors on the metadata loop, just set a default and keep going.
@@ -511,25 +563,23 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 
     if ( flush )
     {
-       rv = SetItemsAreWrittenAndDelete( WorkerThreadQuery, aTableName, writePending );
-       NS_ENSURE_SUCCESS(rv, rv);
+      rv = SetItemsAreWrittenAndDelete( WorkerThreadQuery, aTableName, writePending );
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      batchHelper.Flush();
     }
     PR_Sleep( PR_MillisecondsToInterval( mSleepMS ) );
   }
 
-  if ( lastLibraryGUID.Length() )
+  if ( library )
   {
     // Flush properties cache on completion.
-    nsCOMPtr<sbILibraryManager> libraryManager;
-    libraryManager = do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbILibrary> library;
-    rv = libraryManager->GetLibrary( lastLibraryGUID, getter_AddRefs(library) );
-    NS_ENSURE_SUCCESS(rv, rv);
     rv = library->Write();
     NS_ENSURE_SUCCESS(rv, rv);
     // Along with the written bits.
     rv = SetItemsAreWrittenAndDelete( WorkerThreadQuery, aTableName, writePending );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mediaList->EndUpdateBatch();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
