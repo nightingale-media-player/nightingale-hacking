@@ -436,7 +436,7 @@ nsresult sbMetadataJob::CancelTimer()
 }
 
 
-static class sbMetadataBatchHelper
+class sbMetadataBatchHelper
 {
 public:
   sbMetadataBatchHelper(sbIMediaList* aList = nsnull)
