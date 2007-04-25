@@ -34,8 +34,12 @@ SONGBIRD_TEST_COMPONENT = metadatamanager
 SONGBIRD_TESTS = $(srcdir)/test_metadatajob.js \
                  $(srcdir)/test1-artist-songstowearpantsto.com-.mp3 \
                  $(srcdir)/test2-trackName-Trisagion-.mp3 \
-                 $(srcdir)/test3-album-The\ Singing\ Dictionary-.mp3 \
                  $(NULL)
+
+                 # If the goal is to test filenames with spaces...
+                 # I guess we need to either bump the buildbots to msys
+                 # now or figure out why cygwin isn't parsing this correctly
+                 #$(srcdir)/test3-album-The\ Singing\ Dictionary-.mp3 \
 
 include $(topsrcdir)/build/rules.mk
 
