@@ -91,7 +91,7 @@
 
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
   treecol.setAttribute("bind", this._property);
-  treecol.setAttribute("label", this._property);
+  treecol.setAttribute("label", this._propertyInfo.displayName);
   treecol.setAttribute("flex", "1");
   treeColumns.appendChild(treecol);
 
