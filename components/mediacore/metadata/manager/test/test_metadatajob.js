@@ -27,33 +27,55 @@
 /**
  * \brief Test file
  */
+
+var gTestObserver = 
+{  
+  // nsITimerCallback
+  observe: function(aSubject, aTopic, aData)
+  {
+    onComplete(aSubject, aTopic, aData);
+  }
+};
  
+// The local and remote urls point to the same file, to be tested by the given matrix
 var gLocalFiles = [
-  "test1-artist-songstowearpantsto.com-.mp3",
-  "test2-trackName-Trisagion-.mp3",
-  "test3-album-The Singing Dictionary-.mp3"
+  "testharness/metadatamanager/test1.mp3",
+  "testharness/metadatamanager/test2.mp3",
+  "testharness/metadatamanager/test3.mp3"
 ];
+var gLocalMediaItems = [];
 
 var gRemoteUrls = [
-  "test1-artist-songstowearpantsto.com-.mp3",
-  "test2-trackName-Trisagion-.mp3",
-  "test3-album-The Singing Dictionary-.mp3"
+  "http://download.songbirdnest.com/extensions/test/test1.mp3", // Temporary till publicsvn is back.
+  "http://download.songbirdnest.com/extensions/test/test2.mp3",
+  "http://download.songbirdnest.com/extensions/test/test3.mp3"
 ];
+var gRemoteMediaItems = [];
 
 var gTestMatrix = [
-  // "test1-artist-songstowearpantsto.com-.mp3",
-  [ "http://songbirdnest.com/data/1.0#artistName", "songstowearpantsto.com" ],  
-  
-  // "test2-trackName-Trisagion-.mp3",
+  [ "http://songbirdnest.com/data/1.0#artistName", "Chrysostomos" ],  
   [ "http://songbirdnest.com/data/1.0#trackName", "Trisagion" ],                
-  
-  // "test3-album-The Singing Dictionary-.mp3"
-  [ "http://songbirdnest.com/data/1.0#album", "The Singing Dictionary" ]        
+  [ "http://songbirdnest.com/data/1.0#albumName", "The Singing Dictionary" ]        
 ];
 
+var gTestMediaItems = Components.classes["@mozilla.org/array;1"].createInstance(Components.interfaces.nsIMutableArray);
+
+var gTestMetadataJobManager = null;
+var gTestMetadataJob = null;
+
+var gTestInterval = null;
+
+var gNumTestItems = gLocalFiles.length;
+
+var gTestLibrary = createNewLibrary( "test_metadatajob" );
+
 function runTest () {
-//  log( "Run test_metadatajob.js!" );
-  
+  // Make sure you didn't screw up your data entry.
+  assertEqual( gNumTestItems, gRemoteUrls.length );
+  assertEqual( gNumTestItems, gTestMatrix.length );
+
+/*
+  // Testing display
   var text = "\n=============\n";
   for ( var i = 0; i < gLocalFiles.length; i++ )
   {
@@ -67,26 +89,66 @@ function runTest () {
     text += gTestMatrix[ i ][ 1 ];
     text += "\n=============\n";
   }
-//  log( text );
+  log( text );
+*/
   
-  // Make a fake library
+  for ( var i = 0; i < gNumTestItems; i++ )
+  {
+    // Add gLocalFiles to it
+    var localPath = newAppRelativeFile( gLocalFiles[ i ] );
+    assertNotEqual( localPath, null );
+    var localPathURI = newFileURI( localPath );
+    assertNotEqual( localPathURI, null );
+    var localPathMI = gTestLibrary.createMediaItem( localPathURI );
+    assertNotEqual( localPathMI, null );
+    gLocalMediaItems.push( localPathMI );
+    gTestMediaItems.appendElement( localPathMI, false );
+/*    
+*/    
+    // Add gRemoteUrls to it
+    var remotePathURI = newURI( gRemoteUrls[ i ] );
+    assertNotEqual( remotePathURI, null );
+    var remotePathMI = gTestLibrary.createMediaItem( remotePathURI );
+    assertNotEqual( remotePathMI, null );
+    gRemoteMediaItems.push( remotePathMI );
+    gTestMediaItems.appendElement( remotePathMI, false );
+  }
   
-  // Add gLocalFiles to it
+  // Request metadata for both local and remote urls at the same time.  Woo!
+  gTestMetadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                                .getService(Components.interfaces.sbIMetadataJobManager);
+  gTestMetadataJob = gTestMetadataJobManager.newJob( gTestMediaItems, 5 );                                
   
-  // Add gRemoteUrls to it
   
-  // Get an array of sbMediaItem
-  
-  // Request metadata
-  
-  // Start a timer to wait for the metadata to complete
+  // Set an observer to know when we complete
+  gTestMetadataJob.setObserver( gTestObserver );
+  testPending();
 }
 
-function onTimer () {
-
-  // See if all of the metadata is complete
+function onComplete(aSubject, aTopic, aData) {
+  // Are you really complete?
+  assertEqual( aTopic, "complete" );
+  assertEqual( aData, gTestMetadataJob.tableName );
+  assertTrue( gTestMetadataJob.completed );
+  gTestMetadataJob.removeObserver();
   
-  // When it is, check the values and kill the timer
-  
+  // When it is, check the values
+  for ( var i = 0; i < gNumTestItems; i++ )
+  {
+    var property = gTestMatrix[ i ][ 0 ];
+    var value = gTestMatrix[ i ][ 1 ];
+    var local = null, remote = null;
+    try {
+      local = gLocalMediaItems[ i ].getProperty( property );
+    } catch (e) { log( e ); }
+    try {
+      remote = gRemoteMediaItems[ i ].getProperty( property );
+    } catch (e) { log( e ); }
+    log( property + " -- test:" + value + " ?= local:" + local + " ?= remote:" + remote );
+    assertEqual( local, value );
+    assertEqual( remote, value );
+  }
   // So testing is complete
+  gTestMetadataJobManager.stop(); // Stop the manager
+  testFinished(); // Complete the testing
 }

@@ -31,6 +31,7 @@
 #include "nsISupports.idl"
 
 interface nsIArray;
+interface nsIObserver;
 /**
 * \interface sbIMetadataJob sbIMetadataJob.h
 * \brief Metadata Job represents the status of a running metadata scanning task
@@ -47,14 +48,11 @@ interface sbIMetadataJob : nsISupports
    * \brief The tableName for this task, used by the manager.
    */
   readonly attribute AString tableName;
+
   /**
    * \brief Total number of items to be scanned.
    */
-  readonly attribute unsigned long itemsTotal;
-  /**
-   * \brief Total number of items scanned so far.
-   */
-  readonly attribute unsigned long itemsCompleted;
+  readonly attribute boolean completed;
 
   /**
    * \brief Initialize a task with a specific guid and, optionally, an nsIArray of sbMediaItems
@@ -74,4 +72,16 @@ interface sbIMetadataJob : nsISupports
    * Stop all metadata processing.  Thread shuts down gently.
    */
   void cancel();
+
+  /**
+   * \brief Set an observer to be informed when the task quits.
+   *
+   *  "complete" - Finished normally
+   *  "cancel"   - Cancelled
+   *
+   * \param aObserver The observer object.
+   */
+  void setObserver( in nsIObserver aObserver );
+  void removeObserver();
 };
+

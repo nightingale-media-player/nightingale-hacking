@@ -81,19 +81,15 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataJob, sbIMetadataJob);
 NS_IMPL_THREADSAFE_ISUPPORTS1(MetadataJobProcessorThread, nsIRunnable)
 
 sbMetadataJob::sbMetadataJob() :
-  mTimerWorkers( NUM_CONCURRENT_MAINTHREAD_ITEMS ),
   mInitCount( 0 ),
+  mCompleted( PR_FALSE ),
   mInitCompleted( PR_FALSE ),
   mInitExecuted( PR_FALSE ),
   mTimerCompleted( PR_FALSE ),
   mThreadCompleted( PR_FALSE ),
   mMetatataJobProcessor( nsnull )
 {
-  // Fill with nsnull?
-  for ( PRUint32 i = 0; i < NUM_CONCURRENT_MAINTHREAD_ITEMS; i++ )
-  {
-    mTimerWorkers[ i ] = nsnull;
-  }
+  mTimerWorkers.EnsureCapacity( NUM_CONCURRENT_MAINTHREAD_ITEMS, sizeof(sbMetadataJob::jobitem_t *) )
 
   mMainThreadQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
   NS_ASSERTION(mMainThreadQuery, "Unable to create sbMetadataJob::mMainThreadQuery");
@@ -132,19 +128,31 @@ sbMetadataJob::~sbMetadataJob()
 /* readonly attribute AString tableName; */
 NS_IMETHODIMP sbMetadataJob::GetTableName(nsAString & aTableName)
 {
-    return NS_OK;
+  aTableName = mTableName;
+  return NS_OK;
 }
 
-/* readonly attribute unsigned long itemsTotal; */
-NS_IMETHODIMP sbMetadataJob::GetItemsTotal(PRUint32 *aItemsTotal)
+/* readonly attribute PRBool completed; */
+NS_IMETHODIMP sbMetadataJob::GetCompleted(PRBool *aCompleted)
 {
-    return NS_OK;
+  NS_ENSURE_ARG_POINTER( aCompleted );
+  (*aCompleted) = mCompleted;
+  return NS_OK;
 }
 
-/* readonly attribute unsigned long itemsCompleted; */
-NS_IMETHODIMP sbMetadataJob::GetItemsCompleted(PRUint32 *aItemsCompleted)
+/* void setObserver( in nsIObserver aObserver ); */
+NS_IMETHODIMP sbMetadataJob::SetObserver(nsIObserver *aObserver)
 {
-    return NS_OK;
+  NS_ENSURE_ARG_POINTER( aObserver );
+  mObserver = aObserver;
+  return NS_OK;
+}
+
+/* void removeObserver(); */
+NS_IMETHODIMP sbMetadataJob::RemoveObserver()
+{
+  mObserver = nsnull;
+  return NS_OK;
 }
 
 /* void init (in AString aTableName, in nsIArray aMediaItemsArray); */
@@ -281,6 +289,9 @@ NS_IMETHODIMP sbMetadataJob::Cancel()
     }
   }
 
+  if ( mObserver )
+    mObserver->Observe( this, "cancel", mTableName.get() );
+
   return NS_OK;
 }
 
@@ -349,18 +360,21 @@ nsresult sbMetadataJob::RunTimer()
     // If there's someone there
     if ( mTimerWorkers[ i ] != nsnull )
     {
+      sbMetadataJob::jobitem_t * item = mTimerWorkers[ i ];
       // Check to see if it has completed
       PRBool completed;
-      rv = mTimerWorkers[ i ]->handler->GetCompleted( &completed );
+      rv = item->handler->GetCompleted( &completed );
       NS_ENSURE_SUCCESS(rv, rv);
       if ( completed )
       {
-        // Write it out
-        rv = AddMetadataToItem( mTimerWorkers[ i ], PR_TRUE ); // Flush properties cache every time
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = SetItemIsScanned( mMainThreadQuery, mTableName, mTimerWorkers[ i ] );
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = SetItemIsWrittenAndDelete( mMainThreadQuery, mTableName, mTimerWorkers[ i ] );
+        // Try to write it out
+        rv = AddMetadataToItem( item, PR_TRUE ); // Flush properties cache every time
+        if ( ! NS_SUCCEEDED(rv) )
+        {
+          // If it fails, try to just add a default
+          AddDefaultMetadataToItem( item, PR_TRUE );
+        }
+        rv = SetItemIsWrittenAndDelete( mMainThreadQuery, mTableName, item );
         NS_ENSURE_SUCCESS(rv, rv);
         // And NULL the array entry
         mTimerWorkers[ i ] = nsnull;
@@ -399,10 +413,29 @@ nsresult sbMetadataJob::RunTimer()
 
       // Create the metadata handler and launch it
       rv = StartHandlerForItem( item );
-      NS_ENSURE_SUCCESS(rv, rv);
+      // Ignore errors on the metadata loop, just set a default and keep going.
+      if ( ! NS_SUCCEEDED(rv) )
+      {
+        // If it fails, try to just add a default
+        AddDefaultMetadataToItem( item, PR_TRUE );
+        // Give a nice warning
+        TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - Unable to add metadata for( %s )", this, item->url));
+        // Record this item as completed.
+        rv = SetItemIsScanned( mMainThreadQuery, mTableName, item );
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = SetItemIsWrittenAndDelete( mMainThreadQuery, mTableName, item );
+        NS_ENSURE_SUCCESS(rv, rv);
+        // Leave mTimerWorkers null for the next loop.
+      }
+      else
+      {
+        // If it's good, record that we've started it
+        rv = SetItemIsScanned( mMainThreadQuery, mTableName, item );
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      // And stuff it in our array to check next loop
-      mTimerWorkers[ i ] = item;
+        // And stuff it in our working array to check next loop
+        mTimerWorkers[ i ] = item;
+      }
     }
   }
 
@@ -511,6 +544,12 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
     TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - GetNextItem( %s )", this, alert.get()));
 #endif
 
+    // We're out of items.  Complete the thread.
+    if ( item->library_guid.EqualsLiteral("") )
+    {
+      break;
+    }
+
     if ( !library )
     {
       nsCOMPtr<sbILibraryManager> libraryManager;
@@ -591,6 +630,10 @@ nsresult sbMetadataJob::FinishJob()
 {
   nsresult rv;
   this->CancelTimer();
+  mCompleted = PR_TRUE;
+
+  if ( mObserver )
+    mObserver->Observe( this, "complete", mTableName.get() );
 
   // Decrement the atomic counter
   DecrementDataRemote();

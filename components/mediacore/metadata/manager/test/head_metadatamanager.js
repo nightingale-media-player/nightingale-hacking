@@ -41,3 +41,53 @@ function newURI(spec) {
   
   return ioService.newURI(spec, null, null);
 }
+
+function createNewLibrary(databaseGuid, databaseLocation) {
+
+  var directory;
+  if (databaseLocation) {
+    directory = databaseLocation.QueryInterface(Ci.nsIFileURL).file;
+  }
+  else {
+    directory = Cc["@mozilla.org/file/directory_service;1"].
+                getService(Ci.nsIProperties).
+                get("ProfD", Ci.nsIFile);
+    directory.append("db");
+  }
+  
+  var file = directory.clone();
+  file.append(databaseGuid + ".db");
+
+  var libraryFactory =
+    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
+      .createInstance(Ci.sbILocalDatabaseLibraryFactory);
+  var library = libraryFactory.createLibraryFromDatabase(file);
+  try {
+    library.clear();
+  }
+  catch(e) {
+  }
+  
+  if ( library ) {
+    var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
+                        getService(Ci.sbILibraryManager);
+    libraryManager.registerLibrary( library );
+  }
+  return library;
+}
+
+
+function newAppRelativeFile( path ) {
+  var nodes = path.split("/");
+  var file = Cc["@mozilla.org/file/directory_service;1"].
+                getService(Ci.nsIProperties).
+                get("XREExeF", Ci.nsIFile); // Path to the executable
+  file = file.parent; // Path to the executable folder
+  for ( var i = 0, end = nodes.length; i < end; i++ )
+  {
+    file.append( nodes[ i ] );
+  }
+  log( "newAppRelativeFile - " + file.path );
+  return file.clone();
+}
+

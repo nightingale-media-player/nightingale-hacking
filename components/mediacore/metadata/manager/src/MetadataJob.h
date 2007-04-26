@@ -162,6 +162,8 @@ MDJ_CRACK( IS, "is_scanned" );
   nsCOMPtr<nsIThread>           mThread;
   nsTArray<jobitem_t *>         mTimerWorkers;
   nsCOMPtr<MetadataJobProcessorThread> mMetatataJobProcessor;
+  nsCOMPtr<nsIObserver>         mObserver;
+  PRBool                        mCompleted;
   PRBool                        mInitCompleted;
   PRBool                        mInitExecuted;
   PRBool                        mTimerCompleted;
