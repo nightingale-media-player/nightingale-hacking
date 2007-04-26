@@ -89,7 +89,12 @@ sbMetadataJob::sbMetadataJob() :
   mThreadCompleted( PR_FALSE ),
   mMetatataJobProcessor( nsnull )
 {
-  mTimerWorkers.EnsureCapacity( NUM_CONCURRENT_MAINTHREAD_ITEMS, sizeof(sbMetadataJob::jobitem_t *) )
+  // Fill with nsnull to signal the timer code that all slots are available.
+  for ( PRUint32 i = mTimerWorkers.Length(); i < NUM_CONCURRENT_MAINTHREAD_ITEMS; i++ )
+  {
+    sbMetadataJob::jobitem_t *item = nsnull;
+    mTimerWorkers.AppendElement( item );
+  }
 
   mMainThreadQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
   NS_ASSERTION(mMainThreadQuery, "Unable to create sbMetadataJob::mMainThreadQuery");
