@@ -46,6 +46,7 @@ function init()
   bundle = window.arguments[0];
   pbundle = bundle.QueryInterface(Components.interfaces.sbPIBundle);
   pbundle.setNeedRestart(false);
+  bundle = bundle.QueryInterface(Components.interfaces.sbIBundle);
   n_ext = bundle.bundleExtensionCount;
   cur_ext = -1;
   setTimeout(installNextXPI, 0);
@@ -62,6 +63,7 @@ function installNextXPI()
     return; 
   }
   
+  
   if (!bundle.getExtensionInstallFlag(cur_ext)) {
     setTimeout(installNextXPI, 0);
     return;
@@ -75,9 +77,6 @@ function installNextXPI()
   } catch (e) {}
   label.setAttribute("value", downloading + " " + bundle.getExtensionAttribute(cur_ext, "name"));
   progressmeter.setAttribute("value", 0);
-  
-  for (var i=0;i<bundle.getNumInstallListeners();i++) 
-    bundle.enumInstallListener(i).onProgress(bundle, cur_ext, 0);
   
   for (var i=0;i<pbundle.installListenerCount;i++) 
     pbundle.getInstallListener(i).onExtensionDownloadProgress(bundle, cur_ext, 0, 1);
