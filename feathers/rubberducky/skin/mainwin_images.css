@@ -36,6 +36,12 @@ window
   background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient.png); 
   background-repeat: repeat-x;  
 }
+
+#browser_toolbar
+{
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png); 
+  background-repeat: repeat-x;  
+}
 /* END WINDOW CHROME **/
   
 

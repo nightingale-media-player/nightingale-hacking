@@ -32,6 +32,7 @@ This css file specifies the color styles for everything in the main application 
 #fffff1; /** Light Color Brightest   effective white
 #B3BAAC; /** Light Color 1           light greyish green 1
 #8A8F84; /** Light Color 2           light greyish green 2
+#EDF3F0; /** Light Color 3           very light greyish green
 #202220; /** Dark Color 1            cool charcoal grey 1
 #0f100f; /** Dark Color 2            cool charcoal grey 2
 
@@ -61,7 +62,7 @@ These rules paint the resizeable window for Songbird.
 window
 {
   -moz-appearance: none !important; 
-  background-color: #1f150a; /* color of the Main Window coffee:#1f150a **/
+  background-color: #0c0a05; /* color of the Main Window coffee:#1f150a, 0.3 black #0c0a05**/
   border: none;
 }
 
@@ -152,13 +153,13 @@ The Service Pane is the primary area for navigating through services and content
 
 #frame_servicetree_pane
 {
-  color: #B3BAAC; /** Light Color 1 */
   -moz-border-radius: 4px;
-  background-color: #0f100f; /** Dark Color 2 */
-  border-top-color: #7a7c7c; /** Light Border 1*/
-  border-left-color: #474948; /** Light Border 2*/
-  border-bottom-color: #474848; /** Light Border 3*/
-  border-right-color: #474849; /** Light Border 4*/
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A194; /** Dark Border 1*/
+  border-right-color: #99A195; /** Dark Border 2*/
+  background-color: #202220; /** Dark Color 1 */  
+  color: #fffff1; /** Light Color Brightest */
 }
 
 .servicepane_tree
@@ -377,46 +378,46 @@ Organize your collection with genre/artist/album filterlists.
 ************************************************************************************************************************************************
 */ 
 
-filterlist > tree
+filterlist2 > tree
 {
   background-color: transparent;
   /* opacity: 0.8; slow on the mac :( **/
 }
 
 
-filterlist > tree > treechildren::-moz-tree-row
+filterlist2 > tree > treechildren::-moz-tree-row
 {
   background-color: transparent;
 }
 
 
 /* striping */
-filterlist > tree > treechildren::-moz-tree-row( odd )
+filterlist2 > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #202220; /** Dark Color 1 */
+  background-color: #EDF3F0; /** Light Color 3 */
 }
 
-filterlist > tree > treechildren::-moz-tree-row( even )
+filterlist2 > tree > treechildren::-moz-tree-row( even )
 {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #fffff1; /** Light Color Brightest */
 }
 
-filterlist > tree > treechildren::-moz-tree-row( selected )
+filterlist2 > tree > treechildren::-moz-tree-row( selected )
 {
   background-color: #8A8F84; /** Light Color 2 */
 }
 
-filterlist > tree > treechildren::-moz-tree-row( selected, focus )
+filterlist2 > tree > treechildren::-moz-tree-row( selected, focus )
 {
   background-color: #B3BAAC; /** Light Color 1 */
 }
 
-filterlist > tree > treechildren::-moz-tree-cell-text
+filterlist2 > tree > treechildren::-moz-tree-cell-text
 {
-  color: #fffff1; /** Light Color Brightest */
+  color: #202220; /** Dark Color 1 */
 }
 
-filterlist > tree > treechildren::-moz-tree-cell-text( selected )
+filterlist2 > tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #0f100f; /** Dark Color 2 */
 }
@@ -436,7 +437,6 @@ playlist > stack > vbox
 {
   background-color: transparent !important;
 }
-
 
 #playlist_tree
 {
@@ -471,17 +471,17 @@ treechildren::-moz-tree-column(insertbefore)
 
 #playlist_tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #202220; /** Dark Color 1 */
+  background-color: #EDF3F0; /** Light Color 3 */
 }
 
 #playlist_tree >  treechildren::-moz-tree-row( even )
 {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #fffff1; /** Light Color Brightest */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell
 {
-  border-right: 1px solid #202220 !important; /** Dark Color 1 */
+  border-right: 1px solid #EDF3F0 !important; /** Light Color 3 */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell(insertafter)
@@ -505,12 +505,17 @@ treechildren::-moz-tree-column(insertbefore)
 
 #playlist_tree > treechildren::-moz-tree-cell-text
 {
-  color: #B3BAAC; /** Light Color 1 */
+  color: #202220; /** Dark Color 1 */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #0f100f; /** Dark Color 2 */
+}
+
+#playlist_tree > treechildren::-moz-tree-cell( selected )
+{
+  border-right: 1px solid #B3BAAC !important; /** Light Color 2 */
 }
 
 #playlist_tree > treechildren::-moz-tree-progressmeter
@@ -545,12 +550,8 @@ dropmarker,
 button
 {
   background-color: transparent;
-  color: #99A195;  
-  border: 1px solid;
-  border-top-color: #99A194; /** Dark Border 1*/
-  border-left-color: #99A195; /** Dark Border 2*/
-  border-bottom-color: #333332; /** Dark Border 3*/
-  border-right-color: #333333; /** Dark Border 4*/ 
+  color: #99A195;     
+  border: 1px solid transparent; /** Light Border 1 */
   -moz-border-radius: 5px;
 }
 
@@ -561,7 +562,11 @@ button
 
 button:hover
 {
-  border: 1px solid #7a7c7c; /** Light Border 1 */
+  border: 1px solid;
+  border-top-color: #99A194; /** Dark Border 1*/
+  border-left-color: #99A195; /** Dark Border 2*/
+  border-bottom-color: #333332; /** Dark Border 3*/
+  border-right-color: #333333; /** Dark Border 4*/
   color: #FFF;  
 }
 
@@ -667,8 +672,8 @@ These let the user resize the frames in your box model.
 #filter_splitter
 {
   background-color: transparent;
-  border-left: 1px solid #666;
-  border-right: 1px solid #000;
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
 }
 
 .vert_splitter:active,
@@ -689,7 +694,34 @@ These let the user resize the frames in your box model.
 #servicepane_splitter[state="collapsed"]
 {
   background-color: transparent;
-  border: 1px solid #666;
+}
+
+#servicepane_splitter[state="collapsed"]
+{
+  border: 1px solid #333333; /** Dark Border 4*/
+  -moz-border-radius: 5px;
+}
+
+#servicepane_splitter[state="collapsed"]:hover
+{
+  border: 1px solid;
+  border-top-color: #99A194; /** Dark Border 1*/
+  border-left-color: #99A195; /** Dark Border 2*/
+  border-bottom-color: #333332; /** Dark Border 3*/
+  border-right-color: #333333; /** Dark Border 4*/
+  color: #FFF;  
+  -moz-border-radius: 5px;
+}
+
+#servicepane_splitter[state="collapsed"]:active
+{
+  border: 1px solid;
+  border-top-color: #333332; /** Dark Border 3*/
+  border-left-color: #333333; /** Dark Border 4*/
+  border-bottom-color: #99A194; /** Dark Border 1*/
+  border-right-color: #99A195; /** Dark Border 2*/
+  color: #FFF;  
+  -moz-border-radius: 5px;
 }
 
 .horz_splitter,
@@ -880,7 +912,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 {
   height: 30px;
   min-height: 30px;
-  margin: 2px;
+  margin: 2px 0px 0px 5px;
   padding: 0px;
   border: 1px solid;
   -moz-border-radius: 5px;
@@ -948,13 +980,13 @@ searchbar:not([empty="true"])[livesearchmode="true"]
 }
 
 
-/** When a search engine is detected on the current browser page, light up the
-    search engine menu
-    TODO: Change this!
- **/
+
 .searchbar-engine-button[addengines="true"] 
 {
-  background-color: red;  /** Koshi please change this **/
+  /** When there is a search engine available for Songbird, 
+  this button can show itself. For now, we are choosing to swap the 
+  dropmarker with a plus symbol in an animated gif (dropmarker-plus.gif)
+  when an engine is available. **/
 } 
 
 
