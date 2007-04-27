@@ -104,6 +104,18 @@ sbLocalDatabaseCascadeFilterSet::GetProperty(PRUint16 aIndex,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::IsSearch(PRUint16 aIndex,
+                                          PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+
+  *_retval = mFilters[aIndex].isSearch;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::AppendFilter(const nsAString& aProperty,
                                               PRUint16 *_retval)
 {

@@ -130,6 +130,13 @@ interface sbICascadeFilterSet : nsISupports
   AString getProperty(in unsigned short aIndex);
 
   /**
+   * \brief Determine if the filter at a given index is a search filter
+   * \param aIndex Index of the filter
+   * \return True if the filter at the index is a search filter
+   */
+  boolean isSearch(in unsigned short aIndex);
+
+  /**
    * \brief Add a listener to get notified of filter configuration changes
    * \param aListener Listener to receive change notifications
    */
