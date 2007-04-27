@@ -28,8 +28,8 @@
  * \brief Test file
  */
  
-var URL_AVAILABLE = "http://stashbox.org/796/zadornov.mp3";
-var URL_NOT_AVAILABLE = "http://stashbox.org/poo/poo.mp3";
+var URL_AVAILABLE = "http://download.songbirdnest.com/extensions/test/test1.mp3";
+var URL_NOT_AVAILABLE = "http://download.songbirdnest.com/extensions/poo/poo.mp3";
 var TEST_STRING = "The quick brown fox jumps over the lazy dog.  Bitches."
 
 
