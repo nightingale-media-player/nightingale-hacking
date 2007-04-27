@@ -104,8 +104,10 @@ function newAppRelativeFile( path ) {
                 get("XREExeF", Ci.nsIFile); // Path to the executable
   file = file.parent; // Path to the executable folder
   
-  if (getPlatform() == "Darwin")
-    file = file.parent.append( "Resources" ); // Navigate the lame OSX bundle folder system
+  if (getPlatform() == "Darwin") {
+    file = file.parent.clone();
+    file.append( "Resources" ); // Navigate the lame OSX bundle folder system
+  }
   
   for ( var i = 0, end = nodes.length; i < end; i++ )
   {
