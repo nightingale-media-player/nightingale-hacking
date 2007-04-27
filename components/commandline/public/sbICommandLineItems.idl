@@ -60,6 +60,13 @@ interface sbICommandLineItems : nsISupports
    * \sa addItemHandler
    */
   void removeItemHandler(in sbICommandLineItemHandler aHandler);
+
+  /**
+    * \brief Handle a single url
+    * \param aURL The URL, dispatched to item handlers
+    * \sa sbICommandLineItemHandler
+    */
+  void handleURL(in AString aURL);
 };
 
 

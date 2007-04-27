@@ -5,6 +5,9 @@
 pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul");
 pref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
 
+// This is only used by the MAC version
+pref("browser.chromeURL", "chrome://songbird/content/xul/macCmdLineFwd.xul");
+
 // Prevent xulrunner from launching multiple instances of Songbird.
 pref("toolkit.singletonWindowType", "Songbird:Main");
 

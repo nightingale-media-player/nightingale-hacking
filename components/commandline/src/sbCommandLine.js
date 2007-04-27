@@ -47,9 +47,14 @@ function resolveURIInternal(aCmdLine, aArgument) {
     return uri;
   }
 
+  return checkUri(uri, aArgument);
+}
+
+function checkUri(aURI, aURL) {
   try {
-    if (uri.file.exists())
-      return uri;
+    if (aURI instanceof Components.interfaces.nsIFileURL) 
+      if (aURI.file.exists()) 
+        return aURI;
   }
   catch (e) {
     Components.utils.reportError(e);
@@ -60,17 +65,16 @@ function resolveURIInternal(aCmdLine, aArgument) {
 
   try {
     var urifixup = Components.classes["@mozilla.org/docshell/urifixup;1"]
-                              .getService(nsIURIFixup);
+                              .getService(Ci.nsIURIFixup);
 
-    uri = urifixup.createFixupURI(aArgument, 0);
+    aURI = urifixup.createFixupURI(aURL, 0);
   }
   catch (e) {
     Components.utils.reportError(e);
   }
 
-  return uri;
+  return aURI;
 }
-
 
 function shouldLoadURI(aURI) {
   if (!aURI || aURI == "") return false;
@@ -86,6 +90,8 @@ function shouldLoadURI(aURI) {
  * /brief Songbird commandline handler
  */
 function sbCommandLineHandler() {
+  this.itemHandlers = [];
+  this.itemUriSpecs = [];
 }
 
 sbCommandLineHandler.prototype = {
@@ -95,10 +101,11 @@ sbCommandLineHandler.prototype = {
              "                       If no tests are passed in ALL tests will be run.\n" +
              "  [url|path]           Local path/filename to media items to import and play,\n" +
              "                       or URL to load in the browser.\n",
-  itemHandlers: [],           
-  itemUriSpecs: [],           
+  itemHandlers: null,           
+  itemUriSpecs: null,           
 
   handle : function (cmdLine) {
+
     var urilist = [];
     var oldlength = this.itemUriSpecs.length;
     
@@ -113,19 +120,19 @@ sbCommandLineHandler.prototype = {
     }
     
     var tests = null;
-    var exception = false;
+    var emptyParam = false;
     try {
       tests = cmdLine.handleFlagWithParam("test", false);
     }
     catch (e) {
       // cmdLine throws if there is no param for the flag, but we want the
-      // parameter to be optional, so catch the exception and let ourself
+      // parameter to be optional, so catch the exception and let ourselves
       // know that things are okay. The flag existed without a param.
-      exception = true;
+      emptyParam = true;
     }
 
     // if there was a parameter or if we had a flag and no param
-    if (tests != null || exception) {
+    if (tests != null || emptyParam) {
       // we're running tests, make sure we don't open a window
       cmdLine.preventDefault = true;
       var testHarness = Cc["@songbirdnest.com/Songbird/TestHarness;1"].getService(Ci.sbITestHarness);
@@ -164,19 +171,40 @@ sbCommandLineHandler.prototype = {
       this.dispatchItems();
    
   },
+
+  handleURL: function(aURL) {
+    var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                              .getService(Components.interfaces.nsIIOService);
+    var uri = ioService.newURI(aURL, null, null);
+    uri = checkUri(uri, aURL);
+    if (shouldLoadURI(uri)) {
+      this.itemUriSpecs.push(uri.spec);
+      this.dispatchItems();
+    }
+  },
   
   addItemHandler: function (aHandler) {
     this.itemHandlers.push(aHandler);
     // dispatch items immediatly to this handler
-    this.dispatchItems(aHandler);
+    this.dispatchItemsToHandler(aHandler);
   },
   
   removeItemHandler: function(aHandler) {
     var index = this.itemHandlers.indexOf(aHandler);
     if (index != -1) this.itemHandlers.splice(index, 1);
   },
+
+  dispatchItemsToHandler: function(aHandler) {
+    var count = 0;
+    var total = this.itemUriSpecs.length;
+    for (var i=0; i < this.itemUriSpecs.length; i++) {
+      if (aHandler.handleItem(this.itemUriSpecs[i], count++, total)) {
+        this.itemUriSpecs.splice(i--, 1);
+      }
+    }
+  },
   
-  dispatchItems: function(aHandler) {
+  dispatchItems: function() {
     // if aHandler == null, dispatch to all handlers
     // otherwise, only dispatch to specified handler
     // note that the last handler to get registered 
@@ -184,15 +212,8 @@ sbCommandLineHandler.prototype = {
     // there are several instances of the main window,
     // the items open in the one created last.
     for (var handleridx = this.itemHandlers.length-1; handleridx >= 0; handleridx--) {
-      var handler = this.itemHandlers[handleridx];
-      if (aHandler && (handler != aHandler)) continue;
-      var count = 0;
-      var total = this.itemUriSpecs.length;
-      for (var i=0; i < this.itemUriSpecs.length; i++) {
-        if (handler.handleItem(this.itemUriSpecs[i], count++, total)) {
-          this.itemUriSpecs.splice(i--, 1);
-        }
-      }
+      this.dispatchItemsToHandler(this.itemHandlers[handleridx]);
+      if (this.itemUriSpecs.length == 0) break;
     }  
   },
 
