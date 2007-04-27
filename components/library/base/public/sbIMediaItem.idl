@@ -142,3 +142,15 @@ interface sbIMediaItem : sbILibraryResource
    */
   AString toString();
 };
+
+/**
+ * \interface sbIIndexedMediaItem
+ * \brief A container for a media item and its index
+ */
+[scriptable, uuid(691f4342-4dcb-471f-a0f4-c4ac94cbd805)]
+interface sbIIndexedMediaItem : nsISupports
+{
+  readonly attribute unsigned long index;
+  readonly attribute sbIMediaItem mediaItem;
+};
+

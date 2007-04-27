@@ -271,7 +271,7 @@
               if (!stateonly)
               {
                 // If we get here, show the toolbar
-                toolbar.hidden = false;
+                this.hidden = false;
                 
                 var obj_type;
                 if (radioitems) obj_type = "choiceitem";

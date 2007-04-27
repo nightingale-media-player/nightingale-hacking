@@ -83,7 +83,7 @@ function doTest(array) {
     case "getLengthAsync":
 
       var listener = new ArrayListener();
-      array.setListener(listener);
+      array.asyncListener = listener;
       array.getLengthAsync();
 
       var tester = function() {
@@ -104,7 +104,7 @@ function doTest(array) {
     case "getByIndexAsync":
 
       var listener = new ArrayListener();
-      array.setListener(listener);
+      array.asyncListener = listener;
       array.getByIndexAsync(0);
 
       var tester = function() {
@@ -126,7 +126,7 @@ function doTest(array) {
     case "getSortPropertyValueByIndex":
 
       var listener = new ArrayListener();
-      array.setListener(listener);
+      array.asyncListener = listener;
       array.getSortPropertyValueByIndexAsync(0);
 
       var tester = function() {
@@ -148,7 +148,7 @@ function doTest(array) {
     case "getMediaItemIdByIndex":
 
       var listener = new ArrayListener();
-      array.setListener(listener);
+      array.asyncListener = listener;
       array.getMediaItemIdByIndexAsync(0);
 
       var tester = function() {

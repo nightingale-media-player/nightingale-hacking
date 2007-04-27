@@ -6,21 +6,21 @@ select guid, '(null)' from media_items where guid not in (select  guid from reso
 ---
 .output data_sort_trackname_desc.txt
 select guid, '(null)' from media_items where guid not in (select  guid from resource_properties where property_id = 1) order by media_item_id asc;
-select mi.guid, obj_sortable from resource_properties rp join media_items mi on rp.guid = mi.guid where property_id = 1 order by obj_sortable desc, media_item_id asc;
+select mi.guid, obj_sortable from resource_properties rp join media_items mi on rp.guid = mi.guid where property_id = 1 order by obj_sortable desc, media_item_id desc;
 ---
 .output data_sort_playcount_asc.txt
 select guid, '(null)' from media_items where guid not in (select  guid from resource_properties where property_id = 12) order by media_item_id asc;
 select mi.guid, obj_sortable from resource_properties rp join media_items mi on rp.guid = mi.guid where property_id = 12 order by obj_sortable asc, media_item_id asc;
 ---
 .output data_sort_playcount_desc.txt
-select mi.guid, obj_sortable from resource_properties rp join media_items mi on rp.guid = mi.guid where property_id = 12 order by obj_sortable desc, media_item_id asc;
+select mi.guid, obj_sortable from resource_properties rp join media_items mi on rp.guid = mi.guid where property_id = 12 order by obj_sortable desc, media_item_id desc;
 select guid, '(null)' from media_items where guid not in (select  guid from resource_properties where property_id = 12) order by media_item_id asc;
 ---
 .output data_sort_contenturl_asc.txt
 select guid, content_url from media_items order by content_url asc, media_item_id asc;
 ---
 .output data_sort_contenturl_desc.txt
-select guid, content_url from media_items order by content_url desc, media_item_id asc;
+select guid, content_url from media_items order by content_url desc, media_item_id desc;
 ---
 .output data_sort_created_asc.txt
 select guid, created from media_items order by created asc, media_item_id asc;

@@ -89,4 +89,24 @@ private:
   PRPackedBool mWritePending;
 };
 
+class sbLocalDatabaseIndexedMediaItem : public nsIClassInfo,
+                                        public sbIIndexedMediaItem
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSICLASSINFO
+  NS_DECL_SBIINDEXEDMEDIAITEM
+
+  sbLocalDatabaseIndexedMediaItem(PRUint32 aIndex, sbIMediaItem* aMediaItem) :
+    mIndex(aIndex),
+    mMediaItem(aMediaItem)
+  {
+    NS_ASSERTION(aMediaItem, "Null value passed to ctor");
+  }
+
+private:
+  PRUint32 mIndex;
+  nsCOMPtr<sbIMediaItem> mMediaItem;
+};
+
 #endif /* __SBLOCALDATABASEMEDIAITEM_H__ */

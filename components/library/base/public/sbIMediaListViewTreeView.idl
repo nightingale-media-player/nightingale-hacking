@@ -30,11 +30,14 @@
 
 #include "nsISupports.idl"
 
+interface nsISimpleEnumerator;
+interface sbIMediaItem;
+
 /**
-* \interface sbIMediaListViewTreeViewObserver
-* \brief Observer to implement the nsITreeView methods that a
-*        sbIMediaListViewTreeView does not.
-*/
+ * \interface sbIMediaListViewTreeViewObserver
+ * \brief Observer to implement the nsITreeView methods that a
+ *        sbIMediaListViewTreeView does not.
+ */
 [scriptable, uuid(d34060ad-5aff-46b1-8029-b446e57b59df)]
 interface sbIMediaListViewTreeViewObserver : nsISupports
 {
@@ -47,9 +50,9 @@ interface sbIMediaListViewTreeViewObserver : nsISupports
 };
 
 /**
-* \interface sbIMediaListViewTreeView
-* \brief A tree view that views a media list view
-*/
+ * \interface sbIMediaListViewTreeView
+ * \brief A tree view that views a media list view
+ */
 [scriptable, uuid(53b15ff3-e26c-43ce-9edd-120ac083edad)]
 interface sbIMediaListViewTreeView : nsISupports
 {
@@ -70,6 +73,28 @@ interface sbIMediaListViewTreeView : nsISupports
   long getNextRowIndexForKeyNavigation(in AString aKeyString,
                                        in unsigned long aStartFrom);
 
+  /**
+   * \brief Get and set an observer for this media list tree view
+   */
   attribute sbIMediaListViewTreeViewObserver observer;
+
+  /**
+   * \brief Returns an enumerator of sbIIndexedMediaItems that represents the
+   *        current list of selected rows in the tree.  The enumerator will
+   *        return the items in order.
+   */
+  readonly attribute nsISimpleEnumerator selectedMediaItems;
+
+  /**
+   * \brief Returns the media item corresponding to the currently index of the
+   *        tree, or null if there is no current index
+   */
+  readonly attribute sbIMediaItem currentMediaItem;
+
+  /**
+   * \brief Returns the number of selected items in the tree
+   */
+  readonly attribute unsigned long selectionLength;
+
 };
 

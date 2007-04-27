@@ -81,12 +81,8 @@
             <treecols sbid="treecols"/>
             <treechildren/>
           </tree>
-
           <!-- Playlist Toolbar -->
-          <hbox id="playlist_toolbar_bkg" sbid="playlist_toolbar">
-            <hbox id="playlist_toolbar" sbid="toolbar_parent" flex="1" oncommand="onToolbarCommand( event )" style="overflow: hidden;">
-            </hbox>
-          </hbox>
+          <sb-commands-toolbar sbid="playlist_toolbar" />
 
           <!-- Popupset -->
           <popupset>
@@ -98,6 +94,7 @@
               onpopuphidden="onPopupHidden( event );"
               oncommand="onPlaylistContextMenu( event );"
             >
+              <sb-commands-menuitems sbid="playlist_popup_commands"/>
               <menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
               <menu id="playlist.context.search" label="&playlist.context.search;">
                 <menupopup id="playlist.popup.search">
@@ -239,6 +236,12 @@
       <field name="_treecols" readonly="true">
         document.getAnonymousElementByAttribute(this, "sbid", "treecols");
       </field>
+      <field name="_toolbar">
+        document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
+      </field>
+      <field name="_commandmenuitems">
+        document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_popup_commands');
+      </field>
 
       <field name="_toolbarbuttons">new Array();</field>
       <field name="_menuitems">new Array();</field>
@@ -257,31 +260,6 @@
       <!-- Used to implement draggable smart splitters -->
       <field name="_down">0</field>
       <field name="_lastpos">0</field>
-
-      <!--
-      <field name="context_item"></field>
-      <field name="popup_showing">false</field>
-      <field name="guid">""</field>
-      <field name="table">""</field>
-      <field name="type">""</field>
-      <field name="base_type">""</field>
-      <field name="description">""</field>
-      <field name="readable_name">""</field>
-      <field name="m_Library">null</field>
-      <field name="m_PlaylistManager">null</field>
-      <field name="source">null</field>
-      <field name="_saved_selection">null</field>
-      <field name="_saved_nitems">null</field>
-      <field name="_dragobjects">null</field>
-      <field name="_selection_key">""</field>
-      <field name="_selection_key_array">""</field>
-      <field name="restoring_selection">false</field>
-      <field name="_addto_added_count">0</field>
-      <field name="_addto_existed_count">0</field>
-      <field name="paused_scanning">false</field>
-      <field name="sortorder">""</field>
-      <field name="sortdirection">""</field>
--->
 
       <!-- Drag and Drop flavors -->
       <field name="_TYPE_X_SB_MEDIAITEM"            readonly="true">
@@ -304,7 +282,6 @@
         <parameter name="commands"/>
         <parameter name="resize"/>
         <parameter name="collapse"/>
-        <parameter name="refsuffix"/>
         <body>
 <![CDATA[
   // Set the tree's view to the tree of the supplied media list view
@@ -331,6 +308,9 @@
   var cfs = mediaListView.cascadeFilterSet;
   var length = cfs.length;
   for (var i = 0; i < length; i++) {
+    if (cfs.isSearch(i)) {
+      continue;
+    }
     var filterlist = document.createElementNS(this._XUL_NS, "filterlist2");
     filterlist.setAttribute("enableColumnDrag", "false");
     filterlist.setAttribute("hidecolumnpicker", "true");
@@ -360,57 +340,36 @@
 
   }
 
+  // Clear out the old commands and add the new ones
+  this._toolbar.hidden = true;
+  this._toolbar.bind(this, commands);
+  this._toolbar.refreshCommands();
 
-        // Clear out the old commands
-        var toolbar = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
-        toolbar.hidden = true;
+  this._commandmenuitems.bind(this, commands);
+  this._commandmenuitems.refreshCommands();
 
-        if (!this.forcedcommands)
-        {
-          // And add the new ones
-          this._commands = commands;
+  // If boolean true, read from the XUL file.
+  if (resize == true) {
+    resize = this.getAttribute("resize_height");
+  }
 
-          // See if there is one registered specifically for this table
-/*
-          var cmds = this.source.getPlaylistCommands( this.guid, this.table, this.type );
-          if ( cmds )
-          {
-            this._commands = cmds;
-          }
+  // If an integer
+  if (parseInt(resize) > 0) {
+    this.height = resize;
+  }
+
+/* SK: I can't find any reference to "previousSibling" in the code base?
+  if (this.previousSibling) {
+    if ( collapse > 0 )
+    {
+      this.previousSibling.setAttribute( "state", "collapsed" );
+    }
+    else if ( collapse != null )
+    {
+      this.previousSibling.setAttribute( "state", "open" );
+    }
+  }
 */
-        }
-        else
-        {
-          this._commands = this.forcedcommands;
-        }
-        // Make sure it does what we think it does.
-        if ( this._commands )
-        {
-          this._commands = this._commands.QueryInterface( this._Ci.sbIPlaylistCommands );
-        }
-        this._deferRefresh = false;
-        this.refreshCommands();
-
-        // If boolean true, read from the XUL file.
-        if ( resize == true )
-        {
-          resize = this.getAttribute( "resize_height" );
-        }
-        // If an integer
-        if ( parseInt( resize ) > 0 )
-        {
-          this.height = resize;
-        }
-        if (this.previousSibling) {
-          if ( collapse > 0 )
-          {
-            this.previousSibling.setAttribute( "state", "collapsed" );
-          }
-          else if ( collapse != null )
-          {
-            this.previousSibling.setAttribute( "state", "open" );
-          }
-        }
       ]]>
         </body>
       </method>
@@ -440,6 +399,9 @@
       <method name="_setupColumns">
         <body>
 <![CDATA[
+  var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                   .getService(this._Ci.sbIPropertyManager);
+
   // Read the "column-list" attribute to determine which columns are to be
   // shown and in which order
   var columnListAttr = this.getAttribute("column-list");
@@ -504,8 +466,9 @@
   var alreadyAdded = {};
   var addedColumns = 0;
   columnMap.forEach(function(columnInfo) {
+    var propertyInfo = pm.getPropertyInfo(columnInfo.property);
     this._appendColumn(columnInfo.property,
-                       columnInfo.property.split("#")[1],
+                       propertyInfo.displayName,
                        false,
                        columnInfo.width,
                        numColumns - addedColumns > 1);
@@ -518,8 +481,9 @@
   // show them
   allColumns.forEach(function(property) {
     if (!alreadyAdded[property]) {
+      var propertyInfo = pm.getPropertyInfo(property);
       this._appendColumn(property,
-                         property.split("#")[1],
+                         propertyInfo.displayName,
                          hasColumnSpec,
                          null,
                          numColumns - addedColumns > 1);
@@ -602,264 +566,57 @@
       <method name="refreshCommands">
         <parameter name="stateonly"/>
         <body>
-          <![CDATA[
-//      try
-//      {
-
-        // Sometimes we get here before the tree is properly built.  That's bad.
-        if (this.tree.view == null)
-        {
-          // So if we're supposed to build the items here, remember that and quit.
-          if (!stateonly)
-            this._laststateonly = false;
-          return;
-        }
-        // And build them the next time it's time to refresh (this function gets called alot)
-        if (!this._laststateonly)
-        {
-          stateonly = false;
-          this._laststateonly = true;
-        }
-
-        // Convert null to bool.
-        if (!stateonly)
-          stateonly = false;
-
-        // If our internal objects are out of sync, rebuild.
-        if (this._toolbarbuttons.length == 0 || this._menuitems.length == 0 || this._toolbarbuttons.length != this._commands.getNumCommands())
-          stateonly = false;
-
-        // Get the parents
-        var toolbar = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
-        var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'toolbar_parent');
-        var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_popup');
-        var before = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_before');
-
-        // If deferring refresh, skip it
-        if ( this._deferRefresh )
-        {
-          // make a note that we need to refresh when the popup goes away
-          this._needRefresh = true;
-          // So if we're supposed to build the items here, remember that and quit.
-          if (!stateonly)
-            this._laststateonly = false;
-          return;
-        }
-        this._needRefresh = false;
-
-        if (!stateonly) {
-          toolbar.hidden = true;
-          // Remove old elements
-          this.removeCommands();
-        }
-
-        if ( this._commands )
-        {
-          // Once we get here, tell the commands who we are.
-          if (!stateonly) this._commands.setPlaylist( this );
-
-          // And make all the new stuff
-          var num = this._commands.getNumCommands();
-          for ( var i = 0; i < num; i++ )
-          {
-            var toolbarbutton;
-            var menuitem;
-            if (!stateonly)
-            {
-              // If we get here, show the toolbar
-              toolbar.hidden = false;
-
-              // What id?
-              var obj_id = this._commands.getCommandId( i );
-
-              var toolbarbutton_type = "button";
-              var menuitem_type = "menuitem";
-
-              if ( obj_id == "*separator*" )
-              {
-                toolbarbutton_type = "spacer";
-                menuitem_type = "menuseparator";
-              }
-
-              // Create a toolbarbutton
-              toolbarbutton = document.createElement( toolbarbutton_type );
-              toolbarbutton.setAttribute( "id", obj_id );
-              toolbarbutton.setAttribute( "sbtype", "command" ); // to find it easily, later
-              toolbarbutton.setAttribute( "class", "sb_faceplate" ); // Make them fully skinned buttons.
-
-              // And a menuitem
-              menuitem = document.createElement( menuitem_type );
-              menuitem.setAttribute( "id", obj_id );
-              menuitem.setAttribute( "sbtype", "command" );
-              menuitem.setAttribute( "class", "menuitem-iconic" ); // Icons are set in the css using the id
-
-              // No label unless you have a label
-              var cmd_text = this._commands.getCommandText( i );
-              if ( cmd_text.length > 0 )
-              {
-                if ( cmd_text[ 0 ] == "&" )
-                {
-                  cmd_text = this._getString(cmd_text.substr(1, cmd_text.length), "");
-                }
-                toolbarbutton.setAttribute( "label", cmd_text );
-                menuitem.setAttribute( "label", cmd_text );
-              }
-
-              // No label unless you have a label
-              var cmd_flex = this._commands.getCommandFlex( i );
-              if ( cmd_flex > 0 )
-              {
-                toolbarbutton.setAttribute( "flex", cmd_flex );
-//                menuitem.setAttribute( "flex", cmd_flex );
-              }
-
-              // No tooltip unless you have a tooltip
-              var tooltip_text = this._commands.getCommandToolTipText( i );
-              if ( tooltip_text.length > 0 )
-              {
-                if ( tooltip_text[ 0 ] == "&" )
-                {
-                  tooltip_text = this._getString(tooltip_text.substr(1, tooltip_text.length), "");
-                }
-                ///*
-                //    These cause the crashy if they're up while updating.  :(
-                //
-                //  toolbarbutton.setAttribute( "tooltiptext", tooltip_text );
-                //  menuitem.setAttribute( "tooltiptext", tooltip_text );
-                //*/
-              }
-            }
-            else
-            {
-              toolbarbutton = this._toolbarbuttons[i];
-              menuitem = this._menuitems[i];
-            }
-
-            if ( this._commands.getCommandEnabled( i ) )
-            {
-              toolbarbutton.setAttribute( "disabled", "false" );
-              menuitem.setAttribute( "disabled", "false" );
-            }
-            else
-            {
-              toolbarbutton.setAttribute( "disabled", "true" );
-              menuitem.setAttribute( "disabled", "true" );
-            }
-
-            // Add them to the parents
-            if (!stateonly)
-            {
-              this._toolbarbuttons.push( toolbarbutton );
-              this._menuitems.push( menuitem );
-              parent.appendChild( toolbarbutton );
-              popup.insertBefore( menuitem, before );
-            }
-          }
-
-          if ( this._toolbarbuttons.length != this._commands.getNumCommands() )
-          {
-            dump( "ERROR: TOOLBARBUTTONS OUT OF SYNCH!\n" );
-          }
-        }
-//      }
-//      catch( err )
-//      {
-//        alert( "playlist.xml - refreshCommands - " + err );
-//      }
-      ]]>
-        </body>
-      </method>
-
-      <method name="setDeferRefresh">
-        <body>
-          <![CDATA[
-            try
-            {
-              this._deferRefresh = true;
-            }
-            catch( err )
-            {
-              alert( "playlist.xml - setDeferRefresh - " + err );
-            }
-          ]]>
-        </body>
-      </method>
-
-      <method name="clearDeferRefresh">
-        <body>
-          <![CDATA[
-            try
-            {
-              this._deferRefresh = false;
-              if (this._needRefresh)
-                this.refreshCommands(false);
-            }
-            catch( err )
-            {
-              alert( "playlist.xml - clearDeferRefresh - " + err );
-            }
-          ]]>
+<![CDATA[
+  this._toolbar.refreshCommands(stateonly);
+  this._commandmenuitems.refreshCommands(stateonly);
+]]>
         </body>
       </method>
 
       <method name="removeCommands">
         <body>
 <![CDATA[
-  // Delete the toolbar commands
-  var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'toolbar_parent');
-  var command_nodes = parent.getElementsByAttribute( 'sbtype', 'command' );
-  // command_nodes is a live array, removing children from parent auto removes items from it
-  while ( command_nodes.length > 0 )
-  {
-    var node = command_nodes.item( 0 );
-    parent.removeChild(node);
-  }
-  this._toolbarbuttons.length = 0; // clear the array??
-
-  // Delete the popup commands
-  var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_popup');
-  command_nodes = popup.getElementsByAttribute( 'sbtype', 'command' );
-  while ( command_nodes.length > 0 )
-  {
-    var node = command_nodes.item( 0 );
-    popup.removeChild(node);
-  }
-  this._menuitems.length = 0; // clear the array??
+  this._toolbar.removeCommands();
+  this._commandmenuitems.removeCommands();
 ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="_onFilterSplitterMove">
-      <parameter name="event"/>
-      <body>
-        <![CDATA[
-          var state = this.getAttribute( "state" );
-          if (state != "collapsed" && this._down && this._lastPos) {
-            if (event.screenX > this._lastPos) { this.setAttribute("collapse", "after"); }
-            if (event.screenX < this._lastPos) { this.setAttribute("collapse", "before"); }
-          }
-          this._lastPos = event.screenX;
-        ]]>
-      </body>
-    </method>
+      <method name="_onFilterSplitterMove">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  var state = this.getAttribute( "state" );
+  if (state != "collapsed" && this._down && this._lastPos) {
+    if (event.screenX > this._lastPos) { this.setAttribute("collapse", "after"); }
+    if (event.screenX < this._lastPos) { this.setAttribute("collapse", "before"); }
+  }
+  this._lastPos = event.screenX;
+]]>
+        </body>
+      </method>
 
-    <method name="_onFilterSplitterUp">
-      <body>
-        this._down = 0;
-        this._lastPos = null;
-      </body>
-    </method>
+      <method name="_onFilterSplitterUp">
+        <body>
+<![CDATA[
+  this._down = 0;
+  this._lastPos = null;
+]]>
+        </body>
+      </method>
 
-    <method name="_onFilterSplitterDown">
-      <body>
-        this._down = 1;
-      </body>
-    </method>
+      <method name="_onFilterSplitterDown">
+        <body>
+<![CDATA[
+  this._down = 1;
+]]>
+        </body>
+      </method>
 
-    <!-- Removes all children of the given DOM node -->
-    <method name="_removeAllChildren">
-      <parameter name="parentNode"/>
-      <body>
+      <!-- Removes all children of the given DOM node -->
+      <method name="_removeAllChildren">
+        <parameter name="parentNode"/>
+        <body>
 <![CDATA[
   // Bail out if there are no children
   if (!parentNode.hasChildNodes())
@@ -873,133 +630,6 @@
     parentNode.removeChild(child);
   }
 ]]>
-      </body>
-    </method>
-      <method name="findCell">
-        <parameter name="column"/>
-        <parameter name="value"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            // Instead of a linear search, try a shortcut.
-            if ( column.id == "row_id" )
-            {
-              return value - 1;
-            }
-            var row = this.source.getRefRowByColumnValue(this.ref, column.id, value);
-            return row;
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - findCell - " + err );
-          }
-          return -1;
-        ]]>
-        </body>
-      </method>
-
-      <!-- Drag Objects watcher -->
-
-      <method name="registerDragObject">
-        <parameter name="obj"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            if (this._dragobjects == null) this._dragobjects = Array();
-            this._dragobjects.push(obj);
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - registerDragObject - " + err );
-          }
-        ]]>
-        </body>
-      </method>
-
-      <method name="startWatchingDragObjects">
-        <body>
-          <![CDATA[
-          try {
-            var dragObjects = this._dragobjects;
-            if (dragObjects) {
-              var count = dragObjects.length;
-              for (var i = 0; i < count; i++) {
-                var dragObject = dragObjects[i];
-                if (dragObject.addEventListener) {
-                  dragObject.addEventListener("mouseup", this.dragObjectMouseUp, true);
-                  dragObject.addEventListener("mousedown", this.dragObjectMouseDown, true);
-                }
-              }
-            }
-          }
-          catch(err) {
-            alert("playlist.xml - startWatchingDragObjects - " + err);
-          }
-        ]]>
-        </body>
-      </method>
-
-      <method name="stopWatchingDragObjects">
-        <body>
-          <![CDATA[
-          try
-          {
-            if (this._dragobjects != null)
-            {
-              for (var i=0; i<this._dragobjects.length;i++)
-              {
-                this._dragobjects[i].removeEventListener("mouseup", this.dragObjectMouseUp, true);
-                this._dragobjects[i].removeEventListener("mousedown", this.dragObjectMouseDown, true);
-              }
-              this._dragobjects = null;
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - stopWatchingDragObjects - " + err );
-          }
-        ]]>
-        </body>
-      </method>
-
-      <method name="dragObjectMouseUp">
-        <body>
-          document.__PlaylistXBL_DragObjectDown__ = null;
-        </body>
-      </method>
-
-      <method name="dragObjectMouseDown">
-        <body>
-          document.__PlaylistXBL_DragObjectDown__ = this;
-        </body>
-      </method>
-
-      <method name="isAnyDragObjectDown">
-        <body>
-          <![CDATA[
-          var ret = 0;
-          try
-          {
-            if (this._dragobjects != null) {
-              var o = document.__PlaylistXBL_DragObjectDown__;
-              for (var i=0; i<this._dragobjects.length;i++)
-              {
-                if (o == this._dragobjects[i])
-                {
-                  ret = 1;
-                  break;
-                }
-              }
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - isAnyDragObjectDown - " + err );
-          }
-          return ret;
-        ]]>
         </body>
       </method>
 
@@ -1075,25 +705,6 @@
 
       <!-- Tree event listeners -->
 
-      <method name="onToolbarCommand">
-        <parameter name="evt"/>
-        <body>
-          <![CDATA[
-          try
-          {
-            if ( this._commands )
-            {
-              this._commands.onCommand( evt );
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onToolbarCommand - " + err );
-          }
-        ]]>
-        </body>
-      </method>
-
       <method name="_onPlaylistDblClick">
         <parameter name="evt"/>
         <body>
@@ -1146,223 +757,167 @@
       <method name="_onPlaylistKeypress">
         <parameter name="evt"/>
         <body>
-          <![CDATA[
-            //dump("charcode = " + evt.charCode + " - keycode = " + evt.keyCode + "\n");
-            
-            // Handle Ctrl-a
-            if (evt.charCode == 'a'.charCodeAt(0) && evt.ctrlKey) {
-              this.tree.view.selection.selectAll();
-              return;
-            }
-            
-            switch (evt.keyCode) {
-              // Remove entries for these keys.
-              case evt.DOM_VK_DELETE:
-              case evt.DOM_VK_BACK_SPACE:
-                if (this.tree.currentIndex != -1) {
-                  this._removeSelectedTracks();
-                }
-                break;
-                
-              // Start playback for these keys.
-              case evt.DOM_VK_RETURN:
-              case evt.DOM_VK_ENTER:
-                if (this.tree.currentIndex != -1) {
-                  this.sendPlayEvent();
-                }
-                break;
-              
-              // Handle escape.
-              case evt.DOM_VK_ESCAPE:
-                this.sendEscEvent();
-                break;
-              
-              default:
-                break;
-            }
-          ]]>
+<![CDATA[
+  //dump("charcode = " + evt.charCode + " - keycode = " + evt.keyCode + "\n");
+
+  // Handle Ctrl-a
+  if (evt.charCode == 'a'.charCodeAt(0) && evt.ctrlKey) {
+    this.tree.view.selection.selectAll();
+    return;
+  }
+
+  switch (evt.keyCode) {
+    // Remove entries for these keys.
+    case evt.DOM_VK_DELETE:
+    case evt.DOM_VK_BACK_SPACE:
+      if (this.tree.currentIndex != -1) {
+        this._removeSelectedTracks();
+      }
+      break;
+      
+    // Start playback for these keys.
+    case evt.DOM_VK_RETURN:
+    case evt.DOM_VK_ENTER:
+      if (this.tree.currentIndex != -1) {
+        this.sendPlayEvent();
+      }
+      break;
+
+    // Handle escape.
+    case evt.DOM_VK_ESCAPE:
+      this.sendEscEvent();
+      break;
+
+    default:
+      break;
+  }
+]]>
         </body>
       </method>
 
       <method name="_onPlaylistContextClick">
         <parameter name="evt"/>
         <body>
-          <![CDATA[
-          try {
-            // If there is no actual commands, do not allow the context menu to pop.
-            if (!this._commands || this._commands.getNumCommands() == 0) return;
+<![CDATA[
+  // If there is no actual commands, do not allow the context menu to pop.
+  if (!this._commandmenuitems.commands ||
+      this._commandmenuitems.commands.getNumCommands() == 0) {
+    return;
+  }
 
-            const COLUMN_TITLE = "title";
-            const CONTEXT_IDS = ["playlist_context_before",
-                                 "playlist.context.search",
-                                 "playlist.context.lyrics"];
+  const COLUMN_TITLE = "title";
+  const CONTEXT_IDS = ["playlist_context_before",
+                       "playlist.context.search",
+                       "playlist.context.lyrics"];
 
-            // Small helper to loop through a list of the ids for the context
-            // menu items and show or hide each element.
-            //
-            // aShow - a boolean specifying if items are to be shown or
-            //           hidden. Defaults to true.
-            function showContextItems(aShow) {
-              if (aShow === undefined)
-                aShow = true;
+  // Small helper to loop through a list of the ids for the context
+  // menu items and show or hide each element.
+  //
+  // aShow - a boolean specifying if items are to be shown or
+  //           hidden. Defaults to true.
+  function showContextItems(aShow) {
+    if (aShow === undefined)
+      aShow = true;
 
-              var items = CONTEXT_IDS;
-              var count = items.length;
-              for (var index = 0; index < count; index++) {
-                var id = items[index];
-                var item = document.getElementById(id);
-                if (!item)
-                  continue;
+    var items = CONTEXT_IDS;
+    var count = items.length;
+    for (var index = 0; index < count; index++) {
+      var id = items[index];
+      var item = document.getElementById(id);
+      if (!item)
+        continue;
 
-                var isHidden = item.hasAttribute("hidden");
+      var isHidden = item.hasAttribute("hidden");
 
-                if (aShow && isHidden) {
-                  item.removeAttribute("hidden");
-                }
-                else if (!aShow && !isHidden) {
-                  item.setAttribute("hidden", "true");
-                }
-              }
-            }
+      if (aShow && isHidden) {
+        item.removeAttribute("hidden");
+      }
+      else if (!aShow && !isHidden) {
+        item.setAttribute("hidden", "true");
+      }
+    }
+  }
 
-            var tree = this.tree;
-            if (tree.currentIndex < 0)
-              return;
+  var tree = this.tree;
+  if (tree.currentIndex < 0)
+    return;
 
-            // XXX: do we need a version of this?
-            //this.hidePlaylistEdit();
+  // First, get the row and column clicked.
+  var childElement = {}, rowObject = {}, columnObject = {};
+  tree.treeBoxObject.getCellAt(evt.clientX, evt.clientY, rowObject,
+                               columnObject, childElement);
 
-            // First, get the row and column clicked.
-            var childElement = {}, rowObject = {}, columnObject = {};
-            tree.treeBoxObject.getCellAt(evt.clientX, evt.clientY, rowObject,
-                                         columnObject, childElement);
+  // Bail if we got a bad result
+  if (rowObject.value == -1)
+    return;
 
-            // Bail if we got a bad result
-            if (rowObject.value == -1)
-              return;
+  // Store the last clicked cell
+  this.edit_row = rowObject.value;
+  this.edit_col = columnObject.value;
 
-            // Store the last clicked cell
-            this.edit_row = rowObject.value;
-            this.edit_col = columnObject.value;
+  var cellText =
+    tree.view.getCellText(rowObject.value, columnObject.value);
 
-            var cellText =
-              tree.view.getCellText(rowObject.value, columnObject.value);
+  // XXX: What to do here?
+  if (!cellText) {
+    // If we couldn't get text from the cell then we'll try to pull it
+    // out another way
+    var titleColumn = tree.columns.getNamedColumn(COLUMN_TITLE);
+    if (titleColumn)
+      cellText = tree.view.getCellText(tree.currentIndex, titleColumn);
+  }
 
-            // XXX: What to do here?
-            if (!cellText) {
-              // If we couldn't get text from the cell then we'll try to pull it
-              // out another way
-              var titleColumn = tree.columns.getNamedColumn(COLUMN_TITLE);
-              if (titleColumn)
-                cellText = tree.view.getCellText(tree.currentIndex, titleColumn);
-            }
+  // Make sure that everyone knows about our context
+  this.context_term = cellText;
+  SBDataSetStringValue("playlist.context.term", cellText);
 
-            // Make sure that everyone knows about our context
-            this.context_term = cellText;
-            SBDataSetStringValue("playlist.context.term", cellText);
+  if (cellText) {
+    var searchHeader = this._getString("playlist.context.searchheader", "Search");
+    var lyricsHeader = this._getString("playlist.context.lyricsheader", "Lyrics");
 
-            if (cellText) {
-              var searchHeader = this._getString("playlist.context.searchheader", "Search");
-              var lyricsHeader = this._getString("playlist.context.lyricsheader", "Lyrics");
+    var searchTerm =
+      document.getAnonymousElementByAttribute(this, 'sbid', 'search_popup_term');
+    searchTerm.label = searchHeader + ": " + cellText;
 
-              var searchTerm =
-                document.getAnonymousElementByAttribute(this, 'sbid', 'search_popup_term');
-              searchTerm.label = searchHeader + ": " + cellText;
+    var lyricsTerm =
+      document.getAnonymousElementByAttribute(this, 'sbid', 'lyrics_popup_term');
+    lyricsTerm.label = lyricsHeader + ": " + cellText;
 
-              var lyricsTerm =
-                document.getAnonymousElementByAttribute(this, 'sbid', 'lyrics_popup_term');
-              lyricsTerm.label = lyricsHeader + ": " + cellText;
+    // Make sure that the search and lyrics menus are visible
+    showContextItems(true);
+  }
+  else {
+    // We couldn't get any context, so hide the search and lyrics
+    // menu items.
+    showContextItems(false);
+  }
 
-              // Make sure that the search and lyrics menus are visible
-              showContextItems(true);
-            }
-            else {
-              // We couldn't get any context, so hide the search and lyrics
-              // menu items.
-              showContextItems(false);
-            }
+  // XXX: The coords given to the showPopup() method are relative to
+  // the browser iframe, so compute the difference.  This may be a
+  // bug, possibly related to bmo 362403
+  var bo = document.getBoxObjectFor(document.documentElement);
+  this._context_x = evt.screenX - bo.screenX;
+  this._context_y = evt.screenY - bo.screenY;
 
-            // XXX: The coords given to the showPopup() method are relative to
-            // the browser iframe, so compute the difference.  This may be a
-            // bug, possibly related to bmo 362403
-            var bo = document.getBoxObjectFor(document.documentElement);
-            this._context_x = evt.screenX - bo.screenX;
-            this._context_y = evt.screenY - bo.screenY;
+  //dump("this._context_x = " + this._context_x + "\n");
+  //dump("this._context_y = " + this._context_y + "\n");
 
-            //dump("this._context_x = " + this._context_x + "\n");
-            //dump("this._context_y = " + this._context_y + "\n");
+  this._context_popup.showPopup(tree, this._context_x, this._context_y,
+                                "context", null, null, null);
 
-            this._context_popup.showPopup(tree, this._context_x, this._context_y,
-                                          "context", null, null, null);
-
-            //dump("this._context_popup.boxObject.screenX = " + this._context_popup.boxObject.screenX + "\n");
-            //dump("this._context_popup.boxObject.screenY = " + this._context_popup.boxObject.screenY + "\n");
-          }
-          catch( e )
-          {
-            dump("playlist.xml - onPlaylistContextClick:\nException = " + e + "\n");
-          }
-        ]]>
+  //dump("this._context_popup.boxObject.screenX = " + this._context_popup.boxObject.screenX + "\n");
+  //dump("this._context_popup.boxObject.screenY = " + this._context_popup.boxObject.screenY + "\n");
+]]>
         </body>
       </method>
 
       <method name="_onPlaylistSelectClick">
         <parameter name="evt"/>
         <body>
-          <![CDATA[
-          try
-          {
-            //dump("onPlaylistSelectClick\r\n");
-
-            // If we have commands, allow them to update
-            if ( ! this.restoring_selection )
-            {
-              this.refreshCommands();
-            }
-/* XXX: we should be able to do better than this
-            // If we select too many items, we need to pause the scanning.
-            var count = 0;
-            if (this.tree.view)
-            {
-              var rangeCount = this.tree.view.selection.getRangeCount();
-              for (var i=0; i < rangeCount; i++)
-              {
-                var start = {};
-                var end = {};
-                this.tree.view.selection.getRangeAt( i, start, end );
-                count += end.value - start.value + 1;
-              }
-            }
-            if ( count > 50 )
-            {
-              if ( ! this.paused_scanning )
-              {
-                // increment the backscan pause value.
-                SBDataIncrementValue( "backscan.paused" );
-                this.paused_scanning = true;
-              }
-            }
-            else
-            {
-              if ( this.paused_scanning )
-              {
-                // decrement the backscan.pause value to a floor of 0
-                SBDataDecrementValue( "backscan.paused", 0 );
-                this.paused_scanning = false;
-              }
-            }
-*/
-            if (!this.restoring_selection) {
-              var e = document.createEvent("Events");
-              e.initEvent("playlist-selchange", false, true);
-              this.dispatchEvent(e);
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onPlaylistSelectClick - " + err );
-          }
-        ]]>
+<![CDATA[
+  this.tree.view.selectionChanged();
+  this.refreshCommands();
+]]>
         </body>
       </method>
 
@@ -1452,7 +1007,7 @@
         <![CDATA[
           try
           {
-            this.setDeferRefresh();
+            this._commandmenuitems.setDeferRefresh();
           }
           catch( err )
           {
@@ -1468,7 +1023,7 @@
         <![CDATA[
           try
           {
-            this.clearDeferRefresh();
+            this._commandmenuitems.clearDeferRefresh();
           }
           catch( err )
           {
@@ -1489,14 +1044,21 @@
 
   // If this media lists supports ordering, insert the item where it was
   // dropped
-  if (ml instanceof this._Ci.sbIOrderableMediaList) {
-    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE &&
-        oldLength > 0 && row >= 0 && row < oldLength) {
-      ml.insertBefore(row, item);
+  var doInsert = false;
+  if (ml instanceof this._Ci.sbIOrderableMediaList && oldLength > 0 && row >= 0 ) {
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      doInsert = true;
     }
     else {
-      ml.add(item);
+      if (row + 1 < oldLength) {
+        row++;
+        doInsert = true;
+      }
     }
+  }
+
+  if (doInsert) {
+    ml.insertBefore(row, item);
   }
   else {
     ml.add(item);
@@ -1510,39 +1072,73 @@
 
     <method name="_addItems">
       <parameter name="enumerator"/>
+      <parameter name="row"/>
+      <parameter name="orientation"/>
       <body>
 <![CDATA[
-  // Count the number of items we are about to add so we can message the user
-  // property
-  var items = [];
-  while (enumerator.hasMoreElements()) {
-    items.push(enumerator.getNext());
-  }
-  var count = items.length;
+  var ml = this.mediaListView.mediaList;
+  var oldLength = ml.length;
+  var count = 0;
 
-  var self = this;
-  var tempEnumerator = {
-    _items: items,
-    _nextIndex: 0,
-    hasMoreElements: function() {
-      return this._nextIndex < this._items.length;
-    },
-    getNext: function() {
-      var item = this._items[this._nextIndex];
-      this._nextIndex++;
-      return item;
-    },
-    QueryInterface : function(iid) {
-      if (iid.equals(self._Ci.nsISimpleEnumerator) ||
-          iid.equals(self._Ci.nsISupports))
-        return this;
-      throw self._Cr.NS_NOINTERFACE;
+  // If this media lists supports ordering, insert the item where it was
+  // dropped
+  var doInsert = false;
+  if (ml instanceof this._Ci.sbIOrderableMediaList && oldLength > 0 && row >= 0 ) {
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      doInsert = true;
+    }
+    else {
+      if (row + 1 < oldLength) {
+        row++;
+        doInsert = true;
+      }
     }
   }
 
-  var ml = this.mediaListView.mediaList;
-  var oldLength = ml.length;
-  ml.addSome(tempEnumerator);
+  if (doInsert) {
+    ml.beginUpdateBatch();
+    try {
+      while (enumerator.hasMoreElements()) {
+        ml.insertBefore(row, enumerator.getNext().mediaItem);
+        row++;
+        count++;
+      }
+    }
+    finally {
+      ml.endUpdateBatch();
+    }
+  }
+  else {
+    // Count the number of items we are about to add so we can message the user
+    // property
+    var items = [];
+    while (enumerator.hasMoreElements()) {
+      items.push(enumerator.getNext().mediaItem);
+    }
+    count = items.length;
+  
+    var self = this;
+    var tempEnumerator = {
+      _items: items,
+      _nextIndex: 0,
+      hasMoreElements: function() {
+        return this._nextIndex < this._items.length;
+      },
+      getNext: function() {
+        var item = this._items[this._nextIndex];
+        this._nextIndex++;
+        return item;
+      },
+      QueryInterface : function(iid) {
+        if (iid.equals(self._Ci.nsISimpleEnumerator) ||
+            iid.equals(self._Ci.nsISupports))
+          return this;
+        throw self._Cr.NS_NOINTERFACE;
+      }
+    }
+    ml.addSome(tempEnumerator);
+  }
+
   var added = ml.length - oldLength;
   this._reportAddedTracks(added, count - added);
 ]]>
@@ -1598,20 +1194,18 @@
 <![CDATA[
   var ml = this.mediaListView.mediaList;
 
-  ml.beginUpdateBatch();
-
   // Process the selection backwards so we don't change the indexes as we
   // delete them
+  ml.beginUpdateBatch();
   try {
-    var rangeCount = this.tree.view.selection.getRangeCount();
-    for (var i = rangeCount - 1; i >= 0; i--) {
-      var start = {};
-      var end = {};
-      this.tree.view.selection.getRangeAt(i, start, end);
-      for (var j = end.value; j >= start.value; j--) {
-        var index = this.mediaListView.getUnfilteredIndex(j);
-        ml.removeByIndex(index);
-      }
+    var enumerator = this.tree.view.selectedMediaItems;
+    var indexes = [];
+    while (enumerator.hasMoreElements()) {
+      indexes.push(enumerator.getNext().index);
+    }
+    for (var j = indexes.length - 1; j >= 0; j--) {
+      var index = this.mediaListView.getUnfilteredIndex(indexes[j]);
+      ml.removeByIndex(index);
     }
   }
   finally {
@@ -1675,34 +1269,32 @@
       </body>
     </method>
 
-    <method name="pointInTreeRows">
+    <method name="_pointInTreeRows">
       <parameter name="tree"/>
       <parameter name="mouseX"/>
       <parameter name="mouseY"/>
         <body>
-        <![CDATA[
-          // Make sure the user actually double clicked on a tree cell.
-          // Previously this used getCellAt() on the tree, however, it was
-          // unreliable.  This code compares the mouse position with the box
-          // object of the contaier of the tree's rows (which excludes the
-          // column headers and scroll bar)
-          var treeRows = document.getAnonymousElementByAttribute(tree, "class", "tree-rows");
-          if(!treeRows) {
-              return false;
-          }
-          var treeBodyBox = document.getAnonymousElementByAttribute(treeRows, "class", "tree-bodybox");
-          if(!treeBodyBox) {
-              return false;
-          }
-          var bo = treeBodyBox.boxObject;
-          if(mouseX >= bo.x && mouseX <= (bo.x + bo.width) &&
-             mouseY >= bo.y && mouseY <= (bo.y + bo.height)) {
-             return true;
-          }
-          else {
-            return false;
-          }
-        ]]>
+<![CDATA[
+  // Make sure the user actually double clicked on a tree cell.
+  // Previously this used getCellAt() on the tree, however, it was
+  // unreliable.  This code compares the mouse position with the box
+  // object of the contaier of the tree's rows (which excludes the
+  // column headers and scroll bar)
+  var treeRows = document.getAnonymousElementByAttribute(tree, "class", "tree-rows");
+  if(!treeRows) {
+      return false;
+  }
+  var treeBodyBox = document.getAnonymousElementByAttribute(treeRows, "class", "tree-bodybox");
+  if(!treeBodyBox) {
+      return false;
+  }
+  var bo = treeBodyBox.boxObject;
+  if(mouseX >= bo.x && mouseX <= (bo.x + bo.width) &&
+     mouseY >= bo.y && mouseY <= (bo.y + bo.height)) {
+     return true;
+  }
+  return false;
+]]>
         </body>
       </method>
 
@@ -1732,25 +1324,6 @@
   catch(e) {
     return defaultValue;
   }
-]]>
-        </body>
-      </method>
-
-      <method name="_getSelectionRows">
-        <body>
-<![CDATA[
-  var selection = this.tree.view.selection;
-  var rc = selection.getRangeCount();
-  var rows = [];
-  for (var i = 0; i < rc; ++i) {
-    var min = { }, max = { };
-    selection.getRangeAt(i, min, max);
-
-    for (var j = min.value; j <= max.value; ++j) {
-      rows.push(j);
-    }
-  }
-  return rows;
 ]]>
         </body>
       </method>
@@ -1862,10 +1435,10 @@
         <body>
 <![CDATA[
   try {
-    dump("onDragStart " + event + " " + xferData + " " + dragAction + "\n");
-
-    var rows = this._getSelectionRows();
-    if (rows.length == 0) {
+    var treeView = this.tree.view;
+    var ml = this.mediaListView.mediaList;
+    var numRows = treeView.selectionLength;
+    if (numRows == 0) {
       // Nothing selected, don't drag
       throw this._Cr.NS_OK;
     }
@@ -1878,67 +1451,27 @@
     var data = new TransferData();
 
     // If only one item is selected, use the media item flavor
-    if (rows.length == 1) {
-      var listIndex = this.mediaListView.getUnfilteredIndex(rows[0]);
-      var item = this.mediaListView.mediaList.getItemByIndex(listIndex);
+    if (numRows == 1) {
+      var item = treeView.currentMediaItem;
+      if (!item) {
+        throw this._Cr.NS_OK;
+      }
 
       // Add the single media item flavor
       var handle = dnd.registerSource(item);
       data.addDataForFlavour(this._TYPE_X_SB_MEDIAITEM, handle);
-
-      // Add a simple enumerator with the single item flavor
-      var self = this;
-      var enumerator = {
-        _item: item,
-        hasMoreElements: function() {
-          return this._item != null;
-        },
-        getNext: function() {
-          var i = this._item;
-          this._item = null;
-          return i;
-        },
-        QueryInterface : function(iid) {
-          if (iid.equals(self._Ci.nsISimpleEnumerator) ||
-              iid.equals(self._Ci.nsISupports))
-            return this;
-          throw self._Cr.NS_NOINTERFACE;
-        }
-      }
-      handle = dnd.registerSource(enumerator);
-      data.addDataForFlavour(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR, handle);
-
-      // Add the url of the item as well
-      // XXX: Probably want to make sure that this is a local file that exists
-      // before providing this flavor
-      //data.addDataForFlavour("text/x-moz-url", item.contentSrc);
     }
-    else {
-      // Otherwise, add an emumerator of the selection
-      var self = this;
-      var enumerator = {
-        _rows: rows,
-        _view: this.mediaListView,
-        _nextIndex: 0,
-        hasMoreElements: function() {
-          return this._nextIndex < this._rows.length;
-        },
-        getNext: function() {
-          var i = this._view.getUnfilteredIndex(this._rows[this._nextIndex]);
-          var item = this._view.mediaList.getItemByIndex(i);
-          this._nextIndex++;
-          return item;
-        },
-        QueryInterface : function(iid) {
-          if (iid.equals(self._Ci.nsISimpleEnumerator) ||
-              iid.equals(self._Ci.nsISupports))
-            return this;
-          throw self._Cr.NS_NOINTERFACE;
-        }
-      }
-      handle = dnd.registerSource(enumerator);
-      data.addDataForFlavour(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR, handle);
-    }
+
+    // Add a simple enumerator with the media item enumerator flavor
+    var enumerator = treeView.selectedMediaItems;
+    handle = dnd.registerSource(enumerator);
+    data.addDataForFlavour(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR, handle);
+
+    // Add the url of the item as well
+    // XXX: Probably want to make sure that this is a local file that exists
+    // before providing this flavor
+    //data.addDataForFlavour("text/x-moz-url", item.contentSrc);
+
     xferData.data.push(data);
 
     dragAction.action = this._Ci.nsIDragService.DRAGDROP_ACTION_COPY;
@@ -1946,7 +1479,9 @@
   catch(e) {
     // The drag and drop helper swallows exceptions, so report them and
     // rethrow
-    Components.utils.reportError(e);
+    if (e.result != this._Cr.NS_OK) {
+      Components.utils.reportError(e);
+    }
     throw e;
   }
 ]]>

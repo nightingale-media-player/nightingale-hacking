@@ -278,7 +278,7 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   // Notify our listeners of after removal
   for (PRUint32 i = 0; i < count; i++) {
     mFriendLibrary->NotifyListenersAfterItemRemoved(mFriendLibrary,
-                                               mNotificationList[i]);
+                                                    mNotificationList[i]);
   }
 
   return NS_OK;
@@ -413,16 +413,20 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
 
   NS_ENSURE_TRUE(rowCount == 1, NS_ERROR_UNEXPECTED);
 
-  rv = result->GetRowCell(0, 0, mGuid);
+  nsAutoString guid;
+  rv = result->GetRowCell(0, 0, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize our base classes
   // XXXben You can't call Init here unless this library's mPropertyCache has
   //        been created.
+  // XXXsteve: this is wrong -- the second parameter here should be guid, not
+  // aDatabaseGuid, but this fix causes tests to fail.  I'll leave this the way
+  // it is for now, but we'll fix it when ben gets back.
   rv = sbLocalDatabaseMediaListBase::Init(this, aDatabaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = InitResourceProperty(mPropertyCache, mGuid);
+  rv = InitResourceProperty(mPropertyCache, aDatabaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize the media list factory table.
@@ -677,21 +681,20 @@ sbLocalDatabaseLibrary::GetNowString(nsAString& _retval) {
  * \param aItemType - An integer specifying the type of item to create. This
  *                    will be zero for normal media items and nonzero for all
  *                    media lists.
- * \param aURISpecOrPrefix - The URI spec for media items or the URI prefix for
- *                           media lists.
+ * \param aURISpec - The URI spec for media items (not used for media lists)
  * \param _retval - The GUID that was generated, set only if the function
  *                  succeeds.
  */
 nsresult
 sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
                                         const PRUint32 aMediaItemTypeID,
-                                        const nsAString& aURISpecOrPrefix,
+                                        const nsAString& aURISpec,
                                         nsAString& _retval)
 {
   NS_ENSURE_ARG_POINTER(aQuery);
 
   TRACE(("LocalDatabaseLibrary[0x%.8x] - AddNewItemQuery(%d, %s)", this,
-         aMediaItemTypeID, NS_LossyConvertUTF16toASCII(aURISpecOrPrefix).get()));
+         aMediaItemTypeID, NS_LossyConvertUTF16toASCII(aURISpec).get()));
 
   nsresult rv = aQuery->AddQuery(mInsertMediaItemQuery);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -725,7 +728,7 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
   // Set the new URI spec and media item type.
   if (aMediaItemTypeID == SB_MEDIAITEM_TYPEID) {
     // This is a regular media item so use the spec that was passed in.
-    rv = aQuery->BindStringParameter(3, aURISpecOrPrefix);
+    rv = aQuery->BindStringParameter(3, aURISpec);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Media items don't have a media_list_type_id.
@@ -733,10 +736,12 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
     NS_ENSURE_SUCCESS(rv, rv);
  }
   else {
-    // This is a media list, so use the value that was passed in as a prefix
-    // for the GUID.
+    // This is a media list, create its url in the form
+    // songbird-medialist://<library guid>/<item guid>
     nsAutoString newSpec;
-    newSpec.Assign(aURISpecOrPrefix);
+    newSpec.AssignLiteral("songbird-medialist://");
+    newSpec.Append(mGuid);
+    newSpec.AppendLiteral("/");
     newSpec.Append(guid);
 
     rv = aQuery->BindStringParameter(3, newSpec);
@@ -1188,6 +1193,10 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Invalidate our array
+  rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   NotifyListenersItemAdded(this, mediaItem);
 
   NS_ADDREF(*_retval = mediaItem);
@@ -1239,6 +1248,10 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
 
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Invalidate our array
+  rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   NotifyListenersItemAdded(this, mediaItem);

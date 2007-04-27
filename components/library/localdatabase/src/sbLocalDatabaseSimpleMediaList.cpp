@@ -371,7 +371,25 @@ NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::GetItemByGuid(const nsAString& aGuid,
                                               sbIMediaItem** _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> item;
+  rv = sbLocalDatabaseMediaListBase::GetItemByGuid(aGuid, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool contains;
+  rv = Contains(item, &contains);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (contains) {
+    NS_ADDREF(*_retval = item);
+    return NS_OK;
+  }
+  else {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
 }
 
 NS_IMETHODIMP

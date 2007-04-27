@@ -175,7 +175,7 @@ sbLocalDatabaseAsyncGUIDArray::EnqueueCommand(CommandType aType,
 
 // sbILocalDatabaseAsyncGUIDArray
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::SetListener(sbILocalDatabaseAsyncGUIDArrayListener* aListener)
+sbLocalDatabaseAsyncGUIDArray::SetAsyncListener(sbILocalDatabaseAsyncGUIDArrayListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
   nsAutoMonitor monitor(mSyncMonitor);
@@ -188,6 +188,16 @@ sbLocalDatabaseAsyncGUIDArray::SetListener(sbILocalDatabaseAsyncGUIDArrayListene
                             getter_AddRefs(mProxiedListener));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetAsyncListener(sbILocalDatabaseAsyncGUIDArrayListener** aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  NS_IF_ADDREF(*aListener = mProxiedListener);
   return NS_OK;
 }
 
@@ -369,6 +379,21 @@ sbLocalDatabaseAsyncGUIDArray::GetLength(PRUint32* aLength)
   nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->GetLength(aLength);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetListener(sbILocalDatabaseGUIDArrayListener** aListener)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetListener(aListener);
+}
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::SetListener(sbILocalDatabaseGUIDArrayListener* aListener)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->SetListener(aListener);
 }
 
 NS_IMETHODIMP

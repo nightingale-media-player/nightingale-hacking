@@ -37,10 +37,12 @@
 #include <sbISQLBuilder.h>
 #include <nsDataHashtable.h>
 #include <nsISimpleEnumerator.h>
+#include <nsIStringEnumerator.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
 
 class nsIURI;
+class sbILibrary;
 
 struct FilterSpec {
   nsString property;
@@ -208,6 +210,9 @@ private:
   nsString mQueryY;
   PRUint32 mLengthX;
 
+  // Our listener
+  nsCOMPtr<sbILocalDatabaseGUIDArrayListener> mListener;
+
   // Paired property cache
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
@@ -233,10 +238,28 @@ public:
   sbGUIDArrayEnumerator(sbILocalDatabaseLibrary* aLibrary,
                         sbILocalDatabaseGUIDArray* aArray);
 
+  sbGUIDArrayEnumerator(sbILibrary* aLibrary,
+                        sbILocalDatabaseGUIDArray* aArray);
+
   ~sbGUIDArrayEnumerator();
 
 private:
-  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
+  nsCOMPtr<sbILibrary> mLibrary;
+  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
+  PRUint32 mNextIndex;
+};
+
+class sbGUIDArrayStringEnumerator : public nsIStringEnumerator
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISTRINGENUMERATOR
+
+  sbGUIDArrayStringEnumerator(sbILocalDatabaseGUIDArray* aArray);
+
+  ~sbGUIDArrayStringEnumerator();
+
+private:
   nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
   PRUint32 mNextIndex;
 };

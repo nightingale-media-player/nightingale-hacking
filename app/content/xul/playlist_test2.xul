@@ -59,8 +59,9 @@
   <!-- Local hardcoded sample js -->
   <script type="application/x-javascript">
   <![CDATA[
+
 try
-{  
+{
   var SBLibraryCommands = 
   {
     m_Playlist: null,
@@ -107,7 +108,7 @@ try
         "&command.tooltip.device"
       )
     },
-
+    
     _getMenu: function(aSubMenu)
     {
       var cmds;
@@ -137,16 +138,6 @@ try
       return cmds.m_Ids.length;
     },
   
-    getCommandType: function( aSubMenu, aIndex, aHost )
-    {
-      var cmds = this._getMenu(aSubMenu);
-      if ( aIndex >= cmds.m_Ids.length )
-      {
-        return "";
-      }
-      return cmds.m_Types[ aIndex ];
-    },
-  
     getCommandId: function( aSubMenu, aIndex, aHost )
     {
       var cmds = this._getMenu(aSubMenu);
@@ -155,6 +146,16 @@ try
         return "";
       }
       return cmds.m_Ids[ aIndex ];
+    },
+    
+    getCommandType: function( aSubMenu, aIndex, aHost )
+    {
+      var cmds = this._getMenu(aSubMenu);
+      if ( aIndex >= cmds.m_Ids.length )
+      {
+        return "";
+      }
+      return cmds.m_Types[ aIndex ];
     },
   
     getCommandText: function( aSubMenu, aIndex, aHost )
@@ -183,30 +184,12 @@ try
       }
       return cmds.m_Tooltips[ aIndex ];
     },
-  
+
     getCommandValue: function( aSubMenu, aIndex, aHost )
     {
       var cmds = this._getMenu(aSubMenu);
       switch (cmds.m_Ids[aIndex]) {
         // ...
-        // return command value
-      }
-      return "";
-    },
-  
-    getCommandFlag: function( aSubMenu, aIndex, aHost ) {
-      var cmds = this._getMenu(aSubMenu);
-      switch (cmds.m_Ids[aIndex]) {
-        // ...
-        // return flag value
-      }
-      return false;
-    },
-  
-    getCommandChoiceItem: function( aChoiceMenu, aHost ) {
-      switch (aChoiceMenu) {
-        // ...
-        // return id_of_selecteditem;
       }
       return "";
     },
@@ -261,16 +244,14 @@ try
       if ( id )
       {
         // Was it from the toolbarbutton?
-        var tbb = ( host == "toolbar" );
+        var tbb = (host == "toolbar");
         switch( id )
         {
           case "library_cmd_play":
             if ( this.m_Playlist.tree.currentIndex != -1 )
             {
-              var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                                  .getService(Components.interfaces.sbIPlaylistPlayback);
-              pps.playView(this.m_Playlist.mediaListView,
-                           this.m_Playlist.tree.currentIndex);
+              // Repurpose the command to act as if a doubleclick
+              this.m_Playlist.sendPlayEvent();
             }
           break;
           case "library_cmd_edit":
@@ -283,7 +264,8 @@ try
               }
               else
               {
-                this.m_Playlist.startCellEditing();
+                // Edit the context cell
+                this.m_Playlist.sendEditEvent();
               }
             }
           break;
@@ -324,7 +306,7 @@ try
       return obj;
     },
     
-    setPlaylist: function( playlist )
+    setMediaList: function( playlist )
     {
       // Ah.  Sometimes, things are being secure.
       if ( playlist.wrappedJSObject )
@@ -408,7 +390,7 @@ try
         {
           var view = mediaList.createView();
           var filter = view.cascadeFilterSet;
-          //filter.appendSearch(["*"], 1);
+          filter.appendSearch(["*"], 1);
           filter.appendFilter("http://songbirdnest.com/data/1.0#year");
           filter.appendFilter("http://songbirdnest.com/data/1.0#artistName");
           filter.appendFilter("http://songbirdnest.com/data/1.0#albumName");

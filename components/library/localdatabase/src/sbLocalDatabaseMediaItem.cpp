@@ -897,3 +897,82 @@ sbLocalDatabaseMediaItem::OnStopRequest( nsIRequest *aRequest, nsISupports *aCon
 
   return NS_OK;
 }
+
+NS_IMPL_ISUPPORTS2(sbLocalDatabaseIndexedMediaItem,
+                   nsIClassInfo,
+                   sbIIndexedMediaItem)
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbLocalDatabaseIndexedMediaItem,
+                             nsIClassInfo,
+                             sbIIndexedMediaItem)
+
+NS_IMETHODIMP
+sbLocalDatabaseIndexedMediaItem::GetIndex(PRUint32* aIndex)
+{
+  *aIndex = mIndex;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseIndexedMediaItem::GetMediaItem(sbIMediaItem** aMediaItem)
+{
+  NS_ADDREF(*aMediaItem = mMediaItem);
+  return NS_OK;
+}
+
+// nsIClassInfo
+NS_IMETHODIMP
+sbLocalDatabaseIndexedMediaItem::GetInterfaces(PRUint32* count, nsIID*** array)
+{
+  return NS_CI_INTERFACE_GETTER_NAME(sbLocalDatabaseIndexedMediaItem)(count, array);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseIndexedMediaItem::GetHelperForLanguage(PRUint32 language,
+                                                       nsISupports** _retval)
+{
+  *_retval = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseIndexedMediaItem::GetContractID(char** aContractID)
+{
+  *aContractID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseIndexedMediaItem::GetClassDescription(char** aClassDescription)
+{
+  *aClassDescription = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseIndexedMediaItem::GetClassID(nsCID** aClassID)
+{
+  *aClassID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseIndexedMediaItem::GetImplementationLanguage(PRUint32* aImplementationLanguage)
+{
+  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseIndexedMediaItem::GetFlags(PRUint32 *aFlags)
+{
+  *aFlags = 0;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseIndexedMediaItem::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
+{
+  return NS_ERROR_NOT_AVAILABLE;
+}
+

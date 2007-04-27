@@ -27,10 +27,14 @@
 #include "sbLocalDatabaseTreeView.h"
 
 #include <nsIDOMElement.h>
+#include <nsIProgrammingLanguage.h>
+#include <nsIProperty.h>
+#include <nsIStringEnumerator.h>
 #include <nsITreeBoxObject.h>
 #include <nsITreeColumns.h>
-#include <nsITreeSelection.h>
+#include <nsIVariant.h>
 #include <sbILocalDatabasePropertyCache.h>
+#include <sbILibrary.h>
 #include <sbIMediaListView.h>
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
@@ -39,6 +43,7 @@
 #include <sbISortableMediaList.h>
 
 #include <nsComponentManagerUtils.h>
+#include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsUnicharUtils.h>
@@ -46,6 +51,8 @@
 #include <prlog.h>
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseCID.h"
+#include "sbLocalDatabaseGUIDArray.h"
+#include "sbLocalDatabaseMediaItem.h"
 #include <sbPropertiesCID.h>
 #include <sbTArrayStringEnumerator.h>
 
@@ -62,18 +69,86 @@ static PRLogModuleInfo* gLocalDatabaseTreeViewLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-NS_IMPL_ISUPPORTS3(sbLocalDatabaseTreeView,
+/* static */ nsresult PR_CALLBACK
+sbLocalDatabaseTreeView::SelectionListSavingEnumeratorCallback(PRUint32 aRow,
+                                                               const nsAString& aId,
+                                                               const nsAString& aGuid,
+                                                               void* aUserData)
+{
+  NS_ENSURE_ARG_POINTER(aUserData);
+
+  sbSelectionList* list = NS_STATIC_CAST(sbSelectionList*, aUserData);
+  NS_ENSURE_STATE(list);
+
+  nsAutoString guid(aGuid);
+  PRBool success = list->Put(aId, guid);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+/* static */ nsresult PR_CALLBACK
+sbLocalDatabaseTreeView::SelectionToArrayEnumeratorCallback(PRUint32 aRow,
+                                                            const nsAString& aId,
+                                                            const nsAString& aGuid,
+                                                            void* aUserData)
+{
+  NS_ENSURE_ARG_POINTER(aUserData);
+
+  sbGUIDArrayToIndexedMediaItemEnumerator* enumerator =
+    NS_STATIC_CAST(sbGUIDArrayToIndexedMediaItemEnumerator*, aUserData);
+  NS_ENSURE_STATE(enumerator);
+
+  nsresult rv = enumerator->AddGuid(aGuid, aRow);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */ nsresult PR_CALLBACK
+sbLocalDatabaseTreeView::SelectionIndexEnumeratorCallback(PRUint32 aRow,
+                                                          const nsAString& aId,
+                                                          const nsAString& aGuid,
+                                                          void* aUserData)
+{
+  NS_ENSURE_ARG_POINTER(aUserData);
+
+  nsTHashtable<nsUint32HashKey>* selectedIndexes =
+    NS_STATIC_CAST(nsTHashtable<nsUint32HashKey>*, aUserData);
+  NS_ENSURE_STATE(selectedIndexes);
+
+  nsUint32HashKey* success = selectedIndexes->PutEntry(aRow);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+NS_IMPL_ISUPPORTS6(sbLocalDatabaseTreeView,
+                   nsIClassInfo,
                    nsITreeView,
                    sbILocalDatabaseAsyncGUIDArrayListener,
+                   sbILocalDatabaseGUIDArrayListener,
+                   sbILocalDatabaseTreeView,
                    sbIMediaListViewTreeView)
 
+NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseTreeView,
+                             nsIClassInfo,
+                             nsITreeView,
+                             sbILocalDatabaseAsyncGUIDArrayListener,
+                             sbILocalDatabaseGUIDArrayListener,
+                             sbILocalDatabaseTreeView,
+                             sbIMediaListViewTreeView)
+
 sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
+ mListType(eLibrary),
  mCachedRowCount(0),
  mNextGetByIndexAsync(-1),
+ mSelectionIsAll(PR_FALSE),
  mCachedRowCountDirty(PR_TRUE),
  mCachedRowCountPending(PR_FALSE),
  mIsArrayBusy(PR_FALSE),
- mGetByIndexAsyncPending(PR_FALSE)
+ mGetByIndexAsyncPending(PR_FALSE),
+ mClearSelectionPending(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseTreeViewLog) {
@@ -91,14 +166,19 @@ sbLocalDatabaseTreeView::Init(sbIMediaListView* aMediaListView,
                               sbILocalDatabaseAsyncGUIDArray* aArray,
                               sbIPropertyArray* aCurrentSort)
 {
+  NS_ENSURE_ARG_POINTER(aMediaListView);
   NS_ENSURE_ARG_POINTER(aArray);
+  NS_ENSURE_ARG_POINTER(aCurrentSort);
 
-  nsresult rv;
+  // Make sure we actually are getting a sort
+  PRUint32 arrayLength;
+  nsresult rv = aCurrentSort->GetLength(&arrayLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_STATE(arrayLength);
 
   mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // This can be null if we are not linked to a media list view
   mMediaListView = aMediaListView;
 
   mArray = aArray;
@@ -106,7 +186,14 @@ sbLocalDatabaseTreeView::Init(sbIMediaListView* aMediaListView,
   rv = mArray->GetPropertyCache(getter_AddRefs(mPropertyCache));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mArray->SetListener(this);
+  nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseTreeView*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mArray->SetListener(listener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mArray->SetAsyncListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mArray->GetFetchSize(&mFetchSize);
@@ -121,6 +208,48 @@ sbLocalDatabaseTreeView::Init(sbIMediaListView* aMediaListView,
   success = mDirtyRowCache.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
+  success = mSelectionList.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  // Determine the list type
+  PRBool isDistinct;
+  rv = mArray->GetIsDistinct(&isDistinct);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (isDistinct) {
+    mListType = eDistinct;
+  }
+  else {
+    nsAutoString baseTable;
+    rv = mArray->GetBaseTable(baseTable);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (baseTable.Equals(NS_LITERAL_STRING("media_items"))) {
+      mListType = eLibrary;
+    }
+    else {
+      mListType = eSimple;
+    }
+  }
+
+  // Grab the top level sort property from the bag
+  nsCOMPtr<nsIProperty> property;
+  rv = aCurrentSort->GetPropertyAt(0, getter_AddRefs(property));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = property->GetName(mCurrentSortProperty);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> value;
+  rv = property->GetValue(getter_AddRefs(value));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString stringValue;
+  rv = value->GetAsAString(stringValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mCurrentSortDirectionIsAscending = stringValue.Equals(NS_LITERAL_STRING("a"));
+
   return NS_OK;
 }
 
@@ -129,10 +258,20 @@ sbLocalDatabaseTreeView::Rebuild()
 {
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - Rebuild()", this));
 
-  // Invalidate our cache and force a row recount
-  nsresult rv = InvalidateCache();
+  nsresult rv;
+
+  // Clear the selection from the tree only if we don't have everything
+  // selected.  The selection will be resored when the cached pages are read
+  // back
+  if (mRealSelection && !mSelectionIsAll) {
+    mClearSelectionPending = PR_TRUE;
+  }
+
+  // Invalidate our cache
+  rv = InvalidateCache();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Force a row recount
   mCachedRowCountDirty = PR_TRUE;
   mCachedRowCountPending = PR_FALSE;
 
@@ -210,7 +349,7 @@ sbLocalDatabaseTreeView::GetPropertyBag(const nsAString& aGuid,
 
 nsresult
 sbLocalDatabaseTreeView::GetPageCachedStatus(PRUint32 aIndex,
-                                            PageCacheStatus* aStatus)
+                                             PageCacheStatus* aStatus)
 {
   PRUint32 cell = aIndex / mFetchSize;
   PRUint32 status;
@@ -226,7 +365,7 @@ sbLocalDatabaseTreeView::GetPageCachedStatus(PRUint32 aIndex,
 
 nsresult
 sbLocalDatabaseTreeView::SetPageCachedStatus(PRUint32 aIndex,
-                                            PageCacheStatus aStatus)
+                                             PageCacheStatus aStatus)
 {
   PRUint32 cell = aIndex / mFetchSize;
   PRBool success = mPageCacheStatus.Put(cell, (PRUint32) aStatus);
@@ -239,13 +378,215 @@ sbLocalDatabaseTreeView::SetPageCachedStatus(PRUint32 aIndex,
 }
 
 nsresult
+sbLocalDatabaseTreeView::InvalidateCache()
+{
+  // Copy the visible pages into our temporary dirty row cache so we have
+  // something to show the user while the tree is rebuilding
+  mDirtyRowCache.Clear();
+  if (mTreeBoxObject) {
+    PRInt32 first;
+    PRInt32 last;
+    nsresult rv = mTreeBoxObject->GetFirstVisibleRow(&first);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mTreeBoxObject->GetLastVisibleRow(&last);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (first >= 0 && last >= 0) {
+      for (PRUint32 row = first; row <= (PRUint32) last; row++) {
+        nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+        if (mRowCache.Get(row, getter_AddRefs(bag))) {
+          PRBool success = mDirtyRowCache.Put(row, bag);
+          NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+        }
+      }
+    }
+
+  }
+  mRowCache.Clear();
+  mPageCacheStatus.Clear();
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseTreeView::SaveSelectionList()
+{
+  // If the current selection is everything, don't save anything
+  if (mSelectionIsAll) {
+    return NS_OK;
+  }
+
+  nsresult rv = EnumerateSelection(SelectionListSavingEnumeratorCallback,
+                                   &mSelectionList);
+
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+nsresult
+sbLocalDatabaseTreeView::EnumerateSelection(sbSelectionEnumeratorCallbackFunc aFunc,
+                                            void* aUserData)
+{
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - EnumerateSelection()", this));
+
+  if (mRealSelection) {
+
+    // Iterate through the selection's ranges and store the unique identifier
+    // for each row in the selection hash table.  Note that we don't want
+    // to clear the selection list first as to keep items that were previously
+    // selected but were never re-selected by the background cache fill
+    PRInt32 rangeCount;
+    nsresult rv = mRealSelection->GetRangeCount(&rangeCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRInt32 i = 0; i < rangeCount; i++) {
+      PRInt32 min;
+      PRInt32 max;
+      rv = mRealSelection->GetRangeAt(i, &min, &max);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for (PRInt32 j = min; j <= max; j++) {
+
+        nsAutoString id;
+        rv = GetUniqueIdForRow((PRUint32) j, id);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsAutoString guid;
+        rv = mArray->GetByIndex(j, guid);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SaveSelectionList() - "
+               "saving %s from row %d guid %s",
+               this, NS_ConvertUTF16toUTF8(id).get(), j,
+               NS_ConvertUTF16toUTF8(guid).get()));
+
+        rv = aFunc(j, id, guid, aUserData);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseTreeView::GetUniqueIdForRow(PRUint32 aRow, nsAString& aId)
+{
+  nsresult rv;
+
+  switch(mListType) {
+    case eLibrary:
+      // If this is a library, the guid of the item is usable for the id
+      rv = mArray->GetGuidByIndex(aRow, aId);
+      NS_ENSURE_SUCCESS(rv, rv);
+    break;
+    case eSimple:
+      // If this is a simple media list, we use the ordinal as our unique
+      // identifier since there can be more than one of the same item in
+      // the list which causes duplicate guids
+      rv = mArray->GetOrdinalByIndex(aRow, aId);
+      NS_ENSURE_SUCCESS(rv, rv);
+    break;
+    case eDistinct:
+      // For distinct lists, the sort key works as a unique id
+      rv = mArray->GetSortPropertyValueByIndex(aRow, aId);
+      NS_ENSURE_SUCCESS(rv, rv);
+    break;
+  }
+
+  return NS_OK;
+}
+
+void
+sbLocalDatabaseTreeView::SetSelectionIsAll(PRBool aSelectionIsAll) {
+
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetSelectionIsAll(%d)",
+         this, aSelectionIsAll));
+
+  mSelectionIsAll = aSelectionIsAll;
+
+  // An all selection means everything in our selection list was implicitly
+  // selected so we can clear it
+  if (mSelectionIsAll) {
+    ClearSelectionList();
+  }
+
+}
+
+void
+sbLocalDatabaseTreeView::ClearSelectionList() {
+
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - ClearSelectionList()", this));
+
+  mSelectionList.Clear();
+}
+
+nsresult
+sbLocalDatabaseTreeView::UpdateColumnSortAttributes(const nsAString& aProperty,
+                                                    PRBool aDirection)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsITreeColumns> columns;
+  rv = mTreeBoxObject->GetColumns(getter_AddRefs(columns));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 count;
+  rv = columns->GetCount(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRInt32 i = 0; i < count; i++) {
+    nsCOMPtr<nsITreeColumn> column;
+    rv = columns->GetColumnAt(i, getter_AddRefs(column));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMElement> element;
+    rv = column->GetElement(getter_AddRefs(element));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString bind;
+    rv = element->GetAttribute(NS_LITERAL_STRING("bind"), bind);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (bind.Equals(aProperty)) {
+      rv = element->SetAttribute(NS_LITERAL_STRING("sortActive"),
+                                 NS_LITERAL_STRING("true"));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString direction;
+      if (aDirection) {
+        direction.AssignLiteral("ascending");
+      }
+      else {
+        direction.AssignLiteral("descending");
+      }
+      rv = element->SetAttribute(NS_LITERAL_STRING("sortDirection"),
+                                 direction);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = element->RemoveAttribute(NS_LITERAL_STRING("sortActive"));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = element->RemoveAttribute(NS_LITERAL_STRING("sortDirection"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+// sbILocalDatabaseTreeView
+NS_IMETHODIMP
 sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
 {
   nsresult rv;
 
   // If we are linked to a media list view, use its interfaces to manage
   // the sort
-  if (mMediaListView) {
+  if (mListType != eDistinct) {
     // TODO: Get the sort profile from the property manager, if any
     nsCOMPtr<sbIPropertyArray> sort =
       do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
@@ -268,45 +609,26 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
 
     rv = mArray->AddSort(aProperty, aDirection);
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-  rv = InvalidateCache();
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mTreeBoxObject) {
-    rv = mTreeBoxObject->Invalidate();
+    rv = mArray->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = Rebuild();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  rv = UpdateColumnSortAttributes(aProperty, aDirection);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-nsresult
-sbLocalDatabaseTreeView::InvalidateCache()
+// sbILocalDatabaseGUIDArrayListener
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnBeforeInvalidate()
 {
-  // Copy the visible pages into our temporary dirty row cache so we have
-  // something to show the user while the tree is rebuilding
-  mDirtyRowCache.Clear();
-  if (mTreeBoxObject) {
-    PRInt32 first;
-    PRInt32 last;
-    nsresult rv = mTreeBoxObject->GetFirstVisibleRow(&first);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mTreeBoxObject->GetLastVisibleRow(&last);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (first >= 0 && last >= 0) {
-      for (PRUint32 row = first; row <= (PRUint32) last; row++) {
-        sbILocalDatabaseResourcePropertyBag* bag;
-        if (mRowCache.Get(row, &bag)) {
-          PRBool success = mDirtyRowCache.Put(row, bag);
-          NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-        }
-      }
-    }
-
-  }
-  mRowCache.Clear();
-  mPageCacheStatus.Clear();
+  nsresult rv = SaveSelectionList();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -339,6 +661,13 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
 
   if (NS_SUCCEEDED(aResult) && !mCachedRowCountDirty) {
 
+    // If there is a clear selection pending, clear the selection
+    if (mClearSelectionPending) {
+      rv = mRealSelection->ClearSelection();
+      NS_ENSURE_SUCCESS(rv, rv);
+      mClearSelectionPending = PR_FALSE;
+    }
+
     // Now we know that the page this row is in has been fully cached by
     // the guid array, cache the entire page in our cache
     PRUint32 start = (aIndex / mFetchSize) * mFetchSize;
@@ -348,11 +677,16 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
     }
     PRUint32 length = end - start + 1;
 
+    // Suppress select events
+    rv = mRealSelection->SetSelectEventsSuppressed(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     // Allocate an array of the guids we want
     const PRUnichar** guids = new const PRUnichar*[length];
     for (PRUint32 i = 0; i < length; i++) {
+      PRUint32 row = i + start;
       nsAutoString guid;
-      rv = mArray->GetByIndex(i + start, guid);
+      rv = mArray->GetByIndex(row, guid);
       if (NS_FAILED(rv)) {
 
         // If this fails, this means that the underlying array has changed and
@@ -374,8 +708,33 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
         NS_WARNING("Array changed out from under us - need to make this better");
         return NS_OK;
       }
+
+      // Should this row be selected?
+      if (mSelectionList.Count() > 0) {
+        nsAutoString id;
+        rv = GetUniqueIdForRow(row, id);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsAutoString guid;
+        if (mSelectionList.Get(id, &guid)) {
+          TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetByIndex() - "
+                 "restoring selection %s at %d", this,
+                 NS_ConvertUTF16toUTF8(id).get(), row));
+
+          mSelectionList.Remove(id);
+          if (mRealSelection) {
+            rv = mRealSelection->RangedSelect(row, row, PR_TRUE);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+        }
+      }
+
       guids[i] = ToNewUnicode(guid);
     }
+
+    // Unsuppress select events
+    rv = mRealSelection->SetSelectEventsSuppressed(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     PRUint32 count = 0;
     sbILocalDatabaseResourcePropertyBag** bags = nsnull;
@@ -473,11 +832,47 @@ sbLocalDatabaseTreeView::GetPropertyForTreeColumn(nsITreeColumn* aTreeColumn,
   rv = aTreeColumn->GetElement(getter_AddRefs(element));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString bind;
   rv = element->GetAttribute(NS_LITERAL_STRING("bind"), aProperty);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseTreeView::GetTreeColumnForProperty(const nsAString& aProperty,
+                                                  nsITreeColumn** aTreeColumn)
+{
+  NS_ENSURE_ARG_POINTER(aTreeColumn);
+  NS_ENSURE_STATE(mTreeBoxObject);
+
+  nsCOMPtr<nsITreeColumns> columns;
+  nsresult rv = mTreeBoxObject->GetColumns(getter_AddRefs(columns));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 count;
+  rv = columns->GetCount(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRInt32 i = 0; i < count; i++) {
+    nsCOMPtr<nsITreeColumn> column;
+    rv = columns->GetColumnAt(i, getter_AddRefs(column));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMElement> element;
+    rv = column->GetElement(getter_AddRefs(element));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString bind;
+    rv = element->GetAttribute(NS_LITERAL_STRING("bind"), bind);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (bind.Equals(aProperty)) {
+      NS_ADDREF(*aTreeColumn = column);
+      return NS_OK;
+    }
+  }
+
+  return NS_ERROR_NOT_AVAILABLE;
 }
 
 NS_IMETHODIMP
@@ -524,8 +919,8 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
 
   // Check our local map cache of property bags and return the cell value if
   // we have it cached
-  sbILocalDatabaseResourcePropertyBag* bag;
-  if (mRowCache.Get(row, &bag)) {
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+  if (mRowCache.Get(row, getter_AddRefs(bag))) {
     rv = bag->GetProperty(bind, _retval);
     if(rv == NS_ERROR_ILLEGAL_VALUE) {
       _retval.Assign(EmptyString());
@@ -558,7 +953,10 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
 
       // If we already have a pending request, don't start another, just put
       // this new request on deck.  If there is already a next request on deck,
-      // clobber it and reset its page's cache status
+      // clobber it and reset its page's cache status.  The purpose of this is
+      // to prevent a lot of requests from getting stacked up if the user
+      // scrolls the list around a lot
+
       if (mGetByIndexAsyncPending) {
 
         if (mNextGetByIndexAsync > -1) {
@@ -571,6 +969,7 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
+
         rv = SetPageCachedStatus(row, ePending);
         NS_ENSURE_SUCCESS(rv, rv);
 
@@ -580,7 +979,7 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
       }
 
       // Try our dirty cache so we can show something
-      if (mDirtyRowCache.Get(row, &bag)) {
+      if (mDirtyRowCache.Get(row, getter_AddRefs(bag))) {
         rv = bag->GetProperty(bind, _retval);
         if(rv == NS_ERROR_ILLEGAL_VALUE) {
           _retval.Assign(EmptyString());
@@ -599,7 +998,7 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
     case ePending:
     {
       // Try our dirty cache so we can show something
-      if (mDirtyRowCache.Get(row, &bag)) {
+      if (mDirtyRowCache.Get(row, getter_AddRefs(bag))) {
         rv = bag->GetProperty(bind, _retval);
         if(rv == NS_ERROR_ILLEGAL_VALUE) {
           _retval.Assign(EmptyString());
@@ -641,7 +1040,15 @@ sbLocalDatabaseTreeView::SetSelection(nsITreeSelection* aSelection)
 {
   NS_ENSURE_ARG_POINTER(aSelection);
 
-  mSelection = aSelection;
+  // Wrap the selection given to us with our own proxy implementation so
+  // we can get useful notifications on how the selection is changing
+  mSelection = new sbLocalDatabaseTreeSelection(aSelection, this);
+  NS_ENSURE_TRUE(mSelection, NS_ERROR_OUT_OF_MEMORY);
+
+  // Keep a ref to the real selection so we can modify it without going
+  // through our proxy
+  mRealSelection = aSelection;
+
   return NS_OK;
 }
 
@@ -871,6 +1278,13 @@ sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
   // we can't NS_ENSURE_ARG_POINTER(tree)
 
   mTreeBoxObject = tree;
+
+  if (tree) {
+    nsresult rv = UpdateColumnSortAttributes(mCurrentSortProperty,
+                                             mCurrentSortDirectionIsAscending);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -883,7 +1297,9 @@ sbLocalDatabaseTreeView::ToggleOpenState(PRInt32 index)
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::SelectionChanged()
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SelectionChanged()", this));
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1151,6 +1567,753 @@ sbLocalDatabaseTreeView::GetObserver(sbIMediaListViewTreeViewObserver** aObserve
   NS_ENSURE_ARG_POINTER(aObserver);
 
   NS_IF_ADDREF(*aObserver = mObserver);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetSelectedMediaItems(nsISimpleEnumerator** aSelection)
+{
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetSelectedMediaItems()", this));
+
+  NS_ENSURE_ARG_POINTER(aSelection);
+
+  nsCOMPtr<sbIMediaList> list;
+  nsresult rv = mMediaListView->GetMediaList(getter_AddRefs(list));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> library;
+  rv = list->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If everything is selected, simply return an enumerator over our array
+  if (mSelectionIsAll) {
+    TRACE(("sbLocalDatabaseTreeView[0x%.8x] - "
+           "GetSelectedMediaItems() - all select", this));
+    // Clone the array so changes to the view do not affect the enumerator
+    nsCOMPtr<sbILocalDatabaseGUIDArray> array;
+    rv = mArray->Clone(getter_AddRefs(array));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    *aSelection = new sbIndexedGUIDArrayEnumerator(library, array);
+    NS_ENSURE_TRUE(*aSelection, NS_ERROR_OUT_OF_MEMORY);
+
+    NS_ADDREF(*aSelection);
+    return NS_OK;
+  }
+
+  // If our saved selection is empty, we know the index of every selected
+  // item, so just build the list and return an enumerator
+  if (mSelectionList.Count() == 0) {
+    TRACE(("sbLocalDatabaseTreeView[0x%.8x] - "
+           "GetSelectedMediaItems() - no saved selection", this));
+
+    nsAutoPtr<sbGUIDArrayToIndexedMediaItemEnumerator>
+      enumerator(new sbGUIDArrayToIndexedMediaItemEnumerator(library));
+    NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+    // Fill the enumerator with guids
+    rv = EnumerateSelection(SelectionToArrayEnumeratorCallback, enumerator);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ADDREF(*aSelection = enumerator);
+    enumerator.forget();
+    return NS_OK;
+  }
+
+  // There is no way to determine the index of the items in the saved selection
+  // list, so we need to synchronously (ew) force all the pages into cache
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - "
+         "GetSelectedMediaItems() - have saved selection", this));
+
+  // Get all the indexes from the selection
+  nsTHashtable<nsUint32HashKey> selectedIndexes;
+  PRBool success = selectedIndexes.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = EnumerateSelection(SelectionIndexEnumeratorCallback, &selectedIndexes);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Iterate through the enitre array synchronously, adding guids to the
+  // enumerator if they are either found in the selectedIndexes or our saved
+  // selection
+  PRUint32 length;
+  rv = mArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoPtr<sbGUIDArrayToIndexedMediaItemEnumerator>
+    enumerator(new sbGUIDArrayToIndexedMediaItemEnumerator(library));
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  PRUint32 count = 0;
+  for (PRUint32 i = 0; i < length; i++) {
+
+    if (selectedIndexes.GetEntry(i)) {
+      nsAutoString guid;
+      rv = mArray->GetByIndex(i, guid);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = enumerator->AddGuid(guid, i);
+      NS_ENSURE_SUCCESS(rv, rv);
+      count++;
+    }
+    else {
+      nsAutoString id;
+      rv = GetUniqueIdForRow((PRUint32) i, id);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString guid;
+      if (mSelectionList.Get(id, &guid)) {
+        rv = enumerator->AddGuid(guid, i);
+        NS_ENSURE_SUCCESS(rv, rv);
+        count++;
+      }
+    }
+  }
+
+  NS_ADDREF(*aSelection = enumerator);
+  enumerator.forget();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetSelectionLength(PRUint32* aSelectionLength)
+{
+  NS_ENSURE_ARG_POINTER(aSelectionLength);
+
+  nsresult rv;
+
+  if (mSelectionIsAll) {
+    rv = mArray->GetLength(aSelectionLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // Add the saved selection list with the number of selected rows
+    PRUint32 length = mSelectionList.Count();
+
+    PRInt32 rangeCount;
+    nsresult rv = mRealSelection->GetRangeCount(&rangeCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRInt32 i = 0; i < rangeCount; i++) {
+      PRInt32 min;
+      PRInt32 max;
+      rv = mRealSelection->GetRangeAt(i, &min, &max);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      length += max - min + 1;
+    }
+
+    *aSelectionLength = length;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetCurrentMediaItem(sbIMediaItem** aCurrentMediaItem)
+{
+  NS_ENSURE_ARG_POINTER(aCurrentMediaItem);
+  NS_ENSURE_STATE(mRealSelection);
+
+  PRInt32 currentIndex;
+  nsresult rv = mRealSelection->GetCurrentIndex(&currentIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If there is no current index, return null
+  if (currentIndex < 0) {
+    *aCurrentMediaItem = nsnull;
+    return NS_OK;
+  }
+
+  nsAutoString guid;
+  rv = mArray->GetByIndex(currentIndex, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> list;
+  rv = mMediaListView->GetMediaList(getter_AddRefs(list));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = list->GetItemByGuid(guid, aCurrentMediaItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+// nsIClassInfo
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetInterfaces(PRUint32* count, nsIID*** array)
+{
+  return NS_CI_INTERFACE_GETTER_NAME(sbLocalDatabaseTreeView)(count, array);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetHelperForLanguage(PRUint32 language,
+                                              nsISupports** _retval)
+{
+  *_retval = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetContractID(char** aContractID)
+{
+  *aContractID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetClassDescription(char** aClassDescription)
+{
+  *aClassDescription = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetClassID(nsCID** aClassID)
+{
+  *aClassID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetImplementationLanguage(PRUint32* aImplementationLanguage)
+{
+  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetFlags(PRUint32 *aFlags)
+{
+  *aFlags = 0;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
+{
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+// nsITreeSelection
+//
+// Note that this is mostly a proxy to our inner mSelection.  It is used to
+// to get a detailed look at how the user is changing the selection.  We are
+// only concerned if the user changes the selection in such a way that would
+// affect our selection list, that is, the list of selected items that have
+// not been pulled into the page cache.
+
+NS_IMPL_ISUPPORTS1(sbLocalDatabaseTreeSelection,
+                   nsITreeSelection)
+
+sbLocalDatabaseTreeSelection::sbLocalDatabaseTreeSelection(nsITreeSelection* aSelection,
+                                                           sbLocalDatabaseTreeView* aTreeView) :
+  mSelection(aSelection),
+  mTreeView(aTreeView)
+{
+  NS_ASSERTION(aSelection && aTreeView, "Null passed to ctor");
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::GetTree(nsITreeBoxObject** aTree)
+{
+  return mSelection->GetTree(aTree);
+}
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::SetTree(nsITreeBoxObject* aTree)
+{
+  return mSelection->SetTree(aTree);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::GetSingle(PRBool* aSingle)
+{
+  return mSelection->GetSingle(aSingle);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::GetCount(PRInt32* aCount)
+{
+  return mSelection->GetCount(aCount);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::IsSelected(PRInt32 index, PRBool* _retval)
+{
+  return mSelection->IsSelected(index, _retval);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::Select(PRInt32 index)
+{
+  TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - Select(%d)", this, index));
+
+  nsresult rv = mSelection->Select(index);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // This method causes all other rows to be de-selected, so we need to clear
+  // the selection list
+  mTreeView->ClearSelectionList();
+  mTreeView->SetSelectionIsAll(PR_FALSE);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::TimedSelect(PRInt32 index, PRInt32 delay)
+{
+  TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - TimedSelect(%d, %d)",
+         this, index, delay));
+
+  nsresult rv = mSelection->TimedSelect(index, delay);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // This method calls Select() internally, so treat it the same
+  mTreeView->ClearSelectionList();
+  mTreeView->SetSelectionIsAll(PR_FALSE);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::ToggleSelect(PRInt32 index)
+{
+  TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - ToggleSelect(%d)",
+         this, index));
+
+  nsresult rv = mSelection->ToggleSelect(index);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // This method could have caused all rows to be selected, so check
+  PRBool dummy;
+  rv = CheckIsSelectAll(&dummy);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::RangedSelect(PRInt32 startIndex,
+                                           PRInt32 endIndex,
+                                           PRBool augment)
+{
+  TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - RangedSelect(%d, %d, %d)",
+         this, startIndex, endIndex, augment));
+
+  nsresult rv = mSelection->RangedSelect(startIndex, endIndex, augment);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the ranged select caused a select all, just tell our tree and return
+  PRBool isSelectAll;
+  rv = CheckIsSelectAll(&isSelectAll);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (isSelectAll) {
+    return NS_OK;
+  }
+
+  // If we are not augmenting the current selection (which means we have an
+  // entirely new selection), clear the selection list
+  if (!augment) {
+    mTreeView->ClearSelectionList();
+    return NS_OK;
+  }
+
+  // A startIndex of -1 has some special meaning, see:
+  // http://mxr.mozilla.org/seamonkey/source/layout/xul/base/src/tree/src/nsTreeSelection.cpp#445
+  if (startIndex == -1) {
+    PRInt32 shiftSelectPivot;
+    rv = mSelection->GetShiftSelectPivot(&shiftSelectPivot);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (shiftSelectPivot != -1) {
+      startIndex = shiftSelectPivot;
+    }
+    else {
+      PRInt32 currentIndex;
+      rv = mSelection->GetCurrentIndex(&currentIndex);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (currentIndex != -1) {
+        startIndex = currentIndex;
+      }
+      else {
+        startIndex = endIndex;
+      }
+    }
+  }
+
+  // Check to see if the selection range includes pages that we have not cached
+  // yet.
+  PRBool includesNotCachedPage = RangeIncludesNotCachedPage(startIndex,
+                                                            endIndex);
+
+  // If the selection range does not include any non-cached pages, we know it
+  // does not affect our selection list, so just return.  We also know there
+  // can't be any more non-cached pages after this range if the end of the
+  // range is at the end of the list.
+  if (!includesNotCachedPage ||
+      ((PRUint32) endIndex + 1) == mTreeView->mCachedRowCount) {
+    TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - RangedSelect() - "
+           "Ranged select over cached pages", this));
+    return NS_OK;
+  }
+
+  // Now see if there are any other non-cached pages after the end of the
+  // range
+  includesNotCachedPage = RangeIncludesNotCachedPage(endIndex + 1,
+                                                     mTreeView->mCachedRowCount - 1);
+
+  // If there are no more non-cached pages in the list, we know that the
+  // ranged selection contains our entire selection list, so we can clear it
+  if (!includesNotCachedPage) {
+    mTreeView->ClearSelectionList();
+    TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - RangedSelect() - "
+           "Ranged select over all non-cached pages", this));
+    return NS_OK;
+  }
+
+  // This is where things get a little hairy.  We need to manually knock out
+  // the items that were selected by this selection range from the selection
+  // list
+  for (PRUint32 i = startIndex; i <= (PRUint32) endIndex; i++) {
+    nsAutoString id;
+    rv = mTreeView->GetUniqueIdForRow(i, id);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString guid;
+    if (mTreeView->mSelectionList.Get(id, &guid)) {
+      mTreeView->mSelectionList.Remove(id);
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::ClearRange(PRInt32 startIndex,
+                                         PRInt32 endIndex)
+{
+  TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - ClearRange(%d, %d)",
+         this, startIndex, endIndex));
+
+  nsresult rv = mSelection->ClearRange(startIndex, endIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // This would affect our selection list, but the xul tree binding does not
+  // use this method so we won't bother implementing it for now.
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::ClearSelection()
+{
+  TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - ClearSelection()", this));
+
+  nsresult rv = mSelection->ClearSelection();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Simple clear the selection list when the entire selection is cleared
+  mTreeView->ClearSelectionList();
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::InvertSelection()
+{
+  // This would affect our selection list, but since the moz tree selection
+  // does not implement it, no worries!
+  return mSelection->InvertSelection();
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::SelectAll()
+{
+  TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - SelectAll()", this));
+
+  nsresult rv = mSelection->SelectAll();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Simply tell the view that everything was selected
+  mTreeView->SetSelectionIsAll(PR_TRUE);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::GetRangeCount(PRInt32* _retval)
+{
+  return mSelection->GetRangeCount(_retval);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::GetRangeAt(PRInt32 i,
+                                         PRInt32* min,
+                                         PRInt32* max)
+{
+  return mSelection->GetRangeAt(i, min, max);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::InvalidateSelection()
+{
+  return mSelection->InvalidateSelection();
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::AdjustSelection(PRInt32 index, PRInt32 count)
+{
+  TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - AdjustSelection(%d, %d)",
+         this, index, count));
+
+  nsresult rv = mSelection->AdjustSelection(index, count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // This would affect our selection list, but the xul tree binding does not
+  // use this method so we won't bother implementing it for now.
+  // XXX: Not true, I think it gets called when the tree grows?
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::GetSelectEventsSuppressed(PRBool* aSelectEventsSuppressed)
+{
+  return mSelection->GetSelectEventsSuppressed(aSelectEventsSuppressed);
+}
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::SetSelectEventsSuppressed(PRBool aSelectEventsSuppressed)
+{
+  return mSelection->SetSelectEventsSuppressed(aSelectEventsSuppressed);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::GetCurrentIndex(PRInt32* aCurrentIndex)
+{
+  return mSelection->GetCurrentIndex(aCurrentIndex);
+}
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::SetCurrentIndex(PRInt32 aCurrentIndex)
+{
+  return mSelection->SetCurrentIndex(aCurrentIndex);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::GetCurrentColumn(nsITreeColumn** aCurrentColumn)
+{
+  return mSelection->GetCurrentColumn(aCurrentColumn);
+}
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::SetCurrentColumn(nsITreeColumn* aCurrentColumn)
+{
+  return mSelection->SetCurrentColumn(aCurrentColumn);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeSelection::GetShiftSelectPivot(PRInt32* aShiftSelectPivot)
+{
+  return mSelection->GetShiftSelectPivot(aShiftSelectPivot);
+}
+
+nsresult
+sbLocalDatabaseTreeSelection::CheckIsSelectAll(PRBool* _retval)
+{
+  PRInt32 rangeCount;
+  nsresult rv = mSelection->GetRangeCount(&rangeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isSelectAll = PR_TRUE;
+  if (rangeCount > 0) {
+    PRInt32 nextRow = 0;
+    for (PRInt32 i = 0; isSelectAll && i < rangeCount; i++) {
+      PRInt32 min;
+      PRInt32 max;
+      rv = mSelection->GetRangeAt(i, &min, &max);
+      NS_ENSURE_SUCCESS(rv, rv);
+  
+      for (PRInt32 j = min; j <= max; j++) {
+        if (j != nextRow) {
+          isSelectAll = PR_FALSE;
+        }
+        nextRow++;
+      }
+    }
+
+    if ((PRUint32) nextRow != mTreeView->mCachedRowCount) {
+      isSelectAll = PR_FALSE;
+    }
+
+  }
+  else {
+    isSelectAll = PR_FALSE;
+  }
+
+  mTreeView->SetSelectionIsAll(isSelectAll);
+  *_retval = isSelectAll;
+
+  return NS_OK;
+}
+
+PRBool
+sbLocalDatabaseTreeSelection::RangeIncludesNotCachedPage(PRUint32 startIndex,
+                                                         PRUint32 endIndex)
+{
+  PRUint32 startPage = startIndex / mTreeView->mFetchSize;
+  PRUint32 endPage   = endIndex   / mTreeView->mFetchSize;
+  PRBool includesNotCachedPage = PR_FALSE;
+  for (PRUint32 i = startPage; !includesNotCachedPage && i <= endPage; i++) {
+
+    // A page is not cached if it is not found in page cache status, or if its
+    // status is explicitly set to eNotCached
+    PRUint32 status;
+    if (!mTreeView->mPageCacheStatus.Get(i, &status) ||
+        status == sbLocalDatabaseTreeView::eNotCached) {
+      includesNotCachedPage = PR_TRUE;
+    }
+  }
+
+  return includesNotCachedPage;
+}
+
+NS_IMPL_ISUPPORTS1(sbGUIDArrayToIndexedMediaItemEnumerator, nsISimpleEnumerator)
+
+/**
+ * \class sbGuidArrayToMediaItemEnumerator
+ *
+ * \brief A "pessimistic" enumerator that always looks ahead to make sure
+ *        a next media item is available.
+ */
+sbGUIDArrayToIndexedMediaItemEnumerator::sbGUIDArrayToIndexedMediaItemEnumerator(sbILibrary* aLibrary) :
+  mInitalized(PR_FALSE),
+  mLibrary(aLibrary),
+  mNextIndex(0),
+  mNextItemIndex(0)
+{
+}
+
+nsresult
+sbGUIDArrayToIndexedMediaItemEnumerator::AddGuid(const nsAString& aGuid,
+                                                 PRUint32 aIndex)
+{
+  Item* item = mItems.AppendElement();
+  NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
+
+  item->index = aIndex;
+  item->guid = aGuid;
+
+  return NS_OK;
+}
+
+nsresult
+sbGUIDArrayToIndexedMediaItemEnumerator::GetNextItem()
+{
+  if (!mInitalized) {
+    mInitalized = PR_TRUE;
+  }
+
+  mNextItem = nsnull;
+  PRUint32 length = mItems.Length();
+
+  while (mNextIndex < length) {
+    nsresult rv = mLibrary->GetMediaItem(mItems[mNextIndex].guid,
+                                         getter_AddRefs(mNextItem));
+    mNextItemIndex = mItems[mNextIndex].index;
+    mNextIndex++;
+    if (NS_SUCCEEDED(rv)) {
+      return NS_OK;
+    }
+  }
+
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+NS_IMETHODIMP
+sbGUIDArrayToIndexedMediaItemEnumerator::HasMoreElements(PRBool *_retval)
+{
+  if (!mInitalized) {
+    GetNextItem();
+  }
+
+  *_retval = mNextItem != nsnull;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGUIDArrayToIndexedMediaItemEnumerator::GetNext(nsISupports **_retval)
+{
+  if (!mInitalized) {
+    GetNextItem();
+  }
+
+  if (!mNextItem) {
+    return NS_ERROR_FAILURE;
+  }
+
+  nsAutoPtr<sbLocalDatabaseIndexedMediaItem> indexedItem
+    (new sbLocalDatabaseIndexedMediaItem(mNextItemIndex, mNextItem));
+  NS_ENSURE_TRUE(indexedItem, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<nsISupports> supports =
+    NS_ISUPPORTS_CAST(sbIIndexedMediaItem*, indexedItem);
+  NS_ENSURE_STATE(supports);
+
+  NS_ADDREF(*_retval = supports);
+  indexedItem.forget();
+
+  GetNextItem();
+
+  return NS_OK;
+}
+
+NS_IMPL_ISUPPORTS1(sbIndexedGUIDArrayEnumerator, nsISimpleEnumerator)
+
+sbIndexedGUIDArrayEnumerator::sbIndexedGUIDArrayEnumerator(sbILibrary* aLibrary,
+                                                           sbILocalDatabaseGUIDArray* aArray) :
+  mLibrary(aLibrary),
+  mArray(aArray),
+  mNextIndex(0)
+{
+}
+
+NS_IMETHODIMP
+sbIndexedGUIDArrayEnumerator::HasMoreElements(PRBool *_retval)
+{
+  nsresult rv;
+
+  PRUint32 length;
+  rv = mArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = mNextIndex < length;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbIndexedGUIDArrayEnumerator::GetNext(nsISupports **_retval)
+{
+  nsresult rv;
+
+  nsAutoString guid;
+  rv = mArray->GetByIndex(mNextIndex, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoPtr<sbLocalDatabaseIndexedMediaItem> indexedItem
+    (new sbLocalDatabaseIndexedMediaItem(mNextIndex, item));
+  NS_ENSURE_TRUE(indexedItem, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<nsISupports> supports =
+    NS_ISUPPORTS_CAST(sbIIndexedMediaItem*, indexedItem);
+  NS_ENSURE_STATE(supports);
+
+  NS_ADDREF(*_retval = supports);
+  indexedItem.forget();
+
+  mNextIndex++;
   return NS_OK;
 }
 

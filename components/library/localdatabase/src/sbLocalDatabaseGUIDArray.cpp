@@ -40,6 +40,7 @@
 #include <sbSQLBuilderCID.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
+#include <sbILibrary.h>
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 #include <sbTArrayStringEnumerator.h>
@@ -199,6 +200,20 @@ sbLocalDatabaseGUIDArray::SetIsDistinct(PRBool aIsDistinct)
 {
   mIsDistinct = aIsDistinct;
   return Invalidate();
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetListener(sbILocalDatabaseGUIDArrayListener** aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+  NS_IF_ADDREF(*aListener = mListener);
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetListener(sbILocalDatabaseGUIDArrayListener* aListener)
+{
+  mListener = aListener;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -388,6 +403,10 @@ sbLocalDatabaseGUIDArray::Invalidate()
 {
   if (mValid == PR_FALSE) {
     return NS_OK;
+  }
+
+  if (mListener) {
+    mListener->OnBeforeInvalidate();
   }
 
   PRUint32 len = mCache.Length();
@@ -1555,7 +1574,8 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
    * really bad.  Fill the rest in so we don't crash
    */
   if (rowCount < aCount) {
-    char* message = PR_smprintf("Did not get the requested number of rows, requested %d got %d", aCount, rowCount);
+    char* message = PR_smprintf("Did not get the requested number of rows, "
+                                "requested %d got %d", aCount, rowCount);
     NS_WARNING(message);
     PR_smprintf_free(message);
     for (PRUint32 i = 0; i < aCount - rowCount; i++) {
@@ -1928,6 +1948,16 @@ NS_IMPL_ISUPPORTS1(sbGUIDArrayEnumerator, nsISimpleEnumerator)
 
 sbGUIDArrayEnumerator::sbGUIDArrayEnumerator(sbILocalDatabaseLibrary* aLibrary,
                                              sbILocalDatabaseGUIDArray* aArray) :
+  mArray(aArray),
+  mNextIndex(0)
+{
+  nsresult rv;
+  mLibrary = do_QueryInterface(aLibrary, &rv);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't QI to sbILibrary");
+}
+
+sbGUIDArrayEnumerator::sbGUIDArrayEnumerator(sbILibrary* aLibrary,
+                                             sbILocalDatabaseGUIDArray* aArray) :
   mLibrary(aLibrary),
   mArray(aArray),
   mNextIndex(0)
@@ -1960,13 +1990,55 @@ sbGUIDArrayEnumerator::GetNext(nsISupports **_retval)
   rv = mArray->GetByIndex(mNextIndex, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<sbLocalDatabaseMediaItem> item(new sbLocalDatabaseMediaItem());
-  NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
+  nsCOMPtr<sbIMediaItem> item;
+  rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = item->Init(mLibrary, guid);
+  nsCOMPtr<nsISupports> supports = do_QueryInterface(item, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = supports);
+
+  mNextIndex++;
+  return NS_OK;
+}
+
+NS_IMPL_ISUPPORTS1(sbGUIDArrayStringEnumerator, nsIStringEnumerator)
+
+sbGUIDArrayStringEnumerator::sbGUIDArrayStringEnumerator(sbILocalDatabaseGUIDArray* aArray) :
+  mArray(aArray),
+  mNextIndex(0)
+{
+  NS_ASSERTION(aArray, "Null value passed to ctor");
+}
+
+sbGUIDArrayStringEnumerator::~sbGUIDArrayStringEnumerator()
+{
+}
+
+NS_IMETHODIMP
+sbGUIDArrayStringEnumerator::HasMore(PRBool *_retval)
+{
+  nsresult rv;
+
+  PRUint32 length;
+  rv = mArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = mNextIndex < length;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGUIDArrayStringEnumerator::GetNext(nsAString& _retval)
+{
+  nsresult rv;
+
+  rv = mArray->GetByIndex(mNextIndex, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mNextIndex++;
-  NS_ADDREF(*_retval = NS_ISUPPORTS_CAST(sbIMediaItem*, item.forget()));
+
   return NS_OK;
 }
+

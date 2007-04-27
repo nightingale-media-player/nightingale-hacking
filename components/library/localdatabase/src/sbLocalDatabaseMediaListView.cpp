@@ -185,6 +185,13 @@ sbLocalDatabaseMediaListView::Init()
   rv = mMediaList->AddListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Set the default sort as our view sort
+  mViewSort = do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mViewSort->AppendProperty(mDefaultSortProperty, NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -558,16 +565,9 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListView::GetCurrentSort(sbIPropertyArray** aCurrentSort)
 {
   NS_ENSURE_ARG_POINTER(aCurrentSort);
-
-  nsresult rv;
-
-  if (!mViewSort) {
-    mViewSort = do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  NS_ENSURE_STATE(mViewSort);
 
   NS_ADDREF(*aCurrentSort = mViewSort);
-
   return NS_OK;
 }
 
@@ -636,7 +636,7 @@ sbLocalDatabaseMediaListView::OnBeforeItemRemoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnAfterItemRemoved(sbIMediaList* aMediaList,
-                                            sbIMediaItem* aMediaItem)
+                                                 sbIMediaItem* aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);

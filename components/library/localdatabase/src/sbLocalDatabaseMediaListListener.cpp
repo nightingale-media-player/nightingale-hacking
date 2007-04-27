@@ -176,7 +176,7 @@ sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(sbIMediaList*
  */
 void
 sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(sbIMediaList* aList,
-                                                             sbIMediaItem* aItem)
+                                                                  sbIMediaItem* aItem)
 {
   NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
                "You haven't called Init yet!");
@@ -320,8 +320,8 @@ sbLocalDatabaseMediaListListener::BeforeItemRemovedCallback(nsISupportsHashKey::
  */
 PLDHashOperator PR_CALLBACK
 sbLocalDatabaseMediaListListener::AfterItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
-                                                      sbIMediaListListener* aEntry,
-                                                      void* aUserData)
+                                                           sbIMediaListListener* aEntry,
+                                                           void* aUserData)
 {
   NS_ASSERTION(aKey && aEntry, "Nulls in the hash table!");
 

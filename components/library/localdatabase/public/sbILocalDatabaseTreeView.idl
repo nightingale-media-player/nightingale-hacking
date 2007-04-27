@@ -30,6 +30,7 @@
  */
 
 #include "nsISupports.idl"
+interface nsIStringEnumerator;
 
 /**
 * \interface sbILocalDatabaseTreeView
@@ -37,21 +38,6 @@
 [scriptable, uuid(c1e4e564-8e8d-4052-b4c2-7f4716061ffb)]
 interface sbILocalDatabaseTreeView : nsISupports
 {
-  /**
-   * \brief Calculates the first row index based on a series of keystrokes.
-   *
-   * This method helps optimize the behavior of the tree view. When keyboard
-   * input occurs we want to select the next row that matches the keys that
-   * were pressed.
-   *
-   * \param aKeyString - The accumulated keystrokes to be matched.
-   * \param aStartFrom - The index from which to start searching
-   *
-   * \return The index of the next row that matches the keystrokes. -1 if the
-   *         keystrokes do not match any row. The returned row index may be
-   *         equal to the value passed in to aStartFrom.
-   */
-  long getNextRowIndexForKeyNavigation(in AString aKeyString,
-                                       in unsigned long aStartFrom);
+  void setSort(in AString aProperty, in boolean aDirection);
 };
 
