@@ -76,6 +76,26 @@ function createNewLibrary(databaseGuid, databaseLocation) {
   return library;
 }
 
+function getPlatform() {
+  var platform;
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    platform = sysInfo.getProperty("name");                                          
+  }
+  catch (e) {
+    dump("System-info not available, trying the user agent string.\n");
+    var user_agent = navigator.userAgent;
+    if (user_agent.indexOf("Windows") != -1)
+      platform = "Windows_NT";
+    else if (user_agent.indexOf("Mac OS X") != -1)
+      platform = "Darwin";
+    else if (user_agent.indexOf("Linux") != -1)
+      platform = "Linux";
+  }
+  return platform;
+}
 
 function newAppRelativeFile( path ) {
   var nodes = path.split("/");
@@ -83,6 +103,10 @@ function newAppRelativeFile( path ) {
                 getService(Ci.nsIProperties).
                 get("XREExeF", Ci.nsIFile); // Path to the executable
   file = file.parent; // Path to the executable folder
+  
+  if (getPlatform() == "Darwin")
+    file = file.parent.append( "Resources" ); // Navigate the lame OSX bundle folder system
+  
   for ( var i = 0, end = nodes.length; i < end; i++ )
   {
     file.append( nodes[ i ] );
