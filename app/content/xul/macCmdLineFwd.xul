@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="mac_cmdline_forward" windowtype="Songbird:MacCmdLineFwd"
+        title="Hidden" width="0" height="0" >
+
+  <script><![CDATA[ 
+    const PREFS_SERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
+    const WNDMEDIATOR_SERVICE_CONTRACTID = "@mozilla.org/appshell/window-mediator;1";
+    const CMDLINEHANDLER_SERVICE_CONTRACTID = "@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird";
+    const Ci = Components.interfaces;
+
+    function getPref(aFunc, aPreference, aDefaultValue) {
+      var prefs = 
+        Components.classes[PREFS_SERVICE_CONTRACTID].getService(Ci.nsIPrefBranch2);
+      try {
+        return prefs[aFunc](aPreference);
+      }
+      catch (e) { }
+      return aDefaultValue;
+    }
+
+    function selectMainWindowAndClose() {
+      window.removeEventListener("load", selectMainWindowAndClose, false);
+      var singletonWindowType = getPref("getCharPref", "toolkit.singletonWindowType", "");
+      var windowMediator = Components.classes[WNDMEDIATOR_SERVICE_CONTRACTID].getService(Ci.nsIWindowMediator);
+      var win = windowMediator.getMostRecentWindow(singletonWindowType);
+      win.focus();
+      window.close();
+    }
+
+    if (window.arguments && window.arguments[0]) {
+      var handler = Components.classes[CMDLINEHANDLER_SERVICE_CONTRACTID].getService(Ci.nsICommandLineHandler);
+      handler.QueryInterface(Ci.sbICommandLineManager).handleURL(window.arguments[0]);
+    } 
+    window.addEventListener("load", selectMainWindowAndClose, false);
+
+  ]]></script>
+
+</window>
+
