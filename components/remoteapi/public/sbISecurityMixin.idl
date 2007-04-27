@@ -54,9 +54,8 @@ interface sbISecurityMixin : nsISupports
    */
   void init(in sbISecurityAggregator aOuter,
             [const, array, size_is(aInterfacesLength)] in nsIIDPtr aInterfacesArray, in unsigned long aInterfacesLength,
-            [const, array, size_is(aMethodsLength)] in wstring aMethodsArray, in unsigned long aMethodsLength,
-            [const, array, size_is(aRPropsLength)] in wstring aRPropsArray, in unsigned long aRPropsLength,
-            [const, array, size_is(aWPropsLength)] in wstring aWPropsArray, in unsigned long aWPropsLength);
-
+            [const, array, size_is(aMethodsLength)] in string aMethodsArray, in unsigned long aMethodsLength,
+            [const, array, size_is(aRPropsLength)] in string aRPropsArray, in unsigned long aRPropsLength,
+            [const, array, size_is(aWPropsLength)] in string aWPropsArray, in unsigned long aWPropsLength);
 };
 

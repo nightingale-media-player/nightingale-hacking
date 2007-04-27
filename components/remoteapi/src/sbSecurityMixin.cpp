@@ -27,23 +27,24 @@
 #include "sbSecurityMixin.h"
 #include <sbTArrayStringEnumerator.h>
 
-#include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIConsoleService.h>
-#include <nsIGenericFactory.h>
 #include <nsIPermissionManager.h>
+#include <nsIPrefBranch.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIScriptSecurityManager.h>
-#include <nsIServiceManager.h>
-#include <nsIURI.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
 
+#define PERM_TYPE_CONTROLS "rapi.controls"
+#define PERM_TYPE_BINDING  "rapi.binding"
+#define PERM_TYPE_METADATA "rapi.metadata"
+
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemotePlayer:5
+ *   NSPR_LOG_MODULES=sbSecurityMixin:5
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gLibraryLog = nsnull;
@@ -54,17 +55,20 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 
 static NS_DEFINE_CID(kSecurityMixinCID, SONGBIRD_SECURITYMIXIN_CID);
 
-NS_DECL_CI_INTERFACE_GETTER(sbSecurityMixin)
 NS_IMPL_ISUPPORTS3(sbSecurityMixin,
-                   nsISecurityCheckedComponent,
                    nsIClassInfo,
+                   nsISecurityCheckedComponent,
                    sbISecurityMixin)
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbSecurityMixin,
+                             nsISecurityCheckedComponent,
+                             sbISecurityMixin)
 
 sbSecurityMixin::sbSecurityMixin() : mInterfacesCount(0)
 {
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
-    gLibraryLog = PR_NewLogModule("sbRemotePlayer");
+    gLibraryLog = PR_NewLogModule("sbSecurityMixin");
   }
 #endif
 }
@@ -86,31 +90,33 @@ sbSecurityMixin::~sbSecurityMixin()
 
 NS_IMETHODIMP
 sbSecurityMixin::Init(sbISecurityAggregator *aOuter,
-                      const nsIID** aInterfacesArray, PRUint32 aInterfacesLength,
-                      const PRUnichar **aMethodsArray, PRUint32 aMethodsLength,
-                      const PRUnichar **aRPropsArray, PRUint32 aRPropsLength,
-                      const PRUnichar **aWPropsArray, PRUint32 aWPropsLength)
+                      const nsIID **aInterfacesArray, PRUint32 aInterfacesArrayLength,
+                      const char **aMethodsArray, PRUint32 aMethodsArrayLength,
+                      const char **aRPropsArray, PRUint32 aRPropsArrayLength,
+                      const char **aWPropsArray, PRUint32 aWPropsArrayLength)
 {
-  NS_ENSURE_ARG(aOuter);
+  NS_ENSURE_ARG_POINTER(aOuter);
 
   mOuter = aOuter; // no refcount
 
   // do interfaces last so we know when to free the allocation there
-  if ( NS_FAILED(CopyStrArray(aMethodsLength, aMethodsArray, &mMethods)) ||
-       NS_FAILED(CopyStrArray(aRPropsLength, aRPropsArray, &mRProperties)) ||
-       NS_FAILED(CopyStrArray(aWPropsLength, aWPropsArray, &mWProperties)) ||
-       NS_FAILED(CopyIIDArray( aInterfacesLength, aInterfacesArray, &mInterfaces)))
+  if ( NS_FAILED(CopyStrArray(aMethodsArrayLength, aMethodsArray, &mMethods)) ||
+       NS_FAILED(CopyStrArray(aRPropsArrayLength, aRPropsArray, &mRProperties)) ||
+       NS_FAILED(CopyStrArray(aWPropsArrayLength, aWPropsArray, &mWProperties)) ||
+       NS_FAILED(CopyIIDArray(aInterfacesArrayLength,
+                              aInterfacesArray,
+                              &mInterfaces)) )
     return NS_ERROR_OUT_OF_MEMORY;
 
   // set this only if we've succeeded
-  mInterfacesCount = aInterfacesLength;
+  mInterfacesCount = aInterfacesArrayLength;
 
   return NS_OK;
 }
 
 // ---------------------------------------------------------------------------
 //
-//                        nsISecurityCheckedComponent
+//                      nsISecurityCheckedComponent (nsISCC)
 //
 // ---------------------------------------------------------------------------
 
@@ -118,8 +124,8 @@ NS_IMETHODIMP
 sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
 {
   LOG(("sbSecurityMixin::CanCreateWrapper()"));
-  NS_ENSURE_ARG(aIID);
-  NS_ENSURE_ARG(_retval);
+  NS_ENSURE_ARG_POINTER(aIID);
+  NS_ENSURE_ARG_POINTER(_retval);
 
   if (!mOuter) {
     LOG(("sbSecurityMixin::CanCreateWrapper() - ERROR, no outer"));
@@ -127,6 +133,7 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
     return NS_OK;
   }
 
+  // Make sure the interface requested is one of the approved interfaces
   PRBool canCreate = PR_FALSE;
   for ( PRUint32 index = 0; index < mInterfacesCount; index++ ) {
     const nsIID* ifaceIID = mInterfaces[index];
@@ -135,92 +142,61 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
       break;
     }
   }
- 
-  if (canCreate) { 
-    LOG(( "sbSecurityMixin::CanCreateWrapper() - GRANTED" ));
-    *_retval = xpc_CloneAllAccess();
-  } else {
-    LOG(( "sbSecurityMixin::CanCreateWrapper() - DENIED" ));
+  if (!canCreate) { 
+    LOG(( "sbSecurityMixin::CanCreateWrapper() - DENIED, bad interface" ));
     *_retval = nsnull;
+    return NS_OK;
   }
 
-  return NS_OK;
-
-/*  XXXredfive - this code will get turned on when preferences lands
-
-  // This is a block of code that will check the preferences system to make
-  //   sure the property getting access is cleared for this domain.
-
-  // Get the current domain.
-  nsCOMPtr<nsIScriptSecurityManager> secman(do_GetService(NS_SCRIPTSECURITYMANAGER_CONTRACTID));
-  nsCOMPtr<nsIPrincipal> principal;
-  secman->GetSubjectPrincipal(getter_AddRefs(principal));
+  // Get the codebase of the current page
   nsCOMPtr<nsIURI> codebase;
-  principal->GetURI(getter_AddRefs(codebase));
+  GetCodebase( getter_AddRefs(codebase) );
 
-  // Check the permission manager for permission for the domain
-  nsCOMPtr<nsIPermissionManager> permMgr (do_GetService(NS_PERMISSIONMANAGER_CONTRACTID));
-  PRUint32 permissions = nsIPermissionManager::UNKNOWN_ACTION;
-
-  permMgr->TestPermission(codebase, "create-wrapper", &permissions);
-
-  if (permissions == nsIPermissionManager::ALLOW_ACTION) {
+  // Do this directly opposed to how it is done in CanCallMethod et al. because
+  //   if ANY of these are allowed we need to let the object get created since
+  //   we don't know at this point what the request on the object is actually
+  //   going to be.
+  if ( GetPermission(codebase, PERM_TYPE_CONTROLS, "disable_controls") ||
+       GetPermission(codebase, PERM_TYPE_BINDING, "disable_binding") ||
+       GetPermission(codebase, PERM_TYPE_METADATA, "disable_metadata") ) {
     LOG(("sbSecurityMixin::CanCreateWrapper - Permission GRANTED!!!"));
-    *_retval = xpc_CloneAllAccess();
-  }
-  else {
+    *_retval = SB_CloneAllAccess();
+  } else {
     LOG(("sbSecurityMixin::CanCreateWrapper - Permission DENIED (looser)!!!"));
-    //*_retval = xpc_CloneAllAccess();
     *_retval = nsnull;
   }
-  
-  // Get the property for creation
-  // Check the preferences to see if the user has enabled this domain to
-  //   this capability.
-  // Get the prefs service
-  // Get the current domain
-  // look for a key for the current domain and songbird.remote.create.class.domain set to true
-  //LOG(("sbSecurityMixin::CanCreateWrapper() - leaving"));
-  return NS_OK;
-*/
 
-} // CanCreateWrapper()
+  return NS_OK;
+}
 
 NS_IMETHODIMP
 sbSecurityMixin::CanCallMethod(const nsIID *aIID, const PRUnichar *aMethodName, char **_retval)
 {
-  NS_ENSURE_ARG(aIID);
-  NS_ENSURE_ARG(aMethodName);
-  NS_ENSURE_ARG(_retval);
+  // For some reasone we always get the IID for canCallMethod,
+  //   so this works (see CanGetProperty)
+  NS_ENSURE_ARG_POINTER(aIID);
+  NS_ENSURE_ARG_POINTER(aMethodName);
+  NS_ENSURE_ARG_POINTER(_retval);
 
   LOG(( "sbSecurityMixin::CanCallMethod(%s)",
-        NS_ConvertUTF16toUTF8(aMethodName).get() ));
+        NS_LossyConvertUTF16toASCII(aMethodName).get() ));
 
-  nsresult rv;
-  PRBool canCall = PR_FALSE;
-  PRBool hasMore = PR_FALSE;
   nsAutoString method; 
+  nsDependentString inMethodName(aMethodName);
 
-  nsCOMPtr<nsIStringEnumerator> methods = new sbTArrayStringEnumerator(&mMethods);
-  NS_ENSURE_TRUE(methods, NS_ERROR_OUT_OF_MEMORY);
-
-  while ( NS_SUCCEEDED(methods->HasMore(&hasMore)) && hasMore) {
-    rv = methods->GetNext(method);
-    NS_ENSURE_SUCCESS(rv, rv);
-    LOG(("    -- checking method: %s", NS_ConvertUTF16toUTF8(method).get() ));
-    if ( method == aMethodName ) {
-      canCall = PR_TRUE;
-      break;
-    }
+  GetScopedName(mMethods, inMethodName, method); 
+  if (method.IsEmpty()) {
+    LOG(( "sbSecurityMixin::CanCallMethod(%s) - DENIED, unapproved method",
+          NS_LossyConvertUTF16toASCII(aMethodName).get() ));
+    *_retval = nsnull;
+    return NS_OK;
   }
 
-  if (canCall) {
-    LOG(( "sbSecurityMixin::CanCallProperty(%s) - GRANTED",
-          NS_ConvertUTF16toUTF8(aMethodName).get() ));
-    *_retval = xpc_CloneAllAccess();
+  if ( GetPermissionForScopedName(method) ) {
+    LOG(("sbSecurityMixin::CanCallMethod - Permission GRANTED!!!"));
+    *_retval = SB_CloneAllAccess();
   } else {
-    LOG(( "sbSecurityMixin::CanCallProperty(%s) - DENIED",
-          NS_ConvertUTF16toUTF8(aMethodName).get() ));
+    LOG(("sbSecurityMixin::CanCallMethod - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
   }
   return NS_OK;
@@ -234,38 +210,29 @@ sbSecurityMixin::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   //   patterns we get 2 calls for each getproperty and one has an IID and one
   //   doesn't. So we can't verify IID here. Good thing we don't actually need
   //   it.  XXXredfive - file a bug!!!
-  //NS_ENSURE_ARG(aIID);
-  NS_ENSURE_ARG(aPropertyName);
-  NS_ENSURE_ARG(_retval);
+  //NS_ENSURE_ARG_POINTER(aIID);
+  NS_ENSURE_ARG_POINTER(aPropertyName);
+  NS_ENSURE_ARG_POINTER(_retval);
 
   LOG(( "sbSecurityMixin::CanGetProperty(%s)",
-        NS_ConvertUTF16toUTF8(aPropertyName).get() ));
+        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
 
-  nsresult rv;
-  PRBool canGet = PR_FALSE;
-  PRBool hasMore = PR_FALSE;
   nsAutoString prop; 
+  nsDependentString inPropertyName(aPropertyName);
 
-  nsCOMPtr<nsIStringEnumerator> props = new sbTArrayStringEnumerator(&mRProperties);
-  NS_ENSURE_TRUE(props, NS_ERROR_OUT_OF_MEMORY);
-
-  while ( NS_SUCCEEDED(props->HasMore(&hasMore)) && hasMore) {
-    rv = props->GetNext(prop);
-    NS_ENSURE_SUCCESS(rv, rv);
-    LOG(("    -- checking property: %s", NS_ConvertUTF16toUTF8(prop).get() ));
-    if ( prop == aPropertyName ) {
-      canGet = PR_TRUE;
-      break;
-    }
+  GetScopedName(mRProperties, inPropertyName, prop); 
+  if (prop.IsEmpty()) {
+    LOG(( "sbSecurityMixin::CanGetProperty(%s) - DENIED, unapproved property",
+          NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
+    *_retval = nsnull;
+    return NS_OK;
   }
 
-  if (canGet) {
-    LOG(( "sbSecurityMixin::CanGetProperty(%s) - GRANTED",
-          NS_ConvertUTF16toUTF8(aPropertyName).get() ));
-    *_retval = xpc_CloneAllAccess();
+  if ( GetPermissionForScopedName(prop) ) {
+    LOG(("sbSecurityMixin::CanGetProperty - Permission GRANTED!!!"));
+    *_retval = SB_CloneAllAccess();
   } else {
-    LOG(( "sbSecurityMixin::CanGetProperty(%s) - DENIED",
-          NS_ConvertUTF16toUTF8(aPropertyName).get() ));
+    LOG(("sbSecurityMixin::CanGetProperty - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
   }
   return NS_OK;
@@ -279,38 +246,29 @@ sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   //   patterns we get 2 calls for each SetProperty and one has an IID and one
   //   doesn't. So we can't verify IID here. Good thing we don't actually need
   //   it.  XXXredfive - file a bug!!!
-  //NS_ENSURE_ARG(aIID);
-  NS_ENSURE_ARG(aPropertyName);
-  NS_ENSURE_ARG(_retval);
+  //NS_ENSURE_ARG_POINTER(aIID);
+  NS_ENSURE_ARG_POINTER(aPropertyName);
+  NS_ENSURE_ARG_POINTER(_retval);
 
   LOG(( "sbSecurityMixin::CanSetProperty(%s)",
-        NS_ConvertUTF16toUTF8(aPropertyName).get() ));
+        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
 
-  nsresult rv;
-  PRBool canSet = PR_FALSE;
-  PRBool hasMore = PR_FALSE;
   nsAutoString prop; 
+  nsDependentString inPropertyName(aPropertyName);
 
-  nsCOMPtr<nsIStringEnumerator> props = new sbTArrayStringEnumerator(&mWProperties);
-  NS_ENSURE_TRUE(props, NS_ERROR_OUT_OF_MEMORY);
-
-  while ( NS_SUCCEEDED(props->HasMore(&hasMore)) && hasMore) {
-    rv = props->GetNext(prop);
-    NS_ENSURE_SUCCESS(rv, rv);
-    LOG(("    -- checking property: %s", NS_ConvertUTF16toUTF8(prop).get() ));
-    if ( prop == aPropertyName ) {
-      canSet = PR_TRUE;
-      break;
-    }
+  GetScopedName(mRProperties, inPropertyName, prop); 
+  if (prop.IsEmpty()) {
+    LOG(( "sbSecurityMixin::CanSetProperty(%s) - DENIED, unapproved property",
+          NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
+    *_retval = nsnull;
+    return NS_OK;
   }
 
-  if (canSet) {
-    LOG(( "sbSecurityMixin::CanSetProperty(%s) - GRANTED",
-          NS_ConvertUTF16toUTF8(aPropertyName).get() ));
-    *_retval = xpc_CloneAllAccess();
+  if ( GetPermissionForScopedName(prop) ) {
+    LOG(("sbSecurityMixin::CanSetProperty - Permission GRANTED!!!"));
+    *_retval = SB_CloneAllAccess();
   } else {
-    LOG(( "sbSecurityMixin::CanSetProperty(%s) - DENIED",
-          NS_ConvertUTF16toUTF8(aPropertyName).get() ));
+    LOG(("sbSecurityMixin::CanSetProperty - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
   }
   return NS_OK;
@@ -318,17 +276,194 @@ sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
 
 // ---------------------------------------------------------------------------
 //
-//                            nsIClassInfo
+//                         nsISCC helper functions
 //
 // ---------------------------------------------------------------------------
 
-NS_IMPL_CI_INTERFACE_GETTER2(sbSecurityMixin,
-                             sbISecurityMixin,
-                             nsISecurityCheckedComponent)
+nsresult
+sbSecurityMixin::GetCodebase(nsIURI **aCodebase) {
+  NS_ENSURE_ARG_POINTER(aCodebase);
+
+  // Get the current domain.
+  nsresult rv;
+  nsCOMPtr<nsIScriptSecurityManager> secman(do_GetService(NS_SCRIPTSECURITYMANAGER_CONTRACTID, &rv));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIPrincipal> principal;
+  secman->GetSubjectPrincipal(getter_AddRefs(principal));
+
+  if (!principal) {
+    LOG(("sbSecurityMixin::GetCodebase -- Error: No Subject Principal."));
+    *aCodebase = nsnull;
+    return NS_OK;
+  }
+  LOG(("SecurityMixin::GetCodebase -- Have Subject Principal."));
+
+  nsCOMPtr<nsIPrincipal> systemPrincipal;
+  secman->GetSystemPrincipal(getter_AddRefs(systemPrincipal));
+
+  // XXXredfive - check to see if we can just say yes if we get the System Principal
+  if (principal == systemPrincipal)
+    LOG(("sbSecurityMixin::GetCodebase -- System Principal."));
+  else
+    LOG(("sbSecurityMixin::GetCodebase -- Not System Principal."));
+
+  nsCOMPtr<nsIURI> codebase;
+  principal->GetDomain(getter_AddRefs(codebase));
+
+  if (!codebase) {
+    LOG(("sbSecurityMixin::GetCodebase -- no codebase from domain, getting it from URI."));
+    principal->GetURI(getter_AddRefs(codebase));
+  } else {
+    LOG(("sbSecurityMixin::GetCodebase -- got codebase from domain."));
+  }
+
+  if (!codebase) {
+    LOG(("sbSecurityMixin::GetCodebase -- DOH!!! no codebase"));
+    *aCodebase = nsnull;
+    return NS_OK;
+  }
+  NS_ADDREF(codebase);
+  *aCodebase = codebase;
+  LOG(("sbSecurityMixin::GetCodebase -- Have Codebase."));
+  return NS_OK;
+} 
+
+PRBool
+sbSecurityMixin::GetScopedName(nsTArray<nsCString> &aStringArray,
+                               const nsAString &aMethodName,
+                               nsAString &aScopedName)
+{
+  LOG(( "sbSecurityMixin::GetScopedName()"));
+  PRBool approved = PR_FALSE;
+  nsAutoString method; 
+
+  nsCOMPtr<nsIStringEnumerator> methods = new sbTArrayStringEnumerator(&aStringArray);
+  NS_ENSURE_TRUE(methods, PR_FALSE);
+
+  while ( NS_SUCCEEDED(methods->GetNext(method)) ) {
+    LOG(("    -- checking method: %s", NS_ConvertUTF16toUTF8(method).get() ));
+    if ( StringEndsWith(method, aMethodName) ) {
+      aScopedName = method;
+      approved = PR_TRUE;
+      break;
+    }
+  }
+  return approved;
+}
+
+PRBool
+sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
+{
+  LOG(( "sbSecurityMixin::GetPermissionForScopedName()"));
+  PRBool allowed = PR_FALSE;
+
+  nsCOMPtr<nsIURI> codebase;
+  GetCodebase(getter_AddRefs(codebase));
+
+  if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("internal:"))) {
+    if (!codebase) {
+      // internal stuff always allowed, should never be called from insecure code.
+      allowed = PR_TRUE;
+    } else {
+      // I think this is always a bad thing. It should represent calling of 
+      // methods flagged as internal only being called by insecure code (not
+      // using system principal)
+      LOG(( "sbSecurityMixin::GetPermissionForScopedName() -- AHHH!!! Asked for internal with codebase"));
+      return PR_FALSE;
+    }
+  }
+
+  // without a codebase we're either calling internal stuff or wrong.
+  if (!codebase)
+    return allowed;
+
+  if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("controls:"))) {
+    allowed = GetPermission(codebase, PERM_TYPE_CONTROLS, "disable_controls");
+  }
+  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("binding:"))) {
+    allowed = GetPermission(codebase, PERM_TYPE_BINDING, "disable_binding");
+  }
+  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("metadata:"))) {
+    allowed = GetPermission(codebase, PERM_TYPE_METADATA, "disable_metadata");
+  }
+  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("library:"))) {
+    // Nothing uses this, YET.
+    allowed = PR_TRUE;
+  }
+  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("classinfo:"))) {
+    // class info stuff always allowed - this might need to move above the codebase check.
+    allowed = PR_TRUE;
+  }
+  return allowed;
+}
+
+PRBool
+sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAPIPref )
+{
+  NS_ENSURE_TRUE(aURI, PR_FALSE);
+  NS_ENSURE_TRUE(aType, PR_FALSE);
+  NS_ENSURE_TRUE(aRAPIPref, PR_FALSE);
+
+#ifdef PR_LOGGING
+  nsCAutoString spec;
+  aURI->GetSpec(spec);
+  LOG(( "sbSecurityMixin::GetPermission( %s, %s, %s)", spec.get(), aType, aRAPIPref ));
+#endif
+
+  nsresult rv;
+  nsCOMPtr<nsIPrefBranch> prefService =
+    do_GetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  // build the pref key to check
+  PRBool prefBlocked = PR_TRUE;
+  nsCAutoString prefKey("songbird.rapi.");
+  prefKey += aRAPIPref;
+
+  // get the pref value
+  LOG(( "sbSecurityMixin::GetPermission() - asking for pref: %s", prefKey.get() ));
+  rv = prefService->GetBoolPref(prefKey.get(), &prefBlocked);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  // get the permission for the domain
+  nsCOMPtr<nsIPermissionManager> permMgr(do_GetService(NS_PERMISSIONMANAGER_CONTRACTID, &rv));
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+  PRUint32 perms = nsIPermissionManager::UNKNOWN_ACTION;
+  rv = permMgr->TestPermission(aURI, aType, &perms);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  // check to see if the action is allowed for the domain
+  if (prefBlocked) {
+    LOG(( "sbSecurityMixin::GetPermission() - action is blocked" ));
+    // action is blocked, see if domain is cleared explicitly
+    if ( perms == nsIPermissionManager::ALLOW_ACTION ) {
+      LOG(("sbSecurityMixin::GetPermission - Permission GRANTED!!!"));
+      return PR_TRUE;
+    }
+  } else {
+    LOG(( "sbSecurityMixin::GetPermission() - action not blocked" ));
+    // action not blocked, make sure domain isn't blocked explicitly
+    if ( perms != nsIPermissionManager::DENY_ACTION ) {
+      LOG(("sbSecurityMixin::GetPermission - Permission GRANTED!!!"));
+      return PR_TRUE;
+    }
+  }
+
+  // Negative Ghostrider, pattern is full.
+  LOG(("sbSecurityMixin::GetPermission - Permission DENIED (looooooser)!!!"));
+  return PR_FALSE;
+}
+
+// ---------------------------------------------------------------------------
+//
+//                              nsIClassInfo
+//
+// ---------------------------------------------------------------------------
 
 NS_IMETHODIMP 
 sbSecurityMixin::GetInterfaces(PRUint32 *aCount, nsIID ***aArray)
 { 
+  // gets defined in the NS_IMPL_CI_INTER... macro up by NS_IMPL_NSISUPPORTS
   return NS_CI_INTERFACE_GETTER_NAME(sbSecurityMixin)(aCount, aArray);
 }
 
@@ -388,13 +523,13 @@ sbSecurityMixin::GetClassIDNoAlloc(nsCID *aClassIDNoAlloc)
 // ---------------------------------------------------------------------------
 
 nsresult
-sbSecurityMixin::CopyStrArray(PRUint32 aCount, const PRUnichar **aSourceArray, nsTArray<nsString> *aDestArray  )
+sbSecurityMixin::CopyStrArray(PRUint32 aCount, const char **aSourceArray, nsTArray<nsCString> *aDestArray  )
 {
   NS_ENSURE_ARG_POINTER(aSourceArray);
   NS_ENSURE_ARG_POINTER(aDestArray);
 
   for ( PRUint32 index = 0; index < aCount; index++ ) {
-    if ( !aDestArray->AppendElement(nsString(aSourceArray[index])))
+    if ( !aDestArray->AppendElement(aSourceArray[index]))
       return NS_ERROR_OUT_OF_MEMORY;
   }
   return NS_OK;
@@ -428,36 +563,8 @@ sbSecurityMixin::CopyIIDArray(PRUint32 aCount, const nsIID **aSourceArray, nsIID
   return NS_OK;
 }
 
-char* xpc_CloneAllAccess()
+inline char* SB_CloneAllAccess()
 {
-    static const char allAccess[] = "AllAccess";
-    return (char*)nsMemory::Clone(allAccess, sizeof(allAccess));
+  return ToNewCString(NS_LITERAL_CSTRING("AllAccess"));
 }
-
-// ---------------------------------------------------------------------------
-//
-//                             Component stuff
-//
-// ---------------------------------------------------------------------------
-
-// creates a generic static constructor function
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbSecurityMixin)
-
-// fill out data struct to register with component system
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SONGBIRD_SECURITYMIXIN_CLASSNAME,
-    SONGBIRD_SECURITYMIXIN_CID,
-    SONGBIRD_SECURITYMIXIN_CONTRACTID,
-    sbSecurityMixinConstructor,
-    NULL,
-    NULL,
-    NULL,
-    NS_CI_INTERFACE_GETTER_NAME(sbSecurityMixin)
-  }
-};
-
-// create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SONGBIRD_SECURITYMIXIN_CLASSNAME, components)
 

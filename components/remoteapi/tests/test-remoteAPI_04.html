@@ -30,21 +30,26 @@
   <head>
     <title>Remote API Test: 04</title>
     <script>
-      var dr = null;
+
+      // needs to be global so it can passed to songbird in unload handler
+      var obs = null;
+
       function load() {
+
+        // Yay closures!  
         var changeColor = function(aData) {
-	  dump("changeColor: " + aData);
+          // sometimes aData is blank, when changing from "stuff" to ""
+          if (aData == null)
+            return;
+  
+	  dump("changeColor: " + aData + "\n");
           var regexAF = /^[a-fA-F]/;
           var regexGM = /^[g-mG-M]/;
           var regexNS = /^[n-sN-s]/;
           var regexTZ = /^[t-zT-Z]/;
-  
+ 
 	  var el = document.getElementById("test-body");
 
-          // sometimes we get called when there is no el
-          if (el == null)
-            return;
-  
 	  if (aData.match(regexAF)) {
 	    el.style.backgroundColor = "red";
 	  } else if (aData.match(regexGM)) {
@@ -56,22 +61,21 @@
 	  } else {
 	    el.style.backgroundColor = "red";
 	  }
-        }
+        } // changeColor
 
-        // observer for DataRemote
-        var obs = {
+        // observer for DataRemote -- implementes the nsIObserver interface
+        obs = {
           observe: function ( aSubject, aTopic, aData) {
 	    changeColor(aData);
 	  }
         }
-        dr = songbird.bindObserver("metadata.artist", obs, false);
+        songbird.addListener("metadata.artist", obs);
       }
       
       function unload() {
-        // dataremotes aren't exposed, can't do this
-        //dr.unbind();
-        songbird.unbind(dr);
+        songbird.removeListener("metadata.artist", obs);
       }
+
     </script>
   </head>
   <body id="test-body" onload="load();" onunload="unload();">
@@ -102,10 +106,6 @@
       </tr>
     </table>
     <br />
-    <script>
-
-    </script>
-    
   </body>
 </html>
 

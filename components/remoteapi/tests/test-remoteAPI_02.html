@@ -31,10 +31,7 @@
     <title>Remote API Test: 02</title>
 
     <script>
-      var dr1 = null;
-      var dr2 = null;
-      var dr3 = null;
-      var dr4 = null;
+      var obs = null;
 
       function load() {
         // Get the button elements from the document
@@ -42,19 +39,67 @@
         var btn2 = document.getElementById("test_button2");
         var btn3 = document.getElementById("test_button3");
         var btn4 = document.getElementById("test_button4");
+        var btn5 = document.getElementById("test_button5");
 
-        // Bind them to the value of the data remotes
-        dr1 = songbird.bindElementAttribute("metadata.artist", btn1, "value", false, false, null);
-        dr2 = songbird.bindElementProperty("metadata.album", btn2, "value", false, false, null);
-        dr3 = songbird.bindElementProperty("metadata.title", btn3, "value", false, false, null);
-        dr4 = songbird.bindElementProperty("metadata.composer", btn4, "value", false, false, null);
+        var setData = function(metadata, value) {
+          if ( metadata == "metadata.artist" ) {
+            btn1["value"] = value;
+          } else if ( metadata == "metadata.album" ) {
+            btn2["value"] = value;
+          } else if ( metadata == "metadata.title" ) {
+            btn3["value"] = value;
+          } else if ( metadata == "metadata.composer" ) {
+            btn4["value"] = value;
+          } else if ( metadata == "metadata.foobar" ) {
+            btn5["value"] = value;
+          }
+        }
+
+        // observer for DataRemote -- implementes the nsIObserver interface
+        obs = {
+          observe: function ( aSubject, aTopic, aData) {
+	    setData(aTopic, aData);
+	  }
+        }
+
+        // on failure, make it REALLY OBVIOUS
+        try {
+          songbird.addListener("metadata.artist", obs);
+        } catch (exc) {
+          var btn = document.getElementById("test_button1");
+          btn["value"] = "FAILED";
+        }
+        try {
+          songbird.addListener("metadata.album", obs);
+        } catch (exc) {
+          var btn = document.getElementById("test_button2");
+          btn["value"] = "FAILED";
+        }
+        try {
+          songbird.addListener("metadata.title", obs);
+        } catch (exc) {
+          var btn = document.getElementById("test_button3");
+          btn["value"] = "FAILED";
+        }
+        try {
+          songbird.addListener("metadata.composer", obs);
+        } catch (exc) {
+          var btn = document.getElementById("test_button4");
+          btn["value"] = "FAILED";
+        }
+        try {
+          songbird.addListener("metadata.foobar", obs);
+        } catch (exc) {
+          var btn = document.getElementById("test_button5");
+          btn["value"] = "FAILED";
+        }
       }
 
       function unload() {
-        songbird.unbind(dr1);
-        songbird.unbind(dr2);
-        songbird.unbind(dr3);
-        songbird.unbind(dr4);
+        songbird.removeListener("metadata.artist", obs);
+        songbird.removeListener("metadata.album", obs);
+        songbird.removeListener("metadata.title", obs);
+        songbird.removeListener("metadata.composer", obs);
       }
     </script>
   </head>
@@ -74,7 +119,9 @@
       <br />
       <input type="button" id="test_button3" value="metadata.title" /> - this should have the track title
       <br />
-      <input type="button" id="test_button4" value="metadata.composer" /> - this should fail
+      <input type="button" id="test_button4" value="metadata.composer" /> - this should fail (composer)
+      <br />
+      <input type="button" id="test_button5" value="metadata.foobar" /> - this should fail (foobar)
     </form>
   </body>
 </html>

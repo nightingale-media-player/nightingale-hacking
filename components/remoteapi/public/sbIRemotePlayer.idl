@@ -33,9 +33,7 @@
 #include "nsISupports.idl"
 #include "nsIArray.idl"
 
-interface nsIDOMElement;
 interface nsIObserver;
-interface sbIDataRemote;
 interface sbIMediaList;
 
 /**
@@ -49,6 +47,7 @@ interface sbIMediaList;
 [scriptable, uuid(40964944-5243-4a16-886b-14c1cbaa79d9)]
 interface sbIRemotePlayer : nsISupports
 {
+
   /**
    * \brief The name of the player
    */
@@ -56,13 +55,15 @@ interface sbIRemotePlayer : nsISupports
 
   /**
    * \brief An array of sbIMediaLists
+   * NOTE: NOT IMPLEMENTED
    */
   readonly attribute nsIArray playlists;
 
   /**
    * \brief The current web playlist
+   * NOTE: NOT IMPLEMENTED
    */
-  readonly attribute sbIMediaList webplaylist;
+  readonly attribute sbIMediaList webPlaylist;
 
   /**
    * \brief The name of the artist for the currently playing track
@@ -80,72 +81,45 @@ interface sbIRemotePlayer : nsISupports
   readonly attribute AString currentTrack;
 
   /**
-   * \brief Bind the value of a property to the value of Songbird metadata/state
-   */
-  sbIDataRemote bindElementProperty( in AString aKey,
-                                     in nsIDOMElement aElement,
-                                     in AString aProperty,
-                                     in boolean aIsBool,
-                                     in boolean aIsNot,
-                                     in AString aEvalString );
-
-  /**
-   * \brief Bind the value of an attribute to the value of Songbird metadata/state
-   */
-  sbIDataRemote bindElementAttribute( in AString aKey,
-                                      in nsIDOMElement aElement,
-                                      in AString aAttribute,
-                                      in boolean aIsBool,
-                                      in boolean aIsNot,
-                                      in AString aEvalString );
-
-  /**
    * \brief Bind an observer to get called on changes to Songbird metadata/state
    */
-  sbIDataRemote bindObserver( in AString aKey,
-                              in nsIObserver aObserver,
-                              in boolean aSuppressFirst );
+  void addListener( in AString aKey,
+                    in nsIObserver aObserver );
 
   /**
-   * \brief Unbind an observer.
-   * This MUST be called in an onunload() handler before the page goes away
-   *   or the code will be continue running.
-   * Pass in the return value from one of the bind calls.
-   *
-   * XXXredfive - this functionality will move into the Songbird object so it
-   *              will happen automatically on page unload instead of relying
-   *              on the webpage author to do it.
+   * \brief Remove an observer from the metadata key
    */
-  void unbind( in sbIDataRemote aDataremote );
+  void removeListener( in AString aKey,
+                       in nsIObserver aObserver );
 
   /**
    * \brief Being playback at the current location
    */
-  boolean play();
+  void play();
 
   /**
    * \brief Play an media file by URL
    */
-  boolean playURL(in AString aURL);
+  void playURL(in AString aURL);
 
   /**
    * \brief Stop playback. Sets position to beginning.
    */
-  boolean stop();
+  void stop();
 
   /**
    * \brief Stop playback, leaves position at current location.
    */
-  boolean pause();
+  void pause();
 
   /**
    * \brief Skip to the next track and begin playing
    */
-  boolean next();
+  void next();
 
   /**
    * \brief Skip to the previous track and begin playing
    */
-  boolean previous();
+  void previous();
 };
 

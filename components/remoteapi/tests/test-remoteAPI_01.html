@@ -48,7 +48,10 @@
     <br />
     <script>
       // Property Access
-      document.writeln("The currently playing artist is:<br />");
+      document.writeln("<br />Using the media player:<br />");
+      document.writeln(songbird.name);
+      document.writeln("<br />");
+      document.writeln("<br />The currently playing artist is:<br />");
       document.writeln(songbird.currentArtist);
       document.writeln("<br />");
       document.writeln("<br />The currently playing track is:<br />");
@@ -74,6 +77,10 @@
       document.writeln(songbird.currentArtist);
       document.writeln("<br />");
       document.writeln("<br />");
+
+     
+      document.writeln("Try to get the webplaylist - should fail");
+      var webpl = songbird.webPlaylist
 
     </script>
     

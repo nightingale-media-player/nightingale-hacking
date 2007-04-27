@@ -30,7 +30,7 @@ var gRemoteAPIPane = {
     // provides initialization data to the permissions dialog
     metadata: { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.metadata" },
     controls: { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.controls" },
-    binding:  { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.events"   }
+    binding:  { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.binding"   }
   },
 
   _showExceptions: function (aPermissionType)

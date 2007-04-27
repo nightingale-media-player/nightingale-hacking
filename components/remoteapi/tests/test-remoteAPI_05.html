@@ -31,19 +31,24 @@
     <title>Remote API Test: 05</title>
     <script>
       // global dataremote
-      var dr = null;
+      var obs = null;
 
       function load() {
         // Get the div element from the document
         var textfield = document.getElementById("artist-text");
 
+        obs = {
+          observe: function ( aSubject, aTopic, aData) {
+            textfield.setAttribute("value", aData);
+          }
+        }
+
         // Bind it to the value of the dataremote
-        dr = songbird.bindElementAttribute("metadata.artist", textfield, "value", false, false, null);
+        songbird.addListener("metadata.artist", obs);
       }
 
       function unload() {
-        // disconnect the dataremote, no closures here
-        songbird.unbind(dr);
+        songbird.removeListener("metadata.artist", obs);
       }
 
     </script>

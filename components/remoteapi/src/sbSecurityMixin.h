@@ -24,19 +24,23 @@
 //
  */
 
+#ifndef __SB_SECURITY_MIXIN_H__
+#define __SB_SECURITY_MIXIN_H__
+
 #include "sbISecurityMixin.h"
 #include "sbISecurityAggregator.h"
 
 #include <nsCOMPtr.h>
 #include <nsISecurityCheckedComponent.h>
+#include <nsIURI.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 
-#define SONGBIRD_SECURITYMIXIN_CONTRACTID                \
-  "@songbirdnest.com/songbird/securitymixin;1"
-#define SONGBIRD_SECURITYMIXIN_CLASSNAME                 \
-  "Songbird Remote Mixin Security Component"
-#define SONGBIRD_SECURITYMIXIN_CID                       \
+#define SONGBIRD_SECURITYMIXIN_CONTRACTID                 \
+  "@songbirdnest.com/remoteapi/security-mixin;1"
+#define SONGBIRD_SECURITYMIXIN_CLASSNAME                  \
+  "Songbird Remote Security Mixin"
+#define SONGBIRD_SECURITYMIXIN_CID                        \
 { /* aaae98ec-386e-405e-b109-cf1a872ef6dd */              \
   0xaaae98ec,                                             \
   0x386e,                                                 \
@@ -44,7 +48,7 @@
   {0xb1, 0x09, 0xcf, 0x1a, 0x87, 0x2e, 0xf6, 0xdd}        \
 }
 
-extern char* xpc_CloneAllAccess();
+extern char* SB_CloneAllAccess();
 
 class sbSecurityMixin : public nsISecurityCheckedComponent,
                         public nsIClassInfo,
@@ -52,8 +56,8 @@ class sbSecurityMixin : public nsISecurityCheckedComponent,
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_NSISECURITYCHECKEDCOMPONENT
   NS_DECL_NSICLASSINFO
+  NS_DECL_NSISECURITYCHECKEDCOMPONENT
   NS_DECL_SBISECURITYMIXIN
 
   sbSecurityMixin();
@@ -61,15 +65,31 @@ public:
 protected:
   virtual ~sbSecurityMixin();
 
+  // helpers for resolving the prefs and permissions
+  nsresult GetCodebase(nsIURI **aCodebase);
+  PRBool GetPermission(nsIURI *aURI, const char *aType, const char *aRAPIPref);
+  PRBool GetPermissionForScopedName(const nsAString &aScopedName);
+  PRBool GetScopedName(nsTArray<nsCString> &aStringArray,
+                       const nsAString &aMethodName,
+                       nsAString &aScopedName);
+
   // helper function for allocating IID array 
   nsresult CopyIIDArray(PRUint32 aCount, const nsIID **aSourceArray, nsIID ***aDestArray);
-  nsresult CopyStrArray(PRUint32 aCount, const PRUnichar **aSourceArray, nsTArray<nsString> *aDestArray);
 
-  sbISecurityAggregator* mOuter;  // non-binding ref, we don't want to keep our outer from going away
-  nsIID ** mInterfaces;
+  // helper function for copying over a string array
+  nsresult CopyStrArray(PRUint32 aCount, const char **aSourceArray, nsTArray<nsCString> *aDestArray);
+
+  // non-binding ref, we don't want to keep our outer from going away
+  sbISecurityAggregator* mOuter;  
+
+  // holders for the lists of approved methods, properties and interfaces
+  // passed in to us by the mOuter ( in our Init() method )
+  nsIID **mInterfaces;
   PRUint32 mInterfacesCount;
-  nsTArray<nsString> mMethods;
-  nsTArray<nsString> mRProperties;
-  nsTArray<nsString> mWProperties;
+  nsTArray<nsCString> mMethods;
+  nsTArray<nsCString> mRProperties;
+  nsTArray<nsCString> mWProperties;
 };
+
+#endif // __SB_SECURITY_MIXIN_H__
 

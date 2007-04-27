@@ -324,7 +324,7 @@ DataRemote.prototype = {
     if (this._boundObserver) {
       try {
         // pass useful information to the observer.
-        this._boundObserver.observe( this, "", value );
+        this._boundObserver.observe( this, this._key, value );
       }
       catch (err) {
         dump("ERROR! Could not call boundObserver.observe(). Key = " + this._key + "\n" + err + "\n");
@@ -358,6 +358,8 @@ DataRemote.prototype = {
      var ifaces = [ SONGBIRD_DATAREMOTE_IID,
                     Ci.nsIClassInfo,
                     Ci.nsIObserver,
+                    Ci.nsISecurityCheckedComponent,
+                    Ci.sbISecurityAggregator,
                     Ci.nsISupportsWeakReference ];
       count.value = ifaces.length;
       return ifaces;
@@ -382,11 +384,71 @@ DataRemote.prototype = {
   // needs to be DOM_OBJECT to allow remoteAPI to access it.
   flags: Ci.nsIClassInfo.DOM_OBJECT,
 
+  // nsISecurityCheckedComponent -- implemented by the security mixin
+  _securityMixin: null,
+  _initializedSCC: false,
+  _publicWProps: [ "" ],
+  _publicRProps: [ "internal:stringValue",
+                   "internal:booleanValue" ,
+                   "internal:intValue",
+                   "classinfo:classDescription",
+                   "classinfo:contractID",
+                   "classinfo:classID",
+                   "classinfo:implementationLanguage",
+                   "classinfo:flags"],
+  _publicMethods: [ "internal:bindAttribute",
+                    "internal:bindObserver",
+                    "internal:bindProperty",
+                    "internal:unbind",
+                    "internal:init" ],
+  _publicInterfaces: [ Ci.nsISupports,
+                       Ci.nsIClassInfo,
+                       Ci.nsIObserver,
+                       Ci.nsISecurityCheckedComponent,
+                       SONGBIRD_DATAREMOTE_IID ],
+
+  _initSCC: function() {
+    this._securityMixin = Cc["@songbirdnest.com/remoteapi/security-mixin;1"]
+                         .createInstance(Ci.nsISecurityCheckedComponent);
+
+    // initialize the security mixin with the cleared methods and props
+    this._securityMixin
+             .init(this, this._publicInterfaces, this._publicInterfaces.length,
+                         this._publicMethods, this._publicMethods.length,
+                         this._publicRProps, this._publicRProps.length,
+                         this._publicWProps, this._publicWProps.length);
+
+    this._initializedSCC = true;
+  },
+
+  canCreateWrapper: function(iid) {
+    if (! this._initializedSCC)
+      this._initSCC();
+    return this._securityMixin.canCreateWrapper(iid);
+  },
+  canCallMethod: function(iid, methodName) {
+    if (! this._initializedSCC)
+      this._initSCC();
+    return this._securityMixin.canCallMethod(iid, methodName);
+  },
+  canGetProperty: function(iid, propertyName) {
+    if (! this._initializedSCC)
+      this._initSCC();
+    return this._securityMixin.canGetProperty(iid, propertyName);
+  },
+  canSetProperty: function(iid, propertyName) {
+    if (! this._initializedSCC)
+      this._initSCC();
+    return this._securityMixin.canSetProperty(iid, propertyName);
+  },
+
   // nsISupports
   QueryInterface: function(iid) {
     if (!iid.equals(SONGBIRD_DATAREMOTE_IID) &&
         !iid.equals(Ci.nsIClassInfo) && 
         !iid.equals(Ci.nsIObserver) && 
+        !iid.equals(Ci.nsISecurityCheckedComponent) &&
+        !iid.equals(Ci.nsISecurityAggregator) &&
         !iid.equals(Ci.nsISupportsWeakReference) &&
         !iid.equals(Ci.nsISupports)) {
       throw Cr.NS_ERROR_NO_INTERFACE;
