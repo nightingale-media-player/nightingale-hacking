@@ -322,8 +322,8 @@ sbSecurityMixin::GetCodebase(nsIURI **aCodebase) {
     *aCodebase = nsnull;
     return NS_OK;
   }
-  NS_ADDREF(codebase);
   *aCodebase = codebase;
+  NS_ADDREF(*aCodebase);
   LOG(("sbSecurityMixin::GetCodebase -- Have Codebase."));
   return NS_OK;
 } 
