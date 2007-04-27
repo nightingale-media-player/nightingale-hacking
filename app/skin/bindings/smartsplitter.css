@@ -68,6 +68,8 @@ splitter[orient="vertical"],
 sb-smart-splitter
 {
   background: url(chrome://songbird/skin/splitter/grippy.png) transparent no-repeat center; 
+  margin: 0;
+  padding: 0;
 }
 
 /** Note: This is a closed smartsplitter that moves side to side **/
@@ -75,6 +77,8 @@ splitter:not([orient="vertical"])[state="collapsed"],
 sb-smart-splitter:not([orient="vertical"])[state="collapsed"]
 {
   background: url(chrome://songbird/skin/splitter/grippy_collapsed_vertical.png) transparent no-repeat center;
+  margin: 0;
+  padding: 0;
 }
 
 /** Note: This is a closed smartsplitter that moves up and down **/
@@ -82,5 +86,7 @@ splitter[state="collapsed"][orient="vertical"],
 sb-smart-splitter[state="collapsed"][orient="vertical"]
 {
   background: url(chrome://songbird/skin/splitter/grippy_collapsed_horizontal.png) transparent no-repeat center;
+  margin: 0;
+  padding: 0;
 }
 
