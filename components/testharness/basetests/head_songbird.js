@@ -109,7 +109,7 @@ function doThrow(text) {
   log("*** [" + _test_name + "] - CHECK FAILED: " + text);
   var frame = Components.stack;
   while (frame != null) {
-    _consoleService.logStringMessage(frame);
+    log(frame);
     frame = frame.caller;
   }
   throw Cr.NS_ERROR_ABORT;

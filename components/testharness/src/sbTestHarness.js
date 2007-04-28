@@ -113,6 +113,10 @@ sbTestHarness.prototype = {
     var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
     var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
 
+    var log = function (s) {
+      consoleService.logStringMessage(s);
+    }
+
     // If components were not specific populate the list with all of them.
     if (!this.mTestComponents)
       this.buildTestComponents();
@@ -211,7 +215,7 @@ sbTestHarness.prototype = {
 
         // load the test script
         if (testFile.exists()) {
-          consoleService.logStringMessage("*** [" + _test_name + "] - Testing...");
+          log("*** [" + _test_name + "] - Testing...");
           scriptUri = ioService.newFileURI(testFile);
           jsLoader.loadSubScript( scriptUri.spec, null );
         }
