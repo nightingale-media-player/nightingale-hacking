@@ -59,6 +59,10 @@
   <!-- Local hardcoded sample js -->
   <script type="application/x-javascript">
   <![CDATA[
+if (typeof(Cc) == "undefined")
+ const Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+ const Ci = Components.interfaces;
 
 try
 {
@@ -207,7 +211,7 @@ try
     {
       var cmds = this._getMenu(aSubMenu);
       var playlist = this.m_Playlist;
-      
+
       // Bail out early if we don't have our playlist somehow
       if ( ! playlist )
         return false;
@@ -229,16 +233,16 @@ try
           // Special case for the Smart Playlist - "Remove" makes no sense and
           // should be disabled. If this isn't a Smart Playlist then default
           // logic is appropriate.
-          if ( playlist.base_type == "smart" )
+          if (playlist.mediaListView.mediaList instanceof Ci.sbILocalDatabaseSmartMediaList)
             return false;
         }
         break;
       }
 
       // By default return true if there is at least one item selected
-      return playlist.tree.view.selection.getRangeCount() > 0;
+      return playlist.tree.view.selectionCount > 0;
     },
-  
+
     onCommand: function( id, value, host )
     {
       if ( id )
@@ -248,16 +252,17 @@ try
         switch( id )
         {
           case "library_cmd_play":
-            if ( this.m_Playlist.tree.currentIndex != -1 )
-            {
-              // Repurpose the command to act as if a doubleclick
-              this.m_Playlist.sendPlayEvent();
+            var index = this.m_Playlist.tree.view.selection.currentIndex;
+            if (index >= 0) {
+              var gPPS = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                           .getService(Ci.sbIPlaylistPlayback);
+              gPPS.playView(this.m_Playlist.mediaListView, index);
             }
           break;
           case "library_cmd_edit":
             if ( this.m_Playlist.tree.currentIndex != -1 )
             {
-              if ( tbb || this.m_Playlist.tree.view.selection.count > 1 )
+              if ( tbb || this.m_Playlist.tree.view.selectionCount > 1 )
               {
                 // Edit the entire track
                 this.m_Playlist.sendEditorEvent();
@@ -265,7 +270,7 @@ try
               else
               {
                 // Edit the context cell
-                this.m_Playlist.sendEditEvent();
+                this.m_Playlist.startCellEditing();
               }
             }
           break;
@@ -277,11 +282,7 @@ try
             }
           break;
           case "library_cmd_remove":
-            if ( this.m_Playlist.tree.currentIndex != -1 )
-            {
-              // remove the currently select tracks
-              this.m_Playlist.removeTracks();
-            }
+            this.m_Playlist.removeSelectedTracks();
           break;
           case "library_cmd_burntocd":
             if ( this.m_Playlist.tree.currentIndex != -1 )
@@ -371,7 +372,7 @@ try
         var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"].
                               getService(Components.interfaces.sbILibraryManager);
         var library = libraryManager.getLibrary( libraryGUID );
-        
+
         // Then the sbIMediaList
         var mediaList = null;
         if ( mediaListGUID == "library" )

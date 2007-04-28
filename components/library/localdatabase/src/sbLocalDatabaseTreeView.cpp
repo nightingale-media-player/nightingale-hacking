@@ -1675,7 +1675,7 @@ sbLocalDatabaseTreeView::GetSelectedMediaItems(nsISimpleEnumerator** aSelection)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::GetSelectionLength(PRUint32* aSelectionLength)
+sbLocalDatabaseTreeView::GetSelectionCount(PRUint32* aSelectionLength)
 {
   NS_ENSURE_ARG_POINTER(aSelectionLength);
 

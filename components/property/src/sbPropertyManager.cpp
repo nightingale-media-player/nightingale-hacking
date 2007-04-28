@@ -451,7 +451,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = datetimeProperty->SetTimeType(sbIDatetimePropertyInfo::TIMETYPE_DURATION);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.date_created"), displayValue);
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.duration"), displayValue);
   if(NS_SUCCEEDED(rv)) {
     rv = datetimeProperty->SetDisplayName(displayValue);
     NS_ENSURE_SUCCESS(rv, rv);

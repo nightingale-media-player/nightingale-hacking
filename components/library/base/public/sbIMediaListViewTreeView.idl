@@ -94,7 +94,7 @@ interface sbIMediaListViewTreeView : nsISupports
   /**
    * \brief Returns the number of selected items in the tree
    */
-  readonly attribute unsigned long selectionLength;
+  readonly attribute unsigned long selectionCount;
 
 };
 

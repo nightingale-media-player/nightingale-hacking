@@ -374,6 +374,32 @@
         </body>
       </method>
 
+    <method name="removeSelectedTracks">
+      <body>
+<![CDATA[
+  var ml = this.mediaListView.mediaList;
+
+  // Process the selection backwards so we don't change the indexes as we
+  // delete them
+  ml.beginUpdateBatch();
+  try {
+    var enumerator = this.tree.view.selectedMediaItems;
+    var indexes = [];
+    while (enumerator.hasMoreElements()) {
+      indexes.push(enumerator.getNext().index);
+    }
+    for (var j = indexes.length - 1; j >= 0; j--) {
+      var index = this.mediaListView.getUnfilteredIndex(indexes[j]);
+      ml.removeByIndex(index);
+    }
+  }
+  finally {
+    ml.endUpdateBatch();
+  }
+]]>
+      </body>
+    </method>
+
       <method name="startCellEditing">
         <body>
 <![CDATA[
@@ -771,7 +797,7 @@
     case evt.DOM_VK_DELETE:
     case evt.DOM_VK_BACK_SPACE:
       if (this.tree.currentIndex != -1) {
-        this._removeSelectedTracks();
+        this.removeSelectedTracks();
       }
       break;
       
@@ -1189,32 +1215,6 @@
       </body>
     </method>
 
-    <method name="_removeSelectedTracks">
-      <body>
-<![CDATA[
-  var ml = this.mediaListView.mediaList;
-
-  // Process the selection backwards so we don't change the indexes as we
-  // delete them
-  ml.beginUpdateBatch();
-  try {
-    var enumerator = this.tree.view.selectedMediaItems;
-    var indexes = [];
-    while (enumerator.hasMoreElements()) {
-      indexes.push(enumerator.getNext().index);
-    }
-    for (var j = indexes.length - 1; j >= 0; j--) {
-      var index = this.mediaListView.getUnfilteredIndex(indexes[j]);
-      ml.removeByIndex(index);
-    }
-  }
-  finally {
-    ml.endUpdateBatch();
-  }
-]]>
-      </body>
-    </method>
-
     <method name="setCellRating">
       <parameter name="row"/>
       <parameter name="col"/>
@@ -1437,7 +1437,7 @@
   try {
     var treeView = this.tree.view;
     var ml = this.mediaListView.mediaList;
-    var numRows = treeView.selectionLength;
+    var numRows = treeView.selectionCount;
     if (numRows == 0) {
       // Nothing selected, don't drag
       throw this._Cr.NS_OK;
