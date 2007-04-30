@@ -25,8 +25,11 @@
 */
 
 #include "sbPropertyInfo.h"
+
+#include <nsISimpleEnumerator.h>
+
 #include <nsAutoLock.h>
-#include <sbCOMArraySimpleEnumerator.h>
+#include <nsArrayEnumerator.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyOperator, sbIPropertyOperator)
 
@@ -387,12 +390,7 @@ NS_IMETHODIMP sbPropertyInfo::GetOperators(nsISimpleEnumerator * *aOperators)
   NS_ENSURE_ARG_POINTER(aOperators);
 
   nsAutoLock lock(mOperatorsLock);
-  *aOperators = new sbCOMArraySimpleEnumerator(mOperators);
-
-  NS_ENSURE_TRUE(*aOperators, NS_ERROR_OUT_OF_MEMORY);
-  NS_ADDREF(*aOperators);
-
-  return NS_OK;
+  return NS_NewArrayEnumerator(aOperators, mOperators);
 }
 NS_IMETHODIMP sbPropertyInfo::SetOperators(nsISimpleEnumerator * aOperators)
 {

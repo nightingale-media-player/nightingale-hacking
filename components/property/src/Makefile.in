@@ -77,15 +77,12 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
 ifdef DEBUG
-moz_utils = sbMozStringUtils_d
-moz_enumeration = sbMozEnumerationUtils_d
+moz_stringutils = sbMozStringUtils_d
 else
-moz_utils = sbMozStringUtils
-moz_enumeration = sbMozEnumerationUtils
+moz_stringutils = sbMozStringUtils
 endif
 
-DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/$(moz_utils) \
-                              $(DEPTH)/components/moz/enumeration/src/$(moz_enumeration) \
+DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/$(moz_stringutils) \
                               $(NULL)
 
 ifeq (macosx,$(SB_PLATFORM))

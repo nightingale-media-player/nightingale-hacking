@@ -29,8 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = enumeration \
-          strings \
+SUBDIRS = strings \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
