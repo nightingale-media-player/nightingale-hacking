@@ -36,12 +36,15 @@ function dbqCallback() {
 
 dbqCallback.prototype = {
   onQueryEnd: function(resultObject, dbGUID, query) {
+    
     gCallbackCount++;
-    if(gCallbackCount == 2)
+    if(gCallbackCount >= 2)
     {
       assertEqual(resultObject.getRowCount(), 1);
-      assertEqual(resultObject.getRowCell(0, 0), "test 99");
-      testFinished();
+      
+      if(resultObject.getRowCell(0, 0) == "test 99") {
+        testFinished();
+      }
     }
   }
 };
