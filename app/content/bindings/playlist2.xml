@@ -96,45 +96,12 @@
             >
               <sb-commands-menuitems sbid="playlist_popup_commands"/>
               <menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
-              <menu id="playlist.context.search" label="&playlist.context.search;">
-                <menupopup id="playlist.popup.search">
-                  <menuitem id="search_popup_term" sbid="search_popup_term" label="" disabled="true"/>
-                  <menuseparator/>
-                  <menuitem id="search.popup.dogpile"
-                    label="dogpile" class="menuitem-iconic" image="chrome://service-icons/skin/dogpile.ico"
-                />
-                  <menuitem id="search.popup.elbows"
-                    label="elbo.ws" class="menuitem-iconic" image="chrome://service-icons/skin/elbows.ico"
-                />
-                  <menuitem id="search.popup.mefeedia"
-                    label="mefeedia" class="menuitem-iconic" image="http://www.mefeedia.com/favicon.ico"
-                />
-                  <menuitem id="search.popup.google"
-                    label="Google" class="menuitem-iconic" image="chrome://service-icons/skin/google.ico"
-                />
-                  <menuitem id="search.popup.yahoo"
-                    label="Yahoo!" class="menuitem-iconic" image="chrome://service-icons/skin/yahoo.ico"
-                />
-                  <menuitem id="search.popup.wiki"
-                    label="Wikipedia" class="menuitem-iconic" image="chrome://service-icons/skin/default.ico"
-                />
-                  <menuitem id="search.popup.emusic"
-                    label="eMusic" class="menuitem-iconic" image="chrome://service-icons/skin/emusic.ico"
-                />
-<!--                  <menuitem id="search.popup.creativecommons"
-                    label="Creative Commons" class="menuitem-iconic" image="http://creativecommons.org/favicon.ico"
-                /> -->
-                </menupopup>
-              </menu>
-              <menu id="playlist.context.lyrics" label="&playlist.context.lyrics;">
-                <menupopup id="playlist.popup.lyrics">
-                  <menuitem id="lyrics_popup_term" sbid="lyrics_popup_term" label="" disabled="true"/>
-                  <menuseparator/>
-                  <menuitem id="lyrics.popup.google"
-                    label="Google" class="menuitem-iconic" image="chrome://service-icons/skin/google.ico"
-                  />
-                </menupopup>
-              </menu>
+              <xul:menu id="playlist_context_search" label="&playlist.context.search;">
+                <xul:menupopup id="playlist_context_search_popup" type="search" label="" searchterm="" />
+              </xul:menu>   
+              <xul:menu id="playlist_context_lyrics" label="&playlist.context.lyrics;">
+                <xul:menupopup id="playlist_context_lyrics_popup" type="search" label="" searchterm="" enginetags="lyrics" />
+              </xul:menu>              
               <children/>
             </popup>
           </popupset>
@@ -275,6 +242,63 @@
       <field name="_XUL_NS" readonly="true">
         "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
       </field>
+      
+      
+      <!-- Helper property to get and set the search query that is 
+           filtering this playlist.
+        -->
+      <property name="searchFilter" >
+        <getter>
+<![CDATA[
+  // Attempt to get the search filter on the playlist
+  if (this.mediaListView && this.mediaListView.currentSearch) {
+    var properties = this.mediaListView.currentSearch;
+    if (properties.length > 0) {
+      property = properties.getPropertyAt(0);
+      return property.value;
+    }
+  }
+  return "";
+]]>
+        </getter>
+        <setter>
+<![CDATA[
+  if (!this.mediaListView || !this.mediaListView.cascadeFilterSet) 
+  {
+    throw("Playlist: Unable to set searchFilter. No mediaListView or cascadeFilterSet.");
+  }
+  
+  // Attempt to set the search filter on the playlist
+  var filters = this.mediaListView.cascadeFilterSet;
+  
+  // The search is always the first filter in the cascade set
+  if (val == "" || val == null) {
+    filters.set(0, [], 0);
+  }
+  else {
+    filters.set(0, [val], 1);
+  }
+  return val;  
+]]>
+        </setter>        
+      </property>      
+      
+      
+      <!-- Expose the human readable name of this playlist
+           Note: mediaList.name always returns "" at the moment?
+        -->
+      <property name="displayName" readonly="true">
+        <getter>
+<![CDATA[
+  // Attempt to get the search filter on the playlist
+  if (this.mediaListView && this.mediaListView.mediaList) {
+    return this.mediaListView.mediaList.name;
+  } 
+  return "";
+]]>
+        </getter>
+      </property>       
+      
 
       <!-- Initialization and Control -->
       <method name="bind">
@@ -308,9 +332,11 @@
   var cfs = mediaListView.cascadeFilterSet;
   var length = cfs.length;
   for (var i = 0; i < length; i++) {
+
     if (cfs.isSearch(i)) {
       continue;
     }
+
     var filterlist = document.createElementNS(this._XUL_NS, "filterlist2");
     filterlist.setAttribute("enableColumnDrag", "false");
     filterlist.setAttribute("hidecolumnpicker", "true");
@@ -831,10 +857,12 @@
     return;
   }
 
+
   const COLUMN_TITLE = "title";
   const CONTEXT_IDS = ["playlist_context_before",
-                       "playlist.context.search",
-                       "playlist.context.lyrics"];
+                       "playlist_context_search",
+                       "playlist_context_lyrics"];
+
 
   // Small helper to loop through a list of the ids for the context
   // menu items and show or hide each element.
@@ -898,16 +926,19 @@
   SBDataSetStringValue("playlist.context.term", cellText);
 
   if (cellText) {
-    var searchHeader = this._getString("playlist.context.searchheader", "Search");
-    var lyricsHeader = this._getString("playlist.context.lyricsheader", "Lyrics");
 
-    var searchTerm =
-      document.getAnonymousElementByAttribute(this, 'sbid', 'search_popup_term');
-    searchTerm.label = searchHeader + ": " + cellText;
+    var searchHeader = this._getString("playlist_context_searchheader", "Search");
+    var lyricsHeader = this._getString("playlist_context_lyricsheader", "Lyrics");
 
-    var lyricsTerm =
-      document.getAnonymousElementByAttribute(this, 'sbid', 'lyrics_popup_term');
-    lyricsTerm.label = lyricsHeader + ": " + cellText;
+    var searchMenu =
+      document.getAnonymousElementByAttribute(this, 'id', 'playlist_context_search_popup');
+    searchMenu.setAttribute("label", searchHeader + ": " + cellText);
+    searchMenu.setAttribute("searchterm", cellText);
+
+    var lyricsMenu =
+      document.getAnonymousElementByAttribute(this, 'id', 'playlist_context_lyrics_popup');
+    lyricsMenu.setAttribute("label", lyricsHeader + ": " + cellText);
+    lyricsMenu.setAttribute("searchterm", cellText);
 
     // Make sure that the search and lyrics menus are visible
     showContextItems(true);
@@ -917,6 +948,7 @@
     // menu items.
     showContextItems(false);
   }
+
 
   // XXX: The coords given to the showPopup() method are relative to
   // the browser iframe, so compute the difference.  This may be a
@@ -997,7 +1029,8 @@
 ]]>
       </body>
     </method>
-
+    
+    <!-- This should go away now? -->
     <method name="onPlaylistContextMenu">
       <parameter name="evt"/>
       <body>

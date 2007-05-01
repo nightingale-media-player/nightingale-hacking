@@ -3,12 +3,23 @@
 <Description>Songbird Library Search</Description>
 <InputEncoding>UTF-8</InputEncoding>
 <Image width="16" height="16">chrome://songbird-branding/skin/logo_16.png</Image>
-<Url type="text/html" method="GET" template="http://unused"/>
-<!-- HACK: Instead of searching the web the search box witll fire an event with the alias of this search engine. 
-     Be aware that this method is not frozen, and is guaranteed to change at some point in the future. 
-     Note that engines with songbird:sendevent are hidden on startup, and need to be programmatically shown.     
-     See BrowserSearch and sb-search.xml for more information.
+<!-- HACK: 
+     
+     gSearchHandler intercepts searches for this engine and sends queries
+     directly to the appropriate playlist.
+         
+     Be aware that this is a temporary solution, and was necessary in order extend 
+     the Firefox search system to meet Songbird's needs. 
+     This is guaranteed to change at some point in the future. 
+     
+     Note that engines with songbird:internal are hidden on startup, and need to 
+     be programmatically shown.     
+     
+     See searchHandler.js and sb-search.xml for more information.
   -->
+<Url type="text/html" method="GET" template="http://songbirdnest.com/"/>
+<!-- Engines tagged with songbird:internal are not sent to the web browser. -->
+<Tags>songbird:internal</Tags>
+<!-- This alias allows gSearchHandler to indentify the Songbird engine -->
 <Alias>songbird-internal-search</Alias>
-<Tags>songbird:sendevent</Tags>
 </SearchPlugin>

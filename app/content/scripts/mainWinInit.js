@@ -105,14 +105,11 @@ function SBInitialize()
     gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
     // looks like we need to attach this to the window...
     window.gBrowser = gBrowser;
-    
-    document.__SEARCHWIDGET__ = document.getElementById( "search_widget" );
 
     theWebPlaylist = document.getElementById( "playlist_web" );
     // hack, to let play buttons find the visible playlist if needed
     document.__CURRENTWEBPLAYLIST__ = theWebPlaylist;
     theWebPlaylist.addEventListener( "playlist-play", onPlaylistPlay, true );
-    theWebPlaylist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
     theWebPlaylist.setDnDSourceTracker(sbDnDSourceTracker);
     
     try {
@@ -136,11 +133,10 @@ function SBUninitialize()
 
   var webPlaylist = document.getElementById("playlist_web");
   webPlaylist.removeEventListener("playlist-play", onPlaylistPlay, true);
-  webPlaylist.removeEventListener("command", onPlaylistContextMenu, false);
 
   gServicePane = null;
   gBrowser = null;
-  document.__SEARCHWIDGET__ = null;
+  
   document.__CURRENTWEBPLAYLIST__ = null;
 
   resetJumpToFileHotkey();

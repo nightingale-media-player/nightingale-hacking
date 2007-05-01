@@ -334,7 +334,6 @@ PlaylistPlayback.prototype = {
   _faceplateState:       null,
   _restartOnPlaybackEnd: null,
   _restartAppNow:        null,
-  _resetSearchData:      null,
   
   _requestedVolume:      -1,
   _calculatedVolume:     -1,
@@ -419,7 +418,6 @@ PlaylistPlayback.prototype = {
     this._metadataURL           = createDataRemote("metadata.url", null);
     this._metadataPos           = createDataRemote("metadata.position", null);
     this._metadataLen           = createDataRemote("metadata.length", null);
-    this._resetSearchData       = createDataRemote("faceplate.search.reset", null);
     this._metadataPosText       = createDataRemote("metadata.position.str", null);
     this._metadataLenText       = createDataRemote("metadata.length.str", null);
     this._faceplateState        = createDataRemote("faceplate.state", null);
@@ -486,7 +484,6 @@ PlaylistPlayback.prototype = {
     this._metadataURL.unbind();
     this._metadataPos.unbind();
     this._metadataLen.unbind();
-    this._resetSearchData.unbind();
     this._metadataPosText.unbind();
     this._metadataLenText.unbind();
     this._faceplateState.unbind();
@@ -1654,8 +1651,6 @@ PlaylistPlayback.prototype = {
       if ( this._set_metadata ) {
         // Set the metadata into the database table
         this._setURLMetadata( this._playURL.stringValue, title, length, album, artist, genre, true );
-        // Tell the search popup the metadata has changed
-        this._resetSearchData.intValue++;
         this._set_metadata = false;
       }
 
@@ -1676,8 +1671,6 @@ PlaylistPlayback.prototype = {
     if ( core.getPlaying() && ( this._isFLAC() || len > 0.0 || pos > 0.0 ) ) {
       // First time we see it playing, 
       if ( ! this._seenPlaying.boolValue ) {
-        // Clear the search popup
-        this._resetSearchData.intValue++;
         this._metadataPollCount = 0; // start the count again.
         this._lookForPlayingCount = 0;
       }

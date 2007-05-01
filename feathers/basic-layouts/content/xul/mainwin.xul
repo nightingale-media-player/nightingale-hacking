@@ -175,17 +175,7 @@
                   </sb-smart-splitter>    
 
                   <!-- SEARCH WIDGET -->
-                  <searchbar id="searchbar" flex="1"/>  
-                  
-                  <!-- TODO: remove all old search_widget styles and references to search_service_list, search_service_button-->  
-                  <search
-                    id="search_widget" 
-                    listid="search_service_list"
-                    buttonid="search_service_button"
-                    flex="1"
-                    hidden="true"
-                  />
-                                                                        
+                  <searchbar id="searchbar" flex="1"/>                                         
                   
                   <!-- SPINNER -->
                   <spacer style="min-width: 5px !important;" width="5" height="16"/>
@@ -196,7 +186,6 @@
               </vbox>
               <sb-tabbrowser id="frame_main_pane" flex="1"
                              servicepane="servicepane"
-                             search="search_widget"
                              playlist="playlist_web"
                              contentcontextmenu="html_context_menu"
                              />
@@ -293,6 +282,9 @@
   <!-- Firefox compatibility functions -->
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/browserUtilities.js" />
+
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/searchHandler.js" />
 
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/playlist_xbl_temp.js" />

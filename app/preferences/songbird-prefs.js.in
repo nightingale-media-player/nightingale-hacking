@@ -163,6 +163,7 @@ pref("xpinstall.dialog.progress.type.skin", "Browser:Preferences");
 //
 
 // search engines URL
+// TODO Need a songbird search engine page
 pref("browser.search.searchEnginesURL",      "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/firefox/%VERSION%/search-engines/");
 
 // pointer to the default engine name

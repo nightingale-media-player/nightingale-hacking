@@ -54,7 +54,6 @@ try
       MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.repa", "checked", true, true, "parseInt( value ) != 2" ) );      
      
       // Faceplate Items    
-      MainwinAdd( SBDataBindElementProperty ( "faceplate.search.reset", "search_widget", "reset" ) );
       
       MainwinAdd( SBDataBindElementAttribute( "faceplate.loading", "spinner_stopped", "hidden", true ) );
       MainwinAdd( SBDataBindElementAttribute( "faceplate.loading", "spinner_spin", "hidden", true, true ) );
@@ -75,8 +74,7 @@ try
       // Options
 //      MainwinAdd( SBDataBindElementAttribute( "option.htmlbar", "file.htmlbar", "checked", true ) );
 
-      // Events
-      document.addEventListener( "songbird-internal-search", onSBMainwinSearchEvent, true ); // this didn't work when we put it directly on the widget?
+
       
 //      SBInitPlayerLoop();
     }
@@ -114,68 +112,9 @@ try
     {
       alert( err );
     }
-    document.removeEventListener("songbird-internal-search", onSBMainwinSearchEvent, true);
   }
   
-  //
-  // Complex Implementations (can't be handled by a simple eval)
-  //
-  
-  var theLastSearchEventTarget = null;
-  var theSearchEventInterval = null;
-  function onSBMainwinSearchEvent( evt )
-  {
-    if ( theSearchEventInterval )
-    {
-      clearInterval( theSearchEventInterval );
-      theSearchEventInterval = null;
-    }
-    var widget = null;
-    if ( theLastSearchEventTarget )
-    {
-      widget = theLastSearchEventTarget;
-    }
-    else if ( evt )
-    {
-      widget = evt.target;
-    }
-    if ( widget )
-    {
-      if ( widget.is_songbird )
-      {
-        if ( !gBrowser.playlistTree && !theLastSearchEventTarget )
-        {
-          if (gBrowser) gBrowser.loadURI( "chrome://songbird/content/xul/playlist_test.xul?library" );
-        }
-        
-        var playlistref = SBDataGetStringValue('playlist.ref');
-        if ( playlistref.length )
-        {
-          // Feed the new filter into the list.
-          var source = new sbIPlaylistsource();
-          // Wait until it is done executing
-          if ( ! source.isQueryExecuting( playlistref ) )
-          {
-            // ...before attempting to override.
-            source.setSearchString( playlistref, widget.list.label, true /* reset the filters */ );
-            theLastSearchEventTarget = null;
-            if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
-            return;
-          }
-        }
-        
-        // If we get here, we need to wait for the tree to appear
-        // and finish its query.
-        theLastSearchEventTarget = widget;
-        theSearchEventInterval = setInterval( onSBMainwinSearchEvent, 1500 );
-      }
-      else
-      {
-        onSearchTerm( evt.target.cur_service, evt.target.list.value );
-      }
-    }
-  }
-  
+
   // END
 }
 catch ( err )

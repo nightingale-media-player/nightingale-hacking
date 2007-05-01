@@ -25,6 +25,10 @@
 //
  */
 
+
+// TODO: This entire file should be going away!
+
+
 // This is a temporary file to house methods that need to roll into
 // our Playlist XBL object that we'll be updating for 0.3
 
@@ -125,175 +129,7 @@ function onPlaylistEditor( evt )
     SBTrackEditorOpen();
 }
 
-var theCurrentlyEditingPlaylist = null;
-function onPlaylistEdit( evt )
-{
-  var playlist = evt.target;
-  if ( playlist.wrappedJSObject )
-    playlist = playlist.wrappedJSObject;
-  theCurrentlyEditingPlaylist = playlist;
-  setTimeout(doPlaylistEdit, 0);
-}
 
-function doPlaylistEdit()
-{
-  try
-  {
-    // Make sure it's something with a uuid column.
-    var filter = "uuid";
-    var filter_column = theCurrentlyEditingPlaylist.tree.columns ? theCurrentlyEditingPlaylist.tree.columns[filter] : filter;
-    var filter_value = theCurrentlyEditingPlaylist.tree.view.getCellText( theCurrentlyEditingPlaylist.tree.currentIndex, filter_column );
-    if ( !filter_value )
-    {
-      return;
-    }
-    
-    // We want to resize the edit box to the size of the cell.
-    var out_x = {}, out_y = {}, out_w = {}, out_h = {}; 
-    theCurrentlyEditingPlaylist.tree.treeBoxObject.getCoordsForCellItem( theCurrentlyEditingPlaylist.edit_row, theCurrentlyEditingPlaylist.edit_col, "cell",
-                                                        out_x , out_y , out_w , out_h );
-                           
-    var cell_text = theCurrentlyEditingPlaylist.tree.view.getCellText( theCurrentlyEditingPlaylist.edit_row, theCurrentlyEditingPlaylist.edit_col );
-    
-    // Then pop the edit box to the bounds of the cell.
-    var theMainPane = document.getElementById( "frame_main_pane" );
-    var theEditPopup = document.getElementById( "playlist_edit_popup" );
-    var theEditBox = document.getElementById( "playlist_edit" );
-    var extra_x = 5; // Why do I have to give it extra?  What am I calculating wrong?
-    var extra_y = 21; // Why do I have to give it extra?  What am I calculating wrong?
-    var less_w  = 6;
-    var less_h  = 0;
-    var pos_x = extra_x + theCurrentlyEditingPlaylist.tree.boxObject.screenX + out_x.value;
-    var pos_y = extra_y + theCurrentlyEditingPlaylist.tree.boxObject.screenY + out_y.value;
-    theEditBox.setAttribute( "hidden", "false" );
-    theEditPopup.showPopup( theMainPane, pos_x, pos_y, "context" );
-    theEditPopup.sizeTo( out_w.value - less_w, out_h.value - less_h ); // increase the width to the size of the cell.
-    theEditBox.value = cell_text;
-    theEditBox.focus();
-    theEditBox.select();
-    isPlaylistEditShowing = true;
-    theCurrentlyEditingPlaylist.theCurrentlyEditedUUID = filter_value;
-    theCurrentlyEditingPlaylist.theCurrentlyEditedOldValue = cell_text;
-  }
-  catch ( err )
-  {
-    alert( err );
-  }
-}
 
-function onPlaylistEditChange( evt )
-{
-  try
-  {
-    if (isPlaylistEditShowing) {
-      var theEditBox = document.getElementById( "playlist_edit" );
-      
-      var filter_value = theCurrentlyEditingPlaylist.theCurrentlyEditedUUID;
-      
-      var the_table_column = theCurrentlyEditingPlaylist.edit_col.id;
-      var the_new_value = theEditBox.value
-      if (theCurrentlyEditingPlaylist.theCurrentlyEditedOldValue != the_new_value) {
-      
-        var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-        var aMediaLibrary = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
-        
-        if ( ! aDBQuery || ! aMediaLibrary)
-          return;
-        
-        aDBQuery.setAsyncQuery(true);
-        aDBQuery.setDatabaseGUID(theCurrentlyEditingPlaylist.guid);
-        aMediaLibrary.setQueryObject(aDBQuery);
-        
-        aMediaLibrary.setValueByGUID(filter_value, the_table_column, the_new_value, false);
-        
-        //var table = "library" // hmm... // theCurrentlyEditingPlaylist.table;
-        //var q = 'update ' + table + ' set ' + the_table_column + '="' + the_new_value + '" where ' + filter + '="' + filter_value + '"';
-        //aDBQuery.addQuery( q );
-        
-        //var ret = aDBQuery.execute();
-      }    
-      HidePlaylistEdit();
-    }
-  }
-  catch ( err )
-  {
-    alert( err );
-  }
-}
 
-function onPlaylistEditKeypress( evt )
-{
-  switch ( evt.keyCode )
-  {
-    case 27: // Esc
-      HidePlaylistEdit();
-      break;
-    case 13: // Return
-      onPlaylistEditChange( evt );
-      break;
-  }
-}
-
-var isPlaylistEditShowing = false;
-function HidePlaylistEdit()
-{
-  try
-  {
-    if ( isPlaylistEditShowing )
-    {
-      var theEditBox = document.getElementById( "playlist_edit" );
-      theEditBox.setAttribute( "hidden", "true" );
-      var theEditPopup = document.getElementById( "playlist_edit_popup" );
-      theEditPopup.hidePopup();
-      isPlaylistEditShowing = false;        
-      theCurrentlyEditingPlaylist = null;
-    }
-  }
-  catch ( err )
-  {
-    alert( err );
-  }
-}
-
-// Menubar handling
-function onPlaylistContextMenu( evt )
-{
-  try
-  {
-    // hacky for now
-    var playlist = theLibraryPlaylist;
-    if ( !playlist )
-    {
-      playlist = theWebPlaylist;
-    }
-    
-    // All we do up here, now, is dispatch the search items
-    onSearchTerm( playlist.context_item, playlist.context_term );
-  }
-  catch ( err )
-  {
-    alert( err );
-  }
-}
-// TODO Remove
-function onSearchTerm( target, in_term )
-{
-  var search_url = "";
-  if ( target && in_term && in_term.length )
-  {
-//    var term = '"' + in_term + '"';
-    var term = in_term;
-    var v = target.getAttribute( "id" );
-    switch ( v )
-    {
-      case "search.popup.songbird":
-        onSearchEditIdle();
-      break;
-    }
-  }
-  if ( search_url.length )
-  {
-    gBrowser.loadURI( search_url );
-  }
-}
 

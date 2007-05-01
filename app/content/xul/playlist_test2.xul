@@ -329,45 +329,50 @@ try
     
   } // end of sbPlaylistCommands
   
+  
+  // Helper function to extract and unescape a query string param
+  // from the given url string
+  function getQueryStringParam(param, url) {
+            
+    // Build a regular expression to extract param=string 
+    var re = new RegExp("[&\\?]" + param + "=([\\w%]*)(&.*)?$");
+    
+    var results = re.exec(url);    
+    if (results && results.length >= 2) {
+      return unescape(results[1]);
+    }
+    return "";
+  }
+  
   function LocalLoad()
   {
     try
     { 
       // Default values, in case we get confused
-      var libraryGUID = "main@library.songbirdnest.com";
+      var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                     .getService(Components.interfaces.sbILibraryManager);
+      var libraryGUID = libraryManager.mainLibrary.guid;
       var mediaListGUID = "library";
-      var data = SBDataGetStringValue( "browser.uri" );
+      
+      var url = window.location.href;
 
       // Cook the mediaListGUID from the magic browser uri?
-      var qm = data.lastIndexOf( '?' );
-      if ( qm > -1 )
-      {
-        var str = data.substr( qm + 1, data.length );
-        var divider = str.lastIndexOf( ',' );
-        if ( divider > -1 )
-        {
-          mediaListGUID = str.substr( 0, divider );
-          libraryGUID = str.substr( divider + 1, str.length );
-        }
-        else
-        {
-          mediaListGUID = str;
+      // Extract things like ?library,main@library.songbirdnest.com
+      var libraryStrings = /\?((\w+),)?([\w@\.-]+)/.exec(url);
+      if (libraryStrings && libraryStrings.length == 4) {
+        // Match form ?library,main@library.songbirdnest.com
+        if (libraryStrings[2]) {
+          mediaListGUID = libraryStrings[2];
+          libraryGUID = libraryStrings[3];
+        // Match form ?main@library.songbirdnest.com
+        } else {
+          mediaListGUID = libraryStrings[3];      
         }
       }
-      
+
       // Assuming we have any clue
       if ( ( mediaListGUID.length > 0 ) && ( libraryGUID.length > 0 ) )
       {
-        // TODO: If we're a library, we want metadata filters
-        var filters = null;
-        if ( mediaListGUID == "library" )
-        {
-          filters = new Array(
-                                "artist",
-                                "album" 
-                             );
-        }
-
         // Get the correct sbILibrary
         var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"].
                               getService(Components.interfaces.sbILibraryManager);
@@ -395,6 +400,16 @@ try
           filter.appendFilter("http://songbirdnest.com/data/1.0#year");
           filter.appendFilter("http://songbirdnest.com/data/1.0#artistName");
           filter.appendFilter("http://songbirdnest.com/data/1.0#albumName");
+          
+          // If a search parameter was passed in, use it
+          var searchTerm = getQueryStringParam("search", url);
+          if (searchTerm == "") {
+            filter.set(0, [], 0);
+          }
+          else {
+            filter.set(0, [searchTerm], 1);
+          }
+          
           var playlist = document.getElementById("playlist_test");
           SBLibraryCommands.m_Playlist = playlist;
           playlist.bind(view, SBLibraryCommands);

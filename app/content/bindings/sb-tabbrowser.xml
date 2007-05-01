@@ -184,17 +184,6 @@
       </property>
       
       
-      <field name="_search">null</field>
-      <property name="search">
-        <getter><![CDATA[
-          if (!this._search) {
-            this._search =
-                document.getElementById(this.getAttribute('search'));
-          }
-          return this._search;
-        ]]></getter>
-      </property>
-      
       <field name="_playlist">null</field>
       <property name="playlist">
         <getter><![CDATA[
@@ -205,7 +194,37 @@
           return this._playlist;
         ]]></getter>
       </property>
-      
+
+
+      <!-- Get the playlist element from within the document in the current tab.
+           Returns null if no playlist element is available 
+        -->
+      <property name="currentBrowserPlaylist" readonly="true">
+        <getter><![CDATA[
+
+          // Get the document from the current browser tab
+          var playlistDocument = this.mCurrentBrowser.contentDocument;
+          if (playlistDocument == null) {
+            return null;
+          }
+          
+          // Get the playlist element from within the current tab      
+          // TODO change this
+          var playlist = playlistDocument.getElementById("playlist_test");
+          if (playlist == null) {
+            return null;
+          }
+          
+          // Remove security wrappers
+          if (playlist.wrappedJSObject) {
+            playlist = playlist.wrappedJSObject;
+          }
+              
+          return playlist;
+        ]]></getter>
+      </property>
+
+
       <field name="_loading">SB_NewDataRemote("faceplate.loading", null)</field>
       <property name="loading"
                 onget="return this._loading.boolValue"
@@ -280,13 +299,13 @@
                 playlist.setDnDSourceTracker(sbDnDSourceTracker);
         
                 // Events on the playlist object itself.
-                playlist.addEventListener("playlist-edit", onPlaylistEdit, true);
                 playlist.addEventListener("playlist-editor", onPlaylistEditor, true);
                 playlist.addEventListener("playlist-play", onPlaylistPlay, true);
                 playlist.addEventListener("playlist-burntocd", onPlaylistBurnToCD, true);
                 playlist.addEventListener("playlist-noplaylist", onPlaylistNoPlaylist, true);
                 playlist.addEventListener("playlist-filterchange", onPlaylistFilterChange, true);
-                playlist.addEventListener("command", onPlaylistContextMenu, false );  // don't force it!
+        
+                // TODO: Do we not want to remove these listeners at some point?
         
                 // Remember some values
                 theLibraryPlaylist = playlist;
@@ -414,8 +433,6 @@
             // Nothing in the status text
             theStatusText.stringValue = "";
             
-            this.search.loadSearchStringForCurrentUrl();
-            
             // set the context-menu based on the chromeyness of the location
             if (aLocation.scheme == 'chrome') {
               this.mCurrentBrowser.contextMenu = null;
@@ -510,7 +527,6 @@
           } else {
             // otherwise, play the url as external (added to the db, plays the library from that point on)
             PPS.playAndImportURL(the_url); // if the url is already in the lib, it is not added twice
-            if (document.__SEARCHWIDGET__) document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
           }
         ]]></body>
       </method>
@@ -903,6 +919,8 @@
           }
         ]]></body>
       </method>
+      
+      
       
 
     </implementation>

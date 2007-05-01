@@ -27,591 +27,27 @@
  */
 -->
 
-<!--
-
-
-    WOO HOO!! LET'S MAKE A BINDING WIDGET!!
-
-
--->
-
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
-  <binding id="search">
-    <content>
-      <xul:hbox onmousedown="onFirstMousedown();" onfocus="onFirstMousedown();" align="center" flex="1">
-        <xul:button 
-          sbid="search.button"
-          type="menu"
-          xbl:inherits="id=buttonid"
-          oncommand="onSearchServiceMenu(event.target);"
-        >
-          <xul:menupopup id="search.popup">
-            <xul:menuitem id="search.popup.songbird" sid="search.item.songbird"
-              label="Library" class="menuitem-iconic" image="chrome://songbird/skin/icons/icon_lib_16x16.png"
-            />
-              <xul:menuitem id="search.popup.dogpile" 
-                label="dogpile" class="menuitem-iconic" image="chrome://service-icons/skin/dogpile.ico"
-            />
-              <xul:menuitem id="search.popup.elbows" 
-                label="elbo.ws" class="menuitem-iconic" image="chrome://service-icons/skin/elbows.ico"
-            />
-              <xul:menuitem id="search.popup.mefeedia" 
-                label="mefeedia" class="menuitem-iconic" image="http://www.mefeedia.com/favicon.ico"
-            />
-              <xul:menuitem id="search.popup.google" 
-                label="Google" class="menuitem-iconic" image="chrome://service-icons/skin/google.ico"
-            />
-              <xul:menuitem id="search.popup.yahoo" 
-                label="Yahoo!" class="menuitem-iconic" image="chrome://service-icons/skin/yahoo.ico"
-            />
-              <xul:menuitem id="search.popup.wiki" 
-                label="Wikipedia" class="menuitem-iconic" image="chrome://service-icons/skin/default.ico"
-            />
-              <xul:menuitem id="search.popup.emusic" 
-                label="eMusic" class="menuitem-iconic" image="chrome://service-icons/skin/emusic.ico"
-            />
-<!--              <xul:menuitem id="search.popup.creativecommons" 
-                label="Creative Commons" class="menuitem-iconic" image="http://creativecommons.org/favicon.ico"
-            />         -->
-          </xul:menupopup>
-        </xul:button>
-         
-        <xul:menulist 
-          sbid="search.list"
-          xbl:inherits="id=listid"
-          editable="true"
-          xxx_onchange="onSearchChange();"
-          xxx_oncommand="onSearchChange();"
-          onkeypress="onSearchKeypress( event );"
-          flex="1"
-        >
-          <xul:menupopup 
-            sbid="search.list.popup"
-            id="search.list.popup"
-            onpopupshowing="onSearchPopup();"
-          />
-        </xul:menulist>
 
-        <children/>
-      </xul:hbox>
-    </content>
-
-   <implementation>
-
-    <!-- CONSTRUCTION -->
-    <constructor>
-    <![CDATA[
-    try
-    {
-      // Set our starting values.                              
-      this.theSongbirdSearchSelection = document.getAnonymousElementByAttribute( this, "sid", "search.item.songbird" );
-      this.theCurrentSearchSelection = this.theSongbirdSearchSelection;
-      if ( this.theCurrentSearchSelection )
-      {
-        this.button.setAttribute( "image", this.theCurrentSearchSelection.getAttribute( "image" ) );
-      }
-
-      var defwebsearchid = SBDataGetStringValue( "search.defaultweb" );
-      if (defwebsearchid != "") {
-        this.theLastWebSearchSelection = document.getElementById( defwebsearchid );
-      }
-      if (!this.theLastWebSearchSelection) this.theLastWebSearchSelection = this.theSongbirdSearchSelection.nextSibling;
-
-      this.editIdleInterval = null;
-
-      this.playlistSource = new sbIPlaylistsource();
-
-      this.browserUrl = SB_NewDataRemote( "browser.uri", null );
-      // event handler for the url data remote
-      const on_browser_url_data_change = { 
-        observe: function( aSubject, aTopic, aData ) { onBrowserUrlDataChanged(); } 
-      };
-      this.browserUrl.bindObserver(on_browser_url_data_change, true);
-
-      this.playlistRef = SB_NewDataRemote( "playlist.ref", null );
-      // event handler for the playlist ref data remote
-      const on_playlist_ref_change = { 
-        observe: function( aSubject, aTopic, aData ) { onPlaylistRefChanged(); } 
-      };
-      this.playlistRef.bindObserver(on_playlist_ref_change, true);
-      
-      // if the fist page loaded on startup is a webpage, we should switch to the last websearch engine.
-      // do this manually here because calling onBrowserUrlDataChanged on startup would reset the default 
-      // search string
-      if (!this.isPlaylistUrl(this.browserUrl.stringValue)) {
-        if (this.theLastWebSearchSelection) {
-          this.theCurrentSearchSelection = this.theLastWebSearchSelection;
-          this.button.image = this.theCurrentSearchSelection.getAttribute( "image" );
-        }
-      }
-      
-      // Stuff us into the document context so we can find us from an interval callback
-      document.__SEARCH_WIDGET__ = this;
-      
-      this.list.label = this.getDefaultSearchString();
-    }
-    catch ( err )
-    {
-      alert( err );
-    }
-    ]]>
-    </constructor>
-    
-    <destructor>
-      this.browserUrl.unbind();
-      this.playlistRef.unbind();
-    </destructor>
-
-    <!-- DATA FIELDS -->
-    <field name="button">document.getAnonymousElementByAttribute(this, 'sbid', 'search.button');</field>
-    <field name="list">  document.getAnonymousElementByAttribute(this, 'sbid', 'search.list');  </field>
-    <field name="popup"> document.getAnonymousElementByAttribute(this, 'sbid', 'search.list.popup'); </field>
-    <field name="first_mousedown">false</field>
-
-    <!-- DATA PROPERTIES -->
-    <property name="cur_service">
-      <getter>
-        return this.theCurrentSearchSelection;
-      </getter>
-      <setter>
-        // readonly, bitches!
-      </setter>
-    </property>
-    
-    <property name="is_songbird">
-      <getter>
-        return ( this.theCurrentSearchSelection == this.theSongbirdSearchSelection );
-      </getter>
-      <setter>
-        // readonly, bitches!
-      </setter>
-    </property>
-
-    <property name="reset">
-      <getter>
-        return 0;
-      </getter>
-      <setter>
-        this.onSearchPopup();
-      </setter>
-    </property>
-
-    <method name="getDefaultSearchString">
-      <body>
-        <![CDATA[
-          var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-          var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-          var defaultsearchstring = "Search";
-          try {
-            defaultsearchstring = songbirdStrings.GetStringFromName("search.defaultstring");
-          } catch (err) { /* ignore error, we have default strings */ }
-          return defaultsearchstring;
-        ]]>
-      </body>
-    </method>
-
-    <!-- INTERNAL EVENT HANDLERS -->
-    <method name="onFirstMousedown">
-      <parameter name="event"/>
-      <body>
-      <![CDATA[
-      try
-      {
-        if ( ! this.first_mousedown )
-        {
-          this.list.label = "";
-          this.first_mousedown = true;
-        }
-        this.list.setAttribute( "focused", "true" );
-        this.list.mInputField.focus();
-        
-        // Why select?  This was causing some funky behaviour..
-        //this.list.mInputField.select();
-      }
-      catch( err )
-      {
-        alert( err )
-      }
-      ]]>
-      </body>
-    </method>
-    
-    <method name="onSearchServiceMenu">
-      <parameter name="target"/>
-      <body>
-      <![CDATA[
-      try
-      {
-        this.theCurrentSearchSelection = target;
-        this.button.image = this.theCurrentSearchSelection.getAttribute( "image" );
-        if (this.theCurrentSearchSelection != this.theSongbirdSearchSelection) {
-          this.theLastWebSearchSelection = this.theCurrentSearchSelection;
-          var defwebsearchid = this.theLastWebSearchSelection.getAttribute("id");
-          SBDataSetStringValue( "search.defaultweb", defwebsearchid );
-        }
-        this.onSearchChange();
-      }
-      catch( err )
-      {
-        alert( err )
-      }
-      ]]>
-      </body>
-    </method>
-    
-    <method name="onSearchChange">
-      <body>
-      <![CDATA[
-      try
-      {
-        var empty_space = " ";
-        var search_term = this.list.label;
-        if ( ( search_term.length > 0 ) && ( search_term != empty_space ) )
-        {          
-          this.sendSearchEvent();
-          metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
-          
-          // Keep last 4 search terms for display in popup
-          var recentSearches = SB_NewDataRemote( "searchwidget.recentstrings", null ); 
-          var searchStrings = recentSearches.stringValue.split("\n");
-          if (searchStrings.indexOf(search_term) == -1) 
-          {
-            if (searchStrings.length > 3 || (searchStrings.length == 1 && searchStrings[0] == ""))
-            {
-              searchStrings.pop();
-            }
-            searchStrings.unshift(search_term);
-            recentSearches.stringValue = searchStrings.join("\n");
-            this.onSearchPopup();
-          }
-        }
-        else
-        {
-          // Is the term now empty?
-          this.list.selectedIndex = -1;
-          this.list.label = "";
-        }
-      }
-      catch( err )
-      {
-        alert( err )
-      }
-      ]]>
-      </body>
-    </method>
-    
-    <method name="onSearchKeypress">
-      <parameter name="evt"/>
-      <body>
-      <![CDATA[
-      try
-      {
-        switch ( evt.keyCode )
-        {
-          case 9:  // Tab
-          case 19: // Break
-          case 37: // Arrows
-          case 38:
-          case 39:
-          case 40:
-          case 35: // End
-          case 36: // Home
-          case 45: // Insert
-          case 33: // PgUp
-          case 34: // PgDn
-          case 112: // F1-F12
-          case 113:
-          case 114:
-          case 115:
-          case 116:
-          case 117:
-          case 118:
-          case 119:
-          case 120:
-          case 121:
-          case 122:
-          case 123:
-            break;      
-          case 27: // Esc
-            this.list.label = ""; // Clear it
-            // Fallthru
-          case 13: // Return
-            this.onSearchChange();
-            this.list.mInputField.select();
-            break;      
-          default:
-            if ( this.editIdleInterval )
-            {
-              clearInterval( this.editIdleInterval );
-            }
-            this.editIdleInterval = setInterval( this.onSearchEditIdle, 1000 );
-            break;      
-        }
-      }
-      catch( err )
-      {
-        alert( err )
-      }
-      ]]>
-      </body>
-    </method>
-    
-    <method name="onSearchEditIdle">
-      <body>
-      <![CDATA[
-      try
-      {
-        // WOO HOO.  YAY FOR GLOBAL DATA POLLUTING MY DOCUMENT OBJECT!!
-        if ( document.__SEARCH_WIDGET__.theCurrentSearchSelection == document.__SEARCH_WIDGET__.theSongbirdSearchSelection )
-        {
-          // Only do key timeouts when the library is selected
-          document.__SEARCH_WIDGET__.sendSearchEvent();
-          metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
-        }
-        clearInterval( document.__SEARCH_WIDGET__.editIdleInterval );
-      }
-      catch( err )
-      {
-        alert( err )
-      }
-      ]]>
-      </body>
-    </method>
-
-    <method name="onSearchPopup">
-      <body>
-      <![CDATA[
-      try
-      {
-        var empty_space = " ";
-
-        var prev_sel = this.list.selectedIndex;
-        var prev_label = this.list.label;
-        
-        var modified = false;
-        
   
-        // Look for metadata that might be worth searching
-        var playbackURL = SBDataGetStringValue( "metadata.url" );
-        if ( playbackURL.length )
-        {
-
-          this.list.removeAllItems();
-
-          var title = SBDataGetStringValue("metadata.title");
-          var artist = SBDataGetStringValue("metadata.artist");
-          var album = SBDataGetStringValue("metadata.album");
-          var genre = SBDataGetStringValue("metadata.genre");
-          
-          var metarray = [ title, artist, album, genre ];
-          for ( var j = 0; j < metarray.length; j++ )
-          {
-            var value = "" + metarray[j];
-            // LAME.  If I append a totally blank item it is autoselected.
-            if ( ! value.length )
-            {
-              value = " ";
-              // A unique number of blank spaces to ensure that the metadata column is preserved
-              for ( var k = 0; k < j; k++ )
-              {
-                value += empty_space; 
-              }
-            }
-            this.list.appendItem( value, null, null )
-            modified = true;
-          }
-        }
-        
-        
-        // Add previous searches
-        var recentSearches = SBDataGetStringValue( "searchwidget.recentstrings" ); 
-        if (recentSearches.length)
-        {
-          if (!modified) 
-          {
-            this.list.removeAllItems();
-          }
-          else 
-          {
-            var item = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "menuseparator");
-            this.list.menupopup.appendChild(item);
-          }
-          
-          recentSearches = recentSearches.split("\n");
-          for (var i = 0; i < recentSearches.length; i++)
-          {
-            this.list.appendItem( recentSearches[i], null, null )
-          }
-          
-          modified = true;
-        }
-        
-        
-        // If the list was modified, fix/restore the selected item
-        if (modified) 
-        {
-          this.list.selectedIndex = prev_sel;
-          if ( prev_sel == -1 )
-          {
-            // Reset the label if it's a hand-edited label.
-            this.list.label = prev_label;
-          }
-        }
-      }
-      catch( err )
-      {
-        alert( " search.xml:onSearchPopup" + err )
-      }
-      ]]>
-      </body>
-    </method>
-
-    <!-- EXTERNAL EVENT DISPATCH -->
-    <method name="sendSearchEvent">
-      <parameter name="which"/>
-      <body>
-      <![CDATA[
-      try
-      {
-        if ( this.list.label == "migmigmig" )
-        {
-          alert( ".gge retsaE" );
-        }
-        var e = document.createEvent("Events");
-        e.initEvent("search", false, true);
-        this.dispatchEvent(e);
-      }
-      catch( err )
-      {
-        alert( err )
-      }
-      ]]>
-      </body>
-    </method>
-
-    <method name="onBrowserUrlDataChanged">
-      <body>
-        <![CDATA[
-          if (this.theCurrentSearchSelection != this.theSongbirdSearchSelection) {
-            this.theLastWebSearchString = this.list.label;
-          }
-          setTimeout(function(obj) { obj.loadSearchStringForCurrentUrl(); }, 100, this); 
-        ]]>
-      </body>
-    </method>
-
-    <method name="loadSearchStringForCurrentUrl">
-      <body>
-        <![CDATA[
-          if (this.isPlaylistUrl(this.browserUrl.stringValue)) {
-            this.theCurrentSearchSelection = this.theSongbirdSearchSelection;
-            this.button.image = this.theCurrentSearchSelection.getAttribute( "image" );
-            this.loadPlaylistSearchString(this.playlistRef.stringValue);
-          } else {
-            if (this.theLastWebSearchSelection) {
-              this.theCurrentSearchSelection = this.theLastWebSearchSelection;
-              this.button.image = this.theCurrentSearchSelection.getAttribute( "image" );
-              if (this.theLastWebSearchString)
-                this.list.label = this.theLastWebSearchString;
-              else {
-                this.list.label = this.getDefaultSearchString();
-                this.first_mousedown = false;                
-              }
-            }
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="onPlaylistRefChanged">
-      <body>
-        <![CDATA[
-          if (this.isPlaylistUrl(this.browserUrl.stringValue)) {
-            this.loadPlaylistSearchString(this.playlistRef.stringValue);
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="loadPlaylistSearchString">
-      <parameter name="ref"/>
-      <body>
-        <![CDATA[
-          try {
-            var searchstring = this.playlistSource.getSearchString(ref);
-            if (!searchstring || searchstring == "") {
-              searchstring = this.getDefaultSearchString();
-              this.first_mousedown = false;
-            } else {
-              this.first_mousedown = true;
-            }
-            this.list.label = searchstring;
-          } catch (e) {
-            /* playlistsource ref doesnt exist yet ? reset search text */
-            this.list.label = "";
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="isPlaylistUrl">
-      <parameter name="url"/>
-      <body>
-        <![CDATA[
-          var qmark = url.indexOf("?")
-          if (qmark > -1) url = url.substr(0, qmark);
-          url = url.toLowerCase();
-          return (url.substr(0, 9) == "chrome://" &&
-              url.substr(url.length-17) == "playlist_test.xul");
-          //return (url.toLowerCase() == "chrome://songbird/content/xul/playlist_test.xul");
-        ]]>
-      </body>
-    </method>
-
-   </implementation>
- 
-  </binding>
+  <!-- Songbird Search Widget
   
-  
-  
-  
-  <!-- Search widget for web and internal searches
-  
-       Extends the Firefox searchbar widget to intercept Songbird library searches
-       and add "search as you type" functionality.
+       Extends the Firefox searchbar widget to add "search as you type" functionality
+       and other Songbird customizations.
+       
+       Unlike the Firefox searchbar, this widget fires a "search" event instead of
+       dispatching search queries itself.  This allows gSearchHandler (in searchHandler.js)
+       to provide special processing for the Songbird internal search engine.
        
        See dependencies/vendor/mozilla/browser/components/search/content/search.xml
-       
-       TODO:
-         - Metrics
-         - Localization?
     -->
   <binding id="sb-searchbar"
            extends="chrome://browser/content/search/search.xml#searchbar">
     <implementation>
-
-      <!-- Temporary legacy fields to keep onSearchTerm and onSBMainwinSearchEvent happy -->
-      <!-- TODO: Remove  -->
-      <field name="cur_service">"search.popup.songbird"</field>
-      <property name="is_songbird">
-        <getter>
-          if (this._songbirdSearchEngine == null) {
-            this._songbirdSearchEngine = this.searchService.getEngineByAlias("songbird-internal-search");
-          } 
-          return this._songbirdSearchEngine;
-        </getter>
-      </property>
-      <property name="list">
-        <getter>
-          return { label: this.getSearch() };
-        </getter>
-      </property>    
-
       
-
 
       <!-- Map of engine names to booleans.
            Used to determine which engines send searches
@@ -643,7 +79,6 @@
           return currentEngine || {name:"", uri:null};
         ]]></getter>
         <setter><![CDATA[
-
           this.searchService.currentEngine = val; 
 
           // Set the live search indicator attribute
@@ -662,24 +97,45 @@
       </property>      
       
       
+  
       
-      
-      <!-- Get the current search query.
-           Use this function to avoid being confused by the 
-           default display text that is shown when no search
-           is active (greyed out "Google" for example).
+      <!-- Override the normal get method in order to manage
+           the "empty" and "livesearchmode" attributes for this
+           element.
         -->
-      <method name="getSearch">
-        <body><![CDATA[
-        
+      <property name="value">
+        <getter><![CDATA[
           if (this.getAttribute("empty") == "true") {
             return "";
           }
+          return this._textbox.value;
+        ]]></getter>      
+        <setter><![CDATA[
+          // Make sure to remove the "empty" attribute if someone is setting
+          // the search bar value to a non-empty string. Similarly, we need to
+          // add the "empty" attribute if someone is clearing the search box,
+          // but only if the search box currently doesn't have focus.
+          if (val) {
+            this.removeAttribute("empty");
+            this._textbox.value = val;
+          }
+          else {
+            if (this._textbox.hasAttribute("focused")) {
+              // Just clear the textbox
+              this._textbox.value = "";
+            }
+            else {
+              // Display the current engine
+              this._textbox._displayCurrentEngine();
+            }
+          }
           
-          return this.value;
-        ]]></body>
-      </method>    
+          this.updateLiveSearchAttribute();
 
+          return val;
+        ]]></setter>
+      </property>      
+      
 
       
 
@@ -746,7 +202,7 @@
         -->   
       <method name="updateLiveSearchAttribute">
         <body><![CDATA[
-          var enable = (this.liveSearchMode && this.getSearch() != "");
+          var enable = (this.liveSearchMode && this.value != "");
           this.setAttribute("livesearchmode", (enable) ? "true" : "false");                  
         ]]></body>
       </method> 
@@ -760,7 +216,9 @@
         <parameter name="aEvent"/>
         <body><![CDATA[
           var textBox = this._textbox;
-          var textValue = this.getSearch();
+          var textValue = this.value;
+
+          this.updateLiveSearchAttribute();
 
           // Go-button clicks in live search mode clear the search terms
           if (this.liveSearchMode && aEvent 
@@ -768,7 +226,6 @@
           {
             this.value = "";
             this._sendSearchEvent();
-            this.updateLiveSearchAttribute();
             return;
           }
 
@@ -781,44 +238,19 @@
           // Add your eggs here...
           if ( textValue == "migmigmig" )  { alert( ".gge retsaE" ); } 
           else if ( textValue == "mattmattmatt" )  { alert( "Eggstereast." ); } 
-          
-          
-          // If this engine has been tagged with "songbird:sendevent"
-          // then instead of treating it like a normal search engine
-          // we just fire off an event using the Alias of the engine.
-          // This is to allow for programmatic searches
-          if (this.currentEngine.tags.indexOf("songbird:sendevent") >= 0) 
-          {
-            this._sendSearchEvent();
-          }
-          // Otherwise run the search as mozilla would
-          else 
-          {
-
-            var where = "current";
-            if (aEvent && aEvent.originalTarget.getAttribute("anonid") == "search-go-button")
-              where = whereToOpenLink(aEvent, false, true);
-            else {
-              var newTabPref = textBox._prefBranch.getBoolPref("browser.search.openintab");
-              if ((aEvent && aEvent.altKey) ^ newTabPref)
-                where = "tab";
-            }
-          
-            this.doSearch(textValue, where);
-          }
-          
+                              
+          this._sendSearchEvent();
         ]]></body>
       </method>
 
           
           
-      <!-- Dispatch an event with the alias of the current search engine -->
+      <!-- Dispatch a search event -->
       <method name="_sendSearchEvent">
-        <body><![CDATA[              
+        <body><![CDATA[
+          metrics_inc("searchwidget", this.currentEngine.name, null);        
           var e = document.createEvent("Events");
-          if (this.currentEngine.alias) {
-            e.initEvent(this.currentEngine.alias, false, true);
-          }
+          e.initEvent("search", false, true);
           this.dispatchEvent(e);
         ]]></body>
       </method>      
@@ -871,16 +303,14 @@
       
       
       <!-- Called when a Songbird search is selected, and a short delay has passed since
-           the last keystroke.  Provides "search as you type" functionality. -->
+           the last keystroke.  Provides "search as you type" functionality. 
+         -->
       <method name="_onSearchEditIdle">
         <body>
         <![CDATA[
           if (this.liveSearchMode)
           {
             this._sendSearchEvent();
-
-            // TODO: do something with metrics
-            //metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
             
             this.updateLiveSearchAttribute();
           }
@@ -983,6 +413,233 @@
       ]]></handler>    
     </handlers>
   </binding>  
+
+
+
+
+
+
+  <!--
+    A menupopup that offers to run the given search using the
+    installed search plugins.
+    
+    Attributes:
+      label      - Adds an extra disabled menuitem at the top of the list
+                   to act as a context label.
+      searchterm - The term to search for if the user selects a search engine
+      enginetags - Include only search engines with any of the given tags.
+  -->
+  <binding id="sb-search-menupopup" 
+           extends="chrome://global/content/bindings/popup.xml#popup">
+    <implementation type="application/x-javascript">
+
+
+      <property name="searchService" readonly="true">
+        <getter><![CDATA[
+          if (!this._ss) {
+            const nsIBSS = Components.interfaces.nsIBrowserSearchService;
+            this._ss =
+                 Components.classes["@mozilla.org/browser/search-service;1"]
+                           .getService(nsIBSS);
+          }
+          return this._ss;
+        ]]></getter>
+      </property>
+
+
+      <property name="currentEngine" readonly="true">
+        <getter><![CDATA[
+          // Return a dummy engine if there is no currentEngine
+          return this._currentEngine || {name:"", uri:null};
+        ]]></getter>       
+      </property>      
+      
+      
+      <!-- Get the current search query. -->
+      <property name="value" readonly="true">
+        <getter><![CDATA[
+          return this.getAttribute("searchterm");
+        ]]></getter>      
+      </property>    
+
+
+      <!--
+        Called just before the popup appears.
+      -->
+      <method name="onPopupShowing">
+        <body>
+          <![CDATA[
+            this._cleanMenu();
+            this._buildMenu();
+          ]]>
+        </body>
+      </method>
+
+
+      <!--
+        Called when a child menuitem is selected.  
+      -->
+      <method name="onCommand">
+        <parameter name="item"/>
+        <body>
+          <![CDATA[
+            // If the user clicked on a menuitem, then launch the search
+            if (item.engine) {
+              this._currentEngine = item.engine;
+              this._sendSearchEvent();
+            } else {
+              dump("sb-search-menupopup: oncommand: unknown menu item\n");
+            }
+          ]]>
+        </body>
+      </method>
+
+
+      <!-- Dispatch an event with the alias of the current search engine -->
+      <method name="_sendSearchEvent">
+        <body><![CDATA[              
+          metrics_inc("searchmenu", this._currentEngine.name, null);
+          var e = document.createEvent("Events");
+          e.initEvent("search", false, true);
+          this.dispatchEvent(e);
+        ]]></body>
+      </method>   
+      
+
+      <!-- Get rid of all the children of this menupopup -->
+      <method name="_cleanMenu">
+        <body>
+          <![CDATA[
+            var children = this.childNodes;
+            for (var i = children.length - 1; i >= 0; --i) {
+              this.removeChild(children[i]);
+            }
+          ]]>
+        </body>
+      </method>
+
+
+      <!--
+        Populates this menupopup with menuitems allowing 
+        search engine selection
+      -->
+      <method name="_buildMenu">
+        <body>
+          <![CDATA[
+            var popup = this;
+
+            const kXULNS =
+                "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+
+            // If a label was given, stick it in a disabled menuitem
+            // at the top of the list, and then add a separator.
+            var label = this.getAttribute("label");
+            if (label && label != "") {
+              var menuitem = document.createElementNS(kXULNS, "menuitem");
+              menuitem.setAttribute("label", label);
+              menuitem.setAttribute("disabled", "true");
+              popup.appendChild(menuitem);
+              popup.appendChild(document.createElementNS(kXULNS, "menuseparator"));
+            }
+
+            // Append visible engines
+            this._engines = this._getEngines();
+            for (var i = 0; i < this._engines.length; i++) {
+              var menuitem = document.createElementNS(kXULNS, "menuitem");
+              var name = this._engines[i].name;
+              menuitem.setAttribute("label", name);
+              menuitem.setAttribute("id", name);
+              menuitem.setAttribute("name", "search-menupopup-engine");
+              menuitem.setAttribute("class", "menuitem-iconic searchbar-engine-menuitem");
+              if (this._engines[i].iconURI)
+                menuitem.setAttribute("src", this._engines[i].iconURI.spec);
+              popup.appendChild(menuitem, popup.firstChild);
+              menuitem.engine = this._engines[i];
+            }          
+          ]]>
+        </body>
+      </method>
+      
+      <!--
+        Gets an array of search engines to use in this menu.
+        If enginetags has been specified then the list will only
+        include engines containing at least one of the given tags. 
+        If not, then all visible untagged search engines will be used.
+      -->
+      <method name="_getEngines">
+        <body>
+          <![CDATA[
+            var engines;
+        
+            // If some tags were specified then only get
+            // engines that have at least one of the tags
+            var tags = this.getAttribute("enginetags");
+            if (tags) 
+            {
+              // Build a regex that matches if a string contains
+              // any of the given tags
+              tags = tags.replace(" ", "|");
+              var tagRegex = new RegExp("^(.* )?(" + tags + ")( .*)?$");
+
+              function hasTag(engine) {
+                return tagRegex.test(engine.tags);
+              };
+              
+              // Get all search engines and then filter
+              // using our regular expression
+              engines = this.searchService
+                            .getEngines({ })
+                            .filter(hasTag);
+            }
+            // Otherwise include all visible untagged search engines
+            else 
+            {             
+              function hasTags(engine) {
+                return engine.tags == "";
+              };
+              
+              engines = this.searchService
+                            .getVisibleEngines({ })
+                            .filter(hasTags);
+            }
+ 
+            return engines;
+          ]]>
+        </body>
+      </method>      
+
+
+    </implementation>
+    
+    <handlers>
+      <handler event="command">
+        <![CDATA[
+          this.onCommand(event.target);
+          
+          // We've handled this event, so prevent
+          // others from hearing about it.
+          event.stopPropagation();
+          event.preventDefault();
+        ]]>
+      </handler>
+      <handler event="popupshowing">
+        <![CDATA[
+          if (event.target == this) {
+            this.onPopupShowing();
+          }
+        ]]>
+      </handler>
+      <handler event="popuphidden">
+        <![CDATA[        
+          if (event.target == this) {
+            // Should we do anything here?
+          }
+        ]]>
+      </handler>
+    </handlers>
+  </binding>
+
+
   
   
 

@@ -152,6 +152,11 @@ try
   var source_filtersColumn = [];
   var editIdleInterval;
   var service_tree;
+  
+  // TODO Get rid of all references to the old search box.
+  //      Am leaving this for now as it should be done as part of the 
+  //      greater refactoring for the new library API.
+  
   var search_widget;
   var source_playlist;
   
