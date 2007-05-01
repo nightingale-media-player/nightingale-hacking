@@ -70,12 +70,13 @@ filterlist2 {
   -moz-binding: url("chrome://songbird/content/bindings/filterlist2.xml#filterlist2") !important;
 }
 
+/** Must be named searchbar, as the base FireFox searchbar does a .nodeName search **/
 searchbar {
-  -moz-binding: url("chrome://songbird/content/bindings/search.xml#sb-searchbar") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sb-search.xml#sb-searchbar") !important;
 }
 
 menupopup[type="search"] {
-  -moz-binding: url("chrome://songbird/content/bindings/search.xml#sb-search-menupopup") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/sb-search.xml#sb-search-menupopup") !important;
 }
 
 

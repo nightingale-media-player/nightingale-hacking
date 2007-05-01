@@ -106,7 +106,6 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.image = 'chrome://songbird/skin/icons/icon_lib_16x16.png';
     node.hidden = false;
     node.contractid = CONTRACTID;
-    node.hideURL = true;
     
     // we want to put it above the first non-library item
     // yes this rule is kind of arbitary.
