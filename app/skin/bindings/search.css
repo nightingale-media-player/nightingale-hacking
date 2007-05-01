@@ -100,19 +100,19 @@ toolbarbutton.search-go-button > .toolbarbutton-text {
   display: none; /* hide label */
 }
 
-/** Go button in cancel search mode.  
+/** Clear search button "X".  
     This occurs when live search (library filtering) is active, and
     the search box is not empty.
   */
 searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-box > .search-go-button-stack > .search-go-button 
 {
-  -moz-image-region: rect(0px 16px 16px 0px);
+  -moz-image-region: rect(0px, 64px, 16px, 48px);
 }
 searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-box > .search-go-button-stack > .search-go-button:hover {
   -moz-image-region: rect(0px 32px 16px 16px);
 }
 searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-box > .search-go-button-stack > .search-go-button[disabled="true"] {
-  -moz-image-region: rect(0px, 64px, 16px, 48px);
+  -moz-image-region: rect(0px 16px 16px 0px);
 }
 searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-box > .search-go-button-stack > .search-go-button:hover:active {
   -moz-image-region: rect(0px, 48px, 16px, 32px);
