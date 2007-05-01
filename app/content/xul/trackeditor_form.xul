@@ -43,7 +43,7 @@
     <vbox flex="1">
       <hbox align="center">
         <label id="trackeditor.label.guid" class="dialog_label" value="&metadata.uuid;" width="96"/>
-        <dbedit_label id="trackeditor.guid" column="uuid"/>
+        <dbedit_label id="trackeditor.guid" column="uuid" flex="1"/>
       </hbox>
       <spacer height="3"/>
       <hbox align="center">
