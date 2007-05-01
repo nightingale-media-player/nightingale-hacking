@@ -133,9 +133,6 @@ sbCommandLineHandler.prototype = {
       // parameter to be optional, so catch the exception and let ourselves
       // know that things are okay. The flag existed without a param.
       emptyParam = true;
-      // if handleFlagWithParam threw, the flag was not removed from cmdLine, 
-      // so call handleFlag in order to remove it
-      cmdLine.handleFlag(flag, false);
     }
 
     // if there was a parameter or if we had a flag and no param
