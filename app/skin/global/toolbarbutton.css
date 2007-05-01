@@ -51,10 +51,10 @@ toolbarbutton {
   margin: 0px 2px 0px 2px;
   padding: 3px 1px 3px 1px;
   border: 1px solid;
-  border-top-color: #99A194; /** Dark Border 1*/
+  border-top-color: ##99A194; /** Dark Border 1*/
   border-left-color: #99A195; /** Dark Border 2*/
-  border-bottom-color: #333332; /** Dark Border 3*/
-  border-right-color: #333333; /** Dark Border 4*/ 
+  border-bottom-color: #111111; /** Dark Border 3*/
+  border-right-color: #222222; /** Dark Border 4*/ 
   -moz-border-radius: 5px;
   background-color: transparent;
 }
@@ -62,10 +62,10 @@ toolbarbutton {
 toolbarbutton:active
 {
   border: 1px solid;
-  border-top-color: #333332; /** Dark Border 3*/
-  border-left-color: #333333; /** Dark Border 4*/
+  border-top-color: #111111; /** Dark Border 3*/
+  border-left-color: #222222; /** Dark Border 4*/
   border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/
+  border-right-color: ##99A194; /** Dark Border 1*/
 }
 
 .toolbarbutton-icon {
@@ -116,7 +116,7 @@ toolbarbutton[checked="true"] {
 
 toolbarbutton > dropmarker.toolbarbutton-menubutton-dropmarker
 {
-  border-left: 1px solid #333332 !important; /** Dark Border 3*/
+  border-left: 1px solid #111111 !important; /** Dark Border 3*/
   padding: 0px 5px 0px 5px;
   height: 13px;
 }

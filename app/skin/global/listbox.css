@@ -48,10 +48,10 @@
 listbox {
   margin: 2px 4px;
   border: 1px solid;
-  border-top-color: #333332; /** Dark Border 3*/
-  border-left-color: #333333; /** Dark Border 4*/
+  border-top-color: #111111; /** Dark Border 3*/
+  border-left-color: #222222; /** Dark Border 4*/
   border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/
+  border-right-color: ##99A194; /** Dark Border 1*/
   background-color: #202220; /** Dark Color 1 */ 
   color: -moz-FieldText;
 }

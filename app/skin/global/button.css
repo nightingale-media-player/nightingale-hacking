@@ -47,10 +47,10 @@
 
 button {
   -moz-appearance: button;
-  margin: 6px;
+  margin: 2px;
   min-width: 6.3em;
   -moz-appearance: button;
-  padding: 0;
+  padding: 0px 10px 0px 10px;
   color: #000000;
 }
 
@@ -94,7 +94,7 @@ button[type="menu-button"] {
 
 button > dropmarker.button-menubutton-dropmarker
 {
-  border-left: 1px solid #333332 !important; /** Dark Border 3*/
+  border-left: 1px solid #111111 !important; /** Dark Border 3*/
   padding: 0px 5px 0px 5px;
   height: 13px;
   -moz-border-radius: 0px !important;
