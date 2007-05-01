@@ -28,6 +28,7 @@
 
 var hotkey_service;
 var hotkeyactions_service;
+var cmdline_mgr;
 
 var platform;
 try {
@@ -68,9 +69,21 @@ function initGlobalHotkeys() {
   if (hotkeyActions) {
     hotkeyactions_service = hotkeyActions.getService(Components.interfaces.sbIHotkeyActions);
   }
+
+  var cmdline = Components.classes["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
+  if (cmdline) {
+    var cmdline_service = cmdline.getService(Components.interfaces.nsICommandLineHandler);
+    if (cmdline_service) {
+      cmdline_mgr = cmdline_service.QueryInterface(Components.interfaces.sbICommandLineManager);
+      if (cmdline_mgr) {
+        cmdline_mgr.addFlagHandler(hotkeyHandler, "hotkey");
+      }
+    }
+  }
 }
 
 function resetGlobalHotkeys() {
+  if (cmdline_mgr) cmdline_mgr.removeFlagHandler(hotkeyHandler, "hotkey");
   removeHotkeyBindings();
   stopWatchingHotkeyRemotes();
 }
@@ -99,12 +112,22 @@ var hotkeyHandler =
           }
         }
       }
-      alert("Unknown hotkey action '" + hotkeyid + "'"); 
+      //alert("Unknown hotkey action '" + hotkeyid + "'"); 
+    },
+    
+    handleFlag: function(aFlag, aParam)
+    {
+      var ids = aParam.split(",");
+      for (var i=0;i<ids.length;i++) {
+        setTimeout(function(id) { hotkeyHandler.onHotkey(id); }, i*10, ids[i]);
+      }
+      return true;
     },
 
     QueryInterface : function(aIID)
     {
       if (!aIID.equals(Components.interfaces.sbIGlobalHotkeyCallback) &&
+          !aIID.equals(Components.interfaces.sbICommandLineFlagHandler) &&
           !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
           !aIID.equals(Components.interfaces.nsISupports)) 
       {

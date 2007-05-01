@@ -90,8 +90,10 @@ function shouldLoadURI(aURI) {
  * /brief Songbird commandline handler
  */
 function sbCommandLineHandler() {
-  this.itemHandlers = [];
-  this.itemUriSpecs = [];
+  this.itemHandlers = []; // array of handlers
+  this.itemUriSpecs = []; // array of uri specs
+  this.flagHandlers = []; // array of arrays (handler, flag)
+  this.flags = [];        // array of arrays (flag, param)
 }
 
 sbCommandLineHandler.prototype = {
@@ -103,6 +105,8 @@ sbCommandLineHandler.prototype = {
              "                       or URL to load in the browser.\n",
   itemHandlers: null,           
   itemUriSpecs: null,           
+  flagHandlers: null,           
+  flags: null,           
 
   handle : function (cmdLine) {
 
@@ -129,6 +133,9 @@ sbCommandLineHandler.prototype = {
       // parameter to be optional, so catch the exception and let ourselves
       // know that things are okay. The flag existed without a param.
       emptyParam = true;
+      // if handleFlagWithParam threw, the flag was not removed from cmdLine, 
+      // so call handleFlag in order to remove it
+      cmdLine.handleFlag(flag, false);
     }
 
     // if there was a parameter or if we had a flag and no param
@@ -139,7 +146,7 @@ sbCommandLineHandler.prototype = {
       testHarness.init(tests);
       return testHarness.run();
     }
-
+    
     // XXX bug 2186
     var count = cmdLine.length;
 
@@ -153,6 +160,7 @@ sbCommandLineHandler.prototype = {
         ++i;
       } else {
         try {
+          cmdLine.removeArguments(i, i);
           urilist.push(resolveURIInternal(cmdLine, curarg));
         }
         catch (e) {
@@ -169,7 +177,9 @@ sbCommandLineHandler.prototype = {
     
     if (this.itemUriSpecs.length > oldlength) 
       this.dispatchItems();
-   
+
+    this.handleRemainingFlags(cmdLine);
+    this.dispatchFlags();
   },
 
   handleURL: function(aURL) {
@@ -183,9 +193,44 @@ sbCommandLineHandler.prototype = {
     }
   },
   
+  handleRemainingFlags: function(cmdLine) {
+    while (cmdLine.length) {
+      var curarg = cmdLine.getArgument(0);
+      if (curarg.match(/^-/)) {
+        var flag = curarg.slice(1);
+
+        var param;
+
+        var emptyParam = false;
+        try {
+          param = cmdLine.handleFlagWithParam(flag, false);
+        }
+        catch (e) {
+          // cmdLine throws if there is no param for the flag, but we want the
+          // parameter to be optional, so catch the exception and let ourselves
+          // know that things are okay. The flag existed without a param.
+          emptyParam = true;
+          cmdLine.handleFlag(flag, false);
+        }
+
+        // if there was a parameter or if we had a flag and no param
+        if (param != null || emptyParam) {
+          // record the flag for handling by flag handlers
+          this.flags.push([flag, param]);
+        }
+      } else {
+        // this should really not occur, because the case should have 
+        // been handled as a play item earlier. however, if for some reason
+        // it does occur, not doing the following would cause an infinite loop,
+        // so do it just in case.
+        cmdLine.removeArguments(0, 0);
+      }
+    } 
+  },
+  
   addItemHandler: function (aHandler) {
     this.itemHandlers.push(aHandler);
-    // dispatch items immediatly to this handler
+    // dispatch unhandled items immediatly to this handler
     this.dispatchItemsToHandler(aHandler);
   },
   
@@ -205,10 +250,8 @@ sbCommandLineHandler.prototype = {
   },
   
   dispatchItems: function() {
-    // if aHandler == null, dispatch to all handlers
-    // otherwise, only dispatch to specified handler
-    // note that the last handler to get registered 
-    // gets priority over the first ones, so that if 
+    // The last handler to get registered gets 
+    // priority over the first ones, so that if 
     // there are several instances of the main window,
     // the items open in the one created last.
     for (var handleridx = this.itemHandlers.length-1; handleridx >= 0; handleridx--) {
@@ -217,9 +260,49 @@ sbCommandLineHandler.prototype = {
     }  
   },
 
+  addFlagHandler: function (aHandler, aFlag) {
+    var entry = [aHandler, aFlag];
+    this.flagHandlers.push(entry);
+    // dispatch unhandled flags immediatly to this handler
+    this.dispatchFlagsToHandler(entry);
+  },
+  
+  removeFlagHandler: function(aHandler, aFlag) {
+    for (var i=this.flagHandlers.length-1;i>=0;i--) {
+      var entry = this.flagHandlers[i];
+      if (entry[0] == aHandler && entry[1] == aFlag) {
+        this.flagHandlers.splice(i, 1);
+        return;
+      }
+    }
+  },
+
+  dispatchFlagsToHandler: function(aHandlerEntry) {
+    var handler = aHandlerEntry[0];
+    var flag = aHandlerEntry[1];
+    for (var i=0; i < this.flags.length; i++) {
+      if (this.flags[i][0] == flag) {
+        if (handler.handleFlag(this.flags[i][0], this.flags[i][1])) {
+          this.flags.splice(i--, 1);
+        }
+      }
+    }
+  },
+
+  dispatchFlags: function() {
+    // The last handler to get registered gets 
+    // priority over the first ones, so that if 
+    // there are several instances of the main window,
+    // the flags are handled by the one created last.
+    for (var handleridx = this.flagHandlers.length-1; handleridx >= 0; handleridx--) {
+      this.dispatchFlagsToHandler(this.flagHandlers[handleridx]);
+      if (this.flags.length == 0) break;
+    }  
+  },
+
   QueryInterface : function clh_QI(iid) {
     if (iid.equals(Ci.nsICommandLineHandler) ||
-        iid.equals(Ci.sbICommandLineItems) ||
+        iid.equals(Ci.sbICommandLineManager) ||
         iid.equals(Ci.nsISupports))
       return this;
 

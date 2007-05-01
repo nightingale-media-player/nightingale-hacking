@@ -343,6 +343,27 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\xul\macCmdLineFwd.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\content\xul\main_pane.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -773,6 +794,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 			<Filter
 				Name="bindings"
 				Filter="">
+				<File
+					RelativePath=".\content\bindings\autoscroll.xml">
+				</File>
 				<File
 					RelativePath=".\content\bindings\balloon.xml">
 				</File>

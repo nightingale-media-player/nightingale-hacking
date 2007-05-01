@@ -21,22 +21,22 @@ try
   }
 
   var commandLineItemHandler = {
-    cmdline_items: null,
+    cmdline_mgr: null,
     
     init: function() {
       var cmdline = Components.classes["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
       if (cmdline) {
         var cmdline_service = cmdline.getService(Components.interfaces.nsICommandLineHandler);
         if (cmdline_service) {
-          cmdline_items = cmdline_service.QueryInterface(Components.interfaces.sbICommandLineItems);
-          if (cmdline_items)
-            cmdline_items.addItemHandler(this);
+          cmdline_mgr = cmdline_service.QueryInterface(Components.interfaces.sbICommandLineManager);
+          if (cmdline_mgr)
+            cmdline_mgr.addItemHandler(this);
         }
       }
     },
     
     shutdown: function() {
-      if (cmdline_items) cmdline_items.removeItemHandler(this);
+      if (cmdline_mgr) cmdline_mgr.removeItemHandler(this);
     },
     
     handleItem: function(aUriSpec, aCount, aTotal) {

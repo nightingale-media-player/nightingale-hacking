@@ -27,7 +27,7 @@
 #include "nsISupports.idl"
 
 /**       
- * \file sbICommandLineItems.idl
+ * \file sbICommandLineManager.idl
  * \brief Songbird Commandline Items Interface file
  * This file contains the interface used by the commandlineitems manager, 
  * whose purpose is to hold on to items from the commandline for later
@@ -38,24 +38,25 @@
  */
   
 interface sbICommandLineItemHandler;
+interface sbICommandLineFlagHandler;
 
 /**
- * \interface sbICommandLineItems sbICommandLineItems.h
- * \brief Songbird Command line items Interface
+ * \interface sbICommandLineManager sbICommandLineManager.h
+ * \brief Songbird Command line manager interface
  */
       
 [scriptable, uuid(d54a8a7a-b390-11db-96e7-005056c00008)]
-interface sbICommandLineItems : nsISupports
+interface sbICommandLineManager : nsISupports
 {
   /**
-   * \brief Add command line item handler
+   * \brief Add command line media item handler
    * \param aHandler Handler to register
    * \sa removeItemHandler
    */
   void addItemHandler(in sbICommandLineItemHandler aHandler);
 
   /**
-   * \brief Remove command line item handler
+   * \brief Remove command line media item handler
    * \param aHandler Handler to unregister
    * \sa addItemHandler
    */
@@ -67,6 +68,22 @@ interface sbICommandLineItems : nsISupports
     * \sa sbICommandLineItemHandler
     */
   void handleURL(in AString aURL);
+
+  /**
+   * \brief Add command line flag handler
+   * \param aHandler Handler to register
+   * \param aFlag Flag to receive
+   * \sa removeFlagHandler
+   */
+  void addFlagHandler(in sbICommandLineFlagHandler aHandler, in AString aFlag);
+
+  /**
+   * \brief Remove command flag handler
+   * \param aHandler Handler to unregister
+   * \param aFlag Flag to unregister
+   * \sa addFlagHandler
+   */
+  void removeFlagHandler(in sbICommandLineFlagHandler aHandler, in AString aFlag);
 };
 
 

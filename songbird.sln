@@ -121,6 +121,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "faceplateregistration", "co
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commandline", "components\commandline\commandline.vcproj", "{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -226,6 +230,10 @@ Global
 		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Debug.Build.0 = Debug|Win32
 		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Release.ActiveCfg = Release|Win32
 		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Release.Build.0 = Release|Win32
+		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Debug.ActiveCfg = Debug|Win32
+		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Debug.Build.0 = Debug|Win32
+		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Release.ActiveCfg = Release|Win32
+		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

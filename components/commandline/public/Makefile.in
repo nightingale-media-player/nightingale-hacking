@@ -29,8 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbICommandLineItems.idl \
+XPIDL_SRCS = sbICommandLineManager.idl \
              sbICommandLineItemHandler.idl \
+             sbICommandLineFlagHandler.idl \
              $(NULL)
 
 XPIDL_MODULE = sbCommandLine.xpt
