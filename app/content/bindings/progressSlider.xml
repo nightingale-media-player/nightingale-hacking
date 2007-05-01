@@ -178,22 +178,25 @@
       <parameter name="event"/>
       <body>
         <![CDATA[
-          if (this.mouseonthumb(event.screenX, event.screenY)) 
-          { 
-            this.tracking = 2; 
-          } 
-          else 
+          if (event.button == 0 ) 
           {
-            document.__TrackingSeeker__ = this;
-            this.tracking = 1;
-            this.handlemouse(event);
+            if (this.mouseonthumb(event.screenX, event.screenY)) 
+            { 
+              this.tracking = 2; 
+            } 
+            else 
+            {
+              document.__TrackingSeeker__ = this;
+              this.tracking = 1;
+              this.handlemouse(event);
+            }
+            if ( this.tracking > 0 )
+            {
+              // Report if requested
+              this.is_tracking_data = true;
+            }
+            this.sendChangeEvent();
           }
-          if ( this.tracking > 0 )
-          {
-            // Report if requested
-            this.is_tracking_data = true;
-          }
-          this.sendChangeEvent();
         ]]>
       </body>
     </method>

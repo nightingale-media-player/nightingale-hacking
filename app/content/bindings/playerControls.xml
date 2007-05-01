@@ -214,8 +214,8 @@
   <binding id="forward-button" extends="chrome://global/content/bindings/button.xml#button">
 
    <handlers>
-     <handler event="mousedown" action="this.onFwdMouseDown();"/>
-     <handler event="mouseup" action="this.onFwdMouseUp();"/>
+     <handler event="mousedown" button="0" action="this.onFwdMouseDown();"/>
+     <handler event="mouseup" button="0" action="this.onFwdMouseUp();"/>
      <handler event="mouseout" action="this.onFwdMouseOut();"/>
      <handler event="mouseover" action="this.onFwdMouseOver();"/>
    </handlers>
@@ -328,8 +328,8 @@
   <binding id="back-button" extends="chrome://global/content/bindings/button.xml#button">
 
    <handlers>
-     <handler event="mousedown" action="this.onBackMouseDown();"/>
-     <handler event="mouseup" action="this.onBackMouseUp();"/>
+     <handler event="mousedown" button="0" action="this.onBackMouseDown();"/>
+     <handler event="mouseup" button="0" action="this.onBackMouseUp();"/>
      <handler event="mouseout" action="this.onBackMouseOut();"/>
      <handler event="mouseover" action="this.onBackMouseOver();"/>
    </handlers>
