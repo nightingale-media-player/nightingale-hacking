@@ -113,7 +113,7 @@ static char* kInsertQueryColumns[] = {
   "created",
   "updated",
   "content_url",
-  "visible",
+  "hidden",
   "media_list_type_id"
 };
 
@@ -737,8 +737,8 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
     rv = aQuery->BindStringParameter(3, aURISpec);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Visible by default
-    rv = aQuery->BindInt32Parameter(4, 1);
+    // Not hidden by default
+    rv = aQuery->BindInt32Parameter(4, 0);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Media items don't have a media_list_type_id.
@@ -757,8 +757,8 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
     rv = aQuery->BindStringParameter(3, newSpec);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Visible by default
-    rv = aQuery->BindInt32Parameter(4, 1);
+    // Not hidden by default
+    rv = aQuery->BindInt32Parameter(4, 0);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Record the media list type.

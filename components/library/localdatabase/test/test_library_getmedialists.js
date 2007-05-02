@@ -32,23 +32,23 @@ function runTest () {
 
   var library = createLibrary("test_library_getmedialists");
 
-  testVisibleProperty(library);
+  testHiddenProperty(library);
   testIsListProperty(library);
   testBoth(library);
 }
 
 function testVisibleProperty(library) {
 
-  var PROP_VISIBLE = "http://songbirdnest.com/data/1.0#visible";
+  var PROP_HIDDEN = "http://songbirdnest.com/data/1.0#hidden";
 
   library.clear();
   var items = [];
   for (var i = 0; i < 10; i++) {
     var item = library.createMediaItem(newURI("file://foo/" + i));
-    var visible = item.getProperty(PROP_VISIBLE);
-    assertEqual(visible, "1");
+    var hidden = item.getProperty(PROP_HIDDEN);
+    assertEqual(hidden, "0");
     if (i % 2 == 0) {
-      item.setProperty(PROP_VISIBLE, "0");
+      item.setProperty(PROP_HIDDEN, "1");
       item.write();
     }
   }
@@ -68,7 +68,14 @@ function testVisibleProperty(library) {
     }
   };
 
-  library.enumerateItemsByProperty(PROP_VISIBLE, "1",
+  library.enumerateItemsByProperty(PROP_HIDDEN, "0",
+                                   listener,
+                                   Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+
+  assertEqual(listener.items.length, 5);
+
+  listener.items = [];
+  library.enumerateItemsByProperty(PROP_HIDDEN, "1",
                                    listener,
                                    Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
 
@@ -121,7 +128,7 @@ function testIsListProperty(library) {
 function testBoth(library) {
 
   var PROP_ISLIST = "http://songbirdnest.com/data/1.0#isList";
-  var PROP_VISIBLE = "http://songbirdnest.com/data/1.0#visible";
+  var PROP_HIDDEN = "http://songbirdnest.com/data/1.0#hidden";
 
   library.clear();
   for (var i = 0; i < 20; i++) {
@@ -132,7 +139,7 @@ function testBoth(library) {
   }
   for (var i = 0; i < 3; i++) {
     var list = library.createMediaList("simple");
-    list.setProperty(PROP_VISIBLE, "0");
+    list.setProperty(PROP_HIDDEN, "1");
     list.write();
   }
   assertEqual(library.length, 30);
@@ -151,34 +158,34 @@ function testBoth(library) {
     }
   };
 
-  // All visible things but no lists, just like a library view
+  // All non-hidden things but no lists, just like a library view
   var pa = createPropertyArray();
   pa.appendProperty(PROP_ISLIST, "0");
-  pa.appendProperty(PROP_VISIBLE, "1");
+  pa.appendProperty(PROP_HIDDEN, "0");
 
   library.enumerateItemsByProperties(pa, listener,
                                      Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
 
   assertEqual(listener.items.length, 20);
 
-  // All visible lists, for the service pane
+  // All non-hidden lists, for the service pane
   listener.items = [];
 
   var pa = createPropertyArray();
   pa.appendProperty(PROP_ISLIST, "1");
-  pa.appendProperty(PROP_VISIBLE, "1");
+  pa.appendProperty(PROP_HIDDEN, "0");
 
   library.enumerateItemsByProperties(pa, listener,
                                      Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
 
   assertEqual(listener.items.length, 7);
 
-  // All invsible lists
+  // All hidden lists
   listener.items = [];
 
   var pa = createPropertyArray();
   pa.appendProperty(PROP_ISLIST, "1");
-  pa.appendProperty(PROP_VISIBLE, "0");
+  pa.appendProperty(PROP_HIDDEN, "1");
 
   library.enumerateItemsByProperties(pa, listener,
                                      Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);

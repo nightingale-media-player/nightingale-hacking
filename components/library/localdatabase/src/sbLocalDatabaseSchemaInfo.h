@@ -60,8 +60,8 @@ static sbStaticProperty sStaticProperties[] = {
     PR_UINT32_MAX - 4,
   },
   {
-    NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#visible").get(),
-    NS_LITERAL_STRING("visible").get(),
+    NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#hidden").get(),
+    NS_LITERAL_STRING("hidden").get(),
     PR_UINT32_MAX - 5,
   },
   {
