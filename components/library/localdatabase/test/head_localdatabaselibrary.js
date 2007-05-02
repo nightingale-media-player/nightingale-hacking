@@ -449,7 +449,7 @@ function loadMockDatabase() {
     "http://songbirdnest.com/data/1.0#contentUrl",
     "http://songbirdnest.com/data/1.0#contentMimeType",
     "http://songbirdnest.com/data/1.0#contentLength",
-    "http://songbirdnest.com/data/1.0#visible",
+    "http://songbirdnest.com/data/1.0#hidden",
     "http://songbirdnest.com/data/1.0#isList"
   ];
 
