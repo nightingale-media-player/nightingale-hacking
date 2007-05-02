@@ -134,7 +134,9 @@ NoUninstall:
   File /r chrome
   File /r components
   File /r defaults
+  File /r extensions
   File /r plugins
+  File /r searchplugins
   File /r scripts
   File /r xulrunner
   
