@@ -84,7 +84,7 @@ function loadData(databaseGuid, databaseLocation) {
   var a = data.split("\n");
   for(var i = 0; i < a.length - 1; i++) {
     var b = a[i].split("\t");
-    dbq.addQuery("insert into media_items (guid, created, updated, content_url, content_mime_type, content_length, visible, media_list_type_id) values (?, ?, ?, ?, ?, ?, ?, ?)");
+    dbq.addQuery("insert into media_items (guid, created, updated, content_url, content_mime_type, content_length, hidden, media_list_type_id) values (?, ?, ?, ?, ?, ?, ?, ?)");
     dbq.bindStringParameter(0, b[1]);
     dbq.bindInt64Parameter(1, b[2]);
     dbq.bindInt64Parameter(2, b[3]);
