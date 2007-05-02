@@ -447,23 +447,28 @@ sbLocalDatabaseTreeView::EnumerateSelection(sbSelectionEnumeratorCallbackFunc aF
       rv = mRealSelection->GetRangeAt(i, &min, &max);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      for (PRInt32 j = min; j <= max; j++) {
+      if (min >= 0 && max >= 0) {
+        for (PRInt32 j = min; j <= max; j++) {
 
-        nsAutoString id;
-        rv = GetUniqueIdForRow((PRUint32) j, id);
-        NS_ENSURE_SUCCESS(rv, rv);
+          nsAutoString id;
+          rv = GetUniqueIdForRow((PRUint32) j, id);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-        nsAutoString guid;
-        rv = mArray->GetByIndex(j, guid);
-        NS_ENSURE_SUCCESS(rv, rv);
+          nsAutoString guid;
+          rv = mArray->GetByIndex(j, guid);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-        TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SaveSelectionList() - "
-               "saving %s from row %d guid %s",
-               this, NS_ConvertUTF16toUTF8(id).get(), j,
-               NS_ConvertUTF16toUTF8(guid).get()));
+          TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SaveSelectionList() - "
+                 "saving %s from row %d guid %s",
+                 this, NS_ConvertUTF16toUTF8(id).get(), j,
+                 NS_ConvertUTF16toUTF8(guid).get()));
 
-        rv = aFunc(j, id, guid, aUserData);
-        NS_ENSURE_SUCCESS(rv, rv);
+          rv = aFunc(j, id, guid, aUserData);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+      else {
+        NS_WARNING("Bad value returned from nsTreeSelection::GetRangeAt");
       }
     }
 

@@ -513,7 +513,7 @@ sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  NS_ENSURE_ARG_MAX(aIndex, mLength - 1);
+  NS_ASSERTION(aIndex < mLength, "invalid array index");
 
   // Remove the specified element from the cache
   mCache.RemoveElementAt(aIndex);
@@ -1862,7 +1862,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  NS_ENSURE_ARG_MAX(aIndex, mLength - 1);
+  NS_ASSERTION(aIndex < mLength, "invalid array index");
 
   /*
    * Check to see if we have this index in cache
