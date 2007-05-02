@@ -37,7 +37,7 @@ function runTest () {
   testBoth(library);
 }
 
-function testVisibleProperty(library) {
+function testHiddenProperty(library) {
 
   var PROP_HIDDEN = "http://songbirdnest.com/data/1.0#hidden";
 
