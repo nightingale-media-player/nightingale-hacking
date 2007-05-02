@@ -125,6 +125,9 @@ function sbBookmarks_servicePaneInit(sps) {
                 }
                 fnode.hidden = false;
                 fnode.contractid = CONTRACTID;
+                fnode.dndDragTypes = 'text/x-sb-toplevel';
+                fnode.dndAcceptNear = 'text/x-sb-toplevel';
+                fnode.dndAcceptIn = BOOKMARK_DRAG_TYPE;
                 
                 if (fnode.id == ROOTNODE) {
                     // we just created the default bookmarks root
@@ -157,6 +160,8 @@ function sbBookmarks_servicePaneInit(sps) {
                             bookmark.getAttribute('image') : BOOKMARK_IMAGE;
                     bnode.hidden = false;
                     bnode.contractid = CONTRACTID;
+                    bnode.dndDragTypes = BOOKMARK_DRAG_TYPE;
+                    bnode.dndAcceptNear = BOOKMARK_DRAG_TYPE;
                 }
                 
                 fnode.setAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported', 'true');
@@ -343,8 +348,7 @@ function sbBookmarks_canDrop(aNode, aDragSession, aOrientation) {
             return false;
         }
     }
-    if (aDragSession.isDataFlavorSupported(MOZ_URL_DRAG_TYPE) ||
-            aDragSession.isDataFlavorSupported(BOOKMARK_DRAG_TYPE)) {
+    if (aDragSession.isDataFlavorSupported(MOZ_URL_DRAG_TYPE)) {
         return true;
 
     }
@@ -369,35 +373,7 @@ function sbBookmarks__getDragData(aDragSession, aDataType) {
 }
 sbBookmarks.prototype.onDrop =
 function sbBookmarks_onDrop(aNode, aDragSession, aOrientation) {
-    if (aDragSession.isDataFlavorSupported(BOOKMARK_DRAG_TYPE)) {
-        var value = this._getDragData(aDragSession, BOOKMARK_DRAG_TYPE);
-        // this represents a node already in the tree
-        var node = this._servicePane.getNode(value);
-        if (!node) {
-            return;
-        }
-        // were we dropped on a folder
-        if (aNode.isContainer) {
-            // append it
-            aNode.appendChild(node);
-        } else {
-            // we were dropped on an item - before or after?
-            if (aOrientation == 1) {
-                // after...
-                var after = aNode.nextSibling;
-                if (after) {
-                    // there is a node after
-                    aNode.parentNode.insertBefore(node, after);
-                } else {
-                    // that was the last one - just append
-                    aNode.parentNode.appendChild(node);
-                }
-            } else {
-                // before - that's easy
-                aNode.parentNode.insertBefore(node, aNode);
-            }
-        }
-    } else if (aDragSession.isDataFlavorSupported(MOZ_URL_DRAG_TYPE)) {
+    if (aDragSession.isDataFlavorSupported(MOZ_URL_DRAG_TYPE)) {
         var data = this._getDragData(aDragSession, MOZ_URL_DRAG_TYPE).split('\n');
         var url = data[0];
         var text = data[1];
@@ -431,20 +407,10 @@ function sbBookmarks_onDragGesture(aNode, aTransferable) {
         // service pane service layer
         return false;
     }
-    // create an nsITransferable
-    var trans = Components.classes["@mozilla.org/widget/transferable;1"].
-       createInstance(Components.interfaces.nsITransferable);
-       
-    // attach magic text/x-sb-bookmark data
-    // this is just for draging within the service pane bookmarks
-    this._addDragData(trans, aNode.id, BOOKMARK_DRAG_TYPE);
     
     // attach a text/x-moz-url
     // this is for dragging to other places
-    this._addDragData(trans, aNode.url+'\n'+aNode.name, MOZ_URL_DRAG_TYPE);
-    
-    // pass the nsITransferable back
-    aTransferable.value = trans;
+    this._addDragData(aTransferable, aNode.url+'\n'+aNode.name, MOZ_URL_DRAG_TYPE);
     
     // and say yet - lets do this drag
     return true;

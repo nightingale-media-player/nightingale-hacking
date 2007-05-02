@@ -69,6 +69,14 @@ interface sbIServicePaneNode : nsISupports
   attribute boolean isOpen;
   /* \brief the contract id of the service that owns the node */
   attribute AString contractid;
+  
+  /* drag and drop reordering helper attributes */
+  /* \brief a comma separated list of drag types to offer for reordering */
+  attribute AString dndDragTypes;
+  /* \brief a comma separated list of drag types to allow to be reordered before or after */
+  attribute AString dndAcceptNear;
+  /* \brief a comma separated list of drag types to allow dropping into */
+  attribute AString dndAcceptIn;
 
   
   
@@ -243,7 +251,7 @@ interface sbIServicePaneModule : nsISupports
               in nsIDragSession aDragSession,
               in PRInt32 aOrientation);
   PRBool onDragGesture(in sbIServicePaneNode aNode,
-                       out nsITransferable aTransferable);
+                       in nsITransferable aTransferable);
 };
 
 

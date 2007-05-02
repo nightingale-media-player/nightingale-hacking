@@ -34,6 +34,10 @@
  *  
  */
 
+function DEBUG(msg) {
+    dump('sbServicePaneService.js: '+msg+'\n');
+}
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -161,6 +165,20 @@ ServicePaneNode.prototype.__defineGetter__ ('isOpen', function () {
 ServicePaneNode.prototype.__defineSetter__ ('isOpen', function (aValue) {
     this.setAttributeNS(SP,'Open', aValue?'true':'false'); });
 
+ServicePaneNode.prototype.__defineGetter__ ('dndDragTypes', function () {
+    return this.getAttributeNS(NC,'dndDragTypes'); })
+ServicePaneNode.prototype.__defineSetter__ ('dndDragTypes', function (aValue) {
+    this.setAttributeNS(NC,'dndDragTypes', aValue); });
+
+ServicePaneNode.prototype.__defineGetter__ ('dndAcceptNear', function () {
+    return this.getAttributeNS(NC,'dndAcceptNear'); })
+ServicePaneNode.prototype.__defineSetter__ ('dndAcceptNear', function (aValue) {
+    this.setAttributeNS(NC,'dndAcceptNear', aValue); });
+
+ServicePaneNode.prototype.__defineGetter__ ('dndAcceptIn', function () {
+    return this.getAttributeNS(NC,'dndAcceptIn'); })
+ServicePaneNode.prototype.__defineSetter__ ('dndAcceptIn', function (aValue) {
+    this.setAttributeNS(NC,'dndAcceptIn', aValue); });
 
 
 
@@ -451,7 +469,7 @@ function ServicePaneService_QueryInterface(iid) {
 }
 ServicePaneService.prototype.addNode =
 function ServicePaneService_addNode(aId, aParent, aContainer) {
-    debug ('ServicePaneService.addNode('+aId+','+aParent+')\n');
+    DEBUG ('ServicePaneService.addNode('+aId+','+aParent+')');
 
     /* ensure the parent is supplied */
     if (aParent == null) {
@@ -483,7 +501,7 @@ function ServicePaneService_addNode(aId, aParent, aContainer) {
     /* create the javascript proxy object */
     var node = new ServicePaneNode(this._dataSource, resource);
     
-    debug ('ServicePaneService.addNode: node.hidden='+node.hidden+'\n');
+    DEBUG ('ServicePaneService.addNode: node.hidden='+node.hidden);
     
     /* add the node to the parent */
     aParent.appendChild(node)
@@ -543,13 +561,46 @@ function ServicePaneService_fillContextMenu(aId, aContextMenu, aParentWindow) {
         this._modules[i].fillContextMenu(node, aContextMenu, aParentWindow);
     }
 }
+ServicePaneService.prototype._canDropReorder =
+function ServicePaneService__canDropReorder(aNode, aDragSession, aOrientation) {
+    // see if we can handle the drag and drop based on node properties
+    var types = [];
+    if (aOrientation == 0) {
+        // drop in
+        if (!aNode.isContainer) {
+            // not a container - don't even try
+            return null;
+        }
+        if (aNode.dndAcceptIn) {
+            types = aNode.dndAcceptIn.split(',');
+        }
+    } else {
+        // drop near
+        if (aNode.dndAcceptNear) {
+            types = aNode.dndAcceptNear.split(',');
+        }
+    }
+    for (var i=0; i<types.length; i++) {
+        if (aDragSession.isDataFlavorSupported(types[i])) {
+            return types[i];
+        }
+    }
+    return null;
+}
 ServicePaneService.prototype.canDrop =
 function ServicePaneService_canDrop(aId, aDragSession, aOrientation) {
     var node = this.getNode(aId);
     if (!node) {
         return false;
     }
-    if (node.contractid) {
+    
+    // see if we can handle the drag and drop based on node properties
+    if (this._canDropReorder(node, aDragSession, aOrientation)) {
+        return true;
+    }
+    
+    // let the module that owns this node handle this
+    if (node.contractid && Cc[node.contractid]) {
         var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
         if (module) {
             return module.canDrop(node, aDragSession, aOrientation);
@@ -563,6 +614,56 @@ function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
     if (!node) {
         return false;
     }
+    // see if this is a reorder we can handle based on node properties
+    var type = this._canDropReorder(node, aDragSession, aOrientation);
+    if (type) {
+        // we're in business
+        
+        // do the dance to get our data out of the dnd system
+        // create an nsITransferable
+        var transferable = Components.classes["@mozilla.org/widget/transferable;1"].
+                createInstance(Components.interfaces.nsITransferable);
+        // specify what kind of data we want it to contain
+        transferable.addDataFlavor(type);
+        // ask the drag session to fill the transferable with that data
+        aDragSession.getData(transferable, 0);
+        // get the data from the transferable
+        var data = {};
+        var dataLength = {};
+        transferable.getTransferData(type, data, dataLength);
+        // it's always a string. always.
+        data = data.value.QueryInterface(Components.interfaces.nsISupportsString);
+        data = data.toString();
+        
+        // for drag and drop reordering the data is just the servicepane uri
+        var droppedNode = this.getNode(data);
+        
+        // fail if we can't get the node
+        if (!droppedNode) {
+            return;
+        }
+        
+        if (aOrientation == 0) {
+            // drop into
+            // we should append the new node to the current node
+            node.appendChild(droppedNode);
+        } else if (aOrientation > 0) {
+            // drop after
+            if (node.nextSibling) {
+                // not the last node
+                node.parentNode.insertBefore(droppedNode, node.nextSibling);
+            } else {
+                // the last node
+                node.parentNode.appendChild(droppedNode);
+            }
+        } else {
+            // drop before
+            node.parentNode.insertBefore(droppedNode, node);
+        }
+        return;
+    }
+    
+    // or let the module that owns this node handle it
     if (node.contractid) {
         var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
         if (module) {
@@ -572,16 +673,51 @@ function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
 }
 ServicePaneService.prototype.onDragGesture =
 function ServicePaneService_onDragGesture(aId, aTransferable) {
+    DEBUG('onDragGesture('+aId+', '+aTransferable+')');
     var node = this.getNode(aId);
     if (!node) {
         return false;
     }
-    if (node.contractid) {
-        var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
-        if (module) {
-            return module.onDragGesture(node, aTransferable);
+    
+    var success = false;
+    
+    // create a transferable
+    var transferable = Components.classes["@mozilla.org/widget/transferable;1"].
+        createInstance(Components.interfaces.nsITransferable);
+        
+    // get drag types from the node data
+    if (node.dndDragTypes) {
+        var types = node.dndDragTypes.split(',');
+        for (var i=0; i<types.length; i++) {
+            var type = types[i];
+            transferable.addDataFlavor(type);
+            var text = Components.classes["@mozilla.org/supports-string;1"].
+               createInstance(Components.interfaces.nsISupportsString);
+            text.data = node.id;
+            // double the length - it's unicode - this is stupid
+            transferable.setTransferData(type, text, text.data.length*2);
+            success = true;
         }
     }
+        
+    if (node.contractid && Cc[node.contractid]) {
+        var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
+        if (module) {
+            if (module.onDragGesture(node, transferable)) {
+                if (!success) {
+                    success = true;
+                }
+            }
+        }
+    }
+    
+    if (success) {
+        aTransferable.value = transferable;
+    }
+    
+    DEBUG(' success='+success);
+    
+    return success;
 }
 
 /**

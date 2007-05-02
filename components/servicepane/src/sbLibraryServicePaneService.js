@@ -82,6 +82,17 @@ function sbLibraryServicePane_servicePaneInit(sps) {
 sbLibraryServicePane.prototype.fillContextMenu =
 function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow) {
 }
+sbLibraryServicePane.prototype.canDrop =
+function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation) {
+  return false;
+}
+sbLibraryServicePane.prototype.onDrop =
+function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
+}
+sbLibraryServicePane.prototype.onDragGesture =
+function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
+  return false;
+}
 sbLibraryServicePane.prototype._itemURN =
 function sbLibraryServicePane__itemURN(aMediaItem) {
   // for a given media item get an urn we can use
@@ -106,6 +117,8 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.image = 'chrome://songbird/skin/icons/icon_lib_16x16.png';
     node.hidden = false;
     node.contractid = CONTRACTID;
+    node.dndDragTypes = 'text/x-sb-toplevel';
+    node.dndAcceptNear = 'text/x-sb-toplevel';
     
     // we want to put it above the first non-library item
     // yes this rule is kind of arbitary.
