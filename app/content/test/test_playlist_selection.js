@@ -139,7 +139,7 @@ function testSelectSomeResort(library, playlist, previouslySelected) {
 
 function testSelectAllThenAdd(library, playlist) {
 
-  log("testSelectSomeResort");
+  log("testSelectAllThenAdd");
 
   var treeView = playlist.tree.view;
   treeView.selection.selectAll();
