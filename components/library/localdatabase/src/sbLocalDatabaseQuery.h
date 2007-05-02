@@ -29,9 +29,11 @@
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
-#include <nsComponentManagerUtils.h>
-#include <sbISQLBuilder.h>
 #include "sbLocalDatabaseGUIDArray.h" // for FilterSpec
+
+class sbIDatabaseQuery;
+class sbILocalDatabasePropertyCache;
+class sbISQLBuilder;
 
 class sbLocalDatabaseQuery
 {
@@ -44,7 +46,18 @@ public:
                        const nsAString& aPrimarySortProperty,
                        PRBool aPrimarySortAscending,
                        nsTArray<FilterSpec>* aFilters,
-                       PRBool aIsDistinct);
+                       PRBool aIsDistinct,
+                       sbILocalDatabasePropertyCache* aPropertyCache);
+
+  sbLocalDatabaseQuery(const nsAString& aBaseTable,
+                       const nsAString& aBaseConstraintColumn,
+                       PRUint32 aBaseConstraintValue,
+                       const nsAString& aBaseForeignKeyColumn,
+                       const nsAString& aPrimarySortProperty,
+                       PRBool aPrimarySortAscending,
+                       nsTArray<FilterSpec>* aFilters,
+                       PRBool aIsDistinct,
+                       sbIDatabaseQuery* aDatabaseQuery);
 
   nsresult GetFullCountQuery(nsAString& aQuery);
   nsresult GetFullGuidRangeQuery(nsAString& aQuery);
@@ -65,11 +78,10 @@ private:
   nsresult AddDistinctConstraint();
   nsresult AddDistinctGroupBy();
 
-  nsresult GetTopLevelPropertyColumn(const nsAString& aProperty,
-                                     nsAString& columnName);
   PRInt32 GetPropertyId(const nsAString& aProperty);
 
-  PRBool IsTopLevelProperty(const nsAString& aProperty);
+  nsresult GetPropertyIDFromDatabase(const nsAString& aProperty,
+                                     PRUint32* aPropertyID);
 
   static void MaxExpr(const nsAString& aAlias,
                       const nsAString& aColumn,
@@ -86,6 +98,9 @@ private:
 
   nsCOMPtr<sbISQLSelectBuilder> mBuilder;
   PRBool mIsFullLibrary;
+  nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
+  nsCOMPtr<sbIDatabaseQuery> mDatabaseQuery;
+  nsString mGetPropertyIDQuery;
 };
 
 #endif /* __SBLOCALDATABASEQUERY_H__ */

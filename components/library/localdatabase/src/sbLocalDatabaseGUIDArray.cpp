@@ -28,6 +28,7 @@
 #include "sbLocalDatabaseQuery.h"
 #include "sbLocalDatabaseMediaItem.h"
 #include "sbLocalDatabasePropertyCache.h"
+#include "sbLocalDatabaseSchemaInfo.h"
 
 #include <DatabaseQuery.h>
 #include <nsComponentManagerUtils.h>
@@ -56,11 +57,11 @@
 
 #if defined PR_LOGGING
 static const PRLogModuleInfo *gLocalDatabaseGUIDArrayLog = nsnull;
-#define LOG_DEBUG(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_DEBUG, args)
-#define LOG_WARN(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_WARN, args)
+#define TRACE(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_DEBUG, args)
+#define LOG(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_WARN, args)
 #else
-#define LOG_DEBUG(args)
-#define LOG_WARN(args)
+#define TRACE(args)
+#define LOG(args)
 #endif
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseGUIDArray, sbILocalDatabaseGUIDArray)
@@ -748,26 +749,59 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
    * mNullGuidRangeQuery - A query that returns a list of guids whose primary
    * sort key value is null with filters applied
    */
-  sbLocalDatabaseQuery ldq(mBaseTable,
-                           mBaseConstraintColumn,
-                           mBaseConstraintValue,
-                           NS_LITERAL_STRING("member_media_item_id"),
-                           mSorts[0].property,
-                           mSorts[0].ascending,
-                           &mFilters,
-                           mIsDistinct);
+  nsAutoPtr<sbLocalDatabaseQuery> ldq;
 
-  rv = ldq.GetFullCountQuery(mFullCountQuery);
+  // If we have a property cache, pass it to the sbLocalDatabaseQuery.
+  // Otherwise, create a query object for it to use
+  if (mPropertyCache) {
+    ldq = new sbLocalDatabaseQuery(mBaseTable,
+                                   mBaseConstraintColumn,
+                                   mBaseConstraintValue,
+                                   NS_LITERAL_STRING("member_media_item_id"),
+                                   mSorts[0].property,
+                                   mSorts[0].ascending,
+                                   &mFilters,
+                                   mIsDistinct,
+                                   mPropertyCache);
+  }
+  else {
+    nsCOMPtr<sbIDatabaseQuery> query =
+      do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->SetDatabaseGUID(mDatabaseGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (mDatabaseLocation) {
+      rv = query->SetDatabaseLocation(mDatabaseLocation);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = query->SetAsyncQuery(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    ldq = new sbLocalDatabaseQuery(mBaseTable,
+                                   mBaseConstraintColumn,
+                                   mBaseConstraintValue,
+                                   NS_LITERAL_STRING("member_media_item_id"),
+                                   mSorts[0].property,
+                                   mSorts[0].ascending,
+                                   &mFilters,
+                                   mIsDistinct,
+                                   query);
+  }
+
+  rv = ldq->GetFullCountQuery(mFullCountQuery);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = ldq.GetFullGuidRangeQuery(mFullGuidRangeQuery);
+  rv = ldq->GetFullGuidRangeQuery(mFullGuidRangeQuery);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = ldq.GetNonNullCountQuery(mNonNullCountQuery);
+  rv = ldq->GetNonNullCountQuery(mNonNullCountQuery);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = ldq.GetNullGuidRangeQuery(mNullGuidRangeQuery);
+  rv = ldq->GetNullGuidRangeQuery(mNullGuidRangeQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // This query is used for the prefix search
-  rv = ldq.GetPrefixSearchQuery(mPrefixSearchQuery);
+  rv = ldq->GetPrefixSearchQuery(mPrefixSearchQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString sql;
@@ -786,7 +820,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
     rv = builder->AddColumn(NS_LITERAL_STRING("_base"), GUID_COLUMN);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (IsTopLevelProperty(mSorts[0].property)) {
+    if (SB_IsTopLevelProperty(mSorts[0].property)) {
       rv = builder->SetBaseTableName(MEDIAITEMS_TABLE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -820,7 +854,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
                                               getter_AddRefs(criterionGuid));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      if (IsTopLevelProperty(mSorts[i].property)) {
+      if (SB_IsTopLevelProperty(mSorts[i].property)) {
         rv = builder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_INNER,
                                            MEDIAITEMS_TABLE,
                                            joinedAlias,
@@ -894,7 +928,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
     rv = builder->AddColumn(NS_LITERAL_STRING("_base"), GUID_COLUMN);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (IsTopLevelProperty(mSorts[0].property)) {
+    if (SB_IsTopLevelProperty(mSorts[0].property)) {
       return NS_ERROR_NOT_IMPLEMENTED;
     }
     else {
@@ -1003,7 +1037,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
     rv = builder->AddColumn(EmptyString(), COUNT_COLUMN);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (IsTopLevelProperty(mSorts[0].property)) {
+    if (SB_IsTopLevelProperty(mSorts[0].property)) {
       rv = builder->SetBaseTableName(MEDIAITEMS_TABLE);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1071,7 +1105,8 @@ sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  LOG_WARN(("MakeQuery: %s", NS_ConvertUTF16toUTF8(aSql).get()));
+  LOG(("LocalDatabaseLibrary[0x%.8x] -  MakeQuery: %s",
+       this, NS_ConvertUTF16toUTF8(aSql).get()));
 
   nsresult rv;
 
@@ -1113,7 +1148,7 @@ sbLocalDatabaseGUIDArray::AddFiltersToQuery(sbISQLSelectBuilder *aBuilder,
     tableAlias.AppendLiteral("_p");
     tableAlias.AppendInt(i);
 
-    PRBool isTopLevelProperty = IsTopLevelProperty(fs.property);
+    PRBool isTopLevelProperty = SB_IsTopLevelProperty(fs.property);
 
     nsAutoString joinedTableName;
     // If the filtered property is a top level property, join the top level
@@ -1260,7 +1295,7 @@ sbLocalDatabaseGUIDArray::AddPrimarySortToQuery(sbISQLSelectBuilder *aBuilder,
   /*
    * If this is a top level propery, simply add the sort
    */
-  if (IsTopLevelProperty(ss.property)) {
+  if (SB_IsTopLevelProperty(ss.property)) {
     nsAutoString columnName;
     rv = GetTopLevelPropertyColumn(ss.property, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1450,7 +1485,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   NS_ENSURE_ARG_MIN(aCount, 1);
   NS_ENSURE_ARG_MIN(aDestIndexOffset, 0);
 
-  LOG_WARN(("ReadRowRange start %d count %d dest offset %d isnull %d\n",
+  LOG(("ReadRowRange start %d count %d dest offset %d isnull %d\n",
             aStartIndex,
             aCount,
             aDestIndexOffset,
@@ -1495,7 +1530,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
    * Resize the cache so we can fit the new data
    */
   if (mCache.Length() < aDestIndexOffset + aCount) {
-    LOG_WARN(("SetLength %d to %d",
+    LOG(("SetLength %d to %d",
               mCache.Length(),
               aDestIndexOffset + aCount));
     NS_ENSURE_TRUE(mCache.SetLength(aDestIndexOffset + aCount),
@@ -1532,7 +1567,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + aDestIndexOffset, 1, item),
                    NS_ERROR_OUT_OF_MEMORY);
 
-    LOG_DEBUG(("ReplaceElementsAt %d %s", i + aDestIndexOffset,
+    TRACE(("ReplaceElementsAt %d %s", i + aDestIndexOffset,
                NS_ConvertUTF16toUTF8(item->guid).get()));
     if (needsSorting) {
       if (isFirstValue || !lastSortedValue.Equals(item->sortPropertyValue)) {
@@ -1554,7 +1589,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     }
   }
 
-  LOG_WARN(("Replaced Elements %d to %d",
+  LOG(("Replaced Elements %d to %d",
             aDestIndexOffset,
             rowCount + aDestIndexOffset));
 
@@ -1604,7 +1639,7 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
   nsresult rv;
   PRInt32 dbOk;
 
-  LOG_WARN(("Sorting rows %d to %d on %s, isfirst %d islast %d isonly %d isnull %d\n",
+  LOG(("Sorting rows %d to %d on %s, isfirst %d islast %d isonly %d isnull %d\n",
             aStartIndex,
             aEndIndex,
             NS_ConvertUTF16toUTF8(aKey).get(),
@@ -1820,7 +1855,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
 {
   nsresult rv;
 
-  LOG_DEBUG(("GetByIndexInternal %d %d", aIndex, mLength));
+  TRACE(("GetByIndexInternal %d %d", aIndex, mLength));
 
   if (mValid == PR_FALSE) {
     rv = Initalize();
@@ -1835,13 +1870,13 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
   if (aIndex < mCache.Length()) {
     ArrayItem* item = mCache[aIndex];
     if (item) {
-      LOG_DEBUG(("Cache hit, got %s", NS_ConvertUTF16toUTF8(item->guid).get()));
+      TRACE(("Cache hit, got %s", NS_ConvertUTF16toUTF8(item->guid).get()));
       *_retval = item;
       return NS_OK;
     }
   }
 
-  LOG_DEBUG(("MISS"));
+  TRACE(("MISS"));
 
   /*
    * Cache miss
@@ -1862,24 +1897,6 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
  * NOTE: all the methods below should eventually be replaced with called to the
  * properties manager
  */
-
-PRBool
-sbLocalDatabaseGUIDArray::IsTopLevelProperty(const nsAString& aProperty)
-{
-  // XXX: This should be replaced with a call to the properties manager
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#guid") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#created") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#updated") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentUrl") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentMimeType") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentLength")) {
-    return PR_TRUE;
-  }
-  else {
-    return PR_FALSE;
-  }
-
-}
 
 nsresult
 sbLocalDatabaseGUIDArray::GetPropertyNullSort(const nsAString& aProperty,

@@ -67,10 +67,9 @@ public:
 
   nsresult AddDirtyGUID(const nsAString &aGuid);
 
-  PRUint32 GetPropertyID(const nsAString& aPropertyName);
+  PRUint32 GetPropertyIDInternal(const nsAString& aPropertyName);
   PRBool GetPropertyName(PRUint32 aPropertyID, nsAString& aPropertyName);
 
-  PRBool IsTopLevelProperty(PRUint32 aPropertyID);
   nsresult PropertyRequiresInsert(const nsAString &aGuid, PRUint32 aPropertyID, PRBool *aInsert);
 
   void GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn);
@@ -79,8 +78,6 @@ public:
 private:
   PRBool mWritePending;
 
-  PRUint32 mNumStaticProperties;
- 
   // Database GUID
   nsString mDatabaseGUID;
 
@@ -88,7 +85,7 @@ private:
   nsCOMPtr<nsIURI> mDatabaseLocation;
 
   // Cache the property name list
-  nsClassHashtableMT<nsUint32HashKey, nsString> mPropertyIDToName;
+  nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyIDToName;
   nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyNameToID;
 
   // Used to template the properties select statement

@@ -38,6 +38,8 @@
 #include <sbLocalDatabaseCID.h>
 #include <sbProxyUtils.h>
 
+#include "sbLocalDatabaseGUIDArray.h"
+
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbLocalDatabaseAsyncGUIDArray:5
@@ -94,8 +96,8 @@ sbLocalDatabaseAsyncGUIDArray::Init()
 {
   nsresult rv;
 
-  mInner = do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  mInner = new sbLocalDatabaseGUIDArray();
+  NS_ENSURE_TRUE(mInner, NS_ERROR_OUT_OF_MEMORY);
 
   mSyncMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseAsyncGUIDArray::mSyncMonitor");
   NS_ENSURE_TRUE(mSyncMonitor, NS_ERROR_OUT_OF_MEMORY);

@@ -84,7 +84,7 @@ function loadData(databaseGuid, databaseLocation) {
   var a = data.split("\n");
   for(var i = 0; i < a.length - 1; i++) {
     var b = a[i].split("\t");
-    dbq.addQuery("insert into media_items (guid, created, updated, content_url, content_mime_type, content_length, media_list_type_id) values (?, ?, ?, ?, ?, ?, ?)");
+    dbq.addQuery("insert into media_items (guid, created, updated, content_url, content_mime_type, content_length, visible, media_list_type_id) values (?, ?, ?, ?, ?, ?, ?, ?)");
     dbq.bindStringParameter(0, b[1]);
     dbq.bindInt64Parameter(1, b[2]);
     dbq.bindInt64Parameter(2, b[3]);
@@ -96,11 +96,12 @@ function loadData(databaseGuid, databaseLocation) {
     else {
       dbq.bindInt32Parameter(5, b[6]);
     }
-    if(b[7] == "") {
-      dbq.bindNullParameter(6);
+    dbq.bindInt32Parameter(6, b[7]);
+    if(b[8] == "") {
+      dbq.bindNullParameter(7);
     }
     else {
-      dbq.bindInt32Parameter(6, b[7]);
+      dbq.bindInt32Parameter(7, b[8]);
     }
   }
 
@@ -447,7 +448,9 @@ function loadMockDatabase() {
     "http://songbirdnest.com/data/1.0#updated",
     "http://songbirdnest.com/data/1.0#contentUrl",
     "http://songbirdnest.com/data/1.0#contentMimeType",
-    "http://songbirdnest.com/data/1.0#contentLength"
+    "http://songbirdnest.com/data/1.0#contentLength",
+    "http://songbirdnest.com/data/1.0#visible",
+    "http://songbirdnest.com/data/1.0#isList"
   ];
 
   var db = {};

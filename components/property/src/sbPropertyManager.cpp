@@ -47,48 +47,6 @@
   #define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
 #endif
 
-struct sbStaticProperty {
-  const wchar_t* mName;
-  const wchar_t* mColumn;
-  PRUint32    mID;
-};
-
-enum {
-  sbPropCreated = 0,
-  sbPropUpdated,
-  sbPropContentUrl,
-  sbPropMimeType,
-  sbPropContentLength,
-};
-
-static sbStaticProperty kStaticProperties[] = {
-  {
-    NS_L("http://songbirdnest.com/data/1.0#created"),
-    NS_L("created"),
-    PR_UINT32_MAX,
-  },
-  {
-    NS_L("http://songbirdnest.com/data/1.0#updated"),
-    NS_L("updated"),
-    PR_UINT32_MAX - 1,
-  },
-  {
-    NS_L("http://songbirdnest.com/data/1.0#contentUrl"),
-    NS_L("content_url"),
-    PR_UINT32_MAX - 2,
-  },
-  {
-    NS_L("http://songbirdnest.com/data/1.0#contentMimeType"),
-    NS_L("content_mime_type"),
-    PR_UINT32_MAX - 3,
-  },
-  {
-    NS_L("http://songbirdnest.com/data/1.0#contentLength"),
-    NS_L("content_length"),
-    PR_UINT32_MAX - 4,
-  }
-};
-
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbPropertyManager, 
                               sbIPropertyManager,
                               nsIObserver)
@@ -146,6 +104,8 @@ NS_METHOD sbPropertyManager::Init()
 
   rv = observerService->AddObserver(this, "app-startup", PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -344,7 +304,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIDatetimePropertyInfo *, datetimeProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   datetimeProperty.forget();
-  
+
   //Content URL
   uriProperty = new sbURIPropertyInfo();
   NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);

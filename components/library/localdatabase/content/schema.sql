@@ -18,8 +18,13 @@ create table media_items (
   content_url text not null,
   content_mime_type text,
   content_length integer,
+  visible integer not null check(visible in (0, 1)),
   media_list_type_id integer
 );
+create index idx_media_items_visible on media_items (visible);
+create index idx_media_items_created on media_items (created);
+create index idx_media_items_media_list_type_id on media_items (media_list_type_id);
+create index idx_media_items_visible_media_list_type_id on media_items (visible, media_list_type_id);
 
 create table media_list_types (
   media_list_type_id integer primary key autoincrement, /* implicit index creation */

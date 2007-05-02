@@ -25,20 +25,30 @@
 */
 
 #include "sbLocalDatabaseQuery.h"
+#include "sbLocalDatabaseSchemaInfo.h"
 
+#include <nsComponentManagerUtils.h>
+
+#include <sbIDatabaseQuery.h>
+#include <sbIDatabaseResult.h>
+#include <sbILocalDatabasePropertyCache.h>
+#include <sbISQLBuilder.h>
 #include <sbSQLBuilderCID.h>
 
-#define COUNT_COLUMN       NS_LITERAL_STRING("count(1)")
-#define GUID_COLUMN        NS_LITERAL_STRING("guid")
-#define OBJ_COLUMN         NS_LITERAL_STRING("obj")
-#define OBJSORTABLE_COLUMN NS_LITERAL_STRING("obj_sortable")
-#define MEDIAITEMID_COLUMN NS_LITERAL_STRING("media_item_id")
-#define PROPERTYID_COLUMN  NS_LITERAL_STRING("property_id")
-#define ORDINAL_COLUMN     NS_LITERAL_STRING("ordinal")
+#define COUNT_COLUMN          NS_LITERAL_STRING("count(1)")
+#define GUID_COLUMN           NS_LITERAL_STRING("guid")
+#define OBJ_COLUMN            NS_LITERAL_STRING("obj")
+#define OBJSORTABLE_COLUMN    NS_LITERAL_STRING("obj_sortable")
+#define MEDIAITEMID_COLUMN    NS_LITERAL_STRING("media_item_id")
+#define PROPERTYID_COLUMN     NS_LITERAL_STRING("property_id")
+#define ORDINAL_COLUMN        NS_LITERAL_STRING("ordinal")
+#define PROPERTYNAME_COLUMN   NS_LITERAL_STRING("property_name")
+#define MEDIALISTYPEID_COLUMN NS_LITERAL_STRING("media_list_type_id")
 
 #define PROPERTIES_TABLE       NS_LITERAL_STRING("resource_properties")
 #define MEDIAITEMS_TABLE       NS_LITERAL_STRING("media_items")
 #define SIMPLEMEDIALISTS_TABLE NS_LITERAL_STRING("simple_media_lists")
+#define PROPERTYIDS_TABLE      NS_LITERAL_STRING("properties")
 
 #define BASE_ALIAS       NS_LITERAL_STRING("_base")
 #define MEDIAITEMS_ALIAS NS_LITERAL_STRING("_mi")
@@ -51,6 +61,9 @@
 #define ORDINAL_PROPERTY \
   NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
 
+#define ISLIST_PROPERTY \
+  NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#isList")
+
 sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
                                            const nsAString& aBaseConstraintColumn,
                                            PRUint32 aBaseConstraintValue,
@@ -58,7 +71,8 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
                                            const nsAString& aPrimarySortProperty,
                                            PRBool aPrimarySortAscending,
                                            nsTArray<FilterSpec>* aFilters,
-                                           PRBool aIsDistinct) :
+                                           PRBool aIsDistinct,
+                                           sbILocalDatabasePropertyCache* aPropertyCache) :
   mBaseTable(aBaseTable),
   mBaseConstraintColumn(aBaseConstraintColumn),
   mBaseConstraintValue(aBaseConstraintValue),
@@ -66,13 +80,38 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
   mPrimarySortProperty(aPrimarySortProperty),
   mPrimarySortAscending(aPrimarySortAscending),
   mFilters(aFilters),
-  mIsDistinct(aIsDistinct)
+  mIsDistinct(aIsDistinct),
+  mPropertyCache(aPropertyCache)
 {
   mIsFullLibrary = mBaseTable.Equals(MEDIAITEMS_TABLE);
 
   mBuilder = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID);
-  //NS_ENSURE_SUCCESS(rv, rv);
+  NS_ASSERTION(mBuilder, "Could not create builder");
+}
 
+sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
+                                           const nsAString& aBaseConstraintColumn,
+                                           PRUint32 aBaseConstraintValue,
+                                           const nsAString& aBaseForeignKeyColumn,
+                                           const nsAString& aPrimarySortProperty,
+                                           PRBool aPrimarySortAscending,
+                                           nsTArray<FilterSpec>* aFilters,
+                                           PRBool aIsDistinct,
+                                           sbIDatabaseQuery* aDatabaseQuery) :
+  mBaseTable(aBaseTable),
+  mBaseConstraintColumn(aBaseConstraintColumn),
+  mBaseConstraintValue(aBaseConstraintValue),
+  mBaseForeignKeyColumn(aBaseForeignKeyColumn),
+  mPrimarySortProperty(aPrimarySortProperty),
+  mPrimarySortAscending(aPrimarySortAscending),
+  mFilters(aFilters),
+  mIsDistinct(aIsDistinct),
+  mDatabaseQuery(aDatabaseQuery)
+{
+  mIsFullLibrary = mBaseTable.Equals(MEDIAITEMS_TABLE);
+
+  mBuilder = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID);
+  NS_ASSERTION(mBuilder, "Could not create builder");
 }
 
 nsresult
@@ -248,9 +287,9 @@ sbLocalDatabaseQuery::AddCountColumns()
   nsresult rv;
 
   if (mIsDistinct) {
-    if (IsTopLevelProperty(mPrimarySortProperty)) {
+    if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
         nsAutoString columnName;
-        rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+        rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
         NS_ENSURE_SUCCESS(rv, rv);
 
         nsAutoString count;
@@ -303,9 +342,9 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    if (IsTopLevelProperty(mPrimarySortProperty)) {
+    if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
       nsAutoString columnName;
-      rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+      rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, columnName);
@@ -407,7 +446,7 @@ sbLocalDatabaseQuery::AddFilters()
     tableAlias.AppendLiteral("_p");
     tableAlias.AppendInt(i);
 
-    PRBool isTopLevelProperty = IsTopLevelProperty(fs.property);
+    PRBool isTopLevelProperty = SB_IsTopLevelProperty(fs.property);
 
     // Add the critera
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
@@ -493,68 +532,92 @@ sbLocalDatabaseQuery::AddFilters()
 
     }
     else {
-      /*
-       * A filter
-       */
-      nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
-      if (isTopLevelProperty) {
+      // We have a regular filter
 
-        // Add the constraint for the top level table.
-        nsAutoString columnName;
-        rv = GetTopLevelPropertyColumn(fs.property, columnName);
+      // If the property is the "is list" property, we handle this in a
+      // special way.  If the value is 1, we filter the media_list_type_id
+      // column on not null, if the value is 0 we filter said column on null
+      if (fs.property.Equals(ISLIST_PROPERTY)) {
+        PRUint32 numValues = fs.values.Length();
+        NS_ENSURE_STATE(numValues);
+        nsCOMPtr<sbISQLBuilderCriterion> nullCriterion;
+        PRUint32 matchType;
+        if (fs.values[0].EqualsLiteral("0")) {
+          matchType = sbISQLSelectBuilder::MATCH_EQUALS;
+        }
+        else {
+          matchType = sbISQLSelectBuilder::MATCH_NOTEQUALS;
+        }
+
+        rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
+                                                MEDIALISTYPEID_COLUMN,
+                                                matchType,
+                                                getter_AddRefs(nullCriterion));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = mBuilder->CreateMatchCriterionIn(MEDIAITEMS_ALIAS,
-                                              columnName,
-                                              getter_AddRefs(inCriterion));
+        rv = mBuilder->AddCriterion(nullCriterion);
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
-        rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                               PROPERTIES_TABLE,
-                               tableAlias,
-                               GUID_COLUMN,
-                               MEDIAITEMS_ALIAS,
-                               GUID_COLUMN);
-        NS_ENSURE_SUCCESS(rv, rv);
+        nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
+        if (isTopLevelProperty) {
 
-        // Add the propery constraint for the filter
-        rv = mBuilder->CreateMatchCriterionLong(tableAlias,
-                                                NS_LITERAL_STRING("property_id"),
-                                                sbISQLSelectBuilder::MATCH_EQUALS,
-                                                GetPropertyId(fs.property),
-                                                getter_AddRefs(criterion));
-        NS_ENSURE_SUCCESS(rv, rv);
+          // Add the constraint for the top level table.
+          nsAutoString columnName;
+          rv = SB_GetTopLevelPropertyColumn(fs.property, columnName);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = mBuilder->AddCriterion(criterion);
-        NS_ENSURE_SUCCESS(rv, rv);
+          rv = mBuilder->CreateMatchCriterionIn(MEDIAITEMS_ALIAS,
+                                                columnName,
+                                                getter_AddRefs(inCriterion));
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        else {
+          rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                                 PROPERTIES_TABLE,
+                                 tableAlias,
+                                 GUID_COLUMN,
+                                 MEDIAITEMS_ALIAS,
+                                 GUID_COLUMN);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = mBuilder->CreateMatchCriterionIn(tableAlias,
-                                              OBJSORTABLE_COLUMN,
-                                              getter_AddRefs(inCriterion));
+          // Add the propery constraint for the filter
+          rv = mBuilder->CreateMatchCriterionLong(tableAlias,
+                                                  NS_LITERAL_STRING("property_id"),
+                                                  sbISQLSelectBuilder::MATCH_EQUALS,
+                                                  GetPropertyId(fs.property),
+                                                  getter_AddRefs(criterion));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = mBuilder->AddCriterion(criterion);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = mBuilder->CreateMatchCriterionIn(tableAlias,
+                                                OBJSORTABLE_COLUMN,
+                                                getter_AddRefs(inCriterion));
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        // For each filter value, add the term to an IN constraint
+        PRUint32 numValues = fs.values.Length();
+        for (PRUint32 j = 0; j < numValues; j++) {
+          const nsAString& filterTerm = fs.values[j];
+          rv = inCriterion->AddString(filterTerm);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        rv = mBuilder->AddCriterion(inCriterion);
         NS_ENSURE_SUCCESS(rv, rv);
       }
-
-      // For each filter value, add the term to an IN constraint
-      PRUint32 numValues = fs.values.Length();
-      for (PRUint32 j = 0; j < numValues; j++) {
-        const nsAString& filterTerm = fs.values[j];
-        rv = inCriterion->AddString(filterTerm);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      rv = mBuilder->AddCriterion(inCriterion);
-      NS_ENSURE_SUCCESS(rv, rv);
     }
-
   }
 
   // If this is a top level distinct query, make sure the primary sort property
   // is never null
-  if (mIsDistinct && IsTopLevelProperty(mPrimarySortProperty)) {
+  if (mIsDistinct && SB_IsTopLevelProperty(mPrimarySortProperty)) {
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
     nsAutoString columnName;
-    rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
@@ -591,9 +654,9 @@ sbLocalDatabaseQuery::AddPrimarySort()
   /*
    * If this is a top level propery, simply add the sort
    */
-  if (IsTopLevelProperty(mPrimarySortProperty)) {
+  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
     nsAutoString columnName;
-    rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS,
@@ -680,9 +743,9 @@ sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
 
   nsCOMPtr<sbISQLBuilderCriterion> criterion;
 
-  if (IsTopLevelProperty(mPrimarySortProperty)) {
+  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
     nsAutoString columnName;
-    rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
@@ -742,9 +805,9 @@ sbLocalDatabaseQuery::AddDistinctConstraint()
 
   // When doing a distict query, add a constraint so we only select media items
   // that have a value for the primary sort
-  if (IsTopLevelProperty(mPrimarySortProperty)) {
+  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
     nsAutoString columnName;
-    rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
@@ -782,9 +845,9 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
 {
   nsresult rv;
 
-  if (IsTopLevelProperty(mPrimarySortProperty)) {
+  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
     nsAutoString columnName;
-    rv = GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->AddGroupBy(MEDIAITEMS_ALIAS, columnName);
@@ -854,101 +917,103 @@ sbLocalDatabaseQuery::AddJoinToGetNulls()
   return NS_OK;
 }
 
-PRBool
-sbLocalDatabaseQuery::IsTopLevelProperty(const nsAString& aProperty)
-{
-  // XXX: This should be replaced with a call to the properties manager
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#guid") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#created") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#updated") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentUrl") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentMimeType") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentLength")) {
-    return PR_TRUE;
-  }
-  else {
-    return PR_FALSE;
-  }
-
-}
-
 PRInt32
 sbLocalDatabaseQuery::GetPropertyId(const nsAString& aProperty)
 {
-  // XXX: This should be replaced with a call to the properties manager
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#trackName")) {
-    return 1;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#albumName")) {
-    return 2;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#artistName")) {
-    return 3;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#duration")) {
-    return 4;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#genre")) {
-    return 5;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#track")) {
-    return 6;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#year")) {
-    return 7;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#discNumber")) {
-    return 8;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#totalDiscs")) {
-    return 9;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#totalTracks")) {
-    return 10;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#lastPlayTime")) {
-    return 11;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#playCount")) {
-    return 12;
+  nsresult rv;
+  PRUint32 id;
+
+  if (mPropertyCache) {
+    rv = mPropertyCache->GetPropertyID(aProperty, &id);
+    if (NS_FAILED(rv)) {
+      return -1;
+    }
+    return id;
   }
 
-  return -1;
+  rv = GetPropertyIDFromDatabase(aProperty, &id);
+  if (NS_FAILED(rv)) {
+    return -1;
+  }
+
+  return id;
 }
 
 nsresult
-sbLocalDatabaseQuery::GetTopLevelPropertyColumn(const nsAString& aProperty,
-                                                nsAString& columnName)
+sbLocalDatabaseQuery::GetPropertyIDFromDatabase(const nsAString& aProperty,
+                                                PRUint32* aPropertyID)
 {
-  nsAutoString retval;
+  nsresult rv;
+  PRInt32 dbOk;
 
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#guid")) {
-    retval = NS_LITERAL_STRING("guid");
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#created")) {
-    retval = NS_LITERAL_STRING("created");
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#updated")) {
-    retval = NS_LITERAL_STRING("updated");
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentUrl")) {
-    retval = NS_LITERAL_STRING("content_url");
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentMimeType")) {
-    retval = NS_LITERAL_STRING("content_mime_type");
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentLength")) {
-    retval = NS_LITERAL_STRING("content_length");
+  if (mGetPropertyIDQuery.IsEmpty()) {
+    nsCOMPtr<sbISQLSelectBuilder> builder =
+      do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = builder->SetBaseTableName(PROPERTYIDS_TABLE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = builder->AddColumn(EmptyString(), PROPERTYID_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    rv = builder->CreateMatchCriterionParameter(EmptyString(),
+                                                PROPERTYNAME_COLUMN,
+                                                sbISQLSelectBuilder::MATCH_EQUALS,
+                                                getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = builder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = builder->ToString(mGetPropertyIDQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
   }
 
-  if (retval.IsEmpty()) {
-    return NS_ERROR_INVALID_ARG;
+  if (mDatabaseQuery) {
+
+    rv = mDatabaseQuery->ResetQuery();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDatabaseQuery->AddQuery(mGetPropertyIDQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDatabaseQuery->BindStringParameter(0, aProperty);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDatabaseQuery->Execute(&dbOk);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+    rv = mDatabaseQuery->WaitForCompletion(&dbOk);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+    nsCOMPtr<sbIDatabaseResult> result;
+    rv = mDatabaseQuery->GetResultObject(getter_AddRefs(result));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 rowCount;
+    rv = result->GetRowCount(&rowCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (rowCount == 1) {
+      nsAutoString countStr;
+      rv = result->GetRowCell(0, 0, countStr);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      *aPropertyID = countStr.ToInteger(&rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      return NS_OK;
+    }
+
   }
-  else {
-    columnName = retval;
-    return NS_OK;
-  }
+
+  return NS_ERROR_UNEXPECTED;
 }
+
 
 void
 sbLocalDatabaseQuery::MaxExpr(const nsAString& aAlias,

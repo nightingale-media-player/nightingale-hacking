@@ -33,11 +33,13 @@
 #include <sbIDatabaseResult.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseGUIDArray.h>
+#include <sbILocalDatabasePropertyCache.h>
 #include <sbIMediaListView.h>
 #include <sbISQLBuilder.h>
 
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibrary.h"
+#include "sbLocalDatabaseGUIDArray.h"
 
 #include <DatabaseQuery.h>
 #include <nsAutoLock.h>
@@ -313,8 +315,8 @@ sbLocalDatabaseSimpleMediaList::Init(sbILocalDatabaseLibrary* aLibrary,
   nsresult rv = sbLocalDatabaseMediaListBase::Init(aLibrary, aGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mFullArray = do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  mFullArray = new sbLocalDatabaseGUIDArray();
+  NS_ENSURE_TRUE(mFullArray, NS_ERROR_OUT_OF_MEMORY);
 
   PRUint32 mediaItemId;
   rv = GetMediaItemId(&mediaItemId);
@@ -349,6 +351,13 @@ sbLocalDatabaseSimpleMediaList::Init(sbILocalDatabaseLibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabasePropertyCache> propertyCache;
+  rv = aLibrary->GetPropertyCache(getter_AddRefs(propertyCache));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mFullArray->SetPropertyCache(propertyCache);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();

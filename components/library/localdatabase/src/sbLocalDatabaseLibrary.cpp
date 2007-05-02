@@ -66,6 +66,7 @@
 #include "sbLocalDatabaseMediaListView.h"
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
+#include "sbLocalDatabaseGUIDArray.h"
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
 
@@ -112,6 +113,7 @@ static char* kInsertQueryColumns[] = {
   "created",
   "updated",
   "content_url",
+  "visible",
   "media_list_type_id"
 };
 
@@ -331,8 +333,18 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   mDatabaseLocation = aDatabaseLocation;
 
   nsresult rv;
-  mFullArray = do_CreateInstance(SB_LOCALDATABASE_GUIDARRAY_CONTRACTID, &rv);
+
+  nsAutoPtr<sbLocalDatabasePropertyCache>
+    propCache(new sbLocalDatabasePropertyCache());
+  NS_ENSURE_TRUE(propCache, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = propCache->Init(this);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mPropertyCache = propCache.forget();
+
+  mFullArray = new sbLocalDatabaseGUIDArray();
+  NS_ENSURE_TRUE(mFullArray, NS_ERROR_OUT_OF_MEMORY);
 
   rv = mFullArray->SetDatabaseGUID(aDatabaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -351,14 +363,8 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<sbLocalDatabasePropertyCache>
-    propCache(new sbLocalDatabasePropertyCache());
-  NS_ENSURE_TRUE(propCache, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = propCache->Init(this);
+  rv = mFullArray->SetPropertyCache(mPropertyCache);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  mPropertyCache = propCache.forget();
 
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -731,8 +737,12 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
     rv = aQuery->BindStringParameter(3, aURISpec);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Visible by default
+    rv = aQuery->BindInt32Parameter(4, 1);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     // Media items don't have a media_list_type_id.
-    rv = aQuery->BindNullParameter(4);
+    rv = aQuery->BindNullParameter(5);
     NS_ENSURE_SUCCESS(rv, rv);
  }
   else {
@@ -747,8 +757,12 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
     rv = aQuery->BindStringParameter(3, newSpec);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Visible by default
+    rv = aQuery->BindInt32Parameter(4, 1);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     // Record the media list type.
-    rv = aQuery->BindInt32Parameter(4, aMediaItemTypeID);
+    rv = aQuery->BindInt32Parameter(5, aMediaItemTypeID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
