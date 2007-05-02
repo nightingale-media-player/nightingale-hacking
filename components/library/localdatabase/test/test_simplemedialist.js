@@ -233,10 +233,10 @@ function runTest () {
   // test bad index
   try {
     list.insertBefore(list.length, item);
-    fail("NS_ERROR_ILLEGAL_VALUE not thrown");
+    fail("NS_ERROR_INVALID_ARG not thrown");
   }
   catch(e) {
-    assertEqual(e.result, Cr.NS_ERROR_ILLEGAL_VALUE);
+    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
   }
 
   // Test moveBefore
@@ -279,10 +279,10 @@ function runTest () {
   // test bad index
   try {
     list.removeByIndex(list.length);
-    fail("NS_ERROR_ILLEGAL_VALUE not thrown");
+    fail("NS_ERROR_INVALID_ARG not thrown");
   }
   catch(e) {
-    assertEqual(e.result, Cr.NS_ERROR_ILLEGAL_VALUE);
+    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
   }
 
   var toRemove = [
