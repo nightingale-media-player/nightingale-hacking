@@ -273,17 +273,22 @@ sbLocalDatabaseMediaListBase::EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnu
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
 {
-  nsAutoString str;
-  nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#mediaListName"), str);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#mediaListName"), aName);
 
+  // If the property doesn't exist just return an empty string.
+  if (rv == NS_ERROR_ILLEGAL_VALUE) {
+    aName.Assign(EmptyString());
+    return NS_OK;
+  }
+
+  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::SetName(const nsAString& aName)
 {
-  nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentUrl"), aName);
+  nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#mediaListName"), aName);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

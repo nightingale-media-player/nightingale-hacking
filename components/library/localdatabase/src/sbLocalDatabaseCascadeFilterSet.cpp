@@ -301,8 +301,8 @@ sbLocalDatabaseCascadeFilterSet::GetValues(PRUint16 aIndex,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
 
-  sbGUIDArrayPrimraySortEnumerator* values =
-    new sbGUIDArrayPrimraySortEnumerator(mFilters[aIndex].array);
+  sbGUIDArrayPrimarySortEnumerator* values =
+    new sbGUIDArrayPrimarySortEnumerator(mFilters[aIndex].array);
   NS_ENSURE_TRUE(values, NS_ERROR_OUT_OF_MEMORY);
 
   NS_ADDREF(*_retval = values);
@@ -500,16 +500,16 @@ sbLocalDatabaseCascadeFilterSet::OnValuesChangedCallback(nsISupportsHashKey* aKe
   return PL_DHASH_NEXT;
 }
 
-NS_IMPL_ISUPPORTS1(sbGUIDArrayPrimraySortEnumerator, nsIStringEnumerator)
+NS_IMPL_ISUPPORTS1(sbGUIDArrayPrimarySortEnumerator, nsIStringEnumerator)
 
-sbGUIDArrayPrimraySortEnumerator::sbGUIDArrayPrimraySortEnumerator(sbILocalDatabaseAsyncGUIDArray* aArray) :
+sbGUIDArrayPrimarySortEnumerator::sbGUIDArrayPrimarySortEnumerator(sbILocalDatabaseAsyncGUIDArray* aArray) :
   mArray(aArray),
   mNextIndex(0)
 {
 }
 
 NS_IMETHODIMP
-sbGUIDArrayPrimraySortEnumerator::HasMore(PRBool *_retval)
+sbGUIDArrayPrimarySortEnumerator::HasMore(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
@@ -523,7 +523,7 @@ sbGUIDArrayPrimraySortEnumerator::HasMore(PRBool *_retval)
 }
 
 NS_IMETHODIMP
-sbGUIDArrayPrimraySortEnumerator::GetNext(nsAString& _retval)
+sbGUIDArrayPrimarySortEnumerator::GetNext(nsAString& _retval)
 {
   nsresult rv;
 

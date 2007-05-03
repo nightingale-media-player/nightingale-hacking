@@ -87,13 +87,13 @@ private:
   nsTHashtable<nsISupportsHashKey> mListeners;
 };
 
-class sbGUIDArrayPrimraySortEnumerator : public nsIStringEnumerator
+class sbGUIDArrayPrimarySortEnumerator : public nsIStringEnumerator
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISTRINGENUMERATOR
 
-  sbGUIDArrayPrimraySortEnumerator(sbILocalDatabaseAsyncGUIDArray* aArray);
+  sbGUIDArrayPrimarySortEnumerator(sbILocalDatabaseAsyncGUIDArray* aArray);
 
 private:
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
