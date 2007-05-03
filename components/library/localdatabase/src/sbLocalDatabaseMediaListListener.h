@@ -28,6 +28,7 @@
 #define __SB_LOCALDATABASE_MEDIALISTLISTENER_H__
 
 #include <nsCOMPtr.h>
+#include <nsCOMArray.h>
 #include <nsInterfaceHashtable.h>
 #include <prlock.h>
 
@@ -42,6 +43,8 @@ class sbLocalDatabaseMediaListListener
 
   typedef nsInterfaceHashtableMT<nsISupportsHashKey, sbIMediaListListener>
           sbMediaListListenersTableMT;
+
+  typedef nsCOMArray<sbIMediaListListener> sbMediaListListenersArray;
 
   struct MediaListCallbackInfo {
 
@@ -95,53 +98,50 @@ protected:
 private:
   // This callback is meant to be used with mListenerProxyTable.
   // aUserData should be a MediaListCallbackInfo pointer.
-  static PLDHashOperator PR_CALLBACK
-    ItemAddedCallback(nsISupportsHashKey::KeyType aKey,
-                      sbIMediaListListener* aEntry,
+  static PRBool PR_CALLBACK
+    ItemAddedCallback(sbIMediaListListener* aEntry,
                       void* aUserData);
 
   // This callback is meant to be used with mListenerProxyTable.
   // aUserData should be a MediaListCallbackInfo pointer.
-  static PLDHashOperator PR_CALLBACK
-    BeforeItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
-                              sbIMediaListListener* aEntry,
+  static PRBool PR_CALLBACK
+    BeforeItemRemovedCallback(sbIMediaListListener* aEntry,
                               void* aUserData);
 
   // This callback is meant to be used with mListenerProxyTable.
   // aUserData should be a MediaListCallbackInfo pointer.
-  static PLDHashOperator PR_CALLBACK
-    AfterItemRemovedCallback(nsISupportsHashKey::KeyType aKey,
-                             sbIMediaListListener* aEntry,
+  static PRBool PR_CALLBACK
+    AfterItemRemovedCallback(sbIMediaListListener* aEntry,
                              void* aUserData);
 
   // This callback is meant to be used with mListenerProxyTable.
   // aUserData should be a MediaListCallbackInfo pointer.
-  static PLDHashOperator PR_CALLBACK
-    ItemUpdatedCallback(nsISupportsHashKey::KeyType aKey,
-                        sbIMediaListListener* aEntry,
+  static PRBool PR_CALLBACK
+    ItemUpdatedCallback(sbIMediaListListener* aEntry,
                         void* aUserData);
 
   // This callback is meant to be used with mListenerProxyTable.
   // aUserData should be an sbIMediaList pointer.
-  static PLDHashOperator PR_CALLBACK
-    ListClearedCallback(nsISupportsHashKey::KeyType aKey,
-                        sbIMediaListListener* aEntry,
+  static PRBool PR_CALLBACK
+    ListClearedCallback(sbIMediaListListener* aEntry,
                         void* aUserData);
 
   // This callback is meant to be used with mListenerProxyTable.
   // aUserData should be an sbIMediaList pointer.
-  static PLDHashOperator PR_CALLBACK
-    BatchBeginCallback(nsISupportsHashKey::KeyType aKey,
-                       sbIMediaListListener* aEntry,
+  static PRBool PR_CALLBACK
+    BatchBeginCallback(sbIMediaListListener* aEntry,
                        void* aUserData);
 
   // This callback is meant to be used with mListenerProxyTable.
   // aUserData should be an sbIMediaList pointer.
-  static PLDHashOperator PR_CALLBACK
-    BatchEndCallback(nsISupportsHashKey::KeyType aKey,
-                     sbIMediaListListener* aEntry,
+  static PRBool PR_CALLBACK
+    BatchEndCallback(sbIMediaListListener* aEntry,
                      void* aUserData);
 
+  static PLDHashOperator PR_CALLBACK
+    ToArrayCallback(nsISupportsHashKey::KeyType aKey,
+                    sbIMediaListListener* aEntry,
+                    void* aUserData);
 private:
   // A thread-safe hash table that holds a mapping of listeners to proxies.
   sbMediaListListenersTableMT mListenerProxyTable;
