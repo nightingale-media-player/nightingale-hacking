@@ -32,8 +32,10 @@
 
 #include "nsIGenericFactory.h"
 #include "MetadataHandlerTaglib.h"
+#include "SeekableChannel.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataHandlerTaglib)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbSeekableChannel)
 
 static nsModuleComponentInfo componentInfo[] =
 {
@@ -42,6 +44,13 @@ static nsModuleComponentInfo componentInfo[] =
     SONGBIRD_METADATAHANDLERTAGLIB_CID,
     SONGBIRD_METADATAHANDLERTAGLIB_CONTRACTID,
     sbMetadataHandlerTaglibConstructor
+  },
+
+  {
+    SONGBIRD_SEEKABLECHANNEL_CLASSNAME, 
+    SONGBIRD_SEEKABLECHANNEL_CID,
+    SONGBIRD_SEEKABLECHANNEL_CONTRACTID,
+    sbSeekableChannelConstructor
   }
 };
 

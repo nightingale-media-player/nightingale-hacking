@@ -50,7 +50,7 @@
 #include <prlog.h>
 
 /* Songbird imports. */
-#include "MetadataChannel.h"
+#include "SeekableChannel.h"
 
 
 /*******************************************************************************
@@ -87,8 +87,8 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("TagLibChannelFileIO");
 FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
     const char                  *fileName) const
 {
-    nsCOMPtr<sbIMetadataChannel>
-                                pMetadataChannel;
+    nsCOMPtr<sbISeekableChannel>
+                                pSeekableChannel;
     nsString                    channelID;
     TagLibChannelFileIO         *pTagLibChannelFileIO = NULL;
     nsresult                    result = NS_OK;
@@ -100,14 +100,18 @@ FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
     /* indicates that either the file name was not a channel ID or no */
     /* matching channels are available.                               */
     result = TagLibChannelFileIO::GetChannel(channelID,
-                                             getter_AddRefs(pMetadataChannel));
+                                             getter_AddRefs(pSeekableChannel));
 
     /* Create a channel file I/O object. */
     if (NS_SUCCEEDED(result))
     {
         pTagLibChannelFileIO = new TagLibChannelFileIO(channelID,
-                                                       pMetadataChannel);
+                                                       pSeekableChannel);
+        if (!pTagLibChannelFileIO)
+            result = NS_ERROR_UNEXPECTED;
     }
+    if (NS_SUCCEEDED(result))
+        result = pTagLibChannelFileIO->seek(0);
 
     return (pTagLibChannelFileIO);
 }
@@ -151,31 +155,23 @@ ByteVector TagLibChannelFileIO::readBlock(
 
     /* Fail if restarting channel. */
     if (mChannelRestart)
-        result = NS_ERROR_SONGBIRD_METADATA_CHANNEL_RESTART;
+        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
 
     /* Read the file data. */
     if (NS_SUCCEEDED(result))
     {
-        result = mpMetadataChannel->Read(pByteVector->data(),
+        result = mpSeekableChannel->Read(pByteVector->data(),
                                          length,
                                          &bytesRead);
     }
     if (NS_SUCCEEDED(result))
         pByteVector->resize(bytesRead);
 
-    /* Restart channel on error if metadata       */
-    /* channel has not skipped to end of channel. */
-    if (!NS_SUCCEEDED(result))
+    /* Check for channel restart. */
+    if (result == NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART)
     {
-        PRUint64                    buf;
-        nsresult                    result1 = NS_OK;
-
-        result1 = mpMetadataChannel->GetBuf(&buf);
-        if (NS_SUCCEEDED(result1) && (buf < (mChannelSize / 2)))
-        {
-            SetChannelRestart(mChannelID, PR_TRUE);
-            mChannelRestart = PR_TRUE;
-        }
+        SetChannelRestart(mChannelID, PR_TRUE);
+        mChannelRestart = PR_TRUE;
     }
 
     /* Clear read data on error. */
@@ -260,10 +256,10 @@ bool TagLibChannelFileIO::isOpen() const
 
     /* Fail if restarting channel. */
     if (mChannelRestart)
-        result = NS_ERROR_SONGBIRD_METADATA_CHANNEL_RESTART;
+        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
 
     /* File I/O is open if a metadata channel is available. */
-    if (NS_SUCCEEDED(result) && mpMetadataChannel)
+    if (NS_SUCCEEDED(result) && mpSeekableChannel)
         isOpen = true;
 
     return (isOpen);
@@ -286,7 +282,7 @@ int TagLibChannelFileIO::seek(
 
     /* Fail if restarting channel. */
     if (mChannelRestart)
-        result = NS_ERROR_SONGBIRD_METADATA_CHANNEL_RESTART;
+        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
 
     /* Compute new channel position. */
     if (NS_SUCCEEDED(result))
@@ -299,7 +295,7 @@ int TagLibChannelFileIO::seek(
                 break;
 
             case Current :
-                result = mpMetadataChannel->GetPos(&channelPosition);
+                result = mpSeekableChannel->GetPos(&channelPosition);
                 if (NS_SUCCEEDED(result))
                     channelPosition = channelPosition + offset;
                 break;
@@ -312,10 +308,10 @@ int TagLibChannelFileIO::seek(
 
     /* Set the new position. */
     if (NS_SUCCEEDED(result))
-        result = mpMetadataChannel->SetPos(channelPosition);
+        result = mpSeekableChannel->SetPos(channelPosition);
 
     /* Check for channel restart. */
-    if (result == NS_ERROR_SONGBIRD_METADATA_CHANNEL_RESTART)
+    if (result == NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART)
     {
         SetChannelRestart(mChannelID, PR_TRUE);
         mChannelRestart = PR_TRUE;
@@ -347,11 +343,11 @@ long TagLibChannelFileIO::tell() const
 
     /* Fail if restarting channel. */
     if (mChannelRestart)
-        result = NS_ERROR_SONGBIRD_METADATA_CHANNEL_RESTART;
+        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
 
     /* Get the current channel position. */
     if (NS_SUCCEEDED(result))
-        result = mpMetadataChannel->GetPos(&channelPosition);
+        result = mpSeekableChannel->GetPos(&channelPosition);
 
     /* Get results. */
     if (NS_SUCCEEDED(result))
@@ -398,19 +394,19 @@ void TagLibChannelFileIO::truncate(
  * TagLibChannelFileIO
  *
  *   --> channelID              Channel identifier.
- *   --> pMetadataChannel       Channel to use to access metadata.
+ *   --> pSeekableChannel       Channel to use to access metadata.
  *
  *   This function constructs a TagLib nsIChannel file I/O object that uses
- * the metadata channel specified by pMetadataChannel with the ID specified by
+ * the metadata channel specified by pSeekableChannel with the ID specified by
  * channelID to acccess metadata.
  */
 
 TagLibChannelFileIO::TagLibChannelFileIO(
     nsString                        channelID,
-    nsCOMPtr<sbIMetadataChannel>    pMetadataChannel)
+    nsCOMPtr<sbISeekableChannel>    pSeekableChannel)
 :
     mChannelID(channelID),
-    mpMetadataChannel(pMetadataChannel),
+    mpSeekableChannel(pSeekableChannel),
     mChannelSize(0)
 {
     PRUint64                    channelSize;
@@ -455,17 +451,17 @@ TagLibChannelFileIO::ChannelMap TagLibChannelFileIO::mChannelMap;
  * AddChannel
  *
  *   --> channelID              Channel identifier.
- *   --> pMetadataChannel       Metadata channel.
+ *   --> pSeekableChannel       Metadata channel.
  *
  *   This function adds the metadata channel component instance specified by
- * pMetadataChannel for use by TagLib nsIChannel file I/O objects.  The channel
+ * pSeekableChannel for use by TagLib nsIChannel file I/O objects.  The channel
  * may be retrieved by using the channel identifier specified by channelID.
  */
 
 nsresult TagLibChannelFileIO::AddChannel(
     nsString                    channelID,
-    nsCOMPtr<sbIMetadataChannel>
-                                pMetadataChannel)
+    nsCOMPtr<sbISeekableChannel>
+                                pSeekableChannel)
 {
     TagLibChannelFileIO::Channel *pChannel;
     PRUint64                    channelSize;
@@ -476,7 +472,7 @@ nsresult TagLibChannelFileIO::AddChannel(
     pChannel = new TagLibChannelFileIO::Channel();
     if (pChannel)
     {
-        pChannel->pMetadataChannel = pMetadataChannel;
+        pChannel->pSeekableChannel = pSeekableChannel;
         pChannel->size = 0;
         pChannel->restart = PR_FALSE;
     }
@@ -555,12 +551,12 @@ nsresult TagLibChannelFileIO::GetChannel(
  * GetChannel
  *
  *   --> channelID              Channel identifier.
- *   <-- ppMetadataChannel      Metadata channel.
+ *   <-- ppSeekableChannel      Metadata channel.
  *
  *   <-- NS_ERROR_NOT_AVAILABLE No metadata channel with the specified
  *                              identifier is available.
  *
- *   This function returns in ppMetadataChannel a metadata channel component
+ *   This function returns in ppSeekableChannel a metadata channel component
  * instance corresponding to the channel identifier specified by channelID.  If
  * no metadata channels can be found, this function returns
  * NS_ERROR_NOT_AVAILABLE.
@@ -568,23 +564,23 @@ nsresult TagLibChannelFileIO::GetChannel(
 
 nsresult TagLibChannelFileIO::GetChannel(
     nsString                    channelID,
-    sbIMetadataChannel          **ppMetadataChannel)
+    sbISeekableChannel          **ppSeekableChannel)
 {
     ChannelMap::iterator        mapEntry;
     TagLibChannelFileIO::Channel
                                 *pChannel;
-    nsCOMPtr<sbIMetadataChannel>
-                                pMetadataChannel;
+    nsCOMPtr<sbISeekableChannel>
+                                pSeekableChannel;
     nsresult                    result = NS_OK;
 
     /* Get the metadata channel. */
     result = GetChannel(channelID, &pChannel);
     if (NS_SUCCEEDED(result))
-        pMetadataChannel = pChannel->pMetadataChannel;
+        pSeekableChannel = pChannel->pSeekableChannel;
 
     /* Return results. */
     if (NS_SUCCEEDED(result))
-        NS_ADDREF(*ppMetadataChannel = pMetadataChannel);
+        NS_ADDREF(*ppSeekableChannel = pSeekableChannel);
 
     return (result);
 }
@@ -615,8 +611,8 @@ nsresult TagLibChannelFileIO::GetSize(
     ChannelMap::iterator        mapEntry;
     TagLibChannelFileIO::Channel
                                 *pChannel;
-    nsCOMPtr<sbIMetadataChannel>
-                                pMetadataChannel;
+    nsCOMPtr<sbISeekableChannel>
+                                pSeekableChannel;
     PRUint64                    size = 0;
     nsresult                    result = NS_OK;
 
@@ -628,7 +624,7 @@ nsresult TagLibChannelFileIO::GetSize(
     /* If the size is uninitialized, read it from the metadata channel. */
     if (NS_SUCCEEDED(result) && (size == 0))
     {
-        result = pChannel->pMetadataChannel->GetSize(&size);
+        result = pChannel->pSeekableChannel->GetSize(&size);
         if (NS_SUCCEEDED(result))
             pChannel->size = size;
     }

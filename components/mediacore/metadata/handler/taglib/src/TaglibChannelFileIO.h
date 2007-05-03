@@ -54,7 +54,7 @@
 #include <nsStringGlue.h>
 
 /* Songbird imports. */
-#include <sbIMetadataChannel.h>
+#include <sbISeekableChannel.h>
 
 /* TagLib imports. */
 #include <tfile.h>
@@ -81,7 +81,7 @@ class TagLibChannelFileIO : public TagLib::FileIO
 public:
     TagLibChannelFileIO(
         nsString                        channelID,
-        nsCOMPtr<sbIMetadataChannel>    pMetadataChannel);
+        nsCOMPtr<sbISeekableChannel>    pSeekableChannel);
 
     virtual ~TagLibChannelFileIO();
 
@@ -90,15 +90,15 @@ public:
      * Private TagLib nsIChannel file I/O services.
      *
      *   mChannelID             ID for metadata channel.
-     *   mpMetadataChannel      Channel for accessing metadata.
+     *   mpSeekableChannel      Channel for accessing metadata.
      *   mChannelSize           Size of channel in bytes.
      *   mChannelRestart        True if channel needs to be restarted.
      */
 
 private:
     nsString                    mChannelID;
-    nsCOMPtr<sbIMetadataChannel>
-                                mpMetadataChannel;
+    nsCOMPtr<sbISeekableChannel>
+                                mpSeekableChannel;
     PRUint32                    mChannelSize;
     PRBool                      mChannelRestart;
 
@@ -152,15 +152,15 @@ private:
     class Channel
     {
         /*
-         * pMetadataChannel         Metadata channel component.
+         * pSeekableChannel         Seekable channel component.
          * size                     Size of channel media.
          * restart                  Flag indicating that the channel needs to be
          *                          restarted.
          */
 
     public:
-        nsCOMPtr<sbIMetadataChannel>
-                                    pMetadataChannel;
+        nsCOMPtr<sbISeekableChannel>
+                                    pSeekableChannel;
         PRUint64                    size;
         PRBool                      restart;
     };
@@ -173,8 +173,8 @@ private:
 public:
     static nsresult AddChannel(
         nsString                    channelID,
-        nsCOMPtr<sbIMetadataChannel>
-                                    pMetadataChannel);
+        nsCOMPtr<sbISeekableChannel>
+                                    pSeekableChannel);
 
     static nsresult RemoveChannel(
         nsString                    channelID);
@@ -186,7 +186,7 @@ public:
 
     static nsresult GetChannel(
         nsString                    channelID,
-        sbIMetadataChannel          **ppMetadataChannel);
+        sbISeekableChannel          **ppSeekableChannel);
 
     static nsresult GetSize(
         nsString                    channelID,

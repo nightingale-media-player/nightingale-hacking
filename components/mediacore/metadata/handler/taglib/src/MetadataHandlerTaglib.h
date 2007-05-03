@@ -77,12 +77,13 @@
 #include <nsStringGlue.h>
 
 /* Songbird imports. */
-#include <sbIMetadataChannel.h>
 #include <sbIMetadataHandler.h>
 #include <sbIMetadataValues.h>
+#include <sbISeekableChannel.h>
 
 /* TagLib imports. */
 #include <id3v2tag.h>
+#include <mp4itunestag.h>
 #include <tag.h>
 #include <tfile.h>
 
@@ -97,13 +98,14 @@
  * sbMetadataHandlerTaglib class
  */
 
-class sbMetadataHandlerTaglib : public sbIMetadataHandler
+class sbMetadataHandlerTaglib : public sbIMetadataHandler,
+                                public sbISeekableChannelListener
 {
     /*
      * mpFileProtocolHandler    File protocol handler instance.
      * mpMetadataValues         Read metadata values.
      * mpChannel                Metadata file channel.
-     * mpMetadataChannel        Metadata channel.
+     * mpSeekableChannel        Metadata channel.
      * mpURL                    Metadata file channel URL.
      * mMetadataChannelID       Metadata channel ID.
      * mMetadataChannelRestart  True when metadata channel must be restarted.
@@ -116,18 +118,20 @@ private:
                                 mpFileProtocolHandler;
     nsCOMPtr<sbIMetadataValues> mpMetadataValues;
     nsCOMPtr<nsIChannel>        mpChannel;
-    nsCOMPtr<sbIMetadataChannel>    mpMetadataChannel;
+    nsCOMPtr<sbISeekableChannel>
+                                mpSeekableChannel;
     nsCOMPtr<nsIURL>            mpURL;
     nsString                    mMetadataChannelID;
     PRBool                      mMetadataChannelRestart;
     PRBool                      mCompleted;
-    nsString                    mMetadataPath;
+    nsCString                   mMetadataPath;
 
 
     /* Inherited interfaces. */
 public:
     NS_DECL_ISUPPORTS
     NS_DECL_SBIMETADATAHANDLER
+    NS_DECL_SBISEEKABLECHANNELLISTENER
 
 
     /*
@@ -166,6 +170,14 @@ private:
 
 
     /*
+     * Private taglib metadata handler MP4 services.
+     */
+private:
+    void ReadMP4Tags(
+        TagLib::MP4::Tag            *pTag);
+
+
+    /*
      * Private taglib metadata handler services.
      */
 
@@ -176,6 +188,9 @@ private:
         TagLib::File                *pTagFile);
 
     PRBool ReadMPEGFile(
+        const char                  *filePath);
+
+    PRBool ReadMP4File(
         const char                  *filePath);
 
     PRBool ReadOGGFile(

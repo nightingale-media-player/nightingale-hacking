@@ -65,6 +65,7 @@
 #include <flacfile.h>
 #include <mpcfile.h>
 #include <mpegfile.h>
+#include <mp4file.h>
 #include <vorbisfile.h>
 
 /* C++ std imports. */
@@ -91,7 +92,8 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerTaglib");
  *
  ******************************************************************************/
 
-NS_IMPL_ISUPPORTS1(sbMetadataHandlerTaglib, sbIMetadataHandler)
+NS_IMPL_ISUPPORTS2(sbMetadataHandlerTaglib, sbIMetadataHandler,
+                                            sbISeekableChannelListener)
 
 
 /*******************************************************************************
@@ -131,6 +133,14 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
     /* than the id3lib metadata handler component vote.  */
     if (_url.Find(".mp3", PR_TRUE) != -1)
         vote = 2;
+
+    /* Check for MP4 files.  Return a vote result higher */
+    /* than the m4a metadata handler component vote.     */
+    if (   (_url.Find(".m4a", PR_TRUE) != -1)
+        || (_url.Find(".m4p", PR_TRUE) != -1))
+    {
+        vote = 2;
+    }
 
     /* Check for FLAC and MPC files. */
     if (vote == 0)
@@ -248,9 +258,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
                                                          getter_AddRefs(pFile));
         }
         if (NS_SUCCEEDED(result))
-            result = pFile->GetPath(filePath);
-        if (NS_SUCCEEDED(result))
-            mMetadataPath = filePath;
+            result = pFile->GetNativePath(mMetadataPath);
 
         /* Read the metadata. */
         if (NS_SUCCEEDED(result))
@@ -262,23 +270,23 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     if (NS_SUCCEEDED(result) && !mCompleted)
     {
         /* Create a metadata channel. */
-        mpMetadataChannel =
-            do_CreateInstance("@songbirdnest.com/Songbird/MetadataChannel;1",
+        mpSeekableChannel =
+            do_CreateInstance("@songbirdnest.com/Songbird/SeekableChannel;1",
                               &result);
 
         /* Add the metadata channel for use with the TagLib nsIChannel  */
         /* file I/O services using the metadata path as the channel ID. */
         if (NS_SUCCEEDED(result))
         {
-            mMetadataPath = NS_ConvertUTF8toUTF16(urlSpec);
-            mMetadataChannelID = mMetadataPath;
+            mMetadataPath = urlSpec;
+            mMetadataChannelID = NS_ConvertUTF8toUTF16(mMetadataPath);
             TagLibChannelFileIO::AddChannel(mMetadataChannelID,
-                                            mpMetadataChannel);
+                                            mpSeekableChannel);
         }
 
         /* Open the metadata channel to start reading. */
         if (NS_SUCCEEDED(result))
-            mpMetadataChannel->Open(mpChannel, this);
+            mpSeekableChannel->Open(mpChannel, this);
 
         /* Indicate that reading is being done asynchronously. */
         if (NS_SUCCEEDED(result))
@@ -344,33 +352,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Write(
 NS_IMETHODIMP sbMetadataHandlerTaglib::OnChannelData(
     nsISupports                 *pChannel)
 {
-    PRBool                      channelCompleted;
-    nsresult                    result = NS_OK;
-
-    /* Process channel data and complete processing on any exception. */
-    try
-    {
-        /* Clear channel restart condition. */
-        mMetadataChannelRestart = PR_FALSE;
-
-        /* Read the metadata. */
-        ReadMetadata();
-
-        /* Check for metadata channel completion. */
-        if (!mCompleted)
-        {
-            result = mpMetadataChannel->GetCompleted(&channelCompleted);
-            if (NS_SUCCEEDED(result) && channelCompleted)
-                mCompleted = PR_TRUE;
-        }
-    }
-    catch(...)
-    {
-        printf("1: OnChannelData exception\n");
-        mCompleted = PR_TRUE;
-    }
-
-    return (result);
+    return (NS_OK);
 }
 
 
@@ -387,10 +369,10 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Close()
         TagLibChannelFileIO::RemoveChannel(mMetadataChannelID);
 
     /* Close the metadata channel. */
-    if (mpMetadataChannel)
+    if (mpSeekableChannel)
     {
-        mpMetadataChannel->Close();
-        mpMetadataChannel = nsnull;
+        mpSeekableChannel->Close();
+        mpSeekableChannel = nsnull;
     }
 
     /* Read operation is complete. */
@@ -442,6 +424,57 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::SetChannel(
 {
     mpChannel = pChannel;
     return (NS_OK);
+}
+
+
+/*******************************************************************************
+ *
+ * Taglib metadata handler sbISeekableChannel implementation.
+ *
+ ******************************************************************************/
+
+/**
+* \brief Be thou informst that one's sbISeekableChannel has just received data
+*
+* Every time the underlying nsIChannel dumps data on the sbISeekableChannel,
+* plus once more for when the nsIChannel reports a stop condition.
+*
+* This is a chance for the handler code to attempt to parse the datastream.
+*
+* \param pChannel The sbISeekableChannel delivering data.  You'll have to QI for
+*                 it.
+*/
+
+NS_IMETHODIMP sbMetadataHandlerTaglib::OnChannelDataAvailable(
+    sbISeekableChannel          *pChannel)
+{
+    PRBool                      channelCompleted;
+    nsresult                    result = NS_OK;
+
+    /* Process channel data and complete processing on any exception. */
+    try
+    {
+        /* Clear channel restart condition. */
+        mMetadataChannelRestart = PR_FALSE;
+
+        /* Read the metadata. */
+        ReadMetadata();
+
+        /* Check for metadata channel completion. */
+        if (!mCompleted)
+        {
+            result = mpSeekableChannel->GetCompleted(&channelCompleted);
+            if (NS_SUCCEEDED(result) && channelCompleted)
+                mCompleted = PR_TRUE;
+        }
+    }
+    catch(...)
+    {
+        printf("1: OnChannelDataAvailable exception\n");
+        mCompleted = PR_TRUE;
+    }
+
+    return (result);
 }
 
 
@@ -646,6 +679,39 @@ void sbMetadataHandlerTaglib::AddID3v2Tag(
 
 /*******************************************************************************
  *
+ * Private taglib metadata handler mp4 services.
+ *
+ ******************************************************************************/
+
+/*
+ * ReadMP4Tags
+ *
+ *   --> pTag                   MP4 tag object.
+ *
+ *   This function reads MP4 tags from the MP4 tag object specified by pTag.
+ * The read tags are added to the set of metadata values.
+ *   This function only reads the MP4 specific tags.
+ */
+
+void sbMetadataHandlerTaglib::ReadMP4Tags(
+    TagLib::MP4::Tag            *pTag)
+{
+    /* Add MP4 specific tags. */
+    if (!pTag->composer().isEmpty())
+        AddMetadataValue("composer", pTag->composer());
+    if (pTag->numTracks())
+        AddMetadataValue("track_total", pTag->numTracks());
+    if (pTag->disk())
+        AddMetadataValue("disc_no", pTag->disk());
+    if (pTag->numDisks())
+        AddMetadataValue("disc_total", pTag->numDisks());
+    if (pTag->bpm())
+        AddMetadataValue("bpm", pTag->bpm());
+}
+
+
+/*******************************************************************************
+ *
  * Private taglib metadata handler services.
  *
  ******************************************************************************/
@@ -660,16 +726,14 @@ void sbMetadataHandlerTaglib::AddID3v2Tag(
 
 nsresult sbMetadataHandlerTaglib::ReadMetadata()
 {
-    nsCString                   metadataPathUTF8;
     const char                  *metadataPathCStr;
     nsCString                   fileExt;
     PRBool                      isValid = PR_FALSE;
     PRBool                      decodedFileExt = PR_FALSE;
     nsresult                    result = NS_OK;
 
-    /* Convert metadata path to UTF8. */
-    metadataPathUTF8 = NS_ConvertUTF16toUTF8(mMetadataPath);
-    metadataPathCStr = metadataPathUTF8.get();
+    /* Get the metadata local file path. */
+    metadataPathCStr = mMetadataPath.get();
 
     /* Get the metadata file extension. */
     result = mpURL->GetFileExtension(fileExt);
@@ -687,6 +751,10 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
             isValid = ReadMPCFile(metadataPathCStr);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("mp3")))
             isValid = ReadMPEGFile(metadataPathCStr);
+        else if (fileExt.Equals(NS_LITERAL_CSTRING("m4a")))
+            isValid = ReadMP4File(metadataPathCStr);
+        else if (fileExt.Equals(NS_LITERAL_CSTRING("m4p")))
+            isValid = ReadMP4File(metadataPathCStr);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg")))
             isValid = ReadOGGFile(metadataPathCStr);
         else
@@ -895,6 +963,48 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
     /* Read the ID3v2 metadata. */
     if (isValid)
         ReadID3v2Tags(pTagFile->ID3v2Tag());
+
+    /* Clean up. */
+    if (pTagFile)
+        delete(pTagFile);
+
+    return (isValid);
+}
+
+
+/*
+ * ReadMP4File
+ *
+ *   --> filePath               Path to MP4 file.
+ *
+ *   <--                        True if file has valid MP4 metadata.
+ *
+ *   This function reads metadata from the MP4 file with the file path specified
+ * by filePath.
+ */
+
+PRBool sbMetadataHandlerTaglib::ReadMP4File(
+    const char                  *filePath)
+{
+    TagLib::MP4::File           *pTagFile = NULL;
+    PRBool                      isValid = PR_TRUE;
+
+    /* Open the metadata file. */
+    pTagFile = new TagLib::MP4::File(filePath);
+
+    /* Check for channel restart. */
+    mMetadataChannelRestart =
+                    TagLibChannelFileIO::GetChannelRestart(mMetadataChannelID);
+    if (mMetadataChannelRestart)
+        isValid = PR_FALSE;
+
+    /* Read the base file metadata. */
+    if (isValid)
+        isValid = ReadFile(pTagFile);
+
+    /* Read the MP4 specific metadata. */
+    if (isValid)
+        ReadMP4Tags(static_cast<TagLib::MP4::Tag *>(pTagFile->tag()));
 
     /* Clean up. */
     if (pTagFile)

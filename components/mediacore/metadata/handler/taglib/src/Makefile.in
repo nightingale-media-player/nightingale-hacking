@@ -38,9 +38,11 @@ endif
 CPP_SRCS = MetadataHandlerTaglib.cpp \
            TaglibChannelFileIO.cpp \
            MetadataHandlerTaglibComponent.cpp \
+           SeekableChannel.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
+               $(DEPTH)/components/mediacore/metadata/handler/taglib/public \
                $(topsrcdir)/components/mediacore/metadata/manager/src \
                $(srcdir) \
                $(MOZSDK_INCLUDE_DIR) \
