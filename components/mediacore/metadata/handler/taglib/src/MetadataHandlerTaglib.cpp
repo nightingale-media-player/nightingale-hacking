@@ -129,27 +129,26 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
     /* Convert the URL to lower case. */
     ToLowerCase(_url);
 
-    /* Check for MP3 files.  Return a vote result higher */
-    /* than the id3lib metadata handler component vote.  */
-    if (_url.Find(".mp3", PR_TRUE) != -1)
-        vote = 2;
-
-    /* Check for MP4 files.  Return a vote result higher */
-    /* than the m4a metadata handler component vote.     */
-    if (   (_url.Find(".m4a", PR_TRUE) != -1)
-        || (_url.Find(".m4p", PR_TRUE) != -1))
+    /* Check for supported files. */
+    if (   (_url.Find(".mp3", PR_TRUE) != -1)
+        || (_url.Find(".m4a", PR_TRUE) != -1)
+        || (_url.Find(".m4p", PR_TRUE) != -1)
+        || (_url.Find(".m4v", PR_TRUE) != -1)
+        || (_url.Find(".mov", PR_TRUE) != -1)
+        || (_url.Find(".flac", PR_TRUE) != -1)
+        || (_url.Find(".mpc", PR_TRUE) != -1))
     {
-        vote = 2;
+        vote = 1;
     }
 
-    /* Check for FLAC and MPC files. */
-    if (vote == 0)
+    /* Check for unsupported files. */
+    else if (   (_url.Find(".avi", PR_TRUE) != -1)
+             || (_url.Find(".wma", PR_TRUE) != -1)
+             || (_url.Find(".wmv", PR_TRUE) != -1)
+             || (_url.Find(".asf", PR_TRUE) != -1)
+             || (_url.Find(".wav", PR_TRUE) != -1))
     {
-        if (   (_url.Find(".flac", PR_TRUE) != -1)
-            || (_url.Find(".mpc", PR_TRUE) != -1))
-        {
-            vote = 1;
-        }
+        vote = -1;
     }
 
     /* Return results. */

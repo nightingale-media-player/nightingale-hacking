@@ -29,9 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = id3 \
-          ogg \
-          mp4 \
+SUBDIRS = ogg \
           taglib \
           $(NULL)
 
