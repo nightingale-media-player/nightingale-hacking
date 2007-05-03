@@ -96,7 +96,9 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::GetProperty(PRUint16 aIndex,
                                              nsAString& _retval)
 {
-  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+  PRUint32 filterLength = mFilters.Length();
+  NS_ENSURE_TRUE(filterLength, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_ARG_RANGE(aIndex, 0, filterLength - 1);
 
   _retval = mFilters[aIndex].property;
 

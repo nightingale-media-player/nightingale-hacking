@@ -32,29 +32,39 @@
 
 #include "nsISupports.idl"
 
+interface nsIPropertyBag2;
 interface sbILibrary;
 
 /**
 * \interface sbILibraryFactory
-* \brief Factory for new library instances
+* \brief Factory for new library instances.
 *
-* This interface is used to create new instances of a library
+* This interface is used to create new instances of a library.
 *
 * \sa sbILibrary
 */
-[scriptable, uuid(5e49042d-3676-4dc5-8366-24ea5cace552)]
+[scriptable, uuid(3818fff4-b908-4bf2-9eb1-cf4d02eb446a)]
 interface sbILibraryFactory : nsISupports
 {
   /**
-   * \brief Key to the localized name of the library type this factory creates
+   * \brief A human-readable string identifying the type of library that will
+   *        be created by this factory.
    */
-  readonly attribute AString nameKey;
+  readonly attribute AString type;
 
   /**
-   * \brief Create a new instance of a library
-   * \return New library instance
+   * \brief The contract ID through which an instance of this factory can be
+   *        created.
    */
-  sbILibrary createLibrary();
+  readonly attribute ACString contractID;
 
+  /**
+   * \brief Create a new instance of a library.
+   *
+   * \param aCreationParameters - A collection of properties that will be used
+   *                              to create the library.
+   *
+   * \return A new library instance.
+   */
+  sbILibrary createLibrary(in nsIPropertyBag2 aCreationParameters);
 };
-

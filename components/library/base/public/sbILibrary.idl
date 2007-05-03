@@ -34,9 +34,11 @@
 
 interface nsIArray;
 interface nsIChannel;
+interface nsIPropertyBag2;
 interface nsIStringEnumerator;
 interface nsIURI;
 interface sbIDevice;
+interface sbILibraryFactory;
 interface sbIMediaItem;
 interface sbIMediaList;
 interface sbIMediaListFactory;
@@ -51,7 +53,7 @@ interface sbIMediaListFactory;
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(cd0a02c7-3c0d-4e54-ab92-e8ac4f22c17f)]
+[scriptable, uuid(3e6f268a-0eb7-4c3a-bcfa-075058141ca5)]
 interface sbILibrary : sbILibraryResource
 {
   /**
@@ -63,6 +65,16 @@ interface sbILibrary : sbILibraryResource
    * \brief Declares if this library will host foreign media items
    */
   readonly attribute boolean supportsForeignMediaItems;
+
+  /**
+   * \brief Holds the parameters with which this library was created.
+   */
+  readonly attribute nsIPropertyBag2 creationParameters;
+
+  /**
+   * \brief Holds the factory that created this library.
+   */
+  readonly attribute sbILibraryFactory factory;
 
   /**
    * \brief Resolves a songbird schemed URL to a channel.  Throws an exception
@@ -147,6 +159,4 @@ interface sbILibrary : sbILibraryResource
    * \param aURIArray nsIArray of sbIMediaItem
    */
   void batchNotifyAdded(in nsIArray aMediaItemArray);
-
 };
-

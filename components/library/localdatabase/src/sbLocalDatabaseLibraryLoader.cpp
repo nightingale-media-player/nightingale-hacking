@@ -30,9 +30,8 @@
 #include <nsIFile.h>
 #include <nsIGenericFactory.h>
 #include <nsILocalFile.h>
-#include <nsIObserverService.h>
-#include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
+#include <nsIPropertyBag2.h>
 #include <nsISupportsPrimitives.h>
 #include <sbILibrary.h>
 
@@ -46,6 +45,8 @@
 #include <sbLibraryManager.h>
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibraryFactory.h"
+
+#define PROPERTY_KEY_DATABASEFILE "databaseFile"
 
 /**
  * To log this module, set the following environment variable:
@@ -61,7 +62,6 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
 #endif
 
 #define NS_APPSTARTUP_CATEGORY         "app-startup"
-#define NS_PROFILE_STARTUP_OBSERVER_ID "profile-after-change"
 
 #define PREFBRANCH_LOADER SB_PREFBRANCH_LIBRARY "loader."
 
@@ -95,35 +95,9 @@ private:
   T mArray;
 };
 
-class sbLibraryInfo
-{
-public:
-  sbLibraryInfo() { }
-
-  nsresult Init(const nsACString& aPrefKey);
-
-  nsresult SetDatabaseGUID(const nsAString& aGUID);
-  void GetDatabaseGUID(nsAString& _retval);
-
-  nsresult SetDatabaseLocation(nsILocalFile* aLocation);
-  already_AddRefed<nsILocalFile> GetDatabaseLocation();
-
-  nsresult SetLoadAtStartup(PRBool aLoadAtStartup);
-  PRBool GetLoadAtStartup();
-
-  void GetPrefBranch(nsACString& _retval);
-
-private:
-  nsCOMPtr<nsIPrefBranch> mPrefBranch;
-  nsCString mGUIDKey;
-  nsCString mLocationKey;
-  nsCString mStartupKey;
-};
-
-NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryLoader, nsIObserver)
+NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryLoader, sbILibraryLoader)
 
 sbLocalDatabaseLibraryLoader::sbLocalDatabaseLibraryLoader()
-: mNextLibraryIndex(0)
 {
 #ifdef PR_LOGGING
   if (!sLibraryLoaderLog)
@@ -138,58 +112,13 @@ sbLocalDatabaseLibraryLoader::~sbLocalDatabaseLibraryLoader()
 }
 
 /**
- * \brief Register this component with the Category Manager for instantiaition
- *        on startup.
- */
-/* static */ nsresult
-sbLocalDatabaseLibraryLoader::RegisterSelf(nsIComponentManager* aCompMgr,
-                                           nsIFile* aPath,
-                                           const char* aLoaderStr,
-                                           const char* aType,
-                                           const nsModuleComponentInfo *aInfo)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->AddCategoryEntry(NS_APPSTARTUP_CATEGORY,
-                                         SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION,
-                                         SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID,
-                                         PR_TRUE, PR_TRUE, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return rv;
-}
-
-/**
- * \brief Register with the Observer Service to keep the instance alive until
- *        a profile has been loaded.
+ * \brief
  */
 nsresult
 sbLocalDatabaseLibraryLoader::Init()
 {
   TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - Init", this));
 
-  // Register ourselves with the Observer Service. We use a strong ref so that
-  // we stay alive long enough to catch profile-after-change.
-  nsresult rv;
-  nsCOMPtr<nsIObserverService> observerService = 
-    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = observerService->AddObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-/**
- *
- */
-nsresult
-sbLocalDatabaseLibraryLoader::RealInit()
-{
   nsresult rv;
   nsCOMPtr<nsIPrefService> prefService =
     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
@@ -229,17 +158,13 @@ sbLocalDatabaseLibraryLoader::RealInit()
     PRUint32 libraryKey = keyString.ToInteger(&rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (libraryKey >= mNextLibraryIndex) {
-      mNextLibraryIndex = libraryKey + 1;
-    }
-
     // Should be something like "songbird.library.loader.13.".
     nsCAutoString branchString(Substring(pref, 0, branchLength + keyLength + 1));
     NS_ASSERTION(StringEndsWith(branchString, NS_LITERAL_CSTRING(".")),
                  "Bad pref string!");
 
     if (!mLibraryInfoTable.Get(libraryKey, nsnull)) {
-      nsAutoPtr<sbLibraryInfo> newLibraryInfo(new sbLibraryInfo());
+      nsAutoPtr<sbLibraryLoaderInfo> newLibraryInfo(new sbLibraryLoaderInfo());
       NS_ENSURE_TRUE(newLibraryInfo, NS_ERROR_OUT_OF_MEMORY);
 
       rv = newLibraryInfo->Init(branchString);
@@ -253,33 +178,6 @@ sbLocalDatabaseLibraryLoader::RealInit()
   }
 
   mLibraryInfoTable.Enumerate(VerifyEntriesCallback, nsnull);
-
-  return NS_OK;
-}
-
-/**
- * \brief Load all of the libraries we need for startup.
- */
-nsresult
-sbLocalDatabaseLibraryLoader::LoadLibraries()
-{
-  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - LoadLibraries", this));
-
-  nsresult rv;
-
-  rv = EnsureDefaultLibraries();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILibraryManager> libraryManager = 
-    do_GetService(SONGBIRD_LIBRARYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbLocalDatabaseLibraryFactory libraryFactory;
-  sbLoaderInfo info(libraryManager, &libraryFactory);
-
-  PRUint32 enumeratedLibraries = 
-    mLibraryInfoTable.EnumerateRead(LoadLibrariesCallback, &info);
-  NS_ASSERTION(enumeratedLibraries >= 3, "Too few libraries enumerated!");
 
   return NS_OK;
 }
@@ -339,19 +237,18 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
   sbLibraryExistsInfo existsInfo(databaseGUID);
   mLibraryInfoTable.EnumerateRead(LibraryExistsCallback, &existsInfo);
 
-  PRUint32 index = existsInfo.index != -1 ?
-                   existsInfo.index :
-                   mNextLibraryIndex++;
+  sbLibraryLoaderInfo* libraryInfo;
+  if ((existsInfo.index == -1) ||
+      (!mLibraryInfoTable.Get(existsInfo.index, &libraryInfo))) {
+    // The library wasn't in our hashtable, so make a new sbLibraryLoaderInfo
+    // object. That will take care of setting the prefs up correctly.
+    PRUint32 index = GetNextLibraryIndex();
 
-  sbLibraryInfo* libraryInfo;
-  if (!mLibraryInfoTable.Get(index, &libraryInfo)) {
-    // The library wasn't in our hashtable, so make a new sbLibraryInfo object.
-    // That will take care of setting the prefs up correctly.
     prefKey.AssignLiteral(PREFBRANCH_LOADER);
     prefKey.AppendInt(index);
     prefKey.AppendLiteral(".");
 
-    nsAutoPtr<sbLibraryInfo>
+    nsAutoPtr<sbLibraryLoaderInfo>
       newLibraryInfo(CreateDefaultLibraryInfo(prefKey, databaseGUID));
     if (!newLibraryInfo || !mLibraryInfoTable.Put(index, newLibraryInfo)) {
       return NS_ERROR_FAILURE;
@@ -403,11 +300,11 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
 /**
  * \brief
  */
-sbLibraryInfo*
+sbLibraryLoaderInfo*
 sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKey,
                                                        const nsAString& aGUID)
 {
-  nsAutoPtr<sbLibraryInfo> newLibraryInfo(new sbLibraryInfo());
+  nsAutoPtr<sbLibraryLoaderInfo> newLibraryInfo(new sbLibraryLoaderInfo());
   NS_ENSURE_TRUE(newLibraryInfo, nsnull);
 
   nsresult rv = newLibraryInfo->Init(aPrefKey);
@@ -456,9 +353,21 @@ sbLocalDatabaseLibraryLoader::RemovePrefBranch(const nsACString& aPrefBranch)
   NS_ENSURE_SUCCESS(rv,);
 }
 
+PRUint32
+sbLocalDatabaseLibraryLoader::GetNextLibraryIndex()
+{
+  for (PRUint32 index = 0; ; index++) {
+    if (!mLibraryInfoTable.Get(index, nsnull)) {
+      return index;
+    }
+  }
+  NS_NOTREACHED("Shouldn't be here!");
+  return 0;
+}
+
 /* static */ PLDHashOperator PR_CALLBACK
 sbLocalDatabaseLibraryLoader::LoadLibrariesCallback(nsUint32HashKey::KeyType aKey,
-                                                    sbLibraryInfo* aEntry,
+                                                    sbLibraryLoaderInfo* aEntry,
                                                     void* aUserData)
 {
   sbLoaderInfo* loaderInfo = NS_STATIC_CAST(sbLoaderInfo*, aUserData);
@@ -477,15 +386,15 @@ sbLocalDatabaseLibraryLoader::LoadLibrariesCallback(nsUint32HashKey::KeyType aKe
                                                           getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
   
-  rv = loaderInfo->libraryManager->RegisterLibrary(library);
+  rv = loaderInfo->libraryManager->RegisterLibrary(library, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
 
-  loaderInfo->registeredLibraryCount++;
+  return PL_DHASH_NEXT;
 }
 
 /* static */ PLDHashOperator PR_CALLBACK
 sbLocalDatabaseLibraryLoader::LibraryExistsCallback(nsUint32HashKey::KeyType aKey,
-                                                    sbLibraryInfo* aEntry,
+                                                    sbLibraryLoaderInfo* aEntry,
                                                     void* aUserData)
 {
   sbLibraryExistsInfo* existsInfo =
@@ -506,7 +415,7 @@ sbLocalDatabaseLibraryLoader::LibraryExistsCallback(nsUint32HashKey::KeyType aKe
 
 /* static */ PLDHashOperator PR_CALLBACK
 sbLocalDatabaseLibraryLoader::VerifyEntriesCallback(nsUint32HashKey::KeyType aKey,
-                                                    nsAutoPtr<sbLibraryInfo>& aEntry,
+                                                    nsAutoPtr<sbLibraryLoaderInfo>& aEntry,
                                                     void* aUserData)
 {
   nsCAutoString prefBranch;
@@ -530,52 +439,106 @@ sbLocalDatabaseLibraryLoader::VerifyEntriesCallback(nsUint32HashKey::KeyType aKe
 
   return PL_DHASH_NEXT;
 }
+
 /**
- * See nsIObserver.idl
+ * \brief Load all of the libraries we need for startup.
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibraryLoader::Observe(nsISupports* aSubject,
-                                      const char* aTopic,
-                                      const PRUnichar *aData)
+sbLocalDatabaseLibraryLoader::OnRegisterStartupLibraries(sbILibraryManager* aLibraryManager)
 {
-  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - Observe: %s", this, aTopic));
+  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - LoadLibraries", this));
 
-  // XXXben The current implementation of the Observer Service keeps its
-  //        observers alive during a NotifyObservers call. I can't find anywhere
-  //        in the documentation that this is expected or guaranteed behavior
-  //        so we're going to take an extra step here to ensure our own
-  //        survival.
-  nsCOMPtr<nsISupports> kungFuDeathGrip;
+  nsresult rv = Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  if (strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID) == 0) {
+  rv = EnsureDefaultLibraries();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    // Protect ourselves from deletion until we're done. The Observer Service is
-    // the only thing keeping us alive at the moment, so we need to bump our
-    // ref count before removing ourselves.
-    kungFuDeathGrip = this;
+  sbLocalDatabaseLibraryFactory libraryFactory;
+  sbLoaderInfo info(aLibraryManager, &libraryFactory);
 
-    nsresult rv;
-    nsCOMPtr<nsIObserverService> observerService = 
-      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
-
-    // We have to remove ourselves or we will stay alive until app shutdown.
-    if (NS_SUCCEEDED(rv)) {
-      observerService->RemoveObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID);
-    }
-
-    rv = RealInit();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Now we load our libraries.
-    rv = LoadLibraries();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  PRUint32 enumeratedLibraries = 
+    mLibraryInfoTable.EnumerateRead(LoadLibrariesCallback, &info);
+  NS_ASSERTION(enumeratedLibraries >= 3, "Too few libraries enumerated!");
 
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseLibraryLoader::OnLibraryStartupModified(sbILibrary* aLibrary,
+                                                       PRBool aLoadAtStartup)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+
+  // See if we support this library type.
+  nsCOMPtr<sbILibraryFactory> factory;
+  nsresult rv = aLibrary->GetFactory(getter_AddRefs(factory));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString factoryType;
+  rv = factory->GetType(factoryType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(factoryType.EqualsLiteral(SB_LOCALDATABASE_LIBRARYFACTORY_TYPE),
+                 NS_ERROR_NOT_AVAILABLE);
+
+  // See if this library already exists in the hashtable.
+  nsAutoString databaseGUID;
+  rv = aLibrary->GetGuid(databaseGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbLibraryExistsInfo existsInfo(databaseGUID);
+  mLibraryInfoTable.EnumerateRead(LibraryExistsCallback, &existsInfo);
+
+  sbLibraryLoaderInfo* libraryInfo;
+  if ((existsInfo.index == -1) ||
+      (!mLibraryInfoTable.Get(existsInfo.index, &libraryInfo))) {
+
+    // The library wasn't in the hashtable so make sure that we can recreate
+    // it.
+    nsCOMPtr<nsIPropertyBag2> creationParameters;
+    rv = aLibrary->GetCreationParameters(getter_AddRefs(creationParameters));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_NAMED_LITERAL_STRING(fileKey, PROPERTY_KEY_DATABASEFILE);
+    nsCOMPtr<nsILocalFile> databaseFile;
+    rv = creationParameters->GetPropertyAsInterface(fileKey,
+                                                    NS_GET_IID(nsILocalFile),
+                                                    getter_AddRefs(databaseFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ASSERTION(databaseFile, "This can't be null!");
+
+    // Make a new sbLibraryLoaderInfo object.
+    PRUint32 index = GetNextLibraryIndex();
+
+    nsCAutoString prefKey(PREFBRANCH_LOADER);
+    prefKey.AppendInt(index);
+    prefKey.AppendLiteral(".");
+
+    nsAutoPtr<sbLibraryLoaderInfo>
+      newLibraryInfo(CreateDefaultLibraryInfo(prefKey, databaseGUID));
+    if (!newLibraryInfo || !mLibraryInfoTable.Put(index, newLibraryInfo)) {
+      return NS_ERROR_FAILURE;
+    }
+
+    rv = newLibraryInfo->SetDatabaseLocation(databaseFile);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    libraryInfo = newLibraryInfo.forget();
+  }
+
+  rv = libraryInfo->SetLoadAtStartup(aLoadAtStartup);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
+ * sbLibraryLoaderInfo implementation
+ */
 nsresult
-sbLibraryInfo::Init(const nsACString& aPrefKey)
+sbLibraryLoaderInfo::Init(const nsACString& aPrefKey)
 {
   nsresult rv;
   nsCOMPtr<nsIPrefService> prefService =
@@ -605,7 +568,7 @@ sbLibraryInfo::Init(const nsACString& aPrefKey)
 }
 
 nsresult
-sbLibraryInfo::SetDatabaseGUID(const nsAString& aGUID)
+sbLibraryLoaderInfo::SetDatabaseGUID(const nsAString& aGUID)
 {
   NS_ENSURE_FALSE(aGUID.IsEmpty(), NS_ERROR_INVALID_ARG);
 
@@ -625,7 +588,7 @@ sbLibraryInfo::SetDatabaseGUID(const nsAString& aGUID)
 }
 
 void
-sbLibraryInfo::GetDatabaseGUID(nsAString& _retval)
+sbLibraryLoaderInfo::GetDatabaseGUID(nsAString& _retval)
 {
   _retval.Truncate();
 
@@ -640,7 +603,7 @@ sbLibraryInfo::GetDatabaseGUID(nsAString& _retval)
 }
 
 nsresult
-sbLibraryInfo::SetDatabaseLocation(nsILocalFile* aLocation)
+sbLibraryLoaderInfo::SetDatabaseLocation(nsILocalFile* aLocation)
 {
   NS_ENSURE_ARG_POINTER(aLocation);
 
@@ -659,7 +622,7 @@ sbLibraryInfo::SetDatabaseLocation(nsILocalFile* aLocation)
 }
 
 already_AddRefed<nsILocalFile>
-sbLibraryInfo::GetDatabaseLocation()
+sbLibraryLoaderInfo::GetDatabaseLocation()
 {
   nsresult rv;
   nsCOMPtr<nsILocalFile> location = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
@@ -678,7 +641,7 @@ sbLibraryInfo::GetDatabaseLocation()
 }
 
 nsresult
-sbLibraryInfo::SetLoadAtStartup(PRBool aLoadAtStartup)
+sbLibraryLoaderInfo::SetLoadAtStartup(PRBool aLoadAtStartup)
 {
   nsresult rv = mPrefBranch->SetBoolPref(mStartupKey.get(), aLoadAtStartup);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -687,7 +650,7 @@ sbLibraryInfo::SetLoadAtStartup(PRBool aLoadAtStartup)
 }
 
 PRBool
-sbLibraryInfo::GetLoadAtStartup()
+sbLibraryLoaderInfo::GetLoadAtStartup()
 {
   PRBool loadAtStartup;
   nsresult rv = mPrefBranch->GetBoolPref(mStartupKey.get(), &loadAtStartup);
@@ -697,7 +660,7 @@ sbLibraryInfo::GetLoadAtStartup()
 }
 
 void
-sbLibraryInfo::GetPrefBranch(nsACString& _retval)
+sbLibraryLoaderInfo::GetPrefBranch(nsACString& _retval)
 {
   _retval.Truncate();
 

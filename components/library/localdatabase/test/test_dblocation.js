@@ -52,10 +52,14 @@ function runTest () {
   }
 
   var libraryFactory =
-    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
-      .createInstance(Ci.sbILocalDatabaseLibraryFactory);
+    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"].
+    createInstance(Ci.sbILibraryFactory);
 
-  var library = libraryFactory.createLibraryFromDatabase(file);
+  var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
+                createInstance(Ci.nsIWritablePropertyBag2);
+  hashBag.setPropertyAsInterface("databaseFile", file);
+
+  var library = libraryFactory.createLibrary(hashBag);
 
   var location = newFileURI(directory);
   loadData(dbGUID, location);

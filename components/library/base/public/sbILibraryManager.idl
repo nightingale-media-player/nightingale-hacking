@@ -43,62 +43,13 @@ interface sbILibraryManagerListener;
 * \brief Manages the lifecycle of libraries in the system
 * \sa sbILibrary
 */
-[scriptable, uuid(27f5ebe3-5b02-4658-8916-546d0a798b5f)]
+[scriptable, uuid(c299b8fc-7aab-4247-a2f8-0ef88b06958f)]
 interface sbILibraryManager : nsISupports
 {
   /**
-   * \brief Get a library by its guid
-   * \param aGuid Guid of the library you seek
-   * \return Library instance identified by the supplied guid
+   * \brief Returns the main library.
    */
-  sbILibrary getLibrary(in AString aGuid);
-
-  /**
-   * \brief Get a library by its guid
-   * \param aGuid Guid of the library you seek
-   * \return Library instance identified by the supplied guid
-   */
-  sbILibraryFactory getLibraryFactory(in AString aType);
-
-  /**
-   * \brief Runtime registration of a library
-   * \param aLibrary Library to register
-   */
-  void registerLibrary(in sbILibrary aLibrary);
-
-  /**
-   * \brief Runtime removal of a library
-   * \param aLibrary Library to unregister
-   */
-  void unregisterLibrary(in sbILibrary aLibrary);
-
-  /**
-   * \brief Runtime registration of a library factory
-   * \param aLibraryFactory Library factory to register
-   */
-  void registerLibraryFactory(in sbILibraryFactory aLibraryFactory,
-                              in AString aType);
-
-  /**
-   * \brief Returns a simple enumerator to enumerate all registered libraries.
-   */
-  nsISimpleEnumerator getLibraryEnumerator();
-
-  /**
-   * \brief Returns a simple enumerator to enumerate all registered library
-   *        factories.
-   */
-  nsISimpleEnumerator getLibraryFactoryEnumerator();
-
-  /**
-   * \brief
-   */
-  void addListener(in sbILibraryManagerListener aListener);
-
-  /**
-   * \brief
-   */
-  void removeListener(in sbILibraryManagerListener aListener);
+  readonly attribute sbILibrary mainLibrary;
 
   /**
    * \brief RDF datasource that exposes the currently active libraries and
@@ -107,7 +58,64 @@ interface sbILibraryManager : nsISupports
   readonly attribute nsIRDFDataSource dataSource;
 
   /**
-   * \brief Returns the main library.
+   * \brief Get a library by its guid
+   * \param aGuid Guid of the library you seek
+   * \return Library instance identified by the supplied guid
    */
-  readonly attribute sbILibrary mainLibrary;
+  sbILibrary getLibrary(in AString aGuid);
+
+  /**
+   * \brief Returns a simple enumerator to enumerate all registered libraries.
+   */
+  nsISimpleEnumerator getLibraries();
+
+  /**
+   * \brief Returns a simple enumerator to enumerate all startup libraries.
+   */
+  nsISimpleEnumerator getStartupLibraries();
+
+  /**
+   * \brief Runtime registration of a library
+   *
+   * \param aLibrary Library to register
+   * \param aLoadAtStartup Whether or not the library manager should reload
+   *                       this library at the next startup.
+   */
+  void registerLibrary(in sbILibrary aLibrary,
+                       in boolean aLoadAtStartup);
+
+  /**
+   * \brief Runtime removal of a library
+   * \param aLibrary Library to unregister
+   */
+  void unregisterLibrary(in sbILibrary aLibrary);
+
+  /**
+   * \brief Configures a library to run at startup.
+   */
+  void setLibraryLoadsAtStartup(in sbILibrary aLibrary,
+                                in boolean aLoadAtStartup);
+
+  /**
+   * \brief Returns whether or not a library loads at startup.
+   */
+  boolean getLibraryLoadsAtStartup(in sbILibrary aLibrary);
+
+  /**
+   * \brief Adds a listener.
+   */
+  void addListener(in sbILibraryManagerListener aListener);
+
+  /**
+   * \brief Removes a listener.
+   */
+  void removeListener(in sbILibraryManagerListener aListener);
 };
+
+%{C++
+
+// The Library Manager will use this topic to notify interested components that
+// its startup libraries have all been registered.
+#define SB_LIBRARY_MANAGER_READY_TOPIC "songbird-library-manager-ready"
+
+%}
