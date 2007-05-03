@@ -242,6 +242,9 @@ function runTest () {
   testSet( item, "contentSrc", newSrc);
   testSet( item, "contentLength", 0xbaadf00d );
   testSet( item, "contentType", "x-media/x-poo" );
+  
+  item.setProperty("newpropertyneverseenever", "valuevalue");
+  
   item.write();
   
   // Open up a temp file through this interface

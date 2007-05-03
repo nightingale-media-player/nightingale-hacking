@@ -73,7 +73,7 @@ public:
   nsresult PropertyRequiresInsert(const nsAString &aGuid, PRUint32 aPropertyID, PRBool *aInsert);
 
   void GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn);
-  nsresult InsertPropertyNameInLibrary(const nsAString& aPropertyName);
+  nsresult InsertPropertyNameInLibrary(const nsAString& aPropertyName, PRUint32 *aPropertyID);
   
 private:
   PRBool mWritePending;

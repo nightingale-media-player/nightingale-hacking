@@ -658,9 +658,6 @@ sbLocalDatabasePropertyCache::Write()
         NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
         bagLocal->GetPropertyByID(dirtyProps[j], value);
 
-        rv = InsertPropertyNameInLibrary(propertyName);
-        NS_ENSURE_SUCCESS(rv, rv);
-
         nsCOMPtr<sbIPropertyInfo> propertyInfo;
         rv = mPropertyManager->GetPropertyInfo(propertyName, 
           getter_AddRefs(propertyInfo));
@@ -701,6 +698,10 @@ sbLocalDatabasePropertyCache::Write()
         else { //Regular properties all go in the same spot.
           nsAutoString sortable;
           rv = propertyInfo->MakeSortable(value, sortable);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          PRUint32 propertyID = 0;
+          rv = InsertPropertyNameInLibrary(propertyName, &propertyID);
           NS_ENSURE_SUCCESS(rv, rv);
 
           //Check if we need to insert or update the property.
@@ -945,7 +946,13 @@ sbLocalDatabasePropertyCache::GetPropertyIDInternal(const nsAString& aPropertyNa
 {
   PRUint32 retval;
   if (!mPropertyNameToID.Get(aPropertyName, &retval)) {
-    InsertPropertyNameInLibrary(aPropertyName);
+    nsresult rv = InsertPropertyNameInLibrary(aPropertyName, &retval);
+    
+    //Very unlikely, optimize for it.
+    if(NS_UNLIKELY(rv)) {
+      retval = 0;
+    }
+
   }
   return retval;
 }
@@ -1021,8 +1028,25 @@ sbLocalDatabasePropertyCache::GetColumnForPropertyID(PRUint32 aPropertyID,
   return;
 }
 
-nsresult sbLocalDatabasePropertyCache::InsertPropertyNameInLibrary(const nsAString& aPropertyName)
+PR_STATIC_CALLBACK(PLDHashOperator)
+PropertyIDToNameKeys(nsUint32HashKey::KeyType aPropertyID,
+                     nsString& aValue,
+                     void *aArg)
 {
+  nsTArray<PRUint32>* propertyIDs = NS_STATIC_CAST(nsTArray<PRUint32>*, aArg);
+  if (propertyIDs->AppendElement(aPropertyID)) {
+    return PL_DHASH_NEXT;
+  }
+  else {
+    return PL_DHASH_STOP;
+  }
+}
+
+nsresult 
+sbLocalDatabasePropertyCache::InsertPropertyNameInLibrary(const nsAString& aPropertyName,
+                                                          PRUint32 *aPropertyID)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyID);
   nsAutoString sql;
 
   nsresult rv = mPropertiesTableInsert->ToString(sql);
@@ -1038,6 +1062,10 @@ nsresult sbLocalDatabasePropertyCache::InsertPropertyNameInLibrary(const nsAStri
   rv = query->BindStringParameter(0, aPropertyName);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  sql.AssignLiteral("select last_insert_rowid()");
+  rv = query->AddQuery(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1046,6 +1074,22 @@ nsresult sbLocalDatabasePropertyCache::InsertPropertyNameInLibrary(const nsAStri
   rv = query->WaitForCompletion(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString propertyIDStr;
+  rv = result->GetRowCell(0, 0, propertyIDStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 propertyID = propertyIDStr.ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aPropertyID = propertyID;
+  
+  mPropertyIDToName.Put(propertyID, nsAutoString(aPropertyName));
+  mPropertyNameToID.Put(nsAutoString(aPropertyName), propertyID);
 
   return NS_OK;
 }
@@ -1094,7 +1138,7 @@ PropertyBagKeysToArray(const PRUint32& aPropertyID,
                        nsString* aValue,
                        void *aArg)
 {
-  nsTArray<PRUint32>* propertyIDs = (nsTArray<PRUint32>*) aArg;
+  nsTArray<PRUint32>* propertyIDs = NS_STATIC_CAST(nsTArray<PRUint32>*, aArg);
   if (propertyIDs->AppendElement(aPropertyID)) {
     return PL_DHASH_NEXT;
   }
@@ -1204,7 +1248,8 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aName,
   NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
 
   if(propertyID == 0) {
-    mCache->InsertPropertyNameInLibrary(aName);
+    rv = mCache->InsertPropertyNameInLibrary(aName, &propertyID);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return SetPropertyByID(propertyID, aValue);
