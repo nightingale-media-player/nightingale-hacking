@@ -229,11 +229,14 @@
       <field name="_lastpos">0</field>
 
       <!-- Drag and Drop flavors -->
-      <field name="_TYPE_X_SB_MEDIAITEM"            readonly="true">
-        "application/x-sb-media-item"
+      <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEM"  readonly="true">
+        "application/x-sb-transfer-media-item"
       </field>
-      <field name="_TYPE_X_SB_MEDIAITEM_ENUMERATOR" readonly="true">
-        "application/x-sb-media-item-enumerator"
+      <field name="_TYPE_X_SB_TRANSFER_MEDIA_LIST"  readonly="true">
+        "application/x-sb-transfer-media-list"
+      </field>
+      <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEMS"  readonly="true">
+        "application/x-sb-transfer-media-items"
       </field>
 
       <field name="_Cc"     readonly="true">Components.classes</field>
@@ -1093,6 +1096,7 @@
     </method>
 
     <method name="_addItem">
+      <parameter name="source"/>
       <parameter name="item"/>
       <parameter name="row"/>
       <parameter name="orientation"/>
@@ -1130,14 +1134,15 @@
     </method>
 
     <method name="_addItems">
+      <parameter name="source"/>
       <parameter name="enumerator"/>
+      <parameter name="count"/>
       <parameter name="row"/>
       <parameter name="orientation"/>
       <body>
 <![CDATA[
   var ml = this.mediaListView.mediaList;
   var oldLength = ml.length;
-  var count = 0;
 
   // If this media lists supports ordering, insert the item where it was
   // dropped
@@ -1160,7 +1165,6 @@
       while (enumerator.hasMoreElements()) {
         ml.insertBefore(row, enumerator.getNext().mediaItem);
         row++;
-        count++;
       }
     }
     finally {
@@ -1168,25 +1172,17 @@
     }
   }
   else {
-    // Count the number of items we are about to add so we can message the user
-    // property
-    var items = [];
-    while (enumerator.hasMoreElements()) {
-      items.push(enumerator.getNext().mediaItem);
-    }
-    count = items.length;
-  
+    // Create an enumerator that wraps the enumerator we were handed since
+    // the enumerator we get hands back sbIIndexedMediaItem, not just plain
+    // 'ol sbIMediaItems
+
     var self = this;
-    var tempEnumerator = {
-      _items: items,
-      _nextIndex: 0,
-      hasMoreElements: function() {
-        return this._nextIndex < this._items.length;
+    var unwrapper = {
+      hasMoreElements : function() {
+        return enumerator.hasMoreElements();
       },
-      getNext: function() {
-        var item = this._items[this._nextIndex];
-        this._nextIndex++;
-        return item;
+      getNext : function() {
+        return enumerator.getNext().mediaItem;
       },
       QueryInterface : function(iid) {
         if (iid.equals(self._Ci.nsISimpleEnumerator) ||
@@ -1195,7 +1191,7 @@
         throw self._Cr.NS_NOINTERFACE;
       }
     }
-    ml.addSome(tempEnumerator);
+    ml.addSome(unwrapper);
   }
 
   var added = ml.length - oldLength;
@@ -1420,18 +1416,28 @@
   var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
                     .getService(this._Ci.sbIDndSourceTracker);
 
-  var data = this._getTransferDataForFlavor(this._TYPE_X_SB_MEDIAITEM);
+  var data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM);
   if (data) {
-    var item = dnd.getSourceSupports(data);
-    this._addItem(item, row, orientation);
+    var context = dnd.getSourceSupports(data)
+                     .QueryInterface(this._Ci.sbISingleItemTransferContext);
+    this._addItem(context.source, context.item, row, orientation);
+    return;
   }
-  else {
-    data = this._getTransferDataForFlavor(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR);
-    if (data) {
-      var enumerator = dnd.getSourceSupports(data);
-      this._addItems(enumerator.QueryInterface(this._Ci.nsISimpleEnumerator),
-                     row, orientation);
-    }
+
+  data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_LIST);
+  if (data) {
+    var context = dnd.getSourceSupports(data)
+                     .QueryInterface(this._Ci.sbISingleListTransferContext);
+    this._addItem(context.source, context.list, row, orientation);
+    return;
+  }
+
+  data = this._getTransferDataForFlavor(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS);
+  if (data) {
+    var context = dnd.getSourceSupports(data)
+                     .QueryInterface(this._Ci.sbIMultipleItemTransferContext);
+    this._addItems(context.source, context.items, context.count, row, orientation);
+    return;
   }
 ]]>
         </body>
@@ -1483,22 +1489,72 @@
     xferData.data = new TransferDataSet();
     var data = new TransferData();
 
-    // If only one item is selected, use the media item flavor
+    // If only one item is selected, send two flavors
+    var self = this;
     if (numRows == 1) {
       var item = treeView.currentMediaItem;
       if (!item) {
         throw this._Cr.NS_OK;
       }
 
-      // Add the single media item flavor
-      var handle = dnd.registerSource(item);
-      data.addDataForFlavour(this._TYPE_X_SB_MEDIAITEM, handle);
-    }
+      if (item instanceof this._Ci.sbIMediaList) {
+        // If this is a list, send it as both a media item and a media list
+        var context = {
+          item: item,
+          list: item,
+          source: ml,
+          count: 1,
+          QueryInterface : function(iid) {
+            if (iid.equals(self._Ci.sbISingleItemTransferContext) ||
+                iid.equals(self._Ci.sbISingleListTransferContext) ||
+                iid.equals(self._Ci.nsISupports))
+              return this;
+            throw self._Cr.NS_NOINTERFACE;
+          }
+        }
 
-    // Add a simple enumerator with the media item enumerator flavor
-    var enumerator = treeView.selectedMediaItems;
-    handle = dnd.registerSource(enumerator);
-    data.addDataForFlavour(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR, handle);
+        var handle = dnd.registerSource(context);
+        data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
+        data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
+      }
+      else {
+        // If this is just a media item, send it only as a media item
+        var context = {
+          item: item,
+          source: ml,
+          count: 1,
+          QueryInterface : function(iid) {
+            if (iid.equals(self._Ci.sbISingleItemTransferContext) ||
+                iid.equals(self._Ci.nsISupports))
+              return this;
+            throw self._Cr.NS_NOINTERFACE;
+          }
+        }
+
+        var handle = dnd.registerSource(context);
+        data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
+      }
+
+    }
+    else {
+      // We are sending more than one item.  We don't know (or care to find
+      // out) if all of the items to be sent are actually lists, so send
+      // as items
+      var context = {
+        items: treeView.selectedMediaItems,
+        source: ml,
+        count: numRows,
+        QueryInterface : function(iid) {
+          if (iid.equals(self._Ci.sbIMultipleItemTransferContext) ||
+              iid.equals(self._Ci.nsISupports))
+            return this;
+          throw self._Cr.NS_NOINTERFACE;
+        }
+      }
+
+      var handle = dnd.registerSource(context);
+      data.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);
+    }
 
     // Add the url of the item as well
     // XXX: Probably want to make sure that this is a local file that exists
@@ -1526,8 +1582,9 @@
         <parameter name="session"/>
         <body>
 <![CDATA[
-  if (session.isDataFlavorSupported(this._TYPE_X_SB_MEDIAITEM) ||
-      session.isDataFlavorSupported(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR) ||
+  if (session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM) ||
+      session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_LIST) ||
+      session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS) ||
       session.isDataFlavorSupported("application/x-moz-file") ||
       session.isDataFlavorSupported("text/x-moz-url")) {
     return true;

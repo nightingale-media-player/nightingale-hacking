@@ -1,0 +1,118 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILibraryTransferContext.idl
+ * \brief Definition of the sbILibraryTransferContext interface
+ */
+
+#include "nsISupports.idl"
+
+interface sbIMediaList;
+interface sbIMediaItem;
+interface nsISimpleEnumerator;
+
+/**
+ * \interface sbILibraryTransferContext
+ * \brief A base interface for the various library transfer contexts
+ *
+ * Note that this interface is not meant to be implemented, it just serves
+ * as a base interface for the following derived interfaces
+ */
+[scriptable, uuid(9a3da84e-209c-4d49-9294-c156080486bc)]
+interface sbILibraryTransferContext : nsISupports
+{
+  /**
+   * \brief The list the item or items were dragged from
+   */
+  readonly attribute sbIMediaList source;
+
+  /**
+   * \brief The number of items in the transfer context
+   */
+  readonly attribute unsigned long count;
+};
+
+/**
+ * \interface sbISingleItemTransferContext
+ * \brief This interface represents a transfer of a single media item
+ *
+ * This interface will be sent with the following flavor:
+ *   application/x-sb-transfer-media-item
+ *
+ * Note that a media item may indeed be a media list, so the consumers of this
+ * context will want to check if it is a media list if they wish to handle
+ * lists differently.
+ */
+[scriptable, uuid(4295e550-8222-43bb-a735-dc6ba7116ab6)]
+interface sbISingleItemTransferContext : sbILibraryTransferContext
+{
+  /**
+   * \brief The single item media item payload
+   */
+  readonly attribute sbIMediaItem item;
+};
+
+/**
+ * \interface sbISingleListTransferContext
+ * \brief This interface represents a transfer of a single media list
+ *
+ * This interface will be sent with the following flavor:
+ *   application/x-sb-transfer-media-list
+ */
+[scriptable, uuid(91cb2cf8-f769-4793-a8e7-3b3e91696863)]
+interface sbISingleListTransferContext : sbILibraryTransferContext
+{
+  /**
+   * \brief The single item media list payload
+   */
+  readonly attribute sbIMediaList list;
+};
+
+/**
+ * \interface sbIMultipleItemTransferContext
+ * \brief This interface represents a transfer of a collection of media items
+ *        and/or media lists.
+ *
+ * This interface will be sent with the following flavors:
+ *   application/x-sb-transfer-media-items (enumerator returns sbIMediaItem)
+ *   application/x-sb-transfer-media-lists (enumerator returns sbIMediaList)
+ *
+ * Note that since a media items is a media list, a transfer context whose
+ * flavor is "application/x-sb-transfer-media-items" may indeed still media
+ * lists.  Therefore consumers who want to treat lists differently will need to
+ * check the contents of the enumerator to determine if lists are present.
+ */
+[scriptable, uuid(13af0d9a-9dc6-447f-916d-55e10d42e573)]
+interface sbIMultipleItemTransferContext : sbILibraryTransferContext
+{
+  /**
+   * \brief Depending on the flavor of this transfer context, this enumerator
+   *        may return a list of sbIMediaItem or a list of sbIMediaList
+   */
+  readonly attribute nsISimpleEnumerator items;
+};
+
