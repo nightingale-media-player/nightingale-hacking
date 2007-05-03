@@ -31,10 +31,13 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = public \
           src \
-          tests \
           $(NULL)
 
 SUBDIRDEPS = src : public
-SUBDIRDEPS = tests : src
+
+ifdef SB_ENABLE_TESTS
+SUBDIRS += test
+SUBDIRDEPS2 = test : src
+endif
 
 include $(topsrcdir)/build/rules.mk

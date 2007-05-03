@@ -36,8 +36,8 @@ SUBDIRS = public \
 SUBDIRDEPS = src : public
 
 ifdef SB_ENABLE_TESTS
-SUBDIRS += tests
-SUBDIRDEPS2 = tests : src
+SUBDIRS += test
+SUBDIRDEPS2 = test : src
 endif
 
 include $(topsrcdir)/build/rules.mk
