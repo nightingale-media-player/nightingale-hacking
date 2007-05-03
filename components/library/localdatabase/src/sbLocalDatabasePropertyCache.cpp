@@ -700,10 +700,6 @@ sbLocalDatabasePropertyCache::Write()
           rv = propertyInfo->MakeSortable(value, sortable);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          PRUint32 propertyID = 0;
-          rv = InsertPropertyNameInLibrary(propertyName, &propertyID);
-          NS_ENSURE_SUCCESS(rv, rv);
-
           //Check if we need to insert or update the property.
           PRBool bNeedInsert = PR_FALSE;
           PropertyRequiresInsert(dirtyGuids[i], dirtyProps[j], &bNeedInsert);
@@ -942,8 +938,7 @@ sbLocalDatabasePropertyCache::GetPropertyIDInternal(const nsAString& aPropertyNa
   if (!mPropertyNameToID.Get(aPropertyName, &retval)) {
     nsresult rv = InsertPropertyNameInLibrary(aPropertyName, &retval);
     
-    //Very unlikely, optimize for it.
-    if(NS_UNLIKELY(rv)) {
+    if(NS_FAILED(rv)) {
       retval = 0;
     }
 
@@ -1045,9 +1040,6 @@ sbLocalDatabasePropertyCache::InsertPropertyNameInLibrary(const nsAString& aProp
 
   nsresult rv = mPropertiesTableInsert->ToString(sql);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  //Hack. Should fix SQLBuilder to support conflict clauses.
-  sql.Replace(0, 6, NS_LITERAL_STRING("INSERT OR IGNORE"));
 
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = MakeQuery(sql, getter_AddRefs(query));
