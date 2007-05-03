@@ -438,21 +438,25 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
   nsresult rv = GetPropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mPropertyBagLock);
+  {
+    nsAutoLock lock(mPropertyBagLock);
 
-  rv = NS_ERROR_NOT_AVAILABLE;
-  if(mPropertyBag) {
-    rv = mPropertyBag->SetProperty(aName, aValue);
-    NS_ENSURE_SUCCESS(rv, rv);
+    rv = NS_ERROR_NOT_AVAILABLE;
+    if(mPropertyBag) {
+      rv = mPropertyBag->SetProperty(aName, aValue);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    if(mWriteThrough) {
-      rv = mPropertyBag->Write();
-      mWritePending = PR_FALSE;
-    }
-    else {
-      mWritePending = PR_TRUE;
+      if(mWriteThrough) {
+        rv = mPropertyBag->Write();
+        mWritePending = PR_FALSE;
+      }
+      else {
+        mWritePending = PR_TRUE;
+      }
     }
   }
+
+  mLibrary->NotifyListenersItemUpdated(this);
 
   return rv;
 }

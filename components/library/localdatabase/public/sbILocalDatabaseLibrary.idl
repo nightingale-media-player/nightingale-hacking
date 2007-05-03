@@ -62,6 +62,8 @@ interface sbILocalDatabaseLibrary : nsISupports
 
   sbILocalDatabaseResourcePropertyBag getPropertiesForGuid(in AString aGuid);
 
+  void notifyListenersItemUpdated(in sbIMediaItem aItem);
+
   /**
    * \brief Return a filled query to create many media items from a list of URIs
    *

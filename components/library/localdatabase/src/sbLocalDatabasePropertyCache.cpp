@@ -932,12 +932,6 @@ sbLocalDatabasePropertyCache::AddDirtyGUID(const nsAString &aGuid)
     mDirty.PutEntry(guid);
   }
 
-  nsCOMPtr<sbIMediaItem> item;
-  nsresult rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
-  if (NS_SUCCEEDED(rv)) {
-    mLibrary->NotifyListenersItemUpdated(mLibrary, item);
-  }
-
   return NS_OK;
 }
 

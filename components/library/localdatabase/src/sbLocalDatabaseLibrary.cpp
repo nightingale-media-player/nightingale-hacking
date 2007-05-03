@@ -1125,6 +1125,16 @@ sbLocalDatabaseLibrary::GetPropertiesForGuid(const nsAString& aGuid,
 
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(this, aItem);
+
+  return NS_OK;
+}
+
 /**
  * See sbILibrary
  */
@@ -1802,12 +1812,12 @@ sbLocalDatabaseLibrary::GetItemByGuid(const nsAString& aGuid,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
-
+/*
   nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
+*/
   nsCOMPtr<sbIMediaItem> item;
-  rv = library->GetMediaItem(aGuid, getter_AddRefs(item));
+  rv = GetMediaItem(aGuid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = item);
