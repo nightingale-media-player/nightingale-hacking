@@ -80,9 +80,6 @@ private:
 
   PRInt32 GetPropertyId(const nsAString& aProperty);
 
-  nsresult GetPropertyIDFromDatabase(const nsAString& aProperty,
-                                     PRUint32* aPropertyID);
-
   static void MaxExpr(const nsAString& aAlias,
                       const nsAString& aColumn,
                       nsAString& aExpr);

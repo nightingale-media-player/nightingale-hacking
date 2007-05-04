@@ -36,6 +36,7 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_guidarray_sortmulti.js \
                  $(srcdir)/test_guidarray_distinct.js \
                  $(srcdir)/test_guidarray_prefix.js \
+                 $(srcdir)/test_guidarray_nullsorting.js \
                  $(srcdir)/test_asyncguidarray.js \
                  $(srcdir)/test_propertycache.js \
                  $(srcdir)/test_simplemedialist.js \

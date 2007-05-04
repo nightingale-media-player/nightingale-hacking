@@ -161,6 +161,24 @@ sbLocalDatabaseQuery::GetFullGuidRangeQuery(nsAString& aQuery)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  // If we are sorted on a top level property, we need to add a constraint
+  // to ensure we only get rows with non-null values.  Note that we don't have
+  // to do this when it is not a top level property because we don't get nulls
+  // by virtue of the join
+  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
+    nsAutoString columnName;
+    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
+                                            columnName,
+                                            sbISQLSelectBuilder::MATCH_NOTEQUALS,
+                                            getter_AddRefs(criterion));
+    rv = mBuilder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = AddPrimarySort();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -229,6 +247,12 @@ sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddFilters();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Always sort nulls by ascending media item so thier posistions never change
+  rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS,
+                          MEDIAITEMID_COLUMN,
+                          PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddRange();
@@ -876,43 +900,60 @@ sbLocalDatabaseQuery::AddJoinToGetNulls()
 {
   nsresult rv;
 
-  nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
-  rv = mBuilder->CreateMatchCriterionTable(GETNULL_ALIAS,
-                                           GUID_COLUMN,
-                                           sbISQLSelectBuilder::MATCH_EQUALS,
-                                           MEDIAITEMS_ALIAS,
-                                           GUID_COLUMN,
-                                           getter_AddRefs(criterionGuid));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (SB_IsTopLevelProperty(mPrimarySortProperty)) {
+    nsAutoString columnName;
+    rv = SB_GetTopLevelPropertyColumn(mPrimarySortProperty, columnName);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbISQLBuilderCriterion> criterionProperty;
-  rv = mBuilder->CreateMatchCriterionLong(GETNULL_ALIAS,
-                                          PROPERTYID_COLUMN,
-                                          sbISQLSelectBuilder::MATCH_EQUALS,
-                                          GetPropertyId(mPrimarySortProperty),
-                                          getter_AddRefs(criterionProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
+                                            columnName,
+                                            sbISQLSelectBuilder::MATCH_EQUALS,
+                                            getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbISQLBuilderCriterion> criterion;
-  rv = mBuilder->CreateAndCriterion(criterionGuid,
-                                    criterionProperty,
-                                    getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBuilder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
+    rv = mBuilder->CreateMatchCriterionTable(GETNULL_ALIAS,
+                                             GUID_COLUMN,
+                                             sbISQLSelectBuilder::MATCH_EQUALS,
+                                             MEDIAITEMS_ALIAS,
+                                             GUID_COLUMN,
+                                             getter_AddRefs(criterionGuid));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mBuilder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_LEFT,
-                                      PROPERTIES_TABLE,
-                                      GETNULL_ALIAS,
-                                      criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbISQLBuilderCriterion> criterionProperty;
+    rv = mBuilder->CreateMatchCriterionLong(GETNULL_ALIAS,
+                                            PROPERTYID_COLUMN,
+                                            sbISQLSelectBuilder::MATCH_EQUALS,
+                                            GetPropertyId(mPrimarySortProperty),
+                                            getter_AddRefs(criterionProperty));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mBuilder->CreateMatchCriterionNull(GETNULL_ALIAS,
-                                          OBJSORTABLE_COLUMN,
-                                          sbISQLSelectBuilder::MATCH_EQUALS,
-                                          getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    rv = mBuilder->CreateAndCriterion(criterionGuid,
+                                      criterionProperty,
+                                      getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mBuilder->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBuilder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_LEFT,
+                                        PROPERTIES_TABLE,
+                                        GETNULL_ALIAS,
+                                        criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->CreateMatchCriterionNull(GETNULL_ALIAS,
+                                            OBJSORTABLE_COLUMN,
+                                            sbISQLSelectBuilder::MATCH_EQUALS,
+                                            getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -920,100 +961,16 @@ sbLocalDatabaseQuery::AddJoinToGetNulls()
 PRInt32
 sbLocalDatabaseQuery::GetPropertyId(const nsAString& aProperty)
 {
-  nsresult rv;
-  PRUint32 id;
-
   if (mPropertyCache) {
-    rv = mPropertyCache->GetPropertyID(aProperty, &id);
-    if (NS_FAILED(rv)) {
-      return -1;
-    }
-    return id;
+    return SB_GetPropertyId(aProperty, mPropertyCache);
   }
-
-  rv = GetPropertyIDFromDatabase(aProperty, &id);
-  if (NS_FAILED(rv)) {
+  else if (mDatabaseQuery) {
+    return SB_GetPropertyId(aProperty, mDatabaseQuery);
+  }
+  else {
     return -1;
   }
-
-  return id;
 }
-
-nsresult
-sbLocalDatabaseQuery::GetPropertyIDFromDatabase(const nsAString& aProperty,
-                                                PRUint32* aPropertyID)
-{
-  nsresult rv;
-  PRInt32 dbOk;
-
-  if (mGetPropertyIDQuery.IsEmpty()) {
-    nsCOMPtr<sbISQLSelectBuilder> builder =
-      do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = builder->SetBaseTableName(PROPERTYIDS_TABLE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = builder->AddColumn(EmptyString(), PROPERTYID_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbISQLBuilderCriterion> criterion;
-    rv = builder->CreateMatchCriterionParameter(EmptyString(),
-                                                PROPERTYNAME_COLUMN,
-                                                sbISQLSelectBuilder::MATCH_EQUALS,
-                                                getter_AddRefs(criterion));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = builder->AddCriterion(criterion);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = builder->ToString(mGetPropertyIDQuery);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-  }
-
-  if (mDatabaseQuery) {
-
-    rv = mDatabaseQuery->ResetQuery();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mDatabaseQuery->AddQuery(mGetPropertyIDQuery);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mDatabaseQuery->BindStringParameter(0, aProperty);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mDatabaseQuery->Execute(&dbOk);
-    NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-    rv = mDatabaseQuery->WaitForCompletion(&dbOk);
-    NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-    nsCOMPtr<sbIDatabaseResult> result;
-    rv = mDatabaseQuery->GetResultObject(getter_AddRefs(result));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRUint32 rowCount;
-    rv = result->GetRowCount(&rowCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (rowCount == 1) {
-      nsAutoString countStr;
-      rv = result->GetRowCell(0, 0, countStr);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      *aPropertyID = countStr.ToInteger(&rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      return NS_OK;
-    }
-
-  }
-
-  return NS_ERROR_UNEXPECTED;
-}
-
 
 void
 sbLocalDatabaseQuery::MaxExpr(const nsAString& aAlias,

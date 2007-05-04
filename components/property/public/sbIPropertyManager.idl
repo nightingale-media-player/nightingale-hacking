@@ -127,7 +127,7 @@ interface sbIPropertyInfo : nsISupports
   readonly attribute AString OPERATOR_ENDSWITH;
 
   /**
-   * \brief Causes null values to be infinitely small.
+   * \brief Causes null values to be infinitely small.  This is the default.
    */
   const unsigned long SORT_NULL_SMALL = 0;
 

@@ -43,6 +43,7 @@
 
 class nsIURI;
 class sbILibrary;
+class sbIPropertyManager;
 
 struct FilterSpec {
   nsString property;
@@ -143,6 +144,9 @@ private:
     nsString property;
     PRBool ascending;
   };
+
+  // Cached property manager
+  nsCOMPtr<sbIPropertyManager> mPropMan;
 
   // Database GUID
   nsString mDatabaseGUID;

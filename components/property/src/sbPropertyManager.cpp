@@ -367,6 +367,8 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  rv = textProperty->SetNullSort(sbIPropertyInfo::SORT_NULL_BIG);
+  NS_ENSURE_SUCCESS(rv, rv);
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty.forget();
@@ -383,6 +385,8 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  rv = textProperty->SetNullSort(sbIPropertyInfo::SORT_NULL_BIG);
+  NS_ENSURE_SUCCESS(rv, rv);
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   textProperty.forget();
@@ -393,6 +397,8 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = textProperty->SetName(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#artistName"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = textProperty->SetNullSort(sbIPropertyInfo::SORT_NULL_BIG);
+  NS_ENSURE_SUCCESS(rv, rv);
   rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.artist_name"), displayValue);
   if(NS_SUCCEEDED(rv)) {
     rv = textProperty->SetDisplayName(displayValue);

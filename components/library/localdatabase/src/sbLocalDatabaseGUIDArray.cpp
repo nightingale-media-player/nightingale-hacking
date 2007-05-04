@@ -32,6 +32,7 @@
 
 #include <DatabaseQuery.h>
 #include <nsComponentManagerUtils.h>
+#include <nsServiceManagerUtils.h>
 #include <nsCOMPtr.h>
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
@@ -45,6 +46,7 @@
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 #include <sbTArrayStringEnumerator.h>
+#include <sbPropertiesCID.h>
 
 #define DEFAULT_FETCH_SIZE 20
 
@@ -634,8 +636,17 @@ sbLocalDatabaseGUIDArray::Initalize()
    * Determine where to put null values based on the null sort policy of the
    * primary sort property and how it is being sorted
    */
+  if (!mPropMan) {
+    mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbIPropertyInfo> info;
+  rv = mPropMan->GetPropertyInfo(mSorts[0].property, getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRUint32 nullSort;
-  rv = GetPropertyNullSort(mSorts[0].property, &nullSort);
+  rv = info->GetNullSort(&nullSort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   switch (nullSort) {
@@ -701,10 +712,6 @@ sbLocalDatabaseGUIDArray::RunLengthQuery(const nsAString& aSql,
 
   // Execute the length query
   rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  rv = query->WaitForCompletion(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
@@ -778,9 +785,6 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
       rv = query->SetDatabaseLocation(mDatabaseLocation);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-
-    rv = query->SetAsyncQuery(PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
 
     ldq = new sbLocalDatabaseQuery(mBaseTable,
                                    mBaseConstraintColumn,
@@ -1123,9 +1127,6 @@ sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
     rv = query->SetDatabaseLocation(mDatabaseLocation);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  rv = query->SetAsyncQuery(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(aSql);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1510,10 +1511,6 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
-  rv = query->WaitForCompletion(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1675,10 +1672,6 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
-  rv = query->WaitForCompletion(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1786,10 +1779,6 @@ sbLocalDatabaseGUIDArray::GetPrimarySortKeyPosition(const nsAString& aValue,
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = query->Execute(&dbOk);
-    NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-    rv = query->WaitForCompletion(&dbOk);
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_SUCCESS(dbOk, dbOk);
 
@@ -1922,45 +1911,26 @@ sbLocalDatabaseGUIDArray::GetPropertyNullSort(const nsAString& aProperty,
 PRInt32
 sbLocalDatabaseGUIDArray::GetPropertyId(const nsAString& aProperty)
 {
-  // XXX: This should be replaced with a call to the properties manager
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#trackName")) {
-    return 1;
+  if (mPropertyCache) {
+    return SB_GetPropertyId(aProperty, mPropertyCache);
   }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#albumName")) {
-    return 2;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#artistName")) {
-    return 3;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#duration")) {
-    return 4;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#genre")) {
-    return 5;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#track")) {
-    return 6;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#year")) {
-    return 7;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#discNumber")) {
-    return 8;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#totalDiscs")) {
-    return 9;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#totalTracks")) {
-    return 10;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#lastPlayTime")) {
-    return 11;
-  }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#playCount")) {
-    return 12;
-  }
+  else {
+    nsresult rv;
 
-  return -1;
+    nsCOMPtr<sbIDatabaseQuery> query =
+      do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, -1);
+
+    rv = query->SetDatabaseGUID(mDatabaseGUID);
+    NS_ENSURE_SUCCESS(rv,  -1);
+
+    if (mDatabaseLocation) {
+      rv = query->SetDatabaseLocation(mDatabaseLocation);
+      NS_ENSURE_SUCCESS(rv,  -1);
+    }
+
+    return SB_GetPropertyId(aProperty, query);
+  }
 }
 
 NS_IMPL_ISUPPORTS1(sbGUIDArrayEnumerator, nsISimpleEnumerator)

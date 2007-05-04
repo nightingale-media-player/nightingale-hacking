@@ -27,6 +27,13 @@
 #ifndef __SBLOCALDATABASESCHEMAINFO_H__
 #define __SBLOCALDATABASESCHEMAINFO_H__
 
+#include <nsComponentManagerUtils.h>
+
+#include <sbISQLBuilder.h>
+#include <sbIDatabaseQuery.h>
+#include <sbIDatabaseResult.h>
+#include <sbSQLBuilderCID.h>
+
 struct sbStaticProperty {
   const PRUnichar* mName;
   const PRUnichar* mColumn;
@@ -105,5 +112,91 @@ SB_GetTopLevelPropertyColumn(const nsAString& aProperty,
   }
   return NS_ERROR_NOT_AVAILABLE;
 }
+
+static PRInt32
+SB_GetPropertyId(const nsAString& aProperty,
+                 sbILocalDatabasePropertyCache* aPropertyCache)
+{
+  nsresult rv;
+  PRUint32 id;
+
+  rv = aPropertyCache->GetPropertyID(aProperty, &id);
+  if (NS_FAILED(rv)) {
+    return -1;
+  }
+
+  return id;
+}
+
+static PRInt32
+SB_GetPropertyId(const nsAString& aProperty,
+                 sbIDatabaseQuery* aDatabaseQuery)
+{
+  nsresult rv;
+  PRInt32 dbOk;
+
+  nsCOMPtr<sbISQLSelectBuilder> builder =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("properties"));
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("property_id"));
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  rv = builder->CreateMatchCriterionParameter(EmptyString(),
+                                              NS_LITERAL_STRING("property_name"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  nsAutoString sql;
+  rv = builder->ToString(sql);
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  rv = aDatabaseQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  rv = aDatabaseQuery->AddQuery(sql);
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  rv = aDatabaseQuery->BindStringParameter(0, aProperty);
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  rv = aDatabaseQuery->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, -1);
+  NS_ENSURE_SUCCESS(dbOk, -1);
+
+  rv = aDatabaseQuery->WaitForCompletion(&dbOk);
+  NS_ENSURE_SUCCESS(rv, -1);
+  NS_ENSURE_SUCCESS(dbOk, -1);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = aDatabaseQuery->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, -1);
+
+  if (rowCount == 1) {
+    nsAutoString countStr;
+    rv = result->GetRowCell(0, 0, countStr);
+    NS_ENSURE_SUCCESS(rv, -1);
+
+    PRInt32 id = countStr.ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, -1);
+
+    return id;
+  }
+
+  return -1;
+}
+
 #endif // __SBLOCALDATABASESCHEMAINFO_H__
 
