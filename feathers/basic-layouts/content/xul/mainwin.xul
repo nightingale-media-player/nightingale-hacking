@@ -195,12 +195,14 @@
               
               
               <vbox id="playlist_web_vbox" height="200" hidden="true" minheight="0" _resize_height="200">
-                <playlist 
+                <playlist2 
                   id="playlist_web" 
                   height="105"
                   flex="1"
                   hidden="true"
                   enableColumnDrag="true"
+                  persist="column-list column-widths"
+                  editable="true"
                   minheight="0"
                   _resize_height="105"
                 />

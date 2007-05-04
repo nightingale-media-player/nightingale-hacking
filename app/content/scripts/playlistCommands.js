@@ -30,6 +30,43 @@ var WEB_PLAYLIST_TABLE        = "webplaylist";
 var WEB_PLAYLIST_TABLE_NAME   = "&device.webplaylist";
 var WEB_PLAYLIST_LIBRARY_NAME = "&device.weblibrary";
 
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+
+const URL_ADDTOPLAYLIST_DIALOG =
+  "chrome://songbird/content/xul/add_to_playlist.xul";
+
+function MediaListListener() {
+}
+MediaListListener.prototype = {
+  onItemAdded: function onItemAdded(list, item) {
+  },
+  
+  onBeforeItemRemoved: function onBeforeItemRemoved(list, item) {
+  },
+  
+  onAfterItemRemoved: function onAfterItemRemoved(list, item) {
+  },
+  
+  onItemUpdated: function onItemUpdated(list, item) {
+  },
+
+  onBatchBegin: function onBatchBegin(list) {
+  },
+  
+  onBatchEnd: function onBatchEnd(list) {
+  },
+  
+  QueryInterface: function QueryInterface(iid) {
+    if (!iid.equals(Ci.sbIMediaListListener) &&
+        !iid.equals(Ci.nsISupports))
+      throw Cr.NS_ERROR_NO_INTERFACE;
+    return this;
+  }  
+}
+
+
 // The house for the web playlist and download commands objects.
 var SBWebPlaylistCommands = 
 {
@@ -222,7 +259,7 @@ var SBWebPlaylistCommands =
         retval = false;
       break;
       case "library_cmd_remove":
-        retval = /* this.m_Playlist.description == "library" && */ this.m_Playlist.tree.view.selection.getRangeCount() > 0;
+        retval = this.m_Playlist.tree.view.selection.getRangeCount() > 0;
       break;      
       case "library_cmd_download": // Only download selected tracks from the library, never the whole library
         if ( ( this.m_Playlist.description != "library" ) || ( this.m_Playlist.tree.view.selection.count > 0 ) )
@@ -267,7 +304,7 @@ var SBWebPlaylistCommands =
           if ( this.m_Playlist.tree.currentIndex != -1 )
           {
             // remove the currently select tracks
-            this.m_Playlist.removeTracks();
+            this.m_Playlist.removeSelectedTracks();
           }
         break;
         case "library_cmd_download":
@@ -339,23 +376,66 @@ var SBWebPlaylistCommands =
         case "library_cmd_subscribe":
         {
           // Bring up the subscribe dialog with the web playlist url
-          var url = this.m_Playlist.type;
-          var readable_name = null;
-          var guid = null;
-          var table = null;
-          if ( url == "http" )
-          {
-            url = this.m_Playlist.description;
-            readable_name = this.m_Playlist.readable_name;
-            guid = this.m_Playlist.guid;
-            table = this.m_Playlist.table;
-          }
-          SBSubscribe( url, guid, table, readable_name );
+          var url = window.location.href;
+          var readable_name = unescape(url);
+          SBSubscribe(url, this.m_Playlist.mediaListView, readable_name);
         }
         break;
         case "library_cmd_addtoplaylist":
         {
-          this.m_Playlist.addToPlaylist();
+          // Make a data object to get the playlist to add to from the dialog.
+          var dialogData = {};
+
+          // Open the modal dialog.
+          var chromeFeatures = "chrome,centerscreen";
+          SBOpenModalDialog(URL_ADDTOPLAYLIST_DIALOG, "add_to_playlist",
+                            chromeFeatures, dialogData);
+
+          if (!dialogData.mediaListGUID) {
+            return;
+          }
+
+          var mediaListListener = new MediaListListener();
+          mediaListListener.addedItems = 0;
+          mediaListListener.onItemAdded = function mll_onItemAdded(list, item) {
+            this.addedItems++;
+          };
+
+          var treeView = this.m_Playlist.treeView;
+          var selectionCount = treeView.selectionCount;
+          
+          var indexedItemsEnumerator = treeView.selectedMediaItems;
+          
+          var unwrapper = {
+            hasMoreElements : function() {
+              return indexedItemsEnumerator.hasMoreElements();
+            },
+            getNext : function() {
+              return indexedItemsEnumerator.getNext().mediaItem;
+            },
+            QueryInterface : function(iid) {
+              if (iid.equals(Ci.nsISimpleEnumerator) ||
+                  iid.equals(Ci.nsISupports))
+                return this;
+              throw Cr.NS_NOINTERFACE;
+            }
+          }
+
+          // Add all the items that are selected.
+          var libraryManager =
+            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                      .getService(Components.interfaces.sbILibraryManager);
+          var mediaList =
+            libraryManager.mainLibrary.getMediaItem(dialogData.mediaListGUID);
+
+          mediaList.addListener(mediaListListener);
+          mediaList.addSome(unwrapper);
+          mediaList.removeListener(mediaListListener);
+
+          var addedItems = mediaListListener.addedItems;
+          
+          this.m_Playlist._reportAddedTracks(addedItems,
+                                             selectionCount - addedItems);
         }
         break;
         case "library_cmd_addtolibrary":
@@ -504,7 +584,7 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
 {
     try
     {
-        theWebPlaylistQuery = null; 
+        theWebPlaylistHasItems = false;
           
         deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
                                     getService(Components.interfaces.sbIDeviceManager);

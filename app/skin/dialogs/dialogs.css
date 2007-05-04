@@ -339,14 +339,10 @@ MEDIA SCAN
 } 
 
 /** 
-***********************************************************************************************
-ADD TO PLAYLIST
-**********************************************************************************
+**************************************************************************************************************
+JUMPTO
+***********************************************************************************
 */
-#add_to_playlist
-{
-  height: 200px !important;
-}
 
 #jump_to_file
 {
@@ -354,18 +350,6 @@ ADD TO PLAYLIST
   height: 500px !important;
   min-width: 320px !important;
   min-height: 150px !important;
-}
-
-#songbird_playlistlist > listitem
-{
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-#songbird_playlistlist > listitem[selected=true]
-{
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
 }
 
 /** 

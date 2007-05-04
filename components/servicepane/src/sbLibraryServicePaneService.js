@@ -54,7 +54,8 @@ function sbLibraryServicePane_QueryInterface(iid) {
   if (!iid.equals(Ci.nsISupports) &&
     !iid.equals(Ci.nsIObserver) &&
     !iid.equals(Ci.sbIServicePaneModule) &&
-    !iid.equals(Ci.sbILibraryManagerListener)) {
+    !iid.equals(Ci.sbILibraryManagerListener) &&
+    !iid.equals(Ci.sbIMediaListListener)) {
     throw Components.results.NS_ERROR_NO_INTERFACE;
   }
   return this;
@@ -156,8 +157,11 @@ sbLibraryServicePane.prototype.onItemAdded =
 function sbLibraryServicePane_onItemAdded(aMediaList, aMediaItem) {
   dump('onItemAdded: '+aMediaItem+'\n');
 }
-sbLibraryServicePane.prototype.onItemRemoved =
-function sbLibraryServicePane_onItemRemoved(aMediaList, aMediaItem) {
+sbLibraryServicePane.prototype.onBeforeItemRemoved =
+function sbLibraryServicePane_onBeforeItemRemoved(aMediaList, aMediaItem) {
+}
+sbLibraryServicePane.prototype.onAfterItemRemoved =
+function sbLibraryServicePane_onAfterItemRemoved(aMediaList, aMediaItem) {
 }
 sbLibraryServicePane.prototype.onItemUpdated =
 function sbLibraryServicePane_onItemUpdated(aMediaList, aMediaItem) {

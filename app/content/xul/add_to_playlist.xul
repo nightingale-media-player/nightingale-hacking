@@ -24,250 +24,55 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 -->
+
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
-<window
- xmlns:html="http://www.w3.org/1999/xhtml"
- xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
- id="add_to_playlist"
- title="&addtoplaylist.title;"
- hidechrome="true"
- buttons="none"
- onkeydown="handleKeyDown(event);"
- onload="PushBackscanPause();initFocus();"
- onunload="PopBackscanPause();"
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/addToPlaylist.css" type="text/css"?>
 
-  
- spacers_drag_window="true"
->
-  
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<window xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="add_to_playlist_window"
+        title="&addtoplaylist.title;"
+        hidechrome="true"
+        buttons="none"
+        onkeydown="onKeyDown(event);"
+        onload="onLoad();"
+        onunload="onUnload();">
+
   <windowregion/>
 
   <sb-sys-outer-frame resizers="none" flex="1">
+
     <sb-sys-dialog-titlebar/>
-    <spacer height="8"/>
-    <listbox class="dialog_listbox" id="songbird_playlistlist" onselect="enableOK();" />
-    <spacer height="5"/>
-    <button id="songbird_makenewplaylist" class="dialog_button sb_faceplate" label="&addtoplaylist.create;" oncommand="doCreateNew();"/>
-    <spacer height="5"/> 
-    <hbox>
-      <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-      <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
-      <spacer flex="1"/>
+
+    <listbox id="medialist_listbox" onselect="enableOK();"/>
+
+    <hbox pack="center" drag_window="true">
+      <button id="makenewplaylist_button" label="&addtoplaylist.create;"
+              oncommand="onNewPlaylist();"/>
     </hbox>
+
+    <hbox pack="center" drag_window="true">
+      <button id="ok_button" label="&window.ok;" disabled="true"
+              oncommand="onOK();"/>
+      <button id="cancel_button" label="&window.cancel;"
+              oncommand="onCancel();"/>
+    </hbox>
+
   </sb-sys-outer-frame>
-  
+
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird_interfaces.js" />
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/dragWindow.js" />
+   src="chrome://songbird/content/scripts/dragWindow.js"/>
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/window_utils.js" />
-  <script>
-  <![CDATA[
-    const VK_ESCAPE = 27;
-    const VK_ENTER = 13;
-    
-    const PLAYLIST_LIST_TABLE_NAME = "playlist_list";
-    const PLAYLIST_DB_GUID = "songbird";
-    const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-    const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-  
-    try
-    {
-      document.getElementById("button_ok").setAttribute("disabled", "true");
-
-      var list = document.getElementById("songbird_playlistlist");
-      if (list != null)
-      {
-        var result = getListOfPlaylists();
-
-        //alert("Found " + result.getRowCount() + " playlists.");
-        
-        for (var i = 0; i < result.getRowCount(); i++)
-        {
-          if (result.getRowCellByColumn(i, "base_type") != "playlist") continue;
-          var listitem = document.createElement("listitem");
-          listitem.setAttribute("label", result.getRowCellByColumn(i, "readable_name"));
-          listitem.setAttribute("playlist_name", result.getRowCellByColumn(i, "name"));
-          list.appendChild(listitem);
-        }
-        
-      }
-    }
-    catch (err)
-    {
-      alert("add_to_playlist.xul - init - " + err);
-    }
-    
-    function initFocus()
-    {
-      var list = document.getElementById("songbird_playlistlist");
-      if (list != null) list.focus();
-    }
-    
-    function getListOfPlaylists() 
-    {
-      var queryObj = newQuery();
-      queryObj.setDatabaseGUID(PLAYLIST_DB_GUID);
-      queryObj.setAsyncQuery(false);
-      
-      var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-      aPlaylistManager.getPlaylistList(queryObj);
-      
-      return queryObj.getResultObject();
-    }
-    
-    function newQuery()
-    {
-      var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"];
-      queryObj = queryObj.createInstance();
-      queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-      return queryObj;
-    }
-    
-    function newGuid()
-    {
-      var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance();;
-      aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
-
-      return aUUIDGenerator.generateUUID();
-    }
-    
-    function enableOK()
-    {
-      document.getElementById("button_ok").setAttribute("disabled", "false");
-    }
-    
-    function doOK()
-    {
-      if ( typeof( window.arguments[0] ) != 'undefined' )
-      {
-        window.arguments[0].playlist = "";
-        var list = document.getElementById("songbird_playlistlist");
-        if (list != null)
-        {
-          window.arguments[0].playlist = list.selectedItem.getAttribute("playlist_name");
-        }
-        window.arguments[0].retval = "ok";
-      }
-      return true;
-    }
-    function doCancel()
-    {
-      if ( typeof( window.arguments[0] ) != 'undefined' )
-      {
-        window.arguments[0].playlist = "";
-        window.arguments[0].retval = "cancel";
-      }
-      return true;
-    }
-    
-    function doCreateNew()
-    {
-      // Make a data object to get the name of the playlist from the dialog
-      var new_playlist_data = new Object();
-      // Open the modal dialog
-      SBOpenModalDialog( "chrome://songbird/content/xul/new_playlist.xul", "new_playlist", "chrome,centerscreen", new_playlist_data ); 
-      if ( new_playlist_data.retval == "ok" )
-      {
-        var playlistname = new_playlist_data.playlistname;
-        while (playlistname.charAt(0) == " ") playlistname = playlistname.substring(1);
-        while (playlistname.charAt(playlistname.length-1) == " ") playlistname = playlistname.substr(0, playlistname.length-1);
-        if (playlistname != "") 
-        {
-          // create it !
-          createNewPlaylist(playlistname);
-        }
-      }  
-    }
-    
-    function createNewPlaylist(name)
-    {
-      // if there exists a playlist with that name, tell the user, and abort creation
-      var exists = false;
-      var result = getListOfPlaylists();
-      for (var i=0;i<result.getRowCount();i++)
-      {
-        if (result.getRowCellByColumn(i, "readable_name") == name)
-        {
-          exists = true;
-          break;
-        }
-      }
-      if (exists)
-      {
-        // Make a data object to send the name of the playlist to the dialog
-        var playlist_exists_data = new Object();
-        playlist_exists_data.playlistname = name;
-        // Open the modal dialog
-        SBOpenModalDialog( "chrome://songbird/content/xul/playlist_exists.xul", "playlist_exists", "chrome,centerscreen", playlist_exists_data ); 
-        return;
-      }
-      // otherwise, create it, then add it to the list and select it 
-      
-      var queryObj = newQuery();      
-      var mediaLibrary = new MediaLibrary();    
-      if (mediaLibrary)
-      {
-        mediaLibrary = mediaLibrary.QueryInterface(Components.interfaces.sbIMediaLibrary);
-        queryObj.setAsyncQuery( true );
-        queryObj.setDatabaseGUID( "songbird" );
-        mediaLibrary.setQueryObject( queryObj );
-        var playlistManager = new PlaylistManager();
-        if (playlistManager)
-        {
-          playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
-          playlistManager.createDefaultPlaylistManager( queryObj );      
-          var playlistguid = newGuid();
-          var playlist = playlistManager.createPlaylist( playlistguid, name, "Playlist", "user", queryObj );
-
-          var list = document.getElementById("songbird_playlistlist");
-          if (list != null)
-          {
-            var listitem = document.createElement("listitem");
-            listitem.setAttribute("label", name);
-            listitem.setAttribute("playlist_name", playlist.getName());
-            list.appendChild(listitem);
-            list.ensureElementIsVisible(listitem);
-            list.selectItem(listitem);
-            list.focus();
-          }
-        }
-        else
-        {
-        alert("add_to_playlist.xul - createNewPlaylist - error creating playlistManager object");
-        return;
-        }
-      }
-      else
-      {
-        alert("add_to_playlist.xul - createNewPlaylist - error creating mediaLibrary object");
-        return;
-      }
-    }
-    
-    function handleKeyDown(event) 
-    {
-      switch (event.keyCode)
-      {
-        case VK_ESCAPE:
-          document.getElementById("button_cancel").doCommand();
-          break;
-        case VK_ENTER:
-          document.getElementById("button_ok").doCommand();
-          break;
-      }
-    }
-  ]]>
-  </script>
+   src="chrome://songbird/content/scripts/window_utils.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/addToPlaylist.js"/>
 
 </window>

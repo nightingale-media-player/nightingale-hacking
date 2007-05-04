@@ -393,7 +393,7 @@ function onCDRip(deviceName, guid, table, strFilterColumn, nFilterValueCount, aF
 {
     try
     {
-        theWebPlaylistQuery = null; 
+        theWebPlaylistHasItems = false; 
           
         if (aCDDevice)
         {
@@ -732,7 +732,7 @@ function onAddToCDBurn(guid, table, strFilterColumn, nFilterValueCount, aFilterV
 {
     try
     {
-        theWebPlaylistQuery = null; 
+        theWebPlaylistHasItems = false; 
         // deviceName is ignored for now and we ask cd device for the writable cd drive
         CheckCDAvailableForBurn();
         if (cdAvailableForWrite == 0)

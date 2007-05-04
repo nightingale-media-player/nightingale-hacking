@@ -253,7 +253,7 @@ function doMainwinStart()
   // TEMP fix for the Mac to enable the titlebar on the main window.
   var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                           .getService(Components.interfaces.nsIPropertyBag2);
-  platform = sysInfo.getProperty("name");
+  var platform = sysInfo.getProperty("name");
   
   if (platform == "Darwin") {
     showChrome = true;

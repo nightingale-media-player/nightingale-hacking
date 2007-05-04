@@ -232,7 +232,7 @@ try
       if (!playlist) return;
       
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-      PPS.playRef(playlist.ref, index);
+      PPS.playView(playlist.mediaListView, index);
     }
     catch ( err )
     {
@@ -437,13 +437,13 @@ function SBTrackEditorOpen()
 }
 
 
-function SBSubscribe( url, guid, table, readable_name )
+function SBSubscribe(url, mediaListView, readableName)
 {
   // Make a magic data object to get passed to the dialog
-  var subscribe_data = new Object();
-  subscribe_data.retval = "";
-  subscribe_data.url = url;
-  subscribe_data.readable_name = readable_name;
+  var subscribe_data = { retval: null,
+                         url: url,
+                         readableName: readableName
+                       };
 
   // if we have a table and guid, we're editing an existing playlist
   // so we need to populate the edit dialog with the existing data.

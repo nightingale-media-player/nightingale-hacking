@@ -173,12 +173,75 @@
       </destructor>
 
       <!-- The media list view this playlist is showing -->
-      <field name="mediaListView">null;</field>
+      <field name="_mediaListView">null</field>
+      <property name="mediaListView">
+        <getter>
+          <![CDATA[
+            return this._mediaListView;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            return this._mediaListView = val;
+          ]]>
+        </setter>
+      </property>
 
       <!-- The anonymous xul tree element -->
       <field name="tree" readonly="true">
         document.getAnonymousElementByAttribute(this, "sbid", "playlist_tree");
       </field>
+      
+      <!-- XXXben This is here to fix a bug where 'this.tree.view' will return
+                  null even when the tree actually has a view. Remove once that
+                  works as expected. -->
+      <!-- Get the tree's view -->
+      <field name="_treeView">null</field>
+      <property name="treeView">
+        <getter>
+        <![CDATA[
+          return this.tree.view || this._treeView;
+        ]]>
+        </getter>
+        
+        <setter>
+        <![CDATA[
+          return this.tree.view = this._treeView = val;
+        ]]>
+        </setter>
+      </property>
+
+      <property name="mediaList" readonly="true">
+        <getter>
+        <![CDATA[
+          if (this.mediaListView)
+            return this.mediaListView.mediaList;
+          return null;
+        ]]>
+        </getter>
+      </property>
+
+      <property name="library" readonly="true">
+        <getter>
+        <![CDATA[
+          if (this.mediaListView)
+            return this.mediaListView.mediaList.library;
+          return null;
+        ]]>
+        </getter>
+      </property>
+
+      <property name="description" readonly="true">
+        <getter>
+        <![CDATA[
+          /*
+          if (this.mediaListView)
+            return this.mediaListView.mediaList.name;
+          */
+          return "";
+        ]]>
+        </getter>
+      </property>
 
       <!-- Holds the text value of the cell that was right clicked -->
       <field name="context_term">""</field>
@@ -311,12 +374,13 @@
         <parameter name="collapse"/>
         <body>
 <![CDATA[
-  // Set the tree's view to the tree of the supplied media list view
-  this.mediaListView = mediaListView;
-  this.tree.view = mediaListView.treeView;
 
+  this.mediaListView = mediaListView;
+  this.treeView = mediaListView.treeView;
+  
   // Attach our observer
-  var mediaListViewTreeView = mediaListView.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
+  var mediaListViewTreeView =
+    this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
 
   var self = this;
   mediaListViewTreeView.observer = {
@@ -329,28 +393,31 @@
   };
 
   // Create the filters
-  var parent = document.getAnonymousElementByAttribute(this, "sbid", "filter_parent");
+  var parent =
+    document.getAnonymousElementByAttribute(this, "sbid", "filter_parent");
   this._removeAllChildren(parent);
 
   var cfs = mediaListView.cascadeFilterSet;
   var length = cfs.length;
+  
   for (var i = 0; i < length; i++) {
-
+    // If this is a search then keep going.
     if (cfs.isSearch(i)) {
       continue;
     }
-
+    
     var filterlist = document.createElementNS(this._XUL_NS, "filterlist2");
     filterlist.setAttribute("enableColumnDrag", "false");
     filterlist.setAttribute("hidecolumnpicker", "true");
     filterlist.setAttribute("flex", "1");
+    
     parent.appendChild(filterlist);
     filterlist.bind(cfs, i);
-
+    
     if (i < length - 1) {
       var splitter = document.createElement("sb-smart-splitter");
       splitter.setAttribute("id", "filter_splitter" );
-//      splitter.setAttribute("stateid", "filter_splitter_" + this.ref );
+      //splitter.setAttribute("stateid", "filter_splitter_" + this.ref );
       splitter.setAttribute("state", "open");
       splitter.setAttribute("resizebefore", "closest");
       splitter.setAttribute("resizeafter", "closest");
@@ -368,14 +435,18 @@
     }
 
   }
+  
+  // If we didn't actually add any filters then hide the filter box.
+  if (!parent.firstChild) {
+    parent.setAttribute("hidden", "true");
+  }
 
   // Clear out the old commands and add the new ones
   this._toolbar.hidden = true;
   this._toolbar.bind(this, commands);
   this._toolbar.refreshCommands();
 
-  this._commandmenuitems.bind(this, commands);
-  this._commandmenuitems.refreshCommands();
+  this.setCommands(commands);
 
   // If boolean true, read from the XUL file.
   if (resize == true) {
@@ -405,14 +476,14 @@
 
     <method name="removeSelectedTracks">
       <body>
-<![CDATA[
+<![CDATA[    
   var ml = this.mediaListView.mediaList;
 
   // Process the selection backwards so we don't change the indexes as we
   // delete them
   ml.beginUpdateBatch();
   try {
-    var enumerator = this.tree.view.selectedMediaItems;
+    var enumerator = this.treeView.selectedMediaItems;
     var indexes = [];
     while (enumerator.hasMoreElements()) {
       indexes.push(enumerator.getNext().index);
@@ -627,6 +698,16 @@
 ]]>
         </body>
       </method>
+      
+      <method name="setCommands">
+        <parameter name="commands"/>
+        <body>
+        <![CDATA[
+          this._commandmenuitems.bind(this, commands);
+          this._commandmenuitems.refreshCommands();
+        ]]>
+        </body>
+      </method>
 
       <method name="removeCommands">
         <body>
@@ -774,6 +855,7 @@
   if (row.value >= 0) {
     var gPPS = this._Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                        .getService(this._Ci.sbIPlaylistPlayback);
+
     gPPS.playView(this.mediaListView, row.value);
   }
 ]]>
@@ -817,7 +899,7 @@
 
   // Handle Ctrl-a
   if (evt.charCode == 'a'.charCodeAt(0) && evt.ctrlKey) {
-    this.tree.view.selection.selectAll();
+    this.treeView.selection.selectAll();
     return;
   }
 
@@ -976,7 +1058,7 @@
         <parameter name="evt"/>
         <body>
 <![CDATA[
-  this.tree.view.selectionChanged();
+  this.treeView.selectionChanged();
   this.refreshCommands();
 ]]>
         </body>
@@ -995,7 +1077,7 @@
       // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
       if ( obj.value )
       {
-        if (this.tree.view.isEditable(row.value, col.value))
+        if (this.treeView.isEditable(row.value, col.value))
         {
           // Remember the row and column
           this.edit_row = row.value;
@@ -1255,7 +1337,7 @@
             // Find the url column.
             var filter = "uuid";
             var filter_column = this.tree.columns ? this.tree.columns[filter] : filter;
-            var filter_value = this.tree.view.getCellText( this.tree.currentIndex, filter_column );
+            var filter_value = this.treeView.getCellText( this.tree.currentIndex, filter_column );
 
             var the_table_column = col.id;
             var the_new_value = rating;
@@ -1330,7 +1412,7 @@
       <method name="deselectAll">
         <body>
         <![CDATA[
-          this.tree.view.selection.clearSelection();
+          this.treeView.selection.clearSelection();
         ]]>
         </body>
       </method>
@@ -1474,7 +1556,8 @@
         <body>
 <![CDATA[
   try {
-    var treeView = this.tree.view;
+    var treeView = this.treeView;
+
     var ml = this.mediaListView.mediaList;
     var numRows = treeView.selectionCount;
     if (numRows == 0) {

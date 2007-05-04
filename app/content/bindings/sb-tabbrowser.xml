@@ -261,10 +261,44 @@
       <!-- replacing thePlaylistTree with gBrowser.playlistTree -->
       <field name="playlistTree">null</field>
       
-      <!-- these were globals in browser_xbl_temp -->
-      <field name="WEB_PLAYLIST_CONTEXT">"webplaylist"</field>
-      <field name="WEB_PLAYLIST_TABLE">"webplaylist"</field>
+      <!-- These should match the values in sbLibraryManager.h -->
+      <field name="PREF_WEB_LIBRARY">"songbird.library.web"</field>
+      <field name="PREF_DOWNLOAD_LIBRARY">"songbird.library.download"</field>
       
+      <field name="_downloadLibrary">null</field>
+      <property name="downloadLibrary">
+        <getter><![CDATA[
+          if (this._downloadLibrary) {
+            return this._downloadLibrary;
+          }
+          
+          var guid = this._getUnicodeStringPref(this.PREF_DOWNLOAD_LIBRARY);
+          
+          var libraryManager =
+            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                      .getService(Components.interfaces.sbILibraryManager);
+
+          return this._downloadLibrary = libraryManager.getLibrary(guid);
+        ]]></getter>
+      </property>
+      
+      <field name="_webLibrary">null</field>
+      <property name="webLibrary">
+        <getter><![CDATA[
+          if (this._webLibrary) {
+            return this._webLibrary;
+          }
+          
+          var guid = this._getUnicodeStringPref(this.PREF_WEB_LIBRARY);
+          
+          var libraryManager =
+            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                      .getService(Components.interfaces.sbILibraryManager);
+
+          return this._webLibrary = libraryManager.getLibrary(guid);
+        ]]></getter>
+      </property>
+
       <method name="_loaded">
         <body><![CDATA[
         dump('running _loaded\n');
@@ -342,30 +376,26 @@
                   //setTimeout(this._loaded, 2500);
                   return;
                 } else if (this.contentDocument.getElementsByTagName('A').length != 0 ) {
-                  var playlist_guid = this.WEB_PLAYLIST_CONTEXT;
-                  var playlist_table = this.WEB_PLAYLIST_TABLE;
-                  // BIG HACK to show the subscribed playlist
-                  var cur_url = SBDataGetStringValue( "browser.uri" );
-                  var aPlaylistManager = new sbIPlaylistManager();
-                  var queryObj = new sbIDatabaseQuery();
-                  queryObj.setAsyncQuery(false);
-                  queryObj.setDatabaseGUID("songbird");      
-                  aPlaylistManager.getDynamicPlaylistList(queryObj);
-                  var resObj = queryObj.getResultObject();
-                  var i, rows = resObj.getRowCount();
-                  for ( i = 0; i < rows; i++ ) {
-                    if ( cur_url == resObj.getRowCellByColumn( i, "description" ) ) {
-                      var table = resObj.getRowCellByColumn( i, "name" );
-                      // Bind the Web Playlist UI element to the subscribed playlist instead of scraping.
-                      theWebPlaylist.bind( "songbird", table, null, SBDefaultCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
-                      // Show/hide them
-                      this.showWebPlaylist = true;
-                      playlist_guid = "songbird";
-                      playlist_table = table;
-                    }
-                  }
+
+                  // Set the filter to the current URI.
+                  var propArray =
+                    Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
+                              .createInstance(Components.interfaces.sbIPropertyArray);
+                  propArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl",
+                                           this.currentURI.spec);
+                                             
+                  // Create the view.
+                  var view = this.webLibrary.createView();
+                  view.setFilters(propArray);
+
+                  // Bind the Web Playlist UI element to the subscribed playlist.
+                  SBWebPlaylistCommands.m_Playlist = theWebPlaylist;
+                  theWebPlaylist.bind(view, SBWebPlaylistCommands,
+                                      SBDataGetIntValue("browser.playlist.height"),
+                                      SBDataGetBoolValue("browser.playlist.collapsed"));
+
                   // scrape the document.
-                  AsyncWebDocument(this.contentDocument, playlist_guid, playlist_table );
+                  AsyncWebDocument(this.contentDocument, view);
                 } 
         
         
@@ -823,73 +853,73 @@
       <method name="onBrowserPlaylist">
         <body><![CDATA[
           metrics_inc("player", "urlslurp", null);
-          if (!this.playlistTree)
-          {
-            if (!theWebPlaylist.source ||
-                theWebPlaylist.source.getRefGUID(theWebPlaylist.ref) != this.WEB_PLAYLIST_CONTEXT ||
-                theWebPlaylist.source.getRefTable(theWebPlaylist.ref) != this.WEB_PLAYLIST_TABLE)
-            {
-              SBWebPlaylistCommands.m_Playlist = theWebPlaylist;
-              theWebPlaylist.bind( this.WEB_PLAYLIST_CONTEXT, this.WEB_PLAYLIST_TABLE, null, SBWebPlaylistCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
-            }
+
+          var webLibrary = this.webLibrary;
+          if (this.playlistTree) {
+            this.loadURI("chrome://songbird/content/xul/playlist_test2.xul?" +
+                         "library," + webLibrary.guid, null, null);
+            return;
+          }
+
+          var view;
+          if (!theWebPlaylist.library.equals(webLibrary)) {
+            view = webLibrary.createView();
             
-            // Show/hide them
-            this.showWebPlaylist = true;
+            SBWebPlaylistCommands.m_Playlist = theWebPlaylist;
+            theWebPlaylist.bind(view, SBWebPlaylistCommands,
+                                SBDataGetIntValue("browser.playlist.height"),
+                                SBDataGetBoolValue("browser.playlist.collapsed"));
           }
-          else
-          {
-            this.loadURI( "chrome://songbird/content/xul/playlist_test.xul?" +
-                                  this.WEB_PLAYLIST_TABLE + "," + this.WEB_PLAYLIST_CONTEXT,
-                                  null, null);
+          else {
+            view = theWebPlaylist.mediaListView;
           }
+          
+          // Set the filter to the current URL.
+          var propArray =
+            Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
+                      .createInstance(Components.interfaces.sbIPropertyArray);
+          propArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl",
+                                   window.location.href);
+                                     
+          view.setFilters(propArray);
+
+          this.showWebPlaylist = true;
         ]]></body>
       </method>
 
       <method name="onBrowserDownload">
         <body><![CDATA[
           metrics_inc("player", "downloads", null);
-        
-          // Work to figure out guid and table
-          var guid = theDownloadContext.stringValue;
-          var table = theDownloadTable.stringValue;
-          var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
-                                          getService(Components.interfaces.sbIDeviceManager);
-          if (deviceManager)
-          {
-            var downloadCategory = 'Songbird Download Device';
-            if (deviceManager.hasDeviceForCategory(downloadCategory))
-            {
-              var downloadDevice =
-                deviceManager.getDeviceByCategory(downloadCategory);
-              SBDownloadCommands.m_Device = downloadDevice;
-              guid = downloadDevice.getContext('');
-              table = "download";
-            }
-          }
           
-          // Actual functionality
-          if (!this.playlistTree)
-          {
-            // Errrr, nope?
-            if ( ( guid == "" ) || ( table == "" ) )
-            {
-              return;
-            }
-        
-            if (!theWebPlaylist.source ||
-                theWebPlaylist.source.getRefGUID(theWebPlaylist.ref) != guid ||
-                theWebPlaylist.source.getRefTable(theWebPlaylist.ref) != table)
-            {
-              theWebPlaylist.bind( guid, table, null, SBDownloadCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
-            }
+          var downloadLibrary = this.downloadLibrary;
+          if (this.playlistTree) {
+            var downloadLibraryGUID = downloadLibrary.guid;
+            this.loadURI("chrome://songbird/content/xul/playlist_test2.xul?" +
+                         "library," + downloadLibraryGUID, null, null);
+            return;
+          }
+
+          // Make sure the download device has been added to the commands object.
+          if (!SBDownloadCommands.m_Device) {
+            var deviceManager =
+              Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"]
+                        .getService(Components.interfaces.sbIDeviceManager);
             
-            // Show/hide them
-            this.showWebPlaylist = true;
+            downloadDevice =
+              deviceManager.getDeviceByCategory("Songbird Download Device");
+            SBDownloadCommands.m_Device = downloadDevice;
           }
-          else
-          {
-            this.loadURI( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid, null, null);
+
+          if (!theWebPlaylist.library.equals(downloadLibrary)) {
+            var view = downloadLibrary.createView();
+
+            theWebPlaylist.bind(view, SBDownloadCommands,
+                                SBDataGetIntValue("browser.playlist.height"),
+                                SBDataGetBoolValue("browser.playlist.collapsed"));
           }
+
+          this.showWebPlaylist = true;
+
         ]]></body>
         </method>
 
@@ -920,8 +950,14 @@
         ]]></body>
       </method>
       
-      
-      
+      <method name="_getUnicodeStringPref">
+        <parameter name="prefKey"/>
+        <body><![CDATA[
+          var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                .getService(Components.interfaces.nsIPrefBranch2);
+          return prefs.getComplexValue(prefKey, Components.interfaces.nsISupportsString);
+        ]]></body>
+      </method>
 
     </implementation>
     
