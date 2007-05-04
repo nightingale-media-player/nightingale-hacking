@@ -70,6 +70,16 @@
                 ]]></body>
             </method>
             
+            
+            <method name="getSelectedNode">
+                <body><![CDATA[return this.mTreePane.getSelectedNode();]]></body>
+            </method>  
+
+            <method name="startEditingNode">
+                <parameter name="aNode"/>
+                <body><![CDATA[return this.mTreePane.startEditingNode(aNode);]]></body>
+            </method>
+            
             <method name="getURLName">
                 <parameter name="aURL"/>
                 <body><![CDATA[return this.mTreePane.getURLName(aURL);]]></body>
@@ -109,6 +119,9 @@
                             <xul:triple subject="?node"
                                         predicate="http://home.netscape.com/NC-rdf#Name"
                                         object="?name" />
+                            <xul:triple subject="?node"
+                                        predicate="http://songbirdnest.com/rdf/servicepane#Hidden"
+                                        object="false" />                                        
                         </xul:conditions>
                         <xul:bindings>
                             <xul:binding subject="?node"
@@ -116,13 +129,13 @@
                                          object="?icon" />
                             <xul:binding subject="?node"
                                          predicate="http://songbirdnest.com/rdf/servicepane#Open"
-                                         object="?open" />
+                                         object="?open" />                                       
                         </xul:bindings>
                         <xul:action>
                             <xul:treechildren flex="1">
                                 <xul:treeitem open="?open" uri="?node" nodeid="?node">
                                     <xul:treerow>
-                                        <xul:treecell label="?name" src="?icon" />
+                                        <xul:treecell editable="true" label="?name" src="?icon" />
                                     </xul:treerow>
                                 </xul:treeitem>
                             </xul:treechildren>
@@ -210,6 +223,29 @@
                 ]]></body>
             </method>
             
+            <method name="getSelectedNode">
+                <body><![CDATA[
+                  return this.getNodeForRow(this.mTree.currentIndex);
+                ]]></body>
+            </method>  
+
+            <!-- Attempt to trigger in-cell editing on the cell
+                 corresponding to the given sbIServicePaneNode 
+              -->
+            <method name="startEditingNode">
+                <parameter name="aNode"/>
+                <body><![CDATA[
+                  // TODO what if the node is within a closed container?
+                  // Do we need to pop open all parent containers and scroll to the row?
+                  var index = this.getRowForNode(aNode);
+                  if (index >= 0) {
+                    this.mTree.startEditing(index, this.mTree.columns[0]);
+                    return true;
+                  }
+                  return false;
+                ]]></body>
+            </method>            
+            
             <method name="getNodeForRow">
                 <parameter name="row" />
                 <body><![CDATA[
@@ -220,6 +256,18 @@
                     return this.mService.getNode(id);
                 ]]></body>
             </method>
+            
+            <method name="getRowForNode">
+                <parameter name="node" />
+                <body><![CDATA[
+                    if (!node) {
+                        return -1;
+                    }
+                    return this.mTree.builderView.getIndexOfResource(node.resource);
+                ]]></body>
+            </method>            
+            
+            
             <field name="_browser">null</field>
             <property name="browser">
                 <getter><![CDATA[
@@ -484,7 +532,7 @@
                 var node = this.getNodeForRow(row.value);
                 
                 var transferable = {};
-                if (this.mService.onDragGesture(node.id, transferable)) {
+                if (node && this.mService.onDragGesture(node.id, transferable)) {
                     transferable = transferable.value;
                     var transArray = Components.classes["@mozilla.org/supports-array;1"].
                             createInstance(Components.interfaces.nsISupportsArray);
@@ -506,8 +554,8 @@
             <!-- For now just hijacking the file menu implementation.. -->
             <!-- TODO: over state, up arrow, remove periods from all IDs -->
             <xul:hbox id="frame_service_buttonbar">
-                <xul:sb-clickhold-button id="file.new"  flex="1" label="&menu.file.new;" popupanchor="topleft" popupalign="bottomleft">
-                    <xul:menuitem id="file.new" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+                <xul:sb-clickhold-button id="file.new" oncommand="doMenu('file.new');" flex="1" label="&menu.file.new;" popupanchor="topleft" popupalign="bottomleft">
+                    <xul:menuitem id="file.new" oncommand="doMenu('file.new');" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
                     <xul:menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
                     <xul:menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
                 </xul:sb-clickhold-button>

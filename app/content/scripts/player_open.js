@@ -82,9 +82,6 @@ try
                           .getService(Components.interfaces.nsIIOService);
       var uri = ios.newFileURI(fp.file, null, null);
       PPS.playAndImportURL(uri.spec);
-
-      // put the url into the search widget history???
-      if (document.__SEARCHWIDGET__) document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
     }
   }
 
@@ -104,7 +101,6 @@ try
       theAlbumText.stringValue = "";
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.playAndImportURL(url_open_data.URL);
-      if (document.__SEARCHWIDGET__) document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
     }  
   }
 
@@ -351,28 +347,54 @@ function SBMabOpen()
   SBOpenWindow( "chrome://songbird/content/xul/mab.xul", "Mozilla Amazon Browser", "chrome", mab_data ); 
 }
 
+
 function SBNewPlaylist()
-{
-  try
-  {
-    SBScanServiceTreeNewEntryEditable();
-    var query = new sbIDatabaseQuery();
-    query.setDatabaseGUID( "songbird" );
-    var playlistmanager = new sbIPlaylistManager();
-    var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
-    var playlistguid = aUUIDGenerator.generateUUID();
-    var name = "Playlist";
-    try
-    {
-      name = theSongbirdStrings.getString("playlist");
-    } catch(e) {}
-    var playlist = playlistmanager.createPlaylist( playlistguid, name, "Playlist", "user", query );
-    SBScanServiceTreeNewEntryStart();
+{  
+  // TODO I imagine this function will become more generic.  Hardcoding to simple for now.
+  
+  var mediaListType = "simple";
+ 
+  var servicePane = gServicePane;
+
+  // Try to find the currently selected service pane node
+  var selectedNode;
+  if (servicePane) {
+    selectedNode = servicePane.getSelectedNode();
   }
-  catch ( err )
-  {
-    alert( "SBNewPlaylist - " + err );
+  
+  // Ask the library service pane provider to suggest where
+  // a new playlist should be created
+  var librarySPS = Components.classes['@songbirdnest.com/servicepane/library;1']
+                             .getService(Components.interfaces.sbILibraryServicePaneService);
+  var library = librarySPS.suggestLibraryForNewList(mediaListType, selectedNode);
+  
+  // Looks like no libraries support the given mediaListType
+  if (!library) {
+    throw("Could not find a library supporting lists of type " + mediaListType); 
   }
+  
+  // Create the playlist
+  var mediaList = library.createMediaList(mediaListType);
+  
+  // Give the playlist a default name localized
+  mediaList.name = SBString("playlist", "Playlist");
+  mediaList.write();
+  
+  // Tell the servicetree to make the new playlist node editable
+  // TODO What if there is no servicetree?  Should we pop a dialog?
+  if (servicePane) {
+    // Find the servicepane node for our new medialist
+    var node = librarySPS.getNodeForLibraryResource(mediaList);
+    
+    if (node) {
+      // Ask the service pane to start editing our new node
+      // so that the user can give it a name
+      servicePane.startEditingNode(node);
+    } else {
+      // TODO How should this be handled?
+      dump("Error: Couldn't find a service pane node for the list we just created\n");
+    }
+  }  
 }
 
 
