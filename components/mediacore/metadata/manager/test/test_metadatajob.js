@@ -74,24 +74,6 @@ function runTest () {
   assertEqual( gNumTestItems, gRemoteUrls.length );
   assertEqual( gNumTestItems, gTestMatrix.length );
 
-/*
-  // Testing display
-  var text = "\n=============\n";
-  for ( var i = 0; i < gLocalFiles.length; i++ )
-  {
-    text += "Local: ";
-    text += gLocalFiles[ i ];
-    text += "\nRemote: ";
-    text += gRemoteUrls[ i ];
-    text += "\nTestColumn: ";
-    text += gTestMatrix[ i ][ 0 ];
-    text += "\nTestValue: ";
-    text += gTestMatrix[ i ][ 1 ];
-    text += "\n=============\n";
-  }
-  log( text );
-*/
-  
   for ( var i = 0; i < gNumTestItems; i++ )
   {
     // Add gLocalFiles to it
@@ -144,9 +126,9 @@ function onComplete(aSubject, aTopic, aData) {
     try {
       remote = gRemoteMediaItems[ i ].getProperty( property );
     } catch (e) { log( e ); }
-    log( property + " -- test:" + value + " ?= local:" + local + " ?= remote:" + remote );
-//    assertEqual( local, value );
-//    assertEqual( remote, value );
+//    log( property + " -- test:" + value + " ?= local:" + local + " ?= remote:" + remote );
+    assertEqual( local, value );
+    assertEqual( remote, value );
   }
   // So testing is complete
   gTestMetadataJobManager.stop(); // Stop the manager

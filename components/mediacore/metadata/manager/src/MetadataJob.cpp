@@ -325,11 +325,11 @@ nsresult sbMetadataJob::RunTimer()
       rv = mMainThreadQuery->ResetQuery();
       NS_ENSURE_SUCCESS(rv, rv);
       rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("begin"));
-      for (; mInitCount < max && mInitCount < total; mInitCount++) 
+      for (; mInitCount < max && mInitCount < total; ) 
       {
         // This places the item info on the query.
-        rv = this->AddItemToJobTableQuery( mMainThreadQuery, mTableName, mInitArray[ mInitCount ] );
-        NS_ENSURE_SUCCESS(rv, rv);
+        rv = this->AddItemToJobTableQuery( mMainThreadQuery, mTableName, mInitArray[ mInitCount++ ] );
+//        NS_ENSURE_SUCCESS(rv, rv); // Make this more resilient to people being pissy underneath us.
       }
       rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("commit"));
       NS_ENSURE_SUCCESS(rv, rv);

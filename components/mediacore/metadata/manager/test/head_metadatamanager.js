@@ -116,7 +116,7 @@ function newAppRelativeFile( path ) {
   {
     file.append( nodes[ i ] );
   }
-  log( "newAppRelativeFile - " + file.path );
+//  log( "newAppRelativeFile - " + file.path );
   return file.clone();
 }
 
