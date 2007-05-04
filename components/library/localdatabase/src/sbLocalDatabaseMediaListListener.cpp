@@ -83,8 +83,9 @@ sbLocalDatabaseMediaListListener::AddListener(sbIMediaListListener* aListener)
   nsAutoLock lock(mListenerProxyTableLock);
 
   // See if we have already added this listener.
-  sbIMediaListListener* previousProxy;
-  PRBool success = mListenerProxyTable.Get(aListener, &previousProxy);
+  nsCOMPtr<sbIMediaListListener> previousProxy;
+  PRBool success = mListenerProxyTable.Get(aListener,
+                                           getter_AddRefs(previousProxy));
   if (success && previousProxy) {
     // The listener has already been added, so do nothing more. But warn in
     // debug builds.
@@ -122,9 +123,10 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbIMediaListListener* aListener
 
   // Check to make sure that this listener has actually been added. Only do
   // this in debug builds because the Remove method doesn't return any success
-  // information and always succeeds..
-  sbIMediaListListener* previousProxy;
-  PRBool success = mListenerProxyTable.Get(aListener, &previousProxy);
+  // information and always succeeds.
+  nsCOMPtr<sbIMediaListListener> previousProxy;
+  PRBool success = mListenerProxyTable.Get(aListener,
+                                           getter_AddRefs(previousProxy));
   if (success && !previousProxy) {
     // The listener was never added so there's nothing else to do here. But
     // warn in debug builds.
