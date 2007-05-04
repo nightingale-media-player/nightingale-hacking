@@ -66,6 +66,9 @@ function SB_NewDataRemote(a,b) {
 function sbBookmarks() {
     this._servicePane = null;
     this._stringBundle = null;
+    
+    // use the default stringbundle to translate tree nodes
+    this.stringbundle = null;
 }
 sbBookmarks.prototype.QueryInterface = 
 function sbBookmarks_QueryInterface(iid) {

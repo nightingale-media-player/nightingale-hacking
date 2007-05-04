@@ -38,6 +38,7 @@ interface nsIDOMWindow;
 interface nsISimpleEnumerator;
 interface nsIDragSession;
 interface nsITransferable;
+interface nsIStringBundle;
 
 /**
  * \interface sbIServicePaneNode
@@ -77,6 +78,9 @@ interface sbIServicePaneNode : nsISupports
   attribute AString dndAcceptNear;
   /* \brief a comma separated list of drag types to allow dropping into */
   attribute AString dndAcceptIn;
+  
+  /* \brief the uri of a stringbundle to use to translate the properties of this node */
+  attribute AString stringbundle;
 
   
   
@@ -252,6 +256,10 @@ interface sbIServicePaneModule : nsISupports
               in PRInt32 aOrientation);
   PRBool onDragGesture(in sbIServicePaneNode aNode,
                        in nsITransferable aTransferable);
+  
+  /* \brief optional URI of stringbundle to use to localize names of nodes
+    associated with this module */
+  readonly attribute AString stringbundle;
 };
 
 

@@ -11,3 +11,6 @@ locales.jar:
   locale/en-US/songbird/songbird.properties     (en-US/songbird/songbird.properties)
   locale/branding/brand.dtd                               (branding/brand.dtd)
   locale/branding/brand.properties                        (branding/brand.properties)
+#ifdef SB_ENABLE_TESTS
+  locale/en-US/songbird/test.properties     (en-US/songbird/test.properties)
+#endif

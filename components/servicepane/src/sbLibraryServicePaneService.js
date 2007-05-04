@@ -48,6 +48,9 @@ function SB_NewDataRemote(a,b) {
 function sbLibraryServicePane() {
   this._servicePane = null;
   this._libraryManager = null;
+  
+  // use the default stringbundle to translate tree nodes
+  this.stringbundle = null;
 }
 sbLibraryServicePane.prototype.QueryInterface = 
 function sbLibraryServicePane_QueryInterface(iid) {

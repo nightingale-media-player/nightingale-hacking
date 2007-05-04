@@ -50,6 +50,8 @@ const IOSVC = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService
 const NC='http://home.netscape.com/NC-rdf#';
 const SP='http://songbirdnest.com/rdf/servicepane#';
 
+const STRINGBUNDLE='chrome://songbird/locale/songbird.properties';
+
 function ServicePaneNode (ds, resource) {
     this.__defineGetter__('resource', function () { return resource });
     
@@ -166,20 +168,24 @@ ServicePaneNode.prototype.__defineSetter__ ('isOpen', function (aValue) {
     this.setAttributeNS(SP,'Open', aValue?'true':'false'); });
 
 ServicePaneNode.prototype.__defineGetter__ ('dndDragTypes', function () {
-    return this.getAttributeNS(NC,'dndDragTypes'); })
+    return this.getAttributeNS(SP,'dndDragTypes'); })
 ServicePaneNode.prototype.__defineSetter__ ('dndDragTypes', function (aValue) {
-    this.setAttributeNS(NC,'dndDragTypes', aValue); });
+    this.setAttributeNS(SP,'dndDragTypes', aValue); });
 
 ServicePaneNode.prototype.__defineGetter__ ('dndAcceptNear', function () {
-    return this.getAttributeNS(NC,'dndAcceptNear'); })
+    return this.getAttributeNS(SP,'dndAcceptNear'); })
 ServicePaneNode.prototype.__defineSetter__ ('dndAcceptNear', function (aValue) {
-    this.setAttributeNS(NC,'dndAcceptNear', aValue); });
+    this.setAttributeNS(SP,'dndAcceptNear', aValue); });
 
 ServicePaneNode.prototype.__defineGetter__ ('dndAcceptIn', function () {
-    return this.getAttributeNS(NC,'dndAcceptIn'); })
+    return this.getAttributeNS(SP,'dndAcceptIn'); })
 ServicePaneNode.prototype.__defineSetter__ ('dndAcceptIn', function (aValue) {
-    this.setAttributeNS(NC,'dndAcceptIn', aValue); });
+    this.setAttributeNS(SP,'dndAcceptIn', aValue); });
 
+ServicePaneNode.prototype.__defineGetter__ ('stringbundle', function () {
+    return this.getAttributeNS(SP,'stringbundle'); })
+ServicePaneNode.prototype.__defineSetter__ ('stringbundle', function (aValue) {
+    this.setAttributeNS(SP,'stringbundle', aValue); });
 
 
 ServicePaneNode.prototype.__defineGetter__('childNodes',
@@ -400,7 +406,7 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
 
     var uri = IOSVC.newFileURI(path);
     // FIXME: does this handle non-latin paths on non-linux?
-    this._dataSource = RDFSVC.GetDataSourceBlocking(uri.spec);
+    this._dataSource = new dsWrapper(RDFSVC.GetDataSourceBlocking(uri.spec), this);
 
     // for sbIServicePaneService.dataSource
     this.__defineGetter__('dataSource', 
@@ -719,6 +725,164 @@ function ServicePaneService_onDragGesture(aId, aTransferable) {
     
     return success;
 }
+
+/* this is a wrapper for the nsIRDFDataSource that will translate some of the
+  properties via stringbundles */
+function dsWrapper(inner, sps) {
+    this.inner = inner;
+    this.sps = sps;
+    this.properties = {};
+    this.properties[NC+'Name'] = true;
+    this.stringBundleService = Cc['@mozilla.org/intl/stringbundle;1']
+            .getService(Ci.nsIStringBundleService);
+}
+dsWrapper.prototype = {
+    // impl methods
+    
+    // Try to translate a key based on a string bundle uri. Either return an
+    // nsIRDFLiteral on success or null on failure.
+    translateKey: function translateKey(stringbundleuri, key) {
+        var bundle = this.stringBundleService.createBundle(stringbundleuri);
+        if (!bundle) { return null; }
+        var message = null;
+        try {
+            message = bundle.GetStringFromName(key);
+        } catch (e) { }
+        if (!message) { return null; }
+        return RDFSVC.GetLiteral(message);
+    },
+    
+    // Try to translate an RDF triple. Either return either the original or
+    // the translated target
+    translateTriple: function translateTriple(aSource, aProperty, aTarget) {
+        // if there's no target, fail
+        if (!aTarget) { return null; }
+        
+        // if the target is not an nsIRDFLiteral, return it
+        if (!(aTarget instanceof Ci.nsIRDFLiteral)) { return aTarget; }
+        
+        // if the target does not begin with "&", return it
+        if (aTarget.Value.length < 1 ||
+                aTarget.Value[0] != '&') {
+            return aTarget;
+        }
+        
+        // the key is the rest of aTarget.Value
+        var key = aTarget.Value.substring(1);
+
+        // we need to find the string bundle we look in these places in this
+        // order:
+        //   a property on the node (http://songbirdnest.com/rdf/servicepane#stringbundle)
+        //   the .stringbundle attribute on the associated module service
+        //   the default stringbundle on the service pane service
+        
+        // FIXME: after testing wrap each of these steps in try/catch
+        
+        var node = this.sps.getNode(aSource.Value);
+        
+        // the node's stringbundle
+        if (node && node.stringbundle) {
+            var translated = this.translateKey(node.stringbundle, key);
+            if (translated) {
+                return translated;
+            }                
+        }
+        
+        // the module's stringbundle
+        if (node && node.contractid && Cc[node.contractid]) {
+            var m = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
+            if (m && m.stringbundle) {
+                var translated = this.translateKey(m.stringbundle, key);
+                if (translated) {
+                    return translated
+                }
+            }
+        }
+        
+        // the app's default stringbundle
+        var translated = this.translateKey(STRINGBUNDLE, key)
+        if (translated) {
+            return translated;
+        }
+        
+        // couldn't translate it - let's just return the raw target
+        return aTarget;
+    },
+    
+    // nsISupports
+    QueryInterface: function QueryInterface(iid) {
+        if (this.inner.QueryInterface(iid)) {
+            return this;
+        }
+    },
+    
+    // nsIRDFDataSource
+    get URI() { return this.inner.URI; },
+    GetSource: function GetSource(a,b,c) { return this.inner.GetSource(a,b,c); },
+    GetSources: function GetSources(a,b,c) { return this.inner.GetSources(a,b,c); },
+    GetTarget: function GetTarget(aSource, aProperty, aTruthValue) {
+        var target = this.inner.GetTarget(aSource, aProperty, aTruthValue);
+        
+        // is this property translatable
+        if (this.properties[aProperty.Value]) {
+            return this.translateTriple(aSource, aProperty, target);
+        } else {
+            return target;
+        }
+    },
+    // FIXME do we need to translate GetTargets too?
+    GetTargets: function GetTargets(aSource, aProperty, aTruthValue) {
+        var targets = this.inner.GetTargets(aSource, aProperty, aTruthValue);
+        
+        // is this property translatable?
+        if (this.properties[aProperty.Value]) {
+            // we need to create a proxy enumerator object
+            var self = this;
+            var enumerator = {
+                hasMoreElements: function hasMoreElements() {
+                    return targets.hasMoreElements();
+                },
+                getNext: function getNext() {
+                    return self.translateTriple(aSource, aProperty,
+                            targets.getNext());
+                },
+                QueryInterface: function QueryInterface(iid) {
+                    if (targets.QueryInterface(iid)) {
+                        return this;
+                    }
+                }
+            };
+            return enumerator
+        } else {
+            return targets;
+        }        
+    },
+    Assert: function Assert(a,b,c,d) { this.inner.Assert(a,b,c,d); },
+    Unassert: function Unassert(a,b,c) { this.inner.Unassert(a,b,c); },
+    Change: function Change(a,b,c,d) { this.inner.Change(a,b,c,d); },
+    Move: function Move(a,b,c,d) { this.inner.Move(a,b,c,d); },
+    HasAssertion: function HasAssertion(a,b,c,d) { return this.inner.HasAssertion(a,b,c,d); },
+    AddObserver: function AddObserver(a) { this.inner.AddObserver(a); },
+    RemoveObserver: function RemoveObserver(a) { this.inner.RemoveObserver(a); },
+    ArcLabelsIn: function ArcLabelsIn(a) { return this.inner.ArcLabelsIn(a); },
+    ArcLabelsOut: function ArcLabelsOut(a) { return this.inner.ArcLabelsOut(a); },
+    GetAllResources: function GetAllResources() { return this.inner.GetAllResourvces(); },
+    IsCommandEnabled: function IsCommandEnabled(a,b,c) { return this.inner.IsCommandEnabled(a,b,c); },
+    DoCommand: function DoCommand(a,b,c) { this.inner.DoCommand(a,b,c); },
+    IsCommandEnabled: function IsCommandEnabled(a,b,c) { return this.inner.IsCommandEnabled(a,b,c); },
+    GetAllCmds: function GetAllCmds() { return this.inner.GetAllCmds(); },
+    hasArcIn: function hasArcIn(a,b) { this.inner.hasArcIn(a,b); },
+    hasArcOut: function hasArcOut(a,b) { this.inner.hasArcOut(a,b); },
+    beginUpdateBatch: function beginUpdateBatch() { this.inner.beginUpdateBatch(); },
+    endUpdateBatch: function endUpdateBatch() { this.inner.endUpdateBatch(); },
+    
+    // nsIRDFRemoteDataSource
+    get loaded() { return this.inner.loaded; },
+    Init: function Init(a) { this.inner.Init(a); },
+    Refresh: function Refresh(a) { this.inner.Refresh(a); },
+    Flush: function Flush() { this.inner.Flush(); },
+    FlushTo: function FlushTo(a) { this.inner.FlushTo(a); },
+};
 
 /**
  * /brief XPCOM initialization code

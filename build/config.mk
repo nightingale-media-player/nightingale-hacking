@@ -125,6 +125,10 @@ ifdef SONGBIRD_OFFICIAL
 PPDEFINES += -DSONGBIRD_OFFICIAL="$(SONGBIRD_OFFICIAL)"
 endif
 
+ifdef SB_ENABLE_TESTS
+PPDEFINES += -DSB_ENABLE_TESTS=1
+endif
+
 #------------------------------------------------------------------------------
 endif #CONFIG_MK_INCLUDED
 #------------------------------------------------------------------------------
