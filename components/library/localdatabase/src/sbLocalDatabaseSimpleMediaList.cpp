@@ -233,6 +233,8 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
 
       success = mItemList.ReplaceObjectAt(newMediaItem, index);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      mediaItem = newMediaItem;
     }
 
     nsCOMPtr<sbILocalDatabaseMediaItem> ldbmi =

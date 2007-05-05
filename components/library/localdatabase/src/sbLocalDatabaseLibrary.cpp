@@ -1648,6 +1648,9 @@ sbLocalDatabaseLibrary::BatchCreateMediaItems(nsIArray* aURIList,
   rv = BatchGetMediaItems( addedGuids, getter_AddRefs(newItems) );
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Tell the world they were created.
   rv = BatchNotifyAdded( newItems );
   NS_ENSURE_SUCCESS(rv, rv);
