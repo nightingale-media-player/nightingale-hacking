@@ -35,8 +35,12 @@
 
 #include <nsStringGlue.h>
 #include <nsCOMArray.h>
+#include <nsHashKeys.h>
+#include <nsInterfaceHashtable.h>
+#include <nsTHashtable.h>
 #include <prlock.h>
 
+class nsIMutableArray;
 class nsISimpleEnumerator;
 class sbILocalDatabaseLibrary;
 class sbIMediaItem;
@@ -127,23 +131,32 @@ private:
 
 class sbSimpleMediaListInsertingEnumerationListener : public sbIMediaListEnumerationListener
 {
+  struct ArrayPointers {
+    nsIMutableArray* items;
+    nsIMutableArray* uris;
+  };
+
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
   sbSimpleMediaListInsertingEnumerationListener(sbLocalDatabaseSimpleMediaList* aList)
-  : mFriendList(aList),
-    mItemEnumerated(PR_FALSE)
+  : mFriendList(aList)
   {
     NS_ASSERTION(mFriendList, "Null pointer!");
   }
 
 private:
+  PR_STATIC_CALLBACK(PLDHashOperator)
+    AddURIsToArrayCallback(nsISupportsHashKey::KeyType aKey,
+                           sbIMediaItem* aEntry,
+                           void* aUserData);
+
+private:
   sbLocalDatabaseSimpleMediaList* mFriendList;
-  nsCOMPtr<sbIDatabaseQuery> mDBQuery;
-  nsString mOrdinal;
-  nsCOMArray<sbIMediaItem> mNotificationList;
-  PRBool mItemEnumerated;
+  nsCOMArray<sbIMediaItem> mItemList;
+  nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> mItemsToCreate;
+  nsCOMPtr<sbILibrary> mListLibrary;
 };
 
 class sbSimpleMediaListRemovingEnumerationListener : public sbIMediaListEnumerationListener
