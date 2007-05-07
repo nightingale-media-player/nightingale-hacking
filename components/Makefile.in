@@ -54,6 +54,7 @@ SUBDIRS = addonmetadata \
           servicesource \
           state \
           sqlbuilder \
+          parsererror \
           $(NULL)
 
 # XXX make me a configure option
