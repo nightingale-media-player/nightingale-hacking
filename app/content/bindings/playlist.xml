@@ -1874,7 +1874,7 @@
           <![CDATA[
           try {
             // If there is no actual commands, do not allow the context menu to pop.
-            if (!this.commandmenuitems.commands || this.commandmenuitems.commands.getNumCommands() == 0) return;
+            if (!this.commandmenuitems.hasCommands()) return;
             
             const COLUMN_TITLE = "title";
             const CONTEXT_IDS = ["playlist_context_before",

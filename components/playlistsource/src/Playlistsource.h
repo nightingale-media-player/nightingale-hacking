@@ -185,11 +185,11 @@ public:
     nsCOMPtr<sbPlaylistsource>    m_Server;
   };
 
-  class valuemap_t   : public std::map<nsIRDFResource*, sbValueInfo> {};
-  class infomap_t    : public std::map<nsIRDFResource*, sbFeedInfo> {};
-  class stringmap_t  : public std::map<nsString, nsIRDFResource*> {};
-  class commandmap_t : public std::map<nsString,
-                                       nsCOMPtr<sbIPlaylistCommands> > {};
+  class valuemap_t    : public std::map<nsIRDFResource*, sbValueInfo> {};
+  class infomap_t     : public std::map<nsIRDFResource*, sbFeedInfo> {};
+  class stringmap_t   : public std::map<nsString, nsIRDFResource*> {};
+  class commandlist_t : public std::vector< nsCOMPtr<sbIPlaylistCommands> > {};
+  class commandmap_t  : public std::map<nsString, commandlist_t > {};
 
 
   PRMonitor* g_pMonitor;

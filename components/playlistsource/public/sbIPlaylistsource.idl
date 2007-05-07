@@ -299,7 +299,7 @@ interface sbIPlaylistCommands : nsISupports
 * 
 * \sa playlist.xml
 */
-[scriptable, uuid(836D6EA5-CA63-418f-BFD8-27704509A6A3)]
+[scriptable, uuid(e49a5c32-1945-49c3-876d-08e6b44144ff)]
 interface sbIPlaylistsource : nsIRDFDataSource
 {
   /**
@@ -626,9 +626,20 @@ interface sbIPlaylistsource : nsIRDFDataSource
   * \param aTableName The name of the table to register against
   * \param aPlaylistType The arbitrary type string to register against
   * \param aCommandObj The command object instance to be used for these playlists
-  * \sa sbIPlaylistCommands, playlist.xml
+  * \sa sbIPlaylistCommands, unregisterPlaylistCommands, playlist.xml
   */
   void registerPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
+  
+  /**
+  * \brief Unregister sbIPlaylistCommands that was previously registered
+  *
+  * \param aContextGUID The guid that was used to register the sbIPlaylistCommand
+  * \param aTableName The name of the table that was used to register the sbIPlaylistCommand
+  * \param aPlaylistType The type string that was used to register the sbIPlaylistCommand
+  * \param aCommandObj The command object that was registered
+  * \sa sbIPlaylistCommands, registerPlaylistCommands, playlist.xml
+  */
+  void unregisterPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
   
   /**
   * \brief Retrieve the sbIPlaylistCommands object to be shown for a specific playlist
@@ -644,10 +655,10 @@ interface sbIPlaylistsource : nsIRDFDataSource
   * \param aContextGUID The guid string for the playlist
   * \param aTableName The name of the playlist
   * \param aPlaylistType The type of the playlist
-  * \return A newly duplicated command object instance to be used for this playlist
+  * \return A simple enumerator of newly duplicated command object instances to be used for this playlist
   * \sa sbIPlaylistCommands, playlist.xml
   */
-  sbIPlaylistCommands getPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType );
+  nsISimpleEnumerator getPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType );
 
   /**
   * \brief Calculate the unique identifier for a playlist based on a guid and a table

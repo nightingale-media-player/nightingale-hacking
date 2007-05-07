@@ -67,23 +67,22 @@
         <![CDATA[
           try {
             this.playlist = playlist;
-            // And add the new ones
-            this.commands = commands;
-            if (!this.commands) 
+            this.commands = new Array();
+            // add the default (generic) command object if specified
+            if (commands) this.commands.push(commands);
+            // See if there are more objects registered specifically for this table
+            var source = Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
+                                    .getService( Components.interfaces.sbIPlaylistsource );
+            var cmds = source.getPlaylistCommands( this.playlist.guid, this.playlist.table, this.playlist.type );
+            if ( cmds )
             {
-              // See if there is one registered specifically for this table
-              var source = Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
-                                      .getService( Components.interfaces.sbIPlaylistsource );
-              var cmds = source.getPlaylistCommands( this.playlist.guid, this.playlist.table, this.playlist.type );
-              if ( cmds )
-              {
-                this.commands = cmds;
+              while (cmds.hasMoreElements()) {
+                var obj = cmds.getNext();
+                // Make sure the object does what we think it does.
+                obj = obj.QueryInterface( Components.interfaces.sbIPlaylistCommands );
+                // add it to our array
+                if (obj) this.commands.push(obj);
               }
-            }
-            // Make sure it does what we think it does.
-            if ( this.commands )
-            {
-              this.commands = this.commands.QueryInterface( Components.interfaces.sbIPlaylistCommands );
             }
           } catch (e) {
               alert( "sb-commands.xml - bind - " + err );
@@ -191,6 +190,18 @@
         </body>
       </method>
 
+      <method name="hasCommands">
+        <body>
+          <![CDATA[
+            if (!this.commands) return false;
+            for (var i in this.commands) {
+              if (this.commands[i].getNumCommands() > 0) return true;
+            }
+            return false;
+          ]]>
+        </body>
+      </method>
+
     </implementation>
  
   </binding>
@@ -237,10 +248,15 @@
           
           if ( this.commands )
           {
-            // Once we get here, tell the commands who we are.
-            if (!stateonly) this.commands.setMediaList( this.playlist );
-
-            this.refreshCommandItems(stateonly, null, this.parent, null, 0, false);
+            if (!stateonly) {
+              // Once we get here, tell the commands who we are.
+              for (var i in this.commands) {
+                this.commands[i].setMediaList( this.playlist );
+              }
+            }
+            for (var i in this.commands) {
+              this.refreshCommandItems(i, stateonly, null, this.parent, null, 0, false);
+            }
           }
         }
         catch( err )
@@ -253,6 +269,7 @@
 
     
     <method name="refreshCommandItems">
+      <parameter name="cmdobjidx"/>
       <parameter name="stateonly"/>
       <parameter name="menu"/>
       <parameter name="parentnode"/>
@@ -263,7 +280,7 @@
         <![CDATA[
           try {
             // And make all the new stuff
-            var num = this.commands.getNumCommands(menu, "toolbar");
+            var num = this.commands[cmdobjidx].getNumCommands(menu, "toolbar");
             if (stateonly) num = this.toolbarbuttons.length;
             for ( var i = 0; i < num; i++ )
             {
@@ -275,10 +292,10 @@
                 
                 var obj_type;
                 if (radioitems) obj_type = "choiceitem";
-                else obj_type = this.commands.getCommandType( menu, i, "toolbar" );
+                else obj_type = this.commands[cmdobjidx].getCommandType( menu, i, "toolbar" );
 
                 // What id?
-                var obj_id = this.commands.getCommandId( menu, i, "toolbar" );
+                var obj_id = this.commands[cmdobjidx].getCommandId( menu, i, "toolbar" );
                 
                 var toolbarbutton_type;
                 var toolbarbutton_typeattr;
@@ -342,7 +359,7 @@
                 
                 // Create a toolbarbutton
                 if (custom) {
-                  toolbarbutton = this.commands.instantiateCustomCommand(obj_id, "toolbar");
+                  toolbarbutton = this.commands[cmdobjidx].instantiateCustomCommand(obj_id, "toolbar");
                 } else {
                   toolbarbutton = document.createElement( toolbarbutton_type );
                 }
@@ -370,7 +387,7 @@
                 //label.setAttribute( "class", "sb_faceplate" ); // Make them fully skinned buttons.
                 if (!custom) {
                   // No label unless you have a label
-                  var cmd_text = this.commands.getCommandText( menu, i, "toolbar" );
+                  var cmd_text = this.commands[cmdobjidx].getCommandText( menu, i, "toolbar" );
                   if ( cmd_text.length > 0 )
                   {
                     if ( cmd_text[ 0 ] == "&" )
@@ -390,7 +407,7 @@
                   }
 
                   var cmd_flex = false;
-                  if (toolbarbutton_type != "menu" && toolbarbutton_type != "menuitem") cmd_flex = this.commands.getCommandFlex( menu, i, "toolbar" );
+                  if (toolbarbutton_type != "menu" && toolbarbutton_type != "menuitem") cmd_flex = this.commands[cmdobjidx].getCommandFlex( menu, i, "toolbar" );
                   
                   if ( cmd_flex > 0 )
                   {
@@ -398,7 +415,7 @@
                   }
 
                   // No tooltip unless you have a tooltip
-                  var tooltip_text = this.commands.getCommandToolTipText( menu, i, "toolbar" );
+                  var tooltip_text = this.commands[cmdobjidx].getCommandToolTipText( menu, i, "toolbar" );
                   if ( tooltip_text.length > 0 )
                   {
                     if ( tooltip_text[ 0 ] == "&" )
@@ -424,6 +441,7 @@
                 toolbarbutton.commanddepth = depth;
                 toolbarbutton.commandmenu = menu;
                 toolbarbutton.commandindex = i;
+                toolbarbutton.commandobjindex = cmdobjidx;
                 toolbarbutton.commandcustom = custom;
               }
               else
@@ -431,7 +449,7 @@
                 toolbarbutton = this.toolbarbuttons[i];
               }
 
-              if ( this.commands.getCommandEnabled( toolbarbutton.commandmenu, toolbarbutton.commandindex, "toolbar" ) )
+              if ( this.commands[cmdobjidx].getCommandEnabled( toolbarbutton.commandmenu, toolbarbutton.commandindex, "toolbar" ) )
               {
                 toolbarbutton.removeAttribute( "disabled" );
               }
@@ -451,23 +469,23 @@
                   var menupopup = document.createElement("menupopup");
                   toolbarbutton.appendChild(menupopup);
                   parent = menupopup;
-                  this.refreshCommandItems(stateonly, this.commands.getCommandId(menu, i, "toolbar"), parent, null, depth+1, (obj_type == "choice"));
+                  this.refreshCommandItems(cmdobjidx, stateonly, this.commands[cmdobjidx].getCommandId(menu, i, "toolbar"), parent, null, depth+1, (obj_type == "choice"));
                 }
               }
               
               if (toolbarbutton.commandtype == "flag") {
-                toolbarbutton.setAttribute("checked", this.commands.getCommandFlag( toolbarbutton.commandmenu, toolbarbutton.commandindex, "toolbar" ));
+                toolbarbutton.setAttribute("checked", this.commands[cmdobjidx].getCommandFlag( toolbarbutton.commandmenu, toolbarbutton.commandindex, "toolbar" ));
               }
 
               if (toolbarbutton.commandtype == "value") {
-                var val = this.commands.getCommandValue( toolbarbutton.commandmenu, toolbarbutton.commandindex, "toolbar" );
+                var val = this.commands[cmdobjidx].getCommandValue( toolbarbutton.commandmenu, toolbarbutton.commandindex, "toolbar" );
                 toolbarbutton.value = val;
               }
               if (toolbarbutton.commandtype == "choiceitem") {
                 if (toolbarbutton.commanddepth > 1) {
-                  toolbarbutton.setAttribute("checked", this.commands.getCommandChoiceItem( toolbarbutton.commandmenu, "toolbar" ) == toolbarbutton.id);
+                  toolbarbutton.setAttribute("checked", this.commands[cmdobjidx].getCommandChoiceItem( toolbarbutton.commandmenu, "toolbar" ) == toolbarbutton.id);
                 } else {
-                  if (this.commands.getCommandChoiceItem( toolbarbutton.commandmenu, "toolbar" ) == toolbarbutton.id) {
+                  if (this.commands[cmdobjidx].getCommandChoiceItem( toolbarbutton.commandmenu, "toolbar" ) == toolbarbutton.id) {
                     var e = toolbarbutton;
                     while (e && e.tagName != "menulist") { e = e.parentNode; }
                     if (e) e.selectedIndex = toolbarbutton.commandindex;
@@ -475,7 +493,7 @@
                 }
               }
               if (toolbarbutton.commandcustom) {
-                this.commands.refreshCustomCommand(toolbarbutton.id, "toolbar");
+                this.commands[cmdobjidx].refreshCustomCommand(toolbarbutton.id, "toolbar");
               }
 
             }
@@ -514,7 +532,8 @@
         {
           if ( this.commands )
           {
-            this.commands.onCommand( evt.originalTarget.id, null, "toolbar" );
+            var cmdobjidx = evt.originalTarget.commandobjindex;
+            this.commands[cmdobjidx].onCommand( evt.originalTarget.id, null, "toolbar" );
             var type = evt.originalTarget.commandtype;
             if (type == "flag" || type == "choiceitem") this.refreshCommands(true);
           }
@@ -542,7 +561,8 @@
               else if (sbtype && sbtype != "") return;
               element = element.parentNode;
             }
-            this.commands.onCommand( element.id, element.value, "toolbar" );
+            var cmdobjidx = element.commandobjindex;
+            this.commands[cmdobjidx].onCommand( element.id, element.value, "toolbar" );
           }
         }
         catch( err )
@@ -626,9 +646,15 @@
             if (popup) {
 
               // Once we get here, tell the commands who we are.
-              if (!stateonly) this.commands.setMediaList( this.playlist );
-              
-              this.refreshCommandItems(stateonly, null, popup, before, 0, false);
+              if (!stateonly) {
+                for (var i in this.commands) {
+                  this.commands[i].setMediaList( this.playlist );
+                }
+              }
+
+              for (var i in this.commands) {
+                this.refreshCommandItems(i, stateonly, null, popup, before, 0, false);
+              }
             }
           }
         }
@@ -641,6 +667,7 @@
     </method>
     
     <method name="refreshCommandItems">
+      <parameter name="cmdobjidx"/>
       <parameter name="stateonly"/>
       <parameter name="menu"/>
       <parameter name="parentnode"/>
@@ -651,7 +678,7 @@
         <![CDATA[
           try {
             // And make all the new stuff
-            var num = this.commands.getNumCommands(menu, "menu");
+            var num = this.commands[cmdobjidx].getNumCommands(menu, "menu");
             if (stateonly) num = this.menuitems.length;
             for ( var i = 0; i < num; i++ )
             {
@@ -660,12 +687,12 @@
               // What type?
               var obj_type;
               if (radioitems) obj_type = "choiceitem";
-              else obj_type = this.commands.getCommandType( menu, i, "menu" );
+              else obj_type = this.commands[cmdobjidx].getCommandType( menu, i, "menu" );
 
               if (!stateonly)
               {
                 // What id?
-                var obj_id = this.commands.getCommandId( menu, i, "menu" );
+                var obj_id = this.commands[cmdobjidx].getCommandId( menu, i, "menu" );
                 
                 var menuitem_type;
                 
@@ -699,7 +726,7 @@
                 if (obj_type == "flag" || radioitems) menuitem.setAttribute("type", "checkbox");
                 
                 // No label unless you have a label
-                var cmd_text = this.commands.getCommandText( menu, i, "menu" );
+                var cmd_text = this.commands[cmdobjidx].getCommandText( menu, i, "menu" );
                 if ( cmd_text.length > 0 )
                 {
                   if ( cmd_text[ 0 ] == "&" )
@@ -717,7 +744,7 @@
                 }
 
                 // No tooltip unless you have a tooltip
-                var tooltip_text = this.commands.getCommandToolTipText( menu, i, "menu" );
+                var tooltip_text = this.commands[cmdobjidx].getCommandToolTipText( menu, i, "menu" );
                 if ( tooltip_text.length > 0 )
                 {
                   if ( tooltip_text[ 0 ] == "&" )
@@ -741,22 +768,23 @@
                 menuitem.commandtype = obj_type;
                 menuitem.commandmenu = menu;
                 menuitem.commandindex = i;
+                menuitem.commandobjindex = cmdobjidx;
               }
               else
               {
                 menuitem = this.menuitems[i];
               }
 
-              if ( this.commands.getCommandEnabled( menuitem.commandmenu, menuitem.commandindex, "menu" ) )
+              if ( this.commands[cmdobjidx].getCommandEnabled( menuitem.commandmenu, menuitem.commandindex, "menu" ) )
                 menuitem.setAttribute( "disabled", "false" );
               else
                 menuitem.setAttribute( "disabled", "true" );
                 
               if (menuitem.commandtype == "flag") {
-                menuitem.setAttribute("checked", this.commands.getCommandFlag( menuitem.commandmenu, menuitem.commandindex, "menu" ));
+                menuitem.setAttribute("checked", this.commands[cmdobjidx].getCommandFlag( menuitem.commandmenu, menuitem.commandindex, "menu" ));
               }
               if (menuitem.commandtype == "choiceitem") {
-                menuitem.setAttribute("checked", (menuitem.id == this.commands.getCommandChoiceItem( menuitem.commandmenu, "menu" )));
+                menuitem.setAttribute("checked", (menuitem.id == this.commands[cmdobjidx].getCommandChoiceItem( menuitem.commandmenu, "menu" )));
               }
               
               // Add it to the parent
@@ -768,10 +796,10 @@
                 if (obj_type == "submenu" || obj_type == "choice") {
                   var menupopup = document.createElement("menupopup");
                   menuitem.appendChild(menupopup);
-                  if (this.commands.getCommandId(menu, i, "menu") == null) {
+                  if (this.commands[cmdobjidx].getCommandId(menu, i, "menu") == null) {
                     alert("null submenu: menu = " + menu + ", index = " + i);
                   }
-                  this.refreshCommandItems(stateonly, this.commands.getCommandId(menu, i, "menu"), menupopup, null, depth+1, (obj_type == "choice"));
+                  this.refreshCommandItems(cmdobjidx, stateonly, this.commands[cmdobjidx].getCommandId(menu, i, "menu"), menupopup, null, depth+1, (obj_type == "choice"));
                 }
               }
             }
@@ -812,7 +840,8 @@
         {
           if ( this.commands )
           {
-            this.commands.onCommand( evt.originalTarget.id, null, "menu" );
+            var cmdobjidx = evt.originalTarget.commandobjindex;
+            this.commands[cmdobjidx].onCommand( evt.originalTarget.id, null, "menu" );
             var type = evt.originalTarget.commandtype;
             if (type == "flag" || type == "choiceitem") this.refreshCommands(true);
           }

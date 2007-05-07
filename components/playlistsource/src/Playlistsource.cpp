@@ -1743,23 +1743,70 @@ sbPlaylistsource::RegisterPlaylistCommands(const nsAString     &aContextGUID,
 
   key += aTableName;
 
-  g_CommandMap[type] = aCommandObj;
-  g_CommandMap[key] = aCommandObj;
+  g_CommandMap[type].push_back(aCommandObj);
+  g_CommandMap[key].push_back(aCommandObj);
 
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlaylistsource::UnregisterPlaylistCommands(const nsAString     &aContextGUID,
+                                             const nsAString     &aTableName,
+                                             const nsAString     &aPlaylistType,
+                                             sbIPlaylistCommands *aCommandObj)
+{
+  LOG(("sbPlaylistsource::UnregisterPlaylistCommands"));
+  NS_ENSURE_ARG_POINTER(aCommandObj);
+
+  METHOD_SHORTCIRCUIT;
+
+  nsString key(aContextGUID);
+  nsString type(aPlaylistType);
+
+  key += aTableName;
+  PRBool found = PR_FALSE;
+
+  commandmap_t::iterator c = g_CommandMap.find(type);
+  if (c != g_CommandMap.end()) {
+    commandlist_t *typelist = &((*c).second);
+    if (typelist) {
+      for (commandlist_t::iterator ci = typelist->begin(); ci != typelist->end(); ci++) {
+        if (*ci == aCommandObj) {
+          typelist->erase(ci);
+          found = PR_TRUE;
+          break;
+        }
+      }
+    }
+  }
+
+  c = g_CommandMap.find(key);
+  if (c != g_CommandMap.end()) {
+    commandlist_t *keylist = &((*c).second);
+    if (keylist) {
+      for (commandlist_t::iterator ci = keylist->begin(); ci != keylist->end(); ci++) {
+        if (*ci == aCommandObj) {
+          keylist->erase(ci);
+          found = PR_TRUE;
+          break;
+        }
+      }
+    }
+  }
+
+  return found ? NS_OK : NS_ERROR_FAILURE;
 }
 
 NS_IMETHODIMP
 sbPlaylistsource::GetPlaylistCommands(const nsAString      &aContextGUID,
                                       const nsAString      &aTableName,
                                       const nsAString      &aPlaylistType,
-                                      sbIPlaylistCommands **_retval)
+                                      nsISimpleEnumerator  **_retval)
 {
   LOG(("sbPlaylistsource::GetPlaylistCommands"));
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
-
 
   nsString key(aContextGUID);
   nsString type(aPlaylistType);
@@ -1769,14 +1816,30 @@ sbPlaylistsource::GetPlaylistCommands(const nsAString      &aContextGUID,
   // "type" takes precedence over specific table names
   commandmap_t::iterator c = g_CommandMap.find(type);
   if (c != g_CommandMap.end()) {
-    (*c).second->Duplicate(_retval);
-    return NS_OK;
+    commandlist_t *typelist = &((*c).second);
+    if (typelist && typelist->size() > 0) {
+      nsCOMArray<sbIPlaylistCommands> array;
+      for (int i=0;i<typelist->size();i++) {
+        sbIPlaylistCommands *cmds;
+        (*typelist)[i]->Duplicate(&cmds);
+        array.AppendObject(cmds);
+      }
+      return NS_NewArrayEnumerator(_retval, array);
+    }
   }
 
   c = g_CommandMap.find(key);
   if (c != g_CommandMap.end()) {
-    (*c).second->Duplicate(_retval);
-    return NS_OK;
+    commandlist_t *keylist = &((*c).second);
+    if (keylist && keylist->size() > 0) {
+      nsCOMArray<sbIPlaylistCommands> array;
+      for (int i=0;i<keylist->size();i++) {
+        sbIPlaylistCommands *cmds;
+        (*keylist)[i]->Duplicate(&cmds);
+        array.AppendObject(cmds);
+      }
+      return NS_NewArrayEnumerator(_retval, array);
+    }
   }
 
   *_retval = nsnull;

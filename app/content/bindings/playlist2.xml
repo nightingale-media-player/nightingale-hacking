@@ -937,8 +937,7 @@
         <body>
 <![CDATA[
   // If there is no actual commands, do not allow the context menu to pop.
-  if (!this._commandmenuitems.commands ||
-      this._commandmenuitems.commands.getNumCommands() == 0) {
+  if (!this._commandmenuitems.hasCommands()) {
     return;
   }
 
