@@ -71,6 +71,7 @@ public:
 
   sbRemotePlayer();
   static sbRemotePlayer* GetInstance();
+  static void ReleaseInstance();
 
   static NS_METHOD Register(nsIComponentManager* aCompMgr,
                             nsIFile* aPath,
@@ -84,6 +85,7 @@ public:
                               const nsModuleComponentInfo *aInfo);
 
 protected:
+  nsresult FireRemoteAPIAccessedEvent();
   nsresult Init();
   virtual ~sbRemotePlayer();
 
@@ -97,10 +99,7 @@ protected:
   nsCOMPtr<sbIDataRemote> mCurrentTrack;
 
   PRBool mInitialized;
-
-  nsTArray<nsString> mPublicMethods;
-  nsTArray<nsString> mPublicRProperties;  // Readable Properties
-  nsTArray<nsString> mPublicWProperties;  // Writeable Properties
 };
 
 #endif // __SB_REMOTE_PLAYER_H__
+

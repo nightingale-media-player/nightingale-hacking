@@ -31,10 +31,12 @@
  */
 
 #include "nsISupports.idl"
-#include "nsIArray.idl"
 
-interface nsIObserver;
+interface sbILibrary;
 interface sbIMediaList;
+interface nsIObserver;
+interface nsIDOMElement;
+interface nsISimpleEnumerator;
 
 /**
  * \interface sbIRemotePlayer
@@ -57,13 +59,19 @@ interface sbIRemotePlayer : nsISupports
    * \brief An array of sbIMediaLists
    * NOTE: NOT IMPLEMENTED
    */
-  readonly attribute nsIArray playlists;
+  readonly attribute nsISimpleEnumerator playlists;
 
   /**
    * \brief The current web playlist
    * NOTE: NOT IMPLEMENTED
    */
   readonly attribute sbIMediaList webPlaylist;
+
+  /**
+   * \brief The current web playlist's DOM element
+   * NOTE: NOT IMPLEMENTED
+   */
+  readonly attribute nsIDOMElement webPlaylistElement;
 
   /**
    * \brief The name of the artist for the currently playing track
@@ -121,5 +129,19 @@ interface sbIRemotePlayer : nsISupports
    * \brief Skip to the previous track and begin playing
    */
   void previous();
+
+  //
+  // Library creation and retrieval
+  //
+
+  /**
+   * \brief Return a handle to the specific library for the domain
+   * \arg The path (section of url past .tld/) to clearly identify
+   *      the library to retrieve. Must be a at least a section of
+   *      the prefix for the current site's path
+   */
+  sbILibrary getSiteLibrary(in AString aPath);
+
+
 };
 

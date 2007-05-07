@@ -298,14 +298,16 @@ sbSecurityMixin::GetCodebase(nsIURI **aCodebase) {
   }
   LOG(("SecurityMixin::GetCodebase -- Have Subject Principal."));
 
+#ifdef PR_LOGGING
   nsCOMPtr<nsIPrincipal> systemPrincipal;
   secman->GetSystemPrincipal(getter_AddRefs(systemPrincipal));
 
-  // XXXredfive - check to see if we can just say yes if we get the System Principal
-  if (principal == systemPrincipal)
+  if (principal == systemPrincipal) {
     LOG(("sbSecurityMixin::GetCodebase -- System Principal."));
-  else
+  } else {
     LOG(("sbSecurityMixin::GetCodebase -- Not System Principal."));
+  }
+#endif
 
   nsCOMPtr<nsIURI> codebase;
   principal->GetDomain(getter_AddRefs(codebase));
@@ -313,18 +315,10 @@ sbSecurityMixin::GetCodebase(nsIURI **aCodebase) {
   if (!codebase) {
     LOG(("sbSecurityMixin::GetCodebase -- no codebase from domain, getting it from URI."));
     principal->GetURI(getter_AddRefs(codebase));
-  } else {
-    LOG(("sbSecurityMixin::GetCodebase -- got codebase from domain."));
   }
 
-  if (!codebase) {
-    LOG(("sbSecurityMixin::GetCodebase -- DOH!!! no codebase"));
-    *aCodebase = nsnull;
-    return NS_OK;
-  }
   *aCodebase = codebase;
-  NS_ADDREF(*aCodebase);
-  LOG(("sbSecurityMixin::GetCodebase -- Have Codebase."));
+  NS_IF_ADDREF(*aCodebase);
   return NS_OK;
 } 
 
@@ -405,9 +399,11 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAP
   NS_ENSURE_TRUE(aRAPIPref, PR_FALSE);
 
 #ifdef PR_LOGGING
-  nsCAutoString spec;
-  aURI->GetSpec(spec);
-  LOG(( "sbSecurityMixin::GetPermission( %s, %s, %s)", spec.get(), aType, aRAPIPref ));
+  if (aURI) {
+    nsCAutoString spec;
+    aURI->GetSpec(spec);
+    LOG(( "sbSecurityMixin::GetPermission( %s, %s, %s)", spec.get(), aType, aRAPIPref ));
+  }
 #endif
 
   nsresult rv;

@@ -44,16 +44,24 @@ CPP_SRCS = sbSecurityMixin.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/components/playlistplayback/public \
+               $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/dataremote/public \
                $(topsrcdir)/components/moz/strings/src \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/appshell \
                $(MOZSDK_INCLUDE_DIR)/caps \
+               $(MOZSDK_INCLUDE_DIR)/content \
+               $(MOZSDK_INCLUDE_DIR)/docshell \
                $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/gfx \
                $(MOZSDK_INCLUDE_DIR)/js \
+               $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/widget \
+               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/xpconnect \
                $(NULL)

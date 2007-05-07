@@ -33,4 +33,6 @@ SUBDIRS = public \
           src \
           $(NULL)
 
+SUBDIRDEPS = src : public
+
 include $(topsrcdir)/build/rules.mk

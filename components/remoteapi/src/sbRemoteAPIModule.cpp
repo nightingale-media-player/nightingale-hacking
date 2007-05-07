@@ -60,6 +60,15 @@ static const nsModuleComponentInfo components[] =
   }
 };
 
+static void PR_CALLBACK
+sbRemoteAPIModuleDtor(nsIModule* self)
+{
+  sbRemotePlayer::ReleaseInstance();
+}
+
 // create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SONGBIRD_REMOTEAPI_MODULENAME, components)
+NS_IMPL_NSGETMODULE_WITH_DTOR(SONGBIRD_REMOTEAPI_MODULENAME,
+                              components,
+                              sbRemoteAPIModuleDtor)
+
 

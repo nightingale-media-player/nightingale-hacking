@@ -25,15 +25,27 @@
  */
 
 #include "sbRemotePlayer.h"
+#include <sbILibrary.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsICategoryManager.h>
 #include <nsIClassInfoImpl.h>
+#include <nsIDocument.h>
+#include <nsIDOMDocument.h>
+#include <nsIDOMDocumentEvent.h>
+#include <nsIDOMEvent.h>
+#include <nsIDOMEventTarget.h>
+#include <nsIDOMWindow.h>
+#include <nsIDOMWindowInternal.h>
+#include <nsIInterfaceRequestorUtils.h>
 #include <nsIPermissionManager.h>
+#include <nsIPresShell.h>
+#include <nsIPrivateDOMEvent.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIScriptNameSpaceManager.h>
 #include <nsIScriptSecurityManager.h>
 #include <nsIURI.h>
+#include <nsIWindowMediator.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
@@ -112,16 +124,33 @@ sbRemotePlayer::GetInstance()
   if (!gLibraryLog) {
     gLibraryLog = PR_NewLogModule("sbRemotePlayer");
   }
-  LOG(("sbRemotePlayer::GetInstance()\n"));
+  LOG(("\n\n\n ***********sbRemotePlayer::GetInstance()**********************\n\n\n"));
 #endif
+
+  // if we haven't created it already make one
   if (!sRemotePlayer) {
     sRemotePlayer = new sbRemotePlayer();
     if (!sRemotePlayer)
       return nsnull;
     NS_ADDREF(sRemotePlayer);  // addref the static global
+
+    // initialize the global
+    if (NS_FAILED(sRemotePlayer->Init())) {
+      // if we fail, release and return null
+      NS_RELEASE(sRemotePlayer);
+      return nsnull;
+    }
   }
-  NS_ADDREF(sRemotePlayer);    // addref the return result
+
+  // addref it before handing it back
+  NS_ADDREF(sRemotePlayer);
   return sRemotePlayer;
+}
+
+void
+sbRemotePlayer::ReleaseInstance()
+{
+  NS_IF_RELEASE(sRemotePlayer);
 }
 
 sbRemotePlayer::sbRemotePlayer() : mInitialized(0)
@@ -216,15 +245,19 @@ sbRemotePlayer::GetName(nsAString &aName)
   return NS_OK;
 }
 
-// XXXredfive
+NS_IMETHODIMP
+sbRemotePlayer::GetSiteLibrary(const nsAString &aPath, sbILibrary **aLibrary) {
+  LOG(("sbRemotePlayer::GetSiteLibrary()"));
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 NS_IMETHODIMP 
-sbRemotePlayer::GetPlaylists(nsIArray **aPlaylists)
+sbRemotePlayer::GetPlaylists(nsISimpleEnumerator **aPlaylists)
 {
   LOG(("sbRemotePlayer::GetPlaylists()"));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-// XXXredfive
 NS_IMETHODIMP 
 sbRemotePlayer::GetWebPlaylist(sbIMediaList **aWebplaylist)
 {
@@ -233,9 +266,17 @@ sbRemotePlayer::GetWebPlaylist(sbIMediaList **aWebplaylist)
 }
 
 NS_IMETHODIMP 
+sbRemotePlayer::GetWebPlaylistElement(nsIDOMElement **aWebplaylistElement)
+{
+  LOG(("sbRemotePlayer::GetWebPlaylistElement()"));
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP 
 sbRemotePlayer::GetCurrentArtist(nsAString &aCurrentArtist)
 {
   LOG(("sbRemotePlayer::GetCurrentArtist()"));
+  NS_ENSURE_STATE(mCurrentArtist);
   mCurrentArtist->GetStringValue(aCurrentArtist);
   return NS_OK;
 }
@@ -244,6 +285,7 @@ NS_IMETHODIMP
 sbRemotePlayer::GetCurrentAlbum(nsAString & aCurrentAlbum)
 {
   LOG(("sbRemotePlayer::GetCurrentAlbum()"));
+  NS_ENSURE_STATE(mCurrentAlbum);
   mCurrentAlbum->GetStringValue(aCurrentAlbum);
   return NS_OK;
 }
@@ -252,6 +294,7 @@ NS_IMETHODIMP
 sbRemotePlayer::GetCurrentTrack(nsAString & aCurrentTrack)
 {
   LOG(("sbRemotePlayer::GetCurrentTrack()"));
+  NS_ENSURE_STATE(mCurrentTrack);
   mCurrentTrack->GetStringValue(aCurrentTrack);
   return NS_OK;
 }
@@ -317,6 +360,7 @@ NS_IMETHODIMP
 sbRemotePlayer::Play()
 {
   LOG(("sbRemotePlayer::Play()"));
+  NS_ENSURE_STATE(mGPPS);
   PRBool retval;
   mGPPS->Play(&retval);
   return retval ? NS_OK : NS_ERROR_FAILURE;
@@ -326,6 +370,7 @@ NS_IMETHODIMP
 sbRemotePlayer::PlayURL(const nsAString &aURL)
 {
   LOG(("sbRemotePlayer::PlayURL()"));
+  NS_ENSURE_STATE(mGPPS);
   PRBool retval;
   mGPPS->PlayURL(aURL, &retval);
   return retval ? NS_OK : NS_ERROR_FAILURE;
@@ -335,6 +380,7 @@ NS_IMETHODIMP
 sbRemotePlayer::Stop()
 {
   LOG(("sbRemotePlayer::Stop()"));
+  NS_ENSURE_STATE(mGPPS);
   PRBool retval;
   mGPPS->Stop(&retval);
   return retval ? NS_OK : NS_ERROR_FAILURE;
@@ -344,6 +390,7 @@ NS_IMETHODIMP
 sbRemotePlayer::Pause()
 {
   LOG(("sbRemotePlayer::Pause()"));
+  NS_ENSURE_STATE(mGPPS);
   PRBool retval;
   mGPPS->Pause(&retval);
   return retval ? NS_OK : NS_ERROR_FAILURE;
@@ -353,6 +400,7 @@ NS_IMETHODIMP
 sbRemotePlayer::Next()
 {
   LOG(("sbRemotePlayer::Next()"));
+  NS_ENSURE_STATE(mGPPS);
   PRInt32 retval;
   mGPPS->Next(&retval);
   return (retval > -1) ? NS_OK : NS_ERROR_FAILURE;
@@ -362,6 +410,7 @@ NS_IMETHODIMP
 sbRemotePlayer::Previous()
 {
   LOG(("sbRemotePlayer::Previous()"));
+  NS_ENSURE_STATE(mGPPS);
   PRInt32 retval;
   mGPPS->Previous(&retval);
   return (retval > -1) ? NS_OK : NS_ERROR_FAILURE;
@@ -383,6 +432,8 @@ sbRemotePlayer::CanCreateWrapper(const nsIID *aIID, char **_retval)
   if (!mInitialized)
     Init();
 
+  FireRemoteAPIAccessedEvent();
+
   return mSecurityMixin->CanCreateWrapper(aIID, _retval);
 } 
 
@@ -397,6 +448,8 @@ sbRemotePlayer::CanCallMethod(const nsIID *aIID, const PRUnichar *aMethodName, c
 
   if (!mInitialized)
     Init();
+
+  FireRemoteAPIAccessedEvent();
 
   return mSecurityMixin->CanCallMethod(aIID, aMethodName, _retval);
 }
@@ -413,6 +466,8 @@ sbRemotePlayer::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyName
   if (!mInitialized)
     Init();
 
+  FireRemoteAPIAccessedEvent();
+
   return mSecurityMixin->CanGetProperty(aIID, aPropertyName, _retval);
 }
 
@@ -427,6 +482,8 @@ sbRemotePlayer::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyName
 
   if (!mInitialized)
     Init();
+
+  FireRemoteAPIAccessedEvent();
 
   return mSecurityMixin->CanSetProperty(aIID, aPropertyName, _retval);
 }
@@ -507,6 +564,48 @@ sbRemotePlayer::GetClassIDNoAlloc(nsCID *aClassIDNoAlloc)
   return NS_OK;
 }
 
+nsresult
+sbRemotePlayer::FireRemoteAPIAccessedEvent()
+{
+  LOG(("sbRemotePlayer::FireRemoteAPIAccessedEvent()"));
+
+  nsCOMPtr<nsIWindowMediator> wmediator (do_GetService("@mozilla.org/appshell/window-mediator;1"));
+  NS_ENSURE_STATE(wmediator);
+
+  // get the most recent main window -- XXX DANGER, what happens if we're not in the main window!!!
+  nsCOMPtr<nsIDOMWindowInternal> aWindow;
+  wmediator->GetMostRecentWindow(NS_LITERAL_STRING("Songbird:Main").get(), getter_AddRefs(aWindow));
+  NS_ENSURE_STATE(aWindow);
+  
+  //get the document from the window.
+  nsCOMPtr<nsIDOMDocument> aDoc;
+  aWindow->GetDocument(getter_AddRefs(aDoc));
+  NS_ENSURE_STATE(aDoc);
+
+  //change interfaces to create the event
+  nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(aDoc);
+  NS_ENSURE_STATE(docEvent);
+
+  //create the event
+  nsCOMPtr<nsIDOMEvent> event;
+  docEvent->CreateEvent(NS_LITERAL_STRING("Events"), getter_AddRefs(event));
+  NS_ENSURE_STATE(event);
+  event->InitEvent(NS_LITERAL_STRING("RemoteAPI"), PR_TRUE, PR_TRUE);
+
+  //use the window for a target.
+  nsCOMPtr<nsIDOMEventTarget> targetWindow(do_QueryInterface(aWindow));
+  NS_ENSURE_STATE(targetWindow);
+
+  //make the event trusted
+  nsCOMPtr<nsIPrivateDOMEvent> privEvt(do_QueryInterface(event));
+  privEvt->SetTrusted(PR_TRUE);
+
+  // Fire an event to the chrome system. This even will NOT get to content.
+  PRBool defaultActionEnabledWin;
+  targetWindow->DispatchEvent(event, &defaultActionEnabledWin);
+  return NS_OK;
+}
+
 // ---------------------------------------------------------------------------
 //
 //                             Component stuff
@@ -534,13 +633,6 @@ sbRemotePlayer::Register(nsIComponentManager* aCompMgr,
                                  PR_TRUE,         /* replace existing */
                                  nsnull);
 
-  // start at the very beginning, it's a very good place to start
-  rv = catMan->AddCategoryEntry( "app-startup",
-                                 "songbird",      /* use this name to access */
-                                 "service," SONGBIRD_REMOTEPLAYER_CONTRACTID,
-                                 PR_TRUE,         /* persist */
-                                 PR_TRUE,         /* replace existing */
-                                 nsnull);
   return rv;
 }
 

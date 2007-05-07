@@ -46,7 +46,25 @@
       </li>
     </ol>
     <br />
+    <div id="accessCountDiv">
+    </div>
     <script>
+      var accessCount = 0;
+      var listener = {
+        handleEvent: function(aEvent) {
+          var myDiv = document.getElementById("accessCountDiv");
+          myDiv.appendChild(document.createTextNode("access:" + (++accessCount) ));
+          myDiv.appendChild(document.createElement("br"));
+        }
+      };
+      var onRemoteAPI =  function(aEvent) {
+          var myDiv = document.getElementById("accessCountDiv");
+          myDiv.appendChild(document.createTextNode("access:" + (++accessCount) ));
+          myDiv.appendChild(document.createElement("br"));
+      };
+
+      window.addEventListener("RemoteAPI", onRemoteAPI, true);
+
       // Property Access
       document.writeln("<br />Using the media player:<br />");
       document.writeln(songbird.name);
@@ -79,7 +97,7 @@
       document.writeln("<br />");
 
      
-      document.writeln("Try to get the webplaylist - should fail");
+      document.writeln("Try to get the webplaylist");
       var webpl = songbird.webPlaylist
 
     </script>

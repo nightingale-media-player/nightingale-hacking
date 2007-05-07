@@ -69,11 +69,13 @@
           notify: function(timer) {
             this.tabbrowser._loaded();
             this.timer = null;
-          },
+          }
         };
         this.mTabBox.addEventListener("DOMAttrModified",
             this.tabChangeEventListener, false);
-        
+
+        window.addEventListener("RemoteAPI", this.onRemoteAPI, true);
+
         this.webNavigation.sessionHistory =
             Components.classes["@mozilla.org/browser/shistory;1"]
             .createInstance(Components.interfaces.nsISHistory);
@@ -90,6 +92,7 @@
           this.mTabBox.removeEventListener("DOMAttrModified",
               this.tabChangeEventListener, false);
         }
+        window.removeEventListener("RemoteAPI", this.onRemoteAPI, true);
       ]]></destructor>
       
 
@@ -639,6 +642,27 @@
             alert("sb-tabbrowser::handleMediaURL(" + aURL + "); " + err );
           }
           return retval;
+        ]]></body>
+      </method>
+
+      <method name="onRemoteAPI">
+        <parameter name="event" />
+        <body><![CDATA[
+          // Add code here to check the prefs system to see if we should notify
+          // the user that the RemoteAPI was accessed. Do it via the
+          // notificationbox
+          // todo: get strings from stringBundle
+          //       talk to koshi and see if there is any particular styling/messaging
+          //       see browser/base/content/browser.js#738
+          //       hook up an action to do when the user clicks through, probably launch prepanel
+          var notificationName = "RemoteAPI";
+          var messageString = "RemoteAPI was called";
+          var notificationBox = gBrowser.getNotificationBox();
+          if (!notificationBox.getNotificationWithValue(notificationName)) {
+            const priority = notificationBox.PRIORITY_WARNING_MEDIUM;
+            notificationBox.appendNotification(messageString, notificationName,
+                                               null, priority, null);
+          }
         ]]></body>
       </method>
       
