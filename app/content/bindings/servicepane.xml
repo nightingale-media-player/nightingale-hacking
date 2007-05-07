@@ -179,10 +179,43 @@
                     alert(e);
                 }
                 
+                var sp = this;
+
+                // this is evil. really. i feel guilty.
+                // let's replace the tree's stopEditing function with our own
+                // that actually saves off the data
+                this.mTree._stopEditing = this.mTree.stopEditing;
+                this.mTree.stopEditing = function evilStopEditing(accept) {
+                    /* debugging output - really useful for debugging:
+                    dump('accept: '+accept+'\n');
+                    dump('this._editingColumn: '+this._editingColumn+'\n');
+                    dump('this._editingRow: '+this._editingRow+'\n');
+                    dump('this.inputField.value: '+this.inputField.value+'\n');
+                    dump('this.inputField.hidden: '+this.inputField.hidden+'\n');
+                    dump('this.hasAttribute("editing"): '+this.hasAttribute("editing")+'\n');
+                    */
+                    
+                    var node = null;
+                    var newName = null;
+                    
+                    if (accept && this._editingRow != -1 &&
+                            this._editingColumn && !this.inputField.hidden &&
+                            this.hasAttribute('editing')) {
+                        node = sp.getNodeForRow(this._editingRow);
+                        newName = this.inputField.value;
+                    }
+                    
+                    this._stopEditing(accept);
+                    
+                    if (node) {
+                        node.name = newName;
+                        this.builder.rebuild();
+                    }
+                }
+                
                 this.mCurrentURL = null;
                 
                 /* we want to do some initialization after the window has loaded */
-                var sp = this;
                 function windowOnLoad() {
                     sp.browser.addProgressListener(sp,
                             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
@@ -205,6 +238,9 @@
                 this.browser.removeProgressListener(this);
                 // remove the builder listener
                 this.mTree.builder.removeListener(this);
+                
+                this.mTree.stopEditing = this.mTree._stopEditing;
+                this.mTree._stopEditing = null;
             ]]></destructor>
 
             <method name="getURLName">

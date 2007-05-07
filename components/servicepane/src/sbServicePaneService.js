@@ -406,11 +406,13 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
 
     var uri = IOSVC.newFileURI(path);
     // FIXME: does this handle non-latin paths on non-linux?
-    this._dataSource = new dsWrapper(RDFSVC.GetDataSourceBlocking(uri.spec), this);
+    
+    this._dataSource = RDFSVC.GetDataSourceBlocking(uri.spec);
+    this._dataSourceWrapped = new dsWrapper(this._dataSource, this);
 
     // for sbIServicePaneService.dataSource
     this.__defineGetter__('dataSource', 
-        function () { return this._dataSource });
+        function () { return this._dataSourceWrapped });
 
 
     // for sbIServicePaneService.root
