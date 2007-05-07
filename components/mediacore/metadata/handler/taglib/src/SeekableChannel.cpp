@@ -521,7 +521,7 @@ NS_IMETHODIMP sbSeekableChannel::OnStartRequest(
     if (!mContentLength)
     {
         result = mpChannel->GetContentLength(&contentLength);
-        if (NS_SUCCEEDED(result))
+        if (NS_SUCCEEDED(result) && (contentLength > 0))
             mContentLength = (PRInt64) contentLength;
     }
 
@@ -687,6 +687,8 @@ nsresult sbSeekableChannel::ReadSegment(
         {
             readOffset = mBasePos;
             mBasePos += bytesRead;
+            if (mBasePos > mContentLength)
+                mContentLength = mBasePos;
         }
     }
 

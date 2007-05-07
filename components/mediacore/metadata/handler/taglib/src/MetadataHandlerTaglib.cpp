@@ -130,13 +130,14 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
     ToLowerCase(_url);
 
     /* Check for supported files. */
-    if (   (_url.Find(".mp3", PR_TRUE) != -1)
+    if (   (_url.Find(".flac", PR_TRUE) != -1)
+        || (_url.Find(".mov", PR_TRUE) != -1)
+        || (_url.Find(".mpc", PR_TRUE) != -1)
+        || (_url.Find(".mp3", PR_TRUE) != -1)
         || (_url.Find(".m4a", PR_TRUE) != -1)
         || (_url.Find(".m4p", PR_TRUE) != -1)
         || (_url.Find(".m4v", PR_TRUE) != -1)
-        || (_url.Find(".mov", PR_TRUE) != -1)
-        || (_url.Find(".flac", PR_TRUE) != -1)
-        || (_url.Find(".mpc", PR_TRUE) != -1))
+        || (_url.Find(".ogg", PR_TRUE) != -1))
     {
         vote = 1;
     }
@@ -678,6 +679,79 @@ void sbMetadataHandlerTaglib::AddID3v2Tag(
 
 /*******************************************************************************
  *
+ * Private taglib metadata handler Xiph services.
+ *
+ ******************************************************************************/
+
+/*
+ * XiphMap                      Map of Xiph tag names to Songbird metadata
+ *                              names.
+ */
+
+static char *XiphMap[][2] =
+{
+    { "TRACKNUMBER", "track_no" },
+    { "DATE", "year" }
+};
+
+
+/*
+ * ReadXiphTags
+ *
+ *   --> pTag                   Xiph tag object.
+ *
+ *   This function reads Xiph tags from the Xiph tag object specified by pTag.
+ * The read tags are added to the set of metadata values.
+ */
+
+void sbMetadataHandlerTaglib::ReadXiphTags(
+    TagLib::Ogg::XiphComment    *pTag)
+{
+    TagLib::Ogg::FieldListMap   fieldListMap;
+    int                         numMetadataEntries;
+    int                         i;
+
+    /* Do nothing if no tags are present. */
+    if (!pTag)
+        return;
+
+    fieldListMap = pTag->fieldListMap();
+
+    /* Add the metadata entries. */
+    numMetadataEntries = sizeof(XiphMap) / sizeof(XiphMap[0]);
+    for (i = 0; i < numMetadataEntries; i++)
+        AddXiphTag(fieldListMap, XiphMap[i][0], XiphMap[i][1]);
+}
+
+
+/*
+ * AddXiphTag
+ *
+ *   --> fieldListMap           Field list map.
+ *   --> fieldName              Xiph field name.
+ *   --> metadataName           Metadata name.
+ *
+ *   This function adds the Xiph tag with the Xiph field name specified by
+ * fieldName from the field list map specified by fieldListMap to the set of
+ * metadata values with the metadata name specified by metadataName.
+ */
+
+void sbMetadataHandlerTaglib::AddXiphTag(
+    TagLib::Ogg::FieldListMap   &fieldListMap,
+    const char                  *fieldName,
+    const char                  *metadataName)
+{
+    TagLib::StringList          fieldList;
+
+    /* Add the field metadata. */
+    fieldList = fieldListMap[fieldName];
+    if (!fieldList.isEmpty())
+        AddMetadataValue(metadataName, fieldList.front());
+}
+
+
+/*******************************************************************************
+ *
  * Private taglib metadata handler mp4 services.
  *
  ******************************************************************************/
@@ -1042,6 +1116,10 @@ PRBool sbMetadataHandlerTaglib::ReadOGGFile(
     /* Read the base file metadata. */
     if (isValid)
         isValid = ReadFile(pTagFile);
+
+    /* Read the Xiph metadata. */
+    if (isValid)
+        ReadXiphTags(pTagFile->tag());
 
     /* Clean up. */
     if (pTagFile)

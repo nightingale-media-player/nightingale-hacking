@@ -86,6 +86,7 @@
 #include <mp4itunestag.h>
 #include <tag.h>
 #include <tfile.h>
+#include <xiphcomment.h>
 
 
 /*******************************************************************************
@@ -159,6 +160,7 @@ private:
     /*
      * Private taglib metadata handler ID3v2 services.
      */
+
 private:
     void ReadID3v2Tags(
         TagLib::ID3v2::Tag          *pTag);
@@ -170,8 +172,23 @@ private:
 
 
     /*
+     * Private taglib metadata handler Xiph services.
+     */
+
+private:
+    void ReadXiphTags(
+        TagLib::Ogg::XiphComment    *pTag);
+
+    void AddXiphTag(
+        TagLib::Ogg::FieldListMap   &fieldListMap,
+        const char                  *fieldName,
+        const char                  *metadataName);
+
+
+    /*
      * Private taglib metadata handler MP4 services.
      */
+
 private:
     void ReadMP4Tags(
         TagLib::MP4::Tag            *pTag);

@@ -29,16 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = ogg \
-          taglib \
+SUBDIRS = taglib \
           $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
 SUBDIRS += wma
-endif
-
-ifneq (linux,$(SB_PLATFORM))
-SUBDIRS += m4p
 endif
 
 include $(topsrcdir)/build/rules.mk
