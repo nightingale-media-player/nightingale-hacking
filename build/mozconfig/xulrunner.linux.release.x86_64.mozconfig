@@ -9,8 +9,7 @@ ac_add_options --enable-application=xulrunner
 ac_add_options --enable-optimize --disable-debug
 ac_add_options --disable-tests
 ac_add_options --disable-javaxpcom
-ac_add_options --enable-svg
-ac_add_options --disable-canvas
+ac_add_options --enable-svg --enable-canvas
 ac_add_options --enable-update-packaging
 ac_add_options --disable-installer
 ac_add_options --enable-extensions=default,inspector,venkman
