@@ -23,6 +23,7 @@ symbol_files="intl/unicharutil/util/nsunicharutils.pdb
               xpcom/glue/nsarrayenumerator.pdb
               xpcom/glue/nsarrayutils.pdb
               xpcom/glue/nsautolock.pdb
+              xpcom/glue/nscategorycache.pdb
               xpcom/glue/nscomarray.pdb
               xpcom/glue/nscomponentmanagerutils.pdb
               xpcom/glue/nscomptr.pdb
