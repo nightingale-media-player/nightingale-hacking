@@ -14,7 +14,11 @@ ac_add_options --enable-update-packaging
 ac_add_options --disable-installer
 ac_add_options --enable-extensions=default,inspector,venkman
 
-# For GCC bug with visibility pragmas that causes SELinux to stop us with
-# a text relocation violation.
-#ac_cv_visibility_pragma=no
+# There used to be a GCC bug with visibility pragmas that caused SELinux to
+# stop us with a text relocation violation. To get around that we set the
+# following pragma to no.
+#
+# Now it seems like this isn't an issue, so we'll comment it out for the
+# moment.
 
+#ac_cv_visibility_pragma=no
