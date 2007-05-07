@@ -1845,15 +1845,12 @@ PlaylistPlayback.prototype = {
   
   _playDefault: function () 
   {
-    // Default if there is no ref yet.
-    dump("******** _playDefault\n");
-    var ref = "NC:songbird_library";
-    var index = -1;
-    if ( this._playingRef && this._playingRef.stringValue.length ) {
-      ref = this._playingRef.stringValue;
-    } 
-    // if there is a song to play, play it
-    this.playRef(ref, index);
+    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                   .getService(Components.interfaces.sbILibraryManager);
+    var view = libraryManager.mainLibrary.createView();
+    if (view.length > 0) {
+      this.playView(view, 0);
+    }
   },
   
   _importURLInLibrary: function( aURL )
