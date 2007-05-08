@@ -37,6 +37,7 @@
 #include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 
 //==============================================================================
@@ -133,7 +134,7 @@ NS_IMETHODIMP sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
   mItem = aItem;
 
   nsAutoString storageGuid;
-  nsresult rv = mItem->GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#storageGuid"), 
+  nsresult rv = mItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID), 
                           storageGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 

@@ -38,7 +38,7 @@
 #include <nsNetUtil.h>
 #include <nsXPCOM.h>
 #include <prprf.h>
-
+#include <sbStandardProperties.h>
 
 static void AppendInt(nsAString &str, PRInt64 val)
 {
@@ -63,29 +63,29 @@ enum {
 
 static sbStaticProperty kStaticProperties[] = {
   {
-    "http://songbirdnest.com/data/1.0#created",
-      "created",
-      PR_UINT32_MAX,
+    SB_PROPERTY_CREATED,
+    "created",
+    PR_UINT32_MAX,
   },
   {
-    "http://songbirdnest.com/data/1.0#updated",
-      "updated",
-      PR_UINT32_MAX - 1,
+    SB_PROPERTY_UPDATED,
+    "updated",
+    PR_UINT32_MAX - 1,
   },
   {
-    "http://songbirdnest.com/data/1.0#contentUrl",
-      "content_url",
-      PR_UINT32_MAX - 2,
+    SB_PROPERTY_CONTENTURL,
+    "content_url",
+    PR_UINT32_MAX - 2,
   },
   {
-    "http://songbirdnest.com/data/1.0#contentMimeType",
-      "content_mime_type",
-      PR_UINT32_MAX - 3,
+    SB_PROPERTY_CONTENTMIMETYPE,
+    "content_mime_type",
+    PR_UINT32_MAX - 3,
   },
   {
-    "http://songbirdnest.com/data/1.0#contentLength",
-      "content_length",
-      PR_UINT32_MAX - 4,
+    SB_PROPERTY_CONTENTLENGTH,
+    "content_length",
+    PR_UINT32_MAX - 4,
   }
 };
 
@@ -560,7 +560,7 @@ sbLocalDatabaseMediaItem::GetMediaCreated(PRInt64* aMediaCreated)
   NS_ENSURE_ARG_POINTER(aMediaCreated);
 
   nsAutoString str;
-  nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created"), str);
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CREATED), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aMediaCreated);
@@ -577,7 +577,7 @@ sbLocalDatabaseMediaItem::SetMediaCreated(PRInt64 aMediaCreated)
   nsAutoString str;
   AppendInt(str, aMediaCreated);
 
-  nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created"), str);
+  nsresult rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CREATED), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -592,7 +592,7 @@ sbLocalDatabaseMediaItem::GetMediaUpdated(PRInt64* aMediaUpdated)
   NS_ENSURE_ARG_POINTER(aMediaUpdated);
 
   nsAutoString str;
-  nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#updated"), str);
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ENSURE_TRUE(
@@ -612,7 +612,7 @@ sbLocalDatabaseMediaItem::SetMediaUpdated(PRInt64 aMediaUpdated)
   nsAutoString str;
   AppendInt(str, aMediaUpdated);
 
-  nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#updated"), str);
+  nsresult rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -627,7 +627,7 @@ sbLocalDatabaseMediaItem::GetContentSrc(nsIURI** aContentSrc)
   NS_ENSURE_ARG_POINTER(aContentSrc);
 
   nsAutoString str;
-  nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentUrl"), str);
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = NS_NewURI(aContentSrc, str);
@@ -648,7 +648,7 @@ sbLocalDatabaseMediaItem::SetContentSrc(nsIURI* aContentSrc)
   nsresult rv = aContentSrc->GetSpec(cstr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentUrl"),
+  rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
                    NS_ConvertUTF8toUTF16(cstr));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -664,7 +664,7 @@ sbLocalDatabaseMediaItem::GetContentLength(PRInt64* aContentLength)
   NS_ENSURE_ARG_POINTER(aContentLength);
 
   nsAutoString str;
-  nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentLength"), str);
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH), str);
   NS_ENSURE_SUCCESS(rv, rv);
   
   NS_ENSURE_TRUE(
@@ -683,7 +683,7 @@ sbLocalDatabaseMediaItem::SetContentLength(PRInt64 aContentLength)
   nsAutoString str;
   AppendInt(str, aContentLength);
 
-  nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentLength"), str);
+  nsresult rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -695,7 +695,7 @@ sbLocalDatabaseMediaItem::SetContentLength(PRInt64 aContentLength)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetContentType(nsAString& aContentType)
 {
-  nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentMimeType"),
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE),
                             aContentType);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -708,7 +708,7 @@ sbLocalDatabaseMediaItem::GetContentType(nsAString& aContentType)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetContentType(const nsAString& aContentType)
 {
-  nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentMimeType"),
+  nsresult rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE),
                             aContentType);
   NS_ENSURE_SUCCESS(rv, rv);
   

@@ -68,6 +68,7 @@ class sbGUIDArrayEnumerator;
 class sbIDatabaseQuery;
 class sbILocalDatabaseGUIDArray;
 class sbILocalDatabaseLibrary;
+class sbIMediaItem;
 class sbIMediaListEnumerationListener;
 
 class sbLocalDatabaseMediaListBase : public sbLocalDatabaseMediaItem,
@@ -97,6 +98,9 @@ protected:
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty) = 0;
 
   nsresult MakeStandardQuery(sbIDatabaseQuery** _retval);
+
+  nsresult CopyStandardProperties(sbIMediaItem* aSourceItem,
+                                  sbIMediaItem* aTargetItem);
 
 private:
 
@@ -130,6 +134,9 @@ protected:
   PRMonitor* mFullArrayMonitor;
 
   PRBool mLockedEnumerationActive;
+
+private:
+  static PRInt32 sInstanceCount;
 };
 
 /**

@@ -27,12 +27,14 @@
 #include "sbLocalDatabaseQuery.h"
 #include "sbLocalDatabaseSchemaInfo.h"
 
-#include <nsComponentManagerUtils.h>
 
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbISQLBuilder.h>
+
+#include <nsComponentManagerUtils.h>
+#include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 
 #define COUNT_COLUMN          NS_LITERAL_STRING("count(1)")
@@ -58,11 +60,8 @@
 #define SORT_ALIAS       NS_LITERAL_STRING("_sort")
 #define DISTINCT_ALIAS   NS_LITERAL_STRING("_d")
 
-#define ORDINAL_PROPERTY \
-  NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
-
-#define ISLIST_PROPERTY \
-  NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#isList")
+#define ORDINAL_PROPERTY NS_LITERAL_STRING(SB_PROPERTY_ORDINAL)
+#define ISLIST_PROPERTY  NS_LITERAL_STRING(SB_PROPERTY_ISLIST)
 
 sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
                                            const nsAString& aBaseConstraintColumn,

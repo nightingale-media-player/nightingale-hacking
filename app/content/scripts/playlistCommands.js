@@ -425,8 +425,8 @@ var SBWebPlaylistCommands =
           var libraryManager =
             Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                       .getService(Components.interfaces.sbILibraryManager);
-          var mediaList =
-            libraryManager.mainLibrary.getMediaItem(dialogData.mediaListGUID);
+          var mediaList = libraryManager.mainLibrary
+                                        .getMediaItem(dialogData.mediaListGUID);
 
           mediaList.addListener(mediaListListener);
           mediaList.addSome(unwrapper);

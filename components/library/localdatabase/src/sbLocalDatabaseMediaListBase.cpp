@@ -53,13 +53,41 @@
 #include <nsServiceManagerUtils.h>
 #include <nsHashKeys.h>
 #include <nsMemory.h>
+#include <pratom.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbPropertiesCID.h>
+#include <sbStandardProperties.h>
 #include "sbLocalDatabaseCascadeFilterSet.h"
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabasePropertyCache.h"
+
+static const char* sStandardPropertiesToCopy[] = {
+  SB_PROPERTY_TRACKNAME,
+  SB_PROPERTY_ALBUMNAME,
+  SB_PROPERTY_ARTISTNAME,
+  SB_PROPERTY_DURATION,
+  SB_PROPERTY_GENRE,
+  SB_PROPERTY_TRACK,
+  SB_PROPERTY_YEAR,
+  SB_PROPERTY_DISCNUMBER,
+  SB_PROPERTY_TOTALDISCS,
+  SB_PROPERTY_TOTALTRACKS,
+  SB_PROPERTY_ALBUMARTURL,
+  SB_PROPERTY_RATING,
+  SB_PROPERTY_ORIGINURL
+};
+
+// XXXben Don't try to use this array until after at least one call to
+//        CopyStandardProperties. That function initializes this array. I guess
+//        we could separate that out into another function but no one else
+//        should ever need it.
+static const nsString*
+sPropertyKeys[NS_ARRAY_LENGTH(sStandardPropertiesToCopy)] = {0};
+
+// Keep track of the number of instances so that we can free sPropertyKeys.
+PRInt32 sbLocalDatabaseMediaListBase::sInstanceCount = 0;
 
 NS_IMPL_THREADSAFE_ADDREF(sbLocalDatabaseMediaListBase)
 NS_IMPL_THREADSAFE_RELEASE(sbLocalDatabaseMediaListBase)
@@ -72,12 +100,17 @@ sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
 : mFullArrayMonitor(nsnull),
   mLockedEnumerationActive(PR_FALSE)
 {
+  PR_AtomicIncrement(&sInstanceCount);
 }
 
 sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
 {
   if (mFullArrayMonitor) {
     nsAutoMonitor::DestroyMonitor(mFullArrayMonitor);
+  }
+
+  if (PR_AtomicDecrement(&sInstanceCount) == 0) {
+    delete[] sPropertyKeys;
   }
 }
 
@@ -234,6 +267,37 @@ sbLocalDatabaseMediaListBase::MakeStandardQuery(sbIDatabaseQuery** _retval)
   return NS_OK;
 }
 
+nsresult
+sbLocalDatabaseMediaListBase::CopyStandardProperties(sbIMediaItem* aSourceItem,
+                                                     sbIMediaItem* aTargetItem)
+{
+  PRUint32 propertyCount = NS_ARRAY_LENGTH(sPropertyKeys);
+
+  for (PRUint32 index = 0; index < propertyCount; index++) {
+    // Convert the ASCII to UTF16 if we haven't done so already.
+    if (!sPropertyKeys[index]) {
+      nsString* newString = new nsString();
+      NS_ENSURE_TRUE(newString, NS_ERROR_FAILURE);
+
+      newString->Assign(NS_ConvertASCIItoUTF16(sStandardPropertiesToCopy[index]));
+
+      sPropertyKeys[index] = newString;
+    }
+
+    nsAutoString propertyValue;
+    nsresult rv = aSourceItem->GetProperty(*sPropertyKeys[index],
+                                           propertyValue);
+    if (NS_FAILED(rv)) {
+      continue;
+    }
+
+    rv = aTargetItem->SetProperty(*sPropertyKeys[index], propertyValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 /**
  * \brief Enumerates the items to the given listener.
  */
@@ -273,7 +337,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnu
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
 {
-  nsresult rv = GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#mediaListName"), aName);
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME), aName);
 
   // If the property doesn't exist just return an empty string.
   if (rv == NS_ERROR_ILLEGAL_VALUE) {
@@ -288,7 +352,7 @@ sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::SetName(const nsAString& aName)
 {
-  nsresult rv = SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#mediaListName"), aName);
+  nsresult rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME), aName);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

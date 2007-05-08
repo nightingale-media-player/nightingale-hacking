@@ -53,10 +53,10 @@
 #include <nsXPCOMCID.h>
 #include <pratom.h>
 #include <sbLocalDatabaseMediaListView.h>
+#include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 
-#define DEFAULT_SORT_PROPERTY \
-  NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal")
+#define DEFAULT_SORT_PROPERTY NS_LITERAL_STRING(SB_PROPERTY_ORDINAL)
 #define DEFAULT_FETCH_SIZE 1000
 
 #ifdef DEBUG
@@ -230,6 +230,9 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
       nsCOMPtr<sbIMediaItem> newMediaItem;
       PRBool success = mItemsToCreate.Get(mediaItem, getter_AddRefs(newMediaItem));
       NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+      rv = mFriendList->CopyStandardProperties(mediaItem, newMediaItem);
+      NS_ENSURE_SUCCESS(rv, rv);
 
       success = mItemList.ReplaceObjectAt(newMediaItem, index);
       NS_ENSURE_SUCCESS(rv, rv);

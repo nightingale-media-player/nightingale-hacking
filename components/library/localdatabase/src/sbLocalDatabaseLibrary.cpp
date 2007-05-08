@@ -69,6 +69,7 @@
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
 #include "sbLocalDatabaseGUIDArray.h"
+#include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
 
@@ -84,7 +85,7 @@
   NS_STATIC_CAST(sbILibraryResource*,                                          \
                  NS_STATIC_CAST(sbILibrary*, _ptr))
 
-#define DEFAULT_SORT_PROPERTY "http://songbirdnest.com/data/1.0#created"
+#define DEFAULT_SORT_PROPERTY SB_PROPERTY_CREATED
 
 #define DEFAULT_FETCH_SIZE 1000
 
@@ -938,7 +939,8 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem)
   rv = CreateMediaItem(contentUri, getter_AddRefs(newItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // TODO: Copy properties
+  rv = CopyStandardProperties(aMediaItem, newItem);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1588,7 +1590,7 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::Shutdown()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
-  return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_OK;
 }
 
 /**

@@ -45,6 +45,7 @@
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseTreeView.h"
 #include <sbPropertiesCID.h>
+#include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
 
@@ -175,7 +176,7 @@ sbLocalDatabaseCascadeFilterSet::AppendSearch(const PRUnichar** aPropertyArray,
   rv = mProtoArray->CloneAsyncArray(getter_AddRefs(fs->array));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = fs->array->AddSort(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created"),
+  rv = fs->array->AddSort(NS_LITERAL_STRING(SB_PROPERTY_CREATED),
                           PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 

@@ -54,6 +54,7 @@
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseMediaItem.h"
 #include <sbPropertiesCID.h>
+#include <sbStandardProperties.h>
 #include <sbTArrayStringEnumerator.h>
 
 /*
@@ -913,7 +914,7 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If this is an ordinal column, return just the row number
-  if (bind.Equals(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#ordinal"))) {
+  if (bind.Equals(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL))) {
     _retval.AppendInt(row);
     return NS_OK;
   }

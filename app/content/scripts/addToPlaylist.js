@@ -63,11 +63,6 @@ function onLoad() {
     },
 
     onEnumeratedItem: function(mediaList, item) {
-      // XXXben Remove this block once bug 3037 has been fixed.
-      if (!item.name) {
-        item.name = "Playlist" + this.index++;
-      }
-
       var listItem = document.createElement("listitem");
       listItem.setAttribute("label", item.name);
       listItem.value = item.guid;
@@ -139,6 +134,7 @@ function onNewPlaylist()
     
     var mediaList = mainLibrary.createMediaList("simple");
     mediaList.name = input.value;
+    mediaList.write();
     
     var listItem = document.createElement("listitem");
     listItem.setAttribute("label", mediaList.name);

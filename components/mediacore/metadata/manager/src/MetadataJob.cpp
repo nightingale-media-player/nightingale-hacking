@@ -55,6 +55,7 @@
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbISQLBuilder.h>
+#include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 
 #include "MetadataJob.h"
@@ -1006,7 +1007,7 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem, PRBo
 */
 
   // Set the properties (eventually iterate when the sbIMetadataValue have the correct keystrings).
-  NS_NAMED_LITERAL_STRING( trackNameKey, "http://songbirdnest.com/data/1.0#trackName" );
+  NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
   nsAutoString trackName;
   rv = values->GetValue( NS_LITERAL_STRING("title"), trackName );
   // If the metadata read can't even find a song name, cook one up off the url.
@@ -1016,63 +1017,63 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem, PRBo
   rv = item->SetProperty( trackNameKey, trackName );
 //  NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING( artistKey, "http://songbirdnest.com/data/1.0#artistName" );
+  NS_NAMED_LITERAL_STRING( artistKey, SB_PROPERTY_ARTISTNAME );
   nsAutoString artist;
   rv = values->GetValue( NS_LITERAL_STRING("artist"), artist );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = item->SetProperty( artistKey, artist );
 //  NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING( albumKey, "http://songbirdnest.com/data/1.0#albumName" );
+  NS_NAMED_LITERAL_STRING( albumKey, SB_PROPERTY_ALBUMNAME );
   nsAutoString album;
   rv = values->GetValue( NS_LITERAL_STRING("album"), album );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = item->SetProperty( albumKey, album );
 //  NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING( durationKey, "http://songbirdnest.com/data/1.0#duration" );
+  NS_NAMED_LITERAL_STRING( durationKey, SB_PROPERTY_DURATION );
   nsAutoString duration;
   rv = values->GetValue( NS_LITERAL_STRING("length"), duration );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = item->SetProperty( durationKey, duration );
 //  NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING( genreKey, "http://songbirdnest.com/data/1.0#genre" );
+  NS_NAMED_LITERAL_STRING( genreKey, SB_PROPERTY_GENRE );
   nsAutoString genre;
   rv = values->GetValue( NS_LITERAL_STRING("genre"), genre );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = item->SetProperty( genreKey, genre );
 //  NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING( yearKey, "http://songbirdnest.com/data/1.0#year" );
+  NS_NAMED_LITERAL_STRING( yearKey, SB_PROPERTY_YEAR );
   nsAutoString year;
   rv = values->GetValue( NS_LITERAL_STRING("year"), year );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = item->SetProperty( yearKey, year );
 //  NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING( trackKey, "http://songbirdnest.com/data/1.0#track" );
+  NS_NAMED_LITERAL_STRING( trackKey, SB_PROPERTY_TRACK );
   nsAutoString track;
   rv = values->GetValue( NS_LITERAL_STRING("track_no"), track );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = item->SetProperty( trackKey, track );
 //  NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING( discNumberKey, "http://songbirdnest.com/data/1.0#discNumber" );
+  NS_NAMED_LITERAL_STRING( discNumberKey, SB_PROPERTY_DISCNUMBER );
   nsAutoString discNumber;
   rv = values->GetValue( NS_LITERAL_STRING("disc_no"), discNumber );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = item->SetProperty( discNumberKey, discNumber );
 //  NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING( totalTracksKey, "http://songbirdnest.com/data/1.0#totalTracks" );
+  NS_NAMED_LITERAL_STRING( totalTracksKey, SB_PROPERTY_TOTALTRACKS );
   nsAutoString totalTracks;
   rv = values->GetValue( NS_LITERAL_STRING("track_total"), totalTracks );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = item->SetProperty( totalTracksKey, totalTracks );
 //  NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING( totalDiscsKey, "http://songbirdnest.com/data/1.0#totalDiscs" );
+  NS_NAMED_LITERAL_STRING( totalDiscsKey, SB_PROPERTY_TOTALDISCS );
   nsAutoString totalDiscs;
   rv = values->GetValue( NS_LITERAL_STRING("disc_total"), totalDiscs );
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1106,7 +1107,7 @@ nsresult sbMetadataJob::AddDefaultMetadataToItem( sbMetadataJob::jobitem_t *aIte
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the properties (eventually iterate when the sbIMetadataValue have the correct keystrings).
-  NS_NAMED_LITERAL_STRING( trackNameKey, "http://songbirdnest.com/data/1.0#trackName" );
+  NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
   nsAutoString trackName = CreateDefaultItemName( aItem->url );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = item->SetProperty( trackNameKey, trackName );

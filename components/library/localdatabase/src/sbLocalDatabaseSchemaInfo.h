@@ -32,6 +32,7 @@
 #include <sbISQLBuilder.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
+#include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 
 struct sbStaticProperty {
@@ -42,37 +43,37 @@ struct sbStaticProperty {
 
 static sbStaticProperty sStaticProperties[] = {
   {
-    NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#created").get(),
+    NS_LITERAL_STRING(SB_PROPERTY_CREATED).get(),
     NS_LITERAL_STRING("created").get(),
     PR_UINT32_MAX,
   },
   {
-    NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#updated").get(),
+    NS_LITERAL_STRING(SB_PROPERTY_UPDATED).get(),
     NS_LITERAL_STRING("updated").get(),
     PR_UINT32_MAX - 1,
   },
   {
-    NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentUrl").get(),
+    NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL).get(),
     NS_LITERAL_STRING("content_url").get(),
     PR_UINT32_MAX - 2,
   },
   {
-    NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentMimeType").get(),
+    NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE).get(),
     NS_LITERAL_STRING("content_mime_type").get(),
     PR_UINT32_MAX - 3,
   },
   {
-    NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#contentLength").get(),
+    NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH).get(),
     NS_LITERAL_STRING("content_length").get(),
     PR_UINT32_MAX - 4,
   },
   {
-    NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#hidden").get(),
+    NS_LITERAL_STRING(SB_PROPERTY_HIDDEN).get(),
     NS_LITERAL_STRING("hidden").get(),
     PR_UINT32_MAX - 5,
   },
   {
-    NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#isList").get(),
+    NS_LITERAL_STRING(SB_PROPERTY_ISLIST).get(),
     NS_LITERAL_STRING("media_list_type_id").get(),
     PR_UINT32_MAX - 6,
   }

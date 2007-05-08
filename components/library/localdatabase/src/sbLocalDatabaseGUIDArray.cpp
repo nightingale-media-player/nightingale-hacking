@@ -47,6 +47,7 @@
 #include <sbISQLBuilder.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbPropertiesCID.h>
+#include <sbStandardProperties.h>
 
 #define DEFAULT_FETCH_SIZE 20
 
@@ -1812,22 +1813,22 @@ sbLocalDatabaseGUIDArray::GetTopLevelPropertyColumn(const nsAString& aProperty,
 {
   nsAutoString retval;
 
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#guid")) {
+  if (aProperty.EqualsLiteral(SB_PROPERTY_GUID)) {
     retval = NS_LITERAL_STRING("guid");
   }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#created")) {
+  if (aProperty.EqualsLiteral(SB_PROPERTY_CREATED)) {
     retval = NS_LITERAL_STRING("created");
   }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#updated")) {
+  if (aProperty.EqualsLiteral(SB_PROPERTY_UPDATED)) {
     retval = NS_LITERAL_STRING("updated");
   }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentUrl")) {
+  if (aProperty.EqualsLiteral(SB_PROPERTY_CONTENTURL)) {
     retval = NS_LITERAL_STRING("content_url");
   }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentMimeType")) {
+  if (aProperty.EqualsLiteral(SB_PROPERTY_CONTENTMIMETYPE)) {
     retval = NS_LITERAL_STRING("content_mime_type");
   }
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#contentLength")) {
+  if (aProperty.EqualsLiteral(SB_PROPERTY_CONTENTLENGTH)) {
     retval = NS_LITERAL_STRING("content_length");
   }
 
@@ -1896,9 +1897,9 @@ sbLocalDatabaseGUIDArray::GetPropertyNullSort(const nsAString& aProperty,
   // XXX: This should be replaced with a call to the properties manager
   nsAutoString retval;
 
-  if (aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#trackName") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#artistName") ||
-      aProperty.EqualsLiteral("http://songbirdnest.com/data/1.0#albumName")) {
+  if (aProperty.EqualsLiteral(SB_PROPERTY_TRACKNAME) ||
+      aProperty.EqualsLiteral(SB_PROPERTY_ARTISTNAME) ||
+      aProperty.EqualsLiteral(SB_PROPERTY_ALBUMNAME)) {
     *_retval = sbIPropertyInfo::SORT_NULL_BIG;
   }
   else {

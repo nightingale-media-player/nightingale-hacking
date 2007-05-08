@@ -54,28 +54,18 @@ try
   
   function AsyncWebDocument(aDocument, aMediaListView)
   {
+    const CONTRACTID_ARRAY = "@mozilla.org/array;1";
+    const CONTRACTID_METADATAJOBMANAGER =
+      "@songbirdnest.com/Songbird/MetadataJobManager;1";
+
     const PROPERTYKEY_ORIGINURL = "http://songbirdnest.com/data/1.0#originUrl";
+
+    const nsIMutableArray = Components.interfaces.nsIMutableArray;
     const sbIMediaList = Components.interfaces.sbIMediaList;
-    
-    function EnumerationListener() {
-      this.items = [];
-    }
-    EnumerationListener.prototype = {
-      items: null,
-      onEnumerationBegin: function onEnumerationBegin() {
-        return true;
-      },
-      onEnumeratedItem: function onEnumeratedItem(list, item) {
-        this.items.push(item);
-        return true;
-      },
-      onEnumerationEnd: function onEnumerationEnd() {
-        return true;
-      }
-    }
-    
+    const sbIMetadataJobManager = Components.interfaces.sbIMetadataJobManager;
+
     CancelAsyncWebDocument();
-    
+
     href_loop = new sbIAsyncForLoop
     ( // This is an argument list passed to the sbIAsyncForLoop constructor.
       
@@ -157,14 +147,19 @@ try
       },
 
       function webPlaylist_finishedEval() {
-        if ( !this.m_Interval ) 
+        if (!this.m_Interval) 
           return;
 
+        // XXXben HACK to make sure that the media items' properties are all
+        //        written to the database before we redraw the view. The view
+        //        makes a straight database call and bypasses the property
+        //        cache. Remove this once bug 3037 is fixed.
         var propCache = aMediaListView.mediaList.library.
                         QueryInterface(Components.interfaces.sbILocalDatabaseLibrary).
                         propertyCache;
         propCache.write();
 
+        // Tell the view that it can redraw itself.
         aMediaListView.mediaList.endUpdateBatch();
 
         var propArray =
@@ -173,6 +168,12 @@ try
 
         propArray.appendProperty(PROPERTYKEY_ORIGINURL, gBrowser.currentURI.spec);
         aMediaListView.setFilters(propArray);
+
+        // Create a metadata task    
+        var metadataJobManager =
+          Components.classes[CONTRACTID_METADATAJOBMANAGER]
+                    .getService(sbIMetadataJobManager);
+        var metadataJob = metadataJobManager.newJob(this.mediaItemsToScan, 5);
 
         SBDataSetBoolValue( "media_scan.open", false ); // ?  Don't let this go?
         SBDataSetIntValue( "webplaylist.total", this.a_array.length );
@@ -194,6 +195,8 @@ try
     href_loop.object_array = aDocument.getElementsByTagName("OBJECT");
     href_loop.currentURL = SBDataGetStringValue("browser.uri");
     href_loop.handledURLs = [];
+    href_loop.mediaItemsToScan = Components.classes[CONTRACTID_ARRAY]
+                                           .createInstance(nsIMutableArray);
     
     // Useful function to be called by the internal code
     href_loop.handleURL = function webPlaylist_handleURL(url) {
@@ -245,22 +248,35 @@ try
         
         var library = aMediaListView.mediaList.library;
         
-        var listener = new EnumerationListener();
+        var listener = {
+          itemEnumerated: false,
+          onEnumerationBegin: function onEnumerationBegin() {
+            return true;
+          },
+          onEnumeratedItem: function onEnumeratedItem(list, item) {
+            if (!this.itemEnumerated) {
+              library.beginUpdateBatch();
+              this.itemEnumerated = true;
+            }
+            library.remove(item);
+            return true;
+          },
+          onEnumerationEnd: function onEnumerationEnd() {
+            if (this.itemEnumerated) {
+              library.endUpdateBatch();
+            }
+            return true;
+          }
+        };
+
+        // Enumerate all the items that are already present for this URL and
+        // remove them. This makes sure that the list we end up showing is
+        // current.
+        // XXXben Smarter way to do this? Compare modified time of page?
         library.enumerateItemsByProperty(PROPERTYKEY_ORIGINURL, browserURL, listener,
                                          sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
-        var itemCount = listener.items.length;
-        
-        if (itemCount) {
-          library.beginUpdateBatch();
-          
-          for (var index = 0; index < itemCount; index++) {
-            var item = listener.items[index];
-            library.remove(item);
-          }
-          
-          library.endUpdateBatch();
-        }
 
+        // Let the view know that we're about to make a lot of changes.
         aMediaListView.mediaList.beginUpdateBatch();
 
         SBDataSetBoolValue("browser.canplaylist", true);
@@ -274,16 +290,14 @@ try
       
       var mediaList = aMediaListView.mediaList;
       
-      var uri = newURI(url);
-      var mediaItem = mediaList.library.createMediaItem(uri);
-      
+      var mediaItem = mediaList.library.createMediaItem(newURI(url));
       mediaItem.setProperty("http://songbirdnest.com/data/1.0#originUrl",
                             browserURL);
-      // mediaItem.write();
       
       mediaList.add(mediaItem);
       
       this.handledURLs.push(url);
+      this.mediaItemsToScan.appendElement(mediaItem, false);
       
       // Only one synchronous database call per ui frame.
       return true;

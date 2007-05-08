@@ -36,6 +36,7 @@
 #include <nsCOMPtr.h>
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseSmartMediaList.h"
+#include <sbStandardProperties.h>
 
 #define SB_SMART_MEDIALIST_FACTORY_TYPE "smart"
 
@@ -77,8 +78,8 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
 
   // Get the guid of the media list used to store the query result of
   // the smart media list
-  rv = aInner->GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#storageGuid"),
-                        dataGuid);
+  rv = aInner->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),
+                           dataGuid);
 
   // If the dataGuid is not set, then this must be the first time we are
   // instantiating this list
@@ -99,9 +100,8 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
     rv = dataList->GetGuid(guid);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = aInner->
-      SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#storageGuid"), 
-                  guid);
+    rv = aInner->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),
+                             guid);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
