@@ -47,6 +47,7 @@ SUBDIRS = addonmetadata \
           moz \
           playlistplayback \
           playlistsource \
+          playlistreader \
           property \
           remoteapi \
           search \

@@ -160,5 +160,10 @@ function log(s) {
   _consoleService.logStringMessage(s);
 }
 
+function getPlatform() {
+  var sysInfo = Cc["@mozilla.org/system-info;1"].getService(Ci.nsIPropertyBag2);
+  return sysInfo.getProperty("name");
+}
+
 _consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 

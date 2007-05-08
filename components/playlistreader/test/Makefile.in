@@ -1,0 +1,56 @@
+#
+# BEGIN SONGBIRD GPL
+# 
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2007 POTI, Inc.
+# http://www.songbirdnest.com
+# 
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the GPL).
+# 
+# Software distributed under the License is distributed 
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
+# express or implied. See the GPL for the specific language 
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this 
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc., 
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# 
+# END SONGBIRD GPL
+#
+
+DEPTH = ../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+SONGBIRD_TEST_COMPONENT = playlistreader
+
+SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
+                 $(srcdir)/test_m3uhandler.js \
+                 $(srcdir)/test_plshandler.js \
+                 $(srcdir)/files/relative_remote.m3u \
+                 $(srcdir)/files/relative_remote.pls \
+                 $(srcdir)/files/relative_remote_result.xml \
+                 $(srcdir)/files/absolute_remote.m3u \
+                 $(srcdir)/files/absolute_remote.pls \
+                 $(srcdir)/files/absolute_remote_result.xml \
+                 $(srcdir)/files/maclin_parse.m3u \
+                 $(srcdir)/files/maclin_parse.pls \
+                 $(srcdir)/files/maclin_parsem3u_result.xml \
+                 $(srcdir)/files/maclin_parsepls_result.xml \
+                 $(srcdir)/files/maclin_relative_local.m3u \
+                 $(srcdir)/files/maclin_relative_local.pls \
+                 $(srcdir)/files/maclin_relative_local_result.xml \
+                 $(srcdir)/files/maclin_utf8.m3u \
+                 $(srcdir)/files/maclin_utf8.pls \
+                 $(srcdir)/files/maclin_utf8_result.xml \
+                 $(NULL)
+
+include $(topsrcdir)/build/rules.mk
+

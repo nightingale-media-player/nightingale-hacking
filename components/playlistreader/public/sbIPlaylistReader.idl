@@ -1,45 +1,45 @@
 /*
  //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 
 /**
  * \file sbIPlaylistReader.idl
- * \brief 
- * 
+ * \brief
+ *
  * \sa sbIPlaylist.idl
  */
 
 #include "nsISupports.idl"
-
-#include "nsIArray.idl"
 #include "nsIWebProgressListener.idl"
 
 interface nsIObserver;
+interface nsIFile;
+interface sbIMediaList;
 
 /**
- * \interface sbIMediaLibrary 
+ * \interface sbIMediaLibrary
  * \brief
  *
  * \sa sbIPlaylistReaderManager, sbIPlaylistReader, sbIPlaylist, sbIPlaylistManager
@@ -48,65 +48,65 @@ interface nsIObserver;
 interface sbIPlaylistReaderListener : nsIWebProgressListener
 {
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
   attribute AString originalURL;
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
   attribute AString serviceGuid;
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
   attribute AString destinationURL;
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
   attribute AString destinationTable;
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
   attribute AString readableName;
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
   attribute AString playlistType;
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
   attribute AString description;
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
   attribute PRBool  appendOrReplace;
@@ -136,79 +136,71 @@ interface sbIPlaylistReaderListener : nsIWebProgressListener
 };
 
 /**
- * \interface sbIPlaylistReader 
+ * \interface sbIPlaylistReader
  * \brief
  *
  * \sa sbIPlaylistReaderManager, sbIPlaylistReaderListener, sbIPlaylistManager, sbIPlaylist
  */
-[scriptable, uuid(43005B48-8138-424d-AA12-FE604BA3A3E8)]
+[scriptable, uuid(8be3a732-f081-47e8-ac21-4d97d769260f)]
 interface sbIPlaylistReader : nsISupports
 {
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
-   * \sa read
+   * \param
    */
-  attribute AString originalURL;
+  attribute nsIURI originalURI;
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param
    */
-  PRBool read(in AString aURL, 
-    in AString aGUID, 
-    in AString aDestTable, 
-    in PRBool aReplace, 
-    out PRInt32 aErrorCode);
+  void read(in nsIFile aFile,
+            in sbIMediaList aMediaList,
+            in PRBool aReplace,
+            out PRInt32 aErrorCode);
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param
    */
-  PRInt32 vote(in AString aURL);
+  long vote(in AString aURL);
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param
    */
   AString name();
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param
    */
   AString description();
-  
+
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param
    */
-  void supportedMIMETypes(out PRUint32 aMIMECount, 
+  void supportedMIMETypes(out unsigned long aMIMECount,
     [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param
    */
-  void supportedFileExtensions(out PRUint32 aExtCount, 
+  void supportedFileExtensions(out unsigned long aExtCount,
     [array, size_is (aExtCount), retval] out wstring aExts);
 };
 
 /**
- * \interface sbIPlaylistReaderManager 
+ * \interface sbIPlaylistReaderManager
  * \brief
  *
  * \sa sbIPlaylistReader, sbIPlaylistReaderListener
@@ -217,72 +209,72 @@ interface sbIPlaylistReader : nsISupports
 interface sbIPlaylistReaderManager : nsISupports
 {
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
   attribute AString originalURL;
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
-  PRInt32 autoLoad(in AString aURL, 
-    in AString aGUID, 
-    in AString aReadableName, 
-    in AString aPlaylistType, 
-    in AString aDescription, 
-    in AString aContentType, 
-    in sbIPlaylistReaderListener aPlaylistReaderListener);
-  
-  /**
-   * \brief 
-   *
-   * \param 
-   * \sa sbIDatabaseQuery
-   */
-  PRInt32 loadPlaylist(in AString aURL, 
-    in AString aGUID, 
-    in AString aUniqueName, 
-    in AString aReadableName, 
-    in AString aPlaylistType, 
-    in AString aDescription, 
-    in AString aContentType, 
-    in PRBool aAppendOrReplace, 
+  PRInt32 autoLoad(in AString aURL,
+    in AString aGUID,
+    in AString aReadableName,
+    in AString aPlaylistType,
+    in AString aDescription,
+    in AString aContentType,
     in sbIPlaylistReaderListener aPlaylistReaderListener);
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
-  PRInt32 read(in AString aFile, 
-    in AString aGUID, 
-    in AString aName, 
-    in AString aReadableName, 
-    in AString aContentType, 
+  PRInt32 loadPlaylist(in AString aURL,
+    in AString aGUID,
+    in AString aUniqueName,
+    in AString aReadableName,
+    in AString aPlaylistType,
+    in AString aDescription,
+    in AString aContentType,
+    in PRBool aAppendOrReplace,
+    in sbIPlaylistReaderListener aPlaylistReaderListener);
+
+  /**
+   * \brief
+   *
+   * \param
+   * \sa sbIDatabaseQuery
+   */
+  PRInt32 read(in AString aFile,
+    in AString aGUID,
+    in AString aName,
+    in AString aReadableName,
+    in AString aContentType,
     in PRBool aAppendOrReplace);
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
-  void supportedMIMETypes(out PRUint32 aMIMECount, 
+  void supportedMIMETypes(out PRUint32 aMIMECount,
     [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
 
   /**
-   * \brief 
+   * \brief
    *
-   * \param 
+   * \param
    * \sa sbIDatabaseQuery
    */
-  void supportedFileExtensions(out PRUint32 aExtCount, 
+  void supportedFileExtensions(out PRUint32 aExtCount,
     [array, size_is (aExtCount), retval] out wstring aExts);
 };
 

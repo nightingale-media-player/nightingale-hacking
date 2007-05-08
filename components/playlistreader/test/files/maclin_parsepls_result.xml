@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<item-tests>
+  <item-test
+    property="#contentUrl"
+    value="file:///home/Media/Music/Aus/2006-06-25%5C%20%5C(Abstract,%5C%20Techno,%5C%20Punk%5C).mp3"
+  >
+    <assert-property-value
+      name="#contentUrl"
+      value="file:///home/Media/Music/Aus/2006-06-25%5C%20%5C(Abstract,%5C%20Techno,%5C%20Punk%5C).mp3"
+    />
+    <assert-property-value
+      name="#title"
+      value="2006-06-25 (Abstract, Techno, Punk)"
+    />
+    <assert-property-value
+      name="#duration"
+      value="3155000000"
+    />
+  </item-test>
+  <item-test
+    property="#contentUrl"
+    value="file:///home/foo1.mp3"
+  >
+    <assert-property-value
+      name="#contentUrl"
+      value="file:///home/foo1.mp3"
+    />
+    <assert-property-value
+      name="#title"
+      value="==="
+    />
+  </item-test>
+  <item-test
+    property="#contentUrl"
+    value="http://216.66.69.246:8072/"
+  >
+    <assert-property-value
+      name="#contentUrl"
+      value="http://216.66.69.246:8072/"
+    />
+    <assert-property-value
+      name="#title"
+      value="(#1 - 553/1000) 1.FM - Channel X"
+    />
+  </item-test>
+</item-tests>
+
