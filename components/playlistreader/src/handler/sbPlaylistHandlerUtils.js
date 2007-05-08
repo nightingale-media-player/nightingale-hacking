@@ -34,6 +34,7 @@ function SB_ProcessFile(aFile, aCallback, aThis) {
 
   var istream = Cc["@mozilla.org/network/file-input-stream;1"]
                   .createInstance(Ci.nsIFileInputStream);
+dump("------------------------------------> " + aFile.path + "\n");
   istream.init(aFile, 0x01, 0444, 0);
   istream.QueryInterface(Ci.nsILineInputStream);
 
