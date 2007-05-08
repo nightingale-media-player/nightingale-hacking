@@ -383,7 +383,6 @@ sbLocalDatabaseTreeView::InvalidateCache()
 {
   // Copy the visible pages into our temporary dirty row cache so we have
   // something to show the user while the tree is rebuilding
-  mDirtyRowCache.Clear();
   if (mTreeBoxObject) {
     PRInt32 first;
     PRInt32 last;
@@ -759,6 +758,10 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
       if (bags[i]) {
         PRBool success = mRowCache.Put(i + start, bags[i]);
         NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+        // Now that we have the real data we can remove our temp entry from
+        // mDirtyRowCache.
+        mDirtyRowCache.Remove(i + start);
       }
     }
     NS_Free(bags);

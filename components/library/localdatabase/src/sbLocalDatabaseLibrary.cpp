@@ -158,7 +158,12 @@ sbLibraryInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!equals) {
+    // Don't let this call to AddItemToLocalDatabase notify our listeners. We
+    // will do that in onEnumerationEnd.
+    mFriendLibrary->mPreventAddedNotification = PR_TRUE;
     rv = mFriendLibrary->AddItemToLocalDatabase(aMediaItem);
+    mFriendLibrary->mPreventAddedNotification = PR_FALSE;
+
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Remember this media item for later so we can notify with it
@@ -305,6 +310,7 @@ NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseLibrary,
                              sbIMediaList);
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
+: mPreventAddedNotification(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
@@ -1260,7 +1266,10 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NotifyListenersItemAdded(this, mediaItem);
+  // Don't do this while we're receiving items through the Insertinglistener.
+  if (!mPreventAddedNotification) {
+    NotifyListenersItemAdded(this, mediaItem);
+  }
 
   NS_ADDREF(*_retval = mediaItem);
   return NS_OK;

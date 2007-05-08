@@ -40,7 +40,14 @@ const URL_ADDTOPLAYLIST_DIALOG =
 function MediaListListener() {
 }
 MediaListListener.prototype = {
+  _addedCount: 0,
+  
+  get itemAddedCount() {
+    return this._addedCount;
+  },
+  
   onItemAdded: function onItemAdded(list, item) {
+    this._addedCount++;
   },
   
   onBeforeItemRemoved: function onBeforeItemRemoved(list, item) {
@@ -66,6 +73,38 @@ MediaListListener.prototype = {
   }  
 }
 
+function SelectionUnwrapper(selection) {
+  this._selection = selection;
+}
+SelectionUnwrapper.prototype = {
+  _selection: null,
+  
+  hasMoreElements : function() {
+    return this._selection.hasMoreElements();
+  },
+  
+  getNext : function() {
+    return this._selection.getNext().mediaItem;
+  },
+  
+  QueryInterface : function(iid) {
+    if (iid.equals(Ci.nsISimpleEnumerator) ||
+        iid.equals(Ci.nsISupports))
+      return this;
+    throw Cr.NS_NOINTERFACE;
+  }
+}
+
+function getPlaylistGUIDFromDialog() {
+  // Make a data object to get the playlist to add to from the dialog.
+  var dialogData = {};
+
+  // Open the modal dialog.
+  SBOpenModalDialog(URL_ADDTOPLAYLIST_DIALOG, "add_to_playlist",
+                    "chrome,centerscreen", dialogData);
+
+  return dialogData.mediaListGUID;
+}
 
 // The house for the web playlist and download commands objects.
 var SBWebPlaylistCommands = 
@@ -383,64 +422,60 @@ var SBWebPlaylistCommands =
         break;
         case "library_cmd_addtoplaylist":
         {
-          // Make a data object to get the playlist to add to from the dialog.
-          var dialogData = {};
-
-          // Open the modal dialog.
-          var chromeFeatures = "chrome,centerscreen";
-          SBOpenModalDialog(URL_ADDTOPLAYLIST_DIALOG, "add_to_playlist",
-                            chromeFeatures, dialogData);
-
-          if (!dialogData.mediaListGUID) {
+          var mediaListGUID = getPlaylistGUIDFromDialog();
+          if (!mediaListGUID) {
+            // User clicked Cancel
             return;
           }
 
-          var mediaListListener = new MediaListListener();
-          mediaListListener.addedItems = 0;
-          mediaListListener.onItemAdded = function mll_onItemAdded(list, item) {
-            this.addedItems++;
-          };
+          var libraryManager =
+            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                      .getService(Components.interfaces.sbILibraryManager);
+          var mediaList = libraryManager.mainLibrary.getMediaItem(mediaListGUID);
 
           var treeView = this.m_Playlist.treeView;
           var selectionCount = treeView.selectionCount;
           
-          var indexedItemsEnumerator = treeView.selectedMediaItems;
-          
-          var unwrapper = {
-            hasMoreElements : function() {
-              return indexedItemsEnumerator.hasMoreElements();
-            },
-            getNext : function() {
-              return indexedItemsEnumerator.getNext().mediaItem;
-            },
-            QueryInterface : function(iid) {
-              if (iid.equals(Ci.nsISimpleEnumerator) ||
-                  iid.equals(Ci.nsISupports))
-                return this;
-              throw Cr.NS_NOINTERFACE;
-            }
-          }
+          var unwrapper = new SelectionUnwrapper(treeView.selectedMediaItems);
 
           // Add all the items that are selected.
           var libraryManager =
             Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                       .getService(Components.interfaces.sbILibraryManager);
-          var mediaList = libraryManager.mainLibrary
-                                        .getMediaItem(dialogData.mediaListGUID);
+          var mediaList = libraryManager.mainLibrary.getMediaItem(mediaListGUID);
+
+          var mediaListListener = new MediaListListener();
+          
+          mediaList.addListener(mediaListListener);
+          mediaList.addSome(unwrapper);
+          mediaList.removeListener(mediaListListener);
+          
+          var itemsAdded = mediaListListener.itemAddedCount;
+          this.m_Playlist._reportAddedTracks(itemsAdded,
+                                             selectionCount - itemsAdded);
+        }
+        break;
+        case "library_cmd_addtolibrary":
+        {
+          var libraryManager =
+            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                      .getService(Components.interfaces.sbILibraryManager);
+          var mediaList = libraryManager.mainLibrary;
+          
+          var treeView = this.m_Playlist.treeView;
+          var selectionCount = treeView.selectionCount;
+          
+          var unwrapper = new SelectionUnwrapper(treeView.selectedMediaItems);
+          
+          var mediaListListener = new MediaListListener();
 
           mediaList.addListener(mediaListListener);
           mediaList.addSome(unwrapper);
           mediaList.removeListener(mediaListListener);
 
-          var addedItems = mediaListListener.addedItems;
-          
-          this.m_Playlist._reportAddedTracks(addedItems,
-                                             selectionCount - addedItems);
-        }
-        break;
-        case "library_cmd_addtolibrary":
-        {
-          this.m_Playlist.addToLibrary();
+          var itemsAdded = mediaListListener.itemAddedCount;
+          this.m_Playlist._reportAddedTracks(itemsAdded,
+                                             selectionCount - itemsAdded);
         }
         break;
         case "library_cmd_showdlplaylist":

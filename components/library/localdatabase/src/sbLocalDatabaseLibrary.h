@@ -198,6 +198,8 @@ private:
 
   nsCOMPtr<nsIPropertyBag2> mCreationParameters;
   nsCOMPtr<sbILibraryFactory> mFactory;
+
+  PRBool mPreventAddedNotification;
 };
 
 
