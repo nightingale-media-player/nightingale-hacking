@@ -94,7 +94,7 @@ function runTest () {
   var handler = Cc["@songbirdnest.com/Songbird/Playlist/Reader/M3U;1"]
                   .createInstance(Ci.sbIPlaylistReader);
 
-  var file = getFile("relative_remote.plsm3u");
+  var file = getFile("relative_remote.m3u");
   handler.originalURI = newURI("http://www.foo.com");
 
   handler.read(file, library, false, {});
