@@ -126,9 +126,9 @@ function onComplete(aSubject, aTopic, aData) {
     try {
       remote = gRemoteMediaItems[ i ].getProperty( property );
     } catch (e) { log( e ); }
-    log( property + " -- test:" + value + " ?= local:" + local + " ?= remote:" + remote );
-//    assertEqual( local, value );
-//    assertEqual( remote, value );
+//    log( property + " -- test:" + value + " ?= local:" + local + " ?= remote:" + remote );
+    assertEqual( local, value );
+    assertEqual( remote, value );
   }
   // So testing is complete
   gTestMetadataJobManager.stop(); // Stop the manager
