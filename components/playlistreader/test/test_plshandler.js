@@ -67,9 +67,29 @@ function runTest () {
   if (platform == "Windows_NT") {
     tests = [
       {
+        originalURI: null,
+        file: "win_parse.pls",
+        result: "win_parsepls_result.xml"
+      },
+      {
         originalURI: "http://www.foo.com/",
         file: "relative_remote.pls",
         result: "relative_remote_result.xml"
+      },
+      {
+        originalURI: "http://www.foo.com/mp3",
+        file: "absolute_remote.pls",
+        result: "absolute_remote_result.xml"
+      },
+      {
+        originalURI: "file:///c:/Documents%20and%20Settings/steve/Desktop/blah.mp3",
+        file: "win_relative_local.pls",
+        result: "win_relative_local_result.xml"
+      },
+      {
+        originalURI: null,
+        file: "win_utf8.pls",
+        result: "win_utf8_result.xml"
       }
     ];
   }
