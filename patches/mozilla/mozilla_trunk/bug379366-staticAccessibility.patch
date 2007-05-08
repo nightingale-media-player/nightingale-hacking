@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/accessible/src/msaa/nsAccessNodeWrap.cpp,v
 retrieving revision 1.30
 diff -u -p -8 -r1.30 nsAccessNodeWrap.cpp
 --- accessible/src/msaa/nsAccessNodeWrap.cpp	2 May 2007 15:47:10 -0000	1.30
-+++ accessible/src/msaa/nsAccessNodeWrap.cpp	4 May 2007 16:01:36 -0000
++++ accessible/src/msaa/nsAccessNodeWrap.cpp	8 May 2007 03:31:27 -0000
 @@ -60,16 +60,18 @@
  HINSTANCE nsAccessNodeWrap::gmAccLib = nsnull;
  HINSTANCE nsAccessNodeWrap::gmUserLib = nsnull;
@@ -47,7 +47,7 @@ RCS file: /cvsroot/mozilla/accessible/src/msaa/nsAccessNodeWrap.h,v
 retrieving revision 1.7
 diff -u -p -8 -r1.7 nsAccessNodeWrap.h
 --- accessible/src/msaa/nsAccessNodeWrap.h	1 May 2007 17:08:26 -0000	1.7
-+++ accessible/src/msaa/nsAccessNodeWrap.h	4 May 2007 16:01:36 -0000
++++ accessible/src/msaa/nsAccessNodeWrap.h	8 May 2007 03:31:27 -0000
 @@ -40,16 +40,17 @@
   * see http://lxr.mozilla.org/seamonkey/source/accessible/accessible-docs.html
   */
@@ -91,8 +91,8 @@ RCS file: /cvsroot/mozilla/accessible/src/msaa/nsHyperTextAccessibleWrap.cpp,v
 retrieving revision 1.1
 diff -u -p -8 -r1.1 nsHyperTextAccessibleWrap.cpp
 --- accessible/src/msaa/nsHyperTextAccessibleWrap.cpp	1 May 2007 17:08:26 -0000	1.1
-+++ accessible/src/msaa/nsHyperTextAccessibleWrap.cpp	4 May 2007 16:01:36 -0000
-@@ -35,57 +35,56 @@
++++ accessible/src/msaa/nsHyperTextAccessibleWrap.cpp	8 May 2007 03:31:27 -0000
+@@ -35,58 +35,77 @@
   * and other provisions required by the GPL or the LGPL. If you do not delete
   * the provisions above, a recipient may use your version of this file under
   * the terms of any one of the MPL, the GPL or the LGPL.
@@ -118,7 +118,7 @@ diff -u -p -8 -r1.1 nsHyperTextAccessibleWrap.cpp
    PRUint32 eventType;
    aEvent->GetEventType(&eventType);
  
--  if (eventType == nsIAccessibleEvent::EVENT_TEXT_CHANGED) {
+   if (eventType == nsIAccessibleEvent::EVENT_TEXT_CHANGED) {
 -    nsCOMPtr<nsIAccessibleTextChangeEvent> textEvent(do_QueryInterface(aEvent));
 -    NS_ENSURE_STATE(textEvent);
 -
@@ -127,9 +127,21 @@ diff -u -p -8 -r1.1 nsHyperTextAccessibleWrap.cpp
 -    textEvent->IsInserted(&sIsInserted);
 -
 -    GetText(sOffset, sOffset + sLength, sText);
--  }
-+  if (eventType == nsIAccessibleEvent::EVENT_TEXT_CHANGED)
-+    gTextEvent = do_QueryInterface(aEvent);
++    nsCOMPtr<nsIAccessible> accessible;
++    aEvent->GetAccessible(getter_AddRefs(accessible));
++    if (accessible) {
++      nsCOMPtr<nsIWinAccessNode> winAccessNode(do_QueryInterface(accessible));
++      if (winAccessNode) {
++        void *instancePtr = NULL;
++        nsresult rv = winAccessNode->QueryNativeInterface(IID_IAccessibleText,
++                                                          &instancePtr);
++        if (NS_SUCCEEDED(rv)) {
++          gTextEvent = do_QueryInterface(aEvent);
++          (NS_STATIC_CAST(IUnknown*, instancePtr))->Release();
++        }
++      }
++    }
+   }
  
    return nsHyperTextAccessible::FireAccessibleEvent(aEvent);
  }
@@ -144,37 +156,49 @@ diff -u -p -8 -r1.1 nsHyperTextAccessibleWrap.cpp
 -    aText.Assign(sText);
 -    *aStartOffset = sOffset;
 -    *aEndOffset = sOffset + sLength;
+-  } else {
+-    aText.Truncate();
+-    *aStartOffset = 0;
+-    *aEndOffset = 0;
+-  }
++  aText.Truncate();
++  *aStartOffset = 0;
++  *aEndOffset = 0;
++
 +  if (!gTextEvent)
++    return NS_OK;
++
++  nsCOMPtr<nsIAccessible> targetAcc;
++  gTextEvent->GetAccessible(getter_AddRefs(targetAcc));
++  if (targetAcc != this)
 +    return NS_OK;
 +
 +  PRBool isInserted;
 +  gTextEvent->IsInserted(&isInserted);
 +
-+  if ((aGetInsertedText && isInserted) || (!aGetInsertedText && !isInserted)) {
-+    nsAutoString text;
-+    PRInt32 offset;
-+    PRUint32 length;
++  if (aGetInsertedText != isInserted)
++    return NS_OK;
 +
-+    gTextEvent->GetStart(&offset);
-+    gTextEvent->GetLength(&length);
-+    GetText(offset, offset + length, aText);
-+    *aStartOffset = offset;
-+    *aEndOffset = offset + length;
-   } else {
-     aText.Truncate();
-     *aStartOffset = 0;
-     *aEndOffset = 0;
-   }
++  nsAutoString text;
++  PRInt32 offset;
++  PRUint32 length;
++
++  gTextEvent->GetStart(&offset);
++  gTextEvent->GetLength(&length);
++  GetText(offset, offset + length, aText);
++  *aStartOffset = offset;
++  *aEndOffset = offset + length;
  
    return NS_OK;
  }
+ 
 Index: accessible/src/msaa/nsHyperTextAccessibleWrap.h
 ===================================================================
 RCS file: /cvsroot/mozilla/accessible/src/msaa/nsHyperTextAccessibleWrap.h,v
 retrieving revision 1.1
 diff -u -p -8 -r1.1 nsHyperTextAccessibleWrap.h
 --- accessible/src/msaa/nsHyperTextAccessibleWrap.h	1 May 2007 17:08:26 -0000	1.1
-+++ accessible/src/msaa/nsHyperTextAccessibleWrap.h	4 May 2007 16:01:36 -0000
++++ accessible/src/msaa/nsHyperTextAccessibleWrap.h	8 May 2007 03:31:27 -0000
 @@ -56,23 +56,16 @@ public:
    // IUnknown
    DECL_IUNKNOWN_INHERITED
