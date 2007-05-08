@@ -101,16 +101,8 @@ private:
 
   nsresult UpdateQueries();
 
-  PRBool IsTopLevelProperty(const nsAString& aProperty);
-
   nsresult GetPrimarySortKeyPosition(const nsAString& aValue,
                                      PRUint32 *_retval);
-
-  nsresult GetTopLevelPropertyColumn(const nsAString& aProperty,
-                                     nsAString& columnName);
-
-  nsresult GetPropertyNullSort(const nsAString& aProperty,
-                               PRUint32 *_retval);
 
   nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
 

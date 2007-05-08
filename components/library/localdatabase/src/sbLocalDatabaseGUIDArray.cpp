@@ -869,7 +869,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
         NS_ENSURE_SUCCESS(rv, rv);
 
         nsAutoString columnName;
-        rv = GetTopLevelPropertyColumn(mSorts[i].property, columnName);
+        rv = SB_GetTopLevelPropertyColumn(mSorts[i].property, columnName);
         NS_ENSURE_SUCCESS(rv, rv);
 
         builder->AddOrder(joinedAlias,
@@ -1049,7 +1049,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString columnName;
-      rv = GetTopLevelPropertyColumn(mSorts[0].property, columnName);
+      rv = SB_GetTopLevelPropertyColumn(mSorts[0].property, columnName);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = builder->CreateMatchCriterionParameter(EmptyString(),
@@ -1245,7 +1245,7 @@ sbLocalDatabaseGUIDArray::AddFiltersToQuery(sbISQLSelectBuilder *aBuilder,
 
         // Add the constraint for the top level table.
         nsAutoString columnName;
-        rv = GetTopLevelPropertyColumn(fs.property, columnName);
+        rv = SB_GetTopLevelPropertyColumn(fs.property, columnName);
         NS_ENSURE_SUCCESS(rv, rv);
 
         rv = aBuilder->CreateMatchCriterionIn(tableAlias,
@@ -1301,7 +1301,7 @@ sbLocalDatabaseGUIDArray::AddPrimarySortToQuery(sbISQLSelectBuilder *aBuilder,
    */
   if (SB_IsTopLevelProperty(ss.property)) {
     nsAutoString columnName;
-    rv = GetTopLevelPropertyColumn(ss.property, columnName);
+    rv = SB_GetTopLevelPropertyColumn(ss.property, columnName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     /*
@@ -1808,40 +1808,6 @@ sbLocalDatabaseGUIDArray::GetPrimarySortKeyPosition(const nsAString& aValue,
 }
 
 nsresult
-sbLocalDatabaseGUIDArray::GetTopLevelPropertyColumn(const nsAString& aProperty,
-                                                    nsAString& columnName)
-{
-  nsAutoString retval;
-
-  if (aProperty.EqualsLiteral(SB_PROPERTY_GUID)) {
-    retval = NS_LITERAL_STRING("guid");
-  }
-  if (aProperty.EqualsLiteral(SB_PROPERTY_CREATED)) {
-    retval = NS_LITERAL_STRING("created");
-  }
-  if (aProperty.EqualsLiteral(SB_PROPERTY_UPDATED)) {
-    retval = NS_LITERAL_STRING("updated");
-  }
-  if (aProperty.EqualsLiteral(SB_PROPERTY_CONTENTURL)) {
-    retval = NS_LITERAL_STRING("content_url");
-  }
-  if (aProperty.EqualsLiteral(SB_PROPERTY_CONTENTMIMETYPE)) {
-    retval = NS_LITERAL_STRING("content_mime_type");
-  }
-  if (aProperty.EqualsLiteral(SB_PROPERTY_CONTENTLENGTH)) {
-    retval = NS_LITERAL_STRING("content_length");
-  }
-
-  if (retval.IsEmpty()) {
-    return NS_ERROR_INVALID_ARG;
-  }
-  else {
-    columnName = retval;
-    return NS_OK;
-  }
-}
-
-nsresult
 sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
                                              ArrayItem** _retval)
 {
@@ -1881,30 +1847,6 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
    *_retval = mCache[aIndex];
-
-  return NS_OK;
-}
-
-/*
- * NOTE: all the methods below should eventually be replaced with called to the
- * properties manager
- */
-
-nsresult
-sbLocalDatabaseGUIDArray::GetPropertyNullSort(const nsAString& aProperty,
-                                              PRUint32 *_retval)
-{
-  // XXX: This should be replaced with a call to the properties manager
-  nsAutoString retval;
-
-  if (aProperty.EqualsLiteral(SB_PROPERTY_TRACKNAME) ||
-      aProperty.EqualsLiteral(SB_PROPERTY_ARTISTNAME) ||
-      aProperty.EqualsLiteral(SB_PROPERTY_ALBUMNAME)) {
-    *_retval = sbIPropertyInfo::SORT_NULL_BIG;
-  }
-  else {
-    *_retval = sbIPropertyInfo::SORT_NULL_SMALL;
-  }
 
   return NS_OK;
 }
