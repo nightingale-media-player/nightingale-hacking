@@ -35,22 +35,22 @@ interface sbIServicePaneNode;
 
 [scriptable, uuid(0e3c0208-72d8-4676-86e1-138db0801586)]
 interface sbIBookmarks : nsISupports {
-    /* \brief Add a bookmark
-     * Add a bookmark to the service pane. It will be added in the default
-     * folder. The bookmark's node object will be returned.
-     * If a bookmark for the given URL already exists then null will be
-     * returned.
-     * \param aURL The URL of the page to bookmark
-     * \param aTitle The title of the bookmark
-     * \param aIconURL The url of the icon to associate with the bookmark
-     * \return a new bookmark node or null if the bookmark already exists
-     */
-    sbIServicePaneNode addBookmark (in AString aURL,
-                                    in AString aTitle,
-                                    in AString aIconURL);
-    /* \brief Test if a bookmark exists for the given URL
-     * \param aURL the URL to test
-     * \return true if the bookmark exists, false if it does not
-     */
-    boolean bookmarkExists (in AString aURL);
+  /* \brief Add a bookmark
+   * Add a bookmark to the service pane. It will be added in the default
+   * folder. The bookmark's node object will be returned.
+   * If a bookmark for the given URL already exists then null will be
+   * returned.
+   * \param aURL The URL of the page to bookmark
+   * \param aTitle The title of the bookmark
+   * \param aIconURL The url of the icon to associate with the bookmark
+   * \return a new bookmark node or null if the bookmark already exists
+   */
+  sbIServicePaneNode addBookmark (in AString aURL,
+                                  in AString aTitle,
+                                  in AString aIconURL);
+  /* \brief Test if a bookmark exists for the given URL
+   * \param aURL the URL to test
+   * \return true if the bookmark exists, false if it does not
+   */
+  boolean bookmarkExists (in AString aURL);
 };

@@ -38,32 +38,32 @@ interface sbILibraryResource;
 [scriptable, uuid(2b7aeef4-fa67-11db-8314-0800200c9a66)]
 interface sbILibraryServicePaneService : nsISupports {
 
-    /* \brief Suggest a library for creating a new media list
-     *
-     * \param aMediaListType string identifying a media list type, eg "simple"
-     * \param aNode A service pane node to provide context for new list creation
-     * \return a library, or null if this service can't suggest anything based on 
-     *         the given context and type.
-     */
-    sbILibrary suggestLibraryForNewList (in AString aMediaListType, 
-                                         in sbIServicePaneNode aNode);
+  /* \brief Suggest a library for creating a new media list
+   *
+   * \param aMediaListType string identifying a media list type, eg "simple"
+   * \param aNode A service pane node to provide context for new list creation
+   * \return a library, or null if this service can't suggest anything based on 
+   *         the given context and type.
+   */
+  sbILibrary suggestLibraryForNewList (in AString aMediaListType, 
+                                       in sbIServicePaneNode aNode);
 
 
-    /* \brief Attempt to get a service pane node for the given library resource
-     *         
-     * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary
-     * \return a service pane node that represents the given resource, if one exists
-     */
-    sbIServicePaneNode getNodeForLibraryResource (in sbILibraryResource aResource);
-    
+  /* \brief Attempt to get a service pane node for the given library resource
+   *         
+   * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary
+   * \return a service pane node that represents the given resource, if one exists
+   */
+  sbIServicePaneNode getNodeForLibraryResource (in sbILibraryResource aResource);
+  
 
-    /* \brief Attempt to get a library resource for the given service pane node.
-     *
-     * Note that there is no guarantee that hidden service pane nodes
-     * will have corresponding library resources
-     *
-     * \param aNode 
-     * \return a sbIMediaItem, sbIMediaItem, sbILibrary, or null
-     */    
-    sbILibraryResource getLibraryResourceForNode (in sbIServicePaneNode aNode);
+  /* \brief Attempt to get a library resource for the given service pane node.
+   *
+   * Note that there is no guarantee that hidden service pane nodes
+   * will have corresponding library resources
+   *
+   * \param aNode 
+   * \return a sbIMediaItem, sbIMediaItem, sbILibrary, or null
+   */    
+  sbILibraryResource getLibraryResourceForNode (in sbIServicePaneNode aNode);
 };
