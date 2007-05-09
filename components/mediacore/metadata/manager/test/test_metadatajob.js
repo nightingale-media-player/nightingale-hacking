@@ -114,7 +114,8 @@ function onComplete(aSubject, aTopic, aData) {
   assertTrue( gTestMetadataJob.completed );
   gTestMetadataJob.removeObserver();
   
-  // When it is, check the values
+  // Debug output.  Output everything before testing anything so we can see
+  // the full set of data instead of quitting on the first error.
   for ( var i = 0; i < gNumTestItems; i++ )
   {
     var property = gTestMatrix[ i ][ 0 ];
@@ -126,10 +127,25 @@ function onComplete(aSubject, aTopic, aData) {
     try {
       remote = gRemoteMediaItems[ i ].getProperty( property );
     } catch (e) { log( e ); }
-//    log( property + " -- test:" + value + " ?= local:" + local + " ?= remote:" + remote );
-    assertEqual( local, value );
-    assertEqual( remote, value );
+    log( property + " -- test:" + value + " ?= local:" + local + " ?= remote:" + remote );
   }
+  
+  // Compare the values from the items to the expected results in gTestMatrix
+  for ( var i = 0; i < gNumTestItems; i++ )
+  {
+    var property = gTestMatrix[ i ][ 0 ];
+    var value = gTestMatrix[ i ][ 1 ];
+    var local = null, remote = null;
+    try {
+      local = gLocalMediaItems[ i ].getProperty( property );
+    } catch (e) {}
+    try {
+      remote = gRemoteMediaItems[ i ].getProperty( property );
+    } catch (e) {}
+    assertEqual( value, local );
+    assertEqual( value, remote );
+  }
+  
   // So testing is complete
   gTestMetadataJobManager.stop(); // Stop the manager
   testFinished(); // Complete the testing
