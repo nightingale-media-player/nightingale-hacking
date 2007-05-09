@@ -1820,6 +1820,16 @@ sbLocalDatabaseLibrary::BatchNotifyAdded(nsIArray *aMediaItemArray) {
  * See sbIMediaList
  */
 NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetType(nsAString& aType)
+{
+  aType.Assign(NS_LITERAL_STRING("library"));
+  return NS_OK;
+}
+
+/**
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetItemByGuid(const nsAString& aGuid,
                                       sbIMediaItem** _retval)
 {

@@ -360,6 +360,13 @@ sbLocalDatabaseMediaListBase::SetName(const nsAString& aName)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetType(nsAString& aType)
+{
+  NS_NOTREACHED("Not meant to be implemented in this base class");
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetLength(PRUint32* aLength)
 {
   NS_ENSURE_ARG_POINTER(aLength);

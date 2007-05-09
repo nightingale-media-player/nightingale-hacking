@@ -56,6 +56,7 @@ class sbLocalDatabasePropertyCache;
 // These are the methods from sbLocalDatabaseMediaListBase that we're going to
 // override in sbLocalDatabaseLibrary. Most of them are from sbIMediaList.
 #define SB_DECL_MEDIALISTBASE_OVERRIDES                                         \
+  NS_IMETHOD GetType(nsAString& aType);                                         \
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);     \
   NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);               \
   NS_IMETHOD Add(sbIMediaItem* aMediaItem);                                     \

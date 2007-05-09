@@ -154,6 +154,12 @@ NS_IMETHODIMP sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
   return NS_OK;
 }
 
+NS_IMETHODIMP sbLocalDatabaseSmartMediaList::GetType(nsAString& aType)
+{
+  aType.Assign(NS_LITERAL_STRING("smart"));
+  return NS_OK;
+}
+
 NS_IMETHODIMP sbLocalDatabaseSmartMediaList::GetCurrentQuery(nsAString & aCurrentQuery)
 {
   return NS_ERROR_NOT_IMPLEMENTED;

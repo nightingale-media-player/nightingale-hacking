@@ -492,6 +492,13 @@ sbLocalDatabaseSimpleMediaList::Init(sbILocalDatabaseLibrary* aLibrary,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::GetType(nsAString& aType)
+{
+  aType.Assign(NS_LITERAL_STRING("simple"));
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::GetItemByGuid(const nsAString& aGuid,
                                               sbIMediaItem** _retval)
 {

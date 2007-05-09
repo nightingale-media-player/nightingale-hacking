@@ -60,6 +60,11 @@ interface sbIMediaList : sbIMediaItem
   attribute AString name;
 
   /**
+   * \brief The type of media list (eg "simple")
+   */
+  readonly attribute AString type;
+
+  /**
    * \brief Returns the length of the list
    */
   readonly attribute unsigned long length;
