@@ -40,6 +40,7 @@ SONGBIRD_SEARCHPLUGINS = $(srcdir)/en-US/searchplugins/dogpile.xml \
                          $(srcdir)/en-US/searchplugins/songbird-internal-search.xml \
                          $(srcdir)/en-US/searchplugins/wikipedia.xml \
                          $(srcdir)/en-US/searchplugins/yahoo.xml \
+                         $(srcdir)/en-US/searchplugins/yahoo-lyrics.xml \
                          $(NULL)
 
 
