@@ -137,7 +137,7 @@
       cursor              : default;
     }
 
-  label
+  label, description
     {
       margin              : 1px 5px 2px 6px;
     }
