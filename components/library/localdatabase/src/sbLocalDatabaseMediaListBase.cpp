@@ -98,7 +98,8 @@ NS_INTERFACE_MAP_END_INHERITING(sbLocalDatabaseMediaItem)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
 : mFullArrayMonitor(nsnull),
-  mLockedEnumerationActive(PR_FALSE)
+  mLockedEnumerationActive(PR_FALSE),
+  mBatchCount(0)
 {
   PR_AtomicIncrement(&sInstanceCount);
 }
@@ -900,14 +901,21 @@ sbLocalDatabaseMediaListBase::CreateView(sbIMediaListView** _retval)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::BeginUpdateBatch()
 {
-  sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(this);
+  PRInt32 batchCount = PR_AtomicIncrement(&mBatchCount);
+  NS_ASSERTION(batchCount >= 1, "Illegal batch count, mismatched calls!");
+  if (batchCount == 1) {
+    sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(this);
+  }
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::EndUpdateBatch()
 {
-  sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(this);
+  PRInt32 batchCount = PR_AtomicDecrement(&mBatchCount);
+  NS_ASSERTION(batchCount >= 0, "Illegal batch count, mismatched calls!");
+  if (batchCount == 0) {
+    sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(this);
+  }
   return NS_OK;
 }
-

@@ -561,7 +561,6 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
       nsCOMPtr<sbILibraryManager> libraryManager;
       libraryManager = do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
-      nsCOMPtr<sbILibrary> library;
       rv = libraryManager->GetLibrary( item->library_guid, getter_AddRefs(library) );
       NS_ENSURE_SUCCESS(rv, rv);
       mediaList = do_QueryInterface( library, &rv ); 
@@ -593,7 +592,7 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
       rv = AddMetadataToItem( item, flush );
     }
     // Ignore errors on the metadata loop, just set a default and keep going.
-    if ( ! NS_SUCCEEDED(rv) )
+    if ( NS_FAILED(rv) )
     {
       // Try to just add a default
       AddDefaultMetadataToItem( item, flush );
@@ -623,8 +622,6 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
     NS_ENSURE_SUCCESS(rv, rv);
     // Along with the written bits.
     rv = SetItemsAreWrittenAndDelete( WorkerThreadQuery, aTableName, writePending );
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mediaList->EndUpdateBatch();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

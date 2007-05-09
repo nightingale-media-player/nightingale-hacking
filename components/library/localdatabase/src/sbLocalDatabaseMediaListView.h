@@ -134,11 +134,11 @@ private:
   // Query to return list of values for a given property
   nsString mDistinctPropertyValuesQuery;
 
-  // Batch nesting count
-  PRUint32 mBatchCount;
+  // Whether we're in batch mode.
+  PRPackedBool mInBatch;
 
   // True when we should invalidate when batching ends
-  PRBool mInvalidatePending;
+  PRPackedBool mInvalidatePending;
 };
 
 #endif /* __SB_LOCALDATABASEMEDIALISTVIEW_H__ */

@@ -137,6 +137,8 @@ protected:
 
 private:
   static PRInt32 sInstanceCount;
+
+  PRInt32 mBatchCount;
 };
 
 /**
