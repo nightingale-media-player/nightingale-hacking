@@ -54,6 +54,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsHashKeys.h>
 #include <nsMemory.h>
+#include <nsNetUtil.h>
 #include <pratom.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
@@ -372,14 +373,13 @@ sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
 
   nsDependentSubstring stringKey(++start, end - start), propertiesURL;
 
-  aName.Assign(stringKey);
-
   static const PRUnichar sHash = '#';
 
   for (const PRUnichar* current = start; current < end; current++) {
     if (*current == sHash) {
       stringKey.Rebind(current + 1, end - current - 1);
       propertiesURL.Rebind(start, current - start);
+
       break;
     }
   }
@@ -389,25 +389,43 @@ sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIStringBundle> bundle;
+
   if (!propertiesURL.IsEmpty()) {
-    rv = bundleService->CreateBundle(NS_ConvertUTF16toUTF8(propertiesURL).get(),
+    nsCOMPtr<nsIURI> propertiesURI;
+    rv = NS_NewURI(getter_AddRefs(propertiesURI), propertiesURL);
+
+    if (NS_SUCCEEDED(rv)) {
+      PRBool schemeIsChrome;
+      rv = propertiesURI->SchemeIs("chrome", &schemeIsChrome);
+
+      if (NS_SUCCEEDED(rv) && schemeIsChrome) {
+        nsCAutoString propertiesSpec;
+        rv = propertiesURI->GetSpec(propertiesSpec);
+
+        if (NS_SUCCEEDED(rv)) {
+          rv = bundleService->CreateBundle(propertiesSpec.get(),
+                                           getter_AddRefs(bundle));
+        }
+      }
+    }
+  }
+
+  if (!bundle) {
+    rv = bundleService->CreateBundle(DEFAULT_PROPERTIES_URL,
                                      getter_AddRefs(bundle));
   }
-  else {
-    rv = bundleService->CreateBundle(DEFAULT_PROPERTIES_URL, getter_AddRefs(bundle));
-  }
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString localizedName;
-  rv = bundle->GetStringFromName(stringKey.BeginReading(),
-                                 getter_Copies(localizedName));
   if (NS_SUCCEEDED(rv)) {
-    aName.Assign(localizedName);
-  }
-  else {
-    aName.Assign(unlocalizedName);
+    nsAutoString localizedName;
+    rv = bundle->GetStringFromName(stringKey.BeginReading(),
+                                   getter_Copies(localizedName));
+    if (NS_SUCCEEDED(rv)) {
+      aName.Assign(localizedName);
+      return NS_OK;
+    }
   }
 
+  aName.Assign(unlocalizedName);
   return NS_OK;
 }
 
