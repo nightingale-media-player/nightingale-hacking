@@ -36,6 +36,7 @@
 
 class nsIFile;
 class nsILocalFile;
+class nsIPropertyBag2;
 class sbILibrary;
 
 class sbLocalDatabaseLibraryFactory : public sbILibraryFactory
@@ -45,6 +46,8 @@ public:
   NS_DECL_SBILIBRARYFACTORY
 
   already_AddRefed<nsILocalFile> GetFileForGUID(const nsAString& aGUID);
+  void GetGUIDFromFile(nsILocalFile* aFile,
+                       nsAString& aGUID);
 
   nsresult CreateLibraryFromDatabase(nsIFile* aDatabase,
                                      sbILibrary** _retval,

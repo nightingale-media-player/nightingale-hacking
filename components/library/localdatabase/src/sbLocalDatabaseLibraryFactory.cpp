@@ -414,3 +414,14 @@ sbLocalDatabaseLibraryFactory::GetFileForGUID(const nsAString& aGUID)
 
   return _retval;
 }
+
+void
+sbLocalDatabaseLibraryFactory::GetGUIDFromFile(nsILocalFile* aFile,
+                                               nsAString& aGUID)
+{
+  nsAutoString filename;
+  nsresult rv = aFile->GetLeafName(filename);
+  NS_ENSURE_SUCCESS(rv,);
+
+  aGUID.Assign(StringHead(filename, filename.Length() - 3));
+}

@@ -572,20 +572,23 @@ sbLibraryManager::RegisterLibrary(sbILibrary* aLibrary,
   nsresult rv = aLibrary->GetGuid(libraryGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-#ifdef DEBUG
-  PRBool exists = mLibraryTable.Get(libraryGUID, nsnull);
-  if (exists) {
+  PRBool alreadyRegistered;
+
+  sbLibraryInfo* libraryInfo = nsnull;
+  if (mLibraryTable.Get(libraryGUID, &libraryInfo)) {
     NS_WARNING("Registering a library that has already been registered!");
+    alreadyRegistered = PR_TRUE;
   }
-#endif
+  else {
+    nsAutoPtr<sbLibraryInfo> newLibraryInfo(new sbLibraryInfo());
+    NS_ENSURE_TRUE(newLibraryInfo, NS_ERROR_OUT_OF_MEMORY);
 
-  nsAutoPtr<sbLibraryInfo> newLibraryInfo(new sbLibraryInfo());
-  NS_ENSURE_TRUE(newLibraryInfo, NS_ERROR_OUT_OF_MEMORY);
+    PRBool success = mLibraryTable.Put(libraryGUID, newLibraryInfo);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
-  PRBool success = mLibraryTable.Put(libraryGUID, newLibraryInfo);
-  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-  sbLibraryInfo* libraryInfo = newLibraryInfo.forget();
+    libraryInfo = newLibraryInfo.forget();
+    alreadyRegistered = PR_FALSE;
+  }
 
   libraryInfo->library = aLibrary;
   libraryInfo->loader = mCurrentLoader;
@@ -608,8 +611,9 @@ sbLibraryManager::RegisterLibrary(sbILibrary* aLibrary,
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to update dataSource!");
   }
 
-  // Don't notify while within InvokeLoaders.
-  if (!mCurrentLoader) {
+  // Don't notify while within InvokeLoaders or if this library was previously
+  // registered.
+  if (!mCurrentLoader && !alreadyRegistered) {
     NotifyListenersLibraryRegistered(aLibrary);
   }
 

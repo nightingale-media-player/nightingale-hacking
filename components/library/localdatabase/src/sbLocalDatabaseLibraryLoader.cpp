@@ -267,7 +267,7 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
 
     nsAutoPtr<sbLibraryLoaderInfo>
       newLibraryInfo(CreateDefaultLibraryInfo(prefKey, aDefaultDatabaseGUID,
-                                              aLibraryNameKey));
+                                              nsnull, aLibraryNameKey));
     if (!newLibraryInfo || !mLibraryInfoTable.Put(index, newLibraryInfo)) {
       return NS_ERROR_FAILURE;
     }
@@ -356,6 +356,7 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
 sbLibraryLoaderInfo*
 sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKey,
                                                        const nsAString& aDatabaseGUID,
+                                                       nsILocalFile* aDatabaseFile,
                                                        const nsAString& aLibraryNameKey)
 {
   nsAutoPtr<sbLibraryLoaderInfo> newLibraryInfo(new sbLibraryLoaderInfo());
@@ -364,13 +365,37 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
   nsresult rv = newLibraryInfo->Init(aPrefKey);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  rv = newLibraryInfo->SetDatabaseGUID(aDatabaseGUID);
+  sbLocalDatabaseLibraryFactory libraryFactory;
+
+  nsAutoString databaseGUID;
+
+  if (!aDatabaseGUID.IsEmpty()) {
+    databaseGUID.Assign(aDatabaseGUID);
+  }
+  else {
+    NS_ASSERTION(aDatabaseFile, "You must supply either the GUID or file!");
+
+    // Figure out the GUID from the filename.
+    libraryFactory.GetGUIDFromFile(aDatabaseFile, databaseGUID);
+    NS_ENSURE_FALSE(databaseGUID.IsEmpty(), nsnull);
+  }
+
+  rv = newLibraryInfo->SetDatabaseGUID(databaseGUID);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  sbLocalDatabaseLibraryFactory libraryFactory;
-  nsCOMPtr<nsILocalFile> location =
-    libraryFactory.GetFileForGUID(aDatabaseGUID);
-  NS_ENSURE_TRUE(location, nsnull);
+  nsCOMPtr<nsILocalFile> location;
+
+  if (aDatabaseFile) {
+    location = aDatabaseFile;
+  }
+  else {
+    NS_ASSERTION(!aDatabaseGUID.IsEmpty(),
+                 "You must specify either the GUID or file!");
+
+    // Figure out the file from the GUID.
+    location = libraryFactory.GetFileForGUID(aDatabaseGUID);
+    NS_ENSURE_TRUE(location, nsnull);
+  }
 
   rv = newLibraryInfo->SetDatabaseLocation(location);
   NS_ENSURE_SUCCESS(rv, nsnull);
@@ -571,11 +596,11 @@ sbLocalDatabaseLibraryLoader::OnLibraryStartupModified(sbILibrary* aLibrary,
                  NS_ERROR_NOT_AVAILABLE);
 
   // See if this library already exists in the hashtable.
-  nsAutoString databaseGUID;
-  rv = aLibrary->GetGuid(databaseGUID);
+  nsAutoString resourceGUID;
+  rv = aLibrary->GetGuid(resourceGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLibraryExistsInfo existsInfo(databaseGUID);
+  sbLibraryExistsInfo existsInfo(resourceGUID);
   mLibraryInfoTable.EnumerateRead(LibraryExistsCallback, &existsInfo);
 
   sbLibraryLoaderInfo* libraryInfo;
@@ -605,7 +630,8 @@ sbLocalDatabaseLibraryLoader::OnLibraryStartupModified(sbILibrary* aLibrary,
     prefKey.AppendLiteral(".");
 
     nsAutoPtr<sbLibraryLoaderInfo>
-      newLibraryInfo(CreateDefaultLibraryInfo(prefKey, databaseGUID));
+      newLibraryInfo(CreateDefaultLibraryInfo(prefKey, EmptyString(),
+                                              databaseFile));
     if (!newLibraryInfo || !mLibraryInfoTable.Put(index, newLibraryInfo)) {
       return NS_ERROR_FAILURE;
     }

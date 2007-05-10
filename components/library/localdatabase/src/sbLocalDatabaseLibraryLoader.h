@@ -90,7 +90,8 @@ private:
 
   sbLibraryLoaderInfo*
     CreateDefaultLibraryInfo(const nsACString& aPrefKey,
-                             const nsAString& aDatabaseGUID,
+                             const nsAString& aDatabaseGUID = EmptyString(),
+                             nsILocalFile* aDatabaseFile = nsnull,
                              const nsAString& aLibraryNameKey = EmptyString());
 
   PRUint32 GetNextLibraryIndex();
