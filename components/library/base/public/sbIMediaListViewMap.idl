@@ -1,0 +1,78 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIMediaListViewMap.idl
+ * \brief Definition of the sbIMediaListViewMap interface
+ * \sa sbIMediaListViewMap.idl
+ */
+
+#include "nsISupports.idl"
+
+interface sbIMediaListView;
+
+/**
+* \interface sbIMediaListViewMap
+* \brief A mapping from nsISupports objects to save sbIMediaListView states.
+
+// {16EA057C-D4C2-4921-9984-13AC421A5F8D}
+static const GUID <<name>> = 
+{ 0x16ea057c, 0xd4c2, 0x4921, { 0x99, 0x84, 0x13, 0xac, 0x42, 0x1a, 0x5f, 0x8d } };
+
+*
+* \sa sbIMediaListView
+*/
+[scriptable, uuid(16ea057c-d4c2-4921-9984-13ac421a5f8d)]
+interface sbIMediaListViewMap : nsISupports
+{
+  /**
+   * \brief Given parent and pagekey objects, return the saved view or null if not saved.
+   * \param aParent A grouping object for a set of saved views. See sbIMediaListViewMap::dropParent().
+   * \param aPageKey A unique object to reference the saved view.
+   * \return sbIMediaListView The saved view, or null if none was ever saved.
+   */
+  sbIMediaListView getView( in nsISupports aParent, in nsISupports aPageKey );
+
+  /**
+   * \brief Given parent and pagekey objects, save the given view.
+   * \param aParent A grouping object for a set of saved views. See sbIMediaListViewMap::dropParent().
+   * \param aPageKey A unique object to reference the saved view.
+   * \param aView The view to be saved.
+   */
+  void setView( in nsISupports aParent, in nsISupports aPageKey, in sbIMediaListView aView );
+
+
+  /**
+   * \brief Release all views held by a parent grouping.
+   *
+   *  Usually, the parent object will be the browser for an open tab.  When the tab is closed,
+   * the history is released, so the views may be released as well.
+   *
+   * \param aParent The grouping object to release. See sbIMediaListViewMap::dropParent().
+   */
+  void releaseViews( in nsISupports aParent );
+};
+
