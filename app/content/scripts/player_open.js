@@ -108,8 +108,10 @@ try
   {
     try
     {
-      var aPlaylistReaderManager = (new sbIPlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
-      
+      var aPlaylistReaderManager =
+        Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+                  .getService(Components.interfaces.sbIPlaylistReaderManager);
+
       // Make a filepicker thingie
       var nsIFilePicker = Components.interfaces.nsIFilePicker;
       var fp = Components.classes["@mozilla.org/filepicker;1"]

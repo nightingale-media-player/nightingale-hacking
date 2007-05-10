@@ -629,7 +629,7 @@
 
               var playlistReaderManager =
                 Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
-                          .createInstance(Components.interfaces.sbIPlaylistReaderManager);
+                          .getService(Components.interfaces.sbIPlaylistReaderManager);
               var playlistReaderListener =
                 Components.classes["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
                           .createInstance(Components.interfaces.sbIPlaylistReaderListener);
