@@ -320,7 +320,7 @@
   if (this.mediaListView && this.mediaListView.currentSearch) {
     var properties = this.mediaListView.currentSearch;
     if (properties.length > 0) {
-      property = properties.getPropertyAt(0);
+      var property = properties.getPropertyAt(0);
       return property.value;
     }
   }
