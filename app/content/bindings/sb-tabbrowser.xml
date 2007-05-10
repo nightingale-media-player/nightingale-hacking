@@ -572,32 +572,68 @@
           var retval = false;
           try
           {
+            var ioService =
+              Components.classes["@mozilla.org/network/io-service;1"]
+                        .getService(Components.interfaces.nsIIOService);
+            var uri;
+            try {
+              uri = ioService.newURI(aURL, null, null);
+            }
+            catch(e) {
+            }
+
             // Stick playlists in the service pane (for now).
-            if ( forcePlaylist || gPPS.isPlaylistURL( aURL ) )
+            if ( uri && (forcePlaylist || gPPS.isPlaylistURL( uri.spec )) )
             {
-              var playlistReader = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
-                                   .createInstance(Components.interfaces.sbIPlaylistReaderManager);
-              var playlistReaderListener = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
-                                   .createInstance(Components.interfaces.sbIPlaylistReaderListener);
-        
-              // if we can find it in the service pane already then we shouldn't add it again.
-              var queryObj = new sbIDatabaseQuery();
-              queryObj.setDatabaseGUID("songbird");
-              var playlistManager = new sbIPlaylistManager();
-              playlistManager.getAllPlaylistList( queryObj );
-              var resultset = queryObj.getResultObject();
-              for ( var index = 0; index < resultset.getRowCount(); index++ )
-              {
-                // if we match don't add it, just play it.
-                if ( aURL == resultset.getRowCellByColumn( index, "description" ) )
-                {
-                  gPPS.playTable(resultset.getRowCellByColumn(index, "service_uuid"),
-                                 resultset.getRowCellByColumn(index, "name"),
-                                 0);
+              var library =
+                Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                          .getService(Components.interfaces.sbILibraryManager).mainLibrary;
+
+              // Check to see if this playlist already exists
+              var propertyArray =
+                Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
+                          .createInstance(Components.interfaces.sbIPropertyArray);
+              propertyArray.appendProperty("http://songbirdnest.com/data/1.0#isList", "1");
+              propertyArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl", uri.spec);
+
+              var getFirstListener = {
+                item: null,
+                onEnumerationBegin: function() {
+                  return true;
+                },
+                onEnumeratedItem: function(list, item) {
+                  this.item = item;
+                  return false;
+                },
+                onEnumerationEnd: function() {
                   return true;
                 }
+              };
+
+              library.enumerateItemsByProperties(propertyArray,
+                                                 getFirstListener,
+                                                 Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+
+              // If we found a matching list, clear it, otherwise create it
+              var mediaList;
+              if (getFirstListener.item) {
+                mediaList = getFirstListener.item;
+                mediaList.clear();
               }
-        
+              else {
+                mediaList = library.createMediaList("simple");
+                mediaList.name = gPPS.convertURLToDisplayName(aURL);
+                mediaList.setProperty("http://songbirdnest.com/data/1.0#originUrl", uri.spec);
+                mediaList.write();
+              }
+
+              var playlistReaderManager =
+                Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+                          .createInstance(Components.interfaces.sbIPlaylistReaderManager);
+              var playlistReaderListener =
+                Components.classes["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
+                          .createInstance(Components.interfaces.sbIPlaylistReaderListener);
+
               // Create this closure here to prevent this object from getting garbage
               // collected too soon.  The playlist reader uses the nsIWebBrowserPersist
               // component that does _not_ addref this listener :(
@@ -611,23 +647,27 @@
                                         "Unable to read playlist file - please try again later.");
                   }
                   else {
-                    SBScanServiceTreeNewEntryStart();
+                    var array =
+                      Components.classes["@mozilla.org/array;1"]
+                                .createInstance(Components.interfaces.nsIMutableArray);
+                    for (var i = 0; i < mediaList.length; i++) {
+                      array.appendElement(mediaList.getItemByIndex(i), false);
+                    }
+
+                    // Send the items in the new media list to the metadata scanner
+                    var metadataJobManager =
+                      Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                                .getService(Components.interfaces.sbIMetadataJobManager);
+                    var metadataJob = metadataJobManager.newJob(array, 5);
                   }
                 }
               };
-        
-              SBScanServiceTreeNewEntryEditable();
-        
+
               playlistReaderListener.playWhenLoaded = aShouldBeginPlayback;
               playlistReaderListener.observer = playlist_observer;
               playlistReaderListener.mediaMimetypesOnly = true;
-              playlistReader.autoLoad( aURL,
-                                       "songbird", 
-                                       gPPS.convertURLToDisplayName( aURL ),
-                                       "http",
-                                       aURL,
-                                       "", 
-                                       playlistReaderListener );
+              playlistReaderManager.originalURI = uri;
+              playlistReaderManager.loadPlaylist(uri, mediaList, null, false, playlistReaderListener);
               retval = true;
             }
             // Everything else gets played directly.

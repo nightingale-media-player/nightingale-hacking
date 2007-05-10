@@ -34,12 +34,15 @@ SONGBIRD_TEST_COMPONENT = playlistreader
 SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/test_m3uhandler.js \
                  $(srcdir)/test_plshandler.js \
+                 $(srcdir)/test_manager.js \
+                 $(srcdir)/test_manager_async.js \
                  $(srcdir)/files/relative_remote.m3u \
                  $(srcdir)/files/relative_remote.pls \
                  $(srcdir)/files/relative_remote_result.xml \
                  $(srcdir)/files/absolute_remote.m3u \
                  $(srcdir)/files/absolute_remote.pls \
                  $(srcdir)/files/absolute_remote_result.xml \
+                 $(srcdir)/files/absolute_remote_localhost_result.xml \
                  $(srcdir)/files/maclin_parse.m3u \
                  $(srcdir)/files/maclin_parse.pls \
                  $(srcdir)/files/maclin_parsem3u_result.xml \

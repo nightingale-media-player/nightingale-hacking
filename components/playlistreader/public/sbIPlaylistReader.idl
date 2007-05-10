@@ -44,79 +44,43 @@ interface sbIMediaList;
  *
  * \sa sbIPlaylistReaderManager, sbIPlaylistReader, sbIPlaylist, sbIPlaylistManager
  */
-[scriptable, uuid(5770099E-503B-4b76-B1A6-0BC53F53D2BF)]
+[scriptable, uuid(a1fd4697-6459-473f-a660-1915f91cd469)]
 interface sbIPlaylistReaderListener : nsIWebProgressListener
 {
   /**
    * \brief
    *
    * \param
-   * \sa sbIDatabaseQuery
    */
-  attribute AString originalURL;
+  attribute nsIURI originalURI;
 
   /**
    * \brief
    *
    * \param
-   * \sa sbIDatabaseQuery
    */
-  attribute AString serviceGuid;
+  attribute nsIURI destinationURI;
 
   /**
    * \brief
    *
    * \param
-   * \sa sbIDatabaseQuery
    */
-  attribute AString destinationURL;
+  attribute sbIMediaList mediaList;
 
   /**
    * \brief
    *
    * \param
-   * \sa sbIDatabaseQuery
    */
-  attribute AString destinationTable;
-
-  /**
-   * \brief
-   *
-   * \param
-   * \sa sbIDatabaseQuery
-   */
-  attribute AString readableName;
-
-  /**
-   * \brief
-   *
-   * \param
-   * \sa sbIDatabaseQuery
-   */
-  attribute AString playlistType;
-
-  /**
-   * \brief
-   *
-   * \param
-   * \sa sbIDatabaseQuery
-   */
-  attribute AString description;
-
-  /**
-   * \brief
-   *
-   * \param
-   * \sa sbIDatabaseQuery
-   */
-  attribute PRBool  appendOrReplace;
+  attribute boolean appendOrReplace;
 
   /**
    * \brief Automatically start playing when stream is done loading.
    *
    * False by default.
    */
-  attribute PRBool  playWhenLoaded;
+  attribute boolean playWhenLoaded;
 
   /**
    * \brief Observer to get notified about the failure or success of creating a playlist.
@@ -127,12 +91,12 @@ interface sbIPlaylistReaderListener : nsIWebProgressListener
   /**
    * \brief Only create playlists for media mime-types ( audio* or video* ), not text/html
    */
-  attribute PRBool mediaMimetypesOnly;
+  attribute boolean mediaMimetypesOnly;
 
   /**
    * \brief expose the state of the web downloading (currently only set to "" or STATE_STOP)
    */
-  attribute ASTring state;
+  attribute AString state;
 };
 
 /**
@@ -158,8 +122,7 @@ interface sbIPlaylistReader : nsISupports
    */
   void read(in nsIFile aFile,
             in sbIMediaList aMediaList,
-            in PRBool aReplace,
-            out PRInt32 aErrorCode);
+            in PRBool aReplace);
 
   /**
    * \brief
@@ -205,65 +168,41 @@ interface sbIPlaylistReader : nsISupports
  *
  * \sa sbIPlaylistReader, sbIPlaylistReaderListener
  */
-[scriptable, uuid(18032AD6-CB1F-403d-B3F5-7FE8EB579C28)]
+[scriptable, uuid(127d0f73-295b-4270-9c64-941c20d444e5)]
 interface sbIPlaylistReaderManager : nsISupports
 {
   /**
    * \brief
    *
    * \param
-   * \sa sbIDatabaseQuery
    */
-  attribute AString originalURL;
+  attribute nsIURI originalURI;
 
   /**
    * \brief
    *
    * \param
-   * \sa sbIDatabaseQuery
    */
-  PRInt32 autoLoad(in AString aURL,
-    in AString aGUID,
-    in AString aReadableName,
-    in AString aPlaylistType,
-    in AString aDescription,
-    in AString aContentType,
-    in sbIPlaylistReaderListener aPlaylistReaderListener);
+  long loadPlaylist(in nsIURI aURL,
+                    in sbIMediaList aMediaList,
+                    in AString aContentType,
+                    in boolean aAppendOrReplace,
+                    in sbIPlaylistReaderListener aPlaylistReaderListener);
 
   /**
    * \brief
    *
    * \param
-   * \sa sbIDatabaseQuery
    */
-  PRInt32 loadPlaylist(in AString aURL,
-    in AString aGUID,
-    in AString aUniqueName,
-    in AString aReadableName,
-    in AString aPlaylistType,
-    in AString aDescription,
-    in AString aContentType,
-    in PRBool aAppendOrReplace,
-    in sbIPlaylistReaderListener aPlaylistReaderListener);
+  void read(in nsIFile aFile,
+            in sbIMediaList aMediaList,
+            in AString aContentType,
+            in PRBool aAppendOrReplace);
 
   /**
    * \brief
    *
    * \param
-   * \sa sbIDatabaseQuery
-   */
-  PRInt32 read(in AString aFile,
-    in AString aGUID,
-    in AString aName,
-    in AString aReadableName,
-    in AString aContentType,
-    in PRBool aAppendOrReplace);
-
-  /**
-   * \brief
-   *
-   * \param
-   * \sa sbIDatabaseQuery
    */
   void supportedMIMETypes(out PRUint32 aMIMECount,
     [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
@@ -272,7 +211,6 @@ interface sbIPlaylistReaderManager : nsISupports
    * \brief
    *
    * \param
-   * \sa sbIDatabaseQuery
    */
   void supportedFileExtensions(out PRUint32 aExtCount,
     [array, size_is (aExtCount), retval] out wstring aExts);

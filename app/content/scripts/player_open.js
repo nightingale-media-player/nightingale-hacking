@@ -153,19 +153,42 @@ try
       var fp_status = fp.show();
       if ( fp_status == nsIFilePicker.returnOK )
       {
-        SBScanServiceTreeNewEntryEditable(); // Do this right before you add to the servicelist?
+        var library = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                .getService(Components.interfaces.sbILibraryManager).mainLibrary;
 
-        // And if we're good, play it.
-        var plsFile = "file:///" + fp.file.path;
-        var readableName = fp.file.leafName;
-        var success = aPlaylistReaderManager.autoLoad(fp.fileURL.spec, "songbird", readableName, "user", plsFile, "", null);
-        
-        if ( ( success == true ) || ( success == 1 ) )
-        {
-          SBScanServiceTreeNewEntryStart(); // Do this right after you know you have added to the servicelist?  
+        // Create the media list
+        var mediaList = library.createMediaList("simple");
+        mediaList.name = fp.file.leafName;
+        mediaList.setProperty("http://songbirdnest.com/data/1.0#originUrl", fp.fileURL.spec);
+        mediaList.write();
+
+        aPlaylistReaderManager.originalURI = fp.fileURL;
+        var success = aPlaylistReaderManager.loadPlaylist(fp.fileURL, mediaList, null, false, null);
+        if (success == 1) {
+          var array = Components.classes["@mozilla.org/array;1"]
+                                .createInstance(Components.interfaces.nsIMutableArray);
+          for (var i = 0; i < mediaList.length; i++) {
+            array.appendElement(mediaList.getItemByIndex(i), false);
+          }
+
+          // Send the items in the new media list to the metadata scanner
+          var metadataJobManager =
+            Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                      .getService(Components.interfaces.sbIMetadataJobManager);
+          var metadataJob = metadataJobManager.newJob(array, 5);
+
+          // Give the new media list focus
+          if (gBrowser) {
+            var librarySPS =
+              Components.classes['@songbirdnest.com/servicepane/library;1']
+                        .getService(Components.interfaces.sbILibraryServicePaneService);
+            var node = librarySPS.getNodeForLibraryResource(mediaList);
+            if (node) {
+              gBrowser.loadURI(node.url);
+            }
+          }
         }
 
-        if (theLibraryPlaylist) theLibraryPlaylist.syncPlaylistIndex(true);
       }
     }
     catch(err)

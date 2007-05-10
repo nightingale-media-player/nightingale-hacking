@@ -23,6 +23,7 @@ create table media_items (
 );
 create index idx_media_items_hidden on media_items (hidden);
 create index idx_media_items_created on media_items (created);
+create index idx_media_items_content_url on media_items (content_url);
 create index idx_media_items_media_list_type_id on media_items (media_list_type_id);
 create index idx_media_items_hidden_media_list_type_id on media_items (hidden, media_list_type_id);
 

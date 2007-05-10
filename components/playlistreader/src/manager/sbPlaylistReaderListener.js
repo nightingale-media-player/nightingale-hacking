@@ -1,25 +1,25 @@
 /*
  //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -27,6 +27,9 @@
 //
 // sbIPlaylistReaderListener Object
 //
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
 
 const SONGBIRD_PLAYLISTREADERLISTENER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistReaderListener;1";
 const SONGBIRD_PLAYLISTREADERLISTENER_CLASSNAME = "Songbird Playlist Reader Listener"
@@ -39,21 +42,16 @@ function CPlaylistReaderListener()
 
 CPlaylistReaderListener.prototype.constructor = CPlaylistReaderListener;
 
-CPlaylistReaderListener.prototype = 
+CPlaylistReaderListener.prototype =
 {
-  originalURL: "",
-  serviceGuid: "",
-  destinationURL: "",
-  destinationTable: "",
-  readableName: "",
-  playlistType: "",
-  description: "",
+  originalURI: null,
+  destinationURI: null,
   appendOrReplace: false,
   playWhenLoaded: false,
   mediaMimetypesOnly: false,
   observer: null,
   state: "",
-  
+
   onLocationChange: function(aWebProgress, aRequest, aLocation)
   {
   },
@@ -73,31 +71,31 @@ CPlaylistReaderListener.prototype =
       // mark ourself as finished so the PlaylistReaderManager can remove us.
       this.state = "STATE_STOP";
 
-      var playlistReaderMngr = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
-                                      .createInstance(Components.interfaces.sbIPlaylistReaderManager);
-      var playlistManager =   Components.classes["@songbirdnest.com/Songbird/PlaylistManager;1"]
-                                      .createInstance(Components.interfaces.sbIPlaylistManager);
-      var pps =   Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                                      .getService(Components.interfaces.sbIPlaylistPlayback);
+      var playlistReaderMngr = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+                                 .createInstance(Ci.sbIPlaylistReaderManager);
+      var pps = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                  .getService(Ci.sbIPlaylistPlayback);
 
       var strContentType = "";
       var aChannel = aRequest.QueryInterface(Components.interfaces.nsIChannel);
-      if(aChannel)
+      if (aChannel)
       {
         try
         {
           strContentType = aChannel.contentType;
-        } catch (err) {
-          dump("CPlaylistReaderListener::onStateChange - NO CONTENT TYPE AVAILABLE" + err + "\n");
+        }
+        catch (err) {
+          Components.utils.reportError(err);
         } // Grrrr.
       }
-      playlistReaderMngr.originalURL = this.originalURL;
-      var rv = playlistReaderMngr.loadPlaylist(this.destinationURL, this.serviceGuid, this.destinationTable, 
-                                                    this.readableName, this.playlistType, this.description, 
-                                                    strContentType, this.appendOrReplace, null);
+      playlistReaderMngr.originalURI = this.originalURI;
+      try {
+        playlistReaderMngr.loadPlaylist(this.destinationURI,
+                                        this.mediaList, strContentType,
+                                        this.appendOrReplace,
+                                        null);
+/* XXXsteve: Todo: hook up auto download when it is ready
 
-      if(rv == 0)
-      {
         const DataRemote = new Components.Constructor( "@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
         var dbQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
                                       .createInstance(Components.interfaces.sbIDatabaseQuery);
@@ -108,7 +106,7 @@ CPlaylistReaderListener.prototype =
         dbQuery.setDatabaseGUID(this.serviceGuid);
         dbQuery.setAsyncQuery(false);
         var playlist = playlistManager.getDynamicPlaylist(this.destinationTable, dbQuery);
-        
+
         if(playlist)
         {
           var destFolder = (new DataRemote("download.folder", null)).stringValue;
@@ -117,44 +115,47 @@ CPlaylistReaderListener.prototype =
                                       getService(Components.interfaces.sbIDeviceManager);
           if (!deviceManager)
             return false;
-        
+
           var downloadDevice = null;
           var downloadCategory = 'Songbird Download Device';
           if (deviceManager.hasDeviceForCategory(downloadCategory)) {
             downloadDevice =
               deviceManager.getDeviceByCategory(downloadCategory);
           }
-          
+
           if( !downloadDevice)
             return false;
 
           var downloadTable = {};
           downloadDevice.autoDownloadTable('', this.serviceGuid, this.destinationTable, '', 0, null, '', destFolder, downloadTable);
-          
+
           dpDownloadContext.stringValue = downloadDevice.getContext('');
           dpDownloadTable.stringValue = downloadTable.value;
         }
+*/
         if (this.playWhenLoaded)
         {
-          pps.playTable(this.serviceGuid, this.destinationTable, 0);
+          var view = this.mediaList.createView();
+          pps.playView(view, 0);
         }
         if (this.observer)
         {
           this.observer.observe(null, "success", "");
         }
       }
-      else
+      catch(e)
       {
         if (this.observer)
           this.observer.observe(null, "error: could not create playlist", "");
+        Components.utils.reportError(e);
       }
     }
   },
-  
+
   onStatusChange: function(aWebProgress, aRequest, aStateFlags, strStateMessage)
   {
   },
-  
+
   QueryInterface: function(aIID)
   {
     if (!aIID.equals(Components.interfaces.sbIPlaylistReaderListener) &&
@@ -164,29 +165,29 @@ CPlaylistReaderListener.prototype =
     {
       throw Components.results.NS_ERROR_NO_INTERFACE;
     }
-    
+
     return this;
   }
 };
 
 /**
  * \class sbPlaylistReaderListenerModule
- * \brief 
+ * \brief
  */
-var sbPlaylistReaderListenerModule = 
+var sbPlaylistReaderListenerModule =
 {
   registerSelf: function(compMgr, fileSpec, location, type)
   {
       compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-      compMgr.registerFactoryLocation(SONGBIRD_PLAYLISTREADERLISTENER_CID, 
-                                      SONGBIRD_PLAYLISTREADERLISTENER_CLASSNAME, 
+      compMgr.registerFactoryLocation(SONGBIRD_PLAYLISTREADERLISTENER_CID,
+                                      SONGBIRD_PLAYLISTREADERLISTENER_CLASSNAME,
                                       SONGBIRD_PLAYLISTREADERLISTENER_CONTRACTID,
-                                      fileSpec, 
+                                      fileSpec,
                                       location,
                                       type);
   },
 
-  getClassObject: function(compMgr, cid, iid) 
+  getClassObject: function(compMgr, cid, iid)
   {
       if (!cid.equals(SONGBIRD_PLAYLISTREADERLISTENER_CID))
           throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -198,14 +199,14 @@ var sbPlaylistReaderListenerModule =
   },
 
   canUnload: function(compMgr)
-  { 
-    return true; 
+  {
+    return true;
   }
 };
 
 /**
  * \class sbPlaylistReaderListenerFactory
- * \brief 
+ * \brief
  */
 var sbPlaylistReaderListenerFactory =
 {
@@ -213,7 +214,7 @@ var sbPlaylistReaderListenerFactory =
     {
         if (outer != null)
             throw Components.results.NS_ERROR_NO_AGGREGATION;
-    
+
         if (!iid.equals(SONGBIRD_PLAYLISTREADERLISTENER_IID) &&
             !iid.equals(Components.interfaces.nsIWebProgressListener) &&
             !iid.equals(Components.interfaces.nsISupportsWeakReference) &&
@@ -226,10 +227,10 @@ var sbPlaylistReaderListenerFactory =
 
 /**
  * \function NSGetModule
- * \brief 
+ * \brief
  */
 function NSGetModule(comMgr, fileSpec)
-{ 
+{
   return sbPlaylistReaderListenerModule;
 } //NSGetModule
 

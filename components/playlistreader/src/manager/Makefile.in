@@ -22,16 +22,16 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = handler \
-          manager \
-          $(NULL)
+SONGBIRD_COMPONENTS = $(srcdir)/sbPlaylistReaderManager.js \
+                      $(srcdir)/sbPlaylistReaderListener.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 
