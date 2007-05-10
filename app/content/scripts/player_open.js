@@ -350,8 +350,8 @@ function SBMabOpen()
 
 function SBNewPlaylist()
 {  
-  // TODO I imagine this function will become more generic.  Hardcoding to simple for now.
-  
+
+  // TODO I imagine this function will become more generic.  Hardcoding to simple for now.   
   var mediaListType = "simple";
  
   var servicePane = gServicePane;

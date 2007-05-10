@@ -47,6 +47,24 @@ const URL_ICON_LIBRARY = 'chrome://songbird/skin/icons/icon_lib_16x16.png';
 // TODO: Remove this
 const URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/playlist_test2.xul?"
 
+const LSP='http://songbirdnest.com/rdf/library-servicepane#';
+
+
+/** 
+ * Given the arguments var of a function, dump the
+ * name of the function and the parameters provided
+ */
+function logcall(parentArgs) {
+  dump("\n");
+  dump(parentArgs.callee.name + "(");
+  for (var i = 0; i < parentArgs.length; i++) {
+    dump(parentArgs[i]);
+    if (i < parentArgs.length - 1) {
+      dump(', ');
+    }
+  }
+  dump(")\n");
+}
 
 
 
@@ -85,7 +103,7 @@ function sbLibraryServicePane_QueryInterface(iid) {
 
 sbLibraryServicePane.prototype.servicePaneInit = 
 function sbLibraryServicePane_servicePaneInit(sps) {
-  dump("sbLibraryServicePane_servicePaneInit\n");
+  logcall(arguments);
 
   // keep track of the service pane service
   this._servicePane = sps;
@@ -132,7 +150,7 @@ function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
  */
 sbLibraryServicePane.prototype.suggestLibraryForNewList =
 function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
-  dump("sbLibraryServicePane_suggestLibraryForNewList\n");
+  logcall(arguments);
   
   // Must provide a media list type
   if (!aMediaListType) {
@@ -194,7 +212,7 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
  */
 sbLibraryServicePane.prototype.getNodeForLibraryResource =
 function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
-  dump("sbLibraryServicePane_getNodeForLibraryResource\n");
+  logcall(arguments);
   
   // Must be initialized
   if (!this._libraryManager || !this._servicePane) {
@@ -231,7 +249,7 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
  */
 sbLibraryServicePane.prototype.getLibraryResourceForNode =
 function sbLibraryServicePane_getLibraryResourceForNode(aNode) {
-  dump("sbLibraryServicePane_getLibraryResourceForNode\n");
+  logcall(arguments);
   
   // Must provide a node
   if (!(aNode instanceof Ci.sbIServicePaneNode)) {
@@ -268,7 +286,7 @@ function sbLibraryServicePane_getLibraryResourceForNode(aNode) {
  */
 sbLibraryServicePane.prototype._doesLibrarySupportListType =
 function sbLibraryServicePane__doesLibrarySupportListType(aLibrary, aListType) {
-  dump("sbLibraryServicePane__doesLibrarySupportListType\n");
+  logcall(arguments);
   var types = aLibrary.mediaListTypes;
   while (types.hasMore()) {
     if(aListType == types.getNext())  {
@@ -285,6 +303,7 @@ function sbLibraryServicePane__doesLibrarySupportListType(aLibrary, aListType) {
  */
 sbLibraryServicePane.prototype._hideLibraryNodes =
 function sbLibraryServicePane__hideLibraryNodes(aNode) {
+  logcall(arguments);
   
   // If this is one of our nodes, hide it
   dump("sbLibraryServicePane__hideLibraryNodes testing " + aNode.name + " \n");
@@ -309,7 +328,7 @@ function sbLibraryServicePane__hideLibraryNodes(aNode) {
  */
 sbLibraryServicePane.prototype._processLibraries =
 function sbLibraryServicePane__processLibraries() {
-  dump("sbLibraryServicePane__processLibraries\n");
+  logcall(arguments);
   var libraries = this._libraryManager.getLibraries();
   while (libraries.hasMoreElements()) {
     var library = libraries.getNext();
@@ -323,7 +342,7 @@ function sbLibraryServicePane__processLibraries() {
  */
 sbLibraryServicePane.prototype._processListsInLibrary =
 function sbLibraryServicePane__processListsInLibrary(aLibrary) {
-  dump("sbLibraryServicePane__processListsInLibrary\n");
+  logcall(arguments);
 
   // Listener to receive enumerated items and store then in an array
   var listener = {
@@ -353,7 +372,7 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
  */
 sbLibraryServicePane.prototype._libraryAdded =
 function sbLibraryServicePane__libraryAdded(aLibrary) {
-  dump("sbLibraryServicePane__libraryAdded\n");  
+  logcall(arguments);  
   this._ensureLibraryNodeExists(aLibrary);
   this._processListsInLibrary(aLibrary);
 }
@@ -366,7 +385,7 @@ function sbLibraryServicePane__libraryAdded(aLibrary) {
  */
 sbLibraryServicePane.prototype._libraryRemoved =
 function sbLibraryServicePane__libraryRemoved(aLibrary) {
-  dump("sbLibraryServicePane__libraryRemoved\n");
+  logcall(arguments);
   
   // Find the node for this library
   // TODO needs testing
@@ -385,7 +404,7 @@ function sbLibraryServicePane__libraryRemoved(aLibrary) {
  */
 sbLibraryServicePane.prototype._playlistAdded =
 function sbLibraryServicePane__playlistAdded(aMediaList) {
-  dump("sbLibraryServicePane__playlistAdded\n");
+  logcall(arguments);
   this._ensureMediaListNodeExists(aMediaList);
 }
 
@@ -396,7 +415,7 @@ function sbLibraryServicePane__playlistAdded(aMediaList) {
  */
 sbLibraryServicePane.prototype._playlistRemoved =
 function sbLibraryServicePane__playlistRemoved(aMediaList) {
-  dump("sbLibraryServicePane__playlistRemoved\n");
+  logcall(arguments);
   
   // TODO needs testing
   var id = this._itemURN(aMediaList);
@@ -413,7 +432,7 @@ function sbLibraryServicePane__playlistRemoved(aMediaList) {
  */
 sbLibraryServicePane.prototype._playlistUpdated =
 function sbLibraryServicePane__playlistUpdated(aMediaList) {
-  dump("sbLibraryServicePane__playlistUpdated\n");
+  logcall(arguments);
   this._ensureMediaListNodeExists(aMediaList);
 }
 
@@ -437,14 +456,42 @@ function sbLibraryServicePane__libraryURN(aLibrary) {
 
 
 /**
+ * Given a resource id, attempt to extract the GUID of a media item.
+ */
+sbLibraryServicePane.prototype._getItemGUIDForURN =
+function sbLibraryServicePane__getItemGUIDForURN(aID) {
+  logcall(arguments);
+  var index = aID.indexOf(URN_PREFIX_ITEM);
+  if (index >= 0) {
+    return aID.slice(index);
+  }
+  return null;
+}
+
+
+/**
+ * Given a resource id, attempt to extract the GUID of a library.
+ */
+sbLibraryServicePane.prototype._getLibraryGUIDForURN =
+function sbLibraryServicePane___getLibraryGUIDForURN(aID) {
+  logcall(arguments);
+  var index = aID.indexOf(URN_PREFIX_LIBRARY);
+  if (index >= 0) {
+    return aID.slice(index);
+  }
+  return null;
+}
+
+
+/**
  * Given a resource id, attempt to get an sbIMediaItem.
  * This is the inverse of _itemURN
  */
 sbLibraryServicePane.prototype._getItemForURN =
 function sbLibraryServicePane__getItemForURN(aID) {
-  var index = aID.indexOf(URN_PREFIX_ITEM);
-  if (index >= 0) {
-    var guid = aID.slice(index);
+  logcall(arguments);
+  var guid = this._getItemGUIDForURN(aID);
+  if (guid) {
     var item = null;
     
     // First try the main library
@@ -481,9 +528,9 @@ function sbLibraryServicePane__getItemForURN(aID) {
  */
 sbLibraryServicePane.prototype._getLibraryForURN =
 function sbLibraryServicePane__getLibraryForURN(aID) {
-  var index = aID.indexOf(URN_PREFIX_LIBRARY);
-  if (index >= 0) {
-    var guid = aID.slice(index);
+  logcall(arguments);
+  var guid = this._getLibraryGUIDForURN(aID);
+  if (guid) {
     return this._libraryManager.getLibrary(guid);
   }
   return null;
@@ -496,6 +543,8 @@ function sbLibraryServicePane__getLibraryForURN(aID) {
  */
 sbLibraryServicePane.prototype._getDisplayURL =
 function sbLibraryServicePane__getDisplayURL(aResource) {
+  logcall(arguments);
+  
   // Should really ask someone else... but for now just hardcode
   var url = URL_PLAYLIST_DISPLAY;
   if (aResource instanceof Ci.sbILibrary) {
@@ -506,15 +555,19 @@ function sbLibraryServicePane__getDisplayURL(aResource) {
 
 
 
+/**
+ * Get the service pane node for the given library,
+ * creating one if none exists.
+ */
 sbLibraryServicePane.prototype._ensureLibraryNodeExists =
 function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
-  dump("sbLibraryServicePane__ensureLibraryNodeExists\n");
+  logcall(arguments);
 
   var id = this._libraryURN(aLibrary);
   dump ('ensureLibraryNodeExists: '+id+'\n');
   var node = this._servicePane.getNode(id);
   if (!node) {
-    // create the node
+    // Create the node
     node = this._servicePane.addNode(id, this._servicePane.root, true);
     node.url = this._getDisplayURL(aLibrary);
     node.name = aLibrary.name;
@@ -522,19 +575,21 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.contractid = CONTRACTID;
     node.dndDragTypes = 'text/x-sb-toplevel';
     node.dndAcceptNear = 'text/x-sb-toplevel';
+    node.properties = "library";
     node.editable = true;
     
-    // we want to put it above the first non-library item
-    // yes this rule is kind of arbitary.
-    var childs = this._servicePane.root.childNodes;
-    while (childs.hasMoreElements()) {
-      var child = childs.getNext().QueryInterface(Ci.sbIServicePaneNode);
-      if (child.contractid != CONTRACTID) {
-        this._servicePane.root.insertBefore(node, child);
-        break;
-      }
-    }
+    // Set properties for styling purposes
+    node.properties = "library libraryguid_" + aLibrary.guid;
+    
+    // Save the type of media list so that we can group by type
+    node.setAttributeNS(LSP, "ListType", aLibrary.type)    
+    
+    // Position the node in the tree
+    this._insertLibraryNode(node, aLibrary);
   }
+  
+  // Refresh the name just in case it was localized
+  node.name = aLibrary.name;  
   
   // Make sure the node is visible, since we hid all library nodes on startup
   node.hidden = false;
@@ -545,42 +600,176 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   return node;
 }
 
-
  
- 
+/**
+ * Get the service pane node for the given media list,
+ * creating one if none exists.
+ */ 
 sbLibraryServicePane.prototype._ensureMediaListNodeExists =
 function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
-  dump("sbLibraryServicePane__ensureMediaListNodeExists\n");
+  logcall(arguments);
 
   var id = this._itemURN(aMediaList);
   dump ('_ensureMediaListNodeExists: '+id+'\n');
   var node = this._servicePane.getNode(id);
   if (!node) {
-    // create the node
-    node = this._servicePane.addNode(id, this._servicePane.root, true);
+    // Create the node
+    node = this._servicePane.addNode(id, this._servicePane.root, false);
     node.url = this._getDisplayURL(aMediaList);
     node.image = URL_ICON_PLAYLIST;
     node.contractid = CONTRACTID;
     node.editable = true;
     
-    // TODO change this
-    // we want to put it above the first non-library item
-    // yes this rule is kind of arbitary.
-    var childs = this._servicePane.root.childNodes;
-    while (childs.hasMoreElements()) {
-      var child = childs.getNext().QueryInterface(Ci.sbIServicePaneNode);
-      if (child.contractid != CONTRACTID) {
-        this._servicePane.root.insertBefore(node, child);
-        break;
-      }
-    }
+    // Set properties for styling purposes
+    node.properties = "medialist medialisttype_" + aMediaList.type;
+    
+    // Save the type of media list so that we can group by type
+    node.setAttributeNS(LSP, "ListType", aMediaList.type);
+    
+    // Place the node in the tree
+    this._insertMediaListNode(node, aMediaList);
   }
-  node.name = aMediaList.name;
+  // Refresh the name just in case it was localized
+  node.name = aMediaList.name;  
+  
+  // Make sure the node is visible, since we hid all library nodes on startup
   node.hidden = false;
       
   return node;
 }
+
+
+/**
+ * Logic to determine where a library node should appear
+ * in the service pane tree
+ */ 
+sbLibraryServicePane.prototype._insertLibraryNode =
+function sbLibraryServicePane__insertLibraryNode(aNode, aLibrary) {
+  logcall(arguments);
+  
+  // If this is the main library it should go at
+  // the top of the list
+  if (aLibrary == this._libraryManager.mainLibrary) {
+    if (this._servicePane.root.firstChild) {
+      this._servicePane.root.insertBefore(aNode, 
+              this._servicePane.root.firstChild);    
+    } else {
+      this._servicePane.root.appendChild(aNode);    
+    }
+  // Otherwise, add above the first non-library item?
+  } else {
+    this._insertAfterLastOfSameType(aNode, this._servicePane.root);
+  }
+}
+
+
+/**
+ * Logic to determine where a media list node should appear
+ * in the service pane tree
+ */ 
+sbLibraryServicePane.prototype._insertMediaListNode =
+function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
+  logcall(arguments);
+
+  // If it is a main library media list, it belongs at 
+  // the top level
+  if (aMediaList.library == this._libraryManager.mainLibrary) 
+  {  
+    this._insertAfterLastOfSameType(aNode, this._servicePane.root);
+  } 
+  // If it is a secondary library playlist, it should be
+  // added as a child of that library
+  else 
+  {
+    // Find the parent libary in the tree
+    var parentLibraryGUID = aMediaList.library.guid;
+    var parentLibraryNode;
+    var children = this._servicePane.root.childNodes;
+    while (children.hasMoreElements()) {
+      var child = children.getNext().QueryInterface(Ci.sbIServicePaneNode);
+      if (child.contractid == CONTRACTID && 
+          this._getLibraryGUIDForURN(child.id) == parentLibraryGUID)
+      {
+        parentLibraryNode = child;
+        break;
+      }
+    }
+    
+    // Insert after last of same type as child of
+    // this library
+    if (parentLibraryNode && parentLibraryNode.isContainer) {
+      this._insertAfterLastOfSameType(aNode, parentLibraryNode);
+    } else {
+      dump("sbLibraryServicePane__insertMediaListNode: ");
+      dump("could not add media list to parent library ");
+      dump(parentLibraryNode.name + "\n");
+      this._servicePane.root.appendChild(aNode);
+    }
+  }
+}
+
+
  
+/**
+ * Inserts the given node under the given parent and attempts to keep
+ * children grouped by type.  The node is inserted at the end of the list
+ * or next to the last child of the same type as the given node.
+ * TODO: Not fully tested!
+ */ 
+sbLibraryServicePane.prototype._insertAfterLastOfSameType =
+function sbLibraryServicePane__insertAfterLastOfSameType(aNode, aParent) {
+  logcall(arguments);
+    
+  if (!aParent.isContainer) {
+    dump("sbLibraryServicePane__insertAfterLastOfSameType: ");
+    dump("cannot insert under non-container node.\n");
+    return;
+  }      
+  aParent.isOpen = true;
+  
+  // Insert after last of same type before hitting 
+  // non-library related items
+  var children = aParent.childNodes;
+  var nodeType = aNode.getAttributeNS(LSP, "ListType");
+  var lastOfSameType;
+  var inserted = false;
+  while (children.hasMoreElements()) {
+    var child = children.getNext().QueryInterface(Ci.sbIServicePaneNode);
+    
+    // If we own this node...
+    if (child.contractid == CONTRACTID) {
+    
+      // Keep track of last node of the same type as this one  
+      if (nodeType == child.getAttributeNS(LSP, "ListType")) {
+        lastOfSameType = child;
+      }
+      
+    // When we get to the end of the library section...
+    } else {        
+      // Insert the new list after the last of the same type
+      // or at the end of the list
+      if (lastOfSameType && lastOfSameType.nextSibling) {
+        aParent.insertBefore(aNode, lastOfSameType.nextSibling);
+      } else {
+        aParent.insertBefore(aNode, child);
+      }
+      
+      inserted = true;            
+      break;
+    }     
+  } // end of while
+  
+  // If for some reason we weren't able to insert the item
+  // (eg no bookmarks, or a completely empty service tree), 
+  // then just add it at the end.
+  if (!inserted) {
+    dump("sbLibraryServicePane__insertAfterLastOfSameType: Unable to find a ");
+    dump("good place to insert a library resource node. Defaulting to end.\n");
+    aParent.appendChild(aNode);
+  }
+}
+
+
 
 ///////////////////////////////
 // sbILibraryManagerListener //
@@ -588,11 +777,12 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
 
 sbLibraryServicePane.prototype.onLibraryRegistered =
 function sbLibraryServicePane_onLibraryRegistered(aLibrary) {
+  logcall(arguments);
   this._libraryAdded(aLibrary);
 }
 sbLibraryServicePane.prototype.onLibraryUnregistered =
 function sbLibraryServicePane_onLibraryUnregistered(aLibrary) {
-  dump('onLibraryUnregistered\n');
+  logcall(arguments);
   this._libraryRemoved(aLibrary);
 }
 
@@ -602,7 +792,7 @@ function sbLibraryServicePane_onLibraryUnregistered(aLibrary) {
 
 sbLibraryServicePane.prototype.onItemAdded =
 function sbLibraryServicePane_onItemAdded(aMediaList, aMediaItem) {
-  dump('sbLibraryServicePane_onItemAdded: '+aMediaItem+'\n');
+  logcall(arguments);
   var isList = aMediaItem instanceof Ci.sbIMediaList;
   if (isList) {
     this._playlistAdded(aMediaItem);
@@ -610,7 +800,7 @@ function sbLibraryServicePane_onItemAdded(aMediaList, aMediaItem) {
 }
 sbLibraryServicePane.prototype.onBeforeItemRemoved =
 function sbLibraryServicePane_onBeforeItemRemoved(aMediaList, aMediaItem) {
-  dump('sbLibraryServicePane_onItemRemoved: '+aMediaItem+'\n');
+  logcall(arguments);
   var isList = aMediaItem instanceof Ci.sbIMediaList;
   if (isList) {
     this._playlistRemoved(aMediaItem);
@@ -631,9 +821,11 @@ function sbLibraryServicePane_onListCleared(aMediaList) {
 }
 sbLibraryServicePane.prototype.onBatchBegin =
 function sbLibraryServicePane_onBatchBegin(aMediaList) {
+  logcall(arguments);
 }
 sbLibraryServicePane.prototype.onBatchEnd =
 function sbLibraryServicePane_onBatchEnd(aMediaList) {
+  logcall(arguments);
 }
 
 /////////////////

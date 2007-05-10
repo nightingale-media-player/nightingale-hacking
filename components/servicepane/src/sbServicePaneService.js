@@ -143,9 +143,9 @@ ServicePaneNode.prototype.__defineSetter__ ('tooltip', function (aValue) {
   this.setAttributeNS(NC,'Description', aValue); });
 
 ServicePaneNode.prototype.__defineGetter__ ('properties', function () {
-  return this.getAttributeNS(NC,'Properties'); })
+  return this.getAttributeNS(SP,'Properties'); })
 ServicePaneNode.prototype.__defineSetter__ ('properties', function (aValue) {
-  this.setAttributeNS(NC,'Properties', aValue); });
+ this.setAttributeNS(SP,'Properties', aValue); });
 
 ServicePaneNode.prototype.__defineGetter__ ('contractid', function () {
   return this.getAttributeNS(SP,'contractid'); })

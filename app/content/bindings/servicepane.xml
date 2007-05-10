@@ -129,12 +129,15 @@
               <xul:binding subject="?node"
                      predicate="http://songbirdnest.com/rdf/servicepane#Open"
                      object="?open" />
+              <xul:binding subject="?node"
+                     predicate="http://songbirdnest.com/rdf/servicepane#Properties"
+                     object="?properties" />                                
             </xul:bindings>
             <xul:action>
               <xul:treechildren flex="1" properties="dropOn">
                 <xul:treeitem open="?open" uri="?node" nodeid="?node">
                   <xul:treerow>
-                    <xul:treecell label="?name" src="?icon" />
+                    <xul:treecell label="?name" src="?icon" properties="?properties"/>
                   </xul:treerow>
                 </xul:treeitem>
               </xul:treechildren>
@@ -146,7 +149,7 @@
         <xul:popup anonid="popup" class="sb_faceplate" />
       </xul:popupset>
     </content>
-    <implementation implements="nsIWebProgressListener,nsIXULBuilderListener,nsIXULTreeBuilderObserver">
+    <implementation implements="nsIWebProgressListener,nsIXULBuilderListener">
       <constructor><![CDATA[
         // get the tree node
         this.mTree = document.getAnonymousElementByAttribute(this, 'anonid', 'tree');
@@ -281,13 +284,13 @@
           if (row < 0) {
             return null;
           }
-          /* this is for unbuilt trees 
-          var id = this.mTree.builderView.getResourceAtIndex(row).Value;
-          return this.mService.getNode(id);
-          */
+
+          // If this is a dont-build-content tree, use this:
+          //var id = this.mTree.builderView.getResourceAtIndex(row).Value;
+
           var element = this.mTree.contentView.getItemAtIndex(row);
-          if (element && element.hasAttribute('id')) {
-            return this.mService.getNode(element.getAttribute('id'));
+          if (element && element.hasAttribute('nodeid')) {
+            return this.mService.getNode(element.getAttribute('nodeid'));
           } else {
             return null;
           }
@@ -300,9 +303,10 @@
           if (!node) {
             return -1;
           }
-          /* this is for an unbuilt tree 
-          return this.mTree.builderView.getIndexOfResource(node.resource);
-          */
+
+          // If this is a dont-build-content tree, use this:
+          //return this.mTree.builderView.getIndexOfResource(node.resource);
+
           var element = document.getAnonymousElementByAttribute(this, 'nodeid', node.id);
           return this.mTree.view.getIndexOfItem(element);
         ]]></body>
@@ -354,8 +358,8 @@
           dump('(loadURL?)\n');
           if (!aURL ||
             !aURL.indexOf ||
-            !aURL.length/* ||
-            this.mCurrentURL == aURL*/) {
+            !aURL.length) 
+          {
             // if no URL was supplied there's nothing for us to do
             return;
           }
