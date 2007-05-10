@@ -131,6 +131,7 @@ function sbBookmarks_servicePaneInit(sps) {
         fnode.dndDragTypes = 'text/x-sb-toplevel';
         fnode.dndAcceptNear = 'text/x-sb-toplevel';
         fnode.dndAcceptIn = BOOKMARK_DRAG_TYPE;
+        fnode.editable = true; // folder names are editable
         
         if (fnode.id == ROOTNODE) {
           // we just created the default bookmarks root
@@ -165,6 +166,7 @@ function sbBookmarks_servicePaneInit(sps) {
           bnode.contractid = CONTRACTID;
           bnode.dndDragTypes = BOOKMARK_DRAG_TYPE;
           bnode.dndAcceptNear = BOOKMARK_DRAG_TYPE;
+          bnode.editable = true;
         }
         
         fnode.setAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported', 'true');
@@ -268,6 +270,7 @@ function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
     node.image = aIconURL;
     
     node.hidden = false;
+    node.editable = true;
     
     this._servicePane.save();
     

@@ -522,6 +522,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.contractid = CONTRACTID;
     node.dndDragTypes = 'text/x-sb-toplevel';
     node.dndAcceptNear = 'text/x-sb-toplevel';
+    node.editable = true;
     
     // we want to put it above the first non-library item
     // yes this rule is kind of arbitary.
@@ -560,6 +561,7 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     node.url = this._getDisplayURL(aMediaList);
     node.image = URL_ICON_PLAYLIST;
     node.contractid = CONTRACTID;
+    node.editable = true;
     
     // TODO change this
     // we want to put it above the first non-library item

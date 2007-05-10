@@ -101,7 +101,6 @@
       <xul:tree class="servicepane_tree" anonid="tree" flex="1"
             datasources="rdf:null" ref="SB:Root"
             hidecolumnpicker="true" seltype="single"
-            flags="dont-build-content"
             editable="true"
             >
         <!-- hide the column header - is there a better way? -->
@@ -129,13 +128,13 @@
                      object="?icon" />
               <xul:binding subject="?node"
                      predicate="http://songbirdnest.com/rdf/servicepane#Open"
-                     object="?open" />                     
+                     object="?open" />
             </xul:bindings>
             <xul:action>
-              <xul:treechildren flex="1">
+              <xul:treechildren flex="1" properties="dropOn">
                 <xul:treeitem open="?open" uri="?node" nodeid="?node">
                   <xul:treerow>
-                    <xul:treecell editable="true" label="?name" src="?icon" />
+                    <xul:treecell label="?name" src="?icon" />
                   </xul:treerow>
                 </xul:treeitem>
               </xul:treechildren>
@@ -166,18 +165,8 @@
         this.mTree.database.AddDataSource(this.mService.dataSource);
         // set the ref to the root...
         this.mTree.ref = this.mService.root.id;
-        
-        // register for builder callbacks
-        this.mTree.builder.addListener(this);
+        // and force a rebuild
         this.mTree.builder.rebuild();
-        
-        var xtb = this.mTree.builderView;
-        try {
-          xtb = xtb.QueryInterface(Components.interfaces.nsIXULTreeBuilder);
-          xtb.addObserver(this);
-        } catch (e) {
-          alert(e);
-        }
         
         var sp = this;
 
@@ -209,7 +198,6 @@
           
           if (node) {
             node.name = newName;
-            this.builder.rebuild();
           }
         }
         
@@ -242,6 +230,11 @@
         this.mTree.stopEditing = this.mTree._stopEditing;
         this.mTree._stopEditing = null;
       ]]></destructor>
+      
+      <field name="_dragService"><![CDATA[
+        Components.classes['@mozilla.org/widget/dragservice;1']
+            .getService(Components.interfaces.nsIDragService);
+      ]]></field>
 
       <method name="getURLName">
         <parameter name="aURL"/>
@@ -275,8 +268,8 @@
           // Do we need to pop open all parent containers and scroll to the row?
           var index = this.getRowForNode(aNode);
           if (index >= 0) {
-          this.mTree.startEditing(index, this.mTree.columns[0]);
-          return true;
+            this.mTree.startEditing(index, this.mTree.columns[0]);
+            return true;
           }
           return false;
         ]]></body>
@@ -288,8 +281,16 @@
           if (row < 0) {
             return null;
           }
+          /* this is for unbuilt trees 
           var id = this.mTree.builderView.getResourceAtIndex(row).Value;
           return this.mService.getNode(id);
+          */
+          var element = this.mTree.contentView.getItemAtIndex(row);
+          if (element && element.hasAttribute('id')) {
+            return this.mService.getNode(element.getAttribute('id'));
+          } else {
+            return null;
+          }
         ]]></body>
       </method>
       
@@ -299,10 +300,16 @@
           if (!node) {
             return -1;
           }
+          /* this is for an unbuilt tree 
           return this.mTree.builderView.getIndexOfResource(node.resource);
+          */
+          var element = document.getAnonymousElementByAttribute(this, 'nodeid', node.id);
+          return this.mTree.view.getIndexOfItem(element);
         ]]></body>
-      </method>      
+      </method>
       
+      <!-- the element we're currently dragging over -->
+      <field name="_dragOverElement">null</field>
       
       <field name="_browser">null</field>
       <property name="browser">
@@ -314,10 +321,6 @@
         ]]></getter>
       </property>
       <field name="onPlaylistDefaultCommand">null</field>
-      <field name="_dragService"><![CDATA[
-        Components.classes["@mozilla.org/widget/dragservice;1"]
-            .getService(Components.interfaces.nsIDragService);
-      ]]></field>
       
 
       <method name="highlightURL">
@@ -332,10 +335,10 @@
           if (node) {
             // yep, there's a sidebar node for the URL,
             // how about a DOM element for that node
-            var element = document.getAnonymousElementByAttribute(this, 'nodeid', node.id);
-            if (element) {
+            var row = this.getRowForNode(node);
+            if (row >= 0) {
               // yeah, looks like it - let's select it
-              this.mTree.view.selection.select(this.mTree.view.getIndexOfItem(element));
+              this.mTree.view.selection.select(row);
             }
           }
           
@@ -420,93 +423,63 @@
         <parameter name="aState" />
         <body />
       </method>
-      
 
-      <!-- implementation of nsIXULBuilderListener -->
-      <method name="didRebuild">
-        <parameter name="aBuilder" />
+      <!-- somewhat inspired by nsTreeBodyFrame::ComputeDropPosition -->
+      <method name="computeEventPosition">
+        <parameter name="event" />
         <body><![CDATA[
-          var sb = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-          var bmStrings = sb.createBundle("chrome://songbird/locale/songbird.properties");
-          var nodes = this.mTree.getElementsByTagName('treecell');
-          for (var i=0;i<nodes.length;i++) {
-            var label = nodes[i].getAttribute('label');
-            // if label starts with & do a stringbundle lookup.
-            if (label[0] == '&') {
-              try {
-                nodes[i].setAttribute('label', bmStrings.GetStringFromName(label.substr(1)));
-              } catch (e) {
-                // failure is okay
-              }
-            }
+        // what cell are we over?
+        var row = { }, col = { }, child = { };
+        this.mTree.treeBoxObject.getCellAt(event.pageX, event.pageY, row, col, child);
+        
+        // what node is that?
+        var node = this.getNodeForRow(row.value);
+        
+        // where is that cell?
+        var x = { }, y = { }, width = { }, height = { };
+        this.mTree.treeBoxObject.getCoordsForCellItem(row.value, col.value,
+            'cell', x, y, width, height);
+        
+        // what element is that?
+        var element = this.mTree.contentView.getItemAtIndex(row.value);
+        
+        // where in the cell are we?
+        var position = (event.pageY - y.value -
+            this.mTree.treeBoxObject.treeBody.boxObject.y);
+        position = position / height.value;
+        
+        // so lets work out the orientation. the rules the real tree drag and
+        // drop uses is:
+        //   isContainer:
+        //     <0.25: before
+        //     >0.75: after
+        //     else: on
+        //   else:
+        //     <0.5: before
+        //     >0.5: after
+        var orientation;
+        if (node.isContainer) {
+          if (position <= 0.25) {
+            orientation = -1;
+          } else if (position >= 0.75) {
+            orientation = 1;
+          } else {
+            orientation = 0;
           }
+        } else {
+          if (position <= 0.5) {
+            orientation = -1;
+          } else {
+            orientation = 1;
+          }
+        }
+        
+        return { row: row.value,
+            node: node,
+            orientation: orientation,
+            element: element };
         ]]></body>
       </method>
-      <method name="willRebuild">
-        <parameter name="aBuilder" />
-        <body />
-      </method>
-
-
-      <!-- implementation of nsIXULTreeBuilderObserver -->
-      <method name="canDrop">
-        <parameter name="aIndex" />
-        <parameter name="aOrientation" />
-        <body><![CDATA[
-          var node = this.getNodeForRow(aIndex);
-          var session = this._dragService.getCurrentSession();
-          return this.mService.canDrop(node.id, session, aOrientation);
-        ]]></body>
-      </method>
-      <method name="onCycleCell">
-        <parameter name="aRow" />
-        <parameter name="aColID" />
-        <body><![CDATA[
-        ]]></body>
-      </method>
-      <method name="onCycleHeader">
-        <parameter name="aColID" />
-        <parameter name="aElt" />
-        <body><![CDATA[
-        ]]></body>
-      </method>
-      <method name="onDrop">
-        <parameter name="aRow" />
-        <parameter name="aOrientation" />
-        <body><![CDATA[
-          var node = this.getNodeForRow(aRow);
-          var session = this._dragService.getCurrentSession();
-          this.mService.onDrop(node.id, session, aOrientation);
-          this.mTree.builder.rebuild();
-        ]]></body>
-      </method>
-      <method name="onPerformAction">
-        <parameter name="aAction" />
-        <body><![CDATA[
-        ]]></body>
-      </method>
-      <method name="onPerformActionOnCell">
-        <parameter name="aAction" />
-        <parameter name="aRow" />
-        <parameter name="aColID" />
-        <body><![CDATA[
-        ]]></body>
-      </method>      
-      <method name="onPerformAction">
-        <parameter name="aAction" />
-        <parameter name="aRow" />
-        <body><![CDATA[
-        ]]></body>
-      </method>
-      <method name="onSelectionChanged">
-        <body><![CDATA[
-        ]]></body>
-      </method>
-      <method name="onToggleOpenState">
-        <parameter name="aIndex" />
-        <body><![CDATA[
-        ]]></body>
-      </method>        
     </implementation>
     <handlers>
       <handler event="contextmenu"><![CDATA[
@@ -541,15 +514,20 @@
       event.preventDefault();
       
       ]]></handler>
-      <handler event="click"><![CDATA[
+      <handler event="click" clickcount="1"><![CDATA[
         var node = this.getNodeForRow(this.mTree.currentIndex);
         if (node && node.url) {
           this.highlightURL(node.url);
           
-          dump('url: '+node.url+'\n');
           this.loadURL(node.url, event);
         } else {
           /* FIXME: implement non-go-to-url behaviour */
+        }
+      ]]></handler>
+      <handler event="click" clickcount="2"><![CDATA[
+        var node = this.getNodeForRow(this.mTree.currentIndex);
+        if (node && node.editable) {
+          this.startEditingNode(node);
         }
       ]]></handler>
       <handler event="OpenStateChange"><![CDATA[
@@ -578,6 +556,75 @@
               this._dragService.DRAGDROP_ACTION_MOVE);
           event.preventDefault();
         }
+      ]]></handler>
+      <handler event="dragover"><![CDATA[
+        var position = this.computeEventPosition(event);
+        var element = position.element;
+        // actually we want the treerow element which is the child
+        element = element.childNodes[0];
+        var node = position.node;
+        var orientation = position.orientation;
+        
+        // make sure we're tracking the right element
+        if (this._dragOverElement != element) {
+          if (this._dragOverElement) {
+            // we're now over another element - let's restore its properties
+            this._dragOverElement.setAttribute('properties', 
+                this._dragOverElement.getAttribute('savedproperties'));
+            this._dragOverElement.removeAttribute('savedproperties');
+          }
+          // save the new element
+          this._dragOverElement = element;
+          // and save its properties
+          element.setAttribute('savedproperties',
+              element.getAttribute('properties'));
+        }
+        
+        // set the property based on the orientation
+        // the properties are chosen based on:
+        //   http://developer.mozilla.org/en/docs/XUL_Tutorial:Styling_a_Tree
+        var properties = ''; 
+        if (orientation == -1) {
+          properties = 'dropBefore';
+        } else if (orientation == 1) {
+          properties = 'dropAfter';
+        } else {
+          properties = 'dropOn';
+        }
+
+        // ask the backend if we're allowed to drop here
+        if (!this.mService.canDrop(node.id,
+            this._dragService.getCurrentSession(), orientation)) {
+          // if not, don't set any visual properties
+          properties = '';
+          this._dragService.canDrop = false;
+        } else {
+          this._dragService.canDrop = true;
+        }
+        
+        element.setAttribute('properties',
+            element.getAttribute('savedproperties') + ' ' + properties);
+      ]]></handler>
+      <handler event="dragenter"><![CDATA[
+      ]]></handler>
+      <handler event="dragexit"><![CDATA[
+        // if there's a highlighted element let's restore its state
+        if (this._dragOverElement) {
+          this._dragOverElement.setAttribute('properties',
+              this._dragOverElement.getAttribute('oldproperties'));
+          this._dragOverElement.removeAttribute('savedproperties');
+          this._dragOverElement = null;
+        }
+      ]]></handler>
+      <handler event="dragdrop"><![CDATA[
+        var position = this.computeEventPosition(event);
+        var node = position.node;
+        var orientation = position.orientation;
+        var session = this._dragService.getCurrentSession();
+        if (this.mService.canDrop(node.id, session, orientation)) {
+          this.mService.onDrop(node.id, session, orientation);
+        }
+        this._dragService.endDragSession();
       ]]></handler>
     </handlers>
   </binding>

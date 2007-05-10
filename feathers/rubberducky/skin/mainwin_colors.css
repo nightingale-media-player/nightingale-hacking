@@ -187,6 +187,21 @@ The Service Pane is the primary area for navigating through services and content
   color: #0f100f; /** Dark Color 2 */
 }
 
+.servicepane_tree > treechildren::-moz-tree-row( dropOn )
+{
+  border-left: 5px solid blue !important;
+}
+
+.servicepane_tree > treechildren::-moz-tree-row( dropBefore )
+{
+  border-top: 5px solid blue !important;
+}
+
+.servicepane_tree > treechildren::-moz-tree-row( dropAfter )
+{
+  border-bottom: 5px solid blue !important;
+}
+
 #frame_service_buttonbar button
 {
   border: 1px solid;

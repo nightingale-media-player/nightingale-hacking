@@ -283,6 +283,8 @@ ServicePaneNode.prototype.appendChild = function(aChild) {
 };
 
 ServicePaneNode.prototype.insertBefore = function(aNewNode, aAdjacentNode) {
+  DEBUG('insertBefore('+aNewNode.id+', '+aAdjacentNode.id+')');
+  
   if (!this.isContainer) {
     throw this.id + ' is not a container';
   }
@@ -296,6 +298,8 @@ ServicePaneNode.prototype.insertBefore = function(aNewNode, aAdjacentNode) {
   
   // work out where it should go
   var index = this._container.IndexOf(aAdjacentNode.resource);
+  
+  DEBUG(' index='+index);
   
   // add it back in there
   this._container.InsertElementAt(aNewNode.resource, index, true);
@@ -620,7 +624,7 @@ ServicePaneService.prototype.onDrop =
 function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
   var node = this.getNode(aId);
   if (!node) {
-    return false;
+    return;
   }
   // see if this is a reorder we can handle based on node properties
   var type = this._canDropReorder(node, aDragSession, aOrientation);
@@ -659,6 +663,9 @@ function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
       // drop after
       if (node.nextSibling) {
         // not the last node
+        if (droppedNode.id == node.nextSibling.id) {
+          return; // can't insert after ourselves
+        }
         node.parentNode.insertBefore(droppedNode, node.nextSibling);
       } else {
         // the last node
@@ -666,6 +673,9 @@ function ServicePaneService_onDrop(aId, aDragSession, aOrientation) {
       }
     } else {
       // drop before
+      if (droppedNode.id == node.id) {
+        return; // can't insert before ourselves
+      }
       node.parentNode.insertBefore(droppedNode, node);
     }
     return;
