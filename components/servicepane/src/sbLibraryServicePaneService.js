@@ -517,7 +517,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     // create the node
     node = this._servicePane.addNode(id, this._servicePane.root, true);
     node.url = this._getDisplayURL(aLibrary);
-    node.name = aLibrary.guid;
+    node.name = aLibrary.name;
     node.image = URL_ICON_LIBRARY;
     node.contractid = CONTRACTID;
     node.dndDragTypes = 'text/x-sb-toplevel';

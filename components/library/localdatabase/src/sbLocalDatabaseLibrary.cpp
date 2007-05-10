@@ -442,13 +442,10 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   // Initialize our base classes
   // XXXben You can't call Init here unless this library's mPropertyCache has
   //        been created.
-  // XXXsteve: this is wrong -- the second parameter here should be guid, not
-  // aDatabaseGuid, but this fix causes tests to fail.  I'll leave this the way
-  // it is for now, but we'll fix it when ben gets back.
-  rv = sbLocalDatabaseMediaListBase::Init(this, aDatabaseGuid);
+  rv = sbLocalDatabaseMediaListBase::Init(this, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = InitResourceProperty(mPropertyCache, aDatabaseGuid);
+  rv = InitResourceProperty(mPropertyCache, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize the media list factory table.

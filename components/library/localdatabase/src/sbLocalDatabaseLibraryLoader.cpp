@@ -34,6 +34,7 @@
 #include <nsIPropertyBag2.h>
 #include <nsISupportsPrimitives.h>
 #include <sbILibrary.h>
+#include <sbIMediaList.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
@@ -69,8 +70,23 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
 #define PREF_DATABASE_GUID     "databaseGUID"
 #define PREF_DATABASE_LOCATION "databaseLocation"
 #define PREF_LOAD_AT_STARTUP   "loadAtStartup"
+#define PREF_RESOURCE_GUID     "resourceGUID"
 
 #define MINIMUM_LIBRARY_COUNT 3
+#define LOADERINFO_VALUE_COUNT 4
+
+#define DBENGINE_GUID_MAIN_LIBRARY     "main@library.songbirdnest.com"
+#define DBENGINE_GUID_WEB_LIBRARY      "web@library.songbirdnest.com"
+#define DBENGINE_GUID_DOWNLOAD_LIBRARY "download@library.songbirdnest.com"
+
+// XXXben These should be renamed and standardized somehow.
+#define SB_NAMEKEY_MAIN_LIBRARY                            \
+  "&chrome://songbird/locale/songbird.properties#servicesource.library"
+#define SB_NAMEKEY_WEB_LIBRARY                             \
+  "&chrome://songbird/locale/songbird.properties#device.weblibrary"
+#define SB_NAMEKEY_DOWNLOAD_LIBRARY                        \
+  "&chrome://songbird/locale/songbird.properties#device.download"
+
 
 template <class T>
 class sbAutoFreeXPCOMArray
@@ -136,7 +152,9 @@ sbLocalDatabaseLibraryLoader::Init()
 
   sbAutoFreeXPCOMArray<char**> autoFree(libraryKeysCount, libraryKeys);
 
-  PRBool success = mLibraryInfoTable.Init(MINIMUM_LIBRARY_COUNT);
+  PRBool success =
+    mLibraryInfoTable.Init(PR_MAX(MINIMUM_LIBRARY_COUNT,
+                                  libraryKeysCount / LOADERINFO_VALUE_COUNT));
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   for (PRUint32 index = 0; index < libraryKeysCount; index++) {
@@ -185,16 +203,21 @@ sbLocalDatabaseLibraryLoader::Init()
 nsresult
 sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
 {
-  nsresult rv = EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_MAIN_LIBRARY),
-                                     NS_LITERAL_STRING(SB_GUID_MAIN_LIBRARY));
+  nsresult rv =
+    EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_MAIN_LIBRARY),
+                         NS_LITERAL_STRING(DBENGINE_GUID_MAIN_LIBRARY),
+                         NS_LITERAL_STRING(SB_NAMEKEY_MAIN_LIBRARY));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_WEB_LIBRARY),
-                            NS_LITERAL_STRING(SB_GUID_WEB_LIBRARY));
+                            NS_LITERAL_STRING(DBENGINE_GUID_WEB_LIBRARY),
+                            NS_LITERAL_STRING(SB_NAMEKEY_WEB_LIBRARY));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_DOWNLOAD_LIBRARY),
-                            NS_LITERAL_STRING(SB_GUID_DOWNLOAD_LIBRARY));
+  rv =
+    EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_DOWNLOAD_LIBRARY),
+                         NS_LITERAL_STRING(DBENGINE_GUID_DOWNLOAD_LIBRARY),
+                         NS_LITERAL_STRING(SB_NAMEKEY_DOWNLOAD_LIBRARY));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -202,57 +225,67 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
 
 nsresult
 sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUIDPref,
-                                                   const nsAString& aDefaultGUID)
+                                                   const nsAString& aDefaultDatabaseGUID,
+                                                   const nsAString& aLibraryNameKey)
 {
-  nsCAutoString prefKey(aLibraryGUIDPref);
+  nsCAutoString resourceGUIDPrefKey(aLibraryGUIDPref);
 
   // Figure out the GUID for this library.
-  nsAutoString databaseGUID;
+  nsAutoString resourceGUID;
+
+  PRInt32 libraryInfoIndex = -1;
+
+  // The prefs here should point to a library resourceGUID.
   nsCOMPtr<nsISupportsString> supportsString;
-  nsresult rv = mRootBranch->GetComplexValue(prefKey.get(),
+  nsresult rv = mRootBranch->GetComplexValue(resourceGUIDPrefKey.get(),
                                              NS_GET_IID(nsISupportsString),
                                              getter_AddRefs(supportsString));
   if (NS_SUCCEEDED(rv)) {
     // Use the value stored in the prefs.
-    rv = supportsString->GetData(databaseGUID);
+    rv = supportsString->GetData(resourceGUID);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ASSERTION(!resourceGUID.IsEmpty(), "Should have a resource GUID here!");
+
+    // See if this library already exists in the hashtable.
+    sbLibraryExistsInfo existsInfo(resourceGUID);
+    mLibraryInfoTable.EnumerateRead(LibraryExistsCallback, &existsInfo);
+    
+    libraryInfoIndex = existsInfo.index;
   }
-  else {
-    // Use the value passed in.
-    supportsString = do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = supportsString->SetData(aDefaultGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mRootBranch->SetComplexValue(prefKey.get(),
-                                      NS_GET_IID(nsISupportsString),
-                                      supportsString);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    databaseGUID.Assign(aDefaultGUID);
-  }
-
-  // See if this library already exists in the hashtable.
-  sbLibraryExistsInfo existsInfo(databaseGUID);
-  mLibraryInfoTable.EnumerateRead(LibraryExistsCallback, &existsInfo);
 
   sbLibraryLoaderInfo* libraryInfo;
-  if ((existsInfo.index == -1) ||
-      (!mLibraryInfoTable.Get(existsInfo.index, &libraryInfo))) {
+  if ((libraryInfoIndex == -1) ||
+      (!mLibraryInfoTable.Get(libraryInfoIndex, &libraryInfo))) {
     // The library wasn't in our hashtable, so make a new sbLibraryLoaderInfo
     // object. That will take care of setting the prefs up correctly.
     PRUint32 index = GetNextLibraryIndex();
 
-    prefKey.AssignLiteral(PREFBRANCH_LOADER);
+    nsCAutoString prefKey(PREFBRANCH_LOADER);
     prefKey.AppendInt(index);
     prefKey.AppendLiteral(".");
 
     nsAutoPtr<sbLibraryLoaderInfo>
-      newLibraryInfo(CreateDefaultLibraryInfo(prefKey, databaseGUID));
+      newLibraryInfo(CreateDefaultLibraryInfo(prefKey, aDefaultDatabaseGUID,
+                                              aLibraryNameKey));
     if (!newLibraryInfo || !mLibraryInfoTable.Put(index, newLibraryInfo)) {
       return NS_ERROR_FAILURE;
     }
+
+    // Set the resource GUID into the prefs.
+    newLibraryInfo->GetResourceGUID(resourceGUID);
+    NS_ENSURE_FALSE(resourceGUID.IsEmpty(), NS_ERROR_UNEXPECTED);
+
+    supportsString = do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = supportsString->SetData(resourceGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mRootBranch->SetComplexValue(resourceGUIDPrefKey.get(),
+                                      NS_GET_IID(nsISupportsString),
+                                      supportsString);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     libraryInfo = newLibraryInfo.forget();
   }
@@ -282,7 +315,7 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
     // We can't access this required database file. For now we're going to
     // simply make a new blank database in the default location and switch 
     // the preferences to use it.
-    location = libraryFactory.GetFileForGUID(databaseGUID);
+    location = libraryFactory.GetFileForGUID(aDefaultDatabaseGUID);
     NS_ENSURE_TRUE(location, NS_ERROR_FAILURE);
 
     // Make sure we can access this one.
@@ -290,7 +323,27 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
                                                   getter_AddRefs(library));
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Set the name.
+    nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(library, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mediaList->SetName(aLibraryNameKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mediaList->Write();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // And update the libraryInfo object.
+    rv = libraryInfo->SetDatabaseGUID(aDefaultDatabaseGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = libraryInfo->SetDatabaseLocation(location);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = library->GetGuid(resourceGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = libraryInfo->SetResourceGUID(resourceGUID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -302,7 +355,8 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
  */
 sbLibraryLoaderInfo*
 sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKey,
-                                                       const nsAString& aGUID)
+                                                       const nsAString& aDatabaseGUID,
+                                                       const nsAString& aLibraryNameKey)
 {
   nsAutoPtr<sbLibraryLoaderInfo> newLibraryInfo(new sbLibraryLoaderInfo());
   NS_ENSURE_TRUE(newLibraryInfo, nsnull);
@@ -310,17 +364,43 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
   nsresult rv = newLibraryInfo->Init(aPrefKey);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  rv = newLibraryInfo->SetDatabaseGUID(aGUID);
+  rv = newLibraryInfo->SetDatabaseGUID(aDatabaseGUID);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
   sbLocalDatabaseLibraryFactory libraryFactory;
-  nsCOMPtr<nsILocalFile> location = libraryFactory.GetFileForGUID(aGUID);
+  nsCOMPtr<nsILocalFile> location =
+    libraryFactory.GetFileForGUID(aDatabaseGUID);
   NS_ENSURE_TRUE(location, nsnull);
 
   rv = newLibraryInfo->SetDatabaseLocation(location);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
   rv = newLibraryInfo->SetLoadAtStartup(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  // The resource GUID is unknown at this point. Load the library and get it.
+  nsCOMPtr<sbILibrary> library;
+  rv = libraryFactory.CreateLibraryFromDatabase(location,
+                                                getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  if (!aLibraryNameKey.IsEmpty()) {
+    nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(library, &rv);
+    NS_ENSURE_SUCCESS(rv, nsnull);
+
+    // Set the name.
+    rv = mediaList->SetName(aLibraryNameKey);
+    NS_ENSURE_SUCCESS(rv, nsnull);
+
+    rv = mediaList->Write();
+    NS_ENSURE_SUCCESS(rv, nsnull);
+  }
+
+  nsAutoString resourceGUID;
+  rv = library->GetGuid(resourceGUID);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  rv = newLibraryInfo->SetResourceGUID(resourceGUID);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
   nsCOMPtr<nsIPrefService> prefService = do_QueryInterface(mRootBranch, &rv);
@@ -401,11 +481,11 @@ sbLocalDatabaseLibraryLoader::LibraryExistsCallback(nsUint32HashKey::KeyType aKe
     NS_STATIC_CAST(sbLibraryExistsInfo*, aUserData);
   NS_ASSERTION(existsInfo, "Doh, how did this happen?!");
 
-  nsAutoString databaseGUID;
-  aEntry->GetDatabaseGUID(databaseGUID);
-  NS_ASSERTION(!databaseGUID.IsEmpty(), "GUID can't be empty here!");
+  nsAutoString resourceGUID;
+  aEntry->GetResourceGUID(resourceGUID);
+  NS_ASSERTION(!resourceGUID.IsEmpty(), "GUID can't be empty here!");
 
-  if (databaseGUID.Equals(existsInfo->databaseGUID)) {
+  if (resourceGUID.Equals(existsInfo->resourceGUID)) {
     existsInfo->index = (PRInt32)aKey;
     return PL_DHASH_STOP;
   }
@@ -425,7 +505,15 @@ sbLocalDatabaseLibraryLoader::VerifyEntriesCallback(nsUint32HashKey::KeyType aKe
   nsAutoString databaseGUID;
   aEntry->GetDatabaseGUID(databaseGUID);
   if (databaseGUID.IsEmpty()) {
-    NS_WARNING("One of the libraries was missing a GUID and will be removed.");
+    NS_WARNING("One of the libraries was missing a database GUID and will be removed.");
+    RemovePrefBranch(prefBranch);
+    return PL_DHASH_REMOVE;
+  }
+
+  nsAutoString resourceGUID;
+  aEntry->GetResourceGUID(resourceGUID);
+  if (resourceGUID.IsEmpty()) {
+    NS_WARNING("One of the libraries was missing a resource GUID and will be removed.");
     RemovePrefBranch(prefBranch);
     return PL_DHASH_REMOVE;
   }
@@ -550,9 +638,10 @@ sbLibraryLoaderInfo::Init(const nsACString& aPrefKey)
                               getter_AddRefs(mPrefBranch));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mGUIDKey.Assign(PREF_DATABASE_GUID);
+  mDatabaseGUIDKey.Assign(PREF_DATABASE_GUID);
   mLocationKey.Assign(PREF_DATABASE_LOCATION);
   mStartupKey.Assign(PREF_LOAD_AT_STARTUP);
+  mResourceGUIDKey.Assign(PREF_RESOURCE_GUID);
 
   // Now ensure that the key exists.
   PRBool exists;
@@ -580,7 +669,7 @@ sbLibraryLoaderInfo::SetDatabaseGUID(const nsAString& aGUID)
   rv = supportsString->SetData(aGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPrefBranch->SetComplexValue(mGUIDKey.get(),
+  rv = mPrefBranch->SetComplexValue(mDatabaseGUIDKey.get(),
                                     NS_GET_IID(nsISupportsString),
                                     supportsString);
 
@@ -593,7 +682,7 @@ sbLibraryLoaderInfo::GetDatabaseGUID(nsAString& _retval)
   _retval.Truncate();
 
   nsCOMPtr<nsISupportsString> supportsString;
-  nsresult rv = mPrefBranch->GetComplexValue(mGUIDKey.get(),
+  nsresult rv = mPrefBranch->GetComplexValue(mDatabaseGUIDKey.get(),
                                              NS_GET_IID(nsISupportsString),
                                              getter_AddRefs(supportsString));
   NS_ENSURE_SUCCESS(rv,);
@@ -657,6 +746,41 @@ sbLibraryLoaderInfo::GetLoadAtStartup()
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
   return loadAtStartup;
+}
+
+nsresult
+sbLibraryLoaderInfo::SetResourceGUID(const nsAString& aGUID)
+{
+  NS_ENSURE_FALSE(aGUID.IsEmpty(), NS_ERROR_INVALID_ARG);
+
+  nsresult rv;
+  nsCOMPtr<nsISupportsString> supportsString =
+    do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = supportsString->SetData(aGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPrefBranch->SetComplexValue(mResourceGUIDKey.get(),
+                                    NS_GET_IID(nsISupportsString),
+                                    supportsString);
+
+  return NS_OK;
+}
+
+void
+sbLibraryLoaderInfo::GetResourceGUID(nsAString& _retval)
+{
+  _retval.Truncate();
+
+  nsCOMPtr<nsISupportsString> supportsString;
+  nsresult rv = mPrefBranch->GetComplexValue(mResourceGUIDKey.get(),
+                                             NS_GET_IID(nsISupportsString),
+                                             getter_AddRefs(supportsString));
+  NS_ENSURE_SUCCESS(rv,);
+
+  rv = supportsString->GetData(_retval);
+  NS_ENSURE_SUCCESS(rv,);
 }
 
 void

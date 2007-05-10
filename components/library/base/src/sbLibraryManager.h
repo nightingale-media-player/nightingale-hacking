@@ -66,10 +66,6 @@
 #define SB_PREF_WEB_LIBRARY      SB_PREFBRANCH_LIBRARY "web"
 #define SB_PREF_DOWNLOAD_LIBRARY SB_PREFBRANCH_LIBRARY "download"
 
-#define SB_GUID_MAIN_LIBRARY     "main@library.songbirdnest.com"
-#define SB_GUID_WEB_LIBRARY      "web@library.songbirdnest.com"
-#define SB_GUID_DOWNLOAD_LIBRARY "download@library.songbirdnest.com"
-
 class nsIComponentManager;
 class nsIFile;
 class nsIRDFDataSource;

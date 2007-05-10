@@ -74,7 +74,20 @@ function onLoad()
       aMediaScanQuery = new sbIMediaScanQuery();
       
       theTargetDatabase = window.arguments[0].target_db;
-      if (!theTargetDatabase || theTargetDatabase == "") theTargetDatabase = (USE_NEW_API) ? "main@library.songbirdnest.com" : "songbird";
+      if (!theTargetDatabase)
+      {
+        if (USE_NEW_API)
+        {
+          var libraryManager =
+            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                      .getService(Components.interfaces.sbILibraryManager);
+          theTargetDatabase = libraryManager.mainLibrary.guid;
+        }
+        else
+        {
+          theTargetDatabase = "songbird";
+        }
+      }
       theTargetPlaylist = window.arguments[0].target_pl;
       theAddedGuids = Array();
 

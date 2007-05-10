@@ -28,6 +28,7 @@
 
 #include <nsIProperty.h>
 #include <nsIPropertyBag.h>
+#include <nsIStringBundle.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
@@ -62,6 +63,8 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabasePropertyCache.h"
+
+#define DEFAULT_PROPERTIES_URL "chrome://songbird/locale/songbird.properties"
 
 static const char* sStandardPropertiesToCopy[] = {
   SB_PROPERTY_TRACKNAME,
@@ -111,7 +114,7 @@ sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
   }
 
   if (PR_AtomicDecrement(&sInstanceCount) == 0) {
-    delete[] sPropertyKeys;
+    delete[] &sPropertyKeys;
   }
 }
 
@@ -338,15 +341,73 @@ sbLocalDatabaseMediaListBase::EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnu
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
 {
-  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME), aName);
-
+  nsAutoString unlocalizedName;
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                            unlocalizedName);
+  
   // If the property doesn't exist just return an empty string.
   if (rv == NS_ERROR_ILLEGAL_VALUE) {
     aName.Assign(EmptyString());
     return NS_OK;
   }
-
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // See if this string should be localized. The basic format we're looking for
+  // is:
+  //
+  //   &[chrome://songbird/songbird.properties#]library.name
+  //
+  // The url (followed by '#') is optional.
+
+  const PRUnichar *start, *end;
+  PRUint32 length = unlocalizedName.BeginReading(&start, &end);
+
+  static const PRUnichar sAmp = '&';
+
+  // Bail out if this can't be a localizable string.
+  if (length <= 1 || *start != sAmp) {
+    aName.Assign(unlocalizedName);
+    return NS_OK;
+  }
+
+  nsDependentSubstring stringKey(++start, end - start), propertiesURL;
+
+  aName.Assign(stringKey);
+
+  static const PRUnichar sHash = '#';
+
+  for (const PRUnichar* current = start; current < end; current++) {
+    if (*current == sHash) {
+      stringKey.Rebind(current + 1, end - current - 1);
+      propertiesURL.Rebind(start, current - start);
+      break;
+    }
+  }
+
+  nsCOMPtr<nsIStringBundleService> bundleService =
+    do_GetService("@mozilla.org/intl/stringbundle;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIStringBundle> bundle;
+  if (!propertiesURL.IsEmpty()) {
+    rv = bundleService->CreateBundle(NS_ConvertUTF16toUTF8(propertiesURL).get(),
+                                     getter_AddRefs(bundle));
+  }
+  else {
+    rv = bundleService->CreateBundle(DEFAULT_PROPERTIES_URL, getter_AddRefs(bundle));
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString localizedName;
+  rv = bundle->GetStringFromName(stringKey.BeginReading(),
+                                 getter_Copies(localizedName));
+  if (NS_SUCCEEDED(rv)) {
+    aName.Assign(localizedName);
+  }
+  else {
+    aName.Assign(EmptyString());
+  }
+
   return NS_OK;
 }
 

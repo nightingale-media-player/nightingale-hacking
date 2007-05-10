@@ -320,10 +320,25 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
    */
   nsTArray<nsString> misses;
   for (PRUint32 i = 0; i < aGUIDArrayCount; i++) {
-    nsAutoString guid(aGUIDArray[i]);
+
+    nsDependentString guid(aGUIDArray[i]);
+
     if (!mCache.Get(guid, nsnull)) {
-      nsString* success = misses.AppendElement(guid);
+
+      nsString* newElement = misses.AppendElement(guid);
+      NS_ENSURE_TRUE(newElement, NS_ERROR_OUT_OF_MEMORY);
+
+      nsAutoPtr<sbLocalDatabaseResourcePropertyBag> newBag
+        (new sbLocalDatabaseResourcePropertyBag(this, guid));
+      NS_ENSURE_TRUE(newBag, NS_ERROR_OUT_OF_MEMORY);
+
+      rv = newBag->Init();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool success = mCache.Put(guid, newBag);
       NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+      newBag.forget();
     }
   }
 
@@ -369,30 +384,14 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
         rv = result->GetRowCount(&rowCount);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        nsAutoString lastGUID;
-        nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
         for (PRUint32 row = 0; row < rowCount; row++) {
           PRUnichar* guid;
           rv = result->GetRowCellPtr(row, 0, &guid);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          /*
-           * If this is the first row result or we've encountered a new
-           * guid, create a new property bag and add it to the cache
-           */
-          if (row == 0 || !lastGUID.Equals(guid)) {
-            lastGUID = guid;
-            nsAutoPtr<sbLocalDatabaseResourcePropertyBag> newBag
-              (new sbLocalDatabaseResourcePropertyBag(this, lastGUID));
-            NS_ENSURE_TRUE(newBag, NS_ERROR_OUT_OF_MEMORY);
-
-            rv = newBag->Init();
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            bag = newBag.forget();
-            PRBool success = mCache.Put(lastGUID, bag);
-            NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-          }
+          nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+          PRBool success = mCache.Get(nsDependentString(guid), getter_AddRefs(bag));
+          NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
           /*
            * Add each property / object pair to the current bag
@@ -408,8 +407,11 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
           rv = result->GetRowCell(row, 2, obj);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag.get())
-                                ->PutValue(propertyID, obj);
+          // XXXben FIX ME
+          sbLocalDatabaseResourcePropertyBag* bagClassPtr =
+            NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag.get());
+          rv = bagClassPtr->PutValue(propertyID, obj);
+
           NS_ENSURE_SUCCESS(rv, rv);
         }
 
@@ -455,32 +457,25 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
         rv = result->GetRowCount(&rowCount);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        sbILocalDatabaseResourcePropertyBag* bag;
         for (PRUint32 row = 0; row < rowCount; row++) {
           nsAutoString guid;
           rv = result->GetRowCell(row, 0, guid);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          if (!mCache.Get(guid, &bag)) {
-            nsAutoPtr<sbLocalDatabaseResourcePropertyBag> newBag
-              (new sbLocalDatabaseResourcePropertyBag(this, guid));
-            NS_ENSURE_TRUE(newBag, NS_ERROR_OUT_OF_MEMORY);
-
-            rv = newBag->Init();
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            bag = newBag.forget();
-            PRBool success = mCache.Put(guid, bag);
-            NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-          }
+          nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+          PRBool success = mCache.Get(guid, getter_AddRefs(bag));
+          NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
           for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
             nsAutoString value;
             rv = result->GetRowCell(row, i + 1, value);
             NS_ENSURE_SUCCESS(rv, rv);
 
-            rv = NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag)
-                                  ->PutValue(sStaticProperties[i].mID, value);
+            // XXXben FIX ME
+            sbLocalDatabaseResourcePropertyBag* bagClassPtr =
+              NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag.get());
+            rv = bagClassPtr->PutValue(sStaticProperties[i].mID, value);
+
             NS_ENSURE_SUCCESS(rv, rv);
           }
 

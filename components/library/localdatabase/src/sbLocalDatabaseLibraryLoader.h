@@ -60,12 +60,12 @@ class sbLocalDatabaseLibraryLoader : public sbILibraryLoader
 
   struct sbLibraryExistsInfo
   {
-    sbLibraryExistsInfo(const nsAString& aDatabaseGUID)
-    : databaseGUID(aDatabaseGUID),
+    sbLibraryExistsInfo(const nsAString& aResourceGUID)
+    : resourceGUID(aResourceGUID),
       index(-1)
     { }
 
-    nsString databaseGUID;
+    nsString resourceGUID;
     PRInt32  index;
   };
 
@@ -85,10 +85,13 @@ private:
   nsresult EnsureDefaultLibraries();
 
   nsresult EnsureDefaultLibrary(const nsACString& aLibraryGUIDPref,
-                                const nsAString& aDefaultGUID);
+                                const nsAString& aDefaultDatabaseGUID,
+                                const nsAString& aLibraryNameKey);
 
-  sbLibraryLoaderInfo* CreateDefaultLibraryInfo(const nsACString& aPrefKey,
-                                                const nsAString& aGUID);
+  sbLibraryLoaderInfo*
+    CreateDefaultLibraryInfo(const nsACString& aPrefKey,
+                             const nsAString& aDatabaseGUID,
+                             const nsAString& aLibraryNameKey = EmptyString());
 
   PRUint32 GetNextLibraryIndex();
 
@@ -130,13 +133,20 @@ public:
   nsresult SetLoadAtStartup(PRBool aLoadAtStartup);
   PRBool GetLoadAtStartup();
 
+  nsresult SetResourceGUID(const nsAString& aGUID);
+  void GetResourceGUID(nsAString& _retval);
+
   void GetPrefBranch(nsACString& _retval);
 
 private:
   nsCOMPtr<nsIPrefBranch> mPrefBranch;
-  nsCString mGUIDKey;
+
+  // XXXben If you add additional values to this class please remember to
+  //        update LOADERINFO_VALUE_COUNT in sbLocalDatabaseLibraryLoader.cpp
+  nsCString mDatabaseGUIDKey;
   nsCString mLocationKey;
   nsCString mStartupKey;
+  nsCString mResourceGUIDKey;
 };
 
 #endif /* __SB_LOCALDATABASELIBRARYLOADER_H__ */
