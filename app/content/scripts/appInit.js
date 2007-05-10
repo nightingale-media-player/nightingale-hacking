@@ -124,6 +124,9 @@ function SBAppInitialize()
     
     // Startup the Hotkeys
     initGlobalHotkeys();
+    
+    // Handle dataremote commandline parameters
+    initDataRemoteCmdLine();
 
     // Reset this on application startup. 
     SBDataSetIntValue("backscan.paused", 0);
@@ -171,6 +174,9 @@ function SBAppDeinitialize()
 
   // Shutdown the Hotkeys
   resetGlobalHotkeys();
+  
+  // Shutdown dataremote commandline handler
+  resetDataRemoteCmdLine();
   
   // Shutdown the Metrics
   SBMetricsAppShutdown();
@@ -521,6 +527,58 @@ function SBMigrateDatabase()
   
   queryObject.execute();
 }
+
+function initDataRemoteCmdLine()
+{
+  var cmdline = Components.classes["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
+  if (cmdline) {
+    var cmdline_service = cmdline.getService(Components.interfaces.nsICommandLineHandler);
+    if (cmdline_service) {
+      var cmdline_mgr = cmdline_service.QueryInterface(Components.interfaces.sbICommandLineManager);
+      if (cmdline_mgr) {
+        cmdline_mgr.addFlagHandler(dataRemoteCmdlineHandler, "data");
+      }
+    }
+  }
+}
+
+function resetDataRemoteCmdLine()
+{
+  var cmdline = Components.classes["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
+  if (cmdline) {
+    var cmdline_service = cmdline.getService(Components.interfaces.nsICommandLineHandler);
+    if (cmdline_service) {
+      var cmdline_mgr = cmdline_service.QueryInterface(Components.interfaces.sbICommandLineManager);
+      if (cmdline_mgr) {
+        cmdline_mgr.removeFlagHandler(dataRemoteCmdlineHandler, "data");
+      }
+    }
+  }
+}
+
+var dataRemoteCmdlineHandler = 
+{
+  handleFlag: function(aFlag, aParam)
+  {
+    var v = aParam.split("=");
+    if (v[0] && v[1]) {
+      SBDataSetStringValue(v[0], v[1]);
+      return true;
+    } 
+    return false;
+  },
+
+  QueryInterface : function(aIID)
+  {
+    if (!aIID.equals(Components.interfaces.sbICommandLineFlagHandler) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    
+    return this;
+  }
+};
 
 var theMetadataJobManager = null;
 
