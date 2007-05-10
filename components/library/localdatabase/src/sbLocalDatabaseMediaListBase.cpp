@@ -405,7 +405,7 @@ sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
     aName.Assign(localizedName);
   }
   else {
-    aName.Assign(EmptyString());
+    aName.Assign(unlocalizedName);
   }
 
   return NS_OK;
