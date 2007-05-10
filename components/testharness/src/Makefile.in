@@ -67,6 +67,7 @@ ifeq ($(SB_PLATFORM), macosx)
 endif
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbTestHarness.js \
+                      $(srcdir)/httpd.js \
                       $(DYNAMIC_LIB) \
                       $(NULL)
 
