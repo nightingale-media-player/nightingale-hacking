@@ -43,6 +43,8 @@ var dpUpdaterInterval = null;
 
 function DPUpdaterInit(interval)
 {
+  return;
+  
   try
   {
     if(interval != 0)
