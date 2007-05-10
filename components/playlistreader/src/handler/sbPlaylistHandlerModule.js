@@ -46,13 +46,15 @@ const componentData =
      contractid: "@songbirdnest.com/Songbird/Playlist/Reader/M3U;1",
      script: "sbM3UPlaylistHandler.js",
      constructor: "sbM3UPlaylistHandler",
-     onComponentLoad: null},
+     category: "playlist-reader",
+     categoryEntry: "m3u"},
 
    {cid: Components.ID("{a6937260-0d7f-4721-8f31-4b8455cf72c9}"),
      contractid: "@songbirdnest.com/Songbird/Playlist/Reader/PLS;1",
      script: "sbPLSPlaylistHandler.js",
      constructor: "sbPLSPlaylistHandler",
-     onComponentLoad: null}
+     category: "playlist-reader",
+     categoryEntry: "pls"}
 
   ];
 

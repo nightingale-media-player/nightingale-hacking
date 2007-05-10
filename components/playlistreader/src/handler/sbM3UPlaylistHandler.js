@@ -52,6 +52,8 @@ sbM3UPlaylistHandler.prototype.read =
 function(aFile, aMediaList, aReplace)
 {
   var nextFileMetadata = {};
+  var toAdd = [];
+
   // Match TOKEN_EXTINF then all characters that are not commas, then an
   // optional comma, then capture the rest of the string
   var re = new RegExp("^" + TOKEN_EXTINF + "([^,]*),?(.*)?$");
@@ -79,36 +81,22 @@ function(aFile, aMediaList, aReplace)
     }
 
     // Otherwise, this line is a URL.  Add it to the list
-    var uri = SB_ResolveURI(aLine, this._originalURI);
-    if (uri) {
-      var item;
-      if (aReplace) {
-        item = SB_GetFirstItemByContentUrl(aMediaList, uri);
-      }
-
-      if (!item) {
-        item = aMediaList.library.createMediaItem(uri);
-      }
-
-      // Set the metadata that we found.  Do this in a try block so invalid
-      // data does not kill us
-      try {
-        if (nextFileMetadata.title)
-          item.setProperty(SB_NS + "title", nextFileMetadata.title);
-        if (nextFileMetadata.duration)
-          item.setProperty(SB_NS + "duration", nextFileMetadata.duration * 1000000);
-      }
-      catch(e) {
-        Components.utils.reportError(e);
-      }
-
-      if (nextFileMetadata.title || nextFileMetadata.duration)
-        item.write();
+    var newUri = SB_ResolveURI(aLine, this._originalURI);
+    if (newUri) {
+      var item = { uri: newUri, properties: {}};
+      if (nextFileMetadata.title)
+        item.properties[SB_NS + "title"] = nextFileMetadata.title;
+      if (nextFileMetadata.duration)
+        item.properties[SB_NS + "duration"] = nextFileMetadata.duration * 1000000;
+      toAdd.push(item);
 
       nextFileMetadata = {};
     }
 
   }, this);
+
+  SB_AddItems(toAdd, aMediaList, aReplace);
+
 }
 
 sbM3UPlaylistHandler.prototype.vote =
@@ -130,17 +118,19 @@ function()
 }
 
 sbM3UPlaylistHandler.prototype.supportedMIMETypes =
-function(aMIMECount, aMIMETypes)
+function(aMIMECount)
 {
-  aMIMETypes.value = ["audio/mpegurl", "audio/x-mpegurl"];
-  aMIMECount.value = aMIMETypes.value.length;
+  var mimeTypes = ["audio/mpegurl", "audio/x-mpegurl"];
+  aMIMECount.value = mimeTypes.length;
+  return mimeTypes;
 }
 
 sbM3UPlaylistHandler.prototype.supportedFileExtensions =
-function(aExtCount, aExts)
+function(aExtCount)
 {
-  aExts.value = ["m3u"];
-  aExtCount.value = aExts.value.length;
+  var exts = ["m3u"];
+  aExtCount.value = exts.length;
+  return exts;
 }
 
 sbM3UPlaylistHandler.prototype.QueryInterface =

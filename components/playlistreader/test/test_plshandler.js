@@ -105,23 +105,29 @@ function runTest () {
     if (t.originalURI) {
       handler.originalURI = newURI(t.originalURI);
     }
-    handler.read(file, library, false, {});
+    handler.read(file, library, false);
     assertMediaList(library, getFile(t.result));
   }
 
   // Test duplicates
   library.clear();
+  var mediaList = library.createMediaList("simple");
   var handler = Cc["@songbirdnest.com/Songbird/Playlist/Reader/PLS;1"]
                   .createInstance(Ci.sbIPlaylistReader);
 
   var file = getFile("relative_remote.pls");
   handler.originalURI = newURI("http://www.foo.com");
 
-  handler.read(file, library, false, {});
-  assertEqual(library.length, 3);
-  handler.read(file, library, false, {});
-  assertEqual(library.length, 6);
-  handler.read(file, library, true, {});
-  assertEqual(library.length, 6);
+  handler.read(file, mediaList, false);
+  assertEqual(mediaList.length, 3);
+  assertEqual(mediaList.library.length, 4);
+  handler.read(file, mediaList, false);
+  assertEqual(mediaList.length, 6);
+  assertEqual(mediaList.library.length, 7);
+
+  // Shouldn't add to the library but should add to the list
+  handler.read(file, mediaList, true);
+  assertEqual(mediaList.library.length, 7);
+  assertEqual(mediaList.length, 9);
 }
 

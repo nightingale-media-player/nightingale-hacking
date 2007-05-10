@@ -46,6 +46,135 @@ function SB_ProcessFile(aFile, aCallback, aThis) {
   istream.close();
 }
 
+function SB_AddItems(aItems, aMediaList, aReplace) {
+
+  // A mapping of uris to media items.  We use this later to set the properties
+  var uriStrToItem = {};
+
+  // Generate a list of unique uri strings
+  var temp = {};
+  var uriStrToUri = {};
+  var uniqueUriStr = [];
+  aItems.forEach(function(e) {
+    var uriStr = e.uri.spec;
+    if (!(uriStr in temp)) {
+      uniqueUriStr.push(uriStr);
+      temp[uriStr] = 1;
+      uriStrToUri[uriStr] = e.uri;
+    }
+  });
+
+  // If we are to replace the metadata on existing items, find them by url
+  var toCreate = [];
+  if (aReplace) {
+
+    var propertyArray =
+      Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
+        .createInstance(Ci.sbIPropertyArray);
+
+    // Track the uris of the items that we don't have in our database in
+    // notFound.  Load it up with all the uris and then knock them out when
+    // we enumerate them
+    var notFound = {};
+
+    uniqueUriStr.forEach(function(e) {
+      propertyArray.appendProperty(SB_NS + "originUrl", e);
+      notFound[e] = 1;
+    });
+
+    var listener = {
+      item: null,
+      onEnumerationBegin: function() {
+        return true;
+      },
+      onEnumeratedItem: function(list, item) {
+        var uriStr = item.contentSrc.spec;
+        uriStrToItem[uriStr] = item;
+        delete notFound[uriStr];
+        return true;
+      },
+      onEnumerationEnd: function() {
+        return true;
+      }
+    };
+
+    aMediaList.enumerateItemsByProperties(propertyArray,
+                                          listener,
+                                          Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+
+    // The uris remaining in notFOund need to be created, so add them to the
+    // create list
+    for (var j in notFound) {
+      toCreate.push(j);
+    }
+  }
+  else {
+    // If we are not replacing, create all the unique items
+    toCreate = uniqueUriStr;
+  }
+
+  // Create the items in the create list and add the created items to the
+  // uriStrToItem map
+  if (toCreate.length > 0) {
+
+    var uris = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+    for (var i = 0; i < toCreate.length; i++) {
+      uris.appendElement(uriStrToUri[toCreate[i]], false);
+    }
+    var added = aMediaList.library.batchCreateMediaItems(uris);
+    for (var i = 0; i < added.length; i++) {
+      var item = added.queryElementAt(i, Ci.sbIMediaItem);
+      uriStrToItem[item.contentSrc.spec] = item;
+    }
+  }
+
+  // Set the properties on all the items
+  var toAdd = [];
+  aMediaList.beginUpdateBatch();
+  try {
+    aItems.forEach(function(e) {
+
+      var item = uriStrToItem[e.uri.spec];
+      if (item) {
+        toAdd.push(item);
+        item.setProperty(SB_NS + "originUrl", e.uri.spec);
+        for (var prop in e.properties) {
+          try {
+            item.setProperty(prop, e.properties[prop]);
+          }
+          catch(e) {
+            Components.utils.reportError(e);
+          }
+        }
+        item.write();
+      }
+      else {
+        Components.utils.reportError("item with uri '" + e.uri.spec + "' was not added");
+      }
+    });
+  }
+  finally {
+    aMediaList.endUpdateBatch();
+  }
+
+  // We also need to add the new items to the media list.  If the media list
+  // is actually the library, this is essentially a no-op
+  var enumerator = {
+    _index: 0,
+    _array: toAdd,
+    hasMoreElements: function() {
+      return this._index < this._array.length;
+    },
+    getNext: function() {
+      var item = this._array[this._index];
+      this._index++;
+      return item;
+    }
+  };
+
+  aMediaList.addSome(enumerator);
+}
+
 function SB_ResolveURI(aStringURL, aBaseURI)
 {
   var isURI = false;
@@ -98,29 +227,5 @@ function SB_ResolveURI(aStringURL, aBaseURI)
 
   // Couldn't resolve it, return null for failure
   return null;
-}
-
-function SB_GetFirstItemByContentUrl(aMediaList, aURI) {
-
-  var listener = {
-    item: null,
-    onEnumerationBegin: function() {
-      return true;
-    },
-    onEnumeratedItem: function(list, item) {
-      this.item = item;
-      return false;
-    },
-    onEnumerationEnd: function() {
-      return true;
-    }
-  };
-
-  aMediaList.enumerateItemsByProperty(SB_NS + "contentUrl",
-                                      aURI.spec,
-                                      listener,
-                                      Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
-
-  return listener.item;
 }
 

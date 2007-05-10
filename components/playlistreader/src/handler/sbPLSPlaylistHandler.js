@@ -102,35 +102,20 @@ function(aFile, aMediaList, aReplace)
   // Sort the items by index
   itemList.sort(function(a, b) { a.index - b.index });
 
-  for (var j = 0; j < itemList.length; j++) {
-    var data = itemList[j].data;
+  var toAdd = [];
+  itemList.forEach(function(e) {
+    var data = e.data;
     if (data.uri) {
-
-      var item = null;
-      if (aReplace) {
-        item = SB_GetFirstItemByContentUrl(aMediaList, data.uri);
-      }
-
-      if (!item) {
-        item = aMediaList.library.createMediaItem(data.uri);
-      }
-
-      // Set the metadata that we found.  Do this in a try block so invalid
-      // data does not kill us
-      try {
-        if (data.title)
-          item.setProperty(SB_NS + "title", data.title);
-        if (data.length)
-          item.setProperty(SB_NS + "duration", data.length * 1000000);
-      }
-      catch(e) {
-        Components.utils.reportError(e);
-      }
-
-      if (data.title || data.length)
-        item.write();
+      var item = { uri: data.uri, properties: {} };
+      toAdd.push(item);
+      if (data.title)
+        item.properties[SB_NS + "title"] = data.title;
+      if (data.length)
+        item.properties[SB_NS + "duration"] = data.length * 1000000;
     }
-  }
+  });
+
+  SB_AddItems(toAdd, aMediaList, aReplace);
 }
 
 sbPLSPlaylistHandler.prototype.vote =
@@ -154,15 +139,17 @@ function()
 sbPLSPlaylistHandler.prototype.supportedMIMETypes =
 function(aMIMECount, aMIMETypes)
 {
-  aMIMETypes.value = ["audio/x-scpls"];
-  aMIMECount.value = aMIMETypes.value.length;
+  var mimeTypes = ["audio/x-scpls"];
+  aMIMECount.value = mimeTypes.length;
+  return mimeTypes;
 }
 
 sbPLSPlaylistHandler.prototype.supportedFileExtensions =
 function(aExtCount, aExts)
 {
-  aExts.value = ["pls"];
-  aExtCount.value = aExts.value.length;
+  var exts = ["pls"];
+  aExtCount.value = exts.length;
+  return exts;
 }
 
 sbPLSPlaylistHandler.prototype.QueryInterface =
