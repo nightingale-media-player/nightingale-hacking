@@ -39,7 +39,7 @@ function runTest () {
   var library = createLibrary("test_playlistmanager");
 
   var manager = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
-                  .createInstance(Ci.sbIPlaylistReaderManager);
+                  .getService(Ci.sbIPlaylistReaderManager);
   var listener = Cc["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
                    .createInstance(Ci.sbIPlaylistReaderListener);
 
