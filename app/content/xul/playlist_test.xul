@@ -201,6 +201,11 @@ try
     refreshCustomCommand: function( aElement, aId, aHost ) 
     {
     },
+    
+    getCommandVisible: function( aSubMenu, aIndex, aHost )
+    {
+      return true;
+    },
   
     getCommandEnabled: function( aSubMenu, aIndex, aHost )
     {
