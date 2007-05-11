@@ -39,7 +39,7 @@ function runTest () {
   // Test mime types
   var mimeTypesCount = {};
   var mimeTypes = manager.supportedMIMETypes(mimeTypesCount);
-  var expected = ["audio/mpegurl", "audio/x-mpegurl", "audio/x-scpls"];
+  var expected = ["audio/mpegurl", "audio/x-mpegurl", "audio/x-scpls", "text/html"];
   assertEqual(mimeTypesCount.value, expected.length);
   for (var i = 0; i < mimeTypesCount.value; i++) {
     expected = removeFromArray(expected, mimeTypes[i]);
@@ -49,7 +49,7 @@ function runTest () {
   // Test extensions
   var extCount = {};
   var exts = manager.supportedFileExtensions(extCount);
-  expected = ["pls", "m3u"];
+  expected = ["pls", "m3u", "html", "htm", "php", "php3", ""];
   assertEqual(extCount.value, expected.length);
   for (var i = 0; i < extCount.value; i++) {
     expected = removeFromArray(expected, exts[i]);

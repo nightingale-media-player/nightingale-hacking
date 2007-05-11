@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<item-tests>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/bjork_innocence.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/bjork_innocence.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/scoutniblett_dinosauregg.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/scoutniblett_dinosauregg.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/guiborrato_beautifullife.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/guiborrato_beautifullife.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/arcadefire_thewelllive.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/arcadefire_thewelllive.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/barrystjohn_turnonyourlight.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/barrystjohn_turnonyourlight.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/paulhaig_runningaway.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/paulhaig_runningaway.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/lifewithoutbuildings_libertyfeelup.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/lifewithoutbuildings_libertyfeelup.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/aurevoirsimone_stars.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/aurevoirsimone_stars.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/peterbjornandjohn_upagainstthewall.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/peterbjornandjohn_upagainstthewall.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/matthewdear_donandsherri.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/matthewdear_donandsherri.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/djblaqstarr_shakeittotheground_pistolpete.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/djblaqstarr_shakeittotheground_pistolpete.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/electrelane_totheeast.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/electrelane_totheeast.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/montag_mechanicalkids.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/montag_mechanicalkids.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/yolatengo_theroomgotheavy.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/yolatengo_theroomgotheavy.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/deerhunter_cryptograms.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/deerhunter_cryptograms.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/pterodactyl_threesucceed.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/pterodactyl_threesucceed.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/dizzeerascal_sirens.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/dizzeerascal_sirens.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/mochipet_justintimberlakecore.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/mochipet_justintimberlakecore.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/sissywish_float.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/sissywish_float.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.fluxblog.net/wildbeasts_throughdarknight.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.fluxblog.net/wildbeasts_throughdarknight.mp3"/>
+  </item-test>
+</item-tests>
+

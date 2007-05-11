@@ -54,15 +54,21 @@ const componentData =
      script: "sbPLSPlaylistHandler.js",
      constructor: "sbPLSPlaylistHandler",
      category: "playlist-reader",
-     categoryEntry: "pls"}
+     categoryEntry: "pls"},
 
+   {cid: Components.ID("{75c8f646-e75a-4743-89cd-412fa083ce07}"),
+     contractid: "@songbirdnest.com/Songbird/Playlist/Reader/HTML;1",
+     script: "sbHTMLPlaylistHandler.js",
+     constructor: "sbHTMLPlaylistHandler",
+     category: "playlist-reader",
+     categoryEntry: "html"}
   ];
 
 var sbPlaylistHandlerModule = {
   mScriptsLoaded: false,
   loadScripts: function () {
     if (this.mScriptsLoaded)
-        return;
+      return;
 
     const jssslContractID = "@mozilla.org/moz/jssubscript-loader;1";
     const jssslIID = Ci.mozIJSSubScriptLoader;

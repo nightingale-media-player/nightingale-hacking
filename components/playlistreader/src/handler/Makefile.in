@@ -35,6 +35,7 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbPlaylistHandlerModule.js \
 SONGBIRD_SCRIPTS = $(srcdir)/sbPlaylistHandlerUtils.js \
                    $(srcdir)/sbM3UPlaylistHandler.js \
                    $(srcdir)/sbPLSPlaylistHandler.js \
+                   $(srcdir)/sbHTMLPlaylistHandler.js \
                    $(NULL)
 
 include $(topsrcdir)/build/rules.mk
