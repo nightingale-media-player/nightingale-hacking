@@ -105,6 +105,11 @@ try
       return 0;
     },
 
+    getCommandVisible: function( aSubMenu, aIndex, aHost )
+    {
+      return true;
+    },
+  
     onCommand: function( id, value, host)
     {
     },

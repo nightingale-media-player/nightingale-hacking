@@ -209,6 +209,11 @@ try
     {
     },
   
+    getCommandVisible: function( aSubMenu, aIndex, aHost )
+    {
+      return true;
+    },
+  
     getCommandEnabled: function( aSubMenu, aIndex, aHost )
     {
       var cmds = this._getMenu(aSubMenu);

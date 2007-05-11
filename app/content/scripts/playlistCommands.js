@@ -184,12 +184,11 @@ var SBWebPlaylistCommands =
       alert( "PlaylistCommands - Array lengths do not match!" );
       return 0;
     }
-    return this.m_Ids.length - ((aHost == "toolbar") ? 1 : 0);
+    return this.m_Ids.length;
   },
 
   getCommandId: function( aSubmenu, aIndex, aHost )
   {
-    if (aHost == "toolbar" && aIndex > 5) aIndex++;
     if ( aIndex >= this.m_Ids.length )
     {
       return "";
@@ -199,7 +198,6 @@ var SBWebPlaylistCommands =
 
   getCommandType: function( aSubmenu, aIndex, aHost )
   {
-    if (aHost == "toolbar" && aIndex > 5) aIndex++;
     if ( aIndex >= this.m_Types.length )
     {
       return "";
@@ -209,7 +207,6 @@ var SBWebPlaylistCommands =
 
   getCommandText: function( aSubmenu, aIndex, aHost )
   {
-    if (aHost == "toolbar" && aIndex > 5) aIndex++;
     if ( aIndex >= this.m_Names.length )
     {
       return "";
@@ -219,20 +216,17 @@ var SBWebPlaylistCommands =
 
   getCommandFlex: function( aSubmenu, aIndex, aHost )
   {
-    if (aHost == "toolbar" && aIndex > 5) aIndex++;
     if ( this.m_Types[ aIndex ] == "separator" ) return 1;
     return 0;
   },
   
   getCommandValue: function( aSubmenu, aIndex, aHost )
   {
-    if (aHost == "toolbar" && aIndex > 5) aIndex++;
     return "";
   },
 
   getCommandFlag: function( aSubmenu, aIndex, aHost )
   {
-    if (aHost == "toolbar" && aIndex > 5) aIndex++;
     return false;
   },
 
@@ -243,7 +237,6 @@ var SBWebPlaylistCommands =
 
   getCommandToolTipText: function( aSubmenu, aIndex, aHost )
   {
-    if (aHost == "toolbar" && aIndex > 5) aIndex++;
     if ( aIndex >= this.m_Tooltips.length )
     {
       return "";
@@ -260,9 +253,14 @@ var SBWebPlaylistCommands =
   {
   },
 
+  getCommandVisible: function( aSubMenu, aIndex, aHost )
+  {
+    if (aIndex == 6) return (aHost != "toolbar");
+    return true;
+  },
+  
   getCommandEnabled: function( aSubmenu, aIndex, aHost )
   {
-    if (aHost == "toolbar" && aIndex > 5) aIndex++;
     // First time, make a query to be able to check for the existence of the 
     // download playlist
     if ( this.m_Query == null )
@@ -848,6 +846,11 @@ var SBDownloadCommands =
   {
   },
 
+  getCommandVisible: function( aSubMenu, aIndex, aHost )
+  {
+    return true;
+  },
+
   getCommandEnabled: function( aSubmenu, aIndex, aHost )
   {
     var retval = false;
@@ -1098,6 +1101,11 @@ var SBDefaultCommands =
 
   refreshCustomCommand: function( aElement, aId, aHost ) 
   {
+  },
+
+  getCommandVisible: function( aSubMenu, aIndex, aHost )
+  {
+    return true;
   },
 
   getCommandEnabled: function( aSubmenu, aIndex, aHost )
