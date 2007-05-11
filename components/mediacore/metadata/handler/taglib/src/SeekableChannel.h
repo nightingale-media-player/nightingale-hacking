@@ -170,6 +170,10 @@ class sbSeekableChannel : public sbISeekableChannel,
          * Public data segment services.
          */
 
+        Segment();
+
+        virtual ~Segment();
+
         bool operator()(
             const Segment           *pSegment1,
             const Segment           *pSegment2) const;

@@ -957,6 +957,34 @@ void sbSeekableChannel::DumpChannelData()
 
 
 /*
+ * Segment
+ *
+ *   This method is the constructor for the Segment class.
+ */
+
+sbSeekableChannel::Segment::Segment()
+:
+    offset(0),
+    length(0),
+    buffer(NULL)
+{
+}
+
+
+/*
+ * ~Segment
+ *
+ *   This method is the destructor for the Segment class.
+ */
+
+sbSeekableChannel::Segment::~Segment()
+{
+    if (buffer)
+        nsMemory::Free(buffer);
+}
+
+
+/*
  * operator
  *
  *   --> pSegment1,         Segments to compare.

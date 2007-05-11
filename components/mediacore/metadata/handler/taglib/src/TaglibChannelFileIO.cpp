@@ -146,12 +146,12 @@ const char *TagLibChannelFileIO::name() const
 ByteVector TagLibChannelFileIO::readBlock(
     TagLib::ulong               length)
 {
-    ByteVector                  *pByteVector;
+    ByteVector                  byteVector;
     PRUint32                    bytesRead;
     nsresult                    result = NS_OK;
 
-    /* Create a byte vector for the read data. */
-    pByteVector = new ByteVector((TagLib::uint) length);
+    /* Set up a byte vector to contain the read data. */
+    byteVector.resize((TagLib::uint) length);
 
     /* Fail if restarting channel. */
     if (mChannelRestart)
@@ -160,12 +160,12 @@ ByteVector TagLibChannelFileIO::readBlock(
     /* Read the file data. */
     if (NS_SUCCEEDED(result))
     {
-        result = mpSeekableChannel->Read(pByteVector->data(),
+        result = mpSeekableChannel->Read(byteVector.data(),
                                          length,
                                          &bytesRead);
     }
     if (NS_SUCCEEDED(result))
-        pByteVector->resize(bytesRead);
+        byteVector.resize(bytesRead);
 
     /* Check for channel restart. */
     if (result == NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART)
@@ -176,9 +176,9 @@ ByteVector TagLibChannelFileIO::readBlock(
 
     /* Clear read data on error. */
     if (!NS_SUCCEEDED(result))
-        pByteVector->resize(0);
+        byteVector.resize(0);
 
-    return (*pByteVector);
+    return (byteVector);
 }
 
 
