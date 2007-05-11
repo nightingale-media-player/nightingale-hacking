@@ -262,13 +262,14 @@
       </method>  
 
       <!-- Attempt to trigger in-cell editing on the cell
-         corresponding to the given sbIServicePaneNode 
+           corresponding to the given sbIServicePaneNode 
         -->
       <method name="startEditingNode">
         <parameter name="aNode"/>
         <body><![CDATA[
-          // TODO what if the node is within a closed container?
-          // Do we need to pop open all parent containers and scroll to the row?
+          aNode.parentNode.isOpen = true;
+          // TODO: do we need to scroll to the row?
+          
           var index = this.getRowForNode(aNode);
           if (index >= 0) {
             this.mTree.startEditing(index, this.mTree.columns[0]);
@@ -641,10 +642,10 @@
       <!-- For now just hijacking the file menu implementation.. -->
       <!-- TODO: over state, up arrow, remove periods from all IDs -->
       <xul:hbox id="frame_service_buttonbar">
-        <xul:sb-clickhold-button id="file.new" oncommand="doMenu('file.new');" flex="1" label="&menu.file.new;" popupanchor="topleft" popupalign="bottomleft">
-          <xul:menuitem id="file.new" oncommand="doMenu('file.new');" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
-          <xul:menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
-          <xul:menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
+        <xul:sb-clickhold-button id="file.new" oncommand="onMenu(event.target)" flex="1" label="&menu.file.new;" popupanchor="topleft" popupalign="bottomleft">
+          <xul:menuitem id="file.new"  class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+          <xul:menuitem id="file.smart"  class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
+          <xul:menuitem id="file.remote"  class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
         </xul:sb-clickhold-button>
       </xul:hbox>
     </content>   

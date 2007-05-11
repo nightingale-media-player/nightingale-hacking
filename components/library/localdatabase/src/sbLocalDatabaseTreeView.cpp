@@ -769,8 +769,10 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
     TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetByIndex - "
            "InvalidateRange(%d, %d)", this, start, end));
 
-    rv = mTreeBoxObject->InvalidateRange(start, end);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (mTreeBoxObject) {
+      rv = mTreeBoxObject->InvalidateRange(start, end);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     rv = SetPageCachedStatus(aIndex, eCached);
     NS_ENSURE_SUCCESS(rv, rv);

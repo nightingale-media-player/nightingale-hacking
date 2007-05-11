@@ -373,12 +373,37 @@ function SBMabOpen()
 }
 
 
+/** Legacy function **/
 function SBNewPlaylist()
 {  
+  makeNewPlaylist("simple"); 
+}
 
-  // TODO I imagine this function will become more generic.  Hardcoding to simple for now.   
-  var mediaListType = "simple";
- 
+function SBNewSmartPlaylist( guid, table )
+{
+  SBScanServiceTreeNewEntryEditable(); // Do this right before you add to the servicelist?
+  
+  // Make a magic data object to get passed to the dialog
+  var smart_playlist = new Object();
+  smart_playlist.retval = "";
+  smart_playlist.guid = guid;
+  smart_playlist.table = table
+  // Open the window
+  SBOpenModalDialog( "chrome://songbird/content/xul/smart_playlist.xul", "", "chrome,centerscreen", smart_playlist ); 
+  if ( smart_playlist.retval == "ok" )
+  {
+    SBScanServiceTreeNewEntryStart(); // And this once you know you really did?
+  }
+}
+
+/**
+ * Create a new playlist of the given type, using the service pane
+ * to determine context and perform renaming
+ *
+ * Note: This function should move into the window controller somewhere
+ *       once it exists.
+ */
+function makeNewPlaylist(mediaListType) {
   var servicePane = gServicePane;
 
   // Try to find the currently selected service pane node
@@ -401,12 +426,12 @@ function SBNewPlaylist()
   // Create the playlist
   var mediaList = library.createMediaList(mediaListType);
   
-  // Give the playlist a default name localized
+  // Give the playlist a default name
+  // TODO: Localization should be done internally
   mediaList.name = SBString("playlist", "Playlist");
   mediaList.write();
   
-  // Tell the servicetree to make the new playlist node editable
-  // TODO What if there is no servicetree?  Should we pop a dialog?
+  // If we have a servicetree, tell it to make the new playlist node editable
   if (servicePane) {
     // Find the servicepane node for our new medialist
     var node = librarySPS.getNodeForLibraryResource(mediaList);
@@ -416,29 +441,25 @@ function SBNewPlaylist()
       // so that the user can give it a name
       servicePane.startEditingNode(node);
     } else {
-      // TODO How should this be handled?
-      dump("Error: Couldn't find a service pane node for the list we just created\n");
+      throw("Error: Couldn't find a service pane node for the list we just created\n");
     }
-  }  
-}
 
+  // Otherwise pop up a dialog and ask for playlist name
+  } else {
+    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"  ]
+                                  .getService(Components.interfaces.nsIPromptService);
 
-function SBNewSmartPlaylist( guid, table )
-{
-  SBScanServiceTreeNewEntryEditable(); // Do this right before you add to the servicelist?
-  
-  // Make a magic data object to get passed to the dialog
-  var smart_playlist = new Object();
-  smart_playlist.retval = "";
-  smart_playlist.guid = guid;
-  smart_playlist.table = table
-  // Open the window
-  SBOpenModalDialog( "chrome://songbird/content/xul/smart_playlist.xul", "", "chrome,centerscreen", smart_playlist ); 
-  if ( smart_playlist.retval == "ok" )
-  {
-    SBScanServiceTreeNewEntryStart(); // And this once you know you really did?
+    var input = {value: mediaList.name};
+    var title = SBString("newPlaylist.title", "Create New Playlist");
+    var prompt = SBString("newPlaylist.prompt", "Enter the name of the new playlist.");
+
+    if (promptService.prompt(window, title, prompt, input, null, {})) {
+      mediaList.name = input.value;
+      mediaList.write();
+    }
   }
 }
+
 
 function SBKoshiOpen()
 {
