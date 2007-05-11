@@ -915,7 +915,7 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
         {
             AddMetadataValue("bitrate", pAudioProperties->bitrate());
             AddMetadataValue("frequency", pAudioProperties->sampleRate());
-            AddMetadataValue("length", pAudioProperties->length() * 1000);
+            AddMetadataValue("length", pAudioProperties->length() * 1000000);
         }
     }
 
