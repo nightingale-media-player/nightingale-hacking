@@ -102,7 +102,7 @@
             // See if there are more objects registered specifically for this table
             var source = Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
                                     .getService( Components.interfaces.sbIPlaylistsource );
-            var cmds = source.getPlaylistCommands( this.playlist.guid, this.playlist.table, this.playlist.type );
+            var cmds = source.getPlaylistCommands( this.playlist.mediaListView.mediaList.guid, this.playlist.mediaListView.mediaList.type );
             if ( cmds )
             {
               while (cmds.hasMoreElements()) {

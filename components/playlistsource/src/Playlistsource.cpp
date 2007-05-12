@@ -1799,7 +1799,6 @@ sbPlaylistsource::UnregisterPlaylistCommands(const nsAString     &aContextGUID,
 
 NS_IMETHODIMP
 sbPlaylistsource::GetPlaylistCommands(const nsAString      &aContextGUID,
-                                      const nsAString      &aTableName,
                                       const nsAString      &aPlaylistType,
                                       nsISimpleEnumerator  **_retval)
 {
@@ -1811,9 +1810,7 @@ sbPlaylistsource::GetPlaylistCommands(const nsAString      &aContextGUID,
   nsString key(aContextGUID);
   nsString type(aPlaylistType);
 
-  key += aTableName;
-
-  // "type" takes precedence over specific table names
+  // "type" takes precedence over specific guid
   commandmap_t::iterator c = g_CommandMap.find(type);
   if (c != g_CommandMap.end()) {
     commandlist_t *typelist = &((*c).second);
