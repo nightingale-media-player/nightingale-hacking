@@ -59,6 +59,21 @@
 
       <field name="commands">null</field>
       <field name="playlist">null</field>
+
+      <property name="usedefault">
+        <getter>
+          return (this.getAttribute("usedefault") != "false");
+        </getter>
+        <setter>
+          <![CDATA[
+            var old = this.usedefault;
+            this.setAttribute("usedefault", val);
+            if (this.usedefault != old) {
+              this.rescanCommands();
+            }
+          ]]>
+        </setter>
+      </property>
       
       <method name="bind">
         <parameter name="playlist"/>
@@ -67,9 +82,23 @@
         <![CDATA[
           try {
             this.playlist = playlist;
+            this.defaultcommands = commands;
+            this.rescanCommands();
+          } catch (e) {
+              alert( "sb-commands.xml - bind - " + e );
+          }
+        ]]>
+        </body>
+      </method>
+      
+      <method name="rescanCommands">
+        <body>
+          <![CDATA[
             this.commands = new Array();
-            // add the default (generic) command object if specified
-            if (commands) this.commands.push(commands);
+            if (this.usedefault) {
+              // add the default (generic) command object if specified
+              if (this.defaultcommands) this.commands.push(this.defaultcommands);
+            }
             // See if there are more objects registered specifically for this table
             var source = Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
                                     .getService( Components.interfaces.sbIPlaylistsource );
@@ -84,10 +113,8 @@
                 if (obj) this.commands.push(obj);
               }
             }
-          } catch (e) {
-              alert( "sb-commands.xml - bind - " + err );
-          }
-        ]]>
+            this.refreshCommands();
+          ]]>
         </body>
       </method>
 
@@ -867,4 +894,5 @@
 
 
 </bindings>
+
 

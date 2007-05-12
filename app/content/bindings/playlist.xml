@@ -359,6 +359,17 @@
         </setter>
       </property>
 
+      <property name="usedefaultcommands">
+        <getter>
+          return (this.getAttribute("usedefaultcommands") != "false");
+        </getter>
+        <setter>
+          this.setAttribute("usedefaultcommands", val);
+          if (this.commandmenuitems) this.commandmenuitems.usedefault = val;
+          if (this.toolbar) this.toolbar.usedefault = val;
+        </setter>
+      </property>
+
       <!-- Initialization and Control -->
 
       <method name="load">
@@ -589,10 +600,8 @@
         // Clear out the old commands and add the new ones
         this.toolbar.hidden = true;
         this.toolbar.bind(this, commands);
-        this.toolbar.refreshCommands();
 
         this.commandmenuitems.bind(this, commands);
-        this.commandmenuitems.refreshCommands();
         
         // If boolean true, read from the XUL file.
         if ( resize == true )
@@ -3149,6 +3158,13 @@
         <![CDATA[
           this.tree.view.selection.clearSelection();
         ]]>
+        </body>
+      </method>
+      
+      <method name="rescanCommands">
+        <body>
+          if (this.commandmenuitems) this.commandmenuitems.rescanCommands();
+          if (this.toolbar) this.toolbar.rescanCommands();
         </body>
       </method>
 

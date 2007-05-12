@@ -243,6 +243,21 @@
         </getter>
       </property>
 
+      <property name="usedefaultcommands">
+        <getter>
+          <![CDATA[
+            return (this.getAttribute("usedefaultcommands") != "false");
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this.setAttribute("usedefaultcommands", val);
+            if (this._commandmenuitems) this._commandmenuitems.usedefault = val;
+            if (this._toolbar) this._toolbar.usedefault = val;
+          ]]>
+        </setter>
+      </property>
+
       <!-- Holds the text value of the cell that was right clicked -->
       <field name="context_term">""</field>
 
@@ -443,8 +458,6 @@
 
   // Clear out the old commands and add the new ones
   this._toolbar.hidden = true;
-  this._toolbar.bind(this, commands);
-  this._toolbar.refreshCommands();
 
   this.setCommands(commands);
 
@@ -704,7 +717,7 @@
         <body>
         <![CDATA[
           this._commandmenuitems.bind(this, commands);
-          this._commandmenuitems.refreshCommands();
+          this._toolbar.bind(this, commands);
         ]]>
         </body>
       </method>
@@ -1741,6 +1754,13 @@
           return index;
 
         ]]></body>
+      </method>
+
+      <method name="rescanCommands">
+        <body>
+          if (this._commandmenuitems) this._commandmenuitems.rescanCommands();
+          if (this._toolbar) this._toolbar.rescanCommands();
+        </body>
       </method>
 
     </implementation>
