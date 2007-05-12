@@ -1,0 +1,38 @@
+Index: configure.in
+===================================================================
+RCS file: /cvsroot/mozilla/configure.in,v
+retrieving revision 1.1792
+diff -u -4 -r1.1792 configure.in
+--- configure.in	11 Apr 2007 18:22:35 -0000	1.1792
++++ configure.in	14 Apr 2007 00:18:21 -0000
+@@ -4111,9 +4111,9 @@
+ MOZ_UI_LOCALE=en-US
+ MOZ_UNIVERSALCHARDET=1
+ MOZ_URL_CLASSIFIER=
+ MOZ_USE_NATIVE_UCONV=
+-MOZ_V1_STRING_ABI=1
++MOZ_V1_STRING_ABI=
+ MOZ_VIEW_SOURCE=1
+ MOZ_WEBSERVICES=1
+ MOZ_XMLEXTRAS=1
+ MOZ_XPFE_COMPONENTS=1
+@@ -4233,9 +4233,8 @@
+   MOZ_SVG=
+   MOZ_UNIVERSALCHARDET=
+   MOZ_UPDATER=
+   MOZ_USE_NATIVE_UCONV=1
+-  MOZ_V1_STRING_ABI=
+   MOZ_VIEW_SOURCE=
+   MOZ_XPFE_COMPONENTS=
+   MOZ_XPINSTALL=
+   MOZ_XTF=
+@@ -4284,9 +4283,8 @@
+   MOZ_SVG=
+   MOZ_UNIVERSALCHARDET=
+   MOZ_UPDATER=
+   MOZ_USE_NATIVE_UCONV=1
+-  MOZ_V1_STRING_ABI=
+   MOZ_VIEW_SOURCE=
+   MOZ_XPFE_COMPONENTS=
+   MOZ_XPINSTALL=
+   MOZ_XTF=
