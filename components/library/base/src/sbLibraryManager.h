@@ -42,7 +42,7 @@
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsClassHashtable.h>
-#include <nsTHashtable.h>
+#include <nsInterfaceHashtable.h>
 #include <prlock.h>
 #include <sbILibraryLoader.h>
 
@@ -71,6 +71,7 @@ class nsIFile;
 class nsIRDFDataSource;
 class sbILibraryFactory;
 class sbILibraryLoader;
+class sbILibraryManagerListener;
 
 struct nsModuleComponentInfo;
 
@@ -122,22 +123,18 @@ private:
                                           void* aUserData);
 
   static PLDHashOperator PR_CALLBACK
+    AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey,
+                                   sbILibraryManagerListener* aEntry,
+                                   void* aUserData);
+
+  static PLDHashOperator PR_CALLBACK
     AssertAllLibrariesCallback(nsStringHashKey::KeyType aKey,
                                sbLibraryInfo* aEntry,
                                void* aUserData);
 
-  static PLDHashOperator PR_CALLBACK
-    ShutdownAllLibrariesCallback(nsStringHashKey::KeyType aKey,
-                                 sbLibraryInfo* aEntry,
+  static PRBool PR_CALLBACK
+    ShutdownAllLibrariesCallback(sbILibrary* aEntry,
                                  void* aUserData);
-
-  static PLDHashOperator PR_CALLBACK
-    NotifyListenersLibraryRegisteredCallback(nsISupportsHashKey* aKey,
-                                             void* aUserData);
-
-  static PLDHashOperator PR_CALLBACK
-    NotifyListenersLibraryUnregisteredCallback(nsISupportsHashKey* aKey,
-                                               void* aUserData);
 
   static nsresult AssertLibrary(nsIRDFDataSource* aDataSource,
                                 sbILibrary* aLibrary);
@@ -153,13 +150,15 @@ private:
 
   void InvokeLoaders();
 
-  sbILibraryLoader* FindLoaderForLibrary(sbILibrary* aLibrary);
+  nsresult SetLibraryLoadsAtStartupInternal(sbILibrary* aLibrary,
+                                            PRBool aLoadAtStartup,
+                                            sbLibraryInfo** aInfo);
 
 private:
   /**
    * \brief A hashtable that holds all the registered libraries.
    */
-  nsClassHashtableMT<nsStringHashKey, sbLibraryInfo> mLibraryTable;
+  nsClassHashtable<nsStringHashKey, sbLibraryInfo> mLibraryTable;
 
   /**
    * \brief An in-memory datasource that contains information about the
@@ -170,7 +169,7 @@ private:
   /**
    * \brief A list of listeners.
    */
-  nsTHashtable<nsISupportsHashKey> mListeners;
+  nsInterfaceHashtable<nsISupportsHashKey, sbILibraryManagerListener> mListeners;
 
   /**
    * \brief A list of library loaders registered through the Category Manager.

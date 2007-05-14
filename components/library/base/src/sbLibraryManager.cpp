@@ -52,6 +52,7 @@
 #include <nsThreadUtils.h>
 #include <prlog.h>
 #include <rdf.h>
+#include <sbProxyUtils.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -72,6 +73,8 @@ static PRLogModuleInfo* gLibraryManagerLog = nsnull;
 NS_IMPL_THREADSAFE_ISUPPORTS3(sbLibraryManager, nsIObserver,
                                                 nsISupportsWeakReference,
                                                 sbILibraryManager)
+
+static nsString sString;
 
 sbLibraryManager::sbLibraryManager()
 : mLoaderCache(SB_LIBRARY_LOADER_CATEGORY),
@@ -112,7 +115,8 @@ sbLibraryManager::RegisterSelf(nsIComponentManager* aCompMgr,
 
   rv = categoryManager->AddCategoryEntry(APPSTARTUP_CATEGORY,
                                          SONGBIRD_LIBRARYMANAGER_DESCRIPTION,
-                                         "service," SONGBIRD_LIBRARYMANAGER_CONTRACTID,
+                                         "service,"
+                                         SONGBIRD_LIBRARYMANAGER_CONTRACTID,
                                          PR_TRUE, PR_TRUE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -210,6 +214,33 @@ sbLibraryManager::AddStartupLibrariesToCOMArrayCallback(nsStringHashKey::KeyType
 }
 
 /**
+ * \brief This callback adds the enumerated startup libraries to an nsCOMArray.
+ *
+ * \param aKey      - An nsAString representing the GUID of the library.
+ * \param aEntry    - An sbILibrary entry.
+ * \param aUserData - An nsCOMArray to hold the enumerated pointers.
+ *
+ * \return PL_DHASH_NEXT on success
+ * \return PL_DHASH_STOP on failure
+ */
+/* static */ PLDHashOperator PR_CALLBACK
+sbLibraryManager::AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey,
+                                                 sbILibraryManagerListener* aEntry,
+                                                 void* aUserData)
+{
+  NS_ASSERTION(aKey, "Null key in hashtable!");
+  NS_ASSERTION(aEntry, "Null entry in hashtable!");
+
+  nsCOMArray<sbILibraryManagerListener>* array =
+    NS_STATIC_CAST(nsCOMArray<sbILibraryManagerListener>*, aUserData);
+
+  PRBool success = array->AppendObject(aEntry);
+  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+/**
  * \brief This callback asserts all the enumerated libraries into the given
  *        datasource.
  *
@@ -247,15 +278,13 @@ sbLibraryManager::AssertAllLibrariesCallback(nsStringHashKey::KeyType aKey,
  *
  * \return PL_DHASH_NEXT always
  */
-/* static */ PLDHashOperator PR_CALLBACK
-sbLibraryManager::ShutdownAllLibrariesCallback(nsStringHashKey::KeyType aKey,
-                                               sbLibraryInfo* aEntry,
-                                               void* aUserData)
+/* static */ PRBool PR_CALLBACK
+sbLibraryManager::ShutdownAllLibrariesCallback(sbILibrary* aEntry,
+                                               void* /*aUserData*/)
 {
   NS_ASSERTION(aEntry, "Null entry in hashtable!");
-  NS_ASSERTION(aEntry->library, "Null library in hashtable!");
 
-  nsresult rv = aEntry->library->Shutdown();
+  nsresult rv = aEntry->Shutdown();
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A library's shutdown method failed!");
 
   return PL_DHASH_NEXT;
@@ -291,52 +320,6 @@ sbLibraryManager::UnassertLibrary(nsIRDFDataSource* aDataSource,
 {
   NS_NOTYETIMPLEMENTED("sbLibraryManager::UnassertLibrary");
   return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/**
- * \brief This method notifies listeners that a library has been registered.
- */
-/* static */ PLDHashOperator PR_CALLBACK
-sbLibraryManager::NotifyListenersLibraryRegisteredCallback(nsISupportsHashKey* aKey,
-                                                           void* aUserData)
-{
-  TRACE(("sbLibraryManager[static] - NotifyListenersLibraryRegisteredCallback"));
-
-  NS_ASSERTION(aKey, "Nulls in the hashtable!");
-  nsresult rv;
-  nsCOMPtr<sbILibraryManagerListener> listener =
-    do_QueryInterface(aKey->GetKey(), &rv);
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
-
-  sbILibrary* library = NS_STATIC_CAST(sbILibrary*, aUserData);
-  NS_ASSERTION(library, "Null pointer!");
-
-  listener->OnLibraryRegistered(library);
-  
-  return PL_DHASH_NEXT;
-}
-
-/**
- * \brief This method notifies listeners that a library has been unregistered.
- */
-/* static */ PLDHashOperator PR_CALLBACK
-sbLibraryManager::NotifyListenersLibraryUnregisteredCallback(nsISupportsHashKey* aKey,
-                                                             void* aUserData)
-{
-  TRACE(("sbLibraryManager[static] - NotifyListenersLibraryUnregisteredCallback"));
-
-  NS_ASSERTION(aKey, "Nulls in the hashtable!");
-  nsresult rv;
-  nsCOMPtr<sbILibraryManagerListener> listener =
-    do_QueryInterface(aKey->GetKey(), &rv);
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
-
-  sbILibrary* library = NS_STATIC_CAST(sbILibrary*, aUserData);
-  NS_ASSERTION(library, "Null pointer!");
-
-  listener->OnLibraryUnregistered(library);
-  
-  return PL_DHASH_NEXT;
 }
 
 /**
@@ -380,9 +363,20 @@ sbLibraryManager::NotifyListenersLibraryRegistered(sbILibrary* aLibrary)
 {
   TRACE(("sbLibraryManager[0x%x] - NotifyListenersLibraryRegistered", this));
   
-  nsAutoLock lock(mLock);
-  mListeners.EnumerateEntries(NotifyListenersLibraryRegisteredCallback,
-                              aLibrary);
+  nsCOMArray<sbILibraryManagerListener> listeners;
+  {
+    nsAutoLock lock(mLock);
+    mListeners.EnumerateRead(AddListenersToCOMArrayCallback, &listeners);
+  }
+
+  PRInt32 count = listeners.Count();
+  for (PRInt32 index = 0; index < count; index++) {
+    nsCOMPtr<sbILibraryManagerListener> listener =
+      listeners.ObjectAt(index);
+    NS_ASSERTION(listener, "Null listener!");
+
+    listener->OnLibraryRegistered(aLibrary);
+  }
 }
 
 /**
@@ -398,9 +392,20 @@ sbLibraryManager::NotifyListenersLibraryUnregistered(sbILibrary* aLibrary)
 {
   TRACE(("sbLibraryManager[0x%x] - NotifyListenersLibraryUnregistered", this));
   
-  nsAutoLock lock(mLock);
-  mListeners.EnumerateEntries(NotifyListenersLibraryUnregisteredCallback,
-                              aLibrary);
+  nsCOMArray<sbILibraryManagerListener> listeners;
+  {
+    nsAutoLock lock(mLock);
+    mListeners.EnumerateRead(AddListenersToCOMArrayCallback, &listeners);
+  }
+
+  PRInt32 count = listeners.Count();
+  for (PRInt32 index = 0; index < count; index++) {
+    nsCOMPtr<sbILibraryManagerListener> listener =
+      listeners.ObjectAt(index);
+    NS_ASSERTION(listener, "Null listener!");
+
+    listener->OnLibraryUnregistered(aLibrary);
+  }
 }
 
 void
@@ -410,7 +415,8 @@ sbLibraryManager::InvokeLoaders()
   NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
 
   nsCOMArray<sbILibraryLoader> loaders = mLoaderCache.GetEntries();
-  for (PRUint32 index = 0; index < loaders.Count(); index++) {
+  PRInt32 count = loaders.Count();
+  for (PRInt32 index = 0; index < count; index++) {
     mCurrentLoader = loaders.ObjectAt(index);
     NS_ASSERTION(mCurrentLoader, "Null pointer!");
 
@@ -420,28 +426,86 @@ sbLibraryManager::InvokeLoaders()
   mCurrentLoader = nsnull;
 }
 
-sbILibraryLoader*
-sbLibraryManager::FindLoaderForLibrary(sbILibrary* aLibrary)
+/**
+ * This method exists because we have a fundamental problem with threadsafety.
+ * We have to lock across access to the contents of mLibraryTable or else copy
+ * its contents. RegisterLibrary calls SetLibraryLoadsAtStartup to handle some
+ * startup cases, but SetLibraryLoadsAtStartup is an external IDL method and
+ * requires that the library has already been registered. Hence this method.
+ */
+nsresult
+sbLibraryManager::SetLibraryLoadsAtStartupInternal(sbILibrary* aLibrary,
+                                                   PRBool aLoadAtStartup,
+                                                   sbLibraryInfo** aInfo)
 {
-  // First see if this library is in our hash table.
-  nsAutoString libraryGUID;
-  nsresult rv = aLibrary->GetGuid(libraryGUID);
-  NS_ENSURE_SUCCESS(rv, nsnull);
+  TRACE(("sbLibraryManager[0x%x] - SetLibraryLoadsAtStartupInternal", this));
 
-  sbLibraryInfo* libraryInfo;
-  if (mLibraryTable.Get(libraryGUID, &libraryInfo) && libraryInfo->loader) {
-    return libraryInfo->loader;
+  nsresult rv;
+
+  nsAutoPtr<sbLibraryInfo> libraryInfo(*aInfo ? *aInfo : new sbLibraryInfo());
+  NS_ENSURE_TRUE(libraryInfo, NS_ERROR_OUT_OF_MEMORY);
+
+  if (!*aInfo) {
+    // First see if this library is in our hash table.
+    nsAutoString libraryGUID;
+    rv = aLibrary->GetGuid(libraryGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoLock lock(mLock);
+
+    sbLibraryInfo* tableLibraryInfo;
+    if (!mLibraryTable.Get(libraryGUID, &tableLibraryInfo)) {
+      NS_WARNING("Can't modify the startup of an unregistered library!");
+      return NS_ERROR_INVALID_ARG;
+    }
+
+    // Copy these values to our new sbLibraryInfo object.
+    libraryInfo->loader = tableLibraryInfo->loader;
+    libraryInfo->library = tableLibraryInfo->library;
+    libraryInfo->loadAtStartup = tableLibraryInfo->loadAtStartup;
   }
 
-  nsCOMPtr<sbILibraryFactory> factory;
-  rv = aLibrary->GetFactory(getter_AddRefs(factory));
-  NS_ENSURE_SUCCESS(rv, nsnull);
+  if (libraryInfo->loader) {
+    rv = libraryInfo->loader->OnLibraryStartupModified(aLibrary,
+                                                       aLoadAtStartup);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString factoryType;
-  rv = factory->GetType(factoryType);
-  NS_ENSURE_SUCCESS(rv, nsnull);
-  
-  return nsnull;
+    libraryInfo->loadAtStartup = aLoadAtStartup;
+  }
+  else {
+    // See if we can find a loader for this library.
+    PRInt32 loaderCount;
+    nsCOMArray<sbILibraryLoader> loaders;
+    {
+      nsAutoLock lock(mLock);
+      nsCOMArray<sbILibraryLoader> cachedLoaders = mLoaderCache.GetEntries();
+
+      loaderCount = cachedLoaders.Count();
+      loaders.SetCapacity(loaderCount);
+      loaders.AppendObjects(cachedLoaders);
+    }
+
+    NS_ENSURE_TRUE(loaderCount > 0, NS_ERROR_NOT_AVAILABLE);
+
+    for (PRInt32 index = 0; index < loaderCount; index++) {
+      nsCOMPtr<sbILibraryLoader> cachedLoader = loaders.ObjectAt(index);
+      NS_ASSERTION(cachedLoader, "Null pointer!");
+
+      rv = cachedLoader->OnLibraryStartupModified(aLibrary, aLoadAtStartup);
+      if (NS_SUCCEEDED(rv)) {
+        libraryInfo->loader = cachedLoader;
+        libraryInfo->loadAtStartup = aLoadAtStartup;
+      }
+    }
+  }
+
+  if (NS_FAILED(rv)) {
+    // Fail if none of the registered loaders could accomodate the request.
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  *aInfo = libraryInfo.forget();
+  return NS_OK;
 }
 
 /**
@@ -501,13 +565,20 @@ sbLibraryManager::GetLibrary(const nsAString& aGuid,
   TRACE(("sbLibraryManager[0x%x] - GetLibrary", this));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  sbLibraryInfo* libraryInfo;
-  PRBool exists = mLibraryTable.Get(aGuid, &libraryInfo);
-  NS_ENSURE_TRUE(exists, NS_ERROR_NOT_AVAILABLE);
+  nsCOMPtr<sbILibrary> library;
 
-  NS_ASSERTION(libraryInfo->library, "Null library in hash table!");
+  {
+    nsAutoLock lock(mLock);
 
-  NS_ADDREF(*_retval = libraryInfo->library);
+    sbLibraryInfo* libraryInfo;
+    PRBool exists = mLibraryTable.Get(aGuid, &libraryInfo);
+    NS_ENSURE_TRUE(exists, NS_ERROR_NOT_AVAILABLE);
+
+    NS_ASSERTION(libraryInfo->library, "Null library in hash table!");
+    library = libraryInfo->library;
+  }
+
+  NS_ADDREF(*_retval = library);
   return NS_OK;
 }
 
@@ -520,16 +591,23 @@ sbLibraryManager::GetLibraries(nsISimpleEnumerator** _retval)
   TRACE(("sbLibraryManager[0x%x] - GetLibraries", this));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  PRUint32 libraryCount = mLibraryTable.Count();
-  if (!libraryCount) {
-    return NS_NewEmptyEnumerator(_retval);
+  nsCOMArray<sbILibrary> libraryArray;
+
+  {
+    nsAutoLock lock(mLock);
+
+    PRUint32 libraryCount = mLibraryTable.Count();
+    if (!libraryCount) {
+      return NS_NewEmptyEnumerator(_retval);
+    }
+
+    libraryArray.SetCapacity(libraryCount);
+
+    PRUint32 enumCount =
+      mLibraryTable.EnumerateRead(AddLibrariesToCOMArrayCallback,
+                                  &libraryArray);
+    NS_ENSURE_TRUE(enumCount == libraryCount, NS_ERROR_FAILURE);
   }
-
-  nsCOMArray<sbILibrary> libraryArray(libraryCount);
-
-  PRUint32 enumCount =
-    mLibraryTable.EnumerateRead(AddLibrariesToCOMArrayCallback, &libraryArray);
-  NS_ENSURE_TRUE(enumCount == libraryCount, NS_ERROR_FAILURE);
 
   return NS_NewArrayEnumerator(_retval, libraryArray);
 }
@@ -543,17 +621,23 @@ sbLibraryManager::GetStartupLibraries(nsISimpleEnumerator** _retval)
   TRACE(("sbLibraryManager[0x%x] - GetStartupLibraries", this));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  PRUint32 libraryCount = mLibraryTable.Count();
-  if (!libraryCount) {
-    return NS_NewEmptyEnumerator(_retval);
+  nsCOMArray<sbILibrary> libraryArray;
+
+  {
+    nsAutoLock lock(mLock);
+
+    PRUint32 libraryCount = mLibraryTable.Count();
+    if (!libraryCount) {
+      return NS_NewEmptyEnumerator(_retval);
+    }
+
+    libraryArray.SetCapacity(libraryCount);
+
+    PRUint32 enumCount =
+      mLibraryTable.EnumerateRead(AddStartupLibrariesToCOMArrayCallback,
+                                  &libraryArray);
+    NS_ENSURE_TRUE(enumCount == libraryCount, NS_ERROR_FAILURE);
   }
-
-  nsCOMArray<sbILibrary> libraryArray(libraryCount);
-
-  PRUint32 enumCount =
-    mLibraryTable.EnumerateRead(AddStartupLibrariesToCOMArrayCallback,
-                                &libraryArray);
-  NS_ENSURE_TRUE(enumCount == libraryCount, NS_ERROR_FAILURE);
 
   return NS_NewArrayEnumerator(_retval, libraryArray);
 }
@@ -572,48 +656,53 @@ sbLibraryManager::RegisterLibrary(sbILibrary* aLibrary,
   nsresult rv = aLibrary->GetGuid(libraryGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool alreadyRegistered;
+  {
+    nsAutoLock lock(mLock);
 
-  sbLibraryInfo* libraryInfo = nsnull;
-  if (mLibraryTable.Get(libraryGUID, &libraryInfo)) {
-    NS_WARNING("Registering a library that has already been registered!");
-    alreadyRegistered = PR_TRUE;
+    if (mLibraryTable.Get(libraryGUID, nsnull)) {
+      NS_WARNING("Registering a library that has already been registered!");
+      return NS_OK;
+    }
   }
-  else {
-    nsAutoPtr<sbLibraryInfo> newLibraryInfo(new sbLibraryInfo());
-    NS_ENSURE_TRUE(newLibraryInfo, NS_ERROR_OUT_OF_MEMORY);
+
+  nsAutoPtr<sbLibraryInfo> newLibraryInfo(new sbLibraryInfo());
+  NS_ENSURE_TRUE(newLibraryInfo, NS_ERROR_OUT_OF_MEMORY);
+
+  newLibraryInfo->library = aLibrary;
+  newLibraryInfo->loader = mCurrentLoader;
+
+  if (aLoadAtStartup) {
+    if (mCurrentLoader) {
+      newLibraryInfo->loadAtStartup = PR_TRUE;
+    }
+    else {
+      sbLibraryInfo* libraryInfo = newLibraryInfo;
+      rv = SetLibraryLoadsAtStartupInternal(aLibrary, aLoadAtStartup,
+                                            &libraryInfo);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("No loader can add this library to its startup group.");
+        newLibraryInfo->loadAtStartup = PR_FALSE;
+      }
+    }
+  }
+
+  {
+    nsAutoLock lock(mLock);
 
     PRBool success = mLibraryTable.Put(libraryGUID, newLibraryInfo);
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
-    libraryInfo = newLibraryInfo.forget();
-    alreadyRegistered = PR_FALSE;
+    newLibraryInfo.forget();
   }
 
-  libraryInfo->library = aLibrary;
-  libraryInfo->loader = mCurrentLoader;
-
-  if (aLoadAtStartup) {
-    if (mCurrentLoader) {
-      libraryInfo->loadAtStartup = PR_TRUE;
-    }
-    else {
-      rv = SetLibraryLoadsAtStartup(aLibrary, aLoadAtStartup);
-      if (NS_FAILED(rv)) {
-        NS_WARNING("No loader can add this library to its startup group.");
-        libraryInfo->loadAtStartup = PR_FALSE;
-      }
-    }
-  }
 
   if (mDataSource) {
     rv = AssertLibrary(mDataSource, aLibrary);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to update dataSource!");
   }
 
-  // Don't notify while within InvokeLoaders or if this library was previously
-  // registered.
-  if (!mCurrentLoader && !alreadyRegistered) {
+  // Don't notify while within InvokeLoaders.
+  if (!mCurrentLoader) {
     NotifyListenersLibraryRegistered(aLibrary);
   }
 
@@ -635,10 +724,16 @@ sbLibraryManager::UnregisterLibrary(sbILibrary* aLibrary)
   nsresult rv = aLibrary->GetGuid(libraryGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool exists = mLibraryTable.Get(libraryGUID, nsnull);
-  if (!exists) {
-    NS_WARNING("Unregistering a library that was never registered!");
-    return NS_OK;
+  {
+    nsAutoLock lock (mLock);
+
+    sbLibraryInfo* libInfo;
+    if (!mLibraryTable.Get(libraryGUID, &libInfo)) {
+      NS_WARNING("Unregistering a library that was never registered!");
+      return NS_OK;
+    }
+
+    mLibraryTable.Remove(libraryGUID);
   }
 
   // Don't notify while within InvokeLoaders.
@@ -651,7 +746,6 @@ sbLibraryManager::UnregisterLibrary(sbILibrary* aLibrary)
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to update dataSource!");
   }
 
-  mLibraryTable.Remove(libraryGUID);
   return NS_OK;
 }
 
@@ -662,45 +756,45 @@ NS_IMETHODIMP
 sbLibraryManager::SetLibraryLoadsAtStartup(sbILibrary* aLibrary,
                                            PRBool aLoadAtStartup)
 {
+  TRACE(("sbLibraryManager[0x%x] - SetLibraryLoadsAtStartup", this));
   NS_ENSURE_ARG_POINTER(aLibrary);
 
-  // First see if this library is in our hash table.
+  sbLibraryInfo* outLibInfo = nsnull;
+  nsresult rv = SetLibraryLoadsAtStartupInternal(aLibrary, aLoadAtStartup,
+                                                 &outLibInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Protect from leaks.
+  nsAutoPtr<sbLibraryInfo> libraryInfo(outLibInfo);
+
+#ifdef DEBUG
+  // Prevent anyone from using this pointer as they should use libraryInfo.
+  // It will dangle in release mode, but who cares.
+  outLibInfo = nsnull;
+#endif
+
+  // There's a possibility that another thread came through and unregistered
+  // the library while we were messing around above... That would suck, but we
+  // can't hang on to our lock while calling OnLibraryStartupModified. If that
+  // ever happens then we're just going to return failure and let the caller
+  // deal with it.
+
   nsAutoString libraryGUID;
-  nsresult rv = aLibrary->GetGuid(libraryGUID);
-  NS_ENSURE_SUCCESS(rv, nsnull);
+  rv = aLibrary->GetGuid(libraryGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLibraryInfo* libraryInfo;
-  if (!mLibraryTable.Get(libraryGUID, &libraryInfo)) {
-    NS_WARNING("Can't modify the startup of an unregistered library!");
-    return NS_ERROR_INVALID_ARG;
+  nsAutoLock lock(mLock);
+
+  if (!mLibraryTable.Get(libraryGUID, nsnull)) {
+    NS_WARNING("Another thread unregistered the library you're trying to modify!");
+    return NS_ERROR_UNEXPECTED;
   }
 
-  if (libraryInfo->loader) {
-    rv = libraryInfo->loader->OnLibraryStartupModified(aLibrary,
-                                                       aLoadAtStartup);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    libraryInfo->loadAtStartup = aLoadAtStartup;
-    return NS_OK;
-  }
-
-  // We'll have to query all the loaders to see if they can accomodate this
-  // library.
-  nsCOMArray<sbILibraryLoader> loaders = mLoaderCache.GetEntries();
-  for (PRUint32 index = 0; index < loaders.Count(); index++) {
-    nsCOMPtr<sbILibraryLoader> cachedLoader = loaders.ObjectAt(index);
-    NS_ASSERTION(cachedLoader, "Null pointer!");
-
-    rv = cachedLoader->OnLibraryStartupModified(aLibrary, aLoadAtStartup);
-    if (NS_SUCCEEDED(rv)) {
-      libraryInfo->loader = cachedLoader;
-      libraryInfo->loadAtStartup = aLoadAtStartup;
-      return NS_OK;
-    }
-  }
-
-  // Fail if none of the registered loaders could accomodate the request.
-  return NS_ERROR_NOT_AVAILABLE;
+  PRBool success = mLibraryTable.Put(libraryGUID, libraryInfo);
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+  
+  libraryInfo.forget();
+  return NS_OK;
 }
 
 /**
@@ -710,12 +804,15 @@ NS_IMETHODIMP
 sbLibraryManager::GetLibraryLoadsAtStartup(sbILibrary* aLibrary,
                                            PRBool* _retval)
 {
+  TRACE(("sbLibraryManager[0x%x] - GetLibraryLoadsAtStartup", this));
   NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsAutoString libraryGUID;
   nsresult rv = aLibrary->GetGuid(libraryGUID);
-  NS_ENSURE_SUCCESS(rv, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoLock lock(mLock);
 
   sbLibraryInfo* libraryInfo;
   if (!mLibraryTable.Get(libraryGUID, &libraryInfo)) {
@@ -733,18 +830,33 @@ sbLibraryManager::GetLibraryLoadsAtStartup(sbILibrary* aLibrary,
 NS_IMETHODIMP
 sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
 {
+  TRACE(("sbLibraryManager[0x%x] - AddListener", this));
   NS_ENSURE_ARG_POINTER(aListener);
+
+  {
+    nsAutoLock lock(mLock);
+
+    if (mListeners.Get(aListener, nsnull)) {
+      NS_WARNING("Trying to add a listener twice!");
+      return NS_OK;
+    }
+  }
+
+  // Make a proxy for the listener that will always send callbacks to the
+  // current thread.
+  nsCOMPtr<sbILibraryManagerListener> proxy;
+  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                                     NS_GET_IID(sbILibraryManagerListener),
+                                     aListener,
+                                     NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                     getter_AddRefs(proxy));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsAutoLock lock(mLock);
 
-#ifdef DEBUG
-  nsISupportsHashKey* exists = mListeners.GetEntry(aListener);
-  if (exists) {
-    NS_WARNING("Trying to add a listener twice!");
-  }
-#endif
-
-  nsISupportsHashKey* success = mListeners.PutEntry(aListener);
-  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+  // Add the proxy to the hash table, using the listener as the key.
+  PRBool success = mListeners.Put(aListener, proxy);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -757,14 +869,15 @@ sbLibraryManager::RemoveListener(sbILibraryManagerListener* aListener)
 {
   TRACE(("sbLibraryManager[0x%x] - RemoveListener", this));
   NS_ENSURE_ARG_POINTER(aListener);
+
   nsAutoLock lock(mLock);
 
 #ifdef DEBUG
-  nsISupportsHashKey* exists = mListeners.GetEntry(aListener);
-  NS_WARN_IF_FALSE(exists, "Trying to remove a listener that was never added!");
+  if (!mListeners.Get(aListener, nsnull)) {
+    NS_WARNING("Trying to remove a listener that was never added!");
+  }
 #endif
-
-  mListeners.RemoveEntry(aListener);
+  mListeners.Remove(aListener);
 
   return NS_OK;
 }
@@ -811,7 +924,12 @@ sbLibraryManager::Observe(nsISupports* aSubject,
     }
 
     // Tell all the registered libraries to shutdown.
-    mLibraryTable.EnumerateRead(ShutdownAllLibrariesCallback, nsnull);
+    nsCOMArray<sbILibrary> libraries;
+    {
+      nsAutoLock lock(mLock);
+      mLibraryTable.EnumerateRead(AddLibrariesToCOMArrayCallback, &libraries);
+    }
+    libraries.EnumerateForwards(ShutdownAllLibrariesCallback, nsnull);
 
     return NS_OK;
   }

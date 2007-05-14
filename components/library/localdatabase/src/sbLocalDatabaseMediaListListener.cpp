@@ -473,7 +473,7 @@ sbLocalDatabaseMediaListListener::BatchEndCallback(sbIMediaListListener* aEntry,
 }
 
 /**
- * \brief Adds visited listeners into an aeeay
+ * \brief Adds visited listeners into an array
  *
  * \param aKey      - An sbIMediaListListener.
  * \param aEntry    - An sbIMediaListListener proxy.

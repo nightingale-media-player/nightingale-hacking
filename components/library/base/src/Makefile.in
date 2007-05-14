@@ -40,6 +40,7 @@ CPP_SRCS = sbLibraryManager.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/library/base/public \
+               $(topsrcdir)/components/include \
                $(topsrcdir)/components/library/base/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
