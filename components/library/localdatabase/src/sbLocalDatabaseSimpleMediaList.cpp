@@ -234,6 +234,11 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
       rv = mFriendList->CopyStandardProperties(mediaItem, newMediaItem);
       NS_ENSURE_SUCCESS(rv, rv);
 
+      //Call the copy listener for this media list at this time.
+      //XXXAus: This could benefit from batching in the future.
+      rv = mFriendList->NotifyCopyListener(mediaItem, newMediaItem);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to notify copy listener!");
+
       success = mItemList.ReplaceObjectAt(newMediaItem, index);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -902,6 +907,31 @@ sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListView** _retval)
 }
 
 // sbILocalDatabaseSimpleMediaList
+NS_IMETHODIMP 
+sbLocalDatabaseSimpleMediaList::GetCopyListener(
+  sbILocalDatabaseMediaListCopyListener * *aCopyListener)
+{
+  NS_ENSURE_ARG_POINTER(aCopyListener);
+
+  *aCopyListener = nsnull;
+  
+  if(mCopyListener) {
+    NS_ADDREF(*aCopyListener = mCopyListener);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbLocalDatabaseSimpleMediaList::SetCopyListener(
+  sbILocalDatabaseMediaListCopyListener * aCopyListener)
+{
+  NS_ENSURE_ARG_POINTER(aCopyListener);
+
+  mCopyListener = aCopyListener;
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::GetIndexByOrdinal(const nsAString& aOrdinal,
                                                   PRUint32* _retval)
@@ -1451,6 +1481,21 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
 
   return NS_OK;
 }
+
+nsresult 
+sbLocalDatabaseSimpleMediaList::NotifyCopyListener(sbIMediaItem *aSourceItem,
+                                                   sbIMediaItem *aDestItem)
+{
+  NS_ENSURE_ARG_POINTER(aSourceItem);
+  NS_ENSURE_ARG_POINTER(aDestItem);
+
+  if(mCopyListener) {
+    return mCopyListener->OnItemCopied(aSourceItem, aDestItem);
+  }
+
+  return NS_OK;
+}
+
 
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::GetDefaultSortProperty(nsAString& aProperty)

@@ -100,6 +100,9 @@ private:
 
   nsresult CreateQueries();
 
+  nsresult NotifyCopyListener(sbIMediaItem *aSourceItem,
+                              sbIMediaItem *aDestItem);
+
 private:
   // Query to get the media item id for a given guid, constrained to the
   // items within this simple media list
@@ -125,6 +128,9 @@ private:
 
   // Get first ordinal
   nsString mGetFirstOrdinalQuery;
+
+  // Copy Listener
+  nsCOMPtr<sbILocalDatabaseMediaListCopyListener> mCopyListener;
 
   // Keep a list of guids that should be notified after removal
   nsTHashtable<nsStringHashKey> mShouldNotifyAfterRemove;
