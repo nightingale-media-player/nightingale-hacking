@@ -32,6 +32,16 @@
 
 #include "nsISupports.idl"
 
+interface sbIMediaItem;
+interface sbILocalDatabaseLibrary;
+
+[scriptable, uuid(feca42a6-f060-4041-8f97-5b750074432f)]
+interface sbILocalDatabaseMediaListCopyListener : nsISupports
+{
+  void onItemCopied(in sbIMediaItem aSourceItem, 
+                        in sbIMediaItem aDestItem);
+};
+
 /**
 * \interface sbILocalDatabaseSimpleMediaList
 * \brief Simple media list specific methods
@@ -44,6 +54,8 @@
 [scriptable, uuid(72c5d04f-6c75-4155-adb8-b2e5755714d1)]
 interface sbILocalDatabaseSimpleMediaList : nsISupports
 {
+  attribute sbILocalDatabaseMediaListCopyListener copyListener;
+
   /**
    * \brief Get the index of an item in this list by its ordinal.
    * \param aOrdinal The ordinal to look up the index by
