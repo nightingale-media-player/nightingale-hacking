@@ -1,0 +1,248 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/** 
+* \file  sbMediaListViewMap.cpp
+* \brief Songbird MediaListViewMap Implementation.
+*/
+#include "sbMediaListViewMap.h"
+
+#include <nsIAppStartupNotifier.h>
+#include <nsICategoryManager.h>
+#include <nsIGenericFactory.h>
+#include <nsIObserver.h>
+#include <nsIObserverService.h>
+#include <nsISimpleEnumerator.h>
+#include <nsISupportsPrimitives.h>
+
+#include <nsArrayEnumerator.h>
+#include <nsAutoLock.h>
+#include <nsCOMArray.h>
+#include <nsComponentManagerUtils.h>
+#include <nsEnumeratorUtils.h>
+#include <nsServiceManagerUtils.h>
+#include <nsThreadUtils.h>
+#include <prlog.h>
+#include <rdf.h>
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbMediaListViewMap:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gMediaListViewMapLog = nsnull;
+#define TRACE(args) PR_LOG(gMediaListViewMapLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gMediaListViewMapLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
+
+#define NS_PROFILE_STARTUP_OBSERVER_ID  "profile-after-change"
+#define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
+
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbMediaListViewMap, nsIObserver,
+                                                  nsISupportsWeakReference,
+                                                  sbIMediaListViewMap)
+
+sbMediaListViewMap::sbMediaListViewMap()
+{
+#ifdef PR_LOGGING
+  if (!gMediaListViewMapLog)
+    gMediaListViewMapLog = PR_NewLogModule("sbMediaListViewMap");
+#endif
+
+  TRACE(("sbMediaListViewMap[0x%x] - Created", this));
+
+  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+}
+
+sbMediaListViewMap::~sbMediaListViewMap()
+{
+  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+
+  TRACE(("MediaListViewMap[0x%x] - Destroyed", this));
+}
+
+/* static */ NS_METHOD
+sbMediaListViewMap::RegisterSelf(nsIComponentManager* aCompMgr,
+                               nsIFile* aPath,
+                               const char* aLoaderStr,
+                               const char* aType,
+                               const nsModuleComponentInfo *aInfo)
+{
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> categoryManager =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = categoryManager->AddCategoryEntry(APPSTARTUP_CATEGORY,
+                                         SONGBIRD_MEDIALISTVIEWMAP_DESCRIPTION,
+                                         "service," SONGBIRD_MEDIALISTVIEWMAP_CONTRACTID,
+                                         PR_TRUE, PR_TRUE, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return rv;
+}
+
+/**
+ * \brief Register with the Observer Service.
+ */
+nsresult
+sbMediaListViewMap::Init()
+{
+  TRACE(("sbMediaListViewMap[0x%x] - Init", this));
+  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+
+  nsresult rv;
+  nsCOMPtr<nsIObserverService> observerService = 
+    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = observerService->AddObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID,
+                                    PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = observerService->AddObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID,
+                                    PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* sbIMediaListView getView (in nsISupports aParent, in nsISupports aPageKey); */
+NS_IMETHODIMP sbMediaListViewMap::GetView(nsISupports *aParent, nsISupports *aPageKey, sbIMediaListView **_retval)
+{
+  NS_ENSURE_ARG_POINTER( aParent );
+  NS_ENSURE_ARG_POINTER( aPageKey );
+  NS_ENSURE_ARG_POINTER( _retval );
+  nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > *innerMap = nsnull;
+  sbIMediaListView *innerValue = nsnull;
+  *_retval = nsnull;
+  if ( mViewMap.Get( aParent, &innerMap ) && innerMap && innerMap->Get( aPageKey, &innerValue ) )
+  {
+    NS_IF_ADDREF( *_retval = innerValue );
+  }
+  // It's okay to return null on failure.
+  return NS_OK;
+}
+
+/* void setView (in nsISupports aParent, in nsISupports aPageKey, in sbIMediaListView aView); */
+NS_IMETHODIMP sbMediaListViewMap::SetView(nsISupports *aParent, nsISupports *aPageKey, sbIMediaListView *aView)
+{
+  NS_ENSURE_ARG_POINTER( aParent );
+  NS_ENSURE_ARG_POINTER( aPageKey );
+  NS_ENSURE_ARG_POINTER( aView );
+  nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > *innerMap = nsnull;
+  sbIMediaListView *innerValue = nsnull;
+  // If our inner map does not yet exist, create and stash it.
+  if ( ! mViewMap.Get( aParent, &innerMap ) )
+  {
+    innerMap = new nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView >;
+    NS_ENSURE_TRUE(innerMap, NS_ERROR_OUT_OF_MEMORY);
+    mViewMap.Put( aParent, innerMap ); // Takes over memory management for innerMap
+    innerMap->Init();
+  }
+  // Put the view into the inner map.
+  innerMap->Put( aPageKey, aView );
+  return NS_OK;
+}
+
+/* void releaseViews (in nsISupports aParent); */
+NS_IMETHODIMP sbMediaListViewMap::ReleaseViews(nsISupports *aParent)
+{
+  NS_ENSURE_ARG_POINTER( aParent );
+  nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > *innerMap = nsnull;
+  if ( mViewMap.Get( aParent, &innerMap ) )
+  {
+    // Release everything in/about the inner map.
+    innerMap->Clear();
+    mViewMap.Remove( aParent ); // This line deletes innerMap
+  }
+  return NS_OK;
+}
+
+/**
+ * See nsIObserver.idl
+ */
+NS_IMETHODIMP
+sbMediaListViewMap::Observe(nsISupports* aSubject,
+                          const char* aTopic,
+                          const PRUnichar* aData)
+{
+  TRACE(("sbMediaListViewMap[0x%x] - Observe: %s", this, aTopic));
+
+  nsresult rv;
+  nsCOMPtr<nsIObserverService> observerService = 
+    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+
+  if (strcmp(aTopic, APPSTARTUP_TOPIC) == 0) {
+    return NS_OK;
+  }
+  else if (strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID) == 0) {
+    // Remove ourselves from the observer service.
+    if (NS_SUCCEEDED(rv)) {
+      observerService->RemoveObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID);
+    }
+
+    // Startup
+    mViewMap.Init();
+
+    return NS_OK;
+  }
+  else if (strcmp(aTopic, NS_PROFILE_SHUTDOWN_OBSERVER_ID) == 0) {
+
+    // Remove ourselves from the observer service.
+    if (NS_SUCCEEDED(rv)) {
+      observerService->RemoveObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
+    }
+
+    // Shutdown
+//    mViewMap.Enumerate( ReleaseAll, nsnull );
+
+    // TODO: Make that compile properly.  Grr.
+
+    return NS_OK;
+  }
+
+  NS_NOTREACHED("Observing a topic that wasn't handled!");
+  return NS_OK;
+}
+
+PLDHashOperator PR_CALLBACK
+sbMediaListViewMap::ReleaseAll(nsISupportsHashKey::KeyType aKey,
+                                               nsClassHashtableMT< nsISupportsHashKey, nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > >::UserDataType aEntry,
+                                               void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in hashtable!");
+
+  // Wipe it out
+  aEntry->Clear();
+  delete aEntry;
+
+  return PL_DHASH_NEXT;
+}
+

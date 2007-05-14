@@ -308,7 +308,6 @@
           try {
             if (!this.mainpane_listener_set)
             {
-
               //
               //
               // HORRIBLE SECURITY HACK TO GET THE PLAYLIST TREE AND INJECT FUN EVENT HANDLERS 
@@ -317,9 +316,38 @@
               var installed_listener = false;
               var playlist = this.contentDocument?this.contentDocument.getElementById( "playlist_test" ):null;
               if (playlist) {
+              
+                this.mainpane_listener_set = true; // Okay, we're done.  However far we get, here, only do it once.
+                
                 // Crack the security if necessary
                 if ( playlist.wrappedJSObject )
                   playlist = playlist.wrappedJSObject;
+        
+                if ( playlist.mediaListView ) // New API
+                {
+                  var viewMap =
+                    Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                              .getService(Components.interfaces.sbIMediaListViewMap);
+                              
+                  // Now all I have to do is find something resembling a usefully unique key.
+                  var browser = this.mCurrentBrowser;
+                  var history = browser.webNavigation.sessionHistory;
+                  var entry = history.getEntryAtIndex( history.index, false );
+                  
+                  var restore = viewMap.getView( browser, entry );
+                  
+                  // Save the current view if there is nothing to restore
+                  if ( restore == null )
+                  {
+                    viewMap.setView( browser, entry, playlist.mediaListView );
+                  }
+                  else
+                  {
+                    // Otherwise, restore it.
+                    var commands = playlist.commands;
+                    playlist.bind( restore, commands );
+                  }
+                }
         
                 // Wait until after the bind call?
                 if ( playlist.ref == "" )
@@ -328,7 +356,11 @@
                   //setTimeout(this._loaded, 250);
                   return;
                 }
-        
+                
+                //
+                // THE RETURN ABOVE IS ALWAYS HIT.
+                //
+                
                 // hack, to let play buttons find the visible playlist if needed
                 document.__CURRENTPLAYLIST__ = playlist;
         

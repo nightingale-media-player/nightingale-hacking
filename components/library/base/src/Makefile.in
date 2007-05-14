@@ -35,6 +35,7 @@ target := $(addsuffix _d,$(target))
 endif
 
 CPP_SRCS = sbLibraryManager.cpp \
+           sbMediaListViewMap.cpp \
            sbLibraryManagerModule.cpp \
            $(NULL)
 

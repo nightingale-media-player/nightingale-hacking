@@ -293,7 +293,10 @@
 
       <!-- Cached reference to the Songbird string bundle -->
       <field name="_stringbundle">null;</field>
+      
+      <!-- Internal and external storage of the given commands? -->
       <field name="_commands">null;</field>
+      <field name="commands">null;</field>
 
       <!-- Coordinates of the last shown content menu popup -->
       <field name="_context_x">-1</field>
@@ -458,7 +461,6 @@
 
   // Clear out the old commands and add the new ones
   this._toolbar.hidden = true;
-
   this.setCommands(commands);
 
   // If boolean true, read from the XUL file.
@@ -716,6 +718,13 @@
         <parameter name="commands"/>
         <body>
         <![CDATA[
+          // Out with the old
+          this.removeCommands(); 
+          // In with the new
+          this._commands = this.commands = commands;
+          this._toolbar.hidden = true;
+          this._toolbar.bind(this, commands);
+          this._toolbar.refreshCommands();
           this._commandmenuitems.bind(this, commands);
           this._toolbar.bind(this, commands);
         ]]>
@@ -725,6 +734,7 @@
       <method name="removeCommands">
         <body>
 <![CDATA[
+  this._commands = this.commands = null;
   this._toolbar.removeCommands();
   this._commandmenuitems.removeCommands();
 ]]>

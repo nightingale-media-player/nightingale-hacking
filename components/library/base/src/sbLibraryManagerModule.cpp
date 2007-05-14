@@ -31,8 +31,10 @@
 
 #include <nsIGenericFactory.h>
 #include "sbLibraryManager.h"
+#include "sbMediaListViewMap.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLibraryManager, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaListViewMap, Init);
 
 static nsModuleComponentInfo components[] =
 {
@@ -42,6 +44,13 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_LIBRARYMANAGER_CONTRACTID,
     sbLibraryManagerConstructor,
     sbLibraryManager::RegisterSelf
+  },
+  {
+    SONGBIRD_MEDIALISTVIEWMAP_CLASSNAME,
+    SONGBIRD_MEDIALISTVIEWMAP_CID,
+    SONGBIRD_MEDIALISTVIEWMAP_CONTRACTID,
+    sbMediaListViewMapConstructor,
+    sbMediaListViewMap::RegisterSelf
   }
 };
 

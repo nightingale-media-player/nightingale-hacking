@@ -37,11 +37,6 @@ interface sbIMediaListView;
 /**
 * \interface sbIMediaListViewMap
 * \brief A mapping from nsISupports objects to save sbIMediaListView states.
-
-// {16EA057C-D4C2-4921-9984-13AC421A5F8D}
-static const GUID <<name>> = 
-{ 0x16ea057c, 0xd4c2, 0x4921, { 0x99, 0x84, 0x13, 0xac, 0x42, 0x1a, 0x5f, 0x8d } };
-
 *
 * \sa sbIMediaListView
 */
