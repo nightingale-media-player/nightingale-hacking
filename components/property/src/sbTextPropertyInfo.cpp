@@ -125,6 +125,11 @@ NS_IMETHODIMP sbTextPropertyInfo::Validate(const nsAString & aValue, PRBool *_re
   return NS_OK;
 }
 
+NS_IMETHODIMP sbTextPropertyInfo::Sanitize(const nsAString & aValue, nsAString & _retval)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv;

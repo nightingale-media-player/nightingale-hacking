@@ -130,6 +130,11 @@ NS_IMETHODIMP sbURIPropertyInfo::Validate(const nsAString & aValue, PRBool *_ret
   return NS_OK;
 }
 
+NS_IMETHODIMP sbURIPropertyInfo::Sanitize(const nsAString & aValue, nsAString & _retval)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv = EnsureIOService();
