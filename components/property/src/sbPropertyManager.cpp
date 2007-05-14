@@ -735,28 +735,5 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
   uriProperty.forget();
 
-  //Progress
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_PROGRESS));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(0);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMaxValue(100);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = numberProperty->SetDisplayUsingSimpleType(NS_LITERAL_STRING("progressmeter"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.progress"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
-
   return NS_OK;
 }
