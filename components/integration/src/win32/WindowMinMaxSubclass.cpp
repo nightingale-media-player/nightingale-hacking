@@ -47,7 +47,12 @@
 #include <nsStringGlue.h>
 
 #include "sbIDeviceManager.h"
-#include "sbICDDevice.h"
+#include <sbIDeviceBase.h>
+
+//#define SB_ENABLE_CD_DEVICE
+#if defined(SB_ENABLE_CD_DEVICE)
+  #include "sbICDDevice.h"
+#endif
 
 // CLASSES ====================================================================
 //=============================================================================
@@ -317,6 +322,8 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
                                                 getter_AddRefs(baseDevice));
         if (NS_SUCCEEDED(rv))
         {
+
+#if defined(SB_ENABLE_CD_DEVICE)
           nsCOMPtr<sbICDDevice> cdDevice = do_QueryInterface(baseDevice, &rv);
           if (NS_SUCCEEDED(rv))
           {
@@ -324,6 +331,8 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
             PRBool mediaInserted = DBT_DEVICEARRIVAL == wParam;
             rv = cdDevice->OnCDDriveEvent(mediaInserted, &retVal);
           }
+#endif
+
         }
       }
       break;

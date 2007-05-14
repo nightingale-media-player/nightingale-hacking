@@ -33,6 +33,15 @@
 #include "nsISupports.idl"
 
 /**
+ * Forward references
+ */
+interface nsIArray;
+interface nsIURI;
+
+interface sbILibrary;
+interface sbIMediaItem;
+
+/**
  * \interface sbIDeviceBaseCallback
  *
  * \brief <TODO:Brief>.
@@ -40,7 +49,7 @@
  * <TODO:Detail>.
  *
  */
-[scriptable, uuid(d38c86bc-67da-442b-95ed-fdc1d21a6594)]
+[scriptable, uuid(123f41bd-5976-4561-a12a-d417cf5c18b2)]
 interface sbIDeviceBaseCallback : nsISupports
 {
   /**
@@ -48,18 +57,18 @@ interface sbIDeviceBaseCallback : nsISupports
    *
    * <TODO:Detail>.
    *
-   * \param aDeviceString [in AString] A string that describes the device.
+   * \param aDeviceIdentifier [in AString] A string that describes the device.
    */
-  void onDeviceConnect(in AString aDeviceString);
+  void onDeviceConnect(in AString aDeviceIdentifier);
 
   /**
    * \brief <TODO:Brief>.
    *
    * <TODO:Detail>.
    *
-   * \param aDeviceString [in AString] A string that describes the device.
+   * \param aDeviceIdentifier [in AString] A string that describes the device.
    */
-  void onDeviceDisconnect(in AString aDeviceString);
+  void onDeviceDisconnect(in AString aDeviceIdentifier);
 
   /**
    * \brief <TODO:Brief>.
@@ -128,7 +137,7 @@ interface sbIDeviceBaseCallback : nsISupports
  * instance "Songbird CD Device" is the Device Category and "D:\" is the Device
  * String.
  */
-[scriptable, uuid(ba25e1d1-bb6d-43db-b2f1-f5d3d1a41792)]
+[scriptable, uuid(9b00086e-2497-4075-a6b3-d3ff39e1480c)]
 interface sbIDeviceBase : nsISupports
 {
   /**
@@ -163,499 +172,261 @@ interface sbIDeviceBase : nsISupports
   const PRUint32 STATE_DELETING        = 6;
 
   /**
-   * \brief <TODO:Brief>.
-   *
-   * <TODO:Detail>.
+   * \brief Device Operation Constants
+   * \sa transferItems
+   */
+  const unsigned long OP_UPLOAD    = 1;
+  const unsigned long OP_DOWNLOAD  = 2;
+  const unsigned long OP_MOVE      = 3;
+  
+  /**
+   * \brief The name of the device category handler.
    */
 	attribute AString name;
 
   /**
-   * \brief <TODO:Brief>.
-   *
-   * <TODO:Detail>.
-   *
-   * \return [PRBool] <TODO>.
+   * \brief Initialize the device category handler.
    */
-  PRBool initialize();
+  void initialize();
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Finalize usage of the device category handler.
    *
-   * <TODO:Detail>.
-   *
-   * \return [PRBool] <TODO>.
+   * This effectively prepares the device category handler for
+   * application shutdown.
    */
-  PRBool finalize();
+  boolean finalize();
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Add a device category handler callback.
    *
-   * <TODO:Detail>.
+   * Enables you to get callbacks when devices are connected and when
+   * transfers are initiated.
    *
-   * \param aCallback [in sbIDeviceBaseCallback] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
+   * \param aCallback The device category handler callback you wish to add.
    */
-  PRBool addCallback(in sbIDeviceBaseCallback aCallback);
+  void addCallback(in sbIDeviceBaseCallback aCallback);
 
   /**
-   * \brief <TODO:Brief>.
-   *
-   * <TODO:Detail>.
-   *
-   * \param aCallback [in sbIDeviceBaseCallback] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
+   * \brief Remove a device category handler callback.
+   * 
+   * \param aCallback The device category handler callback you wish to remove.
    */
-  PRBool removeCallback(in sbIDeviceBaseCallback aCallback);
+  void removeCallback(in sbIDeviceBaseCallback aCallback);
 
   /**
-   * \brief <TODO:Brief>.
-   *
-   * Device category name for this class of devices
-   *
-   * \return [AString] <TODO>.
+   * \brief Device category name for this class of devices.
    */
 	readonly attribute AString deviceCategory;
 
   /**
-   * \brief <TODO:Brief>.
-   *
-	 * Device identifying string for a device at index
-   *
-   * \param aIndex [in PRUint32] <TODO>.
-   *
-   * \return [AString] <TODO>.
+   * \brief Contains nsISupportsStrings representing the device unique identifiers 
+   * for all connected devices of this category.
    */
-	AString getDeviceStringByIndex(in PRUint32 aIndex);
+	readonly attribute nsIArray deviceIdentifiers;
 
   /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \return [PRUint32] <TODO>.
+   * \brief Get the number of devices currently connected.
    */
-	readonly attribute PRUint32 deviceCount;
+	readonly attribute unsigned long deviceCount;
 
   /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRUint32] <TODO>.
+   * \brief Get the device library representing the content
+   * available on the device.
+   * 
+   * \param aDeviceIdentifier The unique device identifier.
+   * \return The library for the specified device.
    */
-	PRUint32 getDestinationCount(in AString aDeviceString); 
+  sbILibrary getLibrary(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Get the device's current state.
    *
-	 * To get the database context for a device
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [AString] <TODO>.
+   * \return The current state of the device.
    */
-	AString getContext(in AString aDeviceString);
+  unsigned long getDeviceState(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRUint32] <TODO>.
+   * \brief Get preferred transfer location for item
    */
-  PRUint32 getDeviceState(in AString aDeviceString);
+
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Transfer items to a library or destination.
    *
-   * If calling downloadTable() or uploadTable() then makeTransferTable() can
-   * be called to create a transfer table. Or autoDownloadTable() and
-   * autoUploadTable() can be called to create transfer table and begin
-   * transfer right away.
+   * If you call this method with a library only, the device
+   * will attempt to read the library's preferred transfer 
+   * destination and use it.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aContextInput [in AString] <TODO>.
-   * \param aTableName [in AString] <TODO>.
-   * \param aFilterColumn [in AString] <TODO>.
-   * \param aFilterCount [in PRUint32] <TODO>.
-   * \param aFilterValues [in wstring[]] <TODO>.
-   * \param aSourcePath [in AString] <TODO>.
-   * \param aDestPath [in AString] <TODO>.
-   * \param aDownloading [in PRBool] <TODO>.
-   * \param aTransferTable [out AString] <TODO>.
+   * If you call this method with a destination only, the device
+   * will attempt to transfer the items to that destination only.
    *
-   * \return [PRBool] <TODO>.
+   * If you call this method with a library and destination path, the
+   * device will attempt to simply pass a destination if you do not wish to add
+   * the item to a library after the transfer is complete.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aMediaItems An array of media items to transfer.
+   * \param aDestinationPath The desired destination path, path may include full filename.
+   * \param aDeviceOperation The desired operation (upload, download, move).
+
+   * \param aDestinationLibrary The desired destination library.
+   * \return Number of items actually queued for transfer.
    */
-	PRBool makeTransferTable(in AString aDeviceString,
-                           in AString aContextInput,
-                           in AString aTableName,
-                           in AString aFilterColumn,
-                           in PRUint32 aFilterCount,
-                           [array, size_is(aFilterCount)] in wstring aFilterValues,
-                           in AString aSourcePath,
-                           in AString aDestPath,
-                           in PRBool aDownloading,
-                           out AString aTransferTable);
-  
-  /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aTableName [in AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
-   */
-  PRBool downloadTable(in AString aDeviceString,
-                       in AString aTableName);
+  unsigned long transferItems(in AString aDeviceIdentifier,
+                              in nsIArray aMediaItems, 
+                              in nsIURI aDestionationPath, 
+                              in unsigned long aDeviceOperation,
+                              in boolean aBeginTransferNow,
+                              in sbILibrary aDestinationLibrary);
 
   /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aTableName [in AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
+   * \brief Update items on the device.
    */
-  PRBool uploadTable(in AString aDeviceString,
-                     in AString aTableName);
-	
-  /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aContextInput [in AString] <TODO>.
-   * \param aTableName [in AString] <TODO>.
-   * \param aFilterColumn [in AString] <TODO>.
-   * \param aFilterCount [in PRUint32] <TODO>.
-   * \param aFilterValues [in wstring[]] <TODO>.
-   * \param aSourcePath [in AString] <TODO>.
-   * \param aDestPath [in AString] <TODO>.
-   * \param aTransferTable [out AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
-   */
-  PRBool autoDownloadTable(in AString aDeviceString,
-                           in AString aContextInput,
-                           in AString aTableName,
-                           in AString aFilterColumn,
-                           in PRUint32 aFilterCount,
-                           [array, size_is(aFilterCount)] in wstring aFilterValues,
-                           in AString aSourcePath,
-                           in AString aDestPath,
-                           out AString aTransferTable);
+  unsigned long updateItems(in AString aDeviceIdentifier,
+                            in nsIArray aMediaItems);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Delete items from the device.
    *
-	 * <TODO:Detail>.
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aMediaItems An array of sbIMediaItem objects.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aContextInput [in AString] <TODO>.
-   * \param aTableName [in AString] <TODO>.
-   * \param aFilterColumn [in AString] <TODO>.
-   * \param aFilterCount [in PRUint32] <TODO>.
-   * \param aFilterValues [in wstring[]] <TODO>.
-   * \param aSourcePath [in AString] <TODO>.
-   * \param aDestPath [in AString] <TODO>.
-   * \param aTransferTable [out AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
+   * \return Number of items actually deleted from the device.
    */
-  PRBool autoUploadTable(in AString aDeviceString,
-                         in AString aContextInput,
-                         in AString aTableName,
-                         in AString aFilterColumn,
-                         in PRUint32 aFilterCount,
-                         [array, size_is(aFilterCount)] in wstring aFilterValues,
-                         in AString aSourcePath,
-                         in AString aDestPath,
-                         out AString aTransferTable);
-	
-  // XXXben seems like we should be able to turn these all into attributes if
-  //        we can get rid of the parameter...
+  unsigned long deleteItems(in AString aDeviceIdentifier,
+                            in nsIArray aMediaItems);
+
+  unsigned long deleteAllItems(in AString aDeviceIdentifier);
+
+   /**
+    * \brief Begin transfer operations.
+    * \return The media item that began transferring.
+    */
+  sbIMediaItem beginTransfer(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Cancel a transfer by removing it from the queue.
    *
-	 * <TODO:Detail>.
+	 * Cancel a transfer by removing it from the queue. If the item
+   * has already been transfered this function has no effect.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [AString] <TODO>.
+   * \param aDeviceIdentifier The device unique identifier
+   * \param aMediaItems An array of media items.
+   * \return The number of transfers actually cancelled.
    */
-  AString getDownloadTable(in AString aDeviceString);
+  unsigned long cancelTransfer(in AString aDeviceIdentifier,
+                               in nsIArray aMediaItems);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Suspend all transfers.
    *
-	 * <TODO:Detail>.
+	 * Suspend all active transfers.
    *
-   * \param aDeviceString [in AString] <TODO>.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \return [AString] <TODO>.
+   * \return Number of transfer items actually suspended.
    */
-  AString getUploadTable(in AString aDeviceString);
+  unsigned long suspendTransfer(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Resume pending transfers.
    *
-	 * <TODO:Detail>.
+	 * Resume pending transfers for a device.
    *
-   * \param aDeviceString [in AString] <TODO>.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \return [PRUint32] <TODO>.
+   * \return Number of transfer items actually resumed.
    */
-  PRUint32 getDownloadFileType(in AString aDeviceString);
+  unsigned long resumeTransfer(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Get the amount of used space from a device.
    *
-	 * <TODO:Detail>.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aFileType [in PRUint32] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
+   * \return The amount of used space on the device, in bytes.
    */
-  PRBool setDownloadFileType(in AString aDeviceString,
-                             in PRUint32 aFileType);
+  long long getUsedSpace(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Get the amount of available space from a device.
    *
-	 * <TODO:Detail>.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRUint32] <TODO>.
+   * \return The amount of available space, in bytes.
    */
-  PRUint32 getUploadFileType(in AString aDeviceString);
+	long long getAvailableSpace(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Returns a list of file extensions representing the 
+   * formats supported by a specific device.
    *
-	 * <TODO:Detail>.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aFileType [in PRUint32] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
+   * \return An array of nsISupportsString containing the supported
+   * formats in file extension format.
    */
-  PRBool setUploadFileType(in AString aDeviceString,
-                           in PRUint32 aFileType);
+	nsIArray getSupportedFormats(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Download is to copy a track from the device to the host.
    *
-	 * <TODO:Detail>.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRUint32] <TODO>.
+   * \return True or false.
    */
-  PRUint32 getUsedSpace(in AString aDeviceString);
+	boolean isDownloadSupported(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRUint32] <TODO>.
-   */
-	PRUint32 getAvailableSpace(in AString aDeviceString);
-
-  /**
-   * \brief <TODO:Brief>.
-   *
-   * Get all tracks
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aDBContext [out AString] <TODO>.
-   * \param aTableName [out AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
-   */
-  PRBool getTrackTable(in AString aDeviceString,
-                       out AString aDBContext,
-                       out AString aTableName);
-
-  /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aIndex [in PRUint32] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
-   */
-  PRBool removeTranferTracks(in AString aDeviceString,
-                             in PRUint32 aIndex);
-
-  /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
-   */
-	PRBool abortTransfer(in AString aDeviceString);
-
-  /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
-   */
-  PRBool suspendTransfer(in AString aDeviceString);
-
-  /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
-   */
-  PRBool resumeTransfer(in AString aDeviceString);
-
-  // XXXben Again possible to become attributes?
-
-  /**
-   * \brief <TODO:Brief>.
-   *
-	 * Download is to copy a track from the device to the host
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
-   */
-	PRBool isDownloadSupported(in AString aDeviceString);
-
-  /**
-   * \brief <TODO:Brief>.
+   * \brief Is uploading supported on this device?
    *
    * Upload is to copy a track from host to the device
    *
-   * \param aDeviceString [in AString] <TODO>.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \return [PRBool] <TODO>.
+   * \return True or false.
    */
-	PRBool isUploadSupported(in AString aDeviceString);
+	boolean isUploadSupported(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Is it possible to delete items from the device?
    *
-	 * <TODO:Detail>.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
+   * \return True or false.
    */
-	PRBool isTransfering(in AString aDeviceString);
+	boolean isDeleteSupported(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
-   *
-   * This could be the codecs installed on the device
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRUint32] <TODO>.
-   */
-	PRUint32 getSupportedFormats(in AString aDeviceString);
-
-  /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
-   */
-	PRBool isDeleteSupported(in AString aDeviceString);
-
-  /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aDBContext [in AString] <TODO>.
-   * \param aTableName [in AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
-   */
-	PRBool deleteTable(in AString aDeviceString,
-                     in AString aDBContext,
-                     in AString aTableName);
-	
-  /**
-   * \brief <TODO:Brief>.
+   * \brief Is it possible to update items directly on the device?
    *
 	 * This method could be used for updating tracks on a device
 	 * or applying CDDB match for a CD.
    *
-   * \param aDeviceString [in AString] <TODO>.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \return [PRBool] <TODO>.
+   * \return True or false.
    */
-	PRBool isUpdateSupported(in AString aDeviceString);
+	boolean isUpdateSupported(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Is eject or unmount supported by the device?.
    *
-	 * <TODO:Detail>.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   * \param aTableName [in AString] <TODO>.
-   *
-   * \return [PRBool] <TODO>.
+   * \return True or false.
    */
-  PRBool updateTable(in AString aDeviceString,
-                     in AString aTableName);
-	
-  /**
-   * \brief <TODO:Brief>.
-   *
-	 * <TODO:Detail>.
-   *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRBool] PR_FALSE if eject is not supported.
-   */
-	PRBool isEjectSupported(in AString aDeviceString);
+	boolean isEjectSupported(in AString aDeviceIdentifier);
 
   /**
-   * \brief <TODO:Brief>.
+   * \brief Eject or unmount the device from the system.
    *
-	 * This method could be used for updating tracks on a device
-	 * or applying CDDB match for a CD.
+   * \param aDeviceIdentifier The device unique identifier.
    *
-   * \param aDeviceString [in AString] <TODO>.
-   *
-   * \return [PRBool] PR_FALSE if eject is not supported.
+   * \return True or false.
    */
-  PRBool ejectDevice(in AString aDeviceString);
+  boolean ejectDevice(in AString aDeviceIdentifier);
 };

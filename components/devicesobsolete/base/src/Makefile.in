@@ -40,14 +40,18 @@ CPP_SRCS = DeviceBase.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/devicesobsolete/base/public \
                $(DEPTH)/components/dbengine/public \
-               $(DEPTH)/components/medialibrary/public \
+               $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/library/localdatabase/public \
+               $(topsrcdir)/components/library/localdatabase/src \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/docshell \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/rdf \
                $(MOZSDK_INCLUDE_DIR)/rdfutil \
                $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 

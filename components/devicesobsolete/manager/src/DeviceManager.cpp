@@ -235,8 +235,9 @@ sbDeviceManager::LoadSupportedDevices()
 
     // And initialize the device
     PRBool deviceInitialized;
-    rv = device->Initialize(&deviceInitialized);
-    if (!deviceInitialized) {
+    rv = device->Initialize();
+
+    if(NS_FAILED(rv)) {
       NS_WARNING("Device failed to initialize!");
       continue;
     }

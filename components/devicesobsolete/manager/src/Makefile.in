@@ -42,7 +42,8 @@ CPP_SRCS = DeviceManager.cpp \
 CPP_INCLUDES = $(DEPTH)/components/devicesobsolete/base/public \
                $(topsrcdir)/components/devicesobsolete/base/src \
                $(DEPTH)/components/devicesobsolete/manager/public \
-               $(DEPTH)/components/medialibrary/public \
+               $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/library/localdatabase/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/nspr \
