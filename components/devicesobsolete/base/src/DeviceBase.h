@@ -114,73 +114,147 @@ public:
   virtual ~sbDeviceBase();
 
   /**
-   * \brief 
+   * \brief Create a library for a device instance.
+   *
+   * Creating a library provides you with storage for all data relating
+   * to media items present on the device. After creating a library you will
+   * typically want to register it so that it may be shown to the user.
+   * 
+   * When a library is created, two listeners are added to it. One listener
+   * takes care of advising the sbIDeviceBase interface instance when items
+   * need to be transferred to it, deleted from it or updated because data
+   * relating to those items have changed.
+   *
+   * The second listener is responsible for detecting when items are transferred
+   * from the devices library to another library.
+   * 
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aDeviceDatabaseURI Optional URI for the database.
+   * \param aDevice The device base interface instance to be used
+   * for this device instance.
+   * \sa RemoveDeviceLibrary, RegisterDeviceLibrary, UnregisterDeviceLibrary
    */
   nsresult CreateDeviceLibrary(const nsAString &aDeviceIdentifier, 
                                nsIURI *aDeviceDatabaseURI,
                                sbIDeviceBase *aDevice);
 
   /**
-   * \brief 
+   * \brief Remove a library for a device instance.
+   *
+   * Remove a library instance. This frees up resources that were used
+   * by the device library instance.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
    */
   nsresult RemoveDeviceLibrary(const nsAString &aDeviceIdentifier);
 
   /**
-   * \brief 
+   * \brief Get the library instance for a device.
+   *
+   * Get the library instance for a device. If no library instance
+   * is found, NS_ERROR_INVALID_ARG is returned.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aDeviceLibrary Pointer for device library instance.
    */
   nsresult GetLibraryForDevice(const nsAString &aDeviceIdentifier,
                                sbILibrary* *aDeviceLibrary);
 
   /**
-   * \brief 
+   * \brief Register a device library with the library manager.
+   *
+   * Registering a device library with the library manager enables the user
+   * to view the library. It becomes accessible to others programmatically as well
+   * through the library manager.
+   *
+   * \param aDeviceLibrary The library instance to register.
    */
   nsresult RegisterDeviceLibrary(sbILibrary* aDeviceLibrary);
 
   /**
-   * \brief 
+   * \brief Unregister a device library with the library manager.
+   *
+   * Unregister a device library with the library manager will make the library
+   * vanish from the list of libraries and block out access to it programatically 
+   * as well.
+   * 
+   * A device should always unregister the device library when the application
+   * shuts down, when the device is disconnected suddenly and when the user ejects
+   * the device.
+   *
+   * \param aDeviceLibrary The library instance to unregister.
    */
   nsresult UnregisterDeviceLibrary(sbILibrary* aDeviceLibrary);
 
   /**
-   * \brief 
+   * \brief Create an internal transfer queue for a device instance.
+   *
+   * Creating a transfer queue twice for the same device instance will cause
+   * the original queue to be overridden.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
    */
   nsresult CreateTransferQueue(const nsAString &aDeviceIdentifier);
 
   /**
-   * \brief
+   * \brief Remove an internal transfer queue for a device instance.
+   *
+   * This will not cancel pending transfers. This is only meant to free up
+   * the resources used by the queue itself. One would most likely call
+   * this method at shutdown.
+   *
+   * \param aDeviceLibrary The library instance to register.
    */
   nsresult RemoveTransferQueue(const nsAString &aDeviceIdentifier);
 
   /** 
-   * \brief
+   * \brief Add an item to the internal transfer queue.
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aMediaItem The item to add to the transfer queue.
    */
   nsresult AddItemToTransferQueue(const nsAString &aDeviceIdentifier, 
                                   sbIMediaItem* aMediaItem);
 
   /** 
-   * \brief
+   * \brief Remove an item from the internal transfer queue.
+   * \param aDeviceLibrary The library instance to register.
+   * \param aMediaItem
    */
   nsresult RemoveItemFromTransferQueue(const nsAString &aDeviceIdentifier,
                                        sbIMediaItem* aMediaItem);
   /** 
-   * \brief
+   * \brief Get the next item in the transfer queue.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aMediaItem
    */
   nsresult GetNextItemFromTransferQueue(const nsAString &aDeviceIdentifier,
                                         sbIMediaItem* *aMediaItem);
   /** 
-   * \brief
+   * \brief Get an item from the transfer queue by index.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aItemIndex
+   * \param aMediaItem
    */
   nsresult GetItemByIndexFromTransferQueue(const nsAString &aDeviceIdentifier,
                                            PRUint32 aItemIndex,
                                            sbIMediaItem* *aMediaItem);
   /** 
-   * \brief
+   * \brief Get the internnal transfer queue for a device instance.
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aTransferQueue The device transfer queue.
    */
   nsresult GetTransferQueue(const nsAString &aDeviceIdentifier,
                             nsIMutableArray* *aTransferQueue);
   
   /** 
-   * \brief
+   * \brief Clear the entire transfer queue. 
+   * 
+   * Clearing the entire transfer queue does not cause transfers to be cancelled.
+   * If you wish to cancel all transfers, you must do so yourself.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
    */
   nsresult ClearTransferQueue(const nsAString &aDeviceIdentifier);
 
