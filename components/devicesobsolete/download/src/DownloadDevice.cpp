@@ -24,1009 +24,557 @@
 //
 */
 
+/* *****************************************************************************
+ *******************************************************************************
+ *
+ * Download device.
+ *
+ *******************************************************************************
+ ******************************************************************************/
+
 /** 
 * \file  sbDownloadDevice.cpp
-* \brief Songbird DeviceBase Component Implementation.
+* \brief Songbird DownloadDevice Component Implementation.
 */
-#include "nspr.h"
 
-#if defined(XP_WIN)
-#include "objbase.h"
-#endif
+/* *****************************************************************************
+ *
+ * Download device imported services.
+ *
+ ******************************************************************************/
 
-
-#include <xpcom/nscore.h>
-#include <xpcom/nsXPCOM.h>
-#include <xpcom/nsCOMPtr.h>
-#include <xpcom/nsComponentManagerUtils.h>
-#include <necko/nsIURI.h>
-#include <necko/nsISocketTransport.h>
-#include <necko/ftpCore.h>
-#include <webbrowserpersist/nsIWebBrowserPersist.h>
-#include <xpcom/nsILocalFile.h>
-#include <xpcom/nsServiceManagerUtils.h>
-#include <nsStringGlue.h>
-#include <unicharutil/nsUnicharUtils.h>
-
+/* Local imports. */
 #include "DownloadDevice.h"
 
-#include "sbIDatabaseResult.h"
-#include "sbIDatabaseQuery.h"
 
-#include "sbIMediaLibrary.h"
-#include "sbIPlaylist.h"
+/* *****************************************************************************
+ *
+ * Download device logging services.
+ *
+ ******************************************************************************/
 
-/* Implementation file */
-
-#define NAME_DOWNLOAD_DEVICE_LEN          NS_LITERAL_STRING("Songbird Download Device").Length()
-#define NAME_DOWNLOAD_DEVICE              NS_LITERAL_STRING("Songbird Download Device").get()
-
-#define CONTEXT_DOWNLOAD_DEVICE_LEN       NS_LITERAL_STRING("downloadDB").Length()
-#define CONTEXT_DOWNLOAD_DEVICE           NS_LITERAL_STRING("downloadDB").get()
-
-#define DOWNLOAD_DEVICE_TABLE_NAME        NS_LITERAL_STRING("download").get()
-#define DOWNLOAD_DEVICE_TABLE_READABLE    NS_LITERAL_STRING("&device.download").get()
-#define DOWNLOAD_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("&device.download").get()
-#define DOWNLOAD_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("&device.download").get()
-
-NS_IMPL_THREADSAFE_ISUPPORTS4(sbDownloadListener,
-                              nsIWebProgressListener,
-                              nsIInterfaceRequestor,
-                              nsIProgressEventSink,
-                              nsIHttpEventSink)
-
-NS_IMETHODIMP
-sbDownloadListener::GetInterface(const nsIID & aIID,
-                                 void **aIFace)
-{
-    NS_ENSURE_ARG_POINTER(aIFace);
-
-    *aIFace = nsnull;
-
-    nsresult rv = QueryInterface(aIID, aIFace);
-}
-
-NS_IMETHODIMP
-sbDownloadListener::OnRedirect(nsIHttpChannel *httpChannel,
-                               nsIChannel *newChannel)
-{
-  nsresult rv = NS_OK;
-
-  mHTTPChannel = do_QueryInterface(newChannel, &rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadListener::OnProgress(nsIRequest *request,
-                               nsISupports *ctxt,
-                               PRUint64 aProgress,
-                               PRUint64 aProgressMax)
-{
-  if (mShutDown)
-  {
-    request->Cancel(0);
-    return NS_OK;
-  }
-
-  if (mSuspend)
-  {
-    mSavedRequestObject = request;
-    request->Suspend();
-  }
-
-  UpdateProgress(aProgress, aProgressMax);
-  return NS_OK;
-}
-
-NS_IMETHODIMP sbDownloadListener::OnStatus(nsIRequest *request,
-                                           nsISupports *ctxt,
-                                           nsresult status,
-                                           const PRUnichar *statusArg)
-{
-  if (mShutDown)
-  {
-    request->Cancel(0);
-    return NS_OK;
-  }
-
-  switch ( status )
-  {
-    // We need to filter out non-error error codes.
-    // Is the only NS_SUCCEEDED value NS_OK?
-    case NS_NET_STATUS_RESOLVING_HOST:
-    case NS_NET_STATUS_BEGIN_FTP_TRANSACTION:
-    case NS_NET_STATUS_END_FTP_TRANSACTION:
-    case NS_NET_STATUS_CONNECTING_TO:
-    case NS_NET_STATUS_CONNECTED_TO:
-    case NS_NET_STATUS_SENDING_TO:
-    case NS_NET_STATUS_RECEIVING_FROM:
-    case NS_NET_STATUS_WAITING_FOR:
-    case nsITransport::STATUS_READING:
-    case nsITransport::STATUS_WRITING:
-      break;
-
-    default:
-      mDownlodingDeviceObject->UpdateIOStatus((PRUnichar *)mDeviceString.get(), (PRUnichar *)mTable.get(), (PRUnichar *)mIndex.get(), statusArg);
-      break;
-  }
-
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress,
-                                  nsIRequest *aRequest,
-                                  PRUint32 aStateFlags,
-                                  nsresult aStatus)
-{
-  if (mShutDown)
-  {
-    aRequest->Cancel(NS_ERROR_ABORT);
-    return NS_OK;
-  }
-
-  // If download done for this file then, initiate the next download
-  if (aStateFlags & STATE_STOP)
-  {
-    nsresult status = aStatus;
-
-    // Check HTTP response status
-    if (NS_SUCCEEDED(status) && mHTTPChannel)
-    {
-      PRBool requestSucceeded;
-      mHTTPChannel->GetRequestSucceeded(&requestSucceeded);
-      if (!requestSucceeded)
-      {
-#ifdef DEBUG_downloads
-        PRUint32 httpStatus;
-        mHTTPChannel->GetResponseStatus(&httpStatus);
-        printf("HTTP requeset failed with response: %d\n", httpStatus);
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gLog = PR_NewLogModule("sbDownloadDevice");
+#define LOG(args) if (gLog) PR_LOG(gLog, PR_LOG_DEBUG, args)
+#else
+#define LOG(args)   /* nothing */
 #endif
-        status = NS_ERROR_UNEXPECTED;
-      }
-    }
 
-    // Move the temporary download file to final location
-    if (NS_SUCCEEDED(status))
-    {
-      nsString fileName;
-      nsCOMPtr<nsIFile> fileDir;
-      mDstFile->GetLeafName(fileName);
-      mDstFile->GetParent(getter_AddRefs(fileDir));
-      mTmpDstFile->MoveTo(fileDir, fileName);
-    }
-    else
-    {
-      mTmpDstFile->Remove(PR_FALSE);
-    }
 
-    // Copy the data so you're not sending stale pointers
-    // ("DownloadDone" deletes this item and frees the strings)
-    nsString deviceString = mDeviceString;
-    nsString table = mTable;
-    nsString index = mIndex;
+/* *****************************************************************************
+ *
+ * Download device nsISupports implementation.
+ *
+ ******************************************************************************/
 
-    // OK Download complete
-    if (mDownlodingDeviceObject)
-    {
-      if (NS_SUCCEEDED(aStatus))
-        mDownlodingDeviceObject->UpdateIOProgress((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get(), 100 /* Complete */);
-      mDownlodingDeviceObject->DownloadDone((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get(), status);
-    }
-  }
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadListener::OnProgressChange(nsIWebProgress *aWebProgress,
-                                     nsIRequest *aRequest,
-                                     PRInt32 aCurSelfProgress,
-                                     PRInt32 aMaxSelfProgress,
-                                     PRInt32 aCurTotalProgress,
-                                     PRInt32 aMaxTotalProgress)
-{
-  if (mShutDown)
-  {
-    aRequest->Cancel(0);
-    return NS_OK;
-  }
-
-  if (mSuspend)
-  {
-    mSavedRequestObject = aRequest;
-    aRequest->Suspend();
-  }
-
-  UpdateProgress(aCurTotalProgress, aMaxSelfProgress);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadListener::OnLocationChange(nsIWebProgress *aWebProgress,
-                                     nsIRequest *aRequest,
-                                     nsIURI *aLocation)
-{
-  if (mShutDown)
-  {
-    aRequest->Cancel(0);
-    return NS_OK;
-  }
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadListener::OnStatusChange(nsIWebProgress *aWebProgress,
-                                   nsIRequest *aRequest,
-                                   nsresult aStatus,
-                                   const PRUnichar *aMessage)
-{
-  if (mShutDown)
-  {
-    aRequest->Cancel(0);
-    return NS_OK;
-  }
-
-  mDownlodingDeviceObject->UpdateIOStatus((PRUnichar *)mDeviceString.get(), (PRUnichar *)mTable.get(), (PRUnichar *)mIndex.get(), aMessage);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadListener::OnSecurityChange(nsIWebProgress *aWebProgress,
-                                     nsIRequest *aRequest,
-                                     PRUint32 aState)
-{
-  if (mShutDown)
-  {
-    aRequest->Cancel(0);
-    return NS_OK;
-  }
-
-  return NS_OK;
-}
-
-void
-sbDownloadListener::UpdateProgress(PRInt64 aProgress,
-                                   PRInt64 aMaxProgress)
-{
-  PRUint32 newProgVal = (PRUint32) ((PRInt64)aProgress * (PRInt64)100 / (PRInt64)aMaxProgress);
-
-  // Update progress (0 ... 100)
-  // Check if the update was not done within the last second.
-  if (difftime(time(nsnull), mLastDownloadUpdate))
-  {
-    mLastDownloadUpdate = time(nsnull);
-    mDownlodingDeviceObject->UpdateIOProgress((PRUnichar *)mDeviceString.get(), (PRUnichar *)mTable.get(), (PRUnichar *)mIndex.get(), newProgVal);
-    mPrevProgVal = newProgVal;
-  }
-}
-
-// CLASSES ====================================================================
 NS_IMPL_ISUPPORTS2(sbDownloadDevice, sbIDeviceBase, sbIDownloadDevice)
 
-//-----------------------------------------------------------------------------
-sbDownloadDevice::sbDownloadDevice() :
-  sbDeviceBase(PR_FALSE),
-  mListener(nsnull),
-  mDeviceState(kSB_DEVICE_STATE_IDLE)
+
+/* *****************************************************************************
+ *
+ * Download device sbIDeviceBase implementation.
+ *
+ ******************************************************************************/
+
+/**
+ * \brief Initialize the device category handler.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::Initialize()
 {
-  SetCurrentTransferRowNumber(-1);
-} //ctor
+    LOG(("1: Initialize\n"));
 
-//-----------------------------------------------------------------------------
-sbDownloadDevice::~sbDownloadDevice() 
+    return (NS_ERROR_NOT_IMPLEMENTED);
+}
+
+
+/**
+ * \brief Finalize usage of the device category handler.
+ *
+ * This effectively prepares the device category handler for
+ * application shutdown.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::Finalize(
+    PRBool                      *aResult)
 {
-  PRBool retVal = PR_FALSE;
-  Finalize(&retVal);
-} //dtor
+    LOG(("1: Finalize\n"));
 
-NS_IMETHODIMP
-sbDownloadDevice::Initialize(PRBool *_retval)
+    return (NS_ERROR_NOT_IMPLEMENTED);
+}
+
+
+/**
+ * \brief Add a device category handler callback.
+ *
+ * Enables you to get callbacks when devices are connected and when
+ * transfers are initiated.
+ *
+ * \param aCallback The device category handler callback you wish to add.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::AddCallback(
+    sbIDeviceBaseCallback       *aCallback)
 {
-  // Create temporary directory for download files
-  nsCOMPtr<nsIProperties> pProperties;
-  PRUint32 permissions;
-  PRBool exists;
+    LOG(("1: AddCallback\n"));
 
-  pProperties = do_GetService("@mozilla.org/file/directory_service;1");
-  pProperties->Get("TmpD",
-                   NS_GET_IID(nsIFile),
-                   getter_AddRefs(mpTmpDownloadDir));
-  mpTmpDownloadDir->GetPermissions(&permissions);
-  mpTmpDownloadDir->Append(NS_LITERAL_STRING("Songbird"));
-  mpTmpDownloadDir->Exists(&exists);
-  if (!exists)
-    mpTmpDownloadDir->Create(nsIFile::DIRECTORY_TYPE, permissions);
-  mpTmpDownloadDir->Append(NS_LITERAL_STRING("DownloadDevice"));
-  mpTmpDownloadDir->Exists(&exists);
-
-  // Make the temporary download directory an empty one
-  if (exists)
-    mpTmpDownloadDir->Remove(PR_TRUE);
-  mpTmpDownloadDir->Create(nsIFile::DIRECTORY_TYPE, permissions);
-
-  // Resume transfer if any pending
-  sbDeviceBase::ResumeAbortedTransfer(NULL);
-
-  return NS_OK;
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::Finalize(PRBool *_retval)
+
+/**
+ * \brief Remove a device category handler callback.
+ * 
+ * \param aCallback The device category handler callback you wish to remove.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::RemoveCallback(
+    sbIDeviceBaseCallback       *aCallback)
 {
-  StopCurrentTransfer(EmptyString());
-  return NS_OK;
+    LOG(("1: RemoveCallback\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::AddCallback(sbIDeviceBaseCallback* aCallback,
-                              PRBool* _retval)
+
+/**
+ * \brief Get the device library representing the content
+ * available on the device.
+ * 
+ * \param aDeviceIdentifier The unique device identifier.
+ * \return The library for the specified device.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::GetLibrary(
+    const nsAString             &aDeviceIdentifier,
+    sbILibrary                  **aLibrary)
 {
-  return sbDeviceBase::AddCallback(aCallback, _retval);
+    LOG(("1: GetLibrary\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::RemoveCallback(sbIDeviceBaseCallback* aCallback,
-                                 PRBool* _retval)
+
+/**
+ * \brief Get the device's current state.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return The current state of the device.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::GetDeviceState(
+    const nsAString             &aDeviceIdentifier,
+    PRUint32                    *aState)
 {
-  return sbDeviceBase::RemoveCallback(aCallback, _retval);
+    LOG(("1: GetDeviceState\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-// ***************************
-// sbIDeviceBase implementation 
-// Just forwarding calls to mBaseDevice
 
-NS_IMETHODIMP
-sbDownloadDevice::SetName(const nsAString& aName)
+/**
+ * \brief Get preferred transfer location for item
+ *
+ * Get a transfer location for the specified media item. This enables
+ * the device to determine where best to put this media item based on 
+ * it's own set of criteria.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ * \param aMediaItem The media item that is about to be transferred.
+ * \return The transfer location for the item.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::GetTransferLocation(
+    const nsAString             &aDeviceIdentifier,
+    sbIMediaItem                *aMediaItem,
+    nsIURI                      **aTransferLocationURI)
 {
-  return sbDeviceBase::SetName(aName);
+    LOG(("1: GetTransferLocation\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::GetDeviceStringByIndex(PRUint32 aIndex,
-                                         nsAString& _retval)
+
+/**
+ * \brief Transfer items to a library or destination.
+ *
+ * If you call this method with a library only, the device
+ * will attempt to read the library's preferred transfer 
+ * destination and use it.
+ *
+ * If you call this method with a destination only, the device
+ * will attempt to transfer the items to that destination only.
+ *
+ * If you call this method with a library and destination path, the
+ * device will attempt to simply pass a destination if you do not wish to add
+ * the item to a library after the transfer is complete.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ * \param aMediaItems An array of media items to transfer.
+ * \param aDestinationPath The desired destination path, path may include full filename.
+ * \param aDeviceOperation The desired operation (upload, download, move).
+ * \param aBeginTransferNow Begin the transfer operation immediately?
+ * \param aDestinationLibrary The desired destination library.
+ * \return Number of items actually queued for transfer.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::TransferItems(
+    const nsAString             &aDeviceIdentifier,
+    nsIArray                    *aMediaItems,
+    nsIURI                      *aDestinationPath,
+    PRUint32                    aDeviceOperation,
+    PRBool                      aBeginTransferNow,
+    sbILibrary                  *aDestinationLibrary,
+    PRUint32                    *aItemCount)
 {
-  // There is only one download device, so index is ignored
-  GetDeviceCategory(_retval);
+    LOG(("1: TransferItems\n"));
 
-  return NS_OK;
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::GetContext(const nsAString& aDeviceString,
-                             nsAString& _retval)
+
+/**
+ * \brief Update items on the device.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::UpdateItems(
+    const nsAString             &aDeviceIdentifier,
+    nsIArray                    *aMediaItems,
+    PRUint32                    *aItemCount)
 {
-  _retval.Assign(CONTEXT_DOWNLOAD_DEVICE);
-  return NS_OK;
+    LOG(("1: UpdateItems\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::IsDownloadSupported(const nsAString& aDeviceString,
-                                      PRBool *_retval)
+
+/**
+ * \brief Delete items from the device.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ * \param aMediaItems An array of sbIMediaItem objects.
+ *
+ * \return Number of items actually deleted from the device.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::DeleteItems(
+    const nsAString             &aDeviceIdentifier,
+    nsIArray                    *aMediaItems,
+    PRUint32                    *aItemCount)
 {
-  *_retval = PR_TRUE;
-  return NS_OK;
+    LOG(("1: DeleteItems\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::GetSupportedFormats(const nsAString& aDeviceString,
-                                      PRUint32 *_retval)
+
+/**
+ * \brief Delete all items from the device.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return Number of items actually deleted from the device.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::DeleteAllItems(
+    const nsAString             &aDeviceIdentifier,
+    PRUint32                    *aItemCount)
 {
-  return sbDeviceBase::GetSupportedFormats(aDeviceString, _retval);
+    LOG(("1: DeleteAllItems\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::IsUploadSupported(const nsAString& aDeviceString,
-                                    PRBool *_retval)
+
+/**
+ * \brief Begin transfer operations.
+ * \return The media item that began transferring.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::BeginTransfer(
+    const nsAString             &aDeviceIdentifier,
+    sbIMediaItem                **aMediaItem)
 {
-  return sbDeviceBase::IsUploadSupported(aDeviceString, _retval);
+    LOG(("1: BeginTransfer\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::IsTransfering(const nsAString& aDeviceString,
-                                PRBool *_retval)
+
+/**
+ * \brief Cancel a transfer by removing it from the queue.
+ *
+ * Cancel a transfer by removing it from the queue. If the item
+ * has already been transfered this function has no effect.
+ *
+ * \param aDeviceIdentifier The device unique identifier
+ * \param aMediaItems An array of media items.
+ * \return The number of transfers actually cancelled.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::CancelTransfer(
+    const nsAString             &aDeviceIdentifier,
+    nsIArray                    *aMediaItems,
+    PRUint32                    *aNumItems)
 {
-  return sbDeviceBase::IsTransfering(aDeviceString, _retval);
+    LOG(("1: CancelTransfer\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::IsDeleteSupported(const nsAString& aDeviceString,
-                                    PRBool *_retval)
+
+/**
+ * \brief Suspend all transfers.
+ *
+ * Suspend all active transfers.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return Number of transfer items actually suspended.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::SuspendTransfer(
+    const nsAString             &aDeviceIdentifier,
+    PRUint32                    *aNumItems)
 {
-  return sbDeviceBase::IsDeleteSupported(aDeviceString, _retval);
+    LOG(("1: SuspendTransfer\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::GetUsedSpace(const nsAString& aDeviceString,
-                               PRUint32* _retval)
+
+/**
+ * \brief Resume pending transfers.
+ *
+ * Resume pending transfers for a device.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return Number of transfer items actually resumed.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::ResumeTransfer(
+   const nsAString              &aDeviceIdentifier,
+   PRUint32                     *aNumItems)
 {
-  return sbDeviceBase::GetUsedSpace(aDeviceString, _retval);
+    LOG(("1: ResumeTransfer\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::GetAvailableSpace(const nsAString& aDeviceString,
-                                    PRUint32 *_retval)
+
+/**
+ * \brief Get the amount of used space from a device.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return The amount of used space on the device, in bytes.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::GetUsedSpace(
+    const nsAString             &aDeviceIdentifier,
+    PRInt64                     *aUsedSpace)
 {
-  return sbDeviceBase::GetAvailableSpace(aDeviceString, _retval);
+    LOG(("1: GetUsedSpace\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::GetTrackTable(const nsAString& aDeviceString,
-                                nsAString& aDBContext,
-                                nsAString& aTableName,
-                                PRBool *_retval)
+
+/**
+ * \brief Get the amount of available space from a device.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return The amount of available space, in bytes.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::GetAvailableSpace(
+    const nsAString             &aDeviceIdentifier,
+    PRInt64                     *aAvailableSpace)
 {
-  return sbDeviceBase::GetTrackTable(aDeviceString, aDBContext, aTableName,
-                                     _retval);
+    LOG(("1: GetAvailableSpace\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::AbortTransfer(const nsAString& aDeviceString,
-                                PRBool *_retval)
+
+/**
+ * \brief Returns a list of file extensions representing the 
+ * formats supported by a specific device.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return An array of nsISupportsString containing the supported
+ * formats in file extension format.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::GetSupportedFormats(
+    const nsAString             &aDeviceIdentifier,
+    nsIArray                    **aSupportedFormats)
 {
-  return sbDeviceBase::AbortTransfer(aDeviceString, _retval);
+    LOG(("1: GetSupportedFormats\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::DeleteTable(const nsAString& aDeviceString,
-                              const nsAString& aDBContext,
-                              const nsAString& aTableName,
-                              PRBool* _retval)
+
+/**
+ * \brief Download is to copy a track from the device to the host.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return True or false.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::IsDownloadSupported(
+    const nsAString             &aDeviceIdentifier,
+    PRBool                      *aDownloadSupported)
 {
-  return sbDeviceBase::DeleteTable(aDeviceString, aDBContext, aTableName,
-                                   _retval);
+    LOG(("1: IsDownloadSupported\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::UpdateTable(const nsAString& aDeviceString,
-                              const nsAString& aTableName,
-                              PRBool *_retval)
+
+/**
+ * \brief Is uploading supported on this device?
+ *
+ * Upload is to copy a track from host to the device
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return True or false.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::IsUploadSupported(
+    const nsAString             &aDeviceIdentifier,
+    PRBool                      *aUploadSupported)
 {
-  return sbDeviceBase::UpdateTable(aDeviceString, aTableName, _retval);
+    LOG(("1: IsUploadSupported\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::EjectDevice(const nsAString& aDeviceString,
-                              PRBool *_retval)
+
+/**
+ * \brief Is it possible to delete items from the device?
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return True or false.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::IsDeleteSupported(
+    const nsAString             &aDeviceIdentifier,
+    PRBool                      *aDeleteSupported)
 {
-  return sbDeviceBase::EjectDevice(aDeviceString, _retval);
+    LOG(("1: IsDeleteSupported\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-/* End DeviceBase */
 
-NS_IMETHODIMP
-sbDownloadDevice::GetDeviceCategory(nsAString& aDeviceCategory)
+/**
+ * \brief Is it possible to update items directly on the device?
+ *
+ * This method could be used for updating tracks on a device
+ * or applying CDDB match for a CD.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return True or false.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::IsUpdateSupported(
+    const nsAString             &aDeviceIdentifier,
+    PRBool                      *aUpdateSupported)
 {
-  aDeviceCategory.Assign(NAME_DOWNLOAD_DEVICE);
-  return NS_OK;
+    LOG(("1: IsUpdateSupported\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::GetName(nsAString& aName)
+
+/**
+ * \brief Is eject or unmount supported by the device?.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return True or false.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::IsEjectSupported(
+    const nsAString             &aDeviceIdentifier,
+    PRBool                      *aEjectSupported)
 {
-  aName.Assign(NAME_DOWNLOAD_DEVICE);
-  return NS_OK;
+    LOG(("1: IsEjectSupported\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-PRBool
-sbDownloadDevice::TransferFile(PRUnichar* deviceString,
-                               PRUnichar* source,
-                               PRUnichar* destination,
-                               PRUnichar* dbContext,
-                               PRUnichar* table,
-                               PRUnichar* index,
-                               PRInt32 curDownloadRowNumber)
+
+/**
+ * \brief Eject or unmount the device from the system.
+ *
+ * \param aDeviceIdentifier The device unique identifier.
+ *
+ * \return True or false.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::EjectDevice(
+    const nsAString             &aDeviceIdentifier,
+    PRBool                      *aEjected)
 {
-  nsCOMPtr<nsIURI> pSourceURI(do_CreateInstance("@mozilla.org/network/simple-uri;1"));
+    LOG(("1: EjectDevice\n"));
 
-  if(!pSourceURI)
-    return PR_FALSE;
-
-  nsString strSourceURL(source);
-  nsCString cstr;
-
-  CopyUTF16toUTF8(strSourceURL, cstr);
-  if(NS_FAILED(pSourceURI->SetSpec(cstr))) return PR_FALSE;
-  if(NS_FAILED(pSourceURI->GetScheme(cstr))) return PR_FALSE;
-
-  if(cstr.Equals("file") ||
-    cstr.Length() == 1)
-  {
-    PRBool bRet = PR_FALSE;
-
-    nsresult ec = 0;
-    PRInt32 mediaId = nsString(index).ToInteger(&ec);
-
-    RemoveTranferTracks(EmptyString(), mediaId, &bRet);
-
-    TransferData* data = new TransferData;
-    data->dbContext = dbContext;
-    data->dbTable = table;
-
-    // Done with the download
-    TransferNextFile(GetCurrentTransferRowNumber(deviceString), data);
-    return PR_TRUE;
-  }
-
-  nsCOMPtr<nsIWebBrowserPersist> pBrowser(do_CreateInstance("@mozilla.org/embedding/browser/nsWebBrowser;1"));
-
-  if (pBrowser == nsnull)
-    return PR_FALSE;
-
-  nsCOMPtr<nsIURI> linkURI;
-  nsresult rv = NS_NewURI(getter_AddRefs(linkURI), nsAutoString(source));
-
-  //XXXAus: nsAutoString cannot be used in conjunction with ToLowerCase.
-  nsString lOrigUrl(destination);
-  nsString lUrl(destination);
-
-  nsCOMPtr<nsIFileProtocolHandler> fileProtocolHandler;
-  nsCOMPtr<nsIFile> linkFile;
-
-  fileProtocolHandler = do_CreateInstance("@mozilla.org/network/protocol;1?name=file");
-  rv = fileProtocolHandler->GetFileFromURLSpec(NS_ConvertUTF16toUTF8(lUrl), getter_AddRefs(linkFile));
-  if(NS_FAILED(rv)) return PR_FALSE;
-
-  PRInt32 fileNum = 1;
-  PRBool fileExists = PR_TRUE;  
-  linkFile->Exists(&fileExists);  
-
-  while(fileExists)
-  {
-    nsAutoString strNum;
-    lUrl = lOrigUrl;
-
-    PRInt32 extPos = lUrl.RFindChar('.');
-
-    strNum.AssignLiteral("_");
-    strNum.AppendInt(fileNum);
-    strNum.AppendLiteral("_");
-
-    lUrl.Insert(strNum, extPos);
-    rv = fileProtocolHandler->GetFileFromURLSpec(NS_ConvertUTF16toUTF8(lUrl), getter_AddRefs(linkFile));
-    if(NS_FAILED(rv)) return PR_FALSE;
-    
-    linkFile->Exists(&fileExists);
-    fileNum++;
-  }
-
-  if(!lOrigUrl.Equals(lUrl))
-  {
-    nsAutoString strQuery;
-    nsAutoString strProgress;
-    nsCOMPtr<sbIDatabaseResult> result;
-    nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
-    PRInt32 queryError = 0;
-
-    query->SetDatabaseGUID(nsAutoString(CONTEXT_DOWNLOAD_DEVICE));
-    query->SetAsyncQuery(PR_FALSE);
-
-    strQuery.AssignLiteral("SELECT progress FROM ");
-    strQuery += DOWNLOAD_DEVICE_TABLE_NAME;
-    strQuery.AppendLiteral(" WHERE destination = \"");
-    strQuery += lOrigUrl;
-    strQuery.AppendLiteral("\"");
-
-    query->AddQuery(strQuery);
-    query->Execute(&queryError);
-    query->GetResultObject(getter_AddRefs(result));
-    result->GetRowCell(0, 0, strProgress);
-
-    if(strProgress.IsEmpty())
-    {
-      query->ResetQuery();
-
-      strQuery.AssignLiteral("UPDATE ");
-      strQuery += DOWNLOAD_DEVICE_TABLE_NAME;
-      strQuery.AppendLiteral(" SET destination = \"");
-      strQuery += lUrl;
-      strQuery.AppendLiteral("\" WHERE destination = \"");
-      strQuery += lOrigUrl;
-      strQuery.AppendLiteral("\" AND id = ");
-      strQuery.Append(index);
-
-      query->AddQuery(strQuery);
-      query->Execute(&queryError);
-    }
-    else
-    {
-      rv = fileProtocolHandler->GetFileFromURLSpec(NS_ConvertUTF16toUTF8(lOrigUrl), getter_AddRefs(linkFile));
-      if(NS_FAILED(rv)) return PR_FALSE;
-    }
-  }
-
-  nsCOMPtr<nsIFile> tmpLinkFile;
-
-  fileNum = 1;
-  do
-  {
-    nsString tmpFilename;
-
-    tmpFilename.AssignLiteral("tmp");
-    tmpFilename.AppendInt(fileNum);
-
-    mpTmpDownloadDir->Clone(getter_AddRefs(tmpLinkFile));
-    tmpLinkFile->Append(tmpFilename);
-
-    tmpLinkFile->Exists(&fileExists);
-    fileNum++;
-  } while (fileExists);
-
-  nsCOMPtr<nsIIOService> pIOService;
-  nsCOMPtr<nsIChannel> pChannel;
-  nsCOMPtr<nsIHttpChannel> pHTTPChannel;
-
-  pIOService = do_GetService("@mozilla.org/network/io-service;1");
-  pIOService->NewChannelFromURI(linkURI, getter_AddRefs(pChannel));
-
-  pHTTPChannel = do_QueryInterface(pChannel, &rv);
-
-  mListener = new sbDownloadListener(this, deviceString, table, index, linkFile, tmpLinkFile, pHTTPChannel);
-  mListener->AddRef();
-  pBrowser->SetProgressListener(mListener); 
-  pChannel->SetNotificationCallbacks(mListener);
-
-  SetCurrentTransferRowNumber(curDownloadRowNumber);
-
-  PRUint32 ret = pBrowser->SaveChannel(pChannel, tmpLinkFile);
-
-  return PR_TRUE;
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-void
-sbDownloadDevice::OnThreadBegin()
+
+/*
+ * sbIDeviceBase attribute getters/setters.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::GetName(
+    nsAString                   &aName)
 {
+    LOG(("1: GetName\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-void
-sbDownloadDevice::OnThreadEnd()
+NS_IMETHODIMP sbDownloadDevice::SetName(
+    const nsAString             &aName)
 {
+    LOG(("1: SetName\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::IsUpdateSupported(const nsAString& aDeviceString,
-                                    PRBool *_retval)
+NS_IMETHODIMP sbDownloadDevice::GetDeviceCategory(
+    nsAString                   &aDeviceCategory)
 {
-  return sbDeviceBase::IsUpdateSupported(aDeviceString, _retval);
+    LOG(("1: GetDeviceCategory\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::IsEjectSupported(const nsAString& aDeviceString,
-                                   PRBool *_retval)
+NS_IMETHODIMP sbDownloadDevice::GetDeviceIdentifiers(
+    nsIArray                    **aDeviceIdentifiers)
 {
-  return sbDeviceBase::IsEjectSupported(aDeviceString, _retval);
+    LOG(("1: GetDeviceIdentifiers\n"));
+
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
-NS_IMETHODIMP
-sbDownloadDevice::GetDeviceCount(PRUint32* aDeviceCount)
+NS_IMETHODIMP sbDownloadDevice::GetDeviceCount(
+    PRUint32                    *aDeviceCount)
 {
-  return sbDeviceBase::GetDeviceCount(aDeviceCount);
-}
+    LOG(("1: GetDeviceCount\n"));
 
-NS_IMETHODIMP
-sbDownloadDevice::GetDestinationCount(const nsAString& aDeviceString,
-                                      PRUint32* _retval)
-{
-  return sbDeviceBase::GetDestinationCount(aDeviceString, _retval);
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::MakeTransferTable(const nsAString& aDeviceString,
-                                    const nsAString& aContextInput,
-                                    const nsAString& aTableName,
-                                    const nsAString& aFilterColumn,
-                                    PRUint32 aFilterCount,
-                                    const PRUnichar** aFilterValues,
-                                    const nsAString& aSourcePath,
-                                    const nsAString& aDestPath,
-                                    PRBool aDownloading,
-                                    nsAString& aTransferTable,
-                                    PRBool* _retval)
-{
-  return sbDeviceBase::MakeTransferTable(aDeviceString, aContextInput,
-                                         aTableName, aFilterColumn,
-                                         aFilterCount, aFilterValues,
-                                         aSourcePath, aDestPath,
-                                         aDownloading, aTransferTable,
-                                         _retval);
-}
- 
-NS_IMETHODIMP
-sbDownloadDevice::AutoDownloadTable(const nsAString& aDeviceString,
-                                    const nsAString& aContextInput,
-                                    const nsAString& aTableName,
-                                    const nsAString& aFilterColumn,
-                                    PRUint32 aFilterCount,
-                                    const PRUnichar** aFilterValues,
-                                    const nsAString& aSourcePath,
-                                    const nsAString& aDestPath,
-                                    nsAString& aTransferTable,
-                                    PRBool* _retval)
-{
-  // XXXben Remove me
-  nsAutoString str(aDeviceString);
-
-#ifdef DEBUG_downloads
-  nsAutoString autoDeviceString(aDeviceString);
-  nsAutoString autoContextInput(aContextInput);
-  nsAutoString autoTableName(aTableName);
-  nsAutoString autoSourcePath(aSourcePath);
-  nsAutoString autoDestPath(aDestPath);
-
-  printf("sbDownloadDevice::AutoDownloadTable()\n");
-  printf("      aDeviceString: %s\n", NS_ConvertUTF16toUTF8(autoDeviceString).get() );
-  printf("      aContextInput: %s\n", NS_ConvertUTF16toUTF8(autoContextInput).get() );
-  printf("         aTableName: %s\n", NS_ConvertUTF16toUTF8(autoTableName).get() );
-  printf("        aSourcePath: %s\n", NS_ConvertUTF16toUTF8(autoSourcePath).get() );
-  printf("          aDestPath: %s\n", NS_ConvertUTF16toUTF8(autoDestPath).get() );
-#endif
-
-  // Get rid of finished downloads
-  RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
-
-  nsresult rv = sbDeviceBase::AutoDownloadTable(aDeviceString, aContextInput,
-                                         aTableName, aFilterColumn,
-                                         aFilterCount, aFilterValues,
-                                         aSourcePath, aDestPath,
-                                         aTransferTable, _retval);
-
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
-  query->SetDatabaseGUID(nsAutoString(CONTEXT_DOWNLOAD_DEVICE));
-  query->SetAsyncQuery(PR_FALSE);
-
-  nsAutoString strQuery;
-  strQuery.AssignLiteral("ATTACH DATABASE \"songbird.db\" AS \"songbird\"");
-  query->AddQuery(strQuery);
-
-  strQuery.AssignLiteral("DELETE FROM ");
-  strQuery += DOWNLOAD_DEVICE_TABLE_NAME;
-  strQuery.AppendLiteral(" WHERE url IN ( SELECT url FROM library WHERE url LIKE \"file:%\")");
-  query->AddQuery(strQuery);
-
-  strQuery.AssignLiteral("UPDATE "); 
-  strQuery += DOWNLOAD_DEVICE_TABLE_NAME;
-  strQuery += NS_LITERAL_STRING(" SET id = rowid");
-  rv = query->AddQuery(strQuery);
-
-  strQuery.AssignLiteral("DETACH DATABASE songbird");
-  query->AddQuery(strQuery);
-
-  PRInt32 queryError = 0;
-  query->Execute(&queryError);
-
-  return rv;
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::AutoUploadTable(const nsAString& aDeviceString,
-                                  const nsAString& aContextInput,
-                                  const nsAString& aTableName,
-                                  const nsAString& aFilterColumn,
-                                  PRUint32 aFilterCount,
-                                  const PRUnichar** aFilterValues,
-                                  const nsAString& aSourcePath,
-                                  const nsAString& aDestPath,
-                                  nsAString& aTransferTable,
-                                  PRBool* _retval)
-{
-  // XXXben Remove me
-  nsAutoString strDevice(aDeviceString);
-
-  // Get rid of finished uploads
-  RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
-
-  return sbDeviceBase::AutoUploadTable(aDeviceString, aContextInput,
-                                       aTableName, aFilterColumn,
-                                       aFilterCount, aFilterValues,
-                                       aSourcePath, aDestPath,
-                                       aTransferTable, _retval);
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::SuspendTransfer(const nsAString& aDeviceString,
-                                  PRBool *_retval)
-{
-  sbDeviceBase::SuspendTransfer(aDeviceString, _retval);
-
-  return NS_OK;
-}
-
-PRBool
-sbDownloadDevice::SuspendCurrentTransfer(const nsAString& aDeviceString)
-{
-  // XXXben Remove me
-
-  if (IsTransferInProgress(aDeviceString))
-  {
-    // Suspend transfer
-    if (mListener)
-    {
-      mListener->Suspend();
-      return PR_TRUE;
-    }
-  }
-
-  return PR_FALSE;
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::ResumeTransfer(const nsAString& aDeviceString,
-                                 PRBool *_retval)
-{
-  sbDeviceBase::ResumeTransfer(aDeviceString, _retval);
-
-  return NS_OK;
-}
-
-PRBool
-sbDownloadDevice::ResumeTransfer(const nsAString& aDeviceString)
-{
-  // Resume transfer
-  if (mListener && mListener->Resume())
-  {
-    return PR_TRUE;
-  }
-
-  return PR_FALSE;
+    return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
 
-inline void
-sbDownloadDevice::ReleaseListener()
-{
-  if (mListener)
-  {
-    mListener->Release();
-    mListener = nsnull;
-  }
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::GetDeviceState(const nsAString& aDeviceString,
-                                 PRUint32 *_retval)
-{
-  *_retval = mDeviceState;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::RemoveTranferTracks(const nsAString& aDeviceString,
-                                      PRUint32 aIndex,
-                                      PRBool *_retval)
-{
-  return sbDeviceBase::RemoveTranferTracks(aDeviceString, aIndex, _retval);
-}
-
-PRBool
-sbDownloadDevice::StopCurrentTransfer(const nsAString& aDeviceString)
-{
-  if (IsTransferInProgress(aDeviceString)) {
-    if (mListener) {
-      mListener->ShutDown();
-      return PR_TRUE;
-    }
-  }
-  return PR_FALSE;
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::GetDownloadTable(const nsAString& aDeviceString,
-                                   nsAString& _retval)
-{
-  return sbDeviceBase::GetDownloadTable(aDeviceString, _retval);
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::GetUploadTable(const nsAString& aDeviceString,
-                                 nsAString& _retval)
-{
-  return sbDeviceBase::GetUploadTable(aDeviceString, _retval);
-}
-
-// Transfer related
-void
-sbDownloadDevice::GetDeviceDownloadTableDescription(const nsAString& aDeviceString,
-                                                    nsAString& _retval)
-{ 
-  _retval.Assign(DOWNLOAD_DEVICE_TABLE_DESCRIPTION); 
-}
-
-void
-sbDownloadDevice::GetDeviceUploadTableDescription(const nsAString& aDeviceString,
-                                                  nsAString& _retval)
-{ 
-  _retval.Assign(EmptyString()); 
-}
-
-void
-sbDownloadDevice::GetDeviceDownloadTableType(const nsAString& aDeviceString,
-                                             nsAString& _retval)
-{ 
-  _retval.Assign(DOWNLOAD_DEVICE_TABLE_TYPE); 
-}
-
-void
-sbDownloadDevice::GetDeviceUploadTableType(const nsAString& aDeviceString,
-                                           nsAString& _retval)
-{ 
-  _retval.Assign(EmptyString()); 
-}
-
-void
-sbDownloadDevice::GetDeviceDownloadReadable(const nsAString& aDeviceString,
-                                            nsAString& _retval)
-{ 
-  _retval.Assign(DOWNLOAD_DEVICE_TABLE_READABLE); 
-}
-
-void
-sbDownloadDevice::GetDeviceUploadTableReadable(const nsAString& aDeviceString,
-                                               nsAString& _retval)
-{ 
-  _retval.Assign(EmptyString()); 
-}
-
-void
-sbDownloadDevice::GetDeviceDownloadTable(const nsAString& aDeviceString,
-                                         nsAString& _retval)
-{ 
-  _retval.Assign(DOWNLOAD_DEVICE_TABLE_NAME); 
-}
-
-void
-sbDownloadDevice::GetDeviceUploadTable(const nsAString& aDeviceString,
-                                       nsAString& _retval)
-{ 
-  _retval.Assign(EmptyString()); 
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::UploadTable(const nsAString& aDeviceString,
-                              const nsAString& aTableName,
-                              PRBool *_retval)
-{
-  return sbDeviceBase::UploadTable(aDeviceString, aTableName, _retval);
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::DownloadTable(const nsAString& aDeviceString,
-                                const nsAString& aTableName,
-                                PRBool *_retval)
-{
-  return sbDeviceBase::DownloadTable(aDeviceString, aTableName, _retval);
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::SetDownloadFileType(const nsAString& aDeviceString,
-                                      PRUint32 aFileType,
-                                      PRBool *_retval)
-{
-  return sbDeviceBase::SetDownloadFileType(aDeviceString, aFileType, _retval);
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::SetUploadFileType(const nsAString& aDeviceString,
-                                    PRUint32 aFileType,
-                                    PRBool *_retval)
-{
-  return sbDeviceBase::SetUploadFileType(aDeviceString, aFileType, _retval);
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::GetDownloadFileType(const nsAString& aDeviceString,
-                                      PRUint32 *_retval)
-{
-  return sbDeviceBase::GetDownloadFileType(aDeviceString, _retval);
-}
-
-NS_IMETHODIMP
-sbDownloadDevice::GetUploadFileType(const nsAString& aDeviceString,
-                                    PRUint32 *_retval)
-{
-  return sbDeviceBase::GetUploadFileType(aDeviceString, _retval);
-}
-
-/* End of implementation class template. */

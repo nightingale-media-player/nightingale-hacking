@@ -31,14 +31,14 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = base \
           manager \
-#          download \
+          download \
 #          cd \
 #          wm \
           $(NULL)
 
 SUBDIRDEPS  = manager : base
 #SUBDIRDEPS2 = cd : base
-#SUBDIRDEPS3 = download : base
+SUBDIRDEPS3 = download : base
 #SUBDIRDEPS4 = wm : base
 
 include $(topsrcdir)/build/rules.mk
