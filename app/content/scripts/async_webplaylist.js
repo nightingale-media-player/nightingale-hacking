@@ -32,9 +32,7 @@ try
 {
   // Parse through the document to get all the urls.
   
-  var href_loop = null;
-  
-  function CancelAsyncWebDocument()
+  function CancelAsyncWebDocument(href_loop)
   {
     if ( href_loop )
     {
@@ -52,7 +50,7 @@ try
     element.addEventListener("click", handler, true);
   }
   
-  function AsyncWebDocument(aDocument, aMediaListView)
+  function AsyncWebDocument(aDocument, aMediaListView, old_href_loop, context)
   {
     const CONTRACTID_ARRAY = "@mozilla.org/array;1";
     const CONTRACTID_METADATAJOBMANAGER =
@@ -64,9 +62,9 @@ try
     const sbIMediaList = Components.interfaces.sbIMediaList;
     const sbIMetadataJobManager = Components.interfaces.sbIMetadataJobManager;
 
-    CancelAsyncWebDocument();
+    CancelAsyncWebDocument(old_href_loop);
 
-    href_loop = new sbIAsyncForLoop
+    var href_loop = new sbIAsyncForLoop
     ( // This is an argument list passed to the sbIAsyncForLoop constructor.
       
       function webPlaylist_initEval() {
@@ -87,10 +85,11 @@ try
         try  {
           // Do not run while the "main" playlist is up?  This is so gross.
           //  UGH.  MUST REWRITE ENTIRE WORLD.
+          /*
           if (gBrowser.playlistTree) {
             this.cancel(); 
-            gBrowser.showWebPlaylist = false;
-          } 
+            context.showPlaylist = false;
+          } */
 
           // check is clearInterval has been called (see sbIAsyncForLoop.js:66)
           if (!this.m_Interval) {
@@ -166,7 +165,7 @@ try
           Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
                     .createInstance(Components.interfaces.sbIPropertyArray);
 
-        propArray.appendProperty(PROPERTYKEY_ORIGINURL, gBrowser.currentURI.spec);
+        propArray.appendProperty(PROPERTYKEY_ORIGINURL, aDocument.location);
         aMediaListView.setFilters(propArray);
 
         // Create a metadata task    
@@ -176,8 +175,8 @@ try
         var metadataJob = metadataJobManager.newJob(this.mediaItemsToScan, 5);
 
         SBDataSetBoolValue( "media_scan.open", false ); // ?  Don't let this go?
-        SBDataSetIntValue( "webplaylist.total", this.a_array.length );
-        SBDataSetIntValue( "webplaylist.current", this.a_array.length );
+        context.progressTotal = this.a_array.length;
+        context.progressCurrent = this.a_array.length;
 
         // Release the global reference
         href_loop = null;
@@ -193,7 +192,7 @@ try
     href_loop.a_array = aDocument.getElementsByTagName("A");
     href_loop.embed_array = aDocument.getElementsByTagName("EMBED");
     href_loop.object_array = aDocument.getElementsByTagName("OBJECT");
-    href_loop.currentURL = SBDataGetStringValue("browser.uri");
+    href_loop.currentURL = aDocument.location;
     href_loop.handledURLs = [];
     href_loop.mediaItemsToScan = Components.classes[CONTRACTID_ARRAY]
                                            .createInstance(nsIMutableArray);
@@ -209,7 +208,9 @@ try
       
       if (!gPPS.isMediaURL(url)) {
         // decrement the total (floor is 0) to keep the percentage indicator moving
-        SBDataDecrementValue("webplaylist.total", 0);
+        if (context.progressTotal > 0) {
+          context.progressTotal = context.progressTotal - 1;
+        }
 
         // Keep the loop going.
         return false;
@@ -218,7 +219,7 @@ try
       // This must be a media URL.
       
       // Tell other folks that we're on to the next item.
-      SBDataSetIntValue("webplaylist.current", this.i + 1);
+      context.progressCurrent = this.i + 1;
       
       installClickHandler(this.a_array[this.i]);
       
@@ -228,7 +229,7 @@ try
         return false;
       }
       
-      var browserURL = gBrowser.currentURI.spec;
+      var browserURL = aDocument.location;
       
       if (!this.handledURLs.length) {
         // When we first find media, flip the webplaylist.
@@ -279,13 +280,15 @@ try
         // Let the view know that we're about to make a lot of changes.
         aMediaListView.mediaList.beginUpdateBatch();
 
-        SBDataSetBoolValue("browser.canplaylist", true);
-        theWebPlaylistHasItems = true;
+        context.showPlaylist = true;
+        context.playlistHasItems = true;
 
         // Then pretend like we clicked on it.
+        /*
         if (!gBrowser.playlistTree) {
           gBrowser.onBrowserPlaylist();
         }
+        */
       }
       
       var mediaList = aMediaListView.mediaList;
@@ -294,17 +297,23 @@ try
       mediaItem.setProperty("http://songbirdnest.com/data/1.0#originUrl",
                             browserURL);
       
+      dump ('added media item: '+url+'\n');
+      
       mediaList.add(mediaItem);
       
       this.handledURLs.push(url);
       this.mediaItemsToScan.appendElement(mediaItem, false);
       
+      dump ('\n\nadded media item: '+mediaItem+'\n\n');
+      
       // Only one synchronous database call per ui frame.
       return true;
     }
     
-    SBDataSetIntValue( "webplaylist.total", href_loop.a_array.length );
+    context.progressTotal = href_loop.a_array.length;
     SBDataSetBoolValue( "media_scan.open", true ); // ?  Don't let this go?
+    
+    return href_loop;
   }  
 }
 catch ( err )

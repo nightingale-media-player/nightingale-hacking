@@ -67,7 +67,7 @@
             }
           },
           notify: function(timer) {
-            this.tabbrowser._loaded();
+            //this.tabbrowser._loaded();
             this.timer = null;
           }
         };
@@ -81,6 +81,8 @@
             .createInstance(Components.interfaces.nsISHistory);
         this.browsers[0].removeAttribute("disablehistory");
         
+        // force tabbed mode
+        this.enterTabbedMode();
       ]]></constructor>
       <destructor><![CDATA[
         this.closeBalloonTip();
@@ -187,14 +189,9 @@
       </property>
       
       
-      <field name="_playlist">null</field>
       <property name="playlist">
         <getter><![CDATA[
-          if (!this._playlist) {
-            this._playlist =
-                document.getElementById(this.getAttribute('playlist'));
-          }
-          return this._playlist;
+          return this.currentOuterPlaylist;
         ]]></getter>
       </property>
 
@@ -202,38 +199,47 @@
       <!-- Get the playlist element from within the document in the current tab.
            Returns null if no playlist element is available 
         -->
-      <property name="currentBrowserPlaylist" readonly="true">
+      <property name="currentInnerPlaylist" readonly="true"
+                onget="return this.mCurrentTab.innerPlaylist" />
+      
+      <!-- get the web playlist for the current tab -->
+      <property name="currentOuterPlaylist" readonly="true"
+                onget="return this.mCurrentTab.outerPlaylist" />
+      
+      <!-- get the current page playlist if one exists or the current web
+           playlist if that's all we have -->
+      <property name="currentPlaylist" readonly="true">
         <getter><![CDATA[
-
-          // Get the document from the current browser tab
-          var playlistDocument = this.mCurrentBrowser.contentDocument;
-          if (playlistDocument == null) {
-            return null;
+          var pl = this.currentInnerPlaylist;
+          if (!pl) {
+            pl = this.currentOuterPlaylist;
           }
-          
-          // Get the playlist element from within the current tab      
-          // TODO change this
-          var playlist = playlistDocument.getElementById("playlist_test");
-          if (playlist == null) {
-            return null;
-          }
-          
-          // Remove security wrappers
-          if (playlist.wrappedJSObject) {
-            playlist = playlist.wrappedJSObject;
-          }
-              
-          return playlist;
+          return pl;
         ]]></getter>
       </property>
+      
+      <!-- control the visibility of the web playlist on the current tab -->
+      <property name="currentOuterPlaylistShowing"
+                onget="return this.mCurrentTab.outerPlaylistShowing"
+                onset="this.mCurrentTab.outerPlaylistShowing = val" />
+            
+      <property name="playlistTree" readonly="true">
+        <getter><![CDATA[
+          var pl = this.currentPlaylist;
+          if (pl) {
+            return pl.tree;
+          } else {
+            return null;
+          }
+        ]]></getter>
+      </property>
+      
 
 
       <field name="_loading">SB_NewDataRemote("faceplate.loading", null)</field>
       <property name="loading"
                 onget="return this._loading.boolValue"
                 onset="this._loading.boolValue = val;" />
-      
-      <field name="mainpane_listener_set">false</field>
       
       <property name="showWebPlaylist">
         <getter><![CDATA[
@@ -242,9 +248,11 @@
         ]]></getter>
         <setter><![CDATA[
           // boolify the value that's passed in
+          return;
+        
           var value = (val)?true:false;
-          // set the value in the data remote
-          SBDataSetBoolValue('browser.playlist.show', value);
+          
+          this.currentOuterPlaylistShowing = value;
           
           if (!value) {
             // if the balloontip for the webplaylist is shown, close it
@@ -260,10 +268,7 @@
           }
         ]]></setter>
       </property>
-      
-      <!-- replacing thePlaylistTree with gBrowser.playlistTree -->
-      <field name="playlistTree">null</field>
-      
+
       <!-- These should match the values in sbLibraryManager.h -->
       <field name="PREF_WEB_LIBRARY">"songbird.library.web"</field>
       <field name="PREF_DOWNLOAD_LIBRARY">"songbird.library.download"</field>
@@ -302,159 +307,6 @@
         ]]></getter>
       </property>
 
-      <method name="_loaded">
-        <body><![CDATA[
-        dump('running _loaded\n');
-          try {
-            if (!this.mainpane_listener_set)
-            {
-              //
-              //
-              // HORRIBLE SECURITY HACK TO GET THE PLAYLIST TREE AND INJECT FUN EVENT HANDLERS 
-              //
-              //
-              var installed_listener = false;
-              var playlist = this.contentDocument?this.contentDocument.getElementById( "playlist_test" ):null;
-              if (playlist) {
-              
-                this.mainpane_listener_set = true; // Okay, we're done.  However far we get, here, only do it once.
-                
-                // Crack the security if necessary
-                if ( playlist.wrappedJSObject )
-                  playlist = playlist.wrappedJSObject;
-        
-                if ( playlist.mediaListView ) // New API
-                {
-                  var viewMap =
-                    Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-                              .getService(Components.interfaces.sbIMediaListViewMap);
-                              
-                  // Now all I have to do is find something resembling a usefully unique key.
-                  var browser = this.mCurrentBrowser;
-                  var history = browser.webNavigation.sessionHistory;
-                  var entry = history.getEntryAtIndex( history.index, false );
-                  
-                  var restore = viewMap.getView( browser, entry );
-                  
-                  // Save the current view if there is nothing to restore
-                  if ( restore == null )
-                  {
-                    viewMap.setView( browser, entry, playlist.mediaListView );
-                  }
-                  else
-                  {
-                    // Otherwise, restore it.
-                    var commands = playlist.commands;
-                    playlist.bind( restore, commands );
-                  }
-                }
-        
-                // Wait until after the bind call?
-                if ( playlist.ref == "" )
-                {
-                  // Try again in 250 ms?
-                  //setTimeout(this._loaded, 250);
-                  return;
-                }
-                
-                //
-                // THE RETURN ABOVE IS ALWAYS HIT.
-                //
-                
-                // hack, to let play buttons find the visible playlist if needed
-                document.__CURRENTPLAYLIST__ = playlist;
-        
-                // Drag and Drop tracker object
-                playlist.setDnDSourceTracker(sbDnDSourceTracker);
-        
-                // Events on the playlist object itself.
-                playlist.addEventListener("playlist-editor", onPlaylistEditor, true);
-                playlist.addEventListener("playlist-play", onPlaylistPlay, true);
-                playlist.addEventListener("playlist-burntocd", onPlaylistBurnToCD, true);
-                playlist.addEventListener("playlist-noplaylist", onPlaylistNoPlaylist, true);
-                playlist.addEventListener("playlist-filterchange", onPlaylistFilterChange, true);
-        
-                // TODO: Do we not want to remove these listeners at some point?
-        
-                // Remember some values
-                theLibraryPlaylist = playlist;
-                this.playlistTree = playlist = playlist.tree;
-                SBDataSetStringValue('playlist.ref', playlist.getAttribute( "ref" )); // is this set yet?
-        
-                // Set the current selection
-                theLibraryPlaylist.syncPlaylistIndex(false);
-        
-                // And remember that we did this
-                installed_listener = true;
-        
-                this.mainpane_listener_set = true;
-                
-                if (document.__JUMPTO__) {
-                  document.__JUMPTO__.syncJumpTo();
-                }
-              }
-              else {
-                this.playlistTree = null;
-                theLibraryPlaylist = null;
-                // hack, to let play buttons find the visible playlist if needed
-                document.__CURRENTPLAYLIST__ = null;
-              }
-        
-              // Should the webplaylist scan and listener binding be performed?
-              var enableWebPlaylist = SBDataGetBoolValue("webplaylist.enabled");
-              
-              // If we have not installed a playlist listener, and the web playlist
-              // is enabled, install the link url listener.
-              if ( !installed_listener && enableWebPlaylist) {
-                // wait until the document exists to see if there are any A tags
-                if (!this.contentDocument) {
-                  //setTimeout(this._loaded, 2500);
-                  return;
-                } else if (this.contentDocument.getElementsByTagName('A').length != 0 ) {
-
-                  // Set the filter to the current URI.
-                  var propArray =
-                    Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-                              .createInstance(Components.interfaces.sbIPropertyArray);
-                  propArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl",
-                                           this.currentURI.spec);
-                                             
-                  // Create the view.
-                  var view = this.webLibrary.createView();
-                  view.setFilters(propArray);
-
-                  // Bind the Web Playlist UI element to the subscribed playlist.
-                  SBWebPlaylistCommands.m_Playlist = theWebPlaylist;
-                  theWebPlaylist.bind(view, SBWebPlaylistCommands,
-                                      SBDataGetIntValue("browser.playlist.height"),
-                                      SBDataGetBoolValue("browser.playlist.collapsed"));
-
-                  // scrape the document.
-                  AsyncWebDocument(this.contentDocument, view);
-                } 
-        
-        
-                // XXXlone - we need this to happen so that the playlist gets initialized if it wasn't ready yet but is coming up soon 
-                // unfortunately, if the page is not going to be a playlist, but is a document with no A element, we'll keep hitting this code
-                // and rerun this function every 2.5s, forever. We need to detect that a page is a not a playlist in the process of being loaded 
-                // so that we can avoid issuing a setTimeout(onMainPaneLoad, 2500) in this case, but ONLY in this case.
-                else {
-                  var tb = this;
-                  //setTimeout(function(){tb._loaded()}, 2500 );
-                  return;
-                }
-                // XXXlone - end case where page is going to be a playlist but contentDocument does not yet contains a playlist
-        
-                this.mainpane_listener_set = true;
-              }
-            }
-          } catch( err ) {
-            dump(err.toSource()+'\n');
-            alert( 'sb-tabbrowser::_loaded: '+err );
-          }
-        ]]></body>
-      </method>
-      
       <!-- implementation of nsIWebProgressListener -->
       <method name="onLocationChange">
         <parameter name="aWebProgress" />
@@ -477,20 +329,17 @@
             }
             
             // Clear the playlist tree variable so we are not confused.
-            this.playlistTree = null;
+            //this.playlistTree = null;
             theLibraryPlaylist = null;
             // hack, to let play buttons find the visible playlist if needed
             document.__CURRENTPLAYLIST__ = null;
-            
-            // Clear the tracking variable
-            this.mainpane_listener_set = false;
             
             // Disable the "add to playlist" button until we see that there is anything to add.
             SBDataSetBoolValue('browser.canplaylist', false);
             this.showWebPlaylist = false;
       
             // Clear the playlist tree variable so we are not confused.
-            this.playlistTree = null;
+            //this.playlistTree = null;
             theLibraryPlaylist = null;
             // hack, to let play buttons find the visible playlist if needed
             document.__CURRENTPLAYLIST__ = null;
@@ -547,15 +396,12 @@
             this.loading = true;
             
             // cancel the previous page scan
-            CancelAsyncWebDocument();
+            //CancelAsyncWebDocument(this.href_loop);
 
           }
           else if (aState & nsIWebProgressListener.STATE_STOP) {
             // Stop the spinner if necessary
             this.loading = false;
-      
-            // Notfiy that the page is done loading
-            this._loaded();
           }
         ]]></body>
       </method>
@@ -894,7 +740,6 @@
           // Disable the "add to playlist" button until we see that there is anything to add.
           SBDataSetBoolValue("browser.canplaylist", false);
           this.showWebPlaylist = false;
-          this.mainpane_listener_set = false;
           return this.mCurrentBrowser.goBack();
         ]]></body>
       </method>
@@ -903,20 +748,17 @@
           // Disable the "add to playlist" button until we see that there is anything to add.
           SBDataSetBoolValue("browser.canplaylist", false);
           this.showWebPlaylist = false;
-          this.mainpane_listener_set = false;
           return this.mCurrentBrowser.goForward();
         ]]></body>
       </method>
       <method name="reload">
         <body><![CDATA[
-          this.mainpane_listener_set = false;
           return this.mCurrentBrowser.reload();
         ]]></body>
       </method>
       <method name="stop">
         <body><![CDATA[
           return this.mCurrentBrowser.stop();
-          this.mainpane_listener_set = false;
         ]]></body>
       </method>
       <property name="homePage">
@@ -1171,6 +1013,380 @@
       <xul:toolbarbutton anonid="close-button" class="tab-close-button" tabindex="-1"/>
       <xul:hbox class="tab-image-right" xbl:inherits="selected"/>
     </content>
+    <implementation implements="nsIWebProgressListener">
+      <constructor><![CDATA[
+        // right after all the constructors run...
+        var self = this;
+        window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
+        this._hrefLoop = null;
+      ]]></constructor>
+      
+      <field name="_browserStatusFilter"><![CDATA[
+        Components.classes['@mozilla.org/appshell/component/browser-status-filter;1']
+        .createInstance(Components.interfaces.nsIWebProgress);
+        if (this._hrefLoop) {
+        }
+      ]]></field>
+      
+      <field name="_webLibraryCache">null</field>
+      <property name="_webLibrary">
+        <getter><![CDATA[
+          if (this._webLibraryCache) {
+            return this._webLibraryCache;
+          }
+          
+          var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                .getService(Components.interfaces.nsIPrefBranch2);
+          var guid = prefs.getComplexValue("songbird.library.web",
+                                           Components.interfaces.nsISupportsString);
+          
+          var libraryManager =
+            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                      .getService(Components.interfaces.sbILibraryManager);
+
+          return (this._webLibraryCache = libraryManager.getLibrary(guid));
+        ]]></getter>
+      </property>
+      
+      <method name="createOuterPlaylist">
+        <body><![CDATA[
+          /* from mainwin.xul:
+            <sb-smart-splitter id="playlist_web_split" hidden="true" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
+              <grippy/>
+            </sb-smart-splitter>
+            
+            
+            <vbox id="playlist_web_vbox" height="200" hidden="true" minheight="0" _resize_height="200">
+              <playlist2 
+                id="playlist_web" 
+                height="105"
+                flex="1"
+                hidden="true"
+                enableColumnDrag="true"
+                persist="column-list column-widths"
+                editable="true"
+                minheight="0"
+                column-list="http://songbirdnest.com/data/1.0#ordinal http://songbirdnest.com/data/1.0#trackName http://songbirdnest.com/data/1.0#duration http://songbirdnest.com/data/1.0#artistName http://songbirdnest.com/data/1.0#albumName http://songbirdnest.com/data/1.0#genre"
+                column-widths="20 395 50 222 222 70"
+                _resize_height="105"
+              />
+            </vbox>
+          */
+          
+          // get the notification box around the browser
+          var nbox = this.linkedBrowser.parentNode;
+          
+          var dummybox = document.createElement('vbox');
+          nbox.appendChild(dummybox);
+          
+          this._plbox = document.createElement('vbox');
+          this._plbox.setAttribute('hidden', 'false');
+          
+          // make the splitter
+          this._splitter = document.createElement('sb-smart-splitter');
+          this._splitter.setAttribute('class', 'playlist_web_split');
+          this._splitter.setAttribute('hidden', 'false');
+          this._splitter.setAttribute('state', 'open');
+          this._splitter.setAttribute('resizebefore', 'closest');
+          this._splitter.setAttribute('resizeafter', 'closest');
+          this._splitter.setAttribute('target', 'after');
+          this._splitter.setAttribute('collapse', 'after');
+          this._splitter.appendChild(document.createElement('grippy'));
+          this._plbox.appendChild(this._splitter);
+          
+          // make the vbox
+          this._vbox = document.createElement('vbox');
+          this._vbox.setAttribute('class', 'playlist_web_vbox');
+          this._vbox.setAttribute('height', '200');
+          this._vbox.setAttribute('hidden', 'false');
+          this._vbox.setAttribute('minheight', '0');
+          
+          // make the playlist
+          this._playlist = document.createElement('playlist2');
+          this._playlist.setAttribute('class', 'playlist_web');
+          this._playlist.setAttribute('height', '105');
+          this._playlist.setAttribute('flex', '1');
+          this._playlist.setAttribute('hidden', 'false');
+          this._playlist.setAttribute('enableColumnDrag', 'true');
+          this._playlist.setAttribute('persist', 'column-list column-widths');
+          this._playlist.setAttribute('editable', 'true');
+          this._playlist.setAttribute('minheight', '0');
+          this._playlist.setAttribute('column-list',
+              'http://songbirdnest.com/data/1.0#ordinal '+
+              'http://songbirdnest.com/data/1.0#trackName '+
+              'http://songbirdnest.com/data/1.0#duration '+
+              'http://songbirdnest.com/data/1.0#artistName '+
+              'http://songbirdnest.com/data/1.0#albumName '+
+              'http://songbirdnest.com/data/1.0#genre');
+          this._playlist.setAttribute('column-widths', '20 395 50 222 222 70');
+          
+          // add some events, eh?
+          this._playlist.addEventListener("playlist-play", onPlaylistPlay, true);
+          // FIXME: remove the event listener on the destructor, I guess
+          
+          // put it all together
+          this._vbox.appendChild(this._playlist);
+          this._plbox.appendChild(this._vbox);
+          
+          // wire up the browser status filter
+          this.linkedBrowser.webProgress.addProgressListener(this._browserStatusFilter,
+              Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+          this._browserStatusFilter.addProgressListener(this,
+              Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+          
+          nbox.appendChild(this._plbox);
+          
+          this.outerPlaylistShowing = true;
+        ]]></body>
+      </method>
+      
+      <property name="outerPlaylist" readonly="true"
+                onget="return this._playlist" />
+      
+      <property name="outerPlaylistShowing">
+        <getter><![CDATA[
+          return (this._plbox.getAttribute("hidden") == 'false');
+        ]]></getter>
+        <setter><![CDATA[
+        dump('\n\n\n\n\nsetting outerWebPlaylistShowing to: '+val+'\n');
+          var hidden = val?"false":"true";
+          /*
+          this._splitter.setAttribute('hidden', hidden);
+          this._vbox.setAttribute('hidden', hidden);
+          this._playlist.setAttribute('hidden', hidden);
+          */
+          this._plbox.setAttribute('hidden', hidden);
+        ]]></setter>
+      </property>
+      
+      <property name="innerPlaylist" readonly="true">
+        <getter><![CDATA[
+          if (this.linkedBrowser.currentURI.scheme != 'chrome') {
+            // only chrome urls can supply a playlist
+            return null;
+          }
+          // Get the document from the current browser tab
+          var playlistDocument = this.linkedBrowser.contentDocument;
+          if (playlistDocument == null) {
+            return null;
+          }
+          
+          // Get the playlist element from within the current tab      
+          // TODO change this
+          var playlist = playlistDocument.getElementById("playlist_test");
+          if (playlist == null) {
+            return null;
+          }
+          
+          // Remove security wrappers
+          if (playlist.wrappedJSObject) {
+            playlist = playlist.wrappedJSObject;
+          }
+              
+          return playlist;
+        ]]></getter>
+      </property>
+      
+      
+      <method name="clearOuterPlaylist">
+        <body><![CDATA[
+          // hide the outer playlist
+          this.outerPlaylistShowing = false;
+        ]]></body>
+      </method>
+      
+      
+      <method name="scanWebPage">
+        <body><![CDATA[
+          // only scrape http & https
+          if (this.linkedBrowser.currentURI.scheme != 'http' &&
+              this.linkedBrowser.currentURI.scheme != 'https') {
+            this.outerPlaylistShowing = false;
+            return;
+          }
+
+          if (!SBDataGetBoolValue('webplaylist.enabled')) {
+            // or not
+            return;
+          }
+          
+          // Set the filter to the current URI.
+          var propArray =
+            Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
+                      .createInstance(Components.interfaces.sbIPropertyArray);
+          propArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl",
+                                   this.linkedBrowser.currentURI.spec);
+                                     
+          // Create the view.
+          var view = this._webLibrary.createView();
+          view.setFilters(propArray);
+
+          // show the web playlist?
+          this.outerPlaylistShowing = false;
+          
+          // Bind the Web Playlist UI element to the subscribed playlist.
+          SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
+          dump('this.outerPlaylist = '+this.outerPlaylist+'\n');
+          dump('this.outerPlaylist.localName = '+this.outerPlaylist.localName+'\n');
+          this.outerPlaylist.bind(view, SBWebPlaylistCommands,
+                                  SBDataGetIntValue("browser.playlist.height"),
+                                  SBDataGetBoolValue("browser.playlist.collapsed"));
+
+          // scrape the document.
+          var context = {
+            tab: this,
+            pt: 0,
+            get progressTotal() {
+              dump('get progressTotal\n');
+              return this.pt;
+            },
+            set progressTotal(p) {
+              dump('set progressTotal='+p+'\n');
+              this.pt = p;
+            },
+            sp: false,
+            get showPlaylist() {
+              dump('get showPlaylist\n');
+              return this.sp;
+            },
+            set showPlaylist(s) {
+              dump('set showPlaylist='+s+'\n');
+              this.tab.outerPlaylistShowing = s;
+              this.sp = s;
+            }
+          };
+          this._hrefLoop = AsyncWebDocument(this.linkedBrowser.contentDocument,
+                                            view, this._hrefLoop, context);
+          
+
+        ]]></body>
+      </method>      
+
+      <method name="setUpInnerPlaylist">
+        <body><![CDATA[
+          var playlist = this.innerPlaylist;
+          if ( playlist.mediaListView ) // New API
+          {
+            var viewMap =
+              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                        .getService(Components.interfaces.sbIMediaListViewMap);
+                        
+            // Now all I have to do is find something resembling a usefully unique key.
+            var browser = this.mCurrentBrowser;
+            var history = browser.webNavigation.sessionHistory;
+            var entry = history.getEntryAtIndex( history.index, false );
+            
+            var restore = viewMap.getView( browser, entry );
+            
+            // Save the current view if there is nothing to restore
+            if ( restore == null )
+            {
+              viewMap.setView( browser, entry, playlist.mediaListView );
+            }
+            else
+            {
+              // Otherwise, restore it.
+              var commands = playlist.commands;
+              playlist.bind( restore, commands );
+            }
+          }
+  
+          // Wait until after the bind call?
+          if ( playlist.ref == "" )
+          {
+            return;
+          }
+          
+          //
+          // THE RETURN ABOVE IS ALWAYS HIT.
+          //
+          
+          // Drag and Drop tracker object
+          playlist.setDnDSourceTracker(sbDnDSourceTracker);
+  
+          // Remember some values
+          theLibraryPlaylist = playlist;
+          this.playlistTree = playlist = playlist.tree;
+          SBDataSetStringValue('playlist.ref', playlist.getAttribute( "ref" )); // is this set yet?
+  
+          // Set the current selection
+          theLibraryPlaylist.syncPlaylistIndex(false);
+  
+          // And remember that we did this
+          installed_listener = true;
+          ]]></body>
+      </method>
+      
+      <!-- nsIWebProgressListener implementation -->
+      <method name="onLocationChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aLocation" />
+        <body><![CDATA[
+          dump('\n\n\n\ntab:onLocationChange\n');
+        ]]></body>
+      </method>
+      
+      <method name="onProgressChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aCurSelfProgress" />
+        <parameter name="aMaxSelfProgress" />
+        <parameter name="aCurTotalProgress" />
+        <parameter name="aMaxTotalProgress" />
+        <body><![CDATA[ ]]></body>
+      </method>
+      
+      <method name="onSecurityChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <body><![CDATA[ ]]></body>
+      </method>
+
+      <method name="onStateChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <parameter name="aStatus" />
+        <body><![CDATA[
+          const nsIWebProgressListener =
+            Components.interfaces.nsIWebProgressListener;
+            
+          if (!(aState & nsIWebProgressListener.STATE_IS_WINDOW)) {
+            // not interested
+            return;
+          }
+      
+          if (aState & nsIWebProgressListener.STATE_START) {
+            dump('\n\n\n\ntab:onStateChange START\n');
+            this.clearOuterPlaylist();
+          } else if (aState & nsIWebProgressListener.STATE_STOP) {
+            dump('\n\n\n\ntab:onStateChange STOP\n');
+            if (this.innerPlaylist) {
+              this.setUpInnerPlaylist();
+            } else {
+              this.scanWebPage();
+            }
+          }
+        ]]></body>
+      </method>
+
+      <method name="onStatusChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <parameter name="aMessage" />
+        <body><![CDATA[ ]]></body>
+      </method>
+    </implementation>
+    <handlers>
+      <handler event="TabClose"><![CDATA[
+        // clean up listeners
+        this.linkedBrowser.webProgress.removeProgressListener(this._browserStatusFilter);
+        this._browserStatusFilter.addProgressListener(this);
+      ]]></handler>
+    </handlers>
   </binding>
   
    <binding id="tabbrowser-tabs"  

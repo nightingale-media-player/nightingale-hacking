@@ -41,8 +41,6 @@
 // Mainwin Initialization
 //
 var thePollPlaylistService = null;
-var theWebPlaylist = null;
-var theWebPlaylistHasItems = false;
 
 var gServicePane = null;
 var gBrowser = null;
@@ -104,8 +102,6 @@ function SBInitialize()
     gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
     // looks like we need to attach this to the window...
     window.gBrowser = gBrowser;
-
-    initializeWebPlaylist();    
     
     try {
       var metadataBackscanner = Components.classes["@songbirdnest.com/Songbird/MetadataBackscanner;1"]
@@ -126,13 +122,8 @@ function SBUninitialize()
   
   var mainPane = document.getElementById("frame_main_pane");
 
-  var webPlaylist = document.getElementById("playlist_web");
-  webPlaylist.removeEventListener("playlist-play", onPlaylistPlay, true);
-
   gServicePane = null;
   gBrowser = null;
-  
-  document.__CURRENTWEBPLAYLIST__ = null;
 
   resetJumpToFileHotkey();
   closeJumpTo();
@@ -149,8 +140,6 @@ function SBUninitialize()
   }
 
   thePollPlaylistService = null;
-  theWebPlaylist = null;
-  theWebPlaylistHasItems = null;
 }
 
 var SBWindowMinMaxCB = 
@@ -224,23 +213,4 @@ function setMinMaxCallback()
     // No component
     dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
   }
-}
-
-function initializeWebPlaylist() {
-  if (theWebPlaylist)
-    return;
-
-  var webPlaylist = document.getElementById("playlist_web");
-
-  webPlaylist.addEventListener("playlist-play", onPlaylistPlay, true);
-    // don't force this one
-  //webPlaylist.addEventListener("command", onPlaylistContextMenu, false);
-  
-  // XXXben Not yet implemented.
-  //webPlaylist.setDnDSourceTracker(sbDnDSourceTracker);
-  
-  // hack, to let play buttons find the visible playlist if needed
-  document.__CURRENTWEBPLAYLIST__ = webPlaylist;
-  
-  theWebPlaylist = webPlaylist;
 }

@@ -248,8 +248,7 @@ try
   {
     try
     {
-      if (!playlist) playlist = document.__CURRENTPLAYLIST__;
-      if (!playlist) playlist = document.__CURRENTWEBPLAYLIST__;
+      if (!playlist) playlist = gBrowser.currentPlaylist;
       if (!playlist) return;
       
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);

@@ -786,7 +786,7 @@
               }
             } else {
               var ref = "";
-              var playlist = this.getCurrentPlaylist();
+              var playlist = gBrowser.currentPlaylist;
               if (playlist) {
                 ref = playlist.ref;
               } 
@@ -806,19 +806,6 @@
           <![CDATA[
             // optional connection
             if (gBrowser) gBrowser.loadURI("chrome://songbird/content/xul/playlist_test.xul?library" );
-          ]]>
-        </body>
-      </method>
-
-      <method name="getCurrentPlaylist">
-        <body>
-          <![CDATA[
-            var pl = document.__CURRENTPLAYLIST__;
-            if (!pl) pl = document.__CURRENTWEBPLAYLIST__;
-            if (!pl) return null;
-            if ( pl.wrappedJSObject )
-              pl = pl.wrappedJSObject;
-            return pl;
           ]]>
         </body>
       </method>
@@ -1393,7 +1380,7 @@
           }
           catch ( err )
           {
-            alert( "PFU - " + err );
+            //alert( "PFU - " + err );
           }
           ]]>
         </body>

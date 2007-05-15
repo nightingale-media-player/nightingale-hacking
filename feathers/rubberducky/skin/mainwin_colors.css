@@ -741,7 +741,7 @@ These let the user resize the frames in your box model.
 
 .horz_splitter,
 #horz_splitter,
-#playlist_web_split
+.playlist_web_split
 {
   background-color: transparent;
   border-top: 1px solid #666;
@@ -752,7 +752,7 @@ These let the user resize the frames in your box model.
 
 .horz_splitter:active,
 #horz_splitter:active,
-#playlist_web_split:active
+.playlist_web_split:active
 {
   background-color: transparent;
   border-top: 1px solid #000;
@@ -770,7 +770,7 @@ These let the user resize the frames in your box model.
 }
 
 #horz_splitter[state="collapsed"],
-#playlist_web_split[state="collapsed"]
+.playlist_web_split[state="collapsed"]
 {
   background-color: transparent;
 }

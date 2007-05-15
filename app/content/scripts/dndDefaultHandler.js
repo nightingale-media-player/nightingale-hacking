@@ -63,7 +63,7 @@ function dropFiles(evt, dropdata, session, targetdb, targetpl) {
   theDropPlaylist = targetpl;
   theDropDatabase = targetdb;
   if (!theDropDatabase || !theDropPlaylist) {
-    var pl = getCurrentPlaylist(true);
+    var pl = gBrowser.currentInnerPlaylist;
     if (pl) {
       theDropPlaylist = pl.table;
       theDropDatabase = pl.guid;

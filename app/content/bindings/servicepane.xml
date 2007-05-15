@@ -368,8 +368,6 @@
           dump('loadURL: '+aURL+'\n');
 
           if (this.browser) {
-            this.browser.showWebPlaylist = false;
-
             try {
               this.browser.stop();
               this.browser.loadURI(aURL, null, null, aEvent);

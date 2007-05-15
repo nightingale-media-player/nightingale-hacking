@@ -1180,7 +1180,7 @@ These let the user resize the frames in your box model.
 
 .horz_splitter,
 #horz_splitter,
-#playlist_web_split > grippy
+.playlist_web_split > grippy
 {
   -moz-appearance: none !important; /* grrrr! */
   width: 50px !important;
@@ -1229,7 +1229,7 @@ These let the user resize the frames in your box model.
   background-image: url(default/grippy_filterlist.png) !important;
 }
 
-#playlist_web_split[state="collapsed"]
+.playlist_web_split[state="collapsed"]
 {
   height: 7px !important;
   background-color: #d9d9d9 !important;

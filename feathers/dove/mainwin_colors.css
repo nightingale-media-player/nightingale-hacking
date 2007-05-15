@@ -561,7 +561,7 @@ playlist > stack > vbox > hbox#playlist_toolbar_bkg
 THE WEB PLAYLIST aka THE URL SLURPER
 Style this guy to match your webpage!
 ************************************************************************************************************************************************
-#playlist_web
+.playlist_web
 {
  
 } 
@@ -650,7 +650,7 @@ These let the user resize the frames in your box model.
 
 .horz_splitter,
 #horz_splitter,
-#playlist_web_split > grippy
+.playlist_web_split > grippy
 {
   background-color: #ccc !important;
 }
@@ -670,7 +670,7 @@ These let the user resize the frames in your box model.
   background-color: #ececec !important;
 }
 
-#playlist_web_split[state="collapsed"]
+.playlist_web_split[state="collapsed"]
 {
   background-color: #ececec !important;
 }

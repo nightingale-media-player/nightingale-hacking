@@ -656,15 +656,6 @@ function binaryToHex(input)
   return result;
 }
 
-function getCurrentPlaylist(disallowwebplaylist) {
-  var pl = document.__CURRENTPLAYLIST__;
-  if (!pl && !disallowwebplaylist) pl = document.__CURRENTWEBPLAYLIST__;
-  if (!pl) return null;
-  if ( pl.wrappedJSObject )
-    pl = pl.wrappedJSObject;
-  return pl;
-}
-
 /**
  * Makes a new URI from a url string
  */

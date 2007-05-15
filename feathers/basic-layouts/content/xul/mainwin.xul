@@ -186,9 +186,9 @@
               </vbox>
               <sb-tabbrowser id="frame_main_pane" flex="1"
                              servicepane="servicepane"
-                             playlist="playlist_web"
                              contentcontextmenu="html_context_menu"
                              />
+              <!--
               <sb-smart-splitter id="playlist_web_split" hidden="true" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
                 <grippy/>
               </sb-smart-splitter>
@@ -209,6 +209,7 @@
                   _resize_height="105"
                 />
               </vbox>
+            -->
             </vbox>
           </hbox>
         </vbox>

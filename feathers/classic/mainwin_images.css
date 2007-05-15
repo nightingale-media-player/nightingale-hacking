@@ -1214,7 +1214,7 @@ These let the user resize the frames in your box model.  These must be specified
 
 .horz_splitter,
 #horz_splitter,
-#playlist_web_split > grippy
+.playlist_web_split > grippy
 {
   background-image: url(chrome://songbird/skin/default/grippy.png) !important;
   background-position: center center !important;
@@ -1270,7 +1270,7 @@ These let the user resize the frames in your box model.  These must be specified
   
 }
 
-#playlist_web_split[state="collapsed"]
+.playlist_web_split[state="collapsed"]
 {
   background-image: url(chrome://songbird/skin/default/grippy_webplaylist.png) !important;
   background-repeat: no-repeat !important;
