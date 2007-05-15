@@ -122,6 +122,18 @@ sbDeviceBaseLibraryListener::~sbDeviceBaseLibraryListener()
 {
 }
 
+nsresult
+sbDeviceBaseLibraryListener::Init(const nsAString &aDeviceIdentifier, 
+                                      sbIDeviceBase* aDevice)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  mDeviceIdentifier = aDeviceIdentifier;
+  mDevice = aDevice;
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList, 
                                          sbIMediaItem *aMediaItem)
