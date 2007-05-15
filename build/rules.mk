@@ -181,6 +181,11 @@ ifdef SHELL_EXECUTE
 targets += shell_execute
 endif
 
+ifdef XPI_NAME
+targets += make_xpi
+clean_targets += clean_xpi
+endif
+
 # Right now this system is not compatible with parallel make.
 .NOTPARALLEL : all clean
 
@@ -358,6 +363,7 @@ dll_clean:
 	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.pdb) \
 	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.lib) \
 	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.exp) \
+	      $(addprefix lib,$(DYNAMIC_LIB)).lnk \
 	      $(NULL)
 
 .PHONY : dll_clean
@@ -787,22 +793,29 @@ ifdef JAR_MANIFEST
 # Extension jars need to go to the extensions subdirectory of the xulrunner
 # folder. Otherwise everything goes into the chrome directory.
 
-ifdef JAR_IS_EXTENSION
-# Hack to make this work with directories with funny characters (e.g. '@')
-TARGET_DIR = $(SONGBIRD_EXTENSIONSDIR)/.package
 MANIFEST_MOVE_CMD = $(CYGWIN_WRAPPER) $(MV) -f \
-                      $(SONGBIRD_EXTENSIONSDIR)/chrome.manifest \
-                      $(SONGBIRD_EXTENSIONSDIR)/.package/ \
+                      $(TARGET_DIR)/../chrome.manifest \
+                      $(TARGET_DIR)/ \
                       $(NULL)
+
+# Allow this to be overridden
+ifdef JAR_TARGET_DIR
+TARGET_DIR = $(JAR_TARGET_DIR)
+else
+ifdef JAR_IS_EXTENSION
+TARGET_DIR = $(SONGBIRD_EXTENSIONSDIR)/.package
 EXTENSION_PACKAGING_CMD = $(CYGWIN_WRAPPER) $(RM) -rf \
-                            $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID) && \
+                            $(TARGET_DIR)/../$(EXTENSION_UUID) && \
                             $(CYGWIN_WRAPPER) $(MV) -f \
-                            $(SONGBIRD_EXTENSIONSDIR)/.package \
-                            $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID) \
+                            $(TARGET_DIR) \
+                            $(TARGET_DIR)/../$(EXTENSION_UUID) \
                             $(NULL)
 else
 TARGET_DIR = $(SONGBIRD_CHROMEDIR)
+MANIFEST_MOVE_CMD =
 endif
+endif
+
 TARGET_DIR := $(strip $(TARGET_DIR))
 
 MAKE_JARS_FLAGS = -s $(srcdir) \
@@ -901,8 +914,96 @@ clean_jar_postprocess:
 # We want the preprocessor to run every time regrdless of whether or not
 # $(jar_manifest_in) has changed because defines may change as well.
 
-.PHONY : make_jar clean_jar_postprocess $(JAR_MANIFEST)
+.PHONY : make_jar clean_jar_postprocess
 endif
+
+#------------------------------------------------------------------------------
+# Rules for creating XPIs
+#------------------------------------------------------------------------------
+
+# XPI_NAME - The base name (no extension) of the XPI to create. To do this you
+#            must also set the following variables:
+#
+#              EXTENSION_DIR - dir where the final XPI should be moved
+#              EXTENSION_STAGE_DIR - dir where the XPIs contents reside
+#              EXTENSION_NAME - name of the extension (coolthing)
+#
+#            You must have 'install.rdf' in your src directory OR you can use
+#            the preprocessor to create one. To do that either name your input
+#            file 'install.rdf.in' or specify its name with the following:
+#
+#              INSTALL_RDF -  the name of the input file that will be passed to
+#                             the preprocessor to create 'install.rdf'
+#
+#            If you use the preprocessor you may want to also set the
+#            following variables:
+#
+#              EXTENSION_UUID - uuid of the extension
+#                               (e.g. "coolthing@songbirdnest.com")
+#              EXTENSION_ARCH - arch string describing the build machine
+#                               (e.g. "WINNT_x86-msvc" or "Darwin_x86-gcc4")
+#
+#            If you want to also install the contents of the XPI to the
+#            extensions directory then you may set the following variable:
+#
+#              INSTALL_EXTENSION - whether or not to install the XPI
+#
+#            Note that INSTALL_EXTENSION requires that EXTENSION_UUID be set
+
+ifdef XPI_NAME
+
+# Create install.rdf if it doesn't exist
+
+install_rdf_file = $(srcdir)/install.rdf
+
+ifeq (,$(wildcard $(install_rdf_file)))
+
+# Try this simple substitution. Saves one line in Makefiles...
+ifneq (,$(wildcard $(install_rdf_file).in))
+  INSTALL_RDF = $(install_rdf_file).in
+endif
+
+# If neither install.rdf nor install.rdf.in exist then the user needs to tell
+# us which file to use. Bail.
+ifndef INSTALL_RDF
+  current_dir = $(shell pwd)
+  $(error $(current_dir)/Makefile: install.rdf not found, use INSTALL_RDF)
+endif
+
+# install.rdf doesn't exist, so generate it from the given file
+install_rdf_file = ./install.rdf
+
+$(install_rdf_file): $(srcdir)/$(INSTALL_RDF)
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl            \
+          $(ACDEFINES) $(PPDEFINES)                        \
+          -DEXTENSION_ARCH=$(EXTENSION_ARCH)               \
+          -DEXTENSION_UUID=$(EXTENSION_UUID)               \
+          -DEXTENSION_NAME=$(EXTENSION_NAME) --            \
+          $(srcdir)/$(INSTALL_RDF) > $(install_rdf_file)
+
+endif
+
+.PHONY: make_xpi
+make_xpi: $(install_rdf_file) $(SUBDIRS) $(JAR_MANIFEST)
+	@echo packaging $(EXTENSION_DIR)/$(EXTENSION_NAME).xpi
+	$(RM) -f $(EXTENSION_DIR)/$(EXTENSION_NAME).xpi
+	$(CP) -f $(install_rdf_file) $(EXTENSION_STAGE_DIR)/install.rdf
+	cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(EXTENSION_NAME).xpi.tmp *
+	$(MKDIR) -p $(EXTENSION_DIR)
+	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(EXTENSION_NAME).xpi.tmp \
+        $(EXTENSION_DIR)/$(EXTENSION_NAME).xpi
+  ifdef INSTALL_EXTENSION
+	$(RM) -rf $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+	$(CP) -rf $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+  endif
+
+.PHONY: clean_xpi
+clean_xpi:
+	$(RM) -f $(EXTENSION_DIR)/$(EXTENSION_NAME).xpi
+	$(RM) -f ./install.rdf
+	$(RM) -rf $(EXTENSION_STAGE_DIR)
+
+endif # XPI_NAME
 
 #-----------------------
 
