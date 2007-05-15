@@ -26,6 +26,8 @@
 
 #include "sbLocalDatabaseTreeView.h"
 
+#include <nsIAtom.h>
+#include <nsIAtomService.h>
 #include <nsIDOMElement.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIProperty.h>
@@ -279,6 +281,68 @@ sbLocalDatabaseTreeView::Rebuild()
   PRInt32 count;
   rv = GetRowCount(&count);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
+ * \brief Parses a string and separates space-delimited substrings into nsIAtom
+ *        elements.
+ *
+ * Shamelessly adapted from nsTreeUtils.cpp.
+ */
+nsresult
+sbLocalDatabaseTreeView::TokenizeProperties(const nsAString& aProperties,
+                                            nsISupportsArray* aAtomArray)
+{
+  NS_ASSERTION(!aProperties.IsEmpty(), "Don't give this an empty string");
+  NS_ASSERTION(aAtomArray, "Null pointer!");
+
+  const PRUnichar* current, *end;
+  aProperties.BeginReading(&current, &end);
+
+  static const PRUnichar sSpaceChar = ' ';
+
+  nsresult rv;
+  nsCOMPtr<nsIAtomService> atomService =
+    do_GetService(NS_ATOMSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  do {
+
+    // Skip whitespace
+    while (current < end && *current == sSpaceChar) {
+      ++current;
+    }
+
+    // If only whitespace, we're done
+    if (current == end) {
+      break;
+    }
+
+    // Note the first non-whitespace character
+    const PRUnichar* firstChar = current;
+
+    // Advance to the next whitespace character
+    while (current < end && *current != sSpaceChar) {
+      ++current;
+    }
+
+    nsAutoString token(Substring(firstChar, current));
+
+    // Make an atom
+    nsCOMPtr<nsIAtom> atom;
+    rv = atomService->GetAtom(token.get(), getter_AddRefs(atom));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Don't encourage people to step on each other's toes.
+    NS_ASSERTION(aAtomArray->IndexOf(atom) == -1,
+                 "You're adding an atom that someone else already added!");
+
+    rv = aAtomArray->AppendElement(atom);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+  } while (current < end);
 
   return NS_OK;
 }
@@ -579,6 +643,40 @@ sbLocalDatabaseTreeView::UpdateColumnSortAttributes(const nsAString& aProperty,
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseTreeView::GetCellPropertiesInternal(sbILocalDatabaseResourcePropertyBag* aPropBag,
+                                                   const nsAString& aPropName,
+                                                   nsISupportsArray* aAtomArray)
+{
+  NS_ASSERTION(aPropBag && aAtomArray, "Don't pass nulls!");
+  NS_ASSERTION(!aPropName.IsEmpty(), "Don't pass an empty string!");
+
+  nsAutoString value;
+  nsresult rv = aPropBag->GetProperty(aPropName, value);
+  if (rv == NS_ERROR_ILLEGAL_VALUE) {
+    // It's fine if we don't have this property in the bag.
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propInfo;
+  rv = mPropMan->GetPropertyInfo(aPropName, getter_AddRefs(propInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString displayPropertiesString;
+  rv = propInfo->GetDisplayPropertiesForValue(value, displayPropertiesString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (displayPropertiesString.IsEmpty()) {
+    return NS_OK;
+  }
+
+  rv = TokenizeProperties(displayPropertiesString, aAtomArray);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1113,10 +1211,27 @@ NS_IMETHODIMP
 sbLocalDatabaseTreeView::GetRowProperties(PRInt32 index,
                                           nsISupportsArray* properties)
 {
+  NS_ENSURE_ARG_MIN(index, 0);
   NS_ENSURE_ARG_POINTER(properties);
 
-  // XXX: TODO
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+  PRBool success = mRowCache.Get(index, getter_AddRefs(bag));
+  if (!success) {
+    // Don't bother to do anything else if this row isn't cached yet.
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIStringEnumerator> propertyEnumerator;
+  nsresult rv = mPropMan->GetPropertyNames(getter_AddRefs(propertyEnumerator));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString propertyName;
+  while (NS_SUCCEEDED(propertyEnumerator->GetNext(propertyName))) {
+    rv = GetCellPropertiesInternal(bag, propertyName, properties);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1124,10 +1239,30 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
                                            nsITreeColumn* col,
                                            nsISupportsArray* properties)
 {
+  NS_ENSURE_ARG_MIN(row, 0);
   NS_ENSURE_ARG_POINTER(col);
   NS_ENSURE_ARG_POINTER(properties);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+#ifdef PR_LOGGING
+  PRInt32 colIndex = -1;
+  col->GetIndex(&colIndex);
+
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetCellProperties(%d, %d)", this,
+         row, colIndex));
+#endif
+
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+  PRBool success = mRowCache.Get(row, getter_AddRefs(bag));
+  if (!success) {
+    // Don't bother to do anything else if this row isn't cached yet.
+    return NS_OK;
+  }
+
+  nsAutoString propertyName;
+  nsresult rv = GetPropertyForTreeColumn(col, propertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return GetCellPropertiesInternal(bag, propertyName, properties);
 }
 
 NS_IMETHODIMP

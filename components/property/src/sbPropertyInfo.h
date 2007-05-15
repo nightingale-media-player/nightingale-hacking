@@ -62,7 +62,8 @@ NS_IMETHOD SetDisplayUsingXBLWidget(nsIURI * aDisplayUsingXBLWidget) { return _t
 NS_IMETHOD GetUnits(nsAString & aUnits) { return _to GetUnits(aUnits); } \
 NS_IMETHOD SetUnits(const nsAString & aUnits) { return _to SetUnits(aUnits); } \
 NS_IMETHOD GetOperators(nsISimpleEnumerator * *aOperators) { return _to GetOperators(aOperators); } \
-NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperators(aOperators); }
+NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperators(aOperators); } \
+NS_IMETHOD GetDisplayPropertiesForValue(const nsAString& aValue, nsAString& _retval) { return _to GetDisplayPropertiesForValue(aValue, _retval); }
 
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
   NS_STATIC_CAST(sbIPropertyInfo*, NS_STATIC_CAST(__unambiguousBase, __expr))

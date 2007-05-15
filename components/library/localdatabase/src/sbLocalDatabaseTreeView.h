@@ -42,7 +42,9 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 
+class nsISupportsArray;
 class nsITreeBoxObject;
+class nsITreeColumn;
 class nsITreeSelection;
 class sbILocalDatabasePropertyCache;
 class sbILocalDatabaseResourcePropertyBag;
@@ -82,6 +84,10 @@ public:
                 sbIPropertyArray* aCurrentSort);
 
   nsresult Rebuild();
+
+protected:
+  nsresult TokenizeProperties(const nsAString& aProperties,
+                              nsISupportsArray* aAtomArray);
 
 private:
 
@@ -128,6 +134,10 @@ private:
 
   nsresult UpdateColumnSortAttributes(const nsAString& aProperty,
                                       PRBool aDirection);
+
+  nsresult GetCellPropertiesInternal(sbILocalDatabaseResourcePropertyBag* aPropBag,
+                                     const nsAString& aPropName,
+                                     nsISupportsArray* aAtomArray);
 
   static nsresult PR_CALLBACK
     SelectionListSavingEnumeratorCallback(PRUint32 aRow,

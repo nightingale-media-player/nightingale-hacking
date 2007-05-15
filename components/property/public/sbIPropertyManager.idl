@@ -176,9 +176,9 @@ interface sbIPropertyInfo : nsISupports
   attribute AString displayName;
 
   /**
-   * \brief Display this property using the suggested base
-   * widget available for tree children. 
-   * Example: 'progress'.
+   * \brief Display this property using the suggested base widget available for
+   *        tree children. 
+   * Example: 'progressmeter' or 'checkbox'.
    */
   attribute AString displayUsingSimpleType;
 
@@ -230,6 +230,17 @@ interface sbIPropertyInfo : nsISupports
    * \return The formatted sorting value.
    */
   AString makeSortable(in AString aValue);
+
+  /**
+   * \brief Gets a whitespace-separated string of properties to alter the
+   *        display of a value in a treeview.
+   *
+   * \param aValue
+   *        The current value of the property 
+   *
+   * \return A whitespace-separated string.
+   */
+  AString getDisplayPropertiesForValue(in AString aValue);
 };
 
 [scriptable, uuid(ceff6b77-4b4d-48d0-816f-26ec1992a5b2)]

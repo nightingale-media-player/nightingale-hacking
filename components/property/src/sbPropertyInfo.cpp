@@ -425,3 +425,9 @@ NS_IMETHODIMP sbPropertyInfo::MakeSortable(const nsAString & aValue, nsAString &
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
+
+NS_IMETHODIMP sbPropertyInfo::GetDisplayPropertiesForValue(const nsAString& aValue, nsAString& _retval)
+{
+  _retval.Truncate();
+  return NS_OK;
+}
