@@ -45,19 +45,19 @@ interface sbIMediaListViewMap : nsISupports
 {
   /**
    * \brief Given parent and pagekey objects, return the saved view or null if not saved.
-   * \param aParent A grouping object for a set of saved views. See sbIMediaListViewMap::dropParent().
+   * \param aParentKey A grouping object for a set of saved views. See sbIMediaListViewMap::releaseViews().
    * \param aPageKey A unique object to reference the saved view.
    * \return sbIMediaListView The saved view, or null if none was ever saved.
    */
-  sbIMediaListView getView( in nsISupports aParent, in nsISupports aPageKey );
+  sbIMediaListView getView( in nsISupports aParentKey, in nsISupports aPageKey );
 
   /**
    * \brief Given parent and pagekey objects, save the given view.
-   * \param aParent A grouping object for a set of saved views. See sbIMediaListViewMap::dropParent().
+   * \param aParentKey A grouping object for a set of saved views. See sbIMediaListViewMap::releaseViews().
    * \param aPageKey A unique object to reference the saved view.
    * \param aView The view to be saved.
    */
-  void setView( in nsISupports aParent, in nsISupports aPageKey, in sbIMediaListView aView );
+  void setView( in nsISupports aParentKey, in nsISupports aPageKey, in sbIMediaListView aView );
 
 
   /**
@@ -66,8 +66,8 @@ interface sbIMediaListViewMap : nsISupports
    *  Usually, the parent object will be the browser for an open tab.  When the tab is closed,
    * the history is released, so the views may be released as well.
    *
-   * \param aParent The grouping object to release. See sbIMediaListViewMap::dropParent().
+   * \param aParentKey The grouping object to release. Release everything if (aParentKey == nsnull).
    */
-  void releaseViews( in nsISupports aParent );
+  void releaseViews( in nsISupports aParentKey );
 };
 

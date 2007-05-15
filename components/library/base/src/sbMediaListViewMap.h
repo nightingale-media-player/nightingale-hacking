@@ -86,10 +86,6 @@ public:
 private:
   ~sbMediaListViewMap();
 
-  PR_STATIC_CALLBACK(PLDHashOperator) ReleaseAll( nsISupportsHashKey::KeyType aKey,
-    nsClassHashtableMT< nsISupportsHashKey, nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > >::UserDataType aEntry,
-                                                  void* aUserData);
-
 private:
   nsClassHashtableMT< nsISupportsHashKey, nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > > mViewMap;
 };

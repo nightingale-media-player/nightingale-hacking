@@ -133,16 +133,17 @@ sbMediaListViewMap::Init()
   return NS_OK;
 }
 
-/* sbIMediaListView getView (in nsISupports aParent, in nsISupports aPageKey); */
-NS_IMETHODIMP sbMediaListViewMap::GetView(nsISupports *aParent, nsISupports *aPageKey, sbIMediaListView **_retval)
+/* sbIMediaListView getView (in nsISupports aParentKey, in nsISupports aPageKey); */
+NS_IMETHODIMP sbMediaListViewMap::GetView(nsISupports *aParentKey, nsISupports *aPageKey, sbIMediaListView **_retval)
 {
-  NS_ENSURE_ARG_POINTER( aParent );
+  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+  NS_ENSURE_ARG_POINTER( aParentKey );
   NS_ENSURE_ARG_POINTER( aPageKey );
   NS_ENSURE_ARG_POINTER( _retval );
   nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > *innerMap = nsnull;
   sbIMediaListView *innerValue = nsnull;
   *_retval = nsnull;
-  if ( mViewMap.Get( aParent, &innerMap ) && innerMap && innerMap->Get( aPageKey, &innerValue ) )
+  if ( mViewMap.Get( aParentKey, &innerMap ) && innerMap && innerMap->Get( aPageKey, &innerValue ) )
   {
     NS_IF_ADDREF( *_retval = innerValue );
   }
@@ -150,39 +151,43 @@ NS_IMETHODIMP sbMediaListViewMap::GetView(nsISupports *aParent, nsISupports *aPa
   return NS_OK;
 }
 
-/* void setView (in nsISupports aParent, in nsISupports aPageKey, in sbIMediaListView aView); */
-NS_IMETHODIMP sbMediaListViewMap::SetView(nsISupports *aParent, nsISupports *aPageKey, sbIMediaListView *aView)
+/* void setView (in nsISupports aParentKey, in nsISupports aPageKey, in sbIMediaListView aView); */
+NS_IMETHODIMP sbMediaListViewMap::SetView(nsISupports *aParentKey, nsISupports *aPageKey, sbIMediaListView *aView)
 {
-  NS_ENSURE_ARG_POINTER( aParent );
+  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+  NS_ENSURE_ARG_POINTER( aParentKey );
   NS_ENSURE_ARG_POINTER( aPageKey );
   NS_ENSURE_ARG_POINTER( aView );
   nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > *innerMap = nsnull;
   sbIMediaListView *innerValue = nsnull;
   // If our inner map does not yet exist, create and stash it.
-  if ( ! mViewMap.Get( aParent, &innerMap ) )
+  if ( ! mViewMap.Get( aParentKey, &innerMap ) )
   {
     innerMap = new nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView >;
     NS_ENSURE_TRUE(innerMap, NS_ERROR_OUT_OF_MEMORY);
-    mViewMap.Put( aParent, innerMap ); // Takes over memory management for innerMap
-    innerMap->Init();
+    PRBool success = innerMap->Init();
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+    success = mViewMap.Put( aParentKey, innerMap ); // Takes over memory management for innerMap
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   }
   // Put the view into the inner map.
   innerMap->Put( aPageKey, aView );
   return NS_OK;
 }
 
-/* void releaseViews (in nsISupports aParent); */
-NS_IMETHODIMP sbMediaListViewMap::ReleaseViews(nsISupports *aParent)
+/* void releaseViews (in nsISupports aParentKey); */
+NS_IMETHODIMP sbMediaListViewMap::ReleaseViews(nsISupports *aParentKey)
 {
-  NS_ENSURE_ARG_POINTER( aParent );
-  nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > *innerMap = nsnull;
-  if ( mViewMap.Get( aParent, &innerMap ) )
+  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+  if ( ! aParentKey ) // If NULL, release all.
   {
-    // Release everything in/about the inner map.
-    innerMap->Clear();
-    mViewMap.Remove( aParent ); // This line deletes innerMap
+    mViewMap.Clear(); // Supposedly, this will release everything.  If it doesn't, blame Ben!
   }
-  return NS_OK;
+  else
+  {
+    mViewMap.Remove( aParentKey ); // This line deletes the innerMap, automatically clearing it.
+  }
+  return NS_OK; // If it's not actually there, we don't care.
 }
 
 /**
@@ -200,9 +205,10 @@ sbMediaListViewMap::Observe(nsISupports* aSubject,
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
 
   if (strcmp(aTopic, APPSTARTUP_TOPIC) == 0) {
-    return NS_OK;
+    return NS_OK; // ???
   }
   else if (strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID) == 0) {
+
     // Remove ourselves from the observer service.
     if (NS_SUCCEEDED(rv)) {
       observerService->RemoveObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID);
@@ -221,9 +227,7 @@ sbMediaListViewMap::Observe(nsISupports* aSubject,
     }
 
     // Shutdown
-//    mViewMap.Enumerate( ReleaseAll, nsnull );
-
-    // TODO: Make that compile properly.  Grr.
+    ReleaseViews( nsnull );
 
     return NS_OK;
   }
@@ -231,18 +235,3 @@ sbMediaListViewMap::Observe(nsISupports* aSubject,
   NS_NOTREACHED("Observing a topic that wasn't handled!");
   return NS_OK;
 }
-
-PLDHashOperator PR_CALLBACK
-sbMediaListViewMap::ReleaseAll(nsISupportsHashKey::KeyType aKey,
-                                               nsClassHashtableMT< nsISupportsHashKey, nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > >::UserDataType aEntry,
-                                               void* aUserData)
-{
-  NS_ASSERTION(aEntry, "Null entry in hashtable!");
-
-  // Wipe it out
-  aEntry->Clear();
-  delete aEntry;
-
-  return PL_DHASH_NEXT;
-}
-
