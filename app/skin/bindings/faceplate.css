@@ -50,16 +50,13 @@ FACEPLATE
 }
 
 
-.faceplate-box
-{
-  height: 50px;
-}
 
 .faceplate-bkgd-box
 {
   height: 50px;
   background-image: url(chrome://songbird/skin/faceplate/faceplate_bkgd.png);
   background-repeat: repeat-x;
+  overflow: hidden;
 }
 
 .faceplate-intro-image
@@ -79,6 +76,7 @@ FACEPLATE
 {
   border: 1px solid;
   height: 10px;
+  width: auto;
 }
 
 
@@ -122,9 +120,4 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressme
   margin: 0px;
 }
 
-.faceplate-text
-{
-  width: auto;
-  overflow: hidden;
-}
 

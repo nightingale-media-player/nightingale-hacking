@@ -340,7 +340,6 @@ PlaylistPlayback.prototype = {
   _statusText:         null,
   _statusStyle:        null,
     
-  _faceplateState:       null,
   _restartOnPlaybackEnd: null,
   _restartAppNow:        null,
   
@@ -429,7 +428,6 @@ PlaylistPlayback.prototype = {
     this._metadataLen           = createDataRemote("metadata.length", null);
     this._metadataPosText       = createDataRemote("metadata.position.str", null);
     this._metadataLenText       = createDataRemote("metadata.length.str", null);
-    this._faceplateState        = createDataRemote("faceplate.state", null);
     this._restartOnPlaybackEnd  = createDataRemote("restart.onplaybackend", null);
     this._restartAppNow         = createDataRemote("restart.restartnow", null);
 
@@ -449,7 +447,6 @@ PlaylistPlayback.prototype = {
     //this._muteData.boolValue = false;
     this._playlistRef.stringValue = "";
     this._playlistIndex.intValue = -1;
-    this._faceplateState.boolValue = false;
     this._restartOnPlaybackEnd.boolValue = false;
     this._restartAppNow.boolValue = false;
     this._metadataURL.stringValue = "";
@@ -495,7 +492,6 @@ PlaylistPlayback.prototype = {
     this._metadataLen.unbind();
     this._metadataPosText.unbind();
     this._metadataLenText.unbind();
-    this._faceplateState.unbind();
     this._restartOnPlaybackEnd.unbind();
     this._statusText.unbind();
     this._statusStyle.unbind();
@@ -857,8 +853,6 @@ PlaylistPlayback.prototype = {
       this._playDefault();
     }
 
-    // Hide the intro box and show the normal faceplate box
-    this._faceplateState.boolValue = true;
     return true;
   },
   
@@ -889,9 +883,6 @@ PlaylistPlayback.prototype = {
 
     // Then play it
     var retval = this.playURL(this._playURL.stringValue);
-
-    // Hide the intro box and show the normal faceplate box
-    this._faceplateState.boolValue = true;
  
     return retval;
   },
@@ -1029,9 +1020,6 @@ PlaylistPlayback.prototype = {
 
     // Then play it
     var retval = this.playURL(this._playURL.stringValue);
-
-    // Hide the intro box and show the normal faceplate box
-    this._faceplateState.boolValue = true;
  
     return retval;
   },
@@ -1110,9 +1098,6 @@ PlaylistPlayback.prototype = {
       // Start the polling loop to feed the metadata dataremotes.
       this._startPlayerLoop();
       
-      // Hide the intro box and show the normal faceplate box
-      this._faceplateState.boolValue = true;
-
       // metrics
       var s = spec.split(".");
       if (s.length > 1)

@@ -37,7 +37,7 @@ SUBDIRS = addonmetadata \
           dbengine \
           devicesobsolete \
           draganddrop \
-          faceplateregistration \
+          faceplate \
           feathers \
           integration \
           library \

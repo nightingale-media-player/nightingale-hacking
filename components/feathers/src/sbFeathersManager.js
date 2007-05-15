@@ -569,7 +569,7 @@ function FeathersManager() {
   var os      = Components.classes["@mozilla.org/observer-service;1"]
                       .getService(Components.interfaces.nsIObserverService);
   // We need to unhook things on shutdown
-  os.addObserver(this, "xpcom-shutdown", false);
+  os.addObserver(this, "quit-application", false);
   
   this._skins = {};
   this._layouts = {};
@@ -1113,8 +1113,8 @@ FeathersManager.prototype = {
     var os      = Components.classes["@mozilla.org/observer-service;1"]
                       .getService(Components.interfaces.nsIObserverService);
     switch (topic) {
-    case "xpcom-shutdown":
-      os.removeObserver(this, "xpcom-shutdown");
+    case "quit-application":
+      os.removeObserver(this, "quit-application");
       this._deinit();
       break;
     }

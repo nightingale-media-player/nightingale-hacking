@@ -1,0 +1,142 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIFaceplateManager.idl
+ * \brief Interface for the FaceplateManager, which manages the lifecycle
+ *        of faceplate panes in the faceplate XBL widget 
+ */
+
+
+#include "nsISupports.idl"
+ 
+interface sbIFaceplatePane;
+interface sbIFaceplateManagerListener;
+interface nsISimpleEnumerator;
+  
+/**
+ * \interface sbIFaceplateManager
+ * \brief Manages the panes that are displayed in faceplate widgets.
+ *
+ * To use the generic progress display faceplate:
+ * \Example
+ * \code
+ *         var manager =  Components.classes["@songbirdnest.com/faceplate/manager;1"]
+ *                           .getService(Components.interfaces.sbIFaceplateManager);  
+ *         var pane = manager.createPane("test", "test", 
+ *                      "chrome://songbird/content/bindings/faceplate.xml#progress-pane");
+ *         pane.setData("label1", "This is a demo of the");
+ *         pane.setData("label2", "progress faceplate");
+ *         pane.setData("progress-mode", "determined"); 
+ *         pane.setData("progress-value", 60);         
+ *         pane.setData("label1-hidden", false);      
+ *         pane.setData("label2-hidden", false);      
+ *         pane.setData("progress-hidden", false); 
+ * \endcode
+ *
+ * To make a custom faceplate, see the faceplate.xml. Create a binding to act as
+ * a pane, register it using sbIFaceplateManager.createPane, communicate with it
+ * via sbIFaceplatePane, and then remove it via sbIFaceplateManager.destroyPane
+ * when finished.
+ *
+ * \sa sbIFaceplatePane faceplate.xml
+ */ 
+[scriptable, uuid(17dbf13e-ff78-11db-8314-0800200c9a66)]
+interface sbIFaceplateManager : nsISupports
+{  
+  /**
+   * \brief The number of registered faceplate panes
+   */  
+  readonly attribute unsigned long paneCount;
+
+  /**
+   * \brief Cause a faceplate pane to be created in all faceplates using
+   *        the given XBL binding url.
+   * 
+   * All instances of the faceplate will immediately instantiate
+   * the given binding as a pane.  The new pane will not be shown
+   * until the user selects it, or the showPane method is called.
+   *
+   * \param aID A unique string identifier for this pane.
+   * \param aName A human readable name string for this pane.
+   * \param aBindingURL The complete URL and ID of an XBL widget to be instantiated.   
+   * \return An interface that can be used to communicate with all the
+   *         instances of this faceplate pane. 
+   * \throws NS_ERROR_FAILURE if the given id is already in use.  
+   */
+  sbIFaceplatePane createPane(in AString aID, 
+                              in AString aName,
+                              in AString aBindingURL);
+
+  /**
+   * \brief Cause all faceplate widgets to immediately switch to the 
+   *        given faceplate pane. 
+   *
+   * \param aPane An active, instantiated, faceplate pane interface.
+   */
+  void showPane(in sbIFaceplatePane aPane);
+  
+  /**
+   * \brief Cause all faceplate widgets to immediately destory their instances 
+   *        of the given faceplate pane. 
+   *
+   * \param aPane An active, instantiated, faceplate pane interface.
+   */  
+  void destroyPane(in sbIFaceplatePane aPane);
+
+  /**
+   * \brief Get an interface representing all instances of a particular 
+   *        faceplate pane.
+   * 
+   * \param aID A unique string identifier for this pane.
+   * \return An interface that can be used to communicate with all the
+   *         instances of this faceplate pane. 
+   */
+  sbIFaceplatePane getPane(in AString aID);
+  
+  /**
+   * \brief Gets an enumerator for all instantiated faceplate panes.
+   * \return An enumerator containing sbIFaceplatePane interfaces 
+   */  
+  nsISimpleEnumerator getPanes();
+
+  /**
+   * \brief Register to receive notification when panes are added, removed, 
+   *        and shown. Make sure you remove any listeners you add.
+   * 
+   * \param aListener Callback interface
+   */
+  void addListener(in sbIFaceplateManagerListener aListener);
+  
+  /**
+   * \brief Unregister notification callbacks
+   * 
+   * \param aListener Previously added callback interface
+   */
+  void removeListener(in sbIFaceplateManagerListener aListener);
+};
+
+

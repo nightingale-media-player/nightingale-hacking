@@ -1,0 +1,117 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIFaceplatePane.idl
+ * \brief Definition of the sbIFaceplatePane interface 
+ * \brief 
+ */
+
+
+#include "nsISupports.idl"
+  
+interface nsIStringEnumerator;
+interface nsIVariant;
+interface nsIObserver;
+
+/**
+ * \interface sbIFaceplatePane
+ * \brief Interface used to communicate with faceplate pane binding instances
+ *
+ * This interface provides a single point of access to the potentially many
+ * instances of a single faceplate pane (if more than one window is open, then
+ * there is more than one faceplate, and each faceplate must have an instance
+ * of the pane)
+ *
+ * Calling setData can be used to cause all observing faceplate panes to update 
+ * their UI.  
+ *
+ * Since setData takes an nsIVariant it is possible to send interfaces to
+ * pane bindings. For example, you could provide an RDFDataSource and have
+ * your panes generate their UI from a template.
+ *
+ * \sa sbIFaceplateManager faceplate.xml
+ */      
+[scriptable, uuid(2133d54e-ff78-11db-8314-0800200c9a46)]
+interface sbIFaceplatePane : nsISupports
+{
+  /**
+   * \brief Human readable name for this pane
+   */
+  readonly attribute AString name;
+
+  /**
+   * \brief Unique identifier for this pane
+   */
+  readonly attribute AString id;
+
+  /**
+   * \brief The location and id of the XBL binding for this faceplate
+   */
+  readonly attribute AString bindingURL;
+
+  /**
+   * \brief Stores the given data under the given key name, 
+   *        and notifies all observers.
+   *
+   * \param aKey A name to store the data under.
+   * \param aValue Something to store.    
+   */
+  void setData(in AString aKey, 
+               in nsIVariant aValue);
+               
+  /**
+   * \brief Retrieve the data with the given key name.
+   *
+   * \param aKey The name under which the data is stored.
+   * \return Some data, or null
+   */
+  nsIVariant getData(in AString aKey);
+
+  /**
+   * \brief Gets a string enumerator for all data keys.
+   * \return String enumerator.
+   */  
+  nsIStringEnumerator getKeys();
+
+  /**
+   * \brief Adds an observer to receive notification when setData is called.
+   *
+   * Adds an observer that will be called with observe(this, key, null) 
+   * when setData is called on this interface.  The third parameter is not
+   * used, as the data is an nsIVariant, and not necessarily a string.
+   *
+   * \param aObserver A callback object with an observe method.
+   */    
+  void addObserver(in nsIObserver aObserver);
+  
+  /**
+   * \brief Remove an observer.
+   * \param aObserver an callback object previously passed to addObserver.
+   */
+  void removeObserver(in nsIObserver aObserver);
+};
+

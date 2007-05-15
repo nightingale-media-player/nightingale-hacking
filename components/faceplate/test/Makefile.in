@@ -29,6 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbFaceplateRegistration.js
+SONGBIRD_TEST_COMPONENT = faceplate
+
+SONGBIRD_TESTS = $(srcdir)/test_faceplateManager.js \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk

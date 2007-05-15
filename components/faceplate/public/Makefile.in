@@ -29,10 +29,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbIFaceplateRegistration.idl \
+XPIDL_SRCS = sbIFaceplatePane.idl \
+             sbIFaceplateManager.idl \
+             sbIFaceplateManagerListener.idl \
              $(NULL)
 
-XPIDL_MODULE = sbFaceplateRegistration.xpt
+XPIDL_MODULE = sbFaceplate.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
