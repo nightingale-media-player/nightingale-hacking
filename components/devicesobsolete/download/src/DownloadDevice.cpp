@@ -109,8 +109,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
  * application shutdown.
  */
 
-NS_IMETHODIMP sbDownloadDevice::Finalize(
-    PRBool                      *aResult)
+NS_IMETHODIMP sbDownloadDevice::Finalize()
 {
     LOG(("1: Finalize\n"));
 
