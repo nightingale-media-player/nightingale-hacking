@@ -104,6 +104,7 @@ protected:
   PRLock* m_pCurrentPathLock;
   nsString m_strCurrentPath;
 
+  PRBool m_bSearchHidden;
   PRBool m_bRecurse;
 
   PRLock* m_pScanningLock;

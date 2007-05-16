@@ -52,6 +52,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(CMediaScanQuery, sbIMediaScanQuery)
 //-----------------------------------------------------------------------------
 CMediaScanQuery::CMediaScanQuery()
 : m_strDirectory( EmptyString() )
+, m_bSearchHidden(PR_FALSE)
 , m_bRecurse(PR_FALSE)
 , m_bIsScanning(PR_FALSE)
 , m_pCallback(nsnull)
@@ -76,6 +77,7 @@ CMediaScanQuery::CMediaScanQuery()
 //-----------------------------------------------------------------------------
 CMediaScanQuery::CMediaScanQuery(const nsString &strDirectory, const PRBool &bRecurse, sbIMediaScanCallback *pCallback)
 : m_strDirectory(strDirectory)
+, m_bSearchHidden(PR_FALSE)
 , m_bRecurse(bRecurse)
 , m_bIsScanning(PR_FALSE)
 , m_pCallback(pCallback)
@@ -118,7 +120,22 @@ CMediaScanQuery::CMediaScanQuery(const nsString &strDirectory, const PRBool &bRe
     PR_DestroyLock(m_pCancelLock);
 } //dtor
 
-//--------------------------------------------------------------------- --------
+//-----------------------------------------------------------------------------
+/* attribute boolean searchHidden; */
+NS_IMETHODIMP CMediaScanQuery::GetSearchHidden(PRBool *aSearchHidden)
+{
+  *aSearchHidden = m_bSearchHidden;
+  return NS_OK;
+} //GetSearchHidden
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP CMediaScanQuery::SetSearchHidden(PRBool aSearchHidden)
+{
+  m_bSearchHidden = aSearchHidden;
+  return NS_OK;
+} //SetSearchHidden
+
+//-----------------------------------------------------------------------------
 /* void SetDirectory (in wstring strDirectory); */
 NS_IMETHODIMP CMediaScanQuery::SetDirectory(const nsAString &strDirectory)
 {
@@ -468,7 +485,7 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
 
               // Don't scan hidden things.  
               // Otherwise we wind up in places that can crash the app?
-              if (NS_SUCCEEDED(pEntry->IsHidden(&bIsHidden)) && !bIsHidden)
+              if (NS_SUCCEEDED(pEntry->IsHidden(&bIsHidden)) && bIsHidden)
               {
                 if(NS_SUCCEEDED(pEntry->IsFile(&bIsFile)) && bIsFile)
                 {
@@ -528,8 +545,8 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
   else
   {
     if(NS_SUCCEEDED(pFile->IsFile(&bFlag)) && 
-      bFlag && 
-      pCallback)
+       bFlag && 
+       pCallback)
     {
       *_retval = 1;
       pCallback->OnMediaScanFile(strDirectory, *_retval);
@@ -593,6 +610,9 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
   sbIMediaScanCallback *pCallback = nsnull;
   pQuery->GetCallback(&pCallback);
 
+  PRBool bSearchHidden = PR_FALSE;
+  pQuery->GetSearchHidden(&bSearchHidden);
+  
   PRBool bRecurse = PR_FALSE;
   pQuery->GetRecurse(&bRecurse);
   
@@ -647,7 +667,7 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
               pEntry->IsDirectory(&bIsDirectory);
               pEntry->IsHidden(&bIsHidden);
 
-              if(!bIsHidden)
+              if(!bIsHidden || bSearchHidden)
               {
                 if(bIsFile)
                 {
@@ -695,7 +715,10 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
             NS_IF_RELEASE(pDirEntries);
 
             pDirEntries = dirStack.back();
+            
             dirStack.pop_back();
+            fileEntryStack.pop_back();
+            entryStack.pop_back();
           }
           else
           {
@@ -726,6 +749,10 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
   }
 
   NS_IF_RELEASE(pCallback);
+  
+  dirStack.clear();
+  fileEntryStack.clear();
+  entryStack.clear();
   
   return NS_OK;
 } //ScanDirectory

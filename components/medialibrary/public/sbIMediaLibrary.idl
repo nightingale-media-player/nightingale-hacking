@@ -587,6 +587,8 @@ function ScanBeneathADirectory(aPath) {
 [scriptable, uuid(62A3F4B6-542D-4bd1-87E2-E00C72B0AACE)]
 interface sbIMediaScanQuery : nsISupports
 {
+  attribute boolean searchHidden;
+
   /**
    * \brief Set the directory to scan
    *
