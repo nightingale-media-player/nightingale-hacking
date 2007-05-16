@@ -111,7 +111,7 @@ sbLocalDatabaseCascadeFilterSet::IsSearch(PRUint16 aIndex,
                                           PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+  NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   *_retval = mFilters[aIndex].isSearch;
 
@@ -191,7 +191,7 @@ sbLocalDatabaseCascadeFilterSet::AppendSearch(const PRUnichar** aPropertyArray,
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::Remove(PRUint16 aIndex)
 {
-  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+  NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   nsresult rv;
 
@@ -217,7 +217,7 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
   if (aValueArrayCount) {
     NS_ENSURE_ARG_POINTER(aValueArray);
   }
-  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+  NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   nsresult rv;
 
@@ -302,7 +302,7 @@ sbLocalDatabaseCascadeFilterSet::GetValues(PRUint16 aIndex,
                                            nsIStringEnumerator **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+  NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   sbGUIDArrayPrimarySortEnumerator* values =
     new sbGUIDArrayPrimarySortEnumerator(mFilters[aIndex].array);
@@ -317,7 +317,7 @@ sbLocalDatabaseCascadeFilterSet::GetValueAt(PRUint16 aIndex,
                                             PRUint32 aValueIndex,
                                             nsAString& aValue)
 {
-  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+  NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   mFilters[aIndex].array->GetSortPropertyValueByIndex(aValueIndex, aValue);
 
@@ -329,7 +329,7 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
                                              nsITreeView **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+  NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   sbFilterSpec& fs = mFilters[aIndex];
 
@@ -374,7 +374,7 @@ sbLocalDatabaseCascadeFilterSet::GetValueCount(PRUint16 aIndex,
                                                PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+  NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   nsresult rv = mFilters[aIndex].array->GetLength(_retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -403,7 +403,7 @@ sbLocalDatabaseCascadeFilterSet::RemoveListener(sbICascadeFilterSetListener* aLi
 nsresult
 sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
 {
-  NS_ENSURE_ARG_MAX(aIndex, mFilters.Length() - 1);
+  NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   nsresult rv;
 
