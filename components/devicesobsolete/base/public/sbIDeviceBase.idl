@@ -195,7 +195,7 @@ interface sbIDeviceBase : nsISupports
    * This effectively prepares the device category handler for
    * application shutdown.
    */
-  boolean finalize();
+  void finalize();
 
   /**
    * \brief Add a device category handler callback.

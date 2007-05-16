@@ -314,6 +314,91 @@ sbDeviceBase::~sbDeviceBase()
 
 }
 
+nsresult
+sbDeviceBase::AddCallback(sbIDeviceBaseCallback* aCallback)
+{
+  NS_ENSURE_ARG_POINTER(aCallback);
+
+  if(mDeviceCallbacks.Put(aCallback, aCallback)) {
+    return NS_OK;
+  }
+
+  return NS_ERROR_OUT_OF_MEMORY;
+}
+
+nsresult
+sbDeviceBase::RemoveCallback(sbIDeviceBaseCallback* aCallback)
+{
+  NS_ENSURE_ARG_POINTER(aCallback);
+ 
+  mDeviceCallbacks.Remove(aCallback);
+
+  return NS_OK;
+}
+
+void
+sbDeviceBase::DoTransferStartCallback(const nsAString& aSourceURL,
+                                      const nsAString& aDestinationURL)
+{
+  try
+  {
+    sbIDeviceBaseCallback *pCallback;
+    pCallback->OnTransferStart(aSourceURL, aDestinationURL);
+  }
+  catch(...)
+  {
+    //Oops. Someone is being really bad.
+    NS_ERROR("pCallback->OnTransferStart threw an exception");
+  }
+}
+
+void
+sbDeviceBase::DoTransferCompleteCallback(const nsAString& aSourceURL,
+                                         const nsAString& aDestinationURL,
+                                         PRInt32 aStatus)
+{
+  try
+  {
+    sbIDeviceBaseCallback *pCallback;
+    pCallback->OnTransferComplete(aSourceURL, aDestinationURL, aStatus);
+  }
+  catch(...)
+  {
+    //Oops. Someone is being really bad.
+    NS_ERROR("pCallback->OnTransferComplete threw an exception");
+  }
+}
+
+void
+sbDeviceBase::DoDeviceConnectCallback(const nsAString& aDeviceString)
+{
+  try
+  {
+    sbIDeviceBaseCallback *pCallback;
+    pCallback->OnDeviceConnect(aDeviceString);
+  }
+  catch(...)
+  {
+    //Oops. Someone is being really bad.
+    NS_ERROR("pCallback->OnDeviceConnect threw an exception");
+  }
+}
+
+void
+sbDeviceBase::DoDeviceDisconnectCallback(const nsAString& aDeviceString)
+{
+  try
+  {
+    sbIDeviceBaseCallback *pCallback;
+    pCallback->OnDeviceDisconnect(aDeviceString);
+  }
+  catch(...)
+  {
+    //Oops. Someone is being really bad.
+    NS_ERROR("pCallback->OnDeviceDisconnect threw an exception");
+  }
+}
+
 nsresult 
 sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                                   nsIURI *aDeviceDatabaseURI,

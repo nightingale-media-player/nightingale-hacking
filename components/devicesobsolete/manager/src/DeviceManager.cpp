@@ -162,8 +162,7 @@ sbDeviceManager::Finalize()
     nsCOMPtr<sbIDeviceBase> device = mSupportedDevices.ObjectAt(index);
     NS_ASSERTION(device, "Null pointer in mSupportedDevices");
 
-    PRBool retval;
-    rv = device->Finalize(&retval);
+    rv = device->Finalize();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A device failed to finalize");
   }
 

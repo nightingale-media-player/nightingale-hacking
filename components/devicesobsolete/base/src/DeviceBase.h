@@ -258,10 +258,44 @@ public:
    */
   nsresult ClearTransferQueue(const nsAString &aDeviceIdentifier);
 
+  /**
+   *
+   */
+  nsresult AddCallback(sbIDeviceBaseCallback* aCallback);
+
+  /**
+   *
+   */
+  nsresult RemoveCallback(sbIDeviceBaseCallback* aCallback);
+
+  /**
+   *
+   */
+  void DoTransferStartCallback(const nsAString& aSourceURL,
+                               const nsAString& aDestinationURL);
+
+  /**
+   *
+   */
+  void DoTransferCompleteCallback(const nsAString& aSourceURL,
+                                  const nsAString& aDestinationURL,
+                                  PRInt32 aStatus);
+
+  /** 
+   *
+   */
+  void DoDeviceConnectCallback(const nsAString& aDeviceString);
+
+  /** 
+   *
+   */
+  void DoDeviceDisconnectCallback(const nsAString& aDeviceString);
+
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbILibrary> mDeviceLibraries;
   nsInterfaceHashtableMT<nsStringHashKey, nsIMutableArray> mDeviceQueues;
   
+  nsInterfaceHashtableMT<nsISupportsHashKey, sbIDeviceBaseCallback> mDeviceCallbacks;
 };
 
 //class sbDeviceThread : public nsIRunnable
