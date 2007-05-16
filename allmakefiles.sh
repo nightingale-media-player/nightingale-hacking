@@ -65,6 +65,7 @@ fi
 SCANNED_MAKEFILE_DIRS="
 app
 components
+extras/extensions
 feathers
 installer
 locales
