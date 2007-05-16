@@ -34,6 +34,7 @@
 #include <sbIDatabaseResult.h>
 #include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
+#include <sbILocalDatabasePropertyCache.h>
 
 struct sbStaticProperty {
   const PRUnichar* mName;
