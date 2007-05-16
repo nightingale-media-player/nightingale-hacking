@@ -28,6 +28,8 @@
  * \brief Some globally useful stuff for the local database library tests
  */
 
+var SB_NS = "http://songbirdnest.com/data/1.0#";
+
 function StringArrayEnumerator(aArray) {
   this._array = aArray;
   this._current = 0;
@@ -160,7 +162,11 @@ function readFile(fileName) {
   return data;
 }
 
-function createLibrary(databaseGuid, databaseLocation) {
+function createLibrary(databaseGuid, databaseLocation, init) {
+
+  if (init == undefined) {
+    init = true;
+  }
 
   var directory;
   if (databaseLocation) {
@@ -172,7 +178,7 @@ function createLibrary(databaseGuid, databaseLocation) {
                 get("ProfD", Ci.nsIFile);
     directory.append("db");
   }
-  
+
   var file = directory.clone();
   file.append(databaseGuid + ".db");
 
@@ -184,11 +190,16 @@ function createLibrary(databaseGuid, databaseLocation) {
   hashBag.setPropertyAsInterface("databaseFile", file);
   var library = libraryFactory.createLibrary(hashBag);
   try {
-    library.clear();
+    if (init) {
+      library.clear();
+    }
   }
   catch(e) {
   }
-  loadData(databaseGuid, databaseLocation);
+
+  if (init) {
+    loadData(databaseGuid, databaseLocation);
+  }
   return library;
 }
 

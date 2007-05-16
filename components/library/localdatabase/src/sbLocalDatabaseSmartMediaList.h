@@ -30,13 +30,43 @@
 #include <sbILocalDatabaseSmartMediaList.h>
 
 #include <nsWeakReference.h>
+#include <nsTArray.h>
+#include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
+#include <nsDataHashtable.h>
 #include <nsStringGlue.h>
 #include <prlock.h>
 
-#include <sbIMediaItem.h>
-#include <sbIMediaList.h>
+#include <nsIClassInfo.h>
+#include <sbIMediaListListener.h>
 
+class sbILocalDatabaseLibrary;
+class sbILocalDatabasePropertyCache;
+class sbIMediaItem;
+class sbIMediaList;
+class sbIPropertyInfo;
+class sbIPropertyManager;
+class sbISQLBuilderCriterion;
+class sbISQLSelectBuilder;
+
+typedef nsDataHashtable<nsStringHashKey, nsString> sbStringMap;
+
+static nsresult
+ParseQueryStringIntoHashtable(const nsAString& aString,
+                              sbStringMap& aMap);
+
+static nsresult
+ParseAndAddChunk(const nsAString& aString,
+                 sbStringMap& aMap);
+
+static PLDHashOperator PR_CALLBACK
+JoinStringMapCallback(nsStringHashKey::KeyType aKey,
+                      nsString aEntry,
+                      void* aUserData);
+
+static nsresult
+JoinStringMapIntoQueryString(sbStringMap& aMap,
+                             nsAString& aString);
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_SBIMEDIALIST_ALL_BUT_TYPE(_to) \
@@ -63,29 +93,50 @@
   NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveListener(aListener); } \
   NS_IMETHOD CreateView(sbIMediaListView **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CreateView(_retval); } \
   NS_IMETHOD BeginUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->BeginUpdateBatch(); } \
-  NS_IMETHOD EndUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->EndUpdateBatch(); } 
+  NS_IMETHOD EndUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->EndUpdateBatch(); }
 
 class sbLocalDatabaseSmartMediaListCondition : public sbILocalDatabaseSmartMediaListCondition
 {
+friend class sbLocalDatabaseSmartMediaList;
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASESMARTMEDIALISTCONDITION
 
-  sbLocalDatabaseSmartMediaListCondition();
-  ~sbLocalDatabaseSmartMediaListCondition();
+  sbLocalDatabaseSmartMediaListCondition(const nsAString& aPropertyName,
+                                         sbIPropertyOperator* aOperator,
+                                         const nsAString& aLeftValue,
+                                         const nsAString& aRightValue,
+                                         PRBool aLimit);
+
+  virtual ~sbLocalDatabaseSmartMediaListCondition();
+
+  nsresult ToString(nsAString& _retval);
 
 protected:
+  PRLock* mLock;
 
+  nsString mPropertyName;
+  nsCOMPtr<sbIPropertyOperator> mOperator;
+
+  nsString mLeftValue;
+  nsString mRightValue;
+
+  PRBool   mLimit;
 };
 
 class sbLocalDatabaseSmartMediaList : public sbILocalDatabaseSmartMediaList,
-                                      public nsSupportsWeakReference
+                                      public sbIMediaListListener,
+                                      public nsSupportsWeakReference,
+                                      public nsIClassInfo
 {
+typedef nsRefPtr<sbLocalDatabaseSmartMediaListCondition> sbRefPtrCondition;
+
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASESMARTMEDIALIST
+  NS_DECL_SBIMEDIALISTLISTENER
+  NS_DECL_NSICLASSINFO
 
-  
   NS_FORWARD_SAFE_SBIMEDIAITEM(mItem)
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mItem)
 
@@ -94,15 +145,44 @@ public:
   NS_FORWARD_SAFE_SBIMEDIALIST_ALL_BUT_TYPE(mList)
   NS_IMETHOD GetType(nsAString& aType);
 
-  sbLocalDatabaseSmartMediaList();
-  ~sbLocalDatabaseSmartMediaList();
+  nsresult Init(sbIMediaItem* aMediaItem);
 
-protected:
+  sbLocalDatabaseSmartMediaList();
+  virtual ~sbLocalDatabaseSmartMediaList();
+
+private:
+
+  nsresult CreateSQLForCondition(sbRefPtrCondition& aCondition,
+                                 nsAString& _retval);
+
+  nsresult AddCriterionForCondition(sbISQLSelectBuilder* aBuilder,
+                                    sbRefPtrCondition& aCondition,
+                                    sbIPropertyInfo* aInfo);
+
+  nsresult CreateQueries();
+
+  nsresult ReadConfiguration();
+  nsresult WriteConfiguration();
+
   PRLock* mInnerLock;
 
   nsCOMPtr<sbIMediaItem> mItem;
   nsCOMPtr<sbIMediaList> mList;
 
+  PRLock* mConditionsLock;
+  nsTArray<sbRefPtrCondition> mConditions;
+
+  PRUint32  mMatch;
+  PRBool    mRandomSelection;
+  PRUint32  mItemLimit;
+
+  nsCOMPtr<sbIPropertyManager> mPropMan;
+  nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
+  nsCOMPtr<sbILocalDatabaseLibrary> mLocalDatabaseLibrary;
+
+  nsString mClearListQuery;
+  nsString mCopyToListQuery;
 };
 
 #endif /* __SBLOCALDATABASESMARTMEDIALIST_H__ */
+

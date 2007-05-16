@@ -75,6 +75,8 @@ sbDatetimePropertyInfo::sbDatetimePropertyInfo()
   mDateTimeFormatLock = PR_NewLock();
   NS_ASSERTION(mDateTimeFormatLock,
     "sbDatetimePropertyInfo::mDateTimeFormatLock failed to create lock!");
+
+  InitializeOperators();
 }
 
 sbDatetimePropertyInfo::~sbDatetimePropertyInfo()
@@ -103,6 +105,11 @@ void sbDatetimePropertyInfo::InitializeOperators()
   mOperators.AppendObject(propOp);
   propOp.forget();
 
+  sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.noton"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
   sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onbefore"));
   mOperators.AppendObject(propOp);
@@ -120,6 +127,11 @@ void sbDatetimePropertyInfo::InitializeOperators()
 
   sbPropertyInfo::GetOPERATOR_GREATER(op);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.after"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_BETWEEN(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.between"));
   mOperators.AppendObject(propOp);
   propOp.forget();
 
@@ -146,6 +158,11 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Validate(const nsAString & aValue, PRBool 
   }
 
   return NS_OK;
+}
+
+NS_IMETHODIMP sbDatetimePropertyInfo::Sanitize(const nsAString & aValue, nsAString & _retval)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString & _retval)

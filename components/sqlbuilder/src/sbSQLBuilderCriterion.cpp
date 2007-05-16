@@ -135,6 +135,48 @@ sbSQLBuilderCriterionString::ToString(nsAString& _retval)
   return NS_OK;
 }
 
+// sbSQLBuilderCriterionBetweenString
+NS_IMPL_ISUPPORTS_INHERITED0(sbSQLBuilderCriterionBetweenString,
+                             sbSQLBuilderCriterionBase)
+
+sbSQLBuilderCriterionBetweenString::sbSQLBuilderCriterionBetweenString(const nsAString& aTableName,
+                                                                       const nsAString& aColumnName,
+                                                                       const nsAString& aLeftValue,
+                                                                       const nsAString& aRightValue,
+                                                                       PRBool aNegate) :
+  sbSQLBuilderCriterionBase(aTableName, aColumnName, 0, nsnull, nsnull),
+  mLeftValue(aLeftValue),
+  mRightValue(aRightValue),
+  mNegate(aNegate)
+{
+}
+
+NS_IMETHODIMP
+sbSQLBuilderCriterionBetweenString::ToString(nsAString& _retval)
+{
+  AppendTableColumnTo(_retval);
+
+  if (mNegate) {
+    _retval.AppendLiteral(" not ");
+  }
+
+  _retval.AppendLiteral(" between ");
+
+  nsAutoString escapedLeftValue(mLeftValue);
+  SB_EscapeSQL(escapedLeftValue);
+
+  nsAutoString escapedRightValue(mRightValue);
+  SB_EscapeSQL(escapedRightValue);
+
+  _retval.AppendLiteral("'");
+  _retval.Append(mLeftValue);
+  _retval.AppendLiteral("' and '");
+  _retval.Append(mRightValue);
+  _retval.AppendLiteral("'");
+
+  return NS_OK;
+}
+
 // sbSQLBuilderCriterionLong
 NS_IMPL_ISUPPORTS_INHERITED0(sbSQLBuilderCriterionLong,
                              sbSQLBuilderCriterionBase)

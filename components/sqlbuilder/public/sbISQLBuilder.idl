@@ -134,13 +134,13 @@ interface sbISQLBuilder : nsISupports
 [scriptable, uuid(7a35ea83-e75f-4299-935c-9a678e74c13f)]
 interface sbISQLWhereBuilder : sbISQLBuilder
 {
- /**
+  /**
    * \brief Add a criteria constraint to the query
    * \param aCriterion The Criterion to add
    */
   void addCriterion(in sbISQLBuilderCriterion aCriterion);
 
- /**
+  /**
    * \brief Remve a criteria constraint from the query
    * \param aCriterion The Criterion to remvoe
    */
@@ -158,6 +158,16 @@ interface sbISQLWhereBuilder : sbISQLBuilder
                                                     in AString aSrcColumnName,
                                                     in unsigned long aMatchType,
                                                     in AString aValue);
+
+  sbISQLBuilderCriterion createMatchCriterionBetweenString(in AString aTableName,
+                                                           in AString aSrcColumnName,
+                                                           in AString aLeftValue,
+                                                           in AString aRightValue);
+
+  sbISQLBuilderCriterion createMatchCriterionNotBetweenString(in AString aTableName,
+                                                              in AString aSrcColumnName,
+                                                              in AString aLeftValue,
+                                                              in AString aRightValue);
 
   /**
    * \brief Create a match criterion with an long datatype

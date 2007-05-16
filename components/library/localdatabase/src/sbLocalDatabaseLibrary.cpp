@@ -68,6 +68,7 @@
 #include "sbLocalDatabaseMediaListView.h"
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
+#include "sbLocalDatabaseSmartMediaListFactory.h"
 #include "sbLocalDatabaseGUIDArray.h"
 #include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
@@ -273,8 +274,10 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   // Notify our listeners of before removal
   PRUint32 count = mNotificationList.Count();
   for (PRUint32 i = 0; i < count; i++) {
-    mFriendLibrary->NotifyListenersBeforeItemRemoved(mFriendLibrary,
-                                                     mNotificationList[i]);
+    // XXXsteve This statement causes a "needs QI" assert when the item is
+    // actually a list
+    nsCOMPtr<sbIMediaItem> item = mNotificationList[i];
+    mFriendLibrary->NotifyListenersBeforeItemRemoved(mFriendLibrary, item);
   }
 
   PRInt32 dbSuccess;
@@ -898,6 +901,12 @@ sbLocalDatabaseLibrary::RegisterDefaultMediaListFactories()
   nsresult rv = RegisterMediaListFactory(factory);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  NS_NEWXPCOM(factory, sbLocalDatabaseSmartMediaListFactory);
+  NS_ENSURE_TRUE(factory, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = RegisterMediaListFactory(factory);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -1128,6 +1137,15 @@ sbLocalDatabaseLibrary::GetPropertiesForGuid(const nsAString& aGuid,
     return NS_ERROR_NOT_AVAILABLE;
   }
 
+}
+
+/**
+ * See sbILocalDatabaseLibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::CreateQuery(sbIDatabaseQuery** _retval)
+{
+  return MakeStandardQuery(_retval);
 }
 
 NS_IMETHODIMP

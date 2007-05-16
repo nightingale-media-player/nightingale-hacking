@@ -64,6 +64,8 @@ interface sbILocalDatabaseLibrary : nsISupports
 
   void notifyListenersItemUpdated(in sbIMediaItem aItem);
 
+  sbIDatabaseQuery createQuery();
+
   /**
    * \brief Return a filled query to create many media items from a list of URIs
    *

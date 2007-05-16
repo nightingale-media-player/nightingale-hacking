@@ -125,6 +125,7 @@ interface sbIPropertyInfo : nsISupports
   readonly attribute AString OPERATOR_CONTAINS;
   readonly attribute AString OPERATOR_BEGINSWITH;
   readonly attribute AString OPERATOR_ENDSWITH;
+  readonly attribute AString OPERATOR_BETWEEN;
 
   /**
    * \brief Causes null values to be infinitely small.  This is the default.
@@ -206,9 +207,17 @@ interface sbIPropertyInfo : nsISupports
   attribute AString units;
 
   /**
-   * \brief Contains sbIPropertyOperator 's.
+   * \brief Enumerator of sbIPropertyOperator objects
    */
   attribute nsISimpleEnumerator operators;
+
+  /**
+   * \brief Get the sbIPropertyOperator for the given operator string
+   * \param aOperator Operator string, one of the OPERATOR_ constants
+   * \return The sbIPropertyOperator for the given string, or null of the
+   *         operator is not supported by this property info
+   */
+  sbIPropertyOperator getOperator(in AString aOperator);
 
   /**
    * \brief Validates the string for this property type
@@ -216,6 +225,14 @@ interface sbIPropertyInfo : nsISupports
    * \return True if the value is valid for this property, otherwise false
    */
   boolean validate(in AString aValue);
+
+  /**
+   * \brief Sanitize a value so that it passes validation.
+   * \note This might format your string in an unexpected way.
+   * If you have any doubts, please look at the output string to make
+   * sure it satisfies your requirements.
+   */
+  AString sanitize(in AString aValue);
 
   /**
    * \brief Formats the value for display

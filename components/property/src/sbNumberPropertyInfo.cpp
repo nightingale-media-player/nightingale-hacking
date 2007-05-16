@@ -167,7 +167,17 @@ void sbNumberPropertyInfo::InitializeOperators()
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.equal"));
   mOperators.AppendObject(propOp);
   propOp.forget();
-  
+
+  sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.notequal"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
+  sbPropertyInfo::GetOPERATOR_BETWEEN(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.between"));
+  mOperators.AppendObject(propOp);
+  propOp.forget();
+
   return;
 }
 
@@ -195,6 +205,11 @@ NS_IMETHODIMP sbNumberPropertyInfo::Validate(const nsAString & aValue, PRBool *_
   }
 
   return NS_OK;
+}
+
+NS_IMETHODIMP sbNumberPropertyInfo::Sanitize(const nsAString & aValue, nsAString & _retval)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP sbNumberPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)

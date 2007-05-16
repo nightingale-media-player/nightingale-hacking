@@ -74,6 +74,24 @@ private:
   nsString mValue;
 };
 
+class sbSQLBuilderCriterionBetweenString : public sbSQLBuilderCriterionBase
+{
+public:
+  NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_SBISQLBUILDERCRITERION
+
+  sbSQLBuilderCriterionBetweenString(const nsAString& aTableName,
+                                     const nsAString& aColumnName,
+                                     const nsAString& aLeftValue,
+                                     const nsAString& aRightValue,
+                                     PRBool aNegate);
+
+private:
+  nsString mLeftValue;
+  nsString mRightValue;
+  PRBool mNegate;
+};
+
 class sbSQLBuilderCriterionLong : public sbSQLBuilderCriterionBase
 {
 public:

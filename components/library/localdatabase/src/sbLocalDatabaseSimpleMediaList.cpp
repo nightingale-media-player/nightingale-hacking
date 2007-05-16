@@ -973,6 +973,15 @@ sbLocalDatabaseSimpleMediaList::GetIndexByOrdinal(const nsAString& aOrdinal,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::Invalidate()
+{
+  nsresult rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 nsresult
 sbLocalDatabaseSimpleMediaList::ExecuteAggregateQuery(const nsAString& aQuery,
                                                       nsAString& aValue)
@@ -1567,7 +1576,7 @@ sbLocalDatabaseSimpleMediaList::OnAfterItemRemoved(sbIMediaList* aMediaList,
     // Invalidate the cached list
     // XXX: Should this be batch aware?
     nsresult rv = mFullArray->Invalidate();
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     // Notify our listeners that the item was removed
     NotifyListenersAfterItemRemoved(this, aMediaItem);

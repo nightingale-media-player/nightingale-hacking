@@ -435,9 +435,10 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.genre"), displayValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = textProperty->SetDisplayName(displayValue);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(NS_SUCCEEDED(rv)) {
+    rv = textProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -734,6 +735,26 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIURIPropertyInfo *, uriProperty));
   NS_ENSURE_SUCCESS(rv, rv);
   uriProperty.forget();
+
+  //Hidden
+  numberProperty = new sbNumberPropertyInfo();
+  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
+  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = numberProperty->SetMinValue(0);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = numberProperty->SetMaxValue(1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.hidden"), displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = numberProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
+  NS_ENSURE_SUCCESS(rv, rv);
+  numberProperty.forget();
 
   //Progress
   numberProperty = new sbNumberPropertyInfo();

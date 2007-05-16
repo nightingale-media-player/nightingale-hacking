@@ -62,5 +62,10 @@ interface sbILocalDatabaseSimpleMediaList : nsISupports
    * \return The index of the item with the given ordinal
    */
   unsigned long getIndexByOrdinal(in AString aOrdinal);
+
+  /**
+   * \brief Tell the list that its underlying datasource has changed
+   */
+  void invalidate();
 };
 

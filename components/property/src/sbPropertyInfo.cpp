@@ -25,6 +25,7 @@
 */
 
 #include "sbPropertyInfo.h"
+#include "sbStandardOperators.h"
 
 #include <nsISimpleEnumerator.h>
 
@@ -171,55 +172,61 @@ sbPropertyInfo::~sbPropertyInfo()
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_EQUALS(nsAString & aOPERATOR_EQUALS)
 {
-  aOPERATOR_EQUALS = NS_LITERAL_STRING("=");
+  aOPERATOR_EQUALS = NS_LITERAL_STRING(SB_OPERATOR_EQUALS);
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_NOTEQUALS(nsAString & aOPERATOR_NOTEQUALS)
 {
-  aOPERATOR_NOTEQUALS = NS_LITERAL_STRING("!=");  
+  aOPERATOR_NOTEQUALS = NS_LITERAL_STRING(SB_OPERATOR_NOTEQUALS);  
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_GREATER(nsAString & aOPERATOR_GREATER)
 {
-  aOPERATOR_GREATER = NS_LITERAL_STRING(">");  
+  aOPERATOR_GREATER = NS_LITERAL_STRING(SB_OPERATOR_GREATER);  
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_GREATEREQUAL(nsAString & aOPERATOR_GREATEREQUAL)
 {
-  aOPERATOR_GREATEREQUAL = NS_LITERAL_STRING(">=");  
+  aOPERATOR_GREATEREQUAL = NS_LITERAL_STRING(SB_OPERATOR_GREATEREQUAL);  
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_LESS(nsAString & aOPERATOR_LESS)
 {
-  aOPERATOR_LESS = NS_LITERAL_STRING("<");  
+  aOPERATOR_LESS = NS_LITERAL_STRING(SB_OPERATOR_LESS);  
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_LESSEQUAL(nsAString & aOPERATOR_LESSEQUAL)
 {
-  aOPERATOR_LESSEQUAL = NS_LITERAL_STRING("<=");  
+  aOPERATOR_LESSEQUAL = NS_LITERAL_STRING(SB_OPERATOR_LESSEQUAL);  
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_CONTAINS(nsAString & aOPERATOR_CONTAINS)
 {
-  aOPERATOR_CONTAINS = NS_LITERAL_STRING("%?%");  
+  aOPERATOR_CONTAINS = NS_LITERAL_STRING(SB_OPERATOR_CONTAINS);  
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_BEGINSWITH(nsAString & aOPERATOR_BEGINSWITH)
 {
-  aOPERATOR_BEGINSWITH = NS_LITERAL_STRING("?%");  
+  aOPERATOR_BEGINSWITH = NS_LITERAL_STRING(SB_OPERATOR_BEGINSWITH);  
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_ENDSWITH(nsAString & aOPERATOR_ENDSWITH)
 {
-  aOPERATOR_ENDSWITH = NS_LITERAL_STRING("%?");  
+  aOPERATOR_ENDSWITH = NS_LITERAL_STRING(SB_OPERATOR_ENDSWITH);  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_BETWEEN(nsAString & aOPERATOR_BETWEEN)
+{
+  aOPERATOR_BETWEEN = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);  
   return NS_OK;
 }
 
@@ -405,15 +412,45 @@ NS_IMETHODIMP sbPropertyInfo::SetOperators(nsISimpleEnumerator * aOperators)
   while( NS_SUCCEEDED(aOperators->HasMoreElements(&hasMore)) && 
          hasMore  &&
          NS_SUCCEEDED(aOperators->GetNext(getter_AddRefs(object)))) {
-    mOperators.AppendObject(object);
+    nsresult rv;
+    nsCOMPtr<sbIPropertyOperator> po = do_QueryInterface(object, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool success = mOperators.AppendObject(po);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOperator(const nsAString & aOperator,
+                                          sbIPropertyOperator * *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  PRUint32 length = mOperators.Count();
+  for (PRUint32 i = 0; i < length; i++) {
+    nsAutoString op;
+    nsresult rv = mOperators[i]->GetOperator(op);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (op.Equals(aOperator)) {
+      NS_ADDREF(*_retval = mOperators[i]);
+      return NS_OK;
+    }
+  }
+
+  *_retval = nsnull;
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP sbPropertyInfo::Sanitize(const nsAString & aValue, nsAString & _retval)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP sbPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)

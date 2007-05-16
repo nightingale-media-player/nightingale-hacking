@@ -40,7 +40,7 @@
 
 #define SB_SMART_MEDIALIST_FACTORY_TYPE "smart"
 
-NS_IMPL_ISUPPORTS1(sbLocalDatabaseSmartMediaListFactory, 
+NS_IMPL_ISUPPORTS1(sbLocalDatabaseSmartMediaListFactory,
                    sbIMediaListFactory)
 
 /**
@@ -72,7 +72,7 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
 {
   NS_ENSURE_ARG_POINTER(aInner);
   NS_ENSURE_ARG_POINTER(_retval);
-  
+
   nsresult rv;
   nsAutoString dataGuid;
 
@@ -92,8 +92,15 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIMediaList> dataList;
-    rv = library->CreateMediaList(NS_LITERAL_STRING("simple"), 
+    rv = library->CreateMediaList(NS_LITERAL_STRING("simple"),
                                   getter_AddRefs(dataList));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = dataList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                               NS_LITERAL_STRING("1"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = dataList->Write();
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString guid;
@@ -105,14 +112,15 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsCOMPtr<sbILocalDatabaseSmartMediaList> newSmartList = 
-    new sbLocalDatabaseSmartMediaList();
+  nsAutoPtr<sbLocalDatabaseSmartMediaList> newSmartList(
+    new sbLocalDatabaseSmartMediaList());
+  NS_ENSURE_TRUE(newSmartList, NS_ERROR_OUT_OF_MEMORY);
 
   rv = newSmartList->Init(aInner);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  *_retval = newSmartList;
-  NS_ADDREF(*_retval);
+
+  NS_ADDREF(*_retval = newSmartList);
+  newSmartList.forget();
 
   return NS_OK;
 }

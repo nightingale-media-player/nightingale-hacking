@@ -33,25 +33,27 @@
 #include "nsISupports.idl"
 #include "sbIMediaList.idl"
 
+interface sbIPropertyOperator;
+
 [scriptable, uuid(1E41DDE1-D6A0-4e12-91E8-A5D47E0332F4)]
 interface sbILocalDatabaseSmartMediaListCondition : nsISupports
 {
   /**
    * \brief The name of the property used in this condition.
    */
-  attribute AString propertyName;
+  readonly attribute AString propertyName;
 
   /**
    * \brief The operator used in this condition
    * \sa sbIPropertyInfo
    */
-  attribute AString operator;
+  readonly attribute sbIPropertyOperator operator;
 
   /**
    * \brief The left value for this condition.
    * Only the operator BETWEEN requires a rightValue as well.
    */
-  attribute AString leftValue;
+  readonly attribute AString leftValue;
 
   /**
    * \brief The right value for this condition.
@@ -59,49 +61,47 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
    * Trying to set this value when using a different operator will not fail
    * but will be ignored.
    */
-  attribute AString rightValue;
+  readonly attribute AString rightValue;
 
   /**
    * \brief This condition is a global limit. For example,
    * if you were to use the contentSize property, you can limit
    * the total size of the smart media list in bytes.
    */
-  attribute boolean limit;
+  readonly attribute boolean limit;
 };
 
 /**
-* \interface sbILocalDatabaseSmartMediaList
-* \brief Smart media list specific methods
-*
-* Methods and attributes that are specific to the smart media list are
-* implemented here.
-*
-* \sa sbIMediaList
-*/
+ * \interface sbILocalDatabaseSmartMediaList
+ * \brief Smart media list specific methods
+ *
+ * Methods and attributes that are specific to the smart media list are
+ * implemented here.
+ *
+ * \sa sbIMediaList
+ */
 [scriptable, uuid(50443d21-eae9-4563-a72d-c6f6b1ea499c)]
 interface sbILocalDatabaseSmartMediaList : sbIMediaList
 {
-  /**
-   * \brief Initialize the smart media list.
-   * \note If this method is not called, the smart media list
-   * calls will all fail.
-   */
-  void init(in sbIMediaItem aItem);
+  const unsigned long MATCH_ANY = 0;
+  const unsigned long MATCH_ALL = 1;
+
+  const unsigned long LIMIT_NONE = 0;
 
   /**
-   * \brief The SQL query used to build the smart media list
+   * \brief Match any or all conditions.
    */
-  readonly attribute AString currentQuery;
+  attribute unsigned long match;
 
   /**
    * \brief The number of conditions added to this smart playlist.
    */
-  readonly attribute long conditionCount;
+  readonly attribute unsigned long conditionCount;
 
   /**
    * \brief Limit the total amount of items in the smart media list.
    */
-  attribute long itemLimit;
+  attribute unsigned long itemLimit;
 
   /**
    * \brief Randomly select the items out of the entire result set.
@@ -111,22 +111,33 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
   /**
    * \brief Add a condition or limiting condition.
    */
-  long addCondition(in sbILocalDatabaseSmartMediaListCondition aCondition);
-  
+  sbILocalDatabaseSmartMediaListCondition
+    appendCondition(in AString aPropertyName,
+                    in sbIPropertyOperator aOperator,
+                    in AString aLeftValue,
+                    in AString aRightValue,
+                    in boolean limit);
+
   /**
    * \brief Remove a condition.
    */
-  void removeCondition(in long aConditionIndex);
+  void removeConditionAt(in unsigned long aConditionIndex);
 
   /**
    * \brief Get the condition at the specified index. Indexes start at 0.
-   * The last item is at conditionCount - 1.
+   *        The last item is at conditionCount - 1.
    */
-  sbILocalDatabaseSmartMediaListCondition getConditionAt(in long aConditionIndex);
+  sbILocalDatabaseSmartMediaListCondition
+    getConditionAt(in unsigned long aConditionIndex);
+
+  /**
+   * \brief Clear all conditions
+   */
+  void clearConditions();
 
   /**
    * \brief Rebuild the smart media list contents from the conditions specificied.
-   * You should call this after you add/modify/remove any conditions.
+   *        You should call this after you add/modify/remove any conditions.
    */
   void rebuild();
 };

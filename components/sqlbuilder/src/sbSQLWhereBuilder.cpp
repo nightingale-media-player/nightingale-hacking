@@ -73,6 +73,40 @@ sbSQLWhereBuilder::CreateMatchCriterionString(const nsAString& aTableName,
 }
 
 NS_IMETHODIMP
+sbSQLWhereBuilder::CreateMatchCriterionBetweenString(const nsAString& aTableName,
+                                                     const nsAString& aSrcColumnName,
+                                                     const nsAString& aLeftValue,
+                                                     const nsAString& aRightValue,
+                                                     sbISQLBuilderCriterion** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion =
+    new sbSQLBuilderCriterionBetweenString(aTableName, aSrcColumnName, aLeftValue, aRightValue, PR_FALSE);
+  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = criterion);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLWhereBuilder::CreateMatchCriterionNotBetweenString(const nsAString& aTableName,
+                                                        const nsAString& aSrcColumnName,
+                                                        const nsAString& aLeftValue,
+                                                        const nsAString& aRightValue,
+                                                        sbISQLBuilderCriterion** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion =
+    new sbSQLBuilderCriterionBetweenString(aTableName, aSrcColumnName, aLeftValue, aRightValue, PR_TRUE);
+  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = criterion);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbSQLWhereBuilder::CreateMatchCriterionLong(const nsAString& aTableName,
                                             const nsAString& aSrcColumnName,
                                             PRUint32 aMatchType,

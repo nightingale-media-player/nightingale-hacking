@@ -45,6 +45,7 @@ NS_IMETHOD GetOPERATOR_LESSEQUAL(nsAString & aOPERATOR_LESSEQUAL) { return _to G
 NS_IMETHOD GetOPERATOR_CONTAINS(nsAString & aOPERATOR_CONTAINS) { return _to GetOPERATOR_CONTAINS(aOPERATOR_CONTAINS); } \
 NS_IMETHOD GetOPERATOR_BEGINSWITH(nsAString & aOPERATOR_BEGINSWITH) { return _to GetOPERATOR_BEGINSWITH(aOPERATOR_BEGINSWITH); } \
 NS_IMETHOD GetOPERATOR_ENDSWITH(nsAString & aOPERATOR_ENDSWITH) { return _to GetOPERATOR_ENDSWITH(aOPERATOR_ENDSWITH); } \
+NS_IMETHOD GetOPERATOR_BETWEEN(nsAString & aOPERATOR_BETWEEN) { return _to GetOPERATOR_BETWEEN(aOPERATOR_BETWEEN); } \
 NS_IMETHOD GetNullSort(PRUint32 *aNullSort) { return _to GetNullSort(aNullSort); } \
 NS_IMETHOD SetNullSort(PRUint32 aNullSort) { return _to SetNullSort(aNullSort); } \
 NS_IMETHOD GetSortProfile(sbIPropertyArray * *aSortProfile) { return _to GetSortProfile(aSortProfile); } \
@@ -63,6 +64,7 @@ NS_IMETHOD GetUnits(nsAString & aUnits) { return _to GetUnits(aUnits); } \
 NS_IMETHOD SetUnits(const nsAString & aUnits) { return _to SetUnits(aUnits); } \
 NS_IMETHOD GetOperators(nsISimpleEnumerator * *aOperators) { return _to GetOperators(aOperators); } \
 NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperators(aOperators); } \
+NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retval) { return _to GetOperator(aOperator, _retval); } \
 NS_IMETHOD GetDisplayPropertiesForValue(const nsAString& aValue, nsAString& _retval) { return _to GetDisplayPropertiesForValue(aValue, _retval); }
 
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
@@ -122,7 +124,7 @@ protected:
   nsString  mUnits;
   
   PRLock*   mOperatorsLock;
-  nsCOMArray<nsISupports> mOperators;
+  nsCOMArray<sbIPropertyOperator> mOperators;
 };
 
 #endif /* __SBPROPERTYINFO_H__ */
