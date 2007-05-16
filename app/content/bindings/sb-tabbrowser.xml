@@ -1263,7 +1263,7 @@
       </method>      
 
       <method name="setUpInnerPlaylist">
-        <body><![CDATA[
+        <body><![CDATA[ try {
           var playlist = this.innerPlaylist;
           if ( playlist.mediaListView ) // New API
           {
@@ -1272,7 +1272,7 @@
                         .getService(Components.interfaces.sbIMediaListViewMap);
                         
             // Now all I have to do is find something resembling a usefully unique key.
-            var browser = this.mCurrentBrowser;
+            var browser = this.linkedBrowser;
             var history = browser.webNavigation.sessionHistory;
             var entry = history.getEntryAtIndex( history.index, false );
             
@@ -1298,7 +1298,7 @@
           }
           
           //
-          // THE RETURN ABOVE IS ALWAYS HIT.
+          // THE RETURN ABOVE IS ALWAYS HIT!!  THE CODE BELOW WON'T RUN!!
           //
           
           // Drag and Drop tracker object
@@ -1314,7 +1314,7 @@
   
           // And remember that we did this
           installed_listener = true;
-          ]]></body>
+          } catch( e ) { alert( "tabbrowser::setUpInnerPlaylist\n\n" + e ); }]]></body>
       </method>
       
       <!-- nsIWebProgressListener implementation -->
