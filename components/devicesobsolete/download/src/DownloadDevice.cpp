@@ -49,6 +49,20 @@
 
 /* *****************************************************************************
  *
+ * Download device imported services.
+ *
+ ******************************************************************************/
+
+/*
+ * SB_DOWNLOAD_DEVICE_CATEGORY  Download device category name.
+ */
+
+#define SB_DOWNLOAD_DEVICE_CATEGORY                                            \
+                            NS_LITERAL_STRING("Songbird Download Device").get()
+
+
+/* *****************************************************************************
+ *
  * Download device logging services.
  *
  ******************************************************************************/
@@ -82,9 +96,9 @@ NS_IMPL_ISUPPORTS2(sbDownloadDevice, sbIDeviceBase, sbIDownloadDevice)
 
 NS_IMETHODIMP sbDownloadDevice::Initialize()
 {
-    LOG(("1: Initialize\n"));
+    nsresult                    result = NS_OK;
 
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    return (result);
 }
 
 
@@ -95,7 +109,8 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
  * application shutdown.
  */
 
-NS_IMETHODIMP sbDownloadDevice::Finalize()
+NS_IMETHODIMP sbDownloadDevice::Finalize(
+    PRBool                      *aResult)
 {
     LOG(("1: Finalize\n"));
 
@@ -555,9 +570,8 @@ NS_IMETHODIMP sbDownloadDevice::SetName(
 NS_IMETHODIMP sbDownloadDevice::GetDeviceCategory(
     nsAString                   &aDeviceCategory)
 {
-    LOG(("1: GetDeviceCategory\n"));
-
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    aDeviceCategory.Assign(SB_DOWNLOAD_DEVICE_CATEGORY);
+    return (NS_OK);
 }
 
 NS_IMETHODIMP sbDownloadDevice::GetDeviceIdentifiers(

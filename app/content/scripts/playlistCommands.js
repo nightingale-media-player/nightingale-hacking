@@ -111,8 +111,6 @@ var SBWebPlaylistCommands =
 {
   m_Playlist: null,
   
-  m_Query: null,
-
   m_Types: new Array
   (
     "action",
@@ -261,34 +259,6 @@ var SBWebPlaylistCommands =
   
   getCommandEnabled: function( aSubmenu, aIndex, aHost )
   {
-    // First time, make a query to be able to check for the existence of the 
-    // download playlist
-    if ( this.m_Query == null )
-    {
-      // Find the guid and table for the download playlist.
-      var guid = "downloadDB";
-      var table = "download";
-      var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
-                                      getService(Components.interfaces.sbIDeviceManager);
-      if (deviceManager)
-      {
-        var downloadCategory = 'Songbird Download Device';
-        if (deviceManager.hasDeviceForCategory(downloadCategory))
-        {
-          var downloadDevice =
-            deviceManager.getDeviceByCategory(downloadCategory);
-          SBDownloadCommands.m_Device = downloadDevice;
-          guid = downloadDevice.getContext('');
-          table = downloadDevice.getDownloadTable('');
-        }
-      }
-      
-      // Setup a query to execute to test the existence of the table
-      this.m_Query = new sbIDatabaseQuery();
-      this.m_Query.setDatabaseGUID(guid);
-      this.m_Query.addQuery("select * from " + table + " limit 1");
-    }
-  
     var retval = false;
     switch ( this.m_Ids[aIndex] )
     {
@@ -307,7 +277,7 @@ var SBWebPlaylistCommands =
           retval = true;
       break;
       case "library_cmd_showdlplaylist":
-        retval = this.m_Query.execute() == 0;
+        retval = false;
       break;
       case "library_cmd_copylocation":
         retval = this.m_Playlist.tree.view.selection.getRangeCount() > 0;
@@ -348,31 +318,8 @@ var SBWebPlaylistCommands =
         {
           try
           {        
-            var filterCol = "uuid";
-            var filterVals = new Array();
-            
-            var columnObj = this.m_Playlist.tree.columns.getNamedColumn(filterCol);
-            var rangeCount = this.m_Playlist.tree.view.selection.getRangeCount();
-            for (var i=0; i < rangeCount; i++) 
-            {
-              var start = {};
-              var end = {};
-              this.m_Playlist.tree.view.selection.getRangeAt( i, start, end );
-              for( var c = start.value; c <= end.value; c++ )
-              {
-                if (c >= this.m_Playlist.tree.view.rowCount) 
-                {
-//                  alert( c + ">=" + this.m_Playlist.tree.view.rowCount );
-                  continue; 
-                }
-                
-                var val = this.m_Playlist.tree.view.getCellText(c, columnObj);
-                
-                filterVals.push(val);
-              }
-            }
-
-            onBrowserTransfer( this.m_Playlist.guid, this.m_Playlist.table, filterCol, filterVals.length, filterVals );
+            onBrowserTransfer(new SelectionUnwrapper
+                                (this.m_Playlist.treeView.selectedMediaItems));
             // And show the download table in the chrome playlist.
             gBrowser.onBrowserDownload();
           }
@@ -548,11 +495,6 @@ function listProperties(obj, objName)
     alert(result);
 }
 
-// Assume there's just one?
-var theDownloadContext = SB_NewDataRemote( "download.context", null );
-var theDownloadTable = SB_NewDataRemote( "download.table", null );
-var theDownloadExists = SB_NewDataRemote( "browser.hasdownload", null );
-
 /*
 var theDownloadListener = 
 {
@@ -613,7 +555,7 @@ var theDownloadListener =
 };
 */
 
-function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFilterValues)
+function onBrowserTransfer(mediaItems)
 {
     try
     {
@@ -647,22 +589,7 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
                 // Pick download destination
                 if ( ( download_data.retval == "ok" ) && ( download_data.value.length > 0 ) )
                 {
-                  var downloadTable = {};
-                  // Passing empty string for device name as download device has just one device
-                  // Prepare table for download & get the name for newly prepared download table
-                  //downloadDevice.addCallback(theDownloadListener);
-                  
-                  downloadDevice.autoDownloadTable('', guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', download_data.value, downloadTable);
-                  
-                  // Record the current download table
-                  theDownloadContext.stringValue = downloadDevice.getContext('');
-                  theDownloadTable.stringValue = downloadTable.value;
-                  theDownloadExists.boolValue = true;
-                  
-                  // Register the guid and table with the playlist source to always show special download commands.
-                  SBDownloadCommands.m_Device = downloadDevice;
-                  var source = new sbIPlaylistsource();
-                  source.registerPlaylistCommands( downloadDevice.getContext(''), downloadTable.value, "download", SBDownloadCommands );
+                  downloadDevice.transferItems("", null, null, 0, true, null);
                 }
             }
         }
@@ -962,17 +889,6 @@ try
       var downloadDevice =
         deviceManager.getDeviceByCategory(downloadCategory);
       SBDownloadCommands.m_Device = downloadDevice;
-      var guid = downloadDevice.getContext('');
-      var table = "download"; // downloadDevice.GetTransferTableName('');
-      var source = new sbIPlaylistsource();
-      try
-      {
-        source.registerPlaylistCommands( guid, table, "download", SBDownloadCommands );
-      }
-      catch ( err )
-      {
-        alert( "source.registerPlaylistCommands( " + guid+ ", " + table+ " );\r\n" + err )
-      }
     }
   }
 } catch(e) {}
