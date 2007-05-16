@@ -1276,12 +1276,28 @@
             var history = browser.webNavigation.sessionHistory;
             var entry = history.getEntryAtIndex( history.index, false );
             
+            // Is there something to restore?
             var restore = viewMap.getView( browser, entry );
-            
-            // Save the current view if there is nothing to restore
             if ( restore == null )
             {
+              // Save the current view if there is nothing to restore
               viewMap.setView( browser, entry, playlist.mediaListView );
+              
+              /* 
+                // Sample code for Ian
+                var parent = {}, page = {};
+                viewMap.getContext( playlist.mediaListView, parent, page );
+                alert
+                ( 
+                  parent.value +
+                  ( ( parent.value == browser ) ? " == " : " != " ) +
+                  browser +
+                  "\n\n" + 
+                  page.value +
+                  ( ( page.value == entry ) ? " == " : " != " ) +
+                  entry
+                );
+              */
             }
             else
             {
@@ -1382,6 +1398,12 @@
     </implementation>
     <handlers>
       <handler event="TabClose"><![CDATA[
+      
+        // When we drop the tab, release all of the associated views stored in the map.
+        Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                  .getService(Components.interfaces.sbIMediaListViewMap)
+                  .releaseViews(event.target.linkedBrowser);
+      
         // clean up listeners
         this.linkedBrowser.webProgress.removeProgressListener(this._browserStatusFilter);
         this._browserStatusFilter.addProgressListener(this);

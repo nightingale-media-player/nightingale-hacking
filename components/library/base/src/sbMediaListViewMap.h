@@ -87,7 +87,16 @@ private:
   ~sbMediaListViewMap();
 
 private:
+
+  static PLDHashOperator PR_CALLBACK
+  ReleaseLookups( nsISupportsHashKey::KeyType aKey,
+                  sbIMediaListView* aEntry,
+                  void* aUserData );
+
+
   nsClassHashtableMT< nsISupportsHashKey, nsInterfaceHashtableMT< nsISupportsHashKey, sbIMediaListView > > mViewMap;
+  nsInterfaceHashtableMT< nsISupportsHashKey, nsISupports > mParentLookup; // for getContext
+  nsInterfaceHashtableMT< nsISupportsHashKey, nsISupports > mPageLookup;   // for getContext
 };
 
 #endif /* __SB_MEDIALISTVIEWMAP_H__ */
