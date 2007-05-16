@@ -365,3 +365,12 @@ sb-locationbar-textbox {
   -moz-binding: url("chrome://songbird/content/bindings/sb-locationbar-textbox.xml#sb-locationbar-textbox") !important;
 }
 
+/* BROWSER TOOLBAR */
+sb-browser-toolbar {
+  -moz-binding: url("chrome://songbird/content/bindings/webToolbar.xml#browser-toolbar") !important;
+}
+
+/* SPINNER */
+sb-browser-spinner {
+  -moz-binding: url("chrome://songbird/content/bindings/webToolbar.xml#browser-spinner") !important;
+}

@@ -155,8 +155,12 @@
             <vbox flex="1" id="main_pane_border">
             
               <vbox id="frame_main_pane_html" hidden="false" >
+                
                 <!-- WEB BAR -->
-                <hbox id="browser_toolbar" align="center" flex="1">
+                <sb-browser-toolbar id="browser_toolbar" flex="1" />                                                       
+                
+               <!-- TODO: Remove this once web-toolbar styling is complete
+               <hbox id="browser_toolbar" align="center" flex="1">
                   <button disabled="true" id="browser_back" oncommand="gBrowser.goBack();" tooltiptext="&tooltip.browser.back;"/>
                   <button disabled="true" id="browser_fwd" oncommand="gBrowser.goForward();" tooltiptext="&tooltip.browser.fwd;"/>
                   <button disabled="false" id="browser_refresh" oncommand="gBrowser.reload();" tooltiptext="&tooltip.browser.refresh;"/>
@@ -164,7 +168,6 @@
                   <button disabled="false" id="browser_home" oncommand="gBrowser.goHome();" tooltiptext="&tooltip.browser.home;"/>
                   <button disabled="false" id="browser_bookmark" oncommand="bmManager.addBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
 
-                  <!-- ADDRESS BOX -->
                   <sb-locationbar-textbox id="location_bar"
                                           flex="6" align="center"
                                           browser="frame_main_pane" />
@@ -174,15 +177,14 @@
                     <grippy/>
                   </sb-smart-splitter>    
 
-                  <!-- SEARCH WIDGET -->
                   <searchbar id="searchbar" flex="1"/>                                         
                   
-                  <!-- SPINNER -->
                   <spacer style="min-width: 5px !important;" width="5" height="16"/>
                   <spacer width="16" height="16" id="spinner_spin" class="spinner_spin" hidden="true"/>
                   <spacer width="16" height="16" id="spinner_stopped" class="spinner_stopped" hidden="true"/>
                   <spacer style="min-width: 8px !important;" width="8" height="16"/>
                 </hbox>
+                -->
               </vbox>
               <sb-tabbrowser id="frame_main_pane" flex="1"
                              servicepane="servicepane"
@@ -224,6 +226,8 @@
   </sb-sys-outer-frame>
 
   <commandset id="mainCommandSet" />
+  
+  <broadcasterset id="mainBroadcasterSet" />
   
   <keyset id="mainKeyset">
     <key id="newplaylist-key" modifiers="accel" key="&menu.file.new.key;" oncommand="doMenu('file.new');"/>

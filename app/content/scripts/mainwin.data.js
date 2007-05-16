@@ -52,21 +52,10 @@ try
       MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.repx", "checked", true, true, "parseInt( value ) != 0" ) );
       MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.rep1", "checked", true, true, "parseInt( value ) != 1" ) );
       MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.repa", "checked", true, true, "parseInt( value ) != 2" ) );      
-     
-      // Faceplate Items    
-      
-      MainwinAdd( SBDataBindElementAttribute( "faceplate.loading", "spinner_stopped", "hidden", true ) );
-      MainwinAdd( SBDataBindElementAttribute( "faceplate.loading", "spinner_spin", "hidden", true, true ) );
-      
+           
 //      MainwinAdd( SBDataBindElementProperty ( "faceplate.loading", "status_progress", "mode", false, false, "if ( value == '1' ) value = 'undetermined'; else value = ''; value;" ) ); // <sb-status-progressmeter/>
-      
-      // Browser Items
-      MainwinAdd( SBDataBindElementAttribute( "browser.cangoback", "browser_back", "disabled", true, true ) );
-      MainwinAdd( SBDataBindElementAttribute( "browser.cangofwd", "browser_fwd", "disabled", true, true ) );
-      MainwinAdd( SBDataBindElementAttribute( "faceplate.loading", "browser_stop", "disabled", true, true ) );
         
       MainwinAdd( SBDataBindElementAttribute( "jumpto.visible", "control.jumpto", "checked", true ) );
-      
       
       // Options
 //      MainwinAdd( SBDataBindElementAttribute( "option.htmlbar", "file.htmlbar", "checked", true ) );

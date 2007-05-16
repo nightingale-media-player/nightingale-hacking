@@ -24,11 +24,124 @@
 //
  */
 
-
+/** TODO move this? **/
+@import url(chrome://global/skin/toolbar.css); 
 
 /** 
 ************************************************************************************************************************************************
 WEB TOOLBAR IMAGES
+************************************************************************************************************************************************
+*/
+
+#back-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+#back-button:hover
+{
+  -moz-image-region: rect(16px 16px 32px 0px);
+}
+#back-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 16px 64px 0px);
+}
+#back-button[active="true"]
+{
+  -moz-image-region: rect(32px 16px 48px 0px);
+}
+#reload-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  -moz-image-region: rect(0px 48px 16px 32px);
+}
+#reload-button:hover
+{
+  -moz-image-region: rect(16px 48px 32px 32px);
+}
+#reload-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 48px 94px 32px);
+}
+#reload-button[active="true"]
+{
+  -moz-image-region: rect(32px 48px 48px 32px);
+}
+#stop-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  -moz-image-region: rect(0px 64px 16px 48px);
+}
+#stop-button:hover
+{
+  -moz-image-region: rect(16px 64px 32px 48px);
+}
+#stop-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 64px 64px 48px);
+}
+#stop-button[active="true"]
+{
+  -moz-image-region: rect(32px 64px 48px 48px);
+}
+#forward-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  -moz-image-region: rect(0px 32px 16px 16px);
+}
+#forward-button:hover
+{
+  -moz-image-region: rect(16px 32px 32px 16px);
+}
+#forward-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 32px 64px 16px);
+}
+#forward-button[active="true"]
+{
+  -moz-image-region: rect(32px 32px 48px 16px);
+}
+#home-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  -moz-image-region: rect(0px 80px 16px 64px);
+}
+#home-button:hover
+{
+  -moz-image-region: rect(16px 80px 32px 64px);
+}
+#home-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 80px 64px 64px);
+}
+#home-button[active="true"]
+{
+  -moz-image-region: rect(32px 80px 48px 64px);
+}
+#bookmark-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
+  -moz-image-region: rect(0px 96px 16px 80px);
+}
+#bookmark-button:hover
+{
+  -moz-image-region: rect(16px 96px 32px 80px);
+}
+#bookmark-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 96px 64px 80px);
+}
+#bookmark-button[active="true"]
+{
+  -moz-image-region: rect(32px 96px 48px 80px);
+}
+
+
+
+/** 
+************************************************************************************************************************************************
+OLD WEB TOOLBAR IMAGES
+TODO: Remove
 ************************************************************************************************************************************************
 */
 
