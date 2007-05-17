@@ -55,10 +55,12 @@
 
 /*
  * SB_DOWNLOAD_DEVICE_CATEGORY  Download device category name.
+ * SB_DOWNLOAD_DEVICE_ID        Download device identifier.
  */
 
 #define SB_DOWNLOAD_DEVICE_CATEGORY                                            \
                             NS_LITERAL_STRING("Songbird Download Device").get()
+#define SB_DOWNLOAD_DEVICE_ID   "download"
 
 
 /* *****************************************************************************
@@ -97,6 +99,22 @@ NS_IMPL_ISUPPORTS2(sbDownloadDevice, sbIDeviceBase, sbIDownloadDevice)
 NS_IMETHODIMP sbDownloadDevice::Initialize()
 {
     nsresult                    result = NS_OK;
+
+    /* Create the download device library. */
+    result = CreateDeviceLibrary(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
+                                 NULL,
+                                 this);
+
+    /* Get the download device library. */
+    if (NS_SUCCEEDED(result))
+    {
+        result = GetLibraryForDevice(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
+                                     getter_AddRefs(mpDownloadLibrary));
+    }
+
+    /* Register the download device library. */
+    if (NS_SUCCEEDED(result))
+        result = RegisterDeviceLibrary(mpDownloadLibrary);
 
     return (result);
 }
