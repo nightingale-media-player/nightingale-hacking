@@ -306,14 +306,22 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
 //sbDeviceBase class.
 sbDeviceBase::sbDeviceBase()
 {
-  mDeviceLibraries.Init();
-  mDeviceQueues.Init();
-  mDeviceCallbacks.Init();
 }
 
 sbDeviceBase::~sbDeviceBase()
 {
+}
 
+nsresult
+sbDeviceBase::Init()
+{
+  if(!mDeviceLibraries.Init() ||
+     !mDeviceQueues.Init() ||
+     !mDeviceCallbacks.Init()) {
+    return NS_ERROR_OUT_OF_MEMORY;
+  }
+  
+  return NS_OK;
 }
 
 nsresult

@@ -98,6 +98,8 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 {
     nsresult                    result = NS_OK;
 
+    result = Init();
+
     return (result);
 }
 

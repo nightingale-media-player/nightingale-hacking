@@ -113,6 +113,11 @@ public:
   sbDeviceBase();
   virtual ~sbDeviceBase();
 
+  /** 
+   * \brief Initialize the base device class for use.
+   */
+  nsresult Init();
+
   /**
    * \brief Create a library for a device instance.
    *
