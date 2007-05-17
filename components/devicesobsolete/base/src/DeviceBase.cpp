@@ -505,7 +505,7 @@ sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
     nsAutoString filename(aDeviceIdentifier);
     filename.AppendLiteral(".db");
 
-    rv = libraryFile->Append(filename);
+    rv = libraryFile->SetLeafName(filename);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
