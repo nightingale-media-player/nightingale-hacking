@@ -1216,21 +1216,50 @@
                       .createInstance(Components.interfaces.sbIPropertyArray);
           propArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl",
                                    this.linkedBrowser.currentURI.spec);
-                                     
-          // Create the view.
-          var view = this._webLibrary.createView();
-          view.setFilters(propArray);
+                             
+          // See if we're supposed to be restoring a view or making a new one
+          var viewMap =
+            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                      .getService(Components.interfaces.sbIMediaListViewMap);
+                      
+          // Now all I have to do is find something resembling a usefully unique key.
+          var browser = this.linkedBrowser;
+          var history = browser.webNavigation.sessionHistory;
+          var entry = history.getEntryAtIndex( history.index, false );
+          
+          // Is there something to restore?
+          var skipScan = true;
+          var view = viewMap.getView( browser, entry );
+          if ( view == null )
+          {
+            // If not, create the view
+            view = this._webLibrary.createView();
+            view.setFilters(propArray);
+            // And save it
+            viewMap.setView( browser, entry, view );
+            skipScan = false;
+          }
 
-          // show the web playlist?
+          // Otherwise, don't show the web playlist until we see some tracks.
           this.outerPlaylistShowing = false;
           
-          // Bind the Web Playlist UI element to the subscribed playlist.
+          // Bind the Web Playlist UI element to the subscribed playlist
           SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
           dump('this.outerPlaylist = '+this.outerPlaylist+'\n');
           dump('this.outerPlaylist.localName = '+this.outerPlaylist.localName+'\n');
           this.outerPlaylist.bind(view, SBWebPlaylistCommands,
                                   SBDataGetIntValue("browser.playlist.height"),
                                   SBDataGetBoolValue("browser.playlist.collapsed"));
+
+          // Force it to redraw (grr)
+          this.outerPlaylist.tree.boxObject.invalidate();
+          
+          // If we're restoring a view, don't do anything else
+          if ( skipScan )
+          {
+            this.outerPlaylistShowing = true;
+            return;
+          }
 
           // scrape the document.
           var context = {
