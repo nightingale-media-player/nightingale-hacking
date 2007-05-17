@@ -27,3 +27,11 @@
 /* NOTHING! */
 
 @import url("chrome://global/skin/");
+@import url(chrome://songbird-bindings/skin/bindings.css); 
+
+@import url(chrome://songbird/content/feathers/basic-layouts/css/mainwin.css); /* size and positioning for the main application window **/
+@import url(chrome://songbird/content/feathers/basic-layouts/css/miniplayer.css); /* css for the mini player **/
+
+@import url(plucked_colors.css); /* colors for plucked **/
+@import url(plucked_miniplayer.css); /* css for the plucked mini player **/
+

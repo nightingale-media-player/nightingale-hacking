@@ -1,0 +1,350 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+@namespace html url("http://www.w3.org/1999/xhtml");
+/** 
+************************************************************************************************************************************************
+VOLUME
+************************************************************************************************************************************************
+*/
+#volume_box,
+sb-player-volume-slider,
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb > gripper,
+sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb,
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter,
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar,
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder,
+#songbird_volume_e,
+#songbird_volume_w
+{
+  background-color: transparent !important;
+}
+
+
+#browser_toolbar button 
+{
+  -moz-appearance: none !important;
+  margin-left: 5px !important;
+  height: 30px;
+  width: 30px;  
+  padding: 0px;
+  margin: 2px 0px 2px 2px;
+  min-width: 0px;
+}
+
+#main_pane_border,
+#frame_servicetree_pane,
+#searchbar
+{
+  border: 1px solid #ccc;
+}
+ 
+
+/** 
+************************************************************************************************************************************************
+FACEPLATE
+************************************************************************************************************************************************
+*/
+
+.sb-progress-slider-progressmeter,
+.sb-progress-slider-slider,
+.sb-progress-slider-thumb
+{
+  -moz-appearance: none !important;
+}
+
+/* the seekbar slider */
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb
+{
+  -moz-appearance: none;
+  background-color: #202220; /** Dark Color 1 */
+  border: 1px solid #202220 !important;
+  -moz-border-top-colors: #202220 #202220;
+  -moz-border-right-colors: #202220 #202220;
+  -moz-border-bottom-colors: #202220 #202220;
+  -moz-border-left-colors: #202220 #202220;
+}
+
+.faceplate-seekbar
+{
+  -moz-appearance: none;
+  border: none;
+}
+
+.faceplate-text
+{
+  color: #0f100f; /** Dark Color 2 */
+}
+
+.faceplate-progressmeter
+{
+  -moz-appearance: none;
+  border: none;
+}
+
+.faceplate-progressmeter > .progress-bar,
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar
+{
+  -moz-appearance: none;
+  background-color: #8A8F84;
+}
+
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder,
+.faceplate-progressmeter > .progress-remainder
+{
+  -moz-appearance: none;
+  background-color: #B3BAAC;
+}
+
+
+#frame_control_pane button
+{
+  background-color: transparent !important;
+}
+
+.faceplate-seekbar-box
+{
+ padding-left: 10px;
+ padding-right: 10px;
+ min-height: 14px !important;
+  max-height: 14px !important;
+}
+
+.faceplate-progressmeter,
+.faceplate-seekbar
+{
+  -moz-appearance: none !important;
+  min-height: 10px !important;
+  max-height: 10px !important;
+}
+
+/* the seekbar slider */  
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider,
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
+{
+  -moz-appearance: none !important;
+  min-height: 10px !important;
+  max-height: 10px !important;
+}
+
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb 
+{
+  -moz-appearance: none !important;
+  width: 21px !important;
+  min-height: 8px !important;
+  max-height: 8px !important;
+}
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb  > gripper
+{
+  min-height: 8px !important;
+  max-height: 8px !important;
+  -moz-appearance: none !important;
+}
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
+{
+  -moz-appearance: none !important;
+  min-height: 10px !important;
+  max-height: 10px !important;
+  margin: 0px;
+  padding: 0px;
+  border: 0px !important;
+}
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar,
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder
+{
+  -moz-appearance: none !important;
+  min-height: 10px !important;
+  max-height: 10px !important;
+}
+
+
+#songbird_menu
+{
+  border: none;
+}
+
+/* size and positioning TODO: Move this? */
+
+#control_right_box
+{
+ width: 500px;
+ min-height: 50px !important;
+}
+
+#playbutton_box
+{
+  min-height: 40px;
+}
+
+sb-player-repeat-button,
+sb-player-shuffle-button,
+sb-player-curtrack-button,
+sb-player-cyclefaceplate-button
+{
+  margin: 0 !important;
+}
+
+.servicepane_tree > treechildren::-moz-tree-row( dropOn )
+{
+  border-left: 5px solid #8A8F84 !important;
+}
+
+.servicepane_tree > treechildren::-moz-tree-row( dropBefore )
+{
+  border-top: 5px solid #8A8F84 !important;
+}
+
+.servicepane_tree > treechildren::-moz-tree-row( dropAfter )
+{
+  border-bottom: 5px solid #8A8F84 !important;
+}
+
+
+/** 
+************************************************************************************************************************************************
+THE PLAYLIST
+************************************************************************************************************************************************
+*/ 
+
+playlist
+{
+  background-color: transparent !important;
+}
+
+playlist > stack > vbox
+{
+  background-color: transparent !important;
+}
+
+#playlist_tree
+{
+  background-color: transparent !important;  
+}
+
+
+.playlist-toolbar-bkg
+{
+  border-top: 1px solid #7a7c7c;
+  background-color: transparent !important;
+}
+
+treechildren::-moz-tree-column(insertafter)
+{
+  border-right: 2px solid transparent !important;
+}
+
+treechildren::-moz-tree-column(insertbefore)
+{
+  border-right: 2px solid transparent !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-row
+{
+  border: 0px solid transparent !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-row( odd )
+{
+  background-color: #eee; /** Light Color 3 */
+}
+
+#playlist_tree >  treechildren::-moz-tree-row( even )
+{
+  background-color: #feffff; /** Light Color Brightest */
+}
+
+#playlist_tree > treechildren::-moz-tree-cell
+{
+  border-right: 1px solid #eee !important; /** Light Color 3 */
+}
+
+#playlist_tree > treechildren::-moz-tree-cell(insertafter)
+{
+  border-right: 5px solid #202220 !important; /** Dark Color 1 */
+}
+
+#playlist_tree > treechildren::-moz-tree-cell(insertbefore)
+{
+  border-left: 5px solid transparent !important; 
+}
+
+#playlist_tree > treechildren::-moz-tree-row( selected )
+{
+  background-color: #8A8F84; /** Light Color 2 */
+}
+#playlist_tree > treechildren::-moz-tree-row( selected, focus )
+{
+  background-color: #B3BAAC; /** Light Color 1 */
+}
+
+#playlist_tree > treechildren::-moz-tree-cell-text
+{
+  color: #202220; /** Dark Color 1 */
+}
+
+#playlist_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #0f100f; /** Dark Color 2 */
+}
+
+#playlist_tree > treechildren::-moz-tree-cell( selected )
+{
+  border-right: 1px solid #B3BAAC !important; /** Light Color 2 */
+}
+
+#playlist_tree > treechildren::-moz-tree-progressmeter
+{
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #B3BAAC; /** Light Color 1 */
+}
+
+#playlist_tree > treechildren::-moz-tree-progressmeter( odd )
+{
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #B3BAAC; /** Light Color 1 */
+}
+
+#playlist_tree > treechildren::-moz-tree-progressmeter( selected )
+{
+  background-color: #8A8F84; /** Light Color 2 */
+  color: #0f100f; /** Dark Color 2 */
+}
+
+#playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
+{
+  background-color: #8A8F84; /** Light Color 2 */
+}
+
+
+.locationbar-image
+{
+  margin-left: 3px !important;
+}
+
+#searchbar > hbox > stack > toolbarbutton > .toolbarbutton-icon
+{
+  margin-left: 10px !important;
+}

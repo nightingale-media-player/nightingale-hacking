@@ -1,0 +1,51 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+
+#mini_seekbar > stack > .sb-progress-slider-progressmeter,
+#mini_seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar,
+#mini_seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder,
+#mini_seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb,
+#mini_seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb > gripper,
+#mini_seekbar > stack > .sb-progress-slider-slider
+{
+  -moz-appearance: none !important;
+  min-height: 4px !important;
+  background-color: Transparent !important;
+}
+
+#mini_seekbar
+{
+  height: 4px !important;
+  width: auto !important;
+  border: 0px !important;
+  margin-top: 12px !important;
+}
+
+#mini_btn_feathers > .sb-feathers-toggle-button > .clickhold-button
+{ background-color: transparent !important; }
