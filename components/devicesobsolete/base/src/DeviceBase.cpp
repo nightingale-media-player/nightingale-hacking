@@ -306,7 +306,9 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
 //sbDeviceBase class.
 sbDeviceBase::sbDeviceBase()
 {
-
+  mDeviceLibraries.Init();
+  mDeviceQueues.Init();
+  mDeviceCallbacks.Init();
 }
 
 sbDeviceBase::~sbDeviceBase()
@@ -568,7 +570,7 @@ sbDeviceBase::AddItemToTransferQueue(const nsAString &aDeviceIdentifier,
 
   nsCOMPtr<nsIMutableArray> deviceQueue;
   if(mDeviceQueues.Get(aDeviceIdentifier, getter_AddRefs(deviceQueue))) {
-    return deviceQueue->AppendElement(aMediaItem, PR_TRUE);
+    return deviceQueue->AppendElement(aMediaItem, PR_FALSE);
   }
 
   return NS_ERROR_INVALID_ARG;
