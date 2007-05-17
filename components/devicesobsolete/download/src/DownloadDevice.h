@@ -24,104 +24,45 @@
 //
 */
 
-#ifndef __DOWNLOAD_DEVICE_H__
-#define __DOWNLOAD_DEVICE_H__
-
-/* *****************************************************************************
- *******************************************************************************
- *
- * Download device.
- *
- *******************************************************************************
- ******************************************************************************/
-
 /** 
 * \file  DownloadDevice.h
 * \brief Songbird DownloadDevice Component Definition.
 */
 
-/* *****************************************************************************
- *
- * Download device configuration.
- *
- ******************************************************************************/
+#ifndef __DOWNLOAD_DEVICE_H__
+#define __DOWNLOAD_DEVICE_H__
 
-/*
- * Download device XPCOM component definitions.
- */
+#include "sbIDownloadDevice.h"
+#include "DeviceBase.h"
 
-#define SONGBIRD_DownloadDevice_CONTRACTID                                     \
-                            "@songbirdnest.com/Songbird/Device/DownloadDevice;1"
-#define SONGBIRD_DownloadDevice_CLASSNAME "Songbird Download Device"
-#define SONGBIRD_DownloadDevice_CID                                            \
-{                                                                              \
-    0x961DA3F4,                                                                \
-    0x5EF1,                                                                    \
-    0x4AD0,                                                                    \
-    { 0x81, 0x8d, 0x62, 0x2C, 0x7B, 0xD1, 0x74, 0x47}                          \
+// DEFINES ====================================================================
+#define SONGBIRD_DownloadDevice_CONTRACTID                \
+  "@songbirdnest.com/Songbird/Device/DownloadDevice;1"
+#define SONGBIRD_DownloadDevice_CLASSNAME                 \
+  "Songbird Download Device"
+#define SONGBIRD_DownloadDevice_CID                       \
+{ /* 961da3f4-5ef1-4ad0-818d-622c7bd17447 */              \
+  0x961da3f4,                                             \
+  0x5ef1,                                                 \
+  0x4ad0,                                                 \
+  {0x81, 0x8d, 0x62, 0x2c, 0x7b, 0xd1, 0x74, 0x47}        \
 }
 
+// CLASSES ====================================================================
 
-/* *****************************************************************************
- *
- * Download device imported services.
- *
- ******************************************************************************/
+class sbDownloadDevice;
 
-/* Local imports. */
-#include <DeviceBase.h>
-#include <sbIDownloadDevice.h>
-
-/* Mozilla imports. */
-#include <nsCOMPtr.h>
-
-/* Songbird imports. */
-#include <sbILibrary.h>
-
-
-/* *****************************************************************************
- *
- * Download device classes.
- *
- ******************************************************************************/
-
-/*
- * sbDownloadDevice class.
- */
-
+// Since download device has only one instance, the "Device String" notion does not
+// apply to this device and hence ignored in all the functions.
 class sbDownloadDevice :  public sbIDownloadDevice, public sbDeviceBase
 {
 
-    /* *************************************************************************
-     *
-     * Public interface.
-     *
-     **************************************************************************/
+public:
 
-    public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIDEVICEBASE
+  NS_DECL_SBIDOWNLOADDEVICE
 
-    /*
-     * Inherited interfaces.
-     */
-
-    NS_DECL_ISUPPORTS
-    NS_DECL_SBIDEVICEBASE
-    NS_DECL_SBIDOWNLOADDEVICE
-
-
-    /* *************************************************************************
-     *
-     * Private interface.
-     *
-     **************************************************************************/
-
-    private:
-
-    /*
-     * mpDownloadLibrary        Download device library.
-     */
-
-    nsCOMPtr<sbILibrary>        mpDownloadLibrary;
 };
 
 #endif // __DOWNLOAD_DEVICE_H__
