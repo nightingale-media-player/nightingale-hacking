@@ -127,7 +127,7 @@ protected:
   nsresult RunThread( PRBool * bShutdown );
   nsresult FinishJob();
 
-  static nsresult AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsString aTableName, sbIMediaItem *aMediaItem  );
+  static nsresult AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsString aTableName, sbIMediaItem *aMediaItem, jobitem_t **_retval );
   static nsresult GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableName, PRBool isWorkerThread, jobitem_t **_retval );
   static nsresult SetItemIsScanned( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
   static nsresult SetItemIsWrittenAndDelete( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
@@ -136,7 +136,7 @@ protected:
   static nsresult ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTableName );
   static nsresult StartHandlerForItem( jobitem_t *aItem );
   static nsresult AddMetadataToItem( jobitem_t *aItem, PRBool aShouldFlush );
-  static nsresult AddDefaultMetadataToItem( jobitem_t *aItem, PRBool aShouldFlush );
+  static nsresult AddDefaultMetadataToItem( jobitem_t *aItem, sbIMediaItem *aMediaItem, PRBool aShouldFlush );
   static nsString CreateDefaultItemName( const nsString &aURLString );
 
   void IncrementDataRemote();

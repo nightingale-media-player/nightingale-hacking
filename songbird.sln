@@ -117,10 +117,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "metadatahandlerwma", "compo
 		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403} = {A71C1B20-D331-4A9B-9D7D-D6910EBCB403}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "faceplateregistration", "components\faceplateregistration\faceplateregistration.vcproj", "{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commandline", "components\commandline\commandline.vcproj", "{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -133,6 +129,8 @@ Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{00A5E4C1-0FFC-4932-8E50-763DF2E57054}.Debug.ActiveCfg = Debug|Win32
@@ -230,10 +228,6 @@ Global
 		{CD3FFE4C-C536-490C-BC92-FF8EF05C6B56}.Debug.Build.0 = Debug|Win32
 		{CD3FFE4C-C536-490C-BC92-FF8EF05C6B56}.Release.ActiveCfg = Release|Win32
 		{CD3FFE4C-C536-490C-BC92-FF8EF05C6B56}.Release.Build.0 = Release|Win32
-		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Debug.ActiveCfg = Debug|Win32
-		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Debug.Build.0 = Debug|Win32
-		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Release.ActiveCfg = Release|Win32
-		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Release.Build.0 = Release|Win32
 		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Debug.ActiveCfg = Debug|Win32
 		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Debug.Build.0 = Debug|Win32
 		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Release.ActiveCfg = Release|Win32

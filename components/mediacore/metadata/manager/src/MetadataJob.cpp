@@ -73,9 +73,10 @@ extern PRLogModuleInfo* gMetadataLog;
 // DEFINES ====================================================================
 
 // GLOBALS ====================================================================
-const PRUint32 NUM_CONCURRENT_MAINTHREAD_ITEMS = 10;
+const PRUint32 NUM_CONCURRENT_MAINTHREAD_ITEMS = 3;
 const PRUint32 NUM_ITEMS_BEFORE_FLUSH = 50;
 const PRUint32 NUM_ITEMS_PER_INIT_LOOP = 100;
+const PRUint32 TIMER_LOOP_MS = 100;
 
 // CLASSES ====================================================================
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataJob, sbIMetadataJob);
@@ -251,7 +252,7 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   }
 
   // Launch the timer to complete initialization.
-  rv = mTimer->InitWithFuncCallback( MetadataJobTimer, this, 100, nsITimer::TYPE_REPEATING_SLACK );
+  rv = mTimer->InitWithFuncCallback( MetadataJobTimer, this, TIMER_LOOP_MS, nsITimer::TYPE_REPEATING_SLACK );
   NS_ENSURE_SUCCESS(rv, rv);
 
   // So now it's safe to launch the thread
@@ -326,11 +327,21 @@ nsresult sbMetadataJob::RunTimer()
       rv = mMainThreadQuery->ResetQuery();
       NS_ENSURE_SUCCESS(rv, rv);
       rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("begin"));
-      for (; mInitCount < max && mInitCount < total; ) 
+      for ( ; mInitCount < max && mInitCount < total; mInitCount++ ) 
       {
-        // This places the item info on the query.
-        rv = this->AddItemToJobTableQuery( mMainThreadQuery, mTableName, mInitArray[ mInitCount++ ] );
-//        NS_ENSURE_SUCCESS(rv, rv); // Make this more resilient to people being pissy underneath us.
+        // Place the item info on the query to track in our own database, get back a temporary job item.
+        sbMetadataJob::jobitem_t * tempItem;
+        AddItemToJobTableQuery( mMainThreadQuery, mTableName, mInitArray[ mInitCount ], &tempItem );
+
+        // Use the temporary item to stuff a default title value in the properties cache (don't flush to library database, yet)
+        AddDefaultMetadataToItem( tempItem, mInitArray[ mInitCount ], PR_FALSE );
+
+        // Flush default values when loop would complete
+        if ( mInitCount+1 == max || mInitCount+1 == total )
+          mInitArray[ mInitCount ]->Write();
+
+        // Delete the temporary item
+        delete tempItem; 
       }
       rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("commit"));
       NS_ENSURE_SUCCESS(rv, rv);
@@ -375,14 +386,10 @@ nsresult sbMetadataJob::RunTimer()
       {
         // Try to write it out
         rv = AddMetadataToItem( item, PR_TRUE ); // Flush properties cache every time
-        if ( ! NS_SUCCEEDED(rv) )
-        {
-          // If it fails, try to just add a default
-          AddDefaultMetadataToItem( item, PR_TRUE );
-        }
+        // NS_ENSURE_SUCCESS(rv, rv); // Allow it to fail.  We already put a default value in for it.
         rv = SetItemIsWrittenAndDelete( mMainThreadQuery, mTableName, item );
         NS_ENSURE_SUCCESS(rv, rv);
-        // And NULL the array entry
+        // And NULL the array entry -- releasing the item?
         mTimerWorkers[ i ] = nsnull;
       }
     }
@@ -422,8 +429,6 @@ nsresult sbMetadataJob::RunTimer()
       // Ignore errors on the metadata loop, just set a default and keep going.
       if ( ! NS_SUCCEEDED(rv) )
       {
-        // If it fails, try to just add a default
-        AddDefaultMetadataToItem( item, PR_TRUE );
         // Give a nice warning
         TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - Unable to add metadata for( %s )", this, item->url));
         // Record this item as completed.
@@ -591,11 +596,9 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
       // Make an sbIMediaItem and push the metadata into it
       rv = AddMetadataToItem( item, flush );
     }
-    // Ignore errors on the metadata loop, just set a default and keep going.
+    // Ignore errors on the metadata loop, just set a warning and keep going.
     if ( NS_FAILED(rv) )
     {
-      // Try to just add a default
-      AddDefaultMetadataToItem( item, flush );
       // Give a nice warning
       TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - Unable to add metadata for( %s )", this, item->url));
     }
@@ -681,7 +684,7 @@ nsresult sbMetadataJob::FinishJob()
   return mMainThreadQuery->Execute( &error );
 }
 
-nsresult sbMetadataJob::AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsString aTableName, sbIMediaItem *aMediaItem )
+nsresult sbMetadataJob::AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsString aTableName, sbIMediaItem *aMediaItem, jobitem_t **_retval )
 {
   NS_ENSURE_ARG_POINTER( aMediaItem );
   NS_ENSURE_ARG_POINTER( aQuery );
@@ -746,6 +749,16 @@ nsresult sbMetadataJob::AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsStri
   NS_ENSURE_SUCCESS(rv, rv);
   rv = insert->ToString( insertItem );
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if ( _retval )
+  *_retval = new jobitem_t(
+                  library_guid,
+                  item_guid,
+                  url,
+                  worker_thread,
+                  NS_LITERAL_STRING("0"),
+                  nsnull
+                );
 
   // Add it to the query object
   return aQuery->AddQuery( insertItem );
@@ -831,6 +844,8 @@ nsresult sbMetadataJob::SetItemIsScanned( sbIDatabaseQuery *aQuery, nsString aTa
 nsresult sbMetadataJob::SetItemIsWrittenAndDelete( sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem, PRBool aExecute )
 {
   nsresult rv = SetItemIs( NS_LITERAL_STRING("is_written"), aQuery, aTableName, aItem, aExecute );
+  if ( aItem->handler )
+    aItem->handler->Close();  // You are so done.
   delete aItem;
   return rv;
 }
@@ -1086,7 +1101,7 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem, PRBo
   return NS_OK;
 }
 
-nsresult sbMetadataJob::AddDefaultMetadataToItem( sbMetadataJob::jobitem_t *aItem, PRBool aShouldFlush )
+nsresult sbMetadataJob::AddDefaultMetadataToItem( sbMetadataJob::jobitem_t *aItem, sbIMediaItem *aMediaItem, PRBool aShouldFlush )
 {
   NS_ENSURE_ARG_POINTER( aItem );
 
@@ -1099,9 +1114,12 @@ nsresult sbMetadataJob::AddDefaultMetadataToItem( sbMetadataJob::jobitem_t *aIte
   nsCOMPtr<sbILibrary> library;
   rv = libraryManager->GetLibrary( aItem->library_guid, getter_AddRefs(library) );
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbIMediaItem> item;
-  rv = library->GetMediaItem( aItem->item_guid, getter_AddRefs(item) );
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaItem> item( aMediaItem );
+  if ( ! item.get() )
+  {
+    rv = library->GetMediaItem( aItem->item_guid, getter_AddRefs(item) );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Set the properties (eventually iterate when the sbIMetadataValue have the correct keystrings).
   NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
