@@ -35,6 +35,7 @@
 #include <nsAppDirectoryServiceDefs.h>
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
+#include <nsCOMArray.h>
 #include <nsCRTGlue.h>
 #include <nsComponentManagerUtils.h>
 #include <nsDirectoryServiceUtils.h>
@@ -151,7 +152,7 @@ sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
   items = do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = items->AppendElement(aMediaItem, PR_TRUE);
+  rv = items->AppendElement(aMediaItem, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIURI> uri;
@@ -189,7 +190,7 @@ sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   items = do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = items->AppendElement(aMediaItem, PR_TRUE);
+  rv = items->AppendElement(aMediaItem, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 deleteItemCount;
@@ -209,7 +210,7 @@ sbDeviceBaseLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
   items = do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = items->AppendElement(aMediaItem, PR_TRUE);
+  rv = items->AppendElement(aMediaItem, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 updateItemCount;
@@ -282,7 +283,7 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
   items = do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = items->AppendElement(aSourceItem, PR_TRUE);
+  rv = items->AppendElement(aSourceItem, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIURI> uri;
@@ -346,19 +347,39 @@ sbDeviceBase::RemoveCallback(sbIDeviceBaseCallback* aCallback)
   return NS_OK;
 }
 
+PR_STATIC_CALLBACK(PLDHashOperator)
+EnumDeviceCallback(nsISupports *key, sbIDeviceBaseCallback *data, void *closure)
+{
+  nsCOMArray<sbIDeviceBaseCallback> *array = NS_STATIC_CAST(nsCOMArray<sbIDeviceBaseCallback> *, closure);
+  array->AppendObject(data);
+  return PL_DHASH_NEXT;
+}
+
 void
 sbDeviceBase::DoTransferStartCallback(const nsAString& aSourceURL,
                                       const nsAString& aDestinationURL)
 {
-  try
+  PRUint32 callbackCount = 0;
+  nsCOMArray<sbIDeviceBaseCallback> callbackSnapshot;
+  mDeviceCallbacks.EnumerateRead(EnumDeviceCallback, &callbackSnapshot);
+
+  callbackCount = callbackSnapshot.Count();
+  if(!callbackCount) 
+    return;
+
+  for(PRUint32 i = 0; i < callbackCount; i++)
   {
-    sbIDeviceBaseCallback *pCallback;
-    pCallback->OnTransferStart(aSourceURL, aDestinationURL);
-  }
-  catch(...)
-  {
-    //Oops. Someone is being really bad.
-    NS_ERROR("pCallback->OnTransferStart threw an exception");
+    nsCOMPtr<sbIDeviceBaseCallback> callback = callbackSnapshot.ObjectAt(i);
+    if(callback)
+    {
+      try {
+        callback->OnTransferStart(aSourceURL, aDestinationURL);
+      }
+      catch(...) {
+        //Oops. Someone is being really bad.
+        NS_ERROR("pCallback->OnTransferStart threw an exception");
+      }
+    }
   }
 }
 
@@ -367,45 +388,81 @@ sbDeviceBase::DoTransferCompleteCallback(const nsAString& aSourceURL,
                                          const nsAString& aDestinationURL,
                                          PRInt32 aStatus)
 {
-  try
+  PRUint32 callbackCount = 0;
+  nsCOMArray<sbIDeviceBaseCallback> callbackSnapshot;
+  mDeviceCallbacks.EnumerateRead(EnumDeviceCallback, &callbackSnapshot);
+
+  callbackCount = callbackSnapshot.Count();
+  if(!callbackCount) 
+    return;
+
+  for(PRUint32 i = 0; i < callbackCount; i++)
   {
-    sbIDeviceBaseCallback *pCallback;
-    pCallback->OnTransferComplete(aSourceURL, aDestinationURL, aStatus);
-  }
-  catch(...)
-  {
-    //Oops. Someone is being really bad.
-    NS_ERROR("pCallback->OnTransferComplete threw an exception");
+    nsCOMPtr<sbIDeviceBaseCallback> callback = callbackSnapshot.ObjectAt(i);
+    if(callback)
+    {
+      try {
+        callback->OnTransferComplete(aSourceURL, aDestinationURL, aStatus);
+      }
+      catch(...) {
+        //Oops. Someone is being really bad.
+        NS_ERROR("pCallback->OnTransferComplete threw an exception");
+      }
+    }
   }
 }
 
 void
 sbDeviceBase::DoDeviceConnectCallback(const nsAString& aDeviceString)
 {
-  try
+  PRUint32 callbackCount = 0;
+  nsCOMArray<sbIDeviceBaseCallback> callbackSnapshot;
+  mDeviceCallbacks.EnumerateRead(EnumDeviceCallback, &callbackSnapshot);
+
+  callbackCount = callbackSnapshot.Count();
+  if(!callbackCount) 
+    return;
+
+  for(PRUint32 i = 0; i < callbackCount; i++)
   {
-    sbIDeviceBaseCallback *pCallback;
-    pCallback->OnDeviceConnect(aDeviceString);
-  }
-  catch(...)
-  {
-    //Oops. Someone is being really bad.
-    NS_ERROR("pCallback->OnDeviceConnect threw an exception");
+    nsCOMPtr<sbIDeviceBaseCallback> callback = callbackSnapshot.ObjectAt(i);
+    if(callback)
+    {
+      try {
+        callback->OnDeviceConnect(aDeviceString);
+      }
+      catch(...) {
+        //Oops. Someone is being really bad.
+        NS_ERROR("pCallback->OnDeviceConnect threw an exception");
+      }
+    }
   }
 }
 
 void
 sbDeviceBase::DoDeviceDisconnectCallback(const nsAString& aDeviceString)
 {
-  try
+  PRUint32 callbackCount = 0;
+  nsCOMArray<sbIDeviceBaseCallback> callbackSnapshot;
+  mDeviceCallbacks.EnumerateRead(EnumDeviceCallback, &callbackSnapshot);
+
+  callbackCount = callbackSnapshot.Count();
+  if(!callbackCount) 
+    return;
+
+  for(PRUint32 i = 0; i < callbackCount; i++)
   {
-    sbIDeviceBaseCallback *pCallback;
-    pCallback->OnDeviceDisconnect(aDeviceString);
-  }
-  catch(...)
-  {
-    //Oops. Someone is being really bad.
-    NS_ERROR("pCallback->OnDeviceDisconnect threw an exception");
+    nsCOMPtr<sbIDeviceBaseCallback> callback = callbackSnapshot.ObjectAt(i);
+    if(callback)
+    {
+      try {
+        callback->OnDeviceDisconnect(aDeviceString);
+      }
+      catch(...) {
+        //Oops. Someone is being really bad.
+        NS_ERROR("pCallback->OnDeviceDisconnect threw an exception");
+      }
+    }
   }
 }
 
