@@ -149,6 +149,28 @@ try
         if (!this.m_Interval) 
           return;
 
+        var browserURL = aDocument.location;
+        
+        // Add any new items in reverse order (since we sort by insertion date)
+        for ( var i = this.newURLs.length - 1; i >= 0 ; --i )
+        {
+          var url = this.newURLs[ i ];
+          // Make a new media item for it
+          var mediaItem = aMediaListView.mediaList.library.createMediaItem(newURI(url));
+          mediaItem.setProperty("http://songbirdnest.com/data/1.0#originUrl",
+                                browserURL);
+          
+          dump ('added media item: '+url+'\n');
+          
+          // Add it to the current display
+          aMediaListView.mediaList.add(mediaItem);
+          
+          // And put it in line to get its metadata scanned
+          this.mediaItemsToScan.appendElement(mediaItem, false);
+
+          dump ('\n\nadded media item: '+mediaItem+'\n\n');
+        }
+
         // XXXben HACK to make sure that the media items' properties are all
         //        written to the database before we redraw the view. The view
         //        makes a straight database call and bypasses the property
@@ -160,19 +182,37 @@ try
 
         // Tell the view that it can redraw itself.
         aMediaListView.mediaList.endUpdateBatch();
-
+        
+        // Filter the view to only show items for this site url        
         var propArray =
           Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
                     .createInstance(Components.interfaces.sbIPropertyArray);
-
         propArray.appendProperty(PROPERTYKEY_ORIGINURL, aDocument.location);
         aMediaListView.setFilters(propArray);
 
-        // Create a metadata task    
-        var metadataJobManager =
-          Components.classes[CONTRACTID_METADATAJOBMANAGER]
-                    .getService(sbIMetadataJobManager);
-        var metadataJob = metadataJobManager.newJob(this.mediaItemsToScan, 5);
+        // Sort the view to show newest files first
+        var sortArray =
+          Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
+                    .createInstance(Components.interfaces.sbIPropertyArray);
+        sortArray.appendProperty(SB_PROPERTY_CREATED, "d");
+        aMediaListView.setSort(sortArray);
+
+        // Create a metadata task if there's anything to scan.
+        if ( this.mediaItemsToScan.length > 0 )    
+        {
+          // Reverse the array?  Because we reverse the other array above?
+          metadata = Components.classes[CONTRACTID_ARRAY].createInstance(nsIMutableArray);
+          for ( var i = this.mediaItemsToScan.length - 1; i >= 0 ; --i )
+          {
+            var element = this.mediaItemsToScan.queryElementAt( i, Components.interfaces.sbIMediaItem );
+            metadata.appendElement( element, false );
+          }
+          // Then submit the job
+          var metadataJobManager =
+            Components.classes[CONTRACTID_METADATAJOBMANAGER]
+                      .getService(sbIMetadataJobManager);
+          var metadataJob = metadataJobManager.newJob(metadata, 5);
+        }
 
         SBDataSetBoolValue( "media_scan.open", false ); // ?  Don't let this go?
         context.progressTotal = this.a_array.length;
@@ -194,6 +234,7 @@ try
     href_loop.object_array = aDocument.getElementsByTagName("OBJECT");
     href_loop.currentURL = aDocument.location;
     href_loop.handledURLs = [];
+    href_loop.newURLs = [];
     href_loop.mediaItemsToScan = Components.classes[CONTRACTID_ARRAY]
                                            .createInstance(nsIMutableArray);
     
@@ -230,81 +271,46 @@ try
       }
       
       var browserURL = aDocument.location;
+      var library = aMediaListView.mediaList.library;
       
       if (!this.handledURLs.length) {
         // When we first find media, flip the webplaylist.
-        
         var propCache = aMediaListView.mediaList.library.
                         QueryInterface(Components.interfaces.sbILocalDatabaseLibrary).
                         propertyCache;
         propCache.write();
-        
-        var propArray =
-          Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-                    .createInstance(Components.interfaces.sbIPropertyArray);
-
-        propArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl",
-                                 browserURL);
-        aMediaListView.setFilters(propArray);
-        
-        var library = aMediaListView.mediaList.library;
-        
-        var listener = {
-          itemEnumerated: false,
-          onEnumerationBegin: function onEnumerationBegin() {
-            return true;
-          },
-          onEnumeratedItem: function onEnumeratedItem(list, item) {
-            if (!this.itemEnumerated) {
-              library.beginUpdateBatch();
-              this.itemEnumerated = true;
-            }
-            library.remove(item);
-            return true;
-          },
-          onEnumerationEnd: function onEnumerationEnd() {
-            if (this.itemEnumerated) {
-              library.endUpdateBatch();
-            }
-            return true;
-          }
-        };
-
-        // Enumerate all the items that are already present for this URL and
-        // remove them. This makes sure that the list we end up showing is
-        // current.
-        // XXXben Smarter way to do this? Compare modified time of page?
-        library.enumerateItemsByProperty(PROPERTYKEY_ORIGINURL, browserURL, listener,
-                                         sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
 
         // Let the view know that we're about to make a lot of changes.
         aMediaListView.mediaList.beginUpdateBatch();
-
-        context.showPlaylist = true;
         context.playlistHasItems = true;
+        context.showPlaylist = true;
+      }
 
-        // Then pretend like we clicked on it.
-        /*
-        if (!gBrowser.playlistTree) {
-          gBrowser.onBrowserPlaylist();
-        }
-        */
+      // Try to see if we've already found & scanned this url
+      var mediaList = aMediaListView.mediaList;
+      var listener = {
+        itemEnumerated: false,
+        onEnumerationBegin: function onEnumerationBegin() { return true; },
+        onEnumeratedItem: function onEnumeratedItem(list, item) { this.itemEnumerated = true; return true; },
+        onEnumerationEnd: function onEnumerationEnd() { return true; }
+      };
+      mediaList.library.enumerateItemsByProperty(SB_PROPERTY_CONTENTURL, url, listener,
+                                                 sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+      
+      // If we didn't find it
+      if ( ! listener.itemEnumerated )
+      {
+        // Add it to the list we'll create when we're done
+        this.newURLs.push(url);
+      }
+      else
+      {
+        // Otherwise, it's already there.
+        dump ('already contained media item: '+url+'\n');
       }
       
-      var mediaList = aMediaListView.mediaList;
-      
-      var mediaItem = mediaList.library.createMediaItem(newURI(url));
-      mediaItem.setProperty("http://songbirdnest.com/data/1.0#originUrl",
-                            browserURL);
-      
-      dump ('added media item: '+url+'\n');
-      
-      mediaList.add(mediaItem);
-      
+      // And remember that we saw this url      
       this.handledURLs.push(url);
-      this.mediaItemsToScan.appendElement(mediaItem, false);
-      
-      dump ('\n\nadded media item: '+mediaItem+'\n\n');
       
       // Only one synchronous database call per ui frame.
       return true;
