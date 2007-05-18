@@ -38,7 +38,7 @@
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser">
-    <implementation implements="nsIWebProgressListener">
+    <implementation implements="nsIWebProgressListener,sbITabBrowser">
       <constructor><![CDATA[
         this.addProgressListener(this,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
@@ -584,6 +584,22 @@
         ]]></body>
       </method>
       
+      <!-- sbITabBrowser -->
+      <method name="getTabForDocument">
+        <parameter name="aDocument" />
+        <body><![CDATA[
+          var numTabs = this.mTabContainer.childNodes.length;
+          for ( var index = 0; index < numTabs; index++ ) {
+            if ( this.mTabContainer
+                     .childNodes[index]
+                     .linkedBrowser
+                     .contentDocument == aDocument ) {
+              return this.mTabContainer.childNodes[index];
+            }
+          }
+          return null;
+        ]]></body>
+      </method>
       
       <!-- context menu handler -->
       <method name="onHTMLContextMenu">
@@ -1013,7 +1029,7 @@
       <xul:toolbarbutton anonid="close-button" class="tab-close-button" tabindex="-1"/>
       <xul:hbox class="tab-image-right" xbl:inherits="selected"/>
     </content>
-    <implementation implements="nsIWebProgressListener">
+    <implementation implements="nsIWebProgressListener,sbITabBrowserTab">
       <constructor><![CDATA[
         // right after all the constructors run...
         var self = this;
@@ -1140,8 +1156,22 @@
         ]]></body>
       </method>
       
-      <property name="outerPlaylist" readonly="true"
-                onget="return this._playlist" />
+      <!-- sbITabBrowserTab -->
+      <property name="outerPlaylist" readonly="true">
+        <getter><![CDATA[
+          return this._playlist
+        ]]></getter>
+      </property>
+
+      <method name="getPlaylist">
+        <body><![CDATA[
+          if ( this.innerPlaylist ) {
+            return this.innerPlaylist;
+          } else {
+            return this._playlist;
+          }
+        ]]></body>
+      </method>
       
       <property name="outerPlaylistShowing">
         <getter><![CDATA[
@@ -1159,6 +1189,7 @@
         ]]></setter>
       </property>
       
+      <!-- sbITabBrowserTab -->
       <property name="innerPlaylist" readonly="true">
         <getter><![CDATA[
           if (this.linkedBrowser.currentURI.scheme != 'chrome') {
@@ -1200,7 +1231,8 @@
         <body><![CDATA[
           // only scrape http & https
           if (this.linkedBrowser.currentURI.scheme != 'http' &&
-              this.linkedBrowser.currentURI.scheme != 'https') {
+              this.linkedBrowser.currentURI.scheme != 'https' &&
+              this.linkedBrowser.currentURI.scheme != 'file') {
             this.outerPlaylistShowing = false;
             return;
           }
@@ -1361,7 +1393,7 @@
           installed_listener = true;
           } catch( e ) { alert( "tabbrowser::setUpInnerPlaylist\n\n" + e ); }]]></body>
       </method>
-      
+
       <!-- nsIWebProgressListener implementation -->
       <method name="onLocationChange">
         <parameter name="aWebProgress" />
