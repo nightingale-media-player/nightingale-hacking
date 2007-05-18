@@ -1331,7 +1331,9 @@
           // If we're restoring a view, don't do anything else
           if ( skipScan )
           {
-            this.outerPlaylistShowing = true;
+            // Only show it if there's something to see.
+            if ( view.length > 0 )
+              this.outerPlaylistShowing = true;
             return;
           }
 
