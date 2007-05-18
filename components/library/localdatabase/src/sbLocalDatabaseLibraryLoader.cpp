@@ -77,15 +77,12 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
 
 #define DBENGINE_GUID_MAIN_LIBRARY     "main@library.songbirdnest.com"
 #define DBENGINE_GUID_WEB_LIBRARY      "web@library.songbirdnest.com"
-#define DBENGINE_GUID_DOWNLOAD_LIBRARY "download@library.songbirdnest.com"
 
 // XXXben These should be renamed and standardized somehow.
 #define SB_NAMEKEY_MAIN_LIBRARY                            \
   "&chrome://songbird/locale/songbird.properties#servicesource.library"
 #define SB_NAMEKEY_WEB_LIBRARY                             \
   "&chrome://songbird/locale/songbird.properties#device.weblibrary"
-#define SB_NAMEKEY_DOWNLOAD_LIBRARY                        \
-  "&chrome://songbird/locale/songbird.properties#device.download"
 
 
 template <class T>
@@ -212,12 +209,6 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
   rv = EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_WEB_LIBRARY),
                             NS_LITERAL_STRING(DBENGINE_GUID_WEB_LIBRARY),
                             NS_LITERAL_STRING(SB_NAMEKEY_WEB_LIBRARY));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv =
-    EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_DOWNLOAD_LIBRARY),
-                         NS_LITERAL_STRING(DBENGINE_GUID_DOWNLOAD_LIBRARY),
-                         NS_LITERAL_STRING(SB_NAMEKEY_DOWNLOAD_LIBRARY));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
