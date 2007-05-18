@@ -559,8 +559,6 @@ function onBrowserTransfer(mediaItems)
 {
     try
     {
-        theWebPlaylistHasItems = false;
-          
         deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
                                     getService(Components.interfaces.sbIDeviceManager);
         if (deviceManager)

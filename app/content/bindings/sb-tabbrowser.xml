@@ -234,6 +234,8 @@
         ]]></getter>
       </property>
       
+      
+      
 
 
       <field name="_loading">SB_NewDataRemote("faceplate.loading", null)</field>
@@ -306,6 +308,44 @@
           return this._webLibrary = libraryManager.getLibrary(guid);
         ]]></getter>
       </property>
+      
+      <method name="getTabForView">
+        <parameter name="aView" />
+        <body><![CDATA[
+          var parent = {}, page = {};
+          var viewMap =
+              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+              .getService(Components.interfaces.sbIMediaListViewMap);
+          viewMap.getContext(aView, parent, page );
+          
+          // find the tab
+          var tab = null;
+          var browser = null;
+          for (var i=0; i<this.browsers.length; i++) {
+            // iterate through the browsers
+            browser = this.browsers[i];
+            if (browser == parent.value) {
+              tab = this.tabContainer.childNodes[i];
+              break;
+            }
+          }
+          
+          // if we found a tab, lets see if the history entry we got back
+          if (tab) {
+            var history = browser.webNavigation.sessionHistory;
+            var entry = history.getEntryAtIndex(history.index, false);
+            page.value.QueryInterface(Components.interfaces.nsIHistoryEntry);
+            
+            // if the current history entry for the tab is the same as the
+            // history entry we got back from the view map then the tab should
+            // be currently showing the view map. Right?
+            if (page.value == entry) {
+              return tab;
+            }
+          }
+          return null;
+        ]]></body>
+      </method>
 
       <!-- implementation of nsIWebProgressListener -->
       <method name="onLocationChange">
@@ -1218,11 +1258,15 @@
         ]]></getter>
       </property>
       
+      <field name="scanProgress">-1</field>
       
       <method name="clearOuterPlaylist">
         <body><![CDATA[
           // hide the outer playlist
-          this.outerPlaylistShowing = false;
+          CancelAsyncWebDocument(this._hrefLoop);
+          this._hrefLoop = null;
+          PlaylistShowing = false;
+          this.scanProgress = -1;
         ]]></body>
       </method>
       
@@ -1277,8 +1321,6 @@
           
           // Bind the Web Playlist UI element to the subscribed playlist
           SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
-          dump('this.outerPlaylist = '+this.outerPlaylist+'\n');
-          dump('this.outerPlaylist.localName = '+this.outerPlaylist.localName+'\n');
           this.outerPlaylist.bind(view, SBWebPlaylistCommands,
                                   SBDataGetIntValue("browser.playlist.height"),
                                   SBDataGetBoolValue("browser.playlist.collapsed"));
@@ -1298,30 +1340,41 @@
             tab: this,
             pt: 0,
             get progressTotal() {
-              dump('get progressTotal\n');
               return this.pt;
             },
             set progressTotal(p) {
-              dump('set progressTotal='+p+'\n');
               this.pt = p;
+              this.setProgress();
+            },
+            pc: 0,
+            get progressCurrent() {
+              return this.pc;
+            },
+            set progressCurrent(p) {
+              this.pc = p;
+              this.setProgress();
+            },
+            setProgress: function setProgress() {
+              this.tab.scanProgress = (1.0*this.pc)/this.pt;
             },
             sp: false,
             get showPlaylist() {
-              dump('get showPlaylist\n');
               return this.sp;
             },
             set showPlaylist(s) {
-              dump('set showPlaylist='+s+'\n');
               this.tab.outerPlaylistShowing = s;
               this.sp = s;
             }
           };
+          this.scanProgress = 0;
           this._hrefLoop = AsyncWebDocument(this.linkedBrowser.contentDocument,
                                             view, this._hrefLoop, context);
           
 
         ]]></body>
-      </method>      
+      </method>
+      
+      <field name="applyThisView">null</field>
 
       <method name="setUpInnerPlaylist">
         <body><![CDATA[ try {
@@ -1337,34 +1390,26 @@
             var history = browser.webNavigation.sessionHistory;
             var entry = history.getEntryAtIndex( history.index, false );
             
-            // Is there something to restore?
-            var restore = viewMap.getView( browser, entry );
-            if ( restore == null )
-            {
-              // Save the current view if there is nothing to restore
-              viewMap.setView( browser, entry, playlist.mediaListView );
-              
-              /* 
-                // Sample code for Ian
-                var parent = {}, page = {};
-                viewMap.getContext( playlist.mediaListView, parent, page );
-                alert
-                ( 
-                  parent.value +
-                  ( ( parent.value == browser ) ? " == " : " != " ) +
-                  browser +
-                  "\n\n" + 
-                  page.value +
-                  ( ( page.value == entry ) ? " == " : " != " ) +
-                  entry
-                );
-              */
-            }
-            else
-            {
-              // Otherwise, restore it.
-              var commands = playlist.commands;
-              playlist.bind( restore, commands );
+            // someone wants us to apply a view
+            if (this.applyThisView) {
+              playlist.bind(this.applyThisView, playlist.commands);
+              // save this mapping I guess 
+              viewMap.setView(browser, entry, this.applyThisView);
+              this.applyThisView = null;
+            } else {
+              // Is there something to restore?
+              var restore = viewMap.getView( browser, entry );
+              if ( restore == null )
+              {
+                // Save the current view if there is nothing to restore
+                viewMap.setView( browser, entry, playlist.mediaListView );
+              }
+              else
+              {
+                // Otherwise, restore it.
+                var commands = playlist.commands;
+                playlist.bind( restore, commands );
+              }
             }
           }
   
@@ -1400,7 +1445,6 @@
         <parameter name="aRequest" />
         <parameter name="aLocation" />
         <body><![CDATA[
-          dump('\n\n\n\ntab:onLocationChange\n');
         ]]></body>
       </method>
       
@@ -1436,10 +1480,8 @@
           }
       
           if (aState & nsIWebProgressListener.STATE_START) {
-            dump('\n\n\n\ntab:onStateChange START\n');
             this.clearOuterPlaylist();
           } else if (aState & nsIWebProgressListener.STATE_STOP) {
-            dump('\n\n\n\ntab:onStateChange STOP\n');
             if (this.innerPlaylist) {
               this.setUpInnerPlaylist();
             } else {

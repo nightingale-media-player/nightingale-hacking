@@ -750,8 +750,6 @@
                       .getService(Components.interfaces.sbIPlaylistPlayback);
         // Create and bind data remotes
         this.remote_seenPlaying = SB_NewDataRemote( "faceplate.seenplaying", null );
-        this.remote_playingRef =  SB_NewDataRemote( "playing.ref", null ); 
-        this.remote_playlistIndex =  SB_NewDataRemote( "playlist.index", null ); 
         ]]>
       </constructor>
       <destructor>
@@ -760,41 +758,24 @@
           this.remote_seenPlaying.unbind();
           this.remote_seenPlaying = null;
         }
-        if (this.remote_playingRef) {
-          this.remote_playingRef.unbind();
-          this.remote_playingRef = null;
-        }
-        if (this.remote_playlistIndex) {
-          this.remote_playlistIndex.unbind();
-          this.remote_playlistIndex = null;
-        }
       </destructor>
                      
       <method name="playbackPlay">
         <body>
           <![CDATA[
-            var ref = "";
-            if (this.gPPS.started ||
-                (this.remote_playingRef.stringValue != "" &&
-                  this.remote_playlistIndex.stringValue != "") ) {
+            if (this.gPPS.playing) {
               if (this.gPPS.paused) {
                 this.gPPS.play();
               } else {
-                // player is buffering (or stopped!), because the play button is visible (not started) yet 
-                // pause is not set and the player is started.  start the playlist again at the current spot
-                this.gPPS.playRef( this.remote_playingRef.stringValue, this.remote_playlistIndex.intValue );
+                this.gPPS.pause();
               }
-            } else {
-              var ref = "";
+            } else if (gBrowser) {
               var playlist = gBrowser.currentPlaylist;
               if (playlist) {
-                ref = playlist.ref;
-              } 
-              if (ref == "") {
+                playlist.playViewAtCurrentRow();
+              } else {
                 this.loadLibrary();
                 this.gPPS.play(); // let gpps handle default playback.
-              } else {
-                this.gPPS.playRef(ref, -1);
               }
             }
           ]]>
@@ -805,7 +786,7 @@
         <body>
           <![CDATA[
             // optional connection
-            if (gBrowser) gBrowser.loadURI("chrome://songbird/content/xul/playlist_test.xul?library" );
+            if (gBrowser) gBrowser.loadURI("chrome://songbird/content/xul/playlist_test2.xul?library" );
           ]]>
         </body>
       </method>
@@ -1339,20 +1320,28 @@
           <![CDATA[
           try
           {
-            var display_string = "";
-            // If the user sees a playlist
-            if ( gBrowser && ( gBrowser.currentInnerPlaylist || gBrowser.currentOuterPlaylistShowing ) ) 
-            {
-              // Display the item count
-              var count = gBrowser.currentPlaylist.mediaListView.length;              
-              if ( count > 0 )
-                display_string = SBString( "faceplate.items", "items" ) + ": " + count;
+            if (!gBrowser)
+              return;
+            
+            var displayValue = ''
+            if (gBrowser.mCurrentTab.scanProgress >= 0 &&
+                gBrowser.mCurrentTab.scanProgress < 1) {
+              // display page scan progress
+              var mediafound = SBString("faceplate.mediafound", "Media Found");
+              var percent = Math.round(gBrowser.mCurrentTab.scanProgress*100);
+              displayValue = mediafound + ': ' + percent + '%';
+            } else if (gBrowser.currentPlaylist &&
+                       gBrowser.currentPlaylist.mediaListView &&
+                       gBrowser.currentPlaylist.mediaListView.length) {
+              // display media list length
+              displayValue = SBString("faceplate.items", "items") + ': ' +
+                  gBrowser.currentPlaylist.mediaListView.length;
             }
-            this.setAttribute( "value", display_string );
+            this.setAttribute('value', displayValue);
           }
           catch ( err )
           {
-            //alert( "PFU - " + err );
+            alert( "PFU - " + err );
           }
           ]]>
         </body>
@@ -1476,52 +1465,29 @@
       <method name="onCurrentTrack">
         <body>
           <![CDATA[
-            if (this.interval) {
-              clearInterval(this.interval);
-              this.interval = null;
-            }
-            var guid;
-            var table;
-            var ref = SBDataGetStringValue("playing.ref");
-            if (ref != "") {
-              source_ref = ref;
-              var source = new sbIPlaylistsource();
-              guid = source.getRefGUID( ref );
-              table = source.getRefTable( ref );
-            } else {
-              source_ref = "NC:songbird_library";
-              guid = "songbird";
-              table = "library";
-            }
-            
-            var curplaylist = document.__CURRENTPLAYLIST__;
-            if (curplaylist && curplaylist.ref == source_ref) {
-              curplaylist.syncPlaylistIndex(true);
-              return;
-            }
-            
-            this.loadView(guid, table);
-            this.interval = setInterval(function(obj) { obj.onCurrentTrack(); }, 500, this); 
+          if (!gPPS.playingView) {
+            // nothing to see here, move along
+            return;
+          }
+          
+          if (!gBrowser) {
+            // where do you expect me to show you this currently playing
+            // track of yours?
+            return;
+          }
+          
+          var tab = gBrowser.getTabForView(gPPS.playingView);          
+          if (tab) {
+            gBrowser.selectedTab = tab;
+          } else {
+            var mediaList = gPPS.playingView.mediaList;
+            gBrowser.loadURI("chrome://songbird/content/xul/playlist_test2.xul?" +
+                             'library,' + mediaList.library.guid);
+            gBrowser.mCurrentTab.applyThisView = gPPS.playingView;
+          }
           ]]>
         </body>
       </method>
-      
-      <method name="loadView">
-        <parameter name="guid"/>
-        <parameter name="table"/>
-        <body>
-          <![CDATA[
-            // optional connection
-            if (gBrowser) {
-              if (guid == "songbird" && table == "library")
-                gBrowser.loadURI( "chrome://songbird/content/xul/playlist_test.xul?library");
-              else 
-                gBrowser.loadURI( "chrome://songbird/content/xul/playlist_test.xul?" + table+ "," + guid);
-            }
-          ]]>
-        </body>
-      </method>
-
     </implementation>
   </binding>
   
