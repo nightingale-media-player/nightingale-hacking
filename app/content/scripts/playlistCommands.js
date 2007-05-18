@@ -587,7 +587,12 @@ function onBrowserTransfer(mediaItems)
                 // Pick download destination
                 if ( ( download_data.retval == "ok" ) && ( download_data.value.length > 0 ) )
                 {
-                  downloadDevice.transferItems("", null, null, 0, true, null);
+                  var downloadLibrary = downloadDevice.getLibrary("download");
+                  while (mediaItems.hasMoreElements())
+                  {
+                      downloadLibrary.createMediaItem
+                                              (mediaItems.getNext().contentSrc);
+                  }
                 }
             }
         }

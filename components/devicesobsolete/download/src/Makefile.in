@@ -44,14 +44,17 @@ CPP_SRCS = DownloadDevice.cpp \
 CPP_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
                $(DEPTH)/components/devicesobsolete/base/public \
                $(DEPTH)/components/devicesobsolete/download/public \
+               $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
+               $(DEPTH)/components/property/public \
                $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/uriloader \
+               $(MOZSDK_INCLUDE_DIR)/webbrowserpersist \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 

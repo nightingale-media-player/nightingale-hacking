@@ -24,45 +24,268 @@
 //
 */
 
+#ifndef __DOWNLOAD_DEVICE_H__
+#define __DOWNLOAD_DEVICE_H__
+
+/* *****************************************************************************
+ *******************************************************************************
+ *
+ * Download device.
+ *
+ *******************************************************************************
+ ******************************************************************************/
+
 /** 
 * \file  DownloadDevice.h
 * \brief Songbird DownloadDevice Component Definition.
 */
 
-#ifndef __DOWNLOAD_DEVICE_H__
-#define __DOWNLOAD_DEVICE_H__
+/* *****************************************************************************
+ *
+ * Download device configuration.
+ *
+ ******************************************************************************/
 
-#include "sbIDownloadDevice.h"
-#include "DeviceBase.h"
+/*
+ * Download device XPCOM component definitions.
+ */
 
-// DEFINES ====================================================================
-#define SONGBIRD_DownloadDevice_CONTRACTID                \
-  "@songbirdnest.com/Songbird/Device/DownloadDevice;1"
-#define SONGBIRD_DownloadDevice_CLASSNAME                 \
-  "Songbird Download Device"
-#define SONGBIRD_DownloadDevice_CID                       \
-{ /* 961da3f4-5ef1-4ad0-818d-622c7bd17447 */              \
-  0x961da3f4,                                             \
-  0x5ef1,                                                 \
-  0x4ad0,                                                 \
-  {0x81, 0x8d, 0x62, 0x2c, 0x7b, 0xd1, 0x74, 0x47}        \
+#define SONGBIRD_DownloadDevice_CONTRACTID                                     \
+                            "@songbirdnest.com/Songbird/Device/DownloadDevice;1"
+#define SONGBIRD_DownloadDevice_CLASSNAME "Songbird Download Device"
+#define SONGBIRD_DownloadDevice_CID                                            \
+{                                                                              \
+    0x961DA3F4,                                                                \
+    0x5EF1,                                                                    \
+    0x4AD0,                                                                    \
+    { 0x81, 0x8d, 0x62, 0x2C, 0x7B, 0xD1, 0x74, 0x47}                          \
 }
 
-// CLASSES ====================================================================
 
-class sbDownloadDevice;
+/* *****************************************************************************
+ *
+ * Download device imported services.
+ *
+ ******************************************************************************/
 
-// Since download device has only one instance, the "Device String" notion does not
-// apply to this device and hence ignored in all the functions.
-class sbDownloadDevice :  public sbIDownloadDevice, public sbDeviceBase
+/* Local imports. */
+#include <DeviceBase.h>
+#include <sbIDownloadDevice.h>
+
+/* Mozilla imports. */
+#include <nsCOMPtr.h>
+#include <nsIIOService.h>
+
+/* Songbird imports. */
+#include <sbIDataRemote.h>
+#include <sbILibrary.h>
+
+
+/* *****************************************************************************
+ *
+ * Download device classes.
+ *
+ ******************************************************************************/
+
+/*
+ * sbDownloadDevice class.
+ */
+
+class sbDownloadSession;
+
+class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
 {
+    /* *************************************************************************
+     *
+     * Friends.
+     *
+     **************************************************************************/
 
-public:
+    friend class sbDownloadSession;
 
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBIDEVICEBASE
-  NS_DECL_SBIDOWNLOADDEVICE
 
+    /* *************************************************************************
+     *
+     * Public interface.
+     *
+     **************************************************************************/
+
+    public:
+
+    /*
+     * Inherited interfaces.
+     */
+
+    NS_DECL_ISUPPORTS
+    NS_DECL_SBIDEVICEBASE
+    NS_DECL_SBIDOWNLOADDEVICE
+
+
+    /*
+     * Public download device services.
+     */
+
+    sbDownloadDevice();
+
+    virtual ~sbDownloadDevice();
+
+
+    /* *************************************************************************
+     *
+     * Private interface.
+     *
+     **************************************************************************/
+
+    private:
+
+    /*
+     * mpDownloadLibrary        Download device library.
+     * mpIOService              I/O service.
+     * mpDownloadDirDR          Default download directory data remote.
+     * mpTmpDownloadDir         Temporary download directory.
+     * mpDownloadSession        Current download session.
+     * mBusy                    Non-zero if the transfer queue is busy.
+     */
+
+    nsCOMPtr<sbILibrary>        mpDownloadLibrary;
+    nsCOMPtr<nsIIOService>      mpIOService;
+    nsCOMPtr<sbIDataRemote>     mpDownloadDirDR;
+    nsCOMPtr<nsIFile>           mpTmpDownloadDir;
+    sbDownloadSession           *mpDownloadSession;
+    PRInt32                     mBusy;
+
+
+    /*
+     * Private transfer services.
+     */
+
+    nsresult RunTransferQueue();
+
+    nsresult SetTransferDestination(
+        nsCOMPtr<sbIMediaItem>      pMediaItem);
+
+    void SessionCompleted(
+        sbDownloadSession           *pDownloadSession);
+
+
+    /*
+     * Private services.
+     */
+
+    nsresult GetTmpFile(
+        nsIFile                     **ppTmpFile);
 };
+
+
+/* *****************************************************************************
+ *******************************************************************************
+ *
+ * Download session.
+ *
+ *******************************************************************************
+ ******************************************************************************/
+
+/* *****************************************************************************
+ *
+ * Download session imported services.
+ *
+ ******************************************************************************/
+
+/* Mozilla imports. */
+#include <nsIFileProtocolHandler.h>
+#include <nsIHttpEventSink.h>
+#include <nsIInterfaceRequestor.h>
+#include <nsIProgressEventSink.h>
+#include <nsIWebBrowserPersist.h>
+#include <nsIWebProgressListener.h>
+
+
+/* *****************************************************************************
+ *
+ * Download session classes.
+ *
+ ******************************************************************************/
+
+/*
+ * sbDownloadSession class.
+ */
+
+class sbDownloadSession : public nsIWebProgressListener,
+                          public nsIInterfaceRequestor,
+                          public nsIProgressEventSink,
+                          public nsIHttpEventSink
+{
+    /* *************************************************************************
+     *
+     * Public interface.
+     *
+     **************************************************************************/
+
+    public:
+
+    /*
+     * Inherited interfaces.
+     */
+
+    NS_DECL_ISUPPORTS
+    NS_DECL_NSIWEBPROGRESSLISTENER
+    NS_DECL_NSIINTERFACEREQUESTOR
+    NS_DECL_NSIPROGRESSEVENTSINK
+    NS_DECL_NSIHTTPEVENTSINK
+
+
+    /*
+     * Public download session services.
+     */
+
+    sbDownloadSession(
+        sbDownloadDevice            *pDownloadDevice,
+        sbIMediaItem                *pMediaItem);
+
+    virtual ~sbDownloadSession();
+
+    nsresult Initiate();
+
+
+    /* *************************************************************************
+     *
+     * Private interface.
+     *
+     **************************************************************************/
+
+    private:
+
+    /*
+     * mpDownloadDevice         Managing download device.
+     * mpMediaItem              Media item being downloaded.
+     * mpIOService              I/O service.
+     * mpFileProtocolHandler    File protocol handler.
+     * mpWebBrowser             Web browser used for download.
+     * mpTmpFile                Temporary download file.
+     * mpDstLibrary             Destination library.
+     * mpDstFile                Destination download file.
+     * mpDstURI                 Destination download URI.
+     */
+
+    sbDownloadDevice            *mpDownloadDevice;
+    nsCOMPtr<sbIMediaItem>      mpMediaItem;
+    nsCOMPtr<nsIIOService>      mpIOService;
+    nsCOMPtr<nsIFileProtocolHandler>
+                                mpFileProtocolHandler;
+    nsCOMPtr<nsIWebBrowserPersist>
+                                mpWebBrowser;
+    nsCOMPtr<nsIFile>           mpTmpFile;
+    nsCOMPtr<sbILibrary>        mpDstLibrary;
+    nsCOMPtr<nsIFile>           mpDstFile;
+    nsCOMPtr<nsIURI>            mpDstURI;
+
+
+    /*
+     * Private download session services.
+     */
+
+    nsresult CompleteTransfer();
+};
+
 
 #endif // __DOWNLOAD_DEVICE_H__
