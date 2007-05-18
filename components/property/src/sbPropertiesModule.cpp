@@ -32,6 +32,7 @@
 
 #include "sbDatetimePropertyInfo.h"
 #include "sbNumberPropertyInfo.h"
+#include "sbProgressPropertyInfo.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
 
@@ -44,6 +45,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyOperator);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDatetimePropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbNumberPropertyInfo);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbProgressPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTextPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbURIPropertyInfo);
 
@@ -91,6 +93,12 @@ static const nsModuleComponentInfo components[] =
     SB_TEXTPROPERTYINFO_CID,
     SB_TEXTPROPERTYINFO_CONTRACTID,
     sbTextPropertyInfoConstructor
+  },
+  {
+    SB_PROGRESSPROPERTYINFO_DESCRIPTION,
+    SB_PROGRESSPROPERTYINFO_CID,
+    SB_PROGRESSPROPERTYINFO_CONTRACTID,
+    sbProgressPropertyInfoConstructor
   },
   {
     SB_URIPROPERTYINFO_DESCRIPTION,

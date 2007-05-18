@@ -59,6 +59,10 @@
 #include <sbStandardProperties.h>
 #include <sbTArrayStringEnumerator.h>
 
+#ifdef DEBUG
+#include <prprf.h>
+#endif
+
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbLocalDatabaseTreeView:5
@@ -71,6 +75,9 @@ static PRLogModuleInfo* gLocalDatabaseTreeViewLog = nsnull;
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif
+
+#define PROGRESS_VALUE_UNSET -1
+#define PROGRESS_VALUE_COMPLETE 101
 
 /* static */ nsresult PR_CALLBACK
 sbLocalDatabaseTreeView::SelectionListSavingEnumeratorCallback(PRUint32 aRow,
@@ -1401,10 +1408,63 @@ sbLocalDatabaseTreeView::GetProgressMode(PRInt32 row,
                                          nsITreeColumn* col,
                                          PRInt32* _retval)
 {
-  NS_ENSURE_ARG_POINTER(col);
-  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+  if (!mRowCache.Get(row, getter_AddRefs(bag))) {
+
+    // HACK to get this row's data loaded.
+    nsAutoString cellValue;
+    rv = GetCellText(row, col, cellValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
+    return NS_OK;
+  }
+
+  nsAutoString propertyName;
+  rv = GetPropertyForTreeColumn(col, propertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propInfo;
+  rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+#ifdef DEBUG
+  nsAutoString simpleType;
+  rv = propInfo->GetDisplayUsingSimpleType(simpleType);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "GetDisplayUsingSimpleType failed!");
+
+  NS_ASSERTION(simpleType.EqualsLiteral("progressmeter"),
+               "GetProgressMode called for a column with the wrong type!");
+#endif
+
+  nsCOMPtr<sbIProgressPropertyInfo> progressInfo =
+    do_QueryInterface(propInfo, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString modePropertyName;
+  rv = progressInfo->GetModePropertyName(modePropertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString modeString;
+  rv = bag->GetProperty(modePropertyName, modeString);
+  if (rv == NS_ERROR_INVALID_ARG ||
+      (NS_SUCCEEDED(rv) && modeString.IsEmpty())) {
+    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
+    return NS_OK;
+  }
+
+  PRInt32 mode = modeString.ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ASSERTION(mode == nsITreeView::PROGRESS_NORMAL ||
+               mode == nsITreeView::PROGRESS_UNDETERMINED ||
+               mode == nsITreeView::PROGRESS_NONE,
+               "Invalid progress mode!");
+
+  *_retval = mode;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1412,9 +1472,21 @@ sbLocalDatabaseTreeView::GetCellValue(PRInt32 row,
                                       nsITreeColumn* col,
                                       nsAString& _retval)
 {
-  NS_ENSURE_ARG_POINTER(col);
+  nsAutoString cellValue;
+  nsresult rv = GetCellText(row, col, cellValue);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_FALSE(cellValue.IsEmpty(), NS_ERROR_NOT_AVAILABLE);
+
+#ifdef DEBUG
+  NS_ConvertUTF16toUTF8 narrow(cellValue);
+  PRInt64 progressValue;
+  NS_ASSERTION(PR_sscanf(narrow.get(), "%lld", &progressValue) > 0,
+               "That's not a number!");
+#endif
+
+  _retval.Assign(cellValue);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1462,7 +1534,7 @@ sbLocalDatabaseTreeView::IsEditable(PRInt32 row,
   rv = GetPropertyForTreeColumn(col, bind);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (bind.Equals(NS_LITERAL_STRING("row"))) {
+  if (bind.EqualsLiteral("row")) {
     *_retval = PR_FALSE;
   }
   else {

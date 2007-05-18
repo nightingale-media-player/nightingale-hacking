@@ -59,7 +59,41 @@ public:
 
   NS_METHOD Init();
   NS_METHOD CreateSystemProperties();
-  
+private:
+
+  nsresult RegisterDateTime(const nsAString& aPropertyName,
+                            const nsAString& aDisplayKey,
+                            PRInt32 aType,
+                            nsIStringBundle* aStringBundle);
+
+  nsresult RegisterNumber(const nsAString& aPropertyName,
+                          const nsAString& aDisplayKey,
+                          nsIStringBundle* aStringBundle,
+                          PRInt32 aMinValue = 0,
+                          PRBool aHasMinValue = PR_FALSE,
+                          PRInt32 aMaxValue = 0,
+                          PRBool aHasMaxValue = PR_FALSE);
+
+  nsresult RegisterProgress(const nsAString& aValuePropertyName,
+                            const nsAString& aValueDisplayKey,
+                            const nsAString& aModePropertyName,
+                            const nsAString& aModeDisplayKey,
+                            nsIStringBundle* aStringBundle,
+                            PRInt32 aMinValue = 0,
+                            PRBool aHasMinValue = PR_FALSE,
+                            PRInt32 aMaxValue = 0,
+                            PRBool aHasMaxValue = PR_FALSE);
+
+  nsresult RegisterText(const nsAString& aPropertyName,
+                        const nsAString& aDisplayKey,
+                        nsIStringBundle* aStringBundle,
+                        PRUint32 aNullSort = 0,
+                        PRBool aHasNullSort = PR_FALSE);
+
+  nsresult RegisterURI(const nsAString& aPropertyName,
+                       const nsAString& aDisplayKey,
+                       nsIStringBundle* aStringBundle);
+
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
   

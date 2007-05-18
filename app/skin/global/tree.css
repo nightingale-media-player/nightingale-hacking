@@ -197,14 +197,15 @@ treechildren::-moz-tree-drop-feedback {
 
 treechildren::-moz-tree-progressmeter {
   margin: 2px 4px;
-  border: 2px solid;
   -moz-border-top-colors: #AAAAAA #000000;
   -moz-border-right-colors: #FFFFFF #000000;
   -moz-border-bottom-colors: #FFFFFF #000000;
   -moz-border-left-colors: #AAAAAA #000000;
 }
 
-treechildren::-moz-tree-progressmeter(progressUndetermined) {
+treechildren::-moz-tree-progressmeter(progressUndetermined) 
+{
+  list-style-image: url(chrome://songbird/skin/progressmeter/progressmeter_undetermined.gif)
 }
 
 treechildren::-moz-tree-cell-text(progressmeter) {

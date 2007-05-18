@@ -38,6 +38,7 @@
 
 #include "sbDatetimePropertyInfo.h"
 #include "sbNumberPropertyInfo.h"
+#include "sbProgressPropertyInfo.h"
 #include "sbStandardProperties.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
@@ -231,15 +232,12 @@ NS_IMETHODIMP sbPropertyManager::GetStringFromName(nsIStringBundle *aBundle,
 {
   NS_ENSURE_ARG_POINTER(aBundle);
 
-  PRUnichar *value = nsnull;
-  nsAutoString name(aName);
-  
-  nsresult rv = aBundle->GetStringFromName(name.get(), &value);
+  PRUnichar *value;
+  nsresult rv = aBundle->GetStringFromName(aName.BeginReading(), &value);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
   
   _retval.Assign(value);
-  nsMemory::Free(value);
+  NS_Free(value);
 
   return NS_OK;
 }
@@ -247,537 +245,404 @@ NS_IMETHODIMP sbPropertyManager::GetStringFromName(nsIStringBundle *aBundle,
 NS_METHOD sbPropertyManager::CreateSystemProperties()
 {
   nsresult rv;
-  
-  nsAutoPtr<sbDatetimePropertyInfo> datetimeProperty;
-  nsAutoPtr<sbNumberPropertyInfo> numberProperty;
-  nsAutoPtr<sbTextPropertyInfo> textProperty;
-  nsAutoPtr<sbURIPropertyInfo> uriProperty;
 
-  nsAutoString displayValue;
   nsCOMPtr<nsIStringBundle> stringBundle;
   rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   //Storage Guid
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID));
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID), EmptyString(),
+                    stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
 
   //Date created
-  datetimeProperty = new sbDatetimePropertyInfo();
-  NS_ENSURE_TRUE(datetimeProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = datetimeProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_CREATED));
+  rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_CREATED),
+                        NS_LITERAL_STRING("property.date_created"),
+                        sbIDatetimePropertyInfo::TIMETYPE_DATETIME,
+                        stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = datetimeProperty->SetTimeType(sbIDatetimePropertyInfo::TIMETYPE_DATETIME);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.date_created"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = datetimeProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } 
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIDatetimePropertyInfo *, datetimeProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  datetimeProperty.forget();
-  displayValue = EmptyString();
 
   //Date updated
-  datetimeProperty = new sbDatetimePropertyInfo();
-  NS_ENSURE_TRUE(datetimeProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = datetimeProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_UPDATED));
+  rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_UPDATED),
+                        NS_LITERAL_STRING("property.date_updated"),
+                        sbIDatetimePropertyInfo::TIMETYPE_DATETIME,
+                        stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = datetimeProperty->SetTimeType(sbIDatetimePropertyInfo::TIMETYPE_DATETIME);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.date_updated"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = datetimeProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIDatetimePropertyInfo *, datetimeProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  datetimeProperty.forget();
 
   //Content URL
-  uriProperty = new sbURIPropertyInfo();
-  NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = uriProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL));
+  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                   NS_LITERAL_STRING("property.content_url"),
+                   stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.content_url"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = uriProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIURIPropertyInfo *, uriProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  uriProperty.forget();
 
   //Content Mime Type
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE));
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE),
+                    NS_LITERAL_STRING("property.content_mime_type"),
+                    stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.content_mime_type"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = textProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
-  
   //Content Length (-1, can't determine.)
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH));
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
+                      NS_LITERAL_STRING("property.content_length"),
+                      stringBundle, -1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(-1);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.content_length"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
   //Track name
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.track_name"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = textProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = textProperty->SetNullSort(sbIPropertyInfo::SORT_NULL_BIG);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                    NS_LITERAL_STRING("property.track_name"),
+                    stringBundle, sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE);
 
   //Album name
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.album_name"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = textProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = textProperty->SetNullSort(sbIPropertyInfo::SORT_NULL_BIG);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                    NS_LITERAL_STRING("property.album_name"),
+                    stringBundle, sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE);
 
   //Artist name
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = textProperty->SetNullSort(sbIPropertyInfo::SORT_NULL_BIG);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.artist_name"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = textProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                    NS_LITERAL_STRING("property.artist_name"),
+                    stringBundle, sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE);
 
   //Duration (in usecs)
-  datetimeProperty = new sbDatetimePropertyInfo();
-  NS_ENSURE_TRUE(datetimeProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = datetimeProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_DURATION));
+  rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
+                        NS_LITERAL_STRING("property.duration"),
+                        sbIDatetimePropertyInfo::TIMETYPE_DURATION,
+                        stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = datetimeProperty->SetTimeType(sbIDatetimePropertyInfo::TIMETYPE_DURATION);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.duration"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = datetimeProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIDatetimePropertyInfo *, datetimeProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  datetimeProperty.forget();
 
   //Genre
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_GENRE));
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_GENRE),
+                    NS_LITERAL_STRING("property.genre"),
+                    stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.genre"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = textProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
 
   //Track number
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_TRACK));
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACK),
+                      NS_LITERAL_STRING("property.track_no"),
+                      stringBundle, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(1);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.track_no"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
   //Year
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_YEAR));
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_YEAR),
+                      NS_LITERAL_STRING("property.year"),
+                      stringBundle, 1877, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(1877);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.year"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
   //Disc Number
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER));
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                      NS_LITERAL_STRING("property.disc_no"),
+                      stringBundle, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(1);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.disc_no"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
   //Total Discs
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS));
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS),
+                      NS_LITERAL_STRING("property.total_discs"),
+                      stringBundle, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(1);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.total_discs"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
   //Total tracks
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS));
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS),
+                      NS_LITERAL_STRING("property.total_tracks"),
+                      stringBundle, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(1);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.total_tracks"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
   //Is part of a compilation
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_ISPARTOFCOMPILATION));
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_ISPARTOFCOMPILATION),
+                      NS_LITERAL_STRING("property.is_part_of_compilation"),
+                      stringBundle, 0, PR_TRUE, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(0);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMaxValue(1);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.is_part_of_compilation"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
   //Producer(s)
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_PRODUCERNAME));
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_PRODUCERNAME),
+                    NS_LITERAL_STRING("property.producer"),
+                    stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.producer"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = textProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
-  
   //Composer(s)
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_COMPOSERNAME));
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COMPOSERNAME),
+                    NS_LITERAL_STRING("property.composer"),
+                    stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.composer"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = textProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
 
   //Lyricist(s)
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_LYRICISTNAME));
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LYRICISTNAME),
+                    NS_LITERAL_STRING("property.lyricist"),
+                    stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.lyricist"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = textProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
 
   //Lyrics
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_LYRICS));
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LYRICS),
+                    NS_LITERAL_STRING("property.lyrics"),
+                    stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.lyrics"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = textProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
 
   //Record Label
-  textProperty = new sbTextPropertyInfo();
-  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_RECORDLABELNAME));
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_RECORDLABELNAME),
+                    NS_LITERAL_STRING("property.record_label_name"),
+                    stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.record_label_name"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = textProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  textProperty.forget();
 
   //Album art url
-  uriProperty = new sbURIPropertyInfo();
-  NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = uriProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTURL));
+  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTURL),
+                   NS_LITERAL_STRING("property.album_art_url"),
+                   stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.album_art_url"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = uriProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIURIPropertyInfo *, uriProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  uriProperty.forget();
 
   //Last played time
-  datetimeProperty = new sbDatetimePropertyInfo();
-  NS_ENSURE_TRUE(datetimeProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = datetimeProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_LASTPLAYTIME));
+  rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_LASTPLAYTIME),
+                        NS_LITERAL_STRING("property.last_play_time"),
+                        sbIDatetimePropertyInfo::TIMETYPE_DATETIME,
+                        stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = datetimeProperty->SetTimeType(sbIDatetimePropertyInfo::TIMETYPE_DATETIME);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.last_play_time"), displayValue);
-  if(NS_SUCCEEDED(rv)) { 
-    rv = datetimeProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIDatetimePropertyInfo *, datetimeProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  datetimeProperty.forget();
 
   //Number of times played
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_PLAYCOUNT));
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_PLAYCOUNT),
+                      NS_LITERAL_STRING("property.play_count"),
+                      stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.play_count"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
   //Number of times song was skipped
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_SKIPCOUNT));
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_SKIPCOUNT),
+                      NS_LITERAL_STRING("property.skip_count"),
+                      stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.skip_count"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
   //Rating
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_RATING));
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_RATING),
+                      NS_LITERAL_STRING("property.rating"),
+                      stringBundle, 0, PR_TRUE, 100, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(0);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMaxValue(100);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.rating"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
   //Origin URL
-  uriProperty = new sbURIPropertyInfo();
-  NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = uriProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL));
+  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                   NS_LITERAL_STRING("property.origin_url"),
+                   stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.origin_url"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = uriProperty->SetDisplayName(displayValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbIURIPropertyInfo *, uriProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  uriProperty.forget();
 
   //Hidden
-  numberProperty = new sbNumberPropertyInfo();
-  NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(0);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMaxValue(1);
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                      NS_LITERAL_STRING("property.hidden"),
+                      stringBundle, 0, PR_TRUE, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.hidden"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
+  // Progress Value
+  rv = RegisterProgress(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
+                        NS_LITERAL_STRING("property.progressValue"),
+                        NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
+                        NS_LITERAL_STRING("property.progressMode"),
+                        stringBundle, -1, PR_TRUE, 101, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterText(const nsAString& aPropertyName,
+                                const nsAString& aDisplayKey,
+                                nsIStringBundle* aStringBundle,
+                                PRUint32 aNullSort,
+                                PRBool aHasNullSort)
+{
+  nsAutoPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
+  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = textProperty->SetName(aPropertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aDisplayKey.IsEmpty()) {
+    nsCOMPtr<nsIStringBundle> stringBundle;
+    rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString displayValue;
+    rv = GetStringFromName(stringBundle, aDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = textProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  if (aHasNullSort) {
+    rv = textProperty->SetNullSort(aNullSort);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbITextPropertyInfo*, textProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
 
-  //Progress
-  numberProperty = new sbNumberPropertyInfo();
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  textProperty.forget();
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
+                                    const nsAString& aDisplayKey,
+                                    PRInt32 aType,
+                                    nsIStringBundle* aStringBundle)
+{
+  nsAutoPtr<sbDatetimePropertyInfo>
+    datetimeProperty(new sbDatetimePropertyInfo());
+  NS_ENSURE_TRUE(datetimeProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = datetimeProperty->SetName(aPropertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = datetimeProperty->SetTimeType(aType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aDisplayKey.IsEmpty()) {
+    nsAutoString displayValue;
+    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = datetimeProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIDatetimePropertyInfo*, datetimeProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  datetimeProperty.forget();
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterURI(const nsAString& aPropertyName,
+                               const nsAString& aDisplayKey,
+                               nsIStringBundle* aStringBundle)
+{
+  nsAutoPtr<sbURIPropertyInfo> uriProperty(new sbURIPropertyInfo());
+  NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = uriProperty->SetName(aPropertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aDisplayKey.IsEmpty()) {
+    nsAutoString displayValue;
+    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = uriProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIURIPropertyInfo*, uriProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  uriProperty.forget();
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
+                                  const nsAString& aDisplayKey,
+                                  nsIStringBundle* aStringBundle,
+                                  PRInt32 aMinValue,
+                                  PRBool aHasMinValue,
+                                  PRInt32 aMaxValue,
+                                  PRBool aHasMaxValue)
+{
+  nsAutoPtr<sbNumberPropertyInfo> numberProperty(new sbNumberPropertyInfo());
   NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  rv = numberProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_PROGRESS));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMinValue(0);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = numberProperty->SetMaxValue(100);
+
+  nsresult rv = numberProperty->SetName(aPropertyName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = numberProperty->SetDisplayUsingSimpleType(NS_LITERAL_STRING("progressmeter"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetStringFromName(stringBundle, NS_LITERAL_STRING("property.progress"), displayValue);
-  if(NS_SUCCEEDED(rv)) {
-    rv = numberProperty->SetDisplayName(displayValue);
+  if (aHasMinValue) {
+    rv = numberProperty->SetMinValue(aMinValue);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbINumberPropertyInfo *, numberProperty));
-  NS_ENSURE_SUCCESS(rv, rv);
-  numberProperty.forget();
+  if (aHasMaxValue) {
+    rv = numberProperty->SetMaxValue(aMaxValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
+  if (!aDisplayKey.IsEmpty()) {
+    nsAutoString displayValue;
+    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = numberProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbINumberPropertyInfo*, numberProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  numberProperty.forget();
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
+                                    const nsAString& aValueDisplayKey,
+                                    const nsAString& aModePropertyName,
+                                    const nsAString& aModeDisplayKey,
+                                    nsIStringBundle* aStringBundle,
+                                    PRInt32 aMinValue,
+                                    PRBool aHasMinValue,
+                                    PRInt32 aMaxValue,
+                                    PRBool aHasMaxValue)
+{
+  nsresult rv = RegisterNumber(aModePropertyName, aModeDisplayKey,
+                               aStringBundle);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoPtr<sbProgressPropertyInfo>
+    progressProperty(new sbProgressPropertyInfo());
+  NS_ENSURE_TRUE(progressProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = progressProperty->SetName(aValuePropertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aValueDisplayKey.IsEmpty()) {
+    nsAutoString displayValue;
+    rv = GetStringFromName(aStringBundle, aValueDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = progressProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  if (aHasMinValue) {
+    rv = progressProperty->SetMinValue(aMinValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (aHasMaxValue) {
+    rv = progressProperty->SetMaxValue(aMaxValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = progressProperty->SetDisplayUsingSimpleType(NS_LITERAL_STRING("progressmeter"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = progressProperty->SetModePropertyName(aModePropertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIProgressPropertyInfo*, progressProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  progressProperty.forget();
   return NS_OK;
 }

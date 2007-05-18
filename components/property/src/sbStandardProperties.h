@@ -60,6 +60,7 @@
 #define SB_PROPERTY_ISLIST                  "http://songbirdnest.com/data/1.0#isList"
 #define SB_PROPERTY_ORDINAL                 "http://songbirdnest.com/data/1.0#ordinal"
 #define SB_PROPERTY_MEDIALISTNAME           "http://songbirdnest.com/data/1.0#mediaListName"
-#define SB_PROPERTY_PROGRESS                "http://songbirdnest.com/data/1.0#progress"
+#define SB_PROPERTY_PROGRESSMODE            "http://songbirdnest.com/data/1.0#progressMode"
+#define SB_PROPERTY_PROGRESSVALUE           "http://songbirdnest.com/data/1.0#progressValue"
 
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

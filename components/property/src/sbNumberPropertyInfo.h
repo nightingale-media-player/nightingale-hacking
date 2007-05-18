@@ -41,7 +41,7 @@ class sbNumberPropertyInfo : public sbPropertyInfo,
                              public sbINumberPropertyInfo
 {
 public:
-  NS_DECL_ISUPPORTS
+  NS_DECL_ISUPPORTS_INHERITED
   NS_FORWARD_SBIPROPERTYINFO_NOVALIDATE_NOFORMAT(sbPropertyInfo::);
   NS_DECL_SBINUMBERPROPERTYINFO
 

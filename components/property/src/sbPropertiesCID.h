@@ -97,6 +97,18 @@
 #define SB_NUMBERPROPERTYINFO_CONTRACTID                   \
   "@songbirdnest.com/Songbird/Properties/Info/Number;1"
 
+#define SB_PROGRESSPROPERTYINFO_DESCRIPTION                \
+  "Songbird Progress Property Info Implementation"
+#define SB_PROGRESSPROPERTYINFO_CID                        \
+  { /*{f7465eb1-ea50-4ded-89a3-86efc375ebec}*/             \
+    0xf7465eb1,                                            \
+    0xea50,                                                \
+    0x4ded,                                                \
+    { 0x89, 0xa3, 0x86, 0xef, 0xc3, 0x75, 0xeb, 0xec }     \
+  }
+#define SB_PROGRESSPROPERTYINFO_CONTRACTID                 \
+  "@songbirdnest.com/Songbird/Properties/Info/Progress;1"
+
 #define SB_TEXTPROPERTYINFO_DESCRIPTION                    \
   "Songbird Text Property Info Implementation"
 #define SB_TEXTPROPERTYINFO_CID                            \

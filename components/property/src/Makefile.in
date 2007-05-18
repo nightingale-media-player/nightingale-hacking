@@ -38,6 +38,7 @@ endif
 CPP_SRCS = sbSimpleProperty.cpp \
            sbPropertyArray.cpp \
            sbPropertyFactory.cpp \
+           sbProgressPropertyInfo.cpp \
            sbPropertyInfo.cpp \
            sbTextPropertyInfo.cpp \
            sbNumberPropertyInfo.cpp \
@@ -51,8 +52,10 @@ CPP_INCLUDES = $(DEPTH)/components/property/public \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/enumeration/src \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_INCLUDE_DIR)/locale \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \

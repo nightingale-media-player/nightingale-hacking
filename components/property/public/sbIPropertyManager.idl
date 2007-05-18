@@ -398,3 +398,16 @@ interface sbIDatetimePropertyInfo : sbIPropertyInfo
    */
   attribute boolean durationWithMilliseconds;
 };
+
+/**
+ * \interface sbIProgressPropertyInfo
+ *
+ */
+[scriptable, uuid(154e77d3-6750-4f4c-a070-473bb7645381)]
+interface sbIProgressPropertyInfo : sbINumberPropertyInfo
+{
+  /** 
+   * \brief Minimum value allowed.
+   */
+  attribute AString modePropertyName;
+};

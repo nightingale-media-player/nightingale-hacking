@@ -588,19 +588,7 @@
 
   // Get the list of columns from the property manager and add them to the
   // tree
-  var allColumns = [
-    "http://songbirdnest.com/data/1.0#ordinal",
-    "http://songbirdnest.com/data/1.0#artistName",
-    "http://songbirdnest.com/data/1.0#albumName",
-    "http://songbirdnest.com/data/1.0#trackName",
-    "http://songbirdnest.com/data/1.0#duration",
-    "http://songbirdnest.com/data/1.0#genre",
-    "http://songbirdnest.com/data/1.0#track",
-    "http://songbirdnest.com/data/1.0#year",
-    "http://songbirdnest.com/data/1.0#lastPlayTime",
-    "http://songbirdnest.com/data/1.0#playCount",
-    "http://songbirdnest.com/data/1.0#contentUrl"];
-  var numColumns = allColumns.length;
+  var numColumns = columnMap.length;
 
   // Add the columns that have saved settings, keeping track of which column
   // were added
@@ -608,8 +596,7 @@
   var addedColumns = 0;
   columnMap.forEach(function(columnInfo) {
     var propertyInfo = pm.getPropertyInfo(columnInfo.property);
-    this._appendColumn(columnInfo.property,
-                       propertyInfo.displayName,
+    this._appendColumn(propertyInfo,
                        false,
                        columnInfo.width,
                        numColumns - addedColumns > 1);
@@ -620,17 +607,18 @@
   // Add the rest of the columns from the property manager.  Note if there was
   // any saved column info, add these additional columns as hidden, otherwise
   // show them
-  allColumns.forEach(function(property) {
-    if (!alreadyAdded[property]) {
-      var propertyInfo = pm.getPropertyInfo(property);
-      this._appendColumn(property,
-                         propertyInfo.displayName,
+  var propEnumerator = pm.propertyNames;
+  while (propEnumerator.hasMore()) {
+    var propertyName = propEnumerator.getNext();
+    if (!alreadyAdded[propertyName]) {
+      var propertyInfo = pm.getPropertyInfo(propertyName);
+      this._appendColumn(propertyInfo,
                          hasColumnSpec,
                          null,
                          numColumns - addedColumns > 1);
       addedColumns++;
     }
-  }, this);
+  }
 
   // TODO: set the saved sort
 ]]>
@@ -638,16 +626,15 @@
       </method>
 
       <method name="_appendColumn">
-        <parameter name="property"/>
-        <parameter name="label"/>
+        <parameter name="propertyInfo"/>
         <parameter name="isHidden"/>
         <parameter name="width"/>
         <parameter name="addSplitter"/>
         <body>
 <![CDATA[
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
-  treecol.setAttribute("bind", property);
-  treecol.setAttribute("label", label);
+  treecol.setAttribute("bind", propertyInfo.name);
+  treecol.setAttribute("label", propertyInfo.displayName);
   treecol.setAttribute("flex", "1");
   if (width) {
     treecol.setAttribute("width", width);
@@ -656,9 +643,28 @@
   if (isHidden) {
     treecol.setAttribute("hidden", "true");
   }
+  
+  var shouldInvalidate;
+  switch (propertyInfo.displayUsingSimpleType) {
+    case "progressmeter":
+      treecol.setAttribute("type", "progressmeter");
+      shouldInvalidate = true;
+      break;
+    case "checkbox":
+      treecol.setAttribute("type", "checkbox");
+      shouldInvalidate = true;
+      break;
+    default:
+      // Don't do anything, so this will be "text".
+      break;
+  }
 
   this._treecols.appendChild(treecol);
 
+  if (shouldInvalidate) {
+    this.tree.boxObject.invalidateColumn(treecol);
+  }
+  
   if (addSplitter) {
     var splitter = document.createElementNS(this._XUL_NS, "splitter");
     splitter.setAttribute("class", "tree-splitter");
