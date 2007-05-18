@@ -90,6 +90,12 @@ textbox[disabled="true"] {
   cursor: default;
 } 
 
+/* ..... invalid state ..... */
+
+textbox[invalid="true"] {
+  background-color: red;
+} 
+
 /* ::::: plain textbox ::::: */
 
 textbox.plain {

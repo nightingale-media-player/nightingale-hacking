@@ -37,7 +37,12 @@
 
     <content>
       <xul:sb-multi-drawer sbid="drawer" header="false" flex="1" xbl:inherits="maxvisibleitems">
-        <xul:hbox class="smart-condition-item-box" align="center" flex="1">
+        <xul:hbox
+          class="smart-condition-item-box"
+          align="center"
+          flex="1"
+          oninput="document.getBindingParent(document.getBindingParent(this))._valueChanged(this);"
+        >
           <xul:menulist sbid="metadatapopup" class="smart-condition-list" flex="1" value="artist" drawer-prop-map="value=metadata">
             <xul:menupopup class="smart-condition-popup">
             </xul:menupopup>
@@ -46,13 +51,19 @@
             <xul:menupopup class="smart-condition-popup">
             </xul:menupopup>
           </xul:menulist>
-          <xul:textbox class="smart-condition-value dialog_textbox" flex="1" drawer-prop-map="value=value"/>
+          <xul:textbox
+            sbid="conditionvalue"
+            class="smart-condition-value dialog_textbox"
+            flex="1"
+            drawer-prop-map="value=value"
+            drawer-attr-map="invalid=invalid"
+          />
           <xul:button label="-" class="smart_condition_minus sb_faceplate backless_button" sbtype="remove-drawer-item"/>
           <xul:button label="+" class="smart_condition_plus sb_faceplate backless_button" sbtype="add-drawer-item"/>
         </xul:hbox>
       </xul:sb-multi-drawer>
     </content>
-    
+
     <handlers>
       <handler event="select" action="onSelect(event);"/>
     </handlers>
@@ -60,51 +71,22 @@
     <implementation>
 
       <constructor>
-      <![CDATA[
-      try {
-        // Scan the metadata and fill the metadata popup with appropriate items
-        this.fillMetadata();
-        // This should pop the select event and cause us to fill the conditions popup
-      }
-      catch ( err ) {
-        alert( "conditions constructor - " + err );
-      }
-      ]]>
+<![CDATA[
+  this._pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                     .getService(this._Ci.sbIPropertyManager);
+
+  // Scan the metadata and fill the metadata popup with appropriate items
+  this.fillMetadata();
+]]>
       </constructor>
       <destructor>
       </destructor>
 
-      <field name="drawer">document.getAnonymousElementByAttribute(this, 'sbid', 'drawer');</field>
-      <field name="conditionsText">
-      <![CDATA[
-      new Array(
-        "&smart.text.contains",
-        "&smart.text.not_contain",
-        "&smart.text.is",
-        "&smart.text.is_not",
-        "&smart.text.starts",
-        "&smart.text.ends"
-      );
-      ]]>
-      </field>
-      <field name="conditionsInt">
-      <![CDATA[
-      new Array(
-        "&smart.int.equal",
-        "&smart.int.less",
-        "&smart.int.greater"
-      );
-      ]]>
-      </field>
-      <field name="conditionsDate">
-      <![CDATA[
-      new Array(
-        "&smart.date.on",
-        "&smart.date.before",
-        "&smart.date.after"
-      );
-      ]]>
-      </field>
+      <field name="drawer">document.getAnonymousElementByAttribute(this, "sbid", "drawer");</field>
+      <field name="_pm">null</field>
+      <field name="_Cc" readonly="true">Components.classes</field>
+      <field name="_Ci" readonly="true">Components.interfaces</field>
+      <field name="_Cr" readonly="true">Components.results</field>
 
       <property name="conditions">
         <getter>
@@ -113,6 +95,18 @@
         <setter>
           this.drawer.setState(val);
         </setter>
+      </property>
+      <property name="isValid">
+        <getter>
+<![CDATA[
+  var valid = true;
+  this.conditions.forEach(function(condition) {
+    if (condition.invalid == "true")
+      valid = false;
+  });
+  return valid;
+]]>
+        </getter>
       </property>
 
       <method name="newCondition">
@@ -159,79 +153,78 @@
       
       <method name="fillMetadata">
         <body>
-          <![CDATA[
-            // Erase?
-            var metadata = new Array();
+<![CDATA[
+  var metadata = [];
 
-            // Figure out what metadata properties are available for creating a smart playlist
-            var metadataDBQuery =
-                Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
-                .createInstance( Components.interfaces.sbIDatabaseQuery );
-            var mediaLibrary =
-                Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"]
-                .createInstance( Components.interfaces.sbIMediaLibrary );
-            metadataDBQuery.setAsyncQuery( false );
-            metadataDBQuery.setDatabaseGUID( "songbird" );
-            mediaLibrary.setQueryObject( metadataDBQuery );
-            mediaLibrary.getColumnInfo();
+  var names = this._pm.propertyNames;
+  while (names.hasMore()) {
+    var info = this._pm.getPropertyInfo(names.getNext());
+    metadata.push({ name: info.displayName, value: info.name });
+  }
 
-            // And, here, hopefully we have some column info.
-            var resultset = metadataDBQuery.getResultObject();
-            var rowcount = resultset.getRowCount();
-            const kName = "readable_name";
-            const kColumn = "column_name";
-            const kVisible = "is_visible";
-            for ( var index = 0; index < rowcount; index++ ) {
-              var visible = resultset.getRowCellByColumn( index, kVisible );
-              if ( visible == "1" ) {
-                var obj = {};
-                obj.name = resultset.getRowCellByColumn( index, kName );
-                obj.value = resultset.getRowCellByColumn( index, kColumn );
-                
-                if ( ( obj.value != "row_id" ) && ( obj.value != "id" ) ) {
-                  metadata.push( obj );
-                }
-              }
-            }
-            var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'metadatapopup');
-            this.generateMenuPopup( popup, metadata );
-          ]]>
+  var popup = document.getAnonymousElementByAttribute(this,
+                                                      "sbid",
+                                                      "metadatapopup");
+  this.generateMenuPopup(popup, metadata);
+]]>
         </body>
       </method>
 
       <method name="onSelect">
         <parameter name="event"/>
         <body>
-        <![CDATA[
-          if ( event.originalTarget.getAttribute( "sbid" ) == "metadatapopup" )
-          {
-            var metadatapopup = event.originalTarget;
-            var conditionspopup = metadatapopup.nextSibling;
-            var metadata = metadatapopup.value;
-            
-            var conditionsArray = this.conditionsText;
-            switch( metadata )
-            {
-              case "length":
-              case "disc_no":
-              case "disc_total":
-              case "track_no":
-              case "track_total":
-              case "rating":
-                conditionsArray = this.conditionsInt;
-                break;
-              case "year":
-                conditionsArray = this.conditionsDate;
-                break;
-            }
-            this.generateMenuPopup( conditionspopup, conditionsArray );
-          }
-        ]]>
+<![CDATA[
+  if (event.originalTarget.getAttribute("sbid") == "metadatapopup") {
+    var metadatapopup = event.originalTarget;
+    var conditionspopup = metadatapopup.nextSibling;
+
+    var info = this._pm.getPropertyInfo(metadatapopup.value);
+    var ops = info.operators;
+    var list = [];
+    while (ops.hasMoreElements()) {
+      var op = ops.getNext().QueryInterface(this._Ci.sbIPropertyOperator);
+      list.push({ name: op.operatorReadable, value: op.operator });
+    }
+    this.generateMenuPopup(conditionspopup, list);
+
+    this._valueChanged(metadatapopup.parentNode);
+  }
+]]>
         </body>
       </method>
-        
-    </implementation>
- 
+
+      <method name="_valueChanged">
+        <parameter name="condition"/>
+        <body>
+<![CDATA[
+  var property;
+  var value;
+  var nodes = condition.childNodes;
+
+  // Search the child nodes for the property dropdown and value text box
+  for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
+    if (node.nodeType == Node.ELEMENT_NODE) {
+      if (node.getAttribute("sbid") == "metadatapopup")
+        property = node;
+      if (node.getAttribute("sbid") == "conditionvalue")
+        value = node;
+    }
+  }
+
+  var info = this._pm.getPropertyInfo(property.value);
+  if (info.validate(value.value)) {
+    value.setAttribute("invalid", "false");
+  }
+  else {
+    value.setAttribute("invalid", "true");
+  }
+]]>
+        </body>
+      </method>
+
+      </implementation>
+
   </binding>
 
 </bindings>

@@ -374,25 +374,13 @@ function SBMabOpen()
 
 /** Legacy function **/
 function SBNewPlaylist()
-{  
+{
   makeNewPlaylist("simple"); 
 }
 
-function SBNewSmartPlaylist( guid, table )
+function SBNewSmartPlaylist()
 {
-  SBScanServiceTreeNewEntryEditable(); // Do this right before you add to the servicelist?
-  
-  // Make a magic data object to get passed to the dialog
-  var smart_playlist = new Object();
-  smart_playlist.retval = "";
-  smart_playlist.guid = guid;
-  smart_playlist.table = table
-  // Open the window
-  SBOpenModalDialog( "chrome://songbird/content/xul/smart_playlist.xul", "", "chrome,centerscreen", smart_playlist ); 
-  if ( smart_playlist.retval == "ok" )
-  {
-    SBScanServiceTreeNewEntryStart(); // And this once you know you really did?
-  }
+  makeNewPlaylist("smart"); 
 }
 
 /**

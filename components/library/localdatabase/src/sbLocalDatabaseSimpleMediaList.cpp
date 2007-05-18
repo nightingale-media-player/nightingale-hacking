@@ -979,6 +979,11 @@ sbLocalDatabaseSimpleMediaList::Invalidate()
   nsresult rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIMediaList> list(this);
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(list, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NotifyListenersItemUpdated(this, item);
   return NS_OK;
 }
 

@@ -3,25 +3,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -43,29 +43,17 @@
  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="smart_playlist"
  title="&smart.window;"
- onload="doLoad();" 
+ onload="doLoad();"
+ onunload="doUnLoad();"
  onkeypress="if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doCancel() ) onExit(); }"
  flex="1"
  hidechrome="true"
-
-  
  spacers_drag_window="true"
 >
   <windowregion/>
 
   <sb-sys-outer-frame resizers="none" overflow="true" flex="1">
     <sb-sys-dialog-titlebar/>
-    <!-- Commented out until we have multi-library functionality. -->
-    <!-- hbox class="sb_faceplate" id="smartpl_select_library" align="center">
-      <label value="&smart.library;" control="smart_library"/>
-      <menulist id="smart_library_drop" value="&brandShortName;">
-        <menupopup id="smart_library_popup">
-          <menuitem id="smart_library_songbird" label="&brandShortName;" value="songbird" />
-        </menupopup>
-      </menulist>
-      <spacer flex="1" height="20"/>           
-    </hbox -->
-    
     <vbox flex="1" class="formgrouping"><!-- start of grouping -->
       <vbox flex="1">
         <hbox align="center">
@@ -75,16 +63,16 @@
               <menuitem id="smart_any_list_any" label="&smart.any;" value="any" />
               <menuitem id="smart_any_list_all" label="&smart.all;" value="all" />
             </menupopup>
-          </menulist>       
+          </menulist>
           <label class="dialog_label" value="&smart.following;"/>
-          <spacer flex="1"/>           
+          <spacer flex="1"/>
         </hbox>
         <spacer height="2"/>
         <sb-smart-conditions-drawer id="smart_conditions" flex="1" maxvisibleitems="5"/>
       </vbox>
-      
-      <spacer height="5"/>  
-      
+
+      <spacer height="5"/>
+
       <hbox class="sb_faceplate" align="center">
         <checkbox id="smart_songs_check" label="&smart.limit;" checked="false"/>
         <textbox class="dialog_textbox" id="smart_songs_count" value="20"/>
@@ -115,214 +103,147 @@
             <menuitem id="smart_selected_list_most_added" label="&smart.most_added;" value="most_added" />
             <menuitem id="smart_selected_list_least_added" label="&smart.least_added;" value="least_added" />
           </menupopup>
-        </menulist>       
-        <spacer flex="1" height="25"/>           
+        </menulist>
+        <spacer flex="1" height="25"/>
       </hbox>
     </vbox><!-- end of grouping -->
-    
+
     <spacer height="5"/>
-    
+
     <hbox>
-      <spacer flex="1"/>           
-      <button label="&window.ok;" oncommand="if ( doOK() ) onExit( );"/>
+      <spacer flex="1"/>
+      <button id="smart_ok" label="&window.ok;" oncommand="if ( doOK() ) onExit( );"/>
       <spacer width="5"/>
-      <button label="&window.cancel;" oncommand="if ( doCancel() ) onExit( );"/> 
+      <button label="&window.cancel;" oncommand="if ( doCancel() ) onExit( );"/>
     </hbox>
   </sb-sys-outer-frame>
- 
+
   <!-- SCRIPTS -->
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" /> 
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/window_utils.js" />
   <script>
   <![CDATA[
-    function doLoad()
-    {
-      setTimeout(loadConditions);
+var sbILocalDatabaseSmartMediaList =
+  Components.interfaces.sbILocalDatabaseSmartMediaList;
+
+function updateOkButton(event) {
+
+  var smartConditions = document.getElementById("smart_conditions");
+  var ok = document.getElementById("smart_ok");
+  ok.disabled = !smartConditions.isValid;
+}
+
+function doLoad()
+{
+  setTimeout(loadConditions);
+
+  var smartConditions = document.getElementById("smart_conditions");
+  smartConditions.addEventListener("input",  updateOkButton, false);
+  smartConditions.addEventListener("select", updateOkButton, false);
+}
+
+function doUnLoad()
+{
+  var smartConditions = document.getElementById("smart_conditions");
+  smartConditions.removeEventListener("input",  updateOkButton, false);
+  smartConditions.removeEventListener("select", updateOkButton, false);
+}
+
+function loadConditions()
+{
+  // TODO: impl this??
+  document.getElementById("smart_match_check").checked = true;
+
+  var list = window.arguments[0].QueryInterface(sbILocalDatabaseSmartMediaList);
+
+  // Set up conditions
+  var smartConditions = document.getElementById("smart_conditions");
+  if (list.conditionCount > 0) {
+    var conditions = [];
+    for (var i = 0; i < list.conditionCount; i++) {
+      var condition = list.getConditionAt(i);
+      conditions.push({
+        metadata: condition.propertyName,
+        condition: condition.operator.operator,
+        value: condition.leftValue
+      });
     }
-    
-    function loadConditions()
-    {
-      document.getElementById( "smart_match_check" ).checked = true;
-      try
-      {
-        var smartConditions = document.getElementById( "smart_conditions" );
-        var use_new = true;
-        if ( window.arguments && 
-            window.arguments[0] &&
-            window.arguments[0].guid &&
-            window.arguments[0].table)
-        {
-        
-          const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-          var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-          
-          var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
-          aDBQuery = aDBQuery.QueryInterface(Components.interfaces.sbIDatabaseQuery);
+    smartConditions.conditions = conditions;
+  }
+  else {
+    smartConditions.newCondition();
+  }
 
-          var strGUID = window.arguments[0].guid;
-          var strTable = window.arguments[0].table;
-          aDBQuery.setDatabaseGUID(strGUID);
-                  
-          var aPlaylist = aPlaylistManager.getSmartPlaylist(strTable, aDBQuery);
-          if(aPlaylist)
-          {
-            document.playlist = aPlaylist;
-            document.queryObj = aDBQuery;
-            
-            var strLibrary = aPlaylist.getLibrary();
-            var strLimit = aPlaylist.getLimit();
-            var strLimitType = aPlaylist.getLimitType();
-            var strSelectedBy = aPlaylist.getSelectedBy();
-            var strMatch = aPlaylist.getMatch();
-            
-            if(strLimit != "0")
-              document.getElementById( "smart_songs_check" ).checked = true;
-            
-//            document.getElementById( "smart_library_drop" ).value = strLibrary;
-            document.getElementById( "smart_songs_count" ).value = strLimit;
-            document.getElementById( "smart_songs_list" ).value = strLimitType;
-            document.getElementById( "smart_selected_list" ).value = strSelectedBy;
-            document.getElementById( "smart_any_list" ).value = strMatch;
-            
-            if(smartConditions)
-            {
-              var conditionsArray = new Array();
-              aPlaylist.getAllConstraints();
-              
-              var aResObj = aDBQuery.getResultObject();
-              var rowCount = aResObj.getRowCount();
-              
-              // Hey, some people like to save empty conditions.  Neat.
-              if ( rowCount > 0 )
-              {
-                var node = null, i = 0;
-                for(; i < rowCount; ++i)
-                {
-                  node = new Object;
-                  
-                  node.metadata = aResObj.getRowCellByColumn(i, "column_name");
-                  
-                  var conditionName = aResObj.getRowCellByColumn(i, "constraint_name");
-                  switch(conditionName)
-                  {
-                    case "contains": conditionName = 0; break;
-                    case "does not contain": conditionName = 1; break;
-                    case "is": conditionName = 2; break;
-                    case "is not": conditionName = 3; break;
-                    case "starts with": conditionName = 4; break;
-                    case "ends with": conditionName = 5; break;
-                  }
-                  
-                  node.condition = conditionName;
-                  node.value = aResObj.getRowCellByColumn(i, "constraint_value");
-                  
-                  conditionsArray.push(node);
-                }
-                smartConditions.conditions = conditionsArray;
-                use_new = false; // Don't make a new one, we loaded the previous conditions.
-              }
-            }
-          }
-        }
-        if ( use_new )
-        {
-          smartConditions.newCondition();
-        }
-      }
-      catch(err) { alert(err); }
+  // Set match
+  var match = document.getElementById("smart_any_list");
+  if (list.match == sbILocalDatabaseSmartMediaList.MATCH_ALL) {
+    match.value = "all";
+  }
+  else {
+    match.value = "any";
+  }
+
+  // Set limit
+  var limit = document.getElementById("smart_songs_check");
+  if (list.itemLimit == sbILocalDatabaseSmartMediaList.LIMIT_NONE) {
+    limit.checked = false;
+  }
+  else {
+    limit.checked = true;
+    var count = document.getElementById("smart_songs_count");
+    count.value = list.itemLimit;
+  }
+}
+
+function doOK()
+{
+  var list = window.arguments[0].QueryInterface(sbILocalDatabaseSmartMediaList);
+  var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                             .getService(Components.interfaces.sbIPropertyManager);
+
+  // Save conditions
+  list.clearConditions();
+  var conditions = document.getElementById("smart_conditions").conditions;
+  conditions.forEach(function(condition) {
+    var info = pm.getPropertyInfo(condition.metadata);
+    if (condition.value) {
+      list.appendCondition(condition.metadata,
+                           info.getOperator(condition.condition),
+                           condition.value,
+                           null,
+                           sbILocalDatabaseSmartMediaList.LIMIT_NONE);
     }
-    
-    function doOK()
-    {
-      const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-      var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-      
-      var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
-      queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-      
-      var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance();
-      aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
+  });
 
-      var library = "songbird"; // document.getElementById( "smart_library_drop" ).value; // koshi decided he didn't like this
+  // Save match
+  var match = document.getElementById("smart_any_list");
+  if (match.value == "all") {
+    list.match = sbILocalDatabaseSmartMediaList.MATCH_ALL;
+  }
+  else {
+    list.match = sbILocalDatabaseSmartMediaList.MATCH_ANY;
+  }
 
-      var use_limit = document.getElementById( "smart_songs_check" ).checked;
-      var use_match = document.getElementById( "smart_match_check" ).checked;
-     
-      var limit = use_limit ? document.getElementById( "smart_songs_count" ).value : "0";
-      var limit_type = use_limit ? document.getElementById( "smart_songs_list" ).value : "";
-      var selected_by = use_limit ? document.getElementById( "smart_selected_list" ).value : "";
-      var match = use_match ? document.getElementById( "smart_any_list" ).value : "";
-      
-      // Go ask the dumb conditions object what it has inside it.
-      var conditions_array = document.getElementById( "smart_conditions" ).conditions;
+  // Save limit
+  var limit = document.getElementById("smart_songs_check");
+  if (limit.checked) {
+    var count = document.getElementById("smart_songs_count");
+    list.itemLimit = count.value;
+  }
+  else {
+    list.itemLimit = sbILocalDatabaseSmartMediaList.LIMIT_NONE;
+  }
 
-      queryObj.setAsyncQuery(false);
-      queryObj.setDatabaseGUID(library);      
-      aPlaylistManager.getSmartPlaylistList(queryObj);
+  list.rebuild();
 
-      var resObj = queryObj.getResultObject();
-      var playlistCount = resObj.getRowCount() + 1;
+  return true;
+}
 
-      var newPlaylist = true;
-      var name = "";
-      var readable_name = "";
-
-      if(!document.playlist)
-      {
-        name = aUUIDGenerator.generateUUID();
-        readable_name = "Smart Playlist " + playlistCount;
-      }
-      else
-      {
-        newPlaylist = false;
-        name = document.playlist.getName();
-        readable_name = document.playlist.getReadableName();
-        document.playlist.removeAllConstraints(false);
-      }
-
-      var description = "Smart Playlist";
-      var aSmartPlaylist = aPlaylistManager.createSmartPlaylist(name, readable_name, description, "User", library, limit, limit_type, selected_by, match, queryObj);
-      
-      /*
-      // Hooray for debug texts!
-      var text = "Library GUID: " + library + "\n";
-      text += "Limit: " + use_limit + " - " + limit + "\n";
-      text += "Limit Type: " + limit_type + "\n";
-      text += "Selected By: " + selected_by + "\n";
-      text += "Match On: " + use_match + " - " + match + "\n";
-      text += conditions_array.length + " condition" + ( (conditions_array.length == 1) ? "" : "s" ) + ":\r\n";
-      */
-      
-      for ( var i in conditions_array )
-      {
-        var node = conditions_array[ i ];
-      //  text += " ---- " + node.metadata + " " + node.condition_name + "(" + node.condition + ") " + node.value + "\r\n";
-        aSmartPlaylist.addConstraint(node.metadata, node.condition_name, node.value, false);
-      }
-      //alert( text );
-      
-      aSmartPlaylist.rebuildPlaylist();
-      
-      if ( window.arguments && window.arguments[0] )
-      {
-        window.arguments[0].retval = "ok";
-      }
-      
-      return true;
-    }
-    function doCancel()
-    {
-      if ( window.arguments && window.arguments[0] )
-      {
-        window.arguments[0].retval = "cancel";
-      }
-      
-      return true;
-    }
-  ]]>
+function doCancel() {
+  return true;
+}
+]]>
   </script>
-  
-  
 </window>
 

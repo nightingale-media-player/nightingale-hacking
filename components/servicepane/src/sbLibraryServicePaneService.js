@@ -118,7 +118,20 @@ function sbLibraryServicePane_servicePaneInit(sps) {
 
 sbLibraryServicePane.prototype.fillContextMenu =
 function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow) {
-  // TODO
+
+  var list = this.getLibraryResourceForNode(aNode);
+  if (list && list instanceof Ci.sbILocalDatabaseSmartMediaList) {
+    this._appendMenuItem(aContextMenu, "Properties", function(event) {
+      var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                      .getService(Ci.nsIWindowWatcher);
+      watcher.openWindow(null,
+                         "chrome://songbird/content/xul/smart_playlist.xul",
+                         "_blank",
+                         "chrome,dialog=yes",
+                         list);
+    });
+  }
+
 }
 sbLibraryServicePane.prototype.canDrop =
 function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation) {
@@ -563,7 +576,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.editable = true;
     
     // Set properties for styling purposes
-    node.properties = "library libraryguid_" + aLibrary.guid;
+    node.properties = "library libraryguid-" + aLibrary.guid;
     
     // Save the type of media list so that we can group by type
     node.setAttributeNS(LSP, "ListType", aLibrary.type)    
@@ -599,19 +612,18 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     // Create the node
     node = this._servicePane.addNode(id, this._servicePane.root, false);
     node.url = this._getDisplayURL(aMediaList);
-    node.image = URL_ICON_PLAYLIST;
     node.contractid = CONTRACTID;
     node.editable = true;
-    
+
     // Set properties for styling purposes
-    node.properties = "medialist medialisttype_" + aMediaList.type;
-    
+    node.properties = "medialist medialisttype-" + aMediaList.type;
+
     // Save the type of media list so that we can group by type
     node.setAttributeNS(LSP, "ListType", aMediaList.type);
 
     // Save the guid of the library that owns this media list
     node.setAttributeNS(LSP, "LibraryGUID", aMediaList.library.guid);
-    
+
     // Place the node in the tree
     this._insertMediaListNode(node, aMediaList);
   }
@@ -749,7 +761,13 @@ function sbLibraryServicePane__insertAfterLastOfSameType(aNode, aParent) {
   }
 }
 
-
+sbLibraryServicePane.prototype._appendMenuItem =
+function sbLibraryServicePane__appendMenuItem(aContextMenu, aLabel, aCallback) {
+  var item = aContextMenu.ownerDocument.createElement("menuitem");
+  item.setAttribute("label", aLabel);
+  item.addEventListener("command", aCallback, false);
+  aContextMenu.appendChild(item);
+}
 
 ///////////////////////////////
 // sbILibraryManagerListener //
