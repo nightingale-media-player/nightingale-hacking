@@ -562,7 +562,8 @@ BUTTONS
 ************************************************************************************************************************************************
 */ 
 dropmarker,
-button
+button,
+toolbarbutton
 {
   background-color: transparent;
   color: #99A195;     
@@ -575,7 +576,8 @@ button
   text-align: center;
 }
 
-button:hover
+button:hover,
+toolbarbutton:hover
 {
   border: 1px solid;
   border-top-color: #99A194; /** Dark Border 1*/
@@ -585,7 +587,8 @@ button:hover
   color: #FFF;  
 }
 
-button:active
+button:active,
+toolbarbutton:active
 {
   border: 1px solid;
   border-top-color: #333332; /** Dark Border 3*/
@@ -596,7 +599,10 @@ button:active
 
 button[disabled="true"],
 button[disabled="true"]:active,
-button[disabled="true"]:hover
+button[disabled="true"]:hover,
+toolbarbutton[disabled="true"],
+toolbarbutton[disabled="true"]:active,
+toolbarbutton[disabled="true"]:hover
 {
   background-color: transparent;
   border: 1px solid transparent;
@@ -898,37 +904,10 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 ************************************************************************************************************************************************
 */
 
-/* the box with the url image and the url textbox */
-
-
-.locationbar-image
-{
-  background-color: transparent;
-  height: 16px;
-  width: 16px;
-  max-height: 16px !important;
-  max-width: 16px !important;
-  min-height: 16px !important;
-  min-width: 16px !important;
-  margin: 3px 5px 3px 5px;
-}
-
-
-#browser_toolbar
-{
-  height: 35px;
-  padding-left: 2px;
-  border-bottom: 1px solid transparent; 
-  background-color: transparent;
-}
 
 /* the box with the url image and the url textbox */
 .locationbar-textbox
 {
-  height: 30px;
-  min-height: 30px;
-  margin: 2px 0px 0px 5px;
-  padding: 0px;
   border: 1px solid;
   -moz-border-radius: 5px;
   border-top-color: #333332; /** Dark Border 3*/
@@ -943,21 +922,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   background-color: #0f100f; /** Dark Color 2 */
   color: #fffff1; /** Light Color Brightest */
 }
-
-#browser_toolbar button 
-{
-  height: 30px;
-  width: 30px;  
-  padding: 0px;
-  margin: 2px 0px 2px 2px;
-  min-width: 0px;
-}
-
-#browser_toolbar .button-text
-{
-  display: none;  
-}
  
+
 /* END WEB BAR */
 
 /** 

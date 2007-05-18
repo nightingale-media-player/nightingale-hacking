@@ -1035,7 +1035,7 @@ FeathersManager.prototype = {
             
     // Determine window features.  If chrome is enabled, make resizable.
     // Otherwise remove the titlebar.
-    var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";    
+    var chromeFeatures = "chrome,modal=no,toolbar=yes,popup=no";    
     var showChrome = this.isChromeEnabled(this.currentLayoutURL, this.currentSkinName);
     if (showChrome) {
        chromeFeatures += ",resizable=yes";

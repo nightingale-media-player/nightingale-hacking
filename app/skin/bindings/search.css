@@ -36,12 +36,11 @@ searchbar
 {
   height: 30px;
   min-height: 30px;
-  margin: 2px;
+  margin: 0px 0px 0px 0px;
   padding: 0px;
   border: 1px solid;
   -moz-border-radius: 5px;
 }
-
 
 .searchbar-engine-image {
   margin-left: 2px;

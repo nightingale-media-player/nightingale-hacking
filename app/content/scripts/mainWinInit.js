@@ -77,6 +77,12 @@ function SBInitialize()
     */
     
     setMinMaxCallback();
+    
+    // This is the sb-tabbrowser xul element from mainwin.xul
+    gBrowser = document.getElementById("frame_main_pane");
+    // looks like we need to attach this to the window...
+    window.gBrowser = gBrowser;
+            
     initJumpToFileHotkey();
 
     if (window.addEventListener)
@@ -92,16 +98,11 @@ function SBInitialize()
       setTimeout( SBScanMedia, 1000 );
       SBDataSetBoolValue("firstrun.scancomplete", true);
     }
-    
-    // This is the sb-tabbrowser xul element from mainwin.xul
-    gBrowser = document.getElementById("frame_main_pane");
-    
+       
     // Look at all these ugly hacks that need to go away.  (sigh)
     gServicePane = document.getElementById('servicepane');
     
     gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
-    // looks like we need to attach this to the window...
-    window.gBrowser = gBrowser;
     
     try {
       var metadataBackscanner = Components.classes["@songbirdnest.com/Songbird/MetadataBackscanner;1"]

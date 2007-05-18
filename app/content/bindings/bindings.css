@@ -70,6 +70,11 @@ filterlist2 {
   -moz-binding: url("chrome://songbird/content/bindings/filterlist2.xml#filterlist2") !important;
 }
 
+observes[type="dataremote"]
+{
+  -moz-binding: url("chrome://songbird/content/bindings/observesDataremote.xml#observes") !important;
+}
+
 /** Must be named searchbar, as the base FireFox searchbar does a .nodeName search **/
 searchbar {
   -moz-binding: url("chrome://songbird/content/bindings/sb-search.xml#sb-searchbar") !important;
@@ -78,7 +83,6 @@ searchbar {
 menupopup[type="search"] {
   -moz-binding: url("chrome://songbird/content/bindings/sb-search.xml#sb-search-menupopup") !important;
 }
-
 
 multistatebutton {
   -moz-binding: url("chrome://songbird/content/bindings/multistatebutton.xml#multistatebutton") !important;
@@ -359,18 +363,12 @@ sb-tabbrowser {
   -moz-binding: url("chrome://songbird/content/bindings/sb-tabbrowser.xml#sb-tabbrowser") !important;
 }
 
-
 /* LOCATION BAR */
 sb-locationbar-textbox {
   -moz-binding: url("chrome://songbird/content/bindings/sb-locationbar-textbox.xml#sb-locationbar-textbox") !important;
 }
 
-/* BROWSER TOOLBAR */
-sb-browser-toolbar {
-  -moz-binding: url("chrome://songbird/content/bindings/webToolbar.xml#browser-toolbar") !important;
-}
-
 /* SPINNER */
 sb-browser-spinner {
-  -moz-binding: url("chrome://songbird/content/bindings/webToolbar.xml#browser-spinner") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/spinner.xml#browser-spinner") !important;
 }

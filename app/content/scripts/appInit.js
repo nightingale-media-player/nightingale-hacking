@@ -265,7 +265,7 @@ function doMainwinStart()
     showChrome = true;
   }
   
-  var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";
+  var chromeFeatures = "chrome,modal=no,toolbar=yes,popup=no";
   if (showChrome) {
     chromeFeatures += ",resizable=yes"; 
   } else  {

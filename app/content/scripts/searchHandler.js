@@ -370,11 +370,11 @@ const gSearchHandler = {
    * hidden, null otherwise.
    */
   getSearchBar: function SearchHandler_getSearchBar() {
-    // TODO: This isn't going to work once the searchbar goes inside a binding
-    var searchBar = document.getElementById("searchbar");
-    if (searchBar && isElementVisible(searchBar))
-      return searchBar;
-
+    // Look for a searchbar element
+    var elements = document.getElementsByTagName("searchbar"); 
+    if (elements && elements.length > 0 && isElementVisible(elements[0])) {
+       return elements[0];
+    } 
     return null;
   },
   

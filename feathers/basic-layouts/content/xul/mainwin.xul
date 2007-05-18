@@ -11,7 +11,9 @@
 ]>
 
 <?xul-overlay href="chrome://songbird/content/xul/popupOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/actionSetsOverlay.xul"?>
 <?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/browserToolbarOverlay.xul"?>
 
 <!--
 /*
@@ -45,8 +47,8 @@
 <window
   id="frame_outer"
   class="mainwin"
-  onload="SBInitialize();onSBMainwinDataLoad();"
-  onunload="SBUninitialize();onSBMainwinDataUnload();"
+  onload="SBInitialize();"
+  onunload="SBUninitialize();"
   onclose="/*return false;*/ quitApp();" 
   title="&window.dev.title;"
   windowtype="Songbird:Main"
@@ -58,11 +60,14 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 >
 
-  <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
+  <stringbundleset id="stringbundleset"> 
+     <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
+  </stringbundleset>
+  
   
   <windowregion/> <!-- No matter what mig says, don't take this out!! -->
   
-  <popupset id="popupset_main" />
+  <popupset id="mainPopupSet" />
 
   <sb-sys-outer-frame id="window_parent" flex="1"
     ondragover="nsDragAndDrop.dragOver( event, SBDropObserver )"
@@ -153,44 +158,16 @@
 
             <!-- MAIN PANE -->
             <vbox flex="1" id="main_pane_border">
-            
-              <vbox id="frame_main_pane_html" hidden="false" >
-                
-                <!-- WEB BAR -->
-                <sb-browser-toolbar id="browser_toolbar" flex="1" />                                                       
-                
-               <!-- TODO: Remove this once web-toolbar styling is complete
-               <hbox id="browser_toolbar" align="center" flex="1">
-                  <button disabled="true" id="browser_back" oncommand="gBrowser.goBack();" tooltiptext="&tooltip.browser.back;"/>
-                  <button disabled="true" id="browser_fwd" oncommand="gBrowser.goForward();" tooltiptext="&tooltip.browser.fwd;"/>
-                  <button disabled="false" id="browser_refresh" oncommand="gBrowser.reload();" tooltiptext="&tooltip.browser.refresh;"/>
-                  <button disabled="false" id="browser_stop" oncommand="gBrowser.stop();" tooltiptext="&tooltip.browser.stop;"/>
-                  <button disabled="false" id="browser_home" oncommand="gBrowser.goHome();" tooltiptext="&tooltip.browser.home;"/>
-                  <button disabled="false" id="browser_bookmark" oncommand="bmManager.addBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
+                                          
+              <!-- BROWSER TOOLBAR. Filled via overlay by browserToolbarOverlay.xul and others. -->
+              <toolbox  id="navigator-toolbox" />
 
-                  <sb-locationbar-textbox id="location_bar"
-                                          flex="6" align="center"
-                                          browser="frame_main_pane" />
-
-
-                  <sb-smart-splitter id="search_splitter" state="open">
-                    <grippy/>
-                  </sb-smart-splitter>    
-
-                  <searchbar id="searchbar" flex="1"/>                                         
-                  
-                  <spacer style="min-width: 5px !important;" width="5" height="16"/>
-                  <spacer width="16" height="16" id="spinner_spin" class="spinner_spin" hidden="true"/>
-                  <spacer width="16" height="16" id="spinner_stopped" class="spinner_stopped" hidden="true"/>
-                  <spacer style="min-width: 8px !important;" width="8" height="16"/>
-                </hbox>
-                -->
-              </vbox>
+              <!-- BROWSER -->
               <sb-tabbrowser id="frame_main_pane" flex="1"
                              servicepane="servicepane"
                              contentcontextmenu="html_context_menu"
                              />
-              <!--
+              <!-- TODO: Remove this
               <sb-smart-splitter id="playlist_web_split" hidden="true" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
                 <grippy/>
               </sb-smart-splitter>
@@ -226,25 +203,8 @@
   </sb-sys-outer-frame>
 
   <commandset id="mainCommandSet" />
-  
   <broadcasterset id="mainBroadcasterSet" />
-  
-  <keyset id="mainKeyset">
-    <key id="newplaylist-key" modifiers="accel" key="&menu.file.new.key;" oncommand="doMenu('file.new');"/>
-    <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('file.file');"/>
-    <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('file.url');"/>
-    <!--<key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/> -->
-    <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
-    <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />
-    <key id="copy-key" modifiers="accel" key="&menu.edit.copy.key;" />
-    <key id="paste-key" modifiers="accel" key="&menu.edit.paste.key;" />
-    <key id="selectall-key" modifiers="accel" key="A" />
-    <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
-    <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
-    <key id="search-key" modifiers="accel" key="&search.key;" oncommand="document.getElementById('search_widget').onFirstMousedown();"/>
-    <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
-    <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>
-  </keyset>
+  <keyset id="mainKeyset" />
 
   <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript"   
@@ -308,8 +268,6 @@
   <!-- Load the main window data bindings -->
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/mainWinInit.js" />
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/mainwin.data.js" />
 
   <!-- Load the locale switcher -->
   <script type="application/x-javascript"   

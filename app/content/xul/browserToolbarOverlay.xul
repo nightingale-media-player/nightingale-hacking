@@ -1,0 +1,137 @@
+<?xml version="1.0"?> 
+
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<overlay id="ovToolbox"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+
+
+
+  <!-- 
+    BROWSER TOOLBAR
+    
+    A toolbox for controlling the the browser.
+    
+    See http://www.xulplanet.com/tutorials/xultu/toolbar.html
+    and http://developer.mozilla.org/en/docs/Custom_Toolbar_Button
+    
+    The classes and IDs used in this binding are intended to match those
+    in used in FireFox.
+    
+    Add your own toolbars and palette items via  overlay, or by adding
+    them as children to this binding.
+    
+    TODO Make this toolbar user customizable.
+    -->
+  <toolbox id="navigator-toolbox" class="toolbox-top" mode="icons" 
+            defaultmode="icons" iconsize="small">
+    <toolbarpalette id="BrowserToolbarPalette">
+    
+      <!-- IDs and classes match FireFox in order to make porting 
+           extensions easier -->
+      <toolbarbutton id="back-button"  class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.back;"
+                     command="Browser:Back"
+                     tooltiptext="&tooltip.browser.back;"/>
+                      
+      <toolbarbutton id="forward-button"  class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.fwd;"
+                     command="Browser:Forward"
+                     tooltiptext="&tooltip.browser.fwd;"/>
+                      
+      <toolbarbutton id="reload-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.refresh;"
+                     command="Browser:Reload"
+                     tooltiptext="&tooltip.browser.refresh;"/>
+                      
+      <toolbarbutton id="stop-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.stop;"
+                     command="Browser:Stop"
+                     tooltiptext="&tooltip.browser.stop;" />
+                      
+      <toolbarbutton id="home-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.home;"
+                     command="Browser:Home"
+                     tooltiptext="&tooltip.browser.home;"/>
+                      
+      <toolbarbutton id="bookmark-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.bookmark;"
+                     command="cmd_bm_newbookmark"
+                     tooltiptext="&tooltip.browser.bookmark;"/>
+
+      <!-- ADDRESS BOX -->                 
+      <toolbaritem id="urlbar-container" align="center" flex="6"
+                   title="URL">
+        <sb-locationbar-textbox id="location_bar"
+                                flex="1" align="center"
+                                browser="frame_main_pane" />  
+      </toolbaritem>
+      
+      <splitter id="search_splitter">
+        <grippy/>
+      </splitter> 
+
+      <!-- SEARCH WIDGET -->
+      <toolbaritem id="searchbar-container" align="center" flex="6"
+                   title="&tooltip.search;">
+        <searchbar id="searchbar"  flex="1"/>   
+      </toolbaritem>
+
+      <!-- SPINNER -->
+      <toolbaritem id="spinner-container" align="center" pack="center">
+          <sb-browser-spinner />
+      </toolbaritem>
+
+    </toolbarpalette>
+    
+    <toolbar id="nav-bar" class="toolbar-primary chromeclass-toolbar"
+             toolbarname="WebToolbar"
+             mode="icons" 
+             iconsize="small"
+             customizable="true"
+             defaultset="back-button,forward-button,reload-button,stop-button,home-button,bookmark-button,urlbar-container,search_splitter,searchbar-container,spinner-container"
+             flex="1">            
+    </toolbar>
+    
+    <toolbarset id="customToolbars" />
+          
+  </toolbox>
+
+
+</overlay>
+
+

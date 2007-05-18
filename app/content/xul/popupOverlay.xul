@@ -33,7 +33,7 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 
-  <popupset id="popupset_main">
+  <popupset id="mainPopupSet">
   
     <!-- CONTEXT MENU FOR THE MAIN PANE HTML LINKS -->
     <popup id="html_context_menu" oncommand="gBrowser.onHTMLContextMenu(event.target)">

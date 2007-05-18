@@ -1,0 +1,25 @@
+Index: toolkit/content/widgets/autocomplete.xml
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/content/widgets/autocomplete.xml,v
+retrieving revision 1.74
+diff -u -8 -p -r1.74 autocomplete.xml
+--- toolkit/content/widgets/autocomplete.xml	2 Mar 2007 17:58:55 -0000	1.74
++++ toolkit/content/widgets/autocomplete.xml	17 May 2007 19:02:28 -0000
+@@ -596,16 +596,17 @@
+ 
+       <method name="closePopup">
+         <body><![CDATA[
+           if (this.mPopupOpen) {
+             this.hidePopup();
+             document.popupNode = null;
+ 
+             this.setAttribute("hidden", "true");
++            this.removeAttribute("width");
+             this.mInput.controller.detachRollupListener();
+           }
+         ]]></body>
+       </method>
+ 
+       <method name="invalidate">
+         <body><![CDATA[
+           this.adjustHeight();

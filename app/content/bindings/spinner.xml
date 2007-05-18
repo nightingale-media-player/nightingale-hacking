@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+
+  <!-- 
+    SPINNER    
+    Loading indicator.  Pretty much the same as the FireFox throbber.
+    -->
+  <binding id="browser-spinner">
+
+    <content>
+      <hbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        <image anonid="spinner-image" spinning="false" class="browser-spinner-image"/>
+      </hbox>
+    </content>
+
+    <implementation type="application/x-javascript" >
+
+      <constructor>
+       <![CDATA[
+          // XXX: This won't work once we support multiple windows.
+          // Leaving as-is for now.
+          var image = document.getAnonymousElementByAttribute(this,"anonid", "spinner-image");
+          this._dataremote = SBDataBindElementAttribute( "faceplate.loading", image, "spinning", true );
+       ]]>
+      </constructor>
+      
+      <destructor>
+       <![CDATA[
+         this._dataremote.unbind();
+         this._dataremote = null;
+       ]]>
+      </destructor>
+
+      <field name="_dataremote">null</field>
+                            
+    </implementation>
+  </binding>  
+  
+  
+</bindings>
+
+

@@ -28,22 +28,18 @@
 
 /** 
 ************************************************************************************************************************************************
-SPINNER 
-Used to indicate that the system is busy doing something
+DATAREMOTE OBSERVER 
+By default commands, broadcaster, and observers have display:none, which prevents
+XBL instantiation.  If you are having trouble getting observes to work below
+a node, check to see if display:none is somewhere in the chain.
 ************************************************************************************************************************************************
 */
 
-sb-browser-spinner
+commandset,
+command,
+broadcasterset,
+broadcaster,
+observes[type="dataremote"]
 {
-  background-color: transparent;
-  padding: 2px;
+  display: block !important;
 }
-.browser-spinner-image
-{
-  list-style-image: url(chrome://songbird/skin/icons/spinner_stopped.gif) ;  
-}
-.browser-spinner-image[spinning="true"]
-{
-  list-style-image: url(chrome://songbird/skin/icons/spinner_spin.gif) ;
-}
-

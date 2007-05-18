@@ -43,11 +43,6 @@
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-/* ::::: toolbox ::::: */
-
-toolbox {
-  -moz-appearance: toolbar !important;
-}
 
 /* ::::: toolbar & menubar ::::: */
 
@@ -57,8 +52,8 @@ toolbarpalette {
   min-height: 20px !important;
   color: #000000;
   border-bottom: 1px solid #a3a3a3;
-  background-color: rgb(235, 235, 235);
-  background-image: url("chrome://global/skin/toolbar/toolbar-background.gif");
+  background-color: transparent;
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);
   background-repeat: repeat-x;
   background-position: top right;
 }

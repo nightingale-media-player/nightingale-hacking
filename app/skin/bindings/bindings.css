@@ -31,11 +31,15 @@ XBL WIDGET STYLES
 */ 
 
 
+/** The global toolbar styles are not included by default **/
+@import url(chrome://global/skin/toolbar.css); 
 
 @import url(faceplate.css); 
 @import url(filterlist.css); 
+@import url(locationbar.css); 
 @import url(menu.css); 
 @import url(miniplayer.css); 
+@import url(observes-dataremote.css); 
 @import url(player_controls.css); 
 @import url(playlist.css); 
 @import url(playlist_commands.css);
@@ -47,7 +51,7 @@ XBL WIDGET STYLES
 @import url(statusbar.css); 
 @import url(syscontrols.css); 
 @import url(tree.css); 
-@import url(webtoolbar.css); 
+@import url(browsertoolbar.css); 
 
 
 

@@ -1,0 +1,128 @@
+<?xml version="1.0"?> 
+
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<overlay id="ovActions"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <commandset id="mainCommandSet" >
+    <command id="Browser:Home"    oncommand="gBrowser.goHome();"/>
+
+    <!-- Bound to legacy dataremotes for now.  This will have to change
+         once we support multiple browser windows.
+      -->
+    <command id="Browser:Back"    oncommand="gBrowser.goBack();"  >
+      <observes type="dataremote"
+                key="browser.cangoback" 
+                attribute="disabled" 
+                boolean="true"
+                inverted="true" />  
+    </command>
+    <command id="Browser:Forward" oncommand="gBrowser.goForward();" >
+      <observes type="dataremote"
+                key="browser.cangofwd" 
+                attribute="disabled" 
+                boolean="true"
+                inverted="true" />  
+    </command>
+    <command id="Browser:Stop"    oncommand="gBrowser.stop();" >
+      <observes type="dataremote"
+                key="faceplate.loading" 
+                attribute="disabled" 
+                boolean="true"
+                inverted="true" />  
+    </command>
+    
+    <command id="Browser:Reload"  oncommand="gBrowser.reload();" />
+    <!-- TODO: Make ReloadSkipCache work correctly-->
+    <command id="Browser:ReloadSkipCache"  oncommand="gBrowser.reload();" disabled="true"/>
+    <command id="cmd_bm_newbookmark"       oncommand="bmManager.addBookmark();"/>
+  </commandset>
+  
+  <broadcasterset id="mainBroadcasterSet">
+    <!-- Used by the Control menu -->
+    <broadcaster id="controlModeShuffle" >
+      <observes type="dataremote"
+                key="playlist.shuffle" 
+                attribute="checked" 
+                boolean="true" />
+    </broadcaster>
+    <broadcaster id="controlModeRepeatAlways" >
+      <observes type="dataremote"
+                key="playlist.repeat" 
+                attribute="checked" 
+                onchange="return value == '2'" /> 
+    </broadcaster>
+    <broadcaster id="controlModeRepeatOnce" >
+      <observes type="dataremote"
+                key="playlist.repeat" 
+                attribute="checked" 
+                onchange="return value == '1'" /> 
+    </broadcaster>
+    <broadcaster id="controlModeRepeatNever" >
+      <observes type="dataremote"
+                key="playlist.repeat" 
+                attribute="checked" 
+                onchange="return value == '0'" /> 
+    </broadcaster>
+    <broadcaster id="controlJumpTo" >
+      <observes type="dataremote"
+                key="jumpto.visible" 
+                attribute="checked" 
+                boolean="true" />
+    </broadcaster>
+  </broadcasterset>
+  
+  <keyset id="mainKeyset">
+    <key id="newplaylist-key" modifiers="accel" key="&menu.file.new.key;" oncommand="doMenu('file.new');"/>
+    <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('file.file');"/>
+    <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('file.url');"/>
+    <!--<key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/> -->
+    <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
+    <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />
+    <key id="copy-key" modifiers="accel" key="&menu.edit.copy.key;" />
+    <key id="paste-key" modifiers="accel" key="&menu.edit.paste.key;" />
+    <key id="selectall-key" modifiers="accel" key="A" />
+    <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
+    <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
+    <key id="search-key" modifiers="accel" key="&search.key;" oncommand="document.getElementById('search_widget').onFirstMousedown();"/>
+    <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
+    <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>
+  </keyset>
+
+</overlay>
+
+

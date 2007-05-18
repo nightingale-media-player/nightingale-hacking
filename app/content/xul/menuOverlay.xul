@@ -91,38 +91,13 @@
         <menuitem id="control.next" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
         <menuitem id="control.prev" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
         <menuseparator/>
-        <menuitem id="control.shuf" label="&menu.control.shuf;" type="checkbox" checked="true" accesskey="&menu.control.shuf.accesskey;"/>
+        <menuitem id="control.shuf" label="&menu.control.shuf;" type="checkbox" observes="controlModeShuffle" accesskey="&menu.control.shuf.accesskey;" />
         <menuseparator/>
-        <menuitem id="control.repa" label="&menu.control.repa;" type="checkbox" checked="true" accesskey="&menu.control.repa.accesskey;"/>
-        <menuitem id="control.rep1" label="&menu.control.rep1;" type="checkbox" checked="true" accesskey="&menu.control.rep1.accesskey;"/>
-        <menuitem id="control.repx" label="&menu.control.repx;" type="checkbox" checked="true" accesskey="&menu.control.repx.accesskey;"/>
+        <menuitem id="control.repa" label="&menu.control.repa;" type="checkbox" observes="controlModeRepeatAlways" accesskey="&menu.control.repa.accesskey;" />
+        <menuitem id="control.rep1" label="&menu.control.rep1;" type="checkbox" observes="controlModeRepeatOnce" accesskey="&menu.control.rep1.accesskey;" />
+        <menuitem id="control.repx" label="&menu.control.repx;" type="checkbox" observes="controlModeRepeatNever" accesskey="&menu.control.repx.accesskey;" />
         <menuseparator/>
-        <menuitem id="control.jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" checked="false" accesskey="&menu.control.jumpto.accesskey;"/>
-      </menupopup>
-    </menu>
-
-    <menu id="songbird_menu_item_services" label="&menu.services;" class="sb_faceplate" accesskey="&menu.services.accesskey;">
-      <!-- TRY FILLING THE MENUBAR WITH THE SAME DATA AS THE SERVICE PANE? -->
-      <menupopup 
-        id="services-popup"
-        datasources="rdf:Servicesource"
-        ref="NC:ServicesourceFlat"
-    >
-  <!--  Disabled, since content is duplicated in bookmarks
-        <menuitem id="services.browse" label="&menu.services.browse;"/>
-        <menuseparator/>   
-  -->
-        <template>                 
-          <rule>
-            <menuitem uri="rdf:*"
-              id="rdf:http://home.netscape.com/NC-rdf#Label" 
-              label="rdf:http://home.netscape.com/NC-rdf#Label"
-              value="rdf:http://home.netscape.com/NC-rdf#URL"
-              class="menuitem-iconic"
-              image="rdf:http://home.netscape.com/NC-rdf#Icon"
-          />
-          </rule>
-        </template>
+        <menuitem id="control.jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" observes="controlJumpTo" accesskey="&menu.control.jumpto.accesskey;" />
       </menupopup>
     </menu>
 

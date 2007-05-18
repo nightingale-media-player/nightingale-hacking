@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  <!-- 
+    DATAREMOTE OBSERVER
+    
+    A version of the "observes" tag that works with data remotes.
+       
+    Example:
+    
+    <button>
+          <observes type="dataremote"
+                    key="test.data" 
+                    attribute="hidden" 
+                    boolean="true"
+                    inverted="true" />  
+          <observes type="dataremote"
+                    key="test.title" 
+                    attribute="label" 
+                    onchange="return value.toLowerCase();" />  
+    </button>
+    
+    The onchange script becomes a function used to process
+    the value before it is set as an attribute on the parent
+    of the observes tag.  
+    
+    If the dataremote is a boolean, setting boolean="true"
+    will cause "true" or "false" to be assigned to the 
+    attribute on the parent.  If inverted="true" is also set
+    then !value will be used.  These attributes are helpful
+    as dataremotes currently store true/false as strings
+    '1' and '0'.
+    
+    Note that the attributes of this observes tag
+    cannot be changed once it is instantiated.
+    
+    See also:
+     * http://www.xulplanet.com/ndeakin/xul/specs/appstorage.html
+     * http://www.xulplanet.com/tutorials/xultu/broadob.html
+    -->
+  <binding id="observes">
+
+    <implementation type="application/x-javascript">
+
+      <constructor>
+       <![CDATA[      
+        var key = this.getAttribute("key");
+        this._attribute = this.getAttribute("attribute");
+
+        //dump("observes[type=dataremote]: CONSTRUCTO " + key +  "\n\n");
+        
+        if (key && this._attribute) {
+
+          // Make a function to translate the dataremote value
+          // before it gets assigned to the parent
+          if (this.getAttribute("boolean") == "true") {
+            var isInverted = this.getAttribute("inverted") == "true";
+            this._processValue = function(value) {
+              value = value == "1";
+              return (isInverted) ? !value : value;
+            }
+          } else {
+            var onchange = this.getAttribute("onchange");            
+            if (!onchange) {
+              onchange = "return value;";
+            }
+            this._processValue = new Function("value", onchange);
+          }
+            
+          // Hook up for callbacks when the dataremote changes
+          var newDataRemote = new Components.Constructor(
+                "@songbirdnest.com/Songbird/DataRemote;1", 
+                "sbIDataRemote", "init");
+          this._dataremote = newDataRemote(key, null);
+          var observer = this;
+          this._dataremote.bindObserver(
+            {
+              observe: function(s,t,d) {
+                observer.onDataChanged();
+              }
+            }, false); 
+        }
+       ]]>
+      </constructor>
+      
+      <destructor>
+       <![CDATA[
+        //dump("observes[type=dataremote]: DESTRUCTO " + this.getAttribute("key") +  "\n\n");
+        
+        // Release dataremote
+        if (this._dataremote) {
+          this._dataremote.unbind();
+        }
+        this._dataremote = null;
+       ]]>
+      </destructor>      
+      
+      <field name="_dataremote">null</field>
+      
+      <field name="_attribute">null</field>
+      <field name="_processValue">null</field>
+ 
+    
+      <method name="onDataChanged">
+        <body>
+          <![CDATA[  
+            //dump("observes[type=dataremote]: CHANGEO " + this.getAttribute("key") +  "\n\n");
+            
+            var parent = this.parentNode;
+            if (parent) {
+              parent.setAttribute(this._attribute, 
+                        this._processValue(this._dataremote.stringValue));
+            }
+          ]]>
+        </body>
+      </method>  
+                            
+    </implementation>
+  </binding>  
+  
+</bindings>
+
+

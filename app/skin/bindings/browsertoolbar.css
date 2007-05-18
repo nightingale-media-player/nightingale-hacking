@@ -24,8 +24,7 @@
 //
  */
 
-/** TODO move this? **/
-@import url(chrome://global/skin/toolbar.css); 
+
 
 /** 
 ************************************************************************************************************************************************
@@ -140,115 +139,40 @@ WEB TOOLBAR IMAGES
 
 /** 
 ************************************************************************************************************************************************
-OLD WEB TOOLBAR IMAGES
-TODO: Remove
+GENERAL RULES
 ************************************************************************************************************************************************
 */
 
-
-#browser_back
+#navigator-toolbox > toolbar > toolbarbutton
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
-  -moz-image-region: rect(0px 16px 16px 0px);
-}
-#browser_back:hover
-{
-  -moz-image-region: rect(16px 16px 32px 0px);
-}
-#browser_back[disabled="true"]
-{
-  -moz-image-region: rect(48px 16px 64px 0px);
-}
-#browser_back[active="true"]
-{
-  -moz-image-region: rect(32px 16px 48px 0px);
-}
-#browser_refresh
-{
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
-  -moz-image-region: rect(0px 48px 16px 32px);
-}
-#browser_refresh:hover
-{
-  -moz-image-region: rect(16px 48px 32px 32px);
-}
-#browser_refresh[disabled="true"]
-{
-  -moz-image-region: rect(48px 48px 94px 32px);
-}
-#browser_refresh[active="true"]
-{
-  -moz-image-region: rect(32px 48px 48px 32px);
-}
-#browser_stop
-{
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
-  -moz-image-region: rect(0px 64px 16px 48px);
-}
-#browser_stop:hover
-{
-  -moz-image-region: rect(16px 64px 32px 48px);
-}
-#browser_stop[disabled="true"]
-{
-  -moz-image-region: rect(48px 64px 64px 48px);
-}
-#browser_stop[active="true"]
-{
-  -moz-image-region: rect(32px 64px 48px 48px);
-}
-#browser_fwd
-{
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
-  -moz-image-region: rect(0px 32px 16px 16px);
-}
-#browser_fwd:hover
-{
-  -moz-image-region: rect(16px 32px 32px 16px);
-}
-#browser_fwd[disabled="true"]
-{
-  -moz-image-region: rect(48px 32px 64px 16px);
-}
-#browser_fwd[active="true"]
-{
-  -moz-image-region: rect(32px 32px 48px 16px);
-}
-#browser_home
-{
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
-  -moz-image-region: rect(0px 80px 16px 64px);
-}
-#browser_home:hover
-{
-  -moz-image-region: rect(16px 80px 32px 64px);
-}
-#browser_home[disabled="true"]
-{
-  -moz-image-region: rect(48px 80px 64px 64px);
-}
-#browser_home[active="true"]
-{
-  -moz-image-region: rect(32px 80px 48px 64px);
-}
-#browser_bookmark
-{
-  list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
-  -moz-image-region: rect(0px 96px 16px 80px);
-}
-#browser_bookmark:hover
-{
-  -moz-image-region: rect(16px 96px 32px 80px);
-}
-#browser_bookmark[disabled="true"]
-{
-  -moz-image-region: rect(48px 96px 64px 80px);
-}
-#browser_bookmark[active="true"]
-{
-  -moz-image-region: rect(32px 96px 48px 80px);
+  min-height: 30px;
+  min-width: 30px;  
+  padding: 0px;
+  margin: 0px 1px 0px 1px;
 }
 
-/* END WEB BAR */
+#navigator-toolbox > toolbar
+{
+  padding-left:2px;
+  padding-right:2px;
+}
+
+#nav-bar
+{
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#spinner-container,
+#urlbar-container,
+#searchbar-container 
+{
+  padding-left: 1px;
+  padding-right: 1px;
+}
+
+
+
+
 
 

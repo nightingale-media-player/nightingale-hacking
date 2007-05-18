@@ -28,22 +28,31 @@
 
 /** 
 ************************************************************************************************************************************************
-SPINNER 
-Used to indicate that the system is busy doing something
+LOCATION TEXTBOX
 ************************************************************************************************************************************************
 */
 
-sb-browser-spinner
+
+/* the box with the url image and the url textbox */
+.locationbar-textbox
+{
+  height: 30px;
+  min-height: 30px;
+  margin: 0px 0px 0px 5px;
+  padding: 0px;
+  border: 1px solid;
+  -moz-border-radius: 5px;
+}
+
+.locationbar-image
 {
   background-color: transparent;
-  padding: 2px;
-}
-.browser-spinner-image
-{
-  list-style-image: url(chrome://songbird/skin/icons/spinner_stopped.gif) ;  
-}
-.browser-spinner-image[spinning="true"]
-{
-  list-style-image: url(chrome://songbird/skin/icons/spinner_spin.gif) ;
+  height: 16px;
+  width: 16px;
+  max-height: 16px !important;
+  max-width: 16px !important;
+  min-height: 16px !important;
+  min-width: 16px !important;
+  margin: 3px 5px 3px 5px;
 }
 

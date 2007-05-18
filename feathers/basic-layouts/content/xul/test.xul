@@ -45,6 +45,31 @@
    This page is to be used for testing the default widget styles 
   -->
   
+
+<toolbar id="nav-bar" class="toolbar-primary"
+          toolbarname="WebToolbar"
+          mode="icons" 
+          customizable="true"
+          defaultset="stop-button,home-button,bookmark-button,textbox-container"> 
+
+    <toolbarbutton id="stop-button" anonid="stop-button" class="toolbarbutton-1"
+                    label="Stop" disabled="true"/>
+                    
+    <toolbarbutton id="home-button" class="toolbarbutton-1"
+                    label="Home"/>
+                    
+    <toolbarbutton id="bookmark-button" class="toolbarbutton-1"
+                    label="Bookmark"/>
+              
+    <toolbaritem id="textbox-container" align="center"
+                  title="URL">
+      <textbox value="woo"/>
+    </toolbaritem>
+</toolbar>
+
+
+
+
 <html:div>
    
 <button label="Save" accesskey="S"/>
@@ -189,5 +214,26 @@
 </tree>
 
 </html:div>
+<spacer flex="1"/>
+<toolbar id="test-bar" 
+          toolbarname="TestToolbar"
+          mode="both" 
+          customizable="true"
+          defaultset="stop-button,home-button,bookmark-button,textbox-container"> 
+
+    <toolbarbutton id="stop-button" anonid="stop-button" class="toolbarbutton-1"
+                    label="Stop" disabled="true"/>
+                    
+    <toolbarbutton id="home-button" class="toolbarbutton-1"
+                    label="Home"/>
+                    
+    <toolbarbutton id="bookmark-button" class="toolbarbutton-1"
+                    label="Bookmark"/>
+              
+    <toolbaritem id="textbox-container" align="center"
+                  title="URL">
+      <textbox value="yay"/>
+    </toolbaritem>
+</toolbar>  
    
 </window>
