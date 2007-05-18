@@ -1454,6 +1454,14 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
             PRInt32 nRetryCount = 0;
             PRInt32 totalRows = 0;
 
+            PRUint32 rollingSum = 0;
+            PRUint32 rollingLimit = 0;
+            PRUint32 rollingLimitColumnIndex = 0;
+            PRUint32 rollingRowCount = 0;
+            pQuery->GetRollingLimit(&rollingLimit);
+            pQuery->GetRollingLimitColumnIndex(&rollingLimitColumnIndex);
+
+            PRBool finishEarly = PR_FALSE;
             do
             {
               retDB = sqlite3_step(pStmt);
@@ -1520,24 +1528,43 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                     i = 1;
                   }
 
-                  for(; i < nCount; i++)
-                  {
-                    PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, i);
-                    nsString strCellValue;
-
-                    if(p)
-                      strCellValue = p;
-
-                    vCellValues.push_back(strCellValue);
-                    PR_LOG(gDatabaseEngineLog, PR_LOG_DEBUG,
-                           ("Column %d: '%s' ", i,
-                           NS_ConvertUTF16toUTF8(strCellValue).get()));
+                  // If this is a rolling limit query, increment the rolling
+                  // sum by the value of the  specified column index.
+                  if (rollingLimit > 0) {
+                    rollingSum += sqlite3_column_int(pStmt, rollingLimitColumnIndex);
+                    rollingRowCount++;
                   }
 
-                  pRes->AddRow(vCellValues);
+                  // Add the row to the result only if this is not a rolling
+                  // limit query, or if this is a rolling limit query and the
+                  // rolling sum has met or exceeded the limit
+                  if (rollingLimit == 0 || rollingSum >= rollingLimit) {
+                    for(; i < nCount; i++)
+                    {
+                      PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, i);
+                      nsString strCellValue;
+  
+                      if(p)
+                        strCellValue = p;
+  
+                      vCellValues.push_back(strCellValue);
+                      PR_LOG(gDatabaseEngineLog, PR_LOG_DEBUG,
+                             ("Column %d: '%s' ", i,
+                             NS_ConvertUTF16toUTF8(strCellValue).get()));
+                    }
+                    totalRows++;
+  
+                    pRes->AddRow(vCellValues);
+
+                    // If this is a rolling limit query, we're done
+                    if (rollingLimit > 0) {
+                      pQuery->SetRollingLimitResult(rollingRowCount);
+                      finishEarly = PR_TRUE;
+                    }
+                  }
+
                   PR_Unlock(pQuery->m_pQueryResultLock);
                 }
-                totalRows++;
                 break;
 
                 case SQLITE_DONE:
@@ -1621,7 +1648,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                 }
               }
             }
-            while(retDB == SQLITE_ROW);
+            while(retDB == SQLITE_ROW && !finishEarly);
           }
 
           //Didn't get any rows

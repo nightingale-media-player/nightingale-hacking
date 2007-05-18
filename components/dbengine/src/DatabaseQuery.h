@@ -174,6 +174,11 @@ protected:
   nsTArray<bindParameterArray_t> m_BindParameters;
   bindParameterArray_t* m_LastBindParameters;
 
+  PRLock* m_pRollingLimitLock;
+  PRUint32 m_RollingLimit;
+  PRUint32 m_RollingLimitColumnIndex;
+  PRUint32 m_RollingLimitResult;
+
 private:
   NS_IMETHOD EnsureLastQueryParameter(PRUint32 aParamIndex);
 };

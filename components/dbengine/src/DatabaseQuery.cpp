@@ -76,6 +76,9 @@ CDatabaseQuery::CDatabaseQuery()
 , m_pQueryRunningMonitor(nsAutoMonitor::NewMonitor("CDatabaseQuery.m_pdbQueryRunningMonitor"))
 , m_QueryHasCompleted(PR_FALSE)
 , m_LastBindParameters(nsnull)
+, m_RollingLimit(0)
+, m_RollingLimitColumnIndex(0)
+, m_RollingLimitResult(0)
 {
   m_pLocationURILock = PR_NewLock();
   m_pPersistentQueryTableLock = PR_NewLock();
@@ -90,6 +93,7 @@ CDatabaseQuery::CDatabaseQuery()
   m_pUpdatedRowIDsLock = PR_NewLock();
   m_pDeletedRowIDsLock = PR_NewLock();
   m_pBindParametersLock = PR_NewLock();
+  m_pRollingLimitLock = PR_NewLock();
 
   NS_ASSERTION(m_pLocationURILock, "CDatabaseQuery.m_pLocationURILock failed");
   NS_ASSERTION(m_pPersistentQueryTableLock, "CDatabaseQuery.m_pPersistentQueryTableLock failed");
@@ -105,6 +109,7 @@ CDatabaseQuery::CDatabaseQuery()
   NS_ASSERTION(m_pDeletedRowIDsLock, "CDatabaseQuery.m_pModifiedRowIDsLock failed");
   NS_ASSERTION(m_pQueryRunningMonitor, "CDatabaseQuery.m_pQueryRunningMonitor failed");
   NS_ASSERTION(m_pBindParametersLock, "CDatabaseQuery.m_pBindParametersLock failed");
+  NS_ASSERTION(m_pRollingLimitLock, "CDatabaseQuery.m_pRollingLimitLock failed");
 
 #ifdef DEBUG_locks
   nsCAutoString log;
@@ -118,6 +123,7 @@ CDatabaseQuery::CDatabaseQuery()
   log += NS_LITERAL_CSTRING("m_pModifiedTablesLock         = ") + nsPrintfCString("%x\n", m_pModifiedTablesLock);
   log += NS_LITERAL_CSTRING("m_pQueryRunningMonitor        = ") + nsPrintfCString("%x\n", m_pQueryRunningMonitor);
   log += NS_LITERAL_CSTRING("m_pBindParametersLock         = ") + nsPrintfCString("%x\n", m_pBindParametersLock);
+  log += NS_LITERAL_CSTRING("m_pRollingLimitLock           = ") + nsPrintfCString("%x\n", m_pRollingLimitLock);
   log += NS_LITERAL_CSTRING("\n");
   NS_WARNING(log.get());
 #endif
@@ -176,6 +182,9 @@ CDatabaseQuery::~CDatabaseQuery()
 
   if (m_pBindParametersLock)
     PR_DestroyLock(m_pBindParametersLock);
+
+  if (m_pRollingLimitLock)
+    PR_DestroyLock(m_pRollingLimitLock);
 
   if (m_pQueryRunningMonitor)
     nsAutoMonitor::DestroyMonitor(m_pQueryRunningMonitor);
@@ -475,6 +484,12 @@ NS_IMETHODIMP CDatabaseQuery::ResetQuery()
   m_QueryResult->ClearResultSet();
   PR_Unlock(m_pQueryResultLock);
 
+  PR_Lock(m_pRollingLimitLock);
+  m_RollingLimit = 0;
+  m_RollingLimitColumnIndex = 0;
+  m_RollingLimitResult = 0;
+  PR_Unlock(m_pRollingLimitLock);
+
   return NS_OK;
 }
 
@@ -643,6 +658,66 @@ NS_IMETHODIMP CDatabaseQuery::Abort(PRBool *_retval)
 
     *_retval = PR_TRUE;
   }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::GetRollingLimit(PRUint32 *aRollingLimit)
+{
+  NS_ENSURE_ARG_POINTER(aRollingLimit);
+
+  nsAutoLock lock(m_pRollingLimitLock);
+
+  *aRollingLimit = m_RollingLimit;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::SetRollingLimit(PRUint32 aRollingLimit)
+{
+  nsAutoLock lock(m_pRollingLimitLock);
+
+  m_RollingLimit = aRollingLimit;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::GetRollingLimitColumnIndex(PRUint32 *aRollingLimitColumnIndex)
+{
+  NS_ENSURE_ARG_POINTER(aRollingLimitColumnIndex);
+
+  nsAutoLock lock(m_pRollingLimitLock);
+
+  *aRollingLimitColumnIndex = m_RollingLimitColumnIndex;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::SetRollingLimitColumnIndex(PRUint32 aRollingLimitColumnIndex)
+{
+  nsAutoLock lock(m_pRollingLimitLock);
+
+  m_RollingLimitColumnIndex = aRollingLimitColumnIndex;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::GetRollingLimitResult(PRUint32 *aRollingLimitResult)
+{
+  NS_ENSURE_ARG_POINTER(aRollingLimitResult);
+
+  nsAutoLock lock(m_pRollingLimitLock);
+
+  *aRollingLimitResult = m_RollingLimitResult;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::SetRollingLimitResult(PRUint32 aRollingLimitResult)
+{
+  nsAutoLock lock(m_pRollingLimitLock);
+
+  m_RollingLimitResult = aRollingLimitResult;
 
   return NS_OK;
 }

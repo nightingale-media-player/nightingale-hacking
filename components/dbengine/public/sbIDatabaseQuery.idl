@@ -423,6 +423,30 @@ interface sbIDatabaseQuery : nsISupports
   boolean abort();
 
   /**
+   * \brief Set the rolling limit for this query
+   *
+   * If set, this query will be a rolling limit query.  Rather than return the
+   * full result of the query, a rolling limit query will add up the values of
+   * the column specified in rollingLimitColumnIndex and stop running once the
+   * limit set in rollingLimit is reached.  The query result will be a single
+   * row containing the row that met or exceeded the limit.  The row number
+   * of this row will be set in rollingLimitResult.  If the limit is not
+   * reach, no rows are returned.
+   */
+  attribute unsigned long rollingLimit;
+
+  /**
+   * \brief The index of the column used to add to the limit total
+   */
+  attribute unsigned long rollingLimitColumnIndex;
+
+  /**
+   * \brief The number of the row (1 is the first row) that met or exceeded
+   *        the limit
+   */
+  attribute unsigned long rollingLimitResult;
+
+  /**
    * \brief Binds a UTF8String to the last added query
    * \param aParamIndex The index of the parameter to bind
    * \param aValue Value to bind to the specified index
