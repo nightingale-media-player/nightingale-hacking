@@ -1410,7 +1410,7 @@
               {
                 // Otherwise, restore it.
                 var commands = playlist.commands;
-                playlist.bind( restore, commands );
+                playlist.bind( restore.clone(), commands );
               }
             }
           }

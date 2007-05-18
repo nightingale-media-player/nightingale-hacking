@@ -108,6 +108,27 @@ sbLocalDatabaseMediaListView::AddFilterToGUIDArrayCallback(nsStringHashKey::KeyT
   return PL_DHASH_NEXT;
 }
 
+/* static */ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseMediaListView::CloneStringArrayHashCallback(nsStringHashKey::KeyType aKey,
+                                                           sbStringArray* aEntry,
+                                                           void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  sbStringArrayHash* stringArrayHash =
+    NS_STATIC_CAST(sbStringArrayHash*, aUserData);
+  NS_ASSERTION(stringArrayHash, "Could not cast user data");
+
+  sbStringArray* newStringArray = new sbStringArray(*aEntry);
+  NS_ENSURE_TRUE(newStringArray, PL_DHASH_STOP);
+
+  PRBool success = stringArrayHash->Put(aKey, newStringArray);
+  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
 sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbILocalDatabaseLibrary* aLibrary,
                                                            sbIMediaList* aMediaList,
                                                            nsAString& aDefaultSortProperty,
@@ -333,6 +354,102 @@ sbLocalDatabaseMediaListView::GetUnfilteredIndex(PRUint32 aIndex,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::Clone(sbIMediaListView** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  // XXXsteve THIS IS INCOMPLETE.  Still needs to clone the cascade filter
+  // set
+  nsresult rv;
+
+  nsAutoPtr<sbLocalDatabaseMediaListView>
+    clone(new sbLocalDatabaseMediaListView(mLibrary,
+                                           mMediaList,
+                                           mDefaultSortProperty,
+                                           mMediaListId));
+  NS_ENSURE_TRUE(clone, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = clone->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Copy filters
+  mViewFilters.EnumerateRead(CloneStringArrayHashCallback,
+                             &clone->mViewFilters);
+
+  // Copy searches
+  if (mViewSearches) {
+    rv = ClonePropertyArray(mViewSearches,
+                            getter_AddRefs(clone->mViewSearches));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Copy sorts
+  if (mViewSort) {
+    rv = ClonePropertyArray(mViewSort, getter_AddRefs(clone->mViewSort));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Call the update method to notify the clone that its internal data was
+  // tinkered with
+  rv = clone->UpdateViewArrayConfiguration();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = clone.forget());
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseMediaListView::ClonePropertyArray(sbIPropertyArray* aSource,
+                                                 sbIPropertyArray** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aSource);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIPropertyArray> clone =
+    do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 propertyCount;
+  rv = aSource->GetLength(&propertyCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < propertyCount; i++) {
+    nsCOMPtr<nsIProperty> property;
+    rv = aSource->GetPropertyAt(i, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIVariant> value;
+    rv = property->GetValue(getter_AddRefs(value));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint16 dataType;
+    rv = value->GetDataType(&dataType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Skip non strings
+    if (dataType != nsIDataType::VTYPE_ASTRING) {
+      continue;
+    }
+
+    nsAutoString propertyName;
+    rv = property->GetName(propertyName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString valueString;
+    rv = value->GetAsAString(valueString);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = clone->AppendProperty(propertyName, valueString);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ADDREF(*_retval = clone);
   return NS_OK;
 }
 

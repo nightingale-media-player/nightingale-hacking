@@ -84,6 +84,11 @@ private:
                                  sbStringArray* aEntry,
                                  void* aUserData);
 
+  static PLDHashOperator PR_CALLBACK
+    CloneStringArrayHashCallback(nsStringHashKey::KeyType aKey,
+                                 sbStringArray* aEntry,
+                                 void* aUserData);
+
   nsresult MakeStandardQuery(sbIDatabaseQuery** _retval);
 
   nsresult UpdateFiltersInternal(sbIPropertyArray* aPropertyArray,
@@ -94,6 +99,9 @@ private:
   nsresult CreateQueries();
 
   nsresult Invalidate();
+
+  nsresult ClonePropertyArray(sbIPropertyArray* aSource,
+                              sbIPropertyArray** _retval);
 
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
 

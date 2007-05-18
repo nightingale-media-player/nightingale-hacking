@@ -80,5 +80,12 @@ interface sbIMediaListView : nsISupports
    * \return Index of the same item in the unfiltered list
    */
   unsigned long getUnfilteredIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Create a clone of this view.  This will return a copy with the
+   *        same search, filter, sort, and cascade filter set as the original.
+   * \return A clone of the media list view
+   */
+  sbIMediaListView clone();
 };
 
