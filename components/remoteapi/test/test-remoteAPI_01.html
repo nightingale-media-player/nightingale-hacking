@@ -30,7 +30,7 @@
   <head>
     <title>Remote API Test: 01</title>
   </head>
-  <body>
+  <body onunload="document.removeEventListener('remoteapi', onRemoteAPI, true);">
     <h1>Songbird Global object creation property access</h1>
     <ol>
       <li> Request the current artist, album and track title from the songbird
@@ -50,20 +50,13 @@
     </div>
     <script>
       var accessCount = 0;
-      var listener = {
-        handleEvent: function(aEvent) {
-          var myDiv = document.getElementById("accessCountDiv");
-          myDiv.appendChild(document.createTextNode("access:" + (++accessCount) ));
-          myDiv.appendChild(document.createElement("br"));
-        }
-      };
       var onRemoteAPI =  function(aEvent) {
           var myDiv = document.getElementById("accessCountDiv");
           myDiv.appendChild(document.createTextNode("access:" + (++accessCount) ));
           myDiv.appendChild(document.createElement("br"));
       };
 
-      window.addEventListener("RemoteAPI", onRemoteAPI, true);
+      document.addEventListener("remoteapi", onRemoteAPI, true);
 
       // Property Access
       document.writeln("<br />Using the media player:<br />");

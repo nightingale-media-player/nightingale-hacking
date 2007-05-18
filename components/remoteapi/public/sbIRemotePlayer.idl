@@ -34,9 +34,46 @@
 
 interface sbILibrary;
 interface sbIMediaList;
-interface nsIObserver;
+interface nsIArray;
 interface nsIDOMElement;
+interface nsIObserver;
 interface nsISimpleEnumerator;
+
+// forward decl for sbIRemoteCommands
+interface sbIRemotePlayer;
+
+[scriptable, uuid(3025cbf8-7969-4e79-8641-967a9f4e51b8)]
+interface sbIRemoteLibrary : nsISupports
+{
+  // this will hook up the remotelibrary to the internal library,
+  // setGUID is a bad name, will change.
+  void setGUID(in AString aGUID);
+  // I think these need to be exposed via nsIXPCScriptable
+  // readonly nsIArray artists
+  // readonly nsIArray albums
+
+  // void addMedia(in AString aURL);
+  // void addMediaListFromURL(in AString aURL);
+  // void addMediaListElement(in sbIRemoteMediaList aMediaList);
+};
+
+
+[scriptable, uuid(cff760df-5fe0-4657-8eb5-1d5d3ca12369)]
+interface sbIRemoteCommands : nsISupports
+{
+  // the remotePlayer sets this after it creates it.
+  [noscript] attribute sbIRemotePlayer owner;
+
+  void addCommand(in AString aType, in AString aID, in AString aName, in AString aTooltip);
+  // void removeCommand(in AString aID);
+
+  // Ew. this is so ugly. I'm hoping to be able to clean this up with nsIXPCScriptable
+  void setCommandData( in unsigned long aNumCommands,
+                       [const, array, size_is(aNumCommands)] in wstring aTypeArray,
+                       [const, array, size_is(aNumCommands)] in wstring aIDArray,
+                       [const, array, size_is(aNumCommands)] in wstring aNameArray,
+                       [const, array, size_is(aNumCommands)] in wstring aTooltipArray);
+};
 
 /**
  * \interface sbIRemotePlayer
@@ -131,17 +168,46 @@ interface sbIRemotePlayer : nsISupports
   void previous();
 
   //
-  // Library creation and retrieval
+  // Commands
   //
 
   /**
-   * \brief Return a handle to the specific library for the domain
-   * \arg The path (section of url past .tld/) to clearly identify
-   *      the library to retrieve. Must be a at least a section of
-   *      the prefix for the current site's path
+   * \brief The collection of commands associated with the current page.
    */
-  sbILibrary getSiteLibrary(in AString aPath);
+  readonly attribute sbIRemoteCommands remoteCommands;
+
+  /**
+   * \brief Causes the current commands to get registered
+   * Will cause the commands to show up in the web playlist
+   */
+  void registerCommands(in boolean aUseDefaultCommands);
 
 
+  //
+  // Library creation and retrieval
+  //
+  // XXXredfive - this is probably only going to be accessed via 
+  //              nsIXPCScriptable methods.
+
+  /**
+   * \brief Creates a separate library for the current domain/path combo
+   * probably changing/going away, see next attribute
+   */
+  sbIRemoteLibrary addSiteLibrary(in AString aPath);
+
+  /**
+   * \brief The library created by addSiteLibrary
+   *
+   * The calling convention here will probably change to this
+   * being a method that takes the string above.
+   */
+  readonly attribute sbIRemoteLibrary siteLibrary;
+
+  /**
+   * \brief Fires the event to the webpage
+   * This is an internal method only, implemented as protected code
+   * and only callable by the sbRemoteCommands object.
+   */
+  [noscript] void FireEventToContent(in AString aClass, in AString aType);
 };
 

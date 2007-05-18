@@ -26,22 +26,35 @@
 
 #include "sbRemotePlayer.h"
 #include <sbILibrary.h>
+#include <sbIPlaylistsource.h>
+#include <sbITabBrowser.h>
 
 #include <nsComponentManagerUtils.h>
+#include <nsDOMJSUtils.h>
+#include <nsIArray.h>
 #include <nsICategoryManager.h>
 #include <nsIClassInfoImpl.h>
+#include <nsIContent.h>
+#include <nsIDocShell.h>
+#include <nsIDocShellTreeItem.h>
+#include <nsIDocShellTreeOwner.h>
 #include <nsIDocument.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMDocumentEvent.h>
+#include <nsIDOMElement.h>
 #include <nsIDOMEvent.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIDOMWindow.h>
+#include <nsPIDOMWindow.h>
 #include <nsIDOMWindowInternal.h>
+#include <nsIDOMXULDocument.h>
 #include <nsIInterfaceRequestorUtils.h>
+#include <nsIJSContextStack.h>
 #include <nsIPermissionManager.h>
 #include <nsIPresShell.h>
 #include <nsIPrivateDOMEvent.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsIScriptGlobalObject.h>
 #include <nsIScriptNameSpaceManager.h>
 #include <nsIScriptSecurityManager.h>
 #include <nsIURI.h>
@@ -56,18 +69,16 @@
  *   NSPR_LOG_MODULES=sbRemotePlayer:5
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gLibraryLog = nsnull;
-#define LOG(args)   if (gLibraryLog) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
+static PRLogModuleInfo* gRemotePlayerLog = nsnull;
+#define LOG(args)   if (gRemotePlayerLog) PR_LOG(gRemotePlayerLog, PR_LOG_WARN, args)
 #else
 #define LOG(args)   /* nothing */
 #endif
 
 static NS_DEFINE_CID(kRemotePlayerCID, SONGBIRD_REMOTEPLAYER_CID);
 
-const static PRUint32 sPublicWPropertiesLength = 0;
 const static char* sPublicWProperties[] = {""};
 
-const static PRUint32 sPublicRPropertiesLength = 10;
 const static char* sPublicRProperties[] =
   { "metadata:name",
     "library:playlists",
@@ -75,13 +86,14 @@ const static char* sPublicRProperties[] =
     "metadata:currentArtist",
     "metadata:currentAlbum",
     "metadata:currentTrack",
+    "binding:remoteCommands",
+    "binding:siteLibrary",
     "classinfo:classDescription",
     "classinfo:contractID",
     "classinfo:classID",
     "classinfo:implementationLanguage",
     "classinfo:flags" };
 
-const static PRUint32 sPublicMethodsLength = 8;
 const static char* sPublicMethods[] =
   { "controls:play",
     "controls:stop",
@@ -89,10 +101,12 @@ const static char* sPublicMethods[] =
     "controls:previous",
     "controls:next",
     "controls:playURL",
+    "binding:ping",
+    "binding:registerCommands",
+    "binding:addSiteLibrary",
     "binding:removeListener",
     "binding:addListener" };
 
-const static PRUint32 sPublicMetadataLength = 13;
 const static char* sPublicMetadata[] =
   { "metadata.artist",
     "metadata.title",
@@ -108,55 +122,13 @@ const static char* sPublicMetadata[] =
     "faceplate.playing",
     "faceplate.paused" };
 
-// Manage our singletoness
-static sbRemotePlayer *sRemotePlayer = nsnull;
+#define RAPI_EVENT_CLASS      NS_LITERAL_STRING("Events")
+#define RAPI_EVENT_TYPE       NS_LITERAL_STRING("remoteapi")
+#define SB_PREFS_ROOT         NS_LITERAL_STRING("songbird.")
+#define SB_EVENT_CMNDS_UP     NS_LITERAL_STRING("playlist-commands-updated")
+#define SB_WEB_TABBROWSER_ID  NS_LITERAL_STRING("frame_main_pane")
 
-NS_IMPL_ISUPPORTS4(sbRemotePlayer,
-                   nsIClassInfo,
-                   nsISecurityCheckedComponent,
-                   sbISecurityAggregator,
-                   sbIRemotePlayer)
-
-sbRemotePlayer*
-sbRemotePlayer::GetInstance()
-{
-#ifdef PR_LOGGING
-  if (!gLibraryLog) {
-    gLibraryLog = PR_NewLogModule("sbRemotePlayer");
-  }
-  LOG(("\n\n\n ***********sbRemotePlayer::GetInstance()**********************\n\n\n"));
-#endif
-
-  // if we haven't created it already make one
-  if (!sRemotePlayer) {
-    sRemotePlayer = new sbRemotePlayer();
-    if (!sRemotePlayer)
-      return nsnull;
-    NS_ADDREF(sRemotePlayer);  // addref the static global
-
-    // initialize the global
-    if (NS_FAILED(sRemotePlayer->Init())) {
-      // if we fail, release and return null
-      NS_RELEASE(sRemotePlayer);
-      return nsnull;
-    }
-  }
-
-  // addref it before handing it back
-  NS_ADDREF(sRemotePlayer);
-  return sRemotePlayer;
-}
-
-void
-sbRemotePlayer::ReleaseInstance()
-{
-  NS_IF_RELEASE(sRemotePlayer);
-}
-
-sbRemotePlayer::sbRemotePlayer() : mInitialized(0)
-{
-}
-
+// callback for destructor to clear out the observer hashtable
 PR_STATIC_CALLBACK(PLDHashOperator)
 UnbindAndRelease ( const nsAString &aKey,
                    sbRemoteObserver &aRemObs,
@@ -169,6 +141,41 @@ UnbindAndRelease ( const nsAString &aKey,
 
   aRemObs.remote->Unbind();
   return PL_DHASH_REMOVE;
+}
+
+NS_IMPL_ISUPPORTS4(sbRemotePlayer,
+                   nsIClassInfo,
+                   nsISecurityCheckedComponent,
+                   sbISecurityAggregator,
+                   sbIRemotePlayer)
+
+sbRemotePlayer*
+sbRemotePlayer::GetInstance()
+{
+#ifdef PR_LOGGING
+  if (!gRemotePlayerLog) {
+    gRemotePlayerLog = PR_NewLogModule("sbRemotePlayer");
+  }
+  LOG(("***********sbRemotePlayer::GetInstance()"));
+#endif
+
+  sbRemotePlayer *player = new sbRemotePlayer();
+  if (!player)
+    return nsnull;
+
+  // initialize the player
+  if (NS_FAILED(player->Init())) {
+    return nsnull;
+  }
+
+  // addref it before handing it back
+  NS_ADDREF(player);
+  return player;
+}
+
+sbRemotePlayer::sbRemotePlayer() : mInitialized(PR_FALSE)
+{
+  LOG(("sbRemotePlayer::sbRemotePlayer()"));
 }
 
 sbRemotePlayer::~sbRemotePlayer()
@@ -199,9 +206,9 @@ sbRemotePlayer::Init()
     return NS_ERROR_OUT_OF_MEMORY; 
   }
 
-  mCurrentTrack->Init( NS_LITERAL_STRING("metadata.title"), NS_LITERAL_STRING("songbird.") );
-  mCurrentArtist->Init( NS_LITERAL_STRING("metadata.artist"), NS_LITERAL_STRING("songbird.") );
-  mCurrentAlbum->Init( NS_LITERAL_STRING("metadata.album"), NS_LITERAL_STRING("songbird.") );
+  mCurrentTrack->Init( NS_LITERAL_STRING("metadata.title"), SB_PREFS_ROOT );
+  mCurrentArtist->Init( NS_LITERAL_STRING("metadata.artist"), SB_PREFS_ROOT );
+  mCurrentAlbum->Init( NS_LITERAL_STRING("metadata.album"), SB_PREFS_ROOT );
 
   nsCOMPtr<sbISecurityMixin> mixin = do_CreateInstance("@songbirdnest.com/remoteapi/security-mixin;1", &rv);
   if (NS_FAILED(rv)) {
@@ -215,17 +222,45 @@ sbRemotePlayer::Init()
   GetInterfaces(&iidCount, &iids);
 
   // initialize our mixin with approved interfaces, methods, properties
-  mixin->Init( (sbISecurityAggregator*)this,
-               (const nsIID**)iids, iidCount,
-               sPublicMethods,sPublicMethodsLength,
-               sPublicRProperties,sPublicRPropertiesLength,
-               sPublicWProperties, sPublicWPropertiesLength );
+  rv = mixin->Init( (sbISecurityAggregator*)this,
+                    (const nsIID**)iids, iidCount,
+                    sPublicMethods,NS_ARRAY_LENGTH(sPublicMethods),
+                    sPublicRProperties,NS_ARRAY_LENGTH(sPublicRProperties),
+                    sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties) );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   mSecurityMixin = do_QueryInterface(mixin, &rv);
-  if (NS_FAILED(rv) || !mSecurityMixin) {
-    LOG(("sbRemotePlayer::Init() -- ERROR, no mSecurityMixin"));
-    return NS_ERROR_FAILURE;
+  NS_ENSURE_SUCCESS( rv, rv );
+
+#if 0
+  // Coming in the next patch
+
+  //
+  // Hook up an event listener to listen to the unload event so we can
+  //   remove any commands from the PlaylistSource
+  //
+
+  // pull the dom window from the js stack and context - hopefully this is the window for the content doc
+  nsCOMPtr<nsPIDOMWindow> window = GetWindowFromJS();
+  NS_ENSURE_STATE(window);
+
+  // Get the doc from the window
+  nsCOMPtr<nsIDOMDocument> domdoc;
+  window->GetDocument( getter_AddRefs(domdoc) );
+  NS_ENSURE_STATE(domdoc);
+
+  nsCOMPtr<nsIDOMXULDocument> xuldoc( do_QueryInterface(domdoc) );
+  if (xuldoc) {
+    LOG(("sbRemotePlayer::Init() -- IS a XUL DOC"));
+  } else {
+    LOG(("sbRemotePlayer::Init() -- is NOT a XUL DOC"));
   }
+
+  // possibly march from the xul doc to the content doc.
+
+  //domdoc->AddEventListener();
+
+#endif
 
   mInitialized = PR_TRUE;
 
@@ -237,8 +272,9 @@ sbRemotePlayer::Init()
 //                        sbIRemotePlayer
 //
 // ---------------------------------------------------------------------------
+
 NS_IMETHODIMP 
-sbRemotePlayer::GetName(nsAString &aName)
+sbRemotePlayer::GetName( nsAString &aName )
 {
   LOG(("sbRemotePlayer::GetName()"));
   aName.AssignLiteral("Songbird");
@@ -246,87 +282,229 @@ sbRemotePlayer::GetName(nsAString &aName)
 }
 
 NS_IMETHODIMP
-sbRemotePlayer::GetSiteLibrary(const nsAString &aPath, sbILibrary **aLibrary) {
-  LOG(("sbRemotePlayer::GetSiteLibrary()"));
+sbRemotePlayer::AddSiteLibrary( const nsAString &aPath,
+                                sbIRemoteLibrary **aLibrary )
+{
+  LOG(("sbRemotePlayer::AddSiteLibrary()"));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+NS_IMETHODIMP
+sbRemotePlayer::GetSiteLibrary( sbIRemoteLibrary **aSiteLibrary )
+{
+  NS_ENSURE_ARG_POINTER(aSiteLibrary);
+  LOG(("sbRemotePlayer::GetSiteLibrary()"));
+
+  // XXX this will change when the actual libraries array happens, because this
+  //     is a property I can't require an input string. Ultimatley the input string
+  //     will be the index of the object in the array.
+  nsresult rv;
+  if (!mSiteLibrary) {
+    mSiteLibrary =
+       do_CreateInstance( "@songbirdnest.com/remoteapi/remotelibrary;1", &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  NS_ADDREF( *aSiteLibrary = mSiteLibrary );
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::GetRemoteCommands( sbIRemoteCommands **aCommandsObject )
+{
+  NS_ENSURE_ARG_POINTER(aCommandsObject);
+  LOG(("sbRemotePlayer::GetRemoteCommands()"));
+  nsresult rv;
+  if (!mCommandsObject) {
+    LOG(("sbRemotePlayer::GetRemoteCommands() -- creating it"));
+    mCommandsObject =
+      do_CreateInstance( "@songbirdnest.com/remoteapi/remotecommands;1", &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    mCommandsObject->SetOwner(this);
+  }
+  NS_ADDREF( *aCommandsObject = mCommandsObject );
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
+{
+  NS_ENSURE_STATE(mCommandsObject);
+  nsresult rv;
+
+  // pull the dom window from the js stack and context
+  nsCOMPtr<nsPIDOMWindow> privWindow = GetWindowFromJS();
+  NS_ENSURE_STATE(privWindow);
+
+  // Docshell from DOMWindow - still content level
+  nsIDocShell *docShell = privWindow->GetDocShell();
+  NS_ENSURE_STATE(docShell);
+
+  // Step up to the chrome layer through the event handler
+  nsCOMPtr<nsIDOMEventTarget> chromeEventHandler;
+  docShell->GetChromeEventHandler( getter_AddRefs(chromeEventHandler) );
+  NS_ENSURE_STATE(chromeEventHandler);
+  nsCOMPtr<nsIContent> chromeElement(
+                                do_QueryInterface( chromeEventHandler, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // Get the document from the chrome content
+  nsIDocument *doc = chromeElement->GetDocument();
+  NS_ENSURE_STATE(doc);
+
+  nsCOMPtr<nsIDOMDocument> domdoc( do_QueryInterface( doc, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // Find the playlist element so we can tell it to use (or not) the default commands
+  // Now get the playlist from the chrome doc
+  // FRAGILE, need to find a better way to get the web-playlist
+
+  // Get the tabbrowser, ask it for the tab for our document
+  nsCOMPtr<nsIDOMElement> tabBrowserElement;
+  domdoc->GetElementById( SB_WEB_TABBROWSER_ID,
+                          getter_AddRefs(tabBrowserElement) );
+  NS_ENSURE_STATE(tabBrowserElement);
+  LOG(("sbRemotePlayer::RegisterCommands() -- GOT THE TABBROWSER !!!\n\n"));
+
+  // Get the doc from the window - content doc? Yup. ( at least when called
+  //   from a web page.
+  nsCOMPtr<nsIDOMDocument> contentDoc;
+  privWindow->GetDocument( getter_AddRefs(contentDoc) );
+  NS_ENSURE_STATE(contentDoc);
+
+  // QI the tabbrowser to our super-special 1337 interface
+  nsCOMPtr<sbITabBrowser> tabbrowser( do_QueryInterface( tabBrowserElement , &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // Get the tab for our particular document
+  nsCOMPtr<sbITabBrowserTab> browserTab;
+  tabbrowser->GetTabForDocument( contentDoc, getter_AddRefs(browserTab) );
+  NS_ENSURE_STATE(browserTab);
+
+  // Get the outer playlist from the tab, it's the web playlist
+  nsCOMPtr<nsIDOMElement> playlist;
+  browserTab->GetPlaylist( getter_AddRefs(playlist) );
+  NS_ENSURE_STATE(playlist);
+
+  nsCOMPtr<nsIDOMElement> tabElement( do_QueryInterface( browserTab , &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsCOMPtr<nsIDOMDocument> tabDoc;
+  tabElement->GetOwnerDocument( getter_AddRefs(tabDoc) );
+  NS_ENSURE_STATE(tabDoc);
+
+  // Tell the playlist about our default command settings.
+  if (aUseDefaultCommands) {
+    LOG(("sbRemotePlayer::RegsiterCommands() using defaults"));
+    playlist->SetAttribute( NS_LITERAL_STRING("usedefaultcommands"),
+                            NS_LITERAL_STRING("true") );
+  } else {
+    LOG(("sbRemotePlayer::RegsiterCommands() not using defaults"));
+    playlist->SetAttribute( NS_LITERAL_STRING("usedefaultcommands"),
+                            NS_LITERAL_STRING("false") );
+  }
+
+  // Get the Playlistsource object and register commands with it.
+  nsCOMPtr<sbIPlaylistsource> pls( 
+         do_GetService( "@mozilla.org/rdf/datasource;1?name=playlist", &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  NS_NAMED_LITERAL_STRING( guid, "remote-test-guid" );
+  // type is working, but better be able to put the guid in too.
+  // XXXredfive - FIXME
+  //if (mLibrary)
+  //  mLibrary->GetGuid(guid);
+  nsCOMPtr<sbIPlaylistCommands> commands(
+                                   do_QueryInterface( mCommandsObject, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  pls->RegisterPlaylistCommands( guid,
+                                 EmptyString(),
+                                 NS_LITERAL_STRING("library"),
+                                 commands );
+
+  // This event is no longer getting to the playlist. I think since it moved I
+  //   need to get the document from the tabbrowser.
+  // Fire Event
+  //return DispatchEvent( domdoc, RAPI_EVENT_CLASS, SB_EVENT_CMNDS_UP, PR_TRUE );
+  return DispatchEvent( tabDoc, RAPI_EVENT_CLASS, SB_EVENT_CMNDS_UP, PR_TRUE );
+}
+
 NS_IMETHODIMP 
-sbRemotePlayer::GetPlaylists(nsISimpleEnumerator **aPlaylists)
+sbRemotePlayer::GetPlaylists( nsISimpleEnumerator **aPlaylists )
 {
   LOG(("sbRemotePlayer::GetPlaylists()"));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetWebPlaylist(sbIMediaList **aWebplaylist)
+sbRemotePlayer::GetWebPlaylist( sbIMediaList **aWebplaylist )
 {
   LOG(("sbRemotePlayer::GetWebPlaylist()"));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetWebPlaylistElement(nsIDOMElement **aWebplaylistElement)
+sbRemotePlayer::GetWebPlaylistElement( nsIDOMElement **aWebplaylistElement )
 {
   LOG(("sbRemotePlayer::GetWebPlaylistElement()"));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetCurrentArtist(nsAString &aCurrentArtist)
+sbRemotePlayer::GetCurrentArtist( nsAString &aCurrentArtist )
 {
   LOG(("sbRemotePlayer::GetCurrentArtist()"));
   NS_ENSURE_STATE(mCurrentArtist);
-  mCurrentArtist->GetStringValue(aCurrentArtist);
-  return NS_OK;
+  return mCurrentArtist->GetStringValue(aCurrentArtist);
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetCurrentAlbum(nsAString & aCurrentAlbum)
+sbRemotePlayer::GetCurrentAlbum( nsAString &aCurrentAlbum )
 {
   LOG(("sbRemotePlayer::GetCurrentAlbum()"));
   NS_ENSURE_STATE(mCurrentAlbum);
-  mCurrentAlbum->GetStringValue(aCurrentAlbum);
-  return NS_OK;
+  return mCurrentAlbum->GetStringValue(aCurrentAlbum);
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetCurrentTrack(nsAString & aCurrentTrack)
+sbRemotePlayer::GetCurrentTrack( nsAString &aCurrentTrack )
 {
   LOG(("sbRemotePlayer::GetCurrentTrack()"));
   NS_ENSURE_STATE(mCurrentTrack);
-  mCurrentTrack->GetStringValue(aCurrentTrack);
-  return NS_OK;
+  return mCurrentTrack->GetStringValue(aCurrentTrack);
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::AddListener(const nsAString &aKey,
-                            nsIObserver *aObserver)
+sbRemotePlayer::AddListener( const nsAString &aKey,
+                             nsIObserver *aObserver )
 {
   LOG(("sbRemotePlayer::AddListener()"));
   NS_ENSURE_ARG_POINTER(aObserver);
 
   // Make sure the key passed in is a valid one for attaching to
-  for (PRUint32 index = 0 ; index < sPublicMetadataLength; index++ ) {
+  PRInt32 length = NS_ARRAY_LENGTH(sPublicMetadata);
+  for (PRInt32 index = 0 ; index < length; index++ ) {
     // if we find it break out of the loop and keep going
-    if (aKey == NS_ConvertASCIItoUTF16(sPublicMetadata[index]))
+    if ( aKey.EqualsLiteral(sPublicMetadata[index]) )
       break;
     // if we get to this point it isn't accepted, shortcircuit
-    if (index == (sPublicMetadataLength-1) )
+    if ( index == (length-1) )
       return NS_ERROR_FAILURE;
   }
 
   nsresult rv;
-  nsCOMPtr<sbIDataRemote> dr = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  dr->Init( aKey, NS_LITERAL_STRING("songbird.") );
-  dr->BindObserver(aObserver, PR_FALSE);
+  nsCOMPtr<sbIDataRemote> dr =
+           do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = dr->Init( aKey, SB_PREFS_ROOT );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = dr->BindObserver( aObserver, PR_FALSE );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   sbRemoteObserver remObs;
   remObs.observer = aObserver;
   remObs.remote = dr;
-  PRBool success = mRemObsHash.Put(aKey, remObs);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  PRBool success = mRemObsHash.Put( aKey, remObs );
+  NS_ENSURE_TRUE( success, NS_ERROR_OUT_OF_MEMORY );
 
   return NS_OK;
 }
@@ -335,22 +513,23 @@ NS_IMETHODIMP
 sbRemotePlayer::RemoveListener( const nsAString &aKey,
                                 nsIObserver *aObserver )
 {
+  NS_ENSURE_ARG_POINTER(aObserver);
   LOG(("sbRemotePlayer::RemoveListener(%s %x)",
        PromiseFlatString(aKey).get(), aObserver));
 
   sbRemoteObserver remObs;
-  mRemObsHash.Get(aKey, &remObs);
+  mRemObsHash.Get( aKey, &remObs );
 
-  if (remObs.observer == aObserver) {
-    LOG(("sbRemotePlayer::RemoveListener(%s %x) -- found observer",
-         NS_LossyConvertUTF16toASCII(aKey).get(), aObserver));
+  if ( remObs.observer == aObserver ) {
+    LOG(( "sbRemotePlayer::RemoveListener(%s %x) -- found observer",
+          NS_LossyConvertUTF16toASCII(aKey).get(), aObserver ));
 
     remObs.remote->Unbind();
     mRemObsHash.Remove(aKey);
   }
   else {
-    LOG(("sbRemotePlayer::RemoveListener(%s %x) -- did NOT find observer",
-         PromiseFlatString(aKey).get(), aObserver));
+    LOG(( "sbRemotePlayer::RemoveListener(%s %x) -- did NOT find observer",
+          PromiseFlatString(aKey).get(), aObserver ));
   }
 
   return NS_OK;
@@ -367,12 +546,12 @@ sbRemotePlayer::Play()
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::PlayURL(const nsAString &aURL)
+sbRemotePlayer::PlayURL( const nsAString &aURL )
 {
   LOG(("sbRemotePlayer::PlayURL()"));
   NS_ENSURE_STATE(mGPPS);
   PRBool retval;
-  mGPPS->PlayURL(aURL, &retval);
+  mGPPS->PlayURL( aURL, &retval );
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
@@ -403,7 +582,7 @@ sbRemotePlayer::Next()
   NS_ENSURE_STATE(mGPPS);
   PRInt32 retval;
   mGPPS->Next(&retval);
-  return (retval > -1) ? NS_OK : NS_ERROR_FAILURE;
+  return ( retval > -1 ) ? NS_OK : NS_ERROR_FAILURE;
 }
 
 NS_IMETHODIMP 
@@ -413,7 +592,50 @@ sbRemotePlayer::Previous()
   NS_ENSURE_STATE(mGPPS);
   PRInt32 retval;
   mGPPS->Previous(&retval);
-  return (retval > -1) ? NS_OK : NS_ERROR_FAILURE;
+  return ( retval > -1 ) ? NS_OK : NS_ERROR_FAILURE;
+}
+
+nsresult
+sbRemotePlayer::FireEventToContent( const nsAString &aClass,
+                                    const nsAString &aType )
+{
+  LOG(( "sbRemotePlayer::FireEventToContent(%s, %s)",
+        NS_LossyConvertUTF16toASCII(aClass).get(),
+        NS_LossyConvertUTF16toASCII(aType).get() ));
+
+  // pull the dom window from the js stack and context
+  nsCOMPtr<nsPIDOMWindow> window = GetWindowFromJS();
+  NS_ENSURE_STATE(window);
+
+  // Get the doc from the window
+  nsCOMPtr<nsIDOMDocument> domdoc;
+  window->GetDocument( getter_AddRefs(domdoc) );
+  NS_ENSURE_STATE(domdoc);
+
+  // When we get called from chrome the document is a XUL doc,
+  //   we need to convert that to a content document first.
+  nsCOMPtr<nsIDOMXULDocument> xuldoc( do_QueryInterface(domdoc) );
+  if (xuldoc) {
+    LOG(("sbRemotePlayer::FireEventToContent() -- We have a XULDOC!"));
+    // Get the docshell from the chrome window
+    nsIDocShell *docShell = window->GetDocShell();
+    NS_ENSURE_STATE(docShell);
+
+    // navigate the docshell tree to the content's docshell
+    nsCOMPtr<nsIDocShellTreeItem> docTreeItem( do_QueryInterface(docShell) );
+    NS_ENSURE_STATE(docTreeItem);
+    nsCOMPtr<nsIDocShellTreeOwner> docTreeOwner;
+    docTreeItem->GetTreeOwner( getter_AddRefs(docTreeOwner) );
+    NS_ENSURE_STATE(docTreeOwner);
+    docTreeOwner->GetPrimaryContentShell( getter_AddRefs(docTreeItem) );
+    NS_ENSURE_STATE(docTreeItem);
+
+    // reset the domdoc to the content's document
+    domdoc = do_GetInterface(docTreeItem);
+    NS_ENSURE_STATE(domdoc);
+  }
+
+  return DispatchEvent(domdoc, aClass, aType, PR_FALSE);
 }
 
 // ---------------------------------------------------------------------------
@@ -423,35 +645,38 @@ sbRemotePlayer::Previous()
 // ---------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbRemotePlayer::CanCreateWrapper(const nsIID *aIID, char **_retval)
+sbRemotePlayer::CanCreateWrapper( const nsIID *aIID, char **_retval )
 {
   NS_ENSURE_ARG_POINTER(aIID);
   NS_ENSURE_ARG_POINTER(_retval);
   LOG(("sbRemotePlayer::CanCreateWrapper()"));
 
-  if (!mInitialized)
-    Init();
+  if ( !mInitialized && NS_FAILED( Init() ) )
+    return NS_ERROR_FAILURE;
 
   FireRemoteAPIAccessedEvent();
 
-  return mSecurityMixin->CanCreateWrapper(aIID, _retval);
+  return mSecurityMixin->CanCreateWrapper( aIID, _retval );
 } 
 
 NS_IMETHODIMP
-sbRemotePlayer::CanCallMethod(const nsIID *aIID, const PRUnichar *aMethodName, char **_retval)
+sbRemotePlayer::CanCallMethod( const nsIID *aIID,
+                               const PRUnichar *aMethodName,
+                               char **_retval )
 {
   NS_ENSURE_ARG_POINTER(aIID);
   NS_ENSURE_ARG_POINTER(aMethodName);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  LOG(( "sbRemotePlayer::CanCallMethod(%s)", NS_LossyConvertUTF16toASCII(aMethodName).get() ));
+  LOG(( "sbRemotePlayer::CanCallMethod(%s)",
+        NS_LossyConvertUTF16toASCII(aMethodName).get() ));
 
-  if (!mInitialized)
-    Init();
+  if ( !mInitialized && NS_FAILED( Init() ) )
+    return NS_ERROR_FAILURE;
 
   FireRemoteAPIAccessedEvent();
 
-  return mSecurityMixin->CanCallMethod(aIID, aMethodName, _retval);
+  return mSecurityMixin->CanCallMethod( aIID, aMethodName, _retval );
 }
 
 NS_IMETHODIMP
@@ -463,8 +688,8 @@ sbRemotePlayer::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyName
 
   LOG(( "sbRemotePlayer::CanGetProperty(%s)", NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
 
-  if (!mInitialized)
-    Init();
+  if ( !mInitialized && NS_FAILED( Init() ) )
+    return NS_ERROR_FAILURE;
 
   FireRemoteAPIAccessedEvent();
 
@@ -480,8 +705,8 @@ sbRemotePlayer::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyName
 
   LOG(( "sbRemotePlayer::CanSetProperty(%s)", NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
 
-  if (!mInitialized)
-    Init();
+  if ( !mInitialized && NS_FAILED( Init() ) )
+    return NS_ERROR_FAILURE;
 
   FireRemoteAPIAccessedEvent();
 
@@ -517,31 +742,33 @@ sbRemotePlayer::GetHelperForLanguage(PRUint32 language, nsISupports **_retval)
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetContractID(char **aContractID)
+sbRemotePlayer::GetContractID( char **aContractID )
 {
   LOG(("sbRemotePlayer::GetContractID()"));
-  *aContractID = ToNewCString(NS_LITERAL_CSTRING(SONGBIRD_REMOTEPLAYER_CONTRACTID));
+  *aContractID = ToNewCString(
+                        NS_LITERAL_CSTRING(SONGBIRD_REMOTEPLAYER_CONTRACTID) );
   return *aContractID ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetClassDescription(char **aClassDescription)
+sbRemotePlayer::GetClassDescription( char **aClassDescription )
 {
   LOG(("sbRemotePlayer::GetClassDescription()"));
-  *aClassDescription = ToNewCString(NS_LITERAL_CSTRING("sbRemotePlayer"));
+  *aClassDescription = ToNewCString(
+                         NS_LITERAL_CSTRING(SONGBIRD_REMOTEPLAYER_CLASSNAME) );
   return *aClassDescription ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetClassID(nsCID **aClassID)
+sbRemotePlayer::GetClassID( nsCID **aClassID )
 {
   LOG(("sbRemotePlayer::GetClassID()"));
-  *aClassID = (nsCID*) nsMemory::Alloc(sizeof(nsCID));
+  *aClassID = (nsCID*) nsMemory::Alloc( sizeof(nsCID) );
   return *aClassID ? GetClassIDNoAlloc(*aClassID) : NS_ERROR_OUT_OF_MEMORY;
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetImplementationLanguage(PRUint32 *aImplementationLanguage)
+sbRemotePlayer::GetImplementationLanguage( PRUint32 *aImplementationLanguage )
 {
   LOG(("sbRemotePlayer::GetImplementationLanguage()"));
   *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
@@ -549,7 +776,7 @@ sbRemotePlayer::GetImplementationLanguage(PRUint32 *aImplementationLanguage)
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetFlags(PRUint32 *aFlags)
+sbRemotePlayer::GetFlags( PRUint32 *aFlags )
 {
   LOG(("sbRemotePlayer::GetFlags()"));
   *aFlags = 0;
@@ -557,11 +784,49 @@ sbRemotePlayer::GetFlags(PRUint32 *aFlags)
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetClassIDNoAlloc(nsCID *aClassIDNoAlloc)
+sbRemotePlayer::GetClassIDNoAlloc( nsCID *aClassIDNoAlloc )
 {
   LOG(("sbRemotePlayer::GetClassIDNoAlloc()"));
   *aClassIDNoAlloc = kRemotePlayerCID;
   return NS_OK;
+}
+
+// ---------------------------------------------------------------------------
+//
+//                             Internal Methods
+//
+// ---------------------------------------------------------------------------
+
+already_AddRefed<nsPIDOMWindow>
+sbRemotePlayer::GetWindowFromJS() {
+  LOG(("sbRemotePlayer::GetWindowFromJS()"));
+  // Get the js context from the top of the stack. We may need to iterate
+  // over these at some point in order to make sure we are sending events
+  // to the correct window, but for now this works.
+  nsCOMPtr<nsIJSContextStack> stack =
+                          do_GetService("@mozilla.org/js/xpc/ContextStack;1");
+ 
+  if (!stack) {
+    LOG(("sbRemotePlayer::GetWindowFromJS() -- NO STACK!!!"));
+    return nsnull;
+  }
+ 
+  JSContext *cx;
+ 
+  if (NS_FAILED(stack->Peek(&cx)) || !cx) {
+    LOG(("sbRemotePlayer::GetWindowFromJS() -- NO CONTEXT!!!"));
+    return nsnull;
+  }
+
+  // Get the script context from the js context
+  nsCOMPtr<nsIScriptContext> scCx = GetScriptContextFromJSContext(cx); 
+  NS_ENSURE_TRUE(scCx, nsnull);
+
+  // Get the DOMWindow from the script global via the script context
+  nsCOMPtr<nsPIDOMWindow> window = do_QueryInterface( scCx->GetGlobalObject() );
+  NS_ENSURE_TRUE( window, nsnull );
+  NS_ADDREF( window.get() );
+  return window.get();
 }
 
 nsresult
@@ -569,41 +834,52 @@ sbRemotePlayer::FireRemoteAPIAccessedEvent()
 {
   LOG(("sbRemotePlayer::FireRemoteAPIAccessedEvent()"));
 
-  nsCOMPtr<nsIWindowMediator> wmediator (do_GetService("@mozilla.org/appshell/window-mediator;1"));
-  NS_ENSURE_STATE(wmediator);
-
-  // get the most recent main window -- XXX DANGER, what happens if we're not in the main window!!!
-  nsCOMPtr<nsIDOMWindowInternal> aWindow;
-  wmediator->GetMostRecentWindow(NS_LITERAL_STRING("Songbird:Main").get(), getter_AddRefs(aWindow));
-  NS_ENSURE_STATE(aWindow);
+  // pull the dom window from the js stack and context
+  nsCOMPtr<nsPIDOMWindow> window = GetWindowFromJS();
+  NS_ENSURE_STATE(window);
   
-  //get the document from the window.
-  nsCOMPtr<nsIDOMDocument> aDoc;
-  aWindow->GetDocument(getter_AddRefs(aDoc));
-  NS_ENSURE_STATE(aDoc);
+  // get the document from the window.
+  nsCOMPtr<nsIDOMDocument> domdoc;
+  window->GetDocument( getter_AddRefs(domdoc) );
+  NS_ENSURE_STATE(domdoc);
+
+  return DispatchEvent( domdoc, RAPI_EVENT_CLASS, RAPI_EVENT_TYPE, PR_TRUE );
+}
+
+nsresult
+sbRemotePlayer::DispatchEvent( nsIDOMDocument *aDoc,
+                               const nsAString &aClass,
+                               const nsAString &aType,
+                               PRBool aIsTrusted )
+{
+  LOG(( "sbRemotePlayer::DispatchEvent(%s, %s)",
+        NS_LossyConvertUTF16toASCII(aClass).get(),
+        NS_LossyConvertUTF16toASCII(aType).get() ));
 
   //change interfaces to create the event
-  nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(aDoc);
-  NS_ENSURE_STATE(docEvent);
+  nsresult rv;
+  nsCOMPtr<nsIDOMDocumentEvent> docEvent( do_QueryInterface( aDoc, &rv ) );
+  NS_ENSURE_SUCCESS( rv , rv );
 
   //create the event
   nsCOMPtr<nsIDOMEvent> event;
-  docEvent->CreateEvent(NS_LITERAL_STRING("Events"), getter_AddRefs(event));
+  docEvent->CreateEvent( aClass, getter_AddRefs(event) );
   NS_ENSURE_STATE(event);
-  event->InitEvent(NS_LITERAL_STRING("RemoteAPI"), PR_TRUE, PR_TRUE);
+  rv = event->InitEvent( aType, PR_TRUE, PR_TRUE );
+  NS_ENSURE_SUCCESS( rv , rv );
 
-  //use the window for a target.
-  nsCOMPtr<nsIDOMEventTarget> targetWindow(do_QueryInterface(aWindow));
-  NS_ENSURE_STATE(targetWindow);
+  //use the document for a target.
+  nsCOMPtr<nsIDOMEventTarget> eventTarget( do_QueryInterface( aDoc, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   //make the event trusted
-  nsCOMPtr<nsIPrivateDOMEvent> privEvt(do_QueryInterface(event));
-  privEvt->SetTrusted(PR_TRUE);
+  nsCOMPtr<nsIPrivateDOMEvent> privEvt( do_QueryInterface( event, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  privEvt->SetTrusted(aIsTrusted);
 
   // Fire an event to the chrome system. This even will NOT get to content.
-  PRBool defaultActionEnabledWin;
-  targetWindow->DispatchEvent(event, &defaultActionEnabledWin);
-  return NS_OK;
+  PRBool dummy;
+  return eventTarget->DispatchEvent( event, &dummy );
 }
 
 // ---------------------------------------------------------------------------
@@ -613,15 +889,16 @@ sbRemotePlayer::FireRemoteAPIAccessedEvent()
 // ---------------------------------------------------------------------------
 
 NS_METHOD
-sbRemotePlayer::Register(nsIComponentManager* aCompMgr,
-                         nsIFile* aPath, const char *aLoaderStr,
-                         const char *aType,
-                         const nsModuleComponentInfo *aInfo)
+sbRemotePlayer::Register( nsIComponentManager* aCompMgr,
+                          nsIFile* aPath,
+                          const char *aLoaderStr,
+                          const char *aType,
+                          const nsModuleComponentInfo *aInfo )
 {
   nsresult rv;
 
-  nsCOMPtr<nsICategoryManager> catMan
-    (do_GetService(NS_CATEGORYMANAGER_CONTRACTID));
+  nsCOMPtr<nsICategoryManager> catMan(
+                                do_GetService(NS_CATEGORYMANAGER_CONTRACTID) );
   if (!catMan)
     return NS_ERROR_FAILURE;
 
@@ -631,28 +908,26 @@ sbRemotePlayer::Register(nsIComponentManager* aCompMgr,
                                  SONGBIRD_REMOTEPLAYER_CONTRACTID,
                                  PR_TRUE,         /* persist */
                                  PR_TRUE,         /* replace existing */
-                                 nsnull);
+                                 nsnull );
 
   return rv;
 }
 
 
 NS_METHOD
-sbRemotePlayer::Unregister(nsIComponentManager* aCompMgr,
-                           nsIFile* aPath, const char *aLoaderStr,
-                           const nsModuleComponentInfo *aInfo)
+sbRemotePlayer::Unregister( nsIComponentManager* aCompMgr,
+                            nsIFile* aPath,
+                            const char *aLoaderStr,
+                            const nsModuleComponentInfo *aInfo )
 {
   nsresult rv;
 
-  nsCOMPtr<nsICategoryManager> catMan
-    (do_GetService(NS_CATEGORYMANAGER_CONTRACTID));
+  nsCOMPtr<nsICategoryManager> catMan(
+                                do_GetService(NS_CATEGORYMANAGER_CONTRACTID) );
   if (!catMan)
     return NS_ERROR_FAILURE;
 
   rv = catMan->DeleteCategoryEntry( JAVASCRIPT_GLOBAL_PROPERTY_CATEGORY,
-                                    "songbird",
-                                    PR_TRUE );   /* delete persisted data */
-  rv = catMan->DeleteCategoryEntry( "app-startup",
                                     "songbird",
                                     PR_TRUE );   /* delete persisted data */
   return rv;

@@ -35,6 +35,7 @@
 
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
+#include <nsPIDOMWindow.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
@@ -71,7 +72,6 @@ public:
 
   sbRemotePlayer();
   static sbRemotePlayer* GetInstance();
-  static void ReleaseInstance();
 
   static NS_METHOD Register(nsIComponentManager* aCompMgr,
                             nsIFile* aPath,
@@ -85,20 +85,28 @@ public:
                               const nsModuleComponentInfo *aInfo);
 
 protected:
-  nsresult FireRemoteAPIAccessedEvent();
-  nsresult Init();
   virtual ~sbRemotePlayer();
 
-  nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
+  // Helper Methods
+  nsresult FireRemoteAPIAccessedEvent();
+  already_AddRefed<nsPIDOMWindow> GetWindowFromJS();
+  nsresult DispatchEvent(nsIDOMDocument *aDocument, const nsAString &aClass, const nsAString &aType, PRBool aIsTrusted);
+  nsresult Init();
+
+  // Data members
+  PRBool mInitialized;
   nsCOMPtr<sbIPlaylistPlayback> mGPPS;
+
+  nsCOMPtr<sbIRemoteCommands> mCommandsObject;
+  nsCOMPtr<sbIRemoteLibrary> mSiteLibrary;
 
   nsDataHashtable<nsStringHashKey, sbRemoteObserver> mRemObsHash;
 
+  // SecurityCheckedComponent vars
+  nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
   nsCOMPtr<sbIDataRemote> mCurrentArtist;
   nsCOMPtr<sbIDataRemote> mCurrentAlbum;
   nsCOMPtr<sbIDataRemote> mCurrentTrack;
-
-  PRBool mInitialized;
 };
 
 #endif // __SB_REMOTE_PLAYER_H__

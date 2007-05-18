@@ -62,11 +62,13 @@
 
       <property name="usedefault">
         <getter>
+          dump("XXXredfive - baseCommands - usedefault getter: " + this.getAttribute("usedefault") + "\n" );
           return (this.getAttribute("usedefault") != "false");
         </getter>
         <setter>
           <![CDATA[
             var old = this.usedefault;
+            dump("XXXredfive - baseCommands - usedefault setter: to: " + val + " from: " + old + "\n" );
             this.setAttribute("usedefault", val);
             if (this.usedefault != old) {
               this.rescanCommands();
@@ -94,8 +96,10 @@
       <method name="rescanCommands">
         <body>
           <![CDATA[
+            dump("XXXredfive - baseCommands - rescanCommands\n");
             this.commands = new Array();
             if (this.usedefault) {
+              dump("XXXredfive - baseCommands - rescanCommands using defaults\n");
               // add the default (generic) command object if specified
               if (this.defaultcommands) this.commands.push(this.defaultcommands);
             }
@@ -837,7 +841,7 @@
               }
             }
           } catch (e) {
-            alert("sb-commands.xml - popup - " + e);
+            alert("sb-commands.xml - popup - refreshCommandItems " + e);
           }
         ]]>
       </body>
@@ -881,7 +885,7 @@
         }
         catch( err )
         {
-          alert( "sb-commands.xml - toolbar - onToolbarCommand - " + err );
+          alert( "sb-commands.xml - menu - onMenuCommand - " + err );
         }
       ]]>
       </body>

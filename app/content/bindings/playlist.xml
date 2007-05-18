@@ -210,6 +210,10 @@
         this.addEventListener("dblclick", this._onPlaylistDblClickClosure, false);
         this.addEventListener("draggesture", this._onDragClosure, false);
 
+        window.addEventListener("playlist-commands-updated",
+                                this.rescanCommands,
+                                true);
+
         var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
         var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
         this.str_tracksaddedto = "tracks added to"
@@ -245,6 +249,10 @@
           dump("playlist.xml - destructor - THIS SHOULD NEVER GET CALLED\n");
           return; // ???
         }
+
+        window.removeEventListener("playlist-commands-updated",
+                                   this.rescanCommands,
+                                   true);
 
         var e = document.createEvent("Events");
         e.initEvent("playlist-destroy", false, true);
@@ -3163,8 +3171,19 @@
       
       <method name="rescanCommands">
         <body>
-          if (this.commandmenuitems) this.commandmenuitems.rescanCommands();
-          if (this.toolbar) this.toolbar.rescanCommands();
+          debug("XXXredfive - playlist - rescanCommands\n");
+          // push our usedefaultcommands state because the RemoteAPI only has
+          // access to attributes right now and this needs to get to commands
+          if (this.commandmenuitems) {
+            debug("XXXredfive - playlist - rescanCommands - menuitems");
+            this.commandmenuitems.usedefault = this.usedefaultcommands;
+            this.commandmenuitems.rescanCommands();
+          }
+          if (this.toolbar) {
+            debug("XXXredfive - playlist - rescanCommands - toolbar");
+            this.toolbar.usedefault = this.usedefaultcommands;
+            this.toolbar.rescanCommands();
+          }
         </body>
       </method>
 

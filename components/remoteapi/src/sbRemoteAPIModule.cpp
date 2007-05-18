@@ -24,10 +24,18 @@
 //
  */
 
-#include "sbSecurityMixin.h"
+#include "sbRemoteCommands.h"
+//#include "sbRemoteLibrary.h"
 #include "sbRemotePlayer.h"
+#include "sbSecurityMixin.h"
 
 #define SONGBIRD_REMOTEAPI_MODULENAME "Songbird Remote API Module"
+
+//NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteLibrary, Init)
+//NS_DECL_CI_INTERFACE_GETTER(sbRemoteLibrary)
+
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteCommands, Init)
+NS_DECL_CI_INTERFACE_GETTER(sbRemoteCommands)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSecurityMixin)
 NS_DECL_CI_INTERFACE_GETTER(sbSecurityMixin)
@@ -38,6 +46,16 @@ NS_DECL_CI_INTERFACE_GETTER(sbRemotePlayer)
 // fill out data struct to register with component system
 static const nsModuleComponentInfo components[] =
 {
+  {
+    SONGBIRD_REMOTECOMMANDS_CLASSNAME,
+    SONGBIRD_REMOTECOMMANDS_CID,
+    SONGBIRD_REMOTECOMMANDS_CONTRACTID,
+    sbRemoteCommandsConstructor,
+    NULL,
+    NULL,
+    NULL,
+    NS_CI_INTERFACE_GETTER_NAME(sbRemoteCommands)
+  },
   {
     SONGBIRD_SECURITYMIXIN_CLASSNAME,
     SONGBIRD_SECURITYMIXIN_CID,
@@ -60,15 +78,20 @@ static const nsModuleComponentInfo components[] =
   }
 };
 
-static void PR_CALLBACK
-sbRemoteAPIModuleDtor(nsIModule* self)
-{
-  sbRemotePlayer::ReleaseInstance();
-}
+/* XXXredfive - commented out temp. to isolate changes for
+                the commands patch
+  {
+    SONGBIRD_REMOTELIBRARY_CLASSNAME,
+    SONGBIRD_REMOTELIBRARY_CID,
+    SONGBIRD_REMOTELIBRARY_CONTRACTID,
+    sbRemoteLibraryConstructor,
+    NULL,
+    NULL,
+    NULL,
+    NS_CI_INTERFACE_GETTER_NAME(sbRemoteLibrary)
+  },
+*/
 
 // create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE_WITH_DTOR(SONGBIRD_REMOTEAPI_MODULENAME,
-                              components,
-                              sbRemoteAPIModuleDtor)
-
+NS_IMPL_NSGETMODULE(SONGBIRD_REMOTEAPI_MODULENAME, components)
 

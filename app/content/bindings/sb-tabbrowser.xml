@@ -74,7 +74,7 @@
         this.mTabBox.addEventListener("DOMAttrModified",
             this.tabChangeEventListener, false);
 
-        window.addEventListener("RemoteAPI", this.onRemoteAPI, true);
+        window.addEventListener("remoteapi", this.onRemoteAPI, true);
 
         this.webNavigation.sessionHistory =
             Components.classes["@mozilla.org/browser/shistory;1"]
@@ -94,7 +94,7 @@
           this.mTabBox.removeEventListener("DOMAttrModified",
               this.tabChangeEventListener, false);
         }
-        window.removeEventListener("RemoteAPI", this.onRemoteAPI, true);
+        window.removeEventListener("remoteapi", this.onRemoteAPI, true);
       ]]></destructor>
       
 

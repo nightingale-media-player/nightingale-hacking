@@ -39,14 +39,21 @@ endif
 
 CPP_SRCS = sbSecurityMixin.cpp \
            sbRemotePlayer.cpp \
+           sbRemoteCommands.cpp \
            sbRemoteAPIModule.cpp \
            $(NULL)
 
+# XXXredfive - commented out temp. for commands patch
+#           sbRemoteLibrary.cpp \
+
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/components/playlistplayback/public \
+               $(DEPTH)/components/playlistsource/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/dataremote/public \
+               $(DEPTH)/components/widgets/public \
                $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/library/localdatabase/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/appshell \
                $(MOZSDK_INCLUDE_DIR)/caps \
@@ -59,6 +66,7 @@ CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/pref \
+               $(MOZSDK_INCLUDE_DIR)/rdf \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/widget \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \

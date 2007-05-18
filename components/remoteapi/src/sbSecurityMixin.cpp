@@ -152,6 +152,15 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   nsCOMPtr<nsIURI> codebase;
   GetCodebase( getter_AddRefs(codebase) );
 
+  // XXXredfive CHECK TO MAKE SURE THIS IS SAFE!!!!!!!
+  // This was needed for calls of the sbRemotePlayer API from the
+  // sbRemoteCommands object.
+  if (!codebase) {
+    NS_WARNING("We're doing something possibly bad here - INVESTIGATE ME.");
+    *_retval = SB_CloneAllAccess();
+    return NS_OK;
+  }
+
   // Do this directly opposed to how it is done in CanCallMethod et al. because
   //   if ANY of these are allowed we need to let the object get created since
   //   we don't know at this point what the request on the object is actually
