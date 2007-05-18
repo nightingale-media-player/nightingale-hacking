@@ -168,6 +168,12 @@ interface sbIPlaylistPlayback : nsIObserver
    * \TODO Does this really need to be exposed through an interface?
    */
   readonly attribute boolean started;
+  
+  
+  /**
+   * \brief What view is being played
+   */
+  readonly attribute sbIMediaListView playingView;
 
 
   // --------------------------------------------------------------------------

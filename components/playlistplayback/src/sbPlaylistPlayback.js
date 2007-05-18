@@ -1227,6 +1227,10 @@ PlaylistPlayback.prototype = {
   get started() {
     return this._started;
   },
+  
+  get playingView() {
+    return this._playingView;
+  },
 
   goFullscreen: function() {
     var core = this.core;
