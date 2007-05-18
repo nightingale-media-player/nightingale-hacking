@@ -42,7 +42,11 @@ sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-
 {
   background-color: transparent !important;
 }
-
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar,
+sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder
+{
+  -moz-appearance: none !important;
+}
 
 #browser_toolbar button 
 {
