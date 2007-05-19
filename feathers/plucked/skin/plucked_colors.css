@@ -352,3 +352,69 @@ treechildren::-moz-tree-column(insertbefore)
 {
   margin-left: 10px !important;
 }
+
+
+/** 
+************************************************************************************************************************************************
+THE SPLITTERS aka THE GRIPPY
+These let the user resize the frames in your box model.
+************************************************************************************************************************************************
+*/ 
+
+.horz_splitter,
+#horz_splitter,
+#playlist_web_split
+{
+  background-color: transparent;
+  border-bottom: 1px solid #999;
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #999;
+}
+
+/** 
+************************************************************************************************************************************************
+PROGRESSMETER
+************************************************************************************************************************************************
+*/ 
+sb-status-progressmeter[mode="undetermined"]
+{ 
+  -moz-appearance: none !important;
+  background-image: url(chrome://songbird/skin/progressmeter/progressmeter_undetermined.gif) !important;
+  -moz-background-clip: border;
+  min-height: 12px;
+} 
+
+
+sb-status-progressmeter
+{
+  -moz-appearance: none !important;
+  min-height: 12px;
+  border: 1px solid #ccc;
+  
+}
+
+
+label, description
+    {
+      margin              : 5px 5px 2px 6px;
+    }
+
+#searchbar
+{
+  min-height: 26px !important;
+  max-height: 26px !important;
+  padding-top: 1px !important;
+}
+
+.searchbar-textbox
+{
+  min-height: 22px !important;
+  max-height: 22px !important;
+}
+
+#location_bar
+{
+  min-height: 26px !important;
+  max-height: 26px !important;
+}
