@@ -738,6 +738,26 @@ function ServicePaneService_onDragGesture(aId, aTransferable) {
   return success;
 }
 
+/**
+ * Called when a node is renamed by the user.  
+ * Delegates to the module that owns the given node.
+ */
+ServicePaneService.prototype.onRename =
+function ServicePaneService_onRename(aID, aNewName) {
+  var node = this.getNode(aID);
+  if (!node || !node.editable) {
+    return;
+  }
+  
+  // Pass the message on to the node owner
+  if (node.contractid) {
+    var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
+    if (module) {
+      module.onRename(node, aNewName);
+    }
+  }
+}
+
 /* this is a wrapper for the nsIRDFDataSource that will translate some of the
   properties via stringbundles */
 function dsWrapper(inner, sps) {

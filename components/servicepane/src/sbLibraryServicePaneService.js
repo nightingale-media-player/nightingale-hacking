@@ -133,6 +133,7 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
   }
 
 }
+
 sbLibraryServicePane.prototype.canDrop =
 function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation) {
   return false;
@@ -143,6 +144,20 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
 sbLibraryServicePane.prototype.onDragGesture =
 function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
   return false;
+}
+
+
+/**
+ * Called when the user has attempted to rename a library/medialist node
+ */
+sbLibraryServicePane.prototype.onRename =
+function sbLibraryServicePane_onRename(aNode, aNewName) {
+  //logcall(arguments);
+  if (aNode && aNewName) {
+    var libraryResource = this.getLibraryResourceForNode(aNode);
+    libraryResource.name = aNewName;
+    libraryResource.write();
+  }
 }
 
 
@@ -436,10 +451,14 @@ function sbLibraryServicePane__playlistRemoved(aMediaList) {
  * The given media list has been updated. 
  * The name and other properties may have changed. 
  */
-sbLibraryServicePane.prototype._playlistUpdated =
-function sbLibraryServicePane__playlistUpdated(aMediaList) {
+sbLibraryServicePane.prototype._mediaListUpdated =
+function sbLibraryServicePane__mediaListUpdated(aMediaList) {
   //logcall(arguments);
-  this._ensureMediaListNodeExists(aMediaList);
+  if (aMediaList instanceof Ci.sbILibrary) {
+    this._ensureLibraryNodeExists(aMediaList);
+  } else if (aMediaList instanceof Ci.sbIMediaList) {
+    this._ensureMediaListNodeExists(aMediaList);
+  }
 }
 
 
@@ -811,7 +830,7 @@ sbLibraryServicePane.prototype.onItemUpdated =
 function sbLibraryServicePane_onItemUpdated(aMediaList, aMediaItem) {
   var isList = aMediaItem instanceof Ci.sbIMediaList;
   if (isList) {
-    this._playlistUpdated(aMediaItem);
+    this._mediaListUpdated(aMediaItem);
   }
 }
 sbLibraryServicePane.prototype.onListCleared =

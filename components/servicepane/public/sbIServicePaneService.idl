@@ -225,6 +225,16 @@ interface sbIServicePaneService : nsISupports
               in PRInt32 aOrientation);
   PRBool onDragGesture(in AString aID,
                        out nsITransferable aTransferable);
+
+  /* \brief Called when a node is renamed by the user, allows
+   *        the node owner to accept the action by setting the
+   *        node name to the given value.
+   * \param aId the ID of the node being renamed
+   * \param aNewName new name entered by the user
+   */
+  void onRename(in AString aID,
+                in AString aNewName);
+
 };
 
 
@@ -259,6 +269,15 @@ interface sbIServicePaneModule : nsISupports
               in PRInt32 aOrientation);
   PRBool onDragGesture(in sbIServicePaneNode aNode,
                        in nsITransferable aTransferable);
+
+  /* \brief Called when a node is renamed by the user, allows
+   *        the module to accept the action by setting the
+   *        node name to the given value.
+   * \param aNode the node that was renamed
+   * \param aNewName new name entered by the user
+   */
+  void onRename(in sbIServicePaneNode aNode,
+                in AString aNewName);
   
   /* \brief optional URI of stringbundle to use to localize names of nodes
     associated with this module */

@@ -422,6 +422,17 @@ function sbBookmarks_onDragGesture(aNode, aTransferable) {
   return true;
 }
 
+/**
+ * Called when the user has attempted to rename a bookmark node
+ */
+sbBookmarks.prototype.onRename =
+function sbBookmarks_onRename(aNode, aNewName) {
+  if (aNode && aNewName) {
+    aNode.name = aNewName;
+  }
+}
+
+
 
 /**
  * /brief XPCOM initialization code

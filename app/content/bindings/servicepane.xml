@@ -101,13 +101,11 @@
       <xul:tree class="servicepane_tree" anonid="tree" flex="1"
             datasources="rdf:null" ref="SB:Root"
             hidecolumnpicker="true" seltype="single"
-            editable="true"
             >
         <!-- hide the column header - is there a better way? -->
         <xul:treecols style="height:0px">
           <xul:treecol primary="true" flex="1"
                  hideheader="true"
-                 editable="true"
                  />
         </xul:treecols>
         <xul:template>
@@ -186,6 +184,9 @@
           dump('this.inputField.hidden: '+this.inputField.hidden+'\n');
           dump('this.hasAttribute("editing"): '+this.hasAttribute("editing")+'\n');
           */
+
+          if (!this._editingColumn)
+            return;
           
           var node = null;
           var newName = null;
@@ -194,15 +195,34 @@
               this._editingColumn && !this.inputField.hidden &&
               this.hasAttribute('editing')) {
             node = sp.getNodeForRow(this._editingRow);
-            newName = this.inputField.value;
+            newName = this.inputField.value;            
           }
           
-          this._stopEditing(accept);
+          var input = this.inputField;
+
+          this._editingRow = -1;
+          this._editingColumn = null;
+
+          // Hiding the input field when mouse is over it
+          // causes a crash on blur :(
+          // input.hidden = true;
           
+          // So instead lets just make it invisible.
+          input.style.visibility = "hidden";
+          input.top = 0;
+          input.width = 1;
+          
+          input.value = "";
+          this.removeAttribute("editing");          
           if (node) {
-            node.name = newName;
-          }
+            sp.mService.onRename(node.id, newName);
+          }            
         }
+        this.mTree._startEditing = this.mTree.startEditing;
+        this.mTree.startEditing = function evilStartEditing(row, column) {
+          this._startEditing(row, column);
+          this.inputField.style.visibility = "visible";
+        }        
         
         this.mCurrentURL = null;
         
@@ -232,6 +252,8 @@
         
         this.mTree.stopEditing = this.mTree._stopEditing;
         this.mTree._stopEditing = null;
+        this.mTree.startEditing = this.mTree._startEditing;
+        this.mTree._startEditing = null;
       ]]></destructor>
       
       <field name="_dragService"><![CDATA[
@@ -271,7 +293,7 @@
           // TODO: do we need to scroll to the row?
           
           var index = this.getRowForNode(aNode);
-          if (index >= 0) {
+          if (index >= 0 && aNode.editable) {
             this.mTree.startEditing(index, this.mTree.columns[0]);
             return true;
           }

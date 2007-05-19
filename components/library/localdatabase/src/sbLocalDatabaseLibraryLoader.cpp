@@ -72,7 +72,7 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
 #define PREF_LOAD_AT_STARTUP   "loadAtStartup"
 #define PREF_RESOURCE_GUID     "resourceGUID"
 
-#define MINIMUM_LIBRARY_COUNT 3
+#define MINIMUM_LIBRARY_COUNT 2
 #define LOADERINFO_VALUE_COUNT 4
 
 #define DBENGINE_GUID_MAIN_LIBRARY     "main@library.songbirdnest.com"
@@ -563,7 +563,7 @@ sbLocalDatabaseLibraryLoader::OnRegisterStartupLibraries(sbILibraryManager* aLib
 
   PRUint32 enumeratedLibraries = 
     mLibraryInfoTable.EnumerateRead(LoadLibrariesCallback, &info);
-  NS_ASSERTION(enumeratedLibraries >= 3, "Too few libraries enumerated!");
+  NS_ASSERTION(enumeratedLibraries >= MINIMUM_LIBRARY_COUNT, "Too few libraries enumerated!");
 
   return NS_OK;
 }
