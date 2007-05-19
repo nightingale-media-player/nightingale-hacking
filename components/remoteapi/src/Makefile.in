@@ -90,10 +90,6 @@ ifeq (macosx,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
 
-ifeq (linux,$(SB_PLATFORM))
-  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
-endif
-
 ifeq (windows,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += js3250
 endif
