@@ -42,18 +42,42 @@ interface nsISimpleEnumerator;
 // forward decl for sbIRemoteCommands
 interface sbIRemotePlayer;
 
+[scriptable, uuid(4f30b35e-ff7c-4b2e-b290-10e1a7ae06b1)]
+interface sbIRemoteMediaList : nsISupports
+{
+  // readonly attribute AString name;
+  // readonly attribute AString type;
+  // readonly attribute unsigned long length;
+  
+};
+
 [scriptable, uuid(3025cbf8-7969-4e79-8641-967a9f4e51b8)]
-interface sbIRemoteLibrary : nsISupports
+interface sbIRemoteLibrary : sbIRemoteMedialist
 {
   // this will hook up the remotelibrary to the internal library,
-  // setGUID is a bad name, will change.
-  void setGUID(in AString aGUID);
-  // I think these need to be exposed via nsIXPCScriptable
-  // readonly nsIArray artists
-  // readonly nsIArray albums
+  // use the 'Magic' strings 'main', 'web', 'download' or pass in
+  // the path to the location being called from.
+  // This will work like cookies.
+  /**
+   *
+   * \param aLibraryID - this can be either one of our 'magic' ids: main, web,
+   *        download; or it can be a path. If a path it must adhere to the same
+   *        restrictions that cookies do in the browser, namely it must be a 
+   *        prefix of the location of the URI. Specifically for the URI:
+   *        http://foo.bar.com/this/is/my/music/stolen.html the path must
+   *        be a prefix of 'this/is/my/music/'
+   */
+  void ConnectToMediaLibrary(in AString aLibraryID);
+
+  // this should ultimately be exposed via nsIXPCScriptable
+  // readonly nsIStringEnumerator artists
+  // readonly nsIStringEnumerator albums
 
   // void addMedia(in AString aURL);
+
+  // Takes an url to a playlist file that we handle
   // void addMediaListFromURL(in AString aURL);
+
   // void addMediaListElement(in sbIRemoteMediaList aMediaList);
 };
 
@@ -186,22 +210,12 @@ interface sbIRemotePlayer : nsISupports
   //
   // Library creation and retrieval
   //
-  // XXXredfive - this is probably only going to be accessed via 
-  //              nsIXPCScriptable methods.
 
-  /**
-   * \brief Creates a separate library for the current domain/path combo
-   * probably changing/going away, see next attribute
-   */
-  sbIRemoteLibrary addSiteLibrary(in AString aPath);
+  // access to a sitelibrary for the given path
+  sbIRemoteLibrary siteLibrary(in AString aPath);
 
-  /**
-   * \brief The library created by addSiteLibrary
-   *
-   * The calling convention here will probably change to this
-   * being a method that takes the string above.
-   */
-  readonly attribute sbIRemoteLibrary siteLibrary;
+  // access to any library in the system via path or 'magic' keyword
+  sbIRemoteLibrary libraries(in AString aLibraryID);
 
   /**
    * \brief Fires the event to the webpage
@@ -210,4 +224,6 @@ interface sbIRemotePlayer : nsISupports
    */
   [noscript] void FireEventToContent(in AString aClass, in AString aType);
 };
+
+
 

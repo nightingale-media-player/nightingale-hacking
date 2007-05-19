@@ -1,0 +1,60 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: 08</title>
+  </head>
+  <body>
+    <h1>Library creation, modification, exposing in playlist</h1>
+    <p> Create a remote library, point it to the sitelibrary and add media to it.
+        switch the remote playlist to show the remote library. </p>
+    <br />
+    <p> Force a web playlist to appear. <br />
+      <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
+    </p>
+
+    <script>
+      var siteLib = songbird.siteLibrary("builds/songbird/trunk/components/remoteapi/test");
+      if (siteLib) {
+        document.writeln("Have a siteLib<br/>");
+      } else {
+        document.writeln("DONT Have a siteLib<br/>");
+      }
+      var mainLib = songbird.libraries("main");
+      if (mainLib) {
+        document.writeln("Have a mainLib<br/>");
+      } else {
+        document.writeln("DONT Have a mainLib<br/>");
+      }
+
+    </script>
+    
+  </body>
+</html>
+

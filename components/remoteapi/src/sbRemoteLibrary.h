@@ -1,0 +1,81 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+
+#ifndef __SB_REMOTE_LIBRARY_H__
+#define __SB_REMOTE_LIBRARY_H__
+
+#include <sbIRemotePlayer.h>
+#include <sbILibrary.h>
+#include <sbISecurityMixin.h>
+#include <sbISecurityAggregator.h>
+
+#include <nsISecurityCheckedComponent.h>
+#include <nsStringGlue.h>
+#include <nsTArray.h>
+#include <nsCOMPtr.h>
+
+#define SONGBIRD_REMOTELIBRARY_CONTRACTID               \
+  "@songbirdnest.com/remoteapi/remotelibrary;1"
+#define SONGBIRD_REMOTELIBRARY_CLASSNAME                \
+  "Songbird Remote Library"
+#define SONGBIRD_REMOTELIBRARY_CID                      \
+{ /* e2d511c5-be47-4140-b48e-c011e471e1a2 */            \
+  0xe2d511c5,                                            \
+  0xbe47,                                                \
+  0x4140,                                                \
+  {0xb4, 0x8e, 0xc0, 0x11, 0xe4, 0x71, 0xe1, 0xa2}       \
+}
+
+class sbRemoteLibrary : public nsIClassInfo,
+                        public nsISecurityCheckedComponent,
+                        public sbISecurityAggregator,
+                        public sbIRemoteLibrary
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSICLASSINFO
+  NS_DECL_NSISECURITYCHECKEDCOMPONENT
+  NS_DECL_SBISECURITYAGGREGATOR
+  NS_DECL_SBIREMOTELIBRARY
+
+  sbRemoteLibrary();
+  nsresult Init();
+
+protected:
+  virtual ~sbRemoteLibrary();
+  nsCOMPtr<sbILibrary> mLibrary;
+
+  // helper methods
+  nsresult GetLibraryGUID(const nsAString &aLibraryID, nsAString &aLibraryGUID);
+
+  // SecurityCheckedComponent stuff
+  nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
+  nsTArray<nsString> mPublicMethods;
+  nsTArray<nsString> mPublicRProperties;  // Readable Properties
+  nsTArray<nsString> mPublicWProperties;  // Writeable Properties
+};
+
+#endif // __SB_REMOTE_LIBRARY_H__

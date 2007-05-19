@@ -38,13 +38,11 @@ moz_utils = sbMozStringUtils
 endif
 
 CPP_SRCS = sbSecurityMixin.cpp \
+           sbRemoteLibrary.cpp \
            sbRemotePlayer.cpp \
            sbRemoteCommands.cpp \
            sbRemoteAPIModule.cpp \
            $(NULL)
-
-# XXXredfive - commented out temp. for commands patch
-#           sbRemoteLibrary.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/components/playlistplayback/public \

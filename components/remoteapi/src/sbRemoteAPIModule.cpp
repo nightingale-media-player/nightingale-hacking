@@ -25,14 +25,14 @@
  */
 
 #include "sbRemoteCommands.h"
-//#include "sbRemoteLibrary.h"
+#include "sbRemoteLibrary.h"
 #include "sbRemotePlayer.h"
 #include "sbSecurityMixin.h"
 
 #define SONGBIRD_REMOTEAPI_MODULENAME "Songbird Remote API Module"
 
-//NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteLibrary, Init)
-//NS_DECL_CI_INTERFACE_GETTER(sbRemoteLibrary)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteLibrary, Init)
+NS_DECL_CI_INTERFACE_GETTER(sbRemoteLibrary)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteCommands, Init)
 NS_DECL_CI_INTERFACE_GETTER(sbRemoteCommands)
@@ -57,14 +57,14 @@ static const nsModuleComponentInfo components[] =
     NS_CI_INTERFACE_GETTER_NAME(sbRemoteCommands)
   },
   {
-    SONGBIRD_SECURITYMIXIN_CLASSNAME,
-    SONGBIRD_SECURITYMIXIN_CID,
-    SONGBIRD_SECURITYMIXIN_CONTRACTID,
-    sbSecurityMixinConstructor,
+    SONGBIRD_REMOTELIBRARY_CLASSNAME,
+    SONGBIRD_REMOTELIBRARY_CID,
+    SONGBIRD_REMOTELIBRARY_CONTRACTID,
+    sbRemoteLibraryConstructor,
     NULL,
     NULL,
     NULL,
-    NS_CI_INTERFACE_GETTER_NAME(sbSecurityMixin)
+    NS_CI_INTERFACE_GETTER_NAME(sbRemoteLibrary)
   },
   {
     SONGBIRD_REMOTEPLAYER_CLASSNAME,
@@ -75,22 +75,18 @@ static const nsModuleComponentInfo components[] =
     sbRemotePlayer::Unregister,
     NULL,
     NS_CI_INTERFACE_GETTER_NAME(sbRemotePlayer)
+  },
+  {
+    SONGBIRD_SECURITYMIXIN_CLASSNAME,
+    SONGBIRD_SECURITYMIXIN_CID,
+    SONGBIRD_SECURITYMIXIN_CONTRACTID,
+    sbSecurityMixinConstructor,
+    NULL,
+    NULL,
+    NULL,
+    NS_CI_INTERFACE_GETTER_NAME(sbSecurityMixin)
   }
 };
-
-/* XXXredfive - commented out temp. to isolate changes for
-                the commands patch
-  {
-    SONGBIRD_REMOTELIBRARY_CLASSNAME,
-    SONGBIRD_REMOTELIBRARY_CID,
-    SONGBIRD_REMOTELIBRARY_CONTRACTID,
-    sbRemoteLibraryConstructor,
-    NULL,
-    NULL,
-    NULL,
-    NS_CI_INTERFACE_GETTER_NAME(sbRemoteLibrary)
-  },
-*/
 
 // create the module info struct that is used to regsiter
 NS_IMPL_NSGETMODULE(SONGBIRD_REMOTEAPI_MODULENAME, components)

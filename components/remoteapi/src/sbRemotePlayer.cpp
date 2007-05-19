@@ -87,7 +87,6 @@ const static char* sPublicRProperties[] =
     "metadata:currentAlbum",
     "metadata:currentTrack",
     "binding:remoteCommands",
-    "binding:siteLibrary",
     "classinfo:classDescription",
     "classinfo:contractID",
     "classinfo:classID",
@@ -103,7 +102,8 @@ const static char* sPublicMethods[] =
     "controls:playURL",
     "binding:ping",
     "binding:registerCommands",
-    "binding:addSiteLibrary",
+    "binding:siteLibrary",
+    "binding:libraries",
     "binding:removeListener",
     "binding:addListener" };
 
@@ -282,28 +282,39 @@ sbRemotePlayer::GetName( nsAString &aName )
 }
 
 NS_IMETHODIMP
-sbRemotePlayer::AddSiteLibrary( const nsAString &aPath,
-                                sbIRemoteLibrary **aLibrary )
+sbRemotePlayer::Libraries( const nsAString &aLibraryID,
+                           sbIRemoteLibrary **aLibrary )
 {
-  LOG(("sbRemotePlayer::AddSiteLibrary()"));
-  return NS_ERROR_NOT_IMPLEMENTED;
+  LOG(( "sbRemotePlayer::Libraries(%s)",
+        NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
+  nsresult rv;
+  nsCOMPtr<sbIRemoteLibrary> library =
+       do_CreateInstance( "@songbirdnest.com/remoteapi/remotelibrary;1", &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // Library is going to hash the ID if necessary
+  library->ConnectToMediaLibrary(aLibraryID);
+
+  NS_ADDREF( *aLibrary = library );
+  return NS_OK;
 }
 
 NS_IMETHODIMP
-sbRemotePlayer::GetSiteLibrary( sbIRemoteLibrary **aSiteLibrary )
+sbRemotePlayer::SiteLibrary( const nsAString &aPath,
+                             sbIRemoteLibrary **aSiteLibrary )
 {
-  NS_ENSURE_ARG_POINTER(aSiteLibrary);
-  LOG(("sbRemotePlayer::GetSiteLibrary()"));
+  LOG(( "sbRemotePlayer::SiteLibrary(%s)",
+        NS_LossyConvertUTF16toASCII(aPath).get()));
 
-  // XXX this will change when the actual libraries array happens, because this
-  //     is a property I can't require an input string. Ultimatley the input string
-  //     will be the index of the object in the array.
   nsresult rv;
   if (!mSiteLibrary) {
     mSiteLibrary =
        do_CreateInstance( "@songbirdnest.com/remoteapi/remotelibrary;1", &rv );
     NS_ENSURE_SUCCESS( rv, rv );
   }
+
+  // Library is going to hash the ID passed in
+  mSiteLibrary->ConnectToMediaLibrary(aPath);
   NS_ADDREF( *aSiteLibrary = mSiteLibrary );
   return NS_OK;
 }
