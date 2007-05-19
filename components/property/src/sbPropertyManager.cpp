@@ -432,18 +432,6 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                         stringBundle, -1, PR_TRUE, 101, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Display columns
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COLUMNSPEC),
-                    NS_LITERAL_STRING("property.column_spec"),
-                    stringBundle);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  //Display column widths
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
-                    NS_LITERAL_STRING("property.default_column_spec"),
-                    stringBundle);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 

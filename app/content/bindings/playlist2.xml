@@ -113,6 +113,9 @@
 
       <constructor>
 <![CDATA[
+  // Set up the columns
+  this._setupColumns();
+
   // Attach event handler closures
   var self = this;
 
@@ -313,14 +316,6 @@
       <!-- Used to implement draggable smart splitters -->
       <field name="_down">0</field>
       <field name="_lastpos">0</field>
-      
-      <!-- Where the columnSpec came from. Possible values:
-        0: undefined
-        1: "contentSpec" property on the medialist
-        2: "defaultColumnSpec" property on the medialist
-        3: XUL "columnSpec" attribute
-      -->
-      <field name="_columnSpecOrigin">0</field>
 
       <!-- Drag and Drop flavors -->
       <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEM"  readonly="true">
@@ -408,9 +403,6 @@
   this.mediaListView = mediaListView;
   this.treeView = mediaListView.treeView;
   
-  // Set up the columns
-  this._setupColumns();
-
   // Attach our observer
   var mediaListViewTreeView =
     this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
@@ -546,7 +538,7 @@
 <![CDATA[
   if((event.attrName == "dragging" && event.newValue == "") ||
      event.attrName == "width" || event.attrName == "hidden") {
-    this._saveColumnSpec();
+    this._saveColumnSettings();
   }
 ]]>
         </body>
@@ -558,74 +550,48 @@
   var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                    .getService(this._Ci.sbIPropertyManager);
 
-  // Make sure this is set back to our default (undefined) value.
-  this._columnSpecOrigin = 0;
-  
-  // Our new "column spec" is a whitespace separated string that looks like
-  // this:
-  // 
-  // "propertyName [20] [a] propertyName [40] [d]"
-  //
-  // The width and sort direction are optional.
-  
-  // Try to get this info from 3 places, in this order:
-  // 
-  // 1. In the "columnSpec" property for the medialist.
-  // 2. In the "defaultColumnSpec" property for the medialist.
-  // 3. Hardcoded (or persisted) in XUL on the "columnSpec" attribute.
-  
+  // Read the "column-list" attribute to determine which columns are to be
+  // shown and in which order
+  var columnListAttr = this.getAttribute("column-list");
   var columnMap = [];
-  var columnSpec;
-  
-  var medialist = this.mediaListView.mediaList;
-  
-  try {
-    columnSpec =
-      medialist.getProperty("http://songbirdnest.com/data/1.0#columnSpec");
-    try {
-      columnMap = this._parseColumnSpec(columnSpec);
-      this._columnSpecOrigin = 1;
-    }
-    catch (e) {
-      this._reportError("Failed to parse columnSpec: \"" + columnSpec + "\"", e);
-      columnSpec = "";
-    }
+  var hasColumnSpec = false;
+
+  if (columnListAttr) {
+    hasColumnSpec = true;
+    var a = columnListAttr.split(" ");
+    a.forEach(function(e) {
+      columnMap.push({
+        property: e
+      });
+    });
   }
-  catch (e) { }
-  
-  if (!columnMap.length) {
-    try {
-      columnSpec =
-        medialist.getProperty("http://songbirdnest.com/data/1.0#defaultColumnSpec");
-      try {
-        columnMap = this._parseColumnSpec(columnSpec);
-        this._columnSpecOrigin = 2;
-      }
-      catch (e) {
-        this._reportError("Failed to parse columnSpec: \"" + columnSpec + "\"", e);
-        columnSpec = "";
-      }
-    }
-    catch (e) { }
-  }
-  
-  if (!columnMap.length) {
-    columnSpec = this.getAttribute("columnSpec");
-    try {
-      columnMap = this._parseColumnSpec(columnSpec);
-      this._columnSpecOrigin = 3;
-    }
-    catch (e) {
-      this._reportError("Failed to parse columnSpec: \"" + columnSpec + "\"", e);
-      columnSpec = "";
+
+  // Read the "column-widths" property which is a space delimited list of
+  // integers that correspond to the columns in the "column-list" attribute
+  if (hasColumnSpec) {
+  var columnWidthsAttr = this.getAttribute("column-widths");
+    if (columnWidthsAttr) {
+      var a = columnWidthsAttr.split(" ", columnMap.length);
+      a.forEach(function(e, index) {
+        if (!isNaN(e)) {
+          columnMap[index].width = parseInt(e);
+        }
+      });
     }
   }
 
-  if (!columnMap.length) {
-    throw new Error("Couldn't get columnMap!");
+  // Read the "column-sort" attribute which is a property name, a space, and
+  // then "a" for ascending and "d" for descending
+  var columnSortAttr = this.getAttribute("column-sort");
+  var columnSortProperty;
+  var columnSortDirection;
+  if (columnSortAttr) {
+    var a = columnSortAttr.split(" ", 2);
+    if (a.length == 2) {
+      columnSortProperty  = a[0];
+      columnSortDirection = a[1] == "a";
+    }
   }
-    
-  this._removeAllChildren(this._treecols);
 
   // Get the list of columns from the property manager and add them to the
   // tree
@@ -635,20 +601,15 @@
   // were added
   var alreadyAdded = {};
   var addedColumns = 0;
-  var ordinal = 0;
-  columnMap.forEach(
-    function(columnInfo) {
-      var propertyInfo = pm.getPropertyInfo(columnInfo.property);
-      this._appendColumn(propertyInfo,
-                         false,
-                         columnInfo.width,
-                         columnInfo.sort,
-                         ordinal);
-      alreadyAdded[columnInfo.property] = true;
-      addedColumns++;
-      ordinal += 2;
-    },
-    this);
+  columnMap.forEach(function(columnInfo) {
+    var propertyInfo = pm.getPropertyInfo(columnInfo.property);
+    this._appendColumn(propertyInfo,
+                       false,
+                       columnInfo.width,
+                       numColumns - addedColumns > 1);
+    alreadyAdded[columnInfo.property] = true;
+    addedColumns++;
+  }, this);
 
   // Add the rest of the columns from the property manager.  Note if there was
   // any saved column info, add these additional columns as hidden, otherwise
@@ -659,70 +620,15 @@
     if (!alreadyAdded[propertyName]) {
       var propertyInfo = pm.getPropertyInfo(propertyName);
       this._appendColumn(propertyInfo,
-                         columnMap.length,
+                         hasColumnSpec,
                          null,
-                         null,
-                         ordinal);
+                         numColumns - addedColumns > 1);
       addedColumns++;
-      ordinal += 2;
     }
   }
+
+  // TODO: set the saved sort
 ]]>
-        </body>
-      </method>
-
-      <method name="_parseColumnSpec">
-        <parameter name="spec"/>
-        <body>
-          <![CDATA[
-
-            // strip leading and trailing whitespace.
-            var strippedSpec = spec.match(/^\s*(.*?)\s*$/);
-            if (!strippedSpec.length > 0)
-              throw new Error("RegEx failed to match string");
-
-            // split based on whitespace.
-            var tokens = strippedSpec[1].split(/\s+/);
-            
-            var columns = [];
-            var columnIndex = -1;
-            var seenSort = false;
-            
-            for (var index = 0; index < tokens.length; index++) {
-              var token = tokens[index];
-              if (!token)
-                throw new Error("Zero-length token");
-              
-              if (isNaN(parseInt(token))) {
-                if (token.length == 1 && (token == "a" || token == "d")) {
-                  // This is a sort specifier
-                  if (columnIndex < 0) {
-                    throw new Error("You passed in a bunk string!");
-                  }
-                  // Multiple sorts will be ignored!
-                  if (!seenSort) {
-                    var column = columns[columnIndex];                    
-                    column.sort = token == "a" ? "ascending" : "descending";
-                    seenSort = true;
-                  }
-                }
-                else {
-                  // This is a property name.
-                  columns[++columnIndex] = { property: token };
-                }
-              }
-              else {
-                // This is a width specifier
-                if (columnIndex < 0) {
-                  throw new Error("You passed in a bunk string!");
-                }
-                var column = columns[columnIndex];
-                column.width = token;
-              }
-            }
-            
-            return columns;
-          ]]>
         </body>
       </method>
 
@@ -730,8 +636,7 @@
         <parameter name="propertyInfo"/>
         <parameter name="isHidden"/>
         <parameter name="width"/>
-        <parameter name="sort"/>
-        <parameter name="ordinal"/>
+        <parameter name="addSplitter"/>
         <body>
 <![CDATA[
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
@@ -745,13 +650,6 @@
   if (isHidden) {
     treecol.setAttribute("hidden", "true");
   }
-  
-  if (sort) {
-    treecol.setAttribute("sortDirection", sort);
-    treecol.setAttribute("sortActive", "true");
-  }
-  
-  treecol.setAttribute("ordinal", ordinal);
   
   var shouldInvalidate;
   switch (propertyInfo.displayUsingSimpleType) {
@@ -770,17 +668,20 @@
 
   this._treecols.appendChild(treecol);
 
-  var splitter = document.createElementNS(this._XUL_NS, "splitter");
-  splitter.setAttribute("class", "tree-splitter");
-  splitter.setAttribute("ordinal", ordinal + 1);
+  if (shouldInvalidate) {
+    this.tree.boxObject.invalidateColumn(treecol);
+  }
   
-  this._treecols.appendChild(splitter);
-  
+  if (addSplitter) {
+    var splitter = document.createElementNS(this._XUL_NS, "splitter");
+    splitter.setAttribute("class", "tree-splitter");
+    this._treecols.appendChild(splitter);
+  }
 ]]>
         </body>
       </method>
 
-      <method name="_saveColumnSpec">
+      <method name="_saveColumnSettings">
         <body>
 <![CDATA[
   var columns = [];
@@ -792,85 +693,26 @@
   for (var i = 0; i < treecolList.length; i++) {
     var col = treecolList[i];
     if (col.getAttribute("hidden") != "true") {
-      var columnInfo = { property: col.getAttribute("bind"),
-                         ordinal:  col.getAttribute("ordinal"),
-                         width:    col.width };
-
-      var sortActive = col.getAttribute("sortActive");
-      if (sortActive) {
-        var sortDirection = col.getAttribute("sortDirection");
-        var sortKey;
-        if (sortDirection == "ascending") {
-          sortKey = "a";
-        }
-        else if (sortDirection == "ascending") {
-          sortKey = "d";
-        }
-        if (sortKey) {
-          columnInfo.sort = sortKey;
-        }
-      }
-      
-      columns.push(columnInfo);
+      columns.push({
+        property: col.getAttribute("bind"),
+        ordinal:  col.getAttribute("ordinal"),
+        width:    col.width
+      });
     }
   }
 
   // Sort the column list by ordinal
   columns.sort(function(a, b) { return a.ordinal - b.ordinal; });
 
-  var columnSpec = "";
-  var first = true;
-  
-  function writeColumnInfo(columnInfo) {
-    var newString;
-    if (first) {
-      newString = "";
-      first = false;
-    }
-    else {
-      newString = " ";
-    }
-    
-    newString += columnInfo.property;
-    if (columnInfo.width) {
-      newString += " " + columnInfo.width;
-    }
-    if (columnInfo.sort) {
-      newString += " " + columnInfo.sort;
-    }
-    columnSpec += newString;
-  }
-  
-  columns.forEach(writeColumnInfo);
-  
-  // Sanity check, don't write a bad string.
-  try {
-    var parsedColumns = this._parseColumnSpec(columnSpec);
-  }
-  catch (e) {
-    this._reportError("Almost wrote a bad columnSpec!", e);
-    dump("columnSpec = \"" + columnSpec + "\"\n");
-    return;
-  }
+  var columnList = [];
+  var columnWidths = [];
+  columns.forEach(function(col) {
+    columnList.push(col.property);
+    columnWidths.push(col.width)
+  });
 
-  if (!columnSpec) {
-    throw new Error("No columns enumerated");
-  }
-  
-  switch (this._columnSpecOrigin) {
-    case 3:
-      this.setAttribute("columnSpec", columnSpec);
-    case 2:
-    case 1:
-      var mediaList = this.mediaListView.mediaList;
-      mediaList.setProperty("http://songbirdnest.com/data/1.0#columnSpec",
-                            columnSpec);
-      // XXXben HACK - remove soon when bug 3037 is fixed.
-      mediaList.write();
-      break;
-    default:
-      throw new Error("Bad columnSpecOrigin");
-  }
+  this.setAttribute("column-list", columnList.join(" "));
+  this.setAttribute("column-widths", columnWidths.join(" "));
 ]]>
         </body>
       </method>
@@ -1969,33 +1811,7 @@
           }
         </body>
       </method>
-      
-      <method name="_reportError">
-        <parameter name="message"/>
-        <parameter name="error"/>
-        <body>
-          <![CDATA[
-            dump("*** ERROR: " + message + "\n");
-            Components.utils.reportError(message);
-            if (error) {
-              Components.utils.reportError(error);
-            }
-          ]]>
-        </body>
-      </method>
 
-      <method name="_logMessage">
-        <parameter name="message"/>
-        <body>
-          <![CDATA[
-            dump("*** " + message + "\n");
-            var consoleService =
-              Components.classes["@mozilla.org/consoleservice;1"]
-                        .getService(Components.interfaces.nsIConsoleService);
-            consoleService.logStringMessage(message);
-          ]]>
-        </body>
-      </method>
     </implementation>
 
   </binding>
