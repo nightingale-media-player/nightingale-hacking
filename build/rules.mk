@@ -1123,7 +1123,7 @@ endif #SHELL_EXECUTE
 ifdef CREATEDIRS
 
 create_dirs:
-	$(CYGWIN_WRAPPER) $(MKDIR) -p $(CREATEDIRS)
+	$(foreach dir,$(CREATEDIRS),$(CYGWIN_WRAPPER) $(MKDIR) -p $(dir);)
 
 .PHONY : create_dirs
 
