@@ -8,7 +8,8 @@ bin_files="regxpcom*
 "
 
 # lib_files are relative to $objdir/dist/lib/
-lib_files="*plds4.*
+lib_files="*js3250.*
+           *plds4.*
            *nspr4.*
            *unicharutil_external_s.*
            *xpcom.*
