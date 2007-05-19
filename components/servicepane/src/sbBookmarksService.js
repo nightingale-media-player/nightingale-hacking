@@ -404,7 +404,7 @@ function sbBookmarks__addDragData (aTransferable, aData, aDataType) {
      createInstance(Components.interfaces.nsISupportsString);
   text.data = aData;
   // double the length - it's unicode - this is stupid
-  aTransferable.setTransferData(aDataType, text, text.data.length*2)
+  aTransferable.setTransferData(aDataType, text, text.data.length*2);
 }
 sbBookmarks.prototype.onDragGesture =
 function sbBookmarks_onDragGesture(aNode, aTransferable) {

@@ -50,6 +50,10 @@ const URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/playlist_test2.xul?"
 const LSP='http://songbirdnest.com/rdf/library-servicepane#';
 
 
+const TYPE_X_SB_TRANSFER_MEDIA_ITEM = "application/x-sb-transfer-media-item";
+const TYPE_X_SB_TRANSFER_MEDIA_LIST = "application/x-sb-transfer-media-list";
+const TYPE_X_SB_TRANSFER_MEDIA_ITEMS = "application/x-sb-transfer-media-items";
+
 /** 
  * Given the arguments var of a function, dump the
  * name of the function and the parameters provided
@@ -136,14 +140,171 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
 sbLibraryServicePane.prototype.canDrop =
 function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation) {
+  dump('\n\n\ncanDrop:\n');
+  if (aOrientation != 0) {
+    // FIXME: handle dropping next to stuff
+    return false;
+  }
+  
+  if (aNode.isContainer) {
+    // library
+    if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM) ||
+        aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST) ||
+        aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
+      dump('I CAN HAS DORP\n');
+      return true;
+    }
+  } else {
+    // playlist
+    if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM) ||
+        aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
+      dump('I CAN HAS DORP\n');
+      return true;
+    }
+  }
   return false;
 }
+sbLibraryServicePane.prototype._getDndData =
+function sbLibraryServicePane__getDndData(aDragSession, aDataType, aInterface) {
+  // create an nsITransferable
+  var transferable = Components.classes["@mozilla.org/widget/transferable;1"].
+      createInstance(Components.interfaces.nsITransferable);
+  // specify what kind of data we want it to contain
+  transferable.addDataFlavor(aDataType);
+  // ask the drag session to fill the transferable with that data
+  aDragSession.getData(transferable, 0);
+  // get the data from the transferable
+  var data = {};
+  var dataLength = {};
+  transferable.getTransferData(aDataType, data, dataLength);
+  // it's always a string. always.
+  data = data.value.QueryInterface(Components.interfaces.nsISupportsString);
+  data = data.toString();
+  
+  // get the object from the dnd source tracker
+  var dnd = Components.classes["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+      .getService(Components.interfaces.sbIDndSourceTracker);
+  return dnd.getSource(data).QueryInterface(aInterface);
+}
+
+sbLibraryServicePane.prototype._listsForNode =
+function sbLibraryServicePane__listsForNode(aNode) {
+  // what sbIMediaLists should we add things to if we want to add them to aNode
+  var lists = [];
+  if (aNode.isContainer) {
+    // library
+    lists = [this._getLibraryForURN(aNode.id)];
+  } else {
+    // mediaList
+    var item = this._getItemForURN(aNode.id);
+    lists = [item.library, item];
+  }
+  return lists;
+}
+
 sbLibraryServicePane.prototype.onDrop =
 function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
+  dump('\n\n\nonDrop:\n');
+  if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST)) {
+    dump('media list dropped\n');
+    if (!aNode.isContainer) {
+      // you can only drop media lists onto libraries
+      dump('not container!\n');
+      return;
+    }
+    dump ('gonna try to get context\n');
+    var context = this._getDndData(aDragSession,
+        TYPE_X_SB_TRANSFER_MEDIA_LIST, Ci.sbISingleListTransferContext);
+    dump('got context\n');
+    var library = this._getLibraryForURN(aNode.id);
+    dump('got library\n');
+    library.add(context.list);
+    
+    dump('added\n');
+  } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
+    dump('media items dropped\n');
+    
+    var context = this._getDndData(aDragSession,
+        TYPE_X_SB_TRANSFER_MEDIA_ITEMS, Ci.sbIMultipleItemTransferContext);
+    
+    var items = context.items;
+    
+    // what media lists do we have to add these nodes to?
+    var lists = this._listsForNode(aNode);
+    
+    for (var i=0; i<lists.length; i++) {
+      lists[i].beginUpdateBatch();
+      lists[i].addSome({
+        hasMoreElements: function() { return items.hasMoreElements(); },
+        getNext: function() {
+          var item = items.getNext().QueryInterface(Ci.sbIIndexedMediaItem);
+          return item.mediaItem;
+        },
+        QueryInterface: function(iid) {
+          if (iid.equals(Ci.nsISupports) ||
+              iid.equals(Ci.nsISimpleEnumerator)) {
+            return this;
+          }
+          throw Cr.NS_ERROR_NO_INTERFACE;
+        }
+      });
+      lists[i].endUpdateBatch();
+    }
+
+  } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM)) {
+    dump('media item dropped\n');
+
+    var context = this._getDndData(aDragSession,
+        TYPE_X_SB_TRANSFER_MEDIA_ITEM, Ci.sbISingleItemTransferContext);
+    
+    // what media lists do we have to add this node to?
+    var lists = this._listsForNode(aNode);
+
+    // add this item to all the media lists we need to add it to
+    for (var i=0; i<lists.length; i++) {
+      dump('adding '+context.item+' to '+lists[i]+'\n');
+      lists[i].add(context.item);
+    }
+    
+    dump('added\n');
+  }
 }
 sbLibraryServicePane.prototype.onDragGesture =
 function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
-  return false;
+  if (aNode.isContainer) {
+    // a library isn't dragable
+    return false;
+  }
+  
+  // get the list and create the source context
+  var list = this._getItemForURN(aNode.id);
+  var context = {
+    source: list.library,
+    count: 1,
+    list: list,
+    QueryInterface: function(iid) {
+      if (iid.equals(Components.interfaces.sbISingleListTransferContext) ||
+          iid.equals(Components.interfaces.nsISupports)) {
+        return this;
+      }
+      throw Components.results.NS_NOINTERFACE;
+    }
+  }
+
+  // register the source context
+  var dnd = Components.classes['@songbirdnest.com/Songbird/DndSourceTracker;1']
+      .getService(Components.interfaces.sbIDndSourceTracker);
+  dnd.reset();  
+  var handle = dnd.registerSource(context);
+  
+  // attach the source context to the transferable
+  aTransferable.addDataFlavor(TYPE_X_SB_TRANSFER_MEDIA_LIST);
+  var text = Components.classes["@mozilla.org/supports-string;1"].
+     createInstance(Components.interfaces.nsISupportsString);
+  text.data = handle;
+  aTransferable.setTransferData(TYPE_X_SB_TRANSFER_MEDIA_LIST, text, text.data.length*2);
+  
+  return true;
 }
 
 
@@ -598,7 +759,12 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.properties = "library libraryguid-" + aLibrary.guid;
     
     // Save the type of media list so that we can group by type
-    node.setAttributeNS(LSP, "ListType", aLibrary.type)    
+    node.setAttributeNS(LSP, "ListType", aLibrary.type)
+    
+    // Save the guid of the library
+    node.setAttributeNS(LSP, "LibraryGUID", aLibrary.guid);
+    // and save it as the list guid
+    node.setAttributeNS(LSP, "ListGUID", aLibrary.guid);
     
     // Position the node in the tree
     this._insertLibraryNode(node, aLibrary);
@@ -642,6 +808,8 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
 
     // Save the guid of the library that owns this media list
     node.setAttributeNS(LSP, "LibraryGUID", aMediaList.library.guid);
+    // and the guid of this list
+    node.setAttributeNS(LSP, "ListGUID", aMediaList.guid);
 
     // Place the node in the tree
     this._insertMediaListNode(node, aMediaList);
