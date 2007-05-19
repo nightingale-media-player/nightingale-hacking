@@ -94,8 +94,8 @@ ifeq (linux,$(SB_PLATFORM))
   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
-ifeq (win32,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_s
+ifeq (windows,$(SB_PLATFORM))
+  DYNAMIC_LIB_EXTRA_IMPORTS += js3250
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
