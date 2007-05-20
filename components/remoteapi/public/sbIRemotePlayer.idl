@@ -206,6 +206,13 @@ interface sbIRemotePlayer : nsISupports
    */
   void registerCommands(in boolean aUseDefaultCommands);
 
+  /**
+   * \brief Removes the commands from the central command manager
+   * The commands will no longer be available for use. The current web
+   * playlist will be notified that they are gone, and will be updated.
+   */
+  void unregisterCommands();
+
 
   //
   // Library creation and retrieval

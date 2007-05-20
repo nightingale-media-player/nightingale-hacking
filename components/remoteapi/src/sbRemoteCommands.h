@@ -28,14 +28,14 @@
 #define __SB_REMOTE_COMMANDS_H__
 
 #include <sbIRemotePlayer.h>
+#include <sbISecurityAggregator.h>
 #include <sbISecurityMixin.h>
 #include <sbIPlaylistsource.h>
-#include <sbISecurityAggregator.h>
 
+#include <nsIGenericFactory.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
-#include <nsIGenericFactory.h>
 
 #define SONGBIRD_REMOTECOMMANDS_CONTRACTID              \
   "@songbirdnest.com/remoteapi/remotecommands;1"
@@ -49,6 +49,9 @@
   {0x87, 0xf1, 0xa8, 0xa8, 0x44, 0x9b, 0x16, 0xb5}      \
 }
 
+class nsIDOMNode;
+class nsIWeakReference;
+
 struct sbCommand {
   nsString type;
   nsString id;
@@ -56,18 +59,18 @@ struct sbCommand {
   nsString tooltip;
 };
 
-class sbRemoteCommands : public nsIClassInfo,
+class sbRemoteCommands : public sbIRemoteCommands,
+                         public nsIClassInfo,
                          public nsISecurityCheckedComponent,
-                         public sbISecurityAggregator,
-                         public sbIRemoteCommands,
-                         public sbIPlaylistCommands
+                         public sbIPlaylistCommands,
+                         public sbISecurityAggregator
 {
 public:
+  NS_DECL_SBIREMOTECOMMANDS
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
   NS_DECL_NSISECURITYCHECKEDCOMPONENT
   NS_DECL_SBISECURITYAGGREGATOR
-  NS_DECL_SBIREMOTECOMMANDS
   NS_DECL_SBIPLAYLISTCOMMANDS
 
   sbRemoteCommands();
@@ -77,7 +80,7 @@ protected:
   virtual ~sbRemoteCommands();
 
   // sbIPlaylistCommands stuff
-  nsCOMPtr<sbIRemotePlayer> mOwner;
+  nsCOMPtr<nsIWeakReference> mWeakOwner;
   nsCOMPtr<nsIDOMNode> mMediaList;
   nsTArray<sbCommand> mCommands;
 

@@ -102,6 +102,7 @@ const static char* sPublicMethods[] =
     "controls:playURL",
     "binding:ping",
     "binding:registerCommands",
+    "binding:unregisterCommands",
     "binding:siteLibrary",
     "binding:libraries",
     "binding:removeListener",
@@ -143,11 +144,20 @@ UnbindAndRelease ( const nsAString &aKey,
   return PL_DHASH_REMOVE;
 }
 
-NS_IMPL_ISUPPORTS4(sbRemotePlayer,
-                   nsIClassInfo,
-                   nsISecurityCheckedComponent,
-                   sbISecurityAggregator,
-                   sbIRemotePlayer)
+NS_IMPL_ISUPPORTS6( sbRemotePlayer,
+                    nsIClassInfo,
+                    nsISecurityCheckedComponent,
+                    sbIRemotePlayer,
+                    nsIDOMEventListener,
+                    nsISupportsWeakReference,
+                    sbISecurityAggregator )
+
+NS_IMPL_CI_INTERFACE_GETTER5( sbRemotePlayer,
+                              nsISecurityCheckedComponent,
+                              sbIRemotePlayer,
+                              nsIDOMEventListener,
+                              nsISupportsWeakReference,
+                              sbISecurityAggregator )
 
 sbRemotePlayer*
 sbRemotePlayer::GetInstance()
@@ -156,7 +166,7 @@ sbRemotePlayer::GetInstance()
   if (!gRemotePlayerLog) {
     gRemotePlayerLog = PR_NewLogModule("sbRemotePlayer");
   }
-  LOG(("***********sbRemotePlayer::GetInstance()"));
+  LOG(("**** sbRemotePlayer::GetInstance() ****"));
 #endif
 
   sbRemotePlayer *player = new sbRemotePlayer();
@@ -210,7 +220,8 @@ sbRemotePlayer::Init()
   mCurrentArtist->Init( NS_LITERAL_STRING("metadata.artist"), SB_PREFS_ROOT );
   mCurrentAlbum->Init( NS_LITERAL_STRING("metadata.album"), SB_PREFS_ROOT );
 
-  nsCOMPtr<sbISecurityMixin> mixin = do_CreateInstance("@songbirdnest.com/remoteapi/security-mixin;1", &rv);
+  nsCOMPtr<sbISecurityMixin> mixin =
+        do_CreateInstance("@songbirdnest.com/remoteapi/security-mixin;1", &rv);
   if (NS_FAILED(rv)) {
     LOG(("sbRemotePlayer::Init() -- ERROR creating mixin"));
     return NS_ERROR_OUT_OF_MEMORY; 
@@ -232,35 +243,47 @@ sbRemotePlayer::Init()
   mSecurityMixin = do_QueryInterface(mixin, &rv);
   NS_ENSURE_SUCCESS( rv, rv );
 
-#if 0
-  // Coming in the next patch
-
   //
   // Hook up an event listener to listen to the unload event so we can
   //   remove any commands from the PlaylistSource
   //
 
-  // pull the dom window from the js stack and context - hopefully this is the window for the content doc
-  nsCOMPtr<nsPIDOMWindow> window = GetWindowFromJS();
-  NS_ENSURE_STATE(window);
+  // pull the dom window from the js stack and context
+  nsCOMPtr<nsPIDOMWindow> privWindow = GetWindowFromJS();
+  NS_ENSURE_STATE(privWindow);
 
-  // Get the doc from the window
-  nsCOMPtr<nsIDOMDocument> domdoc;
-  window->GetDocument( getter_AddRefs(domdoc) );
-  NS_ENSURE_STATE(domdoc);
+  //
+  // Get the Content Document
+  //
+  privWindow->GetDocument( getter_AddRefs(mContentDoc) );
+  NS_ENSURE_STATE(mContentDoc);
 
-  nsCOMPtr<nsIDOMXULDocument> xuldoc( do_QueryInterface(domdoc) );
-  if (xuldoc) {
-    LOG(("sbRemotePlayer::Init() -- IS a XUL DOC"));
-  } else {
-    LOG(("sbRemotePlayer::Init() -- is NOT a XUL DOC"));
-  }
+  //
+  // Get the Chrome Document
+  //
+  nsIDocShell *docShell = privWindow->GetDocShell();
+  NS_ENSURE_STATE(docShell);
 
-  // possibly march from the xul doc to the content doc.
+  // Step up to the chrome layer through the event handler
+  nsCOMPtr<nsIDOMEventTarget> chromeEventHandler;
+  docShell->GetChromeEventHandler( getter_AddRefs(chromeEventHandler) );
+  NS_ENSURE_STATE(chromeEventHandler);
+  nsCOMPtr<nsIContent> chromeElement(
+                                do_QueryInterface( chromeEventHandler, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
 
-  //domdoc->AddEventListener();
+  // Get the document from the chrome content
+  nsIDocument *doc = chromeElement->GetDocument();
+  NS_ENSURE_STATE(doc);
 
-#endif
+  mChromeDoc = do_QueryInterface( doc, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  LOG(("sbRemotePlayer::Init() -- registering unload listener"));
+  // Have our HandleEvent called on page unloads, so we can unhook commands
+  nsCOMPtr<nsIDOMEventTarget> eventTarget( do_QueryInterface(mChromeDoc) );
+  NS_ENSURE_STATE(eventTarget);
+  eventTarget->AddEventListener( NS_LITERAL_STRING("unload"), this , PR_TRUE );
 
   mInitialized = PR_TRUE;
 
@@ -342,54 +365,23 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   NS_ENSURE_STATE(mCommandsObject);
   nsresult rv;
 
-  // pull the dom window from the js stack and context
-  nsCOMPtr<nsPIDOMWindow> privWindow = GetWindowFromJS();
-  NS_ENSURE_STATE(privWindow);
-
-  // Docshell from DOMWindow - still content level
-  nsIDocShell *docShell = privWindow->GetDocShell();
-  NS_ENSURE_STATE(docShell);
-
-  // Step up to the chrome layer through the event handler
-  nsCOMPtr<nsIDOMEventTarget> chromeEventHandler;
-  docShell->GetChromeEventHandler( getter_AddRefs(chromeEventHandler) );
-  NS_ENSURE_STATE(chromeEventHandler);
-  nsCOMPtr<nsIContent> chromeElement(
-                                do_QueryInterface( chromeEventHandler, &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // Get the document from the chrome content
-  nsIDocument *doc = chromeElement->GetDocument();
-  NS_ENSURE_STATE(doc);
-
-  nsCOMPtr<nsIDOMDocument> domdoc( do_QueryInterface( doc, &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // Find the playlist element so we can tell it to use (or not) the default commands
-  // Now get the playlist from the chrome doc
-  // FRAGILE, need to find a better way to get the web-playlist
-
   // Get the tabbrowser, ask it for the tab for our document
   nsCOMPtr<nsIDOMElement> tabBrowserElement;
-  domdoc->GetElementById( SB_WEB_TABBROWSER_ID,
-                          getter_AddRefs(tabBrowserElement) );
+  mChromeDoc->GetElementById( SB_WEB_TABBROWSER_ID,
+                              getter_AddRefs(tabBrowserElement) );
   NS_ENSURE_STATE(tabBrowserElement);
   LOG(("sbRemotePlayer::RegisterCommands() -- GOT THE TABBROWSER !!!\n\n"));
 
-  // Get the doc from the window - content doc? Yup. ( at least when called
-  //   from a web page.
-  nsCOMPtr<nsIDOMDocument> contentDoc;
-  privWindow->GetDocument( getter_AddRefs(contentDoc) );
-  NS_ENSURE_STATE(contentDoc);
-
   // QI the tabbrowser to our super-special 1337 interface
-  nsCOMPtr<sbITabBrowser> tabbrowser( do_QueryInterface( tabBrowserElement , &rv ) );
+  nsCOMPtr<sbITabBrowser> tabbrowser(
+                                do_QueryInterface( tabBrowserElement , &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   // Get the tab for our particular document
   nsCOMPtr<sbITabBrowserTab> browserTab;
-  tabbrowser->GetTabForDocument( contentDoc, getter_AddRefs(browserTab) );
+  tabbrowser->GetTabForDocument( mContentDoc, getter_AddRefs(browserTab) );
   NS_ENSURE_STATE(browserTab);
+  LOG(("sbRemotePlayer::RegisterCommands() -- GOT THE TABBROWSER TAB!!!\n\n"));
 
   // Get the outer playlist from the tab, it's the web playlist
   nsCOMPtr<nsIDOMElement> playlist;
@@ -403,6 +395,7 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   tabElement->GetOwnerDocument( getter_AddRefs(tabDoc) );
   NS_ENSURE_STATE(tabDoc);
 
+  // This propogation is working, the playlist has the correct settings
   // Tell the playlist about our default command settings.
   if (aUseDefaultCommands) {
     LOG(("sbRemotePlayer::RegsiterCommands() using defaults"));
@@ -424,7 +417,7 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   // XXXredfive - FIXME
   //if (mLibrary)
   //  mLibrary->GetGuid(guid);
-  nsCOMPtr<sbIPlaylistCommands> commands(
+  nsCOMPtr<sbIPlaylistCommands> commands( 
                                    do_QueryInterface( mCommandsObject, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
   pls->RegisterPlaylistCommands( guid,
@@ -434,9 +427,13 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
 
   // This event is no longer getting to the playlist. I think since it moved I
   //   need to get the document from the tabbrowser.
+  // I think the proper solution is going to be to implement an interface on
+  //   the playlist binding that allows us to QI the domelement to something
+  //   useful.
   // Fire Event
   //return DispatchEvent( domdoc, RAPI_EVENT_CLASS, SB_EVENT_CMNDS_UP, PR_TRUE );
-  return DispatchEvent( tabDoc, RAPI_EVENT_CLASS, SB_EVENT_CMNDS_UP, PR_TRUE );
+  return DispatchEvent( mChromeDoc, RAPI_EVENT_CLASS, SB_EVENT_CMNDS_UP, PR_FALSE );
+  //return DispatchEvent( tabDoc, RAPI_EVENT_CLASS, SB_EVENT_CMNDS_UP, PR_TRUE );
 }
 
 NS_IMETHODIMP 
@@ -614,39 +611,71 @@ sbRemotePlayer::FireEventToContent( const nsAString &aClass,
         NS_LossyConvertUTF16toASCII(aClass).get(),
         NS_LossyConvertUTF16toASCII(aType).get() ));
 
-  // pull the dom window from the js stack and context
-  nsCOMPtr<nsPIDOMWindow> window = GetWindowFromJS();
-  NS_ENSURE_STATE(window);
+  return DispatchEvent(mContentDoc, aClass, aType, PR_FALSE);
+}
 
-  // Get the doc from the window
-  nsCOMPtr<nsIDOMDocument> domdoc;
-  window->GetDocument( getter_AddRefs(domdoc) );
-  NS_ENSURE_STATE(domdoc);
+// ---------------------------------------------------------------------------
+//
+//                           nsIDOMEventListener
+//
+// ---------------------------------------------------------------------------
 
-  // When we get called from chrome the document is a XUL doc,
-  //   we need to convert that to a content document first.
-  nsCOMPtr<nsIDOMXULDocument> xuldoc( do_QueryInterface(domdoc) );
-  if (xuldoc) {
-    LOG(("sbRemotePlayer::FireEventToContent() -- We have a XULDOC!"));
-    // Get the docshell from the chrome window
-    nsIDocShell *docShell = window->GetDocShell();
-    NS_ENSURE_STATE(docShell);
+NS_IMETHODIMP
+sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
+{
+  LOG(("sbRemotePlayer::HandleEvent()"));
+  NS_ENSURE_ARG_POINTER(aEvent);
+  nsAutoString type;
+  aEvent->GetType(type);
+  if ( type.EqualsLiteral("unload") ) {
+    nsresult rv;
+    nsCOMPtr<nsIDOMEventTarget> eventTarget( do_QueryInterface(mChromeDoc) );
+    NS_ENSURE_STATE(eventTarget);
+    rv = eventTarget->RemoveEventListener( NS_LITERAL_STRING("unload"),
+                                           this ,
+                                           PR_TRUE );
+    NS_ASSERTION( NS_SUCCEEDED(rv),
+                  "Failed to remove unload listener from document" );
 
-    // navigate the docshell tree to the content's docshell
-    nsCOMPtr<nsIDocShellTreeItem> docTreeItem( do_QueryInterface(docShell) );
-    NS_ENSURE_STATE(docTreeItem);
-    nsCOMPtr<nsIDocShellTreeOwner> docTreeOwner;
-    docTreeItem->GetTreeOwner( getter_AddRefs(docTreeOwner) );
-    NS_ENSURE_STATE(docTreeOwner);
-    docTreeOwner->GetPrimaryContentShell( getter_AddRefs(docTreeItem) );
-    NS_ENSURE_STATE(docTreeItem);
-
-    // reset the domdoc to the content's document
-    domdoc = do_GetInterface(docTreeItem);
-    NS_ENSURE_STATE(domdoc);
+    // the page is going away, clean up things that will cause us to
+    // not get released.
+    UnregisterCommands();
+    mCommandsObject = nsnull;
+    mContentDoc = nsnull;
+    mChromeDoc = nsnull;
   }
+  return NS_OK;
+}
 
-  return DispatchEvent(domdoc, aClass, aType, PR_FALSE);
+nsresult
+sbRemotePlayer::UnregisterCommands()
+{
+  LOG(("sbRemotePlayer::UnregisterCommands()"));
+  if (!mCommandsObject)
+    return NS_OK;
+
+  // Get the Playlistsource object to unregister the commands
+  nsresult rv;
+  nsCOMPtr<sbIPlaylistsource> pls( 
+         do_GetService( "@mozilla.org/rdf/datasource;1?name=playlist", &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  NS_NAMED_LITERAL_STRING( guid, "remote-test-guid" );
+  // type is working, but better be able to put the guid in too.
+  // XXXredfive - FIXME
+  //if (mLibrary)
+  //  mLibrary->GetGuid(guid);
+  nsCOMPtr<sbIPlaylistCommands> commands(
+                                   do_QueryInterface( mCommandsObject, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = pls->UnregisterPlaylistCommands( guid,
+                                        EmptyString(),
+                                        NS_LITERAL_STRING("library"),
+                                        commands );
+  NS_ASSERTION( NS_SUCCEEDED(rv),
+                "Failed to unregister commands from sbPlaylistsource" );
+  
+  return NS_OK;
 }
 
 // ---------------------------------------------------------------------------
@@ -697,7 +726,8 @@ sbRemotePlayer::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyName
   NS_ENSURE_ARG_POINTER(aPropertyName);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  LOG(( "sbRemotePlayer::CanGetProperty(%s)", NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
+  LOG(( "sbRemotePlayer::CanGetProperty(%s)",
+        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
 
   if ( !mInitialized && NS_FAILED( Init() ) )
     return NS_ERROR_FAILURE;
@@ -714,7 +744,8 @@ sbRemotePlayer::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyName
   NS_ENSURE_ARG_POINTER(aPropertyName);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  LOG(( "sbRemotePlayer::CanSetProperty(%s)", NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
+  LOG(( "sbRemotePlayer::CanSetProperty(%s)",
+        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
 
   if ( !mInitialized && NS_FAILED( Init() ) )
     return NS_ERROR_FAILURE;
@@ -729,11 +760,6 @@ sbRemotePlayer::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyName
 //                            nsIClassInfo
 //
 // ---------------------------------------------------------------------------
-
-NS_IMPL_CI_INTERFACE_GETTER3( sbRemotePlayer,
-                              sbISecurityAggregator,
-                              sbIRemotePlayer,
-                              nsISecurityCheckedComponent )
 
 NS_IMETHODIMP 
 sbRemotePlayer::GetInterfaces(PRUint32 *aCount, nsIID ***aArray)
@@ -815,7 +841,7 @@ sbRemotePlayer::GetWindowFromJS() {
   // over these at some point in order to make sure we are sending events
   // to the correct window, but for now this works.
   nsCOMPtr<nsIJSContextStack> stack =
-                          do_GetService("@mozilla.org/js/xpc/ContextStack;1");
+                           do_GetService("@mozilla.org/js/xpc/ContextStack;1");
  
   if (!stack) {
     LOG(("sbRemotePlayer::GetWindowFromJS() -- NO STACK!!!"));
@@ -823,7 +849,6 @@ sbRemotePlayer::GetWindowFromJS() {
   }
  
   JSContext *cx;
- 
   if (NS_FAILED(stack->Peek(&cx)) || !cx) {
     LOG(("sbRemotePlayer::GetWindowFromJS() -- NO CONTEXT!!!"));
     return nsnull;
@@ -834,10 +859,10 @@ sbRemotePlayer::GetWindowFromJS() {
   NS_ENSURE_TRUE(scCx, nsnull);
 
   // Get the DOMWindow from the script global via the script context
-  nsCOMPtr<nsPIDOMWindow> window = do_QueryInterface( scCx->GetGlobalObject() );
-  NS_ENSURE_TRUE( window, nsnull );
-  NS_ADDREF( window.get() );
-  return window.get();
+  nsCOMPtr<nsPIDOMWindow> win = do_QueryInterface( scCx->GetGlobalObject() );
+  NS_ENSURE_TRUE( win, nsnull );
+  NS_ADDREF( win.get() );
+  return win.get();
 }
 
 nsresult
@@ -845,16 +870,10 @@ sbRemotePlayer::FireRemoteAPIAccessedEvent()
 {
   LOG(("sbRemotePlayer::FireRemoteAPIAccessedEvent()"));
 
-  // pull the dom window from the js stack and context
-  nsCOMPtr<nsPIDOMWindow> window = GetWindowFromJS();
-  NS_ENSURE_STATE(window);
-  
-  // get the document from the window.
-  nsCOMPtr<nsIDOMDocument> domdoc;
-  window->GetDocument( getter_AddRefs(domdoc) );
-  NS_ENSURE_STATE(domdoc);
-
-  return DispatchEvent( domdoc, RAPI_EVENT_CLASS, RAPI_EVENT_TYPE, PR_TRUE );
+  return DispatchEvent( mContentDoc,
+                        RAPI_EVENT_CLASS,
+                        RAPI_EVENT_TYPE,
+                        PR_TRUE );
 }
 
 nsresult

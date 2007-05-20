@@ -35,11 +35,13 @@
 
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
-#include <nsPIDOMWindow.h>
+#include <nsIDOMEventListener.h>
+#include <nsIGenericFactory.h>
 #include <nsISecurityCheckedComponent.h>
+#include <nsPIDOMWindow.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
-#include <nsIGenericFactory.h>
+#include <nsWeakReference.h>
 
 #define SONGBIRD_REMOTEPLAYER_CONTRACTID                \
   "@songbirdnest.com/remoteapi/remoteplayer;1"
@@ -58,17 +60,20 @@ struct sbRemoteObserver {
   nsCOMPtr<sbIDataRemote> remote;
 };
 
-class sbRemotePlayer : public nsIClassInfo,
+class sbRemotePlayer : public sbIRemotePlayer,
+                       public nsIClassInfo,
+                       public nsIDOMEventListener,
                        public nsISecurityCheckedComponent,
-                       public sbISecurityAggregator,
-                       public sbIRemotePlayer
+                       public nsSupportsWeakReference,
+                       public sbISecurityAggregator
 {
 public:
+  NS_DECL_SBIREMOTEPLAYER
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
+  NS_DECL_NSIDOMEVENTLISTENER
   NS_DECL_NSISECURITYCHECKEDCOMPONENT
   NS_DECL_SBISECURITYAGGREGATOR
-  NS_DECL_SBIREMOTEPLAYER
 
   sbRemotePlayer();
   static sbRemotePlayer* GetInstance();
@@ -78,7 +83,6 @@ public:
                             const char *aLoaderStr,
                             const char *aType,
                             const nsModuleComponentInfo *aInfo);
-
   static NS_METHOD Unregister(nsIComponentManager* aCompMgr,
                               nsIFile* aPath,
                               const char *aLoaderStr,
@@ -96,6 +100,8 @@ protected:
   // Data members
   PRBool mInitialized;
   nsCOMPtr<sbIPlaylistPlayback> mGPPS;
+  nsCOMPtr<nsIDOMDocument> mContentDoc;
+  nsCOMPtr<nsIDOMDocument> mChromeDoc;
 
   nsCOMPtr<sbIRemoteCommands> mCommandsObject;
   nsCOMPtr<sbIRemoteLibrary> mSiteLibrary;

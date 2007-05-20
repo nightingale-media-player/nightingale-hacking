@@ -89,17 +89,17 @@ const static char* sPublicMethods[] =
   };
 
 NS_IMPL_ISUPPORTS5( sbRemoteCommands,
-                    sbIRemoteCommands,
-                    sbIPlaylistCommands,
                     nsIClassInfo,
-                    sbISecurityAggregator,
-                    nsISecurityCheckedComponent )
+                    nsISecurityCheckedComponent,
+                    sbIPlaylistCommands,
+                    sbIRemoteCommands,
+                    sbISecurityAggregator )
 
 NS_IMPL_CI_INTERFACE_GETTER4( sbRemoteCommands,
+                              nsISecurityCheckedComponent,
                               sbIRemoteCommands,
                               sbIPlaylistCommands,
-                              sbISecurityAggregator,
-                              nsISecurityCheckedComponent )
+                              sbISecurityAggregator )
 
 sbRemoteCommands::sbRemoteCommands() 
 {
@@ -208,15 +208,19 @@ NS_IMETHODIMP
 sbRemoteCommands::SetOwner( sbIRemotePlayer *aOwner )
 {
   LOG(("sbRemoteCommands::SetOwner()"));
-  mOwner = aOwner;
-  return NS_OK;
+  nsresult rv;
+  mWeakOwner = do_GetWeakReference( aOwner, &rv );
+  return rv;
 }
 
 NS_IMETHODIMP
 sbRemoteCommands::GetOwner( sbIRemotePlayer **aOwner )
 {
-  NS_IF_ADDREF( *aOwner = mOwner );
-  return NS_OK;
+  LOG(("sbRemoteCommands::GetOwner()"));
+  nsresult rv;
+  nsCOMPtr<sbIRemotePlayer> strong = do_QueryReferent( mWeakOwner, &rv );
+  NS_IF_ADDREF( *aOwner = strong );
+  return rv;
 }
 
 // ---------------------------------------------------------------------------
@@ -422,9 +426,11 @@ sbRemoteCommands::OnCommand( const nsAString &aID,
     
   }
 */
-  NS_ENSURE_TRUE( mOwner, NS_ERROR_FAILURE );
-  mOwner->FireEventToContent( NS_LITERAL_STRING("Events"), aID );
-  return NS_OK;
+
+  nsresult rv;
+  nsCOMPtr<sbIRemotePlayer> owner( do_QueryReferent( mWeakOwner, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  return owner->FireEventToContent( NS_LITERAL_STRING("Events"), aID );
 }
 
 NS_IMETHODIMP
@@ -447,7 +453,9 @@ sbRemoteCommands::Duplicate( sbIPlaylistCommands **_retval )
     // if AddCommand fails we are out of memory
     NS_ENSURE_SUCCESS( rv, rv );
   }
-  rv = copy->SetOwner(mOwner);
+  nsCOMPtr<sbIRemotePlayer> owner( do_QueryReferent( mWeakOwner, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = copy->SetOwner(owner);
   NS_ENSURE_SUCCESS( rv, rv );
   nsCOMPtr<sbIPlaylistCommands> plCommands( do_QueryInterface( copy, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
