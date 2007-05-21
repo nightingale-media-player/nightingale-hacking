@@ -129,6 +129,28 @@ sbLocalDatabaseMediaListView::CloneStringArrayHashCallback(nsStringHashKey::KeyT
   return PL_DHASH_NEXT;
 }
 
+/* static */ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseMediaListView::CopyStringArrayHashCallback(nsStringHashKey::KeyType aKey,
+                                                          sbStringArray* aEntry,
+                                                          void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  nsCOMPtr<sbIPropertyArray> propertyArray =
+    NS_STATIC_CAST(sbIPropertyArray*, aUserData);
+  NS_ASSERTION(propertyArray, "Could not cast user data");
+
+  PRUint32 length = aEntry->Length();
+  nsresult rv;
+  for (PRUint32 i = 0; i < length; i++) {
+    rv = propertyArray->AppendProperty(aKey, aEntry->ElementAt(i));
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  }
+
+  return PL_DHASH_NEXT;
+}
+
 sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbILocalDatabaseLibrary* aLibrary,
                                                            sbIMediaList* aMediaList,
                                                            nsAString& aDefaultSortProperty,
@@ -499,6 +521,23 @@ sbLocalDatabaseMediaListView::GetFilterValues(const nsAString& aPropertyName,
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = values);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::GetFilters(sbIPropertyArray** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIPropertyArray> propertyArray =
+    do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mViewFilters.EnumerateRead(CopyStringArrayHashCallback, propertyArray);
+
+  NS_ADDREF(*_retval = propertyArray);
   return NS_OK;
 }
 

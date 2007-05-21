@@ -93,6 +93,22 @@ function runTest () {
   view.setFilters(pa);
   assertEqual(view.length, 10);
 
+  // test get
+  var pa = createPropertyArray();
+  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
+  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "a-ha");
+  pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "Back in Black");
+  view.setFilters(pa);
+
+  var filters = view.getFilters();
+  assertEqual(filters.length, 3);
+
+  assertEqual(filters.getPropertyAt(0).name, "http://songbirdnest.com/data/1.0#artistName");
+  assertEqual(filters.getPropertyAt(0).value, "ac/dc");
+  assertEqual(filters.getPropertyAt(1).name, "http://songbirdnest.com/data/1.0#artistName");
+  assertEqual(filters.getPropertyAt(1).value, "a-ha");
+  assertEqual(filters.getPropertyAt(2).name, "http://songbirdnest.com/data/1.0#albumName");
+  assertEqual(filters.getPropertyAt(2).value, "back in black");
 }
 
 function createPropertyArray() {

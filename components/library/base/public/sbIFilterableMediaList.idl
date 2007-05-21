@@ -44,7 +44,7 @@ interface sbIPropertyArray;
 *
 * \sa sbIMediaList
 */
-[scriptable, uuid(6dc5cfa6-7f95-4bb8-872d-af3ac227c121)]
+[scriptable, uuid(b776a7a8-6569-43a0-b7ed-ad7a804e8e64)]
 interface sbIFilterableMediaList : nsISupports
 {
   /**
@@ -61,6 +61,12 @@ interface sbIFilterableMediaList : nsISupports
    *         given property
    */
   nsIStringEnumerator getFilterValues(in AString aPropertyName);
+
+  /**
+   * \brief Get the current filter configuration
+   * \retrun Array of name value pairs used to filter the list
+   */
+  sbIPropertyArray getFilters();
 
   /**
    * \brief Set a new filter configuration.
