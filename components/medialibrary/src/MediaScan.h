@@ -38,19 +38,20 @@
 
 #include "sbIMediaLibrary.h"
 
-#include <xpcom/nscore.h>
-#include <xpcom/nsCOMPtr.h>
-#include <xpcom/nsIFile.h>
-#include <xpcom/nsILocalFile.h>
+#include <nscore.h>
+#include <nsCOMPtr.h>
+#include <nsIFile.h>
+#include <nsILocalFile.h>
 #include <nsStringGlue.h>
-#include <xpcom/nsServiceManagerUtils.h>
-#include <xpcom/nsComponentManagerUtils.h>
-#include <xpcom/nsISimpleEnumerator.h>
-#include <xpcom/nsXPCOM.h>
+#include <nsServiceManagerUtils.h>
+#include <nsComponentManagerUtils.h>
+#include <nsISimpleEnumerator.h>
+#include <nsXPCOM.h>
 #include <prlock.h>
 #include <prmon.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
+#include <nsIObserver.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_MEDIASCAN_CONTRACTID                     \
@@ -94,7 +95,7 @@ public:
 
 protected:
   typedef std::vector<nsString> filestack_t;
-
+  
   nsString GetExtensionFromFilename(const nsAString &strFilename);
   PRBool VerifyFileExtension(const nsAString &strExtension);
 
@@ -129,7 +130,8 @@ class sbMediaScanThread;
  * \class CMediaScan
  * \brief 
  */
-class CMediaScan : public sbIMediaScan
+class CMediaScan : public sbIMediaScan,
+                   public nsIObserver
 {
 public:
 
@@ -139,6 +141,7 @@ public:
   virtual ~CMediaScan();
 
   NS_DECL_ISUPPORTS
+  NS_DECL_NSIOBSERVER
   NS_DECL_SBIMEDIASCAN
 
   static void PR_CALLBACK QueryProcessor(CMediaScan* pMediaScan);
@@ -151,6 +154,10 @@ protected:
   typedef std::deque<nsISimpleEnumerator * > dirstack_t;
   typedef std::deque<nsCOMPtr<nsIFile> > fileentrystack_t;
   typedef std::deque<nsCOMPtr<nsISupports> > entrystack_t;
+
+  nsresult Shutdown();
+
+  PRBool m_AttemptShutdownOnDestruction;
 
   PRMonitor* m_pThreadMonitor;
   nsCOMPtr<nsIThread> m_pThread;

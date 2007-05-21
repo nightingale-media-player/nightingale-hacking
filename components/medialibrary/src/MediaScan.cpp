@@ -41,6 +41,7 @@
 #include <unicharutil/nsUnicharUtils.h>
 #include <nsThreadUtils.h>
 #include <nsStringGlue.h>
+#include <nsIObserverService.h>
 
 // CLASSES ====================================================================
 //*****************************************************************************
@@ -369,17 +370,20 @@ PRBool CMediaScanQuery::VerifyFileExtension(const nsAString &strExtension)
 //*****************************************************************************
 //  CMediaScan Class
 //*****************************************************************************
-NS_IMPL_ISUPPORTS1(CMediaScan, sbIMediaScan)
+NS_IMPL_ISUPPORTS2(CMediaScan, nsIObserver, sbIMediaScan)
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediaScanThread, nsIRunnable)
 //-----------------------------------------------------------------------------
 CMediaScan::CMediaScan()
-: m_pThreadMonitor(nsAutoMonitor::NewMonitor("CMediaScan.m_pThreadMonitor"))
+: m_AttemptShutdownOnDestruction(PR_FALSE)
+, m_pThreadMonitor(nsAutoMonitor::NewMonitor("CMediaScan.m_pThreadMonitor"))
 , m_pThread(nsnull)
 , m_ThreadShouldShutdown(PR_FALSE)
 , m_ThreadQueueHasItem(PR_FALSE)
 {
   NS_ASSERTION(m_pThreadMonitor, "MediaScan.m_pThreadMonitor failed");
-  
+
+  nsresult rv;
+
   // Attempt to create the scan thread
   do {
     nsCOMPtr<nsIRunnable> pThreadRunner = new sbMediaScanThread(this);
@@ -390,24 +394,78 @@ CMediaScan::CMediaScan()
                                pThreadRunner);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbMediaScanThread");
   } while (PR_FALSE); // Only do this once
+
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  if(NS_SUCCEEDED(rv)) {
+    rv = observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID,
+      PR_FALSE);
+  }
+
+  // This shouldn't be an 'else' case because we want to set this flag if
+  // either of the above calls failed
+  if (NS_FAILED(rv)) {
+    NS_ERROR("Unable to register xpcom-shutdown observer");
+    m_AttemptShutdownOnDestruction = PR_TRUE;
+  }
+
 } //ctor
 
 //-----------------------------------------------------------------------------
 CMediaScan::~CMediaScan()
 {
-  if (m_pThread) {
-    {
-      nsAutoMonitor mon(m_pThreadMonitor);
-      m_ThreadShouldShutdown = PR_TRUE;
-      mon.Notify();
-    }
-    m_pThread->Shutdown();
-    m_pThread = nsnull;
+  if(m_AttemptShutdownOnDestruction) {
+    Shutdown();
   }
 
   if (m_pThreadMonitor)
     nsAutoMonitor::DestroyMonitor(m_pThreadMonitor);
 } //dtor
+
+NS_IMETHODIMP 
+CMediaScan::Observe(nsISupports *aSubject,
+                    const char *aTopic,
+                    const PRUnichar *aData)
+{
+  nsresult rv = NS_OK;
+
+  // Bail if we don't care about the message
+  if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID))
+    return rv;
+
+  rv = Shutdown();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // And remove ourselves from the observer service
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
+}
+
+nsresult 
+CMediaScan::Shutdown() 
+{
+  nsresult rv = NS_OK;
+
+  // Shutdown our thread
+  if (m_pThread) {
+    {
+      nsAutoMonitor mon(m_pThreadMonitor);
+      m_ThreadShouldShutdown = PR_TRUE;
+
+      rv = mon.Notify();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = m_pThread->Shutdown();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Shutdown Failed!");
+
+    m_pThread = nsnull;
+  }
+
+  return rv;
+}
 
 //-----------------------------------------------------------------------------
 /* void SubmitQuery (in sbIMediaScanQuery pQuery); */
@@ -570,7 +628,7 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
       nsAutoMonitor mon(pMediaScan->m_pThreadMonitor);
 
       while (!pMediaScan->m_ThreadQueueHasItem && !pMediaScan->m_ThreadShouldShutdown)
-        mon.Wait();
+        mon.Wait(PR_MillisecondsToInterval(66));
 
       if (pMediaScan->m_ThreadShouldShutdown) {
         return;
