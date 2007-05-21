@@ -7,7 +7,9 @@
   NS_ENSURE_TRUE(mLock, NS_ERROR_FAILURE); \
   nsAutoLock _lock(mLock)
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbProgressPropertyInfo, sbNumberPropertyInfo,
+static const char* kWhitespace="\b\t\r\n ";
+
+NS_IMPL_ISUPPORTS_INHERITED1(sbProgressPropertyInfo, sbTextPropertyInfo,
                                                      sbIProgressPropertyInfo)
 
 sbProgressPropertyInfo::sbProgressPropertyInfo()
@@ -36,5 +38,29 @@ sbProgressPropertyInfo::GetModePropertyName(nsAString& aModePropertyName)
 {
   LOCK_OR_FAIL();
   aModePropertyName.Assign(mModePropertyName);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbProgressPropertyInfo::GetDisplayPropertiesForValue(const nsAString& aValue,
+                                                     nsAString& _retval)
+{
+  _retval.Truncate();
+
+  nsAutoString value(aValue);
+  value.Trim(kWhitespace);
+
+  nsresult rv;
+
+  // This will fail for empty strings.
+  PRInt32 intValue = value.ToInteger(&rv);
+
+  if (NS_FAILED(rv) || intValue == -1) {
+    _retval.AssignLiteral("progressNotStarted");
+  }
+  else if (intValue == 101) {
+    _retval.AssignLiteral("progressCompleted");
+  }
+  
   return NS_OK;
 }

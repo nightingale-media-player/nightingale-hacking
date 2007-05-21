@@ -429,7 +429,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                         NS_LITERAL_STRING("property.progressValue"),
                         NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
                         NS_LITERAL_STRING("property.progressMode"),
-                        stringBundle, -1, PR_TRUE, 101, PR_TRUE);
+                        stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Display columns
@@ -606,11 +606,7 @@ sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
                                     const nsAString& aValueDisplayKey,
                                     const nsAString& aModePropertyName,
                                     const nsAString& aModeDisplayKey,
-                                    nsIStringBundle* aStringBundle,
-                                    PRInt32 aMinValue,
-                                    PRBool aHasMinValue,
-                                    PRInt32 aMaxValue,
-                                    PRBool aHasMaxValue)
+                                    nsIStringBundle* aStringBundle)
 {
   nsresult rv = RegisterNumber(aModePropertyName, aModeDisplayKey,
                                aStringBundle);
@@ -632,16 +628,6 @@ sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
     }
   }
 
-  if (aHasMinValue) {
-    rv = progressProperty->SetMinValue(aMinValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  if (aHasMaxValue) {
-    rv = progressProperty->SetMaxValue(aMaxValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   rv = progressProperty->SetDisplayUsingSimpleType(NS_LITERAL_STRING("progressmeter"));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -656,5 +642,43 @@ sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
   NS_ENSURE_SUCCESS(rv, rv);
 
   progressProperty.forget();
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterCheckbox(const nsAString& aPropertyName,
+                                    const nsAString& aDisplayKey,
+                                    nsIStringBundle* aStringBundle)
+{
+  nsAutoPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
+  NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = textProperty->SetName(aPropertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aDisplayKey.IsEmpty()) {
+    nsCOMPtr<nsIStringBundle> stringBundle;
+    rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString displayValue;
+    rv = GetStringFromName(stringBundle, aDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = textProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  rv = textProperty->SetDisplayUsingSimpleType(NS_LITERAL_STRING("checkbox"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbITextPropertyInfo*, textProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  textProperty.forget();
   return NS_OK;
 }

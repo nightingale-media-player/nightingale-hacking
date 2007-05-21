@@ -79,6 +79,8 @@ static PRLogModuleInfo* gLocalDatabaseTreeViewLog = nsnull;
 #define PROGRESS_VALUE_UNSET -1
 #define PROGRESS_VALUE_COMPLETE 101
 
+#define BAD_CSS_CHARS "/.:# !@$%^&*(),?;'\"<>~=+`\\|[]{}"
+
 /* static */ nsresult PR_CALLBACK
 sbLocalDatabaseTreeView::SelectionListSavingEnumeratorCallback(PRUint32 aRow,
                                                                const nsAString& aId,
@@ -343,8 +345,9 @@ sbLocalDatabaseTreeView::TokenizeProperties(const nsAString& aProperties,
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Don't encourage people to step on each other's toes.
-    NS_ASSERTION(aAtomArray->IndexOf(atom) == -1,
-                 "You're adding an atom that someone else already added!");
+    if (aAtomArray->IndexOf(atom) != -1) {
+      continue;
+    }
 
     rv = aAtomArray->AppendElement(atom);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -650,40 +653,6 @@ sbLocalDatabaseTreeView::UpdateColumnSortAttributes(const nsAString& aProperty,
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
-
-  return NS_OK;
-}
-
-nsresult
-sbLocalDatabaseTreeView::GetCellPropertiesInternal(sbILocalDatabaseResourcePropertyBag* aPropBag,
-                                                   const nsAString& aPropName,
-                                                   nsISupportsArray* aAtomArray)
-{
-  NS_ASSERTION(aPropBag && aAtomArray, "Don't pass nulls!");
-  NS_ASSERTION(!aPropName.IsEmpty(), "Don't pass an empty string!");
-
-  nsAutoString value;
-  nsresult rv = aPropBag->GetProperty(aPropName, value);
-  if (rv == NS_ERROR_ILLEGAL_VALUE) {
-    // It's fine if we don't have this property in the bag.
-    return NS_OK;
-  }
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyInfo> propInfo;
-  rv = mPropMan->GetPropertyInfo(aPropName, getter_AddRefs(propInfo));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString displayPropertiesString;
-  rv = propInfo->GetDisplayPropertiesForValue(value, displayPropertiesString);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (displayPropertiesString.IsEmpty()) {
-    return NS_OK;
-  }
-
-  rv = TokenizeProperties(displayPropertiesString, aAtomArray);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1234,7 +1203,29 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 index,
 
   nsAutoString propertyName;
   while (NS_SUCCEEDED(propertyEnumerator->GetNext(propertyName))) {
-    rv = GetCellPropertiesInternal(bag, propertyName, properties);
+
+    nsAutoString value;
+    nsresult rv = bag->GetProperty(propertyName, value);
+    if (rv == NS_ERROR_ILLEGAL_VALUE) {
+      // It's fine if we don't have this property in the bag. Just send an empty
+      // string to the property info.
+      value.Truncate();
+    }
+    else {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    nsCOMPtr<sbIPropertyInfo> propInfo;
+    rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString displayPropertiesString;
+    rv = propInfo->GetDisplayPropertiesForValue(value, displayPropertiesString);
+    if (NS_FAILED(rv) || displayPropertiesString.IsEmpty()) {
+      continue;
+    }
+
+    rv = TokenizeProperties(displayPropertiesString, properties);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1265,11 +1256,13 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
     return NS_OK;
   }
 
-  nsAutoString propertyName;
-  nsresult rv = GetPropertyForTreeColumn(col, propertyName);
+  nsresult rv = GetRowProperties(row, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return GetCellPropertiesInternal(bag, propertyName, properties);
+  rv = GetColumnProperties(col, properties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1279,7 +1272,40 @@ sbLocalDatabaseTreeView::GetColumnProperties(nsITreeColumn* col,
   NS_ENSURE_ARG_POINTER(col);
   NS_ENSURE_ARG_POINTER(properties);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoString propertyName;
+  nsresult rv = GetPropertyForTreeColumn(col, propertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Turn the property name into something that CSS can handle.
+  NS_NAMED_LITERAL_STRING(badChars, BAD_CSS_CHARS);
+  static const PRUnichar kHyphenChar = '-';
+
+  for (PRUint32 index = 0; index < propertyName.Length(); index++) {
+    PRUnichar testChar = propertyName.CharAt(index);
+
+    // Short circuit for ASCII alphanumerics.
+    if ((testChar >= 97 && testChar <= 122) || // a-z
+        (testChar >= 65 && testChar <= 90) ||  // A-Z
+        (testChar >= 48 && testChar <= 57)) {  // 0-9
+      continue;
+    }
+
+    PRInt32 badCharIndex= badChars.FindChar(testChar);
+    if (badCharIndex > -1) {
+      if (index > 0 && propertyName.CharAt(index - 1) == kHyphenChar) {
+        propertyName.Replace(index, 1, nsnull, 0);
+        index--;
+      }
+      else {
+        propertyName.Replace(index, 1, kHyphenChar);
+      }
+    }
+  }
+
+  rv = TokenizeProperties(propertyName, properties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1408,8 +1434,10 @@ sbLocalDatabaseTreeView::GetProgressMode(PRInt32 row,
                                          nsITreeColumn* col,
                                          PRInt32* _retval)
 {
-  nsresult rv;
+  NS_ENSURE_ARG_POINTER(col);
+  NS_ENSURE_ARG_POINTER(_retval);
 
+  nsresult rv;
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
   if (!mRowCache.Get(row, getter_AddRefs(bag))) {
 
@@ -1418,6 +1446,31 @@ sbLocalDatabaseTreeView::GetProgressMode(PRInt32 row,
     rv = GetCellText(row, col, cellValue);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
+    return NS_OK;
+  }
+
+  // First see if this is a magic value.
+  nsAutoString cellValue;
+  rv = GetCellValue(row, col, cellValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (cellValue.IsEmpty() || cellValue.EqualsLiteral("-1")) {
+    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
+    return NS_OK;
+  }
+
+  PRInt32 cellIntValue = cellValue.ToInteger(&rv);
+  if (NS_FAILED(rv)) {
+    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
+    return NS_OK;
+  }
+
+  NS_ASSERTION(cellIntValue >= -1 && cellIntValue <= 101,
+               "Invalid value saved in progress property!");
+
+  if (cellIntValue == PROGRESS_VALUE_UNSET ||
+      cellIntValue == PROGRESS_VALUE_COMPLETE) {
     *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
     return NS_OK;
   }
@@ -1451,7 +1504,7 @@ sbLocalDatabaseTreeView::GetProgressMode(PRInt32 row,
   rv = bag->GetProperty(modePropertyName, modeString);
   if (rv == NS_ERROR_INVALID_ARG ||
       (NS_SUCCEEDED(rv) && modeString.IsEmpty())) {
-    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
+    *_retval = (PRInt32)nsITreeView::PROGRESS_NORMAL;
     return NS_OK;
   }
 
@@ -1472,18 +1525,25 @@ sbLocalDatabaseTreeView::GetCellValue(PRInt32 row,
                                       nsITreeColumn* col,
                                       nsAString& _retval)
 {
-  nsAutoString cellValue;
-  nsresult rv = GetCellText(row, col, cellValue);
+  nsAutoString propertyName;
+  nsresult rv = GetPropertyForTreeColumn(col, propertyName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ENSURE_FALSE(cellValue.IsEmpty(), NS_ERROR_NOT_AVAILABLE);
+  nsCOMPtr<sbIPropertyInfo> propInfo;
+  rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-#ifdef DEBUG
-  NS_ConvertUTF16toUTF8 narrow(cellValue);
-  PRInt64 progressValue;
-  NS_ASSERTION(PR_sscanf(narrow.get(), "%lld", &progressValue) > 0,
-               "That's not a number!");
-#endif
+  nsAutoString simpleType;
+  rv = propInfo->GetDisplayUsingSimpleType(simpleType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString cellValue;
+  rv = GetCellText(row, col, cellValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (simpleType.EqualsLiteral("checkbox") && cellValue.IsEmpty()) {
+    cellValue.AssignLiteral("false");
+  }
 
   _retval.Assign(cellValue);
   return NS_OK;
@@ -1564,12 +1624,17 @@ sbLocalDatabaseTreeView::SetCellValue(PRInt32 row,
 {
   NS_ENSURE_ARG_POINTER(col);
 
+  nsresult rv;
+#ifdef PR_LOGGING
   PRInt32 colIndex;
-  nsresult rv = col->GetIndex(&colIndex);
+  rv = col->GetIndex(&colIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetCellValue(%d, %d %s)", this,
          row, colIndex, NS_LossyConvertUTF16toASCII(value).get()));
+#endif
+  rv = SetCellText(row, col, value);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1602,9 +1667,8 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
 
   nsAutoString oldValue;
   rv = bag->GetProperty(bind, oldValue);
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  if (!value.Equals(oldValue)) {
+  if (NS_FAILED(rv) || !value.Equals(oldValue)) {
     rv = bag->SetProperty(bind, value);
     NS_ENSURE_SUCCESS(rv, rv);
 

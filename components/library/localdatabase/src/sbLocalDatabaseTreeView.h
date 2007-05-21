@@ -135,10 +135,6 @@ private:
   nsresult UpdateColumnSortAttributes(const nsAString& aProperty,
                                       PRBool aDirection);
 
-  nsresult GetCellPropertiesInternal(sbILocalDatabaseResourcePropertyBag* aPropBag,
-                                     const nsAString& aPropName,
-                                     nsISupportsArray* aAtomArray);
-
   static nsresult PR_CALLBACK
     SelectionListSavingEnumeratorCallback(PRUint32 aRow,
                                           const nsAString& aId,

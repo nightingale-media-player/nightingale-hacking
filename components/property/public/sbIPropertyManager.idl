@@ -404,7 +404,7 @@ interface sbIDatetimePropertyInfo : sbIPropertyInfo
  *
  */
 [scriptable, uuid(154e77d3-6750-4f4c-a070-473bb7645381)]
-interface sbIProgressPropertyInfo : sbINumberPropertyInfo
+interface sbIProgressPropertyInfo : sbITextPropertyInfo
 {
   /** 
    * \brief Minimum value allowed.

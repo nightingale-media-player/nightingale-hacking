@@ -71,12 +71,12 @@
             flex="3"
             onselect="_onPlaylistSelectClick(event);"
             onclick="_onPlaylistClick(event);"
-            ondblclick="_onPlaylistDblClick(event);"
             oncontextmenu="_onPlaylistContextClick(event);"
             onkeypress="_onPlaylistKeypress(event);"
             ondraggesture="_onDragGesture(event);"
             ondragover="_onDragOver(event);"
             ondragdrop="_onDragDrop(event);"
+            editable="true"
           >
             <treecols sbid="treecols"/>
             <treechildren/>
@@ -774,6 +774,7 @@
       break;
     case "checkbox":
       treecol.setAttribute("type", "checkbox");
+      treecol.setAttribute("editable", "true");
       shouldInvalidate = true;
       break;
     default:
@@ -2005,6 +2006,16 @@
         </body>
       </method>
     </implementation>
+    
+    <handlers>
+      <handler event="click" clickcount="2" phase="capturing">
+        <![CDATA[
+          this._onPlaylistDblClick(event);
+          event.stopPropagation();
+          event.preventDefault();
+        ]]>
+      </handler>
+    </handlers>
 
   </binding>
 

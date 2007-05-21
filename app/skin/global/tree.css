@@ -193,6 +193,30 @@ treechildren::-moz-tree-drop-feedback {
   margin-left: 5px;
 }
 
+/* ::::: tree progress checkboxes ::::: */
+
+
+/* Commented out until we have real images...
+treechildren::-moz-tree-checkbox
+{
+  list-style-image: url(chrome://global/skin/tree/checkbox-unchecked.png);
+}
+*/
+
+/* Commented out until we have real images...
+treechildren::-moz-tree-checkbox(checked)
+{
+  list-style-image: url(chrome://global/skin/tree/checkbox-checked.png);
+}
+*/
+
+/* Commented out until we have real images...
+treechildren::-moz-tree-checkbox(disabled)
+{
+  list-style-image: url(chrome://global/skin/tree/checkbox-disabled.png);
+}
+*/
+
 /* ::::: tree progress meter ::::: */
 
 treechildren::-moz-tree-progressmeter {
@@ -465,5 +489,3 @@ treecol
   height: 20px !important;
   border-width: 0px 1px 0px 0px !important;
 }
-
-
