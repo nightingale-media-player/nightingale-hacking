@@ -1450,31 +1450,7 @@ sbLocalDatabaseTreeView::GetProgressMode(PRInt32 row,
     return NS_OK;
   }
 
-  // First see if this is a magic value.
-  nsAutoString cellValue;
-  rv = GetCellValue(row, col, cellValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (cellValue.IsEmpty() || cellValue.EqualsLiteral("-1")) {
-    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
-    return NS_OK;
-  }
-
-  PRInt32 cellIntValue = cellValue.ToInteger(&rv);
-  if (NS_FAILED(rv)) {
-    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
-    return NS_OK;
-  }
-
-  NS_ASSERTION(cellIntValue >= -1 && cellIntValue <= 101,
-               "Invalid value saved in progress property!");
-
-  if (cellIntValue == PROGRESS_VALUE_UNSET ||
-      cellIntValue == PROGRESS_VALUE_COMPLETE) {
-    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
-    return NS_OK;
-  }
-
+  // If the progress mode has been explicitly set then we're going to honor it.
   nsAutoString propertyName;
   rv = GetPropertyForTreeColumn(col, propertyName);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1502,21 +1478,55 @@ sbLocalDatabaseTreeView::GetProgressMode(PRInt32 row,
 
   nsAutoString modeString;
   rv = bag->GetProperty(modePropertyName, modeString);
-  if (rv == NS_ERROR_INVALID_ARG ||
-      (NS_SUCCEEDED(rv) && modeString.IsEmpty())) {
-    *_retval = (PRInt32)nsITreeView::PROGRESS_NORMAL;
+  if (NS_SUCCEEDED(rv)) {
+    PRInt32 mode = modeString.ToInteger(&rv);
+    if (NS_SUCCEEDED(rv)) {
+      NS_ASSERTION(mode == nsITreeView::PROGRESS_NORMAL ||
+                   mode == nsITreeView::PROGRESS_UNDETERMINED ||
+                   mode == nsITreeView::PROGRESS_NONE,
+                   "Invalid progress mode!");
+
+      *_retval = mode;
+      return NS_OK;
+    }
+  }
+
+  // The value wasn't explicitly set (or wasn't set correctly), so try to make
+  // a reasonable guess based on the vell value.
+  nsAutoString cellValue;
+  rv = GetCellValue(row, col, cellValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (cellValue.IsEmpty()) {
+    // Nothing set, so guess text.
+    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
     return NS_OK;
   }
 
-  PRInt32 mode = modeString.ToInteger(&rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  PRInt32 cellIntValue = cellValue.ToInteger(&rv);
+  if (NS_FAILED(rv)) {
+    // Not an integer, so this must be text.
+    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
+    return NS_OK;
+  }
 
-  NS_ASSERTION(mode == nsITreeView::PROGRESS_NORMAL ||
-               mode == nsITreeView::PROGRESS_UNDETERMINED ||
-               mode == nsITreeView::PROGRESS_NONE,
-               "Invalid progress mode!");
+  if (cellIntValue == PROGRESS_VALUE_UNSET ||
+      cellIntValue == PROGRESS_VALUE_COMPLETE) {
+    // If this is a special value (PROGRESS_VALUE_*) then set no progress so
+    // that CSS can add images, etc.
+    *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
+  }
+  else if (cellIntValue > PROGRESS_VALUE_COMPLETE ||
+           cellIntValue < PROGRESS_VALUE_UNSET) {
+    // If this value is something wild print out a warning... And guess
+    // undetermined.
+    *_retval = (PRInt32)nsITreeView::PROGRESS_UNDETERMINED;
+  }
+  else {
+    // Otherwise let's guess normal progress.
+    *_retval = (PRInt32)nsITreeView::PROGRESS_NORMAL;
+  }
 
-  *_retval = mode;
   return NS_OK;
 }
 
