@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_device_content" kind="interface" prot="public">
+    <compoundname>sbIDeviceContent</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_device_content_1d6d24453c8916e49b96da063257a459f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceContent::addLibrary</definition>
+        <argsstring>(in sbIMediaLibrary aLibrary)</argsstring>
+        <name>addLibrary</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_library" kindref="compound">sbIMediaLibrary</ref></type>
+          <declname>aLibrary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="45"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_content_14ae516524967f6c071d76a460a5be73c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceContent::removeLibrary</definition>
+        <argsstring>(in sbIMediaLibrary aLibrary)</argsstring>
+        <name>removeLibrary</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_library" kindref="compound">sbIMediaLibrary</ref></type>
+          <declname>aLibrary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="50"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_device_content_14e150e0b6e296e4fa01ec286d78b735a" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbIDeviceContent::libraries</definition>
+        <argsstring></argsstring>
+        <name>libraries</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="55" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_content_13b2f6ac099d2002ffcf1873026cbcbb7" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRUint32</type>
+        <definition>readonly attribute PRUint32 sbIDeviceContent::libraryCount</definition>
+        <argsstring></argsstring>
+        <name>libraryCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="60" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_content_1791bfda649e0decf0183e7dbee132559" prot="public" static="no" mutable="no">
+        <type>readonly attribute sbIMediaLibraryFactory</type>
+        <definition>readonly attribute sbIMediaLibraryFactory sbIDeviceContent::libraryFactory</definition>
+        <argsstring></argsstring>
+        <name>libraryFactory</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="65" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="41" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" bodystart="40" bodyend="66"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_content_1d6d24453c8916e49b96da063257a459f" prot="public" virt="non-virtual"><scope>sbIDeviceContent</scope><name>addLibrary</name></member>
+      <member refid="interfacesb_i_device_content_14e150e0b6e296e4fa01ec286d78b735a" prot="public" virt="non-virtual"><scope>sbIDeviceContent</scope><name>libraries</name></member>
+      <member refid="interfacesb_i_device_content_13b2f6ac099d2002ffcf1873026cbcbb7" prot="public" virt="non-virtual"><scope>sbIDeviceContent</scope><name>libraryCount</name></member>
+      <member refid="interfacesb_i_device_content_1791bfda649e0decf0183e7dbee132559" prot="public" virt="non-virtual"><scope>sbIDeviceContent</scope><name>libraryFactory</name></member>
+      <member refid="interfacesb_i_device_content_14ae516524967f6c071d76a460a5be73c" prot="public" virt="non-virtual"><scope>sbIDeviceContent</scope><name>removeLibrary</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

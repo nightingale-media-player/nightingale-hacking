@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_media_transcoder_manager" kind="interface" prot="public">
+    <compoundname>sbIMediaTranscoderManager</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_media_transcoder_manager_1a78272abe7b09d0d25dfbc98f04dd934" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIMediaTranscoderManager::transcode</definition>
+        <argsstring>(in AString aInputURL, in sbIMediaType aInputMIMEType, in AString aOutputURL, in sbIMediaType aOutputMIMEType, in sbIMediaTranscoderCallback aCallback)</argsstring>
+        <name>transcode</name>
+        <param>
+          <type>in AString</type>
+          <declname>aInputURL</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref></type>
+          <declname>aInputMIMEType</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aOutputURL</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref></type>
+          <declname>aOutputMIMEType</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_transcoder_callback" kindref="compound">sbIMediaTranscoderCallback</ref></type>
+          <declname>aCallback</declname>
+        </param>
+        <briefdescription>
+<para>Start a transcode operation. </para>        </briefdescription>
+        <detaileddescription>
+<para>This code is responsible for iterating through all available <ref refid="interfacesb_i_media_transcoder" kindref="compound">sbIMediaTranscoder</ref> instances, finding one that supports the requested transcode operation, and calling its <ref refid="interfacesb_i_media_transcoder_1506580255574f461491292e2c5a75872" kindref="member">sbIMediaTranscoder::transcode()</ref> method.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aInputURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The url to the input file </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInputType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the input file </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aOutputURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The url to the output file </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aOutputType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type for the output file </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The optional callback object to observe the transcoding </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Error conditions of some form or another </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="271"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_transcoder_manager_19191aaf95d9303a572f02a8085853f76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaTranscoderManager::getSupportedInputMediaTypes</definition>
+        <argsstring>(out PRUint32 nInputCount,[array, size_is(nInputCount), retval] out sbIMediaType aInputTypes)</argsstring>
+        <name>getSupportedInputMediaTypes</name>
+        <param>
+          <type>out PRUint32</type>
+          <declname>nInputCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nInputCount), retval]</attributes>
+          <type>out <ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref></type>
+          <declname>aInputTypes</declname>
+        </param>
+        <briefdescription>
+<para>Get the list of all supported input types. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method returns a concatenation of all the types it supports</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>nInputCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of items in the array </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInputTypes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The array of types </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="282"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_transcoder_manager_15b2b22f846059ac0697a11582d8786d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaTranscoderManager::getSupportedOutputMediaTypes</definition>
+        <argsstring>(out PRUint32 nOutputCount,[array, size_is(nOutputCount), retval] out sbIMediaType aOutputTypes)</argsstring>
+        <name>getSupportedOutputMediaTypes</name>
+        <param>
+          <type>out PRUint32</type>
+          <declname>nOutputCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nOutputCount), retval]</attributes>
+          <type>out <ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref></type>
+          <declname>aOutputTypes</declname>
+        </param>
+        <briefdescription>
+<para>Get the list of all supported output types. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method returns a concatenation of all the types it supports.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>nOutputCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of items in the array </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aOutputTypes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The array of types </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="293"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An object that receives all requests for transcode operations. </para>    </briefdescription>
+    <detaileddescription>
+<para>This service is retrieved by user code that calls its <ref refid="interfacesb_i_media_transcoder_manager_1a78272abe7b09d0d25dfbc98f04dd934" kindref="member">transcode()</ref> method.</para><para>This code is responsible for iterating through all available <ref refid="interfacesb_i_media_transcoder" kindref="compound">sbIMediaTranscoder</ref> instances, finding one that supports the requested transcode operation, and calling its <ref refid="interfacesb_i_media_transcoder_1506580255574f461491292e2c5a75872" kindref="member">sbIMediaTranscoder::transcode()</ref> method.</para><para><xrefsect id="todo_1_todo000014"><xreftitle>Todo</xreftitle><xrefdescription><para>Stub interface. Currently unimplemented. </para></xrefdescription></xrefsect><simplesect kind="see"><para><ref refid="interfacesb_i_media_transcoder" kindref="compound">sbIMediaTranscoder</ref>, <ref refid="interfacesb_i_media_transcoder_callback" kindref="compound">sbIMediaTranscoderCallback</ref>, <ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" line="251" bodyfile="C:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl" bodystart="250" bodyend="294"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_media_transcoder_manager_19191aaf95d9303a572f02a8085853f76" prot="public" virt="non-virtual"><scope>sbIMediaTranscoderManager</scope><name>getSupportedInputMediaTypes</name></member>
+      <member refid="interfacesb_i_media_transcoder_manager_15b2b22f846059ac0697a11582d8786d9" prot="public" virt="non-virtual"><scope>sbIMediaTranscoderManager</scope><name>getSupportedOutputMediaTypes</name></member>
+      <member refid="interfacesb_i_media_transcoder_manager_1a78272abe7b09d0d25dfbc98f04dd934" prot="public" virt="non-virtual"><scope>sbIMediaTranscoderManager</scope><name>transcode</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

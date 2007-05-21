@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_library_loader" kind="interface" prot="public">
+    <compoundname>sbILibraryLoader</compoundname>
+    <includes refid="sb_i_library_loader_8idl" local="no">sbILibraryLoader.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_library_loader_1594e5109eef93f87be0ac85bf67b4372" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibraryLoader::onRegisterStartupLibraries</definition>
+        <argsstring>(in sbILibraryManager aLibraryManager)</argsstring>
+        <name>onRegisterStartupLibraries</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library_manager" kindref="compound">sbILibraryManager</ref></type>
+          <declname>aLibraryManager</declname>
+        </param>
+        <briefdescription>
+<para>Called when the loader sohould register all startup libraries with the Library Manager. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLibraryManager</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The Library Manager is provided for convenience. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="52"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_loader_1eeeddec9a87b5ec11bd386b5c8918cfc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibraryLoader::onLibraryStartupModified</definition>
+        <argsstring>(in sbILibrary aLibrary, in boolean aLoadAtStartup)</argsstring>
+        <name>onLibraryStartupModified</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref></type>
+          <declname>aLibrary</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aLoadAtStartup</declname>
+        </param>
+        <briefdescription>
+<para>Called when a user action has altered the startup status of one of the libraries controlled by this loader. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLibrary</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The library whose startup status was altered. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLoadAtStartup</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The new status requested.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_AVAILABLE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the library is not supported. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="64"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_library_manager" kindref="compound">sbILibraryManager</ref>, <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="45" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" bodystart="44" bodyend="65"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_loader_1eeeddec9a87b5ec11bd386b5c8918cfc" prot="public" virt="non-virtual"><scope>sbILibraryLoader</scope><name>onLibraryStartupModified</name></member>
+      <member refid="interfacesb_i_library_loader_1594e5109eef93f87be0ac85bf67b4372" prot="public" virt="non-virtual"><scope>sbILibraryLoader</scope><name>onRegisterStartupLibraries</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

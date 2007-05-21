@@ -1,0 +1,235 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_media_list_listener" kind="interface" prot="public">
+    <compoundname>sbIMediaListListener</compoundname>
+    <includes refid="sb_i_media_list_listener_8idl" local="no">sbIMediaListListener.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_media_list_listener_1f61b494821cdfbab811f52457f335834" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListListener::onItemAdded</definition>
+        <argsstring>(in sbIMediaList aMediaList, in sbIMediaItem aMediaItem)</argsstring>
+        <name>onItemAdded</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <briefdescription>
+<para>Called when a media item is added to the list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list that has changed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The new media item. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaListListener.idl" line="55"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_listener_1460fcf3b6325b083c002d1261d17652f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListListener::onBeforeItemRemoved</definition>
+        <argsstring>(in sbIMediaList aMediaList, in sbIMediaItem aMediaItem)</argsstring>
+        <name>onBeforeItemRemoved</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <briefdescription>
+<para>Called before a media item is removed from the list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list that has changed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The media item to be removed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaListListener.idl" line="63"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_listener_140b904f1640f487ba4f390cb0c35fee3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListListener::onAfterItemRemoved</definition>
+        <argsstring>(in sbIMediaList aMediaList, in sbIMediaItem aMediaItem)</argsstring>
+        <name>onAfterItemRemoved</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <briefdescription>
+<para>Called after a media item is removed from the list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list that has changed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The removed media item. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaListListener.idl" line="71"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_listener_1dd39b02b9dbbd2d915b2541c2237671f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListListener::onItemUpdated</definition>
+        <argsstring>(in sbIMediaList aMediaList, in sbIMediaItem aMediaItem)</argsstring>
+        <name>onItemUpdated</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <briefdescription>
+<para>Called when a media item is changed. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The list that contains the item. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The item that has changed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaListListener.idl" line="80"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_listener_17b890b541309847e872a7e5b505bb5d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListListener::onListCleared</definition>
+        <argsstring>(in sbIMediaList aMediaList)</argsstring>
+        <name>onListCleared</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <briefdescription>
+<para>Called when a media list is cleared. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaListListener.idl" line="85"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_listener_1cbd1e38650a4440186a42c6b965bfe6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListListener::onBatchBegin</definition>
+        <argsstring>(in sbIMediaList aMediaList)</argsstring>
+        <name>onBatchBegin</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <briefdescription>
+<para>Called when the library is about to perform multiple operations at once. </para>        </briefdescription>
+        <detaileddescription>
+<para>This notification can be used to optimize behavior. The consumer may choose to ignore further onItemAdded or onItemRemoved notifications until the onBatchEnd notification is received.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list that has changed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaListListener.idl" line="97"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_listener_1f1003ed7359698fd43a83d2ef139d9ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaListListener::onBatchEnd</definition>
+        <argsstring>(in sbIMediaList aMediaList)</argsstring>
+        <name>onBatchEnd</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <briefdescription>
+<para>Called when the library has finished performing multiple operations at once. </para>        </briefdescription>
+        <detaileddescription>
+<para>This notification can be used to optimize behavior. The consumer may choose to stop ignoring onItemAdded or onItemRemoved notifications after receiving this notification.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The list that has changed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaListListener.idl" line="109"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Interface used to listen to changes to a media list. </para>    </briefdescription>
+    <detaileddescription>
+<para>Implementors of this interface can listen to changes in a media list.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/base/public/sbIMediaListListener.idl" line="48" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaListListener.idl" bodystart="47" bodyend="110"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_media_list_listener_140b904f1640f487ba4f390cb0c35fee3" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onAfterItemRemoved</name></member>
+      <member refid="interfacesb_i_media_list_listener_1cbd1e38650a4440186a42c6b965bfe6b" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onBatchBegin</name></member>
+      <member refid="interfacesb_i_media_list_listener_1f1003ed7359698fd43a83d2ef139d9ce" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onBatchEnd</name></member>
+      <member refid="interfacesb_i_media_list_listener_1460fcf3b6325b083c002d1261d17652f" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onBeforeItemRemoved</name></member>
+      <member refid="interfacesb_i_media_list_listener_1f61b494821cdfbab811f52457f335834" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onItemAdded</name></member>
+      <member refid="interfacesb_i_media_list_listener_1dd39b02b9dbbd2d915b2541c2237671f" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onItemUpdated</name></member>
+      <member refid="interfacesb_i_media_list_listener_17b890b541309847e872a7e5b505bb5d2" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onListCleared</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

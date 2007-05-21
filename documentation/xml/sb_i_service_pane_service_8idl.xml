@@ -1,0 +1,252 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="sb_i_service_pane_service_8idl" kind="file">
+    <compoundname>sbIServicePaneService.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <incdepgraph>
+      <node id="381">
+        <label>C:/projects/songbird/components/servicepane/public/sbIServicePaneService.idl</label>
+        <link refid="sbIServicePaneService.idl"/>
+        <childnode refid="382" relation="include">
+        </childnode>
+      </node>
+      <node id="382">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_service_pane_node" prot="public">sbIServicePaneNode</innerclass>
+    <innerclass refid="interfacesb_i_service_pane_node_internal" prot="public">sbIServicePaneNodeInternal</innerclass>
+    <innerclass refid="interfacesb_i_service_pane_service" prot="public">sbIServicePaneService</innerclass>
+    <innerclass refid="interfacesb_i_service_pane_module" prot="public">sbIServicePaneModule</innerclass>
+    <briefdescription>
+<para>Definition of the <ref refid="interfacesb_i_service_pane_service" kindref="compound">sbIServicePaneService</ref> interface. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*<sp/>vim:<sp/>ts=2<sp/>sw=2<sp/>expandtab</highlight></codeline>
+<codeline lineno="2"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed</highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either</highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language</highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this</highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,</highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/>nsIRDFDataSource;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/>nsIRDFResource;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/>nsIDOMXULElement;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">interface<sp/>nsIDragSession;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">interface<sp/>nsITransferable;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">interface<sp/>nsIStringBundle;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_135db095d632304af29bb1444084e912c" kindref="member">uuid</ref>(d730af19-1b0b-4679-9f22-b41caa4ec59a)]</highlight></codeline>
+<codeline lineno="48" refid="interfacesb_i_service_pane_node" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>the<sp/>uri<sp/>of<sp/>this<sp/>node<sp/>as<sp/>an<sp/>RDF<sp/>resource<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="interfacesb_i_service_pane_node_19914bd7843e511d4a39b9677b83b14c6" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIRDFResource<sp/>resource;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>the<sp/>uri<sp/>of<sp/>this<sp/>node<sp/>as<sp/>a<sp/>string<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="interfacesb_i_service_pane_node_1ad8662e708d97896cb9fd4910af4a3ff" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>id;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>can<sp/>this<sp/>node<sp/>have<sp/>children<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="interfacesb_i_service_pane_node_1c9f2f917989487fdc84e4f1755ffc2b4" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isContainer;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>the<sp/>URL<sp/>to<sp/>load<sp/>when<sp/>the<sp/>node<sp/>is<sp/>clicked<sp/>on<sp/>in<sp/>the<sp/>tree<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="interfacesb_i_service_pane_node_1160cce8fd0232c67f445fb6ca68ecfdf" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>url;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>the<sp/>URL<sp/>of<sp/>the<sp/>image<sp/>to<sp/>display<sp/>in<sp/>the<sp/>tree<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="interfacesb_i_service_pane_node_129cecc15d9956df0a88a69f5bbf3b97c" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>image;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>the<sp/>name<sp/>to<sp/>display<sp/>in<sp/>the<sp/>tree<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="interfacesb_i_service_pane_node_1874a27b70f98039ff326125d7b61b9d1" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>the<sp/>tooltip<sp/>to<sp/>display<sp/>when<sp/>the<sp/>user<sp/>hovers<sp/>over<sp/>the<sp/>node<sp/>in<sp/>the<sp/>tree<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="interfacesb_i_service_pane_node_1fbfb809e3534411d9504ade6a3f365e2" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>tooltip;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>should<sp/>the<sp/>node<sp/>be<sp/>hidden<sp/>in<sp/>the<sp/>tree<sp/>?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="interfacesb_i_service_pane_node_1202f87879d782a75542aa58deefd3e19" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hidden;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>should<sp/>the<sp/>node<sp/>name<sp/>be<sp/>editable<sp/>in<sp/>the<sp/>tree<sp/>?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="interfacesb_i_service_pane_node_14709ccf77f08f9c74a36a80a8be7bb88" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>editable;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>the<sp/>this<sp/>node<sp/>open<sp/>in<sp/>the<sp/>tree?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="interfacesb_i_service_pane_node_165eda749170b81dfccc3e468cb2d53cf" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isOpen;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>the<sp/>contract<sp/>id<sp/>of<sp/>the<sp/>service<sp/>that<sp/>owns<sp/>the<sp/>node<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="interfacesb_i_service_pane_node_1d53d6d0f0dc99eb7d68f92d034c659a5" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>contractid;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>drag<sp/>and<sp/>drop<sp/>reordering<sp/>helper<sp/>attributes<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>a<sp/>comma<sp/>separated<sp/>list<sp/>of<sp/>drag<sp/>types<sp/>to<sp/>offer<sp/>for<sp/>reordering<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="interfacesb_i_service_pane_node_18766bf4d107ac0326f4605345d37ec45" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>dndDragTypes;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>a<sp/>comma<sp/>separated<sp/>list<sp/>of<sp/>drag<sp/>types<sp/>to<sp/>allow<sp/>to<sp/>be<sp/>reordered<sp/>before<sp/>or<sp/>after<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="interfacesb_i_service_pane_node_1521399094d675c4101dea40a61806eb0" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>dndAcceptNear;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>a<sp/>comma<sp/>separated<sp/>list<sp/>of<sp/>drag<sp/>types<sp/>to<sp/>allow<sp/>dropping<sp/>into<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="interfacesb_i_service_pane_node_1f3aab7ac03634bb9c910aefb42e9d52a" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>dndAcceptIn;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>the<sp/>uri<sp/>of<sp/>a<sp/>stringbundle<sp/>to<sp/>use<sp/>to<sp/>translate<sp/>the<sp/>properties<sp/>of<sp/>this<sp/>node<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="interfacesb_i_service_pane_node_15d40c54817e8f6d6e7f7b0eadb6d05c2" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>stringbundle;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>space<sp/>separated<sp/>list<sp/>of<sp/>property<sp/>names,<sp/>used<sp/>to<sp/>style<sp/>the<sp/>tree<sp/>cell<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="interfacesb_i_service_pane_node_12021da1b35b2a732e556f8bde6613c8f" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>properties;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>here&apos;s<sp/>a<sp/>subset<sp/>of<sp/>the<sp/>W3C<sp/>DOM<sp/>Level<sp/>1<sp/>Core</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/>AString<sp/>getAttributeNS(in<sp/>AString<sp/>aNamespace,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aName);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/>AString<sp/>setAttributeNS(in<sp/>AString<sp/>aNamespace,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aName,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="99" refid="interfacesb_i_service_pane_node_1f046ac101f6286f8979a2c69d9fb9159" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>childNodes;</highlight></codeline>
+<codeline lineno="100" refid="interfacesb_i_service_pane_node_1b905a54c39156c0fafb9303c1aca8527" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>firstChild;</highlight></codeline>
+<codeline lineno="101" refid="interfacesb_i_service_pane_node_1c57525bce833f38d925407f4214d004d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>lastChild;</highlight></codeline>
+<codeline lineno="102" refid="interfacesb_i_service_pane_node_18b1ea7adac16f5fad567d1f38e9d390e" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>nextSibling;</highlight></codeline>
+<codeline lineno="103" refid="interfacesb_i_service_pane_node_15c663f04b0f6d6066b44a8b9950c48f6" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>parentNode;</highlight></codeline>
+<codeline lineno="104" refid="interfacesb_i_service_pane_node_17f5f6ad75edeb7c41f651803785de807" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>previousSibling;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>appendChild<sp/>(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aChild);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>insertBefore<sp/>(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aNewNode,</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aAdjacentNode);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeChild<sp/>(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aChild);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>replaceChild<sp/>(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aNewNode,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aOldNode);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>potential<sp/>additions:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>readonly<sp/>attribute<sp/>ownerDataSource;<sp/>//<sp/>like<sp/>ownerDocument</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>boolean<sp/>hasChildNodes();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>AString<sp/>getAttribute(in<sp/>AString<sp/>aName);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>AString<sp/>setAttribute(in<sp/>AString<sp/>aName,<sp/>in<sp/>AString<sp/>aValue);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>AString<sp/>removeAttribute(in<sp/>AString<sp/>aName);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>AString<sp/>removeAttributeNS(in<sp/>AString<sp/>aNamespace,<sp/>in<sp/>AString<sp/>aName);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>some<sp/>way<sp/>to<sp/>enumerate<sp/>attributes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>readonly<sp/>attribute<sp/>AString<sp/>namespaceURI;<sp/>//<sp/>default<sp/>attribute<sp/>namespace</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_135db095d632304af29bb1444084e912c" kindref="member">uuid</ref>(9bbc6245-475e-464b-834c-9a45d7642f2b)]</highlight></codeline>
+<codeline lineno="130" refid="interfacesb_i_service_pane_node_internal" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_service_pane_node_internal" kindref="compound">sbIServicePaneNodeInternal</ref><sp/>:<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>{</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unlinkChild<sp/>(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aChild);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unlinkNode<sp/>();</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearNode<sp/>();</highlight></codeline>
+<codeline lineno="149"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_135db095d632304af29bb1444084e912c" kindref="member">uuid</ref>(597efdd3-b564-4052-a61d-100a5bad7ad7)]</highlight></codeline>
+<codeline lineno="161" refid="interfacesb_i_service_pane_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_service_pane_service" kindref="compound">sbIServicePaneService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="162"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="166" refid="interfacesb_i_service_pane_service_1cbd56e202d974410859a7871c3028e12" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIRDFDataSource<sp/>dataSource;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="interfacesb_i_service_pane_service_18b14dfafc737d1cb552c64f7a03043b9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>root;</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>node<sp/>to<sp/>the<sp/>tree</highlight></codeline>
+<codeline lineno="174"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Create<sp/>a<sp/>new<sp/>node<sp/>and<sp/>add<sp/>it<sp/>as<sp/>a<sp/>child<sp/>of<sp/>the<sp/>specified<sp/>parent.<sp/>If<sp/>a</highlight></codeline>
+<codeline lineno="175"><highlight class="comment"><sp/><sp/><sp/>*<sp/>child<sp/>with<sp/>the<sp/>given<sp/>id<sp/>already<sp/>exists<sp/>then<sp/>do<sp/>not<sp/>create<sp/>it,<sp/>and<sp/>return</highlight></codeline>
+<codeline lineno="176"><highlight class="comment"><sp/><sp/><sp/>*<sp/>null.<sp/>Otherwise<sp/>return<sp/>a<sp/>node<sp/>object.</highlight></codeline>
+<codeline lineno="177"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>an<sp/>URN<sp/>to<sp/>use<sp/>as<sp/>the<sp/>ID,<sp/>or<sp/>null<sp/>if<sp/>it<sp/>should<sp/>be<sp/>anonymous</highlight></codeline>
+<codeline lineno="178"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParent<sp/>the<sp/>desired<sp/>parent<sp/>node</highlight></codeline>
+<codeline lineno="179"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContainer<sp/>should<sp/>the<sp/>new<sp/>node<sp/>be<sp/>a<sp/>container</highlight></codeline>
+<codeline lineno="180"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>node<sp/>object,<sp/>or<sp/>null<sp/>if<sp/>the<sp/>node<sp/>couldn&apos;t<sp/>be<sp/>created</highlight></codeline>
+<codeline lineno="181"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>addNode(in<sp/>AString<sp/>aId,</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aParent,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aContainer);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Remove<sp/>a<sp/>node<sp/>and<sp/>all<sp/>its<sp/>children</highlight></codeline>
+<codeline lineno="187"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Remove<sp/>a<sp/>node<sp/>from<sp/>the<sp/>tree<sp/>and<sp/>all<sp/>its<sp/>children<sp/>and<sp/>all<sp/>their<sp/>childen<sp/>and</highlight></codeline>
+<codeline lineno="188"><highlight class="comment"><sp/><sp/><sp/>*<sp/>so<sp/>on.</highlight></codeline>
+<codeline lineno="189"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNode<sp/>the<sp/>node<sp/>to<sp/>remove</highlight></codeline>
+<codeline lineno="190"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeNode(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aNode);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Get<sp/>the<sp/>node<sp/>object<sp/>for<sp/>the<sp/>given<sp/>id</highlight></codeline>
+<codeline lineno="194"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>ID<sp/>of<sp/>the<sp/>desired<sp/>node</highlight></codeline>
+<codeline lineno="195"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>node<sp/>object,<sp/>or<sp/>null<sp/>if<sp/>it<sp/>couldn&apos;t<sp/>be<sp/>found</highlight></codeline>
+<codeline lineno="196"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>getNode(in<sp/>AString<sp/>aId);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Save<sp/>the<sp/>state<sp/>of<sp/>the<sp/>tree<sp/>to<sp/>disk.</highlight></codeline>
+<codeline lineno="200"><highlight class="comment"><sp/><sp/><sp/>*<sp/>This<sp/>should<sp/>go<sp/>away<sp/>and<sp/>be<sp/>handled<sp/>magically</highlight></codeline>
+<codeline lineno="201"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>save();</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Fill<sp/>the<sp/>context<sp/>menu<sp/>for<sp/>the<sp/>given<sp/>node</highlight></codeline>
+<codeline lineno="205"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aId<sp/>the<sp/>id<sp/>of<sp/>the<sp/>node</highlight></codeline>
+<codeline lineno="206"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContextMenu<sp/>the<sp/>menu<sp/>we&apos;re<sp/>trying<sp/>to<sp/>fill</highlight></codeline>
+<codeline lineno="207"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
+<codeline lineno="208"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fillContextMenu(in<sp/>AString<sp/>aId,</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMXULElement<sp/>aContextMenu,</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>I<sp/>think<sp/>we&apos;ll<sp/>need<sp/>to<sp/>have<sp/>this<sp/>interface<sp/>too:</highlight></codeline>
+<codeline lineno="214"><highlight class="comment"><sp/><sp/>nsITreeView<sp/>wrapTreeView(in<sp/>nsITreeView<sp/>aTreeView);</highlight></codeline>
+<codeline lineno="215"><highlight class="comment"><sp/><sp/>it<sp/>will<sp/>take<sp/>an<sp/>existing<sp/>tree-builder<sp/>tree<sp/>view<sp/>and<sp/>add<sp/>some</highlight></codeline>
+<codeline lineno="216"><highlight class="comment"><sp/><sp/>functionality<sp/>that<sp/>we<sp/>want<sp/>to<sp/>have</highlight></codeline>
+<codeline lineno="217"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>drag<sp/>and<sp/>drop<sp/>support<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/>PRBool<sp/>canDrop(in<sp/>AString<sp/>aID,</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDrop(in<sp/>AString<sp/>aID,</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/>PRBool<sp/>onDragGesture(in<sp/>AString<sp/>aID,</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>nsITransferable<sp/>aTransferable);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_135db095d632304af29bb1444084e912c" kindref="member">uuid</ref>(a5c003f9-38e1-436a-9c0a-39718999640e)]</highlight></codeline>
+<codeline lineno="236" refid="interfacesb_i_service_pane_module" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_service_pane_module" kindref="compound">sbIServicePaneModule</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="237"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Initialize<sp/>this<sp/>service<sp/>pane<sp/>module</highlight></codeline>
+<codeline lineno="239"><highlight class="comment"><sp/><sp/><sp/>*<sp/>This<sp/>is<sp/>where<sp/>the<sp/>module<sp/>should<sp/>set<sp/>itself<sp/>up<sp/>in<sp/>the<sp/>tree<sp/>if<sp/>it<sp/>hasn&apos;t</highlight></codeline>
+<codeline lineno="240"><highlight class="comment"><sp/><sp/><sp/>*<sp/>before.</highlight></codeline>
+<codeline lineno="241"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aServicePaneService<sp/>the<sp/>service<sp/>pane<sp/>service<sp/>instance</highlight></codeline>
+<codeline lineno="242"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>servicePaneInit(in<sp/><ref refid="interfacesb_i_service_pane_service" kindref="compound">sbIServicePaneService</ref><sp/>aServicePaneService);</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Fill<sp/>the<sp/>context<sp/>menu<sp/>for<sp/>the<sp/>given<sp/>node</highlight></codeline>
+<codeline lineno="246"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aNode<sp/>the<sp/>node<sp/>that<sp/>was<sp/>context-clicked<sp/>on</highlight></codeline>
+<codeline lineno="247"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aContextMenu<sp/>the<sp/>menu<sp/>we&apos;re<sp/>trying<sp/>to<sp/>fill</highlight></codeline>
+<codeline lineno="248"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aParentWindow<sp/>the<sp/>toplevel<sp/>window<sp/>we&apos;re<sp/>displaying<sp/>in</highlight></codeline>
+<codeline lineno="249"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>fillContextMenu(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMXULElement<sp/>aContextMenu,</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMWindow<sp/>aParentWindow);</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/>PRBool<sp/>canDrop(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDrop(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDragSession<sp/>aDragSession,</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aOrientation);</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/>PRBool<sp/>onDragGesture(in<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref><sp/>aNode,</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsITransferable<sp/>aTransferable);</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>optional<sp/>URI<sp/>of<sp/>stringbundle<sp/>to<sp/>use<sp/>to<sp/>localize<sp/>names<sp/>of<sp/>nodes</highlight></codeline>
+<codeline lineno="264"><highlight class="comment"><sp/><sp/><sp/><sp/>associated<sp/>with<sp/>this<sp/>module<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="265" refid="interfacesb_i_service_pane_module_102cd17a11048533bc10b693b119b276c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>stringbundle;</highlight></codeline>
+<codeline lineno="266"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="C:/projects/songbird/components/servicepane/public/sbIServicePaneService.idl"/>
+  </compounddef>
+</doxygen>

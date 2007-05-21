@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_state_datastore" kind="interface" prot="public">
+    <compoundname>sbIStateDatastore</compoundname>
+    <includes refid="sb_i_state_datastore_8idl" local="no">sbIStateDatastore.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_state_datastore_1056cd6ec44c3b28f4054de03db8ff185" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIStateDatastore::createObjectStorage</definition>
+        <argsstring>(in sbIStateObject aStateObject)</argsstring>
+        <name>createObjectStorage</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref></type>
+          <declname>aStateObject</declname>
+        </param>
+        <briefdescription>
+<para>Create storage for a state object. Create storage for a state object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aStateObject</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The state object. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="78"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_state_datastore_19c7624e8e17358bbc094f81be89a3298" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIStateDatastore::destroyObjectStorage</definition>
+        <argsstring>(in sbIStateObject aStateObject)</argsstring>
+        <name>destroyObjectStorage</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref></type>
+          <declname>aStateObject</declname>
+        </param>
+        <briefdescription>
+<para>Destroy storage for a state object. Delete the storage space and value for a state object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aStateObject</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The state object. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="85"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_state_datastore_1f66ed9704d80a9d3af4292b6cc806884" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIStateDatastore::save</definition>
+        <argsstring>(in sbIStateObject aStateObject, in boolean aCreateStorage)</argsstring>
+        <name>save</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref></type>
+          <declname>aStateObject</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aCreateStorage</declname>
+        </param>
+        <briefdescription>
+<para>Save this state object. Will optionally create storage for your object as well. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aStateObject</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The state object. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCreateStorage</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Create storage for this state object. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="93"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_state_datastore_1fa5da7604355c45197d840e71888c32f" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIStateDatastore::datastoreType</definition>
+        <argsstring></argsstring>
+        <name>datastoreType</name>
+        <briefdescription>
+<para>The type of datastore. The type of datastore implemented. As an example,. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="50" bodyfile="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_state_datastore_19c16e3026b5e7cb6fd4f5fc054b99542" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIStateDatastore::canStoreSerializableObjects</definition>
+        <argsstring></argsstring>
+        <name>canStoreSerializableObjects</name>
+        <briefdescription>
+<para>Can this datastore accept serializable objects? If this datastore can accept serializable objects the value of this attribute will be true. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="57" bodyfile="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_state_datastore_10c6b36b053b9872ee02e02a6f232e0f6" prot="public" static="no" mutable="no">
+        <type>attribute long</type>
+        <definition>attribute long sbIStateDatastore::suggestedMaxSizeForObjects</definition>
+        <argsstring></argsstring>
+        <name>suggestedMaxSizeForObjects</name>
+        <briefdescription>
+<para>Suggested maximum byte size for objects stored. Maximum size of serializable objects this datastore may accept before severe performance impact. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="64" bodyfile="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_state_datastore_161e0ce7ff0b9ee7a7b85455583e91858" prot="public" static="no" mutable="no">
+        <type>attribute long</type>
+        <definition>attribute long sbIStateDatastore::suggestedMaxObjectCount</definition>
+        <argsstring></argsstring>
+        <name>suggestedMaxObjectCount</name>
+        <briefdescription>
+<para>Suggested maximum amount of objects that may be stored. Maximum object count that may be stored in this datastore before severe performance impact. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="71" bodyfile="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This interface may be implemented to provide new datastores for the state service. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref> </para></simplesect>
+<simplesect kind="note"><para>This interface *is* threadsafe. Implementations should follow this assumption. </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" line="45" bodyfile="C:/projects/songbird/components/state/public/sbIStateDatastore.idl" bodystart="44" bodyend="94"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_state_datastore_19c16e3026b5e7cb6fd4f5fc054b99542" prot="public" virt="non-virtual"><scope>sbIStateDatastore</scope><name>canStoreSerializableObjects</name></member>
+      <member refid="interfacesb_i_state_datastore_1056cd6ec44c3b28f4054de03db8ff185" prot="public" virt="non-virtual"><scope>sbIStateDatastore</scope><name>createObjectStorage</name></member>
+      <member refid="interfacesb_i_state_datastore_1fa5da7604355c45197d840e71888c32f" prot="public" virt="non-virtual"><scope>sbIStateDatastore</scope><name>datastoreType</name></member>
+      <member refid="interfacesb_i_state_datastore_19c7624e8e17358bbc094f81be89a3298" prot="public" virt="non-virtual"><scope>sbIStateDatastore</scope><name>destroyObjectStorage</name></member>
+      <member refid="interfacesb_i_state_datastore_1f66ed9704d80a9d3af4292b6cc806884" prot="public" virt="non-virtual"><scope>sbIStateDatastore</scope><name>save</name></member>
+      <member refid="interfacesb_i_state_datastore_161e0ce7ff0b9ee7a7b85455583e91858" prot="public" virt="non-virtual"><scope>sbIStateDatastore</scope><name>suggestedMaxObjectCount</name></member>
+      <member refid="interfacesb_i_state_datastore_10c6b36b053b9872ee02e02a6f232e0f6" prot="public" virt="non-virtual"><scope>sbIStateDatastore</scope><name>suggestedMaxSizeForObjects</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

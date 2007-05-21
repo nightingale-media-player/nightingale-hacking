@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_filterable_media_list" kind="interface" prot="public">
+    <compoundname>sbIFilterableMediaList</compoundname>
+    <includes refid="sb_i_filterable_media_list_8idl" local="no">sbIFilterableMediaList.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_filterable_media_list_18def76273ac701045837155625512833" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIStringEnumerator</type>
+        <definition>nsIStringEnumerator sbIFilterableMediaList::getFilterValues</definition>
+        <argsstring>(in AString aPropertyName)</argsstring>
+        <name>getFilterValues</name>
+        <param>
+          <type>in AString</type>
+          <declname>aPropertyName</declname>
+        </param>
+        <briefdescription>
+<para>Returns an array of all of the possible values for the given property. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPropertyName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The property name to return values for </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string enumerator containing all the possible values for the given property </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaList.idl" line="63"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_filterable_media_list_1a74eee007c951c4475479ba34da6d7c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFilterableMediaList::setFilters</definition>
+        <argsstring>(in sbIPropertyArray aPropertyArray)</argsstring>
+        <name>setFilters</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+          <declname>aPropertyArray</declname>
+        </param>
+        <briefdescription>
+<para>Set a new filter configuration. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPropertyArray</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of name value pairs used to filter the list For each distinct property, the list of values in the filter for that property will be replaced with the supplied values. An empty value will remove the property from the list of filters. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaList.idl" line="72"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_filterable_media_list_1a299f9487d1b456bde6f2c7ba8a294de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFilterableMediaList::updateFilters</definition>
+        <argsstring>(in sbIPropertyArray aPropertyArray)</argsstring>
+        <name>updateFilters</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+          <declname>aPropertyArray</declname>
+        </param>
+        <briefdescription>
+<para>Update an existing filter. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPropertyName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of name value pairs to used to update the current filter configuration. For each distinct property, the list of values in the filter for that propery will be appended to with the supplied values. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaList.idl" line="81"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_filterable_media_list_1121f585012e644a142d9ab355b881194" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFilterableMediaList::removeFilters</definition>
+        <argsstring>(in sbIPropertyArray aPropertyArray)</argsstring>
+        <name>removeFilters</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+          <declname>aPropertyArray</declname>
+        </param>
+        <briefdescription>
+<para>Remove property values from an existing filter. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPropertyName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of name value pairs to remove property value pairs from the filter. Each property value pair in the array will be removed from the filter if it exists. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaList.idl" line="89"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_filterable_media_list_1a3ed0f743d7c09675e5998988f458eef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFilterableMediaList::clearFilters</definition>
+        <argsstring>()</argsstring>
+        <name>clearFilters</name>
+        <briefdescription>
+<para>Clears the current filter configuration. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaList.idl" line="94"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_filterable_media_list_12a9d6e0aad6bddbf83d6a109f9f9470b" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbIFilterableMediaList::filterableProperties</definition>
+        <argsstring></argsstring>
+        <name>filterableProperties</name>
+        <briefdescription>
+<para>A string enumerator of all the property names that can be used in the filter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaList.idl" line="54" bodyfile="C:/projects/songbird/components/library/base/public/sbIFilterableMediaList.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Control the filter settings on a media list. </para>    </briefdescription>
+    <detaileddescription>
+<para>Media lists that implement this interface declare themselves as filterable. The filter is applied as an additional constraint to the list.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/base/public/sbIFilterableMediaList.idl" line="49" bodyfile="C:/projects/songbird/components/library/base/public/sbIFilterableMediaList.idl" bodystart="48" bodyend="95"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_filterable_media_list_1a3ed0f743d7c09675e5998988f458eef" prot="public" virt="non-virtual"><scope>sbIFilterableMediaList</scope><name>clearFilters</name></member>
+      <member refid="interfacesb_i_filterable_media_list_12a9d6e0aad6bddbf83d6a109f9f9470b" prot="public" virt="non-virtual"><scope>sbIFilterableMediaList</scope><name>filterableProperties</name></member>
+      <member refid="interfacesb_i_filterable_media_list_18def76273ac701045837155625512833" prot="public" virt="non-virtual"><scope>sbIFilterableMediaList</scope><name>getFilterValues</name></member>
+      <member refid="interfacesb_i_filterable_media_list_1121f585012e644a142d9ab355b881194" prot="public" virt="non-virtual"><scope>sbIFilterableMediaList</scope><name>removeFilters</name></member>
+      <member refid="interfacesb_i_filterable_media_list_1a74eee007c951c4475479ba34da6d7c3" prot="public" virt="non-virtual"><scope>sbIFilterableMediaList</scope><name>setFilters</name></member>
+      <member refid="interfacesb_i_filterable_media_list_1a299f9487d1b456bde6f2c7ba8a294de" prot="public" virt="non-virtual"><scope>sbIFilterableMediaList</scope><name>updateFilters</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

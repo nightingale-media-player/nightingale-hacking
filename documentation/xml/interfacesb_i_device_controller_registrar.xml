@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_device_controller_registrar" kind="interface" prot="public">
+    <compoundname>sbIDeviceControllerRegistrar</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_device_controller_registrar_14f774e00d1a8bae8e38ba73f9e18ad96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceControllerRegistrar::registerController</definition>
+        <argsstring>(in sbIDeviceController aController)</argsstring>
+        <name>registerController</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref></type>
+          <declname>aController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Registers an <ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref> object. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="42"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_controller_registrar_163ef6f12a625b1e10f0e080ed40e8762" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceControllerRegistrar::unregisterController</definition>
+        <argsstring>(in sbIDeviceController aController)</argsstring>
+        <name>unregisterController</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref></type>
+          <declname>aController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unregisters an <ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref> object. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="47"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_controller_registrar_1b2095645bd9f79a0b26fc3ec185cb2d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref></type>
+        <definition>sbIDeviceController sbIDeviceControllerRegistrar::getController</definition>
+        <argsstring>(in nsIDPtr aControllerId)</argsstring>
+        <name>getController</name>
+        <param>
+          <type>in nsIDPtr</type>
+          <declname>aControllerId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Retrieve a registered controller. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="62"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_device_controller_registrar_12fc9ba94b9593a2ae83f899ccec15e0d" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbIDeviceControllerRegistrar::controllers</definition>
+        <argsstring></argsstring>
+        <name>controllers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>An enumeration of sbIDeviceControllers currently registered. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="52" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_controller_registrar_1c22aa71d3dd874707497c6f39fb9c747" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIDeviceControllerRegistrar::controllerCount</definition>
+        <argsstring></argsstring>
+        <name>controllerCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of sbIDeviceControllers currently registered. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="57" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="38" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="37" bodyend="63"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_controller_registrar_1c22aa71d3dd874707497c6f39fb9c747" prot="public" virt="non-virtual"><scope>sbIDeviceControllerRegistrar</scope><name>controllerCount</name></member>
+      <member refid="interfacesb_i_device_controller_registrar_12fc9ba94b9593a2ae83f899ccec15e0d" prot="public" virt="non-virtual"><scope>sbIDeviceControllerRegistrar</scope><name>controllers</name></member>
+      <member refid="interfacesb_i_device_controller_registrar_1b2095645bd9f79a0b26fc3ec185cb2d8" prot="public" virt="non-virtual"><scope>sbIDeviceControllerRegistrar</scope><name>getController</name></member>
+      <member refid="interfacesb_i_device_controller_registrar_14f774e00d1a8bae8e38ba73f9e18ad96" prot="public" virt="non-virtual"><scope>sbIDeviceControllerRegistrar</scope><name>registerController</name></member>
+      <member refid="interfacesb_i_device_controller_registrar_163ef6f12a625b1e10f0e080ed40e8762" prot="public" virt="non-virtual"><scope>sbIDeviceControllerRegistrar</scope><name>unregisterController</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_remote_library" kind="interface" prot="public">
+    <compoundname>sbIRemoteLibrary</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_remote_library_1b38361c43f3724db71b07cbda3348e56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIRemoteLibrary::setGUID</definition>
+        <argsstring>(in AString aGUID)</argsstring>
+        <name>setGUID</name>
+        <param>
+          <type>in AString</type>
+          <declname>aGUID</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="50"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" line="47" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="46" bodyend="58"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_remote_library_1b38361c43f3724db71b07cbda3348e56" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>setGUID</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

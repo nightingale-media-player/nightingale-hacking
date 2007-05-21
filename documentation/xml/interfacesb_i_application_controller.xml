@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_application_controller" kind="interface" prot="public">
+    <compoundname>sbIApplicationController</compoundname>
+    <includes refid="sb_i_application_controller_8idl" local="no">sbIApplicationController.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_application_controller_19612dd271fdfe084fb2b3feff23c1176" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIDOMWindow</type>
+        <definition>nsIDOMWindow sbIApplicationController::getActiveWindowOfType</definition>
+        <argsstring>(in AString aWindowType)</argsstring>
+        <name>getActiveWindowOfType</name>
+        <param>
+          <type>in AString</type>
+          <declname>aWindowType</declname>
+        </param>
+        <briefdescription>
+<para>Get the current active window of specified type. Get the current active window of specified type, such as &quot;main&quot;, &quot;mini&quot; or &quot;browser&quot;. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aWindowType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of window, such as &quot;main&quot;, &quot;mini&quot; or &quot;browser&quot;. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="83"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_application_controller_1dcb1715123d2dd63195699d26c2e8475" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+        <definition>sbIMediaList sbIApplicationController::getActiveMediaListInWindow</definition>
+        <argsstring>(in nsIDOMWindow aWindow)</argsstring>
+        <name>getActiveMediaListInWindow</name>
+        <param>
+          <type>in nsIDOMWindow</type>
+          <declname>aWindow</declname>
+        </param>
+        <briefdescription>
+<para>Get the current active media list object in the specified window. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aWindow</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The window possibly containing a media list object. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The active media list object, if present. </para></simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>null</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>No active media list object in specified window. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="91"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_application_controller_1d205fc0eae80f54524792349aec4f83b" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+        <definition>attribute sbIMediaList sbIApplicationController::activeMediaList</definition>
+        <argsstring></argsstring>
+        <name>activeMediaList</name>
+        <briefdescription>
+<para>The current active media list object. The current active media list object. May be null if no media list is active or present. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="52" bodyfile="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_application_controller_1fe8e352ee959d7199c6565059852e300" prot="public" static="no" mutable="no">
+        <type>attribute nsIDOMNode</type>
+        <definition>attribute nsIDOMNode sbIApplicationController::activeBrowser</definition>
+        <argsstring></argsstring>
+        <name>activeBrowser</name>
+        <briefdescription>
+<para>The current active browser. The current active browser. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="58" bodyfile="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_application_controller_125d96aa08e98a35b6e863855e85723cb" prot="public" static="no" mutable="no">
+        <type>attribute nsIDOMWindow</type>
+        <definition>attribute nsIDOMWindow sbIApplicationController::activeMainWindow</definition>
+        <argsstring></argsstring>
+        <name>activeMainWindow</name>
+        <briefdescription>
+<para>The current active &quot;main&quot; window. The current active window of category &quot;main&quot;. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="64" bodyfile="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_application_controller_1f4d6c5203e16e0fbba68c3d956b0069b" prot="public" static="no" mutable="no">
+        <type>attribute nsIDOMWindow</type>
+        <definition>attribute nsIDOMWindow sbIApplicationController::activeMiniWindow</definition>
+        <argsstring></argsstring>
+        <name>activeMiniWindow</name>
+        <briefdescription>
+<para>The current active &quot;mini&quot; window. The current active window of category &quot;mini&quot;. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="70" bodyfile="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_application_controller_130214feb0024ffbc90a84a98ea2269b7" prot="public" static="no" mutable="no">
+        <type>attribute nsIDOMWindow</type>
+        <definition>attribute nsIDOMWindow sbIApplicationController::activeWindow</definition>
+        <argsstring></argsstring>
+        <name>activeWindow</name>
+        <briefdescription>
+<para>The current active window. The current active window, regardless of category. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="76" bodyfile="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para></para></simplesect>
+</para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="10">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="14">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="11">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>sbIApplicationController</label>
+        <link refid="interfacesb_i_application_controller"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>activeMediaList</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+      </node>
+      <node id="17">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" line="46" bodyfile="C:/projects/songbird/components/controller/public/sbIApplicationController.idl" bodystart="45" bodyend="92"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_application_controller_1fe8e352ee959d7199c6565059852e300" prot="public" virt="non-virtual"><scope>sbIApplicationController</scope><name>activeBrowser</name></member>
+      <member refid="interfacesb_i_application_controller_125d96aa08e98a35b6e863855e85723cb" prot="public" virt="non-virtual"><scope>sbIApplicationController</scope><name>activeMainWindow</name></member>
+      <member refid="interfacesb_i_application_controller_1d205fc0eae80f54524792349aec4f83b" prot="public" virt="non-virtual"><scope>sbIApplicationController</scope><name>activeMediaList</name></member>
+      <member refid="interfacesb_i_application_controller_1f4d6c5203e16e0fbba68c3d956b0069b" prot="public" virt="non-virtual"><scope>sbIApplicationController</scope><name>activeMiniWindow</name></member>
+      <member refid="interfacesb_i_application_controller_130214feb0024ffbc90a84a98ea2269b7" prot="public" virt="non-virtual"><scope>sbIApplicationController</scope><name>activeWindow</name></member>
+      <member refid="interfacesb_i_application_controller_1dcb1715123d2dd63195699d26c2e8475" prot="public" virt="non-virtual"><scope>sbIApplicationController</scope><name>getActiveMediaListInWindow</name></member>
+      <member refid="interfacesb_i_application_controller_19612dd271fdfe084fb2b3feff23c1176" prot="public" virt="non-virtual"><scope>sbIApplicationController</scope><name>getActiveWindowOfType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

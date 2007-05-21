@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_local_database_media_item" kind="interface" prot="public">
+    <compoundname>sbILocalDatabaseMediaItem</compoundname>
+    <includes refid="sb_i_local_database_media_item_8idl" local="no">sbILocalDatabaseMediaItem.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_local_database_media_item_12bb36f7b468488cc4be7564aab03571a" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbILocalDatabaseMediaItem::mediaItemId</definition>
+        <argsstring></argsstring>
+        <name>mediaItemId</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" line="41" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Internal use only. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" line="40" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" bodystart="39" bodyend="42"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_local_database_media_item_12bb36f7b468488cc4be7564aab03571a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseMediaItem</scope><name>mediaItemId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

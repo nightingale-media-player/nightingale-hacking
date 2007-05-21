@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_device_event_listener" kind="interface" prot="public">
+    <compoundname>sbIDeviceEventListener</compoundname>
+    <includes refid="sb_i_device_event_listener_8idl" local="no">sbIDeviceEventListener.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_device_event_listener_1ea708f23bf95c1db68ffe08c686d4a66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceEventListener::onDeviceEvent</definition>
+        <argsstring>(in sbIDeviceEvent aEvent)</argsstring>
+        <name>onDeviceEvent</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_event" kindref="compound">sbIDeviceEvent</ref></type>
+          <declname>aEvent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>aEvent - information about the event </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl" line="42"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Used to listen to events on a particular device, controller, etc. </para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl" line="38" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl" bodystart="37" bodyend="43"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_event_listener_1ea708f23bf95c1db68ffe08c686d4a66" prot="public" virt="non-virtual"><scope>sbIDeviceEventListener</scope><name>onDeviceEvent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

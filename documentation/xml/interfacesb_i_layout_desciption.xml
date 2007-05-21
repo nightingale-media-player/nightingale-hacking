@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_layout_desciption" kind="interface" prot="public">
+    <compoundname>sbILayoutDesciption</compoundname>
+    <includes refid="sb_i_layout_description_8idl" local="no">sbILayoutDescription.idl</includes>
+    <briefdescription>
+<para>Struct describing the properties of a XUL window layout. </para>    </briefdescription>
+    <detaileddescription>
+<para>Describes the properties of an alternate XUL window.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_feathers_manager" kindref="compound">sbIFeathersManager</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/feathers/public/sbILayoutDescription.idl" line="36"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

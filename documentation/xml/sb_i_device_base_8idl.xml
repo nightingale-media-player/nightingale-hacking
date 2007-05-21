@@ -1,0 +1,577 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="sb_i_device_base_8idl" kind="file">
+    <compoundname>sbIDeviceBase.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <includedby refid="sb_i_c_d_device_8idl" local="yes">C:/projects/songbird/components/devicesobsolete/cd/public/sbICDDevice.idl</includedby>
+    <includedby refid="sb_i_download_device_8idl" local="yes">C:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl</includedby>
+    <includedby refid="sb_i_w_m_device_8idl" local="yes">C:/projects/songbird/components/devicesobsolete/wm/public/sbIWMDevice.idl</includedby>
+    <incdepgraph>
+      <node id="97">
+        <label>C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
+        <link refid="sbIDeviceBase.idl"/>
+        <childnode refid="98" relation="include">
+        </childnode>
+      </node>
+      <node id="98">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="102">
+        <label>C:/projects/songbird/components/devicesobsolete/wm/public/sbIWMDevice.idl</label>
+        <link refid="sb_i_w_m_device_8idl"/>
+      </node>
+      <node id="99">
+        <label>C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
+        <link refid="sbIDeviceBase.idl"/>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+      </node>
+      <node id="100">
+        <label>C:/projects/songbird/components/devicesobsolete/cd/public/sbICDDevice.idl</label>
+        <link refid="sb_i_c_d_device_8idl"/>
+      </node>
+      <node id="101">
+        <label>C:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl</label>
+        <link refid="sb_i_download_device_8idl"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="interfacesb_i_device_base_callback" prot="public">sbIDeviceBaseCallback</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="sb_i_device_base_8idl_12858701f22afbfb4cae7447dc77027e3" prot="public" static="no">
+        <name>kSB_DEVICE_FILE_FORMAT_UNDEFINED</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="103"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_base_8idl_167bc01eb190879935c59d8926b2dbbe5" prot="public" static="no">
+        <name>kSB_DEVICE_FILE_FORMAT_WAV</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="104"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_base_8idl_1c0062ec0682ea2ab4cf89ef5809145bc" prot="public" static="no">
+        <name>kSB_DEVICE_FILE_FORMAT_MP3</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="105"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_base_8idl_12480cbc482fbd0c97c212d4b3f118741" prot="public" static="no">
+        <name>kSB_DEVICE_FILE_FORMAT_WMA</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="106"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_base_8idl_1429808074d6bdff210ed2a87214230c9" prot="public" static="no">
+        <name>kSB_DEVICE_STATE_IDLE</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="109"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_base_8idl_187f670d0920af88870fca0a2798ffa5f" prot="public" static="no">
+        <name>kSB_DEVICE_STATE_BUSY</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="110"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_base_8idl_178af39ba49945c853cca3b77ea97e945" prot="public" static="no">
+        <name>kSB_DEVICE_STATE_DOWNLOADING</name>
+        <initializer>2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="111"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_base_8idl_13ebfbbb4684f01f567be23170c75a2a7" prot="public" static="no">
+        <name>kSB_DEVICE_STATE_UPLOADING</name>
+        <initializer>3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="112"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_base_8idl_19f968b70796eb013a4b4c0d258f628ab" prot="public" static="no">
+        <name>kSB_DEVICE_STATE_DOWNLOAD_PAUSED</name>
+        <initializer>4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="113"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_base_8idl_1732b6ad731e3aca2734d043a730109d1" prot="public" static="no">
+        <name>kSB_DEVICE_STATE_UPLOAD_PAUSED</name>
+        <initializer>5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="114"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_base_8idl_185b72d78c79f1491dd70d1709db0371a" prot="public" static="no">
+        <name>kSB_DEVICE_STATE_DELETING</name>
+        <initializer>6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="115"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="sb_i_device_base_8idl_135db095d632304af29bb1444084e912c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>uuid</definition>
+        <argsstring>(9b00086e-2497-4075-a6b3-d3ff39e1480c)] interface sbIDeviceBase</argsstring>
+        <name>uuid</name>
+        <param>
+          <type>9b00086e-2497-4075-a6b3-</type>
+          <declname>d3ff39e1480c</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>File format constants</para><para>XXXben We have an explicit -1 here but later we have PRUint32 as a param for get/set Upload and Download FileType. Also, should these be renamed to FILE_TYPE_XXX or should we change the other funcs to use FileFormat?</para><para>Device State constants</para><para>Generally speaking I/O commands can be issued to a device if device state is STATE_IDLE for the device. But if STATE_DOWNLOADING then it can be asked to transfer more tracks, and the same applies to STATE_UPLOADING and STATE_DELETING. STATE_TRANSFERRING_PAUSED indicates a paused transfer.</para><para>XXXben STATE_TRANSFERRING_PAUSED no longer exists</para><para>Device Operation Constants <simplesect kind="see"><para>transferItems</para></simplesect>
+The name of the device category handler.</para><para>Initialize the device category handler.</para><para>Finalize usage of the device category handler.</para><para>This effectively prepares the device category handler for application shutdown.</para><para>Add a device category handler callback.</para><para>Enables you to get callbacks when devices are connected and when transfers are initiated.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device category handler callback you wish to add.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Remove a device category handler callback.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device category handler callback you wish to remove.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Device category name for this class of devices.</para><para>Contains nsISupportsStrings representing the device unique identifiers for all connected devices of this category.</para><para>Get the number of devices currently connected.</para><para>Get the device library representing the content available on the device.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The unique device identifier. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The library for the specified device.</para></simplesect>
+Get the device&apos;s current state.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The current state of the device.</para></simplesect>
+Get preferred transfer location for item</para><para>Get a transfer location for the specified media item. This enables the device to determine where best to put this media item based on it&apos;s own set of criteria.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The media item that is about to be transferred. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The transfer location for the item.</para></simplesect>
+Transfer items to a library or destination.</para><para>If you call this method with a library only, the device will attempt to read the library&apos;s preferred transfer destination and use it.</para><para>If you call this method with a destination only, the device will attempt to transfer the items to that destination only.</para><para>If you call this method with a library and destination path, the device will attempt to simply pass a destination if you do not wish to add the item to a library after the transfer is complete.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMediaItems</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An array of media items to transfer. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aDestinationPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The desired destination path, path may include full filename. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aDeviceOperation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The desired operation (upload, download, move). </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aBeginTransferNow</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Begin the transfer operation immediately? </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aDestinationLibrary</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The desired destination library. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of items actually queued for transfer.</para></simplesect>
+Update items on the device.</para><para>Delete items from the device.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMediaItems</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An array of <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> objects.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of items actually deleted from the device.</para></simplesect>
+Begin transfer operations. <simplesect kind="return"><para>The media item that began transferring.</para></simplesect>
+Cancel a transfer by removing it from the queue.</para><para>Cancel a transfer by removing it from the queue. If the item has already been transfered this function has no effect.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMediaItems</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An array of media items. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The number of transfers actually cancelled.</para></simplesect>
+Suspend all transfers.</para><para>Suspend all active transfers.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of transfer items actually suspended.</para></simplesect>
+Resume pending transfers.</para><para>Resume pending transfers for a device.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of transfer items actually resumed.</para></simplesect>
+Get the amount of used space from a device.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The amount of used space on the device, in bytes.</para></simplesect>
+Get the amount of available space from a device.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The amount of available space, in bytes.</para></simplesect>
+Returns a list of file extensions representing the formats supported by a specific device.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An array of nsISupportsString containing the supported formats in file extension format.</para></simplesect>
+Download is to copy a track from the device to the host.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True or false.</para></simplesect>
+Is uploading supported on this device?</para><para>Upload is to copy a track from host to the device</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True or false.</para></simplesect>
+Is it possible to delete items from the device?</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True or false.</para></simplesect>
+Is it possible to update items directly on the device?</para><para>This method could be used for updating tracks on a device or applying CDDB match for a CD.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True or false.</para></simplesect>
+Is eject or unmount supported by the device?.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True or false.</para></simplesect>
+Eject or unmount the device from the system.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDeviceIdentifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The device unique identifier.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True or false. </para></simplesect>
+</para>        </inbodydescription>
+        <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" line="142" bodyfile="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl" bodystart="140" bodyend="441"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The IDL for sbIDeviceBase. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed<sp/></highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either<sp/></highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language<sp/></highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this<sp/></highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,<sp/></highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_135db095d632304af29bb1444084e912c" kindref="member">uuid</ref>(123f41bd-5976-4561-a12a-d417cf5c18b2)]</highlight></codeline>
+<codeline lineno="53" refid="interfacesb_i_device_base_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_base_callback" kindref="compound">sbIDeviceBaseCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDeviceConnect(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDeviceDisconnect(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onTransferStart(in<sp/>AString<sp/>aSourceURL,</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aDestinationURL);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onTransferComplete(in<sp/>AString<sp/>aSourceURL,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aDestinationURL,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRInt32<sp/>aStatus);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//<sp/>XXXben<sp/>These<sp/>are<sp/>left<sp/>here<sp/>for<sp/>the<sp/>time<sp/>being<sp/>so<sp/>the<sp/>world<sp/>doesn&apos;t<sp/>break</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal">%{<sp/>C++</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="comment">//<sp/>File<sp/>format<sp/>constants</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_FILE_FORMAT_UNDEFINED<sp/><sp/>-1</highlight></codeline>
+<codeline lineno="104"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_FILE_FORMAT_WAV<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight></codeline>
+<codeline lineno="105"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_FILE_FORMAT_MP3<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight></codeline>
+<codeline lineno="106"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_FILE_FORMAT_WMA<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight></codeline>
+<codeline lineno="107"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Device<sp/>State<sp/>constants</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_STATE_IDLE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight></codeline>
+<codeline lineno="110"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_STATE_BUSY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1</highlight></codeline>
+<codeline lineno="111"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_STATE_DOWNLOADING<sp/><sp/><sp/><sp/><sp/><sp/>2</highlight></codeline>
+<codeline lineno="112"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_STATE_UPLOADING<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight></codeline>
+<codeline lineno="113"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_STATE_DOWNLOAD_PAUSED<sp/><sp/>4</highlight></codeline>
+<codeline lineno="114"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_STATE_UPLOAD_PAUSED<sp/><sp/><sp/><sp/>5</highlight></codeline>
+<codeline lineno="115"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>kSB_DEVICE_STATE_DELETING<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>6</highlight></codeline>
+<codeline lineno="116"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="sb_i_device_base_8idl_135db095d632304af29bb1444084e912c" refkind="member"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_135db095d632304af29bb1444084e912c" kindref="member">uuid</ref>(9b00086e-2497-4075-a6b3-d3ff39e1480c)]</highlight></codeline>
+<codeline lineno="141"><highlight class="normal">interface<sp/>sbIDeviceBase<sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="142"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FILE_FORMAT_UNDEFINED<sp/>=<sp/>9999;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FILE_FORMAT_WAV<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FILE_FORMAT_MP3<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FILE_FORMAT_WMA<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>STATE_IDLE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>STATE_BUSY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>STATE_DOWNLOADING<sp/><sp/><sp/><sp/><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>STATE_UPLOADING<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>STATE_DOWNLOAD_PAUSED<sp/>=<sp/>4;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>STATE_UPLOAD_PAUSED<sp/><sp/><sp/>=<sp/>5;</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>STATE_DELETING<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>6;</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>OP_UPLOAD<sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>OP_DOWNLOAD<sp/><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>OP_MOVE<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initialize();</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>finalize();</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addCallback(in<sp/><ref refid="interfacesb_i_device_base_callback" kindref="compound">sbIDeviceBaseCallback</ref><sp/>aCallback);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeCallback(in<sp/><ref refid="interfacesb_i_device_base_callback" kindref="compound">sbIDeviceBaseCallback</ref><sp/>aCallback);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>deviceCategory;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/>deviceIdentifiers;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>deviceCount;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref><sp/>getLibrary(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getDeviceState(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/>nsIURI<sp/>getTransferLocation(in<sp/>AString<sp/>aDeviceIdentifier,</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref><sp/>aMediaItem);</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>transferItems(in<sp/>AString<sp/>aDeviceIdentifier,</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIArray<sp/>aMediaItems,<sp/></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIURI<sp/>aDestionationPath,<sp/></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDeviceOperation,</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aBeginTransferNow,</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref><sp/>aDestinationLibrary);</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>updateItems(in<sp/>AString<sp/>aDeviceIdentifier,</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIArray<sp/>aMediaItems);</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>deleteItems(in<sp/>AString<sp/>aDeviceIdentifier,</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIArray<sp/>aMediaItems);</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"></highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>deleteAllItems(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref><sp/>beginTransfer(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>cancelTransfer(in<sp/>AString<sp/>aDeviceIdentifier,</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIArray<sp/>aMediaItems);</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>suspendTransfer(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"></highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>resumeTransfer(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="361"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getUsedSpace(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="362"><highlight class="normal"></highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getAvailableSpace(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"></highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nsIArray<sp/>getSupportedFormats(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"></highlight></codeline>
+<codeline lineno="390"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isDownloadSupported(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isUploadSupported(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="402"><highlight class="normal"></highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isDeleteSupported(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="411"><highlight class="normal"></highlight></codeline>
+<codeline lineno="422"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isUpdateSupported(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="423"><highlight class="normal"></highlight></codeline>
+<codeline lineno="431"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isEjectSupported(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="432"><highlight class="normal"></highlight></codeline>
+<codeline lineno="440"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>ejectDevice(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
+<codeline lineno="441"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="C:/projects/songbird/components/devicesobsolete/base/public/sbIDeviceBase.idl"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_local_database_resource_property" kind="interface" prot="public">
+    <compoundname>sbILocalDatabaseResourceProperty</compoundname>
+    <basecompoundref refid="interfacesb_i_library_resource" prot="public" virt="non-virtual">sbILibraryResource</basecompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_local_database_resource_property_16b3d4a5d5c96ea2e2a1b69f966261aca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseResourceProperty::initResourceProperty</definition>
+        <argsstring>(in sbILocalDatabasePropertyCache aPropertyCache, in AString aGuid)</argsstring>
+        <name>initResourceProperty</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_local_database_property_cache" kindref="compound">sbILocalDatabasePropertyCache</ref></type>
+          <declname>aPropertyCache</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aGuid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="44"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="206">
+        <label>sbILocalDatabaseResourceProperty</label>
+        <link refid="interfacesb_i_local_database_resource_property"/>
+        <childnode refid="207" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="207">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="208">
+        <label>sbILocalDatabaseResourceProperty</label>
+        <link refid="interfacesb_i_local_database_resource_property"/>
+        <childnode refid="209" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="209">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="42" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" bodystart="41" bodyend="45"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>created</name></member>
+      <member refid="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>equals</name></member>
+      <member refid="interfacesb_i_library_resource_1fecce0a9f8cf88784cbfdce7d8143719" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>getProperty</name></member>
+      <member refid="interfacesb_i_library_resource_1c97a2ea6d6aa52d2dfd74095895f74f6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>guid</name></member>
+      <member refid="interfacesb_i_local_database_resource_property_16b3d4a5d5c96ea2e2a1b69f966261aca" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>initResourceProperty</name></member>
+      <member refid="interfacesb_i_library_resource_1fa7bdb6a26b3c120968f0573cba92ae7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>setProperty</name></member>
+      <member refid="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>updated</name></member>
+      <member refid="interfacesb_i_library_resource_1e6dfc14a8a20b1486304a25d9f4f77c0" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>write</name></member>
+      <member refid="interfacesb_i_library_resource_159a9d52527f1014cb02fd09e60272b07" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>writePending</name></member>
+      <member refid="interfacesb_i_library_resource_1810100a298bdedf20f1dc1265619f53d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>writeThrough</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,586 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_s_q_l_where_builder" kind="interface" prot="public">
+    <compoundname>sbISQLWhereBuilder</compoundname>
+    <basecompoundref refid="interfacesb_i_s_q_l_builder" prot="public" virt="non-virtual">sbISQLBuilder</basecompoundref>
+    <derivedcompoundref refid="interfacesb_i_s_q_l_delete_builder" prot="public" virt="non-virtual">sbISQLDeleteBuilder</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_s_q_l_select_builder" prot="public" virt="non-virtual">sbISQLSelectBuilder</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_s_q_l_update_builder" prot="public" virt="non-virtual">sbISQLUpdateBuilder</derivedcompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_1b04abab3d5a117e55e242a0cffce12ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISQLWhereBuilder::addCriterion</definition>
+        <argsstring>(in sbISQLBuilderCriterion aCriterion)</argsstring>
+        <name>addCriterion</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+          <declname>aCriterion</declname>
+        </param>
+        <briefdescription>
+<para>Add a criteria constraint to the query. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCriterion</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Criterion to add </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="141"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_1600c4a25d61c5a3794811b53d8b362e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISQLWhereBuilder::removeCriterion</definition>
+        <argsstring>(in sbISQLBuilderCriterion aCriterion)</argsstring>
+        <name>removeCriterion</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+          <declname>aCriterion</declname>
+        </param>
+        <briefdescription>
+<para>Remve a criteria constraint from the query. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCriterion</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Criterion to remvoe </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="147"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_175afc20a36066872479ccc9cbb0a459f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+        <definition>sbISQLBuilderCriterion sbISQLWhereBuilder::createMatchCriterionString</definition>
+        <argsstring>(in AString aTableName, in AString aSrcColumnName, in unsigned long aMatchType, in AString aValue)</argsstring>
+        <name>createMatchCriterionString</name>
+        <param>
+          <type>in AString</type>
+          <declname>aTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSrcColumnName</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aMatchType</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+<para>Create a match criterion with an AString datatype. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The table name the column in the criterion belongs to </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSrcColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name the column to use in the criterion </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMatchType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The criterion match type, must be one of the MATCH constant values </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The AString value to match agains </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="160"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_177929732a6f7f589968ed83d4d837ab0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+        <definition>sbISQLBuilderCriterion sbISQLWhereBuilder::createMatchCriterionBetweenString</definition>
+        <argsstring>(in AString aTableName, in AString aSrcColumnName, in AString aLeftValue, in AString aRightValue)</argsstring>
+        <name>createMatchCriterionBetweenString</name>
+        <param>
+          <type>in AString</type>
+          <declname>aTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSrcColumnName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLeftValue</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aRightValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="165"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_1698be0478074800a1388a6852b3f73a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+        <definition>sbISQLBuilderCriterion sbISQLWhereBuilder::createMatchCriterionNotBetweenString</definition>
+        <argsstring>(in AString aTableName, in AString aSrcColumnName, in AString aLeftValue, in AString aRightValue)</argsstring>
+        <name>createMatchCriterionNotBetweenString</name>
+        <param>
+          <type>in AString</type>
+          <declname>aTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSrcColumnName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLeftValue</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aRightValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="170"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_1b99de2d6d6ff42a0c26aadfd321c64cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+        <definition>sbISQLBuilderCriterion sbISQLWhereBuilder::createMatchCriterionLong</definition>
+        <argsstring>(in AString aTableName, in AString aSrcColumnName, in unsigned long aMatchType, in long aValue)</argsstring>
+        <name>createMatchCriterionLong</name>
+        <param>
+          <type>in AString</type>
+          <declname>aTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSrcColumnName</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aMatchType</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+<para>Create a match criterion with an long datatype. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The table name the column in the criterion belongs to </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSrcColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name the column to use in the criterion </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMatchType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The criterion match type, must be one of the MATCH constant values </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The long value to match agains </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="183"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_166852cb4c3662f398103ddd625f3e7ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+        <definition>sbISQLBuilderCriterion sbISQLWhereBuilder::createMatchCriterionNull</definition>
+        <argsstring>(in AString aTableName, in AString aSrcColumnName, in unsigned long aMatchType)</argsstring>
+        <name>createMatchCriterionNull</name>
+        <param>
+          <type>in AString</type>
+          <declname>aTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSrcColumnName</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aMatchType</declname>
+        </param>
+        <briefdescription>
+<para>Create a match criterion that tests against the null value. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The table name the column in the Criterion belongs to </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSrcColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name the column to use in the criterion </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMatchType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The criterion match type, must be either MATCH_EQUALS or MATCH_NOTEQUALS </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="194"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_149dd4012ecc2a30342f92f05e02f07a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+        <definition>sbISQLBuilderCriterion sbISQLWhereBuilder::createMatchCriterionTable</definition>
+        <argsstring>(in AString aLeftTableName, in AString aLeftColumnName, in unsigned long aMatchType, in AString aRightTableName, in AString aRightColumnName)</argsstring>
+        <name>createMatchCriterionTable</name>
+        <param>
+          <type>in AString</type>
+          <declname>aLeftTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLeftColumnName</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aMatchType</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aRightTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aRightColumnName</declname>
+        </param>
+        <briefdescription>
+<para>Create a match criterion that tests against a table column. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLeftTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The table name on the left side of the match </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aLeftColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The column name on the right side of the match </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMatchType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The criterion match type </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aRightTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The table name on the left side of the match </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aRightColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The column name on the right side of the match </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="208"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_1477e75a857e1133f3834f4443a4e4a1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_s_q_l_builder_criterion_in" kindref="compound">sbISQLBuilderCriterionIn</ref></type>
+        <definition>sbISQLBuilderCriterionIn sbISQLWhereBuilder::createMatchCriterionIn</definition>
+        <argsstring>(in AString aTableName, in AString aSrcColumnName)</argsstring>
+        <name>createMatchCriterionIn</name>
+        <param>
+          <type>in AString</type>
+          <declname>aTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSrcColumnName</declname>
+        </param>
+        <briefdescription>
+<para>Create a match criterion using the IN() operator. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The table name the column in the Criterion belongs to </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSrcColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name the column to use in the criterion </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="216"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_1039dfffdc2ff4c70e2d5cfd6ec530ab1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+        <definition>sbISQLBuilderCriterion sbISQLWhereBuilder::createMatchCriterionParameter</definition>
+        <argsstring>(in AString aTableName, in AString aSrcColumnName, in unsigned long aMatchType)</argsstring>
+        <name>createMatchCriterionParameter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aSrcColumnName</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aMatchType</declname>
+        </param>
+        <briefdescription>
+<para>Create a match criterion that tests against a parameter placeholder. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The table name the column in the Criterion belongs to </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSrcColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name the column to use in the criterion </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMatchType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The criterion match type </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="226"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_1f443ed1a70948a0f897aa029ce29ebc8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+        <definition>sbISQLBuilderCriterion sbISQLWhereBuilder::createAndCriterion</definition>
+        <argsstring>(in sbISQLBuilderCriterion aLeft, in sbISQLBuilderCriterion aRight)</argsstring>
+        <name>createAndCriterion</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+          <declname>aLeft</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+          <declname>aRight</declname>
+        </param>
+        <briefdescription>
+<para>Create a match criterion that is the logical AND of two critera. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLeft</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The left side of the expression </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aRight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The right side of the expression </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="233"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_where_builder_1608f8c174fc98a44c694fbfd7bc67199" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+        <definition>sbISQLBuilderCriterion sbISQLWhereBuilder::createOrCriterion</definition>
+        <argsstring>(in sbISQLBuilderCriterion aLeft, in sbISQLBuilderCriterion aRight)</argsstring>
+        <name>createOrCriterion</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+          <declname>aLeft</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_s_q_l_builder_criterion" kindref="compound">sbISQLBuilderCriterion</ref></type>
+          <declname>aRight</declname>
+        </param>
+        <briefdescription>
+<para>Create a match criterion that is the logical OR of two critera. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLeft</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The left side of the expression </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aRight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The right side of the expression </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="241"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="533">
+        <label>sbISQLWhereBuilder</label>
+        <link refid="interfacesb_i_s_q_l_where_builder"/>
+        <childnode refid="534" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="537">
+        <label>sbISQLUpdateBuilder</label>
+        <link refid="interfacesb_i_s_q_l_update_builder"/>
+        <childnode refid="533" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="535">
+        <label>sbISQLDeleteBuilder</label>
+        <link refid="interfacesb_i_s_q_l_delete_builder"/>
+        <childnode refid="533" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="534">
+        <label>sbISQLBuilder</label>
+        <link refid="interfacesb_i_s_q_l_builder"/>
+      </node>
+      <node id="536">
+        <label>sbISQLSelectBuilder</label>
+        <link refid="interfacesb_i_s_q_l_select_builder"/>
+        <childnode refid="533" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="538">
+        <label>sbISQLWhereBuilder</label>
+        <link refid="interfacesb_i_s_q_l_where_builder"/>
+        <childnode refid="539" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="539">
+        <label>sbISQLBuilder</label>
+        <link refid="interfacesb_i_s_q_l_builder"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="136" bodyfile="C:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="135" bodyend="244"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_s_q_l_where_builder_1b04abab3d5a117e55e242a0cffce12ec" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>addCriterion</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1c043dcca0a024504bdfba272a183b165" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>addJoin</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1c63876ce6d2eb2972a2d0c4eda3c2c44" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>addJoinWithCriterion</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1942a3fc5adb7eea5a1a23cdd0a6be15c" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>addSubquery</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_1f443ed1a70948a0f897aa029ce29ebc8" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>createAndCriterion</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_177929732a6f7f589968ed83d4d837ab0" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>createMatchCriterionBetweenString</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_1477e75a857e1133f3834f4443a4e4a1e" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>createMatchCriterionIn</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_1b99de2d6d6ff42a0c26aadfd321c64cf" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>createMatchCriterionLong</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_1698be0478074800a1388a6852b3f73a0" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>createMatchCriterionNotBetweenString</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_166852cb4c3662f398103ddd625f3e7ec" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>createMatchCriterionNull</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_1039dfffdc2ff4c70e2d5cfd6ec530ab1" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>createMatchCriterionParameter</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_175afc20a36066872479ccc9cbb0a459f" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>createMatchCriterionString</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_149dd4012ecc2a30342f92f05e02f07a3" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>createMatchCriterionTable</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_1608f8c174fc98a44c694fbfd7bc67199" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>createOrCriterion</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1fa1fa3b8ea1cb475f9ccc10ac519d484" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>JOIN_INNER</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1ad6e58931a0e11662c919c0846503b8c" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>JOIN_LEFT</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_13c7ea9b5a93d06b5651b2930d8b9b472" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>limit</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1cd361a2636559e9627c09784d0099f82" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>limitIsParameter</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1b9f806fd09b240a2adf0f76b92c2fdc3" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>MATCH_EQUALS</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_17932e380ede3501036cbbd15acb82ef2" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>MATCH_GREATER</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_10b508cc32009b229e56539e07c0e6877" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>MATCH_GREATEREQUAL</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1805277f380a5e4a4a260bb28d38ce731" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>MATCH_LESS</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1a65091061732a05911da854ea8f35ba8" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>MATCH_LESSEQUAL</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1e08c6f669a944b7046f55c6484e0c7d3" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>MATCH_LIKE</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1e6f88f4330f1ae6e32ab6244e4292491" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>MATCH_NOTEQUALS</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_11998b6528f7f722b5f24ec83cf7a15dc" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>offset</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_159f35b321060198bf39a288bdd0df5a2" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>offsetIsParameter</name></member>
+      <member refid="interfacesb_i_s_q_l_where_builder_1600c4a25d61c5a3794811b53d8b362e3" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>removeCriterion</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_137f276fb7a1b02e7f5398313e22bb43d" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>reset</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1f67c7d7433677925da7f20e036ea7ff0" prot="public" virt="non-virtual"><scope>sbISQLWhereBuilder</scope><name>toString</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

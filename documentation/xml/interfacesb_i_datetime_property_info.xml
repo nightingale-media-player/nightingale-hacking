@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_datetime_property_info" kind="interface" prot="public">
+    <compoundname>sbIDatetimePropertyInfo</compoundname>
+    <basecompoundref refid="interfacesb_i_property_info" prot="public" virt="non-virtual">sbIPropertyInfo</basecompoundref>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_13c03cfc66ea09935fc4441d335ebfb74" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIDatetimePropertyInfo::TIMETYPE_UNINITIALIZED</definition>
+        <argsstring></argsstring>
+        <name>TIMETYPE_UNINITIALIZED</name>
+        <initializer> -1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="333" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="333" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_1be95a145b9f78009b7986037cc8ab6b1" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIDatetimePropertyInfo::TIMETYPE_DATE</definition>
+        <argsstring></argsstring>
+        <name>TIMETYPE_DATE</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+<para>2007-03-28 , in localized format </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="338" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="338" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_1f27102ee8ddab1ebbb67dd517d76746e" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIDatetimePropertyInfo::TIMETYPE_TIME</definition>
+        <argsstring></argsstring>
+        <name>TIMETYPE_TIME</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+<para>HH:mm:ss.ms, in localized format. Limited to 24 hour days. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_datetime_property_info_1532581492499bc56f497c458cfdb3a4f" kindref="member">TIMETYPE_DURATION</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="344" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="344" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_1f8448b6e7e8f735e03c0278c7bd7ef64" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIDatetimePropertyInfo::TIMETYPE_DATETIME</definition>
+        <argsstring></argsstring>
+        <name>TIMETYPE_DATETIME</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+<para>Long date format, 2007-03-28 12:33:01 , no milliseconds. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="349" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="349" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_1532581492499bc56f497c458cfdb3a4f" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIDatetimePropertyInfo::TIMETYPE_DURATION</definition>
+        <argsstring></argsstring>
+        <name>TIMETYPE_DURATION</name>
+        <initializer> 3</initializer>
+        <briefdescription>
+<para>Duration, represented in HH:mm:ss.ms, in localized format. May exceed 24 hours. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="355" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="355" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_18d6827a42cbb766b64d300cef7e455a3" prot="public" static="no" mutable="no">
+        <type>const long</type>
+        <definition>const long sbIDatetimePropertyInfo::TIMETYPE_TIMESTAMP</definition>
+        <argsstring></argsstring>
+        <name>TIMETYPE_TIMESTAMP</name>
+        <initializer> 4</initializer>
+        <briefdescription>
+<para>Timestamp format, respects unix time, microsecond format. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This is also the internal storage type for this property. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="361" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="361" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_1a700e6a6b9df6f102c6716f2b7338300" prot="public" static="no" mutable="no">
+        <type>attribute long</type>
+        <definition>attribute long sbIDatetimePropertyInfo::timeType</definition>
+        <argsstring></argsstring>
+        <name>timeType</name>
+        <briefdescription>
+<para>You must initialize this attribute before using this object. If you do not, all methods on this object will return NS_ERROR_NOT_INITIALIZED. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="368" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="368" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_1659d08db75de0c036002f0eaf2b32c28" prot="public" static="no" mutable="no">
+        <type>attribute long long</type>
+        <definition>attribute long long sbIDatetimePropertyInfo::minTime</definition>
+        <argsstring></argsstring>
+        <name>minTime</name>
+        <briefdescription>
+<para>A minimum time value to enforce when validating. If you do not wish to use this, set it to 0. </para>        </briefdescription>
+        <detaileddescription>
+<para>You must set this attribute in order for this object to function properly. If you do not, all methods on this object will return NS_ERROR_NOT_INITIALIZED. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="378" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="378" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_1df244c8fba02d2d3decfc708895409f9" prot="public" static="no" mutable="no">
+        <type>attribute long long</type>
+        <definition>attribute long long sbIDatetimePropertyInfo::maxTime</definition>
+        <argsstring></argsstring>
+        <name>maxTime</name>
+        <briefdescription>
+<para>A maximum time value to enforce when validating. If you do not wish to use this, set it to 0. </para>        </briefdescription>
+        <detaileddescription>
+<para>You must set this attribute in order for this object to function properly. If you do not, all methods on this object will return NS_ERROR_NOT_INITIALIZED. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="388" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="388" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_16e5f1bcef1d1ce389d9320c5bede28e2" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIDatetimePropertyInfo::durationInverse</definition>
+        <argsstring></argsstring>
+        <name>durationInverse</name>
+        <briefdescription>
+<para>Causes TIMETYPE_DURATION to display from -xx:xx:xx to 0 instead of 0 to xx:xx:xx. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="394" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="394" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_datetime_property_info_1c75a17f3cb2148dd5fe46a1d00545a63" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIDatetimePropertyInfo::durationWithMilliseconds</definition>
+        <argsstring></argsstring>
+        <name>durationWithMilliseconds</name>
+        <briefdescription>
+<para>Cause TIMETYPE_DURATION to display milliseconds. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="399" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="399" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="56">
+        <label>sbIDatetimePropertyInfo</label>
+        <link refid="interfacesb_i_datetime_property_info"/>
+        <childnode refid="57" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>sbIPropertyInfo</label>
+        <link refid="interfacesb_i_property_info"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="58">
+        <label>sbIDatetimePropertyInfo</label>
+        <link refid="interfacesb_i_datetime_property_info"/>
+        <childnode refid="59" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>sbIPropertyInfo</label>
+        <link refid="interfacesb_i_property_info"/>
+        <childnode refid="60" relation="usage">
+          <edgelabel>sortProfile</edgelabel>
+        </childnode>
+      </node>
+      <node id="60">
+        <label>sbIPropertyArray</label>
+        <link refid="interfacesb_i_property_array"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="332" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="331" bodyend="400"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>displayName</name></member>
+      <member refid="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>displayUsingSimpleType</name></member>
+      <member refid="interfacesb_i_property_info_1e3775774aadcb7b7a0c1260c3940126a" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>displayUsingXBLWidget</name></member>
+      <member refid="interfacesb_i_datetime_property_info_16e5f1bcef1d1ce389d9320c5bede28e2" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>durationInverse</name></member>
+      <member refid="interfacesb_i_datetime_property_info_1c75a17f3cb2148dd5fe46a1d00545a63" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>durationWithMilliseconds</name></member>
+      <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>format</name></member>
+      <member refid="interfacesb_i_property_info_1695c9498ec7779040ca5d28d824e6967" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>getDisplayPropertiesForValue</name></member>
+      <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>getOperator</name></member>
+      <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>makeSortable</name></member>
+      <member refid="interfacesb_i_datetime_property_info_1df244c8fba02d2d3decfc708895409f9" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>maxTime</name></member>
+      <member refid="interfacesb_i_datetime_property_info_1659d08db75de0c036002f0eaf2b32c28" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>minTime</name></member>
+      <member refid="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>name</name></member>
+      <member refid="interfacesb_i_property_info_1ef29192fd04343a208b31f975f6224f8" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>nullSort</name></member>
+      <member refid="interfacesb_i_property_info_123dae3923453285d8471be2a045c125d" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>OPERATOR_BEGINSWITH</name></member>
+      <member refid="interfacesb_i_property_info_1e510a1cfef38ced282dbb4fec4211ee5" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>OPERATOR_BETWEEN</name></member>
+      <member refid="interfacesb_i_property_info_14b6d078b39a35c61911b42ca24a3f2b7" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>OPERATOR_CONTAINS</name></member>
+      <member refid="interfacesb_i_property_info_112123f0254cc60b5323bccbeb6485bd0" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>OPERATOR_ENDSWITH</name></member>
+      <member refid="interfacesb_i_property_info_1afe9f89f31df1de16ca3b9ab5b7682de" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>OPERATOR_EQUALS</name></member>
+      <member refid="interfacesb_i_property_info_18638a084c59f3033542093b691267704" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>OPERATOR_GREATER</name></member>
+      <member refid="interfacesb_i_property_info_10f788ca30e7f58af5d5fab302fa3e00e" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>OPERATOR_GREATEREQUAL</name></member>
+      <member refid="interfacesb_i_property_info_1b0c9ffabb30224122bf1bba5bea890be" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>OPERATOR_LESS</name></member>
+      <member refid="interfacesb_i_property_info_13cdfd09f8658c992b1fe589ced72da7a" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>OPERATOR_LESSEQUAL</name></member>
+      <member refid="interfacesb_i_property_info_107b29f9866c056a61de6f605e56614ba" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>OPERATOR_NOTEQUALS</name></member>
+      <member refid="interfacesb_i_property_info_1f2757f5dbc58e2fa111b918cc83e2c5e" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>operators</name></member>
+      <member refid="interfacesb_i_property_info_1f34bc688867a4ebb7b3b0a8dc4cf655a" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>sanitize</name></member>
+      <member refid="interfacesb_i_property_info_1b3fa49104aef3d82537d89ca6fc4631a" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>SORT_NULL_BIG</name></member>
+      <member refid="interfacesb_i_property_info_1691b6cd3f66d0b53d9a97e271cab4dee" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>SORT_NULL_FIRST</name></member>
+      <member refid="interfacesb_i_property_info_1096eee2d42fdc593b9cfb6dfcce30a2e" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>SORT_NULL_LAST</name></member>
+      <member refid="interfacesb_i_property_info_1a59ffdf127b704755dd744beca75e22c" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>SORT_NULL_SMALL</name></member>
+      <member refid="interfacesb_i_property_info_15928b8ba0b6b86690f8805159f42321b" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>sortProfile</name></member>
+      <member refid="interfacesb_i_datetime_property_info_1a700e6a6b9df6f102c6716f2b7338300" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>timeType</name></member>
+      <member refid="interfacesb_i_datetime_property_info_1be95a145b9f78009b7986037cc8ab6b1" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>TIMETYPE_DATE</name></member>
+      <member refid="interfacesb_i_datetime_property_info_1f8448b6e7e8f735e03c0278c7bd7ef64" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>TIMETYPE_DATETIME</name></member>
+      <member refid="interfacesb_i_datetime_property_info_1532581492499bc56f497c458cfdb3a4f" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>TIMETYPE_DURATION</name></member>
+      <member refid="interfacesb_i_datetime_property_info_1f27102ee8ddab1ebbb67dd517d76746e" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>TIMETYPE_TIME</name></member>
+      <member refid="interfacesb_i_datetime_property_info_18d6827a42cbb766b64d300cef7e455a3" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>TIMETYPE_TIMESTAMP</name></member>
+      <member refid="interfacesb_i_datetime_property_info_13c03cfc66ea09935fc4441d335ebfb74" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>TIMETYPE_UNINITIALIZED</name></member>
+      <member refid="interfacesb_i_property_info_137e83ba1df687703b9006504d58239fe" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>type</name></member>
+      <member refid="interfacesb_i_property_info_124dc15ce31329fb21a05962f84a15c9e" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>units</name></member>
+      <member refid="interfacesb_i_property_info_11814ea167521382aae1196689bc22887" prot="public" virt="non-virtual"><scope>sbIDatetimePropertyInfo</scope><name>validate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

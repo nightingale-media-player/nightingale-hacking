@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_indexed_media_item" kind="interface" prot="public">
+    <compoundname>sbIIndexedMediaItem</compoundname>
+    <includes refid="sb_i_media_item_8idl" local="no">sbIMediaItem.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_indexed_media_item_14ae9e36d39863face1346d4a21f5c35d" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIIndexedMediaItem::index</definition>
+        <argsstring></argsstring>
+        <name>index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="153" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_indexed_media_item_171a61e92b2950718ac1b50876e6447c7" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+        <definition>readonly attribute sbIMediaItem sbIIndexedMediaItem::mediaItem</definition>
+        <argsstring></argsstring>
+        <name>mediaItem</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="154" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A container for a media item and its index. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="125">
+        <label>sbIIndexedMediaItem</label>
+        <link refid="interfacesb_i_indexed_media_item"/>
+        <childnode refid="126" relation="usage">
+          <edgelabel>mediaItem</edgelabel>
+        </childnode>
+      </node>
+      <node id="131">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="129">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="130" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="131" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="128">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="127" relation="public-inheritance">
+        </childnode>
+        <childnode refid="129" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="132" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="127">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="126">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="127" relation="public-inheritance">
+        </childnode>
+        <childnode refid="128" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="130">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+      </node>
+      <node id="132">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="152" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="151" bodyend="155"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_indexed_media_item_14ae9e36d39863face1346d4a21f5c35d" prot="public" virt="non-virtual"><scope>sbIIndexedMediaItem</scope><name>index</name></member>
+      <member refid="interfacesb_i_indexed_media_item_171a61e92b2950718ac1b50876e6447c7" prot="public" virt="non-virtual"><scope>sbIIndexedMediaItem</scope><name>mediaItem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

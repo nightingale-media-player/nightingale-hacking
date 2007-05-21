@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_bundle_install_listener" kind="interface" prot="public">
+    <compoundname>sbIBundleInstallListener</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_bundle_install_listener_1c3014d00ad9544d16b1830039c27fec4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundleInstallListener::onExtensionDownloadProgress</definition>
+        <argsstring>(in sbIBundle aBundle, in long aIndex, in long long aCurrentProgress, in long long aMaxProgress)</argsstring>
+        <name>onExtensionDownloadProgress</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref></type>
+          <declname>aBundle</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aIndex</declname>
+        </param>
+        <param>
+          <type>in long long</type>
+          <declname>aCurrentProgress</declname>
+        </param>
+        <param>
+          <type>in long long</type>
+          <declname>aMaxProgress</declname>
+        </param>
+        <briefdescription>
+<para>Bundled extension download progress callback This method is called while a bundled extension is being downloaded to report progress. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bundle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface to the bundle manager that triggered the event </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The 0-based index of the entry that completed downloading </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>percent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The percentage of the file that has been downloaded </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_install_listener_14437c17b70e1cbfaa7b81671ec3f6070" kindref="member">onInstallComplete</ref>, onComplete, <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="54"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_install_listener_1242ea444478b3eaeb7ef008d27b7a64c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundleInstallListener::onDownloadComplete</definition>
+        <argsstring>(in sbIBundle aBundle, in long aIndex)</argsstring>
+        <name>onDownloadComplete</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref></type>
+          <declname>aBundle</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Bundled extension download completion callback This method is called upon download completion of a bundled extension. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bundle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface to the bundle manager that triggered the event </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The 0-based index of the entry that completed downloading </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_install_listener_14437c17b70e1cbfaa7b81671ec3f6070" kindref="member">onInstallComplete</ref>, <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="63"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_install_listener_14437c17b70e1cbfaa7b81671ec3f6070" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundleInstallListener::onInstallComplete</definition>
+        <argsstring>(in sbIBundle aBundle, in long aIndex)</argsstring>
+        <name>onInstallComplete</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref></type>
+          <declname>aBundle</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Bundle installation complete callback This method is called when a bundled extension has been successfully installed. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bundle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface to the bundle manager that triggered the event </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The 0-based index of the entry that completed downloading </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_install_listener_1242ea444478b3eaeb7ef008d27b7a64c" kindref="member">onDownloadComplete</ref>, onComplete, <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="72"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_install_listener_1b88d730d8b15d37a30e3464b8a201dc5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundleInstallListener::onDownloadError</definition>
+        <argsstring>(in sbIBundle aBundle, in long aIndex)</argsstring>
+        <name>onDownloadError</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref></type>
+          <declname>aBundle</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Bundle download error callback This method is called upon error downloading a bundled extension. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bundle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface to the bundle manager that triggered the event </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The 0-based index of the entry that had an error downloading </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_install_listener_1242ea444478b3eaeb7ef008d27b7a64c" kindref="member">onDownloadComplete</ref>, <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="81"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_install_listener_1dabce2985bfc0b00c63e6d837abd3d10" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundleInstallListener::onInstallError</definition>
+        <argsstring>(in sbIBundle aBundle, in long aIndex)</argsstring>
+        <name>onInstallError</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref></type>
+          <declname>aBundle</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Bundle install error callback This method is called upon error installing a bundled extension. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bundle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface to the bundle manager that triggered the event </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The 0-based index of the entry that had an error installing </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_install_listener_1242ea444478b3eaeb7ef008d27b7a64c" kindref="member">onDownloadComplete</ref>, <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="90"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_install_listener_132744296c9ccd4b30ac3a7889f26a1b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundleInstallListener::onBundleInstallComplete</definition>
+        <argsstring>(in sbIBundle aBundle)</argsstring>
+        <name>onBundleInstallComplete</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref></type>
+          <declname>aBundle</declname>
+        </param>
+        <briefdescription>
+<para>Bundle download and installation complete callback This method is called when the downloading and installing of all the bundled extensions has been completed, regardless of any error that may have occured in the process. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bundle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface to the bundle manager that triggered the event </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_install_listener_1242ea444478b3eaeb7ef008d27b7a64c" kindref="member">onDownloadComplete</ref>, <ref refid="interfacesb_i_bundle_install_listener_1b88d730d8b15d37a30e3464b8a201dc5" kindref="member">onDownloadError</ref>, <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="99"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Songbird Bundle Installation Listener Interface. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" line="45" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundleInstallListener.idl" bodystart="44" bodyend="100"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_bundle_install_listener_132744296c9ccd4b30ac3a7889f26a1b5" prot="public" virt="non-virtual"><scope>sbIBundleInstallListener</scope><name>onBundleInstallComplete</name></member>
+      <member refid="interfacesb_i_bundle_install_listener_1242ea444478b3eaeb7ef008d27b7a64c" prot="public" virt="non-virtual"><scope>sbIBundleInstallListener</scope><name>onDownloadComplete</name></member>
+      <member refid="interfacesb_i_bundle_install_listener_1b88d730d8b15d37a30e3464b8a201dc5" prot="public" virt="non-virtual"><scope>sbIBundleInstallListener</scope><name>onDownloadError</name></member>
+      <member refid="interfacesb_i_bundle_install_listener_1c3014d00ad9544d16b1830039c27fec4" prot="public" virt="non-virtual"><scope>sbIBundleInstallListener</scope><name>onExtensionDownloadProgress</name></member>
+      <member refid="interfacesb_i_bundle_install_listener_14437c17b70e1cbfaa7b81671ec3f6070" prot="public" virt="non-virtual"><scope>sbIBundleInstallListener</scope><name>onInstallComplete</name></member>
+      <member refid="interfacesb_i_bundle_install_listener_1dabce2985bfc0b00c63e6d837abd3d10" prot="public" virt="non-virtual"><scope>sbIBundleInstallListener</scope><name>onInstallError</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

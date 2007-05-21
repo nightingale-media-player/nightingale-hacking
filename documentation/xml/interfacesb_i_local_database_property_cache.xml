@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_local_database_property_cache" kind="interface" prot="public">
+    <compoundname>sbILocalDatabasePropertyCache</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_local_database_property_cache_16b2724ccff9e65b2209a979145a623b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabasePropertyCache::getProperties</definition>
+        <argsstring>([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray, in unsigned long aGUIDArrayCount, out unsigned long aPropertyArrayCount,[retval, array, size_is(aPropertyArrayCount)] out sbILocalDatabaseResourcePropertyBag aPropertyArray)</argsstring>
+        <name>getProperties</name>
+        <param>
+          <attributes>[array, size_is(aGUIDArrayCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aGUIDArray</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aGUIDArrayCount</declname>
+        </param>
+        <param>
+          <type>out unsigned long</type>
+          <declname>aPropertyArrayCount</declname>
+        </param>
+        <param>
+          <attributes>[retval, array, size_is(aPropertyArrayCount)]</attributes>
+          <type>out <ref refid="interfacesb_i_local_database_resource_property_bag" kindref="compound">sbILocalDatabaseResourcePropertyBag</ref></type>
+          <declname>aPropertyArray</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="50"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_property_cache_1a26c3a117c914d8c4e7c3da7f4cf19ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabasePropertyCache::setProperties</definition>
+        <argsstring>([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray, in unsigned long aGUIDArrayCount,[array, size_is(aPropertyArrayCount)] in sbILocalDatabaseResourcePropertyBag aPropertyArray, in unsigned long aPropertyArrayCount, in boolean aWriteThroughNow)</argsstring>
+        <name>setProperties</name>
+        <param>
+          <attributes>[array, size_is(aGUIDArrayCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aGUIDArray</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aGUIDArrayCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aPropertyArrayCount)]</attributes>
+          <type>in <ref refid="interfacesb_i_local_database_resource_property_bag" kindref="compound">sbILocalDatabaseResourcePropertyBag</ref></type>
+          <declname>aPropertyArray</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aPropertyArrayCount</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aWriteThroughNow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="57"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_property_cache_14309d1598dc73fc1e712081fc51414eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabasePropertyCache::cacheProperties</definition>
+        <argsstring>([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray, in unsigned long aGUIDArrayCount)</argsstring>
+        <name>cacheProperties</name>
+        <param>
+          <attributes>[array, size_is(aGUIDArrayCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aGUIDArray</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aGUIDArrayCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="60"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_property_cache_183886b5e17362d0b73056824a7fd7140" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabasePropertyCache::write</definition>
+        <argsstring>()</argsstring>
+        <name>write</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="62"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_property_cache_119916207e8051ab4f55480d982c07817" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbILocalDatabasePropertyCache::getPropertyID</definition>
+        <argsstring>(in AString aProperty)</argsstring>
+        <name>getPropertyID</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="64"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_local_database_property_cache_15a6b9b8aa317b65ff06098b795fbcd81" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbILocalDatabasePropertyCache::writePending</definition>
+        <argsstring></argsstring>
+        <name>writePending</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="44" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="43" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" bodystart="42" bodyend="65"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_local_database_property_cache_14309d1598dc73fc1e712081fc51414eb" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>cacheProperties</name></member>
+      <member refid="interfacesb_i_local_database_property_cache_16b2724ccff9e65b2209a979145a623b2" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>getProperties</name></member>
+      <member refid="interfacesb_i_local_database_property_cache_119916207e8051ab4f55480d982c07817" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>getPropertyID</name></member>
+      <member refid="interfacesb_i_local_database_property_cache_1a26c3a117c914d8c4e7c3da7f4cf19ce" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>setProperties</name></member>
+      <member refid="interfacesb_i_local_database_property_cache_183886b5e17362d0b73056824a7fd7140" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>write</name></member>
+      <member refid="interfacesb_i_local_database_property_cache_15a6b9b8aa317b65ff06098b795fbcd81" prot="public" virt="non-virtual"><scope>sbILocalDatabasePropertyCache</scope><name>writePending</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

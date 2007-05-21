@@ -1,0 +1,306 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_g_streamer_simple" kind="interface" prot="public">
+    <compoundname>sbIGStreamerSimple</compoundname>
+    <includes refid="sb_i_g_streamer_simple_8idl" local="no">sbIGStreamerSimple.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_g_streamer_simple_159ce5d35e201a238ff4ddb009e59ed17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerSimple::init</definition>
+        <argsstring>(in nsIDOMXULElement aVideoOutput)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in nsIDOMXULElement</type>
+          <declname>aVideoOutput</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="58"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_g_streamer_simple_1e3cb4c980575b3647b1fcf2413502b88" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerSimple::play</definition>
+        <argsstring>()</argsstring>
+        <name>play</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="59"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_g_streamer_simple_1155cbf91dcc53844b305f83b1c00bab4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerSimple::pause</definition>
+        <argsstring>()</argsstring>
+        <name>pause</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="60"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_g_streamer_simple_181338c11b8b7b72e4676d967aa5b8a44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerSimple::stop</definition>
+        <argsstring>()</argsstring>
+        <name>stop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="61"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_g_streamer_simple_1ad7586306e1330ffc06246ecf499d3f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerSimple::seek</definition>
+        <argsstring>(in unsigned long long aTimeNanos)</argsstring>
+        <name>seek</name>
+        <param>
+          <type>in unsigned long long</type>
+          <declname>aTimeNanos</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="62"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_g_streamer_simple_1a999bb4deaeb7b0fd5dd344e87dae045" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerSimple::restartPlaybin</definition>
+        <argsstring>()</argsstring>
+        <name>restartPlaybin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="63"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_11fe52d51245c60324c0a4fb408282bbb" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIGStreamerSimple::uri</definition>
+        <argsstring></argsstring>
+        <name>uri</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="42" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1aac9d2048adde299b654a1c82736aa63" prot="public" static="no" mutable="no">
+        <type>attribute double</type>
+        <definition>attribute double sbIGStreamerSimple::volume</definition>
+        <argsstring></argsstring>
+        <name>volume</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="43" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_15992411ea484bafa74146d6b411374ee" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIGStreamerSimple::fullscreen</definition>
+        <argsstring></argsstring>
+        <name>fullscreen</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="44" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1c7f90ad86e23877864d272a97a40b4ba" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long long</type>
+        <definition>readonly attribute unsigned long long sbIGStreamerSimple::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="45" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1006b8d88e00ad40b77f81d1fc629caa4" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIGStreamerSimple::isPlaying</definition>
+        <argsstring></argsstring>
+        <name>isPlaying</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="46" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1e25e3e06cb73cd9c9b6dce667ea7e654" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIGStreamerSimple::isPlayingVideo</definition>
+        <argsstring></argsstring>
+        <name>isPlayingVideo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="47" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_13479d1e3aa53288cbef551e1836f3a51" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIGStreamerSimple::isPaused</definition>
+        <argsstring></argsstring>
+        <name>isPaused</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="48" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1aff9e06580f103d9e18e6b392da4ed68" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long long</type>
+        <definition>readonly attribute unsigned long long sbIGStreamerSimple::streamLength</definition>
+        <argsstring></argsstring>
+        <name>streamLength</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="49" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1d152dc3b27854521bf9aa1b19a33f9f0" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIGStreamerSimple::isAtEndOfStream</definition>
+        <argsstring></argsstring>
+        <name>isAtEndOfStream</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="50" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1189b1ff340233f0bf4d16497c43e4638" prot="public" static="no" mutable="no">
+        <type>readonly attribute long</type>
+        <definition>readonly attribute long sbIGStreamerSimple::lastErrorCode</definition>
+        <argsstring></argsstring>
+        <name>lastErrorCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="51" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1cc17a436412b33fd60094301af9c03c6" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIGStreamerSimple::artist</definition>
+        <argsstring></argsstring>
+        <name>artist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="53" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1fd20eebec78801f82bbff12f91041b1b" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIGStreamerSimple::album</definition>
+        <argsstring></argsstring>
+        <name>album</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="54" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_1aef992a4e89620a459b23c399f9a91f1" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIGStreamerSimple::title</definition>
+        <argsstring></argsstring>
+        <name>title</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="55" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_g_streamer_simple_10dcbf76e2789d70573601812880d85d4" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIGStreamerSimple::genre</definition>
+        <argsstring></argsstring>
+        <name>genre</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="56" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>USER CODE SHOULD NOT REFERENCE THIS CLASS. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="41" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="40" bodyend="64"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_g_streamer_simple_1fd20eebec78801f82bbff12f91041b1b" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>album</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1cc17a436412b33fd60094301af9c03c6" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>artist</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_15992411ea484bafa74146d6b411374ee" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>fullscreen</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_10dcbf76e2789d70573601812880d85d4" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>genre</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_159ce5d35e201a238ff4ddb009e59ed17" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>init</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1d152dc3b27854521bf9aa1b19a33f9f0" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>isAtEndOfStream</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_13479d1e3aa53288cbef551e1836f3a51" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>isPaused</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1006b8d88e00ad40b77f81d1fc629caa4" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>isPlaying</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1e25e3e06cb73cd9c9b6dce667ea7e654" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>isPlayingVideo</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1189b1ff340233f0bf4d16497c43e4638" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>lastErrorCode</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1155cbf91dcc53844b305f83b1c00bab4" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>pause</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1e3cb4c980575b3647b1fcf2413502b88" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>play</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1c7f90ad86e23877864d272a97a40b4ba" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>position</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1a999bb4deaeb7b0fd5dd344e87dae045" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>restartPlaybin</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1ad7586306e1330ffc06246ecf499d3f5" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>seek</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_181338c11b8b7b72e4676d967aa5b8a44" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>stop</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1aff9e06580f103d9e18e6b392da4ed68" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>streamLength</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1aef992a4e89620a459b23c399f9a91f1" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>title</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_11fe52d51245c60324c0a4fb408282bbb" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>uri</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_1aac9d2048adde299b654a1c82736aa63" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>volume</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

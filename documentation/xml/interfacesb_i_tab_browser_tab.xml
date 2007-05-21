@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_tab_browser_tab" kind="interface" prot="public">
+    <compoundname>sbITabBrowserTab</compoundname>
+    <includes refid="sb_i_tab_browser_8idl" local="no">sbITabBrowser.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_tab_browser_tab_1bc82234cf82d052b1cc2cc7f203746aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIDOMElement</type>
+        <definition>nsIDOMElement sbITabBrowserTab::getPlaylist</definition>
+        <argsstring>()</argsstring>
+        <name>getPlaylist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/widgets/public/sbITabBrowser.idl" line="60"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_tab_browser_tab_15fa459b0d1cd94101b8cf42d7880158f" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIDOMElement</type>
+        <definition>readonly attribute nsIDOMElement sbITabBrowserTab::innerPlaylist</definition>
+        <argsstring></argsstring>
+        <name>innerPlaylist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/widgets/public/sbITabBrowser.idl" line="58" bodyfile="C:/projects/songbird/components/widgets/public/sbITabBrowser.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_tab_browser_tab_15071abe645f9ef3ca43f649c617a4781" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIDOMElement</type>
+        <definition>readonly attribute nsIDOMElement sbITabBrowserTab::outerPlaylist</definition>
+        <argsstring></argsstring>
+        <name>outerPlaylist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/widgets/public/sbITabBrowser.idl" line="59" bodyfile="C:/projects/songbird/components/widgets/public/sbITabBrowser.idl" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_tab_browser" kindref="compound">sbITabBrowser</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/widgets/public/sbITabBrowser.idl" line="57" bodyfile="C:/projects/songbird/components/widgets/public/sbITabBrowser.idl" bodystart="56" bodyend="61"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_tab_browser_tab_1bc82234cf82d052b1cc2cc7f203746aa" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>getPlaylist</name></member>
+      <member refid="interfacesb_i_tab_browser_tab_15fa459b0d1cd94101b8cf42d7880158f" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>innerPlaylist</name></member>
+      <member refid="interfacesb_i_tab_browser_tab_15071abe645f9ef3ca43f649c617a4781" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>outerPlaylist</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

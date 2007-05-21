@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_library_transfer_context" kind="interface" prot="public">
+    <compoundname>sbILibraryTransferContext</compoundname>
+    <derivedcompoundref refid="interfacesb_i_multiple_item_transfer_context" prot="public" virt="non-virtual">sbIMultipleItemTransferContext</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_single_item_transfer_context" prot="public" virt="non-virtual">sbISingleItemTransferContext</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_single_list_transfer_context" prot="public" virt="non-virtual">sbISingleListTransferContext</derivedcompoundref>
+    <includes refid="sb_i_library_transfer_context_8idl" local="no">sbILibraryTransferContext.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_library_transfer_context_1b1d4eaa3e8801a81998da228b7355acf" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+        <definition>readonly attribute sbIMediaList sbILibraryTransferContext::source</definition>
+        <argsstring></argsstring>
+        <name>source</name>
+        <briefdescription>
+<para>The list the item or items were dragged from. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl" line="51" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_transfer_context_13ba7b2274e30a6feeec766f190649be8" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbILibraryTransferContext::count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+<para>The number of items in the transfer context. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl" line="56" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A base interface for the various library transfer contexts. </para>    </briefdescription>
+    <detaileddescription>
+<para>Note that this interface is not meant to be implemented, it just serves as a base interface for the following derived interfaces </para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="168">
+        <label>sbILibraryTransferContext</label>
+        <link refid="interfacesb_i_library_transfer_context"/>
+      </node>
+      <node id="169">
+        <label>sbIMultipleItemTransferContext</label>
+        <link refid="interfacesb_i_multiple_item_transfer_context"/>
+        <childnode refid="168" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="171">
+        <label>sbISingleListTransferContext</label>
+        <link refid="interfacesb_i_single_list_transfer_context"/>
+        <childnode refid="168" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="170">
+        <label>sbISingleItemTransferContext</label>
+        <link refid="interfacesb_i_single_item_transfer_context"/>
+        <childnode refid="168" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="173">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="174" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="172">
+        <label>sbILibraryTransferContext</label>
+        <link refid="interfacesb_i_library_transfer_context"/>
+        <childnode refid="173" relation="usage">
+          <edgelabel>source</edgelabel>
+        </childnode>
+      </node>
+      <node id="179">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="177">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="178" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="179" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="176">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="175" relation="public-inheritance">
+        </childnode>
+        <childnode refid="177" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="180" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="175">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="174">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="175" relation="public-inheritance">
+        </childnode>
+        <childnode refid="176" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="178">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+      </node>
+      <node id="180">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl" line="47" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl" bodystart="46" bodyend="57"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_transfer_context_13ba7b2274e30a6feeec766f190649be8" prot="public" virt="non-virtual"><scope>sbILibraryTransferContext</scope><name>count</name></member>
+      <member refid="interfacesb_i_library_transfer_context_1b1d4eaa3e8801a81998da228b7355acf" prot="public" virt="non-virtual"><scope>sbILibraryTransferContext</scope><name>source</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

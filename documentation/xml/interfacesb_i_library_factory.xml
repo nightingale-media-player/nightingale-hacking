@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_library_factory" kind="interface" prot="public">
+    <compoundname>sbILibraryFactory</compoundname>
+    <includes refid="sb_i_library_factory_8idl" local="no">sbILibraryFactory.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_library_factory_1f013d89e9b09b5c6a1f708a58ec9b267" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref></type>
+        <definition>sbILibrary sbILibraryFactory::createLibrary</definition>
+        <argsstring>(in nsIPropertyBag2 aCreationParameters)</argsstring>
+        <name>createLibrary</name>
+        <param>
+          <type>in nsIPropertyBag2</type>
+          <declname>aCreationParameters</declname>
+        </param>
+        <briefdescription>
+<para>Create a new instance of a library. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCreationParameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- A collection of properties that will be used to create the library.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new library instance. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" line="69"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_library_factory_143059ced1a47dc3348362f961879bb71" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILibraryFactory::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+<para>A human-readable string identifying the type of library that will be created by this factory. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" line="53" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_factory_16eebe959439c763d2dce29ca4b77e898" prot="public" static="no" mutable="no">
+        <type>readonly attribute ACString</type>
+        <definition>readonly attribute ACString sbILibraryFactory::contractID</definition>
+        <argsstring></argsstring>
+        <name>contractID</name>
+        <briefdescription>
+<para>The contract ID through which an instance of this factory can be created. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" line="59" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Factory for new library instances. </para>    </briefdescription>
+    <detaileddescription>
+<para>This interface is used to create new instances of a library.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" line="48" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryFactory.idl" bodystart="47" bodyend="70"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_factory_16eebe959439c763d2dce29ca4b77e898" prot="public" virt="non-virtual"><scope>sbILibraryFactory</scope><name>contractID</name></member>
+      <member refid="interfacesb_i_library_factory_1f013d89e9b09b5c6a1f708a58ec9b267" prot="public" virt="non-virtual"><scope>sbILibraryFactory</scope><name>createLibrary</name></member>
+      <member refid="interfacesb_i_library_factory_143059ced1a47dc3348362f961879bb71" prot="public" virt="non-virtual"><scope>sbILibraryFactory</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
