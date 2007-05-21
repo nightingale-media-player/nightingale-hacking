@@ -478,7 +478,15 @@ function loadMockDatabase() {
     }
 
     for(var j = 0; j < sp.length; j++) {
-      item[sp[j]] = b[j + 2];
+      if (sp[j] == "http://songbirdnest.com/data/1.0#isList") {
+        if (!b[j + 2] || b[j + 2] == "0")
+          item[sp[j]] = "";
+        else
+          item[sp[j]] = "1";
+      }
+      else {
+        item[sp[j]] = b[j + 2];
+      }
     }
   }
 
