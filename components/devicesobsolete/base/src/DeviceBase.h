@@ -63,8 +63,18 @@
   {0x82, 0xfd, 0x60, 0x9f, 0xf5, 0xf7, 0x85, 0x8}         \
 }
 
-// CLASSES ====================================================================
+// FUNCTIONS ==================================================================
+void 
+ReplaceChars(nsAString& aOldString,
+             const nsAString& aOldChars,
+             const PRUnichar aNewChar);
 
+void 
+ReplaceChars(nsACString& aOldString,
+             const nsACString& aOldChars,
+             const char aNewChar);
+
+// CLASSES ====================================================================
 class sbDeviceBaseLibraryListener : public sbIMediaListListener
 {
 public:
@@ -262,6 +272,9 @@ public:
    * \param aDeviceIdentifier The device unique identifier.
    */
   nsresult ClearTransferQueue(const nsAString &aDeviceIdentifier);
+
+  nsresult IsTransferQueueEmpty(const nsAString &aDeviceIdentifier, 
+                                PRBool &aEmpty);
 
   /**
    *

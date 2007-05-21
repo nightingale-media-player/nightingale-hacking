@@ -85,9 +85,10 @@
 #endif
 
 //Utility functions.
-static void ReplaceChars(nsAString& aOldString,
-                         const nsAString& aOldChars,
-                         const PRUnichar aNewChar)
+void 
+ReplaceChars(nsAString& aOldString,
+             const nsAString& aOldChars,
+             const PRUnichar aNewChar)
 {
   PRUint32 length = aOldString.Length();
   for (PRUint32 index = 0; index < length; index++) {
@@ -98,9 +99,10 @@ static void ReplaceChars(nsAString& aOldString,
   }
 }
 
-static void ReplaceChars(nsACString& aOldString,
-                         const nsACString& aOldChars,
-                         const char aNewChar)
+void 
+ReplaceChars(nsACString& aOldString,
+             const nsACString& aOldChars,
+             const char aNewChar)
 {
   PRUint32 length = aOldString.Length();
   for (PRUint32 index = 0; index < length; index++) {
@@ -488,19 +490,25 @@ sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
     nsCOMPtr<nsIFileURL> furl = do_QueryInterface(aDeviceDatabaseURI, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIFile> f;
     rv = furl->GetFile(getter_AddRefs(libraryFile));
     NS_ENSURE_SUCCESS(rv, rv);
   } 
   else {
     //No preferred database location, fetch default location.
-    nsCOMPtr<nsIFile> f;
     rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR, 
       getter_AddRefs(libraryFile));
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = libraryFile->Append(NS_LITERAL_STRING("db"));
     NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool exists = PR_FALSE;
+    rv = libraryFile->Exists(&exists);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if(!exists) {
+      rv = libraryFile->Create(nsIFile::DIRECTORY_TYPE, 0700);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     nsAutoString filename(aDeviceIdentifier);
     filename.AppendLiteral(".db");
@@ -715,6 +723,27 @@ sbDeviceBase::ClearTransferQueue(const nsAString &aDeviceIdentifier)
   }
 
   return NS_ERROR_INVALID_ARG;
+}
+
+nsresult 
+sbDeviceBase::IsTransferQueueEmpty(const nsAString &aDeviceIdentifier, 
+                                   PRBool &aEmpty)
+{
+  aEmpty = PR_FALSE;
+
+  nsCOMPtr<nsIMutableArray> queue;
+  nsresult rv = GetTransferQueue(aDeviceIdentifier, getter_AddRefs(queue));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length = 0;
+  rv = queue->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!length) {
+    aEmpty = PR_TRUE;
+  }
+
+  return NS_OK;
 }
 
 //NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceThread, nsIRunnable)
