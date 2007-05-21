@@ -35,9 +35,9 @@ var gBusy = false;
 var consoleListener = {
   observe: function(msg) 
   {
-    dump(msg.message+"\n");
     if (msg.message.substr(0, MSG_ERROR_UNDEFINEDENTITY.length) == MSG_ERROR_UNDEFINEDENTITY ||
         msg.message.substr(0, MSG_ERROR_ENTITYPROCESSING.length) == MSG_ERROR_ENTITYPROCESSING) {
+      dump("parseError:" + msg.message + "\n");
 
       var prefs = Components.classes["@mozilla.org/preferences-service;1"].
                               getService(Components.interfaces.nsIPrefBranch);
