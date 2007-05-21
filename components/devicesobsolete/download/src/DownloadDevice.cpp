@@ -57,6 +57,7 @@
 #include <pratom.h>
 
 /* Songbird imports. */
+#include <sbIMetadataJob.h>
 #include <sbIPropertyManager.h>
 #include <sbStandardProperties.h>
 
