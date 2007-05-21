@@ -58,6 +58,7 @@
 
 /* Songbird imports. */
 #include <sbIPropertyManager.h>
+#include <sbStandardProperties.h>
 
 
 /* *****************************************************************************
@@ -173,6 +174,15 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     {
         mpIOService = do_GetService("@mozilla.org/network/io-service;1",
                                     &result);
+    }
+
+    /* Get the metadata job manager. */
+    if (NS_SUCCEEDED(result))
+    {
+        mpMetadataJobManager =
+                        do_GetService
+                            ("@songbirdnest.com/Songbird/MetadataJobManager;1",
+                             &result);
     }
 
     /* Create the download device library. */
@@ -297,6 +307,10 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         }
     }
 
+    /* Resume incomplete transfers. */
+    if (NS_SUCCEEDED(result))
+        ResumeTransfers();
+
     return (result);
 }
 
@@ -313,8 +327,10 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
     LOG(("1: Finalize\n"));
 
     /* Dispose of any outstanding download sessions. */
+    /* <eps> need to check how best to do this. */
     if (mpDownloadSession)
     {
+        mpDownloadSession->Shutdown();
         delete(mpDownloadSession);
         mpDownloadSession = NULL;
     }
@@ -325,7 +341,7 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
     /* Unregister the download device library. */
     UnregisterDeviceLibrary(mpDownloadLibrary);
 
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    return (NS_OK);
 }
 
 
@@ -458,6 +474,9 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
     PRUint32                    i;
     nsresult                    result = NS_OK;
 
+    /* Clear completed items. */
+    ClearCompletedItems();
+
     /* Add all the media items to the transfer queue. */
     result = aMediaItems->GetLength(&itemCount);
     for (i = 0; ((i < itemCount) && NS_SUCCEEDED(result)); i++)
@@ -468,6 +487,19 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
         /* Set its transfer destination. */
         if (NS_SUCCEEDED(result))
             result = SetTransferDestination(pMediaItem);
+
+        /* Initialize download progress. */
+        if (NS_SUCCEEDED(result))
+        {
+            result = pMediaItem->SetProperty
+                                (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
+                                 NS_LITERAL_STRING("-1"));
+        }
+
+        /* Write the media item. */
+        /* XXXeps won't need this after bug 3037 is fixed. */
+        if (NS_SUCCEEDED(result))
+            result = pMediaItem->Write();
 
         /* Add it to the transfer queue. */
         if (NS_SUCCEEDED(result))
@@ -891,6 +923,122 @@ nsresult sbDownloadDevice::RunTransferQueue()
 
 
 /*
+ * ResumeTransfers
+ *
+ *   This function resumes all uncompleted transfers in the download device
+ * library.
+ */
+
+nsresult sbDownloadDevice::ResumeTransfers()
+{
+    nsCOMPtr<sbIMediaList>      pMediaList;
+    nsCOMPtr<sbIMediaItem>      pMediaItem;
+    nsString                    progressStr;
+    PRInt32                     progress;
+    PRUint32                    itemCount;
+    PRUint32                    queuedCount = 0;
+    PRUint32                    i;
+    nsresult                    itemResult;
+    nsresult                    result = NS_OK;
+
+    /* Get the download library media list. */
+    pMediaList = do_QueryInterface(mpDownloadLibrary, &result);
+    if (NS_SUCCEEDED(result))
+        result = pMediaList->GetLength(&itemCount);
+
+    /* Resume each incomplete item in list. */
+    for (i = 0; (NS_SUCCEEDED(result) && (i < itemCount)); i++)
+    {
+        /* Get the next item. */
+        itemResult = pMediaList->GetItemByIndex(i,
+                                                getter_AddRefs(pMediaItem));
+
+        /* Get the download progress. */
+        if (NS_SUCCEEDED(itemResult))
+        {
+            itemResult = pMediaItem->GetProperty
+                            (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
+                             progressStr);
+        }
+        if (NS_SUCCEEDED(itemResult))
+            progress = progressStr.ToInteger(&itemResult);
+
+        /* Add item to transfer queue if not complete. */
+        if (NS_SUCCEEDED(itemResult) && (progress < 101))
+        {
+            itemResult = AddItemToTransferQueue
+                            (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
+                             pMediaItem);
+            if (NS_SUCCEEDED(itemResult))
+                queuedCount++;
+        }
+    }
+
+    /* Run the transfer queue if any items were queued. */
+    if (queuedCount > 0)
+        RunTransferQueue();
+
+    return (result);
+}
+
+
+/*
+ * ClearCompletedItems
+ *
+ *   This function clears completed media items from the download device
+ * library.
+ */
+
+nsresult sbDownloadDevice::ClearCompletedItems()
+{
+    nsCOMPtr<sbIMediaList>      pMediaList;
+    nsCOMPtr<sbIMediaItem>      pMediaItem;
+    nsString                    progressStr;
+    PRInt32                     progress;
+    PRUint32                    itemCount;
+    PRInt32                     i;
+    nsresult                    itemResult;
+    nsresult                    result = NS_OK;
+
+    /* Get the download library media list. */
+    pMediaList = do_QueryInterface(mpDownloadLibrary, &result);
+    if (NS_SUCCEEDED(result))
+        result = pMediaList->GetLength(&itemCount);
+
+    /* Remove each complete item in list. */
+    if (NS_SUCCEEDED(result))
+    {
+        for (i = itemCount - 1; i >= 0; i--)
+        {
+            /* Get the next item. */
+            itemResult = pMediaList->GetItemByIndex(i,
+                                                    getter_AddRefs(pMediaItem));
+
+            /* Get the download progress. */
+            if (NS_SUCCEEDED(itemResult))
+            {
+                itemResult = pMediaItem->GetProperty
+                                (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
+                                 progressStr);
+            }
+            if (NS_SUCCEEDED(itemResult))
+                progress = progressStr.ToInteger(&itemResult);
+
+            /* Remove item from download device library if complete. */
+            if (NS_SUCCEEDED(itemResult) && (progress == 101))
+                itemResult = pMediaList->Remove(pMediaItem);
+
+            /* Warn if item could not be removed. */
+            if (NS_FAILED(itemResult))
+                NS_WARNING("Failed to remove completed download item.\n");
+        }
+    }
+
+    return (result);
+}
+
+
+/*
  * SetTransferDestination
  *
  *   --> pMediaItem             Media item for which to set transfer
@@ -1093,7 +1241,8 @@ sbDownloadSession::sbDownloadSession(
     sbIMediaItem                *pMediaItem)
 :
     mpDownloadDevice(pDownloadDevice),
-    mpMediaItem(pMediaItem)
+    mpMediaItem(pMediaItem),
+    mShutdown(PR_FALSE)
 {
 }
 
@@ -1199,6 +1348,18 @@ nsresult sbDownloadSession::Initiate()
 }
 
 
+/*
+ * Shutdown
+ *
+ *   This function shuts down the download session.
+ */
+
+void sbDownloadSession::Shutdown()
+{
+    mShutdown = PR_TRUE;
+}
+
+
 /* *****************************************************************************
  *
  * Download session nsISupports implementation.
@@ -1250,13 +1411,25 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
     nsresult                    status = aStatus;
     nsresult                    result = NS_OK;
 
-    /* Do nothing unless the download stopped. */
-    if (!(aStateFlags & STATE_STOP))
+    /* Do nothing if download has not stopped or if shutting down. */
+    if (!(aStateFlags & STATE_STOP) || mShutdown)
+        return (NS_OK);
+
+    /* Do nothing on abort. */
+    /* <eps> This is a workaround for the fact that shutdown */
+    /* isn't called until after channel is aborted.          */
+    if (status == NS_ERROR_ABORT)
         return (NS_OK);
 
     /* Complete the transfer on success. */
     if (NS_SUCCEEDED(status))
         result = CompleteTransfer();
+
+    /* Set the progress to complete. */
+    /* XXXeps won't need Write after bug 3037 is fixed. */
+    mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
+                             NS_LITERAL_STRING("101"));
+    mpMediaItem->Write();
 
     /* Send notification of session completion. */
     mpDownloadDevice->SessionCompleted(this);
@@ -1543,6 +1716,8 @@ nsresult sbDownloadSession::CompleteTransfer()
     nsCOMPtr<nsIFile>           pFileDir;
     nsString                    fileName;
     nsCOMPtr<sbIMediaItem>      pDstMediaItem;
+    nsCOMPtr<sbIMetadataJob>    pMetadataJob;
+    nsCOMPtr<nsIMutableArray>   pMediaItemArray;
     nsresult                    result = NS_OK;
 
     /* Move the temporary download file to the final location. */
@@ -1562,6 +1737,24 @@ nsresult sbDownloadSession::CompleteTransfer()
     /* Write destination library. */
     if (NS_SUCCEEDED(result))
         result = mpDstLibrary->Write();
+
+    /* Start metadata scanning job. */
+    if (NS_SUCCEEDED(result))
+    {
+        /* Put the completed media item into an array. */
+        pMediaItemArray = do_CreateInstance("@mozilla.org/array;1", &result);
+        if (NS_SUCCEEDED(result))
+            result = pMediaItemArray->AppendElement(pDstMediaItem, PR_FALSE);
+
+        /* Start the job. */
+        if (NS_SUCCEEDED(result))
+        {
+            result = mpDownloadDevice->mpMetadataJobManager->
+                                        NewJob(pMediaItemArray,
+                                               5,
+                                               getter_AddRefs(pMetadataJob));
+        }
+    }
 
     return (result);
 }

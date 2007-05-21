@@ -556,7 +556,7 @@ ifdef SUBDIRS
 
 make_subdirs: $(SUBDIRS)
 
-# Hacky McHack says "ours goes to 11" - and find a better way
+# Hacky McHack says "ours goes to 13" - and find a better way
 ifdef SUBDIRDEPS
 $(SUBDIRDEPS)
 $(SUBDIRDEPS2)
@@ -570,6 +570,7 @@ $(SUBDIRDEPS9)
 $(SUBDIRDEPS10)
 $(SUBDIRDEPS11)
 $(SUBDIRDEPS12)
+$(SUBDIRDEPS13)
 endif
 
 $(SUBDIRS):

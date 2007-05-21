@@ -79,6 +79,7 @@
 /* Songbird imports. */
 #include <sbIDataRemote.h>
 #include <sbILibrary.h>
+#include <sbIMetadataJobManager.h>
 
 
 /* *****************************************************************************
@@ -141,6 +142,7 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
     /*
      * mpDownloadLibrary        Download device library.
      * mpIOService              I/O service.
+     * mpMetadataJobManager     Metadata job manager.
      * mpDownloadDirDR          Default download directory data remote.
      * mpTmpDownloadDir         Temporary download directory.
      * mpDownloadSession        Current download session.
@@ -149,6 +151,8 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
 
     nsCOMPtr<sbILibrary>        mpDownloadLibrary;
     nsCOMPtr<nsIIOService>      mpIOService;
+    nsCOMPtr<sbIMetadataJobManager>
+                                mpMetadataJobManager;
     nsCOMPtr<sbIDataRemote>     mpDownloadDirDR;
     nsCOMPtr<nsIFile>           mpTmpDownloadDir;
     sbDownloadSession           *mpDownloadSession;
@@ -160,6 +164,10 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
      */
 
     nsresult RunTransferQueue();
+
+    nsresult ResumeTransfers();
+
+    nsresult ClearCompletedItems();
 
     nsresult SetTransferDestination(
         nsCOMPtr<sbIMediaItem>      pMediaItem);
@@ -246,6 +254,8 @@ class sbDownloadSession : public nsIWebProgressListener,
 
     nsresult Initiate();
 
+    void Shutdown();
+
 
     /* *************************************************************************
      *
@@ -265,6 +275,7 @@ class sbDownloadSession : public nsIWebProgressListener,
      * mpDstLibrary             Destination library.
      * mpDstFile                Destination download file.
      * mpDstURI                 Destination download URI.
+     * mShutdown                True if session has been shut down.
      */
 
     sbDownloadDevice            *mpDownloadDevice;
@@ -278,6 +289,7 @@ class sbDownloadSession : public nsIWebProgressListener,
     nsCOMPtr<sbILibrary>        mpDstLibrary;
     nsCOMPtr<nsIFile>           mpDstFile;
     nsCOMPtr<nsIURI>            mpDstURI;
+    PRBool                      mShutdown;
 
 
     /*

@@ -69,12 +69,13 @@ SUBDIRDEPS2 = playlistreader : medialibrary
 SUBDIRDEPS3 = playlistsource : medialibrary
 SUBDIRDEPS4 = servicesource : medialibrary
 SUBDIRDEPS5 = devicesobsolete : library
-SUBDIRDEPS6 = integration : devicesobsolete
-SUBDIRDEPS7 = library : sqlbuilder
-SUBDIRDEPS8 = library : moz
-SUBDIRDEPS9 = library : property
-SUBDIRDEPS10 = remoteapi : medialibrary
-SUBDIRDEPS11 = remoteapi : moz
-SUBDIRDEPS12 = remoteapi : widgets
+SUBDIRDEPS6 = devicesobsolete : mediacore
+SUBDIRDEPS7 = integration : devicesobsolete
+SUBDIRDEPS8 = library : sqlbuilder
+SUBDIRDEPS9 = library : moz
+SUBDIRDEPS10 = library : property
+SUBDIRDEPS11 = remoteapi : medialibrary
+SUBDIRDEPS12 = remoteapi : moz
+SUBDIRDEPS13 = remoteapi : widgets
 
 include $(topsrcdir)/build/rules.mk
