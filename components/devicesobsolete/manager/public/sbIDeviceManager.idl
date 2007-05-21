@@ -72,3 +72,11 @@ interface sbIDeviceManager : nsIObserver
    */
 	sbIDeviceBase getDeviceByCategory(in AString aCategory);
 };
+
+%{C++
+
+// The Device Manager will use this topic to notify interested components that
+// supported devices have all been loaded.
+#define SB_DEVICE_MANAGER_READY_TOPIC "songbird-device-manager-ready"
+
+%}

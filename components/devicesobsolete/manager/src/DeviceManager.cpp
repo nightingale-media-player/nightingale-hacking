@@ -392,9 +392,19 @@ sbDeviceManager::Observe(nsISupports* aSubject,
   LOG(("DeviceManager[0x%x] - Observe: %s", this, aTopic));
 
   nsresult rv;
+  nsCOMPtr<nsIObserverService> observerService = 
+    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID) == 0) {
     // The profile has been loaded so now we can go hunting for devices
     rv = LoadSupportedDevices();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Notify any observers that we're ready to go.
+    rv = observerService->NotifyObservers(NS_ISUPPORTS_CAST(sbIDeviceManager*, this),
+                                          SB_DEVICE_MANAGER_READY_TOPIC,
+                                          nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else if (strcmp(aTopic, NS_PROFILE_SHUTDOWN_OBSERVER_ID) == 0) {
@@ -404,10 +414,6 @@ sbDeviceManager::Observe(nsISupports* aSubject,
   }
   else if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID) == 0) {
     // Remove ourselves from the observer service
-    nsCOMPtr<nsIObserverService> observerService = 
-      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     rv = observerService->RemoveObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                      "Failed to remove profile startup observer");
