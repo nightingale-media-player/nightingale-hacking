@@ -40,6 +40,7 @@
 #include <nsIClassInfo.h>
 #include <sbIMediaListListener.h>
 
+class sbIDatabaseQuery;
 class sbILocalDatabaseLibrary;
 class sbILocalDatabasePropertyCache;
 class sbIMediaItem;
@@ -130,7 +131,7 @@ class sbLocalDatabaseSmartMediaList : public sbILocalDatabaseSmartMediaList,
                                       public nsIClassInfo
 {
 typedef nsRefPtr<sbLocalDatabaseSmartMediaListCondition> sbRefPtrCondition;
-
+typedef nsTArray<PRUint32> sbMediaItemIdArray;
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASESMARTMEDIALIST
@@ -152,6 +153,21 @@ public:
 
 private:
 
+  nsresult RebuildMatchTypeNoneNotRandom();
+
+  nsresult RebuildMatchTypeNoneRandom();
+
+  nsresult RebuildMatchTypeAnyAll();
+
+  nsresult AddMediaItemsTempTable(const nsAutoString& tempTableName,
+                                  sbMediaItemIdArray& aArray,
+                                  PRUint32 aStart,
+                                  PRUint32 aLength);
+
+  nsresult GetRollingLimit(const nsAString& aSql,
+                           PRUint32 aRollingLimitColumnIndex,
+                           PRUint32* aRow);
+
   nsresult CreateSQLForCondition(sbRefPtrCondition& aCondition,
                                  nsAString& _retval);
 
@@ -159,9 +175,36 @@ private:
                                     sbRefPtrCondition& aCondition,
                                     sbIPropertyInfo* aInfo);
 
+  nsresult AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuilder,
+                                  const nsAString& aBaseTableAlias,
+                                  PRBool aAddOrderBy);
+
+  nsresult AddLimitColumnAndJoin(sbISQLSelectBuilder* aBuilder,
+                                 const nsAString& aBaseTableAlias);
+
   nsresult CreateQueries();
 
+  nsresult GetCopyToListQuery(const nsAString& aTempTableName,
+                              nsAString& aSql);
+
+
+  nsresult CreateTempTable(nsAString& aName);
+
+  nsresult DropTempTable(const nsAString& aName);
+
+  nsresult ExecuteQuery(const nsAString& aSql);
+ 
+  nsresult MakeTempTableName(nsAString& aName);
+
+  nsresult GetMediaItemIdRange(PRUint32* aMin, PRUint32* aMax);
+
+  nsresult GetRowCount(const nsAString& aTableName,
+                       PRUint32* _retval);
+
+  void ShuffleArray(sbMediaItemIdArray& aArray);
+
   nsresult ReadConfiguration();
+
   nsresult WriteConfiguration();
 
   PRLock* mInnerLock;
@@ -172,16 +215,19 @@ private:
   PRLock* mConditionsLock;
   nsTArray<sbRefPtrCondition> mConditions;
 
-  PRUint32  mMatch;
-  PRBool    mRandomSelection;
-  PRUint32  mItemLimit;
+  PRUint32 mMatchType;
+  PRUint32 mLimitType;
+  PRUint64 mLimit;
+  nsString mSelectPropertyName;
+  PRBool   mSelectDirection;
+  PRBool   mRandomSelection;
+  PRBool   mLiveUpdate;
 
   nsCOMPtr<sbIPropertyManager> mPropMan;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
   nsCOMPtr<sbILocalDatabaseLibrary> mLocalDatabaseLibrary;
 
   nsString mClearListQuery;
-  nsString mCopyToListQuery;
 };
 
 #endif /* __SBLOCALDATABASESMARTMEDIALIST_H__ */

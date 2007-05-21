@@ -341,6 +341,18 @@ sbSQLBuilderCriterionIn::AddString(const nsAString& aValue)
 }
 
 NS_IMETHODIMP
+sbSQLBuilderCriterionIn::AddLong(PRInt32 aValue)
+{
+  sbInItem* ii = mInItems.AppendElement();
+  NS_ENSURE_TRUE(ii, NS_ERROR_OUT_OF_MEMORY);
+
+  ii->type       = eInteger32;
+  ii->int32Value = aValue;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbSQLBuilderCriterionIn::AddSubquery(sbISQLSelectBuilder* aSubquery)
 {
   sbInItem* ii = mInItems.AppendElement();
@@ -386,7 +398,7 @@ sbSQLBuilderCriterionIn::ToString(nsAString& _retval)
         break;
       }
       case eInteger32:
-        /* not implemented */
+        _retval.AppendInt(ii.int32Value);
         break;
       case eSubquery:
       {

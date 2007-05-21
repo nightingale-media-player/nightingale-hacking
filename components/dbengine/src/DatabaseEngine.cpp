@@ -1454,8 +1454,8 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
             PRInt32 nRetryCount = 0;
             PRInt32 totalRows = 0;
 
-            PRUint32 rollingSum = 0;
-            PRUint32 rollingLimit = 0;
+            PRUint64 rollingSum = 0;
+            PRUint64 rollingLimit = 0;
             PRUint32 rollingLimitColumnIndex = 0;
             PRUint32 rollingRowCount = 0;
             pQuery->GetRollingLimit(&rollingLimit);
@@ -1531,7 +1531,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                   // If this is a rolling limit query, increment the rolling
                   // sum by the value of the  specified column index.
                   if (rollingLimit > 0) {
-                    rollingSum += sqlite3_column_int(pStmt, rollingLimitColumnIndex);
+                    rollingSum += sqlite3_column_int64(pStmt, rollingLimitColumnIndex);
                     rollingRowCount++;
                   }
 

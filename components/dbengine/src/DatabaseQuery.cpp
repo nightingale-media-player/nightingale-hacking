@@ -662,7 +662,7 @@ NS_IMETHODIMP CDatabaseQuery::Abort(PRBool *_retval)
   return NS_OK;
 }
 
-NS_IMETHODIMP CDatabaseQuery::GetRollingLimit(PRUint32 *aRollingLimit)
+NS_IMETHODIMP CDatabaseQuery::GetRollingLimit(PRUint64 *aRollingLimit)
 {
   NS_ENSURE_ARG_POINTER(aRollingLimit);
 
@@ -673,7 +673,7 @@ NS_IMETHODIMP CDatabaseQuery::GetRollingLimit(PRUint32 *aRollingLimit)
   return NS_OK;
 }
 
-NS_IMETHODIMP CDatabaseQuery::SetRollingLimit(PRUint32 aRollingLimit)
+NS_IMETHODIMP CDatabaseQuery::SetRollingLimit(PRUint64 aRollingLimit)
 {
   nsAutoLock lock(m_pRollingLimitLock);
 

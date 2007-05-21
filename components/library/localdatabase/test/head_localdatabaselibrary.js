@@ -99,7 +99,7 @@ function loadData(databaseGuid, databaseLocation) {
       dbq.bindInt32Parameter(5, b[6]);
     }
     dbq.bindInt32Parameter(6, b[7]);
-    if(b[8] == "") {
+    if(b[8] == "" || b[8] == "0") {
       dbq.bindNullParameter(7);
     }
     else {

@@ -83,15 +83,19 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
 [scriptable, uuid(50443d21-eae9-4563-a72d-c6f6b1ea499c)]
 interface sbILocalDatabaseSmartMediaList : sbIMediaList
 {
-  const unsigned long MATCH_ANY = 0;
-  const unsigned long MATCH_ALL = 1;
+  const unsigned long MATCH_TYPE_ANY  = 0;
+  const unsigned long MATCH_TYPE_ALL  = 1;
+  const unsigned long MATCH_TYPE_NONE = 2;
 
-  const unsigned long LIMIT_NONE = 0;
+  const unsigned long LIMIT_TYPE_NONE  = 0;
+  const unsigned long LIMIT_TYPE_ITEMS = 1;
+  const unsigned long LIMIT_TYPE_USECS = 2;
+  const unsigned long LIMIT_TYPE_BYTES = 3;
 
   /**
    * \brief Match any or all conditions.
    */
-  attribute unsigned long match;
+  attribute unsigned long matchType;
 
   /**
    * \brief The number of conditions added to this smart playlist.
@@ -99,14 +103,36 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
   readonly attribute unsigned long conditionCount;
 
   /**
-   * \brief Limit the total amount of items in the smart media list.
+   * \brief Type of limit to use
    */
-  attribute unsigned long itemLimit;
+  attribute unsigned long limitType;
+
+  /**
+   * \brief Value to apply to the limit type
+   */
+  attribute unsigned long long limit;
+
+  /**
+   * \brief Property to select limited results by
+   */
+  attribute AString selectPropertyName;
+
+  /**
+   * \brief Direction to sort the selection property name, true for ascending,
+   *        false for descending
+   */
+  attribute boolean selectDirection;
 
   /**
    * \brief Randomly select the items out of the entire result set.
    */
   attribute boolean randomSelection;
+
+  /**
+   * \brief Should this smart media list automatically update itself when the
+   *        library changes?
+   */
+  attribute boolean liveUpdate;
 
   /**
    * \brief Add a condition or limiting condition.

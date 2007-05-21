@@ -175,7 +175,7 @@ protected:
   bindParameterArray_t* m_LastBindParameters;
 
   PRLock* m_pRollingLimitLock;
-  PRUint32 m_RollingLimit;
+  PRUint64 m_RollingLimit;
   PRUint32 m_RollingLimitColumnIndex;
   PRUint32 m_RollingLimitResult;
 

@@ -412,6 +412,12 @@ interface sbISQLBuilderCriterionIn : sbISQLBuilderCriterion
   void addString(in AString aValue);
 
   /**
+   * \brief Adds a long value to the list of IN criteria
+   * \param aValue Long to add to the list
+   */
+  void addLong(in long aValue);
+
+  /**
    * \brief Adds a subquery to the IN list
    * \param aSubquery Subquery to add to the list
    */

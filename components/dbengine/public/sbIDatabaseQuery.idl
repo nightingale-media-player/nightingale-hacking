@@ -433,7 +433,7 @@ interface sbIDatabaseQuery : nsISupports
    * of this row will be set in rollingLimitResult.  If the limit is not
    * reach, no rows are returned.
    */
-  attribute unsigned long rollingLimit;
+  attribute unsigned long long rollingLimit;
 
   /**
    * \brief The index of the column used to add to the limit total

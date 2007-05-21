@@ -33,11 +33,6 @@ function runTest() {
   var databaseGUID = "test_smartmedialist";
   var library = createLibrary(databaseGUID);
 
-  var smartListFactory = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/SmartMediaListFactory;1"]
-                           .createInstance(Ci.sbIMediaListFactory);
-
-  library.registerMediaListFactory(smartListFactory);
-
   testProperties(library);
   testConditions(library);
   testAll(library);
@@ -45,23 +40,47 @@ function runTest() {
   testOperators(library);
   testItemLimit(library);
   testSerialize(library);
+  testUsecsLimit(library);
+  testBytesLimit(library);
+  testRandom(library);
+  testMatchTypeNoneItemLimit(library);
+  testMatchTypeNoneUsecLimit(library)
+  testMatchTypeNoneBytesLimit(library);
+  testMatchTypeNoneRandom(library);
 }
 
 function testProperties(library) {
 
+  var albumProp = SB_NS + "albumName";
   var list = library.createMediaList("smart");
 
-  assertEqual(list.match, Ci.sbILocalDatabaseSmartMediaList.MATCH_ANY);
-  list.match = Ci.sbILocalDatabaseSmartMediaList.MATCH_ALL;
-  assertEqual(list.match, Ci.sbILocalDatabaseSmartMediaList.MATCH_ALL);
+  assertEqual(list.matchType, Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_ANY);
+  list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_ALL;
+  assertEqual(list.matchType, Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_ALL);
 
-  assertEqual(list.itemLimit, Ci.sbILocalDatabaseSmartMediaList.LIMIT_NONE);
-  list.itemLimit = 20;
-  assertEqual(list.itemLimit, 20);
+  assertEqual(list.limitType, Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_NONE);
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
+  assertEqual(list.limitType, Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS);
+
+  assertEqual(list.limit, 0);
+  list.limit = 20;
+  assertEqual(list.limit, 20);
+
+  assertEqual(list.selectPropertyName, "");
+  list.selectPropertyName = albumProp;
+  assertEqual(list.selectPropertyName, albumProp);
+
+  assertEqual(list.selectDirection, true);
+  list.selectDirection = false;
+  assertEqual(list.selectDirection, false);
 
   assertEqual(list.randomSelection, false);
   list.randomSelection = true;
   assertEqual(list.randomSelection, true);
+
+  assertEqual(list.liveUpdate, false);
+  list.liveUpdate = true;
+  assertEqual(list.liveUpdate, true);
 }
 
 function testConditions(library) {
@@ -103,7 +122,9 @@ function testAll(library) {
   var contentLengthProp = SB_NS + "contentLength";
 
   var list = library.createMediaList("smart");
-  list.match = Ci.sbILocalDatabaseSmartMediaList.MATCH_ALL;
+  list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_ALL;
+
+  assertEqual(list.length, 0);
 
   list.appendCondition(albumProp,
                        getOperatorForProperty(albumProp, "="),
@@ -113,6 +134,7 @@ function testAll(library) {
   list.rebuild();
 
   assertEqual(list.length, 10);
+  assertUnique(list);
 
   // Adding this condition should not change the result since
   // it overlaps with the first condition
@@ -122,8 +144,8 @@ function testAll(library) {
                        null,
                        false);
   list.rebuild();
-
   assertEqual(list.length, 10);
+  assertUnique(list);
 
   // Should result in 0 items
   list.appendCondition(artistProp,
@@ -138,6 +160,7 @@ function testAll(library) {
   list.removeConditionAt(2);
   list.rebuild();
   assertEqual(list.length, 10);
+  assertUnique(list);
 
   // Contrain the list on contnet length
   list.appendCondition(contentLengthProp,
@@ -147,7 +170,7 @@ function testAll(library) {
                        false);
   list.rebuild();
   assertEqual(list.length, 6);
-
+  assertUnique(list);
 }
 
 function testAny(library) {
@@ -157,7 +180,7 @@ function testAny(library) {
   var contentLengthProp = SB_NS + "contentLength";
 
   var list = library.createMediaList("smart");
-  list.match = Ci.sbILocalDatabaseSmartMediaList.MATCH_ANY;
+  list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_ANY;
 
   list.appendCondition(albumProp,
                        getOperatorForProperty(albumProp, "="),
@@ -167,6 +190,7 @@ function testAny(library) {
   list.rebuild();
 
   assertEqual(list.length, 10);
+  assertUnique(list);
 
   // Adding this condition should not change the result since
   // it overlaps with the first condition
@@ -178,6 +202,7 @@ function testAny(library) {
   list.rebuild();
 
   assertEqual(list.length, 10);
+  assertUnique(list);
 
   // Add another artist
   list.appendCondition(artistProp,
@@ -188,6 +213,7 @@ function testAny(library) {
   list.rebuild();
 
   assertEqual(list.length, 20);
+  assertUnique(list);
 }
 
 function testOperators(library) {
@@ -209,21 +235,27 @@ function testOperators(library) {
   var value = "1166399962000";
   setConditions(lastPlayTimeProp, "=", value);
   assertEqual(list.length, 4);
+  assertUnique(list);
 
   setConditions(lastPlayTimeProp, "!=", value);
   assertEqual(list.length, 45);
+  assertUnique(list);
 
   setConditions(lastPlayTimeProp, ">", value);
   assertEqual(list.length, 29);
+  assertUnique(list);
 
   setConditions(lastPlayTimeProp, ">=", value);
   assertEqual(list.length, 33);
+  assertUnique(list);
 
   setConditions(lastPlayTimeProp, "<", value);
   assertEqual(list.length, 16);
+  assertUnique(list);
 
   setConditions(lastPlayTimeProp, "<=", value);
   assertEqual(list.length, 20);
+  assertUnique(list);
 
   list.clearConditions();
   list.appendCondition(lastPlayTimeProp,
@@ -233,7 +265,7 @@ function testOperators(library) {
                        false);
   list.rebuild();
   assertEqual(list.length, 49);
-
+  assertUnique(list);
 
   list.clearConditions();
   list.appendCondition(albumProp,
@@ -243,6 +275,7 @@ function testOperators(library) {
                        false);
   list.rebuild();
   assertEqual(list.length, 12);
+  assertUnique(list);
 
   list.clearConditions();
   list.appendCondition(albumProp,
@@ -252,6 +285,7 @@ function testOperators(library) {
                        false);
   list.rebuild();
   assertEqual(list.length, 22);
+  assertUnique(list);
 
   list.clearConditions();
   list.appendCondition(albumProp,
@@ -261,11 +295,13 @@ function testOperators(library) {
                        false);
   list.rebuild();
   assertEqual(list.length, 12);
+  assertUnique(list);
 }
 
 function testItemLimit(library) {
 
   var albumProp = SB_NS + "albumName";
+  var trackProp = SB_NS + "track";
 
   var list = library.createMediaList("smart");
 
@@ -276,14 +312,266 @@ function testItemLimit(library) {
                        false);
   list.rebuild();
   assertEqual(list.length, 10);
+  assertUnique(list);
 
-  list.itemLimit = 5;
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
+  list.limit = 5;
+  list.selectPropertyName = trackProp;
+  list.selectDirection = true;
+
   list.rebuild();
   assertEqual(list.length, 5);
 
-  list.itemLimit = Ci.sbILocalDatabaseSmartMediaList.LIMIT_NONE;
+  // Should have tracks 1 to 5
+  assertTrackNumbers(list, [1, 2, 3, 4, 5]);
+
+  list.selectDirection = false;
+  list.rebuild();
+
+  // Should have tracks 6 to 10
+  assertTrackNumbers(list, [6, 7, 8, 9, 10]);
+
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_NONE;
   list.rebuild();
   assertEqual(list.length, 10);
+}
+
+function testUsecsLimit(library) {
+
+  var albumProp = SB_NS + "albumName";
+  var trackProp = SB_NS + "track";
+
+  var list = library.createMediaList("smart");
+
+  list.appendCondition(albumProp,
+                       getOperatorForProperty(albumProp, "="),
+                       "Back In Black",
+                       null,
+                       false);
+
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_USECS;
+  list.limit = 30 * 60 * 1000 * 1000;
+  list.selectPropertyName = trackProp;
+  list.selectDirection = true;
+
+  list.rebuild();
+  assertEqual(list.length, 3);
+  assertUnique(list);
+
+  // Should have tracks 1 to 3
+  assertTrackNumbers(list, [1, 2, 3]);
+
+  list.selectDirection = false;
+  list.rebuild();
+  assertEqual(list.length, 3);
+
+  // Should have tracks 8 to 10
+  assertTrackNumbers(list, [8, 9, 10]);
+}
+
+function testBytesLimit(library) {
+
+  var albumProp = SB_NS + "albumName";
+  var trackProp = SB_NS + "track";
+
+  var list = library.createMediaList("smart");
+
+  list.appendCondition(albumProp,
+                       getOperatorForProperty(albumProp, "="),
+                       "Back In Black",
+                       null,
+                       false);
+
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
+  list.limit = 1500;
+  list.selectPropertyName = trackProp;
+  list.selectDirection = true;
+
+  list.rebuild();
+  assertEqual(list.length, 3);
+  assertUnique(list);
+
+  // Should have tracks 1 to 3
+  assertTrackNumbers(list, [1, 2, 3]);
+
+  list.selectDirection = false;
+  list.rebuild();
+  assertEqual(list.length, 3);
+
+  // Should have tracks 8 to 10
+  assertTrackNumbers(list, [8, 9, 10]);
+}
+
+function testMatchTypeNoneItemLimit(library) {
+
+  var artistProp = SB_NS + "artistName";
+
+  var list = library.createMediaList("smart");
+  list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_NONE;
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
+  list.limit = 25;
+  list.selectPropertyName = artistProp;
+  list.selectDirection = true;
+
+  list.rebuild();
+  assertEqual(list.length, 25);
+  assertUnique(list);
+
+  // First 12 tracks are "A House"
+  assertPropertyRange(list, 0, 12, artistProp, "A House");
+
+  // Next 13 tracks are "A Split Second"
+  assertPropertyRange(list, 12, 13, artistProp, "A Split Second");
+
+}
+
+function testMatchTypeNoneUsecLimit(library) {
+
+  var artistProp = SB_NS + "artistName";
+  var durationProp = SB_NS + "duration";
+
+  var list = library.createMediaList("smart");
+  list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_NONE;
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_USECS;
+
+  // 2 hours of music
+  list.limit = 120 * 60 * 1000 * 1000;
+  list.selectPropertyName = artistProp;
+  list.selectDirection = true;
+
+  list.rebuild();
+  assertEqual(list.length, 15);
+  assertUnique(list);
+
+  // Make sure the list's limit is correct
+  var sum = sumProperty(list, durationProp);
+  assertTrue(sum >= list.limit);
+
+  // First 12 tracks are "A House"
+  assertPropertyRange(list, 0, 12, artistProp, "A House");
+
+  // Next 3 tracks are "A Split Second"
+  assertPropertyRange(list, 12, 3, artistProp, "A Split Second");
+}
+
+function testMatchTypeNoneBytesLimit(library) {
+
+  var artistProp = SB_NS + "artistName";
+  var contentLengthProp = SB_NS + "contentLength";
+
+  var list = library.createMediaList("smart");
+  list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_NONE;
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
+
+  list.limit = 40000;
+  list.selectPropertyName = artistProp;
+  list.selectDirection = true;
+
+  list.rebuild();
+  assertEqual(list.length, 30);
+  assertUnique(list);
+
+  // Make sure the list's limit is correct
+  var sum = sumProperty(list, contentLengthProp);
+  assertTrue(sum >= list.limit);
+
+  // First 12 tracks are "A House"
+  assertPropertyRange(list, 0, 12, artistProp, "A House");
+
+  // Next 15 tracks are "A Split Second"
+  assertPropertyRange(list, 12, 15, artistProp, "A Split Second");
+
+  // Next 3 tracks are "A Split Second"
+  assertPropertyRange(list, 27, 3, artistProp, "a-ha");
+}
+
+function testRandom(library) {
+
+  var albumProp = SB_NS + "albumName";
+  var trackProp = SB_NS + "track";
+
+  var list = library.createMediaList("smart");
+
+  list.appendCondition(albumProp,
+                       getOperatorForProperty(albumProp, "="),
+                       "Back In Black",
+                       null,
+                       false);
+
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
+  list.limit = 5;
+  list.randomSelection = true;
+
+  list.rebuild();
+  assertEqual(list.length, 5);
+  assertUnique(list);
+
+  // Test various high limits, should return all tracks in back in black
+  list.limit = 200;
+  list.rebuild();
+  assertEqual(list.length, 10);
+  assertUnique(list);
+
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_USECS;
+  list.limit = 10 * 60 * 1000 * 1000;
+  list.rebuild();
+  assertUnique(list);
+
+  list.limit = 240 * 60 * 1000 * 1000;
+  list.rebuild();
+  assertEqual(list.length, 10);
+  assertUnique(list);
+
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
+  list.limit = 10000;
+  list.rebuild();
+  assertUnique(list);
+
+  list.limit = 1000000000;
+  list.rebuild();
+  assertEqual(list.length, 10);
+  assertUnique(list);
+}
+
+function testMatchTypeNoneRandom(library) {
+
+  var list = library.createMediaList("smart");
+  var libraryMediaItems = countMediaItems(library);
+
+  list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_NONE;
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
+  list.limit = 5;
+  list.randomSelection = true;
+
+  list.rebuild();
+  assertEqual(list.length, 5);
+  assertUnique(list);
+
+  // a really high limit should select the entire library
+  list.limit = 100000;
+  list.rebuild();
+  assertEqual(list.length, libraryMediaItems);
+  assertUnique(list);
+
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_USECS;
+  list.limit = 10 * 60 * 1000 * 1000;
+  list.rebuild();
+  assertUnique(list);
+
+  list.limit = 100 * 60 * 60 * 1000 * 1000;
+  list.rebuild();
+  assertEqual(list.length, libraryMediaItems);
+  assertUnique(list);
+
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
+  list.limit = 10000;
+  list.rebuild();
+  assertUnique(list);
+
+  list.limit = 1000000000;
+  list.rebuild();
+  assertEqual(list.length, libraryMediaItems);
+  assertUnique(list);
 }
 
 function testSerialize(library) {
@@ -293,9 +581,13 @@ function testSerialize(library) {
 
   var list = library.createMediaList("smart");
   var guid = list.guid;
-  list.match = Ci.sbILocalDatabaseSmartMediaList.MATCH_ALL;
-  list.itemLimit = 123;
+  list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_ALL;
+  list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
+  list.selectPropertyName = albumProp;
+  list.selectDirection = false;
+  list.limit = 123;
   list.randomSelection = true;
+  list.liveUpdate = true;
   list.appendCondition(albumProp,
                        getOperatorForProperty(albumProp, "%?%"),
                        "fat",
@@ -311,16 +603,15 @@ function testSerialize(library) {
   // if they match
   var databaseGUID = "test_smartmedialist";
   var library2 = createLibrary(databaseGUID, null, false);
-
-  var smartListFactory = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/SmartMediaListFactory;1"]
-                           .createInstance(Ci.sbIMediaListFactory);
-
-  library2.registerMediaListFactory(smartListFactory);
   var restoredList = library2.getMediaItem(guid);
 
-  assertEqual(list.match, restoredList.match);
-  assertEqual(list.itemLimit, restoredList.itemLimit);
+  assertEqual(list.matchType, restoredList.matchType);
+  assertEqual(list.limitType, restoredList.limitType);
+  assertEqual(list.selectPropertyName, restoredList.selectPropertyName);
+  assertEqual(list.selectDirection, restoredList.selectDirection);
+  assertEqual(list.limit, restoredList.limit);
   assertEqual(list.randomSelection, restoredList.randomSelection);
+  assertEqual(list.liveUpdate, restoredList.liveUpdate);
   assertEqual(list.conditionCount, restoredList.conditionCount);
 
   for (var i = 0; i < list.conditionCount; i++) {
@@ -344,5 +635,81 @@ function assertCondition(a, b) {
   assertEqual(a.leftValue, b.leftValue);
   assertEqual(a.rightValue, b.rightValue);
   assertEqual(a.limit, b.limit);
+}
+
+function assertTrackNumbers(list, a) {
+
+  for (var i = 0; i < a.length; i++) {
+    assertEqual(list.getItemByIndex(i).getProperty(SB_NS + "track"), a[i]);
+  }
+}
+
+function assertPropertyRange(list, start, length, prop, value) {
+
+  for (var i = start; i < length; i++) {
+    var item = list.getItemByIndex(i);
+    assertEqual(item.getProperty(prop), value);
+  }
+}
+
+function dumpList(list) {
+
+  for (var i = 0; i < list.length; i++) {
+    var item = list.getItemByIndex(i);
+    var artist = item.getProperty(SB_NS + "artistName");
+    var album = item.getProperty(SB_NS + "albumName");
+    var track = item.getProperty(SB_NS + "track");
+    log(artist + " " + album + " " + track);
+  }
+}
+
+function assertUnique(list) {
+
+  var guids = {};
+
+  for (var i = 0; i < list.length; i++) {
+    var item = list.getItemByIndex(i);
+    if (item.guid in guids) {
+      fail("list not unique, gud '" + item.guid + "' appears more than once");
+    }
+    guids[item.guid] = 1;
+  }
+}
+
+function countMediaItems(library) {
+
+  var PROP_ISLIST = "http://songbirdnest.com/data/1.0#isList";
+
+  var listener = {
+    length: 0,
+    onEnumerationBegin: function() {
+      return true;
+    },
+    onEnumeratedItem: function(list, item) {
+      this.length++;
+      return true;
+    },
+    onEnumerationEnd: function() {
+      return true;
+    }
+  };
+
+  library.enumerateItemsByProperty(PROP_ISLIST, "0",
+                                   listener,
+                                   Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+
+  return listener.length;
+}
+
+function sumProperty(list, prop) {
+
+  var sum = 0;
+
+  for (var i = 0; i < list.length; i++) {
+    var item = list.getItemByIndex(i);
+    sum += parseInt(item.getProperty(prop));
+  }
+
+  return sum;
 }
 
