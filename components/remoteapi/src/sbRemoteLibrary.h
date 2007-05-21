@@ -32,6 +32,7 @@
 #include <sbISecurityMixin.h>
 #include <sbISecurityAggregator.h>
 
+#include <nsIFile.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
@@ -68,14 +69,30 @@ protected:
   virtual ~sbRemoteLibrary();
   nsCOMPtr<sbILibrary> mLibrary;
 
-  // helper methods
-  nsresult GetLibraryGUID(const nsAString &aLibraryID, nsAString &aLibraryGUID);
+  // Gets the GUID for the built in libraries: main, web, download
+  nsresult GetLibraryGUID( const nsAString &aLibraryID,
+                           nsAString &aLibraryGUID );
+  // fetches the URI from the security mixin
+  nsresult GetURI( nsIURI **aSiteURI );
+  // validates aPath against aSiteURI, setting aPath if empty
+  nsresult CheckPath( nsAString &aPath, nsIURI *aSiteURI );
+  // validates aDomain against aSiteURI, setting aDomain if empty
+  nsresult CheckDomain( nsAString &aDomain, nsIURI *aSiteURI );
+  // builds a path to the db file for the passed in domain and path
+  nsresult GetSiteLibraryFile( const nsAString &aDomain,
+                               const nsAString &aPath,
+                               nsIFile **aSiteDBFile );
 
   // SecurityCheckedComponent stuff
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
   nsTArray<nsString> mPublicMethods;
   nsTArray<nsString> mPublicRProperties;  // Readable Properties
   nsTArray<nsString> mPublicWProperties;  // Writeable Properties
+
+#ifdef DEBUG
+  // Only set in debug builds - used for validating library creation
+  nsString mFilename;
+#endif
 };
 
 #endif // __SB_REMOTE_LIBRARY_H__

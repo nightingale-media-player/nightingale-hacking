@@ -26,8 +26,7 @@
 
 /**
  * \file sbIRemotePlayer.idl
- * \brief Definition of the sbIRemotePlayer Interface
- * \sa sbSongbird.js 
+ * \brief Definition of the Remote API Interfaces
  */
 
 #include "nsISupports.idl"
@@ -45,40 +44,72 @@ interface sbIRemotePlayer;
 [scriptable, uuid(4f30b35e-ff7c-4b2e-b290-10e1a7ae06b1)]
 interface sbIRemoteMediaList : nsISupports
 {
-  // readonly attribute AString name;
+  /**
+   * The display name of the media list
+   */
+  // attribute AString name;
+
+  /**
+   * The type of the media list
+   */
   // readonly attribute AString type;
+
+  /**
+   * The number of items in the media list
+   */
   // readonly attribute unsigned long length;
-  
+
+  /**
+   * All of the artist names in the media list
+   */
+  // readonly nsIStringEnumerator artists
+
+  /**
+   * All of the album names in the media list
+   */
+  // readonly nsIStringEnumerator albums
+
 };
 
 [scriptable, uuid(3025cbf8-7969-4e79-8641-967a9f4e51b8)]
 interface sbIRemoteLibrary : sbIRemoteMedialist
 {
-  // this will hook up the remotelibrary to the internal library,
-  // use the 'Magic' strings 'main', 'web', 'download' or pass in
-  // the path to the location being called from.
-  // This will work like cookies.
   /**
    *
-   * \param aLibraryID - this can be either one of our 'magic' ids: main, web,
+   * \param aPath - this can be either one of our 'magic' ids: main, web,
    *        download; or it can be a path. If a path it must adhere to the same
    *        restrictions that cookies do in the browser, namely it must be a 
    *        prefix of the location of the URI. Specifically for the URI:
    *        http://foo.bar.com/this/is/my/music/stolen.html the path must
    *        be a prefix of 'this/is/my/music/'
    */
-  void ConnectToMediaLibrary(in AString aLibraryID);
+  [noscript] void connectToMediaLibrary(in AString aDomain, in AString aPath);
 
-  // this should ultimately be exposed via nsIXPCScriptable
-  // readonly nsIStringEnumerator artists
-  // readonly nsIStringEnumerator albums
+  /**
+   * NOTE: not sure if we want/need to expose a RemoteMediaItem class yet
+   *       which is the reason for the second signature.
+   * create and insert a media item into the library
+   */
+  // sbIRemoteMediaItem createMediaItem(in AString aURL);
+  // void createMediaItem(in AString aURL);
 
-  // void addMedia(in AString aURL);
+  /**
+   *
+   */
+  // sbIRemoteMediaList createMediaList(in AString aType);
+  
+  /**
+   * Take a playlist url and add the media and list to the library
+   */
+  // sbIRemoteMediaList addMediaListFromURL(in AString aURL);
 
-  // Takes an url to a playlist file that we handle
-  // void addMediaListFromURL(in AString aURL);
-
+  /**
+   * Add a media list and the tracks in it to the library
+   */
   // void addMediaListElement(in sbIRemoteMediaList aMediaList);
+
+  // accessible only in debug builds
+  readonly attribute AString filename;
 };
 
 
@@ -213,13 +244,12 @@ interface sbIRemotePlayer : nsISupports
    */
   void unregisterCommands();
 
-
   //
   // Library creation and retrieval
   //
 
   // access to a sitelibrary for the given path
-  sbIRemoteLibrary siteLibrary(in AString aPath);
+  sbIRemoteLibrary siteLibrary(in AString aDomain, in AString aPath);
 
   // access to any library in the system via path or 'magic' keyword
   sbIRemoteLibrary libraries(in AString aLibraryID);
@@ -230,6 +260,7 @@ interface sbIRemotePlayer : nsISupports
    * and only callable by the sbRemoteCommands object.
    */
   [noscript] void FireEventToContent(in AString aClass, in AString aType);
+
 };
 
 

@@ -29,32 +29,103 @@
 <html>
   <head>
     <title>Remote API Test: 08</title>
+    <script>
+      var domains = [ "",
+                      "file",
+                      "127.0.0.1",
+                      "www.jgaunt.com",
+                      "jgaunt.com",
+                      "jgaunt.com.",
+                      "gaunt.com",
+                      "svn.jgaunt.com" ];
+
+      var p = { one: [ "",
+                       "/",
+                       ".",
+                       "/staging/songbird_tests/",
+                       "/staging/songbird_tests/remote_api/",
+                       "/staging/songbird_tests/remote_api",
+                       "/staging/songbird_tests/foo/"],
+                two: [ "",
+                       "/",
+                       ".",
+                       "/builds/songbird/",
+                       "/builds/songbird/trunk/components/remoteapi/test/",
+                       "/builds/songbird/trunk/components/remoteapi/test",
+                       "/builds/mofo/"]
+              };
+
+      //
+      // Dynamic Table Generation code
+      //
+
+      // create a library and return the filename
+      var getFilename = function ( domain, path ) {
+        var siteLib = songbird.siteLibrary( domain, path );
+        if (siteLib) {
+          return siteLib.filename;
+        } else {
+          return "FAILED";
+        }
+      }
+
+      // a row of filenames of db files for the domain at each path
+      var getRow = function ( domain, pathArray ) {
+        if ( domain == "" )
+          var htmlText = "<tr><td> '' </td>";
+        else 
+          var htmlText = "<tr><td> '" + domain + "' </td>";
+
+        for ( var stuff in pathArray ) {
+          htmlText += "<td>" + getFilename( domain, pathArray[stuff] ) + "</td>";
+        }
+        htmlText += "</tr>"
+        return htmlText;
+      }
+
+      // a simple header row
+      var getHeaders = function ( pathArray ) {
+        var htmlText = "<tr><td> Domains vs. Paths </td>";
+        for ( var stuff in pathArray ) {
+          if ( pathArray[stuff] == "" )
+            htmlText += "<td> '' </td>";
+          else 
+            htmlText += "<td> '" + pathArray[stuff]  + "' </td>";
+        }
+        htmlText += "</tr>";
+        return htmlText;
+      }
+
+      // get the headers then all the rows of content
+      var getTableContent = function ( domainArray, pathArray ) {
+        var htmlText = "";
+        htmlText += getHeaders( pathArray );
+        for ( var stuff in domainArray ) {
+          if ( domainArray[stuff] == "" )
+            htmlText += getRow( "", pathArray );
+          else 
+            htmlText += getRow( domainArray[stuff], pathArray );
+        }
+        return htmlText;
+      }
+
+    </script> 
   </head>
   <body>
-    <h1>Library creation, modification, exposing in playlist</h1>
+    <h1>Library creation based on Domain and Path and site page is loaded from</h1>
     <p> Create a remote library, point it to the sitelibrary and add media to it.
         switch the remote playlist to show the remote library. </p>
-    <br />
-    <p> Force a web playlist to appear. <br />
-      <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
-    </p>
 
-    <script>
-      var siteLib = songbird.siteLibrary("builds/songbird/trunk/components/remoteapi/test");
-      if (siteLib) {
-        document.writeln("Have a siteLib<br/>");
-      } else {
-        document.writeln("DONT Have a siteLib<br/>");
-      }
-      var mainLib = songbird.libraries("main");
-      if (mainLib) {
-        document.writeln("Have a mainLib<br/>");
-      } else {
-        document.writeln("DONT Have a mainLib<br/>");
-      }
+    <p> This table should be more successful when the page is loaded from jgaunt.com</p>
+    <table border="1">
+        <script> document.writeln(getTableContent(domains, p.one));</script>
+    </table>
 
-    </script>
-    
+    <p> This table should be more successful when the page is loaded from file:</p>
+    <table border="1">
+        <script> document.writeln(getTableContent(domains, p.two));</script>
+    </table>
+
   </body>
 </html>
 

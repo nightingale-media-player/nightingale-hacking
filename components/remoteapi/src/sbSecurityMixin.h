@@ -66,7 +66,6 @@ protected:
   virtual ~sbSecurityMixin();
 
   // helpers for resolving the prefs and permissions
-  nsresult GetCodebase(nsIURI **aCodebase);
   PRBool GetPermission(nsIURI *aURI, const char *aType, const char *aRAPIPref);
   PRBool GetPermissionForScopedName(const nsAString &aScopedName);
   PRBool GetScopedName(nsTArray<nsCString> &aStringArray,

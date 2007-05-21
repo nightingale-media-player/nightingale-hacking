@@ -51,6 +51,7 @@
 #include <nsIScriptSecurityManager.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIURI.h>
+#include <nsIURL.h>
 #include <nsIWindowWatcher.h>
 #include <nsIWritablePropertyBag2.h>
 #include <nsMemory.h>
@@ -58,18 +59,28 @@
 #include <nsStringGlue.h>
 #include <nsWeakPtr.h>
 #include <prlog.h>
+#include <prnetdb.h>
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteLibrary:5
+ *   NSPR_LOG_MODULES=sbRemoteLibrary:<5|4|3|2|1>
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gLibraryLog = nsnull;
-#define LOG(args)   if (gLibraryLog) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
+#define LOG5(args) if (gLibraryLog) PR_LOG(gLibraryLog, 5, args)
+#define LOG4(args) if (gLibraryLog) PR_LOG(gLibraryLog, 4, args)
+#define LOG3(args) if (gLibraryLog) PR_LOG(gLibraryLog, 3, args)
+#define LOG2(args) if (gLibraryLog) PR_LOG(gLibraryLog, 2, args)
+#define LOG1(args) if (gLibraryLog) PR_LOG(gLibraryLog, 1, args)
 #else
-#define LOG(args)   /* nothing */
+#define LOG5(args) /* nothing */
+#define LOG4(args) /* nothing */
+#define LOG3(args) /* nothing */
+#define LOG2(args) /* nothing */
+#define LOG1(args) /* nothing */
 #endif
 
+#define kNotFound -1
 static NS_DEFINE_CID(kRemoteLibraryCID, SONGBIRD_REMOTELIBRARY_CID);
 
 const static char* sPublicWProperties[] = {""};
@@ -80,6 +91,9 @@ const static char* sPublicRProperties[] =
     "metadata:name",
     "metadata:type",
     "metadata:length",
+#ifdef DEBUG
+    "metadata:filename",
+#endif
     "classinfo:classDescription",
     "classinfo:contractID",
     "classinfo:classID",
@@ -103,19 +117,19 @@ sbRemoteLibrary::sbRemoteLibrary()
   if (!gLibraryLog) {
     gLibraryLog = PR_NewLogModule("sbRemoteLibrary");
   }
-  LOG(("sbRemoteLibrary::sbRemoteLibrary()"));
+  LOG1(("sbRemoteLibrary::sbRemoteLibrary()"));
 #endif
 }
 
 sbRemoteLibrary::~sbRemoteLibrary()
 {
-  LOG(("sbRemoteLibrary::~sbRemoteLibrary()"));
+  LOG1(("sbRemoteLibrary::~sbRemoteLibrary()"));
 }
 
 nsresult
 sbRemoteLibrary::Init()
 {
-  LOG(("sbRemoteLibrary::Init()"));
+  LOG1(("sbRemoteLibrary::Init()"));
 
   nsresult rv;
   nsCOMPtr<sbISecurityMixin> mixin =
@@ -148,23 +162,33 @@ sbRemoteLibrary::Init()
 // ---------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aLibraryID )
+sbRemoteLibrary::GetFilename( nsAString &aFilename )
 {
-  LOG(( "sbRemoteLibrary::ConnectToMediaLibrary(%s)",
-        NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
+  LOG1(("sbRemoteLibrary::GetFilename()"));
+#ifdef DEBUG
+  aFilename.Assign(mFilename);
+#endif
+  return NS_OK;
+}
 
-  // convert the id to a guid understandable to the librarymananger
+NS_IMETHODIMP
+sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aDomain, const nsAString &aPath )
+{
+  LOG1(( "sbRemoteLibrary::ConnectToMediaLibrary(domain:%s path:%s)",
+         NS_LossyConvertUTF16toASCII(aDomain).get(),
+         NS_LossyConvertUTF16toASCII(aPath).get() ));
+
+  // For default libraries the path is going to be web|download|main
   nsAutoString guid;
-  nsresult rv = GetLibraryGUID(aLibraryID, guid);
+  nsresult rv = GetLibraryGUID(aPath, guid);
   if ( NS_SUCCEEDED(rv) ) {
-    LOG(( "sbRemoteLibrary::ConnectToMediaLibrary(%s) -- IS a default library",
-          NS_LossyConvertUTF16toASCII(guid).get() ));
+    LOG4(( "sbRemoteLibrary::ConnectToMediaLibrary(%s) -- IS a default library",
+           NS_LossyConvertUTF16toASCII(guid).get() ));
 
     // See if the library manager has it lying around.
     nsCOMPtr<sbILibraryManager> libManager(
         do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv ) );
     NS_ENSURE_SUCCESS( rv, rv );
-    LOG(("sbRemoteLibrary::ConnectToMediaLibrary() -- have library manager"));
 
     rv = libManager->GetLibrary( guid, getter_AddRefs(mLibrary) );
     NS_ENSURE_SUCCESS( rv, rv );
@@ -174,57 +198,26 @@ sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aLibraryID )
   //
   // If we're here, the ID passed in wasn't a default, it should be a path
   //
-  LOG(( "sbRemoteLibrary::ConnectToMediaLibrary(%d) - non default library",
-        HashString(aLibraryID) ));
+  LOG4(("sbRemoteLibrary::ConnectToMediaLibrary() - Site Library"));
 
-  //
-  // Add Security Check here to verify website matches the path.
-  //   see nsCookieService.cpp CheckPath() for details.
-  // might take place in GetLibraryGUID as an alternative
-  //
-
-  // This should be moved to the else case in the GetGUID because we want to 
-  // try and get the library from the manager first and only if that fails
-  // should be go to the factory. But for now this is fine.
-
-  // get the directory service
-  nsCOMPtr<nsIProperties> directoryService(
-                       do_GetService( NS_DIRECTORY_SERVICE_CONTRACTID, &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
-  LOG(("sbRemoteLibrary::ConnectToMediaLibrary() -- have directory service"));
-
-  // get the users profile directory
-  nsCOMPtr<nsIFile> currProfileDir;
-  rv = directoryService->Get( "ProfD",
-                              NS_GET_IID(nsIFile),
-                              getter_AddRefs(currProfileDir) );
-  NS_ENSURE_SUCCESS( rv, rv );
-  LOG(("sbRemoteLibrary::ConnectToMediaLibrary() -- have profileD"));
-
-  // build the filename
-  // XXX need the domain as a prefix here
-  nsAutoString filename;
-  filename.AppendInt(HashString(aLibraryID));
-  filename.AppendLiteral(".db");
-  LOG(( "sbRemoteLibrary::ConnectToMediaLibrary() -- filename: %s",
-        NS_LossyConvertUTF16toASCII(filename).get() ));
-
-  // extend the path and add the file
-  currProfileDir->Append( NS_LITERAL_STRING("db") );
-  currProfileDir->Append(filename);
+  nsCOMPtr<nsIFile> siteDBFile;
+  rv = GetSiteLibraryFile( aDomain, aPath, getter_AddRefs(siteDBFile) );
+  if ( NS_FAILED(rv) ) {
+    LOG3(("sbRemoteLibrary::ConnectToMediaLibrary() - Failed to get site db file "));
+    return rv;
+  }
 
   // Get the library factory to create a new instance from the file
   nsCOMPtr<sbILibraryFactory> libFactory(
         do_CreateInstance( SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID, &rv ) );
   NS_ENSURE_SUCCESS(rv, rv);
-  LOG(("sbRemoteLibrary::ConnectToMediaLibrary() -- have library factory"));
 
   // Get a propertybag to pass in the filename
   nsCOMPtr<nsIWritablePropertyBag2> propBag(
                 do_CreateInstance( "@mozilla.org/hash-property-bag;1", &rv ) );
   NS_ENSURE_SUCCESS(rv, rv);
   propBag->SetPropertyAsInterface( NS_LITERAL_STRING("databaseFile"),
-                                   currProfileDir );
+                                   siteDBFile );
 
   // Create the library
   libFactory->CreateLibrary( propBag, getter_AddRefs(mLibrary) );
@@ -239,6 +232,235 @@ sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aLibraryID )
 //
 // ---------------------------------------------------------------------------
 
+nsresult
+sbRemoteLibrary::GetSiteLibraryFile( const nsAString &aDomain,
+                                     const nsAString &aPath,
+                                     nsIFile **aSiteDBFile )
+{
+  NS_ENSURE_ARG_POINTER(aSiteDBFile);
+  LOG1(( "sbRemoteLibrary::GetSiteLibraryFile(domain:%s path:%s)",
+         NS_LossyConvertUTF16toASCII(aDomain).get(),
+         NS_LossyConvertUTF16toASCII(aPath).get() ));
+
+  nsresult rv;
+  nsCOMPtr<nsIURI> siteURI;
+  rv = GetURI( getter_AddRefs(siteURI) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsAutoString domain(aDomain);
+  rv = CheckDomain( domain, siteURI );
+  if ( NS_FAILED(rv) ) {
+    LOG2(( "sbRemoteLibrary::GetSiteLibraryFile() -- FAILED domain Check"));
+    return rv;
+  }
+
+  nsAutoString path(aPath);
+  rv = CheckPath( path, siteURI );
+  if ( NS_FAILED(rv) ) {
+    LOG2(( "sbRemoteLibrary::GetSiteLibraryFile() -- FAILED path Check"));
+    return rv;
+  }
+
+  // get the directory service
+  nsCOMPtr<nsIProperties> directoryService(
+                       do_GetService( NS_DIRECTORY_SERVICE_CONTRACTID, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // get the users profile directory
+  nsCOMPtr<nsIFile> siteDBFile;
+  rv = directoryService->Get( "ProfD",
+                              NS_GET_IID(nsIFile),
+                              getter_AddRefs(siteDBFile) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsAutoString filename = domain;
+  filename.Append(path);
+
+  // hash it and smack the extension on
+  nsAutoString hashedFile;
+  hashedFile.AppendInt(HashString(filename));
+  hashedFile.AppendLiteral(".db");
+  LOG2(( "sbRemoteLibrary::GetSiteLibraryFile() -- hashed \n\t from: %s \n\t to: %s",
+         NS_LossyConvertUTF16toASCII(filename).get(),
+         NS_LossyConvertUTF16toASCII(hashedFile).get() ));
+
+  // extend the path and add the file
+  siteDBFile->Append( NS_LITERAL_STRING("db") );
+  siteDBFile->Append(hashedFile);
+
+#ifdef DEBUG
+  // Save the filename locally
+  mFilename.Assign(hashedFile);
+#endif
+
+  NS_IF_ADDREF( *aSiteDBFile = siteDBFile );
+  return NS_OK;
+}
+
+nsresult
+sbRemoteLibrary::GetURI( nsIURI **aSiteURI )
+{
+  LOG1(("sbRemoteLibrary::GetURI()"));
+  nsresult rv;
+  nsCOMPtr<sbISecurityMixin> mixin( do_QueryInterface( mSecurityMixin, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsCOMPtr<nsIURI> siteURI; 
+  rv = mixin->GetCodebase( getter_AddRefs(siteURI) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  NS_IF_ADDREF( *aSiteURI = siteURI );
+  return NS_OK;
+}
+
+nsresult
+sbRemoteLibrary::CheckDomain( nsAString &aDomain,  nsIURI *aSiteURI )
+{
+  LOG1(( "sbRemoteLibrary::CheckDomain(%s)",
+         NS_LossyConvertUTF16toASCII(aDomain).get() ));
+
+  // get host from URI, remove leading/trailing dots, lowercase it
+  nsCAutoString uriCHost;
+  aSiteURI->GetHost(uriCHost);
+  uriCHost.Trim(".");
+  ToLowerCase(uriCHost);
+
+  if ( !aDomain.IsEmpty() ) {
+    LOG4(("sbRemoteLibrary::CheckDomain() -- Have a domain from the user"));
+    // remove trailing dots - there is no ToLowerCase for AStrings
+    aDomain.Trim(".");
+
+    // Deal first with numerical ip addresses
+    PRNetAddr addr;
+    if ( PR_StringToNetAddr( uriCHost.get(), &addr ) == PR_SUCCESS ) {
+      // numerical ip address
+      LOG4(("sbRemoteLibrary::CheckDomain() -- Numerical Address "));
+      if ( !aDomain.EqualsLiteral( uriCHost.get() ) ) {
+        LOG3(("sbRemoteLibrary::CheckDomain() -- FAILED ip address check"));
+        return NS_ERROR_FAILURE;
+      }
+    } else {
+      // domain based host, check it against host from URI
+      LOG4(("sbRemoteLibrary::CheckDomain() -- Domain based host "));
+
+      // make sure the domain wasn't '.com' - it should have a dot in it
+      PRInt32 dot = aDomain.FindChar('.');
+      if ( dot == kNotFound ) {
+        LOG3(("sbRemoteLibrary::CheckDomain() -- FAILED dot test "));
+        return NS_ERROR_FAILURE;
+      }
+
+      // prepend a dot so bar.com doesn't match foobar.com but does foo.bar.com
+      aDomain.Insert( NS_LITERAL_STRING("."), 0 );
+
+      PRInt32 domainLength = aDomain.Length();
+      PRInt32 lengthDiff = uriCHost.Length() - domainLength;
+      if ( lengthDiff == 0 ) {
+        LOG4(("sbRemoteLibrary::CheckDomain() -- same length check"));
+        // same length better be the same strings
+        if ( !aDomain.LowerCaseEqualsLiteral( uriCHost.get() ) ) {
+          LOG3(("sbRemoteLibrary::CheckDomain() -- FAILED same length check"));
+          return NS_ERROR_FAILURE;
+        }
+      } else if ( lengthDiff > 0 ) {
+        LOG4(("sbRemoteLibrary::CheckDomain() -- parent domain check"));
+        // normal case URI host is longer that host from user
+        //   from user: .bar.com   from URI:  foo.bar.com
+        nsCAutoString subHost( Substring( uriCHost, lengthDiff, domainLength ) );
+        if ( !aDomain.EqualsLiteral( subHost.get() ) ) {
+          LOG3(("sbRemoteLibrary::CheckDomain() -- FAILED parent domain check"));
+          return NS_ERROR_FAILURE;
+        }
+      } else if ( lengthDiff == -1 ) {
+        LOG4(("sbRemoteLibrary::CheckDomain() -- long domain check"));
+        // special case:  from user: .bar.com   vs. from URI:  bar.com
+        // XXXredfive - I actually think we'll see this most often because
+        //             of the prepending of the dot to the user supplied domain
+        if ( !Substring( aDomain, 1, domainLength - 1 )
+                .LowerCaseEqualsLiteral( uriCHost.get() ) ) {
+          LOG3(("sbRemoteLibrary::CheckDomain() -- FAILED long domain check"));
+          return NS_ERROR_FAILURE;
+        }
+      } else {
+        // domains are WAY off, the user domain is more than 1 char longer than
+        // the URI domain. ie: user: jgaunt.com URI: ""
+        LOG3(("sbRemoteLibrary::CheckDomain() -- FAILED, user domain is superset"));
+        return NS_ERROR_FAILURE;
+      }
+     
+      // remove the leading dot we added
+      aDomain.Trim(".", PR_TRUE, PR_FALSE);
+    }
+  } else {
+    LOG4(( "sbRemoteLibrary::CheckDomain() -- NO domain from the user"));
+    // If the user didn't specify a host
+    // if the URI host is empty, make sure we're file://
+    if ( uriCHost.IsEmpty() ) {
+      PRBool isFileURI = PR_FALSE;
+      aSiteURI->SchemeIs("file", &isFileURI);
+      if (!isFileURI) {
+        // non-file URI without a host!!!
+        LOG3(("sbRemoteLibrary::CheckDomain() -- FAILED file scheme check"));
+        return NS_ERROR_FAILURE;
+      }
+    } else {
+      // no domain from the user but there is a domain from the URI
+      aDomain.Truncate();
+      aDomain.AppendLiteral( uriCHost.get() );
+    }
+  }
+
+  LOG2(("sbRemoteLibrary::CheckDomain() -- PASSED match test"));
+  return NS_OK;
+}
+
+nsresult
+sbRemoteLibrary::CheckPath( nsAString &aPath, nsIURI *aSiteURI )
+{
+  LOG1(( "sbRemoteLibrary::CheckPath(%s)",
+         NS_LossyConvertUTF16toASCII(aPath).get() ));
+
+  nsCAutoString uriCPath;
+
+  // if the user didn't specify a path, use the full path, minus the filename
+  if ( aPath.IsEmpty() ) {
+    nsCOMPtr<nsIURL> siteURL = do_QueryInterface(aSiteURI);
+    if (siteURL) {
+      LOG4(("sbRemoteLibrary::CheckPath() -- IS URL"));
+      siteURL->GetDirectory(uriCPath);
+    } else {
+      LOG4(("sbRemoteLibrary::CheckPath() -- NOT URL"));
+      aSiteURI->GetPath(uriCPath);
+      PRInt32 slash = uriCPath.RFindChar('/');
+      if (slash != kNotFound) {
+        // cut the filename from the path
+        uriCPath.Cut( slash+1, uriCPath.Length()-slash );
+      }
+    }
+
+    // path matches URI for sure, set it and return ok
+    aPath = NS_ConvertUTF8toUTF16(uriCPath);
+    return NS_OK;
+  }
+
+  // Get the path from the URI
+  aSiteURI->GetPath(uriCPath);
+  nsAutoString uriPath = NS_ConvertUTF8toUTF16(uriCPath);
+
+  // Path passed in must be a prefix of the URI's path
+  LOG4(("sbRemoteLibrary::CheckPath() -- Path Prefix Check"));
+  if ( !StringBeginsWith( uriPath, aPath ) ) {
+    LOG3(("sbRemoteLibrary::CheckPath() -- FAILED Path Prefix Check"));
+    return NS_ERROR_FAILURE;
+  }
+
+  LOG2(( "sbRemoteLibrary::CheckPath( user: %s URI: %s ) PASSED Path Check",
+         NS_LossyConvertUTF16toASCII(aPath).get(),
+         NS_LossyConvertUTF16toASCII(uriPath).get() ));
+
+  return NS_OK;
+}
+
 // If the libraryID is one of the default libraries we set the out param
 // to the internal GUID of library as understood by the library manager
 // and return NS_OK. If it is not one of the default libraries then
@@ -248,8 +470,8 @@ nsresult
 sbRemoteLibrary::GetLibraryGUID( const nsAString &aLibraryID,
                                  nsAString &aLibraryGUID )
 {
-  LOG(( "sbRemoteLibrary::GetLibraryGUID(%s)",
-        NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
+  LOG1(( "sbRemoteLibrary::GetLibraryGUID(%s)",
+         NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
 
   nsCAutoString prefKey;
 
@@ -264,7 +486,7 @@ sbRemoteLibrary::GetLibraryGUID( const nsAString &aLibraryID,
 
   // right now just bail if it isn't a default
   if ( prefKey == EmptyCString() ) {
-    LOG(( "sbRemoteLibrary::GetLibraryGUID() -- not a default library"));
+    LOG4(("sbRemoteLibrary::GetLibraryGUID() -- not a default library"));
     // ultimately we need to be able to get the GUID for non-default libraries
     //   if we are going to allow the library manager to manage them.
     // We might want to do the string hashing here and add keys for 
@@ -305,7 +527,7 @@ sbRemoteLibrary::CanCreateWrapper( const nsIID *aIID, char **_retval )
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mSecurityMixin);
 
-  LOG(("sbRemoteLibrary::CanCreateWrapper()"));
+  LOG5(("sbRemoteLibrary::CanCreateWrapper()"));
 
   return mSecurityMixin->CanCreateWrapper( aIID, _retval );
 } 
@@ -320,8 +542,8 @@ sbRemoteLibrary::CanCallMethod( const nsIID *aIID,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mSecurityMixin);
 
-  LOG(( "sbRemoteLibrary::CanCallMethod(%s)",
-        NS_LossyConvertUTF16toASCII(aMethodName).get() ));
+  LOG5(( "sbRemoteLibrary::CanCallMethod(%s)",
+         NS_LossyConvertUTF16toASCII(aMethodName).get() ));
 
   return mSecurityMixin->CanCallMethod( aIID, aMethodName, _retval );
 }
@@ -336,8 +558,8 @@ sbRemoteLibrary::CanGetProperty( const nsIID *aIID,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mSecurityMixin);
 
-  LOG(( "sbRemoteLibrary::CanGetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
+  LOG5(( "sbRemoteLibrary::CanGetProperty(%s)",
+         NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
 
   return mSecurityMixin->CanGetProperty( aIID, aPropertyName, _retval );
 }
@@ -352,8 +574,8 @@ sbRemoteLibrary::CanSetProperty( const nsIID *aIID,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mSecurityMixin);
 
-  LOG(( "sbRemoteLibrary::CanSetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
+  LOG5(( "sbRemoteLibrary::CanSetProperty(%s)",
+         NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
 
   return mSecurityMixin->CanSetProperty( aIID, aPropertyName, _retval );
 }
@@ -374,7 +596,7 @@ sbRemoteLibrary::GetInterfaces( PRUint32 *aCount, nsIID ***aArray )
 { 
   NS_ENSURE_ARG_POINTER(aCount);
   NS_ENSURE_ARG_POINTER(aArray);
-  LOG(("sbRemoteLibrary::GetInterfaces()"));
+  LOG5(("sbRemoteLibrary::GetInterfaces()"));
   return NS_CI_INTERFACE_GETTER_NAME(sbRemoteLibrary)( aCount, aArray );
 }
 
@@ -382,7 +604,7 @@ NS_IMETHODIMP
 sbRemoteLibrary::GetHelperForLanguage( PRUint32 language,
                                        nsISupports **_retval )
 {
-  LOG(("sbRemoteLibrary::GetHelperForLanguage()"));
+  LOG5(("sbRemoteLibrary::GetHelperForLanguage()"));
   *_retval = nsnull;
   return NS_OK;
 }
@@ -390,7 +612,7 @@ sbRemoteLibrary::GetHelperForLanguage( PRUint32 language,
 NS_IMETHODIMP 
 sbRemoteLibrary::GetContractID( char **aContractID )
 {
-  LOG(("sbRemoteLibrary::GetContractID()"));
+  LOG5(("sbRemoteLibrary::GetContractID()"));
   *aContractID = ToNewCString( NS_LITERAL_CSTRING(
                                           SONGBIRD_REMOTELIBRARY_CONTRACTID) );
   return *aContractID ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
@@ -399,7 +621,7 @@ sbRemoteLibrary::GetContractID( char **aContractID )
 NS_IMETHODIMP 
 sbRemoteLibrary::GetClassDescription( char **aClassDescription )
 {
-  LOG(("sbRemoteLibrary::GetClassDescription()"));
+  LOG5(("sbRemoteLibrary::GetClassDescription()"));
   *aClassDescription = ToNewCString( NS_LITERAL_CSTRING(
                                            SONGBIRD_REMOTELIBRARY_CLASSNAME) );
   return *aClassDescription ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
@@ -408,7 +630,7 @@ sbRemoteLibrary::GetClassDescription( char **aClassDescription )
 NS_IMETHODIMP 
 sbRemoteLibrary::GetClassID( nsCID **aClassID )
 {
-  LOG(("sbRemoteLibrary::GetClassID()"));
+  LOG5(("sbRemoteLibrary::GetClassID()"));
   *aClassID = (nsCID*) nsMemory::Alloc( sizeof(nsCID) );
   return *aClassID ? GetClassIDNoAlloc(*aClassID) : NS_ERROR_OUT_OF_MEMORY;
 }
@@ -416,7 +638,7 @@ sbRemoteLibrary::GetClassID( nsCID **aClassID )
 NS_IMETHODIMP 
 sbRemoteLibrary::GetImplementationLanguage( PRUint32 *aImplementationLanguage )
 {
-  LOG(("sbRemoteLibrary::GetImplementationLanguage()"));
+  LOG5(("sbRemoteLibrary::GetImplementationLanguage()"));
   *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
   return NS_OK;
 }
@@ -424,7 +646,7 @@ sbRemoteLibrary::GetImplementationLanguage( PRUint32 *aImplementationLanguage )
 NS_IMETHODIMP 
 sbRemoteLibrary::GetFlags( PRUint32 *aFlags )
 {
-  LOG(("sbRemoteLibrary::GetFlags()"));
+  LOG5(("sbRemoteLibrary::GetFlags()"));
   *aFlags = 0;
   return NS_OK;
 }
@@ -432,7 +654,7 @@ sbRemoteLibrary::GetFlags( PRUint32 *aFlags )
 NS_IMETHODIMP 
 sbRemoteLibrary::GetClassIDNoAlloc( nsCID *aClassIDNoAlloc )
 {
-  LOG(("sbRemoteLibrary::GetClassIDNoAlloc()"));
+  LOG5(("sbRemoteLibrary::GetClassIDNoAlloc()"));
   *aClassIDNoAlloc = kRemoteLibraryCID;
   return NS_OK;
 }

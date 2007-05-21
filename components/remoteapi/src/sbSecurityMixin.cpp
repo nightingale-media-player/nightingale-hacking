@@ -289,7 +289,7 @@ sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
 //
 // ---------------------------------------------------------------------------
 
-nsresult
+NS_IMETHODIMP
 sbSecurityMixin::GetCodebase(nsIURI **aCodebase) {
   NS_ENSURE_ARG_POINTER(aCodebase);
 

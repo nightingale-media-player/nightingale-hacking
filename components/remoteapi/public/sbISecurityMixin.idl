@@ -36,6 +36,8 @@
 #include "nsISupports.idl"
 #include "sbISecurityAggregator.idl"
 
+interface nsIURI;
+
 /**
  * \interface sbISecurityMixin
  * \brief An interface for setting up nsISecurityCheckedComponent security checks.
@@ -57,5 +59,10 @@ interface sbISecurityMixin : nsISupports
             [const, array, size_is(aMethodsLength)] in string aMethodsArray, in unsigned long aMethodsLength,
             [const, array, size_is(aRPropsLength)] in string aRPropsArray, in unsigned long aRPropsLength,
             [const, array, size_is(aWPropsLength)] in string aWPropsArray, in unsigned long aWPropsLength);
+
+  /**
+   * \brief Gets the URI for the current location.
+   */
+  nsIURI getCodebase();
 };
 

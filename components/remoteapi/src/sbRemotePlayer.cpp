@@ -315,15 +315,19 @@ sbRemotePlayer::Libraries( const nsAString &aLibraryID,
        do_CreateInstance( "@songbirdnest.com/remoteapi/remotelibrary;1", &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // Library is going to hash the ID if necessary
-  library->ConnectToMediaLibrary(aLibraryID);
-
-  NS_ADDREF( *aLibrary = library );
+  // Library is going to hash the ID passed in, if necessary
+  rv = library->ConnectToMediaLibrary( NS_LITERAL_STRING(""), aLibraryID );
+  if (NS_SUCCEEDED(rv)) {
+    NS_ADDREF( *aLibrary = library );
+  } else {
+    *aLibrary = nsnull;
+  }
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbRemotePlayer::SiteLibrary( const nsAString &aPath,
+sbRemotePlayer::SiteLibrary( const nsAString &aDomain,
+                             const nsAString &aPath,
                              sbIRemoteLibrary **aSiteLibrary )
 {
   LOG(( "sbRemotePlayer::SiteLibrary(%s)",
@@ -337,8 +341,12 @@ sbRemotePlayer::SiteLibrary( const nsAString &aPath,
   }
 
   // Library is going to hash the ID passed in
-  mSiteLibrary->ConnectToMediaLibrary(aPath);
-  NS_ADDREF( *aSiteLibrary = mSiteLibrary );
+  rv = mSiteLibrary->ConnectToMediaLibrary( aDomain, aPath );
+  if (NS_SUCCEEDED(rv)) {
+    NS_ADDREF( *aSiteLibrary = mSiteLibrary );
+  } else {
+    *aSiteLibrary = nsnull;
+  }
   return NS_OK;
 }
 
