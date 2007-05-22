@@ -115,7 +115,7 @@ ifndef MAKE
 MAKE := gmake
 endif
 
-SONGBIRD_MESSAGE = Songbird Web Player v0.2
+SONGBIRD_MESSAGE = Songbird Build System
 
 RUN_AUTOCONF_CMD = cd $(TOPSRCDIR) && \
                    $(AUTOCONF) && \
