@@ -65,7 +65,6 @@
   NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator **_retval) { return _to GetOperator(aOperator, _retval); } \
   NS_IMETHOD Validate(const nsAString & aValue, PRBool *_retval) { return _to Validate(aValue, _retval); } \
   NS_IMETHOD Sanitize(const nsAString & aValue, nsAString & _retval) { return _to Sanitize(aValue, _retval); } \
-  NS_IMETHOD Format(const nsAString & aValue, nsAString & _retval) { return _to Format(aValue, _retval); } \
   NS_IMETHOD MakeSortable(const nsAString & aValue, nsAString & _retval) { return _to MakeSortable(aValue, _retval); }
 
 class sbProgressPropertyInfo : public sbTextPropertyInfo,
@@ -83,6 +82,9 @@ public:
 
   NS_IMETHOD GetDisplayPropertiesForValue(const nsAString& aValue,
                                           nsAString& _retval);
+
+  NS_IMETHOD Format(const nsAString& aValue,
+                    nsAString& _retval);
 
 private:
   PRLock* mLock;

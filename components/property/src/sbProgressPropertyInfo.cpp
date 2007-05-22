@@ -64,3 +64,18 @@ sbProgressPropertyInfo::GetDisplayPropertiesForValue(const nsAString& aValue,
   
   return NS_OK;
 }
+
+NS_IMETHODIMP
+sbProgressPropertyInfo::Format(const nsAString& aValue,
+                               nsAString& _retval)
+{
+  if (aValue.EqualsLiteral("-1") ||
+      aValue.EqualsLiteral("101")) {
+    _retval.Truncate();
+  }
+  else {
+    _retval.Assign(aValue);
+  }
+
+  return NS_OK;
+}
