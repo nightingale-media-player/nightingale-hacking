@@ -201,6 +201,7 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
 
 /* Mozilla imports. */
 #include <nsIFileProtocolHandler.h>
+#include <nsIHttpChannel.h>
 #include <nsIHttpEventSink.h>
 #include <nsIInterfaceRequestor.h>
 #include <nsIProgressEventSink.h>
@@ -271,10 +272,12 @@ class sbDownloadSession : public nsIWebProgressListener,
      * mpIOService              I/O service.
      * mpFileProtocolHandler    File protocol handler.
      * mpWebBrowser             Web browser used for download.
+     * mpHttpChannel            Download HTTP channel.
      * mpTmpFile                Temporary download file.
      * mpDstLibrary             Destination library.
      * mpDstFile                Destination download file.
      * mpDstURI                 Destination download URI.
+     * mCurrentProgress         Current progress of download.
      * mShutdown                True if session has been shut down.
      */
 
@@ -285,10 +288,12 @@ class sbDownloadSession : public nsIWebProgressListener,
                                 mpFileProtocolHandler;
     nsCOMPtr<nsIWebBrowserPersist>
                                 mpWebBrowser;
+    nsCOMPtr<nsIHttpChannel>    mpHttpChannel;
     nsCOMPtr<nsIFile>           mpTmpFile;
     nsCOMPtr<sbILibrary>        mpDstLibrary;
     nsCOMPtr<nsIFile>           mpDstFile;
     nsCOMPtr<nsIURI>            mpDstURI;
+    int                         mCurrentProgress;
     PRBool                      mShutdown;
 
 
@@ -297,6 +302,10 @@ class sbDownloadSession : public nsIWebProgressListener,
      */
 
     nsresult CompleteTransfer();
+
+    void UpdateProgress(
+        PRUint64                    aProgress,
+        PRUint64                    aProgressMax);
 };
 
 

@@ -52,6 +52,7 @@
 #include <nsILocalFile.h>
 #include <nsIProperties.h>
 #include <nsIStandardURL.h>
+#include <nsITreeView.h>
 #include <nsIURL.h>
 #include <nsServiceManagerUtils.h>
 #include <pratom.h>
@@ -129,7 +130,7 @@ NS_IMPL_ISUPPORTS2(sbDownloadDevice, sbIDeviceBase, sbIDownloadDevice)
 sbDownloadDevice::sbDownloadDevice()
 :
     sbDeviceBase(),
-    mpDownloadSession(NULL),
+    mpDownloadSession(nsnull),
     mBusy(0)
 {
 }
@@ -163,7 +164,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     nsCOMPtr<sbIURIPropertyInfo>
                                 pURIPropertyInfo;
     nsCOMPtr<sbIMediaList>      pMediaList;
-    nsString                    *pNullNSString = NULL;
+    nsString                    *pNullNSString = nsnull;
     nsString                    &nullNSStringRef = *pNullNSString;
     nsresult                    result = NS_OK;
 
@@ -190,7 +191,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     if (NS_SUCCEEDED(result))
     {
         result = CreateDeviceLibrary(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
-                                     NULL,
+                                     nsnull,
                                      this);
     }
 
@@ -220,7 +221,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         result = CreateTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
 
     /* Create the download destination property. */
-    /* <eps> use string bundle. */
+    /* XXXeps use string bundle. */
     if (NS_SUCCEEDED(result))
     {
         pPropertyManager =
@@ -328,12 +329,12 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
     LOG(("1: Finalize\n"));
 
     /* Dispose of any outstanding download sessions. */
-    /* <eps> need to check how best to do this. */
+    /* XXXeps need to check how best to do this. */
     if (mpDownloadSession)
     {
         mpDownloadSession->Shutdown();
         delete(mpDownloadSession);
-        mpDownloadSession = NULL;
+        mpDownloadSession = nsnull;
     }
 
     /* Remove the device transfer queue. */
@@ -489,12 +490,21 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
         if (NS_SUCCEEDED(result))
             result = SetTransferDestination(pMediaItem);
 
-        /* Initialize download progress. */
+        /* Initialize the download progress property. */
         if (NS_SUCCEEDED(result))
         {
             result = pMediaItem->SetProperty
                                 (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
                                  NS_LITERAL_STRING("-1"));
+        }
+        if (NS_SUCCEEDED(result))
+        {
+            nsString                    progressModeStr;
+
+            progressModeStr.AppendInt(nsITreeView::PROGRESS_NONE);
+            result = pMediaItem->SetProperty
+                                (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
+                                 progressModeStr);
         }
 
         /* Write the media item. */
@@ -883,13 +893,13 @@ nsresult sbDownloadDevice::RunTransferQueue()
     nsresult                    result = NS_OK;
 
     /* Mark the transfer queue as busy.  Do nothing if already busy. */
-    /* <eps> fix race condition if queue empty. */
+    /* XXXeps fix race condition if queue empty. */
     alreadyBusy = PR_AtomicSet(&mBusy, 1);
     if (alreadyBusy)
         return (result);
 
     /* Get the next media item to transfer. */
-    /* <eps> need to be thread safe. */
+    /* XXXeps need to be thread safe. */
     result = GetNextItemFromTransferQueue
                                     (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                                      getter_AddRefs(pMediaItem));
@@ -901,7 +911,7 @@ nsresult sbDownloadDevice::RunTransferQueue()
     }
 
     /* Initiate item transfer. */
-    /* <eps> need to clean up when done. */
+    /* XXXeps need to clean up when done. */
     if (NS_SUCCEEDED(result))
     {
         mpDownloadSession = new sbDownloadSession(this, pMediaItem);
@@ -1090,7 +1100,7 @@ nsresult sbDownloadDevice::SetTransferDestination(
             result = pStandardURL->Init(nsIStandardURL::URLTYPE_STANDARD,
                                         0,
                                         NS_LITERAL_CSTRING(""),
-                                        NULL,
+                                        nsnull,
                                         pSrcURI);
         }
 
@@ -1142,8 +1152,8 @@ void sbDownloadDevice::SessionCompleted(
     sbDownloadSession           *pDownloadSession)
 {
     /* Delete the download session. */
-    /* <eps> is it safe to delete here? */
-    mpDownloadSession = NULL;
+    /* XXXeps is it safe to delete here? */
+    mpDownloadSession = nsnull;
 
     /* Mark the transfer queue as not busy and run it. */
     mBusy = 0;
@@ -1243,6 +1253,7 @@ sbDownloadSession::sbDownloadSession(
 :
     mpDownloadDevice(pDownloadDevice),
     mpMediaItem(pMediaItem),
+    mCurrentProgress(-1),
     mShutdown(PR_FALSE)
 {
 }
@@ -1327,6 +1338,18 @@ nsresult sbDownloadSession::Initiate()
                                                 getter_AddRefs(pChannel));
     }
 
+    /* Try to get an HTTP channel.  Assume protocol */
+    /* is not HTTP (e.g., FTP) on failure.          */
+    if (NS_SUCCEEDED(result))
+    {
+        mpHttpChannel = do_QueryInterface(pChannel, &result);
+        if (NS_FAILED(result))
+        {
+            mpHttpChannel = nsnull;
+            result = NS_OK;
+        }
+    }
+
     /* Create a persistent download web browser. */
     if (NS_SUCCEEDED(result))
     {
@@ -1409,6 +1432,8 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
     PRUint32                    aStateFlags,
     nsresult                    aStatus)
 {
+    nsString                    currentProgressStr;
+    nsString                    progressModeStr;
     nsresult                    status = aStatus;
     nsresult                    result = NS_OK;
 
@@ -1417,19 +1442,35 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
         return (NS_OK);
 
     /* Do nothing on abort. */
-    /* <eps> This is a workaround for the fact that shutdown */
+    /* XXXeps This is a workaround for the fact that shutdown */
     /* isn't called until after channel is aborted.          */
     if (status == NS_ERROR_ABORT)
         return (NS_OK);
 
+    /* Check HTTP response status. */
+    if (NS_SUCCEEDED(status) && mpHttpChannel)
+    {
+        PRBool                      requestSucceeded;
+
+        /* Check if request succeeded. */
+        result = mpHttpChannel->GetRequestSucceeded(&requestSucceeded);
+        if (NS_SUCCEEDED(result) && !requestSucceeded)
+            status = NS_ERROR_UNEXPECTED;
+    }
+
     /* Complete the transfer on success. */
-    if (NS_SUCCEEDED(status))
+    if (NS_SUCCEEDED(result) && NS_SUCCEEDED(status))
         result = CompleteTransfer();
 
     /* Set the progress to complete. */
     /* XXXeps won't need Write after bug 3037 is fixed. */
+    mCurrentProgress = 101;
+    currentProgressStr.AppendInt(mCurrentProgress);
     mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
-                             NS_LITERAL_STRING("101"));
+                             currentProgressStr);
+    progressModeStr.AppendInt(nsITreeView::PROGRESS_NONE);
+    mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
+                             progressModeStr);
     mpMediaItem->Write();
 
     /* Send notification of session completion. */
@@ -1475,10 +1516,8 @@ NS_IMETHODIMP sbDownloadSession::OnProgressChange(
     PRInt32                     aCurTotalProgress,
     PRInt32                     aMaxTotalProgress)
 {
-    LOG(("1: OnProgressChange %d %d %d %d\n", aCurSelfProgress,
-                                              aMaxSelfProgress,
-                                              aCurTotalProgress,
-                                              aMaxTotalProgress));
+    /* Update progress. */
+    UpdateProgress(aCurSelfProgress, aMaxSelfProgress);
 
     return (NS_OK);
 }
@@ -1633,8 +1672,8 @@ NS_IMETHODIMP sbDownloadSession::OnProgress(
     PRUint64                    aProgress,
     PRUint64                    aProgressMax)
 {
-    LOG(("1: OnProgress %d\n", (PRUint32) (aProgress & 0xFFFFFFFF)));
-    LOG(("2: OnProgress %d\n", (PRUint32) (aProgressMax & 0xFFFFFFFF)));
+    /* Update progress. */
+    UpdateProgress(aProgress, aProgressMax);
 
     return (NS_OK);
 }
@@ -1693,7 +1732,14 @@ NS_IMETHODIMP sbDownloadSession::OnRedirect(
 {
     nsresult                    result = NS_OK;
 
-    LOG(("1: OnRedirect\n"));
+    /* Try to get an HTTP channel.  Assume protocol */
+    /* is not HTTP (e.g., FTP) on failure.          */
+    mpHttpChannel = do_QueryInterface(newChannel, &result);
+    if (NS_FAILED(result))
+    {
+        mpHttpChannel = nsnull;
+        result = NS_OK;
+    }
 
     return (result);
 }
@@ -1758,6 +1804,44 @@ nsresult sbDownloadSession::CompleteTransfer()
     }
 
     return (result);
+}
+
+
+/*
+ * UpdateProgress
+ *
+ *   --> aProgress              Current progress value.
+ *   --> aProgressMax           Maximum progress value.
+ *
+ *   This function updates the download session progress status with the
+ * progress values specified by aProgress and aProgressMax.
+ */
+
+void sbDownloadSession::UpdateProgress(
+    PRUint64                    aProgress,
+    PRUint64                    aProgressMax)
+{
+    PRInt64                     progressPct;
+    nsString                    currentProgressStr;
+    nsString                    progressModeStr;
+
+    /* Compute the download progress.  Save the   */
+    /* last percent for download post-processing. */
+    progressPct = (100 * aProgress) / aProgressMax;
+
+    /* Update download progress if it has changed. */
+    if (progressPct != mCurrentProgress)
+    {
+        /* Update the download progress. */
+        mCurrentProgress = progressPct;
+        currentProgressStr.AppendInt(mCurrentProgress);
+        mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
+                                 currentProgressStr);
+        progressModeStr.AppendInt(nsITreeView::PROGRESS_NORMAL);
+        mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
+                                 progressModeStr);
+        mpMediaItem->Write();
+    }
 }
 
 
