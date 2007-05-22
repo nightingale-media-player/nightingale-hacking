@@ -1831,6 +1831,83 @@ sbLocalDatabaseLibrary::BatchNotifyAdded(nsIArray *aMediaItemArray) {
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::BatchCreateMediaItemsAsync(nsIArray* aURIList,
+                                                   sbIBatchCreateMediaItemsListener* aListener)
+{
+  NS_ENSURE_ARG_POINTER(aURIList);
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsAsync()", this));
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = query->SetAsyncQuery(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("begin"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 listLength;
+  rv = aURIList->GetLength(&listLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoPtr<sbBatchCreateTimerCallback> callback;
+  callback = new sbBatchCreateTimerCallback(this, aListener, query);
+  NS_ENSURE_TRUE(callback, NS_ERROR_OUT_OF_MEMORY);
+
+  // Add a query to insert each new item and record the guids that were
+  // generated for the future inserts
+  for (PRUint32 i = 0; i < listLength; i++) {
+
+    nsCOMPtr<nsIURI> uri = do_QueryElementAt(aURIList, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCAutoString spec;
+    rv = uri->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString guid;
+    rv = AddNewItemQuery(query,
+                         SB_MEDIAITEM_TYPEID,
+                         NS_ConvertUTF8toUTF16(spec),
+                         guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString* success = callback->mGuids.AppendElement(guid);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  rv = query->AddQuery(NS_LITERAL_STRING("commit"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Run the async query
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  // Start polling the query for completion
+  nsCOMPtr<nsITimer> timer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Stick the timer into a member array so we keep it alive while it does
+  // its thing.  It never gets removed from this array until this library
+  // gets deleted.
+  PRBool success = mBatchCreateTimers.AppendObject(timer);
+  NS_ENSURE_TRUE(success, rv);
+
+  // This value 333 is magical.  I copied it from the old media scan code.  I
+  // assumed it was a number that was reached through experience tweaking the
+  // callback frequency.
+  rv = timer->InitWithCallback(callback, 333, nsITimer::TYPE_REPEATING_SLACK);
+  NS_ENSURE_SUCCESS(rv, rv);
+  callback.forget();
+
+  return NS_OK;
+}
+
 /**
  * See sbIMediaList
  */
@@ -2235,5 +2312,81 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
+}
+
+NS_IMPL_ISUPPORTS1(sbBatchCreateTimerCallback, nsITimerCallback);
+
+sbBatchCreateTimerCallback::sbBatchCreateTimerCallback(sbLocalDatabaseLibrary* aLibrary,
+                                                       sbIBatchCreateMediaItemsListener* aListener,
+                                                       sbIDatabaseQuery* aQuery) :
+  mLibrary(aLibrary),
+  mListener(aListener),
+  mQuery(aQuery)
+{
+}
+
+NS_IMETHODIMP
+sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
+{
+  nsresult rv;
+
+  // Check to see if the query is complete
+  PRUint32 len;
+  PRUint32 pos;
+  rv = mQuery->GetQueryCount(&len);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mQuery->CurrentQuery(&pos);
+  NS_ENSURE_SUCCESS(rv, rv);
+  pos = pos + 1;
+
+  if (len == pos) {
+    // We're done, so cancel the timer, gather the media items we added
+    // and call the listener
+    rv = aTimer->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIMutableArray> array =
+      do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    {
+      sbAutoBatchHelper batchHelper(mLibrary);
+
+      PRUint32 length = mGuids.Length();
+      for (PRUint32 i = 0; i < length; i++) {
+        // We know the GUID and the type of these new media items so preload
+        // the cache with this information
+        nsAutoPtr<sbLocalDatabaseLibrary::sbMediaItemInfo>
+          newItemInfo(new sbLocalDatabaseLibrary::sbMediaItemInfo());
+        NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
+
+        newItemInfo->hasListType = PR_TRUE;
+
+        NS_ASSERTION(!mLibrary->mMediaItemTable.Get(mGuids[i], nsnull),
+                     "Guid already exists!");
+
+        PRBool success = mLibrary->mMediaItemTable.Put(mGuids[i], newItemInfo);
+        NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+        newItemInfo.forget();
+
+        nsCOMPtr<sbIMediaItem> mediaItem;
+        rv = mLibrary->GetMediaItem(mGuids[i], getter_AddRefs(mediaItem));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = array->AppendElement(mediaItem, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        mLibrary->NotifyListenersItemAdded(mLibrary, mediaItem);
+      }
+    }
+    mListener->OnComplete(array);
+  }
+  else {
+    // Notify progress
+    mListener->OnProgress(pos);
+  }
+
+  return NS_OK;
 }
 

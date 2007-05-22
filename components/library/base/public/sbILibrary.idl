@@ -44,6 +44,28 @@ interface sbIMediaList;
 interface sbIMediaListFactory;
 
 /**
+* \interface sbIBatchCreateMediaItemsListener
+* \brief Callback for batch media create items
+*/
+[scriptable, uuid(fcdbb044-4214-425e-9103-bce219cb171d)]
+interface sbIBatchCreateMediaItemsListener : nsISupports
+{
+  /**
+   * \brief Called periodically to provide progress updates for the batch
+   *        operation
+   * \param aIndex The index of the most recently completed item in the work
+   *        array
+   */
+  void onProgress(in unsigned long aIndex);
+
+  /**
+   * \brief Called when batcvh operation is complete
+   * \param aMediaItems Array of the created sbIMediaItem objects.
+   */
+  void onComplete(in nsIArray aMediaItems);
+};
+
+/**
 * \interface sbILibrary
 * \brief Media library abstraction
 *
@@ -159,4 +181,13 @@ interface sbILibrary : sbILibraryResource
    * \param aURIArray nsIArray of sbIMediaItem
    */
   void batchNotifyAdded(in nsIArray aMediaItemArray);
+
+  /**
+   * \brief Asychronously create many media items from a list of URIs
+   * \param aURIArray nsIArray of nsIURI objects
+   * \param aListener Listener to receive progress and complete notifications
+   */
+  void batchCreateMediaItemsAsync(in nsIArray aURIArray,
+                                  in sbIBatchCreateMediaItemsListener aListener);
 };
+

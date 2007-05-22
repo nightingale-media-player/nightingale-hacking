@@ -194,8 +194,7 @@ private:
 
   sbMediaItemInfoTable mMediaItemTable;
 
-  nsCOMPtr<nsITimer> mBatchCreateTimer;
-  nsCOMPtr<nsITimerCallback> mBatchCreateTimerCallback;
+  nsCOMArray<nsITimer> mBatchCreateTimers;
 
   nsCOMPtr<nsIPropertyBag2> mCreationParameters;
   nsCOMPtr<sbILibraryFactory> mFactory;
@@ -249,4 +248,23 @@ private:
   PRPackedBool mItemEnumerated;
 };
 
+class sbBatchCreateTimerCallback : public nsITimerCallback
+{
+friend class sbLocalDatabaseLibrary;
+
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSITIMERCALLBACK
+
+  sbBatchCreateTimerCallback(sbLocalDatabaseLibrary* aLibrary,
+                             sbIBatchCreateMediaItemsListener* aListener,
+                             sbIDatabaseQuery* aQuery);
+private:
+  sbLocalDatabaseLibrary* mLibrary;
+  nsCOMPtr<sbIBatchCreateMediaItemsListener> mListener;
+  nsCOMPtr<sbIDatabaseQuery> mQuery;
+  nsTArray<nsString> mGuids;
+
+};
 #endif /* __SBLOCALDATABASELIBRARY_H__ */
+

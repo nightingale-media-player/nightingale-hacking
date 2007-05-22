@@ -43,6 +43,7 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_smartmedialist.js \
                  $(srcdir)/test_library.js \
                  $(srcdir)/test_library_batchcreate.js \
+                 $(srcdir)/test_library_batchcreateasync.js \
                  $(srcdir)/test_library_getmedialists.js \
                  $(srcdir)/test_libraryloader.js \
                  $(srcdir)/test_multilibrary.js \
