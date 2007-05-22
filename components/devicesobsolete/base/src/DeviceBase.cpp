@@ -84,6 +84,19 @@
   #error need_to_define_your_file_path_separator_and_illegal_characters
 #endif
 
+/*
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbDeviceBase:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo *gUSBMassStorageDeviceLog = nsnull;
+#define TRACE(args) if (gUSBMassStorageDeviceLog) PR_LOG(gUSBMassStorageDeviceLog, PR_LOG_DEBUG, args)
+#define LOG(args)   if (gUSBMassStorageDeviceLog) PR_LOG(gUSBMassStorageDeviceLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
+
 //Utility functions.
 void 
 ReplaceChars(nsAString& aOldString,
@@ -309,6 +322,11 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
 //sbDeviceBase class.
 sbDeviceBase::sbDeviceBase()
 {
+#ifdef PR_LOGGING
+  if (!gUSBMassStorageDeviceLog) {
+    gUSBMassStorageDeviceLog = PR_NewLogModule("sbDeviceBase");
+  }
+#endif
 }
 
 sbDeviceBase::~sbDeviceBase()
@@ -517,6 +535,15 @@ sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                                             libraryFile);
   NS_ENSURE_SUCCESS(rv, rv);
 
+#ifdef PR_LOGGING
+  {
+    nsCAutoString str;
+    if(NS_SUCCEEDED(libraryFile->GetNativePath(str))) {
+      LOG(("Attempting to create device library with file path %s", str.get()));
+    }
+  }
+#endif
+
   nsCOMPtr<sbILibrary> library;
   rv = libraryFactory->CreateLibrary(libraryProps, getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -650,17 +677,19 @@ sbDeviceBase::RemoveItemFromTransferQueue(const nsAString &aDeviceIdentifier,
                                           sbIMediaItem* aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  
+  nsresult rv;
+  PRUint32 index = 0;
 
   nsCOMPtr<nsIMutableArray> deviceQueue;
   if(mDeviceQueues.Get(aDeviceIdentifier, getter_AddRefs(deviceQueue))) {
-    PRUint32 index;
-    nsresult rv = deviceQueue->IndexOf(0, aMediaItem, &index);
+    rv = deviceQueue->IndexOf(0, aMediaItem, &index);
     NS_ENSURE_SUCCESS(rv, rv);
 
     return deviceQueue->RemoveElementAt(index);
   }
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_OK;
 }
 
 nsresult 

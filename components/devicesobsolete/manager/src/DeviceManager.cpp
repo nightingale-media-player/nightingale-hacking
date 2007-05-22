@@ -41,6 +41,8 @@
 #include <nsXPCOM.h>
 #include <prlog.h>
 
+#include <sbILibraryManager.h>
+
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbDeviceManager:5
@@ -116,7 +118,7 @@ sbDeviceManager::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // "profile-after-change" is sent after a profile has been loaded
-  rv = observerService->AddObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID,
+  rv = observerService->AddObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC,
                                     PR_FALSE);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to add profile startup observer");
 
@@ -396,7 +398,7 @@ sbDeviceManager::Observe(nsISupports* aSubject,
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID) == 0) {
+  if (strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC) == 0) {
     // The profile has been loaded so now we can go hunting for devices
     rv = LoadSupportedDevices();
     NS_ENSURE_SUCCESS(rv, rv);
