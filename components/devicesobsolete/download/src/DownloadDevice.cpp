@@ -50,9 +50,11 @@
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsILocalFile.h>
+#include <nsIPrefService.h>
 #include <nsIProperties.h>
 #include <nsIStandardURL.h>
 #include <nsITreeView.h>
+#include <nsISupportsPrimitives.h>
 #include <nsIURL.h>
 #include <nsServiceManagerUtils.h>
 #include <pratom.h>
@@ -90,6 +92,7 @@
 #define SB_DOWNLOAD_TMP_DIR "DownloadDevice"
 #define SB_DOWNLOAD_LIB_NAME                                                   \
                 "&chrome://songbird/locale/songbird.properties#device.download"
+#define SB_PREF_DOWNLOAD_LIBRARY "songbird.library.download"
 
 
 /* *****************************************************************************
@@ -167,6 +170,9 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     nsString                    *pNullNSString = nsnull;
     nsString                    &nullNSStringRef = *pNullNSString;
     nsresult                    result = NS_OK;
+    nsCOMPtr<nsISupportsString> pSupportsString;
+    nsAutoString                libraryGUID;
+    nsCOMPtr<nsIPrefBranch>     pPrefBranch;
 
     /* Initialize the base services. */
     result = Init();
@@ -200,6 +206,31 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     {
         result = GetLibraryForDevice(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                                      getter_AddRefs(mpDownloadLibrary));
+    }
+
+    /* Set the library guid into the prefs so other folks can find us. */
+    if (NS_SUCCEEDED(result)) {
+        pPrefBranch =
+            do_GetService(NS_PREFSERVICE_CONTRACTID, &result);
+
+        if (NS_SUCCEEDED(result)) {
+            pSupportsString =
+                do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &result);
+        }
+
+        if (NS_SUCCEEDED(result)) {
+            result = mpDownloadLibrary->GetGuid(libraryGUID);
+        }
+
+        if (NS_SUCCEEDED(result)) {
+            result = pSupportsString->SetData(libraryGUID);
+        }
+
+        if (NS_SUCCEEDED(result)) {
+            result = pPrefBranch->SetComplexValue(SB_PREF_DOWNLOAD_LIBRARY,
+                                                  NS_GET_IID(nsISupportsString),
+                                                  pSupportsString);
+        }
     }
 
     /* Set the download device library name.  */

@@ -64,7 +64,6 @@
 
 #define SB_PREF_MAIN_LIBRARY     SB_PREFBRANCH_LIBRARY "main"
 #define SB_PREF_WEB_LIBRARY      SB_PREFBRANCH_LIBRARY "web"
-#define SB_PREF_DOWNLOAD_LIBRARY SB_PREFBRANCH_LIBRARY "download"
 
 class nsIComponentManager;
 class nsIFile;
