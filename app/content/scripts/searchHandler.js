@@ -541,8 +541,7 @@ const gSearchHandler = {
    * to the given query.  If not, then open the default library
    * with the given query.
    */
-  _doSongbirdSearch: function SearchHandler__doSongbirdSearch(query) {
-    
+  _doSongbirdSearch: function SearchHandler__doSongbirdSearch(query) {    
     // If we aren't showing a playlist, then load the library
     if ( !this._isPlaylistShowing() )
     {
@@ -623,8 +622,9 @@ const gSearchHandler = {
   _setPlaylistSearch: function SearchHandler__setPlaylistSearch(query) {
 
     // Get the playlist element from within the current tab      
-    var playlist = gBrowser.currentBrowserPlaylist;
+    var playlist = gBrowser.currentPlaylist;
     if (playlist == null) {
+      dump("SearchHandler__setPlaylistSearch: NO PLAYLIST!\n");
       return false;
     }
     
@@ -635,7 +635,7 @@ const gSearchHandler = {
       success = true;
 
       // TODO Remove this legacy functionality.  The jump-to should be self contained.
-      if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo(); 
+      if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
     } catch(e) {
       dump("SearchHandler__setPlaylistSearch: Unable to set the search query.\n");
       dump(e + "\n");
