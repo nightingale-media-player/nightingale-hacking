@@ -1439,7 +1439,8 @@ sbLocalDatabaseTreeView::GetProgressMode(PRInt32 row,
 
   nsresult rv;
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-  if (!mRowCache.Get(row, getter_AddRefs(bag))) {
+  if (!mRowCache.Get(row, getter_AddRefs(bag)) &&
+      !mDirtyRowCache.Get(row, getter_AddRefs(bag))) {
 
     // HACK to get this row's data loaded.
     nsAutoString cellValue;
