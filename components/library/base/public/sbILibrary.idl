@@ -123,6 +123,17 @@ interface sbILibrary : sbILibraryResource
   sbIMediaList createMediaList(in AString aType);
 
   /**
+   * \brief Creates a new media list
+   *
+   * \param aType - The type of media list to create.
+   * \param aSource - A media list whose items and properties are to be copied.
+   * 
+   * \return A new media list.
+   */
+  sbIMediaList copyMediaList(in AString aType,
+                             in sbIMediaList aSource);
+
+  /**
    * \brief Get a media item
    * \param aGuid Guid of media item to get
    * \return The requested media item

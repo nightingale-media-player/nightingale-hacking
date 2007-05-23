@@ -1354,6 +1354,44 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
  * See sbILibrary
  */
 NS_IMETHODIMP
+sbLocalDatabaseLibrary::CopyMediaList(const nsAString& aType,
+                                      sbIMediaList* aSource,
+                                      sbIMediaList** _retval)
+{
+  NS_ENSURE_FALSE(aType.IsEmpty(), NS_ERROR_INVALID_ARG);
+  NS_ENSURE_ARG_POINTER(aSource);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbIMediaList> newList;
+  nsresult rv = CreateMediaList(aType, getter_AddRefs(newList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> sourceItem = do_QueryInterface(aSource, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> newItem = do_QueryInterface(newList, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CopyStandardProperties(sourceItem, newItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  newList = do_QueryInterface(newItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXben This will probably fail for types other than "simple"... For now
+  //        we won't automatically lock other types out (by returning early)
+  //        just in case another media list type implements this behavior.
+  rv = newList->AddAll(aSource);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = newList);
+  return NS_OK;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
                                      sbIMediaItem** _retval)
 {

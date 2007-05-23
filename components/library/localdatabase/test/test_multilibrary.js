@@ -101,4 +101,19 @@ function runTest () {
   assertTrue(list1.length == 0);
   assertTrue(list2.length == 10);
   assertTrue(two.length == 22);
+  
+  var list3 = one.copyMediaList("simple", list2);
+  assertTrue(list3);
+  assertEqual(list2.length, list3.length); 
+  assertEqual(list3.library, one);
+  
+  var list4 = two.copyMediaList("simple", list2);
+  assertTrue(list4);
+  assertEqual(list2.length, list4.length); 
+  assertEqual(list4.library, two);
+  
+  var list5 = two.copyMediaList("simple", list3);
+  assertTrue(list5);
+  assertEqual(list3.length, list5.length); 
+  assertEqual(list5.library, two);
 }
