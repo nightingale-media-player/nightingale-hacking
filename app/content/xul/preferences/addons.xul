@@ -30,13 +30,13 @@
 <overlay id="AddonsPaneOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <prefpane id="paneAddons" flex="1"
+  <prefpane id="paneAddons"
             onpaneload="AddonsPrefPane.load();">
 
     <script type="application/x-javascript"
             src="chrome://songbird/content/scripts/preferences/addons.js"/>
 
-    <iframe id="addonsFrame" flex="1"
+    <iframe id="addonsFrame" style="height:300px;"
             src="chrome://mozapps/content/extensions/extensions.xul"/>
 
   </prefpane>

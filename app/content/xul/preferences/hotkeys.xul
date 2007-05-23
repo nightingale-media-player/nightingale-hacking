@@ -29,8 +29,7 @@
 
 <!-- todo: internationalize -->
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
 <overlay id="HotkeysPaneOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -39,7 +38,7 @@
 
     <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/hotkeys.js"/>
 
-    <groupbox flex="1"> 
+    <groupbox> 
       <checkbox id="hotkeys.enabled" label="&hotkeys.useglobalhotkeys;" accesskey="&hotkeys.useglobalhotkeys.accesskey;" oncommand="gHotkeysPane.onEnableDisable();"/>
       <listbox id="hotkey.list" onselect="gHotkeysPane.onSelectHotkey();">
         <listhead>
@@ -47,8 +46,8 @@
           <listheader label="&hotkeys.hotkey;"/>
         </listhead>
         <listcols>
-          <listcol width="200"/>
-          <listcol width="200"/>
+          <listcol flex="1"/>
+          <listcol flex="1"/>
         </listcols>
       </listbox>
       <hbox align="center">
