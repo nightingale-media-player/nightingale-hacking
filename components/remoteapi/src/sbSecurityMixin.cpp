@@ -152,11 +152,14 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   nsCOMPtr<nsIURI> codebase;
   GetCodebase( getter_AddRefs(codebase) );
 
-  // XXXredfive CHECK TO MAKE SURE THIS IS SAFE!!!!!!!
-  // This was needed for calls of the sbRemotePlayer API from the
-  // sbRemoteCommands object.
+  // bz mentioned in an email that if we don't have a codebase we can infer
+  // that the code didn't come from a http: load. He also mentions that if
+  // they move to a lattice of principals this may not hold true.
+  // for his full message see
+  //  http://groups.google.com/group/mozilla.dev.security/msg/fc48e8d0c795a638
   if (!codebase) {
-    NS_WARNING("We're doing something possibly bad here - INVESTIGATE ME.");
+    // When the commands object gets called by the sb-commands bindings we
+    // wind up here, no codebase because the call is coming from internal code.
     *_retval = SB_CloneAllAccess();
     return NS_OK;
   }
