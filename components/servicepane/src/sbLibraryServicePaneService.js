@@ -138,31 +138,78 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
 }
 
+
+sbLibraryServicePane.prototype._getMediaListForDrop =
+function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrientation) {
+  dump('_getMediaListForDrop('+aNode+', '+aDragSession+', '+aOrientation+')\n');
+  // work out what the drop would target and return an sbIMediaList to
+  // represent that target, or null if the drop is not allowed
+  
+  // work out what's being dropped
+  var dropList = aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST);
+  
+  // if it's not a list and not items, then we don't know or care what happens
+  // next
+  if (!dropList &&
+      !aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM) &&
+      !aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
+    return null;
+  }
+  
+  dump('dropList='+dropList+'\n');
+  
+  // work out where its going
+  var container = aNode;
+  var dropOnto = true;
+  if (aOrientation != 0) {
+    // if we're dropping before/after we're dropping into the parent
+    container = aNode.parentNode;
+    dropOnto = false;
+  }
+  
+  dump('container='+container+' ('+container.id+')\n');
+  dump('dropOnto='+dropOnto+'\n');
+  
+  // work out what library resource is associated with the container node
+  var containerResource = this.getLibraryResourceForNode(container);
+  
+  dump('containerResource='+containerResource+'\n');
+  
+  // if there's no associated library then the target is assumed to be the
+  // default library
+  if (containerResource == null) {
+    containerResource = this._libraryManager.mainLibrary;
+  }
+  
+  // is the target a library
+  var isLibrary = (containerResource instanceof Ci.sbILibrary);
+  
+  dump('isLibrary='+isLibrary+'\n');
+  
+  // The Rules:
+  //  * playlists and items can be dropped on top of playlists or libraries
+  //  * playlists can be dropped next to other playlists (ie: in a library)
+  
+  if (dropOnto || (dropList && isLibrary)) {
+    return containerResource
+  } else {
+    return null;
+  }
+}
+
 sbLibraryServicePane.prototype.canDrop =
 function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation) {
   dump('\n\n\ncanDrop:\n');
-  if (aOrientation != 0) {
-    // FIXME: handle dropping next to stuff
+  
+  var list = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
+  
+  if (list) {
+    dump('I CAN HAS DORP\n');
+    return true;
+  } else {
+    dump('NO DROP FOR YOU!\n');
     return false;
   }
-  
-  if (aNode.isContainer) {
-    // library
-    if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM) ||
-        aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST) ||
-        aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
-      dump('I CAN HAS DORP\n');
-      return true;
-    }
-  } else {
-    // playlist
-    if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM) ||
-        aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
-      dump('I CAN HAS DORP\n');
-      return true;
-    }
-  }
-  return false;
 }
 sbLibraryServicePane.prototype._getDndData =
 function sbLibraryServicePane__getDndData(aDragSession, aDataType, aInterface) {
@@ -187,39 +234,56 @@ function sbLibraryServicePane__getDndData(aDragSession, aDataType, aInterface) {
   return dnd.getSource(data).QueryInterface(aInterface);
 }
 
-sbLibraryServicePane.prototype._listsForNode =
-function sbLibraryServicePane__listsForNode(aNode) {
-  // what sbIMediaLists should we add things to if we want to add them to aNode
-  var lists = [];
-  if (aNode.isContainer) {
-    // library
-    lists = [this._getLibraryForURN(aNode.id)];
-  } else {
-    // mediaList
-    var item = this._getItemForURN(aNode.id);
-    lists = [item.library, item];
-  }
-  return lists;
-}
-
 sbLibraryServicePane.prototype.onDrop =
 function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
   dump('\n\n\nonDrop:\n');
+  
+  // where are we dropping?
+  var targetList = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
+  if (!targetList) {
+    // don't know how to drop here
+    return;
+  }
+  
+  var targetListIsLibrary = (targetList instanceof Ci.sbILibrary);
+  
   if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST)) {
     dump('media list dropped\n');
-    if (!aNode.isContainer) {
-      // you can only drop media lists onto libraries
-      dump('not container!\n');
-      return;
-    }
-    dump ('gonna try to get context\n');
+    
     var context = this._getDndData(aDragSession,
         TYPE_X_SB_TRANSFER_MEDIA_LIST, Ci.sbISingleListTransferContext);
-    dump('got context\n');
-    var library = this._getLibraryForURN(aNode.id);
-    dump('got library\n');
-    library.add(context.list);
+    var list = context.list;
     
+    if (targetListIsLibrary) {
+      // want to copy the list and the contents
+      if (targetList == list.library) {
+        dump('this list is already in this library\n');
+        return;
+      }
+      
+      // create a copy of the list
+      var newlist = targetList.copyMediaList('simple', list);
+      
+      // find the node that was created
+      var newnode = this._servicePane.getNode(this._itemURN(newlist));
+      if (aOrientation < 0) {
+        aNode.parentNode.insertBefore(newnode, aNode);
+      } else if (aNode.nextSibling) {
+        aNode.parentNode.insertBefore(newnode, aNode.nextSibling);
+      } else {
+        aNode.parentNode.appendChild(newnode);
+      }
+      
+      // FIXME: handle the creation of the node in the pane correctly
+    } else {
+      if (context.list == targetList) {
+        // uh oh - you can't drop a list onto itself
+        dump("you can't drop a list onto itself\n");
+        return;
+      }
+      // just add the contents
+      targetList.addAll(list);
+    }
     dump('added\n');
   } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
     dump('media items dropped\n');
@@ -229,27 +293,27 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
     
     var items = context.items;
     
-    // what media lists do we have to add these nodes to?
-    var lists = this._listsForNode(aNode);
-    
-    for (var i=0; i<lists.length; i++) {
-      lists[i].beginUpdateBatch();
-      lists[i].addSome({
-        hasMoreElements: function() { return items.hasMoreElements(); },
-        getNext: function() {
-          var item = items.getNext().QueryInterface(Ci.sbIIndexedMediaItem);
-          return item.mediaItem;
-        },
-        QueryInterface: function(iid) {
-          if (iid.equals(Ci.nsISupports) ||
-              iid.equals(Ci.nsISimpleEnumerator)) {
-            return this;
-          }
-          throw Cr.NS_ERROR_NO_INTERFACE;
+    var itemEnumerator = {
+      hasMoreElements: function() { return items.hasMoreElements(); },
+      getNext: function() {
+        var item = items.getNext().QueryInterface(Ci.sbIIndexedMediaItem);
+        return item.mediaItem;
+      },
+      QueryInterface: function(iid) {
+        if (iid.equals(Ci.nsISupports) ||
+            iid.equals(Ci.nsISimpleEnumerator)) {
+          return this;
         }
-      });
-      lists[i].endUpdateBatch();
-    }
+        throw Cr.NS_ERROR_NO_INTERFACE;
+      }
+    };
+
+    // add all the items to the target list
+    targetList.beginUpdateBatch();
+    targetList.addSome(itemEnumerator);
+    targetList.endUpdateBatch();
+    
+    dump('added\n');
 
   } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM)) {
     dump('media item dropped\n');
@@ -257,21 +321,20 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
     var context = this._getDndData(aDragSession,
         TYPE_X_SB_TRANSFER_MEDIA_ITEM, Ci.sbISingleItemTransferContext);
     
-    // what media lists do we have to add this node to?
-    var lists = this._listsForNode(aNode);
-
-    // add this item to all the media lists we need to add it to
-    for (var i=0; i<lists.length; i++) {
-      dump('adding '+context.item+' to '+lists[i]+'\n');
-      lists[i].add(context.item);
-    }
+    // add the item
+    targetList.add(context.item);
     
     dump('added\n');
   }
 }
+sbLibraryServicePane.prototype._nodeIsLibrary =
+function sbLibraryServicePane__nodeIsLibrary(aNode) {
+  return aNode.getAttributeNS(LSP, "LibraryGUID") ==
+      aNode.getAttributeNS(LSP, "ListGUID");
+}
 sbLibraryServicePane.prototype.onDragGesture =
 function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
-  if (aNode.isContainer) {
+  if (this._nodeIsLibrary(aNode)) {
     // a library isn't dragable
     return false;
   }
@@ -302,7 +365,8 @@ function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
   var text = Components.classes["@mozilla.org/supports-string;1"].
      createInstance(Components.interfaces.nsISupportsString);
   text.data = handle;
-  aTransferable.setTransferData(TYPE_X_SB_TRANSFER_MEDIA_LIST, text, text.data.length*2);
+  aTransferable.setTransferData(TYPE_X_SB_TRANSFER_MEDIA_LIST, text,
+                                text.data.length*2);
   
   return true;
 }
@@ -754,6 +818,9 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.dndAcceptNear = 'text/x-sb-toplevel';
     node.properties = "library";
     node.editable = true;
+    if (aLibrary != this._libraryManager.mainLibrary) {
+      node.dndAcceptIn = 'text/x-sb-playlist-'+aMediaList.library.guid;
+    }
     
     // Set properties for styling purposes
     node.properties = "library libraryguid-" + aLibrary.guid;
@@ -795,7 +862,8 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   var node = this._servicePane.getNode(id);
   if (!node) {
     // Create the node
-    node = this._servicePane.addNode(id, this._servicePane.root, false);
+    // NOTE: it's a container for drag and drop purposes only.
+    node = this._servicePane.addNode(id, this._servicePane.root, true);
     node.url = this._getDisplayURL(aMediaList);
     node.contractid = CONTRACTID;
     node.editable = true;
@@ -810,6 +878,16 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     node.setAttributeNS(LSP, "LibraryGUID", aMediaList.library.guid);
     // and the guid of this list
     node.setAttributeNS(LSP, "ListGUID", aMediaList.guid);
+    
+    if (aMediaList.library == this._libraryManager.mainLibrary) {
+      // a playlist in the main library is considered a toplevel node
+      node.dndDragTypes = 'text/x-sb-toplevel';
+      node.dndAcceptNear = 'text/x-sb-toplevel';
+    } else {
+      // playlists in other libraries can only go into their libraries' nodes
+      node.dndDragTypes = 'text/x-sb-playlist-'+aMediaList.library.guid;
+      node.dndAcceptNear = 'text/x-sb-playlist-'+aMediaList.library.guid;
+    }
 
     // Place the node in the tree
     this._insertMediaListNode(node, aMediaList);
