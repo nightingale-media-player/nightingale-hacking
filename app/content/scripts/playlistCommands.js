@@ -590,8 +590,7 @@ function onBrowserTransfer(mediaItems)
                   var downloadLibrary = downloadDevice.getLibrary("download");
                   while (mediaItems.hasMoreElements())
                   {
-                      downloadLibrary.createMediaItem
-                                              (mediaItems.getNext().contentSrc);
+                      downloadLibrary.add(mediaItems.getNext());
                   }
                 }
             }

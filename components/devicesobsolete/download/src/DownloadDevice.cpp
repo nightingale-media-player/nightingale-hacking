@@ -54,12 +54,14 @@
 #include <nsIPrefService.h>
 #include <nsIProperties.h>
 #include <nsIStandardURL.h>
+#include <nsISupportsPrimitives.h>
 #include <nsITreeView.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIURL.h>
 #include <nsServiceManagerUtils.h>
 
 /* Songbird imports. */
+#include <sbILibraryManager.h>
 #include <sbIMetadataJob.h>
 #include <sbIPropertyManager.h>
 #include <sbStandardProperties.h>
@@ -80,9 +82,10 @@
  * SB_TMP_DIR                   Songbird temporary directory name.
  * SB_DOWNLOAD_TMP_DIR          Download device temporary directory name.
  * SB_DOWNLOAD_LIB_NAME         Download device library name.
- * SB_PREF_DOWNLOAD_LIBRARY     Download library preference name.
  * SB_STRING_BUNDLE_CHROME_URL  URL for Songbird string bundle.
  * SB_DOWNLOAD_COL_SPEC         Default download device playlist column spec.
+ * SB_PREF_DOWNLOAD_LIBRARY     Download library preference name.
+ * SB_PREF_WEB_LIBRARY          Web library GUID preference name.
  */
 
 #define SB_DOWNLOAD_DEVICE_CATEGORY                                            \
@@ -95,7 +98,6 @@
 #define SB_DOWNLOAD_TMP_DIR "DownloadDevice"
 #define SB_DOWNLOAD_LIB_NAME                                                   \
                 "&chrome://songbird/locale/songbird.properties#device.download"
-#define SB_PREF_DOWNLOAD_LIBRARY "songbird.library.download"
 #define SB_STRING_BUNDLE_CHROME_URL                                            \
                                 "chrome://songbird/locale/songbird.properties"
 #define SB_DOWNLOAD_COL_SPEC                                                   \
@@ -103,6 +105,8 @@
                              "http://songbirdnest.com/data/1.0#artistName 222 "\
                              "http://songbirdnest.com/data/1.0#albumName 222 " \
                              "http://songbirdnest.com/data/1.0#progressValue"
+#define SB_PREF_DOWNLOAD_LIBRARY "songbird.library.download"
+#define SB_PREF_WEB_LIBRARY     "songbird.library.web"
 
 
 /* *****************************************************************************
@@ -143,8 +147,8 @@ NS_IMPL_ISUPPORTS2(sbDownloadDevice, sbIDeviceBase, sbIDownloadDevice)
 sbDownloadDevice::sbDownloadDevice()
 :
     sbDeviceBase(),
-    mpTransferQueueLock(nsnull),
-    mBusy(PR_FALSE)
+    mpDeviceLock(nsnull),
+    mState(STATE_IDLE)
 {
 }
 
@@ -179,13 +183,21 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     nsCOMPtr<sbIMediaList>      pMediaList;
     nsString                    *pNullNSString = nsnull;
     nsString                    &nullNSStringRef = *pNullNSString;
-    nsresult                    result = NS_OK;
     nsCOMPtr<nsISupportsString> pSupportsString;
     nsAutoString                libraryGUID;
     nsCOMPtr<nsIPrefBranch>     pPrefBranch;
+    nsresult                    result = NS_OK;
 
     /* Initialize the base services. */
     result = Init();
+
+    /* Create the download device lock. */
+    if (NS_SUCCEEDED(result))
+    {
+        mpDeviceLock = nsAutoLock::NewLock("sbDownloadDevice::mpDeviceLock");
+        if (!mpDeviceLock)
+            result = NS_ERROR_OUT_OF_MEMORY;
+    }
 
     /* Get the IO service. */
     if (NS_SUCCEEDED(result))
@@ -220,13 +232,38 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         }
     }
 
-    /* Create the transfer queue lock. */
+    /* Get the web library. */
     if (NS_SUCCEEDED(result))
     {
-        mpTransferQueueLock =
-                nsAutoLock::NewLock("sbDownloadDevice::mpTransferQueueLock");
-        if (!mpTransferQueueLock)
-            result = NS_ERROR_OUT_OF_MEMORY;
+        nsCOMPtr<sbILibraryManager> pLibraryManager;
+        nsCOMPtr<nsIPrefBranch>     pPrefService;
+        nsCOMPtr<nsISupportsString> pSupportsString;
+        nsAutoString                webLibraryGUID;
+
+        /* Read the web library GUID from the preferences. */
+        pPrefService = do_GetService(NS_PREFSERVICE_CONTRACTID, &result);
+        if (NS_SUCCEEDED(result))
+        {
+            result = pPrefService->GetComplexValue
+                                            (SB_PREF_WEB_LIBRARY,
+                                             NS_GET_IID(nsISupportsString),
+                                             getter_AddRefs(pSupportsString));
+        }
+        if (NS_SUCCEEDED(result))
+            result = pSupportsString->GetData(webLibraryGUID);
+
+        /* Get the web library. */
+        if (NS_SUCCEEDED(result))
+        {
+            pLibraryManager = do_GetService
+                                ("@songbirdnest.com/Songbird/library/Manager;1",
+                                 &result);
+        }
+        if (NS_SUCCEEDED(result))
+        {
+            result = pLibraryManager->GetLibrary(webLibraryGUID,
+                                                 getter_AddRefs(mpWebLibrary));
+        }
     }
 
     /* Create the download device library. */
@@ -409,24 +446,29 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
 NS_IMETHODIMP sbDownloadDevice::Finalize()
 {
-    LOG(("1: Finalize\n"));
-
-    /* Dispose of any outstanding download sessions. */
-    if (mpDownloadSession)
+    /* Lock the download device for finalization. */
+    if (mpDeviceLock)
     {
-        mpDownloadSession->Shutdown();
-        mpDownloadSession = nsnull;
+        /* Lock the download device. */
+        nsAutoLock lock(mpDeviceLock);
+
+        /* Dispose of any outstanding download sessions. */
+        if (mpDownloadSession)
+        {
+            mpDownloadSession->Shutdown();
+            mpDownloadSession = nsnull;
+        }
+
+        /* Remove the device transfer queue. */
+        RemoveTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
+
+        /* Unregister the download device library. */
+        UnregisterDeviceLibrary(mpDownloadLibrary);
     }
 
-    /* Remove the device transfer queue. */
-    RemoveTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
-
-    /* Dispose of the device transfer queue lock. */
-    if (mpTransferQueueLock)
-        nsAutoLock::DestroyLock(mpTransferQueueLock);
-
-    /* Unregister the download device library. */
-    UnregisterDeviceLibrary(mpDownloadLibrary);
+    /* Dispose of the device lock. */
+    if (mpDeviceLock)
+        nsAutoLock::DestroyLock(mpDeviceLock);
 
     return (NS_OK);
 }
@@ -477,8 +519,6 @@ NS_IMETHODIMP sbDownloadDevice::GetLibrary(
     const nsAString             &aDeviceIdentifier,
     sbILibrary                  **aLibrary)
 {
-    LOG(("1: GetLibrary\n"));
-
     return (GetLibraryForDevice(aDeviceIdentifier, aLibrary));
 }
 
@@ -495,9 +535,13 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceState(
     const nsAString             &aDeviceIdentifier,
     PRUint32                    *aState)
 {
-    LOG(("1: GetDeviceState\n"));
+    /* Lock the device. */
+    nsAutoLock lock(mpDeviceLock);
 
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    /* Return results. */
+    *aState = mState;
+
+    return (NS_OK);
 }
 
 
@@ -561,6 +605,11 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
     PRUint32                    i;
     nsresult                    result = NS_OK;
 
+    /* Do nothing unless operation is upload.  Uploading an item to the   */
+    /* download device will download the item to the destination library. */
+    if (aDeviceOperation != OP_UPLOAD)
+        return (NS_ERROR_NOT_IMPLEMENTED);
+
     /* Clear completed items. */
     ClearCompletedItems();
 
@@ -600,7 +649,7 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
         /* Add it to the transfer queue. */
         if (NS_SUCCEEDED(result))
         {
-            nsAutoLock lock(mpTransferQueueLock);
+            nsAutoLock lock(mpDeviceLock);
             result = AddItemToTransferQueue
                                     (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                                      pMediaItem);
@@ -624,8 +673,6 @@ NS_IMETHODIMP sbDownloadDevice::UpdateItems(
     nsIArray                    *aMediaItems,
     PRUint32                    *aItemCount)
 {
-    LOG(("1: UpdateItems\n"));
-
     return (NS_ERROR_NOT_IMPLEMENTED);
 }
 
@@ -719,9 +766,30 @@ NS_IMETHODIMP sbDownloadDevice::SuspendTransfer(
     const nsAString             &aDeviceIdentifier,
     PRUint32                    *aNumItems)
 {
-    LOG(("1: SuspendTransfer\n"));
+    PRUint32                    numItems = 0;
+    nsresult                    result = NS_OK;
 
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    /* Validate arguments. */
+    NS_ENSURE_ARG_POINTER(aNumItems);
+
+    /* Lock the device. */
+    nsAutoLock lock(mpDeviceLock);
+
+    /* If there's a download session, suspend it. */
+    if (mpDownloadSession)
+    {
+        result = mpDownloadSession->Suspend();
+        if (NS_SUCCEEDED(result))
+        {
+            mState = STATE_DOWNLOAD_PAUSED;
+            numItems = 1;
+        }
+    }
+
+    /* Return results. */
+    *aNumItems = numItems;
+
+    return (result);
 }
 
 
@@ -739,9 +807,30 @@ NS_IMETHODIMP sbDownloadDevice::ResumeTransfer(
    const nsAString              &aDeviceIdentifier,
    PRUint32                     *aNumItems)
 {
-    LOG(("1: ResumeTransfer\n"));
+    PRUint32                    numItems = 0;
+    nsresult                    result = NS_OK;
 
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    /* Validate arguments. */
+    NS_ENSURE_ARG_POINTER(aNumItems);
+
+    /* Lock the device. */
+    nsAutoLock lock(mpDeviceLock);
+
+    /* If there's a download session, resume it. */
+    if (mpDownloadSession)
+    {
+        result = mpDownloadSession->Resume();
+        if (NS_SUCCEEDED(result))
+        {
+            mState = STATE_DOWNLOADING;
+            numItems = 1;
+        }
+    }
+
+    /* Return results. */
+    *aNumItems = numItems;
+
+    return (result);
 }
 
 
@@ -977,8 +1066,12 @@ nsresult sbDownloadDevice::RunTransferQueue()
     PRBool                      initiated = PR_FALSE;
     nsresult                    result = NS_OK;
 
+    /* Lock the device. */
+    nsAutoLock lock(mpDeviceLock);
+
     /* Initiate transfers until queue is busy or empty. */
-    while (GetNextTransferItem(getter_AddRefs(pMediaItem)))
+    while (   !mpDownloadSession
+           && GetNextTransferItem(getter_AddRefs(pMediaItem)))
     {
         /* Initiate item transfer. */
         mpDownloadSession = new sbDownloadSession(this, pMediaItem);
@@ -991,16 +1084,13 @@ nsresult sbDownloadDevice::RunTransferQueue()
         else
             initiated = PR_FALSE;
 
+        /* Set state to downloading. */
+        if (initiated)
+            mState = STATE_DOWNLOADING;
+
         /* Release the download session if not initiated. */
         if (!initiated && mpDownloadSession)
             mpDownloadSession = nsnull;
-
-        /* Clear busy condition if transfer not initiated. */
-        if (!initiated)
-        {
-            nsAutoLock lock(mpTransferQueueLock);
-            mBusy = PR_FALSE;
-        }
     }
 
     return (result);
@@ -1027,13 +1117,6 @@ PRBool sbDownloadDevice::GetNextTransferItem(
     nsCOMPtr<sbIMediaItem>          pMediaItem;
     nsresult                        result = NS_OK;
 
-    /* Lock out other threads. */
-    nsAutoLock lock(mpTransferQueueLock);
-
-    /* Do nothing if the transfer queue is busy. */
-    if (mBusy)
-        return (PR_FALSE);
-
     /* Get the next media item to transfer. */
     result = GetNextItemFromTransferQueue
                                     (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
@@ -1044,10 +1127,6 @@ PRBool sbDownloadDevice::GetNextTransferItem(
                                     (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                                      pMediaItem);
     }
-
-    /* Set busy condition if an item was dequeued. */
-    if (NS_SUCCEEDED(result))
-        mBusy = PR_TRUE;
 
     /* Return results. */
     if (NS_SUCCEEDED(result))
@@ -1106,7 +1185,7 @@ nsresult sbDownloadDevice::ResumeTransfers()
         /* Add item to transfer queue if not complete. */
         if (NS_SUCCEEDED(itemResult) && (progress < 101))
         {
-            nsAutoLock lock(mpTransferQueueLock);
+            nsAutoLock lock(mpDeviceLock);
             itemResult = AddItemToTransferQueue
                             (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                              pMediaItem);
@@ -1281,14 +1360,19 @@ nsresult sbDownloadDevice::SetTransferDestination(
 void sbDownloadDevice::SessionCompleted(
     sbDownloadSession           *pDownloadSession)
 {
-    /* Release the download session. */
-    mpDownloadSession = nsnull;
-
-    /* Mark the transfer queue as not busy and run it. */
+    /* Complete session. */
     {
-        nsAutoLock lock(mpTransferQueueLock);
-        mBusy = PR_FALSE;
+        /* Lock the device. */
+        nsAutoLock lock(mpDeviceLock);
+
+        /* Set state to idle. */
+        mState = STATE_IDLE;
+
+        /* Release the download session. */
+        mpDownloadSession = nsnull;
     }
+
+    /* Run the transfer queue. */
     RunTransferQueue();
 }
 
@@ -1363,9 +1447,6 @@ nsresult sbDownloadDevice::GetTmpFile(
 /* Mozilla imports. */
 #include <nsIChannel.h>
 
-/* Songbird imports. */
-#include <sbILibraryManager.h>
-
 
 /* *****************************************************************************
  *
@@ -1383,10 +1464,12 @@ sbDownloadSession::sbDownloadSession(
     sbDownloadDevice            *pDownloadDevice,
     sbIMediaItem                *pMediaItem)
 :
+    mpSessionLock(nsnull),
     mpDownloadDevice(pDownloadDevice),
     mpMediaItem(pMediaItem),
     mCurrentProgress(-1),
-    mShutdown(PR_FALSE)
+    mShutdown(PR_FALSE),
+    mSuspended(PR_FALSE)
 {
 }
 
@@ -1414,7 +1497,6 @@ nsresult sbDownloadSession::Initiate()
     nsCOMPtr<nsIWebBrowserPersist>
                                 mpWebBrowser;
     nsCOMPtr<nsIURI>            pSrcURI;
-    nsCOMPtr<nsIChannel>        pChannel;
     nsString                    dstSpec;
     nsresult                    result = NS_OK;
 
@@ -1426,6 +1508,14 @@ nsresult sbDownloadSession::Initiate()
         mpFileProtocolHandler = do_CreateInstance
                                 ("@mozilla.org/network/protocol;1?name=file",
                                  &result);
+    }
+
+    /* Create the session lock. */
+    if (NS_SUCCEEDED(result))
+    {
+        mpSessionLock = nsAutoLock::NewLock("sbDownloadSession::mpSessionLock");
+        if (!mpSessionLock)
+            result = NS_ERROR_OUT_OF_MEMORY;
     }
 
     /* Get a unique temporary download file. */
@@ -1467,19 +1557,7 @@ nsresult sbDownloadSession::Initiate()
     if (NS_SUCCEEDED(result))
     {
         result = mpIOService->NewChannelFromURI(pSrcURI,
-                                                getter_AddRefs(pChannel));
-    }
-
-    /* Try to get an HTTP channel.  Assume protocol */
-    /* is not HTTP (e.g., FTP) on failure.          */
-    if (NS_SUCCEEDED(result))
-    {
-        mpHttpChannel = do_QueryInterface(pChannel, &result);
-        if (NS_FAILED(result))
-        {
-            mpHttpChannel = nsnull;
-            result = NS_OK;
-        }
+                                                getter_AddRefs(mpChannel));
     }
 
     /* Create a persistent download web browser. */
@@ -1494,11 +1572,65 @@ nsresult sbDownloadSession::Initiate()
     if (NS_SUCCEEDED(result))
         result = mpWebBrowser->SetProgressListener(this);
     if (NS_SUCCEEDED(result))
-        result = pChannel->SetNotificationCallbacks(this);
+        result = mpChannel->SetNotificationCallbacks(this);
 
     /* Initiate the download. */
     if (NS_SUCCEEDED(result))
-        result = mpWebBrowser->SaveChannel(pChannel, mpTmpFile);
+        result = mpWebBrowser->SaveChannel(mpChannel, mpTmpFile);
+
+    return (result);
+}
+
+
+/*
+ * Suspend
+ *
+ *   This function suspends the download session.
+ */
+
+nsresult sbDownloadSession::Suspend()
+{
+    nsCOMPtr<nsIRequest>        pRequest;
+    nsresult                    result = NS_OK;
+
+    /* Lock the session. */
+    nsAutoLock lock(mpSessionLock);
+
+    /* Get the download channel request. */
+    pRequest = do_QueryInterface(mpChannel, &result);
+
+    /* Suspend the request. */
+    if (NS_SUCCEEDED(result))
+        result = pRequest->Suspend();
+    if (NS_SUCCEEDED(result))
+        mSuspended = PR_TRUE;
+
+    return (result);
+}
+
+
+/*
+ * Resume
+ *
+ *   This function resumes the download session.
+ */
+
+nsresult sbDownloadSession::Resume()
+{
+    nsCOMPtr<nsIRequest>        pRequest;
+    nsresult                    result = NS_OK;
+
+    /* Lock the session. */
+    nsAutoLock lock(mpSessionLock);
+
+    /* Get the download channel request. */
+    pRequest = do_QueryInterface(mpChannel, &result);
+
+    /* Resume the request. */
+    if (NS_SUCCEEDED(result))
+        result = pRequest->Resume();
+    if (NS_SUCCEEDED(result))
+        mSuspended = PR_FALSE;
 
     return (result);
 }
@@ -1512,7 +1644,21 @@ nsresult sbDownloadSession::Initiate()
 
 void sbDownloadSession::Shutdown()
 {
+    nsCOMPtr<nsIRequest>        pRequest;
+    nsresult                    result = NS_OK;
+
+    /* Lock the session. */
+    nsAutoLock lock(mpSessionLock);
+
+    /* Mark session for shutdown. */
     mShutdown = PR_TRUE;
+
+    /* Get the download channel request. */
+    pRequest = do_QueryInterface(mpChannel, &result);
+
+    /* Cancel the request. */
+    if (NS_SUCCEEDED(result))
+        result = pRequest->Cancel(NS_ERROR_ABORT);
 }
 
 
@@ -1569,43 +1715,58 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
     nsresult                    status = aStatus;
     nsresult                    result = NS_OK;
 
-    /* Do nothing if download has not stopped or if shutting down. */
-    if (!(aStateFlags & STATE_STOP) || mShutdown)
-        return (NS_OK);
-
-    /* Do nothing on abort. */
-    /* XXXeps This is a workaround for the fact that shutdown */
-    /* isn't called until after channel is aborted.          */
-    if (status == NS_ERROR_ABORT)
-        return (NS_OK);
-
-    /* Check HTTP response status. */
-    if (NS_SUCCEEDED(status) && mpHttpChannel)
+    /* Process state change with the session locked. */
     {
-        PRBool                      requestSucceeded;
+        /* Lock the session. */
+        nsAutoLock lock(mpSessionLock);
 
-        /* Check if request succeeded. */
-        result = mpHttpChannel->GetRequestSucceeded(&requestSucceeded);
-        if (NS_SUCCEEDED(result) && !requestSucceeded)
-            status = NS_ERROR_UNEXPECTED;
+        /* Do nothing if download has not stopped or if shutting down. */
+        if (!(aStateFlags & STATE_STOP) || mShutdown)
+            return (NS_OK);
+
+        /* Do nothing on abort. */
+        /* XXXeps This is a workaround for the fact that shutdown */
+        /* isn't called until after channel is aborted.          */
+        if (status == NS_ERROR_ABORT)
+            return (NS_OK);
+
+        /* Check HTTP response status. */
+        if (NS_SUCCEEDED(status))
+        {
+            nsCOMPtr<nsIHttpChannel>    pHttpChannel;
+            PRBool                      requestSucceeded;
+
+            /* Try to get HTTP channel. */
+            pHttpChannel = do_QueryInterface(mpChannel, &result);
+
+            /* Check if request succeeded. */
+            if (NS_SUCCEEDED(result))
+                result = pHttpChannel->GetRequestSucceeded(&requestSucceeded);
+            if (NS_SUCCEEDED(result) && !requestSucceeded)
+                status = NS_ERROR_UNEXPECTED;
+
+            /* Don't propagate errors from here. */
+            result = NS_OK;
+        }
+
+        /* Complete the transfer on success. */
+        if (NS_SUCCEEDED(result) && NS_SUCCEEDED(status))
+            result = CompleteTransfer();
+
+        /* Set the progress to complete. */
+        /* XXXeps won't need Write after bug 3037 is fixed. */
+        mCurrentProgress = 101;
+        currentProgressStr.AppendInt(mCurrentProgress);
+        mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
+                                 currentProgressStr);
+        progressModeStr.AppendInt(nsITreeView::PROGRESS_NONE);
+        mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
+                                 progressModeStr);
+        mpMediaItem->Write();
     }
 
-    /* Complete the transfer on success. */
-    if (NS_SUCCEEDED(result) && NS_SUCCEEDED(status))
-        result = CompleteTransfer();
-
-    /* Set the progress to complete. */
-    /* XXXeps won't need Write after bug 3037 is fixed. */
-    mCurrentProgress = 101;
-    currentProgressStr.AppendInt(mCurrentProgress);
-    mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
-                             currentProgressStr);
-    progressModeStr.AppendInt(nsITreeView::PROGRESS_NONE);
-    mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
-                             progressModeStr);
-    mpMediaItem->Write();
-
-    /* Send notification of session completion. */
+    /* Send notification of session completion.  Do this */
+    /* outside of session lock to prevent deadlock.      */
     mpDownloadDevice->SessionCompleted(this);
 
     return (NS_OK);
@@ -1676,8 +1837,6 @@ NS_IMETHODIMP sbDownloadSession::OnLocationChange(
     nsIRequest                  *aRequest,
     nsIURI                      *aLocation)
 {
-    LOG(("OnLocationChange\n"));
-
     return (NS_OK);
 }
 
@@ -1706,8 +1865,6 @@ NS_IMETHODIMP sbDownloadSession::OnStatusChange(
     nsresult                    aStatus,
     const PRUnichar             *aMessage)
 {
-    LOG(("OnStatusChange\n"));
-
     return (NS_OK);
 }
 
@@ -1736,8 +1893,6 @@ NS_IMETHODIMP sbDownloadSession::OnSecurityChange(
     nsIRequest                  *aRequest,
     PRUint32                    aState)
 {
-    LOG(("OnSecurityChange\n"));
-
     return (NS_OK);
 }
 
@@ -1839,8 +1994,6 @@ NS_IMETHODIMP sbDownloadSession::OnStatus(
     nsresult                    aStatus,
     const PRUnichar             *aStatusArg)
 {
-    LOG(("1: OnStatus\n"));
-
     return (NS_OK);
 }
 
@@ -1864,14 +2017,15 @@ NS_IMETHODIMP sbDownloadSession::OnRedirect(
 {
     nsresult                    result = NS_OK;
 
-    /* Try to get an HTTP channel.  Assume protocol */
-    /* is not HTTP (e.g., FTP) on failure.          */
-    mpHttpChannel = do_QueryInterface(newChannel, &result);
-    if (NS_FAILED(result))
-    {
-        mpHttpChannel = nsnull;
-        result = NS_OK;
-    }
+    /* Lock the session. */
+    nsAutoLock lock(mpSessionLock);
+
+    /* Get the new channel. */
+    mpChannel = newChannel;
+
+    /* If session is suspended, suspend channel. */
+    if (mSuspended)
+        mpChannel->Suspend();
 
     return (result);
 }
@@ -1894,9 +2048,7 @@ nsresult sbDownloadSession::CompleteTransfer()
 {
     nsCOMPtr<nsIFile>           pFileDir;
     nsString                    fileName;
-    nsCOMPtr<sbIMediaItem>      pDstMediaItem;
-    nsCOMPtr<sbIMetadataJob>    pMetadataJob;
-    nsCOMPtr<nsIMutableArray>   pMediaItemArray;
+    nsCOMPtr<sbIMediaList>      pDstMediaList;
     nsresult                    result = NS_OK;
 
     /* Move the temporary download file to the final location. */
@@ -1906,33 +2058,62 @@ nsresult sbDownloadSession::CompleteTransfer()
     if (NS_SUCCEEDED(result))
         result = mpTmpFile->MoveTo(pFileDir, fileName);
 
-    /* Create a media item in the destination library. */
+    /* Update the download media item content source property. */
     if (NS_SUCCEEDED(result))
-    {
-        result = mpDstLibrary->CreateMediaItem(mpDstURI,
-                                               getter_AddRefs(pDstMediaItem));
-    }
+        result = mpMediaItem->SetContentSrc(mpDstURI);
+
+    /* Add the download media item to the destination library. */
+    if (NS_SUCCEEDED(result))
+        pDstMediaList = do_QueryInterface(mpDstLibrary, &result);
+    if (NS_SUCCEEDED(result))
+        result = pDstMediaList->Add(mpMediaItem);
 
     /* Write destination library. */
     if (NS_SUCCEEDED(result))
         result = mpDstLibrary->Write();
 
-    /* Start metadata scanning job. */
+    /* XXXeps need to rescan metadata locally if remote scan failed. */
+
+    /* Update the web library with the local downloaded file URL. */
     if (NS_SUCCEEDED(result))
     {
-        /* Put the completed media item into an array. */
-        pMediaItemArray = do_CreateInstance("@mozilla.org/array;1", &result);
-        if (NS_SUCCEEDED(result))
-            result = pMediaItemArray->AppendElement(pDstMediaItem, PR_FALSE);
+        nsRefPtr<WebLibraryUpdater> pWebLibraryUpdater;
+        nsCOMPtr<sbIMediaList>      pWebMediaList;
+        nsCOMPtr<nsIURI>            pSrcURI;
+        nsCString                   srcSpec;
 
-        /* Start the job. */
+        /* Get the web library media list. */
+        /*XXXeps should save this in Initiate. */
         if (NS_SUCCEEDED(result))
         {
-            result = mpDownloadDevice->mpMetadataJobManager->
-                                        NewJob(pMediaItemArray,
-                                               5,
-                                               getter_AddRefs(pMetadataJob));
+            pWebMediaList = do_QueryInterface(mpDownloadDevice->mpWebLibrary,
+                                              &result);
         }
+
+        /* Get the source URI spec. */
+        if (NS_SUCCEEDED(result))
+            result = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
+        if (NS_SUCCEEDED(result))
+            result = pSrcURI->GetSpec(srcSpec);
+
+        /* Update the web library. */
+        if (NS_SUCCEEDED(result))
+        {
+            pWebLibraryUpdater = new WebLibraryUpdater(this);
+            if (!pWebLibraryUpdater)
+                result = NS_ERROR_OUT_OF_MEMORY;
+        }
+        if (NS_SUCCEEDED(result))
+        {
+            result = pWebMediaList->EnumerateItemsByProperty
+                                    (NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                     NS_ConvertUTF8toUTF16(srcSpec),
+                                     pWebLibraryUpdater,
+                                     sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+        }
+
+        /* Don't propagate errors from here. */
+        result = NS_OK;
     }
 
     return (result);
@@ -1974,6 +2155,81 @@ void sbDownloadSession::UpdateProgress(
                                  progressModeStr);
         mpMediaItem->Write();
     }
+}
+
+
+/* *****************************************************************************
+ *
+ * Download session WebLibraryUpdater services.
+ *
+ ******************************************************************************/
+
+/* Download device nsISupports implementation. */
+NS_IMPL_ISUPPORTS1(sbDownloadSession::WebLibraryUpdater,
+                   sbIMediaListEnumerationListener)
+
+
+/**
+ * \brief Called when enumeration is about to begin.
+ *
+ * \param aMediaList - The media list that is being enumerated.
+ *
+ * \return true to begin enumeration, false to cancel.
+ */
+
+NS_IMETHODIMP sbDownloadSession::WebLibraryUpdater::OnEnumerationBegin(
+    sbIMediaList                *aMediaList,
+    PRBool                      *_retval)
+{
+    nsresult                    result = NS_OK;
+
+    /* Return results. */
+    *_retval = PR_TRUE;
+
+    return (result);
+}
+
+
+/**
+ * \brief Called once for each item in the enumeration.
+ *
+ * \param aMediaList - The media list that is being enumerated.
+ * \param aMediaItem - The media item.
+ *
+ * \return true to continue enumeration, false to cancel.
+ */
+
+NS_IMETHODIMP sbDownloadSession::WebLibraryUpdater::OnEnumeratedItem(
+    sbIMediaList                *aMediaList,
+    sbIMediaItem                *aMediaItem,
+    PRBool                      *_retval)
+{
+    nsresult                    result = NS_OK;
+
+    /* Update the content source. */
+    aMediaItem->SetContentSrc(mpDownloadSession->mpDstURI);
+
+    /* Return results. */
+    *_retval = PR_TRUE;
+
+    return (result);
+}
+
+
+/**
+ * \brief Called when enumeration has completed.
+ *
+ * \param aMediaList - The media list that is being enumerated.
+ * \param aStatusCode - A code to determine if the enumeration was successful.
+ */
+
+NS_IMETHODIMP sbDownloadSession::WebLibraryUpdater::OnEnumerationEnd(
+    sbIMediaList                *aMediaList,
+    nsresult                    aStatusCode)
+{
+    nsresult                    result = NS_OK;
+
+    return (result);
 }
 
 

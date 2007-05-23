@@ -144,17 +144,19 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
 
     /*
      * mpDownloadLibrary        Download device library.
+     * mpWebLibrary             Web library.
      * mpIOService              I/O service.
      * mpStringBundle           Download device string bundle.
      * mpMetadataJobManager     Metadata job manager.
      * mpDownloadDirDR          Default download directory data remote.
      * mpTmpDownloadDir         Temporary download directory.
      * mpDownloadSession        Current download session.
-     * mpTransferQueueLock      Lock for access to transfer queue.
-     * mBusy                    Non-zero if the transfer queue is busy.
+     * mpDeviceLock             Lock for download device access.
+     * mState                   Current device state.
      */
 
     nsCOMPtr<sbILibrary>        mpDownloadLibrary;
+    nsCOMPtr<sbILibrary>        mpWebLibrary;
     nsCOMPtr<nsIIOService>      mpIOService;
     nsCOMPtr<nsIStringBundle>   mpStringBundle;
     nsCOMPtr<sbIMetadataJobManager>
@@ -162,8 +164,8 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
     nsCOMPtr<sbIDataRemote>     mpDownloadDirDR;
     nsCOMPtr<nsIFile>           mpTmpDownloadDir;
     nsRefPtr<sbDownloadSession> mpDownloadSession;
-    PRLock                      *mpTransferQueueLock;
-    PRBool                      mBusy;
+    PRLock                      *mpDeviceLock;
+    PRUint32                    mState;
 
 
     /*
@@ -265,6 +267,10 @@ class sbDownloadSession : public nsIWebProgressListener,
 
     nsresult Initiate();
 
+    nsresult Suspend();
+
+    nsresult Resume();
+
     void Shutdown();
 
 
@@ -277,20 +283,23 @@ class sbDownloadSession : public nsIWebProgressListener,
     private:
 
     /*
+     * mpSessionLock            Lock for session.
      * mpDownloadDevice         Managing download device.
      * mpMediaItem              Media item being downloaded.
      * mpIOService              I/O service.
      * mpFileProtocolHandler    File protocol handler.
      * mpWebBrowser             Web browser used for download.
-     * mpHttpChannel            Download HTTP channel.
+     * mpChannel                Download channel.
      * mpTmpFile                Temporary download file.
      * mpDstLibrary             Destination library.
      * mpDstFile                Destination download file.
      * mpDstURI                 Destination download URI.
      * mCurrentProgress         Current progress of download.
      * mShutdown                True if session has been shut down.
+     * mSuspended               True if session is suspended.
      */
 
+    PRLock                      *mpSessionLock;
     sbDownloadDevice            *mpDownloadDevice;
     nsCOMPtr<sbIMediaItem>      mpMediaItem;
     nsCOMPtr<nsIIOService>      mpIOService;
@@ -298,13 +307,14 @@ class sbDownloadSession : public nsIWebProgressListener,
                                 mpFileProtocolHandler;
     nsCOMPtr<nsIWebBrowserPersist>
                                 mpWebBrowser;
-    nsCOMPtr<nsIHttpChannel>    mpHttpChannel;
+    nsCOMPtr<nsIChannel>        mpChannel;
     nsCOMPtr<nsIFile>           mpTmpFile;
     nsCOMPtr<sbILibrary>        mpDstLibrary;
     nsCOMPtr<nsIFile>           mpDstFile;
     nsCOMPtr<nsIURI>            mpDstURI;
     int                         mCurrentProgress;
     PRBool                      mShutdown;
+    PRBool                      mSuspended;
 
 
     /*
@@ -316,6 +326,41 @@ class sbDownloadSession : public nsIWebProgressListener,
     void UpdateProgress(
         PRUint64                    aProgress,
         PRUint64                    aProgressMax);
+
+
+    /* *************************************************************************
+     *
+     * Web library updater class.
+     *
+     **************************************************************************/
+
+    class WebLibraryUpdater : public sbIMediaListEnumerationListener
+    {
+        /*
+         * Public interface.
+         */
+
+        public:
+
+        NS_DECL_ISUPPORTS
+        NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+
+        WebLibraryUpdater(
+            sbDownloadSession           *pDownloadSession)
+        :
+            mpDownloadSession(pDownloadSession)
+        {
+        }
+
+
+        /*
+         * Private interface.
+         */
+
+        private:
+
+        sbDownloadSession           *mpDownloadSession;
+    };
 };
 
 
