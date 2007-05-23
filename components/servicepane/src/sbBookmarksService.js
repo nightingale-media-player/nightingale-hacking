@@ -276,12 +276,12 @@ function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
     
     // check that the supplied image url works, otherwise use the default
     var observer = {
-      service : null,
+      service : this,
       onStartRequest : function(aRequest,aContext) {
       },
       onStopRequest : function(aRequest, aContext, aStatusCode) {
         if (aStatusCode != 0) {
-          node.icon = BOOKMARK_IMAGE;
+          node.image = BOOKMARK_IMAGE;
           this.service._servicePane.save();
         }
       }
