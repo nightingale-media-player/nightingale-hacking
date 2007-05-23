@@ -184,6 +184,8 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
     nsresult SetTransferDestination(
         nsCOMPtr<sbIMediaItem>      pMediaItem);
 
+    nsresult CancelSession();
+
     void SessionCompleted(
         sbDownloadSession           *pDownloadSession);
 
@@ -245,6 +247,13 @@ class sbDownloadSession : public nsIWebProgressListener,
     public:
 
     /*
+     * mpMediaItem              Media item being downloaded.
+     */
+
+    nsCOMPtr<sbIMediaItem>      mpMediaItem;
+
+
+    /*
      * Inherited interfaces.
      */
 
@@ -285,7 +294,6 @@ class sbDownloadSession : public nsIWebProgressListener,
     /*
      * mpSessionLock            Lock for session.
      * mpDownloadDevice         Managing download device.
-     * mpMediaItem              Media item being downloaded.
      * mpIOService              I/O service.
      * mpFileProtocolHandler    File protocol handler.
      * mpWebBrowser             Web browser used for download.
@@ -301,7 +309,6 @@ class sbDownloadSession : public nsIWebProgressListener,
 
     PRLock                      *mpSessionLock;
     sbDownloadDevice            *mpDownloadDevice;
-    nsCOMPtr<sbIMediaItem>      mpMediaItem;
     nsCOMPtr<nsIIOService>      mpIOService;
     nsCOMPtr<nsIFileProtocolHandler>
                                 mpFileProtocolHandler;

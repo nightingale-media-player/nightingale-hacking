@@ -100,10 +100,9 @@
                 "&chrome://songbird/locale/songbird.properties#device.download"
 #define SB_STRING_BUNDLE_CHROME_URL                                            \
                                 "chrome://songbird/locale/songbird.properties"
-#define SB_DOWNLOAD_COL_SPEC                                                   \
-                             SB_PROPERTY_TRACKNAME " 395 " \
-                             SB_PROPERTY_ARTISTNAME " 222 "\
-                             SB_PROPERTY_ALBUMNAME " 222 " \
+#define SB_DOWNLOAD_COL_SPEC SB_PROPERTY_TRACKNAME " 395 "                     \
+                             SB_PROPERTY_ARTISTNAME " 222 "                    \
+                             SB_PROPERTY_ALBUMNAME " 222 "                     \
                              SB_PROPERTY_PROGRESSVALUE
 #define SB_PREF_DOWNLOAD_LIBRARY "songbird.library.download"
 #define SB_PREF_WEB_LIBRARY     "songbird.library.web"
@@ -486,9 +485,7 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
 NS_IMETHODIMP sbDownloadDevice::AddCallback(
     sbIDeviceBaseCallback       *aCallback)
 {
-    LOG(("1: AddCallback\n"));
-
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    return (sbDeviceBase::AddCallback(aCallback));
 }
 
 
@@ -501,9 +498,7 @@ NS_IMETHODIMP sbDownloadDevice::AddCallback(
 NS_IMETHODIMP sbDownloadDevice::RemoveCallback(
     sbIDeviceBaseCallback       *aCallback)
 {
-    LOG(("1: RemoveCallback\n"));
-
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    return (sbDeviceBase::RemoveCallback(aCallback));
 }
 
 
@@ -691,9 +686,61 @@ NS_IMETHODIMP sbDownloadDevice::DeleteItems(
     nsIArray                    *aMediaItems,
     PRUint32                    *aItemCount)
 {
-    LOG(("1: DeleteItems\n"));
+    nsCOMPtr<sbIMediaItem>      pMediaItem;
+    PRUint32                    arrayLength;
+    PRUint32                    i;
+    PRBool                      equals;
+    PRBool                      cancelSession = PR_FALSE;
+    PRUint32                    itemCount = 0;
+    nsresult                    result1;
+    nsresult                    result = NS_OK;
 
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    /* Validate arguments. */
+    NS_ENSURE_ARG_POINTER(aMediaItems);
+    NS_ENSURE_ARG_POINTER(aItemCount);
+
+    /* Lock the device. */
+    nsAutoLock lock(mpDeviceLock);
+
+    /* Remove the items. */
+    result = aMediaItems->GetLength(&arrayLength);
+    for (i = 0; (NS_SUCCEEDED(result) && (i < arrayLength)); i++)
+    {
+        /* Get the media item to remove. */
+        pMediaItem = do_QueryElementAt(aMediaItems, i, &result);
+
+        /* Remove the item from the transfer queue. */
+        if (NS_SUCCEEDED(result))
+        {
+            result1 = RemoveItemFromTransferQueue(aDeviceIdentifier,
+                                                  pMediaItem);
+            if (NS_SUCCEEDED(result1))
+                itemCount++;
+        }
+
+        /* Check if current session should be deleted. */
+        if (NS_SUCCEEDED(result) && mpDownloadSession && !cancelSession)
+        {
+            result1 = pMediaItem->Equals(mpDownloadSession->mpMediaItem,
+                                         &equals);
+            if (NS_SUCCEEDED(result1) && equals)
+                cancelSession = PR_TRUE;
+        }
+    }
+
+    /* Cancel the session if needed.  This counts as another deleted */
+    /* item since the item would not be in the transfer queue.       */
+    if (cancelSession)
+    {
+        result1 = CancelSession();
+        if (NS_SUCCEEDED(result1))
+            itemCount++;
+    }
+
+    /* Return results. */
+    *aItemCount = itemCount;
+
+    return (result);
 }
 
 
@@ -709,9 +756,33 @@ NS_IMETHODIMP sbDownloadDevice::DeleteAllItems(
     const nsAString             &aDeviceIdentifier,
     PRUint32                    *aItemCount)
 {
-    LOG(("1: DeleteAllItems\n"));
+    nsCOMPtr<sbIMediaItem>      pMediaItem;
+    PRUint32                    itemCount = 0;
+    nsresult                    result1;
+    nsresult                    result = NS_OK;
 
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    /* Validate arguments. */
+    NS_ENSURE_ARG_POINTER(aItemCount);
+
+    /* Lock the device. */
+    nsAutoLock lock(mpDeviceLock);
+
+    /* Remove all the items in the queue. */
+    while (GetNextTransferItem(getter_AddRefs(pMediaItem)))
+        itemCount++;
+
+    /* Cancel active download session. */
+    if (mpDownloadSession)
+    {
+        result1 = CancelSession();
+        if (NS_SUCCEEDED(result1))
+            itemCount++;
+    }
+
+    /* Return results. */
+    *aItemCount = itemCount;
+
+    return (result);
 }
 
 
@@ -1349,6 +1420,31 @@ nsresult sbDownloadDevice::SetTransferDestination(
 
 
 /*
+ * CancelSession
+ *
+ *   This function cancels the active download session and runs the transfer
+ * queue.
+ */
+
+nsresult sbDownloadDevice::CancelSession()
+{
+    nsresult                    result = NS_OK;
+
+    /* Shutdown the session. */
+    if (mpDownloadSession)
+    {
+        mpDownloadSession->Shutdown();
+        mpDownloadSession = nsnull;
+    }
+
+    /* Run the transfer queue. */
+    RunTransferQueue();
+
+    return (result);
+}
+
+
+/*
  * SessionCompleted
  *
  *   --> pDownloadSession       Completed session.
@@ -1482,6 +1578,9 @@ sbDownloadSession::sbDownloadSession(
 
 sbDownloadSession::~sbDownloadSession()
 {
+    /* Dispose of the session lock. */
+    if (mpSessionLock)
+        nsAutoLock::DestroyLock(mpSessionLock);
 }
 
 
