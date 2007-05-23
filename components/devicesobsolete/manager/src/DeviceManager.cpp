@@ -54,7 +54,6 @@ static PRLogModuleInfo* gDevicemanagerLog = nsnull;
 #define LOG(args) /* nothing */
 #endif
 
-#define NS_PROFILE_STARTUP_OBSERVER_ID "profile-after-change"
 #define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
 
 #define SB_DEVICE_PREFIX "@songbirdnest.com/Songbird/Device/"
@@ -117,10 +116,10 @@ sbDeviceManager::Initialize()
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // "profile-after-change" is sent after a profile has been loaded
+  // We can't really start until the library manager has loaded
   rv = observerService->AddObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC,
                                     PR_FALSE);
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to add profile startup observer");
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to add library manager observer");
 
   // "profile-before-change" is sent before a profile is unloaded
   rv = observerService->AddObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID,
@@ -416,9 +415,9 @@ sbDeviceManager::Observe(nsISupports* aSubject,
   }
   else if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID) == 0) {
     // Remove ourselves from the observer service
-    rv = observerService->RemoveObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID);
+    rv = observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "Failed to remove profile startup observer");
+                     "Failed to remove library manager observer");
 
     rv = observerService->RemoveObserver(this,
                                          NS_PROFILE_SHUTDOWN_OBSERVER_ID);
