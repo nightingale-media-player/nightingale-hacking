@@ -101,10 +101,10 @@
 #define SB_STRING_BUNDLE_CHROME_URL                                            \
                                 "chrome://songbird/locale/songbird.properties"
 #define SB_DOWNLOAD_COL_SPEC                                                   \
-                             "http://songbirdnest.com/data/1.0#trackName 395 " \
-                             "http://songbirdnest.com/data/1.0#artistName 222 "\
-                             "http://songbirdnest.com/data/1.0#albumName 222 " \
-                             "http://songbirdnest.com/data/1.0#progressValue"
+                             SB_PROPERTY_TRACKNAME " 395 " \
+                             SB_PROPERTY_ARTISTNAME " 222 "\
+                             SB_PROPERTY_ALBUMNAME " 222 " \
+                             SB_PROPERTY_PROGRESSVALUE
 #define SB_PREF_DOWNLOAD_LIBRARY "songbird.library.download"
 #define SB_PREF_WEB_LIBRARY     "songbird.library.web"
 

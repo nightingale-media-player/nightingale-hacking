@@ -608,24 +608,6 @@ var SBDownloadCommands =
   m_Playlist: null,
   m_Device: null,
 
-  // XXXben stupid hack until getDeviceState is implemented on the new download
-  //        device.
-  getDeviceState: function getDeviceState(deviceID) {
-    var deviceState;
-    try {
-      deviceState = this.m_Device.getDeviceState(deviceID);
-    }
-    catch (e) {
-      if (e.result == Cr.NS_ERROR_NOT_IMPLEMENTED) {
-        deviceState = Ci.sbIDeviceBase.STATE_DOWNLOADING;
-      }
-      else {
-        throw e;
-      }
-    }
-    return deviceState;
-  },
-  
   m_Types: new Array
   (
     "action",
@@ -692,7 +674,7 @@ var SBDownloadCommands =
     {
       if ( this.m_Device )
       {
-        if ( this.getDeviceState('') == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
+        if ( this.m_Device.getDeviceState('') == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
         {
           this.m_Ids[ aIndex ] = "library_cmd_resume";
         }
@@ -715,7 +697,7 @@ var SBDownloadCommands =
     {
       if ( this.m_Device )
       {
-        if ( this.getDeviceState('') == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
+        if ( this.m_Device.getDeviceState('') == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
         {
           this.m_Names[ aIndex ] = "&command.resumedl";
         }
@@ -759,7 +741,7 @@ var SBDownloadCommands =
     {
       if ( this.m_Device )
       {
-        var deviceState = this.getDeviceState('');
+        var deviceState = this.m_Device.getDeviceState('');
         if ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
         {
           this.m_Tooltips[ aIndex ] = "&command.tooltip.resume";
@@ -799,7 +781,7 @@ var SBDownloadCommands =
       switch( aIndex )
       {
         case 2:
-          var deviceState = this.getDeviceState('');
+          var deviceState = this.m_Device.getDeviceState('');
           retval = ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOADING ) || 
                    ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
         break;
@@ -841,7 +823,7 @@ var SBDownloadCommands =
         break;
         case "library_cmd_pause":
         case "library_cmd_resume":
-          var deviceState = this.getDeviceState('');
+          var deviceState = this.m_Device.getDeviceState('');
           if ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOADING )
           {
             this.m_Device.suspendTransfer('');
