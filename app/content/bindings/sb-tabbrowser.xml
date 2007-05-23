@@ -1003,6 +1003,12 @@
         window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
         this._hrefLoop = null;
       ]]></constructor>
+     <destructor><![CDATA[
+        if (this.previousInnerPlaylist) {
+          this.previousInnerPlaylist.removeEventListener("playlist-play", onPlaylistPlay, true);
+          this.previousInnerPlaylist = null;
+        }
+     ]]></destructor>
       
       <field name="_browserStatusFilter"><![CDATA[
         Components.classes['@mozilla.org/appshell/component/browser-status-filter;1']
@@ -1364,6 +1370,14 @@
               }
             }
           }
+          
+          // add some events, eh?
+          if (this.previousInnerPlaylist) {
+            this.previousInnerPlaylist.removeEventListener("playlist-play", onPlaylistPlay, true);
+            this.previousInnerPlaylist = null;
+          }
+          playlist.addEventListener("playlist-play", onPlaylistPlay, true);
+          this.previousInnerPlaylist = playlist;
   
           // Wait until after the bind call?
           if ( playlist.ref == "" )
@@ -1377,7 +1391,7 @@
           
           // Drag and Drop tracker object
           playlist.setDnDSourceTracker(sbDnDSourceTracker);
-  
+
           // Remember some values
           theLibraryPlaylist = playlist;
           this.playlistTree = playlist = playlist.tree;

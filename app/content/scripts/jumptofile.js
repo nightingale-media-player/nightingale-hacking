@@ -28,6 +28,13 @@
 // Jump To File
 //
 
+// todo:
+
+// function onPlaylistFilterChange() {
+//   if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
+// }
+
+
 try
 {
   function closeJumpTo() {
@@ -39,7 +46,7 @@ try
   function onJumpToFileKey(evt) {
     // "popup=yes" causes nasty issues on the mac with the resizers?
     if (!document.__JUMPTO__)
-      SBOpenWindow( "chrome://songbird/content/xul/jumptofile.xul", "jump_to_file", "chrome,toolbar=no,popup=no,dialog=no,resizable=yes", document, gBrowser.currentPlaylist );
+      SBOpenWindow( "chrome://songbird/content/xul/jumptofile.xul", "jump_to_file", "chrome,toolbar=no,popup=no,dialog=no,resizable=yes", [document, gBrowser] );
     else {
       document.__JUMPTO__.defaultView.focus();
       var textbox = document.__JUMPTO__.getElementById("jumpto.textbox");
@@ -147,20 +154,19 @@ try
     }
   }
  
-  var jumpto_ref;
-  var source_ref;
-  var displayed_ref;
+  var jumpto_view;
+  var source_view;
+  var displayed_view;
+  var defaultlibraryguid;
   var source_guid;
-  var source_table;
+  var source_libraryguid;
   var source_search;
   var source_filters = [];
   var source_filtersColumn = [];
   var editIdleInterval;
   var service_tree;
-  
-  // TODO Get rid of all references to the old search box.
-  //      Am leaving this for now as it should be done as part of the 
-  //      greater refactoring for the new library API.
+  var libraryManager;
+  var previous_play_view;
   
   var search_widget;
   var source_playlist;
@@ -169,15 +175,20 @@ try
   var string_filteredby = "Filtered by";
   var string_library = "Library";
 
-  var playingRef_remote;
+  //var playingRef_remote;
   var showWebPlaylist_remote;
   
   function syncJumpTo(focus) {
-    // because the change to the playlist.ref property may happen after this function has been triggered by an event or a remote observer, introduce a timeout
+    // because the change to the playing view may happen after this function has been triggered by an event or a remote observer, introduce a timeout
     setTimeout("doSyncJumpTo(" + !focus + ");", 0);
   }
   
   function onLoadJumpToFile() {
+    libraryManager =
+      Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                .getService(Components.interfaces.sbILibraryManager);
+    defaultlibraryguid = libraryManager.mainLibrary.guid;
+
     if (!SBDataGetBoolValue("jumpto.nosavestate")) {
       SBDataSetIntValue("jumpto.visible", 1)
     }
@@ -193,95 +204,118 @@ try
       string_library = songbirdStrings.GetStringFromName("jumptofile.library");
     } catch (err) { /* ignore error, we have default strings */ }
 
-    playingRef_remote = SB_NewDataRemote( "playing.ref", null );
+    playingUrl_remote = SB_NewDataRemote( "faceplate.play.url", null );
     showWebPlaylist_remote = SB_NewDataRemote( "browser.playlist.show", null );
 
-    const on_playingRef_change = { 
+    const on_playingUrl_change = { 
       observe: function( aSubject, aTopic, aData ) { syncJumpTo(); } 
     };
     const on_showWebPlaylist_change = { 
       observe: function( aSubject, aTopic, aData ) { syncJumpTo(); } 
     };
 
-    playingRef_remote.bindObserver(on_playingRef_change, true);
+    playingUrl_remote.bindObserver(on_playingUrl_change, true);
     showWebPlaylist_remote.bindObserver(on_showWebPlaylist_change, true);
+
+    var servicepane =
+      Components.classes['@songbirdnest.com/servicepane/service;1']
+      .getService(Components.interfaces.sbIServicePaneService);
+    
+    var menulist = document.getElementById("playable_list");
+    var menupopup = menulist.menupopup;
+
+    while (menupopup.database.GetDataSources().hasMoreElements()) {
+      menupopup.database.RemoveDataSource(
+          menupopup.database.GetDataSources().getNext());
+    }
+    menupopup.database.AddDataSource(servicepane.dataSource);
+    menupopup.ref = servicepane.root.id;
 
     syncJumpTo(true);
   }
-  
+
   function doSyncJumpTo(nofocus) {
-    window.arguments[0].__JUMPTO__ = document;
+    window.arguments[0][0].__JUMPTO__ = document;
     document.syncJumpTo = syncJumpTo;
-    search_widget = window.arguments[0].__SEARCHWIDGET__;
+    search_widget = window.arguments[0][0].__SEARCHWIDGET__;
     var source = new sbIPlaylistsource();
     var guid;
-    var table;
     var search;
-    var filters, filtersColumn;
+    var filters;
     var plsource;
-    var ref;
-    source_playlist = window.arguments[1];
-    if (source_playlist) displayed_ref = source_playlist.ref;
-    ref = SBDataGetStringValue("playing.ref");
-    if (ref != "") {
-      // a ref is playing, use it
-      guid = source.getRefGUID( ref );
-      table = source.getRefTable( ref );
+    var libraryguid;
+    displayed_guid = displayed_libraryguid = null;
+    source_playlist = window.arguments[0][1].currentPlaylist;
+    if (source_playlist) displayed_view = source_playlist.mediaListView;
+    var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+               .getService(Components.interfaces.sbIPlaylistPlayback);
+    var view = gPPS.playingView;
+    if (view) {
+      // a view is playing, use it
+      guid = view.mediaList.guid;
+      libraryguid = view.mediaList.library.guid;
     } else {
       if (source_playlist) {
         // nothing playing, but a playlist object is visible in the source window
-        displayed_ref = source_playlist.ref;
-        if (!displayed_ref || displayed_ref == "") {
-          guid = "songbird";
-          table = "library";
-          ref = "NC:songbird_library";
+        displayed_view = source_playlist.mediaListView;
+        if (!displayed_view) {
+          // use main library
+          guid = libraryManager.mainLibrary.guid;
+          libraryguid = guid;
         } else {
-          guid = source_playlist.guid;
-          table = source_playlist.table
-          ref = displayed_ref;
+          guid = displayed_view.mediaList.guid;
+          libraryguid = displayed_view.mediaList.library.guid;
+          view = displayed_view;
         }
       } else {
         // nothing playing, no playlist object in source window, use the library
-        guid = "songbird";
-        table = "library";
-        ref = "NC:songbird_library";
+        guid = libraryManager.mainLibrary.guid;
+        libraryguid = guid;
       }
     }
-    try { // if the user presses ctrl-j before the page has finished loading, the ref may not have been created yet (grr)
-      search = source.getSearchString( ref );
-    } catch (e) {
-      ensureRefExists(ref, guid, table);
-      search = source.getSearchString( ref );
+    if (view) {
+      // we have a view, it's either the currently playing view or the displayed view, in both cases we need to read its search string
+      search = _getSearchString(view);
+      filters = _getFilters(view);
+    } else {
+      search = "";
+      filters = [];
     }
-    filters = _getFilters( source, ref );
-    filtersColumn = _getFiltersColumn( source, ref );
-    _setPlaylist( guid, table, search, filters, filtersColumn, nofocus );
-    _selectPlaylist( guid, table );
-    _updateSubSearchItem(search, filters, filtersColumn);
+    if (displayed_view) { 
+      displayed_guid = displayed_view.mediaList.guid;
+      displayed_factoryguid = displayed_view.mediaList.library.guid;
+    }
+    _setPlaylist( guid, libraryguid, search, filters, view, nofocus );
+    _selectPlaylist( guid, libraryguid );
+    _updateSubSearchItem(search, filters);
   }
 
   function onPlaylistlistSelect( evt ) {
-    var guid, table, search, filters, filtersColumn;
+    var guid, libraryguid, search, view;
+    var filters = [];
     if (evt.target.getAttribute("id") != "current_play_queue") {
       var guid = evt.target.getAttribute("guid");
-      if (guid == "") guid = "songbird";
-      var table = evt.target.getAttribute("table");
-      if (table == "") table = "library";
+      var libraryguid = evt.target.getAttribute("library");
+      //alert(guid + ' - ' + libraryguid);
+      if (guid == "") guid = defaultlibraryguid;
+      if (libraryguid == "") libraryguid = defaultlibraryguid;
       search = "";
-      filters = [];
-      filtersColumn = [];
+      var library = libraryManager.getLibrary( libraryguid );
+      var mediaList = null;
+      if (guid == libraryguid) mediaList = library;
+      else mediaList = library.getMediaItem(guid);
+      if ( mediaList ) 
+        mediaList = mediaList.QueryInterface(Components.interfaces.sbIMediaList);
+      if ( mediaList )
+        view = mediaList.createView();
     } else {
-      var ref = SBDataGetStringValue("playing.ref");
-      if (!ref || ref == "") ref = displayed_ref;
-      if (!ref || ref == "") ref = "NC:songbird_library";
-      var source = new sbIPlaylistsource();
-      guid = source.getRefGUID(ref);
-      table = source.getRefTable(ref);
-      search = source.getSearchString( ref );
-      filters = _getFilters( source, ref );
-      filtersColumn = _getFiltersColumn( source, ref );
+      view = gPPS.playingView;
+      if (!view) 
+        view = source_playlist.mediaListView;
+      search = _getSearchString( view );
+      filters = _getFilters( view );
     }
-    _setPlaylist( guid, table, search, filters, filtersColumn );
+    _setPlaylist( guid, libraryguid, search, filters, view );
   }
 
   var JumpToPlaylistListListener =
@@ -300,11 +334,8 @@ try
           if ( value.length > 0 )
           {
             var item_guid = item.getAttribute("guid");
-            if (item_guid == "") item_guid = "songbird";
-            var item_table = item.getAttribute("table");
-            if (item_table == "") item_table = "library";
-            
-            if ( source_guid == item_guid && source_table == item_table ) {
+            var item_libraryguid = item.getAttribute("library");
+            if ( source_guid == item_guid && source_libraryguid == item_libraryguid ) {
               menulist.selectedItem = item;
               menulist.setAttribute( "value", value );
               menulist.setAttribute( "label", label );
@@ -328,26 +359,47 @@ try
 	  }    
   }
 
-  function _selectPlaylist( guid, table ) {
+  function _selectPlaylist( guid, libraryguid ) {
     var menulist = document.getElementById("playable_list");
     menulist.menupopup.builder.addListener( JumpToPlaylistListListener );
     JumpToPlaylistListListener.didRebuild();
   }
   
-  function _setPlaylist( guid, table, search, filters, filtersColumn, nofocus ) {
+  function _setPlaylist( guid, libraryguid, search, filters, sourceview, nofocus ) {
+    if (libraryguid == null) {
+      libraryguid = defaultlibraryguid;
+    }
+    if (guid == null) {
+      var library = libraryManager.getLibrary(libraryguid);
+      if (library) {
+        guid = library.guid;
+      }
+    }    
+
+    if (!sourceview) {
+      var library = libraryManager.getLibrary(libraryguid);
+      if ( library ) {
+        if (guid == libraryguid) mediaItem = library;
+        else mediaItem = library.getMediaItem(guid);
+        if (mediaItem) {
+          sourceview = mediaItem.createView();
+        }
+      }
+    }
+
+    if (!sourceview) {
+      dump("error in jumptofile::_setPlaylist, sourceview is null");
+      return;
+    }
+    
+    jumpto_view = sourceview.clone()
+
     var playlist = document.getElementById("jumpto.playlist");
     playlist.tree.setAttribute("seltype", "single");
-    playlist.forcedcommands = SBEmptyPlaylistCommands;
-    playlist.bind(guid, table, null, null, null, null, "jumpto");
-    jumpto_ref = playlist.ref;
+    playlist.bind(jumpto_view, SBEmptyPlaylistCommands);
+    
     if (search) source_search = search; else source_search = "";
-    if (filters) { 
-      source_filters = filters; 
-      source_filtersColumn = filtersColumn; 
-    } else {
-      source_filters = [];
-      source_filtersColumn = [];
-    }
+    if (filters.length) source_filters = filters; else filters = [];
     var textbox = document.getElementById("jumpto.textbox");
     if (!nofocus) {
       window.focus();
@@ -357,10 +409,8 @@ try
     playlist.addEventListener("playlist-esc", onExit, false);
     _applySearch();
     source_guid = guid;
-    source_table = table;
-    var source = new sbIPlaylistsource();
-    source_ref = source.calculateRef(source_guid, source_table);
-    _setFilters( source, jumpto_ref, source_filters, source_filtersColumn );
+    source_libraryguid = libraryguid;
+    source_view = sourceview;
   }
   
   // for the playlist 
@@ -426,18 +476,16 @@ try
     if (playlist.tree.view.rowCount > 0) {
       playlist.tree.view.selection.clearSelection();
       playlist.tree.view.selection.rangedSelect(0, 0, true);
-    } 
+    }
   }
   
   function _applySearch() {
     var search = document.getElementById("jumpto.textbox").value;
     if (source_search != "") search = source_search + " " + search;
-    // Feed the new search into the list.
-    var source = new sbIPlaylistsource();
-    // Wait until it is done executing
-    waitForQueryCompletionTimeout(source, jumpto_ref, 5000);
-    // ...before attempting to override.
-    source.setSearchString( jumpto_ref, search, false /* don't reset the filters */ );
+    var propArray = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
+                              .createInstance(Components.interfaces.sbIPropertyArray);
+    propArray.appendProperty("*", search);
+    jumpto_view.setSearch(propArray);
   }
   
   function onJumpToPlay(event) {
@@ -451,39 +499,21 @@ try
       playlist.tree.view.selection.getRangeAt( 0, start, end );
       first = start.value;
     }
-    var idcolumn = playlist.tree.columns.getNamedColumn("id"); 
-    var rowid=0;
-    if (idcolumn != null) 
-    {
-      rowid = playlist.tree.view.getCellText( first, idcolumn );
-    }
-    
-    // if the user is requesting a playlist other than the one playing currently, switch to it
-    //if (source_ref != displayed_ref) {
-      // this does not ensure that the ref gets created because the window may not have a playlist object (ie, minibrowser)
-      //loadPlaylistPage(source_guid, source_table); 
-    //}
-
-    // if the user is requesting a playlist other than the one playing currently, ensure it exists, and reset whatever search or filter it may have 
-    var playing_ref = SBDataGetStringValue("playing.ref");
-    if (source_ref != playing_ref) {
-      ensureRefExists( source_ref, source_guid, source_table );
-    } 
+    var rowid = playlist.mediaListView.getUnfilteredIndex
+    ( first );
+        
     // check whether the user has selected an unfiltered entry, and if that's the case, reset the search and filters for the playlist.
     if (source_search == "" && source_filters.length == 0) {
-      var source = new sbIPlaylistsource();
-      source.setSearchString(source_ref, "", true /* reset the filters */);
+      _resetSearchString(source_view);
+      _resetFilters(source_view);
       if (search_widget) search_widget.loadPlaylistSearchString();
     }
-    var source = new sbIPlaylistsource();
-    waitForQueryCompletionTimeout(source, source_ref, 5000);
-    source.forceGetTargets( source_ref, true );
-    setTimeout("playSourceRefAndClose("+rowid+");", 0);
+    setTimeout("playSourceViewAndClose("+rowid+");", 0);
   }
   
-  function playSourceRefAndClose(rowid) {
+  function playSourceViewAndClose(rowid) {
     var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-    PPS.playRefByID(source_ref, rowid);
+    PPS.playView(source_view, rowid);
     onExit();
   }
 
@@ -493,9 +523,9 @@ try
     var playlist = document.getElementById("jumpto.playlist");
     playlist.removeEventListener("playlist-esc", onExit, false);
     playlist.removeEventListener("playlist-play", onJumpToPlay, false);
-    window.arguments[0].__JUMPTO__ = null;
+    window.arguments[0][0].__JUMPTO__ = null;
     
-    playingRef_remote.unbind();
+    playingUrl_remote.unbind();
     showWebPlaylist_remote.unbind();
 
     if (!SBDataGetBoolValue("jumpto.nosavestate")) {
@@ -503,7 +533,7 @@ try
     }
   }
   
-  function _updateSubSearchItem(search, filters, filtersColumn) {
+  function _updateSubSearchItem(search, filters) {
     var item = document.getElementById("current_play_queue");
     // show or hide and customize the "Current Play Queue" item according to the presence or absence of a search string and filters
     var no_search = (!search || search == "");
@@ -520,18 +550,16 @@ try
           if (cat != "") cat += ", ";
           cat += string_filteredby + ' ';
           var nactualfilters = 0;
-          for (var i=0;i<filtersColumn.length;i++) {
-            if (filters[i] != "") {
-              if (nactualfilters > 0) cat += ", ";
-              cat += _mixedCase(filtersColumn[i]);
-              nactualfilters++;
-            }
+          for (var i=0;i<filters.length;i++) {
+            if (nactualfilters > 0) cat += ", ";
+            cat += _mixedCase(filters[i][2]);
+            nactualfilters++;
           }
         }
         if (cat != "") {
-          if (source_ref == "NC:songbird_library") label = string_library + " " + cat;
+          if (source_guid == defaultlibraryguid) label = string_library + " " + cat;
           else {
-            var pllabel = getPlaylistLabel(source_guid, source_table);
+            var pllabel = getPlaylistLabel(source_guid, source_libraryguid);
             if (pllabel) label += pllabel + ' ' + cat;
             else label += cat ;
           }
@@ -546,93 +574,56 @@ try
     }
   }
   
-  /*function loadPlaylistPage(guid, table) {
-    // if the parent window does not have a service pane (ie, miniplayer), do not attempt to switch to the new page
-    if (!service_tree) return; 
-    
-    var url = "";
-
-    if (guid == "songbird" && table == "library") url = "chrome://songbird/content/xul/main_pane.xul?library";
-    else {
-      var menulist = document.getElementById("playable_list");
-      var menupopup = menulist.menupopup;
-
-      for ( var i = 0, item = menupopup.firstChild; item; item = item.nextSibling, i++ ) {
-        var value = item.getAttribute("value");
-        if ( value.length > 0 )
-        {
-          var itemguid = item.getAttribute("guid");
-          var itemtable = item.getAttribute("table");
-          if (itemguid == guid && itemtable == table)
-          {
-            url = value;
-            break;
-          }
-        }
-      }    
+  function getPlaylistLabel(guid, libraryguid) {
+    var library = libraryManager.getLibrary( libraryguid );
+    if (library) {
+      if (libraryguid == guid) return library.name;
+      var item = library.getMediaItem(guid);
+      return item.name;
     }
-    if (url != "") gBrowser.loadURI(url);
-  }*/
+    return "Unknown";
+  }
   
-  function getPlaylistLabel(guid, table) {
-    var menulist = document.getElementById("playable_list");
-    var menupopup = menulist.menupopup;
 
-    for ( var i = 0, item = menupopup.firstChild; item; item = item.nextSibling, i++ ) {
-      var label = item.getAttribute("label");
-      if ( label.length > 0 )
-      {
-        var itemguid = item.getAttribute("guid");
-        var itemtable = item.getAttribute("table");
-        if (itemguid == guid && itemtable == table) 
-        {
-          return label;
-        }
-      }
+  function _getSearchString( view ) {
+    var props = view.currentSearch;
+    if (props.length) {
+      return props.getPropertyAt(0).value;
     }
     return "";
   }
-  
-  function ensureRefExists( ref, guid, table ) {
-    var source = new sbIPlaylistsource();
-    var exists = source.refExists(ref);
-    if (!exists) {
-      source.feedPlaylist( ref, guid, table );
-      source.executeFeed( ref );
-      waitForQueryCompletionTimeout(source, ref, 5000);
-      // After the call is done, force GetTargets
-      source.forceGetTargets( ref, false );
-    }
+
+  function _resetSearchString( view ) {
+    view.clearSearch();
   }
-  
-  function _getFilters( source, ref ) {
-    var n = source.getNumFilters( ref );
+    
+  function _getFilters( view ) {
     var filters = [];
-    for (var i=0;i<n;i++) {
-      filters.push(source.getFilter( ref, i ));
+    var properties = view.getFilters();
+
+    if (properties) {
+	    var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+					    .getService(Components.interfaces.sbIPropertyManager);
+      var n = properties.length;
+      var filters = [];
+      for (var i=0;i<n;i++) {
+	      var prop = properties.getPropertyAt(i);
+	      // Get the property info for the property
+	      var info = pm.getPropertyInfo(prop.name);
+	      
+	      // XXXlone hack hack hack
+	      if (info.name == "http://songbirdnest.com/data/1.0#originUrl") continue;
+	      
+        filters.push( [ prop.name, 
+                        prop.value,
+                        info.displayName ] );
+      }
     }
     return filters;
   }
 
-  function _getFiltersColumn( source, ref ) {
-    var n = source.getNumFilters( ref );
-    var filtersColumn = [];
-    for (var i=0;i<n;i++) {
-      filtersColumn.push(source.getFilterColumn( ref, i ));
-    }
-    return filtersColumn;
-  }
-  
-  function _setFilters( source, ref, filters, filtersColumn ) {
-    var n = source.getNumFilters( ref );
-    for (var i=0;i<n;i++) {
-      source.removeFilter( ref, i );
-    }
-    n = filters.length;
-    for (var i=0;i<n;i++) {
-      source.setFilter( ref, i, filters[i], ref + "_" + filtersColumn[i], filtersColumn[i] );
-    }
-    source.executeFeed( ref );
+  function _resetFilters( view ) {
+    view.clearFilters();
   }
   
   function _mixedCase(str) {
@@ -640,19 +631,7 @@ try
   }
   
   function _hasFilters(filters) {
-    var n=filters.length;
-    for (var i=0;i<n;i++) {
-      if (filters[i] != "") return true;
-    }
-    return false;
-  }
-  
-  function resetFilterLists(source, ref) {
-    var n = source.getNumFilters(ref);
-    for (var i=0;i<n;i++) {
-      source.setFilter( ref, i, "", source.getFilterRef(ref, i), source.getFilterColumn(ref, i));
-    }
-    source.executeFeed( ref );
+    return (filters && filters.length > 0);
   }
 
 
@@ -767,19 +746,6 @@ try
     }
   }
   
-  function waitForQueryCompletionTimeout( source, ref, timeout ) {
-    var start = new Date().getTime();
-    while ( source.isQueryExecuting( ref ) && ( new Date().getTime() - start < timeout ) ) {
-      _sleep( 100 );
-    }
-  }
-
-  function _sleep( ms ) {
-    var thread = Components.classes["@mozilla.org/thread;1"].createInstance();
-    thread = thread.QueryInterface(Components.interfaces.nsIThread);
-    thread.currentThread.sleep(ms);
-  }
-
   var SBJumptoWindowMinMaxCB = 
   {
     // Shrink until the box doesn't match the window, then stop.

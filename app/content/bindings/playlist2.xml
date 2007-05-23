@@ -1041,42 +1041,24 @@
           ]]>
         </body>
       </method>
-      
-      <method name="playViewAtRow">
-        <parameter name="row" />
-        <body><![CDATA[
-          var gPPS = this._Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                             .getService(this._Ci.sbIPlaylistPlayback);
-
-          gPPS.playView(this.mediaListView, row);
-        ]]></body>
-      </method>
-      
-      <method name="playViewAtCurrentRow">
-        <body><![CDATA[
-          var row = this.tree.currentIndex;
-          if (row < 0) row = 0;
-          this.playViewAtRow(row);
-        ]]></body>
-      </method>
 
       <!-- Tree event listeners -->
 
       <method name="_onPlaylistDblClick">
         <parameter name="evt"/>
         <body>
-<![CDATA[
-  // Check to see that the user double clicked on a row
-  var row = {};
-  var col = {};
-  var obj = {};
-  var b = this.tree.treeBoxObject;
-  b.getCellAt(evt.clientX, evt.clientY, row, col, obj);
+         <![CDATA[
+          // Check to see that the user double clicked on a row
+          var row = {};
+          var col = {};
+          var obj = {};
+          var b = this.tree.treeBoxObject;
+          b.getCellAt(evt.clientX, evt.clientY, row, col, obj);
 
-  if (row.value >= 0) {
-    this.playViewAtRow(row.value);
-  }
-]]>
+          if (row.value >= 0) {
+            this.sendPlayEvent();
+          }
+         ]]>
         </body>
       </method>
 
