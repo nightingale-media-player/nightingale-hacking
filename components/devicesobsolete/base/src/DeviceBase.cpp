@@ -770,3 +770,31 @@ sbDeviceBase::IsTransferQueueEmpty(const nsAString &aDeviceIdentifier,
 
   return NS_OK;
 }
+
+nsresult 
+sbDeviceBase::GetDeviceState(const nsAString& aDeviceIdentifier, 
+                             PRUint32* aDeviceState)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceState);
+  *aDeviceState = sbIDeviceBase::STATE_IDLE;
+
+  if(mDeviceStates.Get(aDeviceIdentifier, aDeviceState)) {
+    return NS_OK;
+  }
+
+  return NS_ERROR_INVALID_ARG;
+}
+
+nsresult
+sbDeviceBase::SetDeviceState(const nsAString& aDeviceIdentifier,
+                             PRUint32 aDeviceState)
+{
+  NS_ENSURE_ARG(aDeviceState >= sbIDeviceBase::STATE_IDLE &&
+                aDeviceState <= sbIDeviceBase::STATE_DELETING);
+
+  if(mDeviceStates.Put(aDeviceIdentifier, aDeviceState)) {
+    return NS_OK;
+  }
+
+  return NS_ERROR_OUT_OF_MEMORY;
+}

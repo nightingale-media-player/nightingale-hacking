@@ -44,6 +44,7 @@
 
 #include <nsIMutableArray.h>
 #include <nsInterfaceHashtable.h>
+#include <nsDataHashtable.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
 #include <nsIURI.h>
@@ -109,10 +110,6 @@ protected:
   nsCOMPtr<sbIDeviceBase> mDevice;
   nsString mDeviceIdentifier;
 
-};
-
-class sbDeviceBaseTransferListener
-{
 };
 
 class sbDeviceBase
@@ -302,39 +299,30 @@ public:
   /** 
    *
    */
-  void DoDeviceConnectCallback(const nsAString& aDeviceString);
+  void DoDeviceConnectCallback(const nsAString& aDeviceIdentifier);
 
   /** 
    *
    */
-  void DoDeviceDisconnectCallback(const nsAString& aDeviceString);
+  void DoDeviceDisconnectCallback(const nsAString& aDeviceIdentifier);
+
+  /** 
+   *
+   */
+  nsresult GetDeviceState(const nsAString& aDeviceIdentifier, 
+                          PRUint32* aDeviceState);
+  /**
+   *
+   */
+  nsresult SetDeviceState(const nsAString& aDeviceIdentifier,
+                          PRUint32 aDeviceState);
 
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbILibrary> mDeviceLibraries;
   nsInterfaceHashtableMT<nsStringHashKey, nsIMutableArray> mDeviceQueues;
-  
   nsInterfaceHashtableMT<nsISupportsHashKey, sbIDeviceBaseCallback> mDeviceCallbacks;
+  nsDataHashtableMT<nsStringHashKey, PRUint32> mDeviceStates;
 };
-
-//class sbDeviceThread : public nsIRunnable
-//{
-//public:
-//  NS_DECL_ISUPPORTS
-//
-//  sbDeviceThread(sbDeviceBase* pDevice) : mpDevice(pDevice) {
-//    NS_ASSERTION(mpDevice, "Initializing without a sbDeviceBase");
-//  }
-//
-//  NS_IMETHOD Run() {
-//    if (!mpDevice)
-//      return NS_ERROR_NULL_POINTER;
-//    sbDeviceBase::DeviceProcess(mpDevice);
-//    return NS_OK;
-//  }
-//
-//private:
-//  sbDeviceBase* mpDevice;
-//};
 
 #endif // __DEVICE_BASE_H__
 
