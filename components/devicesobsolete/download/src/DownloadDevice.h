@@ -73,8 +73,11 @@
 #include <sbIDownloadDevice.h>
 
 /* Mozilla imports. */
+#include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsIIOService.h>
+#include <nsIStringBundle.h>
+#include <prlock.h>
 
 /* Songbird imports. */
 #include <sbIDataRemote.h>
@@ -142,21 +145,25 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
     /*
      * mpDownloadLibrary        Download device library.
      * mpIOService              I/O service.
+     * mpStringBundle           Download device string bundle.
      * mpMetadataJobManager     Metadata job manager.
      * mpDownloadDirDR          Default download directory data remote.
      * mpTmpDownloadDir         Temporary download directory.
      * mpDownloadSession        Current download session.
+     * mpTransferQueueLock      Lock for access to transfer queue.
      * mBusy                    Non-zero if the transfer queue is busy.
      */
 
     nsCOMPtr<sbILibrary>        mpDownloadLibrary;
     nsCOMPtr<nsIIOService>      mpIOService;
+    nsCOMPtr<nsIStringBundle>   mpStringBundle;
     nsCOMPtr<sbIMetadataJobManager>
                                 mpMetadataJobManager;
     nsCOMPtr<sbIDataRemote>     mpDownloadDirDR;
     nsCOMPtr<nsIFile>           mpTmpDownloadDir;
-    sbDownloadSession           *mpDownloadSession;
-    PRInt32                     mBusy;
+    nsRefPtr<sbDownloadSession> mpDownloadSession;
+    PRLock                      *mpTransferQueueLock;
+    PRBool                      mBusy;
 
 
     /*
@@ -164,6 +171,9 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
      */
 
     nsresult RunTransferQueue();
+
+    PRBool GetNextTransferItem(
+        sbIMediaItem                **appMediaItem);
 
     nsresult ResumeTransfers();
 

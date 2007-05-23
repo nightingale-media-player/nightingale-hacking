@@ -48,6 +48,7 @@
 
 /* Mozilla imports. */
 #include <nsArrayUtils.h>
+#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsILocalFile.h>
 #include <nsIPrefService.h>
@@ -57,7 +58,6 @@
 #include <nsISupportsPrimitives.h>
 #include <nsIURL.h>
 #include <nsServiceManagerUtils.h>
-#include <pratom.h>
 
 /* Songbird imports. */
 #include <sbIMetadataJob.h>
@@ -80,6 +80,9 @@
  * SB_TMP_DIR                   Songbird temporary directory name.
  * SB_DOWNLOAD_TMP_DIR          Download device temporary directory name.
  * SB_DOWNLOAD_LIB_NAME         Download device library name.
+ * SB_PREF_DOWNLOAD_LIBRARY     Download library preference name.
+ * SB_STRING_BUNDLE_CHROME_URL  URL for Songbird string bundle.
+ * SB_DOWNLOAD_COL_SPEC         Default download device playlist column spec.
  */
 
 #define SB_DOWNLOAD_DEVICE_CATEGORY                                            \
@@ -93,6 +96,13 @@
 #define SB_DOWNLOAD_LIB_NAME                                                   \
                 "&chrome://songbird/locale/songbird.properties#device.download"
 #define SB_PREF_DOWNLOAD_LIBRARY "songbird.library.download"
+#define SB_STRING_BUNDLE_CHROME_URL                                            \
+                                "chrome://songbird/locale/songbird.properties"
+#define SB_DOWNLOAD_COL_SPEC                                                   \
+                             "http://songbirdnest.com/data/1.0#trackName 395 " \
+                             "http://songbirdnest.com/data/1.0#artistName 222 "\
+                             "http://songbirdnest.com/data/1.0#albumName 222 " \
+                             "http://songbirdnest.com/data/1.0#progressValue"
 
 
 /* *****************************************************************************
@@ -133,8 +143,8 @@ NS_IMPL_ISUPPORTS2(sbDownloadDevice, sbIDeviceBase, sbIDownloadDevice)
 sbDownloadDevice::sbDownloadDevice()
 :
     sbDeviceBase(),
-    mpDownloadSession(nsnull),
-    mBusy(0)
+    mpTransferQueueLock(nsnull),
+    mBusy(PR_FALSE)
 {
 }
 
@@ -193,6 +203,32 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
                              &result);
     }
 
+    /* Get the string bundle. */
+    if (NS_SUCCEEDED(result))
+    {
+        nsCOMPtr<nsIStringBundleService>
+                                    pStringBundleService;
+
+        /* Get the download device string bundle. */
+        pStringBundleService = do_GetService(NS_STRINGBUNDLE_CONTRACTID,
+                                             &result);
+        if (NS_SUCCEEDED(result))
+        {
+            result = pStringBundleService->CreateBundle
+                                            (SB_STRING_BUNDLE_CHROME_URL,
+                                             getter_AddRefs(mpStringBundle));
+        }
+    }
+
+    /* Create the transfer queue lock. */
+    if (NS_SUCCEEDED(result))
+    {
+        mpTransferQueueLock =
+                nsAutoLock::NewLock("sbDownloadDevice::mpTransferQueueLock");
+        if (!mpTransferQueueLock)
+            result = NS_ERROR_OUT_OF_MEMORY;
+    }
+
     /* Create the download device library. */
     if (NS_SUCCEEDED(result))
     {
@@ -239,6 +275,17 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     if (NS_SUCCEEDED(result))
         result = pMediaList->SetName(NS_LITERAL_STRING(SB_DOWNLOAD_LIB_NAME));
 
+    /* Set the download device playlist default column spec. */
+    if (NS_SUCCEEDED(result))
+    {
+        nsString                    downloadColSpec;
+
+        downloadColSpec.AppendLiteral(SB_DOWNLOAD_COL_SPEC);
+        result = pMediaList->SetProperty
+                            (NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
+                             downloadColSpec);
+    }
+
     /* Write the download device library. */
     if (NS_SUCCEEDED(result))
         result = mpDownloadLibrary->Write();
@@ -252,33 +299,38 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         result = CreateTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
 
     /* Create the download destination property. */
-    /* XXXeps use string bundle. */
     if (NS_SUCCEEDED(result))
     {
+        nsString                    displayName;
+
         pPropertyManager =
                 do_GetService
                     ("@songbirdnest.com/Songbird/Properties/PropertyManager;1",
                      &result);
-    }
-    if (NS_SUCCEEDED(result))
-    {
-        pURIPropertyInfo =
+        if (NS_SUCCEEDED(result))
+        {
+            pURIPropertyInfo =
                         do_CreateInstance
                             ("@songbirdnest.com/Songbird/Properties/Info/URI;1",
                              &result);
-    }
-    if (NS_SUCCEEDED(result))
-    {
-        result = pURIPropertyInfo->SetName
+        }
+        if (NS_SUCCEEDED(result))
+        {
+            result = pURIPropertyInfo->SetName
                                 (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION));
+        }
+        if (NS_SUCCEEDED(result))
+        {
+            result = pPropertyManager->GetStringFromName
+                            (mpStringBundle,
+                             NS_LITERAL_STRING(SB_PROPERTY_DESTINATION_NAME),
+                             displayName);
+        }
+        if (NS_SUCCEEDED(result))
+            result = pURIPropertyInfo->SetDisplayName(displayName);
+        if (NS_SUCCEEDED(result))
+            result = pPropertyManager->AddPropertyInfo(pURIPropertyInfo);
     }
-    if (NS_SUCCEEDED(result))
-    {
-        result = pURIPropertyInfo->SetDisplayName
-                            (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION_NAME));
-    }
-    if (NS_SUCCEEDED(result))
-        result = pPropertyManager->AddPropertyInfo(pURIPropertyInfo);
 
     /* Get the default download directory data remote. */
     if (NS_SUCCEEDED(result))
@@ -360,16 +412,18 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
     LOG(("1: Finalize\n"));
 
     /* Dispose of any outstanding download sessions. */
-    /* XXXeps need to check how best to do this. */
     if (mpDownloadSession)
     {
         mpDownloadSession->Shutdown();
-        delete(mpDownloadSession);
         mpDownloadSession = nsnull;
     }
 
     /* Remove the device transfer queue. */
     RemoveTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
+
+    /* Dispose of the device transfer queue lock. */
+    if (mpTransferQueueLock)
+        nsAutoLock::DestroyLock(mpTransferQueueLock);
 
     /* Unregister the download device library. */
     UnregisterDeviceLibrary(mpDownloadLibrary);
@@ -546,6 +600,7 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
         /* Add it to the transfer queue. */
         if (NS_SUCCEEDED(result))
         {
+            nsAutoLock lock(mpTransferQueueLock);
             result = AddItemToTransferQueue
                                     (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                                      pMediaItem);
@@ -918,19 +973,68 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceCount(
 
 nsresult sbDownloadDevice::RunTransferQueue()
 {
-    PRInt32                     alreadyBusy;
     nsCOMPtr<sbIMediaItem>      pMediaItem;
     PRBool                      initiated = PR_FALSE;
     nsresult                    result = NS_OK;
 
-    /* Mark the transfer queue as busy.  Do nothing if already busy. */
-    /* XXXeps fix race condition if queue empty. */
-    alreadyBusy = PR_AtomicSet(&mBusy, 1);
-    if (alreadyBusy)
-        return (result);
+    /* Initiate transfers until queue is busy or empty. */
+    while (GetNextTransferItem(getter_AddRefs(pMediaItem)))
+    {
+        /* Initiate item transfer. */
+        mpDownloadSession = new sbDownloadSession(this, pMediaItem);
+        if (!mpDownloadSession)
+            result = NS_ERROR_OUT_OF_MEMORY;
+        if (NS_SUCCEEDED(result))
+            result = mpDownloadSession->Initiate();
+        if (NS_SUCCEEDED(result))
+            initiated = PR_TRUE;
+        else
+            initiated = PR_FALSE;
+
+        /* Release the download session if not initiated. */
+        if (!initiated && mpDownloadSession)
+            mpDownloadSession = nsnull;
+
+        /* Clear busy condition if transfer not initiated. */
+        if (!initiated)
+        {
+            nsAutoLock lock(mpTransferQueueLock);
+            mBusy = PR_FALSE;
+        }
+    }
+
+    return (result);
+}
+
+
+/*
+ * GetNextTransferItem
+ *
+ *   <-- appMediaItem           Next media item to transfer.
+ *
+ *   <-- True                   The next media item to transfer was returned.
+ *       False                  The transfer queue is busy or no media is
+ *                              available.
+ *
+ *   This function returns in appMediaItem the next media item to transfer.  If
+ * a media item is available for transfer and the transfer queue is not busy,
+ * this function returns true; otherwise, it returns false.
+ */
+
+PRBool sbDownloadDevice::GetNextTransferItem(
+    sbIMediaItem                **appMediaItem)
+{
+    nsCOMPtr<sbIMediaItem>          pMediaItem;
+    nsresult                        result = NS_OK;
+
+    /* Lock out other threads. */
+    nsAutoLock lock(mpTransferQueueLock);
+
+    /* Do nothing if the transfer queue is busy. */
+    if (mBusy)
+        return (PR_FALSE);
 
     /* Get the next media item to transfer. */
-    /* XXXeps need to be thread safe. */
     result = GetNextItemFromTransferQueue
                                     (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                                      getter_AddRefs(pMediaItem));
@@ -941,26 +1045,20 @@ nsresult sbDownloadDevice::RunTransferQueue()
                                      pMediaItem);
     }
 
-    /* Initiate item transfer. */
-    /* XXXeps need to clean up when done. */
+    /* Set busy condition if an item was dequeued. */
+    if (NS_SUCCEEDED(result))
+        mBusy = PR_TRUE;
+
+    /* Return results. */
     if (NS_SUCCEEDED(result))
     {
-        mpDownloadSession = new sbDownloadSession(this, pMediaItem);
-        if (mpDownloadSession)
-            mpDownloadSession->AddRef();
-        else
-            result = NS_ERROR_OUT_OF_MEMORY;
+        NS_ADDREF(*appMediaItem = pMediaItem);
+        return (PR_TRUE);
     }
-    if (NS_SUCCEEDED(result))
-        result = mpDownloadSession->Initiate();
-    if (NS_SUCCEEDED(result))
-        initiated = PR_TRUE;
-
-    /* Clear busy condition if transfer not initiated. */
-    if (!initiated)
-        mBusy = 0;
-
-    return (result);
+    else
+    {
+        return (PR_FALSE);
+    }
 }
 
 
@@ -1008,6 +1106,7 @@ nsresult sbDownloadDevice::ResumeTransfers()
         /* Add item to transfer queue if not complete. */
         if (NS_SUCCEEDED(itemResult) && (progress < 101))
         {
+            nsAutoLock lock(mpTransferQueueLock);
             itemResult = AddItemToTransferQueue
                             (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                              pMediaItem);
@@ -1182,12 +1281,14 @@ nsresult sbDownloadDevice::SetTransferDestination(
 void sbDownloadDevice::SessionCompleted(
     sbDownloadSession           *pDownloadSession)
 {
-    /* Delete the download session. */
-    /* XXXeps is it safe to delete here? */
+    /* Release the download session. */
     mpDownloadSession = nsnull;
 
     /* Mark the transfer queue as not busy and run it. */
-    mBusy = 0;
+    {
+        nsAutoLock lock(mpTransferQueueLock);
+        mBusy = PR_FALSE;
+    }
     RunTransferQueue();
 }
 
