@@ -192,22 +192,44 @@
   </menupopup>
 </toolbarbutton>
 
-<tree style="min-height:100px; min-width:300px">
+<tree style="min-height:100px; min-width:500px">
   <treecols>
     <treecol label="Name" flex="1"/>
     <treecol label="Size" flex="1"/>
+    <treecol label="Progress" flex="1" type="progressmeter"/>
+    <treecol label="Checkbox" flex="1" type="checkbox"/>
   </treecols>
   <treechildren>
     <treeitem>
       <treerow>
         <treecell label="Popcorn"/>
         <treecell label="Large"/>
+        <treecell value="60" mode="normal"/>
+        <treecell value="true"/>
       </treerow>
     </treeitem>
     <treeitem>
       <treerow>
         <treecell label="Root Beer"/>
         <treecell label="Small"/>
+        <treecell value="20" mode="normal"/>
+        <treecell value="false"/>
+      </treerow>
+    </treeitem>
+    <treeitem>
+      <treerow>
+        <treecell label="Twizzlers"/>
+        <treecell label="Extra Large"/>
+        <treecell value="100" mode="undetermined"/>
+        <treecell value="true" enabled="false"/>
+      </treerow>
+    </treeitem>
+    <treeitem>
+      <treerow>
+        <treecell label="Hot Dog"/>
+        <treecell label="Foot Long"/>
+        <treecell label="No Progress" value="50" mode="none"/>
+        <treecell value="false" enabled="false"/>
       </treerow>
     </treeitem>
   </treechildren>
