@@ -819,7 +819,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.properties = "library";
     node.editable = true;
     if (aLibrary != this._libraryManager.mainLibrary) {
-      node.dndAcceptIn = 'text/x-sb-playlist-'+aMediaList.library.guid;
+      node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
     }
     
     // Set properties for styling purposes
