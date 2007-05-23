@@ -277,7 +277,7 @@ var SBWebPlaylistCommands =
           retval = true;
       break;
       case "library_cmd_showdlplaylist":
-        retval = false;
+        retval = true;
       break;
       case "library_cmd_copylocation":
         retval = this.m_Playlist.tree.view.selection.getRangeCount() > 0;
@@ -321,7 +321,7 @@ var SBWebPlaylistCommands =
             onBrowserTransfer(new SelectionUnwrapper
                                 (this.m_Playlist.treeView.selectedMediaItems));
             // And show the download table in the chrome playlist.
-            gBrowser.onBrowserDownload();
+            gBrowser.mCurrentTab.switchToDownloadView();
           }
           catch( err )          
           {
@@ -425,7 +425,7 @@ var SBWebPlaylistCommands =
         break;
         case "library_cmd_showdlplaylist":
         {
-          gBrowser.onBrowserDownload();
+          gBrowser.mCurrentTab.switchToDownloadView();
         }
         break;
       }
@@ -606,17 +606,27 @@ function onBrowserTransfer(mediaItems)
 
 var SBDownloadCommands = 
 {
-  DEVICE_IDLE :               0,
-  DEVICE_BUSY :               1,
-  DEVICE_DOWNLOADING :        2,
-  DEVICE_UPLOADING :          3,
-  DEVICE_DOWNLOAD_PAUSED :    4,
-  DEVICE_UPLOAD_PAUSED :      5,
-  DEVICE_DELETING :           6,
-  
   m_Playlist: null,
   m_Device: null,
 
+  // XXXben stupid hack until getDeviceState is implemented on the new download
+  //        device.
+  getDeviceState: function getDeviceState(deviceID) {
+    var deviceState;
+    try {
+      deviceState = this.m_Device.getDeviceState(deviceID);
+    }
+    catch (e) {
+      if (e.result == Cr.NS_ERROR_NOT_IMPLEMENTED) {
+        deviceState = Ci.sbIDeviceBase.STATE_DOWNLOADING;
+      }
+      else {
+        throw e;
+      }
+    }
+    return deviceState;
+  },
+  
   m_Types: new Array
   (
     "action",
@@ -683,7 +693,7 @@ var SBDownloadCommands =
     {
       if ( this.m_Device )
       {
-        if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
+        if ( this.getDeviceState('') == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
         {
           this.m_Ids[ aIndex ] = "library_cmd_resume";
         }
@@ -706,7 +716,7 @@ var SBDownloadCommands =
     {
       if ( this.m_Device )
       {
-        if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
+        if ( this.getDeviceState('') == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
         {
           this.m_Names[ aIndex ] = "&command.resumedl";
         }
@@ -750,7 +760,8 @@ var SBDownloadCommands =
     {
       if ( this.m_Device )
       {
-        if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
+        var deviceState = this.getDeviceState('');
+        if ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
         {
           this.m_Tooltips[ aIndex ] = "&command.tooltip.resume";
         }
@@ -789,7 +800,9 @@ var SBDownloadCommands =
       switch( aIndex )
       {
         case 2:
-          retval = ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOADING ) || ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
+          var deviceState = this.getDeviceState('');
+          retval = ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOADING ) || 
+                   ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
         break;
         default:
           retval = true;
@@ -810,6 +823,12 @@ var SBDownloadCommands =
         case "library_cmd_play":
           if ( this.m_Playlist.tree.currentIndex != -1 )
           {
+            // If the user hasn't selected anything, select the first thing for him.
+            if ( this.m_Playlist.tree.currentIndex == -1 )
+            {
+              this.m_Playlist.tree.view.selection.currentIndex = 0;
+              this.m_Playlist.tree.view.selection.select( 0 );
+            }
             // Repurpose the command to act as if a doubleclick
             this.m_Playlist.sendPlayEvent();
           }
@@ -818,16 +837,17 @@ var SBDownloadCommands =
           if ( this.m_Playlist.tree.currentIndex != -1 )
           {
             // remove the currently select tracks
-            this.m_Playlist.removeTracks();
+            this.m_Playlist.removeSelectedTracks();
           }
         break;
         case "library_cmd_pause":
         case "library_cmd_resume":
-          if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOADING )
+          var deviceState = this.getDeviceState('');
+          if ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOADING )
           {
             this.m_Device.suspendTransfer('');
           }
-          else if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
+          else if ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
           {
             this.m_Device.resumeTransfer('');
           }
@@ -836,11 +856,10 @@ var SBDownloadCommands =
         break;
         case "library_cmd_showwebplaylist":
         {
-          gBrowser.onBrowserPlaylist();
+          gBrowser.mCurrentTab.switchToWebPlaylistView();
         }
         break;
       }
-      event.stopPropagation();
     }
   },
   

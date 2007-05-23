@@ -844,79 +844,6 @@
         ]]></body>
       </method>
 
-      <method name="onBrowserPlaylist">
-        <body><![CDATA[
-          metrics_inc("player", "urlslurp", null);
-
-          var webLibrary = this.webLibrary;
-          if (this.playlistTree) {
-            this.loadURI("chrome://songbird/content/xul/playlist_test2.xul?" +
-                         "library," + webLibrary.guid, null, null);
-            return;
-          }
-
-          var view;
-          if (!theWebPlaylist.library.equals(webLibrary)) {
-            view = webLibrary.createView();
-            
-            SBWebPlaylistCommands.m_Playlist = theWebPlaylist;
-            theWebPlaylist.bind(view, SBWebPlaylistCommands,
-                                SBDataGetIntValue("browser.playlist.height"),
-                                SBDataGetBoolValue("browser.playlist.collapsed"));
-          }
-          else {
-            view = theWebPlaylist.mediaListView;
-          }
-          
-          // Set the filter to the current URL.
-          var propArray =
-            Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-                      .createInstance(Components.interfaces.sbIPropertyArray);
-          propArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl",
-                                   window.location.href);
-                                     
-          view.setFilters(propArray);
-
-          this.showWebPlaylist = true;
-        ]]></body>
-      </method>
-
-      <method name="onBrowserDownload">
-        <body><![CDATA[
-          metrics_inc("player", "downloads", null);
-          
-          var downloadLibrary = this.downloadLibrary;
-          if (this.playlistTree) {
-            var downloadLibraryGUID = downloadLibrary.guid;
-            this.loadURI("chrome://songbird/content/xul/playlist_test2.xul?" +
-                         "library," + downloadLibraryGUID, null, null);
-            return;
-          }
-
-          // Make sure the download device has been added to the commands object.
-          if (!SBDownloadCommands.m_Device) {
-            var deviceManager =
-              Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"]
-                        .getService(Components.interfaces.sbIDeviceManager);
-            
-            downloadDevice =
-              deviceManager.getDeviceByCategory("Songbird Download Device");
-            SBDownloadCommands.m_Device = downloadDevice;
-          }
-
-          if (!theWebPlaylist.library.equals(downloadLibrary)) {
-            var view = downloadLibrary.createView();
-
-            theWebPlaylist.bind(view, SBDownloadCommands,
-                                SBDataGetIntValue("browser.playlist.height"),
-                                SBDataGetBoolValue("browser.playlist.collapsed"));
-          }
-
-          this.showWebPlaylist = true;
-
-        ]]></body>
-        </method>
-
       <method name="openBalloonTip">
         <body><![CDATA[
           if (!SBDataGetBoolValue("balloontip.firstwebplaylist.shown")) {
@@ -1104,6 +1031,26 @@
         ]]></getter>
       </property>
       
+      <field name="_downloadLibraryCache">null</field>
+      <property name="_downloadLibrary">
+        <getter><![CDATA[
+          if (this._downloadLibraryCache) {
+            return this._downloadLibraryCache;
+          }
+          
+          var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                .getService(Components.interfaces.nsIPrefBranch2);
+          var guid = prefs.getComplexValue("songbird.library.download",
+                                           Components.interfaces.nsISupportsString);
+          
+          var libraryManager =
+            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                      .getService(Components.interfaces.sbILibraryManager);
+
+          return (this._downloadLibraryCache = libraryManager.getLibrary(guid));
+        ]]></getter>
+      </property>
+
       <method name="createOuterPlaylist">
         <body><![CDATA[
           /* from mainwin.xul:
@@ -1202,7 +1149,7 @@
       <!-- sbITabBrowserTab -->
       <property name="outerPlaylist" readonly="true">
         <getter><![CDATA[
-          return this._playlist
+          return this._playlist;
         ]]></getter>
       </property>
 
@@ -1443,6 +1390,68 @@
           installed_listener = true;
           } catch( e ) { alert( "tabbrowser::setUpInnerPlaylist\n\n" + e ); }]]></body>
       </method>
+      
+      <field name="_swappedPlaylistView">null</field>
+      
+      <method name="switchToWebPlaylistView">
+        <body><![CDATA[
+          metrics_inc("player", "urlslurp", null);
+
+          var view;
+          if (this._swappedPlaylistView) {
+            view = this._swappedPlaylistView;
+            this._swappedPlaylistView = null;
+          }
+          else {
+            // This code should never run unless someone calls this function
+            // manually outside of the SBDownloadCommands object.
+
+            view = this._webLibrary.createView();
+            
+            // Set the filter to the current URL.
+            var propArray =
+              Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
+                        .createInstance(Components.interfaces.sbIPropertyArray);
+            propArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl",
+                                     this.linkedBrowser.currentURI.spec);
+
+            view.setFilters(propArray);
+          }
+          
+          SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
+          
+          this.outerPlaylist.bind(view, SBWebPlaylistCommands,
+                                  SBDataGetIntValue("browser.playlist.height"),
+                                  SBDataGetBoolValue("browser.playlist.collapsed"));
+        ]]></body>
+      </method>
+
+      <method name="switchToDownloadView">
+        <body><![CDATA[
+          metrics_inc("player", "downloads", null);
+          
+          // Make sure the download device has been added to the commands object.
+          if (!SBDownloadCommands.m_Device) {
+            var deviceManager =
+              Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"]
+                        .getService(Components.interfaces.sbIDeviceManager);
+            
+            downloadDevice =
+              deviceManager.getDeviceByCategory("Songbird Download Device");
+            
+            SBDownloadCommands.m_Device = downloadDevice;
+          }
+          
+          // Save this for later if we swap back.
+          this._swappedPlaylistView = this.outerPlaylist.mediaListView;
+          
+          var view = this._downloadLibrary.createView();
+          
+          this.outerPlaylist.bind(view, SBDownloadCommands,
+                                  SBDataGetIntValue("browser.playlist.height"),
+                                  SBDataGetBoolValue("browser.playlist.collapsed"));
+        ]]></body>
+        </method>
 
       <!-- nsIWebProgressListener implementation -->
       <method name="onLocationChange">
