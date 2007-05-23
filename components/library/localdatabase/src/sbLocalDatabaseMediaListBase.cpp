@@ -68,6 +68,7 @@
 #define DEFAULT_PROPERTIES_URL "chrome://songbird/locale/songbird.properties"
 
 static const char* sStandardPropertiesToCopy[] = {
+  SB_PROPERTY_MEDIALISTNAME,
   SB_PROPERTY_TRACKNAME,
   SB_PROPERTY_ALBUMNAME,
   SB_PROPERTY_ARTISTNAME,
