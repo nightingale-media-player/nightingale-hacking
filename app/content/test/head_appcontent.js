@@ -133,7 +133,7 @@ function createLibrary(databaseGuid, databaseLocation) {
                 createInstance(Ci.nsIWritablePropertyBag2);
   hashBag.setPropertyAsInterface("databaseFile", file);
   var library = libraryFactory.createLibrary(hashBag);
-
+  library.clear();
   loadData(databaseGuid, databaseLocation);
   return library;
 }
