@@ -146,6 +146,10 @@ function createLibrary(databaseGuid) {
   
   var file = directory.clone();
   file.append("servicepanetest-" + databaseGuid + ".db");
+  
+  if (file.exists()) {
+    file.remove(false);
+  }
 
   var libraryFactory =
     Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
