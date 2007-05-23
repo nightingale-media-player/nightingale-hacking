@@ -89,7 +89,7 @@ function runTest () {
   
   enumerator = libraryManager.getStartupLibraries();
   var baseStartupLibraryCount = countEnumeratedItems(enumerator);
-  assertTrue(baseStartupLibraryCount >= 3);
+  assertTrue(baseStartupLibraryCount >= 2);
 
   var library3 = createLibrary("test_library-base3");
   libraryManager.registerLibrary(library3, true);
