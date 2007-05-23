@@ -589,7 +589,7 @@
       this._columnSpecOrigin = 1;
     }
     catch (e) {
-      this._reportError("Failed to parse columnSpec: \"" + columnSpec + "\"", e);
+      this._reportError("Failed to parse columnSpec(1): \"" + columnSpec + "\"", e);
       columnSpec = "";
     }
   }
@@ -604,7 +604,7 @@
         this._columnSpecOrigin = 2;
       }
       catch (e) {
-        this._reportError("Failed to parse columnSpec: \"" + columnSpec + "\"", e);
+        this._reportError("Failed to parse columnSpec(2): \"" + columnSpec + "\"", e);
         columnSpec = "";
       }
     }
@@ -613,13 +613,15 @@
   
   if (!columnMap.length) {
     columnSpec = this.getAttribute("columnSpec");
-    try {
-      columnMap = this._parseColumnSpec(columnSpec);
-      this._columnSpecOrigin = 3;
-    }
-    catch (e) {
-      this._reportError("Failed to parse columnSpec: \"" + columnSpec + "\"", e);
-      columnSpec = "";
+    if (columnSpec) {
+      try {
+        columnMap = this._parseColumnSpec(columnSpec);
+        this._columnSpecOrigin = 3;
+      }
+      catch (e) {
+        this._reportError("Failed to parse columnSpec(3): \"" + columnSpec + "\"", e);
+        columnSpec = "";
+      }
     }
   }
   
