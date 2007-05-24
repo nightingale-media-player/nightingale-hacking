@@ -186,7 +186,7 @@ function sbBookmarks_servicePaneInit(sps) {
       //    will try to fetch them again.
     }, false);
     xhr.QueryInterface(Ci.nsIXMLHttpRequest);
-    xhr.open('GET', 'http://ian.mckellar.org/bookmarks.xml', true);
+    xhr.open('GET', 'http://download.songbirdnest.com/bookmarks/bookmarks.xml', true);
     xhr.send(null);
   }
   
