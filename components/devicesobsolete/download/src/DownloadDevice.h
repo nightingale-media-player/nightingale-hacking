@@ -193,6 +193,9 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
 
     nsresult GetTmpFile(
         nsIFile                     **ppTmpFile);
+
+    nsresult MakeFileUnique(
+        nsIFile                     *apFile);
 };
 
 

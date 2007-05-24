@@ -1386,11 +1386,13 @@ nsresult sbDownloadDevice::SetTransferDestination(
     if (NS_SUCCEEDED(result))
         result = mpDownloadDirDR->GetStringValue(dstDir);
 
-    /* Create a local destination file. */
+    /* Create a unique local destination file object. */
     if (NS_SUCCEEDED(result))
         result = NS_NewLocalFile(dstDir, PR_FALSE, getter_AddRefs(pDstFile));
     if (NS_SUCCEEDED(result))
         result = pDstFile->Append(NS_ConvertUTF8toUTF16(fileName));
+    if (NS_SUCCEEDED(result))
+        result = MakeFileUnique(pDstFile);
 
     /* Get the destination URI spec. */
     if (NS_SUCCEEDED(result))
@@ -1512,6 +1514,77 @@ nsresult sbDownloadDevice::GetTmpFile(
     /* Return results. */
     if (NS_SUCCEEDED(result))
         NS_ADDREF(*ppTmpFile = pTmpFile);
+
+    return (result);
+}
+
+
+/*
+ * MakeFileUnique
+ *
+ *   --> apFile                 File to make unique.
+ *
+ *   This function makes the file object specified by apFile refer to a unique,
+ * non-existent file.  If the specified file does not exist, this function does
+ * nothing.  Otherwise, it tries different file leaf names until a non-existent
+ * file is found and sets the specified file object's leaf name accordingly.
+ */
+
+nsresult sbDownloadDevice::MakeFileUnique(
+    nsIFile                     *apFile)
+{
+    nsCOMPtr<nsIFile>           pUniqueFile;
+    nsAutoString                leafName;
+    nsAutoString                uniqueLeafName;
+    PRInt32                     extOffset;
+    nsAutoString                uniqueStr;
+    PRInt32                     uniqueNum = 1;
+    PRBool                      exists;
+    nsresult                    result = NS_OK;
+
+    /* Do nothing if file does not exist. */
+    result = apFile->Exists(&exists);
+    if (NS_FAILED(result) || !exists)
+        return (result);
+
+    /* Clone the file object. */
+    if (NS_SUCCEEDED(result))
+        result = apFile->Clone(getter_AddRefs(pUniqueFile));
+
+    /* Get the file leaf name. */
+    if (NS_SUCCEEDED(result))
+        result = pUniqueFile->GetLeafName(leafName);
+    if (NS_SUCCEEDED(result))
+        extOffset = leafName.RFindChar('.');
+
+    /* Find a non-existent file name. */
+    while (NS_SUCCEEDED(result) && exists)
+    {
+        /* Try producing a unique string. */
+        uniqueStr.AssignLiteral("_");
+        uniqueStr.AppendInt(uniqueNum++);
+        uniqueStr.AppendLiteral("_");
+
+        /* Add the unique string to the file leaf name. */
+        uniqueLeafName.Assign(leafName);
+        if (extOffset == -1)
+            uniqueLeafName.Append(uniqueStr);
+        else
+            uniqueLeafName.Insert(uniqueStr, extOffset);
+
+        /* Check if the file exists. */
+        result = pUniqueFile->SetLeafName(uniqueLeafName);
+        if (NS_SUCCEEDED(result))
+            result = pUniqueFile->Exists(&exists);
+
+        /* Limit number of tries. */
+        if (exists && (uniqueNum > 1000))
+            result = NS_ERROR_FILE_TOO_BIG;
+    }
+
+    /* Update the file with a unique leaf name. */
+    if (NS_SUCCEEDED(result))
+        result = apFile->SetLeafName(uniqueLeafName);
 
     return (result);
 }
