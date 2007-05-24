@@ -897,10 +897,12 @@ jar_manifest_in = $(JAR_MANIFEST).in
 endif
 
 $(JAR_MANIFEST):
+ifneq (,$(jar_mn_in_exists))
 	$(CYGWIN_WRAPPER) $(RM) -f $(JAR_MANIFEST)
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
     $(srcdir)/$(jar_manifest_in) | \
     $(PERL) $(SCRIPTS_DIR)/expand-jar-mn.pl $(srcdir) > $(JAR_MANIFEST)
+endif
 
 make_jar: $(JAR_MANIFEST)
 	@$(CYGWIN_WRAPPER) $(MKDIR) -p $(TARGET_DIR)
