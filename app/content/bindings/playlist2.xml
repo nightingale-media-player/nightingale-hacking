@@ -128,9 +128,6 @@
   this._treecols.addEventListener("DOMAttrModified",
                                   this._onColumnMutationClosure,
                                   false);
-  window.addEventListener("playlist-commands-updated",
-                          this.rescanCommands,
-                          true);
 
   // Install our special keyNavigate function. The signature must match the
   // keyNavigate method in tree.xml.
@@ -160,9 +157,6 @@
       <destructor>
 <![CDATA[
   // Remove event listeners
-  window.removeEventListener("playlist-commands-updated",
-                             this.rescanCommands,
-                             true);
   this._treecols.removeEventListener("DOMAttrModified",
                                      this._onColumnMutationClosure,
                                       false);
@@ -249,14 +243,12 @@
       <property name="usedefaultcommands">
         <getter>
           <![CDATA[
-            debug("XXXredfive - playlist2 - usedefaultcommands getter: " + this.getAttribute("usedefaultcommands") + "\n");
             return (this.getAttribute("usedefaultcommands") != "false");
           ]]>
         </getter>
         <setter>
           <![CDATA[
             this.setAttribute("usedefaultcommands", val);
-            debug("XXXredfive - playlist2 - usedefaultcommands setter: " + val + "\n");
             if (this._commandmenuitems) this._commandmenuitems.usedefault = val;
             if (this._toolbar) this._toolbar.usedefault = val;
           ]]>
@@ -909,6 +901,7 @@
           this._toolbar.refreshCommands();
           this._commandmenuitems.bind(this, commands);
           this._toolbar.bind(this, commands);
+          this.rescanCommands();
         ]]>
         </body>
       </method>
@@ -1947,16 +1940,13 @@
 
       <method name="rescanCommands">
         <body>
-          debug("XXXredfive - playlist2 - rescanCommands\n");
           // push our usedefaultcommands state because the RemoteAPI only has
           // access to attributes right now and this needs to get to commands
           if (this._commandmenuitems) {
-            debug("XXXredfive - playlist2 - rescanCommands - menuitems");
             this._commandmenuitems.usedefault = this.usedefaultcommands;
             this._commandmenuitems.rescanCommands();
           }
           if (this._toolbar) {
-            debug("XXXredfive - playlist2 - rescanCommands - toolbar");
             this._toolbar.usedefault = this.usedefaultcommands;
             this._toolbar.rescanCommands();
           }

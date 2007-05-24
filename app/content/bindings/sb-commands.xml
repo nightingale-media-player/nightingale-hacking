@@ -62,13 +62,11 @@
 
       <property name="usedefault">
         <getter>
-          dump("XXXredfive - baseCommands - usedefault getter: " + this.getAttribute("usedefault") + "\n" );
           return (this.getAttribute("usedefault") != "false");
         </getter>
         <setter>
           <![CDATA[
             var old = this.usedefault;
-            dump("XXXredfive - baseCommands - usedefault setter: to: " + val + " from: " + old + "\n" );
             this.setAttribute("usedefault", val);
             if (this.usedefault != old) {
               this.rescanCommands();
@@ -96,7 +94,6 @@
       <method name="rescanCommands">
         <body>
           <![CDATA[
-            dump("XXXredfive - baseCommands - rescanCommands\n");
             this.commands = new Array();
 
             // See if there are objects registered specifically for this table
@@ -117,7 +114,6 @@
             
             // Use the defaults only if allowed and if we didnt get anything so far
             if (this.usedefault && !this.commands.length) {
-              dump("XXXredfive - baseCommands - rescanCommands using defaults\n");
               // add the default (generic) command object if specified
               if (this.defaultcommands) this.commands.push(this.defaultcommands);
             }
@@ -230,7 +226,7 @@
           <![CDATA[
             if (!this.commands) return false;
             for (var i in this.commands) {
-              if (this.commands[i].getNumCommands() > 0) return true;
+              if (this.commands[i].getNumCommands("", "") > 0) return true;
             }
             return false;
           ]]>

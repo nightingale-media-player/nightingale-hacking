@@ -300,7 +300,9 @@ sbRemoteLibrary::GetSiteLibraryFile( const nsAString &aDomain,
 nsresult
 sbRemoteLibrary::GetURI( nsIURI **aSiteURI )
 {
+  NS_ENSURE_ARG_POINTER(aSiteURI);
   LOG1(("sbRemoteLibrary::GetURI()"));
+
   nsresult rv;
   nsCOMPtr<sbISecurityMixin> mixin( do_QueryInterface( mSecurityMixin, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
@@ -316,6 +318,7 @@ sbRemoteLibrary::GetURI( nsIURI **aSiteURI )
 nsresult
 sbRemoteLibrary::CheckDomain( nsAString &aDomain,  nsIURI *aSiteURI )
 {
+  NS_ENSURE_ARG_POINTER(aSiteURI);
   LOG1(( "sbRemoteLibrary::CheckDomain(%s)",
          NS_LossyConvertUTF16toASCII(aDomain).get() ));
 
@@ -417,6 +420,7 @@ sbRemoteLibrary::CheckDomain( nsAString &aDomain,  nsIURI *aSiteURI )
 nsresult
 sbRemoteLibrary::CheckPath( nsAString &aPath, nsIURI *aSiteURI )
 {
+  NS_ENSURE_ARG_POINTER(aSiteURI);
   LOG1(( "sbRemoteLibrary::CheckPath(%s)",
          NS_LossyConvertUTF16toASCII(aPath).get() ));
 

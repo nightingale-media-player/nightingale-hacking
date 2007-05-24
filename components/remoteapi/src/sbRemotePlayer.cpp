@@ -428,20 +428,12 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   nsCOMPtr<sbIPlaylistCommands> commands( 
                                    do_QueryInterface( mCommandsObject, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
-  pls->RegisterPlaylistCommands( guid,
-                                 EmptyString(),
-                                 NS_LITERAL_STRING("library"),
-                                 commands );
+  rv = pls->RegisterPlaylistCommands( guid,
+                                      EmptyString(),
+                                      NS_LITERAL_STRING("library"),
+                                      commands );
 
-  // This event is no longer getting to the playlist. I think since it moved I
-  //   need to get the document from the tabbrowser.
-  // I think the proper solution is going to be to implement an interface on
-  //   the playlist binding that allows us to QI the domelement to something
-  //   useful.
-  // Fire Event
-  //return DispatchEvent( domdoc, RAPI_EVENT_CLASS, SB_EVENT_CMNDS_UP, PR_TRUE );
-  return DispatchEvent( mChromeDoc, RAPI_EVENT_CLASS, SB_EVENT_CMNDS_UP, PR_FALSE );
-  //return DispatchEvent( tabDoc, RAPI_EVENT_CLASS, SB_EVENT_CMNDS_UP, PR_TRUE );
+  return rv;
 }
 
 NS_IMETHODIMP 
