@@ -160,7 +160,8 @@ private:
 
   nsresult DeleteDatabaseItem(const nsAString& aGuid);
 
-  nsresult AddItemToLocalDatabase(sbIMediaItem* aMediaItem);
+  nsresult AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
+                                  sbIMediaItem** _retval);
 
 private:
   // This is the GUID used by the DBEngine to uniquely identify the sqlite

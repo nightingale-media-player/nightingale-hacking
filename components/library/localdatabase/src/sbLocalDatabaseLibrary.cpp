@@ -153,17 +153,19 @@ sbLibraryInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList
   rv = aMediaItem->GetLibrary(getter_AddRefs(fromLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If the media item is not in the view, add it
+  // If the media item is not in the library, add it
   PRBool equals;
   rv = fromLibrary->Equals(SB_ILIBRESOURCE_CAST(mFriendLibrary), &equals);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!equals) {
-    rv = mFriendLibrary->AddItemToLocalDatabase(aMediaItem);
+    nsCOMPtr<sbIMediaItem> newMediaItem;
+    rv = mFriendLibrary->AddItemToLocalDatabase(aMediaItem,
+                                                getter_AddRefs(newMediaItem));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Remember this media item for later so we can notify with it
-    PRBool success = mNotificationList.AppendObject(aMediaItem);
+    PRBool success = mNotificationList.AppendObject(newMediaItem);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
     mShouldInvalidate = PR_TRUE;
@@ -933,17 +935,24 @@ sbLocalDatabaseLibrary::DeleteDatabaseItem(const nsAString& aGuid)
  * \brief
  */
 nsresult
-sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem)
+sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
+                                               sbIMediaItem** _retval)
 {
-  nsresult rv;
+  NS_ASSERTION(aMediaItem, "Null pointer!");
+  NS_ASSERTION(_retval, "Null pointer!");
 
   // Create a new media item and copy all the properties
   nsCOMPtr<nsIURI> contentUri;
-  rv = aMediaItem->GetContentSrc(getter_AddRefs(contentUri));
+  nsresult rv = aMediaItem->GetContentSrc(getter_AddRefs(contentUri));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> newItem;
 
+  // CreateMediaItem usually notifies listeners that an item was added to the
+  // media list. That's not what we want in this case because our callers
+  // (Add and OnEnumeratedItem) will notify instead. Unfortunately we have to
+  // use a member variable because CreateMediaItem is an IDL method and
+  // additional (optional) parameters are not allowed.
   mPreventAddedNotification = PR_TRUE;
   rv = CreateMediaItem(contentUri, getter_AddRefs(newItem));
   mPreventAddedNotification = PR_FALSE;
@@ -953,6 +962,7 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem)
   rv = CopyStandardProperties(aMediaItem, newItem);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  newItem.swap(*_retval);
   return NS_OK;
 }
 
@@ -2026,8 +2036,10 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
     return NS_OK;
   }
 
+  nsCOMPtr<sbIMediaItem> newMediaItem;
+
   // Import this item into this library
-  rv = AddItemToLocalDatabase(aMediaItem);
+  rv = AddItemToLocalDatabase(aMediaItem, getter_AddRefs(newMediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate the cached list
@@ -2035,7 +2047,7 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // And let everyone know about it.
-  NotifyListenersItemAdded(this, aMediaItem);
+  NotifyListenersItemAdded(this, newMediaItem);
 
   return NS_OK;
 }
