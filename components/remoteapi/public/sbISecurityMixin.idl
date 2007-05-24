@@ -62,6 +62,16 @@ interface sbISecurityMixin : nsISupports
 
   /**
    * \brief Gets the URI for the current location.
+   * 
+   * Can return NS_OK and a null URI. Needs to do so to allow security
+   * checks to succeed when called from native code.
+   *
+   * \param aSiteURI - The URI of the subject principal, basically the calling
+   *                 page. It is pulled from the JS stack. This will be null
+   *                 if the security check originated from native code and not
+   *                 an access on a web page.
+   * \return NS_OK - indicates no implicit failure of code, does not ensure
+   *                 URI is set.
    */
   nsIURI getCodebase();
 };
