@@ -338,7 +338,8 @@ sbDeviceBase::Init()
 {
   if(!mDeviceLibraries.Init() ||
      !mDeviceQueues.Init() ||
-     !mDeviceCallbacks.Init()) {
+     !mDeviceCallbacks.Init() ||
+     !mDeviceStates.Init()) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
   
