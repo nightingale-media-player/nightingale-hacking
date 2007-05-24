@@ -205,15 +205,6 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
                                     &result);
     }
 
-    /* Get the metadata job manager. */
-    if (NS_SUCCEEDED(result))
-    {
-        mpMetadataJobManager =
-                        do_GetService
-                            ("@songbirdnest.com/Songbird/MetadataJobManager;1",
-                             &result);
-    }
-
     /* Get the string bundle. */
     if (NS_SUCCEEDED(result))
     {
@@ -1247,8 +1238,8 @@ nsresult sbDownloadDevice::ResumeTransfers()
         if (NS_SUCCEEDED(itemResult))
         {
             itemResult = pMediaItem->GetProperty
-                            (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
-                             progressStr);
+                                (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
+                                 progressStr);
         }
         if (NS_SUCCEEDED(itemResult))
             progress = progressStr.ToInteger(&itemResult);
@@ -2171,7 +2162,9 @@ nsresult sbDownloadSession::CompleteTransfer()
     if (NS_SUCCEEDED(result))
         result = mpDstLibrary->Write();
 
-    /* XXXeps need to rescan metadata locally if remote scan failed. */
+    /* Update the destination library metadata. */
+    if (NS_SUCCEEDED(result))
+        UpdateDstLibraryMetadata();
 
     /* Update the web library with the local downloaded file URL. */
     if (NS_SUCCEEDED(result))
@@ -2182,7 +2175,6 @@ nsresult sbDownloadSession::CompleteTransfer()
         nsCString                   srcSpec;
 
         /* Get the web library media list. */
-        /*XXXeps should save this in Initiate. */
         if (NS_SUCCEEDED(result))
         {
             pWebMediaList = do_QueryInterface(mpDownloadDevice->mpWebLibrary,
@@ -2213,6 +2205,65 @@ nsresult sbDownloadSession::CompleteTransfer()
 
         /* Don't propagate errors from here. */
         result = NS_OK;
+    }
+
+    return (result);
+}
+
+
+/*
+ * UpdateDstLibraryMetadata
+ *
+ *   This function updates the download media item metadata in the destination
+ * library.  If the metadata is already set in the media item, this function
+ * does nothing.
+ */
+
+nsresult sbDownloadSession::UpdateDstLibraryMetadata()
+{
+    nsCOMPtr<sbIMediaList>      pDstMediaList;
+    nsRefPtr<LibraryMetadataUpdater>
+                                pLibraryMetadataUpdater;
+    nsCString                   dstSpec;
+    nsString                    durationStr;
+    PRInt32                     duration;
+    PRBool                      updateDstLibraryMetadata = PR_TRUE;
+    nsresult                    result1;
+    nsresult                    result = NS_OK;
+
+    /* Check if the download media item has metadata. */
+    result1 = mpMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
+                                       durationStr);
+    if (NS_SUCCEEDED(result1))
+        duration = durationStr.ToInteger(&result1);
+    if (NS_SUCCEEDED(result1) && (duration > 0))
+        updateDstLibraryMetadata = PR_FALSE;
+
+    /* Update the destination library metadata if needed. */
+    if (updateDstLibraryMetadata)
+    {
+        /* Get the destination URI spec. */
+        result = mpDstURI->GetSpec(dstSpec);
+
+        /* Create a library metadata updater. */
+        if (NS_SUCCEEDED(result))
+        {
+            pLibraryMetadataUpdater = new LibraryMetadataUpdater();
+            if (!pLibraryMetadataUpdater)
+                result = NS_ERROR_OUT_OF_MEMORY;
+        }
+
+        /* Update the download media item metadata in the library. */
+        if (NS_SUCCEEDED(result))
+            pDstMediaList = do_QueryInterface(mpDstLibrary, &result);
+        if (NS_SUCCEEDED(result))
+        {
+            result = pDstMediaList->EnumerateItemsByProperty
+                                    (NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                     NS_ConvertUTF8toUTF16(dstSpec),
+                                     pLibraryMetadataUpdater,
+                                     sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+        }
     }
 
     return (result);
@@ -2259,11 +2310,118 @@ void sbDownloadSession::UpdateProgress(
 
 /* *****************************************************************************
  *
- * Download session WebLibraryUpdater services.
+ * Download device LibraryMetadataUpdater services.
+ *
+ *   This class updates a library items' metadata by scanning a local,
+ * downloaded file.
  *
  ******************************************************************************/
 
-/* Download device nsISupports implementation. */
+/* LibraryMetadataUpdater nsISupports implementation. */
+NS_IMPL_ISUPPORTS1(sbDownloadSession::LibraryMetadataUpdater,
+                   sbIMediaListEnumerationListener)
+
+
+/**
+ * \brief Called when enumeration is about to begin.
+ *
+ * \param aMediaList - The media list that is being enumerated.
+ *
+ * \return true to begin enumeration, false to cancel.
+ */
+
+NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumerationBegin(
+    sbIMediaList                *aMediaList,
+    PRBool                      *_retval)
+{
+    nsresult                    result = NS_OK;
+
+    /* Validate arguments. */
+    NS_ENSURE_ARG_POINTER(_retval);
+
+    /* Create an array to contain the media items to scan. */
+    mpMediaItemArray = do_CreateInstance("@mozilla.org/array;1", &result);
+
+    /* Return results. */
+    if (NS_SUCCEEDED(result))
+        *_retval = PR_TRUE;
+    else
+        *_retval = PR_FALSE;
+
+    return (result);
+}
+
+
+/**
+ * \brief Called once for each item in the enumeration.
+ *
+ * \param aMediaList - The media list that is being enumerated.
+ * \param aMediaItem - The media item.
+ *
+ * \return true to continue enumeration, false to cancel.
+ */
+
+NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumeratedItem(
+    sbIMediaList                *aMediaList,
+    sbIMediaItem                *aMediaItem,
+    PRBool                      *_retval)
+{
+    nsresult                    result = NS_OK;
+
+    /* Validate arguments. */
+    NS_ENSURE_ARG_POINTER(_retval);
+
+    /* Put the media item into the scanning array. */
+    result = mpMediaItemArray->AppendElement(aMediaItem, PR_FALSE);
+
+    /* Return results. */
+    *_retval = PR_TRUE;
+
+    return (NS_OK);
+}
+
+
+/**
+ * \brief Called when enumeration has completed.
+ *
+ * \param aMediaList - The media list that is being enumerated.
+ * \param aStatusCode - A code to determine if the enumeration was successful.
+ */
+
+NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumerationEnd(
+    sbIMediaList                *aMediaList,
+    nsresult                    aStatusCode)
+{
+    nsCOMPtr<sbIMetadataJobManager>
+                                pMetadataJobManager;
+    nsCOMPtr<sbIMetadataJob>    pMetadataJob;
+    nsresult                    result = NS_OK;
+
+    /* Start a metadata scanning job. */
+    pMetadataJobManager = do_GetService
+                            ("@songbirdnest.com/Songbird/MetadataJobManager;1",
+                             &result);
+    if (NS_SUCCEEDED(result))
+    {
+        result = pMetadataJobManager->NewJob(mpMediaItemArray,
+                                             5,
+                                             getter_AddRefs(pMetadataJob));
+    }
+
+    return (result);
+}
+
+
+/* *****************************************************************************
+ *
+ * Download session WebLibraryUpdater services.
+ *
+ *   This class updates web library items' content source properties with
+ * downloaded local URLs.
+ *
+ ******************************************************************************/
+
+/* WebLibraryUpdater nsISupports implementation. */
 NS_IMPL_ISUPPORTS1(sbDownloadSession::WebLibraryUpdater,
                    sbIMediaListEnumerationListener)
 

@@ -147,7 +147,6 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
      * mpWebLibrary             Web library.
      * mpIOService              I/O service.
      * mpStringBundle           Download device string bundle.
-     * mpMetadataJobManager     Metadata job manager.
      * mpDownloadDirDR          Default download directory data remote.
      * mpTmpDownloadDir         Temporary download directory.
      * mpDownloadSession        Current download session.
@@ -159,8 +158,6 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
     nsCOMPtr<sbILibrary>        mpWebLibrary;
     nsCOMPtr<nsIIOService>      mpIOService;
     nsCOMPtr<nsIStringBundle>   mpStringBundle;
-    nsCOMPtr<sbIMetadataJobManager>
-                                mpMetadataJobManager;
     nsCOMPtr<sbIDataRemote>     mpDownloadDirDR;
     nsCOMPtr<nsIFile>           mpTmpDownloadDir;
     nsRefPtr<sbDownloadSession> mpDownloadSession;
@@ -330,9 +327,39 @@ class sbDownloadSession : public nsIWebProgressListener,
 
     nsresult CompleteTransfer();
 
+    nsresult UpdateDstLibraryMetadata();
+
     void UpdateProgress(
         PRUint64                    aProgress,
         PRUint64                    aProgressMax);
+
+
+    /* *************************************************************************
+     *
+     * Library metadata updater class.
+     *
+     **************************************************************************/
+
+    class LibraryMetadataUpdater : public sbIMediaListEnumerationListener
+    {
+        /*
+         * Public interface.
+         */
+
+        public:
+
+        NS_DECL_ISUPPORTS
+        NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+
+
+        /*
+         * Private interface.
+         */
+
+        private:
+
+        nsCOMPtr<nsIMutableArray>   mpMediaItemArray;
+    };
 
 
     /* *************************************************************************
