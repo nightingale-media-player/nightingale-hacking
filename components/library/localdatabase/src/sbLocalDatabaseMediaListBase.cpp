@@ -372,7 +372,9 @@ sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
     return NS_OK;
   }
 
-  nsDependentSubstring stringKey(++start, end - start), propertiesURL;
+  // Skip the ampersand
+  start++;
+  nsDependentSubstring stringKey(start, end - start), propertiesURL;
 
   static const PRUnichar sHash = '#';
 
@@ -986,6 +988,33 @@ sbLocalDatabaseMediaListBase::CreateView(sbIMediaListView** _retval)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetDistinctValuesForProperty(const nsAString& aPropertyName,
+                                                           nsIStringEnumerator** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
+  nsresult rv = mFullArray->Clone(getter_AddRefs(guidArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->SetIsDistinct(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->ClearSorts();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = guidArray->AddSort(aPropertyName, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbGUIDArrayValueEnumerator* enumerator =
+    new sbGUIDArrayValueEnumerator(guidArray);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = enumerator);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::BeginUpdateBatch()
 {
   PRInt32 batchCount = PR_AtomicIncrement(&mBatchCount);
@@ -1006,3 +1035,43 @@ sbLocalDatabaseMediaListBase::EndUpdateBatch()
   }
   return NS_OK;
 }
+
+NS_IMPL_ISUPPORTS1(sbGUIDArrayValueEnumerator, nsIStringEnumerator)
+
+sbGUIDArrayValueEnumerator::sbGUIDArrayValueEnumerator(sbILocalDatabaseGUIDArray* aArray) :
+  mArray(aArray),
+  mLength(0),
+  mNextIndex(0)
+{
+  NS_ASSERTION(aArray, "Null value passed to ctor");
+
+  nsresult rv = mArray->GetLength(&mLength);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Could not get length");
+}
+
+sbGUIDArrayValueEnumerator::~sbGUIDArrayValueEnumerator()
+{
+}
+
+NS_IMETHODIMP
+sbGUIDArrayValueEnumerator::HasMore(PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  *_retval = mNextIndex < mLength;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGUIDArrayValueEnumerator::GetNext(nsAString& _retval)
+{
+  nsresult rv;
+
+  rv = mArray->GetSortPropertyValueByIndex(mNextIndex, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mNextIndex++;
+
+  return NS_OK;
+}
+

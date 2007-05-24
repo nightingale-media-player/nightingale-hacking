@@ -35,6 +35,7 @@
 interface nsIArray;
 interface nsIPropertyBag;
 interface nsISimpleEnumerator;
+interface nsIStringEnumerator;
 interface nsITreeView;
 interface sbICascadeFilterSet;
 interface sbILibrary;
@@ -242,5 +243,12 @@ interface sbIMediaList : sbIMediaItem
     * \brief Notify listeners that a batch update is complete
     */
   void endUpdateBatch();
+
+  /*
+   * \brief Return the distinct values in the list for a given property
+   * \param aPropertyName Propery name to get distinct values for
+   * \return String enumerator of distinct values for the given property
+   */
+  nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyName);
 };
 

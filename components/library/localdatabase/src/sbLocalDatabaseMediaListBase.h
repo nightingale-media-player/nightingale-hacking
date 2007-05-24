@@ -30,6 +30,7 @@
 #include "sbLocalDatabaseMediaItem.h"
 #include "sbLocalDatabaseMediaListListener.h"
 #include <nsIClassInfo.h>
+#include <nsIStringEnumerator.h>
 #include <sbIMediaList.h>
 
 #include <nsClassHashtable.h>
@@ -165,6 +166,22 @@ public:
 
 private:
   sbLocalDatabaseMediaListBase* mList;
+};
+
+class sbGUIDArrayValueEnumerator : public nsIStringEnumerator
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISTRINGENUMERATOR
+
+  sbGUIDArrayValueEnumerator(sbILocalDatabaseGUIDArray* aArray);
+
+  ~sbGUIDArrayValueEnumerator();
+
+private:
+  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
+  PRUint32 mLength;
+  PRUint32 mNextIndex;
 };
 
 #endif /* __SBLOCALDATABASEMEDIALISTBASE_H__ */
