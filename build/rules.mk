@@ -896,7 +896,7 @@ ifneq (,$(jar_mn_in_exists))
 jar_manifest_in = $(JAR_MANIFEST).in
 endif
 
-$(JAR_MANIFEST): $(jar_manifest_in)
+$(JAR_MANIFEST):
 	$(CYGWIN_WRAPPER) $(RM) -f $(JAR_MANIFEST)
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
     $(srcdir)/$(jar_manifest_in) | \
@@ -916,7 +916,7 @@ clean_jar_postprocess:
 # We want the preprocessor to run every time regrdless of whether or not
 # $(jar_manifest_in) has changed because defines may change as well.
 
-.PHONY : make_jar clean_jar_postprocess
+.PHONY : make_jar clean_jar_postprocess $(JAR_MANIFEST)
 endif
 
 #------------------------------------------------------------------------------
