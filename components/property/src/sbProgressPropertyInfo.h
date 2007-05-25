@@ -54,6 +54,10 @@
   NS_IMETHOD SetType(const nsAString & aType) { return _to SetType(aType); } \
   NS_IMETHOD GetDisplayName(nsAString & aDisplayName) { return _to GetDisplayName(aDisplayName); } \
   NS_IMETHOD SetDisplayName(const nsAString & aDisplayName) { return _to SetDisplayName(aDisplayName); } \
+  NS_IMETHOD GetUserViewable(PRBool *aUserViewable) { return _to GetUserViewable(aUserViewable); } \
+  NS_IMETHOD SetUserViewable(PRBool aUserViewable) { return _to SetUserViewable(aUserViewable); } \
+  NS_IMETHOD GetUserEditable(PRBool *aUserEditable) { return _to GetUserEditable(aUserEditable); } \
+  NS_IMETHOD SetUserEditable(PRBool aUserEditable) { return _to SetUserEditable(aUserEditable); } \
   NS_IMETHOD GetDisplayUsingSimpleType(nsAString & aDisplayUsingSimpleType) { return _to GetDisplayUsingSimpleType(aDisplayUsingSimpleType); } \
   NS_IMETHOD SetDisplayUsingSimpleType(const nsAString & aDisplayUsingSimpleType) { return _to SetDisplayUsingSimpleType(aDisplayUsingSimpleType); } \
   NS_IMETHOD GetDisplayUsingXBLWidget(nsIURI * *aDisplayUsingXBLWidget) { return _to GetDisplayUsingXBLWidget(aDisplayUsingXBLWidget); } \

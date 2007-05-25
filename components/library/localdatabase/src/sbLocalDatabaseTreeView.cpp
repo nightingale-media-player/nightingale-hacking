@@ -994,7 +994,7 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
 
   // If this is an ordinal column, return just the row number
   if (bind.Equals(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL))) {
-    _retval.AppendInt(row);
+    _retval.AppendInt(row + 1);
     return NS_OK;
   }
 

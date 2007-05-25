@@ -96,6 +96,10 @@ sbPropertyInfo::sbPropertyInfo()
 , mSortProfileLock(nsnull)
 , mNameLock(nsnull)
 , mTypeLock(nsnull)
+, mUserViewableLock(nsnull)
+, mUserViewable(PR_TRUE)
+, mUserEditableLock(nsnull)
+, mUserEditable(PR_TRUE)
 , mDisplayNameLock(nsnull)
 , mDisplayUsingSimpleTypeLock(nsnull)
 , mDisplayUsingXBLWidgetLock(nsnull)
@@ -118,6 +122,14 @@ sbPropertyInfo::sbPropertyInfo()
   NS_ASSERTION(mDisplayNameLock, 
     "sbPropertyInfo::mDisplayNameLock failed to create lock!");
 
+  mUserViewableLock = PR_NewLock();
+  NS_ASSERTION(mUserViewableLock, 
+    "sbPropertyInfo::mUserViewableLock failed to create lock!");
+
+  mUserEditableLock = PR_NewLock();
+  NS_ASSERTION(mUserEditableLock, 
+    "sbPropertyInfo::mUserEditableLock failed to create lock!");
+
   mDisplayUsingSimpleTypeLock = PR_NewLock();
   NS_ASSERTION(mDisplayUsingSimpleTypeLock, 
     "sbPropertyInfo::mDisplayUsingSimpleTypeLock failed to create lock!");
@@ -133,6 +145,7 @@ sbPropertyInfo::sbPropertyInfo()
   mOperatorsLock = PR_NewLock();
   NS_ASSERTION(mOperatorsLock,
     "sbPropertyInfo::mOperatorsLock failed to create lock!");
+
 }
 
 sbPropertyInfo::~sbPropertyInfo()
@@ -151,6 +164,14 @@ sbPropertyInfo::~sbPropertyInfo()
 
   if(mDisplayNameLock) {
     PR_DestroyLock(mDisplayNameLock);
+  }
+
+  if(mUserViewableLock) {
+    PR_DestroyLock(mUserViewableLock);
+  }
+
+  if(mUserEditableLock) {
+    PR_DestroyLock(mUserEditableLock);
   }
 
   if(mDisplayUsingSimpleTypeLock) {
@@ -322,6 +343,42 @@ NS_IMETHODIMP sbPropertyInfo::SetDisplayName(const nsAString &aDisplayName)
   }
 
   return NS_ERROR_ALREADY_INITIALIZED;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetUserViewable(PRBool *aUserViewable)
+{
+  NS_ENSURE_ARG_POINTER(aUserViewable);
+
+  nsAutoLock lock(mUserViewableLock);
+  *aUserViewable = mUserViewable;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::SetUserViewable(PRBool aUserViewable)
+{
+  nsAutoLock lock(mUserViewableLock);
+  mUserViewable = aUserViewable;
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetUserEditable(PRBool *aUserEditable)
+{
+  NS_ENSURE_ARG_POINTER(aUserEditable);
+
+  nsAutoLock lock(mUserEditableLock);
+  *aUserEditable = mUserEditable;
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::SetUserEditable(PRBool aUserEditable)
+{
+  nsAutoLock lock(mUserEditableLock);
+  mUserEditable = aUserEditable;
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetDisplayUsingSimpleType(nsAString & aDisplayUsingSimpleType)

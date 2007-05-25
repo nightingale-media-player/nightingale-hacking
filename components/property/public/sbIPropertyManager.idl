@@ -172,9 +172,21 @@ interface sbIPropertyInfo : nsISupports
   attribute AString type;
 
   /**
-   * \brief Bundle key name for the localized name of this property
+   * \brief Localized display name of this property.
    */
   attribute AString displayName;
+
+  /** 
+   * \brief A user may view this property. 
+   * This does not impede reading the value, it's merely meant as a guideline.
+   */
+  attribute boolean userViewable;
+
+  /**
+   * \brief A user may edit this property.
+   * This does not impede editing the value, it's merely meant as a guideline.
+   */
+  attribute boolean userEditable;
 
   /**
    * \brief Display this property using the suggested base widget available for

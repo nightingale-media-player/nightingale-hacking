@@ -252,45 +252,58 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   //Storage Guid
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID), EmptyString(),
-                    stringBundle);
+                    stringBundle, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Date created
   rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_CREATED),
                         NS_LITERAL_STRING("property.date_created"),
                         sbIDatetimePropertyInfo::TIMETYPE_DATETIME,
-                        stringBundle);
+                        stringBundle, 
+                        PR_TRUE, 
+                        PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Date updated
   rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_UPDATED),
                         NS_LITERAL_STRING("property.date_updated"),
                         sbIDatetimePropertyInfo::TIMETYPE_DATETIME,
-                        stringBundle);
+                        stringBundle,
+                        PR_TRUE,
+                        PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Content URL
   rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
                    NS_LITERAL_STRING("property.content_url"),
-                   stringBundle);
+                   stringBundle,
+                   PR_TRUE,
+                   PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Content Mime Type
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE),
                     NS_LITERAL_STRING("property.content_mime_type"),
-                    stringBundle);
+                    stringBundle,
+                    PR_TRUE,
+                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Content Length (-1, can't determine.)
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
                       NS_LITERAL_STRING("property.content_length"),
-                      stringBundle, -1, PR_TRUE);
+                      stringBundle,
+                      PR_TRUE,
+                      PR_FALSE,
+                      -1, 
+                      PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Track name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
                     NS_LITERAL_STRING("property.track_name"),
-                    stringBundle, sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE);
+                    stringBundle, PR_TRUE, PR_TRUE, 
+                    sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE);
 
   //Album name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
@@ -300,128 +313,131 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Artist name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
                     NS_LITERAL_STRING("property.artist_name"),
-                    stringBundle, sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE);
+                    stringBundle, PR_TRUE, PR_TRUE, 
+                    sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE);
 
   //Duration (in usecs)
   rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
                         NS_LITERAL_STRING("property.duration"),
                         sbIDatetimePropertyInfo::TIMETYPE_DURATION,
-                        stringBundle);
+                        stringBundle, PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Genre
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_GENRE),
                     NS_LITERAL_STRING("property.genre"),
-                    stringBundle);
+                    stringBundle, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Track number
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACK),
                       NS_LITERAL_STRING("property.track_no"),
-                      stringBundle, 1, PR_TRUE);
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Year
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_YEAR),
                       NS_LITERAL_STRING("property.year"),
-                      stringBundle, 1877, PR_TRUE);
+                      stringBundle, PR_TRUE, PR_TRUE, 1877, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Disc Number
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
                       NS_LITERAL_STRING("property.disc_no"),
-                      stringBundle, 1, PR_TRUE);
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Total Discs
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS),
                       NS_LITERAL_STRING("property.total_discs"),
-                      stringBundle, 1, PR_TRUE);
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Total tracks
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS),
                       NS_LITERAL_STRING("property.total_tracks"),
-                      stringBundle, 1, PR_TRUE);
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Is part of a compilation
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_ISPARTOFCOMPILATION),
                       NS_LITERAL_STRING("property.is_part_of_compilation"),
-                      stringBundle, 0, PR_TRUE, 1, PR_TRUE);
+                      stringBundle, PR_TRUE, PR_TRUE, 0, PR_TRUE, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Producer(s)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_PRODUCERNAME),
                     NS_LITERAL_STRING("property.producer"),
-                    stringBundle);
+                    stringBundle, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Composer(s)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COMPOSERNAME),
                     NS_LITERAL_STRING("property.composer"),
-                    stringBundle);
+                    stringBundle, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Lyricist(s)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LYRICISTNAME),
                     NS_LITERAL_STRING("property.lyricist"),
-                    stringBundle);
+                    stringBundle, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Lyrics
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LYRICS),
                     NS_LITERAL_STRING("property.lyrics"),
-                    stringBundle);
+                    stringBundle, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Record Label
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_RECORDLABELNAME),
                     NS_LITERAL_STRING("property.record_label_name"),
-                    stringBundle);
+                    stringBundle, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Album art url
   rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTURL),
                    NS_LITERAL_STRING("property.album_art_url"),
-                   stringBundle);
+                   stringBundle, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Last played time
   rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_LASTPLAYTIME),
                         NS_LITERAL_STRING("property.last_play_time"),
                         sbIDatetimePropertyInfo::TIMETYPE_DATETIME,
-                        stringBundle);
+                        stringBundle, PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Number of times played
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_PLAYCOUNT),
                       NS_LITERAL_STRING("property.play_count"),
-                      stringBundle);
+                      stringBundle, PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Number of times song was skipped
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_SKIPCOUNT),
                       NS_LITERAL_STRING("property.skip_count"),
-                      stringBundle);
+                      stringBundle, PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Rating
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_RATING),
                       NS_LITERAL_STRING("property.rating"),
-                      stringBundle, 0, PR_TRUE, 100, PR_TRUE);
+                      stringBundle, PR_TRUE, PR_TRUE, 
+                      0, PR_TRUE, 100, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Origin URL
   rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
                    NS_LITERAL_STRING("property.origin_url"),
-                   stringBundle);
+                   stringBundle, PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Hidden
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                       NS_LITERAL_STRING("property.hidden"),
-                      stringBundle, 0, PR_TRUE, 1, PR_TRUE);
+                      stringBundle, PR_FALSE, PR_FALSE, 
+                      0, PR_TRUE, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Progress Value
@@ -429,19 +445,19 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                         NS_LITERAL_STRING("property.progressValue"),
                         NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
                         NS_LITERAL_STRING("property.progressMode"),
-                        stringBundle);
+                        stringBundle, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Display columns
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COLUMNSPEC),
                     NS_LITERAL_STRING("property.column_spec"),
-                    stringBundle);
+                    stringBundle, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Display column widths
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
                     NS_LITERAL_STRING("property.default_column_spec"),
-                    stringBundle);
+                    stringBundle, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -451,6 +467,8 @@ nsresult
 sbPropertyManager::RegisterText(const nsAString& aPropertyName,
                                 const nsAString& aDisplayKey,
                                 nsIStringBundle* aStringBundle,
+                                PRBool aUserViewable,
+                                PRBool aUserEditable,
                                 PRUint32 aNullSort,
                                 PRBool aHasNullSort)
 {
@@ -478,6 +496,12 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyName,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  rv = textProperty->SetUserViewable(aUserViewable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = textProperty->SetUserEditable(aUserEditable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbITextPropertyInfo*, textProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -493,7 +517,9 @@ nsresult
 sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
                                     const nsAString& aDisplayKey,
                                     PRInt32 aType,
-                                    nsIStringBundle* aStringBundle)
+                                    nsIStringBundle* aStringBundle,
+                                    PRBool aUserViewable,
+                                    PRBool aUserEditable)
 {
   nsAutoPtr<sbDatetimePropertyInfo>
     datetimeProperty(new sbDatetimePropertyInfo());
@@ -514,6 +540,12 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
     }
   }
 
+  rv = datetimeProperty->SetUserViewable(aUserViewable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = datetimeProperty->SetUserEditable(aUserEditable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIDatetimePropertyInfo*, datetimeProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -528,7 +560,9 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
 nsresult
 sbPropertyManager::RegisterURI(const nsAString& aPropertyName,
                                const nsAString& aDisplayKey,
-                               nsIStringBundle* aStringBundle)
+                               nsIStringBundle* aStringBundle,
+                               PRBool aUserViewable,
+                               PRBool aUserEditable)
 {
   nsAutoPtr<sbURIPropertyInfo> uriProperty(new sbURIPropertyInfo());
   NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
@@ -545,6 +579,12 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyName,
     }
   }
 
+  rv = uriProperty->SetUserViewable(aUserViewable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = uriProperty->SetUserEditable(aUserEditable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIURIPropertyInfo*, uriProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -560,6 +600,8 @@ nsresult
 sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
                                   const nsAString& aDisplayKey,
                                   nsIStringBundle* aStringBundle,
+                                  PRBool aUserViewable,
+                                  PRBool aUserEditable,
                                   PRInt32 aMinValue,
                                   PRBool aHasMinValue,
                                   PRInt32 aMaxValue,
@@ -590,6 +632,12 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
     }
   }
 
+  rv = numberProperty->SetUserViewable(aUserViewable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = numberProperty->SetUserEditable(aUserEditable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbINumberPropertyInfo*, numberProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -606,10 +654,12 @@ sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
                                     const nsAString& aValueDisplayKey,
                                     const nsAString& aModePropertyName,
                                     const nsAString& aModeDisplayKey,
-                                    nsIStringBundle* aStringBundle)
+                                    nsIStringBundle* aStringBundle, 
+                                    PRBool aUserViewable,
+                                    PRBool aUserEditable)
 {
   nsresult rv = RegisterNumber(aModePropertyName, aModeDisplayKey,
-                               aStringBundle);
+                               aStringBundle, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoPtr<sbProgressPropertyInfo>
@@ -634,6 +684,12 @@ sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
   rv = progressProperty->SetModePropertyName(aModePropertyName);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = progressProperty->SetUserViewable(aUserViewable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = progressProperty->SetUserEditable(aUserEditable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIProgressPropertyInfo*, progressProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -648,7 +704,9 @@ sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
 nsresult
 sbPropertyManager::RegisterCheckbox(const nsAString& aPropertyName,
                                     const nsAString& aDisplayKey,
-                                    nsIStringBundle* aStringBundle)
+                                    nsIStringBundle* aStringBundle,
+                                    PRBool aUserViewable,
+                                    PRBool aUserEditable)
 {
   nsAutoPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
@@ -670,6 +728,12 @@ sbPropertyManager::RegisterCheckbox(const nsAString& aPropertyName,
   }
 
   rv = textProperty->SetDisplayUsingSimpleType(NS_LITERAL_STRING("checkbox"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = textProperty->SetUserViewable(aUserViewable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = textProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPropertyInfo> propInfo =

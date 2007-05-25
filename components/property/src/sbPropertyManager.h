@@ -64,11 +64,15 @@ private:
   nsresult RegisterDateTime(const nsAString& aPropertyName,
                             const nsAString& aDisplayKey,
                             PRInt32 aType,
-                            nsIStringBundle* aStringBundle);
+                            nsIStringBundle* aStringBundle,
+                            PRBool aUserViewable,
+                            PRBool aUserEditable);
 
   nsresult RegisterNumber(const nsAString& aPropertyName,
                           const nsAString& aDisplayKey,
                           nsIStringBundle* aStringBundle,
+                          PRBool aUserViewable,
+                          PRBool aUserEditable,
                           PRInt32 aMinValue = 0,
                           PRBool aHasMinValue = PR_FALSE,
                           PRInt32 aMaxValue = 0,
@@ -78,21 +82,29 @@ private:
                             const nsAString& aValueDisplayKey,
                             const nsAString& aModePropertyName,
                             const nsAString& aModeDisplayKey,
-                            nsIStringBundle* aStringBundle);
+                            nsIStringBundle* aStringBundle,
+                            PRBool aUserViewable,
+                            PRBool aUserEditable);
 
   nsresult RegisterText(const nsAString& aPropertyName,
                         const nsAString& aDisplayKey,
                         nsIStringBundle* aStringBundle,
+                        PRBool aUserViewable,
+                        PRBool aUserEditable,
                         PRUint32 aNullSort = 0,
                         PRBool aHasNullSort = PR_FALSE);
 
   nsresult RegisterURI(const nsAString& aPropertyName,
                        const nsAString& aDisplayKey,
-                       nsIStringBundle* aStringBundle);
+                       nsIStringBundle* aStringBundle,
+                       PRBool aUserViewable,
+                       PRBool aUserEditable);
 
   nsresult RegisterCheckbox(const nsAString& aPropertyName,
                             const nsAString& aDisplayKey,
-                            nsIStringBundle* aStringBundle);
+                            nsIStringBundle* aStringBundle,
+                            PRBool aUserViewable,
+                            PRBool aUserEditable);
 
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
