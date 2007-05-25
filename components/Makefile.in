@@ -75,6 +75,5 @@ SUBDIRDEPS9 = library : moz
 SUBDIRDEPS10 = library : property
 SUBDIRDEPS11 = remoteapi : medialibrary
 SUBDIRDEPS12 = remoteapi : moz
-SUBDIRDEPS13 = remoteapi : widgets
 
 include $(topsrcdir)/build/rules.mk
