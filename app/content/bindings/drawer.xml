@@ -742,6 +742,9 @@
           this.parent.insertBefore( this.lastcreateditem, before );
           if (this.nextlabelstate) this.setItemState(this.lastcreateditem, this.nextlabelstate);
           this.nextlabelstate = null;
+          var e = document.createEvent("Events");
+          e.initEvent("additem", false, true);
+          this.dispatchEvent(e);
         </body>
       </method>
 
@@ -749,6 +752,9 @@
         <parameter name="content"/>
         <body>
           this.parent.removeChild( content );
+          var e = document.createEvent("Events");
+          e.initEvent("removeitem", false, true);
+          this.dispatchEvent(e);
         </body>
       </method>
 
