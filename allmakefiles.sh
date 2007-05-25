@@ -64,6 +64,7 @@ fi
 #
 SCANNED_MAKEFILE_DIRS="
 app
+bindings
 components
 extras/extensions
 feathers

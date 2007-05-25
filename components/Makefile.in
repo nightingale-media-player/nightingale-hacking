@@ -56,7 +56,6 @@ SUBDIRS = addonmetadata \
           state \
           sqlbuilder \
           parsererror \
-          widgets \
           $(NULL)
 
 # XXX make me a configure option

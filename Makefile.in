@@ -52,6 +52,7 @@ endif
 
 SUBDIRS = build \
           dependencies \
+          bindings \
           app \
           components \
           feathers \
