@@ -120,7 +120,7 @@ interface sbIRemoteCommands : nsISupports
   [noscript] attribute sbIRemotePlayer owner;
 
   void addCommand(in AString aType, in AString aID, in AString aName, in AString aTooltip);
-  // void removeCommand(in AString aID);
+  void removeCommand(in AString aID);
 
   // Ew. this is so ugly. I'm hoping to be able to clean this up with nsIXPCScriptable
   void setCommandData( in unsigned long aNumCommands,
@@ -148,22 +148,10 @@ interface sbIRemotePlayer : nsISupports
   readonly attribute AString name;
 
   /**
-   * \brief An array of sbIMediaLists
-   * NOTE: NOT IMPLEMENTED
-   */
-  readonly attribute nsISimpleEnumerator playlists;
-
-  /**
    * \brief The current web playlist
    * NOTE: NOT IMPLEMENTED
    */
   readonly attribute sbIMediaList webPlaylist;
-
-  /**
-   * \brief The current web playlist's DOM element
-   * NOTE: NOT IMPLEMENTED
-   */
-  readonly attribute nsIDOMElement webPlaylistElement;
 
   /**
    * \brief The name of the artist for the currently playing track
@@ -229,20 +217,7 @@ interface sbIRemotePlayer : nsISupports
   /**
    * \brief The collection of commands associated with the current page.
    */
-  readonly attribute sbIRemoteCommands remoteCommands;
-
-  /**
-   * \brief Causes the current commands to get registered
-   * Will cause the commands to show up in the web playlist
-   */
-  void registerCommands(in boolean aUseDefaultCommands);
-
-  /**
-   * \brief Removes the commands from the central command manager
-   * The commands will no longer be available for use. The current web
-   * playlist will be notified that they are gone, and will be updated.
-   */
-  void unregisterCommands();
+  readonly attribute sbIRemoteCommands commands;
 
   //
   // Library creation and retrieval
@@ -260,6 +235,7 @@ interface sbIRemotePlayer : nsISupports
    * and only callable by the sbRemoteCommands object.
    */
   [noscript] void FireEventToContent(in AString aClass, in AString aType);
+  [noscript] void onCommandsChanged();
 
 };
 

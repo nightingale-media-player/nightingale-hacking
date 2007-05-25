@@ -29,6 +29,7 @@
 
 #include <sbIDataRemote.h>
 #include <sbIPlaylistPlayback.h>
+#include <sbIPlaylistWidget.h>
 #include <sbISecurityMixin.h>
 #include <sbISecurityAggregator.h>
 #include <sbIRemotePlayer.h>
@@ -96,12 +97,19 @@ protected:
   already_AddRefed<nsPIDOMWindow> GetWindowFromJS();
   nsresult DispatchEvent(nsIDOMDocument *aDocument, const nsAString &aClass, const nsAString &aType, PRBool aIsTrusted);
   nsresult Init();
+  nsresult AcquirePlaylistWidget();
+  nsresult RegisterCommands(PRBool);
+  nsresult UnregisterCommands();
 
   // Data members
   PRBool mInitialized;
+  PRBool mUseDefaultCommands;
   nsCOMPtr<sbIPlaylistPlayback> mGPPS;
   nsCOMPtr<nsIDOMDocument> mContentDoc;
   nsCOMPtr<nsIDOMDocument> mChromeDoc;
+
+  // the UI playlist binding's dom element QI'd
+  nsCOMPtr<sbIPlaylistWidget> mWebPlaylistWidget;
 
   nsCOMPtr<sbIRemoteCommands> mCommandsObject;
   nsCOMPtr<sbIRemoteLibrary> mSiteLibrary;

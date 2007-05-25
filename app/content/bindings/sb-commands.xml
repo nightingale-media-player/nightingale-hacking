@@ -95,12 +95,11 @@
         <body>
           <![CDATA[
             this.commands = new Array();
-
-            // See if there are objects registered specifically for this table
             var source = Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
                                     .getService( Components.interfaces.sbIPlaylistsource );
-            
-            var cmds = source.getPlaylistCommands( this.playlist.mediaListView.mediaList.guid, this.playlist.mediaListView.mediaList.type );
+            if (this.playlist && this.playlist.mediaListView)
+              var cmds = source.getPlaylistCommands( this.playlist.mediaListView.mediaList.guid,
+                                                     this.playlist.mediaListView.mediaList.type );
             if ( cmds )
             {
               while (cmds.hasMoreElements()) {

@@ -29,17 +29,53 @@
 <html>
   <head>
     <title>Remote API Test: 07</title>
+    <script>
+      var originalCommand = true;
+      var toggleCommand = function() {
+        if (originalCommand) {
+          songbird.commands.addCommand( "action",
+                                        "toggled-command",
+                                        "toggle",
+                                        "toggle" );
+        } else {
+          songbird.commands.removeCommand("toggled-command");
+        }
+        originalCommand = !originalCommand;
+      }
+
+      var addCommand = function() {
+          songbird.commands.addCommand( "action",
+                                        "toggled-command2",
+                                        "toggle",
+                                        "toggle" );
+      }
+
+      var removeCommand = function() {
+          songbird.commands.removeCommand("toggled-command2");
+      }
+
+    </script>
   </head>
   <body onunload="document.removeEventListener('remoteapi', onRemoteAPI, true);
                   document.removeEventListener('rapi-test07-play-url', onPlayURL, true);">
     <h1>RemoteCommand registration, object access, callbacks</h1>
-    <p> register a remoteCommand, callbacks for it's events and see
+    <p> create a remoteCommand, get callbacks for it's events and see
         callbacks happen. </p>
     <br />
     <p> Force a web playlist to appear. <br />
       <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
       <a href="http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3">Sheryl Crow</a>
     </p>
+    <form>
+      <input type="button" id="toggle_button" value="Toggle"
+             onclick="toggleCommand();" /> 
+      <br />
+      <input type="button" id="toggle_button" value="Add Command"
+             onclick="addCommand();" /> 
+      <br />
+      <input type="button" id="toggle_button" value="Remove Command"
+             onclick="removeCommand();" /> 
+    </form>
     <div id="accessCountDiv">
     </div>
     <div id="remoteCommandDiv">
@@ -77,44 +113,41 @@
       document.addEventListener( "rapi-test07-play-selected", onPlaySelected, true );
 
       // add a command to the RemoteAPI's collection of commands
-/*    // submenus are broken right now, infinite recursive addition
-      songbird.remoteCommands.addCommand("submenu",
-                                         "rapi-test-07-submenu",
-                                         "Play URL",
-                                         "Play the preset URL");
+/*
+      // XXXredfive the submenu implementation for remote commands is broken 
+      songbird.commands.addCommand( "submenu",
+                                    "rapi-test-07-submenu",
+                                    "Play URL",
+                                    "Play the preset URL" );
 */
 
-      songbird.remoteCommands.setCommandData( 3,
-                                              ["action","separator", "action"],
-                                              ["rapi-test07-play-url","rapi-test07-play-sep","rapi-test07-play-selected"],
-                                              ["Play URL","sep","Play Track"],
-                                              ["Play the preset URL","separate","Play the selected Track(not yet)"] );
-/*
+
+      songbird.commands.setCommandData( 3,
+                                        ["action","separator", "action"],
+                                        ["rapi-test07-play-url","rapi-test07-play-sep","rapi-test07-play-selected"],
+                                        ["Play URL","sep","Play Track"],
+                                        ["Play the preset URL","separate","Play the selected Track(not yet)"] );
+      songbird.commands.removeCommand("rapi-test-07-submenu");
+
+      /*
+      // add a command to the RemoteAPI's collection of commands
+      songbird.commands.addCommand( "action",
+                                    "rapi-test07-play-url",
+                                    "Play URL",
+                                    "Play the preset URL" );
 
       // add a command to the RemoteAPI's collection of commands
-      songbird.remoteCommands.addCommand("action",
-                                         "rapi-test07-play-url",
-                                         "Play URL",
-                                         "Play the preset URL");
-
-      // add a command to the RemoteAPI's collection of commands
-      songbird.remoteCommands.addCommand("separator",
-                                         "rapi-test07-play-sep",
-                                         "Play URL",
-                                         "Play the preset URL");
+      songbird.commands.addCommand( "separator",
+                                    "rapi-test07-play-sep",
+                                    "Play URL",
+                                    "Play the preset URL" );
 
       // add a command to play the selected track in the playlist
-      songbird.remoteCommands.addCommand("action",
-                                         "rapi-test07-play-selected",
-                                         "Play Track",
-                                         "Play the Selected Track(s)");
-*/
-
-      // false means don't use the default commands
-      songbird.registerCommands(false);
-
-      // force a message to come at us
-      //songbird.ping();
+      songbird.commands.addCommand( "action",
+                                    "rapi-test07-play-selected",
+                                    "Play Track",
+                                    "Play the Selected Track(s)" );
+      */
 
     </script>
     

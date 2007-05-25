@@ -78,6 +78,7 @@ public:
 
 protected:
   virtual ~sbRemoteCommands();
+  void DoCommandsUpdated();
 
   // sbIPlaylistCommands stuff
   nsCOMPtr<nsIWeakReference> mWeakOwner;

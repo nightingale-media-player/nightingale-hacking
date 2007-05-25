@@ -86,7 +86,7 @@ const static char* sPublicRProperties[] =
     "metadata:currentArtist",
     "metadata:currentAlbum",
     "metadata:currentTrack",
-    "binding:remoteCommands",
+    "binding:commands",
     "classinfo:classDescription",
     "classinfo:contractID",
     "classinfo:classID",
@@ -351,17 +351,20 @@ sbRemotePlayer::SiteLibrary( const nsAString &aDomain,
 }
 
 NS_IMETHODIMP
-sbRemotePlayer::GetRemoteCommands( sbIRemoteCommands **aCommandsObject )
+sbRemotePlayer::GetCommands( sbIRemoteCommands **aCommandsObject )
 {
   NS_ENSURE_ARG_POINTER(aCommandsObject);
-  LOG(("sbRemotePlayer::GetRemoteCommands()"));
+
+  LOG(("sbRemotePlayer::GetCommands()"));
+
   nsresult rv;
   if (!mCommandsObject) {
-    LOG(("sbRemotePlayer::GetRemoteCommands() -- creating it"));
+    LOG(("sbRemotePlayer::GetCommands() -- creating it"));
     mCommandsObject =
       do_CreateInstance( "@songbirdnest.com/remoteapi/remotecommands;1", &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     mCommandsObject->SetOwner(this);
+    RegisterCommands(PR_TRUE);
   }
   NS_ADDREF( *aCommandsObject = mCommandsObject );
   return NS_OK;
@@ -373,46 +376,13 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   NS_ENSURE_STATE(mCommandsObject);
   nsresult rv;
 
-  // Get the tabbrowser, ask it for the tab for our document
-  nsCOMPtr<nsIDOMElement> tabBrowserElement;
-  mChromeDoc->GetElementById( SB_WEB_TABBROWSER_ID,
-                              getter_AddRefs(tabBrowserElement) );
-  NS_ENSURE_STATE(tabBrowserElement);
-  LOG(("sbRemotePlayer::RegisterCommands() -- GOT THE TABBROWSER !!!\n\n"));
+  // store the default command usage
+  mUseDefaultCommands = aUseDefaultCommands;
 
-  // QI the tabbrowser to our super-special 1337 interface
-  nsCOMPtr<sbITabBrowser> tabbrowser(
-                                do_QueryInterface( tabBrowserElement , &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // Get the tab for our particular document
-  nsCOMPtr<sbITabBrowserTab> browserTab;
-  tabbrowser->GetTabForDocument( mContentDoc, getter_AddRefs(browserTab) );
-  NS_ENSURE_STATE(browserTab);
-  LOG(("sbRemotePlayer::RegisterCommands() -- GOT THE TABBROWSER TAB!!!\n\n"));
-
-  // Get the outer playlist from the tab, it's the web playlist
-  nsCOMPtr<nsIDOMElement> playlist;
-  browserTab->GetPlaylist( getter_AddRefs(playlist) );
-  NS_ENSURE_STATE(playlist);
-
-  nsCOMPtr<nsIDOMElement> tabElement( do_QueryInterface( browserTab , &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  nsCOMPtr<nsIDOMDocument> tabDoc;
-  tabElement->GetOwnerDocument( getter_AddRefs(tabDoc) );
-  NS_ENSURE_STATE(tabDoc);
-
-  // This propogation is working, the playlist has the correct settings
-  // Tell the playlist about our default command settings.
-  if (aUseDefaultCommands) {
-    LOG(("sbRemotePlayer::RegsiterCommands() using defaults"));
-    playlist->SetAttribute( NS_LITERAL_STRING("usedefaultcommands"),
-                            NS_LITERAL_STRING("true") );
-  } else {
-    LOG(("sbRemotePlayer::RegsiterCommands() not using defaults"));
-    playlist->SetAttribute( NS_LITERAL_STRING("usedefaultcommands"),
-                            NS_LITERAL_STRING("false") );
+  // Make sure we have the playlist dom element/widget
+  if (!mWebPlaylistWidget) {
+    rv = AcquirePlaylistWidget();
+    NS_ENSURE_SUCCESS( rv, rv );
   }
 
   // Get the Playlistsource object and register commands with it.
@@ -420,40 +390,60 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
          do_GetService( "@mozilla.org/rdf/datasource;1?name=playlist", &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  NS_NAMED_LITERAL_STRING( guid, "remote-test-guid" );
-  // type is working, but better be able to put the guid in too.
-  // XXXredfive - FIXME
-  //if (mLibrary)
-  //  mLibrary->GetGuid(guid);
-  nsCOMPtr<sbIPlaylistCommands> commands( 
-                                   do_QueryInterface( mCommandsObject, &rv ) );
+  nsCOMPtr<sbIPlaylistCommands> commands( do_QueryInterface( mCommandsObject,
+                                                             &rv ) );
+  // Registration of commands is changing soon, for now type='library' works
   NS_ENSURE_SUCCESS( rv, rv );
-  rv = pls->RegisterPlaylistCommands( guid,
+  rv = pls->RegisterPlaylistCommands( NS_LITERAL_STRING("remote-test-guid"),
                                       EmptyString(),
                                       NS_LITERAL_STRING("library"),
                                       commands );
 
+  NS_ASSERTION( NS_SUCCEEDED(rv),
+                "Failed to register commands in sbPlaylistsource" );
+  rv = pls->RegisterPlaylistCommands( NS_LITERAL_STRING("remote-test-guid"),
+                                      EmptyString(),
+                                      NS_LITERAL_STRING("simple"),
+                                      commands );
+  NS_ASSERTION( NS_SUCCEEDED(rv),
+                "Failed to register commands in sbPlaylistsource" );
+
+  OnCommandsChanged();
+
   return rv;
 }
 
-NS_IMETHODIMP 
-sbRemotePlayer::GetPlaylists( nsISimpleEnumerator **aPlaylists )
+NS_IMETHODIMP
+sbRemotePlayer::OnCommandsChanged()
 {
-  LOG(("sbRemotePlayer::GetPlaylists()"));
-  return NS_ERROR_NOT_IMPLEMENTED;
+  LOG(("sbRemotePlayer::OnCommandsChanged()"));
+
+  nsresult rv;
+  if (!mWebPlaylistWidget) {
+    rv = AcquirePlaylistWidget();
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+
+  nsCOMPtr<nsIDOMElement> playlist( do_QueryInterface( mWebPlaylistWidget, &rv) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // Tell the playlist about our default command settings.
+  LOG(( "sbRemotePlayer::OnCommandsChanged() setting defaults %s",
+        mUseDefaultCommands ? NS_LITERAL_STRING("true") :
+                              NS_LITERAL_STRING("false") ));
+  playlist->SetAttribute( NS_LITERAL_STRING("usedefaultcommands"),
+                          mUseDefaultCommands ? NS_LITERAL_STRING("true") :
+                                                NS_LITERAL_STRING("false") );
+
+  mWebPlaylistWidget->RescanCommands();
+  return NS_OK;
 }
+
 
 NS_IMETHODIMP 
 sbRemotePlayer::GetWebPlaylist( sbIMediaList **aWebplaylist )
 {
   LOG(("sbRemotePlayer::GetWebPlaylist()"));
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP 
-sbRemotePlayer::GetWebPlaylistElement( nsIDOMElement **aWebplaylistElement )
-{
-  LOG(("sbRemotePlayer::GetWebPlaylistElement()"));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -660,17 +650,20 @@ sbRemotePlayer::UnregisterCommands()
          do_GetService( "@mozilla.org/rdf/datasource;1?name=playlist", &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  NS_NAMED_LITERAL_STRING( guid, "remote-test-guid" );
-  // type is working, but better be able to put the guid in too.
-  // XXXredfive - FIXME
-  //if (mLibrary)
-  //  mLibrary->GetGuid(guid);
   nsCOMPtr<sbIPlaylistCommands> commands(
                                    do_QueryInterface( mCommandsObject, &rv ) );
+  // Registration of commands is changing soon, for now type='library' is it
   NS_ENSURE_SUCCESS( rv, rv );
-  rv = pls->UnregisterPlaylistCommands( guid,
+  rv = pls->UnregisterPlaylistCommands( NS_LITERAL_STRING("remote-test-guid"),
                                         EmptyString(),
                                         NS_LITERAL_STRING("library"),
+                                        commands );
+  NS_ASSERTION( NS_SUCCEEDED(rv),
+                "Failed to unregister commands from sbPlaylistsource" );
+
+  rv = pls->UnregisterPlaylistCommands( NS_LITERAL_STRING("remote-test-guid"),
+                                        EmptyString(),
+                                        NS_LITERAL_STRING("simple"),
                                         commands );
   NS_ASSERTION( NS_SUCCEEDED(rv),
                 "Failed to unregister commands from sbPlaylistsource" );
@@ -910,6 +903,44 @@ sbRemotePlayer::DispatchEvent( nsIDOMDocument *aDoc,
   // Fire an event to the chrome system. This even will NOT get to content.
   PRBool dummy;
   return eventTarget->DispatchEvent( event, &dummy );
+}
+
+nsresult
+sbRemotePlayer::AcquirePlaylistWidget()
+{
+  LOG(("sbRemotePlayer::AcquirePlaylistWidget()"));
+
+  // These get set in initialization, so if there aren't set, bad news
+  if (!mChromeDoc || !mContentDoc)
+    return NS_ERROR_FAILURE;
+
+  // Get the tabbrowser, ask it for the tab for our document
+  nsCOMPtr<nsIDOMElement> tabBrowserElement;
+  mChromeDoc->GetElementById( SB_WEB_TABBROWSER_ID,
+                              getter_AddRefs(tabBrowserElement) );
+  NS_ENSURE_STATE(tabBrowserElement);
+
+  // Get our interface
+  nsresult rv;
+  nsCOMPtr<sbITabBrowser> tabbrowser( do_QueryInterface( tabBrowserElement,
+                                                         &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // Get the tab for our particular document
+  nsCOMPtr<sbITabBrowserTab> browserTab;
+  tabbrowser->GetTabForDocument( mContentDoc, getter_AddRefs(browserTab) );
+  NS_ENSURE_STATE(browserTab);
+
+  // Get the outer playlist from the tab, it's the web playlist
+  nsCOMPtr<nsIDOMElement> playlist;
+  browserTab->GetPlaylist( getter_AddRefs(playlist) );
+  NS_ENSURE_STATE(playlist);
+
+  // hold on to that for later as an sbIPlaylistWidget
+  mWebPlaylistWidget = do_QueryInterface( playlist, &rv);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  return NS_OK;
 }
 
 // ---------------------------------------------------------------------------

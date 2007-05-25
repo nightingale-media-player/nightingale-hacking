@@ -85,7 +85,8 @@ const static char* sPublicMethods[] =
     "binding:getCommandText",
     "binding:getCommandToolTipText",
     "binding:register",
-    "binding:addCommand"
+    "binding:addCommand",
+    "binding:removeCommand"
   };
 
 NS_IMPL_ISUPPORTS5( sbRemoteCommands,
@@ -184,6 +185,7 @@ sbRemoteCommands::SetCommandData( PRUint32 aNumCommands,
       return NS_ERROR_OUT_OF_MEMORY;
     }
   }
+  DoCommandsUpdated();
   return NS_OK;
 }
 
@@ -193,6 +195,8 @@ sbRemoteCommands::AddCommand( const nsAString &aType,
                               const nsAString &aName,
                               const nsAString &aTooltip )
 {
+  LOG(( "sbRemoteCommands::AddCommand(%s)",
+        NS_LossyConvertUTF16toASCII(aID).get() ));
   sbCommand command;
   command.type = aType;
   command.id = aID;
@@ -201,7 +205,36 @@ sbRemoteCommands::AddCommand( const nsAString &aType,
 
   if ( !mCommands.AppendElement(command) )
     return NS_ERROR_OUT_OF_MEMORY;
+  DoCommandsUpdated();
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::RemoveCommand( const nsAString &aID )
+{
+  LOG(("sbRemoteCommands::RemoveCommand()"));
+  PRUint32 num = mCommands.Length();
+  for ( PRUint32 index = 0; index < num; index++ ) {
+    LOG(( "sbRemoteCommands::RemoveCommand(%d:%s)",
+          index,
+          NS_LossyConvertUTF16toASCII(mCommands.ElementAt(index).id).get()));
+    if ( mCommands.ElementAt(index).id == aID ) { 
+      mCommands.RemoveElementAt(index);
+      DoCommandsUpdated();
+      return NS_OK;
+    }
+  }
+  // XXXredfive check an error code here and log a warning if the command
+  //            isn't found 
+  return NS_OK;
+}
+
+void
+sbRemoteCommands::DoCommandsUpdated()
+{
+  nsCOMPtr<sbIRemotePlayer> owner( do_QueryReferent(mWeakOwner) );
+  if (owner)
+    owner->OnCommandsChanged();
 }
 
 NS_IMETHODIMP
@@ -396,36 +429,6 @@ sbRemoteCommands::OnCommand( const nsAString &aID,
         NS_LossyConvertUTF16toASCII(aID).get(),
         NS_LossyConvertUTF16toASCII(aValue).get(),
         NS_LossyConvertUTF16toASCII(aHost).get() ));
-/*
-  // Attempt to get the media list so we have context, for things like selection.
-  //   This code will change to call an interface implemented on the playlist
-  //   binding that will return the mediaListView property, giving us the view,
-  //   the list, the treeview and friends, everything a growing boy needs.
-  if (mMediaList) {
-    nsAutoString name;
-    mMediaList->GetNodeName(name);
-    
-    LOG(("     ***** %s ", NS_LossyConvertUTF16toASCII(name).get() ));
-
-    nsCOMPtr<nsIDOMElement> element(do_QueryInterface(mMediaList));
-    PRBool hasProp;
-    element->HasAttribute(NS_LITERAL_STRING("foobar"), &hasProp);
-    if (hasProp) {
-      LOG(("     ***** has foobar property "));
-    } else {
-      LOG(("     ***** does not have foobar property "));
-    }
-    nsCOMPtr<sbIRemoteFoo> fooelement(do_QueryInterface(mMediaList));
-    if (fooelement) {
-      nsAutoString foo;
-      fooelement->GetFoobar(foo);
-      LOG(("     ***** is a RemoteFoo(%s)", NS_LossyConvertUTF16toASCII(foo).get() ));
-    } else {
-      LOG(("     ***** is NOT a RemoteFoo"));
-    }
-    
-  }
-*/
 
   nsresult rv;
   nsCOMPtr<sbIRemotePlayer> owner( do_QueryReferent( mWeakOwner, &rv ) );

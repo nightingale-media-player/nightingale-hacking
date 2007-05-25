@@ -109,7 +109,7 @@
         </stack>
         </content>
 
-    <implementation type="application/x-javascript" name="songbird_playlist2">
+    <implementation implements="sbIPlaylistWidget" type="application/x-javascript" name="songbird_playlist2">
 
       <constructor>
 <![CDATA[
@@ -186,6 +186,13 @@
           ]]>
         </setter>
       </property>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="getView">
+        <body> <![CDATA[
+          return this.mediaListView;
+        ]]> </body>
+      </method>
 
       <!-- The anonymous xul tree element -->
       <field name="tree" readonly="true">
@@ -400,7 +407,6 @@
         <parameter name="collapse"/>
         <body>
 <![CDATA[
-
   this.mediaListView = mediaListView;
   this.treeView = mediaListView.treeView;
   
