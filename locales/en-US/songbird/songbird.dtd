@@ -337,3 +337,5 @@
 
 <!ENTITY tabs.closeTab "Close tab">
 <!ENTITY tabs.listAllTabs "List all tabs">
+<!ENTITY tabs.enabled.label "Enable tabs">
+
