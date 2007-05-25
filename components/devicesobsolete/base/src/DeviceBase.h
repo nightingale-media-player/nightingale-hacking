@@ -88,10 +88,13 @@ public:
   nsresult Init(const nsAString &aDeviceIdentifier,
                 sbIDeviceBase* aDevice);
 
+  nsresult SetIgnoreListener(PRBool aIgnoreListener);
+
 protected:
   nsCOMPtr<sbIDeviceBase> mDevice;
   nsString mDeviceIdentifier;
       
+  PRBool mIgnoreListener;
 };
 
 class sbDeviceBaseLibraryCopyListener : public sbILocalDatabaseMediaListCopyListener
@@ -317,11 +320,18 @@ public:
   nsresult SetDeviceState(const nsAString& aDeviceIdentifier,
                           PRUint32 aDeviceState);
 
+  nsresult SetListenerForDeviceLibrary(const nsAString& aDeviceIdentifier,
+                                       sbIMediaListListener *aMediaListListener);
+  nsresult GetListenerForDeviceLibrary(const nsAString& aDeviceIdentifier,
+                                       sbIMediaListListener* *aMediaListListener);
+                                       
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbILibrary> mDeviceLibraries;
   nsInterfaceHashtableMT<nsStringHashKey, nsIMutableArray> mDeviceQueues;
   nsInterfaceHashtableMT<nsISupportsHashKey, sbIDeviceBaseCallback> mDeviceCallbacks;
   nsDataHashtableMT<nsStringHashKey, PRUint32> mDeviceStates;
+
+  nsInterfaceHashtableMT<nsStringHashKey, sbIMediaListListener> mDeviceLibraryListeners;
 };
 
 #endif // __DEVICE_BASE_H__

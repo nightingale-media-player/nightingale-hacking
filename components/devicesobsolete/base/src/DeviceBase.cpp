@@ -131,6 +131,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryListener,
                               sbIMediaListListener);
 
 sbDeviceBaseLibraryListener::sbDeviceBaseLibraryListener() 
+: mIgnoreListener(PR_FALSE)
 {
 }
 
@@ -140,7 +141,7 @@ sbDeviceBaseLibraryListener::~sbDeviceBaseLibraryListener()
 
 nsresult
 sbDeviceBaseLibraryListener::Init(const nsAString &aDeviceIdentifier, 
-                                      sbIDeviceBase* aDevice)
+                                  sbIDeviceBase* aDevice)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
 
@@ -150,12 +151,23 @@ sbDeviceBaseLibraryListener::Init(const nsAString &aDeviceIdentifier,
   return NS_OK;
 }
 
+nsresult 
+sbDeviceBaseLibraryListener::SetIgnoreListener(PRBool aIgnoreListener)
+{
+  mIgnoreListener = aIgnoreListener;
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList, 
                                          sbIMediaItem *aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  if(mIgnoreListener) {
+    return NS_OK;
+  }
 
   nsresult rv;
   nsCOMPtr<nsIMutableArray> items;
@@ -199,6 +211,10 @@ sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
+  if(mIgnoreListener) {
+    return NS_OK;
+  }
+
   nsresult rv;
   nsCOMPtr<nsIMutableArray> items;
 
@@ -219,6 +235,13 @@ NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnItemUpdated(sbIMediaList *aMediaList, 
                                            sbIMediaItem *aMediaItem)
 {
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  if(mIgnoreListener) {
+    return NS_OK;
+  }
+
   nsresult rv;
   nsCOMPtr<nsIMutableArray> items;
 
@@ -239,6 +262,10 @@ NS_IMETHODIMP
 sbDeviceBaseLibraryListener::OnListCleared(sbIMediaList *aMediaList)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
+
+  if(mIgnoreListener) {
+    return NS_OK;
+  }
 
   PRUint32 deletedItemCount = 0;
   nsresult rv = mDevice->DeleteAllItems(mDeviceIdentifier, &deletedItemCount);
@@ -336,13 +363,12 @@ sbDeviceBase::~sbDeviceBase()
 nsresult
 sbDeviceBase::Init()
 {
-  if(!mDeviceLibraries.Init() ||
-     !mDeviceQueues.Init() ||
-     !mDeviceCallbacks.Init() ||
-     !mDeviceStates.Init()) {
-    return NS_ERROR_OUT_OF_MEMORY;
-  }
-  
+  NS_ENSURE_TRUE(mDeviceLibraries.Init(), NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(mDeviceQueues.Init(), NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(mDeviceCallbacks.Init(), NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(mDeviceStates.Init(), NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(mDeviceLibraryListeners.Init(), NS_ERROR_OUT_OF_MEMORY);
+
   return NS_OK;
 }
 
@@ -561,6 +587,9 @@ sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = list->AddListener(listener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetListenerForDeviceLibrary(aDeviceIdentifier, listener);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILocalDatabaseSimpleMediaList> simpleList;
@@ -798,4 +827,30 @@ sbDeviceBase::SetDeviceState(const nsAString& aDeviceIdentifier,
   }
 
   return NS_ERROR_OUT_OF_MEMORY;
+}
+
+nsresult 
+sbDeviceBase::SetListenerForDeviceLibrary(const nsAString& aDeviceIdentifier,
+                                          sbIMediaListListener *aMediaListListener)
+{
+  NS_ENSURE_ARG_POINTER(aMediaListListener);
+
+  if(mDeviceLibraryListeners.Put(aDeviceIdentifier, aMediaListListener)) {
+    return NS_OK;
+  }
+
+  return NS_ERROR_OUT_OF_MEMORY;
+}
+
+nsresult 
+sbDeviceBase::GetListenerForDeviceLibrary(const nsAString& aDeviceIdentifier,
+                                          sbIMediaListListener* *aMediaListListener)
+{
+  NS_ENSURE_ARG_POINTER(aMediaListListener);
+
+  if(mDeviceLibraryListeners.Get(aDeviceIdentifier, aMediaListListener)) {
+    return NS_OK;
+  }
+
+  return NS_ERROR_INVALID_ARG;
 }
