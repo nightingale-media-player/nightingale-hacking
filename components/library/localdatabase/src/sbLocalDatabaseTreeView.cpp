@@ -1191,8 +1191,8 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 index,
   NS_ENSURE_ARG_POINTER(properties);
 
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-  PRBool success = mRowCache.Get(index, getter_AddRefs(bag));
-  if (!success) {
+  if (!mRowCache.Get(index, getter_AddRefs(bag)) &&
+      !mDirtyRowCache.Get(index, getter_AddRefs(bag))) {
     // Don't bother to do anything else if this row isn't cached yet.
     return NS_OK;
   }
@@ -1250,8 +1250,8 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
 #endif
 
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-  PRBool success = mRowCache.Get(row, getter_AddRefs(bag));
-  if (!success) {
+  if (!mRowCache.Get(row, getter_AddRefs(bag)) &&
+      !mDirtyRowCache.Get(row, getter_AddRefs(bag))) {
     // Don't bother to do anything else if this row isn't cached yet.
     return NS_OK;
   }
