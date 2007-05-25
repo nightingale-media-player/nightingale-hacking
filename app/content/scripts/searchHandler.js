@@ -183,7 +183,7 @@ const gSearchHandler = {
   onBrowserLoad: function SearchHandler_onBrowserLoad(evt) {
     // If a media list is open in the current tab,
     // then we may need to update the contents of the search box
-    var playlist = gBrowser.currentBrowserPlaylist;
+    var playlist = this._getCurrentPlaylist();
     if (playlist && playlist.mediaListView) 
     {
       this._syncSearchBarToPlaylist();
@@ -605,7 +605,7 @@ const gSearchHandler = {
   _getPlaylistSearch: function SearchHandler__getPlaylistSearch() {
 
     // Get the playlist element from within the current tab      
-    var playlist = gBrowser.currentBrowserPlaylist;
+    var playlist = this._getCurrentPlaylist();
     if (playlist == null) {
       return "";
     }
@@ -622,7 +622,7 @@ const gSearchHandler = {
   _setPlaylistSearch: function SearchHandler__setPlaylistSearch(query) {
 
     // Get the playlist element from within the current tab      
-    var playlist = gBrowser.currentPlaylist;
+    var playlist = this._getCurrentPlaylist();
     if (playlist == null) {
       dump("SearchHandler__setPlaylistSearch: NO PLAYLIST!\n");
       return false;
@@ -651,7 +651,7 @@ const gSearchHandler = {
   _getPlaylistDisplayName: function SearchHandler__getPlaylistDisplayName() {
   
     // Get the playlist element from within the current tab      
-    var playlist = gBrowser.currentBrowserPlaylist;
+    var playlist = this._getCurrentPlaylist();
 
     // Attempt to get the name of the playlist
     if (playlist) {
@@ -660,13 +660,21 @@ const gSearchHandler = {
     return "";
   },  
     
+
+  /**
+   * Get the playlist that is currently showing in the browser
+   */
+  _getCurrentPlaylist: function SearchHandler__getCurrentPlaylist() {
+    return gBrowser.currentPlaylist;
+  },  
+  
   
   /**
    * Update the Songbird search to reflect
    * the state of the current playlist
    */
   _syncSearchBarToPlaylist: function SearchHandler__syncSearchBarToPlaylist() {
-  
+    
     // Get the search box element
     var searchBar = this.getSearchBar();
     if (searchBar == null) {
