@@ -52,12 +52,12 @@
     <destructor>
     </destructor>
     
-    <field name="basedoc">null</field>
+    <field name="playlist">null</field>
 
-    <method name="setBaseDocument">
-      <parameter name="doc"/>
+    <method name="setPlaylist">
+      <parameter name="list"/>
       <body>
-        this.basedoc = doc;
+        this.playlist = list;
       </body>
     </method>
 
@@ -99,7 +99,7 @@
             var doc = iframe.contentDocument;
             var func = doc.__SETOBJECTS_FUNCTION__;
             if (func) {
-              func(this.basedoc, this.dirtyobject, this.mainfocusobject);
+              func(this.playlist, this.dirtyobject, this.mainfocusobject);
             } else {
               setTimeout(function(obj) { obj.setObjectsToContentDoc(); }, 0, this); 
             }
@@ -137,6 +137,22 @@
         ]]>
       </body>
     </method>
+    
+    <method name="checkFormatErrors">
+      <body>
+        <![CDATA[
+          var iframe = this.getContent();
+          if (iframe) {
+            var doc = iframe.contentDocument;
+            var func = doc.__CHECKFORMATERRORS_FUNCTION__;
+            if (func) {
+              return func();
+            }
+          }
+          return null; // all good i guess ? :(
+        ]]>
+      </body>
+    </method>
 
    </implementation>
  
@@ -160,17 +176,17 @@
       ]]>
     </constructor>
     <destructor>
-      if (this.playlistevt) this.playlistevt.removeEventListener("playlist-selchange", this.selchangeevt, false);
+      if (this.playlistevt) { this.playlistevt.removeEventListener("playlist-selchange", this.selchangeevt, false); this.playlistevt = null; }
     </destructor>
     
     <field name="controls">null</field>
-    <field name="basedoc">null</field>
+    <field name="playlist">null</field>
     <field name="guids">null</field>
 
-    <method name="setBaseDocument">
-      <parameter name="doc"/>
+    <method name="setPlaylist">
+      <parameter name="list"/>
       <body>
-        this.basedoc = doc;
+        this.playlist = list;
         this.watchPlaylist();
       </body>
     </method>
@@ -220,6 +236,17 @@
         ]]>
       </body>
     </method>
+
+    <method name="checkFormatErrors">
+      <body>
+        <![CDATA[
+          for (var i=0;i<this.controls.length;i++) {
+            if (!this.controls[i].validateValue()) return this.controls[i].column;
+          }
+          return null;
+        ]]>
+      </body>
+    </method>
     
     <method name="appendControls">
       <parameter name="parent"/>
@@ -233,31 +260,38 @@
           var stringbundle = stringBundleService.createBundle( src );
 
           // enumerate the list of metadata columns and for each of them, check if it is in the exclusion list
-          var ml = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
-          var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-          query.setDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
-          ml.setQueryObject(query);
+          //var ml = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+          //var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+          //query.setDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
+          //ml.setQueryObject(query);
           
-          ml.getColumnInfo();
-          var destcols = query.getResultObject();
-          for (var i=0;i<destcols.getRowCount();i++) {
-            // if not, create a control for that column using its data type and readonly status
-            var name = destcols.getRowCellByColumn(i, "column_name");
+          //ml.getColumnInfo();
+          //var destcols = query.getResultObject();
+
+          var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                       .getService(Components.interfaces.sbIPropertyManager);
+          var props = pm.propertyNames;
+          while (props.hasMore()) {
+            var name = props.getNext();
+            var info = pm.getPropertyInfo(name);
+
+            // create a control for that column using its data type and readonly status
+
             if (this.isExcluded(name)) continue;
-            var readablename = destcols.getRowCellByColumn(i, "readable_name");
-            var type = destcols.getRowCellByColumn(i, "type");
-            var ro = destcols.getRowCellByColumn(i, "readonly");
+
+            var readablename = info.displayName;
+            var type = info.type;
+
+            //xxxlone> there is no .readOnly or equivalent functionality ! :(
+            //var ro = info.readOnly; 
+            var ro = false;
+            
             var elem;
             if (ro != 0) elem = document.createElement("dbedit_label");
             else elem = document.createElement("dbedit_textbox");
-            if (type == 'numeric') elem.setAttribute("numeric", true);
+            if (type == 'number') elem.setAttribute("numeric", true);
             if (ro != 0) elem.setAttribute("readonly", "true");
             elem.setAttribute("column", name);
-/*
-  NO, the actual children get these classes set.  Not the outer elements.            
-            if (ro != 0) elem.setAttribute("class", "dialog_textbox");
-            else elem.setAttribute("class", "dialog_label");
-*/            
             elem.setAttribute("flex", "1");
             // create a container for the element, add a descriptive label and a spacer to it
             var hbox = document.createElement("hbox");
@@ -297,6 +331,7 @@
         <![CDATA[
           // set dirty object
           for (var i=0;i<this.controls.length;i++) this.controls[i].dirtyobject = this.dirtyobject;
+          for (var i=0;i<this.controls.length;i++) this.controls[i].playlist = this.playlist;
           // set controls guids
           this.loadSelection();
         ]]>
@@ -320,7 +355,7 @@
           var excludelist = this.exclude;
           var excludearray = excludelist.split(";");
           for (var i=0;i<excludearray.length;i++)
-            if (excludearray[i].toUpperCase() == col.toUpperCase()) return true;
+            if (excludearray[i].toLowerCase() == col.toLowerCase()) return true;
           return false;
         ]]>
       </body>
@@ -329,16 +364,14 @@
     <method name="watchPlaylist">
       <body>
         <![CDATA[
-          var playlist = this.basedoc.__CURRENTPLAYLIST__;
-          if (playlist)
+          if (this.playlist)
           {
-            var onselchange = { 
+            this.selchangeevt = { 
               _that: null, 
               handleEvent: function( event ) { this._that.onPlaylistSelectionChanged(); } 
-            } onselchange._that = this;
-            this.selchangeevt = onselchange;
-            this.playlistevt = playlist;
-            playlist.addEventListener("playlist-selchange", this.selchangeevt, false);
+            }; this.selchangeevt._that = this;
+            this.playlistevt = this.playlist;
+            this.playlist.addEventListener("playlist-selchange", this.selchangeevt, false);
           }
         ]]>
       </body>
@@ -347,30 +380,28 @@
     <method name="loadSelection">
       <body>
         <![CDATA[
-          var guids = Array();
-          var playlist = this.basedoc.__CURRENTPLAYLIST__;
-          if (playlist && playlist.tree.columns) 
+          var _guids = Array();
+          if (this.playlist && this.playlist.tree) 
           {
-            var guid_column = playlist.tree.columns["uuid"];
-            if (guid_column && playlist.tree.view && playlist.tree.view.selection)
+            if (this.playlist.tree.view && this.playlist.tree.view.selection)
             {
-              var rangeCount = playlist.tree.view.selection.getRangeCount();
+              var rangeCount = this.playlist.tree.view.selection.getRangeCount();
               if (rangeCount == 0) return; // abort !
               for (var i=0; i < rangeCount; i++) 
               {
                 var start = {};
                 var end = {};
-                playlist.tree.view.selection.getRangeAt( i, start, end );
+                this.playlist.tree.view.selection.getRangeAt( i, start, end );
                 for (var j=start.value;j<=end.value;j++)
                 {
-                  // Get the text of the hidden tree cell, this contains the uuid.
-                  var guid = playlist.tree.view.getCellText( j, guid_column );
-                  guids.push(guid);
+                  // Get the item, this contains the uuid.
+                  var item = this.playlist.mediaListView.mediaList.getItemByIndex(j);
+                  if (item) _guids.push(item.guid);
                 }
               }
             }
           }
-          this.guids = guids;
+          this.guids = _guids;
           this.onTrackChange();
         ]]>
       </body>

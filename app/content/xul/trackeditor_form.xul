@@ -43,33 +43,33 @@
     <vbox flex="1">
       <hbox align="center">
         <label id="trackeditor.label.guid" class="dialog_label" value="&metadata.uuid;" width="96"/>
-        <dbedit_label id="trackeditor.guid" column="uuid" flex="1"/>
+        <dbedit_label id="trackeditor.guid" column="http://songbirdnest.com/data/1.0#guid" flex="1"/>
       </hbox>
       <spacer height="3"/>
       <hbox align="center">
         <label id="trackeditor.label.url" class="dialog_label" value="&metadata.url;" width="96"/>
-        <dbedit_label id="trackeditor.url" column="url" flex="1"/>
+        <dbedit_label id="trackeditor.url" column="http://songbirdnest.com/data/1.0#contentUrl" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.title" class="dialog_label" value="&metadata.title;" width="96"/>
-        <dbedit_textbox id="trackeditor.title" column="title" flex="1"/>
+        <dbedit_textbox id="trackeditor.title" column="http://songbirdnest.com/data/1.0#trackName" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.artist" class="dialog_label" value="&metadata.artist;" width="96"/>
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.artist" column="artist" flex="1" />
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.artist" column="http://songbirdnest.com/data/1.0#artistName" flex="1" />
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.album" class="dialog_label" value="&metadata.album;" width="96"/>
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.album" column="album" flex="1"/>
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.album" column="http://songbirdnest.com/data/1.0#albumName" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.genre" class="dialog_label" value="&metadata.genre;" width="96"/>
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="genre" flex="1"/>
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="http://songbirdnest.com/data/1.0#genre" flex="1"/>
       </hbox>
       <spacer height="8"/> 
       <hbox align="center">
         <label id="trackeditor.label.length" class="dialog_label" value="&metadata.length;" width="96"/>
-        <dbedit_label id="trackeditor.length" column="length" flex="1"/>
+        <dbedit_label id="trackeditor.length" column="http://songbirdnest.com/data/1.0#duration" flex="1"/>
       </hbox>
     </vbox>
     <spacer width="3"/> 
@@ -83,7 +83,7 @@
   <script>
   <![CDATA[
   var controls = Array();
-  var basedoc = null;
+  var playlist = null;
   var guids = Array();
   var dirtyobject = null;
   var focusobject = null;
@@ -100,17 +100,27 @@
       controls[i].undo();
   }
   
-  function setObjects(doc, dirty, focus) {
-    basedoc = doc;
+  function checkFormatErrors() 
+  {
+    for (var i=0;i<controls.length;i++) {
+      if (!controls[i].validateValue()) return controls[i].column;
+    }
+    return null;
+  }
+  
+  function setObjects(theplaylist, dirty, focus) {
+    playlist = theplaylist;
     dirtyobject = dirty;
     focusobject = focus;
-    setControlsDirtyObject();
+    //setControlsPlaylistObject();
+    //setControlsDirtyObject();
     watchPlaylist();
     loadSelection();
   }
 
   document.__APPLY_FUNCTION__ = apply;
   document.__UNDO_FUNCTION__ = undo;
+  document.__CHECKFORMATERRORS_FUNCTION__ = checkFormatErrors;
   document.__SETOBJECTS_FUNCTION__ = setObjects;
   
   function onInit()
@@ -125,9 +135,13 @@
     }
   } 
   
-  function setControlsDirtyObject() {
+  /*function setControlsDirtyObject() {
     for (var i=0;i<controls.length;i++) controls[i].dirtyobject = dirtyobject;
   }
+
+  function setControlsPlaylistObject() {
+    for (var i=0;i<controls.length;i++) controls[i].playlist = playlist;
+  }*/
 
   function loadControls() {
     controls.push(document.getElementById("trackeditor.guid"));
@@ -140,7 +154,10 @@
   }
   
   function onTrackChange() {
+    if (controls.length == 0) { setTimeout("onTrackChange();"); return; }
     for (var i=0;i<controls.length;i++) {
+      controls[i].dirtyobject = dirtyobject;
+      controls[i].playlist = playlist;
       controls[i].guids = guids;
       controls[i].undo();
     }
@@ -148,7 +165,6 @@
 
   function onDeinit()
   {
-    var playlist = basedoc.__CURRENTPLAYLIST__;
     if (playlist)
     {
       playlist.removeEventListener("playlist-selchange", onPlaylistSelectionChanged, false);
@@ -157,7 +173,6 @@
   
   function watchPlaylist()
   {
-    var playlist = basedoc.__CURRENTPLAYLIST__;
     if (playlist)
     {
       playlist.addEventListener("playlist-selchange", onPlaylistSelectionChanged, false);
@@ -173,12 +188,11 @@
   
   function loadSelection()
   {
+    if (!playlist) { setTimeout("loadSelection();", 0); return; }
     var _guids = Array();
-    var playlist = basedoc.__CURRENTPLAYLIST__;
-    if (playlist && playlist.tree.columns) 
+    if (playlist && playlist.tree) 
     {
-      var guid_column = playlist.tree.columns["uuid"];
-      if (guid_column && playlist.tree.view && playlist.tree.view.selection)
+      if (playlist.tree.view && playlist.tree.view.selection)
       {
         var rangeCount = playlist.tree.view.selection.getRangeCount();
         if (rangeCount == 0) return; // abort !
@@ -189,9 +203,9 @@
           playlist.tree.view.selection.getRangeAt( i, start, end );
           for (var j=start.value;j<=end.value;j++)
           {
-            // Get the text of the hidden tree cell, this contains the uuid.
-            var guid = playlist.tree.view.getCellText( j, guid_column );
-            _guids.push(guid);
+            // Get the item, this contains the uuid.
+            var item = playlist.mediaListView.mediaList.getItemByIndex(j);
+            if (item) _guids.push(item.guid);
           }
         }
       }

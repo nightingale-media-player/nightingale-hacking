@@ -244,24 +244,6 @@ try
   }
 
 
-  function SBPlayPlaylistIndex( index, playlist )
-  {
-    try
-    {
-      if (!playlist) playlist = gBrowser.currentPlaylist;
-      if (!playlist) return;
-      
-      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-      PPS.playView(playlist.mediaListView, index);
-    }
-    catch ( err )
-    {
-      alert( err );
-    }
-  }
-  
-
-
 // Help
 function onHelp()
 {
@@ -476,9 +458,6 @@ function SBExtensionsManagerOpen()
 
 function SBTrackEditorOpen()
 {
-  // for now only allow editing the main db
-  if (!theLibraryPlaylist || theLibraryPlaylist.guid != "songbird") return;
-  
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Components.interfaces.nsIWindowMediator);
   var theTE = wm.getMostRecentWindow("track_editor");
@@ -487,7 +466,7 @@ function SBTrackEditorOpen()
   } else {
     const TEURL = "chrome://songbird/content/xul/trackeditor.xul";
     const TEFEATURES = "chrome,dialog=no,resizable=no";
-    SBOpenWindow(TEURL, "track_editor", TEFEATURES, document); 
+    SBOpenWindow(TEURL, "track_editor", TEFEATURES, gBrowser.currentPlaylist); 
   }
 }
 

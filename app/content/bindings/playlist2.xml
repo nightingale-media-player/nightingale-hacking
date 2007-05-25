@@ -156,6 +156,9 @@
 
       <destructor>
 <![CDATA[
+  var e = document.createEvent("Events");
+  e.initEvent("playlist-destroy", false, true);
+  this.dispatchEvent(e);
   // Remove event listeners
   this._treecols.removeEventListener("DOMAttrModified",
                                      this._onColumnMutationClosure,
@@ -986,6 +989,23 @@
         </body>
       </method>
 
+      <method name="sendSelChangeEvent">
+        <body>
+          <![CDATA[
+      try
+      {
+        var e = document.createEvent("Events");
+        e.initEvent("playlist-selchange", false, true);
+        this.dispatchEvent(e);
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - sendPlayEvent - " + err )
+      }
+      ]]>
+        </body>
+      </method>
+
       <method name="sendEscEvent">
         <body>
           <![CDATA[
@@ -1254,6 +1274,7 @@
 <![CDATA[
   this.treeView.selectionChanged();
   this.refreshCommands();
+  this.sendSelChangeEvent();
 ]]>
         </body>
       </method>

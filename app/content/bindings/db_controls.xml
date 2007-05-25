@@ -47,6 +47,17 @@
 
     <constructor>
       <![CDATA[
+        // generated menuitems.
+        var stringBundleService =
+            Components.classes["@mozilla.org/intl/stringbundle;1"]
+                      .getService(Components.interfaces.nsIStringBundleService);
+        var sb = stringBundleService.createBundle( 
+                    "chrome://songbird/locale/songbird.properties" );
+        try {
+          this.notsetstring = sb.GetStringFromName("trackeditor.notset");
+        } catch (e) { 
+          this.notsetstring = "*Not Set*";
+        }
         if (this.checkbox) {
           var oncommand = { 
             _that: null, 
@@ -65,6 +76,7 @@
     <field name="ismultiedit">false</field>
     <field name="multieditdisabled">false</field>
     <field name="dirtyobject">null</field>
+    <field name="playlist">null</field>
     <field name="originalvalue">""</field>
 
     <property name="readonly">
@@ -98,6 +110,7 @@
             } else {
              this.disableMultiEdition();
              var value = this.getValueFromDatabase(false);
+             this.hasvalue = (value != null);
              this.originalvalue = value;
              this.setValueToControl(value);
             }
@@ -179,56 +192,92 @@
       <parameter name="setmultistate"/>
       <body>
         <![CDATA[
-          this.initMl();
-          var value;
-          if (setmultistate)
-          {
-            if (this.guids.length == 1) 
+          try {
+            var value;
+            if (setmultistate)
             {
-              this.setSingleEdition(); 
-            }
-            else 
-            {
-              this.setMultiEdition();
-              this.enableMultiEdition();
-            }
-          }
-          for (var i=0;i<this.guids.length;i++)
-          {
-            var thisval = this.ml.getValueByGUID(this.guids[i], this.column);
-            if (i==0) 
-            {
-              value = thisval;
-            }
-            else 
-            {
-              if (thisval != value)
+              if (this.guids.length == 1) 
               {
-                if (setmultistate) this.disableMultiEdition();
-                value = ""; // could return the first found too
-                break;
+                this.setSingleEdition(); 
+              }
+              else 
+              {
+                this.setMultiEdition();
+                this.enableMultiEdition();
               }
             }
+            for (var i=0;i<this.guids.length;i++)
+            {
+              var thisval;
+              try {
+                var item = this.playlist.mediaListView.mediaList.getItemByGuid(this.guids[i]);
+                thisval = item.getProperty(this.column);
+              } catch (e) {
+                if (this.column == "http://songbirdnest.com/data/1.0#guid") thisval = this.guids[i];
+                // else thisval stays null;
+              }
+              if (i==0) 
+              {
+                value = thisval;
+              }
+              else 
+              {
+                if (thisval != value)
+                {
+                  if (setmultistate) this.disableMultiEdition();
+                  // should it return the first found (value), or reset ? reset seems good
+                  value = "";
+                  break;
+                }
+              }
+            }
+            return value;
+          } catch (e) {
+            alert("db_controls - getValueFromDatabase - " + e);
           }
-          return value;
+          return null;
         ]]>
       </body>
     </method>
     
+    <method name="validateValue">
+      <body>
+        <![CDATA[
+	      var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+					      .getService(Components.interfaces.sbIPropertyManager);
+	      var info = pm.getPropertyInfo(this.column);
+	      return info.validate(this.getValueFromControl());
+        ]]>
+      </body>
+    </method>
+
     <method name="setValueToDatabase">
       <parameter name="value"/>
       <body>
         <![CDATA[
-          var ro = this.getAttribute("readonly");
-          if (ro == "1" || ro == "true") return;
-          this.initMl();
-          if (this.isSingleEdition() || this.isMultiEditionEnabled())
-          {
-            for (var i=0;i<this.guids.length;i++)
+          try {
+            var ro = this.getAttribute("readonly");
+            if (ro == "1" || ro == "true") return;
+            if (this.isSingleEdition() || this.isMultiEditionEnabled())
             {
-              this.ml.setValueByGUID(this.guids[i], this.column, value, true);
+              for (var i=0;i<this.guids.length;i++)
+              {
+                var item = this.playlist.mediaListView.mediaList.getItemByGuid(this.guids[i]);
+                try {
+                  if (!this.hasvalue) {
+                    //XXXlone> THIS IS WRONG ! WE SHOULD SET NULL INSTEAD, or call removeProperty(), or something.
+                    item.setProperty(this.column, "");
+                  } else {
+                    item.setProperty(this.column, value);
+                  }
+                  item.write();
+                } catch (e) {
+                  // do not care
+                }
+              }
             }
-            this.query.execute();
+          } catch (e) {
+            alert("db-controls - setValueToDatabase - " + e);
           }
         ]]>
       </body>
@@ -247,25 +296,12 @@
     <method name="undo">
       <body>
         var value = this.getValueFromDatabase(true);
+        this.hasvalue = (value != null);
         this.originalvalue = value;
         this.setValueToControl(value);
       </body>
     </method>
 
-    <method name="initMl">
-      <body>
-        <![CDATA[
-        if (!this.ml) 
-        {
-          this.ml = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
-          this.query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-          this.query.setDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
-          this.ml.setQueryObject(this.query);
-        }
-        ]]>
-      </body>
-    </method>
-    
     <method name="setDirty">
       <body>
         <![CDATA[
@@ -315,12 +351,14 @@
     <method name="setValueToControl">
       <parameter name="value"/>
       <body>
+        if (!this.hasvalue) value = this.notsetstring;
         this.label.setAttribute("value", value);
       </body>
     </method>
     
     <method name="getValueFromControl">
       <body>
+        if (!this.hasvalue) return null;
         return this.label.getAttribute("value");
       </body>
     </method>
@@ -361,12 +399,14 @@
     <method name="setValueToControl">
       <parameter name="value"/>
       <body>
+        if (!this.hasvalue) value = this.notsetstring;
         this.editcontrol.value = value;
       </body>
     </method>
     
     <method name="getValueFromControl">
       <body>
+        if (!this.hasvalue) return null;
         return this.editcontrol.value;
       </body>
     </method>
@@ -376,7 +416,22 @@
     <handlers>
       <handler event="keypress">
         <![CDATA[
-          setTimeout(function(obj) { obj.checkForChange(); }, 0, this); 
+          setTimeout(function(obj) { 
+                        if (obj.editcontrol.value != "") {
+                          if (!obj.hasvalue) {
+                            obj.hasvalue = true;
+                            obj.editcontrol.value = "";
+                          } 
+                        } else {
+                          if (obj.hasvalue) {
+                            obj.hasvalue = false;
+                            obj.editcontrol.value = obj.notsetstring;
+                          }
+                        }
+                        obj.checkForChange(); 
+                      }, 
+                     0, 
+                     this); 
         ]]>
       </handler>
     </handlers>
@@ -429,6 +484,7 @@
     <method name="setValueToControl">
       <parameter name="value"/>
       <body>
+        if (!this.hasvalue) value = this.notsetstring;
         this.editcontrol.selectedIndex = -1;
         this.editcontrol.value = value;
       </body>
@@ -436,6 +492,7 @@
     
     <method name="getValueFromControl">
       <body>
+        if (!this.hasvalue) return null;
         return this.editcontrol.value;
       </body>
     </method>
@@ -451,11 +508,10 @@
         <![CDATA[
           if (this.populateuniques) {
             this.editcontrol.removeAllItems();
-            var nout = {};
-            var array = this.ml.getUniqueValuesByColumn(this.column, nout);
-            for (var i=0;i<array.length;i++) {
-              if (array[i] != "")
-                this.editcontrol.appendItem(array[i], null, null);
+            var enum = this.playlist.mediaListView.mediaList.getDistinctValuesForProperty(this.column);
+            while (enum.hasMore()) { 
+              var prop = enum.getNext();
+              this.editcontrol.appendItem(prop, null, null);
             }
           }
       ]]>
@@ -467,7 +523,22 @@
     <handlers>
       <handler event="keypress">
         <![CDATA[
-          setTimeout(function(obj) { obj.checkForChange(); }, 0, this); 
+          setTimeout(function(obj) { 
+                        if (obj.editcontrol.value != "") {
+                          if (!obj.hasvalue) {
+                            obj.hasvalue = true;
+                            obj.editcontrol.value = "";
+                          } 
+                        } else {
+                          if (obj.hasvalue) {
+                            obj.hasvalue = false;
+                            obj.editcontrol.value = obj.notsetstring;
+                          }
+                        }
+                       obj.checkForChange(); 
+                     }, 
+                     0, 
+                     this); 
         ]]>
       </handler>
       <handler event="popuphidden">

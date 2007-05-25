@@ -1005,7 +1005,8 @@
       ]]></constructor>
      <destructor><![CDATA[
         if (this.previousInnerPlaylist) {
-          this.previousInnerPlaylist.removeEventListener("playlist-play", onPlaylistPlay, true);
+          this.previousInnerPlaylist.removeEventListener("playlist-play", this.onPlaylistPlay, true);
+          this.previousInnerPlaylist.removeEventListener("playlist-editor", this.onPlaylistEditor, true);
           this.previousInnerPlaylist = null;
         }
      ]]></destructor>
@@ -1133,7 +1134,8 @@
               'http://songbirdnest.com/data/1.0#genre 70');
 
           // add some events, eh?
-          this._playlist.addEventListener("playlist-play", onPlaylistPlay, true);
+          this._playlist.addEventListener("playlist-play", this.onPlaylistPlay, true);
+          this._playlist.addEventListener("playlist-editor", this.onPlaylistEditor, true);
           // FIXME: remove the event listener on the destructor, I guess
           
           // put it all together
@@ -1373,10 +1375,12 @@
           
           // add some events, eh?
           if (this.previousInnerPlaylist) {
-            this.previousInnerPlaylist.removeEventListener("playlist-play", onPlaylistPlay, true);
+            this.previousInnerPlaylist.removeEventListener("playlist-play", this.onPlaylistPlay, true);
+            this.previousInnerPlaylist.removeEventListener("playlist-editor", this.onPlaylistEditor, true);
             this.previousInnerPlaylist = null;
           }
-          playlist.addEventListener("playlist-play", onPlaylistPlay, true);
+          playlist.addEventListener("playlist-play", this.onPlaylistPlay, true);
+          playlist.addEventListener("playlist-editor", this.onPlaylistEditor, true);
           this.previousInnerPlaylist = playlist;
   
           // Wait until after the bind call?
@@ -1526,6 +1530,69 @@
         <parameter name="aMessage" />
         <body><![CDATA[ ]]></body>
       </method>
+      
+      <method name="onPlaylistEditor">
+        <parameter name="evt"/>
+        <body>
+        <![CDATA[ 
+          var playlist = evt.target;
+          if ( playlist.wrappedJSObject )
+            playlist = playlist.wrappedJSObject;
+          
+            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                              .getService(Components.interfaces.nsIWindowMediator);
+            var theTE = wm.getMostRecentWindow("track_editor");
+            if (theTE) {
+              theTE.focus();
+            } else {
+              const TEURL = "chrome://songbird/content/xul/trackeditor.xul";
+              const TEFEATURES = "chrome,dialog=no,resizable=no";
+              SBOpenWindow(TEURL, "track_editor", TEFEATURES, playlist); 
+            }
+        ]]>
+        </body>
+      </method>
+      
+      <method name="onPlaylistPlay">
+        <parameter name="evt"/>
+        <body>
+        <![CDATA[ 
+          var target = evt.target;
+          if ( target.wrappedJSObject )
+          {
+            target = target.wrappedJSObject;
+          }
+          this.playPlaylistIndex( target.tree.currentIndex, target );
+        ]]>
+        </body>
+      </method>
+      
+      <method name="playPlaylistIndex">
+        <parameter name="index"/>
+        <parameter name="playlist"/>
+        <body>
+        <![CDATA[ 
+          try
+          {
+            if (!playlist) playlist = gBrowser.currentPlaylist;
+            if (!playlist) return;
+            
+            var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+            PPS.playView(playlist.mediaListView, index);
+          }
+          catch ( err )
+          {
+            alert( err );
+          }
+        ]]>
+        </body>
+      </method>
+    
+
+
+
+
+
     </implementation>
     <handlers>
       <handler event="TabClose"><![CDATA[

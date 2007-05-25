@@ -68,7 +68,7 @@
     
     <hbox id="exttrackeditor.hflex">
       <sb-exttrackeditor-drawer id="trackeditor.exttrackeditor" hflex="exttrackeditor.hflex" title="&trackeditor.exttrackdata;" flex="1" 
-        exclude="uuid;url;title;artist;album;genre;length"/>
+        exclude="http://songbirdnest.com/data/1.0#guid;http://songbirdnest.com/data/1.0#contentUrl;http://songbirdnest.com/data/1.0#trackName;http://songbirdnest.com/data/1.0#artistName;http://songbirdnest.com/data/1.0#albumName;http://songbirdnest.com/data/1.0#genre"/>
     </hbox>
 <!--
     <hbox id="tageditor.hflex">
@@ -129,30 +129,29 @@
   function onLoadTrackEditor() {
     SBDataIncrementValue( "backscan.paused" );
 
-    var doc = window.arguments[0];
+    var playlist = window.arguments[0];
     var _trackeditor = document.getElementById("trackeditor.trackeditor");
-    _trackeditor.setBaseDocument(doc);
+    _trackeditor.setPlaylist(playlist);
     _trackeditor.setDirtyObject(dirty);
     _trackeditor.setMainFocusObject(_focus);
     var _exttrackeditor = document.getElementById("trackeditor.exttrackeditor");
-    _exttrackeditor.setBaseDocument(doc);
+    _exttrackeditor.setPlaylist(playlist);
     _exttrackeditor.setDirtyObject(dirty);
     _exttrackeditor.setMainFocusObject(_focus);
     //var _tageditor = document.getElementById("trackeditor.tageditor");
-    //_tageditor.setBaseDocument(doc);
+    //_tageditor.setPlaylist(playlist);
     //_tageditor.setDirtyObject(dirty);
     //_tageditor.setMainFocusObject(_focus);
     
     disableUndo();
     
-    playlist = doc.__CURRENTPLAYLIST__;
     if (playlist)
     {
       playlist.addEventListener("playlist-destroy", onDestroyPlaylist, false);
     }
 
     onWindowLoadPosition();
-    document.getElementById("trackeditor.trackeditor").openDrawer();
+    setTimeout('document.getElementById("trackeditor.trackeditor").openDrawer();', 0);
     setTrackeditorMinMaxCallback();
   }
   
@@ -182,9 +181,27 @@
   
   function doOK() {
     //if (playlist) playlist.deselectAll();
-    document.getElementById("trackeditor.trackeditor").apply();
-    document.getElementById("trackeditor.exttrackeditor").apply();
-    //document.getElementById("trackeditor.tageditor").apply();
+    var trackeditor = document.getElementById("trackeditor.trackeditor");
+    var exttrackeditor = document.getElementById("trackeditor.exttrackeditor");
+    //var tageditor = document.getElementById("trackeditor.tageditor");
+    var err = trackeditor.checkFormatErrors();
+    if (!err) err = exttrackeditor.checkFormatErrors();
+    //if (!err) err = tageditor.checkFormatErrors();
+    
+    // XXXlone> ugh :(
+    if (1) { //!err) {
+      try {
+        trackeditor.apply();
+        exttrackeditor.apply();
+        //tageditor.apply();
+      } catch (e) {
+      }
+    } else {
+        gPrompt.alert( window, 
+                      SBString( "trackeditor.formaterror.title", "Format Error" ),
+                      SBString( "trackeditor.formaterror.msg", "Error in format for property" ) + " " + err );
+        return false;
+    }
     return true;
   }
 
@@ -199,7 +216,7 @@
   function doCancel() {
     return true;
   }
-
+  
   function handleKeyDown(event) 
   {
     switch (event.keyCode)

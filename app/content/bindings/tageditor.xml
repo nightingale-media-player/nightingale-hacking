@@ -54,12 +54,12 @@
     <destructor>
     </destructor>
 
-    <field name="basedoc">null</field>
+    <field name="playlist">null</field>
 
-    <method name="setBaseDocument">
-      <parameter name="doc"/>
+    <method name="setPlaylist">
+      <parameter name="list"/>
       <body>
-        this.basedoc = doc;
+        this.playlist = list;
       </body>
     </method>
 
