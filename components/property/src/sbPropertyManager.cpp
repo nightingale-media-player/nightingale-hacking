@@ -319,7 +319,8 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Album name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                     NS_LITERAL_STRING("property.album_name"),
-                    stringBundle, sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE);
+                    stringBundle, PR_TRUE, PR_TRUE, 
+                    sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE);
 
   //Artist name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
