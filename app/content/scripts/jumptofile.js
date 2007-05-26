@@ -612,7 +612,7 @@ try
 	      var info = pm.getPropertyInfo(prop.name);
 	      
 	      // XXXlone hack hack hack
-	      if (info.name == "http://songbirdnest.com/data/1.0#originUrl") continue;
+	      if (info.name == "http://songbirdnest.com/data/1.0#originURL") continue;
 	      
         filters.push( [ prop.name, 
                         prop.value,

@@ -78,7 +78,7 @@ function SB_AddItems(aItems, aMediaList, aReplace) {
     var notFound = {};
 
     uniqueUriStr.forEach(function(e) {
-      propertyArray.appendProperty(SB_NS + "originUrl", e);
+      propertyArray.appendProperty(SB_NS + "originURL", e);
       notFound[e] = 1;
     });
 
@@ -137,7 +137,7 @@ function SB_AddItems(aItems, aMediaList, aReplace) {
       var item = uriStrToItem[e.uri.spec];
       if (item) {
         toAdd.push(item);
-        item.setProperty(SB_NS + "originUrl", e.uri.spec);
+        item.setProperty(SB_NS + "originURL", e.uri.spec);
         for (var prop in e.properties) {
           try {
             item.setProperty(prop, e.properties[prop]);

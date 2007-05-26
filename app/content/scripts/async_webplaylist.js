@@ -56,7 +56,7 @@ try
     const CONTRACTID_METADATAJOBMANAGER =
       "@songbirdnest.com/Songbird/MetadataJobManager;1";
 
-    const PROPERTYKEY_ORIGINURL = "http://songbirdnest.com/data/1.0#originUrl";
+    const PROPERTYKEY_ORIGINURL = "http://songbirdnest.com/data/1.0#originURL";
 
     const nsIMutableArray = Components.interfaces.nsIMutableArray;
     const sbIMediaList = Components.interfaces.sbIMediaList;
@@ -157,7 +157,7 @@ try
           var url = this.newURLs[ i ];
           // Make a new media item for it
           var mediaItem = aMediaListView.mediaList.library.createMediaItem(newURI(url));
-          mediaItem.setProperty("http://songbirdnest.com/data/1.0#originUrl",
+          mediaItem.setProperty("http://songbirdnest.com/data/1.0#originURL",
                                 browserURL);
           
           dump ('added media item: '+url+'\n');

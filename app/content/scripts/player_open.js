@@ -161,7 +161,7 @@ try
         // Create the media list
         var mediaList = library.createMediaList("simple");
         mediaList.name = fp.file.leafName;
-        mediaList.setProperty("http://songbirdnest.com/data/1.0#originUrl", fp.fileURL.spec);
+        mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", fp.fileURL.spec);
         mediaList.write();
 
         aPlaylistReaderManager.originalURI = fp.fileURL;

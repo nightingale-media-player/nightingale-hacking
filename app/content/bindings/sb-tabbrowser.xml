@@ -512,7 +512,7 @@
                 Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
                           .createInstance(Components.interfaces.sbIPropertyArray);
               propertyArray.appendProperty("http://songbirdnest.com/data/1.0#isList", "1");
-              propertyArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl", uri.spec);
+              propertyArray.appendProperty("http://songbirdnest.com/data/1.0#originURL", uri.spec);
 
               var getFirstListener = {
                 item: null,
@@ -541,7 +541,7 @@
               else {
                 mediaList = library.createMediaList("simple");
                 mediaList.name = gPPS.convertURLToDisplayName(aURL);
-                mediaList.setProperty("http://songbirdnest.com/data/1.0#originUrl", uri.spec);
+                mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", uri.spec);
                 mediaList.write();
               }
 
@@ -1248,7 +1248,7 @@
           var propArray =
             Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
                       .createInstance(Components.interfaces.sbIPropertyArray);
-          propArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl",
+          propArray.appendProperty("http://songbirdnest.com/data/1.0#originURL",
                                    this.linkedBrowser.currentURI.spec);
                              
           // See if we're supposed to be restoring a view or making a new one
@@ -1430,7 +1430,7 @@
             var propArray =
               Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
                         .createInstance(Components.interfaces.sbIPropertyArray);
-            propArray.appendProperty("http://songbirdnest.com/data/1.0#originUrl",
+            propArray.appendProperty("http://songbirdnest.com/data/1.0#originURL",
                                      this.linkedBrowser.currentURI.spec);
 
             view.setFilters(propArray);
