@@ -379,12 +379,6 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   // store the default command usage
   mUseDefaultCommands = aUseDefaultCommands;
 
-  // Make sure we have the playlist dom element/widget
-  if (!mWebPlaylistWidget) {
-    rv = AcquirePlaylistWidget();
-    NS_ENSURE_SUCCESS( rv, rv );
-  }
-
   // Get the Playlistsource object and register commands with it.
   nsCOMPtr<sbIPlaylistsource> pls( 
          do_GetService( "@mozilla.org/rdf/datasource;1?name=playlist", &rv ) );
@@ -392,6 +386,9 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
 
   nsCOMPtr<sbIPlaylistCommands> commands( do_QueryInterface( mCommandsObject,
                                                              &rv ) );
+
+  // XXXredfive - make this pull the GUID from the web playlist
+  //              need sbIRemoteMediaLists online before we can do that.
   // Registration of commands is changing soon, for now type='library' works
   NS_ENSURE_SUCCESS( rv, rv );
   rv = pls->RegisterPlaylistCommands( NS_LITERAL_STRING("remote-test-guid"),
@@ -424,17 +421,21 @@ sbRemotePlayer::OnCommandsChanged()
     NS_ENSURE_SUCCESS( rv, rv );
   }
 
-  nsCOMPtr<nsIDOMElement> playlist( do_QueryInterface( mWebPlaylistWidget, &rv) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
   // Tell the playlist about our default command settings.
   LOG(( "sbRemotePlayer::OnCommandsChanged() setting defaults %s",
         mUseDefaultCommands ? NS_LITERAL_STRING("true") :
                               NS_LITERAL_STRING("false") ));
-  playlist->SetAttribute( NS_LITERAL_STRING("usedefaultcommands"),
-                          mUseDefaultCommands ? NS_LITERAL_STRING("true") :
-                                                NS_LITERAL_STRING("false") );
 
+  //
+  // This is where we want to add code to register the default commands, when
+  // the api for that comes in to being.
+  //
+
+  // When the commands system is able to broadcast change notices about
+  // registered commands this can go away. In the meantime we need to tell
+  // the playlist to rescan so it picks up new/deleted commands.
+  // Theoretically we could just fire an event here, but it wasn't getting
+  // caught in the binding, need to look in to that more.
   mWebPlaylistWidget->RescanCommands();
   return NS_OK;
 }
