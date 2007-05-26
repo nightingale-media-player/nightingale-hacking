@@ -628,8 +628,8 @@
   
   if (!columnMap.length) {
     columnMap =
-      this._parseColumnSpec("http://songbirdnest.com/data/1.0#ordinal 33 a " +
-                            "http://songbirdnest.com/data/1.0#trackName 382 " +
+      this._parseColumnSpec("http://songbirdnest.com/data/1.0#ordinal 55 a " +
+                            "http://songbirdnest.com/data/1.0#trackName 350 " +
                             "http://songbirdnest.com/data/1.0#duration 50 " +
                             "http://songbirdnest.com/data/1.0#artistName 222 " +
                             "http://songbirdnest.com/data/1.0#albumName 222 " +
