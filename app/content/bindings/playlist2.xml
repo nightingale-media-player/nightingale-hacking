@@ -655,14 +655,16 @@
   columnMap.forEach(
     function(columnInfo) {
       var propertyInfo = pm.getPropertyInfo(columnInfo.property);
-      this._appendColumn(propertyInfo,
-                         false,
-                         columnInfo.width,
-                         columnInfo.sort,
-                         ordinal);
-      alreadyAdded[columnInfo.property] = true;
-      addedColumns++;
-      ordinal += 2;
+      if(propertyInfo.userViewable) {
+        this._appendColumn(propertyInfo,
+                          false,
+                          columnInfo.width,
+                          columnInfo.sort,
+                          ordinal);
+        alreadyAdded[columnInfo.property] = true;
+        addedColumns++;
+        ordinal += 2;
+      }
     },
     this);
 
@@ -674,13 +676,15 @@
     var propertyName = propEnumerator.getNext();
     if (!alreadyAdded[propertyName]) {
       var propertyInfo = pm.getPropertyInfo(propertyName);
-      this._appendColumn(propertyInfo,
-                         columnMap.length,
-                         null,
-                         null,
-                         ordinal);
-      addedColumns++;
-      ordinal += 2;
+      if(propertyInfo.userViewable) {
+        this._appendColumn(propertyInfo,
+                          columnMap.length,
+                          null,
+                          null,
+                          ordinal);
+        addedColumns++;
+        ordinal += 2;
+      }
     }
   }
 ]]>

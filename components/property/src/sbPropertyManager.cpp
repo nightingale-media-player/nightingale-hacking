@@ -250,9 +250,20 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Storage Guid
+  //Ordinal
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL), 
+                      NS_LITERAL_STRING("property.ordinal"),
+                      stringBundle, PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Storage Guid (internal use only)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID), EmptyString(),
                     stringBundle, PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Is List (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ISLIST), EmptyString(),
+    stringBundle, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Date created

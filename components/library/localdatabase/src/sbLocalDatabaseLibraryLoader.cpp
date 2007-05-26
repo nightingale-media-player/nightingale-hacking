@@ -47,6 +47,10 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibraryFactory.h"
 
+#include <sbIPropertyManager.h>
+#include <sbPropertiesCID.h>
+#include <sbStandardProperties.h>
+
 #define PROPERTY_KEY_DATABASEFILE "databaseFile"
 
 /**
@@ -565,7 +569,27 @@ sbLocalDatabaseLibraryLoader::OnRegisterStartupLibraries(sbILibraryManager* aLib
     mLibraryInfoTable.EnumerateRead(LoadLibrariesCallback, &info);
   NS_ASSERTION(enumeratedLibraries >= MINIMUM_LIBRARY_COUNT, "Too few libraries enumerated!");
 
-  return NS_OK;
+  nsCOMPtr<sbIPropertyManager> propManager = 
+    do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbITextPropertyInfo> textProperty = 
+    do_CreateInstance(SB_TEXTPROPERTYINFO_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = textProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = textProperty->SetUserViewable(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = textProperty->SetUserEditable(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propInfo = do_QueryInterface(textProperty, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return propManager->AddPropertyInfo(propInfo);
 }
 
 NS_IMETHODIMP
