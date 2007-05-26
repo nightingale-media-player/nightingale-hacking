@@ -370,7 +370,7 @@ sbRemotePlayer::GetCommands( sbIRemoteCommands **aCommandsObject )
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
 {
   NS_ENSURE_STATE(mCommandsObject);
