@@ -1,0 +1,135 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<html>
+  <head>
+  <script>
+// Test all the properties and methods of a remote media item.  Use simple
+// tests to test that things that should be acessible, and try/catch blocks
+// around the things that should not.
+const SB_NS = "http://songbirdnest.com/data/1.0#";
+function runTest(tester) {
+  try {
+
+    var library = songbird.siteLibrary("127.0.0.1", "/");
+    var item = library.createMediaItem("http://www.foo.com/foo.mp3");
+
+    // Test sbILibraryResource interface
+    tester.assertTrue(item.created > 0);
+    tester.assertTrue(item.updated > 0);
+
+    item.setProperty(SB_NS + "artistName", "foo");
+    tester.assertEqual(item.getProperty(SB_NS + "artistName"), "foo");
+
+    tester.assertTrue(item.equals(item));
+
+    try {
+      item.writeThrough = true;
+      tester.fail("did not throw");
+    }
+    catch(e) {}
+
+    try {
+      var junk = item.writePending;
+      tester.fail("did not throw");
+    }
+    catch(e) {}
+
+    try {
+      item.write();
+      tester.fail("did not throw");
+    }
+    catch(e) {}
+
+    // Test sbIMediaItem
+    tester.assertEqual(item.isMutable, true);
+    tester.assertTrue(item.mediaCreated > 0);
+    tester.assertTrue(item.mediaUpdated > 0);
+
+    item.contentLength = 123;
+    tester.assertEqual(item.contentLength, 123);
+
+    item.contentType = "text/html";
+    tester.assertEqual(item.contentType, "text/html");
+
+    try {
+      var junk = item.library;
+      tester.fail("did not throw");
+    }
+    catch(e) {}
+
+    try {
+      var junk = item.contentSrc;
+      tester.fail("did not throw");
+    }
+    catch(e) {}
+
+    try {
+      item.testIsAvailable(null);
+      tester.fail("did not throw");
+    }
+    catch(e) {}
+
+    try {
+      item.openInputStreamAsync(null, null);
+      tester.fail("did not throw");
+    }
+    catch(e) {}
+
+    try {
+      item.openInputStream();
+      tester.fail("did not throw");
+    }
+    catch(e) {}
+
+    try {
+      item.openOutputStream();
+      tester.fail("did not throw");
+    }
+    catch(e) {}
+
+    try {
+      item.toString();
+      tester.fail("did not throw");
+    }
+    catch(e) {}
+  }
+  catch(e) {
+    tester.endRemoteAPITest(e);
+  }
+  tester.endRemoteAPITest();
+}
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
+
+</script>
+  </head>
+  <body>test_remotemediaitem_page.html</body>
+</html>
+

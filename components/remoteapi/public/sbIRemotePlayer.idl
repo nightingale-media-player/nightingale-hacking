@@ -30,6 +30,7 @@
  */
 
 #include "nsISupports.idl"
+#include "sbIRemoteMediaList.idl"
 
 interface sbILibrary;
 interface sbIMediaList;
@@ -37,39 +38,11 @@ interface nsIArray;
 interface nsIDOMElement;
 interface nsIObserver;
 interface nsISimpleEnumerator;
+interface nsIStringEnumerator;
+interface sbIMediaItem;
 
 // forward decl for sbIRemoteCommands
 interface sbIRemotePlayer;
-
-[scriptable, uuid(4f30b35e-ff7c-4b2e-b290-10e1a7ae06b1)]
-interface sbIRemoteMediaList : nsISupports
-{
-  /**
-   * The display name of the media list
-   */
-  // attribute AString name;
-
-  /**
-   * The type of the media list
-   */
-  // readonly attribute AString type;
-
-  /**
-   * The number of items in the media list
-   */
-  // readonly attribute unsigned long length;
-
-  /**
-   * All of the artist names in the media list
-   */
-  // readonly nsIStringEnumerator artists
-
-  /**
-   * All of the album names in the media list
-   */
-  // readonly nsIStringEnumerator albums
-
-};
 
 [scriptable, uuid(3025cbf8-7969-4e79-8641-967a9f4e51b8)]
 interface sbIRemoteLibrary : sbIRemoteMedialist
@@ -90,21 +63,28 @@ interface sbIRemoteLibrary : sbIRemoteMedialist
    *       which is the reason for the second signature.
    * create and insert a media item into the library
    */
-  // sbIRemoteMediaItem createMediaItem(in AString aURL);
-  // void createMediaItem(in AString aURL);
+  sbIMediaItem createMediaItem(in AString aURL);
+  // void addMediaItem(in AString aURL);
 
   /**
    *
    */
-  // sbIRemoteMediaList createMediaList(in AString aType);
-  
+  sbIRemoteMediaList createMediaList(in AString aType);
+
   /**
    * Take a playlist url and add the media and list to the library
    */
   // sbIRemoteMediaList addMediaListFromURL(in AString aURL);
 
   /**
+   * \brief An array of sbIMediaLists
+   */
+  // readonly attribute nsISimpleEnumerator playlists;
+
+  /**
    * Add a media list and the tracks in it to the library
+   *  this may be down the road of copying across libraries so this one
+   *  might need to wait.
    */
   // void addMediaListElement(in sbIRemoteMediaList aMediaList);
 
@@ -141,7 +121,6 @@ interface sbIRemoteCommands : nsISupports
 [scriptable, uuid(40964944-5243-4a16-886b-14c1cbaa79d9)]
 interface sbIRemotePlayer : nsISupports
 {
-
   /**
    * \brief The name of the player
    */
@@ -149,9 +128,8 @@ interface sbIRemotePlayer : nsISupports
 
   /**
    * \brief The current web playlist
-   * NOTE: NOT IMPLEMENTED
    */
-  readonly attribute sbIMediaList webPlaylist;
+  attribute sbIRemoteMediaList webPlaylist;
 
   /**
    * \brief The name of the artist for the currently playing track

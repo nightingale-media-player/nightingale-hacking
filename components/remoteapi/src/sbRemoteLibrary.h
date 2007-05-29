@@ -27,16 +27,21 @@
 #ifndef __SB_REMOTE_LIBRARY_H__
 #define __SB_REMOTE_LIBRARY_H__
 
+#include "sbRemoteMediaItem.h"
+#include "sbRemoteMediaList.h"
+
 #include <sbIRemotePlayer.h>
 #include <sbILibrary.h>
 #include <sbISecurityMixin.h>
 #include <sbISecurityAggregator.h>
+#include <sbIMediaListView.h>
 
 #include <nsIFile.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsCOMPtr.h>
+#include <nsAutoPtr.h>
 
 #define SONGBIRD_REMOTELIBRARY_CONTRACTID               \
   "@songbirdnest.com/remoteapi/remotelibrary;1"
@@ -61,6 +66,7 @@ public:
   NS_DECL_NSISECURITYCHECKEDCOMPONENT
   NS_DECL_SBISECURITYAGGREGATOR
   NS_DECL_SBIREMOTELIBRARY
+  NS_DECL_SBIREMOTEMEDIALIST
 
   sbRemoteLibrary();
   nsresult Init();
@@ -94,5 +100,84 @@ protected:
   nsString mFilename;
 #endif
 };
+
+static nsresult
+SB_WrapMediaItem(sbIMediaItem* aMediaItem,
+                 sbIMediaItem** aRemoteMediaItem)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aRemoteMediaItem);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(aMediaItem, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    nsCOMPtr<sbIMediaListView> mediaListView;
+    rv = mediaList->CreateView(getter_AddRefs(mediaListView));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoPtr<sbRemoteMediaList> remoteMediaList(
+      new sbRemoteMediaList(mediaList, mediaListView));
+    NS_ENSURE_TRUE(remoteMediaList, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = remoteMediaList->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ADDREF(*aRemoteMediaItem = remoteMediaList.forget());
+  }
+  else {
+    nsAutoPtr<sbRemoteMediaItem> remoteMediaItem(
+      new sbRemoteMediaItem(aMediaItem));
+    NS_ENSURE_TRUE(remoteMediaItem, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = remoteMediaItem->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ADDREF(*aRemoteMediaItem = remoteMediaItem.forget());
+  }
+
+  return NS_OK;
+}
+
+static nsresult
+SB_WrapMediaList(sbIMediaList* aMediaList,
+                 sbIMediaList** aRemoteMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aRemoteMediaList);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaListView> mediaListView;
+  rv = aMediaList->CreateView(getter_AddRefs(mediaListView));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoPtr<sbRemoteMediaList> remoteMediaList(
+    new sbRemoteMediaList(aMediaList, mediaListView));
+  NS_ENSURE_TRUE(remoteMediaList, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = remoteMediaList->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*aRemoteMediaList = remoteMediaList.forget());
+
+  return NS_OK;
+}
+
+static nsresult
+SB_WrapMediaList(sbIMediaList* aMediaList,
+                 sbIRemoteMediaList** aRemoteMediaList)
+{
+  nsCOMPtr<sbIMediaList> mediaList;
+  nsresult rv = SB_WrapMediaList(aMediaList, getter_AddRefs(mediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIRemoteMediaList> remoteMediaList =
+    do_QueryInterface(mediaList, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*aRemoteMediaList = remoteMediaList);
+  return NS_OK;
+}
 
 #endif // __SB_REMOTE_LIBRARY_H__

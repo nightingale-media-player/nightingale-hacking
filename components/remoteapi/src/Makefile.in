@@ -41,6 +41,8 @@ CPP_SRCS = sbSecurityMixin.cpp \
            sbRemoteLibrary.cpp \
            sbRemotePlayer.cpp \
            sbRemoteCommands.cpp \
+           sbRemoteMediaList.cpp \
+           sbRemoteMediaItem.cpp \
            sbRemoteAPIModule.cpp \
            $(NULL)
 
@@ -52,6 +54,7 @@ CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/bindings/public \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/library/localdatabase/src \
+               $(topsrcdir)/components/remoteapi/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/appshell \
                $(MOZSDK_INCLUDE_DIR)/caps \

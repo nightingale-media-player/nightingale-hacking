@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbISecurityAggregator.idl \
              sbISecurityMixin.idl \
              sbIRemotePlayer.idl \
+             sbIRemoteMediaList.idl \
              $(NULL)
 
 XPIDL_INCLUDES = $(COMPONENTS_DIR)/medialibrary/public \

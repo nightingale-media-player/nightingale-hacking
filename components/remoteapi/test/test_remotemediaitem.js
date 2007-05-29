@@ -21,7 +21,7 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 // END SONGBIRD GPL
-//
+//  
 */
 
 /**
@@ -33,19 +33,11 @@ function runTest () {
   setRapiPref("disable_controls", false);
   setRapiPref("disable_metadata", false);
 
-  beginRemoteAPITest("test_remotelibrary_page.html", startTesting);
+  beginRemoteAPITest("test_remotemediaitem_page.html", startTesting);
 }
 
 function startTesting() {
 
-  try {
-    //var songbird = testBrowserWindow.songbird;
-    //var library = songbird.siteLibrary("127.0.0.1", "/");
-  }
-  catch(e) {
-    endRemoteAPITest(e);
-  }
-
-  endRemoteAPITest();
+  testBrowserWindow.runPageTest(this);
 }
 

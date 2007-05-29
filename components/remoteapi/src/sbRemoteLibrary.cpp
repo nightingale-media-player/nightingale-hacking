@@ -25,9 +25,14 @@
  */
 
 #include "sbRemoteLibrary.h"
+#include "sbRemoteMediaList.h"
+#include "sbRemoteMediaItem.h"
+
 #include <sbILibrary.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
+#include <sbIMediaList.h>
+#include <sbIMediaListView.h>
 #include <sbLocalDatabaseCID.h>
 
 #include <nsComponentManagerUtils.h>
@@ -55,9 +60,11 @@
 #include <nsIWindowWatcher.h>
 #include <nsIWritablePropertyBag2.h>
 #include <nsMemory.h>
+#include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <nsWeakPtr.h>
+#include <nsAutoPtr.h>
 #include <prlog.h>
 #include <prnetdb.h>
 
@@ -103,6 +110,8 @@ const static char* sPublicRProperties[] =
 const static char* sPublicMethods[] =
   { "binding:connectToMediaLibrary",
     "binding:addMediaItem",
+    "binding:createMediaList",
+    "binding:createMediaItem",
     "binding:addMediaListByURL" };
 
 NS_IMPL_ISUPPORTS4( sbRemoteLibrary,
@@ -226,6 +235,75 @@ sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aDomain, const nsAStrin
   return NS_OK;
 } 
 
+NS_IMETHODIMP
+sbRemoteLibrary::CreateMediaItem(const nsAString& aURL,
+                                 sbIMediaItem** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_STATE(mLibrary);
+
+  nsCOMPtr<nsIURI> uri;
+  nsresult rv = NS_NewURI(getter_AddRefs(uri), aURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Only allow the creation of media items with http(s) schemes
+  nsCAutoString scheme;
+  rv = uri->GetScheme(scheme);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!(scheme.Equals("http") || scheme.Equals("https"))) {
+    return NS_ERROR_INVALID_ARG;
+  }
+
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  rv = mLibrary->CreateMediaItem(uri, getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return SB_WrapMediaItem(mediaItem, _retval);
+}
+
+NS_IMETHODIMP
+sbRemoteLibrary::CreateMediaList(const nsAString& aType,
+                                 sbIRemoteMediaList** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_STATE(mLibrary);
+
+  nsCOMPtr<sbIMediaList> mediaList;
+  nsresult rv = mLibrary->CreateMediaList(aType, getter_AddRefs(mediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return SB_WrapMediaList(mediaList, _retval);
+}
+
+// ---------------------------------------------------------------------------
+//
+//                        sbIRemoteMediaList
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemoteLibrary::GetSelection( nsISimpleEnumerator **aSelection )
+{
+  LOG1(("sbRemoteLibrary::GetSelection()"));
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibrary::EnsureColumVisible( const nsAString& aPropertyName,
+                                     const nsAString& aColumnType )
+{
+  LOG1(("sbRemoteLibrary::EnsureColumVisible()"));
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibrary::SetSelectionByIndex( PRUint32 aIndex, PRBool aSelected )
+{
+  LOG1(("sbRemoteLibrary::SetSelectionByIndex()"));
+  return NS_OK;
+}
+
 // ---------------------------------------------------------------------------
 //
 //                            Helper Methods
@@ -319,6 +397,7 @@ nsresult
 sbRemoteLibrary::CheckDomain( nsAString &aDomain,  nsIURI *aSiteURI )
 {
   NS_ENSURE_ARG_POINTER(aSiteURI);
+
   LOG1(( "sbRemoteLibrary::CheckDomain(%s)",
          NS_LossyConvertUTF16toASCII(aDomain).get() ));
 

@@ -113,7 +113,7 @@ function setupBrowser(page, continueFunction) {
   browser.setAttribute("flex", "1");
   document.documentElement.appendChild(browser);
 
-  var url = "http://localhost:8080/" + page + "?" + Math.random();
+  var url = "http://127.0.0.1:8080/" + page + "?" + Math.random();
   var listener = new ContinuingWebProgressListener(url, continueFunction);
   browser.webProgress.addProgressListener(listener, Ci.nsIWebProgress.NOTIFY_STATE_REQUEST);
   browser.loadURI(url);

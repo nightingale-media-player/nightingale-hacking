@@ -410,6 +410,20 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   return rv;
 }
 
+NS_IMETHODIMP 
+sbRemotePlayer::GetWebPlaylist( sbIRemoteMediaList **aWebplaylist )
+{
+  LOG(("sbRemotePlayer::GetWebPlaylist()"));
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::SetWebPlaylist( sbIRemoteMediaList *aWebplaylist )
+{
+  LOG(("sbRemotePlayer::SetWebPlaylist()"));
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 NS_IMETHODIMP
 sbRemotePlayer::OnCommandsChanged()
 {
@@ -438,14 +452,6 @@ sbRemotePlayer::OnCommandsChanged()
   // caught in the binding, need to look in to that more.
   mWebPlaylistWidget->RescanCommands();
   return NS_OK;
-}
-
-
-NS_IMETHODIMP 
-sbRemotePlayer::GetWebPlaylist( sbIMediaList **aWebplaylist )
-{
-  LOG(("sbRemotePlayer::GetWebPlaylist()"));
-  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP 
