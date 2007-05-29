@@ -451,6 +451,10 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::OnChannelDataAvailable(
     PRBool                      channelCompleted;
     nsresult                    result = NS_OK;
 
+    /* Do nothing if the metadata reading is complete. */
+    if (mCompleted)
+        return (result);
+
     /* Process channel data and complete processing on any exception. */
     try
     {

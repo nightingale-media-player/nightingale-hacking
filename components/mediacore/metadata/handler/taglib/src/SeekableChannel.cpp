@@ -425,8 +425,17 @@ NS_IMETHODIMP sbSeekableChannel::GetSize(
 }
 
 
-/*zzz is this really needed?  Should it return true when the base channel */
-/*zzz completes, or when all the data from the channel has been read? */
+/*
+ * GetCompleted
+ *
+ *   <-- pCompleted             True if channel reading is complete.
+ *
+ *   This function returns in pCompleted the channel reading complete state.  If
+ * all the data for the channel has been read or if a channel read error
+ * occured, this function returns true in pCompleted; otherwise, it returns
+ * false.
+ */
+
 NS_IMETHODIMP sbSeekableChannel::GetCompleted(
     PRBool                      *pCompleted)
 {
@@ -437,7 +446,7 @@ NS_IMETHODIMP sbSeekableChannel::GetCompleted(
         result = NS_ERROR_NULL_POINTER;
 
     /* Return results. */
-    *pCompleted = PR_FALSE;
+    *pCompleted = mCompleted;
 
     return (result);
 }
@@ -474,17 +483,20 @@ NS_IMETHODIMP sbSeekableChannel::OnDataAvailable(
 {
     nsresult                    result = NS_OK;
 
-    /* Check if channel is restarting. */
+    /* Do nothing if channel is restarting. */
     if (mRestarting)
-        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
+        return (NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART);
 
     /* Read the base channel data into a data segment. */
-    if (NS_SUCCEEDED(result))
-        result = ReadSegment(pStream, numBytes);
+    if (numBytes > 0)
+    {
+        mDataReceivedSinceStart = PR_TRUE;
+        ReadSegment(pStream, numBytes);
+    }
 
     /* Call the OnChannelDataAvailable handler. */
     /*zzz should read minimum block size before calling handler. */
-    if (NS_SUCCEEDED(result))
+    if (mpListener)
         mpListener->OnChannelDataAvailable(this);
 
     return (result);
@@ -517,6 +529,10 @@ NS_IMETHODIMP sbSeekableChannel::OnStartRequest(
     /* Channel restart is complete. */
     mRestarting = PR_FALSE;
 
+    /* Indicate that no data has been received */
+    /* since the start of the request.         */
+    mDataReceivedSinceStart = PR_FALSE;
+
     /* Get the channel content length, preserving the sign. */
     if (!mContentLength)
     {
@@ -547,6 +563,19 @@ NS_IMETHODIMP sbSeekableChannel::OnStopRequest(
     nsresult                    status)
 {
     nsresult                    result = NS_OK;
+
+    /* Do nothing if channel is restarting. */
+    if (mRestarting)
+        return (NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART);
+
+    /* Channel reading is complete on error or if no data */
+    /* has been received since the request was started.   */
+    if (NS_FAILED(status) || !mDataReceivedSinceStart)
+        mCompleted = PR_TRUE;
+
+    /* Call the OnChannelDataAvailable handler. */
+    if (mpListener)
+        mpListener->OnChannelDataAvailable(this);
 
     return (result);
 }
@@ -633,6 +662,8 @@ NS_IMETHODIMP sbSeekableChannel::GetInterface(
  */
 
 sbSeekableChannel::sbSeekableChannel()
+:
+    mCompleted(PR_FALSE)
 {
 }
 
@@ -714,6 +745,11 @@ nsresult sbSeekableChannel::ReadSegment(
         result = InsertSegment(pSegment);
     if (NS_SUCCEEDED(result))
         pSegment = NULL;
+
+    /* Channel reading is complete if an error occured */
+    /* or if all of the channel data has been read.    */
+    if (NS_FAILED(result) || AllDataRead())
+        mCompleted = PR_TRUE;
 
     /* Clean up on error. */
     if (!NS_SUCCEEDED(result))
@@ -841,6 +877,37 @@ nsresult sbSeekableChannel::MergeSegments(
         *ppMergedSegment = pToSegment;
 
     return (result);
+}
+
+
+/*
+ * AllDataRead
+ *
+ *   <--                        True if all channel data has been read.
+ *
+ *   This function returns true if all of the channel data has been read.
+ */
+
+PRBool sbSeekableChannel::AllDataRead()
+{
+    DataSet::iterator           dataSetIterator;
+    Segment                     *pFirstSegment;
+    PRBool                      allDataRead = PR_FALSE;
+
+    /* When all data has been read, the data set will consist of */
+    /* a single segment containing all of the channel content.   */
+    dataSetIterator = mChannelData.begin();
+    if (dataSetIterator != mChannelData.end())
+    {
+        pFirstSegment = *dataSetIterator;
+        if (   (pFirstSegment->offset == 0)
+            && (pFirstSegment->length == mContentLength))
+        {
+            allDataRead = PR_TRUE;
+        }
+    }
+
+    return (allDataRead);
 }
 
 

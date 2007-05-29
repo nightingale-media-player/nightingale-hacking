@@ -195,6 +195,9 @@ class sbSeekableChannel : public sbISeekableChannel,
      * mPos                         Current position within channel.
      * mBasePos                     Current position within base channel.
      * mRestarting                  True if restarting channel.
+     * mCompleted                   True if channel reading is complete.
+     * mDataReceivedSinceStart      True if data has been received since the
+     *                              channel request was started.
      */
 
     nsCOMPtr<nsIChannel>            mpChannel;
@@ -205,6 +208,8 @@ class sbSeekableChannel : public sbISeekableChannel,
     PRUint64                        mPos;
     PRUint64                        mBasePos;
     PRBool                          mRestarting;
+    PRBool                          mCompleted;
+    PRBool                          mDataReceivedSinceStart;
 
 
     /*
@@ -222,6 +227,8 @@ class sbSeekableChannel : public sbISeekableChannel,
         Segment                     *pSegment1,
         Segment                     *pSegment2,
         Segment                     **ppMergedSegment);
+
+    PRBool AllDataRead();
 
     nsresult Restart(
         PRUint64                    pos);
