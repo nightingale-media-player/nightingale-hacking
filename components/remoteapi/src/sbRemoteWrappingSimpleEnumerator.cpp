@@ -41,12 +41,14 @@
 
 const static char* sPublicWProperties[] =
 {
-  // none
+  // Need this empty string to make VC happy
+  ""
 };
 
 const static char* sPublicRProperties[] =
 {
-  // none
+  // Need this empty string to make VC happy
+  ""
 };
 
 const static char* sPublicMethods[] =
