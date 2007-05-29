@@ -168,8 +168,11 @@ function runTest(tester) {
     list.clear();
     tester.assertEqual(list.length, 0);
 
+    var enumerator = list.selection;
+    tester.assertFalse(enumerator.hasMoreElements());
+
     try {
-      list.enumerateItemsByPropertues(null, null, 0);
+      list.enumerateItemsByProperties(null, null, 0);
       tester.fail("did not throw");
     }
     catch(e) {}

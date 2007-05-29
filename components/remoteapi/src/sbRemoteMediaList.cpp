@@ -26,10 +26,13 @@
 
 #include "sbRemoteMediaList.h"
 #include "sbRemoteLibrary.h"
+#include "sbRemoteWrappingSimpleEnumerator.h"
 
 #include <sbIRemoteMediaList.h>
+#include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
+#include <sbIMediaListViewTreeView.h>
 #include <sbIWrappedMediaItem.h>
 #include <sbIWrappedMediaList.h>
 
@@ -137,7 +140,6 @@ const static char* sPublicMethods[] =
   "library:addAll",
   "library:remove",
   "library:removeByIndex",
-  "library:removeSome",
   "library:clear",
   "library:getDistinctValuesForProperty",
 
@@ -163,6 +165,9 @@ sbRemoteMediaList::sbRemoteMediaList(sbIMediaList* aMediaList,
 {
   NS_ASSERTION(aMediaList, "Null media list!");
   NS_ASSERTION(aMediaListView, "Null media list view!");
+
+  mMediaItem = do_QueryInterface(mMediaList);
+  NS_ASSERTION(mMediaItem, "Could not QI media list to media item");
 
 #ifdef PR_LOGGING
   if (!gRemoteMediaListLog) {
@@ -217,27 +222,6 @@ sbRemoteMediaList::GetMediaList()
   sbIMediaList* list = mMediaList;
   NS_ADDREF(list);
   return list;
-}
-
-// ---------------------------------------------------------------------------
-//
-//                        sbILibraryResource
-//
-// ---------------------------------------------------------------------------
-
-NS_IMETHODIMP
-sbRemoteMediaList::SetProperty(const nsAString& aName,
-                               const nsAString& aValue)
-{
-  // I don't trust web people to rembmer to call write, so we'll do it for
-  // them
-  nsresult rv = mMediaList->SetProperty(aName, aValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMediaList->Write();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
 }
 
 // ---------------------------------------------------------------------------
@@ -412,6 +396,26 @@ NS_IMETHODIMP
 sbRemoteMediaList::GetSelection( nsISimpleEnumerator **aSelection )
 {
   LOG(("sbRemoteMediaList::GetSelection()"));
+
+  nsCOMPtr<nsITreeView> treeView;
+  nsresult rv = mMediaListView->GetTreeView(getter_AddRefs(treeView));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaListViewTreeView> mlvtv = do_QueryInterface(treeView, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISimpleEnumerator> selection;
+  rv = mlvtv->GetSelectedMediaItems(getter_AddRefs(selection));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoPtr<sbRemoteWrappingSimpleEnumerator> wrapped(
+    new sbRemoteWrappingSimpleEnumerator(selection));
+  NS_ENSURE_TRUE(wrapped, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = wrapped->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*aSelection = wrapped.forget());
   return NS_OK;
 }
 
