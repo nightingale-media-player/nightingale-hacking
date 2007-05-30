@@ -1002,10 +1002,14 @@
         var self = this;
         window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
         this._hrefLoop = null;
+        this._onplaylistplay = { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.onPlaylistPlay(event); } 
+        }; this._onplaylistplay._that = this; 
       ]]></constructor>
      <destructor><![CDATA[
         if (this.previousInnerPlaylist) {
-          this.previousInnerPlaylist.removeEventListener("playlist-play", this.onPlaylistPlay, true);
+          this.previousInnerPlaylist.removeEventListener("playlist-play", this._onplaylistplay, true);
           this.previousInnerPlaylist.removeEventListener("playlist-editor", this.onPlaylistEditor, true);
           this.previousInnerPlaylist = null;
         }
@@ -1134,7 +1138,7 @@
               'http://songbirdnest.com/data/1.0#genre 70');
 
           // add some events, eh?
-          this._playlist.addEventListener("playlist-play", this.onPlaylistPlay, true);
+          this._playlist.addEventListener("playlist-play", this._onplaylistplay, true);
           this._playlist.addEventListener("playlist-editor", this.onPlaylistEditor, true);
           // FIXME: remove the event listener on the destructor, I guess
           
@@ -1375,11 +1379,11 @@
           
           // add some events, eh?
           if (this.previousInnerPlaylist) {
-            this.previousInnerPlaylist.removeEventListener("playlist-play", this.onPlaylistPlay, true);
+            this.previousInnerPlaylist.removeEventListener("playlist-play", this._onplaylistplay, true);
             this.previousInnerPlaylist.removeEventListener("playlist-editor", this.onPlaylistEditor, true);
             this.previousInnerPlaylist = null;
           }
-          playlist.addEventListener("playlist-play", this.onPlaylistPlay, true);
+          playlist.addEventListener("playlist-play", this._onplaylistplay, true);
           playlist.addEventListener("playlist-editor", this.onPlaylistEditor, true);
           this.previousInnerPlaylist = playlist;
   
