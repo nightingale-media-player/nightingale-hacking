@@ -38,7 +38,7 @@ function runTest () {
     var library = enumerator.getNext();
     libraryCount++;
   }
-  assertTrue(libraryCount >= 3);
+  assertTrue(libraryCount >= 2);
   
   enumerator = libraryManager.getLibraries();
   var library = enumerator.getNext();
