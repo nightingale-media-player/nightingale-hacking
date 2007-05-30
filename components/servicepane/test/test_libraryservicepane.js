@@ -223,9 +223,9 @@ function testLibrariesAndContents() {
     testLibraryMediaLists(library);
   }
   
-  // We should have seen at least the main, web, and download libs
+  // We should have seen at least the main and web libs
   DBG("processed " + count + " libraries");
-  assertEqual(count >= 3, true);
+  assertEqual(count >= 2, true);
   
   DBG("done");
 }
