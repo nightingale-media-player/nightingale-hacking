@@ -587,10 +587,20 @@ function onBrowserTransfer(mediaItems)
                 // Pick download destination
                 if ( ( download_data.retval == "ok" ) && ( download_data.value.length > 0 ) )
                 {
-                  var downloadLibrary = downloadDevice.getLibrary("download");
+                  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                        .getService(Components.interfaces.nsIPrefBranch2);
+                  var downloadListGUID =
+                    prefs.getComplexValue("songbird.library.download",
+                                          Components.interfaces.nsISupportsString);
+                  
+                  var libraryManager =
+                    Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                              .getService(Components.interfaces.sbILibraryManager);
+                  var downloadList = libraryManager.mainLibrary.getMediaItem(downloadListGUID);
+                  
                   while (mediaItems.hasMoreElements())
                   {
-                      downloadLibrary.add(mediaItems.getNext());
+                      downloadList.add(mediaItems.getNext());
                   }
                 }
             }

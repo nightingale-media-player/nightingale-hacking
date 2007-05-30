@@ -275,11 +275,11 @@
       <field name="PREF_WEB_LIBRARY">"songbird.library.web"</field>
       <field name="PREF_DOWNLOAD_LIBRARY">"songbird.library.download"</field>
       
-      <field name="_downloadLibrary">null</field>
-      <property name="downloadLibrary">
+      <field name="_downloadList">null</field>
+      <property name="downloadList">
         <getter><![CDATA[
-          if (this._downloadLibrary) {
-            return this._downloadLibrary;
+          if (this._downloadList) {
+            return this._downloadList;
           }
           
           var guid = this._getUnicodeStringPref(this.PREF_DOWNLOAD_LIBRARY);
@@ -287,8 +287,9 @@
           var libraryManager =
             Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                       .getService(Components.interfaces.sbILibraryManager);
+          var mainLibrary = libraryManager.mainLibrary;
 
-          return this._downloadLibrary = libraryManager.getLibrary(guid);
+          return this._downloadList = mainLibrary.getMediaItem(guid);
         ]]></getter>
       </property>
       
@@ -1042,11 +1043,11 @@
         ]]></getter>
       </property>
       
-      <field name="_downloadLibraryCache">null</field>
-      <property name="_downloadLibrary">
+      <field name="_downloadListCache">null</field>
+      <property name="_downloadList">
         <getter><![CDATA[
-          if (this._downloadLibraryCache) {
-            return this._downloadLibraryCache;
+          if (this._downloadListCache) {
+            return this._downloadListCache;
           }
           
           var prefs = Components.classes["@mozilla.org/preferences-service;1"]
@@ -1057,8 +1058,10 @@
           var libraryManager =
             Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                       .getService(Components.interfaces.sbILibraryManager);
+          
+          var mainLibrary = libraryManager.mainLibrary;
 
-          return (this._downloadLibraryCache = libraryManager.getLibrary(guid));
+          return (this._downloadListCache = mainLibrary.getMediaItem(guid));
         ]]></getter>
       </property>
 
@@ -1467,7 +1470,7 @@
           // Save this for later if we swap back.
           this._swappedPlaylistView = this.outerPlaylist.mediaListView;
           
-          var view = this._downloadLibrary.createView();
+          var view = this._downloadList.createView();
           
           this.outerPlaylist.bind(view, SBDownloadCommands,
                                   SBDataGetIntValue("browser.playlist.height"),

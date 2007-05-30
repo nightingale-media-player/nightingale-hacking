@@ -104,7 +104,7 @@
                              SB_PROPERTY_ARTISTNAME " 222 "                    \
                              SB_PROPERTY_ALBUMNAME " 222 "                     \
                              SB_PROPERTY_PROGRESSVALUE
-#define SB_PREF_DOWNLOAD_LIBRARY "songbird.library.download"
+#define SB_PREF_DOWNLOAD_MEDIALIST "songbird.library.download"
 #define SB_PREF_WEB_LIBRARY     "songbird.library.web"
 
 
@@ -179,11 +179,10 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
                                 pPropertyManager;
     nsCOMPtr<sbIURIPropertyInfo>
                                 pURIPropertyInfo;
-    nsCOMPtr<sbIMediaList>      pMediaList;
     nsString                    *pNullNSString = nsnull;
     nsString                    &nullNSStringRef = *pNullNSString;
-    nsCOMPtr<nsISupportsString> pSupportsString;
-    nsAutoString                libraryGUID;
+    nsCOMPtr<sbILibraryManager> pLibraryManager;
+    nsCOMPtr<sbILibrary>        pMainLibrary;
     nsCOMPtr<nsIPrefBranch>     pPrefBranch;
     nsresult                    result = NS_OK;
 
@@ -205,6 +204,21 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
                                     &result);
     }
 
+    /* Get the pref service. */
+    if (NS_SUCCEEDED(result))
+    {
+        pPrefBranch =
+            do_GetService(NS_PREFSERVICE_CONTRACTID, &result);
+    }
+
+    /* Get the library manager. */
+    if (NS_SUCCEEDED(result))
+    {
+        pLibraryManager =
+            do_GetService("@songbirdnest.com/Songbird/library/Manager;1",
+                          &result);
+    }
+
     /* Get the string bundle. */
     if (NS_SUCCEEDED(result))
     {
@@ -222,22 +236,26 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         }
     }
 
+
+    /* Get the main library. */
+    if (NS_SUCCEEDED(result))
+    {
+        result = pLibraryManager->GetMainLibrary(getter_AddRefs(pMainLibrary));
+    }
+
     /* Get the web library. */
     if (NS_SUCCEEDED(result))
     {
-        nsCOMPtr<sbILibraryManager> pLibraryManager;
-        nsCOMPtr<nsIPrefBranch>     pPrefService;
         nsCOMPtr<nsISupportsString> pSupportsString;
         nsAutoString                webLibraryGUID;
 
         /* Read the web library GUID from the preferences. */
-        pPrefService = do_GetService(NS_PREFSERVICE_CONTRACTID, &result);
         if (NS_SUCCEEDED(result))
         {
-            result = pPrefService->GetComplexValue
-                                            (SB_PREF_WEB_LIBRARY,
-                                             NS_GET_IID(nsISupportsString),
-                                             getter_AddRefs(pSupportsString));
+            result = pPrefBranch->GetComplexValue
+                                  (SB_PREF_WEB_LIBRARY,
+                                   NS_GET_IID(nsISupportsString),
+                                   getter_AddRefs(pSupportsString));
         }
         if (NS_SUCCEEDED(result))
             result = pSupportsString->GetData(webLibraryGUID);
@@ -245,62 +263,117 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         /* Get the web library. */
         if (NS_SUCCEEDED(result))
         {
-            pLibraryManager = do_GetService
-                                ("@songbirdnest.com/Songbird/library/Manager;1",
-                                 &result);
-        }
-        if (NS_SUCCEEDED(result))
-        {
             result = pLibraryManager->GetLibrary(webLibraryGUID,
                                                  getter_AddRefs(mpWebLibrary));
         }
+
     }
 
-    /* Create the download device library. */
+    /* See if we need to make a new media list for ourselves in the main library. */
+    if (NS_SUCCEEDED(result)) 
+    {
+        nsCOMPtr<nsISupportsString> pSupportsString;
+        nsAutoString downloadMediaListGUID;
+
+         /* Read the media list GUID from the preferences. */
+        if (NS_SUCCEEDED(result))
+        {
+            result = pPrefBranch->GetComplexValue
+                                  (SB_PREF_DOWNLOAD_MEDIALIST,
+                                   NS_GET_IID(nsISupportsString),
+                                   getter_AddRefs(pSupportsString));
+        }
+
+        if (NS_SUCCEEDED(result))
+        {
+            /* Get the GUID. */
+            result = pSupportsString->GetData(downloadMediaListGUID);
+
+            if (NS_SUCCEEDED(result))
+            {
+                nsCOMPtr<sbIMediaItem> pMediaItem;
+                result = pMainLibrary->GetMediaItem(downloadMediaListGUID,
+                                                    getter_AddRefs(pMediaItem));
+
+                if (NS_SUCCEEDED(result))
+                {
+                    mpDownloadMediaList = do_QueryInterface(pMediaItem, &result);
+
+                    if (NS_FAILED(result))
+                    {
+                        mpDownloadMediaList = nsnull;
+                    }
+                }
+            }
+        }
+        result = NS_OK;
+    }
+
+    /* Make a new media list if we still don't have one. */
+    if (NS_SUCCEEDED(result) && !mpDownloadMediaList)
+    {
+        result = pMainLibrary->CreateMediaList(NS_LITERAL_STRING("simple"),
+                                               getter_AddRefs(mpDownloadMediaList));
+    }
+
+    /* Make a listener for the media list. */
     if (NS_SUCCEEDED(result))
     {
-        result = CreateDeviceLibrary(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
-                                     nsnull,
-                                     this);
+        NS_NAMED_LITERAL_STRING(deviceID, SB_DOWNLOAD_DEVICE_ID);
+
+        nsRefPtr<sbDeviceBaseLibraryListener> listener;
+        NS_NEWXPCOM(listener, sbDeviceBaseLibraryListener);
+
+        if (!listener)
+            result = NS_ERROR_OUT_OF_MEMORY;
+
+        if (NS_SUCCEEDED(result))
+        {
+            result = listener->Init(deviceID, this);
+        }
+        
+
+        if (NS_SUCCEEDED(result))
+        {
+            result = mpDownloadMediaList->AddListener(listener);
+        }
+
+        if (NS_SUCCEEDED(result))
+        {
+            result = SetListenerForDeviceLibrary(deviceID, listener);
+        }
     }
 
-    /* Get the download device library. */
+    /* Set our media list guid into the prefs so other folks can find us. */
     if (NS_SUCCEEDED(result))
     {
-        result = GetLibraryForDevice(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
-                                     getter_AddRefs(mpDownloadLibrary));
-    }
+        nsCOMPtr<nsISupportsString> pSupportsString;
+        nsAutoString downloadMediaListGUID;
 
-    /* Set the library guid into the prefs so other folks can find us. */
-    if (NS_SUCCEEDED(result)) {
-        pPrefBranch =
-            do_GetService(NS_PREFSERVICE_CONTRACTID, &result);
+        pSupportsString =
+            do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &result);
 
-        if (NS_SUCCEEDED(result)) {
-            pSupportsString =
-                do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &result);
+        if (NS_SUCCEEDED(result))
+        {
+            result = mpDownloadMediaList->GetGuid(downloadMediaListGUID);
         }
 
-        if (NS_SUCCEEDED(result)) {
-            result = mpDownloadLibrary->GetGuid(libraryGUID);
+        if (NS_SUCCEEDED(result))
+        {
+            result = pSupportsString->SetData(downloadMediaListGUID);
         }
 
-        if (NS_SUCCEEDED(result)) {
-            result = pSupportsString->SetData(libraryGUID);
-        }
-
-        if (NS_SUCCEEDED(result)) {
-            result = pPrefBranch->SetComplexValue(SB_PREF_DOWNLOAD_LIBRARY,
+        if (NS_SUCCEEDED(result))
+        {
+            result = pPrefBranch->SetComplexValue(SB_PREF_DOWNLOAD_MEDIALIST,
                                                   NS_GET_IID(nsISupportsString),
                                                   pSupportsString);
         }
     }
 
-    /* Set the download device library name.  */
+    /* Set the download device media list name.  */
     if (NS_SUCCEEDED(result))
-        pMediaList = do_QueryInterface(mpDownloadLibrary, &result);
-    if (NS_SUCCEEDED(result))
-        result = pMediaList->SetName(NS_LITERAL_STRING(SB_DOWNLOAD_LIB_NAME));
+        result = mpDownloadMediaList->SetName(NS_LITERAL_STRING(SB_DOWNLOAD_LIB_NAME));
 
     /* Set the download device playlist default column spec. */
     if (NS_SUCCEEDED(result))
@@ -308,18 +381,14 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         nsString                    downloadColSpec;
 
         downloadColSpec.AppendLiteral(SB_DOWNLOAD_COL_SPEC);
-        result = pMediaList->SetProperty
-                            (NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
-                             downloadColSpec);
+        result = mpDownloadMediaList->SetProperty
+                                      (NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
+                                      downloadColSpec);
     }
 
     /* Write the download device library. */
     if (NS_SUCCEEDED(result))
-        result = mpDownloadLibrary->Write();
-
-    /* Register the download device library. */
-    if (NS_SUCCEEDED(result))
-        result = RegisterDeviceLibrary(mpDownloadLibrary);
+        result = mpDownloadMediaList->Write();
 
     /* Create the device transfer queue. */
     if (NS_SUCCEEDED(result))
@@ -451,9 +520,6 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
 
         /* Remove the device transfer queue. */
         RemoveTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
-
-        /* Unregister the download device library. */
-        UnregisterDeviceLibrary(mpDownloadLibrary);
     }
 
     /* Dispose of the device lock. */
@@ -1212,7 +1278,6 @@ PRBool sbDownloadDevice::GetNextTransferItem(
 
 nsresult sbDownloadDevice::ResumeTransfers()
 {
-    nsCOMPtr<sbIMediaList>      pMediaList;
     nsCOMPtr<sbIMediaItem>      pMediaItem;
     nsString                    progressStr;
     PRInt32                     progress;
@@ -1222,17 +1287,14 @@ nsresult sbDownloadDevice::ResumeTransfers()
     nsresult                    itemResult;
     nsresult                    result = NS_OK;
 
-    /* Get the download library media list. */
-    pMediaList = do_QueryInterface(mpDownloadLibrary, &result);
-    if (NS_SUCCEEDED(result))
-        result = pMediaList->GetLength(&itemCount);
+    result = mpDownloadMediaList->GetLength(&itemCount);
 
     /* Resume each incomplete item in list. */
     for (i = 0; (NS_SUCCEEDED(result) && (i < itemCount)); i++)
     {
         /* Get the next item. */
-        itemResult = pMediaList->GetItemByIndex(i,
-                                                getter_AddRefs(pMediaItem));
+        itemResult = mpDownloadMediaList->GetItemByIndex
+                                          (i, getter_AddRefs(pMediaItem));
 
         /* Get the download progress. */
         if (NS_SUCCEEDED(itemResult))
@@ -1273,7 +1335,6 @@ nsresult sbDownloadDevice::ResumeTransfers()
 
 nsresult sbDownloadDevice::ClearCompletedItems()
 {
-    nsCOMPtr<sbIMediaList>      pMediaList;
     nsCOMPtr<sbIMediaItem>      pMediaItem;
     nsString                    progressStr;
     PRInt32                     progress;
@@ -1282,10 +1343,7 @@ nsresult sbDownloadDevice::ClearCompletedItems()
     nsresult                    itemResult;
     nsresult                    result = NS_OK;
 
-    /* Get the download library media list. */
-    pMediaList = do_QueryInterface(mpDownloadLibrary, &result);
-    if (NS_SUCCEEDED(result))
-        result = pMediaList->GetLength(&itemCount);
+    result = mpDownloadMediaList->GetLength(&itemCount);
 
     /* Remove each complete item in list. */
     if (NS_SUCCEEDED(result))
@@ -1293,8 +1351,8 @@ nsresult sbDownloadDevice::ClearCompletedItems()
         for (i = itemCount - 1; i >= 0; i--)
         {
             /* Get the next item. */
-            itemResult = pMediaList->GetItemByIndex(i,
-                                                    getter_AddRefs(pMediaItem));
+            itemResult = mpDownloadMediaList->GetItemByIndex(i,
+                                                             getter_AddRefs(pMediaItem));
 
             /* Get the download progress. */
             if (NS_SUCCEEDED(itemResult))
@@ -1308,7 +1366,7 @@ nsresult sbDownloadDevice::ClearCompletedItems()
 
             /* Remove item from download device library if complete. */
             if (NS_SUCCEEDED(itemResult) && (progress == 101))
-                itemResult = pMediaList->Remove(pMediaItem);
+                itemResult = mpDownloadMediaList->Remove(pMediaItem);
 
             /* Warn if item could not be removed. */
             if (NS_FAILED(itemResult))

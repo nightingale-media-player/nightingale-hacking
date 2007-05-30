@@ -489,3 +489,18 @@ treecol
   height: 20px !important;
   border-width: 0px 1px 0px 0px !important;
 }
+
+treechildren::-moz-tree-cell(http-songbirdnest-com-data-1-0-progressValue progressNotStarted)
+{
+  background: url(chrome://global/skin/tree/item.png) no-repeat center;
+}
+
+treechildren::-moz-tree-cell(http-songbirdnest-com-data-1-0-progressValue progressCompleted)
+{
+  background: url(chrome://global/skin/tree/folder.png) no-repeat center;
+}
+
+treechildren::-moz-tree-progressmeter(http-songbirdnest-com-data-1-0-progressValue)
+{
+  list-style-image: url(chrome://songbird/skin/progressmeter/progressmeter_undetermined.gif);
+}

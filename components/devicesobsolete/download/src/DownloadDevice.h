@@ -143,7 +143,7 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
     private:
 
     /*
-     * mpDownloadLibrary        Download device library.
+     * mpDownloadMediaList      Download device medialist.
      * mpWebLibrary             Web library.
      * mpIOService              I/O service.
      * mpStringBundle           Download device string bundle.
@@ -154,7 +154,7 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
      * mState                   Current device state.
      */
 
-    nsCOMPtr<sbILibrary>        mpDownloadLibrary;
+    nsCOMPtr<sbIMediaList>      mpDownloadMediaList;
     nsCOMPtr<sbILibrary>        mpWebLibrary;
     nsCOMPtr<nsIIOService>      mpIOService;
     nsCOMPtr<nsIStringBundle>   mpStringBundle;
