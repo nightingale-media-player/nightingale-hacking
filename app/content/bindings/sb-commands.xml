@@ -672,7 +672,7 @@
                 _that: null, 
                 handleEvent: function( event ) { this._that.onMenuCommand(event); } 
               }; this.oncommand._that = this; 
-              popup.addEventListener("command", this.oncommand, true);
+              popup.addEventListener("command", this.oncommand, false);
             }
             var before = this;
             
