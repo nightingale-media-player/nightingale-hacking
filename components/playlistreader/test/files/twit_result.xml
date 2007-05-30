@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<item-tests>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0099H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0099H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0098H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0098H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0097H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0097H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0096H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0096H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0095H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0095H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0094H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0094H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0093H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0093H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0092H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0092H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0091H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0091H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0090H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0090H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0089H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0089H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0087H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0087H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0086H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0086H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0085H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0085H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0084H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0084H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0083H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0083H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0082H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0082H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0081H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0081H.mp3"/>
+  </item-test>
+  <item-test property="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0080H.mp3">
+    <assert-property-value name="#contentUrl" value="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0080H.mp3"/>
+  </item-test>
+</item-tests>
+

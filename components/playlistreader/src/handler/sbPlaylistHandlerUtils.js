@@ -29,12 +29,14 @@
  */
 
 const SB_NS = "http://songbirdnest.com/data/1.0#";
+const PR_RDONLY = -1;
+const PR_FLAGS_DEFAULT = -1;
 
 function SB_ProcessFile(aFile, aCallback, aThis) {
 
   var istream = Cc["@mozilla.org/network/file-input-stream;1"]
                   .createInstance(Ci.nsIFileInputStream);
-  istream.init(aFile, 0x01, 0444, 0);
+  istream.init(aFile, PR_RDONLY, PR_FLAGS_DEFAULT, 0);
   istream.QueryInterface(Ci.nsILineInputStream);
 
   var line = {}, hasmore;

@@ -56,6 +56,13 @@ const componentData =
      category: "playlist-reader",
      categoryEntry: "pls"},
 
+   {cid: Components.ID("{fc67054f-3a60-4d8e-a2ec-fc1c8feac14c}"),
+     contractid: "@songbirdnest.com/Songbird/Playlist/Reader/Feed;1",
+     script: "sbFeedPlaylistHandler.js",
+     constructor: "sbFeedPlaylistHandler",
+     category: "playlist-reader",
+     categoryEntry: "feed"},
+
    {cid: Components.ID("{75c8f646-e75a-4743-89cd-412fa083ce07}"),
      contractid: "@songbirdnest.com/Songbird/Playlist/Reader/HTML;1",
      script: "sbHTMLPlaylistHandler.js",

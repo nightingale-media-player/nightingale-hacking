@@ -34,6 +34,7 @@ SONGBIRD_TEST_COMPONENT = playlistreader
 SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/test_m3uhandler.js \
                  $(srcdir)/test_plshandler.js \
+                 $(srcdir)/test_feedhandler.js \
                  $(srcdir)/test_htmlhandler.js \
                  $(srcdir)/test_manager.js \
                  $(srcdir)/test_manager_async.js \
@@ -64,6 +65,8 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/win_utf8.m3u \
                  $(srcdir)/files/win_utf8.pls \
                  $(srcdir)/files/win_utf8_result.xml \
+                 $(srcdir)/files/twit.rss \
+                 $(srcdir)/files/twit_result.xml \
                  $(srcdir)/files/fluxblog_org.html \
                  $(srcdir)/files/fluxblog_org_result.xml \
                  $(NULL)
