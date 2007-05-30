@@ -559,16 +559,14 @@ sbRemoteLibrary::GetLibraryGUID( const nsAString &aLibraryID,
   nsCAutoString prefKey;
 
   // match the 'magic' strings to the keys for the prefs
-  if ( aLibraryID == NS_LITERAL_STRING("main") ) {
+  if ( aLibraryID.EqualsLiteral("main") ) {
     prefKey.AssignLiteral("songbird.library.main");
-  } else if ( aLibraryID == NS_LITERAL_STRING("web") ) {
+  } else if ( aLibraryID.EqualsLiteral("web") ) {
     prefKey.AssignLiteral("songbird.library.web");
-  } else if ( aLibraryID == NS_LITERAL_STRING("download") ) {
-    prefKey.AssignLiteral("songbird.library.download");
   }
 
   // right now just bail if it isn't a default
-  if ( prefKey == EmptyCString() ) {
+  if ( prefKey.IsEmpty() ) {
     LOG4(("sbRemoteLibrary::GetLibraryGUID() -- not a default library"));
     // ultimately we need to be able to get the GUID for non-default libraries
     //   if we are going to allow the library manager to manage them.
