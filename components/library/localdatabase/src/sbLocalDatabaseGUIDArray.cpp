@@ -413,13 +413,6 @@ sbLocalDatabaseGUIDArray::Invalidate()
     mListener->OnBeforeInvalidate();
   }
 
-  PRUint32 len = mCache.Length();
-  for (PRUint32 i = 0; i < len; i++) {
-    const ArrayItem* item = mCache[i];
-    if (item) {
-      delete item;
-    }
-  }
   mCache.Clear();
 
   if(mPrimarySortKeyPositionCache.IsInitialized()) {

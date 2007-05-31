@@ -30,12 +30,13 @@
 #include "sbILocalDatabaseGUIDArray.h"
 #include "sbILocalDatabasePropertyCache.h"
 
+#include <nsAutoPtr.h>
+#include <nsCOMPtr.h>
+#include <nsDataHashtable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
-#include <nsCOMPtr.h>
 #include <sbIDatabaseQuery.h>
 #include <sbISQLBuilder.h>
-#include <nsDataHashtable.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
 #include <sbILocalDatabaseLibrary.h>
@@ -171,7 +172,7 @@ private:
   nsTArray<FilterSpec> mFilters;
 
   // Ordered array of GUIDs
-  nsTArray<ArrayItem*> mCache;
+  nsTArray<nsAutoPtr<ArrayItem> > mCache;
 
   // Cache of primary sort key positions
   nsDataHashtable<nsStringHashKey, PRUint32> mPrimarySortKeyPositionCache;
