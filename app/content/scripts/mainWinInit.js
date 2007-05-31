@@ -104,12 +104,6 @@ function SBInitialize()
     
     gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
     
-    try {
-      var metadataBackscanner = Components.classes["@songbirdnest.com/Songbird/MetadataBackscanner;1"]
-        .getService(Components.interfaces.sbIMetadataBackscanner);
-      metadataBackscanner.start();
-      
-    } catch(err) { dump(err); }
   }
   catch(err)
   {

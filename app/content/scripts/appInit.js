@@ -119,9 +119,6 @@ function SBAppInitialize()
     // Startup the Metrics
     SBMetricsAppStart();
 
-    // Ensure the default library is created and available to gPPS
-    SBCreateLibraryRef();
-    
     // Startup the Hotkeys
     initGlobalHotkeys();
     
@@ -130,9 +127,6 @@ function SBAppInitialize()
 
     // Reset this on application startup. 
     SBDataSetIntValue("backscan.paused", 0);
-    
-    // Go make sure we really have a Songbird database
-    SBInitializeNamedDatabase( "songbird" );
 
     // Startup the Dynamic Playlist Updater
     try
@@ -427,62 +421,6 @@ function SBMetricsAppStart()
   SBDataSetBoolValue("metrics_ignorenextstartup", false);
   var timestamp = new Date();
   SBDataSetIntValue("startup_timestamp", timestamp.getTime());
-}
-
-function SBInitializeNamedDatabase( db_name )
-{
-  // This creates the a working songbird database.
-  // If it already exists, it just errors silently and you don't care.
-  try
-  {
-    // Make an async database query object for the main songbird database
-    var aDBQuery = new sbIDatabaseQuery();
-    aDBQuery.setAsyncQuery(true);
-    aDBQuery.setDatabaseGUID(db_name);
-    
-    // Get the library interface, and create the library through the query
-    var aMediaLibrary = new sbIMediaLibrary();    
-    aMediaLibrary.setQueryObject(aDBQuery);
-    aMediaLibrary.createDefaultLibrary();
-    
-    // Ger the playlist manager, and create the internal playlisting infrastructure.
-    var aPlaylistManager = new sbIPlaylistManager();
-    aPlaylistManager.createDefaultPlaylistManager(aDBQuery);
-  }
-  catch(err)
-  {
-    alert("SBInitializeNamedDatabase\n\n" + err);
-  }
-}
-
-function SBCreateLibraryRef() {
-  // this is so we can playRef the library even if it has never been shown
-
-  // Get a query object to handle the database transactions.
-  var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
-                           .createInstance(Components.interfaces.sbIDatabaseQuery);
-  aDBQuery.setAsyncQuery(false); // hard and slow.  should only have to happen once.
-  aDBQuery.setDatabaseGUID("songbird");
-
-  // Get the library interface, make sure there is a default library (fast if already exists)
-  const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-  var aMediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
-  aMediaLibrary.setQueryObject(aDBQuery);
-  aMediaLibrary.createDefaultLibrary();
-
-  // Make it all go now, please.
-  aDBQuery.execute();
-  aDBQuery.resetQuery();
-
-  // Now convince the playlistsource to load the library
-  var source = new sbIPlaylistsource();
-  source.feedPlaylist( "NC:songbird_library", "songbird", "library");
-  source.executeFeed( "NC:songbird_library" );
-  
-  source.waitForQueryCompletion( "NC:songbird_library" );  
-  
-  // After the call is done, force GetTargets
-  source.forceGetTargets( "NC:songbird_library", false );
 }
 
 //
