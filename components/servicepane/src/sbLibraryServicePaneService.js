@@ -1034,6 +1034,34 @@ function sbLibraryServicePane__appendMenuItem(aContextMenu, aLabel, aCallback) {
   aContextMenu.appendChild(item);
 }
 
+/**
+ * This function is a recursive helper for onListCleared (below) that will
+ * remove all the playlist nodes for a given library.
+ */
+sbLibraryServicePane.prototype._removeListNodesForLibrary =
+function sbLibraryServicePane__removeListNodesForLibrary(aStartNode, aLibraryGUID) {
+
+  var node = aStartNode.firstChild;
+  
+  while (node) {
+  
+    if (node.isContainer) {
+      this._removeListNodesForLibrary(node, aLibraryGUID);
+    }
+    
+    var nextSibling = node.nextSibling;
+    
+    if (this._getItemGUIDForURN(node.id)) {
+      var nodeLibraryGUID = node.getAttributeNS(LSP, "LibraryGUID");
+      if (nodeLibraryGUID == aLibraryGUID) {
+        this._servicePane.removeNode(node);
+      }
+    }
+    
+    node = nextSibling;
+  }
+}
+
 ///////////////////////////////
 // sbILibraryManagerListener //
 ///////////////////////////////
@@ -1081,6 +1109,12 @@ function sbLibraryServicePane_onItemUpdated(aMediaList, aMediaItem) {
 }
 sbLibraryServicePane.prototype.onListCleared =
 function sbLibraryServicePane_onListCleared(aMediaList) {
+  if (aMediaList instanceof Ci.sbILibrary) {
+    var libraryGUID = aMediaList.guid;
+    
+    var node = this._servicePane.root;
+    this._removeListNodesForLibrary(node, libraryGUID);
+  }
 }
 sbLibraryServicePane.prototype.onBatchBegin =
 function sbLibraryServicePane_onBatchBegin(aMediaList) {
