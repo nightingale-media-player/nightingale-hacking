@@ -1603,6 +1603,11 @@
             if (!playlist) playlist = gBrowser.currentPlaylist;
             if (!playlist) return;
             
+            if (index < 0) {
+              // if no track is selected start playing from the first one
+              index = 0;
+            }
+            
             var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
             PPS.playView(playlist.mediaListView, index);
           }

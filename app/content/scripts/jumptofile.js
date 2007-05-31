@@ -46,7 +46,10 @@ try
   function onJumpToFileKey(evt) {
     // "popup=yes" causes nasty issues on the mac with the resizers?
     if (!document.__JUMPTO__)
-      SBOpenWindow( "chrome://songbird/content/xul/jumptofile.xul", "jump_to_file", "chrome,toolbar=no,popup=no,dialog=no,resizable=yes", [document, gBrowser] );
+      SBOpenWindow( "chrome://songbird/content/xul/jumptofile.xul", 
+          "jump_to_file", 
+          "chrome,toolbar=no,popup=no,dialog=no,resizable=yes", 
+          [document, window.gBrowser?gBrowser:null] );
     else {
       document.__JUMPTO__.defaultView.focus();
       var textbox = document.__JUMPTO__.getElementById("jumpto.textbox");
@@ -245,7 +248,7 @@ try
     var plsource;
     var libraryguid;
     displayed_guid = displayed_libraryguid = null;
-    source_playlist = window.arguments[0][1].currentPlaylist;
+    source_playlist = window.arguments[0][1]?window.arguments[0][1].currentPlaylist:null;
     if (source_playlist) displayed_view = source_playlist.mediaListView;
     var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                .getService(Components.interfaces.sbIPlaylistPlayback);

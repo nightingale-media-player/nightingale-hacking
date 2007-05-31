@@ -764,19 +764,20 @@
         <body>
           <![CDATA[
             if (this.gPPS.playing) {
+              // if we're playing already then play / pause
               if (this.gPPS.paused) {
                 this.gPPS.play();
               } else {
                 this.gPPS.pause();
               }
-            } else if (gBrowser) {
-              var playlist = gBrowser.currentPlaylist;
-              if (playlist) {
-                playlist.playViewAtCurrentRow();
-              } else {
-                this.loadLibrary();
-                this.gPPS.play(); // let gpps handle default playback.
-              }
+            } else if (window.gBrowser && gBrowser.currentPlaylist) {
+              // if there's a browser and a playlist active, tell the playlist
+              // to play itself
+              gBrowser.currentPlaylist.sendPlayEvent();
+            } else {
+              // otherwise go get the library and play it
+              this.loadLibrary();
+              this.gPPS.play(); // let gpps handle default playback.
             }
           ]]>
         </body>
@@ -786,7 +787,7 @@
         <body>
           <![CDATA[
             // optional connection
-            if (gBrowser) gBrowser.loadURI("chrome://songbird/content/xul/playlist_test2.xul?library" );
+            if (window.gBrowser) gBrowser.loadURI("chrome://songbird/content/xul/playlist_test2.xul?library" );
           ]]>
         </body>
       </method>
