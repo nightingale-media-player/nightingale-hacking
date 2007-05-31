@@ -435,13 +435,9 @@ sbRemotePlayer::OnCommandsChanged()
     NS_ENSURE_SUCCESS( rv, rv );
   }
 
-  // Tell the playlist about our default command settings.
-  LOG(( "sbRemotePlayer::OnCommandsChanged() setting defaults %s",
-    mUseDefaultCommands ? "true" : "false" ));
-
   //
   // This is where we want to add code to register the default commands, when
-  // the api for that comes in to being.
+  // the api for that comes in to being. Key off of mUseDefaultCommands.
   //
 
   // When the commands system is able to broadcast change notices about

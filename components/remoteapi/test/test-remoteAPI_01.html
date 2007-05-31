@@ -91,7 +91,12 @@
 
      
       document.writeln("Try to get the webplaylist");
-      var webpl = songbird.webPlaylist
+      var webpl;
+      try {
+        webpl = songbird.webPlaylist
+      } catch (e) {
+        document.writeln("Nope, it failed: " + e);
+      }
 
     </script>
     

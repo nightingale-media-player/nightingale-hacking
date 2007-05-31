@@ -614,13 +614,22 @@
           //       talk to koshi and see if there is any particular styling/messaging
           //       see browser/base/content/browser.js#738
           //       hook up an action to do when the user clicks through, probably launch prepanel
-          var notificationName = "RemoteAPI";
+          var notificationName = "remoteapi-called";
           var messageString = "RemoteAPI was called";
-          var notificationBox = gBrowser.getNotificationBox();
-          if (!notificationBox.getNotificationWithValue(notificationName)) {
+          var notificationBox = this.linkedBrowser.parentNode;
+          var notification = notificationBox.getNotificationWithValue(notificationName);
+          if (!notification) {
+            // if there isn't a notfication object, make one and append it
             const priority = notificationBox.PRIORITY_WARNING_MEDIUM;
-            notificationBox.appendNotification(messageString, notificationName,
-                                               null, priority, null);
+            notificationBox.appendNotification( messageString,
+                                                notificationName,
+                                                null,
+                                                priority,
+                                                null);
+          } else {
+            // if there is a notification object set it's text.
+            // this has the side effect of showing it if it was dismissed
+            notification.message = messageString;
           }
         ]]></body>
       </method>
@@ -1512,7 +1521,7 @@
         <body><![CDATA[
           const nsIWebProgressListener =
             Components.interfaces.nsIWebProgressListener;
-            
+
           if (!(aState & nsIWebProgressListener.STATE_IS_WINDOW)) {
             // not interested
             return;
@@ -1520,6 +1529,16 @@
       
           if (aState & nsIWebProgressListener.STATE_START) {
             this.clearOuterPlaylist();
+
+            // see if the notification box is up, remove it if so.
+            // removing it with removeNotification(notification) causes all
+            // subsequent notifications to not show up.
+            var notificationName = "remoteapi-called";
+            var notificationBox = this.linkedBrowser.parentNode;
+            var notification = notificationBox.getNotificationWithValue(notificationName); 
+            if ( notification )
+              notificationBox.removeAllNotifications(true);
+
           } else if (aState & nsIWebProgressListener.STATE_STOP) {
             if (this.innerPlaylist) {
               this.setUpInnerPlaylist();
