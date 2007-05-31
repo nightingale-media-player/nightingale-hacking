@@ -55,6 +55,9 @@
 
 #include <nsCOMArray.h>
 
+// The maximum characters to output in a single PR_LOG call
+#define MAX_PRLOG 500
+
 #if defined(_WIN32)
   #include <direct.h>
 #else
@@ -79,7 +82,21 @@
 #endif
 
 #ifdef PR_LOGGING
-PRLogModuleInfo *gDatabaseEngineLog;
+static PRLogModuleInfo* sDatabaseEngineLog = nsnull;
+static PRLogModuleInfo* sDatabaseEnginePerformanceLog = nsnull;
+#define TRACE(args) PR_LOG(sDatabaseEngineLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(sDatabaseEngineLog, PR_LOG_WARN, args)
+
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
+
+#ifdef PR_LOGGING
+#define BEGIN_PERFORMANCE_LOG(_strQuery, _dbName) \
+ sbDatabaseEnginePerformanceLogger _performanceLogger(_strQuery, _dbName)
+#else
+#define BEGIN_PERFORMANCE_LOG(_strQuery, _dbName) /* nothing */
 #endif
 
 void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, sqlite_int64 nRowID)
@@ -537,7 +554,10 @@ CDatabaseEngine::CDatabaseEngine()
 , m_AttemptShutdownOnDestruction(PR_FALSE)
 {
 #ifdef PR_LOGGING
-  gDatabaseEngineLog = PR_NewLogModule("DatabaseEngine");
+  if (!sDatabaseEngineLog)
+    sDatabaseEngineLog = PR_NewLogModule("DatabaseEngine");
+  if (!sDatabaseEnginePerformanceLog)
+    sDatabaseEnginePerformanceLog = PR_NewLogModule("sbDatabaseEnginePerformance");
 #endif
 } //ctor
 
@@ -1240,9 +1260,8 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
     bPersistent = pQuery->m_PersistentQuery;
     pQuery->GetDatabaseGUID(dbGUID);
 
-    PR_LOG(gDatabaseEngineLog, PR_LOG_WARNING,
-           ("DBE: Process Start, thread 0x%x query 0x%x",
-           PR_GetCurrentThread(), pQuery));
+    LOG(("DBE: Process Start, thread 0x%x query 0x%x",
+         PR_GetCurrentThread(), pQuery));
 
     nsAutoString lowercaseGUID(dbGUID);
     {
@@ -1391,6 +1410,8 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 
           retDB = sqlite3_prepare16(pDB, PromiseFlatString(strQuery).get(), (int)strQuery.Length() * sizeof(PRUnichar), &pStmt, &pzTail);
 
+          BEGIN_PERFORMANCE_LOG(strQuery, dbName);
+
           // If we have parameters for this query, bind them
           if(retDB == SQLITE_OK) {
 
@@ -1427,10 +1448,9 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
             }
           }
 
-          PR_LOG(gDatabaseEngineLog, PR_LOG_WARNING,
-                 ("DBE: '%s' on '%s'\n",
-                 NS_ConvertUTF16toUTF8(dbName).get(),
-                 NS_ConvertUTF16toUTF8(strQuery).get()));
+          LOG(("DBE: '%s' on '%s'\n",
+               NS_ConvertUTF16toUTF8(dbName).get(),
+               NS_ConvertUTF16toUTF8(strQuery).get()));
           pQuery->m_CurrentQuery = i;
 
           if(retDB != SQLITE_OK)
@@ -1513,9 +1533,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                   std::vector<nsString> vCellValues;
                   vCellValues.reserve(nCount);
 
-                  PR_LOG(gDatabaseEngineLog, PR_LOG_DEBUG,
-                         ("DBE: Result row %d:",
-                         totalRows));
+                  TRACE(("DBE: Result row %d:", totalRows));
 
                   int i = 0;
                   if(bPersistent)
@@ -1548,8 +1566,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                         strCellValue = p;
   
                       vCellValues.push_back(strCellValue);
-                      PR_LOG(gDatabaseEngineLog, PR_LOG_DEBUG,
-                             ("Column %d: '%s' ", i,
+                      TRACE(("Column %d: '%s' ", i,
                              NS_ConvertUTF16toUTF8(strCellValue).get()));
                     }
                     totalRows++;
@@ -1570,8 +1587,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                 case SQLITE_DONE:
                 {
                   pQuery->SetLastError(SQLITE_OK);
-                  PR_LOG(gDatabaseEngineLog, PR_LOG_DEBUG,
-                         ("Query complete, %d rows", totalRows));
+                  TRACE(("Query complete, %d rows", totalRows));
                 }
                 break;
 
@@ -1721,8 +1737,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
     pQuery->m_IsExecuting = PR_FALSE;
     pQuery->m_IsAborting = PR_FALSE;
 
-    PR_LOG(gDatabaseEngineLog, PR_LOG_WARNING,
-           ("DBE: Process End"));
+    LOG(("DBE: Process End"));
 
     //Whatever happened, the query is done running now.
     {
@@ -2049,3 +2064,36 @@ nsresult CDatabaseEngine::GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery
 
   return NS_OK;
 } //GetDBStorePath
+
+#ifdef PR_LOGGING
+sbDatabaseEnginePerformanceLogger::sbDatabaseEnginePerformanceLogger(const nsAString& aQuery,
+                                                                     const nsAString& aGuid) :
+  mQuery(aQuery),
+  mGuid(aGuid)
+{
+  mStart = PR_Now();
+}
+
+sbDatabaseEnginePerformanceLogger::~sbDatabaseEnginePerformanceLogger()
+{
+  PRUint32 total = PR_Now() - mStart;
+
+  PRUint32 length = mQuery.Length();
+  for (PRUint32 i = 0; i < (length / MAX_PRLOG) + 1; i++) {
+    nsAutoString q(Substring(mQuery, MAX_PRLOG * i, MAX_PRLOG));
+    if (i == 0) {
+      PR_LOG(sDatabaseEnginePerformanceLog, PR_LOG_DEBUG,
+             ("sbDatabaseEnginePerformanceLogger %s\t%u\t%s",
+              NS_LossyConvertUTF16toASCII(mGuid).get(),
+              total,
+              NS_LossyConvertUTF16toASCII(q).get()));
+    }
+    else {
+      PR_LOG(sDatabaseEnginePerformanceLog, PR_LOG_DEBUG,
+             ("sbDatabaseEnginePerformanceLogger +%s",
+              NS_LossyConvertUTF16toASCII(q).get()));
+    }
+  }
+}
+#endif
+

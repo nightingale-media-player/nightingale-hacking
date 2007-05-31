@@ -45,6 +45,7 @@
 
 #include <prlock.h>
 #include <prmon.h>
+#include <prlog.h>
 #include <nsCOMArray.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
@@ -180,6 +181,20 @@ public:
 protected:
   CDatabaseEngine* mpEngine;
 };
+
+#ifdef PR_LOGGING
+class sbDatabaseEnginePerformanceLogger
+{
+public:
+  sbDatabaseEnginePerformanceLogger(const nsAString& aQuery,
+                                    const nsAString& aGuid);
+  ~sbDatabaseEnginePerformanceLogger();
+private:
+  nsString mQuery;
+  nsString mGuid;
+  PRTime mStart;
+};
+#endif
 
 #endif // __DATABASE_ENGINE_H__
 
