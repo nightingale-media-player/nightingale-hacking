@@ -42,12 +42,43 @@
 #include <DatabaseQuery.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
+#include <prlog.h>
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseTreeView.h"
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbLocalDatabaseCascadeFilterSet:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* sFilterSetLog = nsnull;
+#define TRACE(args) if (sFilterSetLog) PR_LOG(sFilterSetLog, PR_LOG_DEBUG, args)
+#define LOG(args)   if (sFilterSetLog) PR_LOG(sFilterSetLog, PR_LOG_WARN, args)
+#else /* PR_LOGGING */
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
+
+sbLocalDatabaseCascadeFilterSet::sbLocalDatabaseCascadeFilterSet()
+{
+  MOZ_COUNT_CTOR(sbLocalDatabaseCascadeFilterSet);
+#ifdef PR_LOGGING
+  if (!sFilterSetLog) {
+    sFilterSetLog = PR_NewLogModule("sbLocalDatabaseCascadeFilterSet");
+  }
+#endif
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Constructed", this));
+}
+
+sbLocalDatabaseCascadeFilterSet::~sbLocalDatabaseCascadeFilterSet()
+{
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Destructed", this));
+  MOZ_COUNT_DTOR(sbLocalDatabaseCascadeFilterSet);
+}
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseCascadeFilterSet,
                    sbICascadeFilterSet);
@@ -57,6 +88,7 @@ sbLocalDatabaseCascadeFilterSet::Init(sbILocalDatabaseLibrary* aLibrary,
                                       sbIMediaListView* aMediaListView,
                                       sbILocalDatabaseAsyncGUIDArray* aProtoArray)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Init", this));
   NS_ENSURE_ARG_POINTER(aMediaListView);
   NS_ENSURE_ARG_POINTER(aProtoArray);
 
@@ -86,6 +118,7 @@ sbLocalDatabaseCascadeFilterSet::Init(sbILocalDatabaseLibrary* aLibrary,
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::GetLength(PRUint16* aLength)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetLength", this));
   NS_ENSURE_ARG_POINTER(aLength);
 
   *aLength = mFilters.Length();
@@ -97,6 +130,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::GetProperty(PRUint16 aIndex,
                                              nsAString& _retval)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetProperty", this));
   PRUint32 filterLength = mFilters.Length();
   NS_ENSURE_TRUE(filterLength, NS_ERROR_UNEXPECTED);
   NS_ENSURE_ARG_RANGE(aIndex, 0, filterLength - 1);
@@ -110,6 +144,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::IsSearch(PRUint16 aIndex,
                                           PRBool* _retval)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - IsSearch", this));
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
@@ -122,6 +157,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::AppendFilter(const nsAString& aProperty,
                                               PRUint16 *_retval)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - AppendFilter", this));
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
@@ -151,6 +187,7 @@ sbLocalDatabaseCascadeFilterSet::AppendSearch(const PRUnichar** aPropertyArray,
                                               PRUint32 aPropertyArrayCount,
                                               PRUint16 *_retval)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - AppendSearch", this));
   if (aPropertyArrayCount) {
     NS_ENSURE_ARG_POINTER(aPropertyArray);
   }
@@ -191,6 +228,7 @@ sbLocalDatabaseCascadeFilterSet::AppendSearch(const PRUnichar** aPropertyArray,
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::Remove(PRUint16 aIndex)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Remove", this));
   NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   nsresult rv;
@@ -214,6 +252,7 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
                                      const PRUnichar** aValueArray,
                                      PRUint32 aValueArrayCount)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Set", this));
   if (aValueArrayCount) {
     NS_ENSURE_ARG_POINTER(aValueArray);
   }
@@ -301,6 +340,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::GetValues(PRUint16 aIndex,
                                            nsIStringEnumerator **_retval)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetValues", this));
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
@@ -317,6 +357,7 @@ sbLocalDatabaseCascadeFilterSet::GetValueAt(PRUint16 aIndex,
                                             PRUint32 aValueIndex,
                                             nsAString& aValue)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetValueAt", this));
   NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   mFilters[aIndex].array->GetSortPropertyValueByIndex(aValueIndex, aValue);
@@ -328,6 +369,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
                                              nsITreeView **_retval)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetTreeView", this));
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
@@ -373,6 +415,7 @@ NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::GetValueCount(PRUint16 aIndex,
                                                PRUint32 *_retval)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetValueCount", this));
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
@@ -385,6 +428,7 @@ sbLocalDatabaseCascadeFilterSet::GetValueCount(PRUint16 aIndex,
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::AddListener(sbICascadeFilterSetListener* aListener)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - AddListener", this));
   nsISupportsHashKey* success = mListeners.PutEntry(aListener);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
@@ -394,6 +438,7 @@ sbLocalDatabaseCascadeFilterSet::AddListener(sbICascadeFilterSetListener* aListe
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::RemoveListener(sbICascadeFilterSetListener* aListener)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - RemoveListener", this));
 
   mListeners.RemoveEntry(aListener);
 
@@ -403,6 +448,7 @@ sbLocalDatabaseCascadeFilterSet::RemoveListener(sbICascadeFilterSetListener* aLi
 nsresult
 sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - ConfigureArray", this));
   NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
 
   nsresult rv;
@@ -488,6 +534,7 @@ PLDHashOperator PR_CALLBACK
 sbLocalDatabaseCascadeFilterSet::OnValuesChangedCallback(nsISupportsHashKey* aKey,
                                                          void* aUserData)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[static] - OnValuesChangedCallback"));
   NS_ASSERTION(aKey && aUserData, "Args should not be null!");
 
   nsresult rv;

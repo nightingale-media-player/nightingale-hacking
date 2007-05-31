@@ -49,6 +49,9 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBICASCADEFILTERSET
 
+  sbLocalDatabaseCascadeFilterSet();
+  ~sbLocalDatabaseCascadeFilterSet();
+
   nsresult Init(sbILocalDatabaseLibrary* aLibrary,
                 sbIMediaListView* aMediaListView,
                 sbILocalDatabaseAsyncGUIDArray* aProtoArray);

@@ -1105,7 +1105,7 @@ sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  LOG(("LocalDatabaseLibrary[0x%.8x] -  MakeQuery: %s",
+  LOG(("sbLocalDatabaseGUIDArray[0x%.8x] -  MakeQuery: %s",
        this, NS_ConvertUTF16toUTF8(aSql).get()));
 
   nsresult rv;
