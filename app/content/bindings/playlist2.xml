@@ -1427,15 +1427,26 @@
     }
   }
 
-  if (doInsert) {
-    ml.insertBefore(row, item);
+  if (source.equals(ml)) {
+    var index = this.tree.view.selection.currentIndex;
+    if (doInsert) {
+      ml.moveBefore(index, row);
+    }
+    else {
+      ml.moveLast(index);
+    }
   }
   else {
-    ml.add(item);
-  }
+    if (doInsert) {
+      ml.insertBefore(row, item);
+    }
+    else {
+      ml.add(item);
+    }
 
-  var added = ml.length - oldLength;
-  this._reportAddedTracks(added, 1 - added);
+    var added = ml.length - oldLength;
+    this._reportAddedTracks(added, 1 - added);
+  }
 ]]>
       </body>
     </method>
@@ -1466,12 +1477,44 @@
     }
   }
 
-  if (doInsert) {
+  if (source.equals(ml)) {
+    // Find the indexes of all the selected rows
+    var indexes = [];
+    while (enumerator.hasMoreElements()) {
+      indexes.push(enumerator.getNext().index);
+    }
     ml.beginUpdateBatch();
     try {
-      while (enumerator.hasMoreElements()) {
-        ml.insertBefore(row, enumerator.getNext().mediaItem);
-        row++;
+      if (doInsert) {
+        var toOffset = 0;
+        for (var i = 0; i < indexes.length; i++) {
+          var fromRow = indexes[i];
+          var toRow = row + toOffset;
+          ml.moveBefore(fromRow, toRow);
+          if (fromRow > toRow) {
+            toOffset++;
+          }
+          else {
+            for (var j = 0; j < indexes.length; j++) {
+              if (indexes[j] < toRow) {
+                indexes[j]--;
+              }
+            }
+          }
+        }
+      }
+      else {
+        var count = 0;
+        // Do this backwards so the indexes don't change when we move them
+        for (var i = indexes.length - 1; i >= 0; i--) {
+          if (count == 0) {
+            ml.moveLast(indexes[i]);
+          }
+          else {
+            ml.moveBefore(indexes[i], ml.length - count);
+          }
+          count++;
+        }
       }
     }
     finally {
@@ -1479,30 +1522,44 @@
     }
   }
   else {
-    // Create an enumerator that wraps the enumerator we were handed since
-    // the enumerator we get hands back sbIIndexedMediaItem, not just plain
-    // 'ol sbIMediaItems
-
-    var self = this;
-    var unwrapper = {
-      hasMoreElements : function() {
-        return enumerator.hasMoreElements();
-      },
-      getNext : function() {
-        return enumerator.getNext().mediaItem;
-      },
-      QueryInterface : function(iid) {
-        if (iid.equals(self._Ci.nsISimpleEnumerator) ||
-            iid.equals(self._Ci.nsISupports))
-          return this;
-        throw self._Cr.NS_NOINTERFACE;
+    if (doInsert) {
+      ml.beginUpdateBatch();
+      try {
+        while (enumerator.hasMoreElements()) {
+          ml.insertBefore(row, enumerator.getNext().mediaItem);
+          row++;
+        }
+      }
+      finally {
+        ml.endUpdateBatch();
       }
     }
-    ml.addSome(unwrapper);
-  }
+    else {
+      // Create an enumerator that wraps the enumerator we were handed since
+      // the enumerator we get hands back sbIIndexedMediaItem, not just plain
+      // 'ol sbIMediaItems
 
-  var added = ml.length - oldLength;
-  this._reportAddedTracks(added, count - added);
+      var self = this;
+      var unwrapper = {
+        hasMoreElements : function() {
+          return enumerator.hasMoreElements();
+        },
+        getNext : function() {
+          return enumerator.getNext().mediaItem;
+        },
+        QueryInterface : function(iid) {
+          if (iid.equals(self._Ci.nsISimpleEnumerator) ||
+              iid.equals(self._Ci.nsISupports))
+            return this;
+          throw self._Cr.NS_NOINTERFACE;
+        }
+      }
+      ml.addSome(unwrapper);
+    }
+
+    var added = ml.length - oldLength;
+    this._reportAddedTracks(added, count - added);
+  }
 ]]>
       </body>
     </method>

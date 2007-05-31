@@ -728,6 +728,9 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIMediaList> mediaList(this);
+  NotifyListenersItemUpdated(mediaList, mediaList);
+
   return NS_OK;
 }
 
@@ -755,6 +758,9 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
   // Invalidate the cached list
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> mediaList(this);
+  NotifyListenersItemUpdated(mediaList, mediaList);
 
   return NS_OK;
 }
