@@ -151,11 +151,11 @@
   <script type="application/x-javascript"
    src="chrome://songbird/content/scripts/coreGStreamerSimple.js"/>
 
-  <!-- Load the "background" scripts -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/dynamic_playlist_updater.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/watch_folders.js"/>
+  <!-- XXXX TODO: Migrate the "background scripts" -->
+  <!--script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/dynamic_playlist_updater.js"/-->
+  <!--script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/watch_folders.js"/-->
 
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/globalhotkeys.js" />

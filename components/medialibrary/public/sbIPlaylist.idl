@@ -315,7 +315,7 @@ interface sbISmartPlaylist : sbIPlaylist
 
   PRBool rebuildPlaylist();
 };
-
+/*
 [scriptable, uuid(0BE3A41A-6673-494a-A53E-9740A98ACFF7)]
 interface sbIPlaylistManager : nsISupports
 {
@@ -417,3 +417,4 @@ interface sbIPlaylistManager : nsISupports
   void purgeTrackByGUIDFromPlaylists(in AString mediaGUID, 
     in AString strDBGUID);
 };
+*/

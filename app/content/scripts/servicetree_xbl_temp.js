@@ -79,6 +79,8 @@ function onServiceTreeCommand( theEvent )
       case "playlist_context_remove":
         if ( guid && guid.length > 0 && table && table.length > 0 )
         {
+  alert("XXXX - migrate 'onServiceTreeCommand()' to new API");  
+  /*
           // Assume we'll need this...
           const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
           var aPlaylistManager = new PlaylistManager();
@@ -103,6 +105,7 @@ function onServiceTreeCommand( theEvent )
               aPlaylistManager.deletePlaylist(table, aDBQuery);
               break;
           }
+  */      
         }
       break;
     }

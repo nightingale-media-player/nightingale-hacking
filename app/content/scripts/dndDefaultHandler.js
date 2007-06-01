@@ -137,6 +137,8 @@ function SBDropped()
       setTimeout( SBDropped, 10 ); // Next frame
     } else {
       if (_drop_query) {
+        alert("XXXX - migrate 'function SBDropped()' to new API");     
+/*      
         var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
         var playlistManager = new PlaylistManager();
         playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
@@ -152,7 +154,7 @@ function SBDropped()
           }
         }
         _drop_query.execute();
-          
+*/          
         theDropGuids = null;
         _drop_library = null;
         _drop_query = null;

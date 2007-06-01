@@ -478,7 +478,9 @@ function SBSubscribe(url, mediaListView, readableName)
                          url: url,
                          readableName: readableName
                        };
-
+                       
+  alert("XXXX - migrate 'SBSubscribe()' to new API");  
+/*
   // if we have a table and guid, we're editing an existing playlist
   // so we need to populate the edit dialog with the existing data.
   if (table && guid) {
@@ -498,6 +500,7 @@ function SBSubscribe(url, mediaListView, readableName)
       subscribe_data.edit = true;
     }
   }
+*/
 
   // snapshot the service tree so we can find the added playlist
   SBScanServiceTreeNewEntryEditable();

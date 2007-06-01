@@ -211,6 +211,9 @@
         // playlist or create a new one.
         //
 
+  alert("XXXX - migrate 'subscribe.xul::doOK()' to new API");  
+  return true;
+  /*  
         var playlistManager = new sbIPlaylistManager();
         var dbQuery = new sbIDatabaseQuery();
         dbQuery.setAsyncQuery(false);
@@ -250,7 +253,7 @@
 
           playlistManager.createDynamicPlaylist(guid, readable_name, url, url, url, time, dbQuery);
         }
-
+  */
         // Run the dynamic playlist updater to download the new playlist.
         SBDataFireEvent( "dynamic.playlist.update" );
       

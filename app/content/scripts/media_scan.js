@@ -31,10 +31,8 @@ var theSongbirdLibrary = null;
 
 var theTotalItems = 0;
 
-const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
 var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 
-var aMediaLibrary = null;
 var msDBQuery = new sbIDatabaseQuery();
 var polling_interval = null;
 
@@ -72,21 +70,15 @@ function onLoad()
     {
       aMediaScan = new sbIMediaScan();
       aMediaScanQuery = new sbIMediaScanQuery();
-      
+
+      // Use the requested library, or use the main library as default      
       theTargetDatabase = window.arguments[0].target_db;
       if (!theTargetDatabase)
       {
-        if (USE_NEW_API)
-        {
-          var libraryManager =
-            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                      .getService(Components.interfaces.sbILibraryManager);
-          theTargetDatabase = libraryManager.mainLibrary.guid;
-        }
-        else
-        {
-          theTargetDatabase = "songbird";
-        }
+        var libraryManager =
+          Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                    .getService(Components.interfaces.sbILibraryManager);
+        theTargetDatabase = libraryManager.mainLibrary.guid;
       }
       theTargetPlaylist = window.arguments[0].target_pl;
       theAddedGuids = Array();
@@ -158,118 +150,54 @@ function onScanComplete( )
   {
     try
     {
-      if ( USE_NEW_API )
+      if ( PROFILE_TIME )
       {
-        if ( PROFILE_TIME )
-        {
-          timenow = new Date();
-          start = timenow.getTime();
-        }
-              
-        // Go get the library we're supposed to be scanning into.
-        var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"].
-                              getService(Components.interfaces.sbILibraryManager);
-        theSongbirdLibrary = libraryManager.getLibrary( theTargetDatabase );
-        
-        // Take the file array and turn it into a string array.
-        var i = 0, count = 0, total = 0;
-        total = aMediaScanQuery.getFileCount();
-        var array = new Array();
-        for ( i = 0, count = 0; i < total; i++ )
-        {
-          array.push( aMediaScanQuery.getFilePath( i ) );
-        }
-        theTotalItems = total;
-
-        if ( PROFILE_TIME )
-        {
-          var timethen = new Date();
-          alert( "Generate Array Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
-          
-          timenow = new Date();
-          start = timenow.getTime();
-        }
-        
-        // Ask the library to generate all the query strings to add the items to the library.
-        msDBQuery = theSongbirdLibrary.QueryInterface(Components.interfaces.sbILocalDatabaseLibrary).batchCreateMediaItemsQuery( array.length, array, theGUIDSArray );
-
-        if ( PROFILE_TIME )
-        {
-          timethen = new Date();
-          alert( "Generate Query Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
-          
-          timenow = new Date();
-          start = timenow.getTime();
-        }
-
-        // Run it asynchronously because it can take forever
-        msDBQuery.setAsyncQuery(true);
-        msDBQuery.execute();
-
-        // And start up another polling loop to monitor the query.
-        polling_interval = setInterval( onPollQuery, 333 );
+        timenow = new Date();
+        start = timenow.getTime();
       }
-      else
+            
+      // Go get the library we're supposed to be scanning into.
+      var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"].
+                            getService(Components.interfaces.sbILibraryManager);
+      theSongbirdLibrary = libraryManager.getLibrary( theTargetDatabase );
+      
+      // Take the file array and turn it into a string array.
+      var i = 0, count = 0, total = 0;
+      total = aMediaScanQuery.getFileCount();
+      var array = new Array();
+      for ( i = 0, count = 0; i < total; i++ )
       {
-        aMediaLibrary = new MediaLibrary();
-        aMediaLibrary = aMediaLibrary.QueryInterface( Components.interfaces.sbIMediaLibrary );
-
-        if ( ! msDBQuery || ! aMediaLibrary )
-        {
-          return;
-        }
-        
-        msDBQuery = new sbIDatabaseQuery();
-        
-        msDBQuery.resetQuery();
-        msDBQuery.setAsyncQuery( true );
-        msDBQuery.setDatabaseGUID( theTargetDatabase );
-
-        aMediaLibrary.setQueryObject( msDBQuery );
-
-        // Take the file array and for everything that seems to be a media url, add it to the database.
-        var i = 0, count = 0, total = 0;
-        total = aMediaScanQuery.getFileCount();
-
-        msDBQuery.addQuery( "start" );
-
-        for ( i = 0, count = 0; i < total; i++ )
-        {
-          var the_url = null;
-          var is_url = null;
-          the_url = aMediaScanQuery.getFilePath( i );
-
-          var keys = new Array( "title" );
-          var values = new Array();
-          values.push( gPPS.convertURLToDisplayName( the_url ) );
-          var guid = aMediaLibrary.addMedia( the_url, keys.length, keys, values.length, values, false, true );
-          aQueryFileArray.push( values[0] );
-          theAddedGuids.push( guid );
-          
-          if ( ( ( i + 1 ) % 500 ) == 0 )
-          {
-            msDBQuery.addQuery( "commit" );
-            msDBQuery.addQuery( "start" );
-          }
-        }
-        theTotalItems = total;;
-
-        msDBQuery.addQuery( "commit" );
-        
-        count = msDBQuery.getQueryCount();
-        if ( count )
-        {
-          theTitle.value = SBString("media_scan.adding", "Adding") + " (" + count + ")";
-          theLabel.value = "";
-          msDBQuery.execute();
-          polling_interval = setInterval( onPollQuery, 333 );
-        }
-        else
-        {
-          theTitle.value = SBString("media_scan.none", "Nothing");
-          onPollComplete();
-        }
+        array.push( aMediaScanQuery.getFilePath( i ) );
       }
+      theTotalItems = total;
+
+      if ( PROFILE_TIME )
+      {
+        var timethen = new Date();
+        alert( "Generate Array Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
+        
+        timenow = new Date();
+        start = timenow.getTime();
+      }
+      
+      // Ask the library to generate all the query strings to add the items to the library.
+      msDBQuery = theSongbirdLibrary.QueryInterface(Components.interfaces.sbILocalDatabaseLibrary).batchCreateMediaItemsQuery( array.length, array, theGUIDSArray );
+
+      if ( PROFILE_TIME )
+      {
+        timethen = new Date();
+        alert( "Generate Query Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
+        
+        timenow = new Date();
+        start = timenow.getTime();
+      }
+
+      // Run it asynchronously because it can take forever
+      msDBQuery.setAsyncQuery(true);
+      msDBQuery.execute();
+
+      // And start up another polling loop to monitor the query.
+      polling_interval = setInterval( onPollQuery, 333 );
     }
     catch(err)
     {
@@ -288,76 +216,73 @@ function onPollComplete() {
   
   document.getElementById("button_ok").removeAttribute( "disabled" );
   
-  if ( USE_NEW_API ) {
-
-    if ( PROFILE_TIME )
-    {
-      timethen = new Date();
-      alert( "Execute Query Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
-      
-      timenow = new Date();
-      start = timenow.getTime();
-    }
-
-    // Get the items from the guids
-    var mediaItems = theSongbirdLibrary.batchGetMediaItems( theGUIDSArray.value );
+  if ( PROFILE_TIME )
+  {
+    timethen = new Date();
+    alert( "Execute Query Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
     
-    if ( PROFILE_TIME )
-    {
-      timethen = new Date();
-      alert( "Media Items Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
-      
-      timenow = new Date();
-      start = timenow.getTime();
-    }
-    
-    // Tell the world they were added
-    theSongbirdLibrary.batchNotifyAdded( mediaItems );
+    timenow = new Date();
+    start = timenow.getTime();
+  }
 
-    if ( PROFILE_TIME )
-    {
-      timethen = new Date();
-      alert( "Notify Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
-      
-      timenow = new Date();
-      start = timenow.getTime();
-    }
-
-    // Create a metadata task    
-    var metadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                                 .getService(Components.interfaces.sbIMetadataJobManager);
-    var metadataJob = metadataJobManager.newJob( mediaItems, 5 );
+  // Get the items from the guids
+  var mediaItems = theSongbirdLibrary.batchGetMediaItems( theGUIDSArray.value );
+  
+  if ( PROFILE_TIME )
+  {
+    timethen = new Date();
+    alert( "Media Items Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
     
-    if ( PROFILE_TIME )
-    {
-      timethen = new Date();
-      alert( "Launch Metadata - " + ( timethen.getTime() - start ) / 1000 + "s" );
-      
-      timenow = new Date();
-      start = timenow.getTime();
-    }
+    timenow = new Date();
+    start = timenow.getTime();
+  }
+  
+  // Tell the world they were added
+  theSongbirdLibrary.batchNotifyAdded( mediaItems );
+
+  if ( PROFILE_TIME )
+  {
+    timethen = new Date();
+    alert( "Notify Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
+    
+    timenow = new Date();
+    start = timenow.getTime();
+  }
+
+  // Create a metadata task    
+  var metadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                                .getService(Components.interfaces.sbIMetadataJobManager);
+  var metadataJob = metadataJobManager.newJob( mediaItems, 5 );
+  
+  if ( PROFILE_TIME )
+  {
+    timethen = new Date();
+    alert( "Launch Metadata - " + ( timethen.getTime() - start ) / 1000 + "s" );
+    
+    timenow = new Date();
+    start = timenow.getTime();
+  }
 
     // TODO:
     //  - Add items to theTargetPlaylist if it was requested.
-    
-  } else {
-    if (theTargetPlaylist && theAddedGuids && theAddedGuids.length > 0) {
-      var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-      var playlistManager = new PlaylistManager();
-      playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
-      msDBQuery.resetQuery();
-      var thePlaylist;
-      if (theTargetPlaylist != null) thePlaylist = playlistManager.getPlaylist(theTargetPlaylist, msDBQuery);
-      if (thePlaylist) {
-        for (var i=0;i<theAddedGuids.length;i++) {
-          var guid = theAddedGuids[i];
-          thePlaylist.addByGUID(guid, theTargetDatabase, -1, false, true);
-        }
+/*    
+  if (theTargetPlaylist && theAddedGuids && theAddedGuids.length > 0) {
+    var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+    var playlistManager = new PlaylistManager();
+    playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
+    msDBQuery.resetQuery();
+    var thePlaylist;
+    if (theTargetPlaylist != null) thePlaylist = playlistManager.getPlaylist(theTargetPlaylist, msDBQuery);
+    if (thePlaylist) {
+      for (var i=0;i<theAddedGuids.length;i++) {
+        var guid = theAddedGuids[i];
+        thePlaylist.addByGUID(guid, theTargetDatabase, -1, false, true);
       }
-      msDBQuery.execute();
-      theAddedGuids = null;
     }
+    msDBQuery.execute();
+    theAddedGuids = null;
   }
+*/    
 }
 
 var lastpos = 0;

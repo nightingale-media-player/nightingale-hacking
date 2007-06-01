@@ -1335,6 +1335,8 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
 {
   LOG(("sbPlaylistsource::ExecuteFeed"));
 
+#if 0 // DEPRECATED
+
   METHOD_SHORTCIRCUIT;
 
   // XXX Why does this need a retval param if we're not going to use it?
@@ -1364,6 +1366,7 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
   nsCOMPtr<sbIDatabaseQuery> pQuery =
     do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
   NS_ENSURE_TRUE(pQuery, NS_ERROR_FAILURE);
+
 
   nsCOMPtr<sbIPlaylistManager> pPlaylistManager =
     do_CreateInstance("@songbirdnest.com/Songbird/PlaylistManager;1");
@@ -1718,6 +1721,8 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
 
   rv = info->m_Query->Execute(_retval);
   NS_ENSURE_SUCCESS(rv, rv);
+
+#endif // DEPRECATED
 
   return NS_OK;
 }

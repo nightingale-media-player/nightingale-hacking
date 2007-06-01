@@ -318,11 +318,11 @@ void CServicesource::Init(void)
       m_PlaylistsQuery->AddSimpleQueryCallback( callback );
     }
     m_PlaylistsQuery->SetPersistentQuery( PR_TRUE );
-    
+/*    
     nsCOMPtr< sbIPlaylistManager > pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
     if(pPlaylistManager.get())
       pPlaylistManager->GetAllPlaylistList( m_PlaylistsQuery );
-
+*/
     gServicesource = this;
   }
 }

@@ -526,10 +526,10 @@ void sbWMDevice::ClearLibraryData(nsAString& dbContext)
   pQuery->SetDatabaseGUID(dbContext);
 
   PRBool retVal;
-
+/*
   nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
   nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
-
+*/
   if(pPlaylistManager.get())
   {
     pPlaylistManager->DeletePlaylist(nsString(TRACK_TABLE), pQuery, &retVal);

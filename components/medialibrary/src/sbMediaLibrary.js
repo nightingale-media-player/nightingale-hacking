@@ -300,10 +300,12 @@ CMediaLibrary.prototype =
         this.m_queryObject.resetQuery();
         
       this.m_queryObject.addQuery("DELETE FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"");
-      
+
+/*      
       const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
       var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
       aPlaylistManager.purgeTrackByGUIDFromPlaylists(mediaGUID, this.m_queryObject.getDatabaseGUID());
+*/
       
       if(!bWillRunLater)
       {

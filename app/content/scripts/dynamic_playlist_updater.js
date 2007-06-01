@@ -23,6 +23,9 @@
 // END SONGBIRD GPL
 //
  */
+
+alert("XXXX - migrate 'dynamic_playlist_updater.js' to new API");
+return;     
  
 const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
 const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");

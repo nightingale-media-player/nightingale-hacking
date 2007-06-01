@@ -56,16 +56,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playlistplayback", "compone
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playlistreaderm3u", "components\playlistreader\m3u\playlistreaderm3u.vcproj", "{ACDBF78E-46BC-4308-B0E6-778A3D72524F}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5684DF11-A153-4DC9-BB42-B5C824BA27E5} = {5684DF11-A153-4DC9-BB42-B5C824BA27E5}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playlistreaderpls", "components\playlistreader\pls\playlistreaderpls.vcproj", "{0D9F9B6F-4365-46E1-8E3B-47CFA9BF7744}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5684DF11-A153-4DC9-BB42-B5C824BA27E5} = {5684DF11-A153-4DC9-BB42-B5C824BA27E5}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playlistsource", "components\playlistsource\playlistsource.vcproj", "{9B1EB104-44C7-4504-B037-CC275C8DF27A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5684DF11-A153-4DC9-BB42-B5C824BA27E5} = {5684DF11-A153-4DC9-BB42-B5C824BA27E5}
@@ -176,14 +166,6 @@ Global
 		{4BE75698-527D-4261-96B3-57A80F6CF1D3}.Debug.Build.0 = Debug|Win32
 		{4BE75698-527D-4261-96B3-57A80F6CF1D3}.Release.ActiveCfg = Release|Win32
 		{4BE75698-527D-4261-96B3-57A80F6CF1D3}.Release.Build.0 = Release|Win32
-		{ACDBF78E-46BC-4308-B0E6-778A3D72524F}.Debug.ActiveCfg = Debug|Win32
-		{ACDBF78E-46BC-4308-B0E6-778A3D72524F}.Debug.Build.0 = Debug|Win32
-		{ACDBF78E-46BC-4308-B0E6-778A3D72524F}.Release.ActiveCfg = Release|Win32
-		{ACDBF78E-46BC-4308-B0E6-778A3D72524F}.Release.Build.0 = Release|Win32
-		{0D9F9B6F-4365-46E1-8E3B-47CFA9BF7744}.Debug.ActiveCfg = Debug|Win32
-		{0D9F9B6F-4365-46E1-8E3B-47CFA9BF7744}.Debug.Build.0 = Debug|Win32
-		{0D9F9B6F-4365-46E1-8E3B-47CFA9BF7744}.Release.ActiveCfg = Release|Win32
-		{0D9F9B6F-4365-46E1-8E3B-47CFA9BF7744}.Release.Build.0 = Release|Win32
 		{9B1EB104-44C7-4504-B037-CC275C8DF27A}.Debug.ActiveCfg = Debug|Win32
 		{9B1EB104-44C7-4504-B037-CC275C8DF27A}.Debug.Build.0 = Debug|Win32
 		{9B1EB104-44C7-4504-B037-CC275C8DF27A}.Release.ActiveCfg = Release|Win32

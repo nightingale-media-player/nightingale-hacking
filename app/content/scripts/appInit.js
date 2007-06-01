@@ -128,6 +128,9 @@ function SBAppInitialize()
     // Reset this on application startup. 
     SBDataSetIntValue("backscan.paused", 0);
 
+/*
+    // XXX Migrate this crap
+
     // Startup the Dynamic Playlist Updater
     try
     {
@@ -147,6 +150,7 @@ function SBAppInitialize()
     {
       alert("WFInit() - " + err);
     }
+*/    
   }
   catch( err )
   {
