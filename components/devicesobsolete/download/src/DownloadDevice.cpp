@@ -146,7 +146,7 @@ NS_IMPL_ISUPPORTS2(sbDownloadDevice, sbIDeviceBase, sbIDownloadDevice)
 sbDownloadDevice::sbDownloadDevice()
 :
     sbDeviceBase(),
-    mpDeviceLock(nsnull),
+    mpDeviceMonitor(nsnull),
     mState(STATE_IDLE)
 {
 }
@@ -192,8 +192,8 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     /* Create the download device lock. */
     if (NS_SUCCEEDED(result))
     {
-        mpDeviceLock = nsAutoLock::NewLock("sbDownloadDevice::mpDeviceLock");
-        if (!mpDeviceLock)
+        mpDeviceMonitor = nsAutoMonitor::NewMonitor("sbDownloadDevice::mpDeviceMonitor");
+        if (!mpDeviceMonitor)
             result = NS_ERROR_OUT_OF_MEMORY;
     }
 
@@ -506,10 +506,10 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 NS_IMETHODIMP sbDownloadDevice::Finalize()
 {
     /* Lock the download device for finalization. */
-    if (mpDeviceLock)
+    if (mpDeviceMonitor)
     {
         /* Lock the download device. */
-        nsAutoLock lock(mpDeviceLock);
+        nsAutoMonitor mon(mpDeviceMonitor);
 
         /* Dispose of any outstanding download sessions. */
         if (mpDownloadSession)
@@ -523,8 +523,8 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
     }
 
     /* Dispose of the device lock. */
-    if (mpDeviceLock)
-        nsAutoLock::DestroyLock(mpDeviceLock);
+    if (mpDeviceMonitor)
+        nsAutoMonitor::DestroyMonitor(mpDeviceMonitor);
 
     return (NS_OK);
 }
@@ -588,7 +588,7 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceState(
     PRUint32                    *aState)
 {
     /* Lock the device. */
-    nsAutoLock lock(mpDeviceLock);
+    nsAutoMonitor mon(mpDeviceMonitor);
 
     /* Return results. */
     *aState = mState;
@@ -701,7 +701,7 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
         /* Add it to the transfer queue. */
         if (NS_SUCCEEDED(result))
         {
-            nsAutoLock lock(mpDeviceLock);
+            nsAutoMonitor mon(mpDeviceMonitor);
             result = AddItemToTransferQueue
                                     (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                                      pMediaItem);
@@ -757,7 +757,7 @@ NS_IMETHODIMP sbDownloadDevice::DeleteItems(
     NS_ENSURE_ARG_POINTER(aItemCount);
 
     /* Lock the device. */
-    nsAutoLock lock(mpDeviceLock);
+    nsAutoMonitor mon(mpDeviceMonitor);
 
     /* Remove the items. */
     result = aMediaItems->GetLength(&arrayLength);
@@ -822,7 +822,7 @@ NS_IMETHODIMP sbDownloadDevice::DeleteAllItems(
     NS_ENSURE_ARG_POINTER(aItemCount);
 
     /* Lock the device. */
-    nsAutoLock lock(mpDeviceLock);
+    nsAutoMonitor mon(mpDeviceMonitor);
 
     /* Remove all the items in the queue. */
     while (GetNextTransferItem(getter_AddRefs(pMediaItem)))
@@ -901,7 +901,7 @@ NS_IMETHODIMP sbDownloadDevice::SuspendTransfer(
     NS_ENSURE_ARG_POINTER(aNumItems);
 
     /* Lock the device. */
-    nsAutoLock lock(mpDeviceLock);
+    nsAutoMonitor mon(mpDeviceMonitor);
 
     /* If there's a download session, suspend it. */
     if (mpDownloadSession)
@@ -942,7 +942,7 @@ NS_IMETHODIMP sbDownloadDevice::ResumeTransfer(
     NS_ENSURE_ARG_POINTER(aNumItems);
 
     /* Lock the device. */
-    nsAutoLock lock(mpDeviceLock);
+    nsAutoMonitor mon(mpDeviceMonitor);
 
     /* If there's a download session, resume it. */
     if (mpDownloadSession)
@@ -1195,7 +1195,7 @@ nsresult sbDownloadDevice::RunTransferQueue()
     nsresult                    result = NS_OK;
 
     /* Lock the device. */
-    nsAutoLock lock(mpDeviceLock);
+    nsAutoMonitor mon(mpDeviceMonitor);
 
     /* Initiate transfers until queue is busy or empty. */
     while (   !mpDownloadSession
@@ -1309,7 +1309,7 @@ nsresult sbDownloadDevice::ResumeTransfers()
         /* Add item to transfer queue if not complete. */
         if (NS_SUCCEEDED(itemResult) && (progress < 101))
         {
-            nsAutoLock lock(mpDeviceLock);
+            nsAutoMonitor mon(mpDeviceMonitor);
             itemResult = AddItemToTransferQueue
                             (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                              pMediaItem);
@@ -1510,7 +1510,7 @@ void sbDownloadDevice::SessionCompleted(
     /* Complete session. */
     {
         /* Lock the device. */
-        nsAutoLock lock(mpDeviceLock);
+        nsAutoMonitor mon(mpDeviceMonitor);
 
         /* Set state to idle. */
         mState = STATE_IDLE;

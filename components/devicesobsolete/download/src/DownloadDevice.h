@@ -77,7 +77,7 @@
 #include <nsCOMPtr.h>
 #include <nsIIOService.h>
 #include <nsIStringBundle.h>
-#include <prlock.h>
+#include <prmon.h>
 
 /* Songbird imports. */
 #include <sbIDataRemote.h>
@@ -161,7 +161,7 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
     nsCOMPtr<sbIDataRemote>     mpDownloadDirDR;
     nsCOMPtr<nsIFile>           mpTmpDownloadDir;
     nsRefPtr<sbDownloadSession> mpDownloadSession;
-    PRLock                      *mpDeviceLock;
+    PRMonitor                   *mpDeviceMonitor;
     PRUint32                    mState;
 
 
