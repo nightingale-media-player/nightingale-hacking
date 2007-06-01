@@ -51,6 +51,8 @@
 extern PRLogModuleInfo* gMetadataLog;
 #endif
 
+#define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
+
 // DEFINES ====================================================================
 
 // GLOBALS ====================================================================
@@ -68,10 +70,10 @@ sbMetadataJobManager::sbMetadataJobManager()
   nsCOMPtr<nsIObserverService> observerService =
     do_GetService("@mozilla.org/observer-service;1", &rv);
   if(NS_SUCCEEDED(rv)) {
-    observerService->AddObserver(this, "xpcom-shutdown", PR_FALSE);
+    observerService->AddObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
   }
   else {
-    NS_ERROR("Unable to register xpcom-shutdown observer");
+    NS_ERROR("Unable to register profile-before-change shutdown observer");
   }
 
   mQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
@@ -186,7 +188,7 @@ NS_IMETHODIMP
 sbMetadataJobManager::Observe(nsISupports *aSubject, const char *aTopic,
                                const PRUnichar *aData)
 {
-  if(!strcmp(aTopic, "xpcom-shutdown")) {
+  if(!strcmp(aTopic, NS_PROFILE_SHUTDOWN_OBSERVER_ID)) {
     nsresult rv;
 
     PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Metadata Job Manager shutting down..."));
@@ -196,7 +198,7 @@ sbMetadataJobManager::Observe(nsISupports *aSubject, const char *aTopic,
     nsCOMPtr<nsIObserverService> observerService =
       do_GetService("@mozilla.org/observer-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    observerService->RemoveObserver(this, "xpcom-shutdown");
+    observerService->RemoveObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
   }
   return NS_OK;
 }

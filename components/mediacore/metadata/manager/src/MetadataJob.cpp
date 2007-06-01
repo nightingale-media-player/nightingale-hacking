@@ -283,17 +283,8 @@ NS_IMETHODIMP sbMetadataJob::Cancel()
     // Tell the thread to go away, please.
     mMetatataJobProcessor->mShutdown = PR_TRUE;
 
-    // Wait awhile for it.
-    for ( int count = 0; !mThreadCompleted; count++ )
-    {
-      PR_Sleep( PR_MillisecondsToInterval( 20 ) );
-
-      // Break after a second.  Sucks to be you.
-      if ( count == 50 )
-      {
-        break;
-      }
-    }
+    // Wait for the thread to shutdown and release all resources.
+    mThread->Shutdown();
   }
 
   if ( mObserver )
