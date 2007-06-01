@@ -57,10 +57,10 @@
       <xul:stack>
         <xul:spacer id="mini_dash_groove_spacer" flex="1" />
         <xul:hbox id="mini_dash_text_box"  flex="1" drag_window="true">
-          <xul:sb-autoscroll id="mini_dash_autoscroll_box" fitalign="left" spacing="8" flex="1">
-            <xul:sb-player-artist-label id="mini_text_artist" class="mini_dash_text" autotip="1"/>
-            <xul:spacer id="mini_text_spacer" width="20" height="5"/>
-            <xul:sb-player-title-label id="mini_text_title" class="mini_dash_text" autotip="1" />
+          <xul:sb-autoscroll id="mini_dash_autoscroll_box" fitalign="left" spacing="8" flex="1" drag_window="true">
+            <xul:sb-player-artist-label id="mini_text_artist" class="mini_dash_text" autotip="1" drag_window="true" />
+            <xul:spacer id="mini_text_spacer" width="20" height="5" drag_window="true" />
+            <xul:sb-player-title-label id="mini_text_title" class="mini_dash_text" autotip="1" drag_window="true" />
           </xul:sb-autoscroll>
           <xul:sb-player-timeelapsed-label id="mini_text_time_elapsed" value="0:00"  drag_window="true" class="mini_dash_text"/>
           <xul:label id="mini_text_time_t_txt"   value=" / "  drag_window="true" class="mini_dash_text"/>

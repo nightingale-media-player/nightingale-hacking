@@ -41,10 +41,10 @@
     <content>
     
       <xul:bulletinboard pack="center" style="overflow: hidden;" sid="parent">
-        <xul:hbox sid="hbox">
+        <xul:hbox sid="hbox" xbl:inherits="drag_window">
           <children/>
         </xul:hbox>
-        <xul:hbox sid="overlay" flex="1"/>
+        <xul:hbox sid="overlay" flex="1" xbl:inherits="drag_window"/>
       </xul:bulletinboard>
 
     </content>

@@ -78,9 +78,12 @@ function onBkgDown( theEvent, popup )
 {
   if (isMaximized()) 
     return;
-  if ( (theEvent.target.getAttribute("drag_window") == "true") ||
+  dump('onBkgDown: '+theEvent.originalTarget.tagName+' '+theEvent.originalTarget+'\n');
+  dump('           drag_window: '+theEvent.originalTarget.getAttribute('drag_window')+'\n');
+  if ( (theEvent.originalTarget.getAttribute("drag_window") == "true") ||
        ( (document.documentElement.getAttribute("spacers_drag_window") == "true") &&
-         (theEvent.target.nodeName == "spacer") ) )
+         (theEvent.originalTarget.nodeName == "spacer" ||
+          theEvent.originalTarget.nodeName == "xul:spacer") ) )
   {
     try
     {

@@ -68,7 +68,7 @@
     <menubar id="mini_menu" hidden="false" />
 
     <!-- PLAYER DISPLAY AND CONTROLS -->
-    <sb-mini-player-controls flex="1"/>
+    <sb-mini-player-controls flex="1" drag_window="true"/>
 
     <!-- WINDOW CONTROLS -->
     <sb-player-jumpto-button id="mini_btn_jump" class="miniplayer"/>    

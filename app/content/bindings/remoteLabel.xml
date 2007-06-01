@@ -38,7 +38,7 @@
   <binding id="remote-label">
   
     <content>
-      <xul:label sbid="label" xbl:inherits="id,class,value,align,crop,disabled,flex" /> 
+      <xul:label sbid="label" xbl:inherits="id,class,value,align,crop,disabled,flex,drag_window" /> 
     </content>
 
     <implementation>
