@@ -1,4 +1,4 @@
-#include <sqlite3ext.h>
+#include "sqlite3ext.h"
 #include <stdlib.h>
 #include <stdio.h>
 SQLITE_EXTENSION_INIT1
@@ -15,15 +15,16 @@ static int tree_collate_func_next_num(const char* start,
                                       int eTextRep,
                                       int width)
 {
+  int num = 0;
+  int sign = 1;
+
   // If we are at the end of the string, set pos to null
   const char* end = start + length;
+
   if (*pos == end || *pos == NULL) {
     *pos = NULL;
     return 0;
   }
-
-  int num = 0;
-  int sign = 1;
 
   while (*pos < end) {
 
