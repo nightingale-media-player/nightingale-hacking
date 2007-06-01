@@ -54,8 +54,7 @@ SONGBIRD_PLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/*$(DLL_SUFFIX) \
 SONGBIRD_VLCPLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/plugins/*$(DLL_SUFFIX) \
                       $(NULL)
 
-SONGBIRD_DIST = $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
-                $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
+SONGBIRD_DIST = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
                 $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
                 $(NULL)
                      
@@ -89,7 +88,6 @@ SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
 runtimelibs::
 	$(MKDIR) -p $(SONGBIRD_MACOS)
 	$(CP) -dfp $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
-               $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                $(SONGBIRD_MACOS) \
                $(NULL)
