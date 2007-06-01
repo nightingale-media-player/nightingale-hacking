@@ -888,6 +888,44 @@ var SBDownloadCommands =
 
 }; // SBDownloadCommands definition
 
+function registerDownloadListCommands() {
+  window.removeEventListener("load", registerDownloadListCommands, false);
+  
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefBranch2);
+  var downloadListGUID =
+    prefs.getComplexValue("songbird.library.download",
+                          Components.interfaces.nsISupportsString);
+
+  var playlistsource =
+    Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
+              .getService(Components.interfaces.sbIPlaylistsource);
+              
+  playlistsource.registerPlaylistCommands(downloadListGUID, "", "",
+                                          SBDownloadCommands); 
+
+  window.addEventListener("unload", unregisterDownloadListCommands, false);
+}
+
+function unregisterDownloadListCommands() {
+  window.removeEventListener("unload", unregisterDownloadListCommands, false);
+  
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefBranch2);
+  var downloadListGUID =
+    prefs.getComplexValue("songbird.library.download",
+                          Components.interfaces.nsISupportsString);
+
+  var playlistsource =
+    Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
+              .getService(Components.interfaces.sbIPlaylistsource);
+              
+  playlistsource.unregisterPlaylistCommands(downloadListGUID, "", "",
+                                            SBDownloadCommands); 
+}
+
+window.addEventListener("load", registerDownloadListCommands, false);
+
 try
 {
   // Register the download commands at startup if we know what the download table is.
