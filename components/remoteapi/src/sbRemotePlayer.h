@@ -41,7 +41,6 @@
 #include <nsISecurityCheckedComponent.h>
 #include <nsPIDOMWindow.h>
 #include <nsStringGlue.h>
-#include <nsTArray.h>
 #include <nsWeakReference.h>
 
 #define SONGBIRD_REMOTEPLAYER_CONTRACTID                \

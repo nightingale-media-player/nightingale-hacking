@@ -26,10 +26,10 @@
 
 #include "sbRemoteCommands.h"
 #include "sbSecurityMixin.h"
+#include <sbClassInfoUtils.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIClassInfoImpl.h>
 #include <nsIDOMElement.h>
 #include <nsIDocument.h>
 #include <nsIDOMDocument.h>
@@ -101,6 +101,13 @@ NS_IMPL_CI_INTERFACE_GETTER4( sbRemoteCommands,
                               sbIRemoteCommands,
                               sbIPlaylistCommands,
                               sbISecurityAggregator )
+
+SB_IMPL_CLASSINFO( sbRemoteCommands,
+                   SONGBIRD_REMOTECOMMANDS_CONTRACTID,
+                   SONGBIRD_REMOTECOMMANDS_CLASSNAME,
+                   nsIProgrammingLanguage::CPLUSPLUS,
+                   0,
+                   kRemoteCommandsCID );
 
 sbRemoteCommands::sbRemoteCommands() 
 {
@@ -463,141 +470,6 @@ sbRemoteCommands::Duplicate( sbIPlaylistCommands **_retval )
   nsCOMPtr<sbIPlaylistCommands> plCommands( do_QueryInterface( copy, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
   NS_ADDREF( *_retval = plCommands );
-  return NS_OK;
-}
-
-// ---------------------------------------------------------------------------
-//
-//                        nsISecurityCheckedComponent
-//
-// ---------------------------------------------------------------------------
-
-NS_IMETHODIMP
-sbRemoteCommands::CanCreateWrapper( const nsIID *aIID, char **_retval )
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(_retval);
-  LOG(("sbRemoteCommands::CanCreateWrapper()"));
-
-  return mSecurityMixin->CanCreateWrapper( aIID, _retval );
-} 
-
-NS_IMETHODIMP
-sbRemoteCommands::CanCallMethod( const nsIID *aIID,
-                                 const PRUnichar *aMethodName,
-                                 char **_retval )
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aMethodName);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  LOG(( "sbRemoteCommands::CanCallMethod(%s)", 
-        NS_LossyConvertUTF16toASCII(aMethodName).get() ));
-
-  return mSecurityMixin->CanCallMethod( aIID, aMethodName, _retval );
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::CanGetProperty( const nsIID *aIID,
-                                  const PRUnichar *aPropertyName,
-                                  char **_retval )
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  LOG(( "sbRemoteCommands::CanGetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
-
-  return mSecurityMixin->CanGetProperty( aIID, aPropertyName, _retval );
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::CanSetProperty( const nsIID *aIID,
-                                  const PRUnichar *aPropertyName,
-                                  char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  LOG(( "sbRemoteCommands::CanSetProperty(%s)", 
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
-
-  return mSecurityMixin->CanSetProperty( aIID, aPropertyName, _retval );
-}
-
-// ---------------------------------------------------------------------------
-//
-//                            nsIClassInfo
-//
-// ---------------------------------------------------------------------------
-
-NS_IMETHODIMP 
-sbRemoteCommands::GetInterfaces( PRUint32 *aCount, nsIID ***aArray )
-{ 
-  NS_ENSURE_ARG_POINTER(aCount);
-  NS_ENSURE_ARG_POINTER(aArray);
-  LOG(("sbRemoteCommands::GetInterfaces()"));
-  return NS_CI_INTERFACE_GETTER_NAME(sbRemoteCommands)( aCount, aArray );
-}
-
-NS_IMETHODIMP 
-sbRemoteCommands::GetHelperForLanguage( PRUint32 language,
-                                        nsISupports **_retval )
-{
-  LOG(("sbRemoteCommands::GetHelperForLanguage()"));
-  *_retval = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteCommands::GetContractID( char **aContractID )
-{
-  LOG(("sbRemoteCommands::GetContractID()"));
-  *aContractID = ToNewCString(
-                      NS_LITERAL_CSTRING(SONGBIRD_REMOTECOMMANDS_CONTRACTID) );
-  return *aContractID ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbRemoteCommands::GetClassDescription( char **aClassDescription )
-{
-  LOG(("sbRemoteCommands::GetClassDescription()"));
-  *aClassDescription = ToNewCString(
-                       NS_LITERAL_CSTRING(SONGBIRD_REMOTECOMMANDS_CLASSNAME) );
-  return *aClassDescription ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbRemoteCommands::GetClassID( nsCID **aClassID )
-{
-  LOG(("sbRemoteCommands::GetClassID()"));
-  *aClassID = (nsCID*) nsMemory::Alloc( sizeof(nsCID) );
-  return *aClassID ? GetClassIDNoAlloc(*aClassID) : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbRemoteCommands::GetImplementationLanguage( PRUint32 *aImplementationLanguage )
-{
-  LOG(("sbRemoteCommands::GetImplementationLanguage()"));
-  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteCommands::GetFlags( PRUint32 *aFlags )
-{
-  LOG(("sbRemoteCommands::GetFlags()"));
-  *aFlags = 0;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteCommands::GetClassIDNoAlloc( nsCID *aClassIDNoAlloc )
-{
-  LOG(("sbRemoteCommands::GetClassIDNoAlloc()"));
-  *aClassIDNoAlloc = kRemoteCommandsCID;
   return NS_OK;
 }
 

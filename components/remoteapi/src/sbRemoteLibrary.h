@@ -39,7 +39,6 @@
 #include <nsIFile.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
-#include <nsTArray.h>
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
 
@@ -63,10 +62,11 @@ class sbRemoteLibrary : public nsIClassInfo,
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
-  NS_DECL_NSISECURITYCHECKEDCOMPONENT
   NS_DECL_SBISECURITYAGGREGATOR
   NS_DECL_SBIREMOTELIBRARY
   NS_DECL_SBIREMOTEMEDIALIST
+
+  NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
   sbRemoteLibrary();
   nsresult Init();
@@ -91,9 +91,6 @@ protected:
 
   // SecurityCheckedComponent stuff
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
-  nsTArray<nsString> mPublicMethods;
-  nsTArray<nsString> mPublicRProperties;  // Readable Properties
-  nsTArray<nsString> mPublicWProperties;  // Writeable Properties
 
 #ifdef DEBUG
   // Only set in debug builds - used for validating library creation

@@ -28,6 +28,7 @@
 #include "sbRemoteLibrary.h"
 #include "sbRemoteWrappingSimpleEnumerator.h"
 
+#include <sbClassInfoUtils.h>
 #include <sbIRemoteMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -38,7 +39,6 @@
 
 #include <nsComponentManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIScriptNameSpaceManager.h>
 #include <nsIScriptSecurityManager.h>
@@ -157,6 +157,16 @@ NS_IMPL_ISUPPORTS8(sbRemoteMediaList,
                    sbIWrappedMediaList,
                    sbIMediaItem,
                    sbILibraryResource)
+
+NS_IMPL_CI_INTERFACE_GETTER6( sbRemoteMediaList,
+                              sbISecurityAggregator,
+                              sbIRemoteMediaList,
+                              sbIMediaList,
+                              sbIMediaItem,
+                              sbILibraryResource,
+                              nsISecurityCheckedComponent )
+
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaList)
 
 sbRemoteMediaList::sbRemoteMediaList(sbIMediaList* aMediaList,
                                      sbIMediaListView* aMediaListView) :
@@ -450,149 +460,6 @@ sbRemoteMediaList::SetSelectionByIndex( PRUint32 aIndex, PRBool aSelected )
   }
 
   return NS_OK;
-}
-// ---------------------------------------------------------------------------
-//
-//                        nsISecurityCheckedComponent
-//
-// ---------------------------------------------------------------------------
-
-NS_IMETHODIMP
-sbRemoteMediaList::CanCreateWrapper(const nsIID *aIID, char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-  LOG(("sbRemoteMediaList::CanCreateWrapper()"));
-
-  return mSecurityMixin->CanCreateWrapper(aIID, _retval);
-} 
-
-NS_IMETHODIMP
-sbRemoteMediaList::CanCallMethod(const nsIID *aIID,
-                                 const PRUnichar *aMethodName,
-                                 char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aMethodName);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-
-  LOG(( "sbRemoteMediaList::CanCallMethod(%s)",
-        NS_LossyConvertUTF16toASCII(aMethodName).get() ));
-
-  return mSecurityMixin->CanCallMethod(aIID, aMethodName, _retval);
-}
-
-NS_IMETHODIMP
-sbRemoteMediaList::CanGetProperty(const nsIID *aIID,
-                                  const PRUnichar *aPropertyName,
-                                  char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-
-  LOG(( "sbRemoteMediaList::CanGetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
-
-  return mSecurityMixin->CanGetProperty(aIID, aPropertyName, _retval);
-}
-
-NS_IMETHODIMP
-sbRemoteMediaList::CanSetProperty(const nsIID *aIID,
-                                  const PRUnichar *aPropertyName,
-                                  char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-
-  LOG(( "sbRemoteMediaList::CanSetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
-
-  return mSecurityMixin->CanSetProperty(aIID, aPropertyName, _retval);
-}
-
-// ---------------------------------------------------------------------------
-//
-//                            nsIClassInfo
-//
-// ---------------------------------------------------------------------------
-
-NS_IMPL_CI_INTERFACE_GETTER6( sbRemoteMediaList,
-                              sbISecurityAggregator,
-                              sbIRemoteMediaList,
-                              sbIMediaList,
-                              sbIMediaItem,
-                              sbILibraryResource,
-                              nsISecurityCheckedComponent )
-
-NS_IMETHODIMP 
-sbRemoteMediaList::GetInterfaces(PRUint32 *aCount, nsIID ***aArray)
-{ 
-  NS_ENSURE_ARG_POINTER(aCount);
-  NS_ENSURE_ARG_POINTER(aArray);
-  LOG(("sbRemoteMediaList::GetInterfaces()"));
-  return NS_CI_INTERFACE_GETTER_NAME(sbRemoteMediaList)(aCount, aArray);
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaList::GetHelperForLanguage(PRUint32 language,
-                                        nsISupports **_retval)
-{
-  LOG(("sbRemoteMediaList::GetHelperForLanguage()"));
-  *_retval = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaList::GetContractID(char **aContractID)
-{
-  LOG(("sbRemoteMediaList::GetContractID()"));
-  *aContractID = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaList::GetClassDescription(char **aClassDescription)
-{
-  LOG(("sbRemoteMediaList::GetClassDescription()"));
-  *aClassDescription = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaList::GetClassID(nsCID **aClassID)
-{
-  LOG(("sbRemoteMediaList::GetClassID()"));
-  *aClassID = (nsCID*) nsMemory::Alloc(sizeof(nsCID));
-  return *aClassID ? GetClassIDNoAlloc(*aClassID) : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaList::GetImplementationLanguage(PRUint32 *aImplementationLanguage)
-{
-  LOG(("sbRemoteMediaList::GetImplementationLanguage()"));
-  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaList::GetFlags(PRUint32 *aFlags)
-{
-  LOG(("sbRemoteMediaList::GetFlags()"));
-  *aFlags = 0;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaList::GetClassIDNoAlloc(nsCID *aClassIDNoAlloc)
-{
-  LOG(("sbRemoteMediaList::GetClassIDNoAlloc()"));
-  return NS_ERROR_NOT_AVAILABLE;
 }
 
 // ---------------------------------------------------------------------------

@@ -69,9 +69,10 @@ public:
   NS_DECL_SBIREMOTECOMMANDS
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
-  NS_DECL_NSISECURITYCHECKEDCOMPONENT
   NS_DECL_SBISECURITYAGGREGATOR
   NS_DECL_SBIPLAYLISTCOMMANDS
+
+  NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
   sbRemoteCommands();
   nsresult Init();
@@ -87,9 +88,6 @@ protected:
 
   // SecurityCheckedComponent stuff
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
-  nsTArray<nsString> mPublicMethods;
-  nsTArray<nsString> mPublicRProperties;  // Readable Properties
-  nsTArray<nsString> mPublicWProperties;  // Writeable Properties
 };
 
 #endif // __SB_REMOTE_COMMANDS_H__

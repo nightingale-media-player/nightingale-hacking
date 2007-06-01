@@ -26,11 +26,11 @@
 
 #include "sbRemoteMediaItem.h"
 
+#include <sbClassInfoUtils.h>
 #include <sbIMediaItem.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIScriptNameSpaceManager.h>
 #include <nsIScriptSecurityManager.h>
@@ -114,6 +114,14 @@ NS_IMPL_ISUPPORTS6(sbRemoteMediaItem,
                    sbIWrappedMediaItem,
                    sbILibraryResource)
 
+NS_IMPL_CI_INTERFACE_GETTER4( sbRemoteMediaItem,
+                              sbISecurityAggregator,
+                              sbIMediaItem,
+                              sbILibraryResource,
+                              nsISecurityCheckedComponent )
+
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaItem)
+
 sbRemoteMediaItem::sbRemoteMediaItem(sbIMediaItem* aMediaItem) :
   mMediaItem(aMediaItem)
 {
@@ -187,145 +195,4 @@ sbRemoteMediaItem::SetProperty(const nsAString& aName,
   return NS_OK;
 }
 
-// ---------------------------------------------------------------------------
-//
-//                        nsISecurityCheckedComponent
-//
-// ---------------------------------------------------------------------------
-
-NS_IMETHODIMP
-sbRemoteMediaItem::CanCreateWrapper(const nsIID *aIID, char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-  LOG(("sbRemoteMediaItem::CanCreateWrapper()"));
-
-  return mSecurityMixin->CanCreateWrapper(aIID, _retval);
-} 
-
-NS_IMETHODIMP
-sbRemoteMediaItem::CanCallMethod(const nsIID *aIID,
-                                 const PRUnichar *aMethodName,
-                                 char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aMethodName);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-
-  LOG(( "sbRemoteMediaItem::CanCallMethod(%s)",
-        NS_LossyConvertUTF16toASCII(aMethodName).get() ));
-
-  return mSecurityMixin->CanCallMethod(aIID, aMethodName, _retval);
-}
-
-NS_IMETHODIMP
-sbRemoteMediaItem::CanGetProperty(const nsIID *aIID,
-                                  const PRUnichar *aPropertyName,
-                                  char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-
-  LOG(( "sbRemoteMediaItem::CanGetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
-
-  return mSecurityMixin->CanGetProperty(aIID, aPropertyName, _retval);
-}
-
-NS_IMETHODIMP
-sbRemoteMediaItem::CanSetProperty(const nsIID *aIID,
-                                  const PRUnichar *aPropertyName,
-                                  char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-
-  LOG(( "sbRemoteMediaItem::CanSetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
-
-  return mSecurityMixin->CanSetProperty(aIID, aPropertyName, _retval);
-}
-
-// ---------------------------------------------------------------------------
-//
-//                            nsIClassInfo
-//
-// ---------------------------------------------------------------------------
-
-NS_IMPL_CI_INTERFACE_GETTER4( sbRemoteMediaItem,
-                              sbISecurityAggregator,
-                              sbIMediaItem,
-                              sbILibraryResource,
-                              nsISecurityCheckedComponent )
-
-NS_IMETHODIMP 
-sbRemoteMediaItem::GetInterfaces(PRUint32 *aCount, nsIID ***aArray)
-{ 
-  NS_ENSURE_ARG_POINTER(aCount);
-  NS_ENSURE_ARG_POINTER(aArray);
-  LOG(("sbRemoteMediaItem::GetInterfaces()"));
-  return NS_CI_INTERFACE_GETTER_NAME(sbRemoteMediaItem)(aCount, aArray);
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaItem::GetHelperForLanguage(PRUint32 language,
-                                        nsISupports **_retval)
-{
-  LOG(("sbRemoteMediaItem::GetHelperForLanguage()"));
-  *_retval = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaItem::GetContractID(char **aContractID)
-{
-  LOG(("sbRemoteMediaItem::GetContractID()"));
-  *aContractID = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaItem::GetClassDescription(char **aClassDescription)
-{
-  LOG(("sbRemoteMediaItem::GetClassDescription()"));
-  *aClassDescription = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaItem::GetClassID(nsCID **aClassID)
-{
-  LOG(("sbRemoteMediaItem::GetClassID()"));
-  *aClassID = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaItem::GetImplementationLanguage(PRUint32 *aImplementationLanguage)
-{
-  LOG(("sbRemoteMediaItem::GetImplementationLanguage()"));
-  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaItem::GetFlags(PRUint32 *aFlags)
-{
-  LOG(("sbRemoteMediaItem::GetFlags()"));
-  *aFlags = 0;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteMediaItem::GetClassIDNoAlloc(nsCID *aClassIDNoAlloc)
-{
-  LOG(("sbRemoteMediaItem::GetClassIDNoAlloc()"));
-  return NS_ERROR_NOT_AVAILABLE;
-}
 

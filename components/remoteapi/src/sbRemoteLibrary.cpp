@@ -28,6 +28,7 @@
 #include "sbRemoteMediaList.h"
 #include "sbRemoteMediaItem.h"
 
+#include <sbClassInfoUtils.h>
 #include <sbILibrary.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
@@ -39,7 +40,6 @@
 #include <nsEventDispatcher.h>
 #include <nsHashKeys.h>
 #include <nsICategoryManager.h>
-#include <nsIClassInfoImpl.h>
 #include <nsIDocument.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMDocumentEvent.h>
@@ -119,6 +119,18 @@ NS_IMPL_ISUPPORTS4( sbRemoteLibrary,
                     nsISecurityCheckedComponent,
                     sbISecurityAggregator,
                     sbIRemoteLibrary )
+
+NS_IMPL_CI_INTERFACE_GETTER3( sbRemoteLibrary,
+                              sbISecurityAggregator,
+                              sbIRemoteLibrary,
+                              nsISecurityCheckedComponent )
+
+SB_IMPL_CLASSINFO( sbRemoteLibrary,
+                   SONGBIRD_REMOTELIBRARY_CONTRACTID,
+                   SONGBIRD_REMOTELIBRARY_CLASSNAME,
+                   nsIProgrammingLanguage::CPLUSPLUS,
+                   0,
+                   kRemoteLibraryCID )
 
 sbRemoteLibrary::sbRemoteLibrary() 
 {
@@ -592,151 +604,6 @@ sbRemoteLibrary::GetLibraryGUID( const nsAString &aLibraryID,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  return NS_OK;
-}
-
-// ---------------------------------------------------------------------------
-//
-//                        nsISecurityCheckedComponent
-//
-// ---------------------------------------------------------------------------
-
-NS_IMETHODIMP
-sbRemoteLibrary::CanCreateWrapper( const nsIID *aIID, char **_retval )
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-
-  LOG5(("sbRemoteLibrary::CanCreateWrapper()"));
-
-  return mSecurityMixin->CanCreateWrapper( aIID, _retval );
-} 
-
-NS_IMETHODIMP
-sbRemoteLibrary::CanCallMethod( const nsIID *aIID,
-                                const PRUnichar *aMethodName,
-                                char **_retval )
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aMethodName);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-
-  LOG5(( "sbRemoteLibrary::CanCallMethod(%s)",
-         NS_LossyConvertUTF16toASCII(aMethodName).get() ));
-
-  return mSecurityMixin->CanCallMethod( aIID, aMethodName, _retval );
-}
-
-NS_IMETHODIMP
-sbRemoteLibrary::CanGetProperty( const nsIID *aIID,
-                                 const PRUnichar *aPropertyName,
-                                 char **_retval )
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-
-  LOG5(( "sbRemoteLibrary::CanGetProperty(%s)",
-         NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
-
-  return mSecurityMixin->CanGetProperty( aIID, aPropertyName, _retval );
-}
-
-NS_IMETHODIMP
-sbRemoteLibrary::CanSetProperty( const nsIID *aIID,
-                                 const PRUnichar *aPropertyName,
-                                 char **_retval )
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mSecurityMixin);
-
-  LOG5(( "sbRemoteLibrary::CanSetProperty(%s)",
-         NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
-
-  return mSecurityMixin->CanSetProperty( aIID, aPropertyName, _retval );
-}
-
-// ---------------------------------------------------------------------------
-//
-//                            nsIClassInfo
-//
-// ---------------------------------------------------------------------------
-
-NS_IMPL_CI_INTERFACE_GETTER3( sbRemoteLibrary,
-                              sbISecurityAggregator,
-                              sbIRemoteLibrary,
-                              nsISecurityCheckedComponent )
-
-NS_IMETHODIMP 
-sbRemoteLibrary::GetInterfaces( PRUint32 *aCount, nsIID ***aArray )
-{ 
-  NS_ENSURE_ARG_POINTER(aCount);
-  NS_ENSURE_ARG_POINTER(aArray);
-  LOG5(("sbRemoteLibrary::GetInterfaces()"));
-  return NS_CI_INTERFACE_GETTER_NAME(sbRemoteLibrary)( aCount, aArray );
-}
-
-NS_IMETHODIMP 
-sbRemoteLibrary::GetHelperForLanguage( PRUint32 language,
-                                       nsISupports **_retval )
-{
-  LOG5(("sbRemoteLibrary::GetHelperForLanguage()"));
-  *_retval = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteLibrary::GetContractID( char **aContractID )
-{
-  LOG5(("sbRemoteLibrary::GetContractID()"));
-  *aContractID = ToNewCString( NS_LITERAL_CSTRING(
-                                          SONGBIRD_REMOTELIBRARY_CONTRACTID) );
-  return *aContractID ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbRemoteLibrary::GetClassDescription( char **aClassDescription )
-{
-  LOG5(("sbRemoteLibrary::GetClassDescription()"));
-  *aClassDescription = ToNewCString( NS_LITERAL_CSTRING(
-                                           SONGBIRD_REMOTELIBRARY_CLASSNAME) );
-  return *aClassDescription ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbRemoteLibrary::GetClassID( nsCID **aClassID )
-{
-  LOG5(("sbRemoteLibrary::GetClassID()"));
-  *aClassID = (nsCID*) nsMemory::Alloc( sizeof(nsCID) );
-  return *aClassID ? GetClassIDNoAlloc(*aClassID) : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbRemoteLibrary::GetImplementationLanguage( PRUint32 *aImplementationLanguage )
-{
-  LOG5(("sbRemoteLibrary::GetImplementationLanguage()"));
-  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteLibrary::GetFlags( PRUint32 *aFlags )
-{
-  LOG5(("sbRemoteLibrary::GetFlags()"));
-  *aFlags = 0;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemoteLibrary::GetClassIDNoAlloc( nsCID *aClassIDNoAlloc )
-{
-  LOG5(("sbRemoteLibrary::GetClassIDNoAlloc()"));
-  *aClassIDNoAlloc = kRemoteLibraryCID;
   return NS_OK;
 }
 

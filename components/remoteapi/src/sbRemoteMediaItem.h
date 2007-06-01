@@ -49,7 +49,6 @@
   NS_IMETHOD Write(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Write(); } \
   NS_IMETHOD Equals(sbILibraryResource *aOtherLibraryResource, PRBool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Equals(aOtherLibraryResource, _retval); }
 
-
 class sbRemoteMediaItem : public nsIClassInfo,
                           public nsISecurityCheckedComponent,
                           public sbISecurityAggregator,
@@ -59,11 +58,11 @@ class sbRemoteMediaItem : public nsIClassInfo,
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
-  NS_DECL_NSISECURITYCHECKEDCOMPONENT
   NS_DECL_SBISECURITYAGGREGATOR
 
   NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem);
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETPROPERTY(mMediaItem);
+  NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin);
 
   NS_IMETHOD SetProperty(const nsAString& aName, const nsAString& aValue);
 

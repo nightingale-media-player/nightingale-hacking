@@ -27,11 +27,11 @@
 #include "sbRemoteWrappingSimpleEnumerator.h"
 #include "sbRemoteLibrary.h"
 
+#include <sbClassInfoUtils.h>
 #include <sbIMediaItem.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIScriptNameSpaceManager.h>
 #include <nsIScriptSecurityManager.h>
@@ -63,6 +63,13 @@ NS_IMPL_ISUPPORTS4(sbRemoteWrappingSimpleEnumerator,
                    nsISecurityCheckedComponent,
                    sbISecurityAggregator,
                    nsISimpleEnumerator)
+
+NS_IMPL_CI_INTERFACE_GETTER3( sbRemoteWrappingSimpleEnumerator,
+                              nsISecurityCheckedComponent,
+                              nsISimpleEnumerator,
+                              sbISecurityAggregator )
+
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteWrappingSimpleEnumerator)
 
 nsresult
 sbRemoteWrappingSimpleEnumerator::Init()
@@ -125,74 +132,5 @@ sbRemoteWrappingSimpleEnumerator::GetNext(nsISupports** _retval)
 
   NS_ADDREF(*_retval = wrappedMediaItem);
   return NS_OK;
-}
-
-// ---------------------------------------------------------------------------
-//
-//                            nsIClassInfo
-//
-// ---------------------------------------------------------------------------
-
-NS_IMPL_CI_INTERFACE_GETTER3( sbRemoteWrappingSimpleEnumerator,
-                              nsISecurityCheckedComponent,
-                              nsISimpleEnumerator,
-                              sbISecurityAggregator )
-
-NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::GetInterfaces(PRUint32 *aCount,
-                                               nsIID ***aArray)
-{
-  NS_ENSURE_ARG_POINTER(aCount);
-  NS_ENSURE_ARG_POINTER(aArray);
-  return NS_CI_INTERFACE_GETTER_NAME(sbRemoteWrappingSimpleEnumerator)(aCount, aArray);
-}
-
-NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::GetHelperForLanguage(PRUint32 language,
-                                                      nsISupports **_retval)
-{
-  *_retval = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::GetContractID(char **aContractID)
-{
-  *aContractID = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::GetClassDescription(char **aClassDescription)
-{
-  *aClassDescription = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::GetClassID(nsCID **aClassID)
-{
-  *aClassID = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::GetImplementationLanguage(PRUint32 *aImplementationLanguage)
-{
-  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::GetFlags(PRUint32 *aFlags)
-{
-  *aFlags = 0;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::GetClassIDNoAlloc(nsCID *aClassIDNoAlloc)
-{
-  return NS_ERROR_NOT_AVAILABLE;
 }
 

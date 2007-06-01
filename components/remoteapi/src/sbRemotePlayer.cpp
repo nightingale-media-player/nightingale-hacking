@@ -25,6 +25,7 @@
  */
 
 #include "sbRemotePlayer.h"
+#include <sbClassInfoUtils.h>
 #include <sbILibrary.h>
 #include <sbIPlaylistsource.h>
 #include <sbITabBrowser.h>
@@ -33,7 +34,6 @@
 #include <nsDOMJSUtils.h>
 #include <nsIArray.h>
 #include <nsICategoryManager.h>
-#include <nsIClassInfoImpl.h>
 #include <nsIContent.h>
 #include <nsIDocShell.h>
 #include <nsIDocShellTreeItem.h>
@@ -158,6 +158,13 @@ NS_IMPL_CI_INTERFACE_GETTER5( sbRemotePlayer,
                               nsIDOMEventListener,
                               nsISupportsWeakReference,
                               sbISecurityAggregator )
+
+SB_IMPL_CLASSINFO( sbRemotePlayer,
+                   SONGBIRD_REMOTEPLAYER_CONTRACTID,
+                   SONGBIRD_REMOTEPLAYER_CLASSNAME,
+                   nsIProgrammingLanguage::CPLUSPLUS,
+                   0,
+                   kRemotePlayerCID );
 
 sbRemotePlayer*
 sbRemotePlayer::GetInstance()
@@ -748,79 +755,6 @@ sbRemotePlayer::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyName
   FireRemoteAPIAccessedEvent();
 
   return mSecurityMixin->CanSetProperty(aIID, aPropertyName, _retval);
-}
-
-// ---------------------------------------------------------------------------
-//
-//                            nsIClassInfo
-//
-// ---------------------------------------------------------------------------
-
-NS_IMETHODIMP 
-sbRemotePlayer::GetInterfaces(PRUint32 *aCount, nsIID ***aArray)
-{ 
-  NS_ENSURE_ARG_POINTER(aCount);
-  NS_ENSURE_ARG_POINTER(aArray);
-  LOG(("sbRemotePlayer::GetInterfaces()"));
-  return NS_CI_INTERFACE_GETTER_NAME(sbRemotePlayer)(aCount, aArray);
-}
-
-NS_IMETHODIMP 
-sbRemotePlayer::GetHelperForLanguage(PRUint32 language, nsISupports **_retval)
-{
-  LOG(("sbRemotePlayer::GetHelperForLanguage()"));
-  *_retval = nsnull;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemotePlayer::GetContractID( char **aContractID )
-{
-  LOG(("sbRemotePlayer::GetContractID()"));
-  *aContractID = ToNewCString(
-                        NS_LITERAL_CSTRING(SONGBIRD_REMOTEPLAYER_CONTRACTID) );
-  return *aContractID ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbRemotePlayer::GetClassDescription( char **aClassDescription )
-{
-  LOG(("sbRemotePlayer::GetClassDescription()"));
-  *aClassDescription = ToNewCString(
-                         NS_LITERAL_CSTRING(SONGBIRD_REMOTEPLAYER_CLASSNAME) );
-  return *aClassDescription ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbRemotePlayer::GetClassID( nsCID **aClassID )
-{
-  LOG(("sbRemotePlayer::GetClassID()"));
-  *aClassID = (nsCID*) nsMemory::Alloc( sizeof(nsCID) );
-  return *aClassID ? GetClassIDNoAlloc(*aClassID) : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbRemotePlayer::GetImplementationLanguage( PRUint32 *aImplementationLanguage )
-{
-  LOG(("sbRemotePlayer::GetImplementationLanguage()"));
-  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemotePlayer::GetFlags( PRUint32 *aFlags )
-{
-  LOG(("sbRemotePlayer::GetFlags()"));
-  *aFlags = 0;
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemotePlayer::GetClassIDNoAlloc( nsCID *aClassIDNoAlloc )
-{
-  LOG(("sbRemotePlayer::GetClassIDNoAlloc()"));
-  *aClassIDNoAlloc = kRemotePlayerCID;
-  return NS_OK;
 }
 
 // ---------------------------------------------------------------------------

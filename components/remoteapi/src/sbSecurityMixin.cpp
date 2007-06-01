@@ -25,9 +25,9 @@
  */
 
 #include "sbSecurityMixin.h"
+#include <sbClassInfoUtils.h>
 #include <sbTArrayStringEnumerator.h>
 
-#include <nsIClassInfoImpl.h>
 #include <nsIConsoleService.h>
 #include <nsIPermissionManager.h>
 #include <nsIPrefBranch.h>
@@ -63,6 +63,13 @@ NS_IMPL_ISUPPORTS3(sbSecurityMixin,
 NS_IMPL_CI_INTERFACE_GETTER2(sbSecurityMixin,
                              nsISecurityCheckedComponent,
                              sbISecurityMixin)
+
+SB_IMPL_CLASSINFO( sbSecurityMixin,
+                   SONGBIRD_SECURITYMIXIN_CONTRACTID,
+                   SONGBIRD_SECURITYMIXIN_CLASSNAME,
+                   nsIProgrammingLanguage::CPLUSPLUS,
+                   0,
+                   kSecurityMixinCID );
 
 sbSecurityMixin::sbSecurityMixin() : mInterfacesCount(0)
 {
@@ -460,68 +467,6 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAP
   // Negative Ghostrider, pattern is full.
   LOG(("sbSecurityMixin::GetPermission - Permission DENIED (looooooser)!!!"));
   return PR_FALSE;
-}
-
-// ---------------------------------------------------------------------------
-//
-//                              nsIClassInfo
-//
-// ---------------------------------------------------------------------------
-
-NS_IMETHODIMP 
-sbSecurityMixin::GetInterfaces(PRUint32 *aCount, nsIID ***aArray)
-{ 
-  // gets defined in the NS_IMPL_CI_INTER... macro up by NS_IMPL_NSISUPPORTS
-  return NS_CI_INTERFACE_GETTER_NAME(sbSecurityMixin)(aCount, aArray);
-}
-
-NS_IMETHODIMP 
-sbSecurityMixin::GetHelperForLanguage(PRUint32 language, nsISupports **_retval)
-{
-    *_retval = nsnull;
-    return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbSecurityMixin::GetContractID(char **aContractID)
-{
-    *aContractID = ToNewCString(NS_LITERAL_CSTRING(SONGBIRD_SECURITYMIXIN_CONTRACTID));
-    return *aContractID ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbSecurityMixin::GetClassDescription(char **aClassDescription)
-{
-    *aClassDescription = ToNewCString(NS_LITERAL_CSTRING("sbSecurityMixin"));
-    return *aClassDescription ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbSecurityMixin::GetClassID(nsCID **aClassID)
-{
-    *aClassID = (nsCID*) nsMemory::Alloc(sizeof(nsCID));
-    return *aClassID ? GetClassIDNoAlloc(*aClassID) : NS_ERROR_OUT_OF_MEMORY;
-}
-
-NS_IMETHODIMP 
-sbSecurityMixin::GetImplementationLanguage(PRUint32 *aImplementationLanguage)
-{
-    *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
-    return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbSecurityMixin::GetFlags(PRUint32 *aFlags)
-{
-    *aFlags = nsIClassInfo::DOM_OBJECT;
-    return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbSecurityMixin::GetClassIDNoAlloc(nsCID *aClassIDNoAlloc)
-{
-    *aClassIDNoAlloc = kSecurityMixinCID;
-    return NS_OK;
 }
 
 // ---------------------------------------------------------------------------
