@@ -616,7 +616,8 @@
           //       hook up an action to do when the user clicks through, probably launch prepanel
           var notificationName = "remoteapi-called";
           var messageString = "RemoteAPI was called";
-          var notificationBox = this.linkedBrowser.parentNode;
+          var browser = event.currentTarget.gBrowser.getBrowserForDocument(event.target);
+          var notificationBox = browser.parentNode;
           var notification = notificationBox.getNotificationWithValue(notificationName);
           if (!notification) {
             // if there isn't a notfication object, make one and append it
