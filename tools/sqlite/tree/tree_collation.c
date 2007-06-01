@@ -1,6 +1,8 @@
+#include <nscore.h>
 #include "sqlite3ext.h"
 #include <stdlib.h>
 #include <stdio.h>
+
 SQLITE_EXTENSION_INIT1
 
 /*
@@ -132,11 +134,10 @@ static int tree_collate_func_utf8(void *pCtx,
   return tree_collate_func(pCtx, nA, zA, nB, zB, SQLITE_UTF8);
 }
 
-int sqlite3_extension_init(
-  sqlite3 *db,
-  char **pzErrMsg,
-  const sqlite3_api_routines *pApi
-){
+NS_EXPORT int sqlite3_extension_init(sqlite3 *db,
+                                     char **pzErrMsg,
+                                     const sqlite3_api_routines *pApi)
+{
   SQLITE_EXTENSION_INIT2(pApi)
 
   sqlite3_create_collation(db,
