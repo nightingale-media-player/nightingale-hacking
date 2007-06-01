@@ -461,51 +461,6 @@ sbLocalDatabaseQuery::AddFilters()
 {
   nsresult rv;
 
-  PRUint32 joinNum = 0;
-
-  PRUint32 len = mFilters->Length();
-  for (PRUint32 i = 0; i < len; i++) {
-    const FilterSpec& fs = mFilters->ElementAt(i);
-    if (fs.isSearch) {
-
-      // Right now we don't support top level property searches
-      if (SB_IsTopLevelProperty(fs.property)) {
-        NS_WARNING("Top level properties not supported for search");
-        return NS_ERROR_INVALID_ARG;
-      }
-
-      nsAutoString tableAlias;
-      tableAlias.AppendLiteral("_p");
-      tableAlias.AppendInt(joinNum++);
-
-      nsCOMPtr<sbISQLSelectBuilder> builder =
-        do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->SetBaseTableName(PROPERTIES_TABLE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = builder->SetIsDistinct(PR_TRUE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // If the property is not "*" we need to add constraints for each
-      // property
-      if (!fs.property.EqualsLiteral("*")) {
-        nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
-        rv = builder->CreateMatchCriterionIn(EmptyString(),
-                                             PROPERTYID_COLUMN,
-                                             getter_AddRefs(inCriterion));
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = inCriterion->AddSubquery(builder);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        
-
-
-      }
-    }
-  }
-
   PRUint32 len = mFilters->Length();
   for (PRUint32 i = 0; i < len; i++) {
     const FilterSpec& fs = mFilters->ElementAt(i);
