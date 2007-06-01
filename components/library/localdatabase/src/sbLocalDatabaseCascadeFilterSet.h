@@ -28,6 +28,7 @@
 #define __SBLOCALDATABASECASCADEFILTERSET_H__
 
 #include <nsCOMPtr.h>
+#include <nsAutoPtr.h>
 #include <nsIStringEnumerator.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
@@ -35,7 +36,7 @@
 #include <nsTHashtable.h>
 #include <nsHashKeys.h>
 
-class nsITreeView;
+class sbLocalDatabaseTreeView;
 class sbILocalDatabaseAsyncGUIDArray;
 class sbILocalDatabaseLibrary;
 class sbIMediaListView;
@@ -65,7 +66,7 @@ private:
     sbStringArray propertyList;
     sbStringArray values;
     nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> array;
-    nsCOMPtr<nsITreeView> treeView;
+    nsRefPtr<sbLocalDatabaseTreeView> treeView;
   };
 
   // This callback is meant to be used with mListeners.

@@ -242,3 +242,57 @@ sbPropertyArray::GetPropertyAt(PRUint32 aIndex,
   NS_ADDREF(*_retval = property);
   return NS_OK;
 }
+
+NS_IMETHODIMP
+sbPropertyArray::ToString(nsAString& _retval)
+{
+  nsresult rv;
+
+  nsAutoString buff;
+  buff.AssignLiteral("[");
+
+  PRUint32 length = mArray.Count();
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<nsIProperty> property = mArray.ObjectAt(i);
+    NS_ENSURE_STATE(property);
+
+    nsCOMPtr<nsIVariant> value;
+    rv = property->GetValue(getter_AddRefs(value));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint16 dataType;
+    rv = value->GetDataType(&dataType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString propertyName;
+    rv = property->GetName(propertyName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    buff.AppendLiteral("'");
+    buff.Append(propertyName);
+    buff.AppendLiteral("' => ");
+
+    if (dataType == nsIDataType::VTYPE_ASTRING) {
+      nsAutoString valueString;
+      rv = value->GetAsAString(valueString);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      buff.AppendLiteral("'");
+      buff.Append(valueString);
+      buff.AppendLiteral("'");
+    }
+    else {
+      buff.AppendLiteral("<not a string>");
+    }
+
+    if (i + 1 < length) {
+      buff.AppendLiteral(", ");
+    }
+  }
+
+  buff.AssignLiteral("]");
+  _retval = buff;
+
+  return NS_OK;
+}
+

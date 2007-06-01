@@ -160,7 +160,9 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mCachedRowCountPending(PR_FALSE),
  mIsArrayBusy(PR_FALSE),
  mGetByIndexAsyncPending(PR_FALSE),
- mClearSelectionPending(PR_FALSE)
+ mClearSelectionPending(PR_FALSE),
+ mFakeAllRow(PR_FALSE),
+ mSelectionChanging(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseTreeViewLog) {
@@ -230,6 +232,9 @@ sbLocalDatabaseTreeView::Init(sbIMediaListView* aMediaListView,
 
   if (isDistinct) {
     mListType = eDistinct;
+    // XXXsteve This is not fully implemented yet.  This will be PR_TRUE when
+    // it is working
+    mFakeAllRow = PR_FALSE;
   }
   else {
     nsAutoString baseTable;
@@ -702,6 +707,15 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::GetSelectionChanging(PRBool* aSelectionChanging)
+{
+  NS_ENSURE_ARG_POINTER(aSelectionChanging);
+
+  *aSelectionChanging = mSelectionChanging;
+  return NS_OK;
+}
+
 // sbILocalDatabaseGUIDArrayListener
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::OnBeforeInvalidate()
@@ -742,7 +756,9 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
 
     // If there is a clear selection pending, clear the selection
     if (mClearSelectionPending) {
+      mSelectionChanging = PR_TRUE;
       rv = mRealSelection->ClearSelection();
+      mSelectionChanging = PR_FALSE;
       NS_ENSURE_SUCCESS(rv, rv);
       mClearSelectionPending = PR_FALSE;
     }
@@ -802,7 +818,9 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
 
           mSelectionList.Remove(id);
           if (mRealSelection) {
+            mSelectionChanging = PR_TRUE;
             rv = mRealSelection->RangedSelect(row, row, PR_TRUE);
+            mSelectionChanging = PR_FALSE;
             NS_ENSURE_SUCCESS(rv, rv);
           }
         }
@@ -812,7 +830,9 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
     }
 
     // Unsuppress select events
+    mSelectionChanging = PR_TRUE;
     rv = mRealSelection->SetSelectEventsSuppressed(PR_FALSE);
+    mSelectionChanging = PR_FALSE;
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRUint32 count = 0;
@@ -976,6 +996,11 @@ sbLocalDatabaseTreeView::GetRowCount(PRInt32 *aRowCount)
   }
 
   *aRowCount = mCachedRowCount;
+
+  if (mFakeAllRow) {
+    *aRowCount++;
+  }
+
   return NS_OK;
 }
 
@@ -987,6 +1012,18 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
   NS_ENSURE_ARG_POINTER(col);
 
   nsresult rv;
+
+  // If we are adding a fake all row, and this is the first row, the string
+  // should be "All". Otherwise, decrement the row count to fix the offset
+  // of adding the fake all row.
+  // XXXsteve This is not fully implemented yet
+  if (mFakeAllRow) {
+    if (row == 0) {
+      _retval.AssignLiteral("All");
+      return NS_OK;
+    }
+    row--;
+  }
 
   nsAutoString bind;
   rv = GetPropertyForTreeColumn(col, bind);
@@ -1111,6 +1148,8 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::GetSelection(nsITreeSelection** aSelection)
 {
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetSelection()", this));
+
   NS_ENSURE_ARG_POINTER(aSelection);
 
   if (!mSelection) {
@@ -1123,6 +1162,8 @@ sbLocalDatabaseTreeView::GetSelection(nsITreeSelection** aSelection)
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::SetSelection(nsITreeSelection* aSelection)
 {
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetSelection(0x%.8x)", this, aSelection));
+
   NS_ENSURE_ARG_POINTER(aSelection);
 
   // Wrap the selection given to us with our own proxy implementation so
@@ -1563,6 +1604,8 @@ sbLocalDatabaseTreeView::GetCellValue(PRInt32 row,
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
 {
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetTree(0x%.8x)", this, tree));
+
   // XXX: nsTreeBoxObject calls this method with a null to break a cycle so
   // we can't NS_ENSURE_ARG_POINTER(tree)
 
@@ -2109,11 +2152,16 @@ sbLocalDatabaseTreeSelection::sbLocalDatabaseTreeSelection(nsITreeSelection* aSe
 NS_IMETHODIMP
 sbLocalDatabaseTreeSelection::GetTree(nsITreeBoxObject** aTree)
 {
+  TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - GetTree()", this));
+
   return mSelection->GetTree(aTree);
 }
 NS_IMETHODIMP
 sbLocalDatabaseTreeSelection::SetTree(nsITreeBoxObject* aTree)
 {
+  TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - SetTree(0x%.8x)",
+         this, aTree));
+
   return mSelection->SetTree(aTree);
 }
 
@@ -2302,7 +2350,9 @@ sbLocalDatabaseTreeSelection::ClearSelection()
 {
   TRACE(("sbLocalDatabaseTreeSelection[0x%.8x] - ClearSelection()", this));
 
+  mTreeView->mSelectionChanging = PR_TRUE;
   nsresult rv = mSelection->ClearSelection();
+  mTreeView->mSelectionChanging = PR_FALSE;
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Simple clear the selection list when the entire selection is cleared

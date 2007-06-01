@@ -54,4 +54,10 @@ interface sbIPropertyArray : nsIMutableArray
    * \param aIndex The index of the property to retrieve
    */                      
   nsIProperty getPropertyAt(in unsigned long aIndex);
+
+  /**
+   * Return the contents of the property array as a string
+   */                      
+  AString toString();
 };
+

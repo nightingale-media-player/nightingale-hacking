@@ -133,7 +133,7 @@ sbLocalDatabaseCascadeFilterSet::GetProperty(PRUint16 aIndex,
   TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetProperty", this));
   PRUint32 filterLength = mFilters.Length();
   NS_ENSURE_TRUE(filterLength, NS_ERROR_UNEXPECTED);
-  NS_ENSURE_ARG_RANGE(aIndex, 0, filterLength - 1);
+  NS_ENSURE_ARG_MAX(aIndex, filterLength - 1);
 
   _retval = mFilters[aIndex].property;
 
@@ -290,19 +290,44 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
     }
   }
 
+  nsCOMPtr<sbIPropertyArray> toClear =
+    do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Update downstream filters
   for (PRUint32 i = aIndex + 1; i < mFilters.Length(); i++) {
+
+    // We want to clear the downstream filter since the upstream filter has
+    // changed
+    sbFilterSpec& downstream = mFilters[i];
+
+    rv = toClear->AppendProperty(downstream.property, EmptyString());
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = ConfigureArray(i);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (mFilters[i].treeView) {
-      sbLocalDatabaseTreeView* view = NS_STATIC_CAST(sbLocalDatabaseTreeView*, mFilters[i].treeView.get());
-      rv = view->Rebuild();
+    if (downstream.treeView) {
+      rv = downstream.treeView->Rebuild();
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
     // Notify listeners
     mListeners.EnumerateEntries(OnValuesChangedCallback, &i);
+  }
+
+  // Clear the downstream filters from the associated view
+  nsCOMPtr<sbIFilterableMediaList> filterable =
+    do_QueryInterface(mMediaListView, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 numClear;
+  rv = toClear->GetLength(&numClear);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (numClear > 0) {
+    rv = filterable->SetFilters(toClear);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Update the associated view with the new filter or search setting
@@ -321,10 +346,6 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
     }
   }
   else {
-    nsCOMPtr<sbIFilterableMediaList> filterable =
-      do_QueryInterface(mMediaListView, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     if (aValueArrayCount == 0) {
       rv = filter->AppendProperty(fs.property, EmptyString());
       NS_ENSURE_SUCCESS(rv, rv);
@@ -390,8 +411,8 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
     rv = fs.array->SetPropertyCache(propertyCache);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoPtr<sbLocalDatabaseTreeView> treeView(new sbLocalDatabaseTreeView());
-    NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
+    fs.treeView = new sbLocalDatabaseTreeView();
+    NS_ENSURE_TRUE(fs.treeView, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<sbIPropertyArray> propArray =
       do_CreateInstance("@songbirdnest.com/Songbird/Properties/PropertyArray;1", &rv);
@@ -400,10 +421,8 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
     rv = propArray->AppendProperty(fs.property, NS_LITERAL_STRING("a"));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = treeView->Init(mMediaListView, fs.array, propArray);
+    rv = fs.treeView->Init(mMediaListView, fs.array, propArray);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    fs.treeView = treeView.forget();
   }
 
   NS_ADDREF(*_retval = fs.treeView);
@@ -453,9 +472,12 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
 
   nsresult rv;
 
-  const sbFilterSpec& fs = mFilters[aIndex];
+  sbFilterSpec& fs = mFilters[aIndex];
+
+  // Clear this filter since our upstream filters have changed
   rv = fs.array->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
+  fs.values.Clear();
 
   nsCOMPtr<sbIPropertyManager> propMan =
     do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);

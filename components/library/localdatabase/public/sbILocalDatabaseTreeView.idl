@@ -38,6 +38,7 @@ interface nsIStringEnumerator;
 [scriptable, uuid(c1e4e564-8e8d-4052-b4c2-7f4716061ffb)]
 interface sbILocalDatabaseTreeView : nsISupports
 {
+  readonly attribute boolean selectionChanging;
   void setSort(in AString aProperty, in boolean aDirection);
 };
 

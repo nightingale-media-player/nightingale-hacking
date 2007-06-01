@@ -82,7 +82,8 @@ interface sbICascadeFilterSet : nsISupports
   void remove(in unsigned short aIndex);
 
   /**
-   * \brief Set the configuration of a filter
+   * \brief Set the configuration of a filter.  Note that chaging a filter will
+   *        clear the configuration of all downstream filters.
    * \param aIndex Index of the filter to be configured
    * \param aValueArray Array of values used to constrain the filter.  Note
    *        that only the first item in the array is used to constrain a

@@ -230,6 +230,12 @@ private:
   // Used to cause a selection clear on the next async response.
   PRPackedBool mClearSelectionPending;
 
+  // Should we include a fake "All" row in the tree
+  // XXXsteve This is not fully implemented yet
+  PRPackedBool mFakeAllRow;
+
+  // Flag to indicate that the tree is changing its selection
+  PRPackedBool mSelectionChanging;
 };
 
 class sbLocalDatabaseTreeSelection : public nsITreeSelection

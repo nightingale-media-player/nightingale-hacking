@@ -114,6 +114,11 @@
         <parameter name="event"/>
         <body>
 <![CDATA[
+  var ldbtv = this.tree.view.QueryInterface(this._Ci.sbILocalDatabaseTreeView);
+  if (ldbtv.selectionChanging) {
+    return;
+  }
+
   var sel = this.tree.view.selection;
   var values = [];
   var rangeCount = sel.getRangeCount();

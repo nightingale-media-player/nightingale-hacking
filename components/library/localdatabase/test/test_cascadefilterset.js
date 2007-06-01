@@ -124,7 +124,7 @@ function runTest () {
   // Removing the search filter should restore us to the previous state
   cfs.remove(0);
   assertEqual(cfs.getValueCount(0), 8);
-  assertEqual(cfs.getValueCount(1), 2);
+  assertEqual(cfs.getValueCount(1), 8);
 
   // This should cause all filters after the removed one to change
   assertEqual(arrayEquals(listener.indexes, [0, 1]), true);

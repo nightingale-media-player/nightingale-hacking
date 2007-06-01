@@ -52,6 +52,7 @@
 #include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
+#include <prlog.h>
 
 #define DEFAULT_FETCH_SIZE 1000
 
@@ -70,6 +71,19 @@ NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseMediaListView,
                              sbISearchableMediaList,
                              sbISortableMediaList,
                              nsIClassInfo)
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbLocalDatabaseMediaListView:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* sMediaListViewLog = nsnull;
+#define TRACE(args) if (sMediaListViewLog) PR_LOG(sMediaListViewLog, PR_LOG_DEBUG, args)
+#define LOG(args)   if (sMediaListViewLog) PR_LOG(sMediaListViewLog, PR_LOG_WARN, args)
+#else /* PR_LOGGING */
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
 
 /**
  * \brief Adds multiple filters to a GUID array.
@@ -162,12 +176,23 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbILocalDatabaseLibra
   mInBatch(PR_FALSE),
   mInvalidatePending(PR_FALSE)
 {
+  MOZ_COUNT_CTOR(sbLocalDatabaseMediaListView);
+#ifdef PR_LOGGING
+  if (!sMediaListViewLog) {
+    sMediaListViewLog = PR_NewLogModule("sbLocalDatabaseMediaListView");
+  }
+#endif
+  TRACE(("sbLocalDatabaseMediaListView[0x%.8x] - Constructed", this));
+
   PRBool success = mViewFilters.Init();
   NS_ASSERTION(success, "Failed to init view filter table");
 }
 
 sbLocalDatabaseMediaListView::~sbLocalDatabaseMediaListView()
 {
+  TRACE(("sbLocalDatabaseMediaListView[0x%.8x] - Destructed", this));
+  MOZ_COUNT_DTOR(sbLocalDatabaseMediaListView);
+
   if (mMediaList) {
     mMediaList->RemoveListener(this);
   }
@@ -545,6 +570,12 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListView::SetFilters(sbIPropertyArray* aPropertyArray)
 {
   NS_ENSURE_ARG_POINTER(aPropertyArray);
+#ifdef PR_LOGGING
+  nsAutoString buff;
+  aPropertyArray->ToString(buff);
+  TRACE(("sbLocalDatabaseMediaListView[0x%.8x] - SetFilters(%s)",
+         this, NS_LossyConvertUTF16toASCII(buff).get()));
+#endif
 
   nsresult rv = UpdateFiltersInternal(aPropertyArray, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -681,6 +712,12 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListView::SetSearch(sbIPropertyArray* aSearch)
 {
   NS_ENSURE_ARG_POINTER(aSearch);
+#ifdef PR_LOGGING
+  nsAutoString buff;
+  aSearch->ToString(buff);
+  TRACE(("sbLocalDatabaseMediaListView[0x%.8x] - SetSearch(%s)",
+         this, NS_LossyConvertUTF16toASCII(buff).get()));
+#endif
 
   nsresult rv;
 
