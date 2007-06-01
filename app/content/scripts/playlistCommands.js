@@ -495,66 +495,6 @@ function listProperties(obj, objName)
     alert(result);
 }
 
-/*
-var theDownloadListener = 
-{
-  m_queryObj: null,
-  m_libraryObj: null,
-  
-  CreateQueryObj: function()
-  {
-    this.m_queryObj = new sbIDatabaseQuery();
-    this.m_queryObj.setAsyncQuery(true);
-    this.m_queryObj.setDatabaseGUID("songbird");
-  },
-
-  CreateLibraryObj: function()
-  {
-    if(this.m_libraryObj == null)
-    {
-      const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-      this.m_libraryObj = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
-    
-      if(this.m_queryObj == null)
-          this.CreateQueryObj();
-        
-      this.m_libraryObj.setQueryObject(this.m_queryObj);
-    }
-  },
-  
-  QueryInterface : function(aIID) 
-  {
-    if (!aIID.equals(Components.interfaces.sbIDeviceBaseCallback) &&
-        !aIID.equals(Components.interfaces.nsISupports)) 
-    {
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-    return this;
-  },
-  
-  onTransferStart: function(sourceURL, destinationURL)
-  {
-  },
-  
-  onTransferComplete: function(sourceURL, destinationURL, transferStatus)
-  {
-    if(transferStatus == 1)
-    {
-      this.CreateLibraryObj(); 
-      
-      var aKeys = ["title"];
-      var aValues = [];
-      
-      var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
-      aLocalFile.initWithPath(destinationURL);
-    
-      aValues.push(aLocalFile.leafName);
-      this.m_libraryObj.addMedia(destinationURL, aKeys.length, aKeys, aValues.length, aValues, false, false);
-    }
-  }
-};
-*/
-
 function onBrowserTransfer(mediaItems)
 {
     try

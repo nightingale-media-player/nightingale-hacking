@@ -55,7 +55,7 @@ const MINIMUM_FILE_SIZE = 64000;
 const sbICoreWrapper           = Components.interfaces.sbICoreWrapper;
 const sbIDatabaseQuery         = Components.interfaces.sbIDatabaseQuery;
 const sbIDataRemote            = Components.interfaces.sbIDataRemote;
-const sbIMediaLibrary          = Components.interfaces.sbIMediaLibrary;
+// const sbIMediaLibrary          = Components.interfaces.sbIMediaLibrary;
 const sbIPlaylistPlayback      = Components.interfaces.sbIPlaylistPlayback;
 const sbIPlaylistReaderManager = Components.interfaces.sbIPlaylistReaderManager;
 const sbIMediaListView         = Components.interfaces.sbIMediaListView;
@@ -1844,6 +1844,8 @@ PlaylistPlayback.prototype = {
   
   _importURLInLibrary: function( aURL )
   {
+alert("XXXX - migrate 'sbPlaylistPlayback.js::_importURLInLibrary()' to new API");
+return;
     var library = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(sbIMediaLibrary);
 
     // set up the database query object
@@ -1868,6 +1870,8 @@ PlaylistPlayback.prototype = {
   
   // Updates the database with metadata changes
   _setURLMetadata: function( aURL, aTitle, aLength, aAlbum, aArtist, aGenre, boolSync, aDBQuery, execute ) {
+alert("XXXX - migrate 'sbPlaylistPlayback.js::_setURLMetadata()' to new API");
+return;
     var aLibrary = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(sbIMediaLibrary);
 
     if ( aDBQuery == null ) {

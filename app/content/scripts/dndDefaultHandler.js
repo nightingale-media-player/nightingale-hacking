@@ -137,7 +137,7 @@ function SBDropped()
       setTimeout( SBDropped, 10 ); // Next frame
     } else {
       if (_drop_query) {
-        alert("XXXX - migrate 'function SBDropped()' to new API");     
+        alert("XXXX - migrate 'dndDefaultHandler.js::SBDropped()' to new API");     
 /*      
         var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
         var playlistManager = new PlaylistManager();
@@ -194,7 +194,8 @@ function SBDroppedEntry()
     var index = gPPS.importURL(theDropPath);
 
     if (!_drop_library || !_drop_query) {
-      _drop_library = new sbIMediaLibrary();
+      alert("XXXX - migrate 'dndDefaultHandler.js::SBDroppedEntry()' to new API");     
+//      _drop_library = new sbIMediaLibrary();
       _drop_query = new sbIDatabaseQuery();
       _drop_query.setDatabaseGUID(theDropDatabase);
       _drop_library.setQueryObject(_drop_query);

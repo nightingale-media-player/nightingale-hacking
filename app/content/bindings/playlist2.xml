@@ -1624,6 +1624,8 @@
             var the_table_column = col.id;
             var the_new_value = rating;
 
+  alert("XXXX - migrate 'playlist2.xml:setCellRating()' to new API");  
+  return;
             var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
             var aMediaLibrary = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
 

@@ -81,7 +81,6 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(COMPONENTS_DIR)/medialibrary/src/sbMediaLibrary.js \
                       $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistModule.js \
                       $(COMPONENTS_DIR)/medialibrary/src/sbSimplePlaylist.js \
                       $(NULL)

@@ -259,15 +259,6 @@
               .getService(Components.interfaces.nsIStringBundleService);
           var stringbundle = stringBundleService.createBundle( src );
 
-          // enumerate the list of metadata columns and for each of them, check if it is in the exclusion list
-          //var ml = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
-          //var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-          //query.setDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
-          //ml.setQueryObject(query);
-          
-          //ml.getColumnInfo();
-          //var destcols = query.getResultObject();
-
           var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                        .getService(Components.interfaces.sbIPropertyManager);
           var props = pm.propertyNames;

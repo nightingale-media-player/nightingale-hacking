@@ -453,6 +453,8 @@ var theCDListener =
   {
     if(this.m_libraryObj == null)
     {
+  alert("XXXX - migrate 'device_temp.js:CreateLibraryObj()' to new API");  
+  return;
       const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
       this.m_libraryObj = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
     
@@ -1016,6 +1018,8 @@ var theWMDListener =
   {
     if(this.m_libraryObj == null)
     {
+  alert("XXXX - migrate 'device_temp.js:CreateLibraryObj()' to new API");  
+  return;
       const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
       this.m_libraryObj = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
     

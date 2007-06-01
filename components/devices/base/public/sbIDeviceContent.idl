@@ -30,8 +30,8 @@ interface nsIFactory;
 interface nsISimpleEnumerator;
 
 interface sbIDevice;
-interface sbIMediaLibrary;
-interface sbIMediaLibraryFactory;
+interface sbILibrary;
+interface sbILibraryFactory;
 
 /**
  * \interface sbIDeviceContent
@@ -42,12 +42,12 @@ interface sbIDeviceContent : nsISupports
   /**
    * 
    */
-  void addLibrary(in sbIMediaLibrary aLibrary);
+  void addLibrary(in sbILibrary aLibrary);
 
   /**
    * 
    */
-  void removeLibrary(in sbIMediaLibrary aLibrary);
+  void removeLibrary(in sbILibrary aLibrary);
 
   /**
    * 
@@ -62,5 +62,5 @@ interface sbIDeviceContent : nsISupports
   /**
    * 
    */
-  readonly attribute sbIMediaLibraryFactory libraryFactory;
+  readonly attribute sbILibraryFactory libraryFactory;
 };
