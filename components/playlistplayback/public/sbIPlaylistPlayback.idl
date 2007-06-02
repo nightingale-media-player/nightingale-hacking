@@ -53,7 +53,7 @@ interface sbIMediaListView;
  * \sa sbICoreWrapper sbIPlaylist
  * An interface that describes the PlaylistPlayback Service
  */
-[scriptable, uuid(3bc03c4c-7432-429d-96dd-7aad81a7fcdf)]
+[scriptable, uuid(75f6fa58-4853-4ac9-9fe1-ec94879da763)]
 interface sbIPlaylistPlayback : nsIObserver
 {
   // --------------------------------------------------------------------------
@@ -147,7 +147,7 @@ interface sbIPlaylistPlayback : nsIObserver
 
   /**
    * \brief Number of items in the current playlist.
-   * As reported by the playlistsource.
+   * As reported by the current view.
    */
   readonly attribute PRInt32 itemCount;
 
@@ -169,12 +169,10 @@ interface sbIPlaylistPlayback : nsIObserver
    */
   readonly attribute boolean started;
   
-  
   /**
    * \brief What view is being played
    */
   readonly attribute sbIMediaListView playingView;
-
 
   // --------------------------------------------------------------------------
   // Methods for Mutli-core manipulation
@@ -279,129 +277,6 @@ interface sbIPlaylistPlayback : nsIObserver
    */
   void goFullscreen();
 
-
-  // --------------------------------------------------------------------------
-  // Various ways of passing in content to play
-  // --------------------------------------------------------------------------
-
-  /**
-   * \brief Play a particular track from a source.
-   *
-   * \param aSourceRef - A valid table reference in the library
-   * \param aIndex - The index for the row corresponding to the track to play.
-   * \throw NS_ERROR_INVALID_ARG if aSourceRef or aIndex is null or if aIndex
-   *        is negative.
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return true if playback is successful
-   * \return false if playback is not successful
-   */
-  boolean playRef(in AString aSourceRef, in PRInt32 aIndex);
-
-  /**
-   * \brief Play a particular track from a source.
-   *
-   * \param aSourceRef - A valid table reference in the libary
-   * \param aRowID - The ID for the row corresponding to the track to play.
-   * \throw NS_ERROR_INVALID_ARG if aSourceRef or aRowID is null or if aRowID
-   *        is negative.
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return true if playback is successful
-   * \return false if playback is not successful
-   */
-  boolean playRefByID(in AString aSourceRef, in PRInt32 aRowID);
-
-  /**
-   * \brief Play a particular track from a source.
-   *
-   * \param aSourceRef - A valid table reference in the library
-   * \param aMediaUUID - the UUID for the track to play
-   * \throw NS_ERROR_INVALID_ARG if aSourceRef or aMediaUUID is null
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return true if playback is successful
-   * \return false if playback is not successful
-   */
-  boolean playRefByUUID(in AString aSourceRef, in AString aMediaUUID);
-
-  /**
-   * \brief Play a particular track from a source.
-   *
-   * \param aSourceRef - A valid table reference in the library
-   * \param aURL - the url of the track to play
-   * \throw NS_ERROR_INVALID_ARG if aSourceRef or aURL is empty
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return true if playback is successful
-   * \return false if playback is not successful
-   */
-  boolean playRefByURL(in AString aSourceRef, in AString aURL);
-
-  /**
-   * \brief Play a table, starting at the index provided
-   *
-   * \param aDatabaseID - An identifier to a database
-   * \param aTable - A table in the database referenced by the id
-   * \param aIndex - The index at which to start playback.
-   * \throw NS_ERROR_INVALID_ARG if aDatabaseID or aTable is empty or if aURL
-   *        isn't contained in the table.
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return true if playback is successful
-   * \return false if playback is not successful
-   */
-  boolean playTable(in AString aDatabaseID, in AString aTable, in PRInt32 aIndex);
-
-  /**
-   * \brief Play a table, starting at the url provided.
-   *
-   * \param aDatabaseID - An identifier to a database
-   * \param aTable - A table in the database referenced by the id
-   * \param aURL - The URL of the track within to the table to start playing
-   * \throw NS_ERROR_INVALID_ARG if aDatabaseID or aTable is empty or if aURL
-   *        isn't contained in the table.
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return true if playback is successful
-   * \return false if playback is not successful
-   */
-  boolean playTableByURL(in AString aDatabaseID, in AString aTable, in AString aURL);
-
-  /**
-   * \brief Play a table, starting at the ID provided.
-   *
-   * \param aDatabaseID - An identifier to a database
-   * \param aTable - A table in the database referenced by the id
-   * \param aRowID - The ID of the row at which to start playback.
-   * \throw NS_ERROR_INVALID_ARG if aDatabaseID or aTable is empty or if aRowID
-   *        isn't a valid row.
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return true if playback is successful
-   * \return false if playback is not successful
-   */
-  boolean playTableByID(in AString aDatabaseID, in AString aTable, in PRInt32 aRowID);
-
-  /**
-   * \brief Play a table, starting at the UUID provided
-   *
-   * \param aDatabaseID - An identifier to a database
-   * \param aTable - A table in the database referenced by the id
-   * \param aMediaUUID - The UUID of the row at which to start playback.
-   * \throw NS_ERROR_INVALID_ARG if aDatabaseID or aTable is empty or if 
-   *        aMediaUUID isn't a valid row.
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return true if playback is successful
-   * \return false if playback is not successful
-   */
-  boolean playTableByUUID(in AString aDatabaseID, in AString aTable, in AString aMediaUUID);
-
-  /**
-   * \brief Play an item in a playlist
-   *
-   * \param aPlaylist - a valid playlist to play from.
-   * \param aIndex - the index of the track to play
-   * \throw NS_ERROR_INVALID_ARG if the playlist or index is null or if the
-   *        playlist does not have ref.
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
-   */
-  boolean playObject(in sbIPlaylist aPlaylist, in PRInt32 aIndex);
-
   /**
    * \brief Play a piece of media directly via URL
    *
@@ -421,6 +296,15 @@ interface sbIPlaylistPlayback : nsIObserver
    */
   boolean playAndImportURL(in AString aURL);
 
+  /**
+   * \brief Play a media list view.
+   *
+   * \param aView The media list view to play.
+   * \param aIndex The index of the track to play within the view.
+   * \return Status of success of playback from the media list view.
+   * \retval true Playback from media list view succeeded. 
+   * \retval false Playback from the media list view failed.
+   */
   boolean playView(in sbIMediaListView aView, in PRInt32 aIndex);
 
   /**
