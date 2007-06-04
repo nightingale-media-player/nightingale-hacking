@@ -555,7 +555,7 @@ CDatabaseEngine::CDatabaseEngine()
 {
 #ifdef PR_LOGGING
   if (!sDatabaseEngineLog)
-    sDatabaseEngineLog = PR_NewLogModule("DatabaseEngine");
+    sDatabaseEngineLog = PR_NewLogModule("sbDatabaseEngine");
   if (!sDatabaseEnginePerformanceLog)
     sDatabaseEnginePerformanceLog = PR_NewLogModule("sbDatabaseEnginePerformance");
 #endif
@@ -608,6 +608,9 @@ CDatabaseEngine* CDatabaseEngine::GetSingleton()
 
 NS_IMETHODIMP CDatabaseEngine::Init()
 {
+  LOG(("CDatabaseEngine[0x%.8x] - Init() - sqlite version %s",
+       this, sqlite3_libversion()));
+
   m_pDatabasesLock = PR_NewLock();
   NS_ENSURE_TRUE(m_pDatabasesLock, NS_ERROR_OUT_OF_MEMORY);
 

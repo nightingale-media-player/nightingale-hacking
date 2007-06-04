@@ -381,6 +381,8 @@ sbLocalDatabaseTreeView::UpdateRowCount(PRUint32 aRowCount)
       rv = mTreeBoxObject->RowCountChanged(oldRowCount, delta);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+    rv = mTreeBoxObject->ScrollToRow(0);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = mTreeBoxObject->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mTreeBoxObject->EndUpdateBatch();

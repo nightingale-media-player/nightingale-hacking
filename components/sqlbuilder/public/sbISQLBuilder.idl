@@ -96,6 +96,24 @@ interface sbISQLBuilder : nsISupports
                in AString aJoinToColumnName);
 
   /**
+   * \brief Add a subquery join join to the query
+   * \param aJoinType Join type, must be one of the JOIN constant values
+   * \param aJoinedSubquery Select query to be used as the subquery
+   * \param aJoinedTableAlias Alias to give the joined subquery, null for none
+   * \param aJoinedColumnName Column from joined subquery to use in join
+   *        expression
+   * \param aJoinToTableName Table name of the table to join to
+   * \param aJoinToColumnName Column from the joined to table to use in join
+   *        expression
+   */
+  void addSubqueryJoin(in unsigned long aJoinType,
+                       in sbISQLSelectBuilder aJoinedSubquery,
+                       in AString aJoinedTableAlias,
+                       in AString aJoinedColumnName,
+                       in AString aJoinToTableName,
+                       in AString aJoinToColumnName);
+
+  /**
    * \brief Add a join to the query with a critera object specifcying the join
    *        constraints
    * \param aJoinType Join type, must be one of the JOIN constant values

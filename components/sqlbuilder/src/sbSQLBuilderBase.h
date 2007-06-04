@@ -46,6 +46,7 @@
   NS_IMETHOD GetOffsetIsParameter(PRBool *aOffsetIsParameter) { return _to GetOffsetIsParameter(aOffsetIsParameter); } \
   NS_IMETHOD SetOffsetIsParameter(PRBool aOffsetIsParameter) { return _to SetOffsetIsParameter(aOffsetIsParameter); } \
   NS_IMETHOD AddJoin(PRUint32 aJoinType, const nsAString & aJoinedTableName, const nsAString & aJoinedTableAlias, const nsAString & aJoinedColumnName, const nsAString & aJoinToTableName, const nsAString & aJoinToColumnName) { return _to AddJoin(aJoinType, aJoinedTableName, aJoinedTableAlias, aJoinedColumnName, aJoinToTableName, aJoinToColumnName); } \
+  NS_IMETHOD AddSubqueryJoin(PRUint32 aJoinType, sbISQLSelectBuilder *aJoinedSubquery, const nsAString & aJoinedTableAlias, const nsAString & aJoinedColumnName, const nsAString & aJoinToTableName, const nsAString & aJoinToColumnName) { return _to AddSubqueryJoin(aJoinType, aJoinedSubquery, aJoinedTableAlias, aJoinedColumnName, aJoinToTableName, aJoinToColumnName); } \
   NS_IMETHOD AddJoinWithCriterion(PRUint32 aJoinType, const nsAString & aJoinedTableName, const nsAString & aJoinedTableAlias, sbISQLBuilderCriterion *aCriterion) { return _to AddJoinWithCriterion(aJoinType, aJoinedTableName, aJoinedTableAlias, aCriterion); } \
   NS_IMETHOD AddSubquery(sbISQLSelectBuilder *aSubquery, const nsAString & aAlias) { return _to AddSubquery(aSubquery, aAlias); } \
 
@@ -73,6 +74,7 @@ protected:
     nsString joinToTableName;
     nsString joinToColumnName;
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    nsCOMPtr<sbISQLSelectBuilder> subquery;
   };
 
   struct sbSubqueryInfo

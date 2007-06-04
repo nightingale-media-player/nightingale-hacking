@@ -111,6 +111,32 @@ sbSQLBuilderBase::AddJoin(PRUint32 aJoinType,
   ji->joinToTableName  = aJoinToTableName;
   ji->joinToColumnName = aJoinToColumnName;
   ji->criterion        = nsnull;
+  ji->subquery         = nsnull;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilderBase::AddSubqueryJoin(PRUint32 aJoinType,
+                                  sbISQLSelectBuilder* aJoinedSubquery,
+                                  const nsAString& aJoinedTableAlias,
+                                  const nsAString& aJoinedColumnName,
+                                  const nsAString& aJoinToTableName,
+                                  const nsAString& aJoinToColumnName)
+{
+  NS_ENSURE_ARG_POINTER(aJoinedSubquery);
+
+  sbJoinInfo* ji = mJoins.AppendElement();
+  NS_ENSURE_TRUE(ji, NS_ERROR_OUT_OF_MEMORY);
+
+  ji->type             = aJoinType;
+  ji->joinedTableName  = EmptyString();
+  ji->joinedTableAlias = aJoinedTableAlias;
+  ji->joinedColumnName = aJoinedColumnName;
+  ji->joinToTableName  = aJoinToTableName;
+  ji->joinToColumnName = aJoinToColumnName;
+  ji->criterion        = nsnull;
+  ji->subquery         = aJoinedSubquery;
 
   return NS_OK;
 }
@@ -131,6 +157,7 @@ sbSQLBuilderBase::AddJoinWithCriterion(PRUint32 aJoinType,
   ji->joinToTableName  = EmptyString();
   ji->joinToColumnName = EmptyString();
   ji->criterion        = aCriterion;
+  ji->subquery         = nsnull;
 
   return NS_OK;
 }

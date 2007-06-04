@@ -201,7 +201,16 @@ sbSQLSelectBuilder::ToString(nsAString& _retval)
         NS_NOTREACHED("Unknown Join Type");
     }
     buff.AppendLiteral(" join ");
-    buff.Append(ji.joinedTableName);
+    if (ji.subquery) {
+      buff.AppendLiteral("(");
+      nsAutoString str;
+      ji.subquery->ToString(str);
+      buff.Append(str);
+      buff.AppendLiteral(")");
+    }
+    else {
+      buff.Append(ji.joinedTableName);
+    }
     if (!ji.joinedTableAlias.IsEmpty()) {
       buff.AppendLiteral(" as ");
       buff.Append(ji.joinedTableAlias);

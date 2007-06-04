@@ -27,6 +27,7 @@
 #ifndef __SBLOCALDATABASEQUERY_H__
 #define __SBLOCALDATABASEQUERY_H__
 
+#include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include "sbLocalDatabaseGUIDArray.h" // for FilterSpec
@@ -37,6 +38,8 @@ class sbISQLBuilder;
 
 class sbLocalDatabaseQuery
 {
+  typedef nsTArray<PRUint32> sbUint32Array;
+
 public:
 
   sbLocalDatabaseQuery(const nsAString& aBaseTable,
@@ -66,6 +69,17 @@ public:
   nsresult GetPrefixSearchQuery(nsAString& aQuery);
 
 private:
+  struct sbAddJoinInfo {
+    sbAddJoinInfo(sbISQLSelectBuilder* aBuilder, PRUint32* aJoinNum) :
+      builder(aBuilder),
+      joinNum(aJoinNum)
+    {};
+
+    // No nsCOMPtr here since builder will stick around for the lifetime of
+    // the struct
+    sbISQLSelectBuilder* builder;
+    PRUint32* joinNum;
+  };
 
   nsresult AddCountColumns();
   nsresult AddGuidColumns(PRBool aIsNull);
@@ -83,6 +97,11 @@ private:
   static void MaxExpr(const nsAString& aAlias,
                       const nsAString& aColumn,
                       nsAString& aExpr);
+
+  static PLDHashOperator PR_CALLBACK
+    AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType aKey,
+                                     sbUint32Array* aEntry,
+                                     void* aUserData);
 
   nsString mBaseTable;
   nsString mBaseConstraintColumn;
