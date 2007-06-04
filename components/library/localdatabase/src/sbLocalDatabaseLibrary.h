@@ -163,6 +163,10 @@ private:
   nsresult AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
                                   sbIMediaItem** _retval);
 
+  void IncrementAddedItemCounter(PRUint32 aIncrement = 1);
+
+  nsresult RunAnalyzeQuery();
+
 private:
   // This is the GUID used by the DBEngine to uniquely identify the sqlite
   // database file we'll be using. Don't confuse it with mGuid (inherited from
@@ -199,6 +203,10 @@ private:
 
   nsCOMPtr<nsIPropertyBag2> mCreationParameters;
   nsCOMPtr<sbILibraryFactory> mFactory;
+
+  PRUint32 mAddedItemCount;
+
+  PRUint32 mAnalyzeCountLimit;
 
   PRBool mPreventAddedNotification;
 };

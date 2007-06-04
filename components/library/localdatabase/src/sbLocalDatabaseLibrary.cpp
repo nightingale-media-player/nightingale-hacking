@@ -30,6 +30,8 @@
 #include <nsIClassInfo.h>
 #include <nsIFile.h>
 #include <nsIMutableArray.h>
+#include <nsIPrefBranch.h>
+#include <nsIPrefService.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIPropertyBag2.h>
 #include <nsISimpleEnumerator.h>
@@ -78,6 +80,9 @@
 
 #define SB_MEDIAITEM_TYPEID 0
 
+#define DEFAULT_ANALYZE_COUNT_LIMIT 500
+#define ANALYZE_COUNT_PREF "songbird.library.localdatabase.analyzeCountLimit"
+
 #define SB_MEDIALIST_FACTORY_DEFAULT_TYPE 1
 #define SB_MEDIALIST_FACTORY_URI_PREFIX   "medialist('"
 #define SB_MEDIALIST_FACTORY_URI_SUFFIX   "')"
@@ -109,8 +114,6 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 
 // Makes some of the logging a little easier to read
 #define LOG_SUBMESSAGE_SPACE "                                 - "
-
-#define countof(_array) (sizeof(_array) / sizeof(_array[0]))
 
 static char* kInsertQueryColumns[] = {
   "guid",
@@ -310,8 +313,11 @@ NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseLibrary,
                              sbIMediaList);
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
-: mPreventAddedNotification(PR_FALSE)
+: mAddedItemCount(0),
+  mAnalyzeCountLimit(DEFAULT_ANALYZE_COUNT_LIMIT),
+  mPreventAddedNotification(PR_FALSE)
 {
+  MOZ_COUNT_CTOR(sbLocalDatabaseLibrary);
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
     gLibraryLog = PR_NewLogModule("sbLocalDatabaseLibrary");
@@ -323,6 +329,7 @@ sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
 sbLocalDatabaseLibrary::~sbLocalDatabaseLibrary()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Destructed", this));
+  MOZ_COUNT_DTOR(sbLocalDatabaseLibrary);
 }
 
 nsresult
@@ -459,6 +466,18 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   success = mMediaItemTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
+  // See if the user has specified a different analyze count limit. We don't
+  // care if any of this fails.
+  nsCOMPtr<nsIPrefBranch> prefBranch =
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    PRInt32 prefValue;
+    rv = prefBranch->GetIntPref(ANALYZE_COUNT_PREF, &prefValue);
+    if (NS_SUCCEEDED(rv)) {
+      mAnalyzeCountLimit = PR_MAX(1, prefValue);
+    }
+  }
+
   return NS_OK;
 }
 
@@ -533,7 +552,7 @@ sbLocalDatabaseLibrary::CreateQueries()
   rv = insert->SetIntoTableName(NS_LITERAL_STRING("media_items"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 columnCount = countof(kInsertQueryColumns);
+  PRUint32 columnCount = NS_ARRAY_LENGTH(kInsertQueryColumns);
   for (PRUint32 index = 0; index < columnCount; index++) {
     nsCAutoString columnName(kInsertQueryColumns[index]);
     rv = insert->AddColumn(NS_ConvertUTF8toUTF16(columnName));
@@ -966,6 +985,41 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
   return NS_OK;
 }
 
+void
+sbLocalDatabaseLibrary::IncrementAddedItemCounter(PRUint32 aIncrement)
+{
+  mAddedItemCount += aIncrement;
+
+  if (mAddedItemCount >= mAnalyzeCountLimit) {
+    mAddedItemCount = 0;
+
+    if (NS_FAILED(RunAnalyzeQuery())) {
+      NS_WARNING("RunAnalyzeQuery failed!");
+    }
+  }
+}
+
+nsresult
+sbLocalDatabaseLibrary::RunAnalyzeQuery()
+{
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetAsyncQuery(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("ANALYZE"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
 /**
  * See sbILocalDatabaseLibrary
  */
@@ -1267,6 +1321,8 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  IncrementAddedItemCounter();
 
   // Add the new media item into cache
   nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
@@ -1661,6 +1717,11 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::Shutdown()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
+  if (mAddedItemCount) {
+    if (NS_FAILED(RunAnalyzeQuery())) {
+      NS_WARNING("RunAnalyzeQuery failed!");
+    }
+  }
   return NS_OK;
 }
 
@@ -1716,6 +1777,8 @@ sbLocalDatabaseLibrary::BatchCreateMediaItems(nsIArray* aURIList,
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  IncrementAddedItemCounter(listLength);
 
   // Get the media items after the database changes commit.
   rv = BatchGetMediaItems( addedGuids, getter_AddRefs(newItems) );
@@ -1864,6 +1927,8 @@ sbLocalDatabaseLibrary::BatchNotifyAdded(nsIArray *aMediaItemArray) {
   PRUint32 length;
   rv = aMediaItemArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  IncrementAddedItemCounter(length);
 
   // Copy them over, please.
   for (PRUint32 i = 0; i < length; i++) {
@@ -2399,9 +2464,12 @@ sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
     NS_ENSURE_SUCCESS(rv, rv);
 
     {
+      PRUint32 length = mGuids.Length();
+
+      mLibrary->IncrementAddedItemCounter(length);
+
       sbAutoBatchHelper batchHelper(mLibrary);
 
-      PRUint32 length = mGuids.Length();
       for (PRUint32 i = 0; i < length; i++) {
         // We know the GUID and the type of these new media items so preload
         // the cache with this information
