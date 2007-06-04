@@ -46,7 +46,6 @@ CPP_SRCS = MetadataManager.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/dataremote/public \
-               $(DEPTH)/components/medialibrary/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/sqlbuilder/public \

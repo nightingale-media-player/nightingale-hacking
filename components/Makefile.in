@@ -63,17 +63,15 @@ ifdef SB_ENABLE_TESTS
 SUBDIRS += testharness
 endif
 
-SUBDIRDEPS  = mediacore : medialibrary
-SUBDIRDEPS2 = playlistreader : medialibrary
-SUBDIRDEPS3 = playlistsource : medialibrary
-SUBDIRDEPS4 = servicesource : medialibrary
-SUBDIRDEPS5 = devicesobsolete : library
-SUBDIRDEPS6 = devicesobsolete : mediacore
-SUBDIRDEPS7 = integration : devicesobsolete
-SUBDIRDEPS8 = library : sqlbuilder
-SUBDIRDEPS9 = library : moz
-SUBDIRDEPS10 = library : property
-SUBDIRDEPS11 = remoteapi : medialibrary
-SUBDIRDEPS12 = remoteapi : moz
+SUBDIRDEPS  = mediacore : library
+SUBDIRDEPS2 = playlistreader : library
+SUBDIRDEPS3 = devicesobsolete : library
+SUBDIRDEPS4 = devicesobsolete : mediacore
+SUBDIRDEPS5 = integration : devicesobsolete
+SUBDIRDEPS6 = library : sqlbuilder
+SUBDIRDEPS7 = library : moz
+SUBDIRDEPS8 = library : property
+SUBDIRDEPS9 = remoteapi : library
+SUBDIRDEPS10 = remoteapi : moz
 
 include $(topsrcdir)/build/rules.mk

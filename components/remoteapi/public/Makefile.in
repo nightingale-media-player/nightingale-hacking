@@ -35,9 +35,6 @@ XPIDL_SRCS = sbISecurityAggregator.idl \
              sbIRemoteMediaList.idl \
              $(NULL)
 
-XPIDL_INCLUDES = $(COMPONENTS_DIR)/medialibrary/public \
-                 $(NULL)
-
 XPIDL_MODULE = sbBrowserAPI.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 

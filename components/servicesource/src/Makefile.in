@@ -40,7 +40,6 @@ CPP_SRCS = Servicesource.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/servicesource/public \
-               $(DEPTH)/components/medialibrary/public \
                $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/playlistsource/public \
                $(DEPTH)/components/playlistplayback/public \
