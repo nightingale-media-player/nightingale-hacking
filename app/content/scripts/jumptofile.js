@@ -59,7 +59,10 @@ try
 
   var SBEmptyPlaylistCommands = 
   {
-    m_Playlist: null,
+    m_Context: {
+      m_Playlist: null,
+      m_Window: null
+    },
 
     getNumCommands: function( aSubMenu, aHost )
     {
@@ -136,12 +139,21 @@ try
       return obj;
     },
     
-    setMediaList: function( playlist )
+    setContext: function( context )
     {
+      var playlist = context.playlist;
+      var window = context.window;
+      
       // Ah.  Sometimes, things are being secure.
+      
       if ( playlist.wrappedJSObject )
         playlist = playlist.wrappedJSObject;
-      this.m_Playlist = playlist;
+      
+      if ( window.wrappedJSObject )
+        window = window.wrappedJSObject;
+      
+      this.m_Context.m_Playlist = playlist;
+      this.m_Context.m_Window = window;
     },
     
     QueryInterface : function(aIID)

@@ -1296,6 +1296,7 @@
           
           // Bind the Web Playlist UI element to the subscribed playlist
           SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
+          this.outerPlaylist.outerWindow = window;
           this.outerPlaylist.bind(view, SBWebPlaylistCommands,
                                   SBDataGetIntValue("browser.playlist.height"),
                                   SBDataGetBoolValue("browser.playlist.collapsed"));
@@ -1356,6 +1357,7 @@
       <method name="setUpInnerPlaylist">
         <body><![CDATA[ try {
           var playlist = this.innerPlaylist;
+          playlist.outerWindow = window;
           if ( playlist.mediaListView ) // New API
           {
             var viewMap =
@@ -1380,6 +1382,7 @@
               {
                 // Save the current view if there is nothing to restore
                 viewMap.setView( browser, entry, playlist.mediaListView );
+                playlist.refreshCommands();
               }
               else
               {
@@ -1399,7 +1402,7 @@
           playlist.addEventListener("playlist-play", this._onplaylistplay, true);
           playlist.addEventListener("playlist-editor", this.onPlaylistEditor, true);
           this.previousInnerPlaylist = playlist;
-  
+          
           // Wait until after the bind call?
           if ( playlist.ref == "" )
           {
@@ -1452,8 +1455,6 @@
 
             view.setFilters(propArray);
           }
-          
-          SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
           
           this.outerPlaylist.bind(view, SBWebPlaylistCommands,
                                   SBDataGetIntValue("browser.playlist.height"),

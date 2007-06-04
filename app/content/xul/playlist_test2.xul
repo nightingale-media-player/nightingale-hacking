@@ -57,6 +57,10 @@
    src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js"/> 
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/addToPlaylist.js"/> 
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/player_open.js"/> 
 
   <!-- Local hardcoded sample js -->
   <script type="application/x-javascript">
@@ -70,7 +74,10 @@ try
 {
   var SBLibraryCommands = 
   {
-    m_Playlist: null,
+    m_Context: {
+      m_Playlist: null,
+      m_Window: null
+    },
 
     m_root_commands :
     {
@@ -79,7 +86,7 @@ try
         "action",
         "action",
         "action",
-        "action",
+        ADDTOPLAYLIST_MENU_TYPE,
         "action",
         "action"
       ),
@@ -89,7 +96,7 @@ try
         "library_cmd_play",
         "library_cmd_remove",
         "library_cmd_edit",
-        "library_cmd_addtoplaylist",
+        ADDTOPLAYLIST_MENU_ID,
         "library_cmd_burntocd",
         "library_cmd_device"
       ),
@@ -99,7 +106,7 @@ try
         "&command.play",
         "&command.remove",
         "&command.edit",
-        "&command.addtoplaylist",
+        ADDTOPLAYLIST_MENU_NAME,
         "&command.burntocd",
         "&command.device"
       ),
@@ -109,7 +116,7 @@ try
         "&command.tooltip.play",
         "&command.tooltip.remove",
         "&command.tooltip.edit",
-        "&command.tooltip.addtoplaylist",
+        ADDTOPLAYLIST_MENU_TOOLTIP,
         "&command.tooltip.burntocd",
         "&command.tooltip.device"
       )
@@ -118,17 +125,23 @@ try
     _getMenu: function(aSubMenu)
     {
       var cmds;
+      
+      // ADDTOPLAYLIST
+      if (cmds = addToPlaylist.handleAddToPlaylistGetMenu(aSubMenu)) return cmds;
+      
       switch (aSubMenu) {
-        //case "submenu1": 
-          //cmds = this.m_submenu1_commands;
-          //break;
         default:
           cmds = this.m_root_commands;
           break;
       }
       return cmds;
-    },   
-  
+    },
+    
+    onBeforeConstruction: function(aHost) {
+      // ADDTOPLAYLIST INIT
+      addToPlaylist.makeListOfPlaylists(SBLibraryCommands);
+    },
+
     getNumCommands: function( aSubMenu, aHost )
     {
       var cmds = this._getMenu(aSubMenu);
@@ -217,7 +230,7 @@ try
     getCommandEnabled: function( aSubMenu, aIndex, aHost )
     {
       var cmds = this._getMenu(aSubMenu);
-      var playlist = this.m_Playlist;
+      var playlist = this.m_Context.m_Playlist;
 
       // Bail out early if we don't have our playlist somehow
       if ( ! playlist )
@@ -227,6 +240,7 @@ try
 
       switch ( command )
       {
+        case "noplaylist": return false;
         case "library_cmd_device":
         case "library_cmd_burntocd":
         {
@@ -249,9 +263,12 @@ try
       // By default return true if there is at least one item selected
       return playlist.tree.view.selectionCount > 0;
     },
-
+    
     onCommand: function( id, value, host )
     {
+      // ADDTOPLAYLIST
+      if (addToPlaylist.handleAddToPlaylistCommand(id)) return;
+      
       if ( id )
       {
         // Was it from the toolbarbutton?
@@ -259,43 +276,43 @@ try
         switch( id )
         {
           case "library_cmd_play":
-            var index = this.m_Playlist.tree.view.selection.currentIndex;
+            var index = this.m_Context.m_Playlist.tree.view.selection.currentIndex;
             if (index >= 0) {
               var gPPS = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                            .getService(Ci.sbIPlaylistPlayback);
-              gPPS.playView(this.m_Playlist.mediaListView, index);
+              gPPS.playView(this.m_Context.m_Playlist.mediaListView, index);
             }
           break;
           case "library_cmd_edit":
-            if ( this.m_Playlist.tree.currentIndex != -1 )
+            if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
             {
-              if ( tbb || this.m_Playlist.tree.view.selectionCount > 1 )
+              if ( tbb || this.m_Context.m_Playlist.tree.view.selectionCount > 1 )
               {
                 // Edit the entire track
-                this.m_Playlist.sendEditorEvent();
+                this.m_Context.m_Playlist.sendEditorEvent();
               }
               else
               {
                 // Edit the context cell
-                this.m_Playlist.startCellEditing();
+                this.m_Context.m_Playlist.startCellEditing();
               }
             }
           break;
           case "library_cmd_addtoplaylist":
-            if ( this.m_Playlist.tree.currentIndex != -1 )
+            if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
             {
               // add the currently selected track to a (possibly new) playlist
-              this.m_Playlist.addToPlaylist();
+              this.m_Context.m_Playlist.addToPlaylist();
             }
           break;
           case "library_cmd_remove":
-            this.m_Playlist.removeSelectedTracks();
+            this.m_Context.m_Playlist.removeSelectedTracks();
           break;
           case "library_cmd_burntocd":
-            if ( this.m_Playlist.tree.currentIndex != -1 )
+            if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
             {
               // Repurpose the command to act as if a doubleclick
-              this.m_Playlist.sendBurnToCDEvent();
+              this.m_Context.m_Playlist.sendBurnToCDEvent();
             }
           break;
         }
@@ -314,12 +331,28 @@ try
       return obj;
     },
     
-    setMediaList: function( playlist )
+    setContext: function( context )
     {
-      // Ah.  Sometimes, things are being secure.
-      if ( playlist.wrappedJSObject )
-        playlist = playlist.wrappedJSObject;
-      this.m_Playlist = playlist;
+      try {
+        var playlist = context.playlist;
+        var window = context.window;
+        
+        if (window) {
+        
+          // Ah.  Sometimes, things are being secure.
+          
+          if ( playlist && playlist.wrappedJSObject )
+            playlist = playlist.wrappedJSObject;
+          
+          if ( window && window.wrappedJSObject )
+            window = window.wrappedJSObject;
+          
+          this.m_Context.m_Playlist = playlist;
+          this.m_Context.m_Window = window;
+        }
+      } catch (e) {
+        alert("error in setContext - " + e);
+      }
     },
     
     QueryInterface : function(aIID)

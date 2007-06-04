@@ -1,156 +1,182 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-//
+// 
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-//
+// 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this
+// You should have received a copy of the GPL along with this 
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
+// or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
+// 
 // END SONGBIRD GPL
 //
-*/
+ */
 
-const VK_ESCAPE = 27;
-const VK_ENTER = 13;
+const ADDTOPLAYLIST_MENU_TYPE    = "submenu";
+const ADDTOPLAYLIST_MENU_ID      = "library_cmd_addtoplaylist";
+const ADDTOPLAYLIST_MENU_NAME    = "&command.addtoplaylist";
+const ADDTOPLAYLIST_MENU_TOOLTIP = "&command.tooltip.addtoplaylist";
 
-const PROPERTYKEY_ISLIST = "http://songbirdnest.com/data/1.0#isList";
 
-const CONTRACTID_LIBRARYMANAGER      = "@songbirdnest.com/Songbird/library/Manager;1";
-const CONTRACTID_PROMPTSERVICE       = "@mozilla.org/embedcomp/prompt-service;1";
-const CONTRACTID_STRINGBUNDLESERVICE = "@mozilla.org/intl/stringbundle;1";
+const ADDTOPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist:";
+const ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist_createnew";
 
-const STRINGKEY_NEWPLAYLIST_TITLE = "newPlaylist.title";
-const STRINGKEY_NEWPLAYLIST_PROMPT = "newPlaylist.prompt";
-const STRINGKEY_NEWPLAYLIST_DEFAULTNAME = "newPlaylist.defaultName";
-
-const URL_SONGBIRD_PROPERTIES = "chrome://songbird/locale/songbird.properties";
-
-const nsIDOMKeyEvent = Components.interfaces.nsIDOMKeyEvent;
-const nsIPromptService = Components.interfaces.nsIPromptService;
-const nsIStringBundleService = Components.interfaces.nsIStringBundleService;
-
-const sbILibrary = Components.interfaces.sbILibrary;
-const sbILibraryManager = Components.interfaces.sbILibraryManager;
-const sbIMediaList = Components.interfaces.sbIMediaList;
-
-function onLoad() {
-
-  PushBackscanPause();
-
-  var mainLibrary = getMainLibrary();
+var addToPlaylistHelper = {
+  m_listofplaylists: null,
+  m_commands: null,
   
-  var list = document.getElementById("medialist_listbox");
-  
-  var listener = {
-    index: 1,
+  makeListOfPlaylists: function( aCommands ) {
+    this.m_commands = aCommands;
+    
+    // todo: make this smarter :(
+    var typearray = new Array('simple');
 
-    onEnumerationBegin: function() {
-      return true;
-    },
-
-    onEnumeratedItem: function(mediaList, item) {
-      var listItem = document.createElement("listitem");
-      listItem.setAttribute("label", item.name);
-      listItem.value = item.guid;
-
-      list.appendChild(listItem);
-
-      return true;
-    },
-
-    onEnumerationEnd: function() {
-      return true;
+    this.m_listofplaylists = {};
+    this.m_listofplaylists.m_Types = new Array();
+    this.m_listofplaylists.m_Ids = new Array();
+    this.m_listofplaylists.m_Names = new Array();
+    this.m_listofplaylists.m_Tooltips = new Array();
+    
+    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                        .getService(Components.interfaces.sbILibraryManager);
+    
+    var libs = libraryManager.getLibraries();
+    while (libs.hasMoreElements()) {
+      var library = libs.getNext();
+      this.makePlaylistsForLibrary(library, typearray);
     }
-  };
+    
+    if (this.m_listofplaylists.m_Types.length == 0) {
+      this.m_listofplaylists.m_Types.push("action");
+      this.m_listofplaylists.m_Ids.push("noplaylist");
+      this.m_listofplaylists.m_Names.push("&command.addtoplaylist.noexistingplaylist");
+      this.m_listofplaylists.m_Tooltips.push("&command.tooltip.addtoplaylist.noexistingplaylist");
+    }
+
+    this.m_listofplaylists.m_Types.push("separator");
+    this.m_listofplaylists.m_Ids.push("separator");
+    this.m_listofplaylists.m_Names.push("separator");
+    this.m_listofplaylists.m_Tooltips.push("separator");
+    
+    this.m_listofplaylists.m_Types.push("action");
+    this.m_listofplaylists.m_Ids.push(ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID);
+    this.m_listofplaylists.m_Names.push("&command.addtoplaylist.createnew");
+    this.m_listofplaylists.m_Tooltips.push("&command.addtoplaylist.createnew");
+  },
   
-  mainLibrary.enumerateItemsByProperty(PROPERTYKEY_ISLIST, "1", listener,
-                                       sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+    makePlaylistsForLibrary: function(aLibrary, typearray) {
+    var listener = {
+      obj: this,
+      items: [],
+      onEnumerationBegin: function() { return true; },
+      onEnumerationEnd: function() {return true; },
+      onEnumeratedItem: function(list, item) {
+        var hidden = item.getProperty("http://songbirdnest.com/data/1.0#hidden");
+        if (hidden == "1") return true;
+        var goodtype = false;
+        for (var i in typearray) {
+          if (typearray[i] == item.type) { 
+            goodtype = true; 
+            break; 
+          }
+        }
+        if (!goodtype) return true;
+        this.obj.m_listofplaylists.m_Types.push("action");
+        this.obj.m_listofplaylists.m_Ids.push(ADDTOPLAYLIST_COMMAND_ID + item.library.guid + ";" + item.guid);
+        this.obj.m_listofplaylists.m_Names.push(item.name ? item.name : "Unnamed Playlist");
+        this.obj.m_listofplaylists.m_Tooltips.push(item.name ? item.name : "Unnamed Playlist");
+        return true;
+      }
+    };
 
-  list.focus();
-}
+    // Enumerate all lists in this library
+    aLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1",
+                                    listener,
+                                    Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  },
 
-function onUnload() {
-  PopBackscanPause();
-}
+  handleGetMenu: function(aSubMenu) {
+    if (aSubMenu == ADDTOPLAYLIST_MENU_ID) return this.m_listofplaylists;
+    return null;
+  },
 
-function onKeyDown(event) {
-  switch (event.keyCode) {
-    case nsIDOMKeyEvent.DOM_VK_ESCAPE:
-      onCancel();
-      break;
-    case nsIDOMKeyEvent.DOM_VK_ENTER:
-      onOK();
-      break;
+  handleCommand: function(id) {
+    try {
+      var context = this.m_commands.m_Context;
+      if (id == ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID) {
+        var newMediaList = context.m_Window.makeNewPlaylist("simple");
+        this.addToPlaylist(newMediaList.library.guid, newMediaList.guid, context.m_Playlist);
+        return true;
+      }
+      var addtoplstr = ADDTOPLAYLIST_COMMAND_ID;
+      if ( id.slice(0, addtoplstr.length) == addtoplstr) {
+        var r = id.slice(addtoplstr.length);
+        var guids = r.split(';');
+        if (guids.length >= 2) {
+          var libraryguid = guids[0];
+          var playlistguid = guids[1];
+
+          this.addToPlaylist(libraryguid, playlistguid, context.m_Playlist);
+          
+          return true;
+        }
+      } 
+    } catch (e) {
+      alert("addToPlaylist.js - handleCommand - " + e);
+    }
+    return false;
+  },
+  
+  addToPlaylist: function(libraryguid, playlistguid, sourceplaylist) {
+    var libraryManager =
+      Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                .getService(Components.interfaces.sbILibraryManager);
+    var library = libraryManager.getLibrary(libraryguid);
+    var medialist;
+    if (libraryguid == playlistguid) medialist = library;
+    else medialist = library.getMediaItem(playlistguid);
+                
+    if (medialist) {
+    
+      var oldLength = medialist.length;
+      var selection = sourceplaylist.treeView.selectedMediaItems;
+      // Create an enumerator that wraps the enumerator we were handed since
+      // the enumerator we get hands back sbIIndexedMediaItem, not just plain
+      // 'ol sbIMediaItems
+
+      var unwrapper = {
+        enumerator: selection,
+        
+        hasMoreElements : function() {
+          return this.enumerator.hasMoreElements();
+        },
+        getNext : function() {
+          return this.enumerator.getNext().mediaItem;
+        },
+        QueryInterface : function(iid) {
+          if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
+              iid.equals(Components.interfaces.nsISupports))
+            return this;
+          throw Components.results.NS_NOINTERFACE;
+        }
+      }
+
+      medialist.addSome(unwrapper);
+      var added = medialist.length - oldLength;
+      sourceplaylist._reportAddedTracks(added, 0, medialist.name);
+    }
   }
-}
+};
 
-function enableOK() {
-  document.getElementById("ok_button").removeAttribute("disabled");
-}
-
-function onOK() {
-  var list = document.getElementById("medialist_listbox");
-  
-  window.arguments[0].mediaListGUID = list.selectedItem.value;
-  
-  onExit();
-}
-
-function onCancel() {
-  onExit();
-}
-
-function onNewPlaylist()
-{
-  var promptService = Components.classes[CONTRACTID_PROMPTSERVICE]
-                                .getService(nsIPromptService);
-
-  var stringBundle = Components.classes[CONTRACTID_STRINGBUNDLESERVICE]
-                               .getService(nsIStringBundleService)
-                               .createBundle(URL_SONGBIRD_PROPERTIES);
-
-  var input =
-    {value: stringBundle.GetStringFromName(STRINGKEY_NEWPLAYLIST_DEFAULTNAME)};
-
-  var title = stringBundle.GetStringFromName(STRINGKEY_NEWPLAYLIST_TITLE);
-  var prompt = stringBundle.GetStringFromName(STRINGKEY_NEWPLAYLIST_PROMPT);
-
-  if (promptService.prompt(window, title, prompt, input, null, {})) {
-    var mainLibrary = getMainLibrary();
-    
-    var mediaList = mainLibrary.createMediaList("simple");
-    mediaList.name = input.value;
-    mediaList.write();
-    
-    var listItem = document.createElement("listitem");
-    listItem.setAttribute("label", mediaList.name);
-    listItem.value = mediaList.guid;
-
-    var list = document.getElementById("medialist_listbox");
-    list.appendChild(listItem);
-    
-    list.ensureElementIsVisible(listItem);
-    list.selectItem(listItem);
-    list.focus();
-  }
-}
-
-function getMainLibrary() {
-  var libraryManager = Components.classes[CONTRACTID_LIBRARYMANAGER]
-                                 .getService(sbILibraryManager);
-  return libraryManager.mainLibrary;
-}

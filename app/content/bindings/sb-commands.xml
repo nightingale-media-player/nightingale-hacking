@@ -60,6 +60,20 @@
       <field name="commands">null</field>
       <field name="playlist">null</field>
 
+      <field name="_outerWindow">null</field>
+      <property name="outerWindow">
+        <getter>
+          <![CDATA[
+            return this._outerWindow;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            return this._outerWindow = val;
+          ]]>
+        </setter>
+      </property>
+
       <property name="usedefault">
         <getter>
           return (this.getAttribute("usedefault") != "false");
@@ -162,9 +176,10 @@
             // Sometimes we get here before the tree is properly built.  That's bad.
             if (!this.playlist || this.playlist.tree.view == null) 
             {
-              // So if we're supposed to build the items here, remember that and quit.
+              // So if we're supposed to build the items here, remember that and try again soon.
               if (!stateonly)
                 this._laststateonly = false;
+              setTimeout(function(obj) { obj.refreshCommands(); }, 10, this);
               return;
             }
             // And build them the next time it's time to refresh (this function gets called alot)
@@ -198,7 +213,38 @@
             }
             this._needRefresh = false;
 
+            // tell the commands about their context
+            if (!stateonly && this.commands) {
+              // Once we get here, tell the commands who we are.
+              var context = {
+                playlist: this.playlist,
+                window: this.outerWindow,
+                QueryInterface: function(iid) {
+                  if (iid.Equals(Components.interfaces.sbIPlaylistCommandsContext) || 
+                      iid.Equals(Components.interfaces.nsISupports))
+                    return this;
+                  throw Components.results.NS_ERROR_NO_INTERFACE;
+                }
+              };
+              for (var i in this.commands) {
+                try {
+                  this.commands[i].onBeforeConstruction();
+                } catch (e) {
+                }
+                this.commands[i].setContext( context );
+              }
+            }
+
             this.doRefreshCommands(stateonly);
+            
+            if (!stateonly && this.commands) {
+              for (var i in this.commands) {
+                try {
+                  this.commands[i].onAfterConstruction();
+                } catch (e) {
+                }
+              }
+            }
           }
           catch( err )
           {
@@ -214,7 +260,7 @@
           try {
             this.doRemoveCommands();
           } catch (e) {
-            alert( "sb-commands.xml - doRemoveCommands not implemented ? - " + err );
+            alert( "sb-commands.xml - doRemoveCommands not implemented ? - " + e );
           }
         ]]>
         </body>
@@ -248,7 +294,7 @@
   
     <content>
       <xul:hbox class="playlist-toolbar-bkg" sbid="background" flex="1">
-        <xul:hbox class="playlist-toolbar" sbid="parent" flex="1" oncommand="onToolbarCommand( event )" style="overflow: hidden;">
+        <xul:hbox class="playlist-toolbar" sbid="parent" flex="1" oncommand="onToolbarCommand( event )" style="h-overflow: hidden;">
         </xul:hbox>
       </xul:hbox>
     </content>
@@ -278,12 +324,6 @@
           
           if ( this.commands )
           {
-            if (!stateonly) {
-              // Once we get here, tell the commands who we are.
-              for (var i in this.commands) {
-                this.commands[i].setMediaList( this.playlist );
-              }
-            }
             for (var i in this.commands) {
               this.refreshCommandItems(i, stateonly, null, this.parent, null, 0, false);
             }
@@ -331,7 +371,7 @@
                 var obj_id = this.commands[cmdobjidx].getCommandId( menu, i, "toolbar" );
                 
                 var toolbarbutton_type;
-                var toolbarbutton_typeattr;
+                var toolbarbutton_typeattr = null;
                 if (radioitems) toolbarbutton_typeattr = "checkbox";
                 var custom = false;
                 
@@ -389,13 +429,14 @@
                 }
               
                 if (!toolbarbutton_type && !custom) continue;
-                
+                                
                 // Create a toolbarbutton
                 if (custom) {
                   toolbarbutton = this.commands[cmdobjidx].instantiateCustomCommand(obj_id, "toolbar");
                 } else {
                   toolbarbutton = document.createElement( toolbarbutton_type );
                 }
+                if (!toolbarbutton) continue;
                 var label = toolbarbutton;
                 var topelement = toolbarbutton;
                 toolbarbutton.setAttribute( "id", obj_id );
@@ -528,7 +569,6 @@
               if (toolbarbutton.commandcustom) {
                 this.commands[cmdobjidx].refreshCustomCommand(toolbarbutton.id, "toolbar");
               }
-
             }
           } catch (e) {
             alert("sb-commands.xml - toolbar - " + e);
@@ -677,14 +717,6 @@
             var before = this;
             
             if (popup) {
-
-              // Once we get here, tell the commands who we are.
-              if (!stateonly) {
-                for (var i in this.commands) {
-                  this.commands[i].setMediaList( this.playlist );
-                }
-              }
-
               for (var i in this.commands) {
                 this.refreshCommandItems(i, stateonly, null, popup, before, 0, false);
               }

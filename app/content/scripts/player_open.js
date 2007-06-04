@@ -357,12 +357,12 @@ function SBMabOpen()
 /** Legacy function **/
 function SBNewPlaylist()
 {
-  makeNewPlaylist("simple"); 
+  return makeNewPlaylist("simple"); 
 }
 
 function SBNewSmartPlaylist()
 {
-  makeNewPlaylist("smart"); 
+  return makeNewPlaylist("smart"); 
 }
 
 /**
@@ -427,6 +427,7 @@ function makeNewPlaylist(mediaListType) {
       mediaList.write();
     }
   }
+  return mediaList;
 }
 
 

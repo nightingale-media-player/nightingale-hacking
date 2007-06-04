@@ -33,8 +33,10 @@
 #include "nsIRDFDataSource.idl"
 
 interface nsIDOMNode;
+interface nsIDOMWindow;
 interface nsIDOMEvent;
 interface sbIDatabaseResult;
+interface sbIPlaylistCommandsContext;
 
 /**
 * \interface sbIPlaylistCommands sbIPlaylistsource.h
@@ -66,7 +68,7 @@ duplicate: function() {
 * 
 * \sa playlist.xml, playlist_test.xul
 */
-[scriptable, uuid(7a630e7f-ad12-4bee-ae24-aa9a491c4807)]
+[scriptable, uuid(f7cef15a-0d94-423f-a825-dd36047fe1bb)]
 interface sbIPlaylistCommands : nsISupports 
 {
   /**
@@ -79,7 +81,25 @@ interface sbIPlaylistCommands : nsISupports
   *
   * \param node The playlist object
   */
-  void setMediaList( in nsIDOMNode aNode );
+  void setContext( in sbIPlaylistCommandsContext aContext );
+
+  /**
+  * \brief Called before the host begins constructing the UI for the commands
+  *
+  * JS implementors may ommit implementation of this method
+  *
+  * \param aHost The type of object hosting the command
+  */
+  void onBeforeConstruction( in AString aHost );
+
+  /**
+  * \brief Called after the host begins has constructed the UI for the commands
+  *
+  * JS implementors may ommit implementation of this method
+  *
+  * \param aHost The type of object hosting the command
+  */
+  void onAfterConstruction( in AString aHost );
 
   /**
   * \brief Return the number of command elements to be displayed.
@@ -277,6 +297,25 @@ interface sbIPlaylistCommands : nsISupports
   */
   sbIPlaylistCommands duplicate( );
 };
+
+/**
+* \interface sbIPlaylistCommandsContext sbIPlaylistCommandsContext.h
+* \brief The interface for giving context to a playlistcommands object
+*/
+[scriptable, uuid(2d2e8802-9f28-48eb-a55e-75448f08d920)]
+interface sbIPlaylistCommandsContext : nsISupports
+{
+  /**
+  * \brief The playlist against which the commands are acting.
+  */
+  readonly attribute nsIDOMNode playlist;   
+
+  /**
+  * \brief The outer window containing the playlist against which the commands are acting.
+  */
+  readonly attribute nsIDOMWindow window;   
+};
+
 
 /**
 * \interface sbIPlaylistsource sbIPlaylistsource.h

@@ -187,6 +187,22 @@
         </setter>
       </property>
 
+      <!-- The outer window, set from the outside -->
+      <field name="_outerWindow">null</field>
+      <property name="outerWindow">
+        <getter>
+          <![CDATA[
+            return this._outerWindow;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this._outerWindow = val;
+            return val;
+          ]]>
+        </setter>
+      </property>
+
       <!-- sbIPlaylistWidget -->
       <method name="getView">
         <body> <![CDATA[
@@ -475,6 +491,9 @@
   if (!parent.firstChild) {
     parent.setAttribute("hidden", "true");
   }
+
+  if (this._toolbar) this._toolbar.outerWindow = this._outerWindow;
+  if (this._commandmenuitems) this._commandmenuitems.outerWindow = this._outerWindow;
 
   // Clear out the old commands and add the new ones
   this._toolbar.hidden = true;
@@ -895,6 +914,8 @@
         <parameter name="stateonly"/>
         <body>
 <![CDATA[
+  this._toolbar.outerWindow = this._outerWindow;
+  this._commandmenuitems.outerWindow = this._outerWindow;
   this._toolbar.refreshCommands(stateonly);
   this._commandmenuitems.refreshCommands(stateonly);
 ]]>
@@ -1354,13 +1375,6 @@
             }
             this.context_item = document.getAnonymousElementByAttribute(this, 'id', evt.target.id);
             metrics_inc("playlist.context", this.context_item.getAttribute("id"), null);
-            if ( evt.target.getAttribute( "sbtype" ) == "command" )
-            {
-              if ( this._commands ) // I hope so!
-              {
-                this._commands.onCommand( evt );
-              }
-            }
           }
           catch( err )
           {
@@ -1567,6 +1581,7 @@
     <method name="_reportAddedTracks">
       <parameter name="countAdded"/>
       <parameter name="countAlreadyPresent"/>
+      <parameter name="addedToStringOverride"/>
       <body>
 <![CDATA[
   var msg = countAdded + " ";
@@ -1580,13 +1595,18 @@
 
   // Append media list name
   var name = "";
-  try {
-    name = this.mediaListView.mediaList.name;
+  //XXXlone> HACK, this allows the playlist to report songs dropped for another playlist
+  if (addedToStringOverride) {
+    name = addedToStringOverride;
+  } else {
+    try {
+      name = this.mediaListView.mediaList.name;
+    }
+    catch(e) {
+      // No name, leave it blank
+    }
   }
-  catch(e) {
-    // No name, leave it blank
-  }
-
+  
   msg += " " + name;
 
   // Append the message about already present items (if any)
@@ -1845,7 +1865,7 @@
     var ml = this.mediaListView.mediaList;
     var numRows = treeView.selectionCount;
     if (numRows == 0) {
-      // Nothing selected, don't drag
+      // Nothing selected, dont drag
       throw this._Cr.NS_OK;
     }
 
@@ -1904,7 +1924,7 @@
 
     }
     else {
-      // We are sending more than one item.  We don't know (or care to find
+      // We are sending more than one item.  We dont know (or care to find
       // out) if all of the items to be sent are actually lists, so send
       // as items
       var context = {

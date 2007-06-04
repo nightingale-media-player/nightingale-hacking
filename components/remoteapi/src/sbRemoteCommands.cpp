@@ -77,7 +77,7 @@ const static char* sPublicRProperties[] =
     "classinfo:flags" };
 
 const static char* sPublicMethods[] =
-  { "binding:setMediaList",
+  { "binding:setContext",
     "binding:setCommandData",
     "binding:getNumCommands",
     "binding:getCommandType",
@@ -270,10 +270,10 @@ sbRemoteCommands::GetOwner( sbIRemotePlayer **aOwner )
 // ---------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbRemoteCommands::SetMediaList( nsIDOMNode *aNode )
+sbRemoteCommands::SetContext( sbIPlaylistCommandsContext *aContext)
 {
-  LOG(("sbRemoteCommands::SetMediaList()"));
-  mMediaList = aNode;
+  LOG(("sbRemoteCommands::SetContext()"));
+  mContext = aContext;
   return NS_OK;
 }
 
@@ -425,6 +425,19 @@ sbRemoteCommands::RefreshCustomCommand( nsIDOMNode *aCustomCommandElement,
                                         const nsAString &aHost)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+
+NS_IMETHODIMP
+sbRemoteCommands::OnBeforeConstruction( const nsAString &aHost )
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::OnAfterConstruction( const nsAString &aHost )
+{
+  return NS_OK;
 }
 
 NS_IMETHODIMP

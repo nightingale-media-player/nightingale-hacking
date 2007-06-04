@@ -83,7 +83,7 @@ protected:
 
   // sbIPlaylistCommands stuff
   nsCOMPtr<nsIWeakReference> mWeakOwner;
-  nsCOMPtr<nsIDOMNode> mMediaList;
+  nsCOMPtr<sbIPlaylistCommandsContext> mContext;
   nsTArray<sbCommand> mCommands;
 
   // SecurityCheckedComponent stuff
