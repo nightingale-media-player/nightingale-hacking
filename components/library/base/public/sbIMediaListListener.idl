@@ -60,7 +60,7 @@ interface sbIMediaListListener : nsISupports
    * \param aMediaItem The media item to be removed
    */
   void onBeforeItemRemoved(in sbIMediaList aMediaList,
-                     in sbIMediaItem aMediaItem);
+                           in sbIMediaItem aMediaItem);
 
   /**
    * \brief Called after a media item is removed from the list.
