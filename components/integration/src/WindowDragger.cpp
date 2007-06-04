@@ -107,8 +107,6 @@ CWindowDragger::CWindowDragger()
   wndClass.lpfnWndProc = WindowDraggerProc;
   wndClass.lpszClassName = WINDOWDRAGGER_WNDCLASS;
   RegisterClass(&wndClass);
-
-  InitPause();
 } // ctor
 
 //-----------------------------------------------------------------------------
@@ -167,7 +165,6 @@ void CWindowDragger::EndWindowDrag(UINT msg, WPARAM flags)
     m_oldCapture = NULL;
   }
   FireCallback();
-  DecPause();
 } // EndWindowDrag
 
 //-----------------------------------------------------------------------------
@@ -178,7 +175,6 @@ void CWindowDragger::OnCaptureLost()
   m_draggedWindow = NULL;
   m_oldCapture = NULL;
   FireCallback();
-  DecPause();
 } // OnCaptureLost
 
 //-----------------------------------------------------------------------------
@@ -194,7 +190,6 @@ NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance, sbIWindowDragger
     if (m_oldCapture != NULL) SetCapture(m_oldCapture);
     m_oldCapture = NULL;
     FireCallback();
-    DecPause();
   }
 
   m_callback = cb;
@@ -216,8 +211,6 @@ NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance, sbIWindowDragger
   {
     SetWindowLong(m_captureWindow, GWL_USERDATA, (LPARAM)this);
     SetCapture(m_captureWindow);
-
-    IncPause();
   }
   else
   {
@@ -264,42 +257,6 @@ void CWindowDragger::DoDocking(HWND wnd, int *x, int *y, POINT *monitorPoint)
     *x = monitor.right-w;
   }
 } // DoDocking
-
-//-----------------------------------------------------------------------------
-void CWindowDragger::InitPause()
-{
-  //
-  // ?? Kinda hacky.... pause the background scanner.
-  //
-  m_pauseScan = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1");
-  m_pauseScan->Init( NS_LITERAL_STRING( "backscan.paused" ), NS_LITERAL_STRING( "" ) );
-  m_backscanPaused = false;
-}
-
-//-----------------------------------------------------------------------------
-void CWindowDragger::IncPause()
-{
-  // Increment the scan pause level.
-  if ( ! m_backscanPaused )
-  {
-    m_backscanPaused = true;
-    PRInt32 scan_pause_level = -1;
-    m_pauseScan->GetIntValue( &scan_pause_level );
-    m_pauseScan->SetIntValue( scan_pause_level + 1 );
-  }
-}
-
-//-----------------------------------------------------------------------------
-void CWindowDragger::DecPause()
-{
-  // Decrement the scan pause level.
-  if ( m_backscanPaused )
-  {
-    PRInt32 scan_pause_level = -1;
-    m_pauseScan->GetIntValue( &scan_pause_level );
-    m_pauseScan->SetIntValue( max( 0, scan_pause_level - 1 ) + 1 );
-  }
-}
 
 #endif  // END OF WIN32 VERSION
 

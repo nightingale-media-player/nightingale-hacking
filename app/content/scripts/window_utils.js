@@ -449,8 +449,6 @@ function onWindowLoadPosition()
 
 function SBOpenModalDialog( url, param1, param2, param3 )
 {
-  PushBackscanPause();
-
   // bonus stuff to shut the mac up.
   var chromeFeatures = ",modal=yes,resizable=no";
   if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",titlebar=yes";
@@ -458,7 +456,6 @@ function SBOpenModalDialog( url, param1, param2, param3 )
 
   param2 += chromeFeatures;
   var retval = window.openDialog( url, param1, param2, param3 );
-  PopBackscanPause();
   return retval;
 }
 
@@ -490,33 +487,6 @@ function SBOpenWindow( url, param1, param2, param3 )
 
   return retval;
 }
-
-function PushBackscanPause()
-{
-  try
-  {
-    // increment the backscan pause count
-    SBDataIncrementValue( "backscan.paused" );
-  }
-  catch ( err )
-  {
-    alert( "PushBackscanPause - " + err );
-  }
-}
-
-function PopBackscanPause()
-{
-  try
-  {
-    // decrement the backscan pause count to a floor of 0
-    SBDataDecrementValue( "backscan.paused", 0 );
-  }
-  catch ( err )
-  {
-    alert( "PushBackscanPause - " + err );
-  }
-}
-
 
 function quitApp( skipSave )
 {

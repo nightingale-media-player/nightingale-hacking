@@ -125,9 +125,6 @@ function SBAppInitialize()
     // Handle dataremote commandline parameters
     initDataRemoteCmdLine();
 
-    // Reset this on application startup. 
-    SBDataSetIntValue("backscan.paused", 0);
-
 /*
     // XXX Migrate this crap
 

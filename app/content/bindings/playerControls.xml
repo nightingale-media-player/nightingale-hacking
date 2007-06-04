@@ -1376,8 +1376,6 @@
         this.on_value_change._that = this;
         this.bindvalue = SB_NewDataRemote("backscan.concurrent", null);
         this.bindvalue.bindObserver( this.on_value_change, false );
-
-//        this.setAttribute("onmousedown", "SBDataSetIntValue('backscan.paused', SBDataGetIntValue('backscan.paused') == 0 );");
       ]]>
     </constructor>
     <destructor>

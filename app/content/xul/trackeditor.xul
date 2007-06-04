@@ -127,8 +127,6 @@
   };
   
   function onLoadTrackEditor() {
-    SBDataIncrementValue( "backscan.paused" );
-
     var playlist = window.arguments[0];
     var _trackeditor = document.getElementById("trackeditor.trackeditor");
     _trackeditor.setPlaylist(playlist);
@@ -165,9 +163,6 @@
       playlist.removeEventListener("playlist-destroy", onDestroyPlaylist, false);
     }
     
-    // decrement the backscan.pause count to a floor of 0
-    SBDataDecrementValue( "backscan.paused", 0 );
-
     onWindowSavePosition();
   }
   

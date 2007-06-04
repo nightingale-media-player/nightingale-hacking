@@ -87,17 +87,10 @@ protected:
   void OnCaptureLost();
   void DoDocking(HWND wnd, int *x, int *y, POINT *monitorPoint);
 
-  void InitPause();
-  void IncPause();
-  void DecPause();
-  
   HWND m_draggedWindow;
   HWND m_captureWindow;
   HWND m_oldCapture;
   int m_dockDistance;
-
-  bool m_backscanPaused; // hack hack hack.  at least it's through a data remote.
-  nsCOMPtr<sbIDataRemote> m_pauseScan;
 
   POINT m_relativeClickPos;
 #endif // XP_WIN
