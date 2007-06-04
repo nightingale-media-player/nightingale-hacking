@@ -198,31 +198,16 @@
             newName = this.inputField.value;            
           }
           
-          var input = this.inputField;
-
-          this._editingRow = -1;
-          this._editingColumn = null;
-
-          // Hiding the input field when mouse is over it
-          // causes a crash on blur :(
-          // input.hidden = true;
+          // Always set accept to false, since we leave it 
+          // up to the service pane service to determine 
+          // what changes
+          this._stopEditing(false);
           
-          // So instead lets just make it invisible.
-          input.style.visibility = "hidden";
-          input.top = 0;
-          input.width = 1;
-          
-          input.value = "";
-          this.removeAttribute("editing");          
+          // Give the new name to the service pane.
           if (node) {
             sp.mService.onRename(node.id, newName);
           }            
         }
-        this.mTree._startEditing = this.mTree.startEditing;
-        this.mTree.startEditing = function evilStartEditing(row, column) {
-          this._startEditing(row, column);
-          this.inputField.style.visibility = "visible";
-        }        
         
         this.mCurrentURL = null;
         
@@ -252,8 +237,6 @@
         
         this.mTree.stopEditing = this.mTree._stopEditing;
         this.mTree._stopEditing = null;
-        this.mTree.startEditing = this.mTree._startEditing;
-        this.mTree._startEditing = null;
       ]]></destructor>
       
       <field name="_dragService"><![CDATA[
