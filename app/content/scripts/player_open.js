@@ -307,10 +307,10 @@ function SBWatchFolders()
   SBOpenModalDialog( "chrome://songbird/content/xul/watch_folders.xul", "", "chrome,centerscreen", null ); 
 }
 
-var theMediaScanIsOpen = SB_NewDataRemote( "media_scan.open", null );
+var theFileScanIsOpen = SB_NewDataRemote( "media_scan.open", null );
 function SBScanMedia( )
 {
-  theMediaScanIsOpen.boolValue = true;
+  theFileScanIsOpen.boolValue = true;
   const nsIFilePicker = Components.interfaces.nsIFilePicker;
   const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
   var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
@@ -341,7 +341,7 @@ function SBScanMedia( )
     // Open the modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
   }
-  theMediaScanIsOpen.boolValue = false;
+  theFileScanIsOpen.boolValue = false;
 }
 
 function SBMabOpen()

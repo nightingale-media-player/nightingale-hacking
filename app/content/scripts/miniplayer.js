@@ -329,7 +329,7 @@ var gMiniplayer = {
     if ( isDir )
     {
       SBDataSetBoolValue( "media_scan.open", true );
-      theMediaScanIsOpen.boolValue = true;
+      theFileScanIsOpen.boolValue = true;
       // otherwise, fire off the media scan page.
       var media_scan_data = new Object();
       media_scan_data.URL = path;

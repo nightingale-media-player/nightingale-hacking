@@ -28,7 +28,7 @@
  * \file sbIDatabaseQuery.idl
  * \brief Objects for executing SQL queries against the internal database 
  * 
- * \sa sbIDatabaseQuery.idl, DatabaseQuery.h, sbIPlaylist.idl
+ * \sa sbIDatabaseQuery.idl, DatabaseQuery.h
  */
 #include "nsISupports.idl"
 

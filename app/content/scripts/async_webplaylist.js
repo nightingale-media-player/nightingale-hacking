@@ -61,7 +61,7 @@ try
     const nsIMutableArray = Components.interfaces.nsIMutableArray;
     const sbIMediaList = Components.interfaces.sbIMediaList;
     const sbIMetadataJobManager = Components.interfaces.sbIMetadataJobManager;
-
+    
     CancelAsyncWebDocument(old_href_loop);
 
     var href_loop = new sbIAsyncForLoop
@@ -248,6 +248,9 @@ try
       }
       
       if (!gPPS.isMediaURL(url)) {
+//        if ( url.indexOf( ".mp3" ) != -1 )
+//          alert("bad url detection!?!\n" + url);
+      
         // decrement the total (floor is 0) to keep the percentage indicator moving
         if (context.progressTotal > 0) {
           context.progressTotal = context.progressTotal - 1;
@@ -296,7 +299,6 @@ try
       };
       mediaList.library.enumerateItemsByProperty(SB_PROPERTY_CONTENTURL, url, listener,
                                                  sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
-      
       // If we didn't find it
       if ( ! listener.itemEnumerated )
       {
@@ -318,7 +320,7 @@ try
     
     context.progressTotal = href_loop.a_array.length;
     SBDataSetBoolValue( "media_scan.open", true ); // ?  Don't let this go?
-    
+
     return href_loop;
   }  
 }

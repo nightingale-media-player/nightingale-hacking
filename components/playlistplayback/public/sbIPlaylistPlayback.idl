@@ -37,7 +37,6 @@
 #include "nsIObserver.idl"
 #include "nsIStringEnumerator.idl"
 
-interface sbIPlaylist;
 interface sbICoreWrapper;
 interface sbIMediaListView;
 
@@ -50,7 +49,7 @@ interface sbIMediaListView;
  *   should get an instance of this class via Components.Classes() and call
  *   these methods on that object.
  *
- * \sa sbICoreWrapper sbIPlaylist
+ * \sa sbICoreWrapper
  * An interface that describes the PlaylistPlayback Service
  */
 [scriptable, uuid(75f6fa58-4853-4ac9-9fe1-ec94879da763)]
@@ -469,4 +468,5 @@ interface sbIPlaylistPlayback : nsIObserver
   AString convertURLToFolder(in AString aURL);
 
 };
+
 

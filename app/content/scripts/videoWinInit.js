@@ -115,7 +115,6 @@ function SBVideoInitialize()
 
       // Initialize with VLC
       CoreVLCDocumentInit( "core_vlc" );
-
       //InitPlaybackCoreFlash( "core_flash_frame" );
         
       // Hide GStreamer

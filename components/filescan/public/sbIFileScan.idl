@@ -25,25 +25,22 @@
 */
 
 /**
- * \file sbIMediaLibrary.idl
- * \brief Media library interfaces.
+ * \file sbIFileScan.idl
+ * \brief Filesystem Scanning interfaces.
  *
- * sbIMediaLibrary
+ * sbIFileScanCallback
  *
- * sbIMediaScanCallback
+ * sbIFileScanQuery
  *
- * sbIMediaScanQuery
+ * sbIFileScan
  *
- * sbIMediaScan
- * 
- * \sa sbIDatabaseQuery.idl, DatabaseQuery.h, sbIPlaylist.idl
  */
 
 #include "nsISupports.idl"
 
 /**
- * \interface sbIMediaScanCallback 
- * \brief The callback to the sbIMediaScanQuery interface
+ * \interface sbIFileScanCallback 
+ * \brief The callback to the sbIFileScanQuery interface
  *
  * This interface is meant to be implemented by user code.
  *
@@ -53,38 +50,38 @@
  * NOTE: This object's methods are called from the media scan thread.  Not
  * necessarily safe for javascript!
  *
- * \sa sbIMediaScanQuery, sbIMediaScan, MediaScan.h
+ * \sa sbIFileScanQuery, sbIFileScan, FileScan.h
  */
-[scriptable, uuid(0F75EA33-A1FD-4bf6-8D13-DBAC96CAA668)]
-interface sbIMediaScanCallback : nsISupports
+[scriptable, uuid(5224b8f1-34bf-4c88-8742-1c54b6d20c0a)]
+interface sbIFileScanCallback : nsISupports
 {
   /**
    * \brief The media scan is starting
    *
-   * \sa onMediaScanFile, onMediaScanEnd, sbIMediaScanQuery, sbIMediaScan
+   * \sa onFileScanFile, onFileScanEnd, sbIFileScanQuery, sbIFileScan
    */
-  void onMediaScanStart(); /**/
+  void onFileScanStart(); /**/
 
   /**
    * \brief The media scan has found (yet another) file
    *
    * \param filePath The path to the file
    * \param fileCount The number of files found so far
-   * \sa onMediaScanStart, onMediaScanEnd, sbIMediaScanQuery, sbIMediaScan
+   * \sa onFileScanStart, onFileScanEnd, sbIFileScanQuery, sbIFileScan
    */
-  void onMediaScanFile(in AString filePath, 
+  void onFileScanFile(in AString filePath, 
     in PRInt32 fileCount); /**/
 
   /**
    * \brief The media scan is complete
    *
-   * \sa onMediaScanStart, onMediaScanFile, sbIMediaScanQuery, sbIMediaScan
+   * \sa onFileScanStart, onFileScanFile, sbIFileScanQuery, sbIFileScan
    */
-  void onMediaScanEnd(); /**/
+  void onFileScanEnd(); /**/
 };
 
 /**
- * \interface sbIMediaScanQuery 
+ * \interface sbIFileScanQuery 
  * \brief An object to scan through the files of a folder (and optionally subfolders)
  *
  * This object is used to rapidly gather a list of all the files found under a
@@ -94,29 +91,29 @@ interface sbIMediaScanCallback : nsISupports
  * thread to get a periodic snapshot of the current progress of the scan.
  *
  * Execute a scan by creating a scan query, filling it out, and passing it to
- * the sbIMediaScan interface for processing:
+ * the sbIFileScan interface for processing:
 \verbatim
 function ScanBeneathADirectory(aPath) {
   // Create the objects
-  var aMediaScan = Components.classes["@songbirdnest.com/Songbird/MediaScan;1"]
-    .createInstance(Components.interfaces.sbIMediaScan);
-  var aMediaScanQuery = Components.classes["@songbirdnest.com/Songbird/MediaScanQuery;1"]
-    .createInstance(Components.interfaces.sbIMediaScanQuery);
+  var aFileScan = Components.classes["@songbirdnest.com/Songbird/FileScan;1"]
+    .createInstance(Components.interfaces.sbIFileScan);
+  var aFileScanQuery = Components.classes["@songbirdnest.com/Songbird/FileScanQuery;1"]
+    .createInstance(Components.interfaces.sbIFileScanQuery);
 
   // Setup the query
-  aMediaScanQuery.setDirectory(aPath);
-  aMediaScanQuery.setRecurse(true);
+  aFileScanQuery.setDirectory(aPath);
+  aFileScanQuery.setRecurse(true);
           
   // Execute the query
-  aMediaScan.submitQuery(aMediaScanQuery);
-  return aMediaScanQuery;
+  aFileScan.submitQuery(aFileScanQuery);
+  return aFileScanQuery;
 }
 \endverbatim
  *
- * \sa sbIMediaScanCallback, sbIMediaScan, MediaScan.h
+ * \sa sbIFileScanCallback, sbIFileScan, FileScan.h
  */
-[scriptable, uuid(62A3F4B6-542D-4bd1-87E2-E00C72B0AACE)]
-interface sbIMediaScanQuery : nsISupports
+[scriptable, uuid(7BB22470-E03D-4220-AC93-AC70700AF6AB)]
+interface sbIFileScanQuery : nsISupports
 {
   attribute boolean searchHidden;
 
@@ -158,17 +155,17 @@ interface sbIMediaScanQuery : nsISupports
    * \brief Set the callback object for the scan
    *
    * \param pCallback The callback object
-   * \sa sbIMediaScanCallback, getCallback
+   * \sa sbIFileScanCallback, getCallback
    */
-  void setCallback(in sbIMediaScanCallback pCallback); /**/
+  void setCallback(in sbIFileScanCallback pCallback); /**/
 
   /**
    * \brief Get the callback object for the scan
    *
    * \return The callback object
-   * \sa sbIMediaScanCallback, setCallback
+   * \sa sbIFileScanCallback, setCallback
    */
-  sbIMediaScanCallback getCallback(); /**/
+  sbIFileScanCallback getCallback(); /**/
 
   /**
    * \brief Get the number of files found
@@ -245,31 +242,31 @@ interface sbIMediaScanQuery : nsISupports
 };
 
 /**
- * \interface sbIMediaScan
- * \brief The engine in which to execute sbIMediaScanQuery objects
+ * \interface sbIFileScan
+ * \brief The engine in which to execute sbIFileScanQuery objects
  *
- * Create a sbIMediaScanQuery object, fill out its methods, create one of
+ * Create a sbIFileScanQuery object, fill out its methods, create one of
  * these and pass the query to the scanner to begin executing.
  *
- * Optionally, you may skip the use of a sbIMediaScanQuery object and just
+ * Optionally, you may skip the use of a sbIFileScanQuery object and just
  * handle the scan directly by calling scanDirectory() with your own
- * sbIMediaScanCallback object.
+ * sbIFileScanCallback object.
  *
- * \sa sbIMediaScanCallback, sbIMediaScanQuery
+ * \sa sbIFileScanCallback, sbIFileScanQuery
  */
-[scriptable, uuid(12BC75D3-8FD4-4b19-8F5B-CEF353E5168D)]
-interface sbIMediaScan : nsISupports
+[scriptable, uuid(411DD545-EAD0-41c4-8BA1-697DBE5C67EA)]
+interface sbIFileScan : nsISupports
 { 
   /**
-   * \brief Execute a sbIMediaScanQuery object
+   * \brief Execute a sbIFileScanQuery object
    *
    * \param pQuery The query object to execute
    * \sa scanDirectory
    */
-  void submitQuery(in sbIMediaScanQuery pQuery);
+  void submitQuery(in sbIFileScanQuery pQuery);
   
   /**
-   * \brief Execute a scan directly to a sbIMediaScanCallback instance
+   * \brief Execute a scan directly to a sbIFileScanCallback instance
    *
    * \param strDirectory The directory to scan
    * \param bRecurse Whether or not to recurse
@@ -278,5 +275,5 @@ interface sbIMediaScan : nsISupports
    */
   PRInt32 scanDirectory(in AString strDirectory, 
     in PRBool bRecurse, 
-    in sbIMediaScanCallback pCallback);
+    in sbIFileScanCallback pCallback);
 };

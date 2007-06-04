@@ -39,10 +39,10 @@ SUBDIRS = addonmetadata \
           draganddrop \
           faceplate \
           feathers \
+          filescan \
           integration \
           library \
           mediacore \
-          medialibrary \
           metrics \
           moz \
           playlistplayback \

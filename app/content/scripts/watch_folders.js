@@ -25,8 +25,8 @@
  */
 
 var wfMediaLibrary = null;
-var wfMediaScan = null;
-var wfMediaScanQuery = null;
+var wfFileScan = null;
+var wfFileScanQuery = null;
 var wfQuery = null;
 
 //Default to 10 minute update interval.
@@ -52,8 +52,8 @@ function WFInit()
   if(!wfMediaLibrary)
     wfMediaLibrary = new MediaLibrary();
 
-  wfMediaScan = new sbIMediaScan();
-  wfMediaScanQuery = new sbIMediaScanQuery();
+  wfFileScan = new sbIFileScan();
+  wfFileScanQuery = new sbIFileScanQuery();
   wfQuery = new sbIDatabaseQuery();
   
   wfQuery.setAsyncQuery(true);
@@ -72,8 +72,8 @@ function WFInit()
 
 function WFShutdown()
 {
-  wfMediaScan = null;
-  wfMediaScanQuery = null;
+  wfFileScan = null;
+  wfFileScanQuery = null;
   wfQuery = null;
   
   if(wfWakeUpTimer)
@@ -95,10 +95,10 @@ function onWFWakeUpScan()
       wfCurrentFolder = 0;
       wfCurrentFolderList = aFolders;
       
-      wfMediaScanQuery.setDirectory(aFolders[0]);
-      wfMediaScanQuery.setRecurse(true);
+      wfFileScanQuery.setDirectory(aFolders[0]);
+      wfFileScanQuery.setRecurse(true);
       
-      wfMediaScan.submitQuery(wfMediaScanQuery);
+      wfFileScan.submitQuery(wfFileScanQuery);
       wfPollScanTimer = setInterval(onWFPollScan, 333);
     }
   }
@@ -106,7 +106,7 @@ function onWFWakeUpScan()
 
 function onWFPollScan()
 {
-  if(!wfMediaScanQuery.isScanning())
+  if(!wfFileScanQuery.isScanning())
   {
     clearInterval(wfPollScanTimer);
     onWFScanComplete();
@@ -129,11 +129,11 @@ function onWFLibraryAdd()
     wfIsProcessing = false;
   }
 
-  var fileCount = wfMediaScanQuery.getFileCount();
+  var fileCount = wfFileScanQuery.getFileCount();
   
   if(wfCurrentFile < fileCount)
   {
-    var strURL = wfMediaScanQuery.getFilePath(wfCurrentFile);
+    var strURL = wfFileScanQuery.getFilePath(wfCurrentFile);
     
     if(gPPS.isMediaURL(strURL))
     {
@@ -170,10 +170,10 @@ function onWFLibraryAdd()
     wfCurrentFile = 0;
     wfCurrentFolder++;
 
-    wfMediaScanQuery.setDirectory(wfCurrentFolderList[wfCurrentFolder]);
-    wfMediaScanQuery.setRecurse(true);
+    wfFileScanQuery.setDirectory(wfCurrentFolderList[wfCurrentFolder]);
+    wfFileScanQuery.setRecurse(true);
       
-    wfMediaScan.submitQuery(wfMediaScanQuery);
+    wfFileScan.submitQuery(wfFileScanQuery);
     wfPollScanTimer = setInterval(onWFPollScan, 333);
   }
   else

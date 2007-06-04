@@ -93,7 +93,7 @@ function SBInitialize()
     var dataScan = SBDataGetBoolValue("firstrun.scancomplete");
     if (dataScan != true)
     {
-      theMediaScanIsOpen.boolValue = true;  // We don't use this anymore, I should pull it.
+      theFileScanIsOpen.boolValue = true;  // We don't use this anymore, I should pull it.
                                             // But it's everywhere, so after 0.2 release.
       setTimeout( SBScanMedia, 1000 );
       SBDataSetBoolValue("firstrun.scancomplete", true);

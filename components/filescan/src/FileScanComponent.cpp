@@ -25,33 +25,33 @@
  */
 
 /** 
-* \file  MediaLibraryComponent.cpp
-* \brief Songbird MediaLibrary Component Factory and Main Entry Point.
+* \file  FileScanComponent.cpp
+* \brief Songbird FileScan Component Factory and Main Entry Point.
 */
 
 #include "nsIGenericFactory.h"
 
-#include "MediaScan.h"
+#include "FileScan.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(CMediaScan)
-NS_GENERIC_FACTORY_CONSTRUCTOR(CMediaScanQuery)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileScan)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileScanQuery)
 
-static nsModuleComponentInfo sbMediaLibrary[] =
+static nsModuleComponentInfo sbFileScan[] =
 {
   {
-    SONGBIRD_MEDIASCAN_CLASSNAME,
-    SONGBIRD_MEDIASCAN_CID,
-    SONGBIRD_MEDIASCAN_CONTRACTID,
-    CMediaScanConstructor
+    SONGBIRD_FILESCAN_CLASSNAME,
+    SONGBIRD_FILESCAN_CID,
+    SONGBIRD_FILESCAN_CONTRACTID,
+    sbFileScanConstructor
   },
 
   {
-    SONGBIRD_MEDIASCANQUERY_CLASSNAME,
-    SONGBIRD_MEDIASCANQUERY_CID,
-    SONGBIRD_MEDIASCANQUERY_CONTRACTID,
-    CMediaScanQueryConstructor
+    SONGBIRD_FILESCANQUERY_CLASSNAME,
+    SONGBIRD_FILESCANQUERY_CID,
+    SONGBIRD_FILESCANQUERY_CONTRACTID,
+    sbFileScanQueryConstructor
   },
   
 };
 
-NS_IMPL_NSGETMODULE("SongbirdMediaLibraryComponent", sbMediaLibrary)
+NS_IMPL_NSGETMODULE("SongbirdFileScanComponent", sbFileScan)

@@ -65,7 +65,6 @@
 
 #include "Servicesource.h"
 
-#include "sbIPlaylist.h"
 #include "sbIDatabaseResult.h"
 #include "sbIPlaylistPlayback.h"
 
@@ -1182,5 +1181,6 @@ CServicesource::GetPlaylistCommands(const nsAString      &aContextGUID,
   *_retval = nsnull;
   return NS_OK;
 }
+
 
 

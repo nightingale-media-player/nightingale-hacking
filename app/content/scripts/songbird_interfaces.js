@@ -31,17 +31,11 @@
 //
 
 const sbIDatabaseQuery = new Components.Constructor("@songbirdnest.com/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");
-const sbIDynamicPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
-// const sbIMediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-const sbIMediaScan = new Components.Constructor("@songbirdnest.com/Songbird/MediaScan;1", "sbIMediaScan");
-const sbIMediaScanQuery = new Components.Constructor("@songbirdnest.com/Songbird/MediaScanQuery;1", "sbIMediaScanQuery");
-// const sbIPlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-const sbIPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/Playlist;1", "sbIPlaylist");
+const sbIFileScan = new Components.Constructor("@songbirdnest.com/Songbird/FileScan;1", "sbIFileScan");
+const sbIFileScanQuery = new Components.Constructor("@songbirdnest.com/Songbird/FileScanQuery;1", "sbIFileScanQuery");
 const sbIPlaylistReaderListener = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
 const sbIPlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
 const sbIPlaylistsource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=playlist", "sbIPlaylistsource");
-const sbISimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
-const sbISmartPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
 const sbIServicesource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=Servicesource", "sbIServicesource");
 
 /**
@@ -84,3 +78,4 @@ const SB_PROPERTY_HIDDEN               = SB_PROPERTY_PREFACE + "hidden";
 const SB_PROPERTY_ISLIST               = SB_PROPERTY_PREFACE + "isList";
 const SB_PROPERTY_ORDINAL              = SB_PROPERTY_PREFACE + "ordinal";
 const SB_PROPERTY_MEDIALISTNAME        = SB_PROPERTY_PREFACE + "mediaListName";
+

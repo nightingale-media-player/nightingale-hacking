@@ -30,24 +30,29 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifdef DEBUG
-target_name = sbMediaLibrary_d
+target_name = sbFileScan_d
 else
-target_name = sbMediaLibrary
+target_name = sbFileScan
 endif
 
-CPP_SRCS = MediaScan.cpp \
-           MediaLibraryComponent.cpp \
+CPP_SRCS = FileScan.cpp \
+           FileScanComponent.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/medialibrary/public \
-               $(DEPTH)/components/dbengine/public \
+CPP_INCLUDES = $(DEPTH)/components/filescan/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/unicharutil \
+               $(MOZSDK_INCLUDE_DIR)/rdf \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/xultmpl \
+               $(MOZSDK_INCLUDE_DIR)/content \
+               $(MOZSDK_INCLUDE_DIR)/widget \
+               $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_IDL_DIR) \
-               $(SQLITE_DIR)/include \
                $(NULL)
 
 IS_COMPONENT = 1
@@ -63,32 +68,20 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 ifeq (macosx,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
-                               $(NULL)
+  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s \
-                                $(NULL)
+  DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
 ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
-                               $(NULL)
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s 
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistModule.js \
-                      $(COMPONENTS_DIR)/medialibrary/src/sbSimplePlaylist.js \
-                      $(NULL)
-                      
-SONGBIRD_SCRIPTS = $(COMPONENTS_DIR)/medialibrary/src/sbDynamicPlaylist.js \
-                   $(COMPONENTS_DIR)/medialibrary/src/sbPlaylist.js \
-                   $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistBase.js \
-                   $(COMPONENTS_DIR)/medialibrary/src/sbSmartPlaylist.js \
-                   $(NULL)
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk

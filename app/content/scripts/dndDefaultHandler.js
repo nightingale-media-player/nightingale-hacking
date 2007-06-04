@@ -179,7 +179,7 @@ function SBDroppedEntry()
 {
   if ( theDropIsDir )
   {
-    theMediaScanIsOpen.boolValue = true;
+    theFileScanIsOpen.boolValue = true;
     // otherwise, fire off the media scan page.
     var media_scan_data = new Object();
     media_scan_data.URL = theDropPath;
@@ -188,7 +188,7 @@ function SBDroppedEntry()
     media_scan_data.target_db = theDropDatabase;
     // Open the modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
-    theMediaScanIsOpen.boolValue = false;
+    theFileScanIsOpen.boolValue = false;
   } 
   else if (gPPS.isMediaURL( theDropPath )) {
     var index = gPPS.importURL(theDropPath);

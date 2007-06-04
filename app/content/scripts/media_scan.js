@@ -51,8 +51,8 @@ theProgress.value = 0;
 var theProgressValue = 0; // to 100;
 var theProgressText = "";
 
-var aMediaScan = null;
-var aMediaScanQuery = null;
+var aFileScan = null;
+var aFileScanQuery = null;
 
 var theTargetDatabase = null;
 var theTargetPlaylist = null;
@@ -68,8 +68,8 @@ function onLoad()
   {
     try
     {
-      aMediaScan = new sbIMediaScan();
-      aMediaScanQuery = new sbIMediaScanQuery();
+      aFileScan = new sbIFileScan();
+      aFileScanQuery = new sbIFileScanQuery();
 
       // Use the requested library, or use the main library as default      
       theTargetDatabase = window.arguments[0].target_db;
@@ -83,17 +83,17 @@ function onLoad()
       theTargetPlaylist = window.arguments[0].target_pl;
       theAddedGuids = Array();
 
-      if (aMediaScan && aMediaScanQuery)
+      if (aFileScan && aFileScanQuery)
       {
-        aMediaScanQuery.setDirectory(window.arguments[0].URL);
-        aMediaScanQuery.setRecurse(true);
+        aFileScanQuery.setDirectory(window.arguments[0].URL);
+        aFileScanQuery.setRecurse(true);
 
         // Filter file extensions as part of the scan.        
         var eExtensions = gPPS.getSupportedFileExtensions();
         while (eExtensions.hasMore())
-          aMediaScanQuery.addFileExtension(eExtensions.getNext());
+          aFileScanQuery.addFileExtension(eExtensions.getNext());
 
-        aMediaScan.submitQuery(aMediaScanQuery);
+        aFileScan.submitQuery(aFileScanQuery);
         
         polling_interval = setInterval( onPollScan, 333 );
         
@@ -112,7 +112,7 @@ function onPollScan()
 {
   try
   {
-    if ( !aMediaScanQuery.isScanning() )
+    if ( !aFileScanQuery.isScanning() )
     {
       clearInterval( polling_interval );
 
@@ -125,10 +125,10 @@ function onPollScan()
     }   
     else
     {
-      var len = aMediaScanQuery.getFileCount();
+      var len = aFileScanQuery.getFileCount();
       if ( len )
       {
-        var value = aMediaScanQuery.getLastFileFound();
+        var value = aFileScanQuery.getLastFileFound();
         theLabel.value = gPPS.convertURLToFolder(value);
       }
     }
@@ -146,7 +146,7 @@ function onScanComplete( )
 
   theProgress.removeAttribute( "mode" );
 
-  if ( aMediaScanQuery.getFileCount() )
+  if ( aFileScanQuery.getFileCount() )
   {
     try
     {
@@ -163,11 +163,11 @@ function onScanComplete( )
       
       // Take the file array and turn it into a string array.
       var i = 0, count = 0, total = 0;
-      total = aMediaScanQuery.getFileCount();
+      total = aFileScanQuery.getFileCount();
       var array = new Array();
       for ( i = 0, count = 0; i < total; i++ )
       {
-        array.push( aMediaScanQuery.getFilePath( i ) );
+        array.push( aFileScanQuery.getFilePath( i ) );
       }
       theTotalItems = total;
 
@@ -310,7 +310,7 @@ function onPollQuery()
         var fraction = pos / len;
         var index = parseInt( theTotalItems * fraction );
         theTitle.value = SBString("media_scan.adding", "Adding") + " (" + index + "/" + theTotalItems + ")";
-        theLabel.value = gPPS.convertURLToDisplayName( aMediaScanQuery.getFilePath( index ) );
+        theLabel.value = gPPS.convertURLToDisplayName( aFileScanQuery.getFilePath( index ) );
         theProgress.value = fraction * 100.0;
       }
     }
@@ -329,7 +329,7 @@ function doOK()
     var wfManager = new CWatchFolderManager();
     // XXXredfive - componentize WatchFolderManager
     wfManager.CreateWatchFolderManager();
-    wfManager.AddWatchFolder(aMediaScanQuery.getDirectory()); 
+    wfManager.AddWatchFolder(aFileScanQuery.getDirectory()); 
   }
   document.defaultView.close();
   return true;
@@ -337,8 +337,8 @@ function doOK()
 function doCancel()
 {
   // Run away!!
-  if (aMediaScanQuery)
-    aMediaScanQuery.cancel();
+  if (aFileScanQuery)
+    aFileScanQuery.cancel();
   document.defaultView.close();
   return true;
 }

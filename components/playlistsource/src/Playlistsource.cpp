@@ -64,7 +64,6 @@
 #include <nsCRTGlue.h>
 
 #include "Playlistsource.h"
-#include "sbIPlaylist.h"
 
 #define LOOKAHEAD_SIZE 30
 

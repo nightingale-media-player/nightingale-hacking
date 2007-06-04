@@ -28,7 +28,7 @@
  * \file sbIPlaylistReader.idl
  * \brief
  *
- * \sa sbIPlaylist.idl
+ * \sa sbIMediaList.idl
  */
 
 #include "nsISupports.idl"
@@ -42,7 +42,7 @@ interface sbIMediaList;
  * \interface sbIMediaLibrary
  * \brief
  *
- * \sa sbIPlaylistReaderManager, sbIPlaylistReader, sbIPlaylist, sbIPlaylistManager
+ * \sa sbIPlaylistReaderManager, sbIPlaylistReader, sbIMediaList
  */
 [scriptable, uuid(a1fd4697-6459-473f-a660-1915f91cd469)]
 interface sbIPlaylistReaderListener : nsIWebProgressListener
@@ -103,7 +103,7 @@ interface sbIPlaylistReaderListener : nsIWebProgressListener
  * \interface sbIPlaylistReader
  * \brief
  *
- * \sa sbIPlaylistReaderManager, sbIPlaylistReaderListener, sbIPlaylistManager, sbIPlaylist
+ * \sa sbIPlaylistReaderManager, sbIPlaylistReaderListener, sbIMediaList
  */
 [scriptable, uuid(8be3a732-f081-47e8-ac21-4d97d769260f)]
 interface sbIPlaylistReader : nsISupports
@@ -215,4 +215,5 @@ interface sbIPlaylistReaderManager : nsISupports
   void supportedFileExtensions(out PRUint32 aExtCount,
     [array, size_is (aExtCount), retval] out wstring aExts);
 };
+
 
