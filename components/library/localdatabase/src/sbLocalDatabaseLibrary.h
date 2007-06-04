@@ -137,7 +137,8 @@ public:
 private:
   nsresult CreateQueries();
 
-  inline nsresult MakeStandardQuery(sbIDatabaseQuery** _retval);
+  inline nsresult MakeStandardQuery(sbIDatabaseQuery** _retval,
+                                    PRBool aRunAsync = PR_FALSE);
 
   inline void GetNowString(nsAString& _retval);
 
@@ -163,9 +164,9 @@ private:
   nsresult AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
                                   sbIMediaItem** _retval);
 
-  void IncrementAddedItemCounter(PRUint32 aIncrement = 1);
+  void IncrementDatabaseDirtyItemCounter(PRUint32 aIncrement = 1);
 
-  nsresult RunAnalyzeQuery();
+  nsresult RunAnalyzeQuery(PRBool aRunAsync = PR_TRUE);
 
 private:
   // This is the GUID used by the DBEngine to uniquely identify the sqlite
@@ -204,7 +205,7 @@ private:
   nsCOMPtr<nsIPropertyBag2> mCreationParameters;
   nsCOMPtr<sbILibraryFactory> mFactory;
 
-  PRUint32 mAddedItemCount;
+  PRUint32 mDirtyItemCount;
 
   PRUint32 mAnalyzeCountLimit;
 

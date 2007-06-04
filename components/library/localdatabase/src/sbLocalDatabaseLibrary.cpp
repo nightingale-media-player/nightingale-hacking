@@ -80,7 +80,7 @@
 
 #define SB_MEDIAITEM_TYPEID 0
 
-#define DEFAULT_ANALYZE_COUNT_LIMIT 500
+#define DEFAULT_ANALYZE_COUNT_LIMIT 1000
 #define ANALYZE_COUNT_PREF "songbird.library.localdatabase.analyzeCountLimit"
 
 #define SB_MEDIALIST_FACTORY_DEFAULT_TYPE 1
@@ -313,7 +313,7 @@ NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseLibrary,
                              sbIMediaList);
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
-: mAddedItemCount(0),
+: mDirtyItemCount(0),
   mAnalyzeCountLimit(DEFAULT_ANALYZE_COUNT_LIMIT),
   mPreventAddedNotification(PR_FALSE)
 {
@@ -676,7 +676,8 @@ sbLocalDatabaseLibrary::CreateQueries()
  *        generic initialization.
  */
 /* inline */ nsresult
-sbLocalDatabaseLibrary::MakeStandardQuery(sbIDatabaseQuery** _retval)
+sbLocalDatabaseLibrary::MakeStandardQuery(sbIDatabaseQuery** _retval,
+                                          PRBool aRunAsync)
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - MakeStandardQuery()", this));
   nsresult rv;
@@ -693,7 +694,7 @@ sbLocalDatabaseLibrary::MakeStandardQuery(sbIDatabaseQuery** _retval)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = query->SetAsyncQuery(PR_FALSE);
+  rv = query->SetAsyncQuery(aRunAsync);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = query);
@@ -986,27 +987,30 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
 }
 
 void
-sbLocalDatabaseLibrary::IncrementAddedItemCounter(PRUint32 aIncrement)
+sbLocalDatabaseLibrary::IncrementDatabaseDirtyItemCounter(PRUint32 aIncrement)
 {
-  mAddedItemCount += aIncrement;
+  mDirtyItemCount += aIncrement;
 
-  if (mAddedItemCount >= mAnalyzeCountLimit) {
-    mAddedItemCount = 0;
+  if (mDirtyItemCount >= mAnalyzeCountLimit) {
+    mDirtyItemCount = 0;
 
-    if (NS_FAILED(RunAnalyzeQuery())) {
+#ifdef DEBUG
+    nsresult rv =
+#endif
+    RunAnalyzeQuery();
+#ifdef DEBUG
+    if (NS_FAILED(rv)) {
       NS_WARNING("RunAnalyzeQuery failed!");
     }
+#endif
   }
 }
 
 nsresult
-sbLocalDatabaseLibrary::RunAnalyzeQuery()
+sbLocalDatabaseLibrary::RunAnalyzeQuery(PRBool aRunAsync)
 {
   nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetAsyncQuery(PR_TRUE);
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query), aRunAsync);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(NS_LITERAL_STRING("ANALYZE"));
@@ -1322,7 +1326,7 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
-  IncrementAddedItemCounter();
+  IncrementDatabaseDirtyItemCounter();
 
   // Add the new media item into cache
   nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
@@ -1717,10 +1721,16 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::Shutdown()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
-  if (mAddedItemCount) {
-    if (NS_FAILED(RunAnalyzeQuery())) {
+  if (mDirtyItemCount) {
+#ifdef DEBUG
+    nsresult rv =
+#endif
+    RunAnalyzeQuery(PR_FALSE);
+#ifdef DEBUG
+    if (NS_FAILED(rv)) {
       NS_WARNING("RunAnalyzeQuery failed!");
     }
+#endif
   }
   return NS_OK;
 }
@@ -1778,7 +1788,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItems(nsIArray* aURIList,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
-  IncrementAddedItemCounter(listLength);
+  IncrementDatabaseDirtyItemCounter(listLength);
 
   // Get the media items after the database changes commit.
   rv = BatchGetMediaItems( addedGuids, getter_AddRefs(newItems) );
@@ -1928,7 +1938,7 @@ sbLocalDatabaseLibrary::BatchNotifyAdded(nsIArray *aMediaItemArray) {
   rv = aMediaItemArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  IncrementAddedItemCounter(length);
+  IncrementDatabaseDirtyItemCounter(length);
 
   // Copy them over, please.
   for (PRUint32 i = 0; i < length; i++) {
@@ -2466,7 +2476,7 @@ sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
     {
       PRUint32 length = mGuids.Length();
 
-      mLibrary->IncrementAddedItemCounter(length);
+      mLibrary->IncrementDatabaseDirtyItemCounter(length);
 
       sbAutoBatchHelper batchHelper(mLibrary);
 

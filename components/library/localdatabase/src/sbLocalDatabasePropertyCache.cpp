@@ -523,8 +523,8 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
 
     for (PRUint32 i = 0; i < aGUIDArrayCount; i++) {
       nsAutoString guid(aGUIDArray[i]);
-      sbILocalDatabaseResourcePropertyBag* bag;
-      if (mCache.Get(guid, &bag)) {
+      nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+      if (mCache.Get(guid, getter_AddRefs(bag))) {
         propertyBagArray[i] = bag;
         NS_ADDREF(propertyBagArray[i]);
       }
@@ -561,9 +561,9 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
 
   for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
     nsAutoString guid(aGUIDArray[i]);
-    sbILocalDatabaseResourcePropertyBag* bag = nsnull;
+    nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
 
-    if(mCache.Get(guid, &bag) && bag) {
+    if(mCache.Get(guid, getter_AddRefs(bag)) && bag) {
       nsCOMPtr<nsIStringEnumerator> names;
       rv = aPropertyArray[i]->GetNames(getter_AddRefs(names));
       NS_ENSURE_SUCCESS(rv, rv);
@@ -578,7 +578,8 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
         rv = aPropertyArray[i]->GetProperty(name, value);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag)
+        // XXXben FIX ME
+        rv = NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag.get())
           ->SetProperty(name, value);
       }
 
@@ -633,11 +634,13 @@ sbLocalDatabasePropertyCache::Write()
 
   //For each GUID, there's a property bag that needs to be processed as well.
   for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
-    sbILocalDatabaseResourcePropertyBag* bag;
-    if (mCache.Get(dirtyGuids[i], &bag)) {
+    nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+    if (mCache.Get(dirtyGuids[i], getter_AddRefs(bag))) {
       nsTArray<PRUint32> dirtyProps;
+
+      // XXXben FIX ME
       sbLocalDatabaseResourcePropertyBag* bagLocal = 
-        NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag *, bag);
+        NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag *, bag.get());
 
       PRUint32 dirtyPropsCount = 0;
       rv = bagLocal->EnumerateDirty(EnumDirtyProps, (void *) &dirtyProps, &dirtyPropsCount);
@@ -757,16 +760,20 @@ sbLocalDatabasePropertyCache::Write()
     NS_ENSURE_SUCCESS(dbOk, dbOk);
 
     for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
-      sbILocalDatabaseResourcePropertyBag* bag;
-      if (mCache.Get(dirtyGuids[i], &bag)) {
+      nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+      if (mCache.Get(dirtyGuids[i], getter_AddRefs(bag))) {
+
+        // XXXben FIX ME
         sbLocalDatabaseResourcePropertyBag* bagLocal = 
-          NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag *, bag);
+          NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag *, bag.get());
         bagLocal->SetDirty(PR_FALSE);
       }
     }
     
     //Clear dirty guid hastable.
     mDirty.Clear();
+
+    mLibrary->IncrementDatabaseDirtyItemCounter(dirtyGuidCount);
   }
 
   return rv;
