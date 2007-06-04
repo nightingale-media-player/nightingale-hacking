@@ -33,9 +33,6 @@ var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cr = Components.results;
 
-const URL_ADDTOPLAYLIST_DIALOG =
-  "chrome://songbird/content/xul/add_to_playlist.xul";
-
 function MediaListListener() {
 }
 MediaListListener.prototype = {
@@ -92,17 +89,6 @@ SelectionUnwrapper.prototype = {
       return this;
     throw Cr.NS_NOINTERFACE;
   }
-}
-
-function getPlaylistGUIDFromDialog() {
-  // Make a data object to get the playlist to add to from the dialog.
-  var dialogData = {};
-
-  // Open the modal dialog.
-  SBOpenModalDialog(URL_ADDTOPLAYLIST_DIALOG, "add_to_playlist",
-                    "chrome,centerscreen", dialogData);
-
-  return dialogData.mediaListGUID;
 }
 
 // The house for the web playlist and download commands objects.
@@ -403,41 +389,6 @@ var SBWebPlaylistCommands =
           SBSubscribe(url, this.m_Context.m_Playlist.mediaListView, readable_name);
         }
         break;
-        case "library_cmd_addtoplaylist":
-        {
-          var mediaListGUID = getPlaylistGUIDFromDialog();
-          if (!mediaListGUID) {
-            // User clicked Cancel
-            return;
-          }
-
-          var libraryManager =
-            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                      .getService(Components.interfaces.sbILibraryManager);
-          var mediaList = libraryManager.mainLibrary.getMediaItem(mediaListGUID);
-
-          var treeView = this.m_Context.m_Playlist.treeView;
-          var selectionCount = treeView.selectionCount;
-          
-          var unwrapper = new SelectionUnwrapper(treeView.selectedMediaItems);
-
-          // Add all the items that are selected.
-          var libraryManager =
-            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                      .getService(Components.interfaces.sbILibraryManager);
-          var mediaList = libraryManager.mainLibrary.getMediaItem(mediaListGUID);
-
-          var mediaListListener = new MediaListListener();
-          
-          mediaList.addListener(mediaListListener);
-          mediaList.addSome(unwrapper);
-          mediaList.removeListener(mediaListListener);
-          
-          var itemsAdded = mediaListListener.itemAddedCount;
-          this.m_Context.m_Playlist._reportAddedTracks(itemsAdded,
-                                             selectionCount - itemsAdded);
-        }
-        break;
         case "library_cmd_addtolibrary":
         {
           var libraryManager =
@@ -458,7 +409,7 @@ var SBWebPlaylistCommands =
 
           var itemsAdded = mediaListListener.itemAddedCount;
           this.m_Context.m_Playlist._reportAddedTracks(itemsAdded,
-                                             selectionCount - itemsAdded);
+                                             selectionCount - itemsAdded, mediaList.name);
         }
         break;
         case "library_cmd_showdlplaylist":
