@@ -146,10 +146,10 @@ try
       
       // Ah.  Sometimes, things are being secure.
       
-      if ( playlist.wrappedJSObject )
+      if ( playlist && playlist.wrappedJSObject )
         playlist = playlist.wrappedJSObject;
       
-      if ( window.wrappedJSObject )
+      if ( window && window.wrappedJSObject )
         window = window.wrappedJSObject;
       
       this.m_Context.m_Playlist = playlist;
