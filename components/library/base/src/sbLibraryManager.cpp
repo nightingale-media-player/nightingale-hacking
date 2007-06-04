@@ -287,7 +287,7 @@ sbLibraryManager::ShutdownAllLibrariesCallback(sbILibrary* aEntry,
   nsresult rv = aEntry->Shutdown();
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A library's shutdown method failed!");
 
-  return PL_DHASH_NEXT;
+  return PR_TRUE;
 }
 
 /**
