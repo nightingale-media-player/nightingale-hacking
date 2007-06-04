@@ -127,7 +127,7 @@ try
       var cmds;
       
       // ADDTOPLAYLIST
-      if (cmds = addToPlaylist.handleAddToPlaylistGetMenu(aSubMenu)) return cmds;
+      if (cmds = addToPlaylistHelper.handleGetMenu(aSubMenu)) return cmds;
       
       switch (aSubMenu) {
         default:
@@ -139,7 +139,7 @@ try
     
     onBeforeConstruction: function(aHost) {
       // ADDTOPLAYLIST INIT
-      addToPlaylist.makeListOfPlaylists(SBLibraryCommands);
+      addToPlaylistHelper.makeListOfPlaylists(SBLibraryCommands);
     },
 
     getNumCommands: function( aSubMenu, aHost )
@@ -267,7 +267,7 @@ try
     onCommand: function( id, value, host )
     {
       // ADDTOPLAYLIST
-      if (addToPlaylist.handleAddToPlaylistCommand(id)) return;
+      if (addToPlaylistHelper.handleCommand(id)) return;
       
       if ( id )
       {
