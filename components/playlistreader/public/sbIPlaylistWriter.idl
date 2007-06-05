@@ -30,11 +30,19 @@
 #include "nsIPrompt.idl"
 #include "nsIAuthPrompt.idl"
 
+/**
+ * \interface sbIPlaylistWriterListener
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ */
 [scriptable, uuid(3FE9E285-F0F8-4154-9C21-8B6E4B8EFA93)]
 interface sbIPlaylistWriterListener : nsIProgressEventSink
 {
 };
 
+/**
+ * \interface sbIPlaylistWriter
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ */
 [scriptable, uuid(27B68B9B-E471-4367-B159-63B65C581847)]
 interface sbIPlaylistWriter : nsISupports
 {
@@ -96,10 +104,8 @@ interface sbIPlaylistWriter : nsISupports
 };
 
 /**
- * \interface sbIPlaylistReaderManager 
- * \brief
- *
- * \sa sbIPlaylistReader, sbIPlaylistReaderListener
+ * \interface sbIPlaylistWriterManager
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 [scriptable, uuid(CB6A505E-D8CB-4711-A50F-38439561C6D0)]
 interface sbIPlaylistWriterManager : nsISupports

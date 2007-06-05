@@ -30,6 +30,7 @@ interface nsISimpleEnumerator;
 
 /**
  * \interface sbIDeviceCapabilities
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 [scriptable, uuid(193121e6-51a6-40ea-b63d-701ed240a953)]
 interface sbIDeviceCapabilities : nsISupports

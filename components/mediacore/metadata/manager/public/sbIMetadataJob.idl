@@ -39,7 +39,7 @@ interface nsIObserver;
 * You get an sbIMetadataJob by calling sbIMetadataJobManager::newJob()
 * with an nsIArray of sbIMediaItem.
 * 
-* \sa sbIMediaLibrary, sbIMediaItem, sbIMetadataJobManager
+* \sa sbILibrary, sbIMediaItem, sbIMetadataJobManager
 */
 [scriptable, uuid(C38FD6BD-3335-4392-A3DE-1855ECEDA4F8)]
 interface sbIMetadataJob : nsISupports

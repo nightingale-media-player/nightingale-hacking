@@ -39,11 +39,10 @@ interface sbIRemoteMediaList;
 
 /**
  * \interface sbIRemotePlayer
- *
- * This interface is a composition of many of our other interfaces with the
- *  goal of exposing a more web-friendly interface to web sites. The defines
+ * \brief This interface is a composition of many of our other interfaces with the
+ *  goal of exposing a more web-friendly interface to web sites. This defines
  *  our "Remote API" the websites can call to get information about and interact
- *  with Sonbird.
+ *  with Songbird.
  */
 [scriptable, uuid(40964944-5243-4a16-886b-14c1cbaa79d9)]
 interface sbIRemotePlayer : nsISupports

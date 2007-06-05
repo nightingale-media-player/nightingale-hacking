@@ -26,7 +26,10 @@
 
 /**
  * \file sbIController.idl
- * \brief sbIController interface definition.
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3] 
+ *
+ * sbIController interface definition.
+ *
  * \sa sbIApplicationController.idl
  */
 
@@ -34,7 +37,10 @@
 
 /**
  * \interface sbIController
- * \brief Simple wrapper around the standard nsIController interface.
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3] 
+ * 
+ * Simple wrapper around the standard nsIController interface.
+ *
  * \sa sbIApplicationController nsIController
  */
 [uuid(A780AD2E-8655-4d4d-8B9B-C25C69051026)]

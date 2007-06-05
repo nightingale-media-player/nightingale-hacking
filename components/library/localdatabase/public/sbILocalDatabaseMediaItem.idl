@@ -32,9 +32,9 @@
 #include "nsISupports.idl"
 
 /**
-* \interface sbILocalDatabaseMediaItem
-* \brief Internal use only
-*/
+ * \interface sbILocalDatabaseMediaItem
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
 [uuid(a3445a34-99a1-47ce-b766-e51d0a5753c8)]
 interface sbILocalDatabaseMediaItem : nsISupports
 {

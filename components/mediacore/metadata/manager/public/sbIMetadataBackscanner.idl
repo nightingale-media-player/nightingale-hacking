@@ -26,13 +26,12 @@
 
 /**
 * \file sbIMetadataBackscanner.idl
-* \brief The Metadata Backscanner scans unscanned media items for new metadata.
+* \brief [DEPRECATED]
 */
 #include "nsISupports.idl"
 /**
 * \interface sbIMetadataBackscanner sbIMetadataBackscanner.h
-* \brief Metadata Backscanner scans local and remote pieces
-* of media in the users libraries for metadata in the background.
+* \brief [DEPRECATED]
 * 
 * The backscanner can be started via the start() method and 
 * stopped via stop(). Local media and local area network shares
@@ -49,7 +48,6 @@
 * The metadata backscanner is a service and should be called
 * via do_GetService.
 * 
-* \sa sbIMediaLibrary
 */
 [scriptable, uuid(6FE563F3-A217-4e16-A6C5-52BA0F3C09DF)]
 interface sbIMetadataBackscanner : nsISupports

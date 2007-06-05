@@ -25,7 +25,7 @@
  */
 /**
  * \file sbIGStreamerService.idl
- * \brief USER CODE SHOULD NOT REFERENCE THIS CLASS. 
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS] 
  * 
  */
 
@@ -33,7 +33,7 @@
 
 /**
  * \interface sbIGStreamerService
- * \brief USER CODE SHOULD NOT REFERENCE THIS CLASS.
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
 [scriptable, uuid(ae9887e3-ef5a-4466-a6fa-b3b695395cdd)]
 interface sbIGStreamerService : nsISupports

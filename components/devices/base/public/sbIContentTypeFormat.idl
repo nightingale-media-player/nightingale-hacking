@@ -28,6 +28,10 @@
 
 interface nsISimpleEnumerator;
 
+/**
+ * \interface sbIContentTypeFormat
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ */
 [scriptable, uuid(f08c6820-fa6c-44c0-9ce5-19c1d4a5fc3c)]
 interface sbIContentTypeFormat : nsISupports
 {

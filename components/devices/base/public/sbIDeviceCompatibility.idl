@@ -27,7 +27,8 @@
 #include "nsISupports.idl"
 
 /**
- * 
+ * \interface sbIDeviceCompatibility
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 [scriptable, uuid(374fb2c4-387f-4d17-be67-b5a0353c1fea)]
 interface sbIDeviceCompatibility : nsISupports

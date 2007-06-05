@@ -25,7 +25,7 @@
  */
 /**
  * \file sbIGStreamerSimple.idl
- * \brief USER CODE SHOULD NOT REFERENCE THIS CLASS. 
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS] 
  * 
  */
 #include "nsISupports.idl"
@@ -34,7 +34,7 @@ interface nsIDOMXULElement;
 
 /**
  * \interface sbIGStreamerSimple
- * \brief USER CODE SHOULD NOT REFERENCE THIS CLASS.
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
 [scriptable, uuid(7067ba5f-fce9-4d4e-9d79-c08c343ed4dd)]
 interface sbIGStreamerSimple : nsISupports

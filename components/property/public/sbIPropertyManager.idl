@@ -41,7 +41,7 @@ interface sbIPropertyArray;
 
 
 /**
-* \interface sbIPropertiesManager
+* \interface sbIPropertyManager
 * \brief Manager for system wide metadata properties
 *
 * Components should register properties with this service at startup.
@@ -85,7 +85,7 @@ interface sbIPropertyManager : nsISupports
 
 /**
  * \interface sbIPropertyOperator
- * \brief 
+ * \brief An interface to represent an operator that may act upon a property
  */
 [scriptable, uuid(2C334049-EFCD-40ed-99F8-A96D541569E5)]
 interface sbIPropertyOperator : nsISupports
@@ -110,7 +110,7 @@ interface sbIPropertyOperator : nsISupports
 
 /**
 * \interface sbIPropertyInfo
-* \brief System wide metadata property
+* \brief An interface used to describe a metadata property for use by the UI and other sbILibrary interfaces (smartplaylists, etc)
 * \sa sbIPropertyManager
 */
 [scriptable, uuid(3024b398-5c89-4122-8327-3bf9673e22dd)]
@@ -272,6 +272,11 @@ interface sbIPropertyInfo : nsISupports
   AString getDisplayPropertiesForValue(in AString aValue);
 };
 
+/**
+ * \interface sbITextPropertyInfo
+ * \brief The property information specific to text fields
+ * \sa sbIPropertyInfo
+ */
 [scriptable, uuid(ceff6b77-4b4d-48d0-816f-26ec1992a5b2)]
 interface sbITextPropertyInfo : sbIPropertyInfo
 {
@@ -291,6 +296,11 @@ interface sbITextPropertyInfo : sbIPropertyInfo
   attribute boolean enforceLowercase;
 };
 
+/**
+ * \interface sbINumberPropertyInfo
+ * \brief The property information specific to numeric fields
+ * \sa sbIPropertyInfo
+ */
 [scriptable, uuid(eb35eca3-a9ec-4e01-a9af-152c72086e68)]
 interface sbINumberPropertyInfo : sbIPropertyInfo
 {
@@ -325,6 +335,11 @@ interface sbINumberPropertyInfo : sbIPropertyInfo
   attribute unsigned long radix;
 };
 
+/**
+ * \interface sbIURIPropertyInfo
+ * \brief The property information specific to URL/URI fields
+ * \sa sbIPropertyInfo
+ */
 [scriptable, uuid(b8d0b930-8aab-4afa-969d-3a5dca7ea536)]
 interface sbIURIPropertyInfo : sbIPropertyInfo
 {
@@ -337,7 +352,8 @@ interface sbIURIPropertyInfo : sbIPropertyInfo
 
 /**
  * \interface sbIDatetimePropertyInfo
- *
+ * \brief The property information specific to date/time fields
+ * \sa sbIPropertyInfo
  */
 [scriptable, uuid(df7d6d96-db92-4e30-9f5a-01088f3d7dc5)]
 interface sbIDatetimePropertyInfo : sbIPropertyInfo
@@ -413,7 +429,9 @@ interface sbIDatetimePropertyInfo : sbIPropertyInfo
 
 /**
  * \interface sbIProgressPropertyInfo
+ * \brief The property information specific to progressmeters
  *
+ * \sa sbIPropertyInfo
  */
 [scriptable, uuid(154e77d3-6750-4f4c-a070-473bb7645381)]
 interface sbIProgressPropertyInfo : sbITextPropertyInfo

@@ -31,6 +31,7 @@ interface sbIDeviceEventListener;
 
 /**
  * \interface sbIDeviceEventTarget
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 [scriptable, uuid(c83fad0a-d0f7-4b66-9596-b6a3cfa21d65)]
 interface sbIDeviceEventTarget : nsISupports

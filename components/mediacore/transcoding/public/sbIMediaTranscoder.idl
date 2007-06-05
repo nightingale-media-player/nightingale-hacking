@@ -26,14 +26,16 @@
 
 /**
 * \file sbIMediaTranscoder.idl
-* \brief Interfaces for implementing and using media transcoders
+* \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+* Interfaces for implementing and using media transcoders
 * \todo Stub module.  Currently unimplemented.
 */
 #include "nsISupports.idl"
 
 /**
 * \interface sbIMediaType sbIMediaTranscoder.h
-* \brief An object to represent a requested or supported set of mimetypes
+* \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+* An object to represent a requested or supported set of mimetypes
 * \todo Stub interface.  Currently unimplemented.
 * \sa sbIMediaTranscoderManager, sbIMediaTranscoder, sbIMediaTranscoderCallback
 */
@@ -83,7 +85,8 @@ interface sbIMediaType : nsISupports
 
 /**
 * \interface sbIMediaTranscoderCallback sbIMediaTranscoder.h
-* \brief A callback to inform upon the status of a transcode operation
+* \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+* A callback to inform upon the status of a transcode operation
 *
 * User code may implement a local instance of this interface and pass it into
 * the sbIMediaTranscoderManager::transcode() method to be informed about the
@@ -136,7 +139,8 @@ interface sbIMediaTranscoderCallback : nsISupports
 
 /**
 * \interface sbIMediaTranscoder sbIMediaTranscoder.h
-* \brief An object that performs a transcode operation
+* \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+* An object that performs a transcode operation
 *
 * This object is supposed to be a high-level wrapper for a full featured
 * transcoder underneath the covers that does complex transcoding already.
@@ -235,7 +239,8 @@ interface sbIMediaTranscoder : nsISupports
 
 /**
 * \interface sbIMediaTranscoderManager sbIMediaTranscoder.h
-* \brief An object that receives all requests for transcode operations
+* \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+* An object that receives all requests for transcode operations
 *
 * This service is retrieved by user code that calls its transcode() method.
 *

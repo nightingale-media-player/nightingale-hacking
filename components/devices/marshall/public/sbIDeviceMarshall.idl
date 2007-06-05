@@ -29,7 +29,8 @@
 interface sbIDeviceControllerRegistrar;
 
 /**
- * 
+ * \interface sbIDeviceMarshall
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 [scriptable, uuid(8e7daa39-f4d2-4366-8841-a76de3cff7be)]
 interface sbIDeviceMarshall : nsISupports

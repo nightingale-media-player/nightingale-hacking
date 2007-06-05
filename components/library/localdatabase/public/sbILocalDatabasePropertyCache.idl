@@ -36,8 +36,9 @@ interface nsIStringEnumerator;
 interface nsIURI;
 
 /**
-* \interface sbILocalDatabasePropertyCache
-*/
+ * \interface sbILocalDatabasePropertyCache
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
 [scriptable, uuid(8711c7e2-8190-47f9-96d6-f19d2eed7b2b)]
 interface sbILocalDatabasePropertyCache : nsISupports
 {
@@ -65,8 +66,9 @@ interface sbILocalDatabasePropertyCache : nsISupports
 };
 
 /**
-* \interface sbILocalDatabaseResourcePropertyBag
-*/
+ * \interface sbILocalDatabaseResourcePropertyBag
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
 [scriptable, uuid(a6721ecf-d0e6-4216-94f6-147b2ee2932f)]
 interface sbILocalDatabaseResourcePropertyBag : nsISupports
 {

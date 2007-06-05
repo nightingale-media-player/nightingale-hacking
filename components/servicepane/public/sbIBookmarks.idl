@@ -33,6 +33,13 @@
 
 interface sbIServicePaneNode;
 
+/**
+ * \interface sbIBookmarks
+ * \brief Definition of the sbIBookmarks interface
+ *
+ *  TODO: Write this documentation.
+ *
+ */
 [scriptable, uuid(0e3c0208-72d8-4676-86e1-138db0801586)]
 interface sbIBookmarks : nsISupports {
   /* \brief Add a bookmark

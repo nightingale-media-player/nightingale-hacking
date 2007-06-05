@@ -35,6 +35,10 @@ interface sbIServicePaneNode;
 interface sbILibrary;
 interface sbILibraryResource;
 
+/**
+ * \interface sbILibraryServicePaneService
+ * \brief Provides information about libraries and medialists needed by the service pane
+ */
 [scriptable, uuid(2b7aeef4-fa67-11db-8314-0800200c9a66)]
 interface sbILibraryServicePaneService : nsISupports {
 

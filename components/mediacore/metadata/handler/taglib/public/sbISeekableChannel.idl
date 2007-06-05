@@ -34,6 +34,12 @@
 interface nsIChannel;
 interface sbISeekableChannel;
 
+/**
+* \interface sbISeekableChannelListener sbISeekableChannel.h
+* \brief A listener interface for sbISeekableChannel
+*
+* \sa sbISeekableChannel
+*/
 
 [uuid(873ABEF5-AEE5-468E-8896-7768A13DC9A7)]
 

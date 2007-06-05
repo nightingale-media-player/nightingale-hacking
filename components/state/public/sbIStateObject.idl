@@ -38,9 +38,12 @@ interface nsIWritableVariant;
 
 /**
  * \interface sbIStateObject
- * \brief The state object interface is used to store state with the possibility
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ *
+ * The state object interface is used to store state with the possibility
  * of persisting the state data through multiple application sessions. The persisted
  * data is automatically loaded and available upon application startup.
+ *
  * \sa sbIStateDatastore
  * \note This interface *is* threadsafe. Implementations should follow this assumption.
  */

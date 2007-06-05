@@ -36,6 +36,7 @@ interface nsIVariant;
 
 /**
  * \interface sbIPropertyFactory
+ * \brief An interface to create sbIProperty instances
  */
 [scriptable, uuid(9788d829-c1a5-4fad-9df3-d2b4263a4fce)]
 interface sbIPropertyFactory : nsISupports

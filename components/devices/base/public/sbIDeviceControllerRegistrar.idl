@@ -31,7 +31,8 @@ interface nsISimpleEnumerator;
 interface sbIDeviceController;
 
 /**
- * 
+ * \interface sbIDeviceControllerRegistrar
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 [scriptable, uuid(d4db083c-3d1f-494a-9740-e1ba3851790d)]
 interface sbIDeviceControllerRegistrar : nsISupports

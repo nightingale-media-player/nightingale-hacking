@@ -147,8 +147,8 @@ interface sbIDatabaseQueryCallback : nsISupports
 *
 * While client code running from chrome is free to query the databases
 * directly, this object is more commonly passed to the database helper objects
-* (sbIMediaLibrary, sbIPlaylistManager) that translate their methods into SQL
-* queries placed into the passed sbIDatabaseQuery instance.
+* that translate their methods into SQL queries placed into the passed 
+* sbIDatabaseQuery instance.
 *
 * The basic loop for using a query is as follows:
 *

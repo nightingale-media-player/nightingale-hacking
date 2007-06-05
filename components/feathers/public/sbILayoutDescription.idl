@@ -25,7 +25,7 @@
 */
 
 /**
- * \file sbILayoutDesciption.idl
+ * \file sbILayoutDescription.idl
  * \brief Layout package description
  */
 
@@ -33,7 +33,7 @@
 
 
 /**
-* \interface sbILayoutDesciption
+* \interface sbILayoutDescription
 * \brief Struct describing the properties of a XUL window layout
 *
 * Describes the properties of an alternate XUL window.

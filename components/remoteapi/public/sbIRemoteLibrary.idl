@@ -34,6 +34,13 @@
 
 interface sbIMediaItem;
 
+/**
+ * \interface sbIRemoteLibrary
+ * \brief An interface to control a media library from remote web pages.
+ *
+ * TODO: Write this documentation
+ *
+ */
 [scriptable, uuid(3025cbf8-7969-4e79-8641-967a9f4e51b8)]
 interface sbIRemoteLibrary : sbIRemoteMediaList
 {

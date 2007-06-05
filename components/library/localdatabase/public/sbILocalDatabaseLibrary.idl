@@ -39,9 +39,9 @@ interface sbILocalDatabasePropertyCache;
 interface sbILocalDatabaseResourcePropertyBag;
 
 /**
-* \interface sbILocalDatabaseLibrary
-* \brief Internal use only
-*/
+ * \interface sbILocalDatabaseLibrary
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
 [scriptable, uuid(2fbd49f8-3c95-437b-b3ac-efaeefb86d6a)]
 interface sbILocalDatabaseLibrary : nsISupports
 {

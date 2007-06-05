@@ -37,6 +37,7 @@ interface sbILocalDatabasePropertyCache;
 
 /**
  * \interface sbILocalDatabaseGUIDArrayListener
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
 [scriptable, uuid(d76560b0-b2e7-4935-9d51-1c53a0cfb1a0)]
 interface sbILocalDatabaseGUIDArrayListener : nsISupports
@@ -46,6 +47,7 @@ interface sbILocalDatabaseGUIDArrayListener : nsISupports
 
 /**
  * \interface sbILocalDatabaseGUIDArray
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
 [scriptable, uuid(4499865f-b4f3-4e6d-90ed-0004ff38a49f)]
 interface sbILocalDatabaseGUIDArray : nsISupports

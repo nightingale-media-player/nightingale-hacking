@@ -35,6 +35,10 @@
 
 interface sbIPropertyOperator;
 
+/**
+ * \interface sbILocalDatabaseSmartMediaListCondition
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
 [scriptable, uuid(1E41DDE1-D6A0-4e12-91E8-A5D47E0332F4)]
 interface sbILocalDatabaseSmartMediaListCondition : nsISupports
 {
@@ -73,7 +77,7 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
 
 /**
  * \interface sbILocalDatabaseSmartMediaList
- * \brief Smart media list specific methods
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  *
  * Methods and attributes that are specific to the smart media list are
  * implemented here.

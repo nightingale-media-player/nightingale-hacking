@@ -33,6 +33,13 @@
 
 interface sbIRemotePlayer;
 
+/**
+ * \interface sbIRemoteCommands
+ * \brief An interface to specify playlist commands from remote web pages.
+ *
+ * TODO: Write this documentation
+ *
+ */
 [scriptable, uuid(cff760df-5fe0-4657-8eb5-1d5d3ca12369)]
 interface sbIRemoteCommands : nsISupports
 {

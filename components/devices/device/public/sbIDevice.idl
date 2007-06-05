@@ -26,8 +26,7 @@
 
 /**
  * \file sbIDevice.idl
- *
- * \brief The IDL for sbIDevice.
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 
 #include "nsISupports.idl"
@@ -41,6 +40,7 @@ interface sbIDeviceParameters;
 
 /**
  * \interface sbIDevice
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  *
  * The main interface to all device objects
  */

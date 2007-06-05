@@ -25,8 +25,8 @@
 */
 
 /**
- * \file sbILibraryFactory.idl
- * \brief Definition of the sbILibraryFactory interface
+ * \file sbILibraryLoader.idl
+ * \brief Definition of the sbILibraryLoader interface
  * \sa sbILibrary.idl
  */
 
@@ -37,7 +37,7 @@ interface sbILibraryManager;
 
 /**
 * \interface sbILibraryLoader
-*
+* \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
 * \sa sbILibraryManager, sbILibrary
 */
 [scriptable, uuid(816e9cbe-e635-4abc-944f-aa4fa5ec918a)]

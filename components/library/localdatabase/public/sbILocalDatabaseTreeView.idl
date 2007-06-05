@@ -33,8 +33,9 @@
 interface nsIStringEnumerator;
 
 /**
-* \interface sbILocalDatabaseTreeView
-*/
+ * \interface sbILocalDatabaseTreeView
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
 [scriptable, uuid(c1e4e564-8e8d-4052-b4c2-7f4716061ffb)]
 interface sbILocalDatabaseTreeView : nsISupports
 {

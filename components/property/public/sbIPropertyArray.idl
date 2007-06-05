@@ -35,6 +35,7 @@ interface nsIProperty;
 
 /**
  * \interface sbIPropertyArray
+ * \brief An interface to carry around arrays of sbIProperty instances
  */
 [scriptable, uuid(9c7f33c9-2283-4404-96a8-07d8b39c8277)]
 interface sbIPropertyArray : nsIMutableArray

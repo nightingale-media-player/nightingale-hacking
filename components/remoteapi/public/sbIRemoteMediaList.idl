@@ -34,6 +34,13 @@
 interface nsISimpleEnumerator;
 interface sbIMediaListView;
 
+/**
+ * \interface sbIRemoteMediaList
+ * \brief An interface to control a media list from remote web pages.
+ *
+ * TODO: Write this documentation
+ *
+ */
 [scriptable, uuid(4f30b35e-ff7c-4b2e-b290-10e1a7ae06b1)]
 interface sbIRemoteMediaList : nsISupports
 {

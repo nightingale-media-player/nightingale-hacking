@@ -37,7 +37,7 @@ interface nsISimpleEnumerator;
 
 /**
  * \interface sbPIStateService
- * \brief USER CODE SHOULD NOT REFERENCE THIS CLASS.
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  *
  * This interface is implemented as a singleton service. This interface
  * should only be used by code implementing the sbIStateObject interface.

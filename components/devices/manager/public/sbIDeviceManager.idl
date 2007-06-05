@@ -29,6 +29,9 @@
 interface nsISimpleEnumerator;
 
 /**
+ * \interface sbIDeviceManager
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ *
  * This is the DeviceManager service.
  * Make sure to use getService rather than createInstance when using.
  */

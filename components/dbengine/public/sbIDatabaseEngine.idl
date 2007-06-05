@@ -37,7 +37,7 @@
 
 /**
 * \interface sbIDatabaseEngine 
-* \brief USER CODE SHOULD NOT REFERENCE THIS CLASS
+* \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
 *
 * You should use the sbIDatabaseQuery object to submit SQL queries to the database.
 *

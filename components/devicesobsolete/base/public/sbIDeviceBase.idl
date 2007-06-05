@@ -43,8 +43,7 @@ interface sbIMediaItem;
 
 /**
  * \interface sbIDeviceBaseCallback
- *
- * \brief <TODO:Brief>.
+ * \brief [SOON TO BE DEPRECATED AFTER 0.3] The callback class for sbIDeviceBase
  * 
  * <TODO:Detail>.
  *
@@ -96,29 +95,9 @@ interface sbIDeviceBaseCallback : nsISupports
 };
 
 
-// XXXben These are left here for the time being so the world doesn't break
-
-%{ C++
-// File format constants
-#define kSB_DEVICE_FILE_FORMAT_UNDEFINED  -1
-#define kSB_DEVICE_FILE_FORMAT_WAV        0
-#define kSB_DEVICE_FILE_FORMAT_MP3        1
-#define kSB_DEVICE_FILE_FORMAT_WMA        2
-
-// Device State constants
-#define kSB_DEVICE_STATE_IDLE             0
-#define kSB_DEVICE_STATE_BUSY             1
-#define kSB_DEVICE_STATE_DOWNLOADING      2
-#define kSB_DEVICE_STATE_UPLOADING        3
-#define kSB_DEVICE_STATE_DOWNLOAD_PAUSED  4
-#define kSB_DEVICE_STATE_UPLOAD_PAUSED    5
-#define kSB_DEVICE_STATE_DELETING         6
-
-%}
-
 /**
  * \interface sbIDeviceBase
- * \brief <TODO:Brief>.
+ * \brief [SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.
  *
  * Base interface for all supported devices. The supported devices can be CD,
  * Windows Media Device, iPod, etc., and even a download device for downloading
@@ -439,3 +418,23 @@ interface sbIDeviceBase : nsISupports
    */
   boolean ejectDevice(in AString aDeviceIdentifier);
 };
+
+// XXXben These are left here for the time being so the world doesn't break
+// XXXmig When these are left at the top, doxygen breaks.
+%{ C++
+// File format constants
+#define kSB_DEVICE_FILE_FORMAT_UNDEFINED  -1
+#define kSB_DEVICE_FILE_FORMAT_WAV        0
+#define kSB_DEVICE_FILE_FORMAT_MP3        1
+#define kSB_DEVICE_FILE_FORMAT_WMA        2
+
+// Device State constants
+#define kSB_DEVICE_STATE_IDLE             0
+#define kSB_DEVICE_STATE_BUSY             1
+#define kSB_DEVICE_STATE_DOWNLOADING      2
+#define kSB_DEVICE_STATE_UPLOADING        3
+#define kSB_DEVICE_STATE_DOWNLOAD_PAUSED  4
+#define kSB_DEVICE_STATE_UPLOAD_PAUSED    5
+#define kSB_DEVICE_STATE_DELETING         6
+%}
+

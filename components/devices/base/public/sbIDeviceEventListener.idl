@@ -30,6 +30,7 @@ interface sbIDeviceEvent;
 
 /**
  * \interface sbIDeviceEventListener
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  *
  * Used to listen to events on a particular device, controller, etc.
  */

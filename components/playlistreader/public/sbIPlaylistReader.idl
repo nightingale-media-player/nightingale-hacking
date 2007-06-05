@@ -39,8 +39,8 @@ interface nsIFile;
 interface sbIMediaList;
 
 /**
- * \interface sbIMediaLibrary
- * \brief
+ * \interface sbIPlaylistReaderListener
+ * \brief A listener interface for use with sbIPlaylistReader interfaces
  *
  * \sa sbIPlaylistReaderManager, sbIPlaylistReader, sbIMediaList
  */
@@ -101,7 +101,7 @@ interface sbIPlaylistReaderListener : nsIWebProgressListener
 
 /**
  * \interface sbIPlaylistReader
- * \brief
+ * \brief A subclass from which one may derive instances to read specific playlist types
  *
  * \sa sbIPlaylistReaderManager, sbIPlaylistReaderListener, sbIMediaList
  */
@@ -164,7 +164,8 @@ interface sbIPlaylistReader : nsISupports
 
 /**
  * \interface sbIPlaylistReaderManager
- * \brief
+ * \brief An interface to be used to read playlists.  
+ * It will try to find the proper sbIPlaylistReader subclass and use it.
  *
  * \sa sbIPlaylistReader, sbIPlaylistReaderListener
  */

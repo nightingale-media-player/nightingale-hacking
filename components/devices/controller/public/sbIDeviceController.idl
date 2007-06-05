@@ -34,6 +34,7 @@ interface sbIDeviceCompatibility;
 
 /**
  * \interface sbIDeviceController
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 [scriptable, uuid(b4b7ed5d-85f2-4d0b-a7c6-f235acad3fc0)]
 interface sbIDeviceController : nsISupports

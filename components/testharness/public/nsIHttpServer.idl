@@ -49,7 +49,8 @@ interface nsIHttpRequestMetadata;
 interface nsIHttpResponse;
 
 /**
- * An interface which represents an HTTP server.
+ * \interface nsIHttpServer
+ * \brief An interface that represents an HTTP server.  Currently only used by the testharness. (HINT HINT!!!!)
  */
 [scriptable, uuid(5520f79e-ecd5-4c40-843b-97ee13a23747)]
 interface nsIHttpServer : nsIServerSocketListener
@@ -165,6 +166,9 @@ interface nsIHttpServer : nsIServerSocketListener
 };
 
 /**
+ * \interface nsIHttpRequestHandler
+ * \brief An interface that handles HTTP requests.
+ *
  * A representation of a handler for HTTP requests.  The handler is used by
  * calling its .handle method with data for an incoming request; it is the
  * handler's job to use that data as it sees fit to make the desired response.
@@ -197,7 +201,8 @@ interface nsIHttpRequestHandler : nsISupports
 
 
 /**
- * A representation of the data included in an HTTP request.
+ * \interface nsIHttpRequestMetadata
+ * \brief An interface that represents the data included in an HTTP request.
  */
 [scriptable, uuid(3a899b17-b6eb-4333-8ef4-912df454a551)]
 interface nsIHttpRequestMetadata : nsIPropertyBag
@@ -283,7 +288,8 @@ interface nsIHttpRequestMetadata : nsIPropertyBag
 
 
 /**
- * Represents an HTTP response, as described in RFC 2616, section 6.
+ * \interface nsIHttpResponse
+ * \brief An interface that represents an HTTP response, as described in RFC 2616, section 6.
  */
 [scriptable, uuid(a2aaaff7-03bd-43b6-b460-94671e288093)]
 interface nsIHttpResponse : nsISupports

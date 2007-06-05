@@ -53,7 +53,7 @@ interface sbIMetadataJob;
 * via do_GetService.  Because it relies upon starting timers into the
 * main thread, newJob() may only be called from the main thread.
 * 
-* \sa sbIMediaLibrary, sbIMediaItem, sbIMetadataJob
+* \sa sbILibrary, sbIMediaItem, sbIMetadataJob
 */
 [scriptable, uuid(883C63A5-8195-4294-8D41-A21FE16A0D7C)]
 interface sbIMetadataJobManager : nsISupports

@@ -34,8 +34,9 @@
 interface nsISupportsString;
 
 /**
-* \interface sbIDndSourceTracker
-*/
+ * \interface sbIDndSourceTracker
+ * \brief Helper service for transferring internal objects using drag and drop
+ */
 [scriptable, uuid(179b2ff4-c1be-45ed-ae28-c38c59b1d0ea)]
 interface sbIDndSourceTracker : nsISupports
 {

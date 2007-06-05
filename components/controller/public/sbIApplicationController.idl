@@ -26,7 +26,7 @@
 
 /**
  * \file sbIApplicationController.idl
- * \brief
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \sa
  */
 
@@ -38,7 +38,7 @@ interface nsIDOMWindow;
 
 /**
  * \interface sbIApplicationController
- * \brief
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \sa
  */
 [uuid(5FD7CE4D-45DA-4e43-A08B-D97443E11AC6)]

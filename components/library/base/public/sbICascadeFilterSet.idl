@@ -35,6 +35,12 @@ interface nsIStringEnumerator;
 interface nsITreeView;
 interface sbIMediaList;
 
+/**
+* \interface sbICascadeFilterSetListener
+* \brief Listener interface for sbICascadeFilterSet
+*
+* \sa sbICascadeFilterSet
+*/
 [scriptable, uuid(6b0f6a50-07c9-40e1-9392-2714b9bf2fa3)]
 interface sbICascadeFilterSetListener : nsISupports
 {

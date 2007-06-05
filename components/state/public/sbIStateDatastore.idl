@@ -36,7 +36,10 @@ interface sbIStateObject;
 
 /**
  * \interface sbIStateDatastore
- * \brief This interface may be implemented to provide new datastores for the state service.
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ *
+ * This interface may be implemented to provide new datastores for the state service.
+ *
  * \sa sbIStateObject
  * \note This interface *is* threadsafe. Implementations should follow this assumption.
  */

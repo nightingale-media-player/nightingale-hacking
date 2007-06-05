@@ -31,6 +31,7 @@ interface nsIVariant;
 
 /**
  * \interface sbIDeviceIdentification
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 [scriptable, uuid(9db04aec-8802-4885-93e6-1639dede0f82)]
 interface sbIDeviceIdentification : nsISupports

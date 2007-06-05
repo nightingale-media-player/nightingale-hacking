@@ -33,6 +33,7 @@
 
 /**
  * \interface sbILocalDatabaseAsyncGUIDArrayListener
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
 [scriptable, uuid(08af2324-3aa1-4162-9da3-caa4169247ca)]
 interface sbILocalDatabaseAsyncGUIDArrayListener : nsISupports
@@ -60,6 +61,7 @@ interface sbILocalDatabaseAsyncGUIDArrayListener : nsISupports
 
 /**
  * \interface sbILocalDatabaseAsyncGUIDArray
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  *
  * An asynchronous wrapper around an existing GUID array.
  */

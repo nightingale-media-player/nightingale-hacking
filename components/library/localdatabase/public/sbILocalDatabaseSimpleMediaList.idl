@@ -35,6 +35,10 @@
 interface sbIMediaItem;
 interface sbILocalDatabaseLibrary;
 
+/**
+ * \interface sbILocalDatabaseMediaListCopyListener
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
 [scriptable, uuid(feca42a6-f060-4041-8f97-5b750074432f)]
 interface sbILocalDatabaseMediaListCopyListener : nsISupports
 {
@@ -43,14 +47,14 @@ interface sbILocalDatabaseMediaListCopyListener : nsISupports
 };
 
 /**
-* \interface sbILocalDatabaseSimpleMediaList
-* \brief Simple media list specific methods
-*
-* Methods and attributes that are specific to the simple media list are
-* implemented here.
-*
-* \sa sbIMediaList
-*/
+ * \interface sbILocalDatabaseSimpleMediaList
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ *
+ * Methods and attributes that are specific to the simple media list are
+ * implemented here.
+ *
+ * \sa sbIMediaList
+ */
 [scriptable, uuid(72c5d04f-6c75-4155-adb8-b2e5755714d1)]
 interface sbILocalDatabaseSimpleMediaList : nsISupports
 {

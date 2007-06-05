@@ -148,6 +148,7 @@ interface sbISQLBuilder : nsISupports
 
 /**
 * \interface sbISQLWhereBuilder
+* \brief Interface for building WHERE expressions
 */
 [scriptable, uuid(7a35ea83-e75f-4299-935c-9a678e74c13f)]
 interface sbISQLWhereBuilder : sbISQLBuilder
@@ -160,7 +161,7 @@ interface sbISQLWhereBuilder : sbISQLBuilder
 
   /**
    * \brief Remve a criteria constraint from the query
-   * \param aCriterion The Criterion to remvoe
+   * \param aCriterion The Criterion to remove
    */
   void removeCriterion(in sbISQLBuilderCriterion aCriterion);
 
@@ -366,7 +367,7 @@ interface sbISQLInsertBuilder : sbISQLBuilder
 };
 
 /**
- * \interface sbISQLSelectBuilder
+ * \interface sbISQLUpdateBuilder
  * \brief Interface for building UPDATE statements
  */
 [scriptable, uuid(68991dbd-83f0-4df9-b3f6-89d0982ed491)]
@@ -393,7 +394,7 @@ interface sbISQLUpdateBuilder : sbISQLWhereBuilder
 };
 
 /**
- * \interface sbISQLSelectBuilder
+ * \interface sbISQLDeleteBuilder
  * \brief Interface for building DELETE statements
  */
 [scriptable, uuid(73a18b36-2eee-429e-9cda-1f4428c3afb5)]
