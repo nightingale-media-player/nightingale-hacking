@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="dir_d638543ae76e1900518e691aaee9e133" kind="dir">
+    <compoundname>C:/projects/songbird/components/draganddrop/</compoundname>
+    <innerdir refid="dir_2e83cda04c690ff51f3e35324eee37d5">C:/projects/songbird/components/draganddrop/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/draganddrop/"/>
+  </compounddef>
+</doxygen>

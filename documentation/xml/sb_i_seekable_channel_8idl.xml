@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="sb_i_seekable_channel_8idl" kind="file">
+    <compoundname>sbISeekableChannel.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <incdepgraph>
+      <node id="275">
+        <label>C:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl</label>
+        <link refid="sbISeekableChannel.idl"/>
+        <childnode refid="276" relation="include">
+        </childnode>
+      </node>
+      <node id="276">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_seekable_channel_listener" prot="public">sbISeekableChannelListener</innerclass>
+    <innerclass refid="interfacesb_i_seekable_channel" prot="public">sbISeekableChannel</innerclass>
+    <briefdescription>
+<para>A seekable wrapper for an nsIChannel. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed<sp/></highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either<sp/></highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language<sp/></highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this<sp/></highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,<sp/></highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/>nsIChannel;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_seekable_channel" kindref="compound">sbISeekableChannel</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[uuid(873ABEF5-AEE5-468E-8896-7768A13DC9A7)]</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="interfacesb_i_seekable_channel_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_seekable_channel_listener" kindref="compound">sbISeekableChannelListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onChannelDataAvailable(<sp/>in<sp/><ref refid="interfacesb_i_seekable_channel" kindref="compound">sbISeekableChannel</ref><sp/>aChannel<sp/>);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal">[uuid(873E0403-B0B1-4E6D-BD32-E4ED51492109)]</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="interfacesb_i_seekable_channel" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_seekable_channel" kindref="compound">sbISeekableChannel</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="71"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="75" refid="interfacesb_i_seekable_channel_1e2359e2a29ec5e49b846a008216a607f" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRUInt64<sp/>pos;</highlight></codeline>
+<codeline lineno="79" refid="interfacesb_i_seekable_channel_15982378f8763c6d10d831f7e5a98acb1" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRUInt64<sp/>size;</highlight></codeline>
+<codeline lineno="83" refid="interfacesb_i_seekable_channel_1cbf96345ee8179991a8327693f723900" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRBool<sp/>completed;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>open(<sp/>in<sp/>nsIChannel<sp/>aChannel,<sp/>in<sp/><ref refid="interfacesb_i_seekable_channel_listener" kindref="compound">sbISeekableChannelListener</ref><sp/>aListener<sp/>);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>close();</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>skip(<sp/>in<sp/>PRUint64<sp/>aDistance<sp/>);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>PRUint32<sp/>read(<sp/>in<sp/>charPtr<sp/>aBuffer,<sp/>in<sp/>PRUint32<sp/>aSize<sp/>);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>readChar();</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>PRInt32<sp/>readInt32();</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>PRInt64<sp/>readInt64();</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="C:/projects/songbird/components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl"/>
+  </compounddef>
+</doxygen>

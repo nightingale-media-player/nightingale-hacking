@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_device_registrar" kind="interface" prot="public">
+    <compoundname>sbIDeviceRegistrar</compoundname>
+    <includes refid="sb_i_device_registrar_8idl" local="no">sbIDeviceRegistrar.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_device_registrar_1c9ee226f1d9535db5ed3b54674f5188d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceRegistrar::registerDevice</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>registerDevice</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Registers an <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref> object. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="43"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_registrar_1e98da593fce16a36e398ac10defb8a5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceRegistrar::unregisterDevice</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>unregisterDevice</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Unregisters an <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref> object. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="48"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_registrar_128813380ce5501a92b12462e316423fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+        <definition>sbIDevice sbIDeviceRegistrar::getDevice</definition>
+        <argsstring>(in unsigned long aDeviceId)</argsstring>
+        <name>getDevice</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aDeviceId</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Retrieve a registered device. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="63"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_device_registrar_1f944cd3b938fdf3792224ba6e4e1aaf3" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbIDeviceRegistrar::devices</definition>
+        <argsstring></argsstring>
+        <name>devices</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>An enumeration of sbIDevices currently registered. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="53" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_registrar_1e9e14727604f19829039a6d87c0bd4ef" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIDeviceRegistrar::deviceCount</definition>
+        <argsstring></argsstring>
+        <name>deviceCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of sbIDevices currently registered. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="58" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="39" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="38" bodyend="64"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_registrar_1e9e14727604f19829039a6d87c0bd4ef" prot="public" virt="non-virtual"><scope>sbIDeviceRegistrar</scope><name>deviceCount</name></member>
+      <member refid="interfacesb_i_device_registrar_1f944cd3b938fdf3792224ba6e4e1aaf3" prot="public" virt="non-virtual"><scope>sbIDeviceRegistrar</scope><name>devices</name></member>
+      <member refid="interfacesb_i_device_registrar_128813380ce5501a92b12462e316423fa" prot="public" virt="non-virtual"><scope>sbIDeviceRegistrar</scope><name>getDevice</name></member>
+      <member refid="interfacesb_i_device_registrar_1c9ee226f1d9535db5ed3b54674f5188d" prot="public" virt="non-virtual"><scope>sbIDeviceRegistrar</scope><name>registerDevice</name></member>
+      <member refid="interfacesb_i_device_registrar_1e98da593fce16a36e398ac10defb8a5f" prot="public" virt="non-virtual"><scope>sbIDeviceRegistrar</scope><name>unregisterDevice</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

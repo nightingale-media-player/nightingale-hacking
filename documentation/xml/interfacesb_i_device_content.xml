@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_device_content" kind="interface" prot="public">
+    <compoundname>sbIDeviceContent</compoundname>
+    <includes refid="sb_i_device_content_8idl" local="no">sbIDeviceContent.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_device_content_17dba645624ce975ed795eb500b19536f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceContent::addLibrary</definition>
+        <argsstring>(in sbILibrary aLibrary)</argsstring>
+        <name>addLibrary</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref></type>
+          <declname>aLibrary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="46"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_content_1f1bc75c40480dfa6a2f15dd0cb7bef06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceContent::removeLibrary</definition>
+        <argsstring>(in sbILibrary aLibrary)</argsstring>
+        <name>removeLibrary</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref></type>
+          <declname>aLibrary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="51"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_device_content_14e150e0b6e296e4fa01ec286d78b735a" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbIDeviceContent::libraries</definition>
+        <argsstring></argsstring>
+        <name>libraries</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="56" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_content_13b2f6ac099d2002ffcf1873026cbcbb7" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRUint32</type>
+        <definition>readonly attribute PRUint32 sbIDeviceContent::libraryCount</definition>
+        <argsstring></argsstring>
+        <name>libraryCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="61" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_content_18c21ed6447e772a6d8da1b36e4c811a7" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_library_factory" kindref="compound">sbILibraryFactory</ref></type>
+        <definition>readonly attribute sbILibraryFactory sbIDeviceContent::libraryFactory</definition>
+        <argsstring></argsstring>
+        <name>libraryFactory</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="66" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="82">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="83" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="83">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" line="42" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceContent.idl" bodystart="41" bodyend="67"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_content_17dba645624ce975ed795eb500b19536f" prot="public" virt="non-virtual"><scope>sbIDeviceContent</scope><name>addLibrary</name></member>
+      <member refid="interfacesb_i_device_content_14e150e0b6e296e4fa01ec286d78b735a" prot="public" virt="non-virtual"><scope>sbIDeviceContent</scope><name>libraries</name></member>
+      <member refid="interfacesb_i_device_content_13b2f6ac099d2002ffcf1873026cbcbb7" prot="public" virt="non-virtual"><scope>sbIDeviceContent</scope><name>libraryCount</name></member>
+      <member refid="interfacesb_i_device_content_18c21ed6447e772a6d8da1b36e4c811a7" prot="public" virt="non-virtual"><scope>sbIDeviceContent</scope><name>libraryFactory</name></member>
+      <member refid="interfacesb_i_device_content_1f1bc75c40480dfa6a2f15dd0cb7bef06" prot="public" virt="non-virtual"><scope>sbIDeviceContent</scope><name>removeLibrary</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

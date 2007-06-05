@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="dir_b79cccb9ce62906c602436b056d8ef17" kind="dir">
+    <compoundname>C:/projects/songbird/components/mediacore/</compoundname>
+    <innerdir refid="dir_8ebf351158cae18c9fe6bce9dfad4cad">C:/projects/songbird/components/mediacore/metadata/</innerdir>
+    <innerdir refid="dir_a046ae5510f09ba1055e88b44f9e3145">C:/projects/songbird/components/mediacore/playback/</innerdir>
+    <innerdir refid="dir_fd8d397a544bcec01eb24319fa62a357">C:/projects/songbird/components/mediacore/transcoding/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/mediacore/"/>
+  </compounddef>
+</doxygen>

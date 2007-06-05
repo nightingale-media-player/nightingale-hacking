@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_sortable_media_list" kind="interface" prot="public">
+    <compoundname>sbISortableMediaList</compoundname>
+    <includes refid="sb_i_sortable_media_list_8idl" local="no">sbISortableMediaList.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_sortable_media_list_179a4d44a9571a18884bff720367a357a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISortableMediaList::setSort</definition>
+        <argsstring>(in sbIPropertyArray aSort)</argsstring>
+        <name>setSort</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+          <declname>aSort</declname>
+        </param>
+        <briefdescription>
+<para>Set a new sort for the media list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aSort</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A property bag containing the sort parameters. The keys map to sortable properties and the value for each key is either &quot;a&quot; for ascending or &quot;d&quot; for decending. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbISortableMediaList.idl" line="65"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_sortable_media_list_111d0392880a3e8efcce8e95cb60aae5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISortableMediaList::clearSort</definition>
+        <argsstring>()</argsstring>
+        <name>clearSort</name>
+        <briefdescription>
+<para>Clear the sort. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbISortableMediaList.idl" line="70"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_sortable_media_list_127157d177cb0c80c500cc6db5171e392" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbISortableMediaList::sortableProperties</definition>
+        <argsstring></argsstring>
+        <name>sortableProperties</name>
+        <briefdescription>
+<para>A list of properties that support sorting. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbISortableMediaList.idl" line="52" bodyfile="C:/projects/songbird/components/library/base/public/sbISortableMediaList.idl" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_sortable_media_list_19c35e6880414508300c32c70d9035449" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+        <definition>readonly attribute sbIPropertyArray sbISortableMediaList::currentSort</definition>
+        <argsstring></argsstring>
+        <name>currentSort</name>
+        <briefdescription>
+<para>The current sort. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbISortableMediaList.idl" line="57" bodyfile="C:/projects/songbird/components/library/base/public/sbISortableMediaList.idl" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Control the sort settings on a media list. </para>    </briefdescription>
+    <detaileddescription>
+<para>Media lists that implement this interface declare themselves as sortable.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="475">
+        <label>sbIPropertyArray</label>
+        <link refid="interfacesb_i_property_array"/>
+      </node>
+      <node id="474">
+        <label>sbISortableMediaList</label>
+        <link refid="interfacesb_i_sortable_media_list"/>
+        <childnode refid="475" relation="usage">
+          <edgelabel>currentSort</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/library/base/public/sbISortableMediaList.idl" line="48" bodyfile="C:/projects/songbird/components/library/base/public/sbISortableMediaList.idl" bodystart="47" bodyend="72"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_sortable_media_list_111d0392880a3e8efcce8e95cb60aae5d" prot="public" virt="non-virtual"><scope>sbISortableMediaList</scope><name>clearSort</name></member>
+      <member refid="interfacesb_i_sortable_media_list_19c35e6880414508300c32c70d9035449" prot="public" virt="non-virtual"><scope>sbISortableMediaList</scope><name>currentSort</name></member>
+      <member refid="interfacesb_i_sortable_media_list_179a4d44a9571a18884bff720367a357a" prot="public" virt="non-virtual"><scope>sbISortableMediaList</scope><name>setSort</name></member>
+      <member refid="interfacesb_i_sortable_media_list_127157d177cb0c80c500cc6db5171e392" prot="public" virt="non-virtual"><scope>sbISortableMediaList</scope><name>sortableProperties</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_playlist_commands_context" kind="interface" prot="public">
+    <compoundname>sbIPlaylistCommandsContext</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_playlist_commands_context_169c851cca7096063b8c4363539e70936" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIDOMNode</type>
+        <definition>readonly attribute nsIDOMNode sbIPlaylistCommandsContext::playlist</definition>
+        <argsstring></argsstring>
+        <name>playlist</name>
+        <briefdescription>
+<para>The playlist against which the commands are acting. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="311" bodyfile="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" bodystart="311" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_commands_context_1d62ad80fa57bfa8ddabdca72a12e5abe" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIDOMWindow</type>
+        <definition>readonly attribute nsIDOMWindow sbIPlaylistCommandsContext::window</definition>
+        <argsstring></argsstring>
+        <name>window</name>
+        <briefdescription>
+<para>The outer window containing the playlist against which the commands are acting. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="316" bodyfile="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" bodystart="316" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The interface for giving context to a playlistcommands object. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="307" bodyfile="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" bodystart="306" bodyend="317"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_commands_context_169c851cca7096063b8c4363539e70936" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsContext</scope><name>playlist</name></member>
+      <member refid="interfacesb_i_playlist_commands_context_1d62ad80fa57bfa8ddabdca72a12e5abe" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsContext</scope><name>window</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

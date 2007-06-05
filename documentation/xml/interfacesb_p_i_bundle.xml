@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_p_i_bundle" kind="interface" prot="public">
+    <compoundname>sbPIBundle</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_p_i_bundle_1fbee8edc61942983cc3dda2e79aa4cc7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbPIBundle::setInstallResult</definition>
+        <argsstring>(in long aResult)</argsstring>
+        <name>setInstallResult</name>
+        <param>
+          <type>in long</type>
+          <declname>aResult</declname>
+        </param>
+        <briefdescription>
+<para>Sets the result of the installation attempt This method records the result of the extension installation attempt. It should be called by the dialog implementing download and XPI installation. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>window</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parent for the progress dialog box </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbPIBundle.idl" line="54"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_p_i_bundle_189d03f201e6e91a61c8c0072695a23dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbPIBundle::setNeedRestart</definition>
+        <argsstring>(in boolean aNeeded)</argsstring>
+        <name>setNeedRestart</name>
+        <param>
+          <type>in boolean</type>
+          <declname>aNeeded</declname>
+        </param>
+        <briefdescription>
+<para>Sets the flag indicating that a restart is needed This method sets the flag indicating that a restart of the application is needed in order for installed extensions to take effect. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>needed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value of the flag to set </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbPIBundle.idl" line="62"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_p_i_bundle_1996bf5edbddbeb5f4d9c8cef308ec51d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>sbIBundleDownloadListener</type>
+        <definition>sbIBundleDownloadListener sbPIBundle::getInstallListener</definition>
+        <argsstring>(in long aIndex)</argsstring>
+        <name>getInstallListener</name>
+        <param>
+          <type>in long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbPIBundle.idl" line="65"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_p_i_bundle_17e87bbb6ccba2d392bdb841d390aafc6" prot="public" static="no" mutable="no">
+        <type>readonly attribute long</type>
+        <definition>readonly attribute long sbPIBundle::installListenerCount</definition>
+        <argsstring></argsstring>
+        <name>installListenerCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbPIBundle.idl" line="64" bodyfile="C:/projects/songbird/components/bundle/public/sbPIBundle.idl" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Songbird Private Bundle Interface This is a private interface for bundle management, used by the bundle download user interface. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/bundle/public/sbPIBundle.idl" line="46" bodyfile="C:/projects/songbird/components/bundle/public/sbPIBundle.idl" bodystart="45" bodyend="66"/>
+    <listofallmembers>
+      <member refid="interfacesb_p_i_bundle_1996bf5edbddbeb5f4d9c8cef308ec51d" prot="public" virt="non-virtual"><scope>sbPIBundle</scope><name>getInstallListener</name></member>
+      <member refid="interfacesb_p_i_bundle_17e87bbb6ccba2d392bdb841d390aafc6" prot="public" virt="non-virtual"><scope>sbPIBundle</scope><name>installListenerCount</name></member>
+      <member refid="interfacesb_p_i_bundle_1fbee8edc61942983cc3dda2e79aa4cc7" prot="public" virt="non-virtual"><scope>sbPIBundle</scope><name>setInstallResult</name></member>
+      <member refid="interfacesb_p_i_bundle_189d03f201e6e91a61c8c0072695a23dc" prot="public" virt="non-virtual"><scope>sbPIBundle</scope><name>setNeedRestart</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

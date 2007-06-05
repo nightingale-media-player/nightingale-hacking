@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_servicesource" kind="interface" prot="public">
+    <compoundname>sbIServicesource</compoundname>
+    <includes refid="sb_i_servicesource_8idl" local="no">sbIServicesource.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_servicesource_152af52f89ed16752a191a6046d638157" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIServicesource::registerPlaylistCommands</definition>
+        <argsstring>(in AString aContextGUID, in AString aTableName, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj)</argsstring>
+        <name>registerPlaylistCommands</name>
+        <param>
+          <type>in AString</type>
+          <declname>aContextGUID</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aPlaylistType</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
+          <declname>aCommandObj</declname>
+        </param>
+        <briefdescription>
+<para>Register <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> objects to be shown for specific playlists. </para>        </briefdescription>
+        <detaileddescription>
+<para>The <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> interface is used to algorithmically define a set of commands to be rendered arbitrarily by a playlist ui object (currently, playlist.xml).</para><para>Commands can be registered for an entire database (by setting ContextGUID and leaving TableName null), or for any &quot;type&quot; characteristic.</para><para><xrefsect id="todo_1_todo000024"><xreftitle>Todo</xreftitle><xrefdescription><para>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don&apos;t overwrite our standard commands. </para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aContextGUID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The guid string for the database to register against </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the table to register against </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aPlaylistType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The arbitrary type string to register against </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCommandObj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The command object instance to be used for these playlists </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, playlist.xml </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/servicesource/public/sbIServicesource.idl" line="66"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_servicesource_1e88892100cf2c017f61dc451e2a13436" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
+        <definition>sbIPlaylistCommands sbIServicesource::getPlaylistCommands</definition>
+        <argsstring>(in AString aContextGUID, in AString aTableName, in AString aPlaylistType)</argsstring>
+        <name>getPlaylistCommands</name>
+        <param>
+          <type>in AString</type>
+          <declname>aContextGUID</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aPlaylistType</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve the <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> object to be shown for a specific playlist. </para>        </briefdescription>
+        <detaileddescription>
+<para>Given the guid, table, and type strings, return a duplicate instance of the <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> object registered.</para><para>The &quot;type&quot; string has precedence over the &quot;guid&quot;/&quot;table&quot; pair.</para><para>This method is only called by the playlist UI object, in playlist.xml</para><para><xrefsect id="todo_1_todo000025"><xreftitle>Todo</xreftitle><xrefdescription><para>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don&apos;t overwrite our standard commands. </para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aContextGUID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The guid string for the playlist </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the playlist </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aPlaylistType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the playlist </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A newly duplicated command object instance to be used for this playlist </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref>, playlist.xml </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/servicesource/public/sbIServicesource.idl" line="85"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The internal RDF Data Source that sends playlistlist data to the UI. </para>    </briefdescription>
+    <detaileddescription>
+<para>This object returns the playlistlist as an nsIRDFDataSource</para><para>It has two ref values:</para><para>ref=&quot;NC:ServicesourcePlayable&quot; - The list of all playable playlists in the system</para><para>ref=&quot;NC:Servicesource&quot; - The above, plus the &quot;Welcome&quot; node at the beginning</para><para>But it has no user-accessible methods. </para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/servicesource/public/sbIServicesource.idl" line="48" bodyfile="C:/projects/songbird/components/servicesource/public/sbIServicesource.idl" bodystart="47" bodyend="86"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_servicesource_1e88892100cf2c017f61dc451e2a13436" prot="public" virt="non-virtual"><scope>sbIServicesource</scope><name>getPlaylistCommands</name></member>
+      <member refid="interfacesb_i_servicesource_152af52f89ed16752a191a6046d638157" prot="public" virt="non-virtual"><scope>sbIServicesource</scope><name>registerPlaylistCommands</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

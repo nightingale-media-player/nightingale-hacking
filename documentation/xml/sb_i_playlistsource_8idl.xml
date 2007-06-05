@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="sb_i_playlistsource_8idl" kind="file">
+    <compoundname>sbIPlaylistsource.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <includes local="yes">nsIRDFDataSource.idl</includes>
+    <includedby refid="sb_i_servicesource_8idl" local="yes">C:/projects/songbird/components/servicesource/public/sbIServicesource.idl</includedby>
+    <incdepgraph>
+      <node id="346">
+        <label>nsIRDFDataSource.idl</label>
+      </node>
+      <node id="344">
+        <label>C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl</label>
+        <link refid="sbIPlaylistsource.idl"/>
+        <childnode refid="345" relation="include">
+        </childnode>
+        <childnode refid="346" relation="include">
+        </childnode>
+      </node>
+      <node id="345">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="348">
+        <label>C:/projects/songbird/components/servicesource/public/sbIServicesource.idl</label>
+        <link refid="sb_i_servicesource_8idl-source"/>
+      </node>
+      <node id="347">
+        <label>C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl</label>
+        <link refid="sbIPlaylistsource.idl"/>
+        <childnode refid="348" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="interfacesb_i_playlist_commands" prot="public">sbIPlaylistCommands</innerclass>
+    <innerclass refid="interfacesb_i_playlist_commands_context" prot="public">sbIPlaylistCommandsContext</innerclass>
+    <innerclass refid="interfacesb_i_playlistsource" prot="public">sbIPlaylistsource</innerclass>
+    <briefdescription>
+<para>The internal RDF Data Source that sends playlist data to the UI. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para>playlist.xml </para></simplesect>
+</para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed<sp/></highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either<sp/></highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language<sp/></highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this<sp/></highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,<sp/></highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIRDFDataSource.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/>nsIDOMNode;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">interface<sp/>nsIDOMEvent;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_context" kindref="compound">sbIPlaylistCommandsContext</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal">[scriptable,<sp/>uuid(f7cef15a-0d94-423f-a825-dd36047fe1bb)]</highlight></codeline>
+<codeline lineno="72" refid="interfacesb_i_playlist_commands" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref><sp/>:<sp/>nsISupports<sp/></highlight></codeline>
+<codeline lineno="73"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setContext(<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands_context" kindref="compound">sbIPlaylistCommandsContext</ref><sp/>aContext<sp/>);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onBeforeConstruction(<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onAfterConstruction(<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getNumCommands(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandType(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandId(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandText(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getCommandFlex(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandToolTipText(in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandEnabled(in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandVisible(in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/>PRBool<sp/>getCommandFlag(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandValue(<sp/>in<sp/>AString<sp/>aSubMenu,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/>AString<sp/>getCommandChoiceItem(<sp/>in<sp/>AString<sp/>aChoiceMenu,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/>nsIDOMNode<sp/>instantiateCustomCommand(<sp/>in<sp/>AString<sp/>aID,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>refreshCustomCommand(<sp/>in<sp/>nsIDOMNode<sp/>aCustomCommandElement,<sp/>in<sp/>AString<sp/>aId,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCommand(<sp/>in<sp/>AString<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,<sp/>in<sp/>AString<sp/>value,<sp/>in<sp/>AString<sp/>aHost<sp/>);</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref><sp/>duplicate(<sp/>);</highlight></codeline>
+<codeline lineno="299"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal">[scriptable,<sp/>uuid(2d2e8802-9f28-48eb-a55e-75448f08d920)]</highlight></codeline>
+<codeline lineno="306" refid="interfacesb_i_playlist_commands_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_context" kindref="compound">sbIPlaylistCommandsContext</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="307"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="311" refid="interfacesb_i_playlist_commands_context_169c851cca7096063b8c4363539e70936" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMNode<sp/>playlist;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="316" refid="interfacesb_i_playlist_commands_context_1d62ad80fa57bfa8ddabdca72a12e5abe" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMWindow<sp/>window;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="317"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight></codeline>
+<codeline lineno="362"><highlight class="normal">[scriptable,<sp/>uuid(e49a5c32-1945-49c3-876d-08e6b44144ff)]</highlight></codeline>
+<codeline lineno="363" refid="interfacesb_i_playlistsource" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlistsource" kindref="compound">sbIPlaylistsource</ref><sp/>:<sp/>nsIRDFDataSource</highlight></codeline>
+<codeline lineno="364"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/>PRBool<sp/>refExists(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight></codeline>
+<codeline lineno="373"><highlight class="normal"></highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>feedPlaylist(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aTableName<sp/>);</highlight></codeline>
+<codeline lineno="392"><highlight class="normal"></highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearPlaylist(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"></highlight></codeline>
+<codeline lineno="409"><highlight class="normal"><sp/><sp/>PRInt32<sp/>executeFeed(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="439"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setFilter(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>PRInt32<sp/>aIndex,<sp/>in<sp/>AString<sp/>aFilterString,<sp/>in<sp/>AString<sp/>aFilterRefName,<sp/>in<sp/>AString<sp/>aFilterColumn<sp/><sp/>);</highlight></codeline>
+<codeline lineno="440"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="449"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getNumFilters(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="450"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="465"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeFilter(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>PRInt32<sp/>aIndex);</highlight></codeline>
+<codeline lineno="466"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="474"><highlight class="normal"><sp/><sp/>AString<sp/>getFilter(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>PRInt32<sp/>aIndex<sp/>);<sp/></highlight></codeline>
+<codeline lineno="475"><highlight class="normal"></highlight></codeline>
+<codeline lineno="483"><highlight class="normal"><sp/><sp/>AString<sp/>getFilterColumn(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>PRInt32<sp/>aIndex<sp/>);<sp/></highlight></codeline>
+<codeline lineno="484"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="492"><highlight class="normal"><sp/><sp/>AString<sp/>getFilterRef(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>PRInt32<sp/>aIndex<sp/>);</highlight></codeline>
+<codeline lineno="493"><highlight class="normal"></highlight></codeline>
+<codeline lineno="507"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSearchString(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>AString<sp/>aSearchString,<sp/>in<sp/>PRBool<sp/>aResetFilters<sp/>);</highlight></codeline>
+<codeline lineno="508"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="515"><highlight class="normal"><sp/><sp/>AString<sp/>getSearchString(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="516"><highlight class="normal"></highlight></codeline>
+<codeline lineno="528"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setOrder(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>AString<sp/>aColumnName<sp/>);</highlight></codeline>
+<codeline lineno="529"><highlight class="normal"></highlight></codeline>
+<codeline lineno="536"><highlight class="normal"><sp/><sp/>AString<sp/>getOrder(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="537"><highlight class="normal"></highlight></codeline>
+<codeline lineno="544"><highlight class="normal"><sp/><sp/>AString<sp/>getRefGUID(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="545"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="552"><highlight class="normal"><sp/><sp/>AString<sp/>getRefTable(<sp/>in<sp/>AString<sp/>aRefName<sp/>);<sp/></highlight></codeline>
+<codeline lineno="553"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="560"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getRefRowCount(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="561"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="568"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getRefColumnCount(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="569"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="578"><highlight class="normal"><sp/><sp/>AString<sp/>getRefRowCellByColumn(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>PRInt32<sp/>aRow,<sp/>in<sp/>AString<sp/>aColumn<sp/>);</highlight></codeline>
+<codeline lineno="579"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="588"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getRefRowByColumnValue(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>AString<sp/>aColumn,<sp/>in<sp/>AString<sp/>aValue<sp/>);</highlight></codeline>
+<codeline lineno="589"><highlight class="normal"></highlight></codeline>
+<codeline lineno="598"><highlight class="normal"><sp/><sp/>AString<sp/>getRefColumnValueByRow(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>AString<sp/>aColumn,<sp/>in<sp/>PRUint32<sp/>aRow);</highlight></codeline>
+<codeline lineno="599"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="610"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getRefRowsByColumnValues(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>AString<sp/>aColumn,<sp/>in<sp/>PRUint32<sp/>aValueCount,<sp/>[array,<sp/>size_is(aValueCount)]<sp/>in<sp/>wstring<sp/>aValues,<sp/>out<sp/>PRUint32<sp/>aRowCount,<sp/>[array,<sp/>size_is<sp/>(aRowCount),<sp/>retval]<sp/>out<sp/>PRUint32<sp/>aRows);</highlight></codeline>
+<codeline lineno="611"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="622"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getRefColumnValuesByRows(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>AString<sp/>aColumn,<sp/>in<sp/>PRUint32<sp/>aRowCount,<sp/>[array,<sp/>size_is(aRowCount)]<sp/>in<sp/>PRUint32<sp/>aRows,<sp/>out<sp/>PRUint32<sp/>aValueCount,<sp/>[array,<sp/>size_is<sp/>(aValueCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aValues);</highlight></codeline>
+<codeline lineno="623"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="630"><highlight class="normal"><sp/><sp/>PRBool<sp/>isQueryExecuting(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="631"><highlight class="normal"></highlight></codeline>
+<codeline lineno="638"><highlight class="normal"><sp/><sp/>PRInt32<sp/>waitForQueryCompletion(<sp/>in<sp/>AString<sp/>aRefName<sp/>);</highlight></codeline>
+<codeline lineno="639"><highlight class="normal"></highlight></codeline>
+<codeline lineno="655"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>forceGetTargets(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>PRBool<sp/>isPermanent<sp/>);</highlight></codeline>
+<codeline lineno="656"><highlight class="normal"></highlight></codeline>
+<codeline lineno="672"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>incomingObserver(<sp/>in<sp/>AString<sp/>aRefName,<sp/>in<sp/>nsIDOMNode<sp/>aObject<sp/>);</highlight></codeline>
+<codeline lineno="673"><highlight class="normal"></highlight></codeline>
+<codeline lineno="691"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerPlaylistCommands(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aTableName,<sp/>in<sp/>AString<sp/>aPlaylistType,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
+<codeline lineno="692"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="702"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterPlaylistCommands(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aTableName,<sp/>in<sp/>AString<sp/>aPlaylistType,<sp/>in<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref><sp/>aCommandObj<sp/>);</highlight></codeline>
+<codeline lineno="703"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="720"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getPlaylistCommands(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aPlaylistType<sp/>);</highlight></codeline>
+<codeline lineno="721"><highlight class="normal"></highlight></codeline>
+<codeline lineno="733"><highlight class="normal"><sp/><sp/>AString<sp/>calculateRef(<sp/>in<sp/>AString<sp/>aContextGUID,<sp/>in<sp/>AString<sp/>aTableName<sp/>);</highlight></codeline>
+<codeline lineno="734"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl"/>
+  </compounddef>
+</doxygen>

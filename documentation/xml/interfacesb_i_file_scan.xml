@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_file_scan" kind="interface" prot="public">
+    <compoundname>sbIFileScan</compoundname>
+    <includes refid="sb_i_file_scan_8idl" local="no">sbIFileScan.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_file_scan_1d749e2c0ee0fff195512b52ab6f48b1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileScan::submitQuery</definition>
+        <argsstring>(in sbIFileScanQuery pQuery)</argsstring>
+        <name>submitQuery</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_file_scan_query" kindref="compound">sbIFileScanQuery</ref></type>
+          <declname>pQuery</declname>
+        </param>
+        <briefdescription>
+<para>Execute a <ref refid="interfacesb_i_file_scan_query" kindref="compound">sbIFileScanQuery</ref> object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pQuery</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The query object to execute </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_19072c5bad6c983f3337f82c873d31150" kindref="member">scanDirectory</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="266"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_19072c5bad6c983f3337f82c873d31150" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIFileScan::scanDirectory</definition>
+        <argsstring>(in AString strDirectory, in PRBool bRecurse, in sbIFileScanCallback pCallback)</argsstring>
+        <name>scanDirectory</name>
+        <param>
+          <type>in AString</type>
+          <declname>strDirectory</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bRecurse</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref></type>
+          <declname>pCallback</declname>
+        </param>
+        <briefdescription>
+<para>Execute a scan directly to a <ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref> instance. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>strDirectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The directory to scan </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bRecurse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to recurse </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback used to process the scan </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_1d749e2c0ee0fff195512b52ab6f48b1a" kindref="member">submitQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="278"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The engine in which to execute <ref refid="interfacesb_i_file_scan_query" kindref="compound">sbIFileScanQuery</ref> objects. </para>    </briefdescription>
+    <detaileddescription>
+<para>Create a <ref refid="interfacesb_i_file_scan_query" kindref="compound">sbIFileScanQuery</ref> object, fill out its methods, create one of these and pass the query to the scanner to begin executing.</para><para>Optionally, you may skip the use of a <ref refid="interfacesb_i_file_scan_query" kindref="compound">sbIFileScanQuery</ref> object and just handle the scan directly by calling <ref refid="interfacesb_i_file_scan_19072c5bad6c983f3337f82c873d31150" kindref="member">scanDirectory()</ref> with your own <ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref> object.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref>, <ref refid="interfacesb_i_file_scan_query" kindref="compound">sbIFileScanQuery</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="259" bodyfile="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" bodystart="258" bodyend="279"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_file_scan_19072c5bad6c983f3337f82c873d31150" prot="public" virt="non-virtual"><scope>sbIFileScan</scope><name>scanDirectory</name></member>
+      <member refid="interfacesb_i_file_scan_1d749e2c0ee0fff195512b52ab6f48b1a" prot="public" virt="non-virtual"><scope>sbIFileScan</scope><name>submitQuery</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
