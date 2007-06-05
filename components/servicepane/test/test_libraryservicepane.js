@@ -28,7 +28,7 @@
  * \brief Basic library service pane unit tests
  */
 
-const DEBUG_OUTPUT = true;
+const DEBUG_OUTPUT = false;
 
 const PROP_ISLIST = "http://songbirdnest.com/data/1.0#isList";
 const LSP='http://songbirdnest.com/rdf/library-servicepane#';
