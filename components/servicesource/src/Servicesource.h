@@ -43,6 +43,7 @@
 
 #include <map>
 #include <set>
+#include <vector>
 
 #ifndef NS_DECL_ISUPPORTS
 #error
@@ -118,8 +119,8 @@ private:
 
 
 private:
-  class commandmap_t : public std::map<nsString,
-    nsCOMPtr<sbIPlaylistCommands> > {};
+  class commandlist_t : public std::vector< nsCOMPtr<sbIPlaylistCommands> > {};
+  class commandmap_t  : public std::map<nsString, commandlist_t > {};
   commandmap_t g_CommandMap;
 
 };

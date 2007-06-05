@@ -37,6 +37,7 @@ interface nsIDOMWindow;
 interface nsIDOMEvent;
 interface sbIDatabaseResult;
 interface sbIPlaylistCommandsContext;
+interface sbIMediaItem;
 
 /**
 * \interface sbIPlaylistCommands sbIPlaylistsource.h
@@ -309,6 +310,11 @@ interface sbIPlaylistCommandsContext : nsISupports
   * \brief The playlist against which the commands are acting.
   */
   readonly attribute nsIDOMNode playlist;   
+
+    /**
+  * \brief The medialist against which the commands are acting.
+  */
+  readonly attribute sbIMediaItem medialist;
 
   /**
   * \brief The outer window containing the playlist against which the commands are acting.

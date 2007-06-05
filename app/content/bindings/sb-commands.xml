@@ -48,6 +48,24 @@
               Components.classes["@mozilla.org/intl/stringbundle;1"]
               .getService(Components.interfaces.nsIStringBundleService);
           this.stringbundle = stringBundleService.createBundle( src );
+          var selfbind = this.getAttribute("bind");
+          if (selfbind) {
+            var libraryManager =
+              Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                        .getService(Components.interfaces.sbILibraryManager);
+            var guids = selfbind.split(';');
+            var libraryguid = guids[0];
+            var playlistguid = guids[1];
+            var bindtomedialist = null;
+            var library = libraryManager.getLibrary(libraryguid);
+            if (library) {
+              if (libraryguid == playlistguid) bindtomedialist = library;
+              else bindtomedialist = library.getMediaItem(playlistguid);
+            }
+            if (bindtomedialist) {
+              this.bind(bindtomedialist, null, null);
+            }
+          }
         ]]>
       </constructor>
 
@@ -57,8 +75,18 @@
         ]]>
       </destructor>
 
+      <property name="commandtype">
+        <getter>
+          return this.getAttribute("commandtype");
+        </getter>
+        <setter>
+          this.setAttribute("commandtype", val);
+        </setter>
+      </property>
+
       <field name="commands">null</field>
       <field name="playlist">null</field>
+      <field name="medialist">null</field>
 
       <field name="_outerWindow">null</field>
       <property name="outerWindow">
@@ -90,11 +118,13 @@
       </property>
       
       <method name="bind">
+        <parameter name="medialist"/>
         <parameter name="playlist"/>
         <parameter name="commands"/>
         <body>
         <![CDATA[
           try {
+            this.medialist = medialist;
             this.playlist = playlist;
             this.defaultcommands = commands;
             this.rescanCommands();
@@ -109,11 +139,23 @@
         <body>
           <![CDATA[
             this.commands = new Array();
-            var source = Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
-                                    .getService( Components.interfaces.sbIPlaylistsource );
-            if (this.playlist && this.playlist.mediaListView)
-              var cmds = source.getPlaylistCommands( this.playlist.mediaListView.mediaList.guid,
-                                                     this.playlist.mediaListView.mediaList.type );
+            var source; 
+            switch (this.commandtype) {
+              case "list":
+                source = Components.classes["@mozilla.org/rdf/datasource;1?name=Servicesource"]
+                                   .getService(Components.interfaces.sbIServicesource);
+                break;
+              // default case
+              case "item":
+              case "":
+              default:
+                source = Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
+                                   .getService(Components.interfaces.sbIPlaylistsource );
+                break;
+            }
+            if (this.medialist)
+              var cmds = source.getPlaylistCommands( this.medialist.guid,
+                                                     this.medialist.type );
             if ( cmds )
             {
               while (cmds.hasMoreElements()) {
@@ -174,7 +216,7 @@
           try
           {
             // Sometimes we get here before the tree is properly built.  That's bad.
-            if (!this.playlist || this.playlist.tree.view == null) 
+            if (!this.medialist || (this.playlist && this.playlist.tree.view == null))
             {
               // So if we're supposed to build the items here, remember that and try again soon.
               if (!stateonly)
@@ -216,9 +258,12 @@
             // tell the commands about their context
             if (!stateonly && this.commands) {
               // Once we get here, tell the commands who we are.
+              var wnd = this.outerWindow;
+              if (!wnd) wnd = window;
               var context = {
+                medialist: this.medialist,
                 playlist: this.playlist,
-                window: this.outerWindow,
+                window: wnd,
                 QueryInterface: function(iid) {
                   if (iid.Equals(Components.interfaces.sbIPlaylistCommandsContext) || 
                       iid.Equals(Components.interfaces.nsISupports))
@@ -605,7 +650,11 @@
         {
           if ( this.commands )
           {
+            if (!this.parentNode) return;
+            
             var cmdobjidx = evt.originalTarget.commandobjindex;
+            if (cmdobjidx === undefined || this.commands.length <= cmdobjidx) return;
+
             this.commands[cmdobjidx].onCommand( evt.originalTarget.id, null, "toolbar" );
             var type = evt.originalTarget.commandtype;
             if (type == "flag" || type == "choiceitem") this.refreshCommands(true);
@@ -663,10 +712,11 @@
     <destructor>
       <![CDATA[
         if (this.parentpopup) {
-          this.parentpopup.removeEventListener("command", this.oncommand, true);
+          this.parentpopup.removeEventListener("command", this.oncommand, false);
           this.oncommand._that = null;
           this.oncommand = null;
         }
+        this.commands = null;
       ]]>
     </destructor>
 
@@ -908,7 +958,17 @@
         {
           if ( this.commands )
           {
+            
+            //XXX LEAK !!!!! right clicking the service creates a new binding each time, but each previous
+            // binding is not destroyed, and keeps receiving events ! (altho it is removed correctly from 
+            // the dom by servicepane.xml:525 - this.mPopup.removeChild) So... detect if it is out of the 
+            // DOM as a workaround for now :(
+            
+            if (!this.parentNode) return;
+            
             var cmdobjidx = evt.originalTarget.commandobjindex;
+            if (cmdobjidx === undefined || this.commands.length <= cmdobjidx) return;
+            
             this.commands[cmdobjidx].onCommand( evt.originalTarget.id, null, "menu" );
             var type = evt.originalTarget.commandtype;
             if (type == "flag" || type == "choiceitem") this.refreshCommands(true);

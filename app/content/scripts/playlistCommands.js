@@ -440,10 +440,10 @@ var SBWebPlaylistCommands =
     
     // Ah.  Sometimes, things are being secure.
     
-    if ( playlist.wrappedJSObject )
+    if ( playlist && playlist.wrappedJSObject )
       playlist = playlist.wrappedJSObject;
     
-    if ( window.wrappedJSObject )
+    if ( window && window.wrappedJSObject )
       window = window.wrappedJSObject;
     
     this.m_Context.m_Playlist = playlist;
@@ -1137,10 +1137,10 @@ var SBDefaultCommands =
     
     // Ah.  Sometimes, things are being secure.
     
-    if ( playlist.wrappedJSObject )
+    if ( playlist && playlist.wrappedJSObject )
       playlist = playlist.wrappedJSObject;
     
-    if ( window.wrappedJSObject )
+    if ( window && window.wrappedJSObject )
       window = window.wrappedJSObject;
     
     this.m_Context.m_Playlist = playlist;
@@ -1160,4 +1160,221 @@ var SBDefaultCommands =
   }
   
 } // end of sbPlaylistCommands
+
+
+// Default servicetree playlist commands
+
+var SBDefaultServiceCommands = 
+{
+  m_Context: {
+    m_Medialist: null,
+    m_Window: null
+  },
+
+  m_Types: new Array
+  (
+    "action",
+    "action"
+  ),
+  
+  m_Ids: new Array
+  (
+    "playlist_cmd_remove",
+    "playlist_cmd_rename"
+  ),
+  
+  m_Names: new Array
+  (
+    "&command.playlist.remove",
+    "&command.playlist.rename"
+  ),
+  
+  m_Tooltips: new Array
+  (
+    "&command.tooltip.playlist.remove",
+    "&command.tooltip.playlist.rename"
+  ),
+
+  getNumCommands: function( aSubmenu, aHost )
+  {
+    if ( 
+        ( this.m_Tooltips.length != this.m_Ids.length ) ||
+        ( this.m_Names.length != this.m_Ids.length ) ||
+        ( this.m_Tooltips.length != this.m_Names.length )
+        )
+    {
+      alert( "PlaylistCommands - Array lengths do not match!" );
+      return 0;
+    }
+    return this.m_Ids.length;
+  },
+
+  getCommandType: function( aSubmenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Types.length )
+    {
+      return "";
+    }
+    return this.m_Types[ aIndex ];
+  },
+
+  getCommandId: function( aSubmenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Ids.length )
+    {
+      return "";
+    }
+    return this.m_Ids[ aIndex ];
+  },
+
+  getCommandText: function( aSubmenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Names.length )
+    {
+      return "";
+    }
+    return this.m_Names[ aIndex ];
+  },
+
+  getCommandFlex: function( aSubmenu, aIndex, aHost )
+  {
+    if ( this.m_Typess[ aIndex ] == "separator" ) return 1;
+    return 0;
+  },
+
+  getCommandValue: function( aSubmenu, aIndex, aHost )
+  {
+    return "";
+  },
+
+  getCommandFlag: function( aSubmenu, aIndex, aHost )
+  {
+    return false;
+  },
+
+  getCommandChoiceItem: function( aChoiceMenu, aHost )
+  {
+    return "";
+  },
+
+  getCommandToolTipText: function( aSubmenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Tooltips.length )
+    {
+      return "";
+    }
+    return this.m_Tooltips[ aIndex ];
+  },
+
+  instantiateCustomCommand: function( aId, aHost ) 
+  {
+    return null;
+  },
+
+  refreshCustomCommand: function( aElement, aId, aHost ) 
+  {
+  },
+
+  getCommandVisible: function( aSubMenu, aIndex, aHost )
+  {
+    return true;
+  },
+
+  getCommandEnabled: function( aSubmenu, aIndex, aHost )
+  {
+    return true;
+  },
+
+  onCommand: function( id, value, host )
+  {
+    if ( id )
+    {
+      switch( id )
+      {
+        case "playlist_cmd_remove":
+          this.m_Context.m_Medialist.library.remove(this.m_Context.m_Medialist);
+        break;
+        case "playlist_cmd_rename":
+          var servicePane = this.m_Context.m_Window.gServicePane;
+          // If we have a servicetree, tell it to make the new playlist node editable
+          if (servicePane) {
+            // Ask the library service pane provider to suggest where
+            // a new playlist should be created
+            var librarySPS = Components.classes['@songbirdnest.com/servicepane/library;1']
+                                      .getService(Components.interfaces.sbILibraryServicePaneService);
+            // Find the servicepane node for our new medialist
+            var node = librarySPS.getNodeForLibraryResource(this.m_Context.m_Medialist);
+            
+            if (node) {
+              // Ask the service pane to start editing our new node
+              // so that the user can give it a name
+              servicePane.startEditingNode(node);
+            } else {
+              throw("Error: Couldn't find a service pane node for the list we just created\n");
+            }
+
+          // Otherwise pop up a dialog and ask for playlist name
+          } else {
+            var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"  ]
+                                          .getService(Components.interfaces.nsIPromptService);
+
+            var input = {value: this.m_Context.m_Medialist.name};
+            var title = SBString("renamePlaylist.title", "Rename Playlist");
+            var prompt = SBString("renamePlaylist.prompt", "Enter the new name of the playlist.");
+
+            if (promptService.prompt(window, title, prompt, input, null, {})) {
+              this.m_Context.m_Medialist.name = input.value;
+              this.m_Context.m_Medialist.write();
+            }
+          }
+        break;
+      }
+    }
+  },
+  
+  // The object registered with the sbIPlaylistSource interface acts 
+  // as a template for instances bound to specific playlist elements
+  duplicate: function()
+  {
+    var obj = {};
+    for ( var i in this )
+    {
+      obj[ i ] = this[ i ];
+    }
+    return obj;
+  },
+  
+  setContext: function( context )
+  {
+    var medialist = context.medialist;
+    var window = context.window;
+    
+    // Ah.  Sometimes, things are being secure.
+    
+    if ( window && window.wrappedJSObject )
+      window = window.wrappedJSObject;
+    
+    this.m_Context.m_Medialist = medialist;
+    this.m_Context.m_Window = window;
+  },
+  
+  QueryInterface : function(aIID)
+  {
+    if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
+        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    
+    return this;
+  }
+  
+} // end of sbPlaylistCommands
+
+try {
+var ssource = new sbIServicesource();
+ssource.registerPlaylistCommands( "", "", "simple", SBDefaultServiceCommands );
+ssource.registerPlaylistCommands( "", "", "smart", SBDefaultServiceCommands );
+} catch (e) { alert(e); }
 

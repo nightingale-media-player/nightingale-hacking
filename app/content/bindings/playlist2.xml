@@ -82,7 +82,7 @@
             <treechildren/>
           </tree>
           <!-- Playlist Toolbar -->
-          <sb-commands-toolbar sbid="playlist_toolbar" />
+          <sb-commands-toolbar sbid="playlist_toolbar" commandtype="item"/>
 
           <!-- Popupset -->
           <popupset>
@@ -94,7 +94,7 @@
               onpopuphidden="onPopupHidden( event );"
               oncommand="onPlaylistContextMenu( event );"
             >
-              <sb-commands-menuitems sbid="playlist_popup_commands"/>
+              <sb-commands-menuitems sbid="playlist_popup_commands" commandtype="item"/>
               <menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
               <xul:menu id="playlist_context_search" label="&playlist.context.search;">
                 <xul:menupopup id="playlist_context_search_popup" type="search" label="" searchterm="" />
@@ -931,10 +931,9 @@
           // In with the new
           this._commands = this.commands = commands;
           this._toolbar.hidden = true;
-          this._toolbar.bind(this, commands);
+          this._toolbar.bind(this.mediaListView.mediaList, this, commands);
           this._toolbar.refreshCommands();
-          this._commandmenuitems.bind(this, commands);
-          this._toolbar.bind(this, commands);
+          this._commandmenuitems.bind(this.mediaListView.mediaList, this, commands);
           this.rescanCommands();
         ]]>
         </body>

@@ -125,18 +125,20 @@ sbLibraryServicePane.prototype.fillContextMenu =
 function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow) {
 
   var list = this.getLibraryResourceForNode(aNode);
-  if (list && list instanceof Ci.sbILocalDatabaseSmartMediaList) {
-    this._appendMenuItem(aContextMenu, "Properties", function(event) {
-      var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
-                      .getService(Ci.nsIWindowWatcher);
-      watcher.openWindow(null,
-                         "chrome://songbird/content/xul/smart_playlist.xul",
-                         "_blank",
-                         "chrome,dialog=yes",
-                         list);
-    });
+  if (list) {
+    this._appendCommands(aContextMenu, list, aParentWindow);
+    if (list instanceof Ci.sbILocalDatabaseSmartMediaList) {
+      this._appendMenuItem(aContextMenu, "Properties", function(event) { //XXX todo: localize
+        var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                        .getService(Ci.nsIWindowWatcher);
+        watcher.openWindow(null,
+                          "chrome://songbird/content/xul/smart_playlist.xul",
+                          "_blank",
+                          "chrome,dialog=yes",
+                          list);
+      });
+    }
   }
-
 }
 
 
@@ -1033,6 +1035,15 @@ function sbLibraryServicePane__appendMenuItem(aContextMenu, aLabel, aCallback) {
   item.setAttribute("label", aLabel);
   item.addEventListener("command", aCallback, false);
   aContextMenu.appendChild(item);
+}
+
+sbLibraryServicePane.prototype._appendCommands =
+function sbLibraryServicePane__appendCommands(aContextMenu, aList, aParentWindow) {
+  var itemBuilder = aContextMenu.ownerDocument.createElement("sb-commands-menuitems");
+  itemBuilder.setAttribute("id", "playlist-commands");
+  itemBuilder.setAttribute("commandtype", "list");
+  itemBuilder.setAttribute("bind", aList.library.guid + ';' + aList.guid);
+  aContextMenu.appendChild(itemBuilder);
 }
 
 /**

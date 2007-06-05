@@ -1741,11 +1741,6 @@ sbPlaylistsource::RegisterPlaylistCommands(const nsAString     &aContextGUID,
   nsString key(aContextGUID);
   nsString type(aPlaylistType);
 
-  // Hah, uh, NO.
-  // librarymanager.getmainlibrary().guid, 'songbird' is no longer the GUID
-  if (key.Equals(NS_LITERAL_STRING("songbird")))
-    return NS_OK;
-
   key += aTableName;
 
   g_CommandMap[type].push_back(aCommandObj);
