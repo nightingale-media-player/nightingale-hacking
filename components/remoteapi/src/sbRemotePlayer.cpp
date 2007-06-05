@@ -288,9 +288,6 @@ sbRemotePlayer::Init()
   mChromeDoc = do_QueryInterface( doc, &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  rv = AcquirePlaylistWidget();
-  NS_ENSURE_SUCCESS( rv, rv );
-
   LOG(("sbRemotePlayer::Init() -- registering unload listener"));
   // Have our HandleEvent called on page unloads, so we can unhook commands
   nsCOMPtr<nsIDOMEventTarget> eventTarget( do_QueryInterface(mChromeDoc) );
@@ -425,7 +422,10 @@ NS_IMETHODIMP
 sbRemotePlayer::OnCommandsChanged()
 {
   LOG(("sbRemotePlayer::OnCommandsChanged()"));
-  NS_ASSERTION(mWebPlaylistWidget, "Don't have the playlist widget!");
+  if (!mWebPlaylistWidget) {
+    nsresult rv = AcquirePlaylistWidget();
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
 
   //
   // This is where we want to add code to register the default commands, when
@@ -446,7 +446,10 @@ sbRemotePlayer::GetWebPlaylist( sbIRemoteMediaList **aWebPlaylist )
 {
   LOG(("sbRemotePlayer::GetWebPlaylist()"));
   NS_ENSURE_ARG_POINTER(aWebPlaylist);
-  NS_ASSERTION(mWebPlaylistWidget, "Don't have the playlist widget!");
+  if (!mWebPlaylistWidget) {
+    nsresult rv = AcquirePlaylistWidget();
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
 
   // get the view from the web playlist widget
   nsresult rv;
@@ -473,7 +476,10 @@ sbRemotePlayer::SetWebPlaylist( sbIRemoteMediaList *aWebPlaylist )
 {
   LOG(("sbRemotePlayer::SetWebPlaylist()"));
   NS_ENSURE_ARG_POINTER(aWebPlaylist);
-  NS_ASSERTION(mWebPlaylistWidget, "Don't have the playlist widget!");
+  if (!mWebPlaylistWidget) {
+    nsresult rv = AcquirePlaylistWidget();
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
 
   // Get a view from the RemoteMediaList passed in
   nsCOMPtr<sbIMediaList> webMediaList = do_QueryInterface(aWebPlaylist);
