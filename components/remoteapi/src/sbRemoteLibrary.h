@@ -103,10 +103,8 @@ protected:
   // SecurityCheckedComponent stuff
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 
-#ifdef DEBUG
   // Only set in debug builds - used for validating library creation
   nsString mFilename;
-#endif
 };
 
 static nsresult
