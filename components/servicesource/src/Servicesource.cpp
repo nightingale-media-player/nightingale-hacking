@@ -1205,7 +1205,6 @@ CServicesource::GetPlaylistCommands(const nsAString      &aContextGUID,
   nsString key(aContextGUID);
   nsString type(aPlaylistType);
 
-  DebugBreak();
   // "type" takes precedence over specific guid
   commandmap_t::iterator c = g_CommandMap.find(type);
   if (c != g_CommandMap.end()) {
