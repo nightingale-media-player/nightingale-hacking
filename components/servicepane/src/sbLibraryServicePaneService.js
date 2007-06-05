@@ -897,7 +897,7 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   node.name = aMediaList.name;  
   
   // Get hidden state from list, since we hid all list nodes on startup
-  node.hidden = aMediaList.getProperty(PROP_ISHIDDEN);
+  node.hidden = aMediaList.getProperty(PROP_ISHIDDEN) == "1";
       
   return node;
 }
