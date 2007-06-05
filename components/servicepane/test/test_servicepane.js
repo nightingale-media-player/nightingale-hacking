@@ -28,7 +28,7 @@
  * \brief Basic service pane unit tests
  */
 
-function DBG(s) { dump('DBG:test_servicepane: '+s+'\n'); }
+function DBG(s) { log('DBG:test_servicepane: '+s+'\n'); }
 
 function removeIfExists(SPS, ids) {
   for (var i=0; i<ids.length; i++) {
@@ -148,15 +148,15 @@ function runTest () {
   }
   var k;
   for (k in test_root_properties) {
-    dump ('about to set '+k+'\n');
+    log ('about to set '+k+'\n');
     test_root[k] = test_root_properties[k];
   }
 
   // test that they were set right
   for (k in test_root_properties) {
-    dump ('about to check '+k+'\n');
+    log ('about to check '+k+'\n');
     assertEqual(test_root[k], test_root_properties[k]);
-    dump ('ok\n');
+    log ('ok\n');
   }
 
   // create a node inside the root
@@ -237,7 +237,7 @@ function runTest () {
 
 
   // clean up 
-  dump ('cleaning up unit test nodes\n');
+  log ('cleaning up unit test nodes\n');
   test_root.parentNode.removeChild(test_root);
   test_container.parentNode.removeChild(test_container);
 
