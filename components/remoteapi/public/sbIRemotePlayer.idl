@@ -30,85 +30,12 @@
  */
 
 #include "nsISupports.idl"
-#include "sbIRemoteMediaList.idl"
 
-interface sbILibrary;
-interface sbIMediaList;
-interface nsIArray;
-interface nsIDOMElement;
 interface nsIObserver;
-interface nsISimpleEnumerator;
-interface nsIStringEnumerator;
-interface sbIMediaItem;
-
-// forward decl for sbIRemoteCommands
-interface sbIRemotePlayer;
-
-[scriptable, uuid(3025cbf8-7969-4e79-8641-967a9f4e51b8)]
-interface sbIRemoteLibrary : sbIRemoteMedialist
-{
-  /**
-   *
-   * \param aPath - this can be either one of our 'magic' ids: main, web,
-   *        download; or it can be a path. If a path it must adhere to the same
-   *        restrictions that cookies do in the browser, namely it must be a 
-   *        prefix of the location of the URI. Specifically for the URI:
-   *        http://foo.bar.com/this/is/my/music/stolen.html the path must
-   *        be a prefix of 'this/is/my/music/'
-   */
-  [noscript] void connectToMediaLibrary(in AString aDomain, in AString aPath);
-
-  /**
-   * NOTE: not sure if we want/need to expose a RemoteMediaItem class yet
-   *       which is the reason for the second signature.
-   * create and insert a media item into the library
-   */
-  sbIMediaItem createMediaItem(in AString aURL);
-  // void addMediaItem(in AString aURL);
-
-  /**
-   *
-   */
-  sbIRemoteMediaList createMediaList(in AString aType);
-
-  /**
-   * Take a playlist url and add the media and list to the library
-   */
-  // sbIRemoteMediaList addMediaListFromURL(in AString aURL);
-
-  /**
-   * \brief An array of sbIMediaLists
-   */
-  // readonly attribute nsISimpleEnumerator playlists;
-
-  /**
-   * Add a media list and the tracks in it to the library
-   *  this may be down the road of copying across libraries so this one
-   *  might need to wait.
-   */
-  // void addMediaListElement(in sbIRemoteMediaList aMediaList);
-
-  // accessible only in debug builds
-  readonly attribute AString filename;
-};
-
-
-[scriptable, uuid(cff760df-5fe0-4657-8eb5-1d5d3ca12369)]
-interface sbIRemoteCommands : nsISupports
-{
-  // the remotePlayer sets this after it creates it.
-  [noscript] attribute sbIRemotePlayer owner;
-
-  void addCommand(in AString aType, in AString aID, in AString aName, in AString aTooltip);
-  void removeCommand(in AString aID);
-
-  // Ew. this is so ugly. I'm hoping to be able to clean this up with nsIXPCScriptable
-  void setCommandData( in unsigned long aNumCommands,
-                       [const, array, size_is(aNumCommands)] in wstring aTypeArray,
-                       [const, array, size_is(aNumCommands)] in wstring aIDArray,
-                       [const, array, size_is(aNumCommands)] in wstring aNameArray,
-                       [const, array, size_is(aNumCommands)] in wstring aTooltipArray);
-};
+interface sbIMediaListView;
+interface sbIRemoteCommands;
+interface sbIRemoteLibrary;
+interface sbIRemoteMediaList;
 
 /**
  * \interface sbIRemotePlayer
@@ -209,10 +136,8 @@ interface sbIRemotePlayer : nsISupports
 
   /**
    * \brief Fires the event to the webpage
-   * This is an internal method only, implemented as protected code
-   * and only callable by the sbRemoteCommands object.
    */
-  [noscript] void FireEventToContent(in AString aClass, in AString aType);
+  [noscript] void fireEventToContent(in AString aClass, in AString aType);
   [noscript] void onCommandsChanged();
 
 };

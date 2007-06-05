@@ -29,10 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbISecurityAggregator.idl \
-             sbISecurityMixin.idl \
-             sbIRemotePlayer.idl \
+XPIDL_SRCS = \
+             sbIRemoteCommands.idl \
+             sbIRemoteLibrary.idl \
              sbIRemoteMediaList.idl \
+             sbIRemotePlayer.idl \
+             sbISecurityAggregator.idl \
+             sbISecurityMixin.idl \
              $(NULL)
 
 XPIDL_MODULE = sbBrowserAPI.xpt

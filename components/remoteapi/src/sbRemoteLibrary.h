@@ -30,11 +30,15 @@
 #include "sbRemoteMediaItem.h"
 #include "sbRemoteMediaList.h"
 
-#include <sbIRemotePlayer.h>
 #include <sbILibrary.h>
+#include <sbIMediaList.h>
+#include <sbIMediaListListener.h>
+#include <sbIMediaListView.h>
+#include <sbIRemoteLibrary.h>
+#include <sbIRemoteMediaList.h>
+#include <sbIRemotePlayer.h>
 #include <sbISecurityMixin.h>
 #include <sbISecurityAggregator.h>
-#include <sbIMediaListView.h>
 
 #include <nsIFile.h>
 #include <nsISecurityCheckedComponent.h>
@@ -57,15 +61,19 @@
 class sbRemoteLibrary : public nsIClassInfo,
                         public nsISecurityCheckedComponent,
                         public sbISecurityAggregator,
-                        public sbIRemoteLibrary
+                        public sbIRemoteLibrary,
+                        public sbIMediaList
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
   NS_DECL_SBISECURITYAGGREGATOR
   NS_DECL_SBIREMOTELIBRARY
-  NS_DECL_SBIREMOTEMEDIALIST
 
+  NS_FORWARD_SAFE_SBIREMOTEMEDIALIST(mRemMediaList)
+  NS_FORWARD_SAFE_SBIMEDIALIST(mMediaList)
+  NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem)
+  NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mMediaItem)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
   sbRemoteLibrary();
@@ -74,6 +82,9 @@ public:
 protected:
   virtual ~sbRemoteLibrary();
   nsCOMPtr<sbILibrary> mLibrary;
+  nsCOMPtr<sbIRemoteMediaList> mRemMediaList;
+  nsCOMPtr<sbIMediaList> mMediaList;
+  nsCOMPtr<sbIMediaItem> mMediaItem;
 
   // Gets the GUID for the built in libraries: main, web, download
   nsresult GetLibraryGUID( const nsAString &aLibraryID,
@@ -174,6 +185,29 @@ SB_WrapMediaList(sbIMediaList* aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*aRemoteMediaList = remoteMediaList);
+  return NS_OK;
+}
+
+static nsresult
+SB_WrapMediaList(sbIMediaListView* aMediaListView,
+                 sbIRemoteMediaList** aRemoteMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaListView);
+  NS_ENSURE_ARG_POINTER(aRemoteMediaList);
+
+  nsCOMPtr<sbIMediaList> mediaList;
+  nsresult rv = aMediaListView->GetMediaList( getter_AddRefs(mediaList) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoPtr<sbRemoteMediaList> remoteMediaList(
+    new sbRemoteMediaList(mediaList, aMediaListView));
+  NS_ENSURE_TRUE(remoteMediaList, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = remoteMediaList->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*aRemoteMediaList = remoteMediaList.forget());
+
   return NS_OK;
 }
 

@@ -50,6 +50,7 @@ CPP_SRCS = sbSecurityMixin.cpp \
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/components/playlistplayback/public \
                $(DEPTH)/components/playlistsource/public \
+               $(DEPTH)/components/playlistreader/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/dataremote/public \
                $(DEPTH)/bindings/public \
@@ -71,6 +72,7 @@ CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/rdf \
                $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/uriloader \
                $(MOZSDK_INCLUDE_DIR)/widget \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(MOZSDK_INCLUDE_DIR)/xpcom \

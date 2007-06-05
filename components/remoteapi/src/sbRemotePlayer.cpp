@@ -25,8 +25,11 @@
  */
 
 #include "sbRemotePlayer.h"
+#include "sbRemoteLibrary.h"
 #include <sbClassInfoUtils.h>
 #include <sbILibrary.h>
+#include <sbIMediaList.h>
+#include <sbIMediaListView.h>
 #include <sbIPlaylistsource.h>
 #include <sbITabBrowser.h>
 
@@ -80,7 +83,7 @@ static NS_DEFINE_CID(kRemotePlayerCID, SONGBIRD_REMOTEPLAYER_CID);
 const static char* sPublicWProperties[] = {""};
 
 const static char* sPublicRProperties[] =
-  { "metadata:name",
+  { "library:name",
     "library:playlists",
     "library:webPlaylist",
     "metadata:currentArtist",
@@ -100,7 +103,6 @@ const static char* sPublicMethods[] =
     "controls:previous",
     "controls:next",
     "controls:playURL",
-    "binding:ping",
     "binding:registerCommands",
     "binding:unregisterCommands",
     "binding:siteLibrary",
@@ -122,7 +124,7 @@ const static char* sPublicMetadata[] =
     "playlist.repeat",
     "faceplate.playing",
     "faceplate.paused" };
-
+// needs to be in nsEventDispatcher.cpp
 #define RAPI_EVENT_CLASS      NS_LITERAL_STRING("Events")
 #define RAPI_EVENT_TYPE       NS_LITERAL_STRING("remoteapi")
 #define SB_PREFS_ROOT         NS_LITERAL_STRING("songbird.")
@@ -286,6 +288,9 @@ sbRemotePlayer::Init()
   mChromeDoc = do_QueryInterface( doc, &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
+  rv = AcquirePlaylistWidget();
+  NS_ENSURE_SUCCESS( rv, rv );
+
   LOG(("sbRemotePlayer::Init() -- registering unload listener"));
   // Have our HandleEvent called on page unloads, so we can unhook commands
   nsCOMPtr<nsIDOMEventTarget> eventTarget( do_QueryInterface(mChromeDoc) );
@@ -323,7 +328,7 @@ sbRemotePlayer::Libraries( const nsAString &aLibraryID,
   NS_ENSURE_SUCCESS( rv, rv );
 
   // Library is going to hash the ID passed in, if necessary
-  rv = library->ConnectToMediaLibrary( NS_LITERAL_STRING(""), aLibraryID );
+  rv = library->ConnectToDefaultLibrary( aLibraryID );
   if (NS_SUCCEEDED(rv)) {
     NS_ADDREF( *aLibrary = library );
   } else {
@@ -402,7 +407,6 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
                                       EmptyString(),
                                       NS_LITERAL_STRING("library"),
                                       commands );
-
   NS_ASSERTION( NS_SUCCEEDED(rv),
                 "Failed to register commands in sbPlaylistsource" );
   rv = pls->RegisterPlaylistCommands( NS_LITERAL_STRING("remote-test-guid"),
@@ -417,30 +421,11 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   return rv;
 }
 
-NS_IMETHODIMP 
-sbRemotePlayer::GetWebPlaylist( sbIRemoteMediaList **aWebplaylist )
-{
-  LOG(("sbRemotePlayer::GetWebPlaylist()"));
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP 
-sbRemotePlayer::SetWebPlaylist( sbIRemoteMediaList *aWebplaylist )
-{
-  LOG(("sbRemotePlayer::SetWebPlaylist()"));
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
 NS_IMETHODIMP
 sbRemotePlayer::OnCommandsChanged()
 {
   LOG(("sbRemotePlayer::OnCommandsChanged()"));
-
-  nsresult rv;
-  if (!mWebPlaylistWidget) {
-    rv = AcquirePlaylistWidget();
-    NS_ENSURE_SUCCESS( rv, rv );
-  }
+  NS_ASSERTION(mWebPlaylistWidget, "Don't have the playlist widget!");
 
   //
   // This is where we want to add code to register the default commands, when
@@ -453,6 +438,67 @@ sbRemotePlayer::OnCommandsChanged()
   // Theoretically we could just fire an event here, but it wasn't getting
   // caught in the binding, need to look in to that more.
   mWebPlaylistWidget->RescanCommands();
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::GetWebPlaylist( sbIRemoteMediaList **aWebPlaylist )
+{
+  LOG(("sbRemotePlayer::GetWebPlaylist()"));
+  NS_ENSURE_ARG_POINTER(aWebPlaylist);
+  NS_ASSERTION(mWebPlaylistWidget, "Don't have the playlist widget!");
+
+  // get the view from the web playlist widget
+  nsresult rv;
+  nsCOMPtr<sbIMediaListView> mediaListView;
+  rv = mWebPlaylistWidget->GetView( getter_AddRefs(mediaListView) );
+  if ( !mediaListView ) {
+    *aWebPlaylist = nsnull;
+    return rv;  // NS_OK?
+  }
+
+  // Set the view on the RemoteMediaList
+  nsCOMPtr<sbIRemoteMediaList> remoteWebPlaylist;
+  rv = SB_WrapMediaList( mediaListView, getter_AddRefs(remoteWebPlaylist) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  LOG(("sbRemotePlayer::GetWebPlaylist() -- created wrapped playlist"));
+
+  NS_ADDREF( *aWebPlaylist = remoteWebPlaylist ); 
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::SetWebPlaylist( sbIRemoteMediaList *aWebPlaylist )
+{
+  LOG(("sbRemotePlayer::SetWebPlaylist()"));
+  NS_ENSURE_ARG_POINTER(aWebPlaylist);
+  NS_ASSERTION(mWebPlaylistWidget, "Don't have the playlist widget!");
+
+  // Get a view from the RemoteMediaList passed in
+  nsCOMPtr<sbIMediaList> webMediaList = do_QueryInterface(aWebPlaylist);
+  NS_ENSURE_TRUE( webMediaList, NS_ERROR_INVALID_ARG );
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaListView> mediaListView;
+  rv = aWebPlaylist->GetView( getter_AddRefs(mediaListView) );
+  if (!mediaListView) {
+    rv = webMediaList->CreateView( getter_AddRefs(mediaListView) );
+  }
+  NS_ENSURE_TRUE( mediaListView, NS_ERROR_FAILURE );
+
+  // Bind the view to the playlist widget
+  rv = mWebPlaylistWidget->Bind( mediaListView,
+                                 nsnull,
+                                 PR_FALSE,
+                                 PR_FALSE );
+  NS_ENSURE_SUCCESS( rv, rv );
+  LOG(("sbRemotePlayer::SetWebPlaylist() -- successful bind"));
+
+  // Update the commands because the widget has been reset and
+  // needs to know the useDefaultCommands setting
+  OnCommandsChanged();
+
   return NS_OK;
 }
 
@@ -759,7 +805,7 @@ sbRemotePlayer::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyName
 
 // ---------------------------------------------------------------------------
 //
-//                             Internal Methods
+//                             helpers
 //
 // ---------------------------------------------------------------------------
 

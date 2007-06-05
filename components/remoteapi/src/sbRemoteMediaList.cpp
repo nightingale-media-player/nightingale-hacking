@@ -145,6 +145,7 @@ const static char* sPublicMethods[] =
 
   // sbIRemoteMediaList
   "library:ensureColumVisible",
+  "library:getView",
   "library:setSelectionByIndex"
 };
 
@@ -461,6 +462,25 @@ sbRemoteMediaList::SetSelectionByIndex( PRUint32 aIndex, PRBool aSelected )
 
   return NS_OK;
 }
+
+NS_IMETHODIMP
+sbRemoteMediaList::AddItemByURL( const nsAString &aURL )
+{
+  LOG(( "sbRemoteMediaList::AddItemByURL(%s)",
+        NS_LossyConvertUTF16toASCII(aURL).get() ));
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteMediaList::GetView( sbIMediaListView **aView )
+{
+  LOG(("sbRemoteMediaList::GetView()"));
+  NS_ENSURE_ARG_POINTER(aView);
+  NS_ASSERTION(mMediaListView, "No View");
+  NS_ADDREF( *aView = mMediaListView );
+  return NS_OK;
+}
+
 
 // ---------------------------------------------------------------------------
 //

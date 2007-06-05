@@ -30,9 +30,10 @@
 #include <sbIDataRemote.h>
 #include <sbIPlaylistPlayback.h>
 #include <sbIPlaylistWidget.h>
-#include <sbISecurityMixin.h>
-#include <sbISecurityAggregator.h>
+#include <sbIRemoteCommands.h>
 #include <sbIRemotePlayer.h>
+#include <sbISecurityAggregator.h>
+#include <sbISecurityMixin.h>
 
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
@@ -104,15 +105,24 @@ protected:
   PRBool mInitialized;
   PRBool mUseDefaultCommands;
   nsCOMPtr<sbIPlaylistPlayback> mGPPS;
+
+  // The documents for the web page and for the tabbrowser
   nsCOMPtr<nsIDOMDocument> mContentDoc;
   nsCOMPtr<nsIDOMDocument> mChromeDoc;
 
   // the UI playlist binding's dom element QI'd
   nsCOMPtr<sbIPlaylistWidget> mWebPlaylistWidget;
 
+  // Like the site libraries, this may want to be a collection
+  // The commands registered by the page.
   nsCOMPtr<sbIRemoteCommands> mCommandsObject;
+
+  // Site library for the page that has been loaded
+  // Theoretically there _could_ be more than one library requested by the page
+  //    so this will probably have to grow to be a hashtable.
   nsCOMPtr<sbIRemoteLibrary> mSiteLibrary;
 
+  // Hashtable to hold the observers registered by the webpage
   nsDataHashtable<nsStringHashKey, sbRemoteObserver> mRemObsHash;
 
   // SecurityCheckedComponent vars

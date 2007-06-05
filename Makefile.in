@@ -59,6 +59,8 @@ SUBDIRS = build \
           locales \
           $(NULL)
 
+SUBDIRDEPS = components : bindings
+
 ifdef MAKE_INSTALLER
 SUBDIRS += installer 
 SUBDIRDEPS = installer : components app feathers locales

@@ -27,10 +27,11 @@
 #ifndef __SB_REMOTE_COMMANDS_H__
 #define __SB_REMOTE_COMMANDS_H__
 
+#include <sbIPlaylistsource.h>
+#include <sbIRemoteCommands.h>
 #include <sbIRemotePlayer.h>
 #include <sbISecurityAggregator.h>
 #include <sbISecurityMixin.h>
-#include <sbIPlaylistsource.h>
 
 #include <nsIGenericFactory.h>
 #include <nsISecurityCheckedComponent.h>

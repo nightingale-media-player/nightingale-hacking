@@ -25,8 +25,8 @@
  */
 
 #include "sbRemoteLibrary.h"
-#include "sbRemoteMediaList.h"
 #include "sbRemoteMediaItem.h"
+#include "sbRemoteMediaList.h"
 
 #include <sbClassInfoUtils.h>
 #include <sbILibrary.h>
@@ -34,6 +34,7 @@
 #include <sbILibraryManager.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
+#include <sbIPlaylistReader.h>
 #include <sbLocalDatabaseCID.h>
 
 #include <nsComponentManagerUtils.h>
@@ -62,7 +63,9 @@
 #include <nsMemory.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
+#include <nsStringEnumerator.h>
 #include <nsStringGlue.h>
+#include <nsTHashtable.h>
 #include <nsWeakPtr.h>
 #include <nsAutoPtr.h>
 #include <prlog.h>
@@ -111,18 +114,25 @@ const static char* sPublicMethods[] =
   { "binding:connectToMediaLibrary",
     "binding:addMediaItem",
     "binding:createMediaList",
+    "binding:createMediaListFromFile",
     "binding:createMediaItem",
     "binding:addMediaListByURL" };
 
-NS_IMPL_ISUPPORTS4( sbRemoteLibrary,
+NS_IMPL_ISUPPORTS7( sbRemoteLibrary,
                     nsIClassInfo,
                     nsISecurityCheckedComponent,
                     sbISecurityAggregator,
+                    sbIRemoteMediaList,
+                    sbIMediaList,
+                    sbIMediaItem,
                     sbIRemoteLibrary )
 
-NS_IMPL_CI_INTERFACE_GETTER3( sbRemoteLibrary,
+NS_IMPL_CI_INTERFACE_GETTER6( sbRemoteLibrary,
                               sbISecurityAggregator,
                               sbIRemoteLibrary,
+                              sbIRemoteMediaList,
+                              sbIMediaList,
+                              sbIMediaItem,
                               nsISecurityCheckedComponent )
 
 SB_IMPL_CLASSINFO( sbRemoteLibrary,
@@ -193,17 +203,15 @@ sbRemoteLibrary::GetFilename( nsAString &aFilename )
 }
 
 NS_IMETHODIMP
-sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aDomain, const nsAString &aPath )
+sbRemoteLibrary::ConnectToDefaultLibrary( const nsAString &aLibName )
 {
-  LOG1(( "sbRemoteLibrary::ConnectToMediaLibrary(domain:%s path:%s)",
-         NS_LossyConvertUTF16toASCII(aDomain).get(),
-         NS_LossyConvertUTF16toASCII(aPath).get() ));
+  LOG1(( "sbRemoteLibrary::ConnectToDefaultLibrary(name:%s)",
+         NS_LossyConvertUTF16toASCII(aLibName).get() ));
 
-  // For default libraries the path is going to be web|download|main
   nsAutoString guid;
-  nsresult rv = GetLibraryGUID(aPath, guid);
+  nsresult rv = GetLibraryGUID(aLibName, guid);
   if ( NS_SUCCEEDED(rv) ) {
-    LOG4(( "sbRemoteLibrary::ConnectToMediaLibrary(%s) -- IS a default library",
+    LOG4(( "sbRemoteLibrary::ConnectToDefaultLibrary(%s) -- IS a default library",
            NS_LossyConvertUTF16toASCII(guid).get() ));
 
     // See if the library manager has it lying around.
@@ -213,14 +221,29 @@ sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aDomain, const nsAStrin
 
     rv = libManager->GetLibrary( guid, getter_AddRefs(mLibrary) );
     NS_ENSURE_SUCCESS( rv, rv );
-    return NS_OK;
+
+    // Set the underlying mMediaList to point to the underlying library
+    mMediaList = do_QueryInterface(mLibrary);
+    nsCOMPtr<sbIMediaList> list( do_QueryInterface(mLibrary) );
+    SB_WrapMediaList( list, getter_AddRefs(mMediaList) );
+    NS_ENSURE_STATE(mMediaList);
+
+    // Set the underlying mMediaItem to point to the underlying library
+    nsCOMPtr<sbIMediaItem> item( do_QueryInterface(mLibrary) );
+    SB_WrapMediaItem( item, getter_AddRefs(mMediaItem) );
+    NS_ENSURE_STATE(mMediaItem);
   }
+  return rv;
+}
 
-  //
-  // If we're here, the ID passed in wasn't a default, it should be a path
-  //
-  LOG4(("sbRemoteLibrary::ConnectToMediaLibrary() - Site Library"));
+NS_IMETHODIMP
+sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aDomain, const nsAString &aPath )
+{
+  LOG1(( "sbRemoteLibrary::ConnectToMediaLibrary(domain:%s path:%s)",
+         NS_LossyConvertUTF16toASCII(aDomain).get(),
+         NS_LossyConvertUTF16toASCII(aPath).get() ));
 
+  nsresult rv;
   nsCOMPtr<nsIFile> siteDBFile;
   rv = GetSiteLibraryFile( aDomain, aPath, getter_AddRefs(siteDBFile) );
   if ( NS_FAILED(rv) ) {
@@ -243,6 +266,48 @@ sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aDomain, const nsAStrin
   // Create the library
   libFactory->CreateLibrary( propBag, getter_AddRefs(mLibrary) );
   NS_ENSURE_STATE(mLibrary);
+
+  // Set the underlying mMediaList to point to the underlying library
+  mMediaList = do_QueryInterface(mLibrary);
+  SB_WrapMediaList( mMediaList, getter_AddRefs(mRemMediaList) );
+  NS_ENSURE_STATE(mRemMediaList);
+
+  // Set the underlying mMediaItem to point to the underlying library
+  nsCOMPtr<sbIMediaItem> item( do_QueryInterface(mLibrary) );
+  SB_WrapMediaItem( item, getter_AddRefs(mMediaItem) );
+  NS_ENSURE_STATE(mMediaItem);
+
+  // Library has been created, store a pref key to point to the guid
+  nsAutoString guid;
+  mMediaItem->GetGuid(guid);
+
+  // put the guid in a supports string for the pref system 
+  nsCOMPtr<nsISupportsString> supportsString =
+                         do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = supportsString->SetData(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIPrefBranch> prefService =
+                                 do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // the key includes the filename so we can get the guid back reliably
+  nsAutoString key;
+  key.AssignLiteral("songbird.library.site.");
+  key.Append(mFilename);
+
+  rv = prefService->SetComplexValue( NS_LossyConvertUTF16toASCII(key).get(),
+                                     NS_GET_IID(nsISupportsString),
+                                     supportsString );
+
+  // Register the library with the library manager so it shows up in servicepane
+  nsCOMPtr<sbILibraryManager> libManager(
+        do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = libManager->RegisterLibrary( mLibrary, false );
+  NS_ASSERTION( NS_SUCCEEDED(rv), "Failed to register library" );
 
   return NS_OK;
 } 
@@ -288,32 +353,38 @@ sbRemoteLibrary::CreateMediaList(const nsAString& aType,
   return SB_WrapMediaList(mediaList, _retval);
 }
 
-// ---------------------------------------------------------------------------
-//
-//                        sbIRemoteMediaList
-//
-// ---------------------------------------------------------------------------
-
 NS_IMETHODIMP
-sbRemoteLibrary::GetSelection( nsISimpleEnumerator **aSelection )
+sbRemoteLibrary::CreateMediaListFromFile( const nsAString& aURL,
+                                          sbIRemoteMediaList** _retval )
 {
-  LOG1(("sbRemoteLibrary::GetSelection()"));
-  return NS_OK;
-}
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_STATE(mLibrary);
 
-NS_IMETHODIMP
-sbRemoteLibrary::EnsureColumVisible( const nsAString& aPropertyName,
-                                     const nsAString& aColumnType )
-{
-  LOG1(("sbRemoteLibrary::EnsureColumVisible()"));
-  return NS_OK;
-}
+  nsCOMPtr<sbIMediaList> mediaList;
+  nsresult rv = mLibrary->CreateMediaList( NS_LITERAL_STRING("simple"),
+                                           getter_AddRefs(mediaList) );
+  NS_ENSURE_SUCCESS(rv, rv);
 
-NS_IMETHODIMP
-sbRemoteLibrary::SetSelectionByIndex( PRUint32 aIndex, PRBool aSelected )
-{
-  LOG1(("sbRemoteLibrary::SetSelectionByIndex()"));
-  return NS_OK;
+  nsCOMPtr<sbIPlaylistReaderManager> manager =
+      do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistReaderManager;1", &rv );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> uri;
+  rv = NS_NewURI(getter_AddRefs(uri), aURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCAutoString scheme;
+  rv = uri->GetScheme(scheme);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!(scheme.Equals("http") || scheme.Equals("https"))) {
+    return NS_ERROR_INVALID_ARG;
+  }
+
+  PRInt32 dummy;
+  manager->LoadPlaylist( uri, mediaList, EmptyString(), false, nsnull, &dummy ); 
+
+  return SB_WrapMediaList(mediaList, _retval);
 }
 
 // ---------------------------------------------------------------------------
@@ -327,15 +398,19 @@ sbRemoteLibrary::GetSiteLibraryFile( const nsAString &aDomain,
                                      const nsAString &aPath,
                                      nsIFile **aSiteDBFile )
 {
-  NS_ENSURE_ARG_POINTER(aSiteDBFile);
   LOG1(( "sbRemoteLibrary::GetSiteLibraryFile(domain:%s path:%s)",
          NS_LossyConvertUTF16toASCII(aDomain).get(),
          NS_LossyConvertUTF16toASCII(aPath).get() ));
+  NS_ENSURE_ARG_POINTER(aSiteDBFile);
 
   nsresult rv;
   nsCOMPtr<nsIURI> siteURI;
   rv = GetURI( getter_AddRefs(siteURI) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  if ( NS_FAILED(rv) || !siteURI ) {
+    // GetURI can return true even if there was no siteURI
+    LOG2(( "sbRemoteLibrary::GetSiteLibraryFile() -- FAILED to get URI"));
+    return rv;
+  }
 
   nsAutoString domain(aDomain);
   rv = CheckDomain( domain, siteURI );
@@ -378,10 +453,8 @@ sbRemoteLibrary::GetSiteLibraryFile( const nsAString &aDomain,
   siteDBFile->Append( NS_LITERAL_STRING("db") );
   siteDBFile->Append(hashedFile);
 
-#ifdef DEBUG
   // Save the filename locally
   mFilename.Assign(hashedFile);
-#endif
 
   NS_IF_ADDREF( *aSiteDBFile = siteDBFile );
   return NS_OK;
@@ -409,7 +482,6 @@ nsresult
 sbRemoteLibrary::CheckDomain( nsAString &aDomain,  nsIURI *aSiteURI )
 {
   NS_ENSURE_ARG_POINTER(aSiteURI);
-
   LOG1(( "sbRemoteLibrary::CheckDomain(%s)",
          NS_LossyConvertUTF16toASCII(aDomain).get() ));
 

@@ -32,14 +32,21 @@
 #include "nsISupports.idl"
 
 interface nsISimpleEnumerator;
+interface sbIMediaListView;
 
 [scriptable, uuid(4f30b35e-ff7c-4b2e-b290-10e1a7ae06b1)]
 interface sbIRemoteMediaList : nsISupports
 {
   readonly attribute nsISimpleEnumerator selection;
 
+  // NOTE: Not implemented yet
   void ensureColumVisible(in AString aPropertyName, in AString aColumnType);
 
   void setSelectionByIndex(in unsigned long aIndex, in boolean aSelected);
+
+  // NOTE: Not implemented yet
+  void addItemByURL(in AString aURL);
+
+  [noscript] sbIMediaListView getView();
 };
 

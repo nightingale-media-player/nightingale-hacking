@@ -36,6 +36,7 @@ const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
 const ROOTNODE = "SB:Bookmarks";
 
 const PROP_ISLIST = "http://songbirdnest.com/data/1.0#isList";
+const PROP_ISHIDDEN = "http://songbirdnest.com/data/1.0#hidden";
 
 const URN_PREFIX_ITEM = 'urn:item:';
 const URN_PREFIX_LIBRARY = 'urn:library:';
@@ -895,8 +896,8 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   // Refresh the name just in case it was localized
   node.name = aMediaList.name;  
   
-  // Make sure the node is visible, since we hid all library nodes on startup
-  node.hidden = false;
+  // Get hidden state from list, since we hid all list nodes on startup
+  node.hidden = aMediaList.getProperty(PROP_ISHIDDEN);
       
   return node;
 }
