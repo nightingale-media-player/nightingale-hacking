@@ -383,7 +383,7 @@ sbLocalDatabaseMediaListListener::ItemUpdatedCallback(sbIMediaListListener* aEnt
 
   // We don't really care if some listener impl returns failure, but warn for
   // good measure.
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnItemRemoved returned a failure code");
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnItemUpdated returned a failure code");
 
   return PR_TRUE;
 }
