@@ -96,7 +96,7 @@ Playlist toolbar and context menu items.
 /* Toolbar: addtoplaylist Button */
 #library_cmd_addtoplaylist
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
+  list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png);
   -moz-image-region: rect(0px 44px 8px 33px);
 }
 #library_cmd_addtoplaylist:hover
@@ -106,6 +106,10 @@ Playlist toolbar and context menu items.
 #library_cmd_addtoplaylist[disabled="true"]
 {
   -moz-image-region: rect(16px 44px 24px 33px);
+}
+#library_cmd_addtoplaylist > menupopup 
+{
+  list-style-image: none; 
 }
 
 
