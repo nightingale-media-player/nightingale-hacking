@@ -1303,7 +1303,7 @@
         <body>
 <![CDATA[
   this.treeView.selectionChanged();
-  this.refreshCommands();
+  this.refreshCommands(true);
   this.sendSelChangeEvent();
 ]]>
         </body>
