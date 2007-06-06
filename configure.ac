@@ -209,6 +209,15 @@ fi
 AC_SUBST(SB_DEPENDENCIES_DIR)
 
 #
+# Check for extras.
+#
+
+if test -d ${srcdir}/extras; then
+  HAS_EXTRAS=1
+fi
+AC_SUBST(HAS_EXTRAS)
+
+#
 # Checks for programs.
 #
 

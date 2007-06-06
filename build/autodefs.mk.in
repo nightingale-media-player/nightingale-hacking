@@ -66,6 +66,12 @@ SB_UPDATE_CHANNEL = @SB_UPDATE_CHANNEL@
 SB_ENABLE_TESTS   = @SB_ENABLE_TESTS@
 
 #
+# Autodetected variables set by configure
+#
+
+HAS_EXTRAS        = @HAS_EXTRAS@
+
+#
 # Cygwin stuff
 #
 

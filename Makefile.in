@@ -66,9 +66,14 @@ SUBDIRS += installer
 SUBDIRDEPS = installer : components app feathers locales
 endif
 
+ifdef HAS_EXTRAS
+SUBDIRS += extras
+SUBDIRDEPS2 = extras : components
+endif
+
 ifdef SONGBIRD_OFFICIAL
 SUBDIRS += update
-SUBDIRDEPS2 = update : installer
+SUBDIRDEPS3 = update : installer
 endif
 
 ifdef SONGBIRD_OFFICIAL
