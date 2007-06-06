@@ -1,90 +1,16 @@
-Index: caps/src/nsScriptSecurityManager.cpp
-===================================================================
-RCS file: /cvsroot/mozilla/caps/src/nsScriptSecurityManager.cpp,v
-retrieving revision 1.317
-diff -u -p -r1.317 nsScriptSecurityManager.cpp
---- caps/src/nsScriptSecurityManager.cpp	9 Feb 2007 04:52:44 -0000	1.317
-+++ caps/src/nsScriptSecurityManager.cpp	20 Apr 2007 17:49:56 -0000
-@@ -485,6 +485,13 @@ nsScriptSecurityManager::CheckObjectAcce
-     if (!ssm)
-         return JS_FALSE;
- 
-+    // XXXredfive
-+    nsCOMPtr<nsISupports> native;
-+    nsresult rv =
-+        sXPConnect->GetNativeOfJSObject(cx, obj,
-+                                        NS_GET_IID(nsISupports),
-+                                        getter_AddRefs(native));
-+
-     // Get the object being accessed.  We protect these cases:
-     // 1. The Function.prototype.caller property's value, which might lead
-     //    an attacker up a call-stack to a function or another object from
-@@ -497,11 +504,22 @@ nsScriptSecurityManager::CheckObjectAcce
- 
-     // Do the same-origin check -- this sets a JS exception if the check fails.
-     // Pass the parent object's class name, as we have no class-info for it.
-+    // XXXredfive
-+    /*
-     nsresult rv =
-         ssm->CheckPropertyAccess(cx, target, JS_GetClass(cx, obj)->name, id,
-                                  (mode & JSACC_WRITE) ?
-                                  nsIXPCSecurityManager::ACCESS_SET_PROPERTY :
-                                  nsIXPCSecurityManager::ACCESS_GET_PROPERTY);
-+    */
-+    // XXXredfive
-+    rv = ssm->CheckPropertyAccessImpl(( (mode & JSACC_WRITE) ?
-+                                        nsIXPCSecurityManager::ACCESS_SET_PROPERTY :
-+                                        nsIXPCSecurityManager::ACCESS_GET_PROPERTY ),
-+                                      nsnull, cx, target, native, nsnull,
-+                                      nsnull, JS_GET_CLASS(cx, obj)->name, id,
-+                                      nsnull);
-+
- 
-     if (NS_FAILED(rv))
-         return JS_FALSE; // Security check failed (XXX was an error reported?)
-@@ -763,6 +781,8 @@ nsScriptSecurityManager::CheckPropertyAc
-     nsXPIDLCString objectSecurityLevel;
-     if (checkedComponent)
-     {
-+        // XXXredfive
-+        /*
-         nsCOMPtr<nsIXPConnectWrappedNative> wrapper;
-         nsCOMPtr<nsIInterfaceInfo> interfaceInfo;
-         const nsIID* objIID;
-@@ -771,6 +791,25 @@ nsScriptSecurityManager::CheckPropertyAc
-             rv = wrapper->FindInterfaceWithMember(aProperty, getter_AddRefs(interfaceInfo));
-         if (NS_SUCCEEDED(rv))
-             rv = interfaceInfo->GetIIDShared(&objIID);
-+        */
-+        const nsIID* objIID = nsnull;
-+        if (aCallContext) {
-+            // If we have a call context, find the wrapper and the IID
-+            // with the member in question to pass to
-+            // nsISecurityCheckedComponent, if not, pass a null IID
-+            // and it's up to the implementation to decide if it wants
-+            // to permit access or not.
-+            nsCOMPtr<nsIXPConnectWrappedNative> wrapper;
-+            nsCOMPtr<nsIInterfaceInfo> interfaceInfo;
-+            rv = aCallContext->GetCalleeWrapper(getter_AddRefs(wrapper));
-+            if (NS_SUCCEEDED(rv))
-+                rv = wrapper->FindInterfaceWithMember(aProperty, getter_AddRefs(interfaceInfo));
-+            if (NS_SUCCEEDED(rv))
-+                rv = interfaceInfo->GetIIDShared(&objIID);
-+        } else {
-+            rv = NS_OK;
-+        }
-+
-         if (NS_SUCCEEDED(rv))
-         {
-             switch (aAction)
 Index: js/src/xpconnect/idl/nsIXPConnect.idl
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/idl/nsIXPConnect.idl,v
-retrieving revision 1.47
-diff -u -p -r1.47 nsIXPConnect.idl
---- js/src/xpconnect/idl/nsIXPConnect.idl	4 Jan 2007 22:31:26 -0000	1.47
-+++ js/src/xpconnect/idl/nsIXPConnect.idl	20 Apr 2007 17:49:56 -0000
-@@ -674,6 +674,17 @@ interface nsIXPConnect : nsISupports
+retrieving revision 1.50
+diff -u -8 -p -r1.50 nsIXPConnect.idl
+--- js/src/xpconnect/idl/nsIXPConnect.idl	2 May 2007 20:20:21 -0000	1.50
++++ js/src/xpconnect/idl/nsIXPConnect.idl	6 Jun 2007 07:38:35 -0000
+@@ -670,16 +670,27 @@ interface nsIXPConnect : nsISupports
+      * automatically wrapped with an XPCNativeWrapper.
+      *
+      * @param aFilenamePrefix the UTF-8 filename prefix to match, which
+      *                        should end with a slash (/) character
+      */
      void flagSystemFilenamePrefix(in string aFilenamePrefix);
  
      /**
@@ -102,14 +28,24 @@ diff -u -p -r1.47 nsIXPConnect.idl
       * Restore an old prototype for wrapped natives of type
       * aClassInfo. This should be used only when restoring an old
       * scope into a state close to where it was prior to
+      * being reinitialized.
+      */
+     void restoreWrappedNativePrototype(in JSContextPtr aJSContext,
+                                        in JSObjectPtr  aScope,
+                                        in nsIClassInfo aClassInfo,
 Index: js/src/xpconnect/src/XPCDispConvert.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/XPCDispConvert.cpp,v
 retrieving revision 1.14
-diff -u -p -r1.14 XPCDispConvert.cpp
+diff -u -8 -p -r1.14 XPCDispConvert.cpp
 --- js/src/xpconnect/src/XPCDispConvert.cpp	5 Apr 2006 21:34:16 -0000	1.14
-+++ js/src/xpconnect/src/XPCDispConvert.cpp	20 Apr 2007 17:49:56 -0000
-@@ -331,6 +331,7 @@ JSBool XPCDispConvert::JSToCOM(XPCCallCo
++++ js/src/xpconnect/src/XPCDispConvert.cpp	6 Jun 2007 07:38:35 -0000
+@@ -326,16 +326,17 @@ JSBool XPCDispConvert::JSToCOM(XPCCallCo
+             JSObject * obj = JSVAL_TO_OBJECT(src);
+             IUnknown * pUnknown = nsnull;
+             if(!XPCConvert::JSObject2NativeInterface(
+                 ccx, 
+                 (void**)&pUnknown, 
                  obj, 
                  &NSID_IDISPATCH,
                  nsnull, 
@@ -117,14 +53,24 @@ diff -u -p -r1.14 XPCDispConvert.cpp
                  &err))
              {
                  // Avoid cleaning up garbage
+                 varDest->vt = VT_EMPTY;
+                 return JS_FALSE;
+             }
+             varDest->vt = VT_DISPATCH;
+             pUnknown->QueryInterface(IID_IDispatch, 
 Index: js/src/xpconnect/src/nsXPConnect.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/nsXPConnect.cpp,v
-retrieving revision 1.102
-diff -u -p -r1.102 nsXPConnect.cpp
---- js/src/xpconnect/src/nsXPConnect.cpp	20 Apr 2007 08:01:01 -0000	1.102
-+++ js/src/xpconnect/src/nsXPConnect.cpp	20 Apr 2007 17:49:56 -0000
-@@ -1075,7 +1075,7 @@ nsXPConnect::WrapJS(JSContext * aJSConte
+retrieving revision 1.112
+diff -u -8 -p -r1.112 nsXPConnect.cpp
+--- js/src/xpconnect/src/nsXPConnect.cpp	4 Jun 2007 10:01:34 -0000	1.112
++++ js/src/xpconnect/src/nsXPConnect.cpp	6 Jun 2007 07:38:36 -0000
+@@ -1049,17 +1049,17 @@ nsXPConnect::WrapJS(JSContext * aJSConte
+     *result = nsnull;
+ 
+     XPCCallContext ccx(NATIVE_CALLER, aJSContext);
+     if(!ccx.IsValid())
+         return UnexpectedFailure(NS_ERROR_FAILURE);
  
      nsresult rv;
      if(!XPCConvert::JSObject2NativeInterface(ccx, result, aJSObj,
@@ -133,7 +79,17 @@ diff -u -p -r1.102 nsXPConnect.cpp
          return rv;
      return NS_OK;
  }
-@@ -1101,7 +1101,7 @@ nsXPConnect::WrapJSAggregatedToNative(ns
+ 
+ /* void wrapJSAggregatedToNative (in nsISupports aOuter, in JSContextPtr aJSContext, in JSObjectPtr aJSObj, in nsIIDRef aIID, [iid_is (aIID), retval] out nsQIResult result); */
+ NS_IMETHODIMP
+ nsXPConnect::WrapJSAggregatedToNative(nsISupports *aOuter,
+                                       JSContext * aJSContext,
+@@ -1075,17 +1075,17 @@ nsXPConnect::WrapJSAggregatedToNative(ns
+     *result = nsnull;
+ 
+     XPCCallContext ccx(NATIVE_CALLER, aJSContext);
+     if(!ccx.IsValid())
+         return UnexpectedFailure(NS_ERROR_FAILURE);
  
      nsresult rv;
      if(!XPCConvert::JSObject2NativeInterface(ccx, result, aJSObj,
@@ -142,7 +98,17 @@ diff -u -p -r1.102 nsXPConnect.cpp
          return rv;
      return NS_OK;
  }
-@@ -2022,6 +2022,30 @@ nsXPConnect::FlagSystemFilenamePrefix(co
+ 
+ /* nsIXPConnectWrappedNative getWrappedNativeOfJSObject (in JSContextPtr aJSContext, in JSObjectPtr aJSObj); */
+ NS_IMETHODIMP
+ nsXPConnect::GetWrappedNativeOfJSObject(JSContext * aJSContext,
+                                         JSObject * aJSObj,
+@@ -1996,16 +1996,40 @@ nsXPConnect::FlagSystemFilenamePrefix(co
+     if(NS_FAILED(rv))
+         return rv;
+ 
+     if(!JS_FlagScriptFilenamePrefix(rt, aFilenamePrefix, JSFILENAME_SYSTEM))
+         return NS_ERROR_OUT_OF_MEMORY;
      return NS_OK;
  }
  
@@ -173,14 +139,24 @@ diff -u -p -r1.102 nsXPConnect.cpp
  #ifdef DEBUG
  /* These are here to be callable from a debugger */
  JS_BEGIN_EXTERN_C
+ void DumpJSStack()
+ {
+     nsresult rv;
+     nsCOMPtr<nsIXPConnect> xpc(do_GetService(nsIXPConnect::GetCID(), &rv));
+     if(NS_SUCCEEDED(rv) && xpc)
 Index: js/src/xpconnect/src/xpcconvert.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcconvert.cpp,v
 retrieving revision 1.111
-diff -u -p -r1.111 xpcconvert.cpp
+diff -u -8 -p -r1.111 xpcconvert.cpp
 --- js/src/xpconnect/src/xpcconvert.cpp	28 Feb 2007 02:33:05 -0000	1.111
-+++ js/src/xpconnect/src/xpcconvert.cpp	20 Apr 2007 17:49:56 -0000
-@@ -1029,7 +1029,7 @@ XPCConvert::JSData2Native(XPCCallContext
++++ js/src/xpconnect/src/xpcconvert.cpp	6 Jun 2007 07:38:36 -0000
+@@ -1024,17 +1024,17 @@ XPCConvert::JSData2Native(XPCCallContext
+             if(!JSVAL_IS_OBJECT(s) || !(obj = JSVAL_TO_OBJECT(s)))
+             {
+                 if(pErr && JSVAL_IS_INT(s) && 0 == JSVAL_TO_INT(s))
+                     *pErr = NS_ERROR_XPC_BAD_CONVERT_JS_ZERO_ISNOT_NULL;
+                 return JS_FALSE;
              }
  
              return JSObject2NativeInterface(ccx, (void**)d, obj, iid,
@@ -189,7 +165,17 @@ diff -u -p -r1.111 xpcconvert.cpp
          }
          default:
              NS_ASSERTION(0, "bad type");
-@@ -1207,6 +1207,7 @@ XPCConvert::JSObject2NativeInterface(XPC
+             return JS_FALSE;
+         }
+     }
+     return JS_TRUE;
+ }
+@@ -1202,26 +1202,27 @@ XPCConvert::NativeInterface2JSObject(XPC
+ /***************************************************************************/
+ 
+ // static
+ JSBool
+ XPCConvert::JSObject2NativeInterface(XPCCallContext& ccx,
                                       void** dest, JSObject* src,
                                       const nsID* iid,
                                       nsISupports* aOuter,
@@ -197,7 +183,9 @@ diff -u -p -r1.111 xpcconvert.cpp
                                       nsresult* pErr)
  {
      NS_ASSERTION(dest, "bad param");
-@@ -1216,7 +1217,7 @@ XPCConvert::JSObject2NativeInterface(XPC
+     NS_ASSERTION(src, "bad param");
+     NS_ASSERTION(iid, "bad param");
+ 
      JSContext* cx = ccx.GetJSContext();
  
      *dest = nsnull;
@@ -206,7 +194,17 @@ diff -u -p -r1.111 xpcconvert.cpp
          *pErr = NS_ERROR_XPC_BAD_CONVERT_JS;
  
      nsISupports* iface;
-@@ -1266,7 +1267,17 @@ XPCConvert::JSObject2NativeInterface(XPC
+ 
+     if(!aOuter)
+     {
+         // Note that if we have a non-null aOuter then it means that we are
+         // forcing the creation of a wrapper even if the object *is* a 
+@@ -1261,17 +1262,27 @@ XPCConvert::JSObject2NativeInterface(XPC
+ 
+             return JS_FALSE;
+         }
+     }
+ 
      // else...
  
      nsXPCWrappedJS* wrapper;
@@ -224,14 +222,24 @@ diff -u -p -r1.111 xpcconvert.cpp
      if(pErr)
          *pErr = rv;
      if(NS_SUCCEEDED(rv) && wrapper)
+     {
+         // We need to go through the QueryInterface logic to make this return
+         // the right thing for the various 'special' interfaces; e.g. 
+         // nsIPropertyBag. We must use AggregatedQueryInterface in cases where 
+         // there is an outer to avoid nasty recursion.
 Index: js/src/xpconnect/src/xpcprivate.h
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcprivate.h,v
-retrieving revision 1.206
-diff -u -p -r1.206 xpcprivate.h
---- js/src/xpconnect/src/xpcprivate.h	16 Mar 2007 12:52:47 -0000	1.206
-+++ js/src/xpconnect/src/xpcprivate.h	20 Apr 2007 17:49:57 -0000
-@@ -2284,6 +2284,12 @@ public:
+retrieving revision 1.215
+diff -u -8 -p -r1.215 xpcprivate.h
+--- js/src/xpconnect/src/xpcprivate.h	2 Jun 2007 15:11:52 -0000	1.215
++++ js/src/xpconnect/src/xpcprivate.h	6 Jun 2007 07:38:36 -0000
+@@ -2330,16 +2330,22 @@ public:
+     */
+ 
+     static nsresult
+     GetNewOrUsed(XPCCallContext& ccx,
+                  JSObject* aJSObj,
                   REFNSIID aIID,
                   nsISupports* aOuter,
                   nsXPCWrappedJS** wrapper);
@@ -244,7 +252,17 @@ diff -u -p -r1.206 xpcprivate.h
  
      nsISomeInterface* GetXPTCStub() { return mXPTCStub; }
      JSObject* GetJSObject() const {return mJSObj;}
-@@ -2452,6 +2458,7 @@ public:
+     nsXPCWrappedJSClass*  GetClass() const {return mClass;}
+     REFNSIID GetIID() const {return GetClass()->GetIID();}
+     nsXPCWrappedJS* GetRootWrapper() const {return mRoot;}
+     nsXPCWrappedJS* GetNextWrapper() const {return mNext;}
+ 
+@@ -2505,16 +2511,17 @@ public:
+     static JSBool GetNativeInterfaceFromJSObject(XPCCallContext& ccx,
+                                                  void** dest, JSObject* src,
+                                                  const nsID* iid, 
+                                                  nsresult* pErr);
+     static JSBool JSObject2NativeInterface(XPCCallContext& ccx,
                                             void** dest, JSObject* src,
                                             const nsID* iid,
                                             nsISupports* aOuter,
@@ -252,14 +270,24 @@ diff -u -p -r1.206 xpcprivate.h
                                             nsresult* pErr);
  
      /**
+      * Convert a native array into a jsval.
+      *
+      * @param ccx the context for the whole procedure
+      * @param d [out] the resulting jsval
+      * @param s the native array we're working with
 Index: js/src/xpconnect/src/xpcwrappedjs.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcwrappedjs.cpp,v
-retrieving revision 1.52
-diff -u -p -r1.52 xpcwrappedjs.cpp
---- js/src/xpconnect/src/xpcwrappedjs.cpp	9 Mar 2007 13:11:30 -0000	1.52
-+++ js/src/xpconnect/src/xpcwrappedjs.cpp	20 Apr 2007 17:49:57 -0000
-@@ -414,6 +414,62 @@ return_wrapper:
+retrieving revision 1.55
+diff -u -8 -p -r1.55 xpcwrappedjs.cpp
+--- js/src/xpconnect/src/xpcwrappedjs.cpp	2 Jun 2007 15:11:52 -0000	1.55
++++ js/src/xpconnect/src/xpcwrappedjs.cpp	6 Jun 2007 07:38:36 -0000
+@@ -412,16 +412,81 @@ return_wrapper:
+ 
+     if(!wrapper)
+         return NS_ERROR_FAILURE;
+ 
+     *wrapperResult = wrapper;
      return NS_OK;
  }
  
@@ -291,8 +319,17 @@ diff -u -p -r1.52 xpcwrappedjs.cpp
 +    if(!clazz)
 +        return NS_ERROR_FAILURE;
 +
-+    // always find the root JSObject
-+    rootJSObj = clazz->GetRootJSObject(ccx, aJSObj);
++    JSBool hasProp = JS_FALSE;
++    if(JS_HasElement(ccx.GetJSContext(), aJSObj,
++                     rt->GetStringID(XPCJSRuntime::IDX_QUERY_INTERFACE),
++                     &hasProp) && hasProp)
++    {
++        rootJSObj = clazz->GetRootJSObject(ccx, aJSObj);
++    }
++    else
++    {
++        rootJSObj = aJSObj;
++    }
 +
 +    NS_RELEASE(clazz);
 +
@@ -322,3 +359,113 @@ diff -u -p -r1.52 xpcwrappedjs.cpp
  nsXPCWrappedJS::nsXPCWrappedJS(XPCCallContext& ccx,
                                 JSObject* aJSObj,
                                 nsXPCWrappedJSClass* aClass,
+                                nsXPCWrappedJS* root,
+                                nsISupports* aOuter)
+     : mJSObj(aJSObj),
+       mClass(aClass),
+       mRoot(root ? root : this),
+Index: caps/src/nsScriptSecurityManager.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/caps/src/nsScriptSecurityManager.cpp,v
+retrieving revision 1.317
+diff -u -8 -p -r1.317 nsScriptSecurityManager.cpp
+--- caps/src/nsScriptSecurityManager.cpp	9 Feb 2007 04:52:44 -0000	1.317
++++ caps/src/nsScriptSecurityManager.cpp	6 Jun 2007 07:38:36 -0000
+@@ -480,33 +480,51 @@ nsScriptSecurityManager::CheckObjectAcce
+     // Get the security manager
+     nsScriptSecurityManager *ssm =
+         nsScriptSecurityManager::GetScriptSecurityManager();
+ 
+     NS_ASSERTION(ssm, "Failed to get security manager service");
+     if (!ssm)
+         return JS_FALSE;
+ 
++    // XXXredfive
++    nsCOMPtr<nsISupports> native;
++    nsresult rv =
++        sXPConnect->GetNativeOfJSObject(cx, obj,
++                                        NS_GET_IID(nsISupports),
++                                        getter_AddRefs(native));
++
+     // Get the object being accessed.  We protect these cases:
+     // 1. The Function.prototype.caller property's value, which might lead
+     //    an attacker up a call-stack to a function or another object from
+     //    a different trust domain.
+     // 2. A user-defined getter or setter function accessible on another
+     //    trust domain's window or document object.
+     // *vp can be a primitive, in that case, we use obj as the target
+     // object.
+     JSObject* target = JSVAL_IS_PRIMITIVE(*vp) ? obj : JSVAL_TO_OBJECT(*vp);
+ 
+     // Do the same-origin check -- this sets a JS exception if the check fails.
+     // Pass the parent object's class name, as we have no class-info for it.
++    // XXXredfive
++    /*
+     nsresult rv =
+         ssm->CheckPropertyAccess(cx, target, JS_GetClass(cx, obj)->name, id,
+                                  (mode & JSACC_WRITE) ?
+                                  nsIXPCSecurityManager::ACCESS_SET_PROPERTY :
+                                  nsIXPCSecurityManager::ACCESS_GET_PROPERTY);
++    */
++    // XXXredfive
++    rv = ssm->CheckPropertyAccessImpl(( (mode & JSACC_WRITE) ?
++                                        nsIXPCSecurityManager::ACCESS_SET_PROPERTY :
++                                        nsIXPCSecurityManager::ACCESS_GET_PROPERTY ),
++                                      nsnull, cx, target, native, nsnull,
++                                      nsnull, JS_GET_CLASS(cx, obj)->name, id,
++                                      nsnull);
++
+ 
+     if (NS_FAILED(rv))
+         return JS_FALSE; // Security check failed (XXX was an error reported?)
+ 
+     return JS_TRUE;
+ }
+ 
+ NS_IMETHODIMP
+@@ -758,24 +776,45 @@ nsScriptSecurityManager::CheckPropertyAc
+     //--See if the object advertises a non-default level of access
+     //  using nsISecurityCheckedComponent
+     nsCOMPtr<nsISecurityCheckedComponent> checkedComponent =
+         do_QueryInterface(aObj);
+ 
+     nsXPIDLCString objectSecurityLevel;
+     if (checkedComponent)
+     {
++        // XXXredfive
++        /*
+         nsCOMPtr<nsIXPConnectWrappedNative> wrapper;
+         nsCOMPtr<nsIInterfaceInfo> interfaceInfo;
+         const nsIID* objIID;
+         rv = aCallContext->GetCalleeWrapper(getter_AddRefs(wrapper));
+         if (NS_SUCCEEDED(rv))
+             rv = wrapper->FindInterfaceWithMember(aProperty, getter_AddRefs(interfaceInfo));
+         if (NS_SUCCEEDED(rv))
+             rv = interfaceInfo->GetIIDShared(&objIID);
++        */
++        const nsIID* objIID = nsnull;
++        if (aCallContext) {
++            // If we have a call context, find the wrapper and the IID
++            // with the member in question to pass to
++            // nsISecurityCheckedComponent, if not, pass a null IID
++            // and it's up to the implementation to decide if it wants
++            // to permit access or not.
++            nsCOMPtr<nsIXPConnectWrappedNative> wrapper;
++            nsCOMPtr<nsIInterfaceInfo> interfaceInfo;
++            rv = aCallContext->GetCalleeWrapper(getter_AddRefs(wrapper));
++            if (NS_SUCCEEDED(rv))
++                rv = wrapper->FindInterfaceWithMember(aProperty, getter_AddRefs(interfaceInfo));
++            if (NS_SUCCEEDED(rv))
++                rv = interfaceInfo->GetIIDShared(&objIID);
++        } else {
++            rv = NS_OK;
++        }
++
+         if (NS_SUCCEEDED(rv))
+         {
+             switch (aAction)
+             {
+             case nsIXPCSecurityManager::ACCESS_GET_PROPERTY:
+                 checkedComponent->CanGetProperty(objIID,
+                                                  JSValIDToString(cx, aProperty),
+                                                  getter_Copies(objectSecurityLevel));
