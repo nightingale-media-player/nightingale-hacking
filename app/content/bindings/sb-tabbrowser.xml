@@ -734,6 +734,79 @@
         ]]></body>
       </method>
       
+      <field name="_popupShowing">false</field>
+      <method name="onContextPopupShowing">
+        <parameter name="popup" />
+        <parameter name="event" />
+        <body><![CDATA[
+          this._popupShowing = false;
+          
+          var XLINK_NS = 'http://www.w3.org/1999/xlink';
+          
+          this.theHTMLContextURL = '';
+          
+          // are we on a link?
+          var onLink = false;
+          var elem = document.popupNode; // the node that triggered the popup
+          // walk up the DOM looking for a link of some sort
+          while (elem) {
+            if(elem.nodeType == Node.ELEMENT_NODE) {
+              if (elem instanceof HTMLAnchorElement && elem.href ||
+                  elem instanceof HTMLAreaElement ||
+                  elem instanceof HTMLLinkElement ||
+                  elem.getAttribute(XLINK_NS, 'type') == 'simple') {
+                onLink = true;
+                break;
+              }
+            }
+            elem = elem.parentNode;
+          }
+          if (elem && onLink) {
+            // looks like we've got something
+            if (elem.href) {
+              // it's some kind of HTML link
+              this.theHTMLContextURL = elem.href;
+            } else if (elem.hasAttributeNS(XLINK_NS, 'href')) {
+              // it's an XLink link
+              var xlink_href = elem.getAttributeNS(XLINK_NS, 'href');
+              if (!xlink_href || !xlink_href.match(/\S/)) {
+                // no link - fail
+                onLink = false;
+              }
+              // use the IO service to make the URL absolute
+              var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                .getService(Components.interfaces.nsIIOService);
+              var baseURI  = ioService.newURI(elem.baseURI, null, null);
+              onLink = true;
+              this.theHTMLContextURL = ioService.newURI(baseURI.resolve(xlink_href), null, null).spec;
+            } else {
+              // we shouldn't get here, but if we do that thing we thought was a link isn't
+              onLink = false;
+            }
+            
+          }
+          
+          if (this.theHTMLContextURL) {
+            // Disable "Add" if the url isn't media or is already there.
+            document.getElementById("html.context.add").setAttribute("disabled",
+              SBUrlExistsInDatabase(this.theHTMLContextURL) || 
+              !gPPS.isMediaURL(this.theHTMLContextURL));
+            // allow the popup to be shown
+            this._popupShowing = true;
+            
+          }
+
+          return this._popupShowing; // should show
+        ]]></body>
+      </method>
+      
+      <method name="onContextPopupHiding">
+        <parameter name="popup"/>
+        <body><![CDATA[
+          this._popupShowing = false;
+        ]]></body>
+      </method>
+      
       <!-- this method extracts the target url of click event targetted at html -->
       <method name="GetHREFFromEvent">
         <parameter name="evt" />
@@ -786,34 +859,7 @@
           theStatusText.stringValue = "";
         ]]></body>
       </method>
-      <!-- used in async_webplaylist.js -->
-      <method name="onLinkContext">
-        <parameter name="evt" />
-        <body><![CDATA[
-          // Catch a contextual on a media url and attempt to play it
-          try
-          {
-            var theHTMLPopup = document.getElementById( "html_context_menu" );
-            this.theHTMLContextURL = this.GetHREFFromEvent( evt );
-            
-            // Disable "Add" if the url isn't media or is already there.
-            var disabled = "true";
-            if ( gPPS.isMediaURL( this.theHTMLContextURL ) && ! SBUrlExistsInDatabase( this.theHTMLContextURL ) )
-            {
-              disabled = "false"
-            }
-            document.getElementById( "html.context.add" ).setAttribute( "disabled", disabled );
-            
-            theHTMLPopup.showPopup(this, this.boxObject.screenX + evt.clientX + 5,
-                                   this.boxObject.screenY + evt.clientY,
-                                   "context", null, null );
-          }
-          catch ( err )
-          {
-            alert( err );
-          }
-        ]]></body>
-      </method>
+
       <!-- used in async_webplaylist.js -->
       <method name="onMediaClick">
         <parameter name="evt" />
@@ -923,6 +969,11 @@
       <handler event="click"><![CDATA[
         // inspired by contentAreaClick in ffox browser.js
         if (!event.isTrusted || event.getPreventDefault()) {
+          return true;
+        }
+        
+        if (this._popupShowing) {
+          // if we're showing a popup, let's do nothing
           return true;
         }
         

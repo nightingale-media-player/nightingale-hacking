@@ -109,8 +109,6 @@ try
             if ( url )
               loop_break = this.handleURL( url );
             // Add our event listeners to anything that's a link.
-            this.a_array[ this.i ].addEventListener( "contextmenu",
-                function (evt) {gBrowser.onLinkContext(evt)}, true );
             this.a_array[ this.i ].addEventListener( "mouseover",
                 function (evt) {gBrowser.onLinkOver(evt)}, true );
             this.a_array[ this.i ].addEventListener( "mouseout",
