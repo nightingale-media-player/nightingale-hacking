@@ -1290,7 +1290,6 @@
 
     <implementation>
       <constructor>
-        this._source = new sbIPlaylistsource();
         this.setInterval();
       </constructor>
 

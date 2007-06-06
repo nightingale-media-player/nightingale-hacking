@@ -46,13 +46,12 @@ SUBDIRS = addonmetadata \
           metrics \
           moz \
           playlistplayback \
-          playlistsource \
+          playlistcommands \
           playlistreader \
           property \
           remoteapi \
           search \
           servicepane \
-          servicesource \
           state \
           sqlbuilder \
           parsererror \

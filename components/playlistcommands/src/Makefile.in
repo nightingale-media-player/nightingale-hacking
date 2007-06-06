@@ -30,19 +30,16 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifdef DEBUG
-target_name = sbServicesource_d
+target_name = sbPlaylistCommands_d
 else
-target_name = sbServicesource
+target_name = sbPlaylistCommands
 endif
 
-CPP_SRCS = Servicesource.cpp \
-           ServicesourceComponent.cpp \
+CPP_SRCS = PlaylistCommandsManager.cpp \
+           PlaylistCommandsComponent.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/servicesource/public \
-               $(DEPTH)/components/dbengine/public \
-               $(DEPTH)/components/playlistsource/public \
-               $(DEPTH)/components/playlistplayback/public \
+CPP_INCLUDES = $(DEPTH)/components/playlistcommands/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \

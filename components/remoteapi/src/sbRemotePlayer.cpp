@@ -30,7 +30,7 @@
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
-#include <sbIPlaylistsource.h>
+#include <sbIPlaylistCommands.h>
 #include <sbITabBrowser.h>
 
 #include <nsComponentManagerUtils.h>
@@ -254,7 +254,7 @@ sbRemotePlayer::Init()
 
   //
   // Hook up an event listener to listen to the unload event so we can
-  //   remove any commands from the PlaylistSource
+  //   remove any commands from the PlaylistCommandsManager
   //
 
   // pull the dom window from the js stack and context
@@ -388,9 +388,9 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   // store the default command usage
   mUseDefaultCommands = aUseDefaultCommands;
 
-  // Get the Playlistsource object and register commands with it.
-  nsCOMPtr<sbIPlaylistsource> pls( 
-         do_GetService( "@mozilla.org/rdf/datasource;1?name=playlist", &rv ) );
+  // Get the PlaylistCommandsManager object and register commands with it.
+  nsCOMPtr<sbIPlaylistCommandsManager> mgr( 
+         do_GetService( "@songbirdnest.com/Songbird/PlaylistCommandsManager;1", &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<sbIPlaylistCommands> commands( do_QueryInterface( mCommandsObject,
@@ -400,18 +400,16 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   //              need sbIRemoteMediaLists online before we can do that.
   // Registration of commands is changing soon, for now type='library' works
   NS_ENSURE_SUCCESS( rv, rv );
-  rv = pls->RegisterPlaylistCommands( NS_LITERAL_STRING("remote-test-guid"),
-                                      EmptyString(),
-                                      NS_LITERAL_STRING("library"),
-                                      commands );
+  rv = mgr->RegisterPlaylistCommandsMediaItem( NS_LITERAL_STRING("remote-test-guid"),
+                                               NS_LITERAL_STRING("library"),
+                                               commands );
   NS_ASSERTION( NS_SUCCEEDED(rv),
-                "Failed to register commands in sbPlaylistsource" );
-  rv = pls->RegisterPlaylistCommands( NS_LITERAL_STRING("remote-test-guid"),
-                                      EmptyString(),
-                                      NS_LITERAL_STRING("simple"),
-                                      commands );
+                "Failed to register commands in playlistcommandsmanager" );
+  rv = mgr->RegisterPlaylistCommandsMediaItem( NS_LITERAL_STRING("remote-test-guid"),
+                                               NS_LITERAL_STRING("simple"),
+                                               commands );
   NS_ASSERTION( NS_SUCCEEDED(rv),
-                "Failed to register commands in sbPlaylistsource" );
+                "Failed to register commands in playlistcommandsmanager" );
 
   OnCommandsChanged();
 
@@ -705,29 +703,27 @@ sbRemotePlayer::UnregisterCommands()
   if (!mCommandsObject)
     return NS_OK;
 
-  // Get the Playlistsource object to unregister the commands
+  // Get the PlaylistCommandsManager object to unregister the commands
   nsresult rv;
-  nsCOMPtr<sbIPlaylistsource> pls( 
-         do_GetService( "@mozilla.org/rdf/datasource;1?name=playlist", &rv ) );
+  nsCOMPtr<sbIPlaylistCommandsManager> mgr( 
+         do_GetService( "@songbirdnest.com/Songbird/PlaylistCommandsManager;1", &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<sbIPlaylistCommands> commands(
                                    do_QueryInterface( mCommandsObject, &rv ) );
   // Registration of commands is changing soon, for now type='library' is it
   NS_ENSURE_SUCCESS( rv, rv );
-  rv = pls->UnregisterPlaylistCommands( NS_LITERAL_STRING("remote-test-guid"),
-                                        EmptyString(),
-                                        NS_LITERAL_STRING("library"),
-                                        commands );
+  rv = mgr->UnregisterPlaylistCommandsMediaItem( NS_LITERAL_STRING("remote-test-guid"),
+                                                 NS_LITERAL_STRING("library"),
+                                                 commands );
   NS_ASSERTION( NS_SUCCEEDED(rv),
-                "Failed to unregister commands from sbPlaylistsource" );
+                "Failed to unregister commands from playlistcommandsmanager" );
 
-  rv = pls->UnregisterPlaylistCommands( NS_LITERAL_STRING("remote-test-guid"),
-                                        EmptyString(),
-                                        NS_LITERAL_STRING("simple"),
-                                        commands );
+  rv = mgr->UnregisterPlaylistCommandsMediaItem( NS_LITERAL_STRING("remote-test-guid"),
+                                                 NS_LITERAL_STRING("simple"),
+                                                 commands );
   NS_ASSERTION( NS_SUCCEEDED(rv),
-                "Failed to unregister commands from sbPlaylistsource" );
+                "Failed to unregister commands from playlistcommandsmanager" );
   
   return NS_OK;
 }

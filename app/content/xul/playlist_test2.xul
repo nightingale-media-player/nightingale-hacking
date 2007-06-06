@@ -319,7 +319,7 @@ try
       }
     },
     
-    // The object registered with the sbIPlaylistSource interface acts 
+    // The object registered with the sbIPlaylistCommandsManager interface acts 
     // as a template for instances bound to specific playlist elements
     duplicate: function()
     {

@@ -421,7 +421,7 @@ var SBWebPlaylistCommands =
     }
   },
   
-  // The object registered with the sbIPlaylistSource interface acts 
+  // The object registered with the sbIPlaylistCommandsManager interface acts 
   // as a template for instances bound to specific playlist elements
   duplicate: function()
   {
@@ -468,9 +468,9 @@ var SBWebPlaylistCommands =
 // Register the web playlist commands at startup
 if ( ( WEB_PLAYLIST_CONTEXT != "" ) && ( WEB_PLAYLIST_TABLE != "" ) )
 {
-  var source = new sbIPlaylistsource();
-  source.registerPlaylistCommands( WEB_PLAYLIST_CONTEXT, WEB_PLAYLIST_TABLE, "http", SBWebPlaylistCommands );
-  source.registerPlaylistCommands( WEB_PLAYLIST_CONTEXT, "library", "http", SBWebPlaylistCommands );
+  var mgr = new sbIPlaylistCommandsManager();
+  mgr.registerPlaylistCommandsMediaItem( WEB_PLAYLIST_TABLE, "http", SBWebPlaylistCommands );
+  mgr.registerPlaylistCommandsMediaItem( "library", "http", SBWebPlaylistCommands );
 }
 
 */
@@ -796,7 +796,7 @@ var SBDownloadCommands =
     }
   },
   
-  // The object registered with the sbIPlaylistSource interface acts 
+  // The object registered with the sbIPlaylistCommandsManager interface acts 
   // as a template for instances bound to specific playlist elements
   duplicate: function()
   {
@@ -847,11 +847,8 @@ function registerDownloadListCommands() {
     prefs.getComplexValue("songbird.library.download",
                           Components.interfaces.nsISupportsString);
 
-  var playlistsource =
-    Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
-              .getService(Components.interfaces.sbIPlaylistsource);
-              
-  playlistsource.registerPlaylistCommands(downloadListGUID, "", "",
+  var mgr = new sbIPlaylistCommandsManager();
+  mgr.registerPlaylistCommandsMediaItem(downloadListGUID, "",
                                           SBDownloadCommands); 
 
   window.addEventListener("unload", unregisterDownloadListCommands, false);
@@ -866,11 +863,8 @@ function unregisterDownloadListCommands() {
     prefs.getComplexValue("songbird.library.download",
                           Components.interfaces.nsISupportsString);
 
-  var playlistsource =
-    Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
-              .getService(Components.interfaces.sbIPlaylistsource);
-              
-  playlistsource.unregisterPlaylistCommands(downloadListGUID, "", "",
+  var mgr = new sbIPlaylistCommandsManager();
+  mgr.unregisterPlaylistCommandsMediaItem(downloadListGUID, "",
                                             SBDownloadCommands); 
 }
 
@@ -1118,7 +1112,7 @@ var SBDefaultCommands =
     }
   },
   
-  // The object registered with the sbIPlaylistSource interface acts 
+  // The object registered with the sbIPlaylistCommandsManager interface acts 
   // as a template for instances bound to specific playlist elements
   duplicate: function()
   {
@@ -1332,7 +1326,7 @@ var SBDefaultServiceCommands =
     }
   },
   
-  // The object registered with the sbIPlaylistSource interface acts 
+  // The object registered with the sbIPlaylistCommandsManager interface acts 
   // as a template for instances bound to specific playlist elements
   duplicate: function()
   {
@@ -1373,8 +1367,8 @@ var SBDefaultServiceCommands =
 } // end of sbPlaylistCommands
 
 try {
-var ssource = new sbIServicesource();
-ssource.registerPlaylistCommands( "", "", "simple", SBDefaultServiceCommands );
-ssource.registerPlaylistCommands( "", "", "smart", SBDefaultServiceCommands );
+var mgr = new sbIPlaylistCommandsManager();
+mgr.registerPlaylistCommandsMediaList( "", "simple", SBDefaultServiceCommands );
+mgr.registerPlaylistCommandsMediaList( "", "smart", SBDefaultServiceCommands );
 } catch (e) { alert(e); }
 

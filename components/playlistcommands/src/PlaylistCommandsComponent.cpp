@@ -25,12 +25,12 @@
  */
 
 /** 
-* \file  ServicesourceComponent.cpp
-* \brief Songbird Servicesource Component Factory and Main Entry Point.
+* \file  PlaylistCommandsComponent.cpp
+* \brief Songbird PlaylistCommands Component Factory and Main Entry Point.
 */
 
 #include "nsIGenericFactory.h"
-#include "Servicesource.h"
+#include "PlaylistCommandsManager.h"
 
 #define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
   static _Interface * _Interface##SimpletonConstructor( void )                  \
@@ -41,17 +41,17 @@
   }                                                                             \
   NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor )
 
-NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(CServicesource)
+NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(CPlaylistCommandsManager)
 
 static nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_Servicesource_CLASSNAME, 
-    SONGBIRD_Servicesource_CID,
-    SONGBIRD_Servicesource_CONTRACTID,
-    CServicesourceConstructor,
+    SONGBIRD_PlaylistCommandsManager_CLASSNAME, 
+    SONGBIRD_PlaylistCommandsManager_CID,
+    SONGBIRD_PlaylistCommandsManager_CONTRACTID,
+    CPlaylistCommandsManagerConstructor,
   },
 };
 
-NS_IMPL_NSGETMODULE("SongbirdServicesourceComponent", components)
+NS_IMPL_NSGETMODULE("SongbirdPlaylistCommandsComponent", components)
 

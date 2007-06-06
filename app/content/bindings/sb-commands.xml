@@ -139,23 +139,22 @@
         <body>
           <![CDATA[
             this.commands = new Array();
-            var source; 
-            switch (this.commandtype) {
-              case "list":
-                source = Components.classes["@mozilla.org/rdf/datasource;1?name=Servicesource"]
-                                   .getService(Components.interfaces.sbIServicesource);
-                break;
-              // default case
-              case "item":
-              case "":
-              default:
-                source = Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
-                                   .getService(Components.interfaces.sbIPlaylistsource );
-                break;
+            var source = Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+                                   .getService(Components.interfaces.sbIPlaylistCommandsManager);
+            var cmds;
+            if (this.medialist) {
+              switch (this.commandtype) {
+                case "list":
+                  cmds = source.getPlaylistCommandsMediaList( this.medialist.guid, this.medialist.type );
+                  break;
+                // default case
+                case "item":
+                case "":
+                default:
+                  cmds = source.getPlaylistCommandsMediaItem( this.medialist.guid, this.medialist.type );
+                  break;
+              }
             }
-            if (this.medialist)
-              var cmds = source.getPlaylistCommands( this.medialist.guid,
-                                                     this.medialist.type );
             if ( cmds )
             {
               while (cmds.hasMoreElements()) {

@@ -127,7 +127,7 @@ try
     {
     },
     
-    // The object registered with the sbIPlaylistSource interface acts 
+    // The object registered with the sbIPlaylistCommandsManager interface acts 
     // as a template for instances bound to specific playlist elements
     duplicate: function()
     {
@@ -253,7 +253,6 @@ try
     window.arguments[0][0].__JUMPTO__ = document;
     document.syncJumpTo = syncJumpTo;
     search_widget = window.arguments[0][0].__SEARCHWIDGET__;
-    var source = new sbIPlaylistsource();
     var guid;
     var search;
     var filters;

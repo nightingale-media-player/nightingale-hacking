@@ -27,7 +27,7 @@
 #ifndef __SB_REMOTE_COMMANDS_H__
 #define __SB_REMOTE_COMMANDS_H__
 
-#include <sbIPlaylistsource.h>
+#include <sbIPlaylistCommands.h>
 #include <sbIRemoteCommands.h>
 #include <sbIRemotePlayer.h>
 #include <sbISecurityAggregator.h>
@@ -37,6 +37,7 @@
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <nsCOMPtr.h>
 
 #define SONGBIRD_REMOTECOMMANDS_CONTRACTID              \
   "@songbirdnest.com/remoteapi/remotecommands;1"

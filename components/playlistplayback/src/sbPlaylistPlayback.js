@@ -248,9 +248,6 @@ function PlaylistPlayback() {
     gOS.addObserver(this, "profile-before-change", false);
   }
 
-  // Playlistsource provides the interface for requesting playlist info.  
-  this._source = Components.classes[ "@mozilla.org/rdf/datasource;1?name=playlist" ]
-                 .getService( Components.interfaces.sbIPlaylistsource );
   this._timer = Components.classes[ "@mozilla.org/timer;1" ]
                 .createInstance( Components.interfaces.nsITimer );
 
@@ -280,7 +277,6 @@ PlaylistPlayback.prototype = {
   /**
    * The Playlistsource
    */
-  _source: null,
   
   /**
    * Used to not hit the playback core for metadata too often.
@@ -631,13 +627,13 @@ PlaylistPlayback.prototype = {
   },
   
   get itemCount() {
-    return this._source.getRefRowCount( this._playlistRef.stringValue );
+    if (this._playingView) return this._playingView.length;
+    return 0;
   },
   
   get currentGUID() {
-    return this._source.getRefRowCellByColumn( this._playlistRef.stringValue, 
-                                               this._playlistIndex.intValue,
-                                               "uuid");
+    if (this.playing) return this._playingRef.stringValue;
+    return null;
   },
   
   get currentURL() {
@@ -951,20 +947,26 @@ PlaylistPlayback.prototype = {
       // playlist's filters and search.
 
       // import the track in the library if it isn't in it already
-      var index = this._importURLInLibrary(aURL);
-      var ref = "NC:songbird_library";
-      this._source.waitForQueryCompletion(ref);
+      //var index = this._importURLInLibrary(aURL);
+      //var ref = "NC:songbird_library";
+      //this._source.waitForQueryCompletion(ref);
 
       // reset the search and filter for the library, we want to be able to play an arbitrary file
-      this._source.setSearchString(ref, "", true);
-      this._source.executeFeed( ref );
-      this._source.waitForQueryCompletion(ref);
+      //this._source.setSearchString(ref, "", true);
+      //this._source.executeFeed( ref );
+      //this._source.waitForQueryCompletion(ref);
 
       // if we do not forceGetTargets, we end up playing the wrong thing (if we just changed the filtering/search)
-      this._source.forceGetTargets( ref, false );
+      //this._source.forceGetTargets( ref, false );
 
       // play the track
-      this.playRefByID(ref, index);
+      //this.playRefByID(ref, index);
+      
+      //XXX todo: 
+      // 1) reset the main library search and filters (read notes above)
+      // 2) import track in main library
+      // 3) play the library view by the index of that track
+      dump("XXXXXXXXXXXXXXXXX oops! playlistPlayback.playAndImportURL is not implemented yet :(\n");
       
     } catch( err ) {
       dump( "playAndImportURL:\n" + err + "\n" );

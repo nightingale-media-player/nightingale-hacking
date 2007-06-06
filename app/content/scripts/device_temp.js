@@ -209,7 +209,7 @@ var SBCDCommands =
     }
   },
   
-  // The object registered with the sbIPlaylistSource interface acts 
+  // The object registered with the sbIPlaylistCommandsManager interface acts 
   // as a template for instances bound to specific playlist elements
   duplicate: function()
   {
@@ -354,7 +354,7 @@ var SBRippingCommands =
     }
   },
   
-  // The object registered with the sbIPlaylistSource interface acts 
+  // The object registered with the sbIPlaylistCommandsManager interface acts 
   // as a template for instances bound to specific playlist elements
   duplicate: function()
   {
@@ -425,8 +425,8 @@ function onCDRip(deviceName, guid, table, strFilterColumn, nFilterValueCount, aF
                 // Register the guid and table with the playlist source to always show special download commands.
                 SBRippingCommands.m_Device = aCDDevice;
                 SBRippingCommands.m_DeviceName = deviceName;
-                var source = new sbIPlaylistsource();
-                source.registerPlaylistCommands( guid, rippingTable.value, "download", SBRippingCommands );
+                var mgr = new sbIPlaylistCommandsManager();
+                mgr.registerPlaylistCommandsMediaItem( guid, rippingTable.value, "download", SBRippingCommands );
             }
         }
     }
@@ -511,16 +511,17 @@ function OnCDInsert(deviceName)
       cdTable = cdTable.value;
       SBCDCommands.m_Context = cdContext;
       SBCDCommands.m_Table = cdTable;
-      var source = new sbIPlaylistsource();
+      var cmdmgr = new sbIPlaylistCommandsManager();
       if ( cdContext && cdTable )
       {
         try
         {
-          source.registerPlaylistCommands( cdContext, cdTable, cdTable, SBCDCommands );
+          // fix
+          cmdmgr.registerPlaylistCommandsMediaItem( cdTable, cdTable, SBCDCommands );
         }
         catch ( err )
         {
-          alert( "source.registerPlaylistCommands( " + SBCDCommands.m_Context + ", " + SBCDCommands.m_Table+ " );\r\n" + err )
+          alert( "cmdmgr.registerPlaylistCommands( " + SBCDCommands.m_Context + ", " + SBCDCommands.m_Table+ " );\r\n" + err )
         }
       }
     }
@@ -673,7 +674,7 @@ var SBCDBurningCommands =
     }
   },
   
-  // The object registered with the sbIPlaylistSource interface acts 
+  // The object registered with the sbIPlaylistCommandsManager interface acts 
   // as a template for instances bound to specific playlist elements
   duplicate: function()
   {
@@ -749,8 +750,8 @@ function onAddToCDBurn(guid, table, strFilterColumn, nFilterValueCount, aFilterV
         SBCDBurningCommands.m_Device = aCDDevice;
         SBCDBurningCommands.m_DeviceName = writableCDDeviceString;
         SBCDBurningCommands.m_TableName = burnTable.value;
-        var source = new sbIPlaylistsource();
-        source.registerPlaylistCommands( aCDDevice.getContext(writableCDDeviceString), burnTable.value, burnTable.value, SBCDBurningCommands );
+        var mgr = new sbIPlaylistCommandsManager();
+        mgr.registerPlaylistCommandsMediaItem( burnTable.value, burnTable.value, SBCDBurningCommands );
 
         // And show the download table in the chrome playlist.
         //onBrowserCDTransfer(aCDDevice, writableCDDeviceString, 0 /*Burning*/);
@@ -968,7 +969,7 @@ var theSBWMDCommands =
     }
   },
   
-  // The object registered with the sbIPlaylistSource interface acts 
+  // The object registered with the sbIPlaylistCommandsManager interface acts 
   // as a template for instances bound to specific playlist elements
   duplicate: function()
   {
@@ -1078,12 +1079,12 @@ function OnWMDConnect(deviceName)
 		wmdTable = wmdTable.value;
 		theSBWMDCommands.m_Context = wmdContext;
 		theSBWMDCommands.m_Table = wmdTable;
-		var source = new sbIPlaylistsource();
+		var source = new sbIPlaylistCommandsManager();
 		if ( wmdContext && wmdTable )
 		{
 			try
 			{
-			source.registerPlaylistCommands( wmdContext, wmdTable, wmdTable, theSBWMDCommands );
+			source.registerPlaylistCommandsMediaItem( wmdContext, wmdTable, wmdTable, theSBWMDCommands );
 			}
 			catch ( err )
 			{

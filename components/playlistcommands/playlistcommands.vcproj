@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="servicesource"
+	Name="playlistcommands"
 	ProjectGUID="{E9C17F59-5D09-496B-A524-170FA0908892}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\intl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\playlistsource\obj\$(ConfigurationName)&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;Servicesource_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PlaylistCommands_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="TRUE"
@@ -37,13 +37,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib"
-				OutputFile="$(OutDir)/sbServicesource_d.dll"
+				OutputFile="$(OutDir)/sbPlaylistCommands_d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/Servicesource.pdb"
+				ProgramDatabaseFile="$(OutDir)/PlaylistCommands.pdb"
 				SubSystem="2"
-				ImportLibrary="$(OutDir)/Servicesource.lib"
+				ImportLibrary="$(OutDir)/PlaylistCommands.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -51,7 +51,7 @@
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
-copy /y $(TargetDir)sbIServicesource.xpt $(SolutionDir)dist\components
+copy /y $(TargetDir)sbIPlaylistCommands.xpt $(SolutionDir)dist\components
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
@@ -81,7 +81,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\intl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\playlistsource\obj\$(ConfigurationName)&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;Servicesource_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;PlaylistCommands_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -93,15 +93,15 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib"
-				OutputFile="$(OutDir)/sbServicesource.dll"
+				OutputFile="$(OutDir)/sbPlaylistCommands.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/Servicesource.pdb"
+				ProgramDatabaseFile="$(OutDir)/PlaylistCommands.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="$(OutDir)/Servicesource.lib"
+				ImportLibrary="$(OutDir)/PlaylistCommands.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -109,7 +109,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
-copy /y $(TargetDir)sbIServicesource.xpt $(SolutionDir)dist\components
+copy /y $(TargetDir)sbIPlaylistCommands.xpt $(SolutionDir)dist\components
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
@@ -137,7 +137,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			Name="public"
 			Filter="">
 			<File
-				RelativePath=".\public\sbIServicesource.idl">
+				RelativePath=".\public\sbIPlaylistCommands.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -164,13 +164,13 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			Name="src"
 			Filter="">
 			<File
-				RelativePath=".\src\Servicesource.cpp">
+				RelativePath=".\src\PlaylistCommandsManager.cpp">
 			</File>
 			<File
-				RelativePath=".\src\Servicesource.h">
+				RelativePath=".\src\PlaylistCommandsManager.h">
 			</File>
 			<File
-				RelativePath=".\src\ServicesourceComponent.cpp">
+				RelativePath=".\src\PlaylistCommandsComponent.cpp">
 			</File>
 		</Filter>
 	</Files>

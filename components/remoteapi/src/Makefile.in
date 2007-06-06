@@ -49,7 +49,7 @@ CPP_SRCS = sbSecurityMixin.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/components/playlistplayback/public \
-               $(DEPTH)/components/playlistsource/public \
+               $(DEPTH)/components/playlistcommands/public \
                $(DEPTH)/components/playlistreader/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/dataremote/public \

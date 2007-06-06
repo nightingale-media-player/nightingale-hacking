@@ -35,8 +35,7 @@ const sbIFileScan = new Components.Constructor("@songbirdnest.com/Songbird/FileS
 const sbIFileScanQuery = new Components.Constructor("@songbirdnest.com/Songbird/FileScanQuery;1", "sbIFileScanQuery");
 const sbIPlaylistReaderListener = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
 const sbIPlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
-const sbIPlaylistsource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=playlist", "sbIPlaylistsource");
-const sbIServicesource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=Servicesource", "sbIServicesource");
+const sbIPlaylistCommandsManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistCommandsManager;1", "sbIPlaylistCommandsManager");
 
 /**
  * These properties should be kept in sync with sbStandardProperties.h for the
