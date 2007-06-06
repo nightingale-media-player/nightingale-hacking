@@ -1104,6 +1104,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\bindings\sb-commands.xml">
+				</File>
+				<File
 					RelativePath=".\content\bindings\sb-tabbrowser.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
