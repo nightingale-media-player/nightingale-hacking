@@ -9,7 +9,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dataremote", "components\da
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "devicebase", "components\devicesobsolete\base\devicebase.vcproj", "{41A7BFF0-687D-4B2A-90AD-1022284592FF}"
 	ProjectSection(ProjectDependencies) = postProject
-		{5684DF11-A153-4DC9-BB42-B5C824BA27E5} = {5684DF11-A153-4DC9-BB42-B5C824BA27E5}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cddevice", "components\devicesobsolete\cd\cddevice.vcproj", "{A128DAEA-38CB-4F4C-B1D8-7E31CD3DBD60}"
@@ -46,10 +45,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "metadatatranscoding", "components\mediacore\transcoding\metadatatranscoding.vcproj", "{1E13C50C-B3AD-48E5-8236-C1223BA17A89}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403} = {A71C1B20-D331-4A9B-9D7D-D6910EBCB403}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "medialibrary", "components\medialibrary\medialibrary.vcproj", "{5684DF11-A153-4DC9-BB42-B5C824BA27E5}"
-	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playlistplayback", "components\playlistplayback\playlistplayback.vcproj", "{4BE75698-527D-4261-96B3-57A80F6CF1D3}"
@@ -113,6 +108,8 @@ Global
 		Debug = Debug
 		Release = Release
 	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{00A5E4C1-0FFC-4932-8E50-763DF2E57054}.Debug.ActiveCfg = Debug|Win32
 		{00A5E4C1-0FFC-4932-8E50-763DF2E57054}.Debug.Build.0 = Debug|Win32
@@ -149,10 +146,6 @@ Global
 		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403}.Release.Build.0 = Release|Win32
 		{1E13C50C-B3AD-48E5-8236-C1223BA17A89}.Debug.ActiveCfg = Debug|Win32
 		{1E13C50C-B3AD-48E5-8236-C1223BA17A89}.Release.ActiveCfg = Release|Win32
-		{5684DF11-A153-4DC9-BB42-B5C824BA27E5}.Debug.ActiveCfg = Debug|Win32
-		{5684DF11-A153-4DC9-BB42-B5C824BA27E5}.Debug.Build.0 = Debug|Win32
-		{5684DF11-A153-4DC9-BB42-B5C824BA27E5}.Release.ActiveCfg = Release|Win32
-		{5684DF11-A153-4DC9-BB42-B5C824BA27E5}.Release.Build.0 = Release|Win32
 		{4BE75698-527D-4261-96B3-57A80F6CF1D3}.Debug.ActiveCfg = Debug|Win32
 		{4BE75698-527D-4261-96B3-57A80F6CF1D3}.Debug.Build.0 = Debug|Win32
 		{4BE75698-527D-4261-96B3-57A80F6CF1D3}.Release.ActiveCfg = Release|Win32
