@@ -54,6 +54,7 @@
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIJSContextStack.h>
 #include <nsIPermissionManager.h>
+#include <nsIPrefBranch.h>
 #include <nsIPresShell.h>
 #include <nsIPrivateDOMEvent.h>
 #include <nsIProgrammingLanguage.h>
@@ -168,6 +169,8 @@ SB_IMPL_CLASSINFO( sbRemotePlayer,
                    0,
                    kRemotePlayerCID );
 
+SB_IMPL_SECURITYCHECKEDCOMP_WITH_INIT (sbRemotePlayer);
+
 sbRemotePlayer*
 sbRemotePlayer::GetInstance()
 {
@@ -258,7 +261,7 @@ sbRemotePlayer::Init()
   //
 
   // pull the dom window from the js stack and context
-  nsCOMPtr<nsPIDOMWindow> privWindow = GetWindowFromJS();
+  nsCOMPtr<nsPIDOMWindow> privWindow = sbRemotePlayer::GetWindowFromJS();
   NS_ENSURE_STATE(privWindow);
 
   //
@@ -660,7 +663,7 @@ sbRemotePlayer::FireEventToContent( const nsAString &aClass,
         NS_LossyConvertUTF16toASCII(aClass).get(),
         NS_LossyConvertUTF16toASCII(aType).get() ));
 
-  return DispatchEvent(mContentDoc, aClass, aType, PR_FALSE);
+  return sbRemotePlayer::DispatchEvent(mContentDoc, aClass, aType, PR_FALSE);
 }
 
 // ---------------------------------------------------------------------------
@@ -734,76 +737,35 @@ sbRemotePlayer::UnregisterCommands()
 //
 // ---------------------------------------------------------------------------
 
-NS_IMETHODIMP
-sbRemotePlayer::CanCreateWrapper( const nsIID *aIID, char **_retval )
+PRBool
+sbRemotePlayer::ShouldNotifyUser( PRBool aPassedSecurityCheck )
 {
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(_retval);
-  LOG(("sbRemotePlayer::CanCreateWrapper()"));
+  LOG(("sbRemotePlayer::ShouldNotifyUser()"));
+  nsresult rv;
+  nsCOMPtr<nsIPrefBranch> prefService =
+    do_GetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
-  if ( !mInitialized && NS_FAILED( Init() ) )
-    return NS_ERROR_FAILURE;
+  // build the pref key to check
+  nsCAutoString prefKey("songbird.rapi.notify.");
 
-  FireRemoteAPIAccessedEvent();
+  PRBool notify;
+  if ( aPassedSecurityCheck ) {
+    // check the pref for 'always notify me'
+    prefKey += "always";
+  } else {
+    // check the pref for 'notify if denied'
+    prefKey += "denied";
+  }
 
-  return mSecurityMixin->CanCreateWrapper( aIID, _retval );
-} 
+  // get the pref value
+  LOG(( "sbRemotePlayer::ShouldNotifyUser() - asking for pref: %s", prefKey.get() ));
+  rv = prefService->GetBoolPref(prefKey.get(), &notify);
+  NS_ENSURE_SUCCESS(rv, PR_TRUE);
 
-NS_IMETHODIMP
-sbRemotePlayer::CanCallMethod( const nsIID *aIID,
-                               const PRUnichar *aMethodName,
-                               char **_retval )
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aMethodName);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  LOG(( "sbRemotePlayer::CanCallMethod(%s)",
-        NS_LossyConvertUTF16toASCII(aMethodName).get() ));
-
-  if ( !mInitialized && NS_FAILED( Init() ) )
-    return NS_ERROR_FAILURE;
-
-  FireRemoteAPIAccessedEvent();
-
-  return mSecurityMixin->CanCallMethod( aIID, aMethodName, _retval );
+  return notify;
 }
 
-NS_IMETHODIMP
-sbRemotePlayer::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyName, char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  LOG(( "sbRemotePlayer::CanGetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
-
-  if ( !mInitialized && NS_FAILED( Init() ) )
-    return NS_ERROR_FAILURE;
-
-  FireRemoteAPIAccessedEvent();
-
-  return mSecurityMixin->CanGetProperty(aIID, aPropertyName, _retval);
-}
-
-NS_IMETHODIMP
-sbRemotePlayer::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyName, char **_retval)
-{
-  NS_ENSURE_ARG_POINTER(aIID);
-  NS_ENSURE_ARG_POINTER(aPropertyName);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  LOG(( "sbRemotePlayer::CanSetProperty(%s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
-
-  if ( !mInitialized && NS_FAILED( Init() ) )
-    return NS_ERROR_FAILURE;
-
-  FireRemoteAPIAccessedEvent();
-
-  return mSecurityMixin->CanSetProperty(aIID, aPropertyName, _retval);
-}
 
 // ---------------------------------------------------------------------------
 //
@@ -843,11 +805,11 @@ sbRemotePlayer::GetWindowFromJS() {
 }
 
 nsresult
-sbRemotePlayer::FireRemoteAPIAccessedEvent()
+sbRemotePlayer::FireRemoteAPIAccessedEvent( nsIDOMDocument *aContentDoc )
 {
   LOG(("sbRemotePlayer::FireRemoteAPIAccessedEvent()"));
 
-  return DispatchEvent( mContentDoc,
+  return sbRemotePlayer::DispatchEvent( aContentDoc,
                         RAPI_EVENT_CLASS,
                         RAPI_EVENT_TYPE,
                         PR_TRUE );

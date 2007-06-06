@@ -102,7 +102,7 @@ const static char* sPublicRProperties[] =
     "metadata:type",
     "metadata:length",
 #ifdef DEBUG
-    "metadata:filename",
+    "library:filename",
 #endif
     "classinfo:classDescription",
     "classinfo:contractID",

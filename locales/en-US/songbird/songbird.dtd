@@ -269,7 +269,10 @@
 <!ENTITY hotkeys.prefpane             "Hotkeys" >
 
 <!ENTITY rapi.prefpane.title             "RemoteAPI" >
-<!ENTITY rapi.prefpane.text              "This is cool text that talks about the cool RemoteAPI and what it does for websites, and users" >
+<!ENTITY rapi.prefpane.access.text       "Temporary text until the layout gets fixed." > 
+<!ENTITY rapi.prefpane.access.text.tmp       "This options control whether a web page can access Songbird directly through JavaScript in the page. You can block or unblock globaly using the checkboxes and then white- or black- list specific domains using the configuration buttons." > 
+<!ENTITY rapi.prefpane.notify.text       "Temporary text until the layout gets fixed." > 
+<!ENTITY rapi.prefpane.notify.text.tmp       "These options control whether you get notified when a web page attempts to access Songbird directly. Denied applies only when you have denied access by checking one of the boxes in the denied section, or specifying the domain in the configuration dialog (by clicking on the buttons above). If you get notified for Denied you have the option of being notified for all accesses, successful or not." >
 <!ENTITY rapi.disable_metadata.label     "Block website access to track metadata" >
 <!ENTITY rapi.disable_metadata.accesskey "m" >
 <!ENTITY rapi.disable_controls.label     "Block website access to playback controls" >
@@ -282,6 +285,10 @@
 <!ENTITY rapi.greylist.accesskey2         "o" >
 <!ENTITY rapi.greylist.label3             "Configure Binding" >
 <!ENTITY rapi.greylist.accesskey3         "g" >
+<!ENTITY rapi.notify.denied.label         "Notify me when web pages try to directly access Songbird and are denied." >
+<!ENTITY rapi.notify.denied.accesskey     "d" >
+<!ENTITY rapi.notify.always.label         "Notify me when web pages try to directly access Songbird in all cases." >
+<!ENTITY rapi.notify.always.accesskey     "a" >
 
 <!ENTITY prefpane.addons.label        "Add-Ons">
 

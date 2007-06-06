@@ -67,5 +67,20 @@ var gRemoteAPIPane = {
     this._showExceptions("binding");
   },
 
+  notifyDeniedPrefChanged: function ()
+  {
+    // get the checkbox elements for the related preferences
+    var deniedPref = document.getElementById("songbird.rapi.notify.denied");
+    var alwaysPref = document.getElementById("songbird.rapi.notify.always");
+
+    // sync the disabled state with the checked state of the denied pref. This
+    // will cause the second checkbox to only be active if the first is checked
+    alwaysPref.disabled = !deniedPref.value;
+
+    // if the denied pref is unchecked, uncheck the always pref too
+    if (!deniedPref.value)
+      alwaysPref.value = deniedPref.value;
+  }
+
 };
 

@@ -77,8 +77,7 @@ const static char* sPublicRProperties[] =
     "classinfo:flags" };
 
 const static char* sPublicMethods[] =
-  { "binding:setContext",
-    "binding:setCommandData",
+  { "binding:setCommandData",
     "binding:getNumCommands",
     "binding:getCommandType",
     "binding:getCommandId",

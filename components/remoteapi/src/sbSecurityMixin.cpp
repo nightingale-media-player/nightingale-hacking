@@ -137,7 +137,7 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   if (!mOuter) {
     LOG(("sbSecurityMixin::CanCreateWrapper() - ERROR, no outer"));
     *_retval = nsnull;
-    return NS_OK;
+    return NS_ERROR_FAILURE;
   }
 
   // Make sure the interface requested is one of the approved interfaces
@@ -152,7 +152,7 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   if (!canCreate) { 
     LOG(( "sbSecurityMixin::CanCreateWrapper() - DENIED, bad interface" ));
     *_retval = nsnull;
-    return NS_OK;
+    return NS_ERROR_FAILURE;
   }
 
   // Get the codebase of the current page
@@ -183,6 +183,7 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   } else {
     LOG(("sbSecurityMixin::CanCreateWrapper - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
+    return NS_ERROR_FAILURE;
   }
 
   return NS_OK;
@@ -208,7 +209,7 @@ sbSecurityMixin::CanCallMethod(const nsIID *aIID, const PRUnichar *aMethodName, 
     LOG(( "sbSecurityMixin::CanCallMethod(%s) - DENIED, unapproved method",
           NS_LossyConvertUTF16toASCII(aMethodName).get() ));
     *_retval = nsnull;
-    return NS_OK;
+    return NS_ERROR_FAILURE;
   }
 
   if ( GetPermissionForScopedName(method) ) {
@@ -217,6 +218,7 @@ sbSecurityMixin::CanCallMethod(const nsIID *aIID, const PRUnichar *aMethodName, 
   } else {
     LOG(("sbSecurityMixin::CanCallMethod - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
+    return NS_ERROR_FAILURE;
   }
   return NS_OK;
 }
@@ -244,7 +246,7 @@ sbSecurityMixin::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
     LOG(( "sbSecurityMixin::CanGetProperty(%s) - DENIED, unapproved property",
           NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
     *_retval = nsnull;
-    return NS_OK;
+    return NS_ERROR_FAILURE;
   }
 
   if ( GetPermissionForScopedName(prop) ) {
@@ -253,6 +255,7 @@ sbSecurityMixin::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   } else {
     LOG(("sbSecurityMixin::CanGetProperty - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
+    return NS_ERROR_FAILURE;
   }
   return NS_OK;
 }
@@ -280,7 +283,7 @@ sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
     LOG(( "sbSecurityMixin::CanSetProperty(%s) - DENIED, unapproved property",
           NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
     *_retval = nsnull;
-    return NS_OK;
+    return NS_ERROR_FAILURE;
   }
 
   if ( GetPermissionForScopedName(prop) ) {
@@ -289,6 +292,7 @@ sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   } else {
     LOG(("sbSecurityMixin::CanSetProperty - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
+    return NS_ERROR_FAILURE;
   }
   return NS_OK;
 }

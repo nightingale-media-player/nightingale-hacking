@@ -606,30 +606,57 @@
       <method name="onRemoteAPI">
         <parameter name="event" />
         <body><![CDATA[
-          // Add code here to check the prefs system to see if we should notify
-          // the user that the RemoteAPI was accessed. Do it via the
-          // notificationbox
-          // todo: get strings from stringBundle
-          //       talk to koshi and see if there is any particular styling/messaging
-          //       see browser/base/content/browser.js#738
+          // todo: 
           //       hook up an action to do when the user clicks through, probably launch prepanel
+
+          try {
+            var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                     .getService(Components.interfaces.nsIStringBundleService);
+            var songbirdStrings = sbs.createBundle(
+                               "chrome://songbird/locale/songbird.properties");
+            var brandingStrings = sbs.createBundle(
+                                  "chrome://branding/locale/brand.properties");
+          } catch (e) { return; }
+
           var notificationName = "remoteapi-called";
-          var messageString = "RemoteAPI was called";
-          var browser = event.currentTarget.gBrowser.getBrowserForDocument(event.target);
+          var message = "Web Page has accessed Songbird Directly";
+          var buttonLabel = "Preferences";
+          var buttonAccessKey = "P";
+          try {
+            message = songbirdStrings
+                                .GetStringFromName("rapi.access.message.text");
+            buttonLabel = songbirdStrings
+                                .GetStringFromName("rapi.access.button.label");
+            buttonAccessKey = songbirdStrings
+                            .GetStringFromName("rapi.access.button.accessKey");
+            var iconURL = brandingStrings
+                                     .GetStringFromName("rapi.access.iconURL");
+          } catch (e) { }
+
+          var buttons = [{ label: buttonLabel,
+                           accessKey: buttonAccessKey,
+                           popup: null,    // point to a popup xul widget
+                           callback: function() { 
+                                          SBOpenPreferences("paneRemoteAPI"); }
+                        }];
+
+          var browser = event.currentTarget
+                             .gBrowser.getBrowserForDocument(event.target);
           var notificationBox = browser.parentNode;
-          var notification = notificationBox.getNotificationWithValue(notificationName);
+          var notification = notificationBox
+                                   .getNotificationWithValue(notificationName);
           if (!notification) {
             // if there isn't a notfication object, make one and append it
             const priority = notificationBox.PRIORITY_WARNING_MEDIUM;
-            notificationBox.appendNotification( messageString,
+            notificationBox.appendNotification( message,
                                                 notificationName,
-                                                null,
+                                                iconURL,
                                                 priority,
-                                                null);
+                                                buttons);
           } else {
             // if there is a notification object set it's text.
             // this has the side effect of showing it if it was dismissed
-            notification.message = messageString;
+            notification.message = message;
           }
         ]]></body>
       </method>

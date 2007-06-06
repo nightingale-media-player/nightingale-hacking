@@ -27,6 +27,8 @@
 #ifndef __SB_REMOTE_PLAYER_H__
 #define __SB_REMOTE_PLAYER_H__
 
+#include "sbRemoteLibrary.h"
+
 #include <sbIDataRemote.h>
 #include <sbIPlaylistPlayback.h>
 #include <sbIPlaylistWidget.h>
@@ -92,13 +94,18 @@ public:
 protected:
   virtual ~sbRemotePlayer();
 
+  static PRBool ShouldNotifyUser( PRBool aResult );
+  static already_AddRefed<nsPIDOMWindow> GetWindowFromJS();
+  static nsresult FireRemoteAPIAccessedEvent( nsIDOMDocument *aContentDocument );
+  static nsresult DispatchEvent( nsIDOMDocument *aDocument,
+                                 const nsAString &aClass,
+                                 const nsAString &aType,
+                                 PRBool aIsTrusted );
+
   // Helper Methods
-  nsresult FireRemoteAPIAccessedEvent();
-  already_AddRefed<nsPIDOMWindow> GetWindowFromJS();
-  nsresult DispatchEvent(nsIDOMDocument *aDocument, const nsAString &aClass, const nsAString &aType, PRBool aIsTrusted);
   nsresult Init();
   nsresult AcquirePlaylistWidget();
-  nsresult RegisterCommands(PRBool);
+  nsresult RegisterCommands( PRBool aUseDefaultCommands );
   nsresult UnregisterCommands();
 
   // Data members
@@ -131,6 +138,70 @@ protected:
   nsCOMPtr<sbIDataRemote> mCurrentAlbum;
   nsCOMPtr<sbIDataRemote> mCurrentTrack;
 };
+
+#define SB_IMPL_SECURITYCHECKEDCOMP_WITH_INIT(_class)                \
+NS_IMETHODIMP \
+_class::CanCreateWrapper( const nsIID *aIID, char **_retval ) \
+{ \
+  NS_ENSURE_ARG_POINTER(aIID); \
+  NS_ENSURE_ARG_POINTER(_retval); \
+  if ( !mInitialized && NS_FAILED( Init() ) ) { \
+    return NS_ERROR_FAILURE; \
+  }                                                                            \
+  nsresult rv = mSecurityMixin->CanCreateWrapper( aIID, _retval ); \
+  if ( sbRemotePlayer::ShouldNotifyUser( NS_SUCCEEDED(rv) ) ) { \
+    sbRemotePlayer::FireRemoteAPIAccessedEvent(mContentDoc); \
+  }                                                                            \
+  return rv; \
+}  \
+NS_IMETHODIMP \
+_class::CanCallMethod( const nsIID *aIID, \
+                               const PRUnichar *aMethodName, \
+                               char **_retval ) \
+{ \
+  NS_ENSURE_ARG_POINTER(aIID); \
+  NS_ENSURE_ARG_POINTER(aMethodName); \
+  NS_ENSURE_ARG_POINTER(_retval); \
+  if ( !mInitialized && NS_FAILED( Init() ) ) { \
+    return NS_ERROR_FAILURE; \
+  }                                                                            \
+  nsresult rv = mSecurityMixin->CanCallMethod( aIID, aMethodName, _retval ); \
+  if ( sbRemotePlayer::ShouldNotifyUser( NS_SUCCEEDED(rv) ) ) { \
+    sbRemotePlayer::FireRemoteAPIAccessedEvent(mContentDoc); \
+  }                                                                            \
+  return rv; \
+} \
+NS_IMETHODIMP \
+_class::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyName, char **_retval) \
+{ \
+  NS_ENSURE_ARG_POINTER(aIID); \
+  NS_ENSURE_ARG_POINTER(aPropertyName); \
+  NS_ENSURE_ARG_POINTER(_retval); \
+  if ( !mInitialized && NS_FAILED( Init() ) ) { \
+    return NS_ERROR_FAILURE; \
+  }                                                                            \
+  nsresult rv = mSecurityMixin->CanGetProperty(aIID, aPropertyName, _retval); \
+  if ( sbRemotePlayer::ShouldNotifyUser( NS_SUCCEEDED(rv) ) ) { \
+    sbRemotePlayer::FireRemoteAPIAccessedEvent(mContentDoc); \
+  }                                                                            \
+  return rv; \
+} \
+NS_IMETHODIMP \
+_class::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyName, char **_retval) \
+{ \
+  NS_ENSURE_ARG_POINTER(aIID); \
+  NS_ENSURE_ARG_POINTER(aPropertyName); \
+  NS_ENSURE_ARG_POINTER(_retval); \
+  if ( !mInitialized && NS_FAILED( Init() ) ) { \
+    return NS_ERROR_FAILURE; \
+  }                                                                            \
+  nsresult rv = mSecurityMixin->CanSetProperty(aIID, aPropertyName, _retval); \
+  if ( sbRemotePlayer::ShouldNotifyUser( NS_SUCCEEDED(rv) ) ) { \
+    sbRemotePlayer::FireRemoteAPIAccessedEvent(mContentDoc); \
+  }                                                                            \
+  return rv; \
+}
+
 
 #endif // __SB_REMOTE_PLAYER_H__
 
