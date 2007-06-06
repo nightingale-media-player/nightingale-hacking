@@ -670,7 +670,7 @@ nsresult sbMetadataJob::FinishJob()
 
   rv = mMainThreadQuery->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = mMainThreadQuery->AddQuery( dropTable );
+  rv = mMainThreadQuery->AddQuery( delTracking );
   NS_ENSURE_SUCCESS(rv, rv);
   return mMainThreadQuery->Execute( &error );
 }
