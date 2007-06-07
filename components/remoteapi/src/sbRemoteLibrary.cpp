@@ -118,11 +118,11 @@ const static char* sPublicMethods[] =
     "binding:addMediaListByURL",
 
     // sbIMediaList
-    "binding:contains"
-    "binding:add"
-    "binding:addAll"
-    "binding:addSome"
-    "binding:remove"
+    "binding:contains",
+    "binding:add",
+    "binding:addAll",
+    "binding:addSome",
+    "binding:remove",
     "binding:removeByIndex"
   };
 
