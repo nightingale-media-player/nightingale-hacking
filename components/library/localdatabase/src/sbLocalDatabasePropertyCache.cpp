@@ -471,12 +471,20 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
             rv = result->GetRowCell(row, i + 1, value);
             NS_ENSURE_SUCCESS(rv, rv);
 
-            // XXXben FIX ME
-            sbLocalDatabaseResourcePropertyBag* bagClassPtr =
-              NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag.get());
-            rv = bagClassPtr->PutValue(sStaticProperties[i].mID, value);
+            // XXXsteve UGH We don't want to add stuff into the propery bag
+            // for top level properties that are null.  However, the dbengine
+            // does not give us a way to determine if something is null so
+            // we shall test for empty for now.  We will probably fix this
+            // by using SetVoid/IsVoid, but that depends on bmo 380783
+            if (!value.IsEmpty()) {
 
-            NS_ENSURE_SUCCESS(rv, rv);
+              // XXXben FIX ME
+              sbLocalDatabaseResourcePropertyBag* bagClassPtr =
+                NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag.get());
+              rv = bagClassPtr->PutValue(sStaticProperties[i].mID, value);
+  
+              NS_ENSURE_SUCCESS(rv, rv);
+            }
           }
 
         }
@@ -622,15 +630,19 @@ sbLocalDatabasePropertyCache::Write()
   nsresult rv = NS_OK;
   nsTArray<nsString> dirtyGuids;
 
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeQuery(NS_LITERAL_STRING("begin"), getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
   //Lock it.
   nsAutoLock lock(mDirtyLock);
 
   //Enumerate dirty GUIDs
   PRUint32 dirtyGuidCount = mDirty.EnumerateEntries(EnumDirtyGuids, (void *) &dirtyGuids);
+
+  if (!dirtyGuidCount)
+    return NS_OK;
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeQuery(NS_LITERAL_STRING("begin"), getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
 
   //For each GUID, there's a property bag that needs to be processed as well.
   for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
@@ -744,37 +756,34 @@ sbLocalDatabasePropertyCache::Write()
     }
   }
 
-  if(dirtyGuidCount)
-  {
-    PRInt32 dbOk;
+  PRInt32 dbOk;
 
-    rv = query->AddQuery(NS_LITERAL_STRING("commit"));
-    NS_ENSURE_SUCCESS(rv, rv);
+  rv = query->AddQuery(NS_LITERAL_STRING("commit"));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = query->Execute(&dbOk);
-    NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_SUCCESS(dbOk, dbOk);
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
 
-    rv = query->WaitForCompletion(&dbOk);
-    NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_SUCCESS(dbOk, dbOk);
+  rv = query->WaitForCompletion(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
 
-    for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
-      nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-      if (mCache.Get(dirtyGuids[i], getter_AddRefs(bag))) {
+  for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
+    nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+    if (mCache.Get(dirtyGuids[i], getter_AddRefs(bag))) {
 
-        // XXXben FIX ME
-        sbLocalDatabaseResourcePropertyBag* bagLocal = 
-          NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag *, bag.get());
-        bagLocal->SetDirty(PR_FALSE);
-      }
+      // XXXben FIX ME
+      sbLocalDatabaseResourcePropertyBag* bagLocal = 
+        NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag *, bag.get());
+      bagLocal->SetDirty(PR_FALSE);
     }
-    
-    //Clear dirty guid hastable.
-    mDirty.Clear();
-
-    mLibrary->IncrementDatabaseDirtyItemCounter(dirtyGuidCount);
   }
+  
+  //Clear dirty guid hastable.
+  mDirty.Clear();
+
+  mLibrary->IncrementDatabaseDirtyItemCounter(dirtyGuidCount);
 
   return rv;
 }

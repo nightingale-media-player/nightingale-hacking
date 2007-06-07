@@ -100,8 +100,8 @@ protected:
 
   nsresult MakeStandardQuery(sbIDatabaseQuery** _retval);
 
-  nsresult CopyStandardProperties(sbIMediaItem* aSourceItem,
-                                  sbIMediaItem* aTargetItem);
+  nsresult CopyAllProperties(sbIMediaItem* aSourceItem,
+                             sbIMediaItem* aTargetItem);
 
 private:
 
@@ -137,8 +137,6 @@ protected:
   PRBool mLockedEnumerationActive;
 
 private:
-  static PRInt32 sInstanceCount;
-
   PRInt32 mBatchCount;
 };
 

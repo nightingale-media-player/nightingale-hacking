@@ -31,6 +31,7 @@
 
 #include "nsISupports.idl"
 
+interface nsIStringEnumerator;
 interface nsIURI;
 
 /**
@@ -71,6 +72,12 @@ interface sbILibraryResource : nsISupports
    * This boolean is meaningless if you have writeThrough enabled.
    */
   readonly attribute boolean writePending;
+
+  /**
+   * \brief Returns a string enumerator of the names of all the properties
+   *        set on this resource
+   */
+  readonly attribute nsIStringEnumerator propertyNames;
 
   /**
    * \brief Get the value of a property of this resource

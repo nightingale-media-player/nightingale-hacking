@@ -231,7 +231,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
       PRBool success = mItemsToCreate.Get(mediaItem, getter_AddRefs(newMediaItem));
       NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
-      rv = mFriendList->CopyStandardProperties(mediaItem, newMediaItem);
+      rv = mFriendList->CopyAllProperties(mediaItem, newMediaItem);
       NS_ENSURE_SUCCESS(rv, rv);
 
       //Call the copy listener for this media list at this time.

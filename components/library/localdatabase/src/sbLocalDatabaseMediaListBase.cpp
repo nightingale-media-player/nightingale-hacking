@@ -67,33 +67,6 @@
 
 #define DEFAULT_PROPERTIES_URL "chrome://songbird/locale/songbird.properties"
 
-static const char* sStandardPropertiesToCopy[] = {
-  SB_PROPERTY_MEDIALISTNAME,
-  SB_PROPERTY_TRACKNAME,
-  SB_PROPERTY_ALBUMNAME,
-  SB_PROPERTY_ARTISTNAME,
-  SB_PROPERTY_DURATION,
-  SB_PROPERTY_GENRE,
-  SB_PROPERTY_TRACK,
-  SB_PROPERTY_YEAR,
-  SB_PROPERTY_DISCNUMBER,
-  SB_PROPERTY_TOTALDISCS,
-  SB_PROPERTY_TOTALTRACKS,
-  SB_PROPERTY_ALBUMARTURL,
-  SB_PROPERTY_RATING,
-  SB_PROPERTY_ORIGINURL
-};
-
-// XXXben Don't try to use this array until after at least one call to
-//        CopyStandardProperties. That function initializes this array. I guess
-//        we could separate that out into another function but no one else
-//        should ever need it.
-static const nsString*
-sPropertyKeys[NS_ARRAY_LENGTH(sStandardPropertiesToCopy)] = {0};
-
-// Keep track of the number of instances so that we can free sPropertyKeys.
-PRInt32 sbLocalDatabaseMediaListBase::sInstanceCount = 0;
-
 NS_IMPL_THREADSAFE_ADDREF(sbLocalDatabaseMediaListBase)
 NS_IMPL_THREADSAFE_RELEASE(sbLocalDatabaseMediaListBase)
 
@@ -106,17 +79,12 @@ sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
   mLockedEnumerationActive(PR_FALSE),
   mBatchCount(0)
 {
-  PR_AtomicIncrement(&sInstanceCount);
 }
 
 sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
 {
   if (mFullArrayMonitor) {
     nsAutoMonitor::DestroyMonitor(mFullArrayMonitor);
-  }
-
-  if (PR_AtomicDecrement(&sInstanceCount) == 0) {
-    delete[] &sPropertyKeys;
   }
 }
 
@@ -274,32 +242,28 @@ sbLocalDatabaseMediaListBase::MakeStandardQuery(sbIDatabaseQuery** _retval)
 }
 
 nsresult
-sbLocalDatabaseMediaListBase::CopyStandardProperties(sbIMediaItem* aSourceItem,
-                                                     sbIMediaItem* aTargetItem)
+sbLocalDatabaseMediaListBase::CopyAllProperties(sbIMediaItem* aSourceItem,
+                                                sbIMediaItem* aTargetItem)
 {
-  PRUint32 propertyCount = NS_ARRAY_LENGTH(sPropertyKeys);
+  NS_ASSERTION(aSourceItem, "aSourceItem is null");
+  NS_ASSERTION(aTargetItem, "aTargetItem is null");
 
-  for (PRUint32 index = 0; index < propertyCount; index++) {
-    // Convert the ASCII to UTF16 if we haven't done so already.
-    if (!sPropertyKeys[index]) {
-      nsString* newString = new nsString();
-      NS_ENSURE_TRUE(newString, NS_ERROR_FAILURE);
+  nsCOMPtr<nsIStringEnumerator> names;
+  nsresult rv = aSourceItem->GetPropertyNames(getter_AddRefs(names));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-      newString->Assign(NS_ConvertASCIItoUTF16(sStandardPropertiesToCopy[index]));
+  nsAutoString name;
+  while (NS_SUCCEEDED(names->GetNext(name))) {
+    nsAutoString value;
+    rv = aSourceItem->GetProperty(name, value);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      sPropertyKeys[index] = newString;
-    }
-
-    nsAutoString propertyValue;
-    nsresult rv = aSourceItem->GetProperty(*sPropertyKeys[index],
-                                           propertyValue);
-    if (NS_FAILED(rv)) {
-      continue;
-    }
-
-    rv = aTargetItem->SetProperty(*sPropertyKeys[index], propertyValue);
+    rv = aTargetItem->SetProperty(name, value);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  rv = aTargetItem->Write();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

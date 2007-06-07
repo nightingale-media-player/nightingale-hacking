@@ -924,6 +924,13 @@ sbLocalDatabaseLibrary::RegisterDefaultMediaListFactories()
   rv = RegisterMediaListFactory(factory);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  factory =
+    do_GetService(SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RegisterMediaListFactory(factory);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -979,7 +986,7 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
 
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = CopyStandardProperties(aMediaItem, newItem);
+  rv = CopyAllProperties(aMediaItem, newItem);
   NS_ENSURE_SUCCESS(rv, rv);
 
   newItem.swap(*_retval);
@@ -1441,7 +1448,7 @@ sbLocalDatabaseLibrary::CopyMediaList(const nsAString& aType,
   nsCOMPtr<sbIMediaItem> newItem = do_QueryInterface(newList, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = CopyStandardProperties(sourceItem, newItem);
+  rv = CopyAllProperties(sourceItem, newItem);
   NS_ENSURE_SUCCESS(rv, rv);
 
   newList = do_QueryInterface(newItem, &rv);

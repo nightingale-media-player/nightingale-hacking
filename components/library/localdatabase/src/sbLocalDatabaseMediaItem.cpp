@@ -403,6 +403,30 @@ sbLocalDatabaseMediaItem::Write()
  * See sbILibraryResource
  */
 NS_IMETHODIMP
+sbLocalDatabaseMediaItem::GetPropertyNames(nsIStringEnumerator** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv = GetPropertyBag();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoLock lock(mPropertyBagLock);
+
+  if(mPropertyBag) {
+    rv = mPropertyBag->GetNames(_retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+/**
+ * See sbILibraryResource
+ */
+NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName, 
                                       nsAString& _retval)
 {
