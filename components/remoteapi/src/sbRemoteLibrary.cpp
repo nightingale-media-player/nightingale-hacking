@@ -112,11 +112,19 @@ const static char* sPublicRProperties[] =
 
 const static char* sPublicMethods[] =
   { "binding:connectToMediaLibrary",
-    "binding:addMediaItem",
     "binding:createMediaList",
     "binding:createMediaListFromFile",
     "binding:createMediaItem",
-    "binding:addMediaListByURL" };
+    "binding:addMediaListByURL",
+
+    // sbIMediaList
+    "binding:contains"
+    "binding:add"
+    "binding:addAll"
+    "binding:addSome"
+    "binding:remove"
+    "binding:removeByIndex"
+  };
 
 NS_IMPL_ISUPPORTS7( sbRemoteLibrary,
                     nsIClassInfo,
