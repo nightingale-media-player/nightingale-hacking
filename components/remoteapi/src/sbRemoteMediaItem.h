@@ -45,7 +45,7 @@
   NS_IMETHOD GetWriteThrough(PRBool *aWriteThrough) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetWriteThrough(aWriteThrough); } \
   NS_IMETHOD SetWriteThrough(PRBool aWriteThrough) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetWriteThrough(aWriteThrough); } \
   NS_IMETHOD GetWritePending(PRBool *aWritePending) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetWritePending(aWritePending); } \
-  NS_IMETHOD GetNames(nsIStringEnumerator ** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetNames(_retval); } \
+  NS_IMETHOD GetPropertyNames(nsIStringEnumerator ** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPropertyNames(_retval); } \
   NS_IMETHOD GetProperty(const nsAString & aName, nsAString & _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProperty(aName, _retval); } \
   NS_IMETHOD Write(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Write(); } \
   NS_IMETHOD Equals(sbILibraryResource *aOtherLibraryResource, PRBool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Equals(aOtherLibraryResource, _retval); }
