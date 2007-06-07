@@ -154,12 +154,12 @@ public:
   : mList(aList)
   {
     NS_ASSERTION(aList, "Null pointer!");
-    mList->NotifyListenersBatchBegin(mList);
+    mList->BeginUpdateBatch();
   }
 
   ~sbAutoBatchHelper()
   {
-    mList->NotifyListenersBatchEnd(mList);
+    mList->EndUpdateBatch();
   }
 
 private:
