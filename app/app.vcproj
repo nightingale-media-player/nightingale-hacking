@@ -1318,6 +1318,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				Name="scripts"
 				Filter="">
 				<File
+					RelativePath=".\content\scripts\addToPlaylist.js">
+				</File>
+				<File
 					RelativePath=".\content\scripts\appInit.js">
 					<FileConfiguration
 						Name="Debug|Win32">

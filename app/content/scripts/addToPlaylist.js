@@ -36,9 +36,33 @@ const ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist_createne
 var addToPlaylistHelper = {
   m_listofplaylists: null,
   m_commands: null,
-  
-  makeListOfPlaylists: function( aCommands ) {
+
+  init: function(aCommands) {
+    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                        .getService(Components.interfaces.sbILibraryManager);
+    libraryManager.addListener(this);
     this.m_commands = aCommands;
+    this.makeListOfPlaylists();
+  },
+
+  shutdown: function() {
+    this.removeListeners();
+  },
+  
+  removeListeners: function() {
+    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                        .getService(Components.interfaces.sbILibraryManager);
+    
+    var libs = libraryManager.getLibraries();
+    while (libs.hasMoreElements()) {
+      var library = libs.getNext();
+      library.removeListener(this);
+    }
+  },
+    
+  makeListOfPlaylists: function( ) {
+    // no need to remove listeners, the library is fine with multiple additions of the same items
+    // this.removeListeners();
     
     // todo: make this smarter :(
     var typearray = new Array('simple');
@@ -55,6 +79,7 @@ var addToPlaylistHelper = {
     var libs = libraryManager.getLibraries();
     while (libs.hasMoreElements()) {
       var library = libs.getNext();
+      library.addListener(this);
       this.makePlaylistsForLibrary(library, typearray);
     }
     
@@ -108,6 +133,12 @@ var addToPlaylistHelper = {
   },
 
   handleGetMenu: function(aSubMenu) {
+    if (this.m_listofplaylists == null) {
+      // handleGetMenu called before makeListOfPlaylists, this would cause infinite recursion :
+      // the command object would not find the menu either, would return null to getMenu which 
+      // corresponds to the root menu, and it'd recurse infinitly.
+      throw Components.results.NS_ERROR_FAILURE; 
+    }
     if (aSubMenu == ADDTOPLAYLIST_MENU_ID) return this.m_listofplaylists;
     return null;
   },
@@ -177,6 +208,84 @@ var addToPlaylistHelper = {
       var added = medialist.length - oldLength;
       sourceplaylist._reportAddedTracks(added, 0, medialist.name);
     }
-  }
+  },
+  
+  //-----------------------------------------------------------------------------
+  _inbatch       : false,
+  _deferredevent : false,
+  
+  refreshCommands: function() {
+    if (this.m_commands) {
+      if (this.m_commands.m_Context && this.m_commands.m_Context.m_Playlist) {
+        this.makeListOfPlaylists();
+        this.m_commands.m_Context.m_Playlist.refreshCommands();
+      }
+    }
+  },
+
+  onUpdateEvent: function(item) {
+    if (item instanceof Components.interfaces.sbIMediaList) {
+      if (this._inbatch) {
+        // if we are in a batch, remember that we saw a playlist event in it
+        this._deferredevent = true;
+      } else {
+        // if we're not in a batch, proceed with refreshing the commands
+        this.refreshCommands();
+      }
+    }
+  },
+
+  QueryInterface: function QueryInterface(iid) {
+    if (!iid.equals(Ci.sbIMediaListListener) &&
+        !iid.equals(Ci.sbILibraryManagerListener) &&
+        !iid.equals(Ci.nsISupports))
+      throw Cr.NS_ERROR_NO_INTERFACE;
+    return this;
+  },
+
+  onItemAdded: function onItemAdded(list, item) {
+    this.onUpdateEvent(item);
+  },
+  
+  onBeforeItemRemoved: function onBeforeItemRemoved(list, item) {
+  },
+  
+  onAfterItemRemoved: function onAfterItemRemoved(list, item) {
+    this.onUpdateEvent(item);
+  },
+  
+  onItemUpdated: function onItemUpdated(list, item) {
+    this.onUpdateEvent(item);
+  },
+
+  onListCleared: function onListCleared(list) {
+    this.onUpdateEvent(list);
+  },
+
+  onBatchBegin: function onBatchBegin(list) {
+    // start deferring the events
+    this._inbatch = true;
+    this._deferredevent = false;
+  },
+  
+  onBatchEnd: function onBatchEnd(list) {
+    // stop deferring the events
+    this._inbatch = false;
+    // if an event was deferred, handle it
+    if (this._deferredevent) {
+      // since we're no longer in a batch, this does call refreshCommands
+      this.onUpdateEvent(list); 
+    }
+    this._deferredevent = false;
+  },
+  
+  onLibraryRegistered: function onLibraryRegistered(library) {
+    this.onUpdateEvent(library); 
+  },
+
+  onLibraryUnregistered: function onLibraryUnregistered(library) {
+    this.onUpdateEvent(library); 
+  },
+
 };
 

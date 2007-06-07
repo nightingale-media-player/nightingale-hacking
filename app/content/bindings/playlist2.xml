@@ -931,10 +931,9 @@
           // In with the new
           this._commands = this.commands = commands;
           this._toolbar.hidden = true;
-          this._toolbar.bind(this.mediaListView.mediaList, this, commands);
+          this._toolbar.bind(this.mediaListView.mediaList, this, commands ? commands.duplicate() : null);
           this._toolbar.refreshCommands();
-          this._commandmenuitems.bind(this.mediaListView.mediaList, this, commands);
-          this.rescanCommands();
+          this._commandmenuitems.bind(this.mediaListView.mediaList, this, commands ? commands.duplicate() : null);
         ]]>
         </body>
       </method>

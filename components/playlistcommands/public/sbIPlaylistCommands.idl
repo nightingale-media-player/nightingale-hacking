@@ -62,38 +62,20 @@ duplicate: function() {
 * 
 * \sa playlist.xml, playlist_test.xul
 */
-[scriptable, uuid(f7cef15a-0d94-423f-a825-dd36047fe1bb)]
+[scriptable, uuid(5a8f8e20-4212-47c6-8ea8-691ab359478b)]
 interface sbIPlaylistCommands : nsISupports 
 {
   /**
   * \brief Be informed when a set of commands are attached to a playlist element.
   *
   * When a playlist element is about to use an sbIPlaylistCommands instance,
-  * after it has been duplicated, the element will pass itself as the param
-  * to this method.  The implementor may save the playlist object for later
-  * reference and use.
+  * after it has been duplicated, the element will pass a context to this method.
+  * The implementor may save the context information (for instance, a reference to 
+  * the playlist on which the commands are to act) for later reference and use.
   *
-  * \param node The playlist object
+  * \param node The context object
   */
   void setContext( in sbIPlaylistCommandsContext aContext );
-
-  /**
-  * \brief Called before the host begins constructing the UI for the commands
-  *
-  * JS implementors may ommit implementation of this method
-  *
-  * \param aHost The type of object hosting the command
-  */
-  void onBeforeConstruction( in AString aHost );
-
-  /**
-  * \brief Called after the host begins has constructed the UI for the commands
-  *
-  * JS implementors may ommit implementation of this method
-  *
-  * \param aHost The type of object hosting the command
-  */
-  void onAfterConstruction( in AString aHost );
 
   /**
   * \brief Return the number of command elements to be displayed.
@@ -290,6 +272,24 @@ interface sbIPlaylistCommands : nsISupports
   * \return A new copy of this object
   */
   sbIPlaylistCommands duplicate( );
+
+  /**
+  * \brief Initialization function
+  *
+  * When a command object is duplicated and about to be used by a command instantiator,
+  * the instatiator first calls the init() method on it.
+  *
+  * \param aHost The instantiator's host type (menu, toolbar, ...)
+  */
+  void initCommands( in AString aHost );
+
+  /**
+  * \brief Shutdown function
+  *
+  * When a command instantiator is done with a command object, it calls its shutdown() method
+  * before removing it from its internal lists.
+  */
+  void shutdownCommands( );
 };
 
 /**

@@ -138,6 +138,9 @@ try
       }
       return obj;
     },
+
+    initCommands: function(aHost) {},
+    shutdownCommands: function() {},
     
     setContext: function( context )
     {

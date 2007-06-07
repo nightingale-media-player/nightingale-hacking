@@ -127,7 +127,8 @@ try
       var cmds;
       
       // ADDTOPLAYLIST
-      if (cmds = addToPlaylistHelper.handleGetMenu(aSubMenu)) return cmds;
+      cmds = addToPlaylistHelper.handleGetMenu(aSubMenu);
+      if (cmds) return cmds;
       
       switch (aSubMenu) {
         default:
@@ -137,11 +138,6 @@ try
       return cmds;
     },
     
-    onBeforeConstruction: function(aHost) {
-      // ADDTOPLAYLIST INIT
-      addToPlaylistHelper.makeListOfPlaylists(SBLibraryCommands);
-    },
-
     getNumCommands: function( aSubMenu, aHost )
     {
       var cmds = this._getMenu(aSubMenu);
@@ -330,6 +326,9 @@ try
       }
       return obj;
     },
+
+    initCommands: function(aHost) { addToPlaylistHelper.init(this); },
+    shutdownCommands: function() { addToPlaylistHelper.shutdown(); },
     
     setContext: function( context )
     {

@@ -221,6 +221,9 @@ var SBCDCommands =
     return obj;
   },
   
+  initCommands: function(aHost) {},
+  shutdownCommands: function() {},
+  
   setPlaylist: function( playlist )
   {
     // Ah.  Sometimes, things are being secure.
@@ -365,6 +368,9 @@ var SBRippingCommands =
     }
     return obj;
   },
+
+  initCommands: function(aHost) {},
+  shutdownCommands: function() {},
   
   setPlaylist: function( playlist )
   {
@@ -685,6 +691,9 @@ var SBCDBurningCommands =
     }
     return obj;
   },
+
+  initCommands: function(aHost) {},
+  shutdownCommands: function() {},
   
   setPlaylist: function( playlist )
   {
@@ -981,6 +990,9 @@ var theSBWMDCommands =
     return obj;
   },
   
+  initCommands: function(aHost) {},
+  shutdownCommands: function() {},
+
   setPlaylist: function( playlist )
   {
     // Ah.  Sometimes, things are being secure.

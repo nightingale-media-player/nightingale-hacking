@@ -309,6 +309,9 @@ try
       }
       return obj;
     },
+
+    initCommands: function(aHost) {},
+    shutdownCommands: function() {},
     
     setMediaList: function( playlist )
     {

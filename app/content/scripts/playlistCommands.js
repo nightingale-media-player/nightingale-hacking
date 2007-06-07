@@ -167,7 +167,8 @@ var SBWebPlaylistCommands =
     var cmds;
     
     // ADDTOPLAYLIST
-    if (cmds = addToPlaylistHelper.handleGetMenu(aSubMenu)) return cmds;
+    cmds = addToPlaylistHelper.handleGetMenu(aSubMenu);
+    if (cmds) return cmds;
     
     switch (aSubMenu) {
       default:
@@ -175,11 +176,6 @@ var SBWebPlaylistCommands =
         break;
     }
     return cmds;
-  },
-
-  onBeforeConstruction: function(aHost) {
-    // ADDTOPLAYLIST INIT
-    addToPlaylistHelper.makeListOfPlaylists(SBWebPlaylistCommands);
   },
 
   getNumCommands: function( aSubMenu, aHost )
@@ -432,6 +428,9 @@ var SBWebPlaylistCommands =
     }
     return obj;
   },
+
+  initCommands: function(aHost) { addToPlaylistHelper.init(SBWebPlaylistCommands); },
+  shutdownCommands: function() { addToPlaylistHelper.shutdown(); },
   
   setContext: function( context )
   {
@@ -803,6 +802,9 @@ var SBDownloadCommands =
     }
     return obj;
   },
+
+  initCommands: function(aHost) {},
+  shutdownCommands: function() {},
   
   setContext: function( context )
   {
@@ -1119,6 +1121,9 @@ var SBDefaultCommands =
     }
     return obj;
   },
+
+  initCommands: function(aHost) {},
+  shutdownCommands: function() {},
   
   setContext: function( context )
   {
@@ -1333,6 +1338,9 @@ var SBDefaultServiceCommands =
     }
     return obj;
   },
+
+  initCommands: function(aHost) {},
+  shutdownCommands: function() {},
   
   setContext: function( context )
   {

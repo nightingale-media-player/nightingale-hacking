@@ -428,18 +428,6 @@ sbRemoteCommands::RefreshCustomCommand( nsIDOMNode *aCustomCommandElement,
 
 
 NS_IMETHODIMP
-sbRemoteCommands::OnBeforeConstruction( const nsAString &aHost )
-{
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::OnAfterConstruction( const nsAString &aHost )
-{
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbRemoteCommands::OnCommand( const nsAString &aID,
                              const nsAString &aValue,
                              const nsAString &aHost )
@@ -453,6 +441,18 @@ sbRemoteCommands::OnCommand( const nsAString &aID,
   nsCOMPtr<sbIRemotePlayer> owner( do_QueryReferent( mWeakOwner, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
   return owner->FireEventToContent( NS_LITERAL_STRING("Events"), aID );
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::InitCommands( const nsAString &aHost )
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::ShutdownCommands( )
+{
+  return NS_OK;
 }
 
 NS_IMETHODIMP
