@@ -1330,9 +1330,9 @@
               var mediafound = SBString("faceplate.mediafound", "Media Found");
               var percent = Math.round(gBrowser.mCurrentTab.scanProgress*100);
               displayValue = mediafound + ': ' + percent + '%';
-            } else if (gBrowser.currentPlaylist &&
-                       gBrowser.currentPlaylist.mediaListView &&
-                       gBrowser.currentPlaylist.mediaListView.length) {
+            } else if (gBrowser.currentPlaylist != null &&
+                       gBrowser.currentPlaylist.mediaListView != null &&
+                       gBrowser.currentPlaylist.mediaListView.length > 0) {
               // display media list length
               displayValue = SBString("faceplate.items", "items") + ': ' +
                   gBrowser.currentPlaylist.mediaListView.length;
@@ -1341,7 +1341,7 @@
           }
           catch ( err )
           {
-            alert( "PFU - " + err );
+            alert( "numplaylistitems-label\n\n" + err );
           }
           ]]>
         </body>
