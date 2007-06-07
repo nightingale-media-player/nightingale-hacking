@@ -72,9 +72,9 @@ const SB_PROPERTY_PLAYCOUNT            = SB_PROPERTY_PREFACE + "playCount";
 const SB_PROPERTY_SKIPCOUNT            = SB_PROPERTY_PREFACE + "skipCount";
 const SB_PROPERTY_RATING               = SB_PROPERTY_PREFACE + "rating";
 const SB_PROPERTY_ORIGINURL            = SB_PROPERTY_PREFACE + "originURL";
+const SB_PROPERTY_ORIGINPAGE           = SB_PROPERTY_PREFACE + "originPage";
 const SB_PROPERTY_GUID                 = SB_PROPERTY_PREFACE + "guid";
 const SB_PROPERTY_HIDDEN               = SB_PROPERTY_PREFACE + "hidden";
 const SB_PROPERTY_ISLIST               = SB_PROPERTY_PREFACE + "isList";
 const SB_PROPERTY_ORDINAL              = SB_PROPERTY_PREFACE + "ordinal";
 const SB_PROPERTY_MEDIALISTNAME        = SB_PROPERTY_PREFACE + "mediaListName";
-

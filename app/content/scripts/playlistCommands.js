@@ -535,11 +535,7 @@ function onBrowserTransfer(mediaItems)
                     Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                               .getService(Components.interfaces.sbILibraryManager);
                   var downloadList = libraryManager.mainLibrary.getMediaItem(downloadListGUID);
-                  
-                  while (mediaItems.hasMoreElements())
-                  {
-                      downloadList.add(mediaItems.getNext());
-                  }
+                  downloadList.addSome(mediaItems);
                 }
             }
         }

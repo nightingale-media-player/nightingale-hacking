@@ -472,6 +472,11 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     stringBundle, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE),
+                    NS_LITERAL_STRING("property.origin_page"),
+                    stringBundle, PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

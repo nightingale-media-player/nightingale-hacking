@@ -40,6 +40,12 @@
   <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser">
     <implementation implements="nsIWebProgressListener,sbITabBrowser">
       <constructor><![CDATA[
+        if (typeof(SBProperties) == "undefined") {
+          Components.utils.import("rel:sbProperties.jsm");
+          if (!SBProperties)
+            throw new Error("Import of sbProperties module failed");
+        }
+
         this.addProgressListener(this,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
             Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
@@ -511,8 +517,8 @@
               var propertyArray =
                 Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
                           .createInstance(Components.interfaces.sbIPropertyArray);
-              propertyArray.appendProperty("http://songbirdnest.com/data/1.0#isList", "1");
-              propertyArray.appendProperty("http://songbirdnest.com/data/1.0#originURL", uri.spec);
+              propertyArray.appendProperty(SBProperties.isList, "1");
+              propertyArray.appendProperty(SBProperties.originURL, uri.spec);
 
               var getFirstListener = {
                 item: null,
@@ -1220,12 +1226,12 @@
           this._playlist.setAttribute('editable', 'true');
           this._playlist.setAttribute('minheight', '0');
           this._playlist.setAttribute('columnSpec',
-              'http://songbirdnest.com/data/1.0#ordinal 20 a ' +
-              'http://songbirdnest.com/data/1.0#trackName 395 ' +
-              'http://songbirdnest.com/data/1.0#duration 50 ' +
-              'http://songbirdnest.com/data/1.0#artistName 222 ' +
-              'http://songbirdnest.com/data/1.0#albumName 222 ' +
-              'http://songbirdnest.com/data/1.0#genre 70');
+              SBProperties.ordinal + ' 20 a ' +
+              SBProperties.trackName + ' 395 ' +
+              SBProperties.duration + ' 50 ' +
+              SBProperties.artistName + ' 222 ' +
+              SBProperties.albumName + ' 222 ' +
+              SBProperties.genre + ' 70');
 
           // add some events, eh?
           this._playlist.addEventListener("playlist-play", this._onplaylistplay, true);
@@ -1319,7 +1325,7 @@
           // hide the outer playlist
           CancelAsyncWebDocument(this._hrefLoop);
           this._hrefLoop = null;
-          PlaylistShowing = false;
+          this.outerPlaylistShowing = false;
           this.scanProgress = -1;
         ]]></body>
       </method>
@@ -1327,47 +1333,35 @@
       
       <method name="scanWebPage">
         <body><![CDATA[
-          // only scrape http & https
-          if (this.linkedBrowser.currentURI.scheme != 'http' &&
-              this.linkedBrowser.currentURI.scheme != 'https' &&
-              this.linkedBrowser.currentURI.scheme != 'file') {
+          if (!SBDataGetBoolValue('webplaylist.enabled')) {
+            return;
+          }
+
+          // Only scrape http(s) and file pages
+          var scheme = this.linkedBrowser.currentURI.scheme;
+          if (scheme != 'http' && scheme != 'https' && scheme != 'file') {
             this.outerPlaylistShowing = false;
             return;
           }
 
-          if (!SBDataGetBoolValue('webplaylist.enabled')) {
-            // or not
-            return;
-          }
-          
-          // Set the filter to the current URI.
-          var propArray =
-            Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-                      .createInstance(Components.interfaces.sbIPropertyArray);
-          propArray.appendProperty("http://songbirdnest.com/data/1.0#originURL",
-                                   this.linkedBrowser.currentURI.spec);
-                             
-          // See if we're supposed to be restoring a view or making a new one
-          var viewMap =
-            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-                      .getService(Components.interfaces.sbIMediaListViewMap);
-                      
           // Now all I have to do is find something resembling a usefully unique key.
           var browser = this.linkedBrowser;
           var history = browser.webNavigation.sessionHistory;
           var entry = history.getEntryAtIndex( history.index, false );
           
-          // Is there something to restore?
-          var skipScan = true;
-          var view = viewMap.getView( browser, entry );
-          if ( view == null )
-          {
-            // If not, create the view
-            view = this._webLibrary.createView();
-            view.setFilters(propArray);
-            // And save it
-            viewMap.setView( browser, entry, view );
-            skipScan = false;
+          // See if we're supposed to be restoring a view or making a new one
+          var viewMap =
+            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                      .getService(Components.interfaces.sbIMediaListViewMap);
+          var view = viewMap.getView(browser, entry);
+          
+          var skipScan = view ? true : false;
+          
+          if (!view) {
+            var mediaList =
+              this._getWebMediaListForURL(this.linkedBrowser.currentURI.spec);
+            view = mediaList.createView();
+            viewMap.setView(browser, entry, view);
           }
 
           // Otherwise, don't show the web playlist until we see some tracks.
@@ -1380,15 +1374,17 @@
                                   SBDataGetIntValue("browser.playlist.height"),
                                   SBDataGetBoolValue("browser.playlist.collapsed"));
 
-          // Force it to redraw (grr)
-          this.outerPlaylist.tree.boxObject.invalidate();
-          
           // If we're restoring a view, don't do anything else
-          if ( skipScan )
-          {
+          if (skipScan) {
             // Only show it if there's something to see.
-            if ( view.length > 0 )
+            if (view.length) {
               this.outerPlaylistShowing = true;
+            }
+            else {
+              // Remove empty media lists.
+              var library = view.mediaList.library;
+              library.remove(view.mediaList);
+            }
             return;
           }
 
@@ -1426,8 +1422,6 @@
           this.scanProgress = 0;
           this._hrefLoop = AsyncWebDocument(this.linkedBrowser.contentDocument,
                                             view, this._hrefLoop, context);
-          
-
         ]]></body>
       </method>
       
@@ -1523,18 +1517,14 @@
             // This code should never run unless someone calls this function
             // manually outside of the SBDownloadCommands object.
 
-            view = this._webLibrary.createView();
-            
-            // Set the filter to the current URL.
-            var propArray =
-              Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-                        .createInstance(Components.interfaces.sbIPropertyArray);
-            propArray.appendProperty("http://songbirdnest.com/data/1.0#originURL",
-                                     this.linkedBrowser.currentURI.spec);
+            dump("*** WARNING: switchToWebPlaylistView called with no " +
+                 "swappedPlaylistView!\n");
 
-            view.setFilters(propArray);
+            var mediaList =
+              this._getWebMediaListForURL(this.linkedBrowser.currentURI.spec);
+            view = mediaList.createView();
           }
-          
+
           this.outerPlaylist.bind(view, SBWebPlaylistCommands,
                                   SBDataGetIntValue("browser.playlist.height"),
                                   SBDataGetBoolValue("browser.playlist.collapsed"));
@@ -1566,6 +1556,54 @@
                                   SBDataGetIntValue("browser.playlist.height"),
                                   SBDataGetBoolValue("browser.playlist.collapsed"));
         ]]></body>
+        </method>
+        
+        <method name="_getWebMediaListForURL">
+          <parameter name="aURL"/>
+          <body><![CDATA[
+            var listener = {
+              foundList: null,
+              onEnumerationBegin: function onEnumerationBegin(list) {
+                return true;
+              },
+              onEnumeratedItem: function onEnumeratedItem(list, item) {
+                if (!(item instanceof Components.interfaces.sbIMediaList)) {
+                  throw new Error("Given an item, not a list!");
+                }
+                this.foundList = item;
+                return false;
+              },
+              onEnumerationEnd: function onEnumerationEnd(list) {
+                return;
+              }
+            };
+            
+            var propArray =
+              Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
+                        .createInstance(Components.interfaces.sbIPropertyArray);
+            propArray.appendProperty(SBProperties.originPage, aURL);
+            propArray.appendProperty(SBProperties.isList, "1");
+            
+            var webLibrary = this._webLibrary;
+            webLibrary.enumerateItemsByProperties(propArray, listener,
+                                                  Components.interfaces.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+            
+            if (listener.foundList) {
+              return listener.foundList;
+            }
+            
+            // Make a new list and set the originPage property.
+            var newList = webLibrary.createMediaList("simple");
+            
+            newList.setProperty(SBProperties.originPage, aURL);
+            
+            // XXXben Do this for now because the new AddToPlaylist code sweeps
+            //        all non-hidden media lists from *all* libraries.
+            newList.setProperty(SBProperties.hidden, "1");
+            
+            newList.write();
+            return newList;
+          ]]></body>
         </method>
 
       <!-- nsIWebProgressListener implementation -->

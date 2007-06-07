@@ -103,6 +103,8 @@ ifeq (windows,$(SB_PLATFORM))
                                $(NULL)
 endif
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
+                      $(srcdir)/sbProperties.jsm \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
