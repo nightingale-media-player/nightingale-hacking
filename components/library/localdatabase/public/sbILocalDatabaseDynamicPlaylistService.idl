@@ -1,0 +1,92 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILocalDatabaseDynamicPlaylistService.idl
+ * \brief Definition of the sbILocalDatabaseDynamicPlaylistService interface
+ */
+
+#include "nsISupports.idl"
+
+interface nsILocalFile;
+interface nsISimpleEnumerator;
+interface nsIURI;
+interface sbILocalDatabaseLibrary;
+interface sbILocalDatabaseSimpleMediaList;
+interface sbIMediaList;
+
+/**
+* \interface sbILocalDatabaseDynamicPlaylistService
+*/
+[scriptable, uuid(8907dc15-7a57-441a-a35c-6b00d64d78bb)]
+interface sbILocalDatabaseDynamicPlaylistService : nsISupports
+{
+  /**
+   * \brief Create a new dynamnic playlist
+   *
+   * \param aLibrary The library in which to create the new list
+   * \param aUri The URL that will be read to gather tracks for the list
+   * \param aIntervalSeconds Interval between updates, in seconds
+   * \param aDestinationDirectory Directory that the downloaded files will be
+   *        saved in.  If null, the default download directory is used.
+   * \return sbIMediaList The new dynamic playlist
+   */
+  sbIMediaList createList(in sbILocalDatabaseLibrary aLibrary,
+                          in nsIURI aUri,
+                          in unsigned long aIntervalSeconds,
+                          in nsILocalFile aDestinationDirectory);
+
+  /**
+   * \brief Update a new dynamnic playlist
+   *
+   * \param aMediaList The dynamic playlist to update
+   * \param aUri The URL that will be read to gather tracks for the list
+   * \param aIntervalSeconds Interval between updates, in seconds
+   * \param aDestinationDirectory Directory that the downloaded files will be
+   *        saved in.  If null, the default download directory is used.
+   */
+  void updateList(in sbILocalDatabaseSimpleMediaList aMediaList,
+                  in nsIURI aUri,
+                  in unsigned long aIntervalSeconds,
+                  in nsILocalFile aDestinationDirectory);
+
+  /**
+   * \brief Force an update of all dynamic playlists
+   */
+  void updateAllNow();
+
+  /**
+   * \brief Force an update of a specified dynamic playlist
+   * \param aMediaList The dynamic playlist to update
+   */
+  void updateNow(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Returns an enumerator of all dynamic playlists as |sbIMediaList|s
+   */
+  readonly attribute nsISimpleEnumerator scheduledLists;
+};
+
