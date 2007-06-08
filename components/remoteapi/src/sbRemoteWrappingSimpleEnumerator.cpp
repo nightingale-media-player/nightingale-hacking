@@ -134,9 +134,6 @@ sbRemoteWrappingSimpleEnumerator::GetNext(nsISupports** _retval)
   rv = indexedMediaItem->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //nsCOMPtr<sbIIndexedMediaItem> bar = indexedMediaItem.get();
-  //NS_ENSURE_TRUE(bar, NS_ERROR_FAILURE);
-
   NS_ADDREF( *_retval = NS_ISUPPORTS_CAST(sbIIndexedMediaItem*,
                                           indexedMediaItem) );
   return NS_OK;
