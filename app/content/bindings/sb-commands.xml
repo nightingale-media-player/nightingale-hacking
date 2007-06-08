@@ -716,6 +716,11 @@
 
     <implementation type="application/x-javascript">
     
+    <constructor>
+      // hide the binding (this does not hide the items, just the binding)
+      this.hidden = true;
+    </constructor>
+    
     <destructor>
       <![CDATA[
       //alert("destructor");

@@ -144,7 +144,7 @@
         </xul:template>
       </xul:tree>
       <xul:popupset>
-        <xul:popup anonid="popup" class="sb_faceplate" />
+        <xul:popup anonid="popup" class="sb_faceplate" onpopupshown="onPopupShown(event);"/>
       </xul:popupset>
     </content>
     <implementation implements="nsIWebProgressListener,nsIXULBuilderListener">
@@ -487,6 +487,21 @@
             orientation: orientation,
             element: element };
         ]]></body>
+      </method>
+      <method name="onPopupShown">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+          var gotstuff = false;
+          for (var i=0;i<this.mPopup.childNodes.length;i++) {
+            var e = this.mPopup.childNodes[i];
+            if (e.hidden) continue;
+            gotstuff = true;
+          }
+          if (!gotstuff)
+            this.mPopup.hidePopup();
+          ]]>
+        </body>
       </method>
     </implementation>
     <handlers>
