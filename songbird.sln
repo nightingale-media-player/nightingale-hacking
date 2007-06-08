@@ -136,6 +136,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "installer", "installer\inst
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jscodelib", "components\jscodelib\jscodelib.vcproj", "{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -186,6 +190,10 @@ Global
 		{E9C17F59-5D09-496B-A524-170FA0908892}.Debug.Build.0 = Debug|Win32
 		{E9C17F59-5D09-496B-A524-170FA0908892}.Release.ActiveCfg = Release|Win32
 		{E9C17F59-5D09-496B-A524-170FA0908892}.Release.Build.0 = Release|Win32
+		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Debug.ActiveCfg = Debug|Win32
+		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Debug.Build.0 = Debug|Win32
+		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Release.ActiveCfg = Release|Win32
+		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Release.Build.0 = Release|Win32
 		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Debug.ActiveCfg = Debug|Win32
 		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Debug.Build.0 = Debug|Win32
 		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Release.ActiveCfg = Release|Win32
