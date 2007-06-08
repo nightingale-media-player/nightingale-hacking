@@ -24,7 +24,6 @@
 //
  */
 
-#include "sbRemoteWrappingSimpleEnumerator.h"
 #include "sbRemoteIndexedMediaItem.h"
 #include "sbRemoteLibrary.h"
 
@@ -32,48 +31,52 @@
 #include <sbIMediaItem.h>
 
 #include <nsComponentManagerUtils.h>
-#include <nsICategoryManager.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIScriptNameSpaceManager.h>
 #include <nsIScriptSecurityManager.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
-#include <nsStringGlue.h>
 
-const static char* sPublicWProperties[] =
-{
-  // Need this empty string to make VC happy
-  ""
-};
+const static char* sPublicWProperties[] = { "" };
 
 const static char* sPublicRProperties[] =
 {
-  // Need this empty string to make VC happy
-  ""
+  // sbIIndexedMediaItem
+  "library:index",
+  "library:mediaItem",
+
+  // nsIClassInfo
+  "classinfo:classDescription",
+  "classinfo:contractID",
+  "classinfo:classID",
+  "classinfo:implementationLanguage",
+  "classinfo:flags"
 };
 
-const static char* sPublicMethods[] =
-{
-  // nsISimpleEnumerator
-  "library:hasMoreElements",
-  "library:getNext"
-};
+const static char* sPublicMethods[] = { "" };
 
-NS_IMPL_ISUPPORTS4(sbRemoteWrappingSimpleEnumerator,
+NS_IMPL_ISUPPORTS4(sbRemoteIndexedMediaItem,
                    nsIClassInfo,
                    nsISecurityCheckedComponent,
-                   sbISecurityAggregator,
-                   nsISimpleEnumerator)
+                   sbIIndexedMediaItem,
+                   sbISecurityAggregator)
 
-NS_IMPL_CI_INTERFACE_GETTER3(sbRemoteWrappingSimpleEnumerator,
-                             nsISecurityCheckedComponent,
-                             nsISimpleEnumerator,
-                             sbISecurityAggregator)
+NS_IMPL_CI_INTERFACE_GETTER4(sbRemoteIndexedMediaItem,
+                             nsISupports,
+                             sbISecurityAggregator,
+                             sbIIndexedMediaItem,
+                             nsISecurityCheckedComponent)
 
-SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteWrappingSimpleEnumerator)
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteIndexedMediaItem)
+
+sbRemoteIndexedMediaItem::sbRemoteIndexedMediaItem(sbIIndexedMediaItem* aIndexedMediaItem) :
+  mIndexedMediaItem(aIndexedMediaItem)
+{
+  NS_ASSERTION(aIndexedMediaItem, "Null media item!");
+}
 
 nsresult
-sbRemoteWrappingSimpleEnumerator::Init()
+sbRemoteIndexedMediaItem::Init()
 {
   nsresult rv;
 
@@ -103,42 +106,31 @@ sbRemoteWrappingSimpleEnumerator::Init()
 
 // ---------------------------------------------------------------------------
 //
-//                            nsISimpleEnumerator
+//                          sbIIndexedMediaItem
 //
 // ---------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::HasMoreElements(PRBool* _retval)
+sbRemoteIndexedMediaItem::GetIndex(PRUint32* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-
-  return mWrapped->HasMoreElements(_retval);
+  return mIndexedMediaItem->GetIndex(_retval);
 }
 
 NS_IMETHODIMP
-sbRemoteWrappingSimpleEnumerator::GetNext(nsISupports** _retval)
+sbRemoteIndexedMediaItem::GetMediaItem(sbIMediaItem** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsCOMPtr<nsISupports> supports;
-  nsresult rv = mWrapped->GetNext(getter_AddRefs(supports));
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  nsresult rv = mIndexedMediaItem->GetMediaItem( getter_AddRefs(mediaItem) );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIIndexedMediaItem> item = do_QueryInterface(supports, &rv);
+  nsCOMPtr<sbIMediaItem> wrappedMediaItem;
+  rv =  SB_WrapMediaItem(mediaItem, getter_AddRefs(wrappedMediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsRefPtr<sbRemoteIndexedMediaItem> indexedMediaItem =
-    new sbRemoteIndexedMediaItem(item);
-  NS_ENSURE_TRUE(indexedMediaItem, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = indexedMediaItem->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  //nsCOMPtr<sbIIndexedMediaItem> bar = indexedMediaItem.get();
-  //NS_ENSURE_TRUE(bar, NS_ERROR_FAILURE);
-
-  NS_ADDREF( *_retval = NS_ISUPPORTS_CAST(sbIIndexedMediaItem*,
-                                          indexedMediaItem) );
+  NS_ADDREF(*_retval = wrappedMediaItem);
   return NS_OK;
 }
 

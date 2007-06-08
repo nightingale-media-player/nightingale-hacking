@@ -114,11 +114,12 @@ NS_IMPL_ISUPPORTS6(sbRemoteMediaItem,
                    sbIWrappedMediaItem,
                    sbILibraryResource)
 
-NS_IMPL_CI_INTERFACE_GETTER4( sbRemoteMediaItem,
-                              sbISecurityAggregator,
-                              sbIMediaItem,
-                              sbILibraryResource,
-                              nsISecurityCheckedComponent )
+NS_IMPL_CI_INTERFACE_GETTER5(sbRemoteMediaItem,
+                             nsISupports,
+                             sbISecurityAggregator,
+                             sbIMediaItem,
+                             sbILibraryResource,
+                             nsISecurityCheckedComponent)
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaItem)
 

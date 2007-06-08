@@ -160,7 +160,8 @@ NS_IMPL_ISUPPORTS9(sbRemoteMediaList,
                    sbIMediaItem,
                    sbILibraryResource)
 
-NS_IMPL_CI_INTERFACE_GETTER6( sbRemoteMediaList,
+NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteMediaList,
+                              nsISupports,
                               sbISecurityAggregator,
                               sbIRemoteMediaList,
                               sbIMediaList,

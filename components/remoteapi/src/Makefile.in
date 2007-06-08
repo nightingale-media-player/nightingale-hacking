@@ -41,6 +41,7 @@ CPP_SRCS = sbSecurityMixin.cpp \
            sbRemoteLibrary.cpp \
            sbRemotePlayer.cpp \
            sbRemoteCommands.cpp \
+           sbRemoteIndexedMediaItem.cpp \
            sbRemoteMediaList.cpp \
            sbRemoteMediaItem.cpp \
            sbRemoteAPIModule.cpp \
