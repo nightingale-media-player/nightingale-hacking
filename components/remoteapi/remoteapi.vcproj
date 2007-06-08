@@ -94,6 +94,12 @@
 				RelativePath=".\src\sbRemoteCommands.h">
 			</File>
 			<File
+				RelativePath=".\src\sbRemoteIndexedMediaItem.cpp">
+			</File>
+			<File
+				RelativePath=".\src\sbRemoteIndexedMediaItem.h">
+			</File>
+			<File
 				RelativePath=".\src\sbRemoteLibrary.cpp">
 			</File>
 			<File
@@ -165,6 +171,9 @@
 			</File>
 			<File
 				RelativePath=".\test\test-remoteAPI_09.html">
+			</File>
+			<File
+				RelativePath=".\test\test-remoteAPI_10.html">
 			</File>
 			<File
 				RelativePath=".\test\test_remotelibrary.js">
