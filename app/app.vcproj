@@ -84,6 +84,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 		<Filter
 			Name="content"
 			Filter="">
+			<File
+				RelativePath=".\content\Makefile.in">
+			</File>
 			<Filter
 				Name="html"
 				Filter="">
@@ -104,6 +107,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</File>
 				<File
 					RelativePath=".\content\html\jar.mn.in">
+				</File>
+				<File
+					RelativePath=".\content\html\Makefile.in">
 				</File>
 				<File
 					RelativePath=".\content\html\mplayer.html">
@@ -149,6 +155,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\xul\actionSetsOverlay.xul">
+				</File>
+				<File
 					RelativePath=".\content\xul\add_tag.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -192,6 +201,12 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</File>
 				<File
 					RelativePath=".\content\xul\balloonTip.xul">
+				</File>
+				<File
+					RelativePath=".\content\xul\browserToolbarOverlay.xul">
+				</File>
+				<File
+					RelativePath=".\content\xul\command_test2.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\control_pane.xul">
@@ -278,6 +293,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\xul\extensionManagerOverlay.xul">
+				</File>
+				<File
 					RelativePath=".\content\xul\firstrun.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -320,6 +338,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\xul\koshi_test.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\mab.xul">
@@ -383,6 +404,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\xul\Makefile.in">
 				</File>
 				<File
 					RelativePath=".\content\xul\media_scan.xul">
@@ -472,6 +496,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\xul\parsererror.xul">
+				</File>
+				<File
 					RelativePath=".\content\xul\playlist_exists.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -533,6 +560,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\xul\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\xul\popupOverlay.xul">
 				</File>
 				<File
 					RelativePath=".\content\xul\remote_download.xul">
@@ -703,6 +733,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\xul\updateOverlay.xul">
+				</File>
+				<File
 					RelativePath=".\content\xul\watch_folders.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -748,6 +781,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					Name="preferences"
 					Filter="">
 					<File
+						RelativePath=".\content\xul\preferences\addons.xul">
+					</File>
+					<File
 						RelativePath=".\content\xul\preferences\hotkeys.xul">
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -788,6 +824,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 								Outputs="$(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"/>
 						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\content\xul\preferences\remoteAPI.xul">
 					</File>
 				</Filter>
 			</Filter>
@@ -909,6 +948,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\bindings\dynKeyset.xml">
+				</File>
+				<File
 					RelativePath=".\content\bindings\faceplate.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -933,25 +975,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					RelativePath=".\content\bindings\feathers.xml">
 				</File>
 				<File
-					RelativePath=".\content\bindings\filterlist.xml">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\bindings\filterlist2.xml">
 				</File>
 				<File
 					RelativePath=".\content\bindings\folders.xml">
@@ -999,6 +1023,12 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					RelativePath=".\content\bindings\jar.mn.in">
 				</File>
 				<File
+					RelativePath=".\content\bindings\Makefile.in">
+				</File>
+				<File
+					RelativePath=".\content\bindings\miniPlayer.xml">
+				</File>
+				<File
 					RelativePath=".\content\bindings\multistatebutton.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1018,6 +1048,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\observesDataremote.xml">
 				</File>
 				<File
 					RelativePath=".\content\bindings\playerControls.xml">
@@ -1041,25 +1074,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\playlist.xml">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
-					</FileConfiguration>
+					RelativePath=".\content\bindings\playlist2.xml">
 				</File>
 				<File
 					RelativePath=".\content\bindings\progressSlider.xml">
@@ -1105,6 +1120,12 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</File>
 				<File
 					RelativePath=".\content\bindings\sb-commands.xml">
+				</File>
+				<File
+					RelativePath=".\content\bindings\sb-locationbar-textbox.xml">
+				</File>
+				<File
+					RelativePath=".\content\bindings\sb-search.xml">
 				</File>
 				<File
 					RelativePath=".\content\bindings\sb-tabbrowser.xml">
@@ -1167,6 +1188,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\bindings\servicepane.xml">
+				</File>
+				<File
 					RelativePath=".\content\bindings\servicetree.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1209,6 +1233,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\bindings\spinner.xml">
+				</File>
+				<File
 					RelativePath=".\content\bindings\statusbar.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1249,6 +1276,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\tabbrowser.xml">
 				</File>
 				<File
 					RelativePath=".\content\bindings\tageditor.xml">
@@ -1384,6 +1414,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\balloonTip.js">
+				</File>
+				<File
 					RelativePath=".\content\scripts\bookmarks.js">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1447,6 +1480,12 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\browserUtilities.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\cmdline.js">
+				</File>
+				<File
 					RelativePath=".\content\scripts\currenttrack_xbl_temp.js">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1466,6 +1505,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\device_temp.js">
 				</File>
 				<File
 					RelativePath=".\content\scripts\dndDefaultHandler.js">
@@ -1573,6 +1615,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\extensionManagerOverlay.js">
+				</File>
+				<File
 					RelativePath=".\content\scripts\faceplate_xbl_temp.js">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1637,6 +1682,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</File>
 				<File
 					RelativePath=".\content\scripts\jar.mn.in">
+				</File>
+				<File
+					RelativePath=".\content\scripts\json.js">
 				</File>
 				<File
 					RelativePath=".\content\scripts\jumptofile.js">
@@ -1721,6 +1769,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\Makefile.in">
 				</File>
 				<File
 					RelativePath=".\content\scripts\media_scan.js">
@@ -1849,6 +1900,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\overlayLoader.js">
+				</File>
+				<File
 					RelativePath=".\content\scripts\player_open.js">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1952,6 +2006,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\searchHandler.js">
 				</File>
 				<File
 					RelativePath=".\content\scripts\servicetree_xbl_temp.js">
@@ -2080,6 +2137,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\updateOverlay.js">
+				</File>
+				<File
 					RelativePath=".\content\scripts\videoWinInit.js">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -2146,6 +2206,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					Name="preferences"
 					Filter="">
 					<File
+						RelativePath=".\content\scripts\preferences\addons.js">
+					</File>
+					<File
 						RelativePath=".\content\scripts\preferences\hotkeys.js">
 						<FileConfiguration
 							Name="Debug|Win32">
@@ -2166,12 +2229,18 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 								Outputs="$(SolutionDir)dist\chrome\content\scripts\preferences\$(InputFileName)"/>
 						</FileConfiguration>
 					</File>
+					<File
+						RelativePath=".\content\scripts\preferences\remoteAPI.js">
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="preferences"
 			Filter="">
+			<File
+				RelativePath=".\preferences\Makefile.in">
+			</File>
 			<File
 				RelativePath=".\preferences\songbird-channel-prefs.js.in">
 				<FileConfiguration
@@ -2269,6 +2338,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				Name="branding"
 				Filter="">
 				<File
+					RelativePath=".\skin\branding\jar.mn.in">
+				</File>
+				<File
 					RelativePath=".\skin\branding\Makefile.in">
 				</File>
 			</Filter>
@@ -2279,6 +2351,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 			<Filter
 				Name="dialogs"
 				Filter="">
+				<File
+					RelativePath=".\skin\dialogs\balloon.css">
+				</File>
 				<File
 					RelativePath=".\skin\dialogs\dialogs.css">
 					<FileConfiguration
@@ -2305,6 +2380,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</File>
 				<File
 					RelativePath=".\skin\dialogs\Makefile.in">
+				</File>
+				<File
+					RelativePath=".\skin\dialogs\preferences.css">
 				</File>
 			</Filter>
 			<Filter
@@ -2396,6 +2474,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\skin\bindings\browsertoolbar.css">
+				</File>
+				<File
 					RelativePath=".\skin\bindings\callout.css">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -2480,6 +2561,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\skin\bindings\locationbar.css">
+				</File>
+				<File
 					RelativePath=".\skin\bindings\Makefile.in">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -2499,6 +2583,15 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\bindings\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\menu.css">
+				</File>
+				<File
+					RelativePath=".\skin\bindings\miniplayer.css">
+				</File>
+				<File
+					RelativePath=".\skin\bindings\observes-dataremote.css">
 				</File>
 				<File
 					RelativePath=".\skin\bindings\player_controls.css">
@@ -2543,6 +2636,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\skin\bindings\playlist_commands.css">
+				</File>
+				<File
 					RelativePath=".\skin\bindings\scrollbar.css">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -2583,6 +2679,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\bindings\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\skin\bindings\servicepane.css">
 				</File>
 				<File
 					RelativePath=".\skin\bindings\servicetree.css">
@@ -2626,6 +2725,18 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\skin\bindings\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath=".\skin\bindings\spinner.css">
+				</File>
+				<File
+					RelativePath=".\skin\bindings\statusbar.css">
+				</File>
+				<File
+					RelativePath=".\skin\bindings\syscontrols.css">
+				</File>
+				<File
+					RelativePath=".\skin\bindings\tree.css">
+				</File>
 			</Filter>
 		</Filter>
 		<File
@@ -2633,6 +2744,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 		</File>
 		<File
 			RelativePath="..\build\msvc\application.ini">
+		</File>
+		<File
+			RelativePath=".\Makefile.in">
 		</File>
 		<File
 			RelativePath=".\resource.h">

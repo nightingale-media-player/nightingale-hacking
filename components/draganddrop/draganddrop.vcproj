@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="parsererror"
+	Name="draganddrop"
 	ProjectGUID="{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}"
-	RootNamespace="parsererror"
+	RootNamespace="draganddrop"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -23,12 +23,7 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components
-copy /y $(InputDir)src\sbParserError.js $(SolutionDir)dist\components
-copy /y $(InputDir)$(OutDir)\sbIParserError.xpt $(SolutionDir)dist\components
-echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
-"/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 		</Configuration>
@@ -44,12 +39,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components
-copy /y $(InputDir)src\sbParserError.js $(SolutionDir)dist\components
-copy /y $(InputDir)$(OutDir)\sbIParserError.xpt $(SolutionDir)dist\components
-echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
-"/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 		</Configuration>
@@ -58,13 +48,23 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 	</References>
 	<Files>
 		<Filter
+			Name="public"
+			Filter="">
+			<File
+				RelativePath=".\public\Makefile.in">
+			</File>
+			<File
+				RelativePath=".\public\sbIDndSourceTracker.idl">
+			</File>
+		</Filter>
+		<Filter
 			Name="src"
 			Filter="">
 			<File
 				RelativePath=".\src\Makefile.in">
 			</File>
 			<File
-				RelativePath=".\src\sbParserError.js">
+				RelativePath=".\src\sbDndSourceTracker.js">
 			</File>
 		</Filter>
 		<File

@@ -61,6 +61,9 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			Name="public"
 			Filter="">
 			<File
+				RelativePath=".\public\Makefile.in">
+			</File>
+			<File
 				RelativePath=".\public\sbIDataRemote.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -88,6 +91,12 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			Name="src"
 			Filter="">
 			<File
+				RelativePath=".\src\jar.mn.in">
+			</File>
+			<File
+				RelativePath=".\src\Makefile.in">
+			</File>
+			<File
 				RelativePath=".\src\sbDataRemote.js">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -113,7 +122,8 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Performing Custom Build Step $(InputFileName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -121,11 +131,37 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Performing Custom Build Step $(InputFileName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
 		</Filter>
+		<Filter
+			Name="test"
+			Filter="">
+			<File
+				RelativePath=".\test\head_dataremote.js">
+			</File>
+			<File
+				RelativePath=".\test\head_dr_basic.js">
+			</File>
+			<File
+				RelativePath=".\test\Makefile.in">
+			</File>
+			<File
+				RelativePath=".\test\tail_dataremote.js">
+			</File>
+			<File
+				RelativePath=".\test\test_dr_advanced.js">
+			</File>
+			<File
+				RelativePath=".\test\test_dr_basic.js">
+			</File>
+		</Filter>
+		<File
+			RelativePath=".\Makefile.in">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

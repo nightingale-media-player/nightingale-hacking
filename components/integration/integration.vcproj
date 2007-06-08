@@ -309,6 +309,9 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\public\Makefile.in">
+			</File>
+			<File
 				RelativePath=".\public\sbIHotkeyActions.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -337,6 +340,9 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			Filter="">
 			<File
 				RelativePath=".\src\IntegrationComponent.cpp">
+			</File>
+			<File
+				RelativePath=".\src\Makefile.in">
 			</File>
 			<File
 				RelativePath=".\src\NativeWindowFromNode.cpp">
@@ -370,16 +376,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				RelativePath=".\src\WindowCloak.h">
 			</File>
 			<File
-				RelativePath=".\src\WindowLayer.cpp">
-			</File>
-			<File
-				RelativePath=".\src\WindowLayer.h">
-			</File>
-			<File
 				RelativePath=".\src\WindowDragger.cpp">
 			</File>
 			<File
 				RelativePath=".\src\WindowDragger.h">
+			</File>
+			<File
+				RelativePath=".\src\WindowLayer.cpp">
+			</File>
+			<File
+				RelativePath=".\src\WindowLayer.h">
 			</File>
 			<Filter
 				Name="win32"
@@ -389,6 +395,9 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</File>
 				<File
 					RelativePath=".\src\win32\GlobalHotkeys.h">
+				</File>
+				<File
+					RelativePath=".\src\win32\Makefile.in">
 				</File>
 				<File
 					RelativePath=".\src\win32\MultiMonitor.cpp">
@@ -424,12 +433,24 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			<Filter
 				Name="macosx"
 				Filter="">
+				<File
+					RelativePath=".\src\macosx\Makefile.in">
+				</File>
 			</Filter>
 			<Filter
 				Name="linux"
 				Filter="">
+				<File
+					RelativePath=".\src\linux\Makefile.in">
+				</File>
+				<File
+					RelativePath=".\src\linux\sbWindowCloak.js">
+				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath=".\Makefile.in">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

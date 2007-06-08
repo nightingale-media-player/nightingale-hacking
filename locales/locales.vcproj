@@ -76,14 +76,58 @@ echo. &gt; $(SolutionDir)compiled\dist\xulrunner\.autoreg
 			Name="en-US"
 			Filter="">
 			<File
-				RelativePath=".\en-US\songbird\songbird.dtd">
+				RelativePath=".\en-US\Makefile.in">
 			</File>
-			<File
-				RelativePath=".\en-US\songbird\songbird.properties">
-			</File>
+			<Filter
+				Name="searchplugins"
+				Filter="">
+				<File
+					RelativePath=".\en-US\searchplugins\dogpile.xml">
+				</File>
+				<File
+					RelativePath=".\en-US\searchplugins\elbows.xml">
+				</File>
+				<File
+					RelativePath=".\en-US\searchplugins\emusic.xml">
+				</File>
+				<File
+					RelativePath=".\en-US\searchplugins\google-lyrics.xml">
+				</File>
+				<File
+					RelativePath=".\en-US\searchplugins\google.xml">
+				</File>
+				<File
+					RelativePath=".\en-US\searchplugins\mefeedia.xml">
+				</File>
+				<File
+					RelativePath=".\en-US\searchplugins\songbird-internal-search.xml">
+				</File>
+				<File
+					RelativePath=".\en-US\searchplugins\wikipedia.xml">
+				</File>
+				<File
+					RelativePath=".\en-US\searchplugins\yahoo-lyrics.xml">
+				</File>
+				<File
+					RelativePath=".\en-US\searchplugins\yahoo.xml">
+				</File>
+			</Filter>
+			<Filter
+				Name="songbird"
+				Filter="">
+				<File
+					RelativePath=".\en-US\songbird\songbird.dtd">
+				</File>
+				<File
+					RelativePath=".\en-US\songbird\songbird.properties">
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\jar.mn">
+		</File>
+		<File
+			RelativePath=".\Makefile.in">
 		</File>
 	</Files>
 	<Globals>

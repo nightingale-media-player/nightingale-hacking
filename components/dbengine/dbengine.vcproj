@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="parsererror"
+	Name="dbengine"
 	ProjectGUID="{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}"
-	RootNamespace="parsererror"
+	RootNamespace="dbengine"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -23,12 +23,7 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components
-copy /y $(InputDir)src\sbParserError.js $(SolutionDir)dist\components
-copy /y $(InputDir)$(OutDir)\sbIParserError.xpt $(SolutionDir)dist\components
-echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
-"/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 		</Configuration>
@@ -44,12 +39,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components
-copy /y $(InputDir)src\sbParserError.js $(SolutionDir)dist\components
-copy /y $(InputDir)$(OutDir)\sbIParserError.xpt $(SolutionDir)dist\components
-echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
-"/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 		</Configuration>
@@ -58,13 +48,69 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 	</References>
 	<Files>
 		<Filter
+			Name="public"
+			Filter="">
+			<File
+				RelativePath=".\public\Makefile.in">
+			</File>
+			<File
+				RelativePath=".\public\sbIDatabaseEngine.idl">
+			</File>
+			<File
+				RelativePath=".\public\sbIDatabaseQuery.idl">
+			</File>
+			<File
+				RelativePath=".\public\sbIDatabaseResult.idl">
+			</File>
+		</Filter>
+		<Filter
 			Name="src"
 			Filter="">
 			<File
-				RelativePath=".\src\Makefile.in">
+				RelativePath=".\src\DatabaseEngine.cpp">
 			</File>
 			<File
-				RelativePath=".\src\sbParserError.js">
+				RelativePath=".\src\DatabaseEngine.h">
+			</File>
+			<File
+				RelativePath=".\src\DatabaseEngineComponent.cpp">
+			</File>
+			<File
+				RelativePath=".\src\DatabaseQuery.cpp">
+			</File>
+			<File
+				RelativePath=".\src\DatabaseQuery.h">
+			</File>
+			<File
+				RelativePath=".\src\DatabaseResult.cpp">
+			</File>
+			<File
+				RelativePath=".\src\DatabaseResult.h">
+			</File>
+			<File
+				RelativePath=".\src\Makefile.in">
+			</File>
+		</Filter>
+		<Filter
+			Name="test"
+			Filter="">
+			<File
+				RelativePath=".\test\Makefile.in">
+			</File>
+			<File
+				RelativePath=".\test\test_bind.js">
+			</File>
+			<File
+				RelativePath=".\test\test_proxy.js">
+			</File>
+			<File
+				RelativePath=".\test\test_rollinglimit.js">
+			</File>
+			<File
+				RelativePath=".\test\test_selective_persistent.js">
+			</File>
+			<File
+				RelativePath=".\test\test_tree_collate.js">
 			</File>
 		</Filter>
 		<File
