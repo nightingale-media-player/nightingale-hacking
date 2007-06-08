@@ -28,7 +28,7 @@ const SONGBIRD_BUNDLE_CLASSNAME = "Songbird Bundle Service Interface";
 const SONGBIRD_BUNDLE_CID = Components.ID("{ff29ec35-1294-42ae-a341-63d0303df969}");
 const SONGBIRD_BUNDLE_IID = Components.interfaces.sbIBundle;
 
-const SONGBIRD_GETBUNDLE_URL = 'http://bundles.songbirdnest.com/getbundle/';
+const SONGBIRD_GETBUNDLE_PREFKEY = "songbird.url.bundles";
 
 function Bundle() {
   this._datalisteners = new Array();
@@ -102,7 +102,12 @@ Bundle.prototype = {
     httpReq.addEventListener("load", this._onload, false);
     httpReq.addEventListener("error", this._onerror, false);
     
-    var url = SONGBIRD_GETBUNDLE_URL + this._bundleid;
+    var prefsService =
+        Components.classes["@mozilla.org/preferences-service;1"].
+        getService(Components.interfaces.nsIPrefBranch);
+
+    var baseURL = prefsService.getCharPref(SONGBIRD_GETBUNDLE_PREFKEY);
+    var url = baseURL + this._bundleid;
 
     this._req.open('GET', url + this._getRandomParameter(), true); 
     this._req.send(null);

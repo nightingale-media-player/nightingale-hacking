@@ -908,23 +908,19 @@
       </method>
       <property name="homePage">
         <getter><![CDATA[
-          var homepage = null;
-          var defaultHomepage = "http://www.songbirdnest.com/birdhouse/";
-          
-          try {
-            if (this._prefsService.getPrefType("browser.startup.homepage") == prefs.PREF_STRING) {
-              homepage = this._prefsService.getCharPref("browser.startup.homepage");
+          var browserHome = Application.prefs.get("browser.startup.homepage");
+          if (!browserHome) {
+            browserHome = Application.prefs.get("songbird.url.birdhouse");
+            if (!browserHome) {
+              throw new Error("Cannot find 'songbird.url.birdhouse' preference");
             }
-          } catch (e) { }
-          
-          if (homepage == null || homepage == '') {
-            homepage = "http://www.songbirdnest.com/birdhouse/";
+            Application.prefs.setValue("browser.startup.homepage",
+                                       browserHome.value);
           }
-          
-          return homepage
+          return browserHome.value;
         ]]></getter>
         <setter><![CDATA[
-          this._prefsService.setCharPref("browser.startup.homepage", val);
+          Application.prefs.setValue("browser.startup.homepage", val);
         ]]></setter>
       </property>
       <method name="goHome">

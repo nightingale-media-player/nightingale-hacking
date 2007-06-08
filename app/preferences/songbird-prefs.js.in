@@ -211,3 +211,13 @@ pref("songbird.rapi.disable_binding", false);
 pref("songbird.rapi.notify.denied", true);
 pref("songbird.rapi.notify.always", true);
 
+// Songbird default urls
+pref("songbird.url.addons", "http://addons.songbirdnest.com/");
+pref("songbird.url.birdhouse", "http://birdhouse.songbirdnest.com/");
+pref("songbird.url.bookmarks", "http://download.songbirdnest.com/bookmarks/bookmarks.xml");
+pref("songbird.url.bugzilla", "http://bugzilla.songbirdnest.com/");
+pref("songbird.url.bundles", "http://bundles.songbirdnest.com/getbundle/");
+pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
+pref("songbird.url.support", "http://songbirdnest.com/support/");
+pref("songbird.url.support.quicktime", "http://publicsvn.songbirdnest.com/trac/wiki/SettingUpQuickTime");
+pref("songbird.url.support.corefailure", "http://publicsvn.songbirdest.com/trac/wiki/CoreWrapperFailure");

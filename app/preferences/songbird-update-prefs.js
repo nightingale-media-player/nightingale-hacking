@@ -26,11 +26,11 @@ pref("app.update.url", "https://updates.songbirdnest.com/update/1/%PRODUCT%/%VER
 
 // URL user can browse to manually if for some reason all update installation
 // attempts fail.  TODO: Change this URL
-pref("app.update.url.manual", "http://www.songbirdnest.com/home");
+pref("app.update.url.manual", "http://www.songbirdnest.com");
 
 // A default value for the "More information about this update" link
 // supplied in the "An update is available" page of the update wizard. 
-pref("app.update.url.details", "http://www.songbirdnest.com/home");
+pref("app.update.url.details", "http://www.songbirdnest.com");
 
 // User-settable override to app.update.url for testing purposes.
 //pref("app.update.url.override", "");

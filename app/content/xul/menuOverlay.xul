@@ -131,11 +131,11 @@
       <menupopup id="help-popup">
         <menuitem id="help.bugz"
                   label="&menu.help.bugz;"
-                  value="&bugzillaURL;"
+                  value="songbird.url.bugzilla"
                   accesskey="&menu.help.bugz.accesskey;"/>
         <menuitem id="help.topics"
                   label="&menu.help.topics;"
-                  value="&supportURL;"
+                  value="songbird.url.support"
                   key="help-key" 
                   accesskey="&menu.help.help.accesskey;"/>
         <menuseparator/>

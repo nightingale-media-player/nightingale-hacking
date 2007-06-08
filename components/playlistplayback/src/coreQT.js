@@ -380,15 +380,15 @@ CoreQT.prototype.showPluginWarning = function ( dialogLabelKey )
   // If the user said yes, then launch the instructions page
   // in a new window.
   if (promptResult == 0) {
-    const url = "http://publicsvn.songbirdnest.com/trac/wiki/SettingUpQuickTime";
+    var qtURL = SBDataGetStringValue("songbird.url.support.quicktime");
     var externalLoader = Components
           .classes["@mozilla.org/uriloader/external-protocol-service;1"]
           .getService(Components.interfaces.nsIExternalProtocolService);
-    var nsURI = Components
+    var uri = Components
           .classes["@mozilla.org/network/io-service;1"]
           .getService(Components.interfaces.nsIIOService)
-          .newURI(url, null, null);
-    externalLoader.loadURI(nsURI, null);
+          .newURI(qtURL, null, null);
+    externalLoader.loadURI(uri, null);
   }
 }
 

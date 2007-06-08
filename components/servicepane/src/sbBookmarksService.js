@@ -88,6 +88,11 @@ function sbBookmarks_servicePaneInit(sps) {
   // if we don't have a bookmarks node in the tree
   this._bookmarkNode = this._servicePane.getNode(ROOTNODE);
   if (!this._bookmarkNode) {
+    var prefsService =
+        Components.classes["@mozilla.org/preferences-service;1"].
+        getService(Components.interfaces.nsIPrefBranch);
+    var bookmarksURL = prefsService.getCharPref("songbird.url.bookmarks");
+    
     // fetch the default set of bookmarks through a series of tubes
     // FIXME: don't use XHR - use nsIChannel and friends
     // FIXME: send parameters and/or headers to indicate product version or something
@@ -186,7 +191,7 @@ function sbBookmarks_servicePaneInit(sps) {
       //    will try to fetch them again.
     }, false);
     xhr.QueryInterface(Ci.nsIXMLHttpRequest);
-    xhr.open('GET', 'http://download.songbirdnest.com/bookmarks/bookmarks.xml', true);
+    xhr.open('GET', bookmarksURL, true);
     xhr.send(null);
   }
   

@@ -29,8 +29,7 @@ const SONGBIRD_METRICS_CLASSNAME = "Songbird Metrics Service Interface";
 const SONGBIRD_METRICS_CID = Components.ID("{1066527d-b135-4e0c-9ea4-f6109ae97d02}");
 const SONGBIRD_METRICS_IID = Components.interfaces.sbIMetrics;
 
-const SONGBIRD_POSTMETRICS_URL = 'http://metrics.songbirdnest.com/post';
-//const SONGBIRD_POSTMETRICS_URL = 'http://192.168.239.128:3000/metrics/post';
+const SONGBIRD_POSTMETRICS_PREFKEY = "songbird.url.metrics";
 
 const SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS = 7; // every week
 
@@ -143,10 +142,12 @@ Metrics.prototype = {
       handleEvent: function( event ) { this._that.onPostError(); } 
     } onposterror._that = this;
 
+    var postURL = this.prefs.getCharPref(SONGBIRD_POSTMETRICS_PREFKEY);
+    
     this._postreq = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest); 
     this._postreq.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("load", onpostload, false);
     this._postreq.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("error", onposterror, false);
-    this._postreq.open('POST', SONGBIRD_POSTMETRICS_URL, true); 
+    this._postreq.open('POST', postURL, true); 
     this._postreq.send(document);
   },
 

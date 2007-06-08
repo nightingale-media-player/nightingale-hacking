@@ -141,7 +141,8 @@ function doMenu( command ) {
     }
     break;
     case "services.browse":
-      gBrowser.loadURI( "http://extensions.songbirdnest.com/");
+      var addonsURL = Application.prefs.get("songbird.url.addons").value;
+      gBrowser.loadURI(addonsURL);
     break;
     
     default:
@@ -151,14 +152,17 @@ function doMenu( command ) {
 }
 
 // Menubar handling
-function onMenu( target )
-{
-  var v = target.getAttribute( "id" );
-  if (!doMenu(v)) {
-    // ==== Default is to launch the value property if one exists, or do nothing.      
-    if ( target.value )
-    {
-      gBrowser.loadURI( target.value);
+function onMenu(target) {
+  // See if this is a special case.
+  if (doMenu(target.getAttribute("id"))) {
+    return;
+  }
+
+  // The value property may contain a pref key that specifies a url to load.
+  if (target.value) {
+    var pref = Application.prefs.get(target.value);
+    if (pref && pref.value) {
+      gBrowser.loadURI(pref.value);
     }
   }
 }

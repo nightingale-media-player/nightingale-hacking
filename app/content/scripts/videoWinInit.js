@@ -388,9 +388,10 @@ function SBMediaCoreCheck() {
                         .getService(Components.interfaces.nsIExternalProtocolService);
     var ios = Components.classes["@mozilla.org/network/io-service;1"]
                         .getService(Components.interfaces.nsIIOService);
-    var brandBundle = sbs.createBundle("chrome://branding/locale/brand.properties");
-    var uri = ios.newURI(brandBundle.GetStringFromName("mediacorecheck.moreInfoUrl"),
-                         null, null);
+                        
+    var coreFailureURL = Application.prefs.get("songbird.url.support.corefailure");
+    var uri = ios.newURI(coreFailureURL, null, null);
+    
     eps.loadURI(uri, null);
   }
 
