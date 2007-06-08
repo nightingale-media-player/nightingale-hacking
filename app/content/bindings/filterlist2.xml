@@ -91,9 +91,12 @@
 
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
   treecol.setAttribute("bind", this._property);
-  treecol.setAttribute("label", this._propertyInfo.displayName);
   treecol.setAttribute("flex", "1");
   treeColumns.appendChild(treecol);
+  this.treecol = treecol;
+
+  this._updateColumnLabel(this.index);
+  
 
   // Remove our selection if we are updated
   var self = this;
@@ -102,6 +105,7 @@
     },
     onValuesChanged: function(index) {
       if (index == self.index) {
+        self._updateColumnLabel();
         self.tree.view.selection.clearSelection();
       }
     }
@@ -110,6 +114,27 @@
         </body>
       </method>
 
+      <method name="_updateColumnLabel">
+        <body>
+          <![CDATA[
+            var n = this.cfs.getValueCount(this.index); 
+            var itemsstr;
+            switch (n) {
+              case 0:
+                itemsstr = SBString("library.noitem", "no items");
+                break;
+              case 1:
+                itemsstr = n + " " + SBString("library.oneitem", "item");
+                break;
+              default:
+                itemsstr = n + " " + SBString("library.manyitem", "items");
+                break;
+            }
+            this.treecol.setAttribute("label", this._propertyInfo.displayName + " (" + itemsstr + ")");
+          ]]>
+        </body>
+      </method>
+      
       <method name="_onFilterListSelect">
         <parameter name="event"/>
         <body>
