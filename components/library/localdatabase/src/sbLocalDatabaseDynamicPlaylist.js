@@ -290,19 +290,41 @@ function sbLocalDatabaseDynamicPlaylistService__updateList(aList)
       // Schedule the next run for this list
       self._setNextRun(aList);
 
-      // Check to see if this list has a custom download destination
+      // Check to see if this list has a custom download destination, and that
+      // the destination is a directory
       var destination = SB_GETPROP(aList, SB_PROP_DESTINATION);
+      var destinationDir;
+      if (destination) {
+        try {
+          destinationDir = ioService.newURI(destination, null, null)
+                                    .QueryInterface(Ci.nsIFileURL).file;
+          if (!destinationDir.isDirectory())
+            destinationDir = null;
+        }
+        catch (e) {
+          // If we couldn't get a destination dir, use the default
+          destinationDir = null;
+        }
+      }
 
       // Start a metadata job for the newly added items.  If there is a custom
       // destination, update each new item with it
       var array = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
       for (var i = oldLength; i < aList.length; i++) {
         var item = aList.getItemByIndex(i);
-        array.appendElement(item, false);
-        if (destination) {
-          item.setProperty(SB_PROP_DESTINATION, destination);
-          item.write();
+        if (destinationDir) {
+          var itemUri = item.contentSrc;
+
+          // If this is not a nsIURL, let the download manager figure it out
+          if (itemUri instanceof Ci.nsIURL) {
+            var dest = destinationDir.clone();
+            dest.append(itemUri.QueryInterface(Ci.nsIURL).fileName);
+            var destUri = ioService.newFileURI(dest);
+            item.setProperty(SB_PROP_DESTINATION, destUri.spec);
+            item.write();
+          }
         }
+        array.appendElement(item, false);
       }
 
       var metadataJobManager =
