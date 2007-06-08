@@ -49,7 +49,7 @@ function onServiceTreeCommand( theEvent )
         SBNewSmartPlaylist();
       break;
       case "service_popup_new_remote":
-        SBSubscribe( "", "", "", "" );
+        SBSubscribe(null, null);
       break;
       
       case "playlist_context_smartedit":

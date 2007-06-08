@@ -55,6 +55,7 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_mediaitem.js \
                  $(srcdir)/test_distinct.js \
                  $(srcdir)/test_medialistview.js \
+                 $(srcdir)/test_dynamicplaylist.js \
                  $(srcdir)/head_localdatabaselibrary.js \
                  $(srcdir)/media_items.txt \
                  $(srcdir)/resource_properties.txt \
@@ -76,6 +77,9 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/data_distinct_artist.txt \
                  $(srcdir)/data_distinct_contentlength.txt \
                  $(srcdir)/data_distinct_sml101_album.txt \
+                 $(srcdir)/test1.mp3 \
+                 $(srcdir)/test2.mp3 \
+                 $(srcdir)/test3.mp3 \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

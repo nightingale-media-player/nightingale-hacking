@@ -53,6 +53,9 @@ function SB_AddItems(aItems, aMediaList, aReplace) {
   // A mapping of uris to media items.  We use this later to set the properties
   var uriStrToItem = {};
 
+  // A list of uris that already exist in the list
+  var exists = {};
+
   // Generate a list of unique uri strings
   var temp = {};
   var uriStrToUri = {};
@@ -93,6 +96,7 @@ function SB_AddItems(aItems, aMediaList, aReplace) {
         var uriStr = item.contentSrc.spec;
         uriStrToItem[uriStr] = item;
         delete notFound[uriStr];
+        exists[uriStr] = 1;
         return true;
       },
       onEnumerationEnd: function() {
@@ -104,7 +108,7 @@ function SB_AddItems(aItems, aMediaList, aReplace) {
                                           listener,
                                           Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
 
-    // The uris remaining in notFOund need to be created, so add them to the
+    // The uris remaining in notFound need to be created, so add them to the
     // create list
     for (var j in notFound) {
       toCreate.push(j);
@@ -138,7 +142,10 @@ function SB_AddItems(aItems, aMediaList, aReplace) {
 
       var item = uriStrToItem[e.uri.spec];
       if (item) {
-        toAdd.push(item);
+        // If the item already exists in the list, don't add it
+        if (!(e.uri.spec in exists)) {
+          toAdd.push(item);
+        }
         item.setProperty(SB_NS + "originURL", e.uri.spec);
         for (var prop in e.properties) {
           try {

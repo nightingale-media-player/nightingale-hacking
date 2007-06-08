@@ -529,3 +529,15 @@ function newURI(spec) {
   
   return ioService.newURI(spec, null, null);
 }
+
+function getFile(fileName) {
+  var file = Cc["@mozilla.org/file/directory_service;1"]
+               .getService(Ci.nsIProperties)
+               .get("resource:app", Ci.nsIFile);
+  file = file.clone();
+  file.append("testharness");
+  file.append("localdatabaselibrary");
+  file.append(fileName);
+  return file;
+}
+

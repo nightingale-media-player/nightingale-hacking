@@ -125,9 +125,9 @@ function runTest () {
   assertEqual(mediaList.length, 6);
   assertEqual(mediaList.library.length, 7);
 
-  // Shouldn't add to the library but should add to the list
+  // Should not change the list
   handler.read(file, mediaList, true);
   assertEqual(mediaList.library.length, 7);
-  assertEqual(mediaList.length, 9);
+  assertEqual(mediaList.length, 6);
 }
 

@@ -725,7 +725,8 @@ NS_IMETHODIMP sbDownloadDevice::UpdateItems(
     nsIArray                    *aMediaItems,
     PRUint32                    *aItemCount)
 {
-    return (NS_ERROR_NOT_IMPLEMENTED);
+  NS_WARNING("UpdateItems not implemented");
+  return NS_OK;
 }
 
 

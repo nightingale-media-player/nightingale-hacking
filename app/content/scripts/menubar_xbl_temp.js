@@ -38,7 +38,7 @@ function doMenu( command ) {
       SBNewSmartPlaylist();
     break;
     case "file.remote":
-      SBSubscribe( "", "", "", "" );
+      SBSubscribe(null, null);
     break;
     case "file.file":
       SBFileOpen();

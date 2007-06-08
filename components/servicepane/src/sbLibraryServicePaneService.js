@@ -127,6 +127,8 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
   var list = this.getLibraryResourceForNode(aNode);
   if (list) {
     this._appendCommands(aContextMenu, list, aParentWindow);
+
+    // Add menu items for a smart media list
     if (list instanceof Ci.sbILocalDatabaseSmartMediaList) {
       this._appendMenuItem(aContextMenu, "Properties", function(event) { //XXX todo: localize
         var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
@@ -138,9 +140,31 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
                           list);
       });
     }
+
+    // Add menu items for a dynamic media list
+    if (SB_GETPROP(list, "http://songbirdnest.com/data/1.0#isSubscription") == "1") {
+      this._appendMenuItem(aContextMenu, "Properties", function(event) { //XXX todo: localize
+
+        var params = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+        params.appendElement(list, false);
+
+        var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                        .getService(Ci.nsIWindowWatcher);
+        watcher.openWindow(null,
+                           "chrome://songbird/content/xul/subscribe.xul",
+                           "_blank",
+                           "chrome,dialog=yes",
+                           params);
+      });
+      this._appendMenuItem(aContextMenu, "Update", function(event) { //XXX todo: localize
+        var dps = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicPlaylistService;1"]
+                    .getService(Ci.sbILocalDatabaseDynamicPlaylistService);
+        dps.updateNow(list);
+      });
+    }
+
   }
 }
-
 
 sbLibraryServicePane.prototype._getMediaListForDrop =
 function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrientation) {
@@ -646,6 +670,8 @@ function sbLibraryServicePane__libraryRemoved(aLibrary) {
   if (node) {
     this._hideLibraryNodes(node);
   }
+
+  aLibrary.removeListener(this);
 }
 
 
@@ -872,7 +898,10 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     node.editable = true;
 
     // Set properties for styling purposes
-    node.properties = "medialist medialisttype-" + aMediaList.type;
+    if (SB_GETPROP(aMediaList, "http://songbirdnest.com/data/1.0#isSubscription") == "1")
+      node.properties = "medialist medialisttype-dynamic";
+    else
+      node.properties = "medialist medialisttype-" + aMediaList.type;
 
     // Save the type of media list so that we can group by type
     node.setAttributeNS(LSP, "ListType", aMediaList.type);
@@ -1164,6 +1193,15 @@ function sbLibraryServicePane_observe(subject, topic, data) {
   }
 }
 
+// Until we get isVoid/setVoid stuff
+function SB_GETPROP(resource, property) {
+  try {
+    return resource.getProperty(property);
+  }
+  catch (e) {
+  }
+  return null;
+}
 
 ///////////
 // XPCOM //

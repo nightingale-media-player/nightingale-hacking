@@ -924,6 +924,13 @@ sbLocalDatabaseLibrary::RegisterDefaultMediaListFactories()
   rv = RegisterMediaListFactory(factory);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  factory =
+    do_GetService(SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RegisterMediaListFactory(factory);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

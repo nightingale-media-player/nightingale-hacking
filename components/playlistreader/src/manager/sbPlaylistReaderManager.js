@@ -83,21 +83,13 @@ CPlaylistReaderManager.prototype =
 
   getTempFilename: function()
   {
-    var strTempFile = "";
+    var file = Components.classes["@mozilla.org/file/directory_service;1"]
+                         .getService(Components.interfaces.nsIProperties)
+                         .get("TmpD", Components.interfaces.nsIFile);
+    file.append("songbird.tmp");
+    file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0664);
 
-    var aDirectoryService = Components.classes["@mozilla.org/file/directory_service;1"].createInstance();
-    aDirectoryService = aDirectoryService.QueryInterface(Components.interfaces.nsIProperties);
-
-    var aUUIDGenerator = (Components.classes["@mozilla.org/uuid-generator;1"]).createInstance();
-    aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
-    var aUUID = aUUIDGenerator.generateUUID();
-
-    var bResult = new Object;
-    var aTempFolder = aDirectoryService.get("DefProfLRt", Components.interfaces.nsIFile, bResult);
-
-    aTempFolder.append(aUUID);
-
-    return aTempFolder.path;
+    return file.path;
   },
 
   getFileExtension: function(aPath)
@@ -115,7 +107,7 @@ CPlaylistReaderManager.prototype =
   {
     const PlaylistReaderListener = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
 
-    var theExtension = this.getFileExtension(aURI.spec);
+    var theExtension = this.getFileExtension(aURI.path);
 
     if (aURI instanceof Ci.nsIFileURL)
     {

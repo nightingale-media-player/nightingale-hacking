@@ -42,6 +42,7 @@ SUBDIRS = addonmetadata \
           filescan \
           integration \
           library \
+          jscodelib \
           mediacore \
           metrics \
           moz \

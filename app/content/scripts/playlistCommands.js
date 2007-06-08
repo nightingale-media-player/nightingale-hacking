@@ -380,9 +380,7 @@ var SBWebPlaylistCommands =
         case "library_cmd_subscribe":
         {
           // Bring up the subscribe dialog with the web playlist url
-          var url = window.location.href;
-          var readable_name = unescape(url);
-          SBSubscribe(url, this.m_Context.m_Playlist.mediaListView, readable_name);
+          SBSubscribe(null, gBrowser.currentURI);
         }
         break;
         case "library_cmd_addtolibrary":

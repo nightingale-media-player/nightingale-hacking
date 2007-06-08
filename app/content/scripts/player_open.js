@@ -471,50 +471,38 @@ function SBTrackEditorOpen()
   }
 }
 
-
-function SBSubscribe(url, mediaListView, readableName)
+function SBSubscribe(mediaList, defaultUrl)
 {
-  // Make a magic data object to get passed to the dialog
-  var subscribe_data = { retval: null,
-                         url: url,
-                         readableName: readableName
-                       };
-                       
-  alert("XXXX - migrate 'SBSubscribe()' to new API");  
-/*
-  // if we have a table and guid, we're editing an existing playlist
-  // so we need to populate the edit dialog with the existing data.
-  if (table && guid) {
-    var playlistManager = new sbIPlaylistManager();
-    var dbQuery = new sbIDatabaseQuery();
+  // Make sure the argument is a dynamic media list
+  if (mediaList) {
+    if (!(mediaList instanceof Components.interfaces.sbIMediaList))
+      throw Components.results.NS_ERROR_INVALID_ARG;
 
-    dbQuery.setAsyncQuery(false);
-    dbQuery.setDatabaseGUID(guid);
-
-    var playlist = playlistManager.getDynamicPlaylist(table, dbQuery);
-    if (playlist) {
-      // if the playlist exists pull the data from it and mark ourself as
-      // editing the existing playlist
-      subscribe_data.time = playlist.getPeriodicity();
-      subscribe_data.table = table;
-      subscribe_data.guid = guid;
-      subscribe_data.edit = true;
+    var isSubscription;
+    try {
+      isSubscription =
+        mediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription");
     }
+    catch(e) {
+    }
+    if (isSubscription != "1")
+      throw Components.results.NS_ERROR_INVALID_ARG;
   }
-*/
 
-  // snapshot the service tree so we can find the added playlist
-  SBScanServiceTreeNewEntryEditable();
+  if (defaultUrl && !(defaultUrl instanceof Components.interfaces.nsIURI))
+    throw Components.results.NS_ERROR_INVALID_ARG;
+
+  var params = Components.classes["@mozilla.org/array;1"]
+                         .createInstance(Components.interfaces.nsIMutableArray);
+  params.appendElement(mediaList, false);
+  params.appendElement(defaultUrl, false);
 
   // Open the window
-  SBOpenModalDialog( "chrome://songbird/content/xul/subscribe.xul", "", "chrome,centerscreen", subscribe_data ); 
-  if ( subscribe_data.retval == "ok" && !subscribe_data.edit )
-  {
-    // if we are not editing an existing playlist open the edit box
-    SBScanServiceTreeNewEntryStart();
-  }
+  SBOpenModalDialog("chrome://songbird/content/xul/subscribe.xul",
+                    "",
+                    "chrome,centerscreen",
+                    params); 
 }
-
 
 // TODO: This function should be renamed.  See openAboutDialog in browserUtilities.js
 function About( )

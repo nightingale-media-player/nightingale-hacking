@@ -83,14 +83,27 @@
     { 0xab, 0x09, 0xa9, 0xd5, 0x75, 0xf4, 0xc2, 0xaa }               \
   }
 
-#define SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_DESCRIPTION          \
+#define SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_DESCRIPTION           \
   "Local Database Smart Media List Factory"
-#define SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CONTRACTID           \
+#define SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CONTRACTID            \
   "@songbirdnest.com/Songbird/Library/LocalDatabase/SmartMediaListFactory;1"
-#define SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CID                  \
+#define SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CID                   \
   { /* 89cc7c59-2d70-4d6f-8472-59e15f2a3581 */                       \
     0x89cc7c59,                                                      \
     0x2d70,                                                          \
     0x4d6f,                                                          \
     { 0x84, 0x72, 0x59, 0xe1, 0x5f, 0x2a, 0x35, 0x81 }               \
   }
+
+#define SB_LOCALDATABASE_DYANMICMEDIALISTFACTORY_DESCRIPTION         \
+  "Local Database Dyanmic Media List Factory"
+#define SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CONTRACTID          \
+  "@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicMediaListFactory;1"
+#define SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CID                 \
+  { /* 1dcff5da-9a36-46d7-87fd-a6f0d0ec081f */                       \
+    0x1dcff5da,                                                      \
+    0x9a36,                                                          \
+    0x46d7,                                                          \
+    { 0x87, 0xfd, 0xa6, 0xf0, 0xd0, 0xec, 0x08, 0x1f }               \
+  }
+
