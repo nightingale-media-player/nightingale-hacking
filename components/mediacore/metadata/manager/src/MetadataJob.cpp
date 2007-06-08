@@ -205,6 +205,7 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Compose the (other) create index query string
+  createIndex.Truncate();
   createIndex.AppendLiteral( "CREATE INDEX 'idx_" );
   createIndex += mTableName;
   createIndex.AppendLiteral(  "_is_written' ON " );
