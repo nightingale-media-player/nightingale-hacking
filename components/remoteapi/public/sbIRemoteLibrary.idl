@@ -42,7 +42,7 @@ interface sbIMediaItem;
  *
  */
 [scriptable, uuid(3025cbf8-7969-4e79-8641-967a9f4e51b8)]
-interface sbIRemoteLibrary : sbIRemoteMediaList
+interface sbIRemoteLibrary : nsISupports
 {
   /**
    * create and insert a media item into the library

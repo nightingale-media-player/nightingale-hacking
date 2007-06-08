@@ -96,26 +96,40 @@ static NS_DEFINE_CID(kRemoteLibraryCID, SONGBIRD_REMOTELIBRARY_CID);
 const static char* sPublicWProperties[] = {""};
 
 const static char* sPublicRProperties[] =
-  { "metadata:artists",
+  { //
+    "metadata:artists",
     "metadata:albums",
     "metadata:name",
     "metadata:type",
     "metadata:length",
+
+    // sbIRemoteLibrary
+    "binding:selection",
 #ifdef DEBUG
     "library:filename",
 #endif
+
+    // nsIClassInfo
     "classinfo:classDescription",
     "classinfo:contractID",
     "classinfo:classID",
     "classinfo:implementationLanguage",
-    "classinfo:flags" };
+    "classinfo:flags"
+  };
 
 const static char* sPublicMethods[] =
-  { "binding:connectToMediaLibrary",
+  { // sbIRemoteLibrary
+    "library:connectToMediaLibrary",
+    "library:connectToDefaultLibrary",
     "binding:createMediaList",
     "binding:createMediaListFromFile",
     "binding:createMediaItem",
     "binding:addMediaListByURL",
+
+    // sbIRemoteMediaList
+    "binding:addItemByURL",
+    "binding:setSelectionByIndex",
+    "binding:ensureColumnVisible",
 
     // sbIMediaList
     "binding:contains",
@@ -126,12 +140,14 @@ const static char* sPublicMethods[] =
     "binding:removeByIndex"
   };
 
-NS_IMPL_ISUPPORTS7( sbRemoteLibrary,
+NS_IMPL_ISUPPORTS9( sbRemoteLibrary,
                     nsIClassInfo,
                     nsISecurityCheckedComponent,
                     sbISecurityAggregator,
                     sbIRemoteMediaList,
                     sbIMediaList,
+                    sbIWrappedMediaList,
+                    sbIWrappedMediaItem,
                     sbIMediaItem,
                     sbIRemoteLibrary )
 
@@ -230,16 +246,8 @@ sbRemoteLibrary::ConnectToDefaultLibrary( const nsAString &aLibName )
     rv = libManager->GetLibrary( guid, getter_AddRefs(mLibrary) );
     NS_ENSURE_SUCCESS( rv, rv );
 
-    // Set the underlying mMediaList to point to the underlying library
-    mMediaList = do_QueryInterface(mLibrary);
-    nsCOMPtr<sbIMediaList> list( do_QueryInterface(mLibrary) );
-    SB_WrapMediaList( list, getter_AddRefs(mMediaList) );
-    NS_ENSURE_STATE(mMediaList);
-
-    // Set the underlying mMediaItem to point to the underlying library
-    nsCOMPtr<sbIMediaItem> item( do_QueryInterface(mLibrary) );
-    SB_WrapMediaItem( item, getter_AddRefs(mMediaItem) );
-    NS_ENSURE_STATE(mMediaItem);
+    rv = InitInternalMediaList();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   return rv;
 }
@@ -275,19 +283,13 @@ sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aDomain, const nsAStrin
   libFactory->CreateLibrary( propBag, getter_AddRefs(mLibrary) );
   NS_ENSURE_STATE(mLibrary);
 
-  // Set the underlying mMediaList to point to the underlying library
-  mMediaList = do_QueryInterface(mLibrary);
-  SB_WrapMediaList( mMediaList, getter_AddRefs(mRemMediaList) );
-  NS_ENSURE_STATE(mRemMediaList);
-
-  // Set the underlying mMediaItem to point to the underlying library
-  nsCOMPtr<sbIMediaItem> item( do_QueryInterface(mLibrary) );
-  SB_WrapMediaItem( item, getter_AddRefs(mMediaItem) );
-  NS_ENSURE_STATE(mMediaItem);
+  rv = InitInternalMediaList();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Library has been created, store a pref key to point to the guid
   nsAutoString guid;
-  mMediaItem->GetGuid(guid);
+  rv = GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // put the guid in a supports string for the pref system 
   nsCOMPtr<nsISupportsString> supportsString =
@@ -397,9 +399,50 @@ sbRemoteLibrary::CreateMediaListFromFile( const nsAString& aURL,
 
 // ---------------------------------------------------------------------------
 //
+//                            sbIWrappedMediaList
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP_(already_AddRefed<sbIMediaItem>)
+sbRemoteLibrary::GetMediaItem()
+{
+  return mRemMediaList->GetMediaItem();
+}
+
+NS_IMETHODIMP_(already_AddRefed<sbIMediaList>)
+sbRemoteLibrary::GetMediaList()
+{
+  return mRemMediaList->GetMediaList();
+}
+
+// ---------------------------------------------------------------------------
+//
 //                            Helper Methods
 //
 // ---------------------------------------------------------------------------
+
+// create an sbRemoteMediaList object to delegate the calls for
+// sbIMediaList, sbIMediaItem, sbIRemoteMedialist
+nsresult
+sbRemoteLibrary::InitInternalMediaList()
+{
+  NS_ENSURE_STATE(mLibrary);
+
+  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mLibrary);
+  NS_ENSURE_TRUE( mediaList, NS_ERROR_FAILURE );
+
+  nsCOMPtr<sbIMediaListView> mediaListView;
+  nsresult rv = mediaList->CreateView(getter_AddRefs(mediaListView));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mRemMediaList = new sbRemoteMediaList( mediaList, mediaListView );
+  NS_ENSURE_TRUE( mRemMediaList, NS_ERROR_OUT_OF_MEMORY );
+
+  rv = mRemMediaList->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return rv;
+}
 
 nsresult
 sbRemoteLibrary::GetSiteLibraryFile( const nsAString &aDomain,

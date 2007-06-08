@@ -39,6 +39,7 @@
 #include <sbIRemotePlayer.h>
 #include <sbISecurityMixin.h>
 #include <sbISecurityAggregator.h>
+#include <sbIWrappedMediaList.h>
 
 #include <nsIFile.h>
 #include <nsISecurityCheckedComponent.h>
@@ -62,6 +63,8 @@ class sbRemoteLibrary : public nsIClassInfo,
                         public nsISecurityCheckedComponent,
                         public sbISecurityAggregator,
                         public sbIRemoteLibrary,
+                        public sbIRemoteMediaList,
+                        public sbIWrappedMediaList,
                         public sbIMediaList
 {
 public:
@@ -71,20 +74,22 @@ public:
   NS_DECL_SBIREMOTELIBRARY
 
   NS_FORWARD_SAFE_SBIREMOTEMEDIALIST(mRemMediaList)
-  NS_FORWARD_SAFE_SBIMEDIALIST(mMediaList)
-  NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem)
-  NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mMediaItem)
+  NS_FORWARD_SAFE_SBIMEDIALIST(mRemMediaList)
+  NS_FORWARD_SAFE_SBIMEDIAITEM(mRemMediaList)
+  NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mRemMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
   sbRemoteLibrary();
   nsresult Init();
 
+  // sbIWrappedMediaList
+  NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();
+  NS_IMETHOD_(already_AddRefed<sbIMediaList>) GetMediaList();
+
 protected:
   virtual ~sbRemoteLibrary();
   nsCOMPtr<sbILibrary> mLibrary;
-  nsCOMPtr<sbIRemoteMediaList> mRemMediaList;
-  nsCOMPtr<sbIMediaList> mMediaList;
-  nsCOMPtr<sbIMediaItem> mMediaItem;
+  nsRefPtr<sbRemoteMediaList> mRemMediaList;
 
   // Gets the GUID for the built in libraries: main, web, download
   nsresult GetLibraryGUID( const nsAString &aLibraryID,
@@ -99,6 +104,8 @@ protected:
   nsresult GetSiteLibraryFile( const nsAString &aDomain,
                                const nsAString &aPath,
                                nsIFile **aSiteDBFile );
+  // on connection to a library, set the internal remote medialist
+  nsresult InitInternalMediaList();
 
   // SecurityCheckedComponent stuff
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;

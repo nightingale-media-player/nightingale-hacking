@@ -149,13 +149,14 @@ const static char* sPublicMethods[] =
   "library:setSelectionByIndex"
 };
 
-NS_IMPL_ISUPPORTS8(sbRemoteMediaList,
+NS_IMPL_ISUPPORTS9(sbRemoteMediaList,
                    nsIClassInfo,
                    nsISecurityCheckedComponent,
                    sbISecurityAggregator,
                    sbIRemoteMediaList,
                    sbIMediaList,
                    sbIWrappedMediaList,
+                   sbIWrappedMediaItem,
                    sbIMediaItem,
                    sbILibraryResource)
 
@@ -349,6 +350,7 @@ sbRemoteMediaList::Contains(sbIMediaItem* aMediaItem, PRBool* _retval)
 NS_IMETHODIMP
 sbRemoteMediaList::Add(sbIMediaItem *aMediaItem)
 {
+  LOG(("sbRemoteMediaList::Add()"));
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
   nsresult rv;
@@ -388,6 +390,7 @@ NS_IMETHODIMP
 sbRemoteMediaList::Remove(sbIMediaItem* aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  LOG(("sbRemoteMediaList::Remove()"));
 
   nsresult rv;
   nsCOMPtr<sbIWrappedMediaItem> wrappedMediaItem =

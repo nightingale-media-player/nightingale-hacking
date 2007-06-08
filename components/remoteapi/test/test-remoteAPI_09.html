@@ -32,66 +32,69 @@
     <script>
       var siteLib;
       var mainLib;
+      var webLib;
       var originalPlaylist = true;
       var init = false;
       var playlist1;
-      var playlist2;
       var originalWeb;
       var m3uMediaList;
       var mlist;
       var myDiv;
+      var testml1;
+      var testml2;
+      var mediaList;
 
       var load = function load() {
-        dump("\nXXXredfive - load\n\n");
-        /*
-        songbird.commands.addCommand( "action",
-                                      "setwebplaylist",
-                                      "Set Playlist",
-                                      "Set Playlist" );
-        document.addEventListener( "setwebplaylist", setPlaylist, true );
-        */
-
         myDiv = document.getElementById("output");
         siteLib = songbird.siteLibrary("", "/");
         mainLib = songbird.libraries("main");
+        webLib = songbird.libraries("web");
+
+        siteLib.name = "Site Lib";
+        siteLib.type = "library";
 
         originalWeb = songbird.webPlaylist;
-        playlist1 = siteLib.createMediaList("simple");
-        playlist2 = siteLib.createMediaList("simple");
-        playlist1.name = "foo - empty";
-        playlist2.name = "bar - empty";
         init = true;
+      }
+
+      var unload = function unload() {
+        if (playlist1)
+          siteLib.remove(playlist1);
+        if (mediaList)
+          siteLib.remove(mediaList);
+        if (m3uMediaList)
+          siteLib.remove(m3uMediaList);
+        removeSiteMediaList();
+        removeMainMediaList();
+      }
+
+      var setPlaylist = function setPlaylist(aMediaList) {
+        if (!originalWeb)
+          originalWeb = songbird.webPlaylist;
+        songbird.webPlaylist = aMediaList;
       }
 
       // toggle between web and empty playlist
       var togglePlaylist = function() {
+        if ( !playlist1 ) {
+          playlist1 = siteLib.createMediaList("simple");
+          playlist1.name = "foo - empty";
+        }
+
         if (originalPlaylist) {
-          songbird.webPlaylist = playlist1;
+          setPlaylist(playlist1);
         } else {
           songbird.webPlaylist = originalWeb;
         }
         originalPlaylist = !originalPlaylist;
       }
 
-      var setPlaylist = function setPlaylist (aEvent) {
-        if (!mlist) {
-          mlist = siteLib.createMediaList("simple");
-          mlist.name = "foo";
-        }
-        songbird.webPlaylist = mlist;
-
-        myDiv.appendChild(document.createTextNode("mList name: " + mlist.name + " length: " + mlist.length));
-        myDiv.appendChild(document.createTextNode("webPlaylist name: " + songbird.webPlaylist.name + " length: " + songbird.webPlaylist.length));
-        myDiv.appendChild(document.createTextNode("<br />"));
-      }
-
-
       var setWebPlaylist = function setWebPlaylist() {
-        var mediaList = siteLib.createMediaList("simple");
+        mediaList = siteLib.createMediaList("simple");
         mediaList.add(siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3"));
         mediaList.add(siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3"));
         mediaList.name = "Test List - 2 songs";
-        songbird.webPlaylist = mediaList;
+        setPlaylist(mediaList);
       }
 
       var setM3UPlaylist = function setM3UPlaylist() {
@@ -99,23 +102,51 @@
           m3uMediaList = siteLib.createMediaListFromFile("http://www.jgaunt.com/uploads/uploads.m3u");
           m3uMediaList.name = "m3u Test List";
         }
-        songbird.webPlaylist = m3uMediaList;
+        setPlaylist(m3uMediaList);
       }
 
-      // Set the site library as the web playlist
+      //
+      // Test setting of libraries to the web playlist
+      //
+
       var setMain = function setMain() {
-        songbird.webPlaylist = mainLib;
+        setPlaylist(mainLib);
       }
       
-      // Set the site library as the web playlist
+      var setWeb = function setWeb() {
+        setPlaylist(webLib);
+      }
+
       var setSite = function setSite() {
-        songbird.webPlaylist = siteLib;
+        setPlaylist(siteLib);
+      }
+
+      //
+      // Test add/remove medialists
+      //
+
+      var addSiteMediaList = function addSiteMediaList() {
+        testml1 = siteLib.createMediaList("simple");
+      }
+
+      var removeSiteMediaList = function removeSiteMediaList() {
+        if (testml1)
+          siteLib.remove(testml1);
+      }
+
+      var addMainMediaList = function addMainMediaList() {
+        testml2 = mainLib.createMediaList("simple");
+      }
+
+      var removeMainMediaList = function removeMainMediaList() {
+        if (testml2)
+          mainLib.remove(testml2);
       }
       
     </script>
   </head>
 
-  <body onload="load();">
+  <body onload="load();" onunload="unload();">
     <h1>Creation of MediaList from a Library and setting as webplaylist</h1>
     <p> Force a web playlist to appear. <br />
       <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
@@ -124,17 +155,37 @@
       <input type="button" id="toggle_button" value="Toggle"
              onclick="togglePlaylist();" /> 
       <br />
+      <br />
+      <p> Set the playlist to a js created playlist or a playlist from an .m3u file
+      </p>
       <input type="button" id="set_button" value="Set test list"
              onclick="setWebPlaylist();" /> 
-      <br />
       <input type="button" id="make_m3u_button" value="Set From File"
              onclick="setM3UPlaylist();" /> 
       <br />
+      <br />
+      <p> Set the web playlist to the site library, main library or web library
+      </p>
       <input type="button" id="set_site_button" value="Set Site Lib"
              onclick="setSite();" /> 
-      <br />
       <input type="button" id="set_main_button" value="Set Main Lib"
              onclick="setMain();" /> 
+      <input type="button" id="set_web_button" value="Set Web Lib"
+             onclick="setWeb();" /> 
+      <br />
+      <br />
+
+      <p> Create and add a medialist to the site or main libraries, and remove it.
+      </p>
+      <input type="button" id="add_sitemedialist_button" value="add site media list"
+             onclick="addSiteMediaList();" /> 
+      <input type="button" id="add_mainmedialist_button" value="add main media list"
+             onclick="addMainMediaList();" /> 
+      <br />
+      <input type="button" id="remove_sitemedialist_button" value="remove site media list"
+             onclick="removeSiteMediaList();" /> 
+      <input type="button" id="remove_mainmedialist_button" value="remove main media list"
+             onclick="removeMainMediaList();" /> 
       <br />
     </form>
     </p>
