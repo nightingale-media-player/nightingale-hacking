@@ -804,8 +804,17 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
         return NS_OK;
       }
 
+      // XXXben Check to make sure that we have a nsITreeBoxObject here before
+      //        modifying the selection. This was crashing occasionally, see
+      //        bug 3533.
+      nsCOMPtr<nsITreeBoxObject> boxObject;
+      rv = mRealSelection->GetTree(getter_AddRefs(boxObject));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      NS_ASSERTION(boxObject, "No box object?! Fix bug 3533 correctly!");
+
       // Should this row be selected?
-      if (mSelectionList.Count() > 0) {
+      if (mSelectionList.Count() && boxObject) {
         nsAutoString id;
         rv = GetUniqueIdForRow(row, id);
         NS_ENSURE_SUCCESS(rv, rv);
