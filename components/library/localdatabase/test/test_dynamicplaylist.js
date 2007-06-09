@@ -123,7 +123,7 @@ function testUpdate() {
         testFinished();
         fail("Test did not finish in time");
       }
-    }, 8000, Ci.nsITimer.TYPE_ONE_SHOT);
+    }, 10000, Ci.nsITimer.TYPE_ONE_SHOT);
 
   server.start(8080);
   server.registerDirectory("/", getFile("."));
@@ -147,7 +147,7 @@ function testUpdate() {
   dps.updateNow(list);
 
   // 2s should be enough to load the playlist and read the metadata
-  delayContinue(2000, function() {
+  delayContinue(3000, function() {
 
     // Check the contents of the list
     assertEqual(list.length, 2);
@@ -159,7 +159,7 @@ function testUpdate() {
     dps.updateNow(list);
 
     // 2s should be enough to load the playlist and read the metadata
-    delayContinue(2000, function() {
+    delayContinue(3000, function() {
 
       // Check the contents of the list
       assertEqual(list.length, 3);
