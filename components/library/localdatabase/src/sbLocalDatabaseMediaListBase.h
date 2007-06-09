@@ -165,8 +165,8 @@ public:
 private:
   // Not meant to be implemented. This makes it a compiler error to
   // attempt to create an object on the heap.
-  static void* operator new(size_t /*size*/) CPP_THROW_NEW;
-  static void operator delete(void* /*memory*/);
+  static void* operator new(size_t /*size*/) CPP_THROW_NEW {return 0;}
+  static void operator delete(void* /*memory*/) { }
 
   sbLocalDatabaseMediaListBase* mList;
 };
