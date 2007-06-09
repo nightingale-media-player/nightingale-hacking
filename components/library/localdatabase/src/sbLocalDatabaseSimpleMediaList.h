@@ -151,15 +151,20 @@ public:
   : mFriendList(aList)
   {
     NS_ASSERTION(mFriendList, "Null pointer!");
+    NS_ADDREF_THIS();
   }
 
 private:
+  // Not meant to be implemented. This makes it a compiler error to
+  // attempt to create an object on the heap.
+  static void* operator new(size_t /*size*/) CPP_THROW_NEW;
+  static void operator delete(void* /*memory*/);
+
   PR_STATIC_CALLBACK(PLDHashOperator)
     AddURIsToArrayCallback(nsISupportsHashKey::KeyType aKey,
                            sbIMediaItem* aEntry,
                            void* aUserData);
 
-private:
   sbLocalDatabaseSimpleMediaList* mFriendList;
   nsCOMArray<sbIMediaItem> mItemList;
   nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> mItemsToCreate;
@@ -177,9 +182,15 @@ public:
     mItemEnumerated(PR_FALSE)
   {
     NS_ASSERTION(mFriendList, "Null pointer!");
+    NS_ADDREF_THIS();
   }
 
 private:
+  // Not meant to be implemented. This makes it a compiler error to
+  // attempt to create an object on the heap.
+  static void* operator new(size_t /*size*/) CPP_THROW_NEW;
+  static void operator delete(void* /*memory*/);
+
   sbLocalDatabaseSimpleMediaList* mFriendList;
   nsCOMPtr<sbIDatabaseQuery> mDBQuery;
   nsCOMArray<sbIMediaItem> mNotificationList;
