@@ -130,6 +130,15 @@ function runTest () {
   assertEqual(arrayEquals(listener.indexes, [0, 1]), true);
   listener.reset();
 
+  cfs.remove(0);
+  cfs.remove(0);
+  cfs.appendFilter("http://songbirdnest.com/data/1.0#genre", false);
+  assertEqual(cfs.getValueCount(0), 2);
+  cfs.changeFilter(0, "http://songbirdnest.com/data/1.0#artistName");
+  assertEqual(cfs.getValueCount(0), 8);
+  cfs.changeFilter(0, "http://songbirdnest.com/data/1.0#genre");
+  assertEqual(cfs.getValueCount(0), 2);
+
 }
 
 function arrayEquals(array1, array2) {

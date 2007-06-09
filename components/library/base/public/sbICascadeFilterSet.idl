@@ -88,6 +88,13 @@ interface sbICascadeFilterSet : nsISupports
   void remove(in unsigned short aIndex);
 
   /**
+   * \brief Change the property used on a filter
+   * \param aIndex Index of the filter to change
+   * \param aProperty Property to change the filter to
+   */
+   void changeFilter(in unsigned short aIndex, in AString aProperty);
+
+  /**
    * \brief Set the configuration of a filter.  Note that chaging a filter will
    *        clear the configuration of all downstream filters.
    * \param aIndex Index of the filter to be configured

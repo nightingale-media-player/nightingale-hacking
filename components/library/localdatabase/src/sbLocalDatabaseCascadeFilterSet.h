@@ -57,6 +57,8 @@ public:
                 sbIMediaListView* aMediaListView,
                 sbILocalDatabaseAsyncGUIDArray* aProtoArray);
 
+  nsresult Rebuild();
+
 private:
   nsresult ConfigureArray(PRUint32 aIndex);
 

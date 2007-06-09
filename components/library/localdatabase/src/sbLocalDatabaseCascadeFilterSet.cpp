@@ -115,6 +115,29 @@ sbLocalDatabaseCascadeFilterSet::Init(sbILocalDatabaseLibrary* aLibrary,
   return NS_OK;
 }
 
+nsresult
+sbLocalDatabaseCascadeFilterSet::Rebuild()
+{
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Rebuild", this));
+
+  // XXXsteve This is slow so I am going to disable this until we have the
+  // updated property notifications
+/*
+  nsresult rv;
+  for (PRUint32 i = 0; i < mFilters.Length(); i++) {
+    sbFilterSpec& fs = mFilters[i];
+    if (fs.treeView) {
+      rv = fs.array->Invalidate();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = fs.treeView->Rebuild();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+*/
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::GetLength(PRUint16* aLength)
 {
@@ -243,6 +266,33 @@ sbLocalDatabaseCascadeFilterSet::Remove(PRUint16 aIndex)
     // Notify listeners
     mListeners.EnumerateEntries(OnValuesChangedCallback, &i);
   }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::ChangeFilter(PRUint16 aIndex,
+                                              const nsAString& aProperty)
+{
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - ChangeFilter", this));
+  NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
+
+  nsresult rv;
+
+  sbFilterSpec& fs = mFilters[aIndex];
+  if (fs.isSearch)
+    return NS_ERROR_INVALID_ARG;
+
+  fs.property = aProperty;
+
+  rv = fs.array->ClearSorts();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = fs.array->AddSort(aProperty, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ConfigureArray(aIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -415,7 +465,7 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
     NS_ENSURE_TRUE(fs.treeView, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<sbIPropertyArray> propArray =
-      do_CreateInstance("@songbirdnest.com/Songbird/Properties/PropertyArray;1", &rv);
+      do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = propArray->AppendProperty(fs.property, NS_LITERAL_STRING("a"));
