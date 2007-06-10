@@ -1,0 +1,366 @@
+Index: modules/libpref/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/modules/libpref/Makefile.in,v
+retrieving revision 1.8
+diff -u -p -8 -r1.8 Makefile.in
+--- modules/libpref/Makefile.in	31 Dec 2005 12:14:44 -0000	1.8
++++ modules/libpref/Makefile.in	3 May 2007 22:02:28 -0000
+@@ -37,13 +37,17 @@
+ 
+ DEPTH		= ../..
+ topsrcdir	= @top_srcdir@
+ srcdir		= @srcdir@
+ VPATH		= @srcdir@
+ 
+ include $(DEPTH)/config/autoconf.mk
+ 
++ifdef ENABLE_TESTS
++TOOL_DIRS += test
++endif
++
+ MODULE		= pref
+ DIRS		= public src
+ 
+ include $(topsrcdir)/config/rules.mk
+ 
+Index: modules/libpref/public/nsIPrefBranch2.idl
+===================================================================
+RCS file: /cvsroot/mozilla/modules/libpref/public/nsIPrefBranch2.idl,v
+retrieving revision 1.4
+diff -u -p -8 -r1.4 nsIPrefBranch2.idl
+--- modules/libpref/public/nsIPrefBranch2.idl	2 Nov 2006 21:10:19 -0000	1.4
++++ modules/libpref/public/nsIPrefBranch2.idl	3 May 2007 22:02:29 -0000
+@@ -88,16 +88,26 @@ interface nsIPrefBranch2 : nsIPrefBranch
+    *    may hold a weak reference to it instead of a strong one.
+    * 2) The nsPrefBranch object listens for xpcom-shutdown and frees all of the
+    *    objects currently in its observer list. This ensures that long lived
+    *    objects (services for example) will be freed correctly.
+    * 3) The observer can request to be held as a weak reference when it is
+    *    registered. This insures that shorter lived objects (say one tied to an
+    *    open window) will not fall into the cyclical reference trap.
+    *
++   * @note
++   * The list of registered observers may be changed during the dispatch of
++   * nsPref:changed notification. However, the observers are not guaranteed
++   * to be notified in any particular order, so you can't be sure if the
++   * added/removed observer will be called during the notification when it
++   * was added/removed.
++   *
++   * @note
++   * It is possible to change preferences during the notification.
++   *
+    * @see nsIObserver
+    * @see removeObserver
+    */
+   void addObserver(in string aDomain, in nsIObserver aObserver,
+                    in boolean aHoldWeak);
+ 
+   /**
+    * Remove a preference change observer.
+Index: modules/libpref/src/prefapi.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/modules/libpref/src/prefapi.cpp,v
+retrieving revision 3.143
+diff -u -p -8 -r3.143 prefapi.cpp
+--- modules/libpref/src/prefapi.cpp	27 Mar 2007 15:33:41 -0000	3.143
++++ modules/libpref/src/prefapi.cpp	3 May 2007 22:02:29 -0000
+@@ -117,16 +117,19 @@ matchPrefEntry(PLDHashTable*, const PLDH
+ 
+ PLDHashTable        gHashTable = { nsnull };
+ static PLArenaPool  gPrefNameArena;
+ PRBool              gDirty = PR_FALSE;
+ 
+ static struct CallbackNode* gCallbacks = NULL;
+ static PRBool       gCallbacksEnabled = PR_TRUE;
+ static PRBool       gIsAnyPrefLocked = PR_FALSE;
++// These are only used during the call to pref_DoCallback
++static PRBool       gCallbacksInProgress = PR_FALSE;
++static PRBool       gShouldCleanupDeadNodes = PR_FALSE;
+ 
+ 
+ static PLDHashTableOps     pref_HashTableOps = {
+     PL_DHashAllocTable,
+     PL_DHashFreeTable,
+     PL_DHashStringKey,
+     matchPrefEntry,
+     PL_DHashMoveEntryStub,
+@@ -171,16 +174,20 @@ static char *ArenaStrDup(const char* str
+ 
+ static PRBool pref_ValueChanged(PrefValue oldValue, PrefValue newValue, PrefType type);
+ 
+ /* -- Privates */
+ struct CallbackNode {
+     char*                   domain;
+     PrefChangedFunc         func;
+     void*                   data;
++    // Whether the entry is dead. This is set to true if someone attempts
++    // to remove the node from the callback list while pref_DoCallback
++    // is running.
++    PRBool                  dead;
+     struct CallbackNode*    next;
+ };
+ 
+ /* -- Prototypes */
+ static nsresult pref_DoCallback(const char* changed_pref);
+ 
+ 
+ static nsresult pref_HashPref(const char *key, PrefValue value, PrefType type, PRBool defaultPref);
+@@ -200,16 +207,18 @@ nsresult PREF_Init()
+                            PREFNAME_ARENA_SIZE);
+     }
+     return NS_OK;
+ }
+ 
+ /* Frees the callback list. */
+ void PREF_Cleanup()
+ {
++    NS_ASSERTION(!gCallbacksInProgress,
++        "PREF_Cleanup was called while gCallbacksInProgress is PR_TRUE!");
+     struct CallbackNode* node = gCallbacks;
+     struct CallbackNode* next_node;
+ 
+     while (node)
+     {
+         next_node = node->next;
+         PR_Free(node->domain);
+         PR_Free(node);
+@@ -819,70 +828,131 @@ PREF_RegisterCallback(const char *pref_n
+                        void * instance_data)
+ {
+     struct CallbackNode* node = (struct CallbackNode*) malloc(sizeof(struct CallbackNode));
+     if (node)
+     {
+         node->domain = PL_strdup(pref_node);
+         node->func = callback;
+         node->data = instance_data;
++        node->dead = PR_FALSE;
+         node->next = gCallbacks;
+         gCallbacks = node;
+     }
+     return;
+ }
+ 
+-/* Deletes a node from the callback list. */
++/* Removes |node| from gCallbacks list. */
++struct CallbackNode*
++pref_RemoveCallbackNode(struct CallbackNode* node,
++                        struct CallbackNode* prev_node)
++{
++    NS_PRECONDITION(!prev_node || prev_node->next == node, "invalid params");
++    NS_PRECONDITION(prev_node || gCallbacks == node, "invalid params");
++
++    NS_ASSERTION(!gCallbacksInProgress,
++        "modifying the callback list while gCallbacksInProgress is PR_TRUE");
++
++    struct CallbackNode* next_node = node->next;
++    if (prev_node)
++        prev_node->next = next_node;
++    else
++        gCallbacks = next_node;
++    PR_Free(node->domain);
++    PR_Free(node);
++    return next_node;
++}
++
++/* Deletes a node from the callback list or marks it for deletion. */
+ nsresult
+ PREF_UnregisterCallback(const char *pref_node,
+                          PrefChangedFunc callback,
+                          void * instance_data)
+ {
+     nsresult rv = NS_ERROR_FAILURE;
+     struct CallbackNode* node = gCallbacks;
+     struct CallbackNode* prev_node = NULL;
+ 
+     while (node != NULL)
+     {
+         if ( strcmp(node->domain, pref_node) == 0 &&
+              node->func == callback &&
+-             node->data == instance_data )
++             node->data == instance_data &&
++             !node->dead )
+         {
+-            struct CallbackNode* next_node = node->next;
+-            if (prev_node)
+-                prev_node->next = next_node;
++            if (gCallbacksInProgress)
++            {
++                // postpone the node removal until after
++                // gCallbacks enumeration is finished.
++                node->dead = PR_TRUE;
++                gShouldCleanupDeadNodes = PR_TRUE;
++                prev_node = node;
++                node = node->next;
++            }
+             else
+-                gCallbacks = next_node;
+-            PR_Free(node->domain);
+-            PR_Free(node);
+-            node = next_node;
++            {
++                node = pref_RemoveCallbackNode(node, prev_node);
++            }
+             rv = NS_OK;
+         }
+         else
+         {
+             prev_node = node;
+             node = node->next;
+         }
+     }
+     return rv;
+ }
+ 
+ static nsresult pref_DoCallback(const char* changed_pref)
+ {
+     nsresult rv = NS_OK;
+     struct CallbackNode* node;
++
++    PRBool reentered = gCallbacksInProgress;
++    gCallbacksInProgress = PR_TRUE;
++    // No nodes must be deleted from the list while gCallbacksInProgress
++    // is PR_TRUE. Nodes that need to be deleted are marked 'dead' and
++    // are taken care of at the end of this function.
++
+     for (node = gCallbacks; node != NULL; node = node->next)
+     {
+-        if ( PL_strncmp(changed_pref, node->domain, PL_strlen(node->domain)) == 0 )
++        if ( !node->dead &&
++             PL_strncmp(changed_pref,
++                        node->domain,
++                        PL_strlen(node->domain)) == 0 )
+         {
+             nsresult rv2 = (*node->func) (changed_pref, node->data);
+             if (NS_FAILED(rv2))
+                 rv = rv2;
+         }
+     }
++
++    gCallbacksInProgress = reentered;
++
++    if (gShouldCleanupDeadNodes && !gCallbacksInProgress)
++    {
++        struct CallbackNode* prev_node = NULL;
++        node = gCallbacks;
++
++        while (node != NULL)
++        {
++            if (node->dead)
++            {
++                node = pref_RemoveCallbackNode(node, prev_node);
++            }
++            else
++            {
++                prev_node = node;
++                node = node->next;
++            }
++        }
++        gShouldCleanupDeadNodes = PR_FALSE;
++    }
++
+     return rv;
+ }
+ 
+ void PREF_ReaderCallback(void       *closure,
+                          const char *pref,
+                          PrefValue   value,
+                          PrefType    type,
+                          PRBool      isDefault)
+Index: modules/libpref/test/Makefile.in
+===================================================================
+RCS file: modules/libpref/test/Makefile.in
+diff -N modules/libpref/test/Makefile.in
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ modules/libpref/test/Makefile.in	3 May 2007 22:02:29 -0000
+@@ -0,0 +1,50 @@
++#
++# ***** BEGIN LICENSE BLOCK *****
++# Version: MPL 1.1/GPL 2.0/LGPL 2.1
++#
++# The contents of this file are subject to the Mozilla Public License Version
++# 1.1 (the "License"); you may not use this file except in compliance with
++# the License. You may obtain a copy of the License at
++# http://www.mozilla.org/MPL/
++#
++# Software distributed under the License is distributed on an "AS IS" basis,
++# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++# for the specific language governing rights and limitations under the
++# License.
++#
++# The Original Code is mozilla.org code.
++#
++# The Initial Developer of the Original Code is
++# Mozilla.org.
++# Portions created by the Initial Developer are Copyright (C) 2005
++# the Initial Developer. All Rights Reserved.
++#
++# Contributor(s):
++#     Boris Zbarsky <bzbarsky@mit.edu>  (Original author)
++#
++# Alternatively, the contents of this file may be used under the terms of
++# either of the GNU General Public License Version 2 or later (the "GPL"),
++# or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++# in which case the provisions of the GPL or the LGPL are applicable instead
++# of those above. If you wish to allow use of your version of this file only
++# under the terms of either the GPL or the LGPL, and not to allow others to
++# use your version of this file under the terms of the MPL, indicate your
++# decision by deleting the provisions above and replace them with the notice
++# and other provisions required by the GPL or the LGPL. If you do not delete
++# the provisions above, a recipient may use your version of this file under
++# the terms of any one of the MPL, the GPL or the LGPL.
++#
++# ***** END LICENSE BLOCK *****
++
++DEPTH		= ../../..
++topsrcdir	= @top_srcdir@
++srcdir		= @srcdir@
++VPATH		= @srcdir@
++
++include $(DEPTH)/config/autoconf.mk
++
++MODULE		= test_libpref
++
++XPCSHELL_TESTS = unit
++
++include $(topsrcdir)/config/rules.mk
+Index: modules/libpref/test/unit/test_bug345529.js
+===================================================================
+RCS file: modules/libpref/test/unit/test_bug345529.js
+diff -N modules/libpref/test/unit/test_bug345529.js
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ modules/libpref/test/unit/test_bug345529.js	3 May 2007 22:02:29 -0000
+@@ -0,0 +1,34 @@
++/* Any copyright is dedicated to the Public Domain.
++ * http://creativecommons.org/licenses/publicdomain/  */ 
++
++// Regression test for bug 345529 - crash removing an observer during an
++// nsPref:changed notification.
++function run_test() {
++  const Cc = Components.classes;
++  const Ci = Components.interfaces;
++  const PREF_NAME = "testPref";
++
++  var prefs = Cc["@mozilla.org/preferences-service;1"]
++              .getService(Ci.nsIPrefBranch2);
++  var observer = {
++    QueryInterface: function QueryInterface(aIID) {
++      if (aIID.equals(Ci.nsIObserver) ||
++          aIID.equals(Ci.nsISupports))
++         return this;
++      throw Components.results.NS_NOINTERFACE;
++    },
++
++    observe: function observe(aSubject, aTopic, aState) {
++      prefs.removeObserver(PREF_NAME, observer);
++    }
++  }
++  prefs.addObserver(PREF_NAME, observer, false);
++
++  prefs.setCharPref(PREF_NAME, "test0")
++  // This second call isn't needed on a clean profile: it makes sure 
++  // the observer gets called even if the pref already had the value
++  // "test0" before this test.
++  prefs.setCharPref(PREF_NAME, "test1")
++
++  do_check_true(true);
++}
