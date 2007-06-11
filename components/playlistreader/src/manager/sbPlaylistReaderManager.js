@@ -103,7 +103,7 @@ CPlaylistReaderManager.prototype =
   },
 
   //sbIPlaylistReaderManager
-  loadPlaylist: function(aURI, aMediaList, aContentType, aAppendOrReplace, aPlaylistReaderListener)
+  loadPlaylist: function(aURI, aMediaList, aContentType, aAddDistinctOnly, aPlaylistReaderListener)
   {
     const PlaylistReaderListener = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
 
@@ -136,7 +136,7 @@ CPlaylistReaderManager.prototype =
       }
 
       try {
-        this.read(file, aMediaList, aContentType, aAppendOrReplace);
+        this.read(file, aMediaList, aContentType, aAddDistinctOnly);
         return 1;
       }
       catch(e) {
@@ -196,7 +196,7 @@ CPlaylistReaderManager.prototype =
       prListener.originalURI = this.originalURI;
       prListener.mediaList = aMediaList;
       prListener.destinationURI = localFileUri;
-      prListener.appendOrReplace = aAppendOrReplace;
+      prListener.addDistinctOnly = aAddDistinctOnly;
 
 //      this.m_Browser.persistFlags |= 2; // PERSIST_FLAGS_BYPASS_CACHE;
 
@@ -211,7 +211,7 @@ CPlaylistReaderManager.prototype =
     return 1;
   },
 
-  read: function(aFile, aMediaList, aContentType, aAppendOrReplace)
+  read: function(aFile, aMediaList, aContentType, aAddDistinctOnly)
   {
     var theExtension = this.getFileExtension(aFile.path);
     for (var r in this.m_Readers)
@@ -228,7 +228,7 @@ CPlaylistReaderManager.prototype =
           aReader.originalURI = this.originalURI;
           this.originalURI = null;
 
-          aReader.read(aFile, aMediaList, aAppendOrReplace);
+          aReader.read(aFile, aMediaList, aAddDistinctOnly);
           return;
         }
       }
@@ -243,7 +243,7 @@ CPlaylistReaderManager.prototype =
           aReader.originalURI = this.originalURI;
           this.originalURI = null;
 
-          aReader.read(aFile, aMediaList, aAppendOrReplace);
+          aReader.read(aFile, aMediaList, aAddDistinctOnly);
           return;
         }
       }

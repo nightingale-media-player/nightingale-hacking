@@ -106,5 +106,13 @@ var SBProperties = {
   
   get ordinal() { return this._base + "ordinal"; },
   
-  get mediaListName() { return this._base + "mediaListName"; }
+  get mediaListName() { return this._base + "mediaListName"; },
+
+  createArray: function() {
+    var propertyArray =
+      Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
+                .createInstance(Components.interfaces.sbIPropertyArray);
+      return propertyArray;
+  }
 }
+

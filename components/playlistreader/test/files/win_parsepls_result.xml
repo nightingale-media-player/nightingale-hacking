@@ -9,7 +9,7 @@
       value="file:///H:/Media/Music/Aus/2006-06-25%20(Abstract,%20Techno,%20Punk).mp3"
     />
     <assert-property-value
-      name="#title"
+      name="#trackName"
       value="2006-06-25 (Abstract, Techno, Punk)"
     />
     <assert-property-value
@@ -26,7 +26,7 @@
       value="file:///c:/foo1.mp3"
     />
     <assert-property-value
-      name="#title"
+      name="#trackName"
       value="==="
     />
   </item-test>
@@ -39,7 +39,7 @@
       value="http://216.66.69.246:8072/"
     />
     <assert-property-value
-      name="#title"
+      name="#trackName"
       value="(#1 - 553/1000) 1.FM - Channel X"
     />
   </item-test>

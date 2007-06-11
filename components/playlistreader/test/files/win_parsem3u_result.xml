@@ -9,7 +9,7 @@
       value="file:///H:/Media/Music/Aus/2006-06-25%20(Abstract,%20Techno,%20Punk).mp3"
     />
     <assert-property-value
-      name="#title"
+      name="#trackName"
       value="2006-06-25 (Abstract, Techno, Punk)"
     />
     <assert-property-value
@@ -62,7 +62,7 @@
       value="file:///c:/file5.mp3"
     />
     <assert-property-value
-      name="#title"
+      name="#trackName"
       value="title,2"
     />
   </item-test>

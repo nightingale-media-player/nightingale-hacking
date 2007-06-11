@@ -28,7 +28,8 @@
  * \file sbPlaylistHandlerUtils.js
  */
 
-const SB_NS = "http://songbirdnest.com/data/1.0#";
+Components.utils["import"].call(this, "rel:sbProperties.jsm");
+
 const PR_RDONLY = -1;
 const PR_FLAGS_DEFAULT = -1;
 
@@ -48,43 +49,36 @@ function SB_ProcessFile(aFile, aCallback, aThis) {
   istream.close();
 }
 
-function SB_AddItems(aItems, aMediaList, aReplace) {
+function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
 
-  // A mapping of uris to media items.  We use this later to set the properties
-  var uriStrToItem = {};
+  if (aItems.length == 0)
+    return;
 
-  // A list of uris that already exist in the list
-  var exists = {};
-
-  // Generate a list of unique uri strings
-  var temp = {};
-  var uriStrToUri = {};
-  var uniqueUriStr = [];
-  aItems.forEach(function(e) {
-    var uriStr = e.uri.spec;
-    if (!(uriStr in temp)) {
-      uniqueUriStr.push(uriStr);
-      temp[uriStr] = 1;
-      uriStrToUri[uriStr] = e.uri;
+  function removeItemsByUri(items, uri) {
+    for (var i = items.length - 1; i >= 0; i--) {
+      if (items[i].uri.spec == uri)
+        items.splice(i, 1);
     }
-  });
+  }
 
-  // If we are to replace the metadata on existing items, find them by url
-  var toCreate = [];
-  if (aReplace) {
+  // If aAddDistinctOnly is true, remove all items from the aItems array that
+  // are already in this list.  List membership is based on matching either
+  // the #contentUrl or #originURL properties
+  if (aAddDistinctOnly) {
 
-    var propertyArray =
-      Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-        .createInstance(Ci.sbIPropertyArray);
+    // De-dup aItems by uri
+    for (var i = 0; i < aItems.length - 1; i++) {
+      var uri = aItems[i].uri;
+      for (var j = i + 1; j < aItems.length; j++)
+        if (aItems[j].uri.equals(uri))
+          aItems.splice(j, 1);
+    }
 
-    // Track the uris of the items that we don't have in our database in
-    // notFound.  Load it up with all the uris and then knock them out when
-    // we enumerate them
-    var notFound = {};
-
-    uniqueUriStr.forEach(function(e) {
-      propertyArray.appendProperty(SB_NS + "originURL", e);
-      notFound[e] = 1;
+    // Remove all the items from aItems that have matching #contentUrl
+    // property values
+    var propertyArray = SBProperties.createArray();
+    aItems.forEach(function(e) {
+      propertyArray.appendProperty(SBProperties.contentUrl, e.uri.spec);
     });
 
     var listener = {
@@ -93,10 +87,7 @@ function SB_AddItems(aItems, aMediaList, aReplace) {
         return true;
       },
       onEnumeratedItem: function(list, item) {
-        var uriStr = item.contentSrc.spec;
-        uriStrToItem[uriStr] = item;
-        delete notFound[uriStr];
-        exists[uriStr] = 1;
+        removeItemsByUri(aItems, item.contentSrc.spec);
         return true;
       },
       onEnumerationEnd: function() {
@@ -108,57 +99,65 @@ function SB_AddItems(aItems, aMediaList, aReplace) {
                                           listener,
                                           Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
 
-    // The uris remaining in notFound need to be created, so add them to the
-    // create list
-    for (var j in notFound) {
-      toCreate.push(j);
+    // Remove all the items from aItems that have matching originUrl
+    // property values
+    if (aItems.length > 0) {
+      propertyArray.clear();
+      aItems.forEach(function(e) {
+        propertyArray.appendProperty(SBProperties.originURL, e.uri.spec);
+      });
+
+      listener = {
+        item: null,
+        onEnumerationBegin: function() {
+          return true;
+        },
+        onEnumeratedItem: function(list, item) {
+          removeItemsByUri(aItems, item.getProperty(SBProperties.originURL));
+          return true;
+        },
+        onEnumerationEnd: function() {
+          return true;
+        }
+      };
+
+      aMediaList.enumerateItemsByProperties(propertyArray,
+                                            listener,
+                                            Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+
     }
   }
-  else {
-    // If we are not replacing, create all the unique items
-    toCreate = uniqueUriStr;
-  }
 
-  // Create the items in the create list and add the created items to the
-  // uriStrToItem map
-  if (toCreate.length > 0) {
+  // If any items are to be added, add them in a batch
+  if (aItems.length > 0) {
 
     var uris = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
-    for (var i = 0; i < toCreate.length; i++) {
-      uris.appendElement(uriStrToUri[toCreate[i]], false);
-    }
+    aItems.forEach(function(e) {
+      uris.appendElement(e.uri, false);
+    });
+
     var added = aMediaList.library.batchCreateMediaItems(uris);
     for (var i = 0; i < added.length; i++) {
-      var item = added.queryElementAt(i, Ci.sbIMediaItem);
-      uriStrToItem[item.contentSrc.spec] = item;
+      aItems[i].item = added.queryElementAt(i, Ci.sbIMediaItem);
     }
   }
 
   // Set the properties on all the items
-  var toAdd = [];
   aMediaList.beginUpdateBatch();
   try {
     aItems.forEach(function(e) {
 
-      var item = uriStrToItem[e.uri.spec];
-      if (item) {
-        // If the item already exists in the list, don't add it
-        if (!(e.uri.spec in exists)) {
-          toAdd.push(item);
+      // XXXsteve This should be removed once the downloader sets this
+      // property
+      e.item.setProperty(SBProperties.originURL, e.item.contentSrc.spec);
+      for (var prop in e.properties) {
+        try {
+          e.item.setProperty(prop, e.properties[prop]);
         }
-        item.setProperty(SB_NS + "originURL", e.uri.spec);
-        for (var prop in e.properties) {
-          try {
-            item.setProperty(prop, e.properties[prop]);
-          }
-          catch(e) {
-            Components.utils.reportError(e);
-          }
+        catch(e) {
+          Components.utils.reportError(e);
         }
-        item.write();
-      }
-      else {
-        Components.utils.reportError("item with uri '" + e.uri.spec + "' was not added");
+        e.item.write();
       }
     });
   }
@@ -170,12 +169,12 @@ function SB_AddItems(aItems, aMediaList, aReplace) {
   // is actually the library, this is essentially a no-op
   var enumerator = {
     _index: 0,
-    _array: toAdd,
+    _array: aItems,
     hasMoreElements: function() {
       return this._index < this._array.length;
     },
     getNext: function() {
-      var item = this._array[this._index];
+      var item = this._array[this._index].item;
       this._index++;
       return item;
     }

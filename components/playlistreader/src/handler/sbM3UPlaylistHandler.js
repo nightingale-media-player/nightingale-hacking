@@ -85,9 +85,9 @@ function(aFile, aMediaList, aReplace)
     if (newUri) {
       var item = { uri: newUri, properties: {}};
       if (nextFileMetadata.title)
-        item.properties[SB_NS + "title"] = nextFileMetadata.title;
+        item.properties[SBProperties.trackName] = nextFileMetadata.title;
       if (nextFileMetadata.duration)
-        item.properties[SB_NS + "duration"] = nextFileMetadata.duration * 1000000;
+        item.properties[SBProperties.duration] = nextFileMetadata.duration * 1000000;
       toAdd.push(item);
 
       nextFileMetadata = {};

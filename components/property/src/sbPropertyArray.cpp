@@ -290,7 +290,7 @@ sbPropertyArray::ToString(nsAString& _retval)
     }
   }
 
-  buff.AssignLiteral("]");
+  buff.AppendLiteral("]");
   _retval = buff;
 
   return NS_OK;

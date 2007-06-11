@@ -109,9 +109,9 @@ function(aFile, aMediaList, aReplace)
       var item = { uri: data.uri, properties: {} };
       toAdd.push(item);
       if (data.title)
-        item.properties[SB_NS + "title"] = data.title;
+        item.properties[SBProperties.trackName] = data.title;
       if (data.length)
-        item.properties[SB_NS + "duration"] = data.length * 1000000;
+        item.properties[SBProperties.duration] = data.length * 1000000;
     }
   });
 

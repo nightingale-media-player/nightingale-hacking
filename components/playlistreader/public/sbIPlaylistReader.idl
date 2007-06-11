@@ -73,7 +73,7 @@ interface sbIPlaylistReaderListener : nsIWebProgressListener
    *
    * \param
    */
-  attribute boolean appendOrReplace;
+  attribute boolean addDistinctOnly;
 
   /**
    * \brief Automatically start playing when stream is done loading.
@@ -187,7 +187,7 @@ interface sbIPlaylistReaderManager : nsISupports
   long loadPlaylist(in nsIURI aURL,
                     in sbIMediaList aMediaList,
                     in AString aContentType,
-                    in boolean aAppendOrReplace,
+                    in boolean aAddDistinctOnly,
                     in sbIPlaylistReaderListener aPlaylistReaderListener);
 
   /**
@@ -198,7 +198,7 @@ interface sbIPlaylistReaderManager : nsISupports
   void read(in nsIFile aFile,
             in sbIMediaList aMediaList,
             in AString aContentType,
-            in PRBool aAppendOrReplace);
+            in PRBool aAddDistinctOnly);
 
   /**
    * \brief

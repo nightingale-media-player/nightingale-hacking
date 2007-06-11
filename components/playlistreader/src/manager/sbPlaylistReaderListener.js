@@ -46,7 +46,7 @@ CPlaylistReaderListener.prototype =
 {
   originalURI: null,
   destinationURI: null,
-  appendOrReplace: false,
+  addDistinctOnly: false,
   playWhenLoaded: false,
   mediaMimetypesOnly: false,
   observer: null,
@@ -92,47 +92,8 @@ CPlaylistReaderListener.prototype =
       try {
         playlistReaderMngr.loadPlaylist(this.destinationURI,
                                         this.mediaList, strContentType,
-                                        this.appendOrReplace,
+                                        this.addDistinctOnly,
                                         null);
-/* XXXsteve: Todo: hook up auto download when it is ready
-
-        const DataRemote = new Components.Constructor( "@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
-        var dbQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
-                                      .createInstance(Components.interfaces.sbIDatabaseQuery);
-
-        var dpDownloadContext = new DataRemote( "download.context", null );
-        var dpDownloadTable = new DataRemote( "download.table", null );
-
-        dbQuery.setDatabaseGUID(this.serviceGuid);
-        dbQuery.setAsyncQuery(false);
-        var playlist = playlistManager.getDynamicPlaylist(this.destinationTable, dbQuery);
-
-        if(playlist)
-        {
-          var destFolder = (new DataRemote("download.folder", null)).stringValue;
-
-          var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
-                                      getService(Components.interfaces.sbIDeviceManager);
-          if (!deviceManager)
-            return false;
-
-          var downloadDevice = null;
-          var downloadCategory = 'Songbird Download Device';
-          if (deviceManager.hasDeviceForCategory(downloadCategory)) {
-            downloadDevice =
-              deviceManager.getDeviceByCategory(downloadCategory);
-          }
-
-          if( !downloadDevice)
-            return false;
-
-          var downloadTable = {};
-          downloadDevice.autoDownloadTable('', this.serviceGuid, this.destinationTable, '', 0, null, '', destFolder, downloadTable);
-
-          dpDownloadContext.stringValue = downloadDevice.getContext('');
-          dpDownloadTable.stringValue = downloadTable.value;
-        }
-*/
         if (this.playWhenLoaded)
         {
           var view = this.mediaList.createView();
