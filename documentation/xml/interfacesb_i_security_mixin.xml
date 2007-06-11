@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_security_mixin" kind="interface" prot="public">
+    <compoundname>sbISecurityMixin</compoundname>
+    <includes refid="sb_i_security_mixin_8idl" local="no">sbISecurityMixin.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_security_mixin_166940f85f9e5ef28484139b34e07eadd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISecurityMixin::init</definition>
+        <argsstring>(in sbISecurityAggregator aOuter,[const, array, size_is(aInterfacesLength)] in nsIIDPtr aInterfacesArray, in unsigned long aInterfacesLength,[const, array, size_is(aMethodsLength)] in string aMethodsArray, in unsigned long aMethodsLength,[const, array, size_is(aRPropsLength)] in string aRPropsArray, in unsigned long aRPropsLength,[const, array, size_is(aWPropsLength)] in string aWPropsArray, in unsigned long aWPropsLength)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_security_aggregator" kindref="compound">sbISecurityAggregator</ref></type>
+          <declname>aOuter</declname>
+        </param>
+        <param>
+          <attributes>[const, array, size_is(aInterfacesLength)]</attributes>
+          <type>in nsIIDPtr</type>
+          <declname>aInterfacesArray</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aInterfacesLength</declname>
+        </param>
+        <param>
+          <attributes>[const, array, size_is(aMethodsLength)]</attributes>
+          <type>in string</type>
+          <declname>aMethodsArray</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aMethodsLength</declname>
+        </param>
+        <param>
+          <attributes>[const, array, size_is(aRPropsLength)]</attributes>
+          <type>in string</type>
+          <declname>aRPropsArray</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aRPropsLength</declname>
+        </param>
+        <param>
+          <attributes>[const, array, size_is(aWPropsLength)]</attributes>
+          <type>in string</type>
+          <declname>aWPropsArray</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aWPropsLength</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" line="61"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_security_mixin_144156905c04d374770e558d2076d8bc9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIURI</type>
+        <definition>nsIURI sbISecurityMixin::getCodebase</definition>
+        <argsstring>()</argsstring>
+        <name>getCodebase</name>
+        <briefdescription>
+<para>Gets the URI for the current location. </para>        </briefdescription>
+        <detaileddescription>
+<para>Can return NS_OK and a null URI. Needs to do so to allow security checks to succeed when called from native code.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aSiteURI</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The URI of the subject principal, basically the calling page. It is pulled from the JS stack. This will be null if the security check originated from native code and not an access on a web page. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>NS_OK - indicates no implicit failure of code, does not ensure URI is set. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" line="76"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface for setting up nsISecurityCheckedComponent security checks. </para>    </briefdescription>
+    <detaileddescription>
+<para>Implemented by objects that provide the nsISecurityCheckedComponent functionality to allow other classes to aggregate (or compose) that functionality in without implementing it directly.</para><para><simplesect kind="see"><para>nsISecurityCheckedComponent </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" line="53" bodyfile="C:/projects/songbird/components/remoteapi/public/sbISecurityMixin.idl" bodystart="52" bodyend="77"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_security_mixin_144156905c04d374770e558d2076d8bc9" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>getCodebase</name></member>
+      <member refid="interfacesb_i_security_mixin_166940f85f9e5ef28484139b34e07eadd" prot="public" virt="non-virtual"><scope>sbISecurityMixin</scope><name>init</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

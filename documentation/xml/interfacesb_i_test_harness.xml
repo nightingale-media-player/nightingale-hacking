@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_test_harness" kind="interface" prot="public">
+    <compoundname>sbITestHarness</compoundname>
+    <includes refid="sb_i_test_harness_8idl" local="no">sbITestHarness.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_test_harness_193a2926d8d589777366f6bc7bf420c0f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbITestHarness::init</definition>
+        <argsstring>(in AString aComponentList)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in AString</type>
+          <declname>aComponentList</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the Test Harness object. </para>        </briefdescription>
+        <detaileddescription>
+<para>Set the location or file to run the tests on. The testharness expects to recieve a string containing a comma seperated list of subdirectories within the testharness directory to test. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A comma seperated list of components to test. If this variable is null, all tests will be run. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para></para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/testharness/public/sbITestHarness.idl" line="52"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_test_harness_17ec58624bfbae12502b177a5bfcb8dc5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbITestHarness::run</definition>
+        <argsstring>()</argsstring>
+        <name>run</name>
+        <briefdescription>
+<para>Run the tests. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Success or failure </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/testharness/public/sbITestHarness.idl" line="58"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_test_harness_1a4b4e3d8a34df5003f580e9a0ab0362e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbITestHarness::logFailure</definition>
+        <argsstring>(in AString aComponentName)</argsstring>
+        <name>logFailure</name>
+        <param>
+          <type>in AString</type>
+          <declname>aComponentName</declname>
+        </param>
+        <briefdescription>
+<para>Called by the test harness code when a test fails. </para>        </briefdescription>
+        <detaileddescription>
+<para>This allows all tests to run and the the testharness to return failure when complete. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/testharness/public/sbITestHarness.idl" line="66"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface for launching unit tests from XULRunner apps. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/testharness/public/sbITestHarness.idl" line="41" bodyfile="C:/projects/songbird/components/testharness/public/sbITestHarness.idl" bodystart="40" bodyend="67"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_test_harness_193a2926d8d589777366f6bc7bf420c0f" prot="public" virt="non-virtual"><scope>sbITestHarness</scope><name>init</name></member>
+      <member refid="interfacesb_i_test_harness_1a4b4e3d8a34df5003f580e9a0ab0362e" prot="public" virt="non-virtual"><scope>sbITestHarness</scope><name>logFailure</name></member>
+      <member refid="interfacesb_i_test_harness_17ec58624bfbae12502b177a5bfcb8dc5" prot="public" virt="non-virtual"><scope>sbITestHarness</scope><name>run</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="sb_i_hotkey_actions_8idl" kind="file">
+    <compoundname>sbIHotkeyActions.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <incdepgraph>
+      <node id="163">
+        <label>C:/projects/songbird/components/integration/public/sbIHotkeyActions.idl</label>
+        <link refid="sbIHotkeyActions.idl"/>
+        <childnode refid="164" relation="include">
+        </childnode>
+      </node>
+      <node id="164">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_hotkey_action_bundle" prot="public">sbIHotkeyActionBundle</innerclass>
+    <innerclass refid="interfacesb_i_hotkey_actions" prot="public">sbIHotkeyActions</innerclass>
+    <briefdescription>
+<para>Songbird Hotkey Actions Interface file This file contains interfaces used by the songbird hotkey actions API, whose purpose is to register hotkey actions that can be used automatically by the hotkey manager to bind functionality to the user defined key. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para>sbHotkeyActions.js </para></simplesect>
+</para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal">[scriptable,<sp/>uuid(3C278280-C452-4d4e-9AA6-330370501A45)]</highlight></codeline>
+<codeline lineno="21" refid="interfacesb_i_hotkey_action_bundle" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_hotkey_action_bundle" kindref="compound">sbIHotkeyActionBundle</ref>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="23" refid="interfacesb_i_hotkey_action_bundle_1ae0e85d107a34c751a11cac1e457a6a9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>actionCount;<sp/></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>AString<sp/>enumActionLocaleDescription(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>idx);<sp/></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/>AString<sp/>enumActionID(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>idx);<sp/></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onAction(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>idx);<sp/></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="36"><highlight class="normal">[scriptable,<sp/>uuid(C24FBC6E-4007-43e2-86B3-FBFDD6231DBB)]</highlight></codeline>
+<codeline lineno="37" refid="interfacesb_i_hotkey_actions" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_hotkey_actions" kindref="compound">sbIHotkeyActions</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerHotkeyActionBundle(in<sp/><ref refid="interfacesb_i_hotkey_action_bundle" kindref="compound">sbIHotkeyActionBundle</ref><sp/>bundle);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterHotkeyActionBundle(in<sp/><ref refid="interfacesb_i_hotkey_action_bundle" kindref="compound">sbIHotkeyActionBundle</ref><sp/>bundle);</highlight></codeline>
+<codeline lineno="51" refid="interfacesb_i_hotkey_actions_1746f9d9c8a08989ce8efe0f47b9546fe" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>bundleCount;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_hotkey_action_bundle" kindref="compound">sbIHotkeyActionBundle</ref><sp/>enumBundle(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>idx);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="C:/projects/songbird/components/integration/public/sbIHotkeyActions.idl"/>
+  </compounddef>
+</doxygen>

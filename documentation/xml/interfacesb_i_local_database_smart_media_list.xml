@@ -1,0 +1,472 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_local_database_smart_media_list" kind="interface" prot="public">
+    <compoundname>sbILocalDatabaseSmartMediaList</compoundname>
+    <basecompoundref refid="interfacesb_i_media_list" prot="public" virt="non-virtual">sbIMediaList</basecompoundref>
+    <includes refid="sb_i_local_database_smart_media_list_8idl" local="no">sbILocalDatabaseSmartMediaList.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_10db240cb4584ab9312efde2333619973" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound">sbILocalDatabaseSmartMediaListCondition</ref></type>
+        <definition>sbILocalDatabaseSmartMediaListCondition sbILocalDatabaseSmartMediaList::appendCondition</definition>
+        <argsstring>(in AString aPropertyName, in sbIPropertyOperator aOperator, in AString aLeftValue, in AString aRightValue, in boolean limit)</argsstring>
+        <name>appendCondition</name>
+        <param>
+          <type>in AString</type>
+          <declname>aPropertyName</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref></type>
+          <declname>aOperator</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aLeftValue</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aRightValue</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>limit</declname>
+        </param>
+        <briefdescription>
+<para>Add a condition or limiting condition. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="149"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_134cde1d28060618df773e932866d5bd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSmartMediaList::removeConditionAt</definition>
+        <argsstring>(in unsigned long aConditionIndex)</argsstring>
+        <name>removeConditionAt</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aConditionIndex</declname>
+        </param>
+        <briefdescription>
+<para>Remove a condition. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="154"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_1819671c482fec20afa039fc7d8fb1aa1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound">sbILocalDatabaseSmartMediaListCondition</ref></type>
+        <definition>sbILocalDatabaseSmartMediaListCondition sbILocalDatabaseSmartMediaList::getConditionAt</definition>
+        <argsstring>(in unsigned long aConditionIndex)</argsstring>
+        <name>getConditionAt</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aConditionIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get the condition at the specified index. Indexes start at 0. The last item is at conditionCount - 1. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="161"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_12a7e2fc1e2b261d2dd697fefd696071a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSmartMediaList::clearConditions</definition>
+        <argsstring>()</argsstring>
+        <name>clearConditions</name>
+        <briefdescription>
+<para>Clear all conditions. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="166"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_18edbb59cea610161c7241c2095be51f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSmartMediaList::rebuild</definition>
+        <argsstring>()</argsstring>
+        <name>rebuild</name>
+        <briefdescription>
+<para>Rebuild the smart media list contents from the conditions specificied. You should call this after you add/modify/remove any conditions. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="172"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_15bbe1321375bf1a864036fb4cb0c18f6" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::MATCH_TYPE_ANY</definition>
+        <argsstring></argsstring>
+        <name>MATCH_TYPE_ANY</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="90" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_182b5d711c021b3667bc0b6be7d096822" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::MATCH_TYPE_ALL</definition>
+        <argsstring></argsstring>
+        <name>MATCH_TYPE_ALL</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="91" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1d69946f75d1f567f996301856f47fb84" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::MATCH_TYPE_NONE</definition>
+        <argsstring></argsstring>
+        <name>MATCH_TYPE_NONE</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="92" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_187b262401dcad723e879a54451dc86bc" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE</definition>
+        <argsstring></argsstring>
+        <name>LIMIT_TYPE_NONE</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="94" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1a67dba2c3f6a10142a4c977b16f81b9b" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::LIMIT_TYPE_ITEMS</definition>
+        <argsstring></argsstring>
+        <name>LIMIT_TYPE_ITEMS</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="95" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_14b4d700fd0135fb019f75ec85c27a026" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::LIMIT_TYPE_USECS</definition>
+        <argsstring></argsstring>
+        <name>LIMIT_TYPE_USECS</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="96" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_16aafe218f6db5dad2fd6808c954e2638" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::LIMIT_TYPE_BYTES</definition>
+        <argsstring></argsstring>
+        <name>LIMIT_TYPE_BYTES</name>
+        <initializer> 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="97" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1a987b5747c8a203a3dff25799d87c15b" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long</type>
+        <definition>attribute unsigned long sbILocalDatabaseSmartMediaList::matchType</definition>
+        <argsstring></argsstring>
+        <name>matchType</name>
+        <briefdescription>
+<para>Match any or all conditions. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="102" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1dd6a19a6dffe7291f38a78eee7d31e22" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbILocalDatabaseSmartMediaList::conditionCount</definition>
+        <argsstring></argsstring>
+        <name>conditionCount</name>
+        <briefdescription>
+<para>The number of conditions added to this smart playlist. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="107" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_10231d65eee24412bde1d76f43d3884fa" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long</type>
+        <definition>attribute unsigned long sbILocalDatabaseSmartMediaList::limitType</definition>
+        <argsstring></argsstring>
+        <name>limitType</name>
+        <briefdescription>
+<para>Type of limit to use. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="112" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_17fd3a362c93b122e43ab9dc5c50f5ec0" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long long</type>
+        <definition>attribute unsigned long long sbILocalDatabaseSmartMediaList::limit</definition>
+        <argsstring></argsstring>
+        <name>limit</name>
+        <briefdescription>
+<para>Value to apply to the limit type. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="117" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1226dc93118447309b9720f57cce1e2a7" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbILocalDatabaseSmartMediaList::selectPropertyName</definition>
+        <argsstring></argsstring>
+        <name>selectPropertyName</name>
+        <briefdescription>
+<para>Property to select limited results by. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="122" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_17cda6d768041f7abd8899ba75d9c1f0c" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbILocalDatabaseSmartMediaList::selectDirection</definition>
+        <argsstring></argsstring>
+        <name>selectDirection</name>
+        <briefdescription>
+<para>Direction to sort the selection property name, true for ascending, false for descending. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="128" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1e6d90ed82182954e774c1e47caba96e7" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbILocalDatabaseSmartMediaList::randomSelection</definition>
+        <argsstring></argsstring>
+        <name>randomSelection</name>
+        <briefdescription>
+<para>Randomly select the items out of the entire result set. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="133" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1b66c68e1a43f61ef6f50936409d45002" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbILocalDatabaseSmartMediaList::liveUpdate</definition>
+        <argsstring></argsstring>
+        <name>liveUpdate</name>
+        <briefdescription>
+<para>Should this smart media list automatically update itself when the library changes? </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="139" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
+    <detaileddescription>
+<para>Methods and attributes that are specific to the smart media list are implemented here.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="231">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="232" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="233">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="232">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="233" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="230">
+        <label>sbILocalDatabaseSmartMediaList</label>
+        <link refid="interfacesb_i_local_database_smart_media_list"/>
+        <childnode refid="231" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="235">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="236" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="242">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="239">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="240" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="242" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="238">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="237" relation="public-inheritance">
+        </childnode>
+        <childnode refid="239" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="241" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="237">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="236">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="237" relation="public-inheritance">
+        </childnode>
+        <childnode refid="238" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="234">
+        <label>sbILocalDatabaseSmartMediaList</label>
+        <link refid="interfacesb_i_local_database_smart_media_list"/>
+        <childnode refid="235" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="240">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="241" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="241">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="89" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="88" bodyend="173"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_media_list_16fe6be51b869ba4b97dc5274ab68813d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>add</name></member>
+      <member refid="interfacesb_i_media_list_1647f0790225f9e23f83db83da1718cb4" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>addAll</name></member>
+      <member refid="interfacesb_i_media_list_1ee4c210528c50bbbc92f78c0f060af8a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>addListener</name></member>
+      <member refid="interfacesb_i_media_list_13437b5aa10efd05b309d9f71868057b7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>addSome</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_10db240cb4584ab9312efde2333619973" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>appendCondition</name></member>
+      <member refid="interfacesb_i_media_list_1264d18266761aa0f89480455e38e8db2" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>beginUpdateBatch</name></member>
+      <member refid="interfacesb_i_media_list_15b727b02e89e57a15b7f78778722c4a6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>clear</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_12a7e2fc1e2b261d2dd697fefd696071a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>clearConditions</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1dd6a19a6dffe7291f38a78eee7d31e22" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>conditionCount</name></member>
+      <member refid="interfacesb_i_media_list_1cb4bbfe64589e3bd1d973632b39b3116" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>contains</name></member>
+      <member refid="interfacesb_i_media_item_149d00fe6e35d8d24dc468b97d43d8075" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>contentLength</name></member>
+      <member refid="interfacesb_i_media_item_1574db3949d138422afdbd6ecffd88aa2" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>contentSrc</name></member>
+      <member refid="interfacesb_i_media_item_11df3ae03b08948558b1a311e3705db07" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>contentType</name></member>
+      <member refid="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>created</name></member>
+      <member refid="interfacesb_i_media_list_138a86561b73c8baa844137ff8b5259b4" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>createView</name></member>
+      <member refid="interfacesb_i_media_list_1aadcef397cc4dd700ff92eb65b5c8586" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>endUpdateBatch</name></member>
+      <member refid="interfacesb_i_media_list_1cdf4da56f675075c88562e71d1803d31" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>enumerateAllItems</name></member>
+      <member refid="interfacesb_i_media_list_1531c02362fe0b8d3f6a509ac70932921" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>enumerateItemsByProperties</name></member>
+      <member refid="interfacesb_i_media_list_12554674dffd7c47b5a3b9980ceff5e63" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>enumerateItemsByProperty</name></member>
+      <member refid="interfacesb_i_media_list_1c06c5fe198ada5d24ee62f7930038e1c" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>ENUMERATIONTYPE_LOCKING</name></member>
+      <member refid="interfacesb_i_media_list_1ac5c344da31a52fc85cf7ed797cf1111" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>ENUMERATIONTYPE_SNAPSHOT</name></member>
+      <member refid="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>equals</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1819671c482fec20afa039fc7d8fb1aa1" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>getConditionAt</name></member>
+      <member refid="interfacesb_i_media_list_123962e1790fe0801d67c827159988d45" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>getDistinctValuesForProperty</name></member>
+      <member refid="interfacesb_i_media_list_16ab593212150bf9bf55b0a05207867a7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>getItemByGuid</name></member>
+      <member refid="interfacesb_i_media_list_12fd1e5e5bf2a9691bfde77a5a0eddd6a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>getItemByIndex</name></member>
+      <member refid="interfacesb_i_library_resource_1fecce0a9f8cf88784cbfdce7d8143719" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>getProperty</name></member>
+      <member refid="interfacesb_i_library_resource_1c97a2ea6d6aa52d2dfd74095895f74f6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>guid</name></member>
+      <member refid="interfacesb_i_media_list_1c71e81b1b4c3eefbaf620bcbb39681e6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>indexOf</name></member>
+      <member refid="interfacesb_i_media_list_1d022caf363793628e7ef1b96ccf67ea1" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>isEmpty</name></member>
+      <member refid="interfacesb_i_media_item_1679ecac5135fd57929f83c0ea0c09eba" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>isMutable</name></member>
+      <member refid="interfacesb_i_media_list_19edde98509df43db6a983d4937781d56" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>lastIndexOf</name></member>
+      <member refid="interfacesb_i_media_list_150ecebf0fc3f329dab91244321638a0e" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>length</name></member>
+      <member refid="interfacesb_i_media_item_119762d6d72170ace737a639575712ff1" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>library</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_17fd3a362c93b122e43ab9dc5c50f5ec0" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>limit</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_16aafe218f6db5dad2fd6808c954e2638" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>LIMIT_TYPE_BYTES</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1a67dba2c3f6a10142a4c977b16f81b9b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>LIMIT_TYPE_ITEMS</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_187b262401dcad723e879a54451dc86bc" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>LIMIT_TYPE_NONE</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_14b4d700fd0135fb019f75ec85c27a026" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>LIMIT_TYPE_USECS</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_10231d65eee24412bde1d76f43d3884fa" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>limitType</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1b66c68e1a43f61ef6f50936409d45002" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>liveUpdate</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_182b5d711c021b3667bc0b6be7d096822" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>MATCH_TYPE_ALL</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_15bbe1321375bf1a864036fb4cb0c18f6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>MATCH_TYPE_ANY</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1d69946f75d1f567f996301856f47fb84" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>MATCH_TYPE_NONE</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1a987b5747c8a203a3dff25799d87c15b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>matchType</name></member>
+      <member refid="interfacesb_i_media_item_109426f490e2fde8aecf02c2bfada0a7a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>mediaCreated</name></member>
+      <member refid="interfacesb_i_media_item_1d8fc55899ebe6d777619b12e2ccec9e2" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>mediaUpdated</name></member>
+      <member refid="interfacesb_i_media_list_1eb0a00c26bfd525c8b3543da57c516d1" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>name</name></member>
+      <member refid="interfacesb_i_media_item_144f6159371d8779fea4a05ee75a54c8f" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>openInputStream</name></member>
+      <member refid="interfacesb_i_media_item_1f9e5e1ec817d1cf04696332c2ee55f95" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>openInputStreamAsync</name></member>
+      <member refid="interfacesb_i_media_item_15894f5aedd040fa0ed26cc578544d7d6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>openOutputStream</name></member>
+      <member refid="interfacesb_i_library_resource_1653545673a60d0044e2d987196bff522" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>propertyNames</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1e6d90ed82182954e774c1e47caba96e7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>randomSelection</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_18edbb59cea610161c7241c2095be51f7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>rebuild</name></member>
+      <member refid="interfacesb_i_media_list_163e7e739718bd6d35016500933e5fc58" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>remove</name></member>
+      <member refid="interfacesb_i_media_list_148c9653c3324dfe0a1dedb4b6307ea29" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>removeByIndex</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_134cde1d28060618df773e932866d5bd0" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>removeConditionAt</name></member>
+      <member refid="interfacesb_i_media_list_137a3275d1ea302a95b706a31413e3084" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>removeListener</name></member>
+      <member refid="interfacesb_i_media_list_122c907e9dbc8abb40bd4f8e63e9b935d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>removeSome</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_17cda6d768041f7abd8899ba75d9c1f0c" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>selectDirection</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1226dc93118447309b9720f57cce1e2a7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>selectPropertyName</name></member>
+      <member refid="interfacesb_i_library_resource_1fa7bdb6a26b3c120968f0573cba92ae7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>setProperty</name></member>
+      <member refid="interfacesb_i_media_item_1febfa1e819a1155c461fb047cf4d0f5d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>testIsAvailable</name></member>
+      <member refid="interfacesb_i_media_item_1d14095f80e5f7f2d02cce741016088d2" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>toString</name></member>
+      <member refid="interfacesb_i_media_list_1687bc602daf1ac786a7a0049b939c736" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>type</name></member>
+      <member refid="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>updated</name></member>
+      <member refid="interfacesb_i_library_resource_1e6dfc14a8a20b1486304a25d9f4f77c0" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>write</name></member>
+      <member refid="interfacesb_i_library_resource_159a9d52527f1014cb02fd09e60272b07" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>writePending</name></member>
+      <member refid="interfacesb_i_library_resource_1810100a298bdedf20f1dc1265619f53d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>writeThrough</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

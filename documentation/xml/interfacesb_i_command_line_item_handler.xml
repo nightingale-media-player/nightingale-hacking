@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_command_line_item_handler" kind="interface" prot="public">
+    <compoundname>sbICommandLineItemHandler</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_command_line_item_handler_11fa699b794bdd9eb1e159688dc8822d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICommandLineItemHandler::handleItem</definition>
+        <argsstring>(in AString aUriSpec, in PRInt32 aCount, in PRInt32 aTotal)</argsstring>
+        <name>handleItem</name>
+        <param>
+          <type>in AString</type>
+          <declname>aUriSpec</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aCount</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aTotal</declname>
+        </param>
+        <briefdescription>
+<para>Handle a command line item. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aUriSpec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The URI for the command line item </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index for this item (used to detect the end of a series of handleItems calls) </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of items (used to detect the end of a series of handleItems calls) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Return true if the handler processed this item. Items that have not been processed are passed on to the next command line item handler </para></simplesect>
+<simplesect kind="see"><para>removeItemHandler </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/commandline/public/sbICommandLineItemHandler.idl" line="55"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Songbird Command line item handler Interface. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/commandline/public/sbICommandLineItemHandler.idl" line="46" bodyfile="C:/projects/songbird/components/commandline/public/sbICommandLineItemHandler.idl" bodystart="45" bodyend="56"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_command_line_item_handler_11fa699b794bdd9eb1e159688dc8822d0" prot="public" virt="non-virtual"><scope>sbICommandLineItemHandler</scope><name>handleItem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

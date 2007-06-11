@@ -1,0 +1,304 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_database_result" kind="interface" prot="public">
+    <compoundname>sbIDatabaseResult</compoundname>
+    <includes refid="sb_i_database_result_8idl" local="no">sbIDatabaseResult.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_database_result_16d169a4a25ea6254adce3b3b22101d91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbIDatabaseResult::getColumnCount</definition>
+        <argsstring>()</argsstring>
+        <name>getColumnCount</name>
+        <briefdescription>
+<para>The number of columns in the result. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The number of columns in the result. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="51"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_result_1a96dc35bf55ad8aa8774d5612566a3bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIDatabaseResult::getColumnName</definition>
+        <argsstring>(in unsigned long aColumnIndex)</argsstring>
+        <name>getColumnName</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aColumnIndex</declname>
+        </param>
+        <briefdescription>
+<para>The name of a particular column. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aColumnIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the column to access. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The name of the column. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="60"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_result_139f5691f92060f75c7475e96ea279d00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbIDatabaseResult::getColumnIndex</definition>
+        <argsstring>(in AString aColumnName)</argsstring>
+        <name>getColumnIndex</name>
+        <param>
+          <type>in AString</type>
+          <declname>aColumnName</declname>
+        </param>
+        <briefdescription>
+<para>The index of a particular column. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the column to access. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the column. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="69"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_result_189b15a4cfd3f09e61a7240aabf591fab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbIDatabaseResult::getRowCount</definition>
+        <argsstring>()</argsstring>
+        <name>getRowCount</name>
+        <briefdescription>
+<para>The number of rows in the result. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The number of rows in the result. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="77"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_result_1a285ed0d3c4b3931c308cdc18a9e339b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIDatabaseResult::getRowCell</definition>
+        <argsstring>(in unsigned long aRowIndex, in unsigned long aColumnIndex)</argsstring>
+        <name>getRowCell</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aRowIndex</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aColumnIndex</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve the value of a cell at a particular row and column. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aRowIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The row index of the cell to retrieve. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aColumnIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The column index of the cell to retrieve. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The cell value. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="87"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_result_147de5b20ce1455596cbd2bb16db3edee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIDatabaseResult::getRowCellByColumn</definition>
+        <argsstring>(in unsigned long aRowIndex, in AString aColumnName)</argsstring>
+        <name>getRowCellByColumn</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aRowIndex</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aColumnName</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve the value of a cell at a particular row for a named column. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aRowIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The row index of the cell to retrieve. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The column name of the cell to retrieve. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The cell value. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="97"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_result_13bc00b17ce2a3f22038725369f410a6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>wstring</type>
+        <definition>wstring sbIDatabaseResult::getColumnNamePtr</definition>
+        <argsstring>(in unsigned long aColumnIndex)</argsstring>
+        <name>getColumnNamePtr</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aColumnIndex</declname>
+        </param>
+        <briefdescription>
+<para>[noscript] Get the internal pointer to the column name. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method is not available from script. It returns the internal pointer to the value, to reduce unnecessary memory copies.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aColumnIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the column to access. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The name of the column. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="109"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_result_17ed42c803df6b8c50e4ddc6f38d13553" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>wstring</type>
+        <definition>wstring sbIDatabaseResult::getRowCellPtr</definition>
+        <argsstring>(in unsigned long aRowIndex, in unsigned long aColumnIndex)</argsstring>
+        <name>getRowCellPtr</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aRowIndex</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aColumnIndex</declname>
+        </param>
+        <briefdescription>
+<para>[noscript] Get the internal pointer to the cell value. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method is not available from script. It returns the internal pointer to the value, to reduce unnecessary memory copies.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aRowIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The row index of the cell to retrieve. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aColumnIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The column index of the cell to retrieve. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The cell value. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="122"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_result_1221137b3d9bd8880212a2fe036655eac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>wstring</type>
+        <definition>wstring sbIDatabaseResult::getRowCellByColumnPtr</definition>
+        <argsstring>(in unsigned long aRowIndex, in AString aColumnName)</argsstring>
+        <name>getRowCellByColumnPtr</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aRowIndex</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aColumnName</declname>
+        </param>
+        <briefdescription>
+<para>[noscript] Get the internal pointer to the cell value (by named column). </para>        </briefdescription>
+        <detaileddescription>
+<para>This method is not available from script. It returns the internal pointer to the value, to reduce unnecessary memory copies.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aRowIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The row index of the cell to retrieve. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The column name of the cell to retrieve. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The cell value. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="135"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_result_1c5b06f4261b63f6932dfc720ee58a204" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseResult::clearResultSet</definition>
+        <argsstring>()</argsstring>
+        <name>clearResultSet</name>
+        <briefdescription>
+<para>[noscript] Free the internally allocated resources of this results object. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method is not available from script. It deallocates the internal memory used to contain the results data. This allows code to free most of the used memory long before the garbage collector would.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="146"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An object containing the results of a database SELECT query. </para>    </briefdescription>
+    <detaileddescription>
+<para>User code retrieves one of these objects from <ref refid="interfacesb_i_database_query_16dda54df53ed7d5a702d009ad1831315" kindref="member">sbIDatabaseQuery::getResultObject()</ref></para><para><simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" line="44" bodyfile="C:/projects/songbird/components/dbengine/public/sbIDatabaseResult.idl" bodystart="43" bodyend="147"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_database_result_1c5b06f4261b63f6932dfc720ee58a204" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>clearResultSet</name></member>
+      <member refid="interfacesb_i_database_result_16d169a4a25ea6254adce3b3b22101d91" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>getColumnCount</name></member>
+      <member refid="interfacesb_i_database_result_139f5691f92060f75c7475e96ea279d00" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>getColumnIndex</name></member>
+      <member refid="interfacesb_i_database_result_1a96dc35bf55ad8aa8774d5612566a3bd" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>getColumnName</name></member>
+      <member refid="interfacesb_i_database_result_13bc00b17ce2a3f22038725369f410a6c" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>getColumnNamePtr</name></member>
+      <member refid="interfacesb_i_database_result_1a285ed0d3c4b3931c308cdc18a9e339b" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>getRowCell</name></member>
+      <member refid="interfacesb_i_database_result_147de5b20ce1455596cbd2bb16db3edee" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>getRowCellByColumn</name></member>
+      <member refid="interfacesb_i_database_result_1221137b3d9bd8880212a2fe036655eac" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>getRowCellByColumnPtr</name></member>
+      <member refid="interfacesb_i_database_result_17ed42c803df6b8c50e4ddc6f38d13553" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>getRowCellPtr</name></member>
+      <member refid="interfacesb_i_database_result_189b15a4cfd3f09e61a7240aabf591fab" prot="public" virt="non-virtual"><scope>sbIDatabaseResult</scope><name>getRowCount</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

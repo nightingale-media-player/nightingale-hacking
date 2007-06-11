@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_remote_library" kind="interface" prot="public">
+    <compoundname>sbIRemoteLibrary</compoundname>
+    <includes refid="sb_i_remote_library_8idl" local="no">sbIRemoteLibrary.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_remote_library_1b80da1ce2f6cd92240a3c823c10383fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+        <definition>sbIMediaItem sbIRemoteLibrary::createMediaItem</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>createMediaItem</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>create and insert a media item into the library </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="50"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_remote_library_1e5c3bf799d6a3ef49bccd3d19e5d7512" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_remote_media_list" kindref="compound">sbIRemoteMediaList</ref></type>
+        <definition>sbIRemoteMediaList sbIRemoteLibrary::createMediaList</definition>
+        <argsstring>(in AString aType)</argsstring>
+        <name>createMediaList</name>
+        <param>
+          <type>in AString</type>
+          <declname>aType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>create and insert a media list into the library </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="55"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_remote_library_17c82d5eebb3e3dd855c71d1dab9ad7d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_remote_media_list" kindref="compound">sbIRemoteMediaList</ref></type>
+        <definition>sbIRemoteMediaList sbIRemoteLibrary::createMediaListFromFile</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>createMediaListFromFile</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="56"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_remote_library_10e63f94c46773fd064d49af984a8fc23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIRemoteLibrary::connectToMediaLibrary</definition>
+        <argsstring>(in AString aDomain, in AString aPath)</argsstring>
+        <name>connectToMediaLibrary</name>
+        <param>
+          <type>in AString</type>
+          <declname>aDomain</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aPath</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- this can be either one of our &apos;magic&apos; ids: main, web, download; or it can be a path. If a path it must adhere to the same restrictions that cookies do in the browser, namely it must be a prefix of the location of the URI. Specifically for the URI: <ulink url="http://foo.bar.com/this/is/my/music/stolen.html">http://foo.bar.com/this/is/my/music/stolen.html</ulink> the path must be a prefix of &apos;this/is/my/music/&apos; </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="77"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_remote_library_1164f45e178034664ede744941d84b52d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIRemoteLibrary::connectToDefaultLibrary</definition>
+        <argsstring>(in AString aLibName)</argsstring>
+        <name>connectToDefaultLibrary</name>
+        <param>
+          <type>in AString</type>
+          <declname>aLibName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="78"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_remote_library_1683423cf744c14bc1cb3782552148580" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIRemoteLibrary::filename</definition>
+        <argsstring></argsstring>
+        <name>filename</name>
+        <briefdescription>
+<para>An array of sbIMediaLists. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="66" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface to control a media library from remote web pages. </para>    </briefdescription>
+    <detaileddescription>
+<para>TODO: Write this documentation </para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" line="46" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="45" bodyend="79"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_remote_library_1164f45e178034664ede744941d84b52d" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>connectToDefaultLibrary</name></member>
+      <member refid="interfacesb_i_remote_library_10e63f94c46773fd064d49af984a8fc23" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>connectToMediaLibrary</name></member>
+      <member refid="interfacesb_i_remote_library_1b80da1ce2f6cd92240a3c823c10383fe" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>createMediaItem</name></member>
+      <member refid="interfacesb_i_remote_library_1e5c3bf799d6a3ef49bccd3d19e5d7512" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>createMediaList</name></member>
+      <member refid="interfacesb_i_remote_library_17c82d5eebb3e3dd855c71d1dab9ad7d4" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>createMediaListFromFile</name></member>
+      <member refid="interfacesb_i_remote_library_1683423cf744c14bc1cb3782552148580" prot="public" virt="non-virtual"><scope>sbIRemoteLibrary</scope><name>filename</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

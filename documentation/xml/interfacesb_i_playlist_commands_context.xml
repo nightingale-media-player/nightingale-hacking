@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_playlist_commands_context" kind="interface" prot="public">
+    <compoundname>sbIPlaylistCommandsContext</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_playlist_commands_context_169c851cca7096063b8c4363539e70936" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIDOMNode</type>
+        <definition>readonly attribute nsIDOMNode sbIPlaylistCommandsContext::playlist</definition>
+        <argsstring></argsstring>
+        <name>playlist</name>
+        <briefdescription>
+<para>The playlist against which the commands are acting. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="305" bodyfile="C:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="305" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_commands_context_120a1534f23df5eb094c906333520ec54" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+        <definition>readonly attribute sbIMediaItem sbIPlaylistCommandsContext::medialist</definition>
+        <argsstring></argsstring>
+        <name>medialist</name>
+        <briefdescription>
+<para>The medialist against which the commands are acting. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="310" bodyfile="C:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="310" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_commands_context_1d62ad80fa57bfa8ddabdca72a12e5abe" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIDOMWindow</type>
+        <definition>readonly attribute nsIDOMWindow sbIPlaylistCommandsContext::window</definition>
+        <argsstring></argsstring>
+        <name>window</name>
+        <briefdescription>
+<para>The outer window containing the playlist against which the commands are acting. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="315" bodyfile="C:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="315" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The interface for giving context to a playlistcommands object. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="356">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="349">
+        <label>sbIPlaylistCommandsContext</label>
+        <link refid="interfacesb_i_playlist_commands_context"/>
+        <childnode refid="350" relation="usage">
+          <edgelabel>medialist</edgelabel>
+        </childnode>
+      </node>
+      <node id="353">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="354" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="356" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="352">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="351" relation="public-inheritance">
+        </childnode>
+        <childnode refid="353" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="355" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="351">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="350">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="351" relation="public-inheritance">
+        </childnode>
+        <childnode refid="352" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="354">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="355" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="355">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" line="301" bodyfile="C:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl" bodystart="300" bodyend="316"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_commands_context_120a1534f23df5eb094c906333520ec54" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsContext</scope><name>medialist</name></member>
+      <member refid="interfacesb_i_playlist_commands_context_169c851cca7096063b8c4363539e70936" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsContext</scope><name>playlist</name></member>
+      <member refid="interfacesb_i_playlist_commands_context_1d62ad80fa57bfa8ddabdca72a12e5abe" prot="public" virt="non-virtual"><scope>sbIPlaylistCommandsContext</scope><name>window</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_local_database_g_u_i_d_array_listener" kind="interface" prot="public">
+    <compoundname>sbILocalDatabaseGUIDArrayListener</compoundname>
+    <includes refid="sb_i_local_database_g_u_i_d_array_8idl" local="no">sbILocalDatabaseGUIDArray.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_listener_172e1f575e0c89993fc73e9b529e6ce71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseGUIDArrayListener::onBeforeInvalidate</definition>
+        <argsstring>()</argsstring>
+        <name>onBeforeInvalidate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="45"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="44" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="43" bodyend="46"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_local_database_g_u_i_d_array_listener_172e1f575e0c89993fc73e9b529e6ce71" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArrayListener</scope><name>onBeforeInvalidate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,581 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_property_info" kind="interface" prot="public">
+    <compoundname>sbIPropertyInfo</compoundname>
+    <derivedcompoundref refid="interfacesb_i_datetime_property_info" prot="public" virt="non-virtual">sbIDatetimePropertyInfo</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_number_property_info" prot="public" virt="non-virtual">sbINumberPropertyInfo</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_text_property_info" prot="public" virt="non-virtual">sbITextPropertyInfo</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_u_r_i_property_info" prot="public" virt="non-virtual">sbIURIPropertyInfo</derivedcompoundref>
+    <includes refid="sb_i_property_manager_8idl" local="no">sbIPropertyManager.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref></type>
+        <definition>sbIPropertyOperator sbIPropertyInfo::getOperator</definition>
+        <argsstring>(in AString aOperator)</argsstring>
+        <name>getOperator</name>
+        <param>
+          <type>in AString</type>
+          <declname>aOperator</declname>
+        </param>
+        <briefdescription>
+<para>Get the <ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref> for the given operator string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aOperator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Operator string, one of the OPERATOR_ constants </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The <ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref> for the given string, or null of the operator is not supported by this property info </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="232"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_property_info_11814ea167521382aae1196689bc22887" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIPropertyInfo::validate</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>validate</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+<para>Validates the string for this property type. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to validate </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True if the value is valid for this property, otherwise false </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="239"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_property_info_1f34bc688867a4ebb7b3b0a8dc4cf655a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPropertyInfo::sanitize</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>sanitize</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+<para>Sanitize a value so that it passes validation. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This might format your string in an unexpected way. If you have any doubts, please look at the output string to make sure it satisfies your requirements. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="247"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPropertyInfo::format</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>format</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+<para>Formats the value for display. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to format </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The formatted value </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="254"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPropertyInfo::makeSortable</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>makeSortable</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+<para>Formats the value to enable proper sorting. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to format. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The formatted sorting value. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="261"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_property_info_1695c9498ec7779040ca5d28d824e6967" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPropertyInfo::getDisplayPropertiesForValue</definition>
+        <argsstring>(in AString aValue)</argsstring>
+        <name>getDisplayPropertiesForValue</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+<para>Gets a whitespace-separated string of properties to alter the display of a value in a treeview. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current value of the property</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A whitespace-separated string. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="272"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_property_info_1afe9f89f31df1de16ca3b9ab5b7682de" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyInfo::OPERATOR_EQUALS</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_EQUALS</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="119" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_107b29f9866c056a61de6f605e56614ba" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyInfo::OPERATOR_NOTEQUALS</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_NOTEQUALS</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="120" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_18638a084c59f3033542093b691267704" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyInfo::OPERATOR_GREATER</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_GREATER</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="121" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_10f788ca30e7f58af5d5fab302fa3e00e" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyInfo::OPERATOR_GREATEREQUAL</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_GREATEREQUAL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="122" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1b0c9ffabb30224122bf1bba5bea890be" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyInfo::OPERATOR_LESS</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_LESS</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="123" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_13cdfd09f8658c992b1fe589ced72da7a" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyInfo::OPERATOR_LESSEQUAL</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_LESSEQUAL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="124" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_14b6d078b39a35c61911b42ca24a3f2b7" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyInfo::OPERATOR_CONTAINS</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_CONTAINS</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="125" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_123dae3923453285d8471be2a045c125d" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyInfo::OPERATOR_BEGINSWITH</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_BEGINSWITH</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="126" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_112123f0254cc60b5323bccbeb6485bd0" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyInfo::OPERATOR_ENDSWITH</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_ENDSWITH</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="127" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1e510a1cfef38ced282dbb4fec4211ee5" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyInfo::OPERATOR_BETWEEN</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_BETWEEN</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="128" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1a59ffdf127b704755dd744beca75e22c" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIPropertyInfo::SORT_NULL_SMALL</definition>
+        <argsstring></argsstring>
+        <name>SORT_NULL_SMALL</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+<para>Causes null values to be infinitely small. This is the default. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="133" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1b3fa49104aef3d82537d89ca6fc4631a" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIPropertyInfo::SORT_NULL_BIG</definition>
+        <argsstring></argsstring>
+        <name>SORT_NULL_BIG</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+<para>Causes null values to be infinitely large. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="138" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1691b6cd3f66d0b53d9a97e271cab4dee" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIPropertyInfo::SORT_NULL_FIRST</definition>
+        <argsstring></argsstring>
+        <name>SORT_NULL_FIRST</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+<para>Null values always first. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="143" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1096eee2d42fdc593b9cfb6dfcce30a2e" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIPropertyInfo::SORT_NULL_LAST</definition>
+        <argsstring></argsstring>
+        <name>SORT_NULL_LAST</name>
+        <initializer> 3</initializer>
+        <briefdescription>
+<para>Null values always last. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="148" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1ef29192fd04343a208b31f975f6224f8" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long</type>
+        <definition>attribute unsigned long sbIPropertyInfo::nullSort</definition>
+        <argsstring></argsstring>
+        <name>nullSort</name>
+        <briefdescription>
+<para>Set where NULL values get sorted to. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="153" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_15928b8ba0b6b86690f8805159f42321b" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+        <definition>attribute sbIPropertyArray sbIPropertyInfo::sortProfile</definition>
+        <argsstring></argsstring>
+        <name>sortProfile</name>
+        <briefdescription>
+<para>Sort profile to be used. </para>        </briefdescription>
+        <detaileddescription>
+<para>This is a list of columns to sort by for a peculiar property. For example, when sorting by artist, you typically want to sort by Artist, Album and Track No. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="162" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIPropertyInfo::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>Unique name for this property. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="167" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_137e83ba1df687703b9006504d58239fe" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIPropertyInfo::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+<para>The type property. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="172" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIPropertyInfo::displayName</definition>
+        <argsstring></argsstring>
+        <name>displayName</name>
+        <briefdescription>
+<para>Localized display name of this property. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="177" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_10fa3d1fb01bd4fd2ab06eaa63465ed7d" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIPropertyInfo::userViewable</definition>
+        <argsstring></argsstring>
+        <name>userViewable</name>
+        <briefdescription>
+<para>A user may view this property. This does not impede reading the value, it&apos;s merely meant as a guideline. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="183" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_10933e00d6494945c02b977671da28bea" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIPropertyInfo::userEditable</definition>
+        <argsstring></argsstring>
+        <name>userEditable</name>
+        <briefdescription>
+<para>A user may edit this property. This does not impede editing the value, it&apos;s merely meant as a guideline. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="189" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIPropertyInfo::displayUsingSimpleType</definition>
+        <argsstring></argsstring>
+        <name>displayUsingSimpleType</name>
+        <briefdescription>
+<para>Display this property using the suggested base widget available for tree children. Example: &apos;progressmeter&apos; or &apos;checkbox&apos;. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="196" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1e3775774aadcb7b7a0c1260c3940126a" prot="public" static="no" mutable="no">
+        <type>attribute nsIURI</type>
+        <definition>attribute nsIURI sbIPropertyInfo::displayUsingXBLWidget</definition>
+        <argsstring></argsstring>
+        <name>displayUsingXBLWidget</name>
+        <briefdescription>
+<para>Display this property using the suggested XBL widget identified by the following URI. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="202" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_124dc15ce31329fb21a05962f84a15c9e" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIPropertyInfo::units</definition>
+        <argsstring></argsstring>
+        <name>units</name>
+        <briefdescription>
+<para>True if this property has a selection list An enumerator of selection list values Display units (I.S. compliant please). This unit is appended at the end of the formatted string returned by <ref refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" kindref="member">sbIPropertyInfo::format()</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>More information here: <ulink url="http://www.unc.edu/~rowlett/units/sipm.html">http://www.unc.edu/~rowlett/units/sipm.html</ulink> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="219" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_info_1f2757f5dbc58e2fa111b918cc83e2c5e" prot="public" static="no" mutable="no">
+        <type>attribute nsISimpleEnumerator</type>
+        <definition>attribute nsISimpleEnumerator sbIPropertyInfo::operators</definition>
+        <argsstring></argsstring>
+        <name>operators</name>
+        <briefdescription>
+<para>Enumerator of <ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref> objects. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="224" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface used to describe a metadata property for use by the UI and other <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref> interfaces (smartplaylists, etc). </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_property_manager" kindref="compound">sbIPropertyManager</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="405">
+        <label>sbIDatetimePropertyInfo</label>
+        <link refid="interfacesb_i_datetime_property_info"/>
+        <childnode refid="404" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="404">
+        <label>sbIPropertyInfo</label>
+        <link refid="interfacesb_i_property_info"/>
+      </node>
+      <node id="406">
+        <label>sbINumberPropertyInfo</label>
+        <link refid="interfacesb_i_number_property_info"/>
+        <childnode refid="404" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="408">
+        <label>sbIProgressPropertyInfo</label>
+        <link refid="interfacesb_i_progress_property_info"/>
+        <childnode refid="407" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="409">
+        <label>sbIURIPropertyInfo</label>
+        <link refid="interfacesb_i_u_r_i_property_info"/>
+        <childnode refid="404" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="407">
+        <label>sbITextPropertyInfo</label>
+        <link refid="interfacesb_i_text_property_info"/>
+        <childnode refid="404" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="410">
+        <label>sbIPropertyInfo</label>
+        <link refid="interfacesb_i_property_info"/>
+        <childnode refid="411" relation="usage">
+          <edgelabel>sortProfile</edgelabel>
+        </childnode>
+      </node>
+      <node id="411">
+        <label>sbIPropertyArray</label>
+        <link refid="interfacesb_i_property_array"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="118" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="117" bodyend="273"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>displayName</name></member>
+      <member refid="interfacesb_i_property_info_1bb119c824a4781e421689c96f96bbced" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>displayUsingSimpleType</name></member>
+      <member refid="interfacesb_i_property_info_1e3775774aadcb7b7a0c1260c3940126a" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>displayUsingXBLWidget</name></member>
+      <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>format</name></member>
+      <member refid="interfacesb_i_property_info_1695c9498ec7779040ca5d28d824e6967" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>getDisplayPropertiesForValue</name></member>
+      <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>getOperator</name></member>
+      <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>makeSortable</name></member>
+      <member refid="interfacesb_i_property_info_1f99708e616311487152a7a36fd60a80c" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>name</name></member>
+      <member refid="interfacesb_i_property_info_1ef29192fd04343a208b31f975f6224f8" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>nullSort</name></member>
+      <member refid="interfacesb_i_property_info_123dae3923453285d8471be2a045c125d" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>OPERATOR_BEGINSWITH</name></member>
+      <member refid="interfacesb_i_property_info_1e510a1cfef38ced282dbb4fec4211ee5" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>OPERATOR_BETWEEN</name></member>
+      <member refid="interfacesb_i_property_info_14b6d078b39a35c61911b42ca24a3f2b7" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>OPERATOR_CONTAINS</name></member>
+      <member refid="interfacesb_i_property_info_112123f0254cc60b5323bccbeb6485bd0" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>OPERATOR_ENDSWITH</name></member>
+      <member refid="interfacesb_i_property_info_1afe9f89f31df1de16ca3b9ab5b7682de" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>OPERATOR_EQUALS</name></member>
+      <member refid="interfacesb_i_property_info_18638a084c59f3033542093b691267704" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>OPERATOR_GREATER</name></member>
+      <member refid="interfacesb_i_property_info_10f788ca30e7f58af5d5fab302fa3e00e" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>OPERATOR_GREATEREQUAL</name></member>
+      <member refid="interfacesb_i_property_info_1b0c9ffabb30224122bf1bba5bea890be" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>OPERATOR_LESS</name></member>
+      <member refid="interfacesb_i_property_info_13cdfd09f8658c992b1fe589ced72da7a" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>OPERATOR_LESSEQUAL</name></member>
+      <member refid="interfacesb_i_property_info_107b29f9866c056a61de6f605e56614ba" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>OPERATOR_NOTEQUALS</name></member>
+      <member refid="interfacesb_i_property_info_1f2757f5dbc58e2fa111b918cc83e2c5e" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>operators</name></member>
+      <member refid="interfacesb_i_property_info_1f34bc688867a4ebb7b3b0a8dc4cf655a" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>sanitize</name></member>
+      <member refid="interfacesb_i_property_info_1b3fa49104aef3d82537d89ca6fc4631a" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>SORT_NULL_BIG</name></member>
+      <member refid="interfacesb_i_property_info_1691b6cd3f66d0b53d9a97e271cab4dee" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>SORT_NULL_FIRST</name></member>
+      <member refid="interfacesb_i_property_info_1096eee2d42fdc593b9cfb6dfcce30a2e" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>SORT_NULL_LAST</name></member>
+      <member refid="interfacesb_i_property_info_1a59ffdf127b704755dd744beca75e22c" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>SORT_NULL_SMALL</name></member>
+      <member refid="interfacesb_i_property_info_15928b8ba0b6b86690f8805159f42321b" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>sortProfile</name></member>
+      <member refid="interfacesb_i_property_info_137e83ba1df687703b9006504d58239fe" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>type</name></member>
+      <member refid="interfacesb_i_property_info_124dc15ce31329fb21a05962f84a15c9e" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>units</name></member>
+      <member refid="interfacesb_i_property_info_10933e00d6494945c02b977671da28bea" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>userEditable</name></member>
+      <member refid="interfacesb_i_property_info_10fa3d1fb01bd4fd2ab06eaa63465ed7d" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>userViewable</name></member>
+      <member refid="interfacesb_i_property_info_11814ea167521382aae1196689bc22887" prot="public" virt="non-virtual"><scope>sbIPropertyInfo</scope><name>validate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

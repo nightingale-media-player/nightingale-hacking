@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_orderable_media_list" kind="interface" prot="public">
+    <compoundname>sbIOrderableMediaList</compoundname>
+    <includes refid="sb_i_orderable_media_list_8idl" local="no">sbIOrderableMediaList.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_orderable_media_list_1eaa73fb344244fd8a307e1d660bace65" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIOrderableMediaList::insertBefore</definition>
+        <argsstring>(in unsigned long aIndex, in sbIMediaItem aMediaItem)</argsstring>
+        <name>insertBefore</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aIndex</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <briefdescription>
+<para>Insert a media item before the specified media item. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Position of item to insert before </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Media item to insert </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="51"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_orderable_media_list_14eb562dfa30c119feaf9f0b8617eb010" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIOrderableMediaList::moveBefore</definition>
+        <argsstring>(in unsigned long aFromIndex, in unsigned long aToIndex)</argsstring>
+        <name>moveBefore</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aFromIndex</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aToIndex</declname>
+        </param>
+        <briefdescription>
+<para>Move a media item from one position to another in the list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFromIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of media item to move </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aToIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of media item to insert the moved item before </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="59"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_orderable_media_list_147d79a513540df547f301495f136b823" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIOrderableMediaList::moveLast</definition>
+        <argsstring>(in unsigned long aIndex)</argsstring>
+        <name>moveLast</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Move a media item to the end of the list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of media item to move </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="65"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Media lists that implement this interface support custom ordering. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" line="44" bodyfile="C:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl" bodystart="43" bodyend="66"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_orderable_media_list_1eaa73fb344244fd8a307e1d660bace65" prot="public" virt="non-virtual"><scope>sbIOrderableMediaList</scope><name>insertBefore</name></member>
+      <member refid="interfacesb_i_orderable_media_list_14eb562dfa30c119feaf9f0b8617eb010" prot="public" virt="non-virtual"><scope>sbIOrderableMediaList</scope><name>moveBefore</name></member>
+      <member refid="interfacesb_i_orderable_media_list_147d79a513540df547f301495f136b823" prot="public" virt="non-virtual"><scope>sbIOrderableMediaList</scope><name>moveLast</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

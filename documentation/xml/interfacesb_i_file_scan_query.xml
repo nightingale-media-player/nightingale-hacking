@@ -1,0 +1,368 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_file_scan_query" kind="interface" prot="public">
+    <compoundname>sbIFileScanQuery</compoundname>
+    <includes refid="sb_i_file_scan_8idl" local="no">sbIFileScan.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_1a6b1324cef88c61b6e78f2dcc7c62f42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileScanQuery::setDirectory</definition>
+        <argsstring>(in AString strDirectory)</argsstring>
+        <name>setDirectory</name>
+        <param>
+          <type>in AString</type>
+          <declname>strDirectory</declname>
+        </param>
+        <briefdescription>
+<para>Set the directory to scan. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>strDirectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The directory to scan </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_query_1e1346023e65462d3f0c1b823d36873c6" kindref="member">getDirectory</ref>, <ref refid="interfacesb_i_file_scan_query_13b8b2784656c393113f79ca773783b5a" kindref="member">setRecurse</ref>, <ref refid="interfacesb_i_file_scan_query_1709a8fd34deb76351ee54757fc77fd1c" kindref="member">getRecurse</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="126"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_1e1346023e65462d3f0c1b823d36873c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIFileScanQuery::getDirectory</definition>
+        <argsstring>()</argsstring>
+        <name>getDirectory</name>
+        <briefdescription>
+<para>Get the directory to scan. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The directory to scan </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_query_1a6b1324cef88c61b6e78f2dcc7c62f42" kindref="member">setDirectory</ref>, <ref refid="interfacesb_i_file_scan_query_13b8b2784656c393113f79ca773783b5a" kindref="member">setRecurse</ref>, <ref refid="interfacesb_i_file_scan_query_1709a8fd34deb76351ee54757fc77fd1c" kindref="member">getRecurse</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="134"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_13b8b2784656c393113f79ca773783b5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileScanQuery::setRecurse</definition>
+        <argsstring>(in PRBool bRecurse)</argsstring>
+        <name>setRecurse</name>
+        <param>
+          <type>in PRBool</type>
+          <declname>bRecurse</declname>
+        </param>
+        <briefdescription>
+<para>Set the scan to run recursively under the given directory. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bRecurse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, scan subdirectories </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_query_1a6b1324cef88c61b6e78f2dcc7c62f42" kindref="member">setDirectory</ref>, <ref refid="interfacesb_i_file_scan_query_1e1346023e65462d3f0c1b823d36873c6" kindref="member">getDirectory</ref>, <ref refid="interfacesb_i_file_scan_query_1709a8fd34deb76351ee54757fc77fd1c" kindref="member">getRecurse</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="142"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_1709a8fd34deb76351ee54757fc77fd1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIFileScanQuery::getRecurse</definition>
+        <argsstring>()</argsstring>
+        <name>getRecurse</name>
+        <briefdescription>
+<para>Whether or not the scan will run recursively. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>If true, scan subdirectories </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_query_1a6b1324cef88c61b6e78f2dcc7c62f42" kindref="member">setDirectory</ref>, <ref refid="interfacesb_i_file_scan_query_1e1346023e65462d3f0c1b823d36873c6" kindref="member">getDirectory</ref>, <ref refid="interfacesb_i_file_scan_query_13b8b2784656c393113f79ca773783b5a" kindref="member">setRecurse</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="150"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_1ec3994386511d670a8ad2e8a33efc702" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileScanQuery::addFileExtension</definition>
+        <argsstring>(in AString strExtension)</argsstring>
+        <name>addFileExtension</name>
+        <param>
+          <type>in AString</type>
+          <declname>strExtension</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="152"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_154b7e0f516cff8e13ce36ee1f7ff65bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileScanQuery::setCallback</definition>
+        <argsstring>(in sbIFileScanCallback pCallback)</argsstring>
+        <name>setCallback</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref></type>
+          <declname>pCallback</declname>
+        </param>
+        <briefdescription>
+<para>Set the callback object for the scan. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pCallback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback object </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref>, <ref refid="interfacesb_i_file_scan_query_1ab2972bd7991f33d8e8fe96b704042fc" kindref="member">getCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="160"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_1ab2972bd7991f33d8e8fe96b704042fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref></type>
+        <definition>sbIFileScanCallback sbIFileScanQuery::getCallback</definition>
+        <argsstring>()</argsstring>
+        <name>getCallback</name>
+        <briefdescription>
+<para>Get the callback object for the scan. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The callback object </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref>, <ref refid="interfacesb_i_file_scan_query_154b7e0f516cff8e13ce36ee1f7ff65bb" kindref="member">setCallback</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="168"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_19e4960653a6369875294bfab9a69b39f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRUint32</type>
+        <definition>PRUint32 sbIFileScanQuery::getFileCount</definition>
+        <argsstring>()</argsstring>
+        <name>getFileCount</name>
+        <briefdescription>
+<para>Get the number of files found. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The number of files found </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_query_1f0a881a77fe077adbf324aabcc9ae22f" kindref="member">getFilePath</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="176"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_1e7a9f627728653fd6e8fe9502e412410" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileScanQuery::addFilePath</definition>
+        <argsstring>(in AString strFilePath)</argsstring>
+        <name>addFilePath</name>
+        <param>
+          <type>in AString</type>
+          <declname>strFilePath</declname>
+        </param>
+        <briefdescription>
+<para>USER CODE SHOULD NOT REFERENCE THIS METHOD. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="181"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_1f0a881a77fe077adbf324aabcc9ae22f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIFileScanQuery::getFilePath</definition>
+        <argsstring>(in PRUint32 nIndex)</argsstring>
+        <name>getFilePath</name>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get the N&apos;th file from the results of the scan. </para>        </briefdescription>
+        <detaileddescription>
+<para>Don&apos;t call this while <ref refid="interfacesb_i_file_scan_query_1bbff3f54a1ee4d59dd913b473f3daa7f" kindref="member">isScanning()</ref> is true.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>nIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the files array to retrieve </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_query_19e4960653a6369875294bfab9a69b39f" kindref="member">getFileCount</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="191"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_1bbff3f54a1ee4d59dd913b473f3daa7f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIFileScanQuery::isScanning</definition>
+        <argsstring>()</argsstring>
+        <name>isScanning</name>
+        <briefdescription>
+<para>Whether or not the scan operation is executing. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>True, if the scan is executing </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="199"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_16f3e680f18fc1444d52d9a9b7574e0c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileScanQuery::setIsScanning</definition>
+        <argsstring>(in PRBool bIsScanning)</argsstring>
+        <name>setIsScanning</name>
+        <param>
+          <type>in PRBool</type>
+          <declname>bIsScanning</declname>
+        </param>
+        <briefdescription>
+<para>USER CODE SHOULD NOT REFERENCE THIS METHOD. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="204"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_19b70b9b17a1f255f18a5acc4cc131b32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIFileScanQuery::getLastFileFound</definition>
+        <argsstring>()</argsstring>
+        <name>getLastFileFound</name>
+        <briefdescription>
+<para>Returns the most recent file found by the scan. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method may be called while the scan is executing to provide a periodic snapshot of the scan results.</para><para><simplesect kind="return"><para>The path to the last file found </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_query_182d49ccf710ab59a227d2336c9e831b1" kindref="member">getCurrentScanPath</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="215"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_182d49ccf710ab59a227d2336c9e831b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIFileScanQuery::getCurrentScanPath</definition>
+        <argsstring>()</argsstring>
+        <name>getCurrentScanPath</name>
+        <briefdescription>
+<para>Returns the most recent directory scanned. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method may be called while the scan is executing to provide a periodic snapshot of the scan results.</para><para><simplesect kind="return"><para>The path to the last file found </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_query_19b70b9b17a1f255f18a5acc4cc131b32" kindref="member">getLastFileFound</ref>, <ref refid="interfacesb_i_file_scan_query_1d275265b3e6a263d2bc52bad915e9dda" kindref="member">setCurrentScanPath</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="226"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_1d275265b3e6a263d2bc52bad915e9dda" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileScanQuery::setCurrentScanPath</definition>
+        <argsstring>(in AString strScanPath)</argsstring>
+        <name>setCurrentScanPath</name>
+        <param>
+          <type>in AString</type>
+          <declname>strScanPath</declname>
+        </param>
+        <briefdescription>
+<para>USER CODE SHOULD NOT REFERENCE THIS METHOD. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="231"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_17e29f6f6d4b4087039781af8710edcdf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileScanQuery::cancel</definition>
+        <argsstring>()</argsstring>
+        <name>cancel</name>
+        <briefdescription>
+<para>Cancel the current scanning loop. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="236"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_1435818abd81b45e710d869a6c2190904" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIFileScanQuery::isCancelled</definition>
+        <argsstring>()</argsstring>
+        <name>isCancelled</name>
+        <briefdescription>
+<para>USER CODE SHOULD NOT REFERENCE THIS METHOD. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="241"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_file_scan_query_1fcc736deb7bea39e3229b84f4c68feed" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIFileScanQuery::searchHidden</definition>
+        <argsstring></argsstring>
+        <name>searchHidden</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="118" bodyfile="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An object to scan through the files of a folder (and optionally subfolders). </para>    </briefdescription>
+    <detaileddescription>
+<para>This object is used to rapidly gather a list of all the files found under a given directory path. It runs from a separate thread.</para><para>User code may call <ref refid="interfacesb_i_file_scan_query_182d49ccf710ab59a227d2336c9e831b1" kindref="member">getCurrentScanPath()</ref> and <ref refid="interfacesb_i_file_scan_query_19b70b9b17a1f255f18a5acc4cc131b32" kindref="member">getLastFileFound()</ref> from the main thread to get a periodic snapshot of the current progress of the scan.</para><para>Execute a scan by creating a scan query, filling it out, and passing it to the <ref refid="interfacesb_i_file_scan" kindref="compound">sbIFileScan</ref> interface for processing: <verbatim>function ScanBeneathADirectory(aPath) {
+  // Create the objects
+  var aFileScan = Components.classes[&quot;@songbirdnest.com/Songbird/FileScan;1&quot;]
+    .createInstance(Components.interfaces.sbIFileScan);
+  var aFileScanQuery = Components.classes[&quot;@songbirdnest.com/Songbird/FileScanQuery;1&quot;]
+    .createInstance(Components.interfaces.sbIFileScanQuery);
+
+  // Setup the query
+  aFileScanQuery.setDirectory(aPath);
+  aFileScanQuery.setRecurse(true);
+          
+  // Execute the query
+  aFileScan.submitQuery(aFileScanQuery);
+  return aFileScanQuery;
+}
+</verbatim></para><para><simplesect kind="see"><para><ref refid="interfacesb_i_file_scan_callback" kindref="compound">sbIFileScanCallback</ref>, <ref refid="interfacesb_i_file_scan" kindref="compound">sbIFileScan</ref>, FileScan.h </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" line="117" bodyfile="C:/projects/songbird/components/filescan/public/sbIFileScan.idl" bodystart="116" bodyend="242"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_file_scan_query_1ec3994386511d670a8ad2e8a33efc702" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>addFileExtension</name></member>
+      <member refid="interfacesb_i_file_scan_query_1e7a9f627728653fd6e8fe9502e412410" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>addFilePath</name></member>
+      <member refid="interfacesb_i_file_scan_query_17e29f6f6d4b4087039781af8710edcdf" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>cancel</name></member>
+      <member refid="interfacesb_i_file_scan_query_1ab2972bd7991f33d8e8fe96b704042fc" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getCallback</name></member>
+      <member refid="interfacesb_i_file_scan_query_182d49ccf710ab59a227d2336c9e831b1" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getCurrentScanPath</name></member>
+      <member refid="interfacesb_i_file_scan_query_1e1346023e65462d3f0c1b823d36873c6" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getDirectory</name></member>
+      <member refid="interfacesb_i_file_scan_query_19e4960653a6369875294bfab9a69b39f" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getFileCount</name></member>
+      <member refid="interfacesb_i_file_scan_query_1f0a881a77fe077adbf324aabcc9ae22f" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getFilePath</name></member>
+      <member refid="interfacesb_i_file_scan_query_19b70b9b17a1f255f18a5acc4cc131b32" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getLastFileFound</name></member>
+      <member refid="interfacesb_i_file_scan_query_1709a8fd34deb76351ee54757fc77fd1c" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getRecurse</name></member>
+      <member refid="interfacesb_i_file_scan_query_1435818abd81b45e710d869a6c2190904" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>isCancelled</name></member>
+      <member refid="interfacesb_i_file_scan_query_1bbff3f54a1ee4d59dd913b473f3daa7f" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>isScanning</name></member>
+      <member refid="interfacesb_i_file_scan_query_1fcc736deb7bea39e3229b84f4c68feed" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>searchHidden</name></member>
+      <member refid="interfacesb_i_file_scan_query_154b7e0f516cff8e13ce36ee1f7ff65bb" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>setCallback</name></member>
+      <member refid="interfacesb_i_file_scan_query_1d275265b3e6a263d2bc52bad915e9dda" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>setCurrentScanPath</name></member>
+      <member refid="interfacesb_i_file_scan_query_1a6b1324cef88c61b6e78f2dcc7c62f42" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>setDirectory</name></member>
+      <member refid="interfacesb_i_file_scan_query_16f3e680f18fc1444d52d9a9b7574e0c4" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>setIsScanning</name></member>
+      <member refid="interfacesb_i_file_scan_query_13b8b2784656c393113f79ca773783b5a" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>setRecurse</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

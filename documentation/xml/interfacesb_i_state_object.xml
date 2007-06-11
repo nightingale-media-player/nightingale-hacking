@@ -1,0 +1,296 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_state_object" kind="interface" prot="public">
+    <compoundname>sbIStateObject</compoundname>
+    <includes refid="sb_i_state_object_8idl" local="no">sbIStateObject.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_state_object_17cc676d06e1dcc32e2fa57c47c17b70f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbIStateObject::initialize</definition>
+        <argsstring>(in AString aFullKey, in boolean aCreate, in AString aDatastoreImpl)</argsstring>
+        <name>initialize</name>
+        <param>
+          <type>in AString</type>
+          <declname>aFullKey</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aCreate</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aDatastoreImpl</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the state object. </para>        </briefdescription>
+        <detaileddescription>
+<para>Initialize the state object using a full key. This is required to use the object. If you do not initialize the state object, every other method or attribute call will fail.</para><para><simplesect kind="note"><para>You must initialize the state object before using it. Failing to do so will make every method return a . </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFullKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The desired full key. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aCreate</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Boolean flag indicating wether to create the state object if it doesn&apos;t exist. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aDatastoreImpl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The datastore type you wish to use. If an empty string is used, a default datastore implementation type is chosen for you. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Error or success code. </para></simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>STATEOBJECT_CREATION_FAILED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The creation of a new state object has failed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>STATEOBJECT_LOADING_FAILED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The loading of a previously created state object has failed. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>STATEOBJECT_CREATED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The creation of a new state object has succeeded. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>STATEOBJECT_LOADED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The loading of a previously created state object has succeeded. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="109"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_state_object_1537d890e88f681e99b797d901b0aa9ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIStateObject::getFullKey</definition>
+        <argsstring>()</argsstring>
+        <name>getFullKey</name>
+        <briefdescription>
+<para>Reconstitute the full key for this object. </para>        </briefdescription>
+        <detaileddescription>
+<para>Reconstitute the full key for this object by walking back up the state object tree.</para><para><simplesect kind="return"><para>The full key for the state object. As an example: &quot;metrics.playcount.mp3&quot;. </para></simplesect>
+<simplesect kind="note"><para>This can be lengthy operation, please avoid it if possible. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="120"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_state_object_1ad0b630e0221ab986989d501bfc24e69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIStateObject::addObserver</definition>
+        <argsstring>(in nsIObserver aObserver)</argsstring>
+        <name>addObserver</name>
+        <param>
+          <type>in nsIObserver</type>
+          <declname>aObserver</declname>
+        </param>
+        <briefdescription>
+<para>Add an observer to this status object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aObserver</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observer you wish to add. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>To avoid nasty reference counting issues, please remove your observer when you are done using it. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_state_object_12dcef7aecb0e0a5d0f82ceb8e987e79e" kindref="member">removeObserver</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="128"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_state_object_12dcef7aecb0e0a5d0f82ceb8e987e79e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIStateObject::removeObserver</definition>
+        <argsstring>(in nsIObserver aObserver)</argsstring>
+        <name>removeObserver</name>
+        <param>
+          <type>in nsIObserver</type>
+          <declname>aObserver</declname>
+        </param>
+        <briefdescription>
+<para>Remove an observer previously added to this status object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aObserver</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observer you wish to remove. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>If you&apos;ve added an observer please remove it to avoid nasty reference counting issues.ooch </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_state_object_1ad0b630e0221ab986989d501bfc24e69" kindref="member">addObserver</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="136"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_state_object_1db3e9bd5f5af57bfc0493014e810f92d" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStateObject::STATEOBJECT_CREATION_FAILED</definition>
+        <argsstring></argsstring>
+        <name>STATEOBJECT_CREATION_FAILED</name>
+        <initializer> 0x800000001</initializer>
+        <briefdescription>
+<para>State object specific error codes returned by the initialize method. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="57" bodyfile="C:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_state_object_158bf8bed69f785e53c97e6d86524b94d" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStateObject::STATEOBJECT_LOADING_FAILED</definition>
+        <argsstring></argsstring>
+        <name>STATEOBJECT_LOADING_FAILED</name>
+        <initializer> 0x800000002</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="58" bodyfile="C:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_state_object_14021283a74afadb1272d52ce3524a446" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStateObject::STATEOBJECT_CREATED</definition>
+        <argsstring></argsstring>
+        <name>STATEOBJECT_CREATED</name>
+        <initializer> 0x01</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="59" bodyfile="C:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_state_object_198043e2caf30c127fd980803df0a2e3c" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStateObject::STATEOBJECT_LOADED</definition>
+        <argsstring></argsstring>
+        <name>STATEOBJECT_LOADED</name>
+        <initializer> 0x02</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="60" bodyfile="C:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_state_object_1a014f9227ed4acb647072301515e100f" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIStateObject::key</definition>
+        <argsstring></argsstring>
+        <name>key</name>
+        <briefdescription>
+<para>The key for this state object. </para>        </briefdescription>
+        <detaileddescription>
+<para>The key used to find the state object. The key present is only a partial or leaf key. The complete key is composed of the various state objects that build the tree of state objects. For example, if the complete key to an object is &quot;metrics.playcount&quot;, two state objects are involved in constructing the tree. The root object would have the key &quot;metrics&quot; and contain a second </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="71" bodyfile="C:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_state_object_1ccdac5b6c31079813e7d1d0590ba4531" prot="public" static="no" mutable="no">
+        <type>attribute nsIWritableVariant</type>
+        <definition>attribute nsIWritableVariant sbIStateObject::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>The value of the state object. It is valid to not have a value set. </para>        </briefdescription>
+        <detaileddescription>
+<para>The value can be any primitive type or complex type that implements nsISupports. Please note that it is completely valid for a state object to not have any value set. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="79" bodyfile="C:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_state_object_129c75154f03ec8f0dd27d0a333eed7a3" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_state_object" kindref="compound">sbIStateObject</ref></type>
+        <definition>attribute sbIStateObject sbIStateObject::parent</definition>
+        <argsstring></argsstring>
+        <name>parent</name>
+        <briefdescription>
+<para>The parent state object. May be null if this is the root state object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="84" bodyfile="C:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_state_object_1523fa55a4c23710db21491556540f290" prot="public" static="no" mutable="no">
+        <type>attribute nsIWritablePropertyBag2</type>
+        <definition>attribute nsIWritablePropertyBag2 sbIStateObject::children</definition>
+        <argsstring></argsstring>
+        <name>children</name>
+        <briefdescription>
+<para>The children state objects. May be empty if this is a leaf state object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="89" bodyfile="C:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
+    <detaileddescription>
+<para>The state object interface is used to store state with the possibility of persisting the state data through multiple application sessions. The persisted data is automatically loaded and available upon application startup.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_state_datastore" kindref="compound">sbIStateDatastore</ref> </para></simplesect>
+<simplesect kind="note"><para>This interface *is* threadsafe. Implementations should follow this assumption. </para></simplesect>
+</para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="528">
+        <label>sbIStateObject</label>
+        <link refid="interfacesb_i_state_object"/>
+        <childnode refid="528" relation="usage">
+          <edgelabel>parent</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/state/public/sbIStateObject.idl" line="52" bodyfile="C:/projects/songbird/components/state/public/sbIStateObject.idl" bodystart="51" bodyend="137"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_state_object_1ad0b630e0221ab986989d501bfc24e69" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>addObserver</name></member>
+      <member refid="interfacesb_i_state_object_1523fa55a4c23710db21491556540f290" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>children</name></member>
+      <member refid="interfacesb_i_state_object_1537d890e88f681e99b797d901b0aa9ef" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>getFullKey</name></member>
+      <member refid="interfacesb_i_state_object_17cc676d06e1dcc32e2fa57c47c17b70f" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>initialize</name></member>
+      <member refid="interfacesb_i_state_object_1a014f9227ed4acb647072301515e100f" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>key</name></member>
+      <member refid="interfacesb_i_state_object_129c75154f03ec8f0dd27d0a333eed7a3" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>parent</name></member>
+      <member refid="interfacesb_i_state_object_12dcef7aecb0e0a5d0f82ceb8e987e79e" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>removeObserver</name></member>
+      <member refid="interfacesb_i_state_object_14021283a74afadb1272d52ce3524a446" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>STATEOBJECT_CREATED</name></member>
+      <member refid="interfacesb_i_state_object_1db3e9bd5f5af57bfc0493014e810f92d" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>STATEOBJECT_CREATION_FAILED</name></member>
+      <member refid="interfacesb_i_state_object_198043e2caf30c127fd980803df0a2e3c" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>STATEOBJECT_LOADED</name></member>
+      <member refid="interfacesb_i_state_object_158bf8bed69f785e53c97e6d86524b94d" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>STATEOBJECT_LOADING_FAILED</name></member>
+      <member refid="interfacesb_i_state_object_1ccdac5b6c31079813e7d1d0590ba4531" prot="public" virt="non-virtual"><scope>sbIStateObject</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

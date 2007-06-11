@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_controller" kind="interface" prot="public">
+    <compoundname>sbIController</compoundname>
+    <includes refid="sb_i_controller_8idl" local="no">sbIController.idl</includes>
+    <briefdescription>
+<para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
+    <detaileddescription>
+<para>Simple wrapper around the standard nsIController interface.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_application_controller" kindref="compound">sbIApplicationController</ref> nsIController </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/controller/public/sbIController.idl" line="48" bodyfile="C:/projects/songbird/components/controller/public/sbIController.idl" bodystart="47" bodyend="49"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

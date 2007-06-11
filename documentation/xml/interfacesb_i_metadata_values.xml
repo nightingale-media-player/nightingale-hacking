@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_metadata_values" kind="interface" prot="public">
+    <compoundname>sbIMetadataValues</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_metadata_values_1e677c02353eb015806981b4144608722" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIMetadataValues::getKey</definition>
+        <argsstring>(in PRInt32 N)</argsstring>
+        <name>getKey</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>N</declname>
+        </param>
+        <briefdescription>
+<para>The N&apos;th key in the internal map. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl" line="58"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_values_177b1a6f710d4547a24ddd44fdc6b6aab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataValues::setValue</definition>
+        <argsstring>(in AString aKey, in AString aValue, in PRInt32 aType)</argsstring>
+        <name>setValue</name>
+        <param>
+          <type>in AString</type>
+          <declname>aKey</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aType</declname>
+        </param>
+        <briefdescription>
+<para>Assign a value to the internal map. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The key index to receive the incoming value </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to assign </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl" line="66"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_values_11e14ea7a613f3d55f235e3e58f639da1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIMetadataValues::getValue</definition>
+        <argsstring>(in AString aKey)</argsstring>
+        <name>getValue</name>
+        <param>
+          <type>in AString</type>
+          <declname>aKey</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve a value from the internal map. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The key index to find the value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value string at that key </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl" line="73"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_values_13fa426e227dcfde25f74d41dd27a18ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIMetadataValues::getType</definition>
+        <argsstring>(in AString aKey)</argsstring>
+        <name>getType</name>
+        <param>
+          <type>in AString</type>
+          <declname>aKey</declname>
+        </param>
+        <briefdescription>
+<para>Retrieve a value type from the internal map. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The key index to find the value type </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The type enumeration at that key </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl" line="80"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_values_18cec88f7185c712c1bbefe11e9da8632" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataValues::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <briefdescription>
+<para>Clear the internal map and erase all the values. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl" line="85"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_metadata_values_17c670a3cec94e58dcadd63d01cbc9b59" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRInt32</type>
+        <definition>readonly attribute PRInt32 sbIMetadataValues::numValues</definition>
+        <argsstring></argsstring>
+        <name>numValues</name>
+        <briefdescription>
+<para>The number of values stored internally. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl" line="53" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A map of value+type pairs, keyed by string. </para>    </briefdescription>
+    <detaileddescription>
+<para>This object is passed from and to a <ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref> for reading or writing the metadata set of a track.</para><para>The list of supported metadata keys is:</para><para>The type enumeration is:</para><para><xrefsect id="todo_1_todo000009"><xreftitle>Todo</xreftitle><xrefdescription><para>Make a list of keys. Make a type enumeration. </para></xrefdescription></xrefsect><simplesect kind="see"><para><ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl" line="49" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl" bodystart="48" bodyend="86"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_metadata_values_18cec88f7185c712c1bbefe11e9da8632" prot="public" virt="non-virtual"><scope>sbIMetadataValues</scope><name>clear</name></member>
+      <member refid="interfacesb_i_metadata_values_1e677c02353eb015806981b4144608722" prot="public" virt="non-virtual"><scope>sbIMetadataValues</scope><name>getKey</name></member>
+      <member refid="interfacesb_i_metadata_values_13fa426e227dcfde25f74d41dd27a18ef" prot="public" virt="non-virtual"><scope>sbIMetadataValues</scope><name>getType</name></member>
+      <member refid="interfacesb_i_metadata_values_11e14ea7a613f3d55f235e3e58f639da1" prot="public" virt="non-virtual"><scope>sbIMetadataValues</scope><name>getValue</name></member>
+      <member refid="interfacesb_i_metadata_values_17c670a3cec94e58dcadd63d01cbc9b59" prot="public" virt="non-virtual"><scope>sbIMetadataValues</scope><name>numValues</name></member>
+      <member refid="interfacesb_i_metadata_values_177b1a6f710d4547a24ddd44fdc6b6aab" prot="public" virt="non-virtual"><scope>sbIMetadataValues</scope><name>setValue</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
