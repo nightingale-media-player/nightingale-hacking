@@ -123,7 +123,7 @@ function testUpdate() {
         testFinished();
         fail("Test did not finish in time");
       }
-    }, 10000, Ci.nsITimer.TYPE_ONE_SHOT);
+    }, 20000, Ci.nsITimer.TYPE_ONE_SHOT);
 
   server.start(8080);
   server.registerDirectory("/", getFile("."));
