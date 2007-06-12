@@ -420,6 +420,7 @@
           <![CDATA[
           try
           {
+            if (this.tracking) return;
             if (!replacedheight) replacedheight = 0;
             if (this.state == "closed") {
               if (!this.drawercontent) {
