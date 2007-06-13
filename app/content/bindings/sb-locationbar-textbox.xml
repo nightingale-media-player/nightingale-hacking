@@ -93,7 +93,11 @@
           // set the dataremote uri to the right value
           SBDataSetStringValue("browser.uri", val);
           // populate the ui with a little help from our servicepane
-          var text = gServicePane.getURLName(val);
+          var text = null;
+          if ( val.indexOf("chrome://") != -1 ) {
+            // Only cook the url for chrome urls
+            text = gServicePane.getURLName(val); 
+          }
           SBDataSetStringValue("browser.url.text", text?text:val);
           var image = gServicePane.getURLImage(val)
           SBDataSetStringValue("browser.url.image", image?image:'');

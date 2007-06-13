@@ -1080,7 +1080,8 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>
@@ -1128,12 +1129,39 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</File>
 				<File
 					RelativePath=".\content\bindings\sb-commands.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\sb-locationbar-textbox.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\sb-search.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\sb-tabbrowser.xml">
@@ -1197,6 +1225,15 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</File>
 				<File
 					RelativePath=".\content\bindings\servicepane.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\servicetree.xml">

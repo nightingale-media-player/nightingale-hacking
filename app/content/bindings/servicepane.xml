@@ -246,15 +246,15 @@
       <method name="getURLName">
         <parameter name="aURL"/>
         <body><![CDATA[
-          var node = this.mService.getNode(aURL);
-          return node ? node.name : null;
+          var node = this.getNodeForURL(aURL);
+          return (node) ? node.name : null;
         ]]></body>
       </method>
       
       <method name="getURLImage">
         <parameter name="aURL"/>
         <body><![CDATA[
-          var node = this.mService.getNode(aURL);
+          var node = this.getNodeForURL(aURL);
           return node ? node.image : null;
         ]]></body>
       </method>
@@ -299,6 +299,30 @@
           } else {
             return null;
           }
+        ]]></body>
+      </method>
+      
+      <method name="getNodeForURL">
+        <parameter name="aURL" />
+        <body><![CDATA[
+          //  This doesn't always work.  The url != nodeid for library & playlist nodes.
+          var retval = this.mService.getNode(aURL);
+          if (!retval) {
+            // Loop through the content, hoping for an URL.
+            for ( var i = 0, end = this.mTree.contentView.rowCount; i < end; i++ ) {
+              // Find the I'th node.
+              var element = this.mTree.contentView.getItemAtIndex( i );
+              var node = this.mService.getNode(element.getAttribute('nodeid'));
+              if (!node) continue;
+              
+              // Is this the url we're looking for?
+              if (aURL == node.url) {
+                retval = node;
+                break;
+              }
+            }
+          }
+          return retval;
         ]]></body>
       </method>
       
