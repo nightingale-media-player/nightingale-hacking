@@ -110,8 +110,8 @@ var SBProperties = {
 
   createArray: function() {
     var propertyArray =
-      Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-                .createInstance(Components.interfaces.sbIPropertyArray);
+      Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                .createInstance(Components.interfaces.sbIMutablePropertyArray);
       return propertyArray;
   }
 }
