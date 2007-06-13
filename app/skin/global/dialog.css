@@ -53,7 +53,7 @@
 }
 
 dialog { 
-  -moz-appearance: dialog;
+  -moz-appearance: none;
   padding: 14px;
 }
 
@@ -67,11 +67,6 @@ dialog {
 
 dialogheader {
   margin: 0px 5px 5px 5px;
-  border: 2px solid;
-  -moz-border-top-colors: ThreeDShadow ThreeDDarkShadow;
-  -moz-border-right-colors: ThreeDHighlight ThreeDDarkShadow;
-  -moz-border-bottom-colors: ThreeDHighlight ThreeDDarkShadow;
-  -moz-border-left-colors: ThreeDShadow ThreeDDarkShadow;
   padding: 5px 8px;
   background-color: Highlight;
   color: HighlightText;

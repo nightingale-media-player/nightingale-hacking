@@ -45,7 +45,7 @@
 >
 
   <!-- Astounding complexity! -->
-  <label id="version_number" value="&about.version;" class="sb_faceplate"/>
+  <label id="version_number" value="&about.version;" />
   <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false" flex="1"/>
 
   <!-- And intrepid instructions! -->  

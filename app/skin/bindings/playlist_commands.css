@@ -38,12 +38,6 @@ Playlist toolbar and context menu items.
     anything.  If for some reason cross platform issues come up, try putting
     that back.  --matt **/
 
-#playlist_toolbar_bkg
-{ 
-  background-image: url(chrome://songbird/skin/tree/treecol.png);
-  background-repeat: repeat-x;
-  border-top: 1px solid transparent;
-}
 
 /* Toolbar: Play Button */
 #library_cmd_play
@@ -65,7 +59,7 @@ Playlist toolbar and context menu items.
 #library_cmd_remove
 {
   list-style-image: url(chrome://songbird/skin/buttons/playlist_toolbar_buttons.png) ; 
-  -moz-image-region: rect(0px 22px 8px 8px);
+  -moz-image-region: rect(0px 22px 8px 11px);
 }
 #library_cmd_remove:hover
 {

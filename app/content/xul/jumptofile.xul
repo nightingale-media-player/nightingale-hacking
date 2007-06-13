@@ -76,12 +76,12 @@
     </hbox>
     <spacer height="5"/>
     <hbox align="center">
-      <label id="jumpto_search_label" class="dialog_label" value="&jumptofile.search;" />
-      <textbox class="dialog_textbox" id="jumpto.textbox" flex="1" onkeypress="onSearchKeypress(event);" />
+      <label id="jumpto_search_label"  value="&jumptofile.search;" />
+      <textbox  id="jumpto.textbox" flex="1" onkeypress="onSearchKeypress(event);" />
     </hbox>
     <spacer height="5"/>
     <hbox flex="1">
-      <playlist2 class="dialog_playlist" 
+      <playlist2 class="dialog-playlist" 
                  id="jumpto.playlist" 
                  flex="1" 
                  onkeypress="onListKeypress(event);"

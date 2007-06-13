@@ -50,12 +50,12 @@
       <menuitem id="html.context.copytoclipboard" label="&html.context.copytoclipboard;"/>
     </popup>
     <!-- EDIT POPUP FOR THE MAIN PANE PLAYLIST -->
-    <popup id="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">
-      <textbox id="playlist_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="onPlaylistEditChange( event )"/>
+    <popup id="playlist_edit_popup"  ignorekeys="true">
+      <textbox id="playlist_edit" multiline="false" wrap="off" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="onPlaylistEditChange( event )"/>
     </popup>
     <!-- EDIT POPUP FOR THE SERVICE PANE -->
-    <popup id="service_edit_popup" class="sb_faceplate" ignorekeys="true" onpopuphiding="onServiceEditHide(event);">
-      <textbox id="service_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onkeypress="onServiceEditKeypress( event );" onblur="onServiceEditChange()"/>
+    <popup id="service_edit_popup"  ignorekeys="true" onpopuphiding="onServiceEditHide(event);">
+      <textbox id="service_edit" multiline="false" wrap="off" onkeypress="onServiceEditKeypress( event );" onblur="onServiceEditChange()"/>
     </popup>
   </popupset>
 

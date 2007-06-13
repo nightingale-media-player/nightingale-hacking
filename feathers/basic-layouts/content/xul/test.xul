@@ -90,6 +90,10 @@
 
 <checkbox label="Show Toolbar Labels" checked="true"/>
 
+<checkbox label="Disabled Checkbox" checked="true" disabled="true"/>
+
+<checkbox label="Unchecked Checkbox"/>
+
 <colorpicker color="#FF0000"/>
 
 <colorpicker type="button" color="#CC0080"/>
@@ -126,6 +130,14 @@
   </menupopup>
 </menulist>
 
+<menulist disabled="true">
+  <menupopup>
+    <menuitem label="Disabled Lions" value="a"/>
+    <menuitem label="Disabled Tigers" value="b"/>
+    <menuitem label="Disabled Bears" value="c"/>
+  </menupopup>
+</menulist>
+
 <menulist editable="true">
   <menupopup>
     <menuitem label="Elephants" value="Elephants"/>
@@ -134,9 +146,11 @@
   </menupopup>
 </menulist>
 
-<progressmeter value="40"/>
+  <progressmeter value="15"/>
+  <progressmeter value="47"/>
+<progressmeter value="100"/>
 
-<progressmeter value="100" mode="undetermined" />
+<progressmeter mode="undetermined" />
 
 <radiogroup>
   <radio label="Light" value="light" selected="true" />
@@ -169,6 +183,10 @@
 <textbox multiline="true" value="firefox"/>
 
 <textbox type="autocomplete" autocompletesearch="history"/>
+
+<html:input type="autocomplete" class="autocomplete-textbox textbox-input" autocompletesearch="history"/>
+
+<html:input type="autocomplete" />
 
 <textbox type="number" min="1" max="20"/>
 

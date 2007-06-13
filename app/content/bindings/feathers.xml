@@ -337,14 +337,11 @@
       <!--
         Called when the clickhold button is clicked.  
       -->
-      <method name="onCommand">
-        <parameter name="target"/>
+      <method name="switchFeathers">
+        <parameter name="layoutURL"/>
+        <parameter name="skinName"/>
         <body>
-          <![CDATA[
-            // Get the previously active (or default) skin and layout
-            var layoutURL = this._feathersManager.previousLayoutURL;
-            var skinName = this._feathersManager.previousSkinName;
-            
+          <![CDATA[            
             // Attempt to switch feathers
             try {
               this._feathersManager.switchFeathers(layoutURL, skinName);
@@ -415,7 +412,32 @@
     <handlers>
       <handler event="command">
         <![CDATA[
-          this.onCommand(event.target);
+                    
+          // Special hack to reload the current window.
+          // This is to make CSS testing a bit easier.
+          if (event.altKey || event.ctrlKey | event.metaKey | event.shiftKey) {
+            var layoutURL = this._feathersManager.currentLayoutURL;
+            var skinName = this._feathersManager.currentSkinName;
+            var chromeFeatures = "chrome,modal=no,toolbar=yes,popup=no";    
+            var showChrome = this._feathersManager.isChromeEnabled(layoutURL, skinName);
+            if (showChrome) {
+               chromeFeatures += ",resizable=yes";
+            } else {
+               chromeFeatures += ",titlebar=no";
+            }
+            // Open the new player window
+            var newMainWin = window.open(layoutURL, "", chromeFeatures);
+            window.close();
+            newMainWin.focus();
+            
+          // Otherwise just restore the previous feathers
+          } else {
+						// Get the previously active (or default) skin and layout
+						var layoutURL = this._feathersManager.previousLayoutURL;
+						var skinName = this._feathersManager.previousSkinName;
+						  
+						this.switchFeathers(layoutURL, skinName);
+          }
         ]]>
       </handler>
     </handlers>

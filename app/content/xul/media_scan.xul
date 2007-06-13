@@ -55,12 +55,12 @@
     <spacer flex="1"/>
     <hbox style="overflow: hidden;"> 
       <spacer flex="1"/>
-      <label id="songbird_media_scan_title" class="dialog_label" value="" control="songbird_media_scan"/>
+      <label id="songbird_media_scan_title"  value="" control="songbird_media_scan"/>
       <spacer flex="1"/>
     </hbox> 
     <hbox style="overflow: hidden;"> 
       <spacer flex="1"/>
-      <label id="songbird_media_scan_label" class="dialog_label" value="" control="songbird_media_scan"/>
+      <label id="songbird_media_scan_label"  value="" control="songbird_media_scan"/>
       <spacer flex="1"/>
     </hbox> 
     <hbox>
@@ -70,15 +70,15 @@
     </hbox>
     <hbox>
       <spacer flex="1"/>
-      <checkbox class="dialog_checkbox dialog_label" id="watch_check" label="&media_scan.watch;" />
+      <checkbox id="watch_check" label="&media_scan.watch;" />
       <spacer flex="1"/>
     </hbox>
       
     <hbox>
       <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;" hidden="true" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <button id="button_ok" label="&window.ok;" hidden="true"  oncommand="if ( doOK() ) onExit( );"/>
       <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+      <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/>
       <spacer flex="1"/>  
     </hbox>
     <spacer flex="1"/> 

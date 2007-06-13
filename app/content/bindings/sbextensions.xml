@@ -50,7 +50,7 @@
             var listbox = document.createElement( "richlistbox" );
             listbox.setAttribute( "sbid", "extensions_list" );
             listbox.setAttribute("suppressonselect", "true");
-            listbox.setAttribute("class", "sb_faceplate sb-extensions-list");
+            listbox.setAttribute("class", "sb-extensions-list");
             
             return listbox;
           }
@@ -93,7 +93,6 @@
               } oncommand._that = this; oncommand._checkbox = checkbox; oncommand._index = i;
               checkbox.addEventListener("command", oncommand, true);
               checkbox.setAttribute("label", this.bundleInterface.getExtensionAttribute(i, "name") /*+ " - " + this.bundleInterface.getExtensionAttribute(i, "desc")*/); 
-              checkbox.setAttribute("class", "dialog_checkbox dialog_label");
               listbox.appendChild(item);
             }
           }

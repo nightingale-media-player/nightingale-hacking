@@ -55,7 +55,7 @@ window#mini
 #frame_mini
 {
   -moz-border-radius: 10px !important;
-  background-color: #321 !important;  /** Main player color. TODO fix? */
+  background-color: #3e3c38 !important;  /** Mini player color. TODO fix? */
   padding: 2px 0px 2px 0px !important;
   height: 22px;
   border: 1px solid #333;
@@ -84,7 +84,8 @@ window#mini
 /*  Close Window */
 sb-sys-close-button.miniplayer
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.close.png) ;
+  list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.close.png) !important;
+  -moz-image-region: rect(0px 8px 8px 0px);
 }
 
                         

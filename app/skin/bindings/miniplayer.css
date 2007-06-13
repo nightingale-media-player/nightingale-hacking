@@ -62,42 +62,42 @@ sb-player-back-button.miniplayer:active
 
 
 /* the play button */
-.miniplayer > .sb-player-play-button-play
+.miniplayer > .sb-player-play-button-play > button
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
   -moz-image-region: rect(0px 120px 18px 50px);
   background-color: transparent;
 }
-.miniplayer > .sb-player-play-button-play:hover
+.miniplayer > .sb-player-play-button-play > button:hover
 {
   -moz-image-region: rect(18px 120px 36px 50px);
 }
-.miniplayer > .sb-player-play-button-play[disabled="true"]
+.miniplayer > .sb-player-play-button-play > button[disabled="true"]
 {
   -moz-image-region: rect(0px 120px 18px 50px);
 }
-.miniplayer > .sb-player-play-button-play:active
+.miniplayer > .sb-player-play-button-play > button:active
 {
   -moz-image-region: rect(36px 120px 54px 50px);
 }
 
 
 /* the pause button */
-.miniplayer > .sb-player-pause-button-pause
+.miniplayer > .sb-player-pause-button-pause > button
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini_player_controls.png);
   -moz-image-region: rect(0px 190px 18px 120px);
   background-color: transparent;
 }
-.miniplayer > .sb-player-pause-button-pause:hover
+.miniplayer > .sb-player-pause-button-pause > button:hover
 {
   -moz-image-region: rect(18px 190px 36px 120px);
 }
-.miniplayer > .sb-player-pause-button-pause[disabled="true"]
+.miniplayer > .sb-player-pause-button-pause > button[disabled="true"]
 {
   -moz-image-region: rect(0px 190px 18px 120px);
 }
-.miniplayer > .sb-player-pause-button-pause:active
+.miniplayer > .sb-player-pause-button-pause > button:active
 {
   -moz-image-region: rect(36px 190px 54px 120px);
 }
@@ -136,7 +136,7 @@ MINI DASHBOARD
   height: 18px;
   background-image: url(chrome://songbird/skin/miniplayer/mini.bkg.dashboard.png);
   background-repeat: repeat-x;
-  padding: 0px 3px 0px 3px;
+  padding: 0px 0px 0px 0px;
 }
 
 /* Dashboard edges (rounded corners) */
@@ -204,28 +204,6 @@ MINI DASHBOARD
 }
 
 
-
-/** 
-************************************************************************************************************************************************
-MINI WINDOW CONTROLS
-************************************************************************************************************************************************
-*/
-
-
-/* Restore */
-.miniplayer > .sb-feathers-toggle-button
-{
-  list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.max.png);
-}
-
-/*  Close Window */
-sb-sys-close-button.miniplayer
-{
-  list-style-image: url(chrome://songbird/skin/miniplayer/mini.btn.close.png) ;
-}
-
-
-
 /** 
 ************************************************************************************************************************************************
 SPACING
@@ -239,6 +217,12 @@ SPACING
 #mini_btn_mute 
 {
   margin: 0px 5px 0px 5px;
+}
+
+#mini_btn_mute > .sb-player-mute-button-muteoff > .clickhold-button,
+#mini_btn_mute > .sb-player-mute-button-muteon > .clickhold-button
+{
+  background-color: Transparent;
 }
 
 #mini_volume_box

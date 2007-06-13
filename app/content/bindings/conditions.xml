@@ -58,8 +58,8 @@
             drawer-prop-map="value=value"
             drawer-attr-map="invalid=invalid"
           />
-          <xul:button label="-" class="smart_condition_minus sb_faceplate backless_button" sbtype="remove-drawer-item"/>
-          <xul:button label="+" class="smart_condition_plus sb_faceplate backless_button" sbtype="add-drawer-item"/>
+          <xul:button label="-" class="smart_condition_minus" sbtype="remove-drawer-item"/>
+          <xul:button label="+" class="smart_condition_plus" sbtype="add-drawer-item"/>
         </xul:hbox>
       </xul:sb-multi-drawer>
     </content>

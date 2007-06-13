@@ -52,14 +52,14 @@
     <sb-sys-dialog-titlebar/>
     
     <hbox align="center">
-      <label class="dialog_label" value="URL:"/>
-      <textbox class="dialog_textbox" id="subscribe_url" />
+      <label  value="URL:"/>
+      <textbox  id="subscribe_url" />
     </hbox>
     <spacer height="5"/>
-    <hbox class="sb_faceplate" align="center">
+    <hbox  align="center">
     <spacer width="40"/>
-    <label class="dialog_label" id="auto_subscribe_label" label="&subscribe.autocheck;"/>
-    <textbox class="dialog_textbox" id="subscribe_interval" />
+    <label  id="auto_subscribe_label" label="&subscribe.autocheck;"/>
+    <textbox  id="subscribe_interval" />
     <menulist id="subscribe_interval_unit" >
       <menupopup id="subscribe_interval_unit_popup">
         <menuitem id="subscribe_interval_days" label="&subscribe.days;" value="days"/>
@@ -69,18 +69,18 @@
     </menulist>
     </hbox>
     <spacer height="10"/>             
-    <label class="dialog_label" value="&subscribe.destinationfolder;"/>
+    <label  value="&subscribe.destinationfolder;"/>
     <hbox>
-      <textbox class="dialog_textbox" id="subscribe_folder_path" flex="1"/>
-      <button id="button_browse" label="&window.browse;" class="dialog_button sb_faceplate" oncommand="doBrowse();"/>
+      <textbox  id="subscribe_folder_path" flex="1"/>
+      <button id="button_browse" label="&window.browse;"  oncommand="doBrowse();"/>
     </hbox>        
     <spacer height="8"/>           
     <hbox>
       <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate"
+      <button id="button_ok" label="&window.ok;" 
               oncommand="if ( doOK() ) onExit( );"/>
       <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate"
+      <button id="button_cancel" label="&window.cancel;" 
               oncommand="if ( doCancel() ) onExit( );"/>
     </hbox>
   </sb-sys-outer-frame>

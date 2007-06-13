@@ -52,11 +52,11 @@
 
   <sb-sys-outer-frame id="trackeditor_frame" resizers="horiz" overflow="true" flex="1">
     <sb-sys-dialog-titlebar/>
-    <menubar id="trackeditor_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
+    <menubar id="trackeditor_menu" hidden="false"  oncommand="onMenu(event.target)"/>
     
     <spacer height="3" drag_window="true"/>
     
-    <description class="dialog_label" drag_window="true">
+    <description  drag_window="true">
       &trackeditor.disclaimer;
     </description>
     
@@ -78,11 +78,11 @@
     <spacer height="5"/>
     <hbox>
       <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <button id="button_ok" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
       <spacer width="5"/>
-      <button id="button_undo" label="&window.undo;" class="dialog_button sb_faceplate" oncommand="doUndo();"/> 
+      <button id="button_undo" label="&window.undo;"  oncommand="doUndo();"/> 
       <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/> 
+      <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/> 
     </hbox>
   </sb-sys-outer-frame>
 

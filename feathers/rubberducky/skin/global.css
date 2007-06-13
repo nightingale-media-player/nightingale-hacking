@@ -24,34 +24,30 @@
 //
  */
 
-
-
-/** Use styled rather than native scroll bars **/
-@import url("chrome://global/skin/xulscrollbars.css");
-
-
-
 /** 
 ************************************************************************************************************************************************
-THE WINDOW
-These base styles are basically here to tell other -moz styles from spoiling our lovely UI. 
-!important is necessary to make sure these styles override any OS-specific styles as well.
+= Songbird CSS Architecture =
+
+TODO: Write some background
+
+************************************************************************************************************************************************
+*/ 
+
+ /** 
+************************************************************************************************************************************************
+CASCADE!
+You can only use the @ at the top of the file.
 ************************************************************************************************************************************************
 */ 
 
 
+@import url(chrome://songbird-bindings/skin/bindings.css); 
+@import url(chrome://songbird-dialogs/skin/dialogs.css); 
 
-/** TO BE FIXED **/
+@import url(chrome://songbird/content/feathers/basic-layouts/css/mainwin.css); /* size and positioning for the main application window **/
+@import url(chrome://songbird/content/feathers/basic-layouts/css/miniplayer.css); /* css for the mini player **/
+
+@import url(mainwin_images.css); /* extra images for the mainwin **/
+@import url(mainwin_colors.css); /* colors for the main application window colors **/
 
 
-* {
-  -moz-appearance: none !important;
-}
-
-
-window,
-dialog 
-{
-  font-family: tahoma, helvetica, arial !important; /*arial is the fallback font*/
-  font-size: 11px !important;
-}

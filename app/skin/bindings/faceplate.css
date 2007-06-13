@@ -92,7 +92,6 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .
 {
   width: 21px;
   height: 8px;
-  border: 1px solid;
 }
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb  > gripper
 {
@@ -109,6 +108,7 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressme
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder
 {
   height: 10px;
+  background-image: none;
 }
 
 

@@ -42,3 +42,20 @@ radio[pane=paneHotkeys]:hover,
 radio[pane=paneHotkeys][selected="true"]  {
 	-moz-image-region: rect(0px, 32px,  32px, 0px)
 }
+
+#tabPrefsBox
+{
+  padding-left: 25px;
+}
+
+/** TODO wtf **/
+/* tabs in the Advanced Preferences */
+tabpanels
+{
+  margin-top: -1px;
+}
+
+listheader
+{
+  background-image: url(chrome://songbird/skin/tree/treecol.png);
+}

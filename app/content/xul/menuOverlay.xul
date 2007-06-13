@@ -39,7 +39,7 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <menubar id="songbird_menu">
-    <menu id="songbird_menu_item" label="&menu.file;" class="sb_faceplate" accesskey="&menu.file.accesskey;">
+    <menu id="songbird_menu_item" label="&menu.file;"  accesskey="&menu.file.accesskey;">
       <menupopup id="file-popup">
         <menuitem id="file.new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
         <menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
@@ -70,7 +70,7 @@
       </menupopup>
     </menu>
 
-    <menu id="songbird_menu_item_edit" label="&menu.edit;" class="sb_faceplate" accesskey="&menu.edit.accesskey;">
+    <menu id="songbird_menu_item_edit" label="&menu.edit;"  accesskey="&menu.edit.accesskey;">
       <menupopup id="edit-popup">
         <menuitem id="edit.undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
         <menuseparator/>
@@ -84,7 +84,7 @@
       </menupopup>
     </menu>
 
-    <menu id="songbird_menu_item_controls" label="&menu.controls;" class="sb_faceplate" accesskey="&menu.controls.accesskey;">
+    <menu id="songbird_menu_item_controls" label="&menu.controls;"  accesskey="&menu.controls.accesskey;">
       <menupopup id="controls-popup">
         <menuitem id="control.play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
         <menuseparator/>
@@ -101,7 +101,7 @@
       </menupopup>
     </menu>
 
-    <menu id="tools-menu" label="&menu.tools;" class="sb_faceplate" accesskey="&menu.tools.accesskey;">
+    <menu id="tools-menu" label="&menu.tools;"  accesskey="&menu.tools.accesskey;">
       <menupopup id="menu_ToolsPopup">
         <menuitem id="menu.extensions" 
                   label="&menu.extensions;" 
@@ -125,7 +125,7 @@
 
     <menu id="songbird_menu_item_help"
           label="&menu.help;"
-          class="sb_faceplate"
+          
           accesskey="&menu.help.accesskey;"
           onpopupshowing="buildHelpMenu();">
       <menupopup id="help-popup">

@@ -66,7 +66,6 @@
     <method name="createDrawerContent">
      <body>
        var ret = document.createElement("hbox");
-       ret.setAttribute("class", "sb_faceplate");
        this.appendControls(ret);
        return ret;
      </body>
@@ -92,7 +91,6 @@
           clear.setAttribute("label", "Clear"); // todo: internationalize
           remove.setAttribute("class", "dialog_button");
           remove.setAttribute("label", "Remove"); // todo: internationalize
-          list.setAttribute("class", "dialog_listbox");
           list.setAttribute("height", "128");
           parent.appendChild(lspacer);
           parent.appendChild(vbox);

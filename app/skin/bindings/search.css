@@ -46,15 +46,21 @@ searchbar
   margin-left: 2px;
 }
 .searchbar-dropmarker-image {
-  list-style-image: url("chrome://songbird/skin/menu/dropmarker.png");
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_down.png");
   -moz-margin-start: 3px; 
+  padding-left: 1px;
+  padding-right: 2px;
+  padding-top: 2px;
 }
 
 
 /** This rule changes the dropmarker image when new search engines are available.**/
 .searchbar-engine-button[addengines="true"] > stack > hbox > .searchbar-dropmarker-image
 {
-  list-style-image: url("chrome://songbird/skin/menu/dropmarker-plus.gif");
+  list-style-image: url("chrome://songbird/skin/search/dropmarker-plus.gif");
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
 } 
 
 
@@ -84,6 +90,7 @@ searchbar
   list-style-image: url("chrome://songbird/skin/search/search-go-button.png");
   border: 0px !important;
   padding: 0px 10px 0px 0px;
+  background-color: transparent !important;  
   -moz-image-region: rect(16px 16px 32px 0px);
 }
 .search-go-button:hover {

@@ -40,6 +40,7 @@ Windows Title Bar
 sb-sys-icon
 {
   list-style-image: url(chrome://songbird-branding/skin/logo_16_white.png) ;
+  margin-top:5px;
 }
 
 /*  Switch Feathers */
@@ -58,6 +59,11 @@ sb-sys-icon
   min-width: 0px;
   min-height: 0px;
   border-width: 0px;
+}
+
+sb-sys-titlebar > menubar 
+{
+	margin-left: 15px;
 }
 
 

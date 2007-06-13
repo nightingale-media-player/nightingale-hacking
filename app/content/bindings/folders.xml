@@ -39,9 +39,9 @@
       <xul:sb-multi-drawer sbid="drawer" header="false" flex="1" xbl:inherits="maxvisibleitems">
         <xul:hbox class="watch-folders-item-box" align="center" flex="1">
           <xul:textbox drawer-prop-map="value=folder" class="watch-folders-textbox dialog_textbox" flex="1"/>
-          <xul:button label="&window.browse;" class="sb_faceplate backless_button" sbid="browse"/>
-          <xul:button label="-" class="watch-folders-minus sb_faceplate backless_button" sbtype="remove-drawer-item"/>
-          <xul:button label="+" class="watch-folders-plus sb_faceplate backless_button" sbtype="add-drawer-item"/>
+          <xul:button label="&window.browse;" sbid="browse"/>
+          <xul:button label="-" class="watch-folders-minus" sbtype="remove-drawer-item"/>
+          <xul:button label="+" class="watch-folders-plus" sbtype="add-drawer-item"/>
         </xul:hbox>
       </xul:sb-multi-drawer>
     </content>

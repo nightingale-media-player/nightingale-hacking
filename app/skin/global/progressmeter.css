@@ -48,12 +48,14 @@ progressmeter {
   margin: 2px 4px;
   min-width: 128px;
   height: 12px;
-  -moz-border-radius: 5px;
+  margin: 4px 4px;
+  border: 1px solid #99A194; /** Dark Border 3*/
+  background-color: #a3ab9f;
 }
 
 .progress-remainder[flex="100"], .progress-remainder[flex="0"] {
 
-  background-image: none !important;
+  background-image: none;
   -moz-appearance: none;
 }
 
@@ -76,18 +78,18 @@ progressmeter {
 }
 
 
+sb-status-progressmeter[mode="undetermined"],
+.progress-remainder[mode="undetermined"]
+{ 
+  background-image: url(chrome://songbird/skin/progressmeter/progressmeter_undetermined.gif);
+  -moz-background-clip: border;
+} 
 .progress-bar
 {
-  background-color: #1F292B;
-  -moz-border-radius-topleft: 5px;
-  -moz-border-radius-bottomleft: 5px;
+  background-image: url(chrome://songbird/skin/progressmeter/progressbar.png);
+  -moz-background-clip: border;
 }
 
 .progress-remainder
 {
-  background-color: #a3ab9f;
-  -moz-border-radius-topright: 5px;
-  -moz-border-radius-bottomright: 5px;
 }
-
-

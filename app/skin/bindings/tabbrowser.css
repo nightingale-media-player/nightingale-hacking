@@ -24,34 +24,21 @@
 //
  */
 
-
-
-/** Use styled rather than native scroll bars **/
-@import url("chrome://global/skin/xulscrollbars.css");
-
-
-
 /** 
 ************************************************************************************************************************************************
-THE WINDOW
-These base styles are basically here to tell other -moz styles from spoiling our lovely UI. 
-!important is necessary to make sure these styles override any OS-specific styles as well.
+TABBED BROWSER
 ************************************************************************************************************************************************
 */ 
 
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+.tab-icon-image {
+  list-style-image: url("chrome://songbird/skin/icons/small-globe-sunken.png");
+}
 
-/** TO BE FIXED **/
-
-
-* {
-  -moz-appearance: none !important;
+.tabbrowser-tab[busy] > .tab-icon-image,
+.tabbrowser-tab[busy] > .tab-image-middle > .tab-icon > .tab-icon-image {
+ list-style-image: url("chrome://songbird/skin/icons/spinner_spin.gif") !important; 
 }
 
 
-window,
-dialog 
-{
-  font-family: tahoma, helvetica, arial !important; /*arial is the fallback font*/
-  font-size: 11px !important;
-}

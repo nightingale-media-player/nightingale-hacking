@@ -37,7 +37,7 @@
 <window
   id="video_window"
   hidechrome="true"
-  class="sb_faceplate"  
+    
   title="Cheezy Video Window"  
   windowtype="Songbird:Core"
   onclose="return false; /*This window must never be closed unless the app is shutdown*/"
@@ -79,7 +79,7 @@
     <sb-sys-titlebar type="hide"/>
 
     <!-- ??? Is this for the mac? -->    
-    <menubar id="video_menu" hidden="false" class="sb_faceplate">
+    <menubar id="video_menu" hidden="false" >
       <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;" oncommand="quitApp();" hidden="true"/>
     </menubar>
 

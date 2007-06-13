@@ -55,8 +55,9 @@ button {
 }
 
 .button-text {
-  margin: 0 2px 0 3px !important;
+  margin: 0px 3px 0px 3px !important;
   text-align: center;
+  overflow: hidden !important;
 }
 
 .button-icon {
@@ -64,7 +65,7 @@ button {
 }
 
 button[type="default"] {
-  font: menu;
+  font: inherit;
 }
 
 /* .......... disabled state .......... */
@@ -94,7 +95,7 @@ button[type="menu-button"] {
 
 button > dropmarker.button-menubutton-dropmarker
 {
-  border-left: 1px solid #111111 !important; /** Dark Border 3*/
+  border-left: 1px solid #111111 !important;
   padding: 0px 5px 0px 5px;
   height: 13px;
   -moz-border-radius: 0px !important;
@@ -125,4 +126,8 @@ button.plain {
 	font: menu;
 }
 
+.button-text {
+  margin: 2px 2px 2px 2px !important;
+  text-align: center;
+}
 

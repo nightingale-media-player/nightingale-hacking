@@ -48,16 +48,16 @@
   <sb-sys-outer-frame resizers="none" flex="1">
     <sb-sys-dialog-titlebar/>
       
-    <label class="dialog_label" value="&watchfolder.folderlist;" />
+    <label  value="&watchfolder.folderlist;" />
     <spacer height="1" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
     <watch_folders id="watch_folders" browse="&window.browse;" flex="1"/>
     <spacer height="6" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
     
     <hbox>
       <spacer flex="1" ="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <button id="button_ok" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
       <spacer width="5" ="onBkgDown( event );" onmouseup="onBkgUp();"/>
-      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+      <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/>
     </hbox>
   </sb-sys-outer-frame>
   

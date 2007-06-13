@@ -24,50 +24,6 @@
 //
  */
 
-
-/** 
-************************************************************************************************************************************************
-THIS IS A REFERENCE ONLY!
-************************************************************************************************************************************************
-.servicepane_tree > tree
-{
-  margin: 0px;
-  padding: 6px 0px 0px 0px;
-  border: none;
-}
-
-.servicepane_tree > tree > treechildren::-moz-tree-row,
-.servicepane_tree > tree > treechildren::-moz-tree-cell
-{ 
-  margin: 0px;
-  padding: 0px;
-  border: none;
-}
-
-.servicepane_tree > tree > treechildren::-moz-tree-row( selected )
-{
-  -moz-border-radius: 5px;
-}
-
-.servicepane_tree > tree > treechildren::-moz-tree-cell-text( selected )
-{
-  font-weight: bold;
-}
-
-.servicepane_tree > tree > treechildren::-moz-tree-cell-text
-{
-  margin: 0px 0px 0px 3px;
-}
-
-.servicepane_tree > tree > treechildren::-moz-tree-twisty
-{
-  -moz-appearance: none;
-  margin: 0px 3px 0px 0px;
-  padding: 0px;
-}
-*/
-
-
 /** 
 ************************************************************************************************************************************************
 SERVICE PANE - a.k.a the Left Pane

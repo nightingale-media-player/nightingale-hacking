@@ -382,11 +382,11 @@
         <xul:hbox sbid="header">
           <xul:vbox flex="1">
             <xul:spacer flex="1"/>
-            <xul:label class="dialog_box" xbl:inherits="value=title"/>
+            <xul:label xbl:inherits="value=title"/>
             <xul:spacer flex="1"/>
           </xul:vbox>
           <xul:spacer flex="1"/>
-          <xul:button class="dialog_button" sbid="drawer_openclose" label="+" oncommand="toggleDrawer();"/>
+          <xul:button  sbid="drawer_openclose" label="+" oncommand="toggleDrawer();"/>
         </xul:hbox>
             
         <xul:vbox hidden="true" sbid="template" class="drawer-content">

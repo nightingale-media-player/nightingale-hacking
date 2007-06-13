@@ -144,7 +144,7 @@
         </xul:template>
       </xul:tree>
       <xul:popupset>
-        <xul:popup anonid="popup" class="sb_faceplate" onpopupshown="onPopupShown(event);"/>
+        <xul:popup anonid="popup"  onpopupshown="onPopupShown(event);"/>
       </xul:popupset>
     </content>
     <implementation implements="nsIWebProgressListener,nsIXULBuilderListener">

@@ -55,7 +55,7 @@ menulist {
   border-top-color: #111111; /** Dark Border 3*/
   border-left-color: #222222; /** Dark Border 4*/
   border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: ##99A194; /** Dark Border 1*/ 
+  border-right-color: #99A194; /** Dark Border 1*/ 
 }
 
 menulist:focus,
@@ -84,7 +84,7 @@ menulist[focused="true"]
 /* ..... dropmarker ..... */
 
 .menulist-dropmarker {
-  
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_down.png");
 }
 
 /* ..... disabled state ..... */
@@ -93,8 +93,10 @@ menulist[disabled="true"] {
   color: #777777 !important;
 }
 
-menulist[disabled="true"] > .menulist-dropmarker {
-  padding-left: 7px !important;
+menulist[disabled="true"] > .menulist-dropmarker 
+{
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_down_disabled.png");
+  padding: 1px !important;
 }
 
 /* ::::: editable menulists ::::: */
@@ -103,22 +105,8 @@ menulist[editable="true"] {
   -moz-user-focus: normal;
 }
 
-menulist[editable="true"] > .menulist-dropmarker 
-{
-  
-}
-
 menulist[editable="true"][open="true"] > .menulist-dropmarker {
 }
-
-/*TODO: Delete old moz rule*/
-/*.menulist-editable-box {
-  margin: -1px 1px -2px -5px;
-  padding: 0 2px;
-  background-color: -moz-Field;
-  color: -moz-FieldText;
-  -moz-box-align: center;
-}*/
 
 .menulist-editable-input,
 .menulist-editable-box
@@ -138,6 +126,7 @@ html|*.menulist-editable-input {
   padding: 0px !important;
   background: inherit;
   font: inherit;
+  color: inherit;
 }
 
 /* ::::: compact menulists ::::: */

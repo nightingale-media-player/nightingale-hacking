@@ -463,7 +463,7 @@
                       toolbarbutton_type = "menulist";
                       break;
                     case "submenu":
-                      toolbarbutton_type = "button";
+                      toolbarbutton_type = "toolbarbutton";
                       toolbarbutton_typeattr = "menu";
                       break;
                     case "value":
@@ -475,7 +475,7 @@
                       // Fallthru
                     case "action":
                     default:
-                      toolbarbutton_type = "button";
+                      toolbarbutton_type = "toolbarbutton";
                       break;
                   }
                 }
@@ -493,7 +493,6 @@
                 var topelement = toolbarbutton;
                 toolbarbutton.setAttribute( "id", obj_id );
                 if (toolbarbutton_type == "menuitem") { toolbarbutton.setAttribute( "class", "menuitem-iconic" ); } // Icons are set in the css using the id
-                //else toolbarbutton.setAttribute( "class", "sb_faceplate" ); // Make them fully skinned buttons.
                 if (toolbarbutton_typeattr) toolbarbutton.setAttribute( "type", toolbarbutton_typeattr ); 
                 if (toolbarbutton_type == "textbox") {
                   var hbox = document.createElement("hbox");
@@ -510,7 +509,6 @@
                 }
 
                 topelement.setAttribute( "sbtype", "command" ); // to find it easily, later
-                //label.setAttribute( "class", "sb_faceplate" ); // Make them fully skinned buttons.
                 if (!custom) {
                   // No label unless you have a label
                   var cmd_text = this.commands[cmdobjidx].getCommandText( menu, i, this.hoststring );

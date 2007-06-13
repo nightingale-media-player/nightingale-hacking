@@ -1,5 +1,6 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/firstrun.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 <window
@@ -23,39 +24,31 @@
   <windowregion/>
   <sb-sys-outer-frame resizers="none" overflow="true" flex="1">
     <sb-sys-dialog-titlebar/>
-    <spacer height="8"/>
-
-    <hbox>
-      <spacer width="386" height="80" class="firstrun_image" />
+    
+    <hbox pack="center">
+      <image class="firstrun-image" />
     </hbox>
-
-    <spacer height="5"/> 
-
-    <vbox class="formgrouping">
-      <label value="&setup.defaultlanguage;" class="dialog_label"/>
-      <hbox>
-        <menulist id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
-          <menupopup>
-          </menupopup>
-        </menulist>
-      </hbox>
-    </vbox>
+    
+    <groupbox>
+      <label value="&setup.defaultlanguage;" />
+	    <menulist id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
+	      <menupopup/>
+	    </menulist>
+    </groupbox>
       
-    <spacer height="5"/> 
-
-    <vbox class="formgrouping" flex="1">
-      <label value="&setup.optionalextensions;" class="dialog_label"/>
+    <groupbox flex="1">
+      <label value="&setup.optionalextensions;" />
       <spacer id="extensions.replacedcontent.top" height="0"/>
       <vbox id="error_message" hidden="true">
-        <html:body class="dialog_label" style="cursor:default;">&setup.networkerror1;<html:a id="connection_href" onclick="openConnectionSettings(event);" style="text-decoration: underline; cursor:pointer;">&setup.networkerror2;</html:a>&setup.networkerror3;</html:body>
+        <html:body  style="cursor:default;">&setup.networkerror1;<html:a id="connection_href" onclick="openConnectionSettings(event);" style="text-decoration: underline; cursor:pointer;">&setup.networkerror2;</html:a>&setup.networkerror3;</html:body>
       </vbox>
       <vbox id="please_wait" hidden="false">
         <spacer height="3"/>
         <hbox align="center" hidden="false">
           <spacer width="8"/>
-          <spacer width="16" height="16" id="spinner_spin" class="spinner_spin" />
+          <image id="spinner_spin" class="firstrun-spinner-image" />
           <spacer width="2"/>
-          <label class="dialog_label" value="&setup.retrievingxpilist;"/>
+          <label  value="&setup.retrievingxpilist;"/>
         </hbox>
         <spacer height="3"/>
       </vbox>
@@ -64,21 +57,17 @@
       <hbox>
         <sb-extensions-drawer flex="1" id="songbird.extensionlist"/>
       </hbox>
-    </vbox>
+    </groupbox>
 
-    <spacer height="5"/> 
-
-    <vbox id="metrics_vbox" class="formgrouping" width="386">
-      <label value="&setup.privacy;" class="dialog_label"/>
-      <checkbox id="metrics_optout" class="dialog_checkbox dialog_label" checked="true" label="&setup.metrics.optin;"/>
-      <description class="dialog_label">&setup.metrics.info;</description>
-    </vbox>
+    <groupbox id="metrics_vbox" width="386">
+      <label value="&setup.privacy;" />
+      <checkbox id="metrics_optout" checked="true" label="&setup.metrics.optin;"/>
+      <description >&setup.metrics.info;</description>
+    </groupbox>
       
-    <spacer height="5"/> 
-
     <hbox>
       <spacer flex="1"/>
-      <button id="ok_button" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <button id="ok_button" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
     </hbox> 
   </sb-sys-outer-frame>
 

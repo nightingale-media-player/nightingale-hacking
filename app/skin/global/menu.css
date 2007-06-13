@@ -50,7 +50,7 @@ menuitem {
   -moz-appearance: menuitem !important;
   -moz-box-align: center;
   color: MenuText;
-  font: -moz-pull-down-menu;
+  font: inherit;
   -moz-image-region: auto;
 }
 
@@ -154,7 +154,7 @@ menupopup > menuitem,
 popup > menuitem {
   padding: 0px 3px 2px 3px !important;
   max-width: 42em;
-  min-height: 19px;
+  min-height: 10px;
 }
 
 menupopup > menu[_moz-menuactive="true"],
@@ -172,7 +172,7 @@ menulist > menupopup > menuitem,
 menulist > menupopup > menu {
   padding-right: 25px !important;
   max-width: none;
-  font: -moz-pull-down-menu;
+  font: inherit;
   color: -moz-FieldText;
 }
 

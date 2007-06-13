@@ -1,61 +1,55 @@
 /********** Tab widget *********/
-/*******************************/
-/* This Mac-specific CSS styles tabs that are located on the top of their content,
- * as Macintosh tabs generally are.  An example of using bottom tab images can be 
- * found in EditorToolbar.css in classic/editor/.
- *******************************/
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 /*** TAB: TOP <tab> ***/
 
-tab {
+tab,
+.tabbrowser-tab
+{
   -moz-appearance: tab;
   -moz-box-align: stretch;
+  -moz-box-pack: center;  
   color				: #000000;
-  padding: 3px;
+  margin: 2px 1px 3px 0px;
+  padding: 0px;
+  height: 22px !important;
+  min-width: 1px !important;
+  text-align: center;
+  -moz-border-radius-topleft: 5px !important;
+  -moz-border-radius-topright: 5px !important;
+  -moz-background-clip: padding !important;
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);
 }
+
 
 .tab-text {
-  font				: menu;
   font-weight: normal !important;
+  padding-top: 1px;
+  padding-left: 5px;
+  padding-right: 5px;  
+  margin-top: 2px !important;
 }
 
-/*
-tab:hover:active > .tab-image-left { 
-  background		: url(chrome://global/skin/tabbox/tab-unselect-active-left.gif) no-repeat;
+tab[selected="true"] > hbox > label.tab-text
+{
+  font-weight: bold !important;
 }
 
-tab:hover:active > .tab-image-middle { 
-  background-color: #666666;
-  -moz-border-top-colors: #000000 #444444 #555555;
-  -moz-border-bottom-colors: #FFFFFF #CCCCCC #000000;
-}
 
-tab:hover:active > .tab-image-right { 
-  background		: url(chrome://global/skin/tabbox/tab-unselect-active-right.gif) no-repeat;
-}
-
-*/
-
-.tab-border-top-left {
-  background-color  : #DEDEDE;
-  border-bottom     : 3px solid;
-  -moz-border-bottom-colors: #FFFFFF #CECECE #000000;
-  width				: 3px;
-}
 
 tabs {
   padding			: 0px;
   margin-bottom: -2px;
 }
 
-tabbox {
-}
 
 .tabs-left {
 	-moz-box-flex: 1 !important;
 }
+
+/** TODO Find out if bottom/bottom tabs look ok **/
+
 /*** TAB: BOTTOM <tab class="tab-bottom"> ***/
 /* Found in editor.xul & editorOverlay.xul 
  * SMALL TABS FOR NOW */
@@ -64,33 +58,18 @@ tabbox {
 	margin-bottom: 2px;
 }
 
-.tab-bottom > .tab-image-left {
-  background		: url(chrome://global/skin/tabbox/tab-sm-bot-unsel-left.gif) no-repeat;
-  width				: 10px;
-  height			: 25px;
-}
 
 .tab-bottom > .tab-image-middle {
   -moz-border-top-colors: #FFFFFF #CECECE #000000;
   -moz-border-bottom-colors: #000000 #CECECE #DEDEDE;
 }
 
-.tab-bottom > .tab-image-right {
-  background		: url(chrome://global/skin/tabbox/tab-sm-bot-unsel-right.gif) no-repeat;
-  width				: 10px;
-  height			: 25px;
-}
-
 .tab-bottom > .tab-image-middle > .tab-text {
-  font			    : message-box;
   font-weight		: bold;
   padding           : 0px;
   margin            : 0px !important;
 }
 
-.tab-bottom:hover:active > .tab-image-left { 
-  background		: url(chrome://global/skin/tabbox/tab-sm-bot-unsel-acti-left.gif) no-repeat;
-}
 
 .tab-bottom:hover:active > .tab-image-middle { 
   background-color: #666666;
@@ -98,27 +77,13 @@ tabbox {
   -moz-border-bottom-colors: #000000 #444444 #555555;
 }
 
-.tab-bottom:hover:active > .tab-image-right { 
-  background		: url(chrome://global/skin/tabbox/tab-sm-bot-unsel-acti-right.gif) no-repeat;
-}
 
 /* when a tab is selected this is how it should look */
-
-.tab-bottom[selected="true"] > .tab-image-left,
-.tab-bottom:hover:active[selected="true"] > .tab-image-left { 
-  background		: url(chrome://global/skin/tabbox/tab-sm-bot-sel-left.gif) no-repeat;
-}
-
 .tab-bottom[selected="true"] > .tab-image-middle,
 .tab-bottom:hover:active[selected="true"] > .tab-image-middle { 
   background-color: #EEEEEE;
   -moz-border-top-colors: #EEEEEE;
   -moz-border-bottom-colors: #000000 #CCCCCC #FFFFFF;
-}
-
-.tab-bottom[selected="true"] > .tab-image-right,
-.tab-bottom:hover:active[selected="true"] > .tab-image-right { 
-  background		: url(chrome://global/skin/tabbox/tab-sm-bot-sel-right.gif) no-repeat;
 }
 
 .tabs-bottom > .tab-border-top-left {
@@ -144,16 +109,16 @@ tabbox {
   width				: 1px;
 }
 
-    /* top tabs */
+/* top tabs */
 tabbox[orient="vertical"] tabs[orient="horizontal"] tab { 
   padding: 0px;
   margin: 0px;
 }
 
-	/* bottom tabs */
+/* bottom tabs */
 tabbox[orient="vertical"] tabpanels + tabs[orient="horizontal"] tab { 
   border-top: none;
-  border-bottom: 1px solid #666666;
+  border-bottom: 1px solid blue;
   border-left: 1px solid white;
   border-right: 1px solid #666666;
   -moz-border-radius: 0px 0px 8px 8px;
@@ -172,7 +137,7 @@ tabbox[orient="horizontal"] tabs[orient="vertical"] tab {
 	/* right tabs */
 tabbox[orient="horizontal"] tabpanels + tabs[orient="vertical"]  tab { 
   border-top: 1px solid white;
-  border-bottom: 1px solid #666666;
+  border-bottom: 1px solid red;
   border-left: none;
   border-right: 1px solid #666666;
   -moz-border-radius: 0px 8px 8px 0px;
@@ -193,18 +158,15 @@ tabpanels.light {
 
 tabpanels {
   -moz-appearance: tabpanels; 
-  border-top: 0px;
-  border-bottom: 2px ridge #000000;
-  border-left: 2px groove #000000;
-  border-right: 2px ridge #000000;
   padding: 15px 5px 5px 5px;
-  background-color		: #EEEEEE;
+  border-top: 1px outset white;  
+  background-color		: transparent;
   margin-bottom: 10px;
 }
 
 tabstrip-box {
 	-moz-appearance: tabpanels;
-        margin-top: -1px;
+  margin-top: -1px;
 }
 
 .tab-border-top-left, .tabs-left, .tabs-right, .tab-border-top-right {
@@ -215,3 +177,33 @@ tabstrip-box {
 	-moz-box-flex: 0 !important;
 }
 
+tab:not([selected="true"]),
+.tabbrowser-tab:not([selected="true"]) {
+  -moz-background-clip: padding !important;
+  background: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);
+}
+tab:hover:not([selected="true"]),
+.tabbrowser-tab:hover:not([selected="true"]) {
+  -moz-border-radius-topright: 5px !important;
+  -moz-border-radius-topleft: 5px !important;
+  -moz-background-clip: padding !important;
+  background: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+}
+tab[selected="true"],
+.tabbrowser-tab[selected="true"] {
+  -moz-user-focus: normal;
+  -moz-border-radius-topright: 5px !important;
+  -moz-border-radius-topleft: 5px !important;
+  -moz-background-clip: padding !important;
+  background: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+}
+
+/** The bar between the tabs and the tab panels.  Note that the background is positioned
+    so that the tab gradient blends with the bar gradient **/
+.tabs-bottom {
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png) !important;
+  background-position: 0px -22px;
+  border: none;
+  height: 3px !important;
+  margin: 0px !important;
+}

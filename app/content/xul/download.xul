@@ -48,22 +48,22 @@
   <sb-sys-outer-frame resizers="none" flex="1">
     <sb-sys-dialog-titlebar/>
     <spacer height="5"/>             
-    <label class="dialog_label" value="&download.select;"/>
+    <label  value="&download.select;"/>
     <spacer height="3"/>             
     <hbox>
-      <textbox class="dialog_textbox" id="download_folder_path" />
-      <button id="button_browse" label="&window.browse;" class="dialog_button sb_faceplate" oncommand="doBrowse();"/>
+      <textbox  id="download_folder_path" />
+      <button id="button_browse" label="&window.browse;"  oncommand="doBrowse();"/>
     </hbox>        
     <spacer height="3"/>
     <hbox>
-      <checkbox class="dialog_checkbox dialog_label" id="download_check" label="&download.always;" />
+      <checkbox id="download_check" label="&download.always;" />
     </hbox>              
     <spacer height="1"/>           
     <hbox>
       <spacer flex="1"/>           
-      <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+      <button id="button_ok" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
       <spacer width="5"/>
-      <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+      <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/>
     </hbox>
   </sb-sys-outer-frame>
  

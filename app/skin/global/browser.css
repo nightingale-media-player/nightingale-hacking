@@ -1,17 +1,8 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-.tabbrowser-tab:not([selected="true"]):hover {
-  background: url("chrome://global/skin/tabbrowser-tabs-bkgnd.png") repeat-x;
-}
 
 .tabbrowser-tab:hover > .tab-image-middle > .tab-icon > .tab-extra-status {
   background: none;
-}
-
-.tab-icon-image {
-  width: 16px;
-  height: 16px;
-  list-style-image: url("chrome://global/skin/icons/small-globe-sunken.png");
 }
 
 .tab-icon {
@@ -19,28 +10,10 @@
   margin: 2px 0px 1px 0px;
 }
 
-.tab-text {
-  font: icon;
-  padding-top: 1px;
-  margin-top: 2px !important;
-}
-
-.tabbrowser-tab[busy] > .tab-icon-image,
-.tabbrowser-tab[busy] > .tab-image-middle > .tab-icon > .tab-icon-image {
- list-style-image: url("chrome://global/skin/icons/loading_16_grey.gif") !important; 
-}
-
 .tabbrowser-tab {
   -moz-binding: url("chrome://global/skin/globalBindings.xml#tabbrowser-tab") !important;
   -moz-appearance: none;
-  color: #383838;
   -moz-box-pack: center;
-  margin: 2px 0px 3px 0px;
-  padding: 0px;
-  border: none !important;
-  height: 22px !important;
-  min-width: 1px !important;
-  text-align: center;
 }
 
 .tabbrowser-tab[selected="true"] {
@@ -48,18 +21,18 @@
 }
 
 .tabbrowser-tab > .tab-image-middle > .tab-text {
-  border: 1.4pt solid transparent;
+  border: 0.5pt solid transparent;
 }
 
 .tabbrowser-tab:focus > .tab-image-middle > .tab-text {
-  border: 1.4pt solid -moz-mac-focusring;
+  border: 0.5pt dotted white;
 }
 
 .tabbrowser-tab[selected="true"], .tabbrowser-tab:hover {
   color: #000000;
 }
 
-.tabbrowser-tab[first-tab="true"] > .tab-image-left {
+.tabbrowser-tab[first-tab="true"] {
   margin-left: 3px !important;
 }
 
@@ -69,49 +42,10 @@
   padding: 0px;
 }
 
-.tabbrowser-tab > .tab-image-right {
-  background: url("chrome://global/skin/tab-right.png") no-repeat;
-}
-
-.tabbrowser-tab:not([selected="true"]) > .tab-image-right {
-  background: url("chrome://global/skin/tab-right-bkgnd.png") no-repeat;
-  margin-bottom: 1px;
-}
-
-.tabbrowser-tab:hover:not([selected="true"]) > .tab-image-right {
-  background: url("chrome://global/skin/tab-right-hover.png") no-repeat;
-}
-
-.tabbrowser-tab > .tab-image-left {
-  background: url("chrome://global/skin/tab-left.png") no-repeat;
-}
-
-.tabbrowser-tab:not([selected="true"]) > .tab-image-left {
-  background: url("chrome://global/skin/tab-left-bkgnd.png") no-repeat;
-  margin-bottom: 1px;
-}
-
-.tabbrowser-tab:hover:not([selected="true"]) > .tab-image-left {
-  background: url("chrome://global/skin/tab-left-hover.png") no-repeat;
-}
-
 .tabbrowser-tab > .tab-image-middle {
-  background: url("chrome://global/skin/tab-middle.png") repeat-x;
   -moz-box-flex: 0 !important;
 }
 
-.tabbrowser-tab:not([selected="true"]) > .tab-image-middle {
-  background: url("chrome://global/skin/tab-middle-bkgnd.png");
-  margin-bottom: 1px;
-}
-
-.tabbrowser-tab:hover:not([selected="true"]) > .tab-image-middle {
-  background: url("chrome://global/skin/tab-middle-hover.png");
-}
-
-.tabbrowser-tab:not([selected="true"]) > .tab-image-middle > .tab-icon > .tab-icon-image  {
-  list-style-image: url("chrome://global/skin/icons/small-globe-sunken-grey.png");
-}
 
 /* ::::: close button ::::: */
 /**
@@ -124,17 +58,14 @@
 .tabs-closebutton {
   padding: 0px 4px 2px 0px;
   margin: 0px;
-  list-style-image: url("chrome://global/skin/icons/closetab.png") !important;
   border: none !important;
 }
 
 .tabs-closebutton:hover {
-  list-style-image: url("chrome://global/skin/icons/closetab-hover.png") !important;
   border: none !important;
 }
 
 .tabs-closebutton:hover:active {
-  list-style-image: url("chrome://global/skin/icons/closetab-active.png") !important;
   border: none !important;
 }
 
@@ -150,18 +81,10 @@
   margin: 0;
   -moz-box-pack: center;
   -moz-box-align: center;
-  background: url("chrome://global/skin/tabbrowser-tabs-bkgnd.png") repeat-x;
 }
 
 .tab-image-right, .tab-image-left {
   height: 18px !important;
-}
-
-.tabs-bottom {
-  border: none;
-  height: 4px !important;
-  background: url("chrome://global/skin/tabs-bottom-bg.png") repeat !important;
-  margin: 0px !important;
 }
 
 sb-tabbrowser > tabbox > tabpanels {
@@ -195,27 +118,7 @@ sb-tabbrowser > tabbox > tabpanels {
   margin-top: 2px;
 }
 
-.tab-close-button {
-  list-style-image: url("chrome://global/skin/icons/closetab.png");
-  -moz-appearance: none;
-  border: none !important;
-  padding: 0px;
-  background: inherit;
-  cursor: default;
-}
-
-.tab-close-button:hover,
-.tabbrowser-tab[selected="true"] > .tab-close-button:hover {
-  list-style-image: url("chrome://global/skin/icons/closetab-hover.png");
-}
-
-.tab-close-button:hover:active,
-.tabbrowser-tab[selected="true"] > .tab-close-button:hover:active {
-  list-style-image: url("chrome://global/skin/icons/closetab-active.png");
-}
-
 .tabbrowser-tab > .tab-close-button {
-  background-image: url("chrome://global/skin/tab-middle.png");
   background-repeat: repeat-x;
   -moz-margin-start: -5px;
   -moz-margin-end: -1px;
@@ -229,13 +132,47 @@ sb-tabbrowser > tabbox > tabpanels {
 }
 
 .tabbrowser-tab:not([selected="true"]) > .tab-close-button {
-  background-image: url("chrome://global/skin/tab-middle-bkgnd.png");
+  margin-bottom: 1px;
+}
+
+.tab-close-button {
+  list-style-image: url("chrome://songbird/skin/tabs/close.png") !important;
+  -moz-image-region: rect(0px 36px 9px 27px);-moz-appearance: none;
+  padding: 0px;
+  background: transparent !important;
+  background-image: none  !important;
+  cursor: default;
+  border: none !important;
+}
+
+.tab-close-button:hover,
+.tabbrowser-tab[selected="true"] > .tab-close-button:hover {
+  list-style-image: url("chrome://songbird/skin/tabs/close.png") !important;
+  -moz-image-region: rect(0px 18px 9px 9px);  
+}
+
+.tab-close-button:hover:active,
+.tabbrowser-tab[selected="true"] > .tab-close-button:hover:active {
+  list-style-image: url("chrome://songbird/skin/tabs/close.png") !important;
+  -moz-image-region: rect(0px 9px 9px 0px);
+}
+
+.tabbrowser-tab > .tab-close-button {
+  background: none;
+  -moz-margin-start: 0px;
+  -moz-margin-end: 0px;
+  -moz-padding-end: 0px;
+}
+
+.tabbrowser-tab:not([selected="true"]) > .tab-close-button {
+  background: none;
   margin-bottom: 1px;
 }
 
 .tabbrowser-tab:not([selected="true"]):hover > .tab-close-button {
-  background-image: url("chrome://global/skin/tab-middle-hover.png");
+  background: none;
 }
+
 
 /**
  * Tab Scrollbox Arrow Buttons
@@ -244,28 +181,28 @@ sb-tabbrowser > tabbox > tabpanels {
 .tabbrowser-arrowscrollbox > .scrollbutton-up {
   width: 18px;
   height: 18px;
-  margin: 2px 0px 3px 0px;
+  margin: 2px 1px 3px 0px;
   padding-left: 0;
   padding-right: 0;
-  border: none;
-  list-style-image: url("chrome://global/skin/tab-arrow-start.png");
-  background-image: url("chrome://global/skin/tab-arrow-start-bkgnd.png");
-  background-repeat: no-repeat;
-  -moz-image-region: rect(0, 11px, 14px, 0);
-  opacity: 0.65;
+  border: none !important;
+  background-color: transparent !important;
+  -moz-background-clip: padding !important;  
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_left.png");
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up[disabled="true"] {
-  -moz-image-region: rect(0, 33px, 14px, 22px);
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_left_disabled.png");
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover {
-  -moz-image-region: rect(0, 22px, 14px, 11px);
-  opacity: 1.0;
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_left_disabled.png");
 }
  
 .tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover:active {
-  -moz-image-region: rect(0, 44px, 14px, 33px);
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_left_hover.png");
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up > .toolbarbutton-icon {
@@ -276,43 +213,34 @@ sb-tabbrowser > tabbox > tabpanels {
   margin: 2px 0px 3px 0px;
   width: 18px;
   height: 18px;
-  background-image: url("chrome://global/skin/tab-arrow-end-bkgnd.png") !important;
-  background-repeat: no-repeat;
-  opacity: 0.65;
-}
-
-.scrollbutton-rel-box > .scrollbutton-down-box-animate {
-  margin: 2px 0px 3px 0px;
-  width: 18px;
-  height: 18px;
-  background-image: url("chrome://global/skin/tab-arrow-end-bkgnd-animate.png") !important;
-  background-repeat: no-repeat;
-  opacity: 0.0;
 }
 
 .scrollbutton-rel-box > .scrollbutton-down {
-  margin: 2px 0px 3px 0px;
+  margin: 2px 0px 3px 1px;
   width: 18px;
   height: 18px;
-  padding-left: 0;
-  padding-right: 0;
-  border: none;
-  list-style-image: url("chrome://global/skin/tab-arrow-end.png") !important;
-  -moz-image-region: rect(0, 11px, 14px, 0);
+  background-color: transparent !important;
+  border-left: 1px solid;
+  border-top: 1px solid;
+  border-right: 1px solid;
+  border-bottom: none;
+  -moz-background-clip: padding !important;  
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_right.png");
 }
 
 .scrollbutton-rel-box > .scrollbutton-down[disabled="true"] {
-  -moz-image-region: rect(0, 33px, 14px, 22px);
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_right_disabled.png");
 }
 
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
-  background-image: url("chrome://global/skin/tab-arrow-end-bkgnd.png") !important;
-  background-repeat: no-repeat;
-  -moz-image-region: rect(0, 22px, 14px, 11px);
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_right_disabled.png");
 }
 
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
-  -moz-image-region: rect(0, 44px, 14px, 33px);
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_right_hover.png");
 }
 
 .scrollbutton-rel-box > .scrollbutton-down > .toolbarbutton-icon {
@@ -328,13 +256,6 @@ sb-tabbrowser > tabbox > tabpanels {
   margin: 2px 0px 3px 0px;
   width: 16px;
   height: 18px;
-  background-image: url("chrome://global/skin/alltabs-box-bkgnd.png");
-  background-repeat: no-repeat;
-  opacity: 0.65;
-}
-
-.tabbrowser-tabs[overflow="true"] .tabs-alltabs-box {
-  background-image: url("chrome://global/skin/alltabs-box-overflow-bkgnd.png");
 }
 
 .tabs-alltabs-button {
@@ -344,10 +265,12 @@ sb-tabbrowser > tabbox > tabpanels {
   padding-left: 0;
   padding-right: 0;
   border: none;
+  background-color: transparent !important;
+  -moz-background-clip: padding !important;  
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);  
 }
 
 .tabs-alltabs-button  > .toolbarbutton-menu-dropmarker {
-  margin-right: 2px;
   margin-top: 4px;
 }
 
@@ -355,29 +278,11 @@ sb-tabbrowser > tabbox > tabpanels {
   display: none;
 }
 
-.tabs-alltabs-button > .toolbarbutton-icon {
-  -moz-margin-end: 2px;
-}
-
 .tabs-alltabs-button:hover {
   margin: 2px 0px 3px 0px;
-  background-image: url("chrome://global/skin/alltabs-box-bkgnd.png");
-  background-repeat: no-repeat;
-  opacity: 1.0;
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
 }
 
-.tabbrowser-tabs[overflow="true"] .tabs-alltabs-button:hover {
-  background-image: url("chrome://global/skin/alltabs-box-overflow-bkgnd.png");
-}
-
-.tabs-alltabs-box-animate {
-  margin: 2px 0px 3px 0px;
-  width: 16px;
-  height: 18px;
-  background-image: url("chrome://global/skin/alltabs-box-overflow-bkgnd-animate.png");
-  background-repeat: no-repeat;
-  opacity: 0.0;
-}
 
 /**
  * All Tabs Menupopup 
@@ -396,3 +301,38 @@ sb-tabbrowser > tabbox > tabpanels {
 .alltabs-item[busy] > .menu-iconic-left > .menu-iconic-icon {
   list-style-image: url("chrome://global/skin/icons/loading_16_grey.gif") !important;
 }
+
+
+
+
+
+
+
+/* ::::: close button ::::: */
+/**
+ * XXXben - this looks like something added specifically for tabbrowser.
+ *       if it turns out no one uses this that can't easily be evangelized to
+ *       use their own roll-your-own binding, then we should get rid of this
+ *       to tighten up the toolkit api. This binding made obsolete in Firefox
+ *       by 308396. 
+ */
+.tabs-closebutton {
+  padding: 0px 4px 2px 0px;
+  margin: 0px;
+  list-style-image: url("chrome://songbird/skin/tabs/close.png") !important;
+  -moz-image-region: rect(0px 36px 9px 27px);
+  border: none !important;
+}
+
+.tabs-closebutton:hover {
+  list-style-image: url("chrome://songbird/skin/tabs/close.png") !important;
+  -moz-image-region: rect(0px 18px 9px 9px);
+  border: none !important;
+}
+
+.tabs-closebutton:hover:active {
+  list-style-image: url("chrome://songbird/skin/tabs/close.png") !important;
+  -moz-image-region: rect(0px 9px 9px 0px);
+  border: none !important;
+}
+

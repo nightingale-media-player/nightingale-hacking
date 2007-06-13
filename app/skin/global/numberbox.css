@@ -49,7 +49,7 @@ textbox[type="number"] {
   border-top-color: #111111; /** Dark Border 3*/
   border-left-color: #222222; /** Dark Border 4*/
   border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: ##99A194; /** Dark Border 1*/
+  border-right-color: #99A194; /** Dark Border 1*/
   -moz-border-radius: 5px;
   background-color: #202220; /** Dark Color 1 */ 
   cursor: default;

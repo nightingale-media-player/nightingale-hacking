@@ -219,23 +219,6 @@ treechildren::-moz-tree-checkbox(disabled)
 
 /* ::::: tree progress meter ::::: */
 
-treechildren::-moz-tree-progressmeter {
-  margin: 2px 4px;
-  -moz-border-top-colors: #AAAAAA #000000;
-  -moz-border-right-colors: #FFFFFF #000000;
-  -moz-border-bottom-colors: #FFFFFF #000000;
-  -moz-border-left-colors: #AAAAAA #000000;
-}
-
-treechildren::-moz-tree-progressmeter(progressUndetermined) 
-{
-  list-style-image: url(chrome://songbird/skin/progressmeter/progressmeter_undetermined.gif)
-}
-
-treechildren::-moz-tree-cell-text(progressmeter) {
-  margin: 2px 4px;
-  -moz-appearance: progressbar;
- }
 
 /* ::::: tree columns ::::: */
 
@@ -426,14 +409,8 @@ treechildren::-moz-tree-cell-text(selected, editing) {
 }
 
 .tree-input {
-  border: 1px solid;
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: ##99A194; /** Dark Border 1*/
-  -moz-border-radius: 5px;
-  margin: 0 0 0 -3px;
-  padding: 1px;
+  margin: 0px;
+  padding: 0px;
 }
 
 
@@ -446,14 +423,14 @@ treechildren::-moz-tree-cell-text(selected, editing) {
 {
  -moz-appearance: none !important; /* grrrr! */
  background-image: none !important;
- list-style-image: url(chrome://songbird/skin/default/chrome_scroll_up.png) !important;
+ list-style-image:  url("chrome://songbird/skin/arrow/arrow-up.png"); !important;
  padding: 0px 5px 0px 0px !important;
 } 
 .treecol-sortdirection[sortDirection="descending"]
 {
  -moz-appearance: none !important; /* grrrr! */
  background-image: none !important;
- list-style-image: url(chrome://songbird/skin/default/chrome_scroll_down.png) !important;
+ list-style-image:  url("chrome://songbird/skin/arrow/arrow-dn.png"); !important;
  padding: 0px 5px 0px 0px !important;
 }
 

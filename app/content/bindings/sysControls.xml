@@ -322,7 +322,7 @@
         <xul:hbox sbid="show_mac" pack="center">
           <xul:sb-sys-title xbl:inherits="value"/> 
         </xul:hbox>
-        <xul:hbox>
+        <xul:hbox align="center">
           <xul:sb-sys-osx-buttons xbl:inherits="type"/>
           <xul:sb-sys-icon/>
           <xul:sb-sys-title sbid="hide_mac" xbl:inherits="value"/> 

@@ -101,6 +101,7 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > t
 .faceplate-text
 {
   color: #0f100f; /** Dark Color 2 */
+  margin: 0;
 }
 
 .faceplate-progressmeter

@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css" title="Skin"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
@@ -167,28 +168,6 @@
                              servicepane="servicepane"
                              contentcontextmenu="html_context_menu"
                              />
-              <!-- TODO: Remove this
-              <sb-smart-splitter id="playlist_web_split" hidden="true" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
-                <grippy/>
-              </sb-smart-splitter>
-              
-              
-              <vbox id="playlist_web_vbox" height="200" hidden="true" minheight="0" _resize_height="200">
-                <playlist2 
-                  id="playlist_web" 
-                  height="105"
-                  flex="1"
-                  hidden="true"
-                  enableColumnDrag="true"
-                  persist="column-list column-widths"
-                  editable="true"
-                  minheight="0"
-                  column-list="http://songbirdnest.com/data/1.0#ordinal http://songbirdnest.com/data/1.0#trackName http://songbirdnest.com/data/1.0#duration http://songbirdnest.com/data/1.0#artistName http://songbirdnest.com/data/1.0#albumName http://songbirdnest.com/data/1.0#genre"
-                  column-widths="20 395 50 222 222 70"
-                  _resize_height="105"
-                />
-              </vbox>
-            -->
             </vbox>
           </hbox>
         </vbox>

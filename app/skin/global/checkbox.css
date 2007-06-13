@@ -44,9 +44,9 @@
 /* ::::: checkbox ::::: */
 
 checkbox {
-  -moz-appearance: checkbox-container;
   -moz-box-align: center;
   margin: 2px 2px 4px 2px;
+  border: 1px solid transparent;
 }
 
 .checkbox-label-box {
@@ -72,9 +72,27 @@ checkbox[disabled="true"] {
 /* ::::: checkmark image ::::: */
 
 .checkbox-check {
-  -moz-appearance: checkbox;
-  width: 14px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
+  background: -moz-Field no-repeat 50% 50%;
 }
-  
+
+/* ..... checked state ..... */
+
+checkbox[checked="true"] .checkbox-check 
+{
+  background-image: url("chrome://songbird/skin/checkbox/check_fff.png");
+}
+
+.checkbox-label-box {
+  -moz-margin-start: 2px;
+  border: 1px solid transparent;
+  padding: 0px 1px;
+}
+
+.checkbox-icon {
+  -moz-margin-end: 2px;
+}
+
+
 

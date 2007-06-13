@@ -204,7 +204,6 @@
      <body>
        // fixed size parent for the drawer content
        var ret = document.createElement("hbox");
-       ret.setAttribute("class", "sb_faceplate");
        
        // scrollable container for the controls
        var container = document.createElement("vbox");
@@ -289,7 +288,6 @@
             hbox.setAttribute("height", "32");
             hbox.setAttribute("align", "center");
             var label = document.createElement("label");
-            label.setAttribute("class", "dialog_label");
             if (readablename.slice(0, 1) == "&") 
             {
               try

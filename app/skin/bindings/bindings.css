@@ -43,7 +43,6 @@ XBL WIDGET STYLES
 @import url(player_controls.css); 
 @import url(playlist.css); 
 @import url(playlist_commands.css);
-@import url(scrollbar.css); 
 @import url(search.css); 
 @import url(servicepane.css); 
 @import url(smartsplitter.css); 
@@ -52,6 +51,8 @@ XBL WIDGET STYLES
 @import url(syscontrols.css); 
 @import url(tree.css); 
 @import url(browsertoolbar.css); 
+@import url(tabbrowser.css);
+@import url(preferences.css); 
 
 
 

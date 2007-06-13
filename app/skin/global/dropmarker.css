@@ -1,20 +1,23 @@
 dropmarker {
-  -moz-appearance: menulist-button;
   width: 16px;
   -moz-box-align: center;
   -moz-box-pack: center;
-  border: 2px solid;
-  background-color: -moz-Dialog;
+  border: none;
+  background-color: transparent;
   padding: 1px;
-  list-style-image: url("chrome://global/skin/arrow/arrow-dn.gif");
   -moz-image-region: auto;
 }
 
 dropmarker:hover:active {
-  padding: 2px 0 0 2px;
+  padding: 2px 0 0 2px !important;
 }
 
 dropmarker[disabled="true"] {
-  list-style-image: url("chrome://global/skin/arrow/arrow-dn-dis.gif");
-  padding: 1px !important;
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_down_disabled.png") !important;
+  padding: 1px;
+}
+
+.dropmarker-icon
+{
+  list-style-image: url("chrome://songbird/skin/arrow/arrow_down.png");
 }

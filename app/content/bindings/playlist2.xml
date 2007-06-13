@@ -36,12 +36,12 @@
   <binding id="playlist2">
     <content>
       <stack flex="1" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-      <vbox sbid="loading_box" pack="end" align="right" flex="1" class="sb_faceplate">
-          <vbox id="loading_box" class="sb_faceplate" flex="1">
+      <vbox sbid="loading_box" pack="end" align="right" flex="1" >
+          <vbox id="loading_box"  flex="1">
             <label id="loading_text" flex="1" value=""/>
           </vbox>
         </vbox>
-        <vbox flex="1" class="sb_faceplate" style="margin: 0px;padding: 0px;">
+        <vbox flex="1"  style="margin: 0px;padding: 0px;">
           <!-- Playlist Filters -->
           <hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
           </hbox>

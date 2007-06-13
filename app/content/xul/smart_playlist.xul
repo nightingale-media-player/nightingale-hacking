@@ -54,7 +54,7 @@
 
   <sb-sys-outer-frame resizers="none" overflow="true" flex="1">
     <sb-sys-dialog-titlebar/>
-    <vbox flex="1" class="formgrouping"><!-- start of grouping -->
+    <groupbox>
       <vbox flex="1">
         <hbox align="center">
           <checkbox id="smart_match_check" label="&smart.match;" checked="false"/>
@@ -64,7 +64,7 @@
               <menuitem id="smart_any_list_all" label="&smart.all;" value="all" />
             </menupopup>
           </menulist>
-          <label class="dialog_label" value="&smart.following;"/>
+          <label  value="&smart.following;"/>
           <spacer flex="1"/>
         </hbox>
         <spacer height="2"/>
@@ -73,9 +73,9 @@
 
       <spacer height="5"/>
 
-      <hbox class="sb_faceplate" align="center">
+      <hbox  align="center">
         <checkbox id="smart_songs_check" label="&smart.limit;" checked="false"/>
-        <textbox class="dialog_textbox" id="smart_songs_count" value="20"/>
+        <textbox  id="smart_songs_count" value="20"/>
         <menulist id="smart_songs_list" value="songs">
           <menupopup id="smart_songs_list_popup">
             <menuitem id="smart_selected_list_minutes" label="&smart.minutes;" value="minutes" />
@@ -86,7 +86,7 @@
           </menupopup>
         </menulist>
         <spacer width="8"/>
-        <label class="dialog_label"  value="&smart.selectedby;" control="smart_selected_list"/>
+        <label   value="&smart.selectedby;" control="smart_selected_list"/>
         <menulist id="smart_selected_list" value="random">
           <menupopup id="smart_selected_list_popup" >
             <menuitem id="smart_selected_list_random" label="&smart.random;" value="random" />
@@ -106,7 +106,7 @@
         </menulist>
         <spacer flex="1" height="25"/>
       </hbox>
-    </vbox><!-- end of grouping -->
+    </groupbox>
 
     <spacer height="5"/>
 

@@ -31,21 +31,19 @@ WINDOW CHROME
 There is one image for the light effect on every window, including nested ones.
 ************************************************************************************************************************************************
 */
-window
+
+window,
+prefwindow,
+dialog
 {
   background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient.png); 
   background-repeat: repeat-x;  
 }
 
-#browser_toolbar
+.playlist-toolbar-bkg
 {
   background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png); 
-  background-repeat: repeat-x;  
 }
-/* END WINDOW CHROME **/
-  
-
-
 
 
 /** 
@@ -55,8 +53,12 @@ THE PLAYLIST
 */ 
 
 /* Put a Background behind your filterlists for extra style. */
-playlist
+playlist2
 {
   background-image: url(chrome://songbird/skin/backgrounds/asanoha.png); 
 }
+
+
+
+
 

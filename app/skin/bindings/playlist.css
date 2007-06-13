@@ -32,17 +32,6 @@ THE PLAYLIST
 */ 
 
 
-playlist,
-playlist > stack > vbox,
-#playlist_tree,
-.playlist-toolbar,
-.playlist-toolbar-bkg,
-#playlist_tree > treechildren::-moz-tree-row( selected, focus ),
-#playlist_tree > treechildren::-moz-tree-progressmeter,
-#playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
-{
- -moz-appearance: none !important; /* grrrr! */
-}
 
 playlist
 {
@@ -68,6 +57,7 @@ playlist > stack > vbox
 .playlist-toolbar-bkg
 {
   height: 27px !important;
+  padding: 1px;
 }
 
 #playlist_tree > treechildren::-moz-tree-row
@@ -111,28 +101,5 @@ playlist > stack > vbox
 {
 	min-width: 160px !important;
 }
-
-
-/** 
-************************************************************************************************************************************************
-THE PLAYLIST TOOLBAR
-The Toolbar is a way for a user to discover pertinent contextual menu 
-features without having to know how to right-click.  You'll see styles
-for both the toolbar buttons and the corresponding entries in the 
-contextual menu.
-************************************************************************************************************************************************
-*/ 
-
-.playlist-toolbar
-{
-  border: none !important;
-}
-
-
-
-
-
-                        
-                        
 
 

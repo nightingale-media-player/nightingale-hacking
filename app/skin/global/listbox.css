@@ -48,11 +48,11 @@
 listbox {
   margin: 2px 4px;
   border: 1px solid;
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: ##99A194; /** Dark Border 1*/
-  background-color: #202220; /** Dark Color 1 */ 
+  border-top-color: #111111;
+  border-left-color: #222222; 
+  border-bottom-color: #99A195; 
+  border-right-color: #99A194; 
+  background-color: #202220; 
   color: -moz-FieldText;
 }
 
@@ -88,11 +88,7 @@ listbox:focus > listitem[selected="true"] {
 listheader { 
   -moz-appearance: treeheadercell;
   -moz-box-align: center;
-  border: 2px solid;
-  -moz-border-top-colors: ThreeDHighlight ThreeDLightShadow;
-  -moz-border-right-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-bottom-colors: ThreeDDarkShadow ThreeDShadow;
-  -moz-border-left-colors: ThreeDHighlight ThreeDLightShadow;
+  border: none;
   background-color: -moz-Dialog;
   color: -moz-DialogText;
   padding: 0 4px;
@@ -150,6 +146,8 @@ listheader[sortable="true"]:hover:active {
 }
 
 /* ::::: listcell checkbox ::::: */
+
+/** TODO Test the following rules **/
 
 .listcell-check {
   -moz-appearance: checkbox;
