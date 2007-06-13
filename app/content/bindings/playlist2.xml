@@ -552,11 +552,16 @@
     </method>
 
       <method name="startCellEditing">
+        <parameter name="row"/>
+        <parameter name="col"/>
         <body>
 <![CDATA[
-  if (this.edit_row >= 0 && this.edit_col.index >= 0) {
-    this.tree.startEditing(this.edit_row, this.edit_col);
-  }
+  if (row == null) 
+    row = this.edit_row;
+  if (col == null) 
+    col = this.edit_col;
+  if (row >= 0 && col.index >= 0)
+    this.tree.startEditing(row, col);
 ]]>
         </body>
       </method>
@@ -1353,7 +1358,9 @@
             var delay = evt.timeStamp - this._lastClickTimestamp;
             if ( delay > 1000 && delay < 2000 )
             {
-              this.startCellEditing();
+              // Oooh, don't do this in the middle of an event chain.  No, sir!
+              var params = { that: this, row: this.edit_row, col: this.edit_col };
+              setTimeout( function( p ) { p.that.startCellEditing( p.row, p.col ); }, 0, params );
             }
           }
         }
