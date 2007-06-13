@@ -1142,7 +1142,9 @@ sbLibraryServicePane.prototype.onAfterItemRemoved =
 function sbLibraryServicePane_onAfterItemRemoved(aMediaList, aMediaItem) {
 }
 sbLibraryServicePane.prototype.onItemUpdated =
-function sbLibraryServicePane_onItemUpdated(aMediaList, aMediaItem) {
+function sbLibraryServicePane_onItemUpdated(aMediaList,
+                                            aMediaItem,
+                                            aProperties) {
   var isList = aMediaItem instanceof Ci.sbIMediaList;
   if (isList) {
     this._mediaListUpdated(aMediaItem);

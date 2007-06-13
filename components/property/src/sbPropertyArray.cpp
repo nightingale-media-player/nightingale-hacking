@@ -27,16 +27,32 @@
 #include "sbPropertyArray.h"
 
 #include <nsArrayEnumerator.h>
-#include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
+#include <nsComponentManagerUtils.h>
+#include <nsIProgrammingLanguage.h>
 #include <nsIProperty.h>
 #include <nsISimpleEnumerator.h>
+#include <nsMemory.h>
 
 #include "sbSimpleProperty.h"
 
-NS_IMPL_ISUPPORTS3(sbPropertyArray, sbIPropertyArray,
-                                    nsIMutableArray,
-                                    nsIArray)
+NS_IMPL_THREADSAFE_ADDREF(sbPropertyArray)
+NS_IMPL_THREADSAFE_RELEASE(sbPropertyArray)
+
+NS_INTERFACE_MAP_BEGIN(sbPropertyArray)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIMutableArray)
+  NS_INTERFACE_MAP_ENTRY(sbIPropertyArray)
+  NS_INTERFACE_MAP_ENTRY(sbIMutablePropertyArray)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsIArray, nsIMutableArray)
+  NS_INTERFACE_MAP_ENTRY(nsIClassInfo)
+  NS_INTERFACE_MAP_ENTRY(nsIMutableArray)
+NS_INTERFACE_MAP_END
+
+NS_IMPL_CI_INTERFACE_GETTER5(sbPropertyArray, nsIArray,
+                                              nsIMutableArray,
+                                              sbIPropertyArray,
+                                              sbIMutablePropertyArray,
+                                              nsIClassInfo)
 
 /**
  * See nsIArray
@@ -201,7 +217,7 @@ sbPropertyArray::Clear()
 }
 
 /**
- * See sbIPropertyArray
+ * See sbIMutablePropertyArray
  */
 NS_IMETHODIMP
 sbPropertyArray::AppendProperty(const nsAString& aName,
@@ -241,6 +257,46 @@ sbPropertyArray::GetPropertyAt(PRUint32 aIndex,
 
   NS_ADDREF(*_retval = property);
   return NS_OK;
+}
+
+/**
+ * See sbIPropertyArray
+ */
+NS_IMETHODIMP
+sbPropertyArray::GetPropertyValue(const nsAString& aName,
+                                  nsAString& _retval)
+{
+  nsresult rv;
+
+  PRUint32 length = mArray.Count();
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<nsIProperty> property = mArray.ObjectAt(i);
+    NS_ENSURE_STATE(property);
+
+    nsAutoString propertyName;
+    rv = property->GetName(propertyName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (propertyName.Equals(aName)) {
+      nsCOMPtr<nsIVariant> value;
+      rv = property->GetValue(getter_AddRefs(value));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint16 dataType;
+      rv = value->GetDataType(&dataType);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (dataType == nsIDataType::VTYPE_ASTRING) {
+        nsAutoString valueString;
+        rv = value->GetAsAString(_retval);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        return NS_OK;
+      }
+    }
+  }
+
+  return NS_ERROR_NOT_AVAILABLE;
 }
 
 NS_IMETHODIMP
@@ -294,5 +350,61 @@ sbPropertyArray::ToString(nsAString& _retval)
   _retval = buff;
 
   return NS_OK;
+}
+
+// nsIClassInfo
+NS_IMETHODIMP
+sbPropertyArray::GetInterfaces(PRUint32* count, nsIID*** array)
+{
+  return NS_CI_INTERFACE_GETTER_NAME(sbPropertyArray)(count, array);
+}
+
+NS_IMETHODIMP
+sbPropertyArray::GetHelperForLanguage(PRUint32 language,
+                                      nsISupports** _retval)
+{
+  *_retval = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPropertyArray::GetContractID(char** aContractID)
+{
+  *aContractID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPropertyArray::GetClassDescription(char** aClassDescription)
+{
+  *aClassDescription = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPropertyArray::GetClassID(nsCID** aClassID)
+{
+  *aClassID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPropertyArray::GetImplementationLanguage(PRUint32* aImplementationLanguage)
+{
+  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPropertyArray::GetFlags(PRUint32 *aFlags)
+{
+  *aFlags = 0;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPropertyArray::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
+{
+  return NS_ERROR_NOT_AVAILABLE;
 }
 

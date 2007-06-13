@@ -43,8 +43,8 @@ function dumpArray(array) {
 
 function runTest() {
   var propertyArray =
-    Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"].
-    createInstance(Ci.sbIPropertyArray);
+    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+    createInstance(Ci.sbIMutablePropertyArray);
 
   // Test appendProperty.
   for (var index = 0; index < 15; index++) {

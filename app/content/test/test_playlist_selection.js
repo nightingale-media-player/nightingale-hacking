@@ -250,6 +250,7 @@ function getSelected(playlist) {
 }
 
 function createPropertyArray() {
-  return Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"].createInstance(Ci.sbIPropertyArray);
+  return Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+           .createInstance(Ci.sbIMutablePropertyArray);
 }
 

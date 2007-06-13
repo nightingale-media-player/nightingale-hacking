@@ -254,7 +254,7 @@ var addToPlaylistHelper = {
     this.onUpdateEvent(item);
   },
   
-  onItemUpdated: function onItemUpdated(list, item) {
+  onItemUpdated: function onItemUpdated(list, item, properties) {
     this.onUpdateEvent(item);
   },
 

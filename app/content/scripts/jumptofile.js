@@ -501,8 +501,8 @@ try
   function _applySearch() {
     var search = document.getElementById("jumpto.textbox").value;
     if (source_search != "") search = source_search + " " + search;
-    var propArray = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-                              .createInstance(Components.interfaces.sbIPropertyArray);
+    var propArray = Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                              .createInstance(Components.interfaces.sbIMutablePropertyArray);
     propArray.appendProperty("*", search);
     jumpto_view.setSearch(propArray);
   }
@@ -618,7 +618,7 @@ try
     
   function _getFilters( view ) {
     var filters = [];
-    var properties = view.getFilters();
+    var properties = view.currentFilter;
 
     if (properties) {
 	    var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]

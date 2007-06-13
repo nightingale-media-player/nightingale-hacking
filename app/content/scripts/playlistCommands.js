@@ -52,7 +52,7 @@ MediaListListener.prototype = {
   onAfterItemRemoved: function onAfterItemRemoved(list, item) {
   },
   
-  onItemUpdated: function onItemUpdated(list, item) {
+  onItemUpdated: function onItemUpdated(list, item, properties) {
   },
 
   onBatchBegin: function onBatchBegin(list) {

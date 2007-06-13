@@ -672,8 +672,8 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
   // the sort
   if (mListType != eDistinct) {
     // TODO: Get the sort profile from the property manager, if any
-    nsCOMPtr<sbIPropertyArray> sort =
-      do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
+    nsCOMPtr<sbIMutablePropertyArray> sort =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = sort->AppendProperty(aProperty, aDirection ? NS_LITERAL_STRING("a") :
@@ -713,6 +713,33 @@ sbLocalDatabaseTreeView::GetSelectionChanging(PRBool* aSelectionChanging)
   NS_ENSURE_ARG_POINTER(aSelectionChanging);
 
   *aSelectionChanging = mSelectionChanging;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::InvalidateRowsByGuid(const nsAString& aGuid)
+{
+  if (mTreeBoxObject) {
+    PRInt32 first;
+    PRInt32 last;
+    nsresult rv = mTreeBoxObject->GetFirstVisibleRow(&first);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mTreeBoxObject->GetLastVisibleRow(&last);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (first >= 0 && last >= 0) {
+      for (PRUint32 row = first; row <= (PRUint32) last; row++) {
+        nsAutoString guid;
+        rv = mArray->GetGuidByIndex(row, guid);
+        if (guid.Equals(aGuid)) {
+          rv = mTreeBoxObject->InvalidateRow(row);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+    }
+
+  }
+
   return NS_OK;
 }
 
@@ -1709,12 +1736,14 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
 {
   NS_ENSURE_ARG_POINTER(col);
 
+#ifdef PR_LOGGING
   PRInt32 colIndex;
   nsresult rv = col->GetIndex(&colIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetCellText(%d, %d %s)", this,
          row, colIndex, NS_LossyConvertUTF16toASCII(value).get()));
+#endif
 
   nsAutoString bind;
   rv = GetPropertyForTreeColumn(col, bind);
@@ -1724,41 +1753,26 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
   rv = mArray->GetByIndex(row, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-  rv = GetPropertyBag(guid, row, getter_AddRefs(bag));
+  nsCOMPtr<sbIMediaList> mediaList;
+  rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> library;
+  rv = mediaList->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = library->GetMediaItem(guid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString oldValue;
-  rv = bag->GetProperty(bind, oldValue);
-
+  rv = item->GetProperty(bind, oldValue);
   if (NS_FAILED(rv) || !value.Equals(oldValue)) {
-    rv = bag->SetProperty(bind, value);
+    rv = item->SetProperty(bind, value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = bag->Write();
+    rv = item->Write();
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // If this property is involved in the current sort, then we need to
-    // dump our row cache, invalidate our array, and refresh the tree.
-    // Otherwise we can just invalidate the cell
-    // XXX: need to get the full sort from the property manager
-    if (mCurrentSortProperty.Equals(bind)) {
-      rv = InvalidateCache();
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = mArray->Invalidate();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if (mTreeBoxObject) {
-        rv = mTreeBoxObject->Invalidate();
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-    else {
-      if (mTreeBoxObject) {
-        rv = mTreeBoxObject->InvalidateCell(row, col);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
   }
 
   return NS_OK;

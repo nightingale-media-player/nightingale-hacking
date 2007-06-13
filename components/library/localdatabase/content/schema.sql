@@ -56,6 +56,8 @@ create table simple_media_lists (
   ordinal text not null collate tree
 );
 create index idx_simple_media_lists_media_item_id_member_media_item_id on simple_media_lists (media_item_id, member_media_item_id, ordinal);
+create unique index idx_simple_media_lists_media_item_id_ordinal on simple_media_lists (media_item_id, ordinal);
+
 /* note the empty comment blocks at the end of the lines in the body of the
    trigger need to be there to prevent the parser from splitting on the
    line ending semicolon */

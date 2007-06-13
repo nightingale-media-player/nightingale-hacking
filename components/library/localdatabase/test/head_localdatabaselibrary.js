@@ -326,7 +326,7 @@ TestMediaListListener.prototype = {
     this._removedItemAfter = item;
   },
   
-  onItemUpdated: function onItemUpdated(list, item) {
+  onItemUpdated: function onItemUpdated(list, item, properties) {
     this._updatedItem = item;
   },
 

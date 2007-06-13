@@ -43,6 +43,7 @@
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbILibrary.h>
+#include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 #include <sbTArrayStringEnumerator.h>
@@ -270,6 +271,29 @@ sbLocalDatabaseGUIDArray::ClearSorts()
   mSorts.Clear();
 
   return Invalidate();
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetCurrentSort(sbIPropertyArray** aCurrentSort)
+{
+  NS_ENSURE_ARG_POINTER(aCurrentSort);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMutablePropertyArray> sort =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < mSorts.Length(); i++) {
+    const SortSpec& ss = mSorts[i];
+    rv = sort->AppendProperty(ss.property,
+                              ss.ascending ? NS_LITERAL_STRING("a") :
+                                NS_LITERAL_STRING("d"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ADDREF(*aCurrentSort = sort);
+  return NS_OK;
 }
 
 NS_IMETHODIMP

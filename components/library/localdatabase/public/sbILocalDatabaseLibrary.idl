@@ -37,6 +37,7 @@ interface sbIMediaItem;
 interface sbIDatabaseQuery;
 interface sbILocalDatabasePropertyCache;
 interface sbILocalDatabaseResourcePropertyBag;
+interface sbIPropertyArray;
 
 /**
  * \interface sbILocalDatabaseLibrary
@@ -62,7 +63,8 @@ interface sbILocalDatabaseLibrary : nsISupports
 
   sbILocalDatabaseResourcePropertyBag getPropertiesForGuid(in AString aGuid);
 
-  void notifyListenersItemUpdated(in sbIMediaItem aItem);
+  void notifyListenersItemUpdated(in sbIMediaItem aItem,
+                                  in sbIPropertyArray aProperties);
 
   sbIDatabaseQuery createQuery();
 

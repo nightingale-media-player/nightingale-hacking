@@ -500,8 +500,8 @@
 
               // Check to see if this playlist already exists
               var propertyArray =
-                Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-                          .createInstance(Components.interfaces.sbIPropertyArray);
+                Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                          .createInstance(Components.interfaces.sbIMutablePropertyArray);
               propertyArray.appendProperty(SBProperties.isList, "1");
               propertyArray.appendProperty(SBProperties.originURL, uri.spec);
 
@@ -1543,8 +1543,8 @@
             };
             
             var propArray =
-              Components.classes["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-                        .createInstance(Components.interfaces.sbIPropertyArray);
+              Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                        .createInstance(Components.interfaces.sbIMutablePropertyArray);
             propArray.appendProperty(SBProperties.originPage, aURL);
             propArray.appendProperty(SBProperties.isList, "1");
             

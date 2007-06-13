@@ -151,8 +151,8 @@ sbLocalDatabaseMediaListView::CopyStringArrayHashCallback(nsStringHashKey::KeyTy
   NS_ASSERTION(aEntry, "Null entry in the hash?!");
   NS_ASSERTION(aUserData, "Null userData!");
 
-  nsCOMPtr<sbIPropertyArray> propertyArray =
-    NS_STATIC_CAST(sbIPropertyArray*, aUserData);
+  nsCOMPtr<sbIMutablePropertyArray> propertyArray =
+    NS_STATIC_CAST(sbIMutablePropertyArray*, aUserData);
   NS_ASSERTION(propertyArray, "Could not cast user data");
 
   PRUint32 length = aEntry->Length();
@@ -254,7 +254,7 @@ sbLocalDatabaseMediaListView::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the default sort as our view sort
-  mViewSort = do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
+  mViewSort = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mViewSort->AppendProperty(mDefaultSortProperty, NS_LITERAL_STRING("a"));
@@ -300,13 +300,13 @@ sbLocalDatabaseMediaListView::GetTreeView(nsITreeView** aTreeView)
     rv = mArray->SetPropertyCache(propertyCache);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoPtr<sbLocalDatabaseTreeView> treeView(new sbLocalDatabaseTreeView());
-    NS_ENSURE_TRUE(treeView, NS_ERROR_OUT_OF_MEMORY);
+    nsRefPtr<sbLocalDatabaseTreeView> tree = new sbLocalDatabaseTreeView();
+    NS_ENSURE_TRUE(tree, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = treeView->Init(this, mArray, mViewSort);
+    rv = tree->Init(this, mArray, mViewSort);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mTreeView = treeView.forget();
+    mTreeView = tree;
   }
 
   NS_ADDREF(*aTreeView = mTreeView);
@@ -322,17 +322,15 @@ sbLocalDatabaseMediaListView::GetCascadeFilterSet(sbICascadeFilterSet** aCascade
   if (!mCascadeFilterSet) {
     nsresult rv;
 
-    nsAutoPtr<sbLocalDatabaseCascadeFilterSet> cascadeFilterSet(new sbLocalDatabaseCascadeFilterSet());
-    NS_ENSURE_TRUE(cascadeFilterSet, NS_ERROR_OUT_OF_MEMORY);
+    mCascadeFilterSet = new sbLocalDatabaseCascadeFilterSet();
+    NS_ENSURE_TRUE(mCascadeFilterSet, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> guidArray;
     rv = mArray->CloneAsyncArray(getter_AddRefs(guidArray));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = cascadeFilterSet->Init(mLibrary, this, guidArray);
+    rv = mCascadeFilterSet->Init(mLibrary, this, guidArray);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    mCascadeFilterSet = cascadeFilterSet.forget();
   }
 
   NS_ADDREF(*aCascadeFilterSet = mCascadeFilterSet);
@@ -451,15 +449,15 @@ sbLocalDatabaseMediaListView::Clone(sbIMediaListView** _retval)
 
 nsresult
 sbLocalDatabaseMediaListView::ClonePropertyArray(sbIPropertyArray* aSource,
-                                                 sbIPropertyArray** _retval)
+                                                 sbIMutablePropertyArray** _retval)
 {
   NS_ENSURE_ARG_POINTER(aSource);
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
 
-  nsCOMPtr<sbIPropertyArray> clone =
-    do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
+  nsCOMPtr<sbIMutablePropertyArray> clone =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 propertyCount;
@@ -497,6 +495,79 @@ sbLocalDatabaseMediaListView::ClonePropertyArray(sbIPropertyArray* aSource,
   }
 
   NS_ADDREF(*_retval = clone);
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag1,
+                                                sbIPropertyArray* aBag2,
+                                                PRBool* aHasCommonProperty)
+{
+  NS_ASSERTION(aBag1, "aBag1 is null");
+  NS_ASSERTION(aBag2, "aBag2 is null");
+  NS_ASSERTION(aHasCommonProperty, "aHasCommonProperty is null");
+
+  PRUint32 length;
+  nsresult rv = aBag1->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<nsIProperty> property;
+    rv = aBag1->GetPropertyAt(i, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString propertyName;
+    rv = property->GetName(propertyName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString junk;
+    rv = aBag2->GetPropertyValue(propertyName, junk);
+    if (NS_SUCCEEDED(rv)) {
+      *aHasCommonProperty = PR_TRUE;
+      return NS_OK;
+    }
+
+  }
+
+  *aHasCommonProperty = PR_FALSE;
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseMediaListView::ShouldCauseInvalidation(sbIPropertyArray* aProperties,
+                                                      PRBool* aShouldCauseInvalidation)
+{
+  NS_ASSERTION(aProperties, "aProperties is null");
+  NS_ASSERTION(aShouldCauseInvalidation, "aShouldCauseInvalidation is null");
+  
+  // If one of the updated proprties is involved in the current sort, filter,
+  // or search, we should invalidate
+  nsCOMPtr<sbIPropertyArray> props;
+
+  // Search sort
+  nsresult rv = GetCurrentSort(getter_AddRefs(props));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = HasCommonProperty(aProperties, props, aShouldCauseInvalidation);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (*aShouldCauseInvalidation)
+    return NS_OK;
+
+  // Search filter
+  rv = GetCurrentFilter(getter_AddRefs(props));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = HasCommonProperty(aProperties, props, aShouldCauseInvalidation);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (*aShouldCauseInvalidation)
+    return NS_OK;
+
+  // Search search
+  rv = GetCurrentSearch(getter_AddRefs(props));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = HasCommonProperty(aProperties, props, aShouldCauseInvalidation);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (*aShouldCauseInvalidation)
+    return NS_OK;
+
   return NS_OK;
 }
 
@@ -550,14 +621,14 @@ sbLocalDatabaseMediaListView::GetFilterValues(const nsAString& aPropertyName,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListView::GetFilters(sbIPropertyArray** _retval)
+sbLocalDatabaseMediaListView::GetCurrentFilter(sbIPropertyArray** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
 
-  nsCOMPtr<sbIPropertyArray> propertyArray =
-    do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
+  nsCOMPtr<sbIMutablePropertyArray> propertyArray =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mViewFilters.EnumerateRead(CopyStringArrayHashCallback, propertyArray);
@@ -700,7 +771,7 @@ sbLocalDatabaseMediaListView::GetCurrentSearch(sbIPropertyArray** aCurrentSearch
   nsresult rv;
 
   if (!mViewSearches) {
-    mViewSearches = do_CreateInstance(SB_PROPERTYARRAY_CONTRACTID, &rv);
+    mViewSearches = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -721,7 +792,8 @@ sbLocalDatabaseMediaListView::SetSearch(sbIPropertyArray* aSearch)
 
   nsresult rv;
 
-  mViewSearches = aSearch;
+  rv = ClonePropertyArray(aSearch, getter_AddRefs(mViewSearches));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdateViewArrayConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -735,7 +807,10 @@ sbLocalDatabaseMediaListView::ClearSearch()
   nsresult rv;
 
   if (mViewSearches) {
-    rv = mViewSearches->Clear();
+    nsCOMPtr<nsIMutableArray> array = do_QueryInterface(mViewSearches, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = array->Clear();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -771,7 +846,8 @@ sbLocalDatabaseMediaListView::SetSort(sbIPropertyArray* aSort)
 
   nsresult rv;
 
-  mViewSort = aSort;
+  rv = ClonePropertyArray(aSort, getter_AddRefs(mViewSort));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdateViewArrayConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -785,7 +861,10 @@ sbLocalDatabaseMediaListView::ClearSort()
   nsresult rv;
 
   if (mViewSort) {
-    rv = mViewSort->Clear();
+    nsCOMPtr<nsIMutableArray> array = do_QueryInterface(mViewSort, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = array->Clear();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -848,19 +927,54 @@ sbLocalDatabaseMediaListView::OnAfterItemRemoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
-                                            sbIMediaItem* aMediaItem)
+                                            sbIMediaItem* aMediaItem,
+                                            sbIPropertyArray* aProperties)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aProperties);
+
+#ifdef PR_LOGGING
+  nsAutoString buff;
+  aProperties->ToString(buff);
+  TRACE(("sbLocalDatabaseMediaListView[0x%.8x] - OnItemUpdated %s",
+         this, NS_ConvertUTF16toUTF8(buff).get()));
+#endif
+
+  nsresult rv;
+  PRBool shouldInvalidate = PR_FALSE;
 
   if (mInBatch) {
-    mInvalidatePending = PR_TRUE;
-    return NS_OK;
+    // If we are in a batch, remember the updated properties for later.  Once
+    // the batch is complete, we can check it to see if it should cause an
+    // invalidation
+    PRBool success = mUpdatedPropertiesInBatch.AppendObject(aProperties);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+  else {
+    // Otherwise, check to see if this update should cause an invalidation
+    rv = ShouldCauseInvalidation(aProperties, &shouldInvalidate);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (shouldInvalidate) {
+      // Invalidate the view array
+      nsresult rv = Invalidate();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
-  // Invalidate the view array
-  nsresult rv = Invalidate();
-  NS_ENSURE_SUCCESS(rv, rv);
+  // If the array has not already been invalidated, we should invalidate the
+  // row of the tree view that contains this item.  This lets us see updates
+  // that don't cause invalidations as well as see updates that happen in
+  // batches sooner
+  if (mTreeView && !shouldInvalidate) {
+    nsAutoString guid;
+    rv = aMediaItem->GetGuid(guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mTreeView->InvalidateRowsByGuid(guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -894,6 +1008,25 @@ sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
 
     mInvalidatePending = PR_FALSE;
   }
+  else {
+    // If we haven't been told explicitly that there is an invalidation,
+    // pending, we may still have to invalidate due to a series of item
+    // updates
+    PRUint32 length = mUpdatedPropertiesInBatch.Count();
+    for (PRUint32 i = 0; i < length; i++) {
+      PRBool shouldInvalidate;
+      nsresult rv = ShouldCauseInvalidation(mUpdatedPropertiesInBatch[i],
+                                            &shouldInvalidate);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (shouldInvalidate) {
+        nsresult rv = Invalidate();
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      }
+    }
+  }
+
+  mUpdatedPropertiesInBatch.Clear();
 
   return NS_OK;
 }
@@ -1255,6 +1388,7 @@ sbLocalDatabaseMediaListView::CreateQueries()
 nsresult
 sbLocalDatabaseMediaListView::Invalidate()
 {
+  LOG(("sbLocalDatabaseMediaListView[0x%.8x] - Invalidate", this));
   nsresult rv;
 
   // Invalidate the view array
@@ -1263,10 +1397,10 @@ sbLocalDatabaseMediaListView::Invalidate()
 
   // If we have an active tree view, rebuild it
   if (mTreeView) {
-    sbLocalDatabaseTreeView* view = NS_STATIC_CAST(sbLocalDatabaseTreeView*, mTreeView.get());
-    rv = view->Rebuild();
+    rv = mTreeView->Rebuild();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
   return NS_OK;
 }
 

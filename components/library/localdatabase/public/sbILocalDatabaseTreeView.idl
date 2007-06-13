@@ -41,5 +41,7 @@ interface sbILocalDatabaseTreeView : nsISupports
 {
   readonly attribute boolean selectionChanging;
   void setSort(in AString aProperty, in boolean aDirection);
+
+  void invalidateRowsByGuid(in AString aGuid);
 };
 

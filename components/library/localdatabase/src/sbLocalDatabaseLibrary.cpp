@@ -1223,11 +1223,15 @@ sbLocalDatabaseLibrary::CreateQuery(sbIDatabaseQuery** _retval)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem)
+sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem,
+                                                   sbIPropertyArray* aProperties)
 {
   NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aProperties);
 
-  sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(this, aItem);
+  sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(this,
+                                                               aItem,
+                                                               aProperties);
 
   return NS_OK;
 }

@@ -34,6 +34,7 @@
 interface nsIStringEnumerator;
 interface nsIURI;
 interface sbILocalDatabasePropertyCache;
+interface sbIPropertyArray;
 
 /**
  * \interface sbILocalDatabaseGUIDArrayListener
@@ -76,6 +77,8 @@ interface sbILocalDatabaseGUIDArray : nsISupports
                in boolean aAscending);
 
   void clearSorts();
+
+  readonly attribute sbIPropertyArray currentSort;
 
   void addFilter(in AString aProperty,
                  in nsIStringEnumerator aValues,

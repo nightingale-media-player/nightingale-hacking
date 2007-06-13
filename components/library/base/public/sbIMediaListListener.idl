@@ -34,6 +34,7 @@
 
 interface sbIMediaItem;
 interface sbIMediaList;
+interface sbIPropertyArray;
 
 /**
 * \interface sbIMediaListListener
@@ -72,12 +73,14 @@ interface sbIMediaListListener : nsISupports
 
   /**
    * \brief Called when a media item is changed.
-   *
-   * \param aMediaList - The list that contains the item.
-   * \param aMediaItem - The item that has changed.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The item that has changed.
+   * \param aProperties Array of properties that were updated.  Each property's
+   *        value is the previous value of the property
    */
   void onItemUpdated(in sbIMediaList aMediaList,
-                     in sbIMediaItem aMediaItem);
+                     in sbIMediaItem aMediaItem,
+                     in sbIPropertyArray aProperties);
 
   /**
    * \brief Called when a media list is cleared.

@@ -33,6 +33,7 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <sbICascadeFilterSet.h>
+#include <sbIMediaListListener.h>
 #include <nsTHashtable.h>
 #include <nsHashKeys.h>
 
@@ -40,15 +41,16 @@ class sbLocalDatabaseTreeView;
 class sbILocalDatabaseAsyncGUIDArray;
 class sbILocalDatabaseLibrary;
 class sbIMediaListView;
-class sbIPropertyArray;
 
-class sbLocalDatabaseCascadeFilterSet : public sbICascadeFilterSet
+class sbLocalDatabaseCascadeFilterSet : public sbICascadeFilterSet,
+                                        public sbIMediaListListener
 {
   typedef nsTArray<nsString> sbStringArray;
 
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBICASCADEFILTERSET
+  NS_DECL_SBIMEDIALISTLISTENER
 
   sbLocalDatabaseCascadeFilterSet();
   ~sbLocalDatabaseCascadeFilterSet();
@@ -57,11 +59,7 @@ public:
                 sbIMediaListView* aMediaListView,
                 sbILocalDatabaseAsyncGUIDArray* aProtoArray);
 
-  nsresult Rebuild();
-
 private:
-  nsresult ConfigureArray(PRUint32 aIndex);
-
   struct sbFilterSpec {
     PRBool isSearch;
     nsString property;
@@ -69,7 +67,12 @@ private:
     sbStringArray values;
     nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> array;
     nsRefPtr<sbLocalDatabaseTreeView> treeView;
+    PRBool invalidationPending;
   };
+
+  nsresult ConfigureArray(PRUint32 aIndex);
+
+  nsresult InvalidateFilter(sbFilterSpec& aFilter);
 
   // This callback is meant to be used with mListeners.
   // aUserData should be a sbICascadeFilterSetListener pointer.
@@ -91,6 +94,9 @@ private:
 
   // Change listeners
   nsTHashtable<nsISupportsHashKey> mListeners;
+
+  // Is our media list in a batch
+  PRPackedBool mInBatch;
 };
 
 class sbGUIDArrayPrimarySortEnumerator : public nsIStringEnumerator

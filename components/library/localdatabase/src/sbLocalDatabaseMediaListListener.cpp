@@ -140,6 +140,15 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbIMediaListListener* aListener
   return NS_OK;
 }
 
+PRUint32
+sbLocalDatabaseMediaListListener::ListenerCount()
+{
+  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+               "You haven't called Init yet!");
+
+  return mListenerProxyTable.Count();
+}
+
 /**
  * \brief Notifies all listeners that an item has been added to the list.
  */
@@ -203,17 +212,19 @@ sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(sbIMediaList* 
  */
 void
 sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(sbIMediaList* aList,
-                                                             sbIMediaItem* aItem)
+                                                             sbIMediaItem* aItem,
+                                                             sbIPropertyArray* aProperties)
 {
-  NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
+    NS_ASSERTION(mListenerProxyTableLock && mListenerProxyTable.IsInitialized(),
                "You haven't called Init yet!");
   SB_ENSURE_TRUE_VOID(aList);
   SB_ENSURE_TRUE_VOID(aItem);
+  SB_ENSURE_TRUE_VOID(aProperties);
 
   sbMediaListListenersArray snapshot(mListenerProxyTable.Count());
   mListenerProxyTable.EnumerateRead(ToArrayCallback, &snapshot);
 
-  MediaListCallbackInfo info(aList, aItem);
+  ItemUpdatedCallbackInfo info(aList, aItem, aProperties);
   snapshot.EnumerateForwards(ItemUpdatedCallback, &info);
 }
 
@@ -372,14 +383,17 @@ sbLocalDatabaseMediaListListener::ItemUpdatedCallback(sbIMediaListListener* aEnt
 {
   NS_ASSERTION(aEntry, "Nulls in array!");
 
-  MediaListCallbackInfo* info =
-    NS_STATIC_CAST(MediaListCallbackInfo*, aUserData);
+  ItemUpdatedCallbackInfo* info =
+    NS_STATIC_CAST(ItemUpdatedCallbackInfo*, aUserData);
   NS_ENSURE_TRUE(info, PR_TRUE);
 
-  NS_ASSERTION(info->list && info->item, "Bad MediaListCallbackInfo!");
+  NS_ASSERTION(info->list && info->item && info->properties,
+               "Bad ItemUpdatedCallbackInfo!");
 
   nsCOMPtr<sbIMediaListListener> listener = aEntry;
-  nsresult rv = listener->OnItemUpdated(info->list, info->item);
+  nsresult rv = listener->OnItemUpdated(info->list,
+                                        info->item,
+                                        info->properties);
 
   // We don't really care if some listener impl returns failure, but warn for
   // good measure.

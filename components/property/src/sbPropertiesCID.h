@@ -24,17 +24,17 @@
 //
 */
 
-#define SB_PROPERTYARRAY_DESCRIPTION                       \
-  "Songbird Property Array Implementation"
-#define SB_PROPERTYARRAY_CID                               \
+#define SB_MUTABLEPROPERTYARRAY_DESCRIPTION                \
+  "Songbird Mutable Property Array Implementation"
+#define SB_MUTABLEPROPERTYARRAY_CID                        \
   { /* c7e88d66-5a02-4ab2-ba0b-375e802b05ea */             \
     0xc7e88d66,                                            \
     0x5a02,                                                \
     0x4ab2,                                                \
     { 0xba, 0x0b, 0x37, 0x5e, 0x80, 0x2b, 0x05, 0xea }     \
   }
-#define SB_PROPERTYARRAY_CONTRACTID                        \
-  "@songbirdnest.com/Songbird/Properties/PropertyArray;1"
+#define SB_MUTABLEPROPERTYARRAY_CONTRACTID                 \
+  "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"
 
 #define SB_PROPERTYFACTORY_DESCRIPTION                     \
   "Songbird Property Factory Implementation"

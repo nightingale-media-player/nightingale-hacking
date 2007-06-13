@@ -210,8 +210,8 @@ function sbLocalDatabaseDynamicPlaylistService__scheduleLibrary(aLibrary)
     }
   };
 
-  var pa = Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-             .createInstance(Ci.sbIPropertyArray);
+  var pa = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+             .createInstance(Ci.sbIMutablePropertyArray);
   pa.appendProperty(SB_NS + "isList", "1");
   pa.appendProperty(SB_PROP_ISSUBSCRIPTION, "1");
 
@@ -552,7 +552,8 @@ function sbLocalDatabaseDynamicPlaylistService_onAfterItemRemoved(aMediaList,
 
 sbLocalDatabaseDynamicPlaylistService.prototype.onItemUpdated =
 function sbLocalDatabaseDynamicPlaylistService_onItemUpdated(aMediaList,
-                                                             aMediaItem)
+                                                             aMediaItem,
+                                                             aProperties)
 {
   if (this._ignore(aMediaList.library))
     return;

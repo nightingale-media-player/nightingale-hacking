@@ -100,7 +100,7 @@ function runTest () {
   pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "Back in Black");
   view.setFilters(pa);
 
-  var filters = view.getFilters();
+  var filters = view.currentFilter;
   assertEqual(filters.length, 3);
 
   assertEqual(filters.getPropertyAt(0).name, "http://songbirdnest.com/data/1.0#artistName");
@@ -112,6 +112,7 @@ function runTest () {
 }
 
 function createPropertyArray() {
-  return Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"].createInstance(Ci.sbIPropertyArray);
+  return Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+           .createInstance(Ci.sbIMutablePropertyArray);
 }
 

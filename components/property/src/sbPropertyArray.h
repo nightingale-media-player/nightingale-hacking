@@ -31,16 +31,21 @@
 
 #include <nsCOMArray.h>
 #include <nsIArray.h>
+#include <nsIClassInfo.h>
 #include <nsIMutableArray.h>
 #include <nsIProperty.h>
 
-class sbPropertyArray : public sbIPropertyArray
+class sbPropertyArray : public sbIMutablePropertyArray,
+                        public nsIMutableArray,
+                        public nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSIARRAY
+  NS_DECL_NSICLASSINFO
   NS_DECL_NSIMUTABLEARRAY
   NS_DECL_SBIPROPERTYARRAY
+  NS_DECL_SBIMUTABLEPROPERTYARRAY
 
 private:
   nsCOMArray<nsIProperty> mArray;

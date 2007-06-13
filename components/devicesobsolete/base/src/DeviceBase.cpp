@@ -54,6 +54,7 @@
 
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
+#include <sbIPropertyArray.h>
 #include <sbLocalDatabaseCID.h>
 
 #define MSG_DEVICE_BASE             (0x2000) // Base message ID
@@ -232,11 +233,13 @@ sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
 }
 
 NS_IMETHODIMP 
-sbDeviceBaseLibraryListener::OnItemUpdated(sbIMediaList *aMediaList, 
-                                           sbIMediaItem *aMediaItem)
+sbDeviceBaseLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
+                                           sbIMediaItem *aMediaItem,
+                                           sbIPropertyArray* aProperties)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aProperties);
 
   if(mIgnoreListener) {
     return NS_OK;

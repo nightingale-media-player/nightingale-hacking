@@ -84,8 +84,8 @@ function runTest () {
   enumerationListener.reset();
 
   var propertyArray =
-    Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"].
-    createInstance(Ci.sbIPropertyArray);
+    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+    createInstance(Ci.sbIMutablePropertyArray);
   propertyArray.appendProperty(albumProperty, "Back in Black");
   
   list.enumerateItemsByProperties(propertyArray, enumerationListener,

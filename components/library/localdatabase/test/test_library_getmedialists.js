@@ -195,8 +195,8 @@ function testBoth(library) {
 }
 
 function createPropertyArray() {
-  var pa = Cc["@songbirdnest.com/Songbird/Properties/PropertyArray;1"]
-             .createInstance(Ci.sbIPropertyArray);
+  var pa = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+             .createInstance(Ci.sbIMutablePropertyArray);
   return pa;
 }
 

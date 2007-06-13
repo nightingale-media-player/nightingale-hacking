@@ -30,6 +30,8 @@
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
+#include <sbIPropertyArray.h>
+#include <sbPropertiesCID.h>
 
 #include <nsIObserver.h>
 #include <nsIURIChecker.h>
@@ -459,7 +461,14 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
   NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
 
-  nsresult rv = GetPropertyBag();
+  // Create a property array to hold the changed properties and their old
+  // values
+  nsresult rv;
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetPropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
@@ -467,6 +476,18 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
 
     rv = NS_ERROR_NOT_AVAILABLE;
     if(mPropertyBag) {
+
+      // Add the old value to the changed properties array.  If there is no
+      // old value, add an empty string to the properties array.  Note that
+      // this will change once we have IsVoid/SetVoid
+      nsAutoString oldValue;
+      rv = mPropertyBag->GetProperty(aName, oldValue);
+      if (NS_FAILED(rv))
+        oldValue.Truncate();
+
+      rv = properties->AppendProperty(aName, oldValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       rv = mPropertyBag->SetProperty(aName, aValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -480,7 +501,7 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
     }
   }
 
-  mLibrary->NotifyListenersItemUpdated(this);
+  mLibrary->NotifyListenersItemUpdated(this, properties);
 
   return rv;
 }

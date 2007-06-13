@@ -36,6 +36,7 @@
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
+#include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 #include <sbLocalDatabaseSchemaInfo.h>
@@ -2258,7 +2259,8 @@ sbLocalDatabaseSmartMediaList::OnAfterItemRemoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnItemUpdated(sbIMediaList* aMediaList,
-                                             sbIMediaItem* aMediaItem)
+                                             sbIMediaItem* aMediaItem,
+                                             sbIPropertyArray* aProperties)
 {
   // Don't care
   return NS_OK;

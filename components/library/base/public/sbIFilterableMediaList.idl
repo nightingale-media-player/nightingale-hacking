@@ -64,9 +64,8 @@ interface sbIFilterableMediaList : nsISupports
 
   /**
    * \brief Get the current filter configuration
-   * \retrun Array of name value pairs used to filter the list
    */
-  sbIPropertyArray getFilters();
+  readonly attribute sbIPropertyArray currentFilter;
 
   /**
    * \brief Set a new filter configuration.

@@ -29,16 +29,48 @@
  * \brief Definition of the sbIPropertyArray interface
  */
 
+#include "nsIArray.idl"
 #include "nsIMutableArray.idl"
 
 interface nsIProperty;
 
 /**
  * \interface sbIPropertyArray
- * \brief An interface to carry around arrays of sbIProperty instances
+ * \brief An interface to carry around arrays of nsIProperty instances.  Users
+ *        of this interface should only QI it to a sbIMutablePropertyArray if
+ *        they are the owners of the instance.
+ */
+[scriptable, uuid(cc75d9ac-cb61-4f6d-afda-1cba8a090b6f)]
+interface sbIPropertyArray : nsIArray
+{
+  /**
+   * Gets the property at the specified index
+   *
+   * \param aIndex The index of the property to retrieve
+   */                      
+  nsIProperty getPropertyAt(in unsigned long aIndex);
+
+  /**
+   * Gets the value for a property in the array
+   *
+   * \param aName Name of the property to get the value for
+   * \return Value of the property
+   * \throws NS_ERROR_NOT_AVAILABLE if the property is not in the array
+   */
+  AString getPropertyValue(in AString aName);
+
+  /**
+   * Return the contents of the property array as a string
+   */                      
+  AString toString();
+};
+
+/**
+ * \interface sbIPropertyArray
+ * \brief An interface to carry around arrays of nsIProperty instances
  */
 [scriptable, uuid(9c7f33c9-2283-4404-96a8-07d8b39c8277)]
-interface sbIPropertyArray : nsIMutableArray
+interface sbIMutablePropertyArray : sbIPropertyArray
 {
   /**
    * Adds a new property to the array
@@ -48,17 +80,5 @@ interface sbIPropertyArray : nsIMutableArray
    */
   void appendProperty(in AString aName,
                       in AString aValue);
-
-  /**
-   * Gets the property at the specified index
-   *
-   * \param aIndex The index of the property to retrieve
-   */                      
-  nsIProperty getPropertyAt(in unsigned long aIndex);
-
-  /**
-   * Return the contents of the property array as a string
-   */                      
-  AString toString();
 };
 

@@ -431,6 +431,14 @@ sbLocalDatabaseAsyncGUIDArray::ClearSorts()
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetCurrentSort(sbIPropertyArray** aCurrentSort)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetCurrentSort(aCurrentSort);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::AddFilter(const nsAString& aProperty,
                                          nsIStringEnumerator* aValues,
                                          PRBool aIsSearch)

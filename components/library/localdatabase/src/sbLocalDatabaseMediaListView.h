@@ -28,6 +28,7 @@
 #define __SB_LOCALDATABASEMEDIALISTVIEW_H__
 
 #include <nsCOMPtr.h>
+#include <nsCOMArray.h>
 #include <nsClassHashtable.h>
 #include <nsIClassInfo.h>
 #include <nsIStringEnumerator.h>
@@ -42,14 +43,14 @@
 #include <sbISortableMediaList.h>
 #include <sbPropertiesCID.h>
 
-class nsITreeView;
 class nsIURI;
-class sbICascadeFilterSet;
 class sbIDatabaseQuery;
 class sbIDatabaseResult;
 class sbILocalDatabaseAsyncGUIDArray;
 class sbILocalDatabaseLibrary;
 class sbIMediaList;
+class sbLocalDatabaseTreeView;
+class sbLocalDatabaseCascadeFilterSet;
 
 class sbLocalDatabaseMediaListView : public sbIMediaListView,
                                      public sbIMediaListListener,
@@ -78,6 +79,7 @@ public:
 private:
   typedef nsTArray<nsString> sbStringArray;
   typedef nsClassHashtable<nsStringHashKey, sbStringArray> sbStringArrayHash;
+  typedef nsCOMArray<sbIPropertyArray> sbPropertyArrayList;
 
   static PLDHashOperator PR_CALLBACK
     AddFilterToGUIDArrayCallback(nsStringHashKey::KeyType aKey,
@@ -106,7 +108,14 @@ private:
   nsresult Invalidate();
 
   nsresult ClonePropertyArray(sbIPropertyArray* aSource,
-                              sbIPropertyArray** _retval);
+                              sbIMutablePropertyArray** _retval);
+
+  nsresult HasCommonProperty(sbIPropertyArray* aBag1,
+                             sbIPropertyArray* aBag2,
+                             PRBool* aHasCommonProperty);
+
+  nsresult ShouldCauseInvalidation(sbIPropertyArray* aProperties,
+                                   PRBool* aShouldCauseInvalidation);
 
   nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
 
@@ -130,22 +139,25 @@ private:
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
 
   // Filter say for this view, if any
-  nsCOMPtr<sbICascadeFilterSet> mCascadeFilterSet;
+  nsRefPtr<sbLocalDatabaseCascadeFilterSet> mCascadeFilterSet;
 
   // Tree view for this view, if any
-  nsCOMPtr<nsITreeView> mTreeView;
+  nsRefPtr<sbLocalDatabaseTreeView> mTreeView;
 
   // Map of current view filter configuration
   sbStringArrayHash mViewFilters;
 
   // Current search filter configuration
-  nsCOMPtr<sbIPropertyArray> mViewSearches;
+  nsCOMPtr<sbIMutablePropertyArray> mViewSearches;
 
   // Current sort filter configuration
-  nsCOMPtr<sbIPropertyArray> mViewSort;
+  nsCOMPtr<sbIMutablePropertyArray> mViewSort;
 
   // Query to return list of values for a given property
   nsString mDistinctPropertyValuesQuery;
+
+  // Holds the list of propery updates while in a batch
+  sbPropertyArrayList mUpdatedPropertiesInBatch;
 
   // Whether we're in batch mode.
   PRPackedBool mInBatch;

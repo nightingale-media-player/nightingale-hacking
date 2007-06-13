@@ -31,6 +31,7 @@
 #include <nsCOMArray.h>
 #include <nsInterfaceHashtable.h>
 #include <prlock.h>
+#include <sbIPropertyArray.h>
 
 class nsISupportsHashKey;
 class sbIMediaItem;
@@ -56,6 +57,20 @@ class sbLocalDatabaseMediaListListener
     nsCOMPtr<sbIMediaItem> item;
   };
 
+  struct ItemUpdatedCallbackInfo {
+
+    ItemUpdatedCallbackInfo(sbIMediaList* aList,
+                            sbIMediaItem* aItem,
+                            sbIPropertyArray* aProperties)
+    : list(aList),
+      item(aItem),
+      properties(aProperties) { }
+
+    nsCOMPtr<sbIMediaList> list;
+    nsCOMPtr<sbIMediaItem> item;
+    nsCOMPtr<sbIPropertyArray> properties;
+  };
+
 public:
   sbLocalDatabaseMediaListListener();
   ~sbLocalDatabaseMediaListListener();
@@ -69,6 +84,9 @@ protected:
 
   // Remove a listener from the hash table.
   nsresult RemoveListener(sbIMediaListListener* aListener);
+
+  // Return the number of listeners
+  PRUint32 ListenerCount();
 
   // Enumerate listeners and call OnItemAdded
   void NotifyListenersItemAdded(sbIMediaList* aList,
@@ -84,7 +102,8 @@ protected:
 
   // Enumerate listeners and call OnItemRemoved
   void NotifyListenersItemUpdated(sbIMediaList* aList,
-                                  sbIMediaItem* aItem);
+                                  sbIMediaItem* aItem,
+                                  sbIPropertyArray* aProperties);
 
   // Enumerate listeners and call OnListCleared
   void NotifyListenersListCleared(sbIMediaList* aList);
