@@ -1736,9 +1736,10 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
 {
   NS_ENSURE_ARG_POINTER(col);
 
+  nsresult rv;
 #ifdef PR_LOGGING
   PRInt32 colIndex;
-  nsresult rv = col->GetIndex(&colIndex);
+  rv = col->GetIndex(&colIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SetCellText(%d, %d %s)", this,
