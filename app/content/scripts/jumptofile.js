@@ -223,6 +223,8 @@ try
     } catch (err) { /* ignore error, we have default strings */ }
 
     playingUrl_remote = SB_NewDataRemote( "faceplate.play.url", null );
+    //XXXlone > this needs to be replaced by a listener on gBrowser, to detect
+    // the opening and closing of web playlists, and active tab changes !
     showWebPlaylist_remote = SB_NewDataRemote( "browser.playlist.show", null );
 
     const on_playingUrl_change = { 

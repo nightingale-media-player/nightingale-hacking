@@ -91,7 +91,6 @@
         this.enterTabbedMode();
       ]]></constructor>
       <destructor><![CDATA[
-        this.closeBalloonTip();
         this.removeProgressListener(this);
         if (this.tabChangeEventListener) {
           if (this.tabChangeEventListener.timer) {
@@ -251,28 +250,14 @@
       
       <property name="showWebPlaylist">
         <getter><![CDATA[
-          // the value is stored in a data remote
-          return SBDataGetBoolValue('browser.playlist.show');
+          // the value is taken from the current tab
+          return this.currentOuterPlaylistShowing;
         ]]></getter>
         <setter><![CDATA[
-          // boolify the value that's passed in
+          // boolify the value that is passed in
         
           var value = (val)?true:false;
-          
           this.currentOuterPlaylistShowing = value;
-          
-          if (!value) {
-            // if the balloontip for the webplaylist is shown, close it
-            this.closeBalloonTip();
-            // if we're hiding the web playlist then unhook it from the UI
-            if (this.playlist) {
-              this.playlist.datasources = "";
-              this.playlist.ref = "";
-            }
-          } else {
-            // open the balloontip if needed
-            this.openBalloonTip();
-          }
         ]]></setter>
       </property>
 
@@ -928,33 +913,6 @@
           this.loadURI(this.homePage, null, null);
         ]]></body>
       </method>
-
-      <method name="openBalloonTip">
-        <body><![CDATA[
-          if (!SBDataGetBoolValue("balloontip.firstwebplaylist.shown")) {
-            this.balloontip = new BalloonTip;
-            var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-            var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-            var title = "Found media."
-            var text = "Songbird has found the following playable tracks."
-            try {
-              title = songbirdStrings.GetStringFromName("balloontip.firstwebplaylist.title");
-              text = songbirdStrings.GetStringFromName("balloontip.firstwebplaylist.text");
-            } catch (e) { }
-            this.balloontip.showText(text, this.playlist, title, 'balloon-icon-songbird', null, -1);
-            SBDataSetBoolValue("balloontip.firstwebplaylist.shown", true);
-          }
-        ]]></body>
-      </method>
-      
-      <method name="closeBalloonTip">
-        <body><![CDATA[
-          if (this.balloontip) {
-            this.balloontip.closeTip();
-            this.balloontip = null;
-          }
-        ]]></body>
-      </method>
       
       <method name="_getUnicodeStringPref">
         <parameter name="prefKey"/>
@@ -1098,6 +1056,7 @@
         }; this._onplaylistplay._that = this; 
       ]]></constructor>
      <destructor><![CDATA[
+        this.closeBalloonTip();
         if (this.previousInnerPlaylist) {
           this.previousInnerPlaylist.removeEventListener("playlist-play", this._onplaylistplay, true);
           this.previousInnerPlaylist.removeEventListener("playlist-editor", this.onPlaylistEditor, true);
@@ -1246,7 +1205,7 @@
           
           nbox.appendChild(this._plbox);
           
-          this.outerPlaylistShowing = true;
+          this.outerPlaylistShowing = false;
         ]]></body>
       </method>
       
@@ -1282,8 +1241,17 @@
           this._playlist.setAttribute('hidden', hidden);
           */
           this._plbox.setAttribute('hidden', hidden);
+
+          if (!val) {
+            // if the balloontip for the webplaylist is shown, close it
+            this.closeBalloonTip();
+          } else {
+            // open the balloontip if needed
+            this.openBalloonTip();
+          }
         ]]></setter>
       </property>
+
       
       <!-- sbITabBrowserTab -->
       <property name="innerPlaylist" readonly="true">
@@ -1734,6 +1702,32 @@
         </body>
       </method>
     
+      <method name="openBalloonTip">
+        <body><![CDATA[
+          if (!SBDataGetBoolValue("balloontip.firstwebplaylist.shown")) {
+            this.balloontip = new BalloonTip;
+            var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+            var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+            var title = "Found media."
+            var text = "Songbird has found the following playable tracks."
+            try {
+              title = songbirdStrings.GetStringFromName("balloontip.firstwebplaylist.title");
+              text = songbirdStrings.GetStringFromName("balloontip.firstwebplaylist.text");
+            } catch (e) { }
+            this.balloontip.showText(text, this._playlist, title, 'balloon-icon-songbird', null, -1);
+            SBDataSetBoolValue("balloontip.firstwebplaylist.shown", true);
+          }
+        ]]></body>
+      </method>
+      
+      <method name="closeBalloonTip">
+        <body><![CDATA[
+          if (this.balloontip) {
+            this.balloontip.closeTip();
+            this.balloontip = null;
+          }
+        ]]></body>
+      </method>
 
 
 
