@@ -558,7 +558,14 @@ function ServicePaneService_getNode(aId) {
   }
   
   return new ServicePaneNode(this._dataSource, resource);
-  
+}
+
+ServicePaneService.prototype.getNodeForURL =
+function ServicePaneService_getNodeForURL(aURL) {
+  var ncURL = RDFSVC.GetResource(NC+"URL");
+  var url = RDFSVC.GetLiteral(aURL);
+  var target = this._dataSource.GetSource(ncURL, url, true);
+  return (target) ? this.getNode(target.Value) : null;
 }
 
 ServicePaneService.prototype.save =

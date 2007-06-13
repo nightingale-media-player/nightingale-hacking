@@ -196,6 +196,12 @@ interface sbIServicePaneService : nsISupports
    */
   sbIServicePaneNode getNode(in AString aId);
 
+  /* \brief Get the first node object for the given url
+   * \param aURL the url of the desired node
+   * \return node object, or null if it couldn't be found
+   */
+  sbIServicePaneNode getNodeForURL(in AString aURL);
+
   /* \brief Save the state of the tree to disk.
    * This should go away and be handled magically
    */
