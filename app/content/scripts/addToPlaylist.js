@@ -36,6 +36,7 @@ const ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist_createne
 var addToPlaylistHelper = {
   m_listofplaylists: null,
   m_commands: null,
+  m_reglist: null,
 
   init: function(aCommands) {
     var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
@@ -50,19 +51,17 @@ var addToPlaylistHelper = {
   },
   
   removeListeners: function() {
-    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                        .getService(Components.interfaces.sbILibraryManager);
-    
-    var libs = libraryManager.getLibraries();
-    while (libs.hasMoreElements()) {
-      var library = libs.getNext();
-      library.removeListener(this);
+    if (this.m_reglist) {
+      for (var i in this.m_reglist) {
+        this.m_reglist[i].removeListener(this);
+      }
     }
+    this.m_reglist = new Array();
   },
     
   makeListOfPlaylists: function( ) {
-    // no need to remove listeners, the library is fine with multiple additions of the same items
-    // this.removeListeners();
+    // remove previous listeners
+    this.removeListeners();
     
     // todo: make this smarter :(
     var typearray = new Array('simple');
@@ -80,6 +79,7 @@ var addToPlaylistHelper = {
     while (libs.hasMoreElements()) {
       var library = libs.getNext();
       library.addListener(this);
+      this.m_reglist.push(library);
       this.makePlaylistsForLibrary(library, typearray);
     }
     
