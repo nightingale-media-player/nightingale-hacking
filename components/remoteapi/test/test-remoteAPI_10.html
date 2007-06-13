@@ -49,8 +49,10 @@
           var indexed  = enumerator.getNext();
           var item  = indexed.mediaItem;
           count++;
-          myDiv.appendChild( document.createTextNode( "selected track is: " +
-            item.getProperty("http://songbirdnest.com/data/1.0#trackName") ) );
+          myDiv.appendChild(
+            document.createTextNode( "selected track is: " +
+                                     item.getProperty("http://songbirdnest.com/data/1.0#trackName") +
+                                     " index: " + indexed.index ) );
           myDiv.appendChild(document.createElement("br"));
         }
         myDiv.appendChild(document.createTextNode("selection count is:" + count));
