@@ -223,6 +223,7 @@ function doLoad()
     srcURLTextbox.value = args.defaultUrl ? args.defaultUrl : "http://";
     timeTextbox.value = "1";
     unitMenulist.value = "days";
+    destURLTextbox.value = SBDataGetStringValue( "download.folder" );
   }
 
   // focus the ok button by default
@@ -235,7 +236,8 @@ function doOK()
   // Make sure the folder is valid
   var folder = document.getElementById("subscribe_folder_path").value;
   var localFile;
-  if (folder != "") {
+//  if (folder != "") // Uncomment this when the download device won't puke on blank.
+  {
     var folderIsValid = false;
 
     localFile = Cc["@mozilla.org/file/local;1"]
