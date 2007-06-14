@@ -52,6 +52,8 @@
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 #include <sbILibraryResource.h>
+#include <sbILocalDatabaseLibrary.h>
+#include <sbILocalDatabasePropertyCache.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbISQLBuilder.h>
@@ -482,8 +484,11 @@ public:
 
   ~sbMetadataBatchHelper()
   {
-    if ( mList )
+    if ( mList ) {
+      //XXX Remove when #3037 is fixed.
+      WriteCache();
       mList->EndUpdateBatch();
+    }
   }
 
   void SetList(sbIMediaList* aList)
@@ -497,12 +502,37 @@ public:
   {
     if ( mList )
     {
+      //XXX Remove when #3037 is fixed.
+      WriteCache();
       mList->EndUpdateBatch();
       mList->BeginUpdateBatch();
     }
   }
 
+  nsresult WriteCache() {
+    // XXXsteve HACK to make sure the properties get written.  This should be
+    // removed once we get rid of sbIResourceProperty::Write()
+    nsresult rv;
+
+    nsCOMPtr<sbILibrary> library = do_QueryInterface(mList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILocalDatabaseLibrary> localLibrary =
+      do_QueryInterface(library, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILocalDatabasePropertyCache> propertyCache;
+    rv = localLibrary->GetPropertyCache(getter_AddRefs(propertyCache));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = propertyCache->Write();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
+  }
+
 private:
+
   nsCOMPtr<sbIMediaList> mList;
 };
 
@@ -613,7 +643,10 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
   if ( library )
   {
     // Flush properties cache on completion.
-    rv = library->Write();
+    //XXX Remove when #3037 is fixed.
+    rv = batchHelper.WriteCache();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     NS_ENSURE_SUCCESS(rv, rv);
     // Along with the written bits.
     rv = SetItemsAreWrittenAndDelete( WorkerThreadQuery, aTableName, writePending );
