@@ -1285,7 +1285,7 @@
   <binding id="numplaylistitems-label" xextends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
     <content>
-      <xul:label sbid="label" xbl:inherits="id,class,value,align,crop,disabled,flex,drag_window"/> 
+      <xul:label sbid="label" xbl:inherits="id,class,value,align,crop,disabled,flex"/> 
     </content>
 
     <implementation>

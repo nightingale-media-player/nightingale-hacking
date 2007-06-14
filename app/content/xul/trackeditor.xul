@@ -51,13 +51,13 @@
     <sb-sys-dialog-titlebar/>
     <menubar id="trackeditor_menu" hidden="false"  oncommand="onMenu(event.target)"/>
     
-    <spacer height="3" drag_window="true"/>
+    <spacer height="3"/>
     
-    <description  drag_window="true">
+    <description>
       &trackeditor.disclaimer;
     </description>
     
-    <spacer height="8" drag_window="true"/>
+    <spacer height="8"/>
     
     <hbox id="trackeditor.hflex">
       <sb-trackeditor-drawer id="trackeditor.trackeditor" hflex="trackeditor.hflex" title="&trackeditor.trackdata;" flex="1" />

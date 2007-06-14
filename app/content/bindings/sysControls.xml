@@ -300,9 +300,6 @@
           
           // Hidden when "Plucked" ("accessibility.enabled" == "1")
           this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
-          
-          // This whole kaboodle is always draggable
-          this.setAttribute( "drag_window", "true" );
         ]]>
       </constructor>
       <destructor>
@@ -344,9 +341,6 @@
           else
             // Hidden on all but Mac
             document.getAnonymousElementByAttribute(this, 'sbid', 'show_mac').setAttribute( "hidden", "true" ); 
-          
-          // This whole kaboodle is always draggable
-          this.setAttribute( "drag_window", "true" );
 
           // Note:  Doesn't disappear in "plucked" mode -- essentially it becomes the Menubar.
         ]]>

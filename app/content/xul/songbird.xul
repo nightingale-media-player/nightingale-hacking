@@ -46,8 +46,6 @@
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 
-   
-  spacers_drag_window="true"
 >
   <!-- Sometimes we need to convince the DTD files to not be stupid
   <script type="application/x-javascript"   
@@ -160,8 +158,6 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/globalhotkeys.js" />
 
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js"/>
 

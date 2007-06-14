@@ -54,8 +54,6 @@
   title="&window.dev.title;"
   windowtype="Songbird:Main"
 
-  spacers_drag_window="true"
-  
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -75,7 +73,7 @@
     ondragdrop="nsDragAndDrop.drop( event, SBDropObserver )"
   >
     <!-- ?! XBL has hbox orientation for its children, no matter what.  Grr. -->
-    <vbox flex="1" drag_window="true">
+    <vbox flex="1">
 
       <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
       <sb-sys-titlebar>
@@ -89,19 +87,19 @@
       </sb-sys-titlebar>
       
       <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
-      <hbox id="frame_mini" hidden="true" drag_window="true">
+      <hbox id="frame_mini" hidden="true">
         <!-- MINI PLAYER DISPLAY AND CONTROLS -->
         <sb-mini-player-controls flex="1"/>
       </hbox>
 
 
       <!-- inner_frame -->
-      <vbox id="frame_inner_pane" flex="1" drag_window="true">
+      <vbox id="frame_inner_pane" flex="1">
         
         <!-- CONTROL PANE -->
-        <hbox id="frame_control_pane" pack="center" align="center" drag_window="true">
+        <hbox id="frame_control_pane" pack="center" align="center">
 
-          <vbox id="control_left_box" pack="center" align="center" drag_window="true">
+          <vbox id="control_left_box" pack="center" align="center">
             <!-- PLAY BUTTONS -->
             <hbox id="playbutton_box" pack="center" align="center">
               <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>

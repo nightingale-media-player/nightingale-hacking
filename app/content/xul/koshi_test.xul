@@ -38,9 +38,6 @@
  hidechrome="true"
  onkeypress="if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doCancel() ) onExit(); }"
  onload="doLoad();"
-
-  
- spacers_drag_window="true"
 >
   
   <windowregion/>
@@ -61,8 +58,6 @@
     </hbox>
   </sb-sys-outer-frame>
   
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js" />
   <script>

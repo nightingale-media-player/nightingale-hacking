@@ -43,7 +43,7 @@
  xmlns:sp="http://songbirdnest.com/rdf/servicepane"
 >
   <sb-sys-outer-frame id="jumpto_frame" flex="1">
-    <spacer height="5" drag_window="true"/>
+    <spacer height="5"/>
     <hbox align="center">
       <menulist id="playable_list" 
         value="1" 

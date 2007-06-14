@@ -156,14 +156,8 @@ var gMiniplayer = {
    */
   onDblClick: function onDblClick( evt ) 
   {
-    dump("\nMiniplayer." + arguments.callee.name + "\n");  
-  
-    // TODO this will have to change when the drag_window code is updated.
-    // The drag_window code currently doesn't work with xbled elements    
-  
-    // If the clicked element can be used to drag the window
-    // then interpret a double click as "switch back to main mode"
-    if (evt.target.getAttribute("drag_window") == "true") {
+    dump("\nMiniplayer." + arguments.callee.name + "\n"); 
+    if (evt.target.tagName == 'draggable') {
       this.revertFeathers();
     }
   },  
