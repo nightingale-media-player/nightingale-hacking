@@ -443,20 +443,29 @@
     }
   };
 
-  // Create the filters
+  // Hide the playlist splitter
+  var psplitter =
+    document.getAnonymousElementByAttribute(this, "sbid", "filter_splitter");
+  psplitter.setAttribute("hidden","true");
+
+  // Get and empty the parent    
   var parent =
     document.getAnonymousElementByAttribute(this, "sbid", "filter_parent");
   this._removeAllChildren(parent);
 
+  // Create the filters based upon the cascadeFilterSet data.
   var cfs = mediaListView.cascadeFilterSet;
   var length = cfs.length;
-  
   for (var i = 0; i < length; i++) {
     // If this is a search then keep going.
     if (cfs.isSearch(i)) {
       continue;
     }
+  
+    // Once we know we have at least one filter, show the playlist splitter. 
+    psplitter.removeAttribute("hidden");
     
+    // And start creating the filter
     var filterlist = document.createElementNS(this._XUL_NS, "filterlist2");
     filterlist.setAttribute("enableColumnDrag", "false");
     filterlist.setAttribute("hidecolumnpicker", "true");
