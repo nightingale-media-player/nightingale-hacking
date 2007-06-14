@@ -942,6 +942,25 @@ sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
 #endif
 
   nsresult rv;
+
+  // If the list itself is getting updated (rather than an item in the list),
+  // we always invalidate.  This happens when items in a simple media list is
+  // reordered
+  PRBool isList;
+  rv = mMediaList->Equals(aMediaItem, &isList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (isList) {
+    if (mInBatch) {
+      mInvalidatePending = PR_TRUE;
+    }
+    else {
+      nsresult rv = Invalidate();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    return NS_OK;
+  }
+
   PRBool shouldInvalidate = PR_FALSE;
 
   if (mInBatch) {

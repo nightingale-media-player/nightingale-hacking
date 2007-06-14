@@ -728,6 +728,13 @@ sbLocalDatabaseTreeView::InvalidateRowsByGuid(const nsAString& aGuid)
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (first >= 0 && last >= 0) {
+      PRUint32 length;
+      rv = mArray->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if ((PRUint32) last >= length)
+        last = length - 1;
+
       for (PRUint32 row = first; row <= (PRUint32) last; row++) {
         nsAutoString guid;
         rv = mArray->GetGuidByIndex(row, guid);
