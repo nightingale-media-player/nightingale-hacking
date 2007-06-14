@@ -39,7 +39,6 @@
  hidechrome="true"
  ondialogaccept="return doOK();"
  ondialogcancel="return doCancel();"
- spacers_drag_window="true"
 >
   <windowregion/>
   <sb-sys-outer-frame resizers="none" flex="1">
@@ -63,8 +62,6 @@
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-  <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js" />
   <script>

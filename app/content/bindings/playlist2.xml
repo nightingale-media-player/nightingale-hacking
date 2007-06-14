@@ -34,7 +34,7 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
 
   <binding id="playlist2">
-    <content>
+    <content mousethrough="never">
       <stack flex="1" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
       <vbox sbid="loading_box" pack="end" align="right" flex="1" >
           <vbox id="loading_box"  flex="1">

@@ -1032,7 +1032,7 @@
 
   <!-- these are from globalBindings.xml -->
   <binding id="tabbrowser-tab" extends="chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser-tab">
-    <content closetabtext="&tabs.closeTab;">
+    <content closetabtext="&tabs.closeTab;" mousethrough="never">
       <xul:hbox class="tab-image-left" xbl:inherits="selected"/>
       <xul:hbox flex="1" class="tab-image-middle" align="center" xbl:inherits="selected">
         <xul:stack class="tab-icon">

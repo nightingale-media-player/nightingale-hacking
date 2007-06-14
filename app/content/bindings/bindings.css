@@ -372,3 +372,8 @@ sb-locationbar-textbox {
 sb-browser-spinner {
   -moz-binding: url("chrome://songbird/content/bindings/spinner.xml#browser-spinner") !important;
 }
+
+/* DRAGGABLE */
+draggable {
+  -moz-binding: url("chrome://songbird/content/bindings/draggable.xml#draggable") !important;
+}

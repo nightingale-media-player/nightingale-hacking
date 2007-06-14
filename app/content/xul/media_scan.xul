@@ -38,9 +38,6 @@
  onload="return onLoad();"
  flex="1"
  hidechrome="true"
-
-  
- spacers_drag_window="true"
 >
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
 
@@ -94,8 +91,6 @@
    src="chrome://songbird/content/scripts/watch_folders.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/media_scan.js" />
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js" />
 </window>

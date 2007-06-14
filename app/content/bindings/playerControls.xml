@@ -690,7 +690,7 @@
   <binding id="totaltime-label">
   
    <content>
-     <xul:label sbid="timelabel" xbl:inherits="class,align,crop,disabled,flex,drag_window" onmousedown="onTotalDown();"/> 
+     <xul:label sbid="timelabel" xbl:inherits="class,align,crop,disabled,flex" onmousedown="onTotalDown();"/> 
    </content>
 
   <implementation>

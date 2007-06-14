@@ -85,7 +85,7 @@
              as that would break OSX menu handling. 
              See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
           -->
-        <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" />  
+        <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" mousethrough="never" />  
       </sb-sys-titlebar>
       
       <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
@@ -216,8 +216,6 @@
    src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
 
   <!-- Load the Songbird stuff -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/window_utils.js" />
   <script type="application/x-javascript"  

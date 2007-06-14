@@ -38,7 +38,7 @@
       <xul:vbox class="servicepane_box" flex="1">
         <xul:vbox flex="1">
           <xul:vbox style="-moz-binding:url(#treepane)" flex="1"
-                anonid="treepane" xbl:inherits="browser"/>
+                anonid="treepane" xbl:inherits="browser" mousethrough="never" />
           <xul:vbox style="-moz-binding:url(#toolbar)"
                 anonid="toolbar" />
         </xul:vbox>
@@ -101,6 +101,7 @@
       <xul:tree class="servicepane_tree" anonid="tree" flex="1"
             datasources="rdf:null" ref="SB:Root"
             hidecolumnpicker="true" seltype="single"
+            mousethrough="never"
             >
         <!-- hide the column header - is there a better way? -->
         <xul:treecols style="height:0px">

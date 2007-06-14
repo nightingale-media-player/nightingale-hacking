@@ -36,7 +36,7 @@
       <xul:stack flex="1">
         <children/>
         <xul:progressmeter sbid="seekbar_progress" class="sb-progress-slider-progressmeter" xbl:inherits="orient" flex="1"/>
-        <xul:slider sbid="seekbar_slider" class="sb-progress-slider-slider" xbl:inherits="disabled=disabled,orient=orient,maxpos=maxpos" pageincrement="0" flex="1" onmousedown="slidermousedown(event)" onmouseup="slidermouseup(event)" onmousemove="slidermousemove(event)" > 
+        <xul:slider sbid="seekbar_slider" class="sb-progress-slider-slider" xbl:inherits="disabled=disabled,orient=orient,maxpos=maxpos" pageincrement="0" flex="1" onmousedown="slidermousedown(event)" onmouseup="slidermouseup(event)" onmousemove="slidermousemove(event)" mousethrough="never"> 
           <xul:thumb sbid="seekbar_thumb" class="sb-progress-slider-thumb" xbl:inherits="id=thumbid"/>  
         </xul:slider>
       </xul:stack>

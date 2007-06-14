@@ -395,9 +395,9 @@
               <xul:spacer hidden="true" sbid="x6" class="sb-sys-outer-frame-resizer-lb"/>
             </xul:vbox>
 
-            <xul:vbox id="children" sbid="children" class="chrome_bkgd" flex="1" style="overflow: hidden !important;">
+            <xul:draggable id="children" sbid="children" class="chrome_bkgd" flex="1" style="overflow: hidden !important;">
               <children/>
-            </xul:vbox>
+            </xul:draggable>
                   
             <xul:vbox>
               <xul:resizer hidden="true" sbid="r7" class="sb-sys-outer-frame-resizer-rt" dir="topright" style="cursor: ne-resize;"/>
