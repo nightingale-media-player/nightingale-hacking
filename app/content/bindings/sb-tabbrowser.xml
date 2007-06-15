@@ -106,7 +106,10 @@
       <!-- the public interface for loading URLs.
            this overrides the implementation in tabbrowser.xml#tabbrowser
            it takes the existing aURI, aReferrerURI and aCharset arguments
-           and optionally an aEvent handler
+           and optionally an aEvent and aMediaListView.  
+           
+           aMediaListView will be provided to the tab and used if a 
+           playlist is loaded.
            -->
       <method name="loadURI">
         <parameter name="aURI"/>
@@ -114,6 +117,7 @@
         <parameter name="aCharset"/>
         <parameter name="aEvent"/>
         <parameter name="aDefaultLocation"/>
+        <parameter name="aMediaListView"/>
         <body>
           <![CDATA[
             var where = aDefaultLocation?aDefaultLocation:'current';
@@ -152,7 +156,8 @@
             
             // Now, actually open the URI
             if (where == "tab") {
-              this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
+              var tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
+              tab.viewForNextPlaylist = aMediaListView;
             } else if (where == "external") {
               var externalLoader = (Components
                     .classes["@mozilla.org/uriloader/external-protocol-service;1"]
@@ -164,6 +169,7 @@
               externalLoader.loadURI(nsURI, null);
             } else if (where == "current") {
               this.mCurrentBrowser.loadURI(aURI, aReferrerURI, aCharset);
+              this.mCurrentTab.viewForNextPlaylist = aMediaListView;
             } else {
               // eek! unknown target
             }
@@ -1389,7 +1395,7 @@
         ]]></body>
       </method>
       
-      <field name="applyThisView">null</field>
+      <field name="viewForNextPlaylist">null</field>      
 
       <method name="setUpInnerPlaylist">
         <body><![CDATA[ try {
@@ -1407,11 +1413,11 @@
             var entry = history.getEntryAtIndex( history.index, false );
             
             // someone wants us to apply a view
-            if (this.applyThisView) {
-              playlist.bind(this.applyThisView, playlist.commands);
+            if (this.viewForNextPlaylist) {
+              playlist.bind(this.viewForNextPlaylist, playlist.commands);
               // save this mapping I guess 
-              viewMap.setView(browser, entry, this.applyThisView);
-              this.applyThisView = null;
+              viewMap.setView(browser, entry, this.viewForNextPlaylist);
+              this.viewForNextPlaylist = null;
             } else {
               // Is there something to restore?
               var restore = viewMap.getView( browser, entry );

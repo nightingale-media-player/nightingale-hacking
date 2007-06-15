@@ -1483,6 +1483,7 @@
               try {
                 gPPS.playingView.treeView.selection.clearSelection();
                 gPPS.playingView.treeView.selection.select( currentIndex );
+                gPPS.playingView.treeView.selection.tree.ensureRowIsVisible( currentIndex );
               } catch ( e ) { 
                 dump("\n************\ncurtrack-button::onCurrentTrack\n" + 
                       "Steve says that this should work!\n\n" + e + 
@@ -1500,8 +1501,9 @@
           } else {
             var mediaList = gPPS.playingView.mediaList;
             gBrowser.loadURI("chrome://songbird/content/xul/playlist_test2.xul?" +
-                             'library,' + mediaList.library.guid);
-            gBrowser.mCurrentTab.applyThisView = gPPS.playingView;
+                             'library,' + mediaList.library.guid, 
+                             null, null, null, null,
+                             gPPS.playingView);
           }
           ]]>
         </body>
