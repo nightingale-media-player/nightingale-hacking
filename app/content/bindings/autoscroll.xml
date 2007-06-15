@@ -58,8 +58,15 @@
           _that: null, 
           handleEvent: function( event ) { this._that.onMutationEvent(); } 
         }; this.mutationevent._that = this; 
+        
         // adjust orientation
-        if (this.isVertical()) this.setAttribute("style", "-moz-box-orient: horizontal"); else this.setAttribute("style", "-moz-box-orient: vertical");
+        if (this.isVertical()) {
+          this.setAttribute("style", "-moz-box-orient: horizontal"); 
+        }
+        else {
+          this.setAttribute("style", "-moz-box-orient: vertical");
+        }
+        
         // deferred initialization
         setTimeout(function(obj) { obj.start(); }, 0, this);
        ]]>
@@ -245,6 +252,7 @@
          this.setAlignment();
          this.setCursor();
          this.startAnimationTimer();
+         this.setAttribute("mousethrough", "never");
         ]]>
        </body>
      </method>
@@ -259,6 +267,7 @@
          this.setAlignment();
          this.setCursor();
          this.stopAnimationTimer();
+         this.removeAttribute("mousethrough");
         ]]>
        </body>
      </method>
