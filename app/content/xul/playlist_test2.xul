@@ -442,9 +442,11 @@ try
             SBProperties.albumName,
             SBProperties.trackName
           ], 3);
-          filter.appendFilter(SBProperties.year);
-          filter.appendFilter(SBProperties.artistName);
-          filter.appendFilter(SBProperties.albumName);
+          if ( mediaListGUID == "library" ) {
+            filter.appendFilter(SBProperties.year);
+            filter.appendFilter(SBProperties.artistName);
+            filter.appendFilter(SBProperties.albumName);
+          }
 
           // If a search parameter was passed in, use it
           var searchTerm = getQueryStringParam("search", url);
