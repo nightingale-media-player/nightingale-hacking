@@ -1475,24 +1475,24 @@
           }
           
           // Create a self-calling function to try to set the selection over time.
-          function selectIndex( count ) {
+          function selectCurrentIndex( iterationCount ) {
             // Tell the view to select the item?  
             // Steve says I need no context beyond what gPPS has.
-            var index = gPPS.currentIndex;
-            if ( index > -1 ) {
+            var currentIndex = gPPS.currentIndex;
+            if ( currentIndex > -1 ) {
               try {
                 gPPS.playingView.treeView.selection.clearSelection();
-                gPPS.playingView.treeView.selection.select( index );
+                gPPS.playingView.treeView.selection.select( currentIndex );
               } catch ( e ) { 
                 dump("\n************\ncurtrack-button::onCurrentTrack\n" + 
                       "Steve says that this should work!\n\n" + e + 
                       "\n\n************\n");
-                if ( count++ < 20 ) 
-                  setTimeout( selectIndex, 250, count );
+                if ( iterationCount++ < 20 ) 
+                  setTimeout( selectCurrentIndex, 250, iterationCount );
               }
             }
           }
-          selectIndex( 0 );
+          selectCurrentIndex( 0 );
 
           var tab = gBrowser.getTabForView(gPPS.playingView);          
           if (tab) {
