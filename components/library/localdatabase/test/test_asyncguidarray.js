@@ -254,7 +254,7 @@ function runTest () {
   array.databaseGUID = databaseGUID;
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
-  array.addSort("http://songbirdnest.com/data/1.0#track", true);
+  array.addSort("http://songbirdnest.com/data/1.0#trackNumber", true);
 
   currentPhase = 0;
 

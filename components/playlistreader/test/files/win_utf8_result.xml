@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <item-tests>
-  <item-test property="#contentUrl" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/01%20-%20%C3%A7%C2%99%C2%BD%C3%A3%3F%C2%84%C3%A5%C2%AD%C2%A3%C3%A7%C2%AF%C2%80%C3%AF%C2%BC%C2%88Remix%20Ver.%C3%AF%C2%BC%C2%89.mp3">
-    <assert-property-value name="#contentUrl" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/01%20-%20%C3%A7%C2%99%C2%BD%C3%A3%3F%C2%84%C3%A5%C2%AD%C2%A3%C3%A7%C2%AF%C2%80%C3%AF%C2%BC%C2%88Remix%20Ver.%C3%AF%C2%BC%C2%89.mp3"/>
+  <item-test property="#contentURL" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/01%20-%20%C3%A7%C2%99%C2%BD%C3%A3%3F%C2%84%C3%A5%C2%AD%C2%A3%C3%A7%C2%AF%C2%80%C3%AF%C2%BC%C2%88Remix%20Ver.%C3%AF%C2%BC%C2%89.mp3">
+    <assert-property-value name="#contentURL" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/01%20-%20%C3%A7%C2%99%C2%BD%C3%A3%3F%C2%84%C3%A5%C2%AD%C2%A3%C3%A7%C2%AF%C2%80%C3%AF%C2%BC%C2%88Remix%20Ver.%C3%AF%C2%BC%C2%89.mp3"/>
   </item-test>
-  <item-test property="#contentUrl" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/02%20-%20%C3%A9%C2%A2%C2%A8%C3%A3%3F%C2%AB%C3%A4%C2%B9%C2%97%C3%A3%3F%C2%A3%C3%A3%3F%C2%A6.mp3">
-    <assert-property-value name="#contentUrl" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/02%20-%20%C3%A9%C2%A2%C2%A8%C3%A3%3F%C2%AB%C3%A4%C2%B9%C2%97%C3%A3%3F%C2%A3%C3%A3%3F%C2%A6.mp3"/>
+  <item-test property="#contentURL" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/02%20-%20%C3%A9%C2%A2%C2%A8%C3%A3%3F%C2%AB%C3%A4%C2%B9%C2%97%C3%A3%3F%C2%A3%C3%A3%3F%C2%A6.mp3">
+    <assert-property-value name="#contentURL" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/02%20-%20%C3%A9%C2%A2%C2%A8%C3%A3%3F%C2%AB%C3%A4%C2%B9%C2%97%C3%A3%3F%C2%A3%C3%A3%3F%C2%A6.mp3"/>
   </item-test>
-  <item-test property="#contentUrl" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/06%20-%20%C3%A3%3F%C2%AF%C3%A3%3F%C2%98%C3%A3%3F%C2%BE%C3%A3%C2%82%C2%8A%C3%A3%3F%C2%AE%C3%A3%3F%C2%95%C3%A3%C2%82%C2%88%C3%A3%3F%C2%AA%C3%A3%C2%82%C2%89.mp3">
-    <assert-property-value name="#contentUrl" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/06%20-%20%C3%A3%3F%C2%AF%C3%A3%3F%C2%98%C3%A3%3F%C2%BE%C3%A3%C2%82%C2%8A%C3%A3%3F%C2%AE%C3%A3%3F%C2%95%C3%A3%C2%82%C2%88%C3%A3%3F%C2%AA%C3%A3%C2%82%C2%89.mp3"/>
+  <item-test property="#contentURL" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/06%20-%20%C3%A3%3F%C2%AF%C3%A3%3F%C2%98%C3%A3%3F%C2%BE%C3%A3%C2%82%C2%8A%C3%A3%3F%C2%AE%C3%A3%3F%C2%95%C3%A3%C2%82%C2%88%C3%A3%3F%C2%AA%C3%A3%C2%82%C2%89.mp3">
+    <assert-property-value name="#contentURL" value="file:///H:/Media/Music/Little%20Sister_Special%20Sound%20Album/06%20-%20%C3%A3%3F%C2%AF%C3%A3%3F%C2%98%C3%A3%3F%C2%BE%C3%A3%C2%82%C2%8A%C3%A3%3F%C2%AE%C3%A3%3F%C2%95%C3%A3%C2%82%C2%88%C3%A3%3F%C2%AA%C3%A3%C2%82%C2%89.mp3"/>
   </item-test>
 </item-tests>

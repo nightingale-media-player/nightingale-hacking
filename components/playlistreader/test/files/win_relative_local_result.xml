@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <item-tests>
-  <item-test property="#contentUrl" value="file:///c:/Documents%20and%20Settings/steve/Desktop/mp3/file1.mp3">
-    <assert-property-value name="#contentUrl" value="file:///c:/Documents%20and%20Settings/steve/Desktop/mp3/file1.mp3"/>
+  <item-test property="#contentURL" value="file:///c:/Documents%20and%20Settings/steve/Desktop/mp3/file1.mp3">
+    <assert-property-value name="#contentURL" value="file:///c:/Documents%20and%20Settings/steve/Desktop/mp3/file1.mp3"/>
   </item-test>
-  <item-test property="#contentUrl" value="file:///c:/Documents%20and%20Settings/steve/Desktop/mp3/file2.mp3">
-    <assert-property-value name="#contentUrl" value="file:///c:/Documents%20and%20Settings/steve/Desktop/mp3/file2.mp3"/>
+  <item-test property="#contentURL" value="file:///c:/Documents%20and%20Settings/steve/Desktop/mp3/file2.mp3">
+    <assert-property-value name="#contentURL" value="file:///c:/Documents%20and%20Settings/steve/Desktop/mp3/file2.mp3"/>
   </item-test>
-  <item-test property="#contentUrl" value="file:///c:/Documents%20and%20Settings/steve/Desktop/music/file3.mp3">
-    <assert-property-value name="#contentUrl" value="file:///c:/Documents%20and%20Settings/steve/Desktop/music/file3.mp3"/>
+  <item-test property="#contentURL" value="file:///c:/Documents%20and%20Settings/steve/Desktop/music/file3.mp3">
+    <assert-property-value name="#contentURL" value="file:///c:/Documents%20and%20Settings/steve/Desktop/music/file3.mp3"/>
   </item-test>
 </item-tests>
 

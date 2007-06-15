@@ -43,12 +43,12 @@
     <vbox flex="1">
       <hbox align="center">
         <label id="trackeditor.label.guid"  value="&metadata.uuid;" width="96"/>
-        <dbedit_label id="trackeditor.guid" column="http://songbirdnest.com/data/1.0#guid" flex="1"/>
+        <dbedit_label id="trackeditor.guid" column="http://songbirdnest.com/data/1.0#GUID" flex="1"/>
       </hbox>
       <spacer height="3"/>
       <hbox align="center">
         <label id="trackeditor.label.url"  value="&metadata.url;" width="96"/>
-        <dbedit_label id="trackeditor.url" column="http://songbirdnest.com/data/1.0#contentUrl" flex="1"/>
+        <dbedit_label id="trackeditor.url" column="http://songbirdnest.com/data/1.0#contentURL" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.title"  value="&metadata.title;" width="96"/>

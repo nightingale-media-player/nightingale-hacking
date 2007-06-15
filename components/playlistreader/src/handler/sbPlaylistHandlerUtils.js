@@ -63,7 +63,7 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
 
   // If aAddDistinctOnly is true, remove all items from the aItems array that
   // are already in this list.  List membership is based on matching either
-  // the #contentUrl or #originURL properties
+  // the #contentURL or #originURL properties
   if (aAddDistinctOnly) {
 
     // De-dup aItems by uri
@@ -74,7 +74,7 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
           aItems.splice(j, 1);
     }
 
-    // Remove all the items from aItems that have matching #contentUrl
+    // Remove all the items from aItems that have matching #contentURL
     // property values
     var propertyArray = SBProperties.createArray();
     aItems.forEach(function(e) {

@@ -59,7 +59,7 @@ function runTest () {
         return true;
       }
     };
-    library.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#contentUrl",
+    library.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#contentURL",
                                      item.contentSrc.spec,
                                      listener,
                                      Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);

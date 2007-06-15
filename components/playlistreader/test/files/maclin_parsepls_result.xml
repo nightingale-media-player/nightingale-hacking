@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <item-tests>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="file:///home/Media/Music/Aus/2006-06-25%5C%20%5C(Abstract,%5C%20Techno,%5C%20Punk%5C).mp3"
   >
     <assert-property-value
-      name="#contentUrl"
+      name="#contentURL"
       value="file:///home/Media/Music/Aus/2006-06-25%5C%20%5C(Abstract,%5C%20Techno,%5C%20Punk%5C).mp3"
     />
     <assert-property-value
@@ -18,11 +18,11 @@
     />
   </item-test>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="file:///home/foo1.mp3"
   >
     <assert-property-value
-      name="#contentUrl"
+      name="#contentURL"
       value="file:///home/foo1.mp3"
     />
     <assert-property-value
@@ -31,11 +31,11 @@
     />
   </item-test>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="http://216.66.69.246:8072/"
   >
     <assert-property-value
-      name="#contentUrl"
+      name="#contentURL"
       value="http://216.66.69.246:8072/"
     />
     <assert-property-value

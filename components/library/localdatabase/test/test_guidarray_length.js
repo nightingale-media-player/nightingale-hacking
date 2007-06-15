@@ -65,7 +65,7 @@ function runTest () {
   array.clearFilters();
 
   // Full library, top level filter
-  array.addFilter("http://songbirdnest.com/data/1.0#contentUrl",
+  array.addFilter("http://songbirdnest.com/data/1.0#contentURL",
                   new StringArrayEnumerator(["file:///home/steve/Shoot%20to%20Thrill.mp3",
                                              "file:///home/steve/That%20Jim.mp3",
                                              "file:///home/steve/You%20Shook%20Me%20All%20Night%20Long.mp3"]),
@@ -79,7 +79,7 @@ function runTest () {
   array.clearFilters();
 
   // Full library, mixed filtered
-  array.addFilter("http://songbirdnest.com/data/1.0#contentUrl",
+  array.addFilter("http://songbirdnest.com/data/1.0#contentURL",
                   new StringArrayEnumerator(["file:///home/steve/Shoot%20to%20Thrill.mp3",
                                              "file:///home/steve/That%20Jim.mp3",
                                              "file:///home/steve/You%20Shook%20Me%20All%20Night%20Long.mp3"]),
@@ -133,7 +133,7 @@ function runTest () {
   array.clearFilters();
 
   // Simple media list, top level filter
-  array.addFilter("http://songbirdnest.com/data/1.0#contentUrl",
+  array.addFilter("http://songbirdnest.com/data/1.0#contentURL",
                   new StringArrayEnumerator(["file:///home/steve/Shoot%20to%20Thrill.mp3",
                                              "file:///home/steve/Take%20on%20Me.mp3",
                                              "file:///home/steve/You%20Shook%20Me%20All%20Night%20Long.mp3",
@@ -148,7 +148,7 @@ function runTest () {
   array.clearFilters();
 
   // Simple media list, mixed filtered
-  array.addFilter("http://songbirdnest.com/data/1.0#contentUrl",
+  array.addFilter("http://songbirdnest.com/data/1.0#contentURL",
                   new StringArrayEnumerator(["file:///home/steve/Shoot%20to%20Thrill.mp3",
                                              "file:///home/steve/Take%20on%20Me.mp3",
                                              "file:///home/steve/You%20Shook%20Me%20All%20Night%20Long.mp3",

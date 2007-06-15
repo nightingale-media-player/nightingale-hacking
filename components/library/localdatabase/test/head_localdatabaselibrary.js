@@ -460,7 +460,7 @@ function loadMockDatabase() {
   var sp = [
     "http://songbirdnest.com/data/1.0#created",
     "http://songbirdnest.com/data/1.0#updated",
-    "http://songbirdnest.com/data/1.0#contentUrl",
+    "http://songbirdnest.com/data/1.0#contentURL",
     "http://songbirdnest.com/data/1.0#contentMimeType",
     "http://songbirdnest.com/data/1.0#contentLength",
     "http://songbirdnest.com/data/1.0#hidden",
@@ -496,7 +496,7 @@ function loadMockDatabase() {
     "http://songbirdnest.com/data/1.0#artistName",
     "http://songbirdnest.com/data/1.0#duration",
     "http://songbirdnest.com/data/1.0#genre",
-    "http://songbirdnest.com/data/1.0#track",
+    "http://songbirdnest.com/data/1.0#trackNumber",
     "http://songbirdnest.com/data/1.0#year",
     "http://songbirdnest.com/data/1.0#discNumber",
     "http://songbirdnest.com/data/1.0#totalDiscs",

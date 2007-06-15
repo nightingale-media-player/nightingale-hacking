@@ -74,7 +74,7 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#artistName');
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#duration');
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#genre');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#track');
+insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#trackNumber');
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#year');
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#discNumber');
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#totalDiscs');

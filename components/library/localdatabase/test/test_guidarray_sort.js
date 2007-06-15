@@ -80,14 +80,14 @@ function runTest () {
   // One level top level property sort, ascending
   array = makeArray(databaseGUID);
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#contentUrl", true);
+  array.addSort("http://songbirdnest.com/data/1.0#contentURL", true);
   array.fetchSize = 40;
   assertSort(array, "data_sort_contenturl_asc.txt");
 
   // One level top level property sort, descending
   array = makeArray(databaseGUID);
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#contentUrl", false);
+  array.addSort("http://songbirdnest.com/data/1.0#contentURL", false);
   array.fetchSize = 40;
   assertSort(array, "data_sort_contenturl_desc.txt");
 

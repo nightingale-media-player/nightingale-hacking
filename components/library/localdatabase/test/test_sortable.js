@@ -38,20 +38,20 @@ function runTest () {
   assertFilteredSort(view, "data_sort_created_asc.txt");
 
   var pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#contentUrl", "a");
+  pa.appendProperty("http://songbirdnest.com/data/1.0#contentURL", "a");
   view.setSort(pa);
   assertFilteredSort(view, "data_sort_contenturl_asc.txt");
 
   pa = createPropertyArray();
   pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "a");
-  pa.appendProperty("http://songbirdnest.com/data/1.0#track", "a");
+  pa.appendProperty("http://songbirdnest.com/data/1.0#trackNumber", "a");
   view.setSort(pa);
   assertFilteredSort(view, "data_sort_album_asc_track_asc.txt");
 
   pa = createPropertyArray();
   pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "a");
   pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "a");
-  pa.appendProperty("http://songbirdnest.com/data/1.0#track", "a");
+  pa.appendProperty("http://songbirdnest.com/data/1.0#trackNumber", "a");
   view.setSort(pa);
   assertFilteredSort(view, "data_sort_artist_asc_album_asc_track_asc.txt");
 

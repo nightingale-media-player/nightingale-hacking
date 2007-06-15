@@ -40,13 +40,13 @@ var SBProperties = {
   
   get base() { return this._base; },
 
-  get storageGuid() { return this._base + "storageGuid"; },
+  get storageGuid() { return this._base + "storageGUID"; },
   
   get created() { return this._base + "created"; },
   
   get updated() { return this._base + "updated"; },
   
-  get contentUrl() { return this._base + "contentUrl"; },
+  get contentUrl() { return this._base + "contentURL"; },
   
   get contentMimeType() { return this._base + "contentMimeType"; },
   
@@ -62,7 +62,7 @@ var SBProperties = {
   
   get genre() { return this._base + "genre"; },
   
-  get track() { return this._base + "track"; },
+  get track() { return this._base + "trackNumber"; },
   
   get year() { return this._base + "year"; },
   
@@ -84,7 +84,7 @@ var SBProperties = {
   
   get recordLabelName() { return this._base + "recordLabelName"; },
   
-  get albumArtUrl() { return this._base + "albumArtUrl"; },
+  get albumArtUrl() { return this._base + "albumArtURL"; },
   
   get lastPlayTime() { return this._base + "lastPlayTime"; },
   
@@ -98,7 +98,7 @@ var SBProperties = {
   
   get originPage() { return this._base + "originPage"; },
   
-  get GUID() { return this._base + "guid"; },
+  get GUID() { return this._base + "GUID"; },
   
   get hidden() { return this._base + "hidden"; },
   

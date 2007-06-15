@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <item-tests>
-  <item-test property="#contentUrl" value="http://www.foo.com/mp3/file1.mp3">
-    <assert-property-value name="#contentUrl" value="http://www.foo.com/mp3/file1.mp3"/>
+  <item-test property="#contentURL" value="http://www.foo.com/mp3/file1.mp3">
+    <assert-property-value name="#contentURL" value="http://www.foo.com/mp3/file1.mp3"/>
   </item-test>
-  <item-test property="#contentUrl" value="http://www.foo.com/mp3/file2.mp3">
-    <assert-property-value name="#contentUrl" value="http://www.foo.com/mp3/file2.mp3"/>
+  <item-test property="#contentURL" value="http://www.foo.com/mp3/file2.mp3">
+    <assert-property-value name="#contentURL" value="http://www.foo.com/mp3/file2.mp3"/>
   </item-test>
-  <item-test property="#contentUrl" value="http://www.foo.com/file3.mp3">
-    <assert-property-value name="#contentUrl" value="http://www.foo.com/file3.mp3"/>
+  <item-test property="#contentURL" value="http://www.foo.com/file3.mp3">
+    <assert-property-value name="#contentURL" value="http://www.foo.com/file3.mp3"/>
   </item-test>
 </item-tests>
 

@@ -30,7 +30,7 @@
 
 var SB_NS = "http://songbirdnest.com/data/1.0#";
 var SB_PROP_ISSUBSCRIPTION       = SB_NS + "isSubscription";
-var SB_PROP_SUBSCRIPTIONURL      = SB_NS + "subscriptionUrl";
+var SB_PROP_SUBSCRIPTIONURL      = SB_NS + "subscriptionURL";
 var SB_PROP_SUBSCRIPTIONINTERVAL = SB_NS + "subscriptionInterval";
 var SB_PROP_TRACKNAME            = SB_NS + "trackName";
 var SB_PROP_DESTINATION          = SB_NS + "destination"

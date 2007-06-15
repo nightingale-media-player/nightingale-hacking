@@ -43,7 +43,7 @@ function runTest () {
   
   var item1 = library.createMediaItem(uri);
   var now = new Date();
-  assertEqual(item1.getProperty(SB_NS + "contentUrl"), uriSpec);
+  assertEqual(item1.getProperty(SB_NS + "contentURL"), uriSpec);
 
   var created = new Date(parseInt(item1.getProperty(SB_NS + "created")));
   var updated = new Date(parseInt(item1.getProperty(SB_NS + "updated")));

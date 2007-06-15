@@ -65,7 +65,7 @@
     
     <hbox id="exttrackeditor.hflex">
       <sb-exttrackeditor-drawer id="trackeditor.exttrackeditor" hflex="exttrackeditor.hflex" title="&trackeditor.exttrackdata;" flex="1" 
-        exclude="http://songbirdnest.com/data/1.0#guid;http://songbirdnest.com/data/1.0#contentUrl;http://songbirdnest.com/data/1.0#trackName;http://songbirdnest.com/data/1.0#artistName;http://songbirdnest.com/data/1.0#albumName;http://songbirdnest.com/data/1.0#genre"/>
+        exclude="http://songbirdnest.com/data/1.0#GUID;http://songbirdnest.com/data/1.0#contentURL;http://songbirdnest.com/data/1.0#trackName;http://songbirdnest.com/data/1.0#artistName;http://songbirdnest.com/data/1.0#albumName;http://songbirdnest.com/data/1.0#genre"/>
     </hbox>
 <!--
     <hbox id="tageditor.hflex">

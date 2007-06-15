@@ -34,7 +34,7 @@ const Cr = Components.results;
 
 const SB_NS = "http://songbirdnest.com/data/1.0#";
 const SB_PROP_ISSUBSCRIPTION       = SB_NS + "isSubscription";
-const SB_PROP_SUBSCRIPTIONURL      = SB_NS + "subscriptionUrl";
+const SB_PROP_SUBSCRIPTIONURL      = SB_NS + "subscriptionURL";
 const SB_PROP_SUBSCRIPTIONINTERVAL = SB_NS + "subscriptionInterval";
 const SB_PROP_SUBSCRIPTIONNEXTRUN  = SB_NS + "subscriptionNextRun";
 const SB_PROP_DESTINATION          = SB_NS + "destination"

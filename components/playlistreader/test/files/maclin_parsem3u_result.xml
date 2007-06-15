@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <item-tests>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="file:///home/Media/Music/Aus/2006-06-25%5C%20%5C(Abstract,%5C%20Techno,%5C%20Punk%5C).mp3"
   >
     <assert-property-value
-      name="#contentUrl"
+      name="#contentURL"
       value="file:///home/Media/Music/Aus/2006-06-25%5C%20%5C(Abstract,%5C%20Techno,%5C%20Punk%5C).mp3"
     />
     <assert-property-value
@@ -18,25 +18,25 @@
     />
   </item-test>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="file:///home/file1.mp3"
   >
     <assert-property-value
-      name="#contentUrl"
+      name="#contentURL"
       value="file:///home/file1.mp3"
     />
   </item-test>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="file:///home/file2.mp3"
   >
     <assert-property-value
-      name="#contentUrl"
+      name="#contentURL"
       value="file:///home/file2.mp3"
     />
   </item-test>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="file:///home/file3.mp3"
   >
     <assert-property-value
@@ -45,20 +45,20 @@
     />
   </item-test>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="file:///home/file4.mp3"
   >
     <assert-property-value
-      name="#contentUrl"
+      name="#contentURL"
       value="file:///home/file4.mp3"
     />
   </item-test>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="file:///home/file5.mp3"
   >
     <assert-property-value
-      name="#contentUrl"
+      name="#contentURL"
       value="file:///home/file5.mp3"
     />
     <assert-property-value
@@ -67,20 +67,20 @@
     />
   </item-test>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="file:///home/file6.mp3"
   >
     <assert-property-value
-      name="#contentUrl"
+      name="#contentURL"
       value="file:///home/file6.mp3"
     />
   </item-test>
   <item-test
-    property="#contentUrl"
+    property="#contentURL"
     value="http://64.62.252.130:8070/"
   >
     <assert-property-value
-      name="#contentUrl"
+      name="#contentURL"
       value="http://64.62.252.130:8070/"
     />
   </item-test>

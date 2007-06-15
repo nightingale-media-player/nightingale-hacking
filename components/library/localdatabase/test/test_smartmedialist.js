@@ -301,7 +301,7 @@ function testOperators(library) {
 function testItemLimit(library) {
 
   var albumProp = SB_NS + "albumName";
-  var trackProp = SB_NS + "track";
+  var trackProp = SB_NS + "trackNumber";
 
   var list = library.createMediaList("smart");
 
@@ -339,7 +339,7 @@ function testItemLimit(library) {
 function testUsecsLimit(library) {
 
   var albumProp = SB_NS + "albumName";
-  var trackProp = SB_NS + "track";
+  var trackProp = SB_NS + "trackNumber";
 
   var list = library.createMediaList("smart");
 
@@ -372,7 +372,7 @@ function testUsecsLimit(library) {
 function testBytesLimit(library) {
 
   var albumProp = SB_NS + "albumName";
-  var trackProp = SB_NS + "track";
+  var trackProp = SB_NS + "trackNumber";
 
   var list = library.createMediaList("smart");
 
@@ -488,7 +488,7 @@ function testMatchTypeNoneBytesLimit(library) {
 function testRandom(library) {
 
   var albumProp = SB_NS + "albumName";
-  var trackProp = SB_NS + "track";
+  var trackProp = SB_NS + "trackNumber";
 
   var list = library.createMediaList("smart");
 
@@ -640,7 +640,7 @@ function assertCondition(a, b) {
 function assertTrackNumbers(list, a) {
 
   for (var i = 0; i < a.length; i++) {
-    assertEqual(list.getItemByIndex(i).getProperty(SB_NS + "track"), a[i]);
+    assertEqual(list.getItemByIndex(i).getProperty(SB_NS + "trackNumber"), a[i]);
   }
 }
 
@@ -658,7 +658,7 @@ function dumpList(list) {
     var item = list.getItemByIndex(i);
     var artist = item.getProperty(SB_NS + "artistName");
     var album = item.getProperty(SB_NS + "albumName");
-    var track = item.getProperty(SB_NS + "track");
+    var track = item.getProperty(SB_NS + "trackNumber");
     log(artist + " " + album + " " + track);
   }
 }
