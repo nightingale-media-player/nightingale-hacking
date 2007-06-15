@@ -113,8 +113,13 @@
       SBDataSetBoolValue( "download.always", theCheckbox.checked );
       if ( window.arguments && window.arguments[0] )
       {
-        window.arguments[0].value = theTextbox.value;
-        window.arguments[0].retval = "ok";
+        if (window.arguments[0] instanceof Components.interfaces.nsIDialogParamBlock){
+          window.arguments[0].SetInt(0,1);
+          window.arguments[0].SetString(0,theTextbox.value);
+        } else {
+          window.arguments[0].value = theTextbox.value;
+          window.arguments[0].retval = "ok";
+        }
       }
       return true;
     }
@@ -122,9 +127,14 @@
     {
       if ( window.arguments && window.arguments[0] )
       {
-        var theTextbox = document.getElementById( "download_folder_path" );
-        window.arguments[0].value = theTextbox.value;
-        window.arguments[0].retval = "cancel";
+        if (window.arguments[0] instanceof Components.interfaces.nsIDialogParamBlock){
+          window.arguments[0].SetInt(0,0);
+          window.arguments[0].SetString(0,theTextbox.value);
+        } else {
+          var theTextbox = document.getElementById( "download_folder_path" );
+          window.arguments[0].value = theTextbox.value;
+          window.arguments[0].retval = "cancel";
+        }
       }
       return true;
     }

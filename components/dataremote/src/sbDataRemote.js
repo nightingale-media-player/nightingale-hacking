@@ -389,7 +389,7 @@ DataRemote.prototype = {
   _initializedSCC: false,
   _publicWProps: [ "" ],
   _publicRProps: [ "internal:stringValue",
-                   "internal:booleanValue" ,
+                   "internal:boolValue",
                    "internal:intValue",
                    "classinfo:classDescription",
                    "classinfo:contractID",

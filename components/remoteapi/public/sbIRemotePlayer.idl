@@ -32,6 +32,8 @@
 #include "nsISupports.idl"
 
 interface nsIObserver;
+interface nsISimpleEnumerator;
+interface sbIMediaItem;
 interface sbIMediaListView;
 interface sbIRemoteCommands;
 interface sbIRemoteLibrary;
@@ -83,6 +85,13 @@ interface sbIRemotePlayer : nsISupports
    */
   void removeListener( in AString aKey,
                        in nsIObserver aObserver );
+
+  /**
+   * \brief Download the items passed in
+   */
+  void downloadItem( in sbIMediaItem aItem );
+  void downloadList( in sbIRemoteMediaList aList );
+  void downloadSelected( in sbIRemoteMediaList aList );
 
   /**
    * \brief Being playback at the current location

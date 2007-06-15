@@ -159,7 +159,7 @@ var SBWebPlaylistCommands =
       "&command.tooltip.showdlplaylist"
   //    "&command.tooltip.burntocd"
   //    "&command.tooltip.device"
-    ),
+    )
   },
 
   _getMenu: function(aSubMenu)

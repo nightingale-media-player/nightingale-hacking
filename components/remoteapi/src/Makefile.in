@@ -54,6 +54,8 @@ CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/components/playlistreader/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/dataremote/public \
+               $(DEPTH)/components/devicesobsolete/manager/public \
+               $(DEPTH)/components/devicesobsolete/base/public \
                $(DEPTH)/bindings/public \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/library/localdatabase/src \

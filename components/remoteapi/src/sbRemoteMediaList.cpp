@@ -581,6 +581,18 @@ sbUnwrappingSimpleEnumerator::GetNext(nsISupports **_retval)
   rv = mWrapped->GetNext(getter_AddRefs(supports));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // if it's an indexed mediaItem, get the wrapped internal item.
+  nsCOMPtr<sbIIndexedMediaItem> indexedMediaItem = do_QueryInterface(supports, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    nsCOMPtr<sbIMediaItem> item;
+    indexedMediaItem->GetMediaItem( getter_AddRefs(item) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    // make the supports that item
+    supports = do_QueryInterface( item, &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+
   nsCOMPtr<sbIWrappedMediaList> mediaList = do_QueryInterface(supports, &rv);
   if (NS_SUCCEEDED(rv)) {
     NS_ADDREF(*_retval = mediaList->GetMediaList().get());

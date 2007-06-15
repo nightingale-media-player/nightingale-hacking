@@ -102,6 +102,11 @@ protected:
                                  const nsAString &aType,
                                  PRBool aIsTrusted );
 
+  // These three methods should wind up on the download device
+  nsresult GetDownloadList( sbIMediaList **aMediaList );
+  PRBool LaunchDownloadDialog( nsAString &aLocation );
+  nsresult GetDownloadLocation( nsAString &aLocation, PRBool &aAlways );
+
   // Helper Methods
   nsresult Init();
   nsresult AcquirePlaylistWidget();

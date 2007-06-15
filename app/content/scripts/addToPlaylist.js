@@ -285,7 +285,7 @@ var addToPlaylistHelper = {
 
   onLibraryUnregistered: function onLibraryUnregistered(library) {
     this.onUpdateEvent(library); 
-  },
+  }
 
 };
 
