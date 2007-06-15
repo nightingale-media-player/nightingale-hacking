@@ -631,6 +631,11 @@ PlaylistPlayback.prototype = {
     return 0;
   },
   
+  get currentIndex() {
+    if (this.playing) return this._playlistIndex.intValue;
+    return -1;
+  },
+  
   get currentGUID() {
     if (this.playing) return this._playingRef.stringValue;
     return null;

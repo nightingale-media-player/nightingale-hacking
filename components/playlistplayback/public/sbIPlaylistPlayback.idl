@@ -151,12 +151,20 @@ interface sbIPlaylistPlayback : nsIObserver
   readonly attribute PRInt32 itemCount;
 
   /**
+   * \brief The Index for the current track in the playback core
+   * \return The index, or -1 if not playing
+   */
+  readonly attribute PRInt32 currentIndex;
+
+  /**
    * \brief The GUID for the current track in the playback core.
+   * \return The GUID, or blank if not playing
    */
   readonly attribute AString currentGUID;
 
   /**
    * \brief The URL for the current track in the playback core.
+   * \return The URL, or blank if not playing
    */
   readonly attribute AString currentURL;
 
