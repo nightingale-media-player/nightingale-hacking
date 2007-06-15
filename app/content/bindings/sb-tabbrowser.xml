@@ -1735,14 +1735,28 @@
         ]]></body>
       </method>
 
+      <!-- tab dnd helpers -->
+      <method name="canDrop">
+        <parameter name="event"></parameter>
+        <parameter name="session"></parameter>
+        <body><![CDATA[
+          var canDrop = false;
 
-
-
-
+          var playlist = this.innerPlaylist;
+          if (playlist) {
+            canDrop = playlist.canDrop(event, session);
+          } else {
+            canDrop = false;
+          }          
+          return canDrop;
+        ]]></body>
+      </method>
+      <field name="_dragTimeout">350</field>
+      <field name="_dragTimer">null</field>
     </implementation>
+    
     <handlers>
       <handler event="TabClose"><![CDATA[
-      
         // When we drop the tab, release all of the associated views stored in the map.
         Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
                   .getService(Components.interfaces.sbIMediaListViewMap)
@@ -1751,6 +1765,40 @@
         // clean up listeners
         this.linkedBrowser.webProgress.removeProgressListener(this._browserStatusFilter);
         this._browserStatusFilter.addProgressListener(this);
+      ]]></handler>
+      <handler event="dragenter"><![CDATA[
+        var dragService = Components.classes["@mozilla.org/widget/dragservice;1"]
+           .getService(Components.interfaces.nsIDragService);
+        var session = dragService.getCurrentSession();
+
+        session.canDrop = this.canDrop(event, session);
+        
+        if (session.canDrop && !this._dragTimer && this._dragTimeout) {
+          (function(tab) {
+            tab._dragTimer = setTimeout(function() {
+              tab._dragTimer = null;
+              gBrowser.mTabContainer.selectedItem = tab;
+            }, tab._dragTimeout);
+          })(this);
+        }
+        
+      ]]></handler>
+      <handler event="dragleave"><![CDATA[
+        if (this._dragTimer) {
+          clearTimeout(this._dragTimer);
+          this._dragTimer = null;
+        }
+      ]]></handler>
+      <handler event="dragdrop"><![CDATA[
+        var dragService = Components.classes["@mozilla.org/widget/dragservice;1"]
+           .getService(Components.interfaces.nsIDragService);
+        var session = dragService.getCurrentSession();
+        
+        if (this.canDrop(event, session)) {
+          var playlist = this.innerPlaylist;
+          playlist._dropOnTree(playlist.mediaListView.length,
+                               Components.interfaces.DROP_AFTER);
+        }
       ]]></handler>
     </handlers>
   </binding>
