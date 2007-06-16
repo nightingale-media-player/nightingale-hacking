@@ -61,6 +61,8 @@
 #include <nsIScriptGlobalObject.h>
 #include <nsIScriptNameSpaceManager.h>
 #include <nsIScriptSecurityManager.h>
+#include <nsITreeSelection.h>
+#include <nsITreeView.h>
 #include <nsIURI.h>
 #include <nsIWindowMediator.h>
 #include <nsMemory.h>
@@ -107,6 +109,7 @@ const static char* sPublicRProperties[] =
 
 const static char* sPublicMethods[] =
   { "controls:play",
+    "controls:playMediaList",
     "controls:stop",
     "controls:pause",
     "controls:previous",
@@ -803,8 +806,54 @@ sbRemotePlayer::Play()
 {
   LOG(("sbRemotePlayer::Play()"));
   NS_ENSURE_STATE(mGPPS);
+
+  if (!mWebPlaylistWidget) {
+    nsresult rv = AcquirePlaylistWidget();
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+
+  nsCOMPtr<sbIMediaListView> mediaListView;
+  nsresult rv = mWebPlaylistWidget->GetView( getter_AddRefs(mediaListView) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsCOMPtr<nsITreeView> treeView;
+  rv = mediaListView->GetTreeView( getter_AddRefs(treeView) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsCOMPtr<nsITreeSelection> treeSelection;
+  rv = treeView->GetSelection( getter_AddRefs(treeSelection) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  PRInt32 index;
+  treeSelection->GetCurrentIndex(&index);
+  if ( index < 0 )
+    index = 0;
+
   PRBool retval;
-  mGPPS->Play(&retval);
+  mGPPS->PlayView( mediaListView, index, &retval );
+  return retval ? NS_OK : NS_ERROR_FAILURE;
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
+{
+  LOG(("sbRemotePlayer::PlayMediaList()"));
+  NS_ENSURE_ARG_POINTER(aList);
+  NS_ENSURE_STATE(mGPPS);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaList> list( do_QueryInterface( aList, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsCOMPtr<sbIMediaListView> mediaListView;
+  rv = list->CreateView( getter_AddRefs(mediaListView) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  if ( aIndex < 0 )
+    aIndex = 0;
+
+  PRBool retval;
+  mGPPS->PlayView( mediaListView, aIndex, &retval );
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 

@@ -54,6 +54,25 @@
           songbird.commands.removeCommand("add-command");
       }
 
+      var onPlay = function onPlay(event) {
+        if (event.type == "play") {
+          songbird.play();
+        } else if (event.type == "play-list") {
+          songbird.playMediaList(songbird.webPlaylist, 0);
+        } else if (event.type == "play-url") {
+          songbird.playURL('http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3');
+        }
+      }
+
+      var accessCount = 0;
+      var onRemoteAPI =  function onRemoteAPI(aEvent) {
+        var myDiv = document.getElementById("accessCountDiv");
+        if (aEvent.type == "remoteapi") {
+          myDiv.appendChild(document.createTextNode("Remote API Accessed:" + (++accessCount) + "<br />" ));
+          myDiv.appendChild(document.createElement("br"));
+        }
+      };
+
     </script>
   </head>
   <body onunload="document.removeEventListener('remoteapi', onRemoteAPI, true);
@@ -81,36 +100,12 @@
     <div id="remoteCommandDiv">
     </div>
     <script>
-      var accessCount = 0;
-
-      var onPlaySelected =  function onPlaySelected(aEvent) {
-          var myDiv = document.getElementById("remoteCommandDiv");
-          myDiv.appendChild(document.createTextNode("Play Selected Track"));
-          myDiv.appendChild(document.createElement("br"));
-          // Probably want this to be playWebPlaylist or something,
-          //  or have the songbird object check for webPlaylist first.
-          songbird.play();
-      }
-
-      var onPlayURL =  function onPlayURL(aEvent) {
-          var myDiv = document.getElementById("remoteCommandDiv");
-          myDiv.appendChild(document.createTextNode("Play URL - sheryl crow"));
-          myDiv.appendChild(document.createElement("br"));
-          songbird.playURL('http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3');
-      }
-
-      var onRemoteAPI =  function onRemoteAPI(aEvent) {
-        var myDiv = document.getElementById("accessCountDiv");
-        if (aEvent.type == "remoteapi") {
-          myDiv.appendChild(document.createTextNode("Remote API Accessed:" + (++accessCount) + "<br />" ));
-          myDiv.appendChild(document.createElement("br"));
-        }
-      };
 
       // hook listeners to command from this page and the general RemoteAPI event
       document.addEventListener( "remoteapi", onRemoteAPI, true );
-      document.addEventListener( "rapi-test07-play-url", onPlayURL, true );
-      document.addEventListener( "rapi-test07-play-selected", onPlaySelected, true );
+      document.addEventListener( "play-url", onPlay, true );
+      document.addEventListener( "play", onPlay, true );
+      document.addEventListener( "play-list", onPlay, true );
 
       // add a command to the RemoteAPI's collection of commands
 /*
@@ -119,35 +114,20 @@
                                     "rapi-test-07-submenu",
                                     "Play URL",
                                     "Play the preset URL" );
+      songbird.commands.removeCommand("rapi-test-07-submenu");
 */
 
 
       songbird.commands.setCommandData( 3,
                                         ["action","separator", "action"],
-                                        ["rapi-test07-play-url","rapi-test07-play-sep","rapi-test07-play-selected"],
-                                        ["Play URL","sep","Play Track"],
-                                        ["Play the preset URL","separate","Play the selected Track(not yet)"] );
-      songbird.commands.removeCommand("rapi-test-07-submenu");
-
-      /*
-      // add a command to the RemoteAPI's collection of commands
+                                        ["play-url","play-sep","play"],
+                                        ["Play URL","sep","Play"],
+                                        ["Play the preset URL","separate","Play"] );
       songbird.commands.addCommand( "action",
-                                    "rapi-test07-play-url",
-                                    "Play URL",
-                                    "Play the preset URL" );
+                                    "play-list",
+                                    "Play list",
+                                    "Play an list" );
 
-      // add a command to the RemoteAPI's collection of commands
-      songbird.commands.addCommand( "separator",
-                                    "rapi-test07-play-sep",
-                                    "Play URL",
-                                    "Play the preset URL" );
-
-      // add a command to play the selected track in the playlist
-      songbird.commands.addCommand( "action",
-                                    "rapi-test07-play-selected",
-                                    "Play Track",
-                                    "Play the Selected Track(s)" );
-      */
 
     </script>
     

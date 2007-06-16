@@ -97,6 +97,8 @@ interface sbIRemotePlayer : nsISupports
    * \brief Being playback at the current location
    */
   void play();
+  void playMediaList( in sbIRemoteMediaList aList,
+                      in PRInt32 aIndex );
 
   /**
    * \brief Play an media file by URL
