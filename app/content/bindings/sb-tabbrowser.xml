@@ -1777,6 +1777,25 @@
           (function(tab) {
             tab._dragTimer = setTimeout(function() {
               tab._dragTimer = null;
+              
+              // set up an interval callback to check if the drag has completed
+              // and restore the original tab when it's done
+              if (!gBrowser._springLoadedTab) {
+                gBrowser._springLoadedTab = {
+                  tab: gBrowser.mTabContainer.selectedItem,
+                  interval: setInterval(function() {
+                    if (!dragService.getCurrentSession()) {
+                      // the drag is over, clear the timer, clear the state
+                      // restore the tab
+                      gBrowser.mTabContainer.selectedItem =
+                          gBrowser._springLoadedTab.tab;
+                      clearInterval(gBrowser._springLoadedTab.interval);
+                      gBrowser._springLoadedTab = null;
+                    }
+                  }, 500)
+                }
+              }
+              
               gBrowser.mTabContainer.selectedItem = tab;
             }, tab._dragTimeout);
           })(this);
