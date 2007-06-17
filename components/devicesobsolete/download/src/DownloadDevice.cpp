@@ -50,6 +50,7 @@
 #include <nsArrayUtils.h>
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
+#include <nsIDOMWindow.h>
 #include <nsILocalFile.h>
 #include <nsIPrefService.h>
 #include <nsIProperties.h>
@@ -58,6 +59,7 @@
 #include <nsITreeView.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIURL.h>
+#include <nsIWindowWatcher.h>
 #include <nsServiceManagerUtils.h>
 
 /* Songbird imports. */
@@ -192,7 +194,8 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     /* Create the download device lock. */
     if (NS_SUCCEEDED(result))
     {
-        mpDeviceMonitor = nsAutoMonitor::NewMonitor("sbDownloadDevice::mpDeviceMonitor");
+        mpDeviceMonitor = nsAutoMonitor::NewMonitor
+                                        ("sbDownloadDevice::mpDeviceMonitor");
         if (!mpDeviceMonitor)
             result = NS_ERROR_OUT_OF_MEMORY;
     }
@@ -206,10 +209,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
     /* Get the pref service. */
     if (NS_SUCCEEDED(result))
-    {
-        pPrefBranch =
-            do_GetService(NS_PREFSERVICE_CONTRACTID, &result);
-    }
+        pPrefBranch = do_GetService(NS_PREFSERVICE_CONTRACTID, &result);
 
     /* Get the library manager. */
     if (NS_SUCCEEDED(result))
@@ -236,12 +236,9 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         }
     }
 
-
     /* Get the main library. */
     if (NS_SUCCEEDED(result))
-    {
         result = pLibraryManager->GetMainLibrary(getter_AddRefs(pMainLibrary));
-    }
 
     /* Get the web library. */
     if (NS_SUCCEEDED(result))
@@ -269,7 +266,8 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
     }
 
-    /* See if we need to make a new media list for ourselves in the main library. */
+    /* See if we need to make a new media list */
+    /* for ourselves in the main library.      */
     if (NS_SUCCEEDED(result)) 
     {
         nsCOMPtr<nsISupportsString> pSupportsString;
@@ -298,11 +296,8 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
                 if (NS_SUCCEEDED(result))
                 {
                     mpDownloadMediaList = do_QueryInterface(pMediaItem, &result);
-
                     if (NS_FAILED(result))
-                    {
                         mpDownloadMediaList = nsnull;
-                    }
                 }
             }
         }
@@ -312,8 +307,9 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     /* Make a new media list if we still don't have one. */
     if (NS_SUCCEEDED(result) && !mpDownloadMediaList)
     {
-        result = pMainLibrary->CreateMediaList(NS_LITERAL_STRING("simple"),
-                                               getter_AddRefs(mpDownloadMediaList));
+        result = pMainLibrary->CreateMediaList
+                                        (NS_LITERAL_STRING("simple"),
+                                         getter_AddRefs(mpDownloadMediaList));
     }
 
     /* Make a listener for the media list. */
@@ -371,9 +367,28 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         }
     }
 
+    /* Get the device library listener. */
+    if (NS_SUCCEEDED(result))
+    {
+        nsCOMPtr<sbIMediaListListener>  pMediaListListener;
+
+        result = GetListenerForDeviceLibrary
+                                    (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
+                                     getter_AddRefs(pMediaListListener));
+        if (NS_SUCCEEDED(result))
+	{
+            mpDeviceLibraryListener =
+                                NS_STATIC_CAST(sbDeviceBaseLibraryListener *,
+                                               pMediaListListener.get());
+        }
+    }
+
     /* Set the download device media list name.  */
     if (NS_SUCCEEDED(result))
-        result = mpDownloadMediaList->SetName(NS_LITERAL_STRING(SB_DOWNLOAD_LIB_NAME));
+    {
+        result = mpDownloadMediaList->SetName
+                                    (NS_LITERAL_STRING(SB_DOWNLOAD_LIB_NAME));
+    }
 
     /* Set the download device playlist default column spec. */
     if (NS_SUCCEEDED(result))
@@ -382,8 +397,8 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
         downloadColSpec.AppendLiteral(SB_DOWNLOAD_COL_SPEC);
         result = mpDownloadMediaList->SetProperty
-                                      (NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
-                                      downloadColSpec);
+                              (NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
+                              downloadColSpec);
     }
 
     /* Write the download device library. */
@@ -655,6 +670,7 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
     nsCOMPtr<sbIMediaItem>      pMediaItem;
     PRUint32                    itemCount;
     PRUint32                    i;
+    nsresult                    result1;
     nsresult                    result = NS_OK;
 
     /* Do nothing unless operation is upload.  Uploading an item to the   */
@@ -670,41 +686,51 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
     for (i = 0; ((i < itemCount) && NS_SUCCEEDED(result)); i++)
     {
         /* Get the next media item. */
-        pMediaItem = do_QueryElementAt(aMediaItems, i, &result);
+        pMediaItem = do_QueryElementAt(aMediaItems, i, &result1);
+        if (NS_FAILED(result1))
+            pMediaItem = nsnull;
 
         /* Set its transfer destination. */
-        if (NS_SUCCEEDED(result))
-            result = SetTransferDestination(pMediaItem);
+        if (NS_SUCCEEDED(result1))
+            result1 = SetTransferDestination(pMediaItem);
 
         /* Initialize the download progress property. */
-        if (NS_SUCCEEDED(result))
+        if (NS_SUCCEEDED(result1))
         {
-            result = pMediaItem->SetProperty
+            result1 = pMediaItem->SetProperty
                                 (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
                                  NS_LITERAL_STRING("-1"));
         }
-        if (NS_SUCCEEDED(result))
+        if (NS_SUCCEEDED(result1))
         {
             nsString                    progressModeStr;
 
             progressModeStr.AppendInt(nsITreeView::PROGRESS_NONE);
-            result = pMediaItem->SetProperty
+            result1 = pMediaItem->SetProperty
                                 (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
                                  progressModeStr);
         }
 
         /* Write the media item. */
         /* XXXeps won't need this after bug 3037 is fixed. */
-        if (NS_SUCCEEDED(result))
-            result = pMediaItem->Write();
+        if (NS_SUCCEEDED(result1))
+            result1 = pMediaItem->Write();
 
         /* Add it to the transfer queue. */
-        if (NS_SUCCEEDED(result))
+        if (NS_SUCCEEDED(result1))
         {
             nsAutoMonitor mon(mpDeviceMonitor);
-            result = AddItemToTransferQueue
+            result1 = AddItemToTransferQueue
                                     (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                                      pMediaItem);
+        }
+
+        /* Remove item on error. */
+        if (NS_FAILED(result1) && pMediaItem)
+        {
+            mpDeviceLibraryListener->SetIgnoreListener(PR_TRUE);
+            mpDownloadMediaList->Remove(pMediaItem);
+            mpDeviceLibraryListener->SetIgnoreListener(PR_FALSE);
         }
     }
 
@@ -1400,6 +1426,7 @@ nsresult sbDownloadDevice::SetTransferDestination(
     nsCOMPtr<nsIURI>            pDstURI;
     nsCString                   dstSpec;
     nsresult                    propertyResult;
+    PRBool                      cancelDownload;
     nsresult                    result = NS_OK;
 
     /* Do nothing if destination is already set. */
@@ -1444,6 +1471,15 @@ nsresult sbDownloadDevice::SetTransferDestination(
     /* Get the default destination directory. */
     if (NS_SUCCEEDED(result))
         result = mpDownloadDirDR->GetStringValue(dstDir);
+
+    /* If not default destination directory is set, */
+    /* query user.  Treat cancellation as an error. */
+    if (NS_SUCCEEDED(result) && (dstDir.Length() == 0))
+    {
+        result = QueryUserForDestination(&cancelDownload, dstDir);
+        if (NS_SUCCEEDED(result) && cancelDownload)
+            result = NS_ERROR_UNEXPECTED;
+    }
 
     /* Create a unique local destination file object. */
     if (NS_SUCCEEDED(result))
@@ -1595,7 +1631,7 @@ nsresult sbDownloadDevice::MakeFileUnique(
     nsCOMPtr<nsIFile>           pUniqueFile;
     nsAutoString                leafName;
     nsAutoString                uniqueLeafName;
-    PRInt32                     extOffset;
+    PRInt32                     extOffset = -1;
     nsAutoString                uniqueStr;
     PRInt32                     uniqueNum = 1;
     PRBool                      exists;
@@ -1649,6 +1685,137 @@ nsresult sbDownloadDevice::MakeFileUnique(
 }
 
 
+/*
+ * QueryUserForDestination
+ *
+ *   <-- apCancelDownload       True if user cancelled the download.
+ *   <-- aDstDir                Download destination directory.
+ *
+ *   This function queries the user for the default download destination
+ * directory.  The selected directory is returned in aDstDir.  If the user
+ * cancels the download, apCancelDownload is set to true; otherwise, it's set to
+ * false.
+ */
+
+nsresult sbDownloadDevice::QueryUserForDestination(
+    PRBool                      *apCancelDownload,
+    nsAString                   &aDstDir)
+{
+    nsCOMPtr<nsIDialogParamBlock>
+                                pDialogPB;
+    nsString                    dstDir;
+    PRInt32                     okPressed;
+    nsresult                    result = NS_OK;
+
+    /* Get a dialog parameter block. */
+      pDialogPB = do_CreateInstance("@mozilla.org/embedcomp/dialogparam;1",
+                                    &result);
+
+    /* Open the dialog. */
+    if (NS_SUCCEEDED(result))
+    {
+        result = OpenDialog("chrome://songbird/content/xul/download.xul",
+                            pDialogPB);
+    }
+
+    /* Check if the OK button was pressed. */
+    if (NS_SUCCEEDED(result))
+        result = pDialogPB->GetInt(0, &okPressed);
+
+    /* Get the destination directory. */
+    if (NS_SUCCEEDED(result) && okPressed)
+        result = pDialogPB->GetString(0, getter_Copies(dstDir));
+
+    /* Return results. */
+    if (NS_SUCCEEDED(result))
+    {
+        if (okPressed)
+	{
+            *apCancelDownload = PR_FALSE;
+            aDstDir = dstDir;
+        }
+        else
+	{
+            *apCancelDownload = PR_TRUE;
+        }
+    }
+
+    return (result);
+}
+
+
+/*
+ * OpenDialog
+ *
+ *   --> aChromeURL             URL to dialog chrome.
+ *   --> apDialogPB             Dialog parameter block.
+ *
+ *   This function opens a dialog window with the chrome specified by aChromeURL
+ * and the parameter block specified by apDialogPB.
+ */
+
+nsresult sbDownloadDevice::OpenDialog(
+    char                        *aChromeURL,
+    nsIDialogParamBlock         *apDialogPB)
+{
+    nsCOMPtr<nsIWindowWatcher>  pWindowWatcher;
+    nsCOMPtr<nsIDOMWindow>      pActiveWindow;
+    nsCOMPtr<nsIDOMWindow>      pWindow;
+    nsCOMPtr<sbIDataRemote>     pDataRemote;
+    nsCAutoString               chromeFeatures;
+    PRBool                      accessibilityEnabled;
+    nsString                    *pNullNSString = nsnull;
+    nsString                    &nullNSStringRef = *pNullNSString;
+    nsresult                    result = NS_OK;
+
+    /* Get the window watcher services. */
+    pWindowWatcher = do_GetService(NS_WINDOWWATCHER_CONTRACTID, &result);
+
+    /* Get the active window. */
+    if (NS_SUCCEEDED(result))
+        result = pWindowWatcher->GetActiveWindow(getter_AddRefs(pActiveWindow));
+
+    /* Check if accessibility is enabled. */
+    if (NS_SUCCEEDED(result))
+    {
+        pDataRemote = do_CreateInstance
+                                    ("@songbirdnest.com/Songbird/DataRemote;1",
+                                     &result);
+    }
+    if (NS_SUCCEEDED(result))
+    {
+        result = pDataRemote->Init(NS_LITERAL_STRING("accessibility.enabled"),
+                                   nullNSStringRef);
+    }
+    if (NS_SUCCEEDED(result))
+        result = pDataRemote->GetBoolValue(&accessibilityEnabled);
+
+    /* Get the chrome feature set. */
+    if (NS_SUCCEEDED(result))
+    {
+        chromeFeatures = NS_LITERAL_CSTRING
+                                ("chrome,centerscreen,modal=yes,resizable=no");
+        if (accessibilityEnabled)
+            chromeFeatures.AppendLiteral(",titlebar=yes");
+        else
+            chromeFeatures.AppendLiteral(",titlebar=no");
+    }
+
+    /* Open the dialog. */
+    if (NS_SUCCEEDED(result))
+    {
+        pWindowWatcher->OpenWindow(pActiveWindow,
+                                   aChromeURL,
+                                   nsnull,
+                                   chromeFeatures.get(),
+                                   apDialogPB,
+                                   getter_AddRefs(pWindow));
+    }
+
+    return (result);
+}
+
+
 /* *****************************************************************************
  *******************************************************************************
  *
@@ -1683,9 +1850,9 @@ sbDownloadSession::sbDownloadSession(
     sbDownloadDevice            *pDownloadDevice,
     sbIMediaItem                *pMediaItem)
 :
+    mpMediaItem(pMediaItem),
     mpSessionLock(nsnull),
     mpDownloadDevice(pDownloadDevice),
-    mpMediaItem(pMediaItem),
     mCurrentProgress(-1),
     mShutdown(PR_FALSE),
     mSuspended(PR_FALSE)

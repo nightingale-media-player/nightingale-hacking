@@ -60,6 +60,7 @@ CPP_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/uriloader \
                $(MOZSDK_INCLUDE_DIR)/webbrowserpersist \
+               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_IDL_DIR) \
                $(NULL)

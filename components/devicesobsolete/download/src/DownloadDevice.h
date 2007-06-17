@@ -75,6 +75,7 @@
 /* Mozilla imports. */
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
+#include <nsIDialogParamBlock.h>
 #include <nsIIOService.h>
 #include <nsIStringBundle.h>
 #include <prmon.h>
@@ -144,6 +145,7 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
 
     /*
      * mpDownloadMediaList      Download device medialist.
+     * mpDeviceLibraryListener  Songbird device library listener.
      * mpWebLibrary             Web library.
      * mpIOService              I/O service.
      * mpStringBundle           Download device string bundle.
@@ -155,6 +157,8 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
      */
 
     nsCOMPtr<sbIMediaList>      mpDownloadMediaList;
+    nsRefPtr<sbDeviceBaseLibraryListener>
+                                mpDeviceLibraryListener;
     nsCOMPtr<sbILibrary>        mpWebLibrary;
     nsCOMPtr<nsIIOService>      mpIOService;
     nsCOMPtr<nsIStringBundle>   mpStringBundle;
@@ -196,6 +200,14 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
 
     nsresult MakeFileUnique(
         nsIFile                     *apFile);
+
+    nsresult QueryUserForDestination(
+        PRBool                      *apCancelDownload,
+        nsAString                   &aDstDir);
+
+    nsresult OpenDialog(
+        char                        *aChromeURL,
+        nsIDialogParamBlock         *apDialogPB);
 };
 
 
