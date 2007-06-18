@@ -371,10 +371,6 @@
             // hack, to let play buttons find the visible playlist if needed
             document.__CURRENTPLAYLIST__ = null;
             
-            // Disable the "add to playlist" button until we see that there is anything to add.
-            SBDataSetBoolValue('browser.canplaylist', false);
-            this.showWebPlaylist = false;
-      
             // Clear the playlist tree variable so we are not confused.
             //this.playlistTree = null;
             theLibraryPlaylist = null;
@@ -1239,7 +1235,7 @@
         ]]></getter>
         <setter><![CDATA[
           if (!this._plbox) return;
-        dump('\n\n\n\n\nsetting outerWebPlaylistShowing to: '+val+'\n');
+        dump('\n\n\nsetting outerWebPlaylistShowing to: '+val+'\n\n\n\n');
           var hidden = val?"false":"true";
           /*
           this._splitter.setAttribute('hidden', hidden);
@@ -1582,6 +1578,13 @@
         <parameter name="aRequest" />
         <parameter name="aLocation" />
         <body><![CDATA[
+          // set the loadingURI so we know in onStateChange when to  cause a
+          // scan of the web page to populate the web playlist. Do it
+          // here and not in onStateChange because the STATE_START message has
+          // the wrong document URI when using the back button (and probably
+          // when going from site to site).
+          this._loadingURI = aLocation.spec;
+          this.clearOuterPlaylist();
         ]]></body>
       </method>
       
@@ -1615,9 +1618,8 @@
             // not interested
             return;
           }
-      
+
           if (aState & nsIWebProgressListener.STATE_START) {
-            this.clearOuterPlaylist();
 
             // see if the notification box is up, remove it if so.
             // removing it with removeNotification(notification) causes all
@@ -1629,10 +1631,18 @@
               notificationBox.removeAllNotifications(true);
 
           } else if (aState & nsIWebProgressListener.STATE_STOP) {
+
             if (this.innerPlaylist) {
               this.setUpInnerPlaylist();
             } else {
-              this.scanWebPage();
+
+              // we get a lot of stop messages, but we only want to scan
+              // when we are specifically loading the document for the page.
+              if ( this._loadingURI ==
+                   this.linkedBrowser.contentDocument.documentURI ) {
+                this.scanWebPage();
+                this._loadingURI = "";
+              }
             }
           }
         ]]></body>

@@ -450,7 +450,7 @@
   if (this._commandmenuitems) this._commandmenuitems.outerWindow = this._outerWindow;
 
   // Clear out the old commands and add the new ones
-  this._toolbar.hidden = true;
+  //this._toolbar.hidden = true;
   this.setCommands(commands);
 
   // If boolean true, read from the XUL file.
@@ -952,7 +952,6 @@
           this.removeCommands(); 
           // In with the new
           this._commands = this.commands = commands;
-          this._toolbar.hidden = true;
           this._toolbar.bind(this.mediaListView.mediaList, this, commands ? commands.duplicate() : null);
           this._toolbar.refreshCommands();
           this._commandmenuitems.bind(this.mediaListView.mediaList, this, commands ? commands.duplicate() : null);
