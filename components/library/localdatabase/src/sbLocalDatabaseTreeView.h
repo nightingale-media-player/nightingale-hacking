@@ -111,6 +111,10 @@ private:
   nsresult GetTreeColumnForProperty(const nsAString& aProperty,
                                     nsITreeColumn** aTreeColumn);
 
+  nsresult GetCellPropertyValue(PRInt32 row,
+                                nsITreeColumn *col,
+                                nsAString& _retval);
+
   nsresult GetPropertyBag(const nsAString& aGuid,
                           PRUint32 aIndex,
                           sbILocalDatabaseResourcePropertyBag** _retval);

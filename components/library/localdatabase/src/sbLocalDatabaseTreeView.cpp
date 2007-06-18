@@ -391,6 +391,147 @@ sbLocalDatabaseTreeView::UpdateRowCount(PRUint32 aRowCount)
 }
 
 nsresult
+sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 row,
+                                              nsITreeColumn *col,
+                                              nsAString& _retval)
+{
+  NS_ENSURE_ARG_POINTER(col);
+
+  nsresult rv;
+
+  // If we are adding a fake all row, and this is the first row, the string
+  // should be "All". Otherwise, decrement the row count to fix the offset
+  // of adding the fake all row.
+  // XXXsteve This is not fully implemented yet
+  if (mFakeAllRow) {
+    if (row == 0) {
+      _retval.AssignLiteral("All");
+      return NS_OK;
+    }
+    row--;
+  }
+
+  nsAutoString bind;
+  rv = GetPropertyForTreeColumn(col, bind);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If this is an ordinal column, return just the row number
+  if (bind.Equals(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL))) {
+    _retval.AppendInt(row + 1);
+    return NS_OK;
+  }
+
+  nsCOMPtr<sbIPropertyInfo> info;
+  rv = mPropMan->GetPropertyInfo(bind, getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check our local map cache of property bags and return the cell value if
+  // we have it cached
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+  if (mRowCache.Get(row, getter_AddRefs(bag))) {
+    rv = bag->GetProperty(bind, _retval);
+    if(rv == NS_ERROR_ILLEGAL_VALUE) {
+      _retval.Assign(EmptyString());
+    }
+    else {
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Format the value for display
+      rv = info->Format(_retval, _retval);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    return NS_OK;
+  }
+
+  PageCacheStatus status;
+  rv = GetPageCachedStatus(row, &status);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  switch(status) {
+
+    // Since we cache each page's data in mRowCache, this should never be
+    // called.  Warn and fall through so we can still process the request.
+    case eCached:
+      NS_WARNING("Not cached in mRowCache but page cached?");
+
+    // The age this row is in is not yet cached, so async request it and
+    // return blank
+    case eNotCached:
+    {
+
+      // If we already have a pending request, don't start another, just put
+      // this new request on deck.  If there is already a next request on deck,
+      // clobber it and reset its page's cache status.  The purpose of this is
+      // to prevent a lot of requests from getting stacked up if the user
+      // scrolls the list around a lot
+
+      if (mGetByIndexAsyncPending) {
+
+        if (mNextGetByIndexAsync > -1) {
+          rv = SetPageCachedStatus(mNextGetByIndexAsync, eNotCached);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        mNextGetByIndexAsync = row;
+        rv = SetPageCachedStatus(row, ePending);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+
+        rv = SetPageCachedStatus(row, ePending);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mArray->GetByIndexAsync(row);
+        NS_ENSURE_SUCCESS(rv, rv);
+        mGetByIndexAsyncPending = PR_TRUE;
+      }
+
+      // Try our dirty cache so we can show something
+      if (mDirtyRowCache.Get(row, getter_AddRefs(bag))) {
+        rv = bag->GetProperty(bind, _retval);
+        if(rv == NS_ERROR_ILLEGAL_VALUE) {
+          _retval.Assign(EmptyString());
+        }
+        else {
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+      else {
+        _retval.Assign(EmptyString());
+      }
+    }
+    break;
+
+    // The page this row is in is pending, so just return a blank
+    case ePending:
+    {
+      // Try our dirty cache so we can show something
+      if (mDirtyRowCache.Get(row, getter_AddRefs(bag))) {
+        rv = bag->GetProperty(bind, _retval);
+        if(rv == NS_ERROR_ILLEGAL_VALUE) {
+          _retval.Assign(EmptyString());
+        }
+        else {
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+      else {
+        _retval.Assign(EmptyString());
+      }
+    }
+    break;
+  }
+
+  if (!_retval.Equals(EmptyString())) {
+    // Format the value for display
+    rv = info->Format(_retval, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
 sbLocalDatabaseTreeView::GetPropertyBag(const nsAString& aGuid,
                                         PRUint32 aIndex,
                                         sbILocalDatabaseResourcePropertyBag** _retval)
@@ -1056,134 +1197,23 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
 
   nsresult rv;
 
-  // If we are adding a fake all row, and this is the first row, the string
-  // should be "All". Otherwise, decrement the row count to fix the offset
-  // of adding the fake all row.
-  // XXXsteve This is not fully implemented yet
-  if (mFakeAllRow) {
-    if (row == 0) {
-      _retval.AssignLiteral("All");
-      return NS_OK;
-    }
-    row--;
-  }
-
-  nsAutoString bind;
-  rv = GetPropertyForTreeColumn(col, bind);
+  nsAutoString propertyName;
+  rv = GetPropertyForTreeColumn(col, propertyName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If this is an ordinal column, return just the row number
-  if (bind.Equals(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL))) {
-    _retval.AppendInt(row + 1);
-    return NS_OK;
-  }
-
-  nsCOMPtr<sbIPropertyInfo> info;
-  rv = mPropMan->GetPropertyInfo(bind, getter_AddRefs(info));
+  nsCOMPtr<sbIPropertyInfo> propInfo;
+  rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Check our local map cache of property bags and return the cell value if
-  // we have it cached
-  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-  if (mRowCache.Get(row, getter_AddRefs(bag))) {
-    rv = bag->GetProperty(bind, _retval);
-    if(rv == NS_ERROR_ILLEGAL_VALUE) {
-      _retval.Assign(EmptyString());
-    }
-    else {
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Format the value for display
-      rv = info->Format(_retval, _retval);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    return NS_OK;
-  }
-
-  PageCacheStatus status;
-  rv = GetPageCachedStatus(row, &status);
+  nsAutoString simpleType;
+  rv = propInfo->GetDisplayUsingSimpleType(simpleType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  switch(status) {
-
-    // Since we cache each page's data in mRowCache, this should never be
-    // called.  Warn and fall through so we can still process the request.
-    case eCached:
-      NS_WARNING("Not cached in mRowCache but page cached?");
-
-    // The age this row is in is not yet cached, so async request it and
-    // return blank
-    case eNotCached:
-    {
-
-      // If we already have a pending request, don't start another, just put
-      // this new request on deck.  If there is already a next request on deck,
-      // clobber it and reset its page's cache status.  The purpose of this is
-      // to prevent a lot of requests from getting stacked up if the user
-      // scrolls the list around a lot
-
-      if (mGetByIndexAsyncPending) {
-
-        if (mNextGetByIndexAsync > -1) {
-          rv = SetPageCachedStatus(mNextGetByIndexAsync, eNotCached);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-
-        mNextGetByIndexAsync = row;
-        rv = SetPageCachedStatus(row, ePending);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-
-        rv = SetPageCachedStatus(row, ePending);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = mArray->GetByIndexAsync(row);
-        NS_ENSURE_SUCCESS(rv, rv);
-        mGetByIndexAsyncPending = PR_TRUE;
-      }
-
-      // Try our dirty cache so we can show something
-      if (mDirtyRowCache.Get(row, getter_AddRefs(bag))) {
-        rv = bag->GetProperty(bind, _retval);
-        if(rv == NS_ERROR_ILLEGAL_VALUE) {
-          _retval.Assign(EmptyString());
-        }
-        else {
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
-      else {
-        _retval.Assign(EmptyString());
-      }
-    }
-    break;
-
-    // The page this row is in is pending, so just return a blank
-    case ePending:
-    {
-      // Try our dirty cache so we can show something
-      if (mDirtyRowCache.Get(row, getter_AddRefs(bag))) {
-        rv = bag->GetProperty(bind, _retval);
-        if(rv == NS_ERROR_ILLEGAL_VALUE) {
-          _retval.Assign(EmptyString());
-        }
-        else {
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
-      else {
-        _retval.Assign(EmptyString());
-      }
-    }
-    break;
-  }
-
-  if (!_retval.Equals(EmptyString())) {
-    // Format the value for display
-    rv = info->Format(_retval, _retval);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  // Return blank if this is an image property. Otherwise, return text.
+  if (simpleType.EqualsLiteral("image"))
+    _retval.Truncate();
+  else
+    return GetCellPropertyValue(row, col, _retval);
 
   return NS_OK;
 }
@@ -1510,7 +1540,27 @@ sbLocalDatabaseTreeView::GetImageSrc(PRInt32 row,
 {
   NS_ENSURE_ARG_POINTER(col);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+
+  nsAutoString propertyName;
+  rv = GetPropertyForTreeColumn(col, propertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propInfo;
+  rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString simpleType;
+  rv = propInfo->GetDisplayUsingSimpleType(simpleType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return blank if this is not an image property. Otherwise, return text.
+  if (!simpleType.EqualsLiteral("image"))
+    _retval.Truncate();
+  else
+    return GetCellPropertyValue(row, col, _retval);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1528,7 +1578,7 @@ sbLocalDatabaseTreeView::GetProgressMode(PRInt32 row,
 
     // HACK to get this row's data loaded.
     nsAutoString cellValue;
-    rv = GetCellText(row, col, cellValue);
+    rv = GetCellPropertyValue(row, col, cellValue);
     NS_ENSURE_SUCCESS(rv, rv);
 
     *_retval = (PRInt32)nsITreeView::PROGRESS_NONE;
@@ -1633,7 +1683,7 @@ sbLocalDatabaseTreeView::GetCellValue(PRInt32 row,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString cellValue;
-  rv = GetCellText(row, col, cellValue);
+  rv = GetCellPropertyValue(row, col, cellValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (simpleType.EqualsLiteral("checkbox") && cellValue.IsEmpty()) {
