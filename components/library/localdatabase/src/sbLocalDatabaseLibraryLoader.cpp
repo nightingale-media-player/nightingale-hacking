@@ -36,6 +36,7 @@
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
 
+#include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsMemory.h>
@@ -301,21 +302,23 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
   nsCOMPtr<nsILocalFile> location = libraryInfo->GetDatabaseLocation();
   NS_ENSURE_TRUE(location, NS_ERROR_UNEXPECTED);
 
-  sbLocalDatabaseLibraryFactory libraryFactory;
+  nsRefPtr<sbLocalDatabaseLibraryFactory>
+    libraryFactory(new sbLocalDatabaseLibraryFactory());
+  NS_ENSURE_TRUE(libraryFactory, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<sbILibrary> library;
-  rv = libraryFactory.CreateLibraryFromDatabase(location,
-                                                getter_AddRefs(library));
+  rv = libraryFactory->CreateLibraryFromDatabase(location,
+                                                 getter_AddRefs(library));
   if (NS_FAILED(rv)) {
     // We can't access this required database file. For now we're going to
     // simply make a new blank database in the default location and switch 
     // the preferences to use it.
-    location = libraryFactory.GetFileForGUID(aDefaultDatabaseGUID);
+    location = libraryFactory->GetFileForGUID(aDefaultDatabaseGUID);
     NS_ENSURE_TRUE(location, NS_ERROR_FAILURE);
 
     // Make sure we can access this one.
-    rv = libraryFactory.CreateLibraryFromDatabase(location,
-                                                  getter_AddRefs(library));
+    rv = libraryFactory->CreateLibraryFromDatabase(location,
+                                                   getter_AddRefs(library));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Set the name.
@@ -360,8 +363,10 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
   nsresult rv = newLibraryInfo->Init(aPrefKey);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  sbLocalDatabaseLibraryFactory libraryFactory;
-
+  nsRefPtr<sbLocalDatabaseLibraryFactory>
+    libraryFactory(new sbLocalDatabaseLibraryFactory());
+  NS_ENSURE_TRUE(libraryFactory, nsnull);
+  
   nsAutoString databaseGUID;
 
   if (!aDatabaseGUID.IsEmpty()) {
@@ -371,7 +376,7 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
     NS_ASSERTION(aDatabaseFile, "You must supply either the GUID or file!");
 
     // Figure out the GUID from the filename.
-    libraryFactory.GetGUIDFromFile(aDatabaseFile, databaseGUID);
+    libraryFactory->GetGUIDFromFile(aDatabaseFile, databaseGUID);
     NS_ENSURE_FALSE(databaseGUID.IsEmpty(), nsnull);
   }
 
@@ -388,7 +393,7 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
                  "You must specify either the GUID or file!");
 
     // Figure out the file from the GUID.
-    location = libraryFactory.GetFileForGUID(aDatabaseGUID);
+    location = libraryFactory->GetFileForGUID(aDatabaseGUID);
     NS_ENSURE_TRUE(location, nsnull);
   }
 
@@ -400,8 +405,8 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
 
   // The resource GUID is unknown at this point. Load the library and get it.
   nsCOMPtr<sbILibrary> library;
-  rv = libraryFactory.CreateLibraryFromDatabase(location,
-                                                getter_AddRefs(library));
+  rv = libraryFactory->CreateLibraryFromDatabase(location,
+                                                 getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, nsnull);
 
   if (!aLibraryNameKey.IsEmpty()) {
@@ -562,8 +567,11 @@ sbLocalDatabaseLibraryLoader::OnRegisterStartupLibraries(sbILibraryManager* aLib
   rv = EnsureDefaultLibraries();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLocalDatabaseLibraryFactory libraryFactory;
-  sbLoaderInfo info(aLibraryManager, &libraryFactory);
+  nsRefPtr<sbLocalDatabaseLibraryFactory>
+    libraryFactory(new sbLocalDatabaseLibraryFactory());
+  NS_ENSURE_TRUE(libraryFactory, NS_ERROR_OUT_OF_MEMORY);
+  
+  sbLoaderInfo info(aLibraryManager, libraryFactory);
 
   PRUint32 enumeratedLibraries = 
     mLibraryInfoTable.EnumerateRead(LoadLibrariesCallback, &info);

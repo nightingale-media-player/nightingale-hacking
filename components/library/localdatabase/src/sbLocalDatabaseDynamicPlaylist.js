@@ -23,10 +23,13 @@
 // END SONGBIRD GPL
 //
 */
-Components.utils["import"].call(this, "rel:XPCOMUtils.jsm");
-Components.utils["import"].call(this, "rel:ArrayConverter.jsm");
-//Components.utils.import("gre:XPCOMUtils.jsm");
-//Components.utils.import("rel:ArrayConverter.jsm");
+
+// XXXben This following line should be used when XPCOMUtils.jsm grows the
+//        makeQI function:
+//  Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://app/components/XPCOMUtils.jsm");
+
+Components.utils.import("resource://app/components/ArrayConverter.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;

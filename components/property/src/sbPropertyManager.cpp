@@ -180,7 +180,7 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPro
   else {
     //Create default property (text) for new property name encountered.
     nsresult rv;
-    nsAutoPtr<sbTextPropertyInfo> textProperty;
+    nsRefPtr<sbTextPropertyInfo> textProperty;
 
     textProperty = new sbTextPropertyInfo();
     NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
@@ -189,7 +189,6 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPro
 
     rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
     NS_ENSURE_SUCCESS(rv, rv);
-    textProperty.forget();
 
     //This is the only safe way to hand off the instance because the hash table
     //may have changed and returning the instance pointer above may yield a 
@@ -489,7 +488,7 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyName,
                                 PRUint32 aNullSort,
                                 PRBool aHasNullSort)
 {
-  nsAutoPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
+  nsRefPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = textProperty->SetName(aPropertyName);
@@ -526,7 +525,6 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyName,
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  textProperty.forget();
   return NS_OK;
 }
 
@@ -538,7 +536,7 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
                                     PRBool aUserViewable,
                                     PRBool aUserEditable)
 {
-  nsAutoPtr<sbDatetimePropertyInfo>
+  nsRefPtr<sbDatetimePropertyInfo>
     datetimeProperty(new sbDatetimePropertyInfo());
   NS_ENSURE_TRUE(datetimeProperty, NS_ERROR_OUT_OF_MEMORY);
 
@@ -570,7 +568,6 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  datetimeProperty.forget();
   return NS_OK;
 }
 
@@ -581,7 +578,7 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyName,
                                PRBool aUserViewable,
                                PRBool aUserEditable)
 {
-  nsAutoPtr<sbURIPropertyInfo> uriProperty(new sbURIPropertyInfo());
+  nsRefPtr<sbURIPropertyInfo> uriProperty(new sbURIPropertyInfo());
   NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = uriProperty->SetName(aPropertyName);
@@ -609,7 +606,6 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyName,
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  uriProperty.forget();
   return NS_OK;
 }
 
@@ -624,7 +620,7 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
                                   PRInt32 aMaxValue,
                                   PRBool aHasMaxValue)
 {
-  nsAutoPtr<sbNumberPropertyInfo> numberProperty(new sbNumberPropertyInfo());
+  nsRefPtr<sbNumberPropertyInfo> numberProperty(new sbNumberPropertyInfo());
   NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = numberProperty->SetName(aPropertyName);
@@ -662,7 +658,6 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  numberProperty.forget();
   return NS_OK;
 }
 
@@ -679,7 +674,7 @@ sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
                                aStringBundle, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<sbProgressPropertyInfo>
+  nsRefPtr<sbProgressPropertyInfo>
     progressProperty(new sbProgressPropertyInfo());
   NS_ENSURE_TRUE(progressProperty, NS_ERROR_OUT_OF_MEMORY);
 
@@ -714,7 +709,6 @@ sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  progressProperty.forget();
   return NS_OK;
 }
 
@@ -725,7 +719,7 @@ sbPropertyManager::RegisterCheckbox(const nsAString& aPropertyName,
                                     PRBool aUserViewable,
                                     PRBool aUserEditable)
 {
-  nsAutoPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
+  nsRefPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = textProperty->SetName(aPropertyName);
@@ -760,6 +754,5 @@ sbPropertyManager::RegisterCheckbox(const nsAString& aPropertyName,
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  textProperty.forget();
   return NS_OK;
 }

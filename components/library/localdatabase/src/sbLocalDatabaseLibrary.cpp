@@ -357,14 +357,14 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
 
   nsresult rv;
 
-  nsAutoPtr<sbLocalDatabasePropertyCache>
+  nsRefPtr<sbLocalDatabasePropertyCache>
     propCache(new sbLocalDatabasePropertyCache());
   NS_ENSURE_TRUE(propCache, NS_ERROR_OUT_OF_MEMORY);
 
   rv = propCache->Init(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mPropertyCache = propCache.forget();
+  mPropertyCache = propCache;
 
   mFullArray = new sbLocalDatabaseGUIDArray();
   NS_ENSURE_TRUE(mFullArray, NS_ERROR_OUT_OF_MEMORY);
@@ -1511,14 +1511,14 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
     itemInfo->weakRef = nsnull;
   }
 
-  nsAutoPtr<sbLocalDatabaseMediaItem>
+  nsRefPtr<sbLocalDatabaseMediaItem>
     newMediaItem(new sbLocalDatabaseMediaItem());
   NS_ENSURE_TRUE(newMediaItem, NS_ERROR_OUT_OF_MEMORY);
 
   rv = newMediaItem->Init(this, aGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  strongMediaItem = newMediaItem.forget();
+  strongMediaItem = newMediaItem;
 
   // Get the type for the guid.
   nsAutoString type;
@@ -1986,7 +1986,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsAsync(nsIArray* aURIList,
   rv = aURIList->GetLength(&listLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<sbBatchCreateTimerCallback> callback;
+  nsRefPtr<sbBatchCreateTimerCallback> callback;
   callback = new sbBatchCreateTimerCallback(this, aListener, query);
   NS_ENSURE_TRUE(callback, NS_ERROR_OUT_OF_MEMORY);
 
@@ -2036,7 +2036,6 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsAsync(nsIArray* aURIList,
   // callback frequency.
   rv = timer->InitWithCallback(callback, 333, nsITimer::TYPE_REPEATING_SLACK);
   NS_ENSURE_SUCCESS(rv, rv);
-  callback.forget();
 
   return NS_OK;
 }
@@ -2336,14 +2335,14 @@ sbLocalDatabaseLibrary::CreateView(sbIMediaListView** _retval)
   nsAutoString prop;
   prop.AssignLiteral(DEFAULT_SORT_PROPERTY);
 
-  nsAutoPtr<sbLocalDatabaseMediaListView>
+  nsRefPtr<sbLocalDatabaseMediaListView>
     view(new sbLocalDatabaseMediaListView(this, mediaList, prop, 0));
   NS_ENSURE_TRUE(view, NS_ERROR_OUT_OF_MEMORY);
 
   rv = view->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*_retval = view.forget());
+  NS_ADDREF(*_retval = view);
   return NS_OK;
 }
 

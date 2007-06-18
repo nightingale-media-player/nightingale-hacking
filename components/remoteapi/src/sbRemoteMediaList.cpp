@@ -430,7 +430,7 @@ sbRemoteMediaList::GetSelection( nsISimpleEnumerator **aSelection )
   rv = wrapped->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*aSelection = wrapped.forget());
+  NS_ADDREF(*aSelection = wrapped);
   return NS_OK;
 }
 

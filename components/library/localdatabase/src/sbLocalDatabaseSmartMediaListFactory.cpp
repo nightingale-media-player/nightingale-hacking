@@ -112,7 +112,7 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsAutoPtr<sbLocalDatabaseSmartMediaList> newSmartList(
+  nsRefPtr<sbLocalDatabaseSmartMediaList> newSmartList(
     new sbLocalDatabaseSmartMediaList());
   NS_ENSURE_TRUE(newSmartList, NS_ERROR_OUT_OF_MEMORY);
 
@@ -120,7 +120,5 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = newSmartList);
-  newSmartList.forget();
-
   return NS_OK;
 }

@@ -328,7 +328,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
       nsString* newElement = misses.AppendElement(guid);
       NS_ENSURE_TRUE(newElement, NS_ERROR_OUT_OF_MEMORY);
 
-      nsAutoPtr<sbLocalDatabaseResourcePropertyBag> newBag
+      nsRefPtr<sbLocalDatabaseResourcePropertyBag> newBag
         (new sbLocalDatabaseResourcePropertyBag(this, guid));
       NS_ENSURE_TRUE(newBag, NS_ERROR_OUT_OF_MEMORY);
 
@@ -337,8 +337,6 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
 
       PRBool success = mCache.Put(guid, newBag);
       NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-      newBag.forget();
     }
   }
 

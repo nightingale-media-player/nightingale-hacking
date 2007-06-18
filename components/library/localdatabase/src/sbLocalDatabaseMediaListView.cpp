@@ -411,7 +411,7 @@ sbLocalDatabaseMediaListView::Clone(sbIMediaListView** _retval)
   // set
   nsresult rv;
 
-  nsAutoPtr<sbLocalDatabaseMediaListView>
+  nsRefPtr<sbLocalDatabaseMediaListView>
     clone(new sbLocalDatabaseMediaListView(mLibrary,
                                            mMediaList,
                                            mDefaultSortProperty,
@@ -443,7 +443,7 @@ sbLocalDatabaseMediaListView::Clone(sbIMediaListView** _retval)
   rv = clone->UpdateViewArrayConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*_retval = clone.forget());
+  NS_ADDREF(*_retval = clone);
   return NS_OK;
 }
 

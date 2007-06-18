@@ -918,7 +918,7 @@ sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListView** _retval)
   rv = GetMediaItemId(&mediaItemId);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<sbLocalDatabaseMediaListView>
+  nsRefPtr<sbLocalDatabaseMediaListView>
     view(new sbLocalDatabaseMediaListView(mLibrary,
                                           this,
                                           defaultSortProperty,
@@ -927,7 +927,7 @@ sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListView** _retval)
   rv = view->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*_retval = view.forget());
+  NS_ADDREF(*_retval = view);
   return NS_OK;
 }
 

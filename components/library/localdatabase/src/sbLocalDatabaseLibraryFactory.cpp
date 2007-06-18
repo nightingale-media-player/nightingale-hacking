@@ -218,7 +218,7 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
                      ioService);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<sbLocalDatabaseLibrary> library(new sbLocalDatabaseLibrary());
+  nsRefPtr<sbLocalDatabaseLibrary> library(new sbLocalDatabaseLibrary());
   NS_ENSURE_TRUE(library, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<nsIPropertyBag2> creationParams = aCreationParameters;
@@ -240,7 +240,7 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   NS_ENSURE_SUCCESS(rv, rv);
 
 
-  NS_ADDREF(*_retval = library.forget());
+  NS_ADDREF(*_retval = library);
   return NS_OK;
 }
 

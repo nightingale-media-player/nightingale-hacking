@@ -1974,7 +1974,7 @@ sbLocalDatabaseTreeView::GetSelectedMediaItems(nsISimpleEnumerator** aSelection)
     TRACE(("sbLocalDatabaseTreeView[0x%.8x] - "
            "GetSelectedMediaItems() - no saved selection", this));
 
-    nsAutoPtr<sbGUIDArrayToIndexedMediaItemEnumerator>
+    nsRefPtr<sbGUIDArrayToIndexedMediaItemEnumerator>
       enumerator(new sbGUIDArrayToIndexedMediaItemEnumerator(library));
     NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
 
@@ -1983,7 +1983,6 @@ sbLocalDatabaseTreeView::GetSelectedMediaItems(nsISimpleEnumerator** aSelection)
     NS_ENSURE_SUCCESS(rv, rv);
 
     NS_ADDREF(*aSelection = enumerator);
-    enumerator.forget();
     return NS_OK;
   }
 
@@ -2007,7 +2006,7 @@ sbLocalDatabaseTreeView::GetSelectedMediaItems(nsISimpleEnumerator** aSelection)
   rv = mArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<sbGUIDArrayToIndexedMediaItemEnumerator>
+  nsRefPtr<sbGUIDArrayToIndexedMediaItemEnumerator>
     enumerator(new sbGUIDArrayToIndexedMediaItemEnumerator(library));
   NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
 
@@ -2037,7 +2036,6 @@ sbLocalDatabaseTreeView::GetSelectedMediaItems(nsISimpleEnumerator** aSelection)
   }
 
   NS_ADDREF(*aSelection = enumerator);
-  enumerator.forget();
   return NS_OK;
 }
 
@@ -2624,16 +2622,12 @@ sbGUIDArrayToIndexedMediaItemEnumerator::GetNext(nsISupports **_retval)
     return NS_ERROR_FAILURE;
   }
 
-  nsAutoPtr<sbLocalDatabaseIndexedMediaItem> indexedItem
+  nsRefPtr<sbLocalDatabaseIndexedMediaItem> indexedItem
     (new sbLocalDatabaseIndexedMediaItem(mNextItemIndex, mNextItem));
   NS_ENSURE_TRUE(indexedItem, NS_ERROR_OUT_OF_MEMORY);
 
-  nsCOMPtr<nsISupports> supports =
-    NS_ISUPPORTS_CAST(sbIIndexedMediaItem*, indexedItem);
-  NS_ENSURE_STATE(supports);
-
-  NS_ADDREF(*_retval = supports);
-  indexedItem.forget();
+  NS_ADDREF(*_retval = NS_ISUPPORTS_CAST(sbIIndexedMediaItem*,
+                                         indexedItem.get()));
 
   GetNextItem();
 
@@ -2676,18 +2670,13 @@ sbIndexedGUIDArrayEnumerator::GetNext(nsISupports **_retval)
   rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<sbLocalDatabaseIndexedMediaItem> indexedItem
+  nsRefPtr<sbLocalDatabaseIndexedMediaItem> indexedItem
     (new sbLocalDatabaseIndexedMediaItem(mNextIndex, item));
   NS_ENSURE_TRUE(indexedItem, NS_ERROR_OUT_OF_MEMORY);
 
-  nsCOMPtr<nsISupports> supports =
-    NS_ISUPPORTS_CAST(sbIIndexedMediaItem*, indexedItem);
-  NS_ENSURE_STATE(supports);
-
-  NS_ADDREF(*_retval = supports);
-  indexedItem.forget();
+  NS_ADDREF(*_retval = NS_ISUPPORTS_CAST(sbIIndexedMediaItem*,
+                                         indexedItem.get()));
 
   mNextIndex++;
   return NS_OK;
 }
-

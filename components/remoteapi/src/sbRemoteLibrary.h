@@ -129,24 +129,24 @@ SB_WrapMediaItem(sbIMediaItem* aMediaItem,
     rv = mediaList->CreateView(getter_AddRefs(mediaListView));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoPtr<sbRemoteMediaList> remoteMediaList(
+    nsRefPtr<sbRemoteMediaList> remoteMediaList(
       new sbRemoteMediaList(mediaList, mediaListView));
     NS_ENSURE_TRUE(remoteMediaList, NS_ERROR_OUT_OF_MEMORY);
 
     rv = remoteMediaList->Init();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    NS_ADDREF(*aRemoteMediaItem = remoteMediaList.forget());
+    NS_ADDREF(*aRemoteMediaItem = remoteMediaList);
   }
   else {
-    nsAutoPtr<sbRemoteMediaItem> remoteMediaItem(
+    nsRefPtr<sbRemoteMediaItem> remoteMediaItem(
       new sbRemoteMediaItem(aMediaItem));
     NS_ENSURE_TRUE(remoteMediaItem, NS_ERROR_OUT_OF_MEMORY);
 
     rv = remoteMediaItem->Init();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    NS_ADDREF(*aRemoteMediaItem = remoteMediaItem.forget());
+    NS_ADDREF(*aRemoteMediaItem = remoteMediaItem);
   }
 
   return NS_OK;
@@ -165,14 +165,14 @@ SB_WrapMediaList(sbIMediaList* aMediaList,
   rv = aMediaList->CreateView(getter_AddRefs(mediaListView));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<sbRemoteMediaList> remoteMediaList(
+  nsRefPtr<sbRemoteMediaList> remoteMediaList(
     new sbRemoteMediaList(aMediaList, mediaListView));
   NS_ENSURE_TRUE(remoteMediaList, NS_ERROR_OUT_OF_MEMORY);
 
   rv = remoteMediaList->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*aRemoteMediaList = remoteMediaList.forget());
+  NS_ADDREF(*aRemoteMediaList = remoteMediaList);
 
   return NS_OK;
 }
@@ -204,14 +204,14 @@ SB_WrapMediaList(sbIMediaListView* aMediaListView,
   nsresult rv = aMediaListView->GetMediaList( getter_AddRefs(mediaList) );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoPtr<sbRemoteMediaList> remoteMediaList(
+  nsRefPtr<sbRemoteMediaList> remoteMediaList(
     new sbRemoteMediaList(mediaList, aMediaListView));
   NS_ENSURE_TRUE(remoteMediaList, NS_ERROR_OUT_OF_MEMORY);
 
   rv = remoteMediaList->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*aRemoteMediaList = remoteMediaList.forget());
+  NS_ADDREF(*aRemoteMediaList = remoteMediaList);
 
   return NS_OK;
 }

@@ -83,8 +83,6 @@ private:
   PRLock* mPropertyBagLock;
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> mPropertyBag;
 
-  PRLock*   mGuidLock;
-
   PRPackedBool mWriteThrough;
   PRPackedBool mWritePending;
 };

@@ -116,7 +116,6 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
   mLibrary(nsnull),
   mPropertyCacheLock(nsnull),
   mPropertyBagLock(nsnull),
-  mGuidLock(nsnull),
   mWriteThrough(PR_FALSE),
   mWritePending(PR_FALSE)
 {
@@ -124,10 +123,6 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
 
 sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
 {
-  if(mGuidLock) {
-    nsAutoLock::DestroyLock(mGuidLock);
-  }
-
   if(mPropertyCacheLock) {
     nsAutoLock::DestroyLock(mPropertyCacheLock);
   }
@@ -153,10 +148,6 @@ sbLocalDatabaseMediaItem::Init(sbILocalDatabaseLibrary* aLibrary,
 
   mLibrary = aLibrary;
   mGuid.Assign(aGuid);
-
-  mGuidLock =
-    nsAutoLock::NewLock("sbLocalDatabaseMediaItem::mGuidLock");
-  NS_ENSURE_TRUE(mGuidLock, NS_ERROR_OUT_OF_MEMORY);
 
   mPropertyCacheLock =
     nsAutoLock::NewLock("sbLocalDatabaseMediaItem::mPropertyCacheLock");

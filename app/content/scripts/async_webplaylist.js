@@ -29,7 +29,7 @@
 //
 
 if (typeof(SBProperties) == "undefined") {
-  Components.utils.import("rel:sbProperties.jsm");
+  Components.utils.import("resource://app/components/sbProperties.jsm");
   if (!SBProperties)
     throw new Error("Import of sbProperties module failed!");
 }
