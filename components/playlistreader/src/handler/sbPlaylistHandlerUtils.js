@@ -28,7 +28,7 @@
  * \file sbPlaylistHandlerUtils.js
  */
 
-Components.utils["import"].call(this, "rel:sbProperties.jsm");
+Components.utils.import("resource://app/components/sbProperties.jsm");
 
 const PR_RDONLY = -1;
 const PR_FLAGS_DEFAULT = -1;
