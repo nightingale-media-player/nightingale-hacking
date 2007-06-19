@@ -412,7 +412,8 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
   // FIXME: does this handle non-latin paths on non-linux?
   
   this._dataSource = RDFSVC.GetDataSourceBlocking(uri.spec);
-  this._dataSourceWrapped = new dsWrapper(this._dataSource, this);
+  this._dataSourceWrapped = new dsTranslator(this._dataSource, this);
+  new dsSaver(this._dataSource, 30*1000); // try to save every thirty seconds
 
   // for sbIServicePaneService.dataSource
   this.__defineGetter__('dataSource', 
@@ -435,7 +436,6 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
     RDFCU.MakeSeq(this._dataSource, RDFSVC.GetResource('SB:Root'));
     this._root = this.getNode('SB:Root');
     this._root.hidden = false;
-    this.save();
   }
 
   // okay, lets get all the keys
@@ -570,8 +570,7 @@ function ServicePaneService_getNodeForURL(aURL) {
 
 ServicePaneService.prototype.save =
 function ServicePaneService_save() {
-  /* FIXME: this should really be rate-limited */
-  this._dataSource.QueryInterface(Ci.nsIRDFRemoteDataSource).Flush();
+  /* FIXME: this function should go away */
 }
 ServicePaneService.prototype.fillContextMenu =
 function ServicePaneService_fillContextMenu(aId, aContextMenu, aParentWindow) {
@@ -767,7 +766,7 @@ function ServicePaneService_onRename(aID, aNewName) {
 
 /* this is a wrapper for the nsIRDFDataSource that will translate some of the
   properties via stringbundles */
-function dsWrapper(inner, sps) {
+function dsTranslator(inner, sps) {
   this.inner = inner;
   this.sps = sps;
   this.properties = {};
@@ -775,7 +774,7 @@ function dsWrapper(inner, sps) {
   this.stringBundleService = Cc['@mozilla.org/intl/stringbundle;1']
       .getService(Ci.nsIStringBundleService);
 }
-dsWrapper.prototype = {
+dsTranslator.prototype = {
   // impl methods
   
   // Try to translate a key based on a string bundle uri. Either return an
@@ -922,6 +921,72 @@ dsWrapper.prototype = {
   Flush: function Flush() { this.inner.Flush(); },
   FlushTo: function FlushTo(a) { this.inner.FlushTo(a); },
 };
+
+
+/* an RDF observer that handles automatic saving of RDF state */
+function dsSaver(ds, frequency) {
+  this.ds = ds.QueryInterface(Ci.nsIRDFDataSource);
+  this.ds.QueryInterface(Ci.nsIRDFRemoteDataSource);
+
+  this.dirty = false; // has the DS changed since it was last saved?
+  
+  this.timer = Cc['@mozilla.org/timer;1'].createInstance(Ci.nsITimer);
+  this.timer.init(this, frequency, Ci.nsITimer.TYPE_REPEATING_SLACK);
+
+  Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService)
+      .addObserver(this, 'quit-application', false);
+      
+  this.ds.AddObserver(this);
+}
+dsSaver.prototype = {
+  save: function dsSaver_save() {
+    this.ds.Flush();
+  },
+  /* nsISupports */
+  QueryInterface: function dsSaver_QueryInterface(iid) {
+    if (!iid.equals(Ci.nsIRDFObserver) &&
+        !iid.equals(Ci.nsIObserver) &&
+        !iid.equals(Ci.nsISupports)) {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    return this;
+  },
+  
+  /* nsIObserver */
+  observe: function dsSaver_observe(subject, topic, data) {
+    if (subject == this.timer &&
+        topic == 'timer-callback') {
+      /* a timer went off */
+      if (this.dirty) {
+        this.save();
+      }
+    } else if (topic == 'quit-application') {
+      if (this.dirty) {
+        this.save();
+      }
+      Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService)
+        .removeObserver(this, 'quit-application');
+      this.ds.RemoveObserver(this);
+      this.timer.cancel();
+    }
+  },
+  
+  /* nsIRDFObserver */
+  onAssert: function dsSaver_onAssert(a, b, c, d) {
+    this.dirty = true;
+  },
+  onUnassert: function dsSaver_onUnassert(a, b, c, d) {
+    this.dirty = true;
+  },
+  onChange: function dsSaver_onChange(a, b, c, d, e) {
+    this.dirty = true;
+  },
+  onMove: function dsSaver_onMove(a, b, c, d, e) {
+    this.dirty = true;
+  },
+  onBeginUpdateBatch: function dsSaver_onBeginUpdateBatch(a) { },
+  onEndUpdateBatch: function dsSaver_onEndUpdateBatch(a) { },
+}
 
 /**
  * /brief XPCOM initialization code
