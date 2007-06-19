@@ -82,6 +82,10 @@
  
   <script>
   <![CDATA[
+  var Cc = Components.classes;
+  var Ci = Components.interfaces;
+  var Cr = Components.results;
+
   var controls = Array();
   var playlist = null;
   var guids = Array();
@@ -185,29 +189,17 @@
     if (focusobject && focusobject.isFocused()) return; // ignore new selection if the window is focused (the selection can't possibly have been made by the user!)
     loadSelection();
   }
-  
+
   function loadSelection()
   {
     if (!playlist) { setTimeout("loadSelection();", 0); return; }
     var _guids = Array();
-    if (playlist && playlist.tree) 
+    if (playlist && playlist.treeView && playlist.treeView.selectedMediaItems) 
     {
-      if (playlist.tree.view && playlist.tree.view.selection)
-      {
-        var rangeCount = playlist.tree.view.selection.getRangeCount();
-        if (rangeCount == 0) return; // abort !
-        for (var i=0; i < rangeCount; i++) 
-        {
-          var start = {};
-          var end = {};
-          playlist.tree.view.selection.getRangeAt( i, start, end );
-          for (var j=start.value;j<=end.value;j++)
-          {
-            // Get the item, this contains the uuid.
-            var item = playlist.mediaListView.mediaList.getItemByIndex(j);
-            if (item) _guids.push(item.guid);
-          }
-        }
+      var items = playlist.treeView.selectedMediaItems;
+      while (items.hasMoreElements()) {
+        var item = items.getNext().mediaItem;
+        if (item) _guids.push(item.guid);
       }
     }
     guids = _guids;
