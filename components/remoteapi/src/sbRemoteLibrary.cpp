@@ -132,12 +132,20 @@ const static char* sPublicMethods[] =
     "binding:ensureColumnVisible",
 
     // sbIMediaList
+    "binding:getItemByGuid",
+    "binding:getItemByIndex",
+    "binding:enumerateAllItems",
+    "binding:enumerateItemsByProperty",
+    "binding:indexOf",
+    "binding:lastIndexOf",
     "binding:contains",
     "binding:add",
     "binding:addAll",
     "binding:addSome",
     "binding:remove",
-    "binding:removeByIndex"
+    "binding:removeByIndex",
+    "binding:getDistinctValuesForProperty"
+
   };
 
 NS_IMPL_ISUPPORTS9( sbRemoteLibrary,
