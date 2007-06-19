@@ -617,6 +617,11 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 
       // Make an sbIMediaItem and push the metadata into it
       rv = AddMetadataToItem( item, flush );
+
+      // Close the handler by hand since we know we're done with it and
+      // we won't get rid of the item for awhile.
+      if ( item->handler )
+        item->handler->Close();
     }
     // Ignore errors on the metadata loop, just set a warning and keep going.
     if ( NS_FAILED(rv) )
@@ -887,8 +892,7 @@ nsresult sbMetadataJob::SetItemsAreWrittenAndDelete( sbIDatabaseQuery *aQuery, n
   NS_ENSURE_SUCCESS(rv, rv);
   for ( PRUint32 i = 0, end = aItemArray.Length(); i < end; i++ )
   {
-    rv = SetItemIsWrittenAndDelete( aQuery, aTableName, aItemArray[ i ], PR_FALSE );
-    NS_ENSURE_SUCCESS(rv, rv);
+    SetItemIsWrittenAndDelete( aQuery, aTableName, aItemArray[ i ], PR_FALSE );
   }
   rv = aQuery->AddQuery( NS_LITERAL_STRING("commit") );
   NS_ENSURE_SUCCESS(rv, rv);
