@@ -75,6 +75,7 @@
 
 // CLASSES ====================================================================
 class sbIMediaItem;
+class sbIMutablePropertyArray;
 class sbIPropertyArray;
 class sbIPropertyManager;
 class MetadataJobProcessorThread;
