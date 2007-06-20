@@ -314,7 +314,7 @@ try
       };
 
       var library = aMediaListView.mediaList.library;
-      library.enumerateItemsByProperty(SBProperties.contentUrl, url, listener,
+      library.enumerateItemsByProperty(SBProperties.contentURL, url, listener,
                                        sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
       if (listener.foundItem) {
         this.items.push(listener.foundItem)
