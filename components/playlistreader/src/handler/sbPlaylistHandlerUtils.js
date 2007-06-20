@@ -78,7 +78,7 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
     // property values
     var propertyArray = SBProperties.createArray();
     aItems.forEach(function(e) {
-      propertyArray.appendProperty(SBProperties.contentUrl, e.uri.spec);
+      propertyArray.appendProperty(SBProperties.contentURL, e.uri.spec);
     });
 
     var listener = {
