@@ -46,7 +46,7 @@ var nodesToRemove = [];
 
 function runTest () {
   setup();
-/*
+
   testLibrariesAndContents();
   
   testAddingSimplePlaylists();
@@ -58,9 +58,9 @@ function runTest () {
   testLibrarySuggestion();
   
   testLibrariesAndContents();  
-*/  
+  
   testRenaming();
-/*  
+  
   testLibrariesAndContents();    
   
   removeAddedItems();
@@ -68,7 +68,6 @@ function runTest () {
   testAllItemsRemoved();
   
   testLibrariesAndContents();  
-*/
 }
 
 
@@ -522,9 +521,9 @@ function testRenaming() {
   // Add a new library to rename
   var newLibrary = createLibrary("renaming-test");
   newLibrary.name = "Test2";
+  newLibrary.write();
   libraryManager.registerLibrary(newLibrary, false);
-  var list = newLibrary.createMediaList("simple");
-  var newLibraryNode = libraryServicePane.getNodeForLibraryResource(list);
+  var newLibraryNode = libraryServicePane.getNodeForLibraryResource(newLibrary);
 
   // Add a list to the library
   var list1 = newLibrary.createMediaList("simple");

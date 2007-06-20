@@ -1247,6 +1247,16 @@ sbLocalDatabaseLibrary::GetContainingLists(sbMediaItemArray* aItems,
   PRUint32 count = aItems->Count();
   PRUint32 incount = 0;
   for (PRUint32 i = 0; i < count; i++) {
+
+    // The library can never be a member of a simple media list, so skip it.
+    // Without this, GetMediaItemId will fail on the library
+    PRBool isLibrary;
+    rv = this->Equals(aItems->ObjectAt(i), &isLibrary);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (isLibrary) {
+      continue;
+    }
+
     nsCOMPtr<sbILocalDatabaseMediaItem> item =
       do_QueryInterface(aItems->ObjectAt(i), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
