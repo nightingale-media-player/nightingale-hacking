@@ -1285,16 +1285,13 @@
 
   // XXX: The coords given to the showPopup() method are sometimes relative to
   // the browser iframe ! so compute the difference.  This may be a bug, possibly related to bmo 362403
-  dump('\n\n\n\n\n\n\n\n\n\nabout to show playlist context menu\n');
   
   // if we are inside a browser, tweak the coords
   if (window != this.outerWindow) {
-    dump('in a browser\n');
     var bo = document.getBoxObjectFor(document.documentElement);
     this._context_x = evt.screenX - bo.screenX;
     this._context_y = evt.screenY - bo.screenY;
   } else {
-    dump('in the toplevel window\n');
     // otherwise (ie, webplaylist) keep original coords
     this._context_x = evt.screenX;
     this._context_y = evt.screenY;
@@ -1306,7 +1303,9 @@
   
   //dump("this._context_x = " + this._context_x + "\n");
   //dump("this._context_y = " + this._context_y + "\n");
-
+  
+  document.popupNode = null;
+  
   this._context_popup.showPopup(tree, this._context_x, this._context_y,
                                 "context", null, null, null);
 
