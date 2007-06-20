@@ -14,7 +14,19 @@ fi
 pwd=`pwd`
 cd ../../
 base=`pwd`
-pluginroot="$base/dependencies/macosx-i686/plugins/vlc"
+pluginplat=
+platform=`uname -p`
+
+case $platform in
+  powerpc )
+    pluginplat="macosx-ppc"
+    ;;
+  i386 )
+    pluginplat="macosx-i686"
+    ;;
+esac
+
+pluginroot="$base/dependencies/$pluginplat/plugins/vlc"
 scripts="$base/tools/scripts"
 
 echo "Building /builds/vlc and copying to $pluginroot/$1/"
