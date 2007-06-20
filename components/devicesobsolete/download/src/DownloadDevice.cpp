@@ -181,8 +181,6 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
                                 pPropertyManager;
     nsCOMPtr<sbIURIPropertyInfo>
                                 pURIPropertyInfo;
-    nsString                    *pNullNSString = nsnull;
-    nsString                    &nullNSStringRef = *pNullNSString;
     nsCOMPtr<sbILibraryManager> pLibraryManager;
     nsCOMPtr<sbILibrary>        pMainLibrary;
     nsCOMPtr<nsIPrefBranch>     pPrefBranch;
@@ -453,7 +451,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     if (NS_SUCCEEDED(result))
     {
         result = mpDownloadDirDR->Init(NS_LITERAL_STRING(SB_DOWNLOAD_DIR_DR),
-                                       nullNSStringRef);
+                                       EmptyString());
     }
 
     /* Create temporary download directory. */
@@ -1764,8 +1762,6 @@ nsresult sbDownloadDevice::OpenDialog(
     nsCOMPtr<sbIDataRemote>     pDataRemote;
     nsCAutoString               chromeFeatures;
     PRBool                      accessibilityEnabled;
-    nsString                    *pNullNSString = nsnull;
-    nsString                    &nullNSStringRef = *pNullNSString;
     nsresult                    result = NS_OK;
 
     /* Get the window watcher services. */
@@ -1785,7 +1781,7 @@ nsresult sbDownloadDevice::OpenDialog(
     if (NS_SUCCEEDED(result))
     {
         result = pDataRemote->Init(NS_LITERAL_STRING("accessibility.enabled"),
-                                   nullNSStringRef);
+                                   EmptyString());
     }
     if (NS_SUCCEEDED(result))
         result = pDataRemote->GetBoolValue(&accessibilityEnabled);

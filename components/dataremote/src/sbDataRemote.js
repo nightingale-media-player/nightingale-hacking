@@ -67,7 +67,7 @@ DataRemote.prototype = {
       throw Cr.NS_ERROR_UNEXPECTED;
       
     // Set the strings
-    if (aRoot == null) {
+    if (!aRoot) {
       // The prefapi hashes fully qualified prefs, so using a simple root does not
       //   hurt us. Callbacks are in a (BIG) linked-list (ew), which sucks. Having
       //   a shorter root saves some strncmp() time.
