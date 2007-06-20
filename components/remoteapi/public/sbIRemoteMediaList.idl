@@ -47,7 +47,7 @@ interface sbIRemoteMediaList : nsISupports
   readonly attribute nsISimpleEnumerator selection;
 
   // NOTE: Not implemented yet
-  void ensureColumVisible(in AString aPropertyName, in AString aColumnType);
+  void ensureColumnVisible(in AString aPropertyName, in AString aColumnType);
 
   void setSelectionByIndex(in unsigned long aIndex, in boolean aSelected);
 

@@ -36,6 +36,8 @@
 #include <sbIMediaListViewTreeView.h>
 #include <sbIWrappedMediaItem.h>
 #include <sbIWrappedMediaList.h>
+#include <sbIPropertyManager.h>
+#include <sbPropertiesCID.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsICategoryManager.h>
@@ -144,7 +146,7 @@ const static char* sPublicMethods[] =
   "library:getDistinctValuesForProperty",
 
   // sbIRemoteMediaList
-  "library:ensureColumVisible",
+  "library:ensureColumnVisible",
   "library:getView",
   "library:setSelectionByIndex"
 };
@@ -435,10 +437,26 @@ sbRemoteMediaList::GetSelection( nsISimpleEnumerator **aSelection )
 }
 
 NS_IMETHODIMP
-sbRemoteMediaList::EnsureColumVisible( const nsAString& aPropertyName,
-                                       const nsAString& aColumnType )
+sbRemoteMediaList::EnsureColumnVisible( const nsAString& aPropertyName,
+                                        const nsAString& aColumnType )
 {
-  LOG(("sbRemoteMediaList::EnsureColumVisible()"));
+  LOG(( "sbRemoteMediaList::EnsureColumnVisible(%s, %s)",
+        NS_LossyConvertUTF16toASCII(aPropertyName).get(),
+        NS_LossyConvertUTF16toASCII(aColumnType).get() ));
+
+  nsresult rv;
+  nsCOMPtr<sbIPropertyManager> propMngr( 
+    do_GetService( SB_PROPERTYMANAGER_CONTRACTID, &rv ) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the column hasn't been registered already then return an error
+  nsCOMPtr<sbIPropertyInfo> info;
+  propMngr->GetPropertyInfo( aPropertyName, getter_AddRefs( info ) );
+  NS_ENSURE_TRUE( info, NS_ERROR_FAILURE );
+
+  // Since the column exists in the mngr, show it in the playlist widget
+  
+
   return NS_OK;
 }
 

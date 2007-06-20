@@ -144,8 +144,12 @@ const static char* sPublicMethods[] =
     "binding:addSome",
     "binding:remove",
     "binding:removeByIndex",
-    "binding:getDistinctValuesForProperty"
+    "binding:getDistinctValuesForProperty",
 
+    // sbILibraryResource
+    "library:getProperty",
+    "library:setProperty",
+    "library:equals"
   };
 
 NS_IMPL_ISUPPORTS9( sbRemoteLibrary,

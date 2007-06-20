@@ -53,12 +53,14 @@ CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/components/playlistcommands/public \
                $(DEPTH)/components/playlistreader/public \
                $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/property/public \
                $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/devicesobsolete/manager/public \
                $(DEPTH)/components/devicesobsolete/base/public \
                $(DEPTH)/bindings/public \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/library/localdatabase/src \
+               $(topsrcdir)/components/property/src \
                $(topsrcdir)/components/remoteapi/public \
                $(topsrcdir)/components/include \
                $(MOZSDK_INCLUDE_DIR) \
