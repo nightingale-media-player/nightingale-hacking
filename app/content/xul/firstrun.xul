@@ -38,7 +38,7 @@
       <label value="&setup.optionalextensions;" />
       <spacer id="extensions.replacedcontent.top" height="0"/>
       <vbox id="error_message" hidden="true">
-        <html:body  style="cursor:default;">&setup.networkerror1;<html:a id="connection_href" onclick="openConnectionSettings(event);" style="text-decoration: underline; cursor:pointer;">&setup.networkerror2;</html:a>&setup.networkerror3;</html:body>
+        <html:body  style="cursor:default;">&setup.networkerror1;<html:a mousethrough="never" id="connection_href" onclick="openConnectionSettings(event);" style="text-decoration: underline; cursor:pointer;">&setup.networkerror2;</html:a>&setup.networkerror3;</html:body>
       </vbox>
       <vbox id="please_wait" hidden="false">
         <spacer height="3"/>

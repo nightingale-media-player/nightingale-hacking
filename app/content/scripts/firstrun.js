@@ -357,7 +357,21 @@ function openConnectionSettings(evt)
     evt.preventDefault();
     evt.stopPropagation();
   }
-  window.openDialog( "chrome://browser/content/preferences/connection.xul", "Connections", "chrome,modal=yes,centerscreen", document );
+  
+  var psvc = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefBranch);
+  // save value for instantApply
+  var oldInstantApply = psvc.getBoolPref("browser.preferences.instantApply");
+  // set it to true no matter what
+  psvc.setBoolPref("browser.preferences.instantApply", true);
+  // open the connection settings
+  window.openDialog( "chrome://browser/content/preferences/connection.xul", "Connections", "chrome,modal=yes,centerscreen", null);
+  // restore old value
+  psvc.setBoolPref("browser.preferences.instantApply", oldInstantApply);
+  
+  var psvc = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefService);
+  psvc.savePrefFile(null);
   if (!firstrun_bundle) {
     var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
     firstrun_bundle = new sbIBundle();
