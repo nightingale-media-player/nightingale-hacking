@@ -362,7 +362,11 @@ function openConnectionSettings(evt)
                         .getService(Components.interfaces.nsIPrefBranch);
   // save value for instantApply
   var oldInstantApply = psvc.getBoolPref("browser.preferences.instantApply");
-  // set it to true no matter what
+  // set it to true no matter what, it doesnt actually make it apply 
+  // the settings instantly unless you're on a mac, but it makes clicking 
+  // 'ok' apply the changes on all platforms (because the code for the 
+  // prefwindow has no provision for child prefwindows running standalone
+  // when they are not instantApply).
   psvc.setBoolPref("browser.preferences.instantApply", true);
   // open the connection settings
   window.openDialog( "chrome://browser/content/preferences/connection.xul", "Connections", "chrome,modal=yes,centerscreen", null);
