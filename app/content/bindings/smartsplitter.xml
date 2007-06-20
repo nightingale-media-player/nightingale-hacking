@@ -49,6 +49,7 @@
         this.addEventListener( "mouseup", onmouseevent, false);
         this.addEventListener( "mousedown", onmouseevent, false);
         this.restoreLastState();
+        this.setAttribute("mousethrough", "never");
       ]]>
     </constructor>
     <destructor>

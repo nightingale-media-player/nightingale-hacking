@@ -1136,37 +1136,48 @@
           // get the notification box around the browser
           var nbox = this.linkedBrowser.parentNode;
           
-          var dummybox = document.createElement('vbox');
-          nbox.appendChild(dummybox);
-          
-          this._plbox = document.createElement('vbox');
-          this._plbox.setAttribute('hidden', 'false');
           
           // make the splitter
           this._splitter = document.createElement('sb-smart-splitter');
           this._splitter.setAttribute('class', 'playlist_web_split');
-          this._splitter.setAttribute('hidden', 'false');
+          this._splitter.setAttribute('hidden', 'true');
           this._splitter.setAttribute('state', 'open');
           this._splitter.setAttribute('resizebefore', 'closest');
           this._splitter.setAttribute('resizeafter', 'closest');
           this._splitter.setAttribute('target', 'after');
           this._splitter.setAttribute('collapse', 'after');
           this._splitter.appendChild(document.createElement('grippy'));
-          this._plbox.appendChild(this._splitter);
           
-          // make the vbox
-          this._vbox = document.createElement('vbox');
-          this._vbox.setAttribute('class', 'playlist_web_vbox');
-          this._vbox.setAttribute('height', '200');
-          this._vbox.setAttribute('hidden', 'false');
-          this._vbox.setAttribute('minheight', '0');
+
+          // SCARY HACK!  See Bug 3504. 
+          //
+          // For whatever reason, hiding and then showing an
+          // element in this context causes it to reappear
+          // above its previous sibling.
+          //
+          // The Dom stays the same, but visually the
+          // element moves.
+          //
+          // Fortunately adding a hidden box prevents this
+          // behaviour.  
+          //
+          // Awesome.
+          
+          var hack = document.createElement('vbox');
+          hack.setAttribute('hidden', 'true');
+          nbox.appendChild(hack);     
+          
+          nbox.appendChild(this._splitter);               
+
+          hack = document.createElement('vbox');
+          hack.setAttribute('hidden', 'true');
+          nbox.appendChild(hack);
           
           // make the playlist
           this._playlist = document.createElement('playlist2');
           this._playlist.setAttribute('class', 'playlist_web');
-          this._playlist.setAttribute('height', '105');
-          this._playlist.setAttribute('flex', '1');
-          this._playlist.setAttribute('hidden', 'false');
+          this._playlist.setAttribute('height', '200');
+          this._playlist.setAttribute('hidden', 'true');
           this._playlist.setAttribute('enableColumnDrag', 'true');
           this._playlist.setAttribute('persist', 'columnSpec');
           this._playlist.setAttribute('editable', 'true');
@@ -1184,16 +1195,12 @@
           this._playlist.addEventListener("playlist-editor", this.onPlaylistEditor, true);
           // FIXME: remove the event listener on the destructor, I guess
           
-          // put it all together
-          this._vbox.appendChild(this._playlist);
-          this._plbox.appendChild(this._vbox);
-          
           // wire up the browser progress filter
           this._progressFilter.addProgressListener(this, /* ignored */ null);
           this.linkedBrowser.addProgressListener(this._progressFilter,
             Components.interfaces.nsIWebProgress.NOTIFY_ALL);
 
-          nbox.appendChild(this._plbox);
+          nbox.appendChild(this._playlist);
 
           this.outerPlaylistShowing = false;
         ]]></body>
@@ -1218,18 +1225,14 @@
       
       <property name="outerPlaylistShowing">
         <getter><![CDATA[
-          if (!this._plbox) return false;
-          return (this._plbox.getAttribute("hidden") == 'false');
+          if (!this._playlist) return false;
+          return (this._playlist.getAttribute("hidden") == 'false');
         ]]></getter>
         <setter><![CDATA[
-          if (!this._plbox) return;
-          var hidden = val?"false":"true";
-          /*
-          this._splitter.setAttribute('hidden', hidden);
-          this._vbox.setAttribute('hidden', hidden);
-          this._playlist.setAttribute('hidden', hidden);
-          */
-          this._plbox.setAttribute('hidden', hidden);
+          if (!this._playlist) return;
+          dump('\n\n\nsetting outerWebPlaylistShowing to: '+val+'\n\n\n\n');
+          this._playlist.hidden = !val;
+          this._splitter.hidden = !val;
 
           if (!val) {
             // if the balloontip for the webplaylist is shown, close it
