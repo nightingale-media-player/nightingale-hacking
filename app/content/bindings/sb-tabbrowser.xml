@@ -49,11 +49,7 @@
         this.addProgressListener(this,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
             Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
-        /* FIXME: how should this work?
-        this._progressFilter.addProgressListener(this,
-            Components.interfaces.nsIProgressListener.NOTIFY_ALL);
-        this.addProgressListener(this._progressFilter);
-        */
+
         this.loading = false;
         
         /* we need to track when events change */
@@ -176,13 +172,7 @@
           ]]>
         </body>
       </method>
-      
-      
-      <field name="_progressFilter">
-        Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
-            .createInstance(Components.interfaces.nsIWebProgress)
-      </field>
-      
+
       <field name="_prefsService">
         Components.classes["@mozilla.org/preferences-service;1"].
                 getService(Components.interfaces.nsIPrefBranch);
@@ -427,10 +417,6 @@
           if (aState & nsIWebProgressListener.STATE_START) {
             // Start the spinner if necessary
             this.loading = true;
-            
-            // cancel the previous page scan
-            //CancelAsyncWebDocument(this.href_loop);
-
           }
           else if (aState & nsIWebProgressListener.STATE_STOP) {
             // Stop the spinner if necessary
@@ -1055,7 +1041,11 @@
         this._onplaylistplay = { 
           _that: null, 
           handleEvent: function( event ) { this._that.onPlaylistPlay(event); } 
-        }; this._onplaylistplay._that = this; 
+        }; this._onplaylistplay._that = this;
+        
+        this._progressFilter =
+          Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
+                    .createInstance(Components.interfaces.nsIWebProgress);
       ]]></constructor>
      <destructor><![CDATA[
         this.closeBalloonTip();
@@ -1064,14 +1054,13 @@
           this.previousInnerPlaylist.removeEventListener("playlist-editor", this.onPlaylistEditor, true);
           this.previousInnerPlaylist = null;
         }
+        
+        // Clear the progress filter.
+        this._progressFilter.removeProgressListener(this);
+        this.linkedBrowser.removeProgressListener(this._progressFilter);
      ]]></destructor>
       
-      <field name="_browserStatusFilter"><![CDATA[
-        Components.classes['@mozilla.org/appshell/component/browser-status-filter;1']
-        .createInstance(Components.interfaces.nsIWebProgress);
-        if (this._hrefLoop) {
-        }
-      ]]></field>
+      <field name="_progressFilter">null</field>
       
       <field name="_webLibraryCache">null</field>
       <property name="_webLibrary">
@@ -1199,14 +1188,13 @@
           this._vbox.appendChild(this._playlist);
           this._plbox.appendChild(this._vbox);
           
-          // wire up the browser status filter
-          this.linkedBrowser.webProgress.addProgressListener(this._browserStatusFilter,
-              Components.interfaces.nsIWebProgress.NOTIFY_ALL);
-          this._browserStatusFilter.addProgressListener(this,
-              Components.interfaces.nsIWebProgress.NOTIFY_ALL);
-          
+          // wire up the browser progress filter
+          this._progressFilter.addProgressListener(this, /* ignored */ null);
+          this.linkedBrowser.addProgressListener(this._progressFilter,
+            Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+
           nbox.appendChild(this._plbox);
-          
+
           this.outerPlaylistShowing = false;
         ]]></body>
       </method>
@@ -1235,7 +1223,6 @@
         ]]></getter>
         <setter><![CDATA[
           if (!this._plbox) return;
-        dump('\n\n\nsetting outerWebPlaylistShowing to: '+val+'\n\n\n\n');
           var hidden = val?"false":"true";
           /*
           this._splitter.setAttribute('hidden', hidden);
@@ -1572,6 +1559,10 @@
           ]]></body>
         </method>
 
+      <!-- Used to save the URL that is loading so that we can properly match
+           the web progress messages -->
+      <field name="_loadingURL">""</field>
+
       <!-- nsIWebProgressListener implementation -->
       <method name="onLocationChange">
         <parameter name="aWebProgress" />
@@ -1583,7 +1574,8 @@
           // here and not in onStateChange because the STATE_START message has
           // the wrong document URI when using the back button (and probably
           // when going from site to site).
-          this._loadingURI = aLocation.spec;
+
+          this._loadingURL = aLocation.spec;
           this.clearOuterPlaylist();
         ]]></body>
       </method>
@@ -1611,38 +1603,29 @@
         <parameter name="aState" />
         <parameter name="aStatus" />
         <body><![CDATA[
+          if (!(aRequest && aRequest.name == this._loadingURL))
+            return;
+            
+          this._loadingURL = "";
+
           const nsIWebProgressListener =
             Components.interfaces.nsIWebProgressListener;
-
-          if (!(aState & nsIWebProgressListener.STATE_IS_WINDOW)) {
-            // not interested
-            return;
-          }
-
+          
           if (aState & nsIWebProgressListener.STATE_START) {
-
             // see if the notification box is up, remove it if so.
             // removing it with removeNotification(notification) causes all
             // subsequent notifications to not show up.
-            var notificationName = "remoteapi-called";
             var notificationBox = this.linkedBrowser.parentNode;
-            var notification = notificationBox.getNotificationWithValue(notificationName); 
-            if ( notification )
+            if (notificationBox.getNotificationWithValue("remoteapi-called")) {
               notificationBox.removeAllNotifications(true);
-
-          } else if (aState & nsIWebProgressListener.STATE_STOP) {
-
+            }
+          }
+          else if (aState & nsIWebProgressListener.STATE_STOP) {
             if (this.innerPlaylist) {
               this.setUpInnerPlaylist();
-            } else {
-
-              // we get a lot of stop messages, but we only want to scan
-              // when we are specifically loading the document for the page.
-              if ( this._loadingURI ==
-                   this.linkedBrowser.contentDocument.documentURI ) {
-                this.scanWebPage();
-                this._loadingURI = "";
-              }
+            }
+            else {
+              this.scanWebPage();
             }
           }
         ]]></body>
@@ -1763,6 +1746,21 @@
       </method>
       <field name="_dragTimeout">350</field>
       <field name="_dragTimer">null</field>
+
+      <method name="logStringMessage">
+        <parameter name="aString"/>
+        <body>
+          <![CDATA[
+            var message = "*** " + aString + "\n";
+            var consoleService =
+              Components.classes["@mozilla.org/consoleservice;1"]
+                        .getService(Components.interfaces.nsIConsoleService);
+            consoleService.logStringMessage(message);
+            dump(message);
+          ]]>
+        </body>
+      </method>
+
     </implementation>
     
     <handlers>
@@ -1771,11 +1769,8 @@
         Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
                   .getService(Components.interfaces.sbIMediaListViewMap)
                   .releaseViews(event.target.linkedBrowser);
-      
-        // clean up listeners
-        this.linkedBrowser.webProgress.removeProgressListener(this._browserStatusFilter);
-        this._browserStatusFilter.addProgressListener(this);
       ]]></handler>
+
       <handler event="dragenter"><![CDATA[
         var dragService = Components.classes["@mozilla.org/widget/dragservice;1"]
            .getService(Components.interfaces.nsIDragService);
