@@ -416,17 +416,15 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseSimpleMediaList,
+NS_IMPL_ISUPPORTS_INHERITED3(sbLocalDatabaseSimpleMediaList,
                              sbLocalDatabaseMediaListBase,
                              nsIClassInfo,
-                             sbIMediaListListener,
                              sbIOrderableMediaList,
                              sbILocalDatabaseSimpleMediaList)
 
-NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseSimpleMediaList,
+NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseSimpleMediaList,
                              nsIClassInfo,
                              nsISupportsWeakReference,
-                             sbIMediaListListener,
                              sbILibraryResource,
                              sbIMediaItem,
                              sbIMediaList,
@@ -434,7 +432,7 @@ NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseSimpleMediaList,
                              sbIOrderableMediaList);
 
 nsresult
-sbLocalDatabaseSimpleMediaList::Init(sbILocalDatabaseLibrary* aLibrary,
+sbLocalDatabaseSimpleMediaList::Init(sbLocalDatabaseLibrary* aLibrary,
                                      const nsAString& aGuid)
 {
   nsresult rv = sbLocalDatabaseMediaListBase::Init(aLibrary, aGuid);
@@ -486,13 +484,6 @@ sbLocalDatabaseSimpleMediaList::Init(sbILocalDatabaseLibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // And make sure that we know when items get removed from the library.
-  nsCOMPtr<sbIMediaList> libraryList = do_QueryInterface(aLibrary, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = libraryList->AddListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool success = mShouldNotifyAfterRemove.Init();
@@ -733,7 +724,12 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaList> mediaList(this);
+  nsCOMPtr<sbIMediaList> list =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(list, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMutablePropertyArray> properties =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
@@ -741,7 +737,9 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
 
   // XXXsteve What should go into the updated properties array?
 
-  NotifyListenersItemUpdated(mediaList, mediaList, properties);
+  sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(list,
+                                                               item,
+                                                               properties);
 
   return NS_OK;
 }
@@ -771,7 +769,12 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaList> mediaList(this);
+  nsCOMPtr<sbIMediaList> list =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(list, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMutablePropertyArray> properties =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
@@ -779,7 +782,9 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
 
   // XXXsteve What should go into the updated properties array?
 
-  NotifyListenersItemUpdated(mediaList, mediaList, properties);
+  sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(list,
+                                                               item,
+                                                               properties);
 
   return NS_OK;
 }
@@ -840,7 +845,11 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
   rv = mFullArray->RemoveByIndex(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NotifyListenersAfterItemRemoved(this, item);
+  nsCOMPtr<sbIMediaList> mediaList =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NotifyListenersAfterItemRemoved(mediaList, item);
 
   return NS_OK;
 }
@@ -899,6 +908,12 @@ sbLocalDatabaseSimpleMediaList::Clear()
   // Invalidate the cached list
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> mediaList =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList);
 
   return NS_OK;
 }
@@ -1004,7 +1019,10 @@ sbLocalDatabaseSimpleMediaList::Invalidate()
   nsresult rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaList> list(this);
+  nsCOMPtr<sbIMediaList> list =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIMediaItem> item = do_QueryInterface(list, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1014,7 +1032,77 @@ sbLocalDatabaseSimpleMediaList::Invalidate()
 
   // XXXsteve What should go into the updated properties array?
 
-  NotifyListenersItemUpdated(this, item, properties);
+  sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(list,
+                                                               item,
+                                                               properties);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::NotifyListenersItemUpdated(sbIMediaItem* aItem,
+                                                           sbIPropertyArray* aProperties)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aProperties);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaList> list =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(list,
+                                                               aItem,
+                                                               aProperties);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::NotifyListenersBeforeItemRemoved(sbIMediaList* aList,
+                                                                 sbIMediaItem* aItem)
+{
+  NS_ENSURE_ARG_POINTER(aList);
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(aList,
+                                                                     aItem);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::NotifyListenersAfterItemRemoved(sbIMediaList* aList,
+                                                                sbIMediaItem* aItem)
+{
+  NS_ENSURE_ARG_POINTER(aList);
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(aList,
+                                                                    aItem);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::NotifyListenersListCleared(sbIMediaList* aList)
+{
+  NS_ENSURE_ARG_POINTER(aList);
+
+  sbLocalDatabaseMediaListListener::NotifyListenersListCleared(aList);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::NotifyListenersBatchBegin(sbIMediaList* aList)
+{
+  NS_ENSURE_ARG_POINTER(aList);
+
+  sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(aList);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::NotifyListenersBatchEnd(sbIMediaList* aList)
+{
+  NS_ENSURE_ARG_POINTER(aList);
+
+  sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(aList);
   return NS_OK;
 }
 
@@ -1546,157 +1634,6 @@ NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::GetDefaultSortProperty(nsAString& aProperty)
 {
   aProperty.Assign(DEFAULT_SORT_PROPERTY);
-  return NS_OK;
-}
-
-/**
- * See sbIMediaListListener
- */
-NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::OnItemAdded(sbIMediaList* aMediaList,
-                                            sbIMediaItem* aMediaItem)
-{
-  ASSERT_LIST_IS_LIBRARY(aMediaList);
-
-  // We don't care if an item was added to the library
-
-  return NS_OK;
-}
-
-/**
- * See sbIMediaListListener
- */
-NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::OnBeforeItemRemoved(sbIMediaList* aMediaList,
-                                              sbIMediaItem* aMediaItem)
-{
-  ASSERT_LIST_IS_LIBRARY(aMediaList);
-
-  PRBool contains;
-  nsresult rv = Contains(aMediaItem, &contains);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // We don't care about this notification if the item isn't in our list.
-  if (!contains) {
-    return NS_OK;
-  }
-
-  // NOTE: We don't actually have to remove items from this list when they are
-  // removed from the library since this is taken care of by a database trigger
-
-  // Notify our listeners that the item is about to be removed
-  NotifyListenersBeforeItemRemoved(this, aMediaItem);
-
-  // Remember the guid of this item so we can do the after notification as well
-  nsAutoString guid;
-  rv = aMediaItem->GetGuid(guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsStringHashKey* success = mShouldNotifyAfterRemove.PutEntry(guid);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::OnAfterItemRemoved(sbIMediaList* aMediaList,
-                                                   sbIMediaItem* aMediaItem)
-{
-  nsAutoString guid;
-  nsresult rv = aMediaItem->GetGuid(guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mShouldNotifyAfterRemove.GetEntry(guid)) {
-
-    mShouldNotifyAfterRemove.RemoveEntry(guid);
-    // Invalidate the cached list
-    // XXX: Should this be batch aware?
-    nsresult rv = mFullArray->Invalidate();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Notify our listeners that the item was removed
-    NotifyListenersAfterItemRemoved(this, aMediaItem);
-  }
-
-  return NS_OK;
-}
-
-/**
- * See sbIMediaListListener
- */
-NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::OnItemUpdated(sbIMediaList* aMediaList,
-                                              sbIMediaItem* aMediaItem,
-                                              sbIPropertyArray* aProperties)
-{
-  ASSERT_LIST_IS_LIBRARY(aMediaList);
-
-  // If we have no listeners, do nothing
-  if (ListenerCount() == 0) {
-    return NS_OK;
-  }
-
-  PRBool contains;
-  nsresult rv = Contains(aMediaItem, &contains);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // We don't care about this notification if the item isn't in our list.
-  if (!contains) {
-    return NS_OK;
-  }
-
-  // Pass the info on to our listeners (views, etc.).
-  NotifyListenersItemUpdated(this, aMediaItem, aProperties);
-
-  return NS_OK;
-}
-
-/**
- * See sbIMediaListListener
- */
-NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::OnListCleared(sbIMediaList* aMediaList)
-{
-  ASSERT_LIST_IS_LIBRARY(aMediaList);
-
-  // NOTE: We don't actually have to remove items from this list when the
-  // library is cleared since this is taken care of by a database trigger
-
-  // Invalidate the cached list
-  nsresult rv = mFullArray->Invalidate();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Notify our listeners that the list was cleared
-  NotifyListenersListCleared(this);
-
-  return NS_OK;
-}
-
-/**
- * See sbIMediaListListener
- */
-NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::OnBatchBegin(sbIMediaList* aMediaList)
-{
-  ASSERT_LIST_IS_LIBRARY(aMediaList);
-
-  // Just pass through to our listeners
-  NotifyListenersBatchBegin(this);
-
-  return NS_OK;
-}
-
-/**
- * See sbIMediaListListener
- */
-NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::OnBatchEnd(sbIMediaList* aMediaList)
-{
-  ASSERT_LIST_IS_LIBRARY(aMediaList);
-
-  // Just pass through to our listeners
-  NotifyListenersBatchEnd(this);
-
   return NS_OK;
 }
 

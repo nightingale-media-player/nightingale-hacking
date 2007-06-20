@@ -96,5 +96,9 @@ interface sbIMediaListViewTreeView : nsISupports
    */
   readonly attribute unsigned long selectionCount;
 
+  /**
+   * \brief Remove selected items from the view's media list
+   */
+  void removeSelectedMediaItems();
 };
 

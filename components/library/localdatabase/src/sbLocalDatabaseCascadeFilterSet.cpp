@@ -44,6 +44,8 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <prlog.h>
+#include "sbLocalDatabaseLibrary.h"
+#include "sbLocalDatabaseMediaListView.h"
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseTreeView.h"
 #include <sbPropertiesCID.h>
@@ -96,8 +98,8 @@ NS_IMPL_ISUPPORTS2(sbLocalDatabaseCascadeFilterSet,
                    sbIMediaListListener);
 
 nsresult
-sbLocalDatabaseCascadeFilterSet::Init(sbILocalDatabaseLibrary* aLibrary,
-                                      sbIMediaListView* aMediaListView,
+sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
+                                      sbLocalDatabaseMediaListView* aMediaListView,
                                       sbILocalDatabaseAsyncGUIDArray* aProtoArray)
 {
   TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Init", this));
@@ -368,7 +370,7 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
 
   // Clear the downstream filters from the associated view
   nsCOMPtr<sbIFilterableMediaList> filterable =
-    do_QueryInterface(mMediaListView, &rv);
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaListView*, mMediaListView), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 numClear;
@@ -383,7 +385,7 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
   // Update the associated view with the new filter or search setting
   if (fs.isSearch) {
     nsCOMPtr<sbISearchableMediaList> searchable =
-      do_QueryInterface(mMediaListView, &rv);
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaListView*, mMediaListView), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (aValueArrayCount == 0) {
@@ -461,9 +463,6 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
     rv = fs.array->SetPropertyCache(propertyCache);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    fs.treeView = new sbLocalDatabaseTreeView();
-    NS_ENSURE_TRUE(fs.treeView, NS_ERROR_OUT_OF_MEMORY);
-
     nsCOMPtr<sbIMutablePropertyArray> propArray =
       do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -471,8 +470,14 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
     rv = propArray->AppendProperty(fs.property, NS_LITERAL_STRING("a"));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = fs.treeView->Init(mMediaListView, fs.array, propArray);
+    nsRefPtr<sbLocalDatabaseTreeView> newTreeView =
+      new sbLocalDatabaseTreeView();
+    NS_ENSURE_TRUE(newTreeView, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = newTreeView->Init(mMediaListView, fs.array, propArray);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    fs.treeView = newTreeView;
   }
 
   NS_ADDREF(*_retval = fs.treeView);
@@ -744,6 +749,7 @@ sbLocalDatabaseCascadeFilterSet::OnListCleared(sbIMediaList* aMediaList)
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnBatchBegin(sbIMediaList* aMediaList)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - OnBatchBegin", this));
   NS_ASSERTION(!mInBatch, "Shouldn't be notified of more than one batch!");
   mInBatch = PR_TRUE;
   return NS_OK;
@@ -752,6 +758,7 @@ sbLocalDatabaseCascadeFilterSet::OnBatchBegin(sbIMediaList* aMediaList)
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnBatchEnd(sbIMediaList* aMediaList)
 {
+  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - OnBatchEnd", this));
   NS_ASSERTION(mInBatch, "Should have been notified when entering a batch!");
   mInBatch = PR_FALSE;
 

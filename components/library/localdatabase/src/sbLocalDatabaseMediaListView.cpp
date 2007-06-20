@@ -35,24 +35,26 @@
 #include <nsIURI.h>
 #include <nsIVariant.h>
 #include <nsMemory.h>
-#include <sbDatabaseResultStringEnumerator.h>
 #include <sbLocalDatabaseTreeView.h>
 #include <sbICascadeFilterSet.h>
 #include <sbIDatabaseQuery.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseAsyncGUIDArray.h>
-#include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbISQLBuilder.h>
-#include <sbLocalDatabaseCID.h>
-#include <sbLocalDatabaseCascadeFilterSet.h>
-#include <sbLocalDatabasePropertyCache.h>
+#include <sbIMediaList.h>
 #include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
 #include <prlog.h>
+
+#include "sbDatabaseResultStringEnumerator.h"
+#include "sbLocalDatabaseCID.h"
+#include "sbLocalDatabaseCascadeFilterSet.h"
+#include "sbLocalDatabaseLibrary.h"
+#include "sbLocalDatabasePropertyCache.h"
 
 #define DEFAULT_FETCH_SIZE 1000
 
@@ -165,8 +167,8 @@ sbLocalDatabaseMediaListView::CopyStringArrayHashCallback(nsStringHashKey::KeyTy
   return PL_DHASH_NEXT;
 }
 
-sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbILocalDatabaseLibrary* aLibrary,
-                                                           sbIMediaList* aMediaList,
+sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbLocalDatabaseLibrary* aLibrary,
+                                                           sbLocalDatabaseMediaListBase* aMediaList,
                                                            nsAString& aDefaultSortProperty,
                                                            PRUint32 aMediaListId) :
   mLibrary(aLibrary),
@@ -176,6 +178,9 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbILocalDatabaseLibra
   mInBatch(PR_FALSE),
   mInvalidatePending(PR_FALSE)
 {
+  NS_ASSERTION(aLibrary, "aLibrary is null");
+  NS_ASSERTION(aMediaList, "aMediaList is null");
+
   MOZ_COUNT_CTOR(sbLocalDatabaseMediaListView);
 #ifdef PR_LOGGING
   if (!sMediaListViewLog) {
@@ -261,6 +266,22 @@ sbLocalDatabaseMediaListView::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+already_AddRefed<sbLocalDatabaseMediaListBase>
+sbLocalDatabaseMediaListView::GetNativeMediaList()
+{
+  NS_ASSERTION(mMediaList, "mMediaList is null");
+  sbLocalDatabaseMediaListBase* result = mMediaList;
+  NS_ADDREF(result);
+  return result;
+}
+
+sbILocalDatabaseGUIDArray*
+sbLocalDatabaseMediaListView::GetGUIDArray()
+{
+  NS_ASSERTION(mArray, "mArray is null");
+  return mArray;
 }
 
 NS_IMETHODIMP
@@ -349,11 +370,8 @@ sbLocalDatabaseMediaListView::GetItemByIndex(PRUint32 aIndex,
   rv = mArray->GetByIndex(aIndex, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<sbIMediaItem> item;
-  rv = library->GetMediaItem(guid, getter_AddRefs(item));
+  rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = item);
@@ -392,7 +410,7 @@ sbLocalDatabaseMediaListView::GetUnfilteredIndex(PRUint32 aIndex,
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbILocalDatabaseSimpleMediaList> sml =
-      do_QueryInterface(mMediaList, &rv);
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaList*, mMediaList), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = sml->GetIndexByOrdinal(ordinal, _retval);

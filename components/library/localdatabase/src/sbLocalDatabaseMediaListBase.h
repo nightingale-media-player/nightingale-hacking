@@ -92,8 +92,10 @@ public:
   sbLocalDatabaseMediaListBase();
   ~sbLocalDatabaseMediaListBase();
 
-  nsresult Init(sbILocalDatabaseLibrary* aLibrary,
+  nsresult Init(sbLocalDatabaseLibrary* aLibrary,
                 const nsAString& aGuid);
+
+  already_AddRefed<sbLocalDatabaseLibrary> GetNativeLibrary();
 
 protected:
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty) = 0;

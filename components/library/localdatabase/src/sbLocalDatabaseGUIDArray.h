@@ -29,6 +29,7 @@
 
 #include "sbILocalDatabaseGUIDArray.h"
 #include "sbILocalDatabasePropertyCache.h"
+#include "sbLocalDatabaseLibrary.h"
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -232,16 +233,13 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISIMPLEENUMERATOR
 
-  sbGUIDArrayEnumerator(sbILocalDatabaseLibrary* aLibrary,
-                        sbILocalDatabaseGUIDArray* aArray);
-
-  sbGUIDArrayEnumerator(sbILibrary* aLibrary,
+  sbGUIDArrayEnumerator(sbLocalDatabaseLibrary* aLibrary,
                         sbILocalDatabaseGUIDArray* aArray);
 
   ~sbGUIDArrayEnumerator();
 
 private:
-  nsCOMPtr<sbILibrary> mLibrary;
+  nsRefPtr<sbLocalDatabaseLibrary> mLibrary;
   nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
   PRUint32 mNextIndex;
 };

@@ -1895,17 +1895,7 @@ sbLocalDatabaseGUIDArray::GetPropertyId(const nsAString& aProperty)
 
 NS_IMPL_ISUPPORTS1(sbGUIDArrayEnumerator, nsISimpleEnumerator)
 
-sbGUIDArrayEnumerator::sbGUIDArrayEnumerator(sbILocalDatabaseLibrary* aLibrary,
-                                             sbILocalDatabaseGUIDArray* aArray) :
-  mArray(aArray),
-  mNextIndex(0)
-{
-  nsresult rv;
-  mLibrary = do_QueryInterface(aLibrary, &rv);
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't QI to sbILibrary");
-}
-
-sbGUIDArrayEnumerator::sbGUIDArrayEnumerator(sbILibrary* aLibrary,
+sbGUIDArrayEnumerator::sbGUIDArrayEnumerator(sbLocalDatabaseLibrary* aLibrary,
                                              sbILocalDatabaseGUIDArray* aArray) :
   mLibrary(aLibrary),
   mArray(aArray),

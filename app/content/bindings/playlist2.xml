@@ -544,26 +544,10 @@
 
     <method name="removeSelectedTracks">
       <body>
-<![CDATA[    
-  var ml = this.mediaListView.mediaList;
-
-  // Process the selection backwards so we don't change the indexes as we
-  // delete them
-  ml.beginUpdateBatch();
-  try {
-    var enumerator = this.treeView.selectedMediaItems;
-    var indexes = [];
-    while (enumerator.hasMoreElements()) {
-      indexes.push(enumerator.getNext().index);
-    }
-    for (var j = indexes.length - 1; j >= 0; j--) {
-      var index = this.mediaListView.getUnfilteredIndex(indexes[j]);
-      ml.removeByIndex(index);
-    }
-  }
-  finally {
-    ml.endUpdateBatch();
-  }
+<![CDATA[
+  var mediaListViewTreeView =
+    this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
+  mediaListViewTreeView.removeSelectedMediaItems();
 ]]>
       </body>
     </method>

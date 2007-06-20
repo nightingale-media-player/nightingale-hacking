@@ -37,6 +37,18 @@ function runTest () {
   // Set up a library with 20 items, 10 of which have a null content length 
   // and the rest have contents lengths 0 - 9
   var items = [];
+
+  var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
+                .createInstance(Ci.sbILocalDatabaseGUIDArray);
+  array.databaseGUID = databaseGUID;
+  array.baseTable = "media_items";
+
+/*
+  XXXsteve Going to disable this test since we now automagically fill in the
+  contentLength for new items.  We can re-enable this either when we add the
+  null support to setProperty or if we move the setting of this property to
+  the metadata scanner
+
   for (var i = 0; i < 20; i++) {
     var item = library.createMediaItem(newURI("file://foo/" + i));
     if (i >= 10) {
@@ -45,11 +57,6 @@ function runTest () {
     }
     items.push(item.guid);
   }
-
-  var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
-                .createInstance(Ci.sbILocalDatabaseGUIDArray);
-  array.databaseGUID = databaseGUID;
-  array.baseTable = "media_items";
 
   // We build the array to match an ascending sort, so just test
   array.addSort("http://songbirdnest.com/data/1.0#contentLength", true);
@@ -64,6 +71,7 @@ function runTest () {
   items = swap(items, 10);
   items = reverseRange(items, 0, 10);
   assertArraySame(array, items);
+*/
 
   // Now test on a new property using different null sort configurations
   library.clear();

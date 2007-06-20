@@ -36,6 +36,8 @@
 #include <sbSQLBuilderCID.h>
 #include <sbILocalDatabasePropertyCache.h>
 
+#define MAX_IN_LENGTH 5000
+
 struct sbStaticProperty {
   const PRUnichar* mName;
   const PRUnichar* mColumn;

@@ -37,6 +37,8 @@
 #include <nsTHashtable.h>
 #include <nsHashKeys.h>
 
+class sbLocalDatabaseLibrary;
+class sbLocalDatabaseMediaListView;
 class sbLocalDatabaseTreeView;
 class sbILocalDatabaseAsyncGUIDArray;
 class sbILocalDatabaseLibrary;
@@ -55,8 +57,8 @@ public:
   sbLocalDatabaseCascadeFilterSet();
   ~sbLocalDatabaseCascadeFilterSet();
 
-  nsresult Init(sbILocalDatabaseLibrary* aLibrary,
-                sbIMediaListView* aMediaListView,
+  nsresult Init(sbLocalDatabaseLibrary* aLibrary,
+                sbLocalDatabaseMediaListView* aMediaListView,
                 sbILocalDatabaseAsyncGUIDArray* aProtoArray);
 
 private:
@@ -81,10 +83,10 @@ private:
                             void* aUserData);
 
   // The library this filter set is associated with
-  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
+  nsRefPtr<sbLocalDatabaseLibrary> mLibrary;
 
   // The media list view this filter set is associated with
-  nsCOMPtr<sbIMediaListView> mMediaListView;
+  nsRefPtr<sbLocalDatabaseMediaListView> mMediaListView;
 
   // Prototypical array that is cloned to provide each filter's data
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mProtoArray;

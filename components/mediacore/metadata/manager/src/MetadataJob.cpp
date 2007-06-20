@@ -54,10 +54,13 @@
 #include <sbILibraryResource.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
+#include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbISQLBuilder.h>
 #include <sbStandardProperties.h>
+#include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
 
 #include "MetadataJob.h"
@@ -596,7 +599,6 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
       batchHelper.SetList( mediaList );
     }
 
-
     // Create the metadata handler and launch it
     rv = StartHandlerForItem( item );
     if ( NS_SUCCEEDED(rv) )
@@ -1022,7 +1024,7 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem, PRBo
 
   nsresult rv;
 
-  // TODO:
+// TODO:
   // - Update the metadata handlers to use the new keystrings
 
   // Get the sbIMediaItem we're supposed to be updating
@@ -1046,6 +1048,13 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem, PRBo
   const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer", "track_no",
                          "track_total", "disc_no", "disc_total", "service_uuid");
 */
+  nsCOMPtr<sbIPropertyManager> propMan =
+    do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the properties (eventually iterate when the sbIMetadataValue have the correct keystrings).
   NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
@@ -1055,71 +1064,84 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem, PRBo
   if ( trackName.EqualsLiteral("") )
     trackName = CreateDefaultItemName( aItem->url );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( trackNameKey, trackName );
-//  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AppendIfValid( propMan, properties, trackNameKey, trackName);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING( artistKey, SB_PROPERTY_ARTISTNAME );
   nsAutoString artist;
   rv = values->GetValue( NS_LITERAL_STRING("artist"), artist );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( artistKey, artist );
-//  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AppendIfValid( propMan, properties, artistKey, artist );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING( albumKey, SB_PROPERTY_ALBUMNAME );
   nsAutoString album;
   rv = values->GetValue( NS_LITERAL_STRING("album"), album );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( albumKey, album );
-//  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AppendIfValid( propMan, properties, albumKey, album );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING( durationKey, SB_PROPERTY_DURATION );
   nsAutoString duration;
   rv = values->GetValue( NS_LITERAL_STRING("length"), duration );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( durationKey, duration );
-//  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AppendIfValid( propMan, properties, durationKey, duration );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING( genreKey, SB_PROPERTY_GENRE );
   nsAutoString genre;
   rv = values->GetValue( NS_LITERAL_STRING("genre"), genre );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( genreKey, genre );
-//  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AppendIfValid( propMan, properties, genreKey, genre );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING( yearKey, SB_PROPERTY_YEAR );
   nsAutoString year;
   rv = values->GetValue( NS_LITERAL_STRING("year"), year );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( yearKey, year );
-//  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AppendIfValid( propMan, properties, yearKey, year );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING( trackKey, SB_PROPERTY_TRACK );
   nsAutoString track;
   rv = values->GetValue( NS_LITERAL_STRING("track_no"), track );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( trackKey, track );
-//  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AppendIfValid( propMan, properties, trackKey, track );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING( discNumberKey, SB_PROPERTY_DISCNUMBER );
   nsAutoString discNumber;
   rv = values->GetValue( NS_LITERAL_STRING("disc_no"), discNumber );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( discNumberKey, discNumber );
-//  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AppendIfValid( propMan, properties, discNumberKey, discNumber );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING( totalTracksKey, SB_PROPERTY_TOTALTRACKS );
   nsAutoString totalTracks;
   rv = values->GetValue( NS_LITERAL_STRING("track_total"), totalTracks );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( totalTracksKey, totalTracks );
-//  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AppendIfValid( propMan, properties, totalTracksKey, totalTracks );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING( totalDiscsKey, SB_PROPERTY_TOTALDISCS );
   nsAutoString totalDiscs;
   rv = values->GetValue( NS_LITERAL_STRING("disc_total"), totalDiscs );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( totalDiscsKey, totalDiscs );
-//  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AppendIfValid( propMan, properties, totalDiscsKey, totalDiscs );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = item->SetProperties(properties);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if ( aShouldFlush )
   {
@@ -1186,6 +1208,31 @@ nsString sbMetadataJob::CreateDefaultItemName( const nsString &aURLString )
   return retval;
 }
 
+nsresult
+sbMetadataJob::AppendIfValid(sbIPropertyManager* aPropertyManager,
+                             sbIMutablePropertyArray* aProperties,
+                             const nsAString& aName,
+                             const nsAString& aValue)
+{
+  NS_ASSERTION(aPropertyManager, "aPropertyManager is null");
+  NS_ASSERTION(aProperties, "aProperties is null");
+
+  nsCOMPtr<sbIPropertyInfo> info;
+  nsresult rv = aPropertyManager->GetPropertyInfo(aName, getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isValid;
+  rv = info->Validate(aValue, &isValid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (isValid) {
+    rv = aProperties->AppendProperty(aName, aValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 void sbMetadataJob::IncrementDataRemote()
 {
   PRInt32 current;
@@ -1202,3 +1249,4 @@ void sbMetadataJob::DecrementDataRemote()
   // Set to the decremented value
   mDataCurrentMetadataJobs->SetIntValue( --current );
 }
+

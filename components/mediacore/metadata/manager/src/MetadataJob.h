@@ -75,6 +75,8 @@
 
 // CLASSES ====================================================================
 class sbIMediaItem;
+class sbIPropertyArray;
+class sbIPropertyManager;
 class MetadataJobProcessorThread;
 
 class sbMetadataJob : public sbIMetadataJob
@@ -138,6 +140,7 @@ protected:
   static nsresult AddMetadataToItem( jobitem_t *aItem, PRBool aShouldFlush );
   static nsresult AddDefaultMetadataToItem( jobitem_t *aItem, sbIMediaItem *aMediaItem, PRBool aShouldFlush );
   static nsString CreateDefaultItemName( const nsString &aURLString );
+  static nsresult AppendIfValid(sbIPropertyManager* aPropertyManager, sbIMutablePropertyArray* aProperties, const nsAString& aName, const nsAString& aValue);
 
   void IncrementDataRemote();
   void DecrementDataRemote();

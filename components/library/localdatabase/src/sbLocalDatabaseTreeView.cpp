@@ -35,6 +35,7 @@
 #include <nsITreeBoxObject.h>
 #include <nsITreeColumns.h>
 #include <nsIVariant.h>
+#include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILibrary.h>
 #include <sbIMediaListView.h>
@@ -55,6 +56,7 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseMediaItem.h"
+#include "sbLocalDatabaseMediaListView.h"
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbTArrayStringEnumerator.h>
@@ -176,7 +178,7 @@ sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
 }
 
 nsresult
-sbLocalDatabaseTreeView::Init(sbIMediaListView* aMediaListView,
+sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
                               sbILocalDatabaseAsyncGUIDArray* aArray,
                               sbIPropertyArray* aCurrentSort)
 {
@@ -822,7 +824,7 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbISortableMediaList> sortable =
-      do_QueryInterface(mMediaListView, &rv);
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbISortableMediaList*, mMediaListView), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = sortable->SetSort(sort);
@@ -2119,6 +2121,28 @@ sbLocalDatabaseTreeView::GetSelectionCount(PRUint32* aSelectionLength)
 
     *aSelectionLength = length;
   }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::RemoveSelectedMediaItems()
+{
+  NS_ENSURE_STATE(mListType != eDistinct);
+
+  nsresult rv;
+
+  nsRefPtr<sbLocalDatabaseMediaListBase> list =
+    mMediaListView->GetNativeMediaList();
+
+  nsRefPtr<sbLocalDatabaseLibrary> library = list->GetNativeLibrary();
+
+  nsCOMPtr<nsISimpleEnumerator> selection;
+  rv = GetSelectedMediaItems(getter_AddRefs(selection));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = library->RemoveSelected(selection, mMediaListView);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

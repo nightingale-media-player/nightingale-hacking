@@ -52,7 +52,6 @@ class sbSimpleMediaListRemovingEnumerationListener;
 
 class sbLocalDatabaseSimpleMediaList : public sbLocalDatabaseMediaListBase,
                                        public sbILocalDatabaseSimpleMediaList,
-                                       public sbIMediaListListener,
                                        public sbIOrderableMediaList
 {
 public:
@@ -61,11 +60,10 @@ public:
 
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_NSICLASSINFO
-  NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_SBILOCALDATABASESIMPLEMEDIALIST
   NS_DECL_SBIORDERABLEMEDIALIST
 
-  nsresult Init(sbILocalDatabaseLibrary* aLibrary,
+  nsresult Init(sbLocalDatabaseLibrary* aLibrary,
                 const nsAString& aGuid);
 
   // override base class

@@ -29,6 +29,7 @@
 #include <nsArrayUtils.h>
 #include <nsIClassInfo.h>
 #include <nsIFile.h>
+#include <nsIFileURL.h>
 #include <nsIMutableArray.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
@@ -45,6 +46,7 @@
 #include <sbILibraryResource.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabasePropertyCache.h>
+#include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
@@ -59,6 +61,7 @@
 #include <nsHashKeys.h>
 #include <nsID.h>
 #include <nsMemory.h>
+#include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOM.h>
 #include <nsWeakReference.h>
@@ -70,6 +73,7 @@
 #include "sbLocalDatabaseMediaListView.h"
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
+#include "sbLocalDatabaseSchemaInfo.h"
 #include "sbLocalDatabaseSmartMediaListFactory.h"
 #include "sbLocalDatabaseGUIDArray.h"
 #include <sbStandardProperties.h>
@@ -123,6 +127,82 @@ static char* kInsertQueryColumns[] = {
   "hidden",
   "media_list_type_id"
 };
+
+/* static */ PLDHashOperator PR_CALLBACK
+NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType aKey,
+                             sbMediaItemArray* aEntry,
+                             void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  nsCOMPtr<sbIMediaList> list = NS_STATIC_CAST(sbIMediaList*, aUserData);
+  NS_ENSURE_TRUE(list, PL_DHASH_STOP);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  PRUint32 count = aEntry->Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(aEntry->ObjectAt(i), &rv);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    rv = simple->NotifyListenersBeforeItemRemoved(list, item);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  }
+
+  return PL_DHASH_NEXT;
+}
+
+/* static */ PLDHashOperator PR_CALLBACK
+NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
+                            sbMediaItemArray* aEntry,
+                            void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  nsCOMPtr<sbIMediaList> list = NS_STATIC_CAST(sbIMediaList*, aUserData);
+  NS_ENSURE_TRUE(list, PL_DHASH_STOP);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  PRUint32 count = aEntry->Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(aEntry->ObjectAt(i), &rv);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    rv = simple->NotifyListenersAfterItemRemoved(list, item);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  }
+
+  return PL_DHASH_NEXT;
+}
+
+/* static */ PLDHashOperator PR_CALLBACK
+EntriesToMediaListArray(nsISupportsHashKey* aEntry,
+                        void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null entry in the hash?!");
+
+  sbMediaListArray* array =
+    NS_STATIC_CAST(sbMediaListArray*, aUserData);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aEntry->GetKey(), &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  PRBool success = array->AppendObject(list);
+  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
 
 NS_IMPL_ISUPPORTS1(sbLibraryInsertingEnumerationListener,
                    sbIMediaListEnumerationListener)
@@ -188,17 +268,23 @@ NS_IMETHODIMP
 sbLibraryInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
                                                         nsresult aStatusCode)
 {
+  nsresult rv;
+
   if (mShouldInvalidate) {
     NS_ASSERTION(mFriendLibrary->mFullArray, "Uh, no full array?!");
 
-    nsresult rv = mFriendLibrary->mFullArray->Invalidate();
+    rv = mFriendLibrary->mFullArray->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  nsCOMPtr<sbIMediaList> libraryList =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseLibrary*, mFriendLibrary), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our listeners
   PRUint32 count = mNotificationList.Count();
   for (PRUint32 i = 0; i < count; i++) {
-    mFriendLibrary->NotifyListenersItemAdded(mFriendLibrary,
+    mFriendLibrary->NotifyListenersItemAdded(libraryList,
                                              mNotificationList[i]);
   }
 
@@ -271,13 +357,29 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   nsresult rv = mDBQuery->AddQuery(NS_LITERAL_STRING("commit"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Notify our listeners of before removal
+  nsCOMPtr<sbIMediaList> libraryList =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseLibrary*, mFriendLibrary), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // First we notify any simple media lists that contain this item
+  sbMediaItemToListsMap map;
+  PRBool success = map.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  sbMediaListArray lists;
+  rv = mFriendLibrary->GetContainingLists(&mNotificationList, &lists, &map);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  map.EnumerateRead(NotifyListsBeforeItemRemoved, libraryList);
+
+  // Notify explicitly registered listeners for each item removal
   PRUint32 count = mNotificationList.Count();
   for (PRUint32 i = 0; i < count; i++) {
+
     // XXXsteve This statement causes a "needs QI" assert when the item is
     // actually a list
     nsCOMPtr<sbIMediaItem> item = mNotificationList[i];
-    mFriendLibrary->NotifyListenersBeforeItemRemoved(mFriendLibrary, item);
+    mFriendLibrary->NotifyListenersBeforeItemRemoved(libraryList, item);
   }
 
   PRInt32 dbSuccess;
@@ -285,12 +387,26 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
 
+  // Invalidate our guid array
   rv = mFriendLibrary->mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Invalidate all of the simple media lists we notified
+  for (PRInt32 i = 0; i < lists.Count(); i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(lists[i], &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = simple->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Notify simple media lists after removal
+  map.EnumerateRead(NotifyListsAfterItemRemoved, libraryList);
+
   // Notify our listeners of after removal
   for (PRUint32 i = 0; i < count; i++) {
-    mFriendLibrary->NotifyListenersAfterItemRemoved(mFriendLibrary,
+    mFriendLibrary->NotifyListenersAfterItemRemoved(libraryList,
                                                     mNotificationList[i]);
   }
 
@@ -570,22 +686,22 @@ sbLocalDatabaseLibrary::CreateQueries()
   // Build a query to get all the registered media list factories.
   rv = builder->Reset();
   NS_ENSURE_SUCCESS(rv, rv);
-   
+
   rv = builder->AddColumn(EmptyString(),
                           NS_LITERAL_STRING("media_list_type_id"));
   NS_ENSURE_SUCCESS(rv, rv);
-   
+
   rv = builder->AddColumn(EmptyString(),
                           NS_LITERAL_STRING("type"));
   NS_ENSURE_SUCCESS(rv, rv);
-   
+
   rv = builder->AddColumn(EmptyString(),
                           NS_LITERAL_STRING("factory_contractid"));
   NS_ENSURE_SUCCESS(rv, rv);
-   
+
   rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_list_types"));
   NS_ENSURE_SUCCESS(rv, rv);
-   
+
   rv = builder->AddOrder(EmptyString(),
                          NS_LITERAL_STRING("media_list_type_id"),
                          PR_TRUE);
@@ -666,6 +782,29 @@ sbLocalDatabaseLibrary::CreateQueries()
   NS_ENSURE_SUCCESS(rv, rv);
    
   rv = builder->ToString(mGetFactoryIDForTypeQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create mGetAllListsByTypeId
+  rv = builder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(),
+                          NS_LITERAL_STRING("guid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionParameter(EmptyString(),
+                                              NS_LITERAL_STRING("media_list_type_id"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mGetAllListsByTypeId);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1032,6 +1171,215 @@ sbLocalDatabaseLibrary::RunAnalyzeQuery(PRBool aRunAsync)
 }
 
 /**
+ * \brief Given a list of media items, this method returns a mapping of media
+ *        items to the media lists that contain them
+ */
+nsresult
+sbLocalDatabaseLibrary::GetContainingLists(sbMediaItemArray* aItems,
+                                           sbMediaListArray* aLists,
+                                           sbMediaItemToListsMap* aMap)
+{
+  NS_ASSERTION(aItems, "aItems is null");
+  NS_ASSERTION(aLists, "aLists is null");
+  NS_ASSERTION(aMap,   "aMap is null");
+  NS_ASSERTION(aMap->IsInitialized(), "aMap not initalized");
+
+  NS_NAMED_LITERAL_STRING(kGuid,                  "guid");
+  NS_NAMED_LITERAL_STRING(kMediaItemId,           "media_item_id");
+  NS_NAMED_LITERAL_STRING(kMemberMediaItemId,     "member_media_item_id");
+  NS_NAMED_LITERAL_STRING(kListAlias,             "list");
+  NS_NAMED_LITERAL_STRING(kItemAlias,             "item");
+  NS_NAMED_LITERAL_STRING(kSimpleMediaLists,      "simple_media_lists");
+  NS_NAMED_LITERAL_STRING(kSimpleMediaListsAlias, "sml");
+  NS_NAMED_LITERAL_STRING(kMediaItems,            "media_items");
+
+  nsresult rv;
+
+  nsTHashtable<nsISupportsHashKey> distinctLists;
+  PRBool success = distinctLists.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query), PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLSelectBuilder> builder =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(kListAlias, kGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(kItemAlias, kGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(kSimpleMediaLists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableAlias(kSimpleMediaListsAlias);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                        kMediaItems,
+                        kListAlias,
+                        kMediaItemId,
+                        kSimpleMediaListsAlias,
+                        kMediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                        kMediaItems,
+                        kItemAlias,
+                        kMediaItemId,
+                        kSimpleMediaListsAlias,
+                        kMemberMediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
+  rv = builder->CreateMatchCriterionIn(kSimpleMediaListsAlias,
+                                       kMemberMediaItemId,
+                                       getter_AddRefs(inCriterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(inCriterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 count = aItems->Count();
+  PRUint32 incount = 0;
+  for (PRUint32 i = 0; i < count; i++) {
+    nsCOMPtr<sbILocalDatabaseMediaItem> item =
+      do_QueryInterface(aItems->ObjectAt(i), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 mediaItemId;
+    rv = item->GetMediaItemId(&mediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = inCriterion->AddLong(mediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    incount++;
+    if (incount > MAX_IN_LENGTH || i + 1 == count) {
+      nsAutoString sql;
+      rv = builder->ToString(sql);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = query->AddQuery(sql);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = inCriterion->Clear();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      incount = 0;
+    }
+  }
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < rowCount; i++) {
+    nsAutoString listGuid;
+    rv = result->GetRowCell(i, 0, listGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaItem> list;
+    rv = GetMediaItem(listGuid, getter_AddRefs(list));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString itemGuid;
+    rv = result->GetRowCell(i, 1, itemGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaItem> containedItem;
+    rv = GetMediaItem(itemGuid, getter_AddRefs(containedItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    sbMediaItemArray* lists;
+    if (!aMap->Get(containedItem, &lists)) {
+      nsAutoPtr<sbMediaItemArray> newLists(new sbMediaItemArray());
+      NS_ENSURE_TRUE(newLists, NS_ERROR_OUT_OF_MEMORY);
+      PRBool success = aMap->Put(containedItem, newLists);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+      lists = newLists.forget();
+    }
+
+    success = lists->AppendObject(list);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    nsISupportsHashKey* addedList = distinctLists.PutEntry(list);
+    NS_ENSURE_TRUE(addedList, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  distinctLists.EnumerateEntries(EntriesToMediaListArray, aLists);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseLibrary::GetAllListsByType(const nsAString& aType,
+                                          sbMediaListArray* aArray)
+{
+  NS_ASSERTION(aArray, "aArray is null");
+
+  nsresult rv;
+
+  sbMediaListFactoryInfo* factoryInfo;
+  PRBool success = mMediaListFactoryTable.Get(aType, &factoryInfo);
+  NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query), PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mGetAllListsByTypeId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt32Parameter(0, factoryInfo->typeID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < rowCount; i++) {
+    nsAutoString guid;
+    rv = result->GetRowCell(i, 0, guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaItem> item;
+    rv = GetMediaItem(guid, getter_AddRefs(item));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaList> list = do_QueryInterface(item, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool success = aArray->AppendObject(list);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
+/**
  * See sbILocalDatabaseLibrary
  */
 NS_IMETHODIMP
@@ -1229,11 +1577,63 @@ sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem,
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(aProperties);
 
+#ifdef PR_LOGGING
+  PRTime timer = PR_Now();
+#endif
+
+  // First we notify any simple media lists that contain this item
+  sbMediaItemArray singleItem;
+  PRBool success = singleItem.AppendObject(aItem);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  sbMediaItemToListsMap map;
+  success = map.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  sbMediaListArray lists;
+  nsresult rv = GetContainingLists(&singleItem, &lists, &map);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  map.EnumerateRead(NotifyListsItemUpdated, aProperties);
+
+  // Also notify explicity registered listeners
   sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(this,
                                                                aItem,
                                                                aProperties);
 
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - NotifyListenersItemUpdated %d usec",
+         this, PR_Now() - timer));
+
   return NS_OK;
+}
+
+/* static */ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseLibrary::NotifyListsItemUpdated(nsISupportsHashKey::KeyType aKey,
+                                               sbMediaItemArray* aEntry,
+                                               void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  nsCOMPtr<sbIPropertyArray> properties =
+    NS_STATIC_CAST(sbIPropertyArray*, aUserData);
+  NS_ENSURE_TRUE(properties, PL_DHASH_STOP);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  PRUint32 count = aEntry->Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(aEntry->ObjectAt(i), &rv);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    rv = simple->NotifyListenersItemUpdated(item, properties);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  }
+
+  return PL_DHASH_NEXT;
 }
 
 /**
@@ -2040,6 +2440,256 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsAsync(nsIArray* aURIList,
   return NS_OK;
 }
 
+nsresult
+sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
+                                       sbLocalDatabaseMediaListView* aView)
+{
+  NS_ENSURE_ARG_POINTER(aSelection);
+  NS_ENSURE_ARG_POINTER(aView);
+
+  nsresult rv;
+
+  nsRefPtr<sbLocalDatabaseMediaListBase> viewMediaList =
+    aView->GetNativeMediaList();
+
+  sbILocalDatabaseGUIDArray* viewArray = aView->GetGUIDArray();
+
+  // Figure out if we have a library or a simple media list
+  nsCOMPtr<sbIMediaList> list =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaList*, viewMediaList), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isLibrary;
+  rv = this->Equals(list, &isLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Start building a query that we will use to delete the items from the
+  // database.  This query will be slightly different depending on if we are
+  // deleting from the library or a list
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("begin"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLDeleteBuilder> deleteb =
+    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
+
+  // If we are a library, we can delete things by media item id
+  if (isLibrary) {
+    rv = deleteb->SetTableName(NS_LITERAL_STRING("media_items"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deleteb->CreateMatchCriterionIn(EmptyString(),
+                                         NS_LITERAL_STRING("media_item_id"),
+                                         getter_AddRefs(inCriterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deleteb->AddCriterion(inCriterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // If we are a list, we will be deleting by the list's media item id and
+    // the ordinal
+    rv = deleteb->SetTableName(NS_LITERAL_STRING("simple_media_lists"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 mediaItemId;
+    rv = viewMediaList->GetMediaItemId(&mediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deleteb->CreateMatchCriterionLong(EmptyString(),
+                                           NS_LITERAL_STRING("media_item_id"),
+                                           sbISQLSelectBuilder::MATCH_EQUALS,
+                                           mediaItemId,
+                                           getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deleteb->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deleteb->CreateMatchCriterionIn(EmptyString(),
+                                         NS_LITERAL_STRING("ordinal"),
+                                         getter_AddRefs(inCriterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deleteb->AddCriterion(inCriterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Loop through the selected media items and build the in criterion for the
+  // query as well as keep a list of the items were deleting so we can send
+  // notifications
+  sbMediaItemArray selectedItems;
+  nsCOMPtr<sbIIndexedMediaItem> indexedMediaItem;
+  PRUint32 incount = 0;
+  while (NS_SUCCEEDED(aSelection->GetNext(getter_AddRefs(indexedMediaItem)))) {
+
+    nsCOMPtr<sbIMediaItem> item;
+    PRUint32 index;
+
+    rv = indexedMediaItem->GetMediaItem(getter_AddRefs(item));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = indexedMediaItem->GetIndex(&index);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add a different id depending on where we are deleting from
+    if (isLibrary) {
+      PRUint32 mediaItemId;
+      rv = viewArray->GetMediaItemIdByIndex(index, &mediaItemId);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = inCriterion->AddLong(mediaItemId);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      nsAutoString ordinal;
+      rv = viewArray->GetOrdinalByIndex(index, ordinal);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = inCriterion->AddString(ordinal);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    incount++;
+
+    // If we go over the number of IN items we allow, add it to the query
+    if (incount > MAX_IN_LENGTH) {
+      nsAutoString sql;
+      rv = deleteb->ToString(sql);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = query->AddQuery(sql);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = inCriterion->Clear();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      incount = 0;
+    }
+
+    // Finally, remember this media item so we can send notifications
+    PRBool success = selectedItems.AppendObject(item);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  // Add any left overs to the query
+  if (incount > 0) {
+    nsAutoString sql;
+    rv = deleteb->ToString(sql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->AddQuery(sql);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = query->AddQuery(NS_LITERAL_STRING("commit"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 count = selectedItems.Count();
+
+  if (isLibrary) {
+
+    // If we are removing from the library, we need to notify all the simple
+    // media lists that contains the items as well as the library's listeners
+    sbMediaItemToListsMap map;
+    PRBool success = map.Init();
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    sbMediaListArray lists;
+
+    rv = GetContainingLists(&selectedItems, &lists, &map);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Start a batch in both the library and all the lists that we are
+    // removing from
+    sbAutoBatchHelper batchHelper(this);
+    sbAutoSimpleMediaListBatchHelper listsBatchHelper(&lists);
+
+    nsCOMPtr<sbIMediaList> libraryList =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseLibrary*, this), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    map.EnumerateRead(NotifyListsBeforeItemRemoved, libraryList);
+
+    for (PRUint32 i = 0; i < count; i++) {
+      sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(this,
+                                                                         selectedItems[i]);
+    }
+
+    // Now actually delete the items
+    PRInt32 dbSuccess;
+    rv = query->Execute(&dbSuccess);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
+
+    rv = mFullArray->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Invalidate all of the simple media lists we notified
+    for (PRInt32 i = 0; i < lists.Count(); i++) {
+      nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+        do_QueryInterface(lists[i], &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = simple->Invalidate();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // Notify simple media lists after removal
+    map.EnumerateRead(NotifyListsAfterItemRemoved, libraryList);
+
+    // Notify our listeners of after removal
+    for (PRUint32 i = 0; i < count; i++) {
+      sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(this,
+                                                                        selectedItems[i]);
+    }
+  }
+  else {
+    sbAutoBatchHelper batchHelper(viewMediaList);
+
+    // If this is a media list, just notify the list
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaList*, viewMediaList), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 0; i < count; i++) {
+      rv = simple->NotifyListenersBeforeItemRemoved(viewMediaList,
+                                                    selectedItems[i]);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // Now actually delete the items
+    PRInt32 dbSuccess;
+    rv = query->Execute(&dbSuccess);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
+
+    rv = simple->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 0; i < count; i++) {
+      rv = simple->NotifyListenersAfterItemRemoved(viewMediaList,
+                                                   selectedItems[i]);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetNativeLibrary(sbLocalDatabaseLibrary** aLocalDatabaseLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aLocalDatabaseLibrary);
+  *aLocalDatabaseLibrary = this;
+  return NS_OK;
+}
+
 /**
  * See sbIMediaList
  */
@@ -2296,11 +2946,25 @@ sbLocalDatabaseLibrary::Clear()
 
   NotifyListenersListCleared(this);
 
+  sbMediaListArray lists;
+  nsresult rv = GetAllListsByType(NS_LITERAL_STRING("simple"), &lists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Notify simple media lists that they are getting cleared
+  for (PRInt32 i = 0; i < lists.Count(); i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(lists[i], &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = simple->NotifyListenersListCleared(lists[i]);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Clear our cache
   mMediaItemTable.Clear();
 
   nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(mDeleteAllQuery);
@@ -2315,6 +2979,16 @@ sbLocalDatabaseLibrary::Clear()
   rv = mFullArray->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Invalidate all simple media lists
+  for (PRInt32 i = 0; i < lists.Count(); i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(lists[i], &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = simple->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -2328,15 +3002,11 @@ sbLocalDatabaseLibrary::CreateView(sbIMediaListView** _retval)
 
   nsresult rv;
 
-  nsCOMPtr<sbIMediaList> mediaList =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseLibrary*, this), &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsAutoString prop;
   prop.AssignLiteral(DEFAULT_SORT_PROPERTY);
 
   nsRefPtr<sbLocalDatabaseMediaListView>
-    view(new sbLocalDatabaseMediaListView(this, mediaList, prop, 0));
+    view(new sbLocalDatabaseMediaListView(this, this, prop, 0));
   NS_ENSURE_TRUE(view, NS_ERROR_OUT_OF_MEMORY);
 
   rv = view->Init();

@@ -33,6 +33,7 @@
 
 interface nsIStringEnumerator;
 interface nsIURI;
+interface sbIPropertyArray;
 
 /**
 * \interface sbILibraryResource
@@ -94,12 +95,28 @@ interface sbILibraryResource : nsISupports
   void setProperty(in AString aName, in AString aValue);
 
   /**
-   * Bulk get/set?
+   * \brief Get properties from this resource in a property array
+   * \param aPropertyNames A property array containing the names of the
+   *        properties you wish to retrieve.  The values of these properties
+   *        are disregarded.  If this parameter is null, all properties will
+   *        be returned
+   * \return A property array containing the requested properties and values
    */
-/*
-  getProperties();
-  setProperties(?);
-*/
+  sbIPropertyArray getProperties(in sbIPropertyArray aPropertyNames);
+
+  /**
+   * \brief Sets the properties and values in the supplied property array to
+   *        this resource.  This works as if you called setProperty on each
+   *        property in the array
+   * \param aProperties Properties to set to this resource
+   *
+   * NOTE: Until bug 3694 is fixed, it is possible for this method to throw
+   * NS_ERROR_INVALID_ARG if one of the property values in the array is not
+   * valid.  This will have no side effects -- if an error is thrown, the
+   * resource will not be modified.  This will go away when the bug is fixed
+   * as it will then be impossible to have invalid properties in the array
+   */
+  void setProperties(in sbIPropertyArray aProperties);
 
   /**
    * \brief Finish all pending write operations.
@@ -111,5 +128,4 @@ interface sbILibraryResource : nsISupports
    */
   boolean equals(in sbILibraryResource aOtherLibraryResource);
 };
-
 

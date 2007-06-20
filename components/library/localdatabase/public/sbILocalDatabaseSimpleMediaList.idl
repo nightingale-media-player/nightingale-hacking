@@ -32,8 +32,10 @@
 
 #include "nsISupports.idl"
 
-interface sbIMediaItem;
 interface sbILocalDatabaseLibrary;
+interface sbIMediaItem;
+interface sbIMediaList;
+interface sbIPropertyArray;
 
 /**
  * \interface sbILocalDatabaseMediaListCopyListener
@@ -71,5 +73,41 @@ interface sbILocalDatabaseSimpleMediaList : nsISupports
    * \brief Tell the list that its underlying datasource has changed
    */
   void invalidate();
+
+  /**
+   * \brief Notify this simple media list's listeners that an item has been
+   *        updated
+   */
+  void notifyListenersItemUpdated(in sbIMediaItem aItem,
+                                  in sbIPropertyArray aProperties);
+
+  /**
+   * \brief Notify this simple media list's listeners that an item is about to
+   *        be removed
+   */
+  void notifyListenersBeforeItemRemoved(in sbIMediaList aList,
+                                        in sbIMediaItem aItem);
+
+  /**
+   * \brief Notify this simple media list's listeners that an item has been
+   *        removed
+   */
+  void notifyListenersAfterItemRemoved(in sbIMediaList aList,
+                                       in sbIMediaItem aItem);
+
+  /**
+   * \brief Notify the simple media list's listeners that it has been cleared
+   */
+  void notifyListenersListCleared(in sbIMediaList aList);
+
+  /**
+   * \brief Notify the simple media list's listeners that a batch has begun
+   */
+  void notifyListenersBatchBegin(in sbIMediaList aList);
+
+  /**
+   * \brief Notify the simple media list's listeners that a batch has ended
+   */
+  void notifyListenersBatchEnd(in sbIMediaList aList);
 };
 

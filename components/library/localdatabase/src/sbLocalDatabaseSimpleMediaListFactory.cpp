@@ -78,6 +78,10 @@ sbLocalDatabaseSimpleMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
     do_QueryInterface(library, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  sbLocalDatabaseLibrary* localLibraryPtr;
+  rv = localLibrary->GetNativeLibrary(&localLibraryPtr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsAutoString guid;
   rv = aInner->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -86,7 +90,7 @@ sbLocalDatabaseSimpleMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
     newMediaList(new sbLocalDatabaseSimpleMediaList());
   NS_ENSURE_TRUE(newMediaList, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = newMediaList->Init(localLibrary, guid);
+  rv = newMediaList->Init(localLibraryPtr, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = newMediaList);

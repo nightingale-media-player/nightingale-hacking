@@ -53,6 +53,7 @@ class sbIMediaList;
 class sbIMediaListView;
 class sbIPropertyArray;
 class sbIPropertyManager;
+class sbLocalDatabaseMediaListView;
 
 class sbLocalDatabaseTreeView : public nsIClassInfo,
                                 public nsITreeView,
@@ -79,7 +80,7 @@ public:
 
   ~sbLocalDatabaseTreeView();
 
-  nsresult Init(sbIMediaListView* aListView,
+  nsresult Init(sbLocalDatabaseMediaListView* aListView,
                 sbILocalDatabaseAsyncGUIDArray* aArray,
                 sbIPropertyArray* aCurrentSort);
 
@@ -164,7 +165,7 @@ private:
   MediaListType mListType;
 
   // The media list view that this tree view is a view of
-  nsCOMPtr<sbIMediaListView> mMediaListView;
+  nsRefPtr<sbLocalDatabaseMediaListView> mMediaListView;
 
   // The async guid array given to us by our view
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;

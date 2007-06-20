@@ -50,6 +50,7 @@ CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/sqlbuilder/public \
+               $(DEPTH)/components/property/public \
                $(topsrcdir)/components/property/src \
                $(topsrcdir)/components/sqlbuilder/src \
                $(MOZSDK_INCLUDE_DIR) \

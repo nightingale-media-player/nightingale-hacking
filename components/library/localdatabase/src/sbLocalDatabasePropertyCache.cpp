@@ -48,8 +48,6 @@
 #include "sbLocalDatabaseSchemaInfo.h"
 #include <sbTArrayStringEnumerator.h>
 
-#define MAX_IN_LENGTH 5000
-
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbLocalDatabasePropertyCache:5

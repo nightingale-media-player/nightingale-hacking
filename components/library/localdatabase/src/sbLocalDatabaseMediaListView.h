@@ -43,12 +43,13 @@
 #include <sbISortableMediaList.h>
 #include <sbPropertiesCID.h>
 
+#include "sbLocalDatabaseMediaListBase.h"
+
 class nsIURI;
 class sbIDatabaseQuery;
 class sbIDatabaseResult;
 class sbILocalDatabaseAsyncGUIDArray;
-class sbILocalDatabaseLibrary;
-class sbIMediaList;
+class sbLocalDatabaseLibrary;
 class sbLocalDatabaseTreeView;
 class sbLocalDatabaseCascadeFilterSet;
 
@@ -68,14 +69,19 @@ public:
   NS_DECL_SBISORTABLEMEDIALIST
   NS_DECL_NSICLASSINFO
 
-  sbLocalDatabaseMediaListView(sbILocalDatabaseLibrary* aLibrary,
-                               sbIMediaList* aMediaList,
+  sbLocalDatabaseMediaListView(sbLocalDatabaseLibrary* aLibrary,
+                               sbLocalDatabaseMediaListBase* aMediaList,
                                nsAString& aDefaultSortProperty,
                                PRUint32 aMediaListId);
 
   ~sbLocalDatabaseMediaListView();
 
   nsresult Init();
+
+  already_AddRefed<sbLocalDatabaseMediaListBase> GetNativeMediaList();
+
+  sbILocalDatabaseGUIDArray* GetGUIDArray();
+
 private:
   typedef nsTArray<nsString> sbStringArray;
   typedef nsClassHashtable<nsStringHashKey, sbStringArray> sbStringArrayHash;
@@ -117,13 +123,13 @@ private:
   nsresult ShouldCauseInvalidation(sbIPropertyArray* aProperties,
                                    PRBool* aShouldCauseInvalidation);
 
-  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
+  nsRefPtr<sbLocalDatabaseLibrary> mLibrary;
 
   // Property Manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
 
   // The media list this view is of
-  nsCOMPtr<sbIMediaList> mMediaList;
+  nsRefPtr<sbLocalDatabaseMediaListBase> mMediaList;
 
   // The default sort property of the guid array
   nsString mDefaultSortProperty;

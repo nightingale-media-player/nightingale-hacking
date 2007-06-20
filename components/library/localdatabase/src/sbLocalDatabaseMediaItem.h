@@ -35,13 +35,14 @@
 #include <nsIRequestObserver.h>
 #include <nsWeakReference.h>
 
+#include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <prlock.h>
 
-class sbILocalDatabaseLibrary;
 class sbILocalDatabasePropertyCache;
 class sbILocalDatabaseResourcePropertyBag;
+class sbLocalDatabaseLibrary;
 
 class sbLocalDatabaseMediaItem : public nsSupportsWeakReference,
                                  public nsIClassInfo,
@@ -63,7 +64,7 @@ public:
 
   virtual ~sbLocalDatabaseMediaItem();
 
-  nsresult Init(sbILocalDatabaseLibrary* aLibrary,
+  nsresult Init(sbLocalDatabaseLibrary* aLibrary,
                 const nsAString& aGuid);
 
 private:
@@ -72,7 +73,7 @@ private:
 protected:
   PRUint32 mMediaItemId;
 
-  nsCOMPtr<sbILocalDatabaseLibrary> mLibrary;
+  nsRefPtr<sbLocalDatabaseLibrary> mLibrary;
 
   nsString  mGuid;
 

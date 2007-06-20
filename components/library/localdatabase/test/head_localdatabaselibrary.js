@@ -279,9 +279,11 @@ TestMediaListListener.prototype = {
   _addedItem: null,
   _removedItem: null,
   _updatedItem: null,
+  _updatedProperties: null,
   _batchBeginList: null,
   _batchEndList: null,
-  
+  _listCleared: false,
+
   get addedItem() {
     return this._addedItem;
   },
@@ -298,6 +300,10 @@ TestMediaListListener.prototype = {
     return this._updatedItem;
   },
   
+  get updatedProperties() {
+    return this._updatedProperties;
+  },
+  
   get batchBeginList() {
     return this._batchBeginList;
   },
@@ -306,12 +312,18 @@ TestMediaListListener.prototype = {
     return this._batchEndList;
   },
   
+  get listCleared() {
+    return this._listCleared;
+  },
   reset: function reset() {
     this._addedItem = null;
-    this._removedItem = null;
+    this._removedItemBefore = null;
+    this._removedItemAfter = null;
     this._updatedItem = null;
+    this._updatedProperties = null;
     this._batchBeginList = null;
     this._batchEndList = null;
+    this._listCleared = false;
   },
   
   onItemAdded: function onItemAdded(list, item) {
@@ -328,6 +340,7 @@ TestMediaListListener.prototype = {
   
   onItemUpdated: function onItemUpdated(list, item, properties) {
     this._updatedItem = item;
+    this._updatedProperties = properties;
   },
 
   onBatchBegin: function onBatchBegin(list) {
@@ -337,7 +350,9 @@ TestMediaListListener.prototype = {
   onBatchEnd: function onBatchEnd(list) {
     this._batchEndList = list;
   },
-  
+  onListCleared: function onListCleared() {
+    this._listCleared = true;
+  },
   QueryInterface: function QueryInterface(iid) {
     if (!iid.equals(Ci.sbIMediaListListener) &&
         !iid.equals(Ci.nsISupports))

@@ -60,9 +60,11 @@
 #include <sbTArrayStringEnumerator.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
+
 #include "sbLocalDatabaseCascadeFilterSet.h"
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseGUIDArray.h"
+#include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabasePropertyCache.h"
 
 #define DEFAULT_PROPERTIES_URL "chrome://songbird/locale/songbird.properties"
@@ -89,7 +91,7 @@ sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
 }
 
 nsresult
-sbLocalDatabaseMediaListBase::Init(sbILocalDatabaseLibrary* aLibrary,
+sbLocalDatabaseMediaListBase::Init(sbLocalDatabaseLibrary* aLibrary,
                                    const nsAString& aGuid)
 {
   mFullArrayMonitor =
@@ -104,6 +106,15 @@ sbLocalDatabaseMediaListBase::Init(sbILocalDatabaseLibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+already_AddRefed<sbLocalDatabaseLibrary>
+sbLocalDatabaseMediaListBase::GetNativeLibrary()
+{
+  NS_ASSERTION(mLibrary, "mLibrary is null!");
+  sbLocalDatabaseLibrary* result = mLibrary;
+  NS_ADDREF(result);
+  return result;
 }
 
 /**
@@ -432,12 +443,8 @@ sbLocalDatabaseMediaListBase::GetItemByGuid(const nsAString& aGuid,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsresult rv;
-  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<sbIMediaItem> item;
-  rv = library->GetMediaItem(aGuid, getter_AddRefs(item));
+  nsresult rv = mLibrary->GetMediaItem(aGuid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = item);
@@ -461,11 +468,8 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<sbIMediaItem> item;
-  rv = library->GetMediaItem(guid, getter_AddRefs(item));
+  rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = item);

@@ -28,18 +28,22 @@
 
 #include <nsIProgrammingLanguage.h>
 #include <sbILibrary.h>
-#include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 
 #include <nsIObserver.h>
 #include <nsIURIChecker.h>
 #include <nsIFileURL.h>
+#include <nsIStringEnumerator.h>
+#include <nsIProperty.h>
+#include <nsIVariant.h>
 #include <nsAutoLock.h>
 #include <nsNetUtil.h>
 #include <nsXPCOM.h>
 #include <prprf.h>
+#include <sbLocalDatabaseLibrary.h>
 #include <sbStandardProperties.h>
 
 static void AppendInt(nsAString &str, PRInt64 val)
@@ -132,7 +136,6 @@ sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
   }
 }
 
-
 /**
  * \brief Initializes the media item.
  *
@@ -140,7 +143,7 @@ sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
  * \param aGuid    - The GUID of the media item.
  */
 nsresult
-sbLocalDatabaseMediaItem::Init(sbILocalDatabaseLibrary* aLibrary,
+sbLocalDatabaseMediaItem::Init(sbLocalDatabaseLibrary* aLibrary,
                                const nsAString& aGuid)
 {
   NS_ENSURE_ARG_POINTER(aLibrary);
@@ -303,8 +306,8 @@ sbLocalDatabaseMediaItem::GetGuid(nsAString& aGuid)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
 {
-  NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
+  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   NS_ENSURE_ARG_POINTER(aCreated);
 
@@ -323,8 +326,8 @@ sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
 {
-  NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
+  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   NS_ENSURE_ARG_POINTER(aUpdated);
 
@@ -375,12 +378,15 @@ sbLocalDatabaseMediaItem::GetWritePending(PRBool* aWritePending)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::Write()
 {
-  NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
+  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   nsresult rv = NS_OK;
 
   if(mWritePending) {
+    nsresult rv = GetPropertyBag();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     nsAutoLock lock(mPropertyBagLock);
 
     rv = mPropertyBag->Write();
@@ -400,18 +406,16 @@ sbLocalDatabaseMediaItem::GetPropertyNames(nsIStringEnumerator** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
+  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   nsresult rv = GetPropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoLock lock(mPropertyBagLock);
 
-  if(mPropertyBag) {
-    rv = mPropertyBag->GetNames(_retval);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  rv = mPropertyBag->GetNames(_retval);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -423,23 +427,21 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName, 
                                       nsAString& _retval)
 {
-  NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
+  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   nsresult rv = GetPropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoLock lock(mPropertyBagLock);
 
-  if(mPropertyBag) {
-    rv = mPropertyBag->GetProperty(aName, _retval);
-    if (NS_SUCCEEDED(rv) || rv == NS_ERROR_ILLEGAL_VALUE) {
-      return rv;
-    }
-    NS_ENSURE_SUCCESS(rv, rv);
+  rv = mPropertyBag->GetProperty(aName, _retval);
+  if (rv == NS_ERROR_ILLEGAL_VALUE) {
+    return rv;
   }
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return rv;
+  return NS_OK;
 }
 
 /**
@@ -449,8 +451,8 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName, 
                                       const nsAString& aValue)
 {
-  NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
+  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   // Create a property array to hold the changed properties and their old
   // values
@@ -465,30 +467,27 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
   {
     nsAutoLock lock(mPropertyBagLock);
 
-    rv = NS_ERROR_NOT_AVAILABLE;
-    if(mPropertyBag) {
+    // Add the old value to the changed properties array.  If there is no
+    // old value, add an empty string to the properties array.  Note that
+    // this will change once we have IsVoid/SetVoid (bug 3508)
+    nsAutoString oldValue;
+    rv = mPropertyBag->GetProperty(aName, oldValue);
+    if (NS_FAILED(rv)) {
+      oldValue.Truncate();
+    }
 
-      // Add the old value to the changed properties array.  If there is no
-      // old value, add an empty string to the properties array.  Note that
-      // this will change once we have IsVoid/SetVoid
-      nsAutoString oldValue;
-      rv = mPropertyBag->GetProperty(aName, oldValue);
-      if (NS_FAILED(rv))
-        oldValue.Truncate();
+    rv = properties->AppendProperty(aName, oldValue);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = properties->AppendProperty(aName, oldValue);
-      NS_ENSURE_SUCCESS(rv, rv);
+    rv = mPropertyBag->SetProperty(aName, aValue);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mPropertyBag->SetProperty(aName, aValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if(mWriteThrough) {
-        rv = mPropertyBag->Write();
-        mWritePending = PR_FALSE;
-      }
-      else {
-        mWritePending = PR_TRUE;
-      }
+    if(mWriteThrough) {
+      rv = mPropertyBag->Write();
+      mWritePending = PR_FALSE;
+    }
+    else {
+      mWritePending = PR_TRUE;
     }
   }
 
@@ -497,6 +496,178 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
   return rv;
 }
 
+/**
+ * See sbILibraryResource
+ */
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
+{
+  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
+  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
+
+  nsresult rv = GetPropertyBag();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Validate the incoming property array if it is not already valid
+  PRUint32 propertyCount;
+  rv = aProperties->GetLength(&propertyCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyManager> propMan =
+    do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < propertyCount; i++) {
+    nsCOMPtr<nsIProperty> property;
+    rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString propertyName;
+    rv = property->GetName(propertyName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIPropertyInfo> info;
+    rv = propMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIVariant> value;
+    rv = property->GetValue(getter_AddRefs(value));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint16 dataType;
+    rv = value->GetDataType(&dataType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Only strings allowed
+    if (dataType != nsIDataType::VTYPE_ASTRING)
+      return NS_ERROR_INVALID_ARG;
+
+    nsAutoString valueString;
+    rv = value->GetAsAString(valueString);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool valid;
+    rv = info->Validate(valueString, &valid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!valid)
+      return NS_ERROR_INVALID_ARG;
+  }
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  {
+    nsAutoLock lock(mPropertyBagLock);
+
+    for (PRUint32 i = 0; i < propertyCount; i++) {
+      nsCOMPtr<nsIProperty> property;
+      rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString propertyName;
+      rv = property->GetName(propertyName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString oldValue;
+      rv = mPropertyBag->GetProperty(propertyName, oldValue);
+      if (NS_FAILED(rv))
+        oldValue.Truncate();
+
+      rv = properties->AppendProperty(propertyName, oldValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIVariant> value;
+      rv = property->GetValue(getter_AddRefs(value));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString valueString;
+      rv = value->GetAsAString(valueString);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mPropertyBag->SetProperty(propertyName, valueString);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if(mWriteThrough) {
+      rv = mPropertyBag->Write();
+      mWritePending = PR_FALSE;
+    }
+    else {
+      mWritePending = PR_TRUE;
+    }
+  }
+
+  mLibrary->NotifyListenersItemUpdated(this, properties);
+
+  return NS_OK;
+}
+
+/**
+ * See sbILibraryResource
+ */
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::GetProperties(sbIPropertyArray* aProperties,
+                                        sbIPropertyArray** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
+  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
+
+  nsresult rv = GetPropertyBag();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoLock lock(mPropertyBagLock);
+
+  if (aProperties) {
+    PRUint32 propertyCount;
+    rv = aProperties->GetLength(&propertyCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 0; i < propertyCount; i++) {
+      nsCOMPtr<nsIProperty> property;
+      rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString name;
+      rv = property->GetName(name);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString value;
+      rv = mPropertyBag->GetProperty(name, value);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = properties->AppendProperty(name, value);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  else {
+    nsCOMPtr<nsIStringEnumerator> names;
+    rv = mPropertyBag->GetNames(getter_AddRefs(names));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString name;
+    while (NS_SUCCEEDED(names->GetNext(name))) {
+
+      nsAutoString value;
+      rv = mPropertyBag->GetProperty(name, value);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = properties->AppendProperty(name, value);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  NS_ADDREF(*_retval = properties);
+  return NS_OK;
+}
 
 /**
  * See sbILibraryResource
@@ -524,8 +695,8 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::InitResourceProperty(sbILocalDatabasePropertyCache* aPropertyCache, 
                                                const nsAString& aGuid)
 {
-  NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
+  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   NS_ENSURE_ARG_POINTER(aPropertyCache);
 
@@ -561,7 +732,8 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetLibrary(sbILibrary** aLibrary)
 {
   nsresult rv;
-  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
+  nsCOMPtr<sbILibrary> library =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILibrary*, mLibrary), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_IF_ADDREF(*aLibrary = library);

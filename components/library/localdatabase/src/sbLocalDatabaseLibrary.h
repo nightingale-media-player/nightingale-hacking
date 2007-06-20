@@ -31,6 +31,7 @@
 #include <sbIDatabaseQuery.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
+#include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaListListener.h>
 
 #include <nsClassHashtable.h>
@@ -51,7 +52,27 @@ class sbILibraryFactory;
 class sbILocalDatabasePropertyCache;
 class sbLibraryInsertingEnumerationListener;
 class sbLibraryRemovingEnumerationListener;
+class sbLocalDatabaseMediaListView;
 class sbLocalDatabasePropertyCache;
+
+typedef nsCOMArray<sbIMediaItem> sbMediaItemArray;
+typedef nsCOMArray<sbIMediaList> sbMediaListArray;
+typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
+        sbMediaItemToListsMap;
+
+static PLDHashOperator PR_CALLBACK
+  NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType aKey,
+                               sbMediaItemArray* aEntry,
+                               void* aUserData);
+
+static PLDHashOperator PR_CALLBACK
+  NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
+                              sbMediaItemArray* aEntry,
+                              void* aUserData);
+
+static PLDHashOperator PR_CALLBACK
+  EntriesToMediaListArray(nsISupportsHashKey* aEntry,
+                          void* aUserData);
 
 // These are the methods from sbLocalDatabaseMediaListBase that we're going to
 // override in sbLocalDatabaseLibrary. Most of them are from sbIMediaList.
@@ -134,6 +155,13 @@ public:
                 sbILibraryFactory* aFactory,
                 nsIURI* aDatabaseLocation = nsnull);
 
+  /**
+   * \brief Bulk removes the selected items specified in aSelection from the
+   *        view aView
+   */
+  nsresult RemoveSelected(nsISimpleEnumerator* aSelection,
+                          sbLocalDatabaseMediaListView* aView);
+
 private:
   nsresult CreateQueries();
 
@@ -157,6 +185,11 @@ private:
                             sbMediaListFactoryInfo* aEntry,
                             void* aUserData);
 
+  static PLDHashOperator PR_CALLBACK
+    NotifyListsItemUpdated(nsISupportsHashKey::KeyType aKey,
+                           sbMediaItemArray* aEntry,
+                           void* aUserData);
+
   nsresult RegisterDefaultMediaListFactories();
 
   nsresult DeleteDatabaseItem(const nsAString& aGuid);
@@ -167,6 +200,12 @@ private:
   void IncrementDatabaseDirtyItemCounter(PRUint32 aIncrement = 1);
 
   nsresult RunAnalyzeQuery(PRBool aRunAsync = PR_TRUE);
+
+  nsresult GetContainingLists(sbMediaItemArray* aItems,
+                              sbMediaListArray* aLists,
+                              sbMediaItemToListsMap* aMap);
+
+  nsresult GetAllListsByType(const nsAString& aType, sbMediaListArray* aArray);
 
 private:
   // This is the GUID used by the DBEngine to uniquely identify the sqlite
@@ -195,6 +234,9 @@ private:
 
   // Query to grab the media list factory type ID based on its type string.
   nsString mGetFactoryIDForTypeQuery;
+
+  // Get the guids of all lists by type
+  nsString mGetAllListsByTypeId;
 
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
 
@@ -232,7 +274,7 @@ public:
 private:
   sbLocalDatabaseLibrary* mFriendLibrary;
   PRBool mShouldInvalidate;
-  nsCOMArray<sbIMediaItem> mNotificationList;
+  sbMediaItemArray mNotificationList;
 };
 
 /**
@@ -276,5 +318,40 @@ private:
   nsTArray<nsString> mGuids;
 
 };
+
+class sbAutoSimpleMediaListBatchHelper
+{
+public:
+  sbAutoSimpleMediaListBatchHelper(sbMediaListArray* aLists)
+  : mLists(aLists)
+  {
+    NS_ASSERTION(aLists, "Null pointer!");
+    for (PRInt32 i = 0; i < mLists->Count(); i++) {
+      nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+        do_QueryInterface(mLists->ObjectAt(i));
+      if (simple)
+        simple->NotifyListenersBatchBegin(mLists->ObjectAt(i));
+    }
+  }
+
+  ~sbAutoSimpleMediaListBatchHelper()
+  {
+    for (PRInt32 i = 0; i < mLists->Count(); i++) {
+      nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+        do_QueryInterface(mLists->ObjectAt(i));
+      if (simple)
+        simple->NotifyListenersBatchEnd(mLists->ObjectAt(i));
+    }
+  }
+
+private:
+  // Not meant to be implemented. This makes it a compiler error to
+  // attempt to create an object on the heap.
+  static void* operator new(size_t /*size*/) CPP_THROW_NEW {return 0;}
+  static void operator delete(void* /*memory*/) { }
+
+  sbMediaListArray* mLists;
+};
+
 #endif /* __SBLOCALDATABASELIBRARY_H__ */
 
