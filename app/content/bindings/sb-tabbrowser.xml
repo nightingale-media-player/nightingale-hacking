@@ -933,9 +933,9 @@
         if (!event.isTrusted || event.getPreventDefault()) {
           return true;
         }
-        
-        if (this._popupShowing) {
-          // if we're showing a popup, let's do nothing
+                
+        if (this._popupShowing || event.button == 2) {
+          // if we're showing a popup or about to show one, let's do nothing
           return true;
         }
         
