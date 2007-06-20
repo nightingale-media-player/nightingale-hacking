@@ -46,7 +46,7 @@ var nodesToRemove = [];
 
 function runTest () {
   setup();
-
+/*
   testLibrariesAndContents();
   
   testAddingSimplePlaylists();
@@ -58,9 +58,9 @@ function runTest () {
   testLibrarySuggestion();
   
   testLibrariesAndContents();  
-  
+*/  
   testRenaming();
-  
+/*  
   testLibrariesAndContents();    
   
   removeAddedItems();
@@ -68,6 +68,7 @@ function runTest () {
   testAllItemsRemoved();
   
   testLibrariesAndContents();  
+*/
 }
 
 
@@ -518,25 +519,25 @@ function testLibrarySuggestion() {
  */
 function testRenaming() {
   DBG("About to test library renaming functionality");  
-  
   // Add a new library to rename
   var newLibrary = createLibrary("renaming-test");
   newLibrary.name = "Test2";
   libraryManager.registerLibrary(newLibrary, false);
-  var newLibraryNode = libraryServicePane.getNodeForLibraryResource(newLibrary);
+  var list = newLibrary.createMediaList("simple");
+  var newLibraryNode = libraryServicePane.getNodeForLibraryResource(list);
 
   // Add a list to the library
   var list1 = newLibrary.createMediaList("simple");
   list1.name = "Test1";
   list1.write();
   var node1 = libraryServicePane.getNodeForLibraryResource(list1);
-  
+
   // Fake a rename on the library
   var newName = "RenameTest1";
   servicePane.onRename(newLibraryNode.id, newName);
   // Make sure the name was changed correctly
   assertEqual(newLibraryNode.name, newName);
-    
+
   // Fake a rename on the playlist
   newName = "RenameTest2";
   servicePane.onRename(node1.id, newName);
