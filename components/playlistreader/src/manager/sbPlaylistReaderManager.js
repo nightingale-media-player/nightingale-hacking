@@ -109,12 +109,8 @@ CPlaylistReaderManager.prototype =
 
     var theExtension = this.getFileExtension(aURI.path);
 
-    // Remember the original url.
-    this.originalURI = aURI;
-
     if (aURI instanceof Ci.nsIFileURL)
     {
-
       var file = aURI.QueryInterface(Ci.nsIFileURL).file;
 
       // Can't be a playlist if there is nothing in it
@@ -138,9 +134,13 @@ CPlaylistReaderManager.prototype =
         }
       }
 
+      if (!this.originalURI) {
+        this.originalURI = aURI;
+      }
+
       try {
         this.read(file, aMediaList, aContentType, aAddDistinctOnly);
-        if (aPlaylistReaderListener.observer) {
+        if (aPlaylistReaderListener && aPlaylistReaderListener.observer) {
           aPlaylistReaderListener.observer.observe(null, "success", "");
         }
         return 1;
@@ -151,10 +151,16 @@ CPlaylistReaderManager.prototype =
         }
         throw e;
       }
+      finally {
+        this.originalURI = null;
+      }
 
     }
     else
     {
+      // Remember the original url.
+      this.originalURI = aURI;
+
       var browser = Cc["@mozilla.org/embedding/browser/nsWebBrowser;1"]
                       .createInstance(Ci.nsIWebBrowserPersist);
 

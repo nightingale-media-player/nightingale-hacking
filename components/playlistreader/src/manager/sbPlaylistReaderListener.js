@@ -110,6 +110,10 @@ CPlaylistReaderListener.prototype =
           this.observer.observe(null, "error: could not create playlist", "");
         Components.utils.reportError(e);
       }
+      finally
+      {
+        playlistReaderMngr.originalURI = null;
+      }
     }
   },
 
