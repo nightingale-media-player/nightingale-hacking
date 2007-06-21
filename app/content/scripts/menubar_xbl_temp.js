@@ -40,6 +40,9 @@ function doMenu( command ) {
     case "file.remote":
       SBSubscribe(null, null);
     break;
+    case "file.folder":
+      SBNewFolder();
+      break;
     case "file.file":
       SBFileOpen();
     break;

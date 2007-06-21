@@ -517,6 +517,43 @@ function About( )
   }  
 }
 
+function SBNewFolder() {
+  var servicePane = gServicePane;
+
+  // Try to find the currently selected service pane node
+  var selectedNode;
+  if (servicePane) {
+    selectedNode = servicePane.getSelectedNode();
+  }
+  
+  // The bookmarks service knows how to make folders...
+  var bookmarks = Components.classes['@songbirdnest.com/servicepane/bookmarks;1']
+      .getService(Components.interfaces.sbIBookmarks);
+  
+  // ask the bookmarks service to make a new folder
+  var folder = bookmarks.addFolder(SBString('bookmarks.newfolder.defaultname',
+                                            'New Folder'));
+ 
+  // start editing the new folder
+  if (gServicePane) {
+    // we can find the pane so we can edit it inline
+    gServicePane.startEditingNode(folder);
+  } else {
+    // or not - let's pop a dialog
+    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"  ]
+                                  .getService(Components.interfaces.nsIPromptService);
+
+    var input = {value: folder.name};
+    var title = SBString("bookmarks.newfolder.title", "Create New Playlist");
+    var prompt = SBString("bookmarks.newfolder.prompt", "Enter the name of the new playlist.");
+
+    if (promptService.prompt(window, title, prompt, input, null, {})) {
+      folder.name = input.value;
+    }
+  }
+  return folder;
+}
+
 
 /**
  * Opens the update manager and checks for updates to the application.

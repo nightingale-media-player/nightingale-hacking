@@ -55,6 +55,13 @@ interface sbIBookmarks : nsISupports {
   sbIServicePaneNode addBookmark (in AString aURL,
                                   in AString aTitle,
                                   in AString aIconURL);
+  /* \brief Add a folder
+   * Add a bookmark folder in the service pane.
+   * \param aTitle The title of the folder
+   * \return a new folder node
+   */
+  sbIServicePaneNode addFolder (in AString aTitle);
+  
   /* \brief Test if a bookmark exists for the given URL
    * \param aURL the URL to test
    * \return true if the bookmark exists, false if it does not

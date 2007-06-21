@@ -111,32 +111,17 @@ function sbBookmarks_servicePaneInit(sps) {
 
         var fnode = sps.getNode(folder.getAttribute('id'));
         
-        if (fnode) {
-          if (fnode.getAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported')) {
-            // don't reimport a folder that's already been imported
-            continue;
-          }
-        } else {
-          // if the folder doesn't exist...
-          // create the folder
-          fnode = sps.addNode(folder.getAttribute('id'), sps.root, true);
+        if (!fnode) {
+          // if the folder doesn't exist, create it
+          fnode = service.addFolderAt(folder.getAttribute('id'),
+              folder.getAttribute('name'), folder.getAttribute('image'),
+              sps.root, null);
         }
         
-        fnode.name = folder.getAttribute('name');
-        // attach an image
-        if (folder.hasAttribute('image')) {
-          // if an icon was supplied use it
-          fnode.image = folder.getAttribute('image');
-        } else {
-          // otherwise use a default
-          fnode.image = FOLDER_IMAGE;
+        if (fnode && fnode.getAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported')) {
+          // don't reimport a folder that's already been imported
+          continue;
         }
-        fnode.hidden = false;
-        fnode.contractid = CONTRACTID;
-        fnode.dndDragTypes = 'text/x-sb-toplevel';
-        fnode.dndAcceptNear = 'text/x-sb-toplevel';
-        fnode.dndAcceptIn = BOOKMARK_DRAG_TYPE;
-        fnode.editable = true; // folder names are editable
         
         if (fnode.id == ROOTNODE) {
           // we just created the default bookmarks root
@@ -162,16 +147,9 @@ function sbBookmarks_servicePaneInit(sps) {
             continue;
           }
           // create the bookmark
-          bnode = sps.addNode(bookmark.getAttribute('url'), fnode, false);
-          bnode.url = bookmark.getAttribute('url');
-          bnode.name = bookmark.getAttribute('name');
-          bnode.image = bookmark.hasAttribute('image')?
-              bookmark.getAttribute('image') : BOOKMARK_IMAGE;
-          bnode.hidden = false;
-          bnode.contractid = CONTRACTID;
-          bnode.dndDragTypes = BOOKMARK_DRAG_TYPE;
-          bnode.dndAcceptNear = BOOKMARK_DRAG_TYPE;
-          bnode.editable = true;
+          bnode = service.addBookmarkAt(bookmark.getAttribute('url'),
+              bookmark.getAttribute('name'), bookmark.getAttribute('image'),
+              fnode, null);
         }
         
         fnode.setAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported', 'true');
@@ -183,7 +161,6 @@ function sbBookmarks_servicePaneInit(sps) {
       } catch (e) {
       }
 
-      sps.save();
     }, false);
     xhr.addEventListener('error', function(evt) {
       // FIXME: handle errors. if we do nothing here then the user won't
@@ -248,6 +225,7 @@ function sbBookmarks_migrateLegacyBookmarks() {
   } catch (e) {
   }
 }
+
 sbBookmarks.prototype.addBookmark =
 function sbBookmarks_addBookmark(aURL, aTitle, aIconURL) {
   dump('sbBookmarks.addBookmark('+aURL.toSource()+','+aTitle.toSource()+','+aIconURL.toSource()+')\n');
@@ -261,24 +239,24 @@ function sbBookmarks_addBookmark(aURL, aTitle, aIconURL) {
 
 sbBookmarks.prototype.addBookmarkAt =
 function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
-  var node = this._servicePane.addNode(aURL, aParent, false);
-  dump ('addBookmark: addNode returned: '+node+'\n');
-  if (node) {
-    if (aBefore) {
-      dump ('reordering so that '+node.id+' is before '+aBefore.id+'\n');
-      aParent.insertBefore(node, aBefore);
-    }
-    node.contractid = CONTRACTID;
-    node.name = aTitle;
-    node.url = aURL;
-    /* FIXME: the should the icon be downloaded and cached as a data: url */
-    node.image = aIconURL;
-    
-    node.hidden = false;
-    node.editable = true;
-    
-    this._servicePane.save();
-    
+  var bnode = this._servicePane.addNode(aURL, aParent, false);
+  if (!bnode) {
+    return bnode;
+  }
+  
+  bnode.url = aURL;
+  bnode.name = aTitle;
+  bnode.image = aIconURL ? aIconURL : BOOKMARK_IMAGE;
+  if (aBefore) {
+    aBefore.parentNode.insertBefore(bnode, aBefore);
+  }
+  bnode.hidden = false;
+  bnode.contractid = CONTRACTID;
+  bnode.dndDragTypes = BOOKMARK_DRAG_TYPE;
+  bnode.dndAcceptNear = BOOKMARK_DRAG_TYPE;
+  bnode.editable = true;
+  
+  if (bnode.image.match(/^https?:/)) {
     // check that the supplied image url works, otherwise use the default
     var observer = {
       service : this,
@@ -286,8 +264,7 @@ function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
       },
       onStopRequest : function(aRequest, aContext, aStatusCode) {
         if (aStatusCode != 0) {
-          node.image = BOOKMARK_IMAGE;
-          this.service._servicePane.save();
+          bnode.image = BOOKMARK_IMAGE;
         }
       }
     };
@@ -296,13 +273,37 @@ function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
       .createInstance(Components.interfaces.nsIURIChecker);
     var uri = Components.classes["@mozilla.org/network/standard-url;1"]
       .createInstance(Components.interfaces.nsIURI);
-    uri.spec = aIconURL;
+    uri.spec = bnode.image;
     checker.init(uri);
     checker.asyncCheck(observer, null);
   }
   
-  return node;
+  return bnode;
 }
+
+sbBookmarks.prototype.addFolder =
+function sbBookmarks_addFolder(aTitle) {
+  return this.addFolderAt(null, aTitle, null, this._servicePane.root, null);
+}
+
+sbBookmarks.prototype.addFolderAt =
+function sbBookmarks_addFolderAt(aId, aTitle, aIconURL, aParent, aBefore) {
+  var  fnode = this._servicePane.addNode(aId, aParent, true);  
+  fnode.name = aTitle;
+  fnode.image = aIconURL ? aIconURL : FOLDER_IMAGE;
+  if (aBefore) {
+    aBefore.parentNode.insertBefore(fnode, aBefore);
+  }
+  fnode.hidden = false;
+  fnode.contractid = CONTRACTID;
+  fnode.dndDragTypes = 'text/x-sb-toplevel';
+  fnode.dndAcceptNear = 'text/x-sb-toplevel';
+  fnode.dndAcceptIn = BOOKMARK_DRAG_TYPE;
+  fnode.editable = true; // folder names are editable
+  
+  return fnode;
+}
+
 sbBookmarks.prototype.bookmarkExists =
 function sbBookmarks_bookmarkExists(aURL) {
   var node = this._servicePane.getNode(aURL);
@@ -334,8 +335,6 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
     chromeFeatures += (',titlebar='+accessibility?'yes':'no');
     aParentWindow.openDialog('chrome://songbird/content/xul/editbookmark.xul',
                  'edit_bookmark', chromeFeatures, aNode);
-
-    service._servicePane.save();  
   }, false);
   aContextMenu.appendChild(item);
   
@@ -347,7 +346,6 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
     dump ('delete: '+aNode.name+'\n');
     // FIXME: confirmation dialog, eh??
     service._servicePane.removeNode(aNode);
-    service._servicePane.save();
   }, false);
   aContextMenu.appendChild(item);
 }
