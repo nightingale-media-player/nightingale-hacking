@@ -1,0 +1,479 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!--
+
+  This object is essentially the same as a <key> object, except that it only
+  intercepts the key strokes on its parent (default) or on an element that was 
+  specified as target.
+  
+  use setTarget(element) to change the target.
+  use oncommand="fn(event)" to trap the key
+
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+          
+  <binding id="local-key">
+
+  <content>
+  </content>
+
+  <implementation>
+
+    <constructor>
+      this.shiftDown = false;
+      this.ctrlDown = false;
+      this.altDown = false;
+      this.metaDown = false;
+      this.hotkeyShift = false;
+      this.hotkeyCtrl = false;
+      this.hotkeyAlt = false;
+      this.hotkeyMeta = false;
+      this.hotkeyCode = 0;
+      this.hotkeyChar = 0;
+
+      var platform;
+      try {
+        var sysInfo =
+          Components.classes["@mozilla.org/system-info;1"]
+                    .getService(Components.interfaces.nsIPropertyBag2);
+        platform = sysInfo.getProperty("name");                                          
+      }
+      catch (e) {
+        var user_agent = navigator.userAgent;
+        if (user_agent.indexOf("Windows") != -1)
+          platform = "Windows_NT";
+        else if (user_agent.indexOf("Mac OS X") != -1)
+          platform = "Darwin";
+        else if (user_agent.indexOf("Linux") != -1)
+          platform = "Linux";
+      }
+
+      if (platform == "Windows_NT")
+        this.accelkey = "ctrl";
+      else if (platform == "Darwin")
+        this.accelkey = "meta";
+      else if (platform == "Linux")
+        this.accelkey = "ctrl";
+      else
+        this.meta_key_str = "ctrl";
+
+      this.initListeners();
+    </constructor>
+
+    <destructor>
+      this.shutdownListeners();
+    </destructor>
+
+    <method name="setTarget">
+      <parameter name="target"/>
+      <body>
+        <![CDATA[
+          this.target = target;
+          this.initListeners();
+        ]]>
+      </body>
+    </method>
+
+    <method name="initListeners">
+      <body>
+        <![CDATA[
+          this.shutdownListeners();
+            
+          if (!this.target) this.target = this.parentNode;
+
+          if (this.target) {
+            this.oldtarget = this.target;
+            this.keyDownCallback = { 
+              _that: null, 
+              handleEvent: function( event ) { this._that.onKeyDown(event); } 
+            }; this.keyDownCallback._that = this; 
+            this.target.addEventListener("keydown", this.keyDownCallback, true);
+            this.keyUpCallback = { 
+              _that: null, 
+              handleEvent: function( event ) { this._that.onKeyUp(event); } 
+            }; this.keyUpCallback._that = this; 
+            this.target.addEventListener("keyup", this.keyUpCallback, true);
+            this.keyPressCallback = { 
+              _that: null, 
+              handleEvent: function( event ) { this._that.onKeyPress(event); } 
+            }; this.keyPressCallback._that = this; 
+            this.target.addEventListener("keypress", this.keyPressCallback, true);
+            this.domNodeRemoved = { 
+              _that: null, 
+              handleEvent: function( event ) { this._that.onReset(event); } 
+            }; this.domNodeRemoved._that = this; 
+            this.addEventListener("DOMNodeRemoved", this.domNodeRemoved, true);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="shutdownListeners">
+      <body>
+        <![CDATA[
+          if (this.oldtarget) {
+            this.oldtarget.removeEventListener("keydown", this.keyDownCallback, true);
+            this.oldtarget.removeEventListener("keyup", this.keyUpCallback, true);
+            this.oldtarget.removeEventListener("keypress", this.keyPressCallback, true);
+            this.removeEventListener("DOMNodeRemoved", this.domNodeRemoved, true);
+            this.oldtarget = null;
+          } 
+          if (this.domNodeRemoved) {
+            this.domNodeRemoved._that = null;
+            this.domNodeRemoved = null;
+          }
+          if (this.keyDownCallback) {
+            this.keyDownCallback._that = null;
+            this.keyDownCallback = null;
+          }
+          if (this.keyUpCallback) {
+            this.keyUpCallback._that = null;
+            this.keyUpCallback = null;
+          }
+          if (this.keyPressCallback) {
+            this.keyPressCallback._that = null;
+            this.keyPressCallback = null;
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onReset">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          this.shutdownListeners();
+        ]]>
+      </body>
+    </method>
+
+    <method name="onKeyDown">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+         // special case for alt, which does not give an up event after an Alt-Letter was pressed
+         if (!event.altKey && this.altDown) this.altDown = false;
+         if (this.isModKey(event.keyCode)) this.handleModState(event.keyCode, true);
+         this.checkHotkey(event.keyCode, event);
+        ]]>
+      </body>
+    </method>
+
+    <method name="onKeyUp">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (this.isModKey(event.keyCode)) this.handleModState(event.keyCode, false);
+          if (this.hotkeyCode == 0 && this.isModKey(event.keyCode)) { 
+            this.hotkeyAlt = this.hotkeyShift = this.hotkeyCtrl = this.hotkeyMeta = false; 
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onKeyPress">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+         this.hotkeyChar = event.charCode;
+         if (this.hotkeyChar != 0) this.checkHotkey(-1, event);
+        ]]>
+      </body>
+    </method>
+
+    <method name="checkHotkey">
+      <parameter name="keyCode"/>
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (this.getAttribute("disabled") == "true") return;
+          if (keyCode != -1) {
+            this.hotkeyShift = this.shiftDown;
+            this.hotkeyCtrl = this.ctrlDown;
+            this.hotkeyAlt = this.altDown;
+            this.hotkeyMeta = this.metaDown;
+            if (!this.isModKey(keyCode)) { 
+              this.hotkeyCode = keyCode; 
+            } else {
+              this.hotkeyCode = 0;
+            }
+          }
+          var codeok = this.matchKeyCode(this.getAttribute("keycode"), this.hotkeyCode);
+          var keyok = this.matchKey(this.getAttribute("key"), this.hotkeyChar);
+          var modok = this.matchModifiers(this.getAttribute("modifiers"), 
+                                          this.hotkeyShift, 
+                                          this.hotkeyCtrl, 
+                                          this.hotkeyAlt, 
+                                          this.hotkeyMeta);
+          //if (this.getAttribute("keycode") == "VK_DELETE") alert(codeok + " - " + keyok + " - " + modok);
+          if (codeok && keyok && modok) {
+            //alert(event.originalTarget.tagName + " - " + this.target.tagName);
+            if (event.originalTarget == this.target) {
+              // dump("XXXXXXXXXXXXXXXXXXXX event\n");
+              // handle any xml attribute event handlers
+              var handler = this.getAttribute("oncommand");
+              if (handler != "") {
+                var evt = {
+                  target: this,
+                  originalTarget: this,
+                  charCode: this.hotkeyChar,
+                  keyCode: this.hotkeyCode,
+                  altKey: this.hotkeyAlt,
+                  ctrlKey: this.hotkeyCtrl,
+                  shiftKey: this.hotkeyShift,
+                  metaKey: this.hotkeyMeta,
+                };
+                var fn = new Function("event", handler);
+                fn(evt);
+              }
+              event.stopPropagation();
+              event.preventDefault();
+              this.hotkeyAlt = this.hotkeyShift = this.hotkeyCtrl = this.hotkeyMeta = false;
+              this.shiftDown = this.ctrlDown = this.altDown = this.metaDown = false;
+              this.hotkeyCode = this.hotkeyChar = 0;
+            }
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="handleModState">
+      <parameter name="mod"/>
+      <parameter name="down"/>
+      <body>
+        <![CDATA[
+          const e = Components.interfaces.nsIDOMKeyEvent;
+          const DOM_VK_LWIN           = 0x5B;
+          const DOM_VK_RWIN           = 0x5C;
+          switch (mod) {
+            case e.DOM_VK_SHIFT: 
+              this.shiftDown = down; 
+              break;
+            case e.DOM_VK_CONTROL: 
+              this.ctrlDown = down; 
+              break;
+            case e.DOM_VK_ALT: 
+              this.altDown = down; 
+              break;
+            case e.DOM_VK_META: 
+              // fallthru
+            case DOM_VK_LWIN: 
+              // fallthru
+            case DOM_VK_RWIN: 
+              this.metaDown = down; 
+              break;
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="isModKey">
+      <parameter name="keyCode"/>
+      <body>
+        <![CDATA[
+          const e = Components.interfaces.nsIDOMKeyEvent;
+          const DOM_VK_LWIN          = 0x5B;
+          const DOM_VK_RWIN          = 0x5C;
+          var ismodkey = (keyCode == e.DOM_VK_META || 
+                          keyCode == DOM_VK_RWIN || 
+                          keyCode == DOM_VK_LWIN || 
+                          keyCode == e.DOM_VK_SHIFT || 
+                          keyCode == e.DOM_VK_ALT || 
+                          keyCode == e.DOM_VK_CONTROL);
+          return ismodkey;
+        ]]>
+      </body>
+    </method>
+
+    <method name="matchKeyCode">
+      <parameter name="wantedkeycode"/>
+      <parameter name="currentkeycode"/>
+      <body>
+        <![CDATA[
+          if ((!wantedkeycode || wantedkeycode == "") && currentkeycode == 0) return true;
+          var keystr = this.keyCodeToString(currentkeycode);
+          if (keystr.toUpperCase() == wantedkeycode.toUpperCase()) return true;
+          return false;
+        ]]>
+      </body>
+    </method>
+
+    <method name="matchKey">
+      <parameter name="wantedkey"/>
+      <parameter name="currentkey"/>
+      <body>
+        <![CDATA[
+          if ((!wantedkey || wantedkey == "") && currentkey == 0) return true;
+          var keychar = String.fromCharCode(currentkey);
+          return (keychar.toUpperCase() == wantedkey.toUpperCase());
+        ]]>
+      </body>
+    </method>
+
+    <method name="matchModifiers">
+      <parameter name="wantedmods"/>
+      <parameter name="currentshift"/>
+      <parameter name="currentctrl"/>
+      <parameter name="currentalt"/>
+      <parameter name="currentmeta"/>
+      <body>
+        <![CDATA[
+          if ((!wantedmods || wantedmods == "") && 
+              !currentshift && 
+              !currentalt && 
+              !currentctrl && 
+              !currentmeta) return true;
+          var mods = wantedmods.replace(/,/g, " ");
+          var modsarray = mods.split(" ");
+          var r = true;
+          for (var i in modsarray) {
+            var mod = modsarray[i];
+            if (mod == "accel") mod = this.accelkey;
+            switch (mod) {
+              case "shift": r &= currentshift; break;
+              case "alt": r &= currentalt; break;
+              case "control": r &= currentctrl; break;
+              case "meta": r &= currentmeta; break;
+            }
+          }
+          return r;
+        ]]>
+      </body>
+    </method>
+
+    <method name="keyCodeToString">
+      <parameter name="code"/>
+      <body>
+        <![CDATA[
+          const e = Components.interfaces.nsIDOMKeyEvent;
+
+          // this.log(code);
+          switch (code) {
+
+            // translate from keycode contant to keycode attribute string 
+            // (taken from http://www.xulplanet.com/tutorials/xultu/keyref.html)
+
+            case e.DOM_VK_CANCEL: return "VK_CANCEL";
+            case e.DOM_VK_BACK_SPACE: return "VK_BACK";
+            case e.DOM_VK_TAB: return "VK_TAB";
+            case e.DOM_VK_CLEAR: return "VK_CLEAR";
+            case e.DOM_VK_RETURN: return "VK_RETURN";
+            case e.DOM_VK_ENTER: return "VK_ENTER";
+            case e.DOM_VK_SHIFT: return "VK_SHIFT";
+            case e.DOM_VK_CONTROL: return "VK_CONTROL";
+            case e.DOM_VK_ALT: return "VK_ALT";
+            case e.DOM_VK_PAUSE: return "VK_PAUSE";
+            case e.DOM_VK_CAPS_LOCK: return "VK_CAPS_LOCK";
+            case e.DOM_VK_ESCAPE: return "VK_ESCAPE";
+            case e.DOM_VK_SPACE: return "VK_SPACE";
+            case e.DOM_VK_PAGE_UP: return "VK_PAGE_UP";
+            case e.DOM_VK_PAGE_DOWN: return "VK_PAGE_DOWN";
+            case e.DOM_VK_END: return "VK_END";
+            case e.DOM_VK_HOME: return "VK_HOME";
+            case e.DOM_VK_LEFT: return "VK_LEFT";
+            case e.DOM_VK_UP: return "VK_UP";
+            case e.DOM_VK_RIGHT: return "VK_RIGHT";
+            case e.DOM_VK_DOWN: return "VK_DOWN";
+            case e.DOM_VK_PRINTSCREEN: return "VK_PRINTSCREEN";
+            case e.DOM_VK_INSERT: return "VK_INSERT";
+            case e.DOM_VK_DELETE: return "VK_DELETE";
+            case e.DOM_VK_SEMICOLON: return "VK_SEMICOLON";
+            case e.DOM_VK_EQUALS: return "VK_EQUALS";
+            case e.DOM_VK_CONTEXT_MENU: return "VK_CONTEXT_MENU";
+            case e.DOM_VK_NUMPAD0: return "VK_NUMPAD0";
+            case e.DOM_VK_NUMPAD1: return "VK_NUMPAD1";
+            case e.DOM_VK_NUMPAD2: return "VK_NUMPAD2";
+            case e.DOM_VK_NUMPAD3: return "VK_NUMPAD3";
+            case e.DOM_VK_NUMPAD4: return "VK_NUMPAD4";
+            case e.DOM_VK_NUMPAD5: return "VK_NUMPAD5";
+            case e.DOM_VK_NUMPAD6: return "VK_NUMPAD6";
+            case e.DOM_VK_NUMPAD7: return "VK_NUMPAD7";
+            case e.DOM_VK_NUMPAD8: return "VK_NUMPAD8";
+            case e.DOM_VK_NUMPAD9: return "VK_NUMPAD9";
+            case e.DOM_VK_MULTIPLY: return "VK_MULTIPLY";
+            case e.DOM_VK_ADD: return "VK_ADD";
+            case e.DOM_VK_SEPARATOR: return "VK_SEPARATOR";
+            case e.DOM_VK_SUBTRACT: return "VK_SUBTRACT";
+            case e.DOM_VK_DECIMAL: return "VK_DECIMAL";
+            case e.DOM_VK_DIVIDE: return "VK_DIVIDE";
+            case e.DOM_VK_F1: return "VK_F1";
+            case e.DOM_VK_F2: return "VK_F2";
+            case e.DOM_VK_F3: return "VK_F3";
+            case e.DOM_VK_F4: return "VK_F4";
+            case e.DOM_VK_F5: return "VK_F5";
+            case e.DOM_VK_F6: return "VK_F6";
+            case e.DOM_VK_F7: return "VK_F7";
+            case e.DOM_VK_F8: return "VK_F8";
+            case e.DOM_VK_F9: return "VK_F9";
+            case e.DOM_VK_F10: return "VK_F10";
+            case e.DOM_VK_F11: return "VK_F11";
+            case e.DOM_VK_F12: return "VK_F12";
+            case e.DOM_VK_F13: return "VK_F13";
+            case e.DOM_VK_F14: return "VK_F14";
+            case e.DOM_VK_F15: return "VK_F15";
+            case e.DOM_VK_F16: return "VK_F16";
+            case e.DOM_VK_F17: return "VK_F17";
+            case e.DOM_VK_F18: return "VK_F18";
+            case e.DOM_VK_F19: return "VK_F19";
+            case e.DOM_VK_F20: return "VK_F20";
+            case e.DOM_VK_F21: return "VK_F21";
+            case e.DOM_VK_F22: return "VK_F22";
+            case e.DOM_VK_F23: return "VK_F23";
+            case e.DOM_VK_F24: return "VK_F24";
+            case e.DOM_VK_NUM_LOCK: return "VK_NUM_LOCK";
+            case e.DOM_VK_SCROLL_LOCK: return "VK_SCROLL_LOCK";
+            case e.DOM_VK_COMMA: return "VK_COMMA";
+            case e.DOM_VK_PERIOD: return "VK_PERIOD";
+            case e.DOM_VK_SLASH: return "VK_SLASH";
+            case e.DOM_VK_BACK_QUOTE: return "VK_BACK_QUOTE";
+            case e.DOM_VK_OPEN_BRACKET: return "VK_OPEN_BRACKET";
+            case e.DOM_VK_BACK_SLASH: return "VK_BACK_SLASH";
+            case e.DOM_VK_CLOSE_BRACKET: return "VK_CLOSE_BRACKET";
+            case e.DOM_VK_QUOTE: return "VK_QUOTE";
+            case e.DOM_VK_HELP: return "VK_HELP";
+          }
+          if (this.hotkeyChar && this.hotkeyChar != 0) return String.fromCharCode(this.hotkeyChar);
+          // because for some reason, some keys may not be recognized, print them as literal keycodes 
+          // (this is in part, but not entirely, due to mozilla bug #67233, https://bugzilla.mozilla.org/show_bug.cgi?id=67233)
+          return "$" + code;
+        ]]>
+      </body>
+    </method>
+
+   </implementation>
+
+  </binding>
+
+</bindings>

@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!--
+
+  This object allows runtime creation and deletion of <keyset><key/></keyset> objects
+  
+  Use addKey to add a key binding (use local=true to create a localkey instead of a key, see localKey.xml)
+  Use removeKey/removeAllKeys to delete a key binding
+
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+          
+  <binding id="dynamic-keyset">
+
+  <content>
+  </content>
+
+  <implementation>
+
+    <field name="keysets">new Array()</field>
+    
+    <!-- Add a key handler.
+         - local:         : a boolean that indicates whether to use a <key/> or a <sb-local-key/> object.
+                            local keys are only trapped when the keystroke occurs on the targeted element 
+                            (see localKey.xml - by default, the target is the parent for of the keyset.
+         - id             : the id of the key
+         - modifiers      : keyboard modifiers (see help on <key/> element)
+         - key            : character key (see help on <key/> element)
+         - keycode        : key code (see help on <key/> element)
+         - callbackObject : an optional object on which to call onCommand
+         - target         : the targeted element for the key binding
+    -->
+    <method name="addKey">
+    <parameter name="local"/>
+    <parameter name="id"/>
+    <parameter name="modifiers"/>
+    <parameter name="key"/>
+    <parameter name="keycode"/>
+    <parameter name="callbackObject"/>
+    <parameter name="target"/>
+      <body>
+        <![CDATA[
+          //alert("addkey - id='" + id + "', modifiers='" + modifiers + "', key='" + key + "', keycode='" + keycode + "'");
+          var keyelement;
+          if (!local) {
+            var keyset = document.createElement("keyset");
+            keyset.setAttribute("id", id);
+            keyelement = document.createElement("key");
+            keyelement.setAttribute("oncommand", "event.target.dynkeyset.onCommand(event);");
+            keyelement.dynkeyset = this;
+            if (modifiers) keyelement.setAttribute("modifiers", modifiers);
+            if (key) keyelement.setAttribute("key", key);
+            if (keycode) keyelement.setAttribute("keycode", keycode);
+            keyset.appendChild(keyelement);
+            this.keysets.push(keyset);
+            keyelement.callbackObject = callbackObject;
+            keyelement.target = target;
+            this.appendChild(keyset);
+          } else {
+            keyelement = document.createElement("sb-local-key");
+            keyelement.setAttribute("id", id);
+            keyelement.setAttribute("oncommand", "event.target.dynkeyset.onCommand(event);");
+            keyelement.dynkeyset = this;
+            if (modifiers) keyelement.setAttribute("modifiers", modifiers);
+            if (key) keyelement.setAttribute("key", key);
+            if (keycode) keyelement.setAttribute("keycode", keycode);
+            this.keysets.push(keyelement);
+            setTimeout(function() { if (keyelement.parentNode) { keyelement.setTarget(target); } }, 0);
+            keyelement.callbackObject = callbackObject;
+            this.appendChild(keyelement);
+          }
+          return keyelement;
+        ]]>
+      </body>
+    </method>
+
+    <method name="onCommand">
+    <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (event.target.callbackObject) event.target.callbackObject.onCommand(event);
+        ]]>
+      </body>
+    </method>
+
+    <method name="removeKey">
+    <parameter name="id"/>
+      <body>
+        <![CDATA[
+          for (var i in this.keysets) {
+            if (this.keysets[i].getAttribute("id") == id) {
+              var parent = this.keysets[i].parentNode;
+              parent.removeChild(this.keysets[i]);
+              this.keysets.splice(i,1);
+              break;
+            }
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="removeAllKeys">
+      <body>
+        <![CDATA[
+          for (var i in this.keysets) {
+            var parent = this.keysets[i].parentNode;
+            parent.removeChild(this.keysets[i]);
+          }
+          this.keysets.length = 0;
+        ]]>
+      </body>
+    </method>
+
+   </implementation>
+
+  </binding>
+
+</bindings>
