@@ -383,12 +383,12 @@ try
       //
       // YouTube videos on youtube.com
       //
-      else if ( location.indexOf( "www.youtube.com" ) != -1 ) {
-        // Crack it from the get_video URL.
-        var seek = "player2.swf";
+      else if ( location.indexOf( "youtube.com" ) != -1 ) {
+        // Crack it for the get_video URL.
+        var seek = "video_id";
         var key = url.indexOf( seek );
         if ( key != -1 ) {
-          url = "http://www.youtube.com/get_video" + url.substr( key + seek.length );
+          url = "http://www.youtube.com/get_video?" + url.substr( key );
           this.handleURL( url, true ); // Force the webplaylist to accept the url.
           retval = true;
         }
