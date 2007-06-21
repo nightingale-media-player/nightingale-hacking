@@ -63,6 +63,18 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
     this.m_StepsPer      = aStepsPerInterval;
     this.m_Delay         = aIntervalDelay;
     this.m_Interval      = null;
+    this.m_AsyncState    = 0;
+    
+    this.pushAsync = function()
+    {
+      this.m_AsyncState++;
+    }
+    
+    this.popAsync = function()
+    {
+      if ( --this.m_AsyncState < 0 )
+        throw "UNBALANCED ASYNC HANDLER";
+    }
     
     this.cancel = function()
     {
@@ -123,7 +135,7 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
               break;
             }
           }
-          else
+          else if ( this.m_AsyncState == 0 )
           {
             try
             {

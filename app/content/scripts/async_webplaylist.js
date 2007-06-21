@@ -95,6 +95,7 @@ try
       
       function webPlaylist_bodyEval() {
         try  {
+        
           // Do not run while the "main" playlist is up?  This is so gross.
           //  UGH.  MUST REWRITE ENTIRE WORLD.
           /*
@@ -133,17 +134,16 @@ try
           {
             var url = this.embed_array[ this.i ].getAttribute("src");
             if ( url )
-              loop_break |= this.handleURL( url );
+              loop_break |= this.handleEmbedURL( url );
           }
           // "Object" tags
           if ( 
               ( this.i < this.object_array.length )
             )
           {
-            // ?
             var url = this.object_array[ this.i ].getAttribute("src");
             if ( url )
-              loop_break |= this.handleURL( url );
+              loop_break |= this.handleEmbedURL( url );
           }
           
           return loop_break;
@@ -256,7 +256,7 @@ try
     href_loop.mediaList = aMediaListView.mediaList;
     
     // Useful function to be called by the internal code
-    href_loop.handleURL = function webPlaylist_handleURL(url) {
+    href_loop.handleURL = function webPlaylist_handleURL(url, force) {
     
       // Make sure this is a well-formed url.
       try {
@@ -273,7 +273,7 @@ try
         return false;
       }
 
-      if (!gPPS.isMediaURL(url)) {
+      if (!force && !gPPS.isMediaURL(url)) {
         // decrement the total (floor is 0) to keep the percentage indicator moving
         if (context.progressTotal > 0) {
           context.progressTotal = context.progressTotal - 1;
@@ -327,6 +327,79 @@ try
       
       // Only one synchronous database call per ui frame.
       return true;
+    }
+    
+    href_loop.handleEmbedURL = function( url )
+    {
+      var retval = false;
+      var location = "" + gBrowser.mCurrentBrowser.currentURI.spec;
+      
+      // TODO: Make this an API.
+      
+      //
+      // YouTube videos embedded in other webpages
+      //
+      if ( url.indexOf( "www.youtube.com/v/" ) != -1 ) {
+        // This has to traverse a redirect, asynchronously.
+        var observer = {
+          url : "",
+          manager : null,
+          onStartRequest : function(aRequest,aContext) {
+          },
+          onStopRequest : function(aRequest, aContext, aStatusCode) {
+            this.manager.popAsync();
+            try {
+              if (aStatusCode == 0) {
+                // Get the redirected URL.
+                var uriChecker =
+                  aRequest.QueryInterface(Components.interfaces.nsIURIChecker);
+                if ( uriChecker ) {
+                  var url = uriChecker.baseChannel.URI.spec;
+                  
+                  // Crack it for the get_video URL.
+                  var seek = "jp.swf";
+                  var key = url.indexOf( seek );
+                  if ( key != -1 ) {
+                    url = "http://www.youtube.com/get_video" + url.substr( key + seek.length );
+                    this.manager.handleURL( url, true ); // Force the webplaylist to accept the url.
+                  }
+                }
+              }
+            } catch( e ) { 
+              alert( "AsyncWebplaylist youtube urlobserver\n\n" + e ); 
+            }
+          }
+        };
+        observer.manager = this;
+        observer.url = url;
+        var checker = Components.classes["@mozilla.org/network/urichecker;1"].createInstance(Components.interfaces.nsIURIChecker);
+        var uri = Components.classes["@mozilla.org/network/standard-url;1"].createInstance(Components.interfaces.nsIURI);
+        uri.spec = url;
+        checker.init(uri);
+        checker.asyncCheck(observer, null);
+        this.pushAsync();
+        retval = true;
+      }
+      //
+      // YouTube videos on youtube.com
+      //
+      else if ( location.indexOf( "www.youtube.com" ) != -1 ) {
+        // Crack it from the get_video URL.
+        var seek = "player2.swf";
+        var key = url.indexOf( seek );
+        if ( key != -1 ) {
+          url = "http://www.youtube.com/get_video" + url.substr( key + seek.length );
+          this.handleURL( url, true ); // Force the webplaylist to accept the url.
+          retval = true;
+        }
+      }
+      //
+      // This is the boring default functionality.
+      //
+      else {
+        retval = this.handleURL( url );
+      }
+      return retval;
     }
     
     context.progressTotal = href_loop.a_array.length;
