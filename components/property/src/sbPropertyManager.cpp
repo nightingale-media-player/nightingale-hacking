@@ -202,6 +202,18 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPro
   return NS_ERROR_NOT_AVAILABLE;
 }
 
+NS_IMETHODIMP sbPropertyManager::HasProperty(const nsAString &aName,
+                                             PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  if(mPropInfoHashtable.Get(aName, nsnull))
+    *_retval = PR_TRUE;
+  else
+    *_retval = PR_FALSE;
+  return NS_OK;
+}
+
 NS_IMETHODIMP sbPropertyManager::CreateBundle(const char *aURLSpec, 
                                               nsIStringBundle **_retval)
 {

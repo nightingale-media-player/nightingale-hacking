@@ -48,7 +48,7 @@ interface sbIPropertyArray;
 *
 * \sa sbIPropertyInfo
 */
-[scriptable, uuid(4325d6c4-4eaf-4324-8f91-a5865ac22008)]
+[scriptable, uuid(280006ad-3069-4d1b-9684-a647672ff856)]
 interface sbIPropertyManager : nsISupports
 {
   /**
@@ -70,6 +70,14 @@ interface sbIPropertyManager : nsISupports
    *        thrown if the property's name is not unique
    */
   void addPropertyInfo(in sbIPropertyInfo aPropertyInfo);
+
+  /**
+   * \brief Check for an property in the system by name
+   * \param aName Name of the property
+   * \return true if property is in system
+   * \return false if property is not in system
+   */
+  boolean hasProperty(in AString aName);
   
   /**
    * \brief Helper to get a string bundle.
