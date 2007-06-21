@@ -262,7 +262,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
   rv = property->GetValue(value);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mCurrentSortDirectionIsAscending = stringValue.EqualsLiteral("a");
+  mCurrentSortDirectionIsAscending = value.EqualsLiteral("a");
 
   return NS_OK;
 }
