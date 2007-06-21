@@ -55,12 +55,14 @@
 #include <nsIPrefService.h>
 #include <nsIProperties.h>
 #include <nsIStandardURL.h>
+#include <nsIFileURL.h>
 #include <nsISupportsPrimitives.h>
 #include <nsITreeView.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIURL.h>
 #include <nsIWindowWatcher.h>
 #include <nsServiceManagerUtils.h>
+#include <nsNetUtil.h>
 
 /* Songbird imports. */
 #include <sbILibraryManager.h>
@@ -1418,7 +1420,6 @@ nsresult sbDownloadDevice::SetTransferDestination(
     nsCOMPtr<sbIMediaItem>      pMediaItem)
 {
     nsString                    dstProp;
-    nsCString                   fileName;
     nsString                    dstDir;
     nsCOMPtr<nsILocalFile>      pDstFile;
     nsCOMPtr<nsIURI>            pDstURI;
@@ -1434,38 +1435,6 @@ nsresult sbDownloadDevice::SetTransferDestination(
     if (NS_SUCCEEDED(propertyResult))
         return (result);
 
-    /* Get the source file name. */
-    {
-        nsCOMPtr<nsIURI>            pSrcURI;
-        nsCOMPtr<nsIStandardURL>    pStandardURL;
-        nsCOMPtr<nsIURL>            pURL;
-
-        /* Get the source URI. */
-        result = pMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
-
-        /* Convert the URI to a URL. */
-        if (NS_SUCCEEDED(result))
-        {
-            pStandardURL =
-                        do_CreateInstance("@mozilla.org/network/standard-url;1",
-                                          &result);
-        }
-        if (NS_SUCCEEDED(result))
-        {
-            result = pStandardURL->Init(nsIStandardURL::URLTYPE_STANDARD,
-                                        0,
-                                        NS_LITERAL_CSTRING(""),
-                                        nsnull,
-                                        pSrcURI);
-        }
-
-        /* Get the file name from the URL. */
-        if (NS_SUCCEEDED(result))
-            pURL = do_QueryInterface(pStandardURL, &result);
-        if (NS_SUCCEEDED(result))
-            pURL->GetFileName(fileName);
-    }
-
     /* Get the default destination directory. */
     if (NS_SUCCEEDED(result))
         result = mpDownloadDirDR->GetStringValue(dstDir);
@@ -1479,14 +1448,12 @@ nsresult sbDownloadDevice::SetTransferDestination(
             result = NS_ERROR_UNEXPECTED;
     }
 
-    /* Create a unique local destination file object. */
+    /* Create a unique local destination file object.    */
+    /* note that we only record the directory, we do not */
+    /* append the filename until when the file begins    */
+    /* to download                                       */
     if (NS_SUCCEEDED(result))
         result = NS_NewLocalFile(dstDir, PR_FALSE, getter_AddRefs(pDstFile));
-    if (NS_SUCCEEDED(result))
-        result = pDstFile->Append(NS_ConvertUTF8toUTF16(fileName));
-    if (NS_SUCCEEDED(result))
-        result = MakeFileUnique(pDstFile);
-
     /* Get the destination URI spec. */
     if (NS_SUCCEEDED(result))
         result = mpIOService->NewFileURI(pDstFile, getter_AddRefs(pDstURI));
@@ -1875,14 +1842,21 @@ sbDownloadSession::~sbDownloadSession()
  *
  *   This function initiates the download session.
  */
-
+#include <windows.h>
 nsresult sbDownloadSession::Initiate()
 {
     nsCOMPtr<sbILibraryManager> pLibraryManager;
     nsCOMPtr<nsIWebBrowserPersist>
                                 mpWebBrowser;
     nsCOMPtr<nsIURI>            pSrcURI;
+    nsCOMPtr<nsIURI>            pDstURI;
     nsString                    dstSpec;
+    nsCString                   dstCSpec;
+    nsCOMPtr<nsILocalFile>      pDstFile;
+    nsCString                   fileName;
+    nsCOMPtr<nsIURI>            pURI;
+    nsCOMPtr<nsIStandardURL>    pStandardURL;
+    nsCOMPtr<nsIURL>            pURL;
     nsresult                    result = NS_OK;
 
     /* Get the IO and file protocol services. */
@@ -1916,10 +1890,86 @@ nsresult sbDownloadSession::Initiate()
     }
     if (NS_SUCCEEDED(result))
     {
+      /* Create a unique local destination file object. */
+        nsCOMPtr<nsIURI>            pURI;
+        nsCOMPtr<nsIFileURL>        pFileURL;
+        nsCOMPtr<nsIFile>           pFile;
+        result = NS_NewURI(getter_AddRefs(pURI), dstSpec);
+        if (NS_SUCCEEDED(result)) 
+          pFileURL = do_QueryInterface(pURI, &result);
+        if (NS_SUCCEEDED(result)) 
+          result = pFileURL->GetFile(getter_AddRefs(pFile));
+        if (NS_SUCCEEDED(result)) 
+          pDstFile = do_QueryInterface(pFile, &result);
+    }
+    if (NS_SUCCEEDED(result)) {
+      // if the property contains a directory, make a complete filename
+      // based on the original source url
+      PRBool bFlag;
+      pDstFile->IsDirectory(&bFlag);
+      if (bFlag) {
+
+        /* Get the source URI. */
+        result = mpMediaItem->GetContentSrc(getter_AddRefs(pURI));
+
+        /* Convert the URI to a URL. */
+        if (NS_SUCCEEDED(result))
+        {
+            pStandardURL =
+                        do_CreateInstance("@mozilla.org/network/standard-url;1",
+                                          &result);
+        }
+        if (NS_SUCCEEDED(result))
+        {
+            result = pStandardURL->Init(nsIStandardURL::URLTYPE_STANDARD,
+                                        0,
+                                        NS_LITERAL_CSTRING(""),
+                                        nsnull,
+                                        pURI);
+        }
+
+        /* Get the file name from the URL. */
+        if (NS_SUCCEEDED(result))
+            pURL = do_QueryInterface(pStandardURL, &result);
+        if (NS_SUCCEEDED(result))
+            result = pURL->GetFileName(fileName);
+        /* append to the path */
+        if (NS_SUCCEEDED(result))
+          result = pDstFile->Append(NS_ConvertUTF8toUTF16(fileName));
+        /* ensure the filename is unique */
+        if (NS_SUCCEEDED(result))
+          result = sbDownloadDevice::MakeFileUnique(pDstFile);
+
+        /* Get the destination URI spec. */
+        if (NS_SUCCEEDED(result))
+            result = mpIOService->NewFileURI(pDstFile, getter_AddRefs(pDstURI));
+        if (NS_SUCCEEDED(result))
+            result = pDstURI->GetSpec(dstCSpec);
+
+        /* Set the destination property. */
+        if (NS_SUCCEEDED(result))
+        {
+          result = mpMediaItem->SetProperty
+                                        (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
+                                        NS_ConvertUTF8toUTF16(dstCSpec));
+        }
+        if (NS_SUCCEEDED(result))
+        {
+            result = mpMediaItem->GetProperty
+                                        (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
+                                        dstSpec);
+        }
+
+      }
+    }
+
+    if (NS_SUCCEEDED(result))
+    {
         result = mpFileProtocolHandler->GetFileFromURLSpec
                                                 (NS_ConvertUTF16toUTF8(dstSpec),
                                                  getter_AddRefs(mpDstFile));
     }
+
     if (NS_SUCCEEDED(result))
     {
         result = mpFileProtocolHandler->NewFileURI(mpDstFile,
