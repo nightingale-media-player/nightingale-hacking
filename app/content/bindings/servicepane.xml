@@ -526,6 +526,9 @@
         // ask the service to fill in the popup for this node
         this.mService.fillContextMenu(node.id, this.mPopup, window);
         
+        // ask the service to add new item menus
+        this.mService.fillNewItemMenu(node.id, this.mPopup, window);
+        
         // show the popup menu
         this.mPopup.showPopup(document.documentElement,
                     event.screenX+5, event.screenY,
