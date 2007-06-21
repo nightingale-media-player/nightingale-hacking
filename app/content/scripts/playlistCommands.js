@@ -107,6 +107,8 @@ var SBWebPlaylistCommands =
       "action",
       "action",
       "action",
+      "action",
+      "action",
       ADDTOPLAYLIST_MENU_TYPE,
       "action",
       "action",
@@ -119,6 +121,8 @@ var SBWebPlaylistCommands =
     m_Ids: new Array
     (
       "library_cmd_play",
+      "library_cmd_play",
+      "library_cmd_remove",
       "library_cmd_remove",
       "library_cmd_download",
       "library_cmd_subscribe",
@@ -134,6 +138,8 @@ var SBWebPlaylistCommands =
     m_Names: new Array
     (
       "&command.play",
+      "&command.play",
+      "&command.remove",
       "&command.remove",
       "&command.download",
       "&command.subscribe",
@@ -149,6 +155,8 @@ var SBWebPlaylistCommands =
     m_Tooltips: new Array
     (
       "&command.tooltip.play",
+      "&command.tooltip.play",
+      "&command.tooltip.remove",
       "&command.tooltip.remove",
       "&command.tooltip.download",
       "&command.tooltip.subscribe",
@@ -159,7 +167,52 @@ var SBWebPlaylistCommands =
       "&command.tooltip.showdlplaylist"
   //    "&command.tooltip.burntocd"
   //    "&command.tooltip.device"
-    )
+    ),
+    
+    m_Keys: new Array
+    (
+      "&command.shortcut.key.play",
+      "&command.shortcut.key.altplay",
+      "&command.shortcut.key.remove",
+      "&command.shortcut.key.altremove",
+      "&command.shortcut.key.download",
+      "&command.shortcut.key.subscribe",
+      ADDTOPLAYLIST_MENU_KEY,
+      "&command.shortcut.key.addtolibrary",
+      "&command.shortcut.key.copylocation",
+      "",
+      "&command.shortcut.key.showdlplaylist"
+    ),
+
+    m_Keycodes: new Array
+    (
+      "&command.shortcut.keycode.play",
+      "&command.shortcut.keycode.altplay",
+      "&command.shortcut.keycode.remove",
+      "&command.shortcut.keycode.altremove",
+      "&command.shortcut.keycode.download",
+      "&command.shortcut.keycode.subscribe",
+      ADDTOPLAYLIST_MENU_KEYCODE,
+      "&command.shortcut.keycode.addtolibrary",
+      "&command.shortcut.keycode.copylocation",
+      "",
+      "&command.shortcut.keycode.showdlplaylist"
+    ),
+
+    m_Modifiers: new Array
+    (
+      "&command.shortcut.modifiers.play",
+      "&command.shortcut.modifiers.altplay",
+      "&command.shortcut.modifiers.remove",
+      "&command.shortcut.modifiers.altremove",
+      "&command.shortcut.modifiers.download",
+      "&command.shortcut.modifiers.subscribe",
+      ADDTOPLAYLIST_MENU_MODIFIERS,
+      "&command.shortcut.modifiers.addtolibrary",
+      "&command.shortcut.modifiers.copylocation",
+      "",
+      "&command.shortcut.modifiers.dhowdlplaylist"
+    ),
   },
 
   _getMenu: function(aSubMenu)
@@ -260,6 +313,8 @@ var SBWebPlaylistCommands =
 
   getCommandVisible: function( aSubMenu, aIndex, aHost )
   {
+    if (aSubMenu == null && (aIndex == 1 || aIndex == 3)) 
+      return (aHost == "shortcuts");
     return true;
   },
 
@@ -304,6 +359,41 @@ var SBWebPlaylistCommands =
       break;
     }
     return retval;
+  },
+
+  getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_Modifiers.length )
+    {
+      return "";
+    }
+    return cmds.m_Modifiers[ aIndex ];
+  },
+
+  getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_Keys.length )
+    {
+      return "";
+    }
+    return cmds.m_Keys[ aIndex ];
+  },
+
+  getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_Keycodes.length )
+    {
+      return "";
+    }
+    return cmds.m_Keycodes[ aIndex ];
+  },
+
+  getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
+  {
+    return true;
   },
 
   onCommand: function( id, value, host )
@@ -544,6 +634,8 @@ function onBrowserTransfer(mediaItems)
     }
 }
 
+const PAUSERESUME_INDEX = 4;
+
 var SBDownloadCommands = 
 {
   m_Context: {
@@ -558,6 +650,8 @@ var SBDownloadCommands =
     "action",
     "action",
     "action",
+    "action",
+    "action",
     "separator",
     "action"
   ),
@@ -565,6 +659,8 @@ var SBDownloadCommands =
   m_Ids: new Array
   (
     "library_cmd_play",
+    "library_cmd_play",
+    "library_cmd_remove",
     "library_cmd_remove",
     "library_cmd_pause",
     "*separator*",
@@ -574,6 +670,8 @@ var SBDownloadCommands =
   m_Names: new Array
   (
     "&command.play",
+    "&command.play",
+    "&command.remove",
     "&command.remove",
     "&command.pausedl",
     "*separator*",
@@ -583,10 +681,45 @@ var SBDownloadCommands =
   m_Tooltips: new Array
   (
     "&command.tooltip.play",
+    "&command.tooltip.play",
+    "&command.tooltip.remove",
     "&command.tooltip.remove",
     "&command.tooltip.pause",
     "*separator*",
     "&command.tooltip.showwebplaylist"
+  ),
+
+  m_Keys: new Array
+  (
+    "&command.shortcut.key.play",
+    "&command.shortcut.key.altplay",
+    "&command.shortcut.key.remove",
+    "&command.shortcut.key.altremove",
+    "&command.shortcut.key.pause",
+    "",
+    "&command.shortcut.key.showwebplaylist"
+  ),
+
+  m_Keycodes: new Array
+  (
+    "&command.shortcut.keycode.play",
+    "&command.shortcut.keycode.altplay",
+    "&command.shortcut.keycode.remove",
+    "&command.shortcut.keycode.altremove",
+    "&command.shortcut.keycode.pause",
+    "",
+    "&command.shortcut.keycode.showwebplaylist"
+  ),
+
+  m_Modifiers: new Array
+  (
+    "&command.shortcut.modifiers.play",
+    "&command.shortcut.modifiers.altplay",
+    "&command.shortcut.modifiers.remove",
+    "&command.shortcut.modifiers.altremove",
+    "&command.shortcut.modifiers.pause",
+    "",
+    "&command.shortcut.modifiers.showwebplaylist"
   ),
 
   getNumCommands: function( aSubmenu, aHost )
@@ -614,8 +747,7 @@ var SBDownloadCommands =
 
   getCommandId: function( aSubmenu, aIndex, aHost )
   {
-    // Ah! magic number - what does it mean???
-    if ( aIndex == 2 ) 
+    if ( aIndex == PAUSERESUME_INDEX ) 
     {
       if ( this.m_Device )
       {
@@ -638,7 +770,7 @@ var SBDownloadCommands =
 
   getCommandText: function( aSubmenu, aIndex, aHost )
   {
-    if ( aIndex == 2 )
+    if ( aIndex == PAUSERESUME_INDEX )
     {
       if ( this.m_Device )
       {
@@ -682,7 +814,7 @@ var SBDownloadCommands =
 
   getCommandToolTipText: function( aSubmenu, aIndex, aHost )
   {
-    if ( aIndex == 2 )
+    if ( aIndex == PAUSERESUME_INDEX )
     {
       if ( this.m_Device )
       {
@@ -715,6 +847,8 @@ var SBDownloadCommands =
 
   getCommandVisible: function( aSubMenu, aIndex, aHost )
   {
+    if (aSubMenu == null && (aIndex == 1 || aIndex == 3)) 
+      return (aHost == "shortcuts");
     return true;
   },
 
@@ -725,7 +859,7 @@ var SBDownloadCommands =
     {
       switch( aIndex )
       {
-        case 2:
+        case 3:
           var deviceState = this.m_Device.getDeviceState('');
           retval = ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOADING ) || 
                    ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
@@ -736,6 +870,38 @@ var SBDownloadCommands =
       }
     }
     return retval;
+  },
+
+  getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Modifiers.length )
+    {
+      return "";
+    }
+    return this.m_Modifiers[ aIndex ];
+  },
+
+  getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Keys.length )
+    {
+      return "";
+    }
+    return this.m_Keys[ aIndex ];
+  },
+
+  getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Keycodes.length )
+    {
+      return "";
+    }
+    return this.m_Keycodes[ aIndex ];
+  },
+
+  getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
+  {
+    return true;
   },
 
   onCommand: function( id, value, host )
@@ -900,15 +1066,19 @@ var SBDefaultCommands =
     "action",
     "action",
     "action",
+    ADDTOPLAYLIST_MENU_TYPE,
+    "action",
     "action"
   ),
   
   m_Ids: new Array
   (
     "library_cmd_play",
+    "library_cmd_play",
+    "library_cmd_remove",
     "library_cmd_remove",
     "library_cmd_edit",
-    "library_cmd_addtoplaylist",
+    ADDTOPLAYLIST_MENU_ID,
     "library_cmd_burntocd",
     "library_cmd_device"
   ),
@@ -916,9 +1086,11 @@ var SBDefaultCommands =
   m_Names: new Array
   (
     "&command.play",
+    "&command.play",
+    "&command.remove",
     "&command.remove",
     "&command.edit",
-    "&command.addtoplaylist",
+    ADDTOPLAYLIST_MENU_NAME,
     "&command.burntocd",
     "&command.device"
   ),
@@ -926,12 +1098,51 @@ var SBDefaultCommands =
   m_Tooltips: new Array
   (
     "&command.tooltip.play",
+    "&command.tooltip.play",
+    "&command.tooltip.remove",
     "&command.tooltip.remove",
     "&command.tooltip.edit",
-    "&command.tooltip.addtoplaylist",
+    ADDTOPLAYLIST_MENU_TOOLTIP,
     "&command.tooltip.burntocd",
     "&command.tooltip.device"
   ),
+
+  m_Keys: new Array
+  (
+    "&command.shortcut.key.play",
+    "&command.shortcut.key.altplay",
+    "&command.shortcut.key.remove",
+    "&command.shortcut.key.altremove",
+    "&command.shortcut.key.edit",
+    ADDTOPLAYLIST_MENU_KEY,
+    "&command.shortcut.key.burntocd",
+    "&command.shortcut.key.device"
+  ),
+
+  m_Keycodes: new Array
+  (
+    "&command.shortcut.keycode.play",
+    "&command.shortcut.keycode.altplay",
+    "&command.shortcut.keycode.remove",
+    "&command.shortcut.keycode.altremove",
+    "&command.shortcut.keycode.edit",
+    ADDTOPLAYLIST_MENU_KEYCODE,
+    "&command.shortcut.keycode.burntocd",
+    "&command.shortcut.keycode.device"
+  ),
+
+  m_Modifiers: new Array
+  (
+    "&command.shortcut.modifiers.play",
+    "&command.shortcut.modifiers.altplay",
+    "&command.shortcut.modifiers.remove",
+    "&command.shortcut.modifiers.altremove",
+    "&command.shortcut.modifiers.edit",
+    ADDTOPLAYLIST_MENU_MODIFIERS,
+    "&command.shortcut.modifiers.burntocd",
+    "&command.shortcut.modifiers.device"
+  ),
+
 
   getNumCommands: function( aSubmenu, aHost )
   {
@@ -1015,6 +1226,8 @@ var SBDefaultCommands =
 
   getCommandVisible: function( aSubMenu, aIndex, aHost )
   {
+    if (aSubMenu == null && (aIndex == 1 || aIndex == 3)) 
+      return (aHost == "shortcuts");
     return true;
   },
 
@@ -1053,6 +1266,38 @@ var SBDefaultCommands =
     return playlist.tree.view.selection.getRangeCount() > 0;
   },
 
+  getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Modifiers.length )
+    {
+      return "";
+    }
+    return this.m_Modifiers[ aIndex ];
+  },
+
+  getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Keys.length )
+    {
+      return "";
+    }
+    return this.m_Keys[ aIndex ];
+  },
+
+  getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Keycodes.length )
+    {
+      return "";
+    }
+    return this.m_Keycodes[ aIndex ];
+  },
+
+  getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
+  {
+    return true;
+  },
+
   onCommand: function( id, value, host )
   {
     if ( id )
@@ -1084,6 +1329,8 @@ var SBDefaultCommands =
           }
         break;
         case "library_cmd_addtoplaylist":
+          // XXX fix ! use addtoplaylist.js !
+          alert("eek");
           if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
           {
             // add the currently selected track to a (possibly new) playlist
@@ -1188,6 +1435,26 @@ var SBDefaultServiceCommands =
     "&command.tooltip.playlist.rename"
   ),
 
+  m_Keys: new Array
+  (
+    "&command.playlist.shortcut.key.remove",
+    "&command.playlist.shortcut.key.rename"
+  ),
+
+  m_Keycodes: new Array
+  (
+    "&command.playlist.shortcut.keycode.remove",
+    "&command.playlist.shortcut.keycode.rename"
+  ),
+
+  m_Modifiers: new Array
+  (
+    "&command.playlist.shortcut.modifiers.remove",
+    "&command.playlist.shortcut.modifiers.rename"
+  ),
+
+
+
   getNumCommands: function( aSubmenu, aHost )
   {
     if ( 
@@ -1274,6 +1541,38 @@ var SBDefaultServiceCommands =
   },
 
   getCommandEnabled: function( aSubmenu, aIndex, aHost )
+  {
+    return true;
+  },
+
+  getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Modifiers.length )
+    {
+      return "";
+    }
+    return this.m_Modifiers[ aIndex ];
+  },
+
+  getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Keys.length )
+    {
+      return "";
+    }
+    return this.m_Keys[ aIndex ];
+  },
+
+  getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
+  {
+    if ( aIndex >= this.m_Keycodes.length )
+    {
+      return "";
+    }
+    return this.m_Keycodes[ aIndex ];
+  },
+
+  getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
   {
     return true;
   },

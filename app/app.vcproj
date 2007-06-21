@@ -1023,6 +1023,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					RelativePath=".\content\bindings\jar.mn.in">
 				</File>
 				<File
+					RelativePath=".\content\bindings\localKey.xml">
+				</File>
+				<File
 					RelativePath=".\content\bindings\Makefile.in">
 				</File>
 				<File

@@ -62,7 +62,7 @@ duplicate: function() {
 * 
 * \sa playlist.xml, playlist_test.xul
 */
-[scriptable, uuid(5a8f8e20-4212-47c6-8ea8-691ab359478b)]
+[scriptable, uuid(c61ab765-cff1-481b-8c6c-73388c173407)]
 interface sbIPlaylistCommands : nsISupports 
 {
   /**
@@ -204,7 +204,7 @@ interface sbIPlaylistCommands : nsISupports
   * \brief Return the value of the requested command element index
   *
   * The requested elements are always of type 'value'
-
+  *
   * \param submenu The submenu for which the data is being requested
   * \param index The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
@@ -216,14 +216,54 @@ interface sbIPlaylistCommands : nsISupports
   * \brief Return the selected item for choice list of the requested command element index
   *
   * The requested elements are always of type 'choice'
-
+  *
   * \param submenu The submenu for which the data is being requested
   * \param index The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The id of the choice item
   */
   AString getCommandChoiceItem( in AString aChoiceMenu, in AString aHost );
-  
+
+  /**
+  * \brief Return the shortcut modifiers of the requested command element index
+  *
+  * \param submenu The submenu for which the data is being requested
+  * \param index The index of the element for which the data is being requested
+  * \param aHost The type of object hosting the command
+  * \return The shortcut modifiers for the command
+  */
+  AString getCommandShortcutModifiers( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+
+  /**
+  * \brief Return the shortcut key of the requested command element index
+  *
+  * \param submenu The submenu for which the data is being requested
+  * \param index The index of the element for which the data is being requested
+  * \param aHost The type of object hosting the command
+  * \return The shortcut key for the command
+  */
+  AString getCommandShortcutKey( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+
+  /**
+  * \brief Return the shortcut keycode of the requested command element index
+  *
+  * \param submenu The submenu for which the data is being requested
+  * \param index The index of the element for which the data is being requested
+  * \param aHost The type of object hosting the command
+  * \return The shortcut keycode for the command
+  */
+  AString getCommandShortcutKeycode( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+
+  /**
+  * \brief Return a boolean reflecting the local vs window-wide behavior of the shortcut
+  *
+  * \param submenu The submenu for which the data is being requested
+  * \param index The index of the element for which the data is being requested
+  * \param aHost The type of object hosting the command
+  * \return Whether the shortcut is local or not
+  */
+  PRBool getCommandShortcutLocal( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+
   /**
   * \brief Instantiate the custom element associated with the requested command
   *

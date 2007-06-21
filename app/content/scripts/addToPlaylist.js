@@ -24,10 +24,13 @@
 //
  */
 
-const ADDTOPLAYLIST_MENU_TYPE    = "submenu";
-const ADDTOPLAYLIST_MENU_ID      = "library_cmd_addtoplaylist";
-const ADDTOPLAYLIST_MENU_NAME    = "&command.addtoplaylist";
-const ADDTOPLAYLIST_MENU_TOOLTIP = "&command.tooltip.addtoplaylist";
+const ADDTOPLAYLIST_MENU_TYPE      = "submenu";
+const ADDTOPLAYLIST_MENU_ID        = "library_cmd_addtoplaylist";
+const ADDTOPLAYLIST_MENU_NAME      = "&command.addtoplaylist";
+const ADDTOPLAYLIST_MENU_TOOLTIP   = "&command.tooltip.addtoplaylist";
+const ADDTOPLAYLIST_MENU_KEY       = "&command.shortcut.key.addtoplaylist";
+const ADDTOPLAYLIST_MENU_KEYCODE   = "&command.shortcut.keycode.addtoplaylist";
+const ADDTOPLAYLIST_MENU_MODIFIERS = "&command.shortcut.modifiers.addtoplaylist";
 
 
 const ADDTOPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist:";
@@ -71,6 +74,9 @@ var addToPlaylistHelper = {
     this.m_listofplaylists.m_Ids = new Array();
     this.m_listofplaylists.m_Names = new Array();
     this.m_listofplaylists.m_Tooltips = new Array();
+    this.m_listofplaylists.m_Modifiers = new Array();
+    this.m_listofplaylists.m_Keys = new Array();
+    this.m_listofplaylists.m_Keycodes = new Array();
     
     var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                         .getService(Components.interfaces.sbILibraryManager);
@@ -88,17 +94,26 @@ var addToPlaylistHelper = {
       this.m_listofplaylists.m_Ids.push("noplaylist");
       this.m_listofplaylists.m_Names.push("&command.addtoplaylist.noexistingplaylist");
       this.m_listofplaylists.m_Tooltips.push("&command.tooltip.addtoplaylist.noexistingplaylist");
+      this.m_listofplaylists.m_Modifiers.push("");
+      this.m_listofplaylists.m_Keys.push("");
+      this.m_listofplaylists.m_Keycodes.push("");
     }
 
     this.m_listofplaylists.m_Types.push("separator");
     this.m_listofplaylists.m_Ids.push("separator");
     this.m_listofplaylists.m_Names.push("separator");
     this.m_listofplaylists.m_Tooltips.push("separator");
+    this.m_listofplaylists.m_Modifiers.push("");
+    this.m_listofplaylists.m_Keys.push("");
+    this.m_listofplaylists.m_Keycodes.push("");
     
     this.m_listofplaylists.m_Types.push("action");
     this.m_listofplaylists.m_Ids.push(ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID);
     this.m_listofplaylists.m_Names.push("&command.addtoplaylist.createnew");
     this.m_listofplaylists.m_Tooltips.push("&command.addtoplaylist.createnew");
+    this.m_listofplaylists.m_Modifiers.push("");
+    this.m_listofplaylists.m_Keys.push("");
+    this.m_listofplaylists.m_Keycodes.push("");
   },
   
     makePlaylistsForLibrary: function(aLibrary, typearray) {
@@ -122,6 +137,9 @@ var addToPlaylistHelper = {
         this.obj.m_listofplaylists.m_Ids.push(ADDTOPLAYLIST_COMMAND_ID + item.library.guid + ";" + item.guid);
         this.obj.m_listofplaylists.m_Names.push(item.name ? item.name : "Unnamed Playlist");
         this.obj.m_listofplaylists.m_Tooltips.push(item.name ? item.name : "Unnamed Playlist");
+        this.obj.m_listofplaylists.m_Modifiers.push("");
+        this.obj.m_listofplaylists.m_Keys.push("");
+        this.obj.m_listofplaylists.m_Keycodes.push("");
         return true;
       }
     };

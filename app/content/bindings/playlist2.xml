@@ -81,8 +81,10 @@
             <treecols sbid="treecols"/>
             <treechildren/>
           </tree>
+
           <!-- Playlist Toolbar -->
-          <sb-commands-toolbar sbid="playlist_toolbar" commandtype="item"/>
+          <sb-commands-toolbar sbid="playlist_toolbar" commandtype="mediaitem"/>
+          <sb-commands-shortcuts sbid="playlist_shortcuts" commandtype="mediaitem"/>
 
           <!-- Popupset -->
           <popupset>
@@ -94,7 +96,7 @@
               onpopuphidden="onPopupHidden( event );"
               oncommand="onPlaylistContextMenu( event );"
             >
-              <sb-commands-menuitems sbid="playlist_popup_commands" commandtype="item"/>
+              <sb-commands-menuitems sbid="playlist_popup_commands" commandtype="mediaitem"/>
               <menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
               <xul:menu id="playlist_context_search" label="&playlist.context.search;">
                 <xul:menupopup id="playlist_context_search_popup" type="search" label="" searchterm="" />
@@ -277,6 +279,7 @@
             this.setAttribute("usedefaultcommands", val);
             if (this._commandmenuitems) this._commandmenuitems.usedefault = val;
             if (this._toolbar) this._toolbar.usedefault = val;
+            if (this._shortcuts) this._shortcuts.usedefault = val;
           ]]>
         </setter>
       </property>
@@ -306,6 +309,9 @@
       </field>
       <field name="_toolbar">
         document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
+      </field>
+      <field name="_shortcuts">
+        document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_shortcuts');
       </field>
       <field name="_commandmenuitems">
         document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_popup_commands');
@@ -448,9 +454,10 @@
 
   if (this._toolbar) this._toolbar.outerWindow = this._outerWindow;
   if (this._commandmenuitems) this._commandmenuitems.outerWindow = this._outerWindow;
+  if (this._shortcuts) this._shortcuts.outerWindow = this._outerWindow;
 
   // Clear out the old commands and add the new ones
-  //this._toolbar.hidden = true;
+  this._toolbar.hidden = true;
   this.setCommands(commands);
 
   // If boolean true, read from the XUL file.
@@ -922,8 +929,10 @@
 <![CDATA[
   this._toolbar.outerWindow = this._outerWindow;
   this._commandmenuitems.outerWindow = this._outerWindow;
+  this._shortcuts.outerWindow = this._outerWindow;
   this._toolbar.refreshCommands(stateonly);
   this._commandmenuitems.refreshCommands(stateonly);
+  this._shortcuts.refreshCommands(stateonly);
 ]]>
         </body>
       </method>
@@ -936,9 +945,10 @@
           this.removeCommands(); 
           // In with the new
           this._commands = this.commands = commands;
+          this._toolbar.hidden = true;
           this._toolbar.bind(this.mediaListView.mediaList, this, commands ? commands.duplicate() : null);
-          this._toolbar.refreshCommands();
           this._commandmenuitems.bind(this.mediaListView.mediaList, this, commands ? commands.duplicate() : null);
+          this._shortcuts.bind(this.mediaListView.mediaList, this, commands ? commands.duplicate() : null);
         ]]>
         </body>
       </method>
@@ -949,6 +959,7 @@
   this._commands = this.commands = null;
   this._toolbar.removeCommands();
   this._commandmenuitems.removeCommands();
+  this._shortcuts.removeCommands();
 ]]>
         </body>
       </method>
@@ -1153,22 +1164,6 @@
   }
 
   switch (evt.keyCode) {
-    // Remove entries for these keys.
-    case evt.DOM_VK_DELETE:
-    case evt.DOM_VK_BACK_SPACE:
-      if (this.tree.currentIndex != -1) {
-        this.removeSelectedTracks();
-      }
-      break;
-      
-    // Start playback for these keys.
-    case evt.DOM_VK_RETURN:
-    case evt.DOM_VK_ENTER:
-      if (this.tree.currentIndex != -1) {
-        this.sendPlayEvent();
-      }
-      break;
-
     // Handle escape.
     case evt.DOM_VK_ESCAPE:
       this.sendEscEvent();
@@ -2077,6 +2072,10 @@
           if (this._toolbar) {
             this._toolbar.usedefault = this.usedefaultcommands;
             this._toolbar.rescanCommands();
+          }
+          if (this._shortcuts) {
+            this._shortcuts.usedefault = this.usedefaultcommands;
+            this._shortcuts.rescanCommands();
           }
         </body>
       </method>

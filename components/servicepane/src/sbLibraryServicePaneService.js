@@ -81,6 +81,7 @@ function logcall(parentArgs) {
 function sbLibraryServicePane() {
   this._servicePane = null;
   this._libraryManager = null;
+  this._lastShortcuts = null;
   
   // use the default stringbundle to translate tree nodes
   this.stringbundle = null;
@@ -183,6 +184,32 @@ function sbLibraryServicePane_fillNewItemMenu(aNode, aContextMenu, aParentWindow
   add('file.new', 'menu.file.new', 'menu.file.new.accesskey', 'doMenu("file.new")');
   add('file.smart', 'menu.file.smart', 'menu.file.smart.accesskey', 'doMenu("file.smart")');
   add('file.remote', 'menu.file.remote', 'menu.file.remote.accesskey', 'doMenu("file.remote")');
+}
+
+sbLibraryServicePane.prototype.onSelectionChanged =
+function sbLibraryServicePane_onSelectionChanged(aNode, aContainer, aParentWindow) {
+  this._destroyShortcuts(aContainer, aParentWindow);
+  var list;
+  if (aNode) list = this.getLibraryResourceForNode(aNode);
+  if (list) this._createShortcuts(list, aContainer, aParentWindow);
+}
+
+sbLibraryServicePane.prototype._createShortcuts =
+function sbLibraryServicePane__createShortcuts(aList, aContainer, aWindow) {
+  var shortcuts = aWindow.document.createElement("sb-commands-shortcuts");
+  shortcuts.setAttribute("id", "playlist-commands-shortcuts");
+  shortcuts.setAttribute("commandtype", "medialist");
+  shortcuts.setAttribute("bind", aList.library.guid + ';' + aList.guid);
+  aContainer.appendChild(shortcuts);
+  this._lastShortcuts = shortcuts;
+}
+
+sbLibraryServicePane.prototype._destroyShortcuts =
+function sbLibraryServicePane__destroyShortcuts(aContainer, aWindow) {
+  if (this._lastShortcuts) {
+    aContainer.removeChild(this._lastShortcuts);
+    this._lastShortcuts = null;
+  }
 }
 
 sbLibraryServicePane.prototype._getMediaListForDrop =
@@ -1089,7 +1116,7 @@ sbLibraryServicePane.prototype._appendCommands =
 function sbLibraryServicePane__appendCommands(aContextMenu, aList, aParentWindow) {
   var itemBuilder = aContextMenu.ownerDocument.createElement("sb-commands-menuitems");
   itemBuilder.setAttribute("id", "playlist-commands");
-  itemBuilder.setAttribute("commandtype", "list");
+  itemBuilder.setAttribute("commandtype", "medialist");
   itemBuilder.setAttribute("bind", aList.library.guid + ';' + aList.guid);
   aContextMenu.appendChild(itemBuilder);
 }

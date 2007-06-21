@@ -230,6 +230,7 @@
         
       ]]></constructor>
       <destructor><![CDATA[
+        this.mService.onSelectionChanged(null, this.mTree, window);
         // remove the progress listener
         this.browser.removeProgressListener(this);
         // remove the builder listener
@@ -539,6 +540,11 @@
       event.preventBubble();
       event.preventDefault();
       
+      ]]></handler>
+      <handler event="select"><![CDATA[
+        var node = this.getNodeForRow(this.mTree.currentIndex);
+        // ask the service to notify the modules about selection changes
+        this.mService.onSelectionChanged(node?node.id:null, this.mTree, window);
       ]]></handler>
       <handler event="click" clickcount="1"><![CDATA[
         var node = this.getNodeForRow(this.mTree.currentIndex);

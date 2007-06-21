@@ -400,6 +400,46 @@ sbRemoteCommands::GetCommandValue( const nsAString &aSubMenu,
 }
 
 NS_IMETHODIMP
+sbRemoteCommands::GetCommandShortcutModifiers( const nsAString &aSubMenu,
+                                               PRInt32 aIndex,
+                                               const nsAString &aHost,
+                                               nsAString &_retval)
+{
+  _retval = EmptyString();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::GetCommandShortcutKey( const nsAString &aSubMenu,
+                                         PRInt32 aIndex,
+                                         const nsAString &aHost,
+                                         nsAString &_retval)
+{
+  _retval = EmptyString();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::GetCommandShortcutKeycode( const nsAString &aSubMenu,
+                                             PRInt32 aIndex,
+                                             const nsAString &aHost,
+                                             nsAString &_retval)
+{
+  _retval = EmptyString();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::GetCommandShortcutLocal( const nsAString &aSubMenu,
+                                           PRInt32 aIndex,
+                                           const nsAString &aHost,
+                                           PRBool *_retval)
+{
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbRemoteCommands::GetCommandChoiceItem( const nsAString &aChoiceMenu,
                                         const nsAString &aHost,
                                         nsAString &_retval)

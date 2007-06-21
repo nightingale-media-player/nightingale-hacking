@@ -159,11 +159,11 @@
                                     .getService(Components.interfaces.sbIPlaylistCommandsManager);
               var cmds;
               switch (this.commandtype) {
-                case "list":
+                case "medialist":
                   cmds = source.getPlaylistCommandsMediaList( this.medialist.guid, this.medialist.type );
                   break;
                 // default case
-                case "item":
+                case "mediaitem":
                 case "":
                 default:
                   cmds = source.getPlaylistCommandsMediaItem( this.medialist.guid, this.medialist.type );
@@ -329,6 +329,29 @@
         </body>
       </method>
 
+      <method name="translateEntity">
+        <parameter name="str"/>
+        <body>
+          <![CDATA[
+            if ( str && str.length > 0 )
+            {
+              if ( str[ 0 ] == "&" )
+              {
+                try
+                {
+                  str = this.stringbundle.GetStringFromName( str.substr( 1, str.length ) );
+                }
+                catch( err )
+                {
+                  dump("error playlist.xml translateEntity() - getStringFromName for '" + str + "': " + err + "\n");
+                }
+              }
+            }
+            return str;
+          ]]>
+        </body>
+      </method>
+
     </implementation>
  
   </binding>
@@ -407,15 +430,18 @@
             for ( var i = 0; i < num; i++ )
             {
               // skip ?
-              if (!this.commands[cmdobjidx].getCommandVisible( menu, i, this.hoststring )) continue;
+              if (!stateonly && !this.commands[cmdobjidx].getCommandVisible( menu, i, this.hoststring )) {
+                //alert("toolbar - item " + i + " not visible: " + this.commands[cmdobjidx].getCommandId( menu, i, this.hoststring ));
+                continue;
+              }
 
+              var obj_type;
               var toolbarbutton;
               if (!stateonly)
               {
                 // If we get here, show the toolbar
                 this.hidden = false;
                 
-                var obj_type;
                 if (radioitems) obj_type = "choiceitem";
                 else obj_type = this.commands[cmdobjidx].getCommandType( menu, i, this.hoststring );
 
@@ -514,17 +540,7 @@
                   var cmd_text = this.commands[cmdobjidx].getCommandText( menu, i, this.hoststring );
                   if ( cmd_text.length > 0 )
                   {
-                    if ( cmd_text[ 0 ] == "&" )
-                    {
-                      try
-                      {
-                        cmd_text = this.stringbundle.GetStringFromName( cmd_text.substr( 1, cmd_text.length ) );
-                      }
-                      catch( err )
-                      {
-                        dump("error sb-commands.xml - toolbar - doRefreshCommands() - getStringFromName: " + err + "\n");
-                      }
-                    }
+                    cmd_text = this.translateEntity(cmd_text);
                     if (label.tagName == "label") label.setAttribute( "value", cmd_text+":");
                     else if (label.tagName == "menulist") { /*do nothing*/ }
                     else label.setAttribute( "label", cmd_text );
@@ -542,17 +558,7 @@
                   var tooltip_text = this.commands[cmdobjidx].getCommandToolTipText( menu, i, this.hoststring );
                   if ( tooltip_text.length > 0 )
                   {
-                    if ( tooltip_text[ 0 ] == "&" )
-                    {
-                      try
-                      {
-                        tooltip_text = this.stringbundle.GetStringFromName( tooltip_text.substr( 1, tooltip_text.length ) );
-                      }
-                      catch( err )
-                      {
-                        dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
-                      }
-                    }
+                    tooltip_text = this.translateEntity(tooltip_text);
                     /*
                         This causes the crashy if it's up while updating.  :(
                     
@@ -571,6 +577,7 @@
               else
               {
                 toolbarbutton = this.toolbarbuttons[i];
+                obj_type = toolbarbutton.commandtype;
               }
 
               if ( this.commands[cmdobjidx].getCommandEnabled( toolbarbutton.commandmenu, toolbarbutton.commandindex, this.hoststring ) )
@@ -830,15 +837,16 @@
               var menuitem;
 
               // skip ?
-              if (!this.commands[cmdobjidx].getCommandVisible( menu, i, this.hoststring )) continue;
+              if (!stateonly && !this.commands[cmdobjidx].getCommandVisible( menu, i, this.hoststring )) continue;
 
               // What type?
               var obj_type;
-              if (radioitems) obj_type = "choiceitem";
-              else obj_type = this.commands[cmdobjidx].getCommandType( menu, i, this.hoststring );
 
               if (!stateonly)
               {
+                if (radioitems) obj_type = "choiceitem";
+                else obj_type = this.commands[cmdobjidx].getCommandType( menu, i, this.hoststring );
+
                 // What id?
                 var obj_id = this.commands[cmdobjidx].getCommandId( menu, i, this.hoststring );
                 
@@ -877,35 +885,16 @@
                 var cmd_text = this.commands[cmdobjidx].getCommandText( menu, i, this.hoststring );
                 if ( cmd_text.length > 0 )
                 {
-                  if ( cmd_text[ 0 ] == "&" )
-                  {
-                    try
-                    {
-                      cmd_text = this.stringbundle.GetStringFromName( cmd_text.substr( 1, cmd_text.length ) );
-                    }
-                    catch( err )
-                    {
-                      dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
-                    }
-                  }
+                  cmd_text = this.translateEntity(cmd_text);
                   menuitem.setAttribute( "label", cmd_text );
                 }
+                //dump("i = " + i + ", n = " + num + ", - " + cmd_text+"\n");
 
                 // No tooltip unless you have a tooltip
                 var tooltip_text = this.commands[cmdobjidx].getCommandToolTipText( menu, i, this.hoststring );
                 if ( tooltip_text.length > 0 )
                 {
-                  if ( tooltip_text[ 0 ] == "&" )
-                  {
-                    try
-                    {
-                      tooltip_text = this.stringbundle.GetStringFromName( tooltip_text.substr( 1, tooltip_text.length ) );
-                    }
-                    catch( err )
-                    {
-                      dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
-                    }
-                  }
+                  tooltip_text= this.translateEntity(tooltip_text);
                   /*
                       This causes the crashy if it's up while updating.  :(
                   
@@ -921,6 +910,7 @@
               else
               {
                 menuitem = this.menuitems[i];
+                obj_type = menuitem.commandtype;
               }
 
               if ( this.commands[cmdobjidx].getCommandEnabled( menuitem.commandmenu, menuitem.commandindex, this.hoststring ) )
@@ -1007,6 +997,224 @@
 
     </implementation>
  
+  </binding>
+
+
+
+
+  <!-- COMMANDS SHORTCUTS -->
+
+
+
+
+  <binding id="commands-shortcuts" extends="chrome://songbird/content/bindings/sb-commands.xml#commands-base">
+
+    <content>
+      <xul:sb-dynamic-keyset sbid="keyset"/>
+    </content>
+
+    <implementation type="application/x-javascript">
+    
+    <constructor>
+    </constructor>
+    
+    <destructor>
+      <![CDATA[
+        this.keyset.removeAllKeys();
+        this.commands = null;
+      ]]>
+    </destructor>
+
+    <field name="hoststring">"shortcuts"</field>
+    <field name="keyset">document.getAnonymousElementByAttribute(this, "sbid", "keyset");</field>
+    <field name="keys">new Array();</field>
+
+    <method name="shouldForceRebuild">
+      <body>
+        // If our internal objects are out of sync, rebuild.
+        return (this.keys.length == 0);
+      </body>
+    </method>
+
+    <method name="doRefreshCommands">
+      <parameter name="stateonly"/>
+      <body>
+        <![CDATA[
+        try
+        {
+          if (!stateonly) {
+            this.removeCommands();
+          }
+
+          if ( this.commands )
+          {
+            for (var i in this.commands) {
+              this.refreshCommandItems(i, stateonly, null, this, null, 0, false);
+            }
+          }
+        }
+        catch( err )
+        {
+          alert( "sb-commands.xml - shortcuts - doRefreshCommands - " + err );
+        }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="refreshCommandItems">
+      <parameter name="cmdobjidx"/>
+      <parameter name="stateonly"/>
+      <parameter name="menu"/>
+      <parameter name="parentnode"/>
+      <parameter name="before"/>
+      <parameter name="depth"/>
+      <parameter name="radioitems"/>
+      <body>
+        <![CDATA[
+          try {
+            // And make all the new stuff
+            var num = this.commands[cmdobjidx].getNumCommands(menu, this.hoststring);
+            if (stateonly) num = this.keys.length;
+            for ( var i = 0; i < num; i++ )
+            {
+              var key = null;
+
+              // skip ?
+              if (!stateonly && !this.commands[cmdobjidx].getCommandVisible( menu, i, this.hoststring )) continue;
+
+              var obj_type;
+
+              if (!stateonly)
+              {
+                // What type?
+                if (radioitems) obj_type = "choiceitem";
+                else obj_type = this.commands[cmdobjidx].getCommandType( menu, i, this.hoststring );
+
+                // What id?
+                var obj_id = this.commands[cmdobjidx].getCommandId( menu, i, this.hoststring );
+                
+                var makeKey;
+                var skip;
+                
+                switch (obj_type) {  
+                  case "submenu":
+                  case "choice":
+                    makeKey = false;
+                    skip = false;
+                    break;
+                  case "separator":
+                  case "custom":
+                  case "value":
+                    makeKey = false;
+                    skip = true;
+                    break;
+                  case "action":
+                  case "choiceitem":
+                  case "flag":
+                  default:
+                    makeKey = true;
+                    skip = false;
+                    break;
+                }
+                
+                if (skip) continue;
+              
+                if (makeKey) {
+                  // Add a key
+                  var modifiers;
+                  var keyname;
+                  
+                  // No label unless you have a label
+                  var modifiers = this.commands[cmdobjidx].getCommandShortcutModifiers( menu, i, this.hoststring );
+                  var keyname = this.commands[cmdobjidx].getCommandShortcutKey( menu, i, this.hoststring );
+                  var keycode = this.commands[cmdobjidx].getCommandShortcutKeycode( menu, i, this.hoststring );
+                  var local = this.commands[cmdobjidx].getCommandShortcutLocal( menu, i, this.hoststring );
+                  modifiers = this.translateEntity(modifiers);
+                  keyname = this.translateEntity(keyname);
+                  keycode = this.translateEntity(keycode);
+                  
+                  if ((!keyname || keyname == "") && 
+                      (!keycode || keycode == "")) continue;
+                  
+                  var keytarget = this.parentNode;
+                  if (this.playlist) keytarget = this.playlist.tree;
+                  key = this.keyset.addKey( local, obj_id, modifiers, keyname, keycode, this, keytarget );
+
+                  key.commandtype = obj_type;
+                  key.commandmenu = menu;
+                  key.commandindex = i;
+                  key.commandobjindex = cmdobjidx;
+                } else {
+                  key = null;
+                }
+              }
+              else
+              {
+                key = this.keys[i];
+                obj_type = key.commandtype;
+              }
+
+              if (key) {
+                if ( this.commands[cmdobjidx].getCommandEnabled( key.commandmenu, key.commandindex, this.hoststring ) ) {
+                  key.setAttribute( "disabled", "false" );
+                } else {
+                  key.setAttribute( "disabled", "true" );
+                }
+              }
+                
+              if (!stateonly)
+              {
+                if (key) {
+                  this.keys.push( key );
+                }
+                if (obj_type == "submenu" || obj_type == "choice") {
+                  if (this.commands[cmdobjidx].getCommandId(menu, i, this.hoststring) == null) {
+                    alert("null submenu: menu = " + menu + ", index = " + i);
+                  }
+                  this.refreshCommandItems(cmdobjidx, stateonly, this.commands[cmdobjidx].getCommandId(menu, i, this.hoststring), parentnode, null, depth+1, (obj_type == "choice"));
+                }
+              }
+            }
+          } catch (e) {
+            alert("sb-commands.xml - shortcuts - refreshCommandItems " + e);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="doRemoveCommands">
+      <body>
+        <![CDATA[
+          this.keyset.removeAllKeys();
+          this.keys = new Array();
+        ]]>
+      </body>
+    </method>
+
+    <method name="onCommand">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+        try
+        {
+          if ( this.commands )
+          {
+            var cmdobjidx = evt.originalTarget.commandobjindex;
+            if (cmdobjidx === undefined || this.commands.length <= cmdobjidx) return;
+            
+            this.commands[cmdobjidx].onCommand( evt.originalTarget.id, null, this.hoststring );
+          }
+        }
+        catch( err )
+        {
+          alert( "sb-commands.xml - shortcuts - onMenuCommand - " + err );
+        }
+      ]]>
+      </body>
+    </method>
+
+    </implementation>
+
   </binding>
 
 

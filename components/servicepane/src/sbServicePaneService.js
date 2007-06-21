@@ -592,6 +592,15 @@ function ServicePaneService_fillNewItemMenu(aId, aContextMenu, aParentWindow) {
   }
 }
 
+ServicePaneService.prototype.onSelectionChanged =
+function ServicePaneService_onSelectionChanged(aId, aContainer, aParentWindow) {
+  var node;
+  if (aId) node = this.getNode(aId);
+  for (var i=0; i<this._modules.length; i++) {
+    this._modules[i].onSelectionChanged(node, aContainer, aParentWindow);
+  }
+}
+
 ServicePaneService.prototype._canDropReorder =
 function ServicePaneService__canDropReorder(aNode, aDragSession, aOrientation) {
   // see if we can handle the drag and drop based on node properties

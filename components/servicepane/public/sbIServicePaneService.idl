@@ -34,6 +34,7 @@
 interface nsIRDFDataSource;
 interface nsIRDFResource;
 interface nsIDOMXULElement;
+interface nsIDOMNode;
 interface nsIDOMWindow;
 interface nsISimpleEnumerator;
 interface nsIDragSession;
@@ -157,7 +158,7 @@ interface sbIServicePaneNodeInternal : sbIServicePaneNode {
 *
 * @halfbaked
 */
-[scriptable, uuid(597efdd3-b564-4052-a61d-100a5bad7ad7)]
+[scriptable, uuid(2a0a84b7-be67-40fb-8443-6e77a969820e)]
 interface sbIServicePaneService : nsISupports
 {
   /**
@@ -225,6 +226,15 @@ interface sbIServicePaneService : nsISupports
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
   
+  /* \brief Selection changes notification
+   * \param aId the id of the node that is now selected
+   * \param aContainer The container object that implements the selection
+   * \param aParentWindow the toplevel window we're displaying in
+   */
+  void onSelectionChanged(in AString aId,
+                          in nsIDOMNode aContainer,
+                          in nsIDOMWindow aParentWindow);
+  
   /* I think we'll need to have this interface too:
   nsITreeView wrapTreeView(in nsITreeView aTreeView);
   it will take an existing tree-builder tree view and add some
@@ -257,7 +267,7 @@ interface sbIServicePaneService : nsISupports
 * \interface sbIServicePaneModule
 * \brief The interface exposed by the service pane backends
 */
-[scriptable, uuid(a5c003f9-38e1-436a-9c0a-39718999640e)]
+[scriptable, uuid(9c87f9d3-164d-4786-b044-9f72472a95b2)]
 interface sbIServicePaneModule : nsISupports
 {
   /* \brief Initialize this service pane module
@@ -279,6 +289,14 @@ interface sbIServicePaneModule : nsISupports
   void fillNewItemMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
+
+  /* \brief Selection changes notification
+   * \param aNode the node that is now selected
+   * \param aParentWindow the toplevel window we're displaying in
+   */
+  void onSelectionChanged(in sbIServicePaneNode aNode,
+                          in nsIDOMNode aContainer,
+                          in nsIDOMWindow aParentWindow);
 
   PRBool canDrop(in sbIServicePaneNode aNode,
                  in nsIDragSession aDragSession,

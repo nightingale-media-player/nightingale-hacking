@@ -122,6 +122,26 @@ try
     {
       return true;
     },
+    
+    getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
+    {
+      return null;
+    },
+  
+    getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
+    {
+      return null;
+    },
+  
+    getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
+    {
+      return null;
+    },
+  
+    getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
+    {
+      return true;
+    },
   
     onCommand: function( id, value, host)
     {

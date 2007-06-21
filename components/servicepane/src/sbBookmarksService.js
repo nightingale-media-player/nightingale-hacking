@@ -366,6 +366,10 @@ function sbBookmarks_fillNewItemMenu(aNode, aContextMenu, aParentWindow) {
   add('file.folder', 'menu.file.folder', 'menu.file.folder.accesskey', 'doMenu("file.folder")');
 }
 
+sbBookmarks.prototype.onSelectionChanged=
+function sbBookmarks_onSelectionChanged(aNode, aContainer, aParentWindow) {
+}
+
 sbBookmarks.prototype.canDrop =
 function sbBookmarks_canDrop(aNode, aDragSession, aOrientation) {
   if (aNode.isContainer) {

@@ -88,6 +88,8 @@ try
         "action",
         "action",
         "action",
+        "action",
+        "action",
         ADDTOPLAYLIST_MENU_TYPE,
         "action",
         "action"
@@ -96,6 +98,8 @@ try
       m_Ids: new Array
       (
         "library_cmd_play",
+        "library_cmd_play",
+        "library_cmd_remove",
         "library_cmd_remove",
         "library_cmd_edit",
         ADDTOPLAYLIST_MENU_ID,
@@ -106,6 +110,8 @@ try
       m_Names: new Array
       (
         "&command.play",
+        "&command.play",
+        "&command.remove",
         "&command.remove",
         "&command.edit",
         ADDTOPLAYLIST_MENU_NAME,
@@ -116,11 +122,49 @@ try
       m_Tooltips: new Array
       (
         "&command.tooltip.play",
+        "&command.tooltip.play",
+        "&command.tooltip.remove",
         "&command.tooltip.remove",
         "&command.tooltip.edit",
         ADDTOPLAYLIST_MENU_TOOLTIP,
         "&command.tooltip.burntocd",
         "&command.tooltip.device"
+      ),
+      
+      m_Keys: new Array
+      (
+        "&command.shortcut.key.play",
+        "&command.shortcut.key.altplay",
+        "&command.shortcut.key.remove",
+        "&command.shortcut.key.altremove",
+        "&command.shortcut.key.edit",
+        ADDTOPLAYLIST_MENU_KEY,
+        "&command.shortcut.key.burntocd",
+        "&command.shortcut.key.device"
+      ),
+
+      m_Keycodes: new Array
+      (
+        "&command.shortcut.keycode.play",
+        "&command.shortcut.keycode.altplay",
+        "&command.shortcut.keycode.remove",
+        "&command.shortcut.keycode.altremove",
+        "&command.shortcut.keycode.edit",
+        ADDTOPLAYLIST_MENU_KEYCODE,
+        "&command.shortcut.keycode.burntocd",
+        "&command.shortcut.keycode.device"
+      ),
+
+      m_Modifiers: new Array
+      (
+        "&command.shortcut.modifiers.play",
+        "&command.shortcut.modifiers.altplay",
+        "&command.shortcut.modifiers.remove",
+        "&command.shortcut.modifiers.altremove",
+        "&command.shortcut.modifiers.edit",
+        ADDTOPLAYLIST_MENU_MODIFIERS,
+        "&command.shortcut.modifiers.burntocd",
+        "&command.shortcut.modifiers.device"
       )
     },
     
@@ -222,9 +266,46 @@ try
   
     getCommandVisible: function( aSubMenu, aIndex, aHost )
     {
+      if (aSubMenu == null && (aIndex == 1 || aIndex == 3)) 
+        return (aHost == "shortcuts");
       return true;
     },
   
+    getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
+    {
+      var cmds = this._getMenu(aSubMenu);
+      if ( aIndex >= cmds.m_Modifiers.length )
+      {
+        return "";
+      }
+      return cmds.m_Modifiers[ aIndex ];
+    },
+  
+    getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
+    {
+      var cmds = this._getMenu(aSubMenu);
+      if ( aIndex >= cmds.m_Keys.length )
+      {
+        return "";
+      }
+      return cmds.m_Keys[ aIndex ];
+    },
+  
+    getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
+    {
+      var cmds = this._getMenu(aSubMenu);
+      if ( aIndex >= cmds.m_Keycodes.length )
+      {
+        return "";
+      }
+      return cmds.m_Keycodes[ aIndex ];
+    },
+  
+    getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
+    {
+      return true;
+    },
+
     getCommandEnabled: function( aSubMenu, aIndex, aHost )
     {
       var cmds = this._getMenu(aSubMenu);
@@ -238,7 +319,6 @@ try
 
       switch ( command )
       {
-        case "noplaylist": return false;
         case "library_cmd_device":
         case "library_cmd_burntocd":
         {
@@ -258,6 +338,7 @@ try
         break;
       }
 
+      //alert("index = " + aIndex + " - " + aSubMenu + " - " + aHost + " - " + (playlist.tree.view.selectionCount > 0));
       // By default return true if there is at least one item selected
       return playlist.tree.view.selectionCount > 0;
     },
