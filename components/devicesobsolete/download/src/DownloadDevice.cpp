@@ -1842,7 +1842,6 @@ sbDownloadSession::~sbDownloadSession()
  *
  *   This function initiates the download session.
  */
-#include <windows.h>
 nsresult sbDownloadSession::Initiate()
 {
     nsCOMPtr<sbILibraryManager> pLibraryManager;
