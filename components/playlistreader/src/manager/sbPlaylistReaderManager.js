@@ -109,6 +109,9 @@ CPlaylistReaderManager.prototype =
 
     var theExtension = this.getFileExtension(aURI.path);
 
+    // Remember the original url.
+    this.originalURI = aURI;
+
     if (aURI instanceof Ci.nsIFileURL)
     {
 
@@ -137,6 +140,9 @@ CPlaylistReaderManager.prototype =
 
       try {
         this.read(file, aMediaList, aContentType, aAddDistinctOnly);
+        if (aPlaylistReaderListener.observer) {
+          aPlaylistReaderListener.observer.observe(null, "success", "");
+        }
         return 1;
       }
       catch(e) {
@@ -149,10 +155,6 @@ CPlaylistReaderManager.prototype =
     }
     else
     {
-
-      // Remember the original url.
-      this.originalURI = aURI;
-
       var browser = Cc["@mozilla.org/embedding/browser/nsWebBrowser;1"]
                       .createInstance(Ci.nsIWebBrowserPersist);
 
