@@ -572,6 +572,7 @@ ServicePaneService.prototype.save =
 function ServicePaneService_save() {
   /* FIXME: this function should go away */
 }
+
 ServicePaneService.prototype.fillContextMenu =
 function ServicePaneService_fillContextMenu(aId, aContextMenu, aParentWindow) {
   var node = this.getNode(aId);
@@ -579,6 +580,18 @@ function ServicePaneService_fillContextMenu(aId, aContextMenu, aParentWindow) {
     this._modules[i].fillContextMenu(node, aContextMenu, aParentWindow);
   }
 }
+
+ServicePaneService.prototype.fillNewItemMenu =
+function ServicePaneService_fillNewItemMenu(aId, aContextMenu, aParentWindow) {
+  var node = null;
+  if (aId) {
+    this.getNode(aId);
+  }
+  for (var i=0; i<this._modules.length; i++) {
+    this._modules[i].fillNewItemMenu(node, aContextMenu, aParentWindow);
+  }
+}
+
 ServicePaneService.prototype._canDropReorder =
 function ServicePaneService__canDropReorder(aNode, aDragSession, aOrientation) {
   // see if we can handle the drag and drop based on node properties

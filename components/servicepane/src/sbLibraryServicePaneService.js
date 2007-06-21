@@ -162,8 +162,24 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
         dps.updateNow(list);
       });
     }
-
   }
+}
+
+sbLibraryServicePane.prototype.fillNewItemMenu =
+function sbLibraryServicePane_fillNewItemMenu(aNode, aContextMenu, aParentWindow) {
+  function add(id, label, accesskey, oncommand) {
+    var menuitem = aContextMenu.ownerDocument.createElement('menuitem');
+    menuitem.setAttribute('id', id);
+    menuitem.setAttribute('class', 'menuitem-iconic');
+    menuitem.setAttribute('label', '&'+label+';');
+    menuitem.setAttribute('accesskey', '&'+accesskey+';');
+    menuitem.setAttribute('oncommand', oncommand);
+    aContextMenu.appendChild(menuitem);
+  }
+
+  add('file.new', 'menu.file.new', 'menu.file.new.accesskey', 'doMenu("file.new")');
+  add('file.smart', 'menu.file.smart', 'menu.file.smart.accesskey', 'doMenu("file.smart")');
+  add('file.remote', 'menu.file.remote', 'menu.file.remote.accesskey', 'doMenu("file.remote")');
 }
 
 sbLibraryServicePane.prototype._getMediaListForDrop =

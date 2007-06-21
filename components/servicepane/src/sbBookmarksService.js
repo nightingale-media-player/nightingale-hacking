@@ -351,6 +351,22 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
   }, false);
   aContextMenu.appendChild(item);
 }
+
+sbBookmarks.prototype.fillNewItemMenu =
+function sbBookmarks_fillNewItemMenu(aNode, aContextMenu, aParentWindow) {
+  function add(id, label, accesskey, oncommand) {
+    var menuitem = aContextMenu.ownerDocument.createElement('menuitem');
+    menuitem.setAttribute('id', id);
+    menuitem.setAttribute('class', 'menuitem-iconic');
+    menuitem.setAttribute('label', '&'+label+';');
+    menuitem.setAttribute('accesskey', '&'+accesskey+';');
+    menuitem.setAttribute('oncommand', oncommand);
+    aContextMenu.appendChild(menuitem);
+  }
+
+  add('file.folder', 'menu.file.folder', 'menu.file.folder.accesskey', 'doMenu("file.folder")');
+}
+
 sbBookmarks.prototype.canDrop =
 function sbBookmarks_canDrop(aNode, aDragSession, aOrientation) {
   if (aNode.isContainer) {

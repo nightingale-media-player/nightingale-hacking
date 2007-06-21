@@ -216,6 +216,15 @@ interface sbIServicePaneService : nsISupports
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
   
+  /* \brief Fill a menu with menuitems to create new tree nodes
+   * \param aId the id of the node or null for the click and hold menu
+   * \param aContextMenu the menu we're trying to fill
+   * \param aParentWindow the toplevel window we're displaying in
+   */
+  void fillNewItemMenu(in AString aId,
+                       in nsIDOMXULElement aContextMenu,
+                       in nsIDOMWindow aParentWindow);
+  
   /* I think we'll need to have this interface too:
   nsITreeView wrapTreeView(in nsITreeView aTreeView);
   it will take an existing tree-builder tree view and add some
@@ -264,6 +273,10 @@ interface sbIServicePaneModule : nsISupports
    * \param aParentWindow the toplevel window we're displaying in
    */
   void fillContextMenu(in sbIServicePaneNode aNode,
+                       in nsIDOMXULElement aContextMenu,
+                       in nsIDOMWindow aParentWindow);
+  
+  void fillNewItemMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
 

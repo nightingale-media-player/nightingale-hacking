@@ -660,13 +660,42 @@
       <!-- For now just hijacking the file menu implementation.. -->
       <!-- TODO: over state, up arrow, remove periods from all IDs -->
       <xul:hbox id="frame_service_buttonbar">
-        <xul:sb-clickhold-button id="file.new" oncommand="onMenu(event.target)" flex="1" label="&menu.file.new;" popupanchor="topleft" popupalign="bottomleft">
-          <xul:menuitem id="file.new"  class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
-          <xul:menuitem id="file.smart"  class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
-          <xul:menuitem id="file.remote"  class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
+        <xul:sb-clickhold-button anonid='clickhold' flex="1" popupanchor="topleft" popupalign="bottomleft">
         </xul:sb-clickhold-button>
       </xul:hbox>
-    </content>   
+    </content>
+    <implementation>
+      <constructor><![CDATA[
+        var service = Components.classes['@songbirdnest.com/servicepane/service;1']
+          .getService(Components.interfaces.sbIServicePaneService);
+        this._clickHold =
+            document.getAnonymousElementByAttribute(this, 'anonid', 'clickhold');
+        service.fillNewItemMenu(null, this._clickHold, window);
+        var item = this._clickHold.firstChild;
+        if (!item) {
+          // bad news
+          return;
+        }
+        this._clickHold.setAttribute('label', item.getAttribute('label'));
+        // FIXME: this is needed for styling but sucks
+        this._clickHold.setAttribute('id', item.getAttribute('id'));
+
+      ]]></constructor>
+      <field name="_clickHold">null</field>
+    </implementation>
+    <handlers>
+      <handler event="command"><![CDATA[
+        for (var item = this._clickHold.firstChild;
+             item; item = item.nextSibling) {
+          if (event.originalTarget == item) {
+            // the event was heading for a menu item
+            return;
+          }
+        }
+        // this wasn't heading to any of our children - let's do the first one
+        this._clickHold.firstChild.doCommand();
+      ]]></handler>
+    </handlers>
   </binding>
   
   
