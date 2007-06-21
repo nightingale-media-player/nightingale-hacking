@@ -89,6 +89,7 @@ struct CQueryParameter
 typedef nsTArray<CQueryParameter> bindParameterArray_t;
 
 class CDatabaseEngine;
+class nsIEventTarget;
 class nsIURI;
 
 class CDatabaseQuery : public sbIDatabaseQuery
@@ -179,6 +180,7 @@ protected:
   PRUint32 m_RollingLimitColumnIndex;
   PRUint32 m_RollingLimitResult;
 
+  nsCOMPtr<nsIEventTarget> mLocationURIOwningThread;
 private:
   NS_IMETHOD EnsureLastQueryParameter(PRUint32 aParamIndex);
 };

@@ -45,6 +45,7 @@
 #include <nsIServiceManager.h>
 #include <nsThreadUtils.h>
 #include <nsSupportsArray.h>
+#include <nsProxyRelease.h>
 
 #include <sbProxyUtils.h>
 
@@ -205,15 +206,11 @@ NS_IMETHODIMP CDatabaseQuery::GetDatabaseLocation(nsIURI * *aDatabaseLocation)
   nsAutoLock lock(m_pLocationURILock);
   if(m_LocationURI)
   {
-    nsCAutoString spec;
-
-    rv = m_LocationURI->GetSpec(spec);
+    rv = m_LocationURI->Clone(aDatabaseLocation);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = NS_NewURI(aDatabaseLocation, spec);
   }
 
-  return rv;
+  return NS_OK;
 } //GetDatabaseLocation
 
 //-----------------------------------------------------------------------------
@@ -252,6 +249,15 @@ NS_IMETHODIMP CDatabaseQuery::SetDatabaseLocation(nsIURI * aDatabaseLocation)
     {
       nsAutoLock lock(m_pLocationURILock);
       rv = aDatabaseLocation->Clone(getter_AddRefs(m_LocationURI));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Remember the thread that this nsStandardURL was created on so we can
+      // later release it on the same thread to prevent an assertion
+      nsCOMPtr<nsIThread> thread;
+      rv = NS_GetCurrentThread(getter_AddRefs(thread));
+      NS_ENSURE_SUCCESS(rv, rv);
+      mLocationURIOwningThread = do_QueryInterface(thread, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
   else

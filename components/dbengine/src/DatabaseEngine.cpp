@@ -45,6 +45,7 @@
 #include <nsUnicharUtils.h>
 #include <nsIURI.h>
 #include <nsNetUtil.h>
+#include <nsProxyRelease.h>
 
 #include <nsAutoLock.h>
 
@@ -1081,7 +1082,11 @@ nsresult CDatabaseEngine::ClearQueryQueue()
     CDatabaseQuery *pQuery = m_QueryQueue.front();
     m_QueryQueue.pop_front();
 
-    NS_IF_RELEASE(pQuery);
+    nsresult rv = NS_ProxyRelease(pQuery->mLocationURIOwningThread, pQuery);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not proxy release pQuery");
+      NS_RELEASE(pQuery);
+    }
   }
   
   return NS_OK;
@@ -1755,7 +1760,13 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
     //Check if this query changed any data 
     pEngine->UpdatePersistentQueries(pQuery);
 
-    NS_IF_RELEASE(pQuery);
+    // Release the query on the same thread that the location URI class was
+    // created on.  This prevents an assertion.
+    nsresult rv = NS_ProxyRelease(pQuery->mLocationURIOwningThread, pQuery);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not proxy release pQuery");
+      NS_RELEASE(pQuery);
+    }
   } // while
 } //QueryProcessor
 
