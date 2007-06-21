@@ -37,7 +37,6 @@
 #include <nsIURIChecker.h>
 #include <nsIFileURL.h>
 #include <nsIStringEnumerator.h>
-#include <nsIProperty.h>
 #include <nsIVariant.h>
 #include <nsAutoLock.h>
 #include <nsNetUtil.h>
@@ -519,7 +518,7 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < propertyCount; i++) {
-    nsCOMPtr<nsIProperty> property;
+    nsCOMPtr<sbIProperty> property;
     rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -531,24 +530,12 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
     rv = propMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIVariant> value;
-    rv = property->GetValue(getter_AddRefs(value));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRUint16 dataType;
-    rv = value->GetDataType(&dataType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Only strings allowed
-    if (dataType != nsIDataType::VTYPE_ASTRING)
-      return NS_ERROR_INVALID_ARG;
-
-    nsAutoString valueString;
-    rv = value->GetAsAString(valueString);
+    nsAutoString value;
+    rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool valid;
-    rv = info->Validate(valueString, &valid);
+    rv = info->Validate(value, &valid);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (!valid)
@@ -563,7 +550,7 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
     nsAutoLock lock(mPropertyBagLock);
 
     for (PRUint32 i = 0; i < propertyCount; i++) {
-      nsCOMPtr<nsIProperty> property;
+      nsCOMPtr<sbIProperty> property;
       rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -579,15 +566,11 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
       rv = properties->AppendProperty(propertyName, oldValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<nsIVariant> value;
-      rv = property->GetValue(getter_AddRefs(value));
+      nsAutoString value;
+      rv = property->GetValue(value);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsAutoString valueString;
-      rv = value->GetAsAString(valueString);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mPropertyBag->SetProperty(propertyName, valueString);
+      rv = mPropertyBag->SetProperty(propertyName, value);
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
@@ -632,7 +615,7 @@ sbLocalDatabaseMediaItem::GetProperties(sbIPropertyArray* aProperties,
     NS_ENSURE_SUCCESS(rv, rv);
 
     for (PRUint32 i = 0; i < propertyCount; i++) {
-      nsCOMPtr<nsIProperty> property;
+      nsCOMPtr<sbIProperty> property;
       rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
       NS_ENSURE_SUCCESS(rv, rv);
 

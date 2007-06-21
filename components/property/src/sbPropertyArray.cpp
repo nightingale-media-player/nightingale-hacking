@@ -30,7 +30,6 @@
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIProgrammingLanguage.h>
-#include <nsIProperty.h>
 #include <nsISimpleEnumerator.h>
 #include <nsMemory.h>
 
@@ -53,6 +52,26 @@ NS_IMPL_CI_INTERFACE_GETTER5(sbPropertyArray, nsIArray,
                                               sbIPropertyArray,
                                               sbIMutablePropertyArray,
                                               nsIClassInfo)
+sbPropertyArray::sbPropertyArray()
+{
+  MOZ_COUNT_CTOR(sbPropertyArray);
+}
+
+sbPropertyArray::~sbPropertyArray()
+{
+  MOZ_COUNT_DTOR(sbPropertyArray);
+  if(mArrayLock) {
+    nsAutoLock::DestroyLock(mArrayLock);
+  }
+}
+
+nsresult
+sbPropertyArray::Init()
+{
+  mArrayLock = nsAutoLock::NewLock("sbPropertyArray::mArrayLock");
+  NS_ENSURE_TRUE(mArrayLock, NS_ERROR_OUT_OF_MEMORY);
+  return NS_OK;
+}
 
 /**
  * See nsIArray
@@ -62,6 +81,7 @@ sbPropertyArray::GetLength(PRUint32* aLength)
 {
   NS_ENSURE_ARG_POINTER(aLength);
 
+  nsAutoLock lock(mArrayLock);
   *aLength = (PRUint32)mArray.Count();
   return NS_OK;
 }
@@ -77,6 +97,7 @@ sbPropertyArray::QueryElementAt(PRUint32 aIndex,
   NS_ENSURE_ARG_MAX(aIndex, PR_MAX(0, mArray.Count() - 1));
   NS_ENSURE_ARG_POINTER(_retval);
 
+  nsAutoLock lock(mArrayLock);
   nsCOMPtr<nsISupports> element = mArray.ObjectAt(aIndex);
   NS_ENSURE_STATE(element);
 
@@ -93,7 +114,7 @@ sbPropertyArray::IndexOf(PRUint32 aStartIndex,
 {
   NS_ENSURE_ARG_POINTER(aElement);
   NS_ENSURE_ARG_POINTER(_retval);
-  
+
   // nsCOMArray doesn't provide any way for us to start searching for an element
   // at an offset, so warn about the usage. Hopefully no one will use this
   // method anyway ;)
@@ -102,9 +123,10 @@ sbPropertyArray::IndexOf(PRUint32 aStartIndex,
   }
 
   nsresult rv;
-  nsCOMPtr<nsIProperty> property = do_QueryInterface(aElement, &rv);
+  nsCOMPtr<sbIProperty> property = do_QueryInterface(aElement, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsAutoLock lock(mArrayLock);
   PRInt32 index = mArray.IndexOf(property);
   NS_ENSURE_TRUE(index >= 0, NS_ERROR_NOT_AVAILABLE);
 
@@ -120,7 +142,19 @@ sbPropertyArray::Enumerate(nsISimpleEnumerator** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  return NS_NewArrayEnumerator(_retval, mArray);
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> array =
+    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
+
+  nsAutoLock lock(mArrayLock);
+  PRUint32 length = mArray.Count();
+  for (PRUint32 i = 0; i < length; i++) {
+    rv = array->AppendElement(mArray.ObjectAt(i), PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_NewArrayEnumerator(_retval, array);
 }
 
 /**
@@ -136,9 +170,10 @@ sbPropertyArray::AppendElement(nsISupports* aElement,
   NS_ENSURE_FALSE(aWeak, NS_ERROR_FAILURE);
 
   nsresult rv;
-  nsCOMPtr<nsIProperty> property = do_QueryInterface(aElement, &rv);
+  nsCOMPtr<sbIProperty> property = do_QueryInterface(aElement, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsAutoLock lock(mArrayLock);
   PRBool success = mArray.AppendObject(property);
   NS_ENSURE_STATE(success);
 
@@ -153,6 +188,7 @@ sbPropertyArray::RemoveElementAt(PRUint32 aIndex)
 {
   NS_ENSURE_ARG_MAX(aIndex, PR_MAX(0, mArray.Count() - 1));
 
+  nsAutoLock lock(mArrayLock);
   PRBool success = mArray.RemoveObjectAt(aIndex);
   NS_ENSURE_STATE(success);
   return NS_OK;
@@ -173,9 +209,10 @@ sbPropertyArray::InsertElementAt(nsISupports* aElement,
   NS_ENSURE_FALSE(aWeak, NS_ERROR_FAILURE);
 
   nsresult rv;
-  nsCOMPtr<nsIProperty> property = do_QueryInterface(aElement, &rv);
+  nsCOMPtr<sbIProperty> property = do_QueryInterface(aElement, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsAutoLock lock(mArrayLock);
   PRBool success = mArray.InsertObjectAt(property, aIndex);
   NS_ENSURE_STATE(success);
 
@@ -197,9 +234,10 @@ sbPropertyArray::ReplaceElementAt(nsISupports* aElement,
   NS_ENSURE_FALSE(aWeak, NS_ERROR_NOT_IMPLEMENTED);
 
   nsresult rv;
-  nsCOMPtr<nsIProperty> property = do_QueryInterface(aElement, &rv);
+  nsCOMPtr<sbIProperty> property = do_QueryInterface(aElement, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsAutoLock lock(mArrayLock);
   PRBool success = mArray.ReplaceObjectAt(property, aIndex);
   NS_ENSURE_STATE(success);
 
@@ -212,6 +250,7 @@ sbPropertyArray::ReplaceElementAt(nsISupports* aElement,
 NS_IMETHODIMP
 sbPropertyArray::Clear()
 {
+  nsAutoLock lock(mArrayLock);
   mArray.Clear();
   return NS_OK;
 }
@@ -225,17 +264,10 @@ sbPropertyArray::AppendProperty(const nsAString& aName,
 {
   NS_ENSURE_TRUE(!aName.IsEmpty(), NS_ERROR_INVALID_ARG);
 
-  nsresult rv;
-  nsCOMPtr<nsIWritableVariant> variant =
-    do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = variant->SetAsAString(aValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIProperty> property = new sbSimpleProperty(aName, variant);
+  nsCOMPtr<sbIProperty> property = new sbSimpleProperty(aName, aValue);
   NS_ENSURE_TRUE(property, NS_ERROR_OUT_OF_MEMORY);
 
+  nsAutoLock lock(mArrayLock);
   PRBool success = mArray.AppendObject(property);
   NS_ENSURE_STATE(success);
 
@@ -247,12 +279,13 @@ sbPropertyArray::AppendProperty(const nsAString& aName,
  */
 NS_IMETHODIMP
 sbPropertyArray::GetPropertyAt(PRUint32 aIndex,
-                               nsIProperty** _retval)
+                               sbIProperty** _retval)
 {
   NS_ENSURE_ARG_MAX(aIndex, PR_MAX(0, mArray.Count() - 1));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsCOMPtr<nsIProperty> property = mArray.ObjectAt(aIndex);
+  nsAutoLock lock(mArrayLock);
+  nsCOMPtr<sbIProperty> property = mArray.ObjectAt(aIndex);
   NS_ENSURE_STATE(property);
 
   NS_ADDREF(*_retval = property);
@@ -268,9 +301,10 @@ sbPropertyArray::GetPropertyValue(const nsAString& aName,
 {
   nsresult rv;
 
+  nsAutoLock lock(mArrayLock);
   PRUint32 length = mArray.Count();
   for (PRUint32 i = 0; i < length; i++) {
-    nsCOMPtr<nsIProperty> property = mArray.ObjectAt(i);
+    nsCOMPtr<sbIProperty> property = mArray.ObjectAt(i);
     NS_ENSURE_STATE(property);
 
     nsAutoString propertyName;
@@ -278,21 +312,9 @@ sbPropertyArray::GetPropertyValue(const nsAString& aName,
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (propertyName.Equals(aName)) {
-      nsCOMPtr<nsIVariant> value;
-      rv = property->GetValue(getter_AddRefs(value));
+      rv = property->GetValue(_retval);
       NS_ENSURE_SUCCESS(rv, rv);
-
-      PRUint16 dataType;
-      rv = value->GetDataType(&dataType);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if (dataType == nsIDataType::VTYPE_ASTRING) {
-        nsAutoString valueString;
-        rv = value->GetAsAString(_retval);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        return NS_OK;
-      }
+      return NS_OK;
     }
   }
 
@@ -304,42 +326,31 @@ sbPropertyArray::ToString(nsAString& _retval)
 {
   nsresult rv;
 
+  nsAutoLock lock(mArrayLock);
+
   nsAutoString buff;
   buff.AssignLiteral("[");
 
   PRUint32 length = mArray.Count();
   for (PRUint32 i = 0; i < length; i++) {
-    nsCOMPtr<nsIProperty> property = mArray.ObjectAt(i);
+    nsCOMPtr<sbIProperty> property = mArray.ObjectAt(i);
     NS_ENSURE_STATE(property);
-
-    nsCOMPtr<nsIVariant> value;
-    rv = property->GetValue(getter_AddRefs(value));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRUint16 dataType;
-    rv = value->GetDataType(&dataType);
-    NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString propertyName;
     rv = property->GetName(propertyName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString value;
+    rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
     buff.AppendLiteral("'");
     buff.Append(propertyName);
     buff.AppendLiteral("' => ");
 
-    if (dataType == nsIDataType::VTYPE_ASTRING) {
-      nsAutoString valueString;
-      rv = value->GetAsAString(valueString);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      buff.AppendLiteral("'");
-      buff.Append(valueString);
-      buff.AppendLiteral("'");
-    }
-    else {
-      buff.AppendLiteral("<not a string>");
-    }
+    buff.AppendLiteral("'");
+    buff.Append(value);
+    buff.AppendLiteral("'");
 
     if (i + 1 < length) {
       buff.AppendLiteral(", ");

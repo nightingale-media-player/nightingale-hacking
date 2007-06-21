@@ -30,7 +30,6 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsIProgrammingLanguage.h>
-#include <nsIProperty.h>
 #include <nsITreeView.h>
 #include <nsIURI.h>
 #include <nsIVariant.h>
@@ -483,32 +482,19 @@ sbLocalDatabaseMediaListView::ClonePropertyArray(sbIPropertyArray* aSource,
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < propertyCount; i++) {
-    nsCOMPtr<nsIProperty> property;
+    nsCOMPtr<sbIProperty> property;
     rv = aSource->GetPropertyAt(i, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIVariant> value;
-    rv = property->GetValue(getter_AddRefs(value));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRUint16 dataType;
-    rv = value->GetDataType(&dataType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Skip non strings
-    if (dataType != nsIDataType::VTYPE_ASTRING) {
-      continue;
-    }
 
     nsAutoString propertyName;
     rv = property->GetName(propertyName);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString valueString;
-    rv = value->GetAsAString(valueString);
+    nsAutoString value;
+    rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = clone->AppendProperty(propertyName, valueString);
+    rv = clone->AppendProperty(propertyName, value);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -530,7 +516,7 @@ sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag1,
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < length; i++) {
-    nsCOMPtr<nsIProperty> property;
+    nsCOMPtr<sbIProperty> property;
     rv = aBag1->GetPropertyAt(i, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -701,22 +687,9 @@ sbLocalDatabaseMediaListView::RemoveFilters(sbIPropertyArray* aPropertyArray)
   for (PRUint32 index = 0; index < propertyCount; index++) {
 
     // Get the property.
-    nsCOMPtr<nsIProperty> property;
+    nsCOMPtr<sbIProperty> property;
     rv = aPropertyArray->GetPropertyAt(index, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the value.
-    nsCOMPtr<nsIVariant> value;
-    rv = property->GetValue(getter_AddRefs(value));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Make sure the value is a string type, otherwise bail.
-    PRUint16 dataType;
-    rv = value->GetDataType(&dataType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    NS_ENSURE_TRUE(dataType == nsIDataType::VTYPE_ASTRING,
-                   NS_ERROR_INVALID_ARG);
 
     // Get the name of the property. This will be the key for the hash table.
     nsAutoString propertyName;
@@ -724,8 +697,8 @@ sbLocalDatabaseMediaListView::RemoveFilters(sbIPropertyArray* aPropertyArray)
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Get the property value
-    nsAutoString valueString;
-    rv = value->GetAsAString(valueString);
+    nsAutoString value;
+    rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
     sbStringArray* stringArray;
@@ -738,7 +711,7 @@ sbLocalDatabaseMediaListView::RemoveFilters(sbIPropertyArray* aPropertyArray)
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString sortableValue;
-      rv = info->MakeSortable(valueString, sortableValue);
+      rv = info->MakeSortable(value, sortableValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
       PRUint32 length = stringArray->Length();
@@ -1095,22 +1068,9 @@ sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
   for (PRUint32 index = 0; index < propertyCount; index++) {
 
     // Get the property.
-    nsCOMPtr<nsIProperty> property;
+    nsCOMPtr<sbIProperty> property;
     rv = aPropertyArray->GetPropertyAt(index, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the value.
-    nsCOMPtr<nsIVariant> value;
-    rv = property->GetValue(getter_AddRefs(value));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Make sure the value is a string type, otherwise bail.
-    PRUint16 dataType;
-    rv = value->GetDataType(&dataType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    NS_ENSURE_TRUE(dataType == nsIDataType::VTYPE_ASTRING,
-                   NS_ERROR_INVALID_ARG);
 
     // Get the name of the property. This will be the key for the hash table.
     nsAutoString propertyName;
@@ -1118,13 +1078,13 @@ sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Get the property value
-    nsAutoString valueString;
-    rv = value->GetAsAString(valueString);
+    nsAutoString value;
+    rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // If the string is empty and we are replacing, we should delete the
     // property from the hash
-    if (valueString.IsEmpty()) {
+    if (value.IsEmpty()) {
       if (aReplace) {
         mViewFilters.Remove(propertyName);
       }
@@ -1159,7 +1119,7 @@ sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString sortableValue;
-      rv = info->MakeSortable(valueString, sortableValue);
+      rv = info->MakeSortable(value, sortableValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
       // Now we need a slot for the property value.
@@ -1195,20 +1155,16 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
 
     for (PRUint32 index = 0; index < propertyCount; index++) {
 
-      nsCOMPtr<nsIProperty> property;
+      nsCOMPtr<sbIProperty> property;
       rv = mViewSearches->GetPropertyAt(index, getter_AddRefs(property));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<nsIVariant> value;
-      rv = property->GetValue(getter_AddRefs(value));
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString propertyName;
       rv = property->GetName(propertyName);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsAutoString stringValue;
-      rv = value->GetAsAString(stringValue);
+      nsAutoString value;
+      rv = property->GetValue(value);
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<sbIPropertyInfo> info;
@@ -1216,7 +1172,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString sortableValue;
-      rv = info->MakeSortable(stringValue, sortableValue);
+      rv = info->MakeSortable(value, sortableValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
       sbStringArray valueArray(1);
@@ -1244,23 +1200,19 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
 
     for (PRUint32 index = 0; index < propertyCount; index++) {
 
-      nsCOMPtr<nsIProperty> property;
+      nsCOMPtr<sbIProperty> property;
       rv = mViewSort->GetPropertyAt(index, getter_AddRefs(property));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<nsIVariant> value;
-      rv = property->GetValue(getter_AddRefs(value));
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString propertyName;
       rv = property->GetName(propertyName);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsAutoString stringValue;
-      rv = value->GetAsAString(stringValue);
+      nsAutoString value;
+      rv = property->GetValue(value);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      mArray->AddSort(propertyName, stringValue.EqualsLiteral("a"));
+      mArray->AddSort(propertyName, value.EqualsLiteral("a"));
       NS_ENSURE_SUCCESS(rv, rv);
 
       hasSorts = PR_TRUE;

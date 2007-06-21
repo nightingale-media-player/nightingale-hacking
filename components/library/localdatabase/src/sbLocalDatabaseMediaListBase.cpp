@@ -26,8 +26,6 @@
 
 #include "sbLocalDatabaseMediaListBase.h"
 
-#include <nsIProperty.h>
-#include <nsIPropertyBag.h>
 #include <nsIStringBundle.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
@@ -674,24 +672,9 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
   for (PRUint32 index = 0; index < propertyCount; index++) {
 
     // Get the property.
-    nsCOMPtr<nsIProperty> property;
+    nsCOMPtr<sbIProperty> property;
     rv = aProperties->GetPropertyAt(index, getter_AddRefs(property));
     SB_CONTINUE_IF_FAILED(rv);
-
-    // Get the value.
-    nsCOMPtr<nsIVariant> value;
-    rv = property->GetValue(getter_AddRefs(value));
-    SB_CONTINUE_IF_FAILED(rv);
-
-    // Make sure the value is a string type, otherwise bail.
-    PRUint16 dataType;
-    rv = value->GetDataType(&dataType);
-    SB_CONTINUE_IF_FAILED(rv);
-
-    if (dataType != nsIDataType::VTYPE_ASTRING) {
-      NS_WARNING("Wrong data type passed in a properties array!");
-      continue;
-    }
 
     // Get the name of the property. This will be the key for the hash table.
     nsAutoString propertyName;
@@ -727,12 +710,12 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
     rv = propMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
     SB_CONTINUE_IF_FAILED(rv);
 
-    nsAutoString stringValue;
-    rv = value->GetAsAString(stringValue);
+    nsAutoString value;
+    rv = property->GetValue(value);
     SB_CONTINUE_IF_FAILED(rv);
 
     nsAutoString sortableValue;
-    rv = info->MakeSortable(stringValue, *valueString);
+    rv = info->MakeSortable(value, *valueString);
     SB_CONTINUE_IF_FAILED(rv);
   }
 

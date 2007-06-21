@@ -29,11 +29,11 @@
 
 #include <sbIPropertyArray.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMArray.h>
 #include <nsIArray.h>
 #include <nsIClassInfo.h>
 #include <nsIMutableArray.h>
-#include <nsIProperty.h>
 
 class sbPropertyArray : public sbIMutablePropertyArray,
                         public nsIMutableArray,
@@ -47,8 +47,13 @@ public:
   NS_DECL_SBIPROPERTYARRAY
   NS_DECL_SBIMUTABLEPROPERTYARRAY
 
+  sbPropertyArray();
+  ~sbPropertyArray();
+
+  nsresult Init();
 private:
-  nsCOMArray<nsIProperty> mArray;
+  nsCOMArray<sbIProperty> mArray;
+  PRLock* mArrayLock;
 };
 
 #endif /* __SB_PROPERTYARRAY_H__ */

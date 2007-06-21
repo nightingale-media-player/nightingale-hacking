@@ -31,8 +31,7 @@
 
 #include "nsISupports.idl"
 
-interface nsIProperty;
-interface nsIVariant;
+interface sbIProperty;
 
 /**
  * \interface sbIPropertyFactory
@@ -44,6 +43,6 @@ interface sbIPropertyFactory : nsISupports
   /**
    * Create a property
    */
-  nsIProperty createProperty(in AString aName,
-                             in nsIVariant aValue);
+  sbIProperty createProperty(in AString aName,
+                             in AString aValue);
 };

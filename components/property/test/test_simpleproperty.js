@@ -33,10 +33,5 @@ function runTest() {
   assertEqual(property.name, "Foo");
   assertEqual(property.value, "Bar");
   assertEqual(typeof(property.value), "string");
-  
-  property = factory.createProperty("Baz", 200);
-  
-  assertEqual(property.name, "Baz");
-  assertEqual(property.value, 200);
-  assertEqual(typeof(property.value), "number");
+
 }

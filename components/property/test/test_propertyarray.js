@@ -57,11 +57,11 @@ function runTest() {
   assertEqual(propertyArray.length, 15);
   
   // Test queryElementAt.
-  var property = propertyArray.queryElementAt(0, Ci.nsIProperty);
+  var property = propertyArray.queryElementAt(0, Ci.sbIProperty);
   assertPropertyData(property, "Property0", "Value0");
   
   property = propertyArray.queryElementAt(1, Ci.nsISupports);
-  assertPropertyData(property.QueryInterface(Ci.nsIProperty), "Property1",
+  assertPropertyData(property.QueryInterface(Ci.sbIProperty), "Property1",
                     "Value1");
   
   var qiException;
@@ -84,7 +84,7 @@ function runTest() {
   var enumerator = propertyArray.enumerate();
   var count = 0;
   while (enumerator.hasMoreElements()) {
-    var property = enumerator.getNext().QueryInterface(Ci.nsIProperty);
+    var property = enumerator.getNext().QueryInterface(Ci.sbIProperty);
     assertPropertyData(property, "Property" + count, "Value" + count);
     count++;
   }

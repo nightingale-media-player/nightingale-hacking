@@ -30,7 +30,6 @@
 #include <nsIAtomService.h>
 #include <nsIDOMElement.h>
 #include <nsIProgrammingLanguage.h>
-#include <nsIProperty.h>
 #include <nsIStringEnumerator.h>
 #include <nsITreeBoxObject.h>
 #include <nsITreeColumns.h>
@@ -252,19 +251,15 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
   }
 
   // Grab the top level sort property from the bag
-  nsCOMPtr<nsIProperty> property;
+  nsCOMPtr<sbIProperty> property;
   rv = aCurrentSort->GetPropertyAt(0, getter_AddRefs(property));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = property->GetName(mCurrentSortProperty);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> value;
-  rv = property->GetValue(getter_AddRefs(value));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString stringValue;
-  rv = value->GetAsAString(stringValue);
+  nsAutoString value;
+  rv = property->GetValue(value);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mCurrentSortDirectionIsAscending = stringValue.EqualsLiteral("a");

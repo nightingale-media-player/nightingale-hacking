@@ -27,29 +27,30 @@
 #ifndef __SB_SIMPLEPROPERTY_H__
 #define __SB_SIMPLEPROPERTY_H__
 
-#include <nsIProperty.h>
+#include <sbIPropertyArray.h>
 
 #include <nsCOMPtr.h>
 #include <nsIVariant.h>
 #include <nsStringGlue.h>
 
-class sbSimpleProperty : public nsIProperty
+class sbSimpleProperty : public sbIProperty
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_NSIPROPERTY
+  NS_DECL_SBIPROPERTY
 
   sbSimpleProperty()
   { }
 
-  sbSimpleProperty(const nsAString& aName, nsIVariant* aValue)
+  sbSimpleProperty(const nsAString& aName, const nsAString& aValue)
   : mName(aName),
     mValue(aValue)
   { }
 
 private:
   nsString mName;
-  nsCOMPtr<nsIVariant> mValue;
+  nsString mValue;
 };
 
 #endif /* __SB_SIMPLEPROPERTY_H__ */
+

@@ -32,7 +32,19 @@
 #include "nsIArray.idl"
 #include "nsIMutableArray.idl"
 
-interface nsIProperty;
+[scriptable, uuid(89915b4b-f252-4f45-8351-fd8560363b89)]
+interface sbIProperty : nsISupports
+{
+  /**
+   * Get the name of the property.
+   */
+  readonly attribute AString name;
+
+  /**
+   * Get the value of the property.
+   */
+  readonly attribute AString value;
+};
 
 /**
  * \interface sbIPropertyArray
@@ -48,7 +60,7 @@ interface sbIPropertyArray : nsIArray
    *
    * \param aIndex The index of the property to retrieve
    */                      
-  nsIProperty getPropertyAt(in unsigned long aIndex);
+  sbIProperty getPropertyAt(in unsigned long aIndex);
 
   /**
    * Gets the value for a property in the array

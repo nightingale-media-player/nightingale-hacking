@@ -38,7 +38,7 @@
 
 #include "sbPropertiesCID.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyArray)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyArray, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyFactory);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyManager, Init);
 

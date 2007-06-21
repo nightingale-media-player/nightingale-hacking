@@ -26,10 +26,10 @@
 
 #include "sbSimpleProperty.h"
 
-NS_IMPL_ISUPPORTS1(sbSimpleProperty, nsIProperty)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbSimpleProperty, sbIProperty)
 
 /**
- * See nsIProperty
+ * See sbIProperty
  */
 NS_IMETHODIMP
 sbSimpleProperty::GetName(nsAString& aName)
@@ -39,14 +39,12 @@ sbSimpleProperty::GetName(nsAString& aName)
 }
 
 /**
- * See nsIProperty
+ * See sbIProperty
  */
 NS_IMETHODIMP
-sbSimpleProperty::GetValue(nsIVariant** _retval)
+sbSimpleProperty::GetValue(nsAString& aValue)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_STATE(mValue);
-  
-  NS_ADDREF(*_retval = mValue);
+  aValue.Assign(mValue);
   return NS_OK;
 }
+
