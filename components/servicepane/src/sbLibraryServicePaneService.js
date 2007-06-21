@@ -167,12 +167,15 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
 sbLibraryServicePane.prototype.fillNewItemMenu =
 function sbLibraryServicePane_fillNewItemMenu(aNode, aContextMenu, aParentWindow) {
+  var sbSvc = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
+  var stringBundle = sbSvc.createBundle("chrome://songbird/locale/songbird.properties");
+  
   function add(id, label, accesskey, oncommand) {
     var menuitem = aContextMenu.ownerDocument.createElement('menuitem');
     menuitem.setAttribute('id', id);
     menuitem.setAttribute('class', 'menuitem-iconic');
-    menuitem.setAttribute('label', '&'+label+';');
-    menuitem.setAttribute('accesskey', '&'+accesskey+';');
+    menuitem.setAttribute('label', stringBundle.GetStringFromName(label));
+    menuitem.setAttribute('accesskey', stringBundle.GetStringFromName(accesskey));
     menuitem.setAttribute('oncommand', oncommand);
     aContextMenu.appendChild(menuitem);
   }

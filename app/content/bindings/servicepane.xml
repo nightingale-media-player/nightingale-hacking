@@ -663,8 +663,7 @@
       <!-- For now just hijacking the file menu implementation.. -->
       <!-- TODO: over state, up arrow, remove periods from all IDs -->
       <xul:hbox id="frame_service_buttonbar">
-        <xul:sb-clickhold-button anonid='clickhold' flex="1" popupanchor="topleft" popupalign="bottomleft">
-        </xul:sb-clickhold-button>
+        <xul:sb-clickhold-button anonid='clickhold' flex="1" popupanchor="topleft" popupalign="bottomleft" />
       </xul:hbox>
     </content>
     <implementation>
