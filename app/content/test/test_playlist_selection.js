@@ -34,9 +34,6 @@ function runTest () {
             "<?xml-stylesheet href='chrome://songbird/content/bindings/bindings.css' type='text/css'?>" +
             "<window xmlns='http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'/>";
 
-  // XXXsteve Disable this until the playlist binding is fixed
-  return;
-
   beginWindowTest(url, setupPlaylist);
 }
 
