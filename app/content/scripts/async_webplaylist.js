@@ -327,7 +327,7 @@ try
       
       // Only one synchronous database call per ui frame.
       return true;
-    }
+    };
     
     href_loop.handleEmbedURL = function( url )
     {
