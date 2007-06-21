@@ -243,7 +243,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
     rv = mArray->GetBaseTable(baseTable);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (baseTable.Equals(NS_LITERAL_STRING("media_items"))) {
+    if (baseTable.EqualsLiteral("media_items")) {
       mListType = eLibrary;
     }
     else {
@@ -267,7 +267,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
   rv = value->GetAsAString(stringValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mCurrentSortDirectionIsAscending = stringValue.Equals(NS_LITERAL_STRING("a"));
+  mCurrentSortDirectionIsAscending = stringValue.EqualsLiteral("a");
 
   return NS_OK;
 }
@@ -418,7 +418,7 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 row,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If this is an ordinal column, return just the row number
-  if (bind.Equals(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL))) {
+  if (bind.EqualsLiteral(SB_PROPERTY_ORDINAL)) {
     _retval.AppendInt(row + 1);
     return NS_OK;
   }
@@ -1272,8 +1272,12 @@ sbLocalDatabaseTreeView::CycleHeader(nsITreeColumn* col)
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - CycleHeader %s", this,
          NS_LossyConvertUTF16toASCII(bind).get()));
 
-  if (bind.Equals(NS_LITERAL_STRING("row"))) {
-    return NS_OK;
+  if (bind.EqualsLiteral(SB_PROPERTY_ORDINAL)) {
+    if (mListType == eLibrary) {
+      rv = SetSort(NS_LITERAL_STRING(SB_PROPERTY_CREATED), PR_TRUE);
+      NS_ENSURE_SUCCESS(rv, rv);
+      return NS_OK;
+    }
   }
 
   if (bind.Equals(mCurrentSortProperty)) {
@@ -1743,7 +1747,7 @@ sbLocalDatabaseTreeView::IsEditable(PRInt32 row,
   rv = GetPropertyForTreeColumn(col, bind);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (bind.EqualsLiteral("row")) {
+  if (bind.EqualsLiteral(SB_PROPERTY_ORDINAL)) {
     *_retval = PR_FALSE;
   }
   else {
