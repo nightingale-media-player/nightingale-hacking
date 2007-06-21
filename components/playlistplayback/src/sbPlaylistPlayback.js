@@ -175,16 +175,6 @@ function coreSupportsExtension(aCore, aExtension)
   return false;
 }
 
-function getItemProperty(aItem, aProperty)
-{
-  try {
-    return aItem.getProperty(aProperty);
-  }
-  catch (e) { }
-
-  return null;
-}
-
 /**
  * A wrapper to turn a JS array into an nsIStringEnumerator.
  */
@@ -1696,11 +1686,11 @@ PlaylistPlayback.prototype = {
     var item   = aView.getItemByIndex(aIndex);
     var base   = "http://songbirdnest.com/data/1.0#";
     var url    = item.contentSrc.spec;
-    var title  = getItemProperty(item, base + "trackName");
-    var artist = getItemProperty(item, base + "artistName");
-    var album  = getItemProperty(item, base + "albumName");
-    var genre  = getItemProperty(item, base + "genre");
-    var duration = getItemProperty(item, base + "duration");
+    var title  = item.getProperty(base + "trackName");
+    var artist = item.getProperty(base + "artistName");
+    var album  = item.getProperty(base + "albumName");
+    var genre  = item.getProperty(base + "genre");
+    var duration = item.getProperty(base + "duration");
 
     // Clear the data remotes
     this._playURL.stringValue = "";

@@ -267,6 +267,8 @@ sbLocalDatabaseMediaListBase::CopyAllProperties(sbIMediaItem* aSourceItem,
     rv = aSourceItem->GetProperty(name, value);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    NS_ASSERTION(!value.IsVoid(), "This should never be void!");
+
     rv = aTargetItem->SetProperty(name, value);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -319,13 +321,13 @@ sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
   nsAutoString unlocalizedName;
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
                             unlocalizedName);
+  NS_ENSURE_SUCCESS(rv, rv);
   
   // If the property doesn't exist just return an empty string.
-  if (rv == NS_ERROR_ILLEGAL_VALUE) {
-    aName.Assign(EmptyString());
+  if (unlocalizedName.IsEmpty()) {
+    aName.Assign(unlocalizedName);
     return NS_OK;
   }
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // See if this string should be localized. The basic format we're looking for
   // is:

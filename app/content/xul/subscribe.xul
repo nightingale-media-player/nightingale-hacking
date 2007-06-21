@@ -178,13 +178,13 @@ function doLoad()
   // If we get a medialist, read the existing settings from the list and
   // populate the interface
   if (args.mediaList) {
-    var url = SB_GETPROP(args.mediaList, SB_PROP_SUBSCRIPTIONURL);
+    var url = args.mediaList.getProperty(SB_PROP_SUBSCRIPTIONURL);
     if (url)
       srcURLTextbox.value = url;
 
     // Convert the inteval from seconds into something we can display.
     // Determine the units by the magnitude of the interval
-    var time = SB_GETPROP(args.mediaList, SB_PROP_SUBSCRIPTIONINTERVAL);
+    var time = args.mediaList.getProperty(SB_PROP_SUBSCRIPTIONINTERVAL);
     time = time / 60;
     var units = "minutes";
     if (time > 59) {
@@ -200,7 +200,7 @@ function doLoad()
     timeTextbox.value  = time;
     unitMenulist.value = units;
 
-    var dest = SB_GETPROP(args.mediaList, SB_PROP_DESTINATION);
+    var dest = args.mediaList.getProperty(SB_PROP_DESTINATION);
     if (dest) {
       // Convert the URL into a local path
       try {
@@ -343,15 +343,6 @@ function doBrowse()
   }
 }
 
-// Until we get isVoid/setVoid stuff
-function SB_GETPROP(resource, property) {
-  try {
-    return resource.getProperty(property);
-  }
-  catch (e) {
-  }
-  return null;
-}
 ]]>
   </script>
 </window>

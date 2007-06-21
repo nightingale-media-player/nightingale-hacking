@@ -426,15 +426,16 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 row,
   // we have it cached
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
   if (mRowCache.Get(row, getter_AddRefs(bag))) {
-    rv = bag->GetProperty(bind, _retval);
-    if(rv == NS_ERROR_ILLEGAL_VALUE) {
-      _retval.Assign(EmptyString());
+    nsAutoString value;
+    rv = bag->GetProperty(bind, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (value.IsEmpty()) {
+      _retval.Truncate();
     }
     else {
-      NS_ENSURE_SUCCESS(rv, rv);
-
       // Format the value for display
-      rv = info->Format(_retval, _retval);
+      rv = info->Format(value, _retval);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     return NS_OK;
@@ -486,15 +487,10 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 row,
       // Try our dirty cache so we can show something
       if (mDirtyRowCache.Get(row, getter_AddRefs(bag))) {
         rv = bag->GetProperty(bind, _retval);
-        if(rv == NS_ERROR_ILLEGAL_VALUE) {
-          _retval.Assign(EmptyString());
-        }
-        else {
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
+        NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
-        _retval.Assign(EmptyString());
+        _retval.Truncate();
       }
     }
     break;
@@ -505,15 +501,10 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 row,
       // Try our dirty cache so we can show something
       if (mDirtyRowCache.Get(row, getter_AddRefs(bag))) {
         rv = bag->GetProperty(bind, _retval);
-        if(rv == NS_ERROR_ILLEGAL_VALUE) {
-          _retval.Assign(EmptyString());
-        }
-        else {
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
+        NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
-        _retval.Assign(EmptyString());
+        _retval.Truncate();
       }
     }
     break;
@@ -1321,14 +1312,7 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 index,
 
     nsAutoString value;
     nsresult rv = bag->GetProperty(propertyName, value);
-    if (rv == NS_ERROR_ILLEGAL_VALUE) {
-      // It's fine if we don't have this property in the bag. Just send an empty
-      // string to the property info.
-      value.Truncate();
-    }
-    else {
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+    NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIPropertyInfo> propInfo;
     rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(propInfo));
@@ -1826,7 +1810,9 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
 
   nsAutoString oldValue;
   rv = item->GetProperty(bind, oldValue);
-  if (NS_FAILED(rv) || !value.Equals(oldValue)) {
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!value.Equals(oldValue)) {
     rv = item->SetProperty(bind, value);
     NS_ENSURE_SUCCESS(rv, rv);
 

@@ -1975,13 +1975,13 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
   mLiveUpdate = PR_FALSE;
   mConditions.Clear();
 
-  // If no saved state is available, just return
   nsAutoString state;
   rv = mItem->GetProperty(NS_LITERAL_STRING(STATE_PROPERTY), state);
-  if (NS_FAILED(rv)) {
-    if (rv == NS_ERROR_ILLEGAL_VALUE)
-      return NS_OK;
-    NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If no saved state is available, just return
+  if (state.IsEmpty()) {
+    return NS_OK;
   }
 
   // Parse the list's properties from the state

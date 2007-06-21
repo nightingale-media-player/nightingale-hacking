@@ -260,13 +260,7 @@ function loadConditions()
   }
 
   // Set limit.  Get the "ui" limit from a list property
-  var uiLimitType = "songs";
-  try {
-    uiLimitType = list.getProperty(SB_PROPERTY_UILIMITTYPE);
-  }
-  catch(e) {
-    // It is ok if it is unset
-  }
+  var uiLimitType = list.getProperty(SB_PROPERTY_UILIMITTYPE) || "songs";
 
   // Set the limit based on the ui limit.  Convert the units from the smart
   // playlist to the units needed to display the ui limit
