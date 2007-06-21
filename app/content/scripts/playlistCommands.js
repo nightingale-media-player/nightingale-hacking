@@ -1000,37 +1000,47 @@ var SBDownloadCommands =
 
 }; // SBDownloadCommands definition
 
-function registerDownloadListCommands() {
-  window.removeEventListener("load", registerDownloadListCommands, false);
+function registerSpecialListCommands() {
+  window.removeEventListener("load", registerSpecialListCommands, false);
   
   var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefBranch2);
   var downloadListGUID =
     prefs.getComplexValue("songbird.library.download",
+                          Components.interfaces.nsISupportsString);
+  var webListGUID =
+    prefs.getComplexValue("songbird.library.web",
                           Components.interfaces.nsISupportsString);
 
   var mgr = new sbIPlaylistCommandsManager();
   mgr.registerPlaylistCommandsMediaItem(downloadListGUID, "",
-                                          SBDownloadCommands); 
+                                          SBDownloadCommands);
+  mgr.registerPlaylistCommandsMediaItem(webListGUID, "",
+                                          SBWebPlaylistCommands);
 
-  window.addEventListener("unload", unregisterDownloadListCommands, false);
+  window.addEventListener("unload", unregisterSpecialListCommands, false);
 }
 
-function unregisterDownloadListCommands() {
-  window.removeEventListener("unload", unregisterDownloadListCommands, false);
+function unregisterSpecialListCommands() {
+  window.removeEventListener("unload", unregisterSpecialListCommands, false);
   
   var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefBranch2);
   var downloadListGUID =
     prefs.getComplexValue("songbird.library.download",
                           Components.interfaces.nsISupportsString);
+  var webListGUID =
+    prefs.getComplexValue("songbird.library.web",
+                          Components.interfaces.nsISupportsString);
 
   var mgr = new sbIPlaylistCommandsManager();
   mgr.unregisterPlaylistCommandsMediaItem(downloadListGUID, "",
-                                            SBDownloadCommands); 
+                                            SBDownloadCommands);
+  mgr.unregisterPlaylistCommandsMediaItem(webListGUID, "",
+                                            SBWebPlaylistCommands); 
 }
 
-window.addEventListener("load", registerDownloadListCommands, false);
+window.addEventListener("load", registerSpecialListCommands, false);
 
 try
 {
