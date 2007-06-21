@@ -662,8 +662,6 @@ sbLocalDatabasePropertyCache::Write()
         //If this isn't true, something is very wrong, so bail out.
         PRBool success = GetPropertyName(dirtyProps[j], propertyName);
         NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-
-        // XXXben Do we care if this fails?!
         bagLocal->GetPropertyByID(dirtyProps[j], value);
 
         nsCOMPtr<sbIPropertyInfo> propertyInfo;
@@ -1190,7 +1188,14 @@ sbLocalDatabaseResourcePropertyBag::GetProperty(const nsAString& aName,
                                                 nsAString& _retval)
 {
   PRUint32 propertyID = mCache->GetPropertyIDInternal(aName);
-  return GetPropertyByID(propertyID, _retval);
+
+  nsresult rv = GetPropertyByID(propertyID, _retval);
+  if (NS_SUCCEEDED(rv)) {
+    return NS_OK;
+  }
+  else {
+    return NS_ERROR_ILLEGAL_VALUE;
+  }
 }
 
 NS_IMETHODIMP
@@ -1207,9 +1212,7 @@ sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyID,
     }
   }
 
-  // The value hasn't been set, so return a void string.
-  _retval.SetIsVoid(PR_TRUE);
-  return NS_OK;
+  return NS_ERROR_ILLEGAL_VALUE;
 }
 
 NS_IMETHODIMP 

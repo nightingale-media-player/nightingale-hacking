@@ -115,12 +115,6 @@
 
       <constructor>
 <![CDATA[
-  if (typeof(SBProperties) == "undefined") {
-    Components.utils.import("resource://app/components/sbProperties.jsm");
-    if (!SBProperties)
-      throw new Error("Import of sbProperties module failed");
-  }
-
   // Attach event handler closures
   var self = this;
 
@@ -616,31 +610,38 @@
   // 4. A fun hardcoded list as a last resort.
   
   var columnMap = [];
+  var columnSpec;
+  
   var medialist = this.mediaListView.mediaList;
   
-  var columnSpec = medialist.getProperty(SBProperties.columnSpec);
-  if (columnSpec) {
+  try {
+    columnSpec =
+      medialist.getProperty("http://songbirdnest.com/data/1.0#columnSpec");
     try {
       columnMap = this._parseColumnSpec(columnSpec);
       this._columnSpecOrigin = 1;
     }
     catch (e) {
       this._reportError("Failed to parse columnSpec(1): \"" + columnSpec + "\"", e);
+      columnSpec = "";
     }
   }
+  catch (e) { }
   
   if (!columnMap.length) {
-    columnSpec =
-      medialist.getProperty(SBProperties.defaultColumnSpec);
-    if (columnSpec) {
+    try {
+      columnSpec =
+        medialist.getProperty("http://songbirdnest.com/data/1.0#defaultColumnSpec");
       try {
         columnMap = this._parseColumnSpec(columnSpec);
         this._columnSpecOrigin = 2;
       }
       catch (e) {
         this._reportError("Failed to parse columnSpec(2): \"" + columnSpec + "\"", e);
+        columnSpec = "";
       }
     }
+    catch (e) { }
   }
   
   if (!columnMap.length) {
@@ -659,12 +660,12 @@
   
   if (!columnMap.length) {
     columnMap =
-      this._parseColumnSpec(SBProperties.ordinal + " 55 a " +
-                            SBProperties.trackName + " 350 " +
-                            SBProperties.duration + " 50 " +
-                            SBProperties.artistName + " 222 " +
-                            SBProperties.albumName + " 222 " +
-                            SBProperties.genre + " 70");
+      this._parseColumnSpec("http://songbirdnest.com/data/1.0#ordinal 55 a " +
+                            "http://songbirdnest.com/data/1.0#trackName 350 " +
+                            "http://songbirdnest.com/data/1.0#duration 50 " +
+                            "http://songbirdnest.com/data/1.0#artistName 222 " +
+                            "http://songbirdnest.com/data/1.0#albumName 222 " +
+                            "http://songbirdnest.com/data/1.0#genre 70");
     this._columnSpecOrigin = 4;
   }
   

@@ -82,11 +82,6 @@ interface sbILibraryResource : nsISupports
 
   /**
    * \brief Get the value of a property of this resource
-   *
-   * This method will *never* throw. If a value doesn't exist it will return a
-   * special "void" string that behaves just like an empty string except that
-   * the IsVoid() method will return PR_TRUE for those who care.
-   *
    * \param aName Name of the property to get
    * \return Value of the requested property
    */

@@ -74,16 +74,16 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
+  nsAutoString dataGuid;
 
   // Get the guid of the media list used to store the query result of
   // the smart media list
-  nsAutoString dataGuid;
   rv = aInner->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),
                            dataGuid);
 
   // If the dataGuid is not set, then this must be the first time we are
   // instantiating this list
-  if (dataGuid.IsEmpty()) {
+  if (dataGuid.Equals(EmptyString())) {
 
     // Create the simple media list used to store the query result and store the
     // guid as a property of the list

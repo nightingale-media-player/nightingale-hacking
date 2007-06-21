@@ -110,8 +110,13 @@ function assertMediaList(aMediaList, aItemTestsFile) {
         if (prop.indexOf("#") == 0) {
           prop = "http://songbirdnest.com/data/1.0" + prop;
         }
-        var itemValue = this._item.getProperty(prop);
-
+        var itemValue;
+        try {
+          itemValue = this._item.getProperty(prop);
+        }
+        catch(e) {
+          log(e);
+        }
         if (itemValue != value) {
           failMessage = "item with url '" + this._item.contentSrc.spec +
                         "' does not match result at property '" + prop +

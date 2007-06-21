@@ -642,7 +642,7 @@ sbLocalDatabaseCascadeFilterSet::OnItemAdded(sbIMediaList* aMediaList,
 
     nsAutoString junk;
     rv = aMediaItem->GetProperty(fs.property, junk);
-    if (NS_SUCCEEDED(rv) && !junk.IsVoid()) {
+    if (NS_SUCCEEDED(rv)) {
       if (mInBatch) {
         fs.invalidationPending = PR_TRUE;
       }
@@ -681,7 +681,7 @@ sbLocalDatabaseCascadeFilterSet::OnAfterItemRemoved(sbIMediaList* aMediaList,
     sbFilterSpec& fs = mFilters[i];
     nsAutoString junk;
     nsresult rv = aMediaItem->GetProperty(fs.property, junk);
-    if (NS_SUCCEEDED(rv) && !junk.IsVoid()) {
+    if (NS_SUCCEEDED(rv)) {
       if (mInBatch) {
         fs.invalidationPending = PR_TRUE;
       }

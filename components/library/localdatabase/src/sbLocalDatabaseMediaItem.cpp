@@ -314,11 +314,9 @@ sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
   nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropCreated].mName), str);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  PRInt32 convertedItems = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
-                                     aCreated);
-  NS_ENSURE_TRUE(convertedItems > 0, NS_ERROR_FAILURE);
+  PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aCreated);
 
-  return NS_OK;
+  return rv;
 }
 
 /**
@@ -336,11 +334,9 @@ sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
   nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropUpdated].mName), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 convertedItems = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
-                                     aUpdated);
-  NS_ENSURE_TRUE(convertedItems > 0, NS_ERROR_FAILURE);
+  PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aUpdated);
 
-  return NS_OK;
+  return rv;
 }
 
 /**
@@ -439,6 +435,9 @@ sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName,
   nsAutoLock lock(mPropertyBagLock);
 
   rv = mPropertyBag->GetProperty(aName, _retval);
+  if (rv == NS_ERROR_ILLEGAL_VALUE) {
+    return rv;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -467,9 +466,14 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
   {
     nsAutoLock lock(mPropertyBagLock);
 
+    // Add the old value to the changed properties array.  If there is no
+    // old value, add an empty string to the properties array.  Note that
+    // this will change once we have IsVoid/SetVoid (bug 3508)
     nsAutoString oldValue;
     rv = mPropertyBag->GetProperty(aName, oldValue);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_FAILED(rv)) {
+      oldValue.Truncate();
+    }
 
     rv = properties->AppendProperty(aName, oldValue);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -556,7 +560,8 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
 
       nsAutoString oldValue;
       rv = mPropertyBag->GetProperty(propertyName, oldValue);
-      NS_ENSURE_SUCCESS(rv, rv);
+      if (NS_FAILED(rv))
+        oldValue.Truncate();
 
       rv = properties->AppendProperty(propertyName, oldValue);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -749,11 +754,7 @@ sbLocalDatabaseMediaItem::GetMediaCreated(PRInt64* aMediaCreated)
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CREATED), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ASSERTION(!str.IsVoid(), "This should never be void!");
-
-  PRInt32 itemsConverted = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
-                                     aMediaCreated);
-  NS_ENSURE_TRUE(itemsConverted > 0, NS_ERROR_FAILURE);
+  PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aMediaCreated);
 
   return NS_OK;
 }
@@ -785,11 +786,10 @@ sbLocalDatabaseMediaItem::GetMediaUpdated(PRInt64* aMediaUpdated)
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ASSERTION(!str.IsVoid(), "This should never be void!");
-
-  PRInt32 itemsConverted = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
-                                     aMediaUpdated);
-  NS_ENSURE_TRUE(itemsConverted > 0, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(
+    PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aMediaUpdated),
+    NS_ERROR_FAILURE
+  );
 
   return NS_OK;
 }
@@ -820,8 +820,6 @@ sbLocalDatabaseMediaItem::GetContentSrc(nsIURI** aContentSrc)
   nsAutoString str;
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), str);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ASSERTION(!str.IsVoid(), "This should never be void!");
 
   rv = NS_NewURI(aContentSrc, str);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -860,9 +858,9 @@ sbLocalDatabaseMediaItem::GetContentLength(PRInt64* aContentLength)
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH), str);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  PRInt32 itemsConverted = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
-                                     aContentLength);
-  NS_ENSURE_TRUE(itemsConverted > 0, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(
+    PR_sscanf( NS_ConvertUTF16toUTF8(str).get(), "%lld", aContentLength),
+    NS_ERROR_FAILURE);
 
   return NS_OK;
 }
