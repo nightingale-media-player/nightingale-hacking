@@ -34,20 +34,23 @@ This css file specifies the color styles for everything in the main application 
 #B3BAAC; /** Light Color 1           light greyish green 1
 #8A8F84; /** Light Color 2           light greyish green 2
 #EDF3F0; /** Light Color 3           very light greyish green
+#dee8e3; /** Light Color 4           lighter greyish green
 #202220; /** Dark Color 1            cool charcoal grey 1
 #0f100f; /** Dark Color 2            cool charcoal grey 2
 
 Dark Borders
-border-top: #99A194; /** Dark Border 1
-border-left: #99A195; /** Dark Border 2
-border-bottom: #111111; /** Dark Border 3
-border-right: #222222; /** Dark Border 4
+#99A194; /** Dark Border 1
+#99A195; /** Dark Border 2
+#111111; /** Dark Border 3
+#222222; /** Dark Border 4
 
 Light Borders
-border-top: #7a7c7c; /** Light Border 1
-border-left: #474948; /** Light Border 2
-border-bottom: #474848; /** Light Border 3
-border-right: #474849; /** Light Border 4
+#7a7c7c; /** Light Border 1
+#474948; /** Light Border 2
+#474848; /** Light Border 3
+#474849; /** Light Border 4
+#797f76; /** Light Border 5
+
 
 ************************************************************************************************************************************************
 */ 
@@ -62,19 +65,22 @@ These rules paint the resizeable window for Songbird.
 
 dialog,
 window,
-prefwindow
+prefwindow,
+playlist2
 {
-  background-color: #0c0a05 !important; /* color of the Main Window coffee:#1f150a, 0.3 black #0c0a05**/
+  background-color: #313131 !important; /* color of the Main Window coffee:#1f150a, 0.3 black #0c0a05**/
 }
 
-dialog
+toolbar
 {
-  border: 1px solid #B3BAAC !important;
+  border-top: 1px solid #474948; /** Light Border 2*/
+  border-bottom: none;
 }
 
+dialog,
 sb-sys-outer-frame
 {
-  border: 1px solid #B3BAAC;
+  border: none;
 }
 
 sb-sys-title,
@@ -129,17 +135,24 @@ The Service Pane is the primary area for navigating through services and content
   -moz-border-radius: 4px;
   border-top-color: #111111; /** Dark Border 3*/
   border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A194; /** Dark Border 1*/
-  border-right-color: #99A195; /** Dark Border 2*/
+  border-bottom-color: #474948; /** Dark Border 1*/
+  border-right-color: #222222; /** Dark Border 2*/
   background-color: #202220; /** Dark Color 1 */  
   color: #feffff; /** Light Color Brightest */
+}
+
+.servicepane_tree scrollbar
+{
+  border-top: none;
+  border-right: none;
+  margin-right: -1px;
 }
 
 .servicepane_tree
 {
   color: #B3BAAC; /** Light Color 1 */
   background-color: transparent;
-  margin: 5px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
   border: none;
 }
 
@@ -152,6 +165,10 @@ The Service Pane is the primary area for navigating through services and content
 
 .servicepane_tree > treechildren::-moz-tree-row( selected )
 {
+  -moz-border-radius-topright: 2px;
+  -moz-border-radius-topleft: 1px;
+  -moz-border-radius-bottomright: 2px;
+  -moz-border-radius-bottomleft: 1px;
   background-color: #8A8F84; /** Light Color 2 */
 }
 
@@ -178,11 +195,11 @@ The Service Pane is the primary area for navigating through services and content
 #frame_service_buttonbar button
 {
   border: 1px solid;
-  border-top-color: #7a7c7c; /** Light Border 1*/
-  border-left-color: #474948; /** Light Border 2*/
-  border-bottom-color: #474848; /** Light Border 3*/
-  border-right-color: #474849; /** Light Border 4*/
-  background-color: transparent;
+  border-top-color: #797f76; 
+  border-left-color: #313131; 
+  border-bottom-color: #202220; 
+  border-right-color: #313131; 
+  background-color: #313131;
   color: #B3BAAC; /** Light Color 1 */
 }
 
@@ -213,49 +230,44 @@ SCROLLBARS
 
 scrollbar
 {   
-  -moz-border-radius: 2px;
+  -moz-border-radius: 3px;
   background-color: transparent !important;
   background-image: none !important; 
+  border-top: 1px solid #202220; /** Light Border 4*/
 } 
-
 scrollbarbutton
 {    
-  -moz-border-radius: 2px;
+  -moz-border-radius: 3px;
   border-top-color: #7a7c7c; /** Light Border 1*/
-  border-left-color: #474948; /** Light Border 2*/
-  border-bottom-color: #474848; /** Light Border 3*/
-  border-right-color: #474849; /** Light Border 4*/
+  border-left-color: #202220; /** Light Border 2*/
+  border-bottom-color: #0f100f; /** Light Border 3*/
+  border-right-color: #202220; /** Light Border 4*/
   background-color: transparent !important;
 } 
-
 scrollbarbutton:hover:active, 
 scrollbarbutton[active="true"],
-
-/** TODO Koshi, please fix these colors **/
 scrollbar > slider > thumb:active
 {   	
-  -moz-border-radius: 2px;
-  border-top: 1px solid #333;
-  border-right: 1px solid #999;
-  border-bottom: 1px solid #999;
-  border-left: 1px solid #333; 
+  -moz-border-radius: 3px;
+  border-top-color: #0f100f; /** Light Border 1*/
+  border-left-color: #202220; /** Light Border 2*/
+  border-bottom-color: #7a7c7c; /** Light Border 3*/
+  border-right-color: #202220; /** Light Border 4*/
+	background-color: transparent;
 } 
- 
 scrollbar > slider > thumb > gripper
 {   
   background-color: transparent !important; 
 } 
-
 scrollbar > slider > thumb
 {   
-  -moz-border-radius: 2px;
+  -moz-border-radius: 3px;
   border-top-color: #7a7c7c; /** Light Border 1*/
-  border-left-color: #474948; /** Light Border 2*/
-  border-bottom-color: #474848; /** Light Border 3*/
-  border-right-color: #474849; /** Light Border 4*/
-	background-color: #111;
+  border-left-color: #202220; /** Light Border 2*/
+  border-bottom-color: #0f100f; /** Light Border 3*/
+  border-right-color: #202220; /** Light Border 4*/
+	background-color: transparent;
 } 
-
 scrollbar > slider
 {   
   background-color: transparent !important;
@@ -321,8 +333,8 @@ Organize your collection with genre/artist/album filterlists.
 
 filterlist2 > tree
 {
-  background-color: transparent;
-  border: 1px solid transparent;
+  background-color: #202220;
+  border-left: 1px solid #202220;
   /* opacity: 0.8; slow on the mac :( **/
 }
 
@@ -336,7 +348,7 @@ filterlist2 > tree > treechildren::-moz-tree-row
 /* striping */
 filterlist2 > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #EDF3F0; /** Light Color 3 */
+  background-color: #dee8e3; /** Light Color 4 */
 }
 
 filterlist2 > tree > treechildren::-moz-tree-row( even )
@@ -382,14 +394,19 @@ playlist > stack > vbox
 
 #playlist_tree
 {
-  background-color: transparent !important;  
+  background-color: #202220 !important;  
 }
-
+.playlist-toolbar
+{
+  border-bottom: none;
+  border-bottom-width: 0px;
+}
 
 .playlist-toolbar-bkg
 {
-  border-top: 1px solid #7a7c7c;
+  border-top: 1px solid #797f76;
   background-color: transparent !important;
+  border-bottom: 1px solid #202220;
 }
 
 treechildren::-moz-tree-column(insertafter)
@@ -409,7 +426,7 @@ treechildren::-moz-tree-column(insertbefore)
 
 #playlist_tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #EDF3F0; /** Light Color 3 */
+  background-color: #dee8e3; /** Light Color 4 */
 }
 
 #playlist_tree >  treechildren::-moz-tree-row( even )
@@ -503,39 +520,38 @@ toolbarbutton[disabled="true"]:hover
 
 toolbarbutton:hover
 {
-  background-color: #474848; /** Light Border */
-  border-top-color: #99A194; /** Dark Border 1*/
-  border-left-color: #99A195; /** Dark Border 2*/
+  /**background-color: #474848;  Light Border */
+  border-top-color: #797f76; /** Light Border 5*/
+  border-left-color: #202220; 
   border-bottom-color: #111111; /** Dark Border 3*/
-  border-right-color: #222222; /** Dark Border 4*/  
+  border-right-color: #202220;   
 }
 
 toolbarbutton:active
 {
   background-color: #474848; /** Light Border */
-  border-bottom-color: #99A194; /** Dark Border 1*/
-  border-right-color: #99A195; /** Dark Border 2*/
+  border-bottom-color: #797f76; /** Light Border 5*/
+  border-left-color: #202220; /** Dark Border 4*/
   border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/  
+  border-right-color: #202220; /** Dark Border 4*/  
 }
 
 
 button
 {
-  background-color: #474848;
   border: 1px solid;
-  border-top-color: #99A194; /** Dark Border 1*/
-  border-left-color: #99A195; /** Dark Border 2*/
+  border-top-color: #797f76; /** Light Border 5*/
+  border-left-color: #222222; /** Dark Border 4*/
   border-bottom-color: #111111; /** Dark Border 3*/
-  border-right-color: #222222; /** Dark Border 4*/  
+  border-right-color: #222222; /** Dark Border 4*/    
   -moz-border-radius: 5px;
 }
 button:active
 {
-  border-top-color: #111111; /** Dark Border 3*/
+  border-bottom-color: #797f76; /** Light Border 5*/
   border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/
+  border-top-color: #111111; /** Dark Border 3*/
+  border-right-color: #222222; /** Dark Border 4*/ 
 }
 
 button > dropmarker.button-menubutton-dropmarker,
@@ -572,7 +588,15 @@ button[disabled="true"]:hover > hbox > label.button-text
   color: #8A8F84 !important;
 }
 
-
+/** 
+************************************************************************************************************************************************
+DATEPICKER see the RICHLISTBOX for box styles
+************************************************************************************************************************************************
+*/
+.datepicker-gridlabel[selected="true"] {
+  background-color: #8A8F84;
+  color: #0f100f; /** Dark Color 2 */
+}
 
 
 
@@ -701,21 +725,32 @@ These let the user resize the frames in your box model.
 
 /* Splitters to resize the panes */
 
-.vert_splitter,
-#filter_splitter
+.vert_splitter
 {
   background-color: transparent;
   border-right: 1px solid #000;
-  border-left: 1px solid #666;
+  border-left: 1px solid #464646;
 }
 
-.vert_splitter:active,
-#filter_splitter:active
+.vert_splitter:active
 {
   background-color: transparent;
   border-left: 1px solid #000;
-  border-right: 1px solid #666;
+  border-right: 1px solid #464646;
 }
+
+#filter_splitter
+{
+  background-color: transparent;
+  margin: 1px 0px 0px 0px;
+}
+
+#filter_splitter:active
+{
+  background-color: transparent;
+  margin: 1px 0px 0px 0px;
+}
+
 
 #servicepane_splitter,
 #search_splitter
@@ -762,10 +797,7 @@ These let the user resize the frames in your box model.
 .playlist_web_split
 {
   background-color: transparent;
-  border-top: 1px solid #666;
-  border-bottom: 1px solid #000;
-  border-left: 1px solid #333;
-  border-right: 1px solid #333;
+  border: none;
 }
 
 .horz_splitter:active,
@@ -773,8 +805,6 @@ These let the user resize the frames in your box model.
 .playlist_web_split:active
 {
   background-color: transparent;
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #666;
 }
 
 #control_pane_splitter
@@ -804,9 +834,9 @@ THE MAIN PANE
 
 #main_pane_border
 {
-  border-top: 1px solid #666;
-  border-left: 1px solid #474949;
-  border-bottom: 1px solid #202220;
+  border-top: 1px solid #0f100f;
+  border-left: 1px solid #202220;
+  border-bottom: 1px solid #474948;
   border-right: 1px solid #202220;
 }
 
@@ -912,8 +942,8 @@ searchbar
 {
   border-top-color: #111111; /** Dark Border 3*/
   border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A194; /** Dark Border 1*/
-  border-right-color: #99A195; /** Dark Border 2*/
+  border-bottom-color: #797f76; /** Dark Border 5*/
+  border-right-color: #222222; /** Dark Border 2*/
   background-color: #202220; /** Dark Color 1 */  
   color: #feffff; /** Light Color Brightest */
 }
@@ -968,8 +998,8 @@ textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -
 {
   border-top-color: #111111; /** Dark Border 3*/
   border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/
+  border-bottom-color: #797f76; /** Dark Border 2*/
+  border-right-color: #222222; /** Dark Border 1*/
   background-color: #202220; /** Dark Color 1 */ 
   color: #feffff; /** Light Color Brightest */
 }
@@ -1066,7 +1096,7 @@ tree
 tree treecol
 {
   background-color: transparent;
-  border: 0px solid transparent !important;
+  border-right: 1px solid #202220 !important; /** Dark Color 2 */
 }
 
 treechildren::-moz-tree-row
@@ -1195,8 +1225,8 @@ menulist
   border: 1px solid;
   border-top-color: #111111; /** Dark Border 3*/
   border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/ 
+  border-bottom-color: #797f76; /** Dark Border 2*/
+  border-right-color: #222222; /** Dark Border 1*/
 }
 
 menulist[disabled="true"]
@@ -1222,16 +1252,12 @@ listbox
   border: 1px solid;
   border-top-color: #111111; /** Dark Border 3*/
   border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/
+  border-bottom-color: #797f76; /** Dark Border 2*/
+  border-right-color: #222222; /** Dark Border 1*/
   -moz-border-radius: 5px;
 }
 
-listitem[selected="true"]
-{
-  background-color: #B3BAAC; /** Light Color 1*/
-  color: #0f100f; /** Dark Color 2 */
-}
+
 
 listitem[selected="true"] > listcell > .listcell-label
 {
@@ -1239,7 +1265,7 @@ listitem[selected="true"] > listcell > .listcell-label
 }
 
 listbox:focus > listitem[selected="true"][current="true"] {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #8A8F84; /** Dark Color 2 */
 }
 
 listitem[selected="true"] {
@@ -1264,8 +1290,8 @@ textbox[type="number"] {
   border: 1px solid;
   border-top-color: #111111; /** Dark Border 3*/
   border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/
+  border-bottom-color: #797f76; /** Dark Border 2*/
+  border-right-color: #222222; /** Dark Border 1*/
   background-color: #202220; /** Dark Color 1 */ 
 }
 
@@ -1290,21 +1316,24 @@ progressmeter {
 }
 
 
+
 /** 
 ************************************************************************************************************************************************
 RICHLISTBOX
 ************************************************************************************************************************************************
 */
-
+.datepicker-mainbox,
+.datetimepicker-input,
+.datetimepicker-input-box ,
 richlistbox {
   color: #B3BAAC; /** Light Color 1 */
   border-top-color: #111111; /** Dark Border 3*/
   border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/
+  border-bottom-color: #797f76; /** Dark Border 2*/
+  border-right-color: #222222; /** Dark Border 1*/
   background-color: #202220; /** Dark Color 1 */ 
 }
- 
+
 richlistitem[selected="true"]
 {
   background-color: #B3BAAC; /** Light Color 1*/
@@ -1326,6 +1355,11 @@ richlistbox[seltype="multiple"]:focus > richlistitem[current="true"][selected="t
 TABBED BROWSER
 ************************************************************************************************************************************************
 */ 
+
+.tabbrowser-strip
+{
+  background-color: #202220;
+}
 
 tab,
 .tabbrowser-tab {

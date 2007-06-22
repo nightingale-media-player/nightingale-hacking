@@ -36,15 +36,43 @@ window,
 prefwindow,
 dialog
 {
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient.png); 
+  background-image: url(chrome://songbird/skin/backgrounds/background.png); 
   background-repeat: repeat-x;  
 }
 
-.playlist-toolbar-bkg
+scrollbar > slider > thumb
 {
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png); 
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_flat_10percent.png);
+  -moz-background-clip: padding;
 }
 
+sb-smart-splitter:hover,
+scrollbar > slider > thumb:hover
+{
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_flat_25percent.png);
+  -moz-background-clip: padding;
+}
+sb-smart-splitter:active,
+scrollbar > slider > thumb:active
+
+{
+  background-image: url(chrome://songbird/skin/backgrounds/chrome_flat_10percent.png);
+  -moz-background-clip: padding;
+}
+
+.tabbrowser-strip
+{
+  background-image: url(chrome://songbird/skin/backgrounds/tabbrowser-strip.png);
+  background-repeat: repeat-x;  
+  -moz-background-clip: padding;
+}
+
+splitter,
+splitter[orient="vertical"],
+sb-smart-splitter
+{
+  background: none;
+}
 
 /** 
 ************************************************************************************************************************************************
@@ -55,10 +83,12 @@ THE PLAYLIST
 /* Put a Background behind your filterlists for extra style. */
 playlist2
 {
-  background-image: url(chrome://songbird/skin/backgrounds/asanoha.png); 
+  /*background-image: url(chrome://songbird/skin/backgrounds/asanoha.png);*/ 
 }
 
-
-
-
+/*  This rule changes the background image behind the Main Pane **/
+#main_pane_border
+{
+  background-image: none;
+}
 
