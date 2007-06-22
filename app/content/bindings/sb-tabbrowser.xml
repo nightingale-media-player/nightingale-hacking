@@ -173,6 +173,24 @@
         </body>
       </method>
 
+      <method name="loadMediaList">
+        <parameter name="aMediaList"/>
+        <parameter name="aEvent"/>
+        <parameter name="aDefaultLocation"/>
+        <parameter name="aMediaListView"/>
+        <body>
+          <![CDATA[
+            var uri = 'chrome://songbird/content/xul/playlist_test2.xul?';
+            if (aMediaList.guid != aMediaList.library.guid) {
+              uri = uri + aMediaList.guid;
+            } else {
+              uri = uri + 'library,' + aMediaList.guid;
+            }
+            this.loadURI(uri, null, null, aEvent, aDefaultLocation, aMediaListView);
+          ]]>
+        </body>
+      </method>
+
       <field name="_prefsService">
         Components.classes["@mozilla.org/preferences-service;1"].
                 getService(Components.interfaces.nsIPrefBranch);

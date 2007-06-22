@@ -498,7 +498,15 @@ var SBWebPlaylistCommands =
         break;
         case "library_cmd_showdlplaylist":
         {
-          gBrowser.mCurrentTab.switchToDownloadView();
+          if (this.m_Context.m_Window.location.pathname ==
+              '/content/xul/playlist_test2.xul') {
+            // we're in the web library / inner playlist view
+            gBrowser.loadMediaList(gBrowser.downloadList);
+          } else {
+            // we're in a web playlist / outer playlist view
+            gBrowser.mCurrentTab.switchToDownloadView();
+          }
+          
         }
         break;
       }
@@ -948,7 +956,14 @@ var SBDownloadCommands =
         break;
         case "library_cmd_showwebplaylist":
         {
-          gBrowser.mCurrentTab.switchToWebPlaylistView();
+          if (this.m_Context.m_Window.location.pathname ==
+              '/content/xul/playlist_test2.xul') {
+            // we're in the download library / inner playlist view
+            gBrowser.loadMediaList(gBrowser.webLibrary);
+          } else {
+            // we're in a web playlist / outer playlist view
+            gBrowser.mCurrentTab.switchToWebPlaylistView();
+          }
         }
         break;
       }
