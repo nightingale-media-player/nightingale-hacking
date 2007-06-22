@@ -101,9 +101,7 @@ THE MAIN PANE
 
 #main_pane_border
 {
-  -moz-border-radius-topright: 5px;
-  -moz-border-radius-topleft: 5px;
-  border: 1px solid;
+  border: none;
 }
 
 
