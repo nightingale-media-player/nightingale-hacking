@@ -141,7 +141,7 @@ try
               ( this.i < this.object_array.length )
             )
           {
-            var url = this.object_array[ this.i ].getAttribute("src");
+            var url = this.object_array[ this.i ].getAttribute("data");
             if ( url )
               loop_break |= this.handleEmbedURL( url );
           }
