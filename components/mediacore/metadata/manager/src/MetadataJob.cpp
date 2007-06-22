@@ -41,10 +41,15 @@
 #include <xpcom/nsIObserverService.h>
 #include <xpcom/nsCRTGlue.h>
 #include <nsISupportsPrimitives.h>
+#include <nsIFile.h>
+#include <nsIFileURL.h>
+#include <nsAutoPtr.h>
 #include <nsThreadUtils.h>
 #include <nsMemory.h>
+#include <nsNetUtil.h>
 
 #include <nsIURI.h>
+#include <nsIIOService.h>
 #include <nsITextToSubURI.h>
 #include <pref/nsIPrefService.h>
 #include <pref/nsIPrefBranch2.h>
@@ -62,8 +67,17 @@
 #include <sbStandardProperties.h>
 #include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
+#include <sbProxyUtils.h>
 
 #include "MetadataJob.h"
+#include "sbMetadataUtils.h"
+
+// This define is to enable/disable proxying calls to the library and media
+// items to the main thread.  I am leaving this here so we can experiment with
+// the performance of threads talking to the library via a proxy.  If this is
+// acceptable, maybe we can make the library main thread only and save us some
+// pain.
+#define PROXY_LIBRARY 0
 
 #include "prlog.h"
 #ifdef PR_LOGGING
@@ -89,52 +103,90 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(MetadataJobProcessorThread, nsIRunnable)
 
 sbMetadataJob::sbMetadataJob() :
   mInitCount( 0 ),
+  mMetadataJobProcessor( nsnull ),
   mCompleted( PR_FALSE ),
   mInitCompleted( PR_FALSE ),
   mInitExecuted( PR_FALSE ),
   mTimerCompleted( PR_FALSE ),
-  mThreadCompleted( PR_FALSE ),
-  mMetatataJobProcessor( nsnull )
+  mThreadCompleted( PR_FALSE )
 {
-  // Fill with nsnull to signal the timer code that all slots are available.
-  for ( PRUint32 i = mTimerWorkers.Length(); i < NUM_CONCURRENT_MAINTHREAD_ITEMS; i++ )
-  {
-    sbMetadataJob::jobitem_t *item = nsnull;
-    mTimerWorkers.AppendElement( item );
-  }
-
-  mMainThreadQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
-  NS_ASSERTION(mMainThreadQuery, "Unable to create sbMetadataJob::mMainThreadQuery");
-  mMainThreadQuery->SetDatabaseGUID( sbMetadataJob::DATABASE_GUID() );
-  mMainThreadQuery->SetAsyncQuery( PR_FALSE );
-
-  mTimer = do_CreateInstance(NS_TIMER_CONTRACTID);
-  NS_ASSERTION(mTimer, "Unable to create sbMetadataJob::mTimer");
-
-  mDataStatusDisplay = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1" );
-  NS_ASSERTION(mDataStatusDisplay, "Unable to create sbMetadataJob::mDataStatusDisplay");
-  mDataStatusDisplay->Init( NS_LITERAL_STRING("songbird.backscan.status"), NS_LITERAL_STRING("") );
-
-  mDataCurrentMetadataJobs = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1" );
-  NS_ASSERTION(mDataCurrentMetadataJobs, "Unable to create sbMetadataJob::mDataCurrentMetadataJobs");
-  mDataCurrentMetadataJobs->Init( NS_LITERAL_STRING("songbird.backscan.concurrent"), NS_LITERAL_STRING("") );
-
-  // We only use one string, so read it in here.
-  nsresult rv;
-  nsCOMPtr< nsIStringBundle >     stringBundle;
-  nsCOMPtr< nsIStringBundleService > StringBundleService = do_GetService("@mozilla.org/intl/stringbundle;1", &rv );
-  if ( NS_SUCCEEDED(rv) )
-    rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties", getter_AddRefs( stringBundle ) );
-  PRUnichar *value = nsnull;
-  stringBundle->GetStringFromName( NS_LITERAL_STRING("back_scan.scanning").get(), &value );
-  mStatusDisplayString = value;
-  mStatusDisplayString.AppendLiteral(" ... ");
-  nsMemory::Free(value);
 }
 
 sbMetadataJob::~sbMetadataJob()
 {
   Cancel();
+}
+
+nsresult
+sbMetadataJob::FactoryInit()
+{
+  nsresult rv;
+
+  // Fill with nsnull to signal the timer code that all slots are available.
+  for ( PRUint32 i = mTimerWorkers.Length(); i < NUM_CONCURRENT_MAINTHREAD_ITEMS; i++ )
+  {
+    sbMetadataJob::jobitem_t *item = nsnull;
+    jobitem_t** appendedItem = mTimerWorkers.AppendElement( item );
+    NS_ENSURE_TRUE(appendedItem, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  mMainThreadQuery =
+    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMainThreadQuery->SetDatabaseGUID( sbMetadataJob::DATABASE_GUID() );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mDataStatusDisplay =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataStatusDisplay->Init( NS_LITERAL_STRING("songbird.backscan.status"),
+                                 NS_LITERAL_STRING("") );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mDataCurrentMetadataJobs =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataCurrentMetadataJobs->Init( NS_LITERAL_STRING("songbird.backscan.concurrent"),
+                                       NS_LITERAL_STRING("") );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIURIMetadataHelper> uriMetadataHelper = new sbURIMetadataHelper();
+  NS_ENSURE_TRUE(uriMetadataHelper, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                            NS_GET_IID(sbIURIMetadataHelper),
+                            uriMetadataHelper,
+                            NS_PROXY_SYNC,
+                            getter_AddRefs(mURIMetadataHelper));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // We only use one string, so read it in here.
+  nsCOMPtr<nsIStringBundle> stringBundle;
+  nsCOMPtr<nsIStringBundleService> StringBundleService =
+    do_GetService("@mozilla.org/intl/stringbundle;1", &rv );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties",
+                                          getter_AddRefs( stringBundle ) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString scanning;
+  rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("back_scan.scanning").get(),
+                                        getter_Copies(scanning) );
+  if (NS_FAILED(rv)) {
+    scanning.AssignLiteral("Scanning");
+  }
+  scanning.AppendLiteral(" ... ");
+  mStatusDisplayString = scanning;
+  return NS_OK;
 }
 
 /* readonly attribute AString tableName; */
@@ -220,9 +272,10 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create all that groovy stuff.
-  PRBool error;
+  PRInt32 error;
   rv = mMainThreadQuery->Execute( &error );
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
 
   // Update any old items that were scanned but not written
   rv = ResetUnwritten( mMainThreadQuery, mTableName );
@@ -262,13 +315,10 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   NS_ENSURE_SUCCESS(rv, rv);
 
   // So now it's safe to launch the thread
-  mMetatataJobProcessor = new MetadataJobProcessorThread( this );
-  NS_ASSERTION(mMetatataJobProcessor, "Unable to create MetatataJobProcessorRunner");
-  if ( mMetatataJobProcessor )
-  {
-    rv = NS_NewThread( getter_AddRefs(mThread), mMetatataJobProcessor );
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start thread");
-  }
+  mMetadataJobProcessor = new MetadataJobProcessorThread( this );
+  NS_ENSURE_TRUE(mMetadataJobProcessor, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = NS_NewThread( getter_AddRefs(mThread), mMetadataJobProcessor );
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Tell the world we're starting to scan something.
@@ -284,10 +334,10 @@ NS_IMETHODIMP sbMetadataJob::Cancel()
   // Quit the timer.
   CancelTimer();
 
-  if ( mMetatataJobProcessor )
+  if ( mMetadataJobProcessor )
   {
     // Tell the thread to go away, please.
-    mMetatataJobProcessor->mShutdown = PR_TRUE;
+    mMetadataJobProcessor->mShutdown = PR_TRUE;
 
     // Wait for the thread to shutdown and release all resources.
     mThread->Shutdown();
@@ -344,16 +394,17 @@ nsresult sbMetadataJob::RunTimer()
       NS_ENSURE_SUCCESS(rv, rv);
       rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
       NS_ENSURE_SUCCESS(rv, rv);
-      PRBool error;
+      PRInt32 error;
       rv = mMainThreadQuery->Execute( &error );
       NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
 
       // Relaunch the thread if it has completed and we add new task items.
       if ( mThreadCompleted )
       {
         mThreadCompleted = PR_FALSE;
         // So now it's safe to re-launch the thread
-        rv = NS_NewThread( getter_AddRefs(mThread), mMetatataJobProcessor );
+        rv = NS_NewThread( getter_AddRefs(mThread), mMetadataJobProcessor );
         NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start thread");
         NS_ENSURE_SUCCESS(rv, rv);
       }
@@ -382,7 +433,7 @@ nsresult sbMetadataJob::RunTimer()
       if ( completed )
       {
         // Try to write it out
-        rv = AddMetadataToItem( item, PR_TRUE ); // Flush properties cache every time
+        rv = AddMetadataToItem( item, mURIMetadataHelper, PR_TRUE ); // Flush properties cache every time
         // NS_ENSURE_SUCCESS(rv, rv); // Allow it to fail.  We already put a default value in for it.
         rv = SetItemIsWrittenAndDelete( mMainThreadQuery, mTableName, item );
         NS_ENSURE_SUCCESS(rv, rv);
@@ -397,6 +448,10 @@ nsresult sbMetadataJob::RunTimer()
       // Get the next task
       sbMetadataJob::jobitem_t * item;
       rv = GetNextItem( mMainThreadQuery, mTableName, PR_FALSE, &item );
+      if (rv == NS_ERROR_NOT_AVAILABLE) {
+        mTimerCompleted = PR_TRUE;
+        break;
+      }
       NS_ENSURE_SUCCESS(rv, rv);
 
 #if PR_LOGGING
@@ -414,20 +469,15 @@ nsresult sbMetadataJob::RunTimer()
       TRACE(("sbMetadataJob[0x%.8x] - MAIN THREAD - GetNextItem( %s )", this, alert.get()));
 #endif
 
-      // We're out of items.  Leave this worker NULL, when all are NULL we quit.
-      if ( item->library_guid.EqualsLiteral("") )
-      {
-        mTimerCompleted = PR_TRUE;
-        break;
-      }
-
       // Create the metadata handler and launch it
       rv = StartHandlerForItem( item );
       // Ignore errors on the metadata loop, just set a default and keep going.
-      if ( ! NS_SUCCEEDED(rv) )
+      if ( NS_FAILED(rv) )
       {
         // Give a nice warning
-        TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - Unable to add metadata for( %s )", this, item->url));
+        TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - "
+               "Unable to add metadata for( %s )", this,
+               NS_LossyConvertUTF16toASCII(item->url).get()));
         // Record this item as completed.
         rv = SetItemIsScanned( mMainThreadQuery, mTableName, item );
         NS_ENSURE_SUCCESS(rv, rv);
@@ -563,6 +613,9 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
     // Get the next task
     sbMetadataJob::jobitem_t * item;
     rv = GetNextItem( WorkerThreadQuery, aTableName, PR_TRUE, &item );
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      break;
+    }
     NS_ENSURE_SUCCESS(rv, rv);
 
 #if PR_LOGGING
@@ -579,12 +632,6 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 
     TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - GetNextItem( %s )", this, alert.get()));
 #endif
-
-    // We're out of items.  Complete the thread.
-    if ( item->library_guid.EqualsLiteral("") )
-    {
-      break;
-    }
 
     if ( !library )
     {
@@ -618,7 +665,7 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
       }
 
       // Make an sbIMediaItem and push the metadata into it
-      rv = AddMetadataToItem( item, flush );
+      rv = AddMetadataToItem( item, mURIMetadataHelper, flush );
 
       // Close the handler by hand since we know we're done with it and
       // we won't get rid of the item for awhile.
@@ -629,7 +676,9 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
     if ( NS_FAILED(rv) )
     {
       // Give a nice warning
-      TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - Unable to add metadata for( %s )", this, item->url));
+      TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - "
+             "Unable to add metadata for( %s )", this,
+             NS_LossyConvertUTF16toASCII(item->url).get()));
     }
 
     rv = SetItemIsScanned( WorkerThreadQuery, aTableName, item );
@@ -686,9 +735,11 @@ nsresult sbMetadataJob::FinishJob()
   NS_ENSURE_SUCCESS(rv, rv);
   rv = mMainThreadQuery->AddQuery( dropTable );
   NS_ENSURE_SUCCESS(rv, rv);
-  PRBool error;
+
+  PRInt32 error;
   rv = mMainThreadQuery->Execute( &error );
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
 
   // Remove the entry from the tracking table
   nsAutoString delTracking;
@@ -713,7 +764,12 @@ nsresult sbMetadataJob::FinishJob()
   NS_ENSURE_SUCCESS(rv, rv);
   rv = mMainThreadQuery->AddQuery( delTracking );
   NS_ENSURE_SUCCESS(rv, rv);
-  return mMainThreadQuery->Execute( &error );
+
+  rv = mMainThreadQuery->Execute( &error );
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 nsresult sbMetadataJob::AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsString aTableName, sbIMediaItem *aMediaItem, jobitem_t **_retval )
@@ -803,68 +859,164 @@ nsresult sbMetadataJob::GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableNa
 
   nsresult rv;
 
-  // Compose the query string.
-  nsAutoString getNextItem;
-  nsCOMPtr<sbISQLBuilderCriterion> criterionWT;
-  nsCOMPtr<sbISQLBuilderCriterion> criterionIS;
-  nsCOMPtr<sbISQLBuilderCriterion> criterionAND;
-  nsCOMPtr<sbISQLSelectBuilder> select =
-    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = select->SetBaseTableName( aTableName );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = select->AddColumn( aTableName, NS_LITERAL_STRING("*") );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = select->CreateMatchCriterionLong( aTableName,
-                                            NS_LITERAL_STRING("worker_thread"),
-                                            sbISQLSelectBuilder::MATCH_EQUALS,
-                                            ( isWorkerThread ) ? 1 : 0,
-                                            getter_AddRefs(criterionWT) );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = select->CreateMatchCriterionLong( aTableName,
-                                            NS_LITERAL_STRING("is_scanned"),
-                                            sbISQLSelectBuilder::MATCH_EQUALS,
-                                            0,
-                                            getter_AddRefs(criterionIS) );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = select->CreateAndCriterion( criterionWT,
-                                    criterionIS,
-                                    getter_AddRefs(criterionAND) );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = select->AddCriterion( criterionAND );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = select->SetLimit( 1 );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = select->ToString( getNextItem );
-  NS_ENSURE_SUCCESS(rv, rv);
-        
-  // Make it go.
-  rv = aQuery->SetAsyncQuery( PR_FALSE );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = aQuery->ResetQuery();
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = aQuery->AddQuery( getNextItem );
-  NS_ENSURE_SUCCESS(rv, rv);
-  PRBool error;
-  rv = aQuery->Execute( &error );
-  NS_ENSURE_SUCCESS(rv, rv);
+  // We break out of this loop either when we find an item or when there are
+  // no items left
+  while (PR_TRUE) {
 
-  // And return what it got.
-  nsCOMPtr< sbIDatabaseResult > pResult;
-  rv = aQuery->GetResultObject( getter_AddRefs(pResult) );
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  *_retval = new jobitem_t(
-                  LG( pResult ),
-                  IG( pResult ),
-                  URL( pResult ),
-                  WT( pResult ),
-                  IS( pResult ),
-                  nsnull
-                );
+    // Compose the query string.
+    nsAutoString getNextItem;
+    nsCOMPtr<sbISQLBuilderCriterion> criterionWT;
+    nsCOMPtr<sbISQLBuilderCriterion> criterionIS;
+    nsCOMPtr<sbISQLBuilderCriterion> criterionAND;
+    nsCOMPtr<sbISQLSelectBuilder> select =
+      do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = select->SetBaseTableName( aTableName );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = select->AddColumn( aTableName, NS_LITERAL_STRING("*") );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = select->CreateMatchCriterionLong( aTableName,
+                                           NS_LITERAL_STRING("worker_thread"),
+                                           sbISQLSelectBuilder::MATCH_EQUALS,
+                                           ( isWorkerThread ) ? 1 : 0,
+                                           getter_AddRefs(criterionWT) );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = select->CreateMatchCriterionLong( aTableName,
+                                           NS_LITERAL_STRING("is_scanned"),
+                                           sbISQLSelectBuilder::MATCH_EQUALS,
+                                           0,
+                                           getter_AddRefs(criterionIS) );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = select->CreateAndCriterion( criterionWT,
+                                     criterionIS,
+                                     getter_AddRefs(criterionAND) );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = select->AddCriterion( criterionAND );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = select->SetLimit( 1 );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = select->ToString( getNextItem );
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY); 
-  return NS_OK;
+    // Make it go.
+    rv = aQuery->SetAsyncQuery( PR_FALSE );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aQuery->ResetQuery();
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aQuery->AddQuery( getNextItem );
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt32 error;
+    rv = aQuery->Execute( &error );
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
+
+    // And return what it got.
+    nsCOMPtr< sbIDatabaseResult > pResult;
+    rv = aQuery->GetResultObject( getter_AddRefs(pResult) );
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 rowCount;
+    rv = pResult->GetRowCount(&rowCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (rowCount == 0) {
+      return NS_ERROR_NOT_AVAILABLE;
+    }
+
+    nsAutoString libraryGuid;
+    rv = pResult->GetRowCellByColumn(0, NS_LITERAL_STRING( "library_guid" ), libraryGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString itemGuid;
+    rv = pResult->GetRowCellByColumn(0, NS_LITERAL_STRING( "item_guid" ), itemGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString workerThread;
+    rv = pResult->GetRowCellByColumn(0, NS_LITERAL_STRING( "worker_thread" ), workerThread);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString isScanned;
+    rv = pResult->GetRowCellByColumn(0, NS_LITERAL_STRING( "is_scanned" ), isScanned);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILibraryManager> libraryManager =
+      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbILibrary> library;
+    rv = libraryManager->GetLibrary( libraryGuid, getter_AddRefs(library) );
+    if (NS_SUCCEEDED(rv)) {
+#ifdef PROXY_LIBRARY
+      nsCOMPtr<sbILibrary> proxiedLibrary;
+      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                NS_GET_IID(sbILibrary),
+                                library,
+                                NS_PROXY_SYNC,
+                                getter_AddRefs(proxiedLibrary));
+      NS_ENSURE_SUCCESS(rv, rv);
+      library = proxiedLibrary;
+#endif
+      nsCOMPtr<sbIMediaItem> item;
+      rv = library->GetMediaItem( itemGuid, getter_AddRefs(item) );
+      if (NS_SUCCEEDED(rv)) {
+
+#ifdef PROXY_LIBRARY
+        nsCOMPtr<sbIMediaItem> proxiedItem;
+        rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                  NS_GET_IID(sbIMediaItem),
+                                  item,
+                                  NS_PROXY_SYNC,
+                                  getter_AddRefs(proxiedItem));
+        NS_ENSURE_SUCCESS(rv, rv);
+        item = proxiedItem;
+#endif
+
+#ifdef PR_LOGGING
+        nsAutoString itemStr;
+        item->ToString(itemStr);
+        TRACE(("sbMetadataJob - GetNextItem - Got '%s'",
+               NS_LossyConvertUTF16toASCII(itemStr).get()));
+#endif
+
+        nsAutoString uriSpec;
+        rv = item->GetProperty( NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                uriSpec );
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        *_retval = new jobitem_t( libraryGuid,
+                                  itemGuid,
+                                  uriSpec,
+                                  workerThread,
+                                  isScanned,
+                                  item,
+                                  nsnull );
+        NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY); 
+        return NS_OK;
+      }
+    }
+
+    // If we get here, we were unable to find the media item associated with
+    // the metadata job.  Just mark the item as scanned and written and
+    // continue
+
+    TRACE(("sbMetadataJob - GetNextItem - Item with guid '%s' has gone away",
+           NS_LossyConvertUTF16toASCII(itemGuid).get()));
+
+    nsAutoPtr<jobitem_t> tempItem(new jobitem_t( libraryGuid,
+                                                 itemGuid,
+                                                 EmptyString(),
+                                                 workerThread,
+                                                 isScanned,
+                                                 nsnull,
+                                                 nsnull ));
+    NS_ENSURE_TRUE(tempItem, NS_ERROR_OUT_OF_MEMORY); 
+    rv = SetItemIsScanned( aQuery, aTableName, tempItem );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = SetItemIsWrittenAndDelete( aQuery, aTableName, tempItem );
+    NS_ENSURE_SUCCESS(rv, rv);
+    tempItem.forget();
+  }
+
 }
 
 nsresult sbMetadataJob::SetItemIsScanned( sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem )
@@ -898,9 +1050,11 @@ nsresult sbMetadataJob::SetItemsAreWrittenAndDelete( sbIDatabaseQuery *aQuery, n
   }
   rv = aQuery->AddQuery( NS_LITERAL_STRING("commit") );
   NS_ENSURE_SUCCESS(rv, rv);
-  PRBool error;
+  PRInt32 error;
   rv = aQuery->Execute( &error );
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
+
   aItemArray.Clear();
   return NS_OK;
 }
@@ -959,9 +1113,10 @@ nsresult sbMetadataJob::SetItemIs( const nsAString &aColumnString, sbIDatabaseQu
   NS_ENSURE_SUCCESS(rv, rv);
   if ( aExecute )
   {
-    PRBool error;
+    PRInt32 error;
     rv = aQuery->Execute( &error );
     NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
   }
   return NS_OK;
 }
@@ -1000,9 +1155,10 @@ nsresult sbMetadataJob::ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTabl
   NS_ENSURE_SUCCESS(rv, rv);
   rv = aQuery->AddQuery( updateUnwritten );
   NS_ENSURE_SUCCESS(rv, rv);
-  PRBool error;
+  PRInt32 error;
   rv = aQuery->Execute( &error );
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
   return NS_OK;
 }
 
@@ -1018,9 +1174,12 @@ nsresult sbMetadataJob::StartHandlerForItem( sbMetadataJob::jobitem_t *aItem )
   return aItem->handler->Read( &async );
 }
 
-nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem, PRBool aShouldFlush )
+nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
+                                           sbIURIMetadataHelper *aURIMetadataHelper,
+                                           PRBool aShouldFlush )
 {
   NS_ENSURE_ARG_POINTER( aItem );
+  NS_ENSURE_ARG_POINTER( aURIMetadataHelper );
 
   nsresult rv;
 
@@ -1028,15 +1187,7 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem, PRBo
   // - Update the metadata handlers to use the new keystrings
 
   // Get the sbIMediaItem we're supposed to be updating
-  nsCOMPtr<sbILibraryManager> libraryManager;
-  libraryManager = do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbILibrary> library;
-  rv = libraryManager->GetLibrary( aItem->library_guid, getter_AddRefs(library) );
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbIMediaItem> item;
-  rv = library->GetMediaItem( aItem->item_guid, getter_AddRefs(item) );
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaItem> item = aItem->item;
 
   // Get the metadata values that were found
   nsCOMPtr<sbIMetadataValues> values;
@@ -1139,6 +1290,18 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem, PRBo
 
   rv = AppendIfValid( propMan, properties, totalDiscsKey, totalDiscs );
   NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 fileSize;
+  rv = aURIMetadataHelper->GetFileSize(aItem->url, &fileSize);
+  if (NS_SUCCEEDED(rv)) {
+    nsAutoString contentLength;
+    contentLength.AppendInt(fileSize);
+    rv = AppendIfValid( propMan,
+                        properties,
+                        NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
+                        contentLength );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = item->SetProperties(properties);
   NS_ENSURE_SUCCESS(rv, rv);

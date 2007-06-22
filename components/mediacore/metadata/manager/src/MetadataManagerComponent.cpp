@@ -43,7 +43,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataValues)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataChannel)
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataBackscanner, sbMetadataBackscanner::GetSingleton)
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataJobManager, sbMetadataJobManager::GetSingleton)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataJob)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataJob, FactoryInit)
 
 static nsModuleComponentInfo sbMetadataManagerComponent[] =
 {

@@ -53,6 +53,7 @@
 #include "sbIDatabaseQuery.h"
 #include "sbIDatabaseResult.h"
 #include "sbIDataRemote.h"
+#include "sbIMediaItem.h"
 #include "sbIMetadataManager.h"
 #include "sbIMetadataHandler.h"
 #include "sbIMetadataJob.h"
@@ -75,6 +76,7 @@
 
 // CLASSES ====================================================================
 class sbIMediaItem;
+class sbIURIMetadataHelper;
 class sbIMutablePropertyArray;
 class sbIPropertyArray;
 class sbIPropertyManager;
@@ -90,6 +92,8 @@ public:
 
   sbMetadataJob();
   virtual ~sbMetadataJob();
+
+  nsresult FactoryInit();
 
   static void MetadataJobTimer(nsITimer *aTimer, void *aClosure)
   {
@@ -107,6 +111,7 @@ protected:
       nsString _url = nsString(),
       nsString _worker_thread = nsString(),
       nsString _is_scanned = nsString(),
+      sbIMediaItem* _item = nsnull,
       sbIMetadataHandler *_handler = nsnull
     ) :
       library_guid( _library_guid ),
@@ -114,6 +119,7 @@ protected:
       url( _url ),
       worker_thread( _worker_thread ),
       is_scanned( _is_scanned ),
+      item( _item ),
       handler( _handler )
     {}
 
@@ -122,6 +128,7 @@ protected:
     nsString url;
     nsString worker_thread;
     nsString is_scanned;
+    nsCOMPtr<sbIMediaItem> item;
     nsCOMPtr<sbIMetadataHandler> handler;
   };
 
@@ -138,21 +145,13 @@ protected:
   static nsresult SetItemIs( const nsAString &aColumnString, sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
   static nsresult ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTableName );
   static nsresult StartHandlerForItem( jobitem_t *aItem );
-  static nsresult AddMetadataToItem( jobitem_t *aItem, PRBool aShouldFlush );
+  static nsresult AddMetadataToItem( jobitem_t *aItem, sbIURIMetadataHelper *aURIMetadataHelper, PRBool aShouldFlush );
   static nsresult AddDefaultMetadataToItem( jobitem_t *aItem, sbIMediaItem *aMediaItem, PRBool aShouldFlush );
   static nsString CreateDefaultItemName( const nsString &aURLString );
   static nsresult AppendIfValid(sbIPropertyManager* aPropertyManager, sbIMutablePropertyArray* aProperties, const nsAString& aName, const nsAString& aValue);
 
   void IncrementDataRemote();
   void DecrementDataRemote();
-
-#define MDJ_CRACK( function, string ) \
-  static inline nsAutoString function ( sbIDatabaseResult *i ) { nsAutoString str; i->GetRowCellByColumn(0, NS_LITERAL_STRING( string ), str); return str; }
-MDJ_CRACK( LG, "library_guid" );
-MDJ_CRACK( IG, "item_guid" );
-MDJ_CRACK( URL, "url" );
-MDJ_CRACK( WT, "worker_thread" );
-MDJ_CRACK( IS, "is_scanned" );
 
   nsCOMArray<sbIMediaItem>      mInitArray;
   PRUint32                      mInitCount;
@@ -165,8 +164,9 @@ MDJ_CRACK( IS, "is_scanned" );
   nsCOMPtr<nsITimer>            mTimer;
   nsCOMPtr<nsIThread>           mThread;
   nsTArray<jobitem_t *>         mTimerWorkers;
-  nsCOMPtr<MetadataJobProcessorThread> mMetatataJobProcessor;
+  nsCOMPtr<MetadataJobProcessorThread> mMetadataJobProcessor;
   nsCOMPtr<nsIObserver>         mObserver;
+  nsCOMPtr<sbIURIMetadataHelper> mURIMetadataHelper;
   PRBool                        mCompleted;
   PRBool                        mInitCompleted;
   PRBool                        mInitExecuted;
