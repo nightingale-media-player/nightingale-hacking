@@ -39,8 +39,6 @@ sb-smart-splitter
   background-repeat: no-repeat;
   background-position: center center;
   border: 0px solid transparent; 
-  width: 7px;
-  height: 7px;
 }
    
    
@@ -56,9 +54,9 @@ sb-smart-splitter[orient="vertical"]
 
 /** Match global/splitter.css rule for vertical splitter grippies **/
 sb-smart-splitter[orient="vertical"] > grippy {
-  margin: 1px 0px;
+  margin: 0;
   min-width: 42px;
-  min-height: 5px;
+  min-height: 3px;
 }
 
 
@@ -67,7 +65,7 @@ splitter,
 splitter[orient="vertical"],
 sb-smart-splitter
 {
-  background: url(chrome://songbird/skin/splitter/grippy.png) transparent no-repeat center; 
+  background: url(chrome://songbird/skin/splitter/grippy.png) transparent no-repeat center;
   margin: 0;
   padding: 0;
 }

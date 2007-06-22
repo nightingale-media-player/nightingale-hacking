@@ -171,10 +171,9 @@ GENERAL RULES
   padding-right: 1px;
 }
 
-/** Remove border for the browser toolbar so it blends with the tab box **/
+/** browser toolbar **/
 #navigator-toolbox > toolbar
 {
-  border: none;
 }
 
 

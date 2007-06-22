@@ -232,9 +232,7 @@ RESIZERS
 ************************************************************************************************************************************************
 */ 
 
-.sb-sys-outer-frame-resizer-t,
-.sb-sys-outer-frame-resizer-tl,
-.sb-sys-outer-frame-resizer-tr,
+
 .sb-sys-outer-frame-resizer-b,
 .sb-sys-outer-frame-resizer-bl,
 .sb-sys-outer-frame-resizer-br,
@@ -245,8 +243,15 @@ RESIZERS
 .sb-sys-outer-frame-resizer-r,
 .sb-sys-outer-frame-resizer-rb
 {
-  height: 9px !important;
-  width: 9px !important;
+  height: 5px !important;
+  width: 5px !important;
 }
 
+.sb-sys-outer-frame-resizer-t,
+.sb-sys-outer-frame-resizer-tl,
+.sb-sys-outer-frame-resizer-tr
+{
+  height: 1px !important;
+  width: 1px !important;
+}
 

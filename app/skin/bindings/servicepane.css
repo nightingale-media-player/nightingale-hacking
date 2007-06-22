@@ -78,9 +78,8 @@ Currently a single clickhold button below the service tree
 
 #frame_service_buttonbar button
 {
-  border: 1px solid; 
   padding: 0px;
-  margin: 2px;
+  margin: 0px;
   height: 25px;  
 }
 

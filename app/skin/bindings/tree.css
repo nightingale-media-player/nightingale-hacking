@@ -41,6 +41,11 @@ treecol:hover
   background-image: url(chrome://songbird/skin/tree/treecol-hover.png) ;
 }
 
+treecol:hover:active
+{
+  background-image: url(chrome://songbird/skin/tree/treecol.png);
+}
+
 /* column picker **/
 .tree-columnpicker-icon
 {
