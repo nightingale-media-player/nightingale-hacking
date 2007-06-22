@@ -181,7 +181,7 @@ sb-tabbrowser > tabbox > tabpanels {
 .tabbrowser-arrowscrollbox > .scrollbutton-up {
   width: 18px;
   height: 18px;
-  margin: 2px 1px 3px 0px;
+  margin: 4px 1px 3px 0px;
   padding-left: 0;
   padding-right: 0;
   border: none !important;
@@ -210,13 +210,13 @@ sb-tabbrowser > tabbox > tabpanels {
 }
 
 .scrollbutton-rel-box > .scrollbutton-down-box {
-  margin: 2px 0px 3px 0px;
+  margin: 4px 0px 3px 0px;
   width: 18px;
   height: 18px;
 }
 
 .scrollbutton-rel-box > .scrollbutton-down {
-  margin: 2px 0px 3px 1px;
+  margin: 4px 0px 3px 1px;
   width: 18px;
   height: 18px;
   background-color: transparent !important;
@@ -253,13 +253,13 @@ sb-tabbrowser > tabbox > tabpanels {
  */
 
 .tabs-alltabs-box {
-  margin: 2px 0px 3px 0px;
+  margin: 4px 0px 3px 0px;
   width: 16px;
   height: 18px;
 }
 
 .tabs-alltabs-button {
-  margin: 2px 0px 3px 0px;
+  margin: 4px 0px 3px 0px;
   width: 16px;
   height: 18px;
   padding-left: 0;
@@ -279,7 +279,7 @@ sb-tabbrowser > tabbox > tabpanels {
 }
 
 .tabs-alltabs-button:hover {
-  margin: 2px 0px 3px 0px;
+  margin: 4px 0px 3px 0px;
   background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
 }
 

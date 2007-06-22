@@ -49,9 +49,9 @@ toolbarbutton {
   -moz-box-align: center;
   -moz-box-pack: center;
   margin: 0px 2px 0px 2px;
-  padding: 3px 1px 3px 1px;
+  padding: 3px 5px 3px 5px;
   border: 1px solid transparent;
-  -moz-border-radius: 5px;
+  -moz-border-radius: 4px;
   background-color: transparent;
 }
 
