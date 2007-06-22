@@ -67,7 +67,7 @@ function runTest () {
   
   testAllItemsRemoved();
   
-  testLibrariesAndContents();  
+  testLibrariesAndContents();
 }
 
 
@@ -354,7 +354,7 @@ function testInsertionLogic() {
   
   // Now pretend the user moves their playlists in between some
   // of their bookmark folders
-  var bmNode1 = servicePane.addNode("urn:test:1", servicePane.root, true);
+  var bmNode1 = servicePane.addNode("urn:test:1", servicePane.root, true);  
   var bmNode2 = servicePane.addNode("urn:test:2", servicePane.root, true);
   DBG("About to move all playlists between some bookmarks");
   showTree(servicePane.root, "tree-before-move: ");

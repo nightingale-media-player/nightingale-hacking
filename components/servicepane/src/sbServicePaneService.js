@@ -487,7 +487,7 @@ function ServicePaneService_addNode(aId, aParent, aContainer) {
   if (aParent == null) {
     throw Ce('you need to supply a parent to addNode');
   }
-  
+
   var resource;
   if (aId != null) {
     resource = RDFSVC.GetResource(aId);
@@ -512,7 +512,6 @@ function ServicePaneService_addNode(aId, aParent, aContainer) {
   
   /* create the javascript proxy object */
   var node = new ServicePaneNode(this._dataSource, resource);
-  
   DEBUG ('ServicePaneService.addNode: node.hidden='+node.hidden);
   
   /* add the node to the parent */
@@ -525,7 +524,6 @@ function ServicePaneService_addNode(aId, aParent, aContainer) {
   
   // by default nothing is editable
   node.editable = false;
-  
   return node;
 }
 ServicePaneService.prototype.removeNode =
@@ -962,7 +960,10 @@ function dsSaver(ds, frequency) {
 }
 dsSaver.prototype = {
   save: function dsSaver_save() {
-    this.ds.Flush();
+    if (this.dirty) {
+      this.ds.Flush();
+      this.dirty = false;
+    }
   },
   /* nsISupports */
   QueryInterface: function dsSaver_QueryInterface(iid) {
@@ -976,20 +977,20 @@ dsSaver.prototype = {
   
   /* nsIObserver */
   observe: function dsSaver_observe(subject, topic, data) {
-    if (subject == this.timer &&
-        topic == 'timer-callback') {
-      /* a timer went off */
-      if (this.dirty) {
+    switch (topic) {
+      case 'timer-callback':
+        if (subject == this.timer) {
+          this.save();
+        }
+        break;
+      case 'quit-application':
         this.save();
-      }
-    } else if (topic == 'quit-application') {
-      if (this.dirty) {
-        this.save();
-      }
-      Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService)
-        .removeObserver(this, 'quit-application');
-      this.ds.RemoveObserver(this);
-      this.timer.cancel();
+        Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService)
+          .removeObserver(this, 'quit-application');
+        this.ds.RemoveObserver(this);
+        this.timer.cancel();
+        break;
+      default:
     }
   },
   

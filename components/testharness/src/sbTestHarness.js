@@ -253,7 +253,6 @@ sbTestHarness.prototype = {
       for ( var index = 0; index < this.mFailedTests.length ; index++ )
         log("[Test Harness] - " + this.mFailedTests[index]);
       log("\n\n");
-      throw Cr.NS_ERROR_ABORT;
     }
     else {
       log("\n\n");
@@ -263,6 +262,9 @@ sbTestHarness.prototype = {
     consoleService.unregisterListener(consoleListener);
     this._enableScriptTimeout();
 
+    if (this.mFailedTests) {
+      throw Cr.NS_ERROR_ABORT;
+    }
   },
 
   // called only if there are NO components passed in, builds a list

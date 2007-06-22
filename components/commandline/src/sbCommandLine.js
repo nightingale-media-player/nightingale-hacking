@@ -140,8 +140,34 @@ sbCommandLineHandler.prototype = {
       // we're running tests, make sure we don't open a window
       cmdLine.preventDefault = true;
       var testHarness = Cc["@songbirdnest.com/Songbird/TestHarness;1"].getService(Ci.sbITestHarness);
-      testHarness.init(tests);
-      return testHarness.run();
+
+      var exception;
+      try {
+        testHarness.init(tests);
+        testHarness.run();
+      }
+      catch (e) {
+        exception = e;
+      }
+
+      // Fake the sequence of observer notifications for app shutdown. This
+      // sequence should match that of canQuitApplication (from
+      // globalOverlay.js) and nsAppStartup::Quit (from nsAppStartup.cpp).
+      var os = Cc["@mozilla.org/observer-service;1"].
+               getService(Ci.nsIObserverService);
+
+      // We don't care if anyone tries to cancel quit...
+      var dummyCancelQuit = Cc["@mozilla.org/supports-PRBool;1"].
+                            createInstance(Ci.nsISupportsPRBool);
+      os.notifyObservers(dummyCancelQuit, "quit-application-requested", null);
+
+      os.notifyObservers(null, "quit-application-granted", null);
+      
+      os.notifyObservers(null, "quit-application", "shutdown");
+      
+      if (exception) {
+        throw Cr.NS_ERROR_ABORT;
+      }
     }
     
     // XXX bug 2186

@@ -36,7 +36,7 @@
  * \interface sbITestHarness
  * \brief An interface for launching unit tests from XULRunner apps
  */
-[scriptable, uuid(d0531d0b-36a8-4a59-84f3-8e9488dc2a96)]
+[scriptable, uuid(5b11ad26-8f01-46a8-8263-1de16be960eb)]
 interface sbITestHarness : nsISupports
 {
   /**
@@ -47,15 +47,13 @@ interface sbITestHarness : nsISupports
    *  within the testharness directory to test.
    * \param aPath A comma seperated list of components to test. If this 
    *              variable is null, all tests will be run.
-   * \return 
    */
   void init( in AString aComponentList );
 
   /**
    * \brief Run the tests
-   * \return  Success or failure
    */
-  PRInt32 run();
+  void run();
 
   /**
    * \brief Called by the test harness code when a test fails.
