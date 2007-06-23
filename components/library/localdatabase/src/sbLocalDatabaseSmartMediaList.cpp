@@ -140,13 +140,13 @@ ParseAndAddChunk(const nsAString& aString,
   if (pos > 1) {
     nsAutoString name(nsDependentSubstring(aString, 0, pos));
     nsCAutoString unescapedNameUtf8;
-    rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(name), unescapedNameUtf8);
+    rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(name), 0, unescapedNameUtf8);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString value(nsDependentSubstring(aString, pos + 1, length - pos));
     nsCAutoString unescapedValueUtf8;
     if (pos < length - 1) {
-      rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(value), unescapedValueUtf8);
+      rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(value), 0, unescapedValueUtf8);
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
