@@ -30,6 +30,10 @@
  * \sa sbICoreWrapper.idl coreBase.js
  */
 
+var Cr = Components.results;
+var Ci = Components.interfaces;
+var Cc = Components.classes;
+
 /**
  * ----------------------------------------------------------------------------
  * Core Implementation
@@ -196,6 +200,7 @@ CoreVLC.prototype._applyPreferences = function ()
   
   //Turn on volume normalization.
   config.setConfigString("main", "audio-filter", "volnorm");
+  config.setConfigInt("normvol", "norm-buff-size", 60);
   
   //Set user agent, read from moz prefs.
   //config.setConfigString("access_http", "http-user-agent", "Songbird");
@@ -222,12 +227,80 @@ CoreVLC.prototype._setAudioOutputDirectSound = function()
   }
 };
 
-CoreVLC.prototype._setProxyInfo = function (aProxyHost, aProxyUser, aProxyPassword)
+CoreVLC.prototype._setProxyForURI = function (aURI)
 {
-  var actualHost = "";
+  if(aURI.scheme == "http" ||
+     aURI.scheme == "https") {
+    
+    var prefsService = Cc["@mozilla.org/preferences-service;1"]
+                       .getService(Ci.nsIPrefService);
+    
+    var prefBranch = prefsService.getBranch("network.")
+                        .QueryInterface(Ci.nsIPrefBranch);
+    
+    var prefValue;
+    
+    var hostName = "";
+    var hostPort = 0;
+    
+    var prefHost = "";
+    var prefPort = "";
+    
+    var hostScheme = "";
+    
+    switch(aURI.scheme) {
+      case "http":
+        prefHost = "proxy.http";
+        prefPort = "proxy.http_port";
+        hostScheme = "http://";
+      break;
+      
+      case "https":
+        prefHost = "proxy.ssl";
+        prefPort = "proxy.ssl_port";
+        hostScheme = "http://";
+      break;
+      
+      default:
+        return;
+    }
+
+    prefValue = prefBranch.getCharPref(prefHost);
+    if(prefValue != "") {
+      hostName = prefValue;
+    }
+    prefValue = prefBranch.getIntPref(prefPort);
+    if(prefValue != 0) {
+      hostPort = prefValue;
+    }
+    
+    if(hostName != "" && hostPort != 0) {
+      this._setProxyInfo(hostScheme + hostName, hostPort);
+    }    
+  }
+};
+
+CoreVLC.prototype._setProxyInfo = function (aProxyHost, aProxyPort, aProxyUser, aProxyPassword)
+{
+  if(!aProxyHost ||
+     !aProxyHost.length) {
+    return;
+  }
+
+  var actualHost = aProxyHost;
+  var port = parseInt(aProxyPort);
+  
+  if(!isNaN(port)) {
+    actualHost = actualHost + ":" + aProxyPort;
+  }
+  
+  if(aProxyUser && aProxyUser.length && 
+     aProxyPassword && aProxyPassword.length) {
+    actualHost = aProxyUser + ":" + aProxyPassword + "@" + actualHost;
+  }
   
   //Set proxy host.
-  config.setConfigString("access_http", "http-proxy", actualHost);
+  this._object.config.setConfigString("access_http", "http-proxy", actualHost);
 };
 
 CoreVLC.prototype.playURL = function (aURL)
@@ -245,7 +318,12 @@ CoreVLC.prototype.playURL = function (aURL)
   var uri = newURI(aURL);
   if (!uri)
     return false;
-  
+
+  // Figure out if this URI can use a proxy, if so, try and get the proper
+  // proxy information from the preferences and set them in VLC.
+  // VLC only supports HTTP, HTTPS proxy through the access_http module.
+  this._setProxyForURI(uri);
+
   this._url = getVLCURLFromURI(uri);
   
   //Encode + signs since VLC will try and decode those as spaces. 
