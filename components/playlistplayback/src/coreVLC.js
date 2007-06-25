@@ -229,8 +229,7 @@ CoreVLC.prototype._setAudioOutputDirectSound = function()
 
 CoreVLC.prototype._setProxyForURI = function (aURI)
 {
-  if(aURI.scheme == "http" ||
-     aURI.scheme == "https") {
+  if(aURI.scheme == "http") {
     
     var prefsService = Cc["@mozilla.org/preferences-service;1"]
                        .getService(Ci.nsIPrefService);
@@ -255,11 +254,14 @@ CoreVLC.prototype._setProxyForURI = function (aURI)
         hostScheme = "http://";
       break;
       
+      //If you were to add another protocol, this is how you would do it.
+      /*
       case "https":
         prefHost = "proxy.ssl";
         prefPort = "proxy.ssl_port";
-        hostScheme = "http://";
+        hostScheme = "https://";
       break;
+      */
       
       default:
         return;
