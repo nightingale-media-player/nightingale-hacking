@@ -106,7 +106,7 @@ function getVLCURLFromURI(aURI) {
   
   // Normal file for Windows. Mozilla gives us "file:///" and VLC wants a
   // filesystem path like "C:\fun.mp3".
-  if (getPlatformString == "Windows_NT")
+  if (getPlatformString() == "Windows_NT")
     return file.path;
   
   // Default case. Rebuild the uri to avoid "file://localhost/" messes.
@@ -154,6 +154,8 @@ function CoreVLC()
                                                      this._mediaUrlSchemes);
   this._videoUrlMatcher = new ExtensionSchemeMatcher(this._videoUrlExtensions,
                                                      []);
+                                                     
+  
 };
 
 // Enumerate vlc.input.state options
@@ -171,6 +173,62 @@ CoreVLC.prototype = new CoreBase();
 
 // set the constructor so we use ours and not the one for CoreBase
 CoreVLC.prototype.constructor = CoreVLC();
+
+// apply custom preferences to vlc
+CoreVLC.prototype._applyPreferences = function ()
+{
+  var config = this._object.config;
+
+  //Be more generous about file caching.
+  config.setConfigInt("access_file", "file-caching", 1000);
+  
+  //Be more generous about http caching.
+  config.setConfigInt("access_http", "http-caching", 2000);
+  
+  //Be more generous about ftp caching.
+  config.setConfigInt("access_ftp", "ftp-caching", 2000);
+  
+  //Be more generous about smb caching.
+  config.setConfigInt("access_smb", "smb-caching", 2000);
+  
+  //Automatically reconnect if http connection lost.
+  config.setConfigBool("access_http", "http-reconnect", 1);
+  
+  //Turn on volume normalization.
+  config.setConfigString("main", "audio-filter", "volnorm");
+  
+  //Set user agent, read from moz prefs.
+  //config.setConfigString("access_http", "http-user-agent", "Songbird");
+
+  //Be very flexible about SSL certificates. Typically self signed certs
+  //are used by average users and services.
+  config.setConfigBool("gnutls", "tls-check-cert", 0);
+  config.setConfigBool("gnutls", "tls-check-hostname", 0);
+  config.setConfigInt("gnutls", "gnutls-cache-expiration", 12000);
+  config.setConfigInt("gnutls", "gnutls-cache-size", 128);
+};
+
+CoreVLC.prototype._setAudioOutputWaveOut = function()
+{
+  if(getPlatformString() == "Windows_NT") {
+    config.setConfigString("main", "aout", "waveout");
+  }
+};
+
+CoreVLC.prototype._setAudioOutputDirectSound = function()
+{
+  if(getPlatformString() == "Windows_NT") {
+    config.setConfigString("main", "aout", "aout_directx");
+  }
+};
+
+CoreVLC.prototype._setProxyInfo = function (aProxyHost, aProxyUser, aProxyPassword)
+{
+  var actualHost = "";
+  
+  //Set proxy host.
+  config.setConfigString("access_http", "http-proxy", actualHost);
+};
 
 CoreVLC.prototype.playURL = function (aURL)
 {
@@ -638,6 +696,10 @@ function CoreVLCDocumentInit( id )
 
     gCoreVLC.setId("VLC1");
     gCoreVLC.setObject(theVLCInstance);
+    
+    // apply prefs to playback core
+    gCoreVLC._applyPreferences();
+
     gPPS.addCore(gCoreVLC, true);
   }
   catch ( err )
