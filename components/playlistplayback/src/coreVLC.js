@@ -140,7 +140,9 @@ function CoreVLC()
   this._id = "";
   this._muted = false;
   this._url = "";
+  this._uri = null;
   this._paused = false;
+  this._needPlayRestart = false;
 
   this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "aac", "mva",
                               "wma", "wmv", "asx", "asf", "avi",  "mov", "mpg",
@@ -326,6 +328,7 @@ CoreVLC.prototype.playURL = function (aURL)
   // VLC only supports HTTP, HTTPS proxy through the access_http module.
   this._setProxyForURI(uri);
 
+  this._uri = uri;
   this._url = getVLCURLFromURI(uri);
   
   //Encode + signs since VLC will try and decode those as spaces. 
@@ -357,6 +360,11 @@ CoreVLC.prototype.play = function()
 
   if (this._object.playlist.itemCount <= 0) 
     return false;
+
+  if (this._needPlayRestart) {
+    this._needPlayRestart = false;
+    this.stop();
+  }
 
   this._object.playlist.play();
 
@@ -395,6 +403,12 @@ CoreVLC.prototype.pause = function()
     return false;
     
   this._verifyObject();
+  
+  if(this._uri.scheme == "http" &&
+     this.getLength() == 0) {
+    this._needPlayRestart = true;
+  }
+  
   this._object.playlist.togglePause();
   
   if (this._object.playlist.isPlaying)
