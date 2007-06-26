@@ -228,6 +228,13 @@
         }
         window.addEventListener('load', windowOnLoad, false);
         
+        // xbl slight of hand
+        this.mTree._changeOpenState = this.mTree.changeOpenState;
+        this.mTree.changeOpenState = function (row, openState) {
+          this._changeOpenState(row, openState);
+          sp.getNodeForRow(row).isOpen = sp.mTree.view.isContainerOpen(row);
+        }
+        
       ]]></constructor>
       <destructor><![CDATA[
         this.mService.onSelectionChanged(null, this.mTree, window);
@@ -238,6 +245,9 @@
         
         this.mTree.stopEditing = this.mTree._stopEditing;
         this.mTree._stopEditing = null;
+        
+        this.mTree.changeOpenState = this.mTree._changeOpenState;
+        this.mTree._changeOpenState = null;
       ]]></destructor>
       
       <field name="_dragService"><![CDATA[
@@ -560,12 +570,6 @@
         var node = this.getNodeForRow(this.mTree.currentIndex);
         if (node && node.editable) {
           this.startEditingNode(node);
-        }
-      ]]></handler>
-      <handler event="OpenStateChange"><![CDATA[
-        var node = this.getNodeForRow(this.mTree.currentIndex);
-        if (node && node.isContainer) {
-          node.isOpen = this.mTree.view.isContainerOpen(this.mTree.currentIndex);
         }
       ]]></handler>
       
