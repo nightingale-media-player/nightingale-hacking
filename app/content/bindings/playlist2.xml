@@ -778,6 +778,39 @@
         </body>
       </method>
 
+      <method name="insertColumn">
+        <parameter name="propertyInfo"/>
+        <parameter name="isHidden"/>
+        <parameter name="width"/>
+        <parameter name="sort"/>
+        <parameter name="before"/>
+        <body>
+<![CDATA[
+    // get the array of tree column DOM elements (does not include splitters)
+    var treecolList = this._treecols.getElementsByTagNameNS(this._XUL_NS,
+                                                            "treecol");
+
+    var ordinal = 0;
+    if (!before) {
+      // shortcut - insert it at the end
+      ordinal = treecolList.length * 2;
+    } else {
+      // look for the before string
+      for (var index = 0; index < treecolList.length; index++) {
+        var col = treecolList[index];
+        if ( col.getAttribute("bind") == before ) {
+          // found it, stop here ordinal is where we want the column
+          break;
+        }
+        ordinal += 2;
+      } 
+    } 
+
+    this._appendColumn(propertyInfo, isHidden, width, sort, ordinal);
+]]>
+        </body>
+      </method>
+
       <method name="_appendColumn">
         <parameter name="propertyInfo"/>
         <parameter name="isHidden"/>
@@ -919,6 +952,34 @@
                         columnSpec);
   // XXXben HACK - remove soon when bug 3037 is fixed.
   mediaList.write();
+]]>
+        </body>
+      </method>
+
+      <method name="showColumn">
+        <parameter name="columnName"/>
+        <body>
+<![CDATA[
+    var treecolList = this._treecols.getElementsByAttribute("bind",
+                                                            columnName);
+
+    for (var index = 0; index < treecolList.length; index++) {
+        treecolList[index].setAttribute("hidden", false);
+    } 
+]]>
+        </body>
+      </method>
+
+      <method name="hideColumn">
+        <parameter name="columnName"/>
+        <body>
+<![CDATA[
+    var treecolList = this._treecols.getElementsByAttribute("bind",
+                                                            columnName);
+
+    for (var index = 0; index < treecolList.length; index++) {
+      treecolList[index].setAttribute("hidden", true);
+    } 
 ]]>
         </body>
       </method>

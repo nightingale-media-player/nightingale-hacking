@@ -34,6 +34,7 @@
 
 interface sbIMediaListView;
 interface sbIPlaylistCommands;
+interface sbIPropertyInfo;
 
 /**
  * \interface sbIPlaylistWidget
@@ -48,5 +49,12 @@ interface sbIPlaylistWidget : nsISupports
              in sbIPlaylistCommands commands,
              in boolean resize,
              in boolean collapse );
+  void showColumn( in AString aColumnName );
+  void hideColumn( in AString aColumnName );
+  void insertColumn( in sbIPropertyInfo aPropInfo,
+                     in boolean aIsHidden,
+                     in long aWidth,
+                     in AString aSortOrder,
+                     in AString aBeforeCol );
 };
 
