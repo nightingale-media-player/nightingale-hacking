@@ -118,13 +118,23 @@ Metrics.prototype = {
             + '" platform="' + platform
             + '" os="' + user_os 
             + '" updated="' + updated 
-            + '">';
+            + '">\n';
     for (var i = 0; i < metrics.length; i++) 
     {
       var val = branch.getCharPref(metrics[i]);
-      xml += '<item key="' + encodeURIComponent(metrics[i]) + '" value="' + val + '"/>';
+      if ( parseInt(val) > 0 )
+      {
+        xml += '\t<item key="' + encodeURIComponent(metrics[i]) + '" value="' + val + '"/>\n';
+      }
     }
     xml += '</metrics>';
+
+/*
+    // Happy little self-contained test display
+    var gPrompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                          .getService(Components.interfaces.nsIPromptService);
+    gPrompt.alert( null, "METRICS XML", xml );
+*/    
 
     // upload xml
 
@@ -157,28 +167,28 @@ Metrics.prototype = {
     // POST successful, reset all metrics to 0
     if (this._postreq.status == 200 && this._postreq.responseText == "OK") 
     {
-        var ps = Components.classes["@mozilla.org/preferences-service;1"]
-                          .getService(Components.interfaces.nsIPrefService);   
-        var branch = ps.getBranch("metrics.");
-        var metrics = branch.getChildList("", { value: 0 });
-        for (var i = 0; i < metrics.length; i++) 
-        {
-          branch.setCharPref(metrics[i], "0");
-        }
-        var pref = Components.classes["@mozilla.org/preferences-service;1"]
-                          .getService(Components.interfaces.nsIPrefBranch);
-        var timenow = new Date();
-        var now = timenow.getTime();
-        
-        pref.setCharPref("app.metrics.last_upload", now);
-        pref.setCharPref("app.metrics.last_version", this._getCurrentVersion());
-        pref.setIntPref("app.metrics.last_update_count", this._getUpdateCount());
-        
-        this.LOG("metrics reset");
+      var ps = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefService);   
+      var branch = ps.getBranch("metrics.");
+      var metrics = branch.getChildList("", { value: 0 });
+      for (var i = 0; i < metrics.length; i++) 
+      {
+        branch.setCharPref(metrics[i], "0");
+      }
+      var pref = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefBranch);
+      var timenow = new Date();
+      var now = timenow.getTime();
+      
+      pref.setCharPref("app.metrics.last_upload", now);
+      pref.setCharPref("app.metrics.last_version", this._getCurrentVersion());
+      pref.setIntPref("app.metrics.last_update_count", this._getUpdateCount());
+      
+      this.LOG("metrics reset");
     }    
     else 
     {
-        this.LOG("POST metrics failed: " + this._postreq.responseText);
+      this.LOG("POST metrics failed: " + this._postreq.responseText);
     }
   },
 
