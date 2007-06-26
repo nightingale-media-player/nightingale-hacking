@@ -45,9 +45,6 @@ const SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/Pl
 // String Bundles
 const URI_SONGBIRD_PROPERTIES = "chrome://songbird/locale/songbird.properties";
 
-// Database GUIDs
-const DB_TEST_GUID = "testdb-0000";
-
 // Other junk
 const MINIMUM_FILE_SIZE = 64000;
 
@@ -811,6 +808,12 @@ PlaylistPlayback.prototype = {
   _callMethodOnAllCores: function _callMethodOnAllCores(aMethodName, aArgArray) {
     var returnVals = [];
     var coreCount = this._cores.length;
+
+    //At this point there should always have one media core registered.
+    if (coreCount == 0) {
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    }
+    
     for (var index = 0; index < coreCount; index++) {
       var retval = null;
       var core = this._cores[index];
@@ -1112,6 +1115,12 @@ PlaylistPlayback.prototype = {
 
   isMediaURL: function(aURL) {
     var coreCount = this._cores.length;
+    
+    //At this point there should always have one media core registered.
+    if (coreCount == 0) {
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    }
+    
     for (var index = 0; index < coreCount; index++) {
       var core = this._cores[index];
       if (core.isMediaURL(aURL.toLowerCase()))
@@ -1122,6 +1131,12 @@ PlaylistPlayback.prototype = {
 
   isVideoURL: function (aURL) {
     var coreCount = this._cores.length;
+    
+    //At this point there should always have one media core registered.
+    if (coreCount == 0) {
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    }
+
     for (var index = 0; index < coreCount; index++) {
       var core = this._cores[index];
       if (core.isVideoURL(aURL.toLowerCase()))
