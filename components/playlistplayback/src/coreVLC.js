@@ -228,7 +228,7 @@ CoreVLC.prototype._applyPreferences = function ()
   //Turn on volume normalization.
   try {
     config.setConfigString("main", "audio-filter", "volnorm");
-    config.setConfigInt("normvol", "norm-buff-size", 60);
+    config.setConfigInt("normvol", "norm-buff-size", 44);
   }
   catch(e) {
     this.LOG("normvol module is missing, can't set config item.");
