@@ -132,7 +132,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryListener,
                               sbIMediaListListener);
 
 sbDeviceBaseLibraryListener::sbDeviceBaseLibraryListener() 
-: mIgnoreListener(PR_FALSE)
+: mDevice(nsnull),
+  mIgnoreListener(PR_FALSE)
 {
 }
 
@@ -350,8 +351,7 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
 }
 
 //sbDeviceBase class.
-sbDeviceBase::sbDeviceBase() :
-  mDevice(nsnull)
+sbDeviceBase::sbDeviceBase()
 {
 #ifdef PR_LOGGING
   if (!gUSBMassStorageDeviceLog) {
