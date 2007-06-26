@@ -118,6 +118,8 @@ function sbBookmarks_servicePaneInit(sps) {
               sps.root, null);
         }
         
+        fnode.isOpen = (folder.getAttribute('open') == 'true');
+        
         if (fnode && fnode.getAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported')) {
           // don't reimport a folder that's already been imported
           continue;
