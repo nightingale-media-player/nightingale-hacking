@@ -87,7 +87,6 @@ function runTest () {
   assertTrue(listCount > 0);
   
   listListener.reset();
-  
   var removedItemCount = 0;
   listListener.onAfterItemRemoved = function onAfterItemRemoved(list, item) {
     removedItemCount++;
@@ -99,6 +98,8 @@ function runTest () {
   
   assertEqual(list.length, 0);
   
+  library.removeListener(listListener);
+
   // Now test if clearing the library also clears the playlist.
   library = createLibrary(databaseGUID);
   list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
@@ -108,7 +109,6 @@ function runTest () {
   library.clear();
   
   assertEqual(list.length, 0);
-
   // Test that modifying a media item notifies the library and playlist.
   library = createLibrary(databaseGUID);
   list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
@@ -119,12 +119,15 @@ function runTest () {
   
   var libraryListener = new TestMediaListListener();
   library.addListener(libraryListener);
-  
+
   item.contentType = "foo/foo";
   
   assertEqual(listListener.updatedItem, item);
   assertEqual(libraryListener.updatedItem, item);
   
+  list.removeListener(listListener);
+  library.removeListener(libraryListener);
+
   // Test that modifying an item doesn't notify lists that don't contain the
   // item.
   library = createLibrary(databaseGUID);
@@ -143,4 +146,6 @@ function runTest () {
   assertNotEqual(listListener.updatedItem, item);
   assertEqual(libraryListener.updatedItem, item);
 
+  list.removeListener(listListener);
+  library.removeListener(libraryListener);
 }

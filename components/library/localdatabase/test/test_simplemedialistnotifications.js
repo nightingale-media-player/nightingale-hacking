@@ -130,5 +130,8 @@ function runTest () {
   assertEqual(libraryListener.batchEndList, null);
   assertTrue(list.equals(listListener.batchBeginList));
   assertTrue(list.equals(listListener.batchEndList));
+
+  list.removeListener(listListener);
+  library.removeListener(libraryListener);
 }
 
