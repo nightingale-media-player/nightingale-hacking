@@ -186,33 +186,68 @@ CoreVLC.prototype._applyPreferences = function ()
   var config = this._object.config;
 
   //Be more generous about file caching.
-  config.setConfigInt("access_file", "file-caching", 1000);
+  try {
+    config.setConfigInt("access_file", "file-caching", 1000);
+  }
+  catch(e) {
+    this.LOG("access_file module is missing, can't set config item.");
+  }
   
   //Be more generous about http caching.
-  config.setConfigInt("access_http", "http-caching", 2000);
+  try {
+    config.setConfigInt("access_http", "http-caching", 2000);
+  }
+  catch(e) {
+    this.LOG("access_http module is missing, can't set config item.");
+  }
   
   //Be more generous about ftp caching.
-  config.setConfigInt("access_ftp", "ftp-caching", 2000);
+  try {
+    config.setConfigInt("access_ftp", "ftp-caching", 2000);
+  }
+  catch(e) {
+    this.LOG("access_ftp module is missing, can't set config item.");
+  }
   
   //Be more generous about smb caching.
-  config.setConfigInt("access_smb", "smb-caching", 2000);
+  try {
+    config.setConfigInt("access_smb", "smb-caching", 2000);
+  }
+  catch(e) {
+    this.LOG("access_smb module is missing, can't set config item.");
+  }
   
   //Automatically reconnect if http connection lost.
-  config.setConfigBool("access_http", "http-reconnect", 1);
+  try {
+    config.setConfigBool("access_http", "http-reconnect", 1);
+  }
+  catch(e) {
+    this.LOG("access_http module is missing, can't set config item.");
+  }
   
   //Turn on volume normalization.
-  config.setConfigString("main", "audio-filter", "volnorm");
-  config.setConfigInt("normvol", "norm-buff-size", 60);
+  try {
+    config.setConfigString("main", "audio-filter", "volnorm");
+    config.setConfigInt("normvol", "norm-buff-size", 60);
+  }
+  catch(e) {
+    this.LOG("normvol module is missing, can't set config item.");
+  }
   
   //Set user agent, read from moz prefs.
   //config.setConfigString("access_http", "http-user-agent", "Songbird");
 
   //Be very flexible about SSL certificates. Typically self signed certs
   //are used by average users and services.
-  config.setConfigBool("gnutls", "tls-check-cert", 0);
-  config.setConfigBool("gnutls", "tls-check-hostname", 0);
-  config.setConfigInt("gnutls", "gnutls-cache-expiration", 12000);
-  config.setConfigInt("gnutls", "gnutls-cache-size", 128);
+  try {
+    config.setConfigBool("gnutls", "tls-check-cert", 0);
+    config.setConfigBool("gnutls", "tls-check-hostname", 0);
+    config.setConfigInt("gnutls", "gnutls-cache-expiration", 12000);
+    config.setConfigInt("gnutls", "gnutls-cache-size", 128);
+  }
+  catch(e) {
+    this.LOG("gnutls module is missing, can't set config item.");
+  }
 };
 
 CoreVLC.prototype._setAudioOutputWaveOut = function()
