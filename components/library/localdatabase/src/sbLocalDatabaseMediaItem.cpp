@@ -116,6 +116,7 @@ NS_IMPL_CI_INTERFACE_GETTER5(sbLocalDatabaseMediaItem, nsIClassInfo,
 
 sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
 : mMediaItemId(0),
+  mOwnsLibrary(PR_FALSE),
   mLibrary(nsnull),
   mPropertyCacheLock(nsnull),
   mPropertyBagLock(nsnull),
@@ -126,6 +127,11 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
 
 sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
 {
+  // If we've kept an owning reference to the library, release it here
+  if (mLibrary && mOwnsLibrary) {
+    NS_RELEASE(mLibrary);
+  }
+
   if(mPropertyCacheLock) {
     nsAutoLock::DestroyLock(mPropertyCacheLock);
   }
@@ -143,13 +149,22 @@ sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
  */
 nsresult
 sbLocalDatabaseMediaItem::Init(sbLocalDatabaseLibrary* aLibrary,
-                               const nsAString& aGuid)
+                               const nsAString& aGuid,
+                               PRBool aOwnsLibrary)
 {
   NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG(!aGuid.IsEmpty());
 
   mLibrary = aLibrary;
   mGuid.Assign(aGuid);
+  mOwnsLibrary = aOwnsLibrary;
+
+  // The caller has indicated that the reference we keep to the library is
+  // to be either an owning or non-owning reference.  If it is an owning
+  // reference, addref it here.
+  if (aOwnsLibrary) {
+    NS_ADDREF(mLibrary);
+  }
 
   mPropertyCacheLock =
     nsAutoLock::NewLock("sbLocalDatabaseMediaItem::mPropertyCacheLock");
@@ -195,9 +210,9 @@ sbLocalDatabaseMediaItem::GetPropertyBag()
   }
 
   if (NS_SUCCEEDED(rv)) {
+    NS_ASSERTION(count == 1, "GetProperties returned too many bags");
     if (count > 0 && bags[0]) {
-      mPropertyBag = bags[0];
-
+      mPropertyBag = dont_AddRef(bags[0]);
     }
 
     NS_Free(bags);

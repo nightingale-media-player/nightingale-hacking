@@ -149,7 +149,6 @@ public:
   : mFriendList(aList)
   {
     NS_ASSERTION(mFriendList, "Null pointer!");
-    NS_ADDREF_THIS();
   }
 
 private:
@@ -180,7 +179,6 @@ public:
     mItemEnumerated(PR_FALSE)
   {
     NS_ASSERTION(mFriendList, "Null pointer!");
-    NS_ADDREF_THIS();
   }
 
 private:

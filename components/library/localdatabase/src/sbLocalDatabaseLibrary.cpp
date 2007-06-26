@@ -562,10 +562,12 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   rv = result->GetRowCell(0, 0, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Initialize our base classes
+  // Initialize our base classes.  Note that we tell sbLocalDatabaseMediaListBase
+  // that we do not want an owning reference to be kept to the library since
+  // we are the library.  This is done to prevent a cycle.
   // XXXben You can't call Init here unless this library's mPropertyCache has
   //        been created.
-  rv = sbLocalDatabaseMediaListBase::Init(this, guid);
+  rv = sbLocalDatabaseMediaListBase::Init(this, guid, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = InitResourceProperty(mPropertyCache, guid);
@@ -2720,10 +2722,7 @@ sbLocalDatabaseLibrary::GetItemByGuid(const nsAString& aGuid,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
-/*
-  nsCOMPtr<sbILibrary> library = do_QueryInterface(mLibrary, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-*/
+
   nsCOMPtr<sbIMediaItem> item;
   rv = GetMediaItem(aGuid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3144,6 +3143,9 @@ sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
 {
   nsresult rv;
 
+  // Make sure the timer survives throughout the entire method
+  nsCOMPtr<nsITimer> kungFuDeathGrip = aTimer;
+
   // Check to see if the query is complete
   PRUint32 len;
   PRUint32 pos;
@@ -3198,6 +3200,10 @@ sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
       }
     }
     mListener->OnComplete(array);
+
+    // Since we're done, remove this timer from the library's list of timers
+    PRBool success = mLibrary->mBatchCreateTimers.RemoveObject(aTimer);
+    NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
   }
   else {
     // Notify progress

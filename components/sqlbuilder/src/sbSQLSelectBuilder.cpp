@@ -35,6 +35,12 @@ NS_IMPL_ISUPPORTS_INHERITED1(sbSQLSelectBuilder,
 sbSQLSelectBuilder::sbSQLSelectBuilder() :
   mIsDistinct(PR_FALSE)
 {
+  MOZ_COUNT_CTOR(sbSQLSelectBuilder);
+}
+
+sbSQLSelectBuilder::~sbSQLSelectBuilder()
+{
+  MOZ_COUNT_DTOR(sbSQLSelectBuilder);
 }
 
 NS_IMETHODIMP

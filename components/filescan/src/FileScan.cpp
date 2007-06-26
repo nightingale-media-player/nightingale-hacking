@@ -636,7 +636,10 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
 
       if(pFileScan->m_QueryQueue.size())
       {
-        pQuery = pFileScan->m_QueryQueue.front();
+        // The quey was addref'd when it was put into m_QueryQueue so we do
+        // not need to addref it again when we assign it to pQuery.  This will
+        // be deleted when pQuery goes out of scope.
+        pQuery = dont_AddRef(pFileScan->m_QueryQueue.front());
         pFileScan->m_QueryQueue.pop_front();
       }
 

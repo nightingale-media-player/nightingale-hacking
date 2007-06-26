@@ -120,6 +120,7 @@ function sbLibraryServicePane_servicePaneInit(sps) {
   var obs = Cc["@mozilla.org/observer-service;1"].
             getService(Ci.nsIObserverService);
   obs.addObserver(this, "songbird-library-manager-ready", false);
+  obs.addObserver(this, "songbird-library-manager-before-shutdown", false);
 }
 
 sbLibraryServicePane.prototype.fillContextMenu =
@@ -647,8 +648,8 @@ function sbLibraryServicePane__hideLibraryNodes(aNode) {
 /**
  * Add all registered libraries to the service pane
  */
-sbLibraryServicePane.prototype._processLibraries =
-function sbLibraryServicePane__processLibraries() {
+sbLibraryServicePane.prototype._addAllLibraries =
+function sbLibraryServicePane__addAllLibraries() {
   //logcall(arguments);
   var libraries = this._libraryManager.getLibraries();
   while (libraries.hasMoreElements()) {
@@ -657,6 +658,18 @@ function sbLibraryServicePane__processLibraries() {
   }
 }
 
+/**
+ * Remove all registered libraries from the service pane
+ */
+sbLibraryServicePane.prototype._removeAllLibraries =
+function sbLibraryServicePane__removeAllLibraries() {
+  //logcall(arguments);
+  var libraries = this._libraryManager.getLibraries();
+  while (libraries.hasMoreElements()) {
+    var library = libraries.getNext();
+    this._libraryRemoved(library);
+  }
+}
 
 /**
 * Add all media lists found in the given library
@@ -680,7 +693,7 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
   aLibrary.enumerateItemsByProperty(PROP_ISLIST, "1",
                                    listener,
                                    Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
-  
+
   // Make sure we have a node for each list
   for (var i = 0; i < listener.items.length; i++) {
     this._ensureMediaListNodeExists(listener.items[i]);  
@@ -1224,24 +1237,31 @@ function sbLibraryServicePane_onBatchEnd(aMediaList) {
 
 sbLibraryServicePane.prototype.observe = 
 function sbLibraryServicePane_observe(subject, topic, data) {
+
+  var obs = Cc["@mozilla.org/observer-service;1"]
+              .getService(Ci.nsIObserverService);
+
   if (topic == "songbird-library-manager-ready") {
-    var obs = Cc["@mozilla.org/observer-service;1"].
-              getService(Ci.nsIObserverService);
     obs.removeObserver(this, "songbird-library-manager-ready");
-    
+
     // get the library manager
-    this._libraryManager =
-        Components.classes['@songbirdnest.com/Songbird/library/Manager;1']
-        .getService(Components.interfaces.sbILibraryManager);
-    
+    this._libraryManager = Cc['@songbirdnest.com/Songbird/library/Manager;1']
+                             .getService(Ci.sbILibraryManager);
+
     // register for notifications so that we can keep the service pane
     // in sync with the the libraries
     this._libraryManager.addListener(this);
-    
-    // FIXME: remove listener on destruction?  
-    // Shouldn't have to once we get weak ref support in the library system
-    // Show all existing libraries and playlists
-    this._processLibraries();        
+
+    this._addAllLibraries();
+  }
+  else if (topic == "songbird-library-manager-before-shutdown") {
+    obs.removeObserver(this, "songbird-library-manager-before-shutdown");
+
+    var libraryManager = Cc['@songbirdnest.com/Songbird/library/Manager;1']
+                           .getService(Ci.sbILibraryManager);
+    libraryManager.removeListener(this);
+
+    this._removeAllLibraries();
   }
 }
 
@@ -1343,3 +1363,4 @@ var NSGetModule = makeGetModule (
     entry: '0library', // we want this to load first
     value: CONTRACTID
   }]);
+

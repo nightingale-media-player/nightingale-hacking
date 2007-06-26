@@ -29,6 +29,7 @@
 
 #include <sbISQLBuilder.h>
 
+#include <nsAutoPtr.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsCOMArray.h>
@@ -45,6 +46,7 @@ public:
                             sbISQLBuilderCriterion* aLeft,
                             sbISQLBuilderCriterion* aRight);
 
+  virtual ~sbSQLBuilderCriterionBase() {};
 protected:
   void AppendMatchTo(nsAString& aStr);
   void AppendTableColumnTo(nsAString& aStr);
@@ -70,6 +72,7 @@ public:
                               PRUint32 aMatchType,
                               const nsAString& aValue);
 
+  virtual ~sbSQLBuilderCriterionString() {};
 private:
   nsString mValue;
 };
@@ -86,6 +89,7 @@ public:
                                      const nsAString& aRightValue,
                                      PRBool aNegate);
 
+  virtual ~sbSQLBuilderCriterionBetweenString() {};
 private:
   nsString mLeftValue;
   nsString mRightValue;
@@ -103,6 +107,7 @@ public:
                             PRUint32 aMatchType,
                             PRInt32 aValue);
 
+  virtual ~sbSQLBuilderCriterionLong() {};
 private:
   PRInt32 mValue;
 };
@@ -116,6 +121,7 @@ public:
   sbSQLBuilderCriterionNull(const nsAString& aTableName,
                             const nsAString& aColumnName,
                             PRUint32 aMatchType);
+  virtual ~sbSQLBuilderCriterionNull() {};
 };
 
 class sbSQLBuilderCriterionParameter : public sbSQLBuilderCriterionBase
@@ -127,6 +133,7 @@ public:
   sbSQLBuilderCriterionParameter(const nsAString& aTableName,
                                  const nsAString& aColumnName,
                                  PRUint32 aMatchType);
+  virtual ~sbSQLBuilderCriterionParameter() {};
 };
 
 class sbSQLBuilderCriterionTable : public sbSQLBuilderCriterionBase
@@ -140,7 +147,7 @@ public:
                              PRUint32 aMatchType,
                              const nsAString& aRightTableName,
                              const nsAString& aRightColumnName);
-
+  virtual ~sbSQLBuilderCriterionTable() {};
 private:
   nsString mRightTableName;
   nsString mRightColumnName;
@@ -154,6 +161,7 @@ public:
 
   sbSQLBuilderCriterionAnd(sbISQLBuilderCriterion* aLeft,
                            sbISQLBuilderCriterion* aRight);
+  virtual ~sbSQLBuilderCriterionAnd() {};
 };
 
 class sbSQLBuilderCriterionOr : public sbSQLBuilderCriterionBase
@@ -164,6 +172,7 @@ public:
 
   sbSQLBuilderCriterionOr(sbISQLBuilderCriterion* aLeft,
                           sbISQLBuilderCriterion* aRight);
+  virtual ~sbSQLBuilderCriterionOr() {};
 };
 
 class sbSQLBuilderCriterionIn : public sbSQLBuilderCriterionBase,
@@ -176,7 +185,7 @@ public:
 
   sbSQLBuilderCriterionIn(const nsAString& aTableName,
                           const nsAString& aColumnName);
-
+  virtual ~sbSQLBuilderCriterionIn() {};
 private:
   enum ParameterType {
     eIsNull,

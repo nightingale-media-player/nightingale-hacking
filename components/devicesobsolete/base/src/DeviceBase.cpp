@@ -350,7 +350,8 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
 }
 
 //sbDeviceBase class.
-sbDeviceBase::sbDeviceBase()
+sbDeviceBase::sbDeviceBase() :
+  mDevice(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gUSBMassStorageDeviceLog) {

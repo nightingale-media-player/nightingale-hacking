@@ -91,9 +91,10 @@ public:
   nsresult SetIgnoreListener(PRBool aIgnoreListener);
 
 protected:
-  nsCOMPtr<sbIDeviceBase> mDevice;
+  // The device owns the listener, so use a non-owning reference here
+  sbIDeviceBase* mDevice;
   nsString mDeviceIdentifier;
-      
+
   PRBool mIgnoreListener;
 };
 

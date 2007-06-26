@@ -172,9 +172,8 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPro
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = nsnull;
-  
+
   if(mPropInfoHashtable.Get(aName, _retval)) {
-    NS_ADDREF(*_retval);
     return NS_OK;
   }
   else {
@@ -194,7 +193,6 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aName, sbIPro
     //may have changed and returning the instance pointer above may yield a 
     //stale pointer and cause a crash.
     if(mPropInfoHashtable.Get(aName, _retval)) {
-      NS_ADDREF(*_retval);
       return NS_OK;
     }
   }

@@ -81,8 +81,22 @@
   PR_BEGIN_MACRO /* nothing */ PR_END_MACRO
 #endif /* DEBUG */
 
-NS_IMPL_ISUPPORTS1(sbSimpleMediaListInsertingEnumerationListener,
-                   sbIMediaListEnumerationListener)
+// This class is stack-only but needs to act like an XPCOM object.  Add dummy
+// AddRef/Release methods so the ref count is always 1
+NS_IMETHODIMP_(nsrefcnt)
+sbSimpleMediaListInsertingEnumerationListener::AddRef(void)
+{
+  return (nsrefcnt)1;
+}
+
+NS_IMETHODIMP_(nsrefcnt)
+sbSimpleMediaListInsertingEnumerationListener::Release(void)
+{
+  return (nsrefcnt)1;
+}
+
+NS_IMPL_QUERY_INTERFACE1(sbSimpleMediaListInsertingEnumerationListener,
+                         sbIMediaListEnumerationListener)
 
 /**
  * See sbIMediaListListener.idl
@@ -314,8 +328,22 @@ sbSimpleMediaListInsertingEnumerationListener::AddURIsToArrayCallback(nsISupport
   return PL_DHASH_NEXT;
 }
 
-NS_IMPL_ISUPPORTS1(sbSimpleMediaListRemovingEnumerationListener,
-                   sbIMediaListEnumerationListener)
+// This class is stack-only but needs to act like an XPCOM object.  Add dummy
+// AddRef/Release methods so the ref count is always 1
+NS_IMETHODIMP_(nsrefcnt)
+sbSimpleMediaListRemovingEnumerationListener::AddRef(void)
+{
+  return (nsrefcnt)1;
+}
+
+NS_IMETHODIMP_(nsrefcnt)
+sbSimpleMediaListRemovingEnumerationListener::Release(void)
+{
+  return (nsrefcnt)1;
+}
+
+NS_IMPL_QUERY_INTERFACE1(sbSimpleMediaListRemovingEnumerationListener,
+                         sbIMediaListEnumerationListener)
 
 /**
  * See sbIMediaListListener.idl
@@ -1514,38 +1542,39 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Build the subquery
-  rv = builder->Reset();
+  nsCOMPtr<sbISQLSelectBuilder> subquery =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("rowid"));
+  rv = subquery->AddColumn(EmptyString(), NS_LITERAL_STRING("rowid"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->SetBaseTableName(NS_LITERAL_STRING("simple_media_lists"));
+  rv = subquery->SetBaseTableName(NS_LITERAL_STRING("simple_media_lists"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->CreateMatchCriterionParameter(EmptyString(),
-                                              NS_LITERAL_STRING("member_media_item_id"),
-                                              sbISQLSelectBuilder::MATCH_EQUALS,
-                                              getter_AddRefs(criterion));
+  rv = subquery->CreateMatchCriterionParameter(EmptyString(),
+                                               NS_LITERAL_STRING("member_media_item_id"),
+                                               sbISQLSelectBuilder::MATCH_EQUALS,
+                                               getter_AddRefs(criterion));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->AddCriterion(criterion);
+  rv = subquery->AddCriterion(criterion);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->CreateMatchCriterionLong(EmptyString(),
-                                         NS_LITERAL_STRING("media_item_id"),
-                                         sbISQLSelectBuilder::MATCH_EQUALS,
-                                         mediaItemId,
-                                         getter_AddRefs(criterion));
+  rv = subquery->CreateMatchCriterionLong(EmptyString(),
+                                          NS_LITERAL_STRING("media_item_id"),
+                                          sbISQLSelectBuilder::MATCH_EQUALS,
+                                          mediaItemId,
+                                          getter_AddRefs(criterion));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->AddCriterion(criterion);
+  rv = subquery->AddCriterion(criterion);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->AddOrder(EmptyString(), NS_LITERAL_STRING("ordinal"), PR_TRUE);
+  rv = subquery->AddOrder(EmptyString(), NS_LITERAL_STRING("ordinal"), PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->SetLimit(1);
+  rv = subquery->SetLimit(1);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
@@ -1554,7 +1583,7 @@ sbLocalDatabaseSimpleMediaList::CreateQueries()
                                        getter_AddRefs(inCriterion));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = inCriterion->AddSubquery(builder);
+  rv = inCriterion->AddSubquery(subquery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deleteb->AddCriterion(inCriterion);

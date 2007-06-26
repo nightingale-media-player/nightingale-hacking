@@ -51,6 +51,7 @@ public:
   NS_IMETHOD Reset();
 
   sbSQLSelectBuilder();
+  virtual ~sbSQLSelectBuilder();
 private:
   struct sbOrderInfo
   {

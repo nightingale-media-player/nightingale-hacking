@@ -923,6 +923,12 @@ sbLibraryManager::Observe(nsISupports* aSubject,
       observerService->RemoveObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
     }
 
+    // Notify observers that we're about to notify our libraries of shutdown
+    rv = observerService->NotifyObservers(NS_ISUPPORTS_CAST(sbILibraryManager*, this),
+                                          SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
+                                          nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     // Tell all the registered libraries to shutdown.
     nsCOMArray<sbILibrary> libraries;
     {
@@ -930,6 +936,14 @@ sbLibraryManager::Observe(nsISupports* aSubject,
       mLibraryTable.EnumerateRead(AddLibrariesToCOMArrayCallback, &libraries);
     }
     libraries.EnumerateForwards(ShutdownAllLibrariesCallback, nsnull);
+
+    libraries.Clear();
+
+    // Notify observers that we're totally shutdown
+    rv = observerService->NotifyObservers(NS_ISUPPORTS_CAST(sbILibraryManager*, this),
+                                          SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC,
+                                          nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     return NS_OK;
   }

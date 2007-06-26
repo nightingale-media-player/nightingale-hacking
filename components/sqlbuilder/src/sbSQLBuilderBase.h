@@ -57,6 +57,7 @@ public:
   NS_DECL_SBISQLBUILDER
 
   sbSQLBuilderBase();
+  virtual ~sbSQLBuilderBase();
 protected:
 
   struct sbColumnInfo 

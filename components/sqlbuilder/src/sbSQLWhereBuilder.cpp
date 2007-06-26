@@ -32,6 +32,16 @@ NS_IMPL_ISUPPORTS_INHERITED1(sbSQLWhereBuilder,
                              sbSQLBuilderBase,
                              sbISQLWhereBuilder)
 
+sbSQLWhereBuilder::sbSQLWhereBuilder()
+{
+  MOZ_COUNT_CTOR(sbSQLWhereBuilder);
+}
+
+sbSQLWhereBuilder::~sbSQLWhereBuilder()
+{
+  MOZ_COUNT_DTOR(sbSQLWhereBuilder);
+}
+
 NS_IMETHODIMP
 sbSQLWhereBuilder::AddCriterion(sbISQLBuilderCriterion *aCriterion)
 {

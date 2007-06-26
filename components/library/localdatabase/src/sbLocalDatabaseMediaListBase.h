@@ -93,7 +93,8 @@ public:
   ~sbLocalDatabaseMediaListBase();
 
   nsresult Init(sbLocalDatabaseLibrary* aLibrary,
-                const nsAString& aGuid);
+                const nsAString& aGuid,
+                PRBool aOwnsLibrary = PR_TRUE);
 
   already_AddRefed<sbLocalDatabaseLibrary> GetNativeLibrary();
 

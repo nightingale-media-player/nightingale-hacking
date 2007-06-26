@@ -65,7 +65,8 @@ public:
   virtual ~sbLocalDatabaseMediaItem();
 
   nsresult Init(sbLocalDatabaseLibrary* aLibrary,
-                const nsAString& aGuid);
+                const nsAString& aGuid,
+                PRBool aOwnsLibrary = PR_TRUE);
 
 private:
   nsresult GetPropertyBag();
@@ -73,7 +74,15 @@ private:
 protected:
   PRUint32 mMediaItemId;
 
-  nsRefPtr<sbLocalDatabaseLibrary> mLibrary;
+  // Determines what kind of reference will be kept for mLibrary.  If true,
+  // it will be an owning reference, if false, it will be a non-owning
+  // reference.
+  PRBool mOwnsLibrary;
+
+  // This reference is either owning or non-owning depending on how this class
+  // was initalized.  We do manual reference counting if this is to be an
+  // owning reference
+  sbLocalDatabaseLibrary* mLibrary;
 
   nsString  mGuid;
 

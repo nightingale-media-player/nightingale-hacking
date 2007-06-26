@@ -31,7 +31,7 @@
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbSQLBuilderBase, sbISQLBuilder)
+NS_IMPL_ISUPPORTS1(sbSQLBuilderBase, sbISQLBuilder)
 
 sbSQLBuilderBase::sbSQLBuilderBase() :
   mLimit(-1),
@@ -39,6 +39,12 @@ sbSQLBuilderBase::sbSQLBuilderBase() :
   mOffset(-1),
   mOffsetIsParameter(PR_FALSE)
 {
+  MOZ_COUNT_CTOR(sbSQLBuilderBase);
+}
+
+sbSQLBuilderBase::~sbSQLBuilderBase()
+{
+  MOZ_COUNT_DTOR(sbSQLBuilderBase);
 }
 
 NS_IMETHODIMP

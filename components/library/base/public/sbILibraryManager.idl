@@ -118,4 +118,12 @@ interface sbILibraryManager : nsISupports
 // its startup libraries have all been registered.
 #define SB_LIBRARY_MANAGER_READY_TOPIC "songbird-library-manager-ready"
 
+// This notification is sent when shutdown has begun but before the individual
+// libraries are notified of shutdown
+#define SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC "songbird-library-manager-before-shutdown"
+
+// This notification is sent when shutdown has begun and after the individual
+// libraries are notified of shutdown
+#define SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC "songbird-library-manager-after-shutdown"
+
 %}

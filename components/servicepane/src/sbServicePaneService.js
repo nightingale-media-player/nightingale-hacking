@@ -381,6 +381,7 @@ function ServicePaneService () {
   var obsSvc = Cc['@mozilla.org/observer-service;1']
     .getService(Ci.nsIObserverService);
   obsSvc.addObserver(this, 'profile-after-change', false);
+  obsSvc.addObserver(this, 'xpcom-shutdown', false);
   debug('ServicePaneService() ends\n');
 }
 ServicePaneService.prototype.observe = /* for nsIObserver */
@@ -393,6 +394,12 @@ function ServicePaneService_observe(subject, topic, data) {
     obsSvc.removeObserver(this, 'profile-after-change');
     // the profile is loaded - initialize the service
     this.init();
+  }
+  else if (topic == 'xpcom-shutdown') {
+    var obsSvc = Cc['@mozilla.org/observer-service;1']
+      .getService(Ci.nsIObserverService);
+    obsSvc.removeObserver(this, 'xpcom-shutdown');
+    this.shutdown();
   }
   debug('ServicePaneService.observe() ends\n');
 }
@@ -468,6 +475,18 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
   }
 
   debug('ServicePaneService.init() ends\n');
+}
+
+ServicePaneService.prototype.shutdown = function ServicePaneService_shutdown() {
+  debug('ServicePaneService.shutdown() begins\n');
+
+  // Clear our array of service pane providers.  This is needed to break a
+  // reference cycle between the provider and this service
+  for (let i = 0; i < this._modules.length; i++) {
+    this._modules[i] = null;
+  }
+
+  debug('ServicePaneService.shutdown() ends\n');
 }
 // FIXME: implement nsIClassInfo
 ServicePaneService.prototype.QueryInterface = 
@@ -1095,3 +1114,4 @@ var NSGetModule = makeGetModule (
     entry: 'service-pane-service',
     value: 'service,@songbirdnest.com/servicepane/service;1'
   }]);
+

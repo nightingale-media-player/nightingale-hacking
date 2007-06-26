@@ -41,6 +41,8 @@ public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_SBISQLWHEREBUILDER
 
+  sbSQLWhereBuilder();
+  virtual ~sbSQLWhereBuilder();
 protected:
   NS_IMETHOD Reset();
 

@@ -65,8 +65,11 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabasePropertyCache, sbILocalDatabaseProp
 
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache() 
 : mWritePending(PR_FALSE),
+  mPropertiesInCriterion(nsnull),
+  mMediaItemsInCriterion(nsnull),
   mLibrary(nsnull)
 {
+  MOZ_COUNT_CTOR(sbLocalDatabasePropertyCache);
 #ifdef PR_LOGGING
   if (!gLocalDatabasePropertyCacheLog) {
     gLocalDatabasePropertyCacheLog = PR_NewLogModule("sbLocalDatabasePropertyCache");
@@ -80,6 +83,7 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 
 sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
+  MOZ_COUNT_DTOR(sbLocalDatabasePropertyCache);
 }
 
 NS_IMETHODIMP
@@ -124,13 +128,17 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
   rv = mPropertiesSelect->AddColumn(EmptyString(), NS_LITERAL_STRING("obj"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
   rv = mPropertiesSelect->CreateMatchCriterionIn(EmptyString(),
                                                  NS_LITERAL_STRING("guid"),
-                                                 getter_AddRefs(mPropertiesInCriterion));
+                                                 getter_AddRefs(inCriterion));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesSelect->AddCriterion(mPropertiesInCriterion);
+  rv = mPropertiesSelect->AddCriterion(inCriterion);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Keep a non-owning reference to this
+  mPropertiesInCriterion = inCriterion;
 
   rv = mPropertiesSelect->AddOrder(EmptyString(),
                                    NS_LITERAL_STRING("guid"),
@@ -161,11 +169,14 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
 
   rv = mMediaItemsSelect->CreateMatchCriterionIn(EmptyString(),
                                                  NS_LITERAL_STRING("guid"),
-                                                 getter_AddRefs(mMediaItemsInCriterion));
+                                                 getter_AddRefs(inCriterion));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mMediaItemsSelect->AddCriterion(mMediaItemsInCriterion);
+  rv = mMediaItemsSelect->AddCriterion(inCriterion);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Keep a non-owning reference to this
+  mMediaItemsInCriterion = inCriterion;
 
   rv = mMediaItemsSelect->AddOrder(EmptyString(),
                                    NS_LITERAL_STRING("guid"),

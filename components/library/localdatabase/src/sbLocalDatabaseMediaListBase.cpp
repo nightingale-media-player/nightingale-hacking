@@ -90,7 +90,8 @@ sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
 
 nsresult
 sbLocalDatabaseMediaListBase::Init(sbLocalDatabaseLibrary* aLibrary,
-                                   const nsAString& aGuid)
+                                   const nsAString& aGuid,
+                                   PRBool aOwnsLibrary)
 {
   mFullArrayMonitor =
     nsAutoMonitor::NewMonitor("sbLocalDatabaseMediaListBase::mFullArrayMonitor");
@@ -100,7 +101,7 @@ sbLocalDatabaseMediaListBase::Init(sbLocalDatabaseLibrary* aLibrary,
   nsresult rv = sbLocalDatabaseMediaListListener::Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sbLocalDatabaseMediaItem::Init(aLibrary, aGuid);
+  rv = sbLocalDatabaseMediaItem::Init(aLibrary, aGuid, aOwnsLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

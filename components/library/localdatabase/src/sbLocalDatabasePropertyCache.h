@@ -90,11 +90,13 @@ private:
 
   // Used to template the properties select statement
   nsCOMPtr<sbISQLSelectBuilder> mPropertiesSelect;
-  nsCOMPtr<sbISQLBuilderCriterionIn> mPropertiesInCriterion;
+  // mPropertiesSelect has an owning reference to this
+  sbISQLBuilderCriterionIn* mPropertiesInCriterion;
 
   // Used to template the media items select statement
   nsCOMPtr<sbISQLSelectBuilder> mMediaItemsSelect;
-  nsCOMPtr<sbISQLBuilderCriterionIn> mMediaItemsInCriterion;
+  // mMediaItemsSelect has an owning reference to this
+  sbISQLBuilderCriterionIn* mMediaItemsInCriterion;
 
   // Used to template the properties table insert that generates
   // the property ID for the property in the current library.

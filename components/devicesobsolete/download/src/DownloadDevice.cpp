@@ -535,6 +535,12 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
 
         /* Remove the device transfer queue. */
         RemoveTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
+
+        /* Remove our listener from the library */
+        if (mpDownloadMediaList && mpDeviceLibraryListener)
+        {
+          mpDownloadMediaList->RemoveListener(mpDeviceLibraryListener);
+        }
     }
 
     /* Dispose of the device lock. */
