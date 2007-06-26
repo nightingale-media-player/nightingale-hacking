@@ -88,6 +88,9 @@
 
   // Add the column for the property to the tree
   var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
+  
+  while (treeColumns.lastChild) 
+    treeColumns.removeChild(treeColumns.lastChild);
 
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
   treecol.setAttribute("bind", this._property);
@@ -97,7 +100,6 @@
 
   this._updateColumnLabel(this.index);
   
-
   // Remove our selection if we are updated
   var self = this;
   this.cfs.addListener({
@@ -111,6 +113,37 @@
     }
   });
 ]]>
+        </body>
+      </method>
+
+      <method name="changeProperty">
+        <parameter name="property"/>
+        <body>
+          <![CDATA[
+            this.cfs.changeFilter(this.index, property);
+            this.tree.view = this.cfs.getTreeView(this.index);
+            this._property = property;
+
+            // Get the property info for the property
+            var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                            .getService(this._Ci.sbIPropertyManager);
+            this._propertyInfo = pm.getPropertyInfo(this._property);
+
+            var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
+
+            // Remove old column
+            while (treeColumns.lastChild) 
+              treeColumns.removeChild(treeColumns.lastChild);
+
+            // Add the column for the property to the tree
+            var treecol = document.createElementNS(this._XUL_NS, "treecol");
+            treecol.setAttribute("bind", this._property);
+            treecol.setAttribute("flex", "1");
+            treeColumns.appendChild(treecol);
+            this.treecol = treecol;
+
+            this._updateColumnLabel(this.index);
+          ]]>
         </body>
       </method>
 
@@ -165,5 +198,62 @@
 
   </binding>
 
+  <binding id="columnpicker" display="xul:button"
+           extends="chrome://global/content/bindings/tree.xml#tree-base">
+    <content>
+      <xul:image class="tree-columnpicker-icon"/>
+      <xul:menupopup anonid="popup">
+      </xul:menupopup>
+    </content>
+    <implementation>
+      <method name="buildPopup">
+        <parameter name="aPopup"/>
+        <body>
+          <![CDATA[
+            while (aPopup.childNodes.length)
+              aPopup.removeChild(aPopup.firstChild);
+
+            var refChild = aPopup.firstChild;
+            var filterlist = this.parentNode.parentNode.parentNode;
+
+            // Get the property info for the property
+            var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                            .getService(Components.interfaces.sbIPropertyManager);
+            var propEnumerator = pm.propertyNames;
+            while (propEnumerator.hasMore()) {
+              var propertyName = propEnumerator.getNext();
+              var propertyInfo = pm.getPropertyInfo(propertyName);
+              var popupChild = document.createElement("menuitem");
+              popupChild.setAttribute("type", "checkbox");
+              popupChild.setAttribute("label", propertyInfo.displayName);
+              popupChild.setAttribute("property", propertyName);
+              if (propertyName == filterlist._property)
+                  popupChild.setAttribute("checked", "true");
+              aPopup.insertBefore(popupChild, refChild);
+            }
+          ]]>
+        </body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <handler event="command">
+        <![CDATA[
+          if (event.originalTarget == this) {
+            var popup = document.getAnonymousElementByAttribute(this, "anonid", "popup");
+            this.buildPopup(popup);
+            popup.showPopup(this, -1, -1, "popup", "bottomright", "topright");
+          }
+          else {
+            var filterlist = this.parentNode.parentNode.parentNode;
+            filterlist.changeProperty(event.originalTarget.getAttribute("property"));
+          }
+        ]]>
+      </handler>
+    </handlers>
+
+  </binding>
+
 </bindings>
+
 

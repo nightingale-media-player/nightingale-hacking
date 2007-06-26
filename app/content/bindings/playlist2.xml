@@ -511,7 +511,7 @@
     // And start creating the filter
     var filterlist = document.createElementNS(this._XUL_NS, "filterlist2");
     filterlist.setAttribute("enableColumnDrag", "false");
-    filterlist.setAttribute("hidecolumnpicker", "true");
+    //filterlist.setAttribute("hidecolumnpicker", "true");
     filterlist.setAttribute("flex", "1");
     
     parent.appendChild(filterlist);
