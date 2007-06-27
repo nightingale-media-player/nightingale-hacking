@@ -31,6 +31,8 @@
 
 try
 {
+  // TODO: Remove this
+  var URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/playlist_test2.xul?"
 
   function SBFileOpen( )
   {
@@ -81,7 +83,15 @@ try
       var ios = Components.classes["@mozilla.org/network/io-service;1"]
                           .getService(Components.interfaces.nsIIOService);
       var uri = ios.newFileURI(fp.file, null, null);
-      PPS.playAndImportURL(uri.spec);
+      
+      // Import the item.
+      var item = SBImportURLIntoMainLibrary(uri);
+      
+      var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                .getService(Components.interfaces.sbILibraryManager);
+
+      // Display the propery view and play the newly imported item.
+      SBDisplayViewForListAndPlayItem(libraryManager.mainLibrary, item);
     }
   }
 
@@ -100,7 +110,7 @@ try
       theArtistText.stringValue = "";
       theAlbumText.stringValue = "";
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-      PPS.playAndImportURL(url_open_data.URL);
+      PPS.playURL(url_open_data.URL);
     }  
   }
 
@@ -639,6 +649,85 @@ function installXPI(filename) {
   InstallTrigger.install(xpinstallObj);
 }
 
+// Library Utilities
+
+/**
+ * \brief Import a URL into the main library.
+ * \param url URL of item to import, also accepts nsIURI's.
+ * \return The media item that was created.
+ * \retval null Error during creation of item.
+ */
+function SBImportURLIntoMainLibrary(url) {
+  var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                  .getService(Components.interfaces.sbILibraryManager);
+                                  
+  var library = libraryManager.mainLibrary;
+  
+  var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+    .getService(Components.interfaces.nsIIOService);
+
+  var uri = null;
+  try {
+    if( typeof(url.spec) == "undefined" ) {
+      uri = ioService.newURI(url, null, null);
+    }
+    else {
+      uri = url;
+    }
+  }
+  catch (e) {
+    log(e);
+    uri = null;
+  }
+      
+  if(!uri) {
+    return null;
+  }
+  
+  var mediaItem = null;
+  try {
+    mediaItem = library.createMediaItem(uri);
+  }
+  catch(e) {
+    log(e);
+    mediaItem = null;
+  }
+  
+  if(!mediaItem) {
+    return null;
+  }
+  
+  var metadataJobMgr = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+    .getService(Components.interfaces.sbIMetadataJobManager);
+  
+  var items = Components.classes["@mozilla.org/array;1"]
+    .createInstance(Components.interfaces.nsIMutableArray);
+  
+  items.appendElement(mediaItem, false);
+  metadataJobMgr.newJob(items, 5);
+  
+  return mediaItem;
+}
+
+function SBDisplayViewForListAndPlayItem(list, item) {
+  //Create a new view for the list.
+  var view = list.createView();
+  
+  //If it's a library, append special library token.
+  var url = URL_PLAYLIST_DISPLAY;
+  if (list instanceof Ci.sbILibrary) {
+    url += "library,";
+  }
+  url += list.guid;
+  
+  var index = list.indexOf(item, 0);
+
+  // Play the item that was just added.
+  gPPS.playView(view, index);
+  
+  // Get the tabbed browser, load new library view, unfiltered.
+  gBrowser.loadURI(url, null, null, null, null, view);
+}
   
 }
 catch (e)

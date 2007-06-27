@@ -33,22 +33,22 @@ var importingDrop = false;
 var SBDropObserver = 
 {
   canHandleMultipleItems: true,
+  
   getSupportedFlavours : function () 
   {
-//  alert("flav"); 
     var flavours = new FlavourSet();
     flavours.appendFlavour("application/x-moz-file","nsIFile");
     flavours.appendFlavour("text/x-moz-url");
     flavours.appendFlavour("text/unicode");
     return flavours;
   },
+  
   onDragOver: function ( evt, flavour, session )
   {
-//    alert("over");
   },
+  
   onDrop: function ( evt, dropdata, session )
   {
-//    alert("drop");
     dropFiles(evt, dropdata, session, null, null);
   }
 };
@@ -59,16 +59,6 @@ function dropFiles(evt, dropdata, session, targetdb, targetpl) {
   var dataList = dropdata.dataList;
   var dataListLength = dataList.length;
   var lcase = 0;
-  
-  theDropPlaylist = targetpl;
-  theDropDatabase = targetdb;
-  if (!theDropDatabase || !theDropPlaylist) {
-    var pl = gBrowser.currentInnerPlaylist;
-    if (pl) {
-      theDropPlaylist = pl.table;
-      theDropDatabase = pl.guid;
-    }
-  }
   
   if (getPlatformString() == "Windows_NT") lcase = 1;
   
@@ -135,30 +125,6 @@ function SBDropped()
       }
       SBDroppedEntry();
       setTimeout( SBDropped, 10 ); // Next frame
-    } else {
-      if (_drop_query) {
-        alert("XXXX - migrate 'dndDefaultHandler.js::SBDropped()' to new API");     
-/*      
-        var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-        var playlistManager = new PlaylistManager();
-        playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
-
-        _drop_query.resetQuery();
-        var thePlaylist;
-        if (theDropPlaylist != null) thePlaylist = playlistManager.getPlaylist(theDropPlaylist, _drop_query);
-        if (thePlaylist) {
-          for (var i=0;i<theDropGuids.length;i++) {
-            var guid = theDropGuids[i];
-            thePlaylist.addByGUID(guid, theDropDatabase, -1, false, true);
-            dump("added " + guid + "\n");
-          }
-        }
-        _drop_query.execute();
-*/          
-        theDropGuids = null;
-        _drop_library = null;
-        _drop_query = null;
-      }
     }
   } catch (e) {
     dump(e);
@@ -168,46 +134,34 @@ function SBDropped()
 
 var theDropPath = "";
 var theDropIsDir = false;
-var theDropPlaylist = null;
-var theDropDatabase = null;
-var theDropGuids = null;
-
-var _drop_library = null;
-var _drop_query = null;
 
 function SBDroppedEntry()
 {
   if ( theDropIsDir )
   {
     theFileScanIsOpen.boolValue = true;
+    
     // otherwise, fire off the media scan page.
     var media_scan_data = new Object();
     media_scan_data.URL = theDropPath;
     media_scan_data.retval = "";
-    media_scan_data.target_pl = theDropPlaylist;
-    media_scan_data.target_db = theDropDatabase;
+
     // Open the modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
     theFileScanIsOpen.boolValue = false;
   } 
   else if (gPPS.isMediaURL( theDropPath )) {
-    var index = gPPS.importURL(theDropPath);
-
-    if (!_drop_library || !_drop_query) {
-      alert("XXXX - migrate 'dndDefaultHandler.js::SBDroppedEntry()' to new API");     
-//      _drop_library = new sbIMediaLibrary();
-      _drop_query = new sbIDatabaseQuery();
-      _drop_query.setDatabaseGUID(theDropDatabase);
-      _drop_library.setQueryObject(_drop_query);
-    }
-
-    var guid = _drop_library.getValueByIndex(index, "uuid");
-    if (!theDropGuids) theDropGuids = Array();
-    theDropGuids.push(guid);
-
-    if (firstDrop) {
+    
+    //Import the track into the main library.
+    var item = SBImportURLIntoMainLibrary(theDropPath);
+    
+    if(firstDrop) {
       firstDrop = false;
-      gBrowser.playExternalUrl(theDropPath, false);
+      
+      var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                  .getService(Components.interfaces.sbILibraryManager);
+                                  
+      SBDisplayViewForListAndPlayItem(libraryManager.mainLibrary, item);
     }
   }
 }

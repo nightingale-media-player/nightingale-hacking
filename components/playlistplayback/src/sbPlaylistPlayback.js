@@ -33,13 +33,11 @@
 // XPCOM Registration
 const SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistPlayback;1";
 const SONGBIRD_PLAYLISTPLAYBACK_CLASSNAME = "Songbird Playlist Playback Interface";
-const SONGBIRD_PLAYLISTPLAYBACK_CID = Components.ID("{000e2465-58b7-4922-bdfb-9ab1492c6037}");
+const SONGBIRD_PLAYLISTPLAYBACK_CID = Components.ID("{e1c06940-077d-4b66-b70d-71a720320e3a}");
 
 // Songbird ContractID Stuff
 const SONGBIRD_COREWRAPPER_CONTRACTID = "@songbirdnest.com/Songbird/CoreWrapper;1";
 const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbirdnest.com/Songbird/DataRemote;1";
-const SONGBIRD_DATABASEQUERY_CONTRACTID = "@songbirdnest.com/Songbird/DatabaseQuery;1";
-const SONGBIRD_MEDIALIBRARY_CONTRACTID = "@songbirdnest.com/Songbird/MediaLibrary;1";
 const SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistReaderManager;1";
 
 // String Bundles
@@ -50,9 +48,7 @@ const MINIMUM_FILE_SIZE = 64000;
 
 // Interfaces
 const sbICoreWrapper           = Components.interfaces.sbICoreWrapper;
-const sbIDatabaseQuery         = Components.interfaces.sbIDatabaseQuery;
 const sbIDataRemote            = Components.interfaces.sbIDataRemote;
-// const sbIMediaLibrary          = Components.interfaces.sbIMediaLibrary;
 const sbIPlaylistPlayback      = Components.interfaces.sbIPlaylistPlayback;
 const sbIPlaylistReaderManager = Components.interfaces.sbIPlaylistReaderManager;
 const sbIMediaListView         = Components.interfaces.sbIMediaListView;
@@ -930,51 +926,6 @@ PlaylistPlayback.prototype = {
     return true;
   },
   
-  playAndImportURL: function(aURL) {
-    try  {
-      // note 1: eventually we need some error handling here, so we can avoid cancelling the search 
-      // and filters (and also avoid playing the first track of the library) if the import was 
-      // unsuccessful in the first place
-      
-      // note 2: cancelling the search and filters is only needed because there is no 'working playlist',
-      // so we play the 'current' view of the library. that view has to include the file we want to play
-      // for things to work. if we ever make a working playlist system, we will still import the file
-      // in the library but instead of reseting the library filters and search, we will reset the working
-      // playlist's filters and search.
-
-      // import the track in the library if it isn't in it already
-      //var index = this._importURLInLibrary(aURL);
-      //var ref = "NC:songbird_library";
-      //this._source.waitForQueryCompletion(ref);
-
-      // reset the search and filter for the library, we want to be able to play an arbitrary file
-      //this._source.setSearchString(ref, "", true);
-      //this._source.executeFeed( ref );
-      //this._source.waitForQueryCompletion(ref);
-
-      // if we do not forceGetTargets, we end up playing the wrong thing (if we just changed the filtering/search)
-      //this._source.forceGetTargets( ref, false );
-
-      // play the track
-      //this.playRefByID(ref, index);
-      
-      //XXX todo: 
-      // 1) reset the main library search and filters (read notes above)
-      // 2) import track in main library
-      // 3) play the library view by the index of that track
-      dump("XXXXXXXXXXXXXXXXX oops! playlistPlayback.playAndImportURL is not implemented yet :(\n");
-      
-    } catch( err ) {
-      dump( "playAndImportURL:\n" + err + "\n" );
-      return false;
-    }
-    return true;
-  },
-  
-  importURL: function(aURL) {
-    return this._importURLInLibrary(aURL);
-  },
-
   pause: function() {
     var core = this.core;
     if (!core)
@@ -1512,7 +1463,7 @@ PlaylistPlayback.prototype = {
       // OH OH!  If our position isn't moving, go to the next track!
       else if ( pos == this._lastPos && pos > 0.0 && ! this._isFLAC() && ! this.paused ) {
         // After 10 seconds, give up and go to the next one?
-        if ( this._lookForPlayingCount++ > 40 )
+        if ( this._lookForPlayingCount++ > 80 )
           this.next();
       }
       else {
@@ -1629,35 +1580,6 @@ PlaylistPlayback.prototype = {
     if (view.length > 0) {
       this.playView(view, 0);
     }
-  },
-  
-  _importURLInLibrary: function( aURL )
-  {
-    LOG("XXXX - migrate 'sbPlaylistPlayback.js::_importURLInLibrary()' to new API");
-    return;
-
-/*    
-    var library = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(sbIMediaLibrary);
-
-    // set up the database query object
-    var queryObj = Components.classes[SONGBIRD_DATABASEQUERY_CONTRACTID].createInstance(sbIDatabaseQuery);
-    queryObj.setDatabaseGUID("songbird");
-    library.setQueryObject(queryObj);
-
-    // prepare the data for addMedia call
-    var keys = new Array( "title" );
-    var values = new Array();
-    values.push( this.convertURLToDisplayName( aURL ) );
-
-    // add the url to the library
-    var guid = library.addMedia( aURL, keys.length, keys, values.length, values, false, false );
-    LOG("add media = " + guid);
-
-    // return the index of the row in the library.  // This isn't really the row index.  :(
-    var row = library.getValueByGUID(guid, "id");
-    LOG("findbyguid = " + row);
-    return row;
-*/
   },
   
   _setItemMetadata: function( aItem, aTitle, aLength, aAlbum, aArtist, aGenre ) {

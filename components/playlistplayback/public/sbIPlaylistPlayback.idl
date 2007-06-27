@@ -39,6 +39,7 @@
 
 interface sbICoreWrapper;
 interface sbIMediaListView;
+interface sbIMediaItem;
 
 /**
  * \interface sbIPlaylistPlayback
@@ -52,7 +53,7 @@ interface sbIMediaListView;
  * \sa sbICoreWrapper
  * An interface that describes the PlaylistPlayback Service
  */
-[scriptable, uuid(75f6fa58-4853-4ac9-9fe1-ec94879da763)]
+[scriptable, uuid(9b4b18eb-8b76-4e16-a0a3-a1f41bf1df76)]
 interface sbIPlaylistPlayback : nsIObserver
 {
   // --------------------------------------------------------------------------
@@ -295,15 +296,6 @@ interface sbIPlaylistPlayback : nsIObserver
   boolean playURL(in AString aURL);
 
   /**
-   * \brief Add the track to the library and play it.
-   *
-   * \param aURL - the URL to the media
-   * \return true if import and playback was successful
-   * \return false if import or playback was not successful
-   */
-  boolean playAndImportURL(in AString aURL);
-
-  /**
    * \brief Play a media list view.
    *
    * \param aView The media list view to play.
@@ -313,15 +305,6 @@ interface sbIPlaylistPlayback : nsIObserver
    * \retval false Playback from the media list view failed.
    */
   boolean playView(in sbIMediaListView aView, in PRInt32 aIndex);
-
-  /**
-   * \brief Adds a piece of media to the library.
-   *
-   * \param aURL - the URL of the media to add.
-   * \return the row of the media in the library.
-   */
-  PRInt32 importURL(in AString aURL);
-
 
   // --------------------------------------------------------------------------
   // Metadata methods
