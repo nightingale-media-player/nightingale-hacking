@@ -107,6 +107,14 @@ var SBProperties = {
   get ordinal() { return this._base + "ordinal"; },
 
   get mediaListName() { return this._base + "mediaListName"; },
+  
+  get progressMode() { return this._base + "progressMode"; },
+
+  get progressValue() { return this._base + "progressValue"; },
+
+  get columnSpec() { return this._base + "columnSpec"; },
+
+  get defaultColumnSpec() { return this._base + "defaultColumnSpec"; },
 
   createArray: function(properties) {
     var propertyArray =
