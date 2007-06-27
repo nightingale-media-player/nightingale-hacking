@@ -102,10 +102,6 @@ protected:
                                  const nsAString &aType,
                                  PRBool aIsTrusted );
 
-  // XXXredfive - temporary for demo only
-  nsresult RegisterButtonDemo( const nsAString& aName,
-                               const nsAString& aDisplay );
-
   // These three methods should wind up on the download device
   nsresult GetDownloadList( sbIMediaList **aMediaList );
   PRBool LaunchDownloadDialog( nsAString &aLocation );

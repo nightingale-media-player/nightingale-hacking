@@ -313,67 +313,7 @@ sbRemotePlayer::Init()
   NS_ENSURE_STATE(eventTarget);
   eventTarget->AddEventListener( NS_LITERAL_STRING("unload"), this , PR_TRUE );
 
-  // XXXredfive - temporary for demo purposes ONLY
-  // Add the special Button Demo Column types in properties
-  RegisterButtonDemo(NS_LITERAL_STRING("buttonDemoLogo"),
-                     NS_LITERAL_STRING("Logo"));
-  RegisterButtonDemo(NS_LITERAL_STRING("buttonDemoPlay"),
-                     NS_LITERAL_STRING("Play"));
-  RegisterButtonDemo(NS_LITERAL_STRING("buttonDemoShare"),
-                     NS_LITERAL_STRING("Share"));
-  RegisterButtonDemo(NS_LITERAL_STRING("buttonDemoAdd"),
-                     NS_LITERAL_STRING("Add"));
-  RegisterButtonDemo(NS_LITERAL_STRING("buttonDemoBuy"),
-                     NS_LITERAL_STRING("Buy"));
-  RegisterButtonDemo(NS_LITERAL_STRING("buttonDemoPlay"),
-                     NS_LITERAL_STRING("Play"));
-  RegisterButtonDemo(NS_LITERAL_STRING("buttonDemoListen"),
-                     NS_LITERAL_STRING("Listen"));
-  RegisterButtonDemo(NS_LITERAL_STRING("buttonDemoAddToCart"),
-                     NS_LITERAL_STRING("Add To Cart"));
-  RegisterButtonDemo(NS_LITERAL_STRING("buttonDemoDownload"),
-                     NS_LITERAL_STRING("Download"));
-
   mInitialized = PR_TRUE;
-
-  return NS_OK;
-}
-
-// XXXredfive - temporary for demo purposes ONLY
-nsresult
-sbRemotePlayer::RegisterButtonDemo( const nsAString& aName,
-                                    const nsAString& aDisplay )
-{
-  LOG(( "sbRemotePlayer::RegisterButtonDemo(%s, %s)",
-        NS_LossyConvertUTF16toASCII(aName).get(), 
-        NS_LossyConvertUTF16toASCII(aDisplay).get() ));
-
-  nsresult rv;
-  nsCOMPtr<sbIPropertyInfo> propInfo =
-       do_CreateInstance( SB_TEXTPROPERTYINFO_CONTRACTID, &rv );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = propInfo->SetName(aName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = propInfo->SetDisplayName(aDisplay);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = propInfo->SetDisplayUsingSimpleType(NS_LITERAL_STRING("image"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = propInfo->SetUserViewable(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = propInfo->SetUserEditable(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyManager> propMngr( 
-    do_GetService( SB_PROPERTYMANAGER_CONTRACTID, &rv ) );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = propMngr->AddPropertyInfo(propInfo);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
