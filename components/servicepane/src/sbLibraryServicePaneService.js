@@ -144,7 +144,7 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
     }
 
     // Add menu items for a dynamic media list
-    if (SB_GETPROP(list, "http://songbirdnest.com/data/1.0#isSubscription") == "1") {
+    if (list.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") {
       this._appendMenuItem(aContextMenu, "Properties", function(event) { //XXX todo: localize
 
         var params = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
@@ -961,7 +961,7 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     node.editable = true;
 
     // Set properties for styling purposes
-    if (SB_GETPROP(aMediaList, "http://songbirdnest.com/data/1.0#isSubscription") == "1")
+    if (aMediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1")
       node.properties = "medialist medialisttype-dynamic";
     else
       node.properties = "medialist medialisttype-" + aMediaList.type;
@@ -1263,16 +1263,6 @@ function sbLibraryServicePane_observe(subject, topic, data) {
 
     this._removeAllLibraries();
   }
-}
-
-// Until we get isVoid/setVoid stuff
-function SB_GETPROP(resource, property) {
-  try {
-    return resource.getProperty(property);
-  }
-  catch (e) {
-  }
-  return null;
 }
 
 ///////////

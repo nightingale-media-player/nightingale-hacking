@@ -57,7 +57,7 @@ function runTest () {
   // an empty string.  This will change to null once we have IsVoid/SetVoid
   var prop = listener.properties.getPropertyAt(0);
   assertEqual(prop.name, SB_PROP_ARTISTNAME);
-  assertEqual(prop.value, "");
+  assertEqual(prop.value, null);
 
   item.setProperty(SB_PROP_ARTISTNAME, "The Bealtes");
 

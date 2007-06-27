@@ -478,13 +478,8 @@ function SBSubscribe(mediaList, defaultUrl)
     if (!(mediaList instanceof Components.interfaces.sbIMediaList))
       throw Components.results.NS_ERROR_INVALID_ARG;
 
-    var isSubscription;
-    try {
-      isSubscription =
-        mediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription");
-    }
-    catch(e) {
-    }
+    var isSubscription =
+      mediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription");
     if (isSubscription != "1")
       throw Components.results.NS_ERROR_INVALID_ARG;
   }

@@ -57,16 +57,6 @@ function TRACE(s) {
   //dump("------------------> " + s + "\n");
 }
 
-// Until we get isVoid/setVoid stuff
-function SB_GETPROP(resource, property) {
-  try {
-    return resource.getProperty(property);
-  }
-  catch (e) {
-  }
-  return null;
-}
-
 function sbLocalDatabaseDynamicPlaylistService()
 {
   this._started = false;
@@ -227,7 +217,7 @@ function sbLocalDatabaseDynamicPlaylistService__scheduleLibrary(aLibrary)
 sbLocalDatabaseDynamicPlaylistService.prototype._isDynamicPlaylist =
 function sbLocalDatabaseDynamicPlaylistService__isDynamicPlaylist(aMediaList)
 {
-  return SB_GETPROP(aMediaList, SB_PROP_ISSUBSCRIPTION) == "1";
+  return aMediaList.getProperty(SB_PROP_ISSUBSCRIPTION) == "1";
 }
 
 sbLocalDatabaseDynamicPlaylistService.prototype._removeListsFromLibrary =
@@ -246,8 +236,8 @@ function sbLocalDatabaseDynamicPlaylistService__updateSubscriptions(aForce)
   var now = (new Date()).getTime() * 1000;
   for each (var list in this._scheduledLists) {
 
-    var nextRun  = SB_GETPROP(list, SB_PROP_SUBSCRIPTIONNEXTRUN);
-    var interval = SB_GETPROP(list, SB_PROP_SUBSCRIPTIONINTERVAL);
+    var nextRun  = list.getProperty(SB_PROP_SUBSCRIPTIONNEXTRUN);
+    var interval = list.getProperty(SB_PROP_SUBSCRIPTIONINTERVAL);
 
     // If there is no next run set, set it
     if (!nextRun) {
@@ -271,9 +261,11 @@ function sbLocalDatabaseDynamicPlaylistService__updateSubscriptions(aForce)
 sbLocalDatabaseDynamicPlaylistService.prototype._updateList =
 function sbLocalDatabaseDynamicPlaylistService__updateList(aList)
 {
+  var subscriptionURL = aList.getProperty(SB_PROP_SUBSCRIPTIONURL);
+
   var ioService = Cc["@mozilla.org/network/io-service;1"]
                     .getService(Ci.nsIIOService);
-  var uri = ioService.newURI(SB_GETPROP(aList, SB_PROP_SUBSCRIPTIONURL), null, null);
+  var uri = ioService.newURI(subscriptionURL, null, null);
 
   // Get the playlist reader and load the tracks from this url
   var manager = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
@@ -295,7 +287,7 @@ function sbLocalDatabaseDynamicPlaylistService__updateList(aList)
 
       // Check to see if this list has a custom download destination, and that
       // the destination is a directory
-      var destination = SB_GETPROP(aList, SB_PROP_DESTINATION);
+      var destination = aList.getProperty(SB_PROP_DESTINATION);
       var destinationDir;
       if (destination) {
         try {
@@ -358,7 +350,7 @@ sbLocalDatabaseDynamicPlaylistService.prototype._setNextRun =
 function sbLocalDatabaseDynamicPlaylistService__setNextRun(aList)
 {
   var now = (new Date()).getTime() * 1000;
-  var interval = SB_GETPROP(aList, SB_PROP_SUBSCRIPTIONINTERVAL);
+  var interval = aList.getProperty(SB_PROP_SUBSCRIPTIONINTERVAL);
 
   // Interval is in seconds, next run is in micro seconds
   var nextRun = now + (interval * 1000 * 1000);
@@ -460,8 +452,8 @@ function sbLocalDatabaseDynamicPlaylistService_updateAllNow()
 sbLocalDatabaseDynamicPlaylistService.prototype.updateNow =
 function sbLocalDatabaseDynamicPlaylistService_updateNow(aMediaList)
 {
-  var interval = SB_GETPROP(aMediaList, SB_PROP_SUBSCRIPTIONINTERVAL);
-  var url      = SB_GETPROP(aMediaList, SB_PROP_SUBSCRIPTIONURL);
+  var interval = aMediaList.getProperty(SB_PROP_SUBSCRIPTIONINTERVAL);
+  var url = aMediaList.getProperty(SB_PROP_SUBSCRIPTIONURL);
 
   if (interval && url)
     this._updateList(aMediaList);
@@ -527,7 +519,7 @@ function sbLocalDatabaseDynamicPlaylistService_onItemAdded(aMediaList,
   if (this._isDynamicPlaylist(aMediaItem)) {
 
     // If there is no next run time, set one
-    if (SB_GETPROP(aMediaItem, SB_PROP_SUBSCRIPTIONNEXTRUN)) {
+    if (aMediaItem.getProperty(SB_PROP_SUBSCRIPTIONNEXTRUN)) {
       this._setNextRun(aMediaItem);
     }
     this._scheduledLists[aMediaItem.guid] = aMediaItem;

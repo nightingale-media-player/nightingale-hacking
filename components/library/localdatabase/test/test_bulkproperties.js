@@ -74,8 +74,8 @@ function runTest () {
 
   var changedProps = listener.updatedProperties;
   assertEqual(changedProps.length, 2);
-  assertEqual(changedProps.getPropertyValue(SB_NS + "albumName"), "");
-  assertEqual(changedProps.getPropertyValue(SB_NS + "artistName"), "");
+  assertEqual(changedProps.getPropertyValue(SB_NS + "albumName"), null);
+  assertEqual(changedProps.getPropertyValue(SB_NS + "artistName"), null);
 
   a = SBProperties.createArray([
     [SBProperties.albumName, "album name2"],
