@@ -918,12 +918,10 @@ PlaylistPlayback.prototype = {
       this._startPlayerLoop();
       
       // metrics
-      var s = spec.split(".");
-      if (s.length > 1)
-      {
-        var ext = s[s.length-1];
-        this.metrics_inc("play.attempt", ext, null);
-      }
+      var ext = spec.substr( spec.lastIndexOf(".") + 1, spec.length );
+      if ( ext.length < 1 || ext.length > 5 )
+        ext = "???";  // Well, we certainly tried to play something.
+      this.metrics_inc("play.attempt", ext, null);
       this.metrics_inc("play.attempt", core.getId(), null);
     } catch( err ) {
       debug( "playURL:\n" + err + "\n" );
