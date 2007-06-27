@@ -319,6 +319,11 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
     do_CreateInstance(NS_XMLHTTPREQUEST_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Override the MIME type here so that the schema isn't sent to the XML
+  // parser by mistake.
+  rv = request->OverrideMimeType(NS_LITERAL_CSTRING("text/plain"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = request->OpenRequest(NS_LITERAL_CSTRING("GET"),
                             NS_LITERAL_CSTRING(SCHEMA_URL),
                             PR_FALSE, EmptyString(), EmptyString());
