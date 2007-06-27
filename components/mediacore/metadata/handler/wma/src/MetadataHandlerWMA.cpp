@@ -259,22 +259,27 @@ sbMetadataHandlerWMA::Read(PRInt32* _retval)
   rv = fileURL->GetFile(getter_AddRefs(file));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCAutoString filePath;
-  rv = file->GetNativePath(filePath);
+  // How about we start with the cooked path?
+  nsAutoString filePathUTF16;
+  rv = file->GetPath(filePathUTF16);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString filePathUTF16;
-  CopyUTF8toUTF16(filePath, filePathUTF16);
-  
-  // Try to use the WMFSDK for this data because it's probably faster than
-  // initializing the Windows Media Player ActiveX control.
-  rv = ReadMetadataWMFSDK(filePathUTF16, _retval);
-  if (NS_SUCCEEDED(rv))
-    return rv;
-  
-  // The WMF SDK failed on the file (probably because it is protected), so let
-  // the ActiveX control take a crack at it.
-  return ReadMetadataWMP(filePathUTF16, _retval);
+  // If we have something, try it.
+  if ( filePathUTF16.Length() ) {
+    // Try to use the WMFSDK for this data because it's probably faster than
+    // initializing the Windows Media Player ActiveX control.
+    rv = ReadMetadataWMFSDK(filePathUTF16, _retval);
+    if (NS_SUCCEEDED(rv))
+      return rv;
+    
+    // The WMF SDK failed on the file (probably because it is protected), so let
+    // the ActiveX control take a crack at it.
+    rv = ReadMetadataWMP(filePathUTF16, _retval);
+    if (NS_SUCCEEDED(rv))
+      return rv;
+  }
+
+  return NS_ERROR_INVALID_ARG; // This will cause a useful warning in the metadata job.
 }
 
 NS_IMETHODIMP
