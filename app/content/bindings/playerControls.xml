@@ -770,7 +770,7 @@
               } else {
                 this.gPPS.pause();
               }
-            } else if (window.gBrowser && gBrowser.currentPlaylist) {
+            } else if (window.gBrowser && window.gBrowser.currentPlaylist) {
               // if there's a browser and a playlist active, tell the playlist
               // to play itself
               gBrowser.currentPlaylist.sendPlayEvent();

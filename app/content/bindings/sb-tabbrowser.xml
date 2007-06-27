@@ -230,7 +230,7 @@
       <property name="currentPlaylist" readonly="true">
         <getter><![CDATA[
           var pl = this.currentInnerPlaylist;
-          if (!pl) {
+          if (!pl && this.currentOuterPlaylistShowing) {
             pl = this.currentOuterPlaylist;
           }
           return pl;
@@ -1244,7 +1244,8 @@
       <property name="outerPlaylistShowing">
         <getter><![CDATA[
           if (!this._playlist) return false;
-          return (this._playlist.getAttribute("hidden") == 'false');
+          return (!this._playlist.hasAttribute("hidden") ||
+                  this._playlist.getAttribute("hidden") == 'false');
         ]]></getter>
         <setter><![CDATA[
           if (!this._playlist) return;
