@@ -43,6 +43,10 @@ try
     if ( href_loop )
     {
       href_loop.cancel();
+      
+      // Murder his whole family.
+      for ( var i = 0; i < href_loop.childLoops.length; i++ )
+        CancelAsyncWebDocument( href_loop.childLoops[ i ] );
 
       // Make sure to clean up any medialists we have lying around.
       var oldMediaList = href_loop.mediaList;
@@ -84,9 +88,16 @@ try
       },
 
       function webPlaylist_whileEval() {
-        return (this.i < this.a_array.length) ||
-               (this.i < this.embed_array.length) ||
-               (this.i < this.object_array.length);
+        var retval = (this.i < this.a_array.length) ||
+                     (this.i < this.embed_array.length) ||
+                     (this.i < this.object_array.length) ||
+                     (this.i < this.frame_array.length) ||
+                     (this.i < this.iframe_array.length);
+                     
+        for ( var i = 0; i < this.childLoops.length; i++ ) {
+          retval |= this.childLoops[ i ].m_Interval != null;
+        }
+        return retval;
       },
 
       function webPlaylist_stepEval() {
@@ -96,15 +107,7 @@ try
       function webPlaylist_bodyEval() {
         try  {
         
-          // Do not run while the "main" playlist is up?  This is so gross.
-          //  UGH.  MUST REWRITE ENTIRE WORLD.
-          /*
-          if (gBrowser.playlistTree) {
-            this.cancel(); 
-            context.showPlaylist = false;
-          } */
-
-          // check is clearInterval has been called (see sbIAsyncForLoop.js:66)
+          // Check if clearInterval has been called (see sbIAsyncForLoop.js:66)
           if (!this.m_Interval) {
             return true;
           }
@@ -145,6 +148,30 @@ try
             if ( url )
               loop_break |= this.handleEmbedURL( url );
           }
+          // "Frame" tags
+          if ( 
+              ( this.i < this.frame_array.length )
+            )
+          {
+            var doc = this.frame_array[ this.i ].contentDocument;
+            if ( doc ) {
+              var newloop = AsyncWebDocument( doc, this.mediaListView, null, context );
+              newloop.child = true;
+              this.childLoops.push( newloop );
+            }
+          }
+          // "IFrame" tags
+          if ( 
+              ( this.i < this.iframe_array.length )
+            )
+          {
+            var doc = this.iframe_array[ this.i ].contentDocument;
+            if ( doc ) {
+              var newloop = AsyncWebDocument( doc, this.mediaListView, null, context );
+              newloop.child = true;
+              this.childLoops.push( newloop );
+            }
+          }
           
           return loop_break;
         }
@@ -162,20 +189,21 @@ try
         var mediaList = aMediaListView.mediaList;
         var library = mediaList.library;
 
-        if (mediaList.length) {
-          mediaList.clear();
-        }
-
         var foundItemsLength = this.items.length;
         if (foundItemsLength) {
           // Let the view know that we're about to make a lot of changes.
           mediaList.beginUpdateBatch();
+
+          // Only clear the list if we have anything to add.          
+          if (mediaList.length) {
+            // This will need to be fixed for multiple frames with media urls
+            mediaList.clear(); 
+          }
           
           // Use a try/finally construct to make sure that we call
           // endUpdateBatch no matter what happens.
           try {
             var mediaItemsToScan;
-            
             for (var index = 0; index < foundItemsLength; index++) {
               var item = this.items[index];
               var mediaItem;
@@ -209,8 +237,7 @@ try
                             QueryInterface(Components.interfaces.sbILocalDatabaseLibrary).
                             propertyCache;
             propCache.write();
-          }
-          finally {
+          } finally {
             // Tell the view that it can redraw itself.
             mediaList.endUpdateBatch();
           }
@@ -224,20 +251,20 @@ try
             var metadataJob = metadataJobManager.newJob(mediaItemsToScan, 5);
           }
         }
-        else {
-          // Nothing was found, so remove the media list we were using from
-          // the library. DON'T touch aMediaListView after this call!
-          library.remove(mediaList);
-          delete mediaList;
-          delete aMediaListView;
+        else if ( this.child == false ) {
+          // Only if we are a parent job, see if anyone found anything
+          if ( ! this.checkForAnything( this ) ) {
+            // Nothing was found, so remove the media list we were using from
+            // the library. DON'T touch aMediaListView after this call!
+            library.remove(mediaList);
+            delete mediaList;
+            delete aMediaListView;
+          }
         }
-
-        SBDataSetBoolValue( "media_scan.open", false ); // ?  Don't let this go?
-        context.progressTotal = this.a_array.length;
-        context.progressCurrent = this.a_array.length;
-
-        // Release the global reference
-        href_loop = null;
+        if ( this.child == false ) {
+          // Parent job can stop counting progress.
+          context.progressTotal = context.progressCurrent = 1;
+        }                               
       },
       
       20, // 20 steps per interval
@@ -250,13 +277,32 @@ try
     href_loop.a_array = aDocument.getElementsByTagName("A");
     href_loop.embed_array = aDocument.getElementsByTagName("EMBED");
     href_loop.object_array = aDocument.getElementsByTagName("OBJECT");
+    href_loop.frame_array = aDocument.getElementsByTagName("FRAME");
+    href_loop.iframe_array = aDocument.getElementsByTagName("IFRAME");
     href_loop.currentURL = aDocument.location;
     href_loop.items = [];
     href_loop.seenURLs = [];
+    href_loop.childLoops = [];
+    href_loop.mediaListView = aMediaListView;
     href_loop.mediaList = aMediaListView.mediaList;
+    href_loop.child = false; // might get set to true, later.
+    
+    href_loop.checkForAnything = function webPlaylist_checkForAnything() {
+      // Do I have anything?
+      var retval = this.items.length > 0;
+      // Do my children have anything?
+      for ( var i = 0; i < this.childLoops.length; i++ ) {
+        retval |= this.childLoops[ i ].checkForAnything();
+      }
+      return retval;
+    }
     
     // Useful function to be called by the internal code
     href_loop.handleURL = function webPlaylist_handleURL(url, force) {
+
+      // Tell other folks that we're on to the next item.
+      if (context)
+        context.progressCurrent = context.progressCurrent + 1;
     
       // Make sure this is a well-formed url.
       try {
@@ -274,25 +320,20 @@ try
       }
 
       if (!force && !gPPS.isMediaURL(url)) {
-        // decrement the total (floor is 0) to keep the percentage indicator moving
-        if (context.progressTotal > 0) {
-          context.progressTotal = context.progressTotal - 1;
-        }
-
         // Keep the loop going.
         return false;
       }
 
-      // Tell other folks that we're on to the next item.
-      context.progressCurrent = this.i + 1;
 
       installClickHandler(this.a_array[this.i]);
 
-      if (!this.items.length) {
-        context.playlistHasItems = true;
-        context.showPlaylist = true;
+      if (context) {
+        if (!this.items.length) {
+          context.playlistHasItems = true;
+          context.showPlaylist = true;
+        }
       }
-
+      
       // Don't insert it if we already did.
       if (this.seenURLs.indexOf(url) != -1) {
         return false;
@@ -402,9 +443,11 @@ try
       return retval;
     }
     
-    context.progressTotal = href_loop.a_array.length;
-    SBDataSetBoolValue( "media_scan.open", true ); // ?  Don't let this go?
-
+    if (context) {
+      context.progressTotal += href_loop.a_array.length +
+                               href_loop.embed_array.length +
+                               href_loop.object_array.length;
+    }                               
     return href_loop;
   }  
 }
