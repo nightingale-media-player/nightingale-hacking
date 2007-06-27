@@ -919,7 +919,7 @@ PlaylistPlayback.prototype = {
       
       // metrics
       var ext = spec.substr( spec.lastIndexOf(".") + 1, spec.length );
-      if ( ext.length < 1 || ext.length > 5 )
+      if ( ext.length < 1 || ext.length > 6 )
         ext = "???";  // Well, we certainly tried to play something.
       this.metrics_inc("play.attempt", ext, null);
       this.metrics_inc("play.attempt", core.getId(), null);
