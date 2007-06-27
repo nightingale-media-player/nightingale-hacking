@@ -405,13 +405,14 @@ function SBRestartApp()
 
 function SBMetricsAppShutdown() 
 {
-  var startstamp = SBDataGetIntValue("startup_timestamp");
-  var timenow = new Date();
-  var diff = (timenow.getTime() - startstamp)/60000;
-  metrics_add("player", "timerun", null, diff);
+  var startstamp = parseInt( SBDataGetStringValue("startup_timestamp") ); // 64bit, use StringValue
+  var timenow = (new Date()).getTime();
+  var ticsPerMinute = 1000 * 60;
+  var minutes = ( (timenow - startstamp) / ticsPerMinute ) + 1; // Add one for fractionals
+  metrics_add("player", "timerun", null, minutes);
 }
 
-function SBMetricsAppStart() 
+function SBMetricsAppStart()
 {
   // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
   if (!SBDataGetBoolValue("metrics_ignorenextstartup"))
@@ -420,8 +421,8 @@ function SBMetricsAppStart()
   }
   // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
   SBDataSetBoolValue("metrics_ignorenextstartup", false);
-  var timestamp = new Date();
-  SBDataSetIntValue("startup_timestamp", timestamp.getTime());
+  var startstamp = (new Date()).getTime();
+  SBDataSetStringValue("startup_timestamp", startstamp); // 64bit, use StringValue
 }
 
 //
