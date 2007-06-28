@@ -1481,8 +1481,6 @@
       
       <method name="switchToWebPlaylistView">
         <body><![CDATA[
-          metrics_inc("player", "urlslurp", null);
-
           var view;
           if (this._swappedPlaylistView) {
             view = this._swappedPlaylistView;
@@ -1508,8 +1506,6 @@
 
       <method name="switchToDownloadView">
         <body><![CDATA[
-          metrics_inc("player", "downloads", null);
-          
           // Make sure the download device has been added to the commands object.
           if (!SBDownloadCommands.m_Device) {
             var deviceManager =
