@@ -1,8 +1,10 @@
 Index: xpcom/build/nsXPCOMPrivate.h
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/build/nsXPCOMPrivate.h,v
---- xpcom/build/nsXPCOMPrivate.h	2007-06-14 18:38:34.000000000 -0700	1.44
-+++ xpcom/build/nsXPCOMPrivate.h	2007-06-14 18:38:34.000000000 -0700
+retrieving revision 1.44
+diff -u -8 -p -r1.44 nsXPCOMPrivate.h
+--- xpcom/build/nsXPCOMPrivate.h	24 Apr 2007 17:02:50 -0000	1.44
++++ xpcom/build/nsXPCOMPrivate.h	28 Jun 2007 22:11:52 -0000
 @@ -78,26 +78,30 @@ typedef nsresult   (* StringContainerIni
  typedef nsresult   (* StringContainerInit2Func)(nsStringContainer&, const PRUnichar *, PRUint32, PRUint32);
  typedef void       (* StringContainerFinishFunc)(nsStringContainer&);
@@ -58,8 +60,10 @@ RCS file: /cvsroot/mozilla/xpcom/build/nsXPCOMPrivate.h,v
 Index: xpcom/build/nsXPCOMStrings.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/build/nsXPCOMStrings.cpp,v
---- xpcom/build/nsXPCOMStrings.cpp	2007-06-14 18:38:34.000000000 -0700	1.2
-+++ xpcom/build/nsXPCOMStrings.cpp	2007-06-14 18:38:34.000000000 -0700
+retrieving revision 1.2
+diff -u -8 -p -r1.2 nsXPCOMStrings.cpp
+--- xpcom/build/nsXPCOMStrings.cpp	3 May 2006 16:34:24 -0000	1.2
++++ xpcom/build/nsXPCOMStrings.cpp	28 Jun 2007 22:11:52 -0000
 @@ -184,16 +184,28 @@ NS_StringSetDataRange(nsAString &aStr,
  
  XPCOM_API(nsresult)
@@ -121,8 +125,10 @@ RCS file: /cvsroot/mozilla/xpcom/build/nsXPCOMStrings.cpp,v
 Index: xpcom/glue/nsStringAPI.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/glue/nsStringAPI.cpp,v
---- xpcom/glue/nsStringAPI.cpp	2007-06-14 18:38:34.000000000 -0700	3.9
-+++ xpcom/glue/nsStringAPI.cpp	2007-06-14 18:38:34.000000000 -0700
+retrieving revision 3.9
+diff -u -8 -p -r3.9 nsStringAPI.cpp
+--- xpcom/glue/nsStringAPI.cpp	17 Jan 2007 21:10:01 -0000	3.9
++++ xpcom/glue/nsStringAPI.cpp	28 Jun 2007 22:11:52 -0000
 @@ -119,16 +119,32 @@ PRBool
  nsAString::SetLength(PRUint32 aLen)
  {
@@ -192,8 +198,10 @@ RCS file: /cvsroot/mozilla/xpcom/glue/nsStringAPI.cpp,v
 Index: xpcom/glue/nsStringAPI.h
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/glue/nsStringAPI.h,v
---- xpcom/glue/nsStringAPI.h	2007-06-14 18:38:34.000000000 -0700	3.10
-+++ xpcom/glue/nsStringAPI.h	2007-06-14 18:38:34.000000000 -0700
+retrieving revision 3.11
+diff -u -8 -p -r3.11 nsStringAPI.h
+--- xpcom/glue/nsStringAPI.h	16 Jun 2007 20:02:15 -0000	3.11
++++ xpcom/glue/nsStringAPI.h	28 Jun 2007 22:11:52 -0000
 @@ -107,16 +107,19 @@ public:
      return NS_StringGetData(*this, &data);
    }
@@ -237,8 +245,10 @@ RCS file: /cvsroot/mozilla/xpcom/glue/nsStringAPI.h,v
 Index: xpcom/glue/standalone/nsXPCOMGlue.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/glue/standalone/nsXPCOMGlue.cpp,v
---- xpcom/glue/standalone/nsXPCOMGlue.cpp	2007-06-14 18:38:34.000000000 -0700	1.43
-+++ xpcom/glue/standalone/nsXPCOMGlue.cpp	2007-06-14 18:38:34.000000000 -0700
+retrieving revision 1.47
+diff -u -8 -p -r1.47 nsXPCOMGlue.cpp
+--- xpcom/glue/standalone/nsXPCOMGlue.cpp	26 Jun 2007 19:22:54 -0000	1.47
++++ xpcom/glue/standalone/nsXPCOMGlue.cpp	28 Jun 2007 22:11:52 -0000
 @@ -301,16 +301,30 @@ NS_StringSetDataRange(nsAString &aStr, P
  XPCOM_API(nsresult)
  NS_StringCopy(nsAString &aDest, const nsAString &aSrc)
@@ -305,8 +315,10 @@ RCS file: /cvsroot/mozilla/xpcom/glue/standalone/nsXPCOMGlue.cpp,v
 Index: xpcom/string/public/nsXPCOMStrings.h
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/string/public/nsXPCOMStrings.h,v
---- xpcom/string/public/nsXPCOMStrings.h	2007-06-14 18:38:34.000000000 -0700	1.1
-+++ xpcom/string/public/nsXPCOMStrings.h	2007-06-14 18:38:34.000000000 -0700
+retrieving revision 1.1
+diff -u -8 -p -r1.1 nsXPCOMStrings.h
+--- xpcom/string/public/nsXPCOMStrings.h	3 May 2006 16:11:00 -0000	1.1
++++ xpcom/string/public/nsXPCOMStrings.h	28 Jun 2007 22:11:53 -0000
 @@ -55,25 +55,29 @@
  # define NS_StringContainerInit2          NS_StringContainerInit2_P
  # define NS_StringContainerFinish         NS_StringContainerFinish_P
@@ -410,8 +422,10 @@ RCS file: /cvsroot/mozilla/xpcom/string/public/nsXPCOMStrings.h,v
 Index: xpcom/stub/nsXPComStub.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/stub/nsXPComStub.cpp,v
---- xpcom/stub/nsXPComStub.cpp	2007-06-14 18:38:34.000000000 -0700	1.11
-+++ xpcom/stub/nsXPComStub.cpp	2007-06-14 18:38:34.000000000 -0700
+retrieving revision 1.11
+diff -u -8 -p -r1.11 nsXPComStub.cpp
+--- xpcom/stub/nsXPComStub.cpp	24 Apr 2007 17:02:51 -0000	1.11
++++ xpcom/stub/nsXPComStub.cpp	28 Jun 2007 22:11:53 -0000
 @@ -109,17 +109,21 @@ static const XPCOMFunctions kFrozenFunct
      &NS_LogAddRef_P,
      &NS_LogRelease_P,
@@ -500,8 +514,10 @@ RCS file: /cvsroot/mozilla/xpcom/stub/nsXPComStub.cpp,v
 Index: xpcom/tests/Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/tests/Makefile.in,v
---- xpcom/tests/Makefile.in	2007-06-14 18:38:34.000000000 -0700	1.99
-+++ xpcom/tests/Makefile.in	2007-06-14 18:38:34.000000000 -0700
+retrieving revision 1.99
+diff -u -8 -p -r1.99 Makefile.in
+--- xpcom/tests/Makefile.in	27 Mar 2007 03:38:21 -0000	1.99
++++ xpcom/tests/Makefile.in	28 Jun 2007 22:11:53 -0000
 @@ -87,16 +87,22 @@ CPPSRCS += \
  		TestXPIDLString.cpp \
  		TestDeque.cpp \
@@ -527,9 +543,10 @@ RCS file: /cvsroot/mozilla/xpcom/tests/Makefile.in,v
  LIBS +=	$(DIST)/lib/$(LIB_PREFIX)xpcomglue_s.$(LIB_SUFFIX)
 Index: xpcom/tests/TestStringAPI.cpp
 ===================================================================
-RCS file: /cvsroot/mozilla/xpcom/tests/TestStringAPI.cpp,v
---- xpcom/tests/TestStringAPI.cpp	1969-12-31 16:00:00.000000000 -0800	
-+++ xpcom/tests/TestStringAPI.cpp	2007-06-14 18:38:34.000000000 -0700
+RCS file: xpcom/tests/TestStringAPI.cpp
+diff -N xpcom/tests/TestStringAPI.cpp
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ xpcom/tests/TestStringAPI.cpp	28 Jun 2007 22:11:53 -0000
 @@ -0,0 +1,134 @@
 +/* ***** BEGIN LICENSE BLOCK *****
 + * Version: MPL 1.1/GPL 2.0/LGPL 2.1

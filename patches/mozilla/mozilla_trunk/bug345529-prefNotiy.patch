@@ -2,9 +2,9 @@ Index: modules/libpref/Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/modules/libpref/Makefile.in,v
 retrieving revision 1.8
-diff -u -p -8 -r1.8 Makefile.in
+diff -u -8 -p -r1.8 Makefile.in
 --- modules/libpref/Makefile.in	31 Dec 2005 12:14:44 -0000	1.8
-+++ modules/libpref/Makefile.in	3 May 2007 22:02:28 -0000
++++ modules/libpref/Makefile.in	28 Jun 2007 22:06:42 -0000
 @@ -37,13 +37,17 @@
  
  DEPTH		= ../..
@@ -27,9 +27,9 @@ Index: modules/libpref/public/nsIPrefBranch2.idl
 ===================================================================
 RCS file: /cvsroot/mozilla/modules/libpref/public/nsIPrefBranch2.idl,v
 retrieving revision 1.4
-diff -u -p -8 -r1.4 nsIPrefBranch2.idl
+diff -u -8 -p -r1.4 nsIPrefBranch2.idl
 --- modules/libpref/public/nsIPrefBranch2.idl	2 Nov 2006 21:10:19 -0000	1.4
-+++ modules/libpref/public/nsIPrefBranch2.idl	3 May 2007 22:02:29 -0000
++++ modules/libpref/public/nsIPrefBranch2.idl	28 Jun 2007 22:06:42 -0000
 @@ -88,16 +88,26 @@ interface nsIPrefBranch2 : nsIPrefBranch
     *    may hold a weak reference to it instead of a strong one.
     * 2) The nsPrefBranch object listens for xpcom-shutdown and frees all of the
@@ -61,9 +61,9 @@ Index: modules/libpref/src/prefapi.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/modules/libpref/src/prefapi.cpp,v
 retrieving revision 3.143
-diff -u -p -8 -r3.143 prefapi.cpp
+diff -u -8 -p -r3.143 prefapi.cpp
 --- modules/libpref/src/prefapi.cpp	27 Mar 2007 15:33:41 -0000	3.143
-+++ modules/libpref/src/prefapi.cpp	3 May 2007 22:02:29 -0000
++++ modules/libpref/src/prefapi.cpp	28 Jun 2007 22:06:42 -0000
 @@ -117,16 +117,19 @@ matchPrefEntry(PLDHashTable*, const PLDH
  
  PLDHashTable        gHashTable = { nsnull };
@@ -271,7 +271,7 @@ Index: modules/libpref/test/Makefile.in
 RCS file: modules/libpref/test/Makefile.in
 diff -N modules/libpref/test/Makefile.in
 --- /dev/null	1 Jan 1970 00:00:00 -0000
-+++ modules/libpref/test/Makefile.in	3 May 2007 22:02:29 -0000
++++ modules/libpref/test/Makefile.in	28 Jun 2007 22:06:42 -0000
 @@ -0,0 +1,50 @@
 +#
 +# ***** BEGIN LICENSE BLOCK *****
@@ -328,7 +328,7 @@ Index: modules/libpref/test/unit/test_bug345529.js
 RCS file: modules/libpref/test/unit/test_bug345529.js
 diff -N modules/libpref/test/unit/test_bug345529.js
 --- /dev/null	1 Jan 1970 00:00:00 -0000
-+++ modules/libpref/test/unit/test_bug345529.js	3 May 2007 22:02:29 -0000
++++ modules/libpref/test/unit/test_bug345529.js	28 Jun 2007 22:06:42 -0000
 @@ -0,0 +1,34 @@
 +/* Any copyright is dedicated to the Public Domain.
 + * http://creativecommons.org/licenses/publicdomain/  */ 

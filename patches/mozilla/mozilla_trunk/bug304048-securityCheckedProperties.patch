@@ -1,10 +1,11 @@
+? js/src/xpconnect/src/sanity.diff
 Index: js/src/xpconnect/idl/nsIXPConnect.idl
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/idl/nsIXPConnect.idl,v
 retrieving revision 1.50
 diff -u -8 -p -r1.50 nsIXPConnect.idl
 --- js/src/xpconnect/idl/nsIXPConnect.idl	2 May 2007 20:20:21 -0000	1.50
-+++ js/src/xpconnect/idl/nsIXPConnect.idl	7 Jun 2007 00:05:13 -0000
++++ js/src/xpconnect/idl/nsIXPConnect.idl	28 Jun 2007 22:02:59 -0000
 @@ -670,16 +670,27 @@ interface nsIXPConnect : nsISupports
       * automatically wrapped with an XPCNativeWrapper.
       *
@@ -39,7 +40,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/XPCDispConvert.cpp,v
 retrieving revision 1.14
 diff -u -8 -p -r1.14 XPCDispConvert.cpp
 --- js/src/xpconnect/src/XPCDispConvert.cpp	5 Apr 2006 21:34:16 -0000	1.14
-+++ js/src/xpconnect/src/XPCDispConvert.cpp	7 Jun 2007 00:05:13 -0000
++++ js/src/xpconnect/src/XPCDispConvert.cpp	28 Jun 2007 22:02:59 -0000
 @@ -326,16 +326,17 @@ JSBool XPCDispConvert::JSToCOM(XPCCallCo
              JSObject * obj = JSVAL_TO_OBJECT(src);
              IUnknown * pUnknown = nsnull;
@@ -64,7 +65,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/nsXPConnect.cpp,v
 retrieving revision 1.112
 diff -u -8 -p -r1.112 nsXPConnect.cpp
 --- js/src/xpconnect/src/nsXPConnect.cpp	4 Jun 2007 10:01:34 -0000	1.112
-+++ js/src/xpconnect/src/nsXPConnect.cpp	7 Jun 2007 00:05:13 -0000
++++ js/src/xpconnect/src/nsXPConnect.cpp	28 Jun 2007 22:02:59 -0000
 @@ -1049,17 +1049,17 @@ nsXPConnect::WrapJS(JSContext * aJSConte
      *result = nsnull;
  
@@ -150,7 +151,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcconvert.cpp,v
 retrieving revision 1.111
 diff -u -8 -p -r1.111 xpcconvert.cpp
 --- js/src/xpconnect/src/xpcconvert.cpp	28 Feb 2007 02:33:05 -0000	1.111
-+++ js/src/xpconnect/src/xpcconvert.cpp	7 Jun 2007 00:05:13 -0000
++++ js/src/xpconnect/src/xpcconvert.cpp	28 Jun 2007 22:03:00 -0000
 @@ -1024,17 +1024,17 @@ XPCConvert::JSData2Native(XPCCallContext
              if(!JSVAL_IS_OBJECT(s) || !(obj = JSVAL_TO_OBJECT(s)))
              {
@@ -232,7 +233,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcprivate.h,v
 retrieving revision 1.215
 diff -u -8 -p -r1.215 xpcprivate.h
 --- js/src/xpconnect/src/xpcprivate.h	2 Jun 2007 15:11:52 -0000	1.215
-+++ js/src/xpconnect/src/xpcprivate.h	7 Jun 2007 00:05:14 -0000
++++ js/src/xpconnect/src/xpcprivate.h	28 Jun 2007 22:03:00 -0000
 @@ -2330,16 +2330,22 @@ public:
      */
  
@@ -280,7 +281,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcwrappedjs.cpp,v
 retrieving revision 1.55
 diff -u -8 -p -r1.55 xpcwrappedjs.cpp
 --- js/src/xpconnect/src/xpcwrappedjs.cpp	2 Jun 2007 15:11:52 -0000	1.55
-+++ js/src/xpconnect/src/xpcwrappedjs.cpp	7 Jun 2007 00:05:14 -0000
++++ js/src/xpconnect/src/xpcwrappedjs.cpp	28 Jun 2007 22:03:00 -0000
 @@ -412,16 +412,78 @@ return_wrapper:
  
      if(!wrapper)
@@ -363,11 +364,11 @@ diff -u -8 -p -r1.55 xpcwrappedjs.cpp
 Index: caps/src/nsScriptSecurityManager.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/caps/src/nsScriptSecurityManager.cpp,v
-retrieving revision 1.317
-diff -u -8 -p -r1.317 nsScriptSecurityManager.cpp
---- caps/src/nsScriptSecurityManager.cpp	9 Feb 2007 04:52:44 -0000	1.317
-+++ caps/src/nsScriptSecurityManager.cpp	7 Jun 2007 00:05:14 -0000
-@@ -480,33 +480,41 @@ nsScriptSecurityManager::CheckObjectAcce
+retrieving revision 1.318
+diff -u -8 -p -r1.318 nsScriptSecurityManager.cpp
+--- caps/src/nsScriptSecurityManager.cpp	18 Jun 2007 15:12:09 -0000	1.318
++++ caps/src/nsScriptSecurityManager.cpp	28 Jun 2007 22:03:01 -0000
+@@ -488,33 +488,41 @@ nsScriptSecurityManager::CheckObjectAcce
      // Get the security manager
      nsScriptSecurityManager *ssm =
          nsScriptSecurityManager::GetScriptSecurityManager();
@@ -414,7 +415,7 @@ diff -u -8 -p -r1.317 nsScriptSecurityManager.cpp
  }
  
  NS_IMETHODIMP
-@@ -758,24 +766,34 @@ nsScriptSecurityManager::CheckPropertyAc
+@@ -766,24 +774,34 @@ nsScriptSecurityManager::CheckPropertyAc
      //--See if the object advertises a non-default level of access
      //  using nsISecurityCheckedComponent
      nsCOMPtr<nsISecurityCheckedComponent> checkedComponent =
