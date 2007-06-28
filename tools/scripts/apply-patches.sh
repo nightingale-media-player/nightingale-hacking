@@ -30,7 +30,7 @@ abspath="`cd \"$D\" 2>/dev/null && pwd || echo \"$D\"`/$B"
 for ((i=0; $i<$num_patches; i=$i+1)); do
   p=${patches[$i]}
   notice  "# applying $p #"
-  patch $reverse --backup-if-mismatch -p0 \
+  patch -f $reverse --backup-if-mismatch -p0 \
     -d "$targetdir" -i "$abspath/$p"
   echo ""
 done
