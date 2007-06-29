@@ -1,0 +1,91 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: 11 (downloading)</title>
+    <script>
+      var mainLib;
+      var siteLib;
+      var myDiv;
+      var origWebPlaylist;
+
+      var init = function init() {
+        mainLib = songbird.libraries("main");
+        siteLib = songbird.siteLibrary("", "/");
+        myDiv = document.getElementById("output");
+      }
+
+      var downloadList = function downloadList() {
+        if (!origWebPlaylist)
+          origWebPlaylist = songbird.webPlaylist.mediaList;
+
+        // pass the medialist into the songbird object to download
+        songbird.downloadList(origWebPlaylist);
+      }
+
+      var downloadItem = function downloadItem() {
+        if (!origWebPlaylist)
+          origWebPlaylist = songbird.webPlaylist.mediaList;
+
+        // pass the medialist into the songbird object to download
+        songbird.downloadItem( origWebPlaylist.getItemByIndex(1) );
+      }
+
+      var downloadSelected = function downloadSelected() {
+        // pass the web playlist into the songbird object to download
+        songbird.downloadSelected(songbird.webPlaylist);
+      }
+
+    </script>
+  </head>
+
+  <body onload="init();">
+    <h1>Download track to the users library.</h1>
+    
+    <p> Force a web playlist to appear. <br />
+      <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
+      <a href="http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3">Sheryl Crow</a>
+    <form>
+      <input type="button" id="download_button" value="downloadList"
+             onclick="downloadList();" /> 
+      <br />
+      <input type="button" id="download_button" value="downloadItem"
+             onclick="downloadItem();" /> 
+      <br />
+      <input type="button" id="download_button" value="downloadSelected"
+             onclick="downloadSelected();" /> 
+      <br />
+    </form>
+    </p>
+    <div id="output">
+    </div>
+  </body>
+
+</html>
+

@@ -28,7 +28,7 @@
 
 <html>
   <head>
-    <title>Remote API Test: 10</title>
+    <title>Remote API Test: 10 (selection)</title>
     <script>
       var mainLib;
 
@@ -38,7 +38,7 @@
 
       // Set the site library as the web playlist
       var setMain = function setMain() {
-        songbird.webPlaylist = mainLib;
+        songbird.webPlaylist.mediaList = mainLib;
       }
 
       var countSelection = function countSelection() {

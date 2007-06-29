@@ -58,7 +58,7 @@
         if (event.type == "play") {
           songbird.play();
         } else if (event.type == "play-list") {
-          songbird.playMediaList(songbird.webPlaylist, 0);
+          songbird.playMediaList(songbird.webPlaylist.mediaList, 0);
         } else if (event.type == "play-url") {
           songbird.playURL('http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3');
         }

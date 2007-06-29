@@ -28,7 +28,7 @@
 
 <html>
   <head>
-    <title>Remote API Test: 09</title>
+    <title>Remote API Test: 09 (set webplaylist)</title>
     <script>
       var siteLib;
       var mainLib;
@@ -49,18 +49,14 @@
         siteLib = songbird.siteLibrary("", "/");
         mainLib = songbird.libraries("main");
         webLib = songbird.libraries("web");
-
-
-        siteLib.name = "Site Lib";
-        siteLib.ensureColumnVisible("buttonDemoPlay", "image"); 
-        siteLib.ensureColumnVisible("buttonDemoLogo", "image"); 
         try {
-          siteLib.ensureColumnVisible("failure-column", "image"); 
+          originalWeb = songbird.webPlaylist.mediaList;
         } catch (e) {
-          dump("\n\nXXXredfive failed checked for added column - that's good it is suppposed to fail\n\n");
+          dump("XXXredfive - no medialist yet\n");
         }
 
-        originalWeb = songbird.webPlaylist;
+        siteLib.name = "Site Lib";
+
         init = true;
       }
 
@@ -77,8 +73,9 @@
 
       var setPlaylist = function setPlaylist(aMediaList) {
         if (!originalWeb)
-          originalWeb = songbird.webPlaylist;
-        songbird.webPlaylist = aMediaList;
+          originalWeb = songbird.webPlaylist.mediaList;
+
+        songbird.webPlaylist.mediaList = aMediaList;
       }
 
       // toggle between web and empty playlist
@@ -86,12 +83,14 @@
         if ( !playlist1 ) {
           playlist1 = siteLib.createMediaList("simple");
           playlist1.name = "foo - empty";
+          var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+          playlist1.add(item);
         }
 
         if (originalPlaylist) {
           setPlaylist(playlist1);
         } else {
-          songbird.webPlaylist = originalWeb;
+          setPlaylist(originalWeb);
         }
         originalPlaylist = !originalPlaylist;
       }
@@ -99,15 +98,9 @@
       var setWebPlaylist = function setWebPlaylist() {
         mediaList = siteLib.createMediaList("simple");
         var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
-        item.setProperty("buttonDemoPlay", "http://static.realone.com/rotw/images/buttons/playsm.gif"); 
-        item.setProperty("buttonDemoShare", "http://static.realone.com/rotw/images/buttons/btn_add_pl.gif"); 
-        item.setProperty("buttonDemoLogo", "http://static.realone.com/rotw/images/buttons/playsm_over.gif"); 
         mediaList.add(item);
 
-        item =  siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3");
-        item.setProperty("buttonDemoPlay", "http://static.realone.com/rotw/images/buttons/playsm.gif"); 
-        item.setProperty("buttonDemoShare", "http://static.realone.com/rotw/images/buttons/btn_add_pl.gif"); 
-        item.setProperty("buttonDemoLogo", "http://static.realone.com/rotw/images/buttons/playsm_over.gif"); 
+        item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3");
         mediaList.add(item);
 
         mediaList.name = "Test List - 2 songs";
@@ -160,12 +153,6 @@
           mainLib.remove(testml2);
       }
 
-      var addColumn = function addColumn() {
-        var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
-        item.setProperty("buttonDemoPlay", "http://static.realone.com/rotw/images/buttons/btn_add_pl.gif"); 
-        //item.setProperty("buttonDemoPlay", "http://static.realone.com/rotw/images/buttons/playsm.gif"); 
-      }
-      
     </script>
   </head>
 
@@ -211,10 +198,6 @@
              onclick="removeMainMediaList();" /> 
       <br />
 
-      <p> Create columns </p>
-      <input type="button" id="add_column_button" value="add column"
-             onclick="addColumn();" /> 
-      <br />
     </form>
     </p>
     <div id="output">
