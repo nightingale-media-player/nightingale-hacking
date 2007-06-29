@@ -321,12 +321,18 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
   
   var targetListIsLibrary = (targetList instanceof Ci.sbILibrary);
   
+  var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+                    .createInstance(Components.interfaces.sbIMetrics);
+  
   if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST)) {
     dump('media list dropped\n');
     
     var context = this._getDndData(aDragSession,
         TYPE_X_SB_TRANSFER_MEDIA_LIST, Ci.sbISingleListTransferContext);
     var list = context.list;
+    
+    // Metrics!
+    metrics.metricsAdd("app.servicepane.copy", aNode.id, null, list.length);
     
     if (targetListIsLibrary) {
       // want to copy the list and the contents
@@ -366,6 +372,9 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
         TYPE_X_SB_TRANSFER_MEDIA_ITEMS, Ci.sbIMultipleItemTransferContext);
     
     var items = context.items;
+
+    // Metrics!
+    metrics.metricsAdd("app.servicepane.copy", aNode.id, null, context.count);
     
     var itemEnumerator = {
       hasMoreElements: function() { return items.hasMoreElements(); },
@@ -397,6 +406,9 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
     
     // add the item
     targetList.add(context.item);
+
+    // Metrics!
+    metrics.metricsAdd("app.servicepane.copy", aNode.id, null, 1);
     
     dump('added\n');
   }

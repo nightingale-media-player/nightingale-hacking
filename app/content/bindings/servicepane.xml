@@ -562,6 +562,11 @@
           this.highlightURL(node.url);
           
           this.loadURL(node.url, event);
+          
+          // Bookmarks keep the http url in the id
+          if ( node.id.indexOf("http://") != 0 ) { 
+            metrics_inc("app.servicepane.click", node.id, null);
+          }
         } else {
           /* FIXME: implement non-go-to-url behaviour */
         }

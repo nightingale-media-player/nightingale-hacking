@@ -134,7 +134,7 @@ Metrics.prototype = {
     var gPrompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                           .getService(Components.interfaces.nsIPromptService);
     gPrompt.alert( null, "METRICS XML", xml );
-*/    
+*/
 
     // upload xml
 
@@ -367,6 +367,48 @@ Metrics.prototype = {
     return localFile;
   },
   
+  metricsInc: function( aCategory, aUniqueID, aExtraString ) {
+    this.metricsAdd( aCategory, aUniqueID, aExtraString, 1 );
+  },
+  
+  metricsAdd: function( aCategory, aUniqueID, aExtraString, aIntValue ) {
+    // Cook up the key string
+    var key = "metrics." + aCategory + "." + aUniqueID;
+    if (aExtraString != null && aExtraString != "") key = key + "." + aExtraString;
+    
+    try {
+      // Don't record things if we're disabled.
+      var enabled = this._getValue("app.metrics.enabled");
+      if (!enabled) 
+        return;
+
+      // Make sure it's an actual int.      
+      intvalue = parseInt(aIntValue);
+    
+      // Then add our value to the old value and write it back
+      var cur = this._getValue( key );
+      var newval = cur + intvalue;
+      this._setValue( key, newval );
+    } 
+    catch(e) { 
+      this.LOG("error: metricsAdd( " + aCategory + ", " + aUniqueID + ", " + aExtraString + ", " + aIntValue + " ) == '" + key + "'\n\n" + e);
+    }
+  },
+  
+  _getValue: function(key) {
+    // Someday, this should go to the database.
+    var retval = 0;
+    try {
+      retval = parseInt(this.prefs.getCharPref(key));
+    } catch(e) {} // On failure, return 0.
+    return retval;
+  },
+   
+  _setValue: function(key, n) {
+    // Someday, this should go to the database.
+    this.prefs.setCharPref(key, parseInt(n));
+  },
+
   /**
    * See nsISupports.idl
    */

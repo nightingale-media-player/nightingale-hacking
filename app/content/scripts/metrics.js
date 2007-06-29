@@ -26,63 +26,18 @@
 
 // Metrics
 
-// Not assuming sbDataRemoteUtils.js is loaded because this file may be used by a js component
+// (kinda simplified now that the functionality is in the service)
 
-function getValue(key)
-{
-  var v = 0;
-  try
-  {
-    var pref = Components.classes["@mozilla.org/preferences-service;1"]
-                      .getService(Components.interfaces.nsIPrefBranch);
-    v = parseInt(pref.getCharPref(key));                  
-  }
-  catch (e)
-  {
-  }
-  return v;
-}
- 
-function setValue(key, n)
-{
-  try
-  {
-    var pref = Components.classes["@mozilla.org/preferences-service;1"]
-                      .getService(Components.interfaces.nsIPrefBranch);
-    pref.setCharPref(key, parseInt(n));
-  }
-  catch (e)
-  {
-  }
-}
- 
+var gMetrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+                  .createInstance(Components.interfaces.sbIMetrics); 
 
 function metrics_add( category, unique_id, extra, intvalue )
 {
-  try 
-  {
-    var enabled = getValue("app.metrics.enabled");
-    if (!enabled) return;
-
-    // only integers allowed
-    intvalue = parseInt(intvalue);
-
-    var key = "metrics." + category + "." + unique_id;
-    if (extra != null && extra != "") key = key + "." + extra;
-    var cur = getValue( key );
-    var newval = cur + intvalue;
-    setValue( key, newval );
-    //var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-    //                        .getService(Components.interfaces.nsIConsoleService);
-    //consoleService.logStringMessage(key + " is now " + newval);
-  }
-  catch(e)
-  {
-  }
+  gMetrics.metricsAdd( category, unique_id, extra, intvalue );
 }
 
 function metrics_inc( category, unique_id, extra )
 {
-  metrics_add(category, unique_id, extra, 1);
+  gMetrics.metricsInc( category, unique_id, extra );
 }
 

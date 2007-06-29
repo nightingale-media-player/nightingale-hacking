@@ -69,5 +69,32 @@ interface sbIMetrics : nsISupports
    * \param flag the value of the session flag (boolean) 
    */
   void setSessionFlag(in boolean flag);
+
+  /**
+   * \brief Increments a metrics key.
+   *
+   * The key for the metric to be incremented is:
+   *
+   *   aCategory + "." + aUniqueID + ( (aExtraString) ? "." + aExtraString : "" );
+   *
+   * \param aCategory The category string
+   * \param aUniqueID The unique ID string
+   * \param aExtraString The (optional) extra string, usually null
+   */
+  void metricsInc( in AString aCategory, in AString aUniqueID, in AString aExtraString );
+
+  /**
+   * \brief Adds to a metrics key.
+   *
+   * The key for the metric to be incremented is:
+   *
+   *   aCategory + "." + aUniqueID + ( (aExtraString) ? "." + aExtraString : "" );
+   *
+   * \param aCategory The category string
+   * \param aUniqueID The unique ID string
+   * \param aExtraString The (optional) extra string, usually null
+   * \param aIntValue The integer value to add
+   */
+  void metricsAdd( in AString aCategory, in AString aUniqueID, in AString aExtraString, in long long aIntValue );
 };
 
