@@ -90,8 +90,6 @@ appInit.onScriptInit = function()
     
     
     // If there is main window up, try to focus on that.
-    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                      .getService(Components.interfaces.nsIWindowMediator);
     var mainWin = wm.getMostRecentWindow("Songbird:Main");
     if (mainWin)
       mainWin.focus();

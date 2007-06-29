@@ -221,3 +221,10 @@ pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
 pref("songbird.url.support", "http://songbirdnest.com/support/");
 pref("songbird.url.support.quicktime", "http://publicsvn.songbirdnest.com/trac/wiki/SettingUpQuickTime");
 pref("songbird.url.support.corefailure", "http://publicsvn.songbirdest.com/trac/wiki/CoreWrapperFailure");
+
+//
+// Media Core prefs
+// 
+#ifdef XP_WIN
+pref("songbird.mediacore.audioOut", "directsound");
+#endif

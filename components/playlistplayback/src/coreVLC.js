@@ -143,6 +143,7 @@ function CoreVLC()
   this._uri = null;
   this._paused = false;
   this._needPlayRestart = false;
+  this._ignorePrefChange = false;
 
   this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "aac", "mva",
                               "wma", "wmv", "asx", "asf", "avi",  "mov", "mpg",
@@ -228,7 +229,8 @@ CoreVLC.prototype._applyPreferences = function ()
   //Turn on volume normalization.
   try {
     config.setConfigString("main", "audio-filter", "volnorm");
-    config.setConfigInt("normvol", "norm-buff-size", 44);
+    config.setConfigInt("normvol", "norm-buff-size", 99);
+    config.setConfigFloat("normvol", "norm-max-level", 5.123456789123);
   }
   catch(e) {
     this.LOG("normvol module is missing, can't set config item.");
@@ -248,19 +250,56 @@ CoreVLC.prototype._applyPreferences = function ()
   catch(e) {
     this.LOG("gnutls module is missing, can't set config item.");
   }
+  
+  if(getPlatformString() == "Windows_NT") {
+    try {
+      var prefsService = Cc["@mozilla.org/preferences-service;1"]
+                        .getService(Ci.nsIPrefService);
+      
+      var prefBranch = prefsService.QueryInterface(Ci.nsIPrefBranch2);
+      
+      prefBranch.addObserver("songbird.mediacore.audioOut", this, false);
+      
+      var audioOut = prefBranch.getCharPref("songbird.mediacore.audioOut");
+      this._setAudioOutput(audioOut);      
+    }
+    catch(e) {
+      this.LOG(e);
+    }
+  }
+};
+
+CoreVLC.prototype._setAudioOutput = function(aAudioOutputName)
+{
+  switch(aAudioOutputName) {
+    case "directsound":
+      this._setAudioOutputDirectSound();
+      return true;
+    break;
+    
+    case "waveout":
+      this._setAudioOutputWaveOut();
+      return true;
+    break;
+    
+    default:
+      ;
+  }
+  
+  return false;
 };
 
 CoreVLC.prototype._setAudioOutputWaveOut = function()
 {
   if(getPlatformString() == "Windows_NT") {
-    config.setConfigString("main", "aout", "waveout");
+    this._object.config.setConfigString("main", "aout", "waveout");
   }
 };
 
 CoreVLC.prototype._setAudioOutputDirectSound = function()
 {
   if(getPlatformString() == "Windows_NT") {
-    config.setConfigString("main", "aout", "aout_directx");
+    this._object.config.setConfigString("main", "aout", "aout_directx");
   }
 };
 
@@ -340,6 +379,59 @@ CoreVLC.prototype._setProxyInfo = function (aProxyHost, aProxyPort, aProxyUser, 
   
   //Set proxy host.
   this._object.config.setConfigString("access_http", "http-proxy", actualHost);
+};
+
+CoreVLC.prototype.observe = function (aSubject, aTopic, aData) 
+{
+  if(this._ignorePrefChange) {
+    return;
+  }
+
+  var prefBranch = aSubject.QueryInterface(Ci.nsIPrefBranch);
+  var audioOut = prefBranch.getCharPref("songbird.mediacore.audioOut");
+
+  try {
+    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+              .getService(Ci.nsIWindowMediator);
+    var mainWin = wm.getMostRecentWindow("Songbird:Main");
+    
+    if(this._setAudioOutput(audioOut)) {
+      if(mainWin) {
+        mainWin.sbRestartBox_strings("message.mediacore", 
+                                     "message.needrestart", 
+                                     "Media Core", 
+                                     "This setting will take effect after you restart Songbird");
+      }
+    }
+    else {
+      //Alert user.
+      mainWin.alert("'directsound' or 'waveout' only.");
+
+      //Ignore next callback
+      this._ignorePrefChange = true;
+      
+      //Reset to default.
+      prefBranch.clearUserPref("songbird.mediacore.audioOut");
+      
+      this._ignorePrefChange = false;
+    }
+  }
+  catch(e) { 
+    this.LOG(e);
+  }
+
+  return;
+};
+
+CoreVLC.prototype.destroyCoreVLC = function() 
+{
+  var prefsService = Cc["@mozilla.org/preferences-service;1"]
+                  .getService(Ci.nsIPrefService);
+
+  var prefBranch = prefsService.getBranch("songbird.mediacore.")
+                    .QueryInterface(Ci.nsIPrefBranch2);
+
+  prefBranch.removeObserver("audioOut", this);
 };
 
 CoreVLC.prototype.playURL = function (aURL)
@@ -792,8 +884,9 @@ CoreVLC.prototype.getSupportForFileExtension = function(aFileExtension)
 
 CoreVLC.prototype.QueryInterface = function(iid) 
 {
-  if (!iid.equals(sbICoreWrapper) &&
-      !iid.equals(nsISupports))
+  if (!iid.equals(Ci.sbICoreWrapper) &&
+      !iid.equals(Ci.nsIObserver) &&
+      !iid.equals(Ci.nsISupports))
     throw Components.results.NS_ERROR_NO_INTERFACE;
     
   return this;
@@ -806,6 +899,7 @@ CoreVLC.prototype.QueryInterface = function(iid)
  */
 try {
   var gCoreVLC = new CoreVLC();
+  window.addEventListener("unload", gCoreVLC.destroyCoreVLC, false);
 }
 catch (err) {
   dump("ERROR!!! coreVLC failed to create properly.\n");
