@@ -1,0 +1,33 @@
+Index: embedding/browser/activex/src/control/MozillaBrowser.cpp
+===================================================================
+RCS file: /Users/peterv/source/cvs.mozilla.org/cvsroot/mozilla/embedding/browser/activex/src/control/MozillaBrowser.cpp,v
+retrieving revision 1.119
+diff -u -p -r1.119 MozillaBrowser.cpp
+--- embedding/browser/activex/src/control/MozillaBrowser.cpp	28 Jun 2007 02:48:19 -0000	1.119
++++ embedding/browser/activex/src/control/MozillaBrowser.cpp	29 Jun 2007 08:16:24 -0000
+@@ -1292,7 +1292,7 @@ HRESULT CMozillaBrowser::SetEditorMode(B
+         return E_FAIL;
+ 
+     rv = mEditingSession->MakeWindowEditable(domWindow, "html", PR_FALSE,
+-                                             PR_FALSE);
++                                             PR_TRUE, PR_FALSE);
+  
+     return S_OK;
+ }
+Index: embedding/tests/wxEmbed/EditorFrame.cpp
+===================================================================
+RCS file: /Users/peterv/source/cvs.mozilla.org/cvsroot/mozilla/embedding/tests/wxEmbed/EditorFrame.cpp,v
+retrieving revision 1.10
+diff -u -p -r1.10 EditorFrame.cpp
+--- embedding/tests/wxEmbed/EditorFrame.cpp	28 Jun 2007 02:48:20 -0000	1.10
++++ embedding/tests/wxEmbed/EditorFrame.cpp	29 Jun 2007 08:16:55 -0000
+@@ -84,7 +84,8 @@ void EditorFrame::MakeEditable()
+     nsCOMPtr<nsIEditingSession> editingSession = do_GetInterface(mWebBrowser);
+     if (!editingSession)
+         return;// NS_ERROR_FAILURE;
+-    editingSession->MakeWindowEditable(domWindow, NULL, PR_TRUE, PR_FALSE);
++    editingSession->MakeWindowEditable(domWindow, NULL, PR_TRUE, PR_TRUE,
++                                       PR_FALSE);
+ }
+ 
+ nsresult EditorFrame::DoCommand(const char *aCommand, nsICommandParams *aCommandParams)
