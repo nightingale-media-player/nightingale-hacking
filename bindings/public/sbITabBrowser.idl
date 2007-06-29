@@ -58,5 +58,10 @@ interface sbITabBrowserTab : nsISupports
   readonly attribute nsIDOMElement innerPlaylist;
   readonly attribute nsIDOMElement outerPlaylist;
   nsIDOMElement getPlaylist();
+  void clearOuterPlaylist();
+  void disableScan();
+  void enableScan();
+  void hideOuterPlaylist();
+  void showOuterPlaylist();
 };
 

@@ -36,7 +36,6 @@
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>
-#include <nsAutoPtr.h>
 
 #define NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETPROPERTY(_to) \
   NS_IMETHOD GetGuid(nsAString & aGuid) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetGuid(aGuid); } \

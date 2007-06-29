@@ -1240,6 +1240,20 @@
           }
         ]]></body>
       </method>
+
+      <!-- sbITabBrowserTab -->  
+      <method name="hideOuterPlaylist">
+        <body><![CDATA[
+          this.outerPlaylistShowing = false;
+        ]]></body>
+      </method>
+
+      <!-- sbITabBrowserTab -->  
+      <method name="showOuterPlaylist">
+        <body><![CDATA[
+          this.outerPlaylistShowing = true;
+        ]]></body>
+      </method>
       
       <property name="outerPlaylistShowing">
         <getter><![CDATA[
@@ -1292,9 +1306,27 @@
           return playlist;
         ]]></getter>
       </property>
-      
+
+      <!-- sbITabBrowserTab -->  
+      <field name="_shouldScan">true</field>
+
+      <!-- sbITabBrowserTab -->  
+      <method name="enableScan">
+        <body><![CDATA[
+          this._shouldScan = true;
+        ]]></body>
+      </method>
+
+      <!-- sbITabBrowserTab -->  
+      <method name="disableScan">
+        <body><![CDATA[
+          this._shouldScan = false;
+        ]]></body>
+      </method>
+
       <field name="scanProgress">-1</field>
-      
+    
+      <!-- sbITabBrowserTab -->  
       <method name="clearOuterPlaylist">
         <body><![CDATA[
           // hide the outer playlist
@@ -1304,13 +1336,16 @@
           this.scanProgress = -1;
         ]]></body>
       </method>
-      
-      
+
       <method name="scanWebPage">
         <body><![CDATA[
           if (!SBDataGetBoolValue('webplaylist.enabled')) {
             return;
           }
+
+          // check to see if scanning has been disabled
+          if (!this._shouldScan)
+            return;
 
           // Only scrape http(s) and file pages
           var scheme = this.linkedBrowser.currentURI.scheme;
@@ -1595,6 +1630,7 @@
 
           this._loadingURL = aLocation.spec;
           this.clearOuterPlaylist();
+          this._shouldScan = true;
         ]]></body>
       </method>
       

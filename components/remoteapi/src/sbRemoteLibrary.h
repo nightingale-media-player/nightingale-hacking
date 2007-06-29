@@ -41,11 +41,11 @@
 #include <sbISecurityAggregator.h>
 #include <sbIWrappedMediaList.h>
 
+#include <nsAutoPtr.h>
 #include <nsIFile.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>
-#include <nsAutoPtr.h>
 
 #define SONGBIRD_REMOTELIBRARY_CONTRACTID               \
   "@songbirdnest.com/remoteapi/remotelibrary;1"

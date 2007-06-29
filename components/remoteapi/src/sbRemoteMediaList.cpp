@@ -39,6 +39,7 @@
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 
+#include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsICategoryManager.h>
 #include <nsIProgrammingLanguage.h>
@@ -146,9 +147,7 @@ const static char* sPublicMethods[] =
   "library:getDistinctValuesForProperty",
 
   // sbIRemoteMediaList
-  "library:ensureColumnVisible",
-  "library:getView",
-  "library:setSelectionByIndex"
+  "internal:getView"
 };
 
 NS_IMPL_ISUPPORTS9(sbRemoteMediaList,
@@ -222,6 +221,12 @@ sbRemoteMediaList::Init()
 
   return NS_OK;
 }
+
+// ---------------------------------------------------------------------------
+//
+//                        sbIWrappedMediaList
+//
+// ---------------------------------------------------------------------------
 
 NS_IMETHODIMP_(already_AddRefed<sbIMediaItem>)
 sbRemoteMediaList::GetMediaItem()
@@ -408,90 +413,6 @@ sbRemoteMediaList::Remove(sbIMediaItem* aMediaItem)
 //                        sbIRemoteMediaList
 //
 // ---------------------------------------------------------------------------
-
-NS_IMETHODIMP
-sbRemoteMediaList::GetSelection( nsISimpleEnumerator **aSelection )
-{
-  LOG(("sbRemoteMediaList::GetSelection()"));
-
-  nsCOMPtr<nsITreeView> treeView;
-  nsresult rv = mMediaListView->GetTreeView(getter_AddRefs(treeView));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaListViewTreeView> mlvtv = do_QueryInterface(treeView, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsISimpleEnumerator> selection;
-  rv = mlvtv->GetSelectedMediaItems(getter_AddRefs(selection));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoPtr<sbRemoteWrappingSimpleEnumerator> wrapped(
-    new sbRemoteWrappingSimpleEnumerator(selection));
-  NS_ENSURE_TRUE(wrapped, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = wrapped->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*aSelection = wrapped);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteMediaList::EnsureColumnVisible( const nsAString& aPropertyName,
-                                        const nsAString& aColumnType )
-{
-  LOG(( "sbRemoteMediaList::EnsureColumnVisible(%s, %s)",
-        NS_LossyConvertUTF16toASCII(aPropertyName).get(),
-        NS_LossyConvertUTF16toASCII(aColumnType).get() ));
-
-  nsresult rv;
-  nsCOMPtr<sbIPropertyManager> propMngr( 
-    do_GetService( SB_PROPERTYMANAGER_CONTRACTID, &rv ) );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // If the column hasn't been registered already then return an error
-  nsCOMPtr<sbIPropertyInfo> info;
-  propMngr->GetPropertyInfo( aPropertyName, getter_AddRefs( info ) );
-  NS_ENSURE_TRUE( info, NS_ERROR_FAILURE );
-
-  // Since the column exists in the mngr, show it in the playlist widget
-  
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteMediaList::SetSelectionByIndex( PRUint32 aIndex, PRBool aSelected )
-{
-  LOG(("sbRemoteMediaList::SetSelectionByIndex()"));
-
-  nsCOMPtr<nsITreeView> treeView;
-  nsresult rv = mMediaListView->GetTreeView(getter_AddRefs(treeView));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsITreeSelection> treeSelection;
-  rv = treeView->GetSelection(getter_AddRefs(treeSelection));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool isSelected;
-  rv = treeSelection->IsSelected(aIndex, &isSelected);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (isSelected != aSelected) {
-    rv = treeSelection->ToggleSelect(aIndex);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteMediaList::AddItemByURL( const nsAString &aURL )
-{
-  LOG(( "sbRemoteMediaList::AddItemByURL(%s)",
-        NS_LossyConvertUTF16toASCII(aURL).get() ));
-  return NS_OK;
-}
 
 NS_IMETHODIMP
 sbRemoteMediaList::GetView( sbIMediaListView **aView )

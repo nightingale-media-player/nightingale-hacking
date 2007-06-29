@@ -44,13 +44,15 @@ interface sbIPropertyInfo;
 interface sbIPlaylistWidget : nsISupports
 {
   void rescanCommands();
-  sbIMediaListView getView();
+  sbIMediaListView getListView();
   void bind( in sbIMediaListView mediaListView,
              in sbIPlaylistCommands commands,
              in boolean resize,
              in boolean collapse );
   void showColumn( in AString aColumnName );
   void hideColumn( in AString aColumnName );
+  void moveColumnBefore( in AString aColumnName,
+                         in AString aBeforeColumnName );
   void insertColumn( in sbIPropertyInfo aPropInfo,
                      in boolean aIsHidden,
                      in long aWidth,

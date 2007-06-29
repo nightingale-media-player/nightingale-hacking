@@ -31,6 +31,7 @@
 #include <sbClassInfoUtils.h>
 #include <sbIMediaItem.h>
 
+#include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsICategoryManager.h>
 #include <nsIProgrammingLanguage.h>

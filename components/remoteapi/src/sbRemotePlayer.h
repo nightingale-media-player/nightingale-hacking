@@ -37,6 +37,7 @@
 #include <sbISecurityAggregator.h>
 #include <sbISecurityMixin.h>
 
+#include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
 #include <nsIDOMEventListener.h>
@@ -122,8 +123,8 @@ protected:
   nsCOMPtr<nsIDOMDocument> mContentDoc;
   nsCOMPtr<nsIDOMDocument> mChromeDoc;
 
-  // the UI playlist binding's dom element QI'd
-  nsCOMPtr<sbIPlaylistWidget> mWebPlaylistWidget;
+  // the remote impl for the playlist binding
+  nsRefPtr<sbIPlaylistWidget> mWebPlaylistWidget;
 
   // Like the site libraries, this may want to be a collection
   // The commands registered by the page.
@@ -137,11 +138,13 @@ protected:
   // Hashtable to hold the observers registered by the webpage
   nsDataHashtable<nsStringHashKey, sbRemoteObserver> mRemObsHash;
 
-  // SecurityCheckedComponent vars
-  nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
+  // stash these for quick reference
   nsCOMPtr<sbIDataRemote> mCurrentArtist;
   nsCOMPtr<sbIDataRemote> mCurrentAlbum;
   nsCOMPtr<sbIDataRemote> mCurrentTrack;
+
+  // SecurityCheckedComponent vars
+  nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 };
 
 #define SB_IMPL_SECURITYCHECKEDCOMP_WITH_INIT(_class)                \

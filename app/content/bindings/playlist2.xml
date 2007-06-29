@@ -212,7 +212,7 @@
       </property>
 
       <!-- sbIPlaylistWidget -->
-      <method name="getView">
+      <method name="getListView">
         <body> <![CDATA[
           return this.mediaListView;
         ]]> </body>
@@ -427,7 +427,7 @@
         </getter>
       </property>       
 
-      <!-- Initialization and Control -->
+      <!-- sbIPlaylistWidget - Initialization and Control -->
       <method name="bind">
         <parameter name="mediaListView"/>
         <parameter name="commands"/>
@@ -777,6 +777,27 @@
         </body>
       </method>
 
+      <!-- sbIPlaylistWidget -->
+      <method name="moveColumnBefore">
+        <parameter name="columnName"/>
+        <parameter name="beforeColumnName"/>
+        <body>
+<![CDATA[
+  // find the column with the name passed in.
+  var columns = this._treecols.getElementsByAttribute("bind",
+                                                      columnName);
+  var beforeColumns = this._treecols.getElementsByAttribute("bind",
+                                                            beforeColumnName);
+
+  if (!beforeColumns.length || !columns.length)
+    return;
+
+  this.tree._reorderColumn( columns[0], beforeColumns[0], true );
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
       <method name="insertColumn">
         <parameter name="propertyInfo"/>
         <parameter name="isHidden"/>
@@ -805,7 +826,13 @@
       } 
     } 
 
+    // despite taking an ordinal this call doesn't put the column in 
+    // the right place.
     this._appendColumn(propertyInfo, isHidden, width, sort, ordinal);
+
+    // must move the column after appending to get it in the right spot
+    if (before)
+      this.moveColumnBefore(propertyInfo.name, before);
 ]]>
         </body>
       </method>
@@ -955,6 +982,7 @@
         </body>
       </method>
 
+      <!-- sbIPlaylistWidget -->
       <method name="showColumn">
         <parameter name="columnName"/>
         <body>
@@ -969,6 +997,7 @@
         </body>
       </method>
 
+      <!-- sbIPlaylistWidget -->
       <method name="hideColumn">
         <parameter name="columnName"/>
         <body>
@@ -2121,6 +2150,7 @@
         ]]></body>
       </method>
 
+      <!-- sbIPlaylistWidget -->
       <method name="rescanCommands">
         <body>
           // push our usedefaultcommands state because the RemoteAPI only has

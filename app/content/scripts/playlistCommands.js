@@ -212,7 +212,7 @@ var SBWebPlaylistCommands =
       "&command.shortcut.modifiers.copylocation",
       "",
       "&command.shortcut.modifiers.dhowdlplaylist"
-    ),
+    )
   },
 
   _getMenu: function(aSubMenu)

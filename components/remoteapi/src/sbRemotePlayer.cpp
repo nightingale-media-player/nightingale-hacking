@@ -26,6 +26,7 @@
 
 #include "sbRemotePlayer.h"
 #include "sbRemoteLibrary.h"
+#include "sbRemoteWebPlaylist.h"
 #include <sbClassInfoUtils.h>
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
@@ -183,9 +184,9 @@ SB_IMPL_CLASSINFO( sbRemotePlayer,
                    SONGBIRD_REMOTEPLAYER_CLASSNAME,
                    nsIProgrammingLanguage::CPLUSPLUS,
                    0,
-                   kRemotePlayerCID );
+                   kRemotePlayerCID )
 
-SB_IMPL_SECURITYCHECKEDCOMP_WITH_INIT (sbRemotePlayer);
+SB_IMPL_SECURITYCHECKEDCOMP_WITH_INIT( sbRemotePlayer )
 
 sbRemotePlayer*
 sbRemotePlayer::GetInstance()
@@ -459,69 +460,22 @@ sbRemotePlayer::OnCommandsChanged()
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::GetWebPlaylist( sbIRemoteMediaList **aWebPlaylist )
+sbRemotePlayer::GetWebPlaylist( sbIRemoteWebPlaylist **aWebPlaylist )
 {
   LOG(("sbRemotePlayer::GetWebPlaylist()"));
   NS_ENSURE_ARG_POINTER(aWebPlaylist);
+  nsresult rv;
+
   if (!mWebPlaylistWidget) {
-    nsresult rv = AcquirePlaylistWidget();
+    rv = AcquirePlaylistWidget();
     NS_ENSURE_SUCCESS( rv, rv );
   }
 
-  // get the view from the web playlist widget
-  nsresult rv;
-  nsCOMPtr<sbIMediaListView> mediaListView;
-  rv = mWebPlaylistWidget->GetView( getter_AddRefs(mediaListView) );
-  if ( !mediaListView ) {
-    *aWebPlaylist = nsnull;
-    return rv;  // NS_OK?
-  }
-
-  // Set the view on the RemoteMediaList
-  nsCOMPtr<sbIRemoteMediaList> remoteWebPlaylist;
-  rv = SB_WrapMediaList( mediaListView, getter_AddRefs(remoteWebPlaylist) );
+  nsCOMPtr<sbIRemoteWebPlaylist> remotePlaylist(
+                                do_QueryInterface( mWebPlaylistWidget, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
-  LOG(("sbRemotePlayer::GetWebPlaylist() -- created wrapped playlist"));
 
-  NS_ADDREF( *aWebPlaylist = remoteWebPlaylist ); 
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbRemotePlayer::SetWebPlaylist( sbIRemoteMediaList *aWebPlaylist )
-{
-  LOG(("sbRemotePlayer::SetWebPlaylist()"));
-  NS_ENSURE_ARG_POINTER(aWebPlaylist);
-  if (!mWebPlaylistWidget) {
-    nsresult rv = AcquirePlaylistWidget();
-    NS_ENSURE_SUCCESS( rv, rv );
-  }
-
-  // Get a view from the RemoteMediaList passed in
-  nsCOMPtr<sbIMediaList> webMediaList = do_QueryInterface(aWebPlaylist);
-  NS_ENSURE_TRUE( webMediaList, NS_ERROR_INVALID_ARG );
-
-  nsresult rv;
-  nsCOMPtr<sbIMediaListView> mediaListView;
-  rv = aWebPlaylist->GetView( getter_AddRefs(mediaListView) );
-  if (!mediaListView) {
-    rv = webMediaList->CreateView( getter_AddRefs(mediaListView) );
-  }
-  NS_ENSURE_TRUE( mediaListView, NS_ERROR_FAILURE );
-
-  // Bind the view to the playlist widget
-  rv = mWebPlaylistWidget->Bind( mediaListView,
-                                 nsnull,
-                                 PR_FALSE,
-                                 PR_FALSE );
-  NS_ENSURE_SUCCESS( rv, rv );
-  LOG(("sbRemotePlayer::SetWebPlaylist() -- successful bind"));
-
-  // Update the commands because the widget has been reset and
-  // needs to know the useDefaultCommands setting
-  OnCommandsChanged();
-
+  NS_ADDREF( *aWebPlaylist = remotePlaylist );
   return NS_OK;
 }
 
@@ -561,23 +515,23 @@ sbRemotePlayer::DownloadList( sbIRemoteMediaList *aList )
 }
 
 NS_IMETHODIMP 
-sbRemotePlayer::DownloadSelected( sbIRemoteMediaList *aMediaList ) 
+sbRemotePlayer::DownloadSelected( sbIRemoteWebPlaylist *aWebPlaylist ) 
 {
   LOG(("sbRemotePlayer::DownloadSelected()"));
 
-  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aWebPlaylist);
 
   nsCOMPtr<sbIMediaList> downloadList;
   nsresult rv = GetDownloadList( getter_AddRefs(downloadList) );
   NS_ENSURE_TRUE( downloadList, rv );
 
   nsCOMPtr<nsISimpleEnumerator> selection;
-  rv = aMediaList->GetSelection( getter_AddRefs(selection) );
+  rv = aWebPlaylist->GetSelection( getter_AddRefs(selection) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsRefPtr<sbUnwrappingSimpleEnumerator> wrapper(
-    new sbUnwrappingSimpleEnumerator(selection) );
-  NS_ENSURE_TRUE(wrapper, NS_ERROR_OUT_OF_MEMORY);
+                                 new sbUnwrappingSimpleEnumerator(selection) );
+  NS_ENSURE_TRUE( wrapper, NS_ERROR_OUT_OF_MEMORY );
 
   downloadList->AddSome(wrapper);
 
@@ -815,7 +769,7 @@ sbRemotePlayer::Play()
   }
 
   nsCOMPtr<sbIMediaListView> mediaListView;
-  nsresult rv = mWebPlaylistWidget->GetView( getter_AddRefs(mediaListView) );
+  nsresult rv = mWebPlaylistWidget->GetListView( getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<nsITreeView> treeView;
@@ -844,12 +798,19 @@ sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
   NS_ENSURE_STATE(mGPPS);
 
   nsresult rv;
-  nsCOMPtr<sbIMediaList> list( do_QueryInterface( aList, &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
-  
+
+  // Get the existing view if there is one
   nsCOMPtr<sbIMediaListView> mediaListView;
-  rv = list->CreateView( getter_AddRefs(mediaListView) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  rv = aList->GetView( getter_AddRefs(mediaListView) );
+
+  // There isn't a view so create one
+  if (!mediaListView) {
+    nsCOMPtr<sbIMediaList> list( do_QueryInterface( aList, &rv ) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    rv = list->CreateView( getter_AddRefs(mediaListView) );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
 
   if ( aIndex < 0 )
     aIndex = 0;
@@ -1136,9 +1097,20 @@ sbRemotePlayer::AcquirePlaylistWidget()
   browserTab->GetPlaylist( getter_AddRefs(playlist) );
   NS_ENSURE_STATE(playlist);
 
-  // hold on to that for later as an sbIPlaylistWidget
-  mWebPlaylistWidget = do_QueryInterface( playlist, &rv);
+  nsCOMPtr<sbIPlaylistWidget> playlistWidget ( do_QueryInterface( playlist,
+                                                                  &rv) );
   NS_ENSURE_SUCCESS( rv, rv );
+
+  // Create the RemotePlaylistWidget
+  nsRefPtr<sbRemoteWebPlaylist> pWebPlaylist =
+                         new sbRemoteWebPlaylist( playlistWidget, browserTab );
+  NS_ENSURE_TRUE( pWebPlaylist, NS_ERROR_FAILURE );
+
+  rv = pWebPlaylist->Init();
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  mWebPlaylistWidget = pWebPlaylist;
+  NS_ENSURE_TRUE( mWebPlaylistWidget, NS_ERROR_FAILURE );
 
   return NS_OK;
 }

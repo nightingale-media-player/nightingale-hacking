@@ -66,8 +66,6 @@
 #include <nsStringEnumerator.h>
 #include <nsStringGlue.h>
 #include <nsTHashtable.h>
-#include <nsWeakPtr.h>
-#include <nsAutoPtr.h>
 #include <prlog.h>
 #include <prnetdb.h>
 
@@ -93,7 +91,10 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 #define kNotFound -1
 static NS_DEFINE_CID(kRemoteLibraryCID, SONGBIRD_REMOTELIBRARY_CID);
 
-const static char* sPublicWProperties[] = {""};
+const static char* sPublicWProperties[] =
+  {
+    "metadata:name"
+  };
 
 const static char* sPublicRProperties[] =
   { //
@@ -128,8 +129,6 @@ const static char* sPublicMethods[] =
 
     // sbIRemoteMediaList
     "binding:addItemByURL",
-    "binding:setSelectionByIndex",
-    "binding:ensureColumnVisible",
 
     // sbIMediaList
     "binding:getItemByGuid",

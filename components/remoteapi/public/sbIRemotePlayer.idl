@@ -38,6 +38,7 @@ interface sbIMediaListView;
 interface sbIRemoteCommands;
 interface sbIRemoteLibrary;
 interface sbIRemoteMediaList;
+interface sbIRemoteWebPlaylist;
 
 /**
  * \interface sbIRemotePlayer
@@ -57,7 +58,7 @@ interface sbIRemotePlayer : nsISupports
   /**
    * \brief The current web playlist
    */
-  attribute sbIRemoteMediaList webPlaylist;
+  readonly attribute sbIRemoteWebPlaylist webPlaylist;
 
   /**
    * \brief The name of the artist for the currently playing track
@@ -91,7 +92,7 @@ interface sbIRemotePlayer : nsISupports
    */
   void downloadItem( in sbIMediaItem aItem );
   void downloadList( in sbIRemoteMediaList aList );
-  void downloadSelected( in sbIRemoteMediaList aList );
+  void downloadSelected( in sbIRemoteWebPlaylist aWebPlaylist );
 
   /**
    * \brief Being playback at the current location

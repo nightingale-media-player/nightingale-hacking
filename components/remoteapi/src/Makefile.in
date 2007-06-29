@@ -45,6 +45,7 @@ CPP_SRCS = sbSecurityMixin.cpp \
            sbRemoteMediaList.cpp \
            sbRemoteMediaItem.cpp \
            sbRemoteAPIModule.cpp \
+           sbRemoteWebPlaylist.cpp \
            sbRemoteWrappingSimpleEnumerator.cpp \
            $(NULL)
 

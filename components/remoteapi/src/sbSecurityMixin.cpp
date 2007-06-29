@@ -278,7 +278,7 @@ sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   nsAutoString prop; 
   nsDependentString inPropertyName(aPropertyName);
 
-  GetScopedName(mRProperties, inPropertyName, prop); 
+  GetScopedName(mWProperties, inPropertyName, prop); 
   if (prop.IsEmpty()) {
     LOG(( "sbSecurityMixin::CanSetProperty(%s) - DENIED, unapproved property",
           NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
