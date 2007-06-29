@@ -47,7 +47,11 @@ sbURIMetadataHelper::GetFileSize(const nsAString& aURISpec, PRInt64* aFileSize)
   rv = NS_NewURI(getter_AddRefs(uri), aURISpec);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // If this is not a file url, just return the error
   nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(uri, &rv);
+  if (rv == NS_ERROR_NO_INTERFACE) {
+    return rv;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIFile> file;

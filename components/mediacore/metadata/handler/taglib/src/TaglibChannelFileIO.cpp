@@ -48,6 +48,7 @@
 
 /* Mozilla imports. */
 #include <prlog.h>
+#include <nsAutoPtr.h>
 
 /* Songbird imports. */
 #include "SeekableChannel.h"
@@ -87,11 +88,12 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("TagLibChannelFileIO");
 FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
     const char                  *fileName) const
 {
-    nsCOMPtr<sbISeekableChannel>
-                                pSeekableChannel;
-    nsString                    channelID;
-    TagLibChannelFileIO         *pTagLibChannelFileIO = NULL;
-    nsresult                    result = NS_OK;
+    NS_ASSERTION(fileName, "fileName is null");
+
+    nsCOMPtr<sbISeekableChannel>   pSeekableChannel;
+    nsString                       channelID;
+    nsAutoPtr<TagLibChannelFileIO> pTagLibChannelFileIO;
+    nsresult                       result = NS_OK;
 
     /* Assume the file name is a channel ID. */
     channelID = NS_ConvertUTF8toUTF16(fileName);
@@ -113,7 +115,7 @@ FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
     if (NS_SUCCEEDED(result))
         result = pTagLibChannelFileIO->seek(0);
 
-    return (pTagLibChannelFileIO);
+    return (pTagLibChannelFileIO.forget());
 }
 
 
@@ -403,12 +405,14 @@ void TagLibChannelFileIO::truncate(
 
 TagLibChannelFileIO::TagLibChannelFileIO(
     nsString                        channelID,
-    nsCOMPtr<sbISeekableChannel>    pSeekableChannel)
+    sbISeekableChannel*             pSeekableChannel)
 :
     mChannelID(channelID),
     mpSeekableChannel(pSeekableChannel),
     mChannelSize(0)
 {
+    NS_ASSERTION(pSeekableChannel, "pSeekableChannel is null");
+
     PRUint64                    channelSize;
     nsresult                    result = NS_OK;
 
@@ -460,12 +464,12 @@ TagLibChannelFileIO::ChannelMap TagLibChannelFileIO::mChannelMap;
 
 nsresult TagLibChannelFileIO::AddChannel(
     nsString                    channelID,
-    nsCOMPtr<sbISeekableChannel>
-                                pSeekableChannel)
+    sbISeekableChannel*         pSeekableChannel)
 {
-    TagLibChannelFileIO::Channel *pChannel;
-    PRUint64                    channelSize;
-    nsresult                    result = NS_OK;
+    NS_ASSERTION(pSeekableChannel, "pSeekableChannel is null");
+
+    nsAutoPtr<TagLibChannelFileIO::Channel> pChannel;
+    nsresult                                result = NS_OK;
 
     /* Create and initialize a new channel object.          */
     /* Initialize size to 0 because it's not available yet. */
@@ -482,7 +486,7 @@ nsresult TagLibChannelFileIO::AddChannel(
     }
 
     /* Add the channel to the channel map. */
-    mChannelMap[channelID] = pChannel;
+    mChannelMap[channelID] = pChannel.forget();
 
     return (result);
 }
@@ -528,6 +532,8 @@ nsresult TagLibChannelFileIO::GetChannel(
     TagLibChannelFileIO::Channel
                                 **ppChannel)
 {
+    NS_ASSERTION(ppChannel, "ppChannel is null");
+
     ChannelMap::iterator        mapEntry;
     TagLibChannelFileIO::Channel
                                 *pChannel = NULL;
@@ -566,6 +572,8 @@ nsresult TagLibChannelFileIO::GetChannel(
     nsString                    channelID,
     sbISeekableChannel          **ppSeekableChannel)
 {
+    NS_ASSERTION(ppSeekableChannel, "ppSeekableChannel is null");
+
     ChannelMap::iterator        mapEntry;
     TagLibChannelFileIO::Channel
                                 *pChannel;
@@ -608,6 +616,8 @@ nsresult TagLibChannelFileIO::GetSize(
     nsString                    channelID,
     PRUint64                    *pSize)
 {
+    NS_ASSERTION(pSize, "pSize is null");
+
     ChannelMap::iterator        mapEntry;
     TagLibChannelFileIO::Channel
                                 *pChannel;

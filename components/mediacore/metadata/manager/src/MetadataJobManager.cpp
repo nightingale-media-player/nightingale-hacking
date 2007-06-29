@@ -63,6 +63,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbMetadataJobManager, sbIMetadataJobManager, nsIOb
 
 sbMetadataJobManager::sbMetadataJobManager()
 {
+  MOZ_COUNT_CTOR(sbMetadataJobManager);
   nsresult rv;
 
   // TODO:
@@ -95,7 +96,7 @@ sbMetadataJobManager::sbMetadataJobManager()
 
 sbMetadataJobManager::~sbMetadataJobManager()
 {
-  Stop();
+  MOZ_COUNT_DTOR(sbMetadataJobManager);
 }
 
 /* sbIMetadataJob newJob (in nsIArray aMediaItemsArray); */
@@ -147,9 +148,7 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray, PRUint32 aSleepMS, sbIM
   // Kick off the task with the proper data
   rv = task->Init(tableName, aMediaItemsArray, aSleepMS);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ADDREF( task.get() ); // Keep a reference around to it so it doesn't die when we ask its thread to die.
   mJobArray.AppendObject( task );
-
   NS_ADDREF(*_retval = task);
   return NS_OK;
 }
@@ -246,7 +245,6 @@ nsresult sbMetadataJobManager::InitCurrentTasks()
     rv = task->Init(tableName, nsnull, aSleep);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    NS_IF_ADDREF( task.get() );
     mJobArray.AppendObject( task ); // Keep a reference around to it.
   }
 

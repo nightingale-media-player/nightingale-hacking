@@ -28,15 +28,6 @@
  * \brief Test file
  */
 
-var gTestObserver = 
-{  
-  // nsITimerCallback
-  observe: function(aSubject, aTopic, aData)
-  {
-    onComplete(aSubject, aTopic, aData);
-  }
-};
- 
 // The local and remote urls point to the same file, to be tested by the given matrix
 var gLocalFiles = [
   "testharness/metadatamanager/test1.mp3",
@@ -58,8 +49,6 @@ var gTestMatrix = [
   [ "http://songbirdnest.com/data/1.0#albumName", "The Singing Dictionary" ]        
 ];
 
-var gTestMediaItems = Components.classes["@mozilla.org/array;1"].createInstance(Components.interfaces.nsIMutableArray);
-
 var gTestMetadataJobManager = null;
 var gTestMetadataJob = null;
 
@@ -67,9 +56,12 @@ var gTestInterval = null;
 
 var gNumTestItems = gLocalFiles.length;
 
-var gTestLibrary = createNewLibrary( "test_metadatajob" );
 
 function runTest () {
+  var gTestLibrary = createNewLibrary( "test_metadatajob" );
+  var gTestMediaItems = Components.classes["@mozilla.org/array;1"]
+                                  .createInstance(Components.interfaces.nsIMutableArray);
+
   // Make sure you didn't screw up your data entry.
   assertEqual( gNumTestItems, gRemoteUrls.length );
   assertEqual( gNumTestItems, gTestMatrix.length );
@@ -95,16 +87,26 @@ function runTest () {
     gRemoteMediaItems.push( remotePathMI );
     gTestMediaItems.appendElement( remotePathMI, false );
   }
-  
   // Request metadata for both local and remote urls at the same time.  Woo!
   gTestMetadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
                                 .getService(Components.interfaces.sbIMetadataJobManager);
   gTestMetadataJob = gTestMetadataJobManager.newJob( gTestMediaItems, 5 );                                
-  
-  
+
+  var gTestObserver = new MetadataJobObserver(onComplete);
   // Set an observer to know when we complete
   gTestMetadataJob.setObserver( gTestObserver );
   testPending();
+}
+
+function MetadataJobObserver(completeFunc) {
+  this._completeFunc = completeFunc;
+}
+
+MetadataJobObserver.prototype = {
+  observe: function(aSubject, aTopic, aData)
+  {
+    this._completeFunc.call(this, aSubject, aTopic, aData);
+  }
 }
 
 function onComplete(aSubject, aTopic, aData) {
@@ -145,8 +147,10 @@ function onComplete(aSubject, aTopic, aData) {
     assertEqual( value, local );
     assertEqual( value, remote );
   }
-  
+
   // So testing is complete
-  gTestMetadataJobManager.stop(); // Stop the manager
+  //gTestMetadataJobManager.stop(); // Stop the manager
+  gTestMetadataJobManager = null;
+  gTestMetadataJob = null;
   testFinished(); // Complete the testing
 }

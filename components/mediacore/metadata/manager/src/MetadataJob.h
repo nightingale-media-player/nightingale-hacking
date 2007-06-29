@@ -41,6 +41,7 @@
 #include <nsTArray.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
+#include <nsAutoPtr.h>
 #include <nsITimer.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
@@ -80,11 +81,11 @@ class sbIURIMetadataHelper;
 class sbIMutablePropertyArray;
 class sbIPropertyArray;
 class sbIPropertyManager;
-class MetadataJobProcessorThread;
+class sbMetadataJobProcessorThread;
 
 class sbMetadataJob : public sbIMetadataJob
 {
-  friend class MetadataJobProcessorThread;
+  friend class sbMetadataJobProcessorThread;
 
 public:
   NS_DECL_ISUPPORTS
@@ -103,14 +104,18 @@ public:
   static inline nsString DATABASE_GUID() { return NS_LITERAL_STRING( "sbMetadataJob" ); }
 
 protected:
-  struct jobitem_t
+  class jobitem_t
   {
+  public:
+    NS_IMETHOD_(nsrefcnt) AddRef(void);
+    NS_IMETHOD_(nsrefcnt) Release(void);
+
     jobitem_t(
-      nsString _library_guid = nsString(),
-      nsString _item_guid = nsString(),
-      nsString _url = nsString(),
-      nsString _worker_thread = nsString(),
-      nsString _is_scanned = nsString(),
+      nsString _library_guid = EmptyString(),
+      nsString _item_guid = EmptyString(),
+      nsString _url = EmptyString(),
+      nsString _worker_thread = EmptyString(),
+      nsString _is_scanned = EmptyString(),
       sbIMediaItem* _item = nsnull,
       sbIMetadataHandler *_handler = nsnull
     ) :
@@ -121,7 +126,13 @@ protected:
       is_scanned( _is_scanned ),
       item( _item ),
       handler( _handler )
-    {}
+    {
+      MOZ_COUNT_CTOR(jobitem_t);
+    }
+
+    ~jobitem_t() {
+      MOZ_COUNT_DTOR(jobitem_t);
+    }
 
     nsString library_guid;
     nsString item_guid;
@@ -130,6 +141,9 @@ protected:
     nsString is_scanned;
     nsCOMPtr<sbIMediaItem> item;
     nsCOMPtr<sbIMetadataHandler> handler;
+  protected:
+    nsAutoRefCnt mRefCnt;
+    NS_DECL_OWNINGTHREAD
   };
 
   nsresult RunTimer();
@@ -140,8 +154,8 @@ protected:
   static nsresult AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsString aTableName, sbIMediaItem *aMediaItem, jobitem_t **_retval );
   static nsresult GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableName, PRBool isWorkerThread, jobitem_t **_retval );
   static nsresult SetItemIsScanned( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
-  static nsresult SetItemIsWrittenAndDelete( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
-  static nsresult SetItemsAreWrittenAndDelete( sbIDatabaseQuery *aQuery, nsString aTableName, nsTArray< jobitem_t * > &aItemArray );
+  static nsresult SetItemIsWritten( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
+  static nsresult SetItemsAreWritten( sbIDatabaseQuery *aQuery, nsString aTableName, nsTArray<nsRefPtr<jobitem_t> > &aItemArray );
   static nsresult SetItemIs( const nsAString &aColumnString, sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
   static nsresult ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTableName );
   static nsresult StartHandlerForItem( jobitem_t *aItem );
@@ -163,8 +177,8 @@ protected:
   nsCOMPtr<sbIDatabaseQuery>    mMainThreadQuery;
   nsCOMPtr<nsITimer>            mTimer;
   nsCOMPtr<nsIThread>           mThread;
-  nsTArray<jobitem_t *>         mTimerWorkers;
-  nsCOMPtr<MetadataJobProcessorThread> mMetadataJobProcessor;
+  nsTArray<nsRefPtr<jobitem_t> > mTimerWorkers;
+  nsCOMPtr<sbMetadataJobProcessorThread> mMetadataJobProcessor;
   nsCOMPtr<nsIObserver>         mObserver;
   nsCOMPtr<sbIURIMetadataHelper> mURIMetadataHelper;
   PRBool                        mCompleted;
@@ -174,15 +188,20 @@ protected:
   PRBool                        mThreadCompleted;
 };
 
-class MetadataJobProcessorThread : public nsIRunnable
+class sbMetadataJobProcessorThread : public nsIRunnable
 {
 public:
   NS_DECL_ISUPPORTS
 
-  MetadataJobProcessorThread(sbMetadataJob* pMetadataJob) {
+  sbMetadataJobProcessorThread(sbMetadataJob* pMetadataJob) {
     NS_ASSERTION(pMetadataJob, "Null pointer!");
+    MOZ_COUNT_CTOR(sbMetadataJobProcessorThread);
     mMetadataJob = pMetadataJob;
     mShutdown = PR_FALSE;
+  }
+
+  ~sbMetadataJobProcessorThread() {
+    MOZ_COUNT_DTOR(sbMetadataJobProcessorThread);
   }
 
   NS_IMETHOD Run()

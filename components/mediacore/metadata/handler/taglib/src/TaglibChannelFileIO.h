@@ -81,7 +81,7 @@ class TagLibChannelFileIO : public TagLib::FileIO
 public:
     TagLibChannelFileIO(
         nsString                        channelID,
-        nsCOMPtr<sbISeekableChannel>    pSeekableChannel);
+        sbISeekableChannel*             pSeekableChannel);
 
     virtual ~TagLibChannelFileIO();
 
@@ -173,8 +173,7 @@ private:
 public:
     static nsresult AddChannel(
         nsString                    channelID,
-        nsCOMPtr<sbISeekableChannel>
-                                    pSeekableChannel);
+        sbISeekableChannel*         pSeekableChannel);
 
     static nsresult RemoveChannel(
         nsString                    channelID);
