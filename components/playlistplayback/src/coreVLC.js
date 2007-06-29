@@ -188,6 +188,7 @@ CoreVLC.prototype._applyPreferences = function ()
 
   //Be more generous about file caching.
   try {
+    //XXXAus: Read this value from prefs (bug #699)
     config.setConfigInt("access_file", "file-caching", 1000);
   }
   catch(e) {
@@ -196,6 +197,7 @@ CoreVLC.prototype._applyPreferences = function ()
   
   //Be more generous about http caching.
   try {
+    //XXXAus: Read this value from prefs (bug #699)
     config.setConfigInt("access_http", "http-caching", 2000);
   }
   catch(e) {
@@ -204,6 +206,7 @@ CoreVLC.prototype._applyPreferences = function ()
   
   //Be more generous about ftp caching.
   try {
+    //XXXAus: Read this value from prefs (bug #699)
     config.setConfigInt("access_ftp", "ftp-caching", 2000);
   }
   catch(e) {
@@ -212,6 +215,7 @@ CoreVLC.prototype._applyPreferences = function ()
   
   //Be more generous about smb caching.
   try {
+    //XXXAus: Read this value from prefs (bug #699)
     config.setConfigInt("access_smb", "smb-caching", 2000);
   }
   catch(e) {
@@ -220,6 +224,7 @@ CoreVLC.prototype._applyPreferences = function ()
   
   //Automatically reconnect if http connection lost.
   try {
+    //XXXAus: Read this value from prefs (bug #699)
     config.setConfigBool("access_http", "http-reconnect", 1);
   }
   catch(e) {
@@ -228,6 +233,7 @@ CoreVLC.prototype._applyPreferences = function ()
   
   //Turn on volume normalization.
   try {
+    //XXXAus: Read these values from prefs (bug #699)
     config.setConfigString("main", "audio-filter", "volnorm");
     config.setConfigInt("normvol", "norm-buff-size", 99);
     config.setConfigFloat("normvol", "norm-max-level", 5.123456789123);
@@ -242,6 +248,7 @@ CoreVLC.prototype._applyPreferences = function ()
   //Be very flexible about SSL certificates. Typically self signed certs
   //are used by average users and services.
   try {
+    //XXXAus: Read these values from prefs (bug #699)
     config.setConfigBool("gnutls", "tls-check-cert", 0);
     config.setConfigBool("gnutls", "tls-check-hostname", 0);
     config.setConfigInt("gnutls", "gnutls-cache-expiration", 12000);
