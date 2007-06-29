@@ -1,0 +1,109 @@
+Index: netwerk/base/src/nsInputStreamPump.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/netwerk/base/src/nsInputStreamPump.cpp,v
+retrieving revision 1.27
+diff -u -8 -p -r1.27 nsInputStreamPump.cpp
+--- netwerk/base/src/nsInputStreamPump.cpp	25 Apr 2007 20:52:16 -0000	1.27
++++ netwerk/base/src/nsInputStreamPump.cpp	28 Jun 2007 20:57:14 -0000
+@@ -121,24 +121,30 @@ CallPeekFunc(nsIInputStream *aInStream, 
+   NS_ASSERTION(aCount > 0, "Called without data?");
+ 
+   PeekData* data = NS_STATIC_CAST(PeekData*, aClosure);
+   data->mFunc(data->mClosure,
+               NS_REINTERPRET_CAST(const PRUint8*, aFromSegment), aCount);
+   return NS_BINDING_ABORTED;
+ }
+ 
+-void
++nsresult
+ nsInputStreamPump::PeekStream(PeekSegmentFun callback, void* closure)
+ {
+   NS_ASSERTION(mAsyncStream, "PeekStream called without stream");
++
++  // See if the pipe is closed by checking the return of Available.
++  PRUint32 dummy;
++  nsresult rv = mAsyncStream->Available(&dummy);
++  if (NS_FAILED(rv))
++    return rv;
++
+   PeekData data(callback, closure);
+-  PRUint32 read;
+-  mAsyncStream->ReadSegments(CallPeekFunc, &data, NET_DEFAULT_SEGMENT_SIZE,
+-                             &read);
++  return mAsyncStream->ReadSegments(CallPeekFunc, &data,
++                                    NET_DEFAULT_SEGMENT_SIZE, &dummy);
+ }
+ 
+ nsresult
+ nsInputStreamPump::EnsureWaiting()
+ {
+     // no need to worry about multiple threads... an input stream pump lives
+     // on only one thread.
+ 
+Index: netwerk/base/src/nsInputStreamPump.h
+===================================================================
+RCS file: /cvsroot/mozilla/netwerk/base/src/nsInputStreamPump.h,v
+retrieving revision 1.10
+diff -u -8 -p -r1.10 nsInputStreamPump.h
+--- netwerk/base/src/nsInputStreamPump.h	10 May 2006 17:29:47 -0000	1.10
++++ netwerk/base/src/nsInputStreamPump.h	28 Jun 2007 20:57:14 -0000
+@@ -77,17 +77,17 @@ public:
+      * method will not call the callback when there is no data in the stream.
+      * The callback will be called at most once.
+      *
+      * The data from the stream will not be consumed, i.e. the pump's listener
+      * can still read all the data.
+      *
+      * Do not call before asyncRead. Do not call after onStopRequest.
+      */
+-    NS_HIDDEN_(void) PeekStream(PeekSegmentFun callback, void *closure);
++    NS_HIDDEN_(nsresult) PeekStream(PeekSegmentFun callback, void *closure);
+ 
+ protected:
+ 
+     enum {
+         STATE_IDLE,
+         STATE_START,
+         STATE_TRANSFER,
+         STATE_STOP
+Index: netwerk/protocol/http/src/nsHttpChannel.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/netwerk/protocol/http/src/nsHttpChannel.cpp,v
+retrieving revision 1.310
+diff -u -8 -p -r1.310 nsHttpChannel.cpp
+--- netwerk/protocol/http/src/nsHttpChannel.cpp	30 May 2007 02:34:23 -0000	1.310
++++ netwerk/protocol/http/src/nsHttpChannel.cpp	28 Jun 2007 20:57:14 -0000
+@@ -701,19 +701,30 @@ nsHttpChannel::CallOnStartRequest()
+         SetPropertyAsInt64(NS_CHANNEL_PROP_CONTENT_LENGTH,
+                            mResponseHead->ContentLength());
+ 
+     // Allow consumers to override our content type
+     if ((mLoadFlags & LOAD_CALL_CONTENT_SNIFFERS) &&
+         gIOService->GetContentSniffers().Count() != 0) {
+         // NOTE: We can have both a txn pump and a cache pump when the cache
+         // content is partial. In that case, we need to read from the cache,
+-        // because that's the one that has the initial contents.
+-        nsInputStreamPump* pump = mCachePump ? mCachePump : mTransactionPump;
+-        pump->PeekStream(CallTypeSniffers, NS_STATIC_CAST(nsIChannel*, this));
++        // because that's the one that has the initial contents. If that fails
++        // then give the transaction pump a shot.
++
++        nsIChannel* thisChannel = NS_STATIC_CAST(nsIChannel*, this);
++
++        PRBool typeSniffersCalled = PR_FALSE;
++        if (mCachePump) {
++          typeSniffersCalled =
++            NS_SUCCEEDED(mCachePump->PeekStream(CallTypeSniffers, thisChannel));
++        }
++        
++        if (!typeSniffersCalled && mTransactionPump) {
++          mTransactionPump->PeekStream(CallTypeSniffers, thisChannel);
++        }
+     }
+ 
+     LOG(("  calling mListener->OnStartRequest\n"));
+     nsresult rv = mListener->OnStartRequest(this, mListenerContext);
+     if (NS_FAILED(rv)) return rv;
+ 
+     // install stream converter if required
+     rv = ApplyContentConversions();
