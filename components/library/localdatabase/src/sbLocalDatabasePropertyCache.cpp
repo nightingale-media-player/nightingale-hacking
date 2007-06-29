@@ -27,7 +27,9 @@
 #include "sbLocalDatabasePropertyCache.h"
 
 #include <nsIURI.h>
+#include <nsIObserverService.h>
 #include <sbIDatabaseQuery.h>
+#include <sbILibraryManager.h>
 #include <sbISQLBuilder.h>
 #include <sbSQLBuilderCID.h>
 #include <sbIPropertyManager.h>
@@ -61,10 +63,17 @@ static PRLogModuleInfo *gLocalDatabasePropertyCacheLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabasePropertyCache, sbILocalDatabasePropertyCache)
+/**
+ * \brief Max number of pending changes before automatic cache write.
+ */
+#define SB_LOCALDATABASE_MAX_PENDING_CHANGES (500)
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabasePropertyCache, 
+                              sbILocalDatabasePropertyCache,
+                              nsIObserver)
 
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache() 
-: mWritePending(PR_FALSE),
+: mWritePendingCount(0),
   mPropertiesInCriterion(nsnull),
   mMediaItemsInCriterion(nsnull),
   mLibrary(nsnull)
@@ -84,6 +93,29 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
   MOZ_COUNT_DTOR(sbLocalDatabasePropertyCache);
+  
+  if(mDirtyLock) {
+    nsAutoLock::DestroyLock(mDirtyLock);
+  }
+}
+
+NS_IMETHODIMP
+sbLocalDatabasePropertyCache::Observe(nsISupports *aSubject, 
+                                      const char *aTopic,
+                                      const PRUnichar *aData)
+{
+  nsresult rv = NS_OK;
+  
+  if(!strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC)) {
+    nsCOMPtr<nsIObserverService> observerService =
+      do_GetService("@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
+
+    rv = Shutdown();
+  }
+  
+  return rv;
 }
 
 NS_IMETHODIMP
@@ -91,7 +123,7 @@ sbLocalDatabasePropertyCache::GetWritePending(PRBool *aWritePending)
 {
   NS_ASSERTION(mLibrary, "You didn't initalize!");
   NS_ENSURE_ARG_POINTER(aWritePending);
-  *aWritePending = mWritePending;
+  *aWritePending = (mWritePendingCount > 0);
 
   return NS_OK;
 }
@@ -109,6 +141,16 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Register for library manager shutdown so we know when to write all
+  // pending changes.
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = observerService->AddObserver(this, 
+                                    SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, 
+                                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Simple select from properties table with an in list of guids
@@ -310,6 +352,16 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mLibrary = aLibrary;
+
+  return NS_OK;
+}
+
+nsresult 
+sbLocalDatabasePropertyCache::Shutdown()
+{
+  if(mWritePendingCount) {
+    return Write();
+  }
 
   return NS_OK;
 }
@@ -602,12 +654,16 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
       mDirty.PutEntry(guid);
       PR_Unlock(mDirtyLock);
 
-      mWritePending = PR_TRUE;
+      if(++mWritePendingCount > SB_LOCALDATABASE_MAX_PENDING_CHANGES) {
+        rv = Write();
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 
   if(aWriteThroughNow) {
     rv = Write();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return rv;
@@ -1107,8 +1163,9 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseResourcePropertyBag,
 sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache,
                                                                        const nsAString &aGuid)
 : mCache(aCache)
-, mWritePending(PR_FALSE)
+, mWritePendingCount(0)
 , mGuid(aGuid)
+, mDirtyLock(nsnull)
 {
 }
 
@@ -1164,7 +1221,7 @@ NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::GetWritePending(PRBool *aWritePending)
 {
   NS_ENSURE_ARG_POINTER(aWritePending);
-  *aWritePending = mWritePending;
+  *aWritePending = (mWritePendingCount > 0);
   return NS_OK;
 }
 
@@ -1262,17 +1319,19 @@ sbLocalDatabaseResourcePropertyBag::SetPropertyByID(PRUint32 aPropertyID,
 {
   nsresult rv = NS_ERROR_INVALID_ARG;
   if(aPropertyID > 0) {
-     rv = PutValue(aPropertyID, aValue);
-     NS_ENSURE_SUCCESS(rv, rv);
-     
-     rv = mCache->AddDirtyGUID(mGuid);
-     NS_ENSURE_SUCCESS(rv, rv);
+    rv = PutValue(aPropertyID, aValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = mCache->AddDirtyGUID(mGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-     mWritePending = PR_TRUE;
+    PR_Lock(mDirtyLock);
+    mDirty.PutEntry(aPropertyID);
+    PR_Unlock(mDirtyLock);
 
-     PR_Lock(mDirtyLock);
-     mDirty.PutEntry(aPropertyID);
-     PR_Unlock(mDirtyLock);
+    if(++mWritePendingCount > SB_LOCALDATABASE_MAX_PENDING_CHANGES) {
+      rv = Write();
+    }
   }
 
   return rv;
@@ -1282,11 +1341,11 @@ NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
 {
   nsresult rv = NS_OK;
 
-  if(mWritePending) {
+  if(mWritePendingCount) {
     rv = mCache->Write();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mWritePending = PR_FALSE;
+    mWritePendingCount = 0;
   }
 
   return rv;
@@ -1319,13 +1378,17 @@ sbLocalDatabaseResourcePropertyBag::EnumerateDirty(nsTHashtable<nsUint32HashKey>
 nsresult
 sbLocalDatabaseResourcePropertyBag::SetDirty(PRBool aDirty)
 {
-  nsAutoLock lock(mDirtyLock);
+  nsAutoLock lockDirty(mDirtyLock);
 
-  if(mWritePending && !aDirty) {
+  if(!aDirty) {
     mDirty.Clear();
+    mWritePendingCount = 0;
   }
-
-  mWritePending = aDirty;
+  else {
+    //Looks like we're attempting to force a flush on the next property that gets set.
+    //Ensure we trigger a write.
+    mWritePendingCount = SB_LOCALDATABASE_MAX_PENDING_CHANGES + 1;
+  }
 
   return NS_OK;
 }

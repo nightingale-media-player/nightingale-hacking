@@ -538,8 +538,6 @@ public:
   ~sbMetadataBatchHelper()
   {
     if ( mList ) {
-      //XXX Remove when #3037 is fixed.
-      WriteCache();
       mList->EndUpdateBatch();
     }
   }
@@ -555,33 +553,9 @@ public:
   {
     if ( mList )
     {
-      //XXX Remove when #3037 is fixed.
-      WriteCache();
       mList->EndUpdateBatch();
       mList->BeginUpdateBatch();
     }
-  }
-
-  nsresult WriteCache() {
-    // XXXsteve HACK to make sure the properties get written.  This should be
-    // removed once we get rid of sbIResourceProperty::Write()
-    nsresult rv;
-
-    nsCOMPtr<sbILibrary> library = do_QueryInterface(mList, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbILocalDatabaseLibrary> localLibrary =
-      do_QueryInterface(library, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbILocalDatabasePropertyCache> propertyCache;
-    rv = localLibrary->GetPropertyCache(getter_AddRefs(propertyCache));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = propertyCache->Write();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    return NS_OK;
   }
 
 private:
@@ -698,12 +672,6 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 
   if ( library )
   {
-    // Flush properties cache on completion.
-    //XXX Remove when #3037 is fixed.
-    rv = batchHelper.WriteCache();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    NS_ENSURE_SUCCESS(rv, rv);
     // Along with the written bits.
     rv = SetItemsAreWrittenAndDelete( WorkerThreadQuery, aTableName, writePending );
     NS_ENSURE_SUCCESS(rv, rv);

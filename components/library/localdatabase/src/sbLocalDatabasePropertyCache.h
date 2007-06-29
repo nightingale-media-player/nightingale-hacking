@@ -28,6 +28,7 @@
 #define __SBLOCALDATABASEPROPERTYCACHE_H__
 
 #include <nsIStringEnumerator.h>
+#include <nsIObserver.h>
 #include <sbILocalDatabasePropertyCache.h>
 
 #include <nsClassHashtable.h>
@@ -49,10 +50,12 @@ class sbISQLInsertBuilder;
 class sbISQLSelectBuilder;
 class sbISQLUpdateBuilder;
 
-class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache
+class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache,
+                                     public nsIObserver
 {
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_NSIOBSERVER
   NS_DECL_SBILOCALDATABASEPROPERTYCACHE
 
   sbLocalDatabasePropertyCache();
@@ -61,6 +64,7 @@ public:
   ~sbLocalDatabasePropertyCache();
 
   nsresult Init(sbLocalDatabaseLibrary* aLibrary);
+  nsresult Shutdown();
 
   nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
   nsresult LoadProperties();
@@ -76,7 +80,8 @@ public:
   nsresult InsertPropertyNameInLibrary(const nsAString& aPropertyName, PRUint32 *aPropertyID);
   
 private:
-  PRBool mWritePending;
+  // Pending write count.
+  PRUint32 mWritePendingCount;
 
   // Database GUID
   nsString mDatabaseGUID;
@@ -153,7 +158,7 @@ private:
 
   nsCOMPtr<sbIPropertyManager> mPropertyManager;
 
-  PRBool    mWritePending;
+  PRUint32  mWritePendingCount;
   nsString  mGuid;
 
   // Dirty Property ID's

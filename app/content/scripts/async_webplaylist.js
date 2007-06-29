@@ -228,15 +228,6 @@ try
               }
               mediaList.add(mediaItem);
             }
-
-            // XXXben HACK to make sure that the media items' properties are all
-            //        written to the database before we redraw the view. The view
-            //        makes a straight database call and bypasses the property
-            //        cache. Remove this once bug 3037 is fixed.
-            var propCache = library.
-                            QueryInterface(Components.interfaces.sbILocalDatabaseLibrary).
-                            propertyCache;
-            propCache.write();
           } finally {
             // Tell the view that it can redraw itself.
             mediaList.endUpdateBatch();

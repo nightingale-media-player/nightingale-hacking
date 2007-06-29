@@ -718,7 +718,7 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
         }
 
         /* Write the media item. */
-        /* XXXeps won't need this after bug 3037 is fixed. */
+        /* XXXeps won't need this after bug 3134 is fixed. */
         if (NS_SUCCEEDED(result1))
             result1 = pMediaItem->Write();
 
@@ -2194,7 +2194,6 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
             result = CompleteTransfer();
 
         /* Set the progress to complete. */
-        /* XXXeps won't need Write after bug 3037 is fixed. */
         mCurrentProgress = 101;
         currentProgressStr.AppendInt(mCurrentProgress);
         mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
@@ -2202,6 +2201,8 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
         progressModeStr.AppendInt(nsITreeView::PROGRESS_NONE);
         mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
                                  progressModeStr);
+
+        /* XXXeps won't need Write after bug 3134 is fixed. */
         mpMediaItem->Write();
     }
 
