@@ -37,7 +37,7 @@
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(CDatabaseEngine, CDatabaseEngine::GetSingleton)
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseQuery)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(CDatabaseQuery, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseResult)
 
 static nsModuleComponentInfo sbDatabaseEngine[] =

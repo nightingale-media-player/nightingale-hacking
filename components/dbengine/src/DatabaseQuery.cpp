@@ -140,8 +140,7 @@ CDatabaseQuery::CDatabaseQuery()
 //-----------------------------------------------------------------------------
 CDatabaseQuery::~CDatabaseQuery()
 {
-  nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
-  if(p) p->RemovePersistentQuery(this);
+  mDatabaseEngine->RemovePersistentQuery(this);
 
   NS_IF_RELEASE(m_QueryResult);
   
@@ -193,6 +192,15 @@ CDatabaseQuery::~CDatabaseQuery()
   m_PersistentCallbackList.Clear();
   m_CallbackList.Clear();
 } //dtor
+
+nsresult CDatabaseQuery::Init()
+{
+  nsresult rv;
+  mDatabaseEngine = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
 
 //-----------------------------------------------------------------------------
 /* attribute nsIURI databaseLocation; */
@@ -348,13 +356,11 @@ NS_IMETHODIMP CDatabaseQuery::SetPersistentQuery(PRBool bPersistentQuery)
 {
   nsresult rv;
 
-  nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID, &rv);
-  if(NS_FAILED(rv)) return rv;
-
   if(m_PersistentQuery == PR_TRUE &&
     bPersistentQuery == PR_FALSE)
   {
-    p->RemovePersistentQuery(this);    
+    rv = mDatabaseEngine->RemovePersistentQuery(this);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   m_PersistentQuery = bPersistentQuery;
@@ -569,9 +575,9 @@ NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
     m_QueryHasCompleted = PR_FALSE;
   }
 
-  nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
-  if(p) p->SubmitQuery(this, _retval);
-  
+  nsresult rv = mDatabaseEngine->SubmitQuery(this, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if(*_retval != 0)
   {
     nsAutoMonitor mon(m_pQueryRunningMonitor);

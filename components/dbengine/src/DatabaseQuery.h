@@ -91,6 +91,7 @@ typedef nsTArray<CQueryParameter> bindParameterArray_t;
 class CDatabaseEngine;
 class nsIEventTarget;
 class nsIURI;
+class sbIDatabaseEngine;
 
 class CDatabaseQuery : public sbIDatabaseQuery
 {
@@ -105,6 +106,8 @@ public:
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDATABASEQUERY
+
+  nsresult Init();
 
 protected:
   CDatabaseResult* GetResultObject();
@@ -181,6 +184,8 @@ protected:
   PRUint32 m_RollingLimitResult;
 
   nsCOMPtr<nsIEventTarget> mLocationURIOwningThread;
+  nsCOMPtr<sbIDatabaseEngine> mDatabaseEngine;
+
 private:
   NS_IMETHOD EnsureLastQueryParameter(PRUint32 aParamIndex);
 };
