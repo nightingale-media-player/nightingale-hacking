@@ -315,9 +315,6 @@ try
         return false;
       }
 
-
-      installClickHandler(this.a_array[this.i]);
-
       if (context) {
         if (!this.items.length) {
           context.playlistHasItems = true;

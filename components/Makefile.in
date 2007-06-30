@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = addonmetadata \
           bundle \
           commandline \
+          contenthandling \
           controller \
           dataremote \
           dbengine \
@@ -73,5 +74,6 @@ SUBDIRDEPS7 = library : moz
 SUBDIRDEPS8 = library : property
 SUBDIRDEPS9 = remoteapi : library
 SUBDIRDEPS10 = remoteapi : moz
+SUBDIRDEPS11 = contenthandling : playlistplayback
 
 include $(topsrcdir)/build/rules.mk

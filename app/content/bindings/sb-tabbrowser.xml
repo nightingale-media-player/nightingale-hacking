@@ -976,8 +976,7 @@
             linkNode = null;
           }
         }
-        
-        
+
         var wrapper = null;
         var href = null;
         var target = null;
@@ -1027,8 +1026,22 @@
             where = 'tab';
           }
           
+          var pps = 
+            Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                      .getService(Components.interfaces.sbIPlaylistPlayback);
+          if (pps.isMediaURL(href)) {
+            where = 'current';
+          }
+
           this.loadURI(href, referrer, null, event, where);
           event.stopPropagation();
+
+          // We're supposed to return false if this was a normal vanilla link
+          // click.
+          if (event.button == 0 && !event.ctrlKey && !event.shiftKey &&
+              !event.altKey && !event.event.metaKey) {
+            return false;
+          }
         }
         return true;
       ]]></handler>
