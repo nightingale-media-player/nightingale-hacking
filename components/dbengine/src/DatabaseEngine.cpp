@@ -1529,8 +1529,12 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                       PRUnichar *p = (PRUnichar *)sqlite3_column_name16(pStmt, i);
                       nsString strColumnName;
                       
-                      if(p)
+                      if(p) {
                         strColumnName = p;
+                      }
+                      else {
+                        strColumnName.SetIsVoid(PR_TRUE);
+                      }
                       
                       vColumnNames.push_back(strColumnName);
                     }
@@ -1570,8 +1574,12 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                       PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, i);
                       nsString strCellValue;
   
-                      if(p)
+                      if(p) {
                         strCellValue = p;
+                      }
+                      else {
+                        strCellValue.SetIsVoid(PR_TRUE);
+                      }
   
                       vCellValues.push_back(strCellValue);
                       TRACE(("Column %d: '%s' ", i,
