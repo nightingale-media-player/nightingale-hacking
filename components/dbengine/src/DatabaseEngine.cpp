@@ -1961,7 +1961,7 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
 PR_STATIC_CALLBACK(PLDHashOperator)
 EnumSimpleCallback(nsISupports *key, sbIDatabaseSimpleQueryCallback *data, void *closure)
 {
-  nsCOMArray<sbIDatabaseSimpleQueryCallback> *array = NS_STATIC_CAST(nsCOMArray<sbIDatabaseSimpleQueryCallback> *, closure);
+  nsCOMArray<sbIDatabaseSimpleQueryCallback> *array = static_cast<nsCOMArray<sbIDatabaseSimpleQueryCallback> *>(closure);
   array->AppendObject(data);
   return PL_DHASH_NEXT;
 }

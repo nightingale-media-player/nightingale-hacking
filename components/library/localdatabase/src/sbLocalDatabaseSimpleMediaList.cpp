@@ -308,7 +308,7 @@ sbSimpleMediaListInsertingEnumerationListener::AddURIsToArrayCallback(nsISupport
                                                                       sbIMediaItem* aEntry,
                                                                       void* aUserData)
 {
-  ArrayPointers* pointers = NS_STATIC_CAST(ArrayPointers*, aUserData);
+  ArrayPointers* pointers = static_cast<ArrayPointers*>(aUserData);
   NS_ASSERTION(pointers, "This can't be null!");
 
   nsresult rv;

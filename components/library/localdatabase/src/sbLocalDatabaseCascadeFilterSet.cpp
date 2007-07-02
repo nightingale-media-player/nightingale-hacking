@@ -567,7 +567,7 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
           }
 
           nsCOMPtr<nsIStringEnumerator> values =
-            new sbTArrayStringEnumerator(NS_CONST_CAST(sbStringArray*,
+            new sbTArrayStringEnumerator(const_cast<sbStringArray*>(
                                                        &sortableValues));
           NS_ENSURE_TRUE(values, NS_ERROR_OUT_OF_MEMORY);
 
@@ -595,7 +595,7 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
         }
 
         nsCOMPtr<nsIStringEnumerator> values =
-          new sbTArrayStringEnumerator(NS_CONST_CAST(sbStringArray*,
+          new sbTArrayStringEnumerator(const_cast<sbStringArray*>(
                                                      &sortableValues));
         NS_ENSURE_TRUE(values, NS_ERROR_OUT_OF_MEMORY);
 
@@ -790,7 +790,7 @@ sbLocalDatabaseCascadeFilterSet::OnValuesChangedCallback(nsISupportsHashKey* aKe
     do_QueryInterface(aKey->GetKey(), &rv);
 
   if (NS_SUCCEEDED(rv)) {
-    PRUint32* index = NS_STATIC_CAST(PRUint32*, aUserData);
+    PRUint32* index = static_cast<PRUint32*>(aUserData);
     rv = listener->OnValuesChanged(*index);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                      "OnValuesChanged returned a failure code");

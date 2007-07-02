@@ -37,7 +37,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbGStreamerSimple,
 static GstBusSyncReply
 syncHandlerHelper(GstBus* bus, GstMessage* message, gpointer data)
 {
-  sbGStreamerSimple* gsts = NS_STATIC_CAST(sbGStreamerSimple*, data);
+  sbGStreamerSimple* gsts = static_cast<sbGStreamerSimple*>(data);
   return gsts->SyncHandler(bus, message);
 }
 

@@ -507,7 +507,7 @@ sbLocalDatabaseGUIDArray::CloneInto(sbILocalDatabaseGUIDArray* aDest)
     const FilterSpec refSpec = mFilters.ElementAt(index);
 
     nsTArray<nsString>* stringArray =
-      NS_CONST_CAST(nsTArray<nsString>*, &refSpec.values);
+      const_cast<nsTArray<nsString>*>(&refSpec.values);
     NS_ENSURE_STATE(stringArray);
 
     nsCOMPtr<nsIStringEnumerator> enumerator =

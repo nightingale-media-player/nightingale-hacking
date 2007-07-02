@@ -224,7 +224,7 @@ sbSQLSelectBuilder::ToString(nsAString& _retval)
     buff.AppendLiteral(" on ");
     if (ji.criterion) {
       nsAutoString str;
-      NS_STATIC_CAST(sbSQLBuilderCriterionBase*, ji.criterion.get())->ToString(str);
+      static_cast<sbSQLBuilderCriterionBase*>(ji.criterion.get())->ToString(str);
       buff.Append(str);
     }
     else {

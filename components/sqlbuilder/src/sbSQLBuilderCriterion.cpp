@@ -91,7 +91,7 @@ sbSQLBuilderCriterionBase::AppendLogicalTo(const nsAString& aOperator,
 
   sbISQLBuilderCriterion* criterion = mLeft;
   nsAutoString str;
-  NS_STATIC_CAST(sbSQLBuilderCriterionBase*, criterion)->ToString(str);
+  static_cast<sbSQLBuilderCriterionBase*>(criterion)->ToString(str);
   aStr.Append(str);
 
   aStr.AppendLiteral(" ");
@@ -100,7 +100,7 @@ sbSQLBuilderCriterionBase::AppendLogicalTo(const nsAString& aOperator,
 
   criterion = mRight;
   str.Truncate();
-  NS_STATIC_CAST(sbSQLBuilderCriterionBase*, criterion)->ToString(str);
+  static_cast<sbSQLBuilderCriterionBase*>(criterion)->ToString(str);
   aStr.Append(str);
 
   aStr.AppendLiteral(")");

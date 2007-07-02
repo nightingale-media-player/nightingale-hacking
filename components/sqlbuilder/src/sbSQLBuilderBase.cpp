@@ -177,7 +177,7 @@ sbSQLBuilderBase::AddSubquery(sbISQLSelectBuilder *aSubquery,
   // Don't allow a query to use itself as a subquery
   // XXX: This is bad since it assumes the implementation class of the
   // aSubquery parameter.  What is the right way to do this?
-  sbSQLSelectBuilder* sb = NS_STATIC_CAST(sbSQLSelectBuilder*, aSubquery);
+  sbSQLSelectBuilder* sb = static_cast<sbSQLSelectBuilder*>(aSubquery);
   NS_ENSURE_TRUE(sb != this, NS_ERROR_INVALID_ARG);
 
   sbSubqueryInfo* sq = mSubqueries.AppendElement();

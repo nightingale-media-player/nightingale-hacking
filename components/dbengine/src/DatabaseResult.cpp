@@ -165,7 +165,7 @@ NS_IMETHODIMP CDatabaseResult::GetColumnNamePtr(PRUint32 dbColumn, PRUnichar **_
   PR_Lock(m_pColumnNamesLock);
   if(dbColumn < m_ColumnNames.size())
   {
-    *_retval = NS_CONST_CAST(PRUnichar *, PromiseFlatString(m_ColumnNames[dbColumn]).get());
+    *_retval = const_cast<PRUnichar *>(PromiseFlatString(m_ColumnNames[dbColumn]).get());
   }
   else
   {
@@ -185,7 +185,7 @@ NS_IMETHODIMP CDatabaseResult::GetRowCellPtr(PRUint32 dbRow, PRUint32 dbCell, PR
   PR_Lock(m_pRowCellsLock);
   if(dbRow < m_RowCells.size() && dbCell < m_RowCells[dbRow].size())
   {
-    *_retval = NS_CONST_CAST(PRUnichar *, PromiseFlatString(m_RowCells[dbRow][dbCell]).get());
+    *_retval = const_cast<PRUnichar *>(PromiseFlatString(m_RowCells[dbRow][dbCell]).get());
   }
   else
   {

@@ -170,7 +170,7 @@ JoinStringMapCallback(nsStringHashKey::KeyType aKey,
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
   nsString* str =
-    NS_STATIC_CAST(nsString*, aUserData);
+    static_cast<nsString*>(aUserData);
   NS_ENSURE_TRUE(str, PL_DHASH_STOP);
 
   nsCAutoString key;

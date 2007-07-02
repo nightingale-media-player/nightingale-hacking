@@ -401,7 +401,7 @@ sbDeviceBase::RemoveCallback(sbIDeviceBaseCallback* aCallback)
 PR_STATIC_CALLBACK(PLDHashOperator)
 EnumDeviceCallback(nsISupports *key, sbIDeviceBaseCallback *data, void *closure)
 {
-  nsCOMArray<sbIDeviceBaseCallback> *array = NS_STATIC_CAST(nsCOMArray<sbIDeviceBaseCallback> *, closure);
+  nsCOMArray<sbIDeviceBaseCallback> *array = static_cast<nsCOMArray<sbIDeviceBaseCallback> *>(closure);
   array->AppendObject(data);
   return PL_DHASH_NEXT;
 }

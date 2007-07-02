@@ -72,7 +72,7 @@ NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retv
 NS_IMETHOD GetDisplayPropertiesForValue(const nsAString& aValue, nsAString& _retval) { return _to GetDisplayPropertiesForValue(aValue, _retval); }
 
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
-  NS_STATIC_CAST(sbIPropertyInfo*, NS_STATIC_CAST(__unambiguousBase, __expr))
+  static_cast<sbIPropertyInfo*>(static_cast<__unambiguousBase>(__expr))
 
 class sbPropertyOperator : public sbIPropertyOperator
 {

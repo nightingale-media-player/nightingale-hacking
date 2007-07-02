@@ -144,7 +144,7 @@ sbLocalDatabaseMediaListBase::AddFilterToGUIDArrayCallback(nsStringHashKey::KeyT
 
   // Unbox the guidArray.
   nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray =
-    NS_STATIC_CAST(sbILocalDatabaseGUIDArray*, aUserData);
+    static_cast<sbILocalDatabaseGUIDArray*>(aUserData);
   
   // Set the filter.
   nsresult rv = guidArray->AddFilter(aKey, valueEnum, PR_FALSE);

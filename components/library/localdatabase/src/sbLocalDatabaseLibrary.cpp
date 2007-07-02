@@ -92,8 +92,8 @@
 #define SB_MEDIALIST_FACTORY_URI_SUFFIX   "')"
 
 #define SB_ILIBRESOURCE_CAST(_ptr)                                             \
-  NS_STATIC_CAST(sbILibraryResource*,                                          \
-                 NS_STATIC_CAST(sbILibrary*, _ptr))
+  static_cast<sbILibraryResource*>(                                         \
+                 static_cast<sbILibrary*>(_ptr))
 
 #define DEFAULT_SORT_PROPERTY SB_PROPERTY_CREATED
 
@@ -136,7 +136,7 @@ NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType aKey,
   NS_ASSERTION(aEntry, "Null entry in the hash?!");
   NS_ASSERTION(aUserData, "Null userData!");
 
-  nsCOMPtr<sbIMediaList> list = NS_STATIC_CAST(sbIMediaList*, aUserData);
+  nsCOMPtr<sbIMediaList> list = static_cast<sbIMediaList*>(aUserData);
   NS_ENSURE_TRUE(list, PL_DHASH_STOP);
 
   nsresult rv;
@@ -164,7 +164,7 @@ NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
   NS_ASSERTION(aEntry, "Null entry in the hash?!");
   NS_ASSERTION(aUserData, "Null userData!");
 
-  nsCOMPtr<sbIMediaList> list = NS_STATIC_CAST(sbIMediaList*, aUserData);
+  nsCOMPtr<sbIMediaList> list = static_cast<sbIMediaList*>(aUserData);
   NS_ENSURE_TRUE(list, PL_DHASH_STOP);
 
   nsresult rv;
@@ -192,7 +192,7 @@ EntriesToMediaListArray(nsISupportsHashKey* aEntry,
   NS_ASSERTION(aUserData, "Null entry in the hash?!");
 
   sbMediaListArray* array =
-    NS_STATIC_CAST(sbMediaListArray*, aUserData);
+    static_cast<sbMediaListArray*>(aUserData);
 
   nsresult rv;
   nsCOMPtr<sbIMediaList> list = do_QueryInterface(aEntry->GetKey(), &rv);
@@ -1039,7 +1039,7 @@ sbLocalDatabaseLibrary::AddTypesToArrayCallback(nsStringHashKey::KeyType aKey,
   
   // Make a string enumerator for the string array.
   nsTArray<nsString>* array =
-    NS_STATIC_CAST(nsTArray<nsString>*, aUserData);
+    static_cast<nsTArray<nsString>*>(aUserData);
   NS_ENSURE_TRUE(array, PL_DHASH_STOP);
   
   nsString* newElement = array->AppendElement(aKey);
@@ -1630,7 +1630,7 @@ sbLocalDatabaseLibrary::NotifyListsItemUpdated(nsISupportsHashKey::KeyType aKey,
   NS_ASSERTION(aUserData, "Null userData!");
 
   nsCOMPtr<sbIPropertyArray> properties =
-    NS_STATIC_CAST(sbIPropertyArray*, aUserData);
+    static_cast<sbIPropertyArray*>(aUserData);
   NS_ENSURE_TRUE(properties, PL_DHASH_STOP);
 
   nsresult rv;

@@ -176,7 +176,7 @@ sbLibraryManager::AddLibrariesToCOMArrayCallback(nsStringHashKey::KeyType aKey,
   NS_ASSERTION(aEntry->library, "Null library in hashtable!");
 
   nsCOMArray<sbILibrary>* array =
-    NS_STATIC_CAST(nsCOMArray<sbILibrary>*, aUserData);
+    static_cast<nsCOMArray<sbILibrary>*>(aUserData);
 
   PRBool success = array->AppendObject(aEntry->library);
   NS_ENSURE_TRUE(success, PL_DHASH_STOP);
@@ -203,7 +203,7 @@ sbLibraryManager::AddStartupLibrariesToCOMArrayCallback(nsStringHashKey::KeyType
   NS_ASSERTION(aEntry->library, "Null library in hashtable!");
 
   nsCOMArray<sbILibrary>* array =
-    NS_STATIC_CAST(nsCOMArray<sbILibrary>*, aUserData);
+    static_cast<nsCOMArray<sbILibrary>*>(aUserData);
 
   if (aEntry->loader && aEntry->loadAtStartup) {
     PRBool success = array->AppendObject(aEntry->library);
@@ -232,7 +232,7 @@ sbLibraryManager::AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKe
   NS_ASSERTION(aEntry, "Null entry in hashtable!");
 
   nsCOMArray<sbILibraryManagerListener>* array =
-    NS_STATIC_CAST(nsCOMArray<sbILibraryManagerListener>*, aUserData);
+    static_cast<nsCOMArray<sbILibraryManagerListener>*>(aUserData);
 
   PRBool success = array->AppendObject(aEntry);
   NS_ENSURE_TRUE(success, PL_DHASH_STOP);
@@ -259,7 +259,7 @@ sbLibraryManager::AssertAllLibrariesCallback(nsStringHashKey::KeyType aKey,
   NS_ASSERTION(aEntry, "Null entry in hashtable!");
   NS_ASSERTION(aEntry->library, "Null library in hashtable!");
 
-  nsCOMPtr<nsIRDFDataSource> ds = NS_STATIC_CAST(nsIRDFDataSource*, aUserData);
+  nsCOMPtr<nsIRDFDataSource> ds = static_cast<nsIRDFDataSource*>(aUserData);
   NS_ENSURE_TRUE(ds, PL_DHASH_STOP);
 
   nsresult rv = AssertLibrary(ds, aEntry->library);

@@ -475,7 +475,7 @@ sbLocalDatabaseLibraryLoader::LoadLibrariesCallback(nsUint32HashKey::KeyType aKe
                                                     sbLibraryLoaderInfo* aEntry,
                                                     void* aUserData)
 {
-  sbLoaderInfo* loaderInfo = NS_STATIC_CAST(sbLoaderInfo*, aUserData);
+  sbLoaderInfo* loaderInfo = static_cast<sbLoaderInfo*>(aUserData);
   NS_ASSERTION(loaderInfo, "Doh, how did this happen?!");
 
   if (!aEntry->GetLoadAtStartup()) {
@@ -503,7 +503,7 @@ sbLocalDatabaseLibraryLoader::LibraryExistsCallback(nsUint32HashKey::KeyType aKe
                                                     void* aUserData)
 {
   sbLibraryExistsInfo* existsInfo =
-    NS_STATIC_CAST(sbLibraryExistsInfo*, aUserData);
+    static_cast<sbLibraryExistsInfo*>(aUserData);
   NS_ASSERTION(existsInfo, "Doh, how did this happen?!");
 
   nsAutoString resourceGUID;

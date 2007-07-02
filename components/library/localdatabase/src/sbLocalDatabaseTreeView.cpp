@@ -90,7 +90,7 @@ sbLocalDatabaseTreeView::SelectionListSavingEnumeratorCallback(PRUint32 aRow,
 {
   NS_ENSURE_ARG_POINTER(aUserData);
 
-  sbSelectionList* list = NS_STATIC_CAST(sbSelectionList*, aUserData);
+  sbSelectionList* list = static_cast<sbSelectionList*>(aUserData);
   NS_ENSURE_STATE(list);
 
   nsAutoString guid(aGuid);
@@ -109,7 +109,7 @@ sbLocalDatabaseTreeView::SelectionToArrayEnumeratorCallback(PRUint32 aRow,
   NS_ENSURE_ARG_POINTER(aUserData);
 
   sbGUIDArrayToIndexedMediaItemEnumerator* enumerator =
-    NS_STATIC_CAST(sbGUIDArrayToIndexedMediaItemEnumerator*, aUserData);
+    static_cast<sbGUIDArrayToIndexedMediaItemEnumerator*>(aUserData);
   NS_ENSURE_STATE(enumerator);
 
   nsresult rv = enumerator->AddGuid(aGuid, aRow);
@@ -127,7 +127,7 @@ sbLocalDatabaseTreeView::SelectionIndexEnumeratorCallback(PRUint32 aRow,
   NS_ENSURE_ARG_POINTER(aUserData);
 
   nsTHashtable<nsUint32HashKey>* selectedIndexes =
-    NS_STATIC_CAST(nsTHashtable<nsUint32HashKey>*, aUserData);
+    static_cast<nsTHashtable<nsUint32HashKey>*>(aUserData);
   NS_ENSURE_STATE(selectedIndexes);
 
   nsUint32HashKey* success = selectedIndexes->PutEntry(aRow);

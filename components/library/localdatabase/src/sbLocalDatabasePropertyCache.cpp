@@ -468,7 +468,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
 
           // XXXben FIX ME
           sbLocalDatabaseResourcePropertyBag* bagClassPtr =
-            NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag.get());
+            static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
           rv = bagClassPtr->PutValue(propertyID, obj);
 
           NS_ENSURE_SUCCESS(rv, rv);
@@ -539,7 +539,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
 
               // XXXben FIX ME
               sbLocalDatabaseResourcePropertyBag* bagClassPtr =
-                NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag.get());
+                static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
               rv = bagClassPtr->PutValue(sStaticProperties[i].mID, value);
   
               NS_ENSURE_SUCCESS(rv, rv);
@@ -646,7 +646,7 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
         NS_ENSURE_SUCCESS(rv, rv);
 
         // XXXben FIX ME
-        rv = NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag*, bag.get())
+        rv = static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get())
           ->SetProperty(name, value);
       }
 
@@ -672,7 +672,7 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
 PR_STATIC_CALLBACK(PLDHashOperator)
 EnumDirtyGuids(nsStringHashKey *aKey, void *aClosure)
 {
-  nsTArray<nsString> *dirtyGuids = NS_STATIC_CAST(nsTArray<nsString> *, aClosure);
+  nsTArray<nsString> *dirtyGuids = static_cast<nsTArray<nsString> *>(aClosure);
   dirtyGuids->AppendElement(aKey->GetKey());
   return PL_DHASH_NEXT;
 }
@@ -680,7 +680,7 @@ EnumDirtyGuids(nsStringHashKey *aKey, void *aClosure)
 PR_STATIC_CALLBACK(PLDHashOperator)
 EnumDirtyProps(nsUint32HashKey *aKey, void *aClosure)
 {
-  nsTArray<PRUint32> *dirtyProps = NS_STATIC_CAST(nsTArray<PRUint32> *, aClosure);
+  nsTArray<PRUint32> *dirtyProps = static_cast<nsTArray<PRUint32> *>(aClosure);
   dirtyProps->AppendElement(aKey->GetKey());
   return PL_DHASH_NEXT;
 }
@@ -715,7 +715,7 @@ sbLocalDatabasePropertyCache::Write()
 
       // XXXben FIX ME
       sbLocalDatabaseResourcePropertyBag* bagLocal = 
-        NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag *, bag.get());
+        static_cast<sbLocalDatabaseResourcePropertyBag *>(bag.get());
 
       PRUint32 dirtyPropsCount = 0;
       rv = bagLocal->EnumerateDirty(EnumDirtyProps, (void *) &dirtyProps, &dirtyPropsCount);
@@ -840,7 +840,7 @@ sbLocalDatabasePropertyCache::Write()
 
       // XXXben FIX ME
       sbLocalDatabaseResourcePropertyBag* bagLocal = 
-        NS_STATIC_CAST(sbLocalDatabaseResourcePropertyBag *, bag.get());
+        static_cast<sbLocalDatabaseResourcePropertyBag *>(bag.get());
       bagLocal->SetDirty(PR_FALSE);
     }
   }
@@ -1098,7 +1098,7 @@ PropertyIDToNameKeys(nsUint32HashKey::KeyType aPropertyID,
                      nsString& aValue,
                      void *aArg)
 {
-  nsTArray<PRUint32>* propertyIDs = NS_STATIC_CAST(nsTArray<PRUint32>*, aArg);
+  nsTArray<PRUint32>* propertyIDs = static_cast<nsTArray<PRUint32>*>(aArg);
   if (propertyIDs->AppendElement(aPropertyID)) {
     return PL_DHASH_NEXT;
   }
@@ -1201,7 +1201,7 @@ PropertyBagKeysToArray(const PRUint32& aPropertyID,
                        nsString* aValue,
                        void *aArg)
 {
-  nsTArray<PRUint32>* propertyIDs = NS_STATIC_CAST(nsTArray<PRUint32>*, aArg);
+  nsTArray<PRUint32>* propertyIDs = static_cast<nsTArray<PRUint32>*>(aArg);
   if (propertyIDs->AppendElement(aPropertyID)) {
     return PL_DHASH_NEXT;
   }

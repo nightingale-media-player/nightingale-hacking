@@ -633,7 +633,7 @@ sbLocalDatabaseQuery::AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType 
   NS_ASSERTION(aUserData, "Null userData!");
 
   sbAddJoinInfo* addJoinInfo =
-    NS_STATIC_CAST(sbAddJoinInfo*, aUserData);
+    static_cast<sbAddJoinInfo*>(aUserData);
   NS_ENSURE_TRUE(addJoinInfo, PL_DHASH_STOP);
 
   nsresult rv;

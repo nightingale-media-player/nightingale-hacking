@@ -378,7 +378,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         if (NS_SUCCEEDED(result))
 	{
             mpDeviceLibraryListener =
-                                NS_STATIC_CAST(sbDeviceBaseLibraryListener *,
+                                static_cast<sbDeviceBaseLibraryListener *>(
                                                pMediaListListener.get());
         }
     }

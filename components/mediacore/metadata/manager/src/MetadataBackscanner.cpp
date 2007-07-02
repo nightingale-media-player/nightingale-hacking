@@ -661,7 +661,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   if(!aTimer) return;
   if(!aClosure) return;
 
-  sbMetadataBackscanner *p = NS_REINTERPRET_CAST(sbMetadataBackscanner *, aClosure);
+  sbMetadataBackscanner *p = reinterpret_cast<sbMetadataBackscanner *>(aClosure);
 
   PRBool isQueryRunning = PR_FALSE;
   PRUint32 queryCount = 0;
@@ -761,7 +761,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   if(!aTimer) return;
   if(!aClosure) return;
 
-  sbMetadataBackscanner *p = NS_REINTERPRET_CAST(sbMetadataBackscanner *, aClosure);
+  sbMetadataBackscanner *p = reinterpret_cast<sbMetadataBackscanner *>(aClosure);
 
   if(!p->m_workerHasResultSet) return;
   

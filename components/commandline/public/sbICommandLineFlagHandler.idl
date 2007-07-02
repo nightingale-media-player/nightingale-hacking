@@ -48,9 +48,9 @@ interface sbICommandLineFlagHandler : nsISupports
    * \brief Handle a command line flag 
    * \param aFlag The command line flag
    * \param aParam The parameter for the flag
-   * \return Return true if the handler processed this item. Items that have not been processed are passed on to the next command line item handler
+   * \return Return true if the handler processed this item. Items that have
+   *         not been processed are passed on to the next command line item
+   *         handler
    */
   boolean handleFlag(in AString aFlag, in AString aParam);
 };
-
-

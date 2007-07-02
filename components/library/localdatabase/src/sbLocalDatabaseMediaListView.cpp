@@ -117,7 +117,7 @@ sbLocalDatabaseMediaListView::AddFilterToGUIDArrayCallback(nsStringHashKey::KeyT
 
   // Unbox the guidArray.
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> guidArray =
-    NS_STATIC_CAST(sbILocalDatabaseAsyncGUIDArray*, aUserData);
+    static_cast<sbILocalDatabaseAsyncGUIDArray*>(aUserData);
 
   // Set the filter.
   nsresult rv = guidArray->AddFilter(aKey, valueEnum, PR_FALSE);
@@ -135,7 +135,7 @@ sbLocalDatabaseMediaListView::CloneStringArrayHashCallback(nsStringHashKey::KeyT
   NS_ASSERTION(aUserData, "Null userData!");
 
   sbStringArrayHash* stringArrayHash =
-    NS_STATIC_CAST(sbStringArrayHash*, aUserData);
+    static_cast<sbStringArrayHash*>(aUserData);
   NS_ASSERTION(stringArrayHash, "Could not cast user data");
 
   sbStringArray* newStringArray = new sbStringArray(*aEntry);
@@ -156,7 +156,7 @@ sbLocalDatabaseMediaListView::CopyStringArrayHashCallback(nsStringHashKey::KeyTy
   NS_ASSERTION(aUserData, "Null userData!");
 
   nsCOMPtr<sbIMutablePropertyArray> propertyArray =
-    NS_STATIC_CAST(sbIMutablePropertyArray*, aUserData);
+    static_cast<sbIMutablePropertyArray*>(aUserData);
   NS_ASSERTION(propertyArray, "Could not cast user data");
 
   PRUint32 length = aEntry->Length();
