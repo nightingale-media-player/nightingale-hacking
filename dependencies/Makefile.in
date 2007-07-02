@@ -39,16 +39,11 @@ GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 
 ifeq (windows,$(SB_PLATFORM))
-FLASH_PLUGIN = NPSWF32
 VLC_PLUGIN = npvlc
 
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
-SONGBIRD_COMPONENTS = $(DEPS_DIR)/plugins/flash/components/*.xpt \
-                      $(NULL)
-                      
 SONGBIRD_PLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/*$(DLL_SUFFIX) \
-                   $(DEPS_DIR)/plugins/flash/plugins/*$(DLL_SUFFIX) \
                    $(NULL)
 
 SONGBIRD_VLCPLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/plugins/*$(DLL_SUFFIX) \
