@@ -1001,7 +1001,9 @@ sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ENSURE_TRUE(rowCount, NS_ERROR_NOT_AVAILABLE);
+  if (rowCount == 0) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
 
   nsString type;
   rv = result->GetRowCell(0, 0, type);
@@ -2893,7 +2895,7 @@ sbLocalDatabaseLibrary::RemoveByIndex(PRUint32 aIndex)
   // Hrm, we actually have to instantiate an item to notify the listeners here.
   // Hopefully it's cached.
   nsAutoString guid;
-  nsresult rv = mFullArray->GetByIndex(aIndex, guid);
+  nsresult rv = mFullArray->GetGuidByIndex(aIndex, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> mediaItem;

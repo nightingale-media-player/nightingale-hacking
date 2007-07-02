@@ -116,6 +116,7 @@ function testUpdate() {
              .createInstance(Ci.nsIHttpServer);
 
   shutdown = newTimer();
+
   shutdown.initWithCallback({
       notify: function() {
         server.stop();
@@ -134,6 +135,7 @@ function testUpdate() {
   var dest = Cc["@mozilla.org/file/directory_service;1"]
                .getService(Ci.nsIProperties)
                .get("TmpD", Ci.nsIFile);
+
   var list = dps.createList(library1,
                             newURI("http://localhost:8080/test_dynamicplaylist_playlist.m3u"),
                             60,
@@ -171,12 +173,16 @@ function testUpdate() {
 
       // TODO: How can we check to see if these files were downloaded?
       shutdown.cancel();
+      shutdown = null;
       server.stop();
+      server = null;
       libraryManager.unregisterLibrary(library1);
+      libraryManager = null;
+      library1 = null;
+      list = null;
       testFinished();
     });
   });
-
 }
 
 function delayContinue(ms, func) {

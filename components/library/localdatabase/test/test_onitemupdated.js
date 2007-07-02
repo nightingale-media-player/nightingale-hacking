@@ -47,7 +47,7 @@ function runTest () {
     onBatchEnd: function(list) {}
   };
 
-  library.addListener(listener);
+  library.addListener(listener, false);
   var item = library.createMediaItem(newURI("http://foo.com/foo.mp3"));
 
   var value = "The Rolling Stones";

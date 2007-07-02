@@ -355,20 +355,6 @@ sbLocalDatabaseGUIDArray::IsIndexCached(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetByIndex(PRUint32 aIndex,
-                                     nsAString& _retval)
-{
-  nsresult rv;
-
-  ArrayItem* item;
-  rv = GetByIndexInternal(aIndex, &item);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  _retval.Assign(item->guid);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetSortPropertyValueByIndex(PRUint32 aIndex,
                                                       nsAString& _retval)
 {
@@ -376,6 +362,9 @@ sbLocalDatabaseGUIDArray::GetSortPropertyValueByIndex(PRUint32 aIndex,
 
   ArrayItem* item;
   rv = GetByIndexInternal(aIndex, &item);
+  if (rv == NS_ERROR_INVALID_ARG) {
+    return rv;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   _retval.Assign(item->sortPropertyValue);
@@ -392,6 +381,9 @@ sbLocalDatabaseGUIDArray::GetMediaItemIdByIndex(PRUint32 aIndex,
 
   ArrayItem* item;
   rv = GetByIndexInternal(aIndex, &item);
+  if (rv == NS_ERROR_INVALID_ARG) {
+    return rv;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   *_retval = item->mediaItemId;
@@ -406,6 +398,9 @@ sbLocalDatabaseGUIDArray::GetOrdinalByIndex(PRUint32 aIndex,
 
   ArrayItem* item;
   rv = GetByIndexInternal(aIndex, &item);
+  if (rv == NS_ERROR_INVALID_ARG) {
+    return rv;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   _retval.Assign(item->ordinal);
@@ -420,6 +415,9 @@ sbLocalDatabaseGUIDArray::GetGuidByIndex(PRUint32 aIndex,
 
   ArrayItem* item;
   rv = GetByIndexInternal(aIndex, &item);
+  if (rv == NS_ERROR_INVALID_ARG) {
+    return rv;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   _retval.Assign(item->guid);
@@ -1926,7 +1924,7 @@ sbGUIDArrayEnumerator::GetNext(nsISupports **_retval)
   nsresult rv;
 
   nsAutoString guid;
-  rv = mArray->GetByIndex(mNextIndex, guid);
+  rv = mArray->GetGuidByIndex(mNextIndex, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> item;
@@ -1973,7 +1971,7 @@ sbGUIDArrayStringEnumerator::GetNext(nsAString& _retval)
 {
   nsresult rv;
 
-  rv = mArray->GetByIndex(mNextIndex, _retval);
+  rv = mArray->GetGuidByIndex(mNextIndex, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mNextIndex++;

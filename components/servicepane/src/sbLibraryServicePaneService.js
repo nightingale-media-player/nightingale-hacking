@@ -948,7 +948,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   node.hidden = false;
   
   // Listen to changes in the library so that we can display new playlists
-  aLibrary.addListener(this);
+  aLibrary.addListener(this, false);
   
   return node;
 }

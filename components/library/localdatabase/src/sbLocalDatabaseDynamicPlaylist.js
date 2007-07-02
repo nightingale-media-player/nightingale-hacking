@@ -45,7 +45,7 @@ const SB_PROP_DESTINATION          = SB_NS + "destination"
 const SBLDBCOMP = "@songbirdnest.com/Songbird/Library/LocalDatabase/";
 
 const SB_LIBRARY_MANAGER_READY_TOPIC = "songbird-library-manager-ready";
-const NS_XPCOM_SHUTDOWN_TOPIC = "xpcom-shutdown";
+const SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC = "songbird-library-manager-before-shutdown";
 
 const UPDATE_INTERVAL = 60 * 1000;
 
@@ -66,7 +66,7 @@ function sbLocalDatabaseDynamicPlaylistService()
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
   obs.addObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC, false);
-  obs.addObserver(this, NS_XPCOM_SHUTDOWN_TOPIC, false);
+  obs.addObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, false);
 }
 
 sbLocalDatabaseDynamicPlaylistService.prototype = {
@@ -148,7 +148,7 @@ function sbLocalDatabaseDynamicPlaylistService__startup()
   while (libraries.hasMoreElements()) {
     var library = libraries.getNext();
     if (library instanceof Ci.sbILocalDatabaseLibrary)
-      this.onLibraryRegistered();
+      this.onLibraryRegistered(library);
   }
 
   // Do a queue run just in care some things should have been refreshed while
@@ -164,7 +164,7 @@ function sbLocalDatabaseDynamicPlaylistService__shutdown()
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
   obs.removeObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC);
-  obs.removeObserver(this, NS_XPCOM_SHUTDOWN_TOPIC);
+  obs.removeObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
 
   if (this._started) {
     this._timer.cancel();
@@ -261,88 +261,19 @@ function sbLocalDatabaseDynamicPlaylistService__updateSubscriptions(aForce)
 sbLocalDatabaseDynamicPlaylistService.prototype._updateList =
 function sbLocalDatabaseDynamicPlaylistService__updateList(aList)
 {
-  var subscriptionURL = aList.getProperty(SB_PROP_SUBSCRIPTIONURL);
-
-  var ioService = Cc["@mozilla.org/network/io-service;1"]
-                    .getService(Ci.nsIIOService);
-  var uri = ioService.newURI(subscriptionURL, null, null);
-
   // Get the playlist reader and load the tracks from this url
   var manager = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
                   .getService(Ci.sbIPlaylistReaderManager);
   var listener = Cc["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
                    .createInstance(Ci.sbIPlaylistReaderListener);
 
-  // Remember the old length of this list so we can determine what has been
-  // added by the playlist reader
-  var oldLength = aList.length;
+  var ioService = Cc["@mozilla.org/network/io-service;1"]
+                    .getService(Ci.nsIIOService);
+  var uri = ioService.newURI(aList.getProperty(SB_PROP_SUBSCRIPTIONURL), null, null);
 
-  var self = this;
-  listener.observer = {
-    observe: function(aSubject, aTopic, aData) {
-      TRACE("Updated list with uri " + uri.spec);
+  var observer = new sbPlaylistReaderListenerObserver(this, aList);
+  listener.observer = observer;
 
-      // Schedule the next run for this list
-      self._setNextRun(aList);
-
-      // Check to see if this list has a custom download destination, and that
-      // the destination is a directory
-      var destination = aList.getProperty(SB_PROP_DESTINATION);
-      var destinationDir;
-      if (destination) {
-        try {
-          destinationDir = ioService.newURI(destination, null, null)
-                                    .QueryInterface(Ci.nsIFileURL).file;
-          if (!destinationDir.isDirectory())
-            destinationDir = null;
-        }
-        catch (e) {
-          // If we couldn't get a destination dir, use the default
-          destinationDir = null;
-        }
-      }
-
-      // Start a metadata job for the newly added items.  If there is a custom
-      // destination, update each new item with it
-      var array = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
-      for (var i = oldLength; i < aList.length; i++) {
-        var item = aList.getItemByIndex(i);
-        if (destinationDir) {
-          var itemUri = item.contentSrc;
-
-          // If this is not a nsIURL, let the download manager figure it out
-          if (itemUri instanceof Ci.nsIURL) {
-            var dest = destinationDir.clone();
-            dest.append(itemUri.QueryInterface(Ci.nsIURL).fileName);
-            var destUri = ioService.newFileURI(dest);
-            item.setProperty(SB_PROP_DESTINATION, destUri.spec);
-            item.write();
-          }
-        }
-        array.appendElement(item, false);
-      }
-
-      var metadataJobManager =
-        Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-          .getService(Ci.sbIMetadataJobManager);
-      var metadataJob = metadataJobManager.newJob(array, 5);
-
-      // Download the new items
-      var prefs = Cc["@mozilla.org/preferences-service;1"]
-                    .getService(Ci.nsIPrefBranch2);
-      var downloadListGUID =
-        prefs.getComplexValue("songbird.library.download",
-                              Ci.nsISupportsString);
-
-      var mainLibrary =
-        Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-          .getService(Ci.sbILibraryManager).mainLibrary;
-      var downloadList = mainLibrary.getMediaItem(downloadListGUID);
-      downloadList.addSome(array.enumerate());
-    }
-  }
-
-  d("Updaing list with uri " + uri.spec);
   manager.loadPlaylist(uri, aList, null, true, listener);
 }
 
@@ -485,7 +416,7 @@ function sbLocalDatabaseDynamicPlaylistService_onLibraryRegistered(aLibrary)
   // If a library is registered, attach a listener so we can be notified of
   // media item change notifications.  Also pull in the current list of
   // dynamic media lists from this library.
-  aLibrary.addListener(this);
+  aLibrary.addListener(this, false);
 
   // Schedule all of the dynamic media lists in this library
   this._scheduleLibrary(aLibrary);
@@ -596,11 +527,87 @@ function sbLocalDatabaseDynamicPlaylistService_observe(aSubject, aTopic, aData)
   if (aTopic == SB_LIBRARY_MANAGER_READY_TOPIC) {
     this._startup();
   }
-  else if(aTopic == NS_XPCOM_SHUTDOWN_TOPIC) {
+  else if(aTopic == SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC) {
     this._shutdown();
   }
 }
 
+function sbPlaylistReaderListenerObserver(aService, aList) {
+  this._service = aService;
+  this._list = aList;
+  this._oldLength = aList.length;
+}
+
+sbPlaylistReaderListenerObserver.prototype.observe =
+function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
+{
+
+  var ioService = Cc["@mozilla.org/network/io-service;1"]
+                    .getService(Ci.nsIIOService);
+  var uri = ioService.newURI(this._list.getProperty(SB_PROP_SUBSCRIPTIONURL), null, null);
+
+  TRACE("Updated list with uri " + uri.spec);
+
+  // Schedule the next run for this list
+  this._service._setNextRun(this._list);
+
+  // Check to see if this list has a custom download destination, and that
+  // the destination is a directory
+  var destination = this._list.getProperty(SB_PROP_DESTINATION);
+  var destinationDir;
+  if (destination) {
+    try {
+      destinationDir = ioService.newURI(destination, null, null)
+                                .QueryInterface(Ci.nsIFileURL).file;
+      if (!destinationDir.isDirectory())
+        destinationDir = null;
+    }
+    catch (e) {
+      // If we couldn't get a destination dir, use the default
+      destinationDir = null;
+    }
+  }
+
+  // Start a metadata job for the newly added items.  If there is a custom
+  // destination, update each new item with it
+  var array = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  for (var i = this._oldLength; i < this._list.length; i++) {
+    var item = this._list.getItemByIndex(i);
+    if (destinationDir) {
+      var itemUri = item.contentSrc;
+
+      // If this is not a nsIURL, let the download manager figure it out
+      if (itemUri instanceof Ci.nsIURL) {
+        var dest = destinationDir.clone();
+        dest.append(itemUri.QueryInterface(Ci.nsIURL).fileName);
+        var destUri = ioService.newFileURI(dest);
+        item.setProperty(SB_PROP_DESTINATION, destUri.spec);
+        item.write();
+      }
+    }
+    array.appendElement(item, false);
+  }
+
+  var metadataJobManager =
+    Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+      .getService(Ci.sbIMetadataJobManager);
+  var metadataJob = metadataJobManager.newJob(array, 5);
+  return;
+
+  // Download the new items
+  var prefs = Cc["@mozilla.org/preferences-service;1"]
+                .getService(Ci.nsIPrefBranch2);
+  var downloadListGUID =
+    prefs.getComplexValue("songbird.library.download",
+                          Ci.nsISupportsString);
+
+  var mainLibrary =
+    Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+      .getService(Ci.sbILibraryManager).mainLibrary;
+  var downloadList = mainLibrary.getMediaItem(downloadListGUID);
+  downloadList.addSome(array.enumerate());
+}
+  
 // sbIMedaiListFactory
 function sbLocalDatabaseDynamicMediaListFactory()
 {

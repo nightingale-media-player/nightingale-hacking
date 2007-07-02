@@ -221,8 +221,8 @@ function assertSort(array, dataFile) {
 
   for(var i = 0; i < a.length - 1; i++) {
     var b = a[i].split("\t");
-    if(array.getByIndex(i) != b[0]) {
-      fail("sort failed, index " + i + " got " + array.getByIndex(i) + " expected " + b[0]);
+    if(array.getGuidByIndex(i) != b[0]) {
+      fail("sort failed, index " + i + " got " + array.getGuidByIndex(i) + " expected " + b[0]);
     }
   }
 

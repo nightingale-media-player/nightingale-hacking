@@ -84,7 +84,7 @@ var addToPlaylistHelper = {
     var libs = libraryManager.getLibraries();
     while (libs.hasMoreElements()) {
       var library = libs.getNext();
-      library.addListener(this);
+      library.addListener(this, false);
       this.m_reglist.push(library);
       this.makePlaylistsForLibrary(library, typearray);
     }

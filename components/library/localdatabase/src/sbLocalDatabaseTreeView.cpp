@@ -479,7 +479,7 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 row,
         rv = SetPageCachedStatus(row, ePending);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = mArray->GetByIndexAsync(row);
+        rv = mArray->GetGuidByIndexAsync(row);
         NS_ENSURE_SUCCESS(rv, rv);
         mGetByIndexAsyncPending = PR_TRUE;
       }
@@ -663,7 +663,7 @@ sbLocalDatabaseTreeView::EnumerateSelection(sbSelectionEnumeratorCallbackFunc aF
           NS_ENSURE_SUCCESS(rv, rv);
 
           nsAutoString guid;
-          rv = mArray->GetByIndex(j, guid);
+          rv = mArray->GetGuidByIndex(j, guid);
           NS_ENSURE_SUCCESS(rv, rv);
 
           TRACE(("sbLocalDatabaseTreeView[0x%.8x] - SaveSelectionList() - "
@@ -867,6 +867,7 @@ sbLocalDatabaseTreeView::InvalidateRowsByGuid(const nsAString& aGuid)
       for (PRUint32 row = first; row <= (PRUint32) last; row++) {
         nsAutoString guid;
         rv = mArray->GetGuidByIndex(row, guid);
+        NS_ENSURE_SUCCESS(rv, rv);
         if (guid.Equals(aGuid)) {
           rv = mTreeBoxObject->InvalidateRow(row);
           NS_ENSURE_SUCCESS(rv, rv);
@@ -906,11 +907,11 @@ sbLocalDatabaseTreeView::OnGetLength(PRUint32 aLength,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
-                                      const nsAString& aGUID,
-                                      nsresult aResult)
+sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
+                                          const nsAString& aGUID,
+                                          nsresult aResult)
 {
-  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetByIndex(%d, %s)", this,
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetGuidByIndex(%d, %s)", this,
          aIndex, NS_LossyConvertUTF16toASCII(aGUID).get()));
 
   nsresult rv;
@@ -944,7 +945,7 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
     for (PRUint32 i = 0; i < length; i++) {
       PRUint32 row = i + start;
       nsAutoString guid;
-      rv = mArray->GetByIndex(row, guid);
+      rv = mArray->GetGuidByIndex(row, guid);
       if (NS_FAILED(rv)) {
 
         // If this fails, this means that the underlying array has changed and
@@ -984,7 +985,7 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
 
         nsAutoString guid;
         if (mSelectionList.Get(id, &guid)) {
-          TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetByIndex() - "
+          TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetGuidByIndex() - "
                  "restoring selection %s at %d", this,
                  NS_ConvertUTF16toUTF8(id).get(), row));
 
@@ -1032,7 +1033,7 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
     }
     NS_Free(bags);
 
-    TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetByIndex - "
+    TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetGuidByIndex - "
            "InvalidateRange(%d, %d)", this, start, end));
 
     if (mTreeBoxObject) {
@@ -1047,7 +1048,7 @@ sbLocalDatabaseTreeView::OnGetByIndex(PRUint32 aIndex,
 
     // If there was another request on deck, send it now
     if (mNextGetByIndexAsync > -1) {
-      rv = mArray->GetByIndexAsync(mNextGetByIndexAsync);
+      rv = mArray->GetGuidByIndexAsync(mNextGetByIndexAsync);
       NS_ENSURE_SUCCESS(rv, rv);
       mNextGetByIndexAsync = -1;
       mGetByIndexAsyncPending = PR_TRUE;
@@ -1793,7 +1794,7 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString guid;
-  rv = mArray->GetByIndex(row, guid);
+  rv = mArray->GetGuidByIndex(row, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> mediaList;
@@ -1942,8 +1943,8 @@ sbLocalDatabaseTreeView::GetNextRowIndexForKeyNavigation(const nsAString& aKeySt
   // We're going to assume that the caller wants to look at the row we're about
   // to return. Trick the GUID array into caching the page that it's on so that
   // the data will arrive faster.
-  rv = mArray->GetByIndexAsync(index);
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "GetByIndexAsync");
+  rv = mArray->GetGuidByIndexAsync(index);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "GetGuidByIndexAsync");
 
   *_retval = (PRInt32)index;
   return NS_OK;
@@ -1993,12 +1994,8 @@ sbLocalDatabaseTreeView::GetSelectedMediaItems(nsISimpleEnumerator** aSelection)
   if (mSelectionIsAll) {
     TRACE(("sbLocalDatabaseTreeView[0x%.8x] - "
            "GetSelectedMediaItems() - all select", this));
-    // Clone the array so changes to the view do not affect the enumerator
-    nsCOMPtr<sbILocalDatabaseGUIDArray> array;
-    rv = mArray->Clone(getter_AddRefs(array));
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    *aSelection = new sbIndexedGUIDArrayEnumerator(library, array);
+    *aSelection = new sbIndexedGUIDArrayEnumerator(library, mArray);
     NS_ENSURE_TRUE(*aSelection, NS_ERROR_OUT_OF_MEMORY);
 
     NS_ADDREF(*aSelection);
@@ -2052,7 +2049,7 @@ sbLocalDatabaseTreeView::GetSelectedMediaItems(nsISimpleEnumerator** aSelection)
 
     if (selectedIndexes.GetEntry(i)) {
       nsAutoString guid;
-      rv = mArray->GetByIndex(i, guid);
+      rv = mArray->GetGuidByIndex(i, guid);
       NS_ENSURE_SUCCESS(rv, rv);
       rv = enumerator->AddGuid(guid, i);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -2149,7 +2146,7 @@ sbLocalDatabaseTreeView::GetCurrentMediaItem(sbIMediaItem** aCurrentMediaItem)
   }
 
   nsAutoString guid;
-  rv = mArray->GetByIndex(currentIndex, guid);
+  rv = mArray->GetGuidByIndex(currentIndex, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list;
@@ -2699,20 +2696,43 @@ sbIndexedGUIDArrayEnumerator::sbIndexedGUIDArrayEnumerator(sbILibrary* aLibrary,
                                                            sbILocalDatabaseGUIDArray* aArray) :
   mLibrary(aLibrary),
   mArray(aArray),
-  mNextIndex(0)
+  mNextIndex(0),
+  mInitalized(PR_FALSE)
 {
+  NS_ASSERTION(aLibrary, "aLibrary is null");
+  NS_ASSERTION(aArray, "aArray is null");
+}
+  
+nsresult
+sbIndexedGUIDArrayEnumerator::Init()
+{
+  PRUint32 length;
+  nsresult rv = mArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < length; i++) {
+    nsAutoString guid;
+    rv = mArray->GetGuidByIndex(i, guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString* added = mGUIDArray.AppendElement(guid);
+    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  mInitalized = PR_TRUE;
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbIndexedGUIDArrayEnumerator::HasMoreElements(PRBool *_retval)
 {
-  nsresult rv;
+  if (!mInitalized) {
+    nsresult rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  PRUint32 length;
-  rv = mArray->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  *_retval = mNextIndex < length;
+  *_retval = mNextIndex < mGUIDArray.Length();
   return NS_OK;
 }
 
@@ -2721,12 +2741,17 @@ sbIndexedGUIDArrayEnumerator::GetNext(nsISupports **_retval)
 {
   nsresult rv;
 
-  nsAutoString guid;
-  rv = mArray->GetByIndex(mNextIndex, guid);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!mInitalized) {
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (!(mNextIndex < mGUIDArray.Length())) {
+    return NS_ERROR_FAILURE;
+  }
 
   nsCOMPtr<sbIMediaItem> item;
-  rv = mLibrary->GetMediaItem(guid, getter_AddRefs(item));
+  rv = mLibrary->GetMediaItem(mGUIDArray[mNextIndex], getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbLocalDatabaseIndexedMediaItem> indexedItem

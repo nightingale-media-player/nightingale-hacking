@@ -38,7 +38,7 @@ function runTest () {
   var library = createLibrary(databaseGUID, null, false);
 
   var listener = new TestMediaListListener();
-  library.addListener(listener);
+  library.addListener(listener, false);
 
   var uri = "http://floo.com/";
   var item = library.createMediaItem(newURI(uri));
@@ -110,5 +110,7 @@ function runTest () {
   catch (e) {
     assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
   }
+
+  library.removeListener(listener);
 }
 

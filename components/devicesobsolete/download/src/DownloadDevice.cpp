@@ -331,7 +331,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
         if (NS_SUCCEEDED(result))
         {
-            result = mpDownloadMediaList->AddListener(listener);
+            result = mpDownloadMediaList->AddListener(listener, PR_FALSE);
         }
 
         if (NS_SUCCEEDED(result))

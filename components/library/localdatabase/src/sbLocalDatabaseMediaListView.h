@@ -34,6 +34,7 @@
 #include <nsIStringEnumerator.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <nsWeakReference.h>
 #include <sbIFilterableMediaList.h>
 #include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
@@ -53,7 +54,8 @@ class sbLocalDatabaseLibrary;
 class sbLocalDatabaseTreeView;
 class sbLocalDatabaseCascadeFilterSet;
 
-class sbLocalDatabaseMediaListView : public sbIMediaListView,
+class sbLocalDatabaseMediaListView : public nsSupportsWeakReference,
+                                     public sbIMediaListView,
                                      public sbIMediaListListener,
                                      public sbIFilterableMediaList,
                                      public sbISearchableMediaList,
@@ -145,7 +147,7 @@ private:
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
 
   // Filter say for this view, if any
-  nsRefPtr<sbLocalDatabaseCascadeFilterSet> mCascadeFilterSet;
+  nsCOMPtr<nsIWeakReference> mWeakCascadeFilterSet;
 
   // Tree view for this view, if any
   nsRefPtr<sbLocalDatabaseTreeView> mTreeView;

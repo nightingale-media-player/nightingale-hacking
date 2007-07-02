@@ -65,6 +65,10 @@ function CPlaylistReaderManager()
     var aMIMETypes = this.m_Readers[i].supportedMIMETypes(nMIMETypesCount);
     this.m_MIMETypes = this.m_MIMETypes.concat(aMIMETypes);
   }
+
+  var obs = Cc["@mozilla.org/observer-service;1"]
+              .getService(Ci.nsIObserverService);
+  obs.addObserver(this, "quit-application", false);
 }
 
 CPlaylistReaderManager.prototype.constructor = CPlaylistReaderManager;
@@ -330,8 +334,19 @@ CPlaylistReaderManager.prototype =
     return null;
   },
 
+  observe: function(aSubject, aTopic, aData) {
+    var obs = Cc["@mozilla.org/observer-service;1"]
+                .getService(Ci.nsIObserverService);
+    obs.removeObserver(this, "quit-application");
+
+    for (var i = 0; i < this.m_Listeners.length; i++) {
+      this.m_Listeners[i] = null;
+    }
+  },
+
   QueryInterface: function(aIID) {
     if (!aIID.equals(Components.interfaces.sbIPlaylistReaderManager) &&
+        !aIID.equals(Components.interfaces.nsIObserver) &&
         !aIID.equals(Components.interfaces.nsISupports))
     {
       throw Components.results.NS_ERROR_NO_INTERFACE;

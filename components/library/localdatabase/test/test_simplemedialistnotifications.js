@@ -37,9 +37,9 @@ function runTest () {
   var list = library.createMediaList("simple");
 
   var libraryListener = new TestMediaListListener();
-  library.addListener(libraryListener);
+  library.addListener(libraryListener, false);
   var listListener = new TestMediaListListener();
-  list.addListener(listListener);
+  list.addListener(listListener, false);
 
   // test onItemUpdated
   var prop = "http://songbirdnest.com/data/1.0#albumName";
@@ -108,7 +108,7 @@ function runTest () {
 
   item = library.createMediaItem(newURI("http://foo.com/"));
   list = library.createMediaList("simple");
-  list.addListener(listListener);
+  list.addListener(listListener, false);
 
   libraryListener.reset();
   listListener.reset();

@@ -88,14 +88,36 @@ interface sbILocalDatabaseGUIDArray : nsISupports
 
   boolean isIndexCached(in unsigned long aIndex);
 
-  AString getByIndex(in unsigned long aIndex);
-
+  /**
+   * \brief Return the sortable property value at the given index
+   * \param aIndex The index of the array
+   * \return The sortable property value
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
   AString getSortPropertyValueByIndex(in unsigned long aIndex);
 
+  /**
+   * \brief Return the media item id at the given index
+   * \param aIndex The index of the array
+   * \return The media item id
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
   unsigned long getMediaItemIdByIndex(in unsigned long aIndex);
 
+  /**
+   * \brief Return the ordinal at the given index
+   * \param aIndex The index of the array
+   * \return The ordinal
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
   AString getOrdinalByIndex(in unsigned long aIndex);
 
+  /**
+   * \brief Return the guid at the given index
+   * \param aIndex The index of the array
+   * \return The guid
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
   AString getGuidByIndex(in unsigned long aIndex);
 
   void invalidate();

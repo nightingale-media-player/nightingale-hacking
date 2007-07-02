@@ -53,8 +53,7 @@ function runTest () {
   var cfs = view.cascadeFilterSet;
 
   var listener = new CascadeListener();
-  cfs.addListener(listener);
-
+  cfs.addListener(listener, false);
   // A simulation of an everything search, artist, album cascase
   cfs.appendSearch(["*"], 1);
 
@@ -139,6 +138,7 @@ function runTest () {
   cfs.changeFilter(0, "http://songbirdnest.com/data/1.0#genre");
   assertEqual(cfs.getValueCount(0), 2);
 
+  cfs.removeListener(listener);
 }
 
 function arrayEquals(array1, array2) {

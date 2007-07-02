@@ -72,6 +72,7 @@ sbLocalDatabaseAsyncGUIDArray::sbLocalDatabaseAsyncGUIDArray() :
 #endif
 
   TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Created", this));
+  MOZ_COUNT_CTOR(sbLocalDatabaseAsyncGUIDArray);
 }
 
 sbLocalDatabaseAsyncGUIDArray::~sbLocalDatabaseAsyncGUIDArray() {
@@ -89,6 +90,7 @@ sbLocalDatabaseAsyncGUIDArray::~sbLocalDatabaseAsyncGUIDArray() {
   }
 
   TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Destroyed", this));
+  MOZ_COUNT_DTOR(sbLocalDatabaseAsyncGUIDArray);
 }
 
 nsresult
@@ -210,7 +212,7 @@ sbLocalDatabaseAsyncGUIDArray::GetLengthAsync()
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::GetByIndexAsync(PRUint32 aIndex)
+sbLocalDatabaseAsyncGUIDArray::GetGuidByIndexAsync(PRUint32 aIndex)
 {
   return EnqueueCommand(eGetByIndex, aIndex);
 }
@@ -466,15 +468,6 @@ sbLocalDatabaseAsyncGUIDArray::IsIndexCached(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::GetByIndex(PRUint32 aIndex,
-                                          nsAString& _retval)
-{
-  nsAutoMonitor monitor(mSyncMonitor);
-
-  return mInner->GetByIndex(aIndex, _retval);
-}
-
-NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetSortPropertyValueByIndex(PRUint32 aIndex,
                                                            nsAString& _retval)
 {
@@ -601,7 +594,7 @@ CommandProcessor::Run()
             break;
 
             case eGetByIndex:
-              rv = listener->OnGetByIndex(0, EmptyString(), NS_ERROR_ABORT);
+              rv = listener->OnGetGuidByIndex(0, EmptyString(), NS_ERROR_ABORT);
             break;
 
             case eGetSortPropertyValueByIndex:
@@ -659,11 +652,11 @@ CommandProcessor::Run()
         case eGetByIndex:
           {
             TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - "
-                   "Background GetByIndex", mFriendArray));
+                   "Background GetGuidByIndex", mFriendArray));
 
             nsAutoString guid;
-            nsresult innerResult = inner->GetByIndex(cs.index, guid);
-            rv = listener->OnGetByIndex(cs.index, guid, innerResult);
+            nsresult innerResult = inner->GetGuidByIndex(cs.index, guid);
+            rv = listener->OnGetGuidByIndex(cs.index, guid, innerResult);
           }
         break;
 

@@ -32,6 +32,7 @@
 #include <nsIStringEnumerator.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <nsWeakReference.h>
 #include <sbICascadeFilterSet.h>
 #include <sbIMediaListListener.h>
 #include <nsTHashtable.h>
@@ -44,7 +45,8 @@ class sbILocalDatabaseAsyncGUIDArray;
 class sbILocalDatabaseLibrary;
 class sbIMediaListView;
 
-class sbLocalDatabaseCascadeFilterSet : public sbICascadeFilterSet,
+class sbLocalDatabaseCascadeFilterSet : public nsSupportsWeakReference,
+                                        public sbICascadeFilterSet,
                                         public sbIMediaListListener
 {
   typedef nsTArray<nsString> sbStringArray;

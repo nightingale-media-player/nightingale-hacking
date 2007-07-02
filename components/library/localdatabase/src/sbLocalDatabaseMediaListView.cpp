@@ -33,6 +33,7 @@
 #include <nsITreeView.h>
 #include <nsIURI.h>
 #include <nsIVariant.h>
+#include <nsIWeakReferenceUtils.h>
 #include <nsMemory.h>
 #include <sbLocalDatabaseTreeView.h>
 #include <sbICascadeFilterSet.h>
@@ -57,20 +58,22 @@
 
 #define DEFAULT_FETCH_SIZE 1000
 
-NS_IMPL_ISUPPORTS6(sbLocalDatabaseMediaListView,
+NS_IMPL_ISUPPORTS7(sbLocalDatabaseMediaListView,
                    sbIMediaListView,
                    sbIMediaListListener,
                    sbIFilterableMediaList,
                    sbISearchableMediaList,
                    sbISortableMediaList,
-                   nsIClassInfo)
+                   nsIClassInfo,
+                   nsISupportsWeakReference)
 
-NS_IMPL_CI_INTERFACE_GETTER6(sbLocalDatabaseMediaListView,
+NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseMediaListView,
                              sbIMediaListView,
                              sbIMediaListListener,
                              sbIFilterableMediaList,
                              sbISearchableMediaList,
                              sbISortableMediaList,
+                             nsISupportsWeakReference,
                              nsIClassInfo)
 
 /**
@@ -253,8 +256,9 @@ sbLocalDatabaseMediaListView::Init()
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // We listen to our media list
-  rv = mMediaList->AddListener(this);
+  // We listen to our media list.  Use a weak reference here since we already
+  // have an owning reference to the media list.
+  rv = mMediaList->AddListener(this, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the default sort as our view sort
@@ -339,21 +343,28 @@ sbLocalDatabaseMediaListView::GetCascadeFilterSet(sbICascadeFilterSet** aCascade
 {
   NS_ENSURE_ARG_POINTER(aCascadeFilterSet);
 
-  if (!mCascadeFilterSet) {
-    nsresult rv;
+  nsresult rv;
 
-    mCascadeFilterSet = new sbLocalDatabaseCascadeFilterSet();
-    NS_ENSURE_TRUE(mCascadeFilterSet, NS_ERROR_OUT_OF_MEMORY);
-
+  nsCOMPtr<sbICascadeFilterSet> cfs = do_QueryReferent(mWeakCascadeFilterSet);
+  if (!cfs) {
     nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> guidArray;
     rv = mArray->CloneAsyncArray(getter_AddRefs(guidArray));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mCascadeFilterSet->Init(mLibrary, this, guidArray);
+    nsRefPtr<sbLocalDatabaseCascadeFilterSet> filterSet =
+      new sbLocalDatabaseCascadeFilterSet();
+    NS_ENSURE_TRUE(filterSet, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = filterSet->Init(mLibrary, this, guidArray);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    cfs = filterSet;
+
+    mWeakCascadeFilterSet = do_GetWeakReference(cfs, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  NS_ADDREF(*aCascadeFilterSet = mCascadeFilterSet);
+  NS_ADDREF(*aCascadeFilterSet = cfs);
   return NS_OK;
 }
 
@@ -366,7 +377,7 @@ sbLocalDatabaseMediaListView::GetItemByIndex(PRUint32 aIndex,
   nsresult rv;
 
   nsAutoString guid;
-  rv = mArray->GetByIndex(aIndex, guid);
+  rv = mArray->GetGuidByIndex(aIndex, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> item;

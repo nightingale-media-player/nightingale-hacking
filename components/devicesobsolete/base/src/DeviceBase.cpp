@@ -590,7 +590,7 @@ sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   list = do_QueryInterface(library, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = list->AddListener(listener);
+  rv = list->AddListener(listener, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = SetListenerForDeviceLibrary(aDeviceIdentifier, listener);

@@ -25,7 +25,6 @@
  */
 
 var PROFILE_TIME = false;
-var USE_NEW_API = true;
 var theGUIDSArray = {};
 var theSongbirdLibrary = null;
 

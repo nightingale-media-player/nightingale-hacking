@@ -465,7 +465,7 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
     NS_ENSURE_TRUE(mFullArrayMonitor, NS_ERROR_FAILURE);
     nsAutoMonitor mon(mFullArrayMonitor);
 
-    rv = mFullArray->GetByIndex(aIndex, guid);
+    rv = mFullArray->GetGuidByIndex(aIndex, guid);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -802,7 +802,7 @@ sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
 
   for (PRUint32 index = aStartFrom; index < count; index++) {
     nsAutoString itemGUID;
-    rv = mFullArray->GetByIndex(index, itemGUID);
+    rv = mFullArray->GetGuidByIndex(index, itemGUID);
     SB_CONTINUE_IF_FAILED(rv);
 
     if (testGUID.Equals(itemGUID)) {
@@ -839,7 +839,7 @@ sbLocalDatabaseMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
 
   for (PRUint32 index = count - 1; index >= aStartFrom; index--) {
     nsAutoString itemGUID;
-    rv = mFullArray->GetByIndex(index, itemGUID);
+    rv = mFullArray->GetGuidByIndex(index, itemGUID);
     SB_CONTINUE_IF_FAILED(rv);
 
     if (testGUID.Equals(itemGUID)) {
@@ -923,9 +923,10 @@ sbLocalDatabaseMediaListBase::Clear()
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::AddListener(sbIMediaListListener* aListener)
+sbLocalDatabaseMediaListBase::AddListener(sbIMediaListListener* aListener,
+                                          PRBool aOwnsWeak)
 {
-  return sbLocalDatabaseMediaListListener::AddListener(aListener);
+  return sbLocalDatabaseMediaListListener::AddListener(aListener, aOwnsWeak);
 }
 
 NS_IMETHODIMP

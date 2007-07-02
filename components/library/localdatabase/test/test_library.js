@@ -62,7 +62,7 @@ function runTest () {
   assertEqual(library.getItemByGuid(item2.guid).guid, item2.guid);
   
   var listListener = new TestMediaListListener();
-  library.addListener(listListener);
+  library.addListener(listListener, false);
 
   var uri2 = ios.newURI("file:///bar", null, null);
   var item3 = library.createMediaItem(uri2);
@@ -115,10 +115,10 @@ function runTest () {
   var item = list.getItemByIndex(8);
   
   listListener = new TestMediaListListener();
-  list.addListener(listListener);
+  list.addListener(listListener, false);
   
   var libraryListener = new TestMediaListListener();
-  library.addListener(libraryListener);
+  library.addListener(libraryListener, false);
 
   item.contentType = "foo/foo";
   
@@ -134,12 +134,12 @@ function runTest () {
   list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   
   listListener = new TestMediaListListener();
-  list.addListener(listListener);
+  list.addListener(listListener, false);
   
   item = library.getItemByGuid("3E63F4C2-AD99-11DB-9321-C22AB7121F49");
   
   libraryListener = new TestMediaListListener();
-  library.addListener(libraryListener);
+  library.addListener(libraryListener, false);
   
   item.contentType = "foo/foo";
   

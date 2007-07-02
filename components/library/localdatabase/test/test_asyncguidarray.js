@@ -52,7 +52,7 @@ ArrayListener.prototype.onGetLength = function(length, rv)
   this.gotLength = true;
 }
 
-ArrayListener.prototype.onGetByIndex = function(index, guid, rv)
+ArrayListener.prototype.onGetGuidByIndex = function(index, guid, rv)
 {
   this.guid = guid;
   this.rv = rv;
@@ -101,11 +101,11 @@ function doTest(array) {
       return tester;
     break;
 
-    case "getByIndexAsync":
+    case "getGuidByIndexAsync":
 
       var listener = new ArrayListener();
       array.asyncListener = listener;
-      array.getByIndexAsync(0);
+      array.getGuidByIndexAsync(0);
 
       var tester = function() {
         if (listener.gotGuid) {
@@ -232,7 +232,7 @@ TimerLoop.prototype.notify = function(timer)
 }
 
 var phases = ["getLengthAsync",
-              "getByIndexAsync",
+              "getGuidByIndexAsync",
               "getSortPropertyValueByIndex",
               "getMediaItemIdByIndex"];
 var currentPhase = 0;

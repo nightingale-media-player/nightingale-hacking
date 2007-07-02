@@ -413,7 +413,9 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
   nsCOMPtr<sbIMediaList> libraryList = do_QueryInterface(library, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = libraryList->AddListener(this);
+  // Use a weak reference here because we already have a strong reference to
+  // the inner list
+  rv = libraryList->AddListener(this, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);

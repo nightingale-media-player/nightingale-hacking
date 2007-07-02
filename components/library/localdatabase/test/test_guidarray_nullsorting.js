@@ -172,8 +172,8 @@ function assertArraySame(guidArray, guids) {
   }
 
   for (var i = 0; i < guidArray.length; i++) {
-    if (guidArray.getByIndex(i) != guids[i]) {
-      fail("different items at " + i + ", " + guidArray.getByIndex(i) + " != " + guids[i]);
+    if (guidArray.getGuidByIndex(i) != guids[i]) {
+      fail("different items at " + i + ", " + guidArray.getGuidByIndex(i) + " != " + guids[i]);
     }
   }
 

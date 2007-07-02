@@ -93,9 +93,10 @@ sbLocalDatabaseCascadeFilterSet::~sbLocalDatabaseCascadeFilterSet()
   }
 }
 
-NS_IMPL_ISUPPORTS2(sbLocalDatabaseCascadeFilterSet,
+NS_IMPL_ISUPPORTS3(sbLocalDatabaseCascadeFilterSet,
                    sbICascadeFilterSet,
-                   sbIMediaListListener);
+                   sbIMediaListListener,
+                   nsISupportsWeakReference);
 
 nsresult
 sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
@@ -131,7 +132,9 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mediaList->AddListener(this);
+  // Use a weak reference here since we have an owning reference to the view
+  // which has an owning reference to the list
+  rv = mediaList->AddListener(this, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

@@ -487,7 +487,7 @@ var SBWebPlaylistCommands =
           
           var mediaListListener = new MediaListListener();
 
-          mediaList.addListener(mediaListListener);
+          mediaList.addListener(mediaListListener, false);
           mediaList.addSome(unwrapper);
           mediaList.removeListener(mediaListListener);
 

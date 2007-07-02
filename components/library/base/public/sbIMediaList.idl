@@ -217,8 +217,13 @@ interface sbIMediaList : sbIMediaItem
   /**
    * \brief Add a listener to this media list
    * \param aListener The listener to add
+   * \param aOwnsWeak If set to false, the media list will hold a strong
+   *        reference to |aListener|.  If set to true and |aListener| supports
+   *        the nsIWeakReference interface, a weak reference will be held.
+   *        Otherwise an error will be returned.
    */
-  void addListener(in sbIMediaListListener aListener);
+  void addListener(in sbIMediaListListener aListener,
+                   in boolean aOwnsWeak);
 
   /**
    * \brief Remove a listener from this media list

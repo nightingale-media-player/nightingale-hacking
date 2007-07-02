@@ -299,9 +299,13 @@ public:
                                sbILocalDatabaseGUIDArray* aArray);
 
 private:
+  nsresult Init();
+
+  nsTArray<nsString> mGUIDArray;
   nsCOMPtr<sbILibrary> mLibrary;
   nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
   PRUint32 mNextIndex;
+  PRBool mInitalized;
 };
 
 #endif /* __SBLOCALDATABASETREEVIEW_H__ */
