@@ -78,15 +78,11 @@ SB_BUILD_ID := $(shell $(AWK_CMD))
 AWK_EXPR = '/\#define SB_MILESTONE/ { gsub(/"/, "", $$3); print $$3 }'
 SB_MILESTONE := $(shell $(AWK_CMD))
 
-AWK_EXPR = '/\#define SB_MOZILLA_TAG/ { gsub(/"/, "", $$3); print $$3 }'
-SB_MOZILLA_TAG := $(shell $(AWK_CMD))
-
 PPDEFINES += -DSB_APPNAME="$(SB_APPNAME)" \
              -DSB_APPNAME_LCASE="$(SB_APPNAME_LCASE)" \
              -DSB_BRANCHNAME="$(SB_BRANCHNAME)" \
              -DSB_BUILD_ID="$(SB_BUILD_ID)" \
              -DSB_MILESTONE="$(SB_MILESTONE)" \
-             -DSB_MOZILLA_TAG="$(SB_MOZILLA_TAG)" \
              $(NULL)
 
 endif
