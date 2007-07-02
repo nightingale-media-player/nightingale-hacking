@@ -466,10 +466,11 @@ nsresult TagLibChannelFileIO::AddChannel(
     nsString                    channelID,
     sbISeekableChannel*         pSeekableChannel)
 {
-    NS_ASSERTION(pSeekableChannel, "pSeekableChannel is null");
-
     nsAutoPtr<TagLibChannelFileIO::Channel> pChannel;
     nsresult                                result = NS_OK;
+
+    /* Validate parameters. */
+    NS_ASSERTION(pSeekableChannel, "pSeekableChannel is null");
 
     /* Create and initialize a new channel object.          */
     /* Initialize size to 0 because it's not available yet. */
@@ -486,7 +487,8 @@ nsresult TagLibChannelFileIO::AddChannel(
     }
 
     /* Add the channel to the channel map. */
-    mChannelMap[channelID] = pChannel.forget();
+    if (NS_SUCCEEDED(result))
+        mChannelMap[channelID] = pChannel.forget();
 
     return (result);
 }
@@ -504,10 +506,19 @@ nsresult TagLibChannelFileIO::AddChannel(
 nsresult TagLibChannelFileIO::RemoveChannel(
     nsString                    channelID)
 {
+    TagLibChannelFileIO::Channel
+                                *pChannel = nsnull;
     nsresult                    result = NS_OK;
+
+    /* Get the channel map entry. */
+    GetChannel(channelID, &pChannel);
 
     /* Erase the channel map entry. */
     mChannelMap.erase(channelID);
+
+    /* Delete the channel. */
+    if (pChannel)
+        delete (pChannel);
 
     return (result);
 }
@@ -621,8 +632,6 @@ nsresult TagLibChannelFileIO::GetSize(
     ChannelMap::iterator        mapEntry;
     TagLibChannelFileIO::Channel
                                 *pChannel;
-    nsCOMPtr<sbISeekableChannel>
-                                pSeekableChannel;
     PRUint64                    size = 0;
     nsresult                    result = NS_OK;
 

@@ -365,8 +365,11 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Close()
 {
     /* If a metadata channel is being used, remove it from */
     /* use with the TagLib nsIChannel file I/O services.   */
-    if (mMetadataChannelID.Length() > 0)
+    if (!mMetadataChannelID.IsEmpty())
+    {
         TagLibChannelFileIO::RemoveChannel(mMetadataChannelID);
+        mMetadataChannelID.Truncate();
+    }
 
     /* Close the metadata channel. */
     if (mpSeekableChannel)
