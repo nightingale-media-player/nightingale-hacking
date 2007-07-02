@@ -55,11 +55,8 @@ CONFIG_MK_INCLUDED=1
 #
 
 BUILD_ID_DEFS = $(DEPTH)/build/sbBuildIDs.h
-BUILD_ID_DEFS_EXISTS := $(shell if test -f $(BUILD_ID_DEFS); then \
-                                  echo 1; \
-                                fi;)
 
-ifneq (,$(BUILD_ID_DEFS_EXISTS))
+ifneq (,$(wildcard $(BUILD_ID_DEFS)))
 
 AWK_CMD = $(AWK) $(AWK_EXPR) < $(BUILD_ID_DEFS)
 
