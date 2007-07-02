@@ -1635,6 +1635,14 @@
         <parameter name="aRequest" />
         <parameter name="aLocation" />
         <body><![CDATA[
+          // see if the notification box is up, remove it if so.
+          // removing it with removeNotification(notification) causes all
+          // subsequent notifications to not show up.
+          var notificationBox = this.linkedBrowser.parentNode;
+          if (notificationBox.getNotificationWithValue("remoteapi-called")) {
+            notificationBox.removeAllNotifications(true);
+          }
+
           // set the loadingURI so we know in onStateChange when to  cause a
           // scan of the web page to populate the web playlist. Do it
           // here and not in onStateChange because the STATE_START message has
@@ -1678,16 +1686,7 @@
           const nsIWebProgressListener =
             Components.interfaces.nsIWebProgressListener;
           
-          if (aState & nsIWebProgressListener.STATE_START) {
-            // see if the notification box is up, remove it if so.
-            // removing it with removeNotification(notification) causes all
-            // subsequent notifications to not show up.
-            var notificationBox = this.linkedBrowser.parentNode;
-            if (notificationBox.getNotificationWithValue("remoteapi-called")) {
-              notificationBox.removeAllNotifications(true);
-            }
-          }
-          else if (aState & nsIWebProgressListener.STATE_STOP) {
+          if (aState & nsIWebProgressListener.STATE_STOP) {
             if (this.innerPlaylist) {
               this.setUpInnerPlaylist();
             }
