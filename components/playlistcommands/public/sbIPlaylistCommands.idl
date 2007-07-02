@@ -26,6 +26,7 @@
 
 #include "nsISupports.idl"
 
+interface nsIDOMDocument;
 interface nsIDOMNode;
 interface nsIDOMWindow;
 interface sbIPlaylistCommandsContext;
@@ -267,10 +268,11 @@ interface sbIPlaylistCommands : nsISupports
   /**
   * \brief Instantiate the custom element associated with the requested command
   *
+  * \param aDocument Document in which to instantate element
   * \param aID The id of the custom command whose instantiation is being requested
   * \param aHost The command host type that made the request
   */
-  nsIDOMNode instantiateCustomCommand( in AString aID, in AString aHost );
+  nsIDOMNode instantiateCustomCommand( in nsIDOMDocument aDocument, in AString aID, in AString aHost );
 
   /**
   * \brief Refresh the custom element associated with the requested command

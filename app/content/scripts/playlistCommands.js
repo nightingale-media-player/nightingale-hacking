@@ -302,7 +302,7 @@ var SBWebPlaylistCommands =
     return "";
   },
 
-  instantiateCustomCommand: function( aId, aHost ) 
+  instantiateCustomCommand: function( aDocument, aId, aHost ) 
   {
     return null;
   },
@@ -844,7 +844,7 @@ var SBDownloadCommands =
     return this.m_Tooltips[ aIndex ];
   },
 
-  instantiateCustomCommand: function( aId, aHost ) 
+  instantiateCustomCommand: function( aDocument, aId, aHost ) 
   {
     return null;
   },
@@ -1240,7 +1240,7 @@ var SBDefaultCommands =
     return this.m_Tooltips[ aIndex ];
   },
 
-  instantiateCustomCommand: function( aId, aHost ) 
+  instantiateCustomCommand: function( aDocument, aId, aHost ) 
   {
     return null;
   },
@@ -1551,7 +1551,7 @@ var SBDefaultServiceCommands =
     return this.m_Tooltips[ aIndex ];
   },
 
-  instantiateCustomCommand: function( aId, aHost ) 
+  instantiateCustomCommand: function( aDocument, aId, aHost ) 
   {
     return null;
   },

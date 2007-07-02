@@ -510,7 +510,7 @@
                                 
                 // Create a toolbarbutton
                 if (custom) {
-                  toolbarbutton = this.commands[cmdobjidx].instantiateCustomCommand(obj_id, this.hoststring);
+                  toolbarbutton = this.commands[cmdobjidx].instantiateCustomCommand(document, obj_id, this.hoststring);
                 } else {
                   toolbarbutton = document.createElement( toolbarbutton_type );
                 }
@@ -624,7 +624,7 @@
                 }
               }
               if (toolbarbutton.commandcustom) {
-                this.commands[cmdobjidx].refreshCustomCommand(toolbarbutton.id, this.hoststring);
+                this.commands[cmdobjidx].refreshCustomCommand(toolbarbutton, toolbarbutton.id, this.hoststring);
               }
             }
           } catch (e) {
@@ -730,7 +730,6 @@
       <![CDATA[
       //alert("destructor");
         this.resetParentPopup();
-        this.commands = null;
       ]]>
     </destructor>
 
@@ -1021,7 +1020,6 @@
     <destructor>
       <![CDATA[
         this.keyset.removeAllKeys();
-        this.commands = null;
       ]]>
     </destructor>
 

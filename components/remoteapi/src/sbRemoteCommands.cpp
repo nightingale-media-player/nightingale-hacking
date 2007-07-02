@@ -449,7 +449,8 @@ sbRemoteCommands::GetCommandChoiceItem( const nsAString &aChoiceMenu,
 }
 
 NS_IMETHODIMP
-sbRemoteCommands::InstantiateCustomCommand( const nsAString &aID,
+sbRemoteCommands::InstantiateCustomCommand( nsIDOMDocument *aDocument,
+                                            const nsAString &aID,
                                             const nsAString &aHost,
                                             nsIDOMNode **_retval)
 {

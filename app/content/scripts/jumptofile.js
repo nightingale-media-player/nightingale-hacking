@@ -104,7 +104,7 @@ try
       return "";
     },
 
-    instantiateCustomCommand: function( aId, aHost ) 
+    instantiateCustomCommand: function( aDocument, aId, aHost ) 
     {
       return null;
     },
