@@ -227,6 +227,9 @@ AC_PROG_CXX
 AC_CHECK_PROG(PERL, perl, perl)
 if test -z "$PERL"; then AC_MSG_ERROR(Perl not found); fi
 
+AC_CHECK_PROG(PYTHON, python, python)
+if test -z "$PYTHON"; then AC_MSG_ERROR(Python not found); fi
+
 AC_CHECK_PROG(ZIP, zip, zip)
 if test -z "$ZIP"; then AC_MSG_ERROR(Zip not found); fi
 
@@ -592,14 +595,6 @@ AC_SUBST(MACOSX_CONTENTS)
 AC_SUBST(MACOSX_FRAMEWORKS)
 AC_SUBST(MACOSX_RESOURCES)
 AC_SUBST(XULRUNNERDIR)
-
-#
-# Set the name of the file to be generated containing the build ID. It will
-# always be created in the /build subdirectory.
-#
-
-BUILD_ID_FILENAME="build_id.txt"
-AC_SUBST(BUILD_ID_FILENAME)
 
 #
 # Use the mozilla perl method for generating makefiles quickly. This script

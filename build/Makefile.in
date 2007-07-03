@@ -29,15 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-tasks : sbBuildIDs.h all
+all:: sbBuildInfo.ini
 
-sbBuildIDs.h: sbBuildIDs.h.in $(SB_BUILDID_FILENAME)
+sbBuildInfo.ini: FORCE
 	$(RM) -f $@
-	$(PERL) -I$(SCRIPTS_DIR) $(SCRIPTS_DIR)/generate-build-defs.pl \
-	  $@ $(srcdir)/$@.in $(SB_BUILDID_FILENAME)
+	SONGBIRD_OFFICIAL="$(SONGBIRD_OFFICIAL)" \
+    $(PYTHON) $(srcdir)/make-buildinfo.py -i $(srcdir)/$@.in -o $@
 
-$(SB_BUILDID_FILENAME):
-	$(PERL) -I$(SCRIPTS_DIR) $(SCRIPTS_DIR)/generate-build-id.pl \
-	  $@ $(SONGBIRD_OFFICIAL)
+.PHONY : FORCE
 
 include $(topsrcdir)/build/rules.mk

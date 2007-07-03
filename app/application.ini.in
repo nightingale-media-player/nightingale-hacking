@@ -13,3 +13,9 @@ MaxVersion=1.9.*
 
 [XRE]
 EnableExtensionManager=true
+
+[Crash Reporter]
+#if SONGBIRD_OFFICIAL
+Enabled=1
+#endif
+ServerURL=https://crash-reports.songbirdnest.com/submit

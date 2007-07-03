@@ -68,14 +68,15 @@ build_script_files="build/cygwin-wrapper
                     build/macosx/universal/unify
                     build/package/mac_osx/make-diskimage
                     build/package/mac_osx/mozilla.dsstore
+                    config/configobj.py
                     config/make-jars.pl
                     config/mozLock.pm
                     config/preprocessor.pl
+                    config/printconfigsetting.py
 "
 
 # airbag scripts are relative to $srcdir
-airbag_script_files="toolkit/airbag/tools/make_symbol_store.pl
-                     toolkit/airbag/tools/upload_symbols.sh
+airbag_script_files="toolkit/airbag/tools/symbolstore.py
 "
 
 notice() {
