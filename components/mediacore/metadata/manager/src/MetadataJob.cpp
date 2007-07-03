@@ -1336,13 +1336,13 @@ nsresult sbMetadataJob::AddDefaultMetadataToItem( sbMetadataJob::jobitem_t *aIte
   NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
   nsAutoString oldName;
   rv = item->GetProperty( trackNameKey, oldName );
-//  NS_ENSURE_SUCCESS(rv, rv);
+//  NS_ENSURE_SUCCESS(rv, rv); // Ben asked me to remind him that these are here and commented to remind him that we don't care if this call fails.
   if ( oldName.IsEmpty() )
   {
     nsAutoString trackName = CreateDefaultItemName( aItem->url );
     NS_ENSURE_SUCCESS(rv, rv);
     rv = item->SetProperty( trackNameKey, trackName );
-//    NS_ENSURE_SUCCESS(rv, rv);
+//    NS_ENSURE_SUCCESS(rv, rv); // Ben asked me to remind him that these are here and commented to remind him that we don't care if this call fails.
   }
 
   if ( aShouldFlush )
