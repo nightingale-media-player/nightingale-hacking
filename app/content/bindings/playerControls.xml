@@ -776,8 +776,10 @@
               gBrowser.currentPlaylist.sendPlayEvent();
             } else {
               // otherwise go get the library and play it
-              this.loadLibrary();
-              this.gPPS.play(); // let gpps handle default playback.
+              var libraryManager =
+                Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                          .getService(Components.interfaces.sbILibraryManager);
+              this.gPPS.playView(libraryManager.mainLibrary.createView(), 0);
             }
           ]]>
         </body>
