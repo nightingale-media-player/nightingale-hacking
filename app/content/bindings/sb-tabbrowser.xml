@@ -1315,7 +1315,7 @@
           if (playlist.wrappedJSObject) {
             playlist = playlist.wrappedJSObject;
           }
-              
+          
           return playlist;
         ]]></getter>
       </property>
@@ -1635,6 +1635,11 @@
         <parameter name="aRequest" />
         <parameter name="aLocation" />
         <body><![CDATA[
+          // if this location change isn't on the top-level window, ignore it
+          if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent) {
+            return;
+          }
+          
           // see if the notification box is up, remove it if so.
           // removing it with removeNotification(notification) causes all
           // subsequent notifications to not show up.
@@ -1648,6 +1653,7 @@
           // here and not in onStateChange because the STATE_START message has
           // the wrong document URI when using the back button (and probably
           // when going from site to site).
+          
 
           this._loadingURL = aLocation.spec;
           this.clearOuterPlaylist();
@@ -1678,19 +1684,24 @@
         <parameter name="aState" />
         <parameter name="aStatus" />
         <body><![CDATA[
-          if (!(aRequest && aRequest.name == this._loadingURL))
+          // if this state change isn't on the top-level window, ignore it
+          if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent) {
             return;
-            
-          this._loadingURL = "";
-
+          }
+          
           const nsIWebProgressListener =
             Components.interfaces.nsIWebProgressListener;
           
           if (aState & nsIWebProgressListener.STATE_STOP) {
+            if (!(this.linkedBrowser.contentDocument && 
+                  this.linkedBrowser.contentDocument.documentURI == this._loadingURL)) {
+              return;
+            }
+            this._loadingURL = "";
+            
             if (this.innerPlaylist) {
               this.setUpInnerPlaylist();
-            }
-            else {
+            } else {
               this.scanWebPage();
             }
           }
