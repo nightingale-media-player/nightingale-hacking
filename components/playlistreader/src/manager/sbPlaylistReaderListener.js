@@ -101,7 +101,7 @@ CPlaylistReaderListener.prototype =
         }
         if (this.observer)
         {
-          this.observer.observe(null, "success", "");
+          this.observer.observe(this.mediaList, "success", "");
         }
       }
       catch(e)

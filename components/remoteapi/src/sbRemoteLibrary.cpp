@@ -34,6 +34,8 @@
 #include <sbILibraryManager.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
+#include <sbIMetadataJob.h>
+#include <sbIMetadataJobManager.h>
 #include <sbIPlaylistReader.h>
 #include <sbLocalDatabaseCID.h>
 
@@ -48,6 +50,8 @@
 #include <nsIDOMEventTarget.h>
 #include <nsIDOMWindow.h>
 #include <nsIFile.h>
+#include <nsIMutableArray.h>
+#include <nsIObserver.h>
 #include <nsIPermissionManager.h>
 #include <nsIPrefService.h>
 #include <nsIPresShell.h>
@@ -91,9 +95,61 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 #define kNotFound -1
 static NS_DEFINE_CID(kRemoteLibraryCID, SONGBIRD_REMOTELIBRARY_CID);
 
+// Observer for the PlaylistReader that launches a metadata job when the
+// playlist is loaded.
+class sbRemoteMetadataScanLauncher : public nsIObserver
+{
+public:
+  sbRemoteMetadataScanLauncher() {}
+  virtual ~sbRemoteMetadataScanLauncher() {}
+
+  NS_DECL_ISUPPORTS
+  NS_IMETHODIMP Observe( nsISupports *aSubject,
+                         const char *aTopic,
+                         const PRUnichar *aData)
+  {
+    LOG1(( "sbRemoteMetadataScanLauncher::Observe(%s)", aTopic ));
+    nsresult rv;
+    nsCOMPtr<sbIMetadataJobManager> metaJobManager =
+      do_GetService( "@songbirdnest.com/Songbird/MetadataJobManager;1", &rv );
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(NS_SUCCEEDED(rv)) {
+      nsCOMPtr<nsIMutableArray> mediaItems =
+                                 do_CreateInstance( NS_ARRAY_CONTRACTID, &rv );
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbIMediaList> mediaList ( do_QueryInterface( aSubject, &rv ) );
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 length;
+      rv = mediaList->GetLength( &length );
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for ( PRUint32 index = 0; index < length; index++ ) {
+
+        nsCOMPtr<sbIMediaItem> item;
+        rv = mediaList->GetItemByIndex( index, getter_AddRefs ( item ) );
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mediaItems->AppendElement( item, PR_FALSE );
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      nsCOMPtr<sbIMetadataJob> job;
+      rv = metaJobManager->NewJob( mediaItems, 50, getter_AddRefs(job) );
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    return NS_OK;
+  }
+};
+NS_IMPL_ISUPPORTS1( sbRemoteMetadataScanLauncher, nsIObserver )
+
+
 const static char* sPublicWProperties[] =
   {
-    "metadata:name"
+    "metadata:name",
+    "binding:scanMediaOnCreation"
   };
 
 const static char* sPublicRProperties[] =
@@ -106,6 +162,7 @@ const static char* sPublicRProperties[] =
 
     // sbIRemoteLibrary
     "binding:selection",
+    "binding:scanMediaOnCreation",
 #ifdef DEBUG
     "library:filename",
 #endif
@@ -177,7 +234,7 @@ SB_IMPL_CLASSINFO( sbRemoteLibrary,
                    0,
                    kRemoteLibraryCID )
 
-sbRemoteLibrary::sbRemoteLibrary() 
+sbRemoteLibrary::sbRemoteLibrary() : mShouldScan(PR_TRUE)
 {
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
@@ -226,6 +283,21 @@ sbRemoteLibrary::Init()
 //                        sbIRemoteLibrary
 //
 // ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemoteLibrary::GetScanMediaOnCreation( PRBool *aShouldScan )
+{
+  NS_ENSURE_ARG_POINTER(aShouldScan);
+  *aShouldScan = mShouldScan;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibrary::SetScanMediaOnCreation( PRBool aShouldScan )
+{
+  mShouldScan = aShouldScan;
+  return NS_OK;
+}
 
 NS_IMETHODIMP
 sbRemoteLibrary::GetFilename( nsAString &aFilename )
@@ -345,17 +417,36 @@ sbRemoteLibrary::CreateMediaItem(const nsAString& aURL,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Only allow the creation of media items with http(s) schemes
-  nsCAutoString scheme;
-  rv = uri->GetScheme(scheme);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!(scheme.Equals("http") || scheme.Equals("https"))) {
-    return NS_ERROR_INVALID_ARG;
+  PRBool validScheme;
+  uri->SchemeIs("http", &validScheme);
+  if (!validScheme) {
+    uri->SchemeIs("https", &validScheme);
+    if (!validScheme) {
+      return NS_ERROR_INVALID_ARG;
+    }
   }
 
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = mLibrary->CreateMediaItem(uri, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mShouldScan) {
+    nsCOMPtr<sbIMetadataJobManager> metaJobManager =
+      do_GetService("@songbirdnest.com/Songbird/MetadataJobManager;1", &rv);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get MetadataJobManager!");
+
+    if(NS_SUCCEEDED(rv)) {
+      nsCOMPtr<nsIMutableArray> mediaItems = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mediaItems->AppendElement(mediaItem, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbIMetadataJob> job;
+      rv = metaJobManager->NewJob(mediaItems, 50, getter_AddRefs(job));
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to create metadata job!");
+    }
+  }
 
   return SB_WrapMediaItem(mediaItem, _retval);
 }
@@ -387,23 +478,44 @@ sbRemoteLibrary::CreateMediaListFromFile( const nsAString& aURL,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPlaylistReaderManager> manager =
-      do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistReaderManager;1", &rv );
+       do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
+                          &rv );
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIURI> uri;
   rv = NS_NewURI(getter_AddRefs(uri), aURL);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCAutoString scheme;
-  rv = uri->GetScheme(scheme);
+ 
+  // Only allow the creation of media lists with http(s) schemes
+  PRBool validScheme;
+  uri->SchemeIs("http", &validScheme);
+  if (!validScheme) {
+    uri->SchemeIs("https", &validScheme);
+    if (!validScheme) {
+      return NS_ERROR_INVALID_ARG;
+    }
+  }
+
+  nsCOMPtr<sbIPlaylistReaderListener> lstnr =
+      do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistReaderListener;1",
+                         &rv );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (!(scheme.Equals("http") || scheme.Equals("https"))) {
-    return NS_ERROR_INVALID_ARG;
+  if (mShouldScan) {
+    nsRefPtr<sbRemoteMetadataScanLauncher> launcher =
+                                            new sbRemoteMetadataScanLauncher();
+    NS_ENSURE_TRUE( launcher, NS_ERROR_OUT_OF_MEMORY );
+
+    nsCOMPtr<nsIObserver> observer( do_QueryInterface( launcher, &rv ) );
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = lstnr->SetObserver( observer );
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   PRInt32 dummy;
-  manager->LoadPlaylist( uri, mediaList, EmptyString(), false, nsnull, &dummy ); 
+  rv = manager->LoadPlaylist( uri, mediaList, EmptyString(), true, lstnr, &dummy );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return SB_WrapMediaList(mediaList, _retval);
 }

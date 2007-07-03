@@ -88,6 +88,7 @@ public:
 
 protected:
   virtual ~sbRemoteLibrary();
+  PRBool mShouldScan;
   nsCOMPtr<sbILibrary> mLibrary;
   nsRefPtr<sbRemoteMediaList> mRemMediaList;
 

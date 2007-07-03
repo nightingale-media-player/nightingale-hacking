@@ -100,14 +100,28 @@
         var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
         mediaList.add(item);
 
+        siteLib.scanMediaOnCreation = false;
+
         item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3");
         mediaList.add(item);
 
         mediaList.name = "Test List - 2 songs";
         setPlaylist(mediaList);
+
+        siteLib.scanMediaOnCreation = true;
       }
 
-      var setM3UPlaylist = function setM3UPlaylist() {
+      var setM3UPlaylistNoScan = function setM3UPlaylistNoScan() {
+        siteLib.scanMediaOnCreation = false;
+        if (!m3uMediaList) {
+          m3uMediaList = siteLib.createMediaListFromFile("http://www.jgaunt.com/uploads/uploads.m3u");
+          m3uMediaList.name = "m3u Test List";
+        }
+        setPlaylist(m3uMediaList);
+        siteLib.scanMediaOnCreation = true;
+      }
+
+      var setM3UPlaylistWithScan = function setM3UPlaylistWithScan() {
         if (!m3uMediaList) {
           m3uMediaList = siteLib.createMediaListFromFile("http://www.jgaunt.com/uploads/uploads.m3u");
           m3uMediaList.name = "m3u Test List";
@@ -170,8 +184,10 @@
       </p>
       <input type="button" id="set_button" value="Set test list"
              onclick="setWebPlaylist();" /> 
-      <input type="button" id="make_m3u_button" value="Set From File"
-             onclick="setM3UPlaylist();" /> 
+      <input type="button" id="make_m3u_button_scan" value="Set From File And Scan"
+             onclick="setM3UPlaylistWithScan();" /> 
+      <input type="button" id="make_m3u_button" value="Set From File No Scan"
+             onclick="setM3UPlaylistNoScan();" /> 
       <br />
       <br />
       <p> Set the web playlist to the site library, main library or web library

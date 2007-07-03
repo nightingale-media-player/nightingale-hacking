@@ -145,7 +145,7 @@ CPlaylistReaderManager.prototype =
       try {
         this.read(file, aMediaList, aContentType, aAddDistinctOnly);
         if (aPlaylistReaderListener && aPlaylistReaderListener.observer) {
-          aPlaylistReaderListener.observer.observe(null, "success", "");
+          aPlaylistReaderListener.observer.observe(aMediaList, "success", "");
         }
         return 1;
       }

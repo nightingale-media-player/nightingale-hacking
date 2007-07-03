@@ -44,6 +44,8 @@ interface sbIMediaItem;
 [scriptable, uuid(3025cbf8-7969-4e79-8641-967a9f4e51b8)]
 interface sbIRemoteLibrary : nsISupports
 {
+  attribute boolean scanMediaOnCreation;
+
   /**
    * create and insert a media item into the library
    */
