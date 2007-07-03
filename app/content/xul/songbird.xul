@@ -82,7 +82,7 @@
     </menubar>
 
     <spacer height="5"/>
-    <hbox flex="1">
+    <hbox flex="1" id="video-boxes">
       <spacer width="10"/>
       <!-- HEY!  If you add new objects or iframes to this list,
             you need to make sure you hide them per platform in videoWinInit.js -->
