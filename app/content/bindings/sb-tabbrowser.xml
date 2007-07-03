@@ -831,43 +831,6 @@
       </method>
       
       <field name="theHTMLContextURL">null</field>
-      <!-- used in async_webplaylist.js -->
-      <method name="onLinkOver">
-        <parameter name="evt" />
-        <body><![CDATA[
-          // Catch a contextual on a media url and attempt to play it
-          var the_url = this.GetHREFFromEvent( evt )
-          theStatusText.stringValue = the_url;
-          if ( gPPS.isMediaURL( the_url ) || gPPS.isPlaylistURL( the_url ) )
-          {
-            theStatusStyle.stringValue = "font-weight: bold;";
-          }
-          else
-          {
-            theStatusStyle.stringValue = "font-weight: normal;";
-          }
-        ]]></body>
-      </method>
-      <!-- used in async_webplaylist.js -->
-      <method name="onLinkOut">
-        <parameter name="evt" />
-        <body><![CDATA[
-          // Catch a contextual on a media url and attempt to play it
-          theStatusText.stringValue = "";
-        ]]></body>
-      </method>
-
-      <!-- used in async_webplaylist.js -->
-      <method name="onMediaClick">
-        <parameter name="evt" />
-        <body><![CDATA[
-          // Catch a click on a media url and attempt to play it
-          this.handleMediaURL(this.GetHREFFromEvent(evt), true, false);
-          evt.stopPropagation();
-          evt.preventDefault();
-        ]]></body>
-      </method>
-      
       
       <!-- override navigation methods from tabbrowser for fun and profit -->
       <!-- I'm not convinced these are actually required -->
@@ -1032,18 +995,56 @@
           if (pps.isMediaURL(href)) {
             where = 'current';
           }
-
+          
+          // we need to handle playlists specially
+          if (pps.isPlaylistURL(href)) {
+            this.handleMediaURL(href);
+            event.stopPropagation();
+            event.preventDefault();
+            return true;
+          }
+          
           this.loadURI(href, referrer, null, event, where);
           event.stopPropagation();
 
           // We're supposed to return false if this was a normal vanilla link
           // click.
           if (event.button == 0 && !event.ctrlKey && !event.shiftKey &&
-              !event.altKey && !event.event.metaKey) {
+              !event.altKey && !event.metaKey) {
             return false;
           }
         }
         return true;
+      ]]></handler>
+      <handler event="mouseover"><![CDATA[
+        // we only care about these events when they occur in the content doc
+        if (event.target.ownerDocument != this.contentDocument) {
+          return;
+        }
+        
+        var url = this.GetHREFFromEvent(event);
+        if (!url) {
+          return;
+        }
+        theStatusText.stringValue = url;
+        if (gPPS.isMediaURL(url) || gPPS.isPlaylistURL(url)) {
+          theStatusStyle.stringValue = "font-weight: bold;";
+        } else {
+          theStatusStyle.stringValue = "font-weight: normal;";
+        }
+      ]]></handler>
+      <handler event="mouseout"><![CDATA[
+        // we only care about these events when they occur in the content doc
+        if (event.target.ownerDocument != this.contentDocument) {
+          return;
+        }
+        
+        var url = this.GetHREFFromEvent(event);
+        if (!url) {
+          return;
+        }
+        
+        theStatusText.stringValue = '';
       ]]></handler>
     </handlers>
   </binding>

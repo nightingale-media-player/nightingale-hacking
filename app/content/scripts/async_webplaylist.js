@@ -59,15 +59,6 @@ try
     }
   }
   
-  function installClickHandler(element) {
-    // Make a closure for this.
-    function handler(evt) {
-      gBrowser.onMediaClick(evt);
-    }
-    // And attach it to the event listener.
-    element.addEventListener("click", handler, true);
-  }
-  
   function AsyncWebDocument(aDocument, aMediaListView, old_href_loop, context)
   {
     const CONTRACTID_ARRAY = "@mozilla.org/array;1";
@@ -124,11 +115,6 @@ try
             var url = this.a_array[ this.i ].href;
             if ( url )
               loop_break = this.handleURL( url );
-            // Add our event listeners to anything that's a link.
-            this.a_array[ this.i ].addEventListener( "mouseover",
-                function (evt) {gBrowser.onLinkOver(evt)}, true );
-            this.a_array[ this.i ].addEventListener( "mouseout",
-                function (evt) {gBrowser.onLinkOut(evt)}, true );
           }
           // "Embed" tags
           if ( 
@@ -304,8 +290,6 @@ try
       }
       
       if (gPPS.isPlaylistURL(url)) {
-        installClickHandler(this.a_array[this.i]);
-
         // Keep the loop going.
         return false;
       }
