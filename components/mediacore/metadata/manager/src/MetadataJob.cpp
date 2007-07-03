@@ -245,6 +245,7 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
                               "worker_thread INTEGER NOT NULL DEFAULT 0, "
                               "is_scanned INTEGER NOT NULL DEFAULT 0, "
                               "is_written INTEGER NOT NULL DEFAULT 0, "
+                              "is_current INTEGER NOT NULL DEFAULT 0, "
                               "PRIMARY KEY (library_guid, item_guid) )" );
   rv = mMainThreadQuery->AddQuery( createTable );
   NS_ENSURE_SUCCESS(rv, rv);
@@ -263,9 +264,9 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   createIndex.Truncate();
   createIndex.AppendLiteral( "CREATE INDEX IF NOT EXISTS 'idx_" );
   createIndex += mTableName;
-  createIndex.AppendLiteral(  "_is_written' ON " );
+  createIndex.AppendLiteral(  "_is_written_is_current' ON " );
   createIndex += mTableName;
-  createIndex.AppendLiteral(  " (is_written)" );
+  createIndex.AppendLiteral(  " (is_written, is_current)" );
   rv = mMainThreadQuery->AddQuery( createIndex );
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -417,6 +418,9 @@ nsresult sbMetadataJob::RunTimer()
       NS_ENSURE_SUCCESS(rv, rv);
       if ( completed )
       {
+        rv = ClearItemIsCurrent( mMainThreadQuery, mTableName, item );
+        NS_ENSURE_SUCCESS(rv, rv);
+
         // Try to write it out
         rv = AddMetadataToItem( item, mURIMetadataHelper, PR_TRUE ); // Flush properties cache every time
         // NS_ENSURE_SUCCESS(rv, rv); // Allow it to fail.  We already put a default value in for it.
@@ -455,6 +459,12 @@ nsresult sbMetadataJob::RunTimer()
       TRACE(("sbMetadataJob[0x%.8x] - MAIN THREAD - GetNextItem( %s )", this, alert.get()));
 #endif
 
+      // Get ready to launch a handler
+      rv = SetItemIsCurrent( mMainThreadQuery, mTableName, item );
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = SetItemIsScanned( mMainThreadQuery, mTableName, item );
+      NS_ENSURE_SUCCESS(rv, rv);
+
       // Create the metadata handler and launch it
       rv = StartHandlerForItem( item );
       // Ignore errors on the metadata loop, just set a default and keep going.
@@ -465,18 +475,12 @@ nsresult sbMetadataJob::RunTimer()
                "Unable to add metadata for( %s )", this,
                NS_LossyConvertUTF16toASCII(item->url).get()));
         // Record this item as completed.
-        rv = SetItemIsScanned( mMainThreadQuery, mTableName, item );
-        NS_ENSURE_SUCCESS(rv, rv);
         rv = SetItemIsWritten( mMainThreadQuery, mTableName, item );
         NS_ENSURE_SUCCESS(rv, rv);
         // Leave mTimerWorkers null for the next loop.
       }
       else
       {
-        // If it's good, record that we've started it
-        rv = SetItemIsScanned( mMainThreadQuery, mTableName, item );
-        NS_ENSURE_SUCCESS(rv, rv);
-
         // And stuff it in our working array to check next loop
         mTimerWorkers[ i ] = item;
       }
@@ -611,6 +615,12 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
       batchHelper.SetList( mediaList );
     }
 
+    // Get ready to launch a handler
+    rv = SetItemIsCurrent( mMainThreadQuery, mTableName, item );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = SetItemIsScanned( WorkerThreadQuery, aTableName, item );
+    NS_ENSURE_SUCCESS(rv, rv);
+
     // Create the metadata handler and launch it
     rv = StartHandlerForItem( item );
     if ( NS_SUCCEEDED(rv) )
@@ -646,7 +656,8 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
              NS_LossyConvertUTF16toASCII(item->url).get()));
     }
 
-    rv = SetItemIsScanned( WorkerThreadQuery, aTableName, item );
+    // Ah, if we got here we must not have crashed.
+    rv = ClearItemIsCurrent( mMainThreadQuery, mTableName, item );
     NS_ENSURE_SUCCESS(rv, rv);
 
     writePending.AppendElement( item );
@@ -1019,7 +1030,7 @@ nsresult sbMetadataJob::SetItemsAreWritten( sbIDatabaseQuery *aQuery, nsString a
   return NS_OK;
 }
 
-nsresult sbMetadataJob::SetItemIs( const nsAString &aColumnString, sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem, PRBool aExecute )
+nsresult sbMetadataJob::SetItemIs( const nsAString &aColumnString, sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem, PRBool aExecute, PRBool aValue  )
 {
   NS_ENSURE_ARG_POINTER( aQuery );
   NS_ENSURE_ARG_POINTER( aItem );
@@ -1036,7 +1047,7 @@ nsresult sbMetadataJob::SetItemIs( const nsAString &aColumnString, sbIDatabaseQu
   NS_ENSURE_SUCCESS(rv, rv);
   rv = update->SetTableName( aTableName );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = update->AddAssignmentString( aColumnString, NS_LITERAL_STRING("1") );
+  rv = update->AddAssignmentString( aColumnString, aValue ? NS_LITERAL_STRING("1") : NS_LITERAL_STRING("0") );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = update->CreateMatchCriterionString( aTableName,
                                             NS_LITERAL_STRING("library_guid"),
@@ -1081,6 +1092,16 @@ nsresult sbMetadataJob::SetItemIs( const nsAString &aColumnString, sbIDatabaseQu
   return NS_OK;
 }
 
+nsresult sbMetadataJob::SetItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem )
+{
+  return SetItemIs( NS_LITERAL_STRING("is_current"), aQuery, aTableName, aItem, PR_TRUE );
+}
+
+nsresult sbMetadataJob::ClearItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem )
+{
+  return SetItemIs( NS_LITERAL_STRING("is_current"), aQuery, aTableName, aItem, PR_TRUE, PR_FALSE );
+}
+
 nsresult sbMetadataJob::ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTableName )
 {
   NS_ENSURE_ARG_POINTER( aQuery );
@@ -1089,7 +1110,9 @@ nsresult sbMetadataJob::ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTabl
 
   // Compose the query string.
   nsAutoString updateUnwritten;
-  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  nsCOMPtr<sbISQLBuilderCriterion> criterionW;
+  nsCOMPtr<sbISQLBuilderCriterion> criterionC;
+  nsCOMPtr<sbISQLBuilderCriterion> criterionAND;
   nsCOMPtr<sbISQLUpdateBuilder> update =
     do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1098,12 +1121,23 @@ nsresult sbMetadataJob::ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTabl
   rv = update->AddAssignmentString( NS_LITERAL_STRING("is_scanned"), NS_LITERAL_STRING("0") );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = update->CreateMatchCriterionString( aTableName,
-                                            NS_LITERAL_STRING("is_written"),
+                                            // If we hadn't written it out yet
+                                            NS_LITERAL_STRING("is_written"), 
                                             sbISQLUpdateBuilder::MATCH_EQUALS,
                                             NS_LITERAL_STRING("0"),
-                                            getter_AddRefs(criterion) );
+                                            getter_AddRefs(criterionW) );
+  rv = update->CreateMatchCriterionString( aTableName,
+                                            // And it wasn't something currently running when we crashed
+                                            NS_LITERAL_STRING("is_current"), 
+                                            sbISQLUpdateBuilder::MATCH_EQUALS,
+                                            NS_LITERAL_STRING("0"),
+                                            getter_AddRefs(criterionC) );
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = update->AddCriterion( criterion );
+  rv = update->CreateAndCriterion(  criterionW,
+                                    criterionC,
+                                    getter_AddRefs(criterionAND) );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = update->AddCriterion( criterionAND );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = update->ToString( updateUnwritten );
   NS_ENSURE_SUCCESS(rv, rv);

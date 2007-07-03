@@ -156,7 +156,9 @@ protected:
   static nsresult SetItemIsScanned( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
   static nsresult SetItemIsWritten( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
   static nsresult SetItemsAreWritten( sbIDatabaseQuery *aQuery, nsString aTableName, nsTArray<nsRefPtr<jobitem_t> > &aItemArray );
-  static nsresult SetItemIs( const nsAString &aColumnString, sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
+  static nsresult SetItemIs( const nsAString &aColumnString, sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE, PRBool aValue = PR_TRUE );
+  static nsresult SetItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
+  static nsresult ClearItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
   static nsresult ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTableName );
   static nsresult StartHandlerForItem( jobitem_t *aItem );
   static nsresult AddMetadataToItem( jobitem_t *aItem, sbIURIMetadataHelper *aURIMetadataHelper, PRBool aShouldFlush );
