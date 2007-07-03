@@ -66,6 +66,8 @@
 
 /* Songbird imports. */
 #include <sbILibraryManager.h>
+#include <sbILocalDatabasePropertyCache.h>
+#include <sbILocalDatabaseLibrary.h>
 #include <sbIMetadataJob.h>
 #include <sbIPropertyManager.h>
 #include <sbStandardProperties.h>
@@ -1335,6 +1337,8 @@ nsresult sbDownloadDevice::ResumeTransfers()
             itemResult = pMediaItem->GetProperty
                                 (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
                                  progressStr);
+            if (NS_SUCCEEDED(itemResult) && progressStr.IsEmpty())
+                itemResult = NS_ERROR_FAILURE;
         }
         if (NS_SUCCEEDED(itemResult))
             progress = progressStr.ToInteger(&itemResult);
@@ -1393,7 +1397,10 @@ nsresult sbDownloadDevice::ClearCompletedItems()
                 itemResult = pMediaItem->GetProperty
                                 (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSVALUE),
                                  progressStr);
+                if (NS_SUCCEEDED(itemResult) && progressStr.IsEmpty())
+                    itemResult = NS_ERROR_FAILURE;
             }
+
             if (NS_SUCCEEDED(itemResult))
                 progress = progressStr.ToInteger(&itemResult);
 
@@ -1438,12 +1445,11 @@ nsresult sbDownloadDevice::SetTransferDestination(
     propertyResult = pMediaItem->GetProperty
                                     (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
                                      dstProp);
-    if (NS_SUCCEEDED(propertyResult))
+    if (NS_SUCCEEDED(propertyResult) && !dstProp.IsEmpty())
         return (result);
 
     /* Get the default destination directory. */
-    if (NS_SUCCEEDED(result))
-        result = mpDownloadDirDR->GetStringValue(dstDir);
+    result = mpDownloadDirDR->GetStringValue(dstDir);
 
     /* If not default destination directory is set, */
     /* query user.  Treat cancellation as an error. */
@@ -1892,6 +1898,8 @@ nsresult sbDownloadSession::Initiate()
         result = mpMediaItem->GetProperty
                                     (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
                                      dstSpec);
+        if (NS_SUCCEEDED(result) && dstSpec.IsEmpty())
+            result = NS_ERROR_FAILURE;
     }
     if (NS_SUCCEEDED(result))
     {
@@ -1963,6 +1971,8 @@ nsresult sbDownloadSession::Initiate()
             result = mpMediaItem->GetProperty
                                         (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
                                         dstSpec);
+            if (NS_SUCCEEDED(result) && dstSpec.IsEmpty())
+                result = NS_ERROR_FAILURE;
         }
 
       }
@@ -2489,6 +2499,8 @@ nsresult sbDownloadSession::CompleteTransfer()
 {
     nsCOMPtr<nsIFile>           pFileDir;
     nsString                    fileName;
+    nsCString                   srcSpec;
+    nsCOMPtr<nsIURI>            pSrcURI;
     nsCOMPtr<sbIMediaList>      pDstMediaList;
     nsresult                    result = NS_OK;
 
@@ -2498,6 +2510,12 @@ nsresult sbDownloadSession::CompleteTransfer()
         result = mpDstFile->GetParent(getter_AddRefs(pFileDir));
     if (NS_SUCCEEDED(result))
         result = mpTmpFile->MoveTo(pFileDir, fileName);
+
+    /* Save the content URL. */
+    if (NS_SUCCEEDED(result))
+        result = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
+    if (NS_SUCCEEDED(result))
+        result = pSrcURI->GetSpec(srcSpec);
 
     /* Update the download media item content source property. */
     if (NS_SUCCEEDED(result))
@@ -2522,8 +2540,6 @@ nsresult sbDownloadSession::CompleteTransfer()
     {
         nsRefPtr<WebLibraryUpdater> pWebLibraryUpdater;
         nsCOMPtr<sbIMediaList>      pWebMediaList;
-        nsCOMPtr<nsIURI>            pSrcURI;
-        nsCString                   srcSpec;
 
         /* Get the web library media list. */
         if (NS_SUCCEEDED(result))
@@ -2531,12 +2547,6 @@ nsresult sbDownloadSession::CompleteTransfer()
             pWebMediaList = do_QueryInterface(mpDownloadDevice->mpWebLibrary,
                                               &result);
         }
-
-        /* Get the source URI spec. */
-        if (NS_SUCCEEDED(result))
-            result = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
-        if (NS_SUCCEEDED(result))
-            result = pSrcURI->GetSpec(srcSpec);
 
         /* Update the web library. */
         if (NS_SUCCEEDED(result))
@@ -2547,6 +2557,21 @@ nsresult sbDownloadSession::CompleteTransfer()
         }
         if (NS_SUCCEEDED(result))
         {
+            // Remove this flushing code once bug 3134 is fixed. Don't care if
+            // it fails.
+            nsCOMPtr<sbILocalDatabasePropertyCache> propCache;
+            nsCOMPtr<sbILocalDatabaseLibrary> library =
+                do_QueryInterface(mpDownloadDevice->mpWebLibrary, &result);
+            
+            if (NS_SUCCEEDED(result))
+                result = library->GetPropertyCache(getter_AddRefs(propCache));
+
+            if (NS_SUCCEEDED(result))
+                result = propCache->Write();
+
+            NS_WARN_IF_FALSE(NS_SUCCEEDED(result),
+                             "Couldn't flush web library's property cache");
+
             result = pWebMediaList->EnumerateItemsByProperty
                                     (NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
                                      NS_ConvertUTF8toUTF16(srcSpec),
@@ -2585,8 +2610,12 @@ nsresult sbDownloadSession::UpdateDstLibraryMetadata()
     /* Check if the download media item has metadata. */
     result1 = mpMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
                                        durationStr);
+    if (NS_SUCCEEDED(result1) && durationStr.IsEmpty())
+        result = NS_ERROR_FAILURE;
+
     if (NS_SUCCEEDED(result1))
         duration = durationStr.ToInteger(&result1);
+
     if (NS_SUCCEEDED(result1) && (duration > 0))
         updateDstLibraryMetadata = PR_FALSE;
 
