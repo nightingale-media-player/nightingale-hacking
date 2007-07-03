@@ -1329,12 +1329,21 @@ nsresult sbMetadataJob::AddDefaultMetadataToItem( sbMetadataJob::jobitem_t *aIte
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Set the properties (eventually iterate when the sbIMetadataValue have the correct keystrings).
+  // Set the default properties 
+  // (eventually iterate when the sbIMetadataValue have the correct keystrings).
+
+  // Right now, all we default is the track name.
   NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
-  nsAutoString trackName = CreateDefaultItemName( aItem->url );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = item->SetProperty( trackNameKey, trackName );
+  nsAutoString oldName;
+  rv = item->GetProperty( trackNameKey, oldName );
 //  NS_ENSURE_SUCCESS(rv, rv);
+  if ( oldName.IsEmpty() )
+  {
+    nsAutoString trackName = CreateDefaultItemName( aItem->url );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = item->SetProperty( trackNameKey, trackName );
+//    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   if ( aShouldFlush )
   {
