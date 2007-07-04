@@ -1486,7 +1486,7 @@ PlaylistPlayback.prototype = {
     }
     else {
       // After 10 seconds or fatal error, give up and go to the next one?
-      if ( ( this._lookForPlayingCount++ > 40 ) || ( len < -1 ) ) {
+      if ( ( this._lookForPlayingCount++ > 80 ) || ( len < -1 ) ) {
         if ( ! this._stopNextLoop )
           this.next();
         this._stopNextLoop = false;

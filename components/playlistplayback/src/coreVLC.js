@@ -142,7 +142,7 @@ function CoreVLC()
   this._url = "";
   this._uri = null;
   this._paused = false;
-  this._needPlayRestart = false;
+  this._fakePosition = false;
   this._ignorePrefChange = false;
 
   this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "aac", "mva",
@@ -184,7 +184,15 @@ CoreVLC.prototype.constructor = CoreVLC();
 // apply custom preferences to vlc
 CoreVLC.prototype._applyPreferences = function ()
 {
+  var log = this._object.log;
   var config = this._object.config;
+
+  try {
+    log.verbosity = 1;
+  }
+  catch(e) {
+    this.LOG("failed to set log verbosity. log messages disabled.");
+  }
 
   //Be more generous about file caching.
   try {
@@ -388,6 +396,80 @@ CoreVLC.prototype._setProxyInfo = function (aProxyHost, aProxyPort, aProxyUser, 
   this._object.config.setConfigString("access_http", "http-proxy", actualHost);
 };
 
+CoreVLC.prototype._getLoginInfoForURI = function(aURI)
+{
+  var httpAuthManager = Cc["@mozilla.org/network/http-auth-manager;1"]
+                      .getService(Ci.nsIHttpAuthManager);
+  
+  var userDomain = {};
+  var userName = {};
+  var userPassword = {};
+  
+  try {
+    httpAuthManager.getAuthIdentity(aURI.scheme,
+                                    aURI.host,
+                                    aURI.port == -1 ? 80 : aURI.port,
+                                    "basic",
+                                    "",
+                                    aURI.path,
+                                    userDomain,
+                                    userName,
+                                    userPassword);
+  }
+  catch(e) {
+    this.LOG(e);
+    return [];
+  }
+  
+  return [userName.value, userPassword.value];
+};
+
+/**
+ * \brief This function is meant to attempt to process
+ * log messages received from VLC and interpret
+ * their content with the intent of trying to recover
+ * from errors during playURL attempts.
+ */
+CoreVLC.prototype._processLogMessagesForPlayURL = function()
+{
+  this._verifyObject();
+
+  var messages = this._object.log.messages;
+  
+  if(messages.count < 1) {
+    return true;
+  }
+  
+  var messageIterator = messageIterator = messages.iterator();
+
+  var message = null;  
+  while(messageIterator.hasNext) {
+    message = messageIterator.next();
+    
+    //Try and see if we got a 401 and bring up an auth box.  
+    if(message.message.match("'HTTP' answer code 401")) {
+      var loginInfos = this._getLoginInfoForURI(this._uri);
+      
+      //Found a username / password pair.
+      if(loginInfos.length == 2) {
+        var uriWithLogin = this._uri.clone();
+        
+        uriWithLogin.username = loginInfos[0];
+        uriWithLogin.password = loginInfos[1];
+        
+        this._fakePosition = true;
+        this.playURL(uriWithLogin.spec);
+      }
+    }
+    
+    message = null;
+  }
+  
+  messages.clear();
+    
+  return true;
+};
+
 CoreVLC.prototype.observe = function (aSubject, aTopic, aData) 
 {
   if(this._ignorePrefChange) {
@@ -495,11 +577,6 @@ CoreVLC.prototype.play = function()
   if (this._object.playlist.itemCount <= 0) 
     return false;
 
-  if (this._needPlayRestart) {
-    this._needPlayRestart = false;
-    this.stop();
-  }
-
   this._object.playlist.play();
 
   if(this._paused && this._savedTime)
@@ -518,7 +595,7 @@ CoreVLC.prototype.play = function()
 CoreVLC.prototype.stop = function() 
 {
   this._verifyObject();
-
+  
   if (this._object.playlist.itemCount > 0) 
     this._object.playlist.stop();
 
@@ -527,7 +604,7 @@ CoreVLC.prototype.stop = function()
   this._lastCalcTime = 0;
   this._startTime = 0;
   this._savedTime = 0;
-
+  
   return this._object.playlist.isPlaying == false;
 };
   
@@ -537,11 +614,6 @@ CoreVLC.prototype.pause = function()
     return false;
     
   this._verifyObject();
-  
-  if(this._uri.scheme == "http" &&
-     this.getLength() == 0) {
-    this._needPlayRestart = true;
-  }
   
   this._object.playlist.togglePause();
   
@@ -567,12 +639,18 @@ CoreVLC.prototype.getPaused = function()
 CoreVLC.prototype.getPlaying = function() 
 {
   this._verifyObject();
+  
+  if(this._fakePosition) {
+    return true;
+  }
+  
   return this._object.playlist.isPlaying || this._paused;
 };
 
 CoreVLC.prototype.getPlayingVideo = function ()
 {
   this._verifyObject();
+  
   var hasVout = false;
 
   try {
@@ -628,23 +706,29 @@ CoreVLC.prototype.setVolume = function(volume)
 CoreVLC.prototype.getLength = function() 
 {
   this._verifyObject();
-
+  
   if (this._object.playlist.itemCount <= 0 
 	  || this._object.input.state == CoreVLC.INPUT_STATES.IDLE)
     return null;
 
   if(this._fileTime)
     return this._fileTime;
-    
+  
   return this._object.input.length;
 };
 
 CoreVLC.prototype.getPosition = function() 
 {
   this._verifyObject();
+  
+  //This is here because our CoreWrapper interface doesn't have "Run" or "Step"
+  //which would be useful to run a state machine that processes feedback from 
+  //the playback core.
+  this._processLogMessagesForPlayURL();
 
-  if (this._object.playlist.itemCount <= 0)
-    return 0; 
+  if (this._object.playlist.itemCount <= 0) {
+    return 0;
+  }
 		
 	var currentPos, currentPosTime;
 	
@@ -693,6 +777,14 @@ CoreVLC.prototype.getPosition = function()
     currentPos = currentPosTime;
   }
   
+  if (this._fakePosition && 
+      currentPos == 0) {
+    return 1;
+  }
+  else {
+    this._fakePosition = 0;
+  }
+
   return currentPos;
 };
 
@@ -716,6 +808,8 @@ CoreVLC.prototype.goFullscreen = function()
 
 CoreVLC.prototype.getMetadata = function(key)
 {
+  this._verifyObject();
+  
   var retval = "";
 
   var metaInfoCat = "Meta-information";
@@ -864,7 +958,7 @@ CoreVLC.prototype.deactivate = function ()
   if (!this._active)
     return;
   
-  this.stop();
+//  this.stop();
   
   var videoElement =
     this._object.QueryInterface(Components.interfaces.nsIDOMElement);
