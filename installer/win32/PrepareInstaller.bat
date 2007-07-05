@@ -58,6 +58,10 @@ cd %DIST_DIR%
 %DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, 32512, 1033
 %DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, %ICON_FILE%, icongroup, IDI_APPICON, 1033
 %DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
+%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -extract songbird.exe, songbird.rc, VersionInfo, 1, 1033
+sed 's/\(VALUE "FileDescription", "\)[^"]*\("\)/\1Songbird\2/ ; w songbird.out.rc' songbird.rc
+rc /v songbird.out.rc
+%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, songbird.out.res, VersionInfo,1,1033
 cd %DIST_DEPTH%\installer\win32
 
 if "%4"=="prepare" goto end
