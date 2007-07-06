@@ -1940,6 +1940,21 @@ nsresult sbDownloadSession::Initiate()
                                         nsnull,
                                         pURI);
         }
+        
+        /* Set the origin URL. */
+        nsCAutoString url;
+        result = pURI->GetSpec(url);
+        
+        if(NS_SUCCEEDED(result)) {
+          
+          result = mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL), 
+            NS_ConvertUTF8toUTF16(url));
+
+          NS_ASSERTION(NS_SUCCEEDED(result), \
+            "Failed to set originURL, this item may be duplicated later \
+             because it's origin cannot be tracked!");
+        }
+        
 
         /* Get the file name from the URL. */
         if (NS_SUCCEEDED(result))
