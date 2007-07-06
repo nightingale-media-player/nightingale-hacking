@@ -2267,9 +2267,9 @@
       session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_LIST) ||
       session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS) ||
       session.isDataFlavorSupported("application/x-moz-file") ||
-      session.isDataFlavorSupported("text/x-moz-url")) {
       session.isDataFlavorSupported("text/unicode") ||
       session.isDataFlavorSupported("text/plain") ||
+      session.isDataFlavorSupported("text/x-moz-url")) {
     return true;
   }
   else {
