@@ -29,6 +29,8 @@ var WEB_PLAYLIST_TABLE        = "webplaylist";
 var WEB_PLAYLIST_TABLE_NAME   = "&device.webplaylist";
 var WEB_PLAYLIST_LIBRARY_NAME = "&device.weblibrary";
 
+Components.utils.import("resource://app/components/ArrayConverter.jsm");
+
 var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cr = Components.results;
@@ -427,9 +429,33 @@ var SBWebPlaylistCommands =
         case "library_cmd_download":
         {
           try
-          {        
-            onBrowserTransfer(new SelectionUnwrapper
-                                (this.m_Context.m_Playlist.treeView.selectedMediaItems));
+          {
+            if(this.m_Context.m_Playlist.treeView.selectionCount) {
+              onBrowserTransfer(new SelectionUnwrapper
+                               (this.m_Context.m_Playlist.treeView.selectedMediaItems));
+            }
+            else {
+              var allItems = {
+                items: [],
+                onEnumerationBegin: function(aMediaList) {
+                  return true;
+                },
+                onEnumeratedItem: function(aMediaList, aMediaItem) {
+                  this.items.push(aMediaItem);
+                  return true;
+                },
+                onEnumerationEnd: function(aMediaList, aResultCode) {
+                  return;
+                }
+              };
+
+              this.m_Context.m_Playlist.mediaList.enumerateAllItems(allItems, 
+                Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+              
+              var itemEnum = ArrayConverter.enumerator(allItems.items);
+              onBrowserTransfer(itemEnum);
+            }
+            
             // And show the download table in the chrome playlist.
             gBrowser.mCurrentTab.switchToDownloadView();
           }
@@ -630,6 +656,9 @@ function onBrowserTransfer(mediaItems)
                     Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                               .getService(Components.interfaces.sbILibraryManager);
                   var downloadList = libraryManager.mainLibrary.getMediaItem(downloadListGUID);
+                  
+                  //XXXAus: This can be changed to use SB_AddItems(mediaItems, mainLibrary, true)
+                  //when bug #3271 is fixed.
                   downloadList.addSome(mediaItems);
                 }
             }
@@ -638,7 +667,7 @@ function onBrowserTransfer(mediaItems)
     
     catch ( err )
     {
-        alert( err );
+        alert( "onBrowserTransfer: " + err );
     }
 }
 

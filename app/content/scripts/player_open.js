@@ -710,7 +710,8 @@ function SBImportURLIntoMainLibrary(url) {
   
   // skip import of the item if it already exists
   var mediaItem = getFirstItemByProperty(library, "http://songbirdnest.com/data/1.0#contentURL", url);
-  if (mediaItem) return;
+  if (mediaItem) 
+    return null;
   
   try {
     mediaItem = library.createMediaItem(uri);

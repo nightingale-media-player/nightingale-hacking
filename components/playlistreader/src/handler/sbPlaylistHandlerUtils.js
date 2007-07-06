@@ -146,10 +146,6 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
   aMediaList.beginUpdateBatch();
   try {
     aItems.forEach(function(e) {
-
-      // XXXsteve This should be removed once the downloader sets this
-      // property
-      e.item.setProperty(SBProperties.originURL, e.item.contentSrc.spec);
       for (var prop in e.properties) {
         try {
           e.item.setProperty(prop, e.properties[prop]);
