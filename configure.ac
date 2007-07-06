@@ -209,6 +209,41 @@ fi
 AC_SUBST(SB_DEPENDENCIES_DIR)
 
 #
+# Check for media cores to enable
+#
+AC_ARG_WITH(media-core,
+            [  --with-media-core=vlc,windowsmedia,gstreamer,qt,default,none  Media cores to enable],
+            [ SB_MEDIA_CORES=$withval ],
+            [ SB_MEDIA_CORES=default ])
+for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
+    if test "$option" = "default"; then
+        MEDIA_CORE_VLC=1
+        MEDIA_CORE_WMP=1
+        MEDIA_CORE_GST=1
+        MEDIA_CORE_QT=1
+    elif test "$option" = "none"; then
+        MEDIA_CORE_VLC=
+        MEDIA_CORE_WMP=
+        MEDIA_CORE_GST=
+        MEDIA_CORE_QT=
+    elif test "$option" = "vlc"; then
+        MEDIA_CORE_VLC=1
+    elif test "$option" = "windowsmedia"; then
+        MEDIA_CORE_WMP=1
+    elif test "$option" = "gstreamer"; then
+        MEDIA_CORE_GST=1
+    elif test "$option" = "qt"; then
+        MEDIA_CORE_QT=1
+    else
+        AC_MSG_ERROR([Unknown --with-core-wrappers option $option])
+    fi
+done
+AC_SUBST(MEDIA_CORE_VLC)
+AC_SUBST(MEDIA_CORE_WMP)
+AC_SUBST(MEDIA_CORE_GST)
+AC_SUBST(MEDIA_CORE_QT)
+
+#
 # Check for extras.
 #
 
@@ -612,4 +647,5 @@ rm -f ./conftest.sh
 #
 
 AC_OUTPUT($MAKEFILES)
+
 

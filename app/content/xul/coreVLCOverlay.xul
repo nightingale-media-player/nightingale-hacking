@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<overlay id="coreVLCOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         xmlns:html="http://www.w3.org/1999/xhtml">
+
+  <hbox id="video-boxes">
+    <hbox id="box_vlc" flex="1">
+      <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0"
+                   type="application/x-songbird-vlc-plugin"
+                   version ="VideoLAN.VLCPlugin.2">
+        <!-- XXX Mook: VLC seems... buggy in that if the <object> is initally
+                       hidden, it's not scriptable.  Which breaks all sorts
+                       of things. This might be a mozbug instead, not sure. -->
+      </html:object>
+    </hbox>
+  </hbox>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/coreVLC.js"/>
+
+</overlay>

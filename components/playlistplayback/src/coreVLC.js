@@ -1010,16 +1010,17 @@ catch (err) {
   * This is the function called from a document onload handler to bind everything as playback.
   * The <html:object>s won't have their scriptable APIs attached until the onload.
   */
-function CoreVLCDocumentInit( id )
+function CoreVLCDocumentInit()
 {
   try
   {
     var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                          .getService(Components.interfaces.sbIPlaylistPlayback);
-    var theVLCInstance = document.getElementById( id );
+    var theVLCInstance = document.getElementById( "core_vlc" );
 
     gCoreVLC.setId("VLC1");
     gCoreVLC.setObject(theVLCInstance);
+    theVLCInstance.setAttribute("hidden", "true");
     
     // apply prefs to playback core
     gCoreVLC._applyPreferences();
@@ -1030,5 +1031,6 @@ function CoreVLCDocumentInit( id )
   {
     dump( "\n!!! coreVLC failed to bind properly\n" + err );
   }
-}; 
- 
+}
+
+window.addEventListener("load", CoreVLCDocumentInit, false);

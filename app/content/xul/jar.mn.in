@@ -10,3 +10,9 @@ songbird.jar:
 % overlay chrome://mozapps/content/extensions/extensions.xul?type=themes     chrome://songbird/content/xul/extensionManagerOverlay.xul
 % overlay chrome://mozapps/content/update/updates.xul                        chrome://songbird/content/xul/updateOverlay.xul
 @include_all_to content/songbird/xul/
+#ifdef MEDIA_CORE_VLC
+% overlay chrome://songbird/content/xul/songbird.xul                         chrome://songbird/content/xul/coreVLCOverlay.xul
+#endif
+#ifdef MEDIA_CORE_GST
+% overlay chrome://songbird/content/xul/songbird.xul                         chrome://songbird/content/xul/coreGStreamerOverlay.xul
+#endif

@@ -39,15 +39,16 @@ GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 
 ifeq (windows,$(SB_PLATFORM))
-VLC_PLUGIN = npvlc
 
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
-SONGBIRD_PLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/*$(DLL_SUFFIX) \
-                   $(NULL)
+ifdef MEDIA_CORE_VLC
+VLC_PLUGIN = npvlc
+SONGBIRD_PLUGINS += $(DEPS_DIR)/plugins/vlc/plugins/*$(DLL_SUFFIX) 
 
 SONGBIRD_VLCPLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/plugins/*$(DLL_SUFFIX) \
                       $(NULL)
+endif
 
 SONGBIRD_DIST = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
                 $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
@@ -60,6 +61,7 @@ ifeq (linux,$(SB_PLATFORM))
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
 # non-existent variable, VLC no-worky on linux yet...
+ifdef (MEDIA_CORE_VLC)
 ifdef (SB_LINUX_VLC)
 VLC_PLUGIN = libvlcplugin
 
@@ -73,10 +75,15 @@ SONGBIRD_XULRUNNER = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3.
                      $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3.so \
                      $(NULL)
 endif
+endif # MEDIA_CORE_VLC
 
 ifeq (macosx,$(SB_PLATFORM))
 
-all:: runtimelibs vlcplugin
+all:: runtimelibs
+
+ifdef MEDIA_CORE_VLC
+all:: vlcplugin
+endif
 
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
 

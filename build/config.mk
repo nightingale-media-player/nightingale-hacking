@@ -110,6 +110,13 @@ ifdef SB_ENABLE_TESTS
 PPDEFINES += -DSB_ENABLE_TESTS=1
 endif
 
+# core wrappers to enable
+PPDEFINES += $(if $(MEDIA_CORE_VLC), -DMEDIA_CORE_VLC=1) \
+             $(if $(MEDIA_CORE_WMP), -DMEDIA_CORE_WMP=1) \
+             $(if $(MEDIA_CORE_GST), -DMEDIA_CORE_GST=1) \
+             $(if $(MEDIA_CORE_QT),  -DMEDIA_CORE_QT=1 ) \
+             $(NULL)
+
 #------------------------------------------------------------------------------
 endif #CONFIG_MK_INCLUDED
 #------------------------------------------------------------------------------

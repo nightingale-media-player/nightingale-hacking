@@ -99,6 +99,11 @@ CONFIGURE_ARGS += --enable-tests
 endif
 endif #ifndef DEBUG
 
+# choose core wrappers to enable
+ifdef SB_NO_MEDIA_CORE
+CONFIGURE_ARGS += --with-media-core=none
+endif #SB_NO_MEDIA_CORE
+
 #
 # Set some needed commands
 #

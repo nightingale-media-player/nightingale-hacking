@@ -113,10 +113,6 @@ function SBVideoInitialize()
     if (platform == "Windows_NT") {
       // Windows, prefer VLC.
 
-      // Initialize with VLC
-      CoreVLCDocumentInit( "core_vlc" );
-      //InitPlaybackCoreFlash( "core_flash_frame" );
-        
       // Hide GStreamer
       if (theGSTBox)
         theGSTBox.hidden = true;
@@ -133,9 +129,6 @@ function SBVideoInitialize()
       quitMenuItem.removeAttribute("hidden");
 
       // MacOSX, prefer VLC.
-
-      // Initialize with VLC
-      CoreVLCDocumentInit( "core_vlc" );
 
       // Hide GStreamer
       if (theGSTBox)
@@ -156,10 +149,6 @@ function SBVideoInitialize()
       //InitPlaybackCoreFlash( "core_flash_frame" );
       //CoreTotemDocumentInit( "core_totem_frame" );
       CoreGStreamerSimpleDocumentInit( "box_gstreamer_simple" );
-      
-      // Hide VLC
-      if (theVLCBox)
-        theVLCBox.hidden = true;
         
       /*
       // Hide Flash
@@ -177,7 +166,7 @@ function SBVideoInitialize()
     }
 
     // Make sure we actually have a media core
-    SBMediaCoreCheck();
+    setTimeout(SBMediaCoreCheck, 0);
   }
   catch( err )
   {

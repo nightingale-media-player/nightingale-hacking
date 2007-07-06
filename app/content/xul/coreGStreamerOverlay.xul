@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<overlay id="coreGStreamerOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <hbox id="video-boxes">
+    <hbox id="box_gstreamer_simple" flex="1"/>
+  </hbox>
+  <script type="application/x-javascript"
+   src="chrome://songbird/content/scripts/coreGStreamerSimple.js"/>
+
+</overlay>

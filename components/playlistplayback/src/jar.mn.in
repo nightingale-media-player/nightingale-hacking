@@ -8,9 +8,17 @@ songbird.jar:
 #if 0
   content/songbird/scripts/coreQuickTime.js       (coreQuickTime.js)
 #endif
+#ifdef MEDIA_CORE_QT
   content/songbird/scripts/coreQT.js              (coreQT.js)
+#endif
+#ifdef MEDIA_CORE_VLC
   content/songbird/scripts/coreVLC.js             (coreVLC.js)
+#endif
+#ifdef MEDIA_CORE_WMP
   content/songbird/scripts/coreWMP.js             (coreWMP.js)
+#endif
   content/songbird/scripts/coreBase.js            (coreBase.js)
   content/songbird/scripts/coreFlash.js           (coreFlash.js)
+#ifdef MEDIA_CORE_GST
   content/songbird/scripts/coreGStreamerSimple.js (coreGStreamerSimple.js)
+#endif
