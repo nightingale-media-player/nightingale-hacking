@@ -78,6 +78,8 @@ private:
 
   nsresult InvalidateFilter(sbFilterSpec& aFilter);
 
+  nsresult UpdateListener(PRBool aRemoveListener = PR_TRUE);
+
   // This callback is meant to be used with mListeners.
   // aUserData should be a sbICascadeFilterSetListener pointer.
   static PLDHashOperator PR_CALLBACK

@@ -125,6 +125,8 @@ private:
   nsresult ShouldCauseInvalidation(sbIPropertyArray* aProperties,
                                    PRBool* aShouldCauseInvalidation);
 
+  nsresult UpdateListener(PRBool aRemoveListener = PR_TRUE);
+
   nsRefPtr<sbLocalDatabaseLibrary> mLibrary;
 
   // Property Manager
@@ -163,9 +165,6 @@ private:
 
   // Query to return list of values for a given property
   nsString mDistinctPropertyValuesQuery;
-
-  // Holds the list of propery updates while in a batch
-  sbPropertyArrayList mUpdatedPropertiesInBatch;
 
   // Whether we're in batch mode.
   PRPackedBool mInBatch;

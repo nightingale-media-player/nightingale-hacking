@@ -214,16 +214,35 @@ interface sbIMediaList : sbIMediaItem
    */
   void clear();
 
-  /**
+  const unsigned long LISTENER_FLAGS_ITEMADDED         = 1 << 0;
+  const unsigned long LISTENER_FLAGS_BEFOREITEMREMOVED = 1 << 1;
+  const unsigned long LISTENER_FLAGS_AFTERITEMREMOVED  = 1 << 2;
+  const unsigned long LISTENER_FLAGS_ITEMUPDATED       = 1 << 3;
+  const unsigned long LISTENER_FLAGS_LISTCLEARED       = 1 << 4;
+  const unsigned long LISTENER_FLAGS_BATCHBEGIN        = 1 << 5;
+  const unsigned long LISTENER_FLAGS_BATCHEND          = 1 << 6;
+  const unsigned long LISTENER_FLAGS_ALL               = 0xffffffff;
+
+ /**
    * \brief Add a listener to this media list
    * \param aListener The listener to add
    * \param aOwnsWeak If set to false, the media list will hold a strong
    *        reference to |aListener|.  If set to true and |aListener| supports
    *        the nsIWeakReference interface, a weak reference will be held.
    *        Otherwise an error will be returned.
+   * \param aFlags A bit mask made up the LISTENER_FLAGS_ constants above.
+   *        Use this to filter out unwanted notifications.  If not set, this
+   *        will default to LISTENER_FLAGS_ALL
+   * \param aPropertyFilter If this argument is specified, the onItemUpdated
+   *        notification will only be sent for updates to any of the properties
+   *        specified in the array.  Note that the values of the properties
+   *        in the array are ignored.  If not set or null, no filtering will
+   *        be applied.
    */
   void addListener(in sbIMediaListListener aListener,
-                   in boolean aOwnsWeak);
+                   [optional] in boolean aOwnsWeak,
+                   [optional] in unsigned long aFlags,
+                   [optional] in sbIPropertyArray aPropertyFilter);
 
   /**
    * \brief Remove a listener from this media list

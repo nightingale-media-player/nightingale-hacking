@@ -333,7 +333,12 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
         if (NS_SUCCEEDED(result))
         {
-            result = mpDownloadMediaList->AddListener(listener, PR_FALSE);
+            result = mpDownloadMediaList->AddListener(listener,
+                                                      PR_FALSE,
+                                                      sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                                                        sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                                                        sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
+                                                      nsnull);
         }
 
         if (NS_SUCCEEDED(result))

@@ -262,6 +262,10 @@ var addToPlaylistHelper = {
   },
 
   onItemAdded: function onItemAdded(list, item) {
+    // If we are in a batch, ignore future notifications
+    if (this._inbatch) {
+      return true;
+    }
     this.onUpdateEvent(item);
   },
   
@@ -269,14 +273,26 @@ var addToPlaylistHelper = {
   },
   
   onAfterItemRemoved: function onAfterItemRemoved(list, item) {
+    // If we are in a batch, ignore future notifications
+    if (this._inbatch) {
+      return true;
+    }
     this.onUpdateEvent(item);
   },
   
   onItemUpdated: function onItemUpdated(list, item, properties) {
+    // If we are in a batch, ignore future notifications
+    if (this._inbatch) {
+      return true;
+    }
     this.onUpdateEvent(item);
   },
 
   onListCleared: function onListCleared(list) {
+    // If we are in a batch, ignore future notifications
+    if (this._inbatch) {
+      return true;
+    }
     this.onUpdateEvent(list);
   },
 

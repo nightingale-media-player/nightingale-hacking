@@ -32,6 +32,8 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
+Components.utils.import("resource://app/components/sbProperties.jsm");
+
 const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
 const ROOTNODE = "SB:Bookmarks";
 
@@ -85,6 +87,9 @@ function sbLibraryServicePane() {
   
   // use the default stringbundle to translate tree nodes
   this.stringbundle = null;
+
+  this._inBatch = false;
+  this._refreshPending = false;
 }
 sbLibraryServicePane.prototype.QueryInterface = 
 function sbLibraryServicePane_QueryInterface(iid) {
@@ -745,6 +750,14 @@ function sbLibraryServicePane__libraryRemoved(aLibrary) {
   aLibrary.removeListener(this);
 }
 
+sbLibraryServicePane.prototype._refreshLibraryNodes =
+function sbLibraryServicePane__refreshLibraryNodes(aLibrary) {
+  var id = this._libraryURN(aLibrary);
+  var node = this._servicePane.getNode(id);
+  this._hideLibraryNodes(node);
+  this._ensureLibraryNodeExists(aLibrary);
+  this._processListsInLibrary(aLibrary);
+}
 
 /** 
  * The given media list has been added. Show it in the service pane.
@@ -948,7 +961,12 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   node.hidden = false;
   
   // Listen to changes in the library so that we can display new playlists
-  aLibrary.addListener(this, false);
+  var filter = SBProperties.createArray([[SBProperties.mediaListName, null]]);
+  aLibrary.addListener(this,
+                       false,
+                       Ci.sbIMediaList.LISTENER_FLAGS_ALL &
+                         ~Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED,
+                       filter);
   
   return node;
 }
@@ -1200,17 +1218,35 @@ function sbLibraryServicePane_onLibraryUnregistered(aLibrary) {
 sbLibraryServicePane.prototype.onItemAdded =
 function sbLibraryServicePane_onItemAdded(aMediaList, aMediaItem) {
   //logcall(arguments);
-  var isList = aMediaItem instanceof Ci.sbIMediaList;
-  if (isList) {
-    this._playlistAdded(aMediaItem);
+  if (this._inBatch) {
+    // We are going to refresh all the nodes once we exit the batch so
+    // we don't need any more of these notifications
+    this._refreshPending = true;
+    return true;
+  }
+  else {
+    var isList = aMediaItem instanceof Ci.sbIMediaList;
+    if (isList) {
+      this._playlistAdded(aMediaItem);
+    }
+    return false;
   }
 }
 sbLibraryServicePane.prototype.onBeforeItemRemoved =
 function sbLibraryServicePane_onBeforeItemRemoved(aMediaList, aMediaItem) {
   //logcall(arguments);
-  var isList = aMediaItem instanceof Ci.sbIMediaList;
-  if (isList) {
-    this._playlistRemoved(aMediaItem);
+  if (this._inBatch) {
+    // We are going to refresh all the nodes once we exit the batch so
+    // we don't need any more of these notifications
+    this._refreshPending = true;
+    return true;
+  }
+  else {
+    var isList = aMediaItem instanceof Ci.sbIMediaList;
+    if (isList) {
+      this._playlistRemoved(aMediaItem);
+    }
+    return false;
   }
 }
 sbLibraryServicePane.prototype.onAfterItemRemoved =
@@ -1220,27 +1256,51 @@ sbLibraryServicePane.prototype.onItemUpdated =
 function sbLibraryServicePane_onItemUpdated(aMediaList,
                                             aMediaItem,
                                             aProperties) {
-  var isList = aMediaItem instanceof Ci.sbIMediaList;
-  if (isList) {
-    this._mediaListUpdated(aMediaItem);
+  if (this._inBatch) {
+    // We are going to refresh all the nodes once we exit the batch so
+    // we don't need any more of these notifications
+    this._refreshPending = true;
+    return true;
+  }
+  else {
+    var isList = aMediaItem instanceof Ci.sbIMediaList;
+    if (isList) {
+      this._mediaListUpdated(aMediaItem);
+    }
+    return false;
   }
 }
 sbLibraryServicePane.prototype.onListCleared =
 function sbLibraryServicePane_onListCleared(aMediaList) {
-  if (aMediaList instanceof Ci.sbILibrary) {
-    var libraryGUID = aMediaList.guid;
-    
-    var node = this._servicePane.root;
-    this._removeListNodesForLibrary(node, libraryGUID);
+  if (this._inBatch) {
+    // We are going to refresh all the nodes once we exit the batch so
+    // we don't need any more of these notifications
+    this._refreshPending = true;
+    return true;
+  }
+  else {
+    if (aMediaList instanceof Ci.sbILibrary) {
+      var libraryGUID = aMediaList.guid;
+      
+      var node = this._servicePane.root;
+      this._removeListNodesForLibrary(node, libraryGUID);
+    }
+    return false;
   }
 }
 sbLibraryServicePane.prototype.onBatchBegin =
 function sbLibraryServicePane_onBatchBegin(aMediaList) {
   //logcall(arguments);
+  this._inBatch = true;
 }
 sbLibraryServicePane.prototype.onBatchEnd =
 function sbLibraryServicePane_onBatchEnd(aMediaList) {
   //logcall(arguments);
+  this._inBatch = false;
+  if (this._refreshPending) {
+    this._refreshLibraryNodes(aMediaList);
+  }
+
 }
 
 /////////////////

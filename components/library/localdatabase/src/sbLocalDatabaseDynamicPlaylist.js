@@ -28,8 +28,8 @@
 //        makeQI function:
 //  Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/components/XPCOMUtils.jsm");
-
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
+Components.utils.import("resource://app/components/sbProperties.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -62,6 +62,8 @@ function sbLocalDatabaseDynamicPlaylistService()
   this._started = false;
   this._scheduledLists = {};
   this._ignoreLibraryNotifications = {};
+  this._libraryInBatch = {};
+  this._libraryRefreshPending = {};
 
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
@@ -414,9 +416,13 @@ function sbLocalDatabaseDynamicPlaylistService_onLibraryRegistered(aLibrary)
     return;
 
   // If a library is registered, attach a listener so we can be notified of
-  // media item change notifications.  Also pull in the current list of
-  // dynamic media lists from this library.
-  aLibrary.addListener(this, false);
+  // media item change notifications.
+  var filter = SBProperties.createArray([[SB_PROP_ISSUBSCRIPTION, null]]);
+  aLibrary.addListener(this,
+                       false,
+                       Ci.sbIMediaList.LISTENER_FLAGS_ALL &
+                         ~Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED,
+                       filter);
 
   // Schedule all of the dynamic media lists in this library
   this._scheduleLibrary(aLibrary);
@@ -446,6 +452,13 @@ function sbLocalDatabaseDynamicPlaylistService_onItemAdded(aMediaList,
   if (this._ignore(aMediaList.library))
     return;
 
+  // If we are in a batch, we are going to refresh the list of dynamic
+  // playlists when the batch ends, so we don't need any more notifications
+  if (this._libraryInBatch[aMediaList.library.guid]) {
+    this._libraryRefreshPending[aMediaList.library.guid] = true;
+    return true;
+  }
+
   // Is this new item a dynamic media list?
   if (this._isDynamicPlaylist(aMediaItem)) {
 
@@ -466,6 +479,13 @@ function sbLocalDatabaseDynamicPlaylistService_onBeforeItemRemoved(aMediaList,
   if (this._ignore(aMediaList.library))
     return;
 
+  // If we are in a batch, we are going to refresh the list of dynamic
+  // playlists when the batch ends, so we don't need any more notifications
+  if (this._libraryInBatch[aMediaList.library.guid]) {
+    this._libraryRefreshPending[aMediaList.library.guid] = true;
+    return true;
+  }
+
   delete this._scheduledLists[aMediaItem.guid];
 }
 
@@ -484,10 +504,15 @@ function sbLocalDatabaseDynamicPlaylistService_onItemUpdated(aMediaList,
   if (this._ignore(aMediaList.library))
     return;
 
-  if (this._isDynamicPlaylist(aMediaItem)) {
-    // Make sure this list is scheduled
-    this._scheduledLists[aMediaItem.guid] = aMediaItem;
+  // If we are in a batch, we are going to refresh the list of dynamic
+  // playlists when the batch ends, so we don't need any more notifications
+  if (this._libraryInBatch[aMediaList.library.guid]) {
+    this._libraryRefreshPending[aMediaList.library.guid] = true;
+    return true;
   }
+
+  // Make sure this list is scheduled
+  this._scheduledLists[aMediaItem.guid] = aMediaItem;
 }
 
 sbLocalDatabaseDynamicPlaylistService.prototype.onListCleared =
@@ -496,6 +521,13 @@ function sbLocalDatabaseDynamicPlaylistService_onListCleared(aMediaList)
   if (this._ignore(aMediaList.library))
     return;
 
+  // If we are in a batch, we are going to refresh the list of dynamic
+  // playlists when the batch ends, so we don't need any more notifications
+  if (this._libraryInBatch[aMediaList.library.guid]) {
+    this._libraryRefreshPending[aMediaList.library.guid] = true;
+    return true;
+  }
+
   // Clear all schedueld items from this library
   this._removeListsFromLibrary(aMediaList.library);
 }
@@ -503,14 +535,24 @@ function sbLocalDatabaseDynamicPlaylistService_onListCleared(aMediaList)
 sbLocalDatabaseDynamicPlaylistService.prototype.onBatchBegin =
 function sbLocalDatabaseDynamicPlaylistService_onBatchBegin(aMediaList)
 {
-  // TODO: Per library batch management
+  this._libraryInBatch[aMediaList.library.guid] = true;
 }
 
 sbLocalDatabaseDynamicPlaylistService.prototype.onBatchEnd =
 function sbLocalDatabaseDynamicPlaylistService_onBatchEnd(aMediaList)
 {
-  // TODO: Per library batch management.  Should remove and re-add all the
-  // media lists from a library that has gone out of batch
+  var library = aMediaList.library;
+  this._libraryInBatch[library.guid] = false;
+
+  // If there is a refresh pending for this library, do it
+  if (this._libraryRefreshPending[library.guid]) {
+
+    d("Refreshing dynamic playlists in library " + library);
+    this._removeListsFromLibrary(library);
+    this._scheduleLibrary(library);
+
+    this._libraryRefreshPending[library.guid] = false;
+  }
 }
 
 // nsITimerCallback

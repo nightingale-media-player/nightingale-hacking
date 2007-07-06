@@ -51,25 +51,34 @@ interface sbIMediaListListener : nsISupports
    * \brief Called when a media item is added to the list.
    * \param aMediaList The list that has changed.
    * \param aMediaItem The new media item.
+   * \return True if you do not want any further onItemAdded notifications for
+   *         the current batch.  If there is no current batch, the return value
+   *         is ignored.
    */
-  void onItemAdded(in sbIMediaList aMediaList,
-                   in sbIMediaItem aMediaItem);
+  boolean onItemAdded(in sbIMediaList aMediaList,
+                      in sbIMediaItem aMediaItem);
 
   /**
    * \brief Called before a media item is removed from the list.
    * \param aMediaList The list that has changed.
    * \param aMediaItem The media item to be removed
+   * \return True if you do not want any further onBeforeItemRemoved
+   *         notifications for the current batch.  If there is no current batch,
+   *         the return value is ignored.
    */
-  void onBeforeItemRemoved(in sbIMediaList aMediaList,
-                           in sbIMediaItem aMediaItem);
+  boolean onBeforeItemRemoved(in sbIMediaList aMediaList,
+                              in sbIMediaItem aMediaItem);
 
   /**
    * \brief Called after a media item is removed from the list.
    * \param aMediaList The list that has changed.
    * \param aMediaItem The removed media item.
+   * \return True if you do not want any further onAfterItemRemoved for the
+   *         current batch.  If there is no current batch, the return value is
+   *         ignored.
    */
-  void onAfterItemRemoved(in sbIMediaList aMediaList,
-                          in sbIMediaItem aMediaItem);
+  boolean onAfterItemRemoved(in sbIMediaList aMediaList,
+                             in sbIMediaItem aMediaItem);
 
   /**
    * \brief Called when a media item is changed.
@@ -77,15 +86,21 @@ interface sbIMediaListListener : nsISupports
    * \param aMediaItem The item that has changed.
    * \param aProperties Array of properties that were updated.  Each property's
    *        value is the previous value of the property
+   * \return True if you do not want any further onItemUpdated notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
    */
-  void onItemUpdated(in sbIMediaList aMediaList,
-                     in sbIMediaItem aMediaItem,
-                     in sbIPropertyArray aProperties);
+  boolean onItemUpdated(in sbIMediaList aMediaList,
+                        in sbIMediaItem aMediaItem,
+                        in sbIPropertyArray aProperties);
 
   /**
    * \brief Called when a media list is cleared.
+   * \return True if you do not want any further onListCleared notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
    */
-  void onListCleared(in sbIMediaList aMediaList);
+  boolean onListCleared(in sbIMediaList aMediaList);
 
   /**
    * \brief Called when the library is about to perform multiple operations at

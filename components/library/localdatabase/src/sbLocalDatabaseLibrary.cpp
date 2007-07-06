@@ -2307,46 +2307,44 @@ sbLocalDatabaseLibrary::BatchGetMediaItems(nsIArray *aGUIDArray, nsIArray **_ret
   // Generate the return array from the addedGuids
   nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  {
-    sbAutoBatchHelper batchHelper(this);
 
-    // How many GUID?
-    PRUint32 length;
-    rv = aGUIDArray->GetLength(&length);
+  // How many GUID?
+  PRUint32 length;
+  rv = aGUIDArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Copy them over, please.
+  for (PRUint32 i = 0; i < length; i++) {
+    // Break out the lame guid string
+    nsCOMPtr<nsISupportsString> guidStr = do_QueryElementAt(aGUIDArray, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Copy them over, please.
-    for (PRUint32 i = 0; i < length; i++) {
-      // Break out the lame guid string
-      nsCOMPtr<nsISupportsString> guidStr = do_QueryElementAt(aGUIDArray, i, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
+    // To the autostring
+    nsAutoString guid;
+    rv = guidStr->GetData( guid );
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      // To the autostring
-      nsAutoString guid;
-      rv = guidStr->GetData( guid );
-      NS_ENSURE_SUCCESS(rv, rv);
+    // We know the GUID and the type of these new media items so preload
+    // the cache with this information, so getting the media item is faster.
+    nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
+    NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
+    newItemInfo->hasListType = PR_TRUE;
+    NS_ASSERTION(!mMediaItemTable.Get(guid, nsnull),
+                  "Guid already exists!");
+    PRBool success = mMediaItemTable.Put(guid, newItemInfo);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+    newItemInfo.forget();
 
-      // We know the GUID and the type of these new media items so preload
-      // the cache with this information, so getting the media item is faster.
-      nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
-      NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
-      newItemInfo->hasListType = PR_TRUE;
-      NS_ASSERTION(!mMediaItemTable.Get(guid, nsnull),
-                    "Guid already exists!");
-      PRBool success = mMediaItemTable.Put(guid, newItemInfo);
-      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-      newItemInfo.forget();
+    // Then make a media item
+    nsCOMPtr<sbIMediaItem> mediaItem;
+    rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      // Then make a media item
-      nsCOMPtr<sbIMediaItem> mediaItem;
-      rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Add that to the return array
-      rv = array->AppendElement(mediaItem, PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+    // Add that to the return array
+    rv = array->AppendElement(mediaItem, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
+
   NS_ADDREF(*_retval = array);
   return NS_OK;
 }

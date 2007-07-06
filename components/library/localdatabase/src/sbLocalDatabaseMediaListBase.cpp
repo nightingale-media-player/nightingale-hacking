@@ -924,9 +924,15 @@ sbLocalDatabaseMediaListBase::Clear()
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::AddListener(sbIMediaListListener* aListener,
-                                          PRBool aOwnsWeak)
+                                          PRBool aOwnsWeak,
+                                          PRUint32 aFlags,
+                                          sbIPropertyArray* aPropertyFilter)
 {
-  return sbLocalDatabaseMediaListListener::AddListener(aListener, aOwnsWeak);
+  return sbLocalDatabaseMediaListListener::AddListener(this,
+                                                       aListener,
+                                                       aOwnsWeak,
+                                                       aFlags,
+                                                       aPropertyFilter);
 }
 
 NS_IMETHODIMP

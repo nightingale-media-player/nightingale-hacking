@@ -30,16 +30,19 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
+#include <nsTHashtable.h>
+#include <nsHashKeys.h>
 #include <nsTArray.h>
 #include <prlock.h>
+#include <sbIMediaList.h>
 #include <sbIMediaListListener.h>
 #include <sbIPropertyArray.h>
 
-class nsIEventTarget;
-class nsISupportsHashKey;
+class nsIWeakReference;
 class nsIWeakReference;
 class sbIMediaItem;
 class sbIMediaList;
+class sbLocalDatabaseMediaListBase;
 
 class sbListenerInfo
 {
@@ -49,13 +52,33 @@ public:
   sbListenerInfo();
   ~sbListenerInfo();
 
-  nsresult Init(sbIMediaListListener* aListener);
-  nsresult Init(nsIWeakReference* aWeakListener);
+  nsresult Init(sbIMediaListListener* aListener,
+                PRUint32 aCurrentBatchDepth,
+                PRUint32 aFlags,
+                sbIPropertyArray* aPropertyFilter);
+  nsresult Init(sbIMediaListListener* aListener,
+                nsIWeakReference* aWeakListener,
+                PRUint32 aCurrentBatchDepth,
+                PRUint32 aFlags,
+                sbIPropertyArray* aPropertyFilter);
+
+  PRBool ShouldNotify(PRUint32 aFlag, sbIPropertyArray* aProperties = nsnull);
+  void BeginBatch();
+  void EndBatch();
+  void SetShouldStopNotifying(PRUint32 aFlag);
+
 private:
 
+  nsresult InitPropertyFilter(sbIPropertyArray* aPropertyFilter);
+
   PRBool mIsGone;
-  nsCOMPtr<nsISupports> mRef;
+  nsCOMPtr<sbIMediaListListener> mRef;
+  nsCOMPtr<nsIWeakReference> mWeak;
   nsCOMPtr<sbIMediaListListener> mProxy;
+  PRUint32 mFlags;
+  PRBool mHasPropertyFilter;
+  nsTHashtable<nsStringHashKey> mPropertyFilter;
+  nsTArray<PRUint32> mStopNotifiyingStack;
 };
 
 class sbWeakMediaListListenerWrapper : public sbIMediaListListener
@@ -77,7 +100,18 @@ class sbLocalDatabaseMediaListListener
 {
   friend class sbAutoBatchHelper;
 
-  typedef nsCOMArray<sbIMediaListListener> sbMediaListListenersArray;
+  struct ListenerAndIndex {
+    ListenerAndIndex(sbIMediaListListener* aListener, PRUint32 aIndex) :
+      listener(aListener),
+      index(aIndex)
+    {}
+
+    nsCOMPtr<sbIMediaListListener> listener;
+    PRUint32 index;
+  };
+
+  typedef nsTArray<ListenerAndIndex> sbMediaListListenersArray;
+  typedef nsTArray<PRUint32> sbIndexArray;
   typedef nsAutoPtr<sbListenerInfo> sbListenerInfoAutoPtr;
 
 public:
@@ -89,7 +123,11 @@ protected:
   nsresult Init();
 
   // Add a listener to the array
-  nsresult AddListener(sbIMediaListListener* aListener, PRBool aOwnsWeak);
+  nsresult AddListener(sbLocalDatabaseMediaListBase* aList,
+                       sbIMediaListListener* aListener,
+                       PRBool aOwnsWeak = PR_FALSE,
+                       PRUint32 aFlags = sbIMediaList::LISTENER_FLAGS_ALL,
+                       sbIPropertyArray* aPropertyFilter = nsnull);
 
   // Remove a listener from the array
   nsresult RemoveListener(sbIMediaListListener* aListener);
@@ -124,12 +162,18 @@ protected:
   void NotifyListenersBatchEnd(sbIMediaList* aList);
 
 private:
-  nsresult SnapshotListenerArray(sbMediaListListenersArray& aArray);
-  void SweepListenerArray();
+
+  nsresult SnapshotListenerArray(sbMediaListListenersArray& aArray,
+                                 PRUint32 aFlags,
+                                 sbIPropertyArray* aPropertyFilter = nsnull);
+  void SweepListenerArray(sbIndexArray& aStopNotifying);
 
   nsTArray<sbListenerInfoAutoPtr> mListenerArray;
 
   PRLock* mListenerArrayLock;
+
+  PRUint32 mBatchDepth;
 };
 
 #endif /* __SB_LOCALDATABASE_MEDIALISTLISTENER_H__ */
+

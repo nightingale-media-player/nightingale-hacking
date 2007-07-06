@@ -415,7 +415,10 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
 
   // Use a weak reference here because we already have a strong reference to
   // the inner list
-  rv = libraryList->AddListener(this, PR_TRUE);
+  rv = libraryList->AddListener(this,
+                                PR_TRUE,
+                                sbIMediaList::LISTENER_FLAGS_ALL,
+                                nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
@@ -2210,18 +2213,26 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
 // sbIMediaListListener
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnItemAdded(sbIMediaList* aMediaList,
-                                           sbIMediaItem* aMediaItem)
+                                           sbIMediaItem* aMediaItem,
+                                           PRBool* aNoMoreForBatch)
 {
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
   // Don't care
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnBeforeItemRemoved(sbIMediaList* aMediaList,
-                                                   sbIMediaItem* aMediaItem)
+                                                   sbIMediaItem* aMediaItem,
+                                                   PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Is this notification coming from our library?
   nsCOMPtr<sbILibrary> library;
@@ -2248,36 +2259,57 @@ sbLocalDatabaseSmartMediaList::OnBeforeItemRemoved(sbIMediaList* aMediaList,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnAfterItemRemoved(sbIMediaList* aMediaList,
-                                                  sbIMediaItem* aMediaItem)
+                                                  sbIMediaItem* aMediaItem,
+                                                  PRBool* aNoMoreForBatch)
 {
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
   // Don't care
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnItemUpdated(sbIMediaList* aMediaList,
                                              sbIMediaItem* aMediaItem,
-                                             sbIPropertyArray* aProperties)
+                                             sbIPropertyArray* aProperties,
+                                             PRBool* aNoMoreForBatch)
 {
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
   // Don't care
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::OnListCleared(sbIMediaList* aMediaList)
+sbLocalDatabaseSmartMediaList::OnListCleared(sbIMediaList* aMediaList,
+                                             PRBool* aNoMoreForBatch)
 {
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
   // Don't care
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnBatchBegin(sbIMediaList* aMediaList)
 {
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
   // Don't care
   return NS_OK;
 }
@@ -2285,6 +2317,8 @@ sbLocalDatabaseSmartMediaList::OnBatchBegin(sbIMediaList* aMediaList)
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnBatchEnd(sbIMediaList* aMediaList)
 {
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
   // Don't care
   return NS_OK;
 }

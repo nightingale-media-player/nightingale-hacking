@@ -98,6 +98,12 @@ public:
 
   already_AddRefed<sbLocalDatabaseLibrary> GetNativeLibrary();
 
+  nsresult AddListener(sbIMediaListListener* aListener,
+                       PRBool aOwnsWeak = PR_FALSE,
+                       PRUint32 aFlags = 0) {
+    return AddListener(aListener, aOwnsWeak, aFlags, nsnull);
+  }
+
 protected:
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty) = 0;
 

@@ -127,14 +127,7 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
   PRBool success = mListeners.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  // Listen to our view's media list
-  nsCOMPtr<sbIMediaList> mediaList;
-  rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Use a weak reference here since we have an owning reference to the view
-  // which has an owning reference to the list
-  rv = mediaList->AddListener(this, PR_TRUE);
+  rv = UpdateListener(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -205,6 +198,9 @@ sbLocalDatabaseCascadeFilterSet::AppendFilter(const nsAString& aProperty,
 
   *_retval = mFilters.Length() - 1;
 
+  rv = UpdateListener();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -249,6 +245,9 @@ sbLocalDatabaseCascadeFilterSet::AppendSearch(const PRUnichar** aPropertyArray,
 
   *_retval = mFilters.Length() - 1;
 
+  rv = UpdateListener();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -270,6 +269,9 @@ sbLocalDatabaseCascadeFilterSet::Remove(PRUint16 aIndex)
     // Notify listeners
     mListeners.EnumerateEntries(OnValuesChangedCallback, &i);
   }
+
+  rv = UpdateListener();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -297,6 +299,9 @@ sbLocalDatabaseCascadeFilterSet::ChangeFilter(PRUint16 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = ConfigureArray(aIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateListener();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -629,13 +634,70 @@ sbLocalDatabaseCascadeFilterSet::InvalidateFilter(sbFilterSpec& aFilter)
   return NS_OK;
 }
 
+nsresult
+sbLocalDatabaseCascadeFilterSet::UpdateListener(PRBool aRemoveListener)
+{
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaListListener> listener =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaListListener*, this));
+
+  nsCOMPtr<sbIMediaList> mediaList;
+  rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aRemoveListener) {
+    rv = mediaList->RemoveListener(listener);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbIMutablePropertyArray> filter =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString voidString;
+  voidString.SetIsVoid(PR_TRUE);
+
+  // Filter this listener on the properties of all the filters
+  for (PRUint32 i = 0; i < mFilters.Length(); i++) {
+    sbFilterSpec& fs = mFilters[i];
+    if (!fs.isSearch) {
+      rv = filter->AppendProperty(mFilters[i].property, voidString);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // Use a weak reference here since we have an owning reference to the view
+  // which has an owning reference to the list
+  rv = mediaList->AddListener(listener,
+                              PR_TRUE,
+                              sbIMediaList::LISTENER_FLAGS_ALL &
+                                ~sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED,
+                              filter);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 // sbIMediaListListener
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnItemAdded(sbIMediaList* aMediaList,
-                                             sbIMediaItem* aMediaItem)
+                                             sbIMediaItem* aMediaItem,
+                                             PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
+  // If we are in a batch, set all the filters to invalidate and ignore
+  // any future adds in this batch
+  if (mInBatch) {
+    for (PRUint32 i = 0; i < mFilters.Length(); i++) {
+      mFilters[i].invalidationPending = PR_TRUE;
+    }
+    *aNoMoreForBatch = PR_TRUE;
+    return NS_OK;
+  }
 
   // Only need to invalidate a filter list if the new item has a value for
   // its property
@@ -646,37 +708,48 @@ sbLocalDatabaseCascadeFilterSet::OnItemAdded(sbIMediaList* aMediaList,
     nsAutoString junk;
     rv = aMediaItem->GetProperty(fs.property, junk);
     if (NS_SUCCEEDED(rv) && !junk.IsVoid()) {
-      if (mInBatch) {
-        fs.invalidationPending = PR_TRUE;
-      }
-      else {
-        rv = InvalidateFilter(fs);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
+      rv = InvalidateFilter(fs);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnBeforeItemRemoved(sbIMediaList* aMediaList,
-                                                    sbIMediaItem* aMediaItem)
+                                                     sbIMediaItem* aMediaItem,
+                                                     PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Don't care
 
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnAfterItemRemoved(sbIMediaList* aMediaList,
-                                                    sbIMediaItem* aMediaItem)
+                                                    sbIMediaItem* aMediaItem,
+                                                    PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
+  // If we are in a batch, set all the filters to invalidate the ignore
+  // any future adds in this batch
+  if (mInBatch) {
+    for (PRUint32 i = 0; i < mFilters.Length(); i++) {
+      mFilters[i].invalidationPending = PR_TRUE;
+    }
+    *aNoMoreForBatch = PR_TRUE;
+    return NS_OK;
+  }
 
   // Invalidate a filter only when the removed item has a value in its
   // property
@@ -685,27 +758,25 @@ sbLocalDatabaseCascadeFilterSet::OnAfterItemRemoved(sbIMediaList* aMediaList,
     nsAutoString junk;
     nsresult rv = aMediaItem->GetProperty(fs.property, junk);
     if (NS_SUCCEEDED(rv) && !junk.IsVoid()) {
-      if (mInBatch) {
-        fs.invalidationPending = PR_TRUE;
-      }
-      else {
-        rv = InvalidateFilter(fs);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
+      rv = InvalidateFilter(fs);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnItemUpdated(sbIMediaList* aMediaList,
-                                              sbIMediaItem* aMediaItem,
-                                              sbIPropertyArray* aProperties)
+                                               sbIMediaItem* aMediaItem,
+                                               sbIPropertyArray* aProperties,
+                                               PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   nsresult rv;
 
@@ -726,13 +797,16 @@ sbLocalDatabaseCascadeFilterSet::OnItemUpdated(sbIMediaList* aMediaList,
     }
   }
 
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseCascadeFilterSet::OnListCleared(sbIMediaList* aMediaList)
+sbLocalDatabaseCascadeFilterSet::OnListCleared(sbIMediaList* aMediaList,
+                                               PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Invalidate all filters
   for (PRUint32 i = 0; i < mFilters.Length(); i++) {
@@ -746,6 +820,7 @@ sbLocalDatabaseCascadeFilterSet::OnListCleared(sbIMediaList* aMediaList)
     }
   }
 
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 

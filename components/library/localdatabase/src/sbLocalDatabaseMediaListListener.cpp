@@ -25,6 +25,7 @@
 */
 
 #include "sbLocalDatabaseMediaListListener.h"
+#include "sbLocalDatabaseMediaListBase.h"
 
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -58,9 +59,9 @@ static PRLogModuleInfo* gMediaListListenerLog = nsnull;
 
 #endif /* PR_LOGGING */
 
-
 sbLocalDatabaseMediaListListener::sbLocalDatabaseMediaListListener()
-: mListenerArrayLock(nsnull)
+: mListenerArrayLock(nsnull),
+  mBatchDepth(0)
 {
   MOZ_COUNT_CTOR(sbLocalDatabaseMediaListListener);
 #ifdef PR_LOGGING
@@ -97,8 +98,11 @@ sbLocalDatabaseMediaListListener::Init()
 }
 
 nsresult
-sbLocalDatabaseMediaListListener::AddListener(sbIMediaListListener* aListener,
-                                              PRBool aOwnsWeak)
+sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aList,
+                                              sbIMediaListListener* aListener,
+                                              PRBool aOwnsWeak,
+                                              PRUint32 aFlags,
+                                              sbIPropertyArray* aPropertyFilter)
 {
   TRACE(("LocalDatabaseMediaListListener[0x%.8x] - AddListener 0x%.8x %d",
          this, aListener, aOwnsWeak));
@@ -106,6 +110,12 @@ sbLocalDatabaseMediaListListener::AddListener(sbIMediaListListener* aListener,
   NS_ENSURE_ARG_POINTER(aListener);
 
   nsresult rv;
+
+  // When aFlags is 0, this means that it was unspecified by the caller and
+  // should get the default value
+  if (aFlags == 0) {
+    aFlags = sbIMediaList::LISTENER_FLAGS_ALL;
+  }
 
   nsAutoLock lock(mListenerArrayLock);
 
@@ -126,16 +136,29 @@ sbLocalDatabaseMediaListListener::AddListener(sbIMediaListListener* aListener,
   if (aOwnsWeak) {
     nsCOMPtr<nsIWeakReference> weak = do_GetWeakReference(aListener, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = info->Init(weak);
+    rv = info->Init(aListener, weak, mBatchDepth, aFlags, aPropertyFilter);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    rv = info->Init(aListener);
+    rv = info->Init(aListener, mBatchDepth, aFlags, aPropertyFilter);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
   sbListenerInfoAutoPtr* added = mListenerArray.AppendElement(info.forget());
   NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+
+  // If this list is in a batch, the newly added listener should be notified
+  // immediately of this fact
+  if (mBatchDepth > 0) {
+    nsCOMPtr<sbIMediaList> list =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaList*, aList), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    // XXXsteve Right now we kill the idea of nested batches in the
+    // media list base, but I think we really should be notifying once per
+    // batch depth
+    rv = aListener->OnBatchBegin(aList);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnBatchBegin returned a failure code");
+  }
 
   return NS_OK;
 }
@@ -173,21 +196,26 @@ sbLocalDatabaseMediaListListener::ListenerCount()
 }
 
 nsresult
-sbLocalDatabaseMediaListListener::SnapshotListenerArray(sbMediaListListenersArray& aArray)
+sbLocalDatabaseMediaListListener::SnapshotListenerArray(sbMediaListListenersArray& aArray,
+                                                        PRUint32 aFlags,
+                                                        sbIPropertyArray* aProperties)
 {
   nsAutoLock lock(mListenerArrayLock);
 
   PRUint32 length = mListenerArray.Length();
   for (PRUint32 i = 0; i < length; i++) {
-    PRBool success = aArray.AppendObject(mListenerArray[i]->mProxy);
-    NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
+    if (mListenerArray[i]->ShouldNotify(aFlags, aProperties)) {
+      ListenerAndIndex* added =
+        aArray.AppendElement(ListenerAndIndex(mListenerArray[i]->mProxy, i));
+      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+    }
   }
 
   return NS_OK;
 }
 
 void
-sbLocalDatabaseMediaListListener::SweepListenerArray()
+sbLocalDatabaseMediaListListener::SweepListenerArray(sbIndexArray& aStopNotifying)
 {
   nsAutoLock lock(mListenerArrayLock);
 
@@ -196,9 +224,51 @@ sbLocalDatabaseMediaListListener::SweepListenerArray()
     if (mListenerArray[i]->mIsGone) {
       mListenerArray.RemoveElementAt(i);
     }
+    else {
+      if (aStopNotifying[i] > 0) {
+        mListenerArray[i]->SetShouldStopNotifying(aStopNotifying[i]);
+      }
+    }
   }
 
 }
+
+#define SB_NOTIFY_LISTENERS_HEAD                                          \
+  NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");       \
+                                                                          \
+  sbMediaListListenersArray snapshot(mListenerArray.Length());
+
+#define SB_NOTIFY_LISTENERS_TAIL(method, call, flag)                      \
+  SB_ENSURE_TRUE_VOID(NS_SUCCEEDED(rv));                                  \
+  sbIndexArray stopNotifying(mListenerArray.Length());                    \
+  PRBool success = stopNotifying.SetLength(mListenerArray.Length());      \
+  SB_ENSURE_TRUE_VOID(success);                                           \
+                                                                          \
+  TRACE(("LocalDatabaseMediaListListener[0x%.8x] - " #method " %d of %d", \
+         this, snapshot.Length(), mListenerArray.Length()));              \
+                                                                          \
+  for (PRUint32 i = 0; i < snapshot.Length(); i++) {                      \
+    PRBool noMoreForBatch = PR_FALSE;                                     \
+    rv = snapshot[i].listener->call;                                      \
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), #call " returned a failure code"); \
+    if (noMoreForBatch) {                                                 \
+      stopNotifying[snapshot[i].index] = sbIMediaList::flag;              \
+    }                                                                     \
+  }                                                                       \
+                                                                          \
+  SweepListenerArray(stopNotifying);
+
+#define SB_NOTIFY_LISTENERS(method, call, flag)                           \
+  SB_NOTIFY_LISTENERS_HEAD                                                \
+  nsresult rv = SnapshotListenerArray(snapshot, sbIMediaList::flag);      \
+  SB_NOTIFY_LISTENERS_TAIL(method, call, flag)
+
+#define SB_NOTIFY_LISTENERS_PROPERTIES(method, call, flag)                \
+  SB_NOTIFY_LISTENERS_HEAD                                                \
+  nsresult rv = SnapshotListenerArray(snapshot,                           \
+                                      sbIMediaList::flag,                 \
+                                      aProperties);                       \
+  SB_NOTIFY_LISTENERS_TAIL(method, call, flag)
 
 /**
  * \brief Notifies all listeners that an item has been added to the list.
@@ -207,20 +277,12 @@ void
 sbLocalDatabaseMediaListListener::NotifyListenersItemAdded(sbIMediaList* aList,
                                                            sbIMediaItem* aItem)
 {
-  NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");
   SB_ENSURE_TRUE_VOID(aList);
   SB_ENSURE_TRUE_VOID(aItem);
 
-  sbMediaListListenersArray snapshot(mListenerArray.Length());
-  nsresult rv = SnapshotListenerArray(snapshot);
-  SB_ENSURE_TRUE_VOID(NS_SUCCEEDED(rv));
-
-  for (PRInt32 i = 0; i < snapshot.Count(); i++) {
-    rv = snapshot[i]->OnItemAdded(aList, aItem);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnItemAdded returned a failure code");
-  }
-
-  SweepListenerArray();
+  SB_NOTIFY_LISTENERS(NotifyListenersItemAdded,
+                      OnItemAdded(aList, aItem, &noMoreForBatch),
+                      LISTENER_FLAGS_ITEMADDED);
 }
 
 /**
@@ -231,21 +293,12 @@ void
 sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(sbIMediaList* aList,
                                                                    sbIMediaItem* aItem)
 {
-  NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");
   SB_ENSURE_TRUE_VOID(aList);
   SB_ENSURE_TRUE_VOID(aItem);
 
-  sbMediaListListenersArray snapshot(mListenerArray.Length());
-  nsresult rv = SnapshotListenerArray(snapshot);
-  SB_ENSURE_TRUE_VOID(NS_SUCCEEDED(rv));
-
-  for (PRInt32 i = 0; i < snapshot.Count(); i++) {
-    rv = snapshot[i]->OnBeforeItemRemoved(aList, aItem);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "OnBeforeItemRemoved returned a failure code");
-  }
-
-  SweepListenerArray();
+  SB_NOTIFY_LISTENERS(NotifyListenersBeforeItemRemoved,
+                      OnBeforeItemRemoved(aList, aItem, &noMoreForBatch),
+                      LISTENER_FLAGS_BEFOREITEMREMOVED);
 }
 
 /**
@@ -255,21 +308,12 @@ void
 sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(sbIMediaList* aList,
                                                                   sbIMediaItem* aItem)
 {
-  NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");
   SB_ENSURE_TRUE_VOID(aList);
   SB_ENSURE_TRUE_VOID(aItem);
 
-  sbMediaListListenersArray snapshot(mListenerArray.Length());
-  nsresult rv = SnapshotListenerArray(snapshot);
-  SB_ENSURE_TRUE_VOID(NS_SUCCEEDED(rv));
-
-  for (PRInt32 i = 0; i < snapshot.Count(); i++) {
-    rv = snapshot[i]->OnAfterItemRemoved(aList, aItem);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "OnAfterItemRemoved returned a failure code");
-  }
-
-  SweepListenerArray();
+  SB_NOTIFY_LISTENERS(NotifyListenersAfterItemRemoved,
+                      OnAfterItemRemoved(aList, aItem, &noMoreForBatch),
+                      LISTENER_FLAGS_AFTERITEMREMOVED);
 }
 
 /**
@@ -280,16 +324,11 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(sbIMediaList* aList
                                                              sbIMediaItem* aItem,
                                                              sbIPropertyArray* aProperties)
 {
-  NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");
   SB_ENSURE_TRUE_VOID(aList);
   SB_ENSURE_TRUE_VOID(aItem);
   SB_ENSURE_TRUE_VOID(aProperties);
 
-  sbMediaListListenersArray snapshot(mListenerArray.Length());
-  nsresult rv = SnapshotListenerArray(snapshot);
-  SB_ENSURE_TRUE_VOID(NS_SUCCEEDED(rv));
-
-#ifdef PR_LOGGING
+#if 0
   nsAutoString list;
   aList->ToString(list);
   nsAutoString item;
@@ -297,19 +336,15 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(sbIMediaList* aList
   nsAutoString props;
   aProperties->ToString(props);
   TRACE(("LocalDatabaseMediaListListener[0x%.8x] - "
-         "NotifyListenersItemUpdated %d %s %s %s", this, snapshot.Count(),
+         "NotifyListenersItemUpdated %s %s %s", this,
          NS_LossyConvertUTF16toASCII(list).get(),
          NS_LossyConvertUTF16toASCII(item).get(),
          NS_LossyConvertUTF16toASCII(props).get()));
 #endif
 
-  for (PRInt32 i = 0; i < snapshot.Count(); i++) {
-    rv = snapshot[i]->OnItemUpdated(aList, aItem, aProperties);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "OnItemUpdated returned a failure code");
-  }
-
-  SweepListenerArray();
+  SB_NOTIFY_LISTENERS_PROPERTIES(NotifyListenersItemUpdated,
+                                 OnItemUpdated(aList, aItem, aProperties, &noMoreForBatch),
+                                 LISTENER_FLAGS_ITEMUPDATED);
 }
 
 /**
@@ -318,20 +353,11 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(sbIMediaList* aList
 void
 sbLocalDatabaseMediaListListener::NotifyListenersListCleared(sbIMediaList* aList)
 {
-  NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");
   SB_ENSURE_TRUE_VOID(aList);
 
-  sbMediaListListenersArray snapshot(mListenerArray.Length());
-  nsresult rv = SnapshotListenerArray(snapshot);
-  SB_ENSURE_TRUE_VOID(NS_SUCCEEDED(rv));
-
-  for (PRInt32 i = 0; i < snapshot.Count(); i++) {
-    rv = snapshot[i]->OnListCleared(aList);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "OnListCleared returned a failure code");
-  }
-
-  SweepListenerArray();
+  SB_NOTIFY_LISTENERS(NotifyListenersListCleared,
+                      OnListCleared(aList, &noMoreForBatch),
+                      LISTENER_FLAGS_LISTCLEARED);
 }
 
 /**
@@ -340,20 +366,22 @@ sbLocalDatabaseMediaListListener::NotifyListenersListCleared(sbIMediaList* aList
 void
 sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(sbIMediaList* aList)
 {
-  NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");
   SB_ENSURE_TRUE_VOID(aList);
 
-  sbMediaListListenersArray snapshot(mListenerArray.Length());
-  nsresult rv = SnapshotListenerArray(snapshot);
-  SB_ENSURE_TRUE_VOID(NS_SUCCEEDED(rv));
+  mBatchDepth++;
 
-  for (PRInt32 i = 0; i < snapshot.Count(); i++) {
-    rv = snapshot[i]->OnBatchBegin(aList);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "OnBatchBegin returned a failure code");
+  // Tell all of our listener infos that we have started a batch
+  {
+    nsAutoLock lock(mListenerArrayLock);
+    PRUint32 length = mListenerArray.Length();
+    for (PRUint32 i = 0; i < length; i++) {
+      mListenerArray[i]->BeginBatch();
+    }
   }
 
-  SweepListenerArray();
+  SB_NOTIFY_LISTENERS(NotifyListenersBatchBegin,
+                      OnBatchBegin(aList),
+                      LISTENER_FLAGS_BATCHBEGIN);
 }
 
 /**
@@ -362,20 +390,27 @@ sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(sbIMediaList* aList)
 void
 sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(sbIMediaList* aList)
 {
-  NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");
   SB_ENSURE_TRUE_VOID(aList);
 
-  sbMediaListListenersArray snapshot(mListenerArray.Length());
-  nsresult rv = SnapshotListenerArray(snapshot);
-  SB_ENSURE_TRUE_VOID(NS_SUCCEEDED(rv));
-
-  for (PRInt32 i = 0; i < snapshot.Count(); i++) {
-    rv = snapshot[i]->OnBatchEnd(aList);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "OnBatchEnd returned a failure code");
+  if (mBatchDepth == 0) {
+    NS_ERROR("Batch begin/end imbalance");
+    return;
   }
 
-  SweepListenerArray();
+  mBatchDepth--;
+
+  // Tell all of our listener infos that we have ended a batch
+  {
+    nsAutoLock lock(mListenerArrayLock);
+    PRUint32 length = mListenerArray.Length();
+    for (PRUint32 i = 0; i < length; i++) {
+      mListenerArray[i]->EndBatch();
+    }
+  }
+
+  SB_NOTIFY_LISTENERS(NotifyListenersBatchEnd,
+                      OnBatchEnd(aList),
+                      LISTENER_FLAGS_BATCHEND);
 }
 
 sbListenerInfo::sbListenerInfo() :
@@ -390,13 +425,22 @@ sbListenerInfo::~sbListenerInfo()
 }
 
 nsresult
-sbListenerInfo::Init(sbIMediaListListener* aListener)
+sbListenerInfo::Init(sbIMediaListListener* aListener,
+                     PRUint32 aCurrentBatchDepth,
+                     PRUint32 aFlags,
+                     sbIPropertyArray* aPropertyFilter)
 {
   NS_ASSERTION(aListener, "aListener is null");
   NS_ASSERTION(!mProxy, "Init called twice");
   nsresult rv;
 
-  mRef = aListener;
+  mRef   = aListener;
+  mFlags = aFlags;
+
+  PRBool success = mStopNotifiyingStack.SetLength(aCurrentBatchDepth);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  InitPropertyFilter(aPropertyFilter);
 
   rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                             NS_GET_IID(sbIMediaListListener),
@@ -409,13 +453,25 @@ sbListenerInfo::Init(sbIMediaListListener* aListener)
 }
 
 nsresult
-sbListenerInfo::Init(nsIWeakReference* aWeakListener)
+sbListenerInfo::Init(sbIMediaListListener* aListener,
+                     nsIWeakReference* aWeakListener,
+                     PRUint32 aCurrentBatchDepth,
+                     PRUint32 aFlags,
+                     sbIPropertyArray* aPropertyFilter)
 {
+  NS_ASSERTION(aListener, "aListener is null");
   NS_ASSERTION(aWeakListener, "aWeakListener is null");
   NS_ASSERTION(!mProxy, "Init called twice");
   nsresult rv;
 
-  mRef = aWeakListener;
+  mRef   = aListener;
+  mWeak  = aWeakListener;
+  mFlags = aFlags;
+
+  PRBool success = mStopNotifiyingStack.SetLength(aCurrentBatchDepth);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  InitPropertyFilter(aPropertyFilter);
 
   nsCOMPtr<sbIMediaListListener> wrapped =
     new sbWeakMediaListListenerWrapper(this);
@@ -427,6 +483,114 @@ sbListenerInfo::Init(nsIWeakReference* aWeakListener)
                             NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(mProxy));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+PRBool
+sbListenerInfo::ShouldNotify(PRUint32 aFlag, sbIPropertyArray* aProperties)
+{
+  // Check the flags to see if we should be notifying
+  if ((mFlags & aFlag) == 0) {
+    return PR_FALSE;
+  }
+
+  // Check if we are set to stop notifying for this batch
+  if (mStopNotifiyingStack.Length() > 0 && mStopNotifiyingStack[0] & aFlag) {
+    return PR_FALSE;
+  }
+
+  // If there are properties, check them
+  if (mHasPropertyFilter && aProperties) {
+    nsresult rv;
+
+    PRUint32 length;
+    rv = aProperties->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIProperty> property;
+      rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
+      NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+      nsAutoString name;
+      rv = property->GetName(name);
+      NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+      if (mPropertyFilter.GetEntry(name)) {
+        // Found, we should notify
+        return PR_TRUE;
+      }
+    }
+
+    // Not found, don't notify
+    return PR_FALSE;
+  }
+
+  // If we get here, this means we should notify
+  return PR_TRUE;
+}
+
+void
+sbListenerInfo::BeginBatch()
+{
+  PRUint32* success = mStopNotifiyingStack.InsertElementAt(0, 0);
+  SB_ENSURE_TRUE_VOID(success);
+}
+
+void
+sbListenerInfo::EndBatch()
+{
+  if (mStopNotifiyingStack.Length() == 0) {
+    NS_ERROR("BeginBatch/EndBatch out of balance");
+    return;
+  }
+
+  mStopNotifiyingStack.RemoveElementAt(0);
+}
+
+void
+sbListenerInfo::SetShouldStopNotifying(PRUint32 aFlag)
+{
+  // If there is no batch, just ignore this
+  if (mStopNotifiyingStack.Length() == 0) {
+    return;
+  }
+
+  mStopNotifiyingStack[0] |= aFlag;
+}
+
+nsresult
+sbListenerInfo::InitPropertyFilter(sbIPropertyArray* aPropertyFilter)
+{
+  nsresult rv;
+
+  if (aPropertyFilter) {
+    mHasPropertyFilter = PR_TRUE;
+
+    PRUint32 length = 0;
+    rv = aPropertyFilter->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool success = mPropertyFilter.Init(length);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIProperty> property;
+      rv = aPropertyFilter->GetPropertyAt(i, getter_AddRefs(property));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString name;
+      rv = property->GetName(name);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsStringHashKey* added = mPropertyFilter.PutEntry(name);
+      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+    }
+  }
+  else {
+    mHasPropertyFilter = PR_FALSE;
+  }
 
   return NS_OK;
 }
@@ -449,19 +613,11 @@ sbWeakMediaListListenerWrapper::~sbWeakMediaListListenerWrapper()
 already_AddRefed<sbIMediaListListener>
 sbWeakMediaListListenerWrapper::GetListener()
 {
-  nsresult rv;
-  nsCOMPtr<nsIWeakReference> weak =
-    do_QueryInterface(mListenerInfo->mRef, &rv);
-  if (NS_FAILED(rv)) {
-    NS_ERROR("Could no QI mRef to nsIWeakReference");
-    mListenerInfo->mIsGone = PR_TRUE;
-    return nsnull;
-  }
-
-  nsCOMPtr<sbIMediaListListener> strongListener = do_QueryReferent(weak);
+  nsCOMPtr<sbIMediaListListener> strongListener =
+    do_QueryReferent(mListenerInfo->mWeak);
   if (!strongListener) {
-    TRACE(("sbWeakMediaListListenerWrapper[0x%.8x] - Weak listener is gone",
-           this));
+    LOG(("sbWeakMediaListListenerWrapper[0x%.8x] - Weak listener is gone",
+         this));
     mListenerInfo->mIsGone = PR_TRUE;
     return nsnull;
   }
@@ -480,37 +636,45 @@ sbWeakMediaListListenerWrapper::GetListener()
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnItemAdded(sbIMediaList* aMediaList,
-                                            sbIMediaItem* aMediaItem)
+                                            sbIMediaItem* aMediaItem,
+                                            PRBool* aNoMoreForBatch)
 {
-  SB_TRY_NOTIFY(OnItemAdded(aMediaList, aMediaItem))
+  SB_TRY_NOTIFY(OnItemAdded(aMediaList, aMediaItem, aNoMoreForBatch))
 }
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnBeforeItemRemoved(sbIMediaList* aMediaList,
-                                                    sbIMediaItem* aMediaItem)
+                                                    sbIMediaItem* aMediaItem,
+                                                    PRBool* aNoMoreForBatch)
 {
-  SB_TRY_NOTIFY(OnBeforeItemRemoved(aMediaList, aMediaItem))
+  SB_TRY_NOTIFY(OnBeforeItemRemoved(aMediaList, aMediaItem, aNoMoreForBatch))
 }
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnAfterItemRemoved(sbIMediaList* aMediaList,
-                                                   sbIMediaItem* aMediaItem)
+                                                   sbIMediaItem* aMediaItem,
+                                                   PRBool* aNoMoreForBatch)
 {
-  SB_TRY_NOTIFY(OnAfterItemRemoved(aMediaList, aMediaItem))
+  SB_TRY_NOTIFY(OnAfterItemRemoved(aMediaList, aMediaItem, aNoMoreForBatch))
 }
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnItemUpdated(sbIMediaList* aMediaList,
                                               sbIMediaItem* aMediaItem,
-                                              sbIPropertyArray* aProperties)
+                                              sbIPropertyArray* aProperties,
+                                              PRBool* aNoMoreForBatch)
 {
-  SB_TRY_NOTIFY(OnItemUpdated(aMediaList, aMediaItem, aProperties))
+  SB_TRY_NOTIFY(OnItemUpdated(aMediaList,
+                              aMediaItem,
+                              aProperties,
+                              aNoMoreForBatch))
 }
 
 NS_IMETHODIMP
-sbWeakMediaListListenerWrapper::OnListCleared(sbIMediaList* aMediaList)
+sbWeakMediaListListenerWrapper::OnListCleared(sbIMediaList* aMediaList,
+                                              PRBool* aNoMoreForBatch)
 {
-  SB_TRY_NOTIFY(OnListCleared(aMediaList))
+  SB_TRY_NOTIFY(OnListCleared(aMediaList, aNoMoreForBatch))
 }
 
 NS_IMETHODIMP

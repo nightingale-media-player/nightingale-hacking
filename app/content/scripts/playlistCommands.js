@@ -35,42 +35,6 @@ var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cr = Components.results;
 
-function MediaListListener() {
-}
-MediaListListener.prototype = {
-  _addedCount: 0,
-  
-  get itemAddedCount() {
-    return this._addedCount;
-  },
-  
-  onItemAdded: function onItemAdded(list, item) {
-    this._addedCount++;
-  },
-  
-  onBeforeItemRemoved: function onBeforeItemRemoved(list, item) {
-  },
-  
-  onAfterItemRemoved: function onAfterItemRemoved(list, item) {
-  },
-  
-  onItemUpdated: function onItemUpdated(list, item, properties) {
-  },
-
-  onBatchBegin: function onBatchBegin(list) {
-  },
-  
-  onBatchEnd: function onBatchEnd(list) {
-  },
-  
-  QueryInterface: function QueryInterface(iid) {
-    if (!iid.equals(Ci.sbIMediaListListener) &&
-        !iid.equals(Ci.nsISupports))
-      throw Cr.NS_ERROR_NO_INTERFACE;
-    return this;
-  }  
-}
-
 function SelectionUnwrapper(selection) {
   this._selection = selection;
 }
@@ -511,13 +475,10 @@ var SBWebPlaylistCommands =
           
           var unwrapper = new SelectionUnwrapper(treeView.selectedMediaItems);
           
-          var mediaListListener = new MediaListListener();
-
-          mediaList.addListener(mediaListListener, false);
+          var oldLength = mediaList.length;
           mediaList.addSome(unwrapper);
-          mediaList.removeListener(mediaListListener);
 
-          var itemsAdded = mediaListListener.itemAddedCount;
+          var itemsAdded = mediaList.length - oldLength;
           this.m_Context.m_Playlist._reportAddedTracks(itemsAdded,
                                              selectionCount - itemsAdded, mediaList.name);
         }

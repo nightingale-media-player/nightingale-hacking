@@ -98,6 +98,68 @@ const PRUint32 NUM_ITEMS_PER_INIT_LOOP = 100;
 const PRUint32 TIMER_LOOP_MS = 100;
 
 // CLASSES ====================================================================
+class sbMetadataBatchHelper
+{
+public:
+  sbMetadataBatchHelper(sbIMediaList* aList = nsnull)
+  {
+    SetList( aList );
+  }
+
+  ~sbMetadataBatchHelper()
+  {
+    if ( mList ) {
+      //XXX Remove when #3134 is fixed.
+      WriteCache();
+      mList->EndUpdateBatch();
+    }
+  }
+
+  void SetList(sbIMediaList* aList)
+  {
+    mList = aList;
+    if ( mList )
+      mList->BeginUpdateBatch();
+  }
+
+  void Flush()
+  {
+    if ( mList )
+    {
+      //XXX Remove when #3134 is fixed.
+      WriteCache();
+      mList->EndUpdateBatch();
+      mList->BeginUpdateBatch();
+    }
+  }
+
+  nsresult WriteCache() {
+    // XXXsteve HACK to make sure the properties get written.  This should be
+    // removed once we get rid of sbIResourceProperty::Write()
+    nsresult rv;
+
+    nsCOMPtr<sbILibrary> library = do_QueryInterface(mList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILocalDatabaseLibrary> localLibrary =
+      do_QueryInterface(library, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILocalDatabasePropertyCache> propertyCache;
+    rv = localLibrary->GetPropertyCache(getter_AddRefs(propertyCache));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = propertyCache->Write();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
+  }
+
+private:
+
+  nsCOMPtr<sbIMediaList> mList;
+};
+
 NS_IMPL_ADDREF(sbMetadataJob::jobitem_t)
 NS_IMPL_RELEASE(sbMetadataJob::jobitem_t)
 
@@ -357,33 +419,42 @@ nsresult sbMetadataJob::RunTimer()
       //
 
       // Add them to our database table so we don't lose context if the app goes away.
-      rv = mMainThreadQuery->ResetQuery();
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("begin"));
-      for ( ; mInitCount < max && mInitCount < total; mInitCount++ ) 
       {
-        // Place the item info on the query to track in our own database, get back a temporary job item.
-        sbMetadataJob::jobitem_t * tempItem;
-        AddItemToJobTableQuery( mMainThreadQuery, mTableName, mInitArray[ mInitCount ], &tempItem );
+        nsCOMPtr<sbILibraryManager> libraryManager =
+          do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        nsCOMPtr<sbILibrary> library;
+        rv = libraryManager->GetMainLibrary(getter_AddRefs(library));
+        NS_ENSURE_SUCCESS(rv, rv);
+        nsCOMPtr<sbIMediaList> list = do_QueryInterface(library, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
 
-        // Use the temporary item to stuff a default title value in the properties cache (don't flush to library database, yet)
-        AddDefaultMetadataToItem( tempItem, mInitArray[ mInitCount ], PR_FALSE );
+        // XXXsteve This assumes that we are loading into the main library,
+        // but I think we make this assumption all over :(
+        sbMetadataBatchHelper batchHelper(list);
 
-        // Flush default values when loop would complete
-        if ( mInitCount+1 == max || mInitCount+1 == total )
-          mInitArray[ mInitCount ]->Write();
+        rv = mMainThreadQuery->ResetQuery();
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("begin"));
+        NS_ENSURE_SUCCESS(rv, rv);
+        for ( ; mInitCount < max && mInitCount < total; mInitCount++ ) 
+        {
+          // Place the item info on the query to track in our own database, get back a temporary job item.
+          nsRefPtr<jobitem_t> tempItem;
+          AddItemToJobTableQuery( mMainThreadQuery, mTableName, mInitArray[ mInitCount ], getter_AddRefs(tempItem) );
 
-        // Delete the temporary item
-        delete tempItem; 
+          // Use the temporary item to stuff a default title value in the properties cache (don't flush to library database, yet)
+          //AddDefaultMetadataToItem( tempItem, mInitArray[ mInitCount ] );
+        }
+        rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("commit"));
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
+        NS_ENSURE_SUCCESS(rv, rv);
+        PRInt32 error;
+        rv = mMainThreadQuery->Execute( &error );
+        NS_ENSURE_SUCCESS(rv, rv);
+        NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
       }
-      rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("commit"));
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
-      NS_ENSURE_SUCCESS(rv, rv);
-      PRInt32 error;
-      rv = mMainThreadQuery->Execute( &error );
-      NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
 
       // Relaunch the thread if it has completed and we add new task items.
       if ( mThreadCompleted )
@@ -521,44 +592,6 @@ nsresult sbMetadataJob::CancelTimer()
   return NS_OK;
 }
 
-
-class sbMetadataBatchHelper
-{
-public:
-  sbMetadataBatchHelper(sbIMediaList* aList = nsnull)
-  {
-    SetList( aList );
-  }
-
-  ~sbMetadataBatchHelper()
-  {
-    if ( mList ) {
-      mList->EndUpdateBatch();
-    }
-  }
-
-  void SetList(sbIMediaList* aList)
-  {
-    mList = aList;
-    if ( mList )
-      mList->BeginUpdateBatch();
-  }
-
-  void Flush()
-  {
-    if ( mList )
-    {
-      mList->EndUpdateBatch();
-      mList->BeginUpdateBatch();
-    }
-  }
-
-private:
-
-  nsCOMPtr<sbIMediaList> mList;
-};
-
-
 nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 {
   nsresult rv;
@@ -674,6 +707,11 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 
   if ( library )
   {
+    // Flush properties cache on completion.
+    //XXX Remove when #3134 is fixed.
+    rv = batchHelper.WriteCache();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     // Along with the written bits.
     rv = SetItemsAreWritten( WorkerThreadQuery, aTableName, writePending );
     NS_ENSURE_SUCCESS(rv, rv);
@@ -808,15 +846,17 @@ nsresult sbMetadataJob::AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsStri
   rv = insert->ToString( insertItem );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if ( _retval )
-  *_retval = new jobitem_t(
-                  library_guid,
-                  item_guid,
-                  url,
-                  worker_thread,
-                  NS_LITERAL_STRING("0"),
-                  nsnull
-                );
+  if ( _retval ) {
+    nsRefPtr<jobitem_t> item;
+    item = new jobitem_t(library_guid,
+                         item_guid,
+                         url,
+                         worker_thread,
+                         NS_LITERAL_STRING("0"),
+                         nsnull);
+    NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
+    NS_ADDREF(*_retval = item);
+  }
 
   // Add it to the query object
   return aQuery->AddQuery( insertItem );
@@ -1205,10 +1245,13 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
   NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
   nsAutoString trackName;
   rv = values->GetValue( NS_LITERAL_STRING("title"), trackName );
-  // If the metadata read can't even find a song name, cook one up off the url.
-  if ( trackName.EqualsLiteral("") )
-    trackName = CreateDefaultItemName( aItem->url );
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the metadata read can't even find a song name, cook one up off the url.
+  if ( trackName.IsVoid() ) {
+    rv = CreateDefaultItemName( aItem->url, trackName );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AppendIfValid( propMan, properties, trackNameKey, trackName);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1309,59 +1352,47 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
   return NS_OK;
 }
 
-nsresult sbMetadataJob::AddDefaultMetadataToItem( sbMetadataJob::jobitem_t *aItem, sbIMediaItem *aMediaItem, PRBool aShouldFlush )
+nsresult sbMetadataJob::AddDefaultMetadataToItem( sbMetadataJob::jobitem_t *aItem, sbIMediaItem *aMediaItem )
 {
-  NS_ENSURE_ARG_POINTER( aItem );
-
-  nsresult rv;
-
-  // Get the sbIMediaItem we're supposed to be updating
-  nsCOMPtr<sbILibraryManager> libraryManager;
-  libraryManager = do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbILibrary> library;
-  rv = libraryManager->GetLibrary( aItem->library_guid, getter_AddRefs(library) );
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbIMediaItem> item( aMediaItem );
-  if ( ! item.get() )
-  {
-    rv = library->GetMediaItem( aItem->item_guid, getter_AddRefs(item) );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  NS_ASSERTION(aItem, "aItem is null");
+  NS_ASSERTION(aMediaItem, "aMediaItem is null");
 
   // Set the default properties 
   // (eventually iterate when the sbIMetadataValue have the correct keystrings).
 
   // Right now, all we default is the track name.
   NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
+
   nsAutoString oldName;
-  rv = item->GetProperty( trackNameKey, oldName );
+  nsresult rv = aMediaItem->GetProperty( trackNameKey, oldName );
 //  NS_ENSURE_SUCCESS(rv, rv); // Ben asked me to remind him that these are here and commented to remind him that we don't care if this call fails.
   if ( oldName.IsEmpty() )
   {
-    nsAutoString trackName = CreateDefaultItemName( aItem->url );
+    nsAutoString trackName;
+    rv = CreateDefaultItemName( aItem->url, trackName );
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = item->SetProperty( trackNameKey, trackName );
+    rv = aMediaItem->SetProperty( trackNameKey, trackName );
 //    NS_ENSURE_SUCCESS(rv, rv); // Ben asked me to remind him that these are here and commented to remind him that we don't care if this call fails.
-  }
-
-  if ( aShouldFlush )
-  {
-    rv = item->Write();
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
 }
 
-nsString sbMetadataJob::CreateDefaultItemName( const nsString &aURLString )
+nsresult sbMetadataJob::CreateDefaultItemName(const nsAString &aURLString,
+                                              nsAString &retval)
 {
-  nsString retval = aURLString;
+  nsresult rv;
+
+  retval = aURLString;
 
   // First, unescape the url.
-  nsCOMPtr< nsITextToSubURI > textToSubURI = do_GetService("@mozilla.org/intl/texttosuburi;1");
-  nsCAutoString charset; // Blank.  On error, the following function does utf8 -> utf16 automatically.
-  textToSubURI->UnEscapeURIForUI( charset, NS_ConvertUTF16toUTF8(aURLString), retval );
+  nsCOMPtr< nsITextToSubURI > textToSubURI =
+    do_GetService("@mozilla.org/intl/texttosuburi;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Blank.  On error, the following function does utf8 -> utf16 automatically.
+  rv = textToSubURI->UnEscapeURIForUI( EmptyCString(), NS_ConvertUTF16toUTF8(aURLString), retval );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Then pull out just the text after the last slash
   PRInt32 slash = retval.RFindChar( *(NS_LITERAL_STRING("/").get()) );
@@ -1371,7 +1402,7 @@ nsString sbMetadataJob::CreateDefaultItemName( const nsString &aURLString )
   if ( slash != -1 )
     retval.Cut( 0, slash + 1 ); 
 
-  return retval;
+  return NS_OK;
 }
 
 nsresult

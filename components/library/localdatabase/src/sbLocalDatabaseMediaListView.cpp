@@ -47,6 +47,7 @@
 #include <sbIMediaList.h>
 #include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
+#include <sbStandardProperties.h>
 #include <sbTArrayStringEnumerator.h>
 #include <prlog.h>
 
@@ -256,16 +257,14 @@ sbLocalDatabaseMediaListView::Init()
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // We listen to our media list.  Use a weak reference here since we already
-  // have an owning reference to the media list.
-  rv = mMediaList->AddListener(this, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Set the default sort as our view sort
   mViewSort = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mViewSort->AppendProperty(mDefaultSortProperty, NS_LITERAL_STRING("a"));
+  rv = mViewSort->AppendProperty(mDefaultSortProperty, NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateListener(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -586,6 +585,44 @@ sbLocalDatabaseMediaListView::ShouldCauseInvalidation(sbIPropertyArray* aPropert
   return NS_OK;
 }
 
+nsresult
+sbLocalDatabaseMediaListView::UpdateListener(PRBool aRemoveListener)
+{
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaListListener> listener =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaListListener*, this));
+
+  if (aRemoveListener) {
+    rv = mMediaList->RemoveListener(listener);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+/*
+  XXXsteve Once we fix bug 3875 we can use this code :)
+
+  nsCOMPtr<sbIMutablePropertyArray> filter =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ClonePropertyArray(mViewSort, getter_AddRefs(filter));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Also add the ordinal to the filter so we get notified when the list
+  // is reordered
+  rv = filter->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL),
+                              EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+*/
+  rv = mMediaList->AddListener(listener,
+                               PR_TRUE,
+                               sbIMediaList::LISTENER_FLAGS_ALL,
+                               nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 // sbIFilterableMediaList
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::GetFilterableProperties(nsIStringEnumerator** aFilterableProperties)
@@ -854,6 +891,9 @@ sbLocalDatabaseMediaListView::SetSort(sbIPropertyArray* aSort)
   rv = UpdateViewArrayConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = UpdateListener();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -868,9 +908,20 @@ sbLocalDatabaseMediaListView::ClearSort()
 
     rv = array->Clear();
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMutablePropertyArray> propertyArray =
+      do_QueryInterface(mViewSort, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = propertyArray->AppendProperty(mDefaultSortProperty,
+                                       NS_LITERAL_STRING("a"));
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   rv = UpdateViewArrayConfiguration();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateListener();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -879,13 +930,16 @@ sbLocalDatabaseMediaListView::ClearSort()
 // sbIMediaListListener
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
-                                          sbIMediaItem* aMediaItem)
+                                          sbIMediaItem* aMediaItem,
+                                          PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   if (mInBatch) {
     mInvalidatePending = PR_TRUE;
+    *aNoMoreForBatch = PR_TRUE;
     return NS_OK;
   }
 
@@ -893,30 +947,37 @@ sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
   nsresult rv = Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnBeforeItemRemoved(sbIMediaList* aMediaList,
-                                                  sbIMediaItem* aMediaItem)
+                                                  sbIMediaItem* aMediaItem,
+                                                  PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Don't care
 
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnAfterItemRemoved(sbIMediaList* aMediaList,
-                                                 sbIMediaItem* aMediaItem)
+                                                 sbIMediaItem* aMediaItem,
+                                                 PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   if (mInBatch) {
     mInvalidatePending = PR_TRUE;
+    *aNoMoreForBatch = PR_TRUE;
     return NS_OK;
   }
 
@@ -924,17 +985,20 @@ sbLocalDatabaseMediaListView::OnAfterItemRemoved(sbIMediaList* aMediaList,
   nsresult rv = Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
                                             sbIMediaItem* aMediaItem,
-                                            sbIPropertyArray* aProperties)
+                                            sbIPropertyArray* aProperties,
+                                            PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
 #ifdef PR_LOGGING
   nsAutoString buff;
@@ -943,68 +1007,61 @@ sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
          this, NS_ConvertUTF16toUTF8(buff).get()));
 #endif
 
-  nsresult rv;
-
-  // If the list itself is getting updated (rather than an item in the list),
-  // we always invalidate.  This happens when items in a simple media list is
-  // reordered
-  PRBool isList;
-  rv = mMediaList->Equals(aMediaItem, &isList);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (isList) {
-    if (mInBatch) {
-      mInvalidatePending = PR_TRUE;
-    }
-    else {
-      nsresult rv = Invalidate();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+  // If we are in a batch, we don't need any more notifications since we always
+  // invalidate when a batch ends
+  if (mInBatch) {
+    mInvalidatePending = PR_TRUE;
+    *aNoMoreForBatch = PR_TRUE;
     return NS_OK;
   }
 
-  PRBool shouldInvalidate = PR_FALSE;
+  // If we are not in a batch, check to see if this update should cause an
+  // invalidation
+  PRBool shouldInvalidate;
+  nsresult rv = ShouldCauseInvalidation(aProperties, &shouldInvalidate);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mInBatch) {
-    // If we are in a batch, remember the updated properties for later.  Once
-    // the batch is complete, we can check it to see if it should cause an
-    // invalidation
-    PRBool success = mUpdatedPropertiesInBatch.AppendObject(aProperties);
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  if (shouldInvalidate) {
+    // Invalidate the view array
+    nsresult rv = Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    // Otherwise, check to see if this update should cause an invalidation
-    rv = ShouldCauseInvalidation(aProperties, &shouldInvalidate);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // If the array has not already been invalidated, we should invalidate the
+    // row of the tree view that contains this item.  This lets us see updates
+    // that don't cause invalidations
+    if (mTreeView) {
+      nsAutoString guid;
+      rv = aMediaItem->GetGuid(guid);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    if (shouldInvalidate) {
-      // Invalidate the view array
-      nsresult rv = Invalidate();
+      rv = mTreeView->InvalidateRowsByGuid(guid);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
-  // If the array has not already been invalidated, we should invalidate the
-  // row of the tree view that contains this item.  This lets us see updates
-  // that don't cause invalidations as well as see updates that happen in
-  // batches sooner
-  if (mTreeView && !shouldInvalidate) {
-    nsAutoString guid;
-    rv = aMediaItem->GetGuid(guid);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mTreeView->InvalidateRowsByGuid(guid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList)
+sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList,
+                                            PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
+  if (mInBatch) {
+    mInvalidatePending = PR_TRUE;
+    *aNoMoreForBatch = PR_TRUE;
+    return NS_OK;
+  }
+
+  // Invalidate the view array
+  nsresult rv = Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
@@ -1029,25 +1086,6 @@ sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
 
     mInvalidatePending = PR_FALSE;
   }
-  else {
-    // If we haven't been told explicitly that there is an invalidation,
-    // pending, we may still have to invalidate due to a series of item
-    // updates
-    PRUint32 length = mUpdatedPropertiesInBatch.Count();
-    for (PRUint32 i = 0; i < length; i++) {
-      PRBool shouldInvalidate;
-      nsresult rv = ShouldCauseInvalidation(mUpdatedPropertiesInBatch[i],
-                                            &shouldInvalidate);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (shouldInvalidate) {
-        nsresult rv = Invalidate();
-        NS_ENSURE_SUCCESS(rv, rv);
-        break;
-      }
-    }
-  }
-
-  mUpdatedPropertiesInBatch.Clear();
 
   return NS_OK;
 }

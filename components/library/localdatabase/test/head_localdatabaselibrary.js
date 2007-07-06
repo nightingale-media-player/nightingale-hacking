@@ -283,6 +283,7 @@ TestMediaListListener.prototype = {
   _batchBeginList: null,
   _batchEndList: null,
   _listCleared: false,
+  _retval: false,
 
   get addedItem() {
     return this._addedItem;
@@ -315,6 +316,10 @@ TestMediaListListener.prototype = {
   get listCleared() {
     return this._listCleared;
   },
+  
+  set retval(value) {
+    this._retval = value;
+  },
   reset: function reset() {
     this._addedItem = null;
     this._removedItemBefore = null;
@@ -324,23 +329,28 @@ TestMediaListListener.prototype = {
     this._batchBeginList = null;
     this._batchEndList = null;
     this._listCleared = false;
+    this._retval = false;
   },
   
   onItemAdded: function onItemAdded(list, item) {
     this._addedItem = item;
+    return this._retval;
   },
   
   onBeforeItemRemoved: function onBeforeItemRemoved(list, item) {
     this._removedItemBefore = item;
+    return this._retval;
   },
   
   onAfterItemRemoved: function onAfterItemRemoved(list, item) {
     this._removedItemAfter = item;
+    return this._retval;
   },
   
   onItemUpdated: function onItemUpdated(list, item, properties) {
     this._updatedItem = item;
     this._updatedProperties = properties;
+    return this._retval;
   },
 
   onBatchBegin: function onBatchBegin(list) {
@@ -352,6 +362,7 @@ TestMediaListListener.prototype = {
   },
   onListCleared: function onListCleared() {
     this._listCleared = true;
+    return this._retval;
   },
   QueryInterface: function QueryInterface(iid) {
     if (!iid.equals(Ci.sbIMediaListListener) &&
