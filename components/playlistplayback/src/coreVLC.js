@@ -415,13 +415,36 @@ CoreVLC.prototype._getLoginInfoForURI = function(aURI)
                                     userDomain,
                                     userName,
                                     userPassword);
+                                    
+    return [userName.value, userPassword.value];
   }
   catch(e) {
     this.LOG(e);
-    return [];
   }
+
+  //Failed to get the info using http auth manager. Prompt user for information.
+  var windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                        .getService(Ci.nsIWindowWatcher);
   
-  return [userName.value, userPassword.value];
+  var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                        .getService(Ci.nsIPromptService);
+
+  var checkState = {};
+  var message = SBString("message.requireauth", 
+    "Enter username and password to access the following location - ");
+  
+  message = message + "\n" + aURI.scheme + "://" + aURI.host + aURI.path;
+    
+  var hasInfo = promptService.promptUsernameAndPassword(
+                                          windowWatcher.activeWindow,
+                                          null,
+                                          message,
+                                          userName, 
+                                          userPassword,
+                                          null,
+                                          checkState);
+                                            
+  return hasInfo ? [userName.value, userPassword.value] : [];
 };
 
 /**
@@ -439,7 +462,7 @@ CoreVLC.prototype._processLogMessagesForPlayURL = function()
   if(messages.count < 1) {
     return true;
   }
-  
+ 
   var messageIterator = messageIterator = messages.iterator();
 
   var message = null;  
@@ -448,25 +471,28 @@ CoreVLC.prototype._processLogMessagesForPlayURL = function()
     
     //Try and see if we got a 401 and bring up an auth box.  
     if(message.message.match("'HTTP' answer code 401")) {
+      
       var loginInfos = this._getLoginInfoForURI(this._uri);
       
       //Found a username / password pair.
       if(loginInfos.length == 2) {
         var uriWithLogin = this._uri.clone();
-        
+      
+        //Prevent PlaylistPlayback from going to the next track.
+        this._fakePosition = true;
+
         uriWithLogin.username = loginInfos[0];
         uriWithLogin.password = loginInfos[1];
         
-        this._fakePosition = true;
         this.playURL(uriWithLogin.spec);
-      }
+      } 
     }
     
     message = null;
   }
   
   messages.clear();
-    
+
   return true;
 };
 
@@ -730,7 +756,7 @@ CoreVLC.prototype.getPosition = function()
     return 0;
   }
 		
-	var currentPos, currentPosTime;
+	var currentPos = 0, currentPosTime = 0;
 	
 	// VLC will throw an exception if there is no active input. Catch this and
 	// just return 0.
@@ -745,44 +771,43 @@ CoreVLC.prototype.getPosition = function()
 	catch (err) {
 	  return 0;
 	}
-	
-  if(currentPos < 1 && currentPosTime == 0)
-  {
-    // Sometimes the player loop will call this after we've stopped.
-    if (!this._startTime)
-      return 0;
-    
-    if(!this._paused)
-    {
-      var currentTime = new Date();
-      var deltaTime = currentTime.getTime() - this._startTime;
+
+  if(!this._fakePosition) {
+    if(currentPos < 1 && currentPosTime == 0) {
       
-      if( currentPos > 0  && (currentTime.getTime() - this._lastCalcTime.getTime() > 5000))
-      {
-        var posMul = 1 / currentPos;
-        this._fileTime = posMul * deltaTime;
-        this._lastCalcTime = currentTime;
+      // Sometimes the player loop will call this after we've stopped.
+      if (!this._startTime)
+        return 0;
+      
+      if(!this._paused) {
+        var currentTime = new Date();
+        var deltaTime = currentTime.getTime() - this._startTime;
+        
+        if( currentPos > 0  && 
+            (currentTime.getTime() - this._lastCalcTime.getTime() > 5000)) {
+          var posMul = 1 / currentPos;
+          this._fileTime = posMul * deltaTime;
+          this._lastCalcTime = currentTime;
+        }
+        
+        currentPos = deltaTime;
       }
-      
-      currentPos = deltaTime;
+      else {
+        currentPos = this._savedTime;
+      }
     }
-    else
-    {
-      currentPos = this._savedTime;
+    else {
+      this._fileTime = 0;
+      currentPos = currentPosTime;
     }
   }
-  else
-  {
-    this._fileTime = 0;
-    currentPos = currentPosTime;
-  }
-  
+ 
   if (this._fakePosition && 
       currentPos == 0) {
     return 1;
   }
   else {
-    this._fakePosition = 0;
+    this._fakePosition = false;
   }
 
   return currentPos;

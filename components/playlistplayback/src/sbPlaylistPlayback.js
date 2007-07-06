@@ -1453,20 +1453,39 @@ PlaylistPlayback.prototype = {
   },
 
   _onPollCompleted: function ( len, pos, core ) {
+    
+    LOG("_onPollCompleted(" + len + ", " + pos + ", " + core);
+    
+    var isPlaying = core.getPlaying();
+    
+    LOG("_onPollCompleted - isPlaying? " + isPlaying);
+    
     // Basically, this logic means that posLoop will run until the player first says it is playing, and then stops.
-    if ( core.getPlaying() && ( this._isFLAC() || len > 0.0 || pos > 0.0 ) ) {
+    if ( isPlaying && ( this._isFLAC() || len > 0.0 || pos > 0.0 ) ) {
+      
+      LOG("_onPollCompleted - is playing and len or pos > 0.0");
+      
       // First time we see it playing, 
       if ( ! this._seenPlaying.boolValue ) {
+        
+        LOG("_onPollCompleted - first time seen playing.");
+      
         this._metadataPollCount = 0; // start the count again.
         this._lookForPlayingCount = 0;
       }
       // OH OH!  If our position isn't moving, go to the next track!
       else if ( pos == this._lastPos && pos > 0.0 && ! this._isFLAC() && ! this.paused ) {
+        
+        LOG("_onPollCompleted - position is not moving.");
+        
         // After 10 seconds, give up and go to the next one?
         if ( this._lookForPlayingCount++ > 80 )
           this.next();
       }
       else {
+        
+        LOG("_onPollCompleted - reset the counters.");
+        
         // Boring, reset the counters.
         this._lastPos = pos;
         this._lookForPlayingCount = 0;
@@ -1475,7 +1494,11 @@ PlaylistPlayback.prototype = {
       this._seenPlaying.boolValue = true;
     }
     // If we haven't seen ourselves playing, yet, we couldn't have stopped.
-    else if ( this._seenPlaying.boolValue || ( len < 0.0 ) ) {
+    else if ( (this._seenPlaying.boolValue || ( len < 0.0 )) &&
+              ( this._lookForPlayingCount++ > 8 ) ) {
+      
+      LOG("_onPollCompleted - seen playing (" + this._seenPlaying.boolValue + ") OR len: "+len);
+      
       // Oh, NOW you say we stopped, eh?
       this._seenPlaying.boolValue = false;
       this._stopPlayerLoop();
@@ -1485,8 +1508,14 @@ PlaylistPlayback.prototype = {
       this._stopNextLoop = false;
     }
     else {
+      
+      LOG("_onPollCompleted - lookForPlayingCount: " + this._lookForPlayingCount);
+      
       // After 10 seconds or fatal error, give up and go to the next one?
       if ( ( this._lookForPlayingCount++ > 80 ) || ( len < -1 ) ) {
+      
+      LOG("_onPollCompleted - lookForPlayingCount > 80 or ERROR.");
+      
         if ( ! this._stopNextLoop )
           this.next();
         this._stopNextLoop = false;
@@ -1659,9 +1688,9 @@ PlaylistPlayback.prototype = {
   
   
   _sleep: function( ms ) {
-    var thread = Components.classes["@mozilla.org/thread;1"].createInstance();
-   thread = thread.QueryInterface(Components.interfaces.nsIThread);
-   thread.currentThread.sleep(ms);  
+    var thread = Components.classes["@mozilla.org/thread-manager;1"]
+                  .getService().currentThread;
+    //thread.sleep(ms);  
   },
   
   /**
