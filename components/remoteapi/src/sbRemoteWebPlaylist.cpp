@@ -105,6 +105,8 @@ NS_IMPL_CI_INTERFACE_GETTER4( sbRemoteWebPlaylist,
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY( sbRemoteWebPlaylist )
 
+SB_IMPL_SECURITYCHECKEDCOMP_INIT( sbRemoteWebPlaylist )
+
 sbRemoteWebPlaylist::sbRemoteWebPlaylist( sbIPlaylistWidget *aWebPlaylistWidget,
                                           sbITabBrowserTab *aTabBrowserTab ) :
   mInitialized(PR_FALSE),
@@ -121,39 +123,6 @@ sbRemoteWebPlaylist::sbRemoteWebPlaylist( sbIPlaylistWidget *aWebPlaylistWidget,
   LOG(("sbRemoteWebPlaylist::sbRemoteWebPlaylist()"));
 #endif
 }
-
-nsresult
-sbRemoteWebPlaylist::Init()
-{
-  LOG(("sbRemoteWebPlaylist::Init()"));
-
-  nsresult rv;
-  nsCOMPtr<sbISecurityMixin> mixin =
-      do_CreateInstance( "@songbirdnest.com/remoteapi/security-mixin;1", &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // Get the list of IIDs to pass to the security mixin
-  nsIID ** iids;
-  PRUint32 iidCount;
-  rv = GetInterfaces( &iidCount, &iids );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // initialize our mixin with approved interfaces, methods, properties
-  rv = mixin->Init( (sbISecurityAggregator*)this,
-                    (const nsIID**)iids, iidCount,
-                    sPublicMethods, NS_ARRAY_LENGTH(sPublicMethods),
-                    sPublicRProperties, NS_ARRAY_LENGTH(sPublicRProperties),
-                    sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  mSecurityMixin = do_QueryInterface( mixin, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  mInitialized = PR_TRUE;
-
-  return NS_OK;
-}
-
 
 // ---------------------------------------------------------------------------
 //

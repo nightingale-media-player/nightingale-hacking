@@ -27,6 +27,8 @@
 #ifndef __SB_REMOTE_WEBPLAYLIST_H__
 #define __SB_REMOTE_WEBPLAYLIST_H__
 
+#include "sbRemoteAPI.h"
+
 #include <sbIMediaList.h>
 #include <sbIPlaylistWidget.h>
 #include <sbIRemoteWebPlaylist.h>
@@ -48,14 +50,13 @@ public:
   NS_DECL_NSICLASSINFO
   NS_DECL_SBISECURITYAGGREGATOR
   NS_DECL_SBIREMOTEWEBPLAYLIST
+  SB_DECL_SECURITYCHECKEDCOMP_INIT
 
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
   NS_FORWARD_SAFE_SBIPLAYLISTWIDGET(mPlaylistWidget)
 
   sbRemoteWebPlaylist( sbIPlaylistWidget *aPlaylistWidget,
                        sbITabBrowserTab *aBrowserTab );
-  nsresult Init();
-
 protected:
 
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;

@@ -36,6 +36,7 @@
 
     <preferences id="remoteAPIPreferences">
       <preference id="songbird.rapi.disable_metadata"  name="songbird.rapi.disable_metadata"  type="bool"/>
+      <preference id="songbird.rapi.disable_library"   name="songbird.rapi.disable_library"   type="bool"/>
       <preference id="songbird.rapi.disable_controls"  name="songbird.rapi.disable_controls"  type="bool"/>
       <preference id="songbird.rapi.disable_binding"   name="songbird.rapi.disable_binding"   type="bool"/>
       <preference id="songbird.rapi.notify.always"     name="songbird.rapi.notify.always"     type="bool"/>
@@ -68,6 +69,19 @@
                     label="&rapi.greylist.label1;"
                     accesskey="&rapi.greylist.accesskey1;"
                     oncommand="gRemoteAPIPane.showMetadataWhitelist();"/>
+          </row>
+
+          <row id="rapiLibraryRow" align="center">
+            <vbox align="start">
+              <checkbox id="libraryPolicy"
+                        preference="songbird.rapi.disable_library"
+                        label="&rapi.disable_library.label;"
+                        accesskey="&rapi.disable_library.accesskey;"/>
+            </vbox>
+            <button id="libraryPolicyButton"
+                    label="&rapi.greylist.library.label;"
+                    accesskey="&rapi.greylist.library.accesskey;"
+                    oncommand="gRemoteAPIPane.showLibraryWhitelist();"/>
           </row>
 
           <row id="rapiControlsRow" align="center">

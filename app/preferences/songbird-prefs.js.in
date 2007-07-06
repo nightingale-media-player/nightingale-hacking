@@ -204,6 +204,7 @@ pref("browser.urlbar.clickSelectsAll", true);
 
 // allow access to all remote api by default
 pref("songbird.rapi.disable_metadata", false);
+pref("songbird.rapi.disable_library", false);
 pref("songbird.rapi.disable_controls", false);
 pref("songbird.rapi.disable_binding", false);
 
@@ -230,3 +231,4 @@ pref("songbird.url.support.corefailure", "http://publicsvn.songbirdest.com/trac/
 pref("songbird.mediacore.audioOut", "directsound");
 #endif
 #endif
+

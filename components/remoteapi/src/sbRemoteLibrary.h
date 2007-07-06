@@ -27,6 +27,7 @@
 #ifndef __SB_REMOTE_LIBRARY_H__
 #define __SB_REMOTE_LIBRARY_H__
 
+#include "sbRemoteAPI.h"
 #include "sbRemoteMediaItem.h"
 #include "sbRemoteMediaList.h"
 
@@ -72,6 +73,7 @@ public:
   NS_DECL_NSICLASSINFO
   NS_DECL_SBISECURITYAGGREGATOR
   NS_DECL_SBIREMOTELIBRARY
+  SB_DECL_SECURITYCHECKEDCOMP_INIT
 
   NS_FORWARD_SAFE_SBIREMOTEMEDIALIST(mRemMediaList)
   NS_FORWARD_SAFE_SBIMEDIALIST(mRemMediaList)
@@ -80,7 +82,6 @@ public:
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
   sbRemoteLibrary();
-  nsresult Init();
 
   // sbIWrappedMediaList
   NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();

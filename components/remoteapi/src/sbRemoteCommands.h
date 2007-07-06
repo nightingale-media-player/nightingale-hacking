@@ -27,6 +27,7 @@
 #ifndef __SB_REMOTE_COMMANDS_H__
 #define __SB_REMOTE_COMMANDS_H__
 
+#include "sbRemoteAPI.h"
 #include <sbIPlaylistCommands.h>
 #include <sbIRemoteCommands.h>
 #include <sbIRemotePlayer.h>
@@ -76,8 +77,9 @@ public:
 
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
+  SB_DECL_SECURITYCHECKEDCOMP_INIT
+
   sbRemoteCommands();
-  nsresult Init();
 
 protected:
   virtual ~sbRemoteCommands();

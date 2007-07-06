@@ -29,6 +29,7 @@ var gRemoteAPIPane = {
   _exceptionsParams: {
     // provides initialization data to the permissions dialog
     metadata: { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.metadata" },
+    library:  { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.library" },
     controls: { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.controls" },
     binding:  { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.binding"   }
   },
@@ -50,6 +51,11 @@ var gRemoteAPIPane = {
                                         "chrome://browser/content/preferences/permissions.xul",
                                         "",
                                         params);
+  },
+
+  showLibraryWhitelist: function ()
+  {
+    this._showExceptions("library");
   },
 
   showMetadataWhitelist: function ()

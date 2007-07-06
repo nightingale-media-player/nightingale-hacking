@@ -69,39 +69,12 @@ NS_IMPL_CI_INTERFACE_GETTER4(sbRemoteIndexedMediaItem,
 
 SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteIndexedMediaItem)
 
+SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteIndexedMediaItem)
+
 sbRemoteIndexedMediaItem::sbRemoteIndexedMediaItem(sbIIndexedMediaItem* aIndexedMediaItem) :
   mIndexedMediaItem(aIndexedMediaItem)
 {
   NS_ASSERTION(aIndexedMediaItem, "Null media item!");
-}
-
-nsresult
-sbRemoteIndexedMediaItem::Init()
-{
-  nsresult rv;
-
-  nsCOMPtr<sbISecurityMixin> mixin =
-    do_CreateInstance("@songbirdnest.com/remoteapi/security-mixin;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the list of IIDs to pass to the security mixin
-  nsIID ** iids;
-  PRUint32 iidCount;
-  rv = GetInterfaces(&iidCount, &iids);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // initialize our mixin with approved interfaces, methods, properties
-  rv = mixin->Init( (sbISecurityAggregator*)this,
-                    (const nsIID**)iids, iidCount,
-                    sPublicMethods, NS_ARRAY_LENGTH(sPublicMethods),
-                    sPublicRProperties,NS_ARRAY_LENGTH(sPublicRProperties),
-                    sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties) );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mSecurityMixin = do_QueryInterface(mixin, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
 }
 
 // ---------------------------------------------------------------------------

@@ -64,6 +64,8 @@ struct sbRemoteObserver {
   nsCOMPtr<sbIDataRemote> remote;
 };
 
+class sbRemoteCommands;
+
 class sbRemotePlayer : public sbIRemotePlayer,
                        public nsIClassInfo,
                        public nsIDOMEventListener,
@@ -128,7 +130,7 @@ protected:
 
   // Like the site libraries, this may want to be a collection
   // The commands registered by the page.
-  nsCOMPtr<sbIRemoteCommands> mCommandsObject;
+  nsRefPtr<sbRemoteCommands> mCommandsObject;
 
   // Site library for the page that has been loaded
   // Theoretically there _could_ be more than one library requested by the page
@@ -146,70 +148,6 @@ protected:
   // SecurityCheckedComponent vars
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 };
-
-#define SB_IMPL_SECURITYCHECKEDCOMP_WITH_INIT(_class)                \
-NS_IMETHODIMP \
-_class::CanCreateWrapper( const nsIID *aIID, char **_retval ) \
-{ \
-  NS_ENSURE_ARG_POINTER(aIID); \
-  NS_ENSURE_ARG_POINTER(_retval); \
-  if ( !mInitialized && NS_FAILED( Init() ) ) { \
-    return NS_ERROR_FAILURE; \
-  }                                                                            \
-  nsresult rv = mSecurityMixin->CanCreateWrapper( aIID, _retval ); \
-  if ( sbRemotePlayer::ShouldNotifyUser( NS_SUCCEEDED(rv) ) ) { \
-    sbRemotePlayer::FireRemoteAPIAccessedEvent(mContentDoc); \
-  }                                                                            \
-  return rv; \
-}  \
-NS_IMETHODIMP \
-_class::CanCallMethod( const nsIID *aIID, \
-                               const PRUnichar *aMethodName, \
-                               char **_retval ) \
-{ \
-  NS_ENSURE_ARG_POINTER(aIID); \
-  NS_ENSURE_ARG_POINTER(aMethodName); \
-  NS_ENSURE_ARG_POINTER(_retval); \
-  if ( !mInitialized && NS_FAILED( Init() ) ) { \
-    return NS_ERROR_FAILURE; \
-  }                                                                            \
-  nsresult rv = mSecurityMixin->CanCallMethod( aIID, aMethodName, _retval ); \
-  if ( sbRemotePlayer::ShouldNotifyUser( NS_SUCCEEDED(rv) ) ) { \
-    sbRemotePlayer::FireRemoteAPIAccessedEvent(mContentDoc); \
-  }                                                                            \
-  return rv; \
-} \
-NS_IMETHODIMP \
-_class::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyName, char **_retval) \
-{ \
-  NS_ENSURE_ARG_POINTER(aIID); \
-  NS_ENSURE_ARG_POINTER(aPropertyName); \
-  NS_ENSURE_ARG_POINTER(_retval); \
-  if ( !mInitialized && NS_FAILED( Init() ) ) { \
-    return NS_ERROR_FAILURE; \
-  }                                                                            \
-  nsresult rv = mSecurityMixin->CanGetProperty(aIID, aPropertyName, _retval); \
-  if ( sbRemotePlayer::ShouldNotifyUser( NS_SUCCEEDED(rv) ) ) { \
-    sbRemotePlayer::FireRemoteAPIAccessedEvent(mContentDoc); \
-  }                                                                            \
-  return rv; \
-} \
-NS_IMETHODIMP \
-_class::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyName, char **_retval) \
-{ \
-  NS_ENSURE_ARG_POINTER(aIID); \
-  NS_ENSURE_ARG_POINTER(aPropertyName); \
-  NS_ENSURE_ARG_POINTER(_retval); \
-  if ( !mInitialized && NS_FAILED( Init() ) ) { \
-    return NS_ERROR_FAILURE; \
-  }                                                                            \
-  nsresult rv = mSecurityMixin->CanSetProperty(aIID, aPropertyName, _retval); \
-  if ( sbRemotePlayer::ShouldNotifyUser( NS_SUCCEEDED(rv) ) ) { \
-    sbRemotePlayer::FireRemoteAPIAccessedEvent(mContentDoc); \
-  }                                                                            \
-  return rv; \
-}
-
 
 #endif // __SB_REMOTE_PLAYER_H__
 

@@ -404,7 +404,10 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
     allowed = GetPermission(codebase, PERM_TYPE_METADATA, "disable_metadata");
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("library:"))) {
-    // Nothing uses this, YET.
+    allowed = GetPermission(codebase, PERM_TYPE_METADATA, "disable_library");
+  }
+  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("site:"))) {
+    // site library methods are always cleared
     allowed = PR_TRUE;
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("classinfo:"))) {

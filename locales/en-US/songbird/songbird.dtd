@@ -275,12 +275,16 @@
 <!ENTITY rapi.prefpane.access.text.tmp       "This options control whether a web page can access Songbird directly through JavaScript in the page. You can block or unblock globaly using the checkboxes and then white- or black- list specific domains using the configuration buttons." > 
 <!ENTITY rapi.prefpane.notify.text       "Temporary text until the layout gets fixed." > 
 <!ENTITY rapi.prefpane.notify.text.tmp       "These options control whether you get notified when a web page attempts to access Songbird directly. Denied applies only when you have denied access by checking one of the boxes in the denied section, or specifying the domain in the configuration dialog (by clicking on the buttons above). If you get notified for Denied you have the option of being notified for all accesses, successful or not." >
+<!ENTITY rapi.disable_library.label      "Block website access to your library" >
+<!ENTITY rapi.disable_library.accesskey  "l" >
 <!ENTITY rapi.disable_metadata.label     "Block website access to track metadata" >
 <!ENTITY rapi.disable_metadata.accesskey "m" >
 <!ENTITY rapi.disable_controls.label     "Block website access to playback controls" >
 <!ENTITY rapi.disable_controls.accesskey "p" >
 <!ENTITY rapi.disable_binding.label      "Block website ability to bind to metadata" >
 <!ENTITY rapi.disable_binding.accesskey  "b" >
+<!ENTITY rapi.greylist.library.label     "Configure Library" >
+<!ENTITY rapi.greylist.library.accesskey "i" >
 <!ENTITY rapi.greylist.label1             "Configure Metadata" >
 <!ENTITY rapi.greylist.accesskey1         "C" >
 <!ENTITY rapi.greylist.label2             "Configure Playback" >

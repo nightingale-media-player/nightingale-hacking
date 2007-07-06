@@ -73,6 +73,6 @@ interface sbISecurityMixin : nsISupports
    * \return NS_OK - indicates no implicit failure of code, does not ensure
    *                 URI is set.
    */
-  nsIURI getCodebase();
+  [noscript] nsIURI getCodebase();
 };
 

@@ -24,7 +24,9 @@
 //
  */
 
+#include "sbRemoteAPI.h"
 #include "sbRemotePlayer.h"
+#include "sbRemoteCommands.h"
 #include "sbRemoteLibrary.h"
 #include "sbRemoteWebPlaylist.h"
 #include <sbClassInfoUtils.h>
@@ -123,8 +125,8 @@ const static char* sPublicMethods[] =
     "binding:downloadSelected",
     "binding:registerCommands",
     "binding:unregisterCommands",
-    "binding:siteLibrary",
-    "binding:libraries",
+    "site:siteLibrary",
+    "library:libraries",
     "binding:removeListener",
     "binding:addListener" };
 
@@ -389,9 +391,12 @@ sbRemotePlayer::GetCommands( sbIRemoteCommands **aCommandsObject )
   nsresult rv;
   if (!mCommandsObject) {
     LOG(("sbRemotePlayer::GetCommands() -- creating it"));
-    mCommandsObject =
-      do_CreateInstance( "@songbirdnest.com/remoteapi/remotecommands;1", &rv );
+    mCommandsObject = new sbRemoteCommands();
+    NS_ENSURE_TRUE( mCommandsObject, NS_ERROR_OUT_OF_MEMORY );
+
+    rv = mCommandsObject->Init();
     NS_ENSURE_SUCCESS( rv, rv );
+
     mCommandsObject->SetOwner(this);
     RegisterCommands(PR_TRUE);
   }
@@ -413,8 +418,8 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
          do_GetService( "@songbirdnest.com/Songbird/PlaylistCommandsManager;1", &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  nsCOMPtr<sbIPlaylistCommands> commands( do_QueryInterface( mCommandsObject,
-                                                             &rv ) );
+  nsCOMPtr<sbIPlaylistCommands> commands = (sbIPlaylistCommands*) mCommandsObject;
+  NS_ENSURE_TRUE( commands, NS_ERROR_UNEXPECTED );
 
   // XXXredfive - make this pull the GUID from the web playlist
   //              need sbIRemoteMediaLists online before we can do that.
@@ -927,10 +932,9 @@ sbRemotePlayer::UnregisterCommands()
          do_GetService( "@songbirdnest.com/Songbird/PlaylistCommandsManager;1", &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  nsCOMPtr<sbIPlaylistCommands> commands(
-                                   do_QueryInterface( mCommandsObject, &rv ) );
+  nsCOMPtr<sbIPlaylistCommands> commands = (sbIPlaylistCommands*) mCommandsObject;
+  NS_ENSURE_TRUE( commands, NS_ERROR_UNEXPECTED );
   // Registration of commands is changing soon, for now type='library' is it
-  NS_ENSURE_SUCCESS( rv, rv );
   rv = mgr->UnregisterPlaylistCommandsMediaItem( NS_LITERAL_STRING("remote-test-guid"),
                                                  NS_LITERAL_STRING("library"),
                                                  commands );

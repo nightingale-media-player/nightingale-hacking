@@ -234,6 +234,8 @@ SB_IMPL_CLASSINFO( sbRemoteLibrary,
                    0,
                    kRemoteLibraryCID )
 
+SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteLibrary)
+
 sbRemoteLibrary::sbRemoteLibrary() : mShouldScan(PR_TRUE)
 {
 #ifdef PR_LOGGING
@@ -247,35 +249,6 @@ sbRemoteLibrary::sbRemoteLibrary() : mShouldScan(PR_TRUE)
 sbRemoteLibrary::~sbRemoteLibrary()
 {
   LOG1(("sbRemoteLibrary::~sbRemoteLibrary()"));
-}
-
-nsresult
-sbRemoteLibrary::Init()
-{
-  LOG1(("sbRemoteLibrary::Init()"));
-
-  nsresult rv;
-  nsCOMPtr<sbISecurityMixin> mixin =
-      do_CreateInstance( "@songbirdnest.com/remoteapi/security-mixin;1", &rv );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the list of IIDs to pass to the security mixin
-  nsIID **iids;
-  PRUint32 iidCount;
-  GetInterfaces( &iidCount, &iids );
-
-  // initialize our mixin with approved interfaces, methods, properties
-  rv = mixin->Init( (sbISecurityAggregator*)this,
-                    ( const nsIID** )iids, iidCount,
-                    sPublicMethods, NS_ARRAY_LENGTH(sPublicMethods),
-                    sPublicRProperties, NS_ARRAY_LENGTH(sPublicRProperties),
-                    sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties) );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mSecurityMixin = do_QueryInterface( mixin, &rv );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
 }
 
 // ---------------------------------------------------------------------------

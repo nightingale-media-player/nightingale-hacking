@@ -27,6 +27,8 @@
 #ifndef __SB_REMOTE_MEDIAITEM_H__
 #define __SB_REMOTE_MEDIAITEM_H__
 
+#include "sbRemoteAPI.h"
+
 #include <sbIMediaItem.h>
 #include <sbILibraryResource.h>
 #include <sbISecurityMixin.h>
@@ -61,6 +63,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
   NS_DECL_SBISECURITYAGGREGATOR
+  SB_DECL_SECURITYCHECKEDCOMP_INIT
 
   NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem);
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETPROPERTY(mMediaItem);
@@ -72,8 +75,6 @@ public:
   NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();
 
   sbRemoteMediaItem(sbIMediaItem* aMediaItem);
-
-  nsresult Init();
 
 protected:
 

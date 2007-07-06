@@ -27,6 +27,8 @@
 #ifndef __SB_REMOTE_INDEXEDMEDIAITEM_H__
 #define __SB_REMOTE_INDEXEDMEDIAITEM_H__
 
+#include "sbRemoteAPI.h"
+
 #include <sbIMediaItem.h>
 #include <sbISecurityMixin.h>
 #include <sbISecurityAggregator.h>
@@ -44,12 +46,11 @@ public:
   NS_DECL_NSICLASSINFO
   NS_DECL_SBIINDEXEDMEDIAITEM
   NS_DECL_SBISECURITYAGGREGATOR
+  SB_DECL_SECURITYCHECKEDCOMP_INIT
 
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin);
 
   sbRemoteIndexedMediaItem(sbIIndexedMediaItem* aIndexedMediaItem);
-
-  nsresult Init();
 
 protected:
 
