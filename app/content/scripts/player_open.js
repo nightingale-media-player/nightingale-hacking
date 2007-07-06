@@ -683,6 +683,9 @@ function SBImportURLIntoMainLibrary(url) {
                                   .getService(Components.interfaces.sbILibraryManager);
                                   
   var library = libraryManager.mainLibrary;
+
+  if (getPlatformString() == "Windows_NT") url = url.toLowerCase();
+
   
   var ioService = Components.classes["@mozilla.org/network/io-service;1"]
     .getService(Components.interfaces.nsIIOService);
@@ -705,7 +708,10 @@ function SBImportURLIntoMainLibrary(url) {
     return null;
   }
   
-  var mediaItem = null;
+  // skip import of the item if it already exists
+  var mediaItem = getFirstItemByProperty(library, "http://songbirdnest.com/data/1.0#contentURL", url);
+  if (mediaItem) return;
+  
   try {
     mediaItem = library.createMediaItem(uri);
   }
@@ -789,6 +795,31 @@ function SBDisplayViewForListAndPlayItem(list, item) {
   gPPS.playView(view, index);
 }
   
+function getFirstItemByProperty(aMediaList, aProperty, aValue) {
+
+  var listener = {
+    item: null,
+    onEnumerationBegin: function() {
+      return true;
+    },
+    onEnumeratedItem: function(list, item) {
+      this.item = item;
+      return false;
+    },
+    onEnumerationEnd: function() {
+      return true;
+    }
+  };
+
+  aMediaList.enumerateItemsByProperty(aProperty,
+                                      aValue,
+                                      listener,
+                                      Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+
+  return listener.item;
+}
+
+
 }
 catch (e)
 {

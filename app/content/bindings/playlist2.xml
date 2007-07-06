@@ -1680,6 +1680,163 @@
       </body>
     </method>
 
+    <method name="_addExternalFiles">
+      <parameter name="dataarray"/>
+      <parameter name="row"/>
+      <parameter name="orientation"/>
+      <body>
+      <![CDATA[
+
+        var ml = this.mediaListView.mediaList;
+        var library = ml.library;
+        var oldLength = ml.length;
+        var badEntries = 0;
+        
+        var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+          .getService(Components.interfaces.nsIIOService);
+
+        var items = Components.classes["@mozilla.org/array;1"]
+          .createInstance(Components.interfaces.nsIMutableArray);
+        var n=0;
+
+        for (var i = 0;i<dataarray.length;i++) {
+          var item = dataarray[i][0];
+          var datalen = dataarray[i][1];
+
+          var prettyName;
+          var url;
+          
+          if (item instanceof this._Ci.nsIFile) {
+            var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                            .getService(Components.interfaces.nsIIOService);
+            var fileHandler = ioService.getProtocolHandler("file")
+                              .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+            url = fileHandler.getURLSpecFromFile(item); 
+          } else if (item instanceof this._Ci.nsISupportsString) {
+            url = item.QueryInterface(Components.interfaces.nsISupportsString);
+            if (url) url = url.toString();
+            if (url.toLowerCase().indexOf("http://") < 0) {
+              badEntries++;
+              continue;
+            }
+          } else {
+            url = ''+item;
+            if (url.toLowerCase().indexOf("http://") < 0) {
+              badEntries++;
+              continue;
+            }
+          }
+
+          var separator = url.indexOf("\n");
+          if (separator != -1) 
+          {
+            prettyName = url.substr(separator+1);
+            url = url.substr(0,separator);
+          }
+
+          if (getPlatformString() == "Windows_NT") url = url.toLowerCase();
+
+          // skip import of the item if it exists in this library
+          var item = this.getFirstItemByProperty(library, "http://songbirdnest.com/data/1.0#contentURL", url);
+          if (!item) {
+          
+            var uri = null;
+            try {
+              uri = ioService.newURI(url, null, null);
+            }
+            catch (e) {
+              log(e);
+              uri = null;
+            }
+                
+            if (!uri) {
+              badEntries++;
+              continue;
+            }
+            
+            try {
+              item = library.createMediaItem(uri);
+            }
+            catch(e) {
+              log(e);
+              item = null;
+            }
+            
+            if(!item) {
+              badEntries++;
+              continue;
+            }
+            
+            var metadataJobMgr = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+              .getService(Components.interfaces.sbIMetadataJobManager);
+            
+            items.appendElement(item, false);
+            n++;
+          }
+          
+          if (item) {
+            if (ml instanceof this._Ci.sbIOrderableMediaList) {
+              var doInsert = false;
+              if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+                doInsert = true;
+              } else {
+                if (row + 1 < oldLength) {
+                  row++;
+                  doInsert = true;
+                }
+              }
+              if (row >= 0 && doInsert) {
+                ml.insertBefore(row, item);
+              } else {
+                ml.add(item);
+              }
+            }
+          }
+        }
+
+        var added = ml.length - oldLength;
+        var dups = dataarray.length - added - badEntries;
+        
+        if (added || dups)
+          this._reportAddedTracks(added, dups);
+          
+        if (n > 0) {
+          metadataJobMgr.newJob(items, 5);
+          // XXX lone> todo: select items and ensure visible (bug 3879)
+        }
+        
+        ]]>
+      </body>
+    </method>
+    
+    <method name="getFirstItemByProperty">
+      <parameter name="aMediaList"/>
+      <parameter name="aProperty"/>
+      <parameter name="aValue"/>
+      <body>
+        <![CDATA[
+          var listener = {
+            item: null,
+            onEnumerationBegin: function() {
+              return true;
+            },
+            onEnumeratedItem: function(list, item) {
+              this.item = item;
+              return false;
+            },
+            onEnumerationEnd: function() {
+              return true;
+            }
+          };
+          aMediaList.enumerateItemsByProperty(aProperty,
+                                              aValue,
+                                              listener,
+                                              this._Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+          return listener.item;
+        ]]>
+      </body>
+    </method>
+
     <method name="_reportAddedTracks">
       <parameter name="countAdded"/>
       <parameter name="countAlreadyPresent"/>
@@ -1688,9 +1845,9 @@
 <![CDATA[
   var msg = countAdded + " ";
 
-  // Start message with xxx added to...
+  // Start message with 'xxx added to'... except for 0 ('no tracks added')
   switch (countAdded) {
-    case 0:  msg += this._str_notracksaddedto; break;
+    case 0:  msg = this._str_notracksaddedto;  break;
     case 1:  msg += this._str_trackaddedto;    break;
     default: msg += this._str_tracksaddedto;   break;
   }
@@ -1927,30 +2084,65 @@
     this._addItems(context.source, context.items, context.count, row, orientation);
     return;
   }
+  
+  var array = [];
+  data = this._getTransferDataForFlavor("application/x-moz-file", array);
+  if (data) {
+    this._addExternalFiles(array, row, orientation);
+    return;
+  }
+  
+  data = this._getTransferDataForFlavor("text/x-moz-url", array);
+  if (data) {
+    this._addExternalFiles(array, row, orientation);
+    return;
+  }
+  
+  data = this._getTransferDataForFlavor("text/unicode", array);
+  if (data) {
+    this._addExternalFiles(array, row, orientation);
+    return;
+  }
+
+  data = this._getTransferDataForFlavor("text/plain", array);
+  if (data) {
+    this._addExternalFiles(array, row, orientation);
+    return;
+  }
+  
 ]]>
         </body>
       </method>
 
       <method name="_getTransferDataForFlavor">
         <parameter name="flavor"/>
+        <parameter name="array"/>
         <body>
 <![CDATA[
   var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
                             .getService(this._Ci.nsIDragService);
   var session = dragService.getCurrentSession();
 
-  var transfer = this._Cc["@mozilla.org/widget/transferable;1"]
-                         .createInstance(this._Ci.nsITransferable);
+  var nitems = session.numDropItems;
+  var r = null;
 
   if (session.isDataFlavorSupported(flavor)) {
-    transfer.addDataFlavor(flavor);
-    session.getData(transfer, 0);
-    var data = {};
-    transfer.getTransferData(flavor, data, {});
-    return data.value;
+
+    for (var i=0;i<nitems;i++) {
+      var transfer = this._Cc["@mozilla.org/widget/transferable;1"]
+                            .createInstance(this._Ci.nsITransferable);
+
+      transfer.addDataFlavor(flavor);
+      session.getData(transfer, i);
+      var data = {};
+      var length = {};
+      transfer.getTransferData(flavor, data, length);
+      if (!r) r = data.value;
+      if (array) array.push([data.value, length.value]);
+    }
   }
 
-  return null;
+  return r;
 ]]>
         </body>
       </method>
@@ -2076,6 +2268,8 @@
       session.isDataFlavorSupported(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS) ||
       session.isDataFlavorSupported("application/x-moz-file") ||
       session.isDataFlavorSupported("text/x-moz-url")) {
+      session.isDataFlavorSupported("text/unicode") ||
+      session.isDataFlavorSupported("text/plain") ||
     return true;
   }
   else {
@@ -2094,7 +2288,7 @@
 ]]>
         </body>
       </method>
-
+      
       <method name="getSupportedFlavours">
         <body>
 <![CDATA[
@@ -2103,6 +2297,7 @@
   flavorSet.appendFlavour(this._TYPE_X_SB_MEDIAITEM_ENUMERATOR);
   flavorSet.appendFlavour("application/x-moz-file", "nsIFile");
   flavorSet.appendFlavour("text/x-moz-url");
+  flavorSet.appendFlavour("text/unicode");
   return flavorSet;
 ]]>
         </body>

@@ -40,6 +40,7 @@ var SBDropObserver =
     flavours.appendFlavour("application/x-moz-file","nsIFile");
     flavours.appendFlavour("text/x-moz-url");
     flavours.appendFlavour("text/unicode");
+    flavours.appendFlavour("text/plain");
     return flavours;
   },
   
@@ -77,15 +78,17 @@ function dropFiles(evt, dropdata, session, targetdb, targetpl) {
       var fileHandler = ioService.getProtocolHandler("file")
                         .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
       rawData = fileHandler.getURLSpecFromFile(rawData);
-    }
+    } 
     else
     {
-      var separator = rawData.indexOf("\n");
-      if (separator != -1) 
-      {
-        prettyName = rawData.substr(separator+1);
-        rawData = rawData.substr(0,separator);
-      }
+      if (rawData.toLowerCase().indexOf("http://") < 0) continue;
+    }
+
+    var separator = rawData.indexOf("\n");
+    if (separator != -1) 
+    {
+      prettyName = rawData.substr(separator+1);
+      rawData = rawData.substr(0,separator);
     }
     
     if (lcase) rawData = rawData.toLowerCase();
@@ -112,8 +115,13 @@ function SBDropped()
                             .getService(Components.interfaces.nsIIOService);
         var uri = ios.newURI(url, null, null);
         theDropPath = uri.spec;
-        var fileUrl = uri.QueryInterface(Components.interfaces.nsIFileURL);
-        if(fileUrl) {
+        var fileUrl;
+        try {
+          fileUrl = uri.QueryInterface(Components.interfaces.nsIFileURL);
+        } catch (e) { 
+          fileUrl = null; 
+        }
+        if (fileUrl) {
           theDropIsDir = fileUrl.file.isDirectory();
           if(theDropIsDir) {
             theDropPath = fileUrl.file.path;
