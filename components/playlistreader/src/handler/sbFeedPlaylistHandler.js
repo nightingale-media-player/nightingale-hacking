@@ -69,7 +69,42 @@ function(aFile, aMediaList, aReplace)
           var item = { uri: entry.link, properties: {} };
           toAdd.push(item);
         }
+        else {
+          this.addEnclosure(entry);
+        }
       }
+    },
+
+    addEnclosure: function(aEntry)
+    {
+      var enclosureList = aEntry.fields.getPropertyAsInterface("enclosure", Ci.nsIArray);
+      if (!enclosureList)
+        return false;
+      var enclosure = enclosureList.queryElementAt(0, Ci.nsIPropertyBag2);
+
+      var url = enclosure.getPropertyAsAString("url");
+      if (!url)
+        return false;
+      var type = enclosure.getPropertyAsAString("type");
+
+      if (!type) /*XXXeps should be able to ask pps if type is supported. */
+        if (!pps.isMediaURL(url))
+            return false;
+
+      try {
+        var ioService = Cc["@mozilla.org/network/io-service;1"]
+                          .getService(Ci.nsIIOService);
+        var uri = ioService.newURI(url, null, null);
+      }
+      catch (e) {
+        Components.utils.reportError(e);
+        return false;
+      }
+
+      var item = { uri: uri, properties: {} };
+      toAdd.push(item);
+
+      return true;
     }
   };
 
