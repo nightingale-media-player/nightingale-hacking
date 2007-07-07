@@ -51,10 +51,6 @@ UninstPage instfiles
 ShowInstDetails show
 ShowUninstDetails show
 
-Function .onInstSuccess
-  WriteINIStr $APPDATA\Songbird_vlc\vlcrc main plugin-path $INSTDIR\vlcplugins
-FunctionEnd
-
 var LinkIconFile
 var Result
 var MajorVersion
@@ -139,6 +135,20 @@ NoUninstall:
   File /r searchplugins
   File /r scripts
   File /r xulrunner
+
+  StrCmp $MajorVersion "6" XRWorkaround
+  Goto NoXRWorkaround
+  
+; Sets default video output module to "opengl" on Windows Vista.
+XRWorkaround:
+  ;The XULRunner stub loader also fails to find certain symbols when launched
+  ;without a profile (yes, it's confusing). The quick work around is to 
+  ;leave a copy of msvcr71.dll in xulrunner/ as well.
+  SetOutPath $INSTDIR\xulrunner
+  File msvcr71.dll
+  
+; Does nothing right now  
+NoXRWorkaround:
   
   FindFirst $0 $1 $SYSDIR\msvcp71.dll
   StrCmp $1 "" RequiresMSVCP71
@@ -150,10 +160,6 @@ RequiresMSVCP71:
 
 NoRequireMSVCP71:
   FindClose $0
-  
-  ;VLC Configuration File.
-  ;SetOutPath $APPDATA\SongbirdVLC
-  ;File songbirdvlcrc
   
   ;Back to normal install directory.
   SetOutPath $INSTDIR
