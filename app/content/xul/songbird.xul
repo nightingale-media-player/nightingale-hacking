@@ -3,6 +3,7 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/videoWin.css" type="text/css"?>
 
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 

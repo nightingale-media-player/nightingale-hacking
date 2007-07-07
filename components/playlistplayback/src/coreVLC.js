@@ -971,7 +971,7 @@ CoreVLC.prototype.activate = function ()
   try {
     var videoElement =
       this._object.QueryInterface(Components.interfaces.nsIDOMElement);
-    videoElement.removeAttribute("hidden");
+    videoElement.parentNode.hidden = false;
   }
   catch (err) { }
   
@@ -987,7 +987,8 @@ CoreVLC.prototype.deactivate = function ()
   
   var videoElement =
     this._object.QueryInterface(Components.interfaces.nsIDOMElement);
-  videoElement.setAttribute("hidden", true);
+  // hide the containing <hbox> because that has a flex= set
+  videoElement.parentNode.hidden = true;
   
   this._active = false;
 };
@@ -1045,7 +1046,7 @@ function CoreVLCDocumentInit()
 
     gCoreVLC.setId("VLC1");
     gCoreVLC.setObject(theVLCInstance);
-    theVLCInstance.setAttribute("hidden", "true");
+    theVLCInstance.parentNode.hidden = true;
     
     // apply prefs to playback core
     gCoreVLC._applyPreferences();
