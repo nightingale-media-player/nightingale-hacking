@@ -304,10 +304,19 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   createTable.AppendLiteral(  "' (library_guid TEXT NOT NULL, "
                               "item_guid TEXT NOT NULL, "
                               "url TEXT NOT NULL, "
+
+                              // True if the item should run on the worker thread
                               "worker_thread INTEGER NOT NULL DEFAULT 0, "
+
+                              // True if the item has been scanned for metadata (partly complete, must restart)
                               "is_scanned INTEGER NOT NULL DEFAULT 0, "
+
+                              // True if the scan has been written to the database (fully complete, no restart needed)
                               "is_written INTEGER NOT NULL DEFAULT 0, "
+
+                              // True if the item is currently being scanned (ignore on restart, item failed)
                               "is_current INTEGER NOT NULL DEFAULT 0, "
+
                               "PRIMARY KEY (library_guid, item_guid) )" );
   rv = mMainThreadQuery->AddQuery( createTable );
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1158,6 +1167,7 @@ nsresult sbMetadataJob::ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTabl
   NS_ENSURE_SUCCESS(rv, rv);
   rv = update->SetTableName( aTableName );
   NS_ENSURE_SUCCESS(rv, rv);
+  // Set "is_scanned" back to 0
   rv = update->AddAssignmentString( NS_LITERAL_STRING("is_scanned"), NS_LITERAL_STRING("0") );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = update->CreateMatchCriterionString( aTableName,
@@ -1199,13 +1209,20 @@ nsresult sbMetadataJob::ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTabl
 nsresult sbMetadataJob::StartHandlerForItem( sbMetadataJob::jobitem_t *aItem )
 {
   NS_ENSURE_ARG_POINTER( aItem );
-  nsresult rv;
-  nsCOMPtr<sbIMetadataManager> MetadataManager = do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = MetadataManager->GetHandlerForMediaURL( aItem->url, getter_AddRefs(aItem->handler) );
-  NS_ENSURE_SUCCESS(rv, rv);
-  PRBool async = PR_FALSE;
-  return aItem->handler->Read( &async );
+  nsresult rv = NS_ERROR_FAILURE;
+  // No item is a failed metadata attempt.  
+  // Don't bother to chew the CPU or the filesystem by reading metadata.
+  if ( aItem->item && !aItem->url.IsEmpty() )
+  {
+    nsCOMPtr<sbIMetadataManager> MetadataManager = do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = MetadataManager->GetHandlerForMediaURL( aItem->url, getter_AddRefs(aItem->handler) );
+    NS_ENSURE_SUCCESS(rv, rv);
+    PRBool async = PR_FALSE;
+    if ( aItem->handler ) // Shouldn't need this?
+      rv = aItem->handler->Read( &async );
+  }
+  return rv;
 }
 
 nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
