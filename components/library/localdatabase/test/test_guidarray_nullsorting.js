@@ -42,6 +42,8 @@ function runTest () {
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
   array.databaseGUID = databaseGUID;
   array.baseTable = "media_items";
+  array.propertyCache =
+    library.QueryInterface(Ci.sbILocalDatabaseLibrary).propertyCache;
 
 /*
   XXXsteve Going to disable this test since we now automagically fill in the
@@ -53,7 +55,6 @@ function runTest () {
     var item = library.createMediaItem(newURI("file://foo/" + i));
     if (i >= 10) {
       item.setProperty("http://songbirdnest.com/data/1.0#contentLength", i - 10);
-      item.write();
     }
     items.push(item.guid);
   }
@@ -91,7 +92,6 @@ function runTest () {
     var item = library.createMediaItem(newURI("file://foo/" + i));
     if (i >= 10) {
       item.setProperty("http://songbirdnest.com/data/1.0#testNumber", i - 10);
-      item.write();
     }
     items.push(item.guid);
   }

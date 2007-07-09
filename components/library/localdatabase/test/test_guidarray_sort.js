@@ -36,63 +36,63 @@ function runTest () {
   var array;
 
   // One level sort, small fetch size, ascending
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#trackName", true);
   array.fetchSize = 1;
   assertSort(array, "data_sort_trackname_asc.txt");
 
   // One level sort, small fetch size, descending
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#trackName", false);
   array.fetchSize = 2;
   assertSort(array, "data_sort_trackname_desc.txt");
 
   // One level sort, large fetch size, ascending
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#trackName", true);
   array.fetchSize = 20;
   assertSort(array, "data_sort_trackname_asc.txt");
 
   // One level sort, large fetch size, descending
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#trackName", false);
   array.fetchSize = 200;
   assertSort(array, "data_sort_trackname_desc.txt");
 
   // One level sort, ascending
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#playCount", true);
   array.fetchSize = 40;
   assertSort(array, "data_sort_playcount_asc.txt");
 
   // One level sort, descending
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#playCount", false);
   array.fetchSize = 40;
   assertSort(array, "data_sort_playcount_desc.txt");
 
   // One level top level property sort, ascending
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#contentURL", true);
   array.fetchSize = 40;
   assertSort(array, "data_sort_contenturl_asc.txt");
 
   // One level top level property sort, descending
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#contentURL", false);
   array.fetchSize = 40;
   assertSort(array, "data_sort_contenturl_desc.txt");
 
   // Sort a simple media list by the ordinal
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "simple_media_lists";
   array.baseConstraintColumn = "media_item_id";
   array.baseConstraintValue = listId;
@@ -100,7 +100,7 @@ function runTest () {
   array.fetchSize = 40;
   assertSort(array, "data_sort_sml101_ordinal_asc.txt");
 
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "simple_media_lists";
   array.baseConstraintColumn = "media_item_id";
   array.baseConstraintValue = listId;

@@ -94,10 +94,6 @@ const static char* sPublicRProperties[] =
 const static char* sPublicMethods[] =
 { 
   // sbILibraryResource
-  // XXXsteve I am omitting the write/writeThrough/writePending stuff since
-  // it is easy for the user to mess it up.  We will automatically write the
-  // properties the users set from the remote api (hopefully these methods will
-  // go away soon)
   "library:getProperty",
   "library:setProperty",
   "library:equals"
@@ -145,26 +141,4 @@ sbRemoteMediaItem::GetMediaItem()
   NS_ADDREF(item);
   return item;
 }
-
-// ---------------------------------------------------------------------------
-//
-//                        sbILibraryResource
-//
-// ---------------------------------------------------------------------------
-
-NS_IMETHODIMP
-sbRemoteMediaItem::SetProperty(const nsAString& aName,
-                               const nsAString& aValue)
-{
-  // I don't trust web people to rembmer to call write, so we'll do it for
-  // them
-  nsresult rv = mMediaItem->SetProperty(aName, aValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMediaItem->Write();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 

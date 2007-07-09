@@ -297,7 +297,6 @@ function testAddingSimplePlaylists() {
   // Create the playlist
   var mediaList = library.createMediaList("simple");
   mediaList.name = "test playlist";
-  mediaList.write();
   
   // Make sure the playlist appears in the tree
   var node = libraryServicePane.getNodeForLibraryResource(mediaList);
@@ -326,8 +325,6 @@ function testInsertionLogic() {
   var list2 = libraryManager.mainLibrary.createMediaList("simple");
   list1.name = "Test1";
   list2.name = "Test2";
-  list1.write();
-  list2.write();
 
   // Make sure they appeared in the tree
   var node1 = libraryServicePane.getNodeForLibraryResource(list1);
@@ -381,7 +378,6 @@ function testInsertionLogic() {
   // in the middle of the bookmarks
   var list3 = libraryManager.mainLibrary.createMediaList("simple");
   list3.name = "Test3";
-  list3.write();
   
   DBG("After adding a new playlist:");
   showTree(servicePane.root, "tree-after-add: ");
@@ -417,7 +413,6 @@ function testInsertionLogic() {
   // Insert a playlist into the new library
   var list4 = newLibrary.createMediaList("simple");
   list4.name = "Test4";
-  list4.write();
   
   DBG("After adding a playlist into the new library:");
   showTree(servicePane.root, "tree-after-newlibrary-playlist: ");
@@ -465,7 +460,6 @@ function testLibrarySuggestion() {
   // return the new library
   var list1 = newLibrary.createMediaList("simple");
   list1.name = "Test1";
-  list1.write();
   var node1 = libraryServicePane.getNodeForLibraryResource(list1);
   suggestedLibrary = libraryServicePane.suggestLibraryForNewList(
               "simple", node1);
@@ -475,7 +469,6 @@ function testLibrarySuggestion() {
   // level should still return the new library
   var list2 = newLibrary.createMediaList("simple");
   list2.name = "Test2";
-  list2.write();
   var node2 = libraryServicePane.getNodeForLibraryResource(list2);
   suggestedLibrary = libraryServicePane.suggestLibraryForNewList(
               "simple", node2);
@@ -521,14 +514,12 @@ function testRenaming() {
   // Add a new library to rename
   var newLibrary = createLibrary("renaming-test");
   newLibrary.name = "Test2";
-  newLibrary.write();
   libraryManager.registerLibrary(newLibrary, false);
   var newLibraryNode = libraryServicePane.getNodeForLibraryResource(newLibrary);
 
   // Add a list to the library
   var list1 = newLibrary.createMediaList("simple");
   list1.name = "Test1";
-  list1.write();
   var node1 = libraryServicePane.getNodeForLibraryResource(list1);
 
   // Fake a rename on the library

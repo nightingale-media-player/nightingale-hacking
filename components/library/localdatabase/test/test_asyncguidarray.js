@@ -252,6 +252,8 @@ function runTest () {
   var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/AsyncGUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseAsyncGUIDArray);
   array.databaseGUID = databaseGUID;
+  array.propertyCache =
+    library.QueryInterface(Ci.sbILocalDatabaseLibrary).propertyCache;
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
   array.addSort("http://songbirdnest.com/data/1.0#trackNumber", true);

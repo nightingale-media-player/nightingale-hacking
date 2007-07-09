@@ -36,6 +36,8 @@ function runTest () {
   var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
   array.databaseGUID = databaseGUID;
+  array.propertyCache =
+    library.QueryInterface(Ci.sbILocalDatabaseLibrary).propertyCache;
 
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#albumName", true);

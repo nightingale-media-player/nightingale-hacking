@@ -374,7 +374,6 @@ function doOK()
   var limitType = document.getElementById("smart_songs_list");
 
   list.setProperty(SB_PROPERTY_UILIMITTYPE, limitType.value);
-  list.write();
 
   if (limit.checked) {
     switch(limitType.value) {

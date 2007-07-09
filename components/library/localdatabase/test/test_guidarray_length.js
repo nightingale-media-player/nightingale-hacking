@@ -38,6 +38,8 @@ function runTest () {
   var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
   array.databaseGUID = databaseGUID;
+  array.propertyCache =
+    library.QueryInterface(Ci.sbILocalDatabaseLibrary).propertyCache;
 
   // Length checks, use the same sort for all of these since it does not
   // matter

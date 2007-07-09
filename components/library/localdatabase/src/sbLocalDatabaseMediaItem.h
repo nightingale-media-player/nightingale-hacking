@@ -92,9 +92,6 @@ private:
 
   PRLock* mPropertyBagLock;
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> mPropertyBag;
-
-  PRPackedBool mWriteThrough;
-  PRPackedBool mWritePending;
 };
 
 class sbLocalDatabaseIndexedMediaItem : public nsIClassInfo,

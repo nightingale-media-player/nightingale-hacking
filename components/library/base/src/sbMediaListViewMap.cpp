@@ -70,6 +70,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbMediaListViewMap, nsIObserver,
 
 sbMediaListViewMap::sbMediaListViewMap()
 {
+  MOZ_COUNT_CTOR(sbMediaListViewMap);
 #ifdef PR_LOGGING
   if (!gMediaListViewMapLog)
     gMediaListViewMapLog = PR_NewLogModule("sbMediaListViewMap");
@@ -82,9 +83,8 @@ sbMediaListViewMap::sbMediaListViewMap()
 
 sbMediaListViewMap::~sbMediaListViewMap()
 {
-  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
-
   TRACE(("MediaListViewMap[0x%x] - Destroyed", this));
+  MOZ_COUNT_DTOR(sbMediaListViewMap);
 }
 
 /* static */ NS_METHOD

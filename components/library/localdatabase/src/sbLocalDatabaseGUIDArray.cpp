@@ -225,8 +225,7 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetPropertyCache(sbILocalDatabasePropertyCache** aPropertyCache)
 {
   NS_ENSURE_ARG_POINTER(aPropertyCache);
-  *aPropertyCache = mPropertyCache;
-  NS_ADDREF(*aPropertyCache);
+  NS_IF_ADDREF(*aPropertyCache = mPropertyCache);
   return NS_OK;
 }
 NS_IMETHODIMP
@@ -243,7 +242,7 @@ sbLocalDatabaseGUIDArray::GetLength(PRUint32 *aLength)
   nsresult rv;
 
   if (mValid == PR_FALSE) {
-    rv = Initalize();
+    rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -527,7 +526,7 @@ sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
   nsresult rv;
 
   if (mValid == PR_FALSE) {
-    rv = Initalize();
+    rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -567,7 +566,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
   PRInt32 dbOk;
 
   if (mValid == PR_FALSE) {
-    rv = Initalize();
+    rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -623,8 +622,10 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
 }
 
 nsresult
-sbLocalDatabaseGUIDArray::Initalize()
+sbLocalDatabaseGUIDArray::Initialize()
 {
+  NS_ASSERTION(mPropertyCache, "No property cache!");
+
   nsresult rv;
 
   // Make sure we have a database and a base table
@@ -641,6 +642,9 @@ sbLocalDatabaseGUIDArray::Initalize()
     rv = Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  rv = mPropertyCache->Write();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -776,42 +780,15 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
    */
   nsAutoPtr<sbLocalDatabaseQuery> ldq;
 
-  // If we have a property cache, pass it to the sbLocalDatabaseQuery.
-  // Otherwise, create a query object for it to use
-  if (mPropertyCache) {
-    ldq = new sbLocalDatabaseQuery(mBaseTable,
-                                   mBaseConstraintColumn,
-                                   mBaseConstraintValue,
-                                   NS_LITERAL_STRING("member_media_item_id"),
-                                   mSorts[0].property,
-                                   mSorts[0].ascending,
-                                   &mFilters,
-                                   mIsDistinct,
-                                   mPropertyCache);
-  }
-  else {
-    nsCOMPtr<sbIDatabaseQuery> query =
-      do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = query->SetDatabaseGUID(mDatabaseGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (mDatabaseLocation) {
-      rv = query->SetDatabaseLocation(mDatabaseLocation);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    ldq = new sbLocalDatabaseQuery(mBaseTable,
-                                   mBaseConstraintColumn,
-                                   mBaseConstraintValue,
-                                   NS_LITERAL_STRING("member_media_item_id"),
-                                   mSorts[0].property,
-                                   mSorts[0].ascending,
-                                   &mFilters,
-                                   mIsDistinct,
-                                   query);
-  }
+  ldq = new sbLocalDatabaseQuery(mBaseTable,
+                                 mBaseConstraintColumn,
+                                 mBaseConstraintValue,
+                                 NS_LITERAL_STRING("member_media_item_id"),
+                                 mSorts[0].property,
+                                 mSorts[0].ascending,
+                                 &mFilters,
+                                 mIsDistinct,
+                                 mPropertyCache);
 
   rv = ldq->GetFullCountQuery(mFullCountQuery);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1831,7 +1808,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
   TRACE(("GetByIndexInternal %d %d", aIndex, mLength));
 
   if (mValid == PR_FALSE) {
-    rv = Initalize();
+    rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1869,26 +1846,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
 PRInt32
 sbLocalDatabaseGUIDArray::GetPropertyId(const nsAString& aProperty)
 {
-  if (mPropertyCache) {
-    return SB_GetPropertyId(aProperty, mPropertyCache);
-  }
-  else {
-    nsresult rv;
-
-    nsCOMPtr<sbIDatabaseQuery> query =
-      do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, -1);
-
-    rv = query->SetDatabaseGUID(mDatabaseGUID);
-    NS_ENSURE_SUCCESS(rv,  -1);
-
-    if (mDatabaseLocation) {
-      rv = query->SetDatabaseLocation(mDatabaseLocation);
-      NS_ENSURE_SUCCESS(rv,  -1);
-    }
-
-    return SB_GetPropertyId(aProperty, query);
-  }
+  return SB_GetPropertyId(aProperty, mPropertyCache);
 }
 
 NS_IMPL_ISUPPORTS1(sbGUIDArrayEnumerator, nsISimpleEnumerator)

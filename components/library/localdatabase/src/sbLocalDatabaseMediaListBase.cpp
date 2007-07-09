@@ -274,9 +274,6 @@ sbLocalDatabaseMediaListBase::CopyAllProperties(sbIMediaItem* aSourceItem,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = aTargetItem->Write();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 

@@ -2204,9 +2204,6 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
   rv = mItem->SetProperty(NS_LITERAL_STRING(STATE_PROPERTY), state);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mItem->Write();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 

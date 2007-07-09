@@ -472,7 +472,6 @@ function sbLibraryServicePane_onRename(aNode, aNewName) {
   if (aNode && aNewName) {
     var libraryResource = this.getLibraryResourceForNode(aNode);
     libraryResource.name = aNewName;
-    libraryResource.write();
   }
 }
 
@@ -725,6 +724,15 @@ sbLibraryServicePane.prototype._libraryAdded =
 function sbLibraryServicePane__libraryAdded(aLibrary) {
   //logcall(arguments);  
   this._ensureLibraryNodeExists(aLibrary);
+
+  // Listen to changes in the library so that we can display new playlists
+  var filter = SBProperties.createArray([[SBProperties.mediaListName, null]]);
+  aLibrary.addListener(this,
+                       false,
+                       Ci.sbIMediaList.LISTENER_FLAGS_ALL &
+                         ~Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED,
+                       filter);
+
   this._processListsInLibrary(aLibrary);
 }
 
@@ -959,15 +967,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   
   // Make sure the node is visible, since we hid all library nodes on startup
   node.hidden = false;
-  
-  // Listen to changes in the library so that we can display new playlists
-  var filter = SBProperties.createArray([[SBProperties.mediaListName, null]]);
-  aLibrary.addListener(this,
-                       false,
-                       Ci.sbIMediaList.LISTENER_FLAGS_ALL &
-                         ~Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED,
-                       filter);
-  
+
   return node;
 }
 

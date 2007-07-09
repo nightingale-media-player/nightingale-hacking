@@ -168,6 +168,11 @@ interface sbILibrary : sbILibraryResource
   void optimize();
 
   /**
+   * \brief Called when the library should save any cached data to disk
+   */
+  void sync();
+
+  /**
    * \brief Called when the library should clean up in preparation for shutdown
    *        of the application.
    */

@@ -47,24 +47,6 @@ function runTest(tester) {
 
     tester.assertTrue(item.equals(item));
 
-    try {
-      item.writeThrough = true;
-      tester.fail("did not throw");
-    }
-    catch(e) {}
-
-    try {
-      var junk = item.writePending;
-      tester.fail("did not throw");
-    }
-    catch(e) {}
-
-    try {
-      item.write();
-      tester.fail("did not throw");
-    }
-    catch(e) {}
-
     // Test sbIMediaItem
     tester.assertEqual(item.isMutable, true);
     tester.assertTrue(item.mediaCreated > 0);

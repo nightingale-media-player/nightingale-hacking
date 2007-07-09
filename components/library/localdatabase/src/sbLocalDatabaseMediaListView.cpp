@@ -224,6 +224,13 @@ sbLocalDatabaseMediaListView::Init()
   rv = mArray->SetDatabaseGUID(databaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbILocalDatabasePropertyCache> propertyCache;
+  rv = mLibrary->GetPropertyCache(getter_AddRefs(propertyCache));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mArray->SetPropertyCache(propertyCache);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<nsIURI> databaseLocation;
   rv = mLibrary->GetDatabaseLocation(getter_AddRefs(databaseLocation));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -651,6 +658,14 @@ sbLocalDatabaseMediaListView::GetFilterValues(const nsAString& aPropertyName,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindStringParameter(0, aPropertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Flush the property cache
+  nsCOMPtr<sbILocalDatabasePropertyCache> propCache;
+  rv = mLibrary->GetPropertyCache(getter_AddRefs(propCache));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = propCache->Write();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->Execute(&dbOk);

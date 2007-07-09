@@ -49,7 +49,6 @@ function testHiddenProperty(library) {
     assertEqual(hidden, "0");
     if (i % 2 == 0) {
       item.setProperty(PROP_HIDDEN, "1");
-      item.write();
     }
   }
   assertEqual(library.length, 10);
@@ -140,7 +139,6 @@ function testBoth(library) {
   for (var i = 0; i < 3; i++) {
     var list = library.createMediaList("simple");
     list.setProperty(PROP_HIDDEN, "1");
-    list.write();
   }
   assertEqual(library.length, 30);
 

@@ -35,21 +35,21 @@ function runTest () {
   var listId = library.QueryInterface(Ci.sbILocalDatabaseLibrary).getMediaItemIdForGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   var array;
 
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.isDistinct = true;
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#artistName", true);
   array.fetchSize = 1;
   assertDistinct(array, "data_distinct_artist.txt");
 
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.isDistinct = true;
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#contentLength", true);
   array.fetchSize = 1;
   assertDistinct(array, "data_distinct_contentlength.txt");
 
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.isDistinct = true;
   array.baseTable = "simple_media_lists";
   array.baseConstraintColumn = "media_item_id";

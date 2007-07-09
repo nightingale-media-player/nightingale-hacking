@@ -203,10 +203,12 @@ function createLibrary(databaseGuid, databaseLocation, init) {
   return library;
 }
 
-function makeArray(databaseGUID) {
+function makeArray(library) {
+  var ldl = library.QueryInterface(Ci.sbILocalDatabaseLibrary);
   var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
-  array.databaseGUID = databaseGUID;
+  array.databaseGUID = ldl.databaseGuid;
+  array.propertyCache = ldl.propertyCache;
   return array;
 }
 

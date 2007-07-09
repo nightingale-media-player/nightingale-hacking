@@ -153,7 +153,6 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
         catch(e) {
           Components.utils.reportError(e);
         }
-        e.item.write();
       }
     });
   }

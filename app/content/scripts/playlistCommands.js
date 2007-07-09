@@ -1631,7 +1631,6 @@ var SBDefaultServiceCommands =
 
             if (promptService.prompt(window, title, prompt, input, null, {})) {
               this.m_Context.m_Medialist.name = input.value;
-              this.m_Context.m_Medialist.write();
             }
           }
         break;

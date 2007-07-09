@@ -328,9 +328,6 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
     rv = mediaList->SetName(aLibraryNameKey);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mediaList->Write();
-    NS_ENSURE_SUCCESS(rv, rv);
-
     // And update the libraryInfo object.
     rv = libraryInfo->SetDatabaseGUID(aDefaultDatabaseGUID);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -415,9 +412,6 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
 
     // Set the name.
     rv = mediaList->SetName(aLibraryNameKey);
-    NS_ENSURE_SUCCESS(rv, nsnull);
-
-    rv = mediaList->Write();
     NS_ENSURE_SUCCESS(rv, nsnull);
   }
 

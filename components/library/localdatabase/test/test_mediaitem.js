@@ -245,8 +245,6 @@ function runTest () {
   
   item.setProperty("newpropertyneverseenever", "valuevalue");
   
-  item.write();
-  
   // Open up a temp file through this interface
   var ioItem = testlib.createMediaItem( newTempURI("test_mediaitem") );
   assertNotEqual(ioItem, null);

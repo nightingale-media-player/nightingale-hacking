@@ -288,7 +288,6 @@ function sbLocalDatabaseDynamicPlaylistService__setNextRun(aList)
   // Interval is in seconds, next run is in micro seconds
   var nextRun = now + (interval * 1000 * 1000);
   aList.setProperty(SB_PROP_SUBSCRIPTIONNEXTRUN, nextRun);
-  aList.write();
   return nextRun;
 }
 
@@ -368,7 +367,6 @@ function sbLocalDatabaseDynamicPlaylistService_updateList(aMediaList,
       var destinationUri = ioService.newFileURI(aDestinationDirectory);
       aMediaList.setProperty(SB_PROP_DESTINATION, destinationUri.spec);
     }
-    aMediaList.write();
   }
   finally {
     this._endIgnore(aMediaList.library);
@@ -624,7 +622,6 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
         dest.append(itemUri.QueryInterface(Ci.nsIURL).fileName);
         var destUri = ioService.newFileURI(dest);
         item.setProperty(SB_PROP_DESTINATION, destUri.spec);
-        item.write();
       }
     }
     array.appendElement(item, false);
@@ -664,7 +661,6 @@ sbLocalDatabaseDynamicMediaListFactory.prototype = {
     var smlf = Cc[SBLDBCOMP + "SimpleMediaListFactory;1"].getService(Ci.sbIMediaListFactory);
     var list = smlf.createMediaList(aInner);
     list.setProperty(SB_PROP_ISSUBSCRIPTION, "1");
-    list.write();
     return list;
   },
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListFactory])

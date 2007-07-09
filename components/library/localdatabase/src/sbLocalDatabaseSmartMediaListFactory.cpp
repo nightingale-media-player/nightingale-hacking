@@ -100,9 +100,6 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
                                NS_LITERAL_STRING("1"));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = dataList->Write();
-    NS_ENSURE_SUCCESS(rv, rv);
-
     nsAutoString guid;
     rv = dataList->GetGuid(guid);
     NS_ENSURE_SUCCESS(rv, rv);

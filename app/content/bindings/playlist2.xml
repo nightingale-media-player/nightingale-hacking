@@ -976,8 +976,6 @@
   var mediaList = this.mediaListView.mediaList;
   mediaList.setProperty("http://songbirdnest.com/data/1.0#columnSpec",
                         columnSpec);
-  // XXXben HACK - remove soon when bug 3037 is fixed.
-  mediaList.write();
 ]]>
         </body>
       </method>

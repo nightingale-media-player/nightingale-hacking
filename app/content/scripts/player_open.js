@@ -175,7 +175,6 @@ try
         var mediaList = library.createMediaList("simple");
         mediaList.name = fp.file.leafName;
         mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", fp.fileURL.spec);
-        mediaList.write();
 
         aPlaylistReaderManager.originalURI = fp.fileURL;
         var success = aPlaylistReaderManager.loadPlaylist(fp.fileURL, mediaList, null, false, null);
@@ -352,7 +351,8 @@ function SBScanMedia( )
     media_scan_data.URL = fp.file.path;
     media_scan_data.retval = "";
     // Open the modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
+    //SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
+    SBOpenWindow( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
   }
   theFileScanIsOpen.boolValue = false;
 }
@@ -411,8 +411,7 @@ function makeNewPlaylist(mediaListType) {
   // Give the playlist a default name
   // TODO: Localization should be done internally
   mediaList.name = SBString("playlist", "Playlist");
-  mediaList.write();
-  
+
   // If we have a servicetree, tell it to make the new playlist node editable
   if (servicePane) {
     // Find the servicepane node for our new medialist
@@ -437,7 +436,6 @@ function makeNewPlaylist(mediaListType) {
 
     if (promptService.prompt(window, title, prompt, input, null, {})) {
       mediaList.name = input.value;
-      mediaList.write();
     }
   }
   return mediaList;

@@ -94,7 +94,7 @@ private:
 
   ~sbLocalDatabaseGUIDArray();
 
-  nsresult Initalize();
+  nsresult Initialize();
 
   nsresult UpdateLength();
 

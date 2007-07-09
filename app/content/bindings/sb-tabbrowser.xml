@@ -539,7 +539,6 @@
                 mediaList = library.createMediaList("simple");
                 mediaList.name = gPPS.convertURLToDisplayName(aURL);
                 mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", uri.spec);
-                mediaList.write();
               }
 
               var playlistReaderManager =
@@ -1621,7 +1620,6 @@
             //        all non-hidden media lists from *all* libraries.
             newList.setProperty(SBProperties.hidden, "1");
             
-            newList.write();
             return newList;
           ]]></body>
         </method>

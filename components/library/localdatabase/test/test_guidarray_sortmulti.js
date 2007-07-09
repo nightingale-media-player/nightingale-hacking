@@ -39,14 +39,14 @@ function runTest () {
 
   for(var i = 0; i < fetchSizes.length; i++) {
 
-    array = makeArray(databaseGUID);
+    array = makeArray(library);
     array.baseTable = "media_items";
     array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
     array.addSort("http://songbirdnest.com/data/1.0#trackNumber", true);
     array.fetchSize = fetchSizes[i];
     assertSort(array, "data_sort_album_asc_track_asc.txt");
 
-    array = makeArray(databaseGUID);
+    array = makeArray(library);
     array.baseTable = "media_items";
     array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
     array.addSort("http://songbirdnest.com/data/1.0#trackNumber", false);
@@ -54,7 +54,7 @@ function runTest () {
     assertSort(array, "data_sort_album_asc_track_desc.txt");
   }
 
-  array = makeArray(databaseGUID);
+  array = makeArray(library);
   array.baseTable = "media_items";
   array.addSort("http://songbirdnest.com/data/1.0#artistName", true);
   array.addSort("http://songbirdnest.com/data/1.0#albumName", true);

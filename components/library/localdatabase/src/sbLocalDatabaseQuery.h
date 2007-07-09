@@ -52,16 +52,6 @@ public:
                        PRBool aIsDistinct,
                        sbILocalDatabasePropertyCache* aPropertyCache);
 
-  sbLocalDatabaseQuery(const nsAString& aBaseTable,
-                       const nsAString& aBaseConstraintColumn,
-                       PRUint32 aBaseConstraintValue,
-                       const nsAString& aBaseForeignKeyColumn,
-                       const nsAString& aPrimarySortProperty,
-                       PRBool aPrimarySortAscending,
-                       nsTArray<FilterSpec>* aFilters,
-                       PRBool aIsDistinct,
-                       sbIDatabaseQuery* aDatabaseQuery);
-
   nsresult GetFullCountQuery(nsAString& aQuery);
   nsresult GetFullGuidRangeQuery(nsAString& aQuery);
   nsresult GetNonNullCountQuery(nsAString& aQuery);
@@ -115,8 +105,6 @@ private:
   nsCOMPtr<sbISQLSelectBuilder> mBuilder;
   PRBool mIsFullLibrary;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
-  nsCOMPtr<sbIDatabaseQuery> mDatabaseQuery;
-  nsString mGetPropertyIDQuery;
 };
 
 #endif /* __SBLOCALDATABASEQUERY_H__ */

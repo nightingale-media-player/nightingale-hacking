@@ -119,9 +119,7 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
   mOwnsLibrary(PR_FALSE),
   mLibrary(nsnull),
   mPropertyCacheLock(nsnull),
-  mPropertyBagLock(nsnull),
-  mWriteThrough(PR_FALSE),
-  mWritePending(PR_FALSE)
+  mPropertyBagLock(nsnull)
 {
 }
 
@@ -361,64 +359,6 @@ sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
 /**
  * See sbILibraryResource
  */
-NS_IMETHODIMP 
-sbLocalDatabaseMediaItem::GetWriteThrough(PRBool* aWriteThrough)
-{
-  NS_ENSURE_ARG_POINTER(aWriteThrough);
-  *aWriteThrough = mWriteThrough;
-  return NS_OK;
-}
-
-/**
- * See sbILibraryResource
- */
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::SetWriteThrough(PRBool aWriteThrough)
-{
-  mWriteThrough = aWriteThrough;
-  return NS_OK;
-}
-
-/**
- * See sbILibraryResource
- */
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetWritePending(PRBool* aWritePending)
-{
-  NS_ENSURE_ARG_POINTER(aWritePending);
-  *aWritePending = mWritePending;
-  return NS_OK;
-}
-
-/**
- * See sbILibraryResource
- */
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::Write()
-{
-  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
-  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
-
-  nsresult rv = NS_OK;
-
-  if(mWritePending) {
-    nsresult rv = GetPropertyBag();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsAutoLock lock(mPropertyBagLock);
-
-    rv = mPropertyBag->Write();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mWritePending = PR_FALSE;
-  }
-
-  return rv;
-}
-
-/**
- * See sbILibraryResource
- */
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetPropertyNames(nsIStringEnumerator** _retval)
 {
@@ -491,14 +431,6 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
 
     rv = mPropertyBag->SetProperty(aName, aValue);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    if(mWriteThrough) {
-      rv = mPropertyBag->Write();
-      mWritePending = PR_FALSE;
-    }
-    else {
-      mWritePending = PR_TRUE;
-    }
   }
 
   mLibrary->NotifyListenersItemUpdated(this, properties);
@@ -582,14 +514,6 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
 
       rv = mPropertyBag->SetProperty(propertyName, value);
       NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    if(mWriteThrough) {
-      rv = mPropertyBag->Write();
-      mWritePending = PR_FALSE;
-    }
-    else {
-      mWritePending = PR_TRUE;
     }
   }
 

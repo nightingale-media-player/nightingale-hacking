@@ -88,31 +88,6 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
   NS_ASSERTION(mBuilder, "Could not create builder");
 }
 
-sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
-                                           const nsAString& aBaseConstraintColumn,
-                                           PRUint32 aBaseConstraintValue,
-                                           const nsAString& aBaseForeignKeyColumn,
-                                           const nsAString& aPrimarySortProperty,
-                                           PRBool aPrimarySortAscending,
-                                           nsTArray<FilterSpec>* aFilters,
-                                           PRBool aIsDistinct,
-                                           sbIDatabaseQuery* aDatabaseQuery) :
-  mBaseTable(aBaseTable),
-  mBaseConstraintColumn(aBaseConstraintColumn),
-  mBaseConstraintValue(aBaseConstraintValue),
-  mBaseForeignKeyColumn(aBaseForeignKeyColumn),
-  mPrimarySortProperty(aPrimarySortProperty),
-  mPrimarySortAscending(aPrimarySortAscending),
-  mFilters(aFilters),
-  mIsDistinct(aIsDistinct),
-  mDatabaseQuery(aDatabaseQuery)
-{
-  mIsFullLibrary = mBaseTable.Equals(MEDIAITEMS_TABLE);
-
-  mBuilder = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID);
-  NS_ASSERTION(mBuilder, "Could not create builder");
-}
-
 nsresult
 sbLocalDatabaseQuery::GetFullCountQuery(nsAString& aQuery)
 {
@@ -1011,15 +986,7 @@ sbLocalDatabaseQuery::AddJoinToGetNulls()
 PRInt32
 sbLocalDatabaseQuery::GetPropertyId(const nsAString& aProperty)
 {
-  if (mPropertyCache) {
-    return SB_GetPropertyId(aProperty, mPropertyCache);
-  }
-  else if (mDatabaseQuery) {
-    return SB_GetPropertyId(aProperty, mDatabaseQuery);
-  }
-  else {
-    return -1;
-  }
+  return SB_GetPropertyId(aProperty, mPropertyCache);
 }
 
 void

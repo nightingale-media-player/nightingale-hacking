@@ -408,10 +408,6 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
                               downloadColSpec);
     }
 
-    /* Write the download device library. */
-    if (NS_SUCCEEDED(result))
-        result = mpDownloadMediaList->Write();
-
     /* Create the device transfer queue. */
     if (NS_SUCCEEDED(result))
         result = CreateTransferQueue(NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID));
@@ -723,11 +719,6 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
                                 (NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
                                  progressModeStr);
         }
-
-        /* Write the media item. */
-        /* XXXeps won't need this after bug 3134 is fixed. */
-        if (NS_SUCCEEDED(result1))
-            result1 = pMediaItem->Write();
 
         /* Add it to the transfer queue. */
         if (NS_SUCCEEDED(result1))
@@ -2231,9 +2222,6 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
         progressModeStr.AppendInt(nsITreeView::PROGRESS_NONE);
         mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
                                  progressModeStr);
-
-        /* XXXeps won't need Write after bug 3134 is fixed. */
-        mpMediaItem->Write();
     }
 
     /* Send notification of session completion.  Do this */
@@ -2547,10 +2535,6 @@ nsresult sbDownloadSession::CompleteTransfer()
     if (NS_SUCCEEDED(result))
         result = pDstMediaList->Add(mpMediaItem);
 
-    /* Write destination library. */
-    if (NS_SUCCEEDED(result))
-        result = mpDstLibrary->Write();
-
     /* Update the destination library metadata. */
     if (NS_SUCCEEDED(result))
         UpdateDstLibraryMetadata();
@@ -2577,21 +2561,6 @@ nsresult sbDownloadSession::CompleteTransfer()
         }
         if (NS_SUCCEEDED(result))
         {
-            // Remove this flushing code once bug 3134 is fixed. Don't care if
-            // it fails.
-            nsCOMPtr<sbILocalDatabasePropertyCache> propCache;
-            nsCOMPtr<sbILocalDatabaseLibrary> library =
-                do_QueryInterface(mpDownloadDevice->mpWebLibrary, &result);
-            
-            if (NS_SUCCEEDED(result))
-                result = library->GetPropertyCache(getter_AddRefs(propCache));
-
-            if (NS_SUCCEEDED(result))
-                result = propCache->Write();
-
-            NS_WARN_IF_FALSE(NS_SUCCEEDED(result),
-                             "Couldn't flush web library's property cache");
-
             result = pWebMediaList->EnumerateItemsByProperty
                                     (NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
                                      NS_ConvertUTF8toUTF16(srcSpec),
@@ -2703,7 +2672,6 @@ void sbDownloadSession::UpdateProgress(
         progressModeStr.AppendInt(nsITreeView::PROGRESS_NORMAL);
         mpMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PROGRESSMODE),
                                  progressModeStr);
-        mpMediaItem->Write();
     }
 }
 

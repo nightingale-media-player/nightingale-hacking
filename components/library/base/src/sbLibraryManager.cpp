@@ -80,6 +80,7 @@ sbLibraryManager::sbLibraryManager()
 : mLoaderCache(SB_LIBRARY_LOADER_CATEGORY),
   mLock(nsnull)
 {
+  MOZ_COUNT_CTOR(sbLibraryManager);
 #ifdef PR_LOGGING
   if (!gLibraryManagerLog)
     gLibraryManagerLog = PR_NewLogModule("sbLibraryManager");
@@ -92,13 +93,12 @@ sbLibraryManager::sbLibraryManager()
 
 sbLibraryManager::~sbLibraryManager()
 {
-  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
-
   if(mLock) {
     nsAutoLock::DestroyLock(mLock);
   }
 
   TRACE(("LibraryManager[0x%x] - Destroyed", this));
+  MOZ_COUNT_DTOR(sbLibraryManager);
 }
 
 /* static */ NS_METHOD
@@ -440,7 +440,7 @@ sbLibraryManager::SetLibraryLoadsAtStartupInternal(sbILibrary* aLibrary,
 {
   TRACE(("sbLibraryManager[0x%x] - SetLibraryLoadsAtStartupInternal", this));
 
-  nsresult rv;
+  nsresult rv = NS_ERROR_NOT_AVAILABLE;
 
   nsAutoPtr<sbLibraryInfo> libraryInfo(*aInfo ? *aInfo : new sbLibraryInfo());
   NS_ENSURE_TRUE(libraryInfo, NS_ERROR_OUT_OF_MEMORY);

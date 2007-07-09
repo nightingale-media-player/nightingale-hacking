@@ -64,7 +64,6 @@ function runTest () {
 
   listener.reset();
   item.setProperties(a);
-  item.write();
 
   props = item.getProperties(null);
   assertEqual(props.length, originalPropCount + 2);
@@ -84,7 +83,6 @@ function runTest () {
 
   listener.reset();
   item.setProperties(a);
-  item.write();
 
   props = item.getProperties(null);
   assertEqual(props.length, originalPropCount + 2);

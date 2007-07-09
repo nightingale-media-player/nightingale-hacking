@@ -270,7 +270,6 @@
                   } else {
                     item.setProperty(this.column, value);
                   }
-                  item.write();
                 } catch (e) {
                   // do not care
                 }

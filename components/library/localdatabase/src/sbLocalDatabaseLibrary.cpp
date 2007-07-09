@@ -2135,7 +2135,21 @@ sbLocalDatabaseLibrary::Optimize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
-  
+
+  return NS_OK;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::Sync()
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - Sync()", this));
+
+  nsresult rv = mPropertyCache->Write();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

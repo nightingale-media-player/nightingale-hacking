@@ -63,18 +63,6 @@ interface sbILibraryResource : nsISupports
   readonly attribute long long updated;
 
   /**
-   * \brief If this is enabled anytime setProperty is called it will
-   * cause the property to immediately be updated.
-   */
-  attribute boolean writeThrough;
-  
-  /**
-   * \brief Indicates if there is a pending write operation.
-   * This boolean is meaningless if you have writeThrough enabled.
-   */
-  readonly attribute boolean writePending;
-
-  /**
    * \brief Returns a string enumerator of the names of all the properties
    *        set on this resource
    */
@@ -122,11 +110,6 @@ interface sbILibraryResource : nsISupports
    * as it will then be impossible to have invalid properties in the array
    */
   void setProperties(in sbIPropertyArray aProperties);
-
-  /**
-   * \brief Finish all pending write operations.
-   */
-  void write();
 
   /**
    * \brief Tests the equality of two library resources.

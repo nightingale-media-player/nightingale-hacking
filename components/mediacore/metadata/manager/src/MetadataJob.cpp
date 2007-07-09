@@ -109,8 +109,6 @@ public:
   ~sbMetadataBatchHelper()
   {
     if ( mList ) {
-      //XXX Remove when #3134 is fixed.
-      WriteCache();
       mList->EndUpdateBatch();
     }
   }
@@ -126,33 +124,9 @@ public:
   {
     if ( mList )
     {
-      //XXX Remove when #3134 is fixed.
-      WriteCache();
       mList->EndUpdateBatch();
       mList->BeginUpdateBatch();
     }
-  }
-
-  nsresult WriteCache() {
-    // XXXsteve HACK to make sure the properties get written.  This should be
-    // removed once we get rid of sbIResourceProperty::Write()
-    nsresult rv;
-
-    nsCOMPtr<sbILibrary> library = do_QueryInterface(mList, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbILocalDatabaseLibrary> localLibrary =
-      do_QueryInterface(library, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbILocalDatabasePropertyCache> propertyCache;
-    rv = localLibrary->GetPropertyCache(getter_AddRefs(propertyCache));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = propertyCache->Write();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    return NS_OK;
   }
 
 private:
@@ -453,7 +427,7 @@ nsresult sbMetadataJob::RunTimer()
           AddItemToJobTableQuery( mMainThreadQuery, mTableName, mInitArray[ mInitCount ], getter_AddRefs(tempItem) );
 
           // Use the temporary item to stuff a default title value in the properties cache (don't flush to library database, yet)
-          //AddDefaultMetadataToItem( tempItem, mInitArray[ mInitCount ] );
+          AddDefaultMetadataToItem( tempItem, mInitArray[ mInitCount ] );
         }
         rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("commit"));
         NS_ENSURE_SUCCESS(rv, rv);
@@ -502,7 +476,7 @@ nsresult sbMetadataJob::RunTimer()
         NS_ENSURE_SUCCESS(rv, rv);
 
         // Try to write it out
-        rv = AddMetadataToItem( item, mURIMetadataHelper, PR_TRUE ); // Flush properties cache every time
+        rv = AddMetadataToItem( item, mURIMetadataHelper ); // Flush properties cache every time
         // NS_ENSURE_SUCCESS(rv, rv); // Allow it to fail.  We already put a default value in for it.
 
         rv = SetItemIsWritten( mMainThreadQuery, mTableName, item );
@@ -682,7 +656,7 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
       }
 
       // Make an sbIMediaItem and push the metadata into it
-      rv = AddMetadataToItem( item, mURIMetadataHelper, flush );
+      rv = AddMetadataToItem( item, mURIMetadataHelper );
 
       // Close the handler by hand since we know we're done with it and
       // we won't get rid of the item for awhile.
@@ -716,12 +690,7 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 
   if ( library )
   {
-    // Flush properties cache on completion.
-    //XXX Remove when #3134 is fixed.
-    rv = batchHelper.WriteCache();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Along with the written bits.
+    // Flush the written bits.
     rv = SetItemsAreWritten( WorkerThreadQuery, aTableName, writePending );
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1226,8 +1195,7 @@ nsresult sbMetadataJob::StartHandlerForItem( sbMetadataJob::jobitem_t *aItem )
 }
 
 nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
-                                           sbIURIMetadataHelper *aURIMetadataHelper,
-                                           PRBool aShouldFlush )
+                                           sbIURIMetadataHelper *aURIMetadataHelper )
 {
   NS_ENSURE_ARG_POINTER( aItem );
   NS_ENSURE_ARG_POINTER( aURIMetadataHelper );
@@ -1359,12 +1327,6 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
 
   rv = item->SetProperties(properties);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  if ( aShouldFlush )
-  {
-    rv = item->Write();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   return NS_OK;
 }

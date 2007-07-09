@@ -1816,9 +1816,6 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
   if (!value.Equals(oldValue)) {
     rv = item->SetProperty(bind, value);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = item->Write();
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;

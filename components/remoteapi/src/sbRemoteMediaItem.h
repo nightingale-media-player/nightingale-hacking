@@ -39,20 +39,6 @@
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>
 
-#define NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETPROPERTY(_to) \
-  NS_IMETHOD GetGuid(nsAString & aGuid) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetGuid(aGuid); } \
-  NS_IMETHOD GetCreated(PRInt64 *aCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreated(aCreated); } \
-  NS_IMETHOD GetUpdated(PRInt64 *aUpdated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUpdated(aUpdated); } \
-  NS_IMETHOD GetWriteThrough(PRBool *aWriteThrough) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetWriteThrough(aWriteThrough); } \
-  NS_IMETHOD SetWriteThrough(PRBool aWriteThrough) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetWriteThrough(aWriteThrough); } \
-  NS_IMETHOD GetWritePending(PRBool *aWritePending) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetWritePending(aWritePending); } \
-  NS_IMETHOD GetPropertyNames(nsIStringEnumerator ** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPropertyNames(_retval); } \
-  NS_IMETHOD GetProperty(const nsAString & aName, nsAString & _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProperty(aName, _retval); } \
-  NS_IMETHOD GetProperties(sbIPropertyArray * aPropertyNames, sbIPropertyArray ** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProperties(aPropertyNames, _retval); } \
-  NS_IMETHOD SetProperties(sbIPropertyArray * aProperties) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetProperties(aProperties); } \
-  NS_IMETHOD Write(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Write(); } \
-  NS_IMETHOD Equals(sbILibraryResource *aOtherLibraryResource, PRBool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Equals(aOtherLibraryResource, _retval); }
-
 class sbRemoteMediaItem : public nsIClassInfo,
                           public nsISecurityCheckedComponent,
                           public sbISecurityAggregator,
@@ -66,10 +52,8 @@ public:
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
   NS_FORWARD_SAFE_SBIMEDIAITEM(mMediaItem);
-  NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETPROPERTY(mMediaItem);
+  NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mMediaItem);
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin);
-
-  NS_IMETHOD SetProperty(const nsAString& aName, const nsAString& aValue);
 
   // sbIWrappedMediaItem interface
   NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();

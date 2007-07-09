@@ -148,7 +148,7 @@ private:
   // GUID array for this view instance
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
 
-  // Filter say for this view, if any
+  // Filter set for this view, if any
   nsCOMPtr<nsIWeakReference> mWeakCascadeFilterSet;
 
   // Tree view for this view, if any

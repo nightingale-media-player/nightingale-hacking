@@ -80,8 +80,8 @@ class sbLibraryManager : public sbILibraryManager,
 {
   struct sbLibraryInfo {
     sbLibraryInfo(PRBool aLoadAtStartup = PR_FALSE)
-    : loadAtStartup(aLoadAtStartup),
-      loader(nsnull)
+    : loader(nsnull),
+       loadAtStartup(aLoadAtStartup)
     { }
 
     nsCOMPtr<sbILibrary> library;
