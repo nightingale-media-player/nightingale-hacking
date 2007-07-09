@@ -13,6 +13,6 @@ fi
 $pwd = `pwd`
 cd /builds/vlc/mozilla
 rm VLC\ Plugin.tar.gz
-tar cvfz VLC\ Plugin.tar.gz VLC\ Plugin.plugin --exclude=*.svn*
+tar cvfz VLC\ Plugin.tar.gz VLC.plugin --exclude=*.svn*
 cp VLC\ Plugin.tar.gz $1
 cd $pwd
