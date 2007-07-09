@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 target_name = sbTestHarness
 
 CPP_SRCS = sbTestHarnessModule.cpp \
+           sbLeakCanary.cpp \
            sbTestHarnessConsoleListener.cpp \
            $(NULL)
 

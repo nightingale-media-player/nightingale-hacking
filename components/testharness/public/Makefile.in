@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbITestHarness.idl \
+             sbILeakCanary.idl \
              nsIHttpServer.idl \
              $(NULL)
 

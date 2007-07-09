@@ -24,15 +24,23 @@
 //
 */
 
-#define SB_TESTHARNESSCONSOLELISTENER_CID \
-  { 0xc9cd159b, 0x8227, 0x41e1, \
-  { 0xbd, 0xbc, 0xe6, 0x46, 0xcf, 0x32, 0xb3, 0x4e } }
-#define SB_TESTHARNESSCONSOLELISTENER_CONTRACTID \
-  "@songbirdnest.com/Songbird/TestHarness/ConsoleListener;1"
+#ifndef __SBLEAKCANARY_H__
+#define __SBLEAKCANARY_H__
 
-#define SB_LEAKCANARY_CID \
-  { 0x14a72a82, 0x566c, 0x478d, \
-  { 0xa7, 0xda, 0x2f, 0x32, 0xac, 0x7d, 0xa6, 0x26 } }
-#define SB_LEAKCANARY_CONTRACTID \
-  "@songbirdnest.com/Songbird/TestHarness/LeakCanary;1"
+#include <sbILeakCanary.h>
+
+#include <nsCOMPtr.h>
+#include <nsStringGlue.h>
+
+class sbLeakCanary : public sbILeakCanary {
+public:
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBILEAKCANARY
+
+  sbLeakCanary();
+  ~sbLeakCanary();
+};
+
+#endif /* __SBLEAKCANARY_H__ */
 

@@ -28,10 +28,12 @@
 #include "nsCOMPtr.h"
 #include "nsIGenericFactory.h"
 #include "nsIServiceManager.h"
+#include "sbLeakCanary.h"
 #include "sbTestHarnessConsoleListener.h"
 #include "sbTestHarnessCID.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTestHarnessConsoleListener)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLeakCanary)
 
 static const nsModuleComponentInfo components[] =
 {
@@ -40,6 +42,13 @@ static const nsModuleComponentInfo components[] =
     SB_TESTHARNESSCONSOLELISTENER_CID,
     SB_TESTHARNESSCONSOLELISTENER_CONTRACTID,
     sbTestHarnessConsoleListenerConstructor,
+    nsnull
+	},
+	{
+    "Test Harness Leak Canary",
+    SB_LEAKCANARY_CID,
+    SB_LEAKCANARY_CONTRACTID,
+    sbLeakCanaryConstructor,
     nsnull
 	}
 };
