@@ -31,7 +31,7 @@ const SONGBIRD_METRICS_IID = Components.interfaces.sbIMetrics;
 
 const SONGBIRD_POSTMETRICS_PREFKEY = "songbird.url.metrics";
 
-const SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS = 7; // every week
+const SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS = 1; // every day
 
 function Metrics() {
     this.prefs = Components.classes["@mozilla.org/preferences-service;1"]
@@ -84,7 +84,6 @@ Metrics.prototype = {
     var branch = ps.getBranch("metrics.");
     var metrics = branch.getChildList("", { value: 0 });
 
-    
     var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
     // appInfo.name + " " + appInfo.version + " - " + appInfo.appBuildID;    
 
@@ -108,33 +107,58 @@ Metrics.prototype = {
     
     var updated = this._hasUpdateOccurred();
     
+    var tzo = (new Date()).getTimezoneOffset();
+    var neg = (tzo < 0);
+    tzo = Math.abs(tzo);
+    var tzh = Math.floor(tzo / 60);
+    var tzm = tzo - (tzh*60);
+    // note: timezone is -XX:XX if the offset is positive, and +XX:00 if the offset is negative !
+    // this is because the offset has the reverse sign compared to the timezone, since
+    // the offset is what you should add to localtime to get UTC, so if you add -XX:XX, you're
+    // subtracting XX:XX, because the timezone is UTC+XX:XX
+    var tz = (neg ? "+" : "-") + this.formatDigits(tzh,2) + ":" + this.formatDigits(tzm,2);
+    
     // build xml
     
     var xml = "";
-    xml += '<metrics schema_version="1.0" guid="' + user_install_uuid 
+    xml += '<metrics schema_version="2.0" guid="' + user_install_uuid 
             + '" version="' + appInfo.version 
             + '" build="' + appInfo.appBuildID
             + '" product="' + appInfo.name
             + '" platform="' + platform
             + '" os="' + user_os 
             + '" updated="' + updated 
+            + '" timezone="' + tz 
             + '">\n';
+
     for (var i = 0; i < metrics.length; i++) 
     {
       var val = branch.getCharPref(metrics[i]);
       if ( parseInt(val) > 0 )
       {
-        xml += '\t<item key="' + encodeURIComponent(metrics[i]) + '" value="' + val + '"/>\n';
+        var dot = metrics[i].indexOf(".");
+        if (dot >= 0) {
+          var timestamp = metrics[i].substr(0, dot);
+          var key = metrics[i].substr(dot+1)
+          var date = new Date();
+          date.setTime(timestamp);
+          var hourstart = date.getFullYear() + "-" + 
+                          this.formatDigits(date.getMonth()+1,2) + "-" + 
+                          this.formatDigits(date.getDate(),2) + " " + 
+                          this.formatDigits(date.getHours(),2) + ":" + 
+                          this.formatDigits(date.getMinutes(),2) + ":" + 
+                          this.formatDigits(date.getSeconds(),2);
+          xml += '\t<item hour_start="' + hourstart + '" key="' + encodeURIComponent(key) + '" value="' + val + '"/>\n';
+        }
       }
     }
     xml += '</metrics>';
 
-/*
+
     // Happy little self-contained test display
     var gPrompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                           .getService(Components.interfaces.nsIPromptService);
     gPrompt.alert( null, "METRICS XML", xml );
-*/
 
     // upload xml
 
@@ -160,6 +184,12 @@ Metrics.prototype = {
     this._postreq.open('POST', postURL, true); 
     this._postreq.send(document);
   },
+  
+  formatDigits: function(str, n) {
+    str = str+'';
+    while (str.length < n) str = "0" + str;
+    return str;
+  },
 
   onPostLoad: function() {
     this.LOG("POST metrics done: "  + this._postreq.status + " - " + this._postreq.responseText);
@@ -170,11 +200,7 @@ Metrics.prototype = {
       var ps = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefService);   
       var branch = ps.getBranch("metrics.");
-      var metrics = branch.getChildList("", { value: 0 });
-      for (var i = 0; i < metrics.length; i++) 
-      {
-        branch.setCharPref(metrics[i], "0");
-      }
+      branch.deleteBranch("");
       var pref = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefBranch);
       var timenow = new Date();
@@ -372,8 +398,12 @@ Metrics.prototype = {
   },
   
   metricsAdd: function( aCategory, aUniqueID, aExtraString, aIntValue ) {
+    // timestamps are recorded as UTC !
+    var d = new Date();
+    var timestamp = (Math.floor(d.getTime() / 3600000) * 3600000) + (d.getTimezoneOffset() * 60000);
+
     // Cook up the key string
-    var key = "metrics." + aCategory + "." + aUniqueID;
+    var key = "metrics." + timestamp + "." + aCategory + "." + aUniqueID;
     if (aExtraString != null && aExtraString != "") key = key + "." + aExtraString;
     
     try {
