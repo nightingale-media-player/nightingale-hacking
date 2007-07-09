@@ -1638,8 +1638,6 @@ PlaylistPlayback.prototype = {
     if ( aGenre && aGenre.length ) {
       aItem.setProperty(base + "genre", aGenre);
     }
-      
-    aItem.write();
   },
   
   _updateCurrentInfoFromView: function(aView, aIndex)
