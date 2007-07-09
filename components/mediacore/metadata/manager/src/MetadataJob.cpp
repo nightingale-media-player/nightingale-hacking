@@ -670,6 +670,9 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
       TRACE(("sbMetadataJob[0x%.8x] - WORKER THREAD - "
              "Unable to add metadata for( %s )", this,
              NS_LossyConvertUTF16toASCII(item->url).get()));
+
+      // Don't leave the row completely blank.  Please.
+      AddDefaultMetadataToItem( item, item->item );
     }
 
     // Ah, if we got here we must not have crashed.
@@ -1233,7 +1236,7 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If the metadata read can't even find a song name, cook one up off the url.
-  if ( trackName.IsVoid() ) {
+  if ( trackName.IsEmpty() ) {
     rv = CreateDefaultItemName( aItem->url, trackName );
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1344,9 +1347,7 @@ nsresult sbMetadataJob::AddDefaultMetadataToItem( sbMetadataJob::jobitem_t *aIte
 
   nsAutoString oldName;
   nsresult rv = aMediaItem->GetProperty( trackNameKey, oldName );
-//  NS_ENSURE_SUCCESS(rv, rv); // Ben asked me to remind him that these are here and commented to remind him that we don't care if this call fails.
-  if ( oldName.IsEmpty() )
-  {
+  if ( NS_FAILED(rv) || oldName.IsEmpty() )  {
     nsAutoString trackName;
     rv = CreateDefaultItemName( aItem->url, trackName );
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1425,4 +1426,5 @@ void sbMetadataJob::DecrementDataRemote()
   // Set to the decremented value
   mDataCurrentMetadataJobs->SetIntValue( --current );
 }
+
 
