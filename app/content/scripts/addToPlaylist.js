@@ -36,11 +36,21 @@ const ADDTOPLAYLIST_MENU_MODIFIERS = "&command.shortcut.modifiers.addtoplaylist"
 const ADDTOPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist:";
 const ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist_createnew";
 
-var addToPlaylistHelper = {
+function addToPlaylistHelper() {
+}
+
+addToPlaylistHelper.prototype.constructor = addToPlaylistHelper;
+
+addToPlaylistHelper.prototype = {
   m_listofplaylists: null,
   m_commands: null,
   m_reglist: null,
 
+  LOG: function(str) {
+    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
+                            .getService(Components.interfaces.nsIConsoleService);
+    consoleService.logStringMessage(str);
+  },
   init: function(aCommands) {
     var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                         .getService(Components.interfaces.sbILibraryManager);
@@ -50,10 +60,13 @@ var addToPlaylistHelper = {
   },
 
   shutdown: function() {
-    this.removeListeners();
+    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                        .getService(Components.interfaces.sbILibraryManager);
+    libraryManager.removeListener(this);
+    this.removeLibraryListeners();
   },
   
-  removeListeners: function() {
+  removeLibraryListeners: function() {
     if (this.m_reglist) {
       for (var i in this.m_reglist) {
         this.m_reglist[i].removeListener(this);
@@ -64,7 +77,7 @@ var addToPlaylistHelper = {
     
   makeListOfPlaylists: function( ) {
     // remove previous listeners
-    this.removeListeners();
+    this.removeLibraryListeners();
     
     // todo: make this smarter :(
     var typearray = new Array('simple');

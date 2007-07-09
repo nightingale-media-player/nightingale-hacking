@@ -64,6 +64,8 @@ var SBWebPlaylistCommands =
     m_Playlist: null,
     m_Window: null
   },
+
+  m_addToPlaylist: null,
   
   m_root_commands :
   {
@@ -186,7 +188,7 @@ var SBWebPlaylistCommands =
     var cmds;
     
     // ADDTOPLAYLIST
-    cmds = addToPlaylistHelper.handleGetMenu(aSubMenu);
+    cmds = this.m_addToPlaylist.handleGetMenu(aSubMenu);
     if (cmds) return cmds;
     
     switch (aSubMenu) {
@@ -367,7 +369,7 @@ var SBWebPlaylistCommands =
     if ( id )
     {
       // ADDTOPLAYLIST
-      if (addToPlaylistHelper.handleCommand(id)) return;
+      if (this.m_addToPlaylist.handleCommand(id)) return;
 
       // Was it from the toolbarbutton?
       var tbb = ( host == "toolbar" );
@@ -512,8 +514,14 @@ var SBWebPlaylistCommands =
     return obj;
   },
 
-  initCommands: function(aHost) { addToPlaylistHelper.init(SBWebPlaylistCommands); },
-  shutdownCommands: function() { addToPlaylistHelper.shutdown(); },
+  initCommands: function(aHost) { 
+    this.m_addToPlaylist = new addToPlaylistHelper(); 
+    this.m_addToPlaylist.init(SBWebPlaylistCommands); 
+  },
+  shutdownCommands: function() { 
+    this.m_addToPlaylist.shutdown(); 
+    this.m_addToPlaylist = null;
+  },
   
   setContext: function( context )
   {

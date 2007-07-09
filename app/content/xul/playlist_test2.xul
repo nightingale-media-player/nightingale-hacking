@@ -80,6 +80,8 @@ try
       m_Playlist: null,
       m_Window: null
     },
+    
+    m_addToPlaylist: null,
 
     m_root_commands :
     {
@@ -173,7 +175,7 @@ try
       var cmds;
       
       // ADDTOPLAYLIST
-      cmds = addToPlaylistHelper.handleGetMenu(aSubMenu);
+      cmds = this.m_addToPlaylist.handleGetMenu(aSubMenu);
       if (cmds) return cmds;
       
       switch (aSubMenu) {
@@ -346,7 +348,7 @@ try
     onCommand: function( id, value, host )
     {
       // ADDTOPLAYLIST
-      if (addToPlaylistHelper.handleCommand(id)) return;
+      if (this.m_addToPlaylist.handleCommand(id)) return;
       
       if ( id )
       {
@@ -410,8 +412,14 @@ try
       return obj;
     },
 
-    initCommands: function(aHost) { addToPlaylistHelper.init(this); },
-    shutdownCommands: function() { addToPlaylistHelper.shutdown(); },
+    initCommands: function(aHost) { 
+      this.m_addToPlaylist = new addToPlaylistHelper(); 
+      this.m_addToPlaylist.init(this); 
+    },
+    shutdownCommands: function() { 
+      this.m_addToPlaylist.shutdown(); 
+      this.m_addToPlaylist = null;
+    },
     
     setContext: function( context )
     {
