@@ -372,15 +372,15 @@
           var _guids = Array();
           if (this.playlist && this.playlist.tree) 
           {
-            if (this.playlist.tree.view && this.playlist.tree.view.selection)
+            if (this.playlist.mediaListView && this.playlist.mediaListView.treeView.selection)
             {
-              var rangeCount = this.playlist.tree.view.selection.getRangeCount();
+              var rangeCount = this.playlist.mediaListView.treeView.selection.getRangeCount();
               if (rangeCount == 0) return; // abort !
               for (var i=0; i < rangeCount; i++) 
               {
                 var start = {};
                 var end = {};
-                this.playlist.tree.view.selection.getRangeAt( i, start, end );
+                this.playlist.mediaListView.treeView.selection.getRangeAt( i, start, end );
                 for (var j=start.value;j<=end.value;j++)
                 {
                   // Get the item, this contains the uuid.

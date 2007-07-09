@@ -338,9 +338,9 @@ try
         break;
       }
 
-      //alert("index = " + aIndex + " - " + aSubMenu + " - " + aHost + " - " + (playlist.tree.view.selectionCount > 0));
+      //alert("index = " + aIndex + " - " + aSubMenu + " - " + aHost + " - " + (playlist.mediaListView.treeView.selectionCount > 0));
       // By default return true if there is at least one item selected
-      return playlist.tree.view.selectionCount > 0;
+      return playlist.mediaListView.treeView.selectionCount > 0;
     },
     
     onCommand: function( id, value, host )
@@ -355,7 +355,7 @@ try
         switch( id )
         {
           case "library_cmd_play":
-            var index = this.m_Context.m_Playlist.tree.view.selection.currentIndex;
+            var index = this.m_Context.m_Playlist.mediaListView.treeView.selection.currentIndex;
             if (index >= 0) {
               var gPPS = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                            .getService(Ci.sbIPlaylistPlayback);
@@ -365,7 +365,7 @@ try
           case "library_cmd_edit":
             if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
             {
-              if ( tbb || this.m_Context.m_Playlist.tree.view.selectionCount > 1 )
+              if ( tbb || this.m_Context.m_Playlist.mediaListView.treeView.selectionCount > 1 )
               {
                 // Edit the entire track
                 this.m_Context.m_Playlist.sendEditorEvent();

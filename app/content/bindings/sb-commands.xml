@@ -236,7 +236,17 @@
           try
           {
             // Sometimes we get here before the tree is properly built.  That's bad.
-            if (!this.medialist || (this.playlist && this.playlist.tree.view == null))
+            // Also skip if the playlist is not visible, or if our context has not
+            // yet been given a playlist at all.
+            var skip = false;
+            if (!this.medialist) skip = true;
+            if (this.playlist) {
+              if (this.playlist.getAttribute("hidden") == "true" ||
+                  !this.playlist.mediaListView.treeView) {
+                skip = true;
+              }
+            }
+            if (skip)
             {
               // So if we're supposed to build the items here, remember that for next time.
               if (!stateonly)
@@ -299,7 +309,7 @@
           }
           catch( err )
           {
-            alert( "sb-commands.xml - refreshCommands - " + err );
+            alert( "sb-commands.xml - refreshCommands - " + this.hoststring + " - " + err );
           }
           ]]>
         </body>

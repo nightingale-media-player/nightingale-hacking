@@ -296,18 +296,18 @@ var SBWebPlaylistCommands =
 
   getCommandEnabled: function( aSubMenu, aIndex, aHost )
   {
-    var cmds = this._getMenu(aSubMenu);
     var retval = false;
+    var cmds = this._getMenu(aSubMenu);
     switch ( cmds.m_Ids[aIndex] )
     {
       case "library_cmd_device": // Not yet implemented
         retval = false;
       break;
       case "library_cmd_remove":
-        retval = this.m_Context.m_Playlist.tree.view.selection.getRangeCount() > 0;
+        retval = this.m_Context.m_Playlist.mediaListView.treeView.selection.getRangeCount() > 0;
       break;      
       case "library_cmd_download": // Only download selected tracks from the library, never the whole library
-        if ( ( this.m_Context.m_Playlist.description != "library" ) || ( this.m_Context.m_Playlist.tree.view.selection.count > 0 ) )
+        if ( ( this.m_Context.m_Playlist.description != "library" ) || ( this.m_Context.m_Playlist.mediaListView.treeView.selection.count > 0 ) )
           retval = true;
       break;
       case "library_cmd_subscribe": // Never subscribe to the library
@@ -318,7 +318,7 @@ var SBWebPlaylistCommands =
         retval = true;
       break;
       case "library_cmd_copylocation":
-        retval = this.m_Context.m_Playlist.tree.view.selection.getRangeCount() > 0;
+        retval = this.m_Context.m_Playlist.mediaListView.treeView.selection.getRangeCount() > 0;
       break; 
       default:
         retval = true;
@@ -377,8 +377,8 @@ var SBWebPlaylistCommands =
           // If the user hasn't selected anything, select the first thing for him.
           if ( this.m_Context.m_Playlist.tree.currentIndex == -1 )
           {
-            this.m_Context.m_Playlist.tree.view.selection.currentIndex = 0;
-            this.m_Context.m_Playlist.tree.view.selection.select( 0 );
+            this.m_Context.m_Playlist.mediaListView.treeView.selection.currentIndex = 0;
+            this.m_Context.m_Playlist.mediaListView.treeView.selection.select( 0 );
           }
           // Repurpose the command to act as if a doubleclick
           this.m_Context.m_Playlist.sendPlayEvent();
@@ -434,20 +434,20 @@ var SBWebPlaylistCommands =
           var clipboardtext = "";
           var urlCol = "url";
           var columnObj = this.m_Context.m_Playlist.tree.columns.getNamedColumn(urlCol);
-          var rangeCount = this.m_Context.m_Playlist.tree.view.selection.getRangeCount();
+          var rangeCount = this.m_Context.m_Playlist.mediaListView.treeView.selection.getRangeCount();
           for (var i=0; i < rangeCount; i++) 
           {
             var start = {};
             var end = {};
-            this.m_Context.m_Playlist.tree.view.selection.getRangeAt( i, start, end );
+            this.m_Context.m_Playlist.mediaListView.treeView.selection.getRangeAt( i, start, end );
             for( var c = start.value; c <= end.value; c++ )
             {
-              if (c >= this.m_Context.m_Playlist.tree.view.rowCount) 
+              if (c >= this.m_Context.m_Playlist.mediaListView.treeView.rowCount) 
               {
                 continue; 
               }
               
-              var val = this.m_Context.m_Playlist.tree.view.getCellText(c, columnObj);
+              var val = this.m_Context.m_Playlist.mediaListView.treeView.getCellText(c, columnObj);
               if (clipboardtext != "") clipboardtext += "\n";
               clipboardtext += val;
             }
@@ -916,8 +916,8 @@ var SBDownloadCommands =
             // If the user hasn't selected anything, select the first thing for him.
             if ( this.m_Context.m_Playlist.tree.currentIndex == -1 )
             {
-              this.m_Context.m_Playlist.tree.view.selection.currentIndex = 0;
-              this.m_Context.m_Playlist.tree.view.selection.select( 0 );
+              this.m_Context.m_Playlist.mediaListView.treeView.selection.currentIndex = 0;
+              this.m_Context.m_Playlist.mediaListView.treeView.selection.select( 0 );
             }
             // Repurpose the command to act as if a doubleclick
             this.m_Context.m_Playlist.sendPlayEvent();
@@ -1278,7 +1278,7 @@ var SBDefaultCommands =
     }
 
     // By default return true if there is at least one item selected
-    return playlist.tree.view.selection.getRangeCount() > 0;
+    return playlist.mediaListView.treeView.selection.getRangeCount() > 0;
   },
 
   getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
@@ -1331,7 +1331,7 @@ var SBDefaultCommands =
         case "library_cmd_edit":
           if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
           {
-            if ( tbb || this.m_Context.m_Playlist.tree.view.selection.count > 1 )
+            if ( tbb || this.m_Context.m_Playlist.mediaListView.treeView.selection.count > 1 )
             {
               // Edit the entire track
               this.m_Context.m_Playlist.sendEditorEvent();

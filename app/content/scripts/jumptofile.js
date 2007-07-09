@@ -512,9 +512,9 @@ try
     var playlist = document.getElementById("jumpto.playlist");
     // change focus to playlist
     playlist.tree.focus();
-    if (playlist.tree.view.rowCount > 0) {
-      playlist.tree.view.selection.clearSelection();
-      playlist.tree.view.selection.rangedSelect(0, 0, true);
+    if (playlist.mediaListView.treeView.rowCount > 0) {
+      playlist.mediaListView.treeView.selection.clearSelection();
+      playlist.mediaListView.treeView.selection.rangedSelect(0, 0, true);
     }
   }
   
@@ -530,12 +530,12 @@ try
   function onJumpToPlay(event) {
     var playlist = document.getElementById("jumpto.playlist");
     var first=0;
-    var rangeCount = playlist.tree.view.selection.getRangeCount();
+    var rangeCount = playlist.mediaListView.treeView.selection.getRangeCount();
     if (rangeCount > 0)
     {
       var start = {};
       var end = {};
-      playlist.tree.view.selection.getRangeAt( 0, start, end );
+      playlist.mediaListView.treeView.selection.getRangeAt( 0, start, end );
       first = start.value;
     }
     var rowid = playlist.mediaListView.getUnfilteredIndex
