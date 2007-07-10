@@ -28,7 +28,6 @@
 #define __SBLOCALDATABASEPROPERTYCACHE_H__
 
 #include <nsIStringEnumerator.h>
-#include <nsIObserver.h>
 #include <sbILocalDatabasePropertyCache.h>
 
 #include <nsClassHashtable.h>
@@ -50,12 +49,10 @@ class sbISQLInsertBuilder;
 class sbISQLSelectBuilder;
 class sbISQLUpdateBuilder;
 
-class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache,
-                                     public nsIObserver
+class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_NSIOBSERVER
   NS_DECL_SBILOCALDATABASEPROPERTYCACHE
 
   sbLocalDatabasePropertyCache();

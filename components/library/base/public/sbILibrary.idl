@@ -173,12 +173,6 @@ interface sbILibrary : sbILibraryResource
   void sync();
 
   /**
-   * \brief Called when the library should clean up in preparation for shutdown
-   *        of the application.
-   */
-  void shutdown();
-
-  /**
    * \brief Create many media items from a list of URIs, and notify their addition.
    * \param aURIArray nsIArray of nsIURI objects
    * \return nsIArray of the new sbIMediaItem objects

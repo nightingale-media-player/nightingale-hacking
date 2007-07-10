@@ -31,6 +31,7 @@
 #include <nsIFile.h>
 #include <nsIFileURL.h>
 #include <nsIMutableArray.h>
+#include <nsIObserverService.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIProgrammingLanguage.h>
@@ -43,6 +44,7 @@
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbILibraryFactory.h>
+#include <sbILibraryManager.h>
 #include <sbILibraryResource.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabasePropertyCache.h>
@@ -92,8 +94,7 @@
 #define SB_MEDIALIST_FACTORY_URI_SUFFIX   "')"
 
 #define SB_ILIBRESOURCE_CAST(_ptr)                                             \
-  static_cast<sbILibraryResource*>(                                         \
-                 static_cast<sbILibrary*>(_ptr))
+  static_cast<sbILibraryResource*>(static_cast<sbILibrary*>(_ptr))
 
 #define DEFAULT_SORT_PROPERTY SB_PROPERTY_CREATED
 
@@ -104,17 +105,11 @@
  *   NSPR_LOG_MODULES=sbLocalDatabaseLibrary:5
  */
 #ifdef PR_LOGGING
-
 static PRLogModuleInfo* gLibraryLog = nsnull;
-#define TRACE(args) if (gLibraryLog) PR_LOG(gLibraryLog, PR_LOG_DEBUG, args)
-#define LOG(args)   if (gLibraryLog) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
-
-#else /* PR_LOGGING */
-
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
-
 #endif /* PR_LOGGING */
+
+#define TRACE(args) PR_LOG(gLibraryLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gLibraryLog, PR_LOG_WARN, args)
 
 // Makes some of the logging a little easier to read
 #define LOG_SUBMESSAGE_SPACE "                                 - "
@@ -413,14 +408,16 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED4(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS_INHERITED5(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
                                                      nsIClassInfo,
+                                                     nsIObserver,
                                                      sbIDatabaseSimpleQueryCallback,
                                                      sbILibrary,
                                                      sbILocalDatabaseLibrary)
 
-NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseLibrary,
+NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseLibrary,
                              nsIClassInfo,
+                             nsIObserver,
                              nsISupportsWeakReference,
                              sbIDatabaseSimpleQueryCallback,
                              sbILibrary,
@@ -595,6 +592,16 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
       mAnalyzeCountLimit = PR_MAX(1, prefValue);
     }
   }
+
+  // Register for library manager shutdown so we know when to write all
+  // pending changes.
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = observerService->AddObserver(this, 
+                                    SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, 
+                                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1393,6 +1400,31 @@ sbLocalDatabaseLibrary::GetAllListsByType(const nsAString& aType,
   return NS_OK;
 }
 
+nsresult
+sbLocalDatabaseLibrary::Shutdown()
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
+
+  // Explicitly release our property cache here so we make sure to write all
+  // changes to disk (regardless of whether or not this library will be leaked)
+  // to prevent data loss.
+  mPropertyCache = nsnull;
+
+  if (mDirtyItemCount) {
+#ifdef DEBUG
+    nsresult rv =
+#endif
+    RunAnalyzeQuery(PR_FALSE);
+#ifdef DEBUG
+    if (NS_FAILED(rv)) {
+      NS_WARNING("RunAnalyzeQuery failed!");
+    }
+#endif
+  }
+
+  return NS_OK;
+}
+
 /**
  * See sbILocalDatabaseLibrary
  */
@@ -2150,27 +2182,6 @@ sbLocalDatabaseLibrary::Sync()
   nsresult rv = mPropertyCache->Write();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
-}
-
-/**
- * See sbILibrary
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::Shutdown()
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
-  if (mDirtyItemCount) {
-#ifdef DEBUG
-    nsresult rv =
-#endif
-    RunAnalyzeQuery(PR_FALSE);
-#ifdef DEBUG
-    if (NS_FAILED(rv)) {
-      NS_WARNING("RunAnalyzeQuery failed!");
-    }
-#endif
-  }
   return NS_OK;
 }
 
@@ -3059,6 +3070,32 @@ sbLocalDatabaseLibrary::OnQueryEnd(sbIDatabaseResult* aDBResultObject,
 {
   NS_ASSERTION(aQuery.Find("VACUUM") != -1, "Got the wrong callback!");
 
+  return NS_OK;
+}
+
+/**
+ * See nsIObserver
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::Observe(nsISupports *aSubject, 
+                                const char *aTopic,
+                                const PRUnichar *aData)
+{
+  if (!strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC)) {
+    nsresult rv;
+    nsCOMPtr<nsIObserverService> observerService =
+      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+    if (NS_SUCCEEDED(rv)) {
+      observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
+    }
+
+    rv = Shutdown();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    NS_NOTREACHED("Observing a topic we don't care about!");
+  }
+  
   return NS_OK;
 }
 

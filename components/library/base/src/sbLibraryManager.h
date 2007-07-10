@@ -131,10 +131,6 @@ private:
                                sbLibraryInfo* aEntry,
                                void* aUserData);
 
-  static PRBool PR_CALLBACK
-    ShutdownAllLibrariesCallback(sbILibrary* aEntry,
-                                 void* aUserData);
-
   static nsresult AssertLibrary(nsIRDFDataSource* aDataSource,
                                 sbILibrary* aLibrary);
 

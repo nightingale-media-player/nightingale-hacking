@@ -81,18 +81,20 @@ sbLibraryManager::sbLibraryManager()
   mLock(nsnull)
 {
   MOZ_COUNT_CTOR(sbLibraryManager);
+  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+
 #ifdef PR_LOGGING
   if (!gLibraryManagerLog)
     gLibraryManagerLog = PR_NewLogModule("sbLibraryManager");
 #endif
 
   TRACE(("sbLibraryManager[0x%x] - Created", this));
-
-  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
 }
 
 sbLibraryManager::~sbLibraryManager()
 {
+  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+
   if(mLock) {
     nsAutoLock::DestroyLock(mLock);
   }
@@ -266,28 +268,6 @@ sbLibraryManager::AssertAllLibrariesCallback(nsStringHashKey::KeyType aKey,
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;
-}
-
-/**
- * \brief This callback notifies all registered libraries that they should
- *        shutdown.
- *
- * \param aKey      - An nsAString representing the GUID of the library.
- * \param aEntry    - An sbILibrary entry.
- * \param aUserData - Should be null.
- *
- * \return PL_DHASH_NEXT always
- */
-/* static */ PRBool PR_CALLBACK
-sbLibraryManager::ShutdownAllLibrariesCallback(sbILibrary* aEntry,
-                                               void* /*aUserData*/)
-{
-  NS_ASSERTION(aEntry, "Null entry in hashtable!");
-
-  nsresult rv = aEntry->Shutdown();
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A library's shutdown method failed!");
-
-  return PR_TRUE;
 }
 
 /**
@@ -923,23 +903,15 @@ sbLibraryManager::Observe(nsISupports* aSubject,
       observerService->RemoveObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
     }
 
-    // Notify observers that we're about to notify our libraries of shutdown
+    // Notify observers that we're about to release all libraries.
     rv = observerService->NotifyObservers(NS_ISUPPORTS_CAST(sbILibraryManager*, this),
                                           SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
                                           nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Tell all the registered libraries to shutdown.
-    nsCOMArray<sbILibrary> libraries;
-    {
-      nsAutoLock lock(mLock);
-      mLibraryTable.EnumerateRead(AddLibrariesToCOMArrayCallback, &libraries);
-    }
-    libraries.EnumerateForwards(ShutdownAllLibrariesCallback, nsnull);
+    mLibraryTable.Clear();
 
-    libraries.Clear();
-
-    // Notify observers that we're totally shutdown
+    // Notify observers that we're totally shutdown.
     rv = observerService->NotifyObservers(NS_ISUPPORTS_CAST(sbILibraryManager*, this),
                                           SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC,
                                           nsnull);

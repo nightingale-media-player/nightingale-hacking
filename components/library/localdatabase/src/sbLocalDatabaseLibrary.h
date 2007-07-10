@@ -27,12 +27,12 @@
 #ifndef __SBLOCALDATABASELIBRARY_H__
 #define __SBLOCALDATABASELIBRARY_H__
 
-#include "sbLocalDatabaseMediaListBase.h"
+#include <nsIObserver.h>
 #include <sbIDatabaseQuery.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
-#include <sbIMediaListListener.h>
+#include "sbLocalDatabaseMediaListBase.h"
 
 #include <nsClassHashtable.h>
 #include <nsCOMArray.h>
@@ -93,7 +93,8 @@ static PLDHashOperator PR_CALLBACK
 class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
                                public sbIDatabaseSimpleQueryCallback,
                                public sbILibrary,
-                               public sbILocalDatabaseLibrary
+                               public sbILocalDatabaseLibrary,
+                               public nsIObserver
 {
   friend class sbLibraryInsertingEnumerationListener;
   friend class sbLibraryRemovingEnumerationListener;
@@ -140,6 +141,7 @@ public:
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
   NS_DECL_NSICLASSINFO
+  NS_DECL_NSIOBSERVER
   NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaListBase::)
 
   // Include our overrides.
@@ -207,6 +209,8 @@ private:
 
   nsresult GetAllListsByType(const nsAString& aType, sbMediaListArray* aArray);
 
+  nsresult Shutdown();
+
 private:
   // This is the GUID used by the DBEngine to uniquely identify the sqlite
   // database file we'll be using. Don't confuse it with mGuid (inherited from
@@ -253,7 +257,6 @@ private:
 
   PRBool mPreventAddedNotification;
 };
-
 
 /**
  * class sbLibraryInsertingEnumerationListener

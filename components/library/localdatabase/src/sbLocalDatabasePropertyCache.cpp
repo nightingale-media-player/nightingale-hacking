@@ -27,7 +27,6 @@
 #include "sbLocalDatabasePropertyCache.h"
 
 #include <nsIURI.h>
-#include <nsIObserverService.h>
 #include <sbIDatabaseQuery.h>
 #include <sbILibraryManager.h>
 #include <sbISQLBuilder.h>
@@ -56,21 +55,21 @@
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo *gLocalDatabasePropertyCacheLog = nsnull;
-#define TRACE(args) if (gLocalDatabasePropertyCacheLog) PR_LOG(gLocalDatabasePropertyCacheLog, PR_LOG_DEBUG, args)
-#define LOG(args)   if (gLocalDatabasePropertyCacheLog) PR_LOG(gLocalDatabasePropertyCacheLog, PR_LOG_WARN, args)
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
 #endif
+
+#define TRACE(args) PR_LOG(gLocalDatabasePropertyCacheLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gLocalDatabasePropertyCacheLog, PR_LOG_WARN, args)
 
 /**
  * \brief Max number of pending changes before automatic cache write.
  */
 #define SB_LOCALDATABASE_MAX_PENDING_CHANGES (500)
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabasePropertyCache, 
-                              sbILocalDatabasePropertyCache,
-                              nsIObserver)
+#define CACHE_HASHTABLE_SIZE 1000
+#define BAG_HASHTABLE_SIZE   50
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabasePropertyCache, 
+                              sbILocalDatabasePropertyCache)
 
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache() 
 : mWritePendingCount(0),
@@ -92,30 +91,13 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 
 sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
-  MOZ_COUNT_DTOR(sbLocalDatabasePropertyCache);
+  Shutdown();
   
   if(mDirtyLock) {
     nsAutoLock::DestroyLock(mDirtyLock);
   }
-}
 
-NS_IMETHODIMP
-sbLocalDatabasePropertyCache::Observe(nsISupports *aSubject, 
-                                      const char *aTopic,
-                                      const PRUnichar *aData)
-{
-  nsresult rv = NS_OK;
-  
-  if(!strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC)) {
-    nsCOMPtr<nsIObserverService> observerService =
-      do_GetService("@mozilla.org/observer-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
-
-    rv = Shutdown();
-  }
-  
-  return rv;
+  MOZ_COUNT_DTOR(sbLocalDatabasePropertyCache);
 }
 
 NS_IMETHODIMP
@@ -141,16 +123,6 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Register for library manager shutdown so we know when to write all
-  // pending changes.
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = observerService->AddObserver(this, 
-                                    SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, 
-                                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Simple select from properties table with an in list of guids
@@ -345,10 +317,10 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
   rv = LoadProperties();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool success = mCache.Init(1000);
+  PRBool success = mCache.Init(CACHE_HASHTABLE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  success = mDirty.Init(1000);
+  success = mDirty.Init(CACHE_HASHTABLE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mLibrary = aLibrary;
@@ -1004,6 +976,8 @@ sbLocalDatabasePropertyCache::AddDirtyGUID(const nsAString &aGuid)
     mDirty.PutEntry(guid);
   }
 
+  mWritePendingCount++;
+
   return NS_OK;
 }
 
@@ -1181,10 +1155,10 @@ sbLocalDatabaseResourcePropertyBag::Init()
 {
   nsresult rv;
 
-  PRBool success = mValueMap.Init(1000);
+  PRBool success = mValueMap.Init(BAG_HASHTABLE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  success = mDirty.Init(1000);
+  success = mDirty.Init(BAG_HASHTABLE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
