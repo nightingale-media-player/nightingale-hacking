@@ -148,4 +148,24 @@ function runTest () {
 
   list.removeListener(listListener);
   library.removeListener(libraryListener);
+
+  // Test create with properties
+  var props = createPropertyArray();
+  props.appendProperty(SB_NS + "artistName", "a-ha");
+  props.appendProperty(SB_NS + "albumName", "Back in Black");
+  props.appendProperty(SB_NS + "contentLength", "123");
+  props.appendProperty(SB_NS + "contentURL", "http://www.foo.com/foo.mp3");
+  var item4 = library.createMediaItem(uri, props);
+
+  // contentURL should not have been affected by the property list
+  assertEqual(item4.getProperty(SB_NS + "contentURL"), uriSpec);
+  assertEqual(item4.getProperty(SB_NS + "artistName"), "a-ha");
+  assertEqual(item4.getProperty(SB_NS + "albumName"), "Back in Black");
+  assertEqual(item4.getProperty(SB_NS + "contentLength"), "123");
 }
+
+function createPropertyArray() {
+  return Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+           .createInstance(Ci.sbIMutablePropertyArray);
+}
+

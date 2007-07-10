@@ -252,28 +252,51 @@ sbLocalDatabaseMediaListBase::MakeStandardQuery(sbIDatabaseQuery** _retval)
 }
 
 nsresult
-sbLocalDatabaseMediaListBase::CopyAllProperties(sbIMediaItem* aSourceItem,
-                                                sbIMediaItem* aTargetItem)
+sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* aProperties,
+                                                              sbIPropertyArray** _retval)
 {
-  NS_ASSERTION(aSourceItem, "aSourceItem is null");
-  NS_ASSERTION(aTargetItem, "aTargetItem is null");
+  NS_ASSERTION(aProperties, "aProperties is null");
+  NS_ASSERTION(_retval, "_retval is null");
 
-  nsCOMPtr<nsIStringEnumerator> names;
-  nsresult rv = aSourceItem->GetPropertyNames(getter_AddRefs(names));
+  nsresult rv;
+  nsCOMPtr<sbIMutablePropertyArray> mutableArray =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString name;
-  while (NS_SUCCEEDED(names->GetNext(name))) {
-    nsAutoString value;
-    rv = aSourceItem->GetProperty(name, value);
+  PRUint32 length;
+  rv = aProperties->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_NAMED_LITERAL_STRING(contentURLProperty, SB_PROPERTY_CONTENTURL);
+  NS_NAMED_LITERAL_STRING(createdProperty,    SB_PROPERTY_CREATED);
+  NS_NAMED_LITERAL_STRING(updatedProperty,    SB_PROPERTY_UPDATED);
+
+
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<sbIProperty> property;
+    rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    NS_ASSERTION(!value.IsVoid(), "This should never be void!");
+    nsAutoString name;
+    rv = property->GetName(name);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = aTargetItem->SetProperty(name, value);
+    // We never want these properties to be copied to a new item
+    if (name.Equals(contentURLProperty) ||
+        name.Equals(createdProperty) ||
+        name.Equals(updatedProperty)) {
+      continue;
+    }
+
+    nsAutoString value;
+    rv = property->GetValue(value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mutableArray->AppendProperty(name, value);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  NS_ADDREF(*_retval = mutableArray);
   return NS_OK;
 }
 

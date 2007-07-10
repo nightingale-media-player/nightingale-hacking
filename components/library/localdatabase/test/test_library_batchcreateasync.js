@@ -34,23 +34,34 @@ function runTest () {
   var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
   var databaseGUID = "test_localdatabaselibrary";
-  var library = createLibrary(databaseGUID);
+  var library = createLibrary(databaseGUID, null, false);
 
   var toAdd = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  var propertyArray = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = 0; i < 100; i++) {
     toAdd.appendElement(newURI("file:///foo/" + i + ".mp3"), false);
+    var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                  .createInstance(Ci.sbIMutablePropertyArray);
+    props.appendProperty(SB_NS + "contentLength", i);
+    props.appendProperty(SB_NS + "trackNumber", i);
+    propertyArray.appendElement(props, false);
   }
 
   var listener = {
     onProgress: function(index) {
     },
     onComplete: function(array) {
-      array = null;
+      for (var i = 0; i < array.length; i++) {
+        var item = array.queryElementAt(i, Ci.sbIMediaItem);
+        assertTrue(item.contentSrc.equals(newURI("file:///foo/" + i + ".mp3")));
+        assertEqual(item.getProperty(SB_NS + "contentLength"), i);
+        assertEqual(item.getProperty(SB_NS + "trackNumber"), i);
+      }
       testFinished();
     }
   };
 
-  library.batchCreateMediaItemsAsync(toAdd, listener);
+  library.batchCreateMediaItemsAsync(listener, toAdd, propertyArray);
   testPending();
 }
 

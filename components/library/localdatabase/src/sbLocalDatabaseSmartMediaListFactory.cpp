@@ -31,12 +31,15 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
+#include <sbIPropertyArray.h>
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
+#include <nsComponentManagerUtils.h>
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseSmartMediaList.h"
 #include <sbStandardProperties.h>
+#include <sbPropertiesCID.h>
 
 #define SB_SMART_MEDIALIST_FACTORY_TYPE "smart"
 
@@ -91,13 +94,18 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
     rv = aInner->GetLibrary(getter_AddRefs(library));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIMediaList> dataList;
-    rv = library->CreateMediaList(NS_LITERAL_STRING("simple"),
-                                  getter_AddRefs(dataList));
+    nsCOMPtr<sbIMutablePropertyArray> properties =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = dataList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                               NS_LITERAL_STRING("1"));
+    rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                    NS_LITERAL_STRING("1"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaList> dataList;
+    rv = library->CreateMediaList(NS_LITERAL_STRING("simple"),
+                                  properties,
+                                  getter_AddRefs(dataList));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString guid;

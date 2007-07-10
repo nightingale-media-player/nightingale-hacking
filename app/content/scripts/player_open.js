@@ -351,8 +351,7 @@ function SBScanMedia( )
     media_scan_data.URL = fp.file.path;
     media_scan_data.retval = "";
     // Open the modal dialog
-    //SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
-    SBOpenWindow( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
+    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
   }
   theFileScanIsOpen.boolValue = false;
 }

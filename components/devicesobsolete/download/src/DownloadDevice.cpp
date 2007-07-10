@@ -311,6 +311,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     {
         result = pMainLibrary->CreateMediaList
                                         (NS_LITERAL_STRING("simple"),
+                                         nsnull,
                                          getter_AddRefs(mpDownloadMediaList));
     }
 

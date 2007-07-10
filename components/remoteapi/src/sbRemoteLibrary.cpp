@@ -400,7 +400,7 @@ sbRemoteLibrary::CreateMediaItem(const nsAString& aURL,
   }
 
   nsCOMPtr<sbIMediaItem> mediaItem;
-  rv = mLibrary->CreateMediaItem(uri, getter_AddRefs(mediaItem));
+  rv = mLibrary->CreateMediaItem(uri, nsnull, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mShouldScan) {
@@ -432,7 +432,9 @@ sbRemoteLibrary::CreateMediaList(const nsAString& aType,
   NS_ENSURE_STATE(mLibrary);
 
   nsCOMPtr<sbIMediaList> mediaList;
-  nsresult rv = mLibrary->CreateMediaList(aType, getter_AddRefs(mediaList));
+  nsresult rv = mLibrary->CreateMediaList(aType,
+                                          nsnull,
+                                          getter_AddRefs(mediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return SB_WrapMediaList(mediaList, _retval);
@@ -447,6 +449,7 @@ sbRemoteLibrary::CreateMediaListFromFile( const nsAString& aURL,
 
   nsCOMPtr<sbIMediaList> mediaList;
   nsresult rv = mLibrary->CreateMediaList( NS_LITERAL_STRING("simple"),
+                                           nsnull,
                                            getter_AddRefs(mediaList) );
   NS_ENSURE_SUCCESS(rv, rv);
 

@@ -78,21 +78,6 @@ interface sbILocalDatabaseLibrary : nsISupports
   sbIDatabaseQuery createQuery();
 
   /**
-   * \brief Return a filled query to create many media items from a list of URIs
-   *
-   * Note: You must call sbILibrary::batchNotifyAdded() on the returned list 
-   * after the query fully completes!
-   *
-   * \param aURLCount The number of items in the url array.
-   * \param aURLArray An array of strings of urls to media
-   * \param aGUIDArray [out] An array of strings of guids for the new media items
-   * \return sbIDatabaseQuery The composed query
-   */
-  sbIDatabaseQuery batchCreateMediaItemsQuery(in PRUint32 aURLCount,
-                                              [array, size_is (aURLCount)] in wstring aURLArray,
-                                              out nsIArray aGUIDArray ); 
-
-  /**
    * Oh My.  We need this here to avoid a static cast in
    * sbLocalDatabaseSimpleMediaListFactory where we need a
    * sbLocalDatabaseLibrary class pointer to construct the simple media list.

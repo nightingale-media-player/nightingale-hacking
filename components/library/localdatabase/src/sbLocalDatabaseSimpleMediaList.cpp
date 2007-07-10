@@ -59,6 +59,19 @@
 #define DEFAULT_SORT_PROPERTY NS_LITERAL_STRING(SB_PROPERTY_ORDINAL)
 #define DEFAULT_FETCH_SIZE 1000
 
+/**
+ * To log this class, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbLocalDatabaseSimpleMediaList:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gLocalDatabaseSimpleMediaListLog = nsnull;
+#endif /* PR_LOGGING */
+
+#define TRACE(args) if (gLocalDatabaseSimpleMediaListLog) \
+  PR_LOG(gLocalDatabaseSimpleMediaListLog, PR_LOG_DEBUG, args)
+#define LOG(args)   if (gLocalDatabaseSimpleMediaListLog) \
+  PR_LOG(gLocalDatabaseSimpleMediaListLog, PR_LOG_WARN, args)
+
 #ifdef DEBUG
 #define ASSERT_LIST_IS_LIBRARY(_mediaList)                                     \
   PR_BEGIN_MACRO                                                               \
@@ -169,6 +182,9 @@ NS_IMETHODIMP
 sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
                                                                 nsresult aStatusCode)
 {
+  TRACE(("LocalDatabaseSimpleMediaList[0x%.8x] - "
+         "InsertingEnumerator::OnEnumerationEnd", this));
+
   NS_ASSERTION(aMediaList != mFriendList,
                "Can't enumerate our friend media list!");
 
@@ -196,8 +212,34 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
       mItemsToCreate.EnumerateRead(AddURIsToArrayCallback, &pointers);
     NS_ENSURE_TRUE(enumeratedCount == itemsToCreateCount, NS_ERROR_FAILURE);
 
+    nsCOMPtr<nsIMutableArray> propertyArrayArray =
+      do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 itemCount;
+    rv = oldItems->GetLength(&itemCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 0; i < itemCount; i++) {
+      nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(oldItems, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbIPropertyArray> properties;
+      rv = item->GetProperties(nsnull, getter_AddRefs(properties));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbIPropertyArray> filteredProperties;
+      rv = mFriendList->GetFilteredPropertiesForNewItem(properties,
+                                                        getter_AddRefs(filteredProperties));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = propertyArrayArray->AppendElement(filteredProperties, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     nsCOMPtr<nsIArray> newItems;
     rv = mListLibrary->BatchCreateMediaItems(oldURIs,
+                                             propertyArrayArray,
                                              getter_AddRefs(newItems));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -244,9 +286,6 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
       nsCOMPtr<sbIMediaItem> newMediaItem;
       PRBool success = mItemsToCreate.Get(mediaItem, getter_AddRefs(newMediaItem));
       NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-      rv = mFriendList->CopyAllProperties(mediaItem, newMediaItem);
-      NS_ENSURE_SUCCESS(rv, rv);
 
       //Call the copy listener for this media list at this time.
       //XXXAus: This could benefit from batching in the future.
@@ -458,6 +497,22 @@ NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseSimpleMediaList,
                              sbIMediaList,
                              sbILocalDatabaseSimpleMediaList,
                              sbIOrderableMediaList);
+
+sbLocalDatabaseSimpleMediaList::sbLocalDatabaseSimpleMediaList()
+{
+  MOZ_COUNT_CTOR(sbLocalDatabaseSimpleMediaList);
+#ifdef PR_LOGGING
+  if (!gLocalDatabaseSimpleMediaListLog) {
+    gLocalDatabaseSimpleMediaListLog =
+      PR_NewLogModule("sbLocalDatabaseSimpleMediaList");
+  }
+#endif
+}
+
+sbLocalDatabaseSimpleMediaList::~sbLocalDatabaseSimpleMediaList()
+{
+  MOZ_COUNT_DTOR(sbLocalDatabaseSimpleMediaList);
+}
 
 nsresult
 sbLocalDatabaseSimpleMediaList::Init(sbLocalDatabaseLibrary* aLibrary,

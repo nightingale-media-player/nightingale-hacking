@@ -37,8 +37,14 @@ function runTest () {
   var library = createLibrary(databaseGUID);
 
   var toAdd = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  var propertyArray = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = 0; i < 100; i++) {
     toAdd.appendElement(newURI("file:///foo/" + i + ".mp3"), false);
+    var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                  .createInstance(Ci.sbIMutablePropertyArray);
+    props.appendProperty(SB_NS + "contentLength", i);
+    props.appendProperty(SB_NS + "trackNumber", i);
+    propertyArray.appendElement(props, false);
   }
 
   var added = library.batchCreateMediaItems(toAdd);
@@ -64,7 +70,11 @@ function runTest () {
                                      listener,
                                      Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
 
-    assertNotEqual(listener._item, null);
+    assertEqual(listener._item, item);
+    assertEqual(listener._item.getProperty(SB_NS + "contentLength"),
+                item.getProperty(SB_NS + "contentLength"));
+    assertEqual(listener._item.getProperty(SB_NS + "trackNumber"),
+                item.getProperty(SB_NS + "trackNumber"));
   }
 }
 

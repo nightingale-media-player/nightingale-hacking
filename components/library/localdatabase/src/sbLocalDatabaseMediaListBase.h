@@ -109,8 +109,8 @@ protected:
 
   nsresult MakeStandardQuery(sbIDatabaseQuery** _retval);
 
-  nsresult CopyAllProperties(sbIMediaItem* aSourceItem,
-                             sbIMediaItem* aTargetItem);
+  nsresult GetFilteredPropertiesForNewItem(sbIPropertyArray* aProperties,
+                                           sbIPropertyArray** _retval);
 
 private:
 

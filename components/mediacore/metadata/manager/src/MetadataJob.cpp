@@ -50,7 +50,6 @@
 
 #include <nsIURI.h>
 #include <nsIIOService.h>
-#include <nsITextToSubURI.h>
 #include <pref/nsIPrefService.h>
 #include <pref/nsIPrefBranch2.h>
 
@@ -1366,22 +1365,25 @@ nsresult sbMetadataJob::CreateDefaultItemName(const nsAString &aURLString,
   retval = aURLString;
 
   // First, unescape the url.
-  nsCOMPtr< nsITextToSubURI > textToSubURI =
-    do_GetService("@mozilla.org/intl/texttosuburi;1", &rv);
+  nsCOMPtr<nsINetUtil> netUtil =
+    do_GetService("@mozilla.org/network/util;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Blank.  On error, the following function does utf8 -> utf16 automatically.
-  rv = textToSubURI->UnEscapeURIForUI( EmptyCString(), NS_ConvertUTF16toUTF8(aURLString), retval );
+  nsCAutoString uriString = NS_ConvertUTF16toUTF8(aURLString);
+  nsCAutoString result;
+  rv = netUtil->UnescapeString(uriString, nsINetUtil::ESCAPE_ALL, result);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Then pull out just the text after the last slash
-  PRInt32 slash = retval.RFindChar( *(NS_LITERAL_STRING("/").get()) );
+  PRInt32 slash = result.RFindChar( *(NS_LITERAL_STRING("/").get()) );
   if ( slash != -1 )
-    retval.Cut( 0, slash + 1 ); 
-  slash = retval.RFindChar( *(NS_LITERAL_STRING("\\").get()) );
+    result.Cut( 0, slash + 1 ); 
+  slash = result.RFindChar( *(NS_LITERAL_STRING("\\").get()) );
   if ( slash != -1 )
-    retval.Cut( 0, slash + 1 ); 
+    result.Cut( 0, slash + 1 ); 
 
+  retval = NS_ConvertUTF8toUTF16(result);
   return NS_OK;
 }
 

@@ -91,11 +91,11 @@ interface sbILibraryResource : nsISupports
    * \brief Get properties from this resource in a property array
    * \param aPropertyNames A property array containing the names of the
    *        properties you wish to retrieve.  The values of these properties
-   *        are disregarded.  If this parameter is null, all properties will
-   *        be returned
+   *        are disregarded.  If this parameter is null or not specified, all
+   *        properties will be returned
    * \return A property array containing the requested properties and values
    */
-  sbIPropertyArray getProperties(in sbIPropertyArray aPropertyNames);
+  sbIPropertyArray getProperties([optional] in sbIPropertyArray aPropertyNames);
 
   /**
    * \brief Sets the properties and values in the supplied property array to

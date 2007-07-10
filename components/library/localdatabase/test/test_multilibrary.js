@@ -76,7 +76,7 @@ function runTest () {
   log("XXXben " + list1.length);
   assertTrue(list1.length == 10);
   assertTrue(list2.length == 0);
-  assertTrue(two.length == 12);
+  assertEqual(two.length, 12);
   
   enumerator = new SimpleArrayEnumerator(items);
   list2.addSome(enumerator);

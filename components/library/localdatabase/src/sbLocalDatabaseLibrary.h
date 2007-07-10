@@ -35,6 +35,7 @@
 #include "sbLocalDatabaseMediaListBase.h"
 
 #include <nsClassHashtable.h>
+#include <nsDataHashtable.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
@@ -100,6 +101,7 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
   friend class sbLibraryRemovingEnumerationListener;
   friend class sbLocalDatabasePropertyCache;
   friend class sbBatchCreateTimerCallback;
+  friend class sbBatchCreateHelper;
 
   struct sbMediaListFactoryInfo {
     sbMediaListFactoryInfo()
@@ -177,6 +179,11 @@ private:
                            const nsAString& aURISpecOrPrefix,
                            nsAString& _retval);
 
+  nsresult AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
+                                    const nsAString& aGuid,
+                                    sbIPropertyArray* aProperties,
+                                    PRUint32* aAddedQueryCount);
+
   nsresult GetTypeForGUID(const nsAString& aGUID,
                           nsAString& _retval);
 
@@ -242,6 +249,9 @@ private:
   // Get the guids of all lists by type
   nsString mGetAllListsByTypeId;
 
+  // Insert property query
+  nsString mInsertPropertyQuery;
+
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
 
   sbMediaItemInfoTable mMediaItemTable;
@@ -303,6 +313,9 @@ private:
   PRPackedBool mItemEnumerated;
 };
 
+// Forward declare
+class sbBatchCreateHelper;
+
 class sbBatchCreateTimerCallback : public nsITimerCallback
 {
 friend class sbLocalDatabaseLibrary;
@@ -314,12 +327,45 @@ public:
   sbBatchCreateTimerCallback(sbLocalDatabaseLibrary* aLibrary,
                              sbIBatchCreateMediaItemsListener* aListener,
                              sbIDatabaseQuery* aQuery);
+
+  nsresult Init();
+  nsresult AddMapping(PRUint32 aQueryIndex, PRUint32 aItemIndex);
+  nsresult GetBatchHelper(sbBatchCreateHelper** _retval);
+
 private:
   sbLocalDatabaseLibrary* mLibrary;
   nsCOMPtr<sbIBatchCreateMediaItemsListener> mListener;
+  nsRefPtr<sbBatchCreateHelper> mBatchHelper;
   nsCOMPtr<sbIDatabaseQuery> mQuery;
-  nsTArray<nsString> mGuids;
+  nsDataHashtable<nsUint32HashKey, PRUint32> mQueryToIndexMap;
+};
 
+class sbBatchCreateHelper
+{
+public:
+  NS_IMETHOD_(nsrefcnt) AddRef(void);
+  NS_IMETHOD_(nsrefcnt) Release(void);
+
+  sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary);
+  sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary,
+                      sbBatchCreateTimerCallback* aCallback);
+  ~sbBatchCreateHelper();
+
+  nsresult InitQuery(sbIDatabaseQuery* aQuery,
+                     nsIArray* aURIArray,
+                     nsIArray* aPropertyArrayArray);
+  nsresult NotifyAndGetItems(nsIArray** _retval);
+
+protected:
+  nsAutoRefCnt mRefCnt;
+  NS_DECL_OWNINGTHREAD
+
+private:
+  // When this is used for an async batch, the helper will have an owning
+  // reference to the callback
+  sbLocalDatabaseLibrary* mLibrary;
+  sbBatchCreateTimerCallback* mCallback;
+  nsTArray<nsString> mGuids;
 };
 
 class sbAutoSimpleMediaListBatchHelper

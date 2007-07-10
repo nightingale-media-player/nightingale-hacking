@@ -109,18 +109,22 @@ interface sbILibrary : sbILibraryResource
   /**
    * \brief Creates a new media item
    * \prarm aContentUri The URI pointing to the content of the new media item
+   * \param aProperties Optional initial properties for this new item
    * \return A new, persisted media item
    */
-  sbIMediaItem createMediaItem(in nsIURI aContentUri);
+  sbIMediaItem createMediaItem(in nsIURI aContentUri,
+                               [optional] in sbIPropertyArray aProperties);
 
   /**
    * \brief Creates a new media list
    *
    * \param aType - The type of media list to create.
-   * 
+   * \param aProperties Optional initial properties for this new item
+   *
    * \return A new media list.
    */
-  sbIMediaList createMediaList(in AString aType);
+  sbIMediaList createMediaList(in AString aType,
+                               [optional] in sbIPropertyArray aProperties);
 
   /**
    * \brief Creates a new media list
@@ -173,31 +177,27 @@ interface sbILibrary : sbILibraryResource
   void sync();
 
   /**
-   * \brief Create many media items from a list of URIs, and notify their addition.
+   * \brief Create many media items from a list of URIs, and notify their
+   *        addition.
    * \param aURIArray nsIArray of nsIURI objects
+   * \param aPropertyArrayArray Optional array of sbIPropertyArray.  If
+   *        specified, the properties specified at each array index will be
+   *        used in the creation of the new media item at the same array index.
    * \return nsIArray of the new sbIMediaItem objects
    */
-  nsIArray batchCreateMediaItems(in nsIArray aURIArray);
-
-  /**
-   * \brief Get many media items from a list of guid strings
-   * \param aURIArray nsIArray of GUID strings.
-   * \return nsIArray of the new sbIMediaItem objects
-   */
-  nsIArray batchGetMediaItems(in nsIArray aGUIDArray);
-
-  /**
-   * \brief Notify the world that the array is added
-   * \param aURIArray nsIArray of sbIMediaItem
-   */
-  void batchNotifyAdded(in nsIArray aMediaItemArray);
+  nsIArray batchCreateMediaItems(in nsIArray aURIArray,
+                                 [optional] in nsIArray aPropertyArrayArray);
 
   /**
    * \brief Asychronously create many media items from a list of URIs
-   * \param aURIArray nsIArray of nsIURI objects
    * \param aListener Listener to receive progress and complete notifications
+   * \param aURIArray nsIArray of nsIURI objects
+   * \param aPropertyArrayArray Optional array of sbIPropertyArray.  If
+   *        specified, the properties specified at each array index will be
+   *        used in the creation of the new media item at the same array index.
    */
-  void batchCreateMediaItemsAsync(in nsIArray aURIArray,
-                                  in sbIBatchCreateMediaItemsListener aListener);
+  void batchCreateMediaItemsAsync(in sbIBatchCreateMediaItemsListener aListener,
+                                  in nsIArray aURIArray,
+                                  [optional] in nsIArray aPropertyArrayArray);
 };
 

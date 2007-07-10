@@ -63,6 +63,9 @@ public:
   NS_DECL_SBILOCALDATABASESIMPLEMEDIALIST
   NS_DECL_SBIORDERABLEMEDIALIST
 
+  sbLocalDatabaseSimpleMediaList();
+  virtual ~sbLocalDatabaseSimpleMediaList();
+
   nsresult Init(sbLocalDatabaseLibrary* aLibrary,
                 const nsAString& aGuid);
 
