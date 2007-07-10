@@ -154,11 +154,12 @@ Metrics.prototype = {
     }
     xml += '</metrics>';
 
-
+/*
     // Happy little self-contained test display
     var gPrompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                           .getService(Components.interfaces.nsIPromptService);
     gPrompt.alert( null, "METRICS XML", xml );
+*/
 
     // upload xml
 
