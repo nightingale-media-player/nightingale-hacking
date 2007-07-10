@@ -1384,7 +1384,8 @@
             var mediaList =
               this._getWebMediaListForURL(this.linkedBrowser.currentURI.spec);
             view = mediaList.createView();
-            viewMap.setView(browser, entry, view);
+            if ( browser && entry && view instanceof Components.interfaces.sbIMediaListView )
+              viewMap.setView(browser, entry, view);
           }
 
           // Otherwise, don't show the web playlist until we see some tracks.
@@ -1469,7 +1470,8 @@
             if (this.viewForNextPlaylist) {
               playlist.bind(this.viewForNextPlaylist, playlist.commands);
               // save this mapping I guess 
-              viewMap.setView(browser, entry, this.viewForNextPlaylist);
+              if ( browser && entry && this.viewForNextPlaylist instanceof Components.interfaces.sbIMediaListView )
+                viewMap.setView(browser, entry, this.viewForNextPlaylist);
               this.viewForNextPlaylist = null;
             } else {
               // Is there something to restore?
@@ -1477,7 +1479,8 @@
               if ( restore == null )
               {
                 // Save the current view if there is nothing to restore
-                viewMap.setView( browser, entry, playlist.mediaListView );
+                if ( browser && entry && playlist.mediaListView instanceof Components.interfaces.sbIMediaListView )
+                  viewMap.setView( browser, entry, playlist.mediaListView );
                 playlist.refreshCommands();
               }
               else
