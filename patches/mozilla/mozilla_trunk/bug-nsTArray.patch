@@ -1,16 +1,11 @@
 Index: xpcom/glue/nsTArray.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/glue/nsTArray.cpp,v
-retrieving revision 1.6
-diff -u -8 -p -r1.6 nsTArray.cpp
---- xpcom/glue/nsTArray.cpp	4 Nov 2006 02:00:31 -0000	1.6
-+++ xpcom/glue/nsTArray.cpp	16 May 2007 20:38:48 -0000
-@@ -64,17 +64,20 @@ nsTArray_base::EnsureCapacity(size_type 
-   // doubling algorithm may not be able to allocate it.  Additionally we
-   // couldn't fit in the Header::mCapacity member. Just bail out in cases
-   // like that.  We don't want to be allocating 2 GB+ arrays anyway.
-   if (capacity * elemSize > size_type(-1)/2) {
-     NS_ERROR("Attempting to allocate excessively large array");
+retrieving revision 1.7
+diff -u -p -r1.7 nsTArray.cpp
+--- xpcom/glue/nsTArray.cpp	8 Jul 2007 07:08:51 -0000	1.7
++++ xpcom/glue/nsTArray.cpp	10 Jul 2007 17:29:34 -0000
+@@ -69,7 +69,10 @@ nsTArray_base::EnsureCapacity(size_type 
      return PR_FALSE;
    }
  
@@ -20,10 +15,5 @@ diff -u -8 -p -r1.6 nsTArray.cpp
 +  //     capacity of the header.
 +  if (!mHdr->mCapacity) {
      // NS_Alloc new data
-     Header *header = NS_STATIC_CAST(Header*,
-                          NS_Alloc(sizeof(Header) + capacity * elemSize));
-     if (!header)
-       return PR_FALSE;
-     header->mLength = 0;
-     header->mCapacity = capacity;
-     header->mIsAutoArray = 0;
+     Header *header = static_cast<Header*>
+                                 (NS_Alloc(sizeof(Header) + capacity * elemSize));
