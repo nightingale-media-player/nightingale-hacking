@@ -145,8 +145,8 @@ interface sbIMediaList : sbIMediaItem
    * \brief Get the first index of a media item int he list
    * \param aMediaItem Media item to search for
    * \param aStartFrom ben write me
-   * \return The index that the media item was first found at, or -1 if not
-   * found
+   * \return The index that the media item was first found at, or throws
+   * NS_ERROR_NOT_AVAILABLE if not found
    */
   unsigned long indexOf(in sbIMediaItem aMediaItem,
                         in unsigned long aStartFrom);
@@ -155,8 +155,8 @@ interface sbIMediaList : sbIMediaItem
    * \brief Get the last index of a media item int he list
    * \param aMediaItem Media item to search for
    * \param aStartFrom ben write me
-   * \return The index that the media item was last found at, or -1 if not
-   * found
+   * \return The index that the media item was last found at, or throws
+   * NS_ERROR_NOT_AVAILABLE if not found
    */
   unsigned long lastIndexOf(in sbIMediaItem aMediaItem,
                             in unsigned long aStartFrom);
