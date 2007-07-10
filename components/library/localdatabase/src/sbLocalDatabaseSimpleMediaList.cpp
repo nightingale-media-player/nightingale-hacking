@@ -67,10 +67,8 @@
 static PRLogModuleInfo* gLocalDatabaseSimpleMediaListLog = nsnull;
 #endif /* PR_LOGGING */
 
-#define TRACE(args) if (gLocalDatabaseSimpleMediaListLog) \
-  PR_LOG(gLocalDatabaseSimpleMediaListLog, PR_LOG_DEBUG, args)
-#define LOG(args)   if (gLocalDatabaseSimpleMediaListLog) \
-  PR_LOG(gLocalDatabaseSimpleMediaListLog, PR_LOG_WARN, args)
+#define TRACE(args) PR_LOG(gLocalDatabaseSimpleMediaListLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gLocalDatabaseSimpleMediaListLog, PR_LOG_WARN, args)
 
 #ifdef DEBUG
 #define ASSERT_LIST_IS_LIBRARY(_mediaList)                                     \
