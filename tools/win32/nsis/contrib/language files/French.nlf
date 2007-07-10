@@ -6,7 +6,7 @@ NLF v6
 -
 -
 # Codepage - dash (-) means ANSI code page
--
+1252
 # RTL - anything else than RTL means LTR
 -
 # Translation by the French NSIS team <veekee@winampfr.com> - http://www.winampfr.com/nsis.
@@ -98,7 +98,7 @@ Sélectionnez le type de désinstallation :
 # ^UnComponentsSubText2_NoInstTypes
 Sélectionnez les composants à désinstaller :
 # ^UnComponentsSubText2
-Ou, sélectionnez les composants optionnels que vous voulez déinstaller :
+Ou, sélectionnez les composants optionnels que vous voulez désinstaller :
 # ^DirText
 Ceci installera $(^NameDA) dans le dossier suivant. Pour installer dans un autre dossier, cliquez sur Parcourir et choisissez un autre dossier. $_CLICK
 # ^DirSubText

@@ -6,7 +6,7 @@ NLF v6
 -
 -
 # Codepage - dash (-) means ANSI code page
--
+1252
 # RTL - anything else than RTL means LTR
 -
 # Translation by Magnus Bonnevier (magnus.bonnevier@telia.com)
@@ -69,7 +69,7 @@ Namn
 # ^Completed
 Slutförd
 # ^LicenseText
-Please review the license agreement before installing $(^NameDA). Om du accepterar villkoren i avtalet, klicka Jag Godkänner.
+Var vänlig läs igenom licensvillkoren innan du installerar $(^NameDA). Om du accepterar villkoren i avtalet, klicka Jag Godkänner.
 # ^LicenseTextCB
 Var vänlig läs igenom licensvillkoren innan du installerar $(^NameDA). Om du accepterar villkoren i avtalet, klicka i checkrutan nedan. $_CLICK
 # ^LicenseTextRB

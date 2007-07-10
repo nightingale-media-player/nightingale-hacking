@@ -1,14 +1,14 @@
-;NSIS Modern User Interface version 1.74
+;NSIS Modern User Interface version 1.78
 ;Macro System
 ;Written by Joost Verburg
 
-;Copyright © 2002-2006 Joost Verburg
+;Copyright © 2002-2007 Joost Verburg
 
 ;Documentation: Readme.html
 ;License: License.txt
 ;Examples: Examples\Modern UI
 
-!echo "NSIS Modern User Interface version 1.74 - © 2002-2006 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.78 - © 2002-2007 Joost Verburg"
 
 ;--------------------------------
 
@@ -32,7 +32,7 @@
 !include "WinMessages.nsh"
 !verbose pop
 
-!define MUI_SYSVERSION "1.74"
+!define MUI_SYSVERSION "1.78"
 
 Var /GLOBAL MUI_TEMP1
 Var /GLOBAL MUI_TEMP2
@@ -184,15 +184,45 @@ Var /GLOBAL MUI_TEMP2
 
 !macroend
 
+!macro MUI_HEADER_TEXT_INTERNAL ID TEXT
+
+  GetDlgItem $MUI_TEMP1 $HWNDPARENT "${ID}"
+
+  !ifdef MUI_HEADER_TRANSPARENT_TEXT
+
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+  !endif
+
+  SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:${TEXT}"
+
+  !ifdef MUI_HEADER_TRANSPARENT_TEXT
+
+    ShowWindow $MUI_TEMP1 ${SW_SHOWNA}
+
+  !endif
+
+!macroend
+
 !macro MUI_HEADER_TEXT TEXT SUBTEXT
 
   !verbose push
   !verbose ${MUI_VERBOSE}
 
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
-  SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:${TEXT}"
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
-  SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
+  !ifdef MUI_HEADER_TRANSPARENT_TEXT
+
+    LockWindow on
+
+  !endif
+
+  !insertmacro MUI_HEADER_TEXT_INTERNAL 1037 "${TEXT}"
+  !insertmacro MUI_HEADER_TEXT_INTERNAL 1038 "${SUBTEXT}"
+
+  !ifdef MUI_HEADER_TRANSPARENT_TEXT
+
+    LockWindow off
+
+  !endif
 
   !verbose pop
 
@@ -294,7 +324,11 @@ Var /GLOBAL MUI_TEMP2
     StrCmp $MUI_NOABORTWARNING "1" mui.quit
   !endif
 
-  MessageBox MB_YESNO|MB_ICONEXCLAMATION "${MUI_ABORTWARNING_TEXT}" IDYES mui.quit
+  !ifdef MUI_ABORTWARNING_CANCEL_DEFAULT
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "${MUI_ABORTWARNING_TEXT}" IDYES mui.quit
+  !else
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${MUI_ABORTWARNING_TEXT}" IDYES mui.quit
+  !endif
 
   Abort
   mui.quit:
@@ -303,7 +337,11 @@ Var /GLOBAL MUI_TEMP2
 
 !macro MUI_UNABORTWARNING
 
-  MessageBox MB_YESNO|MB_ICONEXCLAMATION "${MUI_UNABORTWARNING_TEXT}" IDYES mui.quit
+  !ifdef MUI_UNABORTWARNING_CANCEL_DEFAULT
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "${MUI_UNABORTWARNING_TEXT}" IDYES mui.quit
+  !else
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${MUI_UNABORTWARNING_TEXT}" IDYES mui.quit
+  !endif
 
   Abort
   mui.quit:
@@ -339,10 +377,22 @@ Var /GLOBAL MUI_TEMP2
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
   CreateFont $MUI_TEMP2 "$(^Font)" "$(^FontSize)" "700"
   SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
-  SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
 
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
-  SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+  !ifndef MUI_HEADER_TRANSPARENT_TEXT
+
+    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+
+  !else
+
+    SetCtlColors $MUI_TEMP1 "" "transparent"
+
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    SetCtlColors $MUI_TEMP1 "" "transparent"
+
+  !endif
 
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1034
   SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
@@ -816,6 +866,7 @@ Var /GLOBAL MUI_TEMP2
 
   !undef MUI_DIRECTORYPAGE_TEXT_TOP
   !undef MUI_DIRECTORYPAGE_TEXT_DESTINATION
+  !insertmacro MUI_UNSET MUI_DIRECTORYPAGE_BGCOLOR
   !insertmacro MUI_UNSET MUI_DIRECTORYPAGE_VARIABLE
   !insertmacro MUI_UNSET MUI_DIRECTORYPAGE_VERIFYONLEAVE
 
@@ -849,6 +900,11 @@ Var /GLOBAL MUI_TEMP2
     !define "MUI_STARTMENUPAGE_${ID}_REGISTRY_VALUENAME" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
   !endif
 
+  !ifndef MUI_VAR_HWND
+    Var /GLOBAL MUI_HWND
+    !define MUI_VAR_HWND
+  !endif
+
   PageEx ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}custom
 
     PageCallbacks ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}mui.StartmenuPre_${MUI_UNIQUEID} ${MUI_PAGE_UNINSTALLER_FUNCPREFIX}mui.StartmenuLeave_${MUI_UNIQUEID}
@@ -867,6 +923,7 @@ Var /GLOBAL MUI_TEMP2
   !insertmacro MUI_UNSET MUI_STARTMENUPAGE_REGISTRY_ROOT
   !insertmacro MUI_UNSET MUI_STARTMENUPAGE_REGISTRY_KEY
   !insertmacro MUI_UNSET MUI_STARTMENUPAGE_REGISTRY_VALUENAME
+  !insertmacro MUI_UNSET MUI_STARTMENUPAGE_BGCOLOR
 
   !verbose pop
 
@@ -930,7 +987,7 @@ Var /GLOBAL MUI_TEMP2
     !endif
   !endif
 
-  !ifdef MUI_FINISHPAGE_RUN | MUI_FINISHPAGE_SHOWREADME
+  !ifdef MUI_FINISHPAGE_CANCEL_ENABLED
     !define MUI_FINISHPAGE_ABORTWARNINGCHECK
     !ifndef MUI_VAR_NOABORTWARNING
       !define MUI_VAR_NOABORTWARNING
@@ -953,9 +1010,11 @@ Var /GLOBAL MUI_TEMP2
   !insertmacro MUI_UNSET MUI_FINISHPAGE_TEXT
   !insertmacro MUI_UNSET MUI_FINISHPAGE_TEXT_LARGE
   !insertmacro MUI_UNSET MUI_FINISHPAGE_BUTTON
+  !insertmacro MUI_UNSET MUI_FINISHPAGE_CANCEL_ENABLED
   !insertmacro MUI_UNSET MUI_FINISHPAGE_TEXT_REBOOT
   !insertmacro MUI_UNSET MUI_FINISHPAGE_TEXT_REBOOTNOW
   !insertmacro MUI_UNSET MUI_FINISHPAGE_TEXT_REBOOTLATER
+  !insertmacro MUI_UNSET MUI_FINISHPAGE_REBOOTLATER_DEFAULT
   !insertmacro MUI_UNSET MUI_FINISHPAGE_RUN
     !insertmacro MUI_UNSET MUI_FINISHPAGE_RUN_TEXT
     !insertmacro MUI_UNSET MUI_FINISHPAGE_RUN_PARAMETERS
@@ -1165,7 +1224,7 @@ Var /GLOBAL MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1205,7 +1264,7 @@ Var /GLOBAL MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1284,6 +1343,12 @@ Var /GLOBAL MUI_TEMP2
   FunctionEnd
 
   Function "${SHOW}"
+    !ifdef MUI_DIRECTORYPAGE_BGCOLOR
+      FindWindow $MUI_TEMP1 "#32770" "" $HWNDPARENT
+      GetDlgItem $MUI_TEMP1 $MUI_TEMP1 1019
+      SetCtlColors $MUI_TEMP1 "" "0x${MUI_DIRECTORYPAGE_BGCOLOR}"
+    !endif
+    
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
   FunctionEnd
 
@@ -1313,18 +1378,31 @@ Var /GLOBAL MUI_TEMP2
 
     StrCmp $(^RTL) 0 mui.startmenu_nortl
       !ifndef MUI_STARTMENUPAGE_NODISABLE
-        StartMenu::Select /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /NOUNLOAD /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !else
-        StartMenu::Select /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /NOUNLOAD /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !endif
-      Goto mui.startmenu_calldone
+      Goto mui.startmenu_initdone
     mui.startmenu_nortl:
       !ifndef MUI_STARTMENUPAGE_NODISABLE
-        StartMenu::Select /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /NOUNLOAD /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !else
-        StartMenu::Select /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /NOUNLOAD /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !endif
-    mui.startmenu_calldone:
+    mui.startmenu_initdone:
+
+  Pop $MUI_HWND
+
+  !ifdef MUI_STARTMENUPAGE_BGCOLOR
+    GetDlgItem $MUI_TEMP1 $MUI_HWND 1002
+    SetCtlColors $MUI_TEMP1 "" "0x${MUI_STARTMENUPAGE_BGCOLOR}"
+    GetDlgItem $MUI_TEMP1 $MUI_HWND 1004
+    SetCtlColors $MUI_TEMP1 "" "0x${MUI_STARTMENUPAGE_BGCOLOR}"
+  !endif
+
+  !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
+
+  StartMenu::Show
 
     Pop $MUI_TEMP1
     StrCmp $MUI_TEMP1 "success" 0 +2
@@ -1453,7 +1531,6 @@ Var /GLOBAL MUI_TEMP2
             !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Bottom" "140"
           !endif
         !endif
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
         !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Type" "RadioButton"
         !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Text" "${MUI_FINISHPAGE_TEXT_REBOOTLATER}"
         !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Left" "120"
@@ -1464,6 +1541,11 @@ Var /GLOBAL MUI_TEMP2
         !else
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Top" "110"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Bottom" "120"
+        !endif
+        !ifdef MUI_FINISHPAGE_REBOOTLATER_DEFAULT
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "State" "1"
+        !else
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
         !endif
 
         Goto mui.finish_load
@@ -1619,7 +1701,7 @@ Var /GLOBAL MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1712,7 +1794,7 @@ Var /GLOBAL MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1984,7 +2066,12 @@ Var /GLOBAL MUI_TEMP2
 
   !endif
 
-  LangDLL::LangDialog "${MUI_LANGDLL_WINDOWTITLE}" "${MUI_LANGDLL_INFO}" A ${MUI_LANGDLL_PUSHLIST} ""
+  !ifdef MUI_LANGDLL_ALLLANGUAGES
+    LangDLL::LangDialog "${MUI_LANGDLL_WINDOWTITLE}" "${MUI_LANGDLL_INFO}" A ${MUI_LANGDLL_PUSHLIST} ""
+  !else
+    LangDLL::LangDialog "${MUI_LANGDLL_WINDOWTITLE}" "${MUI_LANGDLL_INFO}" AC ${MUI_LANGDLL_PUSHLIST} ""
+  !endif
+
 
   Pop $LANGUAGE
   StrCmp $LANGUAGE "cancel" 0 +2
@@ -2163,14 +2250,24 @@ Var /GLOBAL MUI_TEMP2
   !insertmacro MUI_LANGUAGEFILE_DEFINE "MUI_${LANGUAGE}_LANGNAME" "MUI_LANGNAME"
 
   !ifndef MUI_LANGDLL_PUSHLIST
-    !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' ${LANG_${LANGUAGE}} "
+    !ifdef MUI_LANGDLL_ALLLANGUAGES
+      !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' '${LANG_${LANGUAGE}}' "
+    !else
+      !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' '${LANG_${LANGUAGE}}' '${LANG_${LANGUAGE}_CP}' "
+    !endif
   !else
     !ifdef MUI_LANGDLL_PUSHLIST_TEMP
       !undef MUI_LANGDLL_PUSHLIST_TEMP
     !endif
     !define MUI_LANGDLL_PUSHLIST_TEMP "${MUI_LANGDLL_PUSHLIST}"
     !undef MUI_LANGDLL_PUSHLIST
-    !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' ${LANG_${LANGUAGE}} ${MUI_LANGDLL_PUSHLIST_TEMP}"
+
+    !ifdef MUI_LANGDLL_ALLLANGUAGES
+      !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' '${LANG_${LANGUAGE}}' ${MUI_LANGDLL_PUSHLIST_TEMP}"
+    !else
+      !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' '${LANG_${LANGUAGE}}' '${LANG_${LANGUAGE}_CP}' ${MUI_LANGDLL_PUSHLIST_TEMP}"
+    !endif
+
   !endif
 
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING_PAGE WELCOME "MUI_TEXT_WELCOME_INFO_TITLE"
