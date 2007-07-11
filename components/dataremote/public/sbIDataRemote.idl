@@ -164,7 +164,7 @@ interface sbIDataRemote : nsIObserver
    * \return The integer stored if it actually is an interger
    * \return NaN if the the data stored is not a number.
    */
-  attribute long intValue;
+  attribute long long intValue;
 
 };
 

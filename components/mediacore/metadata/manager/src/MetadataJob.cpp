@@ -1414,7 +1414,7 @@ sbMetadataJob::AppendIfValid(sbIPropertyManager* aPropertyManager,
 
 void sbMetadataJob::IncrementDataRemote()
 {
-  PRInt32 current;
+  PRInt64 current;
   mDataCurrentMetadataJobs->GetIntValue( &current );
   mDataStatusDisplay->SetStringValue( mStatusDisplayString );
   // Set to the incremented value
@@ -1423,7 +1423,7 @@ void sbMetadataJob::IncrementDataRemote()
 
 void sbMetadataJob::DecrementDataRemote()
 {
-  PRInt32 current;
+  PRInt64 current;
   mDataCurrentMetadataJobs->GetIntValue( &current );
   // Set to the decremented value
   mDataCurrentMetadataJobs->SetIntValue( --current );
