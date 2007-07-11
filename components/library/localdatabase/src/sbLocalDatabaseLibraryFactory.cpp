@@ -47,6 +47,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
+#include <nsWeakReference.h>
 #include <nsXPCOMCID.h>
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibrary.h"
@@ -59,6 +60,8 @@
 
 #define PERMISSIONS_FILE      0644
 #define PERMISSIONS_DIRECTORY 0755
+
+sbLocalDatabaseLibraryFactory* gLibraryFactory = nsnull;
 
 static nsresult
 CreateDirectory(nsIFile* aDirectory)
@@ -133,6 +136,33 @@ GetDBFolder()
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryFactory, sbILibraryFactory)
 
+/* static */ sbLocalDatabaseLibraryFactory*
+sbLocalDatabaseLibraryFactory::GetInstance()
+{
+  if (!gLibraryFactory) {
+    nsRefPtr<sbLocalDatabaseLibraryFactory> factory =
+      new sbLocalDatabaseLibraryFactory();
+    NS_ENSURE_TRUE(factory, nsnull);
+
+    nsresult rv = factory->Init();
+    NS_ENSURE_SUCCESS(rv, nsnull);
+
+    factory.swap(gLibraryFactory);
+    return gLibraryFactory;
+  }
+  NS_ADDREF(gLibraryFactory);
+  return gLibraryFactory;
+}
+
+nsresult
+sbLocalDatabaseLibraryFactory::Init()
+{
+  PRBool success = mCreatedLibraries.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseLibraryFactory::GetType(nsAString& aType)
 {
@@ -184,6 +214,25 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
+
+  // Get a unique value for this database file.
+  nsCOMPtr<nsIHashable> hashable = do_QueryInterface(aDatabase, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // See if we've already created this library. If we have (and it is still
+  // alive) just return it.
+  nsCOMPtr<nsIWeakReference> weakRef;
+  if (mCreatedLibraries.Get(hashable, getter_AddRefs(weakRef))) {
+    nsCOMPtr<sbILibrary> existingLibrary = do_QueryReferent(weakRef, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (existingLibrary) {
+      existingLibrary.swap(*_retval);
+      return NS_OK;
+    }
+
+    mCreatedLibraries.Remove(hashable);
+  }
 
   // If the database file does not exist, create and initalize it
   PRBool exists;
@@ -239,6 +288,13 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
                      databaseLocation);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Add this library to our table of created libraries.
+  weakRef = do_GetWeakReference(NS_ISUPPORTS_CAST(sbILibrary*, library),
+                                &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool success = mCreatedLibraries.Put(hashable, weakRef);
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   NS_ADDREF(*_retval = library);
   return NS_OK;

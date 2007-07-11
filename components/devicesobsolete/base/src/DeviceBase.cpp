@@ -544,7 +544,7 @@ sbDeviceBase::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
 
   nsresult rv;
   nsCOMPtr<sbILibraryFactory> libraryFactory = 
-    do_CreateInstance(SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID, &rv);
+    do_GetService(SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIWritablePropertyBag2> libraryProps = 

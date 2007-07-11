@@ -30,7 +30,7 @@
 
 function runTest () {
 
-  var databaseGUID = "test_localdatabaselibrary";
+  var databaseGUID = "test_propertycache";
   var library = createLibrary(databaseGUID);
 
   var cache = library.QueryInterface(Ci.sbILocalDatabaseLibrary).propertyCache;

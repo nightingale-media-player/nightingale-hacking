@@ -35,7 +35,8 @@
 #include "sbLocalDatabaseSmartMediaListFactory.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryFactory)
+NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbLocalDatabaseLibraryFactory,
+                                         sbLocalDatabaseLibraryFactory::GetInstance)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryLoader)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSimpleMediaListFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseAsyncGUIDArray, Init)

@@ -53,7 +53,7 @@ function runTest () {
 
   var libraryFactory =
     Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"].
-    createInstance(Ci.sbILibraryFactory);
+    getService(Ci.sbILibraryFactory);
 
   var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
                 createInstance(Ci.nsIWritablePropertyBag2);

@@ -29,6 +29,8 @@
 
 #include <sbILibraryFactory.h>
 #include <nsCOMPtr.h>
+#include <nsHashKeys.h>
+#include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
 
 #define SB_LOCALDATABASE_LIBRARYFACTORY_TYPE               \
@@ -37,6 +39,7 @@
 class nsIFile;
 class nsILocalFile;
 class nsIPropertyBag2;
+class nsIWeakReference;
 class sbILibrary;
 
 class sbLocalDatabaseLibraryFactory : public sbILibraryFactory
@@ -44,6 +47,8 @@ class sbLocalDatabaseLibraryFactory : public sbILibraryFactory
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILIBRARYFACTORY
+
+  static sbLocalDatabaseLibraryFactory* GetInstance();
 
   already_AddRefed<nsILocalFile> GetFileForGUID(const nsAString& aGUID);
   void GetGUIDFromFile(nsILocalFile* aFile,
@@ -54,7 +59,14 @@ public:
                                      nsIPropertyBag2* aCreationParameters = nsnull);
 
 private:
+  nsresult Init();
   nsresult InitalizeLibrary(nsIFile* aDatabaseFile);
+
+private:
+  nsInterfaceHashtable<nsHashableHashKey, nsIWeakReference> mCreatedLibraries;
 };
+
+// Reference to the singleton library factory.
+extern sbLocalDatabaseLibraryFactory* gLibraryFactory;
 
 #endif /* __SBLOCALDATABASELIBRARYFACTORY_H__ */

@@ -325,7 +325,7 @@ sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aDomain, const nsAStrin
 
   // Get the library factory to create a new instance from the file
   nsCOMPtr<sbILibraryFactory> libFactory(
-        do_CreateInstance( SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID, &rv ) );
+        do_GetService( SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID, &rv ) );
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get a propertybag to pass in the filename

@@ -302,8 +302,8 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
   nsCOMPtr<nsILocalFile> location = libraryInfo->GetDatabaseLocation();
   NS_ENSURE_TRUE(location, NS_ERROR_UNEXPECTED);
 
-  nsRefPtr<sbLocalDatabaseLibraryFactory>
-    libraryFactory(new sbLocalDatabaseLibraryFactory());
+  nsRefPtr<sbLocalDatabaseLibraryFactory> libraryFactory = 
+    dont_AddRef(sbLocalDatabaseLibraryFactory::GetInstance());
   NS_ENSURE_TRUE(libraryFactory, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<sbILibrary> library;
@@ -360,8 +360,8 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
   nsresult rv = newLibraryInfo->Init(aPrefKey);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  nsRefPtr<sbLocalDatabaseLibraryFactory>
-    libraryFactory(new sbLocalDatabaseLibraryFactory());
+  nsRefPtr<sbLocalDatabaseLibraryFactory> libraryFactory = 
+    dont_AddRef(sbLocalDatabaseLibraryFactory::GetInstance());
   NS_ENSURE_TRUE(libraryFactory, nsnull);
   
   nsAutoString databaseGUID;
@@ -561,8 +561,8 @@ sbLocalDatabaseLibraryLoader::OnRegisterStartupLibraries(sbILibraryManager* aLib
   rv = EnsureDefaultLibraries();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsRefPtr<sbLocalDatabaseLibraryFactory>
-    libraryFactory(new sbLocalDatabaseLibraryFactory());
+  nsRefPtr<sbLocalDatabaseLibraryFactory> libraryFactory = 
+    dont_AddRef(sbLocalDatabaseLibraryFactory::GetInstance());
   NS_ENSURE_TRUE(libraryFactory, NS_ERROR_OUT_OF_MEMORY);
   
   sbLoaderInfo info(aLibraryManager, libraryFactory);

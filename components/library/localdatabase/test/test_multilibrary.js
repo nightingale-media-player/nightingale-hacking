@@ -73,7 +73,7 @@ function runTest () {
   
   enumerator = new SimpleArrayEnumerator(items);
   list1.addSome(enumerator);
-  log("XXXben " + list1.length);
+
   assertTrue(list1.length == 10);
   assertTrue(list2.length == 0);
   assertEqual(two.length, 12);
@@ -116,4 +116,18 @@ function runTest () {
   assertTrue(list5);
   assertEqual(list3.length, list5.length); 
   assertEqual(list5.library, two);
+  
+  // test to make sure that the factory doesn't return different library
+  // instances for the same database file.
+  var libOne = createLibrary("multilibrary_libOne");
+  var libTwo = createLibrary("multilibrary_libOne");
+  assertTrue(libOne === libTwo);
+  
+  var libOneLength = libOne.length;
+  assertTrue(libOne.length == libTwo.length);
+  
+  libOne.createMediaItem(uri);
+  assertTrue(libOneLength != libOne.length);
+  
+  assertTrue(libOne.length == libTwo.length);
 }
