@@ -320,19 +320,6 @@ sbLibraryRemovingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList,
   PRBool success = mNotificationList.AppendObject(aMediaItem);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  nsAutoString guid;
-  nsresult rv = aMediaItem->GetGuid(guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Remove from our cache.
-  mFriendLibrary->mMediaItemTable.Remove(guid);
-
-  rv = mDBQuery->AddQuery(mFriendLibrary->mDeleteItemQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mDBQuery->BindStringParameter(0, guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   mItemEnumerated = PR_TRUE;
   return NS_OK;
 }
@@ -349,9 +336,7 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
     return NS_OK;
   }
 
-  nsresult rv = mDBQuery->AddQuery(NS_LITERAL_STRING("commit"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  nsresult rv;
   nsCOMPtr<sbIMediaList> libraryList =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseLibrary*, mFriendLibrary), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -367,15 +352,31 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
 
   map.EnumerateRead(NotifyListsBeforeItemRemoved, libraryList);
 
-  // Notify explicitly registered listeners for each item removal
   PRUint32 count = mNotificationList.Count();
   for (PRUint32 i = 0; i < count; i++) {
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(mNotificationList[i], &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    // XXXsteve This statement causes a "needs QI" assert when the item is
-    // actually a list
-    nsCOMPtr<sbIMediaItem> item = mNotificationList[i];
+    // Notify explicitly registered listeners for each item removal
     mFriendLibrary->NotifyListenersBeforeItemRemoved(libraryList, item);
+
+    nsAutoString guid;
+    rv = item->GetGuid(guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Remove from our cache.
+    mFriendLibrary->mMediaItemTable.Remove(guid);
+
+    // And set up the database query to actually remove the item
+    rv = mDBQuery->AddQuery(mFriendLibrary->mDeleteItemQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDBQuery->BindStringParameter(0, guid);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  rv = mDBQuery->AddQuery(NS_LITERAL_STRING("commit"));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 dbSuccess;
   rv = mDBQuery->Execute(&dbSuccess);
@@ -1113,23 +1114,14 @@ sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
 
   // See if we have already cached this GUID's type.
   sbMediaItemInfo* itemInfo;
-  if (!mMediaItemTable.Get(aGUID, &itemInfo)) {
-    // Make a new itemInfo for this GUID.
-    nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
-    NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
-
-    PRBool success = mMediaItemTable.Put(aGUID, newItemInfo);
-    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-    itemInfo = newItemInfo.forget();
-  }
-  else if (itemInfo->hasListType) {
+  if (mMediaItemTable.Get(aGUID, &itemInfo) && itemInfo->hasListType) {
     LOG((LOG_SUBMESSAGE_SPACE "Found type in cache!"));
 
     _retval.Assign(itemInfo->listType);
     return NS_OK;
   }
 
+  // Make sure this GUID actually belongs in our library.
   nsCOMPtr<sbIDatabaseQuery> query;
   nsresult rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1154,12 +1146,24 @@ sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (rowCount == 0) {
+    // This GUID isn't part of our library.
     return NS_ERROR_NOT_AVAILABLE;
   }
 
   nsString type;
   rv = result->GetRowCell(0, 0, type);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!itemInfo) {
+    // Make a new itemInfo for this GUID.
+    nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
+    NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
+
+    PRBool success = mMediaItemTable.Put(aGUID, newItemInfo);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+    itemInfo = newItemInfo.forget();
+  }
 
   itemInfo->listType.Assign(type);
   itemInfo->hasListType = PR_TRUE;
@@ -2090,15 +2094,25 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
   nsCOMPtr<sbIMediaItem> strongMediaItem;
 
   sbMediaItemInfo* itemInfo;
-  if (!mMediaItemTable.Get(aGUID, &itemInfo)) {
-    // Make a new itemInfo for this GUID.
-    nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
-    NS_ENSURE_TRUE(newItemInfo, NS_ERROR_OUT_OF_MEMORY);
+  if (!mMediaItemTable.Get(aGUID, &itemInfo) ||
+      !itemInfo->hasListType) {
+    // Try to get the type from the database. This will also tell us if this
+    // GUID actually belongs to this library.
+    nsString type;
+    rv = GetTypeForGUID(aGUID, type);
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      // Hmm, this GUID doesn't belong to this library. Someone passed in a bad
+      // GUID.
+      NS_WARNING("GetMediaItem called with a bad GUID!");
+      return NS_ERROR_NOT_AVAILABLE;
+    }
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool success = mMediaItemTable.Put(aGUID, newItemInfo);
-    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-    itemInfo = newItemInfo.forget();
+    if (!itemInfo) {
+      // Now there should definitely be an entry for this GUID in our table.
+      mMediaItemTable.Get(aGUID, &itemInfo);
+      NS_ASSERTION(itemInfo, "No entry in the table for this GUID!");
+    }
   }
   else if (itemInfo->weakRef) {
     strongMediaItem = do_QueryReferent(itemInfo->weakRef, &rv);
@@ -2118,6 +2132,8 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
     itemInfo->weakRef = nsnull;
   }
 
+  NS_ASSERTION(itemInfo->hasListType, "Should have set a list type there!");
+
   nsRefPtr<sbLocalDatabaseMediaItem>
     newMediaItem(new sbLocalDatabaseMediaItem());
   NS_ENSURE_TRUE(newMediaItem, NS_ERROR_OUT_OF_MEMORY);
@@ -2127,22 +2143,11 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
 
   strongMediaItem = newMediaItem;
 
-  // Get the type for the guid.
-  nsAutoString type;
-  if (itemInfo->hasListType) {
-    type.Assign(itemInfo->listType);
-  }
-  else {
-    rv = GetTypeForGUID(aGUID, type);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_ASSERTION(itemInfo->hasListType, "Should have set a list type there!");
-
-  if (!type.IsEmpty()) {
+  if (!itemInfo->listType.IsEmpty()) {
     // This must be a media list, so get the appropriate factory.
     sbMediaListFactoryInfo* factoryInfo;
-    PRBool success = mMediaListFactoryTable.Get(type, &factoryInfo);
+    PRBool success = mMediaListFactoryTable.Get(itemInfo->listType,
+                                                &factoryInfo);
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
     NS_ASSERTION(factoryInfo->factory, "Null factory!");

@@ -39,7 +39,6 @@ function runTest () {
   // test create
   var uriSpec = "file:///foo";
   var uri = ios.newURI(uriSpec, null, null);
-
   
   var item1 = library.createMediaItem(uri);
   var now = new Date();
@@ -162,6 +161,21 @@ function runTest () {
   assertEqual(item4.getProperty(SB_NS + "artistName"), "a-ha");
   assertEqual(item4.getProperty(SB_NS + "albumName"), "Back in Black");
   assertEqual(item4.getProperty(SB_NS + "contentLength"), "123");
+
+  // Make sure that items can't be resurrected once removed.
+  var newItem = library.createMediaItem(uri);
+  var guid = newItem.guid;
+
+  library.remove(newItem);
+
+  var exceptionResult;
+  try {
+    var item = library.getItemByGuid(guid);
+  }
+  catch (e) {
+    exceptionResult = e.result;
+  }
+  assertEqual(exceptionResult, Cr.NS_ERROR_NOT_AVAILABLE);
 }
 
 function createPropertyArray() {
