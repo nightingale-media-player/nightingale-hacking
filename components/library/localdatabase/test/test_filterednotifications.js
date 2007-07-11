@@ -186,6 +186,7 @@ function runTest () {
   item.setProperty(SB_NS + "albumName", "foo");
   assertEqual(listener.updatedItem, item);
 
+  library.removeListener(listener);
 }
 
 function doSomethingThatFiresAllEvents(library) {
