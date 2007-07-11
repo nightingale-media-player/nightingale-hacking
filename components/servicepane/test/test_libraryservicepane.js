@@ -68,6 +68,10 @@ function runTest () {
   testAllItemsRemoved();
   
   testLibrariesAndContents();
+
+  servicePane = null;
+  libraryServicePane = null;
+  libraryManager = null;
 }
 
 
