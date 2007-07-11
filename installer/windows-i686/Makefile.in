@@ -28,6 +28,19 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
-SHELL_EXECUTE = $(topsrcdir)/installer/win32/make-installer.sh $(SB_PLATFORM)-$(SB_ARCH)
+SONGBIRD_INSTALLER = defines.nsi.in \
+                     GPL.txt \
+                     LICENSE.txt \
+                     make-installer.sh \
+                     PrepareInstaller.bat \
+                     PublicSVNInstall.ico \
+                     Songbird.nsi \
+                     SongbirdInstall.ico \
+                     $(NULL)
+
+INSTALLER_PREPROCESS = defines.nsi \
+                       $(NULL)
+
+SHELL_EXECUTE = make-installer.sh $(SB_PLATFORM)-$(SB_ARCH)
 
 include $(topsrcdir)/build/rules.mk

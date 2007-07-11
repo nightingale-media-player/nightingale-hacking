@@ -1,0 +1,26 @@
+#filter substitution
+!define BrandShortName        "@SB_APPNAME@"
+!define BrandFullName         "@SB_APPNAME@"
+
+!define BrandFullNameInternal "@SB_APPNAME@"
+!define CompanyName           "POTI, Inc."
+!define URLInfoAbout          "http://www.songbirdnest.com/"
+!define URLUpdateInfo         "http://www.songbirdnest.com/"
+
+!define AppVersion            "@SB_MILESTONE@"
+!define GREVersion            @SB_MOZILLA_VERSION@
+
+!define FileMainEXE           "Songbird.exe"
+!define WindowClass           "SongbirdMessageWindow"
+!define DDEApplication        "Songbird"
+!define AppRegName            "Songbird"
+
+#ifdef SONGBIRD_OFFICIAL
+!define PreferredInstallDir     "$PROGRAMFILES\{$BrandShortName}\"
+!define PreferredInstallerName  "${BrandShortName}_${AppVersion}_${ARCH}.exe"
+!define PreferredInstallerIcon  songbirdinstall.ico
+#else
+!define PreferredInstallDir     "$PROGRAMFILES\{$BrandShortName}_${BUILD_ID}\"
+!define PreferredInstallerName  "${BrandShortName}_${BUILD_ID}_${ARCH}.exe"
+!define PreferredInstallerIcon  publicsvninstall.ico
+#endif

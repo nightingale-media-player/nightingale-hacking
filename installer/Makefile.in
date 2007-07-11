@@ -29,7 +29,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifeq ($(SB_PLATFORM), windows)
-SUBDIRS = win32
+SUBDIRS = $(SB_PLATFORM)-$(SB_ARCH)
 else
 SUBDIRS = $(SB_PLATFORM) 
 endif
