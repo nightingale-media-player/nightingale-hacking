@@ -121,8 +121,11 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
 
   // See if we have already added this listener.
   PRUint32 length = mListenerArray.Length();
+  nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   for (PRUint32 i = 0; i < length; i++) {
-    if(mListenerArray[i]->mRef == aListener) {
+    if(mListenerArray[i]->mRef == ref) {
       // The listener has already been added, so do nothing more. But warn in
       // debug builds.
       NS_WARNING("Attempted to add a listener twice!");
@@ -136,7 +139,7 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
   if (aOwnsWeak) {
     nsCOMPtr<nsIWeakReference> weak = do_GetWeakReference(aListener, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = info->Init(aListener, weak, mBatchDepth, aFlags, aPropertyFilter);
+    rv = info->Init(weak, mBatchDepth, aFlags, aPropertyFilter);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
@@ -173,9 +176,13 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbIMediaListListener* aListener
 
   nsAutoLock lock(mListenerArrayLock);
 
+  nsresult rv;
+  nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRUint32 length = mListenerArray.Length();
   for (PRUint32 i = 0; i < length; i++) {
-    if(mListenerArray[i]->mRef == aListener) {
+    if(mListenerArray[i]->mRef == ref) {
       mListenerArray.RemoveElementAt(i);
       return NS_OK;
     }
@@ -434,7 +441,9 @@ sbListenerInfo::Init(sbIMediaListListener* aListener,
   NS_ASSERTION(!mProxy, "Init called twice");
   nsresult rv;
 
-  mRef   = aListener;
+  mRef = do_QueryInterface(aListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mFlags = aFlags;
 
   PRBool success = mStopNotifiyingStack.SetLength(aCurrentBatchDepth);
@@ -453,18 +462,18 @@ sbListenerInfo::Init(sbIMediaListListener* aListener,
 }
 
 nsresult
-sbListenerInfo::Init(sbIMediaListListener* aListener,
-                     nsIWeakReference* aWeakListener,
+sbListenerInfo::Init(nsIWeakReference* aWeakListener,
                      PRUint32 aCurrentBatchDepth,
                      PRUint32 aFlags,
                      sbIPropertyArray* aPropertyFilter)
 {
-  NS_ASSERTION(aListener, "aListener is null");
   NS_ASSERTION(aWeakListener, "aWeakListener is null");
   NS_ASSERTION(!mProxy, "Init called twice");
   nsresult rv;
 
-  mRef   = aListener;
+  mRef = do_QueryInterface(aWeakListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mWeak  = aWeakListener;
   mFlags = aFlags;
 

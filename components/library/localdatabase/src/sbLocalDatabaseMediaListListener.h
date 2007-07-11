@@ -56,8 +56,7 @@ public:
                 PRUint32 aCurrentBatchDepth,
                 PRUint32 aFlags,
                 sbIPropertyArray* aPropertyFilter);
-  nsresult Init(sbIMediaListListener* aListener,
-                nsIWeakReference* aWeakListener,
+  nsresult Init(nsIWeakReference* aWeakListener,
                 PRUint32 aCurrentBatchDepth,
                 PRUint32 aFlags,
                 sbIPropertyArray* aPropertyFilter);
@@ -72,7 +71,7 @@ private:
   nsresult InitPropertyFilter(sbIPropertyArray* aPropertyFilter);
 
   PRBool mIsGone;
-  nsCOMPtr<sbIMediaListListener> mRef;
+  nsCOMPtr<nsISupports> mRef;
   nsCOMPtr<nsIWeakReference> mWeak;
   nsCOMPtr<sbIMediaListListener> mProxy;
   PRUint32 mFlags;
