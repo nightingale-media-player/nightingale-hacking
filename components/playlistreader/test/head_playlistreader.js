@@ -152,6 +152,9 @@ function assertMediaList(aMediaList, aItemTestsFile) {
   istream.init(aItemTestsFile, 0x01, 0444, 0);
   xmlReader.parseFromStream(istream, null, "text/xml");
 
+  // Need this to prevent the closure from leaking
+  xmlReader.contentHandler = null;
+
   if (failMessage) {
     fail(failMessage);
   }

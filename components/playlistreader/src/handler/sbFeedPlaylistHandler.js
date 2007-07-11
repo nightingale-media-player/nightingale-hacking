@@ -110,6 +110,9 @@ function(aFile, aMediaList, aReplace)
 
   parser.parseFromStream(istream, this._originalURI);
 
+  // Prevent the closure from leaking
+  parser.listener = null;
+
   SB_AddItems(toAdd, aMediaList, aReplace);
 }
 

@@ -47,6 +47,8 @@ function runTest () {
     observe: function(aSubject, aTopic, aData) {
       assertMediaList(mediaList, getFile("absolute_remote_localhost_result.xml"));
       server.stop();
+      // Prevent closure from leaking
+      listener.observer = null;
       testFinished();
     }
   }
