@@ -9,7 +9,7 @@
 
 !define AppVersion            "@SB_MILESTONE@"
 !define GREVersion            "@SB_MOZILLA_VERSION@"
-!define InstallerVersion      "2.0"
+!define InstallerVersion      "@SB_MILESTONE@"
 
 !define FileMainEXE           "Songbird.exe"
 !define FileUninstallEXE      "Songbird-Uninstall.exe"
@@ -38,7 +38,7 @@
 !define PreferredIcon             songbird.ico
 !define PreferredInstallerIcon    songbird.ico
 !define PreferredUninstallerIcon  songbird.ico
-!define VistaIcon                 songbird-vista.ico
+!define VistaIcon                 songbird_vista.ico
 #else
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}_${BUILD_ID}\"
 !define PreferredInstallerName    "${BrandShortName}_${BUILD_ID}_${ARCH}.exe"

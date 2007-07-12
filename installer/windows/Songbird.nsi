@@ -28,9 +28,9 @@ SetCompressor /SOLID lzma
 SetCompressorDictSize 64
 
 ; empty files - except for the comment line - for generating custom pages.
-!system 'echo ; > options.ini'
-!system 'echo ; > components.ini'
-!system 'echo ; > shortcuts.ini'
+;!system 'echo ; > options.ini'
+;!system 'echo ; > components.ini'
+;!system 'echo ; > shortcuts.ini'
 
 ; Addional include directories
 !addincludedir ..\installer\windows

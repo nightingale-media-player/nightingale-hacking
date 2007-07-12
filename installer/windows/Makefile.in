@@ -35,6 +35,7 @@ SONGBIRD_DIST = $(srcdir)/GPL.txt \
 
 ifdef SONGBIRD_OFFICIAL
 SONGBIRD_DIST += $(srcdir)/songbird.ico \
+                 $(srcdir)/songbird_vista.ico \
                  $(NULL)
 else
 SONGBIRD_DIST += $(srcdir)/songbird_nightly.ico \
