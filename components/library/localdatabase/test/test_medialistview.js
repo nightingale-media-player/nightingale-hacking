@@ -30,7 +30,7 @@
 
 function runTest () {
 
-  var library = createLibrary("test_localdatabaselibrary");
+  var library = createLibrary("test_medialistview");
 
   // Tests for getUnfilteredIndex
 
