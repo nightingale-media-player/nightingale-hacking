@@ -107,12 +107,13 @@ menuitem[type="radio"] > .menu-iconic-left {
 .menu-right {
   margin: 0px 8px 0px 6px;
   width: 8px;
-  list-style-image: url(chrome://global/skin/menu/menu-arrow.gif);
+  list-style-image: url(chrome://songbird/skin/menu/menu-arrow.png);
+  opacity: .5;
   -moz-image-region: auto;
 }
 
 .menu-right[_moz-menuactive="true"] {
-  list-style-image: url(chrome://global/skin/menu/menu-arrow-hov.gif);
+  list-style-image: url(chrome://songbird/skin/menu/menu-arrow.png);
   -moz-image-region: auto;
 }
 
@@ -232,3 +233,12 @@ menulist > menupopup {
   list-style-image: url("chrome://global/skin/columnselect.gif");
   -moz-image-region: auto;
 }
+
+
+
+menuitem:hover > .menu-right
+{   
+  list-style-image: url(chrome://songbird/skin/menu/menu-arrow.png);
+  opacity: 1;
+}
+

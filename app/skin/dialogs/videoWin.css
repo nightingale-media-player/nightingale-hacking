@@ -24,7 +24,16 @@
 //
  */
 
-/* This is styles specific to the Cheesy Video Window. */
+
+/** 
+***************************************************************************************************
+
+= Cheesy Video Window = 
+
+Additional styles imported by the Cheesy Video Window
+
+***************************************************************************************************
+*/ 
 
 /* left and right padding outside of the video part (previously two spacers) */
 #video-boxes {

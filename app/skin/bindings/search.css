@@ -24,12 +24,18 @@
 //
  */
 
-/**
- * The Songbird web & internal search box.
- * Note that this widget inherits from the FireFox binding.
- * See dependencies/vendor/mozilla/browser/components/search/content/search.xml
- * and app/content/bindings/search.xml
- */
+
+/** 
+***************************************************************************************************
+
+= The Songbird web & internal search box. =
+
+Note that this widget inherits from the FireFox binding.
+See dependencies/vendor/mozilla/browser/components/search/content/search.xml
+and app/content/bindings/search.xml
+
+***************************************************************************************************
+*/ 
 
 /* Make the search bar match the general textbox style */
 searchbar

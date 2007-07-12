@@ -26,7 +26,6 @@
 
 /* NOTHING! */
 
-@import url("chrome://global/skin/");
 @import url(chrome://songbird-bindings/skin/bindings.css); 
 
 @import url(chrome://songbird/content/feathers/basic-layouts/css/mainwin.css); /* size and positioning for the main application window **/

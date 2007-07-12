@@ -25,28 +25,34 @@
  */
 
 
-
-/** Use styled rather than native scroll bars **/
-@import url("chrome://global/skin/xulscrollbars.css");
-
-
-
 /** 
-************************************************************************************************************************************************
-THE WINDOW
-These base styles are basically here to tell other -moz styles from spoiling our lovely UI. 
-!important is necessary to make sure these styles override any OS-specific styles as well.
-************************************************************************************************************************************************
+***************************************************************************************************
+
+= Base Styles = 
+
+Additional Songbird specific rules for the global skin.
+
+***************************************************************************************************
 */ 
 
 
 
-/** TO BE FIXED **/
 
+/* Use styled rather than native scroll bars */
+@import url("chrome://global/skin/xulscrollbars.css");
+
+
+/*
+  Remove the platform-native styling from all elements.  This allows
+  us to begin applying our own look and feel.
+  
+  For more information see http://developer.mozilla.org/en/docs/CSS:-moz-appearance 
+*/
 
 * {
   -moz-appearance: none !important;
 }
+
 
 
 window,

@@ -25,6 +25,31 @@
  */
 
 
+/** 
+***************************************************************************************************
+
+= Songbird Window Styles =
+
+All Songbird specific XUL windows directly import 
+chrome://songbird/skin/songbird.css.   For example, the
+Track Editor window will import this file, but the
+Add-on Manager will not (since it is shared with Firefox).
+
+This file is the only way to add styles to Songbird when
+the Songbird global skin is not the active provider for
+the chrome://global/skin package.  If you want make a Feather 
+that works with the default platform global skin (Winstrip 
+or Pinstripe), you must import your additional styles here.
+
+For more information, visit:
+TODO:  Link to the feathers overview documentation !important.
+
+***************************************************************************************************
+*/ 
 
 
-/** TODO Document **/
+
+/* 
+ Rubberducky does not include any styles specific to Songbird windows.
+ All Rubberducky styles are included via global.css
+*/

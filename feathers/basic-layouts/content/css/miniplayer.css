@@ -55,7 +55,7 @@ window#mini
 #frame_mini
 {
   -moz-border-radius: 10px !important;
-  background-color: #202220 !important;  /** Mini player color. TODO fix? */
+  background-color: #202220 !important;  /** Mini player color.  */
   padding: 2px 3px 2px 3px !important;
   height: 22px;
   border: 1px solid #333;

@@ -25,9 +25,27 @@
  */
 
 /** 
-************************************************************************************************************************************************
-XBL WIDGET STYLES
-************************************************************************************************************************************************
+***************************************************************************************************
+
+= Songbird Widget Styles =
+
+Imports styles for all the Songbird XBL widgets. 
+
+Songbird widgets, unlike Mozilla's, do not directly include their own 
+styles. This allows easier overriding, as it is up to the feather to
+include the styles.
+
+We assume that most feathers will want the same layout, padding, and
+image rules for the Songbird widgets, and have therefore placed these
+styles in a common chrome://songbird-bindings/skin/ package.  To override
+these rules, supply an alternate provider for this package (using your 
+chrome.manifest), or selectively import the style sheets into your feather.
+
+For more information, see:
+TODO: Add a link to the developer site
+ *  http://developer.mozilla.org/en/docs/Chrome_Registration - Chrome.manifest details
+
+***************************************************************************************************
 */ 
 
 
@@ -37,7 +55,6 @@ XBL WIDGET STYLES
 @import url(faceplate.css); 
 @import url(filterlist.css); 
 @import url(locationbar.css); 
-@import url(menu.css); 
 @import url(miniplayer.css); 
 @import url(observes-dataremote.css); 
 @import url(player_controls.css); 

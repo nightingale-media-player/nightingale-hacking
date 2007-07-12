@@ -1,60 +1,56 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 
-wizard {
-	padding: 14px;
-}
-
-#header { 
-	display: inline !important;
-}
 .wizard-header {
-	-moz-appearance: dialog;
+  border-bottom: 1px solid white;
+  background-image: url("chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png");
+  color: WindowText;
 }
 
 .wizard-header-box-1 {
-  color: #000000;
+  padding: 5px 0px 5px 0px;
 }
 
-.wizard-header-box-text {
-  padding: 6px 10px 6px 10px;
-  font: menu;
-  font-weight: bold;
+wizard[description=""] .wizard-header-description {
+  display: none;
 }
 
 .wizard-header-label {
-  margin-left: 23px;
+  -moz-margin-start: 23px;
   font-weight: bold;
 }
 
-.wizard-header-box-icon {
-  margin: 3px 20px 0 3px;
+.wizard-header-description {
+  -moz-margin-start: 44px;
 }
 
 wizard[branded="true"] .wizard-header-icon {
   list-style-image: url("chrome://branding/content/icon48.png");
+  -moz-margin-end: 5px;
 }
 
 .wizard-page-box {
-  padding: 15px 23px;
-    -moz-appearance: dialog;
+  margin: 10px 44px;
 }
 
 .wizard-buttons-separator {
-  margin: 0 !important;
-  border-bottom: 1px solid #FFFFFF !important;
+  margin-bottom: 0px !important;
 }
 
-.wizard-buttons-btm {
-  padding: 3px 6px 6px 6px;
+.wizard-buttons-box-2 {
+  margin: 10px;
 }
 
-.wizard-label-box {
-  display: none;
+.wizard-button[wizardbutton="finish"],
+.wizard-button[wizardbutton="next"] {
+  -moz-margin-start: -1px !important;
 }
 
-.wizard-button {
-  font: menu !important;
+.wizard-button[wizardbutton="back"] {
+  -moz-margin-end: 0px !important;
 }
 
-
+wizard,
+{
+  background-color: #313131 !important; /* color of the Main Window coffee:#1f150a, 0.3 black #0c0a05**/
+}

@@ -25,11 +25,36 @@
  */
 
 
+
 /** 
-************************************************************************************************************************************************
+***************************************************************************************************
+
+= Additional Images = 
+
+This css file provides additional image rules that are specific to
+this feather.
+
+Note that most image rules are outside of the feathers packages, and can be
+found in /app/skin/global/ and /app/skin/bindings/.  We assume that most 
+feathers will want to use the same image rules set, and will only replace
+the existing graphics.  Moving the rules out of the feathers makes maintenance
+simpler, and feather packages less complex.
+
+You can override the default image rules by re-specifying them here.
+Explore the app/skin/ folder in the Songbird subversion repository 
+to find existing rules, or use DOM Inspector to make your own.
+
+***************************************************************************************************
+*/
+
+
+
+
+/** 
+***************************************************************************************************
 WINDOW CHROME
 There is one image for the light effect on every window, including nested ones.
-************************************************************************************************************************************************
+***************************************************************************************************
 */
 
 window,
@@ -75,9 +100,9 @@ sb-smart-splitter
 }
 
 /** 
-************************************************************************************************************************************************
+***************************************************************************************************
 THE PLAYLIST
-************************************************************************************************************************************************
+***************************************************************************************************
 */ 
 
 /* Put a Background behind your filterlists for extra style. */
