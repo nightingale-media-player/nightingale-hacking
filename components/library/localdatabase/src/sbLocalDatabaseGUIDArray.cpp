@@ -1445,15 +1445,16 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
     // Add the new guid to the guid to first index map.
-    PRUint32 firstIndex;
-    PRBool found = mGuidToFirstIndexMap.Get(guid, &firstIndex);
-    if (!found || index < firstIndex) {
+    PRUint32 firstGuidIndex;
+    PRBool found = mGuidToFirstIndexMap.Get(guid, &firstGuidIndex);
+    if (!found || index < firstGuidIndex) {
       PRBool added = mGuidToFirstIndexMap.Put(guid, index);
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
 
-    TRACE(("ReplaceElementsAt %d %s", i + aDestIndexOffset,
-               NS_ConvertUTF16toUTF8(item->guid).get()));
+    TRACE(("ReplaceElementsAt %d %s", index,
+           NS_ConvertUTF16toUTF8(item->guid).get()));
+
     if (needsSorting) {
       if (isFirstValue || !lastSortedValue.Equals(item->sortPropertyValue)) {
         if (!isFirstValue) {
