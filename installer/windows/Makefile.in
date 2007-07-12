@@ -28,14 +28,24 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_INSTALLER = defines.nsi.in \
-                     GPL.txt \
-                     LICENSE.txt \
+SONGBIRD_DIST = $(srcdir)/GPL.txt \
+                $(srcdir)/LICENSE.txt \
+                $(srcdir)/TRADEMARK.txt \
+                $(NULL)
+
+ifdef SONGBIRD_OFFICIAL
+SONGBIRD_DIST += $(srcdir)/songbird.ico \
+                 $(NULL)
+else
+SONGBIRD_DIST += $(srcdir)/songbird_nightly.ico \
+                 $(NULL)
+endif
+
+SONGBIRD_INSTALLER = common.nsh \
+                     defines.nsi.in \
                      make-installer.sh \
                      PrepareInstaller.bat \
-                     PublicSVNInstall.ico \
                      Songbird.nsi \
-                     SongbirdInstall.ico \
                      $(NULL)
 
 INSTALLER_PREPROCESS = defines.nsi \

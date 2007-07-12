@@ -23,17 +23,17 @@
 # END SONGBIRD GPL
 #
 
+; Compressor settings
 SetCompressor /SOLID lzma
 SetCompressorDictSize 64
-
-CRCCheck on
-
-!verbose 3
 
 ; empty files - except for the comment line - for generating custom pages.
 !system 'echo ; > options.ini'
 !system 'echo ; > components.ini'
 !system 'echo ; > shortcuts.ini'
+
+; Addional include directories
+!addincludedir ..\installer\windows
 
 Var TmpVal
 Var StartMenuDir
@@ -71,29 +71,29 @@ Var fhUninstallLog
 
 ; The following includes are custom.
 !include defines.nsi
+!include common.nsh
 
-#!include common.nsh
 #!include locales.nsi
 #!include version.nsh
 
-VIAddVersionKey "FileDescription" "${BrandShortName} Installer"
+#VIProductVersion "${AppVersion}"
+VIProductVersion "0.3.0.0"
 
-!insertmacro RegCleanMain
-!insertmacro RegCleanUninstall
-!insertmacro CloseApp
-!insertmacro WriteRegStr2
-!insertmacro WriteRegDWORD2
-!insertmacro CreateRegKey
-!insertmacro CanWriteToInstallDir
-!insertmacro CheckDiskSpace
-!insertmacro AddHandlerValues
-!insertmacro GetSingleInstallPath
+VIAddVersionKey "CompanyName"     "${CompanyName}"
+VIAddVersionKey "FileDescription" "${BrandShortName} Installer"
+VIAddVersioNKey "FileVersion"     "${InstallerVersion}"
+VIAddVersionKey "LegalCopyright"  "© ${CompanyName}"
+VIAddVersionKey "LegalTrademark"  "™ ${CompanyName}"
+VIAddVersionKey "ProductVersion"  "${AppVersion}"
+VIAddVersioNKey "SpecialBuild"    "${DebugBuild}" 
 
 #!include shared.nsh
 
 Name "${BrandFullName}"
 OutFile "Songbird_${BUILD_ID}_${ARCH}.exe"
 InstallDir "${PreferredInstallDir}"
+
+BrandingText " "
 
 #XXXAus: Try and use this scheme to enable multiple installs of different versions.
 #InstallDirRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} (${AppVersion} - ${BUILD_ID})" "InstallLocation"
@@ -134,7 +134,10 @@ ShowInstDetails nevershow
 ;!define MUI_WELCOMEPAGE_TEXT
 
 ; Welcome page
-!insertmacro MUI_PAGE_WELCOME
+;!insertmacro MUI_PAGE_WELCOME
+
+; License page
+!insertmacro MUI_PAGE_LICENSE "LICENSE.txt"
 
 ; Components page options
 ;!define MUI_COMPONENTSPAGE_TEXT_TOP
@@ -154,19 +157,14 @@ ShowInstDetails nevershow
 ; Install directory page
 !insertmacro MUI_PAGE_DIRECTORY
 
-; Custom Shortcuts Page
-Page custom preShortcuts leaveShortcuts
-
 ; Start Menu Folder Page Configuration
-!define MUI_PAGE_CUSTOMFUNCTION_PRE preStartMenu
 !define MUI_STARTMENUPAGE_NODISABLE
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${BrandFullNameInternal}\${AppVersion} (${AB_CD})\Main"
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuDir
 
 ; Install Files Page
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE leaveInstFiles
 !insertmacro MUI_PAGE_INSTFILES
 
 ; Finish Page
@@ -175,7 +173,6 @@ Page custom preShortcuts leaveShortcuts
 !define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_FUNCTION LaunchApp
 !define MUI_FINISHPAGE_RUN_TEXT $(LAUNCH_TEXT)
-!define MUI_PAGE_CUSTOMFUNCTION_PRE preFinish
 !insertmacro MUI_PAGE_FINISH
 
 ################################################################################
@@ -186,7 +183,7 @@ Section "-Application" Section1
   SetDetailsPrint textonly
   DetailPrint $(STATUS_CLEANUP)
   SetDetailsPrint none
-
+  
   ; Try to delete the app's main executable and if we can't delete it try to
   ; close the app. This allows running an instance that is located in another
   ; directory and prevents the launching of the app during the installation.
@@ -205,7 +202,10 @@ Section "-Application" Section1
     Delete "$INSTDIR\${FileMainEXE}"
     ${If} ${Errors}
       ClearErrors
-      ${CloseApp} "true" $(WARN_APP_RUNNING_INSTALL)
+      StrCpy $R8 "true"
+      StrCpy $R9 $(WARN_APP_RUNNING_INSTALL)
+      Call CloseApp
+
       ; Try to delete it again to prevent launching the app while we are
       ; installing.
       ClearErrors
@@ -214,7 +214,9 @@ Section "-Application" Section1
       ${If} ${Errors}
         ClearErrors
         ; Try closing the app a second time
-        ${CloseApp} "true" $(WARN_APP_RUNNING_INSTALL)
+        StrCpy $R8 "true"
+        StrCpy $R9 $(WARN_APP_RUNNING_INSTALL)
+        Call CloseApp
         StrCpy $R1 "${FileMainEXE}"
         Call CheckInUse
       ${EndIf}
@@ -247,10 +249,12 @@ Section "-Application" Section1
   DeleteRegKey HKLM "$0"
 
   ; List of files to install
-  File *.ini
-  File *.exe
-  File *.dll
-  File *.ico
+  File ${ApplicationIni}
+  File ${FileMainEXE}
+  File ${CRuntime}
+  File ${CPPRuntime}
+  File ${PreferredIcon}
+  
   File LICENSE.txt
   File GPL.txt
   File TRADEMARK.txt
@@ -263,16 +267,21 @@ Section "-Application" Section1
   File /r plugins
   File /r searchplugins
   File /r scripts
-  File /r xulrunner
+  File /r ${XULRunnerDir}
+
+  ;The XULRunner stub loader also fails to find certain symbols when launched
+  ;without a profile (yes, it's confusing). The quick work around is to 
+  ;leave a copy of msvcr71.dll in xulrunner/ as well.
+  SetOutPath $INSTDIR\${XULRunnerDir}
+  File ${CRuntime}
 
   ; Register DLLs
   ; XXXrstrong - AccessibleMarshal.dll can be used by multiple applications but
   ; is only registered for the last application installed. When the last
   ; application installed is uninstalled AccessibleMarshal.dll will no longer be
   ; registered. bug 338878
-  ${LogHeader} "DLL Registration"
   ClearErrors
-  RegDLL "$INSTDIR\xulrunner\AccessibleMarshal.dll"
+  RegDLL "$INSTDIR\${XULRunnerDir}\AccessibleMarshal.dll"
 
   ; Check if QuickTime is installed and copy the nsIQTScriptablePlugin.xpt from
   ; its plugins directory into the app's components directory.
@@ -285,70 +294,38 @@ Section "-Application" Section1
     ${Unless} ${Errors}
       GetFullPathName $R0 "$R0\Plugins\nsIQTScriptablePlugin.xpt"
       ${Unless} ${Errors}
-        ${LogHeader} "Copying QuickTime Scriptable Component"
         CopyFiles /SILENT "$R0" "$INSTDIR\components"
-        ${If} ${Errors}
-          ${LogMsg} "** ERROR Installing File: $INSTDIR\components\nsIQTScriptablePlugin.xpt **"
-        ${Else}
-          ${LogMsg} "Installed File: $INSTDIR\components\nsIQTScriptablePlugin.xpt"
-          ${LogUninstall} "File: \components\nsIQTScriptablePlugin.xpt"
-        ${EndIf}
       ${EndUnless}
     ${EndUnless}
   ${EndUnless}
   ClearErrors
 
-  ; The following keys should only be set if we can write to HKLM
-  ${If} $TmpVal == "HKLM"
-    ; Uninstall keys can only exist under HKLM on some versions of windows.
-    ${SetUninstallKeys}
-
-    ; Set the Start Menu Internet and Vista Registered App HKLM registry keys.
-    ${SetStartMenuInternet}
-
-    ; If we are writing to HKLM and create the quick launch and the desktop
-    ; shortcuts set IconsVisible to 1 otherwise to 0.
-    ${If} $AddQuickLaunchSC == 1
-    ${OrIf} $AddDesktopSC == 1
-      ${StrFilter} "${FileMainEXE}" "+" "" "" $R9
-      StrCpy $0 "Software\Clients\StartMenuInternet\$R9\InstallInfo"
-      WriteRegDWORD HKLM "$0" "IconsVisible" 1
-    ${Else}
-      WriteRegDWORD HKLM "$0" "IconsVisible" 0
-    ${EndIf}
-  ${EndIf}
-
   ; These need special handling on uninstall since they may be overwritten by
   ; an install into a different location.
   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
-  ${WriteRegStr2} $TmpVal "$0" "" "$INSTDIR\${FileMainEXE}" 0
-  ${WriteRegStr2} $TmpVal "$0" "Path" "$INSTDIR" 0
+  WriteRegStr HKLM "$0" "$INSTDIR\${FileMainEXE}" ""
+  WriteRegStr HKLM "$0" "Path" "$INSTDIR"
 
-  StrCpy $0 "Software\Microsoft\MediaPlayer\ShimInclusionList\$R9"
-  ${CreateRegKey} "$TmpVal" "$0" 0
+  ; Add XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
+  WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}" "" ""
+  WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}" "" ""
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
   ; Create Start Menu shortcuts
-  ${LogHeader} "Adding Shortcuts"
   ${If} $AddStartMenuSC == 1
     CreateDirectory "$SMPROGRAMS\$StartMenuDir"
     CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${FileMainEXE}" 0
-    ${LogUninstall} "File: $SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk"
     CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} ($(SAFE_MODE)).lnk" "$INSTDIR\${FileMainEXE}" "-safe-mode" "$INSTDIR\${FileMainEXE}" 0
-    ${LogUninstall} "File: $SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} ($(SAFE_MODE)).lnk"
   ${EndIf}
 
   ; perhaps use the uninstall keys
   ${If} $AddQuickLaunchSC == 1
     CreateShortCut "$QUICKLAUNCH\${BrandFullName}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${FileMainEXE}" 0
-    ${LogUninstall} "File: $QUICKLAUNCH\${BrandFullName}.lnk"
   ${EndIf}
 
-  ${LogHeader} "Updating Quick Launch Shortcuts"
   ${If} $AddDesktopSC == 1
     CreateShortCut "$DESKTOP\${BrandFullName}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${FileMainEXE}" 0
-    ${LogUninstall} "File: $DESKTOP\${BrandFullName}.lnk"
   ${EndIf}
 
   !insertmacro MUI_STARTMENU_WRITE_END
@@ -393,11 +370,6 @@ Function onInstallDeleteFile
     ${If} ${FileExists} "$INSTDIR$R9"
       ClearErrors
       Delete "$INSTDIR$R9"
-      ${If} ${Errors}
-        ${LogMsg} "** ERROR Deleting File: $INSTDIR$R9 **"
-      ${Else}
-        ${LogMsg} "Deleted File: $INSTDIR$R9"
-      ${EndIf}
     ${EndIf}
   ${EndIf}
   ClearErrors
@@ -418,97 +390,16 @@ Function onInstallRemoveDir
     ${If} ${FileExists} "$INSTDIR$R9"
       ClearErrors
       RmDir /r "$INSTDIR$R9"
-      ${If} ${Errors}
-        ${LogMsg} "** ERROR Removing Directory: $INSTDIR$R9 **"
-      ${Else}
-        ${LogMsg} "Removed Directory: $INSTDIR$R9"
-      ${EndIf}
     ${EndIf}
   ${EndIf}
   ClearErrors
-  Push 0
-FunctionEnd
-
-Function GetDiff
-  ${TrimNewLines} "$9" "$9"
-  ${If} $9 != ""
-    FileWrite $R3 "$9$\r$\n"
-    ${LogMsg} "Added To Uninstall Log: $9"
-  ${EndIf}
-  Push 0
-FunctionEnd
-
-Function DoCopyFiles
-  StrLen $R2 $R0
-  ${LocateNoDetails} "$R0" "/L=FD" "CopyFile"
-FunctionEnd
-
-Function CopyFile
-  StrCpy $R3 $R8 "" $R2
-  retry:
-  ClearErrors
-  ${If} $R6 ==  ""
-    ${Unless} ${FileExists} "$R1$R3\$R7"
-      ClearErrors
-      CreateDirectory "$R1$R3\$R7"
-      ${If} ${Errors}
-        ${LogMsg}  "** ERROR Creating Directory: $R1$R3\$R7 **"
-        StrCpy $0 "$R1$R3\$R7"
-        ${WordReplace} "$(^FileError_NoIgnore)" "\r\n" "$\r$\n" "+*" $0
-        MessageBox MB_RETRYCANCEL|MB_ICONQUESTION "$0" IDRETRY retry
-        Quit
-      ${Else}
-        ${LogMsg}  "Created Directory: $R1$R3\$R7"
-      ${EndIf}
-    ${EndUnless}
-  ${Else}
-    ${Unless} ${FileExists} "$R1$R3"
-      ClearErrors
-      CreateDirectory "$R1$R3"
-      ${If} ${Errors}
-        ${LogMsg}  "** ERROR Creating Directory: $R1$R3 **"
-        StrCpy $0 "$R1$R3"
-        ${WordReplace} "$(^FileError_NoIgnore)" "\r\n" "$\r$\n" "+*" $0
-        MessageBox MB_RETRYCANCEL|MB_ICONQUESTION "$0" IDRETRY retry
-        Quit
-      ${Else}
-        ${LogMsg}  "Created Directory: $R1$R3"
-      ${EndIf}
-    ${EndUnless}
-    ${If} ${FileExists} "$R1$R3\$R7"
-      ClearErrors
-      Delete "$R1$R3\$R7"
-      ${If} ${Errors}
-        ${LogMsg} "** ERROR Deleting File: $R1$R3\$R7 **"
-        StrCpy $0 "$R1$R3\$R7"
-        ${WordReplace} "$(^FileError_NoIgnore)" "\r\n" "$\r$\n" "+*" $0
-        MessageBox MB_RETRYCANCEL|MB_ICONQUESTION "$0" IDRETRY retry
-        Quit
-      ${EndIf}
-    ${EndIf}
-    ClearErrors
-    CopyFiles /SILENT $R9 "$R1$R3"
-    ${If} ${Errors}
-      ${LogMsg} "** ERROR Installing File: $R1$R3\$R7 **"
-      StrCpy $0 "$R1$R3\$R7"
-      ${WordReplace} "$(^FileError_NoIgnore)" "\r\n" "$\r$\n" "+*" $0
-      MessageBox MB_RETRYCANCEL|MB_ICONQUESTION "$0" IDRETRY retry
-      Quit
-    ${Else}
-      ${LogMsg} "Installed File: $R1$R3\$R7"
-    ${EndIf}
-    ; If the file is installed into the installation directory remove the
-    ; installation directory's path from the file path when writing to the
-    ; uninstall.log so it will be a relative path. This allows the same
-    ; helper.exe to be used with zip builds if we supply an uninstall.log.
-    ${WordReplace} "$R1$R3\$R7" "$INSTDIR" "" "+" $R3
-    ${LogUninstall} "File: $R3"
-  ${EndIf}
   Push 0
 FunctionEnd
 
 Function LaunchApp
-  ${CloseApp} "true" $(WARN_APP_RUNNING_INSTALL)
+  StrCpy $R8 "true"
+  StrCpy $R9 $(WARN_APP_RUNNING_INSTALL)
+  Call CloseApp
   Exec "$INSTDIR\${FileMainEXE}"
 FunctionEnd
 

@@ -17,10 +17,12 @@ REM Assume Cygwin here...
 
 set ARCH=%3
 set BUILD_ID=%1
-set ICON_FILE=songbird.ico
 set DEPTH=..\..
 set DIST_DEPTH=..\..
 set DIST_DIR=%DEPTH%\compiled\dist
+
+if exist "%DIST_DIR%\songbird.ico" set ICON_FILE=songbird.ico
+if exist "%DIST_DIR%\songbird_nightly.ico" set ICON_FILE=songbird_nightly.ico
 
 goto prepareorpackage
 
@@ -28,7 +30,7 @@ goto prepareorpackage
 
 set ARCH=%3
 set BUILD_ID=%1
-set ICON_FILE=songbird.ico
+set ICON_FILE=songbirdinstall.ico
 set DEPTH=..\..
 set DIST_DEPTH=..
 set DIST_DIR=%DEPTH%\dist
@@ -44,14 +46,6 @@ if "%4"=="package" goto package
 del /s /f /q %DEPTH%\compiled\_built_installer\*.*
 rd /s /q %DEPTH%\compiled\_built_installer
 
-copy /y Songbird.nsi %DIST_DIR%\Songbird.nsi
-
-copy /y %DEPTH%\app\branding\songbird*.ico %DIST_DIR%
-
-copy /y LICENSE.txt %DIST_DIR%
-copy /y GPL.txt %DIST_DIR%
-copy /y TRADEMARK.txt %DIST_DIR%
-
 cd %DIST_DIR%
 %DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, IDI_APPICON, 1033
 %DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
@@ -62,15 +56,14 @@ cd %DIST_DIR%
 sed 's/\(VALUE "FileDescription", "\)[^"]*\("\)/\1Songbird\2/ ; w songbird.out.rc' songbird.rc
 rc /v songbird.out.rc
 %DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, songbird.out.res, VersionInfo,1,1033
-cd %DIST_DEPTH%\installer\win32
+cd %DIST_DEPTH%\installer\windows
 
 if "%4"=="prepare" goto end
 
 :package
 cd %DIST_DIR%
-%DIST_DEPTH%\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /DARCH="%ARCH%" /O"%DIST_DEPTH%\Songbird_%BUILD_ID%.log" /V4 songbird.nsi
-del songbird.nsi
-cd %DIST_DEPTH%\installer\win32
+%DIST_DEPTH%\tools\win32\nsis\makensis /NOCD /DBUILD_ID="%BUILD_ID%" /DARCH="%ARCH%" /O"%DIST_DEPTH%\Songbird_%BUILD_ID%.log" /V4 ../installer/windows/songbird.nsi
+cd %DIST_DEPTH%\installer\windows
 
 if exist "%DIST_DIR%\Songbird_%BUILD_ID%_%ARCH%.exe" goto success
 goto failure
