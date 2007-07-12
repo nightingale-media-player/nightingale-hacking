@@ -131,6 +131,11 @@ ifdef SONGBIRD_DEFAULTS
 targets += copy_sb_defaults
 endif
 
+ifdef SONGBIRD_INSTALLER
+targets += copy_sb_installer
+clean_targets += clean_copy_sb_installer
+endif
+
 ifdef SONGBIRD_PREFS
 targets += copy_sb_prefs
 endif
@@ -175,6 +180,11 @@ endif
 ifdef APPINI
 targets += appini_preprocess
 clean_targets += clean_appini
+endif
+
+ifdef INSTALLER_PREPROCESS
+targets += run_installer_preprocess
+clean_targets += clean_installer_preprocess
 endif
 
 ifdef SHELL_EXECUTE
@@ -669,6 +679,23 @@ endif #SONGBIRD_DEFAULTS
 
 #-----------------------
 
+ifdef SONGBIRD_INSTALLER
+copy_sb_installer:
+	for file in $(SONGBIRD_INSTALLER); do \
+  	$(CYGWIN_WRAPPER) $(CP) -dfp $(srcdir)/$$file $(SONGBIRD_INSTALLERDIR); \
+  done
+  
+clean_copy_sb_installer:
+	for file in $(SONGBIRD_INSTALLER); do \
+    $(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_INSTALLERDIR)/$$file; \
+  done
+
+.PHONY : copy_sb_installer clean_copy_sb_installer
+
+endif #SONGBIRD_INSTALLER
+
+#-----------------------
+
 ifdef SONGBIRD_PREFS
 songbird_pref_files := $(addprefix $(srcdir)/,$(SONGBIRD_PREFS))
 copy_sb_prefs:
@@ -785,6 +812,33 @@ clean_appini:
 .PHONY : appini_preprocess clean_appini
 
 endif #APPINI
+
+#-----------------------
+
+ifdef INSTALLER_PREPROCESS
+
+# Preprocesses the $(INSTALLER_PREPROCESS) files and turns them into plain .nsi files.
+
+ifeq (windows,$(SB_PLATFORM))
+INSTALLER_PPFLAGS = --line-endings=crlf
+endif
+
+run_installer_preprocess:
+	for file in $(INSTALLER_PREPROCESS); do \
+    source=$(SONGBIRD_INSTALLERDIR)/$$file.in; \
+    target=$(SONGBIRD_INSTALLERDIR)/$$file; \
+    $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(INSTALLER_PPFLAGS) \
+      $(ACDEFINES) $(PPDEFINES) -- $$source > $$target; \
+  done
+  
+clean_installer_preprocess:
+	for file in $(INSTALLER_PREPROCESS); do \
+    $(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_INSTALLER)/$$file; \
+  done
+
+.PHONY : run_installer_preprocess clean_installer_preprocess
+
+endif #INSTALLER_PREPROCESS
 
 #------------------------------------------------------------------------------
 # Rules for packaging things nicely
@@ -1111,7 +1165,7 @@ endif # GUNZIP_SRC
 ifdef SHELL_EXECUTE
 
 shell_execute:
-	$(SHELL_EXECUTE)
+	sh $(SHELL_EXECUTE)
 
 .PHONY : shell_execute
 

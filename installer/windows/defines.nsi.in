@@ -12,6 +12,7 @@
 !define InstallerVersion      "2.0"
 
 !define FileMainEXE           "Songbird.exe"
+!define FileUninstallEXE      "Songbird-Uninstall.exe"
 !define WindowClass           "SongbirdMessageWindow"
 !define DDEApplication        "Songbird"
 !define AppRegName            "Songbird"
@@ -37,10 +38,12 @@
 !define PreferredIcon             songbird.ico
 !define PreferredInstallerIcon    songbird.ico
 !define PreferredUninstallerIcon  songbird.ico
+!define VistaIcon                 songbird-vista.ico
 #else
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}_${BUILD_ID}\"
 !define PreferredInstallerName    "${BrandShortName}_${BUILD_ID}_${ARCH}.exe"
 !define PreferredIcon             songbird_nightly.ico
 !define PreferredInstallerIcon    songbird_nightly.ico
 !define PreferredUninstallerIcon  songbird_nightly.ico
+!define VistaIcon                 songbird_nightly.ico
 #endif

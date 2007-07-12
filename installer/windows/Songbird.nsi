@@ -42,9 +42,6 @@ Var AddStartMenuSC
 Var AddQuickLaunchSC
 Var AddDesktopSC
 
-Var fhInstallLog
-Var fhUninstallLog
-
 ;From NSIS
 !include FileFunc.nsh
 !include LogicLib.nsh
@@ -73,9 +70,6 @@ Var fhUninstallLog
 !include defines.nsi
 !include common.nsh
 
-#!include locales.nsi
-#!include version.nsh
-
 #VIProductVersion "${AppVersion}"
 VIProductVersion "0.3.0.0"
 
@@ -87,8 +81,6 @@ VIAddVersionKey "LegalTrademark"  "™ ${CompanyName}"
 VIAddVersionKey "ProductVersion"  "${AppVersion}"
 VIAddVersioNKey "SpecialBuild"    "${DebugBuild}" 
 
-#!include shared.nsh
-
 Name "${BrandFullName}"
 OutFile "Songbird_${BUILD_ID}_${ARCH}.exe"
 InstallDir "${PreferredInstallDir}"
@@ -98,7 +90,8 @@ BrandingText " "
 #XXXAus: Try and use this scheme to enable multiple installs of different versions.
 #InstallDirRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} (${AppVersion} - ${BUILD_ID})" "InstallLocation"
 
-ShowInstDetails nevershow
+ShowInstDetails show
+ShowUninstDetails show
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Modern User Interface Options
@@ -113,28 +106,23 @@ ShowInstDetails nevershow
 !define MUI_UNICON ${PreferredUninstallerIcon}
 
 ; Installer should have a header image.
-!define MUI_HEADERIMAGE
+;!define MUI_HEADERIMAGE
 
 ; Installer header image.
-!define MUI_HEADERIMAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Header\nsis.bmp
+;!define MUI_HEADERIMAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Header\nsis.bmp
 
 ; Installer Welcome / Finish page image.
-!define MUI_WELCOMEFINISHPAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp
+;!define MUI_WELCOMEFINISHPAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp
 
 ; Uninstaller Welcome / Finish page image.
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp
+;!define MUI_UNWELCOMEFINISHPAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp
+
+; Language
+!insertmacro MUI_LANGUAGE "English"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Installer pages.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; Welcome page options
-;!define MUI_WELCOMEPAGE_TITLE
-;!define MUI_WELCOMEPAGE_TITLE_3LINES
-;!define MUI_WELCOMEPAGE_TEXT
-
-; Welcome page
-;!insertmacro MUI_PAGE_WELCOME
 
 ; License page
 !insertmacro MUI_PAGE_LICENSE "LICENSE.txt"
@@ -169,11 +157,12 @@ ShowInstDetails nevershow
 
 ; Finish Page
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
-!define MUI_FINISHPAGE_TITLE_3LINES
-!define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN $INSTDIR/${FileMainEXE}
 !define MUI_FINISHPAGE_RUN_FUNCTION LaunchApp
-!define MUI_FINISHPAGE_RUN_TEXT $(LAUNCH_TEXT)
+!define MUI_FINISHPAGE_RUN_TEXT "Launch ${BrandFullName}!"
 !insertmacro MUI_PAGE_FINISH
+
+var LinkIconFile
 
 ################################################################################
 # Install Sections
@@ -230,7 +219,7 @@ Section "-Application" Section1
   ; Finally try and uninstall the old version if it's present.
   SetShellVarContext all
   
-  SectionIn RO
+  ; Reset output path
   SetOutPath $INSTDIR
 
   ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "UninstallString"
@@ -272,8 +261,13 @@ Section "-Application" Section1
   ;The XULRunner stub loader also fails to find certain symbols when launched
   ;without a profile (yes, it's confusing). The quick work around is to 
   ;leave a copy of msvcr71.dll in xulrunner/ as well.
-  SetOutPath $INSTDIR\${XULRunnerDir}
-  File ${CRuntime}
+  ${If} ${AtLeastWinVista}
+    SetOutPath $INSTDIR\${XULRunnerDir}
+    File ${CRuntime} 
+    StrCpy $LinkIconFile ${VistaIcon}
+  ${Else}
+    StrCpy $LinkIconFile ${PreferredIcon}
+  ${EndIf}
 
   ; Register DLLs
   ; XXXrstrong - AccessibleMarshal.dll can be used by multiple applications but
@@ -310,28 +304,33 @@ Section "-Application" Section1
   WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}" "" ""
   WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}" "" ""
 
+  ; Write the installation path into the registry
+  WriteRegStr HKLM Software\Songbird "Install_Dir" "$INSTDIR"
+  
+  ; Write the uninstall keys for Windows
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "DisplayName" "${BrandFullName} - ${AppVersion} (${BUILD_ID})"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "UninstallString" '"$INSTDIR\${FileUninstallEXE}.exe"'
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "NoRepair" 1
+
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
-  ; Create Start Menu shortcuts
-  ${If} $AddStartMenuSC == 1
-    CreateDirectory "$SMPROGRAMS\$StartMenuDir"
-    CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${FileMainEXE}" 0
-    CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} ($(SAFE_MODE)).lnk" "$INSTDIR\${FileMainEXE}" "-safe-mode" "$INSTDIR\${FileMainEXE}" 0
-  ${EndIf}
-
-  ; perhaps use the uninstall keys
-  ${If} $AddQuickLaunchSC == 1
-    CreateShortCut "$QUICKLAUNCH\${BrandFullName}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${FileMainEXE}" 0
-  ${EndIf}
-
-  ${If} $AddDesktopSC == 1
-    CreateShortCut "$DESKTOP\${BrandFullName}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${FileMainEXE}" 0
-  ${EndIf}
+  CreateDirectory "$SMPROGRAMS\$StartMenuDir"
+  CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
+  CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullNameInternal}.lnk" "$INSTDIR\${FileUninstallEXE}" "" "$INSTDIR\$LinkIconFile" 0
 
   !insertmacro MUI_STARTMENU_WRITE_END
-
+  
   ; Refresh desktop icons
   System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
+SectionEnd
+
+Section "Desktop Icon"
+  CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
+SectionEnd
+
+Section "QuickLaunch Icon"
+  CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
 SectionEnd
 
 ################################################################################
@@ -360,40 +359,6 @@ Function CheckInUse
       Quit
     ${EndIf}
   ${EndIf}
-FunctionEnd
-
-Function onInstallDeleteFile
-  ${TrimNewLines} "$R9" "$R9"
-  StrCpy $R1 "$R9" 5
-  ${If} $R1 == "File:"
-    StrCpy $R9 "$R9" "" 6
-    ${If} ${FileExists} "$INSTDIR$R9"
-      ClearErrors
-      Delete "$INSTDIR$R9"
-    ${EndIf}
-  ${EndIf}
-  ClearErrors
-  Push 0
-FunctionEnd
-
-; The previous installer removed directories even when they aren't empty so this
-; function does as well.
-Function onInstallRemoveDir
-  ${TrimNewLines} "$R9" "$R9"
-  StrCpy $R1 "$R9" 4
-  ${If} $R1 == "Dir:"
-    StrCpy $R9 "$R9" "" 5
-    StrCpy $R1 "$R9" "" -1
-    ${If} $R1 == "\"
-      StrCpy $R9 "$R9" -1
-    ${EndIf}
-    ${If} ${FileExists} "$INSTDIR$R9"
-      ClearErrors
-      RmDir /r "$INSTDIR$R9"
-    ${EndIf}
-  ${EndIf}
-  ClearErrors
-  Push 0
 FunctionEnd
 
 Function LaunchApp
