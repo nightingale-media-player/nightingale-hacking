@@ -74,6 +74,15 @@ interface sbIMediaListView : nsISupports
   sbIMediaItem getItemByIndex(in unsigned long aIndex);
 
   /**
+   * \brief Searches the view for the first occurrence of the specified media
+   *        item and returns the index where it was found.
+   * \param aMediaItem Media item to search for
+   * \return Index where the media item was found
+   * \throws NS_ERROR_NOT_AVAILABLE if the media item is not in the view
+   */
+  unsigned long getIndexForItem(in sbIMediaItem aMediaItem);
+
+  /**
    * \brief Given an index of an item in the filtered list, get the index of
    *        the same item in the unfiltered list
    * \param aIndex Filtered index of the media item

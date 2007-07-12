@@ -202,7 +202,9 @@ sbLocalDatabaseMediaListView::~sbLocalDatabaseMediaListView()
   MOZ_COUNT_DTOR(sbLocalDatabaseMediaListView);
 
   if (mMediaList) {
-    mMediaList->RemoveListener(this);
+    nsCOMPtr<sbIMediaListListener> listener =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaListListener*, this));
+    mMediaList->RemoveListener(listener);
   }
 }
 
@@ -271,7 +273,7 @@ sbLocalDatabaseMediaListView::Init()
   rv = mViewSort->AppendProperty(mDefaultSortProperty, NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = UpdateListener(PR_TRUE);
+  rv = UpdateListener(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -391,6 +393,26 @@ sbLocalDatabaseMediaListView::GetItemByIndex(PRUint32 aIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = item);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListView::GetIndexForItem(sbIMediaItem* aMediaItem,
+                                              PRUint32* _retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoString guid;
+  nsresult rv = aMediaItem->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mArray->GetFirstIndexByGuid(guid, _retval);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    return rv;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

@@ -59,14 +59,12 @@
 #define PROPERTIES_TABLE NS_LITERAL_STRING("resource_properties")
 #define MEDIAITEMS_TABLE NS_LITERAL_STRING("media_items")
 
-#if defined PR_LOGGING
+#ifdef PR_LOGGING
 static const PRLogModuleInfo *gLocalDatabaseGUIDArrayLog = nsnull;
+#endif /* PR_LOGGING */
+
 #define TRACE(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_DEBUG, args)
 #define LOG(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_WARN, args)
-#else
-#define TRACE(args)
-#define LOG(args)
-#endif
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseGUIDArray, sbILocalDatabaseGUIDArray)
 
@@ -287,7 +285,7 @@ sbLocalDatabaseGUIDArray::GetCurrentSort(sbIPropertyArray** aCurrentSort)
     const SortSpec& ss = mSorts[i];
     rv = sort->AppendProperty(ss.property,
                               ss.ascending ? NS_LITERAL_STRING("a") :
-                                NS_LITERAL_STRING("d"));
+                              NS_LITERAL_STRING("d"));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -300,7 +298,6 @@ sbLocalDatabaseGUIDArray::AddFilter(const nsAString& aProperty,
                                     nsIStringEnumerator *aValues,
                                     PRBool aIsSearch)
 {
-  // TODO: Check for valid properties
   NS_ENSURE_ARG_POINTER(aValues);
 
   nsresult rv;
@@ -319,7 +316,8 @@ sbLocalDatabaseGUIDArray::AddFilter(const nsAString& aProperty,
     nsAutoString s;
     rv = aValues->GetNext(s);
     NS_ENSURE_SUCCESS(rv, rv);
-    fs->values.AppendElement(s);
+    nsString* success = fs->values.AppendElement(s);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
     rv = aValues->HasMore(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -426,6 +424,8 @@ sbLocalDatabaseGUIDArray::GetGuidByIndex(PRUint32 aIndex,
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::Invalidate()
 {
+  TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - Invalidate", this));
+
   if (mValid == PR_FALSE) {
     return NS_OK;
   }
@@ -435,6 +435,7 @@ sbLocalDatabaseGUIDArray::Invalidate()
   }
 
   mCache.Clear();
+  mGuidToFirstIndexMap.Clear();
 
   if(mPrimarySortKeyPositionCache.IsInitialized()) {
     mPrimarySortKeyPositionCache.Clear();
@@ -534,7 +535,13 @@ sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
 
   // Remove the specified element from the cache
   if (aIndex < mCache.Length()) {
+
+    nsString guid;
+    rv = GetGuidByIndex(aIndex, guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     mCache.RemoveElementAt(aIndex);
+    mGuidToFirstIndexMap.Remove(guid);
   }
 
   // Adjust the null length of the array.  Made sure we decrement the non
@@ -621,9 +628,108 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
+                                              PRUint32* _retval)
+{
+  TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - GetFirstIndexByGuid", this));
+
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  if (mValid == PR_FALSE) {
+    rv = Initialize();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // If this is a guid array on a simple media list we can't do any
+  // optimizations that depend on returning the first matching guid we find
+  PRBool uniqueGuids = PR_TRUE;
+  if (mBaseTable.EqualsLiteral("simple_media_lists")) {
+    uniqueGuids = PR_FALSE;
+  }
+
+  PRUint32 firstUncached = 0;
+
+  // First check to see if the guid is cached.  If we have unique guids, we
+  // can use the guid-to-index map as a shortcut
+  if (uniqueGuids) {
+    if (mGuidToFirstIndexMap.Get(aGuid, _retval)) {
+      return NS_OK;
+    }
+
+    // If we are fully cached and the guid was not found, then we know that
+    // it does not exist in this array
+    if (mCache.Length() == mLength) {
+    }
+
+    // If it wasn't found, we need to find the first uncached row
+    PRBool found = PR_FALSE;
+    for (PRUint32 i = 0; !found && i < mCache.Length(); i++) {
+      if (!mCache[i]) {
+        firstUncached = i;
+        found = PR_TRUE;
+      }
+    }
+
+    // If we didn't find any uncached rows and the cache size is the same as
+    // the array length, we know the guid isn't in this array
+    if (!found && mCache.Length() == mLength) {
+      return NS_ERROR_NOT_AVAILABLE;
+    }
+  }
+  else {
+    // Since we could have duplicate guids, just search the array for the guid
+    // from the beginning to the first uncached item
+    PRBool foundFirstUncached = PR_FALSE;
+    for (PRUint32 i = 0; !foundFirstUncached && i < mCache.Length(); i++) {
+      ArrayItem* item = mCache[i];
+      if (item) {
+        if (item->guid.Equals(aGuid)) {
+          *_retval = i;
+          return NS_OK;
+        }
+      }
+      else {
+        firstUncached = i;
+        foundFirstUncached = PR_TRUE;
+      }
+    }
+
+    // If we didn't find any uncached rows and the cache size is the same as
+    // the array length, we know the guid isn't in this array
+    if (!foundFirstUncached && mCache.Length() == mLength) {
+      return NS_ERROR_NOT_AVAILABLE;
+    }
+  }
+
+  // So the guid we are looking for is not cached.  Cache the rest of the
+  // array and search it
+
+  // Temporarily make the fetch size the same size as the array so we read in
+  // the rest of the array in one shot
+  PRUint32 oldFetchSize = mFetchSize;
+  mFetchSize = mLength;
+  rv = FetchRows(firstUncached);
+  mFetchSize = oldFetchSize;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ASSERTION(mLength == mCache.Length(), "Full read didn't work");
+
+  // Either the guid is in the map or it just not in our array
+  if (mGuidToFirstIndexMap.Get(aGuid, _retval)) {
+    return NS_OK;
+  }
+  else {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+}
+
 nsresult
 sbLocalDatabaseGUIDArray::Initialize()
 {
+  TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - Initialize", this));
   NS_ASSERTION(mPropertyCache, "No property cache!");
 
   nsresult rv;
@@ -636,6 +742,11 @@ sbLocalDatabaseGUIDArray::Initialize()
   // Make sure we have at least one sort
   if (mSorts.Length() == 0) {
     return NS_ERROR_UNEXPECTED;
+  }
+
+  if (!mGuidToFirstIndexMap.IsInitialized()) {
+    PRBool success = mGuidToFirstIndexMap.Init();
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
   if (mValid == PR_TRUE) {
@@ -1129,233 +1240,6 @@ sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
 }
 
 nsresult
-sbLocalDatabaseGUIDArray::AddFiltersToQuery(sbISQLSelectBuilder *aBuilder,
-                                            const nsAString& baseAlias)
-{
-  nsresult rv;
-
-  nsAutoString baseTableAlias(baseAlias);
-
-  PRUint32 len = mFilters.Length();
-  for (PRUint32 i = 0; i < len; i++) {
-    const FilterSpec& fs = mFilters[i];
-
-    nsAutoString tableAlias;
-    tableAlias.AppendLiteral("_p");
-    tableAlias.AppendInt(i);
-
-    PRBool isTopLevelProperty = SB_IsTopLevelProperty(fs.property);
-
-    nsAutoString joinedTableName;
-    // If the filtered property is a top level property, join the top level
-    // table
-    if (isTopLevelProperty) {
-      joinedTableName = MEDIAITEMS_TABLE;
-    }
-    else {
-      joinedTableName = PROPERTIES_TABLE;
-    }
-
-    if (i == 0) {
-
-      // If the base table alias of the query is empty we should use the first
-      // filter as the base table.  Otherwise join the first filter to the base
-      // table
-      if (baseTableAlias.IsEmpty()) {
-        rv = aBuilder->SetBaseTableName(joinedTableName);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = aBuilder->SetBaseTableAlias(tableAlias);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        baseTableAlias = tableAlias;
-      }
-      else {
-        rv = aBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                               joinedTableName,
-                               tableAlias,
-                               GUID_COLUMN,
-                               baseTableAlias,
-                               GUID_COLUMN);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-    else {
-      rv = aBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                             joinedTableName,
-                             tableAlias,
-                             GUID_COLUMN,
-                             baseTableAlias,
-                             GUID_COLUMN);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // Add the critera
-    nsCOMPtr<sbISQLBuilderCriterion> criterion;
-
-    if (fs.isSearch) {
-
-      // XXX: Lets not support search on top level properties
-      if (isTopLevelProperty) {
-        return NS_ERROR_INVALID_ARG;
-      }
-
-      // If a property is specified, add it here.  If this is empty, no
-      // property contraint is added for this join which makes it search all
-      // properties
-      if(!fs.property.IsEmpty()) {
-        rv = aBuilder->CreateMatchCriterionLong(tableAlias,
-                                                NS_LITERAL_STRING("property_id"),
-                                                sbISQLSelectBuilder::MATCH_EQUALS,
-                                                GetPropertyId(fs.property),
-                                                getter_AddRefs(criterion));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = aBuilder->AddCriterion(criterion);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      // Add the search term
-      nsAutoString searchTerm;
-      searchTerm.AppendLiteral("%");
-      searchTerm.Append(fs.values[0]);
-      searchTerm.AppendLiteral("%");
-
-      rv = aBuilder->CreateMatchCriterionString(tableAlias,
-                                                OBJSORTABLE_COLUMN,
-                                                sbISQLSelectBuilder::MATCH_LIKE,
-                                                searchTerm,
-                                                getter_AddRefs(criterion));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = aBuilder->AddCriterion(criterion);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-
-      nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
-      if (isTopLevelProperty) {
-
-        // Add the constraint for the top level table.
-        nsAutoString columnName;
-        rv = SB_GetTopLevelPropertyColumn(fs.property, columnName);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = aBuilder->CreateMatchCriterionIn(tableAlias,
-                                              columnName,
-                                              getter_AddRefs(inCriterion));
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        // Add the propery constraint for the filter
-        rv = aBuilder->CreateMatchCriterionLong(tableAlias,
-                                                NS_LITERAL_STRING("property_id"),
-                                                sbISQLSelectBuilder::MATCH_EQUALS,
-                                                GetPropertyId(fs.property),
-                                                getter_AddRefs(criterion));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = aBuilder->AddCriterion(criterion);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = aBuilder->CreateMatchCriterionIn(tableAlias,
-                                              OBJSORTABLE_COLUMN,
-                                              getter_AddRefs(inCriterion));
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      // For each filter value, add the term to an IN constraint
-      PRUint32 numValues = fs.values.Length();
-      for (PRUint32 j = 0; j < numValues; j++) {
-        const nsAString& filterTerm = fs.values[j];
-        rv = inCriterion->AddString(filterTerm);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      rv = aBuilder->AddCriterion(inCriterion);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbLocalDatabaseGUIDArray::AddPrimarySortToQuery(sbISQLSelectBuilder *aBuilder,
-                                                const nsAString& baseAlias)
-{
-  nsresult rv;
-
-  const SortSpec& ss = mSorts[0];
-
-  /*
-   * If this is a top level propery, simply add the sort
-   */
-  if (SB_IsTopLevelProperty(ss.property)) {
-    nsAutoString columnName;
-    rv = SB_GetTopLevelPropertyColumn(ss.property, columnName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    /*
-     * Add the output column for the sorted property so we can later use
-     * this for additional sorting
-     */
-    rv = aBuilder->AddColumn(baseAlias,
-                            columnName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = aBuilder->AddOrder(baseAlias,
-                            columnName,
-                            ss.ascending);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    /*
-     * Add the output column for the sorted property so we can later use
-     * this for additional sorting
-     */
-    rv = aBuilder->AddColumn(NS_LITERAL_STRING("_sort"),
-                            OBJSORTABLE_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    /*
-     * Join an instance of the properties table to the base table
-     */
-    rv = aBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                           PROPERTIES_TABLE,
-                           NS_LITERAL_STRING("_sort"),
-                           GUID_COLUMN,
-                           baseAlias,
-                           GUID_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    /*
-     * Restrict the sort table to the sort property
-     */
-    nsCOMPtr<sbISQLBuilderCriterion> criterion;
-    rv = aBuilder->CreateMatchCriterionLong(NS_LITERAL_STRING("_sort"),
-                                            NS_LITERAL_STRING("property_id"),
-                                            sbISQLSelectBuilder::MATCH_EQUALS,
-                                            GetPropertyId(ss.property),
-                                            getter_AddRefs(criterion));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = aBuilder->AddCriterion(criterion);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    /*
-     * Add a sort on the primary sort
-     */
-    rv = aBuilder->AddOrder(NS_LITERAL_STRING("_sort"),
-                            OBJSORTABLE_COLUMN,
-                            ss.ascending);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-nsresult
 sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
 {
   nsresult rv;
@@ -1522,11 +1406,9 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
    * Resize the cache so we can fit the new data
    */
   if (mCache.Length() < aDestIndexOffset + aCount) {
-    LOG(("SetLength %d to %d",
-              mCache.Length(),
-              aDestIndexOffset + aCount));
-    NS_ENSURE_TRUE(mCache.SetLength(aDestIndexOffset + aCount),
-                   NS_ERROR_OUT_OF_MEMORY);
+    LOG(("SetLength %d to %d", mCache.Length(), aDestIndexOffset + aCount));
+    PRBool success = mCache.SetLength(aDestIndexOffset + aCount);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
   nsAutoString lastSortedValue;
@@ -1534,6 +1416,8 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   PRBool isFirstValue = PR_TRUE;
   PRBool isFirstSort = PR_TRUE;
   for (PRUint32 i = 0; i < rowCount; i++) {
+    PRUint32 index = i + aDestIndexOffset;
+
     nsAutoString mediaItemIdStr;
     rv = result->GetRowCell(i, 0, mediaItemIdStr);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1541,23 +1425,32 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     PRUint32 mediaItemId = mediaItemIdStr.ToInteger(&rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUnichar* guid;
-    rv = result->GetRowCellPtr(i, 1, &guid);
+    nsString guid;
+    rv = result->GetRowCell(i, 1, guid);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUnichar* value;
-    rv = result->GetRowCellPtr(i, 2, &value);
+    nsString value;
+    rv = result->GetRowCell(i, 2, value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUnichar* ordinal;
-    rv = result->GetRowCellPtr(i, 3, &ordinal);
+    nsString ordinal;
+    rv = result->GetRowCell(i, 3, ordinal);
     NS_ENSURE_SUCCESS(rv, rv);
 
     ArrayItem* item = new ArrayItem(mediaItemId, guid, value, ordinal);
     NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
-    NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + aDestIndexOffset, 1, item),
-                   NS_ERROR_OUT_OF_MEMORY);
+    nsAutoPtr<ArrayItem>* success =
+      mCache.ReplaceElementsAt(index, 1, item);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    // Add the new guid to the guid to first index map.
+    PRUint32 firstIndex;
+    PRBool found = mGuidToFirstIndexMap.Get(guid, &firstIndex);
+    if (!found || index < firstIndex) {
+      PRBool added = mGuidToFirstIndexMap.Put(guid, index);
+      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+    }
 
     TRACE(("ReplaceElementsAt %d %s", i + aDestIndexOffset,
                NS_ConvertUTF16toUTF8(item->guid).get()));
@@ -1565,7 +1458,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
       if (isFirstValue || !lastSortedValue.Equals(item->sortPropertyValue)) {
         if (!isFirstValue) {
           rv = SortRows(aDestIndexOffset + firstIndex,
-                        aDestIndexOffset + i - 1,
+                        index - 1,
                         lastSortedValue,
                         isFirstSort,
                         PR_FALSE,
@@ -1612,8 +1505,9 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
                                       EmptyString());
       NS_ENSURE_TRUE(item, NS_ERROR_OUT_OF_MEMORY);
 
-      NS_ENSURE_TRUE(mCache.ReplaceElementsAt(i + rowCount + aDestIndexOffset, 1, item),
-                     NS_ERROR_OUT_OF_MEMORY);
+      nsAutoPtr<ArrayItem>* success =
+        mCache.ReplaceElementsAt(i + rowCount + aDestIndexOffset, 1, item);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
     }
   }
   return NS_OK;
@@ -1737,11 +1631,8 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
    * calculated offset
    */
   for (PRUint32 i = 0; i < rangeLength; i++) {
-    PRUnichar* guid;
-    rv = result->GetRowCellPtr(offset + i, 0, &guid);
+    rv = result->GetRowCell(offset + i, 0, mCache[i + aStartIndex]->guid);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    mCache[i + aStartIndex]->guid = guid;
   }
 
   return NS_OK;

@@ -129,5 +129,7 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   void removeByIndex(in unsigned long aIndex);
 
   unsigned long getFirstIndexByPrefix(in AString aPrefix);
+
+  unsigned long getFirstIndexByGuid(in AString aGuid);
 };
 

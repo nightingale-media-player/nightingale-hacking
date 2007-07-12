@@ -537,6 +537,15 @@ sbLocalDatabaseAsyncGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
+                                                   PRUint32* _retval)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetFirstIndexByGuid(aGuid, _retval);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::RemoveByIndex(PRUint32 aIndex)
 {
   nsAutoMonitor monitor(mSyncMonitor);

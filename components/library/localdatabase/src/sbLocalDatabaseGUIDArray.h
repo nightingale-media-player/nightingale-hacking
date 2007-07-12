@@ -108,12 +108,6 @@ private:
 
   nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
 
-  nsresult AddFiltersToQuery(sbISQLSelectBuilder *aBuilder,
-                             const nsAString& baseAlias);
-
-  nsresult AddPrimarySortToQuery(sbISQLSelectBuilder *aBuilder,
-                                 const nsAString& baseAlias);
-
   nsresult FetchRows(PRUint32 aRequestedIndex);
 
   nsresult SortRows(PRUint32 aStartIndex,
@@ -214,6 +208,9 @@ private:
   // Paired property cache
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
+  // Map of guid -> first array index
+  nsDataHashtable<nsStringHashKey, PRUint32> mGuidToFirstIndexMap;
+
   // Get distinct values?
   PRPackedBool mIsDistinct;
 
@@ -222,7 +219,6 @@ private:
 
   // How nulls are sorted
   PRPackedBool mNullsFirst;
-
 protected:
   /* additional members */
 };

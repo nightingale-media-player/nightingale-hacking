@@ -37,6 +37,7 @@ function runTest () {
   // For the library, the unfiltered index on a view should match the index
   // of the item in the library
   var list = library;
+
   var view = list.createView();
 
   var pa = createPropertyArray();
@@ -84,6 +85,54 @@ function runTest () {
     var viewItem = view.getItemByIndex(i);
     var listIndex = view.getUnfilteredIndex(i);
     assertEqual(listIndex, list.indexOf(viewItem, 0));
+  }
+
+  // Tests for getIndexForItem
+  var item = library.getItemByGuid("3E59BD68-AD99-11DB-9321-C22AB7121F49");
+
+  // Create a new view each time so we have no cached data
+  view = library.createView();
+  assertEqual(view.getIndexForItem(item), 69);
+  forceCache(view);
+  assertEqual(view.getIndexForItem(item), 69);
+
+  view = library.createView();
+  pa = createPropertyArray();
+  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "AC/DC");
+  view.setFilters(pa);
+
+  assertEqual(view.getIndexForItem(item), 4);
+  forceCache(view);
+  assertEqual(view.getIndexForItem(item), 4);
+
+  view = list.createView();
+  assertEqual(view.getIndexForItem(item3), 2);
+  forceCache(view);
+  assertEqual(view.getIndexForItem(item3), 2);
+
+  view = list.createView();
+  pa = createPropertyArray();
+  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "The Dirtbombs");
+  view.setFilters(pa);
+
+  assertEqual(view.getIndexForItem(item3), 1);
+  forceCache(view);
+  assertEqual(view.getIndexForItem(item3), 1);
+
+  try {
+    view.getIndexForItem(item1);
+    fail("NS_ERROR_NOT_AVAILABLE exected");
+  }
+  catch(e) {
+    assertEqual(e.result, Cr.NS_ERROR_NOT_AVAILABLE);
+  }
+
+}
+
+function forceCache(view) {
+
+  for (let i = 0; i < view.length; i++) {
+    view.getItemByIndex(i);
   }
 
 }
