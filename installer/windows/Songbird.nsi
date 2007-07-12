@@ -88,7 +88,7 @@ InstallDir "${PreferredInstallDir}"
 BrandingText " "
 
 #XXXAus: Try and use this scheme to enable multiple installs of different versions.
-#InstallDirRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} (${AppVersion} - ${BUILD_ID})" "InstallLocation"
+#InstallDirRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${AppVersion} (${BUILD_ID})" "InstallLocation"
 
 ShowInstDetails show
 ShowUninstDetails show
@@ -158,21 +158,32 @@ ShowUninstDetails show
 ; Finish Page
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
 !define MUI_FINISHPAGE_RUN $INSTDIR/${FileMainEXE}
-!define MUI_FINISHPAGE_RUN_FUNCTION LaunchApp
 !define MUI_FINISHPAGE_RUN_TEXT "Launch ${BrandFullName}!"
 !insertmacro MUI_PAGE_FINISH
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Uninstaller pages.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Uninstall Confirm Page
+!insertmacro MUI_UNPAGE_CONFIRM
+
+; Remove Files Page
+!insertmacro MUI_UNPAGE_INSTFILES
+
+; Finish Page
+!insertmacro MUI_UNPAGE_FINISH
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Global Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 var LinkIconFile
 
-################################################################################
-# Install Sections
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Install Sections
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Section "-Application" Section1
   SectionIn 1 RO
-  SetDetailsPrint textonly
-  DetailPrint $(STATUS_CLEANUP)
-  SetDetailsPrint none
-  
+
   ; Try to delete the app's main executable and if we can't delete it try to
   ; close the app. This allows running an instance that is located in another
   ; directory and prevents the launching of the app during the installation.
@@ -312,6 +323,7 @@ Section "-Application" Section1
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "UninstallString" '"$INSTDIR\${FileUninstallEXE}.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "NoRepair" 1
+  WriteUninstaller ${FileUninstallEXE}
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
@@ -333,8 +345,84 @@ Section "QuickLaunch Icon"
   CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
 SectionEnd
 
-################################################################################
-# Helper Functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Uninstall Section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Section "Uninstall"
+  SetShellVarContext all
+  
+  ; Remove registry keys
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}"
+  DeleteRegKey HKLM "Software\${BrandFullNameInternal}"
+
+  ; Remove XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
+  DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}"
+  DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}"
+
+  StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
+  DeleteRegKey HKLM "$0"
+
+  ; Remove files and uninstaller
+  Delete $INSTDIR\${FileUninstallEXE}
+
+  ; Read where shortcuts are installed
+  ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Start Menu Folder"
+
+  ; Remove shortcuts, if any.
+  ${If} ${FileExists} "$SMPROGRAMS\$0\*.*"
+    RMDir /r "$SMPROGRAMS\$0\*.*"
+  ${EndIf}
+
+  ; Remove desktop and quicklaunch shortcuts.  
+  Delete "$DESKTOP\${BrandNameFullInternal}.lnk"
+  Delete "$QUICKLAUNCH\${BrandNameFullInternal}.lnk"
+
+  ; Remove directories used
+  Delete $INSTDIR\LICENSE.txt
+  Delete $INSTDIR\GPL.txt
+  Delete $INSTDIR\TRADEMARK.txt
+  
+  ; List of files to install
+  Delete ${ApplicationIni}
+  Delete ${FileMainEXE}
+  Delete ${CRuntime}
+  Delete ${CPPRuntime}
+  Delete ${PreferredIcon}
+  Delete *.chk
+  
+  Delete LICENSE.txt
+  Delete GPL.txt
+  Delete TRADEMARK.txt
+  
+  ; List of directories to install
+  RMDir /r chrome
+  RMDir /r components
+  RMDir /r defaults
+  RMDir /r extensions
+  RMDir /r plugins
+  RMDir /r searchplugins
+  RMDir /r scripts
+  RMDir /r ${XULRunnerDir}
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; I commented this out, because I don't think we *truly* want to do this. 
+  ;; But we might have to later.
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;SetShellVarContext current
+  ;RMDir /r "$APPDATA\Songbird"
+  ;RMDir /r "$LOCALAPPDATA\Songbird"
+  ;SetShellVarContext all
+  
+  RMDir /r "$INSTDIR"
+  
+  ; Refresh desktop.
+  System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
+  
+SectionEnd
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Helper Functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Copies a file to a temporary backup directory and then checks if it is in use
 ; by attempting to delete the file. If the file is in use an error is displayed
@@ -368,8 +456,9 @@ Function LaunchApp
   Exec "$INSTDIR\${FileMainEXE}"
 FunctionEnd
 
-################################################################################
-# Initialization Functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Initialization Functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
 FunctionEnd
