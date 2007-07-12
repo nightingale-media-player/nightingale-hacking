@@ -55,6 +55,9 @@ function doMenu( command ) {
     case "file.playlist":
       SBPlaylistOpen();
     break;
+    case "file.newtab":
+      gBrowser.loadURI(gBrowser.homePage, null, null, null, 'tab');
+    break;
     case "file.scan":
       SBScanMedia();
     break;
