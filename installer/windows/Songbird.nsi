@@ -23,9 +23,16 @@
 # END SONGBIRD GPL
 #
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This installer is based on the Firefox NSIS installer by Rob Strong from
+; Mozilla. Thanks Rob :) I couldn't have gotten our installer all up to date
+; this fast without you.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; Compressor settings
 SetCompressor /SOLID lzma
 SetCompressorDictSize 64
+CRCCheck force
 
 ; empty files - except for the comment line - for generating custom pages.
 ;!system 'echo ; > options.ini'
@@ -37,10 +44,6 @@ SetCompressorDictSize 64
 
 Var TmpVal
 Var StartMenuDir
-Var InstallType
-Var AddStartMenuSC
-Var AddQuickLaunchSC
-Var AddDesktopSC
 
 ;From NSIS
 !include FileFunc.nsh
@@ -50,6 +53,7 @@ Var AddDesktopSC
 !include WinVer.nsh
 !include WordFunc.nsh
 !include MUI.nsh
+!include nsProcess.nsh
 !include x64.nsh
 
 !insertmacro FileJoin
@@ -59,6 +63,7 @@ Var AddDesktopSC
 !insertmacro TrimNewLines
 !insertmacro WordFind
 !insertmacro WordReplace
+!insertmacro un.WordReplace
 !insertmacro GetSize
 !insertmacro GetParameters
 !insertmacro GetParent
@@ -66,10 +71,14 @@ Var AddDesktopSC
 !insertmacro GetRoot
 !insertmacro DriveSpace
 
-; The following includes are custom.
+; The following includes are custom. 
+; defines.nsi is generated from defines.nsi.in!
 !include defines.nsi
 !include common.nsh
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Product version information. 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 VIProductVersion "${AppVersionWindows}"
 
 VIAddVersionKey "CompanyName"     "${CompanyName}"
@@ -81,7 +90,7 @@ VIAddVersionKey "ProductVersion"  "${AppVersion}"
 VIAddVersioNKey "SpecialBuild"    "${DebugBuild}" 
 
 Name "${BrandFullName}"
-OutFile "Songbird_${BUILD_ID}_${ARCH}.exe"
+OutFile "${PreferredInstallerName}"
 InstallDir "${PreferredInstallDir}"
 
 BrandingText " "
@@ -175,61 +184,27 @@ ShowUninstDetails show
 var LinkIconFile
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Force quit message 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!define ForceQuitMessage "Songbird is currently running and will be forced to quit."
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Install Sections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Section "-Application" Section1
   SectionIn 1 RO
 
-  ; Try to delete the app's main executable and if we can't delete it try to
-  ; close the app. This allows running an instance that is located in another
-  ; directory and prevents the launching of the app during the installation.
-  ; A copy of the executable is placed in a temporary directory so it can be
-  ; copied back in the case where a specific file is checked / found to be in
-  ; use that would prevent a successful install.
-
-  ; Create a temporary backup directory.
-  GetTempFileName $TmpVal "$TEMP"
-  ${DeleteFile} $TmpVal
-  SetOutPath $TmpVal
-
   ${If} ${FileExists} "$INSTDIR\${FileMainEXE}"
-    ClearErrors
-    CopyFiles /SILENT "$INSTDIR\${FileMainEXE}" "$TmpVal\${FileMainEXE}"
-    Delete "$INSTDIR\${FileMainEXE}"
-    ${If} ${Errors}
-      ClearErrors
-      StrCpy $R8 "true"
-      StrCpy $R9 $(WARN_APP_RUNNING_INSTALL)
-      Call CloseApp
-
-      ; Try to delete it again to prevent launching the app while we are
-      ; installing.
-      ClearErrors
-      CopyFiles /SILENT "$INSTDIR\${FileMainEXE}" "$TmpVal\${FileMainEXE}"
-      Delete "$INSTDIR\${FileMainEXE}"
-      ${If} ${Errors}
-        ClearErrors
-        ; Try closing the app a second time
-        StrCpy $R8 "true"
-        StrCpy $R9 $(WARN_APP_RUNNING_INSTALL)
-        Call CloseApp
-        StrCpy $R1 "${FileMainEXE}"
-        Call CheckInUse
-      ${EndIf}
-    ${EndIf}
+    Call CloseApp
   ${EndIf}
 
-  SetOutPath $INSTDIR
-  RmDir /r "$TmpVal"
-  ClearErrors
-
-  ; Finally try and uninstall the old version if it's present.
-  SetShellVarContext all
-  
   ; Reset output path
   SetOutPath $INSTDIR
 
-  ; Try and uninstall old version
+  ; Finally try and uninstall the old version if it's present.
+  SetShellVarContext all
+
+  ; Read location of old version
   ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "UninstallString"
 
   ${If} $R1 != ""
@@ -260,9 +235,9 @@ Section "-Application" Section1
   File /r scripts
   File /r ${XULRunnerDir}
 
-  ;The XULRunner stub loader also fails to find certain symbols when launched
-  ;without a profile (yes, it's confusing). The quick work around is to 
-  ;leave a copy of msvcr71.dll in xulrunner/ as well.
+  ; The XULRunner stub loader also fails to find certain symbols when launched
+  ; without a profile (yes, it's confusing). The quick work around is to 
+  ; leave a copy of msvcr71.dll in xulrunner/ as well.
   ${If} ${AtLeastWinVista}
     SetOutPath $INSTDIR\${XULRunnerDir}
     File ${CRuntime} 
@@ -322,27 +297,48 @@ Section "-Application" Section1
 
   CreateDirectory "$SMPROGRAMS\$StartMenuDir"
   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
-  CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "-safe-mode" "$INSTDIR\$LinkIconFile" 0 SW_SHOWNORMAL "" "${BrandFullName} Safe-Mode"
+  CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Profile Manager).lnk" "$INSTDIR\${FileMainEXE}" "-p" "$INSTDIR\$LinkIconFile" 0 SW_SHOWNORMAL "" "${BrandFullName} w/ Profile Manager"
+  CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Safe-Mode).lnk" "$INSTDIR\${FileMainEXE}" "-safe-mode" "$INSTDIR\$LinkIconFile" 0 SW_SHOWNORMAL "" "${BrandFullName} Safe-Mode"
   CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullNameInternal}.lnk" "$INSTDIR\${FileUninstallEXE}" "" "$INSTDIR\$LinkIconFile" 0
 
   !insertmacro MUI_STARTMENU_WRITE_END
   
   ; Refresh desktop icons
   System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
+  
 SectionEnd
 
 Section "Desktop Icon"
+
+  ; Put the desktop icon in All Users\Desktop
+  SetShellVarContext all
   CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
+
+  ; Remember that we installed a desktop shortcut.
+  WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Desktop Shortcut Location" "$DESKTOP\${BrandFullNameInternal}.lnk"
+  
 SectionEnd
 
 Section "QuickLaunch Icon"
+  
+  ; Put the quicklaunch icon in the current users quicklaunch.
+  SetShellVarContext current
   CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
+
+  ; Remember that we installed a quicklaunch shortcut.
+  WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Quicklaunch Shortcut Location" "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
+  
 SectionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Uninstall Section
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Section "Uninstall"
+
+  ${If} ${FileExists} "$INSTDIR\${FileMainEXE}"
+    Call un.CloseApp
+  ${EndIf}
+  
   SetShellVarContext all
   
   ; Remove registry keys
@@ -355,29 +351,32 @@ Section "Uninstall"
   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
   DeleteRegKey HKLM "$0"
 
-  ; Remove files and uninstaller
+  ; Remove uninstaller
   Delete $INSTDIR\${FileUninstallEXE}
 
-  ; Read where shortcuts are installed
+  ; Read where start menu shortcuts are installed
   ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Start Menu Folder"
 
-  ; Remove shortcuts, if any.
+  ; Remove start menu shortcuts and start menu folder.
   ${If} ${FileExists} "$SMPROGRAMS\$0\${BrandFullNameInternal}.lnk"
     RMDir /r "$SMPROGRAMS\$0\*.*"
   ${EndIf}
 
+  ; Read location of desktop shortcut and remove if present.
+  ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Desktop Shortcut Location"
+  ${If} ${FileExists} $0
+    Delete $0
+  ${EndIf}
+
+  ; Read location of quicklaunch shortcut and remove if present.
+  ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Quicklaunch Shortcut Location"
+  ${If} ${FileExists} $0
+    Delete $0
+  ${EndIf}
+  
   ; Remove the last of the registry keys
   DeleteRegKey HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})"
 
-  ; Remove desktop and quicklaunch shortcuts.  
-  Delete "$DESKTOP\${BrandNameFullInternal}.lnk"
-  Delete "$QUICKLAUNCH\${BrandNameFullInternal}.lnk"
-
-  ; Remove directories used
-  Delete $INSTDIR\LICENSE.txt
-  Delete $INSTDIR\GPL.txt
-  Delete $INSTDIR\TRADEMARK.txt
-  
   ; List of files to uninstall
   Delete ${ApplicationIni}
   Delete ${FileMainEXE}
@@ -424,36 +423,94 @@ SectionEnd
 ; Helper Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Copies a file to a temporary backup directory and then checks if it is in use
-; by attempting to delete the file. If the file is in use an error is displayed
-; and the user is given the options to either retry or cancel. If cancel is
-; selected then the files are restored.
-Function CheckInUse
-  ${If} ${FileExists} "$INSTDIR\$R1"
-    retry:
-    ClearErrors
-    CopyFiles /SILENT "$INSTDIR\$R1" "$TmpVal\$R1"
-    ${Unless} ${Errors}
-      Delete "$INSTDIR\$R1"
-    ${EndUnless}
-    ${If} ${Errors}
-      StrCpy $0 "$INSTDIR\$R1"
-      ${WordReplace} "$(^FileError_NoIgnore)" "\r\n" "$\r$\n" "+*" $0
-      MessageBox MB_RETRYCANCEL|MB_ICONQUESTION "$0" IDRETRY retry
-      Delete "$TmpVal\$R1"
-      CopyFiles /SILENT "$TmpVal\*" "$INSTDIR\"
-      SetOutPath $INSTDIR
-      RmDir /r "$TmpVal"
-      Quit
-    ${EndIf}
-  ${EndIf}
-FunctionEnd
-
 Function LaunchApp
-  StrCpy $R8 "true"
-  StrCpy $R9 $(WARN_APP_RUNNING_INSTALL)
   Call CloseApp
   Exec "$INSTDIR\${FileMainEXE}"
+FunctionEnd
+
+Function CloseApp
+  loop:
+
+  ${nsProcess::FindProcess} "${FileMainEXE}" $0
+
+  ${If} $0 == 0
+    MessageBox MB_OKCANCEL|MB_ICONQUESTION "${ForceQuitMessage}" IDCANCEL exit
+
+    FindWindow $1 "${WindowClass}"
+    IntCmp $1 0 +4
+    System::Call 'user32::PostMessage(i r17, i ${WM_QUIT}, i 0, i 0)'
+    
+    ; The amount of time to wait for the app to shutdown before prompting again
+    Sleep 5000
+
+    ${nsProcess::FindProcess} "${FileMainEXE}" $0
+    ${If} $0 == 0
+      ${nsProcess::KillProcess} "${FileMainEXE}" $1
+      ${If} $1 == 0
+        goto end
+      ${Else}
+        goto exit
+      ${EndIf}
+    ${Else}
+      goto end
+    ${EndIf}
+    
+    Sleep 2000
+    Goto loop
+    
+  ${Else}
+    goto end
+  ${EndIf}
+  
+  exit:
+  ${nsProcess::Unload}
+  Quit
+
+  end:
+  ${nsProcess::Unload}
+
+FunctionEnd
+
+Function un.CloseApp
+  loop:
+
+  ${nsProcess::FindProcess} "${FileMainEXE}" $0
+
+  ${If} $0 == 0
+    MessageBox MB_OKCANCEL|MB_ICONQUESTION "${ForceQuitMessage}" IDCANCEL exit
+
+    FindWindow $1 "${WindowClass}"
+    IntCmp $1 0 +4
+    System::Call 'user32::PostMessage(i r17, i ${WM_QUIT}, i 0, i 0)'
+    
+    ; The amount of time to wait for the app to shutdown before prompting again
+    Sleep 5000
+
+    ${nsProcess::FindProcess} "${FileMainEXE}" $0
+    ${If} $0 == 0
+      ${nsProcess::KillProcess} "${FileMainEXE}" $1
+      ${If} $1 == 0
+        goto end
+      ${Else}
+        goto exit
+      ${EndIf}
+    ${Else}
+      goto end
+    ${EndIf}
+    
+    Sleep 2000
+    Goto loop
+    
+  ${Else}
+    goto end
+  ${EndIf}
+  
+  exit:
+  ${nsProcess::Unload}
+  Quit
+
+  end:
+  ${nsProcess::Unload}
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -461,4 +518,9 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
+
+FunctionEnd
+
+Function un.onInit
+
 FunctionEnd

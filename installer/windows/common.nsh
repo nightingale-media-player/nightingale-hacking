@@ -24,128 +24,6 @@
 #
 
 /**
- * Attempts to delete a file if it exists. This will fail if the file is in use.
- * @param   _FILE
- *          The path to the file that is to be deleted.
- */
-!macro DeleteFile _FILE
-  ${If} ${FileExists} "${_FILE}"
-    Delete "${_FILE}"
-  ${EndIf}
-!macroend
-!define DeleteFile "!insertmacro DeleteFile"
-
-/**
- * Posts WM_QUIT to the application's message window which is found using the
- * message window's class. This macro uses the nsProcess plugin available
- * from http://nsis.sourceforge.net/NsProcess_plugin
- *
- * @param   _MSG
- *          The message text to display in the message box.
- * @param   _PROMPT
- *          If false don't prompt the user and automatically exit the
- *          application if it is running.
- *
- * $R6 = return value for nsProcess::_FindProcess and nsProcess::_KillProcess
- * $R7 = value returned from FindWindow
- * $R8 = _PROMPT
- * $R9 = _MSG
- */
-Function CloseApp
-  Exch $R9
-  Exch 1
-  Exch $R8
-  Push $R7
-  Push $R6
-
-  loop:
-  Push $R6
-  nsProcess::_FindProcess /NOUNLOAD "${FileMainEXE}"
-  Pop $R6
-  StrCmp $R6 0 0 end
-
-  StrCmp $R8 "false" +2 0
-  MessageBox MB_OKCANCEL|MB_ICONQUESTION "$R9" IDCANCEL exit 0
-
-  FindWindow $R7 "${WindowClass}"
-  IntCmp $R7 0 +4
-  System::Call 'user32::PostMessage(i r17, i ${WM_QUIT}, i 0, i 0)'
-  # The amount of time to wait for the app to shutdown before prompting again
-  Sleep 5000
-
-  Push $R6
-  nsProcess::_FindProcess /NOUNLOAD "${FileMainEXE}"
-  Pop $R6
-  StrCmp $R6 0 0 end
-  Push $R6
-  nsProcess::_KillProcess /NOUNLOAD "${FileMainEXE}"
-  Pop $R6
-  Sleep 2000
-
-  Goto loop
-
-  exit:
-  nsProcess::_Unload
-  Quit
-
-  end:
-  nsProcess::_Unload
-
-  Pop $R6
-  Pop $R7
-  Exch $R8
-  Exch 1
-  Exch $R9
-FunctionEnd
-
-Function un.CloseApp
-  Exch $R9
-  Exch 1
-  Exch $R8
-  Push $R7
-  Push $R6
-
-  loop:
-  Push $R6
-  nsProcess::_FindProcess /NOUNLOAD "${FileMainEXE}"
-  Pop $R6
-  StrCmp $R6 0 0 end
-
-  StrCmp $R8 "false" +2 0
-  MessageBox MB_OKCANCEL|MB_ICONQUESTION "$R9" IDCANCEL exit 0
-
-  FindWindow $R7 "${WindowClass}"
-  IntCmp $R7 0 +4
-  System::Call 'user32::PostMessage(i r17, i ${WM_QUIT}, i 0, i 0)'
-  # The amount of time to wait for the app to shutdown before prompting again
-  Sleep 5000
-
-  Push $R6
-  nsProcess::_FindProcess /NOUNLOAD "${FileMainEXE}"
-  Pop $R6
-  StrCmp $R6 0 0 end
-  Push $R6
-  nsProcess::_KillProcess /NOUNLOAD "${FileMainEXE}"
-  Pop $R6
-  Sleep 2000
-
-  Goto loop
-
-  exit:
-  nsProcess::_Unload
-  Quit
-
-  end:
-  nsProcess::_Unload
-
-  Pop $R6
-  Pop $R7
-  Exch $R8
-  Exch 1
-  Exch $R9
-FunctionEnd
-
-/**
  * Removes quotes and trailing path separator from registry string paths.
  * @param   $R0
  *          Contains the registry string
@@ -181,3 +59,49 @@ FunctionEnd
   Exch $R0
 !macroend
 !define GetPathFromRegStr "!insertmacro GetPathFromRegStr"
+
+; Copies a file to a temporary backup directory and then checks if it is in use
+; by attempting to delete the file. If the file is in use an error is displayed
+; and the user is given the options to either retry or cancel. If cancel is
+; selected then the files are restored.
+Function CheckInUse
+  ${If} ${FileExists} "$INSTDIR\$R1"
+    retry:
+    ClearErrors
+    CopyFiles /SILENT "$INSTDIR\$R1" "$TmpVal\$R1"
+    ${Unless} ${Errors}
+      Delete "$INSTDIR\$R1"
+    ${EndUnless}
+    ${If} ${Errors}
+      StrCpy $0 "$INSTDIR\$R1"
+      ${WordReplace} "$(^FileError_NoIgnore)" "\r\n" "$\r$\n" "+*" $0
+      MessageBox MB_RETRYCANCEL|MB_ICONQUESTION "$0" IDRETRY retry
+      Delete "$TmpVal\$R1"
+      CopyFiles /SILENT "$TmpVal\*" "$INSTDIR\"
+      SetOutPath $INSTDIR
+      RmDir /r "$TmpVal"
+      Quit
+    ${EndIf}
+  ${EndIf}
+FunctionEnd
+
+Function un.CheckInUse
+  ${If} ${FileExists} "$INSTDIR\$R1"
+    retry:
+    ClearErrors
+    CopyFiles /SILENT "$INSTDIR\$R1" "$TmpVal\$R1"
+    ${Unless} ${Errors}
+      Delete "$INSTDIR\$R1"
+    ${EndUnless}
+    ${If} ${Errors}
+      StrCpy $0 "$INSTDIR\$R1"
+      ${un.WordReplace} "$(^FileError_NoIgnore)" "\r\n" "$\r$\n" "+*" $0
+      MessageBox MB_RETRYCANCEL|MB_ICONQUESTION "$0" IDRETRY retry
+      Delete "$TmpVal\$R1"
+      CopyFiles /SILENT "$TmpVal\*" "$INSTDIR\"
+      SetOutPath $INSTDIR
+      RmDir /r "$TmpVal"
+      Quit
+    ${EndIf}
+  ${EndIf}
+FunctionEnd
