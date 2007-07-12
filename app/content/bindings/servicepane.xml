@@ -145,7 +145,7 @@
         </xul:template>
       </xul:tree>
       <xul:popupset>
-        <xul:popup anonid="popup"  onpopupshown="onPopupShown(event);"/>
+        <xul:popup anonid="popup"  onpopupshown="onPopupShown(event);" />
       </xul:popupset>
     </content>
     <implementation implements="nsIWebProgressListener,nsIXULBuilderListener">
@@ -539,11 +539,21 @@
         
         // ask the service to add new item menus
         this.mService.fillNewItemMenu(node.id, this.mPopup, window);
-        
+
         // show the popup menu
+        document.popupNode = null;
         this.mPopup.showPopup(document.documentElement,
                     event.screenX+5, event.screenY,
                     'context', null, null, null);
+
+        // Setup a one-shot event listener to force the popup closed 
+        // on the next click in the document                    
+        var pop = this.mPopup;
+        function doclistener() {
+          pop.hidePopup();
+          document.removeEventListener( "click", doclistener, false );
+        }
+        document.addEventListener( "click", doclistener, false );
       }
       
       event.stopPropagation();
