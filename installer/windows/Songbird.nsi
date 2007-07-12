@@ -70,8 +70,7 @@ Var AddDesktopSC
 !include defines.nsi
 !include common.nsh
 
-#VIProductVersion "${AppVersion}"
-VIProductVersion "0.3.0.0"
+VIProductVersion "${AppVersionWindows}"
 
 VIAddVersionKey "CompanyName"     "${CompanyName}"
 VIAddVersionKey "FileDescription" "${BrandShortName} Installer"
@@ -86,9 +85,6 @@ OutFile "Songbird_${BUILD_ID}_${ARCH}.exe"
 InstallDir "${PreferredInstallDir}"
 
 BrandingText " "
-
-#XXXAus: Try and use this scheme to enable multiple installs of different versions.
-#InstallDirRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${AppVersion} (${BUILD_ID})" "InstallLocation"
 
 ShowInstDetails show
 ShowUninstDetails show
@@ -233,20 +229,13 @@ Section "-Application" Section1
   ; Reset output path
   SetOutPath $INSTDIR
 
-  ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "UninstallString"
+  ; Try and uninstall old version
+  ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "UninstallString"
 
   ${If} $R1 != ""
     ClearErrors
     ExecWait '$R1 /S _?=$INSTDIR'
   ${EndIf}
-
-  ; During an install Vista checks if a new entry is added under the uninstall
-  ; registry key (e.g. ARP). When the same version of the app is installed on
-  ; top of an existing install the key is deleted / added and the Program
-  ; Compatibility Assistant doesn't see this as a new entry and displays an
-  ; error to the user. See Bug 354000.
-  StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} (${AppVersion})"
-  DeleteRegKey HKLM "$0"
 
   ; List of files to install
   File ${ApplicationIni}
@@ -254,7 +243,9 @@ Section "-Application" Section1
   File ${CRuntime}
   File ${CPPRuntime}
   File ${PreferredIcon}
+  File ${VistaIcon}
   
+  ; List of text files to install
   File LICENSE.txt
   File GPL.txt
   File TRADEMARK.txt
@@ -285,6 +276,7 @@ Section "-Application" Section1
   ; is only registered for the last application installed. When the last
   ; application installed is uninstalled AccessibleMarshal.dll will no longer be
   ; registered. bug 338878
+  ; XXXaus - It's unclear to me if we need to do the same thing, need to investigate.
   ClearErrors
   RegDLL "$INSTDIR\${XULRunnerDir}\AccessibleMarshal.dll"
 
@@ -316,11 +308,12 @@ Section "-Application" Section1
   WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}" "" ""
 
   ; Write the installation path into the registry
-  WriteRegStr HKLM Software\Songbird "Install_Dir" "$INSTDIR"
+  WriteRegStr HKLM "Software\${BrandFullNameInternal\${AppVersion} - (${BUILD_ID})" "InstallDir" "$INSTDIR"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "DisplayName" "${BrandFullName} - ${AppVersion} (${BUILD_ID})"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "UninstallString" '"$INSTDIR\${FileUninstallEXE}.exe"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "DisplayName" "${BrandFullName} ${AppVersion} (${BUILD_ID})"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "InstallLocation" "$INSTDIR"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "UninstallString" '"$INSTDIR\${FileUninstallEXE}"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}" "NoRepair" 1
   WriteUninstaller ${FileUninstallEXE}
@@ -329,6 +322,7 @@ Section "-Application" Section1
 
   CreateDirectory "$SMPROGRAMS\$StartMenuDir"
   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
+  CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "-safe-mode" "$INSTDIR\$LinkIconFile" 0 SW_SHOWNORMAL "" "${BrandFullName} Safe-Mode"
   CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullNameInternal}.lnk" "$INSTDIR\${FileUninstallEXE}" "" "$INSTDIR\$LinkIconFile" 0
 
   !insertmacro MUI_STARTMENU_WRITE_END
@@ -353,7 +347,6 @@ Section "Uninstall"
   
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}"
-  DeleteRegKey HKLM "Software\${BrandFullNameInternal}"
 
   ; Remove XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
   DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}"
@@ -369,9 +362,12 @@ Section "Uninstall"
   ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Start Menu Folder"
 
   ; Remove shortcuts, if any.
-  ${If} ${FileExists} "$SMPROGRAMS\$0\*.*"
+  ${If} ${FileExists} "$SMPROGRAMS\$0\${BrandFullNameInternal}.lnk"
     RMDir /r "$SMPROGRAMS\$0\*.*"
   ${EndIf}
+
+  ; Remove the last of the registry keys
+  DeleteRegKey HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})"
 
   ; Remove desktop and quicklaunch shortcuts.  
   Delete "$DESKTOP\${BrandNameFullInternal}.lnk"
@@ -382,17 +378,21 @@ Section "Uninstall"
   Delete $INSTDIR\GPL.txt
   Delete $INSTDIR\TRADEMARK.txt
   
-  ; List of files to install
+  ; List of files to uninstall
   Delete ${ApplicationIni}
   Delete ${FileMainEXE}
   Delete ${CRuntime}
   Delete ${CPPRuntime}
   Delete ${PreferredIcon}
-  Delete *.chk
+  Delete ${VistaIcon}
   
+  ; Text files to uninstall
   Delete LICENSE.txt
   Delete GPL.txt
   Delete TRADEMARK.txt
+  
+  ; These files are created by the application
+  Delete *.chk
   
   ; List of directories to install
   RMDir /r chrome

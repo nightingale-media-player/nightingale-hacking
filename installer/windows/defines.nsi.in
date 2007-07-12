@@ -9,7 +9,7 @@
 
 !define AppVersion            "@SB_MILESTONE@"
 !define GREVersion            "@SB_MOZILLA_VERSION@"
-!define InstallerVersion      "@SB_MILESTONE@"
+!define AppVersionWindows     "@SB_MILESTONE_WINDOWS@"
 
 !define FileMainEXE           "Songbird.exe"
 !define FileUninstallEXE      "Songbird-Uninstall.exe"

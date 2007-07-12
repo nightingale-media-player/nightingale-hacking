@@ -51,6 +51,7 @@ CONFIG_MK_INCLUDED=1
 # SB_BRANCHNAME
 # SB_BUILD_ID
 # SB_MILESTONE
+# SB_MILESTONE_WINDOWS
 #
 
 BUILDINFO_FILE := $(DEPTH)/build/sbBuildInfo.ini
@@ -63,11 +64,13 @@ SB_APPNAME := $(shell $(CMD) AppName)
 SB_BRANCHNAME := $(shell $(CMD) Branch)
 SB_BUILD_ID := $(shell $(CMD) BuildID)
 SB_MILESTONE := $(shell $(CMD) Milestone)
+SB_MILESTONE_WINDOWS := $(shell $(CMD) MilestoneWindows)
 
 PPDEFINES += -DSB_APPNAME="$(SB_APPNAME)" \
              -DSB_BRANCHNAME="$(SB_BRANCHNAME)" \
              -DSB_BUILD_ID="$(SB_BUILD_ID)" \
              -DSB_MILESTONE="$(SB_MILESTONE)" \
+             -DSB_MILESTONE_WINDOWS="$(SB_MILESTONE_WINDOWS)" \
              $(NULL)
 
 endif
