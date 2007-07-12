@@ -165,5 +165,18 @@ function getPlatform() {
   return sysInfo.getProperty("name");
 }
 
+function sleep(ms) {
+  var threadManager = Cc["@mozilla.org/thread-manager;1"].
+                      getService(Ci.nsIThreadManager);
+  var mainThread = threadManager.mainThread;
+
+  log("*** [" + _test_name + "] - waiting for " + ms + " milliseconds...");
+  var then = new Date().getTime(), now = then;
+  for (; now - then < ms; now = new Date().getTime()) {
+    mainThread.processNextEvent(true);
+  }
+  log("*** [" + _test_name + "] - done waiting.");
+}
+
 _consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 

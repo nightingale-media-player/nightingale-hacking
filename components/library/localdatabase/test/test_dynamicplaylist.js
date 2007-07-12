@@ -98,9 +98,6 @@ function testRegistration() {
   libraryManager.unregisterLibrary(library1);
 }
 
-var shutdown;
-var server;
-
 function testUpdate() {
 
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
@@ -112,20 +109,9 @@ function testUpdate() {
   var playlistFile = getFile("test_dynamicplaylist_playlist.m3u");
   writeFile(playlistFile, playlist1);
 
-  server = Cc["@mozilla.org/server/jshttp;1"]
+  var server = Cc["@mozilla.org/server/jshttp;1"]
              .createInstance(Ci.nsIHttpServer);
-/*
-  shutdown = newTimer();
 
-  shutdown.initWithCallback({
-      notify: function() {
-        server.stop();
-        libraryManager.unregisterLibrary(library1);
-        testFinished();
-        fail("Test did not finish in time");
-      }
-    }, 20000, Ci.nsITimer.TYPE_ONE_SHOT);
-*/
   server.start(8080);
   server.registerDirectory("/", getFile("."));
 
@@ -168,31 +154,9 @@ function testUpdate() {
   //assertEqual(list.getItemByIndex(2).getProperty(SB_PROP_TRACKNAME), "test3 title");
 
   // TODO: How can we check to see if these files were downloaded?
-  shutdown.cancel();
-  shutdown = null;
   server.stop();
-  server = null;
+
   libraryManager.unregisterLibrary(library1);
-  libraryManager = null;
-  library1 = null;
-  list = null;
-}
-
-function sleep(ms) {
-  var threadManager = Cc["@mozilla.org/thread-manager;1"].
-                      getService(Ci.nsIThreadManager);
-  var mainThread = threadManager.mainThread;
-
-  log("waiting for " + ms + " milliseconds...");
-  var then = new Date().getTime(), now = then;
-  for (; now - then < ms; now = new Date().getTime()) {
-    mainThread.processNextEvent(true);
-  }
-  log("done waiting.");
-}
-
-function newTimer() {
-  return Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
 }
 
 function writeFile(file, data) {
