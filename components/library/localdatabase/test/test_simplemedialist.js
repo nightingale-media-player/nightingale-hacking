@@ -40,7 +40,7 @@ function countItems(enumerator) {
 
 function runTest () {
 
-  var databaseGUID = "test_localdatabaselibrary";
+  var databaseGUID = "test_simplemedialist";
   var library = createLibrary(databaseGUID);
 
   var list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");

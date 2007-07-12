@@ -30,7 +30,7 @@
 
 function runTest () {
 
-  var databaseGUID = "test_localdatabaselibrary";
+  var databaseGUID = "test_guidarray_sortmulti";
   var library = createLibrary(databaseGUID);
   var array;
 

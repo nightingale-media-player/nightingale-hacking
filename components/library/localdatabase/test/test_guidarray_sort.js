@@ -30,7 +30,7 @@
 
 function runTest () {
 
-  var databaseGUID = "test_localdatabaselibrary";
+  var databaseGUID = "test_guidarray_sort";
   var library = createLibrary(databaseGUID);
   var listId = library.QueryInterface(Ci.sbILocalDatabaseLibrary).getMediaItemIdForGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   var array;

@@ -157,7 +157,7 @@ function testAvailable( library, url, available, completion ) {
 }
 
 function testIsAvailable( ioItem ) {
-  var databaseGUID = "test_localdatabaselibrary";
+  var databaseGUID = "test_mediaitem_isavailable";
   var testlib = createLibrary(databaseGUID);
   // Async tests of availability for a (supposedly!) known url.
   testAvailable( testlib, ioItem.contentSrc.spec, "true", 
@@ -220,7 +220,7 @@ function testAsyncRead(ioItem) {
 
 function runTest () {
 
-  var databaseGUID = "test_localdatabaselibrary";
+  var databaseGUID = "test_mediaitem";
   var testlib = createLibrary(databaseGUID);
   
   // Get an item

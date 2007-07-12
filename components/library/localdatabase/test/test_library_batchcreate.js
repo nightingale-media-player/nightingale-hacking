@@ -33,7 +33,7 @@ function runTest () {
   var SB_NS = "http://songbirdnest.com/data/1.0#";
   var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
-  var databaseGUID = "test_localdatabaselibrary";
+  var databaseGUID = "test_batchcreate";
   var library = createLibrary(databaseGUID);
 
   var toAdd = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);

@@ -32,7 +32,7 @@ function runTest () {
 
   var SB_NS = "http://songbirdnest.com/data/1.0#";
 
-  var databaseGUID = "test_localdatabaselibrary";
+  var databaseGUID = "test_distinct";
   var library = createLibrary(databaseGUID);
 
   var enumerator = library.getDistinctValuesForProperty(SB_NS + "albumName");
