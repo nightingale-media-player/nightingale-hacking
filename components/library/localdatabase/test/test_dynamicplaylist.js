@@ -114,7 +114,7 @@ function testUpdate() {
 
   server = Cc["@mozilla.org/server/jshttp;1"]
              .createInstance(Ci.nsIHttpServer);
-
+/*
   shutdown = newTimer();
 
   shutdown.initWithCallback({
@@ -125,7 +125,7 @@ function testUpdate() {
         fail("Test did not finish in time");
       }
     }, 20000, Ci.nsITimer.TYPE_ONE_SHOT);
-
+*/
   server.start(8080);
   server.registerDirectory("/", getFile("."));
 
