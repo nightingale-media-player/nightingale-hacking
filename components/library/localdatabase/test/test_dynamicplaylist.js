@@ -141,66 +141,54 @@ function testUpdate() {
                             60,
                             dest);
 
-  testPending();
-
   // Write the first playlist and then update the subscription
   writeFile(playlistFile, playlist1);
 
   dps.updateNow(list);
+  
+  sleep(3000);
+  
+  // Check the contents of the list
+  assertEqual(list.length, 2);
+  // XXXsteve These seem a bit too time sensitive right now
+  //assertEqual(list.getItemByIndex(0).getProperty(SB_PROP_TRACKNAME), "test1 title");
+  //assertEqual(list.getItemByIndex(1).getProperty(SB_PROP_TRACKNAME), "test2 title");
 
-  // 2s should be enough to load the playlist and read the metadata
-  delayContinue(3000, function() {
+  // Updat the playlist file and update again
+  writeFile(playlistFile, playlist2);
+  dps.updateNow(list);
 
-    // Check the contents of the list
-    assertEqual(list.length, 2);
-    // XXXsteve These seem a bit too time sensitive right now
-    //assertEqual(list.getItemByIndex(0).getProperty(SB_PROP_TRACKNAME), "test1 title");
-    //assertEqual(list.getItemByIndex(1).getProperty(SB_PROP_TRACKNAME), "test2 title");
+  sleep(3000);
 
-    // Updat the playlist file and update again
-    writeFile(playlistFile, playlist2);
-    dps.updateNow(list);
+  // Check the contents of the list
+  assertEqual(list.length, 3);
+  // XXXsteve These seem a bit too time sensitive right now
+  //assertEqual(list.getItemByIndex(0).getProperty(SB_PROP_TRACKNAME), "test1 title");
+  //assertEqual(list.getItemByIndex(1).getProperty(SB_PROP_TRACKNAME), "test2 title");
+  //assertEqual(list.getItemByIndex(2).getProperty(SB_PROP_TRACKNAME), "test3 title");
 
-    // 2s should be enough to load the playlist and read the metadata
-    delayContinue(3000, function() {
-
-      // Check the contents of the list
-      assertEqual(list.length, 3);
-      // XXXsteve These seem a bit too time sensitive right now
-      //assertEqual(list.getItemByIndex(0).getProperty(SB_PROP_TRACKNAME), "test1 title");
-      //assertEqual(list.getItemByIndex(1).getProperty(SB_PROP_TRACKNAME), "test2 title");
-      //assertEqual(list.getItemByIndex(2).getProperty(SB_PROP_TRACKNAME), "test3 title");
-
-      // TODO: How can we check to see if these files were downloaded?
-      shutdown.cancel();
-      shutdown = null;
-      server.stop();
-      server = null;
-      libraryManager.unregisterLibrary(library1);
-      libraryManager = null;
-      library1 = null;
-      list = null;
-      testFinished();
-    });
-  });
+  // TODO: How can we check to see if these files were downloaded?
+  shutdown.cancel();
+  shutdown = null;
+  server.stop();
+  server = null;
+  libraryManager.unregisterLibrary(library1);
+  libraryManager = null;
+  library1 = null;
+  list = null;
 }
 
-function delayContinue(ms, func) {
+function sleep(ms) {
+  var threadManager = Cc["@mozilla.org/thread-manager;1"].
+                      getService(Ci.nsIThreadManager);
+  var mainThread = threadManager.mainThread;
 
-  var timer = newTimer();
-  timer.initWithCallback({
-    notify: function() {
-      try {
-        func.apply(this);
-      }
-      catch(e) {
-        shutdown.cancel();
-        server.stop();
-        testFinished();
-        fail(e);
-      }
-    }
-  }, ms, Ci.nsITimer.TYPE_ONE_SHOT);
+  log("waiting for " + ms + " milliseconds...");
+  var then = new Date().getTime(), now = then;
+  for (; now - then < ms; now = new Date().getTime()) {
+    mainThread.processNextEvent(true);
+  }
+  log("done waiting.");
 }
 
 function newTimer() {

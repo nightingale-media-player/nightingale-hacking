@@ -87,7 +87,7 @@ function doMain() {
 
   _consoleService.logStringMessage("*** [" + _test_name + "] - running event loop");
 
-  var tm = Cc["@mozilla.org/thread-manager;1"].createInstance(Ci.nsIThreadManager);
+  var tm = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
   var mainThread = tm.mainThread;
 
   while(!_quit) {
