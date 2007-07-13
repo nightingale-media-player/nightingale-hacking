@@ -42,7 +42,6 @@ CRCCheck force
 ; Addional include directories
 !addincludedir ..\installer\windows
 
-Var TmpVal
 Var StartMenuDir
 
 ;From NSIS
@@ -122,31 +121,15 @@ ShowUninstDetails show
 ; Uninstaller Welcome / Finish page image.
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp
 
-; Language
-!insertmacro MUI_LANGUAGE "English"
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Installer pages.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; License page
-!define MUI_LICENSEPAGE_TEXT_TOP "Please read the license before continuing with the installation of ${BrandFullName}."
 !insertmacro MUI_PAGE_LICENSE "LICENSE.txt"
-
-; Components page options
-;!define MUI_COMPONENTSPAGE_TEXT_TOP
-;!define MUI_COMPONENTSPAGE_TEXT_COMPLIST
-;!define MUI_COMPONENTSPAGE_TEXT_INSTTYPE
-;!define MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_TITLE
-;!define MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_INFO
 
 ; Components page
 !insertmacro MUI_PAGE_COMPONENTS
-
-; Install directory page options
-;!define MUI_DIRECTORYPAGE_TEXT_TOP
-;!define MUI_DIRECTORYPAGE_TEXT_DESTINATION
-;!define MUI_DIRECTORYPAGE_VARIABLE
 
 ; Install directory page
 !insertmacro MUI_PAGE_DIRECTORY
@@ -154,7 +137,7 @@ ShowUninstDetails show
 ; Start Menu Folder Page Configuration
 !define MUI_STARTMENUPAGE_NODISABLE
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})"
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\\${BrandFullNameInternal}\\${AppVersion} (${BUILD_ID})"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuDir
 
@@ -162,29 +145,26 @@ ShowUninstDetails show
 !insertmacro MUI_PAGE_INSTFILES
 
 ; Finish Page
-!define MUI_FINISHPAGE_TITLE_3LINES
-!define MUI_FINISHPAGE_TITLE "${BrandFullName} installation is now complete."
-!define MUI_FINISHPAGE_TEXT  "Congradulations!\r\n ${BrandFullName} is ready to take off!"
 !define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_FUNCTION LaunchApp
-!define MUI_FINISHPAGE_RUN_TEXT "Launch ${BrandFullName}!"
 !insertmacro MUI_PAGE_FINISH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Uninstaller pages.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Uninstall Confirm Page
-!define MUI_UNCONFIRMPAGE_TEXT_TOP "You are about to uninstall ${BrandFullName}."
 !insertmacro MUI_UNPAGE_CONFIRM
 
 ; Remove Files Page
 !insertmacro MUI_UNPAGE_INSTFILES
 
 ; Finish Page
-!define MUI_UNFINISHPAGE_TITLE_3LINES
-!define MUI_UNFINISHPAGE_TITLE "${BrandFullName} uninstallation is now complete."
-!define MUI_UNFINISHPAGE_TEXT  "Chirp! Chirp! See you later!"
 !insertmacro MUI_UNPAGE_FINISH
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Languages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!insertmacro MUI_LANGUAGE "English" ; First is default
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Global Variables
