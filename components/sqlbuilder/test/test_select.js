@@ -104,7 +104,7 @@ function runTest () {
                                    Ci.sbISQLBuilder.MATCH_LIKE,
                                    "%United%");
   q.addCriterion(c);
-  sql = "select name from bbc where name like '%United%'";
+  sql = "select name from bbc where name like '%United%' ESCAPE '\\'";
   assertEqual(sql, q.toString());
 
   return Components.results.NS_OK;
