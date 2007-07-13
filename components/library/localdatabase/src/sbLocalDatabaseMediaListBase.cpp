@@ -317,9 +317,12 @@ sbLocalDatabaseMediaListBase::EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnu
     if (!hasMore) {
       return NS_OK;
     }
-    
-    nsCOMPtr<sbIMediaItem> item;
-    rv = aEnumerator->GetNext(getter_AddRefs(item));
+
+    nsCOMPtr<nsISupports> supports;
+    rv = aEnumerator->GetNext(getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool continueEnumerating;

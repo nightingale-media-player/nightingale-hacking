@@ -39,6 +39,10 @@
 #include <nsThreadUtils.h>
 #include <sbProxyUtils.h>
 
+#ifdef DEBUG
+#include <nsIXPConnect.h>
+#endif
+
 #define SB_ENSURE_TRUE_VOID(_arg) \
   NS_ENSURE_TRUE((_arg), /* void */)
 
@@ -104,8 +108,32 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
                                               PRUint32 aFlags,
                                               sbIPropertyArray* aPropertyFilter)
 {
-  TRACE(("LocalDatabaseMediaListListener[0x%.8x] - AddListener 0x%.8x %d",
-         this, aListener, aOwnsWeak));
+#ifdef DEBUG
+  nsCOMPtr<nsIXPConnect> xpc = do_GetService(nsIXPConnect::GetCID());
+  if(xpc) {
+    nsCAutoString objtype;
+    nsCOMPtr<nsIXPConnectWrappedJS> wrapped = do_QueryInterface(aListener);
+    if (wrapped) {
+      objtype.AssignLiteral("wrapped");
+    }
+    else {
+      objtype.AssignLiteral("native");
+    }
+
+    nsCAutoString stack;
+    stack.AssignLiteral("no js stack");
+
+    nsCOMPtr<nsIStackFrame> current;
+    xpc->GetCurrentJSStack(getter_AddRefs(current));
+    if (current) {
+      current->ToString(getter_Copies(stack));
+    }
+    TRACE(("LocalDatabaseMediaListListener[0x%.8x] - "
+           "AddListener 0x%.8x %d %s %s",
+           this, aListener, aOwnsWeak, objtype.get(), stack.get()));
+  }
+#endif
+
   NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");
   NS_ENSURE_ARG_POINTER(aListener);
 
@@ -124,12 +152,22 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
   nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  for (PRUint32 i = 0; i < length; i++) {
-    if(mListenerArray[i]->mRef == ref) {
-      // The listener has already been added, so do nothing more. But warn in
-      // debug builds.
-      NS_WARNING("Attempted to add a listener twice!");
-      return NS_OK;
+  if (aOwnsWeak) {
+    nsCOMPtr<nsIWeakReference> weak = do_GetWeakReference(aListener, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    for (PRUint32 i = 0; i < length; i++) {
+      if(mListenerArray[i]->mRef == weak) {
+        NS_WARNING("Attempted to add a weak listener twice!");
+        return NS_OK;
+      }
+    }
+  }
+  else {
+    for (PRUint32 i = 0; i < length; i++) {
+      if(mListenerArray[i]->mRef == ref) {
+        NS_WARNING("Attempted to add a strong listener twice!");
+        return NS_OK;
+      }
     }
   }
 
@@ -177,10 +215,9 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbIMediaListListener* aListener
   nsAutoLock lock(mListenerArrayLock);
 
   nsresult rv;
-  nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRUint32 length = mListenerArray.Length();
+
+  nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
   for (PRUint32 i = 0; i < length; i++) {
     if(mListenerArray[i]->mRef == ref) {
       mListenerArray.RemoveElementAt(i);
@@ -188,7 +225,19 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbIMediaListListener* aListener
     }
   }
 
-  NS_WARNING("Attempted to remove a listener that was never added!");
+  nsCOMPtr<nsIWeakReference> weak = do_GetWeakReference(aListener, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    for (PRUint32 i = 0; i < length; i++) {
+      if(mListenerArray[i]->mRef == weak) {
+        mListenerArray.RemoveElementAt(i);
+        return NS_OK;
+      }
+    }
+    NS_WARNING("Attempted to remove a weak listener that was never added!");
+  }
+  else {
+    NS_WARNING("Attempted to remove a strong listener that was never added!");
+  }
 
   return NS_OK;
 }

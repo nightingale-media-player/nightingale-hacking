@@ -108,6 +108,11 @@ interface sbICascadeFilterSet : nsISupports
            in unsigned long aValueArrayCount);
 
   /**
+   * \brief Clear the configuration of all filters
+   */
+  void clearAll();
+
+  /**
    * \brief Get the list of possible values for a filter
    * \param aIndex Index of the filter
    * \return A string enumerator of the values of the filter

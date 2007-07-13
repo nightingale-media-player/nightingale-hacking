@@ -104,11 +104,11 @@ function runTest () {
   assertEqual(filters.length, 3);
 
   assertEqual(filters.getPropertyAt(0).name, "http://songbirdnest.com/data/1.0#artistName");
-  assertEqual(filters.getPropertyAt(0).value, "ac/dc");
+  assertEqual(filters.getPropertyAt(0).value, "AC/DC");
   assertEqual(filters.getPropertyAt(1).name, "http://songbirdnest.com/data/1.0#artistName");
   assertEqual(filters.getPropertyAt(1).value, "a-ha");
   assertEqual(filters.getPropertyAt(2).name, "http://songbirdnest.com/data/1.0#albumName");
-  assertEqual(filters.getPropertyAt(2).value, "back in black");
+  assertEqual(filters.getPropertyAt(2).value, "Back in Black");
 }
 
 function createPropertyArray() {

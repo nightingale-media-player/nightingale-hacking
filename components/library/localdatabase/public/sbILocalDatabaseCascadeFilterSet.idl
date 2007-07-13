@@ -24,32 +24,31 @@
 //
 */
 
-#ifndef __SBTARRAYSTRINGENUMERATOR_H__
-#define __SBTARRAYSTRINGENUMERATOR_H__
+/**
+ * \file sbILocalDatabaseCascadeFilterSet.idl
+ * \brief Definition of the sbILocalDatabaseCascadeFilterSet interface
+ */
 
-#include <nsStringGlue.h>
-#include <nsCOMPtr.h>
-#include <nsTArray.h>
-#include <nsIStringEnumerator.h>
+#include "nsISupports.idl"
 
-class nsIURI;
+interface sbILocalDatabaseGUIDArray;
+interface sbIMutablePropertyArray;
 
-class sbTArrayStringEnumerator : public nsIStringEnumerator
+/**
+ * \interface sbILocalDatabaseCascadeFilterSet
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
+[scriptable, uuid(26a6db99-cd1f-4784-8e67-318a41ea93bd)]
+interface sbILocalDatabaseCascadeFilterSet : nsISupports
 {
-typedef nsTArray<nsString> sbStringArray;
-typedef nsTArray<nsCString> sbCStringArray;
+  void addConfiguration(in sbILocalDatabaseGUIDArray aArray);
 
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSISTRINGENUMERATOR
+  void addFilters(in sbIMutablePropertyArray aArray);
 
-  sbTArrayStringEnumerator(const sbStringArray* aStringArray);
-  sbTArrayStringEnumerator(const sbCStringArray* aStringArray);
+  void addSearches(in sbIMutablePropertyArray aArray);
 
-private:
-  nsTArray<nsString> mStringArray;
-  PRUint32 mNextIndex;
+  void clearFilters();
+
+  void clearSearches();
 };
-
-#endif /* __SBTARRAYSTRINGENUMERATOR_H__ */
 

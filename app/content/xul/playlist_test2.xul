@@ -525,6 +525,14 @@ try
         if ( mediaList )
         {
           var view = mediaList.createView();
+
+          // By default, we never want to show lists and hidden things in the
+          // playlist
+          view.setFilters(SBProperties.createArray([
+            [SBProperties.isList, "0"],
+            [SBProperties.hidden, "0"]
+          ]));
+
           var filter = view.cascadeFilterSet;
           filter.appendSearch([
             SBProperties.artistName,

@@ -80,6 +80,12 @@ CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
+ifdef DEBUG
+CPP_INCLUDES += $(MOZSDK_INCLUDE_DIR)/xpconnect \
+                $(MOZSDK_INCLUDE_DIR)/js \
+                $(NULL)
+endif
+
 IS_COMPONENT = 1
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)

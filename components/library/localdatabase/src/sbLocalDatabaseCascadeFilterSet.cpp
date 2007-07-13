@@ -48,6 +48,7 @@
 #include "sbLocalDatabaseMediaListView.h"
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseTreeView.h"
+#include "sbLocalDatabaseSchemaInfo.h"
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
@@ -93,8 +94,9 @@ sbLocalDatabaseCascadeFilterSet::~sbLocalDatabaseCascadeFilterSet()
   }
 }
 
-NS_IMPL_ISUPPORTS3(sbLocalDatabaseCascadeFilterSet,
+NS_IMPL_ISUPPORTS4(sbLocalDatabaseCascadeFilterSet,
                    sbICascadeFilterSet,
+                   sbILocalDatabaseCascadeFilterSet,
                    sbIMediaListListener,
                    nsISupportsWeakReference);
 
@@ -320,10 +322,6 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
 
   nsresult rv;
 
-  nsCOMPtr<sbIMutablePropertyArray> filter =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   sbFilterSpec& fs = mFilters[aIndex];
   fs.values.Clear();
 
@@ -331,28 +329,11 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
     if (aValueArray[i]) {
       nsString* value = fs.values.AppendElement(aValueArray[i]);
       NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
-
-      // If this is a search, we need to add this search value for each
-      // property being searched
-      if (fs.isSearch) {
-        for (PRUint32 j = 0; j < fs.propertyList.Length(); j++) {
-          rv = filter->AppendProperty(fs.propertyList[j], *value);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
-      else {
-        rv = filter->AppendProperty(fs.property, *value);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
     }
     else {
       NS_WARNING("Null pointer passed in array");
     }
   }
-
-  nsCOMPtr<sbIMutablePropertyArray> toClear =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Update downstream filters
   for (PRUint32 i = aIndex + 1; i < mFilters.Length(); i++) {
@@ -360,9 +341,7 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
     // We want to clear the downstream filter since the upstream filter has
     // changed
     sbFilterSpec& downstream = mFilters[i];
-
-    rv = toClear->AppendProperty(downstream.property, EmptyString());
-    NS_ENSURE_SUCCESS(rv, rv);
+    downstream.values.Clear();
 
     rv = ConfigureArray(i);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -376,43 +355,27 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
     mListeners.EnumerateEntries(OnValuesChangedCallback, &i);
   }
 
-  // Clear the downstream filters from the associated view
-  nsCOMPtr<sbIFilterableMediaList> filterable =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaListView*, mMediaListView), &rv);
+  // Tell the view to update its configuration.  It will first apply its
+  // filters and then ask us for ours
+  rv = mMediaListView->UpdateViewArrayConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 numClear;
-  rv = toClear->GetLength(&numClear);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::ClearAll()
+{
+  nsresult rv;
+
+  for (PRUint32 i = 0; i < mFilters.Length(); i++) {
+    mFilters[i].values.Clear();
+    rv = ConfigureArray(i);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = mMediaListView->UpdateViewArrayConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
-
-  if (numClear > 0) {
-    rv = filterable->SetFilters(toClear);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Update the associated view with the new filter or search setting
-  if (fs.isSearch) {
-    nsCOMPtr<sbISearchableMediaList> searchable =
-      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaListView*, mMediaListView), &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (aValueArrayCount == 0) {
-      rv = searchable->ClearSearch();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      rv = searchable->SetSearch(filter);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-  else {
-    if (aValueArrayCount == 0) {
-      rv = filter->AppendProperty(fs.property, EmptyString());
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    rv = filterable->SetFilters(filter);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   return NS_OK;
 }
@@ -524,6 +487,159 @@ sbLocalDatabaseCascadeFilterSet::RemoveListener(sbICascadeFilterSetListener* aLi
 
   mListeners.RemoveEntry(aListener);
 
+  return NS_OK;
+}
+
+// sbILocalDatabaseCascadeFilterSet
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::AddConfiguration(sbILocalDatabaseGUIDArray* mArray)
+{
+  NS_ENSURE_ARG_POINTER(mArray);
+  nsresult rv;
+
+  nsCOMPtr<sbIPropertyManager> propMan =
+    do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 numFilters = mFilters.Length();
+  for (PRUint32 i = 0; i < numFilters; i++) {
+    const sbFilterSpec& filter = mFilters[i];
+
+    // Skip filters and searches that have no values
+    if (filter.values.Length() == 0) {
+      continue;
+    }
+
+    if (filter.isSearch) {
+
+      // A search can be over many properties (held in propertyList).  Add a
+      // search filter for each property being searched.  The value being
+      // searched for is the first element of the values array.  Note that
+      // we make the values to search for sortable
+      PRUint32 length = filter.propertyList.Length();
+      for (PRUint32 j = 0; j < length; j++) {
+        nsCOMPtr<sbIPropertyInfo> info;
+        rv = propMan->GetPropertyInfo(filter.propertyList[j],
+                                      getter_AddRefs(info));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsAutoString sortableValue;
+        rv = info->MakeSortable(filter.values[0], sortableValue);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        sbStringArray valueArray(1);
+        nsString* successString = valueArray.AppendElement(sortableValue);
+        NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
+
+        nsCOMPtr<nsIStringEnumerator> valueEnum =
+          new sbTArrayStringEnumerator(&valueArray);
+        NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
+
+        rv = mArray->AddFilter(filter.propertyList[j], valueEnum, PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+    else {
+      nsCOMPtr<sbIPropertyInfo> info;
+      rv = propMan->GetPropertyInfo(filter.property, getter_AddRefs(info));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 length = filter.values.Length();
+      sbStringArray sortableValueArray(length);
+      for (PRUint32 i = 0; i < length; i++) {
+        nsAutoString sortableValue;
+        if (SB_IsTopLevelProperty(filter.property)) {
+          sortableValue = filter.values[i];
+        }
+        else {
+          rv = info->MakeSortable(filter.values[i], sortableValue);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        nsString* appended = sortableValueArray.AppendElement(sortableValue);
+        NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+      }
+
+      nsCOMPtr<nsIStringEnumerator> valueEnum =
+        new sbTArrayStringEnumerator(&sortableValueArray);
+      NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
+
+      rv = mArray->AddFilter(filter.property, valueEnum, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::AddFilters(sbIMutablePropertyArray* mArray)
+{
+  NS_ENSURE_ARG_POINTER(mArray);
+  nsresult rv;
+
+  PRUint32 numFilters = mFilters.Length();
+  for (PRUint32 i = 0; i < numFilters; i++) {
+    const sbFilterSpec& filter = mFilters[i];
+
+    if (!filter.isSearch) {
+      PRUint32 numValues = filter.values.Length();
+      for (PRUint32 j = 0; j < numValues; j++) {
+        rv = mArray->AppendProperty(filter.property, filter.values[j]);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::AddSearches(sbIMutablePropertyArray* mArray)
+{
+  NS_ENSURE_ARG_POINTER(mArray);
+  nsresult rv;
+
+  PRUint32 numFilters = mFilters.Length();
+  for (PRUint32 i = 0; i < numFilters; i++) {
+    const sbFilterSpec& filter = mFilters[i];
+
+    if (filter.isSearch && filter.values.Length()) {
+      PRUint32 numProperties = filter.propertyList.Length();
+      for (PRUint32 j = 0; j < numProperties; j++) {
+        rv = mArray->AppendProperty(filter.propertyList[j], filter.values[0]);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::ClearFilters()
+{
+  PRUint32 numFilters = mFilters.Length();
+  for (PRUint32 i = 0; i < numFilters; i++) {
+    sbFilterSpec& filter = mFilters[i];
+
+    if (!filter.isSearch) {
+      filter.values.Clear();
+    }
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::ClearSearches()
+{
+  PRUint32 numFilters = mFilters.Length();
+  for (PRUint32 i = 0; i < numFilters; i++) {
+    sbFilterSpec& filter = mFilters[i];
+
+    if (filter.isSearch) {
+      filter.values.Clear();
+    }
+  }
   return NS_OK;
 }
 

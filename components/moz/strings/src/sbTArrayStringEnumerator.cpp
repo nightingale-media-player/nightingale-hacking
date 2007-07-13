@@ -28,13 +28,13 @@
 
 NS_IMPL_ISUPPORTS1(sbTArrayStringEnumerator, nsIStringEnumerator)
 
-sbTArrayStringEnumerator::sbTArrayStringEnumerator(nsTArray<nsString>* aStringArray) :
+sbTArrayStringEnumerator::sbTArrayStringEnumerator(const sbStringArray* aStringArray) :
   mNextIndex(0)
 {
   mStringArray.InsertElementsAt(0, *aStringArray);
 };
 
-sbTArrayStringEnumerator::sbTArrayStringEnumerator(nsTArray<nsCString>* aStringArray) :
+sbTArrayStringEnumerator::sbTArrayStringEnumerator(const sbCStringArray* aStringArray) :
   mNextIndex(0)
 {
   for ( PRUint32 index = 0; index < aStringArray->Length(); index ++ ) {

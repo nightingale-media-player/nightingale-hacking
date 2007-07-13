@@ -33,6 +33,7 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsWeakReference.h>
+#include <sbILocalDatabaseCascadeFilterSet.h>
 #include <sbICascadeFilterSet.h>
 #include <sbIMediaListListener.h>
 #include <nsTHashtable.h>
@@ -42,11 +43,13 @@ class sbLocalDatabaseLibrary;
 class sbLocalDatabaseMediaListView;
 class sbLocalDatabaseTreeView;
 class sbILocalDatabaseAsyncGUIDArray;
+class sbILocalDatabaseGUIDArray;
 class sbILocalDatabaseLibrary;
 class sbIMediaListView;
 
 class sbLocalDatabaseCascadeFilterSet : public nsSupportsWeakReference,
                                         public sbICascadeFilterSet,
+                                        public sbILocalDatabaseCascadeFilterSet,
                                         public sbIMediaListListener
 {
   typedef nsTArray<nsString> sbStringArray;
@@ -54,6 +57,7 @@ class sbLocalDatabaseCascadeFilterSet : public nsSupportsWeakReference,
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBICASCADEFILTERSET
+  NS_DECL_SBILOCALDATABASECASCADEFILTERSET
   NS_DECL_SBIMEDIALISTLISTENER
 
   sbLocalDatabaseCascadeFilterSet();

@@ -40,6 +40,7 @@
 #include <sbIDatabaseQuery.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseAsyncGUIDArray.h>
+#include <sbILocalDatabaseCascadeFilterSet.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -56,6 +57,7 @@
 #include "sbLocalDatabaseCascadeFilterSet.h"
 #include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabasePropertyCache.h"
+#include "sbLocalDatabaseSchemaInfo.h"
 
 #define DEFAULT_FETCH_SIZE 1000
 
@@ -90,43 +92,6 @@ static PRLogModuleInfo* sMediaListViewLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
-/**
- * \brief Adds multiple filters to a GUID array.
- *
- * This method enumerates a hash table and calls AddFilter on a GUIDArray once 
- * for each key. It constructs a string enumerator for the string array that
- * the hash table contains.
- *
- * This method expects to be handed an sbILocalDatabaseGUIDArray pointer as its
- * aUserData parameter.
- */
-/* static */ PLDHashOperator PR_CALLBACK
-sbLocalDatabaseMediaListView::AddFilterToGUIDArrayCallback(nsStringHashKey::KeyType aKey,
-                                                           sbStringArray* aEntry,
-                                                           void* aUserData)
-{
-  NS_ASSERTION(aEntry, "Null entry in the hash?!");
-  NS_ASSERTION(aUserData, "Null userData!");
-
-  // Make a string enumerator for the string array.
-  nsCOMPtr<nsIStringEnumerator> valueEnum =
-    new sbTArrayStringEnumerator(aEntry);
-
-  // If we failed then we're probably out of memory. Hope we do better on the
-  // next key?
-  NS_ENSURE_TRUE(valueEnum, PL_DHASH_NEXT);
-
-  // Unbox the guidArray.
-  nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> guidArray =
-    static_cast<sbILocalDatabaseAsyncGUIDArray*>(aUserData);
-
-  // Set the filter.
-  nsresult rv = guidArray->AddFilter(aKey, valueEnum, PR_FALSE);
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "AddFilter failed!");
-
-  return PL_DHASH_NEXT;
-}
-
 /* static */ PLDHashOperator PR_CALLBACK
 sbLocalDatabaseMediaListView::CloneStringArrayHashCallback(nsStringHashKey::KeyType aKey,
                                                            sbStringArray* aEntry,
@@ -149,9 +114,9 @@ sbLocalDatabaseMediaListView::CloneStringArrayHashCallback(nsStringHashKey::KeyT
 }
 
 /* static */ PLDHashOperator PR_CALLBACK
-sbLocalDatabaseMediaListView::CopyStringArrayHashCallback(nsStringHashKey::KeyType aKey,
-                                                          sbStringArray* aEntry,
-                                                          void* aUserData)
+sbLocalDatabaseMediaListView::AddValuesToArrayCallback(nsStringHashKey::KeyType aKey,
+                                                       sbStringArray* aEntry,
+                                                       void* aUserData)
 {
   NS_ASSERTION(aEntry, "Null entry in the hash?!");
   NS_ASSERTION(aUserData, "Null userData!");
@@ -166,6 +131,23 @@ sbLocalDatabaseMediaListView::CopyStringArrayHashCallback(nsStringHashKey::KeyTy
     rv = propertyArray->AppendProperty(aKey, aEntry->ElementAt(i));
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
   }
+
+  return PL_DHASH_NEXT;
+}
+
+/* static */ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseMediaListView::AddKeysToStringArrayCallback(nsStringHashKey::KeyType aKey,
+                                                           sbStringArray* aEntry,
+                                                           void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  sbStringArray* stringArray = static_cast<sbStringArray*>(aUserData);
+  NS_ASSERTION(stringArray, "Could not cast user data");
+
+  nsString* appended = stringArray->AppendElement(aKey);
+  NS_ENSURE_TRUE(appended, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;
 }
@@ -720,7 +702,15 @@ sbLocalDatabaseMediaListView::GetCurrentFilter(sbIPropertyArray** _retval)
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mViewFilters.EnumerateRead(CopyStringArrayHashCallback, propertyArray);
+  mViewFilters.EnumerateRead(AddValuesToArrayCallback, propertyArray);
+
+  // Add filters from the cascade filter list, if any
+  nsCOMPtr<sbILocalDatabaseCascadeFilterSet> cfs =
+    do_QueryReferent(mWeakCascadeFilterSet);
+  if (cfs) {
+    rv = cfs->AddFilters(propertyArray);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_ADDREF(*_retval = propertyArray);
   return NS_OK;
@@ -791,19 +781,12 @@ sbLocalDatabaseMediaListView::RemoveFilters(sbIPropertyArray* aPropertyArray)
     // If there is an array for this property, search the array for the value
     // and remove it
     if (arrayExists) {
-      nsCOMPtr<sbIPropertyInfo> info;
-      rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsAutoString sortableValue;
-      rv = info->MakeSortable(value, sortableValue);
-      NS_ENSURE_SUCCESS(rv, rv);
 
       PRUint32 length = stringArray->Length();
       // Do this backwards so we don't have to deal with the array shifting
       // on us.  Also, be sure to remove multiple copies of the same string.
       for (PRInt32 i = length - 1; i >= 0; i--) {
-        if (stringArray->ElementAt(i).Equals(sortableValue)) {
+        if (stringArray->ElementAt(i).Equals(value)) {
           stringArray->RemoveElementAt(i);
           dirty = PR_TRUE;
         }
@@ -824,7 +807,16 @@ sbLocalDatabaseMediaListView::ClearFilters()
 {
   mViewFilters.Clear();
 
-  nsresult rv = UpdateViewArrayConfiguration();
+  // Clear filters from the cascade filter list, if any
+  nsresult rv;
+  nsCOMPtr<sbILocalDatabaseCascadeFilterSet> cfs =
+    do_QueryReferent(mWeakCascadeFilterSet);
+  if (cfs) {
+    rv = cfs->ClearFilters();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = UpdateViewArrayConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -846,12 +838,25 @@ sbLocalDatabaseMediaListView::GetCurrentSearch(sbIPropertyArray** aCurrentSearch
 
   nsresult rv;
 
-  if (!mViewSearches) {
-    mViewSearches = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  nsCOMPtr<sbIMutablePropertyArray> propertyArray;
+  if (mViewSearches) {
+    rv = ClonePropertyArray(mViewSearches, getter_AddRefs(propertyArray));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    propertyArray = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  NS_ADDREF(*aCurrentSearch = mViewSearches);
+  // Add filters from the cascade filter list, if any
+  nsCOMPtr<sbILocalDatabaseCascadeFilterSet> cfs =
+    do_QueryReferent(mWeakCascadeFilterSet);
+  if (cfs) {
+    rv = cfs->AddSearches(propertyArray);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ADDREF(*aCurrentSearch = propertyArray);
   return NS_OK;
 }
 
@@ -887,6 +892,14 @@ sbLocalDatabaseMediaListView::ClearSearch()
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = array->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Clear searches from the cascade filter list, if any
+  nsCOMPtr<sbILocalDatabaseCascadeFilterSet> cfs =
+    do_QueryReferent(mWeakCascadeFilterSet);
+  if (cfs) {
+    rv = cfs->ClearSearches();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1168,9 +1181,9 @@ sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
     rv = property->GetValue(value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // If the string is empty and we are replacing, we should delete the
+    // If the string is null and we are replacing, we should delete the
     // property from the hash
-    if (value.IsEmpty()) {
+    if (value.IsVoid()) {
       if (aReplace) {
         mViewFilters.Remove(propertyName);
       }
@@ -1199,20 +1212,9 @@ sbLocalDatabaseMediaListView::UpdateFiltersInternal(sbIPropertyArray* aPropertyA
           NS_ENSURE_TRUE(successKey, NS_ERROR_OUT_OF_MEMORY);
         }
       }
-
-      nsCOMPtr<sbIPropertyInfo> info;
-      rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsAutoString sortableValue;
-      rv = info->MakeSortable(value, sortableValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-
       // Now we need a slot for the property value.
-      nsString* valueStringPtr = stringArray->AppendElement();
-      NS_ENSURE_TRUE(valueStringPtr, NS_ERROR_OUT_OF_MEMORY);
-
-      valueStringPtr->Assign(sortableValue);
+      nsString* appended = stringArray->AppendElement(value);
+      NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
     }
   }
 
@@ -1231,7 +1233,46 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
   rv = mArray->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mViewFilters.EnumerateRead(AddFilterToGUIDArrayCallback, mArray);
+  sbStringArray filterProperties;
+  mViewFilters.EnumerateRead(AddKeysToStringArrayCallback, &filterProperties);
+  PRUint32 length = filterProperties.Length();
+  for (PRUint32 i = 0; i < length; i++) {
+
+    sbStringArray* values;
+    PRBool success = mViewFilters.Get(filterProperties[i], &values);
+    NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+
+    nsCOMPtr<sbIPropertyInfo> info;
+    rv = mPropMan->GetPropertyInfo(filterProperties[i], getter_AddRefs(info));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    sbStringArray sortableValues;
+
+    PRUint32 valueCount = values->Length();
+    for (PRUint32 j = 0; j < valueCount; j++) {
+
+      nsAutoString sortableValue;
+      // Top level properties are not searched as sortable
+      if (SB_IsTopLevelProperty(filterProperties[i])) {
+        sortableValue = values->ElementAt(j);
+      }
+      else {
+        rv = info->MakeSortable(values->ElementAt(j), sortableValue);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      nsString* appended = sortableValues.AppendElement(sortableValue);
+      NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+    }
+
+    // Make a string enumerator for the string array.
+    nsCOMPtr<nsIStringEnumerator> valueEnum =
+      new sbTArrayStringEnumerator(&sortableValues);
+    NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
+
+    // Set the filter.
+    rv = mArray->AddFilter(filterProperties[i], valueEnum, PR_FALSE);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "AddFilter failed!");
+  }
 
   // Update searches
   if (mViewSearches) {
@@ -1272,6 +1313,14 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
       rv = mArray->AddFilter(propertyName, valueEnum, PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+  }
+
+  // Add configuration from the cascade filter list, if any
+  nsCOMPtr<sbILocalDatabaseCascadeFilterSet> cfs =
+    do_QueryReferent(mWeakCascadeFilterSet);
+  if (cfs) {
+    rv = cfs->AddConfiguration(mArray);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Update sort

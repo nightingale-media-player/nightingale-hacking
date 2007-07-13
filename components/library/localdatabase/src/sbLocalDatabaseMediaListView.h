@@ -84,15 +84,12 @@ public:
 
   sbILocalDatabaseGUIDArray* GetGUIDArray();
 
+  nsresult UpdateViewArrayConfiguration();
+
 private:
   typedef nsTArray<nsString> sbStringArray;
   typedef nsClassHashtable<nsStringHashKey, sbStringArray> sbStringArrayHash;
   typedef nsCOMArray<sbIPropertyArray> sbPropertyArrayList;
-
-  static PLDHashOperator PR_CALLBACK
-    AddFilterToGUIDArrayCallback(nsStringHashKey::KeyType aKey,
-                                 sbStringArray* aEntry,
-                                 void* aUserData);
 
   static PLDHashOperator PR_CALLBACK
     CloneStringArrayHashCallback(nsStringHashKey::KeyType aKey,
@@ -100,16 +97,19 @@ private:
                                  void* aUserData);
 
   static PLDHashOperator PR_CALLBACK
-    CopyStringArrayHashCallback(nsStringHashKey::KeyType aKey,
-                                sbStringArray* aEntry,
-                                void* aUserData);
+    AddValuesToArrayCallback(nsStringHashKey::KeyType aKey,
+                             sbStringArray* aEntry,
+                             void* aUserData);
+
+  static PLDHashOperator PR_CALLBACK
+    AddKeysToStringArrayCallback(nsStringHashKey::KeyType aKey,
+                                 sbStringArray* aEntry,
+                                 void* aUserData);
 
   nsresult MakeStandardQuery(sbIDatabaseQuery** _retval);
 
   nsresult UpdateFiltersInternal(sbIPropertyArray* aPropertyArray,
                                  PRBool aReplace);
-
-  nsresult UpdateViewArrayConfiguration();
 
   nsresult CreateQueries();
 

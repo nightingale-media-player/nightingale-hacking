@@ -39,6 +39,7 @@ XPIDL_SRCS = sbILocalDatabaseAsyncGUIDArray.idl \
              sbILocalDatabaseTreeView.idl \
              sbILocalDatabaseSimpleMediaList.idl \
              sbILocalDatabaseDynamicPlaylistService.idl \
+             sbILocalDatabaseCascadeFilterSet.idl \
              $(NULL)
 
 XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \
