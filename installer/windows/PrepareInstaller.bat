@@ -65,7 +65,7 @@ cd %DIST_DIR%
 %DIST_DEPTH%\tools\win32\nsis\makensis /NOCD /DBUILD_ID="%BUILD_ID%" /DARCH="%ARCH%" /O"%DIST_DEPTH%\Songbird_%BUILD_ID%.log" /V4 ../installer/windows/songbird.nsi
 cd %DIST_DEPTH%\installer\windows
 
-if exist "%DIST_DIR%\Songbird_%BUILD_ID%_%ARCH%.exe" goto success
+if exist "%DIST_DIR%\Songbird_*_%ARCH%.exe" goto success
 goto failure
 
 :success
@@ -77,7 +77,7 @@ goto failure
 @echo.
 
 @mkdir %DEPTH%\compiled\_built_installer
-@move /y %DIST_DIR%\Songbird_%BUILD_ID%_%ARCH%.exe %DEPTH%\compiled\_built_installer
+@move /y %DIST_DIR%\Songbird_*_%ARCH%.exe %DEPTH%\compiled\_built_installer
 @%DEPTH%\tools\win32\fsum\fsum.exe -d%DEPTH%\compiled\_built_installer -md5 -sha1 -jm Songbird_%BUILD_ID%_%ARCH%.exe > %DEPTH%\compiled\_built_installer\Songbird_%BUILD_ID%_%ARCH%.exe.md5
 
 goto end
