@@ -4,4 +4,5 @@ songbird.jar:
 #else
 % skin  songbird-dialogs  classic/1.0  jar:songbird.jar!/skin/dialogs/
 #endif
+% style chrome://mozapps/content/extensions/extensions.xul chrome://songbird-dialogs/skin/addons.css
 @include_all_to skin/dialogs/
