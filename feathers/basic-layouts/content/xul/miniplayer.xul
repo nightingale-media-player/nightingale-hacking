@@ -39,6 +39,9 @@
 %songbirdDTD;
 ]>
 
+<!-- Include this to automatically populate a menubar -->
+<?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
+
 <window 
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -62,8 +65,9 @@
     <hbox id="frame_mini" flex="1" align="center" pack="center">
       <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
   
-      <!-- Magic stub menu to keep OS X happy  -->
-      <menubar id="mini_menu" hidden="false" />
+      <!--  Magic menu to keep OS X happy.  
+            TODO: Make a popup version for everyone else. -->
+      <menubar id="songbird_menu" hidden="true"/>
   
       <!-- PLAYER DISPLAY AND CONTROLS -->
       <sb-mini-player-controls flex="1"/>
@@ -92,6 +96,10 @@
    src="chrome://songbird/content/scripts/mousewheel_volume.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_open.js"/>
+   
+  <!-- This should be put in the menubarOverlay.xul? -->
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/menubar_xbl_temp.js" />
 
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/miniplayer.js" />
