@@ -132,6 +132,9 @@ sbSQLBuilderCriterionString::ToString(nsAString& _retval)
   _retval.AppendLiteral("'");
   _retval.Append(escapedValue);
   _retval.AppendLiteral("'");
+  if (mMatchType == sbISQLWhereBuilder::MATCH_LIKE) {
+    _retval.AppendLiteral(" ESCAPE '\\'");
+  }
   return NS_OK;
 }
 

@@ -36,6 +36,7 @@ target_name = sbMozStringUtils
 endif
 
 CPP_SRCS = sbTArrayStringEnumerator.cpp \
+           sbStringUtils.cpp \
            $(NULL)
 
 CPP_INCLUDES = \

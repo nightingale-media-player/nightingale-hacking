@@ -36,6 +36,7 @@
 #include <nsComponentManagerUtils.h>
 #include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
+#include <sbStringUtils.h>
 
 #define COUNT_COLUMN          NS_LITERAL_STRING("count(1)")
 #define GUID_COLUMN           NS_LITERAL_STRING("guid")
@@ -650,6 +651,12 @@ sbLocalDatabaseQuery::AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType 
   nsAutoString searchTerm;
   searchTerm.AppendLiteral("%");
   searchTerm.Append(aKey);
+  // escape '%' in the user-entered search string
+  PRUint32 offset = nsString_FindCharInSet(searchTerm, "\\%", 1);
+  while (offset != -1) {
+    searchTerm.Insert(PRUnichar('\\'), offset);
+    offset = nsString_FindCharInSet(searchTerm, "\\%", offset + 2); // skip the escaped %
+  }
   searchTerm.AppendLiteral("%");
 
   nsCOMPtr<sbISQLBuilderCriterion> criterion;
