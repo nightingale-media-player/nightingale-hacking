@@ -117,10 +117,10 @@ ShowUninstDetails show
 ;!define MUI_HEADERIMAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Header\nsis.bmp
 
 ; Installer Welcome / Finish page image.
-;!define MUI_WELCOMEFINISHPAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp
+!define MUI_WELCOMEFINISHPAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp
 
 ; Uninstaller Welcome / Finish page image.
-;!define MUI_UNWELCOMEFINISHPAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp
 
 ; Language
 !insertmacro MUI_LANGUAGE "English"
@@ -130,6 +130,7 @@ ShowUninstDetails show
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; License page
+!define MUI_LICENSEPAGE_TEXT_TOP "Please read the license before continuing with the installation of ${BrandFullName}."
 !insertmacro MUI_PAGE_LICENSE "LICENSE.txt"
 
 ; Components page options
@@ -161,8 +162,11 @@ ShowUninstDetails show
 !insertmacro MUI_PAGE_INSTFILES
 
 ; Finish Page
-!define MUI_FINISHPAGE_NOREBOOTSUPPORT
-!define MUI_FINISHPAGE_RUN $INSTDIR/${FileMainEXE}
+!define MUI_FINISHPAGE_TITLE_3LINES
+!define MUI_FINISHPAGE_TITLE "${BrandFullName} installation is now complete."
+!define MUI_FINISHPAGE_TEXT  "Congradulations!\r\n ${BrandFullName} is ready to take off!"
+!define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN_FUNCTION LaunchApp
 !define MUI_FINISHPAGE_RUN_TEXT "Launch ${BrandFullName}!"
 !insertmacro MUI_PAGE_FINISH
 
@@ -170,23 +174,22 @@ ShowUninstDetails show
 ; Uninstaller pages.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Uninstall Confirm Page
+!define MUI_UNCONFIRMPAGE_TEXT_TOP "You are about to uninstall ${BrandFullName}."
 !insertmacro MUI_UNPAGE_CONFIRM
 
 ; Remove Files Page
 !insertmacro MUI_UNPAGE_INSTFILES
 
 ; Finish Page
+!define MUI_UNFINISHPAGE_TITLE_3LINES
+!define MUI_UNFINISHPAGE_TITLE "${BrandFullName} uninstallation is now complete."
+!define MUI_UNFINISHPAGE_TEXT  "Chirp! Chirp! See you later!"
 !insertmacro MUI_UNPAGE_FINISH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Global Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 var LinkIconFile
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Force quit message 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!define ForceQuitMessage "Songbird is currently running and will be forced to quit."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Install Sections

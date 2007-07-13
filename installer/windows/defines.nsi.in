@@ -47,3 +47,5 @@
 !define PreferredUninstallerIcon  songbird_nightly.ico
 !define VistaIcon                 songbird_nightly.ico
 #endif
+
+!define ForceQuitMessage          "@SB_APPNAME@  is currently running and will be forced to quit."
