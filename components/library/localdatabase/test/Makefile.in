@@ -49,6 +49,7 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_multilibrary.js \
                  $(srcdir)/test_filterable.js \
                  $(srcdir)/test_searchable.js \
+                 $(srcdir)/test_search_escaping.js \
                  $(srcdir)/test_sortable.js \
                  $(srcdir)/test_cascadefilterset.js \
                  $(srcdir)/test_dblocation.js \
