@@ -39,6 +39,7 @@
 #include <xpcom/nsAutoLock.h>
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsCOMPtr.h>
+#include <xpcom/nsAutoPtr.h>
 #include <xpcom/nsMemory.h>
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsServiceManagerUtils.h>
@@ -140,53 +141,56 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
 
   if(!_retval) return NS_ERROR_NULL_POINTER;
   *_retval = nsnull;
-  nsresult nRet = NS_ERROR_UNEXPECTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
-  sbIMetadataHandler *pHandler = nsnull;
+  nsRefPtr<sbIMetadataHandler> pHandler;
   nsCOMPtr<nsIChannel> pChannel;
-  nsCOMPtr<nsIIOService> pIOService = do_GetIOService(&nRet);
-  if(NS_FAILED(nRet)) return nRet;
+  nsCOMPtr<nsIIOService> pIOService = do_GetIOService(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ConvertUTF16toUTF8 cstrURL(strURL);
 
   nsCOMPtr<nsIURI> pURI;
-  pIOService->NewURI(cstrURL, nsnull, nsnull, getter_AddRefs(pURI));
-  if(!pURI) return nRet;
+  rv = pIOService->NewURI(cstrURL, nsnull, nsnull, getter_AddRefs(pURI));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   //
   // Apparently, somewhere in here, it fails for local mp3 files on linux and mac.
   //
 
   nsCString cstrScheme;
-  nRet = pURI->GetScheme(cstrScheme);
-  if(NS_FAILED(nRet)) return nRet;
+  rv = pURI->GetScheme(cstrScheme);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if(cstrScheme.Length() <= 1)
   {
     nsCString cstrFixedURL = NS_LITERAL_CSTRING("file://");
     cstrFixedURL += cstrURL;
 
     pIOService->NewURI(cstrFixedURL, nsnull, nsnull, getter_AddRefs(pURI));
-    nRet = pURI->GetScheme(cstrScheme);
+    rv = pURI->GetScheme(cstrScheme);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(pChannel));
-  if(NS_FAILED(nRet)) return nRet;
+  rv = pIOService->NewChannelFromURI(pURI, getter_AddRefs(pChannel));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Local types to ease handling.
   handlerlist_t handlerlist; // hooray for autosorting (std::set)
 
   nsCString u8Url;
-  pURI->GetSpec( u8Url );
-  nsString url = NS_ConvertUTF8toUTF16(u8Url);
+  rv = pURI->GetSpec( u8Url );
+  NS_ENSURE_SUCCESS(rv, rv);
 
+  nsString url = NS_ConvertUTF8toUTF16(u8Url);
   if (!m_ContractList.size())
     throw;
 
   // Go through the list of contract ids, and make them vote on the url
   for (contractlist_t::iterator i = m_ContractList.begin(); i != m_ContractList.end(); i++ )
   {
-    nsCOMPtr<sbIMetadataHandler> handler(do_CreateInstance((*i).get()));
-    if (handler.get())
+    nsCOMPtr<sbIMetadataHandler> handler = do_CreateInstance((*i).get(), &rv);
+    if(NS_SUCCEEDED(rv) && handler.get())
     {
       PRInt32 vote;
       handler->Vote( url, &vote );
@@ -208,20 +212,13 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
     pHandler = (*i).m_Handler.get();
   }
 
-  if(!pHandler)
-  {
-    nRet = NS_ERROR_UNEXPECTED;
-    return nRet;
-  }
+  NS_ENSURE_TRUE(pHandler, NS_ERROR_UNEXPECTED);
 
   // So, if we have anything, set it up and send it back.
-  nRet = pHandler->SetChannel(pChannel);
-  if(nRet != 0) return nRet;
+  rv = pHandler->SetChannel(pChannel);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  pHandler->AddRef();
-  *_retval = pHandler;
+  pHandler.swap(*_retval);
 
-  nRet = NS_OK;
-
-  return nRet;
+  return NS_OK;
 }
