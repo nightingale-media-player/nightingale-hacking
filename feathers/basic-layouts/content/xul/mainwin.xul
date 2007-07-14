@@ -105,35 +105,18 @@
               <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>
               <sb-player-playpause-button id="songbird_btn_play_pause" popupanchor="topleft" popupalign="bottomleft"/>
               <sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" /> 
-            </hbox>
-            <hbox id="volume_box" pack="center" align="center">
-              <sb-player-mute-button id="mute" />
-              <spacer id="songbird_volume_w"/>
-              <sb-player-volume-slider id="songbird_volume" flex="1" orient="horizontal" maxpos="100"/>
-              <spacer id="songbird_volume_e"/>
-            </hbox>
+            </hbox>            
           </vbox>
 
-          <spacer id="control_middle_spacer" flex="1"/>
-
-          <hbox id="control_right_box">
-          
-            <!-- REPEAT/SHUFFLE -->
-            <vbox id="face_left_box" >
-              <sb-player-repeat-button/>
-              <sb-player-shuffle-button/>
-            </vbox>
-            
-
-            <sb-player-faceplate id="main_faceplate" flex="1" />
-                              
-
-            <!-- CURRENT TRACK / NEXT SERVICE -->
-            <vbox id="face_right_box">
-              <sb-player-curtrack-button id="songbird_btn_curr"/>
-              <sb-player-cyclefaceplate-button id="songbird_btn_next" faceplate="main_faceplate" cycle="next" popupanchor="topleft" popupalign="bottomleft" />
-            </vbox>
+          <hbox id="volume_box" pack="center" align="center">
+            <sb-player-mute-button id="mute" />
+            <sb-player-volume-slider id="songbird_volume" flex="1" orient="horizontal" maxpos="100"/>
           </hbox>
+
+          <spacer id="control_middle_spacer" flex="1" />
+          
+          <sb-player-faceplate id="main_faceplate" flex="1" />            
+          
 
           <spacer flex="1"/>
         </hbox>

@@ -43,6 +43,7 @@ There are 13 unique colors specified as follows:
 #8A8F84; /** Light Color 2           light greyish green 2
 #EDF3F0; /** Light Color 3           very light greyish green
 #dee8e3; /** Light Color 4           lighter greyish green
+#5c5f58; /** 
 #202220; /** Dark Color 1            cool charcoal grey 1
 #0f100f; /** Dark Color 2            cool charcoal grey 2
 
@@ -86,7 +87,7 @@ window,
 prefwindow,
 playlist2
 {
-  background-color: #313131 !important; /* color of the Main Window coffee:#1f150a, 0.3 black #0c0a05**/
+  background-color: #313131; /* color of the Main Window coffee:#1f150a, 0.3 black #0c0a05**/
 }
 
 toolbar
@@ -252,6 +253,7 @@ scrollbar
   background-color: transparent !important;
   background-image: none !important; 
   border-top: 1px solid #202220; /** Light Border 4*/
+  border-left: none !important;
 } 
 scrollbarbutton
 {    
@@ -307,8 +309,7 @@ A List Tree is a sortable column list with striping rows.
 listheader,
 tree treecol
 {
-  color: #B3BAAC; /** Light Color 1 */
-  border-right-color: #222222 !important; /** Dark Border 4*/ 
+  color: #99a195; /** TODO rename this color */
   background-color: transparent !important;
 }
 
@@ -337,6 +338,7 @@ tree .treecol-image /* puts a little piece to fill in next to the column picker 
 {
   border: 1px solid transparent;
   background-color: transparent !important;
+  border-right: 1px solid #202220 !important;
 }
 
 /** 
@@ -352,21 +354,27 @@ Organize your collection with genre/artist/album filterlists.
 filterlist2 > tree
 {
   background-color: #202220;
+  border-top: 1px solid #202220;
   border-left: 1px solid #202220;
+  border-right: none;
+  border-bottom: 1px solid #474848; /** Light Border 3 */
   /* opacity: 0.8; slow on the mac :( **/
 }
 
+filterlist2 > tree > treechildren::-moz-tree-cell
+{
+  border: 1px solid transparent !important; /** */
+}
 
 filterlist2 > tree > treechildren::-moz-tree-row
 {
   background-color: transparent;
 }
 
-
 /* striping */
 filterlist2 > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #dee8e3; /** Light Color 4 */
+  background-color: #EDF3F0; /** Light Color 3 */
 }
 
 filterlist2 > tree > treechildren::-moz-tree-row( even )
@@ -381,7 +389,7 @@ filterlist2 > tree > treechildren::-moz-tree-row( selected )
 
 filterlist2 > tree > treechildren::-moz-tree-row( selected, focus )
 {
-  background-color: #B3BAAC; /** Light Color 1 */
+  background-color: #5c5f58; /** */
 }
 
 filterlist2 > tree > treechildren::-moz-tree-cell-text
@@ -391,7 +399,7 @@ filterlist2 > tree > treechildren::-moz-tree-cell-text
 
 filterlist2 > tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #0f100f; /** Dark Color 2 */
+  color: #feffff; /** Light Color Brightest */
 }
 
 /** 
@@ -413,6 +421,7 @@ playlist > stack > vbox
 #playlist_tree
 {
   background-color: #202220 !important;  
+  border-right: 0px solid transparent !important;
 }
 .playlist-toolbar
 {
@@ -444,7 +453,7 @@ treechildren::-moz-tree-column(insertbefore)
 
 #playlist_tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #dee8e3; /** Light Color 4 */
+  background-color: #EDF3F0; /** Light Color 3 */
 }
 
 #playlist_tree >  treechildren::-moz-tree-row( even )
@@ -473,7 +482,7 @@ treechildren::-moz-tree-column(insertbefore)
 }
 #playlist_tree > treechildren::-moz-tree-row( selected, focus )
 {
-  background-color: #B3BAAC; /** Light Color 1 */
+  background-color: #5c5f58; /** */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell-text
@@ -483,7 +492,7 @@ treechildren::-moz-tree-column(insertbefore)
 
 #playlist_tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #0f100f; /** Dark Color 2 */
+  color: #feffff; /** Light Color Brightest */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell( selected )
@@ -906,13 +915,19 @@ FACEPLATE
 */
 
 /* the seekbar slider */
+
+
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb
 {
   -moz-border-radius: 5px;
   background-color: #202220; /** Dark Color 1 */
   border: none;
 }
-
+sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb 
+{
+  background-color: White;
+  border: 3px solid #313131;
+}
 .faceplate-seekbar
 {
   border: none;
@@ -931,7 +946,7 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > t
 .faceplate-progressmeter > .progress-bar,
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar
 {
-  background-color: #8A8F84;
+  background-color: #313131;
   -moz-border-radius: 5px;
 }
 
@@ -939,7 +954,8 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressme
 .faceplate-progressmeter > .progress-remainder
 {
   background-color: #B3BAAC;
-  -moz-border-radius: 5px;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-bottomright: 5px;
 }
 
 
@@ -1002,6 +1018,7 @@ searchbar:not([empty="true"])[livesearchmode="true"]
 searchbar[empty="true"] > hbox > hbox > .searchbar-textbox 
 {
   color: #8A8F84; /** Light Color 2 */  
+  opacity: 0.5;
 }
 
 /** 
@@ -1019,7 +1036,7 @@ textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -
   border-bottom-color: #797f76; /** Dark Border 2*/
   border-right-color: #222222; /** Dark Border 1*/
   background-color: #202220; /** Dark Color 1 */ 
-  color: #feffff; /** Light Color Brightest */
+  color: #B3BAAC; /** Light Color 1 */
 }
     
 
@@ -1046,7 +1063,6 @@ textbox[disabled="true"]
 textbox[invalid="true"] {
   background-color: red;
 } 
-
 
 
 /** 
@@ -1108,7 +1124,6 @@ tree
   border-left-color: #222222; /** Dark Border 4*/
   border-bottom-color: #99A195; /** Dark Border 2*/
   border-right-color: #99A194; /** Dark Border 1*/
-  -moz-border-radius: 5px;
 }
 
 tree treecol

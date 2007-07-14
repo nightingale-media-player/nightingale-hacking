@@ -115,32 +115,26 @@ Contains the Main Playback Controls and the Dashboard.
 
 #control_left_box
 {
-  width: 138px;
 }
 
 #playbutton_box
 {
-  width: 104px;
-  height: 36px;
+ min-height: 55px;
 }
 
 
 #songbird_btn_play_pause 
 {
-  margin-left: 2px;
-  margin-right: 2px;
 }
-
 
 #volume_box
 {
-  padding-top: 0px;
-  margin-top: 5px;
 }
 
 #control_right_box
 {
  width: 500px;
+ height: 55px;
 }
 
 #face_left_box
