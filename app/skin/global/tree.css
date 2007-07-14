@@ -238,6 +238,7 @@ treecolpicker {
 
 .treecol-text {
   margin: 0px !important;
+  padding-bottom: 1px;
 }
 
 treecol[hideheader="true"] {
@@ -336,6 +337,10 @@ treechildren.gridlines::-moz-tree-row {
 treechildren::-moz-tree-image(Name) {
   margin: 0px 4px;
   list-style-image: url("chrome://global/skin/tree/item.png");
+}
+
+treechildren::-moz-tree-image {
+  margin: 0px 3px 0px 0px;
 }
 
 treechildren::-moz-tree-image(Name, container) {

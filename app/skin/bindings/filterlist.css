@@ -59,7 +59,7 @@ filterlist2 > tree > treechildren::-moz-tree-row( selected, focus )
 
 filterlist2 > tree > treechildren::-moz-tree-cell-text( selected )
 {
-  font-weight: bold;
+  font-weight: normal;
 }
 
 

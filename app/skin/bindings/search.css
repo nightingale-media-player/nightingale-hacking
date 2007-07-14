@@ -130,4 +130,9 @@ searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-box > .search-
   -moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 
+searchbar[empty="true"] > hbox > hbox > .searchbar-textbox 
+{
+  padding-bottom: 1px !important;
+}
+
 

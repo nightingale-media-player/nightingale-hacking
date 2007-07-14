@@ -81,7 +81,7 @@ playlist > stack > vbox
 
 #playlist_tree > treechildren::-moz-tree-cell-text( selected )
 {
-  font-weight: bold !important;
+  font-weight: normal;
 }
 
 #playlist_tree > treechildren::-moz-tree-progressmeter

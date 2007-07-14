@@ -32,12 +32,17 @@ FACEPLATE
 ***************************************************************************************************
 */
 
+#main_faceplate
+{
+  min-width: 420px;
+}
+
 /** Rounded corners for the faceplate **/
 .faceplate-left-spacer,
 .faceplate-right-spacer
 {
   width: 10px;
-  height: 50px;
+  height: 55px;
   background-repeat: no-repeat;
 }
 .faceplate-left-spacer
@@ -53,7 +58,7 @@ FACEPLATE
 
 .faceplate-bkgd-box
 {
-  height: 50px;
+  height: 55px;
   background-image: url(chrome://songbird/skin/faceplate/faceplate_bkgd.png);
   background-repeat: repeat-x;
   overflow: hidden;
@@ -70,6 +75,17 @@ FACEPLATE
  padding-left: 10px;
  padding-right: 10px;
 }
+
+.faceplate-text
+{
+  font-family: Arial, Helvetica, Sans-serif !important;
+}
+
+sb-player-artist-label.faceplate-text
+{
+  font-size: 14px !important;
+}
+  
 
 .faceplate-progressmeter,
 .faceplate-seekbar
@@ -90,8 +106,8 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressme
 
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb 
 {
-  width: 21px;
-  height: 8px;
+  width: 11px;
+  height: 10px;
 }
 sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb  > gripper
 {
