@@ -68,10 +68,7 @@
   
   <popupset id="mainPopupSet" />
 
-  <sb-sys-outer-frame id="window_parent" flex="1"
-    ondragover="nsDragAndDrop.dragOver( event, SBDropObserver )"
-    ondragdrop="nsDragAndDrop.drop( event, SBDropObserver )"
-  >
+  <sb-sys-outer-frame id="window_parent" flex="1">
     <!-- ?! XBL has hbox orientation for its children, no matter what.  Grr. -->
     <vbox flex="1">
 
@@ -260,6 +257,7 @@
    src="chrome://songbird/content/scripts/overlayLoader.js" />
 
 </window>
+
 
 
 

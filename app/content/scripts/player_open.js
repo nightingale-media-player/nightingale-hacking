@@ -28,7 +28,6 @@
 //
 // This file is not standalone
 
-
 try
 {
   // TODO: Remove this
@@ -73,25 +72,33 @@ try
     var fp_status = fp.show();
     if ( fp_status == Components.interfaces.nsIFilePicker.returnOK )
     {
-      // And if we're good, play it.
-      seen_playing.boolValue = false;
-      theTitleText.stringValue = fp.file.leafName;
-      theArtistText.stringValue = "";
-      theAlbumText.stringValue = "";
-
       // Use a nsIURI because it is safer and contains the scheme etc...
       var ios = Components.classes["@mozilla.org/network/io-service;1"]
                           .getService(Components.interfaces.nsIIOService);
       var uri = ios.newFileURI(fp.file, null, null);
       
-      // Import the item.
-      var item = SBImportURLIntoMainLibrary(uri);
-      
-      var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                .getService(Components.interfaces.sbILibraryManager);
+      // See if we're asking for an extension
+      if ( isXPI( uri.spec ) )
+      {
+        installXPI( uri.spec );
+      }
+      else
+      {
+        // And if we're good, play it.
+        seen_playing.boolValue = false;
+        theTitleText.stringValue = fp.file.leafName;
+        theArtistText.stringValue = "";
+        theAlbumText.stringValue = "";
 
-      // Display the propery view and play the newly imported item.
-      SBDisplayViewForListAndPlayItem(libraryManager.mainLibrary, item);
+        // Import the item.
+        var item = SBImportURLIntoMainLibrary(uri);
+        
+        var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                  .getService(Components.interfaces.sbILibraryManager);
+
+        // Display the propery view and play the newly imported item.
+        SBDisplayViewForListAndPlayItem(libraryManager.mainLibrary, item);
+      }
     }
   }
 
@@ -643,12 +650,12 @@ function isXPI(filename) {
 }
 
 // Prompt the user to install the given XPI.
-function installXPI(filename) {    
-  xpinstallObj = {};
-  xpinstallObj[filename] = filename;
-  InstallTrigger.install(xpinstallObj);
+function installXPI(localFilename)
+{
+  var inst = { xpi: localFilename };
+  InstallTrigger.install( inst );  // "InstallTrigger" is a Moz Global.  Don't grep for it.
+  // http://developer.mozilla.org/en/docs/XPInstall_API_Reference:InstallTrigger_Object
 }
-
 // Library Utilities
 
 /**
@@ -658,11 +665,11 @@ function SBGetWebLibrary() {
   var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                                   .getService(Components.interfaces.sbILibraryManager);
 
-  var prefsService = Cc["@mozilla.org/preferences-service;1"]
-                    .getService(Ci.nsIPrefService);
+  var prefsService = Components.classes["@mozilla.org/preferences-service;1"]
+                    .getService(Components.interfaces.nsIPrefService);
     
   var prefBranch = prefsService.getBranch("songbird.library.")
-                      .QueryInterface(Ci.nsIPrefBranch);
+                      .QueryInterface(Components.interfaces.nsIPrefBranch);
   
   var webLibrary = prefBranch.getCharPref("web");
   
@@ -708,7 +715,7 @@ function SBImportURLIntoMainLibrary(url) {
   // skip import of the item if it already exists
   var mediaItem = getFirstItemByProperty(library, "http://songbirdnest.com/data/1.0#contentURL", url);
   if (mediaItem) 
-    return null;
+    return mediaItem;
   
   try {
     mediaItem = library.createMediaItem(uri);
@@ -787,7 +794,9 @@ function SBDisplayViewForListAndPlayItem(list, item) {
   var index = list.indexOf(item, 0);
 
   // Get the tabbed browser, load new library view, unfiltered.
-  gBrowser.loadMediaList(list, null, null, null);
+  if ( typeof gBrowser != 'undefined' ) { // "if ( gBrowser )" gave a js error?!
+    gBrowser.loadMediaList(list, null, null, null);
+  }
   
   // Play the item that was just added.
   gPPS.playView(view, index);
@@ -812,7 +821,7 @@ function getFirstItemByProperty(aMediaList, aProperty, aValue) {
   aMediaList.enumerateItemsByProperty(aProperty,
                                       aValue,
                                       listener,
-                                      Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                      Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
 
   return listener.item;
 }
@@ -823,6 +832,7 @@ catch (e)
 {
   alert(e);
 }
+
 
 
 

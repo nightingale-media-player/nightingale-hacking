@@ -1709,6 +1709,12 @@
             url = url.substr(0,separator);
           }
 
+          // Hardcode, skip adding .xpi and .jar files
+          if ( /\.(xpi|jar)$/i.test(url) ) {
+            badEntries++;
+            continue;
+          }
+
           if (getPlatformString() == "Windows_NT") url = url.toLowerCase();
 
           // skip import of the item if it exists in this library

@@ -29,6 +29,32 @@
 var firstDrop;
 var importingDrop = false;
 
+// Module specific global for auto-init/deinit support
+var dndDefaultHandler_module = {};
+dndDefaultHandler_module.init_once = 0;
+dndDefaultHandler_module.deinit_once = 0;
+
+dndDefaultHandler_module.onDragOver = function(event) { nsDragAndDrop.dragOver( event, SBDropObserver ) }
+dndDefaultHandler_module.onDragDrop = function(event) { nsDragAndDrop.drop( event, SBDropObserver ) }
+dndDefaultHandler_module.onLoad = function(event)
+{
+  if (dndDefaultHandler_module.init_once++) { dump("WARNING: dndDefaultHandler_module double init!!\n"); return; }
+  
+  document.addEventListener( "dragover", dndDefaultHandler_module.onDragOver, true );
+  document.addEventListener( "dragdrop", dndDefaultHandler_module.onDragDrop, true );
+}
+
+dndDefaultHandler_module.onUnload = function()
+{
+  if (dndDefaultHandler_module.deinit_once++) { dump("WARNING: dndDefaultHandler_module double deinit!!\n"); return; }
+  document.removeEventListener( "dragover", dndDefaultHandler_module.onDragOver, true );
+  document.removeEventListener( "dragdrop", dndDefaultHandler_module.onDragDrop, true );
+  window.removeEventListener("load", dndDefaultHandler_module.onLoad, false);
+  window.removeEventListener("unload", dndDefaultHandler_module.onUnload, false);
+}
+// Auto-init/deinit registration
+window.addEventListener("load", dndDefaultHandler_module.onLoad, false);
+window.addEventListener("unload", dndDefaultHandler_module.onUnload, false);
 
 var SBDropObserver = 
 {
@@ -46,6 +72,7 @@ var SBDropObserver =
   
   onDragOver: function ( evt, flavour, session )
   {
+    return false;
   },
   
   onDrop: function ( evt, dropdata, session )
@@ -145,31 +172,33 @@ var theDropIsDir = false;
 
 function SBDroppedEntry()
 {
-  if ( theDropIsDir )
-  {
-    theFileScanIsOpen.boolValue = true;
-    
-    // otherwise, fire off the media scan page.
-    var media_scan_data = new Object();
-    media_scan_data.URL = theDropPath;
-    media_scan_data.retval = "";
-
-    // Open the modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
-    theFileScanIsOpen.boolValue = false;
-  } 
-  else if (gPPS.isMediaURL( theDropPath )) {
-    
-    //Import the track into the main library.
-    var item = SBImportURLIntoMainLibrary(theDropPath);
-    
-    if(firstDrop) {
-      firstDrop = false;
+  try {    
+    if ( theDropIsDir )
+    {
+      theFileScanIsOpen.boolValue = true;
       
-      var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                  .getService(Components.interfaces.sbILibraryManager);
-                                  
-      SBDisplayViewForListAndPlayItem(libraryManager.mainLibrary, item);
+      // otherwise, fire off the media scan page.
+      var media_scan_data = new Object();
+      media_scan_data.URL = theDropPath;
+      media_scan_data.retval = "";
+
+      // Open the modal dialog
+      SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
+      theFileScanIsOpen.boolValue = false;
+    } 
+    else if (gPPS.isMediaURL( theDropPath )) {
+      //Import the track into the main library.
+      var item = SBImportURLIntoMainLibrary(theDropPath);
+      if(firstDrop) {
+        firstDrop = false;
+        
+        var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                    .getService(Components.interfaces.sbILibraryManager);
+                                    
+        SBDisplayViewForListAndPlayItem(libraryManager.mainLibrary, item);
+      }
+    } else if ( isXPI( theDropPath ) ) {
+      installXPI(theDropPath);
     }
-  }
+  } catch(e) { alert( "SBDroppedEntry\n\n" + e ); listProperties( e ); }
 }

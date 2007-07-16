@@ -93,7 +93,7 @@ function onExtensionDownloadProgress(aCurrentProgress, aMaxProgress) {
 function onExtensionDownloadComplete() {
   for (var i=0;i<pbundle.installListenerCount;i++) 
     pbundle.getInstallListener(i).onDownloadComplete(pbundle, cur_ext);
-  var r = installXPI(destFile);
+  var r = forceInstallXPI(destFile);
   if (r == 0) {
     gPrompt.alert( window, "Error",
                   SBString( "setupprogress.couldnotinstall", "Could not install" ) + " " +
@@ -243,7 +243,7 @@ function getRandomParameter() {
   return "?randomguid=" + escape(generateUUID());
 }
 
-function installXPI(localFilename)
+function forceInstallXPI(localFilename)
 {
   var file = Components.classes["@mozilla.org/file/local;1"]
                     .createInstance(Components.interfaces.nsILocalFile);
