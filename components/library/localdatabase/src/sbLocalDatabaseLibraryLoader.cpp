@@ -225,7 +225,7 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
 
   return NS_OK;
 }
-#include <windows.h>
+
 nsresult
 sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUIDPref,
                                                    const nsAString& aDefaultDatabaseGUID,
