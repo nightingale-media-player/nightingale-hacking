@@ -48,6 +48,13 @@
         this.addEventListener( "mousemove", onmouseevent, false);
         this.addEventListener( "mouseup", onmouseevent, false);
         this.addEventListener( "mousedown", onmouseevent, false);
+        
+        var onattrevent= { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.onAttrModified(event); } 
+        } onattrevent._that = this; 
+        this.addEventListener( "DOMAttrModified", onmouseevent, false);
+
         this.restoreLastState();
         this.setAttribute("mousethrough", "never");
       ]]>
@@ -55,6 +62,16 @@
     <destructor>
     </destructor>
 
+    <method name="onAttrModified">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (event.attrName == "state")
+            doAutoShowHide();
+        ]]>
+      </body>
+    </method>
+    
     <method name="getResizeBefore">
       <body>
         <![CDATA[
