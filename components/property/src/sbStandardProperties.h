@@ -65,5 +65,6 @@
 #define SB_PROPERTY_PROGRESSVALUE           "http://songbirdnest.com/data/1.0#progressValue"
 #define SB_PROPERTY_COLUMNSPEC              "http://songbirdnest.com/data/1.0#columnSpec"
 #define SB_PROPERTY_DEFAULTCOLUMNSPEC       "http://songbirdnest.com/data/1.0#defaultColumnSpec"
+#define SB_PROPERTY_CUSTOMTYPE             "http://songbirdnest.com/data/1.0#customType"
 
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

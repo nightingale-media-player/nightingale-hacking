@@ -83,8 +83,8 @@
           </tree>
 
           <!-- Playlist Toolbar -->
-          <sb-commands-toolbar sbid="playlist_toolbar" commandtype="mediaitem"/>
-          <sb-commands-shortcuts sbid="playlist_shortcuts" commandtype="mediaitem"/>
+          <sb-commands-toolbar sbid="playlist_toolbar" commandtype="mediaitem" metricscategory="playlist.toolbar"/>
+          <sb-commands-shortcuts sbid="playlist_shortcuts" commandtype="mediaitem" metricscategory="playlist.shortcut"/>
 
           <!-- Popupset -->
           <popupset>
@@ -96,7 +96,7 @@
               onpopuphidden="onPopupHidden( event );"
               oncommand="onPlaylistContextMenu( event );"
             >
-              <sb-commands-menuitems sbid="playlist_popup_commands" commandtype="mediaitem"/>
+              <sb-commands-menuitems sbid="playlist_popup_commands" commandtype="mediaitem" metricscategory="playlist.context"/>
               <menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
               <xul:menu id="playlist_context_search" label="&playlist.context.search;">
                 <xul:menupopup id="playlist_context_search_popup" type="search" label="" searchterm="" />
@@ -1461,29 +1461,6 @@
       </body>
     </method>
     
-    <!-- This should go away now? -->
-    <method name="onPlaylistContextMenu">
-      <parameter name="evt"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            this.context_item = null;
-            if ( ! evt.target )
-            {
-              return;
-            }
-            this.context_item = document.getAnonymousElementByAttribute(this, 'id', evt.target.id);
-            metrics_inc("playlist.context", this.context_item.getAttribute("id"), null);
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onPlaylistContextMenu - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
     <method name="onPopupShown">
       <parameter name="evt"/>
       <body>

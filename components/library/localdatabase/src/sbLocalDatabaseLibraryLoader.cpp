@@ -89,6 +89,11 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
 #define SB_NAMEKEY_WEB_LIBRARY                             \
   "&chrome://songbird/locale/songbird.properties#device.weblibrary"
 
+#define SB_CUSTOMTYPE_MAIN_LIBRARY                            \
+  "local"
+#define SB_CUSTOMTYPE_WEB_LIBRARY                             \
+  "web"
+
 
 template <class T>
 class sbAutoFreeXPCOMArray
@@ -208,21 +213,24 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
   nsresult rv =
     EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_MAIN_LIBRARY),
                          NS_LITERAL_STRING(DBENGINE_GUID_MAIN_LIBRARY),
-                         NS_LITERAL_STRING(SB_NAMEKEY_MAIN_LIBRARY));
+                         NS_LITERAL_STRING(SB_NAMEKEY_MAIN_LIBRARY),
+                         NS_LITERAL_STRING(SB_CUSTOMTYPE_MAIN_LIBRARY));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_WEB_LIBRARY),
                             NS_LITERAL_STRING(DBENGINE_GUID_WEB_LIBRARY),
-                            NS_LITERAL_STRING(SB_NAMEKEY_WEB_LIBRARY));
+                            NS_LITERAL_STRING(SB_NAMEKEY_WEB_LIBRARY),
+                            NS_LITERAL_STRING(SB_CUSTOMTYPE_WEB_LIBRARY));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
-
+#include <windows.h>
 nsresult
 sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUIDPref,
                                                    const nsAString& aDefaultDatabaseGUID,
-                                                   const nsAString& aLibraryNameKey)
+                                                   const nsAString& aLibraryNameKey,
+                                                   const nsAString& aCustomType)
 {
   nsCAutoString resourceGUIDPrefKey(aLibraryGUIDPref);
 
@@ -341,6 +349,10 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
     rv = libraryInfo->SetResourceGUID(resourceGUID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  rv = library->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), 
+                            aCustomType);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

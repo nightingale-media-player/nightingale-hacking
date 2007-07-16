@@ -86,7 +86,8 @@ private:
 
   nsresult EnsureDefaultLibrary(const nsACString& aLibraryGUIDPref,
                                 const nsAString& aDefaultDatabaseGUID,
-                                const nsAString& aLibraryNameKey);
+                                const nsAString& aLibraryNameKey,
+                                const nsAString& aCustomType);
 
   sbLibraryLoaderInfo*
     CreateDefaultLibraryInfo(const nsACString& aPrefKey,

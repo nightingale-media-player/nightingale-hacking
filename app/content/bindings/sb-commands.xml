@@ -362,6 +362,21 @@
         </body>
       </method>
 
+      <method name="reportMetrics">
+        <parameter name="cmdid"/>
+        <body>
+          <![CDATA[
+            var metricscategory = this.getAttribute("metricscategory");
+            if (!metricscategory) return;
+            var library = this.medialist ? this.medialist.library : null;
+            var metricstype = library ? library.getProperty("http://songbirdnest.com/data/1.0#customType") : null;
+            if (!metricstype) return;
+            metrics_inc(metricscategory, metricstype, cmdid);
+          ]]>
+        </body>
+      </method>
+
+
     </implementation>
  
   </binding>
@@ -677,6 +692,8 @@
             var cmdobjidx = evt.originalTarget.commandobjindex;
             if (cmdobjidx === undefined || this.commands.length <= cmdobjidx) return;
 
+            this.reportMetrics(evt.originalTarget.id);
+
             this.commands[cmdobjidx].onCommand( evt.originalTarget.id, null, this.hoststring );
             var type = evt.originalTarget.commandtype;
             if (type == "flag" || type == "choiceitem") this.refreshCommands(true);
@@ -705,6 +722,9 @@
               else if (sbtype && sbtype != "") return;
               element = element.parentNode;
             }
+
+            this.reportMetrics(element.id);
+
             var cmdobjidx = element.commandobjindex;
             this.commands[cmdobjidx].onCommand( element.id, element.value, this.hoststring );
           }
@@ -990,6 +1010,8 @@
             var cmdobjidx = evt.originalTarget.commandobjindex;
             if (cmdobjidx === undefined || this.commands.length <= cmdobjidx) return;
             
+            this.reportMetrics(evt.originalTarget.id);
+
             this.commands[cmdobjidx].onCommand( evt.originalTarget.id, null, this.hoststring );
             var type = evt.originalTarget.commandtype;
             if (type == "flag" || type == "choiceitem") this.refreshCommands(true);
@@ -1210,6 +1232,8 @@
             var cmdobjidx = evt.originalTarget.commandobjindex;
             if (cmdobjidx === undefined || this.commands.length <= cmdobjidx) return;
             
+            this.reportMetrics(evt.originalTarget.id);
+
             this.commands[cmdobjidx].onCommand( evt.originalTarget.id, null, this.hoststring );
           }
         }

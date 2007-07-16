@@ -116,6 +116,8 @@ var SBProperties = {
 
   get defaultColumnSpec() { return this._base + "defaultColumnSpec"; },
 
+  get customType() { return this._base + "customType"; },
+
   createArray: function(properties) {
     var propertyArray =
       Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]

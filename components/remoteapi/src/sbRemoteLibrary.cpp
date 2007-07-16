@@ -72,6 +72,7 @@
 #include <nsTHashtable.h>
 #include <prlog.h>
 #include <prnetdb.h>
+#include <sbStandardProperties.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -366,6 +367,10 @@ sbRemoteLibrary::ConnectToMediaLibrary( const nsAString &aDomain, const nsAStrin
   rv = prefService->SetComplexValue( NS_LossyConvertUTF16toASCII(key).get(),
                                      NS_GET_IID(nsISupportsString),
                                      supportsString );
+
+  rv = mLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), 
+                             NS_LITERAL_STRING("remote"));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Register the library with the library manager so it shows up in servicepane
   nsCOMPtr<sbILibraryManager> libManager(

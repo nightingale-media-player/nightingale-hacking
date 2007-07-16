@@ -486,6 +486,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     stringBundle, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Custom type (used for css and metrics reporting)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                    NS_LITERAL_STRING("property.custom_type"),
+                    stringBundle, PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
