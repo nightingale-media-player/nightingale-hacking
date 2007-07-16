@@ -243,6 +243,8 @@ function getRandomParameter() {
   return "?randomguid=" + escape(generateUUID());
 }
 
+// This method will install the XPI without asking the user's permission.
+// Use "installXPI()" to involve the user in the install process.
 function forceInstallXPI(localFilename)
 {
   var file = Components.classes["@mozilla.org/file/local;1"]
