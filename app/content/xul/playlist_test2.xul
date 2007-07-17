@@ -506,14 +506,43 @@ try
         // Get the correct sbILibrary
         var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"].
                               getService(Components.interfaces.sbILibraryManager);
-        var library = libraryManager.getLibrary( libraryGUID );
+        var library = null;
+        
+    //
+    // Bulletproof the code from things being deleted
+    //        
+        try {
+          // Try to get the requested library
+          library = libraryManager.getLibrary( libraryGUID );
+        } catch(e) {
+          // If something bad happens, freak out.
+          if ( history.length > 1 ) {
+            // If possible, hit the back button.
+            history.back();
+            return;
+          }
+          // Otherwise, just show the main library?  Ugly -- doesn't change the url.
+          mediaListGUID = "library";
+          library = libraryManager.mainLibrary;
+        }
 
         // Then the sbIMediaList
         var mediaList = null;
         if ( mediaListGUID == "library" )
-          mediaList = library
-        else
+          mediaList = library;
+        else try {
           mediaList = library.getMediaItem( mediaListGUID );
+        } catch(e) {
+          // If something bad happens, freak out.
+          if ( history.length > 1 ) {
+            // If possible, hit the back button.
+            history.back();
+            return;
+          }
+          // Otherwise, just show the mediaList's library?  Ugly -- doesn't change the url.
+          mediaListGUID = "library";
+          mediaList = library;
+        }
           
         // Doublecheck that you actually have what you think you have.
         if ( mediaList )
