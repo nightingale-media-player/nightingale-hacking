@@ -60,6 +60,11 @@ var start;
 
 function onLoad()
 {
+  // This window does not get focused properly on Linux, so force focus here.
+  // It seems to have to do with the window getting opened immediately after
+  // the file picker.
+  window.focus();
+
   if ( ( typeof( window.arguments[0] ) != 'undefined' ) && ( typeof( window.arguments[0].URL ) != 'undefined' ) )
   {
     try
