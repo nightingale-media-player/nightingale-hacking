@@ -92,7 +92,28 @@ static PRLogModuleInfo* gLocalDatabaseSimpleMediaListLog = nsnull;
   PR_BEGIN_MACRO /* nothing */ PR_END_MACRO
 #endif /* DEBUG */
 
-// This class is stack-only but needs to act like an XPCOM object.  Add dummy
+#define SB_ENSURE_INDEX_BEGIN             \
+  PR_BEGIN_MACRO                          \
+    nsresult rv;                          \
+    PRUint32 length;                      \
+    rv = mFullArray->GetLength(&length);  \
+    NS_ENSURE_SUCCESS(rv, rv);
+
+#define SB_ENSURE_INDEX_END \
+  PR_END_MACRO
+
+#define SB_ENSURE_INDEX1(_index)            \
+  SB_ENSURE_INDEX_BEGIN                     \
+    NS_ENSURE_ARG_MAX(_index, length - 1);  \
+  SB_ENSURE_INDEX_END
+
+#define SB_ENSURE_INDEX2(_index1, _index2)  \
+  SB_ENSURE_INDEX_BEGIN                     \
+    NS_ENSURE_ARG_MAX(_index1, length - 1); \
+    NS_ENSURE_ARG_MAX(_index2, length - 1); \
+  SB_ENSURE_INDEX_END
+
+  // This class is stack-only but needs to act like an XPCOM object.  Add dummy
 // AddRef/Release methods so the ref count is always 1
 NS_IMETHODIMP_(nsrefcnt)
 sbSimpleMediaListInsertingEnumerationListener::AddRef(void)
@@ -727,12 +748,7 @@ sbLocalDatabaseSimpleMediaList::InsertBefore(PRUint32 aIndex,
   PRInt32 dbOk;
 
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
-
-  PRUint32 length;
-  rv = mFullArray->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ENSURE_ARG_MAX(aIndex, length - 1);
+  SB_ENSURE_INDEX1(aIndex);
 
   nsAutoString ordinal;
   rv = GetBeforeOrdinal(aIndex, ordinal);
@@ -782,16 +798,10 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
     return NS_OK;
   }
 
-  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
-
   nsresult rv;
 
-  PRUint32 length;
-  rv = mFullArray->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ENSURE_ARG_MAX(aFromIndex, length - 1);
-  NS_ENSURE_ARG_MAX(aToIndex,   length - 1);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+  SB_ENSURE_INDEX2(aFromIndex, aToIndex);
 
   // Get the ordinal of the space before the to index
   nsAutoString ordinal;
@@ -816,7 +826,12 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXsteve What should go into the updated properties array?
+  nsAutoString movedIndex;
+  movedIndex.AppendInt(aFromIndex);
+
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL),
+                                  movedIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(list,
                                                                item,
@@ -828,15 +843,10 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
 {
-  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
-
   nsresult rv;
 
-  PRUint32 length;
-  rv = mFullArray->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ENSURE_ARG_MAX(aIndex, length - 1);
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+  SB_ENSURE_INDEX1(aIndex);
 
   // Get the ordinal for the space after the last item in the list
   nsAutoString ordinal;
@@ -861,11 +871,139 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXsteve What should go into the updated properties array?
+  nsAutoString movedIndex;
+  movedIndex.AppendInt(aIndex);
+
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL),
+                                  movedIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(list,
                                                                item,
                                                                properties);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::InsertSomeBefore(PRUint32 aIndex,
+                                                 nsISimpleEnumerator* aMediaItems)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+
+  nsresult rv;
+  PRInt32 dbOk;
+
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+  SB_ENSURE_INDEX1(aIndex);
+
+  nsAutoString baseOrdinal;
+  rv = GetBeforeOrdinal(aIndex, baseOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  baseOrdinal.AppendLiteral(".");
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbAutoBatchHelper batchHelper(this);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("begin"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasMore;
+  PRUint32 count = 0;
+  nsCOMArray<sbIMediaItem> toNotify;
+  while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
+
+    nsAutoString ordinal(baseOrdinal);
+    ordinal.AppendInt(count);
+
+    nsCOMPtr<nsISupports> supports;
+    rv = aMediaItems->GetNext(getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILocalDatabaseMediaItem> ldbmi = do_QueryInterface(item, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 mediaItemId;
+    rv = ldbmi->GetMediaItemId(&mediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->AddQuery(mInsertIntoListQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt32Parameter(0, mediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindStringParameter(1, ordinal);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool success = toNotify.AppendObject(item);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+    count++;
+  }
+
+  rv = query->AddQuery(NS_LITERAL_STRING("commit"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  // Invalidate the cached list
+  rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < count; i++) {
+    NotifyListenersItemAdded(this, toNotify[i]);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::MoveSomeBefore(PRUint32* aFromIndexArray,
+                                               PRUint32 aFromIndexArrayCount,
+                                               PRUint32 aToIndex)
+{
+  NS_ENSURE_ARG_POINTER(aFromIndexArray);
+
+  nsresult rv;
+
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+  SB_ENSURE_INDEX1(aToIndex);
+
+  nsAutoString ordinal;
+  rv = GetBeforeOrdinal(aToIndex, ordinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  ordinal.AppendLiteral(".");
+  rv = MoveSomeInternal(aFromIndexArray, aFromIndexArrayCount, ordinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::MoveSomeLast(PRUint32* aIndexArray,
+                                             PRUint32 aIndexArrayCount)
+{
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+
+  NS_ENSURE_ARG_POINTER(aIndexArray);
+
+  nsAutoString ordinal;
+  nsresult rv = GetNextOrdinal(ordinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  ordinal.AppendLiteral(".");
+  rv = MoveSomeInternal(aIndexArray, aIndexArrayCount, ordinal);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1252,6 +1390,94 @@ sbLocalDatabaseSimpleMediaList::UpdateOrdinalByIndex(PRUint32 aIndex,
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
+                                                 PRUint32 aFromIndexArrayCount,
+                                                 const nsAString& aOrdinalRoot)
+{
+  NS_ASSERTION(aFromIndexArray, "aFromIndexArray is null");
+
+  PRUint32 length;
+  nsresult rv = mFullArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Make sure all the from array indexes are legal
+  for (PRUint32 i = 0; i < aFromIndexArrayCount; i++) {
+    NS_ENSURE_ARG_MAX(aFromIndexArray[i], length - 1);
+  }
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbAutoBatchHelper batchHelper(this);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("begin"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < aFromIndexArrayCount; i++) {
+    nsAutoString ordinal(aOrdinalRoot);
+    ordinal.AppendInt(i);
+
+    PRUint32 mediaItemId;
+    rv = mFullArray->GetMediaItemIdByIndex(aFromIndexArray[i], &mediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->AddQuery(mUpdateListItemOrdinalQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindStringParameter(0, ordinal);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt32Parameter(1, mediaItemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = query->AddQuery(NS_LITERAL_STRING("commit"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  // Invalidate the cached list
+  rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> list =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(list, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < aFromIndexArrayCount; i++) {
+    nsAutoString movedIndex;
+    movedIndex.AppendInt(aFromIndexArray[i]);
+
+    rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL),
+                                    movedIndex);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(list,
+                                                                 item,
+                                                                 properties);
+
+    nsCOMPtr<nsIMutableArray> array = do_QueryInterface(properties, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = array->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

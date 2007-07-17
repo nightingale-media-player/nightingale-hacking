@@ -239,6 +239,17 @@ function runTest () {
     assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
   }
 
+  // Test insertSomeBefore
+  var items = [];
+  items[0] = library.getMediaItem("3E6DD1C2-AD99-11DB-9321-C22AB7121F49");
+  items[1] = library.getMediaItem("3E6D8050-AD99-11DB-9321-C22AB7121F49");
+  items[2] = library.getMediaItem("3E6D3050-AD99-11DB-9321-C22AB7121F49");
+  list.insertSomeBefore(0, new SimpleArrayEnumerator(items));
+  a.unshift(items[2].guid);
+  a.unshift(items[1].guid);
+  a.unshift(items[0].guid);
+  assertList(list, a);
+
   // Test moveBefore
   library = createLibrary(databaseGUID);
   list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
@@ -259,6 +270,19 @@ function runTest () {
   list.moveLast(0);
   guid = a.splice(0, 1)[0];
   a.push(guid);
+  assertList(list, a);
+
+  // Test moveSomeBefore
+  var indexes = [5, 6, 7, 8, 9];
+  list.moveSomeBefore(indexes, indexes.length, 0);
+  var b = a.splice(5, 5);
+  a.unshift(b[0], b[1], b[2], b[3], b[4]);
+  assertList(list, a);
+
+  // Test moveSomeLast
+  list.moveSomeLast(indexes, indexes.length);
+  var b = a.splice(5, 5);
+  a = a.concat(b);
   assertList(list, a);
 
   // Test remove

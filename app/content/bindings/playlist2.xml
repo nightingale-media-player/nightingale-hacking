@@ -1506,7 +1506,8 @@
   // If this media lists supports ordering, insert the item where it was
   // dropped
   var doInsert = false;
-  if (ml instanceof this._Ci.sbIOrderableMediaList && oldLength > 0 && row >= 0 ) {
+  var isOrderable = ml instanceof this._Ci.sbIOrderableMediaList;
+  if (isOrderable && oldLength > 0 && row >= 0 ) {
     if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
       doInsert = true;
     }
@@ -1524,7 +1525,10 @@
       ml.moveBefore(index, row);
     }
     else {
-      ml.moveLast(index);
+      // Moving items within a list that is not orderable does nothing
+      if (isOrderable) {
+        ml.moveLast(index);
+      }
     }
   }
   else {
@@ -1556,7 +1560,8 @@
   // If this media lists supports ordering, insert the item where it was
   // dropped
   var doInsert = false;
-  if (ml instanceof this._Ci.sbIOrderableMediaList && oldLength > 0 && row >= 0 ) {
+  var isOrderable = ml instanceof this._Ci.sbIOrderableMediaList;
+  if (isOrderable && oldLength > 0 && row >= 0 ) {
     if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
       doInsert = true;
     }
@@ -1574,77 +1579,40 @@
     while (enumerator.hasMoreElements()) {
       indexes.push(enumerator.getNext().index);
     }
-    ml.beginUpdateBatch();
-    try {
-      if (doInsert) {
-        var toOffset = 0;
-        for (var i = 0; i < indexes.length; i++) {
-          var fromRow = indexes[i];
-          var toRow = row + toOffset;
-          ml.moveBefore(fromRow, toRow);
-          if (fromRow > toRow) {
-            toOffset++;
-          }
-          else {
-            for (var j = 0; j < indexes.length; j++) {
-              if (indexes[j] < toRow) {
-                indexes[j]--;
-              }
-            }
-          }
-        }
-      }
-      else {
-        var moved = 0;
-        // Do this backwards so the indexes don't change when we move them
-        for (var i = indexes.length - 1; i >= 0; i--) {
-          if (moved == 0) {
-            ml.moveLast(indexes[i]);
-          }
-          else {
-            ml.moveBefore(indexes[i], ml.length - moved);
-          }
-          moved++;
-        }
-      }
+    if (doInsert) {
+      ml.moveSomeBefore(indexes, indexes.length, row);
     }
-    finally {
-      ml.endUpdateBatch();
+    else {
+      // Moving items within a list that is not orderable does nothing
+      if (isOrderable) {
+        ml.moveSomeLast(indexes, indexes.length);
+      }
     }
   }
   else {
-    if (doInsert) {
-      ml.beginUpdateBatch();
-      try {
-        while (enumerator.hasMoreElements()) {
-          ml.insertBefore(row, enumerator.getNext().mediaItem);
-          row++;
-        }
-      }
-      finally {
-        ml.endUpdateBatch();
+    // Create an enumerator that wraps the enumerator we were handed since
+    // the enumerator we get hands back sbIIndexedMediaItem, not just plain
+    // 'ol sbIMediaItems
+
+    var self = this;
+    var unwrapper = {
+      hasMoreElements : function() {
+        return enumerator.hasMoreElements();
+      },
+      getNext : function() {
+        return enumerator.getNext().mediaItem;
+      },
+      QueryInterface : function(iid) {
+        if (iid.equals(self._Ci.nsISimpleEnumerator) ||
+            iid.equals(self._Ci.nsISupports))
+          return this;
+        throw self._Cr.NS_NOINTERFACE;
       }
     }
+    if (doInsert) {
+      ml.insertSomeBefore(row, unwrapper);
+    }
     else {
-      // Create an enumerator that wraps the enumerator we were handed since
-      // the enumerator we get hands back sbIIndexedMediaItem, not just plain
-      // 'ol sbIMediaItems
-
-      var self = this;
-      var unwrapper = {
-        hasMoreElements : function() {
-          return enumerator.hasMoreElements();
-        },
-        getNext : function() {
-          return enumerator.getNext().mediaItem;
-        },
-        QueryInterface : function(iid) {
-          if (iid.equals(self._Ci.nsISimpleEnumerator) ||
-              iid.equals(self._Ci.nsISupports))
-            return this;
-          throw self._Cr.NS_NOINTERFACE;
-        }
-      }
       ml.addSome(unwrapper);
     }
 

@@ -89,6 +89,10 @@ private:
 
   nsresult UpdateOrdinalByIndex(PRUint32 aIndex, const nsAString& aOrdinal);
 
+  nsresult MoveSomeInternal(PRUint32* aFromIndexArray,
+                            PRUint32 aFromIndexArrayCount,
+                            const nsAString& aOrdinalRoot);
+
   nsresult DeleteItemByMediaItemId(PRUint32 aMediaItemId);
 
   nsresult GetNextOrdinal(nsAString& aValue);

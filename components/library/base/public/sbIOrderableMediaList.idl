@@ -32,6 +32,7 @@
 
 #include "nsISupports.idl"
 
+interface nsISimpleEnumerator;
 interface sbIMediaItem;
 
 /**
@@ -63,5 +64,29 @@ interface sbIOrderableMediaList : nsISupports
    * \param aIndex Index of media item to move
    */
   void moveLast(in unsigned long aIndex);
+
+  /**
+   * \brief Insert many media items before the specified media item
+   * \param aIndex Position of item to insert before
+   * \param aMediaItems Simple enumerator of sbIMediaItem objects to insert
+   */
+  void insertSomeBefore(in unsigned long aIndex,
+                        in nsISimpleEnumerator aMediaItems);
+
+  /**
+   * \brief Move a list of media items from one position to another in the list
+   * \param aFromIndexArray Array of indexes of media items to move
+   * \param aToIndex Index of media item to insert the moved items before
+   */
+  void moveSomeBefore([array, size_is(aFromIndexArrayCount)] in unsigned long aFromIndexArray,
+                      in unsigned long aFromIndexArrayCount,
+                      in unsigned long aToIndex);
+
+  /**
+   * \brief Move a list of media items to the end of the list
+   * \param aIndexArray Array of the indexes of media items to move
+   */
+  void moveSomeLast([array, size_is(aIndexArrayCount)] in unsigned long aIndexArray,
+                    in unsigned long aIndexArrayCount);
 };
 
