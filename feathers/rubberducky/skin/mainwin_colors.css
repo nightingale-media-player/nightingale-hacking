@@ -1312,6 +1312,11 @@ listbox:focus > listitem[selected="true"] {
    color: #FFFFFF;
 }
 
+richlistitem[selected="true"] > label,
+richlistitem[selected="true"] > checkbox > hbox > label /** for the first run */
+{
+  color: #202220; /** Dark Color 1 */
+}
 
 /** 
 ***************************************************************************************************
