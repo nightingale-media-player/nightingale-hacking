@@ -40,7 +40,6 @@
 #include <sbIDatabaseQuery.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseAsyncGUIDArray.h>
-#include <sbILocalDatabaseCascadeFilterSet.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -187,6 +186,10 @@ sbLocalDatabaseMediaListView::~sbLocalDatabaseMediaListView()
     nsCOMPtr<sbIMediaListListener> listener =
       do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaListListener*, this));
     mMediaList->RemoveListener(listener);
+  }
+
+  if (mCascadeFilterSet) {
+    mCascadeFilterSet->ClearMediaListView();
   }
 }
 
@@ -335,26 +338,22 @@ sbLocalDatabaseMediaListView::GetCascadeFilterSet(sbICascadeFilterSet** aCascade
 
   nsresult rv;
 
-  nsCOMPtr<sbICascadeFilterSet> cfs = do_QueryReferent(mWeakCascadeFilterSet);
-  if (!cfs) {
+  if (!mCascadeFilterSet) {
     nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> guidArray;
     rv = mArray->CloneAsyncArray(getter_AddRefs(guidArray));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsRefPtr<sbLocalDatabaseCascadeFilterSet> filterSet =
-      new sbLocalDatabaseCascadeFilterSet();
+      new sbLocalDatabaseCascadeFilterSet(this);
     NS_ENSURE_TRUE(filterSet, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = filterSet->Init(mLibrary, this, guidArray);
+    rv = filterSet->Init(mLibrary, guidArray);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    cfs = filterSet;
-
-    mWeakCascadeFilterSet = do_GetWeakReference(cfs, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+    mCascadeFilterSet = filterSet;
   }
 
-  NS_ADDREF(*aCascadeFilterSet = cfs);
+  NS_ADDREF(*aCascadeFilterSet = mCascadeFilterSet);
   return NS_OK;
 }
 
@@ -445,8 +444,6 @@ sbLocalDatabaseMediaListView::Clone(sbIMediaListView** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  // XXXsteve THIS IS INCOMPLETE.  Still needs to clone the cascade filter
-  // set
   nsresult rv;
 
   nsRefPtr<sbLocalDatabaseMediaListView>
@@ -463,7 +460,6 @@ sbLocalDatabaseMediaListView::Clone(sbIMediaListView** _retval)
   mViewFilters.EnumerateRead(CloneStringArrayHashCallback,
                              &clone->mViewFilters);
 
-  // Copy searches
   if (mViewSearches) {
     rv = ClonePropertyArray(mViewSearches,
                             getter_AddRefs(clone->mViewSearches));
@@ -474,6 +470,24 @@ sbLocalDatabaseMediaListView::Clone(sbIMediaListView** _retval)
   if (mViewSort) {
     rv = ClonePropertyArray(mViewSort, getter_AddRefs(clone->mViewSort));
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (mCascadeFilterSet) {
+    nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> guidArray;
+    rv = mArray->CloneAsyncArray(getter_AddRefs(guidArray));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsRefPtr<sbLocalDatabaseCascadeFilterSet> filterSet =
+      new sbLocalDatabaseCascadeFilterSet(clone);
+    NS_ENSURE_TRUE(filterSet, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = filterSet->Init(mLibrary, guidArray);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mCascadeFilterSet->CloneInto(filterSet);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    clone->mCascadeFilterSet = filterSet;
   }
 
   // Call the update method to notify the clone that its internal data was
@@ -705,10 +719,8 @@ sbLocalDatabaseMediaListView::GetCurrentFilter(sbIPropertyArray** _retval)
   mViewFilters.EnumerateRead(AddValuesToArrayCallback, propertyArray);
 
   // Add filters from the cascade filter list, if any
-  nsCOMPtr<sbILocalDatabaseCascadeFilterSet> cfs =
-    do_QueryReferent(mWeakCascadeFilterSet);
-  if (cfs) {
-    rv = cfs->AddFilters(propertyArray);
+  if (mCascadeFilterSet) {
+    rv = mCascadeFilterSet->AddFilters(propertyArray);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -807,12 +819,11 @@ sbLocalDatabaseMediaListView::ClearFilters()
 {
   mViewFilters.Clear();
 
-  // Clear filters from the cascade filter list, if any
   nsresult rv;
-  nsCOMPtr<sbILocalDatabaseCascadeFilterSet> cfs =
-    do_QueryReferent(mWeakCascadeFilterSet);
-  if (cfs) {
-    rv = cfs->ClearFilters();
+
+  // Clear filters from the cascade filter list, if any
+  if (mCascadeFilterSet) {
+    rv = mCascadeFilterSet->ClearFilters();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -849,10 +860,8 @@ sbLocalDatabaseMediaListView::GetCurrentSearch(sbIPropertyArray** aCurrentSearch
   }
 
   // Add filters from the cascade filter list, if any
-  nsCOMPtr<sbILocalDatabaseCascadeFilterSet> cfs =
-    do_QueryReferent(mWeakCascadeFilterSet);
-  if (cfs) {
-    rv = cfs->AddSearches(propertyArray);
+  if (mCascadeFilterSet) {
+    rv = mCascadeFilterSet->AddSearches(propertyArray);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -896,10 +905,8 @@ sbLocalDatabaseMediaListView::ClearSearch()
   }
 
   // Clear searches from the cascade filter list, if any
-  nsCOMPtr<sbILocalDatabaseCascadeFilterSet> cfs =
-    do_QueryReferent(mWeakCascadeFilterSet);
-  if (cfs) {
-    rv = cfs->ClearSearches();
+  if (mCascadeFilterSet) {
+    rv = mCascadeFilterSet->ClearSearches();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1316,10 +1323,8 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
   }
 
   // Add configuration from the cascade filter list, if any
-  nsCOMPtr<sbILocalDatabaseCascadeFilterSet> cfs =
-    do_QueryReferent(mWeakCascadeFilterSet);
-  if (cfs) {
-    rv = cfs->AddConfiguration(mArray);
+  if (mCascadeFilterSet) {
+    rv = mCascadeFilterSet->AddConfiguration(mArray);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

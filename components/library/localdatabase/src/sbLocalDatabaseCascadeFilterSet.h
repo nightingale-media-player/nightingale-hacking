@@ -33,7 +33,6 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsWeakReference.h>
-#include <sbILocalDatabaseCascadeFilterSet.h>
 #include <sbICascadeFilterSet.h>
 #include <sbIMediaListListener.h>
 #include <nsTHashtable.h>
@@ -46,10 +45,10 @@ class sbILocalDatabaseAsyncGUIDArray;
 class sbILocalDatabaseGUIDArray;
 class sbILocalDatabaseLibrary;
 class sbIMediaListView;
+class sbIMutablePropertyArray;
 
 class sbLocalDatabaseCascadeFilterSet : public nsSupportsWeakReference,
                                         public sbICascadeFilterSet,
-                                        public sbILocalDatabaseCascadeFilterSet,
                                         public sbIMediaListListener
 {
   typedef nsTArray<nsString> sbStringArray;
@@ -57,15 +56,27 @@ class sbLocalDatabaseCascadeFilterSet : public nsSupportsWeakReference,
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBICASCADEFILTERSET
-  NS_DECL_SBILOCALDATABASECASCADEFILTERSET
   NS_DECL_SBIMEDIALISTLISTENER
 
-  sbLocalDatabaseCascadeFilterSet();
+  sbLocalDatabaseCascadeFilterSet(sbLocalDatabaseMediaListView* aMediaListView);
   ~sbLocalDatabaseCascadeFilterSet();
 
   nsresult Init(sbLocalDatabaseLibrary* aLibrary,
-                sbLocalDatabaseMediaListView* aMediaListView,
                 sbILocalDatabaseAsyncGUIDArray* aProtoArray);
+
+  nsresult CloneInto(sbLocalDatabaseCascadeFilterSet* aDest);
+
+  nsresult AddConfiguration(sbILocalDatabaseGUIDArray* aArray);
+
+  nsresult AddFilters(sbIMutablePropertyArray* aArray);
+
+  nsresult AddSearches(sbIMutablePropertyArray* aArray);
+
+  nsresult ClearFilters();
+
+  nsresult ClearSearches();
+
+  void ClearMediaListView();
 
 private:
   struct sbFilterSpec {
@@ -93,8 +104,12 @@ private:
   // The library this filter set is associated with
   nsRefPtr<sbLocalDatabaseLibrary> mLibrary;
 
-  // The media list view this filter set is associated with
-  nsRefPtr<sbLocalDatabaseMediaListView> mMediaListView;
+  // The media list view this filter set is associated with.  This pointer
+  // will be set to null when the associated view gets deleted
+  sbLocalDatabaseMediaListView* mMediaListView;
+
+  // The media list we listen to for changes
+  nsCOMPtr<sbIMediaList> mMediaList;
 
   // Prototypical array that is cloned to provide each filter's data
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mProtoArray;

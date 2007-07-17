@@ -67,10 +67,12 @@ static PRLogModuleInfo* sFilterSetLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
-sbLocalDatabaseCascadeFilterSet::sbLocalDatabaseCascadeFilterSet() :
+sbLocalDatabaseCascadeFilterSet::sbLocalDatabaseCascadeFilterSet(sbLocalDatabaseMediaListView* aMediaListView) :
+  mMediaListView(aMediaListView),
   mInBatch(PR_FALSE)
 {
   MOZ_COUNT_CTOR(sbLocalDatabaseCascadeFilterSet);
+  NS_ASSERTION(aMediaListView, "aMediaListView is null");
 #ifdef PR_LOGGING
   if (!sFilterSetLog) {
     sFilterSetLog = PR_NewLogModule("sbLocalDatabaseCascadeFilterSet");
@@ -84,37 +86,30 @@ sbLocalDatabaseCascadeFilterSet::~sbLocalDatabaseCascadeFilterSet()
   TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Destructed", this));
   MOZ_COUNT_DTOR(sbLocalDatabaseCascadeFilterSet);
 
-  if (mMediaListView) {
-    nsCOMPtr<sbIMediaList> mediaList;
-    nsresult rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
-    if (NS_SUCCEEDED(rv)) {
-      rv = mediaList->RemoveListener(this);
-    }
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Could not remove listener!");
+  if (mMediaList) {
+    mMediaList->RemoveListener(this);
   }
 }
 
-NS_IMPL_ISUPPORTS4(sbLocalDatabaseCascadeFilterSet,
+NS_IMPL_ISUPPORTS3(sbLocalDatabaseCascadeFilterSet,
                    sbICascadeFilterSet,
-                   sbILocalDatabaseCascadeFilterSet,
                    sbIMediaListListener,
                    nsISupportsWeakReference);
 
 nsresult
 sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
-                                      sbLocalDatabaseMediaListView* aMediaListView,
                                       sbILocalDatabaseAsyncGUIDArray* aProtoArray)
 {
   TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Init", this));
-  NS_ENSURE_ARG_POINTER(aMediaListView);
+  NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG_POINTER(aProtoArray);
+  NS_ENSURE_STATE(mMediaListView);
 
   nsresult rv;
 
   mLibrary = aLibrary;
 
-  mMediaListView = aMediaListView;
-
+  // Set up our prototype array
   mProtoArray = aProtoArray;
 
   rv = mProtoArray->ClearFilters();
@@ -128,6 +123,9 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
 
   PRBool success = mListeners.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = mMediaListView->GetMediaList(getter_AddRefs(mMediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdateListener(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -357,8 +355,10 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
 
   // Tell the view to update its configuration.  It will first apply its
   // filters and then ask us for ours
-  rv = mMediaListView->UpdateViewArrayConfiguration();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mMediaListView) {
+    rv = mMediaListView->UpdateViewArrayConfiguration();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -374,8 +374,10 @@ sbLocalDatabaseCascadeFilterSet::ClearAll()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = mMediaListView->UpdateViewArrayConfiguration();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mMediaListView) {
+    rv = mMediaListView->UpdateViewArrayConfiguration();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -416,6 +418,7 @@ sbLocalDatabaseCascadeFilterSet::GetTreeView(PRUint16 aIndex,
   TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - GetTreeView", this));
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(aIndex < mFilters.Length(), NS_ERROR_INVALID_ARG);
+  NS_ENSURE_STATE(mMediaListView);
 
   sbFilterSpec& fs = mFilters[aIndex];
 
@@ -490,8 +493,7 @@ sbLocalDatabaseCascadeFilterSet::RemoveListener(sbICascadeFilterSetListener* aLi
   return NS_OK;
 }
 
-// sbILocalDatabaseCascadeFilterSet
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseCascadeFilterSet::AddConfiguration(sbILocalDatabaseGUIDArray* mArray)
 {
   NS_ENSURE_ARG_POINTER(mArray);
@@ -571,7 +573,7 @@ sbLocalDatabaseCascadeFilterSet::AddConfiguration(sbILocalDatabaseGUIDArray* mAr
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseCascadeFilterSet::AddFilters(sbIMutablePropertyArray* mArray)
 {
   NS_ENSURE_ARG_POINTER(mArray);
@@ -593,7 +595,7 @@ sbLocalDatabaseCascadeFilterSet::AddFilters(sbIMutablePropertyArray* mArray)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseCascadeFilterSet::AddSearches(sbIMutablePropertyArray* mArray)
 {
   NS_ENSURE_ARG_POINTER(mArray);
@@ -615,7 +617,7 @@ sbLocalDatabaseCascadeFilterSet::AddSearches(sbIMutablePropertyArray* mArray)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseCascadeFilterSet::ClearFilters()
 {
   PRUint32 numFilters = mFilters.Length();
@@ -629,7 +631,7 @@ sbLocalDatabaseCascadeFilterSet::ClearFilters()
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseCascadeFilterSet::ClearSearches()
 {
   PRUint32 numFilters = mFilters.Length();
@@ -641,6 +643,46 @@ sbLocalDatabaseCascadeFilterSet::ClearSearches()
     }
   }
   return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseCascadeFilterSet::CloneInto(sbLocalDatabaseCascadeFilterSet* aDest)
+{
+  NS_ENSURE_ARG_POINTER(aDest);
+
+  nsresult rv;
+
+  PRUint32 numFilters = mFilters.Length();
+  for (PRUint32 i = 0; i < numFilters; i++) {
+    sbFilterSpec& source = mFilters[i];
+
+    sbFilterSpec* dest = aDest->mFilters.AppendElement();
+    NS_ENSURE_TRUE(dest, NS_ERROR_OUT_OF_MEMORY);
+
+    dest->isSearch = source.isSearch;
+    dest->property = source.property;
+    dest->invalidationPending = PR_FALSE;
+
+    nsString* success = dest->propertyList.AppendElements(source.propertyList);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    success = dest->values.AppendElements(source.values);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = source.array->CloneAsyncArray(getter_AddRefs(dest->array));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = aDest->UpdateListener();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+void
+sbLocalDatabaseCascadeFilterSet::ClearMediaListView()
+{
+  mMediaListView = nsnull;
 }
 
 nsresult
@@ -753,17 +795,15 @@ sbLocalDatabaseCascadeFilterSet::InvalidateFilter(sbFilterSpec& aFilter)
 nsresult
 sbLocalDatabaseCascadeFilterSet::UpdateListener(PRBool aRemoveListener)
 {
+  NS_ENSURE_STATE(mMediaList);
+
   nsresult rv;
 
   nsCOMPtr<sbIMediaListListener> listener =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaListListener*, this));
 
-  nsCOMPtr<sbIMediaList> mediaList;
-  rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   if (aRemoveListener) {
-    rv = mediaList->RemoveListener(listener);
+    rv = mMediaList->RemoveListener(listener);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -785,11 +825,11 @@ sbLocalDatabaseCascadeFilterSet::UpdateListener(PRBool aRemoveListener)
 
   // Use a weak reference here since we have an owning reference to the view
   // which has an owning reference to the list
-  rv = mediaList->AddListener(listener,
-                              PR_TRUE,
-                              sbIMediaList::LISTENER_FLAGS_ALL &
-                                ~sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED,
-                              filter);
+  rv = mMediaList->AddListener(listener,
+                               PR_TRUE,
+                               sbIMediaList::LISTENER_FLAGS_ALL &
+                                 ~sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED,
+                               filter);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

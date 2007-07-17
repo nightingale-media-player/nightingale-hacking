@@ -149,7 +149,7 @@ private:
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
 
   // Filter set for this view, if any
-  nsCOMPtr<nsIWeakReference> mWeakCascadeFilterSet;
+  nsRefPtr<sbLocalDatabaseCascadeFilterSet> mCascadeFilterSet;
 
   // Tree view for this view, if any
   nsRefPtr<sbLocalDatabaseTreeView> mTreeView;
