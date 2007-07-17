@@ -133,7 +133,15 @@ addToPlaylistHelper.prototype = {
     var listener = {
       obj: this,
       items: [],
-      onEnumerationBegin: function() { return true; },
+      _downloadListGUID: null,
+      onEnumerationBegin: function() {
+        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                              .getService(Components.interfaces.nsIPrefBranch2);
+        this._downloadListGUID =
+          prefs.getComplexValue("songbird.library.download",
+                                Components.interfaces.nsISupportsString);
+        return true;
+      },
       onEnumerationEnd: function() {return true; },
       onEnumeratedItem: function(list, item) {
         var hidden = item.getProperty("http://songbirdnest.com/data/1.0#hidden");
@@ -146,6 +154,13 @@ addToPlaylistHelper.prototype = {
           }
         }
         if (!goodtype) return true;
+
+        // XXXsteve Prevent the download playlist from appearing in the list.
+        // this should be fixable once we close bug 4017 and have a way to
+        // interrogate the policy on each playlist to see if it should be
+        // put in this menu
+        if (item.guid == this._downloadListGUID) return true;
+
         this.obj.m_listofplaylists.m_Types.push("action");
         this.obj.m_listofplaylists.m_Ids.push(ADDTOPLAYLIST_COMMAND_ID + item.library.guid + ";" + item.guid);
         this.obj.m_listofplaylists.m_Names.push(item.name ? item.name : "Unnamed Playlist");
