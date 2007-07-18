@@ -30,7 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbICascadeFilterSet.idl \
-             sbIFilterableMediaList.idl \
+             sbIFilterableMediaListView.idl \
              sbILibrary.idl \
              sbILibraryFactory.idl \
              sbILibraryLoader.idl \
@@ -46,8 +46,8 @@ XPIDL_SRCS = sbICascadeFilterSet.idl \
              sbIMediaListViewMap.idl  \
              sbIMediaListViewTreeView.idl \
              sbIOrderableMediaList.idl \
-             sbISearchableMediaList.idl \
-             sbISortableMediaList.idl \
+             sbISearchableMediaListView.idl \
+             sbISortableMediaListView.idl \
              $(NULL)
 
 XPIDL_MODULE = sbLibraryBase.xpt

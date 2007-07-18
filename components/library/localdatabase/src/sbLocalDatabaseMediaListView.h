@@ -35,13 +35,13 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsWeakReference.h>
-#include <sbIFilterableMediaList.h>
+#include <sbIFilterableMediaListView.h>
 #include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
-#include <sbISearchableMediaList.h>
-#include <sbISortableMediaList.h>
+#include <sbISearchableMediaListView.h>
+#include <sbISortableMediaListView.h>
 #include <sbPropertiesCID.h>
 
 #include "sbLocalDatabaseMediaListBase.h"

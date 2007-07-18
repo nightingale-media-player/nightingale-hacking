@@ -34,7 +34,7 @@
 #include <sbICascadeFilterSet.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
-#include <sbIFilterableMediaList.h>
+#include <sbIFilterableMediaListView.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabaseLibrary.h>
@@ -43,8 +43,8 @@
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
-#include <sbISearchableMediaList.h>
-#include <sbISortableMediaList.h>
+#include <sbISearchableMediaListView.h>
+#include <sbISortableMediaListView.h>
 
 #include <DatabaseQuery.h>
 #include <nsAutoLock.h>

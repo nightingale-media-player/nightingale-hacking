@@ -42,7 +42,7 @@
 #include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
-#include <sbISortableMediaList.h>
+#include <sbISortableMediaListView.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>

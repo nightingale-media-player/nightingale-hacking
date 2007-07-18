@@ -30,14 +30,14 @@
 #include <nsITreeView.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
-#include <sbIFilterableMediaList.h>
+#include <sbIFilterableMediaListView.h>
 #include <sbILocalDatabaseAsyncGUIDArray.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
-#include <sbISearchableMediaList.h>
+#include <sbISearchableMediaListView.h>
 #include <sbISQLBuilder.h>
 
 #include <DatabaseQuery.h>
