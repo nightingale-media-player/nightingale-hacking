@@ -223,7 +223,8 @@ Section "-Application" Section1
   ; leave a copy of msvcr71.dll in xulrunner/ as well.
   ${If} ${AtLeastWinVista}
     SetOutPath $INSTDIR\${XULRunnerDir}
-    File ${CRuntime} 
+    File ${CRuntime}
+    File ${CPPRuntime}
     StrCpy $LinkIconFile ${VistaIcon}
   ${Else}
     StrCpy $LinkIconFile ${PreferredIcon}
