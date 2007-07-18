@@ -238,7 +238,7 @@ treecolpicker {
 
 .treecol-text {
   margin: 0px !important;
-  padding-bottom: 1px;
+  padding-bottom: 3px;
 }
 
 treecol[hideheader="true"] {
@@ -435,7 +435,7 @@ tree
   -moz-appearance: none !important; /* grrrr! */
   margin: 0px 0px 0px 0px !important;
   padding: 0px !important;
-  border: none !important;
+  border: none;
 }
 
 .tree-columnpicker-icon
@@ -449,8 +449,8 @@ tree
 treecol
 {
   -moz-appearance: none !important; /* grrrr! */
-  margin: 0px !important;
-  padding: 0px 0px 0px 5px !important;
-  height: 20px !important;
-  border-width: 0px 1px 0px 0px !important;
+  margin: 0px;
+  padding: 0px 0px 0px 5px;
+  height: 20px;
+  border-width: 0px 1px 0px 0px;
 }
