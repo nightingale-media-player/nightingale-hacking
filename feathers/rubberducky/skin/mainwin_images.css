@@ -65,23 +65,10 @@ dialog
   background-repeat: repeat-x;  
 }
 
-scrollbar > slider > thumb
-{
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_flat_10percent.png);
-  -moz-background-clip: padding;
-}
-
 sb-smart-splitter:hover,
 scrollbar > slider > thumb:hover
 {
   background-image: url(chrome://songbird/skin/backgrounds/chrome_flat_25percent.png);
-  -moz-background-clip: padding;
-}
-sb-smart-splitter:active,
-scrollbar > slider > thumb:active
-
-{
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_flat_10percent.png);
   -moz-background-clip: padding;
 }
 

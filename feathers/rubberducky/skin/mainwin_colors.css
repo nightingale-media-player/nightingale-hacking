@@ -93,7 +93,7 @@ playlist2
 toolbar
 {
   border-top: 1px solid #474948; /** Light Border 2*/
-  border-bottom: none;
+  border-bottom: 1px solid #202220;
 }
 
 dialog,
@@ -250,7 +250,7 @@ SCROLLBARS
 scrollbar
 {   
   -moz-border-radius: 3px;
-  background-color: transparent !important;
+  background-color: #202220 !important;
   background-image: none !important; 
   border-top: 1px solid #202220; /** Light Border 4*/
   border-left: none !important;
@@ -258,22 +258,22 @@ scrollbar
 scrollbarbutton
 {    
   -moz-border-radius: 3px;
-  border-top-color: #7a7c7c; /** Light Border 1*/
-  border-left-color: #202220; /** Light Border 2*/
-  border-bottom-color: #0f100f; /** Light Border 3*/
-  border-right-color: #202220; /** Light Border 4*/
-  background-color: transparent !important;
+  border-top: 1px solid #7a7c7c; /** Light Border 1*/
+  border-left: 1px solid  #202220; /** Light Border 2*/
+  border-bottom: 1px solid  #0f100f; /** Light Border 3*/
+  border-right: 1px solid  #202220; /** Light Border 4*/
+  background-color: #313131 !important;
 } 
 scrollbarbutton:hover:active, 
 scrollbarbutton[active="true"],
 scrollbar > slider > thumb:active
 {   	
   -moz-border-radius: 3px;
-  border-top-color: #0f100f; /** Light Border 1*/
-  border-left-color: #202220; /** Light Border 2*/
-  border-bottom-color: #7a7c7c; /** Light Border 3*/
-  border-right-color: #202220; /** Light Border 4*/
-	background-color: transparent;
+  border-top: 1px solid  #0f100f; /** Light Border 1*/
+  border-left: 1px solid  #202220; /** Light Border 2*/
+  border-bottom: 1px solid  #7a7c7c; /** Light Border 3*/
+  border-right: 1px solid  #202220; /** Light Border 4*/
+	background-color: #313131;
 } 
 scrollbar > slider > thumb > gripper
 {   
@@ -282,15 +282,16 @@ scrollbar > slider > thumb > gripper
 scrollbar > slider > thumb
 {   
   -moz-border-radius: 3px;
-  border-top-color: #7a7c7c; /** Light Border 1*/
-  border-left-color: #202220; /** Light Border 2*/
-  border-bottom-color: #0f100f; /** Light Border 3*/
-  border-right-color: #202220; /** Light Border 4*/
-	background-color: transparent;
+  border-top: 1px solid  #7a7c7c; /** Light Border 1*/
+  border-left: 1px solid  #202220; /** Light Border 2*/
+  border-bottom: 1px solid  #0f100f; /** Light Border 3*/
+  border-right: 1px solid  #202220; /** Light Border 4*/
+	background-color: #313131;
 } 
 scrollbar > slider
 {   
-  background-color: transparent !important;
+  background-color: #202220 !important;
+  background-image: none !important; 
 } 
 
 
@@ -309,9 +310,19 @@ A List Tree is a sortable column list with striping rows.
 listheader,
 tree treecol
 {
-  color: #99a195; /** TODO rename this color */
-  background-color: transparent !important;
+  border-top: 1px solid #474948; /** Light Border 2 */
+  color: #8A8F84; /** Light Color 2 */
+  background-color: #313131 !important; /* same as the main window */
 }
+
+treecolpicker
+{
+  border-top: 1px solid #474948; /** Light Border 2 */
+  background-color: #313131 !important; /* same as the main window */
+  border-right: 1px solid #202220 !important;
+}
+
+
 
 treecol[dragging="true"]
 {
@@ -325,21 +336,22 @@ treecol[insertafter="true"]
   border-right: 5px solid transparent !important; 
 }
 
-
+treecol > label
+{
+  color: #8A8F84; /** Light Color 2 */
+}
+treecol:hover > label
+{
+  color: #feffff !important; /** Light Color Brightest */ 
+}
 
 /* column picker **/
-tree .tree-columnpicker-icon
+.tree-columnpicker-icon
 {
   border: 1px solid transparent;
   background-color: transparent !important;
 }
 
-tree .treecol-image /* puts a little piece to fill in next to the column picker **/
-{
-  border: 1px solid transparent;
-  background-color: transparent !important;
-  border-right: 1px solid #202220 !important;
-}
 
 /** 
 ***************************************************************************************************
@@ -348,13 +360,9 @@ Organize your collection with genre/artist/album filterlists.
 ***************************************************************************************************
 */ 
 
-
-
-
 filterlist2 > tree
 {
-  background-color: #202220;
-  border-top: 1px solid #202220;
+  background-color: #202220; 
   border-left: 1px solid #202220;
   border-right: none;
   border-bottom: 1px solid #474848; /** Light Border 3 */
@@ -394,7 +402,8 @@ filterlist2 > tree > treechildren::-moz-tree-row( selected, focus )
 
 filterlist2 > tree > treechildren::-moz-tree-cell-text
 {
-  color: #202220; /** Dark Color 1 */
+  color: #313131; /**  */
+  /**color: #202220;  Dark Color 1 */
 }
 
 filterlist2 > tree > treechildren::-moz-tree-cell-text( selected )
@@ -487,7 +496,7 @@ treechildren::-moz-tree-column(insertbefore)
 
 #playlist_tree > treechildren::-moz-tree-cell-text
 {
-  color: #202220; /** Dark Color 1 */
+  color: #313131; /**  */
 }
 
 #playlist_tree > treechildren::-moz-tree-cell-text( selected )
@@ -891,9 +900,10 @@ sb-status-progressmeter[mode="undetermined"] {
 /** TODO: Why not define a color for the whole status bar and then inherit? **/
 sb-status-label, 
 sb-player-scanning-label, 
-sb-player-numplaylistitems-label
+sb-player-numplaylistitems-label > label
 {
-  color: #999 !important;
+  color: #B3BAAC; /** Light Color 1 */
+  /** color: #8A8F84 !important; Light Color 2 */
 }
 
 /** 
@@ -1130,6 +1140,7 @@ tree treecol
 {
   background-color: transparent;
   border-right: 1px solid #202220 !important; /** Dark Color 2 */
+  border-top: 1px solid #474948; /** Light Border 2 */
 }
 
 treechildren::-moz-tree-row
