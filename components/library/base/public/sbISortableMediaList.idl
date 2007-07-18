@@ -25,8 +25,8 @@
 */
 
 /**
- * \file sbISortableMediaList.idl
- * \brief Definition of the sbISortableMediaList interface
+ * \file sbISortableMediaListView.idl
+ * \brief Definition of the sbISortableMediaListView interface
  * \sa sbIMediaList.idl
  */
 
@@ -36,7 +36,7 @@ interface nsIStringEnumerator;
 interface sbIPropertyArray;
 
 /**
-* \interface sbISortableMediaList
+* \interface sbISortableMediaListView
 * \brief Control the sort settings on a media list
 *
 * Media lists that implement this interface declare themselves as sortable.
@@ -44,7 +44,7 @@ interface sbIPropertyArray;
 * \sa sbIMediaList
 */
 [scriptable, uuid(a3579817-5ba7-49e6-98ad-5ab8270d1848)]
-interface sbISortableMediaList : nsISupports
+interface sbISortableMediaListView : nsISupports
 {
   /**
    * \brief A list of properties that support sorting

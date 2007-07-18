@@ -57,18 +57,18 @@ class sbLocalDatabaseCascadeFilterSet;
 class sbLocalDatabaseMediaListView : public nsSupportsWeakReference,
                                      public sbIMediaListView,
                                      public sbIMediaListListener,
-                                     public sbIFilterableMediaList,
-                                     public sbISearchableMediaList,
-                                     public sbISortableMediaList,
+                                     public sbIFilterableMediaListView,
+                                     public sbISearchableMediaListView,
+                                     public sbISortableMediaListView,
                                      public nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTVIEW
   NS_DECL_SBIMEDIALISTLISTENER
-  NS_DECL_SBIFILTERABLEMEDIALIST
-  NS_DECL_SBISEARCHABLEMEDIALIST
-  NS_DECL_SBISORTABLEMEDIALIST
+  NS_DECL_SBIFILTERABLEMEDIALISTVIEW
+  NS_DECL_SBISEARCHABLEMEDIALISTVIEW
+  NS_DECL_SBISORTABLEMEDIALISTVIEW
   NS_DECL_NSICLASSINFO
 
   sbLocalDatabaseMediaListView(sbLocalDatabaseLibrary* aLibrary,

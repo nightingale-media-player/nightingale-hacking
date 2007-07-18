@@ -63,18 +63,18 @@
 NS_IMPL_ISUPPORTS7(sbLocalDatabaseMediaListView,
                    sbIMediaListView,
                    sbIMediaListListener,
-                   sbIFilterableMediaList,
-                   sbISearchableMediaList,
-                   sbISortableMediaList,
+                   sbIFilterableMediaListView,
+                   sbISearchableMediaListView,
+                   sbISortableMediaListView,
                    nsIClassInfo,
                    nsISupportsWeakReference)
 
 NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseMediaListView,
                              sbIMediaListView,
                              sbIMediaListListener,
-                             sbIFilterableMediaList,
-                             sbISearchableMediaList,
-                             sbISortableMediaList,
+                             sbIFilterableMediaListView,
+                             sbISearchableMediaListView,
+                             sbISortableMediaListView,
                              nsISupportsWeakReference,
                              nsIClassInfo)
 
@@ -648,7 +648,7 @@ sbLocalDatabaseMediaListView::UpdateListener(PRBool aRemoveListener)
   return NS_OK;
 }
 
-// sbIFilterableMediaList
+// sbIFilterableMediaListView
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::GetFilterableProperties(nsIStringEnumerator** aFilterableProperties)
 {
@@ -833,7 +833,7 @@ sbLocalDatabaseMediaListView::ClearFilters()
   return NS_OK;
 }
 
-// sbISearchableMediaList
+// sbISearchableMediaListView
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::GetSearchableProperties(nsIStringEnumerator** aSearchableProperties)
 {
@@ -916,7 +916,7 @@ sbLocalDatabaseMediaListView::ClearSearch()
   return NS_OK;
 }
 
-// sbISortableMediaList
+// sbISortableMediaListView
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::GetSortableProperties(nsIStringEnumerator** aSortableProperties)
 {

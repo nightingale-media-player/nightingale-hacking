@@ -63,7 +63,7 @@
 					RelativePath=".\base\public\sbICascadeFilterSet.idl">
 				</File>
 				<File
-					RelativePath=".\base\public\sbIFilterableMediaList.idl">
+					RelativePath=".\base\public\sbIFilterableMediaListView.idl">
 				</File>
 				<File
 					RelativePath=".\base\public\sbILibrary.idl">
@@ -111,10 +111,10 @@
 					RelativePath=".\base\public\sbIOrderableMediaList.idl">
 				</File>
 				<File
-					RelativePath=".\base\public\sbISearchableMediaList.idl">
+					RelativePath=".\base\public\sbISearchableMediaListView.idl">
 				</File>
 				<File
-					RelativePath=".\base\public\sbISortableMediaList.idl">
+					RelativePath=".\base\public\sbISortableMediaListView.idl">
 				</File>
 			</Filter>
 			<Filter

@@ -25,8 +25,8 @@
 */
 
 /**
- * \file sbIFilterableMediaList.idl
- * \brief Definition of the sbIFilterableMediaList interface
+ * \file sbIFilterableMediaListView.idl
+ * \brief Definition of the sbIFilterableMediaListView interface
  * \sa sbIMediaList.idl
  */
 
@@ -36,7 +36,7 @@ interface nsIStringEnumerator;
 interface sbIPropertyArray;
 
 /**
-* \interface sbIFilterableMediaList
+* \interface sbIFilterableMediaListView
 * \brief Control the filter settings on a media list
 *
 * Media lists that implement this interface declare themselves as filterable.
@@ -45,7 +45,7 @@ interface sbIPropertyArray;
 * \sa sbIMediaList
 */
 [scriptable, uuid(b776a7a8-6569-43a0-b7ed-ad7a804e8e64)]
-interface sbIFilterableMediaList : nsISupports
+interface sbIFilterableMediaListView : nsISupports
 {
   /**
    * \brief A string enumerator of all the property names that can be used

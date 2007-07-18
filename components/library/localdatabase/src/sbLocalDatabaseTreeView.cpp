@@ -814,8 +814,8 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
                                                       NS_LITERAL_STRING("d"));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbISortableMediaList> sortable =
-      do_QueryInterface(NS_ISUPPORTS_CAST(sbISortableMediaList*, mMediaListView), &rv);
+    nsCOMPtr<sbISortableMediaListView> sortable =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbISortableMediaListView*, mMediaListView), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = sortable->SetSort(sort);

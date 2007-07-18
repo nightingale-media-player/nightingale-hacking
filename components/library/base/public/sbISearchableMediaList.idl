@@ -25,8 +25,8 @@
 */
 
 /**
- * \file sbISearchableMediaList.idl
- * \brief Definition of the sbISearchableMediaList interface
+ * \file sbISearchableMediaListView.idl
+ * \brief Definition of the sbISearchableMediaListView interface
  * \sa sbIMediaList.idl
  */
 
@@ -36,7 +36,7 @@ interface nsIStringEnumerator;
 interface sbIPropertyArray;
 
 /**
-* \interface sbISearchableMediaList
+* \interface sbISearchableMediaListView
 * \brief Control the search settings on a media list
 *
 * Media lists that implement this interface declare themselves as searchable.
@@ -45,7 +45,7 @@ interface sbIPropertyArray;
 * \sa sbIMediaList
 */
 [scriptable, uuid(1db2f57c-5fcf-4fe0-8951-c1b40d9f7bf6)]
-interface sbISearchableMediaList : nsISupports
+interface sbISearchableMediaListView : nsISupports
 {
   /**
    * \brief Get a list of all the properties that can be searched
