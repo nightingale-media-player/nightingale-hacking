@@ -594,6 +594,10 @@
         var col = { }
         var child = { }
         this.mTree.treeBoxObject.getCellAt(event.pageX, event.pageY, row, col, child);
+        if (col.value == null) {
+          // not a valid column; e.g., the scrollbar
+          return;
+        }
         var node = this.getNodeForRow(row.value);
         
         var transferable = {};
