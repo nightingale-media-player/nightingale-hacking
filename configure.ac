@@ -256,8 +256,16 @@ AC_SUBST(HAS_EXTRAS)
 # Checks for programs.
 #
 
-AC_PROG_CC
-AC_PROG_CXX
+case "$SB_PLATFORM" in
+  windows)
+  AC_CHECK_PROG(CC, cl, cl)
+  AC_CHECK_PROG(CXX, cl, cl)
+  ;;
+  *)
+  AC_PROG_CC
+  AC_PROG_CXX
+  ;;
+esac
 
 AC_CHECK_PROG(PERL, perl, perl)
 if test -z "$PERL"; then AC_MSG_ERROR(Perl not found); fi
