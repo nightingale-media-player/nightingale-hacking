@@ -34,6 +34,7 @@ SONGBIRD_TEST_COMPONENT = properties
 SONGBIRD_TESTS = $(srcdir)/test_simpleproperty.js \
                  $(srcdir)/test_propertyarray.js \
                  $(srcdir)/test_propertyinfo.js \
+                 $(srcdir)/test_match_properties.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk
