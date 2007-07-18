@@ -265,12 +265,30 @@ sbLocalDatabaseQuery::GetPrefixSearchQuery(nsAString& aQuery)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbISQLBuilderCriterion> criterion;
-  rv = mBuilder->CreateMatchCriterionParameter(SORT_ALIAS,
-                                               OBJSORTABLE_COLUMN,
-                                               sbISQLSelectBuilder::MATCH_LESS,
-                                               getter_AddRefs(criterion));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mPrimarySortProperty.Equals(ORDINAL_PROPERTY)) {
 
+    nsAutoString baseTable;
+    rv = mBuilder->GetBaseTableName(baseTable);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (baseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
+      rv = mBuilder->CreateMatchCriterionParameter(CONSTRAINT_ALIAS,
+                                                   ORDINAL_COLUMN,
+                                                   sbISQLSelectBuilder::MATCH_LESS,
+                                                   getter_AddRefs(criterion));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      return NS_ERROR_INVALID_ARG;
+    }
+  }
+  else {
+    rv = mBuilder->CreateMatchCriterionParameter(SORT_ALIAS,
+                                                 OBJSORTABLE_COLUMN,
+                                                 sbISQLSelectBuilder::MATCH_LESS,
+                                                 getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   rv = mBuilder->AddCriterion(criterion);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -652,7 +670,7 @@ sbLocalDatabaseQuery::AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType 
   searchTerm.AppendLiteral("%");
   searchTerm.Append(aKey);
   // escape '%' in the user-entered search string
-  PRUint32 offset = nsString_FindCharInSet(searchTerm, "\\%", 1);
+  PRInt32 offset = nsString_FindCharInSet(searchTerm, "\\%", 1);
   while (offset != -1) {
     searchTerm.Insert(PRUnichar('\\'), offset);
     offset = nsString_FindCharInSet(searchTerm, "\\%", offset + 2); // skip the escaped %

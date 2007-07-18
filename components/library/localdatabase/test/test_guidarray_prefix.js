@@ -32,6 +32,8 @@ function runTest () {
 
   var databaseGUID = "test_guidarray_prefix";
   var library = createLibrary(databaseGUID);
+  var listId = library.QueryInterface(Ci.sbILocalDatabaseLibrary)
+                      .getMediaItemIdForGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
 
   var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
@@ -69,7 +71,7 @@ function runTest () {
   }
 
   array.addFilter("http://songbirdnest.com/data/1.0#genre",
-                  new StringArrayEnumerator(["ROCK"]),
+                  new StringArrayEnumerator(["rock"]),
                   false);
 
   for (var i = 0; i < tests.length; i++) {
@@ -86,6 +88,85 @@ function runTest () {
     else {
       assertEqual(array.getFirstIndexByPrefix(tests[i]), index);
     }
+  }
+
+  // Test on a simple media list
+  array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
+                .createInstance(Ci.sbILocalDatabaseGUIDArray);
+  array.databaseGUID = databaseGUID;
+  array.propertyCache =
+    library.QueryInterface(Ci.sbILocalDatabaseLibrary).propertyCache;
+
+  array.baseTable = "simple_media_lists";
+  array.baseConstraintColumn = "media_item_id";
+  array.baseConstraintValue = listId;
+
+  array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
+
+  var tests = [
+    "A",
+    "B",
+    "F",
+    "From",
+    "Back",
+    "Life",
+    "qqqqqqq"
+  ];
+
+  for (var i = 0; i < tests.length; i++) {
+    var index = findFirstIndexByPrefix(array, tests[i]);
+    if (index < 0) {
+      try {
+        array.getFirstIndexByPrefix(tests[i]);
+        fail("NS_ERROR_NOT_AVAILABLE not thrown");
+      }
+      catch(e) {
+        assertEqual(e.result, Cr.NS_ERROR_NOT_AVAILABLE);
+      }
+    }
+    else {
+      assertEqual(array.getFirstIndexByPrefix(tests[i]), index);
+    }
+  }
+
+  array.addFilter("http://songbirdnest.com/data/1.0#genre",
+                  new StringArrayEnumerator(["rock"]),
+                  false);
+
+  for (var i = 0; i < tests.length; i++) {
+    var index = findFirstIndexByPrefix(array, tests[i]);
+    if (index < 0) {
+      try {
+        array.getFirstIndexByPrefix(tests[i]);
+        fail("NS_ERROR_NOT_AVAILABLE not thrown");
+      }
+      catch(e) {
+        assertEqual(e.result, Cr.NS_ERROR_NOT_AVAILABLE);
+      }
+    }
+    else {
+      assertEqual(array.getFirstIndexByPrefix(tests[i]), index);
+    }
+  }
+
+  array.clearSorts();
+  array.clearFilters();
+
+  // Special test when sorted by ordinal
+  array.addSort("http://songbirdnest.com/data/1.0#ordinal", true);
+
+  // The ordinals of the freshly loaded data start as equal to the index
+  // number, so test with that
+  for (let i = 0; i < array.length; i++) {
+    assertEqual(i, array.getFirstIndexByPrefix(i));
+  }
+
+  array.addFilter("http://songbirdnest.com/data/1.0#artistName",
+                  new StringArrayEnumerator(["a-ha"]),
+                  false);
+
+  for (let i = 10; i < array.length; i++) {
+    assertEqual(i - 10, array.getFirstIndexByPrefix(i));
   }
 
 }
