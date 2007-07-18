@@ -44,8 +44,9 @@
     <content>
         <xul:button sbid="button" class="clickhold-button" xbl:inherits="label,flex,disabled,tooltiptext" />
         <xul:menupopup sbid="popup" class="clickhold-menupopup" xbl:inherits="position,popupanchor,popupalign,type=menupopuptype,onpopupshowing=onmenushowing,onpopupshown=onmenushown,onpopuphiding=onmenuhiding">
-          <children/>
+          <children includes="menuitem|menupopup|menu"/>
         </xul:menupopup>        
+        <children/>
     </content>
 
    <implementation type="application/x-javascript">

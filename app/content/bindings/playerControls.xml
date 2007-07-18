@@ -442,21 +442,33 @@
   <binding id="repeat-button">
   
    <content>
-     <xul:stack xbl:inherits="class=class" >
-       <xul:sb-clickhold-button sbid="repeat_none" class="sb-player-repeat-button-repnone sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repx;">
-         <xul:menuitem id="menu_repeat_none" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
-         <xul:menuitem id="menu_repeat_1" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
-         <xul:menuitem id="menu_repeat_all" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
+     <xul:stack id="repeat-button" xbl:inherits="class=class" >
+       <xul:sb-clickhold-button id="repeat_none" class="sb-player-repeat-button-repnone sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repx;">
+         <xul:observes type="dataremote"
+                   key="playlist.repeat" 
+                   attribute="hidden" 
+                   onchange="return parseInt( value ) != 0" />  
+         <xul:menuitem id="menu_repeat_none" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
+         <xul:menuitem id="menu_repeat_1" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
+         <xul:menuitem id="menu_repeat_all" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
        </xul:sb-clickhold-button>
-       <xul:sb-clickhold-button sbid="repeat_1" class="sb-player-repeat-button-rep1 sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.rep1;">
-         <xul:menuitem id="menu_repeat_none" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
-         <xul:menuitem id="menu_repeat_1" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
-         <xul:menuitem id="menu_repeat_all" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
+       <xul:sb-clickhold-button id="repeat_1" class="sb-player-repeat-button-rep1 sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.rep1;">
+         <xul:observes type="dataremote"
+                   key="playlist.repeat" 
+                   attribute="hidden" 
+                   onchange="return parseInt( value ) != 1" />  
+         <xul:menuitem id="menu_repeat_none" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
+         <xul:menuitem id="menu_repeat_1" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
+         <xul:menuitem id="menu_repeat_all" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
        </xul:sb-clickhold-button>
-       <xul:sb-clickhold-button sbid="repeat_all" class="sb-player-repeat-button-repall sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repa;">
-         <xul:menuitem id="menu_repeat_none" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
-         <xul:menuitem id="menu_repeat_1" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
-         <xul:menuitem id="menu_repeat_all" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
+       <xul:sb-clickhold-button id="repeat_all" class="sb-player-repeat-button-repall sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repa;">
+         <xul:observes type="dataremote"
+                   key="playlist.repeat" 
+                   attribute="hidden" 
+                   onchange="return parseInt( value ) != 2" />  
+         <xul:menuitem id="menu_repeat_none" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
+         <xul:menuitem id="menu_repeat_1" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
+         <xul:menuitem id="menu_repeat_all" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
        </xul:sb-clickhold-button>
      </xul:stack>
    </content>
@@ -470,39 +482,28 @@
 
         // Create and bind data remotes
         this.remote_repeat = SB_NewDataRemote( "playlist.repeat", null );
-        this.repnonebinding = SBDataBindElementAttribute( "playlist.repeat", this.repeat_none, "hidden", true, false, "parseInt( value ) != 0" );
-        this.rep1binding = SBDataBindElementAttribute( "playlist.repeat", this.repeat_1, "hidden", true, false, "parseInt( value ) != 1" );
-        this.repallbinding = SBDataBindElementAttribute( "playlist.repeat", this.repeat_all, "hidden", true, false, "parseInt( value ) != 2" );
       ]]>
     </constructor>
     <destructor>
       <![CDATA[
         //SB_LOG("playerControls.js", "repeat binding destructor");
-        if (this.repnonebinding) {
-          this.repnonebinding.unbind();
-          this.repnonebinding = null;
-        }
-        if (this.rep1binding) {
-          this.rep1binding.unbind();
-          this.rep1binding = null;
-        }
-        if (this.repallbinding) {
-          this.repallbinding.unbind();
-          this.repallbinding = null;
+        if (this.remote_repeat) {
+          this.remote_repeat.unbind();
+          this.remote_repeat = null;
         }
       ]]>
     </destructor>
 
-    <field name="repeat_none">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_none');</field>
-    <field name="repeat_1">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_1');</field>
-    <field name="repeat_all">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_all');</field>
+    <field name="repeat_none">document.getAnonymousElementByAttribute(this, 'id', 'repeat_none');</field>
+    <field name="repeat_1">document.getAnonymousElementByAttribute(this, 'id', 'repeat_1');</field>
+    <field name="repeat_all">document.getAnonymousElementByAttribute(this, 'id', 'repeat_all');</field>
 
     <method name="onRepeat">
       <parameter name="target"/>
       <body>
         <![CDATA[
           var value = 0;
-          switch(target.id) 
+          switch( target.id )
           {
             case "menu_repeat_none": 
               value = 0;
@@ -510,19 +511,19 @@
             case "menu_repeat_1": 
               value = 1;
               break;
-            case "menu_repeat_all": 
+            case "menu_repeat_all":
               value = 2;
               break;
             default:
               switch ( this.remote_repeat.intValue )
               {
-                case 0:
+                case (0): // Apparently, "case 0:" != "case (0):" ?!?!?
                   value = 2;
                   break;
-                case 1:
+                case (1): // BUT, "case 1:" == "case (1):" ?!?!?
                   value = 0;
                   break;
-                case 2:
+                case (2):
                   value = 1;
                   break;
               }

@@ -1054,6 +1054,24 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</File>
 				<File
 					RelativePath=".\content\bindings\observesDataremote.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\playerControls.xml">
