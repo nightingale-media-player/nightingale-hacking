@@ -37,16 +37,13 @@ sb-browser-spinner
 {
   background-color: transparent;
   padding: 2px;
-  visibility: hidden;
 }
 .browser-spinner-image
 {
   list-style-image: url(chrome://songbird/skin/icons/spinner_stopped.gif) ;  
-  visibility: hidden;
 }
 .browser-spinner-image[spinning="true"]
 {
   list-style-image: url(chrome://songbird/skin/icons/spinner_spin.gif) ;
-  visibility: hidden;
 }
 

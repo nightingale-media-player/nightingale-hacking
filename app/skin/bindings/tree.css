@@ -31,19 +31,11 @@
 Extra tree styles
 ************************************************************************************************************************************************
 */ 
-treecol
-{
-  background-image: url(chrome://songbird/skin/tree/treecol.png) ;
-}
 
-treecol:hover
+treecol:hover,
+treecolpicker:hover
 {
   background-image: url(chrome://songbird/skin/tree/treecol-hover.png) ;
-}
-
-treecol:hover:active
-{
-  background-image: url(chrome://songbird/skin/tree/treecol.png);
 }
 
 /* column picker **/
@@ -51,7 +43,7 @@ treecol:hover:active
 {
   list-style-image: url(chrome://songbird/skin/tree/column_picker.png) ;
 }
-.treecol-image /* puts a little gradient piece to fill in next to the column picker **/
+treecolpicker:hover .tree-columnpicker-icon
 {
-  background-image: url(chrome://songbird/skin/tree/treecol.png) ;
+  list-style-image: url(chrome://songbird/skin/tree/column_picker_hover.png) !important;
 }

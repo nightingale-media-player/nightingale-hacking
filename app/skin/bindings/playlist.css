@@ -70,7 +70,7 @@ playlist > stack > vbox
 #playlist_tree > treechildren::-moz-tree-cell
 {
   margin: 0px !important;
-  padding: 0px 0px 0px 5px !important;
+  padding: 0px 0px 2px 5px !important;
   border-right: 1px solid !important;
 }
 
