@@ -671,7 +671,7 @@
   if (!columnMap.length) {
     throw new Error("Couldn't get columnMap!");
   }
-    
+
   this._removeAllChildren(this._treecols);
 
   // Get the list of columns from the property manager and add them to the
@@ -718,6 +718,8 @@
       }
     }
   }
+
+  this.tree.columns.invalidateColumns();
 ]]>
         </body>
       </method>
@@ -833,6 +835,8 @@
     // must move the column after appending to get it in the right spot
     if (before)
       this.moveColumnBefore(propertyInfo.name, before);
+
+    this.tree.columns.invalidateColumns();
 ]]>
         </body>
       </method>
@@ -881,13 +885,12 @@
   }
 
   this._treecols.appendChild(treecol);
-
   var splitter = document.createElementNS(this._XUL_NS, "splitter");
   splitter.setAttribute("class", "tree-splitter");
   splitter.setAttribute("ordinal", ordinal + 1);
   
   this._treecols.appendChild(splitter);
-  
+  this.tree.columns.invalidateColumns();
 ]]>
         </body>
       </method>

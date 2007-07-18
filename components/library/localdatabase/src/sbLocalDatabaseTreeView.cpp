@@ -756,6 +756,11 @@ sbLocalDatabaseTreeView::UpdateColumnSortAttributes(const nsAString& aProperty,
     rv = columns->GetColumnAt(i, getter_AddRefs(column));
     NS_ENSURE_SUCCESS(rv, rv);
 
+    if (!column) {
+      NS_WARNING("Failed to find column!");
+      continue;
+    }
+
     nsCOMPtr<nsIDOMElement> element;
     rv = column->GetElement(getter_AddRefs(element));
     NS_ENSURE_SUCCESS(rv, rv);

@@ -1535,7 +1535,12 @@
               {
                 // Otherwise, restore it.
                 var commands = playlist.commands;
-                playlist.bind( restore.clone(), commands );
+
+                // Must use setTimeout() here to prevent the playlist from
+                // binding while the page is still loading
+                setTimeout(function() {
+                  playlist.bind( restore.clone(), commands );
+                }, 0);
               }
             }
           }
@@ -1741,7 +1746,6 @@
           
           const nsIWebProgressListener =
             Components.interfaces.nsIWebProgressListener;
-          
           if (aState & nsIWebProgressListener.STATE_STOP) {
             if (!(this.linkedBrowser.contentDocument && 
                   this.linkedBrowser.contentDocument.documentURI == this._loadingURL)) {
