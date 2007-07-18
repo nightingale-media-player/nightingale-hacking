@@ -69,7 +69,14 @@
     <command id="Browser:Reload"  oncommand="gBrowser.reload();" />
     <!-- TODO: Make ReloadSkipCache work correctly-->
     <command id="Browser:ReloadSkipCache"  oncommand="gBrowser.reload();" disabled="true"/>
-    <command id="cmd_bm_newbookmark"       oncommand="bmManager.addBookmark();"/>
+    
+    <command id="cmd_bm_newbookmark"       oncommand="bmManager.addBookmark();">
+      <observes type="dataremote"
+                key="browser.canbookmark"
+                attribute="disabled"
+                boolean="true"
+                inverted="true" />
+    </command>
   </commandset>
   
   <broadcasterset id="mainBroadcasterSet">

@@ -438,9 +438,21 @@
             
             // set the context-menu based on the chromeyness of the location
             if (aLocation.scheme == 'chrome') {
+
+              //XXXAus: Disable bookmarking for chrome URI's to prevent
+              //stale bookmarks. See bug #4009.
+              SBDataSetBoolValue('browser.canbookmark', false);
+              
               this.mCurrentBrowser.contextMenu = null;
+              
             } else {
+            
+              //XXXAus: Enable bookmarking for all other URI schemes.
+              //See bug #4009.
+              SBDataSetBoolValue('browser.canbookmark', true);
+              
               this.mCurrentBrowser.contextMenu = this.getAttribute('contentcontextmenu');
+              
             }
           }
           catch ( err )
