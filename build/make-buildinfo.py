@@ -28,7 +28,6 @@ from datetime import datetime
 import sys
 import os
 
-defaultBuildID = "00000000000000"
 defaultKey = "BuildID"
 
 o = OptionParser()
@@ -38,11 +37,8 @@ o.add_option("-k", "--key", dest="key")
 
 (options, args) = o.parse_args()
 
-if os.environ.get("SONGBIRD_OFFICIAL", False):
-  buildID = os.environ.get("SB_BUILDID_OVERRIDE",
-                           datetime.now().strftime('%Y%m%d%H%M%S'))
-else:
-  buildID = defaultBuildID
+buildID = os.environ.get("SB_BUILDID_OVERRIDE",
+                         datetime.now().strftime('%Y%m%d%H%M%S'))
 
 key = options.key or defaultKey
 
