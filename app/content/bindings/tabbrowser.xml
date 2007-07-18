@@ -925,10 +925,23 @@
 
             if (!title) {
               if (browser.currentURI.spec) {
-                try {
-                  title = this.mURIFixup.createExposableURI(browser.currentURI).spec;
-                } catch(ex) {
-                  title = browser.currentURI.spec;
+              
+                //XXXAus: Looks like we have a chrome URL. Let's try and see if it has 
+                //a pretty name registered with the service pane so that we can match what
+                //the location bar will have (ie, Library, not chrome://songbird[...]).
+                if (browser.currentURI.scheme == "chrome") {
+                  title = gServicePane.getURLName(browser.currentURI.spec); 
+                }
+              
+                //XXXAus: Looks like the service pane didn't have a pretty name for 
+                //this chrome URI. Let's fallback to using the URI itself. This also
+                //works for all other types of schemes (http, ftp, etc).
+                if (!title) {
+                  try {
+                    title = this.mURIFixup.createExposableURI(browser.currentURI).spec;
+                  } catch(ex) {
+                    title = browser.currentURI.spec;
+                  }
                 }
               }
 
