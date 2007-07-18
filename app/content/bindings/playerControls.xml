@@ -51,8 +51,10 @@
   <implementation>
 
     <constructor>
-        this.setAttribute("tooltiptext", "&tooltip.control.volume;")
       <![CDATA[
+        Components.utils.import("resource://app/components/sbProperties.jsm");
+        this.setAttribute("tooltiptext", "&tooltip.control.volume;")
+
         this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                     .getService(Components.interfaces.sbIPlaylistPlayback);
  
@@ -776,11 +778,22 @@
               // to play itself
               gBrowser.currentPlaylist.sendPlayEvent();
             } else {
+
               // otherwise go get the library and play it
               var libraryManager =
                 Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                           .getService(Components.interfaces.sbILibraryManager);
-              this.gPPS.playView(libraryManager.mainLibrary.createView(), 0);
+              var view = libraryManager.mainLibrary.createView();
+
+              // Filter the view as if it is being shown in the UI to determine
+              // if this library actually has anything playable in it
+              view.setFilters(SBProperties.createArray([
+                [SBProperties.isList, "0"],
+                [SBProperties.hidden, "0"]
+              ]));
+              if (view.length > 0) {
+                this.gPPS.playView(view, 0);
+              }
             }
           ]]>
         </body>

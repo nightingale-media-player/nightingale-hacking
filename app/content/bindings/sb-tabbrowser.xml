@@ -1822,7 +1822,9 @@
             }
             
             var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-            PPS.playView(playlist.mediaListView, index);
+            if (index < playlist.mediaListView.length) {
+              PPS.playView(playlist.mediaListView, index);
+            }
           }
           catch ( err )
           {

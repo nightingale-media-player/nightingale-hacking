@@ -358,7 +358,7 @@ try
         {
           case "library_cmd_play":
             var index = this.m_Context.m_Playlist.mediaListView.treeView.selection.currentIndex;
-            if (index >= 0) {
+            if (index >= 0 && index < this.m_Context.m_Playlist.mediaListView.length) {
               var gPPS = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                            .getService(Ci.sbIPlaylistPlayback);
               gPPS.playView(this.m_Context.m_Playlist.mediaListView, index);
