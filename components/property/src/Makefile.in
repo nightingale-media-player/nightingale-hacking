@@ -35,6 +35,11 @@ ifdef DEBUG
 target_name := $(addsuffix _d,$(target_name))
 endif
 
+all:: sbStandardProperties.h
+sbStandardProperties.h: sbStandardProperties.pl $(topsrcdir)/app/content/scripts/songbird_interfaces.js
+	$(PERL) $+
+
+
 CPP_SRCS = sbSimpleProperty.cpp \
            sbPropertyArray.cpp \
            sbPropertyFactory.cpp \
@@ -49,6 +54,7 @@ CPP_SRCS = sbSimpleProperty.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/property/public \
+               $(DEPTH)/components/property/src \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/enumeration/src \
                $(MOZSDK_INCLUDE_DIR) \

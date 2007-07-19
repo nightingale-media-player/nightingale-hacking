@@ -58,6 +58,7 @@ CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \
                $(topsrcdir)/components/library/base/src \
                $(DEPTH)/components/property/public \
                $(topsrcdir)/components/property/src \
+               $(DEPTH)/components/property/src \
                $(DEPTH)/components/dbengine/public \
                $(topsrcdir)/components/dbengine/src \
                $(DEPTH)/components/sqlbuilder/public \
