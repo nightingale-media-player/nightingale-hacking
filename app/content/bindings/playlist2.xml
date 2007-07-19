@@ -719,7 +719,9 @@
     }
   }
 
-  this.tree.columns.invalidateColumns();
+  if (this.tree.columns) {
+    this.tree.columns.invalidateColumns();
+  }
 ]]>
         </body>
       </method>
@@ -836,7 +838,9 @@
     if (before)
       this.moveColumnBefore(propertyInfo.name, before);
 
-    this.tree.columns.invalidateColumns();
+    if (this.tree.columns) {
+      this.tree.columns.invalidateColumns();
+    }
 ]]>
         </body>
       </method>
@@ -890,7 +894,9 @@
   splitter.setAttribute("ordinal", ordinal + 1);
   
   this._treecols.appendChild(splitter);
-  this.tree.columns.invalidateColumns();
+  if (this.tree.columns) {
+    this.tree.columns.invalidateColumns();
+  }
 ]]>
         </body>
       </method>
