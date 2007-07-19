@@ -36,7 +36,7 @@
     <script type="application/x-javascript"
             src="chrome://songbird/content/scripts/preferences/addons.js"/>
 
-    <iframe id="addonsFrame" style="height:300px;"
+    <browser id="addonsFrame" style="height:300px;" type="chrome"
             src="chrome://mozapps/content/extensions/extensions.xul"/>
 
   </prefpane>

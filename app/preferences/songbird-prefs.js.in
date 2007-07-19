@@ -158,6 +158,8 @@ pref("browser.tabs.selectOwnerOnClose", true);
 pref("xpinstall.dialog.progress.type.chrome", "Browser:Preferences");
 pref("xpinstall.dialog.progress.type.skin", "Browser:Preferences");
 
+pref("xpinstall.dialog.progress.chrome", "chrome://browser/content/preferences/preferences.xul");
+pref("xpinstall.dialog.progress.skin", "chrome://browser/content/preferences/preferences.xul");
 
 //
 // Search Preferences
