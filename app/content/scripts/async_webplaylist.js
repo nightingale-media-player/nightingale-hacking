@@ -188,8 +188,8 @@ try
           
           // Use a try/finally construct to make sure that we call
           // endUpdateBatch no matter what happens.
+          var mediaItemsToScan;
           try {
-            var mediaItemsToScan;
             for (var index = 0; index < foundItemsLength; index++) {
               var item = this.items[index];
               var mediaItem;
@@ -198,13 +198,18 @@ try
                 mediaItem = item;
               }
               else {
-                // This must be just a URL.
-                var uri = newURI(item);
+                // This must be just an URL.
+                var url = item;
+                var uri = newURI(url);
                 
                 // Make a new media item for it
                 mediaItem = library.createMediaItem(uri);
-                mediaItem.setProperty(SBProperties.originPage, this.currentURL);
-                
+                // Set the originPage and originURL for later tracking
+                mediaItem.setProperties(SBProperties.createArray([
+                  [SBProperties.originPage, this.currentURL],
+                  [SBProperties.originURL, url]
+                ]));
+
                 // Make sure we scan it for metadata
                 if (!mediaItemsToScan) {
                   mediaItemsToScan = Components.classes[CONTRACTID_ARRAY]
@@ -315,11 +320,11 @@ try
       var listener = {
         foundItem: null,
         onEnumerationBegin: function onEnumerationBegin() {
-          return true;
+          return this.foundItem == null;
         },
         onEnumeratedItem: function onEnumeratedItem(list, item) {
           this.foundItem = item;
-          return false;
+          return false; // Just take the first item found
         },
         onEnumerationEnd: function onEnumerationEnd() {
           return;
@@ -327,6 +332,8 @@ try
       };
 
       var library = aMediaListView.mediaList.library;
+      library.enumerateItemsByProperty(SBProperties.originURL, url, listener,
+                                       sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
       library.enumerateItemsByProperty(SBProperties.contentURL, url, listener,
                                        sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
       if (listener.foundItem) {
