@@ -560,9 +560,19 @@
             // Stick playlists in the service pane (for now).
             if ( uri && (forcePlaylist || gPPS.isPlaylistURL( uri.spec )) )
             {
-              var library =
-                Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+              var library = null;
+              var scheme = uri.scheme;
+              
+              if ( scheme != "file" && 
+                   scheme != "resource" && 
+                   scheme != "chrome" &&
+                   scheme != "jar" ) {
+                library = SBGetWebLibrary();
+              }
+              else {
+                library = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                           .getService(Components.interfaces.sbILibraryManager).mainLibrary;
+              }
 
               // Check to see if this playlist already exists
               var propertyArray =
