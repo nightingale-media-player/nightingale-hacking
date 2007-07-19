@@ -538,8 +538,6 @@ try
       playlist.mediaListView.treeView.selection.getRangeAt( 0, start, end );
       first = start.value;
     }
-    var rowid = playlist.mediaListView.getUnfilteredIndex
-    ( first );
         
     // check whether the user has selected an unfiltered entry, and if that's the case, reset the search and filters for the playlist.
     if (source_search == "" && source_filters.length == 0) {
@@ -547,6 +545,10 @@ try
       _resetFilters(source_view);
       if (search_widget) search_widget.loadPlaylistSearchString();
     }
+
+    var mediaItem = playlist.mediaListView.getItemByIndex(first);
+    var rowid = source_view.getIndexForItem( mediaItem );
+
     setTimeout("playSourceViewAndClose("+rowid+");", 0);
   }
   
