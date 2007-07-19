@@ -40,6 +40,7 @@ function Metrics() {
 
 Metrics.prototype = {
   _postreq: null,
+  _dbquery: null,
   
   LOG: function(str) {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
@@ -78,11 +79,7 @@ Metrics.prototype = {
     var user_os = xulRuntime.OS;
 
     
-    var ps = Components.classes["@mozilla.org/preferences-service;1"]
-                      .getService(Components.interfaces.nsIPrefService);   
-                                      
-    var branch = ps.getBranch("metrics.");
-    var metrics = branch.getChildList("", { value: 0 });
+    var metrics = this._getTable();
 
     var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
     // appInfo.name + " " + appInfo.version + " - " + appInfo.appBuildID;    
@@ -133,13 +130,13 @@ Metrics.prototype = {
 
     for (var i = 0; i < metrics.length; i++) 
     {
-      var val = branch.getCharPref(metrics[i]);
-      if ( parseInt(val) > 0 )
+      var key = metrics[i][0];
+      var val = metrics[i][1];
+      if ( val > 0 )
       {
-        var dot = metrics[i].indexOf(".");
+        var dot = key.indexOf(".");
         if (dot >= 0) {
-          var timestamp = metrics[i].substr(0, dot);
-          var key = metrics[i].substr(dot+1)
+          var timestamp = key.substr(0, dot);
           var date = new Date();
           date.setTime(timestamp);
           var hourstart = date.getFullYear() + "-" + 
@@ -198,10 +195,7 @@ Metrics.prototype = {
     // POST successful, reset all metrics to 0
     if (this._postreq.status == 200 && this._postreq.responseText == "OK") 
     {
-      var ps = Components.classes["@mozilla.org/preferences-service;1"]
-                        .getService(Components.interfaces.nsIPrefService);   
-      var branch = ps.getBranch("metrics.");
-      branch.deleteBranch("");
+      this._emptyTable();
       var pref = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefBranch);
       var timenow = new Date();
@@ -237,7 +231,7 @@ Metrics.prototype = {
       enabled = parseInt(this.prefs.getCharPref("app.metrics.enabled"));
     }
     catch (e) { }
-    if (!enabled) dump("*** METRICS ARE DISABLED ***\n");
+    //if (!enabled) dump("*** METRICS ARE DISABLED ***\n");
     
     return enabled;
   },
@@ -404,14 +398,12 @@ Metrics.prototype = {
     var timestamp = (Math.floor(d.getTime() / 3600000) * 3600000) + (d.getTimezoneOffset() * 60000);
 
     // Cook up the key string
-    var key = "metrics." + timestamp + "." + aCategory + "." + aUniqueID;
+    var key = timestamp + "." + aCategory + "." + aUniqueID;
     if (aExtraString != null && aExtraString != "") key = key + "." + aExtraString;
     
     try {
       // Don't record things if we're disabled.
-      var enabled = this._getValue("app.metrics.enabled");
-      if (!enabled) 
-        return;
+      if (!this._isEnabled()) return;
 
       // Make sure it's an actual int.      
       intvalue = parseInt(aIntValue);
@@ -422,22 +414,81 @@ Metrics.prototype = {
       this._setValue( key, newval );
     } 
     catch(e) { 
-      this.LOG("error: metricsAdd( " + aCategory + ", " + aUniqueID + ", " + aExtraString + ", " + aIntValue + " ) == '" + key + "'\n\n" + e);
+      this.LOG("error: metricsAdd( " + 
+               aCategory +
+               ", " +
+               aUniqueID + 
+               ", " + 
+               aExtraString + 
+               ", " + 
+               aIntValue + 
+               " ) == '" + 
+               key + 
+               "'\n\n" + 
+               e);
+    }
+  },
+  
+  _initDB: function() {
+    if (!this._dbquery) {
+      this._dbquery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].
+                                 createInstance(Components.interfaces.sbIDatabaseQuery);
+      this._dbquery.setAsyncQuery(false);
+      this._dbquery.setDatabaseGUID("metrics");
+      this._dbquery.resetQuery();
+      this._dbquery.addQuery("CREATE TABLE IF NOT EXISTS metrics (keyname TEXT UNIQUE NOT NULL, keyvalue BIGINT DEFAULT 0)");
+      this._dbquery.execute();
     }
   },
   
   _getValue: function(key) {
-    // Someday, this should go to the database.
     var retval = 0;
-    try {
-      retval = parseInt(this.prefs.getCharPref(key));
-    } catch(e) {} // On failure, return 0.
+
+    this._initDB();
+    this._dbquery.resetQuery();
+  
+    this._dbquery.addQuery("SELECT * FROM metrics WHERE keyname = \"" + key + "\"");
+    this._dbquery.execute();
+
+    var dbresult = this._dbquery.getResultObject();
+    if (dbresult.getRowCount() > 0) {
+      retval = parseInt(dbresult.getRowCell(0, 1));
+    }
+
     return retval;
   },
    
   _setValue: function(key, n) {
-    // Someday, this should go to the database.
-    this.prefs.setCharPref(key, parseInt(n));
+    this._initDB();
+    this._dbquery.resetQuery();
+    this._dbquery.addQuery("INSERT OR REPLACE INTO metrics VALUES (\"" + key + "\", " + n + ")");
+    this._dbquery.execute();
+  },
+  
+  _getTable: function() {
+    var table = new Array();
+    this._initDB();
+    this._dbquery.resetQuery();
+    this._dbquery.addQuery("SELECT * FROM metrics");
+    this._dbquery.execute();
+
+    var dbresult = this._dbquery.getResultObject();
+    var count = dbresult.getRowCount();
+
+    for (var i=0;i<count;i++) {
+      var key = dbresult.getRowCell(i, 0);
+      var val = parseInt(dbresult.getRowCell(i, 1));
+      table.push([key, val]);
+    }
+    
+    return table;
+  },
+  
+  _emptyTable: function() {
+    this._initDB();
+    this._dbquery.resetQuery();
+    this._dbquery.addQuery("DELETE FROM metrics");
+    this._dbquery.execute();
   },
 
   /**
