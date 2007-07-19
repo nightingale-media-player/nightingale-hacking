@@ -42,7 +42,7 @@ function readCPPProps() {
   // XXX Mook: This sucks :(
   var file_compiled = appDir.parent;
   // XXX Mook: mac paths are a bit different
-  if (getPlatform().match(/mac/i)) {
+  if (getPlatform() == "Darwin") {
     file_compiled = appDir.parent.parent.parent.parent;
   }
   // Get to the C++ file we want to read
