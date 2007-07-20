@@ -1,0 +1,16 @@
+Index: nsXULPopupManager.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/layout/xul/base/src/nsXULPopupManager.cpp,v
+retrieving revision 1.12
+diff -u -r1.12 nsXULPopupManager.cpp
+--- nsXULPopupManager.cpp	17 Jul 2007 12:21:56 -0000	1.12
++++ nsXULPopupManager.cpp	20 Jul 2007 22:33:01 -0000
+@@ -806,7 +806,7 @@
+ 
+   nsMenuChainItem* item = mCurrentMenu;
+   while (item) {
+-    popups.AppendElement(item->Frame());
++    popups.AppendElement(static_cast<nsIFrame *const>(item->Frame()));
+     item = item->GetParent();
+   }
+ 
