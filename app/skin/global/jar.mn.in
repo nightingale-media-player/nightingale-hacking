@@ -5,3 +5,4 @@ songbird.jar:
 % skin  songbird-global  classic/1.0  jar:songbird.jar!/skin/global/
 #endif
 @include_all_to skin/global/
+*       skin/global/wizard.css                      (wizard.css)

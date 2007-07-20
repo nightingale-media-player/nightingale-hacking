@@ -1,6 +1,89 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 
+/**
+
+Warning!
+
+The XUL layout of a wizard depends on the current platform.
+This CSS file is preprocessed to include platform specific rules
+and make sure that the padding and margins are correct. 
+
+If you've opened this file from a built songbird jar you should
+also look at "app/skin/global/wizard.css" in the Songbird subversion 
+repository.  See http://publicsvn.songbirdnest.com
+
+**/
+
+
+
+%ifdef XP_MACOSX
+
+/** Mac OSX wizard rules: **/ 
+
+
+wizard {
+	padding: 14px;
+}
+
+#header { 
+	display: inline !important;
+}
+.wizard-header {
+	-moz-appearance: dialog;
+}
+
+.wizard-header-box-1 {
+  color: #000000;
+}
+
+.wizard-header-box-text {
+  padding: 6px 10px 6px 10px;
+  font: menu;
+  font-weight: bold;
+}
+
+.wizard-header-label {
+  margin-left: 23px;
+  font-weight: bold;
+}
+
+.wizard-header-box-icon {
+  margin: 3px 20px 0 3px;
+}
+
+wizard[branded="true"] .wizard-header-icon {
+  list-style-image: url("chrome://branding/content/icon48.png");
+}
+
+.wizard-page-box {
+  padding: 15px 23px;
+    -moz-appearance: dialog;
+}
+
+.wizard-buttons-separator {
+  margin: 0 !important;
+  border-bottom: 1px solid #FFFFFF !important;
+}
+
+.wizard-buttons-btm {
+  padding: 3px 6px 6px 6px;
+}
+
+.wizard-label-box {
+  display: none;
+}
+
+.wizard-button {
+  font: menu !important;
+}
+
+
+
+%else
+
+/** Windows/Linux wizard rules: **/ 
+
 .wizard-header {
   border-bottom: 1px solid white;
   background-image: url("chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png");
@@ -54,3 +137,6 @@ wizard,
 {
   background-color: #313131 !important; /* color of the Main Window coffee:#1f150a, 0.3 black #0c0a05**/
 }
+
+%endif
+
