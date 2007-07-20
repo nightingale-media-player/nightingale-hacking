@@ -98,30 +98,30 @@ sb-player-artist-label.faceplate-text
 
 
 /* the seekbar slider */
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider,
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
+slider.sb-player-seek-slider,
+progressmeter.sb-player-seek-slider
 {
   height: 10px;
 }
 
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb 
+thumb.sb-player-seek-slider 
 {
   width: 11px;
   height: 10px;
 }
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb  > gripper
+thumb.sb-player-seek-slider  > gripper
 {
   height: 8px;
 }
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
+progressmeter.sb-player-seek-slider
 {
   height: 8px;
   margin: 0px;
   padding: 0px;
   border: 0px !important;
 }
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar,
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder
+progressmeter.sb-player-seek-slider > .progress-bar,
+progressmeter.sb-player-seek-slider > .progress-remainder
 {
   height: 10px;
   background-image: none;

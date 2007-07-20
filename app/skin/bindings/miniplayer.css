@@ -182,7 +182,7 @@ MINI DASHBOARD
   border: 0px !important;
   margin-top: 12px !important;
 }
-#mini_seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb
+thumb.sb-player-seek-slider.miniplayer
 {
   width: 11px !important;
   height: 4px !important;
@@ -193,11 +193,11 @@ MINI DASHBOARD
   margin: 0px;
   padding: 0px;  
 }
-#mini_seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb > gripper
+thumb.sb-player-seek-slider.miniplayer > gripper
 {
   height: 4px !important;
 }
-#mini_seekbar > stack > .sb-progress-slider-progressmeter
+progressmeter.sb-player-seek-slider.miniplayer
 {
   height: 4px !important;
   border: 0px !important;

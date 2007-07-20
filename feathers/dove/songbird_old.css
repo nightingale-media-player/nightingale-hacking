@@ -2366,7 +2366,7 @@ Mute and Slider
 
 
 
-#songbird_volume_thumb
+thumb.sb-player-volume-slider
 {
   width: 36px !important;
   height: 14px !important;
@@ -2374,7 +2374,7 @@ Mute and Slider
   background-color: transparent !important;
 }
 
-#songbird_volume_progress
+progressmeter.sb-player-volume-slider
 {
   top: 0px !important;
   left: 0px !important; /* previously 20px, 1 thumb-width in */
@@ -2382,13 +2382,13 @@ Mute and Slider
   height: 14px !important;
   background-color: transparent !important;
 }
-#songbird_volume_progress > .progress-bar
+progressmeter.sb-player-volume-slider > .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/volume_progress_bar.png) !important;
   background-color: transparent !important;
 }
-#songbird_volume_progress > .progress-remainder
+progressmeter.sb-player-volume-slider > .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/volume_progress_remainder.png) !important;
@@ -2415,12 +2415,12 @@ Mute and Slider
 }
 
 /* the seekbar slider */
-#songbird_seekbar_slider
+slider.sb-player-seek-slider
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 10px !important;
 }
-#songbird_seekbar_thumb
+thumb.sb-player-seek-slider
 {
   -moz-appearance: none !important; /* grrrr! */
   width: 21px !important;
@@ -2429,22 +2429,22 @@ Mute and Slider
   background-image: url(default/seekbar_progress.png) !important;
   border: 1px solid #a7afa2 !important;
 }
-#songbird_seekbar_thumb > gripper
+thumb.sb-player-seek-slider > gripper
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 10px !important;
 }
-#songbird_seekbar_progress
+progressmeter.sb-player-seek-slider
 {
   height: 10px !important;
 }
-#songbird_seekbar_progress > .progress-bar
+progressmeter.sb-player-seek-slider > .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/seekbar_progress.png) !important;
   height: 10px !important;
 }
-#songbird_seekbar_progress > .progress-remainder
+progressmeter.sb-player-seek-slider > .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/seekbar_remainder.png) !important;
@@ -3202,7 +3202,7 @@ window#mini
 
 
 /* the seekbar slider */
-#songbird_seekbar_slider.miniplayer
+slider.sb-player-seek-slider.miniplayer
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 6px !important;
@@ -3215,7 +3215,7 @@ window#mini
   border-bottom: 1px solid #FFF !important;
   
 }
-#mini_seekbar_thumb
+thumb.sb-player-seek-slider.miniplayer
 {
   -moz-appearance: none !important; /* grrrr! */
   width: 11px !important;
@@ -3224,23 +3224,23 @@ window#mini
   background-color: transparent !important;
   background-repeat: no-repeat !important;
 }
-#mini_seekbar_thumb > gripper
+thumb.sb-player-seek-slider.miniplayer > gripper
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 6px !important;
 }
-#mini_seekbar_progress
+progressmeter.sb-player-seek-slider.miniplayer
 {
   -moz-appearance: none !important;
   height: 6px !important;
 }
-#mini_seekbar_progress .progress-bar
+progressmeter.sb-player-seek-slider.miniplayer .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(mini/seekbar_progress.png) !important;
   height: 6px !important;
 }
-#mini_seekbar_progress .progress-remainder
+progressmeter.sb-player-seek-slider.miniplayer .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(mini/seekbar_remainder.png) !important;

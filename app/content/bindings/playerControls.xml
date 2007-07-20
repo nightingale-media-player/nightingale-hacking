@@ -55,6 +55,13 @@
         Components.utils.import("resource://app/components/sbProperties.jsm");
         this.setAttribute("tooltiptext", "&tooltip.control.volume;")
 
+        // OVERLAY TARGET ID MATCHES ELEMENT NAME
+        this.box.setAttribute("id", "sb-player-volume-slider" );
+        
+        // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
+        this.setAttribute("class", this.getAttribute("class") + " sb-player-volume-slider");
+      
+        // Then do the rest of your crap
         this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                     .getService(Components.interfaces.sbIPlaylistPlayback);
  
@@ -618,6 +625,12 @@
 
     <constructor>
       <![CDATA[
+        // OVERLAY TARGET ID MATCHES ELEMENT NAME
+        this.box.setAttribute("id", "sb-player-seek-slider" );
+
+        // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
+        this.setAttribute("class", this.getAttribute("class") + " sb-player-seek-slider");
+
         this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                     .getService(Components.interfaces.sbIPlaylistPlayback);
 

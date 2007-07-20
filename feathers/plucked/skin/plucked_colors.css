@@ -32,18 +32,18 @@ VOLUME
 */
 #volume_box,
 sb-player-volume-slider,
-sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb > gripper,
-sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb,
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter,
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar,
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder,
+thumb.sb-player-volume-slider > gripper,
+thumb.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider > .progress-bar,
+progressmeter.sb-player-volume-slider > .progress-remainder,
 #songbird_volume_e,
 #songbird_volume_w
 {
   background-color: transparent !important;
 }
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar,
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder
+progressmeter.sb-player-volume-slider > .progress-bar,
+progressmeter.sb-player-volume-slider > .progress-remainder
 {
   -moz-appearance: none !important;
 }
@@ -81,7 +81,7 @@ FACEPLATE
 }
 
 /* the seekbar slider */
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb
+thumb.sb-player-seek-slider
 {
   -moz-appearance: none;
   background-color: #202220; /** Dark Color 1 */
@@ -111,13 +111,13 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > t
 }
 
 .faceplate-progressmeter > .progress-bar,
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar
+progressmeter.sb-player-seek-slider > .progress-bar
 {
   -moz-appearance: none;
   background-color: #8A8F84;
 }
 
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder,
+progressmeter.sb-player-seek-slider > .progress-remainder,
 .faceplate-progressmeter > .progress-remainder
 {
   -moz-appearance: none;
@@ -147,28 +147,28 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressme
 }
 
 /* the seekbar slider */  
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider,
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
+slider.sb-player-seek-slider,
+progressmeter.sb-player-seek-slider
 {
   -moz-appearance: none !important;
   min-height: 10px !important;
   max-height: 10px !important;
 }
 
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb 
+thumb.sb-player-seek-slider 
 {
   -moz-appearance: none !important;
   width: 21px !important;
   min-height: 8px !important;
   max-height: 8px !important;
 }
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb  > gripper
+thumb.sb-player-seek-slider  > gripper
 {
   min-height: 8px !important;
   max-height: 8px !important;
   -moz-appearance: none !important;
 }
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter
+progressmeter.sb-player-seek-slider
 {
   -moz-appearance: none !important;
   min-height: 10px !important;
@@ -177,8 +177,8 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressme
   padding: 0px;
   border: 0px !important;
 }
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar,
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder
+progressmeter.sb-player-seek-slider > .progress-bar,
+progressmeter.sb-player-seek-slider > .progress-remainder
 {
   -moz-appearance: none !important;
   min-height: 10px !important;

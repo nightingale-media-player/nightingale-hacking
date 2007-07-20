@@ -256,7 +256,7 @@ MINI DASH BOARD
 }
 
 /* the seekbar slider */
-#songbird_seekbar_slider.miniplayer
+slider.sb-player-seek-slider.miniplayer
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 4px !important;
@@ -270,7 +270,7 @@ MINI DASH BOARD
   margin-top: 12px !important;
 }
 
-#mini_seekbar_thumb
+thumb.sb-player-seek-slider.miniplayer
 {
   -moz-appearance: none !important; /* grrrr! */
   width: 11px !important;
@@ -279,23 +279,23 @@ MINI DASH BOARD
   background-color: transparent !important;
   background-repeat: no-repeat !important;
 }
-#mini_seekbar_thumb > gripper
+thumb.sb-player-seek-slider.miniplayer > gripper
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 4px !important;
 }
-#mini_seekbar_progress
+progressmeter.sb-player-seek-slider.miniplayer
 {
   -moz-appearance: none !important;
   height: 4px !important;
 }
-#mini_seekbar_progress .progress-bar
+progressmeter.sb-player-seek-slider.miniplayer .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
   background-color: #5a5c5c !important;
   height: 4px !important;
 }
-#mini_seekbar_progress .progress-remainder
+progressmeter.sb-player-seek-slider.miniplayer .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
   background-color: #5a5c5c !important;  

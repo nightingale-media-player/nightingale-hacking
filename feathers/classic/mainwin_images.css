@@ -144,12 +144,12 @@ DASHBOARD
 ************************************************************************************************************************************************
 */
 /* the seekbar slider */
-#songbird_seekbar_slider,
-#songbird_seekbar_thumb,
-#songbird_seekbar_thumb > gripper,
-#songbird_seekbar_progress,
-#songbird_seekbar_progress > .progress-bar,
-#songbird_seekbar_progress > .progress-remainder,
+slider.sb-player-seek-slider,
+thumb.sb-player-seek-slider,
+thumb.sb-player-seek-slider > gripper,
+progressmeter.sb-player-seek-slider,
+progressmeter.sb-player-seek-slider > .progress-bar,
+progressmeter.sb-player-seek-slider > .progress-remainder,
 #songbird_seekbar
 {
   -moz-appearance: none !important;
@@ -167,10 +167,10 @@ Mute and Slider
 #songbird_volume,
 #songbird_volume > progress_slider,
 #songbird_volume gripper,
-#songbird_volume_thumb,
-#songbird_volume_progress,
-#songbird_volume_progress > .progress-bar,
-#songbird_volume_progress > .progress-remainder,
+thumb.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider > .progress-bar,
+progressmeter.sb-player-volume-slider > .progress-remainder,
 #songbird_volume_e,
 #songbird_volume_w
 {
@@ -619,29 +619,29 @@ Face Plate
 }
 
 /* the seekbar slider */
-#songbird_seekbar_slider
+slider.sb-player-seek-slider
 {
   height: 10px !important;
 }
-#songbird_seekbar_thumb
+thumb.sb-player-seek-slider
 {
   width: 21px !important;
   height: 8px !important;
   border: 1px solid !important;
 }
-#songbird_seekbar_thumb > gripper
+thumb.sb-player-seek-slider > gripper
 {
   height: 8px !important;
 }
-#songbird_seekbar_progress
+progressmeter.sb-player-seek-slider
 {
   height: 10px !important;
 }
-#songbird_seekbar_progress > .progress-bar
+progressmeter.sb-player-seek-slider > .progress-bar
 {
   height: 10px !important;
 }
-#songbird_seekbar_progress > .progress-remainder
+progressmeter.sb-player-seek-slider > .progress-remainder
 {
   height: 10px !important;
 }
@@ -654,27 +654,27 @@ Face Plate
 
 
 /* the seekbar slider */
-#songbird_seekbar_thumb
+thumb.sb-player-seek-slider
 {
   background-color: white !important;
   background-image: none !important;
   border: 1px solid #a7afa2 !important;
 }
-#songbird_seekbar_thumb > gripper
+thumb.sb-player-seek-slider > gripper
 {
   height: 10px !important;
 }
-#songbird_seekbar_progress
+progressmeter.sb-player-seek-slider
 {
   height: 10px !important;
 }
-#songbird_seekbar_progress > .progress-bar
+progressmeter.sb-player-seek-slider > .progress-bar
 {
   background-color: black !important;
   background-image: none !important;
   height: 10px !important;
 }
-#songbird_seekbar_progress > .progress-remainder
+progressmeter.sb-player-seek-slider > .progress-remainder
 {
   background-image: none !important;
   background-color: transparent !important;
@@ -1024,13 +1024,13 @@ Mute and Slider
 
 
 
-#songbird_volume_thumb
+thumb.sb-player-volume-slider
 {
   width: 36px !important;
   height: 14px !important;
 }
 
-#songbird_volume_progress
+progressmeter.sb-player-volume-slider
 {
   top: 0px !important;
   left: 0px !important; /* previously 20px, 1 thumb-width in */
@@ -1131,7 +1131,7 @@ Mute and Slider
   border: none !important;
 }
 
-#songbird_volume_thumb
+thumb.sb-player-volume-slider
 {
   background-image: url(chrome://songbird/skin/default/volume_thumb.png) !important;
   min-width: 36px !important;
@@ -1140,7 +1140,7 @@ Mute and Slider
   min-height: 14px !important;
 }
 
-#songbird_volume_progress
+progressmeter.sb-player-volume-slider
 {
   top: 0px !important;
   left: 0px !important; /* previously 20px, 1 thumb-width in */
@@ -1150,21 +1150,21 @@ Mute and Slider
   min-height: 14px !important;
 }
 
-#songbird_volume_thumb:active
+thumb.sb-player-volume-slider:active
 {
   border: none !important;
   background-repeat: no-repeat !important;
   background-image: url(chrome://songbird/skin/default/volume_thumb_active.png) !important;
 }
 
-#songbird_volume_progress > .progress-bar
+progressmeter.sb-player-volume-slider > .progress-bar
 {
   border: none !important;
   background-image: url(chrome://songbird/skin/default/volume_progress_bar.png) !important;
   background-color: transparent !important;
   
 }
-#songbird_volume_progress > .progress-remainder
+progressmeter.sb-player-volume-slider > .progress-remainder
 {
   border: none !important;
   background-image: url(chrome://songbird/skin/default/volume_progress_remainder.png) !important;

@@ -39,12 +39,12 @@ All other styles affecting the elements below are found in songbird.css.
 VOLUME CONTROL, Main Window
 ************************************************************************************************************************************************
 */
-#songbird_volume_thumb
+thumb.sb-player-volume-slider
 {
   background-image: url(chrome://songbird/skin/default/volume_thumb.png) !important;
 }
 
-#songbird_volume_thumb:active
+thumb.sb-player-volume-slider:active
 {
   background-image: url(chrome://songbird/skin/default/volume_thumb_active.png) !important;
 }

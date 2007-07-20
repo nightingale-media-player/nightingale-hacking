@@ -33,13 +33,15 @@
 
   <binding id="progress-slider">
     <content>
-      <xul:stack flex="1">
-        <children/>
-        <xul:progressmeter sbid="seekbar_progress" class="sb-progress-slider-progressmeter" xbl:inherits="orient" flex="1"/>
-        <xul:slider sbid="seekbar_slider" class="sb-progress-slider-slider" xbl:inherits="disabled=disabled,orient=orient,maxpos=maxpos" pageincrement="0" flex="1" onmousedown="slidermousedown(event)" onmouseup="slidermouseup(event)" onmousemove="slidermousemove(event)" mousethrough="never"> 
-          <xul:thumb sbid="seekbar_thumb" class="sb-progress-slider-thumb" xbl:inherits="id=thumbid"/>  
+    <xul:box id="progress-slider-box" sbid="progress-slider-box" xbl:inherits="orient,class" flex="1">
+      <xul:stack xbl:inherits="class" flex="1">
+        <xul:progressmeter id="progress-slider-progress" sbid="progress-slider-progress" class="sb-progress-slider" xbl:inherits="orient,class" flex="1"/>
+        <xul:slider id="progress-slider-slider" sbid="progress-slider-slider" class="sb-progress-slider" xbl:inherits="disabled=disabled,orient=orient,maxpos=maxpos,class" pageincrement="0" flex="1" onmousedown="slidermousedown(event)" onmouseup="slidermouseup(event)" onmousemove="slidermousemove(event)" mousethrough="never"> 
+          <xul:thumb id="progress-slider-thumb" sbid="progress-slider-thumb" class="sb-progress-slider" xbl:inherits="class"/>  
         </xul:slider>
       </xul:stack>
+      <children/>
+    </xul:box>
     </content>
 
    <implementation>
@@ -52,9 +54,10 @@
     </destructor>
 
     <field name="tracking">0</field>
-    <field name="slider">document.getAnonymousElementByAttribute(this, 'sbid', 'seekbar_slider');</field>
-    <field name="thumb">document.getAnonymousElementByAttribute(this, 'sbid', 'seekbar_thumb');</field>
-    <field name="progress">document.getAnonymousElementByAttribute(this, 'sbid', 'seekbar_progress');</field>
+    <field name="box">document.getAnonymousElementByAttribute(this, 'sbid', 'progress-slider-box');</field>
+    <field name="slider">document.getAnonymousElementByAttribute(this, 'sbid', 'progress-slider-slider');</field>
+    <field name="thumb">document.getAnonymousElementByAttribute(this, 'sbid', 'progress-slider-thumb');</field>
+    <field name="progress">document.getAnonymousElementByAttribute(this, 'sbid', 'progress-slider-progress');</field>
 
     <property name="value">
       <getter>

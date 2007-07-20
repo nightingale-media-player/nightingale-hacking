@@ -27,12 +27,12 @@
 @namespace html url("http://www.w3.org/1999/xhtml");
 
 
-#mini_seekbar > stack > .sb-progress-slider-progressmeter,
-#mini_seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar,
-#mini_seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder,
-#mini_seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb,
-#mini_seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb > gripper,
-#mini_seekbar > stack > .sb-progress-slider-slider
+progressmeter.sb-player-seek-slider.miniplayer,
+progressmeter.sb-player-seek-slider.miniplayer > .progress-bar,
+progressmeter.sb-player-seek-slider.miniplayer > .progress-remainder,
+thumb.sb-player-seek-slider.miniplayer,
+thumb.sb-player-seek-slider.miniplayer > gripper,
+slider.sb-player-seek-slider.miniplayer
 {
   -moz-appearance: none !important;
   min-height: 4px !important;

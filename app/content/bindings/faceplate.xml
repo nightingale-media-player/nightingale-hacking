@@ -420,8 +420,7 @@
           <!-- SEEK BAR -->
           <xul:hbox class="faceplate-seekbar-box" align="center" pack="center">
             <xul:sb-player-timeelapsed-label   class="faceplate-text" />
-            <!-- TODO: Change seekbar to class based styling and anonid --> 
-            <xul:sb-player-seek-slider class="faceplate-seekbar" thumbid="songbird_seekbara_thumb" flex="1" orient="horizontal"  maxpos="100"/>
+            <xul:sb-player-seek-slider class="faceplate-seekbar" flex="1" orient="horizontal"  maxpos="100"/>
             <xul:sb-player-totaltime-label class="faceplate-text" />
           </xul:hbox>
         </xul:vbox>

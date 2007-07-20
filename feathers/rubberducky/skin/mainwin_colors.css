@@ -927,13 +927,13 @@ FACEPLATE
 /* the seekbar slider */
 
 
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > thumb
+thumb.sb-player-seek-slider
 {
   -moz-border-radius: 5px;
   background-color: #202220; /** Dark Color 1 */
   border: none;
 }
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .sb-progress-slider-thumb 
+thumb.sb-player-seek-slider 
 {
   background-color: White;
   border: 3px solid #313131;
@@ -954,13 +954,13 @@ sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-slider > .
 }
 
 .faceplate-progressmeter > .progress-bar,
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-bar
+progressmeter.sb-player-seek-slider > .progress-bar
 {
   background-color: #313131;
   -moz-border-radius: 5px;
 }
 
-sb-player-seek-slider.faceplate-seekbar > stack > .sb-progress-slider-progressmeter > .progress-remainder,
+progressmeter.sb-player-seek-slider > .progress-remainder,
 .faceplate-progressmeter > .progress-remainder
 {
   background-color: #B3BAAC;
@@ -1082,11 +1082,11 @@ VOLUME
 */
 #volume_box,
 sb-player-volume-slider,
-sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb > gripper,
-sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb,
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter,
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar,
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder,
+thumb.sb-player-volume-slider > gripper,
+thumb.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider > .progress-bar,
+progressmeter.sb-player-volume-slider > .progress-remainder,
 #songbird_volume_e,
 #songbird_volume_w
 {

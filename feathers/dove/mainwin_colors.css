@@ -803,7 +803,7 @@ Contains the Main Playback Controls and the Dashboard.
 }
 
 /* the seekbar slider */
-#songbird_seekbar_thumb
+thumb.sb-player-seek-slider
 {
   background-color: #a2aa9e !important;
   border: 1px solid !important;
@@ -813,7 +813,7 @@ Contains the Main Playback Controls and the Dashboard.
   -moz-border-left-colors: #ccd4c7 !important;
 }
 
-#songbird_seekbar_thumb:active
+thumb.sb-player-seek-slider:active
 {
   -moz-border-bottom-colors: #ccd4c7 !important;
   -moz-border-left-colors: #888f85 !important;
@@ -1135,10 +1135,10 @@ Mute and Slider
 #volume_box,
 #songbird_volume > sb-progress-slider,
 #songbird_volume gripper,
-#songbird_volume_thumb,
-#songbird_volume_progress,
-#songbird_volume_progress > .progress-bar,
-#songbird_volume_progress > .progress-remainder,
+thumb.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider > .progress-bar,
+progressmeter.sb-player-volume-slider > .progress-remainder,
 #songbird_volume_e,
 #songbird_volume_w
 {

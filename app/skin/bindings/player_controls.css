@@ -177,10 +177,10 @@ sb-player-volume-slider
   height: 14px !important;
 }
 
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter,
-sb-player-volume-slider > stack > .sb-progress-slider-slider,
-sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb,
-sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb > gripper
+progressmeter.sb-player-volume-slider,
+slider.sb-player-volume-slider,
+thumb.sb-player-volume-slider,
+thumb.sb-player-volume-slider > gripper
 {  
   padding: 0px !important;
   margin: 0px !important;
@@ -194,7 +194,7 @@ sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb > gripper
     use a background. We put both states in one image and then change
     the background-position in order to prevent flickering when changing
     states. **/
-sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb
+thumb.sb-player-volume-slider
 {
   width: 14px;
   height: 14px;
@@ -202,13 +202,13 @@ sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb
   background-repeat: no-repeat;
   background-position: center center;
 }
-sb-player-volume-slider > stack > .sb-progress-slider-slider > thumb:active
+thumb.sb-player-volume-slider:active
 {
   background-image: url(chrome://songbird/skin/volume/volume_thumb_active.png);
   background-repeat: no-repeat;
   background-position: center center;
 }
-sb-player-volume-slider > stack > .sb-progress-slider-slider
+slider.sb-player-volume-slider
 {
   background-image: url(chrome://songbird/skin/volume/volume_progress-slider-bkgd.png);
   background-position: left center;
@@ -220,7 +220,7 @@ sb-player-volume-slider > stack > .sb-progress-slider-slider
   padding: 0px 6px 0px 6px !important;
 }
 
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter
+progressmeter.sb-player-volume-slider
 {
   background-image: url(chrome://songbird/skin/volume/volume_progressmeter-bkgd.png);
   background-position: right center;
@@ -231,12 +231,12 @@ sb-player-volume-slider > stack > .sb-progress-slider-progressmeter
   margin: 0px 0px 0px 10px !important;
 }
 
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-bar
+progressmeter.sb-player-volume-slider > .progress-bar
 {
   -moz-appearance: none !important;
   background-image: none;
 }
-sb-player-volume-slider > stack > .sb-progress-slider-progressmeter > .progress-remainder
+progressmeter.sb-player-volume-slider > .progress-remainder
 {
   background-image: none;
 }
