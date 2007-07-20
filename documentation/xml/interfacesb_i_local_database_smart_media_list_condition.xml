@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_local_database_smart_media_list_condition" kind="interface" prot="public">
+    <compoundname>sbILocalDatabaseSmartMediaListCondition</compoundname>
+    <includes refid="sb_i_local_database_smart_media_list_8idl" local="no">sbILocalDatabaseSmartMediaList.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_condition_1352f3b74293cff65edbc28ce46589c32" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILocalDatabaseSmartMediaListCondition::propertyName</definition>
+        <argsstring></argsstring>
+        <name>propertyName</name>
+        <briefdescription>
+<para>The name of the property used in this condition. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="48" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_condition_11469d0ef5822557ad66ccae1123d6a85" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref></type>
+        <definition>readonly attribute sbIPropertyOperator sbILocalDatabaseSmartMediaListCondition::operator</definition>
+        <argsstring></argsstring>
+        <name>operator</name>
+        <briefdescription>
+<para>The operator used in this condition. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="54" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_condition_1ce7ccaecdc9de5b312dbca24b7f3dc2b" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILocalDatabaseSmartMediaListCondition::leftValue</definition>
+        <argsstring></argsstring>
+        <name>leftValue</name>
+        <briefdescription>
+<para>The left value for this condition. Only the operator BETWEEN requires a rightValue as well. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="60" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_condition_14175ccab9312eaf27de77d4ef479c1f2" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILocalDatabaseSmartMediaListCondition::rightValue</definition>
+        <argsstring></argsstring>
+        <name>rightValue</name>
+        <briefdescription>
+<para>The right value for this condition. This value is only used in conjunction with the BETWEEN operator. Trying to set this value when using a different operator will not fail but will be ignored. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="68" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_condition_10aed3cad7c89ebf0474f98b85ba6f28a" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbILocalDatabaseSmartMediaListCondition::limit</definition>
+        <argsstring></argsstring>
+        <name>limit</name>
+        <briefdescription>
+<para>This condition is a global limit. For example, if you were to use the contentSize property, you can limit the total size of the smart media list in bytes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="75" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="250">
+        <label>sbIPropertyOperator</label>
+        <link refid="interfacesb_i_property_operator"/>
+      </node>
+      <node id="249">
+        <label>sbILocalDatabaseSmartMediaListCondition</label>
+        <link refid="interfacesb_i_local_database_smart_media_list_condition"/>
+        <childnode refid="250" relation="usage">
+          <edgelabel>operator</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="44" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="43" bodyend="76"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_local_database_smart_media_list_condition_1ce7ccaecdc9de5b312dbca24b7f3dc2b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>leftValue</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_condition_10aed3cad7c89ebf0474f98b85ba6f28a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>limit</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_condition_11469d0ef5822557ad66ccae1123d6a85" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>operator</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_condition_1352f3b74293cff65edbc28ce46589c32" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>propertyName</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_condition_14175ccab9312eaf27de77d4ef479c1f2" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>rightValue</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_local_database_tree_view" kind="interface" prot="public">
+    <compoundname>sbILocalDatabaseTreeView</compoundname>
+    <includes refid="sb_i_local_database_tree_view_8idl" local="no">sbILocalDatabaseTreeView.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_local_database_tree_view_1abe59afc9371614ed0b40da25a4ef860" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseTreeView::setSort</definition>
+        <argsstring>(in AString aProperty, in boolean aDirection)</argsstring>
+        <name>setSort</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aDirection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="43"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_tree_view_11905891930f0a85984437d2e117a443e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseTreeView::invalidateRowsByGuid</definition>
+        <argsstring>(in AString aGuid)</argsstring>
+        <name>invalidateRowsByGuid</name>
+        <param>
+          <type>in AString</type>
+          <declname>aGuid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="45"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_local_database_tree_view_161d370c0ac87d1397550fe5dfc70e6d0" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbILocalDatabaseTreeView::selectionChanging</definition>
+        <argsstring></argsstring>
+        <name>selectionChanging</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="42" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" line="41" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseTreeView.idl" bodystart="40" bodyend="46"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_local_database_tree_view_11905891930f0a85984437d2e117a443e" prot="public" virt="non-virtual"><scope>sbILocalDatabaseTreeView</scope><name>invalidateRowsByGuid</name></member>
+      <member refid="interfacesb_i_local_database_tree_view_161d370c0ac87d1397550fe5dfc70e6d0" prot="public" virt="non-virtual"><scope>sbILocalDatabaseTreeView</scope><name>selectionChanging</name></member>
+      <member refid="interfacesb_i_local_database_tree_view_1abe59afc9371614ed0b40da25a4ef860" prot="public" virt="non-virtual"><scope>sbILocalDatabaseTreeView</scope><name>setSort</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

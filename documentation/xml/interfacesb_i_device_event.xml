@@ -1,0 +1,491 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_device_event" kind="interface" prot="public">
+    <compoundname>sbIDeviceEvent</compoundname>
+    <includes refid="sb_i_device_event_8idl" local="no">sbIDeviceEvent.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_device_event_1a3e6c8fb430675ca5f3aa4ae51642836" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_DEVICE_BASE</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_DEVICE_BASE</name>
+        <initializer> 0x00000000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="43" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1d11856dc4d6638758b7aae18261006d6" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_DEVICE_RESET</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_DEVICE_RESET</name>
+        <initializer> 0x00000001</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="44" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1e92cac3b73befd81e9d81e776b74f272" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_DEVICE_POWER_DOWN</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_DEVICE_POWER_DOWN</name>
+        <initializer> 0x00000002</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="45" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1d7fbb9b0dee547b0b5e42759fb81d92e" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_DEVICE_POWER_UP</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_DEVICE_POWER_UP</name>
+        <initializer> 0x00000003</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="46" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_17dcb415bac2ae2f1467c889271337373" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_DEVICE_MEDIA_EJECT</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_DEVICE_MEDIA_EJECT</name>
+        <initializer> 0x00000004</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="47" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_10670ccd72b3a368d600450e505d0369d" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_DEVICE_MEDIA_FORMAT</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_DEVICE_MEDIA_FORMAT</name>
+        <initializer> 0x00000005</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="48" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_199c9f6c1eb8e62351f6a1f8e1f0a05f2" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_CONTROLLER_BASE</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_CONTROLLER_BASE</name>
+        <initializer> 0x00020000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="53" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1319ec0d2c7e1682b4d4848d19ac8addb" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_CONTROLLER_RESET</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_CONTROLLER_RESET</name>
+        <initializer> 0x00020001</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="54" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_10b933a6be2fb74312f0758eba03eaa90" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_MARSHALL_BASE</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_MARSHALL_BASE</name>
+        <initializer> 0x00040000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="59" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_15cff1b1683e280da63748877c5bdf053" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_MARSHALL_RESET</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_MARSHALL_RESET</name>
+        <initializer> 0x00040001</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="60" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_15627c372eaaa6a19c630f96157c476ac" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_MANAGER_BASE</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_MANAGER_BASE</name>
+        <initializer> 0x00060000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="65" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1dce80fd88ab1c7f5a7239f28d7acae07" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_MANAGER_REFRESH</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_MANAGER_REFRESH</name>
+        <initializer> 0x00060001</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="66" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1ba48b037e696226d618605eb677109d5" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::COMMAND_CLIENT_DEFINED</definition>
+        <argsstring></argsstring>
+        <name>COMMAND_CLIENT_DEFINED</name>
+        <initializer> 0x20000000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="71" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1776531a2a557b93de6ac527abb5e9f0d" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_BASE</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_BASE</name>
+        <initializer> 0x40000000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="76" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_14a921cb3047dc4911998d5384204a761" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_ADDED</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_ADDED</name>
+        <initializer> 0x40000001</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="77" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_13c18f2e1ad6f1dd896fb4feac8b976b6" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_REMOVED</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_REMOVED</name>
+        <initializer> 0x40000002</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="78" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1ade0006ea99a163b6fd9d0467b46243d" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_MEDIA_INSERTED</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_MEDIA_INSERTED</name>
+        <initializer> 0x40000003</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="79" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_11ccf12f3b9e643adb2235524ac6ff6d3" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_MEDIA_REMOVED</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_MEDIA_REMOVED</name>
+        <initializer> 0x40000004</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="80" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_11415c512117c6f65d586c2bc2924e1f1" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_START</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_MEDIA_READ_START</name>
+        <initializer> 0x40000005</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="81" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_19060c1d692d63f47ba459d29872ba030" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_END</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_MEDIA_READ_END</name>
+        <initializer> 0x40000006</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="82" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1bd57e28928f64b1eaa3b1880546cb5ea" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_FAILED</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_MEDIA_READ_FAILED</name>
+        <initializer> 0x40000007</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="83" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1641905b30b5e939b7237d2d92a7f18e1" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_START</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_MEDIA_WRITE_START</name>
+        <initializer> 0x40000008</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="84" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1d8b61cdafc67f1dc18b6a82b35373a35" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_END</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_MEDIA_WRITE_END</name>
+        <initializer> 0x40000009</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="85" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_115cfa72883c1b40027726af23a8e80f8" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_FAILED</definition>
+        <argsstring></argsstring>
+        <name>EVENT_DEVICE_MEDIA_WRITE_FAILED</name>
+        <initializer> 0x4000000A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="86" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1cb6bb266781dbcb22e4483ce400770e2" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_CONTROLLER_BASE</definition>
+        <argsstring></argsstring>
+        <name>EVENT_CONTROLLER_BASE</name>
+        <initializer> 0x40020000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="91" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1d0cb2fa10c2fbd9a903280b281d34713" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_MARSHALL_BASE</definition>
+        <argsstring></argsstring>
+        <name>EVENT_MARSHALL_BASE</name>
+        <initializer> 0x40040000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="96" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1beb207b4c5548d656dc09351b4f9010c" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_MANAGER_BASE</definition>
+        <argsstring></argsstring>
+        <name>EVENT_MANAGER_BASE</name>
+        <initializer> 0x40060000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="101" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1ecdb97c08ac5f027a7bf08698584015a" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDeviceEvent::EVENT_CLIENT_DEFINED</definition>
+        <argsstring></argsstring>
+        <name>EVENT_CLIENT_DEFINED</name>
+        <initializer> 0x60000000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="106" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1269ebbe5776a185ca776233b54085fcf" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRUint32</type>
+        <definition>readonly attribute PRUint32 sbIDeviceEvent::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="111" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_199e5f65469f988f927910b9e939ee910" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIVariant</type>
+        <definition>readonly attribute nsIVariant sbIDeviceEvent::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="116" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_event_1d3ba0c0de389b9d6a0a47f59cab1320b" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_device_event_target" kindref="compound">sbIDeviceEventTarget</ref></type>
+        <definition>readonly attribute sbIDeviceEventTarget sbIDeviceEvent::source</definition>
+        <argsstring></argsstring>
+        <name>source</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="121" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="89">
+        <label>sbIDeviceEvent</label>
+        <link refid="interfacesb_i_device_event"/>
+        <childnode refid="90" relation="usage">
+          <edgelabel>source</edgelabel>
+        </childnode>
+      </node>
+      <node id="90">
+        <label>sbIDeviceEventTarget</label>
+        <link refid="interfacesb_i_device_event_target"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" line="39" bodyfile="C:/projects/songbird/components/devices/base/public/sbIDeviceEvent.idl" bodystart="38" bodyend="122"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_event_1ba48b037e696226d618605eb677109d5" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_CLIENT_DEFINED</name></member>
+      <member refid="interfacesb_i_device_event_199c9f6c1eb8e62351f6a1f8e1f0a05f2" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_CONTROLLER_BASE</name></member>
+      <member refid="interfacesb_i_device_event_1319ec0d2c7e1682b4d4848d19ac8addb" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_CONTROLLER_RESET</name></member>
+      <member refid="interfacesb_i_device_event_1a3e6c8fb430675ca5f3aa4ae51642836" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_DEVICE_BASE</name></member>
+      <member refid="interfacesb_i_device_event_17dcb415bac2ae2f1467c889271337373" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_DEVICE_MEDIA_EJECT</name></member>
+      <member refid="interfacesb_i_device_event_10670ccd72b3a368d600450e505d0369d" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_DEVICE_MEDIA_FORMAT</name></member>
+      <member refid="interfacesb_i_device_event_1e92cac3b73befd81e9d81e776b74f272" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_DEVICE_POWER_DOWN</name></member>
+      <member refid="interfacesb_i_device_event_1d7fbb9b0dee547b0b5e42759fb81d92e" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_DEVICE_POWER_UP</name></member>
+      <member refid="interfacesb_i_device_event_1d11856dc4d6638758b7aae18261006d6" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_DEVICE_RESET</name></member>
+      <member refid="interfacesb_i_device_event_15627c372eaaa6a19c630f96157c476ac" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_MANAGER_BASE</name></member>
+      <member refid="interfacesb_i_device_event_1dce80fd88ab1c7f5a7239f28d7acae07" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_MANAGER_REFRESH</name></member>
+      <member refid="interfacesb_i_device_event_10b933a6be2fb74312f0758eba03eaa90" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_MARSHALL_BASE</name></member>
+      <member refid="interfacesb_i_device_event_15cff1b1683e280da63748877c5bdf053" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>COMMAND_MARSHALL_RESET</name></member>
+      <member refid="interfacesb_i_device_event_199e5f65469f988f927910b9e939ee910" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>data</name></member>
+      <member refid="interfacesb_i_device_event_1ecdb97c08ac5f027a7bf08698584015a" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_CLIENT_DEFINED</name></member>
+      <member refid="interfacesb_i_device_event_1cb6bb266781dbcb22e4483ce400770e2" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_CONTROLLER_BASE</name></member>
+      <member refid="interfacesb_i_device_event_14a921cb3047dc4911998d5384204a761" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_ADDED</name></member>
+      <member refid="interfacesb_i_device_event_1776531a2a557b93de6ac527abb5e9f0d" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_BASE</name></member>
+      <member refid="interfacesb_i_device_event_1ade0006ea99a163b6fd9d0467b46243d" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_MEDIA_INSERTED</name></member>
+      <member refid="interfacesb_i_device_event_19060c1d692d63f47ba459d29872ba030" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_MEDIA_READ_END</name></member>
+      <member refid="interfacesb_i_device_event_1bd57e28928f64b1eaa3b1880546cb5ea" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_MEDIA_READ_FAILED</name></member>
+      <member refid="interfacesb_i_device_event_11415c512117c6f65d586c2bc2924e1f1" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_MEDIA_READ_START</name></member>
+      <member refid="interfacesb_i_device_event_11ccf12f3b9e643adb2235524ac6ff6d3" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_MEDIA_REMOVED</name></member>
+      <member refid="interfacesb_i_device_event_1d8b61cdafc67f1dc18b6a82b35373a35" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_MEDIA_WRITE_END</name></member>
+      <member refid="interfacesb_i_device_event_115cfa72883c1b40027726af23a8e80f8" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_MEDIA_WRITE_FAILED</name></member>
+      <member refid="interfacesb_i_device_event_1641905b30b5e939b7237d2d92a7f18e1" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_MEDIA_WRITE_START</name></member>
+      <member refid="interfacesb_i_device_event_13c18f2e1ad6f1dd896fb4feac8b976b6" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_DEVICE_REMOVED</name></member>
+      <member refid="interfacesb_i_device_event_1beb207b4c5548d656dc09351b4f9010c" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_MANAGER_BASE</name></member>
+      <member refid="interfacesb_i_device_event_1d0cb2fa10c2fbd9a903280b281d34713" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>EVENT_MARSHALL_BASE</name></member>
+      <member refid="interfacesb_i_device_event_1269ebbe5776a185ca776233b54085fcf" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>id</name></member>
+      <member refid="interfacesb_i_device_event_1d3ba0c0de389b9d6a0a47f59cab1320b" prot="public" virt="non-virtual"><scope>sbIDeviceEvent</scope><name>source</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

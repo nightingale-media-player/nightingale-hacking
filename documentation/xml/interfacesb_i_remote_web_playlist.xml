@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_remote_web_playlist" kind="interface" prot="public">
+    <compoundname>sbIRemoteWebPlaylist</compoundname>
+    <includes refid="sb_i_remote_web_playlist_8idl" local="no">sbIRemoteWebPlaylist.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_remote_web_playlist_14eb7065850d6e04a9b1d287cd7956261" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIRemoteWebPlaylist::setSelectionByIndex</definition>
+        <argsstring>(in unsigned long aIndex, in boolean aSelected)</argsstring>
+        <name>setSelectionByIndex</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aIndex</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aSelected</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="52"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_remote_web_playlist_1f1856a898c54ebe84da02c0a5f33b3cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIRemoteWebPlaylist::addColumn</definition>
+        <argsstring>(in AString aColumnType, in AString aColumnName, in AString aDisplayName, in AString aBeforeColumnName, in boolean aHidden, in boolean aUserViewable, in boolean aUserEditable, in boolean aHasNullSort, in unsigned long aNullSort, in unsigned long aWidth)</argsstring>
+        <name>addColumn</name>
+        <param>
+          <type>in AString</type>
+          <declname>aColumnType</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aColumnName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aDisplayName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeColumnName</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aHidden</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aUserViewable</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aUserEditable</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aHasNullSort</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aNullSort</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aWidth</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="64"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_remote_web_playlist_16608f2e9d021e6fe17b50d188dc0c57e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIRemoteWebPlaylist::showColumnBefore</definition>
+        <argsstring>(in AString aColumnName, in AString aBeforeColumnName)</argsstring>
+        <name>showColumnBefore</name>
+        <param>
+          <type>in AString</type>
+          <declname>aColumnName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aBeforeColumnName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="67"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_remote_web_playlist_177085c7d935bd95749cea08ce51e125f" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_remote_media_list" kindref="compound">sbIRemoteMediaList</ref></type>
+        <definition>attribute sbIRemoteMediaList sbIRemoteWebPlaylist::mediaList</definition>
+        <argsstring></argsstring>
+        <name>mediaList</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="48" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_remote_web_playlist_1434871417cc139f6eb5c5bf8670a282a" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbIRemoteWebPlaylist::selection</definition>
+        <argsstring></argsstring>
+        <name>selection</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="50" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface to control a media list from remote web pages. </para>    </briefdescription>
+    <detaileddescription>
+<para>TODO: Write this documentation </para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="444">
+        <label>sbIRemoteMediaList</label>
+        <link refid="interfacesb_i_remote_media_list"/>
+      </node>
+      <node id="443">
+        <label>sbIRemoteWebPlaylist</label>
+        <link refid="interfacesb_i_remote_web_playlist"/>
+        <childnode refid="444" relation="usage">
+          <edgelabel>mediaList</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" line="47" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl" bodystart="46" bodyend="68"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_remote_web_playlist_1f1856a898c54ebe84da02c0a5f33b3cf" prot="public" virt="non-virtual"><scope>sbIRemoteWebPlaylist</scope><name>addColumn</name></member>
+      <member refid="interfacesb_i_remote_web_playlist_177085c7d935bd95749cea08ce51e125f" prot="public" virt="non-virtual"><scope>sbIRemoteWebPlaylist</scope><name>mediaList</name></member>
+      <member refid="interfacesb_i_remote_web_playlist_1434871417cc139f6eb5c5bf8670a282a" prot="public" virt="non-virtual"><scope>sbIRemoteWebPlaylist</scope><name>selection</name></member>
+      <member refid="interfacesb_i_remote_web_playlist_14eb7065850d6e04a9b1d287cd7956261" prot="public" virt="non-virtual"><scope>sbIRemoteWebPlaylist</scope><name>setSelectionByIndex</name></member>
+      <member refid="interfacesb_i_remote_web_playlist_16608f2e9d021e6fe17b50d188dc0c57e" prot="public" virt="non-virtual"><scope>sbIRemoteWebPlaylist</scope><name>showColumnBefore</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

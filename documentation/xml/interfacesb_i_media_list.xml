@@ -1,0 +1,950 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_media_list" kind="interface" prot="public">
+    <compoundname>sbIMediaList</compoundname>
+    <basecompoundref refid="interfacesb_i_media_item" prot="public" virt="non-virtual">sbIMediaItem</basecompoundref>
+    <derivedcompoundref refid="interfacesb_i_local_database_smart_media_list" prot="public" virt="non-virtual">sbILocalDatabaseSmartMediaList</derivedcompoundref>
+    <includes refid="sb_i_media_list_8idl" local="no">sbIMediaList.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_media_list_16ab593212150bf9bf55b0a05207867a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+        <definition>sbIMediaItem sbIMediaList::getItemByGuid</definition>
+        <argsstring>(in AString aGuid)</argsstring>
+        <name>getItemByGuid</name>
+        <param>
+          <type>in AString</type>
+          <declname>aGuid</declname>
+        </param>
+        <briefdescription>
+<para>Get a media item in the list by guid. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aGuid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Guid of the media item </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Media item with the requested guid or null if not found </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="78"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_12fd1e5e5bf2a9691bfde77a5a0eddd6a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+        <definition>sbIMediaItem sbIMediaList::getItemByIndex</definition>
+        <argsstring>(in unsigned long aIndex)</argsstring>
+        <name>getItemByIndex</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get a media item in the list by index. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the media item </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Media item with the requested index </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="85"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_1cdf4da56f675075c88562e71d1803d31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::enumerateAllItems</definition>
+        <argsstring>(in sbIMediaListEnumerationListener aEnumerationListener, in unsigned short aEnumerationType)</argsstring>
+        <name>enumerateAllItems</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_enumeration_listener" kindref="compound">sbIMediaListEnumerationListener</ref></type>
+          <declname>aEnumerationListener</declname>
+        </param>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aEnumerationType</declname>
+        </param>
+        <briefdescription>
+<para>Enumerate all items in the list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aEnumerationType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- One of the ENUMERATIONTYPE values above. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aEnumerationListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The enumeration listener. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="116"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_12554674dffd7c47b5a3b9980ceff5e63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::enumerateItemsByProperty</definition>
+        <argsstring>(in AString aPropertyName, in AString aPropertyValue, in sbIMediaListEnumerationListener aEnumerationListener, in unsigned short aEnumerationType)</argsstring>
+        <name>enumerateItemsByProperty</name>
+        <param>
+          <type>in AString</type>
+          <declname>aPropertyName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aPropertyValue</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_enumeration_listener" kindref="compound">sbIMediaListEnumerationListener</ref></type>
+          <declname>aEnumerationListener</declname>
+        </param>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aEnumerationType</declname>
+        </param>
+        <briefdescription>
+<para>Enumerate the media items in the list that match a given property name and value. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Property name to search. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Property value to search. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aEnumerationType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- One of the ENUMERATIONTYPE values above. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aEnumerationListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The enumeration listener. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="130"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_1531c02362fe0b8d3f6a509ac70932921" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::enumerateItemsByProperties</definition>
+        <argsstring>(in sbIPropertyArray aProperties, in sbIMediaListEnumerationListener aEnumerationListener, in unsigned short aEnumerationType)</argsstring>
+        <name>enumerateItemsByProperties</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+          <declname>aProperties</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_enumeration_listener" kindref="compound">sbIMediaListEnumerationListener</ref></type>
+          <declname>aEnumerationListener</declname>
+        </param>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aEnumerationType</declname>
+        </param>
+        <briefdescription>
+<para>Enumerate the media items that match a list of property names and values. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aProperties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- A list of property name/value pairs. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aEnumerationType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- One of the ENUMERATIONTYPE values above. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aEnumerationListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The enumeration listener. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="142"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_1c71e81b1b4c3eefbaf620bcbb39681e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbIMediaList::indexOf</definition>
+        <argsstring>(in sbIMediaItem aMediaItem, in unsigned long aStartFrom)</argsstring>
+        <name>indexOf</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aStartFrom</declname>
+        </param>
+        <briefdescription>
+<para>Get the first index of a media item int he list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Media item to search for </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aStartFrom</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ben write me </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index that the media item was first found at, or throws NS_ERROR_NOT_AVAILABLE if not found </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="152"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_19edde98509df43db6a983d4937781d56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbIMediaList::lastIndexOf</definition>
+        <argsstring>(in sbIMediaItem aMediaItem, in unsigned long aStartFrom)</argsstring>
+        <name>lastIndexOf</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aStartFrom</declname>
+        </param>
+        <briefdescription>
+<para>Get the last index of a media item int he list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Media item to search for </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aStartFrom</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ben write me </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index that the media item was last found at, or throws NS_ERROR_NOT_AVAILABLE if not found </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="162"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_1cb4bbfe64589e3bd1d973632b39b3116" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIMediaList::contains</definition>
+        <argsstring>(in sbIMediaItem aMediaItem)</argsstring>
+        <name>contains</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <briefdescription>
+<para>Check if the list contains a media item. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Media item to search for </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the media item was found, false if it was not found </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="169"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_16fe6be51b869ba4b97dc5274ab68813d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::add</definition>
+        <argsstring>(in sbIMediaItem aMediaItem)</argsstring>
+        <name>add</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <briefdescription>
+<para>Add a media item to this list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The media item to add to the list </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="180"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_1647f0790225f9e23f83db83da1718cb4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::addAll</definition>
+        <argsstring>(in sbIMediaList aMediaList)</argsstring>
+        <name>addAll</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <briefdescription>
+<para>Add the contents of a media list to this list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The media list whose contents are to be added </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="186"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_13437b5aa10efd05b309d9f71868057b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::addSome</definition>
+        <argsstring>(in nsISimpleEnumerator aMediaItems)</argsstring>
+        <name>addSome</name>
+        <param>
+          <type>in nsISimpleEnumerator</type>
+          <declname>aMediaItems</declname>
+        </param>
+        <briefdescription>
+<para>Adds media items suppled by the provided enumerator. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItems</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An enumerator returning <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> objects </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="192"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_163e7e739718bd6d35016500933e5fc58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::remove</definition>
+        <argsstring>(in sbIMediaItem aMediaItem)</argsstring>
+        <name>remove</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <briefdescription>
+<para>Remove the first occurrence of the given media item from the list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Media item to remove </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="198"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_148c9653c3324dfe0a1dedb4b6307ea29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::removeByIndex</definition>
+        <argsstring>(in unsigned long aIndex)</argsstring>
+        <name>removeByIndex</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Remove a media item from the list by index. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the item to remove </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="204"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_122c907e9dbc8abb40bd4f8e63e9b935d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::removeSome</definition>
+        <argsstring>(in nsISimpleEnumerator aMediaItems)</argsstring>
+        <name>removeSome</name>
+        <param>
+          <type>in nsISimpleEnumerator</type>
+          <declname>aMediaItems</declname>
+        </param>
+        <briefdescription>
+<para>Removed media items suppled by the provided enumerator. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItems</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An enumerator returning <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> objects </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="210"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_15b727b02e89e57a15b7f78778722c4a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <briefdescription>
+<para>Clear the list. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="215"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_1f8515c51ec7849141b2682696ebfb5de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::addListener</definition>
+        <argsstring>(in sbIMediaListListener aListener,[optional] in boolean aOwnsWeak,[optional] in unsigned long aFlags,[optional] in sbIPropertyArray aPropertyFilter)</argsstring>
+        <name>addListener</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_listener" kindref="compound">sbIMediaListListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in boolean</type>
+          <declname>aOwnsWeak</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in unsigned long</type>
+          <declname>aFlags</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+          <declname>aPropertyFilter</declname>
+        </param>
+        <briefdescription>
+<para>Add a listener to this media list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The listener to add </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aOwnsWeak</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If set to false, the media list will hold a strong reference to |aListener|. If set to true and |aListener| supports the nsIWeakReference interface, a weak reference will be held. Otherwise an error will be returned. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFlags</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A bit mask made up the LISTENER_FLAGS_ constants above. Use this to filter out unwanted notifications. If not set, this will default to LISTENER_FLAGS_ALL </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aPropertyFilter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If this argument is specified, the onItemUpdated notification will only be sent for updates to any of the properties specified in the array. Note that the values of the properties in the array are ignored. If not set or null, no filtering will be applied. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="245"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_137a3275d1ea302a95b706a31413e3084" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::removeListener</definition>
+        <argsstring>(in sbIMediaListListener aListener)</argsstring>
+        <name>removeListener</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_listener" kindref="compound">sbIMediaListListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Remove a listener from this media list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The listener to remove </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="251"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_138a86561b73c8baa844137ff8b5259b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+        <definition>sbIMediaListView sbIMediaList::createView</definition>
+        <argsstring>()</argsstring>
+        <name>createView</name>
+        <briefdescription>
+<para>Create a new view for this list. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The new view </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="257"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_1264d18266761aa0f89480455e38e8db2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::beginUpdateBatch</definition>
+        <argsstring>()</argsstring>
+        <name>beginUpdateBatch</name>
+        <briefdescription>
+<para>Notify listeners that a batch update is about to begin. Listeners may choose to ignore other notifications until the batch is complete. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="264"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_1aadcef397cc4dd700ff92eb65b5c8586" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaList::endUpdateBatch</definition>
+        <argsstring>()</argsstring>
+        <name>endUpdateBatch</name>
+        <briefdescription>
+<para>Notify listeners that a batch update is complete. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="269"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_123962e1790fe0801d67c827159988d45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIStringEnumerator</type>
+        <definition>nsIStringEnumerator sbIMediaList::getDistinctValuesForProperty</definition>
+        <argsstring>(in AString aPropertyName)</argsstring>
+        <name>getDistinctValuesForProperty</name>
+        <param>
+          <type>in AString</type>
+          <declname>aPropertyName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="276"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_media_list_1eb0a00c26bfd525c8b3543da57c516d1" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIMediaList::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>The name of the media list. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="61" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_1687bc602daf1ac786a7a0049b939c736" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIMediaList::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+<para>The type of media list (eg &quot;simple&quot;). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="66" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_150ecebf0fc3f329dab91244321638a0e" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIMediaList::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+<para>Returns the length of the list. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="71" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_1ac5c344da31a52fc85cf7ed797cf1111" prot="public" static="no" mutable="no">
+        <type>const unsigned short</type>
+        <definition>const unsigned short sbIMediaList::ENUMERATIONTYPE_SNAPSHOT</definition>
+        <argsstring></argsstring>
+        <name>ENUMERATIONTYPE_SNAPSHOT</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+<para>This flag means that the list being enumerated is a copy that may become out of date. </para>        </briefdescription>
+        <detaileddescription>
+<para>Use this flag if you don&apos;t care whether or not other threads change the list&apos;s contents. The listener may make changes to the list at any time but those changes will not be reflected in the enumeration sequence. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="95" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_1c06c5fe198ada5d24ee62f7930038e1c" prot="public" static="no" mutable="no">
+        <type>const unsigned short</type>
+        <definition>const unsigned short sbIMediaList::ENUMERATIONTYPE_LOCKING</definition>
+        <argsstring></argsstring>
+        <name>ENUMERATIONTYPE_LOCKING</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+<para>This flag means that the list is protected from changes by other threads during the enumeration. </para>        </briefdescription>
+        <detaileddescription>
+<para>Use this flag if you need to be certain that the contents of the list are not changed during enumeration. Note that all other threads will block until the enumeration is complete. Furthermore, changes made to list from the listener are not permitted until the listener has received the onEnumerationEnd notification. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="107" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_1d022caf363793628e7ef1b96ccf67ea1" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIMediaList::isEmpty</definition>
+        <argsstring></argsstring>
+        <name>isEmpty</name>
+        <briefdescription>
+<para>Is the list empty? </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="174" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_1b34ff623969f79f3dab95304e42f34b3" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediaList::LISTENER_FLAGS_ITEMADDED</definition>
+        <argsstring></argsstring>
+        <name>LISTENER_FLAGS_ITEMADDED</name>
+        <initializer> 1 &lt;&lt; 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="217" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_1ebd887a26980780de64ddf4af9cf430a" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED</definition>
+        <argsstring></argsstring>
+        <name>LISTENER_FLAGS_BEFOREITEMREMOVED</name>
+        <initializer> 1 &lt;&lt; 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="218" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_1cdecf4b09dd4e75a52e9be77d378e6f3" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED</definition>
+        <argsstring></argsstring>
+        <name>LISTENER_FLAGS_AFTERITEMREMOVED</name>
+        <initializer> 1 &lt;&lt; 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="219" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_134e744de3ce3931f387c6ab405c3a968" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediaList::LISTENER_FLAGS_ITEMUPDATED</definition>
+        <argsstring></argsstring>
+        <name>LISTENER_FLAGS_ITEMUPDATED</name>
+        <initializer> 1 &lt;&lt; 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="220" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_110cf8a4549906ace13097775e484c2b3" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediaList::LISTENER_FLAGS_LISTCLEARED</definition>
+        <argsstring></argsstring>
+        <name>LISTENER_FLAGS_LISTCLEARED</name>
+        <initializer> 1 &lt;&lt; 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="221" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_1c038790117b70fcca91a4a6f6c5a3f4b" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediaList::LISTENER_FLAGS_BATCHBEGIN</definition>
+        <argsstring></argsstring>
+        <name>LISTENER_FLAGS_BATCHBEGIN</name>
+        <initializer> 1 &lt;&lt; 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="222" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_1536109c8e3dc6da8d732ad92a226337b" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediaList::LISTENER_FLAGS_BATCHEND</definition>
+        <argsstring></argsstring>
+        <name>LISTENER_FLAGS_BATCHEND</name>
+        <initializer> 1 &lt;&lt; 6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="223" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_16e0542725b8ace2f19f7556d3192ed5f" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediaList::LISTENER_FLAGS_ALL</definition>
+        <argsstring></argsstring>
+        <name>LISTENER_FLAGS_ALL</name>
+        <initializer> 0xffffffff</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="224" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A brief description of the contents of this interface. </para>    </briefdescription>
+    <detaileddescription>
+<para>A detailed description of this interface</para><para><simplesect kind="see"><para>List of &quot;see also&quot; interfaces </para></simplesect>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="264">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="265" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="266">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="265">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="266" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="267">
+        <label>sbILocalDatabaseSmartMediaList</label>
+        <link refid="interfacesb_i_local_database_smart_media_list"/>
+        <childnode refid="264" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="268">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="269" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="275">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="272">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="273" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="275" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="271">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="270" relation="public-inheritance">
+        </childnode>
+        <childnode refid="272" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="274" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="270">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="269">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="270" relation="public-inheritance">
+        </childnode>
+        <childnode refid="271" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="273">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="274" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="274">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" line="57" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaList.idl" bodystart="56" bodyend="277"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_media_list_16fe6be51b869ba4b97dc5274ab68813d" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>add</name></member>
+      <member refid="interfacesb_i_media_list_1647f0790225f9e23f83db83da1718cb4" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>addAll</name></member>
+      <member refid="interfacesb_i_media_list_1f8515c51ec7849141b2682696ebfb5de" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>addListener</name></member>
+      <member refid="interfacesb_i_media_list_13437b5aa10efd05b309d9f71868057b7" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>addSome</name></member>
+      <member refid="interfacesb_i_media_list_1264d18266761aa0f89480455e38e8db2" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>beginUpdateBatch</name></member>
+      <member refid="interfacesb_i_media_list_15b727b02e89e57a15b7f78778722c4a6" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>clear</name></member>
+      <member refid="interfacesb_i_media_list_1cb4bbfe64589e3bd1d973632b39b3116" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>contains</name></member>
+      <member refid="interfacesb_i_media_item_149d00fe6e35d8d24dc468b97d43d8075" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>contentLength</name></member>
+      <member refid="interfacesb_i_media_item_1574db3949d138422afdbd6ecffd88aa2" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>contentSrc</name></member>
+      <member refid="interfacesb_i_media_item_11df3ae03b08948558b1a311e3705db07" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>contentType</name></member>
+      <member refid="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>created</name></member>
+      <member refid="interfacesb_i_media_list_138a86561b73c8baa844137ff8b5259b4" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>createView</name></member>
+      <member refid="interfacesb_i_media_list_1aadcef397cc4dd700ff92eb65b5c8586" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>endUpdateBatch</name></member>
+      <member refid="interfacesb_i_media_list_1cdf4da56f675075c88562e71d1803d31" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>enumerateAllItems</name></member>
+      <member refid="interfacesb_i_media_list_1531c02362fe0b8d3f6a509ac70932921" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>enumerateItemsByProperties</name></member>
+      <member refid="interfacesb_i_media_list_12554674dffd7c47b5a3b9980ceff5e63" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>enumerateItemsByProperty</name></member>
+      <member refid="interfacesb_i_media_list_1c06c5fe198ada5d24ee62f7930038e1c" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>ENUMERATIONTYPE_LOCKING</name></member>
+      <member refid="interfacesb_i_media_list_1ac5c344da31a52fc85cf7ed797cf1111" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>ENUMERATIONTYPE_SNAPSHOT</name></member>
+      <member refid="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>equals</name></member>
+      <member refid="interfacesb_i_media_list_123962e1790fe0801d67c827159988d45" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>getDistinctValuesForProperty</name></member>
+      <member refid="interfacesb_i_media_list_16ab593212150bf9bf55b0a05207867a7" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>getItemByGuid</name></member>
+      <member refid="interfacesb_i_media_list_12fd1e5e5bf2a9691bfde77a5a0eddd6a" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>getItemByIndex</name></member>
+      <member refid="interfacesb_i_library_resource_1ed9c1d9b3fa1328d0ad585e0d571676a" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>getProperties</name></member>
+      <member refid="interfacesb_i_library_resource_1fecce0a9f8cf88784cbfdce7d8143719" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>getProperty</name></member>
+      <member refid="interfacesb_i_library_resource_1c97a2ea6d6aa52d2dfd74095895f74f6" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>guid</name></member>
+      <member refid="interfacesb_i_media_list_1c71e81b1b4c3eefbaf620bcbb39681e6" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>indexOf</name></member>
+      <member refid="interfacesb_i_media_list_1d022caf363793628e7ef1b96ccf67ea1" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>isEmpty</name></member>
+      <member refid="interfacesb_i_media_item_1679ecac5135fd57929f83c0ea0c09eba" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>isMutable</name></member>
+      <member refid="interfacesb_i_media_list_19edde98509df43db6a983d4937781d56" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>lastIndexOf</name></member>
+      <member refid="interfacesb_i_media_list_150ecebf0fc3f329dab91244321638a0e" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>length</name></member>
+      <member refid="interfacesb_i_media_item_119762d6d72170ace737a639575712ff1" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>library</name></member>
+      <member refid="interfacesb_i_media_list_1cdecf4b09dd4e75a52e9be77d378e6f3" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>LISTENER_FLAGS_AFTERITEMREMOVED</name></member>
+      <member refid="interfacesb_i_media_list_16e0542725b8ace2f19f7556d3192ed5f" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>LISTENER_FLAGS_ALL</name></member>
+      <member refid="interfacesb_i_media_list_1c038790117b70fcca91a4a6f6c5a3f4b" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>LISTENER_FLAGS_BATCHBEGIN</name></member>
+      <member refid="interfacesb_i_media_list_1536109c8e3dc6da8d732ad92a226337b" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>LISTENER_FLAGS_BATCHEND</name></member>
+      <member refid="interfacesb_i_media_list_1ebd887a26980780de64ddf4af9cf430a" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>LISTENER_FLAGS_BEFOREITEMREMOVED</name></member>
+      <member refid="interfacesb_i_media_list_1b34ff623969f79f3dab95304e42f34b3" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>LISTENER_FLAGS_ITEMADDED</name></member>
+      <member refid="interfacesb_i_media_list_134e744de3ce3931f387c6ab405c3a968" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>LISTENER_FLAGS_ITEMUPDATED</name></member>
+      <member refid="interfacesb_i_media_list_110cf8a4549906ace13097775e484c2b3" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>LISTENER_FLAGS_LISTCLEARED</name></member>
+      <member refid="interfacesb_i_media_item_109426f490e2fde8aecf02c2bfada0a7a" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>mediaCreated</name></member>
+      <member refid="interfacesb_i_media_item_1d8fc55899ebe6d777619b12e2ccec9e2" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>mediaUpdated</name></member>
+      <member refid="interfacesb_i_media_list_1eb0a00c26bfd525c8b3543da57c516d1" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>name</name></member>
+      <member refid="interfacesb_i_media_item_144f6159371d8779fea4a05ee75a54c8f" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>openInputStream</name></member>
+      <member refid="interfacesb_i_media_item_1f9e5e1ec817d1cf04696332c2ee55f95" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>openInputStreamAsync</name></member>
+      <member refid="interfacesb_i_media_item_15894f5aedd040fa0ed26cc578544d7d6" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>openOutputStream</name></member>
+      <member refid="interfacesb_i_library_resource_1653545673a60d0044e2d987196bff522" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>propertyNames</name></member>
+      <member refid="interfacesb_i_media_list_163e7e739718bd6d35016500933e5fc58" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>remove</name></member>
+      <member refid="interfacesb_i_media_list_148c9653c3324dfe0a1dedb4b6307ea29" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>removeByIndex</name></member>
+      <member refid="interfacesb_i_media_list_137a3275d1ea302a95b706a31413e3084" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>removeListener</name></member>
+      <member refid="interfacesb_i_media_list_122c907e9dbc8abb40bd4f8e63e9b935d" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>removeSome</name></member>
+      <member refid="interfacesb_i_library_resource_179625ea92faf0b5dfadc74c840b2525b" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>setProperties</name></member>
+      <member refid="interfacesb_i_library_resource_1fa7bdb6a26b3c120968f0573cba92ae7" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>setProperty</name></member>
+      <member refid="interfacesb_i_media_item_1febfa1e819a1155c461fb047cf4d0f5d" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>testIsAvailable</name></member>
+      <member refid="interfacesb_i_media_item_1d14095f80e5f7f2d02cce741016088d2" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>toString</name></member>
+      <member refid="interfacesb_i_media_list_1687bc602daf1ac786a7a0049b939c736" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>type</name></member>
+      <member refid="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>updated</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

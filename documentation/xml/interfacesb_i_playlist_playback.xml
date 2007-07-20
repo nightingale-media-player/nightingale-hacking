@@ -1,0 +1,1160 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_playlist_playback" kind="interface" prot="public">
+    <compoundname>sbIPlaylistPlayback</compoundname>
+    <includes refid="sb_i_playlist_playback_8idl" local="no">sbIPlaylistPlayback.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_157b2697c1029d00279d841c57fa6dd77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlayback::addCore</definition>
+        <argsstring>(in sbICoreWrapper aCore, in boolean aSelect)</argsstring>
+        <name>addCore</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref></type>
+          <declname>aCore</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aSelect</declname>
+        </param>
+        <briefdescription>
+<para>Add a playback core. Add a playback core to the collection of cores available for media playback. If the core already exists it doesn&apos;t get added again but will be selected if aSelect is true. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCore</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The Core wrapper that interfaces with the core implementation </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSelect</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- A boolean to indicate if the core should be selected as the current playback core. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>void </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="200"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_18ba11f526ece608120fcf29b94ba326c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlayback::removeCore</definition>
+        <argsstring>(in sbICoreWrapper aCore)</argsstring>
+        <name>removeCore</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref></type>
+          <declname>aCore</declname>
+        </param>
+        <briefdescription>
+<para>Take a core out of the collection of available playback cores. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCore</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the core to remove </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>void </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="208"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1ee7408cd7d2d62d2a146d83abe5acd6f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlayback::selectCore</definition>
+        <argsstring>(in sbICoreWrapper aCore)</argsstring>
+        <name>selectCore</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref></type>
+          <declname>aCore</declname>
+        </param>
+        <briefdescription>
+<para>Select the core passed in as the current core. If the core passed in doesn&apos;t already exist in the collection it gets added first. Then it is selected as the current playback core. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCore</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the core to add. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>void </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="218"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_11f753836239c83c49b88ac2d640baaa2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIPlaylistPlayback::play</definition>
+        <argsstring>()</argsstring>
+        <name>play</name>
+        <briefdescription>
+<para>Begin playback. If previously paused playback will start at the same position. If stopped playback will begin at the beginning of the track. Paused playback will start from the same point. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no core has been set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="234"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_106c688bf56cd5354d78b55edac6ab65a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIPlaylistPlayback::pause</definition>
+        <argsstring>()</argsstring>
+        <name>pause</name>
+        <briefdescription>
+<para>Halt playback This maintains the position in the track and halts the playback. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no core has been set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="243"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_173cfaeb60327ced50c221a51da6a49e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIPlaylistPlayback::stop</definition>
+        <argsstring>()</argsstring>
+        <name>stop</name>
+        <briefdescription>
+<para>Halt playback Stops the playback of the current track. Restarting the playback after this call casuses it to start from the beginning of the track. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no core has been set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="253"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1e6f7bbccb8822bcf7531f8a3f2cc8a39" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIPlaylistPlayback::next</definition>
+        <argsstring>()</argsstring>
+        <name>next</name>
+        <briefdescription>
+<para>Advance playback to the next track. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no core has been set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>the index of the currently playing track </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="261"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_11216b0885012ee3e442edd059cbec100" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIPlaylistPlayback::previous</definition>
+        <argsstring>()</argsstring>
+        <name>previous</name>
+        <briefdescription>
+<para>Set playback to the track before the current one in play order. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no core has been set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>the index of the currently playing track </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="269"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1a5fa73c4990aeae8bb8cad5602b38014" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIPlaylistPlayback::current</definition>
+        <argsstring>()</argsstring>
+        <name>current</name>
+        <briefdescription>
+<para>Get the index of the current track. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no core has been set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>the index of the currently playing track </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="277"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_142d8906fd9160e75cb35df21462d6408" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlayback::goFullscreen</definition>
+        <argsstring>()</argsstring>
+        <name>goFullscreen</name>
+        <briefdescription>
+<para>Make the playback take the full screen. This only makes sense for video playback. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if no core has been set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="286"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_194d4972b4a355e0522d6b5d354fbc19e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIPlaylistPlayback::playURL</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>playURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+<para>Play a piece of media directly via URL. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the URL of the media to play. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the core has not been set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if playback is successfull </para><para>false if playback was not successful </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="296"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_148707fad9b0dd01d8257e1af78648945" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIPlaylistPlayback::playView</definition>
+        <argsstring>(in sbIMediaListView aView, in PRInt32 aIndex)</argsstring>
+        <name>playView</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+          <declname>aView</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Play a media list view. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aView</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The media list view to play. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the track to play within the view. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Status of success of playback from the media list view. </para></simplesect>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>true</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Playback from media list view succeeded. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>false</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Playback from the media list view failed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="307"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1d21cb95118038ef1c3f51be7d6fbf6e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlayback::getMetadataFields</definition>
+        <argsstring>(out PRUint32 aFieldCount,[array, size_is(aFieldCount), retval] out wstring aMetaFields)</argsstring>
+        <name>getMetadataFields</name>
+        <param>
+          <type>out PRUint32</type>
+          <declname>aFieldCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aFieldCount), retval]</attributes>
+          <type>out wstring</type>
+          <declname>aMetaFields</declname>
+        </param>
+        <briefdescription>
+<para>Return metadata metadata. Return the number of fields supported and their identifiers. </para>        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000016"><xreftitle>Todo</xreftitle><xrefdescription><para><itemizedlist>
+<listitem><para>implement getMetadataFields, currently sets out params to 0 and &quot;&quot;</para></listitem></itemizedlist>
+</para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFieldCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the number of metadata fields supported </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMetaFields</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- An array of metadata identifiers. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the core has not been set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>void </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="324"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_10876200cb49aa473e345cddf07ca3d24" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPlaylistPlayback::getCurrentValue</definition>
+        <argsstring>(in AString aField)</argsstring>
+        <name>getCurrentValue</name>
+        <param>
+          <type>in AString</type>
+          <declname>aField</declname>
+        </param>
+        <briefdescription>
+<para>Give the value of the metadata field specified. </para>        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000017"><xreftitle>Todo</xreftitle><xrefdescription><para><itemizedlist>
+<listitem><para>implement getCurrentValue - currently returns &quot;&quot;</para></listitem></itemizedlist>
+</para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aField</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the metadata for which we return the value </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>the value of the metadata </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="333"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1fe49d1a9aeafe4a6c697ed4e395a8eb0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlayback::setCurrentValue</definition>
+        <argsstring>(in AString aField, in AString aValue)</argsstring>
+        <name>setCurrentValue</name>
+        <param>
+          <type>in AString</type>
+          <declname>aField</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+<para>Set the value of the metadata specified. </para>        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000018"><xreftitle>Todo</xreftitle><xrefdescription><para><itemizedlist>
+<listitem><para>implement setCurrentValue - current does nothing.</para></listitem></itemizedlist>
+</para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aField</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the metadata for which to set the data </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the value to set the metadata to. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>void </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="343"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_152034b678ca53a540bea83645997fea2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlayback::getCurrentValues</definition>
+        <argsstring>(in PRUint32 aFieldCount,[array, size_is(aFieldCount)] in wstring aMetaFields, out PRUint32 aValueCount,[array, size_is(aValueCount), retval] out wstring aMetaValues)</argsstring>
+        <name>getCurrentValues</name>
+        <param>
+          <type>in PRUint32</type>
+          <declname>aFieldCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aFieldCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aMetaFields</declname>
+        </param>
+        <param>
+          <type>out PRUint32</type>
+          <declname>aValueCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aValueCount), retval]</attributes>
+          <type>out wstring</type>
+          <declname>aMetaValues</declname>
+        </param>
+        <briefdescription>
+<para>Get the values of multiple metadata fields. </para>        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000019"><xreftitle>Todo</xreftitle><xrefdescription><para>implement getCurrentValues - currently sets out paramst to 0 and &quot;&quot;</para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFieldCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the number of metadata fields to retrieve </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMetaFields</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the identifiers for the metadata fields </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the number of metadata values returned </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMetaValues</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The values of the metadata requested. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>void </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="358"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1c54bd378b48598fe690ced4a7c44626f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlayback::setCurrentValues</definition>
+        <argsstring>(in PRUint32 aFieldCount,[array, size_is(aFieldCount)] in wstring aMetaFields, in PRUint32 aValueCount,[array, size_is(aValueCount)] in wstring aMetaValues)</argsstring>
+        <name>setCurrentValues</name>
+        <param>
+          <type>in PRUint32</type>
+          <declname>aFieldCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aFieldCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aMetaFields</declname>
+        </param>
+        <param>
+          <type>in PRUint32</type>
+          <declname>aValueCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aValueCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aMetaValues</declname>
+        </param>
+        <briefdescription>
+<para>Set the values of multiple metadata fields. </para>        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000020"><xreftitle>Todo</xreftitle><xrefdescription><para>implement setCurrentValues - currently does nothing.</para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFieldCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the number of metadata fields to set </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMetaFields</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the identifiers for the metadata fields </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the number of metadata values </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aMetaValues</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The values of the metadata to set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>\return</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="374"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1cab27efe13a85f45a7d4bb3dadca179b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIPlaylistPlayback::isMediaURL</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>isMediaURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+<para>Check to see if an url points to media content This checks for a number of known file extensions and prefixes to see if the URL contains them and is therefore media. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the URL to check </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the URL points to media content </para><para>false if the URL does not point to media content </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="390"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1d94771f3b5ef37d91b4b0a85e8e5f379" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIPlaylistPlayback::isVideoURL</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>isVideoURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+<para>Check to see if an url points to video content This checks for a number of known file extensions to see if the URL contains them and is therefore video. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the URL to check </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the URL points to video content </para><para>false if the URL does not point to video content </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="401"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1443493bb9c9422ba7c4db510e6259abc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIPlaylistPlayback::isPlaylistURL</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>isPlaylistURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+<para>Check to see if an url points to a playlist This checks for a number of known file extensions to see if the URL contains them and is therefore a playlist. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the URL to check </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the URL points to a playlist </para><para>false if the URL does not point a playlist </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="412"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1a02047a9651809af3b830e9abff0ccc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIStringEnumerator</type>
+        <definition>nsIStringEnumerator sbIPlaylistPlayback::getSupportedFileExtensions</definition>
+        <argsstring>()</argsstring>
+        <name>getSupportedFileExtensions</name>
+        <briefdescription>
+<para>Return an enumeration of the file extensions that are supported for playback. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>an nsIStringEnumerator containting the list of extensions </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="420"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1e02ca0130ec8807194dcde3f07775537" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPlaylistPlayback::stripHoursFromTimeString</definition>
+        <argsstring>(in AString aTimeString)</argsstring>
+        <name>stripHoursFromTimeString</name>
+        <param>
+          <type>in AString</type>
+          <declname>aTimeString</declname>
+        </param>
+        <briefdescription>
+<para>Removes the hours from the string passed in. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aTimeString</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- a string in the format HH:MM:SS </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>- The string with the HH: </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="432"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1e5a04a116cecdc9bf36cfca4ddf9aefb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPlaylistPlayback::emitSecondsToTimeString</definition>
+        <argsstring>(in AString aSeconds)</argsstring>
+        <name>emitSecondsToTimeString</name>
+        <param>
+          <type>in AString</type>
+          <declname>aSeconds</declname>
+        </param>
+        <briefdescription>
+<para>Convert an integer into a time duration. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aSeconds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- an integer representing the number of seconds </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A time string in the format HH:MM:SS </para><para>&quot;Error&quot; if hours is greater than 50 </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="441"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_18f1124dc74b08581379b9f53df1b901d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPlaylistPlayback::convertURLToDisplayName</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>convertURLToDisplayName</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+<para>Un-Escape a URL and find the leaf name. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the URL to convert </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The URL passed in if it does not decode properly </para><para>The text after the last &apos;\&apos; or &apos;//&apos; in the URL </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="450"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_1ce21c670be1140e364069a88c1cc835e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPlaylistPlayback::convertURLToFolder</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>convertURLToFolder</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+<para>Unescape a URL and find the &quot;basename&quot;. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the URL to convert </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The URL passed in if it does not decode properly </para><para>The text before the last &apos;\&apos; or &apos;//&apos; in the URL </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="459"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_18aa8650c33a135d9e88737139593df16" prot="public" static="no" mutable="no">
+        <type>const short</type>
+        <definition>const short sbIPlaylistPlayback::REPEAT_MODE_OFF</definition>
+        <argsstring></argsstring>
+        <name>REPEAT_MODE_OFF</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+<para>No repeat. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="65" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_123faa5a2cbbb59e2a049be8bdf546875" prot="public" static="no" mutable="no">
+        <type>const short</type>
+        <definition>const short sbIPlaylistPlayback::REPEAT_MODE_ONE</definition>
+        <argsstring></argsstring>
+        <name>REPEAT_MODE_ONE</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+<para>Repeat the current track (again and again and... ). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="69" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_1f3a1c0c8e1e2b2e34985ef0950261b8b" prot="public" static="no" mutable="no">
+        <type>const short</type>
+        <definition>const short sbIPlaylistPlayback::REPEAT_MODE_ALL</definition>
+        <argsstring></argsstring>
+        <name>REPEAT_MODE_ALL</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+<para>Play through all tracks and then do it again. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="73" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_1dbe1ce37c7027bb61b79948da98acb17" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref></type>
+        <definition>attribute sbICoreWrapper sbIPlaylistPlayback::core</definition>
+        <argsstring></argsstring>
+        <name>core</name>
+        <briefdescription>
+<para>The current core responsible for playback. This object is the wrapper around the actual playback engine. All calls to the playback engine go through this wrapper. This may be only one of several available playback cores, but it is the current core controlling playback. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="87" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_198953fa2afb7e2fd9cf9703cd7e7a7e3" prot="public" static="no" mutable="no">
+        <type>attribute short</type>
+        <definition>attribute short sbIPlaylistPlayback::volume</definition>
+        <argsstring></argsstring>
+        <name>volume</name>
+        <briefdescription>
+<para>The volume. The volume as reported by the core, or set upon the core. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="93" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_12c6e186d951b95f40cc64952208af941" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIPlaylistPlayback::mute</definition>
+        <argsstring></argsstring>
+        <name>mute</name>
+        <briefdescription>
+<para>The mute state. The mute state as reported by the core, or set upon the core. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="99" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_19a22d879a7f83ff18c9ba572ad19d961" prot="public" static="no" mutable="no">
+        <type>attribute PRInt64</type>
+        <definition>attribute PRInt64 sbIPlaylistPlayback::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <briefdescription>
+<para>The position within the current track. The number of milliseconds from the start of the current track as reported by or set upon the core. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="106" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_14d5f003c140083313523b461a11e3372" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRInt64</type>
+        <definition>readonly attribute PRInt64 sbIPlaylistPlayback::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>/brief The length of the current track. Reported by the core. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="112" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_19c1b43840438ca39cf5dc7126d3b89f7" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIPlaylistPlayback::paused</definition>
+        <argsstring></argsstring>
+        <name>paused</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>/brief The pause state of the core. If paused, playback will continue from the current position. <simplesect kind="see"><para><ref refid="interfacesb_i_playlist_playback_1a9d8868c0c6ba509a9dd0b9974f7da0a" kindref="member">playing</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="119" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_1a9d8868c0c6ba509a9dd0b9974f7da0a" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIPlaylistPlayback::playing</definition>
+        <argsstring></argsstring>
+        <name>playing</name>
+        <briefdescription>
+<para>The playing state of the core. Seperate from pause state. A paused track is playing, a stopped track is not playing AND not paused. A. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_playback_19c1b43840438ca39cf5dc7126d3b89f7" kindref="member">paused</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="127" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_1e00d5a1f97614cb4c473767f38878d9a" prot="public" static="no" mutable="no">
+        <type>attribute short</type>
+        <definition>attribute short sbIPlaylistPlayback::repeat</definition>
+        <argsstring></argsstring>
+        <name>repeat</name>
+        <briefdescription>
+<para>Repeat state. This has 3 possible states the are reflected in the constants. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para>REPEAT_MODE_NONE </para><para><ref refid="interfacesb_i_playlist_playback_1f3a1c0c8e1e2b2e34985ef0950261b8b" kindref="member">REPEAT_MODE_ALL</ref> </para><para><ref refid="interfacesb_i_playlist_playback_123faa5a2cbbb59e2a049be8bdf546875" kindref="member">REPEAT_MODE_ONE</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="141" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_11d02000aa3ee3049da3db4e5f6825299" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIPlaylistPlayback::shuffle</definition>
+        <argsstring></argsstring>
+        <name>shuffle</name>
+        <briefdescription>
+<para>Shuffle state. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="146" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_1ecf91b316f3ba1d3b01476617ed025ef" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRInt32</type>
+        <definition>readonly attribute PRInt32 sbIPlaylistPlayback::itemCount</definition>
+        <argsstring></argsstring>
+        <name>itemCount</name>
+        <briefdescription>
+<para>Number of items in the current playlist. As reported by the current view. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="152" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_173a46bee358df63419e7f3ddf8840afe" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRInt32</type>
+        <definition>readonly attribute PRInt32 sbIPlaylistPlayback::currentIndex</definition>
+        <argsstring></argsstring>
+        <name>currentIndex</name>
+        <briefdescription>
+<para>The Index for the current track in the playback core. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The index, or -1 if not playing </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="158" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_199fc99e76b4b271e219ce90131775750" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPlaylistPlayback::currentGUID</definition>
+        <argsstring></argsstring>
+        <name>currentGUID</name>
+        <briefdescription>
+<para>The GUID for the current track in the playback core. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The GUID, or blank if not playing </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="164" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_1244bf5af2fe05920bb2b05aec2729749" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPlaylistPlayback::currentURL</definition>
+        <argsstring></argsstring>
+        <name>currentURL</name>
+        <briefdescription>
+<para>The URL for the current track in the playback core. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The URL, or blank if not playing </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="170" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_1b474c491f7e8e4633843372338f65b98" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIPlaylistPlayback::started</definition>
+        <argsstring></argsstring>
+        <name>started</name>
+        <briefdescription>
+<para>Has playback started. This is mainly used internally. This does not check the state of the player. </para>        </briefdescription>
+        <detaileddescription>
+<para>Does this really need to be exposed through an interface? </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="178" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="178" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_playlist_playback_1af7e06e34078f49a755cf2305ce46f76" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+        <definition>readonly attribute sbIMediaListView sbIPlaylistPlayback::playingView</definition>
+        <argsstring></argsstring>
+        <name>playingView</name>
+        <briefdescription>
+<para>What view is being played. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="183" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Defines standard media player playback functionality. This interface defines the interface for managing playback cores (adding selecting and removing) and for controlling the playback of media in the cores (play, stop, pause, etc). Objects wishing to control playback should get an instance of this class via Components.Classes() and call these methods on that object. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_core_wrapper" kindref="compound">sbICoreWrapper</ref> An interface that describes the PlaylistPlayback Service </para></simplesect>
+</para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="372">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="373" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="369">
+        <label>sbIPlaylistPlayback</label>
+        <link refid="interfacesb_i_playlist_playback"/>
+        <childnode refid="370" relation="usage">
+          <edgelabel>core</edgelabel>
+        </childnode>
+        <childnode refid="371" relation="usage">
+          <edgelabel>playingView</edgelabel>
+        </childnode>
+      </node>
+      <node id="371">
+        <label>sbIMediaListView</label>
+        <link refid="interfacesb_i_media_list_view"/>
+        <childnode refid="372" relation="usage">
+          <edgelabel>mediaList</edgelabel>
+        </childnode>
+        <childnode refid="380" relation="usage">
+          <edgelabel>cascadeFilterSet</edgelabel>
+        </childnode>
+      </node>
+      <node id="370">
+        <label>sbICoreWrapper</label>
+        <link refid="interfacesb_i_core_wrapper"/>
+      </node>
+      <node id="379">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="376">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="377" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="379" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+      </node>
+      <node id="375">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="374" relation="public-inheritance">
+        </childnode>
+        <childnode refid="376" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="378" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="380">
+        <label>sbICascadeFilterSet</label>
+        <link refid="interfacesb_i_cascade_filter_set"/>
+      </node>
+      <node id="374">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="373">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="374" relation="public-inheritance">
+        </childnode>
+        <childnode refid="375" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="377">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="378" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="378">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="58" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="57" bodyend="461"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_playback_157b2697c1029d00279d841c57fa6dd77" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>addCore</name></member>
+      <member refid="interfacesb_i_playlist_playback_18f1124dc74b08581379b9f53df1b901d" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>convertURLToDisplayName</name></member>
+      <member refid="interfacesb_i_playlist_playback_1ce21c670be1140e364069a88c1cc835e" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>convertURLToFolder</name></member>
+      <member refid="interfacesb_i_playlist_playback_1dbe1ce37c7027bb61b79948da98acb17" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>core</name></member>
+      <member refid="interfacesb_i_playlist_playback_1a5fa73c4990aeae8bb8cad5602b38014" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>current</name></member>
+      <member refid="interfacesb_i_playlist_playback_199fc99e76b4b271e219ce90131775750" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>currentGUID</name></member>
+      <member refid="interfacesb_i_playlist_playback_173a46bee358df63419e7f3ddf8840afe" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>currentIndex</name></member>
+      <member refid="interfacesb_i_playlist_playback_1244bf5af2fe05920bb2b05aec2729749" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>currentURL</name></member>
+      <member refid="interfacesb_i_playlist_playback_1e5a04a116cecdc9bf36cfca4ddf9aefb" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>emitSecondsToTimeString</name></member>
+      <member refid="interfacesb_i_playlist_playback_10876200cb49aa473e345cddf07ca3d24" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>getCurrentValue</name></member>
+      <member refid="interfacesb_i_playlist_playback_152034b678ca53a540bea83645997fea2" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>getCurrentValues</name></member>
+      <member refid="interfacesb_i_playlist_playback_1d21cb95118038ef1c3f51be7d6fbf6e4" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>getMetadataFields</name></member>
+      <member refid="interfacesb_i_playlist_playback_1a02047a9651809af3b830e9abff0ccc3" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>getSupportedFileExtensions</name></member>
+      <member refid="interfacesb_i_playlist_playback_142d8906fd9160e75cb35df21462d6408" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>goFullscreen</name></member>
+      <member refid="interfacesb_i_playlist_playback_1cab27efe13a85f45a7d4bb3dadca179b" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>isMediaURL</name></member>
+      <member refid="interfacesb_i_playlist_playback_1443493bb9c9422ba7c4db510e6259abc" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>isPlaylistURL</name></member>
+      <member refid="interfacesb_i_playlist_playback_1d94771f3b5ef37d91b4b0a85e8e5f379" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>isVideoURL</name></member>
+      <member refid="interfacesb_i_playlist_playback_1ecf91b316f3ba1d3b01476617ed025ef" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>itemCount</name></member>
+      <member refid="interfacesb_i_playlist_playback_14d5f003c140083313523b461a11e3372" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>length</name></member>
+      <member refid="interfacesb_i_playlist_playback_12c6e186d951b95f40cc64952208af941" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>mute</name></member>
+      <member refid="interfacesb_i_playlist_playback_1e6f7bbccb8822bcf7531f8a3f2cc8a39" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>next</name></member>
+      <member refid="interfacesb_i_playlist_playback_106c688bf56cd5354d78b55edac6ab65a" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>pause</name></member>
+      <member refid="interfacesb_i_playlist_playback_19c1b43840438ca39cf5dc7126d3b89f7" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>paused</name></member>
+      <member refid="interfacesb_i_playlist_playback_11f753836239c83c49b88ac2d640baaa2" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>play</name></member>
+      <member refid="interfacesb_i_playlist_playback_1a9d8868c0c6ba509a9dd0b9974f7da0a" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>playing</name></member>
+      <member refid="interfacesb_i_playlist_playback_1af7e06e34078f49a755cf2305ce46f76" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>playingView</name></member>
+      <member refid="interfacesb_i_playlist_playback_194d4972b4a355e0522d6b5d354fbc19e" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>playURL</name></member>
+      <member refid="interfacesb_i_playlist_playback_148707fad9b0dd01d8257e1af78648945" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>playView</name></member>
+      <member refid="interfacesb_i_playlist_playback_19a22d879a7f83ff18c9ba572ad19d961" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>position</name></member>
+      <member refid="interfacesb_i_playlist_playback_11216b0885012ee3e442edd059cbec100" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>previous</name></member>
+      <member refid="interfacesb_i_playlist_playback_18ba11f526ece608120fcf29b94ba326c" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>removeCore</name></member>
+      <member refid="interfacesb_i_playlist_playback_1e00d5a1f97614cb4c473767f38878d9a" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>repeat</name></member>
+      <member refid="interfacesb_i_playlist_playback_1f3a1c0c8e1e2b2e34985ef0950261b8b" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>REPEAT_MODE_ALL</name></member>
+      <member refid="interfacesb_i_playlist_playback_18aa8650c33a135d9e88737139593df16" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>REPEAT_MODE_OFF</name></member>
+      <member refid="interfacesb_i_playlist_playback_123faa5a2cbbb59e2a049be8bdf546875" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>REPEAT_MODE_ONE</name></member>
+      <member refid="interfacesb_i_playlist_playback_1ee7408cd7d2d62d2a146d83abe5acd6f" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>selectCore</name></member>
+      <member refid="interfacesb_i_playlist_playback_1fe49d1a9aeafe4a6c697ed4e395a8eb0" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>setCurrentValue</name></member>
+      <member refid="interfacesb_i_playlist_playback_1c54bd378b48598fe690ced4a7c44626f" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>setCurrentValues</name></member>
+      <member refid="interfacesb_i_playlist_playback_11d02000aa3ee3049da3db4e5f6825299" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>shuffle</name></member>
+      <member refid="interfacesb_i_playlist_playback_1b474c491f7e8e4633843372338f65b98" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>started</name></member>
+      <member refid="interfacesb_i_playlist_playback_173cfaeb60327ced50c221a51da6a49e4" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>stop</name></member>
+      <member refid="interfacesb_i_playlist_playback_1e02ca0130ec8807194dcde3f07775537" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>stripHoursFromTimeString</name></member>
+      <member refid="interfacesb_i_playlist_playback_198953fa2afb7e2fd9cf9703cd7e7a7e3" prot="public" virt="non-virtual"><scope>sbIPlaylistPlayback</scope><name>volume</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

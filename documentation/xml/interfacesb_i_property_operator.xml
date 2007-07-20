@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_property_operator" kind="interface" prot="public">
+    <compoundname>sbIPropertyOperator</compoundname>
+    <includes refid="sb_i_property_manager_8idl" local="no">sbIPropertyManager.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_property_operator_19a1618c4ce32a4618d22b811f124d75f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPropertyOperator::Init</definition>
+        <argsstring>(in AString aOperator, in aString aOperatorReadable)</argsstring>
+        <name>Init</name>
+        <param>
+          <type>in AString</type>
+          <declname>aOperator</declname>
+        </param>
+        <param>
+          <type>in aString</type>
+          <declname>aOperatorReadable</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the operator. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This method may not be called more than once. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="116"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_property_operator_1655cf614c5ada820482e2286943267ff" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyOperator::operator</definition>
+        <argsstring></argsstring>
+        <name>operator</name>
+        <briefdescription>
+<para>The operator. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="104" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_operator_1ff61810d7bc89c81dcc005b14c711647" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyOperator::operatorReadable</definition>
+        <argsstring></argsstring>
+        <name>operatorReadable</name>
+        <briefdescription>
+<para>The operator readable string or language property name. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="110" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface to represent an operator that may act upon a property. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="100" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="99" bodyend="117"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_property_operator_19a1618c4ce32a4618d22b811f124d75f" prot="public" virt="non-virtual"><scope>sbIPropertyOperator</scope><name>Init</name></member>
+      <member refid="interfacesb_i_property_operator_1655cf614c5ada820482e2286943267ff" prot="public" virt="non-virtual"><scope>sbIPropertyOperator</scope><name>operator</name></member>
+      <member refid="interfacesb_i_property_operator_1ff61810d7bc89c81dcc005b14c711647" prot="public" virt="non-virtual"><scope>sbIPropertyOperator</scope><name>operatorReadable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

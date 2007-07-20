@@ -1,0 +1,355 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_data_remote" kind="interface" prot="public">
+    <compoundname>sbIDataRemote</compoundname>
+    <includes refid="sb_i_data_remote_8idl" local="no">sbIDataRemote.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_data_remote_1a3bb5959cddbed7f3788beb15edf03eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDataRemote::init</definition>
+        <argsstring>(in AString aKey, in AString aRoot)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in AString</type>
+          <declname>aKey</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aRoot</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the DataRemote Sets internal state, MUST be called before any other methods. All other calls will throw exceptions if init has not been called. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The string identifier for the data to watch </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aRoot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- OPTIONAL - If present this defines a prefix to the key </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_FAILURE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if unable to initialize properly </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_UNEXPECTED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if init has already been called </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="71"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_data_remote_185a4c38fc8804c46e3f8af8e22b1929e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDataRemote::unbind</definition>
+        <argsstring>()</argsstring>
+        <name>unbind</name>
+        <briefdescription>
+<para>Disconnect the DataRemote If this DataRemote has been bound via a call to <ref refid="interfacesb_i_data_remote_1aa59f0b689be09201c7477cfe682773e" kindref="member">bindObserver()</ref>, <ref refid="interfacesb_i_data_remote_12219f772d68c39cc746a460ae8596364" kindref="member">bindAttribute()</ref> or <ref refid="interfacesb_i_data_remote_142f016597bb2abe2d4f9626780eff54a" kindref="member">bindProperty()</ref> it must be disconnected to prevent calls back to objects that may no longer be around. <parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if init has not been called. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="80"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_data_remote_1aa59f0b689be09201c7477cfe682773e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDataRemote::bindObserver</definition>
+        <argsstring>(in nsIObserver aObserver, in boolean aSuppressFirst)</argsstring>
+        <name>bindObserver</name>
+        <param>
+          <type>in nsIObserver</type>
+          <declname>aObserver</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aSuppressFirst</declname>
+        </param>
+        <briefdescription>
+<para>When the key associated with the sbDataRemote changes the observer will get a callback to observe() with the new value for the data, a handle to the sbDataRemote and the key to which the data belongs. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aObserver</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSuppressFirst</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if init has not been called </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="92"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_data_remote_142f016597bb2abe2d4f9626780eff54a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDataRemote::bindProperty</definition>
+        <argsstring>(in nsIDOMElement aElement, in AString aProperty, in boolean aIsBool, in boolean aIsNot, in AString aEvalString)</argsstring>
+        <name>bindProperty</name>
+        <param>
+          <type>in nsIDOMElement</type>
+          <declname>aElement</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aIsBool</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aIsNot</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aEvalString</declname>
+        </param>
+        <briefdescription>
+<para>When the key associated with the sbDataRemote changes the property of the element will be modified appropriately. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aElement</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aProperty</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIsBool</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIsNot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aEvalString</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>\ throws NS_ERROR_NOT_INITIALIZED if init has not been called </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="110"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_data_remote_12219f772d68c39cc746a460ae8596364" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDataRemote::bindAttribute</definition>
+        <argsstring>(in nsIDOMElement aElement, in AString aProperty, in boolean aIsBool, in boolean aIsNot, in AString aEvalString)</argsstring>
+        <name>bindAttribute</name>
+        <param>
+          <type>in nsIDOMElement</type>
+          <declname>aElement</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aIsBool</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aIsNot</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aEvalString</declname>
+        </param>
+        <briefdescription>
+<para>When the key associated with the sbDataRemote changes the attribute of the element will be modified appropriately. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aElement</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aProperty</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIsBool</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIsNot</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aEvalString</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if init has not been called </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="128"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_data_remote_189eae5e03cf102feb03703dec9a5455e" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIDataRemote::stringValue</definition>
+        <argsstring></argsstring>
+        <name>stringValue</name>
+        <briefdescription>
+<para>Access to the data in string format In javascript you can access the data as you would properties of a normal js object ( obj.stringValue = &quot;foo&quot; assigns the string foo into the DataRemote ). In c++ you need to call setStringValue(&quot;foo&quot;) and likewise for the getter. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aStringValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The string to set as the data </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string containing the value of the data, or the empty string if no data has been set yet. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="141" bodyfile="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_data_remote_1b112f0b93b2639f84e0ae6ea315fb911" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIDataRemote::boolValue</definition>
+        <argsstring></argsstring>
+        <name>boolValue</name>
+        <briefdescription>
+<para>Access to the data in boolean format In javascript you can access the data as you would properties of a normal js object ( obj.boolValue = true assigns the boolean true into the DataRemote ). In c++ you need to call setStringValue(true) and likewise for the getter. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aBoolValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The boolean to set as the data </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>TRUE if the data converts to true </para><para>FALSE if the data converts to false or there is no data set yet. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="154" bodyfile="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_data_remote_193eaaccaa59c47a88fb0b78889acbfa9" prot="public" static="no" mutable="no">
+        <type>attribute long long</type>
+        <definition>attribute long long sbIDataRemote::intValue</definition>
+        <argsstring></argsstring>
+        <name>intValue</name>
+        <briefdescription>
+<para>Access to the data in integer format In javascript you can access the data as you would properties of a normal js object ( obj.intValue = 10 assigns the integer 10 into the DataRemote ). In c++ you need to call setStringValue(10) and likewise for the getter. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIntValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The integer to set as the data </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The integer stored if it actually is an interger </para><para>NaN if the the data stored is not a number. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="167" bodyfile="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface for accessing, and binding to, stored data. </para>    </briefdescription>
+    <detaileddescription>
+<para>This interface defines the ability to set key-value pairs into a global data-store, and to observe changes in the value of the data. The observer can be bound to the data in one of three different ways. A callback object can be bound as an nsIObserver, or a DOM element can bind the value of an attribute or a property to the value of the data.</para><para>The attribute and property bindings can be done as string, integer or boolean, and in the case of boolean binding the value can be the inverse of the data value. In addition the actual value for the attribute or property can be defined by additional script executed in the notification step.</para><para><simplesect kind="see"><para>DataRemote </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" line="59" bodyfile="C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl" bodystart="58" bodyend="169"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_data_remote_12219f772d68c39cc746a460ae8596364" prot="public" virt="non-virtual"><scope>sbIDataRemote</scope><name>bindAttribute</name></member>
+      <member refid="interfacesb_i_data_remote_1aa59f0b689be09201c7477cfe682773e" prot="public" virt="non-virtual"><scope>sbIDataRemote</scope><name>bindObserver</name></member>
+      <member refid="interfacesb_i_data_remote_142f016597bb2abe2d4f9626780eff54a" prot="public" virt="non-virtual"><scope>sbIDataRemote</scope><name>bindProperty</name></member>
+      <member refid="interfacesb_i_data_remote_1b112f0b93b2639f84e0ae6ea315fb911" prot="public" virt="non-virtual"><scope>sbIDataRemote</scope><name>boolValue</name></member>
+      <member refid="interfacesb_i_data_remote_1a3bb5959cddbed7f3788beb15edf03eb" prot="public" virt="non-virtual"><scope>sbIDataRemote</scope><name>init</name></member>
+      <member refid="interfacesb_i_data_remote_193eaaccaa59c47a88fb0b78889acbfa9" prot="public" virt="non-virtual"><scope>sbIDataRemote</scope><name>intValue</name></member>
+      <member refid="interfacesb_i_data_remote_189eae5e03cf102feb03703dec9a5455e" prot="public" virt="non-virtual"><scope>sbIDataRemote</scope><name>stringValue</name></member>
+      <member refid="interfacesb_i_data_remote_185a4c38fc8804c46e3f8af8e22b1929e" prot="public" virt="non-virtual"><scope>sbIDataRemote</scope><name>unbind</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

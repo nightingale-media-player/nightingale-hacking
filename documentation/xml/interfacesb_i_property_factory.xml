@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_property_factory" kind="interface" prot="public">
+    <compoundname>sbIPropertyFactory</compoundname>
+    <includes refid="sb_i_property_factory_8idl" local="no">sbIPropertyFactory.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_property_factory_171a5288548c5a7bb445cfead2a62bb21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_property" kindref="compound">sbIProperty</ref></type>
+        <definition>sbIProperty sbIPropertyFactory::createProperty</definition>
+        <argsstring>(in AString aName, in AString aValue)</argsstring>
+        <name>createProperty</name>
+        <param>
+          <type>in AString</type>
+          <declname>aName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create a property </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/property/public/sbIPropertyFactory.idl" line="47"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface to create <ref refid="interfacesb_i_property" kindref="compound">sbIProperty</ref> instances. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/property/public/sbIPropertyFactory.idl" line="42" bodyfile="C:/projects/songbird/components/property/public/sbIPropertyFactory.idl" bodystart="41" bodyend="48"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_property_factory_171a5288548c5a7bb445cfead2a62bb21" prot="public" virt="non-virtual"><scope>sbIPropertyFactory</scope><name>createProperty</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

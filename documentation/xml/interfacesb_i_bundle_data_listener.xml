@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_bundle_data_listener" kind="interface" prot="public">
+    <compoundname>sbIBundleDataListener</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_bundle_data_listener_1f83887e981e59e9f21376899c36283c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundleDataListener::onDownloadComplete</definition>
+        <argsstring>(in sbIBundle aBundle)</argsstring>
+        <name>onDownloadComplete</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref></type>
+          <declname>aBundle</declname>
+        </param>
+        <briefdescription>
+<para>Bundle download completion callback This method is called upon completion of the bundle data download. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bundle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface to the bundle manager that triggered the event </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_data_listener_1a04961c929e9b52bde15d44aef08faff" kindref="member">onError</ref>, <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundleDataListener.idl" line="52"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_data_listener_1a04961c929e9b52bde15d44aef08faff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundleDataListener::onError</definition>
+        <argsstring>(in sbIBundle aBundle)</argsstring>
+        <name>onError</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref></type>
+          <declname>aBundle</declname>
+        </param>
+        <briefdescription>
+<para>Bundle download error callback This method is called upon error while downloading the bundle data. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bundle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface to the bundle manager that triggered the event </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_data_listener_1f83887e981e59e9f21376899c36283c0" kindref="member">onDownloadComplete</ref>, <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundleDataListener.idl" line="59"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Songbird Bundle Data Listener Interface. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/bundle/public/sbIBundleDataListener.idl" line="45" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundleDataListener.idl" bodystart="44" bodyend="60"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_bundle_data_listener_1f83887e981e59e9f21376899c36283c0" prot="public" virt="non-virtual"><scope>sbIBundleDataListener</scope><name>onDownloadComplete</name></member>
+      <member refid="interfacesb_i_bundle_data_listener_1a04961c929e9b52bde15d44aef08faff" prot="public" virt="non-virtual"><scope>sbIBundleDataListener</scope><name>onError</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

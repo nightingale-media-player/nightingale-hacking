@@ -1,0 +1,537 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_feathers_manager" kind="interface" prot="public">
+    <compoundname>sbIFeathersManager</compoundname>
+    <includes refid="sb_i_feathers_manager_8idl" local="no">sbIFeathersManager.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_1a6dc3a42091e3a46b3336605ea562289" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsISimpleEnumerator</type>
+        <definition>nsISimpleEnumerator sbIFeathersManager::getSkinDescriptions</definition>
+        <argsstring>()</argsstring>
+        <name>getSkinDescriptions</name>
+        <briefdescription>
+<para>Enumerator for all registered <ref refid="interfacesb_i_skin_description" kindref="compound">sbISkinDescription</ref> objects. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="77"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_1cbff729402f6161de8446f0148defeac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsISimpleEnumerator</type>
+        <definition>nsISimpleEnumerator sbIFeathersManager::getLayoutDescriptions</definition>
+        <argsstring>()</argsstring>
+        <name>getLayoutDescriptions</name>
+        <briefdescription>
+<para>Enumerator for all registered <ref refid="interfacesb_i_layout_description" kindref="compound">sbILayoutDescription</ref> objects. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="89"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_136241d7adea8eec3b4c242c0f54d41c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManager::registerSkin</definition>
+        <argsstring>(in sbISkinDescription aSkin)</argsstring>
+        <name>registerSkin</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_skin_description" kindref="compound">sbISkinDescription</ref></type>
+          <declname>aSkin</declname>
+        </param>
+        <briefdescription>
+<para>Make the given skin available for use. </para>        </briefdescription>
+        <detaileddescription>
+<para>Register the the given skin description. Note that any existing registration with the same skin provider name will be overwritten.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aSkin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Skin description </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="108"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_1bba086d622c240a8e93c6273cd3e11ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManager::unregisterSkin</definition>
+        <argsstring>(in sbISkinDescription aSkin)</argsstring>
+        <name>unregisterSkin</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_skin_description" kindref="compound">sbISkinDescription</ref></type>
+          <declname>aSkin</declname>
+        </param>
+        <briefdescription>
+<para>Disable the given skin. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aSkin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Skin description </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="114"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_14a4852b795bebc293f2003f229d40504" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_skin_description" kindref="compound">sbISkinDescription</ref></type>
+        <definition>sbISkinDescription sbIFeathersManager::getSkinDescription</definition>
+        <argsstring>(in AString aInternalName)</argsstring>
+        <name>getSkinDescription</name>
+        <param>
+          <type>in AString</type>
+          <declname>aInternalName</declname>
+        </param>
+        <briefdescription>
+<para>Gets the full skin description associated with a skin identifier. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aInternalName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Skin identifier (provider) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Skin description </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="122"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_1a3f6c1145bf57ce889f4c5c76c1f25c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManager::registerLayout</definition>
+        <argsstring>(in sbILayoutDescription aLayout)</argsstring>
+        <name>registerLayout</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_layout_description" kindref="compound">sbILayoutDescription</ref></type>
+          <declname>aLayout</declname>
+        </param>
+        <briefdescription>
+<para>Make the given XUL window available for use. </para>        </briefdescription>
+        <detaileddescription>
+<para>Register the the given layout description. Note that any existing registration with the same URL will be overwritten.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Window description </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="135"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_11798ffcf7e2a3593b4151095dc5e309e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManager::unregisterLayout</definition>
+        <argsstring>(in sbILayoutDescription aLayout)</argsstring>
+        <name>unregisterLayout</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_layout_description" kindref="compound">sbILayoutDescription</ref></type>
+          <declname>aLayout</declname>
+        </param>
+        <briefdescription>
+<para>Disable the given window. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Window description </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="141"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_1cc68c664bea00a1e1ac5289af3d7068f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_layout_description" kindref="compound">sbILayoutDescription</ref></type>
+        <definition>sbILayoutDescription sbIFeathersManager::getLayoutDescription</definition>
+        <argsstring>(in AString aLayoutURL)</argsstring>
+        <name>getLayoutDescription</name>
+        <param>
+          <type>in AString</type>
+          <declname>aLayoutURL</declname>
+        </param>
+        <briefdescription>
+<para>Gets the full layout description associated with a layout URL. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayoutURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Unique identifier </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Layout description </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="149"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_12f3fdf3b9c5ff0f9ab655c8c099e378a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManager::assertCompatibility</definition>
+        <argsstring>(in AString aLayoutURL, in AString aInternalName, in boolean aShowChrome)</argsstring>
+        <name>assertCompatibility</name>
+        <param>
+          <type>in AString</type>
+          <declname>aLayoutURL</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aInternalName</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aShowChrome</declname>
+        </param>
+        <briefdescription>
+<para>Assert compatibility of a skin-layout pair. </para>        </briefdescription>
+        <detaileddescription>
+<para>Indicate that layoutURL and internalName can be active at the same time, and whether the window chrome (titlebar, borders) should be shown.</para><para>Note that the given skin and xul window IDs do not need to be registered with the feathers manager.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayoutURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL for a xul window </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInternalName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier for a skin </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aShowChrome</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not the OS titlebar should be used when the skin-window pair is active </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="169"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_11cf705163c6a5ddf649c3eb71e092b81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManager::unassertCompatibility</definition>
+        <argsstring>(in AString aLayoutURL, in AString aInternalName)</argsstring>
+        <name>unassertCompatibility</name>
+        <param>
+          <type>in AString</type>
+          <declname>aLayoutURL</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aInternalName</declname>
+        </param>
+        <briefdescription>
+<para>Unassert compatibility of a skin-layout pair. </para>        </briefdescription>
+        <detaileddescription>
+<para>Indicate that layoutURL and internalName cannot be active at the same time.</para><para>TODO: Throw an exception if the mapping is currently in use?</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayoutURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL for a xul window </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInternalName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier for a skin </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="184"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_1ad3b2e31c3dc72083f8d7408326658a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIFeathersManager::isChromeEnabled</definition>
+        <argsstring>(in AString aLayoutURL, in AString aInternalName)</argsstring>
+        <name>isChromeEnabled</name>
+        <param>
+          <type>in AString</type>
+          <declname>aLayoutURL</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aInternalName</declname>
+        </param>
+        <briefdescription>
+<para>Should window chrome be used with the given window-skin pair. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayoutURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL for a xul window </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInternalName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier for a skin </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True if the given pair should be displayed with native chrome (titlebar, etc.) </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="196"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_17f80bd36542c40d6a3b733c54b1934b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsISimpleEnumerator</type>
+        <definition>nsISimpleEnumerator sbIFeathersManager::getSkinsForLayout</definition>
+        <argsstring>(in AString aLayoutURL)</argsstring>
+        <name>getSkinsForLayout</name>
+        <param>
+          <type>in AString</type>
+          <declname>aLayoutURL</declname>
+        </param>
+        <briefdescription>
+<para>Get an enumerator for all registered skins compatible with the given layoutID. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayoutURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL for a xul window </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Enumerator for a list of <ref refid="interfacesb_i_skin_description" kindref="compound">sbISkinDescription</ref> objects </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="208"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_14481e6634ff2789cb61b7960e54cadd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManager::switchFeathers</definition>
+        <argsstring>(in AString aLayoutURL, in AString aInternalName)</argsstring>
+        <name>switchFeathers</name>
+        <param>
+          <type>in AString</type>
+          <declname>aLayoutURL</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aInternalName</declname>
+        </param>
+        <briefdescription>
+<para>Switch to the given window-skin pair. </para>        </briefdescription>
+        <detaileddescription>
+<para>Attempts to reopen all Songbird windows using the given layout and skin.</para><para>Note: triggers the onSelectRequest callback</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayoutURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL for a xul window </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInternalName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier for a skin </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para>sbIFeathersChangeListener </para></simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_FAILURE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the given feathers are invalid or incompatible </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="226"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_10e7152df59e47a9cb1b9699f03294033" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManager::addListener</definition>
+        <argsstring>(in sbIFeathersManagerListener aListener)</argsstring>
+        <name>addListener</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_feathers_manager_listener" kindref="compound">sbIFeathersManagerListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Register to receive modification callbacks. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback interface </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="234"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_19debde65ce0281d47f82cfb3233f03d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManager::removeListener</definition>
+        <argsstring>(in sbIFeathersManagerListener aListener)</argsstring>
+        <name>removeListener</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_feathers_manager_listener" kindref="compound">sbIFeathersManagerListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Unregister modification callbacks. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback interface </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="241"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_feathers_manager_12baaf5ce393f0ecfc798855cf68df318" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIFeathersManager::currentLayoutURL</definition>
+        <argsstring></argsstring>
+        <name>currentLayoutURL</name>
+        <briefdescription>
+<para>URL for the active layout. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="57" bodyfile="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_feathers_manager_1f21a46e05b9760ad021366cfa20b59d6" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIFeathersManager::currentSkinName</definition>
+        <argsstring></argsstring>
+        <name>currentSkinName</name>
+        <briefdescription>
+<para>Skin internalName string for the active skin. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="62" bodyfile="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_feathers_manager_1e19315d1af9989b5421c07bba9123a03" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIFeathersManager::previousLayoutURL</definition>
+        <argsstring></argsstring>
+        <name>previousLayoutURL</name>
+        <briefdescription>
+<para>URL for the previously active or default layout. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="67" bodyfile="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_feathers_manager_19ce06e150df7c593c107acd850ab5f81" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIFeathersManager::previousSkinName</definition>
+        <argsstring></argsstring>
+        <name>previousSkinName</name>
+        <briefdescription>
+<para>Skin internalName string for the previously active or default skin. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="72" bodyfile="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_feathers_manager_1f88d0c0de580dd60d6f3277efd15e118" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIFeathersManager::skinCount</definition>
+        <argsstring></argsstring>
+        <name>skinCount</name>
+        <briefdescription>
+<para>Number of registered skins. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="83" bodyfile="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_feathers_manager_199dda59c7065df4a6ab43c1d94baa432" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIFeathersManager::layoutCount</definition>
+        <argsstring></argsstring>
+        <name>layoutCount</name>
+        <briefdescription>
+<para>Number of registered XUL windows. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="95" bodyfile="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Controls the appearance of the application. </para>    </briefdescription>
+    <detaileddescription>
+<para>Acts as a registry for installed skins and alternate XUL windows, and provides a mechanism for switching between them.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_skin_description" kindref="compound">sbISkinDescription</ref>, <ref refid="interfacesb_i_layout_description" kindref="compound">sbILayoutDescription</ref>, sbIFeathersChangeListener </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="53" bodyfile="C:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" bodystart="52" bodyend="242"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_feathers_manager_10e7152df59e47a9cb1b9699f03294033" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>addListener</name></member>
+      <member refid="interfacesb_i_feathers_manager_12f3fdf3b9c5ff0f9ab655c8c099e378a" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>assertCompatibility</name></member>
+      <member refid="interfacesb_i_feathers_manager_12baaf5ce393f0ecfc798855cf68df318" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>currentLayoutURL</name></member>
+      <member refid="interfacesb_i_feathers_manager_1f21a46e05b9760ad021366cfa20b59d6" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>currentSkinName</name></member>
+      <member refid="interfacesb_i_feathers_manager_1cc68c664bea00a1e1ac5289af3d7068f" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>getLayoutDescription</name></member>
+      <member refid="interfacesb_i_feathers_manager_1cbff729402f6161de8446f0148defeac" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>getLayoutDescriptions</name></member>
+      <member refid="interfacesb_i_feathers_manager_14a4852b795bebc293f2003f229d40504" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>getSkinDescription</name></member>
+      <member refid="interfacesb_i_feathers_manager_1a6dc3a42091e3a46b3336605ea562289" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>getSkinDescriptions</name></member>
+      <member refid="interfacesb_i_feathers_manager_17f80bd36542c40d6a3b733c54b1934b2" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>getSkinsForLayout</name></member>
+      <member refid="interfacesb_i_feathers_manager_1ad3b2e31c3dc72083f8d7408326658a0" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>isChromeEnabled</name></member>
+      <member refid="interfacesb_i_feathers_manager_199dda59c7065df4a6ab43c1d94baa432" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>layoutCount</name></member>
+      <member refid="interfacesb_i_feathers_manager_1e19315d1af9989b5421c07bba9123a03" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>previousLayoutURL</name></member>
+      <member refid="interfacesb_i_feathers_manager_19ce06e150df7c593c107acd850ab5f81" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>previousSkinName</name></member>
+      <member refid="interfacesb_i_feathers_manager_1a3f6c1145bf57ce889f4c5c76c1f25c4" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>registerLayout</name></member>
+      <member refid="interfacesb_i_feathers_manager_136241d7adea8eec3b4c242c0f54d41c2" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>registerSkin</name></member>
+      <member refid="interfacesb_i_feathers_manager_19debde65ce0281d47f82cfb3233f03d4" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>removeListener</name></member>
+      <member refid="interfacesb_i_feathers_manager_1f88d0c0de580dd60d6f3277efd15e118" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>skinCount</name></member>
+      <member refid="interfacesb_i_feathers_manager_14481e6634ff2789cb61b7960e54cadd7" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>switchFeathers</name></member>
+      <member refid="interfacesb_i_feathers_manager_11cf705163c6a5ddf649c3eb71e092b81" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>unassertCompatibility</name></member>
+      <member refid="interfacesb_i_feathers_manager_11798ffcf7e2a3593b4151095dc5e309e" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>unregisterLayout</name></member>
+      <member refid="interfacesb_i_feathers_manager_1bba086d622c240a8e93c6273cd3e11ed" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>unregisterSkin</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="dir_2cecf9dde1780356be32d01632878528" kind="dir">
+    <compoundname>C:/projects/songbird/components/</compoundname>
+    <innerdir refid="dir_c818d8e723a75c7b4135524f1321905c">C:/projects/songbird/components/bundle/</innerdir>
+    <innerdir refid="dir_d594ae21dc8aa90b0b13f988cb44ea52">C:/projects/songbird/components/commandline/</innerdir>
+    <innerdir refid="dir_8cb2d18a5175499cd525aa456d782222">C:/projects/songbird/components/controller/</innerdir>
+    <innerdir refid="dir_643031b5a4636ec9d70fe84f222fdb2c">C:/projects/songbird/components/dataremote/</innerdir>
+    <innerdir refid="dir_237cf5a589cfcd6820287638a3c4ab6e">C:/projects/songbird/components/dbengine/</innerdir>
+    <innerdir refid="dir_e7afcdf5e8451c9b454df5cf50b7a957">C:/projects/songbird/components/devices/</innerdir>
+    <innerdir refid="dir_9cba9b77f5c5f1f6f4062f19381b42a8">C:/projects/songbird/components/devicesobsolete/</innerdir>
+    <innerdir refid="dir_d638543ae76e1900518e691aaee9e133">C:/projects/songbird/components/draganddrop/</innerdir>
+    <innerdir refid="dir_2e7be0fa2e43d1c64093f63bea20f652">C:/projects/songbird/components/faceplate/</innerdir>
+    <innerdir refid="dir_bf92c0de2ac09a496f10f5e891bad46f">C:/projects/songbird/components/feathers/</innerdir>
+    <innerdir refid="dir_499803ee16b70f6213a226d7bc0e8d1b">C:/projects/songbird/components/filescan/</innerdir>
+    <innerdir refid="dir_f43deae64ab583f49372fd7c5cf03671">C:/projects/songbird/components/integration/</innerdir>
+    <innerdir refid="dir_ec6a592b2a5ea0ad99fb1f19d8e8eb27">C:/projects/songbird/components/library/</innerdir>
+    <innerdir refid="dir_b79cccb9ce62906c602436b056d8ef17">C:/projects/songbird/components/mediacore/</innerdir>
+    <innerdir refid="dir_cdca4d5ba96b7f96b8b18235268da9a6">C:/projects/songbird/components/metrics/</innerdir>
+    <innerdir refid="dir_a1524e051bc1aec4f60e78e19d9b8f03">C:/projects/songbird/components/playlistcommands/</innerdir>
+    <innerdir refid="dir_e7e788e344cca5b3d974f2ee0f527de5">C:/projects/songbird/components/playlistplayback/</innerdir>
+    <innerdir refid="dir_5017d7ccb08a31f0420016e43e206381">C:/projects/songbird/components/playlistreader/</innerdir>
+    <innerdir refid="dir_f52167c5814b914cf8bf90c2e59ae822">C:/projects/songbird/components/property/</innerdir>
+    <innerdir refid="dir_1bc914b721637779e3eee2f3739b4839">C:/projects/songbird/components/remoteapi/</innerdir>
+    <innerdir refid="dir_4fa99a91a7827ad30668f77f8cd40022">C:/projects/songbird/components/servicepane/</innerdir>
+    <innerdir refid="dir_71daad80bea2a98fe4e5c15eeaf765ee">C:/projects/songbird/components/sqlbuilder/</innerdir>
+    <innerdir refid="dir_470df08ad5a65484e1f968212f964415">C:/projects/songbird/components/state/</innerdir>
+    <innerdir refid="dir_5aeeb3dc5abdbc1a791ab94403f08e0b">C:/projects/songbird/components/testharness/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/"/>
+  </compounddef>
+</doxygen>

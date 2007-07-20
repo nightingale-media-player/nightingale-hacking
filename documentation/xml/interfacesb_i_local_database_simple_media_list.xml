@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_local_database_simple_media_list" kind="interface" prot="public">
+    <compoundname>sbILocalDatabaseSimpleMediaList</compoundname>
+    <includes refid="sb_i_local_database_simple_media_list_8idl" local="no">sbILocalDatabaseSimpleMediaList.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_1018bb1f9eca511b23dcda5a1081863f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbILocalDatabaseSimpleMediaList::getIndexByOrdinal</definition>
+        <argsstring>(in AString aOrdinal)</argsstring>
+        <name>getIndexByOrdinal</name>
+        <param>
+          <type>in AString</type>
+          <declname>aOrdinal</declname>
+        </param>
+        <briefdescription>
+<para>Get the index of an item in this list by its ordinal. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aOrdinal</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The ordinal to look up the index by </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the item with the given ordinal </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="70"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_10d5e606226d2e8e935257b50edb9fdb0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSimpleMediaList::invalidate</definition>
+        <argsstring>()</argsstring>
+        <name>invalidate</name>
+        <briefdescription>
+<para>Tell the list that its underlying datasource has changed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="75"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_1291e6fe131f286efca62db025255c759" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSimpleMediaList::notifyListenersItemUpdated</definition>
+        <argsstring>(in sbIMediaItem aItem, in sbIPropertyArray aProperties)</argsstring>
+        <name>notifyListenersItemUpdated</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aItem</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+          <declname>aProperties</declname>
+        </param>
+        <briefdescription>
+<para>Notify this simple media list&apos;s listeners that an item has been updated. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="82"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_1cc4acb7d7c2e349b54c0c3cf98d74dad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSimpleMediaList::notifyListenersBeforeItemRemoved</definition>
+        <argsstring>(in sbIMediaList aList, in sbIMediaItem aItem)</argsstring>
+        <name>notifyListenersBeforeItemRemoved</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aList</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aItem</declname>
+        </param>
+        <briefdescription>
+<para>Notify this simple media list&apos;s listeners that an item is about to be removed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="89"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_10f7663fb96eceddce0796b671c39ec23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSimpleMediaList::notifyListenersAfterItemRemoved</definition>
+        <argsstring>(in sbIMediaList aList, in sbIMediaItem aItem)</argsstring>
+        <name>notifyListenersAfterItemRemoved</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aList</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aItem</declname>
+        </param>
+        <briefdescription>
+<para>Notify this simple media list&apos;s listeners that an item has been removed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="96"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_1703c262b9951487bca0308d2de2c20c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSimpleMediaList::notifyListenersListCleared</definition>
+        <argsstring>(in sbIMediaList aList)</argsstring>
+        <name>notifyListenersListCleared</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aList</declname>
+        </param>
+        <briefdescription>
+<para>Notify the simple media list&apos;s listeners that it has been cleared. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="101"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_10d722dac772c9960eade1c51a769b571" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSimpleMediaList::notifyListenersBatchBegin</definition>
+        <argsstring>(in sbIMediaList aList)</argsstring>
+        <name>notifyListenersBatchBegin</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aList</declname>
+        </param>
+        <briefdescription>
+<para>Notify the simple media list&apos;s listeners that a batch has begun. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="106"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_10e7193fba06eca8b337efcbd276b9591" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSimpleMediaList::notifyListenersBatchEnd</definition>
+        <argsstring>(in sbIMediaList aList)</argsstring>
+        <name>notifyListenersBatchEnd</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aList</declname>
+        </param>
+        <briefdescription>
+<para>Notify the simple media list&apos;s listeners that a batch has ended. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="111"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_local_database_simple_media_list_19ab4500c07ac7424d962babcdf3a8364" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_local_database_media_list_copy_listener" kindref="compound">sbILocalDatabaseMediaListCopyListener</ref></type>
+        <definition>attribute sbILocalDatabaseMediaListCopyListener sbILocalDatabaseSimpleMediaList::copyListener</definition>
+        <argsstring></argsstring>
+        <name>copyListener</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="63" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
+    <detaileddescription>
+<para>Methods and attributes that are specific to the simple media list are implemented here.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="234">
+        <label>sbILocalDatabaseMediaListCopyListener</label>
+        <link refid="interfacesb_i_local_database_media_list_copy_listener"/>
+      </node>
+      <node id="233">
+        <label>sbILocalDatabaseSimpleMediaList</label>
+        <link refid="interfacesb_i_local_database_simple_media_list"/>
+        <childnode refid="234" relation="usage">
+          <edgelabel>copyListener</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="62" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="61" bodyend="112"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_local_database_simple_media_list_19ab4500c07ac7424d962babcdf3a8364" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>copyListener</name></member>
+      <member refid="interfacesb_i_local_database_simple_media_list_1018bb1f9eca511b23dcda5a1081863f3" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>getIndexByOrdinal</name></member>
+      <member refid="interfacesb_i_local_database_simple_media_list_10d5e606226d2e8e935257b50edb9fdb0" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>invalidate</name></member>
+      <member refid="interfacesb_i_local_database_simple_media_list_10f7663fb96eceddce0796b671c39ec23" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>notifyListenersAfterItemRemoved</name></member>
+      <member refid="interfacesb_i_local_database_simple_media_list_10d722dac772c9960eade1c51a769b571" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>notifyListenersBatchBegin</name></member>
+      <member refid="interfacesb_i_local_database_simple_media_list_10e7193fba06eca8b337efcbd276b9591" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>notifyListenersBatchEnd</name></member>
+      <member refid="interfacesb_i_local_database_simple_media_list_1cc4acb7d7c2e349b54c0c3cf98d74dad" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>notifyListenersBeforeItemRemoved</name></member>
+      <member refid="interfacesb_i_local_database_simple_media_list_1291e6fe131f286efca62db025255c759" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>notifyListenersItemUpdated</name></member>
+      <member refid="interfacesb_i_local_database_simple_media_list_1703c262b9951487bca0308d2de2c20c7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>notifyListenersListCleared</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_remote_media_list" kind="interface" prot="public">
+    <compoundname>sbIRemoteMediaList</compoundname>
+    <includes refid="sb_i_remote_media_list_8idl" local="no">sbIRemoteMediaList.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_remote_media_list_10f5264220052ca13380b741670a2a055" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+        <definition>sbIMediaListView sbIRemoteMediaList::getView</definition>
+        <argsstring>()</argsstring>
+        <name>getView</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteMediaList.idl" line="47"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface to control a media list from remote web pages. </para>    </briefdescription>
+    <detaileddescription>
+<para>TODO: Write this documentation </para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/remoteapi/public/sbIRemoteMediaList.idl" line="46" bodyfile="C:/projects/songbird/components/remoteapi/public/sbIRemoteMediaList.idl" bodystart="45" bodyend="48"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_remote_media_list_10f5264220052ca13380b741670a2a055" prot="public" virt="non-virtual"><scope>sbIRemoteMediaList</scope><name>getView</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

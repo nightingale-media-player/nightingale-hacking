@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_feathers_manager_listener" kind="interface" prot="public">
+    <compoundname>sbIFeathersManagerListener</compoundname>
+    <includes refid="sb_i_feathers_manager_listener_8idl" local="no">sbIFeathersManagerListener.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_listener_184decb16b4f3a8fd566c4bfffa9f0240" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManagerListener::onFeathersUpdate</definition>
+        <argsstring>()</argsstring>
+        <name>onFeathersUpdate</name>
+        <briefdescription>
+<para>Called whenever the Feathers Manager is modified. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl" line="49"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_listener_129c526c7d75a44a89bc0ecdf1865afcc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManagerListener::onFeathersSelectRequest</definition>
+        <argsstring>(in sbILayoutDescription aLayout, in sbISkinDescription aSkin)</argsstring>
+        <name>onFeathersSelectRequest</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_layout_description" kindref="compound">sbILayoutDescription</ref></type>
+          <declname>aLayout</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_skin_description" kindref="compound">sbISkinDescription</ref></type>
+          <declname>aSkin</declname>
+        </param>
+        <briefdescription>
+<para>Called when the feathers manager is about to switch feathers. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the layout to be selected </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSkin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the skin to be selected </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl" line="57"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Callback interface used to listen to Feathers Manager changes. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_feathers_manager" kindref="compound">sbIFeathersManager</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl" line="45" bodyfile="C:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl" bodystart="44" bodyend="58"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_feathers_manager_listener_129c526c7d75a44a89bc0ecdf1865afcc" prot="public" virt="non-virtual"><scope>sbIFeathersManagerListener</scope><name>onFeathersSelectRequest</name></member>
+      <member refid="interfacesb_i_feathers_manager_listener_184decb16b4f3a8fd566c4bfffa9f0240" prot="public" virt="non-virtual"><scope>sbIFeathersManagerListener</scope><name>onFeathersUpdate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

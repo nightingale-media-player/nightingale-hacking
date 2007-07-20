@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_window_layer" kind="interface" prot="public">
+    <compoundname>sbIWindowLayer</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_window_layer_136f724a453357dc41acf55b3561df1fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIWindowLayer::setOpacity</definition>
+        <argsstring>(in nsISupports aWindow, in PRUInt32 alpha)</argsstring>
+        <name>setOpacity</name>
+        <param>
+          <type>in nsISupports</type>
+          <declname>aWindow</declname>
+        </param>
+        <param>
+          <type>in PRUInt32</type>
+          <declname>alpha</declname>
+        </param>
+        <briefdescription>
+<para>Set the window opacity This method sets the opacity for an entire window to a particular value. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDOMWindow</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The xul window on which to operate </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alpha</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The opacity value (0 = fully transparent, 255 = fully opaque) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_window_layer_116a16e9c349cdff6d442ce154720b793" kindref="member">getOpacity</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/integration/public/IWindowLayer.idl" line="54"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_window_layer_116a16e9c349cdff6d442ce154720b793" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRUInt32</type>
+        <definition>PRUInt32 sbIWindowLayer::getOpacity</definition>
+        <argsstring>(in nsISupports aWindow)</argsstring>
+        <name>getOpacity</name>
+        <param>
+          <type>in nsISupports</type>
+          <declname>aWindow</declname>
+        </param>
+        <briefdescription>
+<para>Returns the opacity of a window. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aWindow</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The xul window to query for opacity </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The opacity of the window </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_window_layer_136f724a453357dc41acf55b3561df1fb" kindref="member">setOpacity</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/integration/public/IWindowLayer.idl" line="62"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Window layering service interface This is an interface to the window layering service, used to set the opacity of an entire window. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/integration/public/IWindowLayer.idl" line="46" bodyfile="C:/projects/songbird/components/integration/public/IWindowLayer.idl" bodystart="45" bodyend="63"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_window_layer_116a16e9c349cdff6d442ce154720b793" prot="public" virt="non-virtual"><scope>sbIWindowLayer</scope><name>getOpacity</name></member>
+      <member refid="interfacesb_i_window_layer_136f724a453357dc41acf55b3561df1fb" prot="public" virt="non-virtual"><scope>sbIWindowLayer</scope><name>setOpacity</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

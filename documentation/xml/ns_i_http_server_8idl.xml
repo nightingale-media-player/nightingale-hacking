@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="ns_i_http_server_8idl" kind="file">
+    <compoundname>nsIHttpServer.idl</compoundname>
+    <includes local="yes">nsIServerSocket.idl</includes>
+    <includes local="yes">nsIPropertyBag.idl</includes>
+    <incdepgraph>
+      <node id="411">
+        <label>nsIPropertyBag.idl</label>
+      </node>
+      <node id="410">
+        <label>nsIServerSocket.idl</label>
+      </node>
+      <node id="409">
+        <label>C:/projects/songbird/components/testharness/public/nsIHttpServer.idl</label>
+        <link refid="nsIHttpServer.idl"/>
+        <childnode refid="410" relation="include">
+        </childnode>
+        <childnode refid="411" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacens_i_http_server" prot="public">nsIHttpServer</innerclass>
+    <innerclass refid="interfacens_i_http_request_handler" prot="public">nsIHttpRequestHandler</innerclass>
+    <innerclass refid="interfacens_i_http_request_metadata" prot="public">nsIHttpRequestMetadata</innerclass>
+    <innerclass refid="interfacens_i_http_response" prot="public">nsIHttpResponse</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*<sp/>*****<sp/>BEGIN<sp/>LICENSE<sp/>BLOCK<sp/>*****</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/>Version:<sp/>MPL<sp/>1.1/GPL<sp/>2.0/LGPL<sp/>2.1</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>The<sp/>contents<sp/>of<sp/>this<sp/>file<sp/>are<sp/>subject<sp/>to<sp/>the<sp/>Mozilla<sp/>Public<sp/>License<sp/>Version</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*<sp/>1.1<sp/>(the<sp/>&quot;License&quot;);<sp/>you<sp/>may<sp/>not<sp/>use<sp/>this<sp/>file<sp/>except<sp/>in<sp/>compliance<sp/>with</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/>the<sp/>License.<sp/>You<sp/>may<sp/>obtain<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>License<sp/>at</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*<sp/>http://www.mozilla.org/MPL/</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>License</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/>for<sp/>the<sp/>specific<sp/>language<sp/>governing<sp/>rights<sp/>and<sp/>limitations<sp/>under<sp/>the</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*<sp/>License.</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>The<sp/>Original<sp/>Code<sp/>is<sp/>the<sp/>MozJSHTTP<sp/>server.</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/>The<sp/>Initial<sp/>Developer<sp/>of<sp/>the<sp/>Original<sp/>Code<sp/>is</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*<sp/>Mozilla<sp/>Corporation.</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/>Portions<sp/>created<sp/>by<sp/>the<sp/>Initial<sp/>Developer<sp/>are<sp/>Copyright<sp/>(C)<sp/>2006</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/>the<sp/>Initial<sp/>Developer.<sp/>All<sp/>Rights<sp/>Reserved.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*<sp/>Contributor(s):</highlight></codeline>
+<codeline lineno="22"><highlight class="comment"><sp/>*<sp/><sp/><sp/>Jeff<sp/>Walden<sp/>&lt;jwalden+code@mit.edu&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(original<sp/>author)</highlight></codeline>
+<codeline lineno="23"><highlight class="comment"><sp/>*<sp/><sp/><sp/>Robert<sp/>Sayre<sp/>&lt;sayrer@gmail.com&gt;</highlight></codeline>
+<codeline lineno="24"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*<sp/>Alternatively,<sp/>the<sp/>contents<sp/>of<sp/>this<sp/>file<sp/>may<sp/>be<sp/>used<sp/>under<sp/>the<sp/>terms<sp/>of</highlight></codeline>
+<codeline lineno="26"><highlight class="comment"><sp/>*<sp/>either<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>or<sp/>later<sp/>(the<sp/>&quot;GPL&quot;),<sp/>or</highlight></codeline>
+<codeline lineno="27"><highlight class="comment"><sp/>*<sp/>the<sp/>GNU<sp/>Lesser<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2.1<sp/>or<sp/>later<sp/>(the<sp/>&quot;LGPL&quot;),</highlight></codeline>
+<codeline lineno="28"><highlight class="comment"><sp/>*<sp/>in<sp/>which<sp/>case<sp/>the<sp/>provisions<sp/>of<sp/>the<sp/>GPL<sp/>or<sp/>the<sp/>LGPL<sp/>are<sp/>applicable<sp/>instead</highlight></codeline>
+<codeline lineno="29"><highlight class="comment"><sp/>*<sp/>of<sp/>those<sp/>above.<sp/>If<sp/>you<sp/>wish<sp/>to<sp/>allow<sp/>use<sp/>of<sp/>your<sp/>version<sp/>of<sp/>this<sp/>file<sp/>only</highlight></codeline>
+<codeline lineno="30"><highlight class="comment"><sp/>*<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>either<sp/>the<sp/>GPL<sp/>or<sp/>the<sp/>LGPL,<sp/>and<sp/>not<sp/>to<sp/>allow<sp/>others<sp/>to</highlight></codeline>
+<codeline lineno="31"><highlight class="comment"><sp/>*<sp/>use<sp/>your<sp/>version<sp/>of<sp/>this<sp/>file<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>MPL,<sp/>indicate<sp/>your</highlight></codeline>
+<codeline lineno="32"><highlight class="comment"><sp/>*<sp/>decision<sp/>by<sp/>deleting<sp/>the<sp/>provisions<sp/>above<sp/>and<sp/>replace<sp/>them<sp/>with<sp/>the<sp/>notice</highlight></codeline>
+<codeline lineno="33"><highlight class="comment"><sp/>*<sp/>and<sp/>other<sp/>provisions<sp/>required<sp/>by<sp/>the<sp/>GPL<sp/>or<sp/>the<sp/>LGPL.<sp/>If<sp/>you<sp/>do<sp/>not<sp/>delete</highlight></codeline>
+<codeline lineno="34"><highlight class="comment"><sp/>*<sp/>the<sp/>provisions<sp/>above,<sp/>a<sp/>recipient<sp/>may<sp/>use<sp/>your<sp/>version<sp/>of<sp/>this<sp/>file<sp/>under</highlight></codeline>
+<codeline lineno="35"><highlight class="comment"><sp/>*<sp/>the<sp/>terms<sp/>of<sp/>any<sp/>one<sp/>of<sp/>the<sp/>MPL,<sp/>the<sp/>GPL<sp/>or<sp/>the<sp/>LGPL.</highlight></codeline>
+<codeline lineno="36"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="37"><highlight class="comment"><sp/>*<sp/>*****<sp/>END<sp/>LICENSE<sp/>BLOCK<sp/>*****<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIServerSocket.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIPropertyBag.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal">interface<sp/>nsILocalFile;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">interface<sp/>nsIOutputStream;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal">interface<sp/><ref refid="interfacens_i_http_server" kindref="compound">nsIHttpServer</ref>;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">interface<sp/><ref refid="interfacens_i_http_request_handler" kindref="compound">nsIHttpRequestHandler</ref>;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">interface<sp/><ref refid="interfacens_i_http_request_metadata" kindref="compound">nsIHttpRequestMetadata</ref>;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">interface<sp/><ref refid="interfacens_i_http_response" kindref="compound">nsIHttpResponse</ref>;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal">[scriptable,<sp/>uuid(5520f79e-ecd5-4c40-843b-97ee13a23747)]</highlight></codeline>
+<codeline lineno="56" refid="interfacens_i_http_server" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacens_i_http_server" kindref="compound">nsIHttpServer</ref><sp/>:<sp/>nsIServerSocketListener</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>start(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>port);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>stop();</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerFile(in<sp/>string<sp/>path,<sp/>in<sp/>nsILocalFile<sp/>file);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerPathHandler(in<sp/>string<sp/>path,<sp/>in<sp/><ref refid="interfacens_i_http_request_handler" kindref="compound">nsIHttpRequestHandler</ref><sp/>handler);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerErrorHandler(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>code,<sp/>in<sp/><ref refid="interfacens_i_http_request_handler" kindref="compound">nsIHttpRequestHandler</ref><sp/>handler);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerDirectory(in<sp/>string<sp/>path,<sp/>in<sp/>nsILocalFile<sp/>dir);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setIndexHandler(in<sp/><ref refid="interfacens_i_http_request_handler" kindref="compound">nsIHttpRequestHandler</ref><sp/>handler);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(2bbb4db7-d285-42b3-a3ce-142b8cc7e139)]</highlight></codeline>
+<codeline lineno="183" refid="interfacens_i_http_request_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacens_i_http_request_handler" kindref="compound">nsIHttpRequestHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="184"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>handle(in<sp/><ref refid="interfacens_i_http_request_metadata" kindref="compound">nsIHttpRequestMetadata</ref><sp/>metadata,<sp/>in<sp/><ref refid="interfacens_i_http_response" kindref="compound">nsIHttpResponse</ref><sp/>response);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal">[scriptable,<sp/>uuid(3a899b17-b6eb-4333-8ef4-912df454a551)]</highlight></codeline>
+<codeline lineno="208" refid="interfacens_i_http_request_metadata" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacens_i_http_request_metadata" kindref="compound">nsIHttpRequestMetadata</ref><sp/>:<sp/>nsIPropertyBag</highlight></codeline>
+<codeline lineno="209"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="213" refid="interfacens_i_http_request_metadata_14632959e1f434521d67ede765aeeb0c7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>string<sp/>method;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="220" refid="interfacens_i_http_request_metadata_1b506c4ca676904b02fcc53ffe234c0d0" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>string<sp/>host;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225" refid="interfacens_i_http_request_metadata_1b92290e3606856f1e4f4408e4939015f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>port;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231" refid="interfacens_i_http_request_metadata_194799613ea43b992c9e77413330ad9a2" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>string<sp/>path;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237" refid="interfacens_i_http_request_metadata_1bba9381df6833faaf422e8eb7efe2193" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>string<sp/>queryString;</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="245" refid="interfacens_i_http_request_metadata_1f5140947a19ec5957de10e121be28213" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>string<sp/>httpVersion;</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/>string<sp/>getHeader(in<sp/>string<sp/>fieldName);</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hasHeader(in<sp/>string<sp/>fieldName);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284" refid="interfacens_i_http_request_metadata_175b4ddb79c439774ec39c4ef149f6ccb" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>headers;</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>XXX<sp/>should<sp/>expose<sp/>body<sp/>of<sp/>request<sp/>here!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="287"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal">[scriptable,<sp/>uuid(a2aaaff7-03bd-43b6-b460-94671e288093)]</highlight></codeline>
+<codeline lineno="295" refid="interfacens_i_http_response" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacens_i_http_response" kindref="compound">nsIHttpResponse</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="296"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setStatusLine(in<sp/>string<sp/>httpVersion,</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>statusCode,</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>string<sp/>description);</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setHeader(in<sp/>string<sp/>name,<sp/>in<sp/>string<sp/>value,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>merge);</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341" refid="interfacens_i_http_response_17e432f5378ed7041c8f741d9f8976a59" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIOutputStream<sp/>bodyOutputStream;</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"></highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>write(in<sp/>string<sp/>data);</highlight></codeline>
+<codeline lineno="350"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="C:/projects/songbird/components/testharness/public/nsIHttpServer.idl"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_library_resource" kind="interface" prot="public">
+    <compoundname>sbILibraryResource</compoundname>
+    <derivedcompoundref refid="interfacesb_i_library" prot="public" virt="non-virtual">sbILibrary</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_local_database_resource_property" prot="public" virt="non-virtual">sbILocalDatabaseResourceProperty</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_media_item" prot="public" virt="non-virtual">sbIMediaItem</derivedcompoundref>
+    <includes refid="sb_i_library_resource_8idl" local="no">sbILibraryResource.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_library_resource_1fecce0a9f8cf88784cbfdce7d8143719" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbILibraryResource::getProperty</definition>
+        <argsstring>(in AString aName)</argsstring>
+        <name>getProperty</name>
+        <param>
+          <type>in AString</type>
+          <declname>aName</declname>
+        </param>
+        <briefdescription>
+<para>Get the value of a property of this resource. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method will *never* throw. If a value doesn&apos;t exist it will return a special &quot;void&quot; string that behaves just like an empty string except that the IsVoid() method will return PR_TRUE for those who care.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the property to get </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Value of the requested property </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="81"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_resource_1fa7bdb6a26b3c120968f0573cba92ae7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibraryResource::setProperty</definition>
+        <argsstring>(in AString aName, in AString aValue)</argsstring>
+        <name>setProperty</name>
+        <param>
+          <type>in AString</type>
+          <declname>aName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+<para>Set the value of a property on this resource. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the property to set </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New value for the specified property </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="88"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_resource_1ed9c1d9b3fa1328d0ad585e0d571676a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+        <definition>sbIPropertyArray sbILibraryResource::getProperties</definition>
+        <argsstring>([optional] in sbIPropertyArray aPropertyNames)</argsstring>
+        <name>getProperties</name>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+          <declname>aPropertyNames</declname>
+        </param>
+        <briefdescription>
+<para>Get properties from this resource in a property array. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPropertyNames</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A property array containing the names of the properties you wish to retrieve. The values of these properties are disregarded. If this parameter is null or not specified, all properties will be returned </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A property array containing the requested properties and values </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="98"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_resource_179625ea92faf0b5dfadc74c840b2525b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILibraryResource::setProperties</definition>
+        <argsstring>(in sbIPropertyArray aProperties)</argsstring>
+        <name>setProperties</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+          <declname>aProperties</declname>
+        </param>
+        <briefdescription>
+<para>Sets the properties and values in the supplied property array to this resource. This works as if you called setProperty on each property in the array. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aProperties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Properties to set to this resource</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+NOTE: Until bug 3694 is fixed, it is possible for this method to throw NS_ERROR_INVALID_ARG if one of the property values in the array is not valid. This will have no side effects -- if an error is thrown, the resource will not be modified. This will go away when the bug is fixed as it will then be impossible to have invalid properties in the array </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="112"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbILibraryResource::equals</definition>
+        <argsstring>(in sbILibraryResource aOtherLibraryResource)</argsstring>
+        <name>equals</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library_resource" kindref="compound">sbILibraryResource</ref></type>
+          <declname>aOtherLibraryResource</declname>
+        </param>
+        <briefdescription>
+<para>Tests the equality of two library resources. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="117"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_library_resource_1c97a2ea6d6aa52d2dfd74095895f74f6" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILibraryResource::guid</definition>
+        <argsstring></argsstring>
+        <name>guid</name>
+        <briefdescription>
+<para>The guid of this resource. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="53" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" static="no" mutable="no">
+        <type>readonly attribute long long</type>
+        <definition>readonly attribute long long sbILibraryResource::created</definition>
+        <argsstring></argsstring>
+        <name>created</name>
+        <briefdescription>
+<para>The creation time of this resource as a unix timestamp. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="58" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" static="no" mutable="no">
+        <type>readonly attribute long long</type>
+        <definition>readonly attribute long long sbILibraryResource::updated</definition>
+        <argsstring></argsstring>
+        <name>updated</name>
+        <briefdescription>
+<para>The last update time of this resource as a unix timestamp. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="63" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_library_resource_1653545673a60d0044e2d987196bff522" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbILibraryResource::propertyNames</definition>
+        <argsstring></argsstring>
+        <name>propertyNames</name>
+        <briefdescription>
+<para>Returns a string enumerator of the names of all the properties set on this resource. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="69" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>General interface to data resources. </para>    </briefdescription>
+    <detaileddescription>
+<para>This interface should be implemented by each object of the data model, including libraries, media items, and media lists.</para><para><simplesect kind="see"><para>sbILibraryPropertiesManager </para></simplesect>
+</para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="179">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="178" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="177">
+        <label>sbILocalDatabaseResourceProperty</label>
+        <link refid="interfacesb_i_local_database_resource_property"/>
+        <childnode refid="175" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="176">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="175" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="175">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="178">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="175" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="180">
+        <label>sbILocalDatabaseSmartMediaList</label>
+        <link refid="interfacesb_i_local_database_smart_media_list"/>
+        <childnode refid="179" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" line="49" bodyfile="C:/projects/songbird/components/library/base/public/sbILibraryResource.idl" bodystart="48" bodyend="118"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>created</name></member>
+      <member refid="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>equals</name></member>
+      <member refid="interfacesb_i_library_resource_1ed9c1d9b3fa1328d0ad585e0d571676a" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>getProperties</name></member>
+      <member refid="interfacesb_i_library_resource_1fecce0a9f8cf88784cbfdce7d8143719" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>getProperty</name></member>
+      <member refid="interfacesb_i_library_resource_1c97a2ea6d6aa52d2dfd74095895f74f6" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>guid</name></member>
+      <member refid="interfacesb_i_library_resource_1653545673a60d0044e2d987196bff522" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>propertyNames</name></member>
+      <member refid="interfacesb_i_library_resource_179625ea92faf0b5dfadc74c840b2525b" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>setProperties</name></member>
+      <member refid="interfacesb_i_library_resource_1fa7bdb6a26b3c120968f0573cba92ae7" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>setProperty</name></member>
+      <member refid="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" virt="non-virtual"><scope>sbILibraryResource</scope><name>updated</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

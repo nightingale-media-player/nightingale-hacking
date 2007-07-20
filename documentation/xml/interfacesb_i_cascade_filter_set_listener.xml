@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_cascade_filter_set_listener" kind="interface" prot="public">
+    <compoundname>sbICascadeFilterSetListener</compoundname>
+    <includes refid="sb_i_cascade_filter_set_8idl" local="no">sbICascadeFilterSet.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_listener_1e215eaa7d97b715041b80c3c61b0c7bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICascadeFilterSetListener::onChange</definition>
+        <argsstring>()</argsstring>
+        <name>onChange</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="47"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_listener_1abf1f4b671d10f3a108228d11b1d9d8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICascadeFilterSetListener::onValuesChanged</definition>
+        <argsstring>(in unsigned short aIndex)</argsstring>
+        <name>onValuesChanged</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="49"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Listener interface for <ref refid="interfacesb_i_cascade_filter_set" kindref="compound">sbICascadeFilterSet</ref>. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_cascade_filter_set" kindref="compound">sbICascadeFilterSet</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="46" bodyfile="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" bodystart="45" bodyend="50"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_cascade_filter_set_listener_1e215eaa7d97b715041b80c3c61b0c7bd" prot="public" virt="non-virtual"><scope>sbICascadeFilterSetListener</scope><name>onChange</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_listener_1abf1f4b671d10f3a108228d11b1d9d8b" prot="public" virt="non-virtual"><scope>sbICascadeFilterSetListener</scope><name>onValuesChanged</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

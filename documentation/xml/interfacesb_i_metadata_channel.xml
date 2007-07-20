@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_metadata_channel" kind="interface" prot="public">
+    <compoundname>sbIMetadataChannel</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_metadata_channel_106162d5145e8574500c6a475e8ed79e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataChannel::open</definition>
+        <argsstring>(in nsIChannel aChannel, in sbIMetadataHandler aHandler)</argsstring>
+        <name>open</name>
+        <param>
+          <type>in nsIChannel</type>
+          <declname>aChannel</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref></type>
+          <declname>aHandler</declname>
+        </param>
+        <briefdescription>
+<para>Open the channel and start downloading the file. </para>        </briefdescription>
+        <detaileddescription>
+<para>An instance of <ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref> passes itself and an nsIChannel into this method in order to start transferring data across the channel.</para><para>Every time the channel reports it has data available (or a change in state) it will call the given <ref refid="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" kindref="member">sbIMetadataHandler::onChannelData</ref> method.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aChannel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The channel from which to download </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aHandler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The handler to be informed of the download progress </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="85"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_channel_1d7a864d82d848f5feae6fd79624c155f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataChannel::close</definition>
+        <argsstring>()</argsstring>
+        <name>close</name>
+        <briefdescription>
+<para>Close the channel and free all references. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="89"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_channel_1d0ce838a6c0bfef2f9882f077e9a6072" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataChannel::skip</definition>
+        <argsstring>(in PRUint64 aDistance)</argsstring>
+        <name>skip</name>
+        <param>
+          <type>in PRUint64</type>
+          <declname>aDistance</declname>
+        </param>
+        <briefdescription>
+<para>Skip forward in the read buffer. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDistance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of bytes to skip forward in the buffer (you can pass negative numbers) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="94"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_channel_17b931b8aea05a54a1f0f4ee17e1d87d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRUint32</type>
+        <definition>PRUint32 sbIMetadataChannel::read</definition>
+        <argsstring>(in charPtr aBuffer, in PRUint32 aSize)</argsstring>
+        <name>read</name>
+        <param>
+          <type>in charPtr</type>
+          <declname>aBuffer</declname>
+        </param>
+        <param>
+          <type>in PRUint32</type>
+          <declname>aSize</declname>
+        </param>
+        <briefdescription>
+<para>Read from the buffer. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aBuffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The buffer into which to read </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the buffer in bytes </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The number of bytes read </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="101"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_channel_176c6402a0c9c81a78b9795bdb3478669" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char</type>
+        <definition>char sbIMetadataChannel::readChar</definition>
+        <argsstring>()</argsstring>
+        <name>readChar</name>
+        <briefdescription>
+<para>Read a byte from the buffer. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The byte read </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="106"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_channel_16948e056c34868f428edfdbe86ed3952" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIMetadataChannel::readInt32</definition>
+        <argsstring>()</argsstring>
+        <name>readInt32</name>
+        <briefdescription>
+<para>Read a 32bit int from the buffer. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The value read </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="111"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_channel_1619a8c0810859ed75568506fdf739a16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt64</type>
+        <definition>PRInt64 sbIMetadataChannel::readInt64</definition>
+        <argsstring>()</argsstring>
+        <name>readInt64</name>
+        <briefdescription>
+<para>Read a 32bit int from the buffer. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The value read </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="116"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_metadata_channel_17ab89a2563f897b7311a856067956809" prot="public" static="no" mutable="no">
+        <type>attribute PRUInt64</type>
+        <definition>attribute PRUInt64 sbIMetadataChannel::pos</definition>
+        <argsstring></argsstring>
+        <name>pos</name>
+        <briefdescription>
+<para>The current read position (for the read methods). </para>        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000004"><xreftitle>Todo</xreftitle><xrefdescription><para>Make &quot;SetPos()&quot; work past the end of the buffer. Right now, nothing is seekable. </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="55" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_channel_1eb31ddf794d8dd7f24e8e1deb9ac9a1e" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRUInt64</type>
+        <definition>readonly attribute PRUInt64 sbIMetadataChannel::buf</definition>
+        <argsstring></argsstring>
+        <name>buf</name>
+        <briefdescription>
+<para>The current internal buffer position (everything the channel has sent). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="59" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_channel_113b0bde43d528e8ae0c12c56aa6e1b1c" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRUInt64</type>
+        <definition>readonly attribute PRUInt64 sbIMetadataChannel::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+<para>The size of the file targeted by the nsIChannel. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="63" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_channel_131900ec93b36e8097b1165b6ebe5cde1" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRBool</type>
+        <definition>readonly attribute PRBool sbIMetadataChannel::seekable</definition>
+        <argsstring></argsstring>
+        <name>seekable</name>
+        <briefdescription>
+<para>If the datastream is seekable. </para>        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000005"><xreftitle>Todo</xreftitle><xrefdescription><para>Make &quot;GetSeekable()&quot; work. Right now, nothing is seekable. </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="68" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_channel_1dc3708c7b505097379eda3f07b3595b2" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRBool</type>
+        <definition>readonly attribute PRBool sbIMetadataChannel::completed</definition>
+        <argsstring></argsstring>
+        <name>completed</name>
+        <briefdescription>
+<para>If the nsIChannel has finished (by completion or error). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="72" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A wrapper for an nsIChannel that buffers the incoming data. </para>    </briefdescription>
+    <detaileddescription>
+<para>Every time the channel reports it has data available (or a change in state) it will call the given <ref refid="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" kindref="member">sbIMetadataHandler::onChannelData</ref> method.</para><para>This class provides buffered read methods for the handler to retrieve data.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" line="50" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl" bodystart="49" bodyend="117"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_metadata_channel_1eb31ddf794d8dd7f24e8e1deb9ac9a1e" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>buf</name></member>
+      <member refid="interfacesb_i_metadata_channel_1d7a864d82d848f5feae6fd79624c155f" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>close</name></member>
+      <member refid="interfacesb_i_metadata_channel_1dc3708c7b505097379eda3f07b3595b2" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>completed</name></member>
+      <member refid="interfacesb_i_metadata_channel_106162d5145e8574500c6a475e8ed79e3" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>open</name></member>
+      <member refid="interfacesb_i_metadata_channel_17ab89a2563f897b7311a856067956809" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>pos</name></member>
+      <member refid="interfacesb_i_metadata_channel_17b931b8aea05a54a1f0f4ee17e1d87d3" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>read</name></member>
+      <member refid="interfacesb_i_metadata_channel_176c6402a0c9c81a78b9795bdb3478669" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>readChar</name></member>
+      <member refid="interfacesb_i_metadata_channel_16948e056c34868f428edfdbe86ed3952" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>readInt32</name></member>
+      <member refid="interfacesb_i_metadata_channel_1619a8c0810859ed75568506fdf739a16" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>readInt64</name></member>
+      <member refid="interfacesb_i_metadata_channel_131900ec93b36e8097b1165b6ebe5cde1" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>seekable</name></member>
+      <member refid="interfacesb_i_metadata_channel_113b0bde43d528e8ae0c12c56aa6e1b1c" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>size</name></member>
+      <member refid="interfacesb_i_metadata_channel_1d0ce838a6c0bfef2f9882f077e9a6072" prot="public" virt="non-virtual"><scope>sbIMetadataChannel</scope><name>skip</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

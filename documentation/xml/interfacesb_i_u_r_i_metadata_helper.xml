@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_u_r_i_metadata_helper" kind="interface" prot="public">
+    <compoundname>sbIURIMetadataHelper</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_u_r_i_metadata_helper_16336650f02edbda93a00bd0f2c636035" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>long long</type>
+        <definition>long long sbIURIMetadataHelper::getFileSize</definition>
+        <argsstring>(in AString aURISpec)</argsstring>
+        <name>getFileSize</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURISpec</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl" line="35"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl" line="34" bodyfile="C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataUtils.idl" bodystart="33" bodyend="36"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_u_r_i_metadata_helper_16336650f02edbda93a00bd0f2c636035" prot="public" virt="non-virtual"><scope>sbIURIMetadataHelper</scope><name>getFileSize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

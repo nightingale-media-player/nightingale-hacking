@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_media_list_factory" kind="interface" prot="public">
+    <compoundname>sbIMediaListFactory</compoundname>
+    <includes refid="sb_i_media_list_factory_8idl" local="no">sbIMediaListFactory.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_media_list_factory_10599f8b092d05b91ac8129f75b2f22a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+        <definition>sbIMediaList sbIMediaListFactory::createMediaList</definition>
+        <argsstring>(in sbIMediaItem aInner)</argsstring>
+        <name>createMediaList</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aInner</declname>
+        </param>
+        <briefdescription>
+<para>Create a new instance of a media list based on the template <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> provided. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aInner</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- An <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> created by the library</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A object implementing the <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> interface. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaListFactory.idl" line="69"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_media_list_factory_162954d41e48bc47cd362da6e0813dc52" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIMediaListFactory::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+<para>A human-readable string identifying the type of media list that will be created by this factory. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaListFactory.idl" line="53" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaListFactory.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_factory_18170ef5344f4a22d92f33428880c0f41" prot="public" static="no" mutable="no">
+        <type>readonly attribute ACString</type>
+        <definition>readonly attribute ACString sbIMediaListFactory::contractID</definition>
+        <argsstring></argsstring>
+        <name>contractID</name>
+        <briefdescription>
+<para>The contract ID through which an instance of this class can be created. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbIMediaListFactory.idl" line="59" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaListFactory.idl" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Factory for new media list instances. </para>    </briefdescription>
+    <detaileddescription>
+<para>This interface is used to create new instances of a media list.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/base/public/sbIMediaListFactory.idl" line="48" bodyfile="C:/projects/songbird/components/library/base/public/sbIMediaListFactory.idl" bodystart="47" bodyend="70"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_media_list_factory_18170ef5344f4a22d92f33428880c0f41" prot="public" virt="non-virtual"><scope>sbIMediaListFactory</scope><name>contractID</name></member>
+      <member refid="interfacesb_i_media_list_factory_10599f8b092d05b91ac8129f75b2f22a3" prot="public" virt="non-virtual"><scope>sbIMediaListFactory</scope><name>createMediaList</name></member>
+      <member refid="interfacesb_i_media_list_factory_162954d41e48bc47cd362da6e0813dc52" prot="public" virt="non-virtual"><scope>sbIMediaListFactory</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

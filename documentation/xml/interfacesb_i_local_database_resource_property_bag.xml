@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_local_database_resource_property_bag" kind="interface" prot="public">
+    <compoundname>sbILocalDatabaseResourcePropertyBag</compoundname>
+    <includes refid="sb_i_local_database_property_cache_8idl" local="no">sbILocalDatabasePropertyCache.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_local_database_resource_property_bag_13f95e76eefcccc100437e94487d108f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbILocalDatabaseResourcePropertyBag::getProperty</definition>
+        <argsstring>(in AString aName)</argsstring>
+        <name>getProperty</name>
+        <param>
+          <type>in AString</type>
+          <declname>aName</declname>
+        </param>
+        <briefdescription>
+<para>Returns a property value by key. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method will *never* throw. If a value doesn&apos;t exist it will return a special &quot;void&quot; string that behaves just like an empty string except that the IsVoid() method will return PR_TRUE for those who care. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="86"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_resource_property_bag_115c5ea352747ee99d64e28cbccaf595b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbILocalDatabaseResourcePropertyBag::getPropertyByID</definition>
+        <argsstring>(in unsigned long aPropertyID)</argsstring>
+        <name>getPropertyByID</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aPropertyID</declname>
+        </param>
+        <briefdescription>
+<para>Returns a property value by property id. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method will *never* throw. If a value doesn&apos;t exist it will return a special &quot;void&quot; string that behaves just like an empty string except that the IsVoid() method will return PR_TRUE for those who care. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="95"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_resource_property_bag_1f58d84469ac8b813205ec0a27d9771b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseResourcePropertyBag::setProperty</definition>
+        <argsstring>(in AString aName, in AString aValue)</argsstring>
+        <name>setProperty</name>
+        <param>
+          <type>in AString</type>
+          <declname>aName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="97"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_resource_property_bag_12e4b5a02564e3b9c71bed6fa83bbe898" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseResourcePropertyBag::setPropertyByID</definition>
+        <argsstring>(in unsigned long aPropertyID, in AString aValue)</argsstring>
+        <name>setPropertyByID</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aPropertyID</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="98"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_resource_property_bag_1b50ee7117f28689f25ff63c63738790f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseResourcePropertyBag::write</definition>
+        <argsstring>()</argsstring>
+        <name>write</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="100"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_local_database_resource_property_bag_133793561e76ad9d5c9b03b514e454f14" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILocalDatabaseResourcePropertyBag::guid</definition>
+        <argsstring></argsstring>
+        <name>guid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="75" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_resource_property_bag_169c4fa6781b7499968bf22cd70e097f8" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbILocalDatabaseResourcePropertyBag::writePending</definition>
+        <argsstring></argsstring>
+        <name>writePending</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="76" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_resource_property_bag_18272561f9018120e0f250195e48d2acd" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIStringEnumerator</type>
+        <definition>readonly attribute nsIStringEnumerator sbILocalDatabaseResourcePropertyBag::names</definition>
+        <argsstring></argsstring>
+        <name>names</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="77" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" line="74" bodyfile="C:/projects/songbird/components/library/localdatabase/public/sbILocalDatabasePropertyCache.idl" bodystart="73" bodyend="101"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_local_database_resource_property_bag_13f95e76eefcccc100437e94487d108f9" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>getProperty</name></member>
+      <member refid="interfacesb_i_local_database_resource_property_bag_115c5ea352747ee99d64e28cbccaf595b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>getPropertyByID</name></member>
+      <member refid="interfacesb_i_local_database_resource_property_bag_133793561e76ad9d5c9b03b514e454f14" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>guid</name></member>
+      <member refid="interfacesb_i_local_database_resource_property_bag_18272561f9018120e0f250195e48d2acd" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>names</name></member>
+      <member refid="interfacesb_i_local_database_resource_property_bag_1f58d84469ac8b813205ec0a27d9771b7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>setProperty</name></member>
+      <member refid="interfacesb_i_local_database_resource_property_bag_12e4b5a02564e3b9c71bed6fa83bbe898" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>setPropertyByID</name></member>
+      <member refid="interfacesb_i_local_database_resource_property_bag_1b50ee7117f28689f25ff63c63738790f" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>write</name></member>
+      <member refid="interfacesb_i_local_database_resource_property_bag_169c4fa6781b7499968bf22cd70e097f8" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>writePending</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

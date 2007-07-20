@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_library_service_pane_service" kind="interface" prot="public">
+    <compoundname>sbILibraryServicePaneService</compoundname>
+    <includes refid="sb_i_library_service_pane_service_8idl" local="no">sbILibraryServicePaneService.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_library_service_pane_service_14c1ecd7837c0614171076ecbba3da6f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref></type>
+        <definition>sbILibrary sbILibraryServicePaneService::suggestLibraryForNewList</definition>
+        <argsstring>(in AString aMediaListType, in sbIServicePaneNode aNode)</argsstring>
+        <name>suggestLibraryForNewList</name>
+        <param>
+          <type>in AString</type>
+          <declname>aMediaListType</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref></type>
+          <declname>aNode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/servicepane/public/sbILibraryServicePaneService.idl" line="53"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_service_pane_service_1a0de5432009fa0b571333bf8dc043d47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref></type>
+        <definition>sbIServicePaneNode sbILibraryServicePaneService::getNodeForLibraryResource</definition>
+        <argsstring>(in sbILibraryResource aResource)</argsstring>
+        <name>getNodeForLibraryResource</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library_resource" kindref="compound">sbILibraryResource</ref></type>
+          <declname>aResource</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/servicepane/public/sbILibraryServicePaneService.idl" line="61"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_service_pane_service_1f1c145f1d519db096811ea5fd04b4f03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_library_resource" kindref="compound">sbILibraryResource</ref></type>
+        <definition>sbILibraryResource sbILibraryServicePaneService::getLibraryResourceForNode</definition>
+        <argsstring>(in sbIServicePaneNode aNode)</argsstring>
+        <name>getLibraryResourceForNode</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref></type>
+          <declname>aNode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/servicepane/public/sbILibraryServicePaneService.idl" line="72"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Provides information about libraries and medialists needed by the service pane. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/servicepane/public/sbILibraryServicePaneService.idl" line="43" bodyfile="C:/projects/songbird/components/servicepane/public/sbILibraryServicePaneService.idl" bodystart="43" bodyend="73"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_library_service_pane_service_1f1c145f1d519db096811ea5fd04b4f03" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>getLibraryResourceForNode</name></member>
+      <member refid="interfacesb_i_library_service_pane_service_1a0de5432009fa0b571333bf8dc043d47" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>getNodeForLibraryResource</name></member>
+      <member refid="interfacesb_i_library_service_pane_service_14c1ecd7837c0614171076ecbba3da6f2" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>suggestLibraryForNewList</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,450 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_cascade_filter_set" kind="interface" prot="public">
+    <compoundname>sbICascadeFilterSet</compoundname>
+    <includes refid="sb_i_cascade_filter_set_8idl" local="no">sbICascadeFilterSet.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_11d80acdcc0567057e9fcdf53e909a609" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned short</type>
+        <definition>unsigned short sbICascadeFilterSet::appendFilter</definition>
+        <argsstring>(in AString aProperty)</argsstring>
+        <name>appendFilter</name>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <briefdescription>
+<para>Add a new property value filter to the end of the cascade. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aProperty</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Property that this filter will filter </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the newly created filter </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="71"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_14c9c13699e6d46e83d4bf388a7df9fa4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned short</type>
+        <definition>unsigned short sbICascadeFilterSet::appendSearch</definition>
+        <argsstring>([array, size_is(aPropertyArrayCount)] in wstring aPropertyArray, in unsigned long aPropertyArrayCount)</argsstring>
+        <name>appendSearch</name>
+        <param>
+          <attributes>[array, size_is(aPropertyArrayCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aPropertyArray</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aPropertyArrayCount</declname>
+        </param>
+        <briefdescription>
+<para>Add a new text search filter to the end of the cascade. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPropertyArray</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of property that this text search filter will search over. Use a single element array with the value &quot;*&quot; to indicate all properties are to be searched. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aPropertyArrayCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of the aPropertyArray array </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the newly created filter </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="82"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_1b8c664b0441fb66e9d67bbcc4d22cc76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICascadeFilterSet::remove</definition>
+        <argsstring>(in unsigned short aIndex)</argsstring>
+        <name>remove</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Remove a filter from the cascade. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the filter to be removed </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="88"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_1aedc21c8d4ae9515dd6e8c5bfefc2342" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICascadeFilterSet::changeFilter</definition>
+        <argsstring>(in unsigned short aIndex, in AString aProperty)</argsstring>
+        <name>changeFilter</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aIndex</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <briefdescription>
+<para>Change the property used on a filter. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the filter to change </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aProperty</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Property to change the filter to </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="95"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_17c5f6c345297156eae8a0bb10c9e4dcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICascadeFilterSet::set</definition>
+        <argsstring>(in unsigned short aIndex,[array, size_is(aValueArrayCount)] in wstring aValueArray, in unsigned long aValueArrayCount)</argsstring>
+        <name>set</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aIndex</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aValueArrayCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aValueArray</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aValueArrayCount</declname>
+        </param>
+        <briefdescription>
+<para>Set the configuration of a filter. Note that chaging a filter will clear the configuration of all downstream filters. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the filter to be configured </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueArray</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of values used to constrain the filter. Note that only the first item in the array is used to constrain a text search filter. Send a zero-length array to reset the filter. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueArrayCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>length of the aValueArray array </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="108"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_150ee89f372646f684770cf63e9ec4f4e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICascadeFilterSet::clearAll</definition>
+        <argsstring>()</argsstring>
+        <name>clearAll</name>
+        <briefdescription>
+<para>Clear the configuration of all filters. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="113"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_177fef30be97b844909e6616440561d96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIStringEnumerator</type>
+        <definition>nsIStringEnumerator sbICascadeFilterSet::getValues</definition>
+        <argsstring>(in unsigned short aIndex)</argsstring>
+        <name>getValues</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get the list of possible values for a filter. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the filter </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string enumerator of the values of the filter </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="120"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_1aa9b6b3bb42777d92aae27e7ac6e5ca3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbICascadeFilterSet::getValueAt</definition>
+        <argsstring>(in unsigned short aIndex, in unsigned long aValueIndex)</argsstring>
+        <name>getValueAt</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aIndex</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aValueIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get a single value of a filter list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the filter </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aValueIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the value to get within the specified filter </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The requested value </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="128"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_185d3be9ed13f6e5c2978712bf782de66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsITreeView</type>
+        <definition>nsITreeView sbICascadeFilterSet::getTreeView</definition>
+        <argsstring>(in unsigned short aIndex)</argsstring>
+        <name>getTreeView</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get a nsITreeView to display the specified filter&apos;s contents. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the filter </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An nsITreeView </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="135"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_1b2b3acc5b024ebf567d1e1057f98652e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbICascadeFilterSet::getValueCount</definition>
+        <argsstring>(in unsigned short aIndex)</argsstring>
+        <name>getValueCount</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get the number of possible values for a filter. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the filter </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The number of possible values for a filter </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="142"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_163d848f38fcfc6f7890c7c9aab117556" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbICascadeFilterSet::getProperty</definition>
+        <argsstring>(in unsigned short aIndex)</argsstring>
+        <name>getProperty</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get the property for a filter by index. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the filter </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The property for the given filter index </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="149"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_142dd508927a0893b0ee26d38562169bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICascadeFilterSet::isSearch</definition>
+        <argsstring>(in unsigned short aIndex)</argsstring>
+        <name>isSearch</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Determine if the filter at a given index is a search filter. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the filter </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True if the filter at the index is a search filter </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="156"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_1659eba1779c8e80568ca7e1673e2c053" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICascadeFilterSet::addListener</definition>
+        <argsstring>(in sbICascadeFilterSetListener aListener)</argsstring>
+        <name>addListener</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound">sbICascadeFilterSetListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Add a listener to get notified of filter configuration changes. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Listener to receive change notifications </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="162"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_cascade_filter_set_11b1c4feed4717e7b4cde5678b31343b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICascadeFilterSet::removeListener</definition>
+        <argsstring>(in sbICascadeFilterSetListener aListener)</argsstring>
+        <name>removeListener</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound">sbICascadeFilterSetListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Remove listener from notification list. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Listener to remove </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="168"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_cascade_filter_set_15c6a7e2239bf4aab77d400eb8771cc70" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned short</type>
+        <definition>readonly attribute unsigned short sbICascadeFilterSet::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of filters in the set </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="64" bodyfile="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Cascade filter management for a media list. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound">sbICascadeFilterSetListener</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" line="60" bodyfile="C:/projects/songbird/components/library/base/public/sbICascadeFilterSet.idl" bodystart="59" bodyend="169"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_cascade_filter_set_1659eba1779c8e80568ca7e1673e2c053" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>addListener</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_11d80acdcc0567057e9fcdf53e909a609" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>appendFilter</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_14c9c13699e6d46e83d4bf388a7df9fa4" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>appendSearch</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_1aedc21c8d4ae9515dd6e8c5bfefc2342" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>changeFilter</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_150ee89f372646f684770cf63e9ec4f4e" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>clearAll</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_163d848f38fcfc6f7890c7c9aab117556" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getProperty</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_185d3be9ed13f6e5c2978712bf782de66" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getTreeView</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_1aa9b6b3bb42777d92aae27e7ac6e5ca3" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getValueAt</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_1b2b3acc5b024ebf567d1e1057f98652e" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getValueCount</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_177fef30be97b844909e6616440561d96" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>getValues</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_142dd508927a0893b0ee26d38562169bf" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>isSearch</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_15c6a7e2239bf4aab77d400eb8771cc70" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>length</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_1b8c664b0441fb66e9d67bbcc4d22cc76" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>remove</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_11b1c4feed4717e7b4cde5678b31343b7" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>removeListener</name></member>
+      <member refid="interfacesb_i_cascade_filter_set_17c5f6c345297156eae8a0bb10c9e4dcf" prot="public" virt="non-virtual"><scope>sbICascadeFilterSet</scope><name>set</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
