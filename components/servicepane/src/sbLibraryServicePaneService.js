@@ -188,7 +188,8 @@ function sbLibraryServicePane_fillNewItemMenu(aNode, aContextMenu, aParentWindow
   }
 
   add('file.new', 'menu.file.new', 'menu.file.new.accesskey', 'doMenu("file.new")');
-  add('file.smart', 'menu.file.smart', 'menu.file.smart.accesskey', 'doMenu("file.smart")');
+  //XXX Mook: disabled; see bug 4001
+  //add('file.smart', 'menu.file.smart', 'menu.file.smart.accesskey', 'doMenu("file.smart")');
   add('file.remote', 'menu.file.remote', 'menu.file.remote.accesskey', 'doMenu("file.remote")');
 }
 

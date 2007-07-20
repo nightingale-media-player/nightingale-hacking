@@ -42,7 +42,9 @@
     <menu id="songbird_menu_item" label="&menu.file;"  accesskey="&menu.file.accesskey;">
       <menupopup id="file-popup">
         <menuitem id="file.new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+        <!-- XXX Mook: disabled; see bug 4001
         <menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
+        -->
         <menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
         <menuitem id="file.folder" class="menuitem-iconic" label="&menu.file.folder;" accesskey="&menu.file.folder.accesskey;"/>
         <menuitem id="file.file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
