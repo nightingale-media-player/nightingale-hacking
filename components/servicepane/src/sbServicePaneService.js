@@ -46,6 +46,7 @@ const Ce = Components.Exception;
 const RDFSVC = Cc['@mozilla.org/rdf/rdf-service;1'].getService(Ci.nsIRDFService);
 const RDFCU = Cc['@mozilla.org/rdf/container-utils;1'].getService(Ci.nsIRDFContainerUtils);
 const IOSVC = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
+const Application = Cc['@mozilla.org/fuel/application;1'].getService(Ci.fuelIApplication);
 
 const NC='http://home.netscape.com/NC-rdf#';
 const SP='http://songbirdnest.com/rdf/servicepane#';
@@ -592,29 +593,43 @@ function ServicePaneService_save() {
 
 ServicePaneService.prototype.fillContextMenu =
 function ServicePaneService_fillContextMenu(aId, aContextMenu, aParentWindow) {
-  var node = this.getNode(aId);
+  var node = aId ? this.getNode(aId) : null;
   for (var i=0; i<this._modules.length; i++) {
-    this._modules[i].fillContextMenu(node, aContextMenu, aParentWindow);
+    try {
+      this._modules[i].fillContextMenu(node, aContextMenu, aParentWindow);
+    } catch (ex) {
+      if (Application.prefs.getValue('javascript.options.showInConsole', false)) {
+        Components.utils.reportError(ex);
+      }
+    }
   }
 }
 
 ServicePaneService.prototype.fillNewItemMenu =
 function ServicePaneService_fillNewItemMenu(aId, aContextMenu, aParentWindow) {
-  var node = null;
-  if (aId) {
-    this.getNode(aId);
-  }
+  var node = aId ? this.getNode(aId) : null;
   for (var i=0; i<this._modules.length; i++) {
-    this._modules[i].fillNewItemMenu(node, aContextMenu, aParentWindow);
+    try {
+      this._modules[i].fillNewItemMenu(node, aContextMenu, aParentWindow);
+    } catch (ex) {
+      if (Application.prefs.getValue('javascript.options.showInConsole', false)) {
+        Components.utils.reportError(ex);
+      }
+    }
   }
 }
 
 ServicePaneService.prototype.onSelectionChanged =
 function ServicePaneService_onSelectionChanged(aId, aContainer, aParentWindow) {
-  var node;
-  if (aId) node = this.getNode(aId);
+  var node = aId ? this.getNode(aId) : null;
   for (var i=0; i<this._modules.length; i++) {
-    this._modules[i].onSelectionChanged(node, aContainer, aParentWindow);
+    try {
+      this._modules[i].onSelectionChanged(node, aContainer, aParentWindow);
+    } catch (ex) {
+      if (Application.prefs.getValue('javascript.options.showInConsole', false)) {
+        Components.utils.reportError(ex);
+      }
+    }
   }
 }
 
