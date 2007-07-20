@@ -174,12 +174,14 @@ function SBAppDeinitialize()
   // Shutdown the Metrics
   SBMetricsAppShutdown();
   
+/*  
   // Shutdown the Watch Folders
   try {
     WFShutdown();
   } catch(err) {
     dump(err);
   }
+*/  
 }
 
 //

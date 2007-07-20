@@ -55,7 +55,9 @@
         <menuseparator/>
         <menuitem id="file.scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
         <menuitem id="file.dlfolder" class="menuitem-iconic" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
-        <menuitem id="file.watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
+        <!-- BUG 3961 "Comment out watch folder UI" 
+          <menuitem id="file.watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
+        -->
         <menuseparator/>
         <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
           <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />

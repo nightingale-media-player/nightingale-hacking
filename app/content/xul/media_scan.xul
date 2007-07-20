@@ -65,7 +65,7 @@
       <progressmeter id="songbird_media_scan" flex="1"/>
       <spacer flex="1"/>
     </hbox>
-    <hbox>
+    <hbox hidden="true"> <!-- BUG 3961 "Comment out watch folder UI" -->
       <spacer flex="1"/>
       <checkbox id="watch_check" label="&media_scan.watch;" />
       <spacer flex="1"/>
