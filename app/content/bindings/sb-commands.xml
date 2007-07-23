@@ -294,8 +294,8 @@
                 playlist: this.playlist,
                 window: wnd,
                 QueryInterface: function(iid) {
-                  if (iid.Equals(Components.interfaces.sbIPlaylistCommandsContext) || 
-                      iid.Equals(Components.interfaces.nsISupports))
+                  if (iid.equals(Components.interfaces.sbIPlaylistCommandsContext) || 
+                      iid.equals(Components.interfaces.nsISupports))
                     return this;
                   throw Components.results.NS_ERROR_NO_INTERFACE;
                 }

@@ -94,7 +94,6 @@
               sbid="playlist_context_popup"
               onpopupshown="onPopupShown( event );"
               onpopuphidden="onPopupHidden( event );"
-              oncommand="onPlaylistContextMenu( event );"
             >
               <sb-commands-menuitems sbid="playlist_popup_commands" commandtype="mediaitem" metricscategory="playlist.context"/>
               <menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
