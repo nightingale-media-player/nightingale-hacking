@@ -100,9 +100,9 @@
         <menuseparator/>
         <menuitem id="control.shuf" label="&menu.control.shuf;" type="checkbox" observes="controlModeShuffle" accesskey="&menu.control.shuf.accesskey;" />
         <menuseparator/>
+        <menuitem id="control.repx" label="&menu.control.repx;" type="checkbox" observes="controlModeRepeatNever" accesskey="&menu.control.repx.accesskey;" />
         <menuitem id="control.repa" label="&menu.control.repa;" type="checkbox" observes="controlModeRepeatAlways" accesskey="&menu.control.repa.accesskey;" />
         <menuitem id="control.rep1" label="&menu.control.rep1;" type="checkbox" observes="controlModeRepeatOnce" accesskey="&menu.control.rep1.accesskey;" />
-        <menuitem id="control.repx" label="&menu.control.repx;" type="checkbox" observes="controlModeRepeatNever" accesskey="&menu.control.repx.accesskey;" />
         <menuseparator/>
         <menuitem id="control.jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" observes="controlJumpTo" accesskey="&menu.control.jumpto.accesskey;" />
       </menupopup>
