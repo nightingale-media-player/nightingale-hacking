@@ -436,7 +436,7 @@
 <![CDATA[
   this.mediaListView = mediaListView;
   this.treeView = mediaListView.treeView;
-  
+
   // Set up the columns
   this._setupColumns();
 
@@ -1420,32 +1420,73 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
+  var bo = this.tree.treeBoxObject;
   try
   {
     if ( evt.button == 0 && this.tree.currentIndex != -1 )
     {
       var obj = {}, row = {}, col = {};
-      this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
+      bo.getCellAt( evt.clientX, evt.clientY, row, col, obj );
       // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
       if ( obj.value )
       {
-        if (this.treeView.isEditable(row.value, col.value))
+        var property = col.value.element.getAttribute("bind");
+        var item = this.mediaListView.getItemByIndex(row.value);
+
+        // Fire our PlaylistCellClick event
+        var event = document.createEvent("Events");
+        event.initEvent("PlaylistCellClick", true, true);
+        event.property = property;
+        event.item     = item;
+        event.row      = row.value;
+        event.column   = col.value;
+        this.dispatchEvent(event);
+
+        // If the property for this column is a clickable property, get the
+        // value for this click
+        var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                         .getService(this._Ci.sbIPropertyManager);
+        var info = pm.getPropertyInfo(property);
+        if (info instanceof this._Ci.sbIClickablePropertyInfo) {
+
+          var clickable =
+            info.QueryInterface(this._Ci.sbIClickablePropertyInfo);
+
+          // Compute the X and Y coordinates within the cell
+          var cellX = {};
+          var cellY = {};
+          var cellWidth  = {};
+          var cellHeight = {};
+          bo.getCoordsForCellItem(row.value,
+                                  col.value,
+                                  "cell",
+                                  cellX,
+                                  cellY,
+                                  cellWidth,
+                                  cellHeight);
+
+          var bodyBox = this.tree.getElementsByTagName("treechildren")[0];
+          var x = evt.screenX - bodyBox.boxObject.screenX - cellX.value;
+          var y = evt.screenY - bodyBox.boxObject.screenY - cellY.value;
+
+          // Get the current value for this property
+          var oldValue = item.getProperty(property);
+
+          // Get and set the new value for the property
+          var value = clickable.getValueForClick(oldValue,
+                                                 cellWidth.value,
+                                                 cellHeight.value,
+                                                 x,
+                                                 y);
+          this.tree.view.setCellValue(row.value, col.value, value);
+          evt.stopPropagation();
+        }
+        else if (this.treeView.isEditable(row.value, col.value))
         {
           // Remember the row and column
           this.edit_row = row.value;
           this.edit_col = col.value;
-          if (this.edit_col.id == "rating")
-          {
-            var width = this.edit_col.element.boxObject.width;
-            var dist = evt.screenX - this.edit_col.element.boxObject.screenX;
-            // 4 pixels offsets
-            width -= 8;
-            dist -= 4;
-            var ret = Math.round(dist / width * 100);
-            if (ret < 0) ret = 0; if (ret > 100) ret = 100;
-            this.setCellRating(this.edit_row, this.edit_col, ret);
-          }
-          else if ( this.tree.currentIndex == this._lastClickIndex  )
+          if ( this.tree.currentIndex == this._lastClickIndex  )
           {
             var delay = evt.timeStamp - this._lastClickTimestamp;
             if ( delay > 1000 && delay < 2000 )
@@ -1479,7 +1520,7 @@
           }
           catch( err )
           {
-            alert( "playlist.xml - onPlaylistContextMenu - " + err );
+            alert( "playlist.xml - onPopupShown - " + err );
           }
         ]]>
       </body>
@@ -1495,7 +1536,7 @@
           }
           catch( err )
           {
-            alert( "playlist.xml - onPlaylistContextMenu - " + err );
+            alert( "playlist.xml - onPopupHidden - " + err );
           }
         ]]>
       </body>
@@ -1851,62 +1892,6 @@
   SBDataSetStringValue("faceplate.status.override.text", msg);
   SBDataSetStringValue("faceplate.status.override.style", "font-weight: bold;");
 ]]>
-      </body>
-    </method>
-
-    <method name="setCellRating">
-      <parameter name="row"/>
-      <parameter name="col"/>
-      <parameter name="rating"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            // Find the url column.
-            var filter = "uuid";
-            var filter_column = this.tree.columns ? this.tree.columns[filter] : filter;
-            var filter_value = this.treeView.getCellText( this.tree.currentIndex, filter_column );
-
-            var the_table_column = col.id;
-            var the_new_value = rating;
-
-  alert("XXXX - migrate 'playlist2.xml:setCellRating()' to new API");  
-  return;
-            var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-            var aMediaLibrary = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
-
-            if ( ! aDBQuery || ! aMediaLibrary)
-              return;
-
-            aDBQuery.setAsyncQuery(true);
-            aDBQuery.setDatabaseGUID(this.guid);
-            aMediaLibrary.setQueryObject(aDBQuery);
-
-            aMediaLibrary.setValueByGUID(filter_value, the_table_column, the_new_value, false);
-          }
-          catch (err)
-          {
-            alert( "playlist.xml - setCellRating - " + err );
-          }
-          return;
-        ]]>
-      </body>
-    </method>
-
-    <method name="syncColumnSortIndicator">
-      <body>
-        <![CDATA[
-          if (this._treecols) {
-            var cols = this._treecols.childNodes;
-            for (var i=0;i<cols.length;i++) {
-              if (cols[i].getAttribute("id") == this.sortorder) {
-                cols[i].setAttribute("sortDirection", (this.sortdirection == "asc") ? "ascending" : "descending");
-              } else {
-                cols[i].setAttribute("sortDirection", "natural");
-              }
-            }
-          }
-        ]]>
       </body>
     </method>
 

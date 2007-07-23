@@ -430,14 +430,12 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 row,
     rv = bag->GetProperty(bind, value);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (value.IsEmpty()) {
+    // Format the value for display
+    rv = info->Format(value, _retval);
+    if (NS_FAILED(rv)) {
       _retval.Truncate();
     }
-    else {
-      // Format the value for display
-      rv = info->Format(value, _retval);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+
     return NS_OK;
   }
 
@@ -1381,7 +1379,14 @@ sbLocalDatabaseTreeView::GetColumnProperties(nsITreeColumn* col,
   nsresult rv = GetPropertyForTreeColumn(col, propertyName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Turn the property name into something that CSS can handle.
+  // Turn the property name into something that CSS can handle.  For example
+  //
+  //   http://songbirdnest.com/data/1.0#rating
+  //
+  // becomes:
+  //
+  //   http-songbirdnest-com-data-1-0-rating
+
   NS_NAMED_LITERAL_STRING(badChars, BAD_CSS_CHARS);
   static const PRUnichar kHyphenChar = '-';
 

@@ -82,3 +82,5 @@ const SB_PROPERTY_PROGRESSVALUE        = SB_PROPERTY_PREFACE + "progressValue";
 const SB_PROPERTY_COLUMNSPEC           = SB_PROPERTY_PREFACE + "columnSpec";
 const SB_PROPERTY_DEFAULTCOLUMNSPEC    = SB_PROPERTY_PREFACE + "defaultColumnSpec";
 const SB_PROPERTY_CUSTOMTYPE           = SB_PROPERTY_PREFACE + "customType";
+const SB_PROPERTY_DOWNLOADBUTTON       = SB_PROPERTY_PREFACE + "downloadButton";
+

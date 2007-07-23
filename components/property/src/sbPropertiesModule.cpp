@@ -35,6 +35,7 @@
 #include "sbProgressPropertyInfo.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
+#include "sbButtonPropertyInfo.h"
 
 #include "sbPropertiesCID.h"
 
@@ -48,6 +49,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbNumberPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbProgressPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTextPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbURIPropertyInfo);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbButtonPropertyInfo);
 
 static const nsModuleComponentInfo components[] =
 {
@@ -105,6 +107,12 @@ static const nsModuleComponentInfo components[] =
     SB_URIPROPERTYINFO_CID,
     SB_URIPROPERTYINFO_CONTRACTID,
     sbURIPropertyInfoConstructor
+  },
+  {
+    SB_BUTTONPROPERTYINFO_DESCRIPTION,
+    SB_BUTTONPROPERTYINFO_CID,
+    SB_BUTTONPROPERTYINFO_CONTRACTID,
+    sbButtonPropertyInfoConstructor
   },
 };
 

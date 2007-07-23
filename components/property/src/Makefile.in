@@ -41,7 +41,8 @@ sbProperties.jsm: sbStandardProperties.pl
 	$(PERL) $< $(srcdir)
 
 
-CPP_SRCS = sbSimpleProperty.cpp \
+CPP_SRCS = sbButtonPropertyInfo.cpp \
+           sbSimpleProperty.cpp \
            sbPropertyArray.cpp \
            sbPropertyFactory.cpp \
            sbProgressPropertyInfo.cpp \
@@ -52,6 +53,7 @@ CPP_SRCS = sbSimpleProperty.cpp \
            sbDatetimePropertyInfo.cpp \
            sbPropertyManager.cpp \
            sbPropertiesModule.cpp \
+           sbRatingPropertyInfo.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/property/public \

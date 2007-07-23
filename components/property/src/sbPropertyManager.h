@@ -106,6 +106,13 @@ private:
                             PRBool aUserViewable,
                             PRBool aUserEditable);
 
+  nsresult RegisterRatingProperty(nsIStringBundle* aStringBundle);
+
+  nsresult RegisterButton(const nsAString& aPropertyName,
+                          const nsAString& aDisplayKey,
+                          nsIStringBundle* aStringBundle,
+                          const nsAString& aLabel);
+
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
   

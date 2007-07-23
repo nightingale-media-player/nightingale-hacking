@@ -126,9 +126,22 @@
 #define SB_URIPROPERTYINFO_CID                        \
   { /*{DD3224A5-0199-48c0-A653-0DA698940A5A}*/        \
     0xdd3224a5,                                       \
-    0x199,                                            \
+    0x0199,                                            \
     0x48c0,                                           \
     { 0xa6, 0x53, 0xd, 0xa6, 0x98, 0x94, 0xa, 0x5a }  \
   }
 #define SB_URIPROPERTYINFO_CONTRACTID                 \
   "@songbirdnest.com/Songbird/Properties/Info/URI;1"
+
+#define SB_BUTTONPROPERTYINFO_DESCRIPTION              \
+  "Songbird Button Property Info Implementation"
+#define SB_BUTTONPROPERTYINFO_CID                      \
+  { /*{50f102e1-a73e-498c-91ea-5a7060520a58}*/         \
+    0x50f102e1,                                        \
+    0xa73e,                                            \
+    0x498c,                                            \
+    { 0x91, 0xea, 0x5a, 0x70, 0x60, 0x52, 0x0a, 0x58 } \
+  }
+#define SB_BUTTONPROPERTYINFO_CONTRACTID               \
+  "@songbirdnest.com/Songbird/Properties/Info/Button;1"
+

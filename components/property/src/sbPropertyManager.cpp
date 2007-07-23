@@ -36,9 +36,11 @@
 #include <nsAutoPtr.h>
 #include <nsIStringBundle.h>
 
+#include "sbButtonPropertyInfo.h"
 #include "sbDatetimePropertyInfo.h"
 #include "sbNumberPropertyInfo.h"
 #include "sbProgressPropertyInfo.h"
+#include "sbRatingPropertyInfo.h"
 #include "sbStandardProperties.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
@@ -442,10 +444,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Rating
-  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_RATING),
-                      NS_LITERAL_STRING("property.rating"),
-                      stringBundle, PR_TRUE, PR_TRUE, 
-                      0, PR_TRUE, 100, PR_TRUE);
+  rv = RegisterRatingProperty(stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Origin URL
@@ -492,6 +491,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     stringBundle, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Custom type (used for css and metrics reporting)
+  rv = RegisterButton(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON),
+                      NS_LITERAL_STRING("property.download_button"),
+                      stringBundle, NS_LITERAL_STRING("Download"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -504,6 +509,8 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyName,
                                 PRUint32 aNullSort,
                                 PRBool aHasNullSort)
 {
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
   nsRefPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
 
@@ -552,6 +559,8 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyName,
                                     PRBool aUserViewable,
                                     PRBool aUserEditable)
 {
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
   nsRefPtr<sbDatetimePropertyInfo>
     datetimeProperty(new sbDatetimePropertyInfo());
   NS_ENSURE_TRUE(datetimeProperty, NS_ERROR_OUT_OF_MEMORY);
@@ -594,6 +603,8 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyName,
                                PRBool aUserViewable,
                                PRBool aUserEditable)
 {
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
   nsRefPtr<sbURIPropertyInfo> uriProperty(new sbURIPropertyInfo());
   NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
 
@@ -636,6 +647,8 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyName,
                                   PRInt32 aMaxValue,
                                   PRBool aHasMaxValue)
 {
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
   nsRefPtr<sbNumberPropertyInfo> numberProperty(new sbNumberPropertyInfo());
   NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
 
@@ -686,6 +699,8 @@ sbPropertyManager::RegisterProgress(const nsAString& aValuePropertyName,
                                     PRBool aUserViewable,
                                     PRBool aUserEditable)
 {
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
   nsresult rv = RegisterNumber(aModePropertyName, aModeDisplayKey,
                                aStringBundle, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -735,6 +750,8 @@ sbPropertyManager::RegisterCheckbox(const nsAString& aPropertyName,
                                     PRBool aUserViewable,
                                     PRBool aUserEditable)
 {
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
   nsRefPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
 
@@ -772,3 +789,86 @@ sbPropertyManager::RegisterCheckbox(const nsAString& aPropertyName,
 
   return NS_OK;
 }
+
+nsresult
+sbPropertyManager::RegisterRatingProperty(nsIStringBundle* aStringBundle)
+{
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
+  nsRefPtr<sbRatingPropertyInfo> ratingProperty(new sbRatingPropertyInfo());
+  NS_ENSURE_TRUE(ratingProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = ratingProperty->SetName(NS_LITERAL_STRING(SB_PROPERTY_RATING));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ratingProperty->SetMinValue(0);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ratingProperty->SetMaxValue(5);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString displayValue;
+  rv = GetStringFromName(aStringBundle,
+                         NS_LITERAL_STRING("property.rating"),
+                         displayValue);
+  if(NS_SUCCEEDED(rv)) {
+    rv = ratingProperty->SetDisplayName(displayValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = ratingProperty->SetUserViewable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ratingProperty->SetUserEditable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIClickablePropertyInfo*, ratingProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterButton(const nsAString& aPropertyName,
+                                  const nsAString& aDisplayKey,
+                                  nsIStringBundle* aStringBundle,
+                                  const nsAString& aLabel)
+{
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
+  nsRefPtr<sbButtonPropertyInfo> buttonProperty(new sbButtonPropertyInfo());
+  NS_ENSURE_TRUE(buttonProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = buttonProperty->SetName(aPropertyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aDisplayKey.IsEmpty()) {
+    nsCOMPtr<nsIStringBundle> stringBundle;
+    rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString displayValue;
+    rv = GetStringFromName(stringBundle, aDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = buttonProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  rv = buttonProperty->SetLabel(aLabel);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIButtonPropertyInfo*, buttonProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

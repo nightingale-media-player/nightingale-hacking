@@ -532,6 +532,11 @@ treechildren::-moz-tree-column(insertbefore)
   background-color: #8A8F84; /** Light Color 2 */
 }
 
+#playlist_tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-downloadButton, button )
+{
+  color: #feffff; /** Light Color Brightest */
+}
+
 /** 
 ***************************************************************************************************
 BUTTONS
