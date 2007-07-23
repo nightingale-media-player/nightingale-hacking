@@ -30,6 +30,7 @@ var WEB_PLAYLIST_TABLE_NAME   = "&device.webplaylist";
 var WEB_PLAYLIST_LIBRARY_NAME = "&device.weblibrary";
 
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
+Components.utils.import("resource://app/components/sbProperties.jsm")
 
 var Cc = Components.classes;
 var Ci = Components.interfaces;
@@ -437,7 +438,7 @@ var SBWebPlaylistCommands =
           var urlCol = "url";
           var columnElem = document.getAnonymousElementByAttribute(this.m_Context.m_Playlist,
                                                                    "bind",
-                                                                   SB_PROPERTY_CONTENTURL);
+                                                                   SBProperties.contentURL);
           var columnObj = this.m_Context.m_Playlist.tree.columns.getColumnFor(columnElem);
           var rangeCount = this.m_Context.m_Playlist.mediaListView.treeView.selection.getRangeCount();
           for (var i=0; i < rangeCount; i++) 

@@ -38,8 +38,7 @@ const sbIPlaylistReaderManager = new Components.Constructor("@songbirdnest.com/S
 const sbIPlaylistCommandsManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistCommandsManager;1", "sbIPlaylistCommandsManager");
 
 /**
- * These properties should be kept in sync with sbStandardProperties.h for the
- * moment. Eventually we'll figure out a better way to do this.
+ * These constants are deprecated; use sbProperties.jsm instead
  */
 
 const SB_PROPERTY_PREFACE              = "http://songbirdnest.com/data/1.0#";

@@ -49,7 +49,7 @@ CPP_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/property/public \
-               $(DEPTH)/components/property/src \
+               $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/intl \

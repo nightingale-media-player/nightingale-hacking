@@ -35,9 +35,10 @@ ifdef DEBUG
 target_name := $(addsuffix _d,$(target_name))
 endif
 
-all:: sbStandardProperties.h
-sbStandardProperties.h: sbStandardProperties.pl $(topsrcdir)/app/content/scripts/songbird_interfaces.js
-	$(PERL) $+
+all:: sbProperties.jsm
+sbProperties.jsm: sbProperties.jsm.in sbStandardProperties.h
+sbProperties.jsm: sbStandardProperties.pl
+	$(PERL) $< $(srcdir)
 
 
 CPP_SRCS = sbSimpleProperty.cpp \
@@ -54,7 +55,6 @@ CPP_SRCS = sbSimpleProperty.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/property/public \
-               $(DEPTH)/components/property/src \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/enumeration/src \
                $(MOZSDK_INCLUDE_DIR) \
@@ -110,7 +110,7 @@ ifeq (windows,$(SB_PLATFORM))
 endif
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(srcdir)/sbProperties.jsm \
+                      sbProperties.jsm \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

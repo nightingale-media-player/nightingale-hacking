@@ -351,7 +351,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Track number
-  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACK),
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
                       NS_LITERAL_STRING("property.track_no"),
                       stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);

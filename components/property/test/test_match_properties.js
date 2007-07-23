@@ -97,7 +97,26 @@ function checkJSProps() {
   }
 }
 
+function checkJSMProps() {
+  Components.utils.import("resource://app/components/sbProperties.jsm");
+  var props = {};
+  for (var i in SBProperties) {
+    if (typeof SBProperties[i] != "string") continue;
+    if (SBProperties[i].length <= SBProperties.base.length) {
+      continue;
+    }
+    var prop = SBProperties[i].match(/http:\/\/songbirdnest.com\/data\/1.0#(\w+)/)[1];
+    assertTrue(prop in gProps, "property " + prop + " is only in sbProperties.jsm");
+    props[prop] = true;
+  }
+  for (prop in gProps) {
+    assertTrue(prop in props, "property " + prop + " is not in sbProperties.jsm");
+  }
+}
+
 function runTest() {
-  if (readCPPProps())
+  if (readCPPProps()) {
     checkJSProps();
+    checkJSMProps();
+  }
 }

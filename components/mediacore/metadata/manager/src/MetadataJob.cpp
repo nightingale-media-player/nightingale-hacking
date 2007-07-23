@@ -1283,7 +1283,7 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
   rv = AppendIfValid( propMan, properties, yearKey, year );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING( trackKey, SB_PROPERTY_TRACK );
+  NS_NAMED_LITERAL_STRING( trackKey, SB_PROPERTY_TRACKNUMBER );
   nsAutoString track;
   rv = values->GetValue( NS_LITERAL_STRING("track_no"), track );
   NS_ENSURE_SUCCESS(rv, rv);

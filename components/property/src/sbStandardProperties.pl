@@ -23,39 +23,49 @@
 # END SONGBIRD GPL
 #
 
-# This is hard-coded to generate sbStandardProperties.h from
-# $(topsrcdir)/app/content/scripts/songbird_interfaces.js
+# This is hard-coded to generate sbProperties.jsm from sbStandardProperties.h
 
 use strict;
 
-sub setup() {
-  if ($#ARGV < 0) {
-    die "Usage: $0 \$(topsrcdir)/app/content/scripts/songbird_interfaces.js";
-  }
-  my $SRC = $ARGV[0];
-  open(INPUT, "<", "$SRC") or die "Failed to open input file $SRC";
-  open(OUTPUT, ">", "sbStandardProperties.h") or die "Failed to open output file";
+# file handles used:
+# CPP        the C++ header to read the definitions from
+# JSM_IN     the template for the JSM file
+# JSM        handle to the output JSM
   
-  print OUTPUT <<EOF
-#ifndef __SB_STANDARD_PROPERTIES_H__
-#define __SB_STANDARD_PROPERTIES_H__
-EOF
+# open the files and print the headers
+sub setup() {
+  ($#ARGV < 0) and die "Usage: $0 \$(srcdir)";
+  open(JSM_IN, "<", $ARGV[0] . "/sbProperties.jsm.in") or die "Failed to open sbProperties.jsm.in";
+  open(CPP, "<", $ARGV[0] . "/sbStandardProperties.h") or die "Failed to open sbStandardProperties.h";
+  open(JSM, ">", "sbProperties.jsm") or die "Failed to open sbProperties.jsm";
+
+  while (<JSM_IN>) {
+    m/^###/ and last; # marker for "insert contents here"
+    print JSM;
+  }
 }
 
-sub read() {
-  while(<INPUT>) {
-    m/const \s+ SB_PROPERTY_ (\w+) \s* = \s*
-      SB_PROPERTY_PREFACE \s* \+ \s* "([^"]*?)"/x or next;
-    print OUTPUT "#define SB_PROPERTY_$1 \"http://songbirdnest.com/data/1.0#$2\"\n";
+# print the trailers and clean up
+sub finish() {
+  while (<JSM_IN>) {
+    print JSM;
   }
+
+  close CPP;
+  close JSM;
+  close JSM_IN;
+}
+
+# print out one property in each file
+sub emit($) {
+  my $aProp = shift(@_);
+  printf JSM "  get %-24s() { return this._base + \"%s\"; },\n", ($aProp, $aProp);
+
 }
 
 &setup();
-&read();
-
-print OUTPUT <<EOF
-#endif /* __SB_STANDARD_PROPERTIES_H__ */
-EOF
-;
-close INPUT;
-close OUTPUT;
+while (<CPP>) {
+  /SB_PROPERTY_/ or next;
+  m/".*?#(.*?)"/ and emit $1;
+}
+&finish();
