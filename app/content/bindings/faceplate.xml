@@ -419,9 +419,11 @@
           </xul:hbox>
           <!-- SEEK BAR -->
           <xul:hbox class="faceplate-seekbar-box" align="center" pack="center">
+            <xul:sb-player-shuffle-button class="faceplate-shuffle" />
             <xul:sb-player-timeelapsed-label   class="faceplate-text" />
             <xul:sb-player-seek-slider class="faceplate-seekbar" flex="1" orient="horizontal"  maxpos="100"/>
             <xul:sb-player-totaltime-label class="faceplate-text" />
+            <xul:sb-player-repeat-button class="faceplate-repeat" />
           </xul:hbox>
         </xul:vbox>
     </content>

@@ -458,8 +458,8 @@
                    attribute="hidden" 
                    onchange="return parseInt( value ) != 0" />  
          <xul:menuitem id="menu_repeat_none" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
-         <xul:menuitem id="menu_repeat_1" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
          <xul:menuitem id="menu_repeat_all" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
+         <xul:menuitem id="menu_repeat_1" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
        </xul:sb-clickhold-button>
        <xul:sb-clickhold-button id="repeat_1" class="sb-player-repeat-button-rep1 sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.rep1;">
          <xul:observes type="dataremote"
@@ -467,8 +467,8 @@
                    attribute="hidden" 
                    onchange="return parseInt( value ) != 1" />  
          <xul:menuitem id="menu_repeat_none" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
-         <xul:menuitem id="menu_repeat_1" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
          <xul:menuitem id="menu_repeat_all" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
+         <xul:menuitem id="menu_repeat_1" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
        </xul:sb-clickhold-button>
        <xul:sb-clickhold-button id="repeat_all" class="sb-player-repeat-button-repall sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repa;">
          <xul:observes type="dataremote"
@@ -476,8 +476,8 @@
                    attribute="hidden" 
                    onchange="return parseInt( value ) != 2" />  
          <xul:menuitem id="menu_repeat_none" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
-         <xul:menuitem id="menu_repeat_1" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
          <xul:menuitem id="menu_repeat_all" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
+         <xul:menuitem id="menu_repeat_1" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
        </xul:sb-clickhold-button>
      </xul:stack>
    </content>
