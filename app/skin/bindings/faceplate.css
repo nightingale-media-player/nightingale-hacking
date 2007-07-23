@@ -136,4 +136,30 @@ progressmeter.sb-player-seek-slider > .progress-remainder
   margin: 0px;
 }
 
+/* shuffle and repeat */
+.faceplate-shuffle
+{
+  margin: -1px 2px 0px 0px;
+}
+.sb-player-shuffle-button-shuffleoff > button
+{
+  list-style-image: url(chrome://songbird/skin/faceplate/shuffle-off.png);
+}
+.sb-player-shuffle-button-shuffleon > button
+{
+  list-style-image: url(chrome://songbird/skin/faceplate/shuffle-on.png);
+}
 
+.sb-player-repeat-button-repnone > button
+{
+  list-style-image: url(chrome://songbird/skin/faceplate/repeat-off.png);
+  margin: 0px 0px 0px 2px;
+}
+.sb-player-repeat-button-repall > button
+{
+  list-style-image: url(chrome://songbird/skin/faceplate/repeat-all.png);
+}
+.sb-player-repeat-button-rep1 > button
+{
+  list-style-image: url(chrome://songbird/skin/faceplate/repeat-one.png);
+}
