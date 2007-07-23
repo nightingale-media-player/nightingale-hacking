@@ -1658,11 +1658,21 @@
           var url;
           
           if (item instanceof this._Ci.nsIFile) {
+
+            //XXXAus: We probably want to make this scan for media and insert at the correct
+            //position in the future, instead of just importing.
+                        
+            //Skip over directories. The default drop handler will get them for us.
+            if(item.isDirectory()) {
+              badEntries++;
+              continue;
+            }
+            
             var ioService = Components.classes["@mozilla.org/network/io-service;1"]
                             .getService(Components.interfaces.nsIIOService);
             var fileHandler = ioService.getProtocolHandler("file")
                               .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
-            url = fileHandler.getURLSpecFromFile(item); 
+            url = fileHandler.getURLSpecFromFile(item);
           } else if (item instanceof this._Ci.nsISupportsString) {
             url = item.QueryInterface(Components.interfaces.nsISupportsString);
             if (url) url = url.toString();

@@ -50,6 +50,7 @@ var aFileScanQuery = null;
 
 var theTargetDatabase = null;
 var theTargetPlaylist = null;
+var theTargetInsertIndex = -1;
 
 // Init the text box to the last url played (shrug).
 var polling_interval;
@@ -81,7 +82,9 @@ function onLoad()
                     .getService(Components.interfaces.sbILibraryManager);
         theTargetDatabase = libraryManager.mainLibrary.guid;
       }
+
       theTargetPlaylist = window.arguments[0].target_pl;
+      theTargetInsertIndex = window.arguments[0].target_pl_row;
 
       if (aFileScan && aFileScanQuery)
       {
@@ -169,7 +172,17 @@ function sbBatchCreateListener_onComplete(aItemArray)
   theLabel.value = SBString("media_scan.complete", "Complete");
   theProgress.value = 100.0;
 
-  // TODO: Add items to theTargetPlaylist if it was requested.
+  // Add items to theTargetPlaylist if it was requested.
+  if(theTargetPlaylist) {
+    //Insert at the requested row.
+    if(theTargetInsertIndex != -1) {
+      theTargetPlaylist.insertSomeBefore(theTargetInsertIndex, 
+                                         aItemArray.enumerate());
+    }
+    else {
+      theTargetPlaylist.addSome(aItemArray.enumerate());
+    }
+  }
 
   // Create and submit a metadata job for the
   // new items

@@ -677,6 +677,35 @@ function SBGetWebLibrary() {
 }
 
 /**
+ * \brief Verify to see if the library resource is the web library.
+ */
+function SBIsWebLibrary(aLibraryResource) {
+  if(!(aLibraryResource instanceof Components.interfaces.sbILibraryResource)) {
+    return Components.results.NS_ERROR_INVALID_ARG;
+  }
+  
+  if(!(aLibraryResource instanceof Components.interfaces.sbILibrary)) {
+    return false;
+  }
+
+  var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                  .getService(Components.interfaces.sbILibraryManager);
+
+  var prefsService = Components.classes["@mozilla.org/preferences-service;1"]
+                    .getService(Components.interfaces.nsIPrefService);
+    
+  var prefBranch = prefsService.getBranch("songbird.library.")
+                      .QueryInterface(Components.interfaces.nsIPrefBranch);
+  
+  var webLibraryGuid = prefBranch.getCharPref("web");
+  
+  var webLibrary = libraryManager.getLibrary(webLibraryGuid);
+  var library = libraryManager.getLibrary(aLibraryResource.guid);
+  
+  return webLibrary.guid == library.guid;
+}
+
+/**
  * \brief Import a URL into the main library.
  * \param url URL of item to import, also accepts nsIURI's.
  * \return The media item that was created.
