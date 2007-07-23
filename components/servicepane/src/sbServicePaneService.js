@@ -46,7 +46,7 @@ const Ce = Components.Exception;
 const RDFSVC = Cc['@mozilla.org/rdf/rdf-service;1'].getService(Ci.nsIRDFService);
 const RDFCU = Cc['@mozilla.org/rdf/container-utils;1'].getService(Ci.nsIRDFContainerUtils);
 const IOSVC = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
-const Application = Cc['@mozilla.org/fuel/application;1'].getService(Ci.fuelIApplication);
+const gPrefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBranch);
 
 const NC='http://home.netscape.com/NC-rdf#';
 const SP='http://songbirdnest.com/rdf/servicepane#';
@@ -598,7 +598,8 @@ function ServicePaneService_fillContextMenu(aId, aContextMenu, aParentWindow) {
     try {
       this._modules[i].fillContextMenu(node, aContextMenu, aParentWindow);
     } catch (ex) {
-      if (Application.prefs.getValue('javascript.options.showInConsole', false)) {
+      if (gPrefs.getPrefType('javascript.options.showInConsole') &&
+          gPrefs.getBoolPref('javascript.options.showInConsole')) {
         Components.utils.reportError(ex);
       }
     }
@@ -612,7 +613,8 @@ function ServicePaneService_fillNewItemMenu(aId, aContextMenu, aParentWindow) {
     try {
       this._modules[i].fillNewItemMenu(node, aContextMenu, aParentWindow);
     } catch (ex) {
-      if (Application.prefs.getValue('javascript.options.showInConsole', false)) {
+      if (gPrefs.getPrefType('javascript.options.showInConsole') &&
+          gPrefs.getBoolPref('javascript.options.showInConsole')) {
         Components.utils.reportError(ex);
       }
     }
@@ -626,7 +628,8 @@ function ServicePaneService_onSelectionChanged(aId, aContainer, aParentWindow) {
     try {
       this._modules[i].onSelectionChanged(node, aContainer, aParentWindow);
     } catch (ex) {
-      if (Application.prefs.getValue('javascript.options.showInConsole', false)) {
+      if (gPrefs.getPrefType('javascript.options.showInConsole') &&
+          gPrefs.getBoolPref('javascript.options.showInConsole')) {
         Components.utils.reportError(ex);
       }
     }
