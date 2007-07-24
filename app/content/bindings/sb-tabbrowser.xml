@@ -1762,7 +1762,8 @@
         <parameter name="aStatus" />
         <body><![CDATA[
           // if this state change isn't on the top-level window, ignore it
-          if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent) {
+          if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent ||
+              !(aState & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)) {
             return;
           }
           
