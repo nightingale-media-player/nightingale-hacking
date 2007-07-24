@@ -203,12 +203,14 @@ try
                 var uri = newURI(url);
                 
                 // Make a new media item for it
-                mediaItem = library.createMediaItem(uri);
-                // Set the originPage and originURL for later tracking
-                mediaItem.setProperties(SBProperties.createArray([
-                  [SBProperties.originPage, this.currentURL],
-                  [SBProperties.originURL, url]
-                ]));
+                mediaItem = library.createMediaItem(uri,
+                  // Set the properties for later tracking
+                  SBProperties.createArray([
+                    [SBProperties.originPage, this.currentURL],
+                    [SBProperties.originURL, url],
+                    [SBProperties.trackName, gPPS.convertURLToDisplayName(url)]
+                  ])
+                );
 
                 // Make sure we scan it for metadata
                 if (!mediaItemsToScan) {
