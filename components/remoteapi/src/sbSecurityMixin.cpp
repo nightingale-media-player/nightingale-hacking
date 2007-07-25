@@ -41,6 +41,7 @@
 #define PERM_TYPE_CONTROLS "rapi.controls"
 #define PERM_TYPE_BINDING  "rapi.binding"
 #define PERM_TYPE_METADATA "rapi.metadata"
+#define PERM_TYPE_LIBRARY "rapi.library"
 
 /*
  * To log this module, set the following environment variable:
@@ -404,7 +405,7 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
     allowed = GetPermission(codebase, PERM_TYPE_METADATA, "disable_metadata");
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("library:"))) {
-    allowed = GetPermission(codebase, PERM_TYPE_METADATA, "disable_library");
+    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY, "disable_library");
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("site:"))) {
     // site library methods are always cleared
