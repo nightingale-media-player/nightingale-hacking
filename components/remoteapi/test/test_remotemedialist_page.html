@@ -47,24 +47,6 @@ function runTest(tester) {
 
     tester.assertTrue(list.equals(list));
 
-    try {
-      list.writeThrough = true;
-      tester.fail("did not throw");
-    }
-    catch(e) {}
-
-    try {
-      var junk = list.writePending;
-      tester.fail("did not throw");
-    }
-    catch(e) {}
-
-    try {
-      list.write();
-      tester.fail("did not throw");
-    }
-    catch(e) {}
-
     // Test sbIMediaItem
     tester.assertEqual(list.isMutable, true);
     tester.assertTrue(list.mediaCreated > 0);
@@ -78,43 +60,43 @@ function runTest(tester) {
 
     try {
       var junk = list.library;
-      tester.fail("did not throw");
+      tester.fail("did not throw: library");
     }
     catch(e) {}
 
     try {
       var junk = list.contentSrc;
-      tester.fail("did not throw");
+      tester.fail("did not throw: contentSrc");
     }
     catch(e) {}
 
     try {
       list.testIsAvailable(null);
-      tester.fail("did not throw");
+      tester.fail("did not throw: testIsAvailable");
     }
     catch(e) {}
 
     try {
       list.openInputStreamAsync(null, null);
-      tester.fail("did not throw");
+      tester.fail("did not throw: openInputStreamAsync");
     }
     catch(e) {}
 
     try {
       list.openInputStream();
-      tester.fail("did not throw");
+      tester.fail("did not throw: openInputStream");
     }
     catch(e) {}
 
     try {
       list.openOutputStream();
-      tester.fail("did not throw");
+      tester.fail("did not throw: openOutputStream");
     }
     catch(e) {}
 
     try {
       list.toString();
-      tester.fail("did not throw");
+      tester.fail("did not throw: toString");
     }
     catch(e) {}
 
@@ -132,6 +114,11 @@ function runTest(tester) {
     tester.assertTrue(list.getItemByGuid(item.guid).equals(item));
     tester.assertTrue(list.getItemByIndex(0).equals(item));
 
+    var e = list.getDistinctValuesForProperty(SB_NS + "contentURL");
+    tester.assertTrue(e.hasMore());
+    tester.assertTrue(e.getNext() == url);
+    tester.assertFalse(e.hasMore());
+
     var listener = {
       _item: null,
       onEnumerationBegin: function() {
@@ -148,7 +135,7 @@ function runTest(tester) {
     list.enumerateAllItems(listener, 1);
     tester.assertTrue(listener._item.equals(item));
 
-    list.enumerateItemsByProperty(SB_NS + "contentUrl", url, listener, 1);
+    list.enumerateItemsByProperty(SB_NS + "contentURL", url, listener, 1);
     tester.assertTrue(listener._item.equals(item));
 
     tester.assertEqual(list.indexOf(item, 0), 0);
@@ -169,53 +156,53 @@ function runTest(tester) {
     tester.assertEqual(list.length, 0);
 
     var enumerator = list.selection;
-    tester.assertFalse(enumerator.hasMoreElements());
+    tester.assertFalse(enumerator);
 
     try {
       list.enumerateItemsByProperties(null, null, 0);
-      tester.fail("did not throw");
+      tester.fail("did not throw: enumerateItemsByProperties");
     }
     catch(e) {}
 
     try {
       list.addSome(null);
-      tester.fail("did not throw");
+      tester.fail("did not throw: addSome");
     }
     catch(e) {}
 
     try {
       list.removeSome(null);
-      tester.fail("did not throw");
+      tester.fail("did not throw: removeSome");
     }
     catch(e) {}
 
     try {
       list.addListener(null);
-      tester.fail("did not throw");
+      tester.fail("did not throw: addListener");
     }
     catch(e) {}
 
     try {
       list.removeListener(null);
-      tester.fail("did not throw");
+      tester.fail("did not throw: removeListener");
     }
     catch(e) {}
 
     try {
       list.createView();
-      tester.fail("did not throw");
+      tester.fail("did not throw: createView");
     }
     catch(e) {}
 
     try {
       list.beginUpdateBatch();
-      tester.fail("did not throw");
+      tester.fail("did not throw: beginUpdateBatch");
     }
     catch(e) {}
 
     try {
       list.endUpdateBatch();
-      tester.fail("did not throw");
+      tester.fail("did not throw: endUpdateBatch");
     }
     catch(e) {}
   }

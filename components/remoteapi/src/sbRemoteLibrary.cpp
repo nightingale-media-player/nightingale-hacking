@@ -150,7 +150,7 @@ NS_IMPL_ISUPPORTS1( sbRemoteMetadataScanLauncher, nsIObserver )
 const static char* sPublicWProperties[] =
   {
     "metadata:name",
-    "binding:scanMediaOnCreation"
+    "library:scanMediaOnCreation"
   };
 
 const static char* sPublicRProperties[] =
@@ -162,8 +162,8 @@ const static char* sPublicRProperties[] =
     "metadata:length",
 
     // sbIRemoteLibrary
-    "binding:selection",
-    "binding:scanMediaOnCreation",
+    "library:selection",
+    "library:scanMediaOnCreation",
 #ifdef DEBUG
     "library:filename",
 #endif
@@ -180,28 +180,28 @@ const static char* sPublicMethods[] =
   { // sbIRemoteLibrary
     "library:connectToMediaLibrary",
     "library:connectToDefaultLibrary",
-    "binding:createMediaList",
-    "binding:createMediaListFromFile",
-    "binding:createMediaItem",
-    "binding:addMediaListByURL",
+    "library:createMediaList",
+    "library:createMediaListFromFile",
+    "library:createMediaItem",
+    "library:addMediaListByURL",
 
     // sbIRemoteMediaList
-    "binding:addItemByURL",
+    "library:addItemByURL",
 
     // sbIMediaList
-    "binding:getItemByGuid",
-    "binding:getItemByIndex",
-    "binding:enumerateAllItems",
-    "binding:enumerateItemsByProperty",
-    "binding:indexOf",
-    "binding:lastIndexOf",
-    "binding:contains",
-    "binding:add",
-    "binding:addAll",
-    "binding:addSome",
-    "binding:remove",
-    "binding:removeByIndex",
-    "binding:getDistinctValuesForProperty",
+    "library:getItemByGuid",
+    "library:getItemByIndex",
+    "library:enumerateAllItems",
+    "library:enumerateItemsByProperty",
+    "library:indexOf",
+    "library:lastIndexOf",
+    "library:contains",
+    "library:add",
+    "library:addAll",
+    "library:addSome",
+    "library:remove",
+    "library:removeByIndex",
+    "library:getDistinctValuesForProperty",
 
     // sbILibraryResource
     "library:getProperty",

@@ -27,6 +27,7 @@
 #include "sbRemoteMediaList.h"
 #include "sbRemoteLibrary.h"
 #include "sbRemoteWrappingSimpleEnumerator.h"
+#include "sbRemoteWrappingStringEnumerator.h"
 
 #include <sbClassInfoUtils.h>
 #include <sbIRemoteMediaList.h>
@@ -370,6 +371,31 @@ sbRemoteMediaList::Remove(sbIMediaItem* aMediaItem)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return mMediaList->Remove(wrappedMediaItem->GetMediaItem().get());
+}
+
+NS_IMETHODIMP
+sbRemoteMediaList::GetDistinctValuesForProperty(const nsAString &aPropertyName,
+                                                nsIStringEnumerator **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  // get enumeration of stuff
+  nsCOMPtr<nsIStringEnumerator> enumeration;
+  nsresult rv =
+    mMediaList->GetDistinctValuesForProperty( aPropertyName,
+                                              getter_AddRefs(enumeration) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsRefPtr<sbRemoteWrappingStringEnumerator> wrapped(
+                           new sbRemoteWrappingStringEnumerator(enumeration) );
+  NS_ENSURE_TRUE( wrapped, NS_ERROR_OUT_OF_MEMORY );
+
+  rv = wrapped->Init();
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  NS_ADDREF( *_retval = wrapped );
+
+  return NS_OK;
 }
 
 // ---------------------------------------------------------------------------

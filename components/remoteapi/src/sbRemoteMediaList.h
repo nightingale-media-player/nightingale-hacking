@@ -60,8 +60,7 @@ class sbIMediaItem;
   NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveListener(aListener); } \
   NS_IMETHOD CreateView(sbIMediaListView **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CreateView(_retval); } \
   NS_IMETHOD BeginUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->BeginUpdateBatch(); } \
-  NS_IMETHOD EndUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->EndUpdateBatch(); } \
-  NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyName, nsIStringEnumerator **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyName, _retval); }
+  NS_IMETHOD EndUpdateBatch(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->EndUpdateBatch(); }
 
 class sbRemoteMediaList : public nsIClassInfo,
                           public nsISecurityCheckedComponent,
@@ -102,6 +101,8 @@ public:
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
+  NS_IMETHOD GetDistinctValuesForProperty(const nsAString &aPropertyName,
+                                          nsIStringEnumerator **_retval);
 
   // sbIWrappedMediaList
   NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();

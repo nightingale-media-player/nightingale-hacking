@@ -411,6 +411,10 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
     // site library methods are always cleared
     allowed = PR_TRUE;
   }
+  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("helper:"))) {
+    // helper classes always allowed
+    allowed = PR_TRUE;
+  }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("classinfo:"))) {
     // class info stuff always allowed - this might need to move above the codebase check.
     allowed = PR_TRUE;

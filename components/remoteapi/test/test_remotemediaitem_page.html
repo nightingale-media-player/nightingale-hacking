@@ -60,43 +60,43 @@ function runTest(tester) {
 
     try {
       var junk = item.library;
-      tester.fail("did not throw");
+      tester.fail("did not throw: library");
     }
     catch(e) {}
 
     try {
       var junk = item.contentSrc;
-      tester.fail("did not throw");
+      tester.fail("did not throw: contentSrc");
     }
     catch(e) {}
 
     try {
       item.testIsAvailable(null);
-      tester.fail("did not throw");
+      tester.fail("did not throw: testIsAvailable");
     }
     catch(e) {}
 
     try {
       item.openInputStreamAsync(null, null);
-      tester.fail("did not throw");
+      tester.fail("did not throw: openInputStreamAsync");
     }
     catch(e) {}
 
     try {
       item.openInputStream();
-      tester.fail("did not throw");
+      tester.fail("did not throw: openInputStream");
     }
     catch(e) {}
 
     try {
       item.openOutputStream();
-      tester.fail("did not throw");
+      tester.fail("did not throw: openOutputStream");
     }
     catch(e) {}
 
     try {
       item.toString();
-      tester.fail("did not throw");
+      tester.fail("did not throw: toString");
     }
     catch(e) {}
   }
