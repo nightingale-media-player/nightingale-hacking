@@ -82,8 +82,8 @@ pref("extensions.getMoreThemesURL", "chrome://branding/locale/brand.properties")
 
 pref("extensions.blocklist.enabled", true);
 pref("extensions.blocklist.interval", 86400);
-pref("extensions.blocklist.url", "http://addons.songbirdnest.com/blocklist/1/%APP_ID%/%APP_VERSION%/");
-pref("extensions.blocklist.detailsURL", "http://addons.songbirdnest.com/blocklist/");
+pref("extensions.blocklist.url", "https://addons.songbirdnest.com/blocklist/1/%APP_ID%/%APP_VERSION%/");
+pref("extensions.blocklist.detailsURL", "https://addons.songbirdnest.com/blocklist/");
 pref("extensions.ignoreMTimeChanges", false);
 
 pref("xpinstall.whitelist.add", "addons.songbirdnest.com");
