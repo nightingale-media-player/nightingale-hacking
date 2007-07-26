@@ -99,12 +99,12 @@ wizard[description=""] .wizard-header-description {
 }
 
 .wizard-header-label {
-  -moz-margin-start: 23px;
+  -moz-margin-start: 6px;
   font-weight: bold;
 }
 
 .wizard-header-description {
-  -moz-margin-start: 44px;
+  -moz-margin-start: 6px;
 }
 
 wizard[branded="true"] .wizard-header-icon {
