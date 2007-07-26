@@ -958,7 +958,9 @@ FeathersManager.prototype = {
     // Set new values
     this._layoutDataRemote.stringValue = layoutURL;
     this._skinDataRemote.stringValue = internalName;
-    
+
+    this._flushXULPrototypeCache();
+
     this._reloadPlayerWindow();
   },
   
@@ -1104,7 +1106,27 @@ FeathersManager.prototype = {
     });
   },
 
-      
+  _flushXULPrototypeCache: function flushXULPrototypeCache() {
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                          .getService(Components.interfaces.nsIPrefBranch);
+    var disabled = false;
+    var userPref = false;
+
+    try {
+      disabled = prefs.getBoolPref("nglayout.debug.disable_xul_cache");
+      userPref = true;
+    }
+    catch(e) {
+    }
+
+    if (!disabled) {
+      prefs.setBoolPref("nglayout.debug.disable_xul_cache", true);
+      prefs.setBoolPref("nglayout.debug.disable_xul_cache", false);
+      if (!userPref) {
+        prefs.clearUserPref("nglayout.debug.disable_xul_cache");
+      }
+    }
+  },
 
   /**
    * Called by the observer service. Looks for XRE shutdown messages 

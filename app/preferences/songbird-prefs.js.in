@@ -15,9 +15,6 @@ pref("general.useragent.extra.songbird", "Songbird/@SB_MILESTONE@ (@SB_BUILD_ID@
 
 pref("general.skins.selectedSkin", "rubberducky/0.2");
 
-// Our skinswitching trick doesn't work unless we shut down the XUL cache.
-pref("nglayout.debug.disable_xul_cache", true);
-
 // Dump the current ram footprint when minimized.
 pref("config.trim_on_minimize", true);
 
