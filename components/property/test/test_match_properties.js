@@ -43,7 +43,7 @@ function readCPPProps() {
   var topsrcdir = appDir.parent.parent;
   // mac paths are a bit different
   if (getPlatform() == "Darwin") {
-    topsrcdir = appDir.parent.parent.parent.parent;
+    topsrcdir = topsrcdir.parent.parent.parent;
   }
   // Get to the C++ file we want to read
   var file = topsrcdir.clone();
