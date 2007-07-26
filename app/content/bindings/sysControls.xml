@@ -34,7 +34,7 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
 
           
-  <binding id="sb-sys-maximize-button" extends="chrome://global/content/bindings/checkbox.xml#checkbox-baseline">
+  <binding id="sb-sys-maximize-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-checkbox-base">
     <handlers>
       <!-- Grrr, apparently you use "CheckboxStateChange" instead of "command" from inside an XBL.  Of course.  Obviously. -->
       <handler event="CheckboxStateChange" action="onMaximize();"/>
@@ -42,8 +42,10 @@
     <implementation>
       <constructor>
         this.setAttribute("tooltiptext", "&tooltip.maximize;")
-        if ( this.getAttribute("hidden") != "true" ) // not hidden already
-          this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        <![CDATA[
+          if ( this.getAttribute("hidden") != "true" ) // not hidden already
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        ]]>
       </constructor>
       <destructor>
         <![CDATA[
@@ -56,15 +58,17 @@
     </implementation>
   </binding>
 
-  <binding id="sb-sys-minimize-button" extends="chrome://global/content/bindings/button.xml#button">
+  <binding id="sb-sys-minimize-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
       <handler event="command" action="onMinimize();"/>
     </handlers>
     <implementation>
       <constructor>
         this.setAttribute("tooltiptext", "&tooltip.minimize;")
-        if ( this.getAttribute("hidden") != "true" ) // not hidden already
-          this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        <![CDATA[
+          if ( this.getAttribute("hidden") != "true" ) // not hidden already
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        ]]>
       </constructor>
       <destructor>
         <![CDATA[
@@ -77,7 +81,7 @@
     </implementation>
   </binding>
 
-  <binding id="sb-sys-close-button" extends="chrome://global/content/bindings/button.xml#button">
+  <binding id="sb-sys-close-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
       <!-- Close the window or close the app -->
       <handler event="command" action="( event.target.getAttribute('type') == 'dialog' ) ? onExit() : quitApp();"/>
@@ -85,8 +89,10 @@
     <implementation>
       <constructor>
         this.setAttribute("tooltiptext", "&tooltip.exit;")
-        if ( this.getAttribute("hidden") != "true" ) // not hidden already
-          this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        <![CDATA[
+          if ( this.getAttribute("hidden") != "true" ) // not hidden already
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        ]]>
       </constructor>
       <destructor>
         <![CDATA[
@@ -99,15 +105,17 @@
     </implementation>
   </binding>
 
-  <binding id="sb-sys-hide-button" extends="chrome://global/content/bindings/button.xml#button">
+  <binding id="sb-sys-hide-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
       <handler event="command" action="onHideButtonClick();"/>
     </handlers>
     <implementation>
       <constructor>
         this.setAttribute("tooltiptext", "&tooltip.hide;")
-        if ( this.getAttribute("hidden") != "true" ) // not hidden already
-          this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        <![CDATA[
+          if ( this.getAttribute("hidden") != "true" ) // not hidden already
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        ]]>
       </constructor>
       <destructor>
         <![CDATA[
@@ -122,10 +130,12 @@
 
   <binding id="sb-sys-buttons">
     <content>
-      <xul:sb-sys-minimize-button sbid="mini"/>
-      <xul:sb-sys-maximize-button sbid="maxi"/>
-      <xul:sb-sys-close-button sbid="close" xbl:inherits="type"/>
-      <xul:sb-sys-hide-button sbid="hide" hidden="true"/>
+      <xul:hbox id="sb-sys-buttons">
+        <xul:sb-sys-minimize-button id="sb-sys-buttons-mini" sbid="mini"/>
+        <xul:sb-sys-maximize-button id="sb-sys-buttons-maxi" sbid="maxi"/>
+        <xul:sb-sys-close-button id="sb-sys-buttons-close" sbid="close" xbl:inherits="type"/>
+        <xul:sb-sys-hide-button id="sb-sys-buttons-hide" sbid="hide" hidden="true"/>
+      </xul:hbox>
     </content>
     <implementation>
       <constructor>
@@ -167,10 +177,12 @@
 
   <binding id="sb-sys-osx-buttons">
     <content>
-      <xul:sb-sys-hide-button sbid="hide" hidden="true"/>
-      <xul:sb-sys-close-button sbid="close" xbl:inherits="type"/>
-      <xul:sb-sys-minimize-button sbid="mini"/>
-      <xul:sb-sys-maximize-button sbid="maxi"/>
+      <xul:hbox id="sb-sys-osx-buttons">
+        <xul:sb-sys-hide-button id="sb-sys-osx-buttons-hide" sbid="hide" hidden="true"/>
+        <xul:sb-sys-close-button id="sb-sys-osx-buttons-close" sbid="close" xbl:inherits="type"/>
+        <xul:sb-sys-minimize-button id="sb-sys-osx-buttons-mini" sbid="mini"/>
+        <xul:sb-sys-maximize-button id="sb-sys-osx-buttons-maxi" sbid="maxi"/>
+      </xul:hbox>
     </content>
     <implementation>
       <constructor>
@@ -211,7 +223,7 @@
     </implementation>
   </binding>
 
-  <binding id="sb-sys-icon" extends="chrome://global/content/bindings/button.xml#button">
+  <binding id="sb-sys-icon" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
       <handler event="dblclick" action="quitApp();"/>
     </handlers>
@@ -241,7 +253,9 @@
 
   <binding id="sb-sys-title">
     <content>
-      <xul:label sbid="title" xbl:inherits="value"/> 
+      <xul:hbox id="sb-sys-title">
+        <xul:label id="sb-sys-title-title" sbid="title" xbl:inherits="value"/> 
+      </xul:hbox>
     </content>
     <implementation>
       <constructor>
@@ -273,16 +287,16 @@
   <binding id="sb-sys-dialog-titlebar">
     <content>
       <xul:stack flex="1">
-        <xul:hbox sbid="show_mac" pack="center">
-          <xul:sb-sys-title xbl:inherits="value"/> 
+        <xul:hbox id="sb-sys-dialog-titlebar-osx-title" sbid="show_mac" pack="center">
+          <xul:sb-sys-title id="sb-sys-dialog-titlebar-osx-title-title" xbl:inherits="value"/> 
         </xul:hbox>
-        <xul:hbox>
-          <xul:sb-sys-osx-buttons type="dialog"/>
-          <xul:sb-sys-title sbid="hide_mac" xbl:inherits="value"/> 
+        <xul:hbox id="sb-sys-dialog-titlebar">
+          <xul:sb-sys-osx-buttons id="sb-sys-dialog-titlebar-osx-buttons" type="dialog"/>
+          <xul:sb-sys-title id="sb-sys-dialog-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
           <!-- TODO: allow external menu? -->
-          <xul:menubar />  
-          <xul:spacer flex="1"/>
-          <xul:sb-sys-buttons type="dialog"/>
+          <xul:menubar id="sb-sys-dialog-titlebar-menubar" />  
+          <xul:spacer id="sb-sys-dialog-titlebar-spacer" flex="1"/>
+          <xul:sb-sys-buttons id="sb-sys-dialog-titlebar-buttons" type="dialog"/>
         </xul:hbox>
       </xul:stack>
     </content>
@@ -316,17 +330,17 @@
   <binding id="sb-sys-titlebar">
     <content>
       <xul:stack flex="1">
-        <xul:hbox sbid="show_mac" pack="center">
-          <xul:sb-sys-title xbl:inherits="value"/> 
+        <xul:hbox id="sb-sys-titlebar-osx-title" sbid="show_mac" pack="center">
+          <xul:sb-sys-title id="sb-sys-titlebar-osx-title-title" xbl:inherits="value"/> 
         </xul:hbox>
-        <xul:hbox align="center">
-          <xul:sb-sys-osx-buttons xbl:inherits="type"/>
-          <xul:sb-sys-icon/>
-          <xul:sb-sys-title sbid="hide_mac" xbl:inherits="value"/> 
+        <xul:hbox id="sb-sys-titlebar" align="center">
+          <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
+          <xul:sb-sys-icon id="sb-sys-titlebar-icon"/>
+          <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
           <children />
-          <xul:spacer flex="1"/>
-          <xul:sb-feathers-toggle-button sbid="feathers" id="sysbtn_minimode" popupanchor="bottomright" popupalign="topright" />
-          <xul:sb-sys-buttons xbl:inherits="type"/>
+          <xul:spacer id="sb-sys-titlebar-spacer" flex="1"/>
+          <xul:sb-feathers-toggle-button id="sb-sys-titlebar-feathers" sbid="feathers" popupanchor="bottomright" popupalign="topright" />
+          <xul:sb-sys-buttons id="sb-sys-titlebar-buttons" xbl:inherits="type"/>
         </xul:hbox>
       </xul:stack>
     </content>

@@ -68,7 +68,7 @@ interface sbIDataRemote : nsIObserver
    * \throws NS_ERROR_FAILURE if unable to initialize properly
    * \throws NS_ERROR_UNEXPECTED if init has already been called
    */
-  void init(in AString aKey, in AString aRoot);
+  void init(in AString aKey, [optional] in AString aRoot);
 
   /**
    * \brief Disconnect the DataRemote
@@ -89,7 +89,7 @@ interface sbIDataRemote : nsIObserver
    * \throws NS_ERROR_NOT_INITIALIZED if init has not been called
    */
   void bindObserver(in nsIObserver aObserver,
-                    in boolean aSuppressFirst);
+                    [optional] in boolean aSuppressFirst);
 
   /**
    * \brief
@@ -105,9 +105,9 @@ interface sbIDataRemote : nsIObserver
    */
   void bindProperty(in nsIDOMElement aElement, 
                     in AString aProperty,
-                    in boolean aIsBool,
-                    in boolean aIsNot,
-                    in AString aEvalString);
+                    [optional] in boolean aIsBool,
+                    [optional] in boolean aIsNot,
+                    [optional] in AString aEvalString);
  
   /**
    * \brief
@@ -123,9 +123,9 @@ interface sbIDataRemote : nsIObserver
    */
   void bindAttribute(in nsIDOMElement aElement,
                      in AString aProperty,
-                     in boolean aIsBool,
-                     in boolean aIsNot,
-                     in AString aEvalString);
+                     [optional] in boolean aIsBool,
+                     [optional] in boolean aIsNot,
+                     [optional] in AString aEvalString);
 
   /**
    * \brief Access to the data in string format

@@ -63,9 +63,9 @@
     then !value will be used.  These attributes are helpful
     as dataremotes currently store true/false as strings
     '1' and '0'.
-    
-    Note that the attributes of this observes tag
-    cannot be changed once it is instantiated.
+
+    Changing the key/attribute/boolean/inverted values as
+    properties on the object will re-bind the dataremote.    
     
     See also:
      * http://www.xulplanet.com/ndeakin/xul/specs/appstorage.html
@@ -73,80 +73,157 @@
     -->
   <binding id="observes">
 
+    <handlers>
+      <handler event="DOMAttrModified" action="this.bind();"/>
+    </handlers>
+    
     <implementation type="application/x-javascript">
 
       <constructor>
-       <![CDATA[      
-        var key = this.getAttribute("key");
-        this._attribute = this.getAttribute("attribute");
-
-        //dump("observes[type=dataremote]: CONSTRUCTO " + key +  "\n\n");
-        
-        if (key && this._attribute) {
-
-          // Make a function to translate the dataremote value
-          // before it gets assigned to the parent
-          if (this.getAttribute("boolean") == "true") {
-            var isInverted = this.getAttribute("inverted") == "true";
-            this._processValue = function(value) {
-              value = value == "1";
-              return (isInverted) ? !value : value;
-            }
-          } else {
-            var onchange = this.getAttribute("onchange");            
-            if (!onchange) {
-              onchange = "return value;";
-            }
-            this._processValue = new Function("value", onchange);
-          }
-            
-          // Hook up for callbacks when the dataremote changes
-          var newDataRemote = new Components.Constructor(
-                "@songbirdnest.com/Songbird/DataRemote;1", 
-                "sbIDataRemote", "init");
-          this._dataremote = newDataRemote(key, null);
-          var observer = this;
-          this._dataremote.bindObserver(
-            {
-              observe: function(s,t,d) {
-                observer.onDataChanged();
-              }
-            }, false); 
-        }
-       ]]>
+        <![CDATA[      
+        this.bind();
+        ]]>
       </constructor>
       
       <destructor>
-       <![CDATA[
+        <![CDATA[
         //dump("observes[type=dataremote]: DESTRUCTO " + this.getAttribute("key") +  "\n\n");
-        
-        // Release dataremote
-        if (this._dataremote) {
-          this._dataremote.unbind();
-        }
-        this._dataremote = null;
-       ]]>
+        this.unbind();
+        ]]>
       </destructor>      
       
       <field name="_dataremote">null</field>
-      
       <field name="_attribute">null</field>
       <field name="_processValue">null</field>
  
+      <property name="key">
+        <getter>
+          <![CDATA[
+          return this.getAttribute("key");
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+          this.setAttribute("key", val);
+          ]]>
+        </setter>
+      </property>
+      
+      <property name="attribute">
+        <getter>
+          <![CDATA[
+          return this.getAttribute("attribute");
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+          this.setAttribute("attribute", val);
+          ]]>
+        </setter>
+      </property>
+      
+      <property name="boolean">
+        <getter>
+          <![CDATA[
+          return this.getAttribute("boolean");
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+          this.setAttribute("boolean", val);
+          ]]>
+        </setter>
+      </property>
+      
+      <property name="inverted">
+        <getter>
+          <![CDATA[
+          return this.getAttribute("inverted");
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+          this.setAttribute("inverted", val);
+          ]]>
+        </setter>
+      </property>
     
-      <method name="onDataChanged">
+      <method name="unbind">
         <body>
-          <![CDATA[  
-            //dump("observes[type=dataremote]: CHANGEO " + this.getAttribute("key") +  "\n\n");
-            
-            var parent = this.parentNode;
-            if (parent) {
-              parent.setAttribute(this._attribute, 
-                        this._processValue(this._dataremote.stringValue));
-            }
+          <![CDATA[
+          // Release dataremote
+          if (this._dataremote) {
+            this._dataremote.unbind();
+          }
+          this._dataremote = null;
+          this._processValue = null;
+          this._attribute = "";
           ]]>
         </body>
       </method>  
+      
+      <method name="bind">
+        <body>
+          <![CDATA[
+          this.unbind();
+            
+          //
+          // Rebind
+          var key = this.getAttribute("key");
+          this._attribute = this.getAttribute("attribute");
+
+          //dump("observes[type=dataremote]: CONSTRUCTO " + key +  "\n\n");
+          
+          if (key && this._attribute) {
+
+            // Make a function to translate the dataremote value
+            // before it gets assigned to the parent
+            if (this.getAttribute("boolean") == "true") {
+              var isInverted = this.getAttribute("inverted") == "true";
+              this._processValue = function(value) {
+                value = value == "1";
+                return (isInverted) ? !value : value;
+              }
+            } else {
+              var onchange = this.getAttribute("onchange");            
+              if (!onchange) {
+                onchange = "return value;";
+              }
+              this._processValue = new Function("value", onchange);
+            }
+              
+            // Hook up for callbacks when the dataremote changes
+            var newDataRemote = new Components.Constructor(
+                  "@songbirdnest.com/Songbird/DataRemote;1", 
+                  "sbIDataRemote", "init");
+            this._dataremote = newDataRemote(key, null);
+            var observer = this;
+            this._dataremote.bindObserver(
+              {
+                observe: function(s,t,d) {
+                  observer.onDataChanged();
+                }
+              }, false); 
+          }
+          ]]>
+        </body>
+      </method>  
+
+      <method name="onDataChanged">
+        <body>
+          <![CDATA[  
+          //dump("observes[type=dataremote]: CHANGEO " + this.getAttribute("key") +  "\n\n");
+          
+          var parent = this.parentNode;
+          if (parent) {
+            parent.setAttribute(this._attribute, 
+                      this._processValue.apply(this, [this._dataremote.stringValue]));
+          }
+          ]]>
+        </body>
+      </method>  
+
+
                             
     </implementation>
   </binding>  

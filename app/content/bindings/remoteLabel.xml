@@ -38,23 +38,35 @@
   <binding id="remote-label">
   
     <content>
-      <xul:label sbid="label" xbl:inherits="id,class,value,align,crop,disabled,flex" /> 
+      <xul:hbox sbid="overlay_box" xbl:inherits="class,align,crop,disabled,flex">
+        <xul:label sbid="label" xbl:inherits="class,value,align,crop,disabled,flex">
+          <xul:observes type="dataremote"
+                    attribute="value"/>  
+        </xul:label> 
+      </xul:hbox>
     </content>
 
     <implementation>
 
       <constructor>
         <![CDATA[
+          // Get the nodename (without the namespace)
+          var nameArray = this.nodeName.split(":");
+          var nodeName = ( nameArray.length > 1 ) ? nameArray[ 1 ] : nameArray[ 0 ];
+          // OVERLAY TARGET ID MATCHES ELEMENT NAME
+          var box = document.getAnonymousElementByAttribute(this, "sbid", "overlay_box");
+          box.setAttribute( 'id', nodeName );
+          // OVERLAY INSERTBEFORE ID MATCHES ELEMENT NAME + "-label"
+          var label = document.getAnonymousElementByAttribute(this, "sbid", "label");
+          label.setAttribute( 'id', nodeName + "-label" );
+          // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
+          this.setAttribute("class", this.getAttribute("class") + " " + nodeName);
         ]]>
       </constructor>
 
       <destructor>
         <![CDATA[
           //SB_LOG("remoteLabel.js", "remote-label destructor");
-          if (this.bind) {
-            this.bind.unbind();
-            this.bind = null;
-          }
         ]]>
       </destructor>
 
@@ -70,12 +82,9 @@
           <![CDATA[
             //SB_LOG("remoteLabel.js", "remote-label data setter");
             this.setAttribute("data", val);
-            if (this.bind) {
-              this.bind.unbind();
-              this.bind = null;
-            }
-            if (val != "") 
-              this.bind = SBDataBindElementAttribute ( val, this, "value" );
+            // Tell the observer to watch us.
+            var observes = document.getAnonymousElementByAttribute(this, "type", "dataremote");
+            observes.key = val;
           ]]>
         </setter>
       </property>

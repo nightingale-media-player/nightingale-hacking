@@ -30,6 +30,7 @@
 <!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
@@ -51,9 +52,9 @@
   <implementation>
 
     <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.control.volume;")
       <![CDATA[
         Components.utils.import("resource://app/components/sbProperties.jsm");
-        this.setAttribute("tooltiptext", "&tooltip.control.volume;")
 
         // OVERLAY TARGET ID MATCHES ELEMENT NAME
         this.box.setAttribute("id", "sb-player-volume-slider" );
@@ -154,12 +155,28 @@
 
   <binding id="mute-button">
   
-   <content>
-     <xul:sb-clickhold-button class="sb-player-mute-button-muteoff sb-player-button" sbid="mute-off" oncommand="onMute();" tooltiptext="&tooltip.control.mute;"/>
-     <xul:sb-clickhold-button class="sb-player-mute-button-muteon sb-player-button"  sbid="mute-on"  oncommand="onMute();" tooltiptext="&tooltip.control.mute;"/>
-   </content>
+    <content>
+      <xul:hbox id="sb-player-mute-button" oncommand="onMute();">
+        <xul:sb-clickhold-button hidden="false" id="sb-player-mute-button-muteoff" class="sb-player-mute-button-muteoff sb-player-button" sbid="mute-off" tooltiptext="&tooltip.control.mute;" xbl:inherits="label,position,popupanchor,popupalign">
+          <xul:observes type="dataremote"
+                    key="faceplate.mute" 
+                    attribute="hidden" 
+                    boolean="true"
+                    inverted="false" />  
+          <xul:menuitem id="sb-player-mute-menu-muteoff" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&tooltip.control.mute;"/>
+        </xul:sb-clickhold-button>
+        <xul:sb-clickhold-button hidden="false" id="sb-player-mute-button-muteon" class="sb-player-mute-button-muteon sb-player-button" sbid="mute-on" tooltiptext="&tooltip.control.mute;" xbl:inherits="label,position,popupanchor,popupalign">
+          <xul:observes type="dataremote"
+                    key="faceplate.mute" 
+                    attribute="hidden" 
+                    boolean="true"
+                    inverted="true" />  
+          <xul:menuitem id="sb-player-mute-menu-muteon" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&tooltip.control.mute;"/>
+        </xul:sb-clickhold-button>
+      </xul:hbox>
+    </content>
 
-  <implementation>
+    <implementation>
 
     <constructor>
       <![CDATA[
@@ -169,22 +186,13 @@
         // Create and bind the data remotes
         this.remote_volume = SB_NewDataRemote( "faceplate.volume", null );
         this.remote_lastVolume = SB_NewDataRemote( "faceplate.volume.last", null );
-        this.remote_mute = SB_NewDataRemote( "faceplate.mute", null );
-        this.bindmuteon = SBDataBindElementAttribute( "faceplate.mute", this.mute_on, "hidden", true, true );
-        this.bindmuteoff = SBDataBindElementAttribute( "faceplate.mute", this.mute_off, "hidden", true );
       ]]>
     </constructor>
     <destructor>
       <![CDATA[
         //SB_LOG("playerControls.js", "mute binding destructor");
-        if (this.bindmuteon) {
-          this.bindmuteon.unbind();
-          this.bindmuteon = null;
-        }
-        if (this.bindmuteoff) {
-          this.bindmuteoff.unbind();
-          this.bindmuteoff = null;
-        }
+        // Release the data remotes
+        this.remote_volume = this.remote_lastVolume = null;
       ]]>
     </destructor>
 
@@ -192,6 +200,18 @@
     <field name="mute_off">document.getAnonymousElementByAttribute(this, 'sbid', 'mute-off');</field>
 
     <method name="onMute">
+      <body>
+        <![CDATA[
+          // Yikes.  If we hide the clickholdbutton because of the popupmenu,
+          // the popupmenu gets broken.  Therefore, we wait until the next UI
+          // frame to change the mute state.
+          var that = this;
+          setTimeout( function() { that.doMute() }, 0 );
+        ]]>
+      </body>
+    </method>
+
+    <method name="doMute">
       <body>
         <![CDATA[
           var newmute = !this.gPPS.mute; 
@@ -214,20 +234,72 @@
 
 
   
+  <!-- BASECLASS BINDINGS FOR SONGBIRD OVERLAY TRICKS
+  
+  These bindings will set some magic values inside of the objects we inherit from xpfe.
+  
+  It places the nodename as the id on the inner hbox for XBL Overlay and adds a class
+  value that may be used in the CSS.
+  
+  -->
+  <binding id="sb-button-base" extends="chrome://global/content/bindings/button.xml#button">
+    <implementation>
+      <constructor>
+      <![CDATA[
+        // ENFORCE CLICKABILITY!  (why do I have to do this?)
+        this.setAttribute("mousethrough","never");
+        
+        // Get the nodename (without the namespace)
+        var nameArray = this.nodeName.split(":");
+        var nodeName = ( nameArray.length > 1 ) ? nameArray[ 1 ] : nameArray[ 0 ];
+        
+        // OVERLAY TARGET ID MATCHES ELEMENT NAME
+        var box = document.getAnonymousElementByAttribute(this, "class", "box-inherit button-box");
+        box.setAttribute( 'id', nodeName );
+        
+        // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
+        this.setAttribute("class", this.getAttribute("class") + " " + nodeName);
+      ]]>
+      </constructor>
+    </implementation>
+  </binding>
+
+  <binding id="sb-checkbox-base" extends="chrome://global/content/bindings/checkbox.xml#checkbox-baseline">
+    <implementation>
+      <constructor>
+      <![CDATA[
+        // ENFORCE CLICKABILITY!  (why do I have to do this?)
+        this.setAttribute("mousethrough","never");
+        
+        // Get the nodename (without the namespace)
+        var nameArray = this.nodeName.split(":");
+        var nodeName = ( nameArray.length > 1 ) ? nameArray[ 1 ] : nameArray[ 0 ];
+        
+        // OVERLAY TARGET ID MATCHES ELEMENT NAME
+        var box = document.getAnonymousElementByAttribute(this, "class", "checkbox-label-box");
+        box.setAttribute( 'id', nodeName );
+        
+        // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
+        this.setAttribute("class", this.getAttribute("class") + " " + nodeName);
+      ]]>
+      </constructor>
+    </implementation>
+  </binding>
+
 
   <!-- FORWARD BUTTON-->
 
   
   
   
-  <binding id="forward-button" extends="chrome://global/content/bindings/button.xml#button">
+  <binding id="forward-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
 
-   <handlers>
-     <handler event="mousedown" button="0" action="this.onFwdMouseDown();"/>
-     <handler event="mouseup" button="0" action="this.onFwdMouseUp();"/>
-     <handler event="mouseout" action="this.onFwdMouseOut();"/>
-     <handler event="mouseover" action="this.onFwdMouseOver();"/>
-   </handlers>
+  <handlers>
+    <handler event="mousedown" button="0" action="this.onFwdMouseDown();"/>
+    <handler event="mouseup" button="0" action="this.onFwdMouseUp();"/>
+    <handler event="mouseout" action="this.onFwdMouseOut();"/>
+    <handler event="mouseover" action="this.onFwdMouseOver();"/>
+  </handlers>
 
   <implementation>
 
@@ -334,7 +406,7 @@
   
   
   
-  <binding id="back-button" extends="chrome://global/content/bindings/button.xml#button">
+  <binding id="back-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
 
    <handlers>
      <handler event="mousedown" button="0" action="this.onBackMouseDown();"/>
@@ -451,8 +523,8 @@
   <binding id="repeat-button">
   
    <content>
-     <xul:stack id="repeat-button" xbl:inherits="class=class" >
-       <xul:sb-clickhold-button id="repeat_none" class="sb-player-repeat-button-repnone sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repx;">
+     <xul:stack id="sb-player-repeat-button" xbl:inherits="class=class" >
+       <xul:sb-clickhold-button id="repeat_none" class="sb-player-repeat-button-repnone sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repx;" xbl:inherits="label,position,popupanchor,popupalign">
          <xul:observes type="dataremote"
                    key="playlist.repeat" 
                    attribute="hidden" 
@@ -461,7 +533,7 @@
          <xul:menuitem id="menu_repeat_all" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
          <xul:menuitem id="menu_repeat_1" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
        </xul:sb-clickhold-button>
-       <xul:sb-clickhold-button id="repeat_1" class="sb-player-repeat-button-rep1 sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.rep1;">
+       <xul:sb-clickhold-button id="repeat_1" class="sb-player-repeat-button-rep1 sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.rep1;" xbl:inherits="label,position,popupanchor,popupalign">
          <xul:observes type="dataremote"
                    key="playlist.repeat" 
                    attribute="hidden" 
@@ -470,7 +542,7 @@
          <xul:menuitem id="menu_repeat_all" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
          <xul:menuitem id="menu_repeat_1" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
        </xul:sb-clickhold-button>
-       <xul:sb-clickhold-button id="repeat_all" class="sb-player-repeat-button-repall sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repa;">
+       <xul:sb-clickhold-button id="repeat_all" class="sb-player-repeat-button-repall sb-player-button" oncommand="onRepeat(event.target);" tooltiptext="&menu.control.repa;" xbl:inherits="label,position,popupanchor,popupalign">
          <xul:observes type="dataremote"
                    key="playlist.repeat" 
                    attribute="hidden" 
@@ -558,9 +630,21 @@
   <binding id="shuffle-button">
   
    <content>
-     <xul:stack xbl:inherits="class=class" >
-       <xul:sb-clickhold-button sbid="shuffle_off" class="sb-player-shuffle-button-shuffleoff sb-player-button" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuf_off;"/>
-       <xul:sb-clickhold-button sbid="shuffle_on" class="sb-player-shuffle-button-shuffleon sb-player-button" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
+     <xul:stack id="sb-player-shuffle-button" xbl:inherits="class=class" oncommand="onShuffle( );">
+       <xul:sb-clickhold-button id="sb-player-shuffle-button-off" sbid="shuffle_off" class="sb-player-shuffle-button-off sb-player-button" tooltiptext="&tooltip.control.shuf_off;" xbl:inherits="label,position,popupanchor,popupalign">
+         <xul:observes type="dataremote"
+                   key="playlist.shuffle" 
+                   attribute="hidden" 
+                   onchange="return parseInt( value ) != 0" />  
+         <xul:menuitem id="menu_shuffle_off" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&tooltip.control.shuffle;"/>
+       </xul:sb-clickhold-button>
+       <xul:sb-clickhold-button id="sb-player-shuffle-button-on" sbid="shuffle_on" class="sb-player-shuffle-button-on sb-player-button" tooltiptext="&tooltip.control.shuffle;" xbl:inherits="label,position,popupanchor,popupalign">
+         <xul:observes type="dataremote"
+                   key="playlist.shuffle" 
+                   attribute="hidden" 
+                   onchange="return parseInt( value ) != 1" />  
+         <xul:menuitem id="menu_shuffle_on" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&tooltip.control.shuffle;"/>
+       </xul:sb-clickhold-button>
      </xul:stack>
    </content>
 
@@ -573,21 +657,11 @@
 
         // Create and bind data remotes
         this.remote_shuffle = SB_NewDataRemote( "playlist.shuffle", null );
-        this.bindshuffleoff = SBDataBindElementAttribute( "playlist.shuffle", this.shuffle_off, "hidden", true );
-        this.bindshuffleon = SBDataBindElementAttribute( "playlist.shuffle", this.shuffle_on, "hidden", true, true );
       ]]>
     </constructor>
     <destructor>
       <![CDATA[
         //SB_LOG("playerControls.js", "shuffle binding destructor");
-        if (this.bindshuffleoff) {
-          this.bindshuffleoff.unbind()
-          this.bindshuffleoff = null;
-        }
-        if (this.bindshuffleon) {
-          this.bindshuffleon.unbind()
-          this.bindshuffleon = null;
-        }
       ]]>
     </destructor>
 
@@ -698,61 +772,7 @@
   
   
   
-  <!-- TOTALTIME CONTROL -->
-
-
-
-
-  <binding id="totaltime-label">
-  
-   <content>
-     <xul:label sbid="timelabel" xbl:inherits="class,align,crop,disabled,flex" onmousedown="onTotalDown();"/> 
-   </content>
-
-  <implementation>
-
-    <constructor>
-      <![CDATA[
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                    .getService(Components.interfaces.sbIPlaylistPlayback);
-
-        // Create and bind data remote
-        this.remote_showRemaining = SB_NewDataRemote( "faceplate.showremainingtime", null );
-        this.bindtotaltime = SBDataBindElementAttribute( "metadata.length.str", this.label, "value" );
-      ]]>
-    </constructor>
-    <destructor>
-      <![CDATA[
-        //SB_LOG("playerControls.js", "totaltime binding destructor");
-        if (this.bindtotaltime) {
-          this.bindtotaltime.unbind();
-          this.bindtotaltime = null;
-        }
-      ]]>
-    </destructor>
-
-    <field name="label">document.getAnonymousElementByAttribute(this, 'sbid', 'timelabel');</field>
-    
-    <method name="onTotalDown">
-      <body>
-        <![CDATA[
-          var len = this.gPPS.length;
-          if ( len > 0 )
-            this.remote_showRemaining.boolValue = !this.remote_showRemaining.boolValue;
-          // If you try to toggle it while it is zero, you lose the state.
-          else
-            this.remote_showRemaining.boolValue = false;
-        ]]>
-      </body>
-    </method>
-
-   </implementation>
  
-  </binding>
-
-
-
-
   <!-- PLAYPAUSE/PLAY/PAUSE/STOP CONTROLS -->
 
 
@@ -848,9 +868,17 @@
 
   <binding id="play-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
   
-   <content>
-     <xul:sb-clickhold-button sbid="play" class="sb-player-play-button-play sb-player-button" oncommand="onPlay();" tooltiptext="&tooltip.control.play;"/>
-   </content>
+    <content>
+      <xul:hbox id="sb-player-play-button" xbl:inherits="hidden,class">
+      
+        <xul:sb-clickhold-button id="sb-player-play-button-play" sbid="play" 
+                  class="sb-player-play-button-play sb-player-button" 
+                  oncommand="onPlay();" 
+                  tooltiptext="&tooltip.control.play;" 
+                  xbl:inherits="label,position,popupanchor,popupalign"/>
+          
+      </xul:hbox>
+    </content>
 
   <implementation>
 
@@ -869,80 +897,73 @@
 
   <binding id="pause-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
   
-   <content>
-     <xul:stack xbl:inherits="class=class" >
-       <xul:sb-clickhold-button sbid="pause" class="sb-player-pause-button-pause sb-player-button" oncommand="onPause();" label="&menu.control.pause.button;"/>
-       <xul:sb-clickhold-button sbid="resume" class="sb-player-pause-button-resume sb-player-button" oncommand="onPause();" label="&menu.control.resume.button;"/>
-     </xul:stack>
-   </content>
+    <content>
+      <xul:hbox id="sb-player-pause-button" flex="1" xbl:inherits="hidden,class">
+        <xul:stack xbl:inherits="class=class" >
+        
+          <xul:sb-clickhold-button id="sb-player-pause-button-pause" sbid="pause" 
+                    class="sb-player-pause-button-pause sb-player-button" 
+                    onmousedown="onPause();" 
+                    tooltiptext="&tooltip.control.pause;" 
+                    xbl:inherits="label,position,popupanchor,popupalign">
+            
+            <xul:observes type="dataremote"
+                      key="faceplate.playing" 
+                      attribute="disabled" 
+                      boolean="true"
+                      inverted="true"/>  
+            <xul:observes type="dataremote"
+                      key="faceplate.paused" 
+                      attribute="hidden" 
+                      boolean="true"
+                      inverted="false"/>  
+          </xul:sb-clickhold-button>
+          
+          <xul:sb-clickhold-button id="sb-player-pause-button-resume" sbid="resume" 
+                    class="sb-player-pause-button-resume sb-player-button" 
+                    oncommand="onPlay();" 
+                    tooltiptext="&tooltip.control.resume;" 
+                    xbl:inherits="label,position,popupanchor,popupalign">
+            
+            <xul:observes type="dataremote"
+                      key="faceplate.playing" 
+                      attribute="disabled" 
+                      boolean="true"
+                      inverted="true"/>  
+            <xul:observes type="dataremote"
+                      key="faceplate.paused" 
+                      attribute="hidden" 
+                      boolean="true"
+                      inverted="true"/>  
+          </xul:sb-clickhold-button>
+          
+        </xul:stack>
+      </xul:hbox>
+    </content>
 
   <implementation>
 
     <constructor>
       <![CDATA[
-        // Create and bind the data remotes
-        this.remote_playing = SB_NewDataRemote( "faceplate.playing", null );
-        this.remote_paused = SB_NewDataRemote( "faceplate.paused", null );
-
-        this.on_state_change = { 
-          _that: null, 
-          observe: function( aSubject, aTopic, aData ) { this._that.onStateChange(); } 
-        };
-        this.on_state_change._that = this;
-        
-        this.remote_playing.bindObserver(this.on_state_change, false);
-        this.remote_paused.bindObserver(this.on_state_change, false);
-
       ]]>
     </constructor>
     <destructor>
       <![CDATA[
-        if (this.remote_playing) {
-          this.remote_playing.unbind();
-          this.remote_playing = null;
-          this.on_state_change._that = null;
-          this.on_state_change = null;
-        }
-        if (this.remote_paused) {
-          this.remote_paused.unbind();
-          this.remote_paused = null;
-          this.on_state_change._that = null;
-          this.on_state_change = null;
-        }
       ]]>
     </destructor>
 
     <field name="pause">document.getAnonymousElementByAttribute(this, 'sbid', 'pause');</field>
     <field name="resume">document.getAnonymousElementByAttribute(this, 'sbid', 'resume');</field>
 
-    <method name="onStateChange">
-      <body>
-        <![CDATA[
-          if (!this.remote_playing.boolValue) {
-            // if we are not playing, disable both buttons, pause button will be made visible by default
-            this.pause.setAttribute("disabled", "true");
-            this.resume.setAttribute("disabled", "true");
-          } else {
-            // otherwise enable both buttons
-            this.pause.removeAttribute("disabled");
-            this.resume.removeAttribute("disabled");
-          }
-          if (this.remote_paused.boolValue) {
-            // if we are paused (which implies that our buttons have been enabled), show only the resume button
-            this.pause.removeAttribute("hidden");
-            this.resume.setAttribute("hidden", "true");
-          } else {
-            // otherwise show the pause button. if the core is actually stopped, then the pause button will have been disabled
-            this.pause.setAttribute("hidden", "true");
-            this.resume.removeAttribute("hidden");
-          }
-        ]]>
-      </body>
-    </method>
-
     <method name="onPause">
       <body>
         this.playbackPause();
+      </body>
+    </method>
+
+    <method name="onPlay">
+      <body>
+        this.playbackPlay();
       </body>
     </method>
 
@@ -954,26 +975,33 @@
 
   <binding id="stop-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
   
-   <content>
-     <xul:stack xbl:inherits="class=class" >
-       <xul:sb-clickhold-button sbid="stop" class="sb-player-stop-button-stop sb-player-button" oncommand="onStop();" label="&menu.control.stop.button;"/>
-     </xul:stack>
-   </content>
+    <content>
+      <xul:hbox id="sb-player-stop-button" flex="1" xbl:inherits="hidden,class">
+      
+        <xul:sb-clickhold-button id="sb-player-stop-button-stop" sbid="stop" 
+                  class="sb-player-stop-button-stop sb-player-button" 
+                  oncommand="onStop();" 
+                  tooltiptext="&tooltip.control.stop;" 
+                  xbl:inherits="label,position,popupanchor,popupalign">
+          
+          <xul:observes type="dataremote"
+                    key="faceplate.playing" 
+                    attribute="disabled" 
+                    boolean="true"
+                    inverted="true" />  
+        </xul:sb-clickhold-button>
+        
+      </xul:hbox>
+    </content>
 
   <implementation>
 
     <constructor>
       <![CDATA[
-        // Create and bind the data remotes
-        this.bindstop = SBDataBindElementAttribute( "faceplate.playing", this.stop, "disabled", true, false);
       ]]>
     </constructor>
     <destructor>
       <![CDATA[
-        if (this.bindstop) {
-          this.bindstop.unbind();
-          this.bindstop = null;
-        }
       ]]>
     </destructor>
 
@@ -989,30 +1017,37 @@
  
   </binding>
 
+
+
   <binding id="playpause-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
   
-   <content>
-     <xul:sb-clickhold-button sbid="play" 
-                         class="sb-player-play-button-play sb-player-button" 
-                         oncommand="onPlayPause(event.target);" 
-                         tooltiptext="&tooltip.control.play;" 
-                         xbl:inherits="position,popupanchor,popupalign"
-                         onmenushowing="syncMenus();">
-       <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
-       <xul:menuitem id="menu_pause" class="menuitem-iconic" label="&menu.control.pause.button;"/>
-       <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
-     </xul:sb-clickhold-button>
-     <xul:sb-clickhold-button sbid="pause" 
-                         class="sb-player-pause-button-pause sb-player-button" 
-                         oncommand="onPlayPause(event.target);" 
-                         tooltiptext="&tooltip.control.pause;" 
-                         xbl:inherits="position,popupanchor,popupalign"
-                         onmenushowing="syncMenus();">
-       <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
-       <xul:menuitem id="menu_pause" class="menuitem-iconic" label="&menu.control.pause.button;"/>
-       <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
-     </xul:sb-clickhold-button>
-   </content>
+    <content>
+      <xul:hbox id="sb-player-playpause-button" flex="1" xbl:inherits="hidden,class">
+      
+        <xul:sb-clickhold-button id="sb-player-playpause-button-play" sbid="play" 
+                            class="sb-player-playpause-button-play sb-player-button" 
+                            oncommand="onPlayPause(event.target);" 
+                            tooltiptext="&tooltip.control.play;" 
+                            xbl:inherits="label,position,popupanchor,popupalign"
+                            onmenushowing="syncMenus();">
+          <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
+          <xul:menuitem id="menu_pause" class="menuitem-iconic" label="&menu.control.pause.button;"/>
+          <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
+        </xul:sb-clickhold-button>
+        
+        <xul:sb-clickhold-button id="sb-player-playpause-button-pause" sbid="pause" 
+                            class="sb-player-playpause-button-pause sb-player-button" 
+                            oncommand="onPlayPause(event.target);" 
+                            tooltiptext="&tooltip.control.pause;" 
+                            xbl:inherits="label,position,popupanchor,popupalign"
+                            onmenushowing="syncMenus();">
+          <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
+          <xul:menuitem id="menu_pause" class="menuitem-iconic" label="&menu.control.pause.button;"/>
+          <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
+        </xul:sb-clickhold-button>
+        
+      </xul:hbox>
+    </content>
 
   <implementation>
 
@@ -1126,20 +1161,81 @@
 
 
 
+  <!-- CONTROL PANE BUTTONS BLOCK -->
 
+  <binding id="control-buttons">
 
-  <!-- ARTIST DISPLAY -->
-
-
-
-
-  <binding id="artist-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
+    <content>
+      <xul:hbox id="sb-player-control-buttons" flex="1">
+        <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>
+        <!-- Bonus Buttons!
+          <sb-player-pause-button id="songbird_btn_pause" popupanchor="topleft" popupalign="bottomleft"/>
+          <sb-player-play-button id="songbird_btn_play" popupanchor="topleft" popupalign="bottomleft"/>
+          <sb-player-stop-button id="songbird_btn_stop" popupanchor="topleft" popupalign="bottomleft"/>
+        -->
+        <sb-player-playpause-button id="songbird_btn_play_pause" popupanchor="topleft" popupalign="bottomleft"/>
+        <sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" /> 
+      </xul:hbox>
+    </content>
   
+    <implementation>
+      <constructor>
+      </constructor>
+    </implementation>
+ 
+  </binding>
+
+
+
+  <!-- TOTALTIME DISPLAY -->
+
+  <binding id="totaltime-label">
+  
+    <content>
+      <xul:hbox id="sb-player-totaltime-label" xbl:inherits="class,align,crop,disabled,flex">
+        <xul:label sbid="timelabel" xbl:inherits="class,align,crop,disabled,flex" mousethrough="never">
+          <xul:observes type="dataremote"
+                    key="metadata.length.str" 
+                    attribute="value"/>  
+        </xul:label>
+      </xul:hbox>
+    </content>
+
+    <handlers>
+      <handler event="mousedown" action="this.onTotalDown();"/>
+    </handlers>
+
+
   <implementation>
 
     <constructor>
-      this.data  = "metadata.artist";
+      <![CDATA[
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                    .getService(Components.interfaces.sbIPlaylistPlayback);
+
+        // Create and bind data remote
+        this.remote_showRemaining = SB_NewDataRemote( "faceplate.showremainingtime", null );
+      ]]>
     </constructor>
+    <destructor>
+      <![CDATA[
+        //SB_LOG("playerControls.js", "totaltime binding destructor");
+        this.remote_showRemaining = null;
+      ]]>
+    </destructor>
+
+    <method name="onTotalDown">
+      <body>
+        <![CDATA[
+          var len = this.gPPS.length;
+          if ( len > 0 )
+            this.remote_showRemaining.boolValue = !this.remote_showRemaining.boolValue;
+          // If you try to toggle it while it is zero, you lose the state.
+          else
+            this.remote_showRemaining.boolValue = false;
+        ]]>
+      </body>
+    </method>
 
    </implementation>
  
@@ -1147,10 +1243,24 @@
 
 
 
+  <!-- ARTIST DISPLAY -->
+
+
+  <binding id="artist-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
+  
+    <implementation>
+
+      <constructor>
+        this.data  = "metadata.artist";
+      </constructor>
+
+    </implementation>
+ 
+  </binding>
+
+
 
   <!-- TITLE DISPLAY -->
-
-
 
 
   <binding id="title-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
@@ -1221,10 +1331,7 @@
 
 
 
-
   <!-- ALBUM DISPLAY -->
-
-
 
 
   <binding id="album-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
@@ -1314,7 +1421,9 @@
   <binding id="numplaylistitems-label" xextends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
     <content>
-      <xul:label sbid="label" xbl:inherits="id,class,value,align,crop,disabled,flex"/> 
+      <xul:hbox id="sb-player-numplaylistitems-label">
+        <xul:label id="sb-player-numplaylistitems-label-label" sbid="label" xbl:inherits="class,value,align,crop,disabled,flex"/> 
+      </xul:hbox>
     </content>
 
     <implementation>
@@ -1366,7 +1475,8 @@
               displayValue = SBString("faceplate.items", "items") + ': ' +
                   gBrowser.currentPlaylist.mediaListView.length;
             }
-            this.setAttribute('value', displayValue);
+            var label = document.getAnonymousElementByAttribute(this, "sbid", "label");
+            label.setAttribute('value', displayValue);
           }
           catch ( err )
           {
@@ -1394,7 +1504,7 @@
     <constructor>
       <![CDATA[
         this.setAttribute( "hidden", "true" );
-        this.data  = "backscan.status";
+        this.data = "backscan.status";
 
         // See if we want to pop our balloon tip.
         this.on_value_change = { 
@@ -1408,10 +1518,6 @@
     </constructor>
     <destructor>
       <![CDATA[
-        if (this.bindvisible) {
-          this.bindvisible.unbind();
-          this.bindvisible = null;
-        }
         if (this.bindvalue) {
           this.bindvalue.unbind();
           this.bindvalue = null;
@@ -1473,7 +1579,9 @@
   <binding id="curtrack-button">
     
     <content>
-      <xul:sb-clickhold-button oncommand="onCurrentTrack( );" class="sb-player-curtrack-button sb-player-button" tooltiptext="&tooltip.control.curtrack;"/>
+      <xul:hbox id="sb-player-curtrack-button" xbl:inherits="hidden,class">
+        <xul:sb-clickhold-button id="sb-player-curtrack-button-button" oncommand="onCurrentTrack( );" class="sb-player-curtrack-button sb-player-button" tooltiptext="&tooltip.control.curtrack;" xbl:inherits="label,position,popupanchor,popupalign"/>
+      </xul:hbox>
     </content>
     
     <implementation>
@@ -1546,7 +1654,7 @@
    
   <!-- TOGGLE JUMP TO WINDOW -->
   
-  <binding id="jumpto-button" extends="chrome://global/content/bindings/button.xml#button">
+  <binding id="jumpto-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
     
     <handlers>
       <handler event="command" action="this.onCommand();"/>
@@ -1582,7 +1690,7 @@
 
   <!-- ENTER FULLSCREEN MODE (WHEN PLAYING VIDEO) -->
   
-  <binding id="fullscreen-button" extends="chrome://global/content/bindings/button.xml#button">
+  <binding id="fullscreen-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
     
     <handlers>
       <handler event="command" action="this.onCommand();"/>

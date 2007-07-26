@@ -141,11 +141,11 @@ progressmeter.sb-player-seek-slider > .progress-remainder
 {
   margin: -1px 2px 0px 0px;
 }
-.sb-player-shuffle-button-shuffleoff > button
+.sb-player-shuffle-button-off > button
 {
   list-style-image: url(chrome://songbird/skin/faceplate/shuffle-off.png);
 }
-.sb-player-shuffle-button-shuffleon > button
+.sb-player-shuffle-button-on > button
 {
   list-style-image: url(chrome://songbird/skin/faceplate/shuffle-on.png);
 }

@@ -180,6 +180,10 @@ sb-player-stop-button {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#stop-button") !important;
 }
 
+sb-player-control-buttons {
+  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#control-buttons") !important;
+}
+
 sb-player-artist-label {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#artist-label") !important;
 }

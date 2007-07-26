@@ -179,7 +179,7 @@ sbMetadataJob::FactoryInit()
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDataStatusDisplay->Init( NS_LITERAL_STRING("songbird.backscan.status"),
+  rv = mDataStatusDisplay->Init( NS_LITERAL_STRING("backscan.status"),
                                  NS_LITERAL_STRING("") );
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -187,7 +187,7 @@ sbMetadataJob::FactoryInit()
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDataCurrentMetadataJobs->Init( NS_LITERAL_STRING("songbird.backscan.concurrent"),
+  rv = mDataCurrentMetadataJobs->Init( NS_LITERAL_STRING("backscan.concurrent"),
                                        NS_LITERAL_STRING("") );
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -219,6 +219,7 @@ sbMetadataJob::FactoryInit()
   }
   scanning.AppendLiteral(" ... ");
   mStatusDisplayString = scanning;
+  mDataStatusDisplay->SetStringValue( mStatusDisplayString );
   return NS_OK;
 }
 

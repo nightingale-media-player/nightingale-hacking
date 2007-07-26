@@ -99,9 +99,15 @@
           <vbox id="control_left_box" pack="center" align="center">
             <!-- PLAY BUTTONS -->
             <hbox id="playbutton_box" pack="center" align="center">
-              <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>
-              <sb-player-playpause-button id="songbird_btn_play_pause" popupanchor="topleft" popupalign="bottomleft"/>
-              <sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" /> 
+              <sb-player-control-buttons id="songbird_control_btns" class="sb-player-button"/>
+              <!-- Possible Control Buttons:
+                <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>
+                <sb-player-pause-button id="songbird_btn_pause" popupanchor="topleft" popupalign="bottomleft"/>
+                <sb-player-play-button id="songbird_btn_play" popupanchor="topleft" popupalign="bottomleft"/>
+                <sb-player-stop-button id="songbird_btn_stop" popupanchor="topleft" popupalign="bottomleft"/>
+                <sb-player-playpause-button id="songbird_btn_play_pause" popupanchor="topleft" popupalign="bottomleft"/>
+                <sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" /> 
+              -->
             </hbox>            
           </vbox>
 
