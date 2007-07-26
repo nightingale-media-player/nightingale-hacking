@@ -40,19 +40,15 @@ function readCPPProps() {
   
   // Get the root of the source tree
   // XXX Mook: This sucks :(
-  var file_compiled = appDir.parent;
-  // XXX Mook: mac paths are a bit different
+  var topsrcdir = appDir.parent.parent;
+  // mac paths are a bit different
   if (getPlatform() == "Darwin") {
-    file_compiled = appDir.parent.parent.parent.parent;
+    topsrcdir = appDir.parent.parent.parent.parent;
   }
   // Get to the C++ file we want to read
-  var file = file_compiled.clone();
+  var file = topsrcdir.clone();
   for each (var part in ["components", "property", "src", "sbStandardProperties.h"] )
     file.append(part);
-  if (!file.exists()) {
-    log("WARNING: cannot find C++ input file");
-    return false;
-  }
 
   var istream = Components.classes["@mozilla.org/network/file-input-stream;1"]
                         .createInstance(Components.interfaces.nsIFileInputStream);
