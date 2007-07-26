@@ -185,9 +185,16 @@ sbLocalDatabaseAsyncGUIDArray::SetAsyncListener(sbILocalDatabaseAsyncGUIDArrayLi
   nsAutoMonitor monitor(mSyncMonitor);
 
   nsresult rv;
+  nsCOMPtr<nsIWeakReference> weakListener =
+    do_GetWeakReference(aListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mWeakListenerWrapper = new sbWeakAsyncListenerWrapper(weakListener);
+  NS_ENSURE_TRUE(mWeakListenerWrapper, NS_ERROR_OUT_OF_MEMORY);
+
   rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                             NS_GET_IID(sbILocalDatabaseAsyncGUIDArrayListener),
-                            aListener,
+                            mWeakListenerWrapper,
                             NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(mProxiedListener));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -201,7 +208,15 @@ sbLocalDatabaseAsyncGUIDArray::GetAsyncListener(sbILocalDatabaseAsyncGUIDArrayLi
   NS_ENSURE_ARG_POINTER(aListener);
   nsAutoMonitor monitor(mSyncMonitor);
 
-  NS_IF_ADDREF(*aListener = mProxiedListener);
+  if (mWeakListenerWrapper) {
+    nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> listener =
+      mWeakListenerWrapper->GetListener();
+    NS_IF_ADDREF(*aListener = listener);
+  }
+  else {
+    *aListener = nsnull;
+  }
+
   return NS_OK;
 }
 
@@ -712,5 +727,79 @@ CommandProcessor::Run()
   TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Background Thread End", mFriendArray));
 
   return NS_OK;
+}
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper,
+                              sbILocalDatabaseAsyncGUIDArrayListener)
+
+sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::sbWeakAsyncListenerWrapper(nsIWeakReference* aWeakReference) :
+  mWeakListener(aWeakReference)
+{
+  NS_ASSERTION(mWeakListener, "aWeakReference is null");
+  MOZ_COUNT_CTOR(sbWeakAsyncListenerWrapper);
+}
+
+sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::~sbWeakAsyncListenerWrapper()
+{
+  MOZ_COUNT_DTOR(sbWeakAsyncListenerWrapper);
+}
+
+already_AddRefed<sbILocalDatabaseAsyncGUIDArrayListener>
+sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::GetListener()
+{
+  nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> strongListener =
+    do_QueryReferent(mWeakListener);
+  if (!strongListener) {
+    return nsnull;
+  }
+
+  sbILocalDatabaseAsyncGUIDArrayListener* listenerPtr = strongListener;
+  NS_ADDREF(listenerPtr);
+  return listenerPtr;
+}
+
+#define SB_TRY_NOTIFY(call)                                   \
+  nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> listener = \
+    GetListener();                                            \
+  if (listener) {                                             \
+    return listener->call;                                    \
+  }                                                           \
+  return NS_OK;
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::OnGetLength(PRUint32 aLength,
+                                                                       nsresult aResult)
+{
+  SB_TRY_NOTIFY(OnGetLength(aLength, aResult))
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::OnGetGuidByIndex(PRUint32 aIndex,
+                                                                            const nsAString& aGUID,
+                                                                            nsresult aResult)
+{
+  SB_TRY_NOTIFY(OnGetGuidByIndex(aIndex, aGUID, aResult))
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::OnGetSortPropertyValueByIndex(PRUint32 aIndex,
+                                                                                         const nsAString& aPropertySortValue,
+                                                                                         nsresult aResult)
+{
+  SB_TRY_NOTIFY(OnGetSortPropertyValueByIndex(aIndex, aPropertySortValue, aResult))
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::OnGetMediaItemIdByIndex(PRUint32 aIndex,
+                                                                                   PRUint32 aMediaItemId,
+                                                                                   nsresult aResult)
+{
+  SB_TRY_NOTIFY(OnGetMediaItemIdByIndex(aIndex, aMediaItemId, aResult))
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::sbWeakAsyncListenerWrapper::OnStateChange(PRUint32 aState)
+{
+  SB_TRY_NOTIFY(OnStateChange(aState))
 }
 

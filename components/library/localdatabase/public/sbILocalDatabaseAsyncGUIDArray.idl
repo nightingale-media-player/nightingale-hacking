@@ -46,7 +46,7 @@ interface sbILocalDatabaseAsyncGUIDArrayListener : nsISupports
                         in nsresult aResult);
 
   void onGetSortPropertyValueByIndex(in unsigned long aIndex,
-                                     in AString aGUID,
+                                     in AString aPropertySortValue,
                                      in nsresult aResult);
 
   void onGetMediaItemIdByIndex(in unsigned long aIndex,

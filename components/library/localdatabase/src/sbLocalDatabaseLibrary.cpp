@@ -1722,44 +1722,6 @@ sbLocalDatabaseLibrary::GetPropertyCache(sbILocalDatabasePropertyCache** aProper
  * See sbILocalDatabaseLibrary
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetPropertiesForGuid(const nsAString& aGuid,
-                                             sbILocalDatabaseResourcePropertyBag** aPropertyBag)
-{
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetPropertiesForGuid(%s)", this,
-         NS_LossyConvertUTF16toASCII(aGuid).get()));
-  NS_ENSURE_ARG_POINTER(aPropertyBag);
-
-  nsresult rv;
-
-  const PRUnichar** guids = new const PRUnichar*[1];
-  guids[0] = PromiseFlatString(aGuid).get();
-
-  PRUint32 count;
-  sbILocalDatabaseResourcePropertyBag** bags;
-  rv = mPropertyCache->GetProperties(guids, 1, &count, &bags);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  *aPropertyBag = nsnull;
-  if (count > 0 && bags[0]) {
-    NS_ADDREF(*aPropertyBag = bags[0]);
-  }
-
-  NS_Free(bags);
-  delete[] guids;
-
-  if (*aPropertyBag) {
-    return NS_OK;
-  }
-  else {
-    return NS_ERROR_NOT_AVAILABLE;
-  }
-
-}
-
-/**
- * See sbILocalDatabaseLibrary
- */
-NS_IMETHODIMP
 sbLocalDatabaseLibrary::CreateQuery(sbIDatabaseQuery** _retval)
 {
   return MakeStandardQuery(_retval);

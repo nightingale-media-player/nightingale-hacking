@@ -176,6 +176,11 @@
     this._splitters[s].removeEventListener("mousedown", this._onFilterSplitterDown, true);
     this._splitters[s].removeEventListener("mouseup", this._onFilterSplitterUp, true);
   }
+
+  // Break the cycle between ourselves and the tree view
+  var mediaListViewTreeView =
+    this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
+  mediaListViewTreeView.observer = null;
 ]]>
       </destructor>
 
@@ -474,20 +479,7 @@
   if (parseInt(resize) > 0) {
     this.height = resize;
   }
-
-/* SK: I can't find any reference to "previousSibling" in the code base?
-  if (this.previousSibling) {
-    if ( collapse > 0 )
-    {
-      this.previousSibling.setAttribute( "state", "collapsed" );
-    }
-    else if ( collapse != null )
-    {
-      this.previousSibling.setAttribute( "state", "open" );
-    }
-  }
-*/
-      ]]>
+]]>
         </body>
       </method>
 

@@ -136,8 +136,9 @@ sbLocalDatabaseTreeView::SelectionIndexEnumeratorCallback(PRUint32 aRow,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS6(sbLocalDatabaseTreeView,
+NS_IMPL_ISUPPORTS7(sbLocalDatabaseTreeView,
                    nsIClassInfo,
+                   nsISupportsWeakReference,
                    nsITreeView,
                    sbILocalDatabaseAsyncGUIDArrayListener,
                    sbILocalDatabaseGUIDArrayListener,
@@ -165,6 +166,7 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mFakeAllRow(PR_FALSE),
  mSelectionChanging(PR_FALSE)
 {
+  MOZ_COUNT_CTOR(sbLocalDatabaseTreeView);
 #ifdef PR_LOGGING
   if (!gLocalDatabaseTreeViewLog) {
     gLocalDatabaseTreeViewLog = PR_NewLogModule("sbLocalDatabaseTreeView");
@@ -174,6 +176,7 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
 
 sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
 {
+  MOZ_COUNT_DTOR(sbLocalDatabaseTreeView);
 }
 
 nsresult
@@ -208,7 +211,11 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
   rv = mArray->SetListener(listener);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mArray->SetAsyncListener(this);
+  nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> asyncListener =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseTreeView*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mArray->SetAsyncListener(asyncListener);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mArray->GetFetchSize(&mFetchSize);
@@ -294,6 +301,12 @@ sbLocalDatabaseTreeView::Rebuild()
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+void
+sbLocalDatabaseTreeView::ClearMediaListView()
+{
+  mMediaListView = nsnull;
 }
 
 /**
@@ -526,21 +539,18 @@ sbLocalDatabaseTreeView::GetPropertyBag(const nsAString& aGuid,
 
   // Since we've linked a property cache with the array, this guid
   // should be cached
-  const PRUnichar** guids = new const PRUnichar*[1];
-  nsAutoString guid(aGuid);
-  guids[0] = guid.get();
+  const PRUnichar* guid = aGuid.BeginReading();
 
   PRUint32 count = 0;
   sbILocalDatabaseResourcePropertyBag** bags = nsnull;
-  rv = mPropertyCache->GetProperties(guids, 1, &count, &bags);
-  delete[] guids;
+  rv = mPropertyCache->GetProperties(&guid, 1, &count, &bags);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
   if (count == 1 && bags[0]) {
     bag = bags[0];
   }
-  NS_Free(bags);
+  NS_FREE_XPCOM_ISUPPORTS_POINTER_ARRAY(count, bags);
 
   if (!bag) {
     NS_WARNING("Could not find properties for guid!");
@@ -803,6 +813,8 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
   // If we are linked to a media list view, use its interfaces to manage
   // the sort
   if (mListType != eDistinct) {
+    NS_ENSURE_STATE(mMediaListView);
+
     // TODO: Get the sort profile from the property manager, if any
     nsCOMPtr<sbIMutablePropertyArray> sort =
       do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
@@ -943,8 +955,12 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
     rv = mRealSelection->SetSelectEventsSuppressed(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Allocate an array of the guids we want
-    const PRUnichar** guids = new const PRUnichar*[length];
+    // Build an array of guids we want.  We build both a string array and a
+    // pointer array because we need the former to make sure the pointers
+    // remain valid.
+    nsTArray<nsString> guids(length);
+    nsTArray<const PRUnichar*> guidArray(length);
+
     for (PRUint32 i = 0; i < length; i++) {
       PRUint32 row = i + start;
       nsAutoString guid;
@@ -954,13 +970,6 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
         // If this fails, this means that the underlying array has changed and
         // we don't know it yet.  This is pretty bad and I would like to
         // figure out a nicer way to detect besides just handing the error.
-
-        // Free the memory in the guid array up to the last guid that was
-        // allocated, then delete the array itself.
-        for (PRUint32 j = 0; j < i; j++) {
-          delete guids[j];
-        }
-        delete[] guids;
 
         // Mark this page as not cached
         rv = SetPageCachedStatus(aIndex, eNotCached);
@@ -986,8 +995,8 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
         rv = GetUniqueIdForRow(row, id);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        nsAutoString guid;
-        if (mSelectionList.Get(id, &guid)) {
+        nsAutoString selectedGuid;
+        if (mSelectionList.Get(id, &selectedGuid)) {
           TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetGuidByIndex() - "
                  "restoring selection %s at %d", this,
                  NS_ConvertUTF16toUTF8(id).get(), row));
@@ -1002,7 +1011,11 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
         }
       }
 
-      guids[i] = ToNewUnicode(guid);
+      nsString* addedGuid = guids.AppendElement(guid);
+      NS_ENSURE_TRUE(addedGuid, NS_ERROR_OUT_OF_MEMORY);
+
+      const PRUnichar** addedPtr = guidArray.AppendElement(guid.get());
+      NS_ENSURE_TRUE(addedPtr, NS_ERROR_OUT_OF_MEMORY);
     }
 
     // Unsuppress select events
@@ -1013,28 +1026,25 @@ sbLocalDatabaseTreeView::OnGetGuidByIndex(PRUint32 aIndex,
 
     PRUint32 count = 0;
     sbILocalDatabaseResourcePropertyBag** bags = nsnull;
-    rv = mPropertyCache->GetProperties(guids, length, &count, &bags);
-    // Note that we check rv after we free guids array
-
-    // Free the array and its contents
-    for (PRUint32 i = 0; i < length; i++) {
-      delete guids[i];
-    }
-    delete[] guids;
+    rv = mPropertyCache->GetProperties(guidArray.Elements(), length, &count, &bags);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Cache each of the returned property bags
     for (PRUint32 i = 0; i < count; i++) {
       if (bags[i]) {
         PRBool success = mRowCache.Put(i + start, bags[i]);
-        NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+        if (!success) {
+          NS_FREE_XPCOM_ISUPPORTS_POINTER_ARRAY(count, bags);
+          return NS_ERROR_OUT_OF_MEMORY;
+        }
 
         // Now that we have the real data we can remove our temp entry from
         // mDirtyRowCache.
         mDirtyRowCache.Remove(i + start);
       }
     }
-    NS_Free(bags);
+
+    NS_FREE_XPCOM_ISUPPORTS_POINTER_ARRAY(count, bags);
 
     TRACE(("sbLocalDatabaseTreeView[0x%.8x] - OnGetGuidByIndex - "
            "InvalidateRange(%d, %d)", this, start, end));
@@ -1788,6 +1798,7 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
                                      const nsAString& value)
 {
   NS_ENSURE_ARG_POINTER(col);
+  NS_ENSURE_STATE(mMediaListView);
 
   nsresult rv;
 #ifdef PR_LOGGING
@@ -1963,8 +1974,6 @@ sbLocalDatabaseTreeView::GetNextRowIndexForKeyNavigation(const nsAString& aKeySt
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::SetObserver(sbIMediaListViewTreeViewObserver* aObserver)
 {
-  NS_ENSURE_ARG_POINTER(aObserver);
-
   mObserver = aObserver;
 
   return NS_OK;
@@ -1988,6 +1997,7 @@ sbLocalDatabaseTreeView::GetSelectedMediaItems(nsISimpleEnumerator** aSelection)
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetSelectedMediaItems()", this));
 
   NS_ENSURE_ARG_POINTER(aSelection);
+  NS_ENSURE_STATE(mMediaListView);
 
   nsCOMPtr<sbIMediaList> list;
   nsresult rv = mMediaListView->GetMediaList(getter_AddRefs(list));
@@ -2118,6 +2128,7 @@ NS_IMETHODIMP
 sbLocalDatabaseTreeView::RemoveSelectedMediaItems()
 {
   NS_ENSURE_STATE(mListType != eDistinct);
+  NS_ENSURE_STATE(mMediaListView);
 
   nsresult rv;
 
@@ -2141,6 +2152,7 @@ sbLocalDatabaseTreeView::GetCurrentMediaItem(sbIMediaItem** aCurrentMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aCurrentMediaItem);
   NS_ENSURE_STATE(mRealSelection);
+  NS_ENSURE_STATE(mMediaListView);
 
   PRInt32 currentIndex;
   nsresult rv = mRealSelection->GetCurrentIndex(&currentIndex);

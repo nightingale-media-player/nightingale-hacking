@@ -77,6 +77,14 @@ ArrayListener.prototype.onStateChange = function(state)
 {
 }
 
+ArrayListener.prototype.QueryInterface = function(iid) {
+  if (!iid.equals(Ci.sbILocalDatabaseAsyncGUIDArrayListener) &&
+      !iid.equals(Ci.nsISupportsWeakReference) &&
+      !iid.equals(Ci.nsISupports))
+    throw Cr.NS_ERROR_NO_INTERFACE;
+  return this;
+};
+
 function doTest(array) {
 
   switch(phases[currentPhase]) {

@@ -191,6 +191,10 @@ sbLocalDatabaseMediaListView::~sbLocalDatabaseMediaListView()
   if (mCascadeFilterSet) {
     mCascadeFilterSet->ClearMediaListView();
   }
+
+  if (mTreeView) {
+    mTreeView->ClearMediaListView();
+  }
 }
 
 nsresult

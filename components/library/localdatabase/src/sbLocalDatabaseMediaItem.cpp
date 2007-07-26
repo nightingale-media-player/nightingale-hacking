@@ -197,26 +197,26 @@ sbLocalDatabaseMediaItem::GetPropertyBag()
 
   //XXX: If cache is invalidated, refresh now?
   PRUint32 count = 0;
-  const PRUnichar** guids = new const PRUnichar*[1];
-  sbILocalDatabaseResourcePropertyBag** bags;
+  const PRUnichar* guid = mGuid.get();
 
-  guids[0] = PromiseFlatString(mGuid).get();
+  sbILocalDatabaseResourcePropertyBag** bags;
 
   {
     nsAutoLock cacheLock(mPropertyCacheLock);
-    rv = mPropertyCache->GetProperties(guids, 1, &count, &bags);
+    rv = mPropertyCache->GetProperties(&guid,
+                                       1,
+                                       &count,
+                                       &bags);
   }
 
   if (NS_SUCCEEDED(rv)) {
     NS_ASSERTION(count == 1, "GetProperties returned too many bags");
     if (count > 0 && bags[0]) {
-      mPropertyBag = dont_AddRef(bags[0]);
+      mPropertyBag = bags[0];
     }
-
-    NS_Free(bags);
   }
 
-  delete[] guids;
+  NS_FREE_XPCOM_ISUPPORTS_POINTER_ARRAY(count, bags);
 
   return rv;
 }

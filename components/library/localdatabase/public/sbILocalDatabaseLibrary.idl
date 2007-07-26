@@ -70,8 +70,6 @@ interface sbILocalDatabaseLibrary : nsISupports
 
   unsigned long getMediaItemIdForGuid(in AString aGuid);
 
-  sbILocalDatabaseResourcePropertyBag getPropertiesForGuid(in AString aGuid);
-
   void NotifyListenersItemUpdated(in sbIMediaItem aItem,
                                   in sbIPropertyArray aProperties);
 

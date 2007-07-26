@@ -30,6 +30,7 @@
 #include <sbILocalDatabaseAsyncGUIDArray.h>
 #include <sbILocalDatabaseGUIDArray.h>
 
+#include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsIObserver.h>
 #include <nsIRunnable.h>
@@ -39,6 +40,7 @@
 #include <prmon.h>
 
 class nsIThread;
+class nsIWeakReference;
 
 // These need compilation unit scoping so both classes can use them
 enum CommandType {
@@ -81,8 +83,26 @@ public:
 
   ~sbLocalDatabaseAsyncGUIDArray();
 private:
+  class sbWeakAsyncListenerWrapper : public sbILocalDatabaseAsyncGUIDArrayListener
+  {
+  public:
+    NS_DECL_ISUPPORTS
+    NS_DECL_SBILOCALDATABASEASYNCGUIDARRAYLISTENER
+
+    sbWeakAsyncListenerWrapper(nsIWeakReference* aWeakListener);
+    ~sbWeakAsyncListenerWrapper();
+
+    already_AddRefed<sbILocalDatabaseAsyncGUIDArrayListener> GetListener();
+
+  private:
+    nsCOMPtr<nsIWeakReference> mWeakListener;
+  };
+
   // GUID array this class wraps
   nsCOMPtr<sbILocalDatabaseGUIDArray> mInner;
+
+  // The weak listener wrapper
+  nsRefPtr<sbWeakAsyncListenerWrapper> mWeakListenerWrapper;
 
   // Listener that gets notified when commands complete
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArrayListener> mProxiedListener;

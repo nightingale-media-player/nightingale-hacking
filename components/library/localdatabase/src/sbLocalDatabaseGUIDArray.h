@@ -44,6 +44,7 @@
 #include <sbIMediaItem.h>
 
 class nsIURI;
+class nsIWeakReference;
 class sbILibrary;
 class sbIPropertyManager;
 
@@ -203,7 +204,7 @@ private:
   PRUint32 mLengthX;
 
   // Our listener
-  nsCOMPtr<sbILocalDatabaseGUIDArrayListener> mListener;
+  nsCOMPtr<nsIWeakReference> mListener;
 
   // Paired property cache
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;

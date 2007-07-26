@@ -36,6 +36,7 @@
 #include <nsCOMPtr.h>
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
+#include <nsIWeakReference.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
 #include <prprf.h>
@@ -85,7 +86,6 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
 
 sbLocalDatabaseGUIDArray::~sbLocalDatabaseGUIDArray()
 {
-  Invalidate();
 }
 
 NS_IMETHODIMP
@@ -209,13 +209,31 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetListener(sbILocalDatabaseGUIDArrayListener** aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
-  NS_IF_ADDREF(*aListener = mListener);
+
+  if (mListener) {
+    nsresult rv;
+    nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener = 
+      do_QueryReferent(mListener, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (listener) {
+      NS_ADDREF(*aListener = listener);
+      return NS_OK;
+    }
+  }
+
+  *aListener = nsnull;
   return NS_OK;
 }
+
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::SetListener(sbILocalDatabaseGUIDArrayListener* aListener)
 {
-  mListener = aListener;
+  nsresult rv;
+
+  mListener = do_GetWeakReference(aListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -431,7 +449,14 @@ sbLocalDatabaseGUIDArray::Invalidate()
   }
 
   if (mListener) {
-    mListener->OnBeforeInvalidate();
+    nsresult rv;
+    nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener =
+      do_QueryReferent(mListener, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (listener) {
+      listener->OnBeforeInvalidate();
+    }
   }
 
   mCache.Clear();

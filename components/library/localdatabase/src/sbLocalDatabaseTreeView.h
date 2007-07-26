@@ -41,6 +41,7 @@
 #include <nsClassHashtable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <nsWeakReference.h>
 
 class nsISupportsArray;
 class nsITreeBoxObject;
@@ -55,7 +56,8 @@ class sbIPropertyArray;
 class sbIPropertyManager;
 class sbLocalDatabaseMediaListView;
 
-class sbLocalDatabaseTreeView : public nsIClassInfo,
+class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
+                                public nsIClassInfo,
                                 public nsITreeView,
                                 public sbILocalDatabaseAsyncGUIDArrayListener,
                                 public sbILocalDatabaseGUIDArrayListener,
@@ -85,6 +87,8 @@ public:
                 sbIPropertyArray* aCurrentSort);
 
   nsresult Rebuild();
+
+  void ClearMediaListView();
 
 protected:
   nsresult TokenizeProperties(const nsAString& aProperties,
@@ -164,8 +168,9 @@ private:
   // Type of media list this tree view is of
   MediaListType mListType;
 
-  // The media list view that this tree view is a view of
-  nsRefPtr<sbLocalDatabaseMediaListView> mMediaListView;
+  // The media list view that this tree view is a view of.  This pointer is
+  // set to null when the view is destroyed.
+  sbLocalDatabaseMediaListView* mMediaListView;
 
   // The async guid array given to us by our view
   nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
