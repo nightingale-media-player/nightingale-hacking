@@ -159,7 +159,7 @@
     
     function onSetDefaultIcon(evt) {
       var icon = document.getElementById("bookmark.icon");
-      icon.value = "chrome://service-icons/skin/default.ico";
+      icon.value = "chrome://songbird/skin/icons/icon_bookmark.ico";
       validate();
     }
     

@@ -51,7 +51,7 @@ const Cr = Components.results;
 const CONTRACTID = "@songbirdnest.com/servicepane/bookmarks;1"
 const ROOTNODE = "SB:Bookmarks"
 const FOLDER_IMAGE = 'chrome://songbird/skin/icons/icon_folder.png';
-const BOOKMARK_IMAGE = 'chrome://service-icons/skin/default.ico';
+const BOOKMARK_IMAGE = 'chrome://songbird/skin/icons/icon_bookmark.ico';
 const BOOKMARK_DRAG_TYPE = 'text/x-sb-bookmark';
 const MOZ_URL_DRAG_TYPE = 'text/x-moz-url';
 
@@ -210,7 +210,7 @@ function sbBookmarks_migrateLegacyBookmarks() {
               node.name = bm.label;
             } else {
               // the bookmark does not exist. We need to create it
-              var icon = 'chrome://service-icons/skin/default.ico';
+              var icon = BOOKMARK_IMAGE;
               // only import the icon if its from the web
               if (bm.icon.match(/^http/)) {
                 icon = bm.icon;
