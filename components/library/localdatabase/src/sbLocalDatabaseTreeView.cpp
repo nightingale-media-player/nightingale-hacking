@@ -28,6 +28,7 @@
 
 #include <nsIAtom.h>
 #include <nsIAtomService.h>
+#include <nsIClassInfoImpl.h>
 #include <nsIDOMElement.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIStringEnumerator.h>

@@ -50,6 +50,7 @@
 #include <nsTArray.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <nsIClassInfoImpl.h>
 #include <nsINetUtil.h>
 #include <nsIUUIDGenerator.h>
 #include <nsIProgrammingLanguage.h>

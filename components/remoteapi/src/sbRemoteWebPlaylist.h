@@ -37,6 +37,7 @@
 #include <sbITabBrowser.h>
 
 #include <nsCOMPtr.h>
+#include <nsIClassInfo.h>
 #include <nsISecurityCheckedComponent.h>
 
 class sbRemoteWebPlaylist : public nsIClassInfo,

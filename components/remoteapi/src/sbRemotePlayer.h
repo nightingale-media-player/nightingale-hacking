@@ -40,6 +40,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
+#include <nsIClassInfo.h>
 #include <nsIDOMEventListener.h>
 #include <nsIGenericFactory.h>
 #include <nsISecurityCheckedComponent.h>

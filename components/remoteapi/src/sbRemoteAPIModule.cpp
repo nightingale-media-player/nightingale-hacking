@@ -29,6 +29,8 @@
 #include "sbRemotePlayer.h"
 #include "sbSecurityMixin.h"
 
+#include <nsIClassInfoImpl.h>
+
 #define SONGBIRD_REMOTEAPI_MODULENAME "Songbird Remote API Module"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteLibrary, Init)

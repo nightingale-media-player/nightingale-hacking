@@ -30,6 +30,7 @@
 #include <sbISecurityAggregator.h>
 #include <sbISecurityMixin.h>
 
+#include <nsIClassInfo.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsIStringEnumerator.h>
 #include <nsStringGlue.h>

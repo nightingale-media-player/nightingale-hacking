@@ -28,6 +28,7 @@
 
 #include <nsArrayUtils.h>
 #include <nsIClassInfo.h>
+#include <nsIClassInfoImpl.h>
 #include <nsIFile.h>
 #include <nsIFileURL.h>
 #include <nsIMutableArray.h>

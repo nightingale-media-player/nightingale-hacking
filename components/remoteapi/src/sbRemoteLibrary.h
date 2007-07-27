@@ -43,6 +43,7 @@
 #include <sbIWrappedMediaList.h>
 
 #include <nsAutoPtr.h>
+#include <nsIClassInfo.h>
 #include <nsIFile.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>

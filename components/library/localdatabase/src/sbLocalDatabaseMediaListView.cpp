@@ -29,6 +29,7 @@
 #include <DatabaseQuery.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
+#include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsITreeView.h>
 #include <nsIURI.h>

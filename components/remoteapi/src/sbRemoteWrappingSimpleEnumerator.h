@@ -31,6 +31,7 @@
 #include <sbISecurityMixin.h>
 #include <sbISecurityAggregator.h>
 
+#include <nsIClassInfo.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>

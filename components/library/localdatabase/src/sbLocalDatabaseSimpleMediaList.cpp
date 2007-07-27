@@ -27,6 +27,7 @@
 #include "sbLocalDatabaseSimpleMediaList.h"
 
 #include <nsIArray.h>
+#include <nsIClassInfoImpl.h>
 #include <nsIMutableArray.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISimpleEnumerator.h>

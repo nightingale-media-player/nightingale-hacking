@@ -35,6 +35,7 @@
 #include <sbISecurityAggregator.h>
 #include <sbIWrappedMediaItem.h>
 
+#include <nsIClassInfo.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>

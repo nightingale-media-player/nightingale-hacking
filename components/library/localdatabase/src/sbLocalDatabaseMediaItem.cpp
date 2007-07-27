@@ -33,6 +33,7 @@
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 
+#include <nsIClassInfoImpl.h>
 #include <nsIObserver.h>
 #include <nsIURIChecker.h>
 #include <nsIFileURL.h>

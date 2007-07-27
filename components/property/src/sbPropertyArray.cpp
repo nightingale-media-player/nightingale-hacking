@@ -29,6 +29,7 @@
 #include <nsArrayEnumerator.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISimpleEnumerator.h>
 #include <nsMemory.h>
