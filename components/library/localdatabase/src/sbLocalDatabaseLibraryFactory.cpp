@@ -26,6 +26,7 @@
 
 #include "sbLocalDatabaseLibraryFactory.h"
 
+#include <nsIConverterInputStream.h>
 #include <nsIFile.h>
 #include <nsIIOService.h>
 #include <nsILocalFile.h>
@@ -33,9 +34,10 @@
 #include <nsIPropertyBag2.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
+#include <nsIInputStream.h>
+#include <nsIUnicharInputStream.h>
 #include <nsIUUIDGenerator.h>
 #include <nsIWritablePropertyBag2.h>
-#include <nsIXMLHttpRequest.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbILibrary.h>
@@ -60,6 +62,8 @@
 
 #define PERMISSIONS_FILE      0644
 #define PERMISSIONS_DIRECTORY 0755
+
+#define CONVERTER_BUFFER_SIZE 8192
 
 sbLocalDatabaseLibraryFactory* gLibraryFactory = nsnull;
 
@@ -369,27 +373,37 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
   rv = query->SetDatabaseLocation(parentURI);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Load the schema file, and add each colon-newline delimited line into
-  // the query object.
-  nsCOMPtr<nsIXMLHttpRequest> request = 
-    do_CreateInstance(NS_XMLHTTPREQUEST_CONTRACTID, &rv);
+  nsCOMPtr<nsIURI> schemaURI;
+  rv = NS_NewURI(getter_AddRefs(schemaURI), NS_LITERAL_CSTRING(SCHEMA_URL));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Override the MIME type here so that the schema isn't sent to the XML
-  // parser by mistake.
-  rv = request->OverrideMimeType(NS_LITERAL_CSTRING("text/plain"));
+  nsCOMPtr<nsIInputStream> input;
+  rv = NS_OpenURI(getter_AddRefs(input), schemaURI);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = request->OpenRequest(NS_LITERAL_CSTRING("GET"),
-                            NS_LITERAL_CSTRING(SCHEMA_URL),
-                            PR_FALSE, EmptyString(), EmptyString());
+  nsCOMPtr<nsIConverterInputStream> converterStream =
+    do_CreateInstance("@mozilla.org/intl/converter-input-stream;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = request->Send(nsnull);
+  rv = converterStream->Init(input,
+                             "UTF-8",
+                             CONVERTER_BUFFER_SIZE,
+                             nsIConverterInputStream::
+                               DEFAULT_REPLACEMENT_CHARACTER);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString response;
-  rv = request->GetResponseText(response);
+  nsCOMPtr<nsIUnicharInputStream> unichar =
+    do_QueryInterface(converterStream, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 read;
+  nsString response;
+  rv = unichar->ReadString(PR_UINT32_MAX, response, &read);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ASSERTION(read, "Schema file zero bytes?");
+
+  rv = unichar->Close();
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING(colonNewline, ";\n");
