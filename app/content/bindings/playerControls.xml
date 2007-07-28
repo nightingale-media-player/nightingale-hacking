@@ -156,7 +156,7 @@
   <binding id="mute-button">
   
     <content>
-      <xul:hbox id="sb-player-mute-button" oncommand="onMute();">
+      <xul:hbox id="sb-player-mute-button" oncommand="onMute();" flex="1">
         <xul:sb-clickhold-button hidden="false" id="sb-player-mute-button-muteoff" class="sb-player-mute-button-muteoff sb-player-button" sbid="mute-off" tooltiptext="&tooltip.control.mute;" xbl:inherits="label,position,popupanchor,popupalign">
           <xul:observes type="dataremote"
                     key="faceplate.mute" 
@@ -869,7 +869,7 @@
   <binding id="play-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
   
     <content>
-      <xul:hbox id="sb-player-play-button" xbl:inherits="hidden,class">
+      <xul:hbox id="sb-player-play-button" flex="1" xbl:inherits="hidden,class">
       
         <xul:sb-clickhold-button id="sb-player-play-button-play" sbid="play" 
                   class="sb-player-play-button-play sb-player-button" 
@@ -1166,15 +1166,15 @@
   <binding id="control-buttons">
 
     <content>
-      <xul:hbox id="sb-player-control-buttons" flex="1">
-        <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>
+      <xul:hbox id="sb-player-control-buttons" flex="1" xbl:inherits="class,hidden">
+        <xul:sb-player-back-button id="songbird_btn_back" class="sb-player-button" xbl:inherits="class"/>
         <!-- Bonus Buttons!
-          <sb-player-pause-button id="songbird_btn_pause" popupanchor="topleft" popupalign="bottomleft"/>
-          <sb-player-play-button id="songbird_btn_play" popupanchor="topleft" popupalign="bottomleft"/>
-          <sb-player-stop-button id="songbird_btn_stop" popupanchor="topleft" popupalign="bottomleft"/>
+          <xul:sb-player-pause-button id="songbird_btn_pause" popupanchor="topleft" popupalign="bottomleft"/>
+          <xul:sb-player-play-button id="songbird_btn_play" popupanchor="topleft" popupalign="bottomleft"/>
+          <xul:sb-player-stop-button id="songbird_btn_stop" popupanchor="topleft" popupalign="bottomleft"/>
         -->
-        <sb-player-playpause-button id="songbird_btn_play_pause" popupanchor="topleft" popupalign="bottomleft"/>
-        <sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" /> 
+        <xul:sb-player-playpause-button id="songbird_btn_play_pause" class="sb-player-button" xbl:inherits="class" popupanchor="topleft" popupalign="bottomleft"/>
+        <xul:sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" xbl:inherits="class"/> 
       </xul:hbox>
     </content>
   
@@ -1192,7 +1192,7 @@
   <binding id="totaltime-label">
   
     <content>
-      <xul:hbox id="sb-player-totaltime-label" xbl:inherits="class,align,crop,disabled,flex">
+      <xul:hbox id="sb-player-totaltime-label" flex="1" xbl:inherits="class,align,crop,disabled,flex">
         <xul:label sbid="timelabel" xbl:inherits="class,align,crop,disabled,flex" mousethrough="never">
           <xul:observes type="dataremote"
                     key="metadata.length.str" 
@@ -1421,7 +1421,7 @@
   <binding id="numplaylistitems-label" xextends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
   
     <content>
-      <xul:hbox id="sb-player-numplaylistitems-label">
+      <xul:hbox id="sb-player-numplaylistitems-label" flex="1" xbl:inherits="class">
         <xul:label id="sb-player-numplaylistitems-label-label" sbid="label" xbl:inherits="class,value,align,crop,disabled,flex"/> 
       </xul:hbox>
     </content>
@@ -1579,7 +1579,7 @@
   <binding id="curtrack-button">
     
     <content>
-      <xul:hbox id="sb-player-curtrack-button" xbl:inherits="hidden,class">
+      <xul:hbox id="sb-player-curtrack-button" flex="1" xbl:inherits="hidden,class">
         <xul:sb-clickhold-button id="sb-player-curtrack-button-button" oncommand="onCurrentTrack( );" class="sb-player-curtrack-button sb-player-button" tooltiptext="&tooltip.control.curtrack;" xbl:inherits="label,position,popupanchor,popupalign"/>
       </xul:hbox>
     </content>

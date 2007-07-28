@@ -163,7 +163,7 @@ Back, Play, Pause, Forward Buttons
 }
 
 /* the fwd button */
-#mini_btn_fwd
+sb-player-forward-button.miniplayer
 {
   width: 50px !important;
   height: 18px !important;
@@ -171,7 +171,7 @@ Back, Play, Pause, Forward Buttons
   background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
-#mini_btn_fwd:hover
+sb-player-forward-button.miniplayer:hover
 {
   width: 50px !important;
   height: 18px !important;
@@ -179,13 +179,13 @@ Back, Play, Pause, Forward Buttons
   background-image: url(chrome://songbird/skin/mini/mini.btn.fwd.h.png) !important;
   background-color: transparent !important;
 }
-#mini_btn_fwd[disabled="true"]
+sb-player-forward-button.miniplayer[disabled="true"]
 {
   background-image: url(chrome://songbird/skin/mini/mini.btn.fwd.d.png) !important;
   background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
-#mini_btn_fwd:active
+sb-player-forward-button.miniplayer:active
 {
   background-image: url(chrome://songbird/skin/mini/mini.btn.fwd.a.png) !important;
   background-repeat: no-repeat !important;

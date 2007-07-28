@@ -130,7 +130,7 @@
 
   <binding id="sb-sys-buttons">
     <content>
-      <xul:hbox id="sb-sys-buttons">
+      <xul:hbox id="sb-sys-buttons" flex="1">
         <xul:sb-sys-minimize-button id="sb-sys-buttons-mini" sbid="mini"/>
         <xul:sb-sys-maximize-button id="sb-sys-buttons-maxi" sbid="maxi"/>
         <xul:sb-sys-close-button id="sb-sys-buttons-close" sbid="close" xbl:inherits="type"/>
@@ -177,7 +177,7 @@
 
   <binding id="sb-sys-osx-buttons">
     <content>
-      <xul:hbox id="sb-sys-osx-buttons">
+      <xul:hbox id="sb-sys-osx-buttons" flex="1">
         <xul:sb-sys-hide-button id="sb-sys-osx-buttons-hide" sbid="hide" hidden="true"/>
         <xul:sb-sys-close-button id="sb-sys-osx-buttons-close" sbid="close" xbl:inherits="type"/>
         <xul:sb-sys-minimize-button id="sb-sys-osx-buttons-mini" sbid="mini"/>
@@ -253,7 +253,7 @@
 
   <binding id="sb-sys-title">
     <content>
-      <xul:hbox id="sb-sys-title">
+      <xul:hbox id="sb-sys-title" flex="1">
         <xul:label id="sb-sys-title-title" sbid="title" xbl:inherits="value"/> 
       </xul:hbox>
     </content>
@@ -287,10 +287,10 @@
   <binding id="sb-sys-dialog-titlebar">
     <content>
       <xul:stack flex="1">
-        <xul:hbox id="sb-sys-dialog-titlebar-osx-title" sbid="show_mac" pack="center">
+        <xul:hbox id="sb-sys-dialog-titlebar-osx-title" sbid="show_mac" pack="center" flex="1">
           <xul:sb-sys-title id="sb-sys-dialog-titlebar-osx-title-title" xbl:inherits="value"/> 
         </xul:hbox>
-        <xul:hbox id="sb-sys-dialog-titlebar">
+        <xul:hbox id="sb-sys-dialog-titlebar" flex="1">
           <xul:sb-sys-osx-buttons id="sb-sys-dialog-titlebar-osx-buttons" type="dialog"/>
           <xul:sb-sys-title id="sb-sys-dialog-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
           <!-- TODO: allow external menu? -->
@@ -330,10 +330,10 @@
   <binding id="sb-sys-titlebar">
     <content>
       <xul:stack flex="1">
-        <xul:hbox id="sb-sys-titlebar-osx-title" sbid="show_mac" pack="center">
+        <xul:hbox id="sb-sys-titlebar-osx-title" sbid="show_mac" pack="center" flex="1">
           <xul:sb-sys-title id="sb-sys-titlebar-osx-title-title" xbl:inherits="value"/> 
         </xul:hbox>
-        <xul:hbox id="sb-sys-titlebar" align="center">
+        <xul:hbox id="sb-sys-titlebar" align="center" flex="1">
           <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
           <xul:sb-sys-icon id="sb-sys-titlebar-icon"/>
           <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 

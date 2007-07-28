@@ -31,20 +31,25 @@
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
-  <binding id="filterlist2">
+  <!-- If you change the box model around, remember to fix the custom columnpicker!! -->
+  <binding id="filterlist">
     <content>
-      <xul:tree
-        xbl:inherits="enableColumnDrag=enableColumnDrag,hidecolumnpicker=hidecolumnpicker"
-        id="filter_tree"
-        flex="1"
-        onselect="_onFilterListSelect(event);"
-      >
-        <xul:treecols sbid="treeColumns"/>
-        <xul:treechildren/>
-      </xul:tree>
+      <xul:hbox id="sb-filterlist" class="filterlist" flex="1" xbl:inherits="class">
+        <xul:tree
+          id="sb-filterlist-tree"
+          class="sb-filterlist-tree"
+          sbid="filter_tree"
+          flex="1"
+          onselect="_onFilterListSelect(event);"
+          xbl:inherits="class,enableColumnDrag,hidecolumnpicker"
+        >
+          <xul:treecols sbid="treeColumns" xbl:inherits="class"/>
+          <xul:treechildren/>
+        </xul:tree>
+      </xul:hbox>
     </content>
 
-    <implementation type="application/x-javascript" name="songbird_filterlist2">
+    <implementation type="application/x-javascript" name="songbird_filterlist">
 
       <constructor>
       </constructor>
@@ -52,7 +57,7 @@
       <destructor>
       </destructor>
 
-      <field name="tree">document.getAnonymousElementByAttribute(this, 'id', 'filter_tree');</field>
+      <field name="tree">document.getAnonymousElementByAttribute(this, 'sbid', 'filter_tree');</field>
 
       <!-- The filter set this filter is part of -->
       <field name="cfs">null</field>
@@ -143,6 +148,25 @@
             this.treecol = treecol;
 
             this._updateColumnLabel(this.index);
+            this._saveCascadeFilterState();
+            
+            // Force sort, update the display
+            this.tree.view.cycleHeader( this.tree.treeBoxObject.columns.getColumnFor( this.treecol ) );
+          ]]>
+        </body>
+      </method>
+
+      <method name="_saveCascadeFilterState">
+        <body>
+          <![CDATA[
+            var array = [];
+            for ( var i = 0, end = this.cfs.length; i < end; i++ ) {
+              var property = this.cfs.getProperty(i);
+              if ( property.length > 0 )
+                array.push( property );
+            }
+            var serialize = array.join(";");
+            SBDataSetStringValue( "library.filterset", serialize );
           ]]>
         </body>
       </method>
@@ -245,7 +269,7 @@
             popup.showPopup(this, -1, -1, "popup", "bottomright", "topright");
           }
           else {
-            var filterlist = this.parentNode.parentNode.parentNode;
+            var filterlist = this.parentNode.parentNode.parentNode.parentNode;
             filterlist.changeProperty(event.originalTarget.getAttribute("property"));
           }
         ]]>

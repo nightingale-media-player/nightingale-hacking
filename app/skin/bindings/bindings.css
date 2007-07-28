@@ -55,9 +55,9 @@ TODO: Add a link to the developer site
 @import url(faceplate.css); 
 @import url(filterlist.css); 
 @import url(locationbar.css); 
-@import url(miniplayer.css); 
 @import url(observes-dataremote.css); 
 @import url(player_controls.css); 
+@import url(miniplayer.css); 
 @import url(playlist.css); 
 @import url(playlist_commands.css);
 @import url(search.css); 

@@ -754,13 +754,13 @@ clickholdbutton[id="file.new"]
 */
 #frame_service_tree,
 #playlist_tree,
-filterlist
+sb-filterlist
 {
   margin: 0px !important;
   padding: 0px !important;
 }
 
-filterlist > tree
+.sb-filterlist-tree
 {
   -moz-border-right-colors: none !important;
   -moz-border-bottom-colors: none !important;

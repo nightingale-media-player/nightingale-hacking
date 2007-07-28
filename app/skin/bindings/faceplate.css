@@ -53,7 +53,14 @@ FACEPLATE
 {
   background-image: url(chrome://songbird/skin/faceplate/faceplate_right.png);
 }
-
+/*  Sample for how to style the faceplate based upon the showing pane.
+.faceplate-left-spacer[currentId="songbird-intro"],
+.faceplate-right-spacer[currentId="songbird-intro"],
+.faceplate-bkgd-box[currentId="songbird-intro"]
+{
+  opacity: 0.5;  // Opacity is slooooow
+}
+*/
 
 
 .faceplate-bkgd-box

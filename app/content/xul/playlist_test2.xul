@@ -568,10 +568,26 @@ try
             SBProperties.albumName,
             SBProperties.trackName
           ], 3);
+          
+          // If we're a library, set our desired filterlists
           if ( mediaListGUID == "library" ) {
-            filter.appendFilter(SBProperties.year);
-            filter.appendFilter(SBProperties.artistName);
-            filter.appendFilter(SBProperties.albumName);
+            // Restore the last library filterset or set our defaults
+            var desiredFilterSet;
+            var defaultFilterSet = [
+              SBProperties.year,
+              SBProperties.artistName,
+              SBProperties.albumName
+            ];
+            var savedFilterSet = SBDataGetStringValue( "library.filterset" );
+            if ( savedFilterSet.length > 0 ) {
+              desiredFilterSet = savedFilterSet.split(";");
+            } else {
+              desiredFilterSet = defaultFilterSet;
+            }
+            
+            for ( var i = 0, end = desiredFilterSet.length; i < end; i++ ) {
+              filter.appendFilter(desiredFilterSet[i]);
+            }
           }
 
           // If a search parameter was passed in, use it

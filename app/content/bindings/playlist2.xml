@@ -506,7 +506,7 @@
     }
   
     // And start creating the filter
-    var filterlist = document.createElementNS(this._XUL_NS, "filterlist2");
+    var filterlist = document.createElementNS(this._XUL_NS, "sb-filterlist");
     filterlist.setAttribute("enableColumnDrag", "false");
     //filterlist.setAttribute("hidecolumnpicker", "true");
     filterlist.setAttribute("flex", "1");

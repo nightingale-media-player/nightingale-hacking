@@ -470,14 +470,14 @@ Organize your collection with genre/artist/album filterlists.  Somehow Apple see
 ************************************************************************************************************************************************
 */ 
 
-filterlist
+sb-filterlist
 {
   -moz-appearance: none !important; /* grrrr! */
   margin: 0px !important;
   padding: 0px !important;
 }
 
-filterlist > tree
+.sb-filterlist-tree
 {
   -moz-appearance: none !important; /* grrrr! */
   -moz-border-right-colors: none !important;
@@ -494,36 +494,36 @@ filterlist > tree
 }
 
 /* striping for genre filter */
-filterlist > tree > treechildren::-moz-tree-row
+.sb-filterlist-tree > treechildren::-moz-tree-row
 {
   -moz-appearance: none !important;
   background-color: #EDF3F0 !important;
   -moz-border-top-colors: #EDF3F0 !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-row( odd )
+.sb-filterlist-tree > treechildren::-moz-tree-row( odd )
 {
   background-color: #EDF3F0 !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-row( even )
+.sb-filterlist-tree > treechildren::-moz-tree-row( even )
 {
   background-color: #FFF !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-row( selected )
+.sb-filterlist-tree > treechildren::-moz-tree-row( selected )
 {
   background-color: #99A195 !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-row( selected, focus )
+.sb-filterlist-tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none !important; /* grrrr! */
   border: none !important;
   background-color: #4A4E48 !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-cell-text( selected )
+.sb-filterlist-tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #EEE !important;
   font-weight: bold !important;
@@ -3171,7 +3171,7 @@ window#mini
 }
 
 /* the fwd button */
-#mini_btn_fwd
+sb-player-forward-button.miniplayer
 {
   width: 50px !important;
   height: 18px !important;
@@ -3179,7 +3179,7 @@ window#mini
   background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
-#mini_btn_fwd:hover
+sb-player-forward-button.miniplayer:hover
 {
   width: 50px !important;
   height: 18px !important;
@@ -3187,13 +3187,13 @@ window#mini
   background-image: url(mini/mini.btn.fwd.h.png) !important;
   background-color: transparent !important;
 }
-#mini_btn_fwd[disabled="true"]
+sb-player-forward-button.miniplayer[disabled="true"]
 {
   background-image: url(mini/mini.btn.fwd.d.png) !important;
   background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
-#mini_btn_fwd:active
+sb-player-forward-button.miniplayer:active
 {
   background-image: url(mini/mini.btn.fwd.a.png) !important;
   background-repeat: no-repeat !important;

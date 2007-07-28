@@ -411,53 +411,53 @@ Organize your collection with genre/artist/album filterlists.
 ************************************************************************************************************************************************
 */ 
 
-filterlist
+sb-filterlist
 {
   background-color: #FFF !important;
 }
 
-filterlist > tree
+.sb-filterlist-tree
 {
   background-color: #FFF !important;
   /* opacity: 0.8; slow on the mac :( **/
 }
 
 /* striping for genre filter */
-filterlist > tree > treechildren::-moz-tree-row
+.sb-filterlist-tree > treechildren::-moz-tree-row
 {
   background-color: #ececec !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-row( odd )
+.sb-filterlist-tree > treechildren::-moz-tree-row( odd )
 {
   background-color: #fff !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-row( even )
+.sb-filterlist-tree > treechildren::-moz-tree-row( even )
 {
   background-color: #ececec !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-row( selected )
+.sb-filterlist-tree > treechildren::-moz-tree-row( selected )
 {
   background-color: #bdc1c1 !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-row( selected, focus )
+.sb-filterlist-tree > treechildren::-moz-tree-row( selected, focus )
 {
   background-color: #686a6a !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-cell-text
+.sb-filterlist-tree > treechildren::-moz-tree-cell-text
 {
   color: #333 !important;
 }
 
-filterlist > tree > treechildren::-moz-tree-cell-text( selected )
+.sb-filterlist-tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #333 !important;
 }
-filterlist > tree > treechildren::-moz-tree-cell-text( selected, focus )
+.sb-filterlist-tree > treechildren::-moz-tree-cell-text( selected, focus )
 {
   color: #FFF !important;
 }

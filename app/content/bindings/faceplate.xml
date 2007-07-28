@@ -48,11 +48,13 @@
   <binding id="faceplate">
 
     <content>
-      <xul:spacer class="faceplate-left-spacer"/>
-      <xul:deck anonid="faceplate-deck" selectedIndex="0" class="faceplate-bkgd-box" flex="1" >      
-        <!--  All faceplate panes are added programmatically via sbIFaceplateManager -->
-      </xul:deck>
-      <xul:spacer class="faceplate-right-spacer"/>            
+      <xul:hbox id="sb-player-faceplate" flex="1" xbl:inherits="currentIndex,currentId,class">
+        <xul:spacer id="sb-player-faceplate-left" class="faceplate-left-spacer" xbl:inherits="currentIndex,currentId"/>
+        <xul:deck id="sb-player-faceplate-deck" anonid="faceplate-deck" selectedIndex="0" class="faceplate-bkgd-box" flex="1" xbl:inherits="currentIndex,currentId">
+          <!--  All faceplate panes are added programmatically via sbIFaceplateManager -->
+        </xul:deck>
+        <xul:spacer id="sb-player-faceplate-right" class="faceplate-right-spacer" xbl:inherits="currentIndex,currentId"/>
+      </xul:hbox>
     </content>
 
     <implementation type="application/x-javascript" 
@@ -74,6 +76,7 @@
                          Components.interfaces.sbIFaceplatePane);
             this.onCreatePane(pane);
           }
+          this.currentIndex = 0;
        ]]>
       </constructor>
       
@@ -88,6 +91,50 @@
           "anonid", "faceplate-deck");</field>
       <field name="_paneCount">0</field>
       <field name="_manager">null</field>              
+
+      <property name="currentIndex">
+        <getter>
+          <![CDATA[
+            // Run everything off the deck's selectedIndex.
+            var index = parseInt(this._deck.selectedIndex);
+            this.setAttribute("currentIndex", index);
+            var paneid = this._findPaneAtIndex(index);
+            this.setAttribute("currentId", paneid);
+            return index;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            var index = parseInt(val);
+            this._deck.selectedIndex = index;
+            this.setAttribute("currentIndex", index);
+            var paneid = this._findPaneAtIndex(index);
+            this.setAttribute("currentId", paneid);
+          ]]>
+        </setter>
+      </property>
+      
+      <property name="currentId">
+        <getter>
+          <![CDATA[
+            // Run everything off the deck's selectedIndex.
+            var index = parseInt(this._deck.selectedIndex);
+            this.setAttribute("currentIndex", index);
+            var paneid = this._findPaneAtIndex(index);
+            this.setAttribute("currentId", paneid);
+            return paneid;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            var index = parseInt(this._findPaneIndex(val));
+            this._deck.selectedIndex = index;
+            this.setAttribute("currentIndex", index);
+            var paneid = this._findPaneAtIndex(index);
+            this.setAttribute("currentId", paneid);
+          ]]>
+        </setter>
+      </property>
       
       <!-- sbIFaceplateManagerListener support -->
       
@@ -135,8 +182,8 @@
              // select something else  (or else the pane stays on 
              // screen until repaint)
              // Select the previous pane (fine, since we can't remove pane 0)
-             if (this._deck.selectedIndex == index) {
-               this._deck.selectedIndex = --index;
+             if (this.currentIndex == index) {
+               this.currentIndex = --index;
              }
              
              this._paneCount--;
@@ -152,7 +199,7 @@
           <![CDATA[
             var index = this._findPaneIndex(id);
             if (index >= 0) {
-              this._deck.selectedIndex = index;
+              this.currentIndex = index;
             }
           ]]>
         </body>
@@ -161,9 +208,8 @@
       <method name="switchToNextPane">
         <body>
           <![CDATA[
-            var currentIndex = parseInt(this._deck.selectedIndex);
-            var newIndex = (currentIndex + 1) % this._paneCount;
-            this._deck.selectedIndex = newIndex; 
+            var newIndex = (this.currentIndex + 1) % this._paneCount;
+            this.currentIndex = newIndex; 
           ]]>
         </body>
       </method>  
@@ -171,11 +217,10 @@
       <method name="switchToPreviousPane">
         <body>
           <![CDATA[
-            var currentIndex = parseInt(this._deck.selectedIndex);
-            if (currentIndex == 0) {
-              this._deck.selectedIndex = this._paneCount - 1; 
+            if (this.currentIndex == 0) {
+              this.currentIndex = this._paneCount - 1; 
             } else {
-              this._deck.selectedIndex = currentIndex - 1; 
+              this.currentIndex = this.currentIndex - 1; 
             }
           ]]>
         </body>
@@ -184,7 +229,7 @@
       <method name="getCurrentPaneID">
         <body>
           <![CDATA[
-            return this._findPaneAtIndex(parseInt(this._deck.selectedIndex));
+            return this._findPaneAtIndex(this.currentIndex);
           ]]>
         </body>
       </method>          

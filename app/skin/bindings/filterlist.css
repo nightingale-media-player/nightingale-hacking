@@ -31,16 +31,14 @@ Organize your collection with genre/artist/album filterlists.
 ***************************************************************************************************
 */ 
 
-/* TODO: change back to filterlist when the final elements are done */
-
-filterlist2,
-filterlist2 > tree
+sb-filterlist,
+.sb-filterlist-tree
 {
   margin: 0px;
   padding: 0px;
 }
 
-filterlist2 > tree
+.sb-filterlist-tree
 {
   -moz-border-right-colors: none;
   -moz-border-bottom-colors: none;
@@ -50,14 +48,14 @@ filterlist2 > tree
   /* opacity: 0.8; slow on the mac :( **/
 }
 
-filterlist2 > tree,
-filterlist2 > tree > treechildren::-moz-tree-row,
-filterlist2 > tree > treechildren::-moz-tree-row( selected, focus )
+.sb-filterlist-tree,
+.sb-filterlist-tree > treechildren::-moz-tree-row,
+.sb-filterlist-tree > treechildren::-moz-tree-row( selected, focus )
 {
   border: none;
 }
 
-filterlist2 > tree > treechildren::-moz-tree-cell-text( selected )
+.sb-filterlist-tree > treechildren::-moz-tree-cell-text( selected )
 {
   font-weight: normal;
 }

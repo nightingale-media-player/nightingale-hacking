@@ -74,16 +74,12 @@ playlist2 {
   -moz-binding: url("chrome://songbird/content/bindings/playlist2.xml#playlist2") !important;
 }
 
-filterlist {
+sb-filterlist {
   -moz-binding: url("chrome://songbird/content/bindings/filterlist.xml#filterlist") !important;
 }
 
-filterlist2 {
-  -moz-binding: url("chrome://songbird/content/bindings/filterlist2.xml#filterlist2") !important;
-}
-
-filterlist2 > tree > treecols > treecolpicker {
-  -moz-binding: url("chrome://songbird/content/bindings/filterlist2.xml#columnpicker") !important;
+.sb-filterlist-tree > treecols > treecolpicker {
+  -moz-binding: url("chrome://songbird/content/bindings/filterlist.xml#columnpicker") !important;
 }
 
 observes[type="dataremote"]
