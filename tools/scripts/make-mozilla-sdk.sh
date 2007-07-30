@@ -159,7 +159,6 @@ cd "$distdir/sdk" && cp -RLfp * "$sdkdir/frozen"
 notice "copying scripts..."
 cd "$sdkdir" && mkdir -p scripts
 cd "$srcdir" && cp -Lfp $build_script_files "$sdkdir/scripts"
-cd "$srcdir" && cp -Lfp $airbag_script_files "$sdkdir/scripts"
 cd "$srcdir/tools/update-packaging" && cp -Lfp $update_script_files "$sdkdir/scripts"
 cd "$srcdir" && cp -Lfp $breakpad_script_files "$sdkdir/scripts"
 
