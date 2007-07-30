@@ -75,9 +75,16 @@ build_script_files="build/cygwin-wrapper
                     config/printconfigsetting.py
 "
 
-# airbag scripts are relative to $srcdir
-airbag_script_files="toolkit/airbag/tools/symbolstore.py
+# breakpad script files are relative to $srcdir
+breakpad_script_files="toolkit/crashreporter/tools/symbolstore.py
+                       toolkit/crashreporter/tools/upload_symbols.sh
 "
+
+# windows breakpad binary files are relative to $srcdir
+breakpad_bin_files_win="toolkit/crashreporter/tools/win32/dump_syms.exe"
+
+# other breakpad binary files are relative to $objdir/dist/host/bin/
+breakpad_bin_files_nix="dump_syms"
 
 notice() {
   echo $* 1>&2
@@ -86,6 +93,11 @@ notice() {
 if [ $# != 3 ]; then
   notice "usage: make-mozilla-sdk.sh [mozilla-src-dir] [mozilla-obj-dir] [songbird-sdk-dir]"
   exit 1
+fi
+
+uname_os=`uname -o`
+if test "$uname_os" == "Msys" -o "$uname_os" == "Cygwin"; then
+is_windows="1"
 fi
 
 relsrcdir="$1"
@@ -116,6 +128,13 @@ cd "$sdkdir" && mkdir -p bin
 cd "$distdir/bin" && cp -Lfp $bin_files "$sdkdir/bin"
 cd "$distdir/host/bin" && cp -Lfp $update_bin_files "$sdkdir/bin"
 
+# breakpad binaries differ by platform
+if test -n "$is_windows"; then
+cd "$srcdir" && cp -Lfp $breakpad_bin_files_win "$sdkdir/bin"
+else
+cd "$distdir/host/bin" && cp -Lfp $breakpad_bin_files_nix "$sdkdir/bin"
+fi
+
 notice "copying library files..."
 cd "$sdkdir" && mkdir -p lib
 # some os don't have all these files, so silence errors
@@ -142,11 +161,14 @@ cd "$sdkdir" && mkdir -p scripts
 cd "$srcdir" && cp -Lfp $build_script_files "$sdkdir/scripts"
 cd "$srcdir" && cp -Lfp $airbag_script_files "$sdkdir/scripts"
 cd "$srcdir/tools/update-packaging" && cp -Lfp $update_script_files "$sdkdir/scripts"
+cd "$srcdir" && cp -Lfp $breakpad_script_files "$sdkdir/scripts"
 
 notice "performing post-processing..."
 
 # bump WINVER and _WIN32_WINNT to 0x501 on windows
+if test -n "$is_windows"; then
 cd "$sdkdir/include" && perl -p -i.bak -e 's/WINVER 0x500/WINVER 0x501/g;s/_WIN32_WINNT 0x500/_WIN32_WINNT 0x501/g' ./mozilla-config.h
 cd "$sdkdir/include" && rm -f ./mozilla-config.h.bak
+fi
 
 notice "done."
