@@ -68,7 +68,9 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 ifeq (macosx,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
+  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs \
+                               unicharutil_external_s \
+                               $(NULL)
 endif
 
 ifeq (linux,$(SB_PLATFORM))
