@@ -353,7 +353,7 @@ PRBool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension)
   filestack_t::size_type extCount =  m_Extensions.size();
   for(filestack_t::size_type extCur = 0; extCur < extCount; ++extCur)
   {
-    if(m_Extensions[extCur].Equals(strExtension))
+    if(m_Extensions[extCur].Equals(strExtension, CaseInsensitiveCompare))
     {
       isValid = PR_TRUE;
       break;
