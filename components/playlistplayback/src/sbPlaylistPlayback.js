@@ -916,9 +916,11 @@ PlaylistPlayback.prototype = {
       // metrics
       var ext = spec.substr( spec.lastIndexOf(".") + 1, spec.length );
       if ( ext.length < 1 || ext.length > 6 )
-        ext = "???+" + ext.length;  // Well, we certainly tried to play something.
-      this.metrics_inc("play.attempt", ext, null);
-      this.metrics_inc("play.attempt", core.getId(), null);
+        ext = "???";  // Well, we certainly tried to play something.
+      var protocol = spec.substr(0, spec.indexOf(":"));
+      if (protocol.length < 1) 
+        protocol = "???"
+      this.metrics_inc("mediacore.play.attempt", core.getId(), ext + "." + protocol);
     } catch( err ) {
       debug( "playURL:\n" + err + "\n" );
       return false;

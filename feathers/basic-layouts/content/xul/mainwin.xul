@@ -124,7 +124,7 @@
           <spacer flex="1"/>
         </hbox>
 
-        <sb-smart-splitter id="control_pane_splitter"  state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane">
+        <sb-smart-splitter id="control_pane_splitter"  state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="app" metricsid="collapse.controlpane">
           <grippy/>
         </sb-smart-splitter>
 
@@ -137,7 +137,7 @@
               <servicepane id="servicepane" flex="1" browser="frame_main_pane" />                  
             </vbox>
 
-            <sb-smart-splitter id="servicepane_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="collapse.servicepane">
+            <sb-smart-splitter id="servicepane_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">
               <grippy/>
             </sb-smart-splitter>
 

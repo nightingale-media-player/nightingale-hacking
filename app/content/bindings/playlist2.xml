@@ -54,7 +54,7 @@
             resizebefore="closest"
             resizeafter="closest"
             hidden="true"
-            metricscategory="player"
+            metricscategory="app"
             metricsid="collapse.library"
           >
             <grippy/>

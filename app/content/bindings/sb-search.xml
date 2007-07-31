@@ -248,7 +248,7 @@
       <!-- Dispatch a search event -->
       <method name="_sendSearchEvent">
         <body><![CDATA[
-          metrics_inc("searchwidget", this.currentEngine.name, null);        
+          metrics_inc("search.widget", this.currentEngine.name, null);        
           var e = document.createEvent("Events");
           e.initEvent("search", false, true);
           this.dispatchEvent(e);
@@ -498,7 +498,7 @@
       <!-- Dispatch an event with the alias of the current search engine -->
       <method name="_sendSearchEvent">
         <body><![CDATA[              
-          metrics_inc("searchmenu", this._currentEngine.name, null);
+          metrics_inc("search.menu", this._currentEngine.name, null);
           var e = document.createEvent("Events");
           e.initEvent("search", false, true);
           this.dispatchEvent(e);

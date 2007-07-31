@@ -575,6 +575,12 @@
           
           // Bookmarks keep the http url in the id
           if ( node.id.indexOf("http://") != 0 ) { 
+            // This is not good, node.id is of the form urn:library:<guid> or 
+            // urn:item:<guid> for all medialist nodes, and node.name is localized.
+            // We could set a namespaced attribute for the customtype of the
+            // parent library, but then we cannot recognize the download node
+            // (which is a medialist of the 'local' library). Oh my, what should
+            // we do ??
             metrics_inc("app.servicepane.click", node.id, null);
           }
         } else {

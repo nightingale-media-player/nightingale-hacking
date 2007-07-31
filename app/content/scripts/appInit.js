@@ -196,24 +196,12 @@ function doShutdown() {
   if (!metrics) 
     throw("doShutdown could not get the metrics component");
     
-  // mark this session as clean, we did not crash
-  metrics.setSessionFlag(false); 
-  
-  
   // get the startup service and tell it to shut us down
   var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
                      .getService(Components.interfaces.nsIAppStartup);
   if (!as) 
     throw("doShutdown could not get the app-startup component!");
 
-  // do not count next startup in metrics, since we counted this one, 
-  // but it was aborted.
-  //
-  // Note: do NOT replace '_' with '.', or it will be handled as metrics
-  //    data: it would be posted to the metrics aggregator, then reset
-  //    to 0 automatically
-  SBDataSetBoolValue("metrics_ignorenextstartup", true);
-  
   as.quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
 }
 
@@ -231,10 +219,6 @@ function doMainwinStart()
       Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
                 .createInstance(Components.interfaces.sbIMetrics);
 
-    if (metrics.getSessionFlag())
-      metrics_inc("player", "crash");
-
-    metrics.setSessionFlag(true);
     metrics.checkUploadMetrics();
   }
   catch (err) {
@@ -377,18 +361,6 @@ function firstRunComplete(restartfirstrun) {
 
 function SBRestartApp()
 {
-  // mark this session as clean, we did not crash
-  var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
-                .createInstance(Components.interfaces.sbIMetrics);
-  if (!metrics) 
-    dump("SBRestartApp could not get the metrics component\n"); // Don't throw, we still want to restart.
-  else
-    metrics.setSessionFlag(false); 
-
-  // do NOT replace '_' with '.', or it will be handled as a metrics data:
-  // it would be posted to the metrics aggregator, then reset to 0 automatically
-  SBDataSetBoolValue("metrics_ignorenextstartup", true);
-  
   // attempt to restart
   var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
                      .getService(Components.interfaces.nsIAppStartup);
@@ -409,18 +381,12 @@ function SBMetricsAppShutdown()
   var timenow = (new Date()).getTime();
   var ticsPerMinute = 1000 * 60;
   var minutes = ( (timenow - startstamp) / ticsPerMinute ) + 1; // Add one for fractionals
-  metrics_add("player", "timerun", null, minutes);
+  metrics_add("app", "timerun", null, minutes);
 }
 
 function SBMetricsAppStart()
 {
-  // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
-  if (!SBDataGetBoolValue("metrics_ignorenextstartup"))
-  {
-    metrics_inc("player", "appstart", null);
-  }
-  // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
-  SBDataSetBoolValue("metrics_ignorenextstartup", false);
+  metrics_inc("app", "appstart", null);
   var startstamp = (new Date()).getTime();
   SBDataSetStringValue("startup_timestamp", startstamp); // 64bit, use StringValue
 }

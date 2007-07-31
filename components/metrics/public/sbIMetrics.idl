@@ -40,7 +40,7 @@
  * This is an interface to the songbird metrics service, used to phone home and send 
  * metrics gathered since the last report was sent.
  */
-[scriptable, uuid(F64283C0-CDCF-48ec-8502-735B7282981E)]
+[scriptable, uuid(91c7a054-c7a0-4dc1-994c-e0629df95c2b)]
 interface sbIMetrics : nsISupports
 {
   /**
@@ -52,23 +52,6 @@ interface sbIMetrics : nsISupports
    * This function may return without performing any task if the user has disabled metrics gathering.
    */
   void checkUploadMetrics();
-
-  /**
-   * \brief Returns the session flag.
-   * The session flag is set when the application starts up, and cleared when it terminates. 
-   * This allows a simple detection of crashes if this function returns true before. setSessionFlag(true) 
-   * has been called.
-   */
-  boolean getSessionFlag();
-
-  /**
-   * \brief Sets the session flag.
-   * The session flag is set when the application starts up, and cleared when it terminates. 
-   * This allows a simple detection of crashes if getSessionFlag returns true before this function
-   * has been called with a value of 'true'.
-   * \param flag the value of the session flag (boolean) 
-   */
-  void setSessionFlag(in boolean flag);
 
   /**
    * \brief Increments a metrics key.
@@ -97,4 +80,5 @@ interface sbIMetrics : nsISupports
    */
   void metricsAdd( in AString aCategory, in AString aUniqueID, in AString aExtraString, in long long aIntValue );
 };
+
 

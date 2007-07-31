@@ -330,6 +330,8 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
   var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
                     .createInstance(Components.interfaces.sbIMetrics);
   
+  var totype = targetList.library.getProperty("http://songbirdnest.com/data/1.0#customType");
+
   if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST)) {
     dump('media list dropped\n');
     
@@ -338,7 +340,8 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
     var list = context.list;
     
     // Metrics!
-    metrics.metricsAdd("app.servicepane.copy", aNode.id, null, list.length);
+    var fromtype = list.library.getProperty("http://songbirdnest.com/data/1.0#customType");
+    metrics.metricsAdd("app.servicepane.copy", fromtype, totype, list.length);
     
     if (targetListIsLibrary) {
       // want to copy the list and the contents
@@ -380,7 +383,9 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
     var items = context.items;
 
     // Metrics!
-    metrics.metricsAdd("app.servicepane.copy", aNode.id, null, context.count);
+    var fromtype = context.source.library.getProperty("http://songbirdnest.com/data/1.0#customType");
+      Components.utils.reportError(fromtype + " - " + totype );
+    metrics.metricsAdd("app.servicepane.copy", fromtype, totype, context.count);
     
     var itemEnumerator = {
       hasMoreElements: function() { return items.hasMoreElements(); },
@@ -414,7 +419,8 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation) {
     targetList.add(context.item);
 
     // Metrics!
-    metrics.metricsAdd("app.servicepane.copy", aNode.id, null, 1);
+    var fromtype = context.source.library.getProperty("http://songbirdnest.com/data/1.0#customType");
+    metrics.metricsAdd("app.servicepane.copy", fromtype, totype, 1);
     
     dump('added\n');
   }
