@@ -56,6 +56,7 @@
 #include <nsIStandardURL.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
+#include <prprf.h>
 #include <unicharutil/nsUnicharUtils.h>
 
 /* Taglib imports. */
@@ -499,8 +500,8 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::OnChannelDataAvailable(
 
 sbMetadataHandlerTaglib::sbMetadataHandlerTaglib()
 :
-    mCompleted(PR_FALSE),
-    mMetadataChannelRestart(PR_FALSE)
+    mMetadataChannelRestart(PR_FALSE),
+    mCompleted(PR_FALSE)
 {
     nsresult                    result = NS_OK;
 
@@ -680,7 +681,25 @@ void sbMetadataHandlerTaglib::AddID3v2Tag(
     /* Add the frame metadata. */
     frameList = frameListMap[frameID];
     if (!frameList.isEmpty())
-        AddMetadataValue(metadataName, frameList.front()->toString());
+    {
+        /* Convert length to microseconds. */
+        if (!strcmp(metadataName, "length"))
+        {
+            PRInt32                     length;
+
+            PR_sscanf(frameList.front()->toString().toCString(true),
+                      "%d",
+                      &length);
+            length *= 1000;
+            AddMetadataValue(metadataName, length);
+        }
+
+        /* Just copy all other metadata. */
+        else
+        {
+            AddMetadataValue(metadataName, frameList.front()->toString());
+        }
+    }
 }
 
 
