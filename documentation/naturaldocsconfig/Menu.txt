@@ -1,0 +1,76 @@
+Format: 1.35
+
+
+Title: Songbird Web Page API
+
+# You can also add a sub-title to your menu like this:
+# SubTitle: [subtitle]
+
+# You can add a footer to your documentation like this:
+# Footer: [text]
+# If you want to add a copyright notice, this would be the place to do it.
+
+
+# --------------------------------------------------------------------------
+# 
+# Cut and paste the lines below to change the order in which your files
+# appear on the menu.  Don't worry about adding or removing files, Natural
+# Docs will take care of that.
+# 
+# You can further organize the menu by grouping the entries.  Add a
+# "Group: [name] {" line to start a group, and add a "}" to end it.
+# 
+# You can add text and web links to the menu by adding "Text: [text]" and
+# "Link: [name] ([URL])" lines, respectively.
+# 
+# The formatting and comments are auto-generated, so don't worry about
+# neatness when editing the file.  Natural Docs will clean it up the next
+# time it is run.  When working with groups, just deal with the braces and
+# forget about the indentation and comments.
+# 
+# You can use this file on other computers even if they use different
+# directories.  As long as the command line points to the same source files,
+# Natural Docs will be able to correct the locations automatically.
+# 
+# --------------------------------------------------------------------------
+
+
+Group: Global Object  {
+
+   File: Songbird  (/cygdrive/e/Projects/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl)
+   }  # Group: Global Object
+
+Group: Commands Object  {
+
+   File: Commands  (/cygdrive/e/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl)
+   }  # Group: Commands Object
+
+Group: MediaList Object  {
+
+   File: MediaList  (/cygdrive/e/Projects/songbird/trunk/components/library/base/public/sbIMediaList.idl)
+   File: MediaItem  (/cygdrive/e/Projects/songbird/trunk/components/library/base/public/sbIMediaItem.idl)
+   }  # Group: MediaList Object
+
+Group: MediaItem Object  {
+
+   File: MediaItem  (/cygdrive/e/Projects/songbird/trunk/components/library/base/public/sbIMediaItem.idl)
+   }  # Group: MediaItem Object
+
+Group: WebPlaylist Object  {
+
+   File: WebPlaylist  (/cygdrive/e/Projects/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl)
+   }  # Group: WebPlaylist Object
+
+Group: Index  {
+
+   Index: Everything
+   Class Index: Classes
+   Property Index: Properties
+   Function Index: Functions
+   }  # Group: Index
+
+
+
+##### Do not change or remove these lines. #####
+Data: 1(D33339Q`fH8/G3G3gHulG9t636u\`Y8Hf3tHN\A39uEIu\G\t63HGEutGpI83INYo89)
+Data: 1(h33339Q`fH8/G3G3gHulG9t636u\`Y8Hf3tHN\A39uEIu\G\t63o8YHpHQ3Yp6G3INYo89)
