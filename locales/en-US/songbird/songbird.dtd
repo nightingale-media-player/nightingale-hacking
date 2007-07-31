@@ -196,6 +196,9 @@
 <!ENTITY setup.defaultlanguage    "Default Language">
 <!ENTITY setup.privacy            "Privacy">
 <!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY setup.noupdate "We're sorry, but Songbird is unable to update your old library to the new database format.  Please reimport your media.">
+<!ENTITY setup.groupbox.width "386">
+<!ENTITY setup.flexbox.height "110">
 
 <!ENTITY menu.file.accesskey          "F" >
 <!ENTITY menu.file.new.accesskey      "N" >
@@ -354,4 +357,5 @@
 <!ENTITY tabs.closeTab "Close tab">
 <!ENTITY tabs.listAllTabs "List all tabs">
 <!ENTITY tabs.enabled.label "Enable tabs">
+
 

@@ -206,10 +206,7 @@
 				Name="skin"
 				Filter="">
 				<File
-					RelativePath=".\rubberducky\skin\css_readme.txt">
-				</File>
-				<File
-					RelativePath=".\rubberducky\skin\dialog_colors.css">
+					RelativePath=".\rubberducky\skin\global.css">
 				</File>
 				<File
 					RelativePath=".\rubberducky\skin\mainwin_colors.css">

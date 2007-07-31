@@ -11,6 +11,7 @@
  buttons="cancel, accept"
  ondialogaccept="return doOK();"
  ondialogcancel="return doCancel();"
+ onclose="return false;"
  hidechrome="true"
  windowtype="Songbird:Firstrun"
  onkeydown="handleKeyDown(event);"
@@ -21,24 +22,28 @@
   
   <windowregion/>
   <sb-sys-outer-frame resizers="none" overflow="true" flex="1">
-    <sb-sys-dialog-titlebar/>
+    <sb-sys-dialog-titlebar nobuttons="true"/>
     
     <hbox pack="center">
       <image class="firstrun-image" />
     </hbox>
     
-    <groupbox>
+    <groupbox id="error_noupdate_vbox" width="&setup.groupbox.width;" class="error-box" hidden="true">
+      <description class="error-text">&setup.noupdate;</description>
+    </groupbox>
+      
+    <groupbox width="&setup.groupbox.width;">
       <label value="&setup.defaultlanguage;" />
 	    <menulist id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
 	      <menupopup/>
 	    </menulist>
     </groupbox>
       
-    <groupbox flex="1" height="110">
+    <groupbox flex="1" height="&setup.flexbox.height;" width="&setup.groupbox.width;">
       <label value="&setup.optionalextensions;" />
       <spacer id="extensions.replacedcontent.top" height="0"/>
       <vbox id="error_message" hidden="true">
-        <html:body  style="cursor:default;">&setup.networkerror1; <html:a mousethrough="never" id="connection_href" onclick="openConnectionSettings(event);" style="text-decoration: underline; cursor:pointer;">&setup.networkerror2;</html:a> &setup.networkerror3;</html:body>
+        <html:body  style="cursor:default;"><html:span class="error-text">&setup.networkerror1;</html:span> <html:a mousethrough="never" id="connection_href" onclick="openConnectionSettings(event);" style="text-decoration: underline; cursor:pointer;" class="error-text error-link">&setup.networkerror2;</html:a> <html:span class="error-text">&setup.networkerror3;</html:span></html:body>
       </vbox>
       <vbox id="please_wait" hidden="false">
         <spacer height="3"/>
@@ -57,7 +62,7 @@
       </hbox>
     </groupbox>
 
-    <groupbox id="metrics_vbox" width="386">
+    <groupbox id="metrics_vbox" width="&setup.groupbox.width;">
       <label value="&setup.privacy;" />
       <checkbox id="metrics_optout" checked="true" label="&setup.metrics.optin;"/>
       <description >&setup.metrics.info;</description>

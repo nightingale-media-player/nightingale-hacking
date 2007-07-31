@@ -324,7 +324,7 @@ function doFirstRun()
   try {
     var haveRun = false;
     try {
-      haveRun = gPrefs.getBoolPref("songbird.firstrun.check");
+      haveRun = gPrefs.getBoolPref("songbird.firstrun.check.0.3");
     } catch (err) { /* prefs throws an exepction if the pref is not there */ }
 
     if ( ! haveRun ) {
@@ -412,6 +412,20 @@ function SBRestarterDeinitialize()
 
 function SBMigrateDatabase()
 {
+
+  var directory = Components.classes["@mozilla.org/file/directory_service;1"].
+                  getService(Components.interfaces.nsIProperties).
+                  get("ProfD", Components.interfaces.nsIFile);
+  directory.append("db");
+  if (directory.exists()) {
+    var old_database_file = directory.clone();
+    old_database_file.append("songbird.db");
+    if (!old_database_file.exists()) {
+      return;
+    }
+  }
+    
+
   var queryObject = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
     .createInstance(Components.interfaces.sbIDatabaseQuery);
   queryObject.setAsyncQuery(false);

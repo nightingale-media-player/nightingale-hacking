@@ -1510,3 +1510,24 @@ SMART PLAYLIST BUILDER
 }
 
 
+
+/** 
+*******************************************************************
+ERRORS
+*******************************************************************
+*/
+
+html|*.error-box,
+groupbox.error-box > .groupbox-body
+{
+  border: 1px solid #F00;
+}
+
+html|*.error-text,
+.error-text
+{
+  color: #F00;
+  font-weight: bold;
+}
+
+

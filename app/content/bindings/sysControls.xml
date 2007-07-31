@@ -145,7 +145,7 @@
           if ( sysInfo.getProperty("name") == "Darwin" )
             // Hidden on Mac
             this.setAttribute( "hidden", "true" ); 
-          else
+          else if ( this.getAttribute("hidden") != "true" )
             // Hidden when "Plucked" ("accessibility.enabled" == "1")
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
 
@@ -192,7 +192,7 @@
           if ( sysInfo.getProperty("name") != "Darwin" )
             // Hidden on all but Mac
             this.setAttribute( "hidden", "true" ); 
-          else
+          else if ( this.getAttribute("hidden") != "true" )
             // Hidden when "Plucked" ("accessibility.enabled" == "1")
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
             
@@ -235,7 +235,7 @@
           if ( sysInfo.getProperty("name") == "Darwin" )
             // Hidden on Mac
             this.setAttribute( "hidden", "true" ); 
-          else
+          else if ( this.getAttribute("hidden") != "true" )
             // Hidden when "Plucked" ("accessibility.enabled" == "1")
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
         ]]>
@@ -261,7 +261,8 @@
       <constructor>
         <![CDATA[
           // Hidden when "Plucked" ("accessibility.enabled" == "1")
-          this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+          if ( this.getAttribute("hidden") != "true" )
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
           
           // If there's no value attribute,
           var value = "" + this.getAttribute( "value" );
@@ -291,12 +292,12 @@
           <xul:sb-sys-title id="sb-sys-dialog-titlebar-osx-title-title" xbl:inherits="value"/> 
         </xul:hbox>
         <xul:hbox id="sb-sys-dialog-titlebar" flex="1">
-          <xul:sb-sys-osx-buttons id="sb-sys-dialog-titlebar-osx-buttons" type="dialog"/>
+          <xul:sb-sys-osx-buttons id="sb-sys-dialog-titlebar-osx-buttons" sbid="left_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
           <xul:sb-sys-title id="sb-sys-dialog-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
           <!-- TODO: allow external menu? -->
           <xul:menubar id="sb-sys-dialog-titlebar-menubar" />  
           <xul:spacer id="sb-sys-dialog-titlebar-spacer" flex="1"/>
-          <xul:sb-sys-buttons id="sb-sys-dialog-titlebar-buttons" type="dialog"/>
+          <xul:sb-sys-buttons id="sb-sys-dialog-titlebar-buttons" sbid="right_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
         </xul:hbox>
       </xul:stack>
     </content>
@@ -313,7 +314,8 @@
             document.getAnonymousElementByAttribute(this, 'sbid', 'show_mac').setAttribute( "hidden", "true" ); 
           
           // Hidden when "Plucked" ("accessibility.enabled" == "1")
-          this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+          if ( this.getAttribute("hidden") != "true" )
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
         ]]>
       </constructor>
       <destructor>

@@ -91,6 +91,40 @@ function localesBundleDataReady() {
 
 function initFirstRun() 
 {
+  // Determine if we should show the error box for people who have previously run Songbird
+  try {
+    var oldLibrary = false;
+    var oldError = false;
+
+    var haveRun = false;
+    try {
+      oldError = gPrefs.getBoolPref("songbird.firstrun.libraryerror.check.0.3");
+    } catch (err) { /* prefs throws an exepction if the pref is not there */ }
+    
+    if (!oldError) {
+      // Try to find the old 0.2 database file.    
+      var directory = Components.classes["@mozilla.org/file/directory_service;1"].
+                      getService(Components.interfaces.nsIProperties).
+                      get("ProfD", Components.interfaces.nsIFile);
+      directory.append("db");
+      if (directory.exists()) {
+        var old_database_file = directory.clone();
+        old_database_file.append("songbird.db");
+        if (old_database_file.exists()) {
+          oldLibrary = true;
+        }
+      }
+    }
+    
+    // If there's an old library file and we haven't shown the error, yet, show it.
+    if (oldLibrary) {
+      document.getElementById("error_noupdate_vbox").removeAttribute("hidden");      
+    }
+  } catch ( err ) {
+    SB_LOG("initFirstRun - library error box", "" + err );
+  }
+
+
   try {
     var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
     firstrun_bundle = new sbIBundle();
@@ -277,15 +311,16 @@ function doOK()
     return false;
   }
   
-  if (noext) {
-    gPrefs.setBoolPref("songbird.firstrun.check", true);  
-  } else {
+  if (!noext) {
     var res = firstrun_bundle.installFlaggedExtensions(window);
     if (res == firstrun_bundle.BUNDLE_INSTALL_ERROR) 
       return false;
-    gPrefs.setBoolPref("songbird.firstrun.check", true);  
     gPrefs.setCharPref("songbird.installedbundle", firstrun_bundle.bundleDataVersion);
   }
+  
+  gPrefs.setBoolPref("songbird.firstrun.check.0.3", true);  
+  gPrefs.setBoolPref("songbird.firstrun.libraryerror.check.0.3", true);
+  
   
   if ((firstrun_bundle && firstrun_bundle.restartRequired) || 
       (locales_bundle && locales_bundle.restartRequired)) {
