@@ -464,8 +464,30 @@ case "$SB_PLATFORM" in
         _CC_SUITE=6
     elif test "$_CC_MAJOR_VERSION" = "13"; then
         _CC_SUITE=7
+    elif test "$_CC_MAJOR_VERSION" = "14"; then
+        _CC_SUITE=8
     else
         AC_MSG_ERROR([This version of the MSVC compiler, $CC_VERSION , is unsupported.])
+    fi
+
+    # mozilla bug #249782
+    # ensure that mt.exe is Microsoft (R) Manifest Tool and not magnetic tape manipulation utility (or something else)
+    if test "$_CC_SUITE" -ge "8"; then
+            changequote(,)
+            _MSMT_VER_FILTER='s|.* \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
+            changequote([,])
+  
+            MSMT_TOOL=`mt 2>&1|grep 'Microsoft (R) Manifest Tool'`
+            if test -n "$MSMT_TOOL"; then
+                    MSMANIFEST_TOOL_VERSION=`echo ${MSMT_TOOL}|sed -ne "$_MSMT_VER_FILTER"`
+                    if test -z "$MSMANIFEST_TOOL_VERSION"; then
+                            AC_MSG_WARN([Unknown version of the Microsoft (R) Manifest Tool.])
+                    fi
+                    MSMANIFEST_TOOL=1
+                    unset MSMT_TOOL
+            else
+                    AC_MSG_ERROR([Microsoft (R) Manifest Tool must be in your \$PATH.])
+            fi
     fi
 
     # Check linker version
@@ -478,7 +500,7 @@ case "$SB_PLATFORM" in
     MSVC_COMPILER_FLAGS="-nologo -W3 -WL -GS -Wp64 -EHsc -Zi -c"
     
     if test "$_CC_SUITE" = "8"; then
-      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Zc:wchar_t"
+      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Zc:wchar_t-"
     fi
     
     if test "$enable_debug" = "yes"; then
@@ -620,6 +642,7 @@ AC_SUBST(ARFLAGS_PATH_SUFFIX)
 AC_SUBST(ARFLAGS_LIB)
 AC_SUBST(CFLAGS_INCLUDE_PREFIX)
 AC_SUBST(CFLAGS_INCLUDE_SUFFIX)
+AC_SUBST(_MSC_VER)
 AC_SUBST(LDFLAGS_DLL)
 AC_SUBST(LDFLAGS_LIB)
 AC_SUBST(LDFLAGS_OUT_PREFIX)
