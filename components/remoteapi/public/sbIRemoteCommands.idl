@@ -33,6 +33,13 @@
 
 interface sbIRemotePlayer;
 
+/*
+Class: Commands
+The Commands Object allows remote web pages to add and remove commands.
+
+The Commands Object is associated with a <MediaList>. This means that 
+when <Commands> are modified, the modifications are scoped to the media list.
+*/
 /**
  * \interface sbIRemoteCommands
  * \brief An interface to specify playlist commands from remote web pages.
@@ -43,8 +50,28 @@ interface sbIRemotePlayer;
 [scriptable, uuid(cff760df-5fe0-4657-8eb5-1d5d3ca12369)]
 interface sbIRemoteCommands : nsISupports
 {
+  /*
+  Function: addCommand
+  Add a command.
+  
+  Arguments:
+    type - The type of the command.
+    id - The id of the command.
+    name - The name of the command.
+    tooltip - The tooltip for the command.
+  
+  See Also:
+    The complete list of command types available (<http://songbirdnest.com/>).
+  */
   void addCommand(in AString aType, in AString aID, in AString aName, in AString aTooltip);
 
+  /*
+  Function: removeCommand
+  Remove a command.
+  
+  Arguments:
+    id - The id of the command.
+  */
   void removeCommand(in AString aID);
 
   // Ew. this is so ugly. I'm hoping to be able to clean this up with nsIXPCScriptable

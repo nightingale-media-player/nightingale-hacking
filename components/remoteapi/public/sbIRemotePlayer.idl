@@ -25,8 +25,9 @@
  */
 
 /**
+ *
  * \file sbIRemotePlayer.idl
- * \brief Definition of the Remote API Interfaces
+ * \brief Definition of the Web Page Player Interfaces
  */
 
 #include "nsISupports.idl"
@@ -40,6 +41,54 @@ interface sbIRemoteLibrary;
 interface sbIRemoteMediaList;
 interface sbIRemoteWebPlaylist;
 
+/*
+Class: Songbird
+
+The Songbird object provides several pieces of functionality to your web page: playback, 
+download, listener adding and removing and library creation and retrieval.
+
+This object provides you with functions that enable you to initiate playback 
+of URL's, <MediaLists> and <WebPlaylists>. Basic playback control functions are also
+provided. 
+
+The Songbird object provides download functionality as well. You may use it to download
+<MediaItems>, <MediaLists> and user selected items present in the <WebPlaylist>.
+
+The Songbird object is accessible (from Javascript) using the "songbird" global variable attached 
+to the currently loaded document. See the example below.
+
+Example:
+(start code)
+//Get the currently playing artist.
+var artist = songbird.currentArtist;
+
+//Create default library with current domain and path automatically guessed.
+//This is the suggested way to create your site library.
+var library = songbird.siteLibrary("", "");
+
+... // Look up the artist in your web service database
+... // Find some samples by that artist.
+
+var mediaItem = library.createMediaItem(url);
+
+//Create a simple media list.
+var mediaList = library.createMediaList("simple");
+
+//Add a mediaitem to it.
+list.addItem(mediaItem);
+
+//Play it.
+songbird.playMediaList(mediaList);
+
+//You may also want to trigger a download to the users machine, for this mediaitem.
+songbird.downloadItem(mediaItem);
+(end)
+
+See Also:
+  For more information about the <MediaItem> object, see the <MediaItem> reference.
+  For more information about the <MediaList> object, see the <MediaList> reference.
+  For more information about the <WebPlaylist> object, see the <WebPlaylist> reference.
+*/
 /**
  * \interface sbIRemotePlayer
  * \brief This interface is a composition of many of our other interfaces with the
@@ -53,96 +102,500 @@ interface sbIRemotePlayer : nsISupports
   /**
    * \brief The name of the player
    */
+
+  /*
+  Prop: name
+  
+  The name of the player.
+  
+  Type: 
+    String
+  */
   readonly attribute AString name;
 
   /**
-   * \brief The current web playlist
+   * \brief The name of the artist for the currently playing media item.
    */
-  readonly attribute sbIRemoteWebPlaylist webPlaylist;
 
-  /**
-   * \brief The name of the artist for the currently playing track
-   */
+  /*
+  Prop: currentArtist
+  
+  The name of the artist for the currently playing track.
+  
+  Type: 
+    String
+  */
   readonly attribute AString currentArtist;
 
   /**
    * \brief The name of the album for the currently playing track
    */
+
+  /*
+  Prop: currentAlbum
+  
+  The name of the album for the currently playing media item.
+
+  Type: 
+    String
+  */
   readonly attribute AString currentAlbum;
 
   /**
    * \brief The name of the currently playing track
    */
+   
+  /*
+  Prop: currentTrack
+  
+  The track name of the currently playing media item.
+
+  Type: 
+    String
+  */
   readonly attribute AString currentTrack;
+
+  /**
+   * \brief The collection of commands associated with the current page.
+   */
+
+  /*
+  Prop: commands
+  
+  The collection of <Commands> associated with the current page.
+
+  Type:
+    <Commands>
+  */
+  readonly attribute sbIRemoteCommands commands;
+
+  /**
+   * \brief The current web playlist
+   */
+
+  /*
+  Prop: webPlaylist
+  
+  The current <WebPlaylist> object associated with this <Player> instance.
+  
+  Type: 
+    <WebPlaylist>
+  */
+  readonly attribute sbIRemoteWebPlaylist webPlaylist;
 
   /**
    * \brief Bind an observer to get called on changes to Songbird metadata/state
    */
+
+  /*
+  Func: addListener
+  
+  Add a listener to get notified of changes to Songbird metadata and state.
+  
+  Prototype:
+    addListener(String key, Object listener)
+
+  Parameters:
+    key - The key for the metadata or state value.
+    listener - The listener that will get called when the metadata or state value specified by the key changes.
+  
+  Example:
+    (start code)
+    //Make a listener object. The listener must always have at least this function.
+    
+    //You may add any number of functions and properties to it for your own use.
+    
+    //Make sure to save this object somewhere so you may unregister it when you are done
+    //listening for changes.
+    var listener = {
+      observer: function(subject, topic, data) {
+      }
+    }
+    
+    var key = "metadata.genre";
+    
+    songbird.addListener(key, listener);
+
+    ...
+
+    songbird.removeListener(key, listener);
+    (end)
+
+  See Also: 
+    <removeListener>
+
+    Visit <http://some/other/part/of/documentation/> for a list of keys for metadata and state.
+    
+    Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsIObserver.html> for nsIObserver interface reference.
+  */
   void addListener( in AString aKey,
                     in nsIObserver aObserver );
 
   /**
    * \brief Remove an observer from the metadata key
    */
+
+  /*
+  Func: removeListener
+  
+  Remove a listener that was previously added using <addListener>.
+  
+  Prototype:
+    removeListener(String key, Object listener)
+
+  Parameters:
+    key - The key for the metadata or state value.
+    listener - The listener that was previously added using <addListener>.
+
+  Example:
+    (start code)
+    //This example assumes there was a listener object named 'listener' that was previously
+    //created and added using the key 'metadata.genre'.
+    
+    ...
+
+    var key = "metadata.genre";
+    songbird.removeListener(key, listener);
+    (end)
+  
+  See Also: 
+    <addListener>
+
+    Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsIObserver.html> for nsIObserver interface reference.
+  */
   void removeListener( in AString aKey,
                        in nsIObserver aObserver );
 
   /**
    * \brief Download the items passed in
    */
+  /*
+  Func: downloadItem
+  
+  Download a <MediaItem>.
+  
+  Prototype:
+    downloadItem(<MediaItem> mediaItem)
+
+  Parameters:
+    mediaItem - The <MediaItem> to download.
+
+  Example:
+    (start code)
+    //Create or get library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create the mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+    
+    //Download the mediaitem to the users local machine.
+    songbird.downloadItem(mediaItem);
+    (end)
+  */
   void downloadItem( in sbIMediaItem aItem );
+  
+  /*
+  Func: downloadList
+  
+  Download a <MediaList>.
+  
+  Prototype:
+    downloadList(<MediaList> mediaList)
+
+  Parameters:
+    mediaList - The <MediaList> to download.
+
+  Example:
+    (start code)
+    //Create or get site library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create medialist to download.
+    var mediaList = library.createMediaList("simple");
+
+    //Add item to medialist.
+    mediaList.add(mediaItem);
+
+    //Download the medialist.
+    songbird.downloadList(mediaList);
+    (end)
+
+  See Also:
+    <downloadItem>
+    <downloadSelected>
+  */
   void downloadList( in sbIRemoteMediaList aList );
+  
+  /*
+  Func: downloadSelected
+
+  Download the <MediaItems> selected by the user in a <WebPlaylist>.
+  
+  Prototype:
+    downloadSelected(<WebPlaylist> webPlaylist)
+
+  Parameters:
+    webPlaylist - The <WebPlaylist> from which to download the selected <MediaItems>.
+
+  Example:
+    (start code)
+    //Download the mediaitems currently selected by the user in 
+    //the current webplaylist.
+
+    songbird.downloadSelected(songbird.webPlaylist);
+    (end)
+
+  See Also:
+    <downloadItem>
+    <downloadList>
+  */
   void downloadSelected( in sbIRemoteWebPlaylist aWebPlaylist );
 
   /**
-   * \brief Being playback at the current location
+   * \brief Begin playback at the current location
    */
+
+  /*
+  Func: play
+
+  Prototype:
+    play()
+
+  Begin playback at the current location in the playlist or in the
+  current <MediaItem>.
+
+  Example:
+    (start code)
+    songbird.play();
+    (end)
+
+  See Also:
+    <playURL>
+    <playMediaList>
+    <pause>
+    <stop>
+    <previous>
+    <next>
+  */
   void play();
+  
+  /*
+  Func: playMediaList
+
+  Begin playback of a <MediaList> at the specified index in the list.
+
+  Prototype:
+    playMediaList(<MediaList> mediaList, Number index)
+
+  Parameters: 
+    mediaList - The <MediaList> to play.
+    index - Where to start playing in the list. Index starts at 0.
+
+  Example:
+    (start code)
+    //Songbird object implements Player.
+    //Play the media list, starting with item at index 2.
+
+    player.playMediaList(mediaList, 2);
+    (end)
+  */
   void playMediaList( in sbIRemoteMediaList aList,
                       in PRInt32 aIndex );
 
   /**
    * \brief Play an media file by URL
    */
+
+  /*
+  Func: playURL
+  
+  Begin playback of a URL.
+
+  Prototype:
+    playURL(String url);
+  
+  Parameters: 
+    url - The URL to play.
+
+  Example:
+    (start code)
+    songbird.playURL("http://path/to/item.mp3");
+    (end)
+
+  See Also:
+    <play>
+    <playMediaList>
+    <pause>
+    <stop>
+    <previous>
+    <next>
+  */
   void playURL(in AString aURL);
 
   /**
    * \brief Stop playback. Sets position to beginning.
    */
+  
+  /*
+  Func: stop
+  
+  Stop playback.
+
+  Prototype:
+    stop()
+
+  Example:
+    (start code)
+     songbird.stop();
+    (end)
+
+  See Also:
+    <play>
+    <playURL>
+    <playMediaList>
+    <pause>
+    <previous>
+    <next>
+  */
   void stop();
 
   /**
    * \brief Stop playback, leaves position at current location.
    */
+   
+  /*
+  Func: pause
+  
+  Pause playback.
+
+  Prototype:
+    pause()
+
+  Example:
+    (start code)
+    songbird.pause();
+    (end)
+
+  See Also:
+    <play>
+    <playURL>
+    <playMediaList>
+    <stop>
+    <previous>
+    <next>
+  */
   void pause();
 
   /**
    * \brief Skip to the next track and begin playing
    */
+  
+  /*
+  Func: next
+  
+  Skip to the next item, if there is one, and begin playing.
+  
+  If there is no next item playback will continue until the 
+  end of the current item.
+
+  Prototype:
+    next()
+
+  Example:
+    (start code)
+    songbird.next();
+    (end)
+
+  See Also:
+    <play>
+    <playURL>
+    <playMediaList>
+    <pause>
+    <stop>
+    <previous>
+  */
   void next();
 
   /**
    * \brief Skip to the previous track and begin playing
    */
+
+  /*
+  Func: previous
+  
+  Skip to the previous item, if there is one, and begin playing.
+  
+  If there is no previous item playback will continue until the of the current item.
+
+  Prototype:
+    previous()
+
+  Example:
+    (start code)
+    songbird.previous();
+    (end)
+
+  See Also:
+    <play>
+    <playURL>
+    <playMediaList>
+    <pause>
+    <stop>
+    <previous>
+    <next>
+  */
   void previous();
 
-  //
-  // Commands
-  //
+  /*
+  Func: siteLibrary
+  
+  Access to a sitelibrary for the given domain and path. If you wish to create
+  your library with the default domain and path (which reflect your page's current domain and path)
+  use an empty string for the domain and the path.
 
-  /**
-   * \brief The collection of commands associated with the current page.
-   */
-  readonly attribute sbIRemoteCommands commands;
+  If a library was already created for the domain and path, the existing library will be returned.
+  
+  Prototype:
+    siteLibrary(String domain, String path)
 
-  //
-  // Library creation and retrieval
-  //
+  Parameters:
+    domain - The domain name of the library. This may be an empty string.
+    path - The path within the domain for the library. This may be an empty string.
+  
+  Returns:
+    The requested <Library> object or null.
 
-  // access to a sitelibrary for the given path
+  Example:
+    (start code)
+    //Create a library. This is the preferred way to create your site library.
+     var library = songbird.siteLibrary("", "");
+    (end)
+  */
   sbIRemoteLibrary siteLibrary(in AString aDomain, in AString aPath);
 
-  // access to any library in the system via path or 'magic' keyword
+  /*
+  Func: libraries 
+  
+  Access to any library in the system via path or 'magic' keyword.
+  
+  Prototype:
+    libraries(String libraryID)
+
+  Parameters: 
+    libraryID - Library ID you wish to access, this can be a path or 'magic' keyword.
+
+  Example:
+    (start code)
+    var libraryID = "web";
+    var library = songbird.libraries(libraryID);
+    (end)
+
+  See Also:
+    <siteLibrary>
+  */
   sbIRemoteLibrary libraries(in AString aLibraryID);
 
   /**

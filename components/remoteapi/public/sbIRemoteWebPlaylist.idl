@@ -35,6 +35,11 @@ interface nsISimpleEnumerator;
 interface sbIMediaListView;
 interface sbIRemoteMediaList;
 
+/*
+Class: WebPlaylist
+
+Web MediaList Object
+*/
 /**
  * \interface sbIRemoteWebPlaylist
  * \brief An interface to control a media list from remote web pages.
@@ -45,10 +50,29 @@ interface sbIRemoteMediaList;
 [scriptable, uuid(6aa00573-1aaa-4ff9-9080-fbd172669997)]
 interface sbIRemoteWebPlaylist : nsISupports
 {
+  /*
+  Property: mediaList
+
+  The <MediaList> associated with this <WebPlaylist> instance.
+  */
   attribute sbIRemoteMediaList mediaList;
 
+  /*
+  Property: selection
+
+  The current selection in the <WebPlaylist>.
+  */
   readonly attribute nsISimpleEnumerator selection;
 
+  /*
+  Function: setSelectionByIndex
+
+  Set the selection in the <WebPlaylist>.
+
+  Parameters:
+    index - Index of the item in the <WebPlaylist>.
+    selected - Flag used for setting the selection state, may be true or false.
+  */
   void setSelectionByIndex(in unsigned long aIndex, in boolean aSelected);
 
   // ugh, nsIXPCScriptable take me away

@@ -66,6 +66,7 @@ SCANNED_MAKEFILE_DIRS="
 app
 bindings
 components
+documentation
 extras
 feathers
 installer

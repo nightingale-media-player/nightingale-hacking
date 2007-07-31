@@ -40,6 +40,10 @@ interface nsIInputStream;
 interface nsIOutputStream;
 interface sbILibrary;
 
+/*
+Class: MediaItem
+*/
+
 /**
 * \interface sbIMediaItem
 * \brief Interface that defines a single item of media in the system
@@ -78,6 +82,15 @@ interface sbIMediaItem : sbILibraryResource
    * Note that this is the creation time of the media item itself, not the
    * creation time of the item's content
    */
+  
+  /*
+  Prop: mediaCreated
+
+  A timestamp representing the date and time at which this <MediaItem> was created.
+
+  Type:
+    Number
+  */
   attribute long long mediaCreated;
 
   /**
@@ -86,22 +99,61 @@ interface sbIMediaItem : sbILibraryResource
    * Note that this is the last modification time of the media item itself, not
    * the creation time of the item's content
    */
+
+  /*
+  Prop: mediaUpdated
+
+  A timestamp representing the date and time at which this <MediaItem> was last updated.
+
+  Type:
+    Number
+  */
   attribute long long mediaUpdated;
 
   /**
    * \brief A nsIURI that resolves to the content of the media item
    */
+
+  /*
+  Prop: contentSrc
+
+  The URI representing the location of the <MediaItem>.
+
+  Type:
+    Number, in bytes.
+  */
   attribute nsIURI contentSrc;
 
   /**
    * \brief Size (in bytes) of the content of the media item
    */
+
+  /*
+  Prop: contentLength
+
+  The size (in bytes) of the content of the <MediaItem>.
+
+  Type:
+    Number, in bytes.
+  */
   attribute long long contentLength;
 
   /**
    * \brief Content type of the content of the media item, typically a mime
    * type (should this be renamed?)
    */
+
+  /*
+  Prop: contentType
+
+  The content type, also called mime type, of the <MediaItem>.
+
+  Type:
+    String
+
+  Note:
+    This property is never filled currently.
+  */
   attribute AString contentType;
 
 
@@ -116,7 +168,7 @@ interface sbIMediaItem : sbILibraryResource
   /**
    * \brief Asynchronously get an input stream to the content of the media item
    *
-   * NOTE: If the listener can also QI to an nsIInterfaceRequestor, it will be
+   * \note If the listener can also QI to an nsIInterfaceRequestor, it will be
    * assigned to the internal channel's notificationCallbacks property.
    *
    * \param aListener Provide an nsIStreamListener to receive streaming data.

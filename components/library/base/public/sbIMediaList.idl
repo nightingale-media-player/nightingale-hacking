@@ -44,6 +44,10 @@ interface sbIMediaListListener;
 interface sbIMediaListView;
 interface sbIPropertyArray;
 
+/*
+Class: MediaList
+*/
+
 /**
 * \interface sbIMediaList
 * \brief A brief description of the contents of this interface
@@ -58,16 +62,43 @@ interface sbIMediaList : sbIMediaItem
   /**
    * \brief The name of the media list
    */
+  
+  /*
+  Prop: name
+  
+  The name of the media list.
+
+  Type:
+    String
+  */
   attribute AString name;
 
   /**
    * \brief The type of media list (eg "simple")
    */
+
+  /*
+  Prop: type
+
+  The type of this media list.
+
+  Type:
+    String
+  */
   readonly attribute AString type;
 
   /**
    * \brief Returns the length of the list
    */
+
+  /*
+  Prop: length
+
+  The length (in number of items) present in the media list.
+
+  Type:
+    Number
+  */
   readonly attribute unsigned long length;
 
   /**

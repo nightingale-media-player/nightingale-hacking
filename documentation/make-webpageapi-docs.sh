@@ -1,0 +1,68 @@
+#!/bin/sh
+
+notice() {
+  echo $* 1>&2
+}
+
+if [ $# != 1 ]; then
+  notice "usage: make-webpageapi-docs.sh [topsrcdir]"
+  exit 1
+fi
+
+# Working directory
+workingdir=`pwd`
+
+# Trunk top level directory
+topsrcdir="$workingdir/$1"
+
+# Remote API top level directory
+remoteapidir="$topsrcdir/components/remoteapi"
+
+# Library base top level directory
+librarybasedir="$topsrcdir/components/library/base"
+
+# Documentation temp directory
+docstempdir="$topsrcdir/compiled/documentation/tmp"
+
+# Documentation output directory
+docsoutputdir="$topsrcdir/documentation/webpageapi"
+
+# Natural Docs project directory
+ndprojectdir="$topsrcdir/documentation/naturaldocsconfig"
+
+# Remote API files needed to generate the documentation
+remoteapifiles="$remoteapidir/public/sbIRemoteCommands.idl
+                $remoteapidir/public/sbIRemoteLibrary.idl
+                $remoteapidir/public/sbIRemoteMediaList.idl
+                $remoteapidir/public/sbIRemotePlayer.idl
+                $remoteapidir/public/sbIRemoteWebPlaylist.idl
+"
+
+# Library base files needed to generate the documentation
+librarybasefiles="$librarybasedir/public/sbIMediaItem.idl
+                  $librarybasedir/public/sbIMediaList.idl
+                  $librarybasedir/public/sbILibraryResource.idl
+"
+
+# Cleanup old working temp dir
+rm -rf $docstempdir
+
+# Create working temp directory
+mkdir $docstempdir
+
+# Copy the necessary remoteapi idl files
+cp -Lfp $remoteapifiles $docstempdir
+
+# Copy the necessary library idl files
+cp -Lfp $librarybasefiles $docstempdir
+
+# Merge RemoteMediaList with MediaList, MediaItem and LibraryResource
+
+# Merge RemoteMediaItem with MediaItem, LibraryResource
+
+# Run NaturalDocs
+$topsrcdir/tools/common/naturaldocs/NaturalDocs \
+-i $docstempdir \
+-o HTML $docsoutputdir \
+-p $ndprojectdir \
+-s Default Docs -r

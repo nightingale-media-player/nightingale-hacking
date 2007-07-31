@@ -103,7 +103,7 @@ interface sbILibraryResource : nsISupports
    *        property in the array
    * \param aProperties Properties to set to this resource
    *
-   * NOTE: Until bug 3694 is fixed, it is possible for this method to throw
+   * \note Until bug 3694 is fixed, it is possible for this method to throw
    * NS_ERROR_INVALID_ARG if one of the property values in the array is not
    * valid.  This will have no side effects -- if an error is thrown, the
    * resource will not be modified.  This will go away when the bug is fixed

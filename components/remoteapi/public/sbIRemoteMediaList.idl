@@ -38,7 +38,7 @@ interface sbIMediaListView;
  * \interface sbIRemoteMediaList
  * \brief An interface to control a media list from remote web pages.
  *
- * TODO: Write this documentation
+ * \todo Write this documentation
  *
  */
 [scriptable, uuid(30644bad-4d6b-4e01-ab62-17ee4d775413)]
