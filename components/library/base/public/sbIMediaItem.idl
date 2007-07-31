@@ -40,10 +40,6 @@ interface nsIInputStream;
 interface nsIOutputStream;
 interface sbILibrary;
 
-/*
-Class: MediaItem
-*/
-
 /**
 * \interface sbIMediaItem
 * \brief Interface that defines a single item of media in the system

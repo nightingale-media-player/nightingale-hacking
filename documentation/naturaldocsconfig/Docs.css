@@ -59,7 +59,8 @@ body.FramedMenuPage,
     padding: 10px 0 0 0 }
 
 .MenuSection {
-    width: 27ex }
+    width: 27ex
+    }
 
 
     .MTitle {
@@ -138,7 +139,9 @@ body.FramedContentPage,
     padding-bottom: 15px }
 
 .ContentSection {
-    border-width: 0 0 1px 1px; border-style: solid; border-color: #000000 }
+    border-width: 0 0 1px 1px; 
+    border-style: solid; 
+    border-color: #000000 }
 
 
     .CTopic {

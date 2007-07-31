@@ -44,10 +44,6 @@ interface sbIMediaListListener;
 interface sbIMediaListView;
 interface sbIPropertyArray;
 
-/*
-Class: MediaList
-*/
-
 /**
 * \interface sbIMediaList
 * \brief A brief description of the contents of this interface
