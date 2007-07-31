@@ -15,6 +15,9 @@ workingdir=`pwd`
 # Trunk top level directory
 topsrcdir="$workingdir/$1"
 
+# Scripts directory
+scriptsdir="$topsrcdir/tools/scripts"
+
 # Remote API top level directory
 remoteapidir="$topsrcdir/components/remoteapi"
 
@@ -36,12 +39,19 @@ remoteapifiles="$remoteapidir/public/sbIRemoteCommands.idl
                 $remoteapidir/public/sbIRemoteMediaList.idl
                 $remoteapidir/public/sbIRemotePlayer.idl
                 $remoteapidir/public/sbIRemoteWebPlaylist.idl
+                $remoteapidir/public/sbIWrappedMediaItem.h
 "
 
 # Library base files needed to generate the documentation
 librarybasefiles="$librarybasedir/public/sbIMediaItem.idl
                   $librarybasedir/public/sbIMediaList.idl
                   $librarybasedir/public/sbILibraryResource.idl
+"
+
+# Library base files we need to clean up
+librarybasefilescleanup="$docstempdir/sbIMediaItem.idl
+                         $docstempdir/sbIMediaList.idl
+                         $docstempdir/sbILibraryResource.idl
 "
 
 # Cleanup old working temp dir
@@ -57,8 +67,16 @@ cp -Lfp $remoteapifiles $docstempdir
 cp -Lfp $librarybasefiles $docstempdir
 
 # Merge RemoteMediaList with MediaList, MediaItem and LibraryResource
+$scriptsdir/extract.pl sbIMediaList < $docstempdir/sbIMediaList.idl >> $docstempdir/sbIRemoteMediaList.idl
+$scriptsdir/extract.pl sbIMediaItem < $docstempdir/sbIMediaItem.idl >> $docstempdir/sbIRemoteMediaList.idl
+$scriptsdir/extract.pl sbILibraryResource < $docstempdir/sbILibraryResource.idl >> $docstempdir/sbIRemoteMediaList.idl
 
 # Merge RemoteMediaItem with MediaItem, LibraryResource
+$scriptsdir/extract.pl sbIMediaItem < $docstempdir/sbIMediaItem.idl >> $docstempdir/sbIWrappedMediaItem.h
+$scriptsdir/extract.pl sbILibraryResource < $docstempdir/sbILibraryResource.idl >> $docstempdir/sbIWrappedMediaItem.h
+
+# Delete source files for merge so we don't get duplicate classes.
+rm -f $librarybasefilescleanup
 
 # Run NaturalDocs
 $topsrcdir/tools/common/naturaldocs/NaturalDocs \

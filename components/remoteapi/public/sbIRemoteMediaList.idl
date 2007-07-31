@@ -34,6 +34,12 @@
 interface nsISimpleEnumerator;
 interface sbIMediaListView;
 
+/*
+Class: MediaList
+A <MediaList> is a list of <MediaItems>. A <MediaList> is also itself a <MediaItem> 
+and can be used as a parameter to functions that take a <MediaItem>.
+*/
+
 /**
  * \interface sbIRemoteMediaList
  * \brief An interface to control a media list from remote web pages.

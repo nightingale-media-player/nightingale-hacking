@@ -115,7 +115,7 @@ Format: 1.35
 
 Language: JavaScript IDL Blend
 
-   Extension: idl
+   Extensions: idl h
    Line Comment: //
    Block Comment: /* */
    Enum Values: Local

@@ -36,26 +36,17 @@ Group: Global Object  {
    File: Songbird  (sbIRemotePlayer.idl)
    }  # Group: Global Object
 
-Group: Commands Object  {
+Group: Commands  {
 
    File: Commands  (sbIRemoteCommands.idl)
-   }  # Group: Commands Object
+   }  # Group: Commands
 
-Group: MediaList Object  {
+Group: Library Objects  {
 
-   File: MediaList  (sbIMediaList.idl)
-   File: MediaItem  (sbIMediaItem.idl)
-   }  # Group: MediaList Object
-
-Group: MediaItem Object  {
-
-   File: MediaItem  (sbIMediaItem.idl)
-   }  # Group: MediaItem Object
-
-Group: WebPlaylist Object  {
-
+   File: MediaItem  (sbIWrappedMediaItem.h)
+   File: MediaList  (sbIRemoteMediaList.idl)
    File: WebPlaylist  (sbIRemoteWebPlaylist.idl)
-   }  # Group: WebPlaylist Object
+   }  # Group: Library Objects
 
 Group: Index  {
 

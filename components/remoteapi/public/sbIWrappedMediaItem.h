@@ -39,6 +39,11 @@ class sbIMediaItem;
 #define SB_IWRAPPEDMEDIAITEM_IID \
 { 0x14a50b3c, 0x4e4e, 0x422b, { 0xbe, 0x86, 0x98, 0xb5, 0x88, 0xbf, 0xcb, 0xc6 } }
 
+/*
+Class: MediaItem
+A <MediaItem> represents a partial or whole piece of media.
+*/
+
 class sbIWrappedMediaItem : public nsISupports
 {
 public:
