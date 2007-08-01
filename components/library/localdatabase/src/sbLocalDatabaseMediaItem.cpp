@@ -126,11 +126,9 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
 
 sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
 {
-  // If we've kept an owning reference to the library, release it here
-  if (mLibrary && mOwnsLibrary) {
-    NS_RELEASE(mLibrary);
-  }
-
+  // Free this here in case we hold the last reference to the library below.
+  mPropertyCache = nsnull;
+  
   if(mPropertyCacheLock) {
     nsAutoLock::DestroyLock(mPropertyCacheLock);
   }
@@ -138,6 +136,12 @@ sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
   if(mPropertyBagLock) {
     nsAutoLock::DestroyLock(mPropertyBagLock);
   }
+  
+  // If we've kept an owning reference to the library, release it here
+  if (mLibrary && mOwnsLibrary) {
+    NS_RELEASE(mLibrary);
+  }
+
 }
 
 /**

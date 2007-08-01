@@ -67,12 +67,9 @@
 
 #define DEFAULT_PROPERTIES_URL "chrome://songbird/locale/songbird.properties"
 
-NS_IMPL_THREADSAFE_ADDREF(sbLocalDatabaseMediaListBase)
-NS_IMPL_THREADSAFE_RELEASE(sbLocalDatabaseMediaListBase)
-
-NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaListBase)
-  NS_INTERFACE_MAP_ENTRY(sbIMediaList)
-NS_INTERFACE_MAP_END_INHERITING(sbLocalDatabaseMediaItem)
+NS_IMPL_ISUPPORTS_INHERITED1(sbLocalDatabaseMediaListBase,
+                             sbLocalDatabaseMediaItem,
+                             sbIMediaList)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
 : mFullArrayMonitor(nsnull),

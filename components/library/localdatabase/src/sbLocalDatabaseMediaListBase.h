@@ -90,7 +90,7 @@ public:
   NS_DECL_SBIMEDIALIST
 
   sbLocalDatabaseMediaListBase();
-  ~sbLocalDatabaseMediaListBase();
+  virtual ~sbLocalDatabaseMediaListBase();
 
   nsresult Init(sbLocalDatabaseLibrary* aLibrary,
                 const nsAString& aGuid,

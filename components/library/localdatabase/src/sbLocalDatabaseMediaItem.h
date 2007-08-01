@@ -84,7 +84,7 @@ protected:
   // owning reference
   sbLocalDatabaseLibrary* mLibrary;
 
-  nsString  mGuid;
+  nsString mGuid;
 
 private:
   PRLock* mPropertyCacheLock;
