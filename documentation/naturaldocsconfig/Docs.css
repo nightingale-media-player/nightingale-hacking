@@ -56,7 +56,10 @@ body.FramedMenuPage,
 .MenuSection {
     font-size: 9pt;
     background-color: #E8E8E8;
-    padding: 10px 0 0 0 }
+    padding: 10px 0 0 0;
+    overflow: auto; /**/
+    position: fixed; /**/ 
+    height: 100%; /**/ }
 
 .MenuSection {
     width: 27ex
@@ -136,7 +139,8 @@ body.FramedMenuPage,
 body.FramedContentPage,
 .ContentSection {
     background-color: #FFFFFF;
-    padding-bottom: 15px }
+    padding-bottom: 15px; /**/ 
+    padding-left: 188px; /**/}
 
 .ContentSection {
     border-width: 0 0 1px 1px; 

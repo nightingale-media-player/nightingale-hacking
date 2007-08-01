@@ -81,6 +81,6 @@ rm -f $librarybasefilescleanup
 # Run NaturalDocs
 $topsrcdir/tools/common/naturaldocs/NaturalDocs \
 -i $docstempdir \
--o FramedHTML $docsoutputdir \
+-o HTML $docsoutputdir \
 -p $ndprojectdir \
 -s Default Docs -r

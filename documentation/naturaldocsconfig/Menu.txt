@@ -36,11 +36,6 @@ Group: Global Object  {
    File: Songbird  (sbIRemotePlayer.idl)
    }  # Group: Global Object
 
-Group: Commands  {
-
-   File: Commands  (sbIRemoteCommands.idl)
-   }  # Group: Commands
-
 Group: Library Objects  {
 
    File: Library  (sbIRemoteLibrary.idl)
@@ -50,6 +45,7 @@ Group: Library Objects  {
 
 Group: UI Objects  {
 
+   File: Commands  (sbIRemoteCommands.idl)
    File: WebPlaylist  (sbIRemoteWebPlaylist.idl)
    }  # Group: UI Objects
 
