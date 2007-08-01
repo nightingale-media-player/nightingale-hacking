@@ -49,10 +49,9 @@
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gLibraryLog = nsnull;
-#define LOG(args)   if (gLibraryLog) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
-#else
-#define LOG(args)   /* nothing */
 #endif
+
+#define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
 
 static NS_DEFINE_CID(kSecurityMixinCID, SONGBIRD_SECURITYMIXIN_CID);
 
@@ -156,6 +155,12 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
     return NS_ERROR_FAILURE;
   }
 
+  // XXXredfive - if the interface is approved, create the wrapper; any actions
+  //  on the object will be passed through security for further checking
+  *_retval = SB_CloneAllAccess();
+  return NS_OK;
+
+#if 0
   // Get the codebase of the current page
   nsCOMPtr<nsIURI> codebase;
   GetCodebase( getter_AddRefs(codebase) );
@@ -188,6 +193,7 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   }
 
   return NS_OK;
+#endif
 }
 
 NS_IMETHODIMP
@@ -405,6 +411,12 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
     allowed = GetPermission(codebase, PERM_TYPE_METADATA, "disable_metadata");
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("library:"))) {
+    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY, "disable_library");
+  }
+  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("download:"))) {
+    // XXXredfive - use the library prefs for downloads for now. Larger
+    //              re-ordering of which pref goes with which call is planned
+    //              for soon. This will do for now.
     allowed = GetPermission(codebase, PERM_TYPE_LIBRARY, "disable_library");
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("site:"))) {

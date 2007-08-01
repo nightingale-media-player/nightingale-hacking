@@ -27,7 +27,7 @@
 #include "sbRemoteAPI.h"
 #include "sbRemotePlayer.h"
 #include "sbRemoteCommands.h"
-#include "sbRemoteLibrary.h"
+#include "sbRemoteLibraryBase.h"
 #include "sbRemoteWebPlaylist.h"
 #include <sbClassInfoUtils.h>
 #include <sbILibrary.h>
@@ -89,10 +89,9 @@
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gRemotePlayerLog = nsnull;
-#define LOG(args)   if (gRemotePlayerLog) PR_LOG(gRemotePlayerLog, PR_LOG_WARN, args)
-#else
-#define LOG(args)   /* nothing */
 #endif
+
+#define LOG(args) PR_LOG(gRemotePlayerLog, PR_LOG_WARN, args)
 
 static NS_DEFINE_CID(kRemotePlayerCID, SONGBIRD_REMOTEPLAYER_CID);
 
@@ -101,11 +100,11 @@ const static char* sPublicWProperties[] = {""};
 const static char* sPublicRProperties[] =
   { "library:name",
     "library:playlists",
-    "library:webPlaylist",
+    "site:webPlaylist",
     "metadata:currentArtist",
     "metadata:currentAlbum",
     "metadata:currentTrack",
-    "binding:commands",
+    "library:commands",
     "classinfo:classDescription",
     "classinfo:contractID",
     "classinfo:classID",
@@ -120,15 +119,13 @@ const static char* sPublicMethods[] =
     "controls:previous",
     "controls:next",
     "controls:playURL",
-    "binding:downloadItem",
-    "binding:downloadList",
-    "binding:downloadSelected",
-    "binding:registerCommands",
-    "binding:unregisterCommands",
+    "download:downloadItem",
+    "download:downloadList",
+    "download:downloadSelected",
     "site:siteLibrary",
     "library:libraries",
-    "binding:removeListener",
-    "binding:addListener" };
+    "metadata:removeListener",
+    "metadata:addListener" };
 
 const static char* sPublicMetadata[] =
   { "metadata.artist",
@@ -367,14 +364,16 @@ sbRemotePlayer::SiteLibrary( const nsAString &aDomain,
   nsresult rv;
   if (!mSiteLibrary) {
     mSiteLibrary =
-       do_CreateInstance( "@songbirdnest.com/remoteapi/remotelibrary;1", &rv );
+       do_CreateInstance( "@songbirdnest.com/remoteapi/remotesitelibrary;1", &rv );
     NS_ENSURE_SUCCESS( rv, rv );
   }
 
   // Library is going to hash the ID passed in
-  rv = mSiteLibrary->ConnectToMediaLibrary( aDomain, aPath );
+  rv = mSiteLibrary->ConnectToSiteLibrary( aDomain, aPath );
   if (NS_SUCCEEDED(rv)) {
-    NS_ADDREF( *aSiteLibrary = mSiteLibrary );
+    nsCOMPtr<sbIRemoteLibrary> library (do_QueryInterface(mSiteLibrary, &rv) );
+    NS_ENSURE_SUCCESS( rv, rv );
+    NS_ADDREF( *aSiteLibrary = library );
   } else {
     *aSiteLibrary = nsnull;
   }

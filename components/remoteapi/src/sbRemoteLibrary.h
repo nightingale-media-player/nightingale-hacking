@@ -28,195 +28,37 @@
 #define __SB_REMOTE_LIBRARY_H__
 
 #include "sbRemoteAPI.h"
-#include "sbRemoteMediaItem.h"
-#include "sbRemoteMediaList.h"
-
-#include <sbILibrary.h>
-#include <sbIMediaList.h>
-#include <sbIMediaListListener.h>
-#include <sbIMediaListView.h>
+#include "sbRemoteLibraryBase.h"
 #include <sbIRemoteLibrary.h>
-#include <sbIRemoteMediaList.h>
-#include <sbIRemotePlayer.h>
-#include <sbISecurityMixin.h>
-#include <sbISecurityAggregator.h>
-#include <sbIWrappedMediaList.h>
 
-#include <nsAutoPtr.h>
 #include <nsIClassInfo.h>
-#include <nsIFile.h>
-#include <nsISecurityCheckedComponent.h>
-#include <nsStringGlue.h>
-#include <nsCOMPtr.h>
 
 #define SONGBIRD_REMOTELIBRARY_CONTRACTID               \
   "@songbirdnest.com/remoteapi/remotelibrary;1"
 #define SONGBIRD_REMOTELIBRARY_CLASSNAME                \
   "Songbird Remote Library"
 #define SONGBIRD_REMOTELIBRARY_CID                      \
-{ /* e2d511c5-be47-4140-b48e-c011e471e1a2 */            \
-  0xe2d511c5,                                            \
-  0xbe47,                                                \
-  0x4140,                                                \
-  {0xb4, 0x8e, 0xc0, 0x11, 0xe4, 0x71, 0xe1, 0xa2}       \
+{ /* 94b825ed-7308-473f-9ed3-2fd97463fe3c */            \
+  0x94b825ed,                                            \
+  0x7308,                                                \
+  0x473f,                                                \
+  {0x9e, 0xd3, 0x2f, 0xd9, 0x74, 0x63, 0xfe, 0x3c}       \
 }
 
-class sbRemoteLibrary : public nsIClassInfo,
-                        public nsISecurityCheckedComponent,
-                        public sbISecurityAggregator,
-                        public sbIRemoteLibrary,
-                        public sbIRemoteMediaList,
-                        public sbIWrappedMediaList,
-                        public sbIMediaList
+class sbRemoteLibrary : public sbRemoteLibraryBase
 {
 public:
-  NS_DECL_ISUPPORTS
+  NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_NSICLASSINFO
-  NS_DECL_SBISECURITYAGGREGATOR
-  NS_DECL_SBIREMOTELIBRARY
   SB_DECL_SECURITYCHECKEDCOMP_INIT
-
-  NS_FORWARD_SAFE_SBIREMOTEMEDIALIST(mRemMediaList)
-  NS_FORWARD_SAFE_SBIMEDIALIST(mRemMediaList)
-  NS_FORWARD_SAFE_SBIMEDIAITEM(mRemMediaList)
-  NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mRemMediaList)
-  NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
   sbRemoteLibrary();
 
-  // sbIWrappedMediaList
-  NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();
-  NS_IMETHOD_(already_AddRefed<sbIMediaList>) GetMediaList();
-
 protected:
   virtual ~sbRemoteLibrary();
-  PRBool mShouldScan;
-  nsCOMPtr<sbILibrary> mLibrary;
-  nsRefPtr<sbRemoteMediaList> mRemMediaList;
 
-  // Gets the GUID for the built in libraries: main, web, download
-  nsresult GetLibraryGUID( const nsAString &aLibraryID,
-                           nsAString &aLibraryGUID );
-  // fetches the URI from the security mixin
-  nsresult GetURI( nsIURI **aSiteURI );
-  // validates aPath against aSiteURI, setting aPath if empty
-  nsresult CheckPath( nsAString &aPath, nsIURI *aSiteURI );
-  // validates aDomain against aSiteURI, setting aDomain if empty
-  nsresult CheckDomain( nsAString &aDomain, nsIURI *aSiteURI );
-  // builds a path to the db file for the passed in domain and path
-  nsresult GetSiteLibraryFile( const nsAString &aDomain,
-                               const nsAString &aPath,
-                               nsIFile **aSiteDBFile );
   // on connection to a library, set the internal remote medialist
-  nsresult InitInternalMediaList();
-
-  // SecurityCheckedComponent stuff
-  nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
-
-  // Only set in debug builds - used for validating library creation
-  nsString mFilename;
+  virtual nsresult InitInternalMediaList();
 };
-
-static nsresult
-SB_WrapMediaItem(sbIMediaItem* aMediaItem,
-                 sbIMediaItem** aRemoteMediaItem)
-{
-  NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_ARG_POINTER(aRemoteMediaItem);
-
-  nsresult rv;
-
-  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(aMediaItem, &rv);
-  if (NS_SUCCEEDED(rv)) {
-    nsCOMPtr<sbIMediaListView> mediaListView;
-    rv = mediaList->CreateView(getter_AddRefs(mediaListView));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsRefPtr<sbRemoteMediaList> remoteMediaList(
-      new sbRemoteMediaList(mediaList, mediaListView));
-    NS_ENSURE_TRUE(remoteMediaList, NS_ERROR_OUT_OF_MEMORY);
-
-    rv = remoteMediaList->Init();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    NS_ADDREF(*aRemoteMediaItem = remoteMediaList);
-  }
-  else {
-    nsRefPtr<sbRemoteMediaItem> remoteMediaItem(
-      new sbRemoteMediaItem(aMediaItem));
-    NS_ENSURE_TRUE(remoteMediaItem, NS_ERROR_OUT_OF_MEMORY);
-
-    rv = remoteMediaItem->Init();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    NS_ADDREF(*aRemoteMediaItem = remoteMediaItem);
-  }
-
-  return NS_OK;
-}
-
-static nsresult
-SB_WrapMediaList(sbIMediaList* aMediaList,
-                 sbIMediaList** aRemoteMediaList)
-{
-  NS_ENSURE_ARG_POINTER(aMediaList);
-  NS_ENSURE_ARG_POINTER(aRemoteMediaList);
-
-  nsresult rv;
-
-  nsCOMPtr<sbIMediaListView> mediaListView;
-  rv = aMediaList->CreateView(getter_AddRefs(mediaListView));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsRefPtr<sbRemoteMediaList> remoteMediaList(
-    new sbRemoteMediaList(aMediaList, mediaListView));
-  NS_ENSURE_TRUE(remoteMediaList, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = remoteMediaList->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*aRemoteMediaList = remoteMediaList);
-
-  return NS_OK;
-}
-
-static nsresult
-SB_WrapMediaList(sbIMediaList* aMediaList,
-                 sbIRemoteMediaList** aRemoteMediaList)
-{
-  nsCOMPtr<sbIMediaList> mediaList;
-  nsresult rv = SB_WrapMediaList(aMediaList, getter_AddRefs(mediaList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIRemoteMediaList> remoteMediaList =
-    do_QueryInterface(mediaList, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*aRemoteMediaList = remoteMediaList);
-  return NS_OK;
-}
-
-static nsresult
-SB_WrapMediaList(sbIMediaListView* aMediaListView,
-                 sbIRemoteMediaList** aRemoteMediaList)
-{
-  NS_ENSURE_ARG_POINTER(aMediaListView);
-  NS_ENSURE_ARG_POINTER(aRemoteMediaList);
-
-  nsCOMPtr<sbIMediaList> mediaList;
-  nsresult rv = aMediaListView->GetMediaList( getter_AddRefs(mediaList) );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsRefPtr<sbRemoteMediaList> remoteMediaList(
-    new sbRemoteMediaList(mediaList, aMediaListView));
-  NS_ENSURE_TRUE(remoteMediaList, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = remoteMediaList->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*aRemoteMediaList = remoteMediaList);
-
-  return NS_OK;
-}
 
 #endif // __SB_REMOTE_LIBRARY_H__

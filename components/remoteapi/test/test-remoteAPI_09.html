@@ -46,9 +46,22 @@
 
       var load = function load() {
         myDiv = document.getElementById("output");
+
+        // always have access to the siteLibrary
         siteLib = songbird.siteLibrary("", "/");
-        mainLib = songbird.libraries("main");
-        webLib = songbird.libraries("web");
+
+        try {
+          mainLib = songbird.libraries("main");
+        } catch (e) {
+          dump("XXXredfive - no access to main library\n");
+        }
+
+        try {
+          webLib = songbird.libraries("web");
+        } catch (e) {
+          dump("XXXredfive - no access to web library\n");
+        }
+
         try {
           originalWeb = songbird.webPlaylist.mediaList;
         } catch (e) {
@@ -56,7 +69,6 @@
         }
 
         siteLib.name = "Site Lib";
-
         init = true;
       }
 
@@ -72,6 +84,8 @@
       }
 
       var setPlaylist = function setPlaylist(aMediaList) {
+        if (!aMediaList)
+          return;
         if (!originalWeb)
           originalWeb = songbird.webPlaylist.mediaList;
 
@@ -114,7 +128,7 @@
       var setM3UPlaylistNoScan = function setM3UPlaylistNoScan() {
         siteLib.scanMediaOnCreation = false;
         if (!m3uMediaList) {
-          m3uMediaList = siteLib.createMediaListFromFile("http://www.jgaunt.com/uploads/uploads.m3u");
+          m3uMediaList = siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u");
           m3uMediaList.name = "m3u Test List";
         }
         setPlaylist(m3uMediaList);
@@ -123,7 +137,7 @@
 
       var setM3UPlaylistWithScan = function setM3UPlaylistWithScan() {
         if (!m3uMediaList) {
-          m3uMediaList = siteLib.createMediaListFromFile("http://www.jgaunt.com/uploads/uploads.m3u");
+          m3uMediaList = siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u");
           m3uMediaList.name = "m3u Test List";
         }
         setPlaylist(m3uMediaList);

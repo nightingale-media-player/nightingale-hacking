@@ -24,8 +24,8 @@
 //
  */
 
+#include "sbRemoteAPIUtils.h"
 #include "sbRemoteWebPlaylist.h"
-#include "sbRemoteLibrary.h"
 #include "sbRemoteWrappingSimpleEnumerator.h"
 
 #include <sbClassInfoUtils.h>
@@ -54,21 +54,20 @@
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gRemoteWebPlaylistLog = nsnull;
-#define LOG(args)   if (gRemoteWebPlaylistLog) PR_LOG(gRemoteWebPlaylistLog, PR_LOG_WARN, args)
-#else
-#define LOG(args)   /* nothing */
 #endif
+
+#define LOG(args) PR_LOG(gRemoteWebPlaylistLog, PR_LOG_WARN, args)
 
 const static char* sPublicWProperties[] =
 {
-  "library:mediaList"
+  "site:mediaList"
 };
 
 const static char* sPublicRProperties[] =
 {
   // sbIRemoteWebPlaylist
-  "library:selection",
-  "library:mediaList",
+  "site:selection",
+  "site:mediaList",
 
   // nsIClassInfo
   "classinfo:classDescription",
@@ -81,13 +80,13 @@ const static char* sPublicRProperties[] =
 const static char* sPublicMethods[] =
 { 
   // sbIRemoteWebPlaylist
-  "library:addColumn",
-  "library:setSelectionByIndex",
+  "site:addColumn",
+  "site:setSelectionByIndex",
 
   // sbIPlaylistWidget
-  "library:showColumn",
-  "library:hideColumn",
-  "library:getView"
+  "site:showColumn",
+  "site:hideColumn",
+  "internal:getView"
 };
 
 NS_IMPL_ISUPPORTS5( sbRemoteWebPlaylist,

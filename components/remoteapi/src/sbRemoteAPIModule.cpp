@@ -27,6 +27,7 @@
 #include "sbRemoteCommands.h"
 #include "sbRemoteLibrary.h"
 #include "sbRemotePlayer.h"
+#include "sbRemoteSiteLibrary.h"
 #include "sbSecurityMixin.h"
 
 #include <nsIClassInfoImpl.h>
@@ -35,6 +36,9 @@
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteLibrary, Init)
 NS_DECL_CI_INTERFACE_GETTER(sbRemoteLibrary)
+
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteSiteLibrary, Init)
+NS_DECL_CI_INTERFACE_GETTER(sbRemoteSiteLibrary)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteCommands, Init)
 NS_DECL_CI_INTERFACE_GETTER(sbRemoteCommands)
@@ -67,6 +71,16 @@ static const nsModuleComponentInfo components[] =
     NULL,
     NULL,
     NS_CI_INTERFACE_GETTER_NAME(sbRemoteLibrary)
+  },
+  {
+    SONGBIRD_REMOTESITELIBRARY_CLASSNAME,
+    SONGBIRD_REMOTESITELIBRARY_CID,
+    SONGBIRD_REMOTESITELIBRARY_CONTRACTID,
+    sbRemoteSiteLibraryConstructor,
+    NULL,
+    NULL,
+    NULL,
+    NS_CI_INTERFACE_GETTER_NAME(sbRemoteSiteLibrary)
   },
   {
     SONGBIRD_REMOTEPLAYER_CLASSNAME,

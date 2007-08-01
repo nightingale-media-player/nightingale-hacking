@@ -52,10 +52,9 @@
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gRemoteCommandsLog = nsnull;
-#define LOG(args)   if (gRemoteCommandsLog) PR_LOG(gRemoteCommandsLog, PR_LOG_WARN, args)
-#else
-#define LOG(args)   /* nothing */
 #endif
+
+#define LOG(args) PR_LOG(gRemoteCommandsLog, PR_LOG_WARN, args)
 
 static NS_DEFINE_CID(kRemoteCommandsCID, SONGBIRD_REMOTECOMMANDS_CID);
 

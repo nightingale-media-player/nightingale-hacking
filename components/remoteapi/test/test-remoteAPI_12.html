@@ -86,6 +86,16 @@
 
       var addDemoColumns = function addDemoColumns() {
         try {
+          songbird.webPlaylist.addColumn( "text",
+                                          "buttonDemoText",
+                                          "FOO",
+                                          "",
+                                          false,
+                                          true,
+                                          false,
+                                          false,
+                                          0,
+                                          150 ); 
           songbird.webPlaylist.addColumn( "button",
                                           "buttonDemoPlay",
                                           "Play",

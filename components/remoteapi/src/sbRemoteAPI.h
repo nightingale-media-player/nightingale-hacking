@@ -27,7 +27,11 @@
 #ifndef __SB_REMOTE_API_H__
 #define __SB_REMOTE_API_H__
 
-#define SB_DECL_SECURITYCHECKEDCOMP_INIT nsresult Init();
+#include <sbISecurityAggregator.h>
+#include <sbISecurityMixin.h>
+#include "sbRemotePlayer.h"
+
+#define SB_DECL_SECURITYCHECKEDCOMP_INIT virtual nsresult Init();
 
 #define SB_IMPL_SECURITYCHECKEDCOMP_INIT(_class)                              \
 nsresult                                                                      \

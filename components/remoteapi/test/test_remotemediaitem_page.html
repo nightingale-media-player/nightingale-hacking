@@ -52,11 +52,17 @@ function runTest(tester) {
     tester.assertTrue(item.mediaCreated > 0);
     tester.assertTrue(item.mediaUpdated > 0);
 
-    item.contentLength = 123;
-    tester.assertEqual(item.contentLength, 123);
+    try {
+      item.contentLength = 123;
+      tester.fail("did not throw");
+    } 
+    catch(e) {}
 
-    item.contentType = "text/html";
-    tester.assertEqual(item.contentType, "text/html");
+    try {
+      item.contentType = "text/html";
+      tester.fail("did not throw");
+    }
+    catch(e) {}
 
     try {
       var junk = item.library;

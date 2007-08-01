@@ -24,9 +24,7 @@
 //
  */
 
-#include "sbRemoteAPI.h"
-#include "sbRemoteMediaList.h"
-
+#include "sbRemoteSiteMediaList.h"
 #include <sbClassInfoUtils.h>
 
 #include <nsComponentManagerUtils.h>
@@ -36,7 +34,7 @@
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteMediaList:5
+ *   NSPR_LOG_MODULES=sbRemoteSiteMediaList:5
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gRemoteMediaListLog = nsnull;
@@ -47,33 +45,33 @@ static PRLogModuleInfo* gRemoteMediaListLog = nsnull;
 const static char* sPublicWProperties[] =
 {
   // sbIMediaList
-  "library:name"
+  "site:name"
 };
 
 const static char* sPublicRProperties[] =
 {
   // sbILibraryResource
-  "library:guid",
-  "library:created",
-  "library:updated",
+  "site:guid",
+  "site:created",
+  "site:updated",
 
   // sbIMediaItem
   // omitting library since we don't want the user to get back
   // to the original library
-  "library:isMutable",
-  "library:mediaCreated",
-  "library:mediaUpdated",
-  "library:contentLength",
-  "library:contentType",
+  "site:isMutable",
+  "site:mediaCreated",
+  "site:mediaUpdated",
+  "site:contentLength",
+  "site:contentType",
 
   // sbIMediaList
-  "library:name",
-  "library:type",
-  "library:length",
-  "library:isEmpty",
+  "site:name",
+  "site:type",
+  "site:length",
+  "site:isEmpty",
 
   // sbIRemoteMediaList
-  "library:selection",
+  "site:selection",
 
   // nsIClassInfo
   "classinfo:classDescription",
@@ -86,38 +84,38 @@ const static char* sPublicRProperties[] =
 const static char* sPublicMethods[] =
 { 
   // sbILibraryResource
-  "library:getProperty",
-  "library:setProperty",
-  "library:equals",
+  "site:getProperty",
+  "site:setProperty",
+  "site:equals",
 
   // sbIMediaItem
   // none applicable
 
   // sbIMediaList
   // omitting createView, listeners, and batching
-  "library:getItemByGuid",
-  "library:getItemByIndex",
-  "library:enumerateAllItems",
-  "library:enumerateItemsByProperty",
-  "library:indexOf",
-  "library:lastIndexOf",
-  "library:contains",
-  "library:add",
-  "library:addAll",
-  "library:remove",
-  "library:removeByIndex",
-  "library:clear",
-  "library:getDistinctValuesForProperty",
+  "site:getItemByGuid",
+  "site:getItemByIndex",
+  "site:enumerateAllItems",
+  "site:enumerateItemsByProperty",
+  "site:indexOf",
+  "site:lastIndexOf",
+  "site:contains",
+  "site:add",
+  "site:addAll",
+  "site:remove",
+  "site:removeByIndex",
+  "site:clear",
+  "site:getDistinctValuesForProperty",
 
   // sbIRemoteMediaList
   "internal:getView"
 };
 
-NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteMediaList,
+NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteSiteMediaList,
                               sbRemoteMediaListBase,
                               nsIClassInfo )
 
-NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteMediaList,
+NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteSiteMediaList,
                               nsISupports,
                               sbISecurityAggregator,
                               sbIRemoteMediaList,
@@ -126,24 +124,24 @@ NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteMediaList,
                               sbILibraryResource,
                               nsISecurityCheckedComponent )
 
-SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaList)
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteSiteMediaList)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteMediaList)
+SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteSiteMediaList)
 
-sbRemoteMediaList::sbRemoteMediaList( sbIMediaList* aMediaList,
-                                      sbIMediaListView* aMediaListView ) :
+sbRemoteSiteMediaList::sbRemoteSiteMediaList( sbIMediaList* aMediaList,
+                                              sbIMediaListView* aMediaListView ) :
   sbRemoteMediaListBase( aMediaList, aMediaListView )
 {
 #ifdef PR_LOGGING
   if (!gRemoteMediaListLog) {
-    gRemoteMediaListLog = PR_NewLogModule("sbRemoteMediaList");
+    gRemoteMediaListLog = PR_NewLogModule("sbRemoteSiteMediaList");
   }
-  LOG(("sbRemoteMediaList::sbRemoteMediaList()"));
+  LOG(("sbRemoteSiteMediaList::sbRemoteSiteMediaList()"));
 #endif
 }
 
-sbRemoteMediaList::~sbRemoteMediaList()
+sbRemoteSiteMediaList::~sbRemoteSiteMediaList()
 {
-  LOG(("sbRemoteMediaList::~sbRemoteMediaList()"));
+  LOG(("sbRemoteSiteMediaList::~sbRemoteSiteMediaList()"));
 }
 

@@ -24,8 +24,9 @@
 //
  */
 
+#include "sbRemoteAPI.h"
+#include "sbRemoteAPIUtils.h"
 #include "sbRemoteIndexedMediaItem.h"
-#include "sbRemoteLibrary.h"
 
 #include <sbClassInfoUtils.h>
 #include <sbIMediaItem.h>

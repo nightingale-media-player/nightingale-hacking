@@ -38,45 +38,123 @@ interface sbIMediaItem;
  * \interface sbIRemoteLibrary
  * \brief An interface to control a media library from remote web pages.
  *
- * TODO: Write this documentation
+ * The remote library interface allows websites to create media items in a
+ *   manner more web-like than the internal sbILibrary interface. Access to
+ *   the main or web libraries is controlled through permissions set by the
+ *   user. Some or all calls made to objects that implement this interface
+ *   may fail based on the permissions set by the user.
  *
  */
-[scriptable, uuid(3025cbf8-7969-4e79-8641-967a9f4e51b8)]
+[scriptable, uuid(22dbb456-1269-408d-abd5-3cb2c00370fc)]
 interface sbIRemoteLibrary : nsISupports
 {
+  /**
+   * \brief Control whether or not media is scanned when created
+   *
+   * This attribute controlls whether or not the library will cause the
+   *   metadata to be scanned for any tracks created. If a website wants
+   *   to hand-set it's metadata then it should set this to false. By
+   *   default this is true. If metadat for a particular track has already
+   *   been scanned, that metadata will show up automatically ( for instance
+   *   for 2 items created from the same URL ).
+   */
   attribute boolean scanMediaOnCreation;
 
   /**
-   * create and insert a media item into the library
+   * \brief Create a media item from a URL
+   *
+   * Create and insert a media item into the library
+   *
+   * \param An http or https URL that points to a valid media file
+   *
+   * \returns the media item that gets created
+   * \returns NS_ERROR_INVALID_ARG if URL is not an http: or https: URL
    */
   sbIMediaItem createMediaItem(in AString aURL);
 
   /**
-   * create and insert a media list into the library
+   * \brief Create a media list
+   *
+   * Create and insert a media list into the library for the type
+   * passed in.
+   *
+   * \param aType A string, either 'simple' or 'smart'
+   *
+   * \returns the media list that gets created.
    */
   sbIRemoteMediaList createMediaList(in AString aType);
-  sbIRemoteMediaList createMediaListFromFile(in AString aURL);
 
   /**
-   * \brief An array of sbIMediaLists
-   */
-  // readonly attribute nsISimpleEnumerator playlists;
-  // readonly attribute nsISimpleEnumerator artists;
-  // readonly attribute nsISimpleEnumerator albums;
-
-  // set only in debug builds
-  readonly attribute AString filename;
-
-  /**
+   * \brief Create a media list from an exising playlist file
    *
-   * \param aPath - this can be either one of our 'magic' ids: main, web,
-   *        download; or it can be a path. If a path it must adhere to the same
-   *        restrictions that cookies do in the browser, namely it must be a 
-   *        prefix of the location of the URI. Specifically for the URI:
-   *        http://foo.bar.com/this/is/my/music/stolen.html the path must
-   *        be a prefix of 'this/is/my/music/'
+   * Create and insert a media list into the library. The URL passed in must
+   * be an http or https url that points to a type of playlist file supported
+   * by Songbird. That is currently: .pls, .m3u, .html, and rss type feeds.
+   *
+   * \param aURL A string that points to a type of playlist file that is
+   *             supported by Songbird. It must be either http: or https: and
+   *             one of the following playlist types: .pls, .m3u, .html and rss
+   *             type feeds.
+   *
+   * \returns the media list that gets created.
    */
-  [noscript] void connectToMediaLibrary(in AString aDomain, in AString aPath);
+  sbIRemoteMediaList createMediaListFromURL(in AString aURL);
+
+  /**
+   * \brief Connect the remote library to the main or web library
+   * 
+   * This method retrieves the internal data model's library for use by
+   *   the webpage.
+   *
+   * \param aLibName - Only accepted values are 'main' or 'web'
+   */
   [noscript] void connectToDefaultLibrary(in AString aLibName);
 };
 
+/**
+ * \interface sbIRemoteSiteLibrary
+ * \brief An interface for a sandbox library created by the website.
+ *
+ * This interface is used by the player to connect a library to a specific
+ *   library for a website. The library serves as an area a website can 
+ *   use to create the media items and lists needed to populate web playlists
+ *   and to transfer into the user's main library. The restrictions on the
+ *   site library are lighter allowing a website to do more with the limited
+ *   scope of the site library.
+ */
+[scriptable, uuid(023734d0-0ba2-4c19-9fe6-58646282b586)]
+interface sbIRemoteSiteLibrary : sbIRemoteLibrary
+{
+  /**
+   * \brief The filename of the library file
+   * Set only in debug builds
+   */
+  readonly attribute AString filename;
+
+  /**
+   * \brief Connects the remote library to a library from the internal data
+   *        model.
+   *
+   * This method is used to create or load the data model library for a
+   *   specific site's library. The strings passed in follow the format for
+   *   cookies, in that the domain and path must meet the requirements for
+   *   RFC 2109.
+   * In the case of a bad match, the method fails and no library is hooked
+   *   up. Any further attempt to access the library will fail.
+   * 
+   * \param aDomain - The domain, or subdomain for the site library. The 
+   *        requesting website must be on this domain. A site on foo.bar.com
+   *        may pass in bar.com, but not the other way around.
+   * \param aPath - The path or subpath for the site library. The requesting
+   *        site must be on this patch. A site at foo.com/my/path/index.html
+   *        can pass in '/my/path/', '/my', '/', or ''. In the case of the '/'
+   *        a root level library is created, accessibel by ALL paths in the
+   *        domain. In the case of '' the deepest path is used, which would
+   *        match 'my/path/'. The leading slash MUST be there, except when
+   *        not passing any path (''). Currently the trailing slash is
+   *        important, while this will succeed with or without the slash you
+   *        will get different libraries as a result. This will be fixed --
+   *        bug 4176 
+   */
+  [noscript] void connectToSiteLibrary(in AString aDomain, in AString aPath);
+};

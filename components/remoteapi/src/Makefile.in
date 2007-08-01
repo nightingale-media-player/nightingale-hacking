@@ -48,6 +48,11 @@ CPP_SRCS = sbSecurityMixin.cpp \
            sbRemoteWebPlaylist.cpp \
            sbRemoteWrappingSimpleEnumerator.cpp \
            sbRemoteWrappingStringEnumerator.cpp \
+           sbRemoteMediaListBase.cpp \
+           sbRemoteLibraryBase.cpp \
+           sbRemoteSiteLibrary.cpp \
+           sbRemoteSiteMediaItem.cpp \
+           sbRemoteSiteMediaList.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \

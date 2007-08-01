@@ -27,15 +27,13 @@
 #ifndef __SB_REMOTE_PLAYER_H__
 #define __SB_REMOTE_PLAYER_H__
 
-#include "sbRemoteLibrary.h"
-
 #include <sbIDataRemote.h>
+#include <sbIMediaList.h>
 #include <sbIPlaylistPlayback.h>
 #include <sbIPlaylistWidget.h>
-#include <sbIRemoteCommands.h>
+#include <sbIRemoteLibrary.h>
 #include <sbIRemotePlayer.h>
 #include <sbISecurityAggregator.h>
-#include <sbISecurityMixin.h>
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -53,11 +51,11 @@
 #define SONGBIRD_REMOTEPLAYER_CLASSNAME                 \
   "Songbird Remote Player"
 #define SONGBIRD_REMOTEPLAYER_CID                       \
-{ /* 4b67df4e-bb96-42c7-b5ef-65f95402e446 */            \
-  0x4b67df4e,                                           \
-  0xbb96,                                               \
-  0x42c7,                                               \
-  {0xb5, 0xef, 0x65, 0xf9, 0x54, 0x02, 0xe4, 0x46}      \
+{ /* 645e064c-e547-444c-bb41-8f2e5b12700b */            \
+  0x645e064c,                                           \
+  0xe547,                                               \
+  0x444c,                                               \
+  {0xbb, 0x41, 0x8f, 0x2e, 0x5b, 0x12, 0x70, 0x0b}      \
 }
 
 struct sbRemoteObserver {
@@ -136,7 +134,7 @@ protected:
   // Site library for the page that has been loaded
   // Theoretically there _could_ be more than one library requested by the page
   //    so this will probably have to grow to be a hashtable.
-  nsCOMPtr<sbIRemoteLibrary> mSiteLibrary;
+  nsCOMPtr<sbIRemoteSiteLibrary> mSiteLibrary;
 
   // Hashtable to hold the observers registered by the webpage
   nsDataHashtable<nsStringHashKey, sbRemoteObserver> mRemObsHash;

@@ -24,7 +24,7 @@
 //
  */
 
-#include "sbRemoteMediaItem.h"
+#include "sbRemoteSiteMediaItem.h"
 #include <sbClassInfoUtils.h>
 
 #include <nsComponentManagerUtils.h>
@@ -34,31 +34,31 @@
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteMediaItem:5
+ *   NSPR_LOG_MODULES=sbRemoteSiteMediaItem:5
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gRemoteMediaItemLog = nsnull;
+static PRLogModuleInfo* gRemoteSiteMediaItemLog = nsnull;
 #endif
 
-#define LOG(args) PR_LOG(gRemoteMediaItemLog, PR_LOG_WARN, args)
+#define LOG(args) PR_LOG(gRemoteSiteMediaItemLog, PR_LOG_WARN, args)
 
-const static char* sPublicWProperties[] = { "" };
+const static char* sPublicWProperties[] = {""};
 
 const static char* sPublicRProperties[] =
 {
   // sbILibraryResource
-  "library:guid",
-  "library:created",
-  "library:updated",
+  "site:guid",
+  "site:created",
+  "site:updated",
 
   // sbIMediaItem
   // omitting library since we don't want the user to get back
   // to the original library
-  "library:isMutable",
-  "library:mediaCreated",
-  "library:mediaUpdated",
-  "library:contentLength",
-  "library:contentType",
+  "site:isMutable",
+  "site:mediaCreated",
+  "site:mediaUpdated",
+  "site:contentLength",
+  "site:contentType",
 
   // nsIClassInfo
   "classinfo:classDescription",
@@ -71,51 +71,42 @@ const static char* sPublicRProperties[] =
 const static char* sPublicMethods[] =
 { 
   // sbILibraryResource
-  "library:getProperty",
-  "library:setProperty",
-  "library:equals"
+  "site:getProperty",
+  "site:setProperty",
+  "site:equals"
 
   // sbIMediaItem
   // none applicable
 };
 
-NS_IMPL_ISUPPORTS6(sbRemoteMediaItem,
-                   nsIClassInfo,
-                   nsISecurityCheckedComponent,
-                   sbISecurityAggregator,
-                   sbIMediaItem,
-                   sbIWrappedMediaItem,
-                   sbILibraryResource)
+NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteSiteMediaItem,
+                              sbRemoteMediaItem,
+                              nsIClassInfo )
 
-NS_IMPL_CI_INTERFACE_GETTER5(sbRemoteMediaItem,
+NS_IMPL_CI_INTERFACE_GETTER5(sbRemoteSiteMediaItem,
                              nsISupports,
                              sbISecurityAggregator,
                              sbIMediaItem,
                              sbILibraryResource,
                              nsISecurityCheckedComponent)
 
-SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaItem)
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteSiteMediaItem)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteMediaItem)
+SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteSiteMediaItem)
 
-sbRemoteMediaItem::sbRemoteMediaItem(sbIMediaItem* aMediaItem) :
-  mMediaItem(aMediaItem)
+sbRemoteSiteMediaItem::sbRemoteSiteMediaItem(sbIMediaItem* aMediaItem) :
+                       sbRemoteMediaItem(aMediaItem)
 {
-  NS_ASSERTION(aMediaItem, "Null media list!");
-
 #ifdef PR_LOGGING
-  if (!gRemoteMediaItemLog) {
-    gRemoteMediaItemLog = PR_NewLogModule("sbRemoteMediaItem");
+  if (!gRemoteSiteMediaItemLog) {
+    gRemoteSiteMediaItemLog = PR_NewLogModule("sbRemoteSiteMediaItem");
   }
-  LOG(("sbRemoteMediaItem::sbRemoteMediaItem()"));
+  LOG(("sbRemoteSiteMediaItem::sbRemoteSiteMediaItem()"));
 #endif
 }
 
-NS_IMETHODIMP_(already_AddRefed<sbIMediaItem>)
-sbRemoteMediaItem::GetMediaItem()
+sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()
 {
-  sbIMediaItem* item = mMediaItem;
-  NS_ADDREF(item);
-  return item;
+  LOG(("sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()"));
 }
 
