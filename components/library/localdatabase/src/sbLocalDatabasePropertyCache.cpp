@@ -38,6 +38,7 @@
 #include <nsAutoLock.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
+#include <nsIObserverService.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringEnumerator.h>
 #include <nsUnicharUtils.h>
@@ -68,8 +69,11 @@ static PRLogModuleInfo *gLocalDatabasePropertyCacheLog = nsnull;
 #define CACHE_HASHTABLE_SIZE 1000
 #define BAG_HASHTABLE_SIZE   50
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabasePropertyCache, 
-                              sbILocalDatabasePropertyCache)
+#define NS_QUIT_APPLICATION_OBSERVER_ID "quit-application"
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabasePropertyCache, 
+                              sbILocalDatabasePropertyCache,
+                              nsIObserver)
 
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache() 
 : mWritePendingCount(0),
@@ -91,8 +95,6 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 
 sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
-  Shutdown();
-  
   if(mDirtyLock) {
     nsAutoLock::DestroyLock(mDirtyLock);
   }
@@ -324,6 +326,15 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mLibrary = aLibrary;
+
+  nsCOMPtr<nsIObserverService> observerService = 
+    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = observerService->AddObserver(this,
+                                    NS_QUIT_APPLICATION_OBSERVER_ID,
+                                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -832,6 +843,27 @@ sbLocalDatabasePropertyCache::GetPropertyID(const nsAString& aProperty,
   NS_ENSURE_ARG_POINTER(_retval);
 
   *_retval = GetPropertyIDInternal(aProperty);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabasePropertyCache::Observe(nsISupports* aSubject, 
+                                      const char* aTopic,
+                                      const PRUnichar* aData)
+{
+  if (strcmp(aTopic, NS_QUIT_APPLICATION_OBSERVER_ID) == 0) {
+
+    nsresult rv;
+    nsCOMPtr<nsIObserverService> observerService = 
+      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+
+    if (NS_SUCCEEDED(rv)) {
+      observerService->RemoveObserver(this, NS_QUIT_APPLICATION_OBSERVER_ID);
+    }
+
+    Shutdown();
+  }
+
   return NS_OK;
 }
 

@@ -161,6 +161,7 @@ private:
   querypersistmap_t m_PersistentQueries;
 
   PRBool m_AttemptShutdownOnDestruction;
+  PRBool m_IsShutDown;
 };
 
 class QueryProcessorThread : public nsIRunnable

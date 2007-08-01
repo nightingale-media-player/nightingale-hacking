@@ -34,6 +34,7 @@
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
 #include <nsInterfaceHashtable.h>
+#include <nsIObserver.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
@@ -49,11 +50,13 @@ class sbISQLInsertBuilder;
 class sbISQLSelectBuilder;
 class sbISQLUpdateBuilder;
 
-class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache
+class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache,
+                                     public nsIObserver
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASEPROPERTYCACHE
+  NS_DECL_NSIOBSERVER
 
   sbLocalDatabasePropertyCache();
 

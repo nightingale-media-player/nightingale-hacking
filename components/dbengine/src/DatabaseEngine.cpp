@@ -553,6 +553,7 @@ CDatabaseEngine::CDatabaseEngine()
 , m_QueryProcessorQueueHasItem(PR_FALSE)
 , m_pPersistentQueriesMonitor(nsnull)
 , m_AttemptShutdownOnDestruction(PR_FALSE)
+, m_IsShutDown(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!sDatabaseEngineLog)
@@ -672,6 +673,8 @@ NS_IMETHODIMP CDatabaseEngine::Init()
 
 NS_IMETHODIMP CDatabaseEngine::Shutdown()
 {
+  m_IsShutDown = PR_TRUE;
+
   PRInt32 count = m_QueryProcessorThreads.Count();
   if (count) {
     {
@@ -808,6 +811,11 @@ PRInt32 CDatabaseEngine::DropDB(const nsAString &dbGUID)
 /* [noscript] PRInt32 SubmitQuery (in CDatabaseQueryPtr dbQuery); */
 NS_IMETHODIMP CDatabaseEngine::SubmitQuery(CDatabaseQuery * dbQuery, PRInt32 *_retval)
 {
+  if (m_IsShutDown) {
+    NS_ERROR("Don't submit queries after the DBEngine is shut down!!!!");
+    return NS_ERROR_FAILURE;
+  }
+
   *_retval = SubmitQueryPrivate(dbQuery);
   return NS_OK;
 }
