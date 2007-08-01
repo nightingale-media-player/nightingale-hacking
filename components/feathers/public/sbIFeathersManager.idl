@@ -223,7 +223,7 @@ interface sbIFeathersManager : nsISupports
    * \throws NS_ERROR_FAILURE if the given feathers are invalid or incompatible
    */
   void switchFeathers(in AString aLayoutURL, 
-                         in AString aInternalName);
+                      in AString aInternalName);
 
 
   /**

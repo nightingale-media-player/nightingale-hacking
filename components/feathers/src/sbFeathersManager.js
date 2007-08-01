@@ -939,15 +939,6 @@ FeathersManager.prototype = {
             " are not compatible");
     } 
     
-    // If the given pair is currently active, then do nothing
-    if (layoutURL == this.currentLayoutURL 
-        && internalName == this.currentSkinName)
-    {
-      debug("FeathersManager.switchFeathers: already active: " + layoutURL + ", " + internalName + "\n");
-      return;
-    }
-    
-    
     // Notify that a select is about to occur
     this._onSelect(layoutDescription, skinDescription);
     
