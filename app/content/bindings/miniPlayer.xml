@@ -39,37 +39,39 @@
   <content mousethrough="always">
     <xul:hbox id="sb-mini-player-controls" flex="1">
       <!-- PLAYBACK CONTROLS -->
-      <xul:sb-player-back-button id="mini_btn_back" class="miniplayer sb-player-button" />
-      <xul:sb-player-playpause-button id="mini_btn_playpause" class="miniplayer sb-player-button" popupanchor="topleft" popupalign="bottomleft"/>
-      <xul:sb-player-forward-button id="mini_btn_fwd" class="miniplayer sb-player-button" />
+      <xul:sb-player-back-button id="sb-mini-player-controls-back" class="miniplayer sb-player-button" />
+      <xul:sb-player-playpause-button id="sb-mini-player-controls-playpause" class="miniplayer sb-player-button" popupanchor="topleft" popupalign="bottomleft"/>
+      <xul:sb-player-forward-button id="sb-mini-player-controls-fwd" class="miniplayer sb-player-button" />
 
       <!-- VOLUME -->
-      <xul:hbox id="mini_volume_box" pack="center" align="center" mousethrough="always">
-        <xul:sb-player-mute-button id="mini_btn_mute" class="miniplayer"/>
+      <xul:hbox id="sb-mini-player-controls-volume-box" class="sb-mini-player-controls-volume-box" pack="center" align="center" mousethrough="always">
+        <xul:sb-player-mute-button id="sb-mini-player-controls-mute" class="miniplayer"/>
         <xul:spacer id="songbird_volume_w" />
-        <xul:sb-player-volume-slider id="songbird_volume" flex="1" orient="horizontal" class="miniplayer" maxpos="100"/>
+        <xul:sb-player-volume-slider id="sb-mini-player-controls-volume" flex="1" orient="horizontal" class="miniplayer" maxpos="100"/>
         <xul:spacer id="songbird_volume_e"/>
       </xul:hbox>
       
       <!-- THE DASHBOARD -->
-      <xul:image id="mini_dash_w" mousethrough="always"/>
-      <xul:vbox id="mini_dash" flex="1" mousethrough="always">
-        <xul:stack>
-          <xul:spacer id="mini_dash_groove_spacer" flex="1" />
-          <xul:hbox id="mini_dash_text_box"  flex="1" mousethrough="always">
-            <xul:sb-autoscroll id="mini_dash_autoscroll_box" fitalign="left" spacing="8" flex="1" mousethrough="always">
-              <xul:sb-player-artist-label id="mini_text_artist" class="mini_dash_text" autotip="1" mousethrough="always" />
-              <xul:spacer id="mini_text_spacer" width="20" height="5" mousethrough="always" />
-              <xul:sb-player-title-label id="mini_text_title" class="mini_dash_text" autotip="1" mousethrough="always" />
-            </xul:sb-autoscroll>
-            <xul:sb-player-timeelapsed-label id="mini_text_time_elapsed" value="0:00"  mousethrough="always" class="mini_dash_text"/>
-            <xul:label id="mini_text_time_t_txt"   value=" / "  mousethrough="always" class="mini_dash_text"/>
-            <xul:sb-player-totaltime-label id="mini_text_time_total" value="0:00"  mousethrough="always" class="mini_dash_text"/>
-          </xul:hbox>
-          <xul:sb-player-seek-slider id="mini_seekbar" orient="horizontal"  maxpos="100" class="miniplayer"/>
-        </xul:stack>
-      </xul:vbox>
-      <xul:image id="mini_dash_e" mousethrough="always"/>
+      <xul:hbox flex="1" pack="center" align="center" mousethrough="always">
+        <xul:image id="sb-mini-player-controls-dash-image-w" class="sb-mini-player-controls-dash-image-w" mousethrough="always"/>
+        <xul:vbox id="sb-mini-player-controls-dash-box" class="sb-mini-player-controls-dash-box" flex="1" mousethrough="always">
+          <xul:stack>
+            <xul:spacer id="sb-mini-player-controls-dash-groove" class="sb-mini-player-controls-dash-groove" flex="1" />
+            <xul:hbox id="sb-mini-player-controls-dash-text-box" class="sb-mini-player-controls-dash-text-box" flex="1" mousethrough="always">
+              <xul:sb-autoscroll id="sb-mini-player-controls-dash-autoscroll-box" class="sb-mini-player-controls-dash-autoscroll-box" fitalign="left" spacing="8" flex="1" mousethrough="always">
+                <xul:sb-player-artist-label id="sb-mini-player-controls-artist" class="mini_dash_text" autotip="1" mousethrough="always" />
+                <xul:spacer id="sb-mini-player-controls-dash-text-spacer" width="20" height="5" mousethrough="always" />
+                <xul:sb-player-title-label id="sb-mini-player-controls-title" class="mini_dash_text" autotip="1" mousethrough="always" />
+              </xul:sb-autoscroll>
+              <xul:sb-player-timeelapsed-label id="sb-mini-player-controls-timeelapsed" value="0:00"  mousethrough="always" class="mini_dash_text"/>
+              <xul:label id="sb-mini-player-controls-dash-text-slash" value=" / "  mousethrough="always" class="mini_dash_text"/>
+              <xul:sb-player-totaltime-label id="sb-mini-player-controls-totaltime" value="0:00"  mousethrough="always" class="mini_dash_text"/>
+            </xul:hbox>
+            <xul:sb-player-seek-slider id="sb-mini-player-controls-seek" orient="horizontal"  maxpos="100" class="miniplayer"/>
+          </xul:stack>
+        </xul:vbox>
+        <xul:image id="sb-mini-player-controls-dash-image-e" class="sb-mini-player-controls-dash-image-e" mousethrough="always"/>
+      </xul:hbox>
     </xul:hbox>
     
   </content>

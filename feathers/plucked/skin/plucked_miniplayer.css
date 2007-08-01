@@ -39,7 +39,7 @@ slider.sb-player-seek-slider.miniplayer
   background-color: Transparent !important;
 }
 
-#mini_seekbar
+sb-player-seek-slider.miniplayer
 {
   height: 4px !important;
   width: auto !important;

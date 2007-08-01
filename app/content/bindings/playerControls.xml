@@ -1167,14 +1167,14 @@
 
     <content>
       <xul:hbox id="sb-player-control-buttons" flex="1" xbl:inherits="class,hidden">
-        <xul:sb-player-back-button id="songbird_btn_back" class="sb-player-button" xbl:inherits="class"/>
+        <xul:sb-player-back-button id="sb-player-control-buttons-back" class="sb-player-button" xbl:inherits="class"/>
         <!-- Bonus Buttons!
-          <xul:sb-player-pause-button id="songbird_btn_pause" popupanchor="topleft" popupalign="bottomleft"/>
-          <xul:sb-player-play-button id="songbird_btn_play" popupanchor="topleft" popupalign="bottomleft"/>
-          <xul:sb-player-stop-button id="songbird_btn_stop" popupanchor="topleft" popupalign="bottomleft"/>
+          <xul:sb-player-pause-button id="sb-player-control-buttons-pause" popupanchor="topleft" popupalign="bottomleft"/>
+          <xul:sb-player-play-button id="sb-player-control-buttons-play" popupanchor="topleft" popupalign="bottomleft"/>
+          <xul:sb-player-stop-button id="sb-player-control-buttons-stop" popupanchor="topleft" popupalign="bottomleft"/>
         -->
-        <xul:sb-player-playpause-button id="songbird_btn_play_pause" class="sb-player-button" xbl:inherits="class" popupanchor="topleft" popupalign="bottomleft"/>
-        <xul:sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" xbl:inherits="class"/> 
+        <xul:sb-player-playpause-button id="sb-player-control-buttons-playpause" class="sb-player-button" xbl:inherits="class" popupanchor="topleft" popupalign="bottomleft"/>
+        <xul:sb-player-forward-button id="sb-player-control-buttons-forward" class="sb-player-button" xbl:inherits="class"/> 
       </xul:hbox>
     </content>
   

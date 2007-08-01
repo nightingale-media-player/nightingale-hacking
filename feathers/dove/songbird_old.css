@@ -3081,7 +3081,7 @@ window#mini
 }
 
 /* the back button */
-#mini_btn_back
+sb-player-back-button.miniplayer
 {
   width: 50px !important;
   height: 18px !important;
@@ -3089,7 +3089,7 @@ window#mini
   background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
-#mini_btn_back:hover
+sb-player-back-button.miniplayer:hover
 {
   width: 50px !important;
   height: 18px !important;
@@ -3097,13 +3097,13 @@ window#mini
   background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
-#mini_btn_back[disabled="true"]
+sb-player-back-button.miniplayer[disabled="true"]
 {
   background-image: url(mini/mini.btn.back.n.png) !important;
   background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
-#mini_btn_back:active
+sb-player-back-button.miniplayer:active
 {
   background-image: url(mini/mini.btn.back.a.png) !important;
   background-repeat: no-repeat !important;
@@ -3208,7 +3208,7 @@ slider.sb-player-seek-slider.miniplayer
   height: 6px !important;
   width: auto !important;
 }
-#mini_seekbar
+sb-player-seek-slider.miniplayer
 {
   -moz-appearance: none !important;
   height: 6px !important;
@@ -3265,7 +3265,7 @@ progressmeter.sb-player-seek-slider.miniplayer .progress-remainder
   padding: 0px 3px 0px 3px !important;
 }
 
-#mini_dash_e
+.sb-mini-player-controls-dash-image-e
 {
   -moz-appearance: none !important; /* grrrr! */
   width: 4px !important;
@@ -3274,7 +3274,7 @@ progressmeter.sb-player-seek-slider.miniplayer .progress-remainder
   background-image: url(mini/mini.bkg.dashboard_e.png) !important;
 }
 
-#mini_dash_w
+.sb-mini-player-controls-dash-image-w
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 18px !important;

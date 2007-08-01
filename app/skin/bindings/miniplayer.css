@@ -179,7 +179,7 @@ MINI DASHBOARD
 */
 
 /* Dashboard background box */
-#mini_dash
+.sb-mini-player-controls-dash-box
 {
   height: 18px;
   background-image: url(chrome://songbird/skin/miniplayer/mini.bkg.dashboard.png);
@@ -188,11 +188,11 @@ MINI DASHBOARD
 }
 
 /* Dashboard edges (rounded corners) */
-#mini_dash_e
+.sb-mini-player-controls-dash-image-e
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini.bkg.dashboard_e.png) !important;
 }
-#mini_dash_w
+.sb-mini-player-controls-dash-image-w
 {
   list-style-image: url(chrome://songbird/skin/miniplayer/mini.bkg.dashboard_w.png) !important;
 }
@@ -214,16 +214,16 @@ MINI DASHBOARD
 /** Make a fake slider groove underneath the dash text.
     This is to allow the text to hang over the slider
     without messing with click handling **/
-#mini_dash_groove_spacer
+.sb-mini-player-controls-dash-groove
 {
   height: 4px;
   width: auto;
   margin-top: 12px !important;
-  background-color: #5a5c5c !important;  
+  background-color: #5aFc5c !important;  
 }
 
 /* the seekbar slider */
-#mini_seekbar
+sb-player-seek-slider.miniplayer
 {
   height: 4px !important;
   width: auto !important;
@@ -258,27 +258,27 @@ SPACING
 ***************************************************************************************************
 */
 
-#mini_btn_playpause {
+sb-player-playpause-button.miniplayer {
   margin: 0px 1px 0px 1px !important;
 }
 
-#mini_btn_mute 
+sb-player-mute-button.miniplayer 
 {
   margin: 0px 5px 0px 5px;
 }
 
-#mini_btn_mute > .sb-player-mute-button-muteoff > .clickhold-button,
-#mini_btn_mute > .sb-player-mute-button-muteon > .clickhold-button
+sb-player-mute-button.miniplayer > .sb-player-mute-button-muteoff > .clickhold-button,
+sb-player-mute-button.miniplayer > .sb-player-mute-button-muteon > .clickhold-button
 {
   background-color: Transparent;
 }
 
-#mini_volume_box
+.sb-mini-player-controls-volume-box
 {
   margin: 0px 10px 0px 5px;
 }
 
-#mini_dash_autoscroll_box 
+.sb-mini-player-controls-dash-autoscroll-box 
 {
   margin-right:10px;
 }
