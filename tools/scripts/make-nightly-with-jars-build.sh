@@ -7,8 +7,8 @@ notice() {
 DEPTH=../..
 CURRENT_DIR=`pwd`
 
-export SONGBIRD_OFFICIAL=1
 export SB_UPDATE_CHANNEL="nightly"
+export SB_ENABLE_BREAKPAD=1
 export SB_ENABLE_JARS=1
 export SB_ENABLE_INSTALLER=1
 
@@ -17,7 +17,7 @@ make -f songbird.mk clobber
 make -f songbird.mk
 make -C compiled/update complete
 
-unset SONGBIRD_OFFICIAL
+unset SB_ENABLE_BREAKPAD
 unset SB_UPDATE_CHANNEL
 unset SB_ENABLE_JARS
 unset SB_ENABLE_INSTALLER
