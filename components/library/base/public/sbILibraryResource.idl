@@ -50,16 +50,53 @@ interface sbILibraryResource : nsISupports
   /**
    * \brief The guid of this resource
    */
+
+  /*
+  Prop: guid
+
+  The global unique identifier of this Library object.
+  
+  Type:
+    String
+
+  Note:
+    <MediaItem>, <MediaList> and <Library> are all Library Objects.
+  */
   readonly attribute AString guid;
 
   /**
    * \brief The creation time of this resource as a unix timestamp
    */
+
+  /*
+  Prop: created
+
+  The creation time of this Library object.
+
+  Type:
+    Number, in (TODO units???)
+
+  Note:
+    <MediaItem>, <MediaList> and <Library> are all Library Objects.
+  */
   readonly attribute long long created;
 
   /**
    * \brief The last update time of this resource as a unix timestamp
    */
+
+  /*
+  Prop: updated
+
+  The last update time of this Library object. Changing any property
+  constitutes an update.
+
+  Type:
+    Number, in (TODO units???)
+  
+  Note:
+    <MediaItem>, <MediaList> and <Library> are all Library Objects.
+  */
   readonly attribute long long updated;
 
   /**

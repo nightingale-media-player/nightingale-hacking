@@ -415,7 +415,7 @@ interface sbIRemotePlayer : nsISupports
   Begin playback of a URL.
 
   Prototype:
-    playURL(String url);
+    playURL(String url)
   
   Parameters: 
     url - The URL to play.

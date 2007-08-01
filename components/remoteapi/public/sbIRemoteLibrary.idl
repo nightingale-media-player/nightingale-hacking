@@ -34,6 +34,55 @@
 
 interface sbIMediaItem;
 
+/*
+Class: Library
+
+A <Library> is a collection of <MediaItems> and <MediaLists>. 
+It is possible to create a <Library> using the <Songbird::siteLibrary> 
+function.
+
+Example:
+  (start code)
+  //Create or get a library.
+  var library = songbird.siteLibrary("", "");
+  
+  //Create a medialist using the library.
+  var mediaList = songbird.createMediaList("simple");
+
+  //Create some mediaitems and add them to the medialist.
+  var itemURLs = ["http://path/to/song.mp3", "http://path/to/another/song.mp3"];
+  for(var url in itemURLs) {
+
+    //Calling createMediaItem may throw an exception when it fails
+    //to create the mediaitem.
+
+    try {
+      var mediaItem = library.createMediaItem(url);
+      mediaList.add(mediaItem);
+    }
+    catch(e) {
+
+      //Dump it.
+      dump("Failed creation of mediaitem: " + e);
+
+      //Or alert it.
+      alert("Failed creation of mediaitem: " + e);
+
+      //Oops the URL was not valid.
+      if(e.result == Components.results.NS_ERROR_INVALID_ARG) {
+        alert("The URL: " + url + " was not valid.");
+      }
+
+    }
+  }
+  (end code)
+
+See Also:
+  <Songbird>
+  <MediaItem>
+  <MediaList>
+*/
+
 /**
  * \interface sbIRemoteLibrary
  * \brief An interface to control a media library from remote web pages.
@@ -58,6 +107,25 @@ interface sbIRemoteLibrary : nsISupports
    *   been scanned, that metadata will show up automatically ( for instance
    *   for 2 items created from the same URL ).
    */
+  /*
+  Prop: scanMediaOnCreation
+
+  Set this property to true if you wish all new <MediaItems> 
+  created to be scanned for metadata.
+
+  Set this property to false if you wish to skip scanning 
+  for metadata when <MediaItems> are created.
+
+  If you are attempting to set all of your own metadata for <MediaItems>
+  you create, you may set this to false to prevent your metadata 
+  from being overwritten.
+
+  Note:
+    This property defaults to _true_.
+
+  Type:
+    Boolean
+  */
   attribute boolean scanMediaOnCreation;
 
   /**
@@ -70,6 +138,47 @@ interface sbIRemoteLibrary : nsISupports
    * \returns the media item that gets created
    * \returns NS_ERROR_INVALID_ARG if URL is not an http: or https: URL
    */
+
+  /*
+  Func: createMediaItem
+
+  Create a <MediaItem> from a URL. You may pass in 
+  http and https URLs. Local file URLs are not permitted.
+
+  Prototype:
+    <MediaItem> createMediaItem(String url)
+
+  Parameters:
+    url - A URL referring to a media file.
+
+  Returns:
+    The newly created <MediaItem>.
+
+  Throws:
+    Invalid Argument (Components.results.NS_ERROR_INVALID_ARG) 
+    if the URL isn't http or https.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+    
+    //Create the mediaitem from a url pointing to a media file.
+    var mediaItem = null;
+
+    //This function may throw if it fails to create the item because
+    //the URL is invalid.
+    try {
+      mediaItem = library.createMediaItem("http://path/to/file.mp3");
+    }
+    catch(e) {
+      //Oops, bad URL.
+      if(e.result == Components.results.NS_ERROR_INVALID_ARG) {
+        alert("Oops, the URL was not valid.");
+      }
+    }
+    (end)
+  */
   sbIMediaItem createMediaItem(in AString aURL);
 
   /**
@@ -82,6 +191,37 @@ interface sbIRemoteLibrary : nsISupports
    *
    * \returns the media list that gets created.
    */
+
+  /*
+  Func: createMediaList
+
+  Create an empty <MediaList> of a certain type.
+
+  Prototype:
+    <MediaList> createMediaList(String type)
+
+  Parameters:
+    type - The type of <MediaList> to create.
+
+  Returns:
+    The newly created <MediaList> or null.
+
+  Note:
+    Currently only the type "simple" is supported.
+
+  See Also:
+    <createMediaListFromURL>
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+    
+    //Create an empty medialist.
+    var mediaList = library.createMediaList("simple");
+    (end)
+
+  */
   sbIRemoteMediaList createMediaList(in AString aType);
 
   /**
@@ -98,6 +238,36 @@ interface sbIRemoteLibrary : nsISupports
    *
    * \returns the media list that gets created.
    */
+
+  /*
+  Func: createMediaListFromURL
+
+  Create a <MediaList> from a URL. The URL may point to an
+  m3u, pls, rss or html file. After being created, the <MediaList>
+  will contain all valid <MediaItems> it could create from the URLs
+  it found in the file.
+
+  Prototype:
+    <MediaList> createMediaListFromFile(String url)
+
+  Parameters:
+    url - The URL of the file to use for creating the <MediaList>.
+
+  Returns:
+    The newly created <MediaList> or null.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+    
+    //Create the medialist from a url pointing to a file.
+    var mediaList = library.createMediaListFromURL("http://path/to/file.m3u");
+    (end)
+
+  See Also:
+    <createMediaList>
+  */
   sbIRemoteMediaList createMediaListFromURL(in AString aURL);
 
   /**

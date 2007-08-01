@@ -67,13 +67,13 @@ cp -Lfp $remoteapifiles $docstempdir
 cp -Lfp $librarybasefiles $docstempdir
 
 # Merge RemoteMediaList with MediaList, MediaItem and LibraryResource
-$scriptsdir/extract.pl sbIMediaList < $docstempdir/sbIMediaList.idl >> $docstempdir/sbIRemoteMediaList.idl
-$scriptsdir/extract.pl sbIMediaItem < $docstempdir/sbIMediaItem.idl >> $docstempdir/sbIRemoteMediaList.idl
 $scriptsdir/extract.pl sbILibraryResource < $docstempdir/sbILibraryResource.idl >> $docstempdir/sbIRemoteMediaList.idl
+$scriptsdir/extract.pl sbIMediaItem < $docstempdir/sbIMediaItem.idl >> $docstempdir/sbIRemoteMediaList.idl
+$scriptsdir/extract.pl sbIMediaList < $docstempdir/sbIMediaList.idl >> $docstempdir/sbIRemoteMediaList.idl
 
 # Merge RemoteMediaItem with MediaItem, LibraryResource
-$scriptsdir/extract.pl sbIMediaItem < $docstempdir/sbIMediaItem.idl >> $docstempdir/sbIWrappedMediaItem.h
 $scriptsdir/extract.pl sbILibraryResource < $docstempdir/sbILibraryResource.idl >> $docstempdir/sbIWrappedMediaItem.h
+$scriptsdir/extract.pl sbIMediaItem < $docstempdir/sbIMediaItem.idl >> $docstempdir/sbIWrappedMediaItem.h
 
 # Delete source files for merge so we don't get duplicate classes.
 rm -f $librarybasefilescleanup

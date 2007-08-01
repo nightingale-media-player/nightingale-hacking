@@ -43,10 +43,15 @@ Group: Commands  {
 
 Group: Library Objects  {
 
+   File: Library  (sbIRemoteLibrary.idl)
    File: MediaItem  (sbIWrappedMediaItem.h)
    File: MediaList  (sbIRemoteMediaList.idl)
-   File: WebPlaylist  (sbIRemoteWebPlaylist.idl)
    }  # Group: Library Objects
+
+Group: UI Objects  {
+
+   File: WebPlaylist  (sbIRemoteWebPlaylist.idl)
+   }  # Group: UI Objects
 
 Group: Index  {
 

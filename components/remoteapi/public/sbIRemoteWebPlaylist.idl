@@ -38,7 +38,8 @@ interface sbIRemoteMediaList;
 /*
 Class: WebPlaylist
 
-Web MediaList Object
+The <WebPlaylist> UI object.
+
 */
 /**
  * \interface sbIRemoteWebPlaylist
@@ -54,6 +55,9 @@ interface sbIRemoteWebPlaylist : nsISupports
   Property: mediaList
 
   The <MediaList> associated with this <WebPlaylist> instance.
+
+  Type:
+    <MediaList>
   */
   attribute sbIRemoteMediaList mediaList;
 
@@ -61,6 +65,9 @@ interface sbIRemoteWebPlaylist : nsISupports
   Property: selection
 
   The current selection in the <WebPlaylist>.
+
+  Type:
+    Enumerator
   */
   readonly attribute nsISimpleEnumerator selection;
 
@@ -69,9 +76,21 @@ interface sbIRemoteWebPlaylist : nsISupports
 
   Set the selection in the <WebPlaylist>.
 
+  Prototype:
+    setSelectionByIndex(Number index, Boolean selected)
+
   Parameters:
-    index - Index of the item in the <WebPlaylist>.
+    index - Index of the item in the <WebPlaylist>. Index starts at 0.
     selected - Flag used for setting the selection state, may be true or false.
+
+  Example:
+    (start code)
+    //Get the current webPlaylist.
+    var webPlaylist = songbird.webPlaylist;
+
+    //Select the first item.
+    webPlaylist.setSelectionByIndex(0, true);    
+    (end)
   */
   void setSelectionByIndex(in unsigned long aIndex, in boolean aSelected);
 

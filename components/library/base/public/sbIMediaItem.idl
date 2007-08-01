@@ -127,7 +127,10 @@ interface sbIMediaItem : sbILibraryResource
   /*
   Prop: contentLength
 
-  The size (in bytes) of the content of the <MediaItem>.
+  The size (in bytes) of the content of the <MediaItem>. If this <MediaItem>
+  is also a <MediaList>, the contentLength will always be 0. 
+
+  The contentLength may not be available for streams
 
   Type:
     Number, in bytes.
