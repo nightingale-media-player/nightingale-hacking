@@ -144,7 +144,7 @@ function testUpdate() {
   writeFile(playlistFile, playlist2);
   dps.updateNow(list);
 
-  sleep(3000);
+  sleep(6000);
 
   // Check the contents of the list
   assertEqual(list.length, 3);
