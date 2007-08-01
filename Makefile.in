@@ -76,44 +76,59 @@ SUBDIRS += update
 SUBDIRDEPS3 = update : installer
 endif
 
-ifdef SONGBIRD_OFFICIAL
-ifeq (windows,$(SB_PLATFORM))
-  AIRBAG_SYMBOL_PATH = $(SONGBIRD_OBJDIR)/airbag-symbols
-  AIRBAG_ARCHIVE_PATH = $(SONGBIRD_OBJDIR)
-  AIRBAG_ARCHIVE_FILENAME = symbols-$(SB_BUILD_ID).tar.bz2
+ifdef SB_ENABLE_BREAKPAD
+
+BREAKPAD_SYMBOL_PATH = $(SONGBIRD_OBJDIR)/breakpad-symbols
+BREAKPAD_ARCHIVE_PATH = $(SONGBIRD_OBJDIR)
+BREAKPAD_ARCHIVE_FILENAME = symbols-$(SB_BUILD_ID).zip
+
+ifeq ($(SB_PLATFORM),windows)
+# we want to copy PDB files on Windows
+MAKE_SYM_STORE_ARGS := -c
+ifeq ($(_MSC_VER),1400)
+DUMP_SYMS_BIN := $(MOZSDK_BIN_DIR)/dump_syms.exe
+else
+DUMP_SYMS_BIN := $(topsrcdir)/tools/win32/breakpad/dump_syms-vc71.exe
 endif
+# PDB files don't get moved to dist, so we need to scan the whole objdir
+MAKE_SYM_STORE_PATH := ./
 endif
 
-tasks: all
-
-buildsymbols:
-ifdef SONGBIRD_OFFICIAL
-ifeq (windows,$(SB_PLATFORM))
-	@echo removing old symbol store at $(AIRBAG_SYMBOL_PATH)
-	$(RM) -f $(AIRBAG_ARCHIVE_PATH)/$(AIRBAG_ARCHIVE_FILENAME)
-	$(RM) -rf $(AIRBAG_SYMBOL_PATH)
-	@echo building airbag symbol store at $(AIRBAG_SYMBOL_PATH)
-	$(MKDIR) -p $(AIRBAG_SYMBOL_PATH)
-	$(FIND) . -path "$(SONGBIRD_DISTDIR)" -prune -o -name "*.exe"                 \
-          -o -name "*.dll" -o -name "*.EXE" -o -name "*.DLL" |                  \
-          sed "s/\.[^\.]*$$/\.pdb/" |                                           \
-	  xargs $(MOZSDK_SCRIPTS_DIR)/make_symbol_store.pl -c                         \
-	  $(topsrcdir)/tools/$(SB_PLATFORM)/airbag/dump_syms$(BIN_SUFFIX)             \
-	  $(AIRBAG_SYMBOL_PATH) >                                                     \
-	  $(AIRBAG_SYMBOL_PATH)/$(SB_BUILD_ID)-symbols.txt
-	@echo packing symbols at $(AIRBAG_ARCHIVE_PATH)/$(AIRBAG_ARCHIVE_FILENAME)
-	$(MKDIR) -p $(AIRBAG_ARCHIVE_PATH)
-	cd $(AIRBAG_SYMBOL_PATH) && $(TAR) -cvjf $(AIRBAG_ARCHIVE_FILENAME) *
-	$(MV) $(AIRBAG_SYMBOL_PATH)/$(AIRBAG_ARCHIVE_FILENAME) $(AIRBAG_ARCHIVE_PATH)
-endif
+ifeq ($(SB_PLATFORM),macosx)
+MAKE_SYM_STORE_ARGS := -a $(SB_ARCH) --vcs-info
+DUMP_SYMS_BIN := $(MOZSDK_BIN_DIR)/dump_syms
+MAKE_SYM_STORE_PATH := $(SONGBIRD_OBJDIR)/dist/bin
 endif
 
-uploadsymbols:
-ifdef SONGBIRD_OFFICIAL
-ifeq (windows,$(SB_PLATFORM))
-	$(MOZSDK_SCRIPTS_DIR)/upload_symbols.sh $(AIRBAG_ARCHIVE_PATH)/$(AIRBAG_ARCHIVE_FILENAME)
+ifeq ($(SB_PLATFORM),linux)
+MAKE_SYM_STORE_ARGS := --vcs-info
+DUMP_SYMS_BIN := $(MOZSDK_BIN_DIR)/dump_syms
+MAKE_SYM_STORE_PATH := $(SONGBIRD_OBJDIR)/dist/bin
 endif
-endif
+
+endif #SB_ENABLE_BREAKPAD
 
 include $(topsrcdir)/build/rules.mk
 
+buildsymbols:
+ifdef SB_ENABLE_BREAKPAD
+	@echo building symbol store
+	$(MKDIR) -p $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID)
+	$(PYTHON) $(MOZSDK_SCRIPTS_DIR)/symbolstore.py \
+    $(MAKE_SYM_STORE_ARGS) -s $(topsrcdir)/ $(DUMP_SYMS_BIN) \
+    $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID) \
+    $(MAKE_SYM_STORE_PATH) > \
+    $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID)/$(SB_APPNAME)-$(SB_MILESTONE)-$(SB_ARCH)-$(SB_BUILD_ID)-symbols.txt
+	@echo packing symbols
+	cd $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID) && \
+    zip -r9D ../$(BREAKPAD_ARCHIVE_FILENAME) .
+	$(MKDIR) -p $(BREAKPAD_ARCHIVE_PATH)
+	$(MV) $(BREAKPAD_SYMBOL_PATH)/$(BREAKPAD_ARCHIVE_FILENAME) \
+    $(BREAKPAD_ARCHIVE_PATH)
+endif # SB_ENABLE_BREAKPAD
+
+uploadsymbols:
+ifdef SB_ENABLE_BREAKPAD
+	$(MOZSDK_SCRIPTS_DIR)/upload_symbols.sh \
+    $(BREAKPAD_ARCHIVE_PATH)/$(BREAKPAD_ARCHIVE_FILENAME)
+endif

@@ -104,6 +104,11 @@ ifdef SB_NO_MEDIA_CORE
 CONFIGURE_ARGS += --with-media-core=none
 endif #SB_NO_MEDIA_CORE
 
+# breakpad support
+ifdef SB_ENABLE_BREAKPAD
+CONFIGURE_ARGS += --enable-breakpad
+endif
+
 #
 # Set some needed commands
 #

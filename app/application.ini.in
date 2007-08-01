@@ -15,7 +15,7 @@ MaxVersion=1.9.*
 EnableExtensionManager=true
 
 [Crash Reporter]
-#if SONGBIRD_OFFICIAL
+#if SB_ENABLE_BREAKPAD
 Enabled=1
 #endif
 ServerURL=https://crash-reports.songbirdnest.com/submit

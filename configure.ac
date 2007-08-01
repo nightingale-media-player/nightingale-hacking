@@ -122,6 +122,26 @@ fi
 AC_SUBST(SB_UPDATE_CHANNEL)
 
 #
+# Breakpad support
+#
+
+AC_ARG_ENABLE(breakpad,
+              [  --enable-breakpad       whether or not to enable breakpad (disabled by default in non-official builds)])
+# off by default in non-official builds
+if test -n "$SONGBIRD_OFFICIAL"; then
+  SB_ENABLE_BREAKPAD=1
+fi
+
+# allow explicit overrides
+if test "$enable_breakpad" == "yes"; then
+  SB_ENABLE_BREAKPAD=1
+elif test "$enable_breakpad" == "no"; then
+  SB_ENABLE_BREAKPAD=
+fi
+
+AC_SUBST(SB_ENABLE_BREAKPAD)
+
+#
 # Check platform
 #
 
