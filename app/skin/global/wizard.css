@@ -86,7 +86,6 @@ wizard[branded="true"] .wizard-header-icon {
 
 .wizard-header {
   border-bottom: 1px solid white;
-  background-image: url("chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png");
   color: WindowText;
 }
 

@@ -929,9 +929,10 @@ FACEPLATE
 ***************************************************************************************************
 */
 
+sb-player-faceplate {
+}
+
 /* the seekbar slider */
-
-
 thumb.sb-player-seek-slider
 {
   -moz-border-radius: 5px;
@@ -1123,6 +1124,56 @@ label
 {
   border: 1px solid #111111; /** Dark Border 3*/
   -moz-border-radius: 5px;
+}
+
+
+/* class for text with a 'link' appearance */
+.text-link
+{
+  color: #99CCFF;
+  border: 1px solid transparent;
+}
+.text-link:focus
+{
+  color: #99CCFF;		
+  border: 1px dotted -moz-DialogText;
+}
+.text-link:hover
+{
+  color: #D4ECFF;
+  cursor: pointer;
+} 
+.text-link:hover:active
+{
+  color: #3399FF;
+} 
+.text-link[visited="true"]
+{
+  color: #3399FF;
+}
+
+/* groove separators (50% size) */
+separator.groove,
+separator.groove[orient="horizontal"] 
+{
+  border-top: 2px solid;
+  -moz-border-top-colors: black #474948;
+}
+  
+separator.groove[orient="vertical"] 
+{
+  border-left: 1px solid #474948;
+}
+  
+/* groove separators (0 padding, for dividing effects) */  
+separator.groove-thin 
+{
+  border-top: 1px solid #474948;  
+}
+  
+separator[orient="vertical"].groove-thin 
+{
+  border-left: 1px solid #474948;
 }
 
 
@@ -1504,12 +1555,23 @@ SMART PLAYLIST BUILDER
 *******************************************************************
 */
 
+/** TODO: Can this be removed? **/
+
 .drawer-box
 {
   border: 1px solid #99A195;
 }
 
-
+/** 
+*******************************************************************
+WIZARDS
+*******************************************************************
+*/
+.wizard-header {
+  background-color: #202220;
+  border-bottom: 2px solid;
+  -moz-border-bottom-colors:  #474948 black;
+}
 
 /** 
 *******************************************************************
