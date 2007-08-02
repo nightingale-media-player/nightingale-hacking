@@ -51,9 +51,9 @@
     <script>
       var accessCount = 0;
       var onRemoteAPI =  function(aEvent) {
-          var myDiv = document.getElementById("accessCountDiv");
-          myDiv.appendChild(document.createTextNode("access:" + (++accessCount) ));
-          myDiv.appendChild(document.createElement("br"));
+          //var myDiv = document.getElementById("accessCountDiv");
+          //myDiv.appendChild(document.createTextNode("access:" + (++accessCount) ));
+          //myDiv.appendChild(document.createElement("br"));
       };
 
       document.addEventListener("remoteapi", onRemoteAPI, true);
@@ -84,18 +84,58 @@
 
       // get the property again
       document.writeln("The currently playing artist is (should be the same as above):<br />");
-      document.writeln("<br />");
       document.writeln(songbird.currentArtist);
-      document.writeln("<br />");
       document.writeln("<br />");
 
      
-      document.writeln("Try to get the webplaylist");
-      var webpl;
+      document.writeln("Try to get the webplaylist<br/>");
       try {
-        webpl = songbird.webPlaylist
+        var webpl = songbird.webPlaylist
       } catch (e) {
-        document.writeln("Nope, it failed: " + e);
+        document.writeln("DOH!, couldn't get the web playlist: " + e);
+      }
+      document.writeln("<br />");
+
+      try {
+        document.writeln("Playing is: " + songbird.playing + "<br/>");
+      } catch (e) {
+        document.writeln("DOH!, couldn't read playing: " + e);
+      }
+      
+      try {
+        document.writeln("Paused is: " + songbird.paused + "<br/>");
+      } catch (e) {
+        document.writeln("DOH!, couldn't read paused: " + e);
+      }
+
+      try {
+        document.writeln("Repeat is: " + songbird.repeat + "<br/>");
+      } catch (e) {
+        document.writeln("DOH!, couldn't read repeat: " + e);
+      }
+
+      try {
+        document.writeln("Shuffle is: " + songbird.shuffle + "<br/>");
+      } catch (e) {
+        document.writeln("DOH!, couldn't read shuffle: " + e);
+      }
+
+      try {
+        document.writeln("Position is: " + songbird.position + "<br/>");
+      } catch (e) {
+        document.writeln("DOH!, couldn't read mute: " + e);
+      }
+
+      try {
+        document.writeln("Volume is: " + songbird.volume + "<br/>");
+      } catch (e) {
+        document.writeln("DOH!, couldn't read volume: " + e);
+      }
+
+      try {
+        document.writeln("Mute is: " + songbird.mute + "<br/>");
+      } catch (e) {
+        document.writeln("DOH!, couldn't read mute: " + e);
       }
 
     </script>

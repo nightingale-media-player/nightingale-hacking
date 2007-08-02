@@ -98,7 +98,14 @@ static NS_DEFINE_CID(kRemotePlayerCID, SONGBIRD_REMOTEPLAYER_CID);
 const static char* sPublicWProperties[] = {""};
 
 const static char* sPublicRProperties[] =
-  { "library:name",
+  { "site:playing",
+    "site:paused",
+    "site:repeat",
+    "site:shuffle",
+    "site:position",
+    "site:volume",
+    "site:mute",
+    "library:name",
     "library:playlists",
     "site:webPlaylist",
     "metadata:currentArtist",
@@ -127,6 +134,7 @@ const static char* sPublicMethods[] =
     "metadata:removeListener",
     "metadata:addListener" };
 
+// dataremotes keys that can be listened to
 const static char* sPublicMetadata[] =
   { "metadata.artist",
     "metadata.title",
@@ -139,8 +147,11 @@ const static char* sPublicMetadata[] =
     "metadata.length.str",
     "playlist.shuffle",
     "playlist.repeat",
+    "faceplate.volume",
+    "faceplate.mute",
     "faceplate.playing",
     "faceplate.paused" };
+
 // needs to be in nsEventDispatcher.cpp
 #define RAPI_EVENT_CLASS      NS_LITERAL_STRING("Events")
 #define RAPI_EVENT_TYPE       NS_LITERAL_STRING("remoteapi")
@@ -234,19 +245,6 @@ sbRemotePlayer::Init()
 
   PRBool success = mRemObsHash.Init();
   NS_ASSERTION(success, "sbPropertyManager::mRemObsHash failed to initialize!");
-
-  mCurrentTrack = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1");
-  mCurrentArtist = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1");
-  mCurrentAlbum = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1");
-
-  if (!mCurrentTrack || ! mCurrentArtist || ! mCurrentAlbum) {
-    LOG(("sbRemotePlayer::Init() -- ERROR creating dataremotes"));
-    return NS_ERROR_OUT_OF_MEMORY; 
-  }
-
-  mCurrentTrack->Init( NS_LITERAL_STRING("metadata.title"), SB_PREFS_ROOT );
-  mCurrentArtist->Init( NS_LITERAL_STRING("metadata.artist"), SB_PREFS_ROOT );
-  mCurrentAlbum->Init( NS_LITERAL_STRING("metadata.album"), SB_PREFS_ROOT );
 
   nsCOMPtr<sbISecurityMixin> mixin =
         do_CreateInstance("@songbirdnest.com/remoteapi/security-mixin;1", &rv);
@@ -679,24 +677,166 @@ NS_IMETHODIMP
 sbRemotePlayer::GetCurrentArtist( nsAString &aCurrentArtist )
 {
   LOG(("sbRemotePlayer::GetCurrentArtist()"));
-  NS_ENSURE_STATE(mCurrentArtist);
-  return mCurrentArtist->GetStringValue(aCurrentArtist);
+  if (!mdrCurrentArtist) {
+    nsresult rv;
+    mdrCurrentArtist =
+           do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrCurrentArtist->Init( NS_LITERAL_STRING("metadata.artist"),
+                                 SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrCurrentArtist->GetStringValue(aCurrentArtist);
 }
 
 NS_IMETHODIMP 
 sbRemotePlayer::GetCurrentAlbum( nsAString &aCurrentAlbum )
 {
   LOG(("sbRemotePlayer::GetCurrentAlbum()"));
-  NS_ENSURE_STATE(mCurrentAlbum);
-  return mCurrentAlbum->GetStringValue(aCurrentAlbum);
+  if (!mdrCurrentAlbum) {
+    nsresult rv;
+    mdrCurrentAlbum =
+           do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrCurrentAlbum->Init( NS_LITERAL_STRING("metadata.album"),
+                                SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrCurrentAlbum->GetStringValue(aCurrentAlbum);
 }
 
 NS_IMETHODIMP 
 sbRemotePlayer::GetCurrentTrack( nsAString &aCurrentTrack )
 {
   LOG(("sbRemotePlayer::GetCurrentTrack()"));
-  NS_ENSURE_STATE(mCurrentTrack);
-  return mCurrentTrack->GetStringValue(aCurrentTrack);
+  if (!mdrCurrentTrack) {
+    nsresult rv;
+    mdrCurrentTrack = 
+           do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrCurrentTrack->Init( NS_LITERAL_STRING("metadata.title"),
+                                SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrCurrentTrack->GetStringValue(aCurrentTrack);
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::GetPlaying( PRBool *aPlaying )
+{
+  LOG(("sbRemotePlayer::GetPlaying()"));
+  NS_ENSURE_ARG_POINTER(aPlaying);
+  if (!mdrPlaying) {
+    nsresult rv;
+    mdrPlaying = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+                                    &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrPlaying->Init( NS_LITERAL_STRING("faceplate.playing"),
+                           SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrPlaying->GetBoolValue(aPlaying);
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::GetPaused( PRBool *aPaused )
+{
+  LOG(("sbRemotePlayer::GetPaused()"));
+  NS_ENSURE_ARG_POINTER(aPaused);
+  if (!mdrPaused) {
+    nsresult rv;
+    mdrPaused = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+                                    &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrPaused->Init( NS_LITERAL_STRING("faceplate.paused"),
+                          SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrPaused->GetBoolValue(aPaused);
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::GetRepeat( PRInt64 *aRepeat )
+{
+  LOG(("sbRemotePlayer::GetRepeat()"));
+  NS_ENSURE_ARG_POINTER(aRepeat);
+  if (!mdrRepeat) {
+    nsresult rv;
+    mdrRepeat = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+                                   &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrRepeat->Init( NS_LITERAL_STRING("playlist.repeat"),
+                          SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrRepeat->GetIntValue(aRepeat);
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::GetShuffle( PRBool *aShuffle )
+{
+  LOG(("sbRemotePlayer::GetShuffle()"));
+  NS_ENSURE_ARG_POINTER(aShuffle);
+  if (!mdrShuffle) {
+    nsresult rv;
+    mdrShuffle = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+                                    &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrShuffle->Init( NS_LITERAL_STRING("playlist.shuffle"),
+                           SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrShuffle->GetBoolValue(aShuffle);
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::GetPosition( PRInt64 *aPosition )
+{
+  LOG(("sbRemotePlayer::GetPosition()"));
+  NS_ENSURE_ARG_POINTER(aPosition);
+  if (!mdrPosition) {
+    nsresult rv;
+    mdrPosition = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+                                     &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrPosition->Init( NS_LITERAL_STRING("metadata.position"),
+                            SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrPosition->GetIntValue(aPosition);
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::GetVolume( PRInt64 *aVolume )
+{
+  LOG(("sbRemotePlayer::GetVolume()"));
+  NS_ENSURE_ARG_POINTER(aVolume);
+  if (!mdrVolume) {
+    nsresult rv;
+    mdrVolume = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+                                   &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrVolume->Init( NS_LITERAL_STRING("faceplate.volume"),
+                          SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrVolume->GetIntValue(aVolume);
+}
+
+NS_IMETHODIMP 
+sbRemotePlayer::GetMute( PRBool *aMute )
+{
+  LOG(("sbRemotePlayer::GetMute()"));
+  NS_ENSURE_ARG_POINTER(aMute);
+  if (!mdrMute) {
+    nsresult rv;
+    mdrMute = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+                                 &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrMute->Init( NS_LITERAL_STRING("faceplate.mute"), SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrMute->GetBoolValue(aMute);
 }
 
 NS_IMETHODIMP 

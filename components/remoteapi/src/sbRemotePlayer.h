@@ -140,9 +140,16 @@ protected:
   nsDataHashtable<nsStringHashKey, sbRemoteObserver> mRemObsHash;
 
   // stash these for quick reference
-  nsCOMPtr<sbIDataRemote> mCurrentArtist;
-  nsCOMPtr<sbIDataRemote> mCurrentAlbum;
-  nsCOMPtr<sbIDataRemote> mCurrentTrack;
+  nsCOMPtr<sbIDataRemote> mdrCurrentArtist;
+  nsCOMPtr<sbIDataRemote> mdrCurrentAlbum;
+  nsCOMPtr<sbIDataRemote> mdrCurrentTrack;
+  nsCOMPtr<sbIDataRemote> mdrPlaying;
+  nsCOMPtr<sbIDataRemote> mdrPaused;
+  nsCOMPtr<sbIDataRemote> mdrRepeat;
+  nsCOMPtr<sbIDataRemote> mdrShuffle;
+  nsCOMPtr<sbIDataRemote> mdrPosition;
+  nsCOMPtr<sbIDataRemote> mdrVolume;
+  nsCOMPtr<sbIDataRemote> mdrMute;
 
   // SecurityCheckedComponent vars
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;

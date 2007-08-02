@@ -155,6 +155,14 @@ interface sbIRemotePlayer : nsISupports
   */
   readonly attribute AString currentTrack;
 
+  readonly attribute boolean playing;
+  readonly attribute boolean paused;
+  readonly attribute long long repeat;
+  readonly attribute boolean shuffle;
+  readonly attribute long long position;
+  readonly attribute long long volume;
+  readonly attribute boolean mute;
+
   /**
    * \brief The collection of commands associated with the current page.
    */

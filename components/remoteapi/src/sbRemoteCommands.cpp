@@ -58,17 +58,10 @@ static PRLogModuleInfo* gRemoteCommandsLog = nsnull;
 
 static NS_DEFINE_CID(kRemoteCommandsCID, SONGBIRD_REMOTECOMMANDS_CID);
 
-const static char* sPublicWProperties[] =
-  { "binding:type",
-    "binding:ID",
-    "binding:name",
-    "binding:tooltip" };
+const static char* sPublicWProperties[] = { "" };
 
 const static char* sPublicRProperties[] =
-  { "binding:type",
-    "binding:ID",
-    "binding:name",
-    "binding:tooltip",
+  { // nsIClassInfo
     "classinfo:classDescription",
     "classinfo:contractID",
     "classinfo:classID",
@@ -76,15 +69,17 @@ const static char* sPublicRProperties[] =
     "classinfo:flags" };
 
 const static char* sPublicMethods[] =
-  { "binding:setCommandData",
-    "binding:getNumCommands",
-    "binding:getCommandType",
-    "binding:getCommandId",
-    "binding:getCommandText",
-    "binding:getCommandToolTipText",
-    "binding:register",
-    "binding:addCommand",
-    "binding:removeCommand"
+  { // sbIPlaylistCommands
+    "site:getNumCommands",
+    "site:getCommandType",
+    "site:getCommandId",
+    "site:getCommandText",
+    "site:getCommandToolTipText",
+
+    // sbIRemoteCommands
+    "site:addCommand",
+    "site:removeCommand",
+    "site:setCommandData"
   };
 
 NS_IMPL_ISUPPORTS5( sbRemoteCommands,
