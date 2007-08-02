@@ -197,6 +197,7 @@ interface sbIMediaList : sbIMediaItem
     (start code)
     //This example assumes you already have a medialist in the variable named "mediaList".
     //It also assumes that you have an enumeration listener in the variable named "enumListener".
+
     mediaList.enumerateAllItems(enumListener, 0);
     (end)
 
@@ -220,7 +221,6 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Const: ENUMERATIONTYPE_LOCKING
-
   */
   const unsigned short ENUMERATIONTYPE_LOCKING  = 1;
 
@@ -249,6 +249,8 @@ interface sbIMediaList : sbIMediaItem
     (end)
 
   See Also:
+    <ENUMERATIONTYPE_SNAPSHOT>
+    <ENUMERATIONTYPE_LOCKING>
     <enumerateItemsByProperty()>
   */
   void enumerateAllItems(in sbIMediaListEnumerationListener aEnumerationListener,
@@ -266,6 +268,31 @@ interface sbIMediaList : sbIMediaItem
   
   /*
   Func: enumerateItemsByProperty()
+
+  Enumerate the <MediaItems> in the <MediaList> that have a certain property
+  and value match.
+
+  This function is useful if you are looking for all items having, for example,
+  an artistName value of "Tom Waits".
+
+  Prototype:
+    enumerateItemsByProperty(String name, String value, EnumerationListener enumListener)
+
+  Parameters:
+    name - The name of the property to match.
+    value - The value of the property to match.
+    enumListener - The enumeration listener.
+    enumType - The type of enumeration desired. Valid values for enumType 
+               are <ENUMERATIONTYPE_SNAPSHOT> and <ENUMERATIONTYPE_LOCKING>.
+
+  Example:
+    (start code)
+    (end)
+
+  See Also:
+    <ENUMERATIONTYPE_SNAPSHOT>
+    <ENUMERATIONTYPE_LOCKING>
+    <enumerateAllItems()>
   */
   void enumerateItemsByProperty(in AString aPropertyName,
                                 in AString aPropertyValue,
@@ -294,6 +321,26 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Func: indexOf()
+
+  Get the index for a <MediaItem> present in the <MediaList>.
+
+  Prototype:
+    Number indexOf(<MediaItem> mediaItem, Number startFrom)
+
+  Parameters:
+    mediaItem - The <MediaItem> to find.
+    startFrom - The index position at which to start searching. Index starts at 0.
+
+  Returns:
+    The index where the <MediaItem> was first found.
+
+  Throws:
+    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE) 
+    when the <MediaItem> cannot be found.
+
+  See Also:
+    <lastIndexOf()>
+    <contains()>
   */
   unsigned long indexOf(in sbIMediaItem aMediaItem,
                         in unsigned long aStartFrom);
@@ -308,6 +355,30 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Func: lastIndexOf()
+
+  Get the *last* index for a <MediaItem> present in the <MediaList>.
+
+  Prototype:
+    Number lastIndexOf(<MediaItem> mediaItem, Number startFrom)
+
+  Parameters:
+    mediaItem - The <MediaItem> to find.
+    startFrom - The index position at which to start searching. Index starts at 0.
+
+  Returns:
+    The *last* index where the <MediaItem> was first found.
+
+  Throws:
+    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE) 
+    when the <MediaItem> cannot be found.
+
+  Example:
+    (start code)
+    (end)
+
+  See Also:
+    <indexOf()>
+    <contains()>
   */
   unsigned long lastIndexOf(in sbIMediaItem aMediaItem,
                             in unsigned long aStartFrom);
@@ -331,7 +402,11 @@ interface sbIMediaList : sbIMediaItem
 
   Returns:
     true - The <MediaItem> *is present* in the <MediaList>.
-    false - The <MediaItem> *is _not_ present*
+    false - The <MediaItem> *is _not_ present*.
+
+  See Also:
+    <indexOf()>
+    <lastIndexOf()>
   */
   boolean contains(in sbIMediaItem aMediaItem);
 
@@ -341,6 +416,19 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Prop: isEmpty
+
+  Is the <MediaList> empty?
+
+  Type:
+    Boolean
+
+  Returns:
+    true - <MediaList> is empty.
+    false - <MediaList> is _not_ empty.
+
+  Example:
+    (start code)
+    (end)
   */
   readonly attribute boolean isEmpty;
 
@@ -351,6 +439,24 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Func: add()
+
+  Add a <MediaItem> to this <MediaList>.
+
+  Prototype:
+    add(<MediaItem> mediaItem);
+
+  Parameters:
+    mediaItem - The <MediaItem> to add.
+
+  Example:
+    (start code)
+    (end)
+
+  See Also:
+    <addAll()>
+    <remove()>
+    <removeByIndex()>
+    <clear()>
   */
   void add(in sbIMediaItem aMediaItem);
 
@@ -361,6 +467,18 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Func: addAll()
+
+  Add all the <MediaItems> from a <MediaList> into this <MediaList>.
+
+  Prototype:
+    addAll(<MediaList> mediaList)
+
+  Parameters:
+    mediaList - The <MediaList> whose <MediaItems> are to be added.
+
+  Example:
+    (start code)
+    (end)
   */
   void addAll(in sbIMediaList aMediaList);
 
@@ -377,6 +495,14 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Func: remove()
+
+  Remove the first occurrence of the given <MediaItem> from this <MediaList>.
+
+  Prototype:
+    remove(<MediaItem> mediaItem)
+
+  Parameters:
+    mediaItem - The <MediaItem> to remove.
   */
   void remove(in sbIMediaItem aMediaItem);
 
@@ -387,6 +513,18 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Func: removeByIndex()
+
+  Remove a <MediaItem> from the <MediaList> using it's index.
+
+  Prototype:
+    removeByIndex(Number index)
+
+  Parameters:
+    index - The index of the <MediaItem> to remove.
+
+  Throws:
+    Invalid Argument (Components.results.NS_ERROR_INVALID_ARG)
+    when the <MediaItem> cannot be found.
   */
   void removeByIndex(in unsigned long aIndex);
 
@@ -402,6 +540,12 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Func: clear()
+
+  Clear the <MediaList>. This will remove all <MediaItems> from this <MediaList>.
+
+  Note:
+    This is the *preferred* way to remove all <MediaItems> from a <MediaList> 
+    because it is optimized for speed.
   */
   void clear();
 
@@ -467,6 +611,27 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Func: getDistinctValuesForProperty()
+
+  Get all distinct (unique) values in this <MediaList> for a given property.
+
+  This function is useful if you want to know all the unique artistName property
+  values for example.
+
+  Prototype:
+    Enumerator getDistinctValuesForProperty(String name)
+
+  Parameters:
+    name - The name of the property for which all distinct values are desired.
+  
+  Returns:
+    Enumerator, contains Strings.
+
+  Example:
+    (start code)
+    (end)
+
+  See Also:
+    <enumerateItemsByProperty()>
   */
   nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyName);
 };
