@@ -224,12 +224,14 @@ function testDefaultRevert() {
   // Confirm that revert switches us to the primary fallback
   feathersManager.switchFeathers(feathersManager.previousLayoutURL,
                                  feathersManager.previousSkinName);
+  sleep(100); // switchFeathers is now async
   assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
   assertEqual(layoutDataRemote.stringValue, DEFAULT_MAIN_LAYOUT_URL);
   
   // Now revert again, taking us to the secondary fallback
   feathersManager.switchFeathers(feathersManager.previousLayoutURL,
                                  feathersManager.previousSkinName);
+  sleep(100); // switchFeathers is now async
   assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
   assertEqual(layoutDataRemote.stringValue, DEFAULT_SECONDARY_LAYOUT_URL);
 }

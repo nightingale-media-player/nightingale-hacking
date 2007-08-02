@@ -945,16 +945,16 @@ FeathersManager.prototype = {
     // Remember the current feathers so that we can revert later if needed
     this._previousLayoutDataRemote.stringValue = this.currentLayoutURL;
     this._previousSkinDataRemote.stringValue = this.currentSkinName;
-        
-    // Set new values
-    this._layoutDataRemote.stringValue = layoutURL;
-    this._skinDataRemote.stringValue = internalName;
 
-    this._flushXULPrototypeCache();
-
-    this._reloadPlayerWindow();
+    // close the player window *before* changing the skin
+    // otherwise Gecko tries to load an image that will go away right after and crashes
+    // (songbird bug 3965)
+    this._closePlayerWindow();
+    
+    var timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+    var callback = new FeathersManager_switchFeathers_callback(this, layoutURL, internalName);
+    timer.initWithCallback(callback, 0, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
   },
-  
   
   /**
    * \sa sbIFeathersManager
@@ -980,10 +980,8 @@ FeathersManager.prototype = {
 
   /**
    * Close all player windows (except the plugin host)
-   * and then relaunch the main window
    */
-  _reloadPlayerWindow: function _reloadPlayerWindow() {
-
+  _closePlayerWindow: function _closePlayerWindow() {
     var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                                    .getService(Components.interfaces.nsIWindowMediator);
 
@@ -993,7 +991,7 @@ FeathersManager.prototype = {
     // If no core window exists, then we are probably in test mode.
     // Therefore do nothing.
     if (coreWindow == null) {
-      dump("FeathersManager._reloadPlayerWindow: unable to find window of type Songbird:Core. Test mode?\n");
+      dump("FeathersManager._closePlayerWindow: unable to find window of type Songbird:Core. Test mode?\n");
       return;
     }
 
@@ -1025,7 +1023,25 @@ FeathersManager.prototype = {
         }
       }
     }
-            
+  },
+
+  /**
+   * Relaunch the main window
+   */
+  _openPlayerWindow: function _openPlayerWindow() {
+    var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                   .getService(Components.interfaces.nsIWindowMediator);
+
+    // The core window (plugin host) is the only window which cannot be shut down
+    var coreWindow = windowMediator.getMostRecentWindow(WINDOWTYPE_SONGBIRD_CORE);  
+
+    // If no core window exists, then we are probably in test mode.
+    // Therefore do nothing.
+    if (coreWindow == null) {
+      dump("FeathersManager._closePlayerWindow: unable to find window of type Songbird:Core. Test mode?\n");
+      return;
+    }
+
     // Determine window features.  If chrome is enabled, make resizable.
     // Otherwise remove the titlebar.
     var chromeFeatures = "chrome,modal=no,toolbar=yes,popup=no";    
@@ -1145,6 +1161,32 @@ FeathersManager.prototype = {
   }
 }; // FeathersManager.prototype
 
+/**
+ * Callback helper for FeathersManager::switchFeathers
+ * This is needed to make sure the window is really closed before we switch skins
+ */
+function FeathersManager_switchFeathers_callback(aFeathersManager,
+                                                 aLayoutURL,
+                                                 aInternalName) {
+  this.feathersManager = aFeathersManager;
+  this.layoutURL = aLayoutURL;
+  this.internalName = aInternalName;
+}
+
+FeathersManager_switchFeathers_callback.prototype = {
+  /**
+   * \sa nsITimerCallback
+   */
+  notify: function FeathersManager_switchFeathers_callback_notify() {
+    // Set new values
+    this.feathersManager._layoutDataRemote.stringValue = this.layoutURL;
+    this.feathersManager._skinDataRemote.stringValue = this.internalName;
+
+    this.feathersManager._flushXULPrototypeCache();
+    this.feathersManager._openPlayerWindow();
+    this.feathersManager = null;
+  }
+}; // FeathersManager_switchFeathers_callback.prototype
 
 
 
