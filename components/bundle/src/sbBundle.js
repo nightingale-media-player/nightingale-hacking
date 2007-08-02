@@ -191,9 +191,19 @@ Bundle.prototype = {
   getDataNodes: function(bundledocument) {
     if (!bundledocument) return null;
     var datablocknodes = bundledocument.childNodes;
+    
     for (var i=0;i<datablocknodes.length;i++) {
       if (datablocknodes[i].tagName == "SongbirdInstallBundle") {
         this._bundleversion = datablocknodes[i].getAttribute("version")
+/*
+        // Sample code to generate some elements for testing.
+        for ( var j = 0; j < 10; j++ ) {
+          var testElement = bundledocument.createElement("XPI");
+          testElement.setAttribute("name", "TEST ELEMENT #" + (j+1) );
+          testElement.setAttribute("url", "");
+          datablocknodes[i].appendChild( testElement );
+        }
+*/
         return datablocknodes[i].childNodes;
       }
     }

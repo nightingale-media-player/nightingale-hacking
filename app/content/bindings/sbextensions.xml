@@ -51,6 +51,7 @@
             listbox.setAttribute( "sbid", "extensions_list" );
             listbox.setAttribute("suppressonselect", "true");
             listbox.setAttribute("class", "sb-extensions-list");
+            listbox.setAttribute("flex", "1");
             
             return listbox;
           }

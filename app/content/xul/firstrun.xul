@@ -39,7 +39,7 @@
 	    </menulist>
     </groupbox>
       
-    <groupbox flex="1" height="&setup.flexbox.height;" width="&setup.groupbox.width;">
+    <groupbox flex="1" minheight="&setup.flexbox.height;" width="&setup.groupbox.width;">
       <label value="&setup.optionalextensions;" />
       <spacer id="extensions.replacedcontent.top" height="0"/>
       <vbox id="error_message" hidden="true">
@@ -57,9 +57,9 @@
       </vbox>
       <spacer id="extensions.replacedcontent.bottom" height="0"/>
       <spacer height="5"/>
-      <hbox>
+      <vbox flex="1">
         <sb-extensions-drawer flex="1" id="songbird.extensionlist"/>
-      </hbox>
+      </vbox>
     </groupbox>
 
     <groupbox id="metrics_vbox" width="&setup.groupbox.width;">
