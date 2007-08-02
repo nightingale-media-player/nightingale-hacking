@@ -1442,7 +1442,7 @@
           ]]>
         </body>
       </method>
- 
+
       <method name="onInterval">
         <parameter name="that"/>
         <body>
@@ -1452,7 +1452,7 @@
           ]]>
         </body>
       </method>
- 
+
       <method name="doInterval">
         <body>
           <![CDATA[
@@ -1460,7 +1460,7 @@
           {
             if (!gBrowser)
               return;
-            
+
             var displayValue = ''
             if (gBrowser.mCurrentTab.scanProgress >= 0 &&
                 gBrowser.mCurrentTab.scanProgress < 1) {
@@ -1469,11 +1469,20 @@
               var percent = Math.round(gBrowser.mCurrentTab.scanProgress*100);
               displayValue = mediafound + ': ' + percent + '%';
             } else if (gBrowser.currentPlaylist != null &&
-                       gBrowser.currentPlaylist.mediaListView != null &&
-                       gBrowser.currentPlaylist.mediaListView.length > 0) {
-              // display media list length
-              displayValue = SBString("faceplate.items", "items") + ': ' +
-                  gBrowser.currentPlaylist.mediaListView.length;
+                       gBrowser.currentPlaylist.mediaListView != null) {
+              // HOORAY!!  It's okay for mediaListView.length to throw!
+              var length = 0;
+              try {
+                length = gBrowser.currentPlaylist.mediaListView.length;
+              } catch(e) {
+                Components.utils.reportError(e);
+                length = 0;
+              }
+
+              if ( length > 0 ) {
+                // display media list length
+                displayValue = SBString("faceplate.items", "items") + ': ' + length;
+              }
             }
             var label = document.getAnonymousElementByAttribute(this, "sbid", "label");
             label.setAttribute('value', displayValue);
