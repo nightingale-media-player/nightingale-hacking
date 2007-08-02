@@ -34,7 +34,8 @@ blockquote {
     }
 /*  This will be fixed in JavaScript.  We just need a default if it's turned off.  */
 .IE blockquote {
-    width: 400px;  }
+    width: 100%;
+    }
 
 .Gecko blockquote {
     padding-bottom: .5em;
@@ -65,6 +66,10 @@ body.FramedMenuPage,
     width: 27ex
     }
 
+.IE .MenuSection {
+    overflow: none; /**/
+    float: left; /**/
+    }
 
     .MTitle {
         font-size: 16pt; font-weight: bold; font-variant: small-caps;
@@ -141,6 +146,10 @@ body.FramedContentPage,
     background-color: #FFFFFF;
     padding-bottom: 15px; /**/ 
     padding-left: 188px; /**/}
+
+.IE .ContentSection {
+    padding-left: 0;
+    }
 
 .ContentSection {
     border-width: 0 0 1px 1px; 

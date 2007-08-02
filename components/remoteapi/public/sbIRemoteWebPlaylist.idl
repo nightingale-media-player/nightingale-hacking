@@ -52,7 +52,7 @@ The <WebPlaylist> UI object.
 interface sbIRemoteWebPlaylist : nsISupports
 {
   /*
-  Property: mediaList
+  Prop: mediaList
 
   The <MediaList> associated with this <WebPlaylist> instance.
 
@@ -62,17 +62,38 @@ interface sbIRemoteWebPlaylist : nsISupports
   attribute sbIRemoteMediaList mediaList;
 
   /*
-  Property: selection
+  Prop: selection
 
   The current selection in the <WebPlaylist>.
 
   Type:
-    Enumerator
+    Enumerator, contains <MediaItems>.
+
+  Example:
+    (start code)
+    //Get the current webplaylist.
+    var webPlaylist = songbird.webPlaylist;
+    
+
+    //Get the currently selected mediaitems in the webplaylist.
+    var selectedMediaItems = webPlaylist.selection;
+
+    //Go through all the selected mediaitems.
+    while(selectedMediaItems.hasMoreElements()) {
+      var mediaItem = selectedMediaItems.getNext();
+
+      //Do something with the mediaitem.
+      ...
+    }
+    (end)
+
+  See Also:
+    Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsISimpleEnumerator.html> for nsISimpleEnumerator interface reference.
   */
   readonly attribute nsISimpleEnumerator selection;
 
   /*
-  Function: setSelectionByIndex
+  Func: setSelectionByIndex()
 
   Set the selection in the <WebPlaylist>.
 
@@ -89,12 +110,55 @@ interface sbIRemoteWebPlaylist : nsISupports
     var webPlaylist = songbird.webPlaylist;
 
     //Select the first item.
-    webPlaylist.setSelectionByIndex(0, true);    
+    webPlaylist.setSelectionByIndex(0, true);
+
+    //Select the third item.
+    webPlaylist.setSelectionByIndex(2, true);
+
+    //Unselect the first item.
+    webPlaylist.setSelectionByIndex(0, false);
     (end)
   */
   void setSelectionByIndex(in unsigned long aIndex, in boolean aSelected);
 
-  // ugh, nsIXPCScriptable take me away
+  /*
+  Func: addColumn()
+
+  Add a column of data to the <WebPlaylist>.
+
+  Prototype:
+    addColumn(String columnType, 
+              String columnName,  
+              String displayName, 
+              String beforeColumn, 
+              Boolean hidden, 
+              Boolean viewable, 
+              Boolean editable,
+              Boolean hasNullsort,
+              Number nullsort,
+              Number width)
+
+  Parameters:
+    columnType - The type of column.
+    columnName - The name of the column.
+    displayName - The displayed name of the column.
+    beforeColumn - Insert this column before the column with this name. 
+                   If an empty string is specified, the column is appended 
+                   to the end of the existing columns.
+    hidden - Hidden column by default.
+    viewable - Column can be viewed by the user.
+    editable - Column row cell values can be edited by the user.
+    hasNullsort - Specify how null values will be sorted visually.
+    nullsort - The type of null sorting desired.
+    width - The default width of the column when displayed.
+
+  Example:
+    (start code)
+    (end)
+
+  See Also:
+    <showColumnBefore()>
+  */
   void addColumn( in AString aColumnType,
                   in AString aColumnName,
                   in AString aDisplayName,
@@ -106,6 +170,28 @@ interface sbIRemoteWebPlaylist : nsISupports
                   in unsigned long aNullSort,
                   in unsigned long aWidth );
 
+  /*
+  Func: showColumnBefore()
+
+  Show a column before another column. This enables you to move
+  columns around visually as well as specify where you might want your own
+  column to be shown.
+
+  Prototype:
+    showColumnBefore(String columnName, String beforeColumn)
+
+  Parameters:
+    columnName - The name of column to move.
+    beforeColumn - Show the column with columnName 
+                   before the column with beforeColumn.
+
+  Example:
+    (start code)
+    (end)
+
+  See Also:
+    <addColumn()>
+  */
   void showColumnBefore( in AString aColumnName,
                          in AString aBeforeColumnName );
 };

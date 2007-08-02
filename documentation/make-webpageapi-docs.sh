@@ -75,6 +75,9 @@ $scriptsdir/extract.pl sbIMediaList < $docstempdir/sbIMediaList.idl >> $docstemp
 $scriptsdir/extract.pl sbILibraryResource < $docstempdir/sbILibraryResource.idl >> $docstempdir/sbIWrappedMediaItem.h
 $scriptsdir/extract.pl sbIMediaItem < $docstempdir/sbIMediaItem.idl >> $docstempdir/sbIWrappedMediaItem.h
 
+# Merge SiteLibrary with LibraryResource
+$scriptsdir/extract.pl sbILibraryResource < $docstempdir/sbILibraryResource.idl >> $docstempdir/sbIRemoteLibrary.idl
+
 # Delete source files for merge so we don't get duplicate classes.
 rm -f $librarybasefilescleanup
 

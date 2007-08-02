@@ -188,7 +188,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: addListener
+  Func: addListener()
   
   Add a listener to get notified of changes to Songbird metadata and state.
   
@@ -222,7 +222,7 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also: 
-    <removeListener>
+    <removeListener()>
 
     Visit <http://some/other/part/of/documentation/> for a list of keys for metadata and state.
     
@@ -236,7 +236,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: removeListener
+  Func: removeListener()
   
   Remove a listener that was previously added using <addListener>.
   
@@ -259,7 +259,7 @@ interface sbIRemotePlayer : nsISupports
     (end)
   
   See Also: 
-    <addListener>
+    <addListener()>
 
     Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsIObserver.html> for nsIObserver interface reference.
   */
@@ -270,7 +270,7 @@ interface sbIRemotePlayer : nsISupports
    * \brief Download the items passed in
    */
   /*
-  Func: downloadItem
+  Func: downloadItem()
   
   Download a <MediaItem>.
   
@@ -291,11 +291,15 @@ interface sbIRemotePlayer : nsISupports
     //Download the mediaitem to the users local machine.
     songbird.downloadItem(mediaItem);
     (end)
+
+  See Also:
+    <downloadList()>
+    <downloadSelected()>
   */
   void downloadItem( in sbIMediaItem aItem );
   
   /*
-  Func: downloadList
+  Func: downloadList()
   
   Download a <MediaList>.
   
@@ -324,13 +328,13 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also:
-    <downloadItem>
-    <downloadSelected>
+    <downloadItem()>
+    <downloadSelected()>
   */
   void downloadList( in sbIRemoteMediaList aList );
   
   /*
-  Func: downloadSelected
+  Func: downloadSelected()
 
   Download the <MediaItems> selected by the user in a <WebPlaylist>.
   
@@ -349,8 +353,8 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also:
-    <downloadItem>
-    <downloadList>
+    <downloadItem()>
+    <downloadList()>
   */
   void downloadSelected( in sbIRemoteWebPlaylist aWebPlaylist );
 
@@ -359,7 +363,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: play
+  Func: play()
 
   Prototype:
     play()
@@ -373,17 +377,17 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also:
-    <playURL>
-    <playMediaList>
-    <pause>
-    <stop>
-    <previous>
-    <next>
+    <playURL()>
+    <playMediaList()>
+    <pause()>
+    <stop()>
+    <previous()>
+    <next()>
   */
   void play();
   
   /*
-  Func: playMediaList
+  Func: playMediaList()
 
   Begin playback of a <MediaList> at the specified index in the list.
 
@@ -401,6 +405,14 @@ interface sbIRemotePlayer : nsISupports
 
     player.playMediaList(mediaList, 2);
     (end)
+
+  See Also:
+    <play()>
+    <playURL()>
+    <pause()>
+    <stop()>
+    <previous()>
+    <next()>
   */
   void playMediaList( in sbIRemoteMediaList aList,
                       in PRInt32 aIndex );
@@ -410,7 +422,7 @@ interface sbIRemotePlayer : nsISupports
    */
 
   /*
-  Func: playURL
+  Func: playURL()
   
   Begin playback of a URL.
 
@@ -426,12 +438,12 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also:
-    <play>
-    <playMediaList>
-    <pause>
-    <stop>
-    <previous>
-    <next>
+    <play()>
+    <playMediaList()>
+    <pause()>
+    <stop()>
+    <previous()>
+    <next()>
   */
   void playURL(in AString aURL);
 
@@ -440,7 +452,7 @@ interface sbIRemotePlayer : nsISupports
    */
   
   /*
-  Func: stop
+  Func: stop()
   
   Stop playback.
 
@@ -453,12 +465,12 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also:
-    <play>
-    <playURL>
-    <playMediaList>
-    <pause>
-    <previous>
-    <next>
+    <play()>
+    <playURL()>
+    <playMediaList()>
+    <pause()>
+    <previous()>
+    <next()>
   */
   void stop();
 
@@ -467,7 +479,7 @@ interface sbIRemotePlayer : nsISupports
    */
    
   /*
-  Func: pause
+  Func: pause()
   
   Pause playback.
 
@@ -480,12 +492,12 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also:
-    <play>
-    <playURL>
-    <playMediaList>
-    <stop>
-    <previous>
-    <next>
+    <play()>
+    <playURL()>
+    <playMediaList()>
+    <stop()>
+    <previous()>
+    <next()>
   */
   void pause();
 
@@ -494,7 +506,7 @@ interface sbIRemotePlayer : nsISupports
    */
   
   /*
-  Func: next
+  Func: next()
   
   Skip to the next item, if there is one, and begin playing.
   
@@ -510,12 +522,12 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also:
-    <play>
-    <playURL>
-    <playMediaList>
-    <pause>
-    <stop>
-    <previous>
+    <play()>
+    <playURL()>
+    <playMediaList()>
+    <pause()>
+    <stop()>
+    <previous()>
   */
   void next();
 
@@ -539,18 +551,18 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also:
-    <play>
-    <playURL>
-    <playMediaList>
-    <pause>
-    <stop>
-    <previous>
-    <next>
+    <play()>
+    <playURL()>
+    <playMediaList()>
+    <pause()>
+    <stop()>
+    <previous()>
+    <next()>
   */
   void previous();
 
   /*
-  Func: siteLibrary
+  Func: siteLibrary()
   
   Access to a sitelibrary for the given domain and path. If you wish to create
   your library with the default domain and path (which reflect your page's current domain and path)
@@ -577,7 +589,7 @@ interface sbIRemotePlayer : nsISupports
   sbIRemoteLibrary siteLibrary(in AString aDomain, in AString aPath);
 
   /*
-  Func: libraries 
+  Func: libraries ()
   
   Access to any library in the system via path or 'magic' keyword.
   
@@ -594,7 +606,7 @@ interface sbIRemotePlayer : nsISupports
     (end)
 
   See Also:
-    <siteLibrary>
+    <siteLibrary()>
   */
   sbIRemoteLibrary libraries(in AString aLibraryID);
 
