@@ -82,7 +82,7 @@
     </hbox>
     <spacer height="5"/>
     <hbox flex="1">
-      <playlist2 class="dialog-playlist" 
+      <playlist class="dialog-playlist" 
                  id="jumpto.playlist" 
                  flex="1" 
                  onkeypress="onListKeypress(event);"

@@ -33,22 +33,29 @@
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
-  <binding id="playlist2">
+  <binding id="playlist">
     <content mousethrough="never">
       <stack flex="1" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-      <vbox sbid="loading_box" pack="end" align="right" flex="1" >
+        <vbox sbid="loading_box" pack="end" align="right" flex="1" >
           <vbox id="loading_box"  flex="1">
             <label id="loading_text" flex="1" value=""/>
           </vbox>
         </vbox>
-        <vbox flex="1"  style="margin: 0px;padding: 0px;">
+        <vbox id="sb-playlist" flex="1"  style="margin: 0px;padding: 0px;">
           <!-- Playlist Filters -->
-          <hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
+          <hbox 
+            id="sb-playlist-filters" 
+            sbid="filter_parent" 
+            class="sb-playlist-filters" 
+            style="min-height: 60px;" 
+            flex="1" 
+            hidden="false">
           </hbox>
 
           <sb-smart-splitter
-            id="horz_splitter"
+            id="sb-playlist-splitter"
             sbid="filter_splitter"
+            class="horz_splitter"
             state="open"
             collapse="before"
             resizebefore="closest"
@@ -66,8 +73,9 @@
           <!-- Playlist Tree -->
           <tree
             xbl:inherits="enableColumnDrag=enableColumnDrag,hidecolumnpicker=hidecolumnpicker"
-            id="playlist_tree"
-            sbid="playlist_tree"
+            id="sb-playlist-tree"
+            sbid="sb-playlist-tree"
+            class="sb-playlist-tree"
             flex="3"
             onselect="_onPlaylistSelectClick(event);"
             onclick="_onPlaylistClick(event);"
@@ -83,15 +91,16 @@
           </tree>
 
           <!-- Playlist Toolbar -->
-          <sb-commands-toolbar sbid="playlist_toolbar" commandtype="mediaitem" metricscategory="playlist.toolbar"/>
-          <sb-commands-shortcuts sbid="playlist_shortcuts" commandtype="mediaitem" metricscategory="playlist.shortcut"/>
+          <sb-commands-toolbar id="sb-playlist-tree-toolbar" sbid="playlist_toolbar" commandtype="mediaitem" metricscategory="playlist.toolbar"/>
+          <sb-commands-shortcuts id="sb-playlist-tree-shortcuts" sbid="playlist_shortcuts" commandtype="mediaitem" metricscategory="playlist.shortcut"/>
 
           <!-- Popupset -->
           <popupset>
             <!-- Context Popup -->
             <popup
-              id="playlist_context_popup"
-              sbid="playlist_context_popup"
+              id="sb-playlist-popup"
+              sbid="sb-playlist-popup"
+              class="sb-playlist-popup"
               onpopupshown="onPopupShown( event );"
               onpopuphidden="onPopupHidden( event );"
             >
@@ -110,7 +119,7 @@
         </stack>
         </content>
 
-    <implementation implements="sbIPlaylistWidget" type="application/x-javascript" name="songbird_playlist2">
+    <implementation implements="sbIPlaylistWidget" type="application/x-javascript" name="songbird_playlist">
 
       <constructor>
 <![CDATA[
@@ -224,7 +233,7 @@
 
       <!-- The anonymous xul tree element -->
       <field name="tree" readonly="true">
-        document.getAnonymousElementByAttribute(this, "sbid", "playlist_tree");
+        document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-tree");
       </field>
       
       <!-- XXXben This is here to fix a bug where 'this.tree.view' will return
@@ -309,7 +318,7 @@
 
       <!-- Sortcuts for various anonymous elements -->
       <field name="_context_popup" readonly="true">
-        document.getAnonymousElementByAttribute(this, "sbid", "playlist_context_popup");
+        document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-popup");
       </field>
       <field name="_loading_box" readonly="true">
         document.getAnonymousElementByAttribute(this, "sbid", "loading_box");

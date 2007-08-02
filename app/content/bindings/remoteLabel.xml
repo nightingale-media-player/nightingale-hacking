@@ -38,7 +38,7 @@
   <binding id="remote-label">
   
     <content>
-      <xul:hbox sbid="overlay_box" xbl:inherits="class,align,crop,disabled,flex">
+      <xul:hbox id="sb-remote-label" sbid="overlay_box" xbl:inherits="class,align,crop,disabled,flex">
         <xul:label sbid="label" xbl:inherits="class,value,align,crop,disabled,flex">
           <xul:observes type="dataremote"
                     attribute="value"/>  

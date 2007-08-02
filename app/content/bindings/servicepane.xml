@@ -35,11 +35,15 @@
   
   <binding id="servicepane">
     <content>
-      <xul:vbox class="servicepane_box" flex="1">
-        <xul:vbox flex="1">
-          <xul:vbox style="-moz-binding:url(#treepane)" flex="1"
-                anonid="treepane" xbl:inherits="browser" mousethrough="never" />
-          <xul:vbox style="-moz-binding:url(#toolbar)"
+      <xul:vbox id="sb-servicepane" class="servicepane_box" flex="1">
+        <xul:vbox id="sb-servicepane-box" flex="1">
+          <xul:vbox id="sb-servicepane-treepane" 
+                style="-moz-binding:url(#treepane)" flex="1"
+                anonid="treepane" 
+                mousethrough="never"
+                xbl:inherits="browser"/>
+          <xul:vbox id="sb-servicepane-toolbar" 
+                style="-moz-binding:url(#toolbar)"
                 anonid="toolbar" />
         </xul:vbox>
         <!--

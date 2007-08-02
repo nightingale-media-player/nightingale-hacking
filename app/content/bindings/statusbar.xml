@@ -35,6 +35,7 @@
 
 
   <binding id="sb-status-bar">
+    <!-- Uses id's to match firefox -->
     <content>
       <xul:statusbar id="status-bar" flex="1">
         <xul:statusbarpanel id="statusbar-display" flex="1">

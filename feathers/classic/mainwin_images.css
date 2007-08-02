@@ -753,7 +753,7 @@ clickholdbutton[id="file.new"]
 ************************************************************************************************************************************************
 */
 #frame_service_tree,
-#playlist_tree,
+.sb-playlist-tree,
 sb-filterlist
 {
   margin: 0px !important;

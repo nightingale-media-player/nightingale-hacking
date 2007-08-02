@@ -64,8 +64,8 @@
     as dataremotes currently store true/false as strings
     '1' and '0'.
 
-    Changing the key/attribute/boolean/inverted values as
-    properties on the object will re-bind the dataremote.    
+    Changing the key/attribute/boolean/inverted values will 
+    release and re-bind the dataremote to the new values.
     
     See also:
      * http://www.xulplanet.com/ndeakin/xul/specs/appstorage.html

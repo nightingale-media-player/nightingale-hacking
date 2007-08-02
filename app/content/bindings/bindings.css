@@ -67,11 +67,7 @@ sb-local-key {
 }
 
 playlist {
-  -moz-binding: url("chrome://songbird/content/bindings/playlist2.xml#playlist2") !important;
-}
-
-playlist2 {
-  -moz-binding: url("chrome://songbird/content/bindings/playlist2.xml#playlist2") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/playlist.xml#playlist") !important;
 }
 
 sb-filterlist {

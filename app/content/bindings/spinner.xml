@@ -42,8 +42,8 @@
   <binding id="browser-spinner">
 
     <content>
-      <hbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-        <image anonid="spinner-image" spinning="false" class="browser-spinner-image"/>
+      <hbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="sb-browser-spinner" flex="1">
+        <image id="sb-browser-spinner-image" anonid="spinner-image" spinning="false" class="browser-spinner-image"/>
       </hbox>
     </content>
 

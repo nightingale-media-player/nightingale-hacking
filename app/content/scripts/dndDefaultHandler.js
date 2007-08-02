@@ -107,7 +107,7 @@ var SBDropObserver =
       }
     }
     
-    if ( evt.target.tagName == "playlist2" ) {
+    if ( evt.target.tagName == "playlist" ) {
       var playlist = evt.target.QueryInterface(Ci.sbIPlaylistWidget);
       
       if(playlist.wrappedJSObject) {
@@ -159,7 +159,7 @@ function dropFiles(evt, dropdata, session, targetdb, targetpl) {
     }
   }
   
-  if ( evt.target.tagName == "playlist2" ) {
+  if ( evt.target.tagName == "playlist" ) {
     var playlist = evt.target;
   
     if(playlist.wrappedJSObject) {

@@ -47,44 +47,44 @@ playlist > stack > vbox
   padding: 0px 0px 0px 0px !important;
 }
 
-#playlist_tree
+.sb-playlist-tree
 {
   border: none !important;
   margin: 0px 0px 0px 0px !important;
   padding: 0px 0px 0px 0px !important;
 }
 
-.playlist-toolbar-bkg
+.sb-commands-toolbar-bkg
 {
   height: 25px !important;
   padding: 1px;
 }
 
-#playlist_tree > treechildren::-moz-tree-row
+.sb-playlist-tree > treechildren::-moz-tree-row
 {
   margin: 0px !important;
   padding: 0px 0px 0px 0px !important;
   border: 0px solid !important;
 }
 
-#playlist_tree > treechildren::-moz-tree-cell
+.sb-playlist-tree > treechildren::-moz-tree-cell
 {
   margin: 0px !important;
   padding: 0px 0px 2px 5px !important;
   border-right: 1px solid !important;
 }
 
-#playlist_tree > treechildren::-moz-tree-row( selected, focus )
+.sb-playlist-tree > treechildren::-moz-tree-row( selected, focus )
 {
   border: none !important;
 }
 
-#playlist_tree > treechildren::-moz-tree-cell-text( selected )
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( selected )
 {
   font-weight: normal;
 }
 
-#playlist_tree > treechildren::-moz-tree-progressmeter
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter
 {
  border: none !important;
  margin-top: 6px !important;
@@ -92,58 +92,58 @@ playlist > stack > vbox
  height: 10px !important;
 }
 
-#playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
   border: none !important;
 }
 
-#playlist_context_popup
+.sb-playlist-popup
 {
 	min-width: 160px !important;
 }
 
-#playlist_tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-rating )
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-rating )
 {
   color: transparent !important;
 }
 
-#playlist_tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating )
 {
   background-position: center left;
   background-repeat: no-repeat;
 }
 
-#playlist_tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating0 )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating0 )
 {
   background-image: url(chrome://songbird/skin/tree/stars/0.png);
 }
 
-#playlist_tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating1 )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating1 )
 {
   background-image: url(chrome://songbird/skin/tree/stars/1.png);
 }
 
-#playlist_tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating2 )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating2 )
 {
   background-image: url(chrome://songbird/skin/tree/stars/2.png);
 }
 
-#playlist_tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating3 )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating3 )
 {
   background-image: url(chrome://songbird/skin/tree/stars/3.png);
 }
 
-#playlist_tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating4 )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating4 )
 {
   background-image: url(chrome://songbird/skin/tree/stars/4.png);
 }
 
-#playlist_tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating5 )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-rating, rating5 )
 {
   background-image: url(chrome://songbird/skin/tree/stars/5.png);
 }
 
-#playlist_tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-downloadButton, button )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-downloadButton, button )
 {
   background-image: url(chrome://songbird/skin/tree/button.png);
   background-repeat: no-repeat;

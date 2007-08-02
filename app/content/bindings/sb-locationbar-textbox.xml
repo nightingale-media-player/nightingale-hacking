@@ -33,15 +33,18 @@
 
   <binding id="sb-locationbar-textbox">
     <content>
-      <xul:textbox anonid="textbox" class="locationbar-textbox"
-                   type="autocomplete"
-                   autocompletesearch="history"
-                   enablehistory="true"
-                   flex="6" align="center">
-        <children/>
-        <xul:image anonid="image" class="locationbar-image"
-            src="" />
-      </xul:textbox>
+      <xul:hbox id="sb-locationbar-textbox" flex="1">
+        <xul:textbox id="sb-locationbar-textbox-textbox"
+                     anonid="textbox" class="locationbar-textbox"
+                     type="autocomplete"
+                     autocompletesearch="history"
+                     enablehistory="true"
+                     flex="1" align="center">
+          <children/>
+          <xul:image id="sb-locationbar-textbox-image" anonid="image" class="locationbar-image"
+              src="" />
+        </xul:textbox>
+      </xul:hbox>
     </content>
     
     <implementation implements="nsIWebProgressListener">

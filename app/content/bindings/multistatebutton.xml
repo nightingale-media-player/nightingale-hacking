@@ -34,8 +34,8 @@
 
   <binding id="multistatebutton">
     <content>
-	    <xul:hbox id="mainbox">
-        <children id="bleh"/>
+	    <xul:hbox id="multistatebutton">
+        <children/>
 	    </xul:hbox>
     </content>
 

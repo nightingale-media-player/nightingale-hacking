@@ -85,7 +85,7 @@ wizard,
 dialog,
 window,
 prefwindow,
-playlist2
+playlist
 {
   background-color: #313131; /* color of the Main Window coffee:#1f150a, 0.3 black #0c0a05**/
 }
@@ -427,18 +427,18 @@ playlist > stack > vbox
   background-color: transparent !important;
 }
 
-#playlist_tree
+.sb-playlist-tree
 {
   background-color: #202220 !important;  
   border-right: 0px solid transparent !important;
 }
-.playlist-toolbar
+.sb-commands-toolbar
 {
   border-bottom: none;
   border-bottom-width: 0px;
 }
 
-.playlist-toolbar-bkg
+.sb-commands-toolbar-bkg
 {
   border-top: 1px solid #797f76;
   background-color: transparent !important;
@@ -455,84 +455,84 @@ treechildren::-moz-tree-column(insertbefore)
   border-right: 2px solid transparent !important;
 }
 
-#playlist_tree > treechildren::-moz-tree-row
+.sb-playlist-tree > treechildren::-moz-tree-row
 {
   border: 0px solid transparent !important;
 }
 
-#playlist_tree > treechildren::-moz-tree-row( odd )
+.sb-playlist-tree > treechildren::-moz-tree-row( odd )
 {
   background-color: #EDF3F0; /** Light Color 3 */
 }
 
-#playlist_tree >  treechildren::-moz-tree-row( even )
+.sb-playlist-tree >  treechildren::-moz-tree-row( even )
 {
   background-color: #feffff; /** Light Color Brightest */
 }
 
-#playlist_tree > treechildren::-moz-tree-cell
+.sb-playlist-tree > treechildren::-moz-tree-cell
 {
   border-right: 1px solid #EDF3F0 !important; /** Light Color 3 */
 }
 
-#playlist_tree > treechildren::-moz-tree-cell(insertafter)
+.sb-playlist-tree > treechildren::-moz-tree-cell(insertafter)
 {
   border-right: 5px solid #202220 !important; /** Dark Color 1 */
 }
 
-#playlist_tree > treechildren::-moz-tree-cell(insertbefore)
+.sb-playlist-tree > treechildren::-moz-tree-cell(insertbefore)
 {
   border-left: 5px solid transparent !important; 
 }
 
-#playlist_tree > treechildren::-moz-tree-row( selected )
+.sb-playlist-tree > treechildren::-moz-tree-row( selected )
 {
   background-color: #8A8F84; /** Light Color 2 */
 }
-#playlist_tree > treechildren::-moz-tree-row( selected, focus )
+.sb-playlist-tree > treechildren::-moz-tree-row( selected, focus )
 {
   background-color: #5c5f58; /** */
 }
 
-#playlist_tree > treechildren::-moz-tree-cell-text
+.sb-playlist-tree > treechildren::-moz-tree-cell-text
 {
   color: #313131; /**  */
 }
 
-#playlist_tree > treechildren::-moz-tree-cell-text( selected )
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #feffff; /** Light Color Brightest */
 }
 
-#playlist_tree > treechildren::-moz-tree-cell( selected )
+.sb-playlist-tree > treechildren::-moz-tree-cell( selected )
 {
   border-right: 1px solid #B3BAAC !important; /** Light Color 2 */
 }
 
-#playlist_tree > treechildren::-moz-tree-progressmeter
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter
 {
   background-color: #8A8F84; /** Light Color 2 */
   color: #B3BAAC; /** Light Color 1 */
 }
 
-#playlist_tree > treechildren::-moz-tree-progressmeter( odd )
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter( odd )
 {
   background-color: #8A8F84; /** Light Color 2 */
   color: #B3BAAC; /** Light Color 1 */
 }
 
-#playlist_tree > treechildren::-moz-tree-progressmeter( selected )
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected )
 {
   background-color: #8A8F84; /** Light Color 2 */
   color: #0f100f; /** Dark Color 2 */
 }
 
-#playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
   background-color: #8A8F84; /** Light Color 2 */
 }
 
-#playlist_tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-downloadButton, button )
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-downloadButton, button )
 {
   color: #feffff; /** Light Color Brightest */
 }

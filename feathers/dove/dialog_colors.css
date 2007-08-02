@@ -225,7 +225,7 @@ playlist.dialog_playlist > stack > vbox
 }
 
 
-.dialog_playlist #playlist_tree
+.dialog_playlist .sb-playlist-tree
 {
   background-color: transparent !important;  
 }
@@ -235,63 +235,63 @@ playlist.dialog_playlist > stack > vbox > hbox
   background-color: #fff !important;
 }
 
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-row
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-row
 {
   border: 0px solid #ececec !important;
 }
 
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-row( odd )
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-row( odd )
 {
   background-color: #fff !important;
 }
 
-.dialog_playlist #playlist_tree >  treechildren::-moz-tree-row( even )
+.dialog_playlist .sb-playlist-tree >  treechildren::-moz-tree-row( even )
 {
   background-color: #ececec !important;
 }
 
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-cell
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-cell
 {
   border-right: 1px solid #eee !important;
 }
 
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-row( selected )
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-row( selected )
 {
   background-color: #bdc1c1 !important;
 }
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-row( selected, focus )
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-row( selected, focus )
 {
   background-color: #686a6a !important;
 }
 
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-cell-text
 {
   color: #333 !important;
 }
 
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text( selected )
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #333 !important;
 }
 
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text( selected,focus )
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-cell-text( selected,focus )
 {
   color: #FFF !important;
 }
 
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-progressmeter
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-progressmeter
 {
  background-color: #ccc !important;
  color: #999 !important;
 }
 
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-progressmeter( odd )
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-progressmeter( odd )
 {
  background-color: #ececec !important;
  color: #999 !important;
 }
 
-.dialog_playlist #playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
+.dialog_playlist .sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
  background-color: #ececec !important;
  color: #999 !important;

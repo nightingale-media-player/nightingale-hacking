@@ -1214,7 +1214,7 @@
             
             
             <vbox id="playlist_web_vbox" height="200" hidden="true" minheight="0" _resize_height="200">
-              <playlist2 
+              <playlist 
                 id="playlist_web" 
                 height="105"
                 flex="1"
@@ -1275,7 +1275,7 @@
           nbox.appendChild(hack);
           
           // make the playlist
-          this._playlist = document.createElement('playlist2');
+          this._playlist = document.createElement('playlist');
           this._playlist.setAttribute('class', 'playlist_web');
           this._playlist.setAttribute('height', '200');
           this._playlist.setAttribute('hidden', 'true');
