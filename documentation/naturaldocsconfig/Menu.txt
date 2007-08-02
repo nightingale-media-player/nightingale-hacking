@@ -55,5 +55,6 @@ Group: Index  {
    Class Index: Classes
    Property Index: Properties
    Function Index: Functions
+   Constant Index: Constants
    }  # Group: Index
 

@@ -449,10 +449,20 @@ body.FramedIndexPage,
 .IndexSection {
     background-color: #FFFFFF;
     font-size: 10pt;
-    padding: 15px }
+    padding: 15px;
+    }
 
 .IndexSection {
-    border-width: 0 0 1px 1px; border-style: solid; border-color: #000000 }
+    border-width: 0 0 1px 1px; 
+    border-style: solid; 
+    border-color: #000000;
+    padding-left: 188px; 
+    }
+
+.IE .IndexSection {
+    padding-left: 0;
+    }
+
 
     .IPageTitle {
         font-size: 20pt; font-weight: bold;

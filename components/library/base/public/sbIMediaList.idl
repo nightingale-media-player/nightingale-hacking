@@ -102,6 +102,35 @@ interface sbIMediaList : sbIMediaItem
    * \param aGuid Guid of the media item
    * \return Media item with the requested guid or null if not found
    */
+
+  /*
+  Func: getItemByGuid()
+
+  Get a <MediaItem> from the <MediaList> by using it's <MediaItem::guid>.
+
+  Prototype:
+    <MediaItem> getItemByGuid(String guid);
+
+  Parameters:
+    guid - The global unique identifier (<MediaItem::guid>) of the <MediaItem>.
+
+  Returns:
+    The <MediaItem> with the requested guid.
+
+  Throws:
+    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE)
+    when there is no <MediaItem> with the requested guid.
+
+  Example:
+    (start code)
+    (end)
+
+  See Also:
+    <getItemByIndex()>
+    <indexOf()>
+    <lastIndexOf()>
+    <contains()>
+  */
   sbIMediaItem getItemByGuid(in AString aGuid);
 
   /**
@@ -109,6 +138,35 @@ interface sbIMediaList : sbIMediaItem
    * \param aIndex Index of the media item
    * \return Media item with the requested index
    */
+
+  /*
+  Func: getItemByIndex()
+
+  Get a <MediaItem> from the <MediaList> by using it's index in the <MediaList>.
+
+  Prototype:
+    <MediaItem> getItemByIndex(Number index)
+
+  Parameters:
+    index - The index of the <MediaItem>. Index starts at 0.
+
+  Returns:
+    The <MediaItem> present at the requested index.
+
+  Throws:
+    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE) 
+    when there is no <MediaItem> at the requested index.
+
+  Example:
+    (start code)
+    (end)
+  
+  See Also:
+    <getItemByGuid()>
+    <indexOf()>
+    <lastIndexOf()>
+    <contains()>
+  */
   sbIMediaItem getItemByIndex(in unsigned long aIndex);
 
   /**
@@ -119,6 +177,34 @@ interface sbIMediaList : sbIMediaItem
    * list's contents. The listener may make changes to the list at any time but
    * those changes will not be reflected in the enumeration sequence.
    */
+
+  /*
+  Const: ENUMERATIONTYPE_SNAPSHOT
+
+  If this constant is specified when calling <enumerateAllItems()> or 
+  <enumerateItemsByProperty()>, the EnumerationListener will recieve 
+  a copy of the <MediaItem> instead of the <MediaItem> present in 
+  the <MediaList>.
+
+  Note:
+    This is the *suggested* constant to be used when calling <enumerateAllItems()>
+    or <enumerateItemsByProperty()>.
+
+    Any properties changed on the copy of the <MediaItem> will also be
+    reflected in the <MediaItem> present in the list.
+
+  Example:
+    (start code)
+    //This example assumes you already have a medialist in the variable named "mediaList".
+    //It also assumes that you have an enumeration listener in the variable named "enumListener".
+    mediaList.enumerateAllItems(enumListener, 0);
+    (end)
+
+  See Also:
+    <ENUMERATIONTYPE_LOCKING>
+    <enumerateAllItems()>
+    <enumerateItemsByProperty()>
+  */
   const unsigned short ENUMERATIONTYPE_SNAPSHOT = 0;
 
   /**
@@ -131,6 +217,11 @@ interface sbIMediaList : sbIMediaItem
    * the listener are not permitted until the listener has received the
    * onEnumerationEnd notification.
    */
+
+  /*
+  Const: ENUMERATIONTYPE_LOCKING
+
+  */
   const unsigned short ENUMERATIONTYPE_LOCKING  = 1;
 
   /**
@@ -139,6 +230,27 @@ interface sbIMediaList : sbIMediaItem
    * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
    * \param aEnumerationListener - The enumeration listener.
    */
+  
+  /*
+  Func: enumerateAllItems()
+
+  Enumerate all <MediaItems> in the <MediaList>.
+  
+  Prototype:
+    enumerateAllItems(EnumerationListener enumListener, Number enumType)
+
+  Parameters:
+    enumListener - An EnumerationListener object. See example below.
+    enumType - The type of enumeration desired. Valid values for enumType 
+               are <ENUMERATIONTYPE_SNAPSHOT> and <ENUMERATIONTYPE_LOCKING>.
+
+  Example:
+    (start code)
+    (end)
+
+  See Also:
+    <enumerateItemsByProperty()>
+  */
   void enumerateAllItems(in sbIMediaListEnumerationListener aEnumerationListener,
                          in unsigned short aEnumerationType);
 
@@ -151,6 +263,10 @@ interface sbIMediaList : sbIMediaItem
    * \param aEnumerationType - One of the ENUMERATIONTYPE values above.
    * \param aEnumerationListener - The enumeration listener.
    */
+  
+  /*
+  Func: enumerateItemsByProperty()
+  */
   void enumerateItemsByProperty(in AString aPropertyName,
                                 in AString aPropertyValue,
                                 in sbIMediaListEnumerationListener aEnumerationListener,
@@ -175,6 +291,10 @@ interface sbIMediaList : sbIMediaItem
    * \return The index that the media item was first found at, or throws
    * NS_ERROR_NOT_AVAILABLE if not found
    */
+
+  /*
+  Func: indexOf()
+  */
   unsigned long indexOf(in sbIMediaItem aMediaItem,
                         in unsigned long aStartFrom);
 
@@ -185,6 +305,10 @@ interface sbIMediaList : sbIMediaItem
    * \return The index that the media item was last found at, or throws
    * NS_ERROR_NOT_AVAILABLE if not found
    */
+
+  /*
+  Func: lastIndexOf()
+  */
   unsigned long lastIndexOf(in sbIMediaItem aMediaItem,
                             in unsigned long aStartFrom);
 
@@ -193,23 +317,51 @@ interface sbIMediaList : sbIMediaItem
    * \param aMediaItem Media item to search for
    * \return true if the media item was found, false if it was not found
    */
+
+  /*
+  Func: contains()
+
+  Verify that this <MediaList> contains the requested <MediaItem>.
+
+  Prototype:
+    Boolean contains(<MediaItem> mediaItem)
+
+  Parameters:
+    mediaItem - The <MediaItem> to verify.
+
+  Returns:
+    true - The <MediaItem> *is present* in the <MediaList>.
+    false - The <MediaItem> *is _not_ present*
+  */
   boolean contains(in sbIMediaItem aMediaItem);
 
   /**
    * \brief Is the list empty?
    */
+
+  /*
+  Prop: isEmpty
+  */
   readonly attribute boolean isEmpty;
 
   /**
    * \brief Add a media item to this list
    * \param aMediaItem The media item to add to the list
    */
+
+  /*
+  Func: add()
+  */
   void add(in sbIMediaItem aMediaItem);
 
   /**
    * \brief Add the contents of a media list to this list
    * \param aMediaList The media list whose contents are to be added
    */
+
+  /*
+  Func: addAll()
+  */
   void addAll(in sbIMediaList aMediaList);
 
   /**
@@ -222,12 +374,20 @@ interface sbIMediaList : sbIMediaItem
    * \brief Remove the first occurrence of the given media item from the list
    * \param aMediaItem Media item to remove
    */
+
+  /*
+  Func: remove()
+  */
   void remove(in sbIMediaItem aMediaItem);
 
   /**
    * \brief Remove a media item from the list by index
    * \param aIndex Index of the item to remove
    */
+
+  /*
+  Func: removeByIndex()
+  */
   void removeByIndex(in unsigned long aIndex);
 
   /**
@@ -239,6 +399,10 @@ interface sbIMediaList : sbIMediaItem
   /**
    * \brief Clear the list
    */
+
+  /*
+  Func: clear()
+  */
   void clear();
 
   const unsigned long LISTENER_FLAGS_ITEMADDED         = 1 << 0;
@@ -300,6 +464,10 @@ interface sbIMediaList : sbIMediaItem
    * \param aPropertyName Propery name to get distinct values for
    * \return String enumerator of distinct values for the given property
    */
+
+  /*
+  Func: getDistinctValuesForProperty()
+  */
   nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyName);
 };
 
