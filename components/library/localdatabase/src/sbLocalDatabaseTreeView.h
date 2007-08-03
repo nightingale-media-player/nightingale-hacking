@@ -67,7 +67,7 @@ class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
   friend class sbLocalDatabaseTreeSelection;
   typedef nsDataHashtable<nsStringHashKey, nsString> sbSelectionList;
   typedef nsresult (*PR_CALLBACK sbSelectionEnumeratorCallbackFunc)
-    (PRUint32 aRow,const nsAString& aId, const nsAString& aGuid, void* aUserData);
+    (PRUint32 aIndex, const nsAString& aId, const nsAString& aGuid, void* aUserData);
 
 public:
   NS_DECL_ISUPPORTS
@@ -116,8 +116,8 @@ private:
   nsresult GetTreeColumnForProperty(const nsAString& aProperty,
                                     nsITreeColumn** aTreeColumn);
 
-  nsresult GetCellPropertyValue(PRInt32 row,
-                                nsITreeColumn *col,
+  nsresult GetCellPropertyValue(PRInt32 aIndex,
+                                nsITreeColumn *aTreeColumn,
                                 nsAString& _retval);
 
   nsresult GetPropertyBag(const nsAString& aGuid,
@@ -135,7 +135,7 @@ private:
   nsresult EnumerateSelection(sbSelectionEnumeratorCallbackFunc aFunc,
                               void* aUserData);
 
-  nsresult GetUniqueIdForRow(PRUint32 aRow, nsAString& aId);
+  nsresult GetUniqueIdForIndex(PRUint32 aIndex, nsAString& aId);
 
   void SetSelectionIsAll(PRBool aSelectionIsAll);
 
@@ -145,22 +145,34 @@ private:
                                       PRBool aDirection);
 
   static nsresult PR_CALLBACK
-    SelectionListSavingEnumeratorCallback(PRUint32 aRow,
+    SelectionListSavingEnumeratorCallback(PRUint32 aIndex,
                                           const nsAString& aId,
                                           const nsAString& aGuid,
                                           void* aUserData);
 
   static nsresult PR_CALLBACK
-    SelectionToArrayEnumeratorCallback(PRUint32 aRow,
+    SelectionToArrayEnumeratorCallback(PRUint32 aIndex,
                                        const nsAString& aId,
                                        const nsAString& aGuid,
                                        void* aUserData);
 
   static nsresult PR_CALLBACK
-    SelectionIndexEnumeratorCallback(PRUint32 aRow,
+    SelectionIndexEnumeratorCallback(PRUint32 aIndex,
                                      const nsAString& aId,
                                      const nsAString& aGuid,
                                      void* aUserData);
+
+  inline PRUint32 TreeToArray(PRInt32 aRow) {
+    return (PRUint32) (mFakeAllRow ? aRow - 1 : aRow);
+  }
+
+  inline PRUint32 ArrayToTree(PRUint32 aIndex) {
+    return (PRInt32) (mFakeAllRow ? aIndex + 1 : aIndex);
+  }
+
+  inline PRBool IsAllRow(PRInt32 aRow) {
+    return mFakeAllRow && aRow == 0;
+  }
 
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
@@ -246,6 +258,8 @@ private:
 
   // Flag to indicate that the tree is changing its selection
   PRPackedBool mSelectionChanging;
+
+  nsString mLocalizedAll;
 };
 
 class sbLocalDatabaseTreeSelection : public nsITreeSelection
@@ -255,10 +269,11 @@ public:
   NS_DECL_NSITREESELECTION
 
   sbLocalDatabaseTreeSelection(nsITreeSelection* aSelection,
-                               sbLocalDatabaseTreeView* mTreeView);
+                               sbLocalDatabaseTreeView* mTreeView,
+                               PRBool mAllRow);
 
 private:
-  nsresult CheckIsSelectAll(PRBool* _retval);
+  nsresult CheckIsSelectAll(PRBool* _retval = nsnull);
   PRBool RangeIncludesNotCachedPage(PRUint32 startIndex, PRUint32 endIndex);
 
   nsCOMPtr<nsITreeSelection> mSelection;
@@ -266,6 +281,10 @@ private:
   // A pointer to the friend sbLocalDatabaseTreeView class.  This class keeps
   // a strong reference to this class so this pointer will never be invalid.
   sbLocalDatabaseTreeView* mTreeView;
+
+  // Include an all row in this selection.  When this is true, the first row
+  // (the "all" row) will remain selected when nothing else is selected.
+  PRBool mAllRow;
 };
 
 class sbGUIDArrayToIndexedMediaItemEnumerator : public nsISimpleEnumerator

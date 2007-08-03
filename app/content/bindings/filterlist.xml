@@ -208,8 +208,15 @@
     var min = {};
     var max = {};
     sel.getRangeAt(i, min, max);
+
+    // If the "all" row is selected, clear the values for this filter
+    if (min.value == 0) {
+      this.cfs.set(this.index, [], 0);
+      return;
+    }
+
     for (var j = min.value; j <= max.value; j++) {
-      var value = this.cfs.getValueAt(this.index, j);
+      var value = this.cfs.getValueAt(this.index, j - 1);
       values.push(value);
     }
   }
