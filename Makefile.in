@@ -102,13 +102,14 @@ BREAKPAD_ARCH = $(SB_ARCH)
 endif
 MAKE_SYM_STORE_ARGS := -a $(BREAKPAD_ARCH) --vcs-info
 DUMP_SYMS_BIN := $(MOZSDK_BIN_DIR)/dump_syms
-MAKE_SYM_STORE_PATH := $(SONGBIRD_OBJDIR)/dist/Songbird.app
+MAKE_SYM_STORE_PATH := $(SONGBIRD_OBJDIR)/dist/Songbird.app/Contents/Resources/components
+  $(NULL)
 endif
 
 ifeq ($(SB_PLATFORM),linux)
 MAKE_SYM_STORE_ARGS := --vcs-info
 DUMP_SYMS_BIN := $(MOZSDK_BIN_DIR)/dump_syms
-MAKE_SYM_STORE_PATH := $(SONGBIRD_OBJDIR)/dist
+MAKE_SYM_STORE_PATH := $(SONGBIRD_OBJDIR)/dist/components
 endif
 
 endif #SB_ENABLE_BREAKPAD
