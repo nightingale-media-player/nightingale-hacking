@@ -581,6 +581,7 @@ case "$SB_PLATFORM" in
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline -O1"
     else
+      # Use -O2 on OS X, better than -Os according to moz perf tests
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O2"
     fi
 
@@ -624,11 +625,14 @@ case "$SB_PLATFORM" in
     AC_SUBST(GSTREAMER_CFLAGS)
     AC_SUBST(GTK_CFLAGS)
 
-    GCC_COMPILER_FLAGS="-c -g -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
+    # Breakpad needs stabs debugging data, so always explicitly request it with
+    # -gstabs+
+    GCC_COMPILER_FLAGS="-c -gstabs+ -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline -O1"
     else
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O2"
+      # Use -Os on linux, better than -O2 according to moz perf tests
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -Os"
     fi
 
     # We always want to include "mozilla-config.h"
