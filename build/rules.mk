@@ -1,24 +1,24 @@
 #
 # BEGIN SONGBIRD GPL
-# 
+#
 # This file is part of the Songbird web player.
 #
 # Copyright(c) 2005-2007 POTI, Inc.
 # http://www.songbirdnest.com
-# 
+#
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the GPL).
-# 
-# Software distributed under the License is distributed 
-# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
-# express or implied. See the GPL for the specific language 
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
-# You should have received a copy of the GPL along with this 
+# You should have received a copy of the GPL along with this
 # program. If not, go to http://www.gnu.org/licenses/gpl.html
-# or write to the Free Software Foundation, Inc., 
+# or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-# 
+#
 # END SONGBIRD GPL
 #
 
@@ -687,7 +687,7 @@ ifdef SONGBIRD_DEFAULTS
 copy_sb_defaults:
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)
 .PHONY : copy_sb_defaults
-endif #SONGBIRD_DEFAULTS  
+endif #SONGBIRD_DEFAULTS
 
 #-----------------------
 
@@ -696,7 +696,7 @@ copy_sb_installer:
 	for file in $(SONGBIRD_INSTALLER); do \
   	$(CYGWIN_WRAPPER) $(CP) -dfp $(srcdir)/$$file $(SONGBIRD_INSTALLERDIR); \
   done
-  
+
 clean_copy_sb_installer:
 	for file in $(SONGBIRD_INSTALLER); do \
     $(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_INSTALLERDIR)/$$file; \
@@ -747,8 +747,10 @@ ifdef SONGBIRD_TEST_COMPONENT
 SONGBIRD_TESTSDIR := $(SONGBIRD_TESTSDIR)/$(SONGBIRD_TEST_COMPONENT)
 endif #SONGBIRD_TEST_COMPONENT
 copy_sb_tests:
+ifneq (,$(SB_ENABLE_TESTS))
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_TESTSDIR)
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_TESTS) $(SONGBIRD_TESTSDIR)
+endif
 .PHONY : copy_sb_tests
 endif #SONGBIRD_TESTS
 
@@ -790,7 +792,7 @@ endif
 ifndef PREFERENCES_STRIP_SUFFIXES
 PREFERENCES_STRIP_SUFFIXES = .in
 endif
-                             
+
 preferences_preprocess:
 	@$(MKDIR) -p $(SONGBIRD_PREFERENCESDIR)
 	for item in $(PREFERENCES); do \
@@ -842,7 +844,7 @@ run_installer_preprocess:
     $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(INSTALLER_PPFLAGS) \
       $(ACDEFINES) $(PPDEFINES) -- $$source > $$target; \
   done
-  
+
 clean_installer_preprocess:
 	for file in $(INSTALLER_PREPROCESS); do \
     $(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_INSTALLER)/$$file; \
@@ -1219,7 +1221,7 @@ out:
 
 endif #GARBAGE
 
-garbage: 
+garbage:
 	$(remove_cmd)
 
 .PHONY : garbage
