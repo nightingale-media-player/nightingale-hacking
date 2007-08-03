@@ -152,7 +152,6 @@ case "$target" in
     case "$target_cpu" in
       *i*86*)
         SB_ARCH="$target_cpu"
-        HAS_ARCH_DEPENDENCIES=1
       ;;
       *)
         AC_MSG_ERROR(Unsupported architecture)
@@ -178,11 +177,9 @@ case "$target" in
     case "$target_cpu" in
       powerpc* | ppc)
         SB_ARCH="ppc"
-        HAS_ARCH_DEPENDENCIES=1
       ;;
       *i*86*)
         SB_ARCH="$target_cpu"
-        HAS_ARCH_DEPENDENCIES=1
       ;;
       *)
         AC_MSG_ERROR(Unsupported architecture)
@@ -194,11 +191,9 @@ case "$target" in
     case "$target_cpu" in
       *86)
         SB_ARCH="$target_cpu"
-        HAS_ARCH_DEPENDENCIES=1
       ;;
       x86_64)
         SB_ARCH="$target_cpu"
-        HAS_ARCH_DEPENDENCIES=1
       ;;
       *)
         AC_MSG_ERROR(Unsupported architecture)
@@ -210,67 +205,6 @@ AC_SUBST(SB_PLATFORM)
 AC_SUBST(SB_ARCH)
 AC_SUBST(CYGWIN_WRAPPER)
 AC_SUBST(CYGDRIVE_MOUNT)
-
-#
-# Check for an alternate dependencies location
-#
-
-AC_ARG_WITH(dependencies-dir,
-            [  --with-dependencies-dir=DIR          the location of the dependencies directory],
-            SB_DEPENDENCIES_DIR=$withval)
-if test -z "$SB_DEPENDENCIES_DIR"; then
-  if test -n "$HAS_ARCH_DEPENDENCIES"; then
-    DEPS_SUBDIR=$SB_PLATFORM-$SB_ARCH
-  else
-    DEPS_SUBDIR=$SB_PLATFORM
-  fi
-  SB_DEPENDENCIES_DIR=dependencies/$DEPS_SUBDIR
-fi
-AC_SUBST(SB_DEPENDENCIES_DIR)
-
-#
-# Check for media cores to enable
-#
-AC_ARG_WITH(media-core,
-            [  --with-media-core=vlc,windowsmedia,gstreamer,qt,default,none  Media cores to enable],
-            [ SB_MEDIA_CORES=$withval ],
-            [ SB_MEDIA_CORES=default ])
-for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
-    if test "$option" = "default"; then
-        MEDIA_CORE_VLC=1
-        MEDIA_CORE_WMP=1
-        MEDIA_CORE_GST=1
-        MEDIA_CORE_QT=1
-    elif test "$option" = "none"; then
-        MEDIA_CORE_VLC=
-        MEDIA_CORE_WMP=
-        MEDIA_CORE_GST=
-        MEDIA_CORE_QT=
-    elif test "$option" = "vlc"; then
-        MEDIA_CORE_VLC=1
-    elif test "$option" = "windowsmedia"; then
-        MEDIA_CORE_WMP=1
-    elif test "$option" = "gstreamer"; then
-        MEDIA_CORE_GST=1
-    elif test "$option" = "qt"; then
-        MEDIA_CORE_QT=1
-    else
-        AC_MSG_ERROR([Unknown --with-core-wrappers option $option])
-    fi
-done
-AC_SUBST(MEDIA_CORE_VLC)
-AC_SUBST(MEDIA_CORE_WMP)
-AC_SUBST(MEDIA_CORE_GST)
-AC_SUBST(MEDIA_CORE_QT)
-
-#
-# Check for extras.
-#
-
-if test -d ${srcdir}/extras; then
-  HAS_EXTRAS=1
-fi
-AC_SUBST(HAS_EXTRAS)
 
 #
 # Checks for programs.
@@ -362,66 +296,6 @@ case "$SB_PLATFORM" in
     if test -z "$TAR"; then AC_MSG_ERROR(Tar not found); fi
   ;;
 esac
-
-#
-# Checks for libraries.
-#
-
-AC_CHECK_LIB([nspr4], [PR_Cleanup])
-AC_CHECK_LIB([xul], [_XRE_Main])
-
-#
-# Checks for header files.
-#
-
-#AC_PATH_X
-#AC_HEADER_DIRENT
-#AC_HEADER_STDC
-#AC_CHECK_HEADERS([arpa/inet.h fcntl.h float.h inttypes.h limits.h malloc.h memory.h netdb.h netinet/in.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/socket.h sys/time.h unistd.h wchar.h])
-
-#
-# Checks for typedefs, structures, and compiler characteristics.
-#
-
-#AC_HEADER_STAT
-#AC_HEADER_STDBOOL
-#AC_C_CONST
-#AC_TYPE_UID_T
-#AC_C_INLINE
-#AC_TYPE_MODE_T
-#AC_TYPE_OFF_T
-#AC_TYPE_PID_T
-#AC_TYPE_SIZE_T
-#AC_CHECK_MEMBERS([struct stat.st_blksize])
-#AC_STRUCT_ST_BLOCKS
-#AC_CHECK_MEMBERS([struct stat.st_rdev])
-#AC_HEADER_TIME
-#AC_STRUCT_TM
-#AC_C_VOLATILE
-#AC_CHECK_TYPES([ptrdiff_t])
-
-#
-# Checks for library functions.
-#
-
-#AC_FUNC_ERROR_AT_LINE
-#AC_PROG_GCC_TRADITIONAL
-#AC_FUNC_LSTAT
-#AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
-#AC_FUNC_MALLOC
-#AC_FUNC_MEMCMP
-#AC_FUNC_MKTIME
-#AC_FUNC_MMAP
-#AC_FUNC_REALLOC
-#AC_FUNC_SELECT_ARGTYPES
-#AC_FUNC_SETVBUF_REVERSED
-#AC_TYPE_SIGNAL
-#AC_FUNC_STAT
-#AC_FUNC_STRCOLL
-#AC_FUNC_STRFTIME
-#AC_FUNC_VPRINTF
-#AC_CHECK_FUNCS([ftruncate getcwd gethostbyaddr gethostname getpagesize gettimeofday memchr memmove memset munmap putenv select socket strcasecmp strdup strncasecmp strndup strstr strtol])
-
 #
 # Set platform-specific defines
 #
@@ -528,6 +402,7 @@ case "$SB_PLATFORM" in
     MSVC_COMPILER_FLAGS="-nologo -W3 -WL -GS -Wp64 -EHsc -Zi -c"
 
     if test "$_CC_SUITE" = "8"; then
+      # MSVC 8+ use native wchar_t, but Mozilla builds without it
       MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Zc:wchar_t-"
     fi
 
@@ -694,6 +569,76 @@ AC_SUBST(MACOSX_CONTENTS)
 AC_SUBST(MACOSX_FRAMEWORKS)
 AC_SUBST(MACOSX_RESOURCES)
 AC_SUBST(XULRUNNERDIR)
+
+
+#
+# Check for an alternate dependencies location
+#
+
+AC_ARG_WITH(dependencies-dir,
+            [  --with-dependencies-dir=DIR          the location of the dependencies directory],
+            SB_DEPENDENCIES_DIR=$withval)
+if test -z "$SB_DEPENDENCIES_DIR"; then
+  DEPS_SUBDIR=$SB_PLATFORM-$SB_ARCH
+  if test "$SB_PLATFORM" = "windows" -a "$_CC_SUITE" = "8" ; then
+    # since the default dependencies for Windows are for MSVC 7.1,
+    # we need to special-case for MSVC 8 to use its (incompatible) version instead
+    DEPS_SUBDIR=$DEPS_SUBDIR-msvc8
+  fi
+  SB_DEPENDENCIES_DIR=dependencies/$DEPS_SUBDIR
+fi
+AC_SUBST(SB_DEPENDENCIES_DIR)
+
+#
+# Check for media cores to enable
+#
+AC_ARG_WITH(media-core,
+            [  --with-media-core=vlc,windowsmedia,gstreamer,qt,default,none  Media cores to enable],
+            [ SB_MEDIA_CORES=$withval ],
+            [ SB_MEDIA_CORES=default ])
+for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
+    if test "$option" = "default"; then
+        MEDIA_CORE_VLC=1
+        MEDIA_CORE_WMP=1
+        MEDIA_CORE_GST=1
+        MEDIA_CORE_QT=1
+    elif test "$option" = "none"; then
+        MEDIA_CORE_VLC=
+        MEDIA_CORE_WMP=
+        MEDIA_CORE_GST=
+        MEDIA_CORE_QT=
+    elif test "$option" = "vlc"; then
+        MEDIA_CORE_VLC=1
+    elif test "$option" = "windowsmedia"; then
+        MEDIA_CORE_WMP=1
+    elif test "$option" = "gstreamer"; then
+        MEDIA_CORE_GST=1
+    elif test "$option" = "qt"; then
+        MEDIA_CORE_QT=1
+    else
+        AC_MSG_ERROR([Unknown --with-core-wrappers option $option])
+    fi
+done
+AC_SUBST(MEDIA_CORE_VLC)
+AC_SUBST(MEDIA_CORE_WMP)
+AC_SUBST(MEDIA_CORE_GST)
+AC_SUBST(MEDIA_CORE_QT)
+
+#
+# Check for extras.
+#
+
+if test -d ${srcdir}/extras; then
+  HAS_EXTRAS=1
+fi
+AC_SUBST(HAS_EXTRAS)
+
+#
+# Checks for libraries.
+#
+
+AC_CHECK_LIB([nspr4], [PR_Cleanup])
+AC_CHECK_LIB([xul], [_XRE_Main])
 
 #
 # Use the mozilla perl method for generating makefiles quickly. This script

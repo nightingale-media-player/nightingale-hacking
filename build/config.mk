@@ -124,6 +124,9 @@ PPDEFINES += $(if $(MEDIA_CORE_VLC), -DMEDIA_CORE_VLC=1) \
              $(if $(MEDIA_CORE_QT),  -DMEDIA_CORE_QT=1 ) \
              $(NULL)
 
+# support for different versions of MSVC
+PPDEFINES += $(if $(_MSC_VER), -D_MSC_VER=$(_MSC_VER))
+
 #------------------------------------------------------------------------------
 endif #CONFIG_MK_INCLUDED
 #------------------------------------------------------------------------------
