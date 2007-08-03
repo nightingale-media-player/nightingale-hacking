@@ -1,24 +1,24 @@
 #
 # BEGIN SONGBIRD GPL
-# 
+#
 # This file is part of the Songbird web player.
 #
 # Copyright(c) 2005-2007 POTI, Inc.
 # http://www.songbirdnest.com
-# 
+#
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the GPL).
-# 
-# Software distributed under the License is distributed 
-# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
-# express or implied. See the GPL for the specific language 
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
-# You should have received a copy of the GPL along with this 
+# You should have received a copy of the GPL along with this
 # program. If not, go to http://www.gnu.org/licenses/gpl.html
-# or write to the Free Software Foundation, Inc., 
+# or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-# 
+#
 # END SONGBIRD GPL
 #
 
@@ -162,7 +162,7 @@ case "$target" in
     case "$target" in
       *-mingw*)
         # no cygwin wrapper for mingw
-      ;;  
+      ;;
       *)
         CYGWIN_WRAPPER="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
         if test "`echo ${srcdir} | grep -c ^/ 2>/dev/null`" = 0; then
@@ -276,6 +276,10 @@ AC_SUBST(HAS_EXTRAS)
 # Checks for programs.
 #
 
+# Don't let autoconf hijack our flags
+_SAVE_CFLAGS=$CFLAGS
+_SAVE_CXXFLAGS=$CXXFLAGS
+
 case "$SB_PLATFORM" in
   windows)
   AC_CHECK_PROG(CC, cl, cl)
@@ -286,6 +290,10 @@ case "$SB_PLATFORM" in
   AC_PROG_CXX
   ;;
 esac
+
+# Restore saved flags
+CFLAGS=$_SAVE_CFLAGS
+CXXFLAGS=$_SAVE_CXXFLAGS
 
 AC_CHECK_PROG(PERL, perl, perl)
 if test -z "$PERL"; then AC_MSG_ERROR(Perl not found); fi
@@ -346,9 +354,9 @@ case "$SB_PLATFORM" in
     AC_CHECK_PROG(AS, as, as)
     if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
     AC_CHECK_PROG(AR, ar, ar)
-	  if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
-	  AC_CHECK_PROG(RANLIB, ranlib, ranlib)
-	  if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
+    if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
+    AC_CHECK_PROG(RANLIB, ranlib, ranlib)
+    if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
     if test -z "$GZIP"; then AC_MSG_ERROR(Gzip not found); fi
     if test -z "$GUNZIP"; then AC_MSG_ERROR(Gunzip not found); fi
     if test -z "$TAR"; then AC_MSG_ERROR(Tar not found); fi
@@ -467,7 +475,7 @@ case "$SB_PLATFORM" in
     changequote(,)
     _MSVC_VER_FILTER='s|.* \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
     changequote([,])
-    
+
     # Determine compiler version
     CC_VERSION=`"${CC}" -v 2>&1 | sed -ne "$_MSVC_VER_FILTER"`
     _CC_MAJOR_VERSION=`echo ${CC_VERSION} | $AWK -F\. '{ print $1 }'`
@@ -496,7 +504,7 @@ case "$SB_PLATFORM" in
             changequote(,)
             _MSMT_VER_FILTER='s|.* \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
             changequote([,])
-  
+
             MSMT_TOOL=`mt 2>&1|grep 'Microsoft (R) Manifest Tool'`
             if test -n "$MSMT_TOOL"; then
                     MSMANIFEST_TOOL_VERSION=`echo ${MSMT_TOOL}|sed -ne "$_MSMT_VER_FILTER"`
@@ -518,11 +526,11 @@ case "$SB_PLATFORM" in
     fi
 
     MSVC_COMPILER_FLAGS="-nologo -W3 -WL -GS -Wp64 -EHsc -Zi -c"
-    
+
     if test "$_CC_SUITE" = "8"; then
       MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Zc:wchar_t-"
     fi
-    
+
     if test "$enable_debug" = "yes"; then
       MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MDd -Od -RTC1 -RTCc"
     else
@@ -531,7 +539,7 @@ case "$SB_PLATFORM" in
 
     # We always want to include "mozilla-config.h"
     MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -FI \"mozilla-config.h\" -FI \"xpcom/xpcom-config.h\""
-   
+
     MSVC_LINKER_FLAGS="-NOLOGO -INCREMENTAL:NO -SUBSYSTEM:WINDOWS -MACHINE:X86 -DEBUG"
     if test "$enable_debug" != "yes"; then
       MSVC_LINKER_FLAGS="$MSVC_LINKER_FLAGS -OPT:REF -OPT:ICF"
@@ -569,9 +577,9 @@ case "$SB_PLATFORM" in
     MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
     XULRUNNERDIR="/XUL.framework"
 
-    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
+    GCC_COMPILER_FLAGS="-g -c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
     if test "$enable_debug" = "yes"; then
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline -O1"
     else
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O2"
     fi
@@ -618,9 +626,9 @@ case "$SB_PLATFORM" in
 
     GCC_COMPILER_FLAGS="-c -g -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline -O1"
     else
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O3"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O2"
     fi
 
     # We always want to include "mozilla-config.h"
@@ -698,5 +706,3 @@ rm -f ./conftest.sh
 #
 
 AC_OUTPUT($MAKEFILES)
-
-
