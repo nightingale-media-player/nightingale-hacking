@@ -27,13 +27,30 @@
 /**
  * \brief Test file
  */
+
+// declared globally so it can be removed in the tail_ file
+var dest;
+
 function runTest () {
 
   setRapiPref("disable_binding", false);
   setRapiPref("disable_controls", false);
   setRapiPref("disable_metadata", false);
 
+  dest = Cc["@mozilla.org/file/directory_service;1"]
+             .getService(Ci.nsIProperties)
+             .get("TmpD", Ci.nsIFile);
+
+  dest.append("remoteplayer_test");
+
+  var drCtor = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
+  var dlFolder = new drCtor("download.folder", null);
+  var dlAlways = new drCtor("download.always", null);
+  dlFolder.stringValue = dest.path;
+  dlAlways.boolValue = true;
+
   beginRemoteAPITest("test_remoteplayer_page.html", startTesting);
+
 }
 
 function startTesting() {

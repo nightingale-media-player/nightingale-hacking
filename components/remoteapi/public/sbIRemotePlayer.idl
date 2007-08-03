@@ -155,12 +155,125 @@ interface sbIRemotePlayer : nsISupports
   */
   readonly attribute AString currentTrack;
 
+  /**
+   * \brief The playing state of the application
+   * 
+   * \returns false if the application is stopped
+   * \returns true if the application is playing or paused
+   */
+
+  /*
+  Prop: playing
+
+  This is the playing state of the application. If stopped this will be false,
+  otherwise this will be true. If the application is paused this will be true
+  so for a complete status you need to check the paused state as well.
+
+  Type:
+    boolean
+  */
   readonly attribute boolean playing;
+
+  /**
+   * \brief The paused state of the application
+   *
+   * \returns false if the application is not paused
+   * \returns true if the application is paused
+   */
+
+  /*
+  Prop: paused
+
+  This is the pause state of the application. This will be true if the
+  application has been paused during playback. It will be false if not
+  paused or stopped.
+
+  Type:
+    boolean
+  */
   readonly attribute boolean paused;
+
+  /**
+   * \brief The repeat state for playback
+   *
+   * The repeat state for playback. This can be one of three values:
+   *   0 - no repeat
+   *   1 - repeat the current track forever
+   *   2 - repeat the current playlist forever
+   */
+
+  /*
+  Prop: repeat
+
+  The repeat state for playback. This can be one of three values:
+    0 - no repeat
+    1 - repeat the current track forever
+    2 - repeat the current playlist forever
+
+  Type:
+    integer
+  */
   readonly attribute long long repeat;
+
+  /**
+   * \brief Shuffle state for playback
+   *
+   * This will be true if shuffle is enabled, false if not.
+   */
+
+  /*
+  Prop: shuffle
+
+  The shuffle state for playback. This will be true if shuffle is enabled,
+  false otherwise.
+
+  Type:
+    boolean
+  */
   readonly attribute boolean shuffle;
+
+  /**
+   * \brief The location of playback within the current media, in milliseconds.
+   */
+
+  /*
+  Prop: position
+
+  The location of playback within the current media, in milliseconds.
+
+  Type:
+    integer
+  */
   readonly attribute long long position;
+
+  /**
+   * \brief The volume on a range from 0 to 255
+   */
+
+  /*
+  Prop: volume
+
+  The volumen of the application on a range from 0 to 255.
+
+  Type:
+    integer
+  */
   readonly attribute long long volume;
+
+  /**
+   * \brief The mute state.
+   *
+   * True if muted or the volume is set to 0, false otherwise
+   */
+
+  /*
+  Prop: mute
+
+    True if muted or the volume is set to 0, false otherwise
+
+  Type:
+    boolean
+  */
   readonly attribute boolean mute;
 
   /**
@@ -275,12 +388,12 @@ interface sbIRemotePlayer : nsISupports
                        in nsIObserver aObserver );
 
   /**
-   * \brief Download the items passed in
+   * \brief Download the item passed in
    */
   /*
   Func: downloadItem()
   
-  Download a <MediaItem>.
+  Download a <MediaItem>. <MediaList>s and <Library>ies not allowed.
   
   Prototype:
     downloadItem(<MediaItem> mediaItem)
@@ -305,11 +418,16 @@ interface sbIRemotePlayer : nsISupports
     <downloadSelected()>
   */
   void downloadItem( in sbIMediaItem aItem );
-  
+ 
+  /**
+   * \brief Download all items in a MediaList
+   */
+
   /*
   Func: downloadList()
   
-  Download a <MediaList>.
+  Download a <MediaList>. As <Library>ies are <MediaList>s they are
+  allowed here.
   
   Prototype:
     downloadList(<MediaList> mediaList)
@@ -340,6 +458,10 @@ interface sbIRemotePlayer : nsISupports
     <downloadSelected()>
   */
   void downloadList( in sbIRemoteMediaList aList );
+
+  /**
+   * \brief Download only the selected elements from a WebPlaylist
+   */
   
   /*
   Func: downloadSelected()
@@ -376,8 +498,7 @@ interface sbIRemotePlayer : nsISupports
   Prototype:
     play()
 
-  Begin playback at the current location in the playlist or in the
-  current <MediaItem>.
+  Begin playback at the current location in the <WebPlaylist>.
 
   Example:
     (start code)
@@ -622,6 +743,10 @@ interface sbIRemotePlayer : nsISupports
    * \brief Fires the event to the webpage
    */
   [noscript] void fireEventToContent(in AString aClass, in AString aType);
+
+  /**
+   * \brief Forces the webplaylist to rescan it's commands
+   */
   [noscript] void onCommandsChanged();
 
 };

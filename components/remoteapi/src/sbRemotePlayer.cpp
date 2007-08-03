@@ -488,6 +488,10 @@ sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
 
   NS_ENSURE_ARG_POINTER(aItem);
 
+  // Make sure the item is JUST an item, no lists or libraries allowed
+  nsCOMPtr<sbIMediaList> listcheck (do_QueryInterface(aItem) );
+  NS_ENSURE_FALSE( listcheck, NS_ERROR_INVALID_ARG );
+
   nsCOMPtr<sbIMediaList> downloadList;
   nsresult rv = GetDownloadList( getter_AddRefs(downloadList) );
   NS_ENSURE_TRUE( downloadList, rv );

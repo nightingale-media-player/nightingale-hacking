@@ -34,19 +34,70 @@
 function runTest(tester) {
   try {
 
-    var library = songbird.siteLibrary("127.0.0.1", "/");
+    // access to libraries
+    var siteLib = songbird.siteLibrary("127.0.0.1", "/");
+    var mainLib = songbird.libraries("main");
+    var webLib = songbird.libraries("web");
 
-    var junk = songbird.playing;
+    // Need the mainpage UI for this one
+    //var webpl = songbird.webPlaylist;
+
+    // this causes a command refresh which doesn't work without UI
+    //var cmnds = songbird.commands;
+
+    // readable properties
+    var junk = songbird.name;
+    junk = songbird.currentArtist;
+    junk = songbird.currentAlbum;
+    junk = songbird.currentTrack;
+    junk = songbird.playing;
     junk = songbird.paused;
     junk = songbird.repeat;
     junk = songbird.shuffle;
     junk = songbird.position;
     junk = songbird.volume;
     junk = songbird.mute;
-    junk = songbird.currentArtist;
-    junk = songbird.currentAlbum;
-    junk = songbird.currentTrack;
 
+    // listeners
+    var listener = {
+      observe: function(a,b,c) {
+      }
+    }
+
+    // valid string should work
+    songbird.addListener("faceplate.playing", listener);
+    songbird.removeListener("faceplate.playing", listener);
+
+    // invalid string should throw
+    try {
+      songbird.addListener("foo.bar", listener);
+      tester.fail("did not throw: addListener('foo.bar')");
+    }
+    catch (e) {}
+
+    songbird.removeListener("foo.bar", listener);
+
+    // downloading - set in test_ file to go to tmpD/remoteplayer_test/
+    var item = siteLib.createMediaItem(
+              "http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+    var list = siteLib.createMediaList("simple");
+    list.add(item);
+
+    songbird.downloadItem(item); 
+    songbird.downloadList(list); 
+
+    // Need the mainpage UI for this one
+    // requires a webplaylist
+    //songbird.downloadSelected(webpl);
+
+    // controls - these need a core to be spun up, or a fake core added.
+    // Need the mainpage UI for this one
+    //songbird.play();
+    //songbird.playURL("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+    //songbird.pause();
+    //songbird.stop();
+    //songbird.next();
+    //songbird.previous();
   }
   catch(e) {
     tester.endRemoteAPITest(e);
