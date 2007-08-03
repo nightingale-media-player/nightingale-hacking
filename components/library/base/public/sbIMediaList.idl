@@ -66,6 +66,18 @@ interface sbIMediaList : sbIMediaItem
 
   Type:
     String
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Give it a name.
+    mediaList.name = "80's hits";
+    (end)
   */
   attribute AString name;
 
@@ -80,6 +92,18 @@ interface sbIMediaList : sbIMediaItem
 
   Type:
     String
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Tell everyone this is a simple medialist.
+    alert("Hello everyone, this is a " + mediaList.type + " medialist!");
+    (end)
   */
   readonly attribute AString type;
 
@@ -94,8 +118,68 @@ interface sbIMediaList : sbIMediaItem
 
   Type:
     Number
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
+    mediaList.add(mediaItem);
+
+    //Tell everyone there are 2 tracks in the medialist.
+    alert("There are " + mediaList.length + " mediaitems in the medialist.");
+    (end)
   */
   readonly attribute unsigned long length;
+
+  /**
+   * \brief Is the list empty?
+   */
+
+  /*
+  Prop: isEmpty
+
+  Is the <MediaList> empty?
+
+  Type:
+    Boolean
+
+  Returns:
+    true - <MediaList> is empty.
+    false - <MediaList> is _not_ empty.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
+    mediaList.add(mediaItem);
+
+    //Clear the medialist.
+    mediaList.clear();
+
+    //Check to see if the mediaList is empty.
+    //The property in this case will be true.
+    var empty = mediaList.isEmpty;
+    (end)
+  */
+  readonly attribute boolean isEmpty;
 
   /**
    * \brief Get a media item in the list by guid
@@ -123,6 +207,20 @@ interface sbIMediaList : sbIMediaItem
 
   Example:
     (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
+
+    //Get the same item by guid.
+    var sameMediaItem = mediaList.getItemByGuid(mediaItem.guid);
     (end)
 
   See Also:
@@ -159,6 +257,21 @@ interface sbIMediaList : sbIMediaItem
 
   Example:
     (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
+    mediaList.add(mediaItem);
+    
+    //Get the mediaitem at index 1.
+    var sameMediaItem = mediaList.getItemByIndex(1);
     (end)
   
   See Also:
@@ -221,6 +334,28 @@ interface sbIMediaList : sbIMediaItem
 
   /*
   Const: ENUMERATIONTYPE_LOCKING
+
+  If this constant is specified when calling <enumerateAllItems()> or 
+  <enumerateItemsByProperty()> the EnumerationListener will recieve 
+  the actual <MediaItem> from the <MediaList>.
+
+  Note:
+    This is the _suggested_ constant to use when attempting to change a lot of properties
+    on <MediaItems>, or when you need to process them individually without calling any other 
+    functions on the <MediaList> during enumeration.
+
+  Example:
+    (start code)
+    //This example assumes you already have a medialist in the variable named "mediaList".
+    //It also assumes that you have an enumeration listener in the variable named "enumListener".
+
+    mediaList.enumerateAllItems(enumListener, 1);
+    (end)
+
+  See Also:
+    <ENUMERATIONTYPE_SNAPSHOT>
+    <enumerateAllItems()>
+    <enumerateItemsByProperty()>
   */
   const unsigned short ENUMERATIONTYPE_LOCKING  = 1;
 
@@ -338,6 +473,26 @@ interface sbIMediaList : sbIMediaItem
     Not Available (Components.results.NS_ERROR_NOT_AVAILABLE) 
     when the <MediaItem> cannot be found.
 
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
+    mediaList.add(mediaItem);
+    
+    //Get the first occurrence of mediaItem.
+    //The returned value in this case will be 0.
+    var index = mediaList.indexOf(mediaItem, 0);
+    (end)
+
   See Also:
     <lastIndexOf()>
     <contains()>
@@ -374,6 +529,22 @@ interface sbIMediaList : sbIMediaItem
 
   Example:
     (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
+    mediaList.add(mediaItem);
+
+    //Get the first occurrence of mediaItem.
+    //The returned value in this case will be 0.
+    var index = mediaList.lastIndexOf(mediaItem, 0);
     (end)
 
   See Also:
@@ -404,33 +575,31 @@ interface sbIMediaList : sbIMediaItem
     true - The <MediaItem> *is present* in the <MediaList>.
     false - The <MediaItem> *is _not_ present*.
 
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
+    mediaList.add(mediaItem);
+    
+    //Check to see if mediaList contains mediaItem.
+    //The returned value in this case will be true.
+    var containsItem = mediaList.contains(mediaItem;
+    (end)
+
   See Also:
     <indexOf()>
     <lastIndexOf()>
   */
   boolean contains(in sbIMediaItem aMediaItem);
-
-  /**
-   * \brief Is the list empty?
-   */
-
-  /*
-  Prop: isEmpty
-
-  Is the <MediaList> empty?
-
-  Type:
-    Boolean
-
-  Returns:
-    true - <MediaList> is empty.
-    false - <MediaList> is _not_ empty.
-
-  Example:
-    (start code)
-    (end)
-  */
-  readonly attribute boolean isEmpty;
 
   /**
    * \brief Add a media item to this list
@@ -450,6 +619,17 @@ interface sbIMediaList : sbIMediaItem
 
   Example:
     (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
     (end)
 
   See Also:
@@ -478,6 +658,11 @@ interface sbIMediaList : sbIMediaItem
 
   Example:
     (start code)
+    //This example assumes you already have medialists in 
+    //variables named mediaListFrom and mediaListTo.
+    
+    //Add all mediaitems from mediaListFrom to mediaListTo.
+    mediaListTo.addAll(mediaListFrom);
     (end)
   */
   void addAll(in sbIMediaList aMediaList);
@@ -503,6 +688,32 @@ interface sbIMediaList : sbIMediaItem
 
   Parameters:
     mediaItem - The <MediaItem> to remove.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
+    mediaList.add(mediaItem);
+
+    //Remove the first occurrence of the mediaitem.
+    mediaList.remove(mediaItem);
+
+    ... //Now only the second occurrence remains and it's index is now 0.
+    (end)
+
+  See Also:
+    <add()>
+    <addAll()>
+    <removeByIndex()>
   */
   void remove(in sbIMediaItem aMediaItem);
 
@@ -525,6 +736,30 @@ interface sbIMediaList : sbIMediaItem
   Throws:
     Invalid Argument (Components.results.NS_ERROR_INVALID_ARG)
     when the <MediaItem> cannot be found.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
+    mediaList.add(mediaItem);
+    
+    //Remove the duplicate item.
+    mediaList.removeByIndex(1);
+    (end)
+
+  See Also:
+    <add()>
+    <addAll()>
+    <remove()>
   */
   void removeByIndex(in unsigned long aIndex);
 
@@ -543,9 +778,37 @@ interface sbIMediaList : sbIMediaItem
 
   Clear the <MediaList>. This will remove all <MediaItems> from this <MediaList>.
 
+  Prototype:
+    clear()
+
   Note:
     This is the *preferred* way to remove all <MediaItems> from a <MediaList> 
     because it is optimized for speed.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    mediaList.add(mediaItem);
+    mediaList.add(mediaItem);
+
+    ... //Do something with the medialist.
+
+    //Clear the medialist.
+    mediaList.clear();
+
+    //Check to see if the medialist is empty.
+    //The property in this case will be true.
+    var empty = mediaList.isEmpty;
+    (end)
   */
   void clear();
 

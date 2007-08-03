@@ -115,6 +115,32 @@ interface sbILibraryResource : nsISupports
    * \param aName Name of the property to get
    * \return Value of the requested property
    */
+
+  /*
+  Func: getProperty()
+
+  Get the value of a property for this library object.
+
+  Prototype:
+    String getProperty(String name)
+
+  Parameters:
+    name - The name property value requested.
+
+  Example:
+    (start code)
+    //This example assumes you already have created 
+    //a mediaitem and assigned it to mediaItem.
+
+    //Get the albumName property from a mediaitem.
+    var albumName = mediaItem.getProperty("http://songbirdnest.com/data/1.0#albumName");
+    (end)
+
+  See Also:
+    <setProperty()>
+
+    <http://publicsvn.songbirdnest.com/browser/trunk/components/property/src/sbStandardProperties.h>, for a list of standard properties.
+  */
   AString getProperty(in AString aName);
 
   /**
@@ -122,6 +148,29 @@ interface sbILibraryResource : nsISupports
    * \param aName Name of the property to set
    * \param aValue New value for the specified property
    */
+
+  /*
+  Func: setProperty()
+
+  Set the value of a property for this library object.
+
+  Prototype:
+    setProperty(String name, String value)
+
+  Example:
+    (start code)
+    //This example assumes you already have created 
+    //a mediaitem and assigned it to mediaItem.
+
+    //Set the albumName property from a mediaitem.
+    mediaItem.setProperty("http://songbirdnest.com/data/1.0#albumName", "Let Us Play");
+    (end)
+
+  See Also:
+    <getProperty()>
+
+    <http://publicsvn.songbirdnest.com/browser/trunk/components/property/src/sbStandardProperties.h>, for a list of standard properties.
+  */
   void setProperty(in AString aName, in AString aValue);
 
   /**
