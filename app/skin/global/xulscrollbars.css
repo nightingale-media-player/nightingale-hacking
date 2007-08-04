@@ -128,7 +128,7 @@ scrollbarbutton[type="increment"] {
 }
 scrollbarbutton[type="increment"]:hover {
   -moz-appearance: scrollbarbutton-right;
-  background-image: url("chrome://songbird/skin/arrow/arrow_right_hover_flat_25percent.png");
+  background-image: url("chrome://songbird/skin/arrow/arrow_right.png");
 }
 scrollbarbutton[type="increment"]:active {
   -moz-appearance: scrollbarbutton-right;
@@ -144,7 +144,7 @@ scrollbar[orient="vertical"] > scrollbarbutton[type="increment"] {
 }
 scrollbar[orient="vertical"] > scrollbarbutton[type="increment"]:hover {
   -moz-appearance: scrollbarbutton-down;
-  background-image: url("chrome://songbird/skin/arrow/arrow_down_hover_flat_25percent.png");
+  background-image: url("chrome://songbird/skin/arrow/arrow_down_hover.png");
 }
 scrollbar[orient="vertical"] > scrollbarbutton[type="increment"]:active {
   -moz-appearance: scrollbarbutton-down;
@@ -180,7 +180,7 @@ scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"] {
 }
 scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"]:hover {
   -moz-appearance: scrollbarbutton-up;
-   background-image: url("chrome://songbird/skin/arrow/arrow_up_hover_flat_25percent.png");
+   background-image: url("chrome://songbird/skin/arrow/arrow_up_hover.png");
    -moz-background-clip: padding;
 }
 scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"]:active {

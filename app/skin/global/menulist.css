@@ -61,7 +61,7 @@ menulist {
 menulist:focus,
 menulist[focused="true"] 
 {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #0f100f; /** Groove */
 }
 
 .menulist-label-box {

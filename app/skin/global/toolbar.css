@@ -51,7 +51,7 @@ toolbarpalette {
   min-width: 1px;
   min-height: 20px !important;
   color: #000000;
-  border-bottom: 1px solid #0f100f;
+  border-bottom: 1px solid #0f100f; /** Groove */
   background-color: transparent;
   background-repeat: repeat-x;
   background-position: top right;

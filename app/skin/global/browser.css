@@ -181,13 +181,13 @@ sb-tabbrowser > tabbox > tabpanels {
 .tabbrowser-arrowscrollbox > .scrollbutton-up {
   width: 18px;
   height: 18px;
-  margin: 4px 1px 3px 0px;
+  margin: 3px 1px 1px 0px;
   padding-left: 0;
   padding-right: 0;
   border: none !important;
   background-color: transparent !important;
   -moz-background-clip: padding !important;  
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);
+  background-color: #313131;
   list-style-image: url("chrome://songbird/skin/arrow/arrow_left.png");
 }
 
@@ -196,12 +196,12 @@ sb-tabbrowser > tabbox > tabpanels {
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover {
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  background-color: #313131;
   list-style-image: url("chrome://songbird/skin/arrow/arrow_left_disabled.png");
 }
  
 .tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover:active {
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  background-color: #313131;
   list-style-image: url("chrome://songbird/skin/arrow/arrow_left_hover.png");
 }
 
@@ -210,22 +210,21 @@ sb-tabbrowser > tabbox > tabpanels {
 }
 
 .scrollbutton-rel-box > .scrollbutton-down-box {
-  margin: 4px 0px 3px 0px;
+  margin: 3px 0px 1px 0px;
   width: 18px;
   height: 18px;
 }
 
 .scrollbutton-rel-box > .scrollbutton-down {
-  margin: 4px 0px 3px 1px;
+  margin: 3px 0px 1px 1px;
   width: 18px;
   height: 18px;
-  background-color: transparent !important;
+  background-color: #313131;
   border-left: 1px solid;
   border-top: 1px solid;
   border-right: 1px solid;
   border-bottom: none;
   -moz-background-clip: padding !important;  
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);
   list-style-image: url("chrome://songbird/skin/arrow/arrow_right.png");
 }
 
@@ -234,12 +233,12 @@ sb-tabbrowser > tabbox > tabpanels {
 }
 
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  background-color: #313131;
   list-style-image: url("chrome://songbird/skin/arrow/arrow_right_disabled.png");
 }
 
 .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  background-color: #313131;
   list-style-image: url("chrome://songbird/skin/arrow/arrow_right_hover.png");
 }
 
@@ -253,21 +252,19 @@ sb-tabbrowser > tabbox > tabpanels {
  */
 
 .tabs-alltabs-box {
-  margin: 4px 0px 3px 0px;
+  margin: 3px 0px 1px 0px;
   width: 16px;
   height: 18px;
 }
 
 .tabs-alltabs-button {
-  margin: 4px 0px 3px 0px;
+  margin: 3px 0px 1px 0px;
   width: 16px;
   height: 18px;
   padding-left: 0;
   padding-right: 0;
   border: none;
-  background-color: transparent !important;
-  -moz-background-clip: padding !important;  
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);  
+  background-color: #313131;
 }
 
 .tabs-alltabs-button  > .toolbarbutton-menu-dropmarker {
@@ -279,8 +276,8 @@ sb-tabbrowser > tabbox > tabpanels {
 }
 
 .tabs-alltabs-button:hover {
-  margin: 4px 0px 3px 0px;
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  margin: 3px 0px 1px 0px;
+  background-color: #313131;
 }
 
 

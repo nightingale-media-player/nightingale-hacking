@@ -76,7 +76,7 @@ textbox.padded {
 popup[type="autocomplete"],
 .autocomplete-history-popup {
   padding: 0px !important;
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #0f100f; /** Groove */
   font: icon;
   -moz-appearance: none;
 }

@@ -57,7 +57,7 @@ textbox[type="number"] {
 
 textbox[type="number"][focused="true"] 
 {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #0f100f; /** Groove */
 }
 
 html|*.numberbox-input {

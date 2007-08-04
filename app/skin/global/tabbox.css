@@ -10,8 +10,8 @@ tab,
   -moz-appearance: tab;
   -moz-box-align: stretch;
   -moz-box-pack: center;  
-  color				: #000000;
-  margin: 4px 1px 3px 0px;
+  color: #000000;
+  margin: 3px 1px 0px 0px;
   padding: 0px;
   height: 22px !important;
   min-width: 1px !important;
@@ -19,7 +19,7 @@ tab,
   -moz-border-radius-topleft: 5px !important;
   -moz-border-radius-topright: 5px !important;
   -moz-background-clip: padding !important;
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);
+  background-color: #313131;
 }
 
 
@@ -180,14 +180,14 @@ tabstrip-box {
 tab:not([selected="true"]),
 .tabbrowser-tab:not([selected="true"]) {
   -moz-background-clip: padding !important;
-  background: url(chrome://songbird/skin/backgrounds/chrome_gradient_10percent.png);
+  background-color: #313131;
 }
 tab:hover:not([selected="true"]),
 .tabbrowser-tab:hover:not([selected="true"]) {
   -moz-border-radius-topright: 5px !important;
   -moz-border-radius-topleft: 5px !important;
   -moz-background-clip: padding !important;
-  background: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  background-color: #313131;
 }
 tab[selected="true"],
 .tabbrowser-tab[selected="true"] {
@@ -195,15 +195,14 @@ tab[selected="true"],
   -moz-border-radius-topright: 5px !important;
   -moz-border-radius-topleft: 5px !important;
   -moz-background-clip: padding !important;
-  background: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png);
+  background-color: #313131;
 }
 
 /** The bar between the tabs and the tab panels.  Note that the background is positioned
     so that the tab gradient blends with the bar gradient **/
 .tabs-bottom {
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_gradient_25percent.png) !important;
-  background-position: 0px -22px;
-  border: none;
+  border-top: 1px solid #797f76 !important;
+  background-color: #313131;
   height: 3px !important;
   margin: 0px !important;
 }

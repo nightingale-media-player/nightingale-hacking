@@ -69,17 +69,17 @@ listitem {
 }
 
 listbox:focus > listitem[selected="true"][current="true"] {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #0f100f; /** Groove */
 }
 
 listitem[selected="true"] {
   background-color: #8A8F84; /** Light Color 2 */
-  color: #0f100f; /** Dark Color 2 */
+  color: #0f100f; /** Groove */
 }
 
 listbox:focus,
 listbox:focus > listitem[selected="true"] {  
-   background-color: #0f100f; /** Dark Color 2 */
+   background-color: #0f100f; /** Groove */
    color: #FFFFFF;
 }
 
