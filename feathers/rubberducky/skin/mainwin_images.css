@@ -65,13 +65,6 @@ dialog
   background-repeat: repeat-x;  
 }
 
-sb-smart-splitter:hover,
-scrollbar > slider > thumb:hover
-{
-  background-image: url(chrome://songbird/skin/backgrounds/chrome_flat_25percent.png);
-  -moz-background-clip: padding;
-}
-
 .tabbrowser-strip
 {
   background-image: url(chrome://songbird/skin/backgrounds/tabbrowser-strip.png);

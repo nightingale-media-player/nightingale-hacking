@@ -31,44 +31,26 @@
 
 = Color Scheme = 
 
-This css file specifies color styles for all windows and elements
-in the Songbird application.
+This css file specifies color styles for all windows and elements in the Songbird application.
 
-TODO: UPDATE THIS LIST!
+These are the colors used in Rubberducky, our default:
 
-There are 13 unique colors specified as follows:
-
+#313131; /** color of the Main Window
 #feffff; /** Light Color Brightest   effective white
 #B3BAAC; /** Light Color 1           light greyish green 1
 #8A8F84; /** Light Color 2           light greyish green 2
 #EDF3F0; /** Light Color 3           very light greyish green
-#dee8e3; /** Light Color 4           lighter greyish green
-#5c5f58; /** 
-#202220; /** Dark Color 1            cool charcoal grey 1
-#0f100f; /** Dark Color 2            cool charcoal grey 2
+#5c5f58; /** Selected Focus Row      dark brownish grey
+#202220; /** Button Shadow           cool charcoal grey 1
+#0f100f; /** Groove                  almost black
+#474948; /** Rubber Highlight        dark grey
+#797f76; /** Button Highlight        light grey  
 
-Dark Borders
-#99A194; /** Dark Border 1
-#99A195; /** Dark Border 2
-#111111; /** Dark Border 3
-#222222; /** Dark Border 4
-
-Light Borders
-#7a7c7c; /** Light Border 1
-#474948; /** Light Border 2
-#474848; /** Light Border 3
-#474849; /** Light Border 4
-#797f76; /** Light Border 5
-
-
-The use of unique color values makes it possible to perform changes
-using standard find and replace tools. 
-
-TODO: Explain color rationale.  I'm not sure it makes sense.  I can
-easily swap colors even if they are not unique.  It seems like
-our unique colors are more about how the color will be used, and 
-being able to replace colors by purpose.  Is this true?
-
+This style sheet groups color rules by UI element. To change the color of an element, find its 
+appropriate section and change all of the associated colors for that section.  For example, to 
+change the color of the rows in the playlist, search for THE PLAYLIST section and change all of the 
+colors in that section of the style sheet.  Some UI elements are made up of many parts so be sure to 
+address all of the colors in the section for best results.
 
 ***************************************************************************************************
 */ 
@@ -87,13 +69,13 @@ window,
 prefwindow,
 playlist
 {
-  background-color: #313131; /* color of the Main Window coffee:#1f150a, 0.3 black #0c0a05**/
+  background-color: #313131; /* color of the Main Window **/
 }
 
 toolbar
 {
-  border-top: 1px solid #474948; /** Light Border 2*/
-  border-bottom: 1px solid #202220;
+  border-top: 1px solid #474948; /** Rubber Highlight */
+  border-bottom: 1px solid #202220; /** Button Shadow */
 }
 
 dialog,
@@ -152,11 +134,11 @@ The Service Pane is the primary area for navigating through services and content
 #frame_servicetree_pane
 {
   -moz-border-radius: 4px;
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #474948; /** Dark Border 1*/
-  border-right-color: #222222; /** Dark Border 2*/
-  background-color: #202220; /** Dark Color 1 */  
+  border-top-color: #202220; /** Button Shadow */
+  border-left-color: #202220; /** Button Shadow */
+  border-bottom-color: #474948; /** Rubber Highlight */
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #0f100f; /** Groove */  
   color: #feffff; /** Light Color Brightest */
 }
 
@@ -193,7 +175,7 @@ The Service Pane is the primary area for navigating through services and content
 
 .servicepane_tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #0f100f; /** Dark Color 2 */
+  color: #0f100f; /** Groove */
 }
 
 .servicepane_tree > treechildren::-moz-tree-row( dropOn )
@@ -214,7 +196,7 @@ The Service Pane is the primary area for navigating through services and content
 #frame_service_buttonbar button
 {
   border: 1px solid;
-  border-top-color: #797f76; 
+  border-top-color: #797f76; /** Button Highlight */
   border-left-color: #313131; 
   border-bottom-color: #202220; 
   border-right-color: #313131; 
@@ -224,19 +206,15 @@ The Service Pane is the primary area for navigating through services and content
 
 #frame_service_buttonbar button:hover
 {
-  border-top-color: #7a7c7c; /** Light Border 1*/
-  border-left-color: #474948; /** Light Border 2*/
-  border-bottom-color: #474848; /** Light Border 3*/
-  border-right-color: #474849; /** Light Border 4*/
   color: #feffff; /** Light Color Brightest */
 }
 
 #frame_service_buttonbar button:active
 {
-  border-top-color: #474848; /** Light Border 3*/
-  border-left-color: #474948; /** Light Border 2*/
-  border-bottom-color: #7a7c7c; /** Light Border 1*/
-  border-right-color: #474849; /** Light Border 4*/
+  border-top-color: #474948; /** Rubber Highlight */
+  border-left-color: #474948; /** Rubber Highlight */
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-right-color: #474948; /** Rubber Highlight */
 }
 
 
@@ -252,16 +230,16 @@ scrollbar
   -moz-border-radius: 3px;
   background-color: #202220 !important;
   background-image: none !important; 
-  border-top: 1px solid #202220; /** Light Border 4*/
+  border-top: 1px solid #202220; /** Button Shadow */
   border-left: none !important;
 } 
 scrollbarbutton
 {    
   -moz-border-radius: 3px;
-  border-top: 1px solid #7a7c7c; /** Light Border 1*/
-  border-left: 1px solid  #202220; /** Light Border 2*/
-  border-bottom: 1px solid  #0f100f; /** Light Border 3*/
-  border-right: 1px solid  #202220; /** Light Border 4*/
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */ 
   background-color: #313131 !important;
 } 
 scrollbarbutton:hover:active, 
@@ -269,10 +247,10 @@ scrollbarbutton[active="true"],
 scrollbar > slider > thumb:active
 {   	
   -moz-border-radius: 3px;
-  border-top: 1px solid  #0f100f; /** Light Border 1*/
-  border-left: 1px solid  #202220; /** Light Border 2*/
-  border-bottom: 1px solid  #7a7c7c; /** Light Border 3*/
-  border-right: 1px solid  #202220; /** Light Border 4*/
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */  
 	background-color: #313131;
 } 
 scrollbar > slider > thumb > gripper
@@ -282,10 +260,10 @@ scrollbar > slider > thumb > gripper
 scrollbar > slider > thumb
 {   
   -moz-border-radius: 3px;
-  border-top: 1px solid  #7a7c7c; /** Light Border 1*/
-  border-left: 1px solid  #202220; /** Light Border 2*/
-  border-bottom: 1px solid  #0f100f; /** Light Border 3*/
-  border-right: 1px solid  #202220; /** Light Border 4*/
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
 	background-color: #313131;
 } 
 scrollbar > slider
@@ -310,14 +288,14 @@ A List Tree is a sortable column list with striping rows.
 listheader,
 tree treecol
 {
-  border-top: 1px solid #474948; /** Light Border 2 */
+  border-top: 1px solid #474948; /** Rubber Highlight */
   color: #8A8F84; /** Light Color 2 */
   background-color: #313131 !important; /* same as the main window */
 }
 
 treecolpicker
 {
-  border-top: 1px solid #474948; /** Light Border 2 */
+  border-top: 1px solid #474948; /** Rubber Highlight */
   background-color: #313131 !important; /* same as the main window */
   border-right: 1px solid #202220 !important;
 }
@@ -362,10 +340,10 @@ Organize your collection with genre/artist/album filterlists.
 
 .sb-filterlist-tree
 {
-  background-color: #202220; 
-  border-left: 1px solid #202220;
+  background-color: #B3BAAC; 
+  border-left: 1px solid #202220; /** Button Shadow */
   border-right: none;
-  border-bottom: 1px solid #474848; /** Light Border 3 */
+  border-bottom: 1px solid #474948; /** Rubber Highlight */
   /* opacity: 0.8; slow on the mac :( **/
 }
 
@@ -397,13 +375,12 @@ Organize your collection with genre/artist/album filterlists.
 
 .sb-filterlist-tree > treechildren::-moz-tree-row( selected, focus )
 {
-  background-color: #5c5f58; /** */
+  background-color: #5c5f58; /** Selected Focus Row */
 }
 
 .sb-filterlist-tree > treechildren::-moz-tree-cell-text
 {
-  color: #313131; /**  */
-  /**color: #202220;  Dark Color 1 */
+  color: #313131; 
 }
 
 .sb-filterlist-tree > treechildren::-moz-tree-cell-text( selected )
@@ -429,7 +406,7 @@ playlist > stack > vbox
 
 .sb-playlist-tree
 {
-  background-color: #202220 !important;  
+  background-color: #B3BAAC !important;  
   border-right: 0px solid transparent !important;
 }
 .sb-commands-toolbar
@@ -440,9 +417,9 @@ playlist > stack > vbox
 
 .sb-commands-toolbar-bkg
 {
-  border-top: 1px solid #797f76;
+  border-top: 1px solid #474948; /** Rubber Highlight */
   background-color: transparent !important;
-  border-bottom: 1px solid #202220;
+  border-bottom: 1px solid #202220; /** Button Shadow */
 }
 
 treechildren::-moz-tree-column(insertafter)
@@ -477,7 +454,7 @@ treechildren::-moz-tree-column(insertbefore)
 
 .sb-playlist-tree > treechildren::-moz-tree-cell(insertafter)
 {
-  border-right: 5px solid #202220 !important; /** Dark Color 1 */
+  border-right: 5px solid #202220 !important; /** Button Shadow */
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell(insertbefore)
@@ -491,7 +468,7 @@ treechildren::-moz-tree-column(insertbefore)
 }
 .sb-playlist-tree > treechildren::-moz-tree-row( selected, focus )
 {
-  background-color: #5c5f58; /** */
+  background-color: #5c5f58; /** Selected Focus Row */
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell-text
@@ -524,7 +501,7 @@ treechildren::-moz-tree-column(insertbefore)
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected )
 {
   background-color: #8A8F84; /** Light Color 2 */
-  color: #0f100f; /** Dark Color 2 */
+  color: #0f100f; /** Groove */
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected, focus )
@@ -561,44 +538,42 @@ toolbarbutton[disabled="true"]:hover
 
 toolbarbutton:hover
 {
-  /**background-color: #474848;  Light Border */
-  border-top-color: #797f76; /** Light Border 5*/
-  border-left-color: #202220; 
-  border-bottom-color: #111111; /** Dark Border 3*/
-  border-right-color: #202220;   
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */
+  border-bottom-color: #202220; /** Button Shadow */
+  border-right-color: #202220; /** Button Shadow */
 }
 
 toolbarbutton:active
 {
-  background-color: #474848; /** Light Border */
-  border-bottom-color: #797f76; /** Light Border 5*/
-  border-left-color: #202220; /** Dark Border 4*/
-  border-top-color: #111111; /** Dark Border 3*/
-  border-right-color: #202220; /** Dark Border 4*/  
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */  
 }
 
 
 button
 {
   border: 1px solid;
-  border-top-color: #797f76; /** Light Border 5*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #111111; /** Dark Border 3*/
-  border-right-color: #222222; /** Dark Border 4*/    
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */ 
   -moz-border-radius: 5px;
 }
 button:active
 {
-  border-bottom-color: #797f76; /** Light Border 5*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-top-color: #111111; /** Dark Border 3*/
-  border-right-color: #222222; /** Dark Border 4*/ 
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */ 
 }
 
 button > dropmarker.button-menubutton-dropmarker,
 toolbarbutton > dropmarker.toolbarbutton-menubutton-dropmarker
 {
-  border-left: 1px solid #111111 !important; /** Dark Border 3*/
+  border-left: 1px solid #202220 !important; /** Button Shadow */
 }
 
 
@@ -636,7 +611,7 @@ DATEPICKER see the RICHLISTBOX for box styles
 */
 .datepicker-gridlabel[selected="true"] {
   background-color: #8A8F84;
-  color: #0f100f; /** Dark Color 2 */
+  color: #0f100f; /** Groove */
 }
 
 
@@ -670,19 +645,19 @@ MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
 menupopup, 
 popup
 {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #0f100f; /** Groove */
   color: #feffff; /** Light Color Brightest */
 }
 
 menuseparator
 {
-  border-top-color: #202220; /** Dark Color 1 */
+  border-top-color: #202220; /** Button Shadow */
 }
 
 menuitem[disabled="true"],
 menuitem[disabled="true"]:hover
 {
-  color: #202220; /** Dark Color 1 */
+  color: #202220; /** Button Shadow */
 }
 menuitem,
 menupopup > menu,
@@ -714,12 +689,22 @@ PREFERENCES
 .viewSelector 
 {
   border: 1px solid !important;
-  border-top-color: #111111 !important; /** Dark Border 3*/
-  border-left-color: #222222 !important; /** Dark Border 4*/
-  border-bottom-color: #99A195 !important; /** Dark Border 2*/
-  border-right-color: #99A194 !important; /** Dark Border 1*/
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */ 
   background-color: transparent !important;
   color: #feffff !important;
+}
+
+#viewGroup
+{
+  background-color: #0f100f !important; /** Groove */
+  border: 1px solid !important;
+  border-bottom-color: #797f76 !important; /** Button Highlight */
+  border-left-color: #202220 !important; /** Button Shadow */ 
+  border-top-color: #202220 !important; /** Button Shadow */ 
+  border-right-color: #202220 !important; /** Button Shadow */
 }
 
 #viewGroup radio:hover {
@@ -769,27 +754,29 @@ These let the user resize the frames in your box model.
 .vert_splitter
 {
   background-color: transparent;
-  border-right: 1px solid #000;
-  border-left: 1px solid #464646;
+  border-right: 1px solid #202220; /** Button Shadow */
+  border-left: 1px solid #474948; /** Rubber Highlight */
 }
 
 .vert_splitter:active
 {
   background-color: transparent;
-  border-left: 1px solid #000;
-  border-right: 1px solid #464646;
+  border-left: 1px solid #202220; /** Button Shadow */
+  border-right: 1px solid #474948; /** Rubber Highlight */
 }
 
-#filter_splitter
+#filter_splitter > grippy
 {
-  background-color: transparent;
-  margin: 1px 0px 0px 0px;
+  background-color: #313131;
+  margin: 0px 0px 0px 0px;
+  border-top: 1px solid !important;
+  border-top-color: #474948 !important; /** Rubber Highlight */
 }
 
 #filter_splitter:active
 {
-  background-color: transparent;
-  margin: 1px 0px 0px 0px;
+  background-color: #313131;
+  margin: 0px 0px 0px 0px;
 }
 
 
@@ -807,17 +794,17 @@ These let the user resize the frames in your box model.
 
 #servicepane_splitter[state="collapsed"]
 {
-  border: 1px solid #222222; /** Dark Border 4*/
+  border: 1px solid #202220; /** Button Shadow */
   -moz-border-radius: 5px;
 }
 
 #servicepane_splitter[state="collapsed"]:hover
 {
   border: 1px solid;
-  border-top-color: #99A194; /** Dark Border 1*/
-  border-left-color: #99A195; /** Dark Border 2*/
-  border-bottom-color: #111111; /** Dark Border 3*/
-  border-right-color: #222222; /** Dark Border 4*/
+  border-top-color: #474948; /** Rubber Highlight */
+  border-left-color: #474948; /** Rubber Highlight */
+  border-bottom-color: #202220; /** Button Shadow */
+  border-right-color: #202220; /** Button Shadow */
   color: #FFF;  
   -moz-border-radius: 5px;
 }
@@ -825,10 +812,10 @@ These let the user resize the frames in your box model.
 #servicepane_splitter[state="collapsed"]:active
 {
   border: 1px solid;
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A194; /** Dark Border 1*/
-  border-right-color: #99A195; /** Dark Border 2*/
+  border-top-color: #202220; /** Button Shadow */
+  border-left-color: #202220; /** Button Shadow */
+  border-bottom-color: #474948; /** Rubber Highlight */
+  border-right-color: #474948; /** Rubber Highlight */
   color: #FFF;  
   -moz-border-radius: 5px;
 }
@@ -875,10 +862,10 @@ THE MAIN PANE
 
 #main_pane_border
 {
-  border-top: 1px solid #0f100f;
-  border-left: 1px solid #202220;
-  border-bottom: 1px solid #474948;
-  border-right: 1px solid #202220;
+  border-top: 1px solid #0f100f; /** Groove  */
+  border-left: 1px solid #202220; /** Button Shadow */
+  border-bottom: 1px solid #474948; /** Rubber Highlight */
+  border-right: 1px solid #202220; /** Button Shadow */
 }
 
 /** 
@@ -888,18 +875,18 @@ THE STATUS PANE
 */ 
 
 sb-status-progressmeter { 
-  background-color: #333 !important; 
-  color: #eee !important; 
+  background-color: #0f100f; /** Groove  */
+  color: #feffff !important; /** Light Color Brightest */ 
 } 
 
 sb-status-progressmeter .progress-bar { 
-  background-color: #666 !important;
-  color: #eee !important; 
+  background-color: #474948; /** Rubber Highlight */
+  color: #feffff !important; /** Light Color Brightest */
 } 
   
 sb-status-progressmeter[mode="undetermined"] { 
-  background-color: #333 !important;
-  color: #eee !important; 
+  background-color: #0f100f; /** Groove  */
+  color: #feffff !important; /** Light Color Brightest */
 } 
   
 /** TODO: Why not define a color for the whole status bar and then inherit? **/
@@ -908,7 +895,6 @@ sb-player-scanning-label,
 sb-player-numplaylistitems-label > label
 {
   color: #B3BAAC; /** Light Color 1 */
-  /** color: #8A8F84 !important; Light Color 2 */
 }
 
 /** 
@@ -920,7 +906,7 @@ TOOLTIPS
 tooltip
 {  
   background-color: #EEE !important;
-  color: #333 !important;   
+  color: #0f100f !important; /** Groove  */
 }
 
 /** 
@@ -933,25 +919,21 @@ sb-player-faceplate {
 }
 
 /* the seekbar slider */
-thumb.sb-player-seek-slider
-{
-  -moz-border-radius: 5px;
-  background-color: #202220; /** Dark Color 1 */
-  border: none;
-}
 thumb.sb-player-seek-slider 
 {
+  -moz-border-radius: 5px;
   background-color: White;
   border: 3px solid #313131;
 }
 .faceplate-seekbar
 {
   border: none;
+  background-color: Transparent;
 }
 
 .faceplate-text
 {
-  color: #0f100f; /** Dark Color 2 */
+  color: #0f100f; /** Groove */
 }
 
 .faceplate-progressmeter
@@ -990,16 +972,16 @@ and app/content/bindings/search.xml
 /* Make the search bar match the general textbox style */
 searchbar
 {
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #797f76; /** Dark Border 5*/
-  border-right-color: #222222; /** Dark Border 2*/
-  background-color: #202220; /** Dark Color 1 */  
+  border-top-color: #202220; /** Button Shadow */ 
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-right-color: #202220; /** Button Shadow */ 
+  background-color: #0f100f; /** Groove */
   color: #feffff; /** Light Color Brightest */
 }
 searchbar[focused="true"] 
 {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #0f100f; /** Groove */
 }
 
 /** Change the background color when a live search is active 
@@ -1007,7 +989,7 @@ searchbar[focused="true"]
  **/
 searchbar:not([empty="true"])[livesearchmode="true"]
 {
-  background-color: #474948;  
+  background-color: #474948; /** Rubber Highlight */ 
 }
 
 .searchbar-engine-button[addengines="true"] 
@@ -1047,11 +1029,11 @@ TEXTBOX
 textbox,
 textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
 {
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #797f76; /** Dark Border 2*/
-  border-right-color: #222222; /** Dark Border 1*/
-  background-color: #202220; /** Dark Color 1 */ 
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #0f100f; /** Groove */ 
   color: #B3BAAC; /** Light Color 1 */
 }
     
@@ -1061,7 +1043,7 @@ textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -
 .fileFieldContentBox,
 textbox[focused="true"] 
 {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #0f100f; /** Groove */
 }
 
 /* ..... readonly state ..... textbox[readonly="true"]  */
@@ -1122,7 +1104,7 @@ label
 
 .groupbox-body
 {
-  border: 1px solid #111111; /** Dark Border 3*/
+  border: 1px solid #202220; /** Button Shadow 3*/
   -moz-border-radius: 5px;
 }
 
@@ -1157,7 +1139,7 @@ separator.groove,
 separator.groove[orient="horizontal"] 
 {
   border-top: 2px solid;
-  -moz-border-top-colors: black #474948;
+  -moz-border-top-colors: black #474948; /** Rubber Highlight */
 }
   
 separator.groove[orient="vertical"] 
@@ -1168,12 +1150,12 @@ separator.groove[orient="vertical"]
 /* groove separators (0 padding, for dividing effects) */  
 separator.groove-thin 
 {
-  border-top: 1px solid #474948;  
+  border-top: 1px solid #474948; /** Rubber Highlight */  
 }
   
 separator[orient="vertical"].groove-thin 
 {
-  border-left: 1px solid #474948;
+  border-left: 1px solid #474948; /** Rubber Highlight */
 }
 
 
@@ -1186,17 +1168,17 @@ TREE
 tree
 {
   border: 1px solid;
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/
+  border-top-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-bottom-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */ 
 }
 
 tree treecol
 {
   background-color: transparent;
-  border-right: 1px solid #202220 !important; /** Dark Color 2 */
-  border-top: 1px solid #474948; /** Light Border 2 */
+  border-right: 1px solid #202220 !important; /** Button Shadow */
+  border-top: 1px solid #474948; /** Rubber Highlight */
 }
 
 treechildren::-moz-tree-row
@@ -1206,22 +1188,22 @@ treechildren::-moz-tree-row
 
 treechildren::-moz-tree-row( odd )
 {
-  background-color: #202220; /** Dark Color 1 */
+  background-color: #202220; /** Button Shadow */
 }
 
 treechildren::-moz-tree-row( even )
 {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #0f100f; /** Groove */
 }
 
 treechildren::-moz-tree-cell
 {
-  border-right: 1px solid #202220 !important; /** Dark Color 1 */
+  border-right: 1px solid #202220 !important; /** Button Shadow */
 }
 
 treechildren::-moz-tree-cell(insertafter)
 {
-  border-right: 5px solid #202220 !important; /** Dark Color 1 */
+  border-right: 5px solid #202220 !important; /** Button Shadow */
 }
 
 treechildren::-moz-tree-cell(insertbefore)
@@ -1248,7 +1230,7 @@ treechildren::-moz-tree-cell-text
 treechildren#trDOMTreeBody::-moz-tree-cell-text( selected ), /* for DOM Inspector */
 treechildren::-moz-tree-cell-text( selected )
 {
-  color: #0f100f; /** Dark Color 2 */
+  color: #0f100f; /** Groove */
 }
 
 treechildren::-moz-tree-progressmeter
@@ -1264,7 +1246,7 @@ treechildren::-moz-tree-progressmeter( odd )
 treechildren::-moz-tree-progressmeter( selected )
 {
   background-color: #8A8F84; /** Light Color 2 */
-  color: #0f100f; /** Dark Color 2 */
+  color: #0f100f; /** Groove */
 }
 
 treechildren::-moz-tree-progressmeter( selected, focus )
@@ -1288,20 +1270,19 @@ checkbox[disabled="true"] {
 
 /* ::::: checkmark image ::::: */
 
-/** TODO Name these colors **/
 .checkbox-check {
-  border-top: 1px solid #535751;
-  border-left: 1px solid #535751;
-  border-right: 1px solid #99A195;
-  border-bottom: 1px solid #99A195;
-  background-color: #000; 
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #0f100f; /** Groove */  
 }
 
 /* ..... focused state ..... */
 
 checkbox:focus,
 checkbox[checked="true"]:focus{
-  border: 1px dotted #666 !important;
+  border: 1px dotted #797f76 !important; /** Button Highlight */
 }
 
 
@@ -1321,12 +1302,12 @@ MENULIST
 menulist
 {
   color: #fffff1; /** Light Color Brightest */
-  background-color: #202220; /** Dark Color 1 */ 
+  background-color: #0f100f; /** Groove */
   border: 1px solid;
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #797f76; /** Dark Border 2*/
-  border-right-color: #222222; /** Dark Border 1*/
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
 }
 
 menulist[disabled="true"]
@@ -1337,7 +1318,7 @@ menulist[disabled="true"]
 menulist:focus,
 menulist[focused="true"] 
 {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #0f100f; /** Groove */
 }
 
 
@@ -1349,40 +1330,41 @@ LISTBOX
 
 listbox
 {
-  border: 1px solid;
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #797f76; /** Dark Border 2*/
-  border-right-color: #222222; /** Dark Border 1*/
-  -moz-border-radius: 5px;
+  border: 1px solid !important;
+  border-bottom-color: #797f76 !important; /** Button Highlight */
+  border-left-color: #202220 !important; /** Button Shadow */ 
+  border-top-color: #202220 !important; /** Button Shadow */ 
+  border-right-color: #202220 !important; /** Button Shadow */
+  background-color: #0f100f !important; /** Groove */
+  -moz-border-radius: 5px !important;
 }
 
 
 
 listitem[selected="true"] > listcell > .listcell-label
 {
-  color: #0f100f; /** Dark Color 2 */
+  color: #0f100f; /** Groove */
 }
 
 listbox:focus > listitem[selected="true"][current="true"] {
-  background-color: #8A8F84; /** Dark Color 2 */
+  background-color: #8A8F84; /** Light Color 2 */
 }
 
 listitem[selected="true"] {
   background-color: #8A8F84; /** Light Color 2 */
-  color: #0f100f; /** Dark Color 2 */
+  color: #0f100f; /** Groove */
 }
 
 listbox:focus,
 listbox:focus > listitem[selected="true"] {  
-   background-color: #0f100f; /** Dark Color 2 */
+   background-color: #0f100f; /** Groove */
    color: #FFFFFF;
 }
 
 richlistitem[selected="true"] > label,
 richlistitem[selected="true"] > checkbox > hbox > label /** for the first run */
 {
-  color: #202220; /** Dark Color 1 */
+  color: #202220; /** Button Shadow */ 
 }
 
 /** 
@@ -1393,16 +1375,16 @@ NUMBERBOX
 
 textbox[type="number"] {
   border: 1px solid;
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #797f76; /** Dark Border 2*/
-  border-right-color: #222222; /** Dark Border 1*/
-  background-color: #202220; /** Dark Color 1 */ 
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #0f100f; /** Groove */
 }
 
 textbox[type="number"][focused="true"] 
 {
-  background-color: #0f100f; /** Dark Color 2 */
+  background-color: #0f100f; /** Groove */
 }
 
 html|*.numberbox-input {
@@ -1416,10 +1398,9 @@ PROGRESSMETER
 */
 
 progressmeter {
-  border: 1px solid #99A194; /** Dark Border 3*/
-  background-color: #a3ab9f; /** TODO what color is this? **/
+  border: 1px solid #797f76; /** Button Highlight */
+  background-color: #474948; /** Rubber Highlight */
 }
-
 
 
 /** 
@@ -1432,27 +1413,31 @@ RICHLISTBOX
 .datetimepicker-input-box ,
 richlistbox {
   color: #B3BAAC; /** Light Color 1 */
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #797f76; /** Dark Border 2*/
-  border-right-color: #222222; /** Dark Border 1*/
-  background-color: #202220; /** Dark Color 1 */ 
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #0f100f; /** Groove */
+}
+richlistitem
+{
+  border: none !important;
 }
 
 richlistitem[selected="true"]
 {
   background-color: #B3BAAC; /** Light Color 1*/
-  color: #0f100f !important; /** Dark Color 2 */
+  color: #0f100f !important; /** Groove */
 }
 
 richlistbox:focus > richlistitem[selected="true"] 
 {
   background-color: #B3BAAC; /** Light Color 1*/
-  color: #0f100f; /** Dark Color 2 */
+  color: #0f100f; /** Groove */
 }
 
 richlistbox[seltype="multiple"]:focus > richlistitem[current="true"][selected="true"] {
-  outline: 1px dotted #474948; /** Light Border 2*/
+  outline: 1px dotted #474948; /** Rubber Highlight */
 }
 
 /** 
@@ -1468,32 +1453,39 @@ TABBED BROWSER
 
 tab,
 .tabbrowser-tab {
-  border-right: 1px solid #474948 !important;
-  border-top: 1px solid #474948 !important;
-  border-left: 1px solid #474948 !important;
+  border-right: 1px solid #474948 !important; /** Rubber Highlight */
+  border-top: 1px solid #474948 !important; /** Rubber Highlight */
+  border-left: 1px solid #474948 !important; /** Rubber Highlight */
+  background-color: #313131;
 }
 tab:not([selected="true"]),
 .tabbrowser-tab:not([selected="true"]) {
-  border-right: 1px solid #474948 !important;
-  border-top: 1px solid #474948 !important;
-  border-left: 1px solid #474948 !important;
+  border-right: 1px solid #474948 !important; /** Rubber Highlight */
+  border-top: 1px solid #474948 !important; /** Rubber Highlight */
+  border-left: 1px solid #474948 !important; /** Rubber Highlight */
+  background-color: #313131;
+  margin-bottom: 1px;
 }
 tab:hover:not([selected="true"]),
 .tabbrowser-tab:hover:not([selected="true"]) {
-  border-right: 1px solid #222222 !important;
-  border-top: 1px solid #B3BAAC !important;
-  border-left: 1px solid #99A194 !important;
+  border-right: 1px solid #202220 !important; /** Button Shadow */
+  border-top: 1px solid #797f76 !important; /** Button Highlight */
+  border-left: 1px solid #202220 !important; /** Button Shadow */
+  background-color: #313131;
+  margin-bottom: 1px;
 }
 tab[selected="true"],
 .tabbrowser-tab[selected="true"] {
-  border-right: 1px solid #222222 !important;
-  border-top: 1px solid #B3BAAC !important;
-  border-left: 1px solid #99A194 !important;
+  border-right: 1px solid #474948 !important; /** Rubber Highlight */
+  border-top: 1px solid #797f76 !important; /** Button Highlight */
+  border-left: 1px solid #474948 !important; /** Rubber Highlight */
+  background-color: #313131;
+  margin-top: 2px;
 }
 
 label.tab-text
 {
-  color: #99A194 !important;
+  color: #99A195 !important; /** Tab Text */
 }
 
 tab[selected="true"] > hbox > label.tab-text,
@@ -1503,11 +1495,15 @@ tab[selected="true"] > hbox > label.tab-text,
 }
 
 tabpanels {
-  border-top: 1px outset #99A194;  
+  border-top: 1px outset #99A195;  
   background-color		: transparent;
 }
 
-
+.tabs-bottom-spacer
+{
+  min-height: 2px;
+  border-bottom: 1px solid #202220; /** Button Shadow */
+}
 
 /**
  * Tab Scrollbox Arrow Buttons
@@ -1516,21 +1512,25 @@ tabpanels {
 .tabbrowser-arrowscrollbox > .scrollbutton-up {
   border-right: 1px solid #474948 !important;
   border-top: 1px solid #474948 !important;
+  background-color: #313131;
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover {
-  border-right: 1px solid #99A195 !important;
-  border-top: 1px solid #99A195 !important;
+  border-right: 1px solid #474948 !important;
+  border-top: 1px solid #797f76 !important;
+  background-color: #313131;
 }
 
 .tabbrowser-arrowscrollbox > stack > .scrollbutton-rel-box > .scrollbutton-down {
   border-left: 1px solid #474948 !important;
   border-top: 1px solid #474948 !important;
+  background-color: #313131;
 }
 
 .tabbrowser-arrowscrollbox > stack > .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
-  border-left: 1px solid #99A195 !important;
-  border-top: 1px solid #99A195 !important;
+  border-left: 1px solid #474948 !important;
+  border-top: 1px solid #797f76 !important;
+  background-color: #313131;
 }
 
 /**
@@ -1540,14 +1540,27 @@ tabpanels {
 .tabs-alltabs-button {
   border-top: 1px solid #474948 !important;
   border-left: 1px solid #474948 !important;
+  background-color: #313131;
 }
 
 .tabs-alltabs-button:hover {
-  border-top: 1px solid #99A195 !important;
-  border-left: 1px solid #99A195 !important;
+  border-left: 1px solid #474948 !important;
+  border-top: 1px solid #797f76 !important;
+  background-color: #313131;
 }
 
-
+.scrollbutton-rel-box > .scrollbutton-down {
+  background-color: #313131;
+ }
+ 
+ 
+.scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
+  background-color: #313131;
+ }
+ 
+.scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
+  background-color: #313131;
+ }
 
 /** 
 *******************************************************************
@@ -1555,11 +1568,9 @@ SMART PLAYLIST BUILDER
 *******************************************************************
 */
 
-/** TODO: Can this be removed? **/
-
 .drawer-box
 {
-  border: 1px solid #99A195;
+  border: 1px solid #202220; /** Button Shadow */
 }
 
 /** 
@@ -1568,11 +1579,23 @@ WIZARDS
 *******************************************************************
 */
 .wizard-header {
-  background-color: #202220;
+  background-color: #0f100f; /** Groove */
   border-bottom: 2px solid;
   -moz-border-bottom-colors:  #474948 black;
 }
 
+/** Software Installer Dialog */
+installitem
+{
+  border: 0px solid !important;
+  background-color: #313131 !important; /** Window color */
+  color: #99A195; /** Tab Text */
+}
+#itemList
+{
+  background-color: #313131 !important; /** Window color */
+  border: none !important;
+}
 /** 
 *******************************************************************
 ERRORS
