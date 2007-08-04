@@ -52,7 +52,7 @@
 
         this.loading = false;
         
-        /* we need to track when events change */
+        /* we need to track when tabs change */
         this.tabChangeEventListener = {
           tabbrowser: this,
           timer_period: 200, // fire after 1/5th of a second
@@ -75,6 +75,21 @@
         };
         this.mTabBox.addEventListener("DOMAttrModified",
             this.tabChangeEventListener, false);
+        
+        /* we want to know when the window has finished opening so we can
+          restore tabs and other fun stuff
+        */
+        this.windowLoadEventListener = {
+          tabbrowser: this,
+          document: document,
+          handleEvent: function(event) {
+            if (event.target != this.document) {
+              return;
+            }
+            this.tabbrowser.restoreTabState();
+          }
+        }
+        window.addEventListener('load', this.windowLoadEventListener, true);
 
         window.addEventListener("remoteapi", this.onRemoteAPI, true);
 
@@ -141,11 +156,51 @@
           this.mTabBox.removeEventListener("DOMAttrModified",
               this.tabChangeEventListener, false);
         }
+        
+        window.removeEventListener('load', this.windowLoadEventListener, true);
+
         window.removeEventListener("remoteapi", this.onRemoteAPI, true);
         window.QueryInterface(Components.interfaces.nsIDOMChromeWindow)
               .browserDOMWindow = null;
       ]]></destructor>
       
+      <field name="_tabStatePref">'songbird.browser.tab_state'</field>
+      <property name="_tabState">
+        <getter><![CDATA[
+          if (this._prefsService.prefHasUserValue(this._tabStatePref)) {
+            return eval(this._prefsService.getCharPref(this._tabStatePref));
+          }
+          return null;
+        ]]></getter>
+        <setter><![CDATA[
+          this._prefsService.setCharPref(this._tabStatePref, val.toSource());
+        ]]></setter>
+      </property>
+      <method name="saveTabState">
+        <body><![CDATA[
+          dump('saveTabState\n');
+          var tab = this.mTabContainer.firstChild;
+          var urls = [];
+          while (tab) {
+            try {
+              urls.push(tab.linkedBrowser.currentURI.spec);
+            } catch (e) { }
+            tab = tab.nextSibling;
+          }
+          this._tabState = urls;
+        ]]></body>
+      </method>
+      <method name="restoreTabState">
+        <body><![CDATA[
+          var tabs = this._tabState;
+          if (tabs) {
+            for (var i=0; i<tabs.length; i++) {
+              /* load the first url into the current tab and subsequent urls into new tabs */
+              this.loadURI(tabs[i], null, null, null, i?'tab':'current');
+            }
+          }
+        ]]></body>
+      </method>
 
       <!-- the public interface for loading URLs.
            this overrides the implementation in tabbrowser.xml#tabbrowser
@@ -1775,6 +1830,10 @@
               return;
             }
             this._loadingURL = "";
+            
+            if (window && window.gBrowser) {
+              window.gBrowser.saveTabState();
+            }
             
             if (this.innerPlaylist) {
               this.setUpInnerPlaylist();
