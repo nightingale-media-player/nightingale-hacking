@@ -36,11 +36,13 @@ LOCATION TEXTBOX
 /* the box with the url image and the url textbox */
 .locationbar-textbox
 {
-  height: 30px;
-  min-height: 30px;
-  margin: 0px 0px 0px 5px;
-  padding: 0px;
+  max-height: 26px;
+  min-height: 26px;
+  margin: 1px 0px 1px 2px;
+  padding: 0px 0px 1px 0px;
 }
+
+
 
 .locationbar-image
 {

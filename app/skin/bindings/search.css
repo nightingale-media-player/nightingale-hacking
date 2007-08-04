@@ -40,10 +40,10 @@ and app/content/bindings/search.xml
 /* Make the search bar match the general textbox style */
 searchbar
 {
-  height: 30px;
-  min-height: 30px;
-  margin: 0px 0px 0px 0px;
-  padding: 0px;
+  max-height: 26px;
+  min-height: 26px;
+  margin: 1px 0px 1px 0px;
+  padding: 1px 0px 1px 0px;
   border: 1px solid;
   -moz-border-radius: 5px;
 }
@@ -56,7 +56,7 @@ searchbar
   -moz-margin-start: 3px; 
   padding-left: 1px;
   padding-right: 2px;
-  padding-top: 2px;
+  padding-top: 0px;
 }
 
 
@@ -87,7 +87,7 @@ searchbar
   min-width: 4em;
   border: none !important;
   margin: 0px;
-  padding: 2px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
 }
 
 
@@ -95,7 +95,7 @@ searchbar
 .search-go-button {
   list-style-image: url("chrome://songbird/skin/search/search-go-button.png");
   border: 0px !important;
-  padding: 0px 10px 0px 0px;
+  padding: 0px 5px 0px 0px;
   background-color: transparent !important;  
   -moz-image-region: rect(16px 16px 32px 0px);
 }

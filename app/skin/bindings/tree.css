@@ -32,11 +32,7 @@ Extra tree styles
 ************************************************************************************************************************************************
 */ 
 
-treecol:hover,
-treecolpicker:hover
-{
-  background-image: url(chrome://songbird/skin/tree/treecol-hover.png) ;
-}
+
 
 /* column picker **/
 .tree-columnpicker-icon

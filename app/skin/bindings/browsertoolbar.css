@@ -145,22 +145,21 @@ GENERAL RULES
 
 #navigator-toolbox > toolbar > toolbarbutton
 {
-  min-height: 30px;
-  min-width: 30px;  
-  padding: 0px;
-  margin: 0px 1px 0px 1px;
+  min-height: 26px;
+  min-width: 28px;  
+  padding: 0px 0px 0px 0px;
+  margin: 0px 2px 0px 2px;
 }
 
 #navigator-toolbox > toolbar
 {
-  padding-left:2px;
-  padding-right:2px;
+  padding: 4px 2px 4px 2px; 
 }
 
 #nav-bar
 {
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
 #spinner-container,
