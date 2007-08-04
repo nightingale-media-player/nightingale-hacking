@@ -1549,7 +1549,7 @@ sbLocalDatabaseTreeView::CanDrop(PRInt32 row,
   NS_ENSURE_ARG_POINTER(_retval);
 
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - CanDrop(%d, %d)", this,
-         index, orientation));
+         row, orientation));
 
   if (!IsAllRow(row) && mObserver) {
     nsresult rv = mObserver->CanDrop(TreeToArray(row),
