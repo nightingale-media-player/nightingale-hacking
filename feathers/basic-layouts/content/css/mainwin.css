@@ -120,6 +120,7 @@ Contains the Main Playback Controls and the Dashboard.
 #playbutton_box
 {
  min-height: 55px;
+ margin: 0px 0px 0px 20px;
 }
 
 
