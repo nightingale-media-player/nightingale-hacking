@@ -1,10 +1,10 @@
 Index: xpcom/build/nsXPCOMPrivate.h
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/build/nsXPCOMPrivate.h,v
-retrieving revision 1.44
-diff -u -8 -p -r1.44 nsXPCOMPrivate.h
---- xpcom/build/nsXPCOMPrivate.h	24 Apr 2007 17:02:50 -0000	1.44
-+++ xpcom/build/nsXPCOMPrivate.h	28 Jun 2007 22:11:52 -0000
+retrieving revision 1.45
+diff -u -8 -p -r1.45 nsXPCOMPrivate.h
+--- xpcom/build/nsXPCOMPrivate.h	6 Aug 2007 14:34:02 -0000	1.45
++++ xpcom/build/nsXPCOMPrivate.h	6 Aug 2007 20:32:21 -0000
 @@ -78,26 +78,30 @@ typedef nsresult   (* StringContainerIni
  typedef nsresult   (* StringContainerInit2Func)(nsStringContainer&, const PRUnichar *, PRUint32, PRUint32);
  typedef void       (* StringContainerFinishFunc)(nsStringContainer&);
@@ -16,7 +16,7 @@ diff -u -8 -p -r1.44 nsXPCOMPrivate.h
  typedef nsresult   (* StringCopyFunc)(nsAString &, const nsAString &);
 +typedef void       (* StringSetIsVoidFunc)(nsAString &);
 +typedef PRBool     (* StringGetIsVoidFunc)(const nsAString &);
- 
+
  typedef nsresult   (* CStringContainerInitFunc)(nsCStringContainer&);
  typedef nsresult   (* CStringContainerInit2Func)(nsCStringContainer&, const char *, PRUint32, PRUint32);
  typedef void       (* CStringContainerFinishFunc)(nsCStringContainer&);
@@ -28,51 +28,88 @@ diff -u -8 -p -r1.44 nsXPCOMPrivate.h
  typedef nsresult   (* CStringCopyFunc)(nsACString &, const nsACString &);
 +typedef void       (* CStringSetIsVoidFunc)(nsACString &);
 +typedef PRBool     (* CStringGetIsVoidFunc)(const nsACString &);
- 
+
  typedef nsresult   (* CStringToUTF16)(const nsACString &, nsCStringEncoding, nsAString &);
  typedef nsresult   (* UTF16ToCString)(const nsAString &, nsCStringEncoding, nsACString &);
- 
+
  typedef void*      (* AllocFunc)(PRSize size);
  typedef void*      (* ReallocFunc)(void* ptr, PRSize size);
  typedef void       (* FreeFunc)(void* ptr);
- 
-@@ -177,16 +181,20 @@ typedef struct XPCOMFunctions{
-     LogReleaseFunc logReleaseFunc;
-     LogCtorFunc logCtorFunc;
+
+@@ -180,32 +184,36 @@ typedef struct XPCOMFunctions{
      LogCtorFunc logDtorFunc;
      LogCOMPtrFunc logCOMPtrAddRefFunc;
      LogCOMPtrFunc logCOMPtrReleaseFunc;
      GetXPTCallStubFunc getXPTCallStubFunc;
      DestroyXPTCallStubFunc destroyXPTCallStubFunc;
      InvokeByIndexFunc invokeByIndexFunc;
+     CycleCollectorFunc cycleSuspectFunc;
+     CycleCollectorFunc cycleForgetFunc;
 +    StringSetIsVoidFunc stringSetIsVoid;
 +    StringGetIsVoidFunc stringGetIsVoid;
 +    CStringSetIsVoidFunc cstringSetIsVoid;
 +    CStringGetIsVoidFunc cstringGetIsVoid;
- 
+
  } XPCOMFunctions;
- 
+
  typedef nsresult (PR_CALLBACK *GetFrozenFunctionsFunc)(XPCOMFunctions *entryPoints, const char* libraryPath);
  XPCOM_API(nsresult)
  NS_GetFrozenFunctions(XPCOMFunctions *entryPoints, const char* libraryPath);
- 
+
  // think hard before changing this
+ #define XPCOM_GLUE_VERSION 1
+
+
+ /* XPCOM Specific Defines
+  *
+- * XPCOM_DLL              - name of the loadable xpcom library on disk.
++ * XPCOM_DLL              - name of the loadable xpcom library on disk.
+  * XUL_DLL                - name of the loadable XUL library on disk
+- * XPCOM_SEARCH_KEY       - name of the environment variable that can be
++ * XPCOM_SEARCH_KEY       - name of the environment variable that can be
+  *                          modified to include additional search paths.
+  * GRE_CONF_NAME          - Name of the GRE Configuration file
+  */
+
+ #if defined(XP_WIN32) || defined(XP_OS2) || defined(WINCE)
+
+ #define XPCOM_SEARCH_KEY  "PATH"
+ #define GRE_CONF_NAME     "gre.config"
+@@ -222,17 +230,17 @@ NS_GetFrozenFunctions(XPCOMFunctions *en
+ #define XPCOM_DLL "libxpcom"MOZ_DLL_SUFFIX
+ #define XUL_DLL   "libxul"MOZ_DLL_SUFFIX
+
+ #else // Unix
+
+ #define XPCOM_DLL "libxpcom"MOZ_DLL_SUFFIX
+
+ // you have to love apple..
+-#ifdef XP_MACOSX
++#ifdef XP_MACOSX
+ #define XPCOM_SEARCH_KEY  "DYLD_LIBRARY_PATH"
+ #define GRE_FRAMEWORK_NAME "XUL.framework"
+ #define XUL_DLL            "XUL"
+ #else
+ #define XPCOM_SEARCH_KEY  "LD_LIBRARY_PATH"
+ #define XUL_DLL   "libxul"MOZ_DLL_SUFFIX
+ #endif
+
 Index: xpcom/build/nsXPCOMStrings.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/build/nsXPCOMStrings.cpp,v
-retrieving revision 1.2
-diff -u -8 -p -r1.2 nsXPCOMStrings.cpp
---- xpcom/build/nsXPCOMStrings.cpp	3 May 2006 16:34:24 -0000	1.2
-+++ xpcom/build/nsXPCOMStrings.cpp	28 Jun 2007 22:11:52 -0000
+retrieving revision 1.3
+diff -u -8 -p -r1.3 nsXPCOMStrings.cpp
+--- xpcom/build/nsXPCOMStrings.cpp	8 Jul 2007 07:08:50 -0000	1.3
++++ xpcom/build/nsXPCOMStrings.cpp	6 Aug 2007 20:32:21 -0000
 @@ -184,16 +184,28 @@ NS_StringSetDataRange(nsAString &aStr,
- 
+
  XPCOM_API(nsresult)
  NS_StringCopy(nsAString &aDest, const nsAString &aSrc)
  {
    aDest.Assign(aSrc);
    return NS_OK; // XXX report errors
  }
- 
+
 +XPCOM_API(void)
 +NS_StringSetIsVoid(nsAString &aStr)
 +{
@@ -86,22 +123,22 @@ diff -u -8 -p -r1.2 nsXPCOMStrings.cpp
 +}
 +
  /* ------------------------------------------------------------------------- */
- 
+
  XPCOM_API(nsresult)
  NS_CStringContainerInit(nsCStringContainer &aContainer)
  {
    NS_ASSERTION(sizeof(nsStringContainer_base) >= sizeof(nsCString),
        "nsCStringContainer is not large enough");
- 
+
 @@ -331,16 +343,28 @@ NS_CStringSetDataRange(nsACString &aStr,
- 
+
  XPCOM_API(nsresult)
  NS_CStringCopy(nsACString &aDest, const nsACString &aSrc)
  {
    aDest.Assign(aSrc);
    return NS_OK; // XXX report errors
  }
- 
+
 +XPCOM_API(void)
 +NS_CStringSetIsVoid(nsACString &aStr)
 +{
@@ -115,7 +152,7 @@ diff -u -8 -p -r1.2 nsXPCOMStrings.cpp
 +}
 +
  /* ------------------------------------------------------------------------- */
- 
+
  XPCOM_API(nsresult)
  NS_CStringToUTF16(const nsACString &aSrc,
                    nsCStringEncoding aSrcEncoding,
@@ -125,18 +162,18 @@ diff -u -8 -p -r1.2 nsXPCOMStrings.cpp
 Index: xpcom/glue/nsStringAPI.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/glue/nsStringAPI.cpp,v
-retrieving revision 3.9
-diff -u -8 -p -r3.9 nsStringAPI.cpp
---- xpcom/glue/nsStringAPI.cpp	17 Jan 2007 21:10:01 -0000	3.9
-+++ xpcom/glue/nsStringAPI.cpp	28 Jun 2007 22:11:52 -0000
-@@ -119,16 +119,32 @@ PRBool
+retrieving revision 3.10
+diff -u -8 -p -r3.10 nsStringAPI.cpp
+--- xpcom/glue/nsStringAPI.cpp	11 Jul 2007 17:26:12 -0000	3.10
++++ xpcom/glue/nsStringAPI.cpp	6 Aug 2007 20:32:21 -0000
+@@ -108,16 +108,32 @@ PRBool
  nsAString::SetLength(PRUint32 aLen)
  {
    char_type *data;
    NS_StringGetMutableData(*this, aLen, &data);
    return data != nsnull;
  }
- 
+
  void
 +nsAString::SetIsVoid(PRBool val)
 +{
@@ -160,16 +197,16 @@ diff -u -8 -p -r3.9 nsStringAPI.cpp
    PRUnichar *buf = BeginWriting(len);
    if (!buf)
      return;
- 
+
    for (; *aStr; ++aStr, ++buf)
-@@ -570,16 +586,32 @@ PRBool
+@@ -559,16 +575,32 @@ PRBool
  nsACString::SetLength(PRUint32 aLen)
  {
    char_type *data;
    NS_CStringGetMutableData(*this, aLen, &data);
    return data != nsnull;
  }
- 
+
  void
 +nsACString::SetIsVoid(PRBool val)
 +{
@@ -190,27 +227,27 @@ diff -u -8 -p -r3.9 nsStringAPI.cpp
  nsACString::StripChars(const char *aSet)
  {
    nsCString copy(*this);
- 
+
    const char_type *source, *sourceEnd;
    copy.BeginReading(&source, &sourceEnd);
- 
+
    char_type *dest;
 Index: xpcom/glue/nsStringAPI.h
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/glue/nsStringAPI.h,v
-retrieving revision 3.11
-diff -u -8 -p -r3.11 nsStringAPI.h
---- xpcom/glue/nsStringAPI.h	16 Jun 2007 20:02:15 -0000	3.11
-+++ xpcom/glue/nsStringAPI.h	28 Jun 2007 22:11:52 -0000
+retrieving revision 3.12
+diff -u -8 -p -r3.12 nsStringAPI.h
+--- xpcom/glue/nsStringAPI.h	8 Jul 2007 07:08:51 -0000	3.12
++++ xpcom/glue/nsStringAPI.h	6 Aug 2007 20:32:22 -0000
 @@ -107,16 +107,19 @@ public:
      return NS_StringGetData(*this, &data);
    }
- 
+
    NS_HIDDEN_(PRBool) IsEmpty() const
    {
      return Length() == 0;
    }
- 
+
 +  NS_HIDDEN_(void) SetIsVoid(PRBool);
 +  NS_HIDDEN_(PRBool) IsVoid() const;
 +
@@ -225,12 +262,12 @@ diff -u -8 -p -r3.11 nsStringAPI.h
 @@ -382,16 +385,19 @@ public:
      return NS_CStringGetData(*this, &data);
    }
- 
+
    NS_HIDDEN_(PRBool) IsEmpty() const
    {
      return Length() == 0;
    }
- 
+
 +  NS_HIDDEN_(void) SetIsVoid(PRBool);
 +  NS_HIDDEN_(PRBool) IsVoid() const;
 +
@@ -245,11 +282,11 @@ diff -u -8 -p -r3.11 nsStringAPI.h
 Index: xpcom/glue/standalone/nsXPCOMGlue.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/glue/standalone/nsXPCOMGlue.cpp,v
-retrieving revision 1.47
-diff -u -8 -p -r1.47 nsXPCOMGlue.cpp
---- xpcom/glue/standalone/nsXPCOMGlue.cpp	26 Jun 2007 19:22:54 -0000	1.47
-+++ xpcom/glue/standalone/nsXPCOMGlue.cpp	28 Jun 2007 22:11:52 -0000
-@@ -301,16 +301,30 @@ NS_StringSetDataRange(nsAString &aStr, P
+retrieving revision 1.49
+diff -u -8 -p -r1.49 nsXPCOMGlue.cpp
+--- xpcom/glue/standalone/nsXPCOMGlue.cpp	6 Aug 2007 14:34:04 -0000	1.49
++++ xpcom/glue/standalone/nsXPCOMGlue.cpp	6 Aug 2007 20:32:22 -0000
+@@ -300,16 +300,30 @@ NS_StringSetDataRange(nsAString &aStr, P
  XPCOM_API(nsresult)
  NS_StringCopy(nsAString &aDest, const nsAString &aSrc)
  {
@@ -257,7 +294,7 @@ diff -u -8 -p -r1.47 nsXPCOMGlue.cpp
          return NS_ERROR_NOT_INITIALIZED;
      return xpcomFunctions.stringCopy(aDest, aSrc);
  }
- 
+
 +XPCOM_API(void)
 +NS_StringSetIsVoid(nsAString &aStr)
 +{
@@ -272,7 +309,7 @@ diff -u -8 -p -r1.47 nsXPCOMGlue.cpp
 +        return PR_FALSE;
 +    return xpcomFunctions.stringGetIsVoid(aStr);
 +}
- 
+
  XPCOM_API(nsresult)
  NS_CStringContainerInit(nsCStringContainer &aStr)
  {
@@ -280,7 +317,7 @@ diff -u -8 -p -r1.47 nsXPCOMGlue.cpp
          return NS_ERROR_NOT_INITIALIZED;
      return xpcomFunctions.cstringContainerInit(aStr);
  }
-@@ -381,16 +395,31 @@ NS_CStringSetDataRange(nsACString &aStr,
+@@ -380,16 +394,31 @@ NS_CStringSetDataRange(nsACString &aStr,
  XPCOM_API(nsresult)
  NS_CStringCopy(nsACString &aDest, const nsACString &aSrc)
  {
@@ -288,7 +325,7 @@ diff -u -8 -p -r1.47 nsXPCOMGlue.cpp
          return NS_ERROR_NOT_INITIALIZED;
      return xpcomFunctions.cstringCopy(aDest, aSrc);
  }
- 
+
 +XPCOM_API(void)
 +NS_CStringSetIsVoid(nsACString &aStr)
 +{
@@ -311,14 +348,14 @@ diff -u -8 -p -r1.47 nsXPCOMGlue.cpp
          return NS_ERROR_NOT_INITIALIZED;
      return xpcomFunctions.cstringToUTF16(aSrc, aSrcEncoding, aDest);
  }
- 
+
 Index: xpcom/string/public/nsXPCOMStrings.h
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/string/public/nsXPCOMStrings.h,v
 retrieving revision 1.1
 diff -u -8 -p -r1.1 nsXPCOMStrings.h
 --- xpcom/string/public/nsXPCOMStrings.h	3 May 2006 16:11:00 -0000	1.1
-+++ xpcom/string/public/nsXPCOMStrings.h	28 Jun 2007 22:11:53 -0000
++++ xpcom/string/public/nsXPCOMStrings.h	6 Aug 2007 20:32:22 -0000
 @@ -55,25 +55,29 @@
  # define NS_StringContainerInit2          NS_StringContainerInit2_P
  # define NS_StringContainerFinish         NS_StringContainerFinish_P
@@ -344,9 +381,9 @@ diff -u -8 -p -r1.1 nsXPCOMStrings.h
  # define NS_CStringToUTF16                NS_CStringToUTF16_P
  # define NS_UTF16ToCString                NS_UTF16ToCString_P
  #endif
- 
+
  #include "nscore.h"
- 
+
  /* The base string types */
  class nsAString;
 @@ -440,16 +444,34 @@ NS_StringInsertData(nsAString &aStr, PRU
@@ -357,7 +394,7 @@ diff -u -8 -p -r1.1 nsXPCOMStrings.h
  {
    return NS_StringSetDataRange(aStr, aCutOffset, aCutLength, nsnull, 0);
  }
- 
+
 +/**
 + * NS_StringSetIsVoid
 + *
@@ -377,7 +414,7 @@ diff -u -8 -p -r1.1 nsXPCOMStrings.h
 +NS_StringGetIsVoid(const nsAString& aStr);
 +
  /* ------------------------------------------------------------------------- */
- 
+
  /**
   * nsCStringContainer
   *
@@ -392,7 +429,7 @@ diff -u -8 -p -r1.1 nsXPCOMStrings.h
  {
    return NS_CStringSetDataRange(aStr, aCutOffset, aCutLength, nsnull, 0);
  }
- 
+
 +/**
 + * NS_CStringSetIsVoid
 + *
@@ -412,7 +449,7 @@ diff -u -8 -p -r1.1 nsXPCOMStrings.h
 +NS_CStringGetIsVoid(const nsACString& aStr);
 +
  /* ------------------------------------------------------------------------- */
- 
+
  /**
   * Encodings that can be used with the following conversion routines.
   */
@@ -422,42 +459,82 @@ diff -u -8 -p -r1.1 nsXPCOMStrings.h
 Index: xpcom/stub/nsXPComStub.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/stub/nsXPComStub.cpp,v
-retrieving revision 1.11
-diff -u -8 -p -r1.11 nsXPComStub.cpp
---- xpcom/stub/nsXPComStub.cpp	24 Apr 2007 17:02:51 -0000	1.11
-+++ xpcom/stub/nsXPComStub.cpp	28 Jun 2007 22:11:53 -0000
-@@ -109,17 +109,21 @@ static const XPCOMFunctions kFrozenFunct
-     &NS_LogAddRef_P,
-     &NS_LogRelease_P,
+retrieving revision 1.12
+diff -u -8 -p -r1.12 nsXPComStub.cpp
+--- xpcom/stub/nsXPComStub.cpp	6 Aug 2007 14:34:04 -0000	1.12
++++ xpcom/stub/nsXPComStub.cpp	6 Aug 2007 20:32:22 -0000
+@@ -39,18 +39,18 @@
+ #include "nsXPCOMPrivate.h"
+ #include "nsXPCOMStrings.h"
+ #include "xptcall.h"
+
+ #include <string.h>
+
+ /**
+  * Private Method to register an exit routine.  This method
+- * used to allow you to setup a callback that will be called from
+- * the NS_ShutdownXPCOM function after all services and
++ * used to allow you to setup a callback that will be called from
++ * the NS_ShutdownXPCOM function after all services and
+  * components have gone away. It was fatally flawed in that the component
+  * DLL could be released before the exit function was called; it is now a
+  * stub implementation that does nothing.
+  */
+ XPCOM_API(nsresult)
+ NS_RegisterXPCOMExitRoutine(XPCOMExitRoutine exitRoutine, PRUint32 priority);
+
+ XPCOM_API(nsresult)
+@@ -111,17 +111,21 @@ static const XPCOMFunctions kFrozenFunct
      &NS_LogCtor_P,
      &NS_LogDtor_P,
      &NS_LogCOMPtrAddRef_P,
      &NS_LogCOMPtrRelease_P,
      &NS_GetXPTCallStub_P,
      &NS_DestroyXPTCallStub_P,
--    &NS_InvokeByIndex_P
-+    &NS_InvokeByIndex_P,
+     &NS_InvokeByIndex_P,
+     &NS_CycleCollectorSuspect_P,
+-    &NS_CycleCollectorForget_P
++    &NS_CycleCollectorForget_P,
 +    &NS_StringSetIsVoid_P,
 +    &NS_StringGetIsVoid_P,
 +    &NS_CStringSetIsVoid_P,
 +    &NS_CStringGetIsVoid_P
  };
- 
+
  EXPORT_XPCOM_API(nsresult)
  NS_GetFrozenFunctions(XPCOMFunctions *functions, const char* /* libraryPath */)
  {
      if (!functions)
          return NS_ERROR_OUT_OF_MEMORY;
- 
-@@ -420,16 +424,30 @@ NS_StringSetDataRange(nsAString &aStr, P
- 
+
+@@ -368,17 +372,17 @@ NS_StringContainerInit(nsStringContainer
+ }
+
+ #undef NS_StringContainerInit2
+ EXPORT_XPCOM_API(nsresult)
+ NS_StringContainerInit2(nsStringContainer &aStr,
+                         const PRUnichar   *aData,
+                         PRUint32           aDataLength,
+                         PRUint32           aFlags)
+-{
++{
+   return NS_StringContainerInit2_P(aStr, aData, aDataLength, aFlags);
+ }
+
+ #undef NS_StringContainerFinish
+ EXPORT_XPCOM_API(void)
+ NS_StringContainerFinish(nsStringContainer &aStr)
+ {
+   NS_StringContainerFinish_P(aStr);
+@@ -422,30 +426,44 @@ NS_StringSetDataRange(nsAString &aStr, P
+
  #undef NS_StringCopy
  EXPORT_XPCOM_API(nsresult)
  NS_StringCopy(nsAString &aDest, const nsAString &aSrc)
  {
    return NS_StringCopy_P(aDest, aSrc);
  }
- 
+
 +#undef NS_StringSetIsVoid
 +EXPORT_XPCOM_API(void)
 +NS_StringSetIsVoid(nsAString &aStr)
@@ -478,17 +555,32 @@ diff -u -8 -p -r1.11 nsXPComStub.cpp
  {
    return NS_CStringContainerInit_P(aStr);
  }
- 
+
  #undef NS_CStringContainerInit2
-@@ -487,16 +505,30 @@ NS_CStringSetDataRange(nsACString &aStr,
- 
+ EXPORT_XPCOM_API(nsresult)
+ NS_CStringContainerInit2(nsCStringContainer &aStr,
+                          const char         *aData,
+                          PRUint32            aDataLength,
+                          PRUint32            aFlags)
+-{
++{
+   return NS_CStringContainerInit2_P(aStr, aData, aDataLength, aFlags);
+ }
+
+ #undef NS_CStringContainerFinish
+ EXPORT_XPCOM_API(void)
+ NS_CStringContainerFinish(nsCStringContainer &aStr)
+ {
+   NS_CStringContainerFinish_P(aStr);
+@@ -489,16 +507,30 @@ NS_CStringSetDataRange(nsACString &aStr,
+
  #undef NS_CStringCopy
  EXPORT_XPCOM_API(nsresult)
  NS_CStringCopy(nsACString &aDest, const nsACString &aSrc)
  {
    return NS_CStringCopy_P(aDest, aSrc);
  }
- 
+
 +#undef NS_CStringSetIsVoid
 +EXPORT_XPCOM_API(void)
 +NS_CStringSetIsVoid(nsACString &aStr)
@@ -509,7 +601,7 @@ diff -u -8 -p -r1.11 nsXPComStub.cpp
  {
    return NS_CStringToUTF16_P(aSrc, aSrcEncoding, aDest);
  }
- 
+
  #undef NS_UTF16ToCString
 Index: xpcom/tests/Makefile.in
 ===================================================================
@@ -517,7 +609,7 @@ RCS file: /cvsroot/mozilla/xpcom/tests/Makefile.in,v
 retrieving revision 1.99
 diff -u -8 -p -r1.99 Makefile.in
 --- xpcom/tests/Makefile.in	27 Mar 2007 03:38:21 -0000	1.99
-+++ xpcom/tests/Makefile.in	28 Jun 2007 22:11:53 -0000
++++ xpcom/tests/Makefile.in	6 Aug 2007 20:32:22 -0000
 @@ -87,16 +87,22 @@ CPPSRCS += \
  		TestXPIDLString.cpp \
  		TestDeque.cpp \
@@ -526,7 +618,7 @@ diff -u -8 -p -r1.99 Makefile.in
  		TestExpirationTracker.cpp \
  		$(NULL)
  endif
- 
+
 +ifndef MOZILLA_INTERNAL_API
 +CPPSRCS += \
 +		TestStringAPI.cpp \
@@ -534,151 +626,10 @@ diff -u -8 -p -r1.99 Makefile.in
 +endif
 +
  #CPPSRCS		+= TimerTest.cpp
- 
+
  SIMPLE_PROGRAMS	= $(CPPSRCS:.cpp=$(BIN_SUFFIX))
- 
+
  include $(topsrcdir)/config/config.mk
- 
+
  ifndef MOZILLA_INTERNAL_API
  LIBS +=	$(DIST)/lib/$(LIB_PREFIX)xpcomglue_s.$(LIB_SUFFIX)
-Index: xpcom/tests/TestStringAPI.cpp
-===================================================================
-RCS file: xpcom/tests/TestStringAPI.cpp
-diff -N xpcom/tests/TestStringAPI.cpp
---- /dev/null	1 Jan 1970 00:00:00 -0000
-+++ xpcom/tests/TestStringAPI.cpp	28 Jun 2007 22:11:53 -0000
-@@ -0,0 +1,134 @@
-+/* ***** BEGIN LICENSE BLOCK *****
-+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
-+ *
-+ * The contents of this file are subject to the Mozilla Public License Version
-+ * 1.1 (the "License"); you may not use this file except in compliance with
-+ * the License. You may obtain a copy of the License at
-+ * http://www.mozilla.org/MPL/
-+ *
-+ * Software distributed under the License is distributed on an "AS IS" basis,
-+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-+ * for the specific language governing rights and limitations under the
-+ * License.
-+ *
-+ * The Original Code is XPCOM external strings test.
-+ *
-+ * The Initial Developer of the Original Code is
-+ * Mook <mook.moz@gmail.com>.
-+ * Portions created by the Initial Developer are Copyright (C) 2007
-+ * the Initial Developer. All Rights Reserved.
-+ *
-+ * Contributor(s):
-+ *
-+ * Alternatively, the contents of this file may be used under the terms of
-+ * either the GNU General Public License Version 2 or later (the "GPL"), or
-+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
-+ * in which case the provisions of the GPL or the LGPL are applicable instead
-+ * of those above. If you wish to allow use of your version of this file only
-+ * under the terms of either the GPL or the LGPL, and not to allow others to
-+ * use your version of this file under the terms of the MPL, indicate your
-+ * decision by deleting the provisions above and replace them with the notice
-+ * and other provisions required by the GPL or the LGPL. If you do not delete
-+ * the provisions above, a recipient may use your version of this file under
-+ * the terms of any one of the MPL, the GPL or the LGPL.
-+ *
-+ * ***** END LICENSE BLOCK ***** */
-+
-+#include <cstdio>
-+#include "nsStringAPI.h"
-+
-+#define CHECK(x) \
-+  _doCheck(x, #x, __LINE__)
-+
-+int _doCheck(bool cond, const char* msg, int line) {
-+  if (cond) return 0;
-+  fprintf(stderr, "FAIL: line %d: %s\n", line, msg);
-+  return 1;
-+}
-+
-+int testEmpty() {
-+  nsString s;
-+  return CHECK(0 == s.Length()) +
-+         CHECK(s.IsEmpty());
-+}
-+
-+int testAccess() {
-+  nsString s;
-+  s.Assign(NS_LITERAL_STRING("hello"));
-+  int res = CHECK(5 == s.Length()) +
-+            CHECK(s.EqualsLiteral("hello"));
-+  const PRUnichar *it, *end;
-+  int len = s.BeginReading(&it, &end);
-+  res += CHECK(5 == len);
-+  res += CHECK(PRUnichar('h') == it[0]) +
-+         CHECK(PRUnichar('e') == it[1]) +
-+         CHECK(PRUnichar('l') == it[2]) +
-+         CHECK(PRUnichar('l') == it[3]) +
-+         CHECK(PRUnichar('o') == it[4]) +
-+         CHECK(it + len == end);
-+  res += CHECK(s[0] == s.First());
-+  for (int i = 0; i < len; ++i) {
-+    res += CHECK(s[i] == it[i]);
-+    res += CHECK(s[i] == s.CharAt(i));
-+  }
-+  res += CHECK(it == s.BeginReading());
-+  res += CHECK(end == s.EndReading());
-+  return res;
-+}
-+
-+int testWrite() {
-+  nsString s(NS_LITERAL_STRING("xyzz"));
-+  PRUnichar *begin, *end;
-+  int res = CHECK(4 == s.Length());
-+  PRUint32 len = s.BeginWriting(&begin, &end, 5);
-+  res += CHECK(5 == s.Length()) +
-+         CHECK(5 == len) +
-+         CHECK(end == begin + 5) +
-+         CHECK(begin == s.BeginWriting()) +
-+         CHECK(end == s.EndWriting());
-+  begin[4] = PRUnichar('y');
-+  res += CHECK(s.Equals(NS_LITERAL_STRING("xyzzy")));
-+  s.SetLength(4);
-+  res += CHECK(4 == s.Length()) +
-+         CHECK(s.Equals(NS_LITERAL_STRING("xyzz"))) +
-+         CHECK(!s.Equals(NS_LITERAL_STRING("xyzzy"))) +
-+         CHECK(!s.IsEmpty());
-+  s.Truncate();
-+  res += CHECK(0 == s.Length()) +
-+         CHECK(s.IsEmpty());
-+  const PRUnichar sample[] = { 's', 'a', 'm', 'p', 'l', 'e', '\0' };
-+  s.Assign(sample);
-+  res += CHECK(s.EqualsLiteral("sample"));
-+  s.Assign(sample, 4);
-+  res += CHECK(s.EqualsLiteral("samp"));
-+  s.Assign(PRUnichar('q'));
-+  res += CHECK(s.EqualsLiteral("q"));
-+  return res;
-+}
-+
-+int testVoid() {
-+  nsString s;
-+  int ret = CHECK(!s.IsVoid());
-+  s.SetIsVoid(PR_FALSE);
-+  ret += CHECK(!s.IsVoid());
-+  s.SetIsVoid(PR_TRUE);
-+  ret += CHECK(s.IsVoid());
-+  s.SetIsVoid(PR_FALSE);
-+  ret += CHECK(!s.IsVoid());
-+  s.SetIsVoid(PR_TRUE);
-+  s.AssignLiteral("hello");
-+  ret += CHECK(!s.IsVoid());
-+  return ret;
-+}
-+
-+int main() {
-+  int rv = 0;
-+  rv += testEmpty();
-+  rv += testAccess();
-+  rv += testWrite();
-+  rv += testVoid();
-+  if (0 == rv) {
-+    fprintf(stderr, "PASS: StringAPI tests\n");
-+  }
-+  return rv;
-+}
