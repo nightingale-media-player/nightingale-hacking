@@ -162,9 +162,11 @@ sbCommandLineHandler.prototype = {
       os.notifyObservers(dummyCancelQuit, "quit-application-requested", null);
 
       os.notifyObservers(null, "quit-application-granted", null);
-      
-      os.notifyObservers(null, "quit-application", "shutdown");
-      
+
+      var appStartup = Cc["@mozilla.org/toolkit/app-startup;1"]
+                         .getService(Ci.nsIAppStartup);
+      appStartup.quit(Ci.nsIAppStartup.eAttemptQuit);
+
       if (exception) {
         throw Cr.NS_ERROR_ABORT;
       }
