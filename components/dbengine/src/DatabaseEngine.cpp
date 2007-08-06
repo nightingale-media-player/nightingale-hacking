@@ -73,7 +73,7 @@
 
 #define USE_SQLITE_FULL_DISK_CACHING  1
 #define SQLITE_MAX_RETRIES            666
-#define QUERY_PROCESSOR_THREAD_COUNT  4
+#define QUERY_PROCESSOR_THREAD_COUNT  2
 
 #if defined(_DEBUG) || defined(DEBUG)
   #if defined(XP_WIN)
@@ -774,6 +774,8 @@ PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID, CDatabaseQuery *pQuery)
       char *strErr = nsnull;
       sqlite3_exec(pDB, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
       if(strErr) sqlite3_free(strErr);
+
+      sqlite3_enable_shared_cache(1);
 #endif
 
       NS_ASSERTION( ret == SQLITE_OK, "CDatabaseEngine: Couldn't create/open database!");
