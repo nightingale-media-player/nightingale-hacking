@@ -60,6 +60,13 @@ sb-player-back-button.miniplayer[disabled="true"]
   -moz-image-region: rect(54px 50px 72px 0px);
 }
 
+sb-player-playpause-button.miniplayer {
+  min-width: 25px !important;
+  max-width: 70px !important;
+  -moz-box-flex: 1 !important;
+  -moz-box-pack: center !important;
+  -moz-box-align: center !important;  
+}
 
 /* the play state */
 .miniplayer > .sb-player-play-button-play > button,
@@ -275,6 +282,7 @@ sb-player-mute-button.miniplayer > .sb-player-mute-button-muteon > .clickhold-bu
 
 .sb-mini-player-controls-volume-box
 {
+  max-width: 130px;
   margin: 0px 10px 0px 5px;
 }
 

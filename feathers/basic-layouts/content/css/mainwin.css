@@ -64,7 +64,7 @@ Love the box.
   border: 1px solid;
   margin: 0px;
   padding: 0px;
-  width: 135px;
+  width: 167px;
 }
 
 
@@ -115,12 +115,14 @@ Contains the Main Playback Controls and the Dashboard.
 
 #control_left_box
 {
+  -moz-box-align: left;
+  max-width:120px;
 }
 
 #playbutton_box
 {
- min-height: 55px;
- margin: 0px 0px 0px 20px;
+  min-height: 55px;
+  margin: 0px 0px 0px 20px;
 }
 
 
@@ -130,6 +132,8 @@ sb-player-playpause-button
 
 #volume_box
 {
+  max-width: 150px;
+  margin-left: 35px;
 }
 
 #control_right_box

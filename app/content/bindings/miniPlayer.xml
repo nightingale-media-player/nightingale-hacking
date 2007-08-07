@@ -44,11 +44,9 @@
       <xul:sb-player-forward-button id="sb-mini-player-controls-fwd" class="miniplayer sb-player-button" />
 
       <!-- VOLUME -->
-      <xul:hbox id="sb-mini-player-controls-volume-box" class="sb-mini-player-controls-volume-box" pack="center" align="center" mousethrough="always">
+      <xul:hbox id="sb-mini-player-controls-volume-box" class="sb-mini-player-controls-volume-box" pack="center" align="center" mousethrough="always" flex="1">
         <xul:sb-player-mute-button id="sb-mini-player-controls-mute" class="miniplayer"/>
-        <xul:spacer id="songbird_volume_w" />
         <xul:sb-player-volume-slider id="sb-mini-player-controls-volume" flex="1" orient="horizontal" class="miniplayer" maxpos="100"/>
-        <xul:spacer id="songbird_volume_e"/>
       </xul:hbox>
       
       <!-- THE DASHBOARD -->

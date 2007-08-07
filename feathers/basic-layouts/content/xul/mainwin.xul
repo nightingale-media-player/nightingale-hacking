@@ -69,99 +69,95 @@
   <popupset id="mainPopupSet" />
 
   <sb-sys-outer-frame id="window_parent" flex="1">
-    <!-- ?! XBL has hbox orientation for its children, no matter what.  Grr. -->
-    <vbox flex="1">
 
-      <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
-      <sb-sys-titlebar>
+    <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
+    <sb-sys-titlebar>
+    
+      <!-- Note: This menu must have the id "songbird_menu", as it is the overlay
+            target of menuOverlay.xul.  This cannot be put inside of a binding
+            as that would break OSX menu handling. 
+            See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
+        -->
+      <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" mousethrough="never" />  
+    </sb-sys-titlebar>
+    
+    <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
+    <hbox id="frame_mini" hidden="true">
+      <!-- MINI PLAYER DISPLAY AND CONTROLS -->
+      <sb-mini-player-controls flex="1"/>
+    </hbox>
+
+
+    <!-- inner_frame -->
+    <vbox id="frame_inner_pane" flex="1">
       
-        <!-- Note: This menu must have the id "songbird_menu", as it is the overlay
-             target of menuOverlay.xul.  This cannot be put inside of a binding
-             as that would break OSX menu handling. 
-             See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
-          -->
-        <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" mousethrough="never" />  
-      </sb-sys-titlebar>
-      
-      <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
-      <hbox id="frame_mini" hidden="true">
-        <!-- MINI PLAYER DISPLAY AND CONTROLS -->
-        <sb-mini-player-controls flex="1"/>
-      </hbox>
+      <!-- CONTROL PANE -->
+      <hbox id="frame_control_pane">
 
-
-      <!-- inner_frame -->
-      <vbox id="frame_inner_pane" flex="1">
-        
-        <!-- CONTROL PANE -->
-        <hbox id="frame_control_pane" pack="center" align="center">
-
-          <vbox id="control_left_box" pack="center" align="center">
-            <!-- PLAY BUTTONS -->
-            <hbox id="playbutton_box" pack="center" align="center">
-              <sb-player-control-buttons id="songbird_control_btns" class="sb-player-button"/>
-              <!-- Possible Control Buttons:
-                <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>
-                <sb-player-pause-button id="songbird_btn_pause" popupanchor="topleft" popupalign="bottomleft"/>
-                <sb-player-play-button id="songbird_btn_play" popupanchor="topleft" popupalign="bottomleft"/>
-                <sb-player-stop-button id="songbird_btn_stop" popupanchor="topleft" popupalign="bottomleft"/>
-                <sb-player-playpause-button id="songbird_btn_play_pause" popupanchor="topleft" popupalign="bottomleft"/>
-                <sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" /> 
-              -->
-            </hbox>            
-          </vbox>
-
-          <hbox id="volume_box" pack="center" align="center">
-            <sb-player-mute-button id="mute" />
-            <sb-player-volume-slider id="songbird_volume" flex="1" orient="horizontal" maxpos="100"/>
-          </hbox>
-
-          <spacer id="control_middle_spacer" flex="1" />
-          
-          <sb-player-faceplate id="main_faceplate" flex="1" />            
-          
-
-          <spacer flex="1"/>
-        </hbox>
-
-        <sb-smart-splitter id="control_pane_splitter"  state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="app" metricsid="collapse.controlpane">
-          <grippy/>
-        </sb-smart-splitter>
-
-        <vbox id="frame_middle_pane" flex="1">
-          <hbox id="frame_middle_pane_hbox" flex="1">
-
-            <!-- SERVICE PANE -->
-            <vbox id="frame_servicetree_pane">
-              <!--  NOTE: the id used to be frame_servicetree. -->
-              <servicepane id="servicepane" flex="1" browser="frame_main_pane" />                  
-            </vbox>
-
-            <sb-smart-splitter id="servicepane_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">
-              <grippy/>
-            </sb-smart-splitter>
-
-            <!-- MAIN PANE -->
-            <vbox flex="1" id="main_pane_border">
-                                          
-              <!-- BROWSER TOOLBAR. Filled via overlay by browserToolbarOverlay.xul and others. -->
-              <toolbox  id="navigator-toolbox" />
-
-              <!-- BROWSER -->
-              <sb-tabbrowser id="frame_main_pane" flex="1"
-                             servicepane="servicepane"
-                             contentcontextmenu="html_context_menu"
-                             />
-            </vbox>
+        <vbox id="control_left_box" flex="1">
+          <!-- PLAY BUTTONS -->
+          <hbox id="playbutton_box" pack="center" align="center">
+            <sb-player-control-buttons id="songbird_control_btns" class="sb-player-button"/>
+            <!-- Possible Control Buttons:
+              <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>
+              <sb-player-pause-button id="songbird_btn_pause" popupanchor="topleft" popupalign="bottomleft"/>
+              <sb-player-play-button id="songbird_btn_play" popupanchor="topleft" popupalign="bottomleft"/>
+              <sb-player-stop-button id="songbird_btn_stop" popupanchor="topleft" popupalign="bottomleft"/>
+              <sb-player-playpause-button id="songbird_btn_play_pause" popupanchor="topleft" popupalign="bottomleft"/>
+              <sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" /> 
+            -->
           </hbox>
         </vbox>
-        <!-- frame_middle_pane -->
+
+        <hbox id="volume_box" pack="center" align="center" flex="1">
+          <sb-player-mute-button id="mute" />
+          <sb-player-volume-slider id="songbird_volume" flex="1" orient="horizontal" maxpos="100"/>
+        </hbox>
+
+        <spacer id="control_middle_spacer" flex="3" />
         
-        <!-- STATUS PANE -->
-        <sb-status-bar/>
+        <sb-player-faceplate id="main_faceplate" flex="1" />            
+        
+        <spacer id="control_right_spacer" flex="7" />
+      </hbox>
+
+      <sb-smart-splitter id="control_pane_splitter"  state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="app" metricsid="collapse.controlpane">
+        <grippy/>
+      </sb-smart-splitter>
+
+      <vbox id="frame_middle_pane" flex="1">
+        <hbox id="frame_middle_pane_hbox" flex="1">
+
+          <!-- SERVICE PANE -->
+          <vbox id="frame_servicetree_pane">
+            <!--  NOTE: the id used to be frame_servicetree. -->
+            <servicepane id="servicepane" flex="1" browser="frame_main_pane" />                  
+          </vbox>
+
+          <sb-smart-splitter id="servicepane_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">
+            <grippy/>
+          </sb-smart-splitter>
+
+          <!-- MAIN PANE -->
+          <vbox flex="1" id="main_pane_border">
+                                        
+            <!-- BROWSER TOOLBAR. Filled via overlay by browserToolbarOverlay.xul and others. -->
+            <toolbox  id="navigator-toolbox" />
+
+            <!-- BROWSER -->
+            <sb-tabbrowser id="frame_main_pane" flex="1"
+                            servicepane="servicepane"
+                            contentcontextmenu="html_context_menu"
+                            />
+          </vbox>
+        </hbox>
       </vbox>
-      <!-- inner_frame -->
+      <!-- frame_middle_pane -->
+      
+      <!-- STATUS PANE -->
+      <sb-status-bar/>
     </vbox>
+    <!-- inner_frame -->
 
   </sb-sys-outer-frame>
 

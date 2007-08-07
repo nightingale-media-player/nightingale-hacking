@@ -202,11 +202,6 @@ Mute and Slider
 ***************************************************************************************************
 */
 
-#volume_box
-{
-  margin-left: 20px;
-}
-
 .sb-player-mute-button-muteoff > .clickhold-button
 {
   list-style-image: url(chrome://songbird/skin/volume/mute_off.png);
@@ -222,26 +217,17 @@ sb-player-mute-button {
   margin-right: 2px;
 }
 
+progressmeter.sb-player-volume-slider {
+  min-width: 50px;
+  max-width: 100px;
+  margin: 0px 0px 0px 6px;
+}
+
 
 sb-player-volume-slider
 {
   margin-top: 2px !important;
   margin-bottom: 1px !important; 
-  width: 100px !important;
-  height: 14px !important;
-}
-
-progressmeter.sb-player-volume-slider,
-slider.sb-player-volume-slider,
-thumb.sb-player-volume-slider,
-thumb.sb-player-volume-slider > gripper
-{  
-  padding: 0px !important;
-  margin: 0px !important;
-  border: none !important;
-  min-width: 0px !important;
-  min-height: 0px !important;
-  -moz-appearance: none !important;
 }
 
 /** The thumb does not respond to list-style-image, so we are forced to 
@@ -255,6 +241,7 @@ thumb.sb-player-volume-slider
   background-image: url(chrome://songbird/skin/volume/volume_thumb.png);
   background-repeat: no-repeat;
   background-position: center center;
+  border: none;
 }
 thumb.sb-player-volume-slider:active
 {
@@ -262,28 +249,7 @@ thumb.sb-player-volume-slider:active
   background-repeat: no-repeat;
   background-position: center center;
 }
-slider.sb-player-volume-slider
-{
-  background-image: url(chrome://songbird/skin/volume/volume_progress-slider-bkgd.png);
-  background-position: left center;
-  background-repeat: no-repeat;
-  top: 0px !important;
-  left: 0px !important; 
-  width: 100px !important;
-  height: 22px !important;
-  padding: 0px 6px 0px 6px !important;
-}
 
-progressmeter.sb-player-volume-slider
-{
-  background-image: url(chrome://songbird/skin/volume/volume_progressmeter-bkgd.png);
-  background-position: right center;
-  top: 0px !important;
-  left: 0px !important; 
-  width: 90px !important;
-  height: 22px !important;
-  margin: 0px 0px 0px 10px !important;
-}
 
 progressmeter.sb-player-volume-slider > .progress-bar
 {
@@ -294,6 +260,26 @@ progressmeter.sb-player-volume-slider > .progress-remainder
 {
   background-image: none;
 }
+    
+    
+slider.sb-player-volume-slider
+{
+  background-image: url(chrome://songbird/skin/volume/volume_progress-slider-bkgd.png);
+  background-position: left center;
+  background-repeat: no-repeat;
+  height: 22px !important;
+  border: none;
+  margin-right: 10px;  
+  padding-left: 6px;  
+}
 
+
+progressmeter.sb-player-volume-slider
+{
+  background-image: url(chrome://songbird/skin/volume/volume_progressmeter-bkgd.png);
+  background-position: right center;
+  height: 22px !important;
+  border: none;
+}
 
 
