@@ -214,37 +214,47 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create property insert query builder:
-  //  INSERT INTO resource_properties (guid, property_id, obj, obj_sortable) VALUES (?, ?, ?, ?)
+  //  INSERT OR REPLACE INTO resource_properties (guid, property_id, obj, obj_sortable) VALUES (?, ?, ?, ?)
 
-  mPropertiesInsert = do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+  nsCOMPtr<sbISQLInsertBuilder> propertiesInsert =
+    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesInsert->SetIntoTableName(NS_LITERAL_STRING("resource_properties"));
+  rv = propertiesInsert->SetIntoTableName(NS_LITERAL_STRING("resource_properties"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesInsert->AddColumn(NS_LITERAL_STRING("guid"));
+  rv = propertiesInsert->AddColumn(NS_LITERAL_STRING("guid"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesInsert->AddColumn(NS_LITERAL_STRING("property_id"));
+  rv = propertiesInsert->AddColumn(NS_LITERAL_STRING("property_id"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesInsert->AddColumn(NS_LITERAL_STRING("obj"));
+  rv = propertiesInsert->AddColumn(NS_LITERAL_STRING("obj"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesInsert->AddColumn(NS_LITERAL_STRING("obj_sortable"));
+  rv = propertiesInsert->AddColumn(NS_LITERAL_STRING("obj_sortable"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesInsert->AddValueParameter();
+  rv = propertiesInsert->AddValueParameter();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesInsert->AddValueParameter();
+  rv = propertiesInsert->AddValueParameter();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesInsert->AddValueParameter();
+  rv = propertiesInsert->AddValueParameter();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesInsert->AddValueParameter();
+  rv = propertiesInsert->AddValueParameter();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = propertiesInsert->ToString(mPropertiesInsertOrReplace);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // HACK: The query builder does not support the INSERT OR REPLACE syntax
+  // so we jam it in here
+  mPropertiesInsertOrReplace.Replace(0,
+                                     6,
+                                     NS_LITERAL_STRING("insert or replace"));
 
   // Create property update query builder:
   //   UPDATE resource_properties SET obj = ?, obj_sortable = ? WHERE guid = ? AND property_id = ?
@@ -281,45 +291,48 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary)
   rv = mPropertiesUpdate->AddCriterion(criterionAnd);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Create media item property update query builder.
-  // This one can't be prepared in advance.
+  // Create media item property update queries, one for each static property
+  PRBool success = mMediaItemsUpdateQueries.Init(sStaticPropertyCount);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
 
-  mMediaItemsUpdate = do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+    PRUint32 propertyId = sStaticProperties[i].mID;
 
-  // Create query used to verify if we need to insert or update a property
+    nsCOMPtr<sbISQLUpdateBuilder> update =
+      do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  mPropertyInsertSelect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = update->SetTableName(NS_LITERAL_STRING("media_items"));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertyInsertSelect->SetBaseTableName(NS_LITERAL_STRING("resource_properties"));
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsAutoString column;
+    GetColumnForPropertyID(propertyId, column);
 
-  rv = mPropertyInsertSelect->AddColumn(EmptyString(), NS_LITERAL_STRING("guid"));
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = update->AddAssignmentParameter(column);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertyInsertSelect->CreateMatchCriterionParameter(EmptyString(), 
-                                                            NS_LITERAL_STRING("guid"),
-                                                            sbISQLBuilder::MATCH_EQUALS,
-                                                            getter_AddRefs(criterionLeft));
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    rv = update->CreateMatchCriterionParameter(EmptyString(),
+                                               NS_LITERAL_STRING("guid"),
+                                               sbISQLBuilder::MATCH_EQUALS,
+                                               getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertyInsertSelect->CreateMatchCriterionParameter(EmptyString(),
-                                                            NS_LITERAL_STRING("property_id"),
-                                                            sbISQLBuilder::MATCH_EQUALS,
-                                                            getter_AddRefs(criterionRight));
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = update->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertyInsertSelect->CreateAndCriterion(criterionLeft, criterionRight, getter_AddRefs(criterionAnd));
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsString sql;
+    rv = update->ToString(sql);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertyInsertSelect->AddCriterion(criterionAnd);
-  NS_ENSURE_SUCCESS(rv, rv);
+    success = mMediaItemsUpdateQueries.Put(propertyId, sql);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
 
   rv = LoadProperties();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool success = mCache.Init(CACHE_HASHTABLE_SIZE);
+  success = mCache.Init(CACHE_HASHTABLE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = mDirty.Init(CACHE_HASHTABLE_SIZE);
@@ -724,33 +737,17 @@ sbLocalDatabasePropertyCache::Write()
         //Top level properties need to be treated differently, so check for them.
         if(SB_IsTopLevelPropertyID(dirtyProps[j])) {
 
-          rv = mMediaItemsUpdate->SetTableName(NS_LITERAL_STRING("media_items"));
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          nsAutoString column;
-          GetColumnForPropertyID(dirtyProps[j], column);
-
-          rv = mMediaItemsUpdate->AddAssignmentString(column, value);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          nsCOMPtr<sbISQLBuilderCriterion> criterion;
-          rv = mMediaItemsUpdate->CreateMatchCriterionString(EmptyString(), 
-                                                             NS_LITERAL_STRING("guid"),
-                                                             sbISQLBuilder::MATCH_EQUALS,
-                                                             dirtyGuids[i],
-                                                             getter_AddRefs(criterion));
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          rv = mMediaItemsUpdate->AddCriterion(criterion);
-          NS_ENSURE_SUCCESS(rv, rv);
-          
-          rv = mMediaItemsUpdate->ToString(sql);
-          NS_ENSURE_SUCCESS(rv, rv);
+          nsString sql;
+          PRBool found = mMediaItemsUpdateQueries.Get(dirtyProps[j], &sql);
+          NS_ENSURE_TRUE(found, NS_ERROR_UNEXPECTED);
 
           rv = query->AddQuery(sql);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = mMediaItemsUpdate->Reset();
+          rv = query->BindStringParameter(0, value);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = query->BindStringParameter(1, dirtyGuids[i]);
           NS_ENSURE_SUCCESS(rv, rv);
         }
         else { //Regular properties all go in the same spot.
@@ -758,47 +755,20 @@ sbLocalDatabasePropertyCache::Write()
           rv = propertyInfo->MakeSortable(value, sortable);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          //Check if we need to insert or update the property.
-          PRBool bNeedInsert = PR_FALSE;
-          PropertyRequiresInsert(dirtyGuids[i], dirtyProps[j], &bNeedInsert);
-          if(bNeedInsert) {
-            rv = mPropertiesInsert->ToString(sql);
-            NS_ENSURE_SUCCESS(rv, rv);
+          rv = query->AddQuery(mPropertiesInsertOrReplace);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-            rv = query->AddQuery(sql);
-            NS_ENSURE_SUCCESS(rv, rv);
+          rv = query->BindStringParameter(0, dirtyGuids[i]);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-            rv = query->BindStringParameter(0, dirtyGuids[i]);
-            NS_ENSURE_SUCCESS(rv, rv);
+          rv = query->BindInt32Parameter(1, dirtyProps[j]);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-            rv = query->BindInt32Parameter(1, dirtyProps[j]);
-            NS_ENSURE_SUCCESS(rv, rv);
+          rv = query->BindStringParameter(2, value);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-            rv = query->BindStringParameter(2, value);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = query->BindStringParameter(3, sortable);
-            NS_ENSURE_SUCCESS(rv, rv);
-          } 
-          else {
-            rv = mPropertiesUpdate->ToString(sql);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = query->AddQuery(sql);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = query->BindStringParameter(0, value);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = query->BindStringParameter(1, sortable);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = query->BindStringParameter(2, dirtyGuids[i]);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = query->BindInt32Parameter(3, dirtyProps[j]);
-            NS_ENSURE_SUCCESS(rv, rv);
-          }
+          rv = query->BindStringParameter(3, sortable);
+          NS_ENSURE_SUCCESS(rv, rv);
         }
       }
     }
@@ -1038,50 +1008,6 @@ sbLocalDatabasePropertyCache::GetPropertyName(PRUint32 aPropertyID,
     return PR_TRUE;
   }
   return PR_FALSE;
-}
-
-nsresult
-sbLocalDatabasePropertyCache::PropertyRequiresInsert(const nsAString &aGuid, PRUint32 aPropertyID, PRBool *aInsert)
-{
-  NS_ENSURE_ARG_POINTER(aInsert);
-  *aInsert = PR_TRUE;
-
-  nsAutoString sql;
-  nsresult rv = mPropertyInsertSelect->ToString(sql);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeQuery(sql, getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(0, aGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindInt32Parameter(1, aPropertyID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt32 dbOk;
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  rv = query->WaitForCompletion(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  nsCOMPtr<sbIDatabaseResult> result;
-  rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 rowCount;
-  rv = result->GetRowCount(&rowCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if(rowCount > 0) {
-    *aInsert = PR_FALSE;
-  }
-
-  return NS_OK;
 }
 
 void

@@ -74,8 +74,6 @@ public:
   PRUint32 GetPropertyIDInternal(const nsAString& aPropertyName);
   PRBool GetPropertyName(PRUint32 aPropertyID, nsAString& aPropertyName);
 
-  nsresult PropertyRequiresInsert(const nsAString &aGuid, PRUint32 aPropertyID, PRBool *aInsert);
-
   void GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn);
   nsresult InsertPropertyNameInLibrary(const nsAString& aPropertyName, PRUint32 *aPropertyID);
   
@@ -108,13 +106,13 @@ private:
   nsCOMPtr<sbISQLInsertBuilder> mPropertiesTableInsert;
 
   // Used to template the properties insert statement
-  nsCOMPtr<sbISQLInsertBuilder> mPropertiesInsert;
+  nsString mPropertiesInsertOrReplace;
 
   //Used to template the properties update statement
   nsCOMPtr<sbISQLUpdateBuilder> mPropertiesUpdate;
 
   // Used to template the media item property update statement
-  nsCOMPtr<sbISQLUpdateBuilder> mMediaItemsUpdate;
+  nsDataHashtable<nsUint32HashKey, nsString> mMediaItemsUpdateQueries;
 
   // Used to template the query used to verify if we need to insert or
   // update a peculiar property.
