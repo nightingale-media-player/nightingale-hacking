@@ -442,6 +442,7 @@ NS_IMETHODIMP CDatabaseQuery::AddQuery(const nsAString &strQuery)
   PR_Lock(m_pBindParametersLock);
   m_LastBindParameters = m_BindParameters.AppendElement();
   PR_Unlock(m_pBindParametersLock);
+
   NS_ENSURE_TRUE(m_LastBindParameters, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -840,8 +841,14 @@ CDatabaseResult *CDatabaseQuery::GetResultObject()
 
 bindParameterArray_t* CDatabaseQuery::GetQueryParameters(PRInt32 aQueryIndex)
 {
+  bindParameterArray_t* retval = nsnull;
   nsAutoLock lock(m_pBindParametersLock);
 
-  bindParameterArray_t* retval = new bindParameterArray_t(m_BindParameters[aQueryIndex]);
+  if(aQueryIndex < m_BindParameters.Length()) {
+    retval = new bindParameterArray_t(m_BindParameters[aQueryIndex]);
+  } else {
+    retval = new bindParameterArray_t;
+  }
+
   return retval;
 }
