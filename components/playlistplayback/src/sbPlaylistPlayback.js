@@ -941,6 +941,9 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
       
+//    if ( ! this.playing )
+//      return;
+      
     // Ask the core very nicely to please stop.  Won't happen immediately.
     core.stop();
     
@@ -953,12 +956,16 @@ PlaylistPlayback.prototype = {
     this._stopNextLoop = true;
     if (this.playing)
       dump("sbPlaylistPlayback::stop() - WHOA.  Playback core didn't actually stop when we asked it!\n");
+/*
+// Something in the _onPlayerLoop() kills us here.
+// It looks like this is okay to ignore and just use the _stopNextLoop flag.
     else {
       // Call the loop immediately, here, so we clean out and shut the loop down.
       this._onPlayerLoop();
       this._stopPlayerLoop();
       this._stopNextLoop = false; // If we make it here, we don't need this
     }
+*/    
     this._playingVideo.boolValue = false;
     return true;
   },

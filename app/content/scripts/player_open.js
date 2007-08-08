@@ -824,7 +824,7 @@ function SBDisplayViewForListAndPlayItem(list, item) {
 
   // Get the tabbed browser, load new library view, unfiltered.
   if ( typeof gBrowser != 'undefined' ) { // "if ( gBrowser )" gave a js error?!
-    gBrowser.loadMediaList(list, null, null, null);
+//    gBrowser.loadMediaList(list, null, null, null);
   }
   
   // Play the item that was just added.
