@@ -46,7 +46,6 @@ class sbLocalDatabaseMediaListBase;
 
 class sbListenerInfo
 {
-friend class sbWeakMediaListListenerWrapper;
 friend class sbLocalDatabaseMediaListListener;
 public:
   sbListenerInfo();
@@ -70,7 +69,6 @@ private:
 
   nsresult InitPropertyFilter(sbIPropertyArray* aPropertyFilter);
 
-  PRBool mIsGone;
   nsCOMPtr<nsISupports> mRef;
   nsCOMPtr<nsIWeakReference> mWeak;
   nsCOMPtr<sbIMediaListListener> mProxy;
@@ -86,13 +84,13 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTLISTENER
 
-  sbWeakMediaListListenerWrapper(sbListenerInfo* aListenerInfo);
+  sbWeakMediaListListenerWrapper(nsIWeakReference* aWeakListener);
   ~sbWeakMediaListListenerWrapper();
 
 private:
   already_AddRefed<sbIMediaListListener> GetListener();
 
-  sbListenerInfo* mListenerInfo;
+  nsCOMPtr<nsIWeakReference> mWeak;
 };
 
 class sbLocalDatabaseMediaListListener

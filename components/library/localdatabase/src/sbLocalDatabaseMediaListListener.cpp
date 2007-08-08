@@ -277,13 +277,19 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbIndexArray& aStopNotifyin
 
   PRUint32 length = mListenerArray.Length();
   for (PRInt32 i = length - 1; i >= 0; --i) {
-    if (mListenerArray[i]->mIsGone) {
-      mListenerArray.RemoveElementAt(i);
-    }
-    else {
-      if (aStopNotifying[i] > 0) {
-        mListenerArray[i]->SetShouldStopNotifying(aStopNotifying[i]);
+    if (mListenerArray[i]->mWeak) {
+      nsCOMPtr<sbIMediaListListener> strongListener =
+        do_QueryReferent(mListenerArray[i]->mWeak);
+      if (!strongListener) {
+        LOG(("sbLocalDatabaseMediaListListener[0x%.8x] - Weak listener #%i is gone",
+             mListenerArray[i], i));
+        mListenerArray.RemoveElementAt(i);
+        continue;
       }
+    }
+
+    if (aStopNotifying[i] > 0) {
+      mListenerArray[i]->SetShouldStopNotifying(aStopNotifying[i]);
     }
   }
 
@@ -469,8 +475,7 @@ sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(sbIMediaList* aList)
                       LISTENER_FLAGS_BATCHEND);
 }
 
-sbListenerInfo::sbListenerInfo() :
-  mIsGone(PR_FALSE)
+sbListenerInfo::sbListenerInfo()
 {
   MOZ_COUNT_CTOR(sbListenerInfo);
 }
@@ -532,7 +537,7 @@ sbListenerInfo::Init(nsIWeakReference* aWeakListener,
   InitPropertyFilter(aPropertyFilter);
 
   nsCOMPtr<sbIMediaListListener> wrapped =
-    new sbWeakMediaListListenerWrapper(this);
+    new sbWeakMediaListListenerWrapper(mWeak);
   NS_ENSURE_TRUE(wrapped, NS_ERROR_OUT_OF_MEMORY);
 
   rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
@@ -656,10 +661,10 @@ sbListenerInfo::InitPropertyFilter(sbIPropertyArray* aPropertyFilter)
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbWeakMediaListListenerWrapper,
                               sbIMediaListListener)
 
-sbWeakMediaListListenerWrapper::sbWeakMediaListListenerWrapper(sbListenerInfo* aListenerInfo) :
-  mListenerInfo(aListenerInfo)
+sbWeakMediaListListenerWrapper::sbWeakMediaListListenerWrapper(nsIWeakReference* aWeakListener) :
+  mWeak(aWeakListener)
 {
-  NS_ASSERTION(mListenerInfo, "aListenerInfo is null");
+  NS_ASSERTION(mWeak, "aWeakListener is null");
   MOZ_COUNT_CTOR(sbWeakMediaListListenerWrapper);
 }
 
@@ -671,12 +676,10 @@ sbWeakMediaListListenerWrapper::~sbWeakMediaListListenerWrapper()
 already_AddRefed<sbIMediaListListener>
 sbWeakMediaListListenerWrapper::GetListener()
 {
-  nsCOMPtr<sbIMediaListListener> strongListener =
-    do_QueryReferent(mListenerInfo->mWeak);
+  nsCOMPtr<sbIMediaListListener> strongListener = do_QueryReferent(mWeak);
   if (!strongListener) {
     LOG(("sbWeakMediaListListenerWrapper[0x%.8x] - Weak listener is gone",
          this));
-    mListenerInfo->mIsGone = PR_TRUE;
     return nsnull;
   }
 
