@@ -49,37 +49,45 @@ WEB TOOLBAR IMAGES
 {
   -moz-image-region: rect(32px 16px 48px 0px);
 }
-#reload-button
+#reload-button,
+.sb-browser-stopreload-reload-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
   -moz-image-region: rect(0px 48px 16px 32px);
 }
-#reload-button:hover
+#reload-button:hover,
+.sb-browser-stopreload-reload-button:hover
 {
   -moz-image-region: rect(16px 48px 32px 32px);
 }
-#reload-button[disabled="true"]
+#reload-button[disabled="true"],
+.sb-browser-stopreload-reload-button[disabled="true"]
 {
   -moz-image-region: rect(48px 48px 94px 32px);
 }
-#reload-button[active="true"]
+#reload-button[active="true"],
+.sb-browser-stopreload-reload-button[active="true"]
 {
   -moz-image-region: rect(32px 48px 48px 32px);
 }
-#stop-button
+#stop-button,
+.sb-browser-stopreload-stop-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/webbar_buttons.png);
   -moz-image-region: rect(0px 64px 16px 48px);
 }
-#stop-button:hover
+#stop-button:hover,
+.sb-browser-stopreload-stop-button:hover
 {
   -moz-image-region: rect(16px 64px 32px 48px);
 }
-#stop-button[disabled="true"]
+#stop-button[disabled="true"],
+.sb-browser-stopreload-stop-button[disabled="true"]
 {
   -moz-image-region: rect(48px 64px 64px 48px);
 }
-#stop-button[active="true"]
+#stop-button[active="true"],
+.sb-browser-stopreload-stop-button[active="true"]
 {
   -moz-image-region: rect(32px 64px 48px 48px);
 }
@@ -143,7 +151,8 @@ GENERAL RULES
 ***************************************************************************************************
 */
 
-#navigator-toolbox > toolbar > toolbarbutton
+#navigator-toolbox > toolbar > toolbarbutton,
+.sb-browser-stoprefresh-button > toolbarbutton
 {
   min-height: 26px;
   min-width: 28px;  

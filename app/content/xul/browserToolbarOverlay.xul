@@ -52,7 +52,7 @@
     The classes and IDs used in this binding are intended to match those
     in used in FireFox.
     
-    Add your own toolbars and palette items via  overlay, or by adding
+    Add your own toolbars and palette items via overlay, or by adding
     them as children to this binding.
     
     TODO Make this toolbar user customizable.
@@ -82,6 +82,11 @@
                      label="&tooltip.browser.stop;"
                      command="Browser:Stop"
                      tooltiptext="&tooltip.browser.stop;" />
+
+      <!-- COMBINED STOP/RELOAD BUTTON -->
+      <toolbaritem id="stopreload-container" title="&tooltip.search;">
+        <sb-browser-stopreload-button id="stopreload-button" class="toolbarbutton-1 chromeclass-toolbar-additional"/>   
+      </toolbaritem>                     
                       
       <toolbarbutton id="home-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
                      label="&tooltip.browser.home;"
@@ -123,7 +128,7 @@
              mode="icons" 
              iconsize="small"
              customizable="true"
-             defaultset="back-button,forward-button,reload-button,stop-button,home-button,bookmark-button,urlbar-container,search_splitter,searchbar-container,spinner-container"
+             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,urlbar-container,search_splitter,searchbar-container,spinner-container"
              flex="1">            
     </toolbar>
     

@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!DOCTYPE bindings PUBLIC "-//MOZILLA//DTD XBL V1.0//EN" "http://www.mozilla.org/xbl">
 <!--
 //
 // BEGIN SONGBIRD GPL
@@ -25,6 +24,12 @@
 // END SONGBIRD GPL
 //
 -->
+<!DOCTYPE bindings [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
 <bindings
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xbl="http://www.mozilla.org/xbl"
@@ -200,5 +205,75 @@
       ]]></handler>
     </handlers>
   </binding>
+  
+  
+  <!-- 
+    SPINNER    
+    Loading indicator.  Pretty much the same as the FireFox throbber.
+    -->
+  <binding id="sb-browser-spinner">
+
+    <content>
+      <hbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="sb-browser-spinner" flex="1">
+        <image id="sb-browser-spinner-image" anonid="spinner-image" spinning="false" class="browser-spinner-image"/>
+      </hbox>
+    </content>
+
+    <implementation type="application/x-javascript" >
+
+      <constructor>
+       <![CDATA[
+          // XXX: This won't work once we support multiple windows.
+          // Leaving as-is for now.
+          var image = document.getAnonymousElementByAttribute(this,"anonid", "spinner-image");
+          this._dataremote = SBDataBindElementAttribute( "faceplate.loading", image, "spinning", true );
+       ]]>
+      </constructor>
+      
+      <destructor>
+       <![CDATA[
+         this._dataremote.unbind();
+         this._dataremote = null;
+       ]]>
+      </destructor>
+
+      <field name="_dataremote">null</field>
+                            
+    </implementation>
+  </binding>    
+  
+
+  <!-- 
+    STOP/RELOAD
+    Combined stop and reload buttons.  Only one is visible at a time.
+    -->
+  <binding id="sb-browser-stopreload-button">
+
+    <content>
+      <hbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="sb-browser-stoprefresh-button" flex="1">
+        <toolbarbutton id="sb-browser-stopreload-reload-button" class="sb-browser-stopreload-reload-button toolbarbutton-1 chromeclass-toolbar-additional"
+                       anonid="reload-button"
+                       label="&tooltip.browser.refresh;"
+                       command="Browser:Reload"
+                       tooltiptext="&tooltip.browser.refresh;">
+           <observes type="dataremote"
+                     key="faceplate.loading" 
+                     attribute="hidden" 
+                     boolean="true" />  
+        </toolbarbutton>
+        <toolbarbutton id="sb-browser-stopreload-stop-button" class="sb-browser-stopreload-stop-button toolbarbutton-1 chromeclass-toolbar-additional"
+                       anonid="stop-button"
+                       label="&tooltip.browser.stop;"
+                       command="Browser:Stop"
+                       tooltiptext="&tooltip.browser.stop;" >
+           <observes type="dataremote"
+                     key="faceplate.loading" 
+                     attribute="hidden" 
+                     boolean="true"
+                     inverted="true" />  
+        </toolbarbutton>          
+      </hbox>
+    </content>
+  </binding>    
 
 </bindings>

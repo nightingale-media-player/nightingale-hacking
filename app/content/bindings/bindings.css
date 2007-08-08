@@ -377,12 +377,17 @@ sb-tabbrowser {
 
 /* LOCATION BAR */
 sb-locationbar-textbox {
-  -moz-binding: url("chrome://songbird/content/bindings/sb-locationbar-textbox.xml#sb-locationbar-textbox") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browserControls.xml#sb-locationbar-textbox") !important;
 }
 
 /* SPINNER */
 sb-browser-spinner {
-  -moz-binding: url("chrome://songbird/content/bindings/spinner.xml#browser-spinner") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browserControls.xml#sb-browser-spinner") !important;
+}
+
+/* COMBINED STOP/RELOAD BUTTON */
+sb-browser-stopreload-button {
+  -moz-binding: url("chrome://songbird/content/bindings/browserControls.xml#sb-browser-stopreload-button") !important;
 }
 
 /* DRAGGABLE */
