@@ -4,24 +4,23 @@ RCS file: /cvsroot/mozilla/extensions/spellcheck/hunspell/src/atypes.hxx,v
 retrieving revision 1.3
 diff -u -p -8 -r1.3 atypes.hxx
 --- atypes.hxx	18 Jul 2007 22:22:33 -0000	1.3
-+++ atypes.hxx	7 Aug 2007 11:37:02 -0000
-@@ -57,18 +57,23 @@
++++ atypes.hxx	8 Aug 2007 16:46:40 -0000
+@@ -55,21 +55,20 @@
+  ******* END LICENSE BLOCK *******/
+ 
  #ifndef _ATYPES_HXX_
  #define _ATYPES_HXX_
  
  #ifndef HUNSPELL_WARNING
  #ifdef HUNSPELL_WARNING_ON
  #define HUNSPELL_WARNING fprintf
- #define WARNVAR warnvar
+-#define WARNVAR warnvar
  #else
-+#if !defined(_MSC_VER) || (_MSC_VER >= 1400)
- #define HUNSPELL_WARNING(a,b,...) {}
- #define WARNVAR
-+#else
-+static inline void HUNSPELL_WARNING(FILE * stream, const char * format, ...) {}
-+#define WARNVAR warnvar
-+#endif
+-#define HUNSPELL_WARNING(a,b,...) {}
+-#define WARNVAR
++static inline void HUNSPELL_WARNING(FILE *, const char *, ...) {}
  #endif
++#define WARNVAR warnvar
  #endif
  
  // HUNSTEM def.
@@ -29,3 +28,4 @@ diff -u -p -8 -r1.3 atypes.hxx
  
  #include "csutil.hxx"
  #include "hashmgr.hxx"
+ 
