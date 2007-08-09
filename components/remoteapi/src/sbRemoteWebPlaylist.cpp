@@ -82,6 +82,7 @@ const static char* sPublicMethods[] =
   // sbIRemoteWebPlaylist
   "site:addColumn",
   "site:setSelectionByIndex",
+  "site:showColumnBefore",
 
   // sbIPlaylistWidget
   "site:showColumn",

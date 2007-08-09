@@ -75,6 +75,14 @@ const static char* sPublicMethods[] =
     "site:getCommandId",
     "site:getCommandText",
     "site:getCommandToolTipText",
+    "site:getCommandEnabled",
+    "site:getCommandFlag",
+    "site:getCommandVisible",
+    "site:getCommandValue",
+    "site:getCommandShortcutModifiers",
+    "site:getCommandShortcutKey",
+    "site:getCommandShortcutKeycode",
+    "site:getCommandShortcutLocal",
 
     // sbIRemoteCommands
     "site:addCommand",
@@ -259,7 +267,7 @@ sbRemoteCommands::GetCommandType( const nsAString &aSubMenu,
                                   const nsAString &aHost,
                                   nsAString &_retval )
 {
-  if ( aIndex >= 0 && aIndex < mCommands.Length() ) {
+  if ( aIndex >= 0 && aIndex < (PRInt32)mCommands.Length() ) {
     _retval = mCommands.ElementAt(aIndex).type;
     return NS_OK;
   }
@@ -272,7 +280,7 @@ sbRemoteCommands::GetCommandId( const nsAString &aSubMenu,
                                 const nsAString &aHost,
                                 nsAString &_retval)
 {
-  if ( aIndex >= 0 && aIndex < mCommands.Length() ) {
+  if ( aIndex >= 0 && aIndex < (PRInt32)mCommands.Length() ) {
     _retval = mCommands.ElementAt(aIndex).id;
     return NS_OK;
   }
@@ -285,7 +293,7 @@ sbRemoteCommands::GetCommandText( const nsAString &aSubMenu,
                                   const nsAString &aHost,
                                   nsAString &_retval)
 {
-  if ( aIndex >= 0 && aIndex < mCommands.Length() ) {
+  if ( aIndex >= 0 && aIndex < (PRInt32)mCommands.Length() ) {
     _retval = mCommands.ElementAt(aIndex).name;
     return NS_OK;
   }
@@ -299,7 +307,7 @@ sbRemoteCommands::GetCommandFlex( const nsAString &aSubMenu,
                                   PRInt32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  if ( aIndex >= 0 && aIndex < mCommands.Length() ) {
+  if ( aIndex >= 0 && aIndex < (PRInt32)mCommands.Length() ) {
     nsAutoString cmdType = mCommands.ElementAt(aIndex).type;
     if ( cmdType == NS_LITERAL_STRING("separator") )
       *_retval = 1;
@@ -316,7 +324,7 @@ sbRemoteCommands::GetCommandToolTipText( const nsAString &aSubMenu,
                                          const nsAString & aHost,
                                          nsAString &_retval)
 {
-  if ( aIndex >= 0 && aIndex < mCommands.Length() ) {
+  if ( aIndex >= 0 && aIndex < (PRInt32)mCommands.Length() ) {
     _retval = mCommands.ElementAt(aIndex).tooltip;
     return NS_OK;
   }

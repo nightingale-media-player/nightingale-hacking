@@ -40,13 +40,13 @@
 #include "sbRemoteSiteMediaItem.h"
 #include "sbRemoteSiteMediaList.h"
 
-// Figures out if the media item passed in is from the web or main
-// libraries by comparing the GUIDs from the item and the default libraries
+// Figures out if the media item passed in is from the named
+// library by comparing the GUIDs from the item and the named library
 static nsresult
-SB_IsFromDefaultLib( sbIMediaItem *aMediaItem, PRBool *aDefault )
+SB_IsFromLibName( sbIMediaItem *aMediaItem, const nsAString &aLibName, PRBool *aIsFromLib )
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_ARG_POINTER(aDefault);
+  NS_ENSURE_ARG_POINTER(aIsFromLib);
 
   nsCOMPtr<sbILibrary> library;
   nsresult rv = aMediaItem->GetLibrary( getter_AddRefs(library) );
@@ -60,17 +60,14 @@ SB_IsFromDefaultLib( sbIMediaItem *aMediaItem, PRBool *aDefault )
   NS_ENSURE_SUCCESS( rv, rv );
 
   // Get the guids for the default libs
-  nsAutoString mainGuid;
-  rv = sbRemoteLibraryBase::GetLibraryGUID( NS_LITERAL_STRING("main"), mainGuid );
-  NS_ENSURE_SUCCESS( rv, rv );
-  nsAutoString webGuid;
-  rv = sbRemoteLibraryBase::GetLibraryGUID( NS_LITERAL_STRING("web"), webGuid );
+  nsAutoString libGuid;
+  rv = sbRemoteLibraryBase::GetLibraryGUID( aLibName, libGuid );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  if ( guid == mainGuid || guid == webGuid )
-    *aDefault = PR_TRUE;
+  if ( guid == libGuid )
+    *aIsFromLib = PR_TRUE;
   else
-    *aDefault = PR_FALSE;
+    *aIsFromLib = PR_FALSE;
 
   return NS_OK;
 }
@@ -92,13 +89,13 @@ SB_WrapMediaList(sbIMediaList* aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Find out if this is a default or site library
-  PRBool isDefault;
+  PRBool isMain;
   nsCOMPtr<sbIMediaItem> item( do_QueryInterface( aMediaList, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
-  rv = SB_IsFromDefaultLib( item, &isDefault );
+  rv = SB_IsFromLibName( item, NS_LITERAL_STRING("main"), &isMain );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  if (isDefault) {
+  if (isMain) {
     nsRefPtr<sbRemoteMediaList> remoteMediaList;
     remoteMediaList = new sbRemoteMediaList( aMediaList, mediaListView );
     NS_ENSURE_TRUE( remoteMediaList, NS_ERROR_OUT_OF_MEMORY );
@@ -138,11 +135,11 @@ SB_WrapMediaItem(sbIMediaItem* aMediaItem,
   }
   else {
     // Find out if this is a default or site library
-    PRBool isDefault;
-    rv = SB_IsFromDefaultLib( aMediaItem, &isDefault );
+    PRBool isMain;
+    rv = SB_IsFromLibName( aMediaItem, NS_LITERAL_STRING("main"), &isMain );
     NS_ENSURE_SUCCESS( rv, rv );
 
-    if (isDefault) {
+    if (isMain) {
       nsRefPtr<sbRemoteMediaItem> remoteMediaItem;
       remoteMediaItem = new sbRemoteMediaItem(aMediaItem);
       NS_ENSURE_TRUE(remoteMediaItem, NS_ERROR_OUT_OF_MEMORY);
@@ -199,11 +196,12 @@ SB_WrapMediaList(sbIMediaListView* aMediaListView,
   nsCOMPtr<sbIMediaItem> item( do_QueryInterface( mediaList, &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  PRBool isDefault;
-  rv = SB_IsFromDefaultLib( item, &isDefault );
+  // Find out if this is a default or site library
+  PRBool isMain;
+  rv = SB_IsFromLibName( item, NS_LITERAL_STRING("main"), &isMain );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  if (isDefault) {
+  if (isMain) {
     nsRefPtr<sbRemoteMediaList> remoteMediaList;
     remoteMediaList = new sbRemoteMediaList(mediaList, aMediaListView);
     NS_ENSURE_TRUE(remoteMediaList, NS_ERROR_OUT_OF_MEMORY);

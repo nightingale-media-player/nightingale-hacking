@@ -68,10 +68,43 @@
       var onRemoteAPI =  function onRemoteAPI(aEvent) {
         var myDiv = document.getElementById("accessCountDiv");
         if (aEvent.type == "remoteapi") {
-          myDiv.appendChild(document.createTextNode("Remote API Accessed:" + (++accessCount) + "<br />" ));
-          myDiv.appendChild(document.createElement("br"));
+          //myDiv.appendChild(document.createTextNode("Remote API Accessed:" + (++accessCount)));
+          //myDiv.appendChild(document.createElement("br"));
         }
       };
+
+      function dumpState () {
+        var outDiv = document.getElementById("outputDiv");
+        var myDiv = document.createElement("div");
+
+        myDiv.appendChild(document.createTextNode("Num: " + songbird.commands.getNumCommands(null, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "Type: " + songbird.commands.getCommandType(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "ID: " + songbird.commands.getCommandId(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "Text: " + songbird.commands.getCommandText(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "TtText: " + songbird.commands.getCommandToolTipText(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "Enabled: " + songbird.commands.getCommandEnabled(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "Flag: " + songbird.commands.getCommandFlag(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "Visible: " + songbird.commands.getCommandVisible(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "Value: " + songbird.commands.getCommandValue(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "ShortcutMod: " + songbird.commands.getCommandShortcutModifiers(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "ShortcutKey: " + songbird.commands.getCommandShortcutKey(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "ShortcutKeycode: " + songbird.commands.getCommandShortcutKeycode(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        myDiv.appendChild(document.createTextNode( "ShortcutLocal: " + songbird.commands.getCommandShortcutLocal(null, 0, null)));
+        myDiv.appendChild(document.createElement("br"));
+        outDiv.appendChild(myDiv);
+      }
 
     </script>
   </head>
@@ -93,10 +126,13 @@
       <br />
       <input type="button" id="toggle_button" value="Remove Command"
              onclick="removeCommand();" /> 
+      <br />
+      <input type="button" id="dump_button" value="Dump State"
+             onclick="dumpState();" /> 
     </form>
     <div id="accessCountDiv">
     </div>
-    <div id="remoteCommandDiv">
+    <div id="outputDiv">
     </div>
     <script>
 
@@ -125,8 +161,7 @@
       songbird.commands.addCommand( "action",
                                     "play-list",
                                     "Play list",
-                                    "Play an list" );
-
+                                    "Play a list" );
 
     </script>
     

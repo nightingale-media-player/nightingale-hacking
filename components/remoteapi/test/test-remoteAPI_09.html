@@ -109,6 +109,11 @@
         originalPlaylist = !originalPlaylist;
       }
 
+      var addTrack = function addTrack() {
+        item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/presidents_of_the_united_states_of_america_naked_and_famous.mp3");
+        originalWeb.add(item);
+      }
+
       var setWebPlaylist = function setWebPlaylist() {
         mediaList = siteLib.createMediaList("simple");
         var item = siteLib.createMediaItem("http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
@@ -164,7 +169,8 @@
       //
 
       var addSiteMediaList = function addSiteMediaList() {
-        testml1 = siteLib.createMediaList("simple");
+        if (siteLib)
+          testml1 = siteLib.createMediaList("simple");
       }
 
       var removeSiteMediaList = function removeSiteMediaList() {
@@ -173,7 +179,8 @@
       }
 
       var addMainMediaList = function addMainMediaList() {
-        testml2 = mainLib.createMediaList("simple");
+        if (mainLib)
+          testml2 = mainLib.createMediaList("simple");
       }
 
       var removeMainMediaList = function removeMainMediaList() {
@@ -213,6 +220,8 @@
       <input type="button" id="set_web_button" value="Set Web Lib"
              onclick="setWeb();" /> 
       <br />
+      <input type="button" id="add_track_button" value="Add Track"
+             onclick="addTrack();" /> 
       <br />
 
       <p> Create and add a medialist to the site or main libraries, and remove it.

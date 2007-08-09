@@ -111,7 +111,7 @@ const static char* sPublicRProperties[] =
     "metadata:currentArtist",
     "metadata:currentAlbum",
     "metadata:currentTrack",
-    "library:commands",
+    "site:commands",
     "classinfo:classDescription",
     "classinfo:contractID",
     "classinfo:classID",
@@ -1218,7 +1218,7 @@ sbRemotePlayer::AcquirePlaylistWidget()
 {
   LOG(("sbRemotePlayer::AcquirePlaylistWidget()"));
 
-  // These get set in initialization, so if there aren't set, bad news
+  // These get set in initialization, so if they aren't set, bad news
   if (!mChromeDoc || !mContentDoc)
     return NS_ERROR_FAILURE;
 
