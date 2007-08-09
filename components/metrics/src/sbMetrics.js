@@ -56,10 +56,9 @@ Metrics.prototype = {
   {
     if (!this._isEnabled()) return;
     
-    var updated = this._hasVersionChanged();
     var timeUp = this._isWaitPeriodUp();
     
-    if (timeUp || updated)
+    if (timeUp)
     {
       this.uploadMetrics();
     } 
@@ -101,9 +100,6 @@ Metrics.prototype = {
 
     var platform = appInfo.OS + "_" + abi;
     
-    
-    var updated = this._hasUpdateOccurred();
-    
     var tzo = (new Date()).getTimezoneOffset();
     var neg = (tzo < 0);
     tzo = Math.abs(tzo);
@@ -124,7 +120,6 @@ Metrics.prototype = {
             + '" product="' + appInfo.name
             + '" platform="' + platform
             + '" os="' + user_os 
-            + '" updated="' + updated 
             + '" timezone="' + tz 
             + '">\n';
 
@@ -137,15 +132,17 @@ Metrics.prototype = {
         var dot = key.indexOf(".");
         if (dot >= 0) {
           var timestamp = key.substr(0, dot);
+          var cleanKey = key.substr(dot + 1);
           var date = new Date();
           date.setTime(timestamp);
+          
           var hourstart = date.getFullYear() + "-" + 
                           this.formatDigits(date.getMonth()+1,2) + "-" + 
                           this.formatDigits(date.getDate(),2) + " " + 
                           this.formatDigits(date.getHours(),2) + ":" + 
                           this.formatDigits(date.getMinutes(),2) + ":" + 
                           this.formatDigits(date.getSeconds(),2);
-          xml += '\t<item hour_start="' + hourstart + '" key="' + encodeURIComponent(key) + '" value="' + val + '"/>\n';
+          xml += '\t<item hour_start="' + hourstart + '" key="' + encodeURIComponent(cleanKey) + '" value="' + val + '"/>\n';
         }
       }
     }
@@ -286,37 +283,6 @@ Metrics.prototype = {
     
     return upgraded;
   },
-  
-  
-  /**
-   * Has the update manager updated songbird since the last time metrics were submitted
-   */
-  _hasUpdateOccurred: function() {
-  
-    var updated = false;
-    
-    var currentCount = this._getUpdateCount();
-    var lastCount = null;
-    
-    try 
-    {
-      lastCount = this.prefs.getIntPref("app.metrics.last_update_count");
-    }
-    catch (e) 
-    { 
-      // If the pref didn't exist, then we must not have updated
-      return false; 
-    }    
-    
-    if (currentCount != lastCount) 
-    {
-        updated = true;
-    }
-    
-    return updated;
-  },
-  
- 
   
   /**
    * TODO: REPLACE WITH SOMETHING OFFICIAL
