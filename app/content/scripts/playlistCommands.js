@@ -492,7 +492,7 @@ var SBWebPlaylistCommands =
         case "library_cmd_showdlplaylist":
         {
           if (this.m_Context.m_Window.location.pathname ==
-              '/content/xul/playlist_test2.xul') {
+              '/content/xul/sb-library-page.xul') {
             // we're in the web library / inner playlist view
             gBrowser.loadMediaList(gBrowser.downloadList);
           } else {
@@ -959,7 +959,7 @@ var SBDownloadCommands =
         case "library_cmd_showwebplaylist":
         {
           if (this.m_Context.m_Window.location.pathname ==
-              '/content/xul/playlist_test2.xul') {
+              '/content/xul/sb-library-page.xul') {
             // we're in the download library / inner playlist view
             gBrowser.loadMediaList(gBrowser.webLibrary);
           } else {

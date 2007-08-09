@@ -283,7 +283,7 @@
         <parameter name="aMediaListView"/>
         <body>
           <![CDATA[
-            var uri = 'chrome://songbird/content/xul/playlist_test2.xul?';
+            var uri = 'chrome://songbird/content/xul/sb-library-page.xul?';
             if (aMediaList.guid != aMediaList.library.guid) {
               uri = uri + aMediaList.guid;
             } else {

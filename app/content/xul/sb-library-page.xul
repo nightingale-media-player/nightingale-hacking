@@ -32,17 +32,23 @@
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
 <window
+  id="sb-library-page"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   onload="LocalLoad();"
+  windowtype="Songbird:Library"
 >
-  <playlist id="playlist_test" 
+  <playlist id="sb-library-page-playlist" 
       flex="1"
       enableColumnDrag="true"
       persist="column-list column-widths"
       editable="true"
   />
+
+  <!-- Extension Overlay Support -->
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/overlayLoader.js" />
 
   <!-- Load the sbPlaylistsource helper -->
   <script type="application/x-javascript" 
@@ -599,7 +605,7 @@ try
             filter.set(0, [searchTerm], 1);
           }
           
-          var playlist = document.getElementById("playlist_test");
+          var playlist = document.getElementById("sb-library-page-playlist");
           SBLibraryCommands.m_Playlist = playlist;
           playlist.bind(view, SBLibraryCommands);
         }

@@ -48,7 +48,7 @@ const URL_ICON_PLAYLIST = 'chrome://songbird/skin/icons/icon_playlist_16x16.png'
 const URL_ICON_LIBRARY = 'chrome://songbird/skin/icons/icon_lib_16x16.png';
 
 // TODO: Remove this
-const URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/playlist_test2.xul?"
+const URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sb-library-page.xul?"
 
 const LSP='http://songbirdnest.com/rdf/library-servicepane#';
 
@@ -937,42 +937,37 @@ sbLibraryServicePane.prototype._ensureLibraryNodeExists =
 function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   //logcall(arguments);
 
+  // Get the Node.
   var id = this._libraryURN(aLibrary);
   var node = this._servicePane.getNode(id);
   if (!node) {
     // Create the node
     node = this._servicePane.addNode(id, this._servicePane.root, true);
-    node.url = this._getDisplayURL(aLibrary);
-    node.name = aLibrary.name;
-    node.image = URL_ICON_LIBRARY;
-    node.contractid = CONTRACTID;
-    node.dndDragTypes = 'text/x-sb-toplevel';
-    node.dndAcceptNear = 'text/x-sb-toplevel';
-    node.properties = "library";
-    node.editable = true;
-    if (aLibrary != this._libraryManager.mainLibrary) {
-      node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
-    }
-    
-    // Set properties for styling purposes
-    node.properties = "library libraryguid-" + aLibrary.guid;
-    
-    // Save the type of media list so that we can group by type
-    node.setAttributeNS(LSP, "ListType", aLibrary.type)
-    
-    // Save the guid of the library
-    node.setAttributeNS(LSP, "LibraryGUID", aLibrary.guid);
-    // and save it as the list guid
-    node.setAttributeNS(LSP, "ListGUID", aLibrary.guid);
-    
     // Position the node in the tree
     this._insertLibraryNode(node, aLibrary);
   }
   
-  // Refresh the name just in case it was localized
+  // Refresh the information just in case it is supposed to change
   node.name = aLibrary.name;  
-  
-  // Make sure the node is visible, since we hid all library nodes on startup
+  node.url = this._getDisplayURL(aLibrary);
+  node.image = URL_ICON_LIBRARY;
+  node.contractid = CONTRACTID;
+  node.dndDragTypes = 'text/x-sb-toplevel';
+  node.dndAcceptNear = 'text/x-sb-toplevel';
+  node.editable = true;
+  if (aLibrary != this._libraryManager.mainLibrary) {
+    node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
+  }
+  // Set properties for styling purposes
+  node.properties = "library libraryguid-" + aLibrary.guid;
+  // Save the type of media list so that we can group by type
+  node.setAttributeNS(LSP, "ListType", aLibrary.type)
+  // Save the guid of the library
+  node.setAttributeNS(LSP, "LibraryGUID", aLibrary.guid);
+  // and save it as the list guid
+  node.setAttributeNS(LSP, "ListGUID", aLibrary.guid);
+    
+  // Make sure the node is visible, since we hide all library nodes on startup
   node.hidden = false;
 
   return node;
@@ -993,41 +988,37 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     // Create the node
     // NOTE: it's a container for drag and drop purposes only.
     node = this._servicePane.addNode(id, this._servicePane.root, true);
-    node.url = this._getDisplayURL(aMediaList);
-    node.contractid = CONTRACTID;
-    node.editable = true;
-
-    // Set properties for styling purposes
-    if (aMediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1")
-      node.properties = "medialist medialisttype-dynamic";
-    else
-      node.properties = "medialist medialisttype-" + aMediaList.type;
-
-    // Save the type of media list so that we can group by type
-    node.setAttributeNS(LSP, "ListType", aMediaList.type);
-
-    // Save the guid of the library that owns this media list
-    node.setAttributeNS(LSP, "LibraryGUID", aMediaList.library.guid);
-    // and the guid of this list
-    node.setAttributeNS(LSP, "ListGUID", aMediaList.guid);
-    
-    if (aMediaList.library == this._libraryManager.mainLibrary) {
-      // a playlist in the main library is considered a toplevel node
-      node.dndDragTypes = 'text/x-sb-toplevel';
-      node.dndAcceptNear = 'text/x-sb-toplevel';
-    } else {
-      // playlists in other libraries can only go into their libraries' nodes
-      node.dndDragTypes = 'text/x-sb-playlist-'+aMediaList.library.guid;
-      node.dndAcceptNear = 'text/x-sb-playlist-'+aMediaList.library.guid;
-    }
-
     // Place the node in the tree
     this._insertMediaListNode(node, aMediaList);
   }
-  // Refresh the name just in case it was localized
-  node.name = aMediaList.name;  
   
-  // Get hidden state from list, since we hid all list nodes on startup
+  // Refresh the information just in case it is supposed to change
+  node.name = aMediaList.name;  
+  node.url = this._getDisplayURL(aMediaList);
+  node.contractid = CONTRACTID;
+  node.editable = true;
+  // Set properties for styling purposes
+  if (aMediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1")
+    node.properties = "medialist medialisttype-dynamic";
+  else
+    node.properties = "medialist medialisttype-" + aMediaList.type;
+  // Save the type of media list so that we can group by type
+  node.setAttributeNS(LSP, "ListType", aMediaList.type);
+  // Save the guid of the library that owns this media list
+  node.setAttributeNS(LSP, "LibraryGUID", aMediaList.library.guid);
+  // and the guid of this list
+  node.setAttributeNS(LSP, "ListGUID", aMediaList.guid);
+  if (aMediaList.library == this._libraryManager.mainLibrary) {
+    // a playlist in the main library is considered a toplevel node
+    node.dndDragTypes = 'text/x-sb-toplevel';
+    node.dndAcceptNear = 'text/x-sb-toplevel';
+  } else {
+    // playlists in other libraries can only go into their libraries' nodes
+    node.dndDragTypes = 'text/x-sb-playlist-'+aMediaList.library.guid;
+    node.dndAcceptNear = 'text/x-sb-playlist-'+aMediaList.library.guid;
+  }
+  
+  // Get hidden state from list, since we hide all list nodes on startup
   node.hidden = aMediaList.getProperty(PROP_ISHIDDEN) == "1";
       
   return node;

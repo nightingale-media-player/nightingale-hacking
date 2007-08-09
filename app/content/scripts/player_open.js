@@ -31,7 +31,7 @@
 try
 {
   // TODO: Remove this
-  var URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/playlist_test2.xul?"
+  var URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sb-library-page.xul?"
 
   function SBFileOpen( )
   {
