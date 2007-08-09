@@ -940,11 +940,11 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   // Get the Node.
   var id = this._libraryURN(aLibrary);
   var node = this._servicePane.getNode(id);
+  var newnode = false;
   if (!node) {
     // Create the node
     node = this._servicePane.addNode(id, this._servicePane.root, true);
-    // Position the node in the tree
-    this._insertLibraryNode(node, aLibrary);
+    newnode = true;
   }
   
   // Refresh the information just in case it is supposed to change
@@ -966,6 +966,11 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   node.setAttributeNS(LSP, "LibraryGUID", aLibrary.guid);
   // and save it as the list guid
   node.setAttributeNS(LSP, "ListGUID", aLibrary.guid);
+
+  if (newnode) {
+    // Position the node in the tree
+    this._insertLibraryNode(node, aLibrary);
+  }
     
   // Make sure the node is visible, since we hide all library nodes on startup
   node.hidden = false;
@@ -984,12 +989,12 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
 
   var id = this._itemURN(aMediaList);
   var node = this._servicePane.getNode(id);
+  var newnode = false;
   if (!node) {
     // Create the node
     // NOTE: it's a container for drag and drop purposes only.
     node = this._servicePane.addNode(id, this._servicePane.root, true);
-    // Place the node in the tree
-    this._insertMediaListNode(node, aMediaList);
+    newnode = true;
   }
   
   // Refresh the information just in case it is supposed to change
@@ -1017,6 +1022,13 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     node.dndDragTypes = 'text/x-sb-playlist-'+aMediaList.library.guid;
     node.dndAcceptNear = 'text/x-sb-playlist-'+aMediaList.library.guid;
   }
+
+
+  if (newnode) {
+    // Place the node in the tree
+    this._insertMediaListNode(node, aMediaList);
+  }
+  
   
   // Get hidden state from list, since we hide all list nodes on startup
   node.hidden = aMediaList.getProperty(PROP_ISHIDDEN) == "1";
