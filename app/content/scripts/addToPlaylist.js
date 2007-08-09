@@ -90,6 +90,7 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_Modifiers = new Array();
     this.m_listofplaylists.m_Keys = new Array();
     this.m_listofplaylists.m_Keycodes = new Array();
+    this.m_listofplaylists.m_PlaylistCommands = new Array();
     
     var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                         .getService(Components.interfaces.sbILibraryManager);
@@ -110,6 +111,7 @@ addToPlaylistHelper.prototype = {
       this.m_listofplaylists.m_Modifiers.push("");
       this.m_listofplaylists.m_Keys.push("");
       this.m_listofplaylists.m_Keycodes.push("");
+      this.m_listofplaylists.m_PlaylistCommands.push(null);
     }
 
     this.m_listofplaylists.m_Types.push("separator");
@@ -119,6 +121,7 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_Modifiers.push("");
     this.m_listofplaylists.m_Keys.push("");
     this.m_listofplaylists.m_Keycodes.push("");
+    this.m_listofplaylists.m_PlaylistCommands.push(null);
     
     this.m_listofplaylists.m_Types.push("action");
     this.m_listofplaylists.m_Ids.push(ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID);
@@ -127,6 +130,7 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_Modifiers.push("");
     this.m_listofplaylists.m_Keys.push("");
     this.m_listofplaylists.m_Keycodes.push("");
+    this.m_listofplaylists.m_PlaylistCommands.push(null);
   },
   
     makePlaylistsForLibrary: function(aLibrary, typearray) {
@@ -168,6 +172,7 @@ addToPlaylistHelper.prototype = {
         this.obj.m_listofplaylists.m_Modifiers.push("");
         this.obj.m_listofplaylists.m_Keys.push("");
         this.obj.m_listofplaylists.m_Keycodes.push("");
+        this.obj.m_listofplaylists.m_PlaylistCommands.push(null);
         return true;
       }
     };

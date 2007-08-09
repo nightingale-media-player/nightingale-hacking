@@ -120,6 +120,15 @@
    src="chrome://songbird/content/scripts/watch_folders.js"/-->
 
   <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/kPlaylistCommands.js" />
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/playlistCommandsBuilder.js" />
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/addToPlaylist.js"/> 
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/playlistCommands.js" />
+
+  <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/globalhotkeys.js" />
 
   <script type="application/x-javascript"  

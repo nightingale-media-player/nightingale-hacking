@@ -198,10 +198,8 @@
   <!-- Load the Songbird stuff -->
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/window_utils.js" />
-  <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/addToPlaylist.js"/> 
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/playlistCommands.js" />
+   src="chrome://songbird/content/scripts/kPlaylistCommands.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/async_webplaylist.js" />
   <script type="application/x-javascript"   

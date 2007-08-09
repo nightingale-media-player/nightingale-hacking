@@ -447,20 +447,22 @@ function onWindowLoadPosition()
 
 
 
-function SBOpenModalDialog( url, param1, param2, param3 )
+function SBOpenModalDialog( url, param1, param2, param3, parentWindow )
 {
+  if (!parentWindow) parentWindow = window;
   // bonus stuff to shut the mac up.
   var chromeFeatures = ",modal=yes,resizable=no";
   if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",titlebar=yes";
   else chromeFeatures += ",titlebar=no";
 
   param2 += chromeFeatures;
-  var retval = window.openDialog( url, param1, param2, param3 );
+  var retval = parentWindow.openDialog( url, param1, param2, param3 );
   return retval;
 }
 
-function SBOpenWindow( url, param1, param2, param3 )
+function SBOpenWindow( url, param1, param2, param3, parentWindow )
 {
+  if (!parentWindow) parentWindow = window;
   var titlebar = ",modal=no";
   if (SBDataGetBoolValue("accessibility.enabled")) {
     titlebar += ",titlebar=yes"; 
@@ -636,4 +638,22 @@ function newURI(aURLString)
   catch (e) { }
   
   return null;
+}
+
+// Debugging Tool
+function listProperties(obj, objName) 
+{
+    var columns = 3;
+    var count = 0;
+    var result = "";
+    for (var i in obj) 
+    {
+        result += objName + "." + i + " = " + obj[i] + "\t\t\t";
+        count = ++count % columns;
+        if ( count == columns - 1 )
+        {
+          result += "\n";
+        }
+    }
+    alert(result);
 }

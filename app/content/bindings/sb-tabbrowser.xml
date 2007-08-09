@@ -1517,9 +1517,13 @@
           this.outerPlaylistShowing = false;
           
           // Bind the Web Playlist UI element to the subscribed playlist
-          SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
+          //SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
+
+          var mgr = new sbIPlaylistCommandsManager();
+          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_WEBPLAYLIST);
+          
           this.outerPlaylist.outerWindow = window;
-          this.outerPlaylist.bind(view, SBWebPlaylistCommands,
+          this.outerPlaylist.bind(view, cmds,
                                   SBDataGetIntValue("browser.playlist.height"),
                                   SBDataGetBoolValue("browser.playlist.collapsed"));
 
@@ -1679,7 +1683,10 @@
             view = mediaList.createView();
           }
 
-          this.outerPlaylist.bind(view, SBWebPlaylistCommands,
+          var mgr = new sbIPlaylistCommandsManager();
+          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_WEBPLAYLIST);
+
+          this.outerPlaylist.bind(view, cmds/*SBWebPlaylistCommands*/,
                                   SBDataGetIntValue("browser.playlist.height"),
                                   SBDataGetBoolValue("browser.playlist.collapsed"));
         ]]></body>
@@ -1688,7 +1695,10 @@
       <method name="switchToDownloadView">
         <body><![CDATA[
           // Make sure the download device has been added to the commands object.
-          if (!SBDownloadCommands.m_Device) {
+          var mgr = new sbIPlaylistCommandsManager();
+          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_DOWNLOADPLAYLIST);
+
+          if (!cmds.getProperty("m_Device")) {
             var deviceManager =
               Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"]
                         .getService(Components.interfaces.sbIDeviceManager);
@@ -1696,7 +1706,7 @@
             downloadDevice =
               deviceManager.getDeviceByCategory("Songbird Download Device");
             
-            SBDownloadCommands.m_Device = downloadDevice;
+            cmds.setProperty("m_Device", downloadDevice);
           }
           
           // Save this for later if we swap back.
@@ -1704,7 +1714,7 @@
           
           var view = this._downloadList.createView();
           
-          this.outerPlaylist.bind(view, SBDownloadCommands,
+          this.outerPlaylist.bind(view, cmds,
                                   SBDataGetIntValue("browser.playlist.height"),
                                   SBDataGetBoolValue("browser.playlist.collapsed"));
         ]]></body>

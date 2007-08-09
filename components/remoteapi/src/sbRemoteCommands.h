@@ -40,6 +40,7 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsCOMPtr.h>
+#include <map>
 
 #define SONGBIRD_REMOTECOMMANDS_CONTRACTID              \
   "@songbirdnest.com/remoteapi/remotecommands;1"
@@ -90,6 +91,7 @@ protected:
   nsCOMPtr<nsIWeakReference> mWeakOwner;
   nsCOMPtr<sbIPlaylistCommandsContext> mContext;
   nsTArray<sbCommand> mCommands;
+  std::map<nsString, nsString> mProperties;
 
   // SecurityCheckedComponent stuff
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;

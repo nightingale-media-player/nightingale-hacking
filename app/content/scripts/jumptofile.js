@@ -143,7 +143,12 @@ try
       return true;
     },
   
-    onCommand: function( id, value, host)
+    getCommandSubObject: function ( aSubMenu, aIndex, aHost )
+    {
+      return null;
+    },
+  
+    onCommand: function( aSubMenu, aIndex, aHost, id, value)
     {
     },
     

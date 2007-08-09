@@ -102,14 +102,14 @@ try
     }
   }
 
-  function SBUrlOpen( )
+  function SBUrlOpen( parentWindow )
   {
     // Make a magic data object to get passed to the dialog
     var url_open_data = new Object();
     url_open_data.URL = URL.stringValue;
     url_open_data.retval = "";
     // Open the modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/open_url.xul", "open_url", "chrome,centerscreen", url_open_data ); 
+    SBOpenModalDialog( "chrome://songbird/content/xul/open_url.xul", "open_url", "chrome,centerscreen", url_open_data, parentWindow ); 
     if ( url_open_data.retval == "ok" )
     {
       var library = SBGetWebLibrary();
@@ -272,8 +272,10 @@ function onHelp()
 
 
 
-function SBOpenPreferences(paneID)
+function SBOpenPreferences(paneID, parentWindow)
 {
+  if (!parentWindow) parentWindow = window;
+
   // On all systems except Windows pref changes should be instant.
   //
   // In mozilla this is the browser.prefereces.instantApply pref,
@@ -292,16 +294,16 @@ function SBOpenPreferences(paneID)
     }
   }
   else
-    openDialog("chrome://browser/content/preferences/preferences.xul", "Preferences", features, paneID);
+    parentWindow.openDialog("chrome://browser/content/preferences/preferences.xul", "Preferences", features, paneID);
     
   // to open connection settings only:
   // SBOpenModalDialog("chrome://browser/content/preferences/connection.xul", "chrome,centerscreen", null); 
 }
 
-function SBSetDownloadFolder()
+function SBSetDownloadFolder(parentWindow)
 {
   // Just open the window, we don't care what the user does in it.
-  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,centerscreen", null ); 
+  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,centerscreen", null, parentWindow ); 
 }
 
 /*function SBOpenDownloadManager()
@@ -321,13 +323,13 @@ function SBSetDownloadFolder()
    }
 }*/
 
-function SBWatchFolders()
+function SBWatchFolders( parentWindow )
 {
-  SBOpenModalDialog( "chrome://songbird/content/xul/watch_folders.xul", "", "chrome,centerscreen", null ); 
+  SBOpenModalDialog( "chrome://songbird/content/xul/watch_folders.xul", "", "chrome,centerscreen", null, parentWindow ); 
 }
 
 var theFileScanIsOpen = SB_NewDataRemote( "media_scan.open", null );
-function SBScanMedia( )
+function SBScanMedia( parentWindow )
 {
   theFileScanIsOpen.boolValue = true;
   const nsIFilePicker = Components.interfaces.nsIFilePicker;
@@ -358,18 +360,18 @@ function SBScanMedia( )
     media_scan_data.URL = fp.file.path;
     media_scan_data.retval = "";
     // Open the modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
+    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data, parentWindow ); 
   }
   theFileScanIsOpen.boolValue = false;
 }
 
-function SBMabOpen()
+function SBMabOpen( parentWindow )
 {
   var mab_data = new Object();
   mab_data.retval = "";
   
   // Open the non modal dialog
-  SBOpenWindow( "chrome://songbird/content/xul/mab.xul", "Mozilla Amazon Browser", "chrome", mab_data ); 
+  SBOpenWindow( "chrome://songbird/content/xul/mab.xul", "Mozilla Amazon Browser", "chrome", mab_data, parentWindow ); 
 }
 
 
@@ -448,17 +450,18 @@ function makeNewPlaylist(mediaListType) {
 }
 
 
-function SBKoshiOpen()
+function SBKoshiOpen( parentWindow )
 {
   // Make a magic data object to get passed to the dialog
   var koshi_data = new Object();
   koshi_data.retval = "";
   // Open the window
-  SBOpenModalDialog( "chrome://songbird/content/xul/koshi_test.xul", "", "chrome,centerscreen", koshi_data ); 
+  SBOpenModalDialog( "chrome://songbird/content/xul/koshi_test.xul", "", "chrome,centerscreen", koshi_data, parentWindow ); 
 }
 
-function SBExtensionsManagerOpen()
+function SBExtensionsManagerOpen( parentWindow )
 {
+  if (!parentWindow) parentWindow = window;
   const EM_TYPE = "Extension:Manager";
   
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
@@ -471,10 +474,10 @@ function SBExtensionsManagerOpen()
   
   const EM_URL = "chrome://mozapps/content/extensions/extensions.xul?type=extensions";
   const EM_FEATURES = "chrome,menubar,extra-chrome,toolbar,dialog=no,resizable";
-  window.openDialog(EM_URL, "", EM_FEATURES);
+  parentWindow.openDialog(EM_URL, "", EM_FEATURES);
 }
 
-function SBTrackEditorOpen()
+function SBTrackEditorOpen( parentWindow )
 {
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Components.interfaces.nsIWindowMediator);
@@ -484,11 +487,11 @@ function SBTrackEditorOpen()
   } else {
     const TEURL = "chrome://songbird/content/xul/trackeditor.xul";
     const TEFEATURES = "chrome,dialog=no,resizable=no";
-    SBOpenWindow(TEURL, "track_editor", TEFEATURES, gBrowser.currentPlaylist); 
+    SBOpenWindow(TEURL, "track_editor", TEFEATURES, gBrowser.currentPlaylist, parentWindow); 
   }
 }
 
-function SBSubscribe(mediaList, defaultUrl)
+function SBSubscribe(mediaList, defaultUrl, parentWindow)
 {
   // Make sure the argument is a dynamic media list
   if (mediaList) {
@@ -513,17 +516,18 @@ function SBSubscribe(mediaList, defaultUrl)
   SBOpenModalDialog("chrome://songbird/content/xul/subscribe.xul",
                     "",
                     "chrome,centerscreen",
-                    params); 
+                    params,
+                    parentWindow); 
 }
 
 // TODO: This function should be renamed.  See openAboutDialog in browserUtilities.js
-function About( )
+function About( parentWindow )
 {
   // Make a magic data object to get passed to the dialog
   var about_data = new Object();
   about_data.retval = "";
   // Open the modal dialog
-  SBOpenModalDialog( "chrome://songbird/content/xul/about.xul", "about", "chrome,centerscreen", about_data ); 
+  SBOpenModalDialog( "chrome://songbird/content/xul/about.xul", "about", "chrome,centerscreen", about_data, parentWindow ); 
   if ( about_data.retval == "ok" )
   {
   }  
@@ -861,6 +865,7 @@ catch (e)
 {
   alert(e);
 }
+
 
 
 

@@ -58,8 +58,10 @@ SelectionUnwrapper.prototype = {
   }
 }
 
-// The house for the web playlist and download commands objects.
-var SBWebPlaylistCommands = 
+// ----------------------------------------------------------------------------
+// The "Add to playlist" dynamic command object
+// ----------------------------------------------------------------------------
+var SBPlaylistCommand_AddToPlaylist = 
 {
   m_Context: {
     m_Playlist: null,
@@ -72,115 +74,42 @@ var SBWebPlaylistCommands =
   {
     m_Types: new Array
     (
-      "action",
-      "action",
-      "action",
-      "action",
-      "action",
-      "action",
-      ADDTOPLAYLIST_MENU_TYPE,
-      "action",
-      "action",
-      "separator",
-      "action"
-  //    "action"
-  //    "action"
+      ADDTOPLAYLIST_MENU_TYPE
     ),
 
     m_Ids: new Array
     (
-      "library_cmd_play",
-      "library_cmd_play",
-      "library_cmd_remove",
-      "library_cmd_remove",
-      "library_cmd_download",
-      "library_cmd_subscribe",
-      ADDTOPLAYLIST_MENU_ID,
-      "library_cmd_addtolibrary",
-      "library_cmd_copylocation",
-      "*separator*",
-      "library_cmd_showdlplaylist"
-  //    "library_cmd_burntocd"
-  //    "library_cmd_device"
+      ADDTOPLAYLIST_MENU_ID
     ),
     
     m_Names: new Array
     (
-      "&command.play",
-      "&command.play",
-      "&command.remove",
-      "&command.remove",
-      "&command.download",
-      "&command.subscribe",
-      ADDTOPLAYLIST_MENU_NAME,
-      "&command.addtolibrary",
-      "&command.copylocation",
-      "*separator*",
-      "&command.showdlplaylist"
-  //    "&command.burntocd"
-  //    "&command.device"
+      ADDTOPLAYLIST_MENU_NAME
     ),
     
     m_Tooltips: new Array
     (
-      "&command.tooltip.play",
-      "&command.tooltip.play",
-      "&command.tooltip.remove",
-      "&command.tooltip.remove",
-      "&command.tooltip.download",
-      "&command.tooltip.subscribe",
-      ADDTOPLAYLIST_MENU_TOOLTIP,
-      "&command.tooltip.addtolibrary",
-      "&command.tooltip.copylocation",
-      "*separator*",
-      "&command.tooltip.showdlplaylist"
-  //    "&command.tooltip.burntocd"
-  //    "&command.tooltip.device"
+      ADDTOPLAYLIST_MENU_TOOLTIP
     ),
     
     m_Keys: new Array
     (
-      "&command.shortcut.key.play",
-      "&command.shortcut.key.altplay",
-      "&command.shortcut.key.remove",
-      "&command.shortcut.key.altremove",
-      "&command.shortcut.key.download",
-      "&command.shortcut.key.subscribe",
-      ADDTOPLAYLIST_MENU_KEY,
-      "&command.shortcut.key.addtolibrary",
-      "&command.shortcut.key.copylocation",
-      "",
-      "&command.shortcut.key.showdlplaylist"
+      ADDTOPLAYLIST_MENU_KEY
     ),
 
     m_Keycodes: new Array
     (
-      "&command.shortcut.keycode.play",
-      "&command.shortcut.keycode.altplay",
-      "&command.shortcut.keycode.remove",
-      "&command.shortcut.keycode.altremove",
-      "&command.shortcut.keycode.download",
-      "&command.shortcut.keycode.subscribe",
-      ADDTOPLAYLIST_MENU_KEYCODE,
-      "&command.shortcut.keycode.addtolibrary",
-      "&command.shortcut.keycode.copylocation",
-      "",
-      "&command.shortcut.keycode.showdlplaylist"
+      ADDTOPLAYLIST_MENU_KEYCODE
     ),
 
     m_Modifiers: new Array
     (
-      "&command.shortcut.modifiers.play",
-      "&command.shortcut.modifiers.altplay",
-      "&command.shortcut.modifiers.remove",
-      "&command.shortcut.modifiers.altremove",
-      "&command.shortcut.modifiers.download",
-      "&command.shortcut.modifiers.subscribe",
-      ADDTOPLAYLIST_MENU_MODIFIERS,
-      "&command.shortcut.modifiers.addtolibrary",
-      "&command.shortcut.modifiers.copylocation",
-      "",
-      "&command.shortcut.modifiers.dhowdlplaylist"
+      ADDTOPLAYLIST_MENU_MODIFIERS
+    ),
+
+    m_PlaylistCommands: new Array
+    (
+      null
     )
   },
 
@@ -188,7 +117,6 @@ var SBWebPlaylistCommands =
   {
     var cmds;
     
-    // ADDTOPLAYLIST
     cmds = this.m_addToPlaylist.handleGetMenu(aSubMenu);
     if (cmds) return cmds;
     
@@ -203,45 +131,27 @@ var SBWebPlaylistCommands =
   getNumCommands: function( aSubMenu, aHost )
   {
     var cmds = this._getMenu(aSubMenu);
-    if ( 
-        ( cmds.m_Tooltips.length != cmds.m_Ids.length ) ||
-        ( cmds.m_Names.length != cmds.m_Ids.length ) ||
-        ( cmds.m_Tooltips.length != cmds.m_Names.length )
-        )
-    {
-      alert( "PlaylistCommands - Array lengths do not match!" );
-      return 0;
-    }
     return cmds.m_Ids.length;
   },
 
   getCommandId: function( aSubMenu, aIndex, aHost )
   {
     var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Ids.length )
-    {
-      return "";
-    }
+    if ( aIndex >= cmds.m_Ids.length ) return "";
     return cmds.m_Ids[ aIndex ];
   },
   
   getCommandType: function( aSubMenu, aIndex, aHost )
   {
     var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Ids.length )
-    {
-      return "";
-    }
+    if ( aIndex >= cmds.m_Ids.length ) return "";
     return cmds.m_Types[ aIndex ];
   },
 
   getCommandText: function( aSubMenu, aIndex, aHost )
   {
     var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Names.length )
-    {
-      return "";
-    }
+    if ( aIndex >= cmds.m_Names.length ) return "";
     return cmds.m_Names[ aIndex ];
   },
 
@@ -255,20 +165,12 @@ var SBWebPlaylistCommands =
   getCommandToolTipText: function( aSubMenu, aIndex, aHost )
   {
     var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Tooltips.length )
-    {
-      return "";
-    }
+    if ( aIndex >= cmds.m_Tooltips.length ) return "";
     return cmds.m_Tooltips[ aIndex ];
   },
 
   getCommandValue: function( aSubMenu, aIndex, aHost )
   {
-    var cmds = this._getMenu(aSubMenu);
-    switch (cmds.m_Ids[aIndex]) {
-      // ...
-    }
-    return "";
   },
 
   instantiateCustomCommand: function( aDocument, aId, aHost ) 
@@ -282,8 +184,6 @@ var SBWebPlaylistCommands =
 
   getCommandVisible: function( aSubMenu, aIndex, aHost )
   {
-    if (aSubMenu == null && (aIndex == 1 || aIndex == 3)) 
-      return (aHost == "shortcuts");
     return true;
   },
 
@@ -299,64 +199,27 @@ var SBWebPlaylistCommands =
 
   getCommandEnabled: function( aSubMenu, aIndex, aHost )
   {
-    var retval = false;
-    var cmds = this._getMenu(aSubMenu);
-    switch ( cmds.m_Ids[aIndex] )
-    {
-      case "library_cmd_device": // Not yet implemented
-        retval = false;
-      break;
-      case "library_cmd_remove":
-        retval = this.m_Context.m_Playlist.mediaListView.treeView.selection.getRangeCount() > 0;
-      break;      
-      case "library_cmd_download": // Only download selected tracks from the library, never the whole library
-        if ( ( this.m_Context.m_Playlist.description != "library" ) || ( this.m_Context.m_Playlist.mediaListView.treeView.selection.count > 0 ) )
-          retval = true;
-      break;
-      case "library_cmd_subscribe": // Never subscribe to the library
-        if ( this.m_Context.m_Playlist.description != "library" )
-          retval = true;
-      break;
-      case "library_cmd_showdlplaylist":
-        retval = true;
-      break;
-      case "library_cmd_copylocation":
-        retval = this.m_Context.m_Playlist.mediaListView.treeView.selection.getRangeCount() > 0;
-      break; 
-      default:
-        retval = true;
-      break;
-    }
-    return retval;
+    return (this.m_Context.m_Playlist.tree.currentIndex != -1);
   },
 
   getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
   {
     var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Modifiers.length )
-    {
-      return "";
-    }
+    if ( aIndex >= cmds.m_Modifiers.length ) return "";
     return cmds.m_Modifiers[ aIndex ];
   },
 
   getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
   {
     var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Keys.length )
-    {
-      return "";
-    }
+    if ( aIndex >= cmds.m_Keys.length ) return "";
     return cmds.m_Keys[ aIndex ];
   },
 
   getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
   {
     var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Keycodes.length )
-    {
-      return "";
-    }
+    if ( aIndex >= cmds.m_Keycodes.length ) return "";
     return cmds.m_Keycodes[ aIndex ];
   },
 
@@ -365,144 +228,21 @@ var SBWebPlaylistCommands =
     return true;
   },
 
-  onCommand: function( id, value, host )
+  getCommandSubObject: function ( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_PlaylistCommands.length ) return null;
+    return cmds.m_PlaylistCommands[ aIndex ];
+  },
+
+  onCommand: function( aSubMenu, aIndex, aHost, id, value )
   {
     if ( id )
     {
       // ADDTOPLAYLIST
       if (this.m_addToPlaylist.handleCommand(id)) return;
-
-      // Was it from the toolbarbutton?
-      var tbb = ( host == "toolbar" );
-      switch( id )
-      {
-        case "library_cmd_play":
-          // If the user hasn't selected anything, select the first thing for him.
-          if ( this.m_Context.m_Playlist.tree.currentIndex == -1 )
-          {
-            this.m_Context.m_Playlist.mediaListView.treeView.selection.currentIndex = 0;
-            this.m_Context.m_Playlist.mediaListView.treeView.selection.select( 0 );
-          }
-          // Repurpose the command to act as if a doubleclick
-          this.m_Context.m_Playlist.sendPlayEvent();
-        break;
-        case "library_cmd_remove":
-          if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
-          {
-            // remove the currently select tracks
-            this.m_Context.m_Playlist.removeSelectedTracks();
-          }
-        break;
-        case "library_cmd_download":
-        {
-          try
-          {
-            if(this.m_Context.m_Playlist.treeView.selectionCount) {
-              onBrowserTransfer(new SelectionUnwrapper
-                               (this.m_Context.m_Playlist.treeView.selectedMediaItems));
-            }
-            else {
-              var allItems = {
-                items: [],
-                onEnumerationBegin: function(aMediaList) {
-                  return true;
-                },
-                onEnumeratedItem: function(aMediaList, aMediaItem) {
-                  this.items.push(aMediaItem);
-                  return true;
-                },
-                onEnumerationEnd: function(aMediaList, aResultCode) {
-                  return;
-                }
-              };
-
-              this.m_Context.m_Playlist.mediaList.enumerateAllItems(allItems, 
-                Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
-              
-              var itemEnum = ArrayConverter.enumerator(allItems.items);
-              onBrowserTransfer(itemEnum);
-            }
-            
-            // And show the download table in the chrome playlist.
-            gBrowser.mCurrentTab.switchToDownloadView();
-          }
-          catch( err )          
-          {
-            alert( "SBWebPlaylistCommands Error:" + err );
-          }
-        }
-        break;
-        case "library_cmd_copylocation":
-        {
-          var clipboardtext = "";
-          var urlCol = "url";
-          var columnElem = document.getAnonymousElementByAttribute(this.m_Context.m_Playlist,
-                                                                   "bind",
-                                                                   SBProperties.contentURL);
-          var columnObj = this.m_Context.m_Playlist.tree.columns.getColumnFor(columnElem);
-          var rangeCount = this.m_Context.m_Playlist.mediaListView.treeView.selection.getRangeCount();
-          for (var i=0; i < rangeCount; i++) 
-          {
-            var start = {};
-            var end = {};
-            this.m_Context.m_Playlist.mediaListView.treeView.selection.getRangeAt( i, start, end );
-            for( var c = start.value; c <= end.value; c++ )
-            {
-              if (c >= this.m_Context.m_Playlist.mediaListView.treeView.rowCount) 
-              {
-                continue; 
-              }
-              
-              var val = this.m_Context.m_Playlist.mediaListView.treeView.getCellText(c, columnObj);
-              if (clipboardtext != "") clipboardtext += "\n";
-              clipboardtext += val;
-            }
-          }
-
-          var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
-          clipboard.copyString(clipboardtext);
-        }
-        break;
-        case "library_cmd_subscribe":
-        {
-          // Bring up the subscribe dialog with the web playlist url
-          SBSubscribe(null, gBrowser.currentURI);
-        }
-        break;
-        case "library_cmd_addtolibrary":
-        {
-          var libraryManager =
-            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                      .getService(Components.interfaces.sbILibraryManager);
-          var mediaList = libraryManager.mainLibrary;
-          
-          var treeView = this.m_Context.m_Playlist.treeView;
-          var selectionCount = treeView.selectionCount;
-          
-          var unwrapper = new SelectionUnwrapper(treeView.selectedMediaItems);
-          
-          var oldLength = mediaList.length;
-          mediaList.addSome(unwrapper);
-
-          var itemsAdded = mediaList.length - oldLength;
-          this.m_Context.m_Playlist._reportAddedTracks(itemsAdded,
-                                             selectionCount - itemsAdded, mediaList.name);
-        }
-        break;
-        case "library_cmd_showdlplaylist":
-        {
-          if (this.m_Context.m_Window.location.pathname ==
-              '/content/xul/sb-library-page.xul') {
-            // we're in the web library / inner playlist view
-            gBrowser.loadMediaList(gBrowser.downloadList);
-          } else {
-            // we're in a web playlist / outer playlist view
-            gBrowser.mCurrentTab.switchToDownloadView();
-          }
-          
-        }
-        break;
-      }
+      
+      // ...
     }
   },
   
@@ -520,9 +260,14 @@ var SBWebPlaylistCommands =
 
   initCommands: function(aHost) { 
     this.m_addToPlaylist = new addToPlaylistHelper(); 
-    this.m_addToPlaylist.init(SBWebPlaylistCommands); 
+    this.m_addToPlaylist.init(this); 
   },
+  
   shutdownCommands: function() { 
+    if (!this.m_addToPlaylist) {
+      dump("this.m_addToPlaylist is null in SBPlaylistCommand_AddToPlaylist ?!!\n");
+      return;
+    }
     this.m_addToPlaylist.shutdown(); 
     this.m_addToPlaylist = null;
   },
@@ -555,39 +300,9 @@ var SBWebPlaylistCommands =
     
     return this;
   }
-}; // SBWebPlaylistCommands declaration
+}; // SBPlaylistCommand_AddToPlaylist declaration
 
-/*
-
-// Register the web playlist commands at startup
-if ( ( WEB_PLAYLIST_CONTEXT != "" ) && ( WEB_PLAYLIST_TABLE != "" ) )
-{
-  var mgr = new sbIPlaylistCommandsManager();
-  mgr.registerPlaylistCommandsMediaItem( WEB_PLAYLIST_TABLE, "http", SBWebPlaylistCommands );
-  mgr.registerPlaylistCommandsMediaItem( "library", "http", SBWebPlaylistCommands );
-}
-
-*/
-
-// Debugging Tool
-function listProperties(obj, objName) 
-{
-    var columns = 3;
-    var count = 0;
-    var result = "";
-    for (var i in obj) 
-    {
-        result += objName + "." + i + " = " + obj[i] + "\t\t\t";
-        count = ++count % columns;
-        if ( count == columns - 1 )
-        {
-          result += "\n";
-        }
-    }
-    alert(result);
-}
-
-function onBrowserTransfer(mediaItems)
+function onBrowserTransfer(mediaItems, parentWindow)
 {
     try
     {
@@ -613,7 +328,7 @@ function onBrowserTransfer(mediaItems)
                 else
                 {
                   // Open the window
-                  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,centerscreen", download_data ); 
+                  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,centerscreen", download_data, parentWindow ); 
                 }
 
                 // Pick download destination
@@ -644,403 +359,79 @@ function onBrowserTransfer(mediaItems)
     }
 }
 
-const PAUSERESUME_INDEX = 4;
+// The house for the web playlist and download commands objects.
 
-var SBDownloadCommands = 
-{
-  m_Context: {
-    m_Playlist: null,
-    m_Window: null
-  },
-
-  m_Device: null,
-
-  m_Types: new Array
-  (
-    "action",
-    "action",
-    "action",
-    "action",
-    "action",
-    "separator",
-    "action"
-  ),
-  
-  m_Ids: new Array
-  (
-    "library_cmd_play",
-    "library_cmd_play",
-    "library_cmd_remove",
-    "library_cmd_remove",
-    "library_cmd_pause",
-    "*separator*",
-    "library_cmd_showwebplaylist"
-  ),
-  
-  m_Names: new Array
-  (
-    "&command.play",
-    "&command.play",
-    "&command.remove",
-    "&command.remove",
-    "&command.pausedl",
-    "*separator*",
-    "&command.showwebplaylist"
-  ),
-  
-  m_Tooltips: new Array
-  (
-    "&command.tooltip.play",
-    "&command.tooltip.play",
-    "&command.tooltip.remove",
-    "&command.tooltip.remove",
-    "&command.tooltip.pause",
-    "*separator*",
-    "&command.tooltip.showwebplaylist"
-  ),
-
-  m_Keys: new Array
-  (
-    "&command.shortcut.key.play",
-    "&command.shortcut.key.altplay",
-    "&command.shortcut.key.remove",
-    "&command.shortcut.key.altremove",
-    "&command.shortcut.key.pause",
-    "",
-    "&command.shortcut.key.showwebplaylist"
-  ),
-
-  m_Keycodes: new Array
-  (
-    "&command.shortcut.keycode.play",
-    "&command.shortcut.keycode.altplay",
-    "&command.shortcut.keycode.remove",
-    "&command.shortcut.keycode.altremove",
-    "&command.shortcut.keycode.pause",
-    "",
-    "&command.shortcut.keycode.showwebplaylist"
-  ),
-
-  m_Modifiers: new Array
-  (
-    "&command.shortcut.modifiers.play",
-    "&command.shortcut.modifiers.altplay",
-    "&command.shortcut.modifiers.remove",
-    "&command.shortcut.modifiers.altremove",
-    "&command.shortcut.modifiers.pause",
-    "",
-    "&command.shortcut.modifiers.showwebplaylist"
-  ),
-
-  getNumCommands: function( aSubmenu, aHost )
-  {
-    if ( 
-        ( this.m_Tooltips.length != this.m_Ids.length ) ||
-        ( this.m_Names.length != this.m_Ids.length ) ||
-        ( this.m_Tooltips.length != this.m_Names.length )
-       )
-    {
-      alert( "PlaylistCommands - Array lengths do not match!" );
-      return 0;
-    }
-    return this.m_Ids.length;
-  },
-
-  getCommandType: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Types.length )
-    {
-      return "";
-    }
-    return this.m_Types[ aIndex ];
-  },
-
-  getCommandId: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex == PAUSERESUME_INDEX ) 
-    {
-      if ( this.m_Device )
-      {
-        if ( this.m_Device.getDeviceState('') == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
-        {
-          this.m_Ids[ aIndex ] = "library_cmd_resume";
-        }
-        else
-        {
-          this.m_Ids[ aIndex ] = "library_cmd_pause";
-        }
-      }
-    }
-    if ( aIndex >= this.m_Ids.length )
-    {
-      return "";
-    }
-    return this.m_Ids[ aIndex ];
-  },
-
-  getCommandText: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex == PAUSERESUME_INDEX )
-    {
-      if ( this.m_Device )
-      {
-        if ( this.m_Device.getDeviceState('') == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
-        {
-          this.m_Names[ aIndex ] = "&command.resumedl";
-        }
-        else
-        {
-          this.m_Names[ aIndex ] = "&command.pausedl";
-        }
-      }
-    }
-    if ( aIndex >= this.m_Names.length )
-    {
-      return "";
-    }
-    return this.m_Names[ aIndex ];
-  },
-
-  getCommandFlex: function( aSubmenu, aIndex, aHost )
-  {
-    if ( this.m_Types[ aIndex ] == "separator" ) return 1;
-    return 0;
-  },
-
-  getCommandValue: function( aSubmenu, aIndex, aHost )
-  {
-    return "";
-  },
-
-  getCommandFlag: function( aSubmenu, aIndex, aHost )
-  {
-    return false;
-  },
-
-  getCommandChoiceItem: function( aChoiceMenu, aHost )
-  {
-    return "";
-  },
-
-  getCommandToolTipText: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex == PAUSERESUME_INDEX )
-    {
-      if ( this.m_Device )
-      {
-        var deviceState = this.m_Device.getDeviceState('');
-        if ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
-        {
-          this.m_Tooltips[ aIndex ] = "&command.tooltip.resume";
-        }
-        else
-        {
-          this.m_Tooltips[ aIndex ] = "&command.tooltip.pause";
-        }
-      }
-    }
-    if ( aIndex >= this.m_Tooltips.length )
-    {
-      return "";
-    }
-    return this.m_Tooltips[ aIndex ];
-  },
-
-  instantiateCustomCommand: function( aDocument, aId, aHost ) 
-  {
-    return null;
-  },
-
-  refreshCustomCommand: function( aElement, aId, aHost ) 
-  {
-  },
-
-  getCommandVisible: function( aSubMenu, aIndex, aHost )
-  {
-    if (aSubMenu == null && (aIndex == 1 || aIndex == 3)) 
-      return (aHost == "shortcuts");
-    return true;
-  },
-
-  getCommandEnabled: function( aSubmenu, aIndex, aHost )
-  {
-    var retval = false;
-    if ( this.m_Device )
-    {
-      switch( aIndex )
-      {
-        case 3:
-          var deviceState = this.m_Device.getDeviceState('');
-          retval = ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOADING ) || 
-                   ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
-        break;
-        default:
-          retval = true;
-        break;
-      }
-    }
-    return retval;
-  },
-
-  getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Modifiers.length )
-    {
-      return "";
-    }
-    return this.m_Modifiers[ aIndex ];
-  },
-
-  getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Keys.length )
-    {
-      return "";
-    }
-    return this.m_Keys[ aIndex ];
-  },
-
-  getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Keycodes.length )
-    {
-      return "";
-    }
-    return this.m_Keycodes[ aIndex ];
-  },
-
-  getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
-  {
-    return true;
-  },
-
-  onCommand: function( id, value, host )
-  {
-    if ( this.m_Device && id )
-    {
-      // Was it from the toolbarbutton?
-      var tbb = ( host == "toolbar" );
-      switch( id )
-      {
-        case "library_cmd_play":
-          if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
-          {
-            // If the user hasn't selected anything, select the first thing for him.
-            if ( this.m_Context.m_Playlist.tree.currentIndex == -1 )
-            {
-              this.m_Context.m_Playlist.mediaListView.treeView.selection.currentIndex = 0;
-              this.m_Context.m_Playlist.mediaListView.treeView.selection.select( 0 );
-            }
-            // Repurpose the command to act as if a doubleclick
-            this.m_Context.m_Playlist.sendPlayEvent();
-          }
-        break;
-        case "library_cmd_remove":
-          if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
-          {
-            // remove the currently select tracks
-            this.m_Context.m_Playlist.removeSelectedTracks();
-          }
-        break;
-        case "library_cmd_pause":
-        case "library_cmd_resume":
-          var deviceState = this.m_Device.getDeviceState('');
-          if ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOADING )
-          {
-            this.m_Device.suspendTransfer('');
-          }
-          else if ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
-          {
-            this.m_Device.resumeTransfer('');
-          }
-          // Since we changed state, update the command buttons.
-          this.m_Context.m_Playlist.refreshCommands();
-        break;
-        case "library_cmd_showwebplaylist":
-        {
-          if (this.m_Context.m_Window.location.pathname ==
-              '/content/xul/sb-library-page.xul') {
-            // we're in the download library / inner playlist view
-            gBrowser.loadMediaList(gBrowser.webLibrary);
-          } else {
-            // we're in a web playlist / outer playlist view
-            gBrowser.mCurrentTab.switchToWebPlaylistView();
-          }
-        }
-        break;
-      }
-    }
-  },
-  
-  // The object registered with the sbIPlaylistCommandsManager interface acts 
-  // as a template for instances bound to specific playlist elements
-  duplicate: function()
-  {
-    var obj = {};
-    for ( var i in this )
-    {
-      obj[ i ] = this[ i ];
-    }
-    return obj;
-  },
-
-  initCommands: function(aHost) {},
-  shutdownCommands: function() {},
-  
-  setContext: function( context )
-  {
-    var playlist = context.playlist;
-    var window = context.window;
-
-    // Ah.  Sometimes, things are being secure.
-    if ( playlist && playlist.wrappedJSObject )
-      playlist = playlist.wrappedJSObject;
-    
-    if ( window && window.wrappedJSObject )
-      window = window.wrappedJSObject;
-    
-    this.m_Context.m_Playlist = playlist;
-    this.m_Context.m_Window = window;
-  },
-  
-  QueryInterface : function(aIID)
-  {
-    if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
-        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !aIID.equals(Components.interfaces.nsISupports)) 
-    {
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-    
-    return this;
-  }
-
-}; // SBDownloadCommands definition
+var SBWebPlaylistCommands = new PlaylistCommandsBuilder();
+var SBDownloadCommands = new PlaylistCommandsBuilder();
 
 function registerSpecialListCommands() {
-  window.removeEventListener("load", registerSpecialListCommands, false);
-  
   var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefBranch2);
+
+  var mgr = new sbIPlaylistCommandsManager();
+
   var downloadListGUID =
     prefs.getComplexValue("songbird.library.download",
                           Components.interfaces.nsISupportsString);
   var webListGUID =
     prefs.getComplexValue("songbird.library.web",
                           Components.interfaces.nsISupportsString);
+  
+  // Construct the web playlist commands
+  SBWebPlaylistCommands.appendPlaylistCommands(null, 
+                                               "library_cmdobj_play",
+                                               SBPlaylistCommand_Play);
+  SBWebPlaylistCommands.appendPlaylistCommands(null, 
+                                               "library_cmdobj_remove",
+                                               SBPlaylistCommand_Remove);
+  SBWebPlaylistCommands.appendPlaylistCommands(null, 
+                                               "library_cmdobj_download",
+                                               SBPlaylistCommand_Download);
+  SBWebPlaylistCommands.appendPlaylistCommands(null, 
+                                               "library_cmdobj_subscribe",
+                                               SBPlaylistCommand_Subscribe);
+  SBWebPlaylistCommands.appendPlaylistCommands(null, 
+                                               "library_cmdobj_addtoplaylist",
+                                               SBPlaylistCommand_AddToPlaylist);
+  SBWebPlaylistCommands.appendPlaylistCommands(null, 
+                                               "library_cmdobj_addtolibrary",
+                                               SBPlaylistCommand_AddToLibrary);
+  SBWebPlaylistCommands.appendPlaylistCommands(null, 
+                                               "library_cmdobj_copylocation",
+                                               SBPlaylistCommand_CopyTrackLocation);
+  SBWebPlaylistCommands.appendSeparator(null, "separator");
+  SBWebPlaylistCommands.appendPlaylistCommands(null, 
+                                               "library_cmdobj_showdlplaylist",
+                                               SBPlaylistCommand_ShowDownloadPlaylist);
 
-  var mgr = new sbIPlaylistCommandsManager();
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMANDS_WEBPLAYLIST, SBWebPlaylistCommands);
+
+  // Construct the download playlist commands
+  SBDownloadCommands.appendPlaylistCommands(null, 
+                                            "library_cmdobj_play",
+                                            SBPlaylistCommand_Play);
+  SBDownloadCommands.appendPlaylistCommands(null, 
+                                            "library_cmdobj_remove",
+                                            SBPlaylistCommand_Remove);
+  SBDownloadCommands.appendPlaylistCommands(null, 
+                                            "library_cmdobj_pauseresumedownload",
+                                            SBPlaylistCommand_PauseResumeDownload);
+  SBDownloadCommands.appendSeparator(null, "separator");
+  SBDownloadCommands.appendPlaylistCommands(null, 
+                                            "library_cmdobj_showwebplaylist",
+                                            SBPlaylistCommand_ShowWebPlaylist);
+
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMANDS_DOWNLOADPLAYLIST, SBDownloadCommands);
+
+  // Register the special lists commands
   mgr.registerPlaylistCommandsMediaItem(downloadListGUID, "",
                                           SBDownloadCommands);
-  mgr.registerPlaylistCommandsMediaItem(webListGUID, "",
-                                          SBWebPlaylistCommands);
-
-  window.addEventListener("unload", unregisterSpecialListCommands, false);
+  mgr.registerPlaylistCommandsMediaItem(webListGUID, 
+                                        "",
+                                        SBWebPlaylistCommands);
 }
 
 function unregisterSpecialListCommands() {
-  window.removeEventListener("unload", unregisterSpecialListCommands, false);
-  
   var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefBranch2);
   var downloadListGUID =
@@ -1051,13 +442,601 @@ function unregisterSpecialListCommands() {
                           Components.interfaces.nsISupportsString);
 
   var mgr = new sbIPlaylistCommandsManager();
+
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMANDS_WEBPLAYLIST, SBWebPlaylistCommands);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMANDS_DOWNLOADPLAYLIST, SBDownloadCommands);
+
   mgr.unregisterPlaylistCommandsMediaItem(downloadListGUID, "",
                                             SBDownloadCommands);
   mgr.unregisterPlaylistCommandsMediaItem(webListGUID, "",
                                             SBWebPlaylistCommands); 
 }
 
-window.addEventListener("load", registerSpecialListCommands, false);
+// Define various playlist commands, they will be exposed to the playlist commands
+// manager so that they can later be retrieved and concatenated into bigger
+// playlist commands objects.
+
+// play the selected track
+var SBPlaylistCommand_Play;
+// remove the selected track(s)
+var SBPlaylistCommand_Remove;
+// download the selected track(s)
+var SBPlaylistCommand_Download;
+// subscribe to the currently displayed site
+var SBPlaylistCommand_Subscribe;
+// add the selection to the library
+var SBPlaylistCommand_AddToLibrary;
+// copy the select track(s) location(s)
+var SBPlaylistCommand_CopyTrackLocation;
+// switch the outer playlist contaner to the download playlist
+var SBPlaylistCommand_ShowDownloadPlaylist;
+// switch the outer playlist contaner to the web playlist
+var SBPlaylistCommand_ShowWebPlaylist;
+// autoswitching pause/resume track download
+var SBPlaylistCommand_PauseResumeDownload;
+
+
+// Called when the play action is triggered
+function plCmd_Play_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  // if something is selected, trigger the play event on the playlist
+  if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
+    // Repurpose the command to act as a doubleclick
+    aContext.m_Playlist.sendPlayEvent();
+  }
+}
+
+// Called when the remove action is triggered
+function plCmd_Remove_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  // remove the selected tracks, if any
+  if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
+    aContext.m_Playlist.removeSelectedTracks();
+  }
+}
+
+// Called when the download action is triggered
+function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  try
+  {
+    if(aContext.m_Playlist.treeView.selectionCount) {
+      onBrowserTransfer(new SelectionUnwrapper
+                      (aContext.m_Playlist.treeView.selectedMediaItems), aContext.m_Window);
+    }
+    else {
+      var allItems = {
+        items: [],
+        onEnumerationBegin: function(aMediaList) {
+          return true;
+        },
+        onEnumeratedItem: function(aMediaList, aMediaItem) {
+          this.items.push(aMediaItem);
+          return true;
+        },
+        onEnumerationEnd: function(aMediaList, aResultCode) {
+          return;
+        }
+      };
+
+      aContext.m_Playlist.mediaList.enumerateAllItems(allItems, 
+        Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+      
+      var itemEnum = ArrayConverter.enumerator(allItems.items);
+      onBrowserTransfer(itemEnum, aContext.m_Window);
+    }
+    
+    // And show the download table in the chrome playlist if possible.
+    var browser = aContext.m_Window.gBrowser;
+    if (browser) browser.mCurrentTab.switchToDownloadView();
+  }
+  catch( err )          
+  {
+    alert( "plCmd_Download_TriggerCallback Error:" + err );
+  }
+}
+
+// Called when the subscribe action is triggered
+function plCmd_Subscribe_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  // Bring up the subscribe dialog with the web playlist url
+  // XXX this should instead extract the url from an #originPage property on the list
+  var browser = aContext.m_Window.gBrowser;
+  if (browser) {
+    SBSubscribe(null, browser.currentURI, aContext.m_Window); 
+  }
+}
+
+// Called when the "add to library" action is triggered
+function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var libraryManager =
+    Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+              .getService(Components.interfaces.sbILibraryManager);
+  var mediaList = libraryManager.mainLibrary;
+  
+  var treeView = aContext.m_Playlist.treeView;
+  var selectionCount = treeView.selectionCount;
+  
+  var unwrapper = new SelectionUnwrapper(treeView.selectedMediaItems);
+  
+  var oldLength = mediaList.length;
+  mediaList.addSome(unwrapper);
+
+  var itemsAdded = mediaList.length - oldLength;
+  aContext.m_Playlist._reportAddedTracks(itemsAdded,
+                                         selectionCount - itemsAdded, 
+                                         mediaList.name); 
+}
+
+// Called when the "copy track location" action is triggered
+function plCmd_CopyTrackLocation_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var clipboardtext = "";
+  var urlCol = "url";
+  var columnElem = aContext.m_Window.
+                   document.getAnonymousElementByAttribute(aContext.m_Playlist,
+                                                           "bind",
+                                                           SBProperties.contentURL);
+  var columnObj = aContext.m_Playlist.tree.columns.getColumnFor(columnElem);
+  var rangeCount = aContext.m_Playlist.mediaListView.treeView.selection.getRangeCount();
+  for (var i=0; i < rangeCount; i++) 
+  {
+    var start = {};
+    var end = {};
+    aContext.m_Playlist.mediaListView.treeView.selection.getRangeAt( i, start, end );
+    for( var c = start.value; c <= end.value; c++ )
+    {
+      if (c >= aContext.m_Playlist.mediaListView.treeView.rowCount) 
+      {
+        continue; 
+      }
+      
+      var val = aContext.m_Playlist.mediaListView.treeView.getCellText(c, columnObj);
+      if (clipboardtext != "") clipboardtext += "\n";
+      clipboardtext += val;
+    }
+  }
+
+  var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
+                            .getService(Components.interfaces.nsIClipboardHelper);
+  clipboard.copyString(clipboardtext);
+}
+
+// Called whne the "show download playlist" action is triggered
+function plCmd_ShowDownloadPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var browser = aContext.m_Window.gBrowser;
+  if (browser) {
+    if (aContext.m_Window.location.pathname ==
+        '/content/xul/sb-library-page.xul') {
+      // we're in the web library / inner playlist view
+      browser.loadMediaList(browser.downloadList);
+    } else {
+      // we're in a web playlist / outer playlist view
+      browser.mCurrentTab.switchToDownloadView();
+    } 
+  }
+}
+
+// Called whne the "show web playlist" action is triggered
+function plCmd_ShowWebPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var browser = aContext.m_Window.gBrowser;
+  if (browser) {
+    if (aContext.m_Window.location.pathname ==
+        '/content/xul/sb-library-page.xul') {
+      // we're in the download library / inner playlist view
+      browser.loadMediaList(browser.webLibrary);
+    } else {
+      // we're in a web playlist / outer playlist view
+      browser.mCurrentTab.switchToWebPlaylistView();
+    }
+  }
+}
+
+// Called when the pause/resume download action is triggered
+function plCmd_PauseResumeDownload_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var device = aContext.m_Commands.getProperty("m_Device");
+  var deviceState = device.getDeviceState('');
+  if ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOADING )
+  {
+    device.suspendTransfer('');
+  }
+  else if ( deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED )
+  {
+    device.resumeTransfer('');
+  }
+  // Since we changed state, update the command buttons.
+  aContext.m_Playlist.refreshCommands(); 
+}
+
+// Returns true when at least one track is selected in the playlist
+function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
+  return ( aContext.m_Playlist.tree.currentIndex != -1 );
+}
+
+// Returns true if the host is the shortcuts instantiator
+function plCmd_IsShortcutsInstantiator(aContext, aSubMenuId, aCommandId, aHost) {
+  return (aHost == "shortcuts");
+}
+
+// Returns true if the current playlist isn't the library
+function plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost) {
+  return (aContext.m_Playlist.description != "library" );
+}
+
+// Returns true if the conditions are ok for subscribing to a page
+function plCmd_CanSubscribe(aContext, aSubMenuId, aCommandId, aHost) {
+  return plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost) &&
+         plCmd_ContextHasBrowser(aContext, aSubMenuId, aCommandId, aHost);
+}
+
+// Returns true if the conditions are ok for adding tracks to the library
+function plCmd_CanAddToLibrary(aContext, aSubMenuId, aCommandId, aHost) {
+  return plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) &&
+         plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost);
+}
+
+// Returns true if a download is currently in progress (not paused)
+function plCmd_IsDownloading(aContext, aSubMenuId, aCommandId, aHost) {
+  var device = aContext.m_Commands.getProperty("m_Device");
+  var deviceState = device.getDeviceState('');
+  return (deviceState == Ci.sbIDeviceBase.STATE_DOWNLOADING);
+}
+
+// Returns true if a download is currently paused
+function plCmd_IsDownloadPaused(aContext, aSubMenuId, aCommandId, aHost) {
+  var device = aContext.m_Commands.getProperty("m_Device");
+  var deviceState = device.getDeviceState('');
+  return (deviceState == Ci.sbIDeviceBase.STATE_DOWNLOAD_PAUSED);
+}
+
+// Returns true if a download has been started, regardless of wether it has
+// been paused or not
+function plCmd_IsDownloadActive(aContext, aSubMenuId, aCommandId, aHost) {
+  return plCmd_IsDownloading(aContext, aSubMenuId, aCommandId, aHost) ||
+         plCmd_IsDownloadPaused(aContext, aSubMenuId, aCommandId, aHost);
+}
+
+// Returns true if a download is in progress or if there is not download that
+// has been started at all
+function plCmd_IsDownloadingOrNotActive(aContext, aSubMenuId, aCommandId, aHost) {
+  return plCmd_IsDownloading(aContext, aSubMenuId, aCommandId, aHost) ||
+         !plCmd_IsDownloadActive(aContext, aSubMenuId, aCommandId, aHost);
+}
+
+// Returns true if the supplied context contains a gBrowser object
+function plCmd_ContextHasBrowser(aContext, aSubMenuId, aCommandId, aHost) {
+  return (aContext.m_Window.gBrowser);
+}
+
+// ----------------------------------------------------------------------------
+// INIT
+// ----------------------------------------------------------------------------
+
+function initPlaylistCommands() {
+  window.removeEventListener("load", initPlaylistCommands, false);
+  
+  // Build playlist command actions
+
+  // --------------------------------------------------------------------------
+  // The PLAY button is made of two commands, one that is always there for
+  // all instantiators, the other that is only created by the shortcuts
+  // instantiator. This makes one toolbar button and menu item, and two
+  // shortcut keys.
+  // --------------------------------------------------------------------------
+  
+  SBPlaylistCommand_Play = new PlaylistCommandsBuilder();
+
+  // The first item, always created
+  SBPlaylistCommand_Play.appendAction(null, 
+                                      "library_cmd_play",
+                                      "&command.play",
+                                      "&command.tooltip.play",
+                                      plCmd_Play_TriggerCallback);
+  
+  SBPlaylistCommand_Play.setCommandShortcut(null,
+                                            "library_cmd_play",
+                                            "&command.shortcut.key.play",
+                                            "&command.shortcut.keycode.play",
+                                            "&command.shortcut.modifiers.play",
+                                            true);
+
+  SBPlaylistCommand_Play.setCommandEnabledCallback(null,
+                                                   "library_cmd_play",
+                                                   plCmd_IsAnyTrackSelected);
+
+  // The second item, only created by the keyboard shortcuts instantiator
+  SBPlaylistCommand_Play.appendAction(null, 
+                                      "library_cmd_play2",
+                                      "&command.play",
+                                      "&command.tooltip.play",
+                                      plCmd_Play_TriggerCallback);
+
+  SBPlaylistCommand_Play.setCommandShortcut(null,
+                                            "library_cmd_play2",
+                                            "&command.shortcut.key.altplay",
+                                            "&command.shortcut.keycode.altplay",
+                                            "&command.shortcut.modifiers.altplay",
+                                            true);
+
+  SBPlaylistCommand_Play.setCommandEnabledCallback(null,
+                                                   "library_cmd_play2",
+                                                   plCmd_IsAnyTrackSelected);
+
+  SBPlaylistCommand_Play.setCommandVisibleCallback(null,
+                                                   "library_cmd_play2",
+                                                   plCmd_IsShortcutsInstantiator);
+
+  // --------------------------------------------------------------------------
+  // The REMOVE button, like the play button, is made of two commands, one that 
+  // is always there for all instantiators, the other that is only created by 
+  // the shortcuts instantiator. This makes one toolbar button and menu item, 
+  // and two shortcut keys.
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_Remove = new PlaylistCommandsBuilder();
+
+  // The first item, always created
+  SBPlaylistCommand_Remove.appendAction(null, 
+                                        "library_cmd_remove",
+                                        "&command.remove",
+                                        "&command.tooltip.remove",
+                                        plCmd_Remove_TriggerCallback);
+  
+  SBPlaylistCommand_Remove.setCommandShortcut(null,
+                                              "library_cmd_remove",
+                                              "&command.shortcut.key.remove",
+                                              "&command.shortcut.keycode.remove",
+                                              "&command.shortcut.modifiers.remove",
+                                              true);
+
+  SBPlaylistCommand_Remove.setCommandEnabledCallback(null,
+                                                   "library_cmd_remove",
+                                                   plCmd_IsAnyTrackSelected);
+
+  // The second item, only created by the keyboard shortcuts instantiator
+  SBPlaylistCommand_Remove.appendAction(null, 
+                                      "library_cmd_remove2",
+                                      "&command.remove",
+                                      "&command.tooltip.remove",
+                                      plCmd_Remove_TriggerCallback);
+
+  SBPlaylistCommand_Remove.setCommandShortcut(null,
+                                            "library_cmd_remove2",
+                                            "&command.shortcut.key.altremove",
+                                            "&command.shortcut.keycode.altremove",
+                                            "&command.shortcut.modifiers.altremove",
+                                            true);
+
+  SBPlaylistCommand_Remove.setCommandEnabledCallback(null,
+                                                   "library_cmd_remove2",
+                                                   plCmd_IsAnyTrackSelected);
+
+  SBPlaylistCommand_Remove.setCommandVisibleCallback(null,
+                                                   "library_cmd_remove2",
+                                                   plCmd_IsShortcutsInstantiator);
+  
+  // --------------------------------------------------------------------------
+  // The DOWNLOAD button
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_Download = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommand_Download.appendAction(null, 
+                                        "library_cmd_download",
+                                        "&command.download",
+                                        "&command.tooltip.download",
+                                        plCmd_Download_TriggerCallback);
+  
+  SBPlaylistCommand_Download.setCommandShortcut(null,
+                                              "library_cmd_download",
+                                              "&command.shortcut.key.download",
+                                              "&command.shortcut.keycode.download",
+                                              "&command.shortcut.modifiers.download",
+                                              true);
+
+  SBPlaylistCommand_Download.setCommandEnabledCallback(null,
+                                                   "library_cmd_download",
+                                                   plCmd_IsAnyTrackSelected);
+  
+  // --------------------------------------------------------------------------
+  // The SUBSCRIBE button
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_Subscribe = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommand_Subscribe.appendAction(null, 
+                                           "library_cmd_subscribe",
+                                           "&command.subscribe",
+                                           "&command.tooltip.subscribe",
+                                           plCmd_Subscribe_TriggerCallback);
+
+  SBPlaylistCommand_Subscribe.setCommandShortcut(null,
+                                                 "library_cmd_subscribe",
+                                                 "&command.shortcut.key.subscribe",
+                                                 "&command.shortcut.keycode.subscribe",
+                                                 "&command.shortcut.modifiers.subscribe",
+                                                 true);
+
+  SBPlaylistCommand_Subscribe.setCommandEnabledCallback(null,
+                                                   "library_cmd_subscribe",
+                                                   plCmd_CanSubscribe);
+
+  // --------------------------------------------------------------------------
+  // The ADDTOLIBRARY button
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_AddToLibrary = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommand_AddToLibrary.appendAction(null, 
+                                              "library_cmd_addtolibrary",
+                                              "&command.addtolibrary",
+                                              "&command.tooltip.addtolibrary",
+                                              plCmd_AddToLibrary_TriggerCallback);
+
+  SBPlaylistCommand_AddToLibrary.setCommandShortcut(null,
+                                                    "library_cmd_addtolibrary",
+                                                    "&command.shortcut.key.addtolibrary",
+                                                    "&command.shortcut.keycode.addtolibrary",
+                                                    "&command.shortcut.modifiers.addtolibrary",
+                                                    true);
+
+  SBPlaylistCommand_AddToLibrary.setCommandEnabledCallback(null,
+                                                           "library_cmd_addtolibrary",
+                                                           plCmd_CanAddToLibrary);
+
+  // --------------------------------------------------------------------------
+  // The COPY TRACK LOCATION button
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_CopyTrackLocation = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommand_CopyTrackLocation.appendAction(null, 
+                                              "library_cmd_copylocation",
+                                              "&command.copylocation",
+                                              "&command.tooltip.copylocation",
+                                              plCmd_CopyTrackLocation_TriggerCallback);
+
+  SBPlaylistCommand_CopyTrackLocation.setCommandShortcut(null,
+                                                    "library_cmd_copylocation",
+                                                    "&command.shortcut.key.copylocation",
+                                                    "&command.shortcut.keycode.copylocation",
+                                                    "&command.shortcut.modifiers.copylocation",
+                                                    true);
+
+  SBPlaylistCommand_CopyTrackLocation.setCommandEnabledCallback(null,
+                                                                "library_cmd_copylocation",
+                                                                plCmd_IsAnyTrackSelected);
+
+  // --------------------------------------------------------------------------
+  // The SHOW DOWNLOAD PLAYLIST button
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_ShowDownloadPlaylist = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommand_ShowDownloadPlaylist.appendAction(null, 
+                                              "library_cmd_showdlplaylist",
+                                              "&command.showdlplaylist",
+                                              "&command.tooltip.showdlplaylist",
+                                              plCmd_ShowDownloadPlaylist_TriggerCallback);
+
+  SBPlaylistCommand_ShowDownloadPlaylist.setCommandShortcut(null,
+                                                    "library_cmd_showdlplaylist",
+                                                    "&command.shortcut.key.showdlplaylist",
+                                                    "&command.shortcut.keycode.showdlplaylist",
+                                                    "&command.shortcut.modifiers.showdlplaylist",
+                                                    true);
+
+  SBPlaylistCommand_ShowDownloadPlaylist.setCommandVisibleCallback(null,
+                                                                   "library_cmd_showdlplaylist",
+                                                                   plCmd_ContextHasBrowser);
+
+  // --------------------------------------------------------------------------
+  // The PAUSE/RESUME DOWNLOAD button
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_PauseResumeDownload = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommand_PauseResumeDownload.appendAction(null, 
+                                              "library_cmd_pause",
+                                              "&command.pausedl",
+                                              "&command.tooltip.pause",
+                                              plCmd_PauseResumeDownload_TriggerCallback);
+
+  SBPlaylistCommand_PauseResumeDownload.setCommandShortcut(null,
+                                                    "library_cmd_pause",
+                                                    "&command.shortcut.key.pause",
+                                                    "&command.shortcut.keycode.pause",
+                                                    "&command.shortcut.modifiers.pause",
+                                                    true);
+
+  SBPlaylistCommand_PauseResumeDownload.setCommandVisibleCallback(null,
+                                                   "library_cmd_pause",
+                                                   plCmd_IsDownloadingOrNotActive);
+
+  SBPlaylistCommand_PauseResumeDownload.setCommandEnabledCallback(null,
+                                                   "library_cmd_pause",
+                                                   plCmd_IsDownloadActive);
+
+  SBPlaylistCommand_PauseResumeDownload.appendAction(null, 
+                                              "library_cmd_resume",
+                                              "&command.resumedl",
+                                              "&command.tooltip.resume",
+                                              plCmd_PauseResumeDownload_TriggerCallback);
+
+  SBPlaylistCommand_PauseResumeDownload.setCommandShortcut(null,
+                                                    "library_cmd_resume",
+                                                    "&command.shortcut.key.resume",
+                                                    "&command.shortcut.keycode.resume",
+                                                    "&command.shortcut.modifiers.resume",
+                                                    true);
+
+  SBPlaylistCommand_PauseResumeDownload.setCommandVisibleCallback(null,
+                                                   "library_cmd_resume",
+                                                   plCmd_IsDownloadPaused);
+
+  // --------------------------------------------------------------------------
+  // The SHOW WEB PLAYLIST button
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_ShowWebPlaylist = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommand_ShowWebPlaylist.appendAction(null, 
+                                                 "library_cmd_showwebplaylist",
+                                                 "&command.showwebplaylist",
+                                                 "&command.tooltip.showwebplaylist",
+                                                plCmd_ShowWebPlaylist_TriggerCallback);
+
+  SBPlaylistCommand_ShowWebPlaylist.setCommandShortcut(null,
+                                                    "library_cmd_showwebplaylist",
+                                                    "&command.shortcut.key.showwebplaylist",
+                                                    "&command.shortcut.keycode.showwebplaylist",
+                                                    "&command.shortcut.modifiers.showwebplaylist",
+                                                    true);
+
+  SBPlaylistCommand_ShowWebPlaylist.setCommandVisibleCallback(null,
+                                                              "library_cmd_showwebplaylist",
+                                                              plCmd_ContextHasBrowser);
+
+  // --------------------------------------------------------------------------
+  
+  // Expose playlist commands
+
+  var mgr = new sbIPlaylistCommandsManager();
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_PLAY, SBPlaylistCommand_Play);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_REMOVE, SBPlaylistCommand_Remove);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_DOWNLOAD, SBPlaylistCommand_Download);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_SUBSCRIBE, SBPlaylistCommand_Subscribe);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_ADDTOLIBRARY, SBPlaylistCommand_AddToLibrary);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_COPYTRACKLOCATION, SBPlaylistCommand_CopyTrackLocation);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_SHOWDOWNLOADPLAYLIST, SBPlaylistCommand_ShowDownloadPlaylist);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_SHOWWEBPLAYLIST, SBPlaylistCommand_ShowWebPlaylist);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_PAUSERESUMEDOWNLOAD, SBPlaylistCommand_PauseResumeDownload);
+  
+  registerSpecialListCommands();
+  window.addEventListener("unload", shutdownPlaylistCommands, false);
+}
+
+// ----------------------------------------------------------------------------
+// SHUTDOWN
+// ----------------------------------------------------------------------------
+
+function shutdownPlaylistCommands() {
+  window.removeEventListener("unload", shutdownPlaylistCommands, false);
+
+  // Un-expose playlist commands
+  var mgr = new sbIPlaylistCommandsManager();
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_PLAY, SBPlaylistCommand_Play);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_REMOVE, SBPlaylistCommand_Remove);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_DOWNLOAD, SBPlaylistCommand_Download);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_SUBSCRIBE, SBPlaylistCommand_Subscribe);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_ADDTOLIBRARY, SBPlaylistCommand_AddToLibrary);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_COPYTRACKLOCATION, SBPlaylistCommand_CopyTrackLocation);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_SHOWDOWNLOADPLAYLIST, SBPlaylistCommand_ShowDownloadPlaylist);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_SHOWWEBPLAYLIST, SBPlaylistCommand_ShowWebPlaylist);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_PAUSERESUMEDOWNLOAD, SBPlaylistCommand_PauseResumeDownload);
+
+  unregisterSpecialListCommands();
+}
+
+
+window.addEventListener("load", initPlaylistCommands, false);
 
 try
 {
@@ -1072,7 +1051,7 @@ try
     {
       var downloadDevice =
         deviceManager.getDeviceByCategory(downloadCategory);
-      SBDownloadCommands.m_Device = downloadDevice;
+      SBDownloadCommands.setProperty("m_Device", downloadDevice);
     }
   }
 } catch(e) {}
@@ -1168,6 +1147,18 @@ var SBDefaultCommands =
     ADDTOPLAYLIST_MENU_MODIFIERS,
     "&command.shortcut.modifiers.burntocd",
     "&command.shortcut.modifiers.device"
+  ),
+  
+  m_PlaylistCommands: new Array
+  (
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
   ),
 
 
@@ -1325,12 +1316,17 @@ var SBDefaultCommands =
     return true;
   },
 
-  onCommand: function( id, value, host )
+  getCommandSubObject: function ( aSubMenu, aIndex, aHost )
+  {
+    return null;
+  },
+
+  onCommand: function( aSubMenu, aIndex, aHost, id, value )
   {
     if ( id )
     {
       // Was it from the toolbarbutton?
-      var tbb = ( host == "toolbar" );
+      var tbb = ( aHost == "toolbar" );
       switch( id )
       {
         case "library_cmd_play":
@@ -1480,6 +1476,12 @@ var SBDefaultServiceCommands =
     "&command.playlist.shortcut.modifiers.rename"
   ),
 
+  m_PlaylistCommands: new Array
+  (
+    null,
+    null
+  ),
+
 
 
   getNumCommands: function( aSubmenu, aHost )
@@ -1604,7 +1606,12 @@ var SBDefaultServiceCommands =
     return true;
   },
 
-  onCommand: function( id, value, host )
+  getCommandSubObject: function ( aSubMenu, aIndex, aHost )
+  {
+    return null;
+  },
+
+  onCommand: function( aSubMenu, aIndex, aHost, id, value )
   {
     if ( id )
     {

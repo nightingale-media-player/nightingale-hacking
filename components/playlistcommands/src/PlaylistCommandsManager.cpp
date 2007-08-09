@@ -247,3 +247,39 @@ CPlaylistCommandsManager::GetPlaylistCommandsMediaItem(const nsAString      &aCo
 {
   return GetPlaylistCommands(&m_MediaItemMap, aContextGUID, aPlaylistType, _retval);
 }
+
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+CPlaylistCommandsManager::Publish(const nsAString     &aCommandsGUID,
+                                  sbIPlaylistCommands *aCommandObj)
+{
+  nsString guid(aCommandsGUID);
+  if (m_publishedCommands[guid]) return NS_ERROR_FAILURE;
+  m_publishedCommands[guid] = aCommandObj;
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+CPlaylistCommandsManager::Withdraw(const nsAString     &aCommandsGUID,
+                                   sbIPlaylistCommands *aCommandObj)
+{
+  nsString guid(aCommandsGUID);
+  if (m_publishedCommands[guid] != aCommandObj) return NS_ERROR_FAILURE;
+  m_publishedCommands.erase(guid);
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+CPlaylistCommandsManager::Request(const nsAString      &aCommandsGUID,
+                                  sbIPlaylistCommands  **_retval)
+{
+  nsString guid(aCommandsGUID);
+  sbIPlaylistCommands *cmds;
+  m_publishedCommands[guid]->Duplicate(&cmds);
+  *_retval = cmds;
+  return NS_OK;
+}
+

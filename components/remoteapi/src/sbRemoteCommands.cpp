@@ -424,6 +424,16 @@ sbRemoteCommands::GetCommandChoiceItem( const nsAString &aChoiceMenu,
 }
 
 NS_IMETHODIMP
+sbRemoteCommands::GetCommandSubObject( const nsAString &aSubMenu,
+                                      PRInt32 aIndex,
+                                      const nsAString &aHost,
+                                      sbIPlaylistCommands **_retval)
+{
+  *_retval = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbRemoteCommands::InstantiateCustomCommand( nsIDOMDocument *aDocument,
                                             const nsAString &aID,
                                             const nsAString &aHost,
@@ -444,14 +454,18 @@ sbRemoteCommands::RefreshCustomCommand( nsIDOMNode *aCustomCommandElement,
 
 
 NS_IMETHODIMP
-sbRemoteCommands::OnCommand( const nsAString &aID,
-                             const nsAString &aValue,
-                             const nsAString &aHost )
+sbRemoteCommands::OnCommand( const nsAString &aSubMenu, 
+                             const PRInt32 aIndex,
+                             const nsAString &aHost,
+                             const nsAString &aID,
+                             const nsAString &aValue)
 {
   LOG(( "sbRemoteCommands::OnCommand(%s %s %s)",
+        NS_LossyConvertUTF16toASCII(aSubMenu).get(),
+        NS_LossyConvertUTF16toASCII(aIndex).get(),
+        NS_LossyConvertUTF16toASCII(aHost).get(),
         NS_LossyConvertUTF16toASCII(aID).get(),
-        NS_LossyConvertUTF16toASCII(aValue).get(),
-        NS_LossyConvertUTF16toASCII(aHost).get() ));
+        NS_LossyConvertUTF16toASCII(aValue).get()));
 
   nsresult rv;
   nsCOMPtr<sbIRemotePlayer> owner( do_QueryReferent( mWeakOwner, &rv ) );
@@ -468,6 +482,25 @@ sbRemoteCommands::InitCommands( const nsAString &aHost )
 NS_IMETHODIMP
 sbRemoteCommands::ShutdownCommands( )
 {
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::SetProperty(const nsAString &aPropertyName,
+                              const nsAString &aValue)
+{
+  nsString prop(aPropertyName);
+  nsString value(aValue);
+  mProperties[prop] = value;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::GetProperty(const nsAString &aPropertyName,
+                              nsAString &_retval)
+{
+  nsString prop(aPropertyName);
+  _retval = mProperties[prop];
   return NS_OK;
 }
 

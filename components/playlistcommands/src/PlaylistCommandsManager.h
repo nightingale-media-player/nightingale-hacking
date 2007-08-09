@@ -70,19 +70,20 @@ private:
   class commandmap_t  : public std::map<nsString, commandlist_t > {};
   commandmap_t m_MediaListMap;
   commandmap_t m_MediaItemMap;
+  std::map<nsString, nsCOMPtr<sbIPlaylistCommands> > m_publishedCommands;
 
   NS_IMETHODIMP RegisterPlaylistCommands(commandmap_t *map,
                                          const nsAString     &aContextGUID,
                                          const nsAString     &aPlaylistType,
                                          sbIPlaylistCommands *aCommandObj);
-NS_IMETHODIMP UnregisterPlaylistCommands(commandmap_t *map,
+  NS_IMETHODIMP UnregisterPlaylistCommands(commandmap_t *map,
                                          const nsAString     &aContextGUID,
                                          const nsAString     &aPlaylistType,
                                          sbIPlaylistCommands *aCommandObj);
-NS_IMETHODIMP GetPlaylistCommands(commandmap_t *map,
-                                  const nsAString      &aContextGUID,
-                                  const nsAString      &aPlaylistType,
-                                  nsISimpleEnumerator  **_retval);
+  NS_IMETHODIMP GetPlaylistCommands(commandmap_t *map,
+                                    const nsAString      &aContextGUID,
+                                    const nsAString      &aPlaylistType,
+                                    nsISimpleEnumerator  **_retval);
 
 };
 

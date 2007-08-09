@@ -351,7 +351,12 @@ try
       return playlist.mediaListView.treeView.selectionCount > 0;
     },
     
-    onCommand: function( id, value, host )
+    getCommandSubObject: function(aSubMenu, aIndex, aHost)
+    {
+      return null;
+    },
+    
+    onCommand: function( submenuid, index, host, id, value )
     {
       // ADDTOPLAYLIST
       if (this.m_addToPlaylist.handleCommand(id)) return;

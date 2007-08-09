@@ -2135,6 +2135,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\kPlaylistCommands.js">
+				</File>
+				<File
 					RelativePath=".\content\scripts\language_scan.js">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -2370,6 +2373,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 "
 							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\playlistCommandsBuilder.js">
 				</File>
 				<File
 					RelativePath=".\content\scripts\restartbox.js">
