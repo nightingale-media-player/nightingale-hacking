@@ -1,30 +1,20 @@
 Index: Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/Makefile.in,v
-retrieving revision 1.385
-diff -u -8 -p -r1.385 Makefile.in
---- Makefile.in	9 Jul 2007 21:37:28 -0000	1.385
-+++ Makefile.in	2 Aug 2007 20:37:46 -0000
-@@ -134,34 +134,34 @@ ifdef MOZ_PROFILE
- 	/bin/find $(DIST) -name "*.dbg" -exec mv {} $(DIST)/$(BUILDID) \;
- endif # MOZ_PROFILE
- endif # MOZILLA_OFFICIAL
- endif # WINNT
-
+retrieving revision 1.387
+diff -u -p -r1.387 Makefile.in
+--- Makefile.in	8 Aug 2007 15:19:57 -0000	1.387
++++ Makefile.in	10 Aug 2007 21:59:16 -0000
+@@ -134,7 +134,7 @@ endif # WINNT
  ifeq ($(OS_ARCH),WINNT)
  # we want to copy PDB files on Windows
  MAKE_SYM_STORE_ARGS := -c
--DUMP_SYMS_BIN := $(topsrcdir)/toolkit/airbag/tools/win32/dump_syms.exe
-+DUMP_SYMS_BIN ?= $(topsrcdir)/toolkit/airbag/tools/win32/dump_syms.exe
+-DUMP_SYMS_BIN := $(topsrcdir)/toolkit/crashreporter/tools/win32/dump_syms.exe
++DUMP_SYMS_BIN ?= $(topsrcdir)/toolkit/crashreporter/tools/win32/dump_syms.exe
  # PDB files don't get moved to dist, so we need to scan the whole objdir
  MAKE_SYM_STORE_PATH := .
  endif
- ifeq ($(OS_ARCH),Darwin)
- # need to pass arch flags for universal builds
- ifdef UNIVERSAL_BINARY
- MAKE_SYM_STORE_ARGS := -a "ppc i386" --vcs-info
- MAKE_SYM_STORE_PATH := $(DIST)/universal
- else
+@@ -147,11 +147,11 @@ else
  MAKE_SYM_STORE_ARGS := -a $(OS_TEST) --vcs-info
  MAKE_SYM_STORE_PATH := $(DIST)/bin
  endif
@@ -37,9 +27,4 @@ diff -u -8 -p -r1.385 Makefile.in
 +DUMP_SYMS_BIN ?= $(DIST)/host/bin/dump_syms
  MAKE_SYM_STORE_PATH := $(DIST)/bin
  endif
-
- ifdef MOZ_SYMBOLS_EXTRA_BUILDID
- EXTRA_BUILDID := -$(MOZ_SYMBOLS_EXTRA_BUILDID)
- endif
-
- buildsymbols:
+ 
