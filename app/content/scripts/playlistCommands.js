@@ -36,333 +36,12 @@ var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cr = Components.results;
 
-function SelectionUnwrapper(selection) {
-  this._selection = selection;
-}
-SelectionUnwrapper.prototype = {
-  _selection: null,
-  
-  hasMoreElements : function() {
-    return this._selection.hasMoreElements();
-  },
-  
-  getNext : function() {
-    return this._selection.getNext().mediaItem;
-  },
-  
-  QueryInterface : function(iid) {
-    if (iid.equals(Ci.nsISimpleEnumerator) ||
-        iid.equals(Ci.nsISupports))
-      return this;
-    throw Cr.NS_NOINTERFACE;
-  }
-}
+// The house for the playlist commands objects.
 
-// ----------------------------------------------------------------------------
-// The "Add to playlist" dynamic command object
-// ----------------------------------------------------------------------------
-var SBPlaylistCommand_AddToPlaylist = 
-{
-  m_Context: {
-    m_Playlist: null,
-    m_Window: null
-  },
-
-  m_addToPlaylist: null,
-  
-  m_root_commands :
-  {
-    m_Types: new Array
-    (
-      ADDTOPLAYLIST_MENU_TYPE
-    ),
-
-    m_Ids: new Array
-    (
-      ADDTOPLAYLIST_MENU_ID
-    ),
-    
-    m_Names: new Array
-    (
-      ADDTOPLAYLIST_MENU_NAME
-    ),
-    
-    m_Tooltips: new Array
-    (
-      ADDTOPLAYLIST_MENU_TOOLTIP
-    ),
-    
-    m_Keys: new Array
-    (
-      ADDTOPLAYLIST_MENU_KEY
-    ),
-
-    m_Keycodes: new Array
-    (
-      ADDTOPLAYLIST_MENU_KEYCODE
-    ),
-
-    m_Modifiers: new Array
-    (
-      ADDTOPLAYLIST_MENU_MODIFIERS
-    ),
-
-    m_PlaylistCommands: new Array
-    (
-      null
-    )
-  },
-
-  _getMenu: function(aSubMenu)
-  {
-    var cmds;
-    
-    cmds = this.m_addToPlaylist.handleGetMenu(aSubMenu);
-    if (cmds) return cmds;
-    
-    switch (aSubMenu) {
-      default:
-        cmds = this.m_root_commands;
-        break;
-    }
-    return cmds;
-  },
-
-  getNumCommands: function( aSubMenu, aHost )
-  {
-    var cmds = this._getMenu(aSubMenu);
-    return cmds.m_Ids.length;
-  },
-
-  getCommandId: function( aSubMenu, aIndex, aHost )
-  {
-    var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Ids.length ) return "";
-    return cmds.m_Ids[ aIndex ];
-  },
-  
-  getCommandType: function( aSubMenu, aIndex, aHost )
-  {
-    var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Ids.length ) return "";
-    return cmds.m_Types[ aIndex ];
-  },
-
-  getCommandText: function( aSubMenu, aIndex, aHost )
-  {
-    var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Names.length ) return "";
-    return cmds.m_Names[ aIndex ];
-  },
-
-  getCommandFlex: function( aSubMenu, aIndex, aHost )
-  {
-    var cmds = this._getMenu(aSubMenu);
-    if ( cmds.m_Types[ aIndex ] == "separator" ) return 1;
-    return 0;
-  },
-
-  getCommandToolTipText: function( aSubMenu, aIndex, aHost )
-  {
-    var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Tooltips.length ) return "";
-    return cmds.m_Tooltips[ aIndex ];
-  },
-
-  getCommandValue: function( aSubMenu, aIndex, aHost )
-  {
-  },
-
-  instantiateCustomCommand: function( aDocument, aId, aHost ) 
-  {
-    return null;
-  },
-
-  refreshCustomCommand: function( aElement, aId, aHost ) 
-  {
-  },
-
-  getCommandVisible: function( aSubMenu, aIndex, aHost )
-  {
-    return true;
-  },
-
-  getCommandFlag: function( aSubmenu, aIndex, aHost )
-  {
-    return false;
-  },
-
-  getCommandChoiceItem: function( aChoiceMenu, aHost )
-  {
-    return "";
-  },
-
-  getCommandEnabled: function( aSubMenu, aIndex, aHost )
-  {
-    return (this.m_Context.m_Playlist.tree.currentIndex != -1);
-  },
-
-  getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
-  {
-    var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Modifiers.length ) return "";
-    return cmds.m_Modifiers[ aIndex ];
-  },
-
-  getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
-  {
-    var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Keys.length ) return "";
-    return cmds.m_Keys[ aIndex ];
-  },
-
-  getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
-  {
-    var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_Keycodes.length ) return "";
-    return cmds.m_Keycodes[ aIndex ];
-  },
-
-  getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
-  {
-    return true;
-  },
-
-  getCommandSubObject: function ( aSubMenu, aIndex, aHost )
-  {
-    var cmds = this._getMenu(aSubMenu);
-    if ( aIndex >= cmds.m_PlaylistCommands.length ) return null;
-    return cmds.m_PlaylistCommands[ aIndex ];
-  },
-
-  onCommand: function( aSubMenu, aIndex, aHost, id, value )
-  {
-    if ( id )
-    {
-      // ADDTOPLAYLIST
-      if (this.m_addToPlaylist.handleCommand(id)) return;
-      
-      // ...
-    }
-  },
-  
-  // The object registered with the sbIPlaylistCommandsManager interface acts 
-  // as a template for instances bound to specific playlist elements
-  duplicate: function()
-  {
-    var obj = {};
-    for ( var i in this )
-    {
-      obj[ i ] = this[ i ];
-    }
-    return obj;
-  },
-
-  initCommands: function(aHost) { 
-    this.m_addToPlaylist = new addToPlaylistHelper(); 
-    this.m_addToPlaylist.init(this); 
-  },
-  
-  shutdownCommands: function() { 
-    if (!this.m_addToPlaylist) {
-      dump("this.m_addToPlaylist is null in SBPlaylistCommand_AddToPlaylist ?!!\n");
-      return;
-    }
-    this.m_addToPlaylist.shutdown(); 
-    this.m_addToPlaylist = null;
-  },
-  
-  setContext: function( context )
-  {
-    var playlist = context.playlist;
-    var window = context.window;
-    
-    // Ah.  Sometimes, things are being secure.
-    
-    if ( playlist && playlist.wrappedJSObject )
-      playlist = playlist.wrappedJSObject;
-    
-    if ( window && window.wrappedJSObject )
-      window = window.wrappedJSObject;
-    
-    this.m_Context.m_Playlist = playlist;
-    this.m_Context.m_Window = window;
-  },
-  
-  QueryInterface : function(aIID)
-  {
-    if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
-        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !aIID.equals(Components.interfaces.nsISupports)) 
-    {
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-    
-    return this;
-  }
-}; // SBPlaylistCommand_AddToPlaylist declaration
-
-function onBrowserTransfer(mediaItems, parentWindow)
-{
-    try
-    {
-        deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
-                                    getService(Components.interfaces.sbIDeviceManager);
-        if (deviceManager)
-        {
-            var downloadCategory = 'Songbird Download Device';
-            if (deviceManager.hasDeviceForCategory(downloadCategory))
-            {
-                var downloadDevice =
-                  deviceManager.getDeviceByCategory(downloadCategory);
-                
-                // Make a magic data object to get passed to the dialog
-                var download_data = new Object();
-                download_data.retval = "";
-                download_data.value = SBDataGetStringValue( "download.folder" );
-                
-                if ( ( SBDataGetIntValue( "download.always" ) == 1 ) && ( download_data.value.length > 0 ) )
-                {
-                  download_data.retval = "ok";
-                }
-                else
-                {
-                  // Open the window
-                  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,centerscreen", download_data, parentWindow ); 
-                }
-
-                // Pick download destination
-                if ( ( download_data.retval == "ok" ) && ( download_data.value.length > 0 ) )
-                {
-                  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                        .getService(Components.interfaces.nsIPrefBranch2);
-                  var downloadListGUID =
-                    prefs.getComplexValue("songbird.library.download",
-                                          Components.interfaces.nsISupportsString);
-                  
-                  var libraryManager =
-                    Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                              .getService(Components.interfaces.sbILibraryManager);
-                  var downloadList = libraryManager.mainLibrary.getMediaItem(downloadListGUID);
-                  
-                  //XXXAus: This can be changed to use SB_AddItems(mediaItems, mainLibrary, true)
-                  //when bug #3271 is fixed.
-                  downloadList.addSome(mediaItems);
-                }
-            }
-        }
-    }
-    
-    catch ( err )
-    {
-        alert( "onBrowserTransfer: " + err );
-    }
-}
-
-// The house for the web playlist and download commands objects.
-
+var SBDefaultCommands = new PlaylistCommandsBuilder();
 var SBWebPlaylistCommands = new PlaylistCommandsBuilder();
 var SBDownloadCommands = new PlaylistCommandsBuilder();
+var SBServiceTreeDefaultCommands = new PlaylistCommandsBuilder();
 
 function registerSpecialListCommands() {
   var prefs = Components.classes["@mozilla.org/preferences-service;1"]
@@ -376,7 +55,30 @@ function registerSpecialListCommands() {
   var webListGUID =
     prefs.getComplexValue("songbird.library.web",
                           Components.interfaces.nsISupportsString);
+
+  // Construct the main library commands
+
+  SBDefaultCommands.appendPlaylistCommands(null, 
+                                           "library_cmdobj_play",
+                                           SBPlaylistCommand_Play);
+  SBDefaultCommands.appendPlaylistCommands(null, 
+                                           "library_cmdobj_remove",
+                                           SBPlaylistCommand_Remove);
+  SBDefaultCommands.appendPlaylistCommands(null, 
+                                           "library_cmdobj_edit",
+                                           SBPlaylistCommand_Edit);
+  SBDefaultCommands.appendPlaylistCommands(null, 
+                                           "library_cmdobj_addtoplaylist",
+                                           SBPlaylistCommand_AddToPlaylist);
+  SBDefaultCommands.appendPlaylistCommands(null, 
+                                           "library_cmdobj_burntocd",
+                                           SBPlaylistCommand_BurnToCD);
+  SBDefaultCommands.appendPlaylistCommands(null, 
+                                           "library_cmdobj_device",
+                                           SBPlaylistCommand_CopyToDevice);
   
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_DEFAULT, SBDefaultCommands);
+
   // Construct the web playlist commands
   SBWebPlaylistCommands.appendPlaylistCommands(null, 
                                                "library_cmdobj_play",
@@ -404,7 +106,7 @@ function registerSpecialListCommands() {
                                                "library_cmdobj_showdlplaylist",
                                                SBPlaylistCommand_ShowDownloadPlaylist);
 
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMANDS_WEBPLAYLIST, SBWebPlaylistCommands);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_WEBPLAYLIST, SBWebPlaylistCommands);
 
   // Construct the download playlist commands
   SBDownloadCommands.appendPlaylistCommands(null, 
@@ -421,7 +123,7 @@ function registerSpecialListCommands() {
                                             "library_cmdobj_showwebplaylist",
                                             SBPlaylistCommand_ShowWebPlaylist);
 
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMANDS_DOWNLOADPLAYLIST, SBDownloadCommands);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_DOWNLOADPLAYLIST, SBDownloadCommands);
 
   // Register the special lists commands
   mgr.registerPlaylistCommandsMediaItem(downloadListGUID, "",
@@ -443,8 +145,9 @@ function unregisterSpecialListCommands() {
 
   var mgr = new sbIPlaylistCommandsManager();
 
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMANDS_WEBPLAYLIST, SBWebPlaylistCommands);
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMANDS_DOWNLOADPLAYLIST, SBDownloadCommands);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_DEFAULT, SBDefaultCommands);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_WEBPLAYLIST, SBWebPlaylistCommands);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_DOWNLOADPLAYLIST, SBDownloadCommands);
 
   mgr.unregisterPlaylistCommandsMediaItem(downloadListGUID, "",
                                             SBDownloadCommands);
@@ -460,6 +163,8 @@ function unregisterSpecialListCommands() {
 var SBPlaylistCommand_Play;
 // remove the selected track(s)
 var SBPlaylistCommand_Remove;
+// edit the selected track(s)
+var SBPlaylistCommand_Edit;
 // download the selected track(s)
 var SBPlaylistCommand_Download;
 // subscribe to the currently displayed site
@@ -474,7 +179,15 @@ var SBPlaylistCommand_ShowDownloadPlaylist;
 var SBPlaylistCommand_ShowWebPlaylist;
 // autoswitching pause/resume track download
 var SBPlaylistCommand_PauseResumeDownload;
+// burn selected tracks to cd
+var SBPlaylistCommand_BurnToCD;
+// copy selected tracks to device
+var SBPlaylistCommand_CopyToDevice;
 
+// remove the selected playlist
+var SBPlaylistCommandList_Remove;
+// rename the selected playlist
+var SBPlaylistCommandList_Rename;
 
 // Called when the play action is triggered
 function plCmd_Play_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
@@ -482,6 +195,21 @@ function plCmd_Play_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
     // Repurpose the command to act as a doubleclick
     aContext.m_Playlist.sendPlayEvent();
+  }
+}
+
+// Called when the edit action is triggered
+function plCmd_Edit_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
+    if ( plCmd_IsToolbarInstantiator(aContext, aSubMenuId, aCommandId, aHost) || 
+         aContext.m_Playlist.mediaListView.treeView.selectionCount > 1 ) {
+      // Trigger the edit event on the playlist, this will spawn
+      // the multiple tracks editor
+      aContext.m_Playlist.sendEditorEvent();
+    } else {
+      // Edit the context cell
+      aContext.m_Playlist.startCellEditing();
+    }
   }
 }
 
@@ -643,6 +371,63 @@ function plCmd_PauseResumeDownload_TriggerCallback(aContext, aSubMenuId, aComman
   aContext.m_Playlist.refreshCommands(); 
 }
 
+// Called when the "burn to cd" action is triggered
+function plCmd_BurnToCD_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  // if something is selected, trigger the burn event on the playlist
+  if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
+    aContext.m_Playlist.sendBurnToCDEvent();
+  }
+}
+
+// Called when the "copy to device" action is triggered
+function plCmd_CopyToDevice_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  // if something is selected, trigger the burn event on the playlist
+  if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
+    //XXX not implemented
+    //aContext.m_Playlist.sendCopyToDeviceEvent();
+  }
+}
+
+// Called when the "remove playlist" action is triggered 
+function plCmd_RemoveList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  aContext.m_Medialist.library.remove(aContext.m_Medialist);
+}
+
+// Called when the "remove playlist" action is triggered 
+function plCmd_RenameList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var servicePane = aContext.m_Window.gServicePane;
+  // If we have a servicetree, tell it to make the new playlist node editable
+  if (servicePane) {
+    // Ask the library service pane provider to suggest where
+    // a new playlist should be created
+    var librarySPS = Components.classes['@songbirdnest.com/servicepane/library;1']
+                              .getService(Components.interfaces.sbILibraryServicePaneService);
+    // Find the servicepane node for our new medialist
+    var node = librarySPS.getNodeForLibraryResource(aContext.m_Medialist);
+    
+    if (node) {
+      // Ask the service pane to start editing our new node
+      // so that the user can give it a name
+      servicePane.startEditingNode(node);
+    } else {
+      throw("Error: Couldn't find a service pane node for the list we just created\n");
+    }
+
+  // Otherwise pop up a dialog and ask for playlist name
+  } else {
+    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"  ]
+                                  .getService(Components.interfaces.nsIPromptService);
+
+    var input = {value: aContext.m_Medialist.name};
+    var title = SBString("renamePlaylist.title", "Rename Playlist");
+    var prompt = SBString("renamePlaylist.prompt", "Enter the new name of the playlist.");
+
+    if (promptService.prompt(window, title, prompt, input, null, {})) {
+      aContext.m_Medialist.name = input.value;
+    }
+  }
+}
+
 // Returns true when at least one track is selected in the playlist
 function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
   return ( aContext.m_Playlist.tree.currentIndex != -1 );
@@ -651,6 +436,11 @@ function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
 // Returns true if the host is the shortcuts instantiator
 function plCmd_IsShortcutsInstantiator(aContext, aSubMenuId, aCommandId, aHost) {
   return (aHost == "shortcuts");
+}
+
+// Returns true if the host is the toolbar instantiator
+function plCmd_IsToolbarInstantiator(aContext, aSubMenuId, aCommandId, aHost) {
+  return (aHost == "toolbar");
 }
 
 // Returns true if the current playlist isn't the library
@@ -701,6 +491,90 @@ function plCmd_IsDownloadingOrNotActive(aContext, aSubMenuId, aCommandId, aHost)
 // Returns true if the supplied context contains a gBrowser object
 function plCmd_ContextHasBrowser(aContext, aSubMenuId, aCommandId, aHost) {
   return (aContext.m_Window.gBrowser);
+}
+
+// Always return false
+function plCmd_False(aContext, aSubMenuId, aCommandId, aHost) {
+  return false
+}
+
+function SelectionUnwrapper(selection) {
+  this._selection = selection;
+}
+SelectionUnwrapper.prototype = {
+  _selection: null,
+  
+  hasMoreElements : function() {
+    return this._selection.hasMoreElements();
+  },
+  
+  getNext : function() {
+    return this._selection.getNext().mediaItem;
+  },
+  
+  QueryInterface : function(iid) {
+    if (iid.equals(Ci.nsISimpleEnumerator) ||
+        iid.equals(Ci.nsISupports))
+      return this;
+    throw Cr.NS_NOINTERFACE;
+  }
+}
+
+function onBrowserTransfer(mediaItems, parentWindow)
+{
+    try
+    {
+        deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
+                                    getService(Components.interfaces.sbIDeviceManager);
+        if (deviceManager)
+        {
+            var downloadCategory = 'Songbird Download Device';
+            if (deviceManager.hasDeviceForCategory(downloadCategory))
+            {
+                var downloadDevice =
+                  deviceManager.getDeviceByCategory(downloadCategory);
+                
+                // Make a magic data object to get passed to the dialog
+                var download_data = new Object();
+                download_data.retval = "";
+                download_data.value = SBDataGetStringValue( "download.folder" );
+                
+                if ( ( SBDataGetIntValue( "download.always" ) == 1 ) && ( download_data.value.length > 0 ) )
+                {
+                  download_data.retval = "ok";
+                }
+                else
+                {
+                  // Open the window
+                  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,centerscreen", download_data, parentWindow ); 
+                }
+
+                // Pick download destination
+                if ( ( download_data.retval == "ok" ) && ( download_data.value.length > 0 ) )
+                {
+                  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                        .getService(Components.interfaces.nsIPrefBranch2);
+                  var downloadListGUID =
+                    prefs.getComplexValue("songbird.library.download",
+                                          Components.interfaces.nsISupportsString);
+                  
+                  var libraryManager =
+                    Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                              .getService(Components.interfaces.sbILibraryManager);
+                  var downloadList = libraryManager.mainLibrary.getMediaItem(downloadListGUID);
+                  
+                  //XXXAus: This can be changed to use SB_AddItems(mediaItems, mainLibrary, true)
+                  //when bug #3271 is fixed.
+                  downloadList.addSome(mediaItems);
+                }
+            }
+        }
+    }
+    
+    catch ( err )
+    {
+        alert( "onBrowserTransfer: " + err );
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -809,6 +683,30 @@ function initPlaylistCommands() {
   SBPlaylistCommand_Remove.setCommandVisibleCallback(null,
                                                    "library_cmd_remove2",
                                                    plCmd_IsShortcutsInstantiator);
+
+  // --------------------------------------------------------------------------
+  // The EDIT button
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_Edit = new PlaylistCommandsBuilder();
+
+  // The first item, always created
+  SBPlaylistCommand_Edit.appendAction(null, 
+                                      "library_cmd_edit",
+                                      "&command.edit",
+                                      "&command.tooltip.edit",
+                                      plCmd_Edit_TriggerCallback);
+  
+  SBPlaylistCommand_Edit.setCommandShortcut(null,
+                                            "library_cmd_edit",
+                                            "&command.shortcut.key.edit",
+                                            "&command.shortcut.keycode.edit",
+                                            "&command.shortcut.modifiers.edit",
+                                            true);
+
+  SBPlaylistCommand_Edit.setCommandEnabledCallback(null,
+                                                   "library_cmd_edit",
+                                                   plCmd_IsAnyTrackSelected);
   
   // --------------------------------------------------------------------------
   // The DOWNLOAD button
@@ -993,22 +891,113 @@ function initPlaylistCommands() {
                                                               plCmd_ContextHasBrowser);
 
   // --------------------------------------------------------------------------
+  // The BURN TO CD button
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_BurnToCD = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommand_BurnToCD.appendAction(null, 
+                                          "library_cmd_burntocd",
+                                          "&command.burntocd",
+                                          "&command.tooltip.burntocd",
+                                          plCmd_BurnToCD_TriggerCallback);
+
+  SBPlaylistCommand_BurnToCD.setCommandShortcut(null,
+                                                "library_cmd_burntocd",
+                                                "&command.shortcut.key.burntocd",
+                                                "&command.shortcut.keycode.burntocd",
+                                                "&command.shortcut.modifiers.burntocd",
+                                                true);
+
+  //XXX burn to cd is not yet implemented
+  SBPlaylistCommand_BurnToCD.setCommandEnabledCallback(null,
+                                                       "library_cmd_burntocd",
+                                                       /*plCmd_IsAnyTrackSelected*/
+                                                       plCmd_False);
+
+  // --------------------------------------------------------------------------
+  // The COPY TO DEVICE button
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommand_CopyToDevice = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommand_CopyToDevice.appendAction(null, 
+                                              "library_cmd_device",
+                                              "&command.device",
+                                              "&command.tooltip.device",
+                                              plCmd_CopyToDevice_TriggerCallback);
+
+  SBPlaylistCommand_CopyToDevice.setCommandShortcut(null,
+                                                    "library_cmd_device",
+                                                    "&command.shortcut.key.device",
+                                                    "&command.shortcut.keycode.device",
+                                                    "&command.shortcut.modifiers.device",
+                                                    true);
+
+  //XXX copy to device is not yet implemented
+  SBPlaylistCommand_CopyToDevice.setCommandEnabledCallback(null,
+                                                           "library_cmd_device",
+                                                           /*plCmd_IsAnyTrackSelected*/
+                                                           plCmd_False);
+
+  // --------------------------------------------------------------------------
+  // The Remove Playlist action
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommandList_Remove = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommandList_Remove.appendAction(null, 
+                                            "playlist_cmd_remove",
+                                            "&command.playlist.remove",
+                                            "&command.tooltip.playlist.remove",
+                                            plCmd_RemoveList_TriggerCallback);
+
+  SBPlaylistCommandList_Remove.setCommandShortcut(null,
+                                                  "playlist_cmd_remove",
+                                                  "&command.playlist.shortcut.key.remove",
+                                                  "&command.playlist.shortcut.keycode.remove",
+                                                  "&command.playlist.shortcut.modifiers.remove",
+                                                  true);
+
+  // --------------------------------------------------------------------------
+  // The Rename Playlist action
+  // --------------------------------------------------------------------------
+
+  SBPlaylistCommandList_Rename = new PlaylistCommandsBuilder();
+
+  SBPlaylistCommandList_Rename.appendAction(null, 
+                                            "playlist_cmd_rename",
+                                            "&command.playlist.rename",
+                                            "&command.tooltip.playlist.rename",
+                                            plCmd_RenameList_TriggerCallback);
+
+  SBPlaylistCommandList_Rename.setCommandShortcut(null,
+                                                  "playlist_cmd_rename",
+                                                  "&command.playlist.shortcut.key.rename",
+                                                  "&command.playlist.shortcut.keycode.rename",
+                                                  "&command.playlist.shortcut.modifiers.rename",
+                                                  true);
+
+  // --------------------------------------------------------------------------
   
   // Expose playlist commands
 
   var mgr = new sbIPlaylistCommandsManager();
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_PLAY, SBPlaylistCommand_Play);
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_REMOVE, SBPlaylistCommand_Remove);
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_DOWNLOAD, SBPlaylistCommand_Download);
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_SUBSCRIBE, SBPlaylistCommand_Subscribe);
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_ADDTOLIBRARY, SBPlaylistCommand_AddToLibrary);
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_COPYTRACKLOCATION, SBPlaylistCommand_CopyTrackLocation);
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_SHOWDOWNLOADPLAYLIST, SBPlaylistCommand_ShowDownloadPlaylist);
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_SHOWWEBPLAYLIST, SBPlaylistCommand_ShowWebPlaylist);
-  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_PAUSERESUMEDOWNLOAD, SBPlaylistCommand_PauseResumeDownload);
-
-  registerCommands();
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_PLAY, SBPlaylistCommand_Play);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_REMOVE, SBPlaylistCommand_Remove);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_EDIT, SBPlaylistCommand_Edit);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_DOWNLOAD, SBPlaylistCommand_Download);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_SUBSCRIBE, SBPlaylistCommand_Subscribe);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_ADDTOLIBRARY, SBPlaylistCommand_AddToLibrary);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_COPYTRACKLOCATION, SBPlaylistCommand_CopyTrackLocation);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_SHOWDOWNLOADPLAYLIST, SBPlaylistCommand_ShowDownloadPlaylist);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_SHOWWEBPLAYLIST, SBPlaylistCommand_ShowWebPlaylist);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_PAUSERESUMEDOWNLOAD, SBPlaylistCommand_PauseResumeDownload);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_BURNTOCD, SBPlaylistCommand_BurnToCD);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_COPYTODEVICE, SBPlaylistCommand_CopyToDevice);
+  
+  registerServiceTreeCommands();
   registerSpecialListCommands();
   window.addEventListener("unload", shutdownPlaylistCommands, false);
 }
@@ -1022,18 +1011,21 @@ function shutdownPlaylistCommands() {
 
   // Un-expose playlist commands
   var mgr = new sbIPlaylistCommandsManager();
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_PLAY, SBPlaylistCommand_Play);
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_REMOVE, SBPlaylistCommand_Remove);
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_DOWNLOAD, SBPlaylistCommand_Download);
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_SUBSCRIBE, SBPlaylistCommand_Subscribe);
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_ADDTOLIBRARY, SBPlaylistCommand_AddToLibrary);
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_COPYTRACKLOCATION, SBPlaylistCommand_CopyTrackLocation);
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_SHOWDOWNLOADPLAYLIST, SBPlaylistCommand_ShowDownloadPlaylist);
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_SHOWWEBPLAYLIST, SBPlaylistCommand_ShowWebPlaylist);
-  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_PAUSERESUMEDOWNLOAD, SBPlaylistCommand_PauseResumeDownload);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_PLAY, SBPlaylistCommand_Play);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_REMOVE, SBPlaylistCommand_Remove);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_EDIT, SBPlaylistCommand_Edit);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_DOWNLOAD, SBPlaylistCommand_Download);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_SUBSCRIBE, SBPlaylistCommand_Subscribe);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_ADDTOLIBRARY, SBPlaylistCommand_AddToLibrary);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_COPYTRACKLOCATION, SBPlaylistCommand_CopyTrackLocation);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_SHOWDOWNLOADPLAYLIST, SBPlaylistCommand_ShowDownloadPlaylist);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_SHOWWEBPLAYLIST, SBPlaylistCommand_ShowWebPlaylist);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_PAUSERESUMEDOWNLOAD, SBPlaylistCommand_PauseResumeDownload);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_BURNTOCD, SBPlaylistCommand_BurnToCD);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIAITEM_COPYTODEVICE, SBPlaylistCommand_CopyToDevice);
 
-  unregisterCommands();
+  unregisterServiceTreeCommands();
   unregisterSpecialListCommands();
 }
 
@@ -1058,665 +1050,39 @@ try
   }
 } catch(e) {}
 
-//
-// Default playlist commands.
-var SBDefaultCommands = 
-{
-  m_Context: {
-    m_Playlist: null,
-    m_Window: null
-  },
 
-  m_Types: new Array
-  (
-    "action",
-    "action",
-    "action",
-    "action",
-    "action",
-    ADDTOPLAYLIST_MENU_TYPE,
-    "action",
-    "action"
-  ),
-  
-  m_Ids: new Array
-  (
-    "library_cmd_play",
-    "library_cmd_play",
-    "library_cmd_remove",
-    "library_cmd_remove",
-    "library_cmd_edit",
-    ADDTOPLAYLIST_MENU_ID,
-    "library_cmd_burntocd",
-    "library_cmd_device"
-  ),
-  
-  m_Names: new Array
-  (
-    "&command.play",
-    "&command.play",
-    "&command.remove",
-    "&command.remove",
-    "&command.edit",
-    ADDTOPLAYLIST_MENU_NAME,
-    "&command.burntocd",
-    "&command.device"
-  ),
-  
-  m_Tooltips: new Array
-  (
-    "&command.tooltip.play",
-    "&command.tooltip.play",
-    "&command.tooltip.remove",
-    "&command.tooltip.remove",
-    "&command.tooltip.edit",
-    ADDTOPLAYLIST_MENU_TOOLTIP,
-    "&command.tooltip.burntocd",
-    "&command.tooltip.device"
-  ),
-
-  m_Keys: new Array
-  (
-    "&command.shortcut.key.play",
-    "&command.shortcut.key.altplay",
-    "&command.shortcut.key.remove",
-    "&command.shortcut.key.altremove",
-    "&command.shortcut.key.edit",
-    ADDTOPLAYLIST_MENU_KEY,
-    "&command.shortcut.key.burntocd",
-    "&command.shortcut.key.device"
-  ),
-
-  m_Keycodes: new Array
-  (
-    "&command.shortcut.keycode.play",
-    "&command.shortcut.keycode.altplay",
-    "&command.shortcut.keycode.remove",
-    "&command.shortcut.keycode.altremove",
-    "&command.shortcut.keycode.edit",
-    ADDTOPLAYLIST_MENU_KEYCODE,
-    "&command.shortcut.keycode.burntocd",
-    "&command.shortcut.keycode.device"
-  ),
-
-  m_Modifiers: new Array
-  (
-    "&command.shortcut.modifiers.play",
-    "&command.shortcut.modifiers.altplay",
-    "&command.shortcut.modifiers.remove",
-    "&command.shortcut.modifiers.altremove",
-    "&command.shortcut.modifiers.edit",
-    ADDTOPLAYLIST_MENU_MODIFIERS,
-    "&command.shortcut.modifiers.burntocd",
-    "&command.shortcut.modifiers.device"
-  ),
-  
-  m_PlaylistCommands: new Array
-  (
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null
-  ),
-
-
-  getNumCommands: function( aSubmenu, aHost )
-  {
-    if ( 
-        ( this.m_Tooltips.length != this.m_Ids.length ) ||
-        ( this.m_Names.length != this.m_Ids.length ) ||
-        ( this.m_Tooltips.length != this.m_Names.length )
-        )
-    {
-      alert( "PlaylistCommands - Array lengths do not match!" );
-      return 0;
-    }
-    return this.m_Ids.length;
-  },
-
-  getCommandType: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Types.length )
-    {
-      return "";
-    }
-    return this.m_Types[ aIndex ];
-  },
-
-  getCommandId: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Ids.length )
-    {
-      return "";
-    }
-    return this.m_Ids[ aIndex ];
-  },
-
-  getCommandText: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Names.length )
-    {
-      return "";
-    }
-    return this.m_Names[ aIndex ];
-  },
-
-  getCommandFlex: function( aSubmenu, aIndex, aHost )
-  {
-    if ( this.m_Typess[ aIndex ] == "separator" ) return 1;
-    return 0;
-  },
-
-  getCommandValue: function( aSubmenu, aIndex, aHost )
-  {
-    return "";
-  },
-
-  getCommandFlag: function( aSubmenu, aIndex, aHost )
-  {
-    return false;
-  },
-
-  getCommandChoiceItem: function( aChoiceMenu, aHost )
-  {
-    return "";
-  },
-
-  getCommandToolTipText: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Tooltips.length )
-    {
-      return "";
-    }
-    return this.m_Tooltips[ aIndex ];
-  },
-
-  instantiateCustomCommand: function( aDocument, aId, aHost ) 
-  {
-    return null;
-  },
-
-  refreshCustomCommand: function( aElement, aId, aHost ) 
-  {
-  },
-
-  getCommandVisible: function( aSubMenu, aIndex, aHost )
-  {
-    if (aSubMenu == null && (aIndex == 1 || aIndex == 3)) 
-      return (aHost == "shortcuts");
-    return true;
-  },
-
-  getCommandEnabled: function( aSubmenu, aIndex, aHost )
-  {
-    var playlist = this.m_Context.m_Playlist;
-    
-    // Bail out early if we don't have our playlist somehow
-    if ( ! playlist )
-      return false;
-
-    var command = this.m_Ids[aIndex];    
-
-    switch ( command )
-    {
-      case "library_cmd_device":
-      case "library_cmd_burntocd":
-      {
-        // These commands are not fully implemented yet
-        return false;
-      }
-      break;
-
-      case "library_cmd_remove":
-      {
-        // Special case for the Smart Playlist - "Remove" makes no sense and
-        // should be disabled. If this isn't a Smart Playlist then default
-        // logic is appropriate.
-        if ( playlist.base_type == "smart" )
-          return false;
-      }
-      break;
-    }
-
-    // By default return true if there is at least one item selected
-    return playlist.mediaListView.treeView.selection.getRangeCount() > 0;
-  },
-
-  getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Modifiers.length )
-    {
-      return "";
-    }
-    return this.m_Modifiers[ aIndex ];
-  },
-
-  getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Keys.length )
-    {
-      return "";
-    }
-    return this.m_Keys[ aIndex ];
-  },
-
-  getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Keycodes.length )
-    {
-      return "";
-    }
-    return this.m_Keycodes[ aIndex ];
-  },
-
-  getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
-  {
-    return true;
-  },
-
-  getCommandSubObject: function ( aSubMenu, aIndex, aHost )
-  {
-    return null;
-  },
-
-  onCommand: function( aSubMenu, aIndex, aHost, id, value )
-  {
-    if ( id )
-    {
-      // Was it from the toolbarbutton?
-      var tbb = ( aHost == "toolbar" );
-      switch( id )
-      {
-        case "library_cmd_play":
-          if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
-          {
-            // Repurpose the command to act as if a doubleclick
-            this.m_Context.m_Playlist.sendPlayEvent();
-          }
-        break;
-        case "library_cmd_edit":
-          if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
-          {
-            if ( tbb || this.m_Context.m_Playlist.mediaListView.treeView.selection.count > 1 )
-            {
-              // Edit the entire track
-              this.m_Context.m_Playlist.sendEditorEvent();
-            }
-            else
-            {
-              // Edit the context cell
-              this.m_Context.m_Playlist.startCellEditing();
-            }
-          }
-        break;
-        case "library_cmd_addtoplaylist":
-          // XXX fix ! use addtoplaylist.js !
-          alert("eek");
-          if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
-          {
-            // add the currently selected track to a (possibly new) playlist
-            this.m_Context.m_Playlist.addToPlaylist();
-          }
-        break;
-        case "library_cmd_remove":
-          if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
-          {
-            // remove the currently select tracks
-            this.m_Context.m_Playlist.removeTracks();
-          }
-        break;
-        case "library_cmd_burntocd":
-          if ( this.m_Context.m_Playlist.tree.currentIndex != -1 )
-          {
-            // Repurpose the command to act as if a doubleclick
-            this.m_Context.m_Playlist.sendBurnToCDEvent();
-          }
-        break;
-      }
-    }
-  },
-  
-  // The object registered with the sbIPlaylistCommandsManager interface acts 
-  // as a template for instances bound to specific playlist elements
-  duplicate: function()
-  {
-    var obj = {};
-    for ( var i in this )
-    {
-      obj[ i ] = this[ i ];
-    }
-    return obj;
-  },
-
-  initCommands: function(aHost) {},
-  shutdownCommands: function() {},
-  
-  setContext: function( context )
-  {
-    var playlist = context.playlist;
-    var window = context.window;
-    
-    // Ah.  Sometimes, things are being secure.
-    
-    if ( playlist && playlist.wrappedJSObject )
-      playlist = playlist.wrappedJSObject;
-    
-    if ( window && window.wrappedJSObject )
-      window = window.wrappedJSObject;
-    
-    this.m_Context.m_Playlist = playlist;
-    this.m_Context.m_Window = window;
-  },
-  
-  QueryInterface : function(aIID)
-  {
-    if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
-        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !aIID.equals(Components.interfaces.nsISupports)) 
-    {
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-    
-    return this;
-  }
-  
-} // end of sbPlaylistCommands
-
-
-// Default servicetree playlist commands
-
-var SBDefaultServiceCommands = 
-{
-  m_Context: {
-    m_Medialist: null,
-    m_Window: null
-  },
-
-  m_Types: new Array
-  (
-    "action",
-    "action"
-  ),
-  
-  m_Ids: new Array
-  (
-    "playlist_cmd_remove",
-    "playlist_cmd_rename"
-  ),
-  
-  m_Names: new Array
-  (
-    "&command.playlist.remove",
-    "&command.playlist.rename"
-  ),
-  
-  m_Tooltips: new Array
-  (
-    "&command.tooltip.playlist.remove",
-    "&command.tooltip.playlist.rename"
-  ),
-
-  m_Keys: new Array
-  (
-    "&command.playlist.shortcut.key.remove",
-    "&command.playlist.shortcut.key.rename"
-  ),
-
-  m_Keycodes: new Array
-  (
-    "&command.playlist.shortcut.keycode.remove",
-    "&command.playlist.shortcut.keycode.rename"
-  ),
-
-  m_Modifiers: new Array
-  (
-    "&command.playlist.shortcut.modifiers.remove",
-    "&command.playlist.shortcut.modifiers.rename"
-  ),
-
-  m_PlaylistCommands: new Array
-  (
-    null,
-    null
-  ),
-
-
-
-  getNumCommands: function( aSubmenu, aHost )
-  {
-    if ( 
-        ( this.m_Tooltips.length != this.m_Ids.length ) ||
-        ( this.m_Names.length != this.m_Ids.length ) ||
-        ( this.m_Tooltips.length != this.m_Names.length )
-        )
-    {
-      alert( "PlaylistCommands - Array lengths do not match!" );
-      return 0;
-    }
-    return this.m_Ids.length;
-  },
-
-  getCommandType: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Types.length )
-    {
-      return "";
-    }
-    return this.m_Types[ aIndex ];
-  },
-
-  getCommandId: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Ids.length )
-    {
-      return "";
-    }
-    return this.m_Ids[ aIndex ];
-  },
-
-  getCommandText: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Names.length )
-    {
-      return "";
-    }
-    return this.m_Names[ aIndex ];
-  },
-
-  getCommandFlex: function( aSubmenu, aIndex, aHost )
-  {
-    if ( this.m_Typess[ aIndex ] == "separator" ) return 1;
-    return 0;
-  },
-
-  getCommandValue: function( aSubmenu, aIndex, aHost )
-  {
-    return "";
-  },
-
-  getCommandFlag: function( aSubmenu, aIndex, aHost )
-  {
-    return false;
-  },
-
-  getCommandChoiceItem: function( aChoiceMenu, aHost )
-  {
-    return "";
-  },
-
-  getCommandToolTipText: function( aSubmenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Tooltips.length )
-    {
-      return "";
-    }
-    return this.m_Tooltips[ aIndex ];
-  },
-
-  instantiateCustomCommand: function( aDocument, aId, aHost ) 
-  {
-    return null;
-  },
-
-  refreshCustomCommand: function( aElement, aId, aHost ) 
-  {
-  },
-
-  getCommandVisible: function( aSubMenu, aIndex, aHost )
-  {
-    return true;
-  },
-
-  getCommandEnabled: function( aSubmenu, aIndex, aHost )
-  {
-    return true;
-  },
-
-  getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Modifiers.length )
-    {
-      return "";
-    }
-    return this.m_Modifiers[ aIndex ];
-  },
-
-  getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Keys.length )
-    {
-      return "";
-    }
-    return this.m_Keys[ aIndex ];
-  },
-
-  getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
-  {
-    if ( aIndex >= this.m_Keycodes.length )
-    {
-      return "";
-    }
-    return this.m_Keycodes[ aIndex ];
-  },
-
-  getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
-  {
-    return true;
-  },
-
-  getCommandSubObject: function ( aSubMenu, aIndex, aHost )
-  {
-    return null;
-  },
-
-  onCommand: function( aSubMenu, aIndex, aHost, id, value )
-  {
-    if ( id )
-    {
-      switch( id )
-      {
-        case "playlist_cmd_remove":
-          this.m_Context.m_Medialist.library.remove(this.m_Context.m_Medialist);
-        break;
-        case "playlist_cmd_rename":
-          var servicePane = this.m_Context.m_Window.gServicePane;
-          // If we have a servicetree, tell it to make the new playlist node editable
-          if (servicePane) {
-            // Ask the library service pane provider to suggest where
-            // a new playlist should be created
-            var librarySPS = Components.classes['@songbirdnest.com/servicepane/library;1']
-                                      .getService(Components.interfaces.sbILibraryServicePaneService);
-            // Find the servicepane node for our new medialist
-            var node = librarySPS.getNodeForLibraryResource(this.m_Context.m_Medialist);
-            
-            if (node) {
-              // Ask the service pane to start editing our new node
-              // so that the user can give it a name
-              servicePane.startEditingNode(node);
-            } else {
-              throw("Error: Couldn't find a service pane node for the list we just created\n");
-            }
-
-          // Otherwise pop up a dialog and ask for playlist name
-          } else {
-            var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"  ]
-                                          .getService(Components.interfaces.nsIPromptService);
-
-            var input = {value: this.m_Context.m_Medialist.name};
-            var title = SBString("renamePlaylist.title", "Rename Playlist");
-            var prompt = SBString("renamePlaylist.prompt", "Enter the new name of the playlist.");
-
-            if (promptService.prompt(window, title, prompt, input, null, {})) {
-              this.m_Context.m_Medialist.name = input.value;
-            }
-          }
-        break;
-      }
-    }
-  },
-  
-  // The object registered with the sbIPlaylistCommandsManager interface acts 
-  // as a template for instances bound to specific playlist elements
-  duplicate: function()
-  {
-    var obj = {};
-    for ( var i in this )
-    {
-      obj[ i ] = this[ i ];
-    }
-    return obj;
-  },
-
-  initCommands: function(aHost) {},
-  shutdownCommands: function() {},
-  
-  setContext: function( context )
-  {
-    var medialist = context.medialist;
-    var window = context.window;
-    
-    // Ah.  Sometimes, things are being secure.
-    
-    if ( window && window.wrappedJSObject )
-      window = window.wrappedJSObject;
-    
-    this.m_Context.m_Medialist = medialist;
-    this.m_Context.m_Window = window;
-  },
-  
-  QueryInterface : function(aIID)
-  {
-    if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
-        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !aIID.equals(Components.interfaces.nsISupports)) 
-    {
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-    
-    return this;
-  }
-  
-} // end of sbPlaylistCommands
-
-function registerCommands() {
+function registerServiceTreeCommands() {
 
   var mgr = new sbIPlaylistCommandsManager();
-  mgr.registerPlaylistCommandsMediaList( "", "simple", SBDefaultServiceCommands );
-  mgr.registerPlaylistCommandsMediaList( "", "smart", SBDefaultServiceCommands );
 
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIALIST_REMOVE, SBPlaylistCommandList_Remove);
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_MEDIALIST_RENAME, SBPlaylistCommandList_Rename);
+
+  SBServiceTreeDefaultCommands.appendPlaylistCommands(null, 
+                                           "servicetree_cmdobj_remove",
+                                           SBPlaylistCommandList_Remove);
+  SBServiceTreeDefaultCommands.appendPlaylistCommands(null, 
+                                           "servicetree_cmdobj_rename",
+                                           SBPlaylistCommandList_Rename);
+  
+  mgr.publish(kSONGBIRD_PLAYLIST_COMMANDS_MEDIALIST_DEFAULT, SBServiceTreeDefaultCommands);
+
+  mgr.registerPlaylistCommandsMediaList( "", "simple", SBServiceTreeDefaultCommands );
+  mgr.registerPlaylistCommandsMediaList( "", "smart", SBServiceTreeDefaultCommands );
 }
 
-function unregisterCommands() {
+function unregisterServiceTreeCommands() {
 
   var mgr = new sbIPlaylistCommandsManager();
+  
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIALIST_REMOVE, SBPlaylistCommandList_Remove);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_MEDIALIST_RENAME, SBPlaylistCommandList_Rename);
+  mgr.withdraw(kSONGBIRD_PLAYLIST_COMMANDS_MEDIALIST_DEFAULT, SBServiceTreeDefaultCommands);
+
   mgr.unregisterPlaylistCommandsMediaList("",
                                           "simple",
-                                          SBDefaultServiceCommands);
+                                          SBServiceTreeDefaultCommands);
   mgr.unregisterPlaylistCommandsMediaList("",
                                           "smart",
-                                          SBDefaultServiceCommands); 
+                                          SBServiceTreeDefaultCommands);
 }

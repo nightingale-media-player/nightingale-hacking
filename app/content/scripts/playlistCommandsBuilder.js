@@ -1154,6 +1154,7 @@ PlaylistCommandsBuilder.prototype = {
     }
 
     var playlist = context.playlist;
+    var medialist = context.medialist;
     var window = context.window;
     
     // Ah.  Sometimes, things are being secure.
@@ -1163,8 +1164,12 @@ PlaylistCommandsBuilder.prototype = {
     
     if ( window && window.wrappedJSObject )
       window = window.wrappedJSObject;
+
+    if ( medialist && medialist.wrappedJSObject )
+      medialist = medialist.wrappedJSObject;
     
     this.m_Context.m_Playlist = playlist;
+    this.m_Context.m_Medialist = medialist;
     this.m_Context.m_Window = window;
   },
   
@@ -1189,4 +1194,5 @@ PlaylistCommandsBuilder.prototype = {
     return this;
   }
 }; // PlaylistCommandsBuilder.prototype
+
 

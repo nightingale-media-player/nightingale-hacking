@@ -1520,7 +1520,7 @@
           //SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
 
           var mgr = new sbIPlaylistCommandsManager();
-          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_WEBPLAYLIST);
+          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_WEBPLAYLIST);
           
           this.outerPlaylist.outerWindow = window;
           this.outerPlaylist.bind(view, cmds,
@@ -1684,7 +1684,7 @@
           }
 
           var mgr = new sbIPlaylistCommandsManager();
-          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_WEBPLAYLIST);
+          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_WEBPLAYLIST);
 
           this.outerPlaylist.bind(view, cmds/*SBWebPlaylistCommands*/,
                                   SBDataGetIntValue("browser.playlist.height"),
@@ -1696,7 +1696,7 @@
         <body><![CDATA[
           // Make sure the download device has been added to the commands object.
           var mgr = new sbIPlaylistCommandsManager();
-          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_DOWNLOADPLAYLIST);
+          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_DOWNLOADPLAYLIST);
 
           if (!cmds.getProperty("m_Device")) {
             var deviceManager =

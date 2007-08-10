@@ -36,6 +36,251 @@ const ADDTOPLAYLIST_MENU_MODIFIERS = "&command.shortcut.modifiers.addtoplaylist"
 const ADDTOPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist:";
 const ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist_createnew";
 
+// ----------------------------------------------------------------------------
+// The "Add to playlist" dynamic command object
+// ----------------------------------------------------------------------------
+var SBPlaylistCommand_AddToPlaylist = 
+{
+  m_Context: {
+    m_Playlist: null,
+    m_Window: null
+  },
+
+  m_addToPlaylist: null,
+  
+  m_root_commands :
+  {
+    m_Types: new Array
+    (
+      ADDTOPLAYLIST_MENU_TYPE
+    ),
+
+    m_Ids: new Array
+    (
+      ADDTOPLAYLIST_MENU_ID
+    ),
+    
+    m_Names: new Array
+    (
+      ADDTOPLAYLIST_MENU_NAME
+    ),
+    
+    m_Tooltips: new Array
+    (
+      ADDTOPLAYLIST_MENU_TOOLTIP
+    ),
+    
+    m_Keys: new Array
+    (
+      ADDTOPLAYLIST_MENU_KEY
+    ),
+
+    m_Keycodes: new Array
+    (
+      ADDTOPLAYLIST_MENU_KEYCODE
+    ),
+
+    m_Modifiers: new Array
+    (
+      ADDTOPLAYLIST_MENU_MODIFIERS
+    ),
+
+    m_PlaylistCommands: new Array
+    (
+      null
+    )
+  },
+
+  _getMenu: function(aSubMenu)
+  {
+    var cmds;
+    
+    cmds = this.m_addToPlaylist.handleGetMenu(aSubMenu);
+    if (cmds) return cmds;
+    
+    switch (aSubMenu) {
+      default:
+        cmds = this.m_root_commands;
+        break;
+    }
+    return cmds;
+  },
+
+  getNumCommands: function( aSubMenu, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    return cmds.m_Ids.length;
+  },
+
+  getCommandId: function( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_Ids.length ) return "";
+    return cmds.m_Ids[ aIndex ];
+  },
+  
+  getCommandType: function( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_Ids.length ) return "";
+    return cmds.m_Types[ aIndex ];
+  },
+
+  getCommandText: function( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_Names.length ) return "";
+    return cmds.m_Names[ aIndex ];
+  },
+
+  getCommandFlex: function( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( cmds.m_Types[ aIndex ] == "separator" ) return 1;
+    return 0;
+  },
+
+  getCommandToolTipText: function( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_Tooltips.length ) return "";
+    return cmds.m_Tooltips[ aIndex ];
+  },
+
+  getCommandValue: function( aSubMenu, aIndex, aHost )
+  {
+  },
+
+  instantiateCustomCommand: function( aDocument, aId, aHost ) 
+  {
+    return null;
+  },
+
+  refreshCustomCommand: function( aElement, aId, aHost ) 
+  {
+  },
+
+  getCommandVisible: function( aSubMenu, aIndex, aHost )
+  {
+    return true;
+  },
+
+  getCommandFlag: function( aSubmenu, aIndex, aHost )
+  {
+    return false;
+  },
+
+  getCommandChoiceItem: function( aChoiceMenu, aHost )
+  {
+    return "";
+  },
+
+  getCommandEnabled: function( aSubMenu, aIndex, aHost )
+  {
+    return (this.m_Context.m_Playlist.tree.currentIndex != -1);
+  },
+
+  getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_Modifiers.length ) return "";
+    return cmds.m_Modifiers[ aIndex ];
+  },
+
+  getCommandShortcutKey: function ( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_Keys.length ) return "";
+    return cmds.m_Keys[ aIndex ];
+  },
+
+  getCommandShortcutKeycode: function ( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_Keycodes.length ) return "";
+    return cmds.m_Keycodes[ aIndex ];
+  },
+
+  getCommandShortcutLocal: function ( aSubMenu, aIndex, aHost )
+  {
+    return true;
+  },
+
+  getCommandSubObject: function ( aSubMenu, aIndex, aHost )
+  {
+    var cmds = this._getMenu(aSubMenu);
+    if ( aIndex >= cmds.m_PlaylistCommands.length ) return null;
+    return cmds.m_PlaylistCommands[ aIndex ];
+  },
+
+  onCommand: function( aSubMenu, aIndex, aHost, id, value )
+  {
+    if ( id )
+    {
+      // ADDTOPLAYLIST
+      if (this.m_addToPlaylist.handleCommand(id)) return;
+      
+      // ...
+    }
+  },
+  
+  // The object registered with the sbIPlaylistCommandsManager interface acts 
+  // as a template for instances bound to specific playlist elements
+  duplicate: function()
+  {
+    var obj = {};
+    for ( var i in this )
+    {
+      obj[ i ] = this[ i ];
+    }
+    return obj;
+  },
+
+  initCommands: function(aHost) { 
+    this.m_addToPlaylist = new addToPlaylistHelper(); 
+    this.m_addToPlaylist.init(this); 
+  },
+  
+  shutdownCommands: function() { 
+    if (!this.m_addToPlaylist) {
+      dump("this.m_addToPlaylist is null in SBPlaylistCommand_AddToPlaylist ?!!\n");
+      return;
+    }
+    this.m_addToPlaylist.shutdown(); 
+    this.m_addToPlaylist = null;
+  },
+  
+  setContext: function( context )
+  {
+    var playlist = context.playlist;
+    var window = context.window;
+    
+    // Ah.  Sometimes, things are being secure.
+    
+    if ( playlist && playlist.wrappedJSObject )
+      playlist = playlist.wrappedJSObject;
+    
+    if ( window && window.wrappedJSObject )
+      window = window.wrappedJSObject;
+    
+    this.m_Context.m_Playlist = playlist;
+    this.m_Context.m_Window = window;
+  },
+  
+  QueryInterface : function(aIID)
+  {
+    if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
+        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    
+    return this;
+  }
+}; // SBPlaylistCommand_AddToPlaylist declaration
+
+
 function addToPlaylistHelper() {
 }
 
