@@ -40,16 +40,18 @@ function runTest () {
   testUpdate();
 }
 
+const PORT_NUMBER = Math.round((Math.random() * 10000) + 10000);
+
 var playlist1 = <>
 #EXTM3U
-http://localhost:8080/test1.mp3
-http://localhost:8080/test2.mp3
+http://localhost:{PORT_NUMBER}/test1.mp3
+http://localhost:{PORT_NUMBER}/test2.mp3
 </>.toString();
 
 var playlist2 = <>
 #EXTM3U
-http://localhost:8080/test2.mp3
-http://localhost:8080/test3.mp3
+http://localhost:{PORT_NUMBER}/test2.mp3
+http://localhost:{PORT_NUMBER}/test3.mp3
 </>.toString();
 
 function testRegistration() {
@@ -112,7 +114,7 @@ function testUpdate() {
   var server = Cc["@mozilla.org/server/jshttp;1"]
              .createInstance(Ci.nsIHttpServer);
 
-  server.start(8080);
+  server.start(PORT_NUMBER);
   server.registerDirectory("/", getFile("."));
 
   var dps = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicPlaylistService;1"]
@@ -122,10 +124,10 @@ function testUpdate() {
                .getService(Ci.nsIProperties)
                .get("TmpD", Ci.nsIFile);
 
-  var list = dps.createList(library1,
-                            newURI("http://localhost:8080/test_dynamicplaylist_playlist.m3u"),
-                            60,
-                            dest);
+  var url = "http://localhost:" + PORT_NUMBER +
+            "/test_dynamicplaylist_playlist.m3u";
+
+  var list = dps.createList(library1, newURI(url), 60, dest);
 
   // Write the first playlist and then update the subscription
   writeFile(playlistFile, playlist1);
@@ -133,7 +135,7 @@ function testUpdate() {
   dps.updateNow(list);
 
   sleep(3000);
-  
+
   // Check the contents of the list
   assertEqual(list.length, 2);
   // XXXsteve These seem a bit too time sensitive right now
@@ -168,4 +170,3 @@ function writeFile(file, data) {
   foStream.write(data, data.length);
   foStream.close();
 }
-
