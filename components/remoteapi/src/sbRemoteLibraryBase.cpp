@@ -77,11 +77,7 @@
 static PRLogModuleInfo* gLibraryLog = nsnull;
 #endif
 
-#define LOG5(args) PR_LOG(gLibraryLog, 5, args)
-#define LOG4(args) PR_LOG(gLibraryLog, 4, args)
-#define LOG3(args) PR_LOG(gLibraryLog, 3, args)
-#define LOG2(args) PR_LOG(gLibraryLog, 2, args)
-#define LOG1(args) PR_LOG(gLibraryLog, 1, args)
+#define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
 
 // Observer for the PlaylistReader that launches a metadata job when the
 // playlist is loaded.
@@ -94,7 +90,7 @@ public:
                          const char *aTopic,
                          const PRUnichar *aData)
   {
-    LOG1(( "sbRemoteMetadataScanLauncher::Observe(%s)", aTopic ));
+    LOG(( "sbRemoteMetadataScanLauncher::Observe(%s)", aTopic ));
     nsresult rv;
     nsCOMPtr<sbIMetadataJobManager> metaJobManager =
       do_GetService( "@songbirdnest.com/Songbird/MetadataJobManager;1", &rv );
@@ -147,13 +143,13 @@ sbRemoteLibraryBase::sbRemoteLibraryBase() : mShouldScan(PR_TRUE)
   if (!gLibraryLog) {
     gLibraryLog = PR_NewLogModule("sbRemoteLibraryBase");
   }
-  LOG1(("sbRemoteLibraryBase::sbRemoteLibraryBase()"));
+  LOG(("sbRemoteLibraryBase::sbRemoteLibraryBase()"));
 #endif
 }
 
 sbRemoteLibraryBase::~sbRemoteLibraryBase()
 {
-  LOG1(("sbRemoteLibraryBase::~sbRemoteLibraryBase()"));
+  LOG(("sbRemoteLibraryBase::~sbRemoteLibraryBase()"));
 }
 
 // ---------------------------------------------------------------------------
@@ -180,14 +176,14 @@ sbRemoteLibraryBase::SetScanMediaOnCreation( PRBool aShouldScan )
 NS_IMETHODIMP
 sbRemoteLibraryBase::ConnectToDefaultLibrary( const nsAString &aLibName )
 {
-  LOG1(( "sbRemoteLibraryBase::ConnectToDefaultLibrary(guid:%s)",
-         NS_LossyConvertUTF16toASCII(aLibName).get() ));
+  LOG(( "sbRemoteLibraryBase::ConnectToDefaultLibrary(guid:%s)",
+        NS_LossyConvertUTF16toASCII(aLibName).get() ));
 
   nsAutoString guid;
   nsresult rv = GetLibraryGUID(aLibName, guid);
   if ( NS_SUCCEEDED(rv) ) {
-    LOG4(( "sbRemoteLibraryBase::ConnectToDefaultLibrary(%s) -- IS a default library",
-           NS_LossyConvertUTF16toASCII(guid).get() ));
+    LOG(( "sbRemoteLibraryBase::ConnectToDefaultLibrary(%s) -- IS a default library",
+          NS_LossyConvertUTF16toASCII(guid).get() ));
 
     // See if the library manager has it lying around.
     nsCOMPtr<sbILibraryManager> libManager(
@@ -210,7 +206,7 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mLibrary);
 
-  LOG1(( "sbRemoteLibraryBase::CreateMediaItem()" ));
+  LOG(("sbRemoteLibraryBase::CreateMediaItem()"));
 
   nsCOMPtr<nsIURI> uri;
   nsresult rv = NS_NewURI(getter_AddRefs(uri), aURL);
@@ -259,7 +255,7 @@ sbRemoteLibraryBase::CreateMediaList( const nsAString& aType,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mLibrary);
 
-  LOG1(( "sbRemoteLibraryBase::CreateMediaList()" ));
+  LOG(("sbRemoteLibraryBase::CreateMediaList()"));
 
   nsCOMPtr<sbIMediaList> mediaList;
   nsresult rv = mLibrary->CreateMediaList(aType,
@@ -278,7 +274,7 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mLibrary);
 
-  LOG1(( "sbRemoteLibraryBase::CreateMediaListFromURL()" ));
+  LOG(("sbRemoteLibraryBase::CreateMediaListFromURL()"));
 
   nsCOMPtr<sbIMediaList> mediaList;
   nsresult rv = mLibrary->CreateMediaList( NS_LITERAL_STRING("simple"),
@@ -363,8 +359,8 @@ nsresult
 sbRemoteLibraryBase::GetLibraryGUID( const nsAString &aLibraryID,
                                      nsAString &aLibraryGUID )
 {
-  LOG1(( "sbRemoteLibraryBase::GetLibraryGUID(%s)",
-         NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
+  LOG(( "sbRemoteLibraryBase::GetLibraryGUID(%s)",
+        NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
 
   nsCAutoString prefKey;
 
@@ -377,7 +373,7 @@ sbRemoteLibraryBase::GetLibraryGUID( const nsAString &aLibraryID,
 
   // right now just bail if it isn't a default
   if ( prefKey.IsEmpty() ) {
-    LOG4(("sbRemoteLibraryBase::GetLibraryGUID() -- not a default library"));
+    LOG(("sbRemoteLibraryBase::GetLibraryGUID() -- not a default library"));
     // ultimately we need to be able to get the GUID for non-default libraries
     //   if we are going to allow the library manager to manage them.
     // We might want to do the string hashing here and add keys for 

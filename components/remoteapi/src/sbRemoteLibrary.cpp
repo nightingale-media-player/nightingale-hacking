@@ -41,11 +41,7 @@
 static PRLogModuleInfo* gLibraryLog = nsnull;
 #endif
 
-#define LOG5(args) PR_LOG(gLibraryLog, 5, args)
-#define LOG4(args) PR_LOG(gLibraryLog, 4, args)
-#define LOG3(args) PR_LOG(gLibraryLog, 3, args)
-#define LOG2(args) PR_LOG(gLibraryLog, 2, args)
-#define LOG1(args) PR_LOG(gLibraryLog, 1, args)
+#define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
 
 static NS_DEFINE_CID(kRemoteLibraryCID, SONGBIRD_REMOTELIBRARY_CID);
 
@@ -134,13 +130,13 @@ sbRemoteLibrary::sbRemoteLibrary() : sbRemoteLibraryBase()
   if (!gLibraryLog) {
     gLibraryLog = PR_NewLogModule("sbRemoteLibrary");
   }
-  LOG1(("sbRemoteLibrary::sbRemoteLibrary()"));
+  LOG(("sbRemoteLibrary::sbRemoteLibrary()"));
 #endif
 }
 
 sbRemoteLibrary::~sbRemoteLibrary()
 {
-  LOG1(("sbRemoteLibrary::~sbRemoteLibrary()"));
+  LOG(("sbRemoteLibrary::~sbRemoteLibrary()"));
 }
 
 
@@ -155,6 +151,7 @@ sbRemoteLibrary::~sbRemoteLibrary()
 nsresult
 sbRemoteLibrary::InitInternalMediaList()
 {
+  LOG(("sbRemoteLibrary::InitInternalMediaList()"));
   NS_ENSURE_STATE(mLibrary);
 
   nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mLibrary);
