@@ -15,7 +15,7 @@
 </hbox>
 -->
 
-<browser id="main_iframe" type="content-primary" src="playlist_test.xul" flex="1"/>
+<browser id="main_iframe" type="content-primary" src="sb-library-page.xul" flex="1"/>
   
 </page>
 

@@ -1431,7 +1431,7 @@
           
           // Get the playlist element from within the current tab      
           // TODO change this
-          var playlist = playlistDocument.getElementById("playlist_test");
+          var playlist = playlistDocument.getElementById("sb-library-page-playlist");
           if (playlist == null) {
             return null;
           }

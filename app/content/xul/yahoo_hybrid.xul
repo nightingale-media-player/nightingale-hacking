@@ -21,7 +21,7 @@
   <grippy/>
 </splitter>
 
-<iframe id="main_iframe" src="playlist_test.xul" flex="1"/>
+<iframe id="main_iframe" src="sb-library-page.xul" flex="1"/>
   
 </page>
 
