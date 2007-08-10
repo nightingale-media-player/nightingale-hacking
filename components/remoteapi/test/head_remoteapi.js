@@ -94,10 +94,11 @@ function safeSetTimeout(closure, timeout) {
 
 function beginRemoteAPITest(page, continueFunction) {
 
+  var port = Math.round((Math.random() * 10000) + 10000);
 
   testServer = Cc["@mozilla.org/server/jshttp;1"]
                  .createInstance(Ci.nsIHttpServer);
-  testServer.start(8080);
+  testServer.start(port);
   testServer.registerDirectory("/", getFile("."));
 
   var url = "data:application/vnd.mozilla.xul+xml," + 
@@ -105,10 +106,10 @@ function beginRemoteAPITest(page, continueFunction) {
             "<?xml-stylesheet href='chrome://songbird/content/bindings/bindings.css' type='text/css'?>" +
             "<window xmlns='http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'/>";
 
-  beginWindowTest(url, function() { setupBrowser(page, continueFunction); })
+  beginWindowTest(url, function() { setupBrowser(page, port, continueFunction); })
 }
 
-function setupBrowser(page, continueFunction) {
+function setupBrowser(page, port, continueFunction) {
 
   testWindow.resizeTo(200, 200);
 
@@ -120,7 +121,7 @@ function setupBrowser(page, continueFunction) {
   testBrowser.setAttribute("flex", "1");
   document.documentElement.appendChild(testBrowser);
 
-  var url = "http://127.0.0.1:8080/" + page + "?" + Math.random();
+  var url = "http://127.0.0.1:" + port + "/" + page + "?" + Math.random();
   testListener = new ContinuingWebProgressListener(url, continueFunction);
   testBrowser.webProgress.addProgressListener(testListener, Ci.nsIWebProgress.NOTIFY_STATE_REQUEST);
   testBrowser.loadURI(url);
