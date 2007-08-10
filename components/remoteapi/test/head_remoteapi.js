@@ -32,6 +32,8 @@ var testWindow;
 var testWindowFailed;
 var testServer;
 var testBrowserWindow;
+var testBrowser;
+var testListener;
 
 function beginWindowTest(url, continueFunction) {
   var ww = Cc["@mozilla.org/embedcomp/window-watcher;1"]
@@ -48,6 +50,11 @@ function beginWindowTest(url, continueFunction) {
 function endWindowTest(e) {
   if (!testWindowFailed) {
     testWindowFailed = true;
+    if (testBrowser && testListener) {
+      testBrowser.webProgress.removeProgressListener(testListener);
+      testBrowser = null;
+      testListener = null;
+    }
     if (testWindow) {
       testWindow.close();
       testWindow = null;
@@ -109,15 +116,15 @@ function setupBrowser(page, continueFunction) {
 
   var document = testWindow.document;
 
-  var browser = document.createElementNS(XUL_NS, "browser");
-  browser.setAttribute("flex", "1");
-  document.documentElement.appendChild(browser);
+  testBrowser = document.createElementNS(XUL_NS, "browser");
+  testBrowser.setAttribute("flex", "1");
+  document.documentElement.appendChild(testBrowser);
 
   var url = "http://127.0.0.1:8080/" + page + "?" + Math.random();
-  var listener = new ContinuingWebProgressListener(url, continueFunction);
-  browser.webProgress.addProgressListener(listener, Ci.nsIWebProgress.NOTIFY_STATE_REQUEST);
-  browser.loadURI(url);
-  testBrowserWindow = browser.contentWindow;
+  testListener = new ContinuingWebProgressListener(url, continueFunction);
+  testBrowser.webProgress.addProgressListener(testListener, Ci.nsIWebProgress.NOTIFY_STATE_REQUEST);
+  testBrowser.loadURI(url);
+  testBrowserWindow = testBrowser.contentWindow;
 }
 
 function endRemoteAPITest(e) {

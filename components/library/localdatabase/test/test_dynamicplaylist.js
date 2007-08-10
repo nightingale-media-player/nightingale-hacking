@@ -131,7 +131,7 @@ function testUpdate() {
   writeFile(playlistFile, playlist1);
 
   dps.updateNow(list);
-  
+
   sleep(3000);
   
   // Check the contents of the list

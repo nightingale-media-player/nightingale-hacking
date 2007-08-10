@@ -167,8 +167,8 @@ CPlaylistCommandsManager::GetPlaylistCommands(commandmap_t *map,
     if (typelist && typelist->size() > 0) {
       nsCOMArray<sbIPlaylistCommands> array;
       for (int i=0;i<typelist->size();i++) {
-        sbIPlaylistCommands *cmds;
-        (*typelist)[i]->Duplicate(&cmds);
+        nsCOMPtr<sbIPlaylistCommands> cmds;
+        (*typelist)[i]->Duplicate(getter_AddRefs(cmds));
         array.AppendObject(cmds);
       }
       return NS_NewArrayEnumerator(_retval, array);
@@ -181,8 +181,8 @@ CPlaylistCommandsManager::GetPlaylistCommands(commandmap_t *map,
     if (keylist && keylist->size() > 0) {
       nsCOMArray<sbIPlaylistCommands> array;
       for (int i=0;i<keylist->size();i++) {
-        sbIPlaylistCommands *cmds;
-        (*keylist)[i]->Duplicate(&cmds);
+        nsCOMPtr<sbIPlaylistCommands> cmds;
+        (*keylist)[i]->Duplicate(getter_AddRefs(cmds));
         array.AppendObject(cmds);
       }
       return NS_NewArrayEnumerator(_retval, array);

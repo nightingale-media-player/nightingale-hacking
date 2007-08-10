@@ -101,22 +101,18 @@ function getPlatform() {
 }
 
 function newAppRelativeFile( path ) {
+
+  var file = Cc["@mozilla.org/file/directory_service;1"]
+               .getService(Ci.nsIProperties)
+               .get("resource:app", Ci.nsIFile);
+  file = file.clone();
+
   var nodes = path.split("/");
-  var file = Cc["@mozilla.org/file/directory_service;1"].
-                getService(Ci.nsIProperties).
-                get("XREExeF", Ci.nsIFile); // Path to the executable
-  file = file.parent; // Path to the executable folder
-  
-  if (getPlatform() == "Darwin") {
-    file = file.parent.clone();
-    file.append( "Resources" ); // Navigate the lame OSX bundle folder system
-  }
-  
   for ( var i = 0, end = nodes.length; i < end; i++ )
   {
     file.append( nodes[ i ] );
   }
-//  log( "newAppRelativeFile - " + file.path );
-  return file.clone();
+
+  return file;
 }
 

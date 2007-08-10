@@ -96,8 +96,6 @@ private:
   nsString  mTitle;
   nsString  mGenre;
 
-  nsCOMPtr<sbIGStreamerSimple> mSelfProxy;
-
 protected:
   /* additional members */
 };

@@ -49,12 +49,17 @@
       </xul:hbox>
     </content>
 
-    <implementation type="application/x-javascript" name="songbird_filterlist">
+    <implementation type="application/x-javascript" name="songbird_filterlist" implements="sbICascadeFilterSetListener">
 
       <constructor>
       </constructor>
 
       <destructor>
+<![CDATA[
+  if (this._isBound) {
+    this.cfs.removeListener(this);
+  }
+]]>
       </destructor>
 
       <field name="tree">document.getAnonymousElementByAttribute(this, 'sbid', 'filter_tree');</field>
@@ -69,6 +74,9 @@
       <field name="_property">null</field>
       <field name="_propertyInfo">null</field>
 
+      <!-- If this filterlist is bound to anything -->
+      <field name="_isBound">false</field>
+
       <field name="_XUL_NS" readonly="true">
         "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
       </field>
@@ -81,6 +89,9 @@
         <parameter name="index"/>
         <body>
 <![CDATA[
+  if (this._isBound) {
+    throw new Error("already bound");
+  }
   this.cfs = cfs;
   this.index = index;
   this._property = cfs.getProperty(index);
@@ -106,17 +117,8 @@
   this._updateColumnLabel(this.index);
   
   // Remove our selection if we are updated
-  var self = this;
-  this.cfs.addListener({
-    onChange: function() {
-    },
-    onValuesChanged: function(index) {
-      if (index == self.index) {
-        self._updateColumnLabel();
-        self.tree.view.selection.clearSelection();
-      }
-    }
-  });
+  this.cfs.addListener(this);
+  this._isBound = true;
 ]]>
         </body>
       </method>
@@ -221,6 +223,26 @@
     }
   }
   this.cfs.set(this.index, values, values.length);
+]]>
+        </body>
+      </method>
+
+      <method name="onChange">
+        <body>
+<![CDATA[
+  // do nothing
+]]>
+        </body>
+      </method>
+
+      <method name="onValuesChanged">
+        <parameter name="aIndex"/>
+        <body>
+<![CDATA[
+  if (aIndex == this.index) {
+    this._updateColumnLabel();
+    this.tree.view.selection.clearSelection();
+  }
 ]]>
         </body>
       </method>

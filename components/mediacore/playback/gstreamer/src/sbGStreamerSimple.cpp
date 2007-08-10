@@ -115,14 +115,6 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
                             getter_AddRefs(mCursorIntervalTimer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIGStreamerSimple> gsts(this);
-  rv = proxyObjMgr->GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
-                            NS_GET_IID(sbIGStreamerSimple),
-                            gsts,
-                            NS_PROXY_ASYNC,
-                            getter_AddRefs(mSelfProxy));
-  NS_ENSURE_SUCCESS(rv, rv); 
-
   mVideoOutputElement = aVideoOutput;
 
   // Get a handle to the xul element's native window
@@ -830,10 +822,24 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
     case GST_MESSAGE_EOS: {
       mIsAtEndOfStream = PR_TRUE;
       mIsPlayingVideo = PR_FALSE;
-      if(mFullscreen && mGdkWinFull != NULL) {
-        mSelfProxy->SetFullscreen(PR_FALSE);
-      }
       mCursorIntervalTimer->Cancel();
+      if(mFullscreen && mGdkWinFull != NULL) {
+
+        nsresult rv;
+        nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
+          do_GetService("@mozilla.org/xpcomproxy;1", &rv);
+        NS_ENSURE_SUCCESS(rv, GST_BUS_PASS);
+
+        nsCOMPtr<sbIGStreamerSimple> proxy;
+        rv = proxyObjMgr->GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                            NS_GET_IID(sbIGStreamerSimple),
+                                            NS_ISUPPORTS_CAST(sbIGStreamerSimple*, this),
+                                            NS_PROXY_ASYNC,
+                                            getter_AddRefs(proxy));
+        NS_ENSURE_SUCCESS(rv, GST_BUS_PASS); 
+
+        proxy->SetFullscreen(PR_FALSE);
+      }
       break;
     }
 

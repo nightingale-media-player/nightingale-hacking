@@ -82,11 +82,11 @@ function sbBookmarks_QueryInterface(iid) {
 sbBookmarks.prototype.servicePaneInit = 
 function sbBookmarks_servicePaneInit(sps) {
   this._servicePane = sps;
-  
   var service = this;
   
   // if we don't have a bookmarks node in the tree
   this._bookmarkNode = this._servicePane.getNode(ROOTNODE);
+
   if (!this._bookmarkNode) {
     var prefsService =
         Components.classes["@mozilla.org/preferences-service;1"].
@@ -173,10 +173,18 @@ function sbBookmarks_servicePaneInit(sps) {
     xhr.open('GET', bookmarksURL, true);
     xhr.send(null);
   }
-  
+
   var sbSvc = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
   this._stringBundle = sbSvc.createBundle("chrome://songbird/locale/songbird.properties");
 }
+
+sbBookmarks.prototype.shutdown = 
+function sbBookmarks_shutdown() {
+  this._bookmarkNode = null;
+  this._servicePane = null;
+  this._stringBundle = null;
+}
+
 sbBookmarks.prototype.getString =
 function sbBookmarks_getString(aStringId, aDefault) {
   try {
@@ -260,27 +268,31 @@ function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
   
   if (bnode.image.match(/^https?:/)) {
     // check that the supplied image url works, otherwise use the default
-    var observer = {
-      service : this,
-      onStartRequest : function(aRequest,aContext) {
-      },
-      onStopRequest : function(aRequest, aContext, aStatusCode) {
-        if (aStatusCode != 0) {
-          bnode.image = BOOKMARK_IMAGE;
-        }
-      }
-    };
-    observer.manager = this;
     var checker = Components.classes["@mozilla.org/network/urichecker;1"]
       .createInstance(Components.interfaces.nsIURIChecker);
     var uri = Components.classes["@mozilla.org/network/standard-url;1"]
       .createInstance(Components.interfaces.nsIURI);
     uri.spec = bnode.image;
     checker.init(uri);
-    checker.asyncCheck(observer, null);
+    checker.asyncCheck(new ImageUriCheckerObserver(bnode), null);
   }
-  
+
   return bnode;
+}
+
+function ImageUriCheckerObserver(bnode) {
+  this._bnode = bnode;
+}
+ImageUriCheckerObserver.prototype.onStartRequest =
+function ImageUriCheckerObserver_onStartRequest(aRequest, aContext)
+{
+}
+ImageUriCheckerObserver.prototype.onStopRequest =
+function ImageUriCheckerObserver_onStopRequest(aRequest, aContext, aStatusCode)
+{
+  if (aStatusCode != 0) {
+    this._bnode.image = BOOKMARK_IMAGE;
+  }
 }
 
 sbBookmarks.prototype.addFolder =

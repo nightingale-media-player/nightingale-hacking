@@ -231,9 +231,6 @@ function PlaylistPlayback() {
     gOS.addObserver(this, "profile-before-change", false);
   }
 
-  this._timer = Components.classes[ "@mozilla.org/timer;1" ]
-                .createInstance( Components.interfaces.nsITimer );
-
   var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                  .getService(Components.interfaces.mozIJSSubScriptLoader);
   jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
@@ -1274,11 +1271,16 @@ PlaylistPlayback.prototype = {
     this._started = true;
     this._playing.boolValue = false;
     this._lookForPlayingCount = 0;
+    this._timer = Components.classes[ "@mozilla.org/timer;1" ]
+                  .createInstance( Components.interfaces.nsITimer );
     this._timer.initWithCallback( this, 250, 1 ) // TYPE_REPEATING_SLACK
   },
   
   _stopPlayerLoop: function () {
-    this._timer.cancel();
+    if (this._timer) {
+      this._timer.cancel();
+      this._timer = null;
+    }
     this._started = false;
   },
   

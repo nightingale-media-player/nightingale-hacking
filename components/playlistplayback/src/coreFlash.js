@@ -286,6 +286,7 @@ function InitPlaybackCoreFlash ( aElementId )
     var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                          .getService(Components.interfaces.sbIPlaylistPlayback);
     gPPS.addCore(gFlashCore, true);
+    registeredCores.push(gFlashCore);
   }
   catch ( err ) {
     dump( "\n!!! Flash PlaybackCore failed to bind properly\n" + err + "\n" );

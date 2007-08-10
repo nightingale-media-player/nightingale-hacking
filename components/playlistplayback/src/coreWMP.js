@@ -246,4 +246,5 @@ function CoreWMPDocumentInit(aBoxId)
   var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
   pps.addCore(coreWrapper, true);
+  registeredCores.push(coreWrapper);
 }

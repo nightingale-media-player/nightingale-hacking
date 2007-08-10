@@ -224,6 +224,7 @@ TimerLoop.prototype.notify = function(timer)
     }
     else {
       this._array = null;
+      this._timer = null;
       loop = null;
       testFinished();
       fail("maximum iterations reached");
@@ -231,6 +232,7 @@ TimerLoop.prototype.notify = function(timer)
   }
   else {
     this._array = null;
+    this._timer = null;
     loop = null;
     testFinished();
     if (failed) {

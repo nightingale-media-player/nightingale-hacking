@@ -209,7 +209,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
   {
     // The end of the list had the highest vote
     handlerlist_t::reverse_iterator i = handlerlist.rbegin();
-    pHandler = (*i).m_Handler.get();
+    pHandler = (*i).m_Handler;
   }
 
   NS_ENSURE_TRUE(pHandler, NS_ERROR_UNEXPECTED);

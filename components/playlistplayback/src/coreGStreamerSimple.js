@@ -473,6 +473,7 @@ CoreGStreamerSimple.prototype.QueryInterface = function(iid) {
  * Global variables and autoinitialization.
  * ----------------------------------------------------------------------------
  */
+
 try {
   var gGStreamerSimpleCore = new CoreGStreamerSimple();
 }
@@ -496,9 +497,11 @@ function CoreGStreamerSimpleDocumentInit( id )
     gstSimple.init(videoElement);
     gGStreamerSimpleCore.setObject(gstSimple);
     gPPS.addCore(gGStreamerSimpleCore, true);
+    registeredCores.push(gGStreamerSimpleCore);
   }
   catch ( err )
   {
     dump( "\n!!! coreGStreamerSimple failed to bind properly\n" + err );
   }
 };
+

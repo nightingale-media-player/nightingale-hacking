@@ -42,7 +42,7 @@
   title="Cheezy Video Window"  
   windowtype="Songbird:Core"
   onclose="return false; /*This window must never be closed unless the app is shutdown*/"
-  
+  onunload="UnregiserCoreWrappers();"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"

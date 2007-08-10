@@ -31,7 +31,8 @@ const MENUBAR_LOCALESBUNDLE_TIMEOUT = 15000;
 try {
   // Module specific global for auto-init/deinit support
   var menubar_locales_bundle_module = {};
-  
+  var menubar_locales_bundle = null;
+
   menubar_locales_bundle_module.init_once = 0;
   menubar_locales_bundle_module.deinit_once = 0;
   menubar_locales_bundle_module.onLoad = function()

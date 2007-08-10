@@ -821,7 +821,8 @@ function CoreQTDocumentInit( id )
     coreQTDocumentElementIdentifier = id;
     SetQTObject();    
     gPPS.addCore(gQTCore, true);
- }
+    registeredCores.push(gQTCore);
+  }
   catch ( err )
   {
     dump( "\n!!! coreQT failed to bind properly\n" + err );

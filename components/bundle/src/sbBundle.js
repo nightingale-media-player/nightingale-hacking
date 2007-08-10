@@ -23,9 +23,8 @@
 // END SONGBIRD GPL
 //
  */
-const SONGBIRD_BUNDLE_CONTRACTID = "@songbirdnest.com/Songbird/Bundle;1";
-const SONGBIRD_BUNDLE_CLASSNAME = "Songbird Bundle Service Interface";
-const SONGBIRD_BUNDLE_CID = Components.ID("{ff29ec35-1294-42ae-a341-63d0303df969}");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 const SONGBIRD_BUNDLE_IID = Components.interfaces.sbIBundle;
 
 const SONGBIRD_GETBUNDLE_PREFKEY = "songbird.url.bundles";
@@ -33,11 +32,19 @@ const SONGBIRD_GETBUNDLE_PREFKEY = "songbird.url.bundles";
 function Bundle() {
   this._datalisteners = new Array();
   this._installlisteners = new Array();
+
+  var obs = Components.classes["@mozilla.org/observer-service;1"]
+                      .getService(Components.interfaces.nsIObserverService);
+  obs.addObserver(this, "quit-application", false);
 }
 
 Bundle.prototype.constructor = Bundle;
 
 Bundle.prototype = {
+  classDescription: "Songbird Bundle Service Interface",
+  classID:          Components.ID("{ff29ec35-1294-42ae-a341-63d0303df969}"),
+  contractID:       "@songbirdnest.com/Songbird/Bundle;1",
+
   _bundleid: null,
   _req: null,
   _datalisteners: null,
@@ -227,7 +234,7 @@ Bundle.prototype = {
   getExtensionList: function() {
     this._extlist = new Array();
     if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS) {
-      bundledocument = this.bundleDataDocument;
+      var bundledocument = this.bundleDataDocument;
       if (bundledocument) {
         var nodes = this.getDataNodes(bundledocument);
         if (nodes) {
@@ -304,75 +311,32 @@ Bundle.prototype = {
       this._req.abort();
       this.onError();
     }
+    this._timer.cancel();
     this._timer = null;
+  },
+
+  // nsIObserver
+  observe: function(aSubject, aTopic, aData) {
+    if (aTopic == "quit-application") {
+      if (this._timer) {
+        this._timer.cancel();
+        this._timer = null;
+      }
+    }
   },
 
   /**
    * See nsISupports.idl
    */
-  QueryInterface: function(iid) {
-    if (!iid.equals(SONGBIRD_BUNDLE_IID) &&
-        !iid.equals(Components.interfaces.sbPIBundle) &&
-        !iid.equals(Components.interfaces.nsIWebProgressListener) &&
-        !iid.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !iid.equals(Components.interfaces.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
+  QueryInterface:
+    XPCOMUtils.generateQI([SONGBIRD_BUNDLE_IID,
+                           Components.interfaces.sbPIBundle,
+                           Components.interfaces.nsIWebProgressListener,
+                           Components.interfaces.nsISupportsWeakReference,
+                           Components.interfaces.nsIObserver])
 }; // Bundle.prototype
 
-/**
- * ----------------------------------------------------------------------------
- * Registration for XPCOM
- * ----------------------------------------------------------------------------
- * Adapted from nsBundleService.js
- */
-var gModule = {
-  registerSelf: function(componentManager, fileSpec, location, type) {
-    componentManager = componentManager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-    for (var key in this._objects) {
-      var obj = this._objects[key];
-      componentManager.registerFactoryLocation(obj.CID, obj.className, obj.contractID,
-                                               fileSpec, location, type);
-    }
-  },
-
-  getClassObject: function(componentManager, cid, iid) {
-    if (!iid.equals(Components.interfaces.nsIFactory))
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-
-    for (var key in this._objects) {
-      if (cid.equals(this._objects[key].CID))
-        return this._objects[key].factory;
-    }
-    
-    throw Components.results.NS_ERROR_NO_INTERFACE;
-  },
-
-  _makeFactory: #1= function(ctor) {
-    function ci(outer, iid) {
-      if (outer != null)
-        throw Components.results.NS_ERROR_NO_AGGREGATION;
-      return (new ctor()).QueryInterface(iid);
-    } 
-    return { createInstance: ci };
-  },
-  
-  _objects: {
-    // The Bundle Component
-    bundle:     { CID        : SONGBIRD_BUNDLE_CID,
-                  contractID : SONGBIRD_BUNDLE_CONTRACTID,
-                  className  : SONGBIRD_BUNDLE_CLASSNAME,
-                  factory    : #1#(Bundle)
-                },
-  },
-
-  canUnload: function(componentManager) { 
-    return true; 
-  }
-}; // gModule
-
-function NSGetModule(comMgr, fileSpec) {
-  return gModule;
-} // NSGetModule
+function NSGetModule(compMgr, fileSpec) {
+  return XPCOMUtils.generateModule([Bundle]);
+}
 

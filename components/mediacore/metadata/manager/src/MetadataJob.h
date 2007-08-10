@@ -147,6 +147,7 @@ protected:
   };
 
   nsresult RunTimer();
+  nsresult ProcessTimer();
   nsresult CancelTimer();
   nsresult RunThread( PRBool * bShutdown );
   nsresult FinishJob();

@@ -170,7 +170,7 @@ CoreBase.prototype =
     var count = 0;
     var result = "";
     for (var i in aObj) {
-      result += objName + "." + i + " = " + obj[i] + "\t\t\t";
+      result += aObjName + "." + i + " = " + aObj[i] + "\t\t\t";
       count = ++count % columns;
       if ( count == columns - 1 )
         result += "\n";

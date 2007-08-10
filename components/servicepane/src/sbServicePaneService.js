@@ -35,7 +35,7 @@
  */
 
 function DEBUG(msg) {
-  dump('sbServicePaneService.js: '+msg+'\n');
+  //dump('sbServicePaneService.js: '+msg+'\n');
 }
 
 const Cc = Components.classes;
@@ -54,15 +54,16 @@ const SP='http://songbirdnest.com/rdf/servicepane#';
 const STRINGBUNDLE='chrome://songbird/locale/songbird.properties';
 
 function ServicePaneNode (ds, resource) {
-  this.__defineGetter__('resource', function () { return resource });
-  
+  this._resource = resource;
+
   this._dataSource = ds;
   this._dataSource.QueryInterface(Ci.nsIRDFRemoteDataSource);
-  
+
   // set up this._container if this is a Seq
   if (RDFCU.IsSeq(ds, resource)) {
     this._container = Cc['@mozilla.org/rdf/container;1'].createInstance(Ci.nsIRDFContainer);
     this._container.Init(ds, resource);
+    this._resource = null;
   } else {
     this._container = null;
   }
@@ -93,9 +94,19 @@ ServicePaneNode.prototype.getInterfaces = function(count) {
   return interfaces;
 }
 
+ServicePaneNode.prototype.__defineGetter__ ('resource',
+  function () { 
+    if (this._container) {
+      return this._container.Resource;
+    }
+    else {
+      return this._resource;
+    }
+  }
+);
 
 ServicePaneNode.prototype.__defineGetter__ ('id',
-    function () { return this.resource.ValueUTF8 });
+    function () { return this.resource.ValueUTF8; });
 
 ServicePaneNode.prototype.__defineGetter__ ('isContainer',
     function () { return this._container != null });
@@ -382,7 +393,7 @@ function ServicePaneService () {
   var obsSvc = Cc['@mozilla.org/observer-service;1']
     .getService(Ci.nsIObserverService);
   obsSvc.addObserver(this, 'profile-after-change', false);
-  obsSvc.addObserver(this, 'xpcom-shutdown', false);
+  obsSvc.addObserver(this, 'quit-application', false);
   debug('ServicePaneService() ends\n');
 }
 ServicePaneService.prototype.observe = /* for nsIObserver */
@@ -396,10 +407,10 @@ function ServicePaneService_observe(subject, topic, data) {
     // the profile is loaded - initialize the service
     this.init();
   }
-  else if (topic == 'xpcom-shutdown') {
+  else if (topic == 'quit-application') {
     var obsSvc = Cc['@mozilla.org/observer-service;1']
       .getService(Ci.nsIObserverService);
-    obsSvc.removeObserver(this, 'xpcom-shutdown');
+    obsSvc.removeObserver(this, 'quit-application');
     this.shutdown();
   }
   debug('ServicePaneService.observe() ends\n');
@@ -421,16 +432,7 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
   
   this._dataSource = RDFSVC.GetDataSourceBlocking(uri.spec);
   this._dataSourceWrapped = new dsTranslator(this._dataSource, this);
-  new dsSaver(this._dataSource, 30*1000); // try to save every thirty seconds
-
-  // for sbIServicePaneService.dataSource
-  this.__defineGetter__('dataSource', 
-    function () { return this._dataSourceWrapped });
-
-
-  // for sbIServicePaneService.root
-  this.__defineGetter__('root', 
-    function () { return this._root });
+  this._dsSaver = new dsSaver(this._dataSource, 30*1000); // try to save every thirty seconds
 
   // the root of the tree
   this._root = this.getNode('SB:Root');
@@ -474,7 +476,6 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
       debug('ERROR CREATING SERVICE PANE MODULE: '+e);
     }
   }
-
   debug('ServicePaneService.init() ends\n');
 }
 
@@ -484,11 +485,34 @@ ServicePaneService.prototype.shutdown = function ServicePaneService_shutdown() {
   // Clear our array of service pane providers.  This is needed to break a
   // reference cycle between the provider and this service
   for (let i = 0; i < this._modules.length; i++) {
+    try {
+      this._modules[i].shutdown();
+    }
+    catch (e) {
+      // Ignore errors
+      Components.utils.reportError(e);
+    }
     this._modules[i] = null;
   }
 
+  this._dataSource = null;
+  this._dataSourceWrapped = null;
+  this._root = null;
+  this._dsSaver = null;
+
   debug('ServicePaneService.shutdown() ends\n');
 }
+
+// for sbIServicePaneService.dataSource
+ServicePaneService.prototype.__defineGetter__('dataSource', function () {
+  return this._dataSourceWrapped;
+});
+
+// for sbIServicePaneService.root
+ServicePaneService.prototype.__defineGetter__('root', function () { 
+  return this._root;
+});
+
 // FIXME: implement nsIClassInfo
 ServicePaneService.prototype.QueryInterface = 
 function ServicePaneService_QueryInterface(iid) {
@@ -928,7 +952,7 @@ dsTranslator.prototype = {
   // FIXME do we need to translate GetTargets too?
   GetTargets: function GetTargets(aSource, aProperty, aTruthValue) {
     var targets = this.inner.GetTargets(aSource, aProperty, aTruthValue);
-    
+
     // is this property translatable?
     if (this.properties[aProperty.Value]) {
       // we need to create a proxy enumerator object
@@ -1026,6 +1050,7 @@ dsSaver.prototype = {
           .removeObserver(this, 'quit-application');
         this.ds.RemoveObserver(this);
         this.timer.cancel();
+        this.timer = null;
         break;
       default:
     }

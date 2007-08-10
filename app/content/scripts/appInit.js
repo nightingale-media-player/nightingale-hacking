@@ -500,6 +500,23 @@ var dataRemoteCmdlineHandler =
   }
 };
 
+var registeredCores = [];
+function UnregiserCoreWrappers() {
+
+  // We must remove the core wrappers before this window closes since the core
+  // wrapper JS objects live in the scope of this window.  If they outlive
+  // the scope of this window we get "XPConnect is being called on a scope
+  // without a 'Components' property!" assertions.
+  var pps =
+    Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+              .getService(Components.interfaces.sbIPlaylistPlayback);
+
+  registeredCores.forEach(function(e) {
+    pps.removeCore(e);
+  });
+
+}
+
 var theMetadataJobManager = null;
 
 // !!!

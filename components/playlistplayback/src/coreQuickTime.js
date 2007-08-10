@@ -220,4 +220,5 @@ function QuickTimeCoreInit(aId, aSelect)
                       .getService(Components.interfaces.sbIPlaylistPlayback);
   var select = (aSelect == true) ? true : false;
   pps.addCore(coreWrapper, select);
+  registeredCores.push(coreWrapper);
 };

@@ -42,7 +42,8 @@ create table resource_properties (
   guid text not null,
   property_id integer not null,
   obj text not null,
-  obj_sortable text
+  obj_sortable text,
+  primary key (guid, property_id)
 );
 create index idx_resource_properties_property_id_obj on resource_properties (property_id, obj);
 create index idx_resource_properties_obj_sortable on resource_properties (obj_sortable);

@@ -110,11 +110,12 @@ MetadataJobObserver.prototype = {
 }
 
 function onComplete(aSubject, aTopic, aData) {
+  gTestMetadataJob.removeObserver();
+
   // Are you really complete?
   assertEqual( aTopic, "complete" );
   assertEqual( aData, gTestMetadataJob.tableName );
   assertTrue( gTestMetadataJob.completed );
-  gTestMetadataJob.removeObserver();
   
   // Debug output.  Output everything before testing anything so we can see
   // the full set of data instead of quitting on the first error.
@@ -149,8 +150,8 @@ function onComplete(aSubject, aTopic, aData) {
   }
 
   // So testing is complete
-  //gTestMetadataJobManager.stop(); // Stop the manager
   gTestMetadataJobManager = null;
   gTestMetadataJob = null;
+
   testFinished(); // Complete the testing
 }

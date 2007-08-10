@@ -128,6 +128,11 @@ function sbLibraryServicePane_servicePaneInit(sps) {
   obs.addObserver(this, "songbird-library-manager-before-shutdown", false);
 }
 
+sbLibraryServicePane.prototype.shutdown = 
+function sbLibraryServicePane_shutdown() {
+  this._removeAllLibraries();
+}
+
 sbLibraryServicePane.prototype.fillContextMenu =
 function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow) {
 
@@ -1342,8 +1347,6 @@ function sbLibraryServicePane_observe(subject, topic, data) {
     var libraryManager = Cc['@songbirdnest.com/Songbird/library/Manager;1']
                            .getService(Ci.sbILibraryManager);
     libraryManager.removeListener(this);
-
-    this._removeAllLibraries();
   }
 }
 

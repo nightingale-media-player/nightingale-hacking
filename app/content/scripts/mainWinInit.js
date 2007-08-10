@@ -43,11 +43,16 @@
 var thePollPlaylistService = null;
 
 var gServicePane = null;
-var gBrowser = null;
-function getBrowser() { return gBrowser; }
+function getBrowser() {
+  if (!window.gBrowser) {
+    window.gBrowser = document.getElementById("frame_main_pane");
+  }
+  return window.gBrowser;
+}
 
 function SBInitialize()
 {
+
   try
   {
     //Whatever migration is required between version, this function takes care of it.
@@ -77,12 +82,10 @@ function SBInitialize()
     */
     
     setMinMaxCallback();
-    
-    // This is the sb-tabbrowser xul element from mainwin.xul
-    gBrowser = document.getElementById("frame_main_pane");
-    // looks like we need to attach this to the window...
-    window.gBrowser = gBrowser;
-            
+
+    // Initalize gBrowser
+    getBrowser();
+
     initJumpToFileHotkey();
 
     if (window.addEventListener)
@@ -100,7 +103,7 @@ function SBInitialize()
     }
        
     // Look at all these ugly hacks that need to go away.  (sigh)
-    gServicePane = document.getElementById('servicepane');
+    window.gServicePane = document.getElementById('servicepane');
     
     gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
     
@@ -117,8 +120,8 @@ function SBUninitialize()
   
   var mainPane = document.getElementById("frame_main_pane");
 
-  gServicePane = null;
-  gBrowser = null;
+  window.gServicePane = null;
+  window.gBrowser = null;
 
   resetJumpToFileHotkey();
   closeJumpTo();

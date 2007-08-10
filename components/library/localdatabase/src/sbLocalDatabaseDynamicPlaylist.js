@@ -24,10 +24,7 @@
 //
 */
 
-// XXXben This following line should be used when XPCOMUtils.jsm grows the
-//        makeQI function:
-//  Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://app/components/XPCOMUtils.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
 Components.utils.import("resource://app/components/sbProperties.jsm");
 
@@ -55,6 +52,17 @@ function d(s) {
 
 function TRACE(s) {
   //dump("------------------> " + s + "\n");
+}
+
+// XXXsteve Any time we get a media item's guid and want to use it as an
+// object property, run it through this function first.  This will force the
+// string to be a javascript land string rather than a string dependent on the
+// buffer held by the media item.  This it to prevent crashes when the atom
+// created from that string gets deleted at shutdown.  See bmo 391590
+function FIX(s) {
+  var g = "x" + s;
+  g = g.substr(1);
+  return g;
 }
 
 function sbLocalDatabaseDynamicPlaylistService()
@@ -170,6 +178,7 @@ function sbLocalDatabaseDynamicPlaylistService__shutdown()
 
   if (this._started) {
     this._timer.cancel();
+    this._timer = null;
 
     // Stop listening to the library manager
     var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
@@ -197,7 +206,7 @@ function sbLocalDatabaseDynamicPlaylistService__scheduleLibrary(aLibrary)
       return true;
     },
     onEnumeratedItem: function(list, item) {
-      self._scheduledLists[item.guid] = item;
+      self._scheduledLists[FIX(item.guid)] = item;
       return true;
     },
     onEnumerationEnd: function() {
@@ -227,7 +236,7 @@ function sbLocalDatabaseDynamicPlaylistService__removeListsFromLibrary(aLibrary)
 {
   for each (var list in this._scheduledLists) {
     if (list.library.equals(aLibrary)) {
-        delete this._scheduledLists[list.guid];
+        delete this._scheduledLists[FIX(list.guid)];
     }
   }
 }
@@ -294,19 +303,19 @@ function sbLocalDatabaseDynamicPlaylistService__setNextRun(aList)
 sbLocalDatabaseDynamicPlaylistService.prototype._beginIgnore =
 function sbLocalDatabaseDynamicPlaylistService__beginIgnore(aLibrary)
 {
-  var count = this._ignoreLibraryNotifications[aLibrary.guid];
+  var count = this._ignoreLibraryNotifications[FIX(aLibrary.guid)];
   if (count)
-    this._ignoreLibraryNotifications[aLibrary.guid] = count + 1;
+    this._ignoreLibraryNotifications[FIX(aLibrary.guid)] = count + 1;
   else
-    this._ignoreLibraryNotifications[aLibrary.guid] = 1;
+    this._ignoreLibraryNotifications[FIX(aLibrary.guid)] = 1;
 }
 
 sbLocalDatabaseDynamicPlaylistService.prototype._endIgnore =
 function sbLocalDatabaseDynamicPlaylistService__endIgnore(aLibrary)
 {
-  var count = this._ignoreLibraryNotifications[aLibrary.guid];
+  var count = this._ignoreLibraryNotifications[FIX(aLibrary.guid)];
   if (count)
-    this._ignoreLibraryNotifications[aLibrary.guid] = count - 1;
+    this._ignoreLibraryNotifications[FIX(aLibrary.guid)] = count - 1;
   else
     throw Cr.NS_ERROR_FAILURE;
 }
@@ -314,7 +323,7 @@ function sbLocalDatabaseDynamicPlaylistService__endIgnore(aLibrary)
 sbLocalDatabaseDynamicPlaylistService.prototype._ignore =
 function sbLocalDatabaseDynamicPlaylistService__ignore(aLibrary)
 {
-  var count = this._ignoreLibraryNotifications[aLibrary.guid];
+  var count = this._ignoreLibraryNotifications[FIX(aLibrary.guid)];
   return count && count > 0;
 }
 
@@ -334,7 +343,7 @@ function sbLocalDatabaseDynamicPlaylistService_createList(aLibrary,
   try {
     this._beginIgnore(aLibrary);
     var list = aLibrary.createMediaList("dynamic");
-    this._scheduledLists[list.guid] = list;
+    this._scheduledLists[FIX(list.guid)] = list;
     this.updateList(list, aUri, aIntervalSeconds, aDestinationDirectory);
   }
   finally {
@@ -385,7 +394,6 @@ function sbLocalDatabaseDynamicPlaylistService_updateNow(aMediaList)
 {
   var interval = aMediaList.getProperty(SB_PROP_SUBSCRIPTIONINTERVAL);
   var url = aMediaList.getProperty(SB_PROP_SUBSCRIPTIONURL);
-
   if (interval && url)
     this._updateList(aMediaList);
   else
@@ -452,8 +460,8 @@ function sbLocalDatabaseDynamicPlaylistService_onItemAdded(aMediaList,
 
   // If we are in a batch, we are going to refresh the list of dynamic
   // playlists when the batch ends, so we don't need any more notifications
-  if (this._libraryInBatch[aMediaList.library.guid]) {
-    this._libraryRefreshPending[aMediaList.library.guid] = true;
+  if (this._libraryInBatch[FIX(aMediaList.library.guid)]) {
+    this._libraryRefreshPending[FIX(aMediaList.library.guid)] = true;
     return true;
   }
 
@@ -464,7 +472,7 @@ function sbLocalDatabaseDynamicPlaylistService_onItemAdded(aMediaList,
     if (aMediaItem.getProperty(SB_PROP_SUBSCRIPTIONNEXTRUN)) {
       this._setNextRun(aMediaItem);
     }
-    this._scheduledLists[aMediaItem.guid] = aMediaItem;
+    this._scheduledLists[FIX(aMediaItem.guid)] = aMediaItem;
     d("A new dynamic playlist was added");
   }
 
@@ -479,12 +487,12 @@ function sbLocalDatabaseDynamicPlaylistService_onBeforeItemRemoved(aMediaList,
 
   // If we are in a batch, we are going to refresh the list of dynamic
   // playlists when the batch ends, so we don't need any more notifications
-  if (this._libraryInBatch[aMediaList.library.guid]) {
-    this._libraryRefreshPending[aMediaList.library.guid] = true;
+  if (this._libraryInBatch[FIX(aMediaList.library.guid)]) {
+    this._libraryRefreshPending[FIX(aMediaList.library.guid)] = true;
     return true;
   }
 
-  delete this._scheduledLists[aMediaItem.guid];
+  delete this._scheduledLists[FIX(aMediaItem.guid)];
 }
 
 sbLocalDatabaseDynamicPlaylistService.prototype.onAfterItemRemoved =
@@ -504,13 +512,13 @@ function sbLocalDatabaseDynamicPlaylistService_onItemUpdated(aMediaList,
 
   // If we are in a batch, we are going to refresh the list of dynamic
   // playlists when the batch ends, so we don't need any more notifications
-  if (this._libraryInBatch[aMediaList.library.guid]) {
-    this._libraryRefreshPending[aMediaList.library.guid] = true;
+  if (this._libraryInBatch[FIX(aMediaList.library.guid)]) {
+    this._libraryRefreshPending[FIX(aMediaList.library.guid)] = true;
     return true;
   }
 
   // Make sure this list is scheduled
-  this._scheduledLists[aMediaItem.guid] = aMediaItem;
+  this._scheduledLists[FIX(aMediaItem.guid)] = aMediaItem;
 }
 
 sbLocalDatabaseDynamicPlaylistService.prototype.onListCleared =
@@ -521,8 +529,8 @@ function sbLocalDatabaseDynamicPlaylistService_onListCleared(aMediaList)
 
   // If we are in a batch, we are going to refresh the list of dynamic
   // playlists when the batch ends, so we don't need any more notifications
-  if (this._libraryInBatch[aMediaList.library.guid]) {
-    this._libraryRefreshPending[aMediaList.library.guid] = true;
+  if (this._libraryInBatch[FIX(aMediaList.library.guid)]) {
+    this._libraryRefreshPending[FIX(aMediaList.library.guid)] = true;
     return true;
   }
 
@@ -533,23 +541,23 @@ function sbLocalDatabaseDynamicPlaylistService_onListCleared(aMediaList)
 sbLocalDatabaseDynamicPlaylistService.prototype.onBatchBegin =
 function sbLocalDatabaseDynamicPlaylistService_onBatchBegin(aMediaList)
 {
-  this._libraryInBatch[aMediaList.library.guid] = true;
+  this._libraryInBatch[FIX(aMediaList.library.guid)] = true;
 }
 
 sbLocalDatabaseDynamicPlaylistService.prototype.onBatchEnd =
 function sbLocalDatabaseDynamicPlaylistService_onBatchEnd(aMediaList)
 {
   var library = aMediaList.library;
-  this._libraryInBatch[library.guid] = false;
+  this._libraryInBatch[FIX(library.guid)] = false;
 
   // If there is a refresh pending for this library, do it
-  if (this._libraryRefreshPending[library.guid]) {
+  if (this._libraryRefreshPending[FIX(library.guid)]) {
 
     d("Refreshing dynamic playlists in library " + library);
     this._removeListsFromLibrary(library);
     this._scheduleLibrary(library);
 
-    this._libraryRefreshPending[library.guid] = false;
+    this._libraryRefreshPending[FIX(library.guid)] = false;
   }
 }
 
@@ -581,7 +589,6 @@ function sbPlaylistReaderListenerObserver(aService, aList) {
 sbPlaylistReaderListenerObserver.prototype.observe =
 function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
 {
-
   var ioService = Cc["@mozilla.org/network/io-service;1"]
                     .getService(Ci.nsIIOService);
   var uri = ioService.newURI(this._list.getProperty(SB_PROP_SUBSCRIPTIONURL), null, null);
@@ -631,7 +638,6 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
     Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
       .getService(Ci.sbIMetadataJobManager);
   var metadataJob = metadataJobManager.newJob(array, 5);
-  return;
 
   // Download the new items
   var prefs = Cc["@mozilla.org/preferences-service;1"]
@@ -658,7 +664,9 @@ sbLocalDatabaseDynamicMediaListFactory.prototype = {
 
   type: "dynamic",
   createMediaList: function sbLocalDatabaseDynamicMediaListFactory_createMediaList(aInner) {
-    var smlf = Cc[SBLDBCOMP + "SimpleMediaListFactory;1"].getService(Ci.sbIMediaListFactory);
+
+    var smlf = Cc[SBLDBCOMP + "SimpleMediaListFactory;1"]
+                 .getService(Ci.sbIMediaListFactory);
     var list = smlf.createMediaList(aInner);
     list.setProperty(SB_PROP_ISSUBSCRIPTION, "1");
     return list;
@@ -666,8 +674,9 @@ sbLocalDatabaseDynamicMediaListFactory.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListFactory])
 }
 
-var NSGetModule = XPCOMUtils.generateNSGetModule(
-  [
+function NSGetModule(compMgr, fileSpec) {
+
+  return XPCOMUtils.generateModule([
     sbLocalDatabaseDynamicPlaylistService,
     sbLocalDatabaseDynamicMediaListFactory
   ],
@@ -678,6 +687,6 @@ var NSGetModule = XPCOMUtils.generateNSGetModule(
       "service," + sbLocalDatabaseDynamicPlaylistService.prototype.contractID,
       true,
       true);
-  }
-);
+  });
+}
 

@@ -152,30 +152,31 @@
         <xul:popup anonid="popup"  onpopupshown="onPopupShown(event);" />
       </xul:popupset>
     </content>
-    <implementation implements="nsIWebProgressListener,nsIXULBuilderListener">
+    <implementation implements="nsIWebProgressListener">
       <constructor><![CDATA[
         // get the tree node
         this.mTree = document.getAnonymousElementByAttribute(this, 'anonid', 'tree');
         // get the popup node
         this.mPopup = document.getAnonymousElementByAttribute(this, 'anonid', 'popup');
-        // get the service pane service
+        // clear out the old datasources from the tree
+
         this.mService =
           Components.classes['@songbirdnest.com/servicepane/service;1']
           .getService(Components.interfaces.sbIServicePaneService);
-        // clear out the old datasources from the tree
+
         while (this.mTree.database.GetDataSources().hasMoreElements()) {
           this.mTree.database.RemoveDataSource(
               this.mTree.database.GetDataSources().getNext());
         }
+
         // add the datasource from the service
         this.mTree.database.AddDataSource(this.mService.dataSource);
-        // set the ref to the root...
         this.mTree.ref = this.mService.root.id;
+
         // and force a rebuild
         this.mTree.builder.rebuild();
         
         var sp = this;
-
         // this is evil. really. i feel guilty.
         // let's replace the tree's stopEditing function with our own
         // that actually saves off the data
@@ -210,7 +211,7 @@
           
           // Give the new name to the service pane.
           if (node) {
-            sp.mService.onRename(node.id, newName);
+            sp._service.onRename(node.id, newName);
           }            
         }
         
@@ -238,20 +239,19 @@
           this._changeOpenState(row, openState);
           sp.getNodeForRow(row).isOpen = sp.mTree.view.isContainerOpen(row);
         }
-        
       ]]></constructor>
       <destructor><![CDATA[
         this.mService.onSelectionChanged(null, this.mTree, window);
         // remove the progress listener
         this.browser.removeProgressListener(this);
-        // remove the builder listener
-        this.mTree.builder.removeListener(this);
-        
+
         this.mTree.stopEditing = this.mTree._stopEditing;
         this.mTree._stopEditing = null;
-        
+
         this.mTree.changeOpenState = this.mTree._changeOpenState;
         this.mTree._changeOpenState = null;
+
+        this.mTree.database.RemoveDataSource(this.mService.dataSource);
       ]]></destructor>
       
       <field name="_dragService"><![CDATA[

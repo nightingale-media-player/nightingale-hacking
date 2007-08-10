@@ -47,6 +47,10 @@
 
 #include <sbTArrayStringEnumerator.h>
 
+#ifdef DEBUG
+#include <prprf.h>
+#endif
+
 #if !defined(SB_STRING_BUNDLE_CHROME_URL)
   #define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
 #endif
@@ -243,12 +247,21 @@ NS_IMETHODIMP sbPropertyManager::GetStringFromName(nsIStringBundle *aBundle,
 {
   NS_ENSURE_ARG_POINTER(aBundle);
 
-  PRUnichar *value;
-  nsresult rv = aBundle->GetStringFromName(aName.BeginReading(), &value);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  _retval.Assign(value);
-  NS_Free(value);
+  nsAutoString value;
+  nsresult rv = aBundle->GetStringFromName(aName.BeginReading(),
+                                           getter_Copies(value));
+  if (NS_SUCCEEDED(rv)) {
+    _retval.Assign(value);
+  }
+  else {
+    _retval.Truncate();
+#ifdef DEBUG
+    char* message = PR_smprintf("sbPropertyManager: '%s' not found in bundle",
+                                NS_LossyConvertUTF16toASCII(aName).get());
+    NS_WARNING(message);
+    PR_smprintf_free(message);
+#endif
+  }
 
   return NS_OK;
 }

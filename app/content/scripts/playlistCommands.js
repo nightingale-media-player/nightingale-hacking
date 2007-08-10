@@ -1007,7 +1007,8 @@ function initPlaylistCommands() {
   mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_SHOWDOWNLOADPLAYLIST, SBPlaylistCommand_ShowDownloadPlaylist);
   mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_SHOWWEBPLAYLIST, SBPlaylistCommand_ShowWebPlaylist);
   mgr.publish(kSONGBIRD_PLAYLIST_COMMAND_PAUSERESUMEDOWNLOAD, SBPlaylistCommand_PauseResumeDownload);
-  
+
+  registerCommands();
   registerSpecialListCommands();
   window.addEventListener("unload", shutdownPlaylistCommands, false);
 }
@@ -1032,6 +1033,7 @@ function shutdownPlaylistCommands() {
   mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_SHOWWEBPLAYLIST, SBPlaylistCommand_ShowWebPlaylist);
   mgr.withdraw(kSONGBIRD_PLAYLIST_COMMAND_PAUSERESUMEDOWNLOAD, SBPlaylistCommand_PauseResumeDownload);
 
+  unregisterCommands();
   unregisterSpecialListCommands();
 }
 
@@ -1700,9 +1702,21 @@ var SBDefaultServiceCommands =
   
 } // end of sbPlaylistCommands
 
-try {
-var mgr = new sbIPlaylistCommandsManager();
-mgr.registerPlaylistCommandsMediaList( "", "simple", SBDefaultServiceCommands );
-mgr.registerPlaylistCommandsMediaList( "", "smart", SBDefaultServiceCommands );
-} catch (e) { alert(e); }
+function registerCommands() {
 
+  var mgr = new sbIPlaylistCommandsManager();
+  mgr.registerPlaylistCommandsMediaList( "", "simple", SBDefaultServiceCommands );
+  mgr.registerPlaylistCommandsMediaList( "", "smart", SBDefaultServiceCommands );
+
+}
+
+function unregisterCommands() {
+
+  var mgr = new sbIPlaylistCommandsManager();
+  mgr.unregisterPlaylistCommandsMediaList("",
+                                          "simple",
+                                          SBDefaultServiceCommands);
+  mgr.unregisterPlaylistCommandsMediaList("",
+                                          "smart",
+                                          SBDefaultServiceCommands); 
+}

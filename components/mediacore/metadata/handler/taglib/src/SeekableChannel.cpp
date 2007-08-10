@@ -175,6 +175,7 @@ NS_IMETHODIMP sbSeekableChannel::Close()
         mpChannel->IsPending(&pending);
         if (pending)
             mpChannel->Cancel(NS_ERROR_ABORT);
+        mpChannel->SetNotificationCallbacks(nsnull);
     }
 
     /* Empty the data set. */
@@ -523,6 +524,8 @@ NS_IMETHODIMP sbSeekableChannel::OnStartRequest(
     nsIRequest                  *pRequest,
     nsISupports                 *pCtx)
 {
+    NS_ENSURE_STATE(mpChannel);
+
     PRInt32                     contentLength;
     nsresult                    result = NS_OK;
 

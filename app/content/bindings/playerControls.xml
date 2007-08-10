@@ -1067,6 +1067,8 @@
     </constructor>
     <destructor>
       <![CDATA[
+        this.remote_playing.unbind();
+        this.remote_paused.unbind();
       ]]>
     </destructor>
 
@@ -1456,24 +1458,23 @@
       <method name="doInterval">
         <body>
           <![CDATA[
-          try
-          {
-            if (!gBrowser)
+            var browser = window.gBrowser;
+            if (!browser)
               return;
 
             var displayValue = ''
-            if (gBrowser.mCurrentTab.scanProgress >= 0 &&
-                gBrowser.mCurrentTab.scanProgress < 1) {
+            if (browser.mCurrentTab.scanProgress >= 0 &&
+                browser.mCurrentTab.scanProgress < 1) {
               // display page scan progress
               var mediafound = SBString("faceplate.mediafound", "Media Found");
-              var percent = Math.round(gBrowser.mCurrentTab.scanProgress*100);
+              var percent = Math.round(browser.mCurrentTab.scanProgress*100);
               displayValue = mediafound + ': ' + percent + '%';
-            } else if (gBrowser.currentPlaylist != null &&
-                       gBrowser.currentPlaylist.mediaListView != null) {
+            } else if (browser.currentPlaylist != null &&
+                       browser.currentPlaylist.mediaListView != null) {
               // HOORAY!!  It's okay for mediaListView.length to throw!
               var length = 0;
               try {
-                length = gBrowser.currentPlaylist.mediaListView.length;
+                length = browser.currentPlaylist.mediaListView.length;
               } catch(e) {
                 Components.utils.reportError(e);
                 length = 0;
@@ -1486,11 +1487,6 @@
             }
             var label = document.getAnonymousElementByAttribute(this, "sbid", "label");
             label.setAttribute('value', displayValue);
-          }
-          catch ( err )
-          {
-            alert( "numplaylistitems-label\n\n" + err );
-          }
           ]]>
         </body>
       </method>

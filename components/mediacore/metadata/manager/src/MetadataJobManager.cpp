@@ -156,9 +156,10 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray, PRUint32 aSleepMS, sbIM
 
 NS_IMETHODIMP sbMetadataJobManager::Stop()
 {
-  for ( PRUint32 i = 0; i < mJobArray.Count(); i++ )
+  for ( PRInt32 i = mJobArray.Count() - 1; i >= 0; i-- )
   {
     mJobArray[ i ]->Cancel();
+    mJobArray.RemoveObjectAt(i);
   }
   return NS_OK;
 }

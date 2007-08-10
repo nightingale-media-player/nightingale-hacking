@@ -118,6 +118,8 @@
          this.descbinding = null;
          this.stylebinding.unbind();
          this.stylebinding = null;
+         this.override_descbinding.unbind();
+         this.override_stylebinding.unbind();
        ]]>
      </destructor>
 

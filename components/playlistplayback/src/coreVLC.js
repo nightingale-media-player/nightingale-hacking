@@ -1052,6 +1052,7 @@ function CoreVLCDocumentInit()
     gCoreVLC._applyPreferences();
 
     gPPS.addCore(gCoreVLC, true);
+    registeredCores.push(gCoreVLC);
   }
   catch ( err )
   {

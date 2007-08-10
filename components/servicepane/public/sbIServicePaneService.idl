@@ -319,6 +319,10 @@ interface sbIServicePaneModule : nsISupports
   /* \brief optional URI of stringbundle to use to localize names of nodes
     associated with this module */
   readonly attribute AString stringbundle;
+
+  /* \brief Called when service pane service is shutting down
+   */
+  void shutdown();
 };
 
 
