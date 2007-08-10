@@ -112,7 +112,7 @@ SB_IMPL_CLASSINFO( sbRemoteCommands,
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteCommands)
 
-sbRemoteCommands::sbRemoteCommands() 
+sbRemoteCommands::sbRemoteCommands()
 {
 #ifdef PR_LOGGING
   if (!gRemoteCommandsLog) {
@@ -199,14 +199,14 @@ sbRemoteCommands::RemoveCommand( const nsAString &aID )
     LOG(( "sbRemoteCommands::RemoveCommand(%d:%s)",
           index,
           NS_LossyConvertUTF16toASCII(mCommands.ElementAt(index).id).get()));
-    if ( mCommands.ElementAt(index).id == aID ) { 
+    if ( mCommands.ElementAt(index).id == aID ) {
       mCommands.RemoveElementAt(index);
       DoCommandsUpdated();
       return NS_OK;
     }
   }
   // XXXredfive check an error code here and log a warning if the command
-  //            isn't found 
+  //            isn't found
   return NS_OK;
 }
 
@@ -454,15 +454,14 @@ sbRemoteCommands::RefreshCustomCommand( nsIDOMNode *aCustomCommandElement,
 
 
 NS_IMETHODIMP
-sbRemoteCommands::OnCommand( const nsAString &aSubMenu, 
+sbRemoteCommands::OnCommand( const nsAString &aSubMenu,
                              const PRInt32 aIndex,
                              const nsAString &aHost,
                              const nsAString &aID,
                              const nsAString &aValue)
 {
-  LOG(( "sbRemoteCommands::OnCommand(%s %s %s)",
-        NS_LossyConvertUTF16toASCII(aSubMenu).get(),
-        NS_LossyConvertUTF16toASCII(aIndex).get(),
+  LOG(( "sbRemoteCommands::OnCommand(%s, %d, %s, %s, %s)",
+        NS_LossyConvertUTF16toASCII(aSubMenu).get(), aIndex,
         NS_LossyConvertUTF16toASCII(aHost).get(),
         NS_LossyConvertUTF16toASCII(aID).get(),
         NS_LossyConvertUTF16toASCII(aValue).get()));
@@ -533,4 +532,3 @@ sbRemoteCommands::Duplicate( sbIPlaylistCommands **_retval )
   NS_ADDREF( *_retval = plCommands );
   return NS_OK;
 }
-
