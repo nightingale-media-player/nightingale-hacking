@@ -53,7 +53,12 @@ endif
 SONGBIRD_DIST = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
                 $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
                 $(NULL)
-                     
+
+# MSVC 8 needs the manifest files
+ifeq ($(_MSC_VER), 1400)
+SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
+endif # _MSC_VER==1400
+
 endif
 
 ifeq (linux,$(SB_PLATFORM))

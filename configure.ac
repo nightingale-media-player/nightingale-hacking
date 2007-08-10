@@ -412,9 +412,9 @@ case "$SB_PLATFORM" in
     fi
 
     if test "$enable_debug" = "yes"; then
-      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MDd -Od -RTC1 -RTCc"
+      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MTd -Od -RTC1 -RTCc"
     else
-      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MD -Ox"
+      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MT -Ox"
     fi
 
     # We always want to include "mozilla-config.h"

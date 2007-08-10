@@ -365,18 +365,6 @@ endif
 dll_link: $(DYNAMIC_LIB_OBJS)
 	$(ranlib_cmd)
 	$(CYGWIN_WRAPPER) $(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_objs) $(linker_imports)
-ifdef MSMANIFEST_TOOL
-	@if test -f $(DYNAMIC_LIB).manifest; then \
-		if test -f "$(srcdir)/$(DYNAMIC_LIB).manifest"; then \
-			$(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(srcdir)/$(DYNAMIC_LIB).manifest" $(DYNAMIC_LIB).manifest -OUTPUTRESOURCE:$(DYNAMIC_LIB)\;2; \
-		else \
-			$(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST $(DYNAMIC_LIB).manifest -OUTPUTRESOURCE:$(DYNAMIC_LIB)\;2; \
-		fi; \
-		rm -f $(DYNAMIC_LIB).manifest; \
-	else \
-		echo "WARNING: MISSGING MANIFEST $(DYNAMIC_LIB).manifest in `pwd`"; \
-	fi
-endif # MSVC with manifest tool
 	$(CYGWIN_WRAPPER) $(CHMOD) +x $(DYNAMIC_LIB)
 	$(makelink_cmd)
 
@@ -1100,6 +1088,10 @@ endif
 
 move_sb_stub_executable: $(SONGBIRD_MAIN_APP)
 	$(CYGWIN_WRAPPER) $(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable)
+ifdef MSMANIFEST_TOOL
+	$(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
+		-OUTPUTRESOURCE:$(sb_executable)\;1
+endif # MSVC with manifest tool
 	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable)
 
 #.PHONY : move_sb_stub_executable
