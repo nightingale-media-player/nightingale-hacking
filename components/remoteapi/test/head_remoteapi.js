@@ -94,7 +94,7 @@ function safeSetTimeout(closure, timeout) {
 
 function beginRemoteAPITest(page, continueFunction) {
 
-  var port = Math.round((Math.random() * 10000) + 10000);
+  var port = getTestServerPortNumber();
 
   testServer = Cc["@mozilla.org/server/jshttp;1"]
                  .createInstance(Ci.nsIHttpServer);
