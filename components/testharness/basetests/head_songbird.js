@@ -72,7 +72,7 @@ _TimerCallback.prototype = {
     throw Cr.NS_ERROR_NO_INTERFACE;
   },
   notify: function(timer) {
-    eval(this._expr);  
+    eval(this._expr);
   }
 };
 
@@ -118,7 +118,7 @@ function doThrow(text) {
 function assertFalse(aTest, aMessage) {
   if (aTest) {
     var msg = (aMessage != null) ? ( " : " +  aMessage ) : "";
-    doThrow(aTest + msg);  
+    doThrow(aTest + msg);
   }
 }
 
@@ -129,20 +129,20 @@ function assertTrue(aTest, aMessage) {
 function assertEqual( aExpected, aActual, aMessage) {
   if (aExpected != aActual) {
     var msg = (aMessage != null) ? ( " : " +  aMessage ) : "";
-    doThrow(aExpected + " != " + aActual + msg);  
+    doThrow(aExpected + " != " + aActual + msg);
   }
 }
 
 function assertNotEqual( aExpected, aActual, aMessage) {
   if (aExpected == aActual) {
     var msg = (aMessage != null) ? ( " : " +  aMessage ) : "";
-    doThrow(aExpected + " != " + aActual + msg);  
+    doThrow(aExpected + " != " + aActual + msg);
   }
 }
 
 function fail(aMessage) {
   var msg = (aMessage != null) ? ( "FAIL : " +  aMessage ) : "FAIL";
-  doThrow(msg);  
+  doThrow(msg);
 }
 
 function testPending() {
@@ -178,5 +178,24 @@ function sleep(ms) {
   log("*** [" + _test_name + "] - done waiting.");
 }
 
-_consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+function getTestServerPortNumber() {
+  var DEFAULT_PORT = 8080;
+  const ENV_VAR_PORT = "SONGBIRD_TEST_SERVER_PORT";
 
+  var environment =
+    Components.classes["@mozilla.org/process/environment;1"]
+              .getService(Components.interfaces.nsIEnvironment);
+
+  var port = DEFAULT_PORT;
+  if (environment.exists(ENV_VAR_PORT)) {
+    var envPort = parseInt(environment.get(ENV_VAR_PORT));
+    if (envPort) {
+      port = envPort;
+    }
+  }
+
+  log("*** [" + _test_name + "] - using test server port " + port);
+
+  return port;
+}
+_consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);

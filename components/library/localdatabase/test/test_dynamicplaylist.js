@@ -40,7 +40,7 @@ function runTest () {
   testUpdate();
 }
 
-const PORT_NUMBER = Math.round((Math.random() * 10000) + 10000);
+const PORT_NUMBER = getTestServerPortNumber()
 
 var playlist1 = <>
 #EXTM3U
