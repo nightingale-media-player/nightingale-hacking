@@ -46,6 +46,7 @@ class sbLocalDatabaseMediaListBase;
 
 class sbListenerInfo
 {
+friend class sbWeakMediaListListenerWrapper;
 friend class sbLocalDatabaseMediaListListener;
 public:
   sbListenerInfo();
@@ -59,16 +60,24 @@ public:
                 PRUint32 aCurrentBatchDepth,
                 PRUint32 aFlags,
                 sbIPropertyArray* aPropertyFilter);
+  
+  NS_IMETHOD_(nsrefcnt) AddRef(void);
+  NS_IMETHOD_(nsrefcnt) Release(void);
 
   PRBool ShouldNotify(PRUint32 aFlag, sbIPropertyArray* aProperties = nsnull);
   void BeginBatch();
   void EndBatch();
   void SetShouldStopNotifying(PRUint32 aFlag);
 
+protected:
+  nsAutoRefCnt mRefCnt;
+  NS_DECL_OWNINGTHREAD
+
 private:
 
   nsresult InitPropertyFilter(sbIPropertyArray* aPropertyFilter);
 
+  PRBool mIsGone;
   nsCOMPtr<nsISupports> mRef;
   nsCOMPtr<nsIWeakReference> mWeak;
   nsCOMPtr<sbIMediaListListener> mProxy;
@@ -84,13 +93,13 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTLISTENER
 
-  sbWeakMediaListListenerWrapper(nsIWeakReference* aWeakListener);
+  sbWeakMediaListListenerWrapper(sbListenerInfo* aListenerInfo);
   ~sbWeakMediaListListenerWrapper();
 
 private:
   already_AddRefed<sbIMediaListListener> GetListener();
 
-  nsCOMPtr<nsIWeakReference> mWeak;
+  nsRefPtr<sbListenerInfo> mListenerInfo;
 };
 
 class sbLocalDatabaseMediaListListener
@@ -109,7 +118,7 @@ class sbLocalDatabaseMediaListListener
 
   typedef nsTArray<ListenerAndIndex> sbMediaListListenersArray;
   typedef nsTArray<PRUint32> sbIndexArray;
-  typedef nsAutoPtr<sbListenerInfo> sbListenerInfoAutoPtr;
+  typedef nsRefPtr<sbListenerInfo> sbListenerInfoRefPtr;
 
 public:
   sbLocalDatabaseMediaListListener();
@@ -165,7 +174,7 @@ private:
                                  sbIPropertyArray* aPropertyFilter = nsnull);
   void SweepListenerArray(sbIndexArray& aStopNotifying);
 
-  nsTArray<sbListenerInfoAutoPtr> mListenerArray;
+  nsTArray<sbListenerInfoRefPtr> mListenerArray;
 
   PRLock* mListenerArrayLock;
 
