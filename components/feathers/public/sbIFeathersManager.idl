@@ -208,6 +208,15 @@ interface sbIFeathersManager : nsISupports
   nsISimpleEnumerator getSkinsForLayout(in AString aLayoutURL);
 
 
+  /**
+   * \brief Get an enumerator for all registered layouts compatible with 
+   *        the given skin
+   * 
+   * \param aInternalName Identifier for a skin
+   * \return Enumerator for a list of sbILayoutDescription objects
+   */
+  nsISimpleEnumerator getLayoutsForSkin(in AString aInternalName);
+
 
   /**
    * \brief Switch to the given window-skin pair

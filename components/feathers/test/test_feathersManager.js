@@ -224,14 +224,14 @@ function testDefaultRevert() {
   // Confirm that revert switches us to the primary fallback
   feathersManager.switchFeathers(feathersManager.previousLayoutURL,
                                  feathersManager.previousSkinName);
-  sleep(100); // switchFeathers is now async
+  sleep(300); // switchFeathers is now async
   assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
   assertEqual(layoutDataRemote.stringValue, DEFAULT_MAIN_LAYOUT_URL);
   
   // Now revert again, taking us to the secondary fallback
   feathersManager.switchFeathers(feathersManager.previousLayoutURL,
                                  feathersManager.previousSkinName);
-  sleep(100); // switchFeathers is now async
+  sleep(300); // switchFeathers is now async
   assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
   assertEqual(layoutDataRemote.stringValue, DEFAULT_SECONDARY_LAYOUT_URL);
 }
@@ -383,6 +383,9 @@ function runTest () {
   enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layouts[1].url), 
                  Components.interfaces.sbISkinDescription);
   assertEnumeratorEqualsArray(enumerator, [skins[0], skins[1]]);
+  enumerator = wrapEnumerator(feathersManager.getLayoutsForSkin(skins[0].internalName), 
+                 Components.interfaces.sbILayoutDescription);
+  assertEnumeratorEqualsArray(enumerator, [layouts[1]]);
   
   // ------------------------
   // Verify showChrome
@@ -398,7 +401,6 @@ function runTest () {
   layoutDataRemote.stringValue = layouts[0].url;
   skinDataRemote.stringValue = skins[2].internalName;
   
-  // TODO Actually select!
   
   // First with an invalid pair
   var failed = false;
@@ -414,6 +416,7 @@ function runTest () {
   feathersChangeListener.expectSkin = skins[0];
   feathersChangeListener.expectLayout = layouts[1];
   feathersManager.switchFeathers(layouts[1].url, skins[0].internalName);
+  sleep(300); // switchFeathers is now async
   // Make sure onSelect callback occurred
   assertEqual(feathersChangeListener.expectSkin, null);
   assertEqual(feathersChangeListener.expectLayout, null);
@@ -424,6 +427,7 @@ function runTest () {
   feathersChangeListener.expectLayout = layouts[0];
   feathersManager.switchFeathers(feathersManager.previousLayoutURL,
                                  feathersManager.previousSkinName);
+  sleep(300); // switchFeathers is now async
   // Make sure onSelect callback occurred
   assertEqual(feathersChangeListener.expectSkin, null);
   assertEqual(feathersChangeListener.expectLayout, null);

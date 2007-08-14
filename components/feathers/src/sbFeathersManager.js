@@ -915,6 +915,28 @@ FeathersManager.prototype = {
     }   
     return new ArrayEnumerator( skins );
   },
+  
+  
+  /**
+   * \sa sbIFeathersManager
+   */
+  getLayoutsForSkin: function getLayoutsForSkin(internalName) {
+    this._init();
+
+    var layouts = [];
+    
+    // Find skin descriptions that are compatible with the given layout.
+    for (var layout in this._mappings) {
+      if (internalName in this._mappings[layout]) {
+        var desc = this.getLayoutDescription(layout);
+        if (desc) {
+          layouts.push(desc);
+        }      
+      }
+    }
+      
+    return new ArrayEnumerator( layouts );
+  },
 
 
   /**
