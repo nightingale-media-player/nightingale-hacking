@@ -297,7 +297,7 @@ NS_IMETHODIMP
 sbLibraryRemovingEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaList,
                                                          PRBool* _retval)
 {
-  // Prep the query
+  // Prep the queryÄ
   nsresult rv = mFriendLibrary->MakeStandardQuery(getter_AddRefs(mDBQuery));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -600,8 +600,8 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   nsCOMPtr<nsIObserverService> observerService =
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = observerService->AddObserver(this, 
-                                    SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, 
+  rv = observerService->AddObserver(this,
+                                    SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -779,19 +779,19 @@ sbLocalDatabaseLibrary::CreateQueries()
   rv = builder->AddColumn(EmptyString(),
                           NS_LITERAL_STRING("media_list_type_id"));
   NS_ENSURE_SUCCESS(rv, rv);
-   
+
   rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_list_types"));
   NS_ENSURE_SUCCESS(rv, rv);
-   
+
   rv = builder->CreateMatchCriterionParameter(EmptyString(),
                                               NS_LITERAL_STRING("type"),
                                               sbISQLSelectBuilder::MATCH_EQUALS,
                                               getter_AddRefs(criterion));
   NS_ENSURE_SUCCESS(rv, rv);
-   
+
   rv = builder->AddCriterion(criterion);
   NS_ENSURE_SUCCESS(rv, rv);
-   
+
   rv = builder->ToString(mGetFactoryIDForTypeQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -871,7 +871,7 @@ sbLocalDatabaseLibrary::MakeStandardQuery(sbIDatabaseQuery** _retval,
 
   rv = query->SetDatabaseGUID(mDatabaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Set the location (if it was specified in the constructor)
   if (mDatabaseLocation) {
     rv = query->SetDatabaseLocation(mDatabaseLocation);
@@ -1193,12 +1193,12 @@ sbLocalDatabaseLibrary::AddTypesToArrayCallback(nsStringHashKey::KeyType aKey,
   TRACE(("LocalDatabaseLibrary - AddTypesToArrayCallback(%s, %s)",
          NS_LossyConvertUTF16toASCII(aKey).get(), contractID.get()));
 #endif
-  
+
   // Make a string enumerator for the string array.
   nsTArray<nsString>* array =
     static_cast<nsTArray<nsString>*>(aUserData);
   NS_ENSURE_TRUE(array, PL_DHASH_STOP);
-  
+
   nsString* newElement = array->AppendElement(aKey);
   NS_ENSURE_TRUE(newElement, PL_DHASH_STOP);
 
@@ -2621,7 +2621,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
                                                                         selectedItems[i]);
     }
   }
-  else {
+  else { // isLibrary
     sbAutoBatchHelper batchHelper(viewMediaList);
 
     // If this is a media list, just notify the list
@@ -2649,6 +2649,19 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
                                                    selectedItems[i]);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+  }
+
+  for (PRUint32 i = 0; i < count; i++) {
+    nsString guid;
+
+    sbIMediaItem* mediaItem = selectedItems.ObjectAt(i);
+    NS_ASSERTION(mediaItem, "Null in selectedItems!");
+
+    rv = mediaItem->GetGuid(guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Remove from our cache.
+    mMediaItemTable.Remove(guid);
   }
 
   return NS_OK;
@@ -2986,7 +2999,7 @@ sbLocalDatabaseLibrary::CreateView(sbIMediaListView** _retval)
 }
 
 /**
- * See 
+ * See
  */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetDefaultSortProperty(nsAString& aProperty)
@@ -3012,7 +3025,7 @@ sbLocalDatabaseLibrary::OnQueryEnd(sbIDatabaseResult* aDBResultObject,
  * See nsIObserver
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::Observe(nsISupports *aSubject, 
+sbLocalDatabaseLibrary::Observe(nsISupports *aSubject,
                                 const char *aTopic,
                                 const PRUnichar *aData)
 {
@@ -3030,7 +3043,7 @@ sbLocalDatabaseLibrary::Observe(nsISupports *aSubject,
   else {
     NS_NOTREACHED("Observing a topic we don't care about!");
   }
-  
+
   return NS_OK;
 }
 
@@ -3345,4 +3358,3 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
   NS_ADDREF(*_retval = array);
   return NS_OK;
 }
-
