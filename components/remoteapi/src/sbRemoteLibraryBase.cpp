@@ -359,8 +359,14 @@ nsresult
 sbRemoteLibraryBase::GetLibraryGUID( const nsAString &aLibraryID,
                                      nsAString &aLibraryGUID )
 {
+#ifdef PR_LOGGING
+  // This method is static, so the log might not be initialized
+  if (!gLibraryLog) {
+    gLibraryLog = PR_NewLogModule("sbRemoteLibraryBase");
+  }
   LOG(( "sbRemoteLibraryBase::GetLibraryGUID(%s)",
         NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
+#endif
 
   nsCAutoString prefKey;
 

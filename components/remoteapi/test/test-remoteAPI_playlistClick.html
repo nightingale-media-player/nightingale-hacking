@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<html lang="en">
+<head>
+  <title>Remote API Test: Playlist click</title>
+  <script type="application/javascript">
+    function onload() {
+      document.addEventListener("PlaylistCellClick", onplaylistclick, false);
+      songbird;
+    }
+    function onplaylistclick(event) {
+      var myDiv = document.getElementById("output");
+      myDiv.appendChild(document.createTextNode(event.button));
+      myDiv.appendChild(document.createTextNode(event.ctrlKey));
+      myDiv.appendChild(document.createTextNode(event.property));
+      if ("item" in event) {
+        myDiv.appendChild(document.createTextNode(event.item.guid));
+      }
+      myDiv.appendChild(document.createElement("br"));
+    }
+  </script>
+</head>
+<body>
+  <h1>Excercise the Remote Library API</h1>
+  
+  <p> Force a web playlist to appear. <br>
+    <a href="http://users.igl.net/unicorn/Black_Sabbath-_Iron_man.mp3">IronMan</a>
+    <a href="http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3">Sheryl Crow</a>
+  </p>
+  <h2>Instructions</h2>
+  <p>
+    Click on the items in the playlist.
+  <dl>
+    <dt>Expected results:</dt>
+    <dd>New text should show up, containing
+      <ol>
+        <li>the button pressed (0 for left)
+        <li>the state of the Ctrl key
+        <li>the property clicked on
+        <li>the guid of the item clicked on
+      </ol>
+    </dd>
+  </dl>
+  <hr>
+  </p>
+  <div id="output">
+  </div>
+</body>
+</html>

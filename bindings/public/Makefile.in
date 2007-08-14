@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbITabBrowser.idl \
              sbIPlaylistWidget.idl \
+             sbIPlaylistClickEvent.idl \
              $(NULL)
 
 XPIDL_MODULE = sbWidgets.xpt

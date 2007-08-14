@@ -1,0 +1,95 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface sbIMediaItem;
+
+/*
+Class: PlaylistClickEvent
+
+A <PlaylistClickEvent> is passed to any event handlers listening for the
+PlaylistCellClick event fired on the document object.  This event object also
+has some of the properties of MouseEvent.
+
+Note that the <Songbird> object must be accessed before any events will be raised.
+This will likely change in the future.
+
+Example:
+  (start code)
+  function onPlaylistCellClick( aEvent ) {
+    // we can get the property that was clicked on...
+    alert(aEvent.property);
+    
+    // or the <MediaItem>
+    alert(aEvent.item.guid);
+    
+    // as well as key states from MouseEvent
+    alert(aEvent.ctrlKey);
+  }
+  
+  // initialize the event system
+  songbird;
+  
+  // attach the event handler
+  document.addEventListener("PlaylistCellClick", onPlaylistCellClick, false);
+  (end code)
+
+  See Also:
+    <MediaItem>
+    <http://developer.mozilla.org/en/docs/DOM:event>
+    <http://developer.mozilla.org/en/docs/DOM:element.addEventListener>
+*/
+
+/**
+ * \interface sbIPlaylistClickEvent
+ * \brief an interface to maintain information about the last event that occurred
+ * \sa sbIPlaylistWidget
+ */
+[scriptable, uuid(83b06ce0-b364-4861-afff-9b8de773cd75)]
+ interface sbIPlaylistClickEvent : nsISupports
+{
+  /*
+  Prop: property
+  
+  The name of the property (column) that was clicked on
+  
+  Type: String
+  
+  See Also:
+    <MediaItem::getProperty()>
+  */
+  readonly attribute AString property;
+  
+  /*
+  Prop: item
+  
+  The <MediaItem> that was clicked on
+  
+  Type: <MediaItem>
+  */
+  readonly attribute sbIMediaItem item;
+};

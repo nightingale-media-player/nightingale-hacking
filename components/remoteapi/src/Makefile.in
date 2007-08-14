@@ -53,6 +53,7 @@ CPP_SRCS = sbSecurityMixin.cpp \
            sbRemoteSiteLibrary.cpp \
            sbRemoteSiteMediaItem.cpp \
            sbRemoteSiteMediaList.cpp \
+           sbRemotePlaylistClickEvent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \

@@ -28,11 +28,13 @@
 #include "sbRemotePlayer.h"
 #include "sbRemoteCommands.h"
 #include "sbRemoteLibraryBase.h"
+#include "sbRemotePlaylistClickEvent.h"
 #include "sbRemoteWebPlaylist.h"
 #include <sbClassInfoUtils.h>
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
+#include <sbIPlaylistClickEvent.h>
 #include <sbIPlaylistCommands.h>
 #include <sbITabBrowser.h>
 #include <sbIPropertyManager.h>
@@ -52,6 +54,8 @@
 #include <nsIDOMElement.h>
 #include <nsIDOMEvent.h>
 #include <nsIDOMEventTarget.h>
+#include <nsIDOMMouseEvent.h>
+#include <nsIDOMNSEvent.h>
 #include <nsIDOMWindow.h>
 #include <nsPIDOMWindow.h>
 #include <nsIDOMWindowInternal.h>
@@ -311,6 +315,9 @@ sbRemotePlayer::Init()
   NS_ENSURE_STATE(eventTarget);
   eventTarget->AddEventListener( NS_LITERAL_STRING("unload"), this , PR_TRUE );
 
+  LOG(("sbRemotePlayer::Init() -- registering PlaylistCellClick listener"));
+  eventTarget->AddEventListener( NS_LITERAL_STRING("PlaylistCellClick"), this , PR_TRUE );
+  
   mInitialized = PR_TRUE;
 
   return NS_OK;
@@ -1052,12 +1059,100 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove unload listener from document" );
 
+    rv = eventTarget->RemoveEventListener( NS_LITERAL_STRING("PlaylistCellClick"),
+                                           this ,
+                                           PR_TRUE );
+    NS_ASSERTION( NS_SUCCEEDED(rv),
+                  "Failed to remove PlaylistCellClick listener from document" );
+
     // the page is going away, clean up things that will cause us to
     // not get released.
     UnregisterCommands();
     mCommandsObject = nsnull;
     mContentDoc = nsnull;
     mChromeDoc = nsnull;
+  } else if ( type.EqualsLiteral("PlaylistCellClick") ) {
+    nsresult rv;
+
+    // get the event information from the playlist
+    nsCOMPtr<nsIDOMNSEvent> srcEvent( do_QueryInterface(aEvent, &rv) );
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMEventTarget> srcEventTarget;
+    rv = srcEvent->GetOriginalTarget( getter_AddRefs(srcEventTarget) );
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<sbIPlaylistWidget> playlist( do_QueryInterface(srcEventTarget, &rv) );
+    // this recurses because we see the event targeted at the content document
+    // bubble up, so just gracefully ignore it if the event wasn't from a playlist
+    if (NS_FAILED(rv))
+      return NS_OK;
+    
+    nsCOMPtr<sbIPlaylistClickEvent> playlistClickEvent;
+    rv = playlist->GetLastClickEvent( getter_AddRefs(playlistClickEvent) );
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    // make a mouse event
+    nsCOMPtr<nsIDOMDocumentEvent> docEvent( do_QueryInterface(mContentDoc, &rv) );
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<nsIDOMEvent> newEvent;
+    rv = docEvent->CreateEvent( NS_LITERAL_STRING("mouseevent"), getter_AddRefs(newEvent) );
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    PRBool ctrlKey = PR_FALSE, altKey = PR_FALSE,
+           shiftKey = PR_FALSE, metaKey = PR_FALSE;
+    PRUint16 button = 0;
+    nsCOMPtr<nsIDOMMouseEvent> srcMouseEvent( do_QueryInterface(playlistClickEvent, &rv) );
+    if (NS_SUCCEEDED(rv)) {
+      srcMouseEvent->GetCtrlKey(&ctrlKey);
+      srcMouseEvent->GetAltKey(&altKey);
+      srcMouseEvent->GetShiftKey(&shiftKey);
+      srcMouseEvent->GetMetaKey(&metaKey);
+      srcMouseEvent->GetButton(&button);
+    } else {
+      LOG(("sbRemotePlayer::HandleEvent() - no mouse event for PlaylistCellClick"));
+    }
+    
+    nsCOMPtr<nsIDOMMouseEvent> newMouseEvent( do_QueryInterface(newEvent, &rv) );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = newMouseEvent->InitMouseEvent( NS_LITERAL_STRING("PlaylistCellClick"),
+                                        PR_TRUE, /* can bubble */
+                                        PR_TRUE, /* can cancel */
+                                        nsnull,
+                                        0, /* detail */
+                                        0, 0, /* screen x & y */
+                                        0, 0, /* client x & y */
+                                        ctrlKey, /* ctrl key */
+                                        altKey, /* alt key */
+                                        shiftKey, /* shift key */
+                                        metaKey, /* meta key */
+                                        button, /* button */
+                                        nsnull /* related target */
+                                      );
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    //make the event trusted
+    nsCOMPtr<nsIPrivateDOMEvent> privEvt( do_QueryInterface( newEvent, &rv ) );
+    NS_ENSURE_SUCCESS( rv, rv );
+    privEvt->SetTrusted( PR_TRUE );
+
+    // make our custom wrapper event
+    nsRefPtr<sbRemotePlaylistClickEvent> remoteEvent( new sbRemotePlaylistClickEvent() );
+    NS_ENSURE_TRUE(remoteEvent, NS_ERROR_OUT_OF_MEMORY);
+    
+    rv = remoteEvent->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = remoteEvent->InitEvent( playlistClickEvent, newMouseEvent );
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // dispatch the event the the content document
+    PRBool dummy;
+    nsCOMPtr<nsIDOMEventTarget> destEventTarget = do_QueryInterface( mContentDoc, &rv );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = destEventTarget->DispatchEvent( remoteEvent, &dummy );
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   return NS_OK;
 }

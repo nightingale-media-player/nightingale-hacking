@@ -311,6 +311,36 @@
       <field name="edit_row">0;</field>
       <field name="edit_col">0;</field>
 
+      <!-- Stores the last click event, to be passed to the remote API
+           (this is a sbIPlaylistClickEvent) -->
+      <field name="_lastClickEvent">null</field>
+      <property name="lastClickEvent">
+        <getter>
+        <![CDATA[
+          if (!this._lastClickEvent)
+            return null;
+          var obj = {
+            QueryInterface: function lastEventInfo_QI(aIID) {
+              if (aIID.equals(Components.interfaces.nsISupports) ||
+                  aIID.equals(Components.interfaces.nsIDOMMouseEvent) ||
+                  aIID.equals(Components.interfaces.sbIPlaylistClickEvent)
+                 )
+              {
+                return this;
+              }
+              throw Components.results.NS_ERROR_NO_INTERFACE;
+            }
+          };
+          const props = ["property", "item", "ctrlKey", "shiftKey",
+                         "altKey", "metaKey", "button"];
+          for each (var i in props) {
+            obj[i] = this._lastClickEvent[i];
+          }
+          return obj;
+        ]]>
+        </getter>
+      </property>
+
       <!-- Last click time and row index.  This is used to time the slow click
            to inline edit -->
       <field name="_lastClickIndex">0</field>
@@ -1443,7 +1473,9 @@
         event.item     = item;
         event.row      = row.value;
         event.column   = col.value;
+        this._lastClickEvent = { property: property, item: item, __proto__: evt };
         this.dispatchEvent(event);
+        this._lastClickEvent = null;
 
         // If the property for this column is a clickable property, get the
         // value for this click
