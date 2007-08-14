@@ -1273,18 +1273,23 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
 
   // Set the properties (eventually iterate when the sbIMetadataValue have the correct keystrings).
   NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
+  nsAutoString oldName;
+  rv = item->GetProperty( trackNameKey, oldName );
   nsAutoString trackName;
   rv = values->GetValue( NS_LITERAL_STRING("title"), trackName );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If the metadata read can't even find a song name, cook one up off the url.
-  if ( trackName.IsEmpty() ) {
+  // If the metadata read can't even find a song name, 
+  // AND THERE ISN'T ALREADY A TRACK NAME, cook one up off the url.
+  if ( trackName.IsEmpty() && oldName.IsEmpty() ) {
     rv = CreateDefaultItemName( aItem->url, trackName );
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = AppendIfValid( propMan, properties, trackNameKey, trackName);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! trackName.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, trackNameKey, trackName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_NAMED_LITERAL_STRING( artistKey, SB_PROPERTY_ARTISTNAME );
   nsAutoString artist;

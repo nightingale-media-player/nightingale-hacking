@@ -200,17 +200,30 @@ try
               else {
                 // This must be just an URL.
                 var url = item;
+                var name = "";
+                
+                // Or, uhm, maybe it's an Object?
+                if (item instanceof Object) {
+                  url = item.url;
+                  name = item.name;
+                }
+                
                 var uri = newURI(url);
+                
+                // Set the originURL/Page values to remember our state.
+                var propArray = [
+                    [SBProperties.originPage, this.currentURL],
+                    [SBProperties.originURL, url]
+                  ];
+                // Add the track name if requested.
+                if (name.length > 0) {
+                  propArray.push([SBProperties.trackName, name])
+                }
                 
                 // Make a new media item for it
                 mediaItem = library.createMediaItem(uri,
-                  // Set the properties for later tracking
-                  SBProperties.createArray([
-                    [SBProperties.originPage, this.currentURL],
-                    [SBProperties.originURL, url],
-                    [SBProperties.trackName, gPPS.convertURLToDisplayName(url)]
-                  ])
-                );
+                                // Set the properties for later tracking
+                                SBProperties.createArray( propArray ) );
 
                 // Make sure we scan it for metadata
                 if (!mediaItemsToScan) {
@@ -288,36 +301,45 @@ try
       if (context)
         context.progressCurrent = context.progressCurrent + 1;
     
-      // Make sure this is a well-formed url.
-      try {
-        url = newURI(url).spec;
-      }
-      catch (e) {
-        return false;
+      if (!force) {
+        // Make sure this is a well-formed url.
+        try {
+          url = newURI(url).spec;
+        }
+        catch (e) {
+          return false;
+        }
+        
+        if (gPPS.isPlaylistURL(url)) {
+          // Keep the loop going.
+          return false;
+        }
+
+        if (!gPPS.isMediaURL(url)) {
+          // Keep the loop going.
+          return false;
+        }
       }
       
-      if (gPPS.isPlaylistURL(url)) {
-        // Keep the loop going.
-        return false;
-      }
-
-      if (!force && !gPPS.isMediaURL(url)) {
-        // Keep the loop going.
-        return false;
-      }
-
       if (context) {
         if (!this.items.length) {
           context.playlistHasItems = true;
           context.showPlaylist = true;
         }
       }
+
+      // Shortcut
+      if (force) {
+        this.items.push(url);
+        this.seenURLs.push(url);
+        return true;
+      }
       
       // Don't insert it if we already did.
       if (this.seenURLs.indexOf(url) != -1) {
         return false;
       }
-
+      
       // Try to see if we've already found and scanned this url
       var listener = {
         foundItem: null,
@@ -339,7 +361,7 @@ try
       library.enumerateItemsByProperty(SBProperties.contentURL, url, listener,
                                        sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
       if (listener.foundItem) {
-        this.items.push(listener.foundItem)
+        this.items.push(listener.foundItem);
       }
       else {
         this.items.push(url);
@@ -382,8 +404,10 @@ try
                   var seek = "jp.swf";
                   var key = url.indexOf( seek );
                   if ( key != -1 ) {
-                    url = "http://www.youtube.com/get_video" + url.substr( key + seek.length );
-                    this.manager.handleURL( url, true ); // Force the webplaylist to accept the url.
+                    var obj = {};
+                    obj.url = "http://www.youtube.com/get_video" + url.substr( key + seek.length );
+                    obj.name = "*** YouTube Video ***";
+                    this.manager.handleURL( obj, true ); // Force the webplaylist to accept the obj.
                   }
                 }
               }
@@ -410,8 +434,10 @@ try
         var seek = "video_id";
         var key = url.indexOf( seek );
         if ( key != -1 ) {
-          url = "http://www.youtube.com/get_video?" + url.substr( key );
-          this.handleURL( url, true ); // Force the webplaylist to accept the url.
+          var obj = {};
+          obj.url = "http://www.youtube.com/get_video?" + url.substr( key );
+          obj.name = "*** YouTube Video ***";
+          this.handleURL( obj, true ); // Force the webplaylist to accept the obj.
           retval = true;
         }
       }
