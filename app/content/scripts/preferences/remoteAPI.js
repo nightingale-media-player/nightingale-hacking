@@ -1,5 +1,3 @@
-/*
- //
 // BEGIN SONGBIRD GPL
 //
 // This file is part of the Songbird web player.
@@ -21,31 +19,39 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 // END SONGBIRD GPL
-//
-*/
 
 var gRemoteAPIPane = {
+  // the prefs for the checkboxes in the pane
+  // these are both the XUL DOM id and pref key
+  _prefKeys: [
+    'songbird.rapi.playback_control_disable',
+    'songbird.rapi.playback_read_disable',
+    'songbird.rapi.library_read_disable',
+    'songbird.rapi.library_write_disable',
+    'songbird.rapi.library_create_disable'
+  ],
 
-  _exceptionsParams: {
-    // provides initialization data to the permissions dialog
-    metadata: { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.metadata" },
-    library:  { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.library" },
-    controls: { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.controls" },
-    binding:  { blockVisible: true, sessionVisible: false, allowVisible: true, prefilledHost: "", permissionType: "rapi.binding"   }
-  },
-
-  _showExceptions: function (aPermissionType)
+  configureWhitelist: function (aType)
   {
     // get ref to the properties file string bundle
     var bundlePreferences = document.getElementById("bundlePreferences");
 
     // set up a parmater object to pass to permission window
-    var params = this._exceptionsParams[aPermissionType];
-
-    // Pull the title and text for the particular permission from the properties file
-    params.windowTitle = bundlePreferences.getString("rapi." + aPermissionType + ".permissions_title");
-    params.introText = bundlePreferences.getString("rapi." + aPermissionType + ".permissions_text");
-
+    var params = {
+      blockVisible: false,
+      sessionVisible: false,
+      allowVisible: true,
+      prefilledHost: "",
+      permissionType: "rapi." + aType,
+      windowTitle: bundlePreferences.getString("rapi.permissions_title"),
+      introText: bundlePreferences.getString("rapi." + aType + ".permissions_text"),
+      blocking: {
+        settings: bundlePreferences.getString("rapi." + aType + ".block_settings"),
+        prompt: bundlePreferences.getString("rapi.block_prompt"),
+        pref: "songbird.rapi." + aType + "_notify"
+      }
+    };
+    
     // open the permission window to set allow/disallow/session permissions
     document.documentElement.openWindow("Browser:Permissions",
                                         "chrome://browser/content/preferences/permissions.xul",
@@ -53,40 +59,45 @@ var gRemoteAPIPane = {
                                         params);
   },
 
-  showLibraryWhitelist: function ()
-  {
-    this._showExceptions("library");
+  updateDisabledState: function() {
+    for (var i=0; i<this._prefKeys.length; i++) {
+      var pref_element = document.getElementById(this._prefKeys[i]);
+      if (!pref_element) {
+        continue;
+      }
+      var button_element = document.getElementById(this._prefKeys[i]+'.button');
+      if (!button_element) {
+        continue;
+      }
+      if (!pref_element.value) {
+        button_element.setAttribute('disabled', 'true');
+      } else {
+        button_element.removeAttribute('disabled');
+      }
+
+    }
   },
-
-  showMetadataWhitelist: function ()
-  {
-    this._showExceptions("metadata");
+  
+  onLoad: function(event) {
+    window.removeEventListener('load', gRemoteAPIPane.onLoad, false);
+    gRemoteAPIPane.updateDisabledState();
   },
-
-  showControlsWhitelist: function ()
-  {
-    this._showExceptions("controls");
+  
+  onChange: function(event) {
+    gRemoteAPIPane.updateDisabledState();
   },
-
-  showBindingWhitelist: function ()
-  {
-    this._showExceptions("binding");
-  },
-
-  notifyDeniedPrefChanged: function ()
-  {
-    // get the checkbox elements for the related preferences
-    var deniedPref = document.getElementById("songbird.rapi.notify.denied");
-    var alwaysPref = document.getElementById("songbird.rapi.notify.always");
-
-    // sync the disabled state with the checked state of the denied pref. This
-    // will cause the second checkbox to only be active if the first is checked
-    alwaysPref.disabled = !deniedPref.value;
-
-    // if the denied pref is unchecked, uncheck the always pref too
-    if (!deniedPref.value)
-      alwaysPref.value = deniedPref.value;
+  
+  restoreDefaults: function() {
+    for (var i=0; i<this._prefKeys.length; i++) {
+      var pref_element = document.getElementById(this._prefKeys[i]);
+      if (!pref_element) {
+        continue;
+      }
+      pref_element.reset();
+    }
   }
 
 };
+
+window.addEventListener('load', gRemoteAPIPane.onLoad, false);
 

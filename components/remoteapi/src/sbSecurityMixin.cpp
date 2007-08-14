@@ -38,11 +38,17 @@
 #include <nsStringGlue.h>
 #include <prlog.h>
 
-#define PERM_TYPE_CONTROLS "rapi.controls"
-#define PERM_TYPE_BINDING  "rapi.binding"
-#define PERM_TYPE_METADATA "rapi.metadata"
-#define PERM_TYPE_LIBRARY "rapi.library"
+#define PERM_TYPE_PLAYBACK_CONTROL "rapi.playback_control"
+#define PERM_TYPE_PLAYBACK_READ    "rapi.playback_read"
+#define PERM_TYPE_LIBRARY_READ     "rapi.library_read"
+#define PERM_TYPE_LIBRARY_WRITE    "rapi.library_write"
+#define PERM_TYPE_LIBRARY_CREATE   "rapi.library_create"
 
+#define PREF_PLAYBACK_CONTROL "playback_control_disable"
+#define PREF_PLAYBACK_READ    "playback_read_disable"
+#define PREF_LIBRARY_READ     "library_read_disable"
+#define PREF_LIBRARY_WRITE    "library_write_disable"
+#define PREF_LIBRARY_CREATE   "library_create_disable"
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbSecurityMixin:5
@@ -181,9 +187,9 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   //   if ANY of these are allowed we need to let the object get created since
   //   we don't know at this point what the request on the object is actually
   //   going to be.
-  if ( GetPermission(codebase, PERM_TYPE_CONTROLS, "disable_controls") ||
-       GetPermission(codebase, PERM_TYPE_BINDING, "disable_binding") ||
-       GetPermission(codebase, PERM_TYPE_METADATA, "disable_metadata") ) {
+  if ( GetPermission(codebase, PERM_TYPE_PLAYBACK_CONTROL, PREF_PLAYBACK_CONTROL) ||
+       GetPermission(codebase, PERM_TYPE_PLAYBACK_READ, PREF_PLAYBACK_READ) ||
+       GetPermission(codebase, PERM_TYPE_LIBRARY_READ, PREF_LIBRARY_READ) ) {
     LOG(("sbSecurityMixin::CanCreateWrapper - Permission GRANTED!!!"));
     *_retval = SB_CloneAllAccess();
   } else {
@@ -402,22 +408,25 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
     return allowed;
 
   if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("controls:"))) {
-    allowed = GetPermission(codebase, PERM_TYPE_CONTROLS, "disable_controls");
+    allowed = GetPermission(codebase, PERM_TYPE_PLAYBACK_CONTROL, PREF_PLAYBACK_CONTROL);
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("binding:"))) {
-    allowed = GetPermission(codebase, PERM_TYPE_BINDING, "disable_binding");
+    allowed = GetPermission(codebase, PERM_TYPE_PLAYBACK_READ, PREF_PLAYBACK_READ);
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("metadata:"))) {
-    allowed = GetPermission(codebase, PERM_TYPE_METADATA, "disable_metadata");
+    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY_READ, PREF_LIBRARY_READ);
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("library:"))) {
-    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY, "disable_library");
+    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY_WRITE, PREF_LIBRARY_WRITE);
+  }
+  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("library_create:"))) {
+    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY_CREATE, PREF_LIBRARY_CREATE);
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("download:"))) {
     // XXXredfive - use the library prefs for downloads for now. Larger
     //              re-ordering of which pref goes with which call is planned
     //              for soon. This will do for now.
-    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY, "disable_library");
+    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY_WRITE, PREF_LIBRARY_WRITE);
   }
   else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("site:"))) {
     // site library methods are always cleared

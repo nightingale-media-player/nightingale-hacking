@@ -276,30 +276,20 @@
 <!ENTITY hotkeys.prefpane             "Hotkeys" >
 
 <!ENTITY rapi.prefpane.title             "RemoteAPI" >
-<!ENTITY rapi.prefpane.access.text       "Temporary text until the layout gets fixed." > 
-<!ENTITY rapi.prefpane.access.text.tmp       "This options control whether a web page can access Songbird directly through JavaScript in the page. You can block or unblock globaly using the checkboxes and then white- or black- list specific domains using the configuration buttons." > 
-<!ENTITY rapi.prefpane.notify.text       "Temporary text until the layout gets fixed." > 
-<!ENTITY rapi.prefpane.notify.text.tmp       "These options control whether you get notified when a web page attempts to access Songbird directly. Denied applies only when you have denied access by checking one of the boxes in the denied section, or specifying the domain in the configuration dialog (by clicking on the buttons above). If you get notified for Denied you have the option of being notified for all accesses, successful or not." >
-<!ENTITY rapi.disable_library.label      "Block website access to your library" >
-<!ENTITY rapi.disable_library.accesskey  "l" >
-<!ENTITY rapi.disable_metadata.label     "Block website access to track metadata" >
-<!ENTITY rapi.disable_metadata.accesskey "m" >
-<!ENTITY rapi.disable_controls.label     "Block website access to playback controls" >
-<!ENTITY rapi.disable_controls.accesskey "p" >
-<!ENTITY rapi.disable_binding.label      "Block website ability to bind to metadata" >
-<!ENTITY rapi.disable_binding.accesskey  "b" >
-<!ENTITY rapi.greylist.library.label     "Configure Library" >
-<!ENTITY rapi.greylist.library.accesskey "i" >
-<!ENTITY rapi.greylist.label1             "Configure Metadata" >
-<!ENTITY rapi.greylist.accesskey1         "C" >
-<!ENTITY rapi.greylist.label2             "Configure Playback" >
-<!ENTITY rapi.greylist.accesskey2         "o" >
-<!ENTITY rapi.greylist.label3             "Configure Binding" >
-<!ENTITY rapi.greylist.accesskey3         "g" >
-<!ENTITY rapi.notify.denied.label         "Notify me when web pages try to directly access Songbird and are denied." >
-<!ENTITY rapi.notify.denied.accesskey     "d" >
-<!ENTITY rapi.notify.always.label         "Notify me when web pages try to directly access Songbird in all cases." >
-<!ENTITY rapi.notify.always.accesskey     "a" >
+<!ENTITY rapi.prefpane.access.caption    "Webpage" >
+<!ENTITY rapi.prefpane.access.text       "You can allow websites to integrate with Songbird to create a tighter coupling between the web and your media. Please configure Songbird to allow or block websites usage of the following points of integration." > 
+<!ENTITY rapi.whitelist.label            "Configure" >
+<!ENTITY rapi.restore_defaults.label      "Restore to Default" >
+<!ENTITY rapi.playback_control_disable.label "Block from controlling media playback" >
+<!ENTITY rapi.playback_read_disable.label    "Block from looking at information about playing media" >
+<!ENTITY rapi.library_read_disable.label     "Block from looking at information about media in my Songbird" >
+<!ENTITY rapi.library_write_disable.label    "Block from adding/deleting media in my Library and devices" >
+<!ENTITY rapi.library_create_disable.label   "Block from creating/editing playlists in my Library and devices" >
+<!ENTITY rapi.playback_control_disable.accesskey "p" >
+<!ENTITY rapi.playback_read_disable.accesskey    "m" >
+<!ENTITY rapi.library_read_disable.accesskey     "s" >
+<!ENTITY rapi.library_write_disable.accesskey    "a" >
+<!ENTITY rapi.library_create_disable.accesskey   "c" >
 
 <!ENTITY prefpane.addons.label        "Add-Ons">
 

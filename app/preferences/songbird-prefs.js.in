@@ -202,15 +202,19 @@ pref("browser.urlbar.clickSelectsAll", true);
 // RemoteAPI prefs
 //
 
-// allow access to all remote api by default
-pref("songbird.rapi.disable_metadata", false);
-pref("songbird.rapi.disable_library", false);
-pref("songbird.rapi.disable_controls", false);
-pref("songbird.rapi.disable_binding", false);
+// allow access to playback control/read remote api by default
+pref("songbird.rapi.playback_control_disable", false);
+pref("songbird.rapi.playback_read_disable", false);
+pref("songbird.rapi.library_read_disable", true);
+pref("songbird.rapi.library_write_disable", true);
+pref("songbird.rapi.library_create_disable", true);
 
-// notify user for all accesses by default
-pref("songbird.rapi.notify.denied", true);
-pref("songbird.rapi.notify.always", true);
+// by default notify about everything
+pref("songbird.rapi.playback_control_notify", true);
+pref("songbird.rapi.playback_read_notify", true);
+pref("songbird.rapi.library_read_notify", true);
+pref("songbird.rapi.library_write_notify", true);
+pref("songbird.rapi.library_create_notify", true);
 
 // Songbird default urls
 pref("songbird.url.addons", "http://addons.songbirdnest.com/");

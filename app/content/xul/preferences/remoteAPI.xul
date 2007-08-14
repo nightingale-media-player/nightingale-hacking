@@ -32,102 +32,96 @@
 <overlay id="RemoteAPIPaneOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <prefpane id="paneRemoteAPI" >
+  <prefpane id="paneRemoteAPI" flex="1">
 
     <preferences id="remoteAPIPreferences">
-      <preference id="songbird.rapi.disable_metadata"  name="songbird.rapi.disable_metadata"  type="bool"/>
-      <preference id="songbird.rapi.disable_library"   name="songbird.rapi.disable_library"   type="bool"/>
-      <preference id="songbird.rapi.disable_controls"  name="songbird.rapi.disable_controls"  type="bool"/>
-      <preference id="songbird.rapi.disable_binding"   name="songbird.rapi.disable_binding"   type="bool"/>
-      <preference id="songbird.rapi.notify.always"     name="songbird.rapi.notify.always"     type="bool"/>
-      <preference id="songbird.rapi.notify.denied"     name="songbird.rapi.notify.denied"     type="bool"
-                  onchange="gRemoteAPIPane.notifyDeniedPrefChanged();"/>
+      <preference id="songbird.rapi.playback_control_disable"
+                  name="songbird.rapi.playback_control_disable"
+                  type="bool"
+                  onchange="gRemoteAPIPane.onChange()"/>
+      <preference id="songbird.rapi.playback_read_disable"
+                  name="songbird.rapi.playback_read_disable"
+                  type="bool"
+                  onchange="gRemoteAPIPane.onChange()"/>
+      <preference id="songbird.rapi.library_read_disable"
+                  name="songbird.rapi.library_read_disable"
+                  type="bool"
+                  onchange="gRemoteAPIPane.onChange()"/>
+      <preference id="songbird.rapi.library_write_disable"
+                  name="songbird.rapi.library_write_disable"
+                  type="bool"
+                  onchange="gRemoteAPIPane.onChange()"/>
+      <preference id="songbird.rapi.library_create_disable"
+                  name="songbird.rapi.library_create_disable"
+                  type="bool"
+                  onchange="gRemoteAPIPane.onChange()"/>
     </preferences>
     
     <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/remoteAPI.js"/>
 
     <vbox align="start">
-    <groupbox id="rapiAccessGroup" flex="1">
-      <description>
-        &rapi.prefpane.access.text;
-      </description>
-      <grid id="rapiContentGrid">
-        <columns>
-          <column flex="1"/>
-          <column/>
-        </columns>
-        <rows id="rapiRows-1">
-
-          <row id="rapiMetadataRow" align="center">
-            <vbox align="start">
-              <checkbox id="metadataPolicy"
-                        preference="songbird.rapi.disable_metadata"
-                        label="&rapi.disable_metadata.label;"
-                        accesskey="&rapi.disable_metadata.accesskey;"/>
-            </vbox>
-            <button id="metadataPolicyButton"
-                    label="&rapi.greylist.label1;"
-                    accesskey="&rapi.greylist.accesskey1;"
-                    oncommand="gRemoteAPIPane.showMetadataWhitelist();"/>
-          </row>
-
-          <row id="rapiLibraryRow" align="center">
-            <vbox align="start">
-              <checkbox id="libraryPolicy"
-                        preference="songbird.rapi.disable_library"
-                        label="&rapi.disable_library.label;"
-                        accesskey="&rapi.disable_library.accesskey;"/>
-            </vbox>
-            <button id="libraryPolicyButton"
-                    label="&rapi.greylist.library.label;"
-                    accesskey="&rapi.greylist.library.accesskey;"
-                    oncommand="gRemoteAPIPane.showLibraryWhitelist();"/>
-          </row>
-
-          <row id="rapiControlsRow" align="center">
-            <vbox align="start">
-              <checkbox id="controlsPolicy"
-                        preference="songbird.rapi.disable_controls"
-                        label="&rapi.disable_controls.label;"
-                        accesskey="&rapi.disable_controls.accesskey;" />
-            </vbox>
-            <button id="controlsPolicyButton"
-                    label="&rapi.greylist.label2;"
-                    accesskey="&rapi.greylist.accesskey2;"
-                    oncommand="gRemoteAPIPane.showControlsWhitelist();"/>
-          </row>
-
-          <row id="rapiBindingRow" align="center">
-            <vbox align="start">
-              <checkbox id="bindingPolicy"
-                        preference="songbird.rapi.disable_binding"
-                        label="&rapi.disable_binding.label;"
-                        accesskey="&rapi.disable_binding.accesskey;" />
-            </vbox>
-            <button id="bindingPolicyButton"
-                    label="&rapi.greylist.label3;"
-                    accesskey="&rapi.greylist.accesskey3;"
-                    oncommand="gRemoteAPIPane.showBindingWhitelist();"/>
-          </row>
-        </rows>
-      </grid>
-    </groupbox>
-
-    <groupbox id="rapiNotificationGroup" flex="1">
-      <description>
-        &rapi.prefpane.notify.text;
-      </description>
-      <checkbox id="notifyDenied"
-                preference="songbird.rapi.notify.denied"
-                label="&rapi.notify.denied.label;"
-                accesskey="&rapi.notify.denied.accesskey;" 
-                onsyncfrompreference="gRemoteAPIPane.notifyDeniedPrefChanged();"/>
-      <checkbox id="notifyAlways"
-                class="indent"
-                preference="songbird.rapi.notify.always"
-                label="&rapi.notify.always.label;"
-                accesskey="&rapi.notify.always.accesskey;" />
-    </groupbox>
+      <groupbox id="rapiAccessGroup" flex="1">
+        <caption label="&rapi.prefpane.access.caption;"/>
+        <description>&rapi.prefpane.access.text;</description>
+        <vbox flex="1">
+          <hbox flex="1">
+            <checkbox preference="songbird.rapi.playback_control_disable"
+              label="&rapi.playback_control_disable.label;"
+              accesskey="&rapi.playback_control_disable.accesskey;"/>
+            <spacer flex="1"/>
+            <button id="songbird.rapi.playback_control_disable.button"
+              label="&rapi.whitelist.label;"
+              oncommand="gRemoteAPIPane.configureWhitelist('playback_control');"/>
+          </hbox>
+          
+          <hbox flex="1">
+            <checkbox preference="songbird.rapi.playback_read_disable"
+              label="&rapi.playback_read_disable.label;"
+              accesskey="&rapi.playback_read_disable.accesskey;"/>
+            <spacer flex="1"/>
+            <button id="songbird.rapi.playback_read_disable.button"
+              label="&rapi.whitelist.label;"
+              oncommand="gRemoteAPIPane.configureWhitelist('playback_read');"/>
+          </hbox>
+          
+          <hbox flex="1">
+            <checkbox preference="songbird.rapi.library_read_disable"
+              label="&rapi.library_read_disable.label;"
+              accesskey="&rapi.library_read_disable.accesskey;"/>
+            <spacer flex="1"/>
+            <button id="songbird.rapi.library_read_disable.button"
+              label="&rapi.whitelist.label;"
+              oncommand="gRemoteAPIPane.configureWhitelist('library_read');"/>
+          </hbox>
+          
+          <hbox flex="1">
+            <checkbox checked="true" disabled="true"
+              label="&rapi.library_write_disable.label;"
+              accesskey="&rapi.library_write_disable.accesskey;"/>
+            <spacer flex="1"/>
+            <button id="songbird.rapi.library_write_disable.button"
+              label="&rapi.whitelist.label;"
+              oncommand="gRemoteAPIPane.configureWhitelist('library_write');"/>
+          </hbox>
+          
+          <hbox flex="1">
+            <checkbox checked="true" disabled="true"
+              label="&rapi.library_create_disable.label;"
+              accesskey="&rapi.library_create_disable.accesskey;"/>
+            <spacer flex="1"/>
+            <button id="songbird.rapi.library_create_disable.button"
+              label="&rapi.whitelist.label;"
+              oncommand="gRemoteAPIPane.configureWhitelist('library_create');"/>
+          </hbox>
+          
+          <hbox flex="1">
+            <button label="&rapi.restore_defaults.label;"
+              oncommand="gRemoteAPIPane.restoreDefaults();"/>
+            <spacer flex="1"/>
+          </hbox>
+        </vbox>
+      </groupbox>
+      <spacer flex="1"/>
     </vbox>
   </prefpane>
 
