@@ -436,8 +436,8 @@ try
       return;
     }
     
-    jumpto_view = sourceview.clone()
-
+    jumpto_view = sourceview.clone();
+    
     var playlist = document.getElementById("jumpto.playlist");
     playlist.tree.setAttribute("seltype", "single");
     playlist.bind(jumpto_view, SBEmptyPlaylistCommands);

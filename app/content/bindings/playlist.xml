@@ -505,42 +505,44 @@
     document.getAnonymousElementByAttribute(this, "sbid", "filter_parent");
   this._removeAllChildren(parent);
   
-  // Create the filters based upon the cascadeFilterSet data.
-  var cfs = this.mediaListView.cascadeFilterSet;
-  var length = cfs.length;
-  for (var i = 0; i < length; i++) {
-    // If this is a search then keep going.
-    if (cfs.isSearch(i)) {
-      continue;
-    }
-  
-    // And start creating the filter
-    var filterlist = document.createElementNS(this._XUL_NS, "sb-filterlist");
-    filterlist.setAttribute("enableColumnDrag", "false");
-    //filterlist.setAttribute("hidecolumnpicker", "true");
-    filterlist.setAttribute("flex", "1");
+  if (this.getAttribute("hidefilters") != "true") {
+    // Create the filters based upon the cascadeFilterSet data.
+    var cfs = this.mediaListView.cascadeFilterSet;
+    var length = cfs.length;
+    for (var i = 0; i < length; i++) {
+      // If this is a search then keep going.
+      if (cfs.isSearch(i)) {
+        continue;
+      }
     
-    parent.appendChild(filterlist);
-    filterlist.bind(cfs, i);
-    
-    if (i < length - 1) {
-      var splitter = document.createElement("sb-smart-splitter");
-      splitter.setAttribute("id", "filter_splitter" );
-      //splitter.setAttribute("stateid", "filter_splitter_" + this.ref );
-      splitter.setAttribute("state", "open");
-      splitter.setAttribute("resizebefore", "closest");
-      splitter.setAttribute("resizeafter", "closest");
-      splitter.setAttribute("collapse", "before");
+      // And start creating the filter
+      var filterlist = document.createElementNS(this._XUL_NS, "sb-filterlist");
+      filterlist.setAttribute("enableColumnDrag", "false");
+      //filterlist.setAttribute("hidecolumnpicker", "true");
+      filterlist.setAttribute("flex", "1");
+      
+      parent.appendChild(filterlist);
+      filterlist.bind(cfs, i);
+      
+      if (i < length - 1) {
+        var splitter = document.createElement("sb-smart-splitter");
+        splitter.setAttribute("id", "filter_splitter" );
+        //splitter.setAttribute("stateid", "filter_splitter_" + this.ref );
+        splitter.setAttribute("state", "open");
+        splitter.setAttribute("resizebefore", "closest");
+        splitter.setAttribute("resizeafter", "closest");
+        splitter.setAttribute("collapse", "before");
 
-      var grippy = document.createElement( "grippy" );
-      splitter.appendChild(grippy);
-      parent.appendChild(splitter);
+        var grippy = document.createElement( "grippy" );
+        splitter.appendChild(grippy);
+        parent.appendChild(splitter);
 
-      splitter.addEventListener("mousemove", this._onFilterSplitterMove, true);
-      splitter.addEventListener("mousedown", this._onFilterSplitterDown, true);
-      splitter.addEventListener("mouseup", this._onFilterSplitterUp, true);
+        splitter.addEventListener("mousemove", this._onFilterSplitterMove, true);
+        splitter.addEventListener("mousedown", this._onFilterSplitterDown, true);
+        splitter.addEventListener("mouseup", this._onFilterSplitterUp, true);
 
-      this._splitters.push(splitter);
+        this._splitters.push(splitter);
+      }
     }
   }
   
