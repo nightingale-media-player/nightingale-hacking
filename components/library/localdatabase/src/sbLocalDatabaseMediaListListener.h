@@ -65,9 +65,11 @@ public:
   NS_IMETHOD_(nsrefcnt) Release(void);
 
   PRBool ShouldNotify(PRUint32 aFlag, sbIPropertyArray* aProperties = nsnull);
+
   void BeginBatch();
   void EndBatch();
   void SetShouldStopNotifying(PRUint32 aFlag);
+  void GetDebugAddress(nsAString& mDebugAddress);
 
 protected:
   nsAutoRefCnt mRefCnt;
@@ -85,6 +87,7 @@ private:
   PRBool mHasPropertyFilter;
   nsTHashtable<nsStringHashKey> mPropertyFilter;
   nsTArray<PRUint32> mStopNotifiyingStack;
+  nsString mDebugAddress;
 };
 
 class sbWeakMediaListListenerWrapper : public sbIMediaListListener

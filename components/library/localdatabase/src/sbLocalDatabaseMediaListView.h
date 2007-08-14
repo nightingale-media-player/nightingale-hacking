@@ -42,6 +42,7 @@
 #include <sbIPropertyManager.h>
 #include <sbISearchableMediaListView.h>
 #include <sbISortableMediaListView.h>
+#include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
 
 #include "sbLocalDatabaseMediaListBase.h"
@@ -167,7 +168,7 @@ private:
   nsString mDistinctPropertyValuesQuery;
 
   // Whether we're in batch mode.
-  PRPackedBool mInBatch;
+  sbLibraryBatchHelper mBatchHelper;
 
   // True when we should invalidate when batching ends
   PRPackedBool mInvalidatePending;

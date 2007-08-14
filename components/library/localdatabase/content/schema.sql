@@ -47,7 +47,9 @@ create table resource_properties (
 );
 create index idx_resource_properties_property_id_obj on resource_properties (property_id, obj);
 create index idx_resource_properties_obj_sortable on resource_properties (obj_sortable);
+/* don't think i need this
 create index idx_resource_properties_property_id_obj_sortable on resource_properties (property_id, obj_sortable);
+*/
 create index idx_resource_properties_guid_property_id_obj_sortable on resource_properties (guid, property_id, obj_sortable);
 create index idx_resource_properties_property_id_obj_sortable_guid on resource_properties (property_id, obj_sortable, guid);
 
@@ -58,6 +60,7 @@ create table simple_media_lists (
 );
 create index idx_simple_media_lists_media_item_id_member_media_item_id on simple_media_lists (media_item_id, member_media_item_id, ordinal);
 create unique index idx_simple_media_lists_media_item_id_ordinal on simple_media_lists (media_item_id, ordinal);
+create index idx_simple_media_lists_member_media_item_id on simple_media_lists (member_media_item_id);
 
 /* note the empty comment blocks at the end of the lines in the body of the
    trigger need to be there to prevent the parser from splitting on the

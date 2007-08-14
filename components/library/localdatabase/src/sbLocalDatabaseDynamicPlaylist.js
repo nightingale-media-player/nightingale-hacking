@@ -27,6 +27,7 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
 Components.utils.import("resource://app/components/sbProperties.jsm");
+Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -70,7 +71,7 @@ function sbLocalDatabaseDynamicPlaylistService()
   this._started = false;
   this._scheduledLists = {};
   this._ignoreLibraryNotifications = {};
-  this._libraryInBatch = {};
+  this._libraryBatch = new MultiBatchHelper();
   this._libraryRefreshPending = {};
 
   var obs = Cc["@mozilla.org/observer-service;1"]
@@ -460,7 +461,7 @@ function sbLocalDatabaseDynamicPlaylistService_onItemAdded(aMediaList,
 
   // If we are in a batch, we are going to refresh the list of dynamic
   // playlists when the batch ends, so we don't need any more notifications
-  if (this._libraryInBatch[FIX(aMediaList.library.guid)]) {
+  if (this._libraryBatch.isActive(aMediaList.library)) {
     this._libraryRefreshPending[FIX(aMediaList.library.guid)] = true;
     return true;
   }
@@ -487,7 +488,7 @@ function sbLocalDatabaseDynamicPlaylistService_onBeforeItemRemoved(aMediaList,
 
   // If we are in a batch, we are going to refresh the list of dynamic
   // playlists when the batch ends, so we don't need any more notifications
-  if (this._libraryInBatch[FIX(aMediaList.library.guid)]) {
+  if (this._libraryBatch.isActive(aMediaList.library)) {
     this._libraryRefreshPending[FIX(aMediaList.library.guid)] = true;
     return true;
   }
@@ -512,7 +513,7 @@ function sbLocalDatabaseDynamicPlaylistService_onItemUpdated(aMediaList,
 
   // If we are in a batch, we are going to refresh the list of dynamic
   // playlists when the batch ends, so we don't need any more notifications
-  if (this._libraryInBatch[FIX(aMediaList.library.guid)]) {
+  if (this._libraryBatch.isActive(aMediaList.library)) {
     this._libraryRefreshPending[FIX(aMediaList.library.guid)] = true;
     return true;
   }
@@ -529,7 +530,7 @@ function sbLocalDatabaseDynamicPlaylistService_onListCleared(aMediaList)
 
   // If we are in a batch, we are going to refresh the list of dynamic
   // playlists when the batch ends, so we don't need any more notifications
-  if (this._libraryInBatch[FIX(aMediaList.library.guid)]) {
+  if (this._libraryBatch.isActive(aMediaList.library)) {
     this._libraryRefreshPending[FIX(aMediaList.library.guid)] = true;
     return true;
   }
@@ -541,23 +542,26 @@ function sbLocalDatabaseDynamicPlaylistService_onListCleared(aMediaList)
 sbLocalDatabaseDynamicPlaylistService.prototype.onBatchBegin =
 function sbLocalDatabaseDynamicPlaylistService_onBatchBegin(aMediaList)
 {
-  this._libraryInBatch[FIX(aMediaList.library.guid)] = true;
+  this._libraryBatch.begin(aMediaList.library);
 }
 
 sbLocalDatabaseDynamicPlaylistService.prototype.onBatchEnd =
 function sbLocalDatabaseDynamicPlaylistService_onBatchEnd(aMediaList)
 {
   var library = aMediaList.library;
-  this._libraryInBatch[FIX(library.guid)] = false;
+  this._libraryBatch.end(library);
 
-  // If there is a refresh pending for this library, do it
-  if (this._libraryRefreshPending[FIX(library.guid)]) {
+  if (!this._libraryBatch.isActive(library)) {
 
-    d("Refreshing dynamic playlists in library " + library);
-    this._removeListsFromLibrary(library);
-    this._scheduleLibrary(library);
+    // If there is a refresh pending for this library, do it
+    if (this._libraryRefreshPending[FIX(library.guid)]) {
 
-    this._libraryRefreshPending[FIX(library.guid)] = false;
+      d("Refreshing dynamic playlists in library " + library);
+      this._removeListsFromLibrary(library);
+      this._scheduleLibrary(library);
+
+      this._libraryRefreshPending[FIX(library.guid)] = false;
+    }
   }
 }
 

@@ -104,7 +104,7 @@ protected:
   PRBool m_bIsScanning;
 
   PRLock* m_pCallbackLock;
-  sbIFileScanCallback *m_pCallback;
+  nsCOMPtr<sbIFileScanCallback> m_pCallback;
 
   PRLock* m_pFileStackLock;
   filestack_t m_FileStack;
@@ -119,7 +119,7 @@ protected:
 class sbFileScanThread;
 
 /**
- * \class sbFileScan
+ * \class sbFileScan    
  * \brief 
  */
 class sbFileScan : public sbIFileScan,

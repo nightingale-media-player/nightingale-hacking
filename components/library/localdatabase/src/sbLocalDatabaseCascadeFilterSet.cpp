@@ -68,8 +68,7 @@ static PRLogModuleInfo* sFilterSetLog = nsnull;
 #endif /* PR_LOGGING */
 
 sbLocalDatabaseCascadeFilterSet::sbLocalDatabaseCascadeFilterSet(sbLocalDatabaseMediaListView* aMediaListView) :
-  mMediaListView(aMediaListView),
-  mInBatch(PR_FALSE)
+  mMediaListView(aMediaListView)
 {
   MOZ_COUNT_CTOR(sbLocalDatabaseCascadeFilterSet);
   NS_ASSERTION(aMediaListView, "aMediaListView is null");
@@ -847,7 +846,7 @@ sbLocalDatabaseCascadeFilterSet::OnItemAdded(sbIMediaList* aMediaList,
 
   // If we are in a batch, set all the filters to invalidate and ignore
   // any future adds in this batch
-  if (mInBatch) {
+  if (mBatchHelper.IsActive()) {
     for (PRUint32 i = 0; i < mFilters.Length(); i++) {
       mFilters[i].invalidationPending = PR_TRUE;
     }
@@ -899,7 +898,7 @@ sbLocalDatabaseCascadeFilterSet::OnAfterItemRemoved(sbIMediaList* aMediaList,
 
   // If we are in a batch, set all the filters to invalidate the ignore
   // any future adds in this batch
-  if (mInBatch) {
+  if (mBatchHelper.IsActive()) {
     for (PRUint32 i = 0; i < mFilters.Length(); i++) {
       mFilters[i].invalidationPending = PR_TRUE;
     }
@@ -943,7 +942,7 @@ sbLocalDatabaseCascadeFilterSet::OnItemUpdated(sbIMediaList* aMediaList,
     nsAutoString junk;
     rv = aProperties->GetPropertyValue(fs.property, junk);
     if (NS_SUCCEEDED(rv)) {
-      if (mInBatch) {
+      if (mBatchHelper.IsActive()) {
         fs.invalidationPending = PR_TRUE;
       }
       else {
@@ -967,7 +966,7 @@ sbLocalDatabaseCascadeFilterSet::OnListCleared(sbIMediaList* aMediaList,
   // Invalidate all filters
   for (PRUint32 i = 0; i < mFilters.Length(); i++) {
     sbFilterSpec& fs = mFilters[i];
-    if (mInBatch) {
+    if (mBatchHelper.IsActive()) {
       fs.invalidationPending = PR_TRUE;
     }
     else {
@@ -983,18 +982,14 @@ sbLocalDatabaseCascadeFilterSet::OnListCleared(sbIMediaList* aMediaList,
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnBatchBegin(sbIMediaList* aMediaList)
 {
-  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - OnBatchBegin", this));
-  NS_ASSERTION(!mInBatch, "Shouldn't be notified of more than one batch!");
-  mInBatch = PR_TRUE;
+  mBatchHelper.Begin();
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnBatchEnd(sbIMediaList* aMediaList)
 {
-  TRACE(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - OnBatchEnd", this));
-  NS_ASSERTION(mInBatch, "Should have been notified when entering a batch!");
-  mInBatch = PR_FALSE;
+  mBatchHelper.End();
 
   // Do all pending invalidations
   for (PRUint32 i = 0; i < mFilters.Length(); i++) {

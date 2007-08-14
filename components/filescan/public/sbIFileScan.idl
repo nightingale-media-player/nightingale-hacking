@@ -37,6 +37,7 @@
  */
 
 #include "nsISupports.idl"
+interface nsIArray;
 
 /**
  * \interface sbIFileScanCallback 
@@ -234,6 +235,12 @@ interface sbIFileScanQuery : nsISupports
    * \brief Cancel the current scanning loop
    */
   void cancel();
+
+  /**
+   * \brief
+   */
+  nsIArray getResultRangeAsURIs(in unsigned long aStartIndex,
+                                in unsigned long aEndIndex);
 
   /**
    * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD

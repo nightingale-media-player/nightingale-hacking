@@ -439,7 +439,9 @@ sbLocalDatabaseTreeView::UpdateRowCount(PRUint32 aRowCount)
   // because we never get a callback for this fake row when repopulating the
   // tree.
   if (mFakeAllRow && mSelectionIsAll) {
+    mSelectionChanging = PR_TRUE;
     rv = mRealSelection->Select(0);
+    mSelectionChanging = PR_FALSE;
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -901,6 +903,9 @@ sbLocalDatabaseTreeView::GetSelectionChanging(PRBool* aSelectionChanging)
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::InvalidateRowsByGuid(const nsAString& aGuid)
 {
+  LOG(("sbLocalDatabaseTreeView[0x%.8x] - InvalidateRowsByGuid(%s)",
+       this, NS_LossyConvertUTF16toASCII(aGuid).get()));
+
   if (mTreeBoxObject) {
     PRInt32 first;
     PRInt32 last;

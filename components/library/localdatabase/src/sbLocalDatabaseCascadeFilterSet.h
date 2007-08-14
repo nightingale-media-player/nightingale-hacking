@@ -27,16 +27,18 @@
 #ifndef __SBLOCALDATABASECASCADEFILTERSET_H__
 #define __SBLOCALDATABASECASCADEFILTERSET_H__
 
-#include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
+#include <nsCOMPtr.h>
+#include <nsHashKeys.h>
 #include <nsIStringEnumerator.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <nsTHashtable.h>
 #include <nsWeakReference.h>
+
 #include <sbICascadeFilterSet.h>
 #include <sbIMediaListListener.h>
-#include <nsTHashtable.h>
-#include <nsHashKeys.h>
+#include <sbLibraryUtils.h>
 
 class sbLocalDatabaseLibrary;
 class sbLocalDatabaseMediaListView;
@@ -121,7 +123,7 @@ private:
   nsTHashtable<nsISupportsHashKey> mListeners;
 
   // Is our media list in a batch
-  PRPackedBool mInBatch;
+  sbLibraryBatchHelper mBatchHelper;
 };
 
 class sbGUIDArrayPrimarySortEnumerator : public nsIStringEnumerator

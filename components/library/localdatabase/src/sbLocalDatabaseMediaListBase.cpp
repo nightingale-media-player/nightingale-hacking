@@ -998,22 +998,14 @@ sbLocalDatabaseMediaListBase::GetDistinctValuesForProperty(const nsAString& aPro
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::BeginUpdateBatch()
 {
-  PRInt32 batchCount = PR_AtomicIncrement(&mBatchCount);
-  NS_ASSERTION(batchCount >= 1, "Illegal batch count, mismatched calls!");
-  if (batchCount == 1) {
-    sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(this);
-  }
+  sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(this);
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::EndUpdateBatch()
 {
-  PRInt32 batchCount = PR_AtomicDecrement(&mBatchCount);
-  NS_ASSERTION(batchCount >= 0, "Illegal batch count, mismatched calls!");
-  if (batchCount == 0) {
-    sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(this);
-  }
+  sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(this);
   return NS_OK;
 }
 

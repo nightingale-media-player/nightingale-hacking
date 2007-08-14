@@ -33,6 +33,7 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 
 Components.utils.import("resource://app/components/sbProperties.jsm");
+Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
 const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
 const ROOTNODE = "SB:Bookmarks";
@@ -88,7 +89,7 @@ function sbLibraryServicePane() {
   // use the default stringbundle to translate tree nodes
   this.stringbundle = null;
 
-  this._inBatch = false;
+  this._batch = new BatchHelper();
   this._refreshPending = false;
 }
 sbLibraryServicePane.prototype.QueryInterface = 
@@ -1233,7 +1234,7 @@ function sbLibraryServicePane_onLibraryUnregistered(aLibrary) {
 sbLibraryServicePane.prototype.onItemAdded =
 function sbLibraryServicePane_onItemAdded(aMediaList, aMediaItem) {
   //logcall(arguments);
-  if (this._inBatch) {
+  if (this._batch.isActive()) {
     // We are going to refresh all the nodes once we exit the batch so
     // we don't need any more of these notifications
     this._refreshPending = true;
@@ -1250,7 +1251,7 @@ function sbLibraryServicePane_onItemAdded(aMediaList, aMediaItem) {
 sbLibraryServicePane.prototype.onBeforeItemRemoved =
 function sbLibraryServicePane_onBeforeItemRemoved(aMediaList, aMediaItem) {
   //logcall(arguments);
-  if (this._inBatch) {
+  if (this._batch.isActive()) {
     // We are going to refresh all the nodes once we exit the batch so
     // we don't need any more of these notifications
     this._refreshPending = true;
@@ -1271,7 +1272,7 @@ sbLibraryServicePane.prototype.onItemUpdated =
 function sbLibraryServicePane_onItemUpdated(aMediaList,
                                             aMediaItem,
                                             aProperties) {
-  if (this._inBatch) {
+  if (this._batch.isActive()) {
     // We are going to refresh all the nodes once we exit the batch so
     // we don't need any more of these notifications
     this._refreshPending = true;
@@ -1287,7 +1288,7 @@ function sbLibraryServicePane_onItemUpdated(aMediaList,
 }
 sbLibraryServicePane.prototype.onListCleared =
 function sbLibraryServicePane_onListCleared(aMediaList) {
-  if (this._inBatch) {
+  if (this._batch.isActive()) {
     // We are going to refresh all the nodes once we exit the batch so
     // we don't need any more of these notifications
     this._refreshPending = true;
@@ -1306,13 +1307,13 @@ function sbLibraryServicePane_onListCleared(aMediaList) {
 sbLibraryServicePane.prototype.onBatchBegin =
 function sbLibraryServicePane_onBatchBegin(aMediaList) {
   //logcall(arguments);
-  this._inBatch = true;
+  this._batch.begin();
 }
 sbLibraryServicePane.prototype.onBatchEnd =
 function sbLibraryServicePane_onBatchEnd(aMediaList) {
   //logcall(arguments);
-  this._inBatch = false;
-  if (this._refreshPending) {
+  this._batch.end();
+  if (!this._batch.isActive() && this._refreshPending) {
     this._refreshLibraryNodes(aMediaList);
   }
 

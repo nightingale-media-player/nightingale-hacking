@@ -23,6 +23,7 @@
 // END SONGBIRD GPL
 //
  */
+Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
 const ADDTOPLAYLIST_MENU_TYPE      = "submenu";
 const ADDTOPLAYLIST_MENU_ID        = "library_cmd_addtoplaylist";
@@ -507,7 +508,7 @@ addToPlaylistHelper.prototype = {
   },
   
   //-----------------------------------------------------------------------------
-  _inbatch       : false,
+  _batch         : new BatchHelper(),
   _deferredevent : false,
   
   refreshCommands: function() {
@@ -521,7 +522,7 @@ addToPlaylistHelper.prototype = {
 
   onUpdateEvent: function(item) {
     if (item instanceof Components.interfaces.sbIMediaList) {
-      if (this._inbatch) {
+      if (this._batch.isActive()) {
         // if we are in a batch, remember that we saw a playlist event in it
         this._deferredevent = true;
       } else {
@@ -541,7 +542,7 @@ addToPlaylistHelper.prototype = {
 
   onItemAdded: function onItemAdded(list, item) {
     // If we are in a batch, ignore future notifications
-    if (this._inbatch) {
+    if (this._batch.isActive()) {
       return true;
     }
     this.onUpdateEvent(item);
@@ -552,7 +553,7 @@ addToPlaylistHelper.prototype = {
   
   onAfterItemRemoved: function onAfterItemRemoved(list, item) {
     // If we are in a batch, ignore future notifications
-    if (this._inbatch) {
+    if (this._batch.isActive()) {
       return true;
     }
     this.onUpdateEvent(item);
@@ -560,7 +561,7 @@ addToPlaylistHelper.prototype = {
   
   onItemUpdated: function onItemUpdated(list, item, properties) {
     // If we are in a batch, ignore future notifications
-    if (this._inbatch) {
+    if (this._batch.isActive()) {
       return true;
     }
     this.onUpdateEvent(item);
@@ -568,7 +569,7 @@ addToPlaylistHelper.prototype = {
 
   onListCleared: function onListCleared(list) {
     // If we are in a batch, ignore future notifications
-    if (this._inbatch) {
+    if (this._batch.isActive()) {
       return true;
     }
     this.onUpdateEvent(list);
@@ -576,15 +577,15 @@ addToPlaylistHelper.prototype = {
 
   onBatchBegin: function onBatchBegin(list) {
     // start deferring the events
-    this._inbatch = true;
+    this._batch.begin();
     this._deferredevent = false;
   },
   
   onBatchEnd: function onBatchEnd(list) {
     // stop deferring the events
-    this._inbatch = false;
+    this._batch.end();
     // if an event was deferred, handle it
-    if (this._deferredevent) {
+    if (!this._batch.isActive() && this._deferredevent) {
       // since we're no longer in a batch, this does call refreshCommands
       this.onUpdateEvent(list); 
     }

@@ -69,7 +69,7 @@ public:
                 PRBool aOwnsLibrary = PR_TRUE);
 
 private:
-  nsresult GetPropertyBag();
+  nsresult EnsurePropertyBag();
 
 protected:
   PRUint32 mMediaItemId;

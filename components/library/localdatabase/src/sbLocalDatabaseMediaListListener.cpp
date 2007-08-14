@@ -41,6 +41,7 @@
 
 #ifdef DEBUG
 #include <nsIXPConnect.h>
+#include <prprf.h>
 #endif
 
 #define SB_ENSURE_TRUE_VOID(_arg) \
@@ -194,11 +195,11 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
     nsCOMPtr<sbIMediaList> list =
       do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaList*, aList), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    // XXXsteve Right now we kill the idea of nested batches in the
-    // media list base, but I think we really should be notifying once per
-    // batch depth
-    rv = aListener->OnBatchBegin(aList);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnBatchBegin returned a failure code");
+
+    for (PRUint32 i = 0; i < mBatchDepth; i++) {
+      rv = aListener->OnBatchBegin(aList);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnBatchBegin returned a failure code");
+    }
   }
 
   return NS_OK;
@@ -290,6 +291,43 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbIndexArray& aStopNotifyin
 
 }
 
+#ifdef PR_LOGGING
+
+#define SB_NOTIFY_LOG_COUNT(method)                                       \
+  nsString __notifiedList;                                                \
+  TRACE(("LocalDatabaseMediaListListener[0x%.8x] - " #method " %d of %d", \
+         this, snapshot.Length(), mListenerArray.Length()));
+
+#define SB_NOTIFY_LOG_REMEMBER_NOTIFIED                                   \
+  PR_BEGIN_MACRO                                                          \
+    nsString address;                                                     \
+    mListenerArray[snapshot[i].index]->GetDebugAddress(address);          \
+    __notifiedList.AppendLiteral(" ");                                    \
+    __notifiedList.Append(address);                                       \
+    __notifiedList.AppendLiteral(" (");                                   \
+    __notifiedList.AppendInt(__delta);                                    \
+    __notifiedList.AppendLiteral(")");                                    \
+  PR_END_MACRO
+
+#define SB_NOTIFY_LOG_NOTIFIED                                            \
+  TRACE(("LocalDatabaseMediaListListener[0x%.8x] - Notified%s",           \
+         this, NS_LossyConvertUTF16toASCII(__notifiedList).get()));
+
+#define SB_NOTIFY_LOG_START_TIMER                                         \
+  PRTime __now = PR_Now();
+
+#define SB_NOTIFY_LOG_STOP_TIMER                                          \
+  PRUint32 __delta = PR_Now() - __now;
+#else
+
+#define SB_NOTIFY_LOG_COUNT(method)
+#define SB_NOTIFY_LOG_REMEMBER_NOTIFIED
+#define SB_NOTIFY_LOG_NOTIFIED
+#define SB_NOTIFY_LOG_START_TIMER
+#define SB_NOTIFY_LOG_STOP_TIMER
+
+#endif
+
 #define SB_NOTIFY_LISTENERS_HEAD                                          \
   NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");       \
                                                                           \
@@ -301,18 +339,21 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbIndexArray& aStopNotifyin
   PRBool success = stopNotifying.SetLength(mListenerArray.Length());      \
   SB_ENSURE_TRUE_VOID(success);                                           \
                                                                           \
-  TRACE(("LocalDatabaseMediaListListener[0x%.8x] - " #method " %d of %d", \
-         this, snapshot.Length(), mListenerArray.Length()));              \
+  SB_NOTIFY_LOG_COUNT(method)                                             \
                                                                           \
   for (PRUint32 i = 0; i < snapshot.Length(); i++) {                      \
     PRBool noMoreForBatch = PR_FALSE;                                     \
+    SB_NOTIFY_LOG_START_TIMER                                             \
     rv = snapshot[i].listener->call;                                      \
+    SB_NOTIFY_LOG_STOP_TIMER                                              \
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), #call " returned a failure code"); \
     if (noMoreForBatch) {                                                 \
       stopNotifying[snapshot[i].index] = sbIMediaList::flag;              \
     }                                                                     \
+    SB_NOTIFY_LOG_REMEMBER_NOTIFIED;                                      \
   }                                                                       \
                                                                           \
+  SB_NOTIFY_LOG_NOTIFIED                                                  \
   SweepListenerArray(stopNotifying);
 
 #define SB_NOTIFY_LISTENERS(method, call, flag)                           \
@@ -511,6 +552,11 @@ sbListenerInfo::Init(sbIMediaListListener* aListener,
                             getter_AddRefs(mProxy));
   NS_ENSURE_SUCCESS(rv, rv);
 
+#ifdef PR_LOGGING
+  char buf[256];
+  PRUint32 len = PR_snprintf(buf, sizeof(buf), "0x%.8x", aListener);
+  mDebugAddress.Assign(NS_ConvertASCIItoUTF16(buf, len));
+#endif
   return NS_OK;
 }
 
@@ -546,7 +592,21 @@ sbListenerInfo::Init(nsIWeakReference* aWeakListener,
                             getter_AddRefs(mProxy));
   NS_ENSURE_SUCCESS(rv, rv);
 
+#ifdef PR_LOGGING
+  nsCOMPtr<sbIMediaListListener> listener = do_QueryReferent(aWeakListener);
+  char buf[256];
+  PRUint32 len = PR_snprintf(buf, sizeof(buf), "0x%.8x",
+                             listener ? listener.get() : 0);
+  mDebugAddress.Assign(NS_ConvertASCIItoUTF16(buf, len));
+#endif
+
   return NS_OK;
+}
+
+void
+sbListenerInfo::GetDebugAddress(nsAString& aDebugAddress)
+{
+  aDebugAddress = mDebugAddress;
 }
 
 PRBool

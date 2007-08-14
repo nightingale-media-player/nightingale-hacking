@@ -187,7 +187,7 @@ sbLocalDatabaseMediaItem::Init(sbLocalDatabaseLibrary* aLibrary,
  * \brief Makes sure that the property bag is available.
  */
 nsresult
-sbLocalDatabaseMediaItem::GetPropertyBag()
+sbLocalDatabaseMediaItem::EnsurePropertyBag()
 {
   nsAutoLock lock(mPropertyBagLock);
 
@@ -372,7 +372,7 @@ sbLocalDatabaseMediaItem::GetPropertyNames(nsIStringEnumerator** _retval)
   NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
-  nsresult rv = GetPropertyBag();
+  nsresult rv = EnsurePropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoLock lock(mPropertyBagLock);
@@ -393,7 +393,7 @@ sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName,
   NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
-  nsresult rv = GetPropertyBag();
+  nsresult rv = EnsurePropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoLock lock(mPropertyBagLock);
@@ -421,7 +421,7 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = GetPropertyBag();
+  rv = EnsurePropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
@@ -453,7 +453,7 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
   NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
-  nsresult rv = GetPropertyBag();
+  nsresult rv = EnsurePropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Validate the incoming property array if it is not already valid
@@ -539,7 +539,7 @@ sbLocalDatabaseMediaItem::GetProperties(sbIPropertyArray* aProperties,
   NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
-  nsresult rv = GetPropertyBag();
+  nsresult rv = EnsurePropertyBag();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMutablePropertyArray> properties =
@@ -644,6 +644,32 @@ sbLocalDatabaseMediaItem::GetMediaItemId(PRUint32* _retval)
   }
 
   *_retval = mMediaItemId;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::GetPropertyBag(sbILocalDatabaseResourcePropertyBag** aPropertyBag)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyBag);
+
+  nsresult rv = EnsurePropertyBag();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*aPropertyBag = mPropertyBag);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaItem::SetPropertyBag(sbILocalDatabaseResourcePropertyBag* aPropertyBag)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyBag);
+
+  if (mPropertyBag) {
+    NS_ERROR("Can't reset the property bag!");
+    return NS_ERROR_UNEXPECTED;
+  }
+
+  mPropertyBag = aPropertyBag;
   return NS_OK;
 }
 

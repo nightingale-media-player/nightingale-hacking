@@ -25,12 +25,8 @@
  */
 Components.utils.import("resource://app/components/sbProperties.jsm");
 
-var PROFILE_TIME = false;
-var theSongbirdLibrary = null;
-
-var theTotalItems = 0;
-
-var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                             .getService(Components.interfaces.sbIPlaylistPlayback);
 
 var theTitle = document.getElementById( "songbird_media_scan_title" );
 theTitle.value = "";
@@ -48,16 +44,17 @@ var theProgressText = "";
 var aFileScan = null;
 var aFileScanQuery = null;
 
-var theTargetDatabase = null;
+var theTargetLibrary = null;
 var theTargetPlaylist = null;
 var theTargetInsertIndex = -1;
 
 // Init the text box to the last url played (shrug).
 var polling_interval;
 
-var timethen;
-var timenow;
-var start;
+var CHUNK_SIZE = 500;
+var nextStartIndex = 0;
+var batchLoadsPending = 0;
+var closePending = false;
 
 function onLoad()
 {
@@ -73,14 +70,19 @@ function onLoad()
       aFileScan = new sbIFileScan();
       aFileScanQuery = new sbIFileScanQuery();
 
+      var libraryManager =
+        Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                  .getService(Components.interfaces.sbILibraryManager);
+
       // Use the requested library, or use the main library as default      
-      theTargetDatabase = window.arguments[0].target_db;
-      if (!theTargetDatabase)
+      var theTargetDatabase = window.arguments[0].target_db;
+      if (theTargetDatabase)
       {
-        var libraryManager =
-          Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                    .getService(Components.interfaces.sbILibraryManager);
-        theTargetDatabase = libraryManager.mainLibrary.guid;
+        theTargetLibrary = libraryManager.getLibrary( theTargetDatabase );
+      }
+      else
+      {
+        theTargetLibrary = libraryManager.mainLibrary;
       }
 
       theTargetPlaylist = window.arguments[0].target_pl;
@@ -113,32 +115,59 @@ function onLoad()
 
 function onPollScan()
 {
-  try
-  {
-    if ( !aFileScanQuery.isScanning() )
-    {
-      clearInterval( polling_interval );
+  // Check to see if the scan is complete or if it has progressed past our
+  // chunk size
+  var count = aFileScanQuery.getFileCount();
+  var scanIsDone = !aFileScanQuery.isScanning();
+  if (count > 0 && (count - nextStartIndex > CHUNK_SIZE || scanIsDone)) {
 
-      theLabel.value = SBString("media_scan.composing", "Composing Query...");
-      onScanComplete();
-      document.getElementById("button_ok").removeAttribute( "hidden" );
-      document.getElementById("button_ok").setAttribute( "disabled", "true" );
-      document.getElementById("button_ok").focus();
-      document.getElementById("button_cancel").setAttribute( "hidden", "true" );
-    }   
-    else
-    {
-      var len = aFileScanQuery.getFileCount();
-      if ( len )
-      {
-        var value = aFileScanQuery.getLastFileFound();
-        theLabel.value = gPPS.convertURLToFolder(value);
-      }
+    // Grab the next chunk of scanned tracks from the query
+    var endIndex = scanIsDone ? count - 1 : nextStartIndex + CHUNK_SIZE - 1;
+    if (endIndex >= count) {
+      endIndex = count - 1;
     }
+
+    var array = aFileScanQuery.getResultRangeAsURIs(nextStartIndex, endIndex);
+    nextStartIndex = endIndex + 1;
+
+    // Create a temporary track nane for all of the found tracks
+    var propsArray =
+      Components.classes["@mozilla.org/array;1"]
+                .createInstance(Components.interfaces.nsIMutableArray);
+    for (let i = 0; i < array.length; i++) {
+      let uri = array.queryElementAt(i, Components.interfaces.nsIURI);
+      let props =
+        Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                  .createInstance(Components.interfaces.sbIMutablePropertyArray);
+      props.appendProperty(SBProperties.trackName,
+                           createDefaultTitle(uri));
+      propsArray.appendElement(props, false);
+    }
+
+    // Asynchronously load the scanned chunk into the library
+    var listener = new sbBatchCreateListener(array);
+    batchLoadsPending++;
+    theTargetLibrary.batchCreateMediaItemsAsync(listener, array, propsArray);
   }
-  catch ( err )  
-  {
-    alert( "onPollScan\n\n"+err );
+
+  if (scanIsDone) {
+    clearInterval(polling_interval);
+    if (count > 0) {
+      theTitle.value = count + " " + SBString("media_scan.added", "Added");
+    }
+    else {
+      theTitle.value = SBString("media_scan.none", "Nothing");
+    }
+    theLabel.value = SBString("media_scan.complete", "Complete");
+    theProgress.removeAttribute( "mode" );
+    document.getElementById("button_ok").removeAttribute( "hidden" );
+    document.getElementById("button_ok").setAttribute( "disabled", "false" );
+    document.getElementById("button_ok").focus();
+    document.getElementById("button_cancel").setAttribute( "hidden", "true" );
+  }
+  else {
+    var value = aFileScanQuery.getLastFileFound();
+    theLabel.value = gPPS.convertURLToFolder(value);
   }
 }
 
@@ -150,39 +179,12 @@ function sbBatchCreateListener(aArray) {
 sbBatchCreateListener.prototype.onProgress = 
 function sbBatchCreateListener_onProgress(aIndex)
 {
-  var fraction = aIndex / this._length;
-  theTitle.value = SBString("media_scan.adding", "Adding") +
-                            " (" + aIndex + "/" + this._length + ")";
-  var uri = this._array.queryElementAt(aIndex, Components.interfaces.nsIURI);
-  theLabel.value = gPPS.convertURLToDisplayName( uri.spec );
-  theProgress.value = fraction * 100.0;
 }
 
 sbBatchCreateListener.prototype.onComplete = 
 function sbBatchCreateListener_onComplete(aItemArray)
 {
-  if ( PROFILE_TIME )
-  {
-    timenow = new Date();
-    start = timenow.getTime();
-  }
-
-  // The batch load is complete.
-  theTitle.value = this._length + " " + SBString("media_scan.added", "Added");
-  theLabel.value = SBString("media_scan.complete", "Complete");
-  theProgress.value = 100.0;
-
-  // Add items to theTargetPlaylist if it was requested.
-  if(theTargetPlaylist) {
-    //Insert at the requested row.
-    if(theTargetInsertIndex != -1) {
-      theTargetPlaylist.insertSomeBefore(theTargetInsertIndex, 
-                                         aItemArray.enumerate());
-    }
-    else {
-      theTargetPlaylist.addSome(aItemArray.enumerate());
-    }
-  }
+  batchLoadsPending--;
 
   // Create and submit a metadata job for the
   // new items
@@ -191,110 +193,14 @@ function sbBatchCreateListener_onComplete(aItemArray)
               .getService(Components.interfaces.sbIMetadataJobManager);
   var metadataJob = metadataJobManager.newJob(aItemArray, 5);
 
-  if ( PROFILE_TIME )
-  {
-    timethen = new Date();
-    alert( "newJob - " + ( timethen.getTime() - start ) / 1000 + "s" );
-    
-    timenow = new Date();
-    start = timenow.getTime();
+  if (closePending && batchLoadsPending == 0) {
+    onExit();
   }
 
-  // Enable the OK button
-  document.getElementById("button_ok").removeAttribute( "disabled" );
-}
-
-
-function onScanComplete( )
-{
-  clearInterval( polling_interval );
-  polling_interval = null;
-
-  theProgress.removeAttribute( "mode" );
-
-  if ( aFileScanQuery.getFileCount() )
-  {
-    try
-    {
-      if ( PROFILE_TIME )
-      {
-        timenow = new Date();
-        start = timenow.getTime();
-      }
-
-      // Go get the library we're supposed to be scanning into.
-      var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"].
-                            getService(Components.interfaces.sbILibraryManager);
-      theSongbirdLibrary = libraryManager.getLibrary( theTargetDatabase );
-
-      // Take the file array and turn it into an array of nsIURIs.
-      var i = 0, total = 0;
-      total = aFileScanQuery.getFileCount();
-      var array =
-        Components.classes["@mozilla.org/array;1"]
-                  .createInstance(Components.interfaces.nsIMutableArray);
-      var propsArray =
-        Components.classes["@mozilla.org/array;1"]
-                  .createInstance(Components.interfaces.nsIMutableArray);
-      var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                          .getService(Components.interfaces.nsIIOService);
-
-      for ( i = 0; i < total; i++ )
-      {
-        try {
-          var uri = ios.newURI(aFileScanQuery.getFilePath( i ) , null, null);
-          var props =
-            Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                      .createInstance(Components.interfaces.sbIMutablePropertyArray);
-          props.appendProperty(SBProperties.trackName,
-                               createDefaultTitle(uri));
-          array.appendElement(uri, false);
-          propsArray.appendElement(props, false);
-        }
-        catch(e) {
-          Components.utils.reportError("Error pasing file scan url " + e);
-        }
-      }
-      theTotalItems = total;
-
-      if ( PROFILE_TIME )
-      {
-        var timethen = new Date();
-        alert( "Generate Array Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
-        
-        timenow = new Date();
-        start = timenow.getTime();
-      }
-
-      // Start the async batch create
-      var listener = new sbBatchCreateListener(array);
-      theSongbirdLibrary.batchCreateMediaItemsAsync(listener, array, propsArray);
-
-      if ( PROFILE_TIME )
-      {
-        timethen = new Date();
-        alert( "Generate Query Loop - " + ( timethen.getTime() - start ) / 1000 + "s" );
-        
-        timenow = new Date();
-        start = timenow.getTime();
-      }
-
-    }
-    catch(err)
-    {
-      alert("onScanComplete\n\n"+err);
-    }
-  }
-  else
-  {
-    theTitle.value = SBString("media_scan.none", "Nothing");
-  }
 }
 
 function doOK()
 {
-  if ( polling_interval != null ) return false;
-
   if (document.getElementById("watch_check").checked) {
     // XXX need to port folder watcher
     // var wfManager = new CWatchFolderManager();
@@ -302,16 +208,35 @@ function doOK()
     // wfManager.CreateWatchFolderManager();
     // wfManager.AddWatchFolder(aFileScanQuery.getDirectory()); 
   }
-  document.defaultView.close();
-  return true;
+
+  // We can't just close the window if we have pending batch loads since we
+  // have a listener registered with the library.  Closing the window while
+  // it has this reference causes that "Components not defined" error.
+  if (batchLoadsPending == 0) {
+    return true;
+  }
+  else {
+    closePending = true;
+    return false;
+  }
+
 }
 function doCancel()
 {
   // Run away!!
   if (aFileScanQuery)
     aFileScanQuery.cancel();
-  document.defaultView.close();
-  return true;
+
+  clearInterval(polling_interval);
+
+  // See comment in doOk()
+  if (batchLoadsPending == 0) {
+    return true;
+  }
+  else {
+    closePending = true;
+    return false;
+  }
 }
 
 function createDefaultTitle(aURI) {

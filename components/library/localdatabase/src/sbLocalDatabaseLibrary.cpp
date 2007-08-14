@@ -3321,8 +3321,24 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
 
   mLibrary->IncrementDatabaseDirtyItemCounter(length);
 
+
   {
     sbAutoBatchHelper batchHelper(mLibrary);
+
+    // Bulk get all the property bags for the newly added items
+    nsTArray<const PRUnichar*> guidArray(length);
+    for (PRUint32 i = 0; i < length; i++) {
+      const PRUnichar** addedPtr = guidArray.AppendElement(mGuids[i].get());
+      NS_ENSURE_TRUE(addedPtr, NS_ERROR_OUT_OF_MEMORY);
+    }
+
+    PRUint32 count = 0;
+    sbILocalDatabaseResourcePropertyBag** bags = nsnull;
+    rv = mLibrary->mPropertyCache->GetProperties(guidArray.Elements(),
+                                                 length,
+                                                 &count,
+                                                 &bags);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     for (PRUint32 i = 0; i < length; i++) {
       // We know the GUID and the type of these new media items so preload
@@ -3345,6 +3361,14 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       rv = mLibrary->GetMediaItem(mGuids[i], getter_AddRefs(mediaItem));
       NS_ENSURE_SUCCESS(rv, rv);
 
+      // Set the new media item with the property bag we got earlier
+      nsCOMPtr<sbILocalDatabaseMediaItem> ldbmi =
+        do_QueryInterface(mediaItem, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = ldbmi->SetPropertyBag(bags[i]);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       rv = array->AppendElement(mediaItem, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3353,6 +3377,9 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
 
       mLibrary->NotifyListenersItemAdded(mLibrary, mediaItem);
     }
+
+    NS_FREE_XPCOM_ISUPPORTS_POINTER_ARRAY(count, bags);
+
   }
 
   NS_ADDREF(*_retval = array);

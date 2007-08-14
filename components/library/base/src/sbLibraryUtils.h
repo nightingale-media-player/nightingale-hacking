@@ -24,23 +24,51 @@
 //
 */
 
-/**
- * \file sbILocalDatabaseMediaItem.idl
- * \brief Definition of the sbILocalDatabaseMediaItem interfaces
- */
+#ifndef __SBLIBRARYUTILS_H__
+#define __SBLIBRARYUTILS_H__
 
-#include "nsISupports.idl"
-interface sbILocalDatabaseResourcePropertyBag;
+#include <nsCOMPtr.h>
+#include <pratom.h>
 
-/**
- * \interface sbILocalDatabaseMediaItem
- * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
- */
-[uuid(a3445a34-99a1-47ce-b766-e51d0a5753c8)]
-interface sbILocalDatabaseMediaItem : nsISupports
+class sbLibraryBatchHelper
 {
-  readonly attribute unsigned long mediaItemId;
+public:
+  sbLibraryBatchHelper() :
+    mDepth(0)
+  {
+    MOZ_COUNT_CTOR(sbLibraryBatchHelper);
+  }
 
-  attribute sbILocalDatabaseResourcePropertyBag propertyBag;
+  ~sbLibraryBatchHelper()
+  {
+    MOZ_COUNT_DTOR(sbLibraryBatchHelper);
+  }
+
+  void Begin()
+  {
+    NS_ASSERTION(mDepth >= 0, "Illegal batch depth, mismatched calls!");
+    PR_AtomicIncrement(&mDepth);
+  }
+
+  void End()
+  {
+    PRInt32 depth = PR_AtomicDecrement(&mDepth);
+    NS_ASSERTION(depth >= 0, "Illegal batch depth, mismatched calls!");
+  }
+
+  PRUint32 Depth()
+  {
+    return (PRUint32) mDepth;
+  }
+
+  PRBool IsActive()
+  {
+    return mDepth > 0;
+  }
+
+private:
+  PRInt32 mDepth;
 };
+
+#endif // __SBLIBRARYUTILS_H__
 

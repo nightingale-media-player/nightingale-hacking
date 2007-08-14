@@ -42,6 +42,8 @@
 #include <nsThreadUtils.h>
 #include <nsStringGlue.h>
 #include <nsIObserverService.h>
+#include <nsIMutableArray.h>
+#include <nsNetUtil.h>
 
 // CLASSES ====================================================================
 //*****************************************************************************
@@ -52,19 +54,17 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileScanQuery, sbIFileScanQuery)
 
 //-----------------------------------------------------------------------------
 sbFileScanQuery::sbFileScanQuery()
-: m_strDirectory( EmptyString() )
+: m_pDirectoryLock(PR_NewLock())
+, m_pCurrentPathLock(PR_NewLock())
 , m_bSearchHidden(PR_FALSE)
 , m_bRecurse(PR_FALSE)
+, m_pScanningLock(PR_NewLock())
 , m_bIsScanning(PR_FALSE)
-, m_pCallback(nsnull)
-, m_bCancel(PR_FALSE)
-, m_pDirectoryLock(PR_NewLock())
-, m_pCurrentPathLock(PR_NewLock())
 , m_pCallbackLock(PR_NewLock())
 , m_pFileStackLock(PR_NewLock())
 , m_pExtensionsLock(PR_NewLock())
-, m_pScanningLock(PR_NewLock())
 , m_pCancelLock(PR_NewLock())
+, m_bCancel(PR_FALSE)
 {
   NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
@@ -77,19 +77,19 @@ sbFileScanQuery::sbFileScanQuery()
 
 //-----------------------------------------------------------------------------
 sbFileScanQuery::sbFileScanQuery(const nsString &strDirectory, const PRBool &bRecurse, sbIFileScanCallback *pCallback)
-: m_strDirectory(strDirectory)
+: m_pDirectoryLock(PR_NewLock())
+, m_strDirectory(strDirectory)
+, m_pCurrentPathLock(PR_NewLock())
 , m_bSearchHidden(PR_FALSE)
 , m_bRecurse(bRecurse)
+, m_pScanningLock(PR_NewLock())
 , m_bIsScanning(PR_FALSE)
-, m_pCallback(pCallback)
-, m_bCancel(PR_FALSE)
-, m_pDirectoryLock(PR_NewLock())
-, m_pCurrentPathLock(PR_NewLock())
 , m_pCallbackLock(PR_NewLock())
+, m_pCallback(pCallback)
 , m_pFileStackLock(PR_NewLock())
 , m_pExtensionsLock(PR_NewLock())
-, m_pScanningLock(PR_NewLock())
 , m_pCancelLock(PR_NewLock())
+, m_bCancel(PR_FALSE)
 {
   NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
@@ -98,13 +98,11 @@ sbFileScanQuery::sbFileScanQuery(const nsString &strDirectory, const PRBool &bRe
   NS_ASSERTION(m_pExtensionsLock, "FileScanQuery.m_pExtensionsLock failed");
   NS_ASSERTION(m_pScanningLock, "FileScanQuery.m_pScanningLock failed");
   NS_ASSERTION(m_pCancelLock, "FileScanQuery.m_pCancelLock failed");
-  NS_IF_ADDREF(m_pCallback);
 } //ctor
 
 //-----------------------------------------------------------------------------
 /*virtual*/ sbFileScanQuery::~sbFileScanQuery()
 {
-  NS_IF_RELEASE(m_pCallback);
   if (m_pDirectoryLock)
     PR_DestroyLock(m_pDirectoryLock);
   if (m_pCurrentPathLock)
@@ -196,9 +194,6 @@ NS_IMETHODIMP sbFileScanQuery::SetCallback(sbIFileScanCallback *pCallback)
 
   PR_Lock(m_pCallbackLock);
 
-  if(pCallback != m_pCallback)
-    NS_IF_RELEASE(m_pCallback);  
-  NS_ADDREF(pCallback);
   m_pCallback = pCallback;
 
   PR_Unlock(m_pCallbackLock);
@@ -212,8 +207,7 @@ NS_IMETHODIMP sbFileScanQuery::GetCallback(sbIFileScanCallback **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   PR_Lock(m_pCallbackLock);
-  *_retval = m_pCallback;
-  NS_IF_ADDREF(m_pCallback);
+  NS_IF_ADDREF(*_retval = m_pCallback);
   PR_Unlock(m_pCallbackLock);
   return NS_OK;
 } //GetCallback
@@ -320,6 +314,32 @@ NS_IMETHODIMP sbFileScanQuery::Cancel()
   PR_Unlock(m_pCancelLock);
   return NS_OK;
 } //Cancel
+
+NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIs(PRUint32 aStartIndex,
+                                                    PRUint32 aEndIndex,
+                                                    nsIArray** _retval)
+{
+  nsAutoLock lock(m_pFileStackLock);
+
+  PRUint32 length = m_FileStack.size();
+  NS_ENSURE_TRUE(aStartIndex < length, NS_ERROR_INVALID_ARG);
+  NS_ENSURE_TRUE(aEndIndex < length, NS_ERROR_INVALID_ARG);
+
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> array =
+    do_CreateInstance("@mozilla.org/array;1", &rv);
+
+  for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
+    nsCOMPtr<nsIURI> uri;
+    rv = NS_NewURI(getter_AddRefs(uri), m_FileStack[i]);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = array->AppendElement(uri, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ADDREF(*_retval = array);
+  return NS_OK;
+}
 
 //-----------------------------------------------------------------------------
 /* PRBool IsCancelled (); */

@@ -160,7 +160,6 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbLocalDatabaseLibrar
   mMediaList(aMediaList),
   mDefaultSortProperty(aDefaultSortProperty),
   mMediaListId(aMediaListId),
-  mInBatch(PR_FALSE),
   mInvalidatePending(PR_FALSE)
 {
   NS_ASSERTION(aLibrary, "aLibrary is null");
@@ -999,7 +998,7 @@ sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
-  if (mInBatch) {
+  if (mBatchHelper.IsActive()) {
     mInvalidatePending = PR_TRUE;
     *aNoMoreForBatch = PR_TRUE;
     return NS_OK;
@@ -1037,7 +1036,7 @@ sbLocalDatabaseMediaListView::OnAfterItemRemoved(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
-  if (mInBatch) {
+  if (mBatchHelper.IsActive()) {
     mInvalidatePending = PR_TRUE;
     *aNoMoreForBatch = PR_TRUE;
     return NS_OK;
@@ -1069,19 +1068,23 @@ sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
          this, NS_ConvertUTF16toUTF8(buff).get()));
 #endif
 
+  nsresult rv;
+
   // If we are in a batch, we don't need any more notifications since we always
   // invalidate when a batch ends
-  if (mInBatch) {
+  PRBool shouldInvalidate;
+  if (mBatchHelper.IsActive()) {
+    shouldInvalidate = PR_FALSE;
     mInvalidatePending = PR_TRUE;
     *aNoMoreForBatch = PR_TRUE;
-    return NS_OK;
   }
-
-  // If we are not in a batch, check to see if this update should cause an
-  // invalidation
-  PRBool shouldInvalidate;
-  nsresult rv = ShouldCauseInvalidation(aProperties, &shouldInvalidate);
-  NS_ENSURE_SUCCESS(rv, rv);
+  else {
+    // If we are not in a batch, check to see if this update should cause an
+    // invalidation
+    rv = ShouldCauseInvalidation(aProperties, &shouldInvalidate);
+    NS_ENSURE_SUCCESS(rv, rv);
+    *aNoMoreForBatch = PR_FALSE;
+  }
 
   if (shouldInvalidate) {
     // Invalidate the view array
@@ -1102,7 +1105,6 @@ sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
     }
   }
 
-  *aNoMoreForBatch = PR_FALSE;
   return NS_OK;
 }
 
@@ -1113,7 +1115,7 @@ sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
-  if (mInBatch) {
+  if (mBatchHelper.IsActive()) {
     mInvalidatePending = PR_TRUE;
     *aNoMoreForBatch = PR_TRUE;
     return NS_OK;
@@ -1130,16 +1132,14 @@ sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList,
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnBatchBegin(sbIMediaList* aMediaList)
 {
-  NS_ASSERTION(!mInBatch, "Shouldn't be notified of more than one batch!");
-  mInBatch = PR_TRUE;
+  mBatchHelper.Begin();
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
 {
-  NS_ASSERTION(mInBatch, "Should have been notified when entering a batch!");
-  mInBatch = PR_FALSE;
+  mBatchHelper.End();
 
   if (mInvalidatePending) {
     // Invalidate the view array
