@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  <binding id="sb-status-bar">
+    <!-- Uses id's to match firefox -->
+    <content>
+      <xul:statusbar id="status-bar" flex="1">
+        <xul:statusbarpanel id="statusbar-display" flex="1">
+          <xul:sb-status-label id="sb-status-bar-status-label" class="sb-status-bar-status-label" value=" " flex="1" crop="end"/>
+        </xul:statusbarpanel>
+        <xul:sb-player-numplaylistitems-label id="sb-status-bar-numplaylistitems-label" class="sb-status-bar-numplaylistitems-label" crop="end"/>
+        <xul:sb-player-scanning-label id="sb-status-bar-scanning-label" class="sb-status-bar-scanning-label" crop="end"/>
+        <xul:statusbarpanel class="statusbarpanel-progress" id="statusbar-progresspanel">
+          <xul:sb-status-progressmeter id="sb-status-bar-status-progressmeter" class="sb-status-bar-status-progressmeter" mode="undetermined"/>
+        </xul:statusbarpanel>
+      </xul:statusbar>
+    </content>
+    <implementation>
+    </implementation>
+  </binding>
+  
+
+  <binding id="sb-status-progressmeter" extends="chrome://global/content/bindings/progressmeter.xml#progressmeter">
+    <implementation>
+      <constructor>
+        <![CDATA[
+          this._binding = SBDataBindElementProperty ( "faceplate.loading", this, "mode", false, false, "if ( value == '1' ) value = 'undetermined'; else value = ''; value;" );
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._binding) {
+            this._binding.unbind();
+            this._binding = null;
+          }
+        ]]>
+      </destructor>
+    </implementation>
+  </binding>
+
+
+  <!-- STATUS TEXT DISPLAY -->
+  <binding id="sb-status-label">
+  
+   <content>
+     <xul:description sbid="desc" xbl:inherits="id=id,class=class,value=value,align=align,crop=crop,disabled=disabled,flex=flex,style=style" /> 
+   </content>
+
+   <implementation>
+   
+     <constructor>
+       <![CDATA[
+         // Create and bind data remotes
+         this.on_status_change = { 
+           _that: null, 
+           observe: function( aSubject, aTopic, aData ) { this._that.onStatusChange(); } 
+         };
+         this.on_status_change._that = this;
+         this.on_override_change = { 
+           _that: null, 
+           observe: function( aSubject, aTopic, aData ) { this._that.onSetOverride(); } 
+         };
+         this.on_override_change._that = this;
+
+         this.descbinding = SB_NewDataRemote( "faceplate.status.text", null );
+         this.descbinding.bindObserver(this.on_status_change, true);
+         this.stylebinding = SB_NewDataRemote( "faceplate.status.style", null );
+         this.stylebinding.bindObserver(this.on_status_change, true);
+
+         this.override_descbinding = SB_NewDataRemote( "faceplate.status.override.text", null );
+         this.override_descbinding.bindObserver(this.on_override_change, true);
+         this.override_stylebinding = SB_NewDataRemote( "faceplate.status.override.style", null );
+         this.override_stylebinding.bindObserver(this.on_status_change, true);
+       ]]>
+     </constructor>
+
+     <destructor>
+       <![CDATA[
+         this.resetOverride();
+         this.on_status_change._that = null;
+         this.on_status_change = null;
+         this.on_override_change._that = null;
+         this.on_override_change = null;
+         this.descbinding.unbind();
+         this.descbinding = null;
+         this.stylebinding.unbind();
+         this.stylebinding = null;
+         this.override_descbinding.unbind();
+         this.override_stylebinding.unbind();
+       ]]>
+     </destructor>
+
+     <field name="desc">document.getAnonymousElementByAttribute(this, 'sbid', 'desc');</field>
+
+     <method name="onStatusChange">
+       <body>
+         <![CDATA[
+          // if there is an override, use it
+          if (this.override_descbinding.stringValue != "") {
+            this.desc.value = this.override_descbinding.stringValue + " ";
+            this.desc.setAttribute("style", this.override_stylebinding.stringValue);
+          } else {
+            // otherwise use the normal status text
+            this.desc.value = this.descbinding.stringValue + " ";
+            this.desc.setAttribute("style", this.stylebinding.stringValue);
+          }
+         ]]>
+       </body>
+     </method>
+     
+     <method name="onSetOverride">
+       <body>
+         <![CDATA[
+            // if the override was set, start a timeout for reseting it
+            if (this.override_descbinding.stringValue != "") {
+              this.resetTimeout();
+              this.timeout = setTimeout(function(obj) { obj.resetOverride(); }, 5000, this); 
+            }
+            this.onStatusChange();
+         ]]>
+       </body>
+     </method>
+
+     <method name="resetTimeout">
+       <parameter name=""/>
+       <body>
+         <![CDATA[
+           if (this.timeout) 
+             clearTimeout(this.timeout);
+           this.timeout = null;
+           this.callback = null; 
+         ]]>
+       </body>
+     </method>
+
+     
+     <method name="resetOverride">
+       <body>
+         <![CDATA[
+           this.resetTimeout();
+           this.override_descbinding.stringValue = "";
+           this.override_stylebinding.stringValue = "";
+         ]]>
+       </body>
+     </method>
+
+   </implementation>
+
+  </binding>
+
+</bindings>
+
+
+
+
