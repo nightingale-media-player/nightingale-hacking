@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+ 
+  <binding id="smart-splitter" extends="xul:splitter">
+  
+  <implementation>
+
+    <constructor>
+      <![CDATA[
+        var onmouseevent= { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.onMouseEvent(event); } 
+        } onmouseevent._that = this; 
+        this.addEventListener( "mousemove", onmouseevent, false);
+        this.addEventListener( "mouseup", onmouseevent, false);
+        this.addEventListener( "mousedown", onmouseevent, false);
+        
+        var onattrevent= { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.onAttrModified(event); } 
+        } onattrevent._that = this; 
+        this.addEventListener( "DOMAttrModified", onmouseevent, false);
+
+        this.restoreLastState();
+        this.setAttribute("mousethrough", "never");
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <method name="onAttrModified">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (event.attrName == "state")
+            doAutoShowHide();
+        ]]>
+      </body>
+    </method>
+    
+    <method name="getResizeBefore">
+      <body>
+        <![CDATA[
+          var keyword = this.getAttribute("resizebefore");
+          if (keyword == "farthest") return this.parentNode.firstChild;
+          if (keyword == "closest") return this.previousSibling;
+          return null;
+        ]]>
+      </body>
+    </method>
+    
+    <method name="getResizeAfter">
+      <body>
+        <![CDATA[
+          var keyword = this.getAttribute("resizeafter");
+          if (keyword == "farthest") return this.parentNode.lastChild;
+          if (keyword == "closest") return this.nextSibling;
+          return null;
+        ]]>
+      </body>
+    </method>
+    
+    <method name="onMouseEvent">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          var state = this.getAttribute( "state" );
+
+          var id = this.getAttribute("stateid");
+          if (!id || id == "") id = this.id;
+          
+          var root = "splitter." + id + ".";
+          if (this.isTargetBefore()) {
+            var resizebefore = this.getResizeBefore();
+            if (resizebefore) {
+              if (this.isVertical()) {
+                if (resizebefore.height != "") SBDataSetIntValue( root + "before.height", resizebefore.height );
+              } else {
+                if (resizebefore.width != "") SBDataSetIntValue( root + "before.width", resizebefore.width );
+              }
+            }
+          } else {
+            var resizeafter = this.getResizeAfter();
+            if (resizeafter) {
+              if (this.isVertical()) {
+                if (resizeafter.height != "") SBDataSetIntValue( root + "after.height", resizeafter.height );
+              } else {
+                if (resizeafter.width != "") SBDataSetIntValue( root + "after.width", resizeafter.width );
+              }
+            }
+          }
+          this.doAutoShowHide();
+
+          // Only record state change on mouse up, rather than
+          // on every mousemove
+          if (event.type == "mouseup")
+          {
+            var collapsed = (state == "collapsed");
+            
+            var metricsid = this.getAttribute("metricsid");
+            var metricscategory = this.getAttribute("metricscategory");
+            if (metricsid && metricscategory ) {
+              // if we changed our collapsed state - record it.
+              if (collapsed != SBDataGetBoolValue(root + "collapsed"))
+                metrics_inc(metricscategory, metricsid, null);
+            }
+            
+            // make sure we save the state either way
+            SBDataSetBoolValue( root + "collapsed", collapsed );
+            
+            // trigger an event (name of the event is the name of the state) for custom handlers
+            var e = document.createEvent("Events");
+            e.initEvent(state, false, true);
+            this.dispatchEvent(e);
+          }
+          
+        ]]>
+      </body>
+    </method>
+
+    <method name="doAutoShowHide">
+      <parameter name=""/>
+      <body>
+        <![CDATA[
+          var state = this.getAttribute( "state" );
+          switch (state) {
+            case "open":
+            case "dragging":
+              var hideonopen = this.getAttribute("hideonopen");
+              if (hideonopen != "") {
+                var element = document.getElementById(hideonopen);
+                if (element) element.hidden = true;
+              }
+              var showonopen = this.getAttribute("showonopen");
+              if (showonopen != "") {
+                var element = document.getElementById(showonopen);
+                if (element) element.hidden = false;
+              }
+              break;
+            case "collapsed":
+              var hideoncollapse = this.getAttribute("hideoncollapse");
+              if (hideoncollapse != "") {
+                var element = document.getElementById(hideoncollapse);
+                if (element) element.hidden = true;
+              }
+              var showoncollapse = this.getAttribute("showoncollapse");
+              if (showoncollapse != "") {
+                var element = document.getElementById(showoncollapse);
+                if (element) element.hidden = false;
+              }
+              break;
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="restoreLastState">
+      <parameter name="sizeonly"/>
+      <body>
+        <![CDATA[
+          var id = this.getAttribute("stateid");
+          if (!id || id == "") id = this.id;
+          var root = "splitter." + id + ".";
+          if (this.isTargetBefore()) {
+            var resizebefore = this.getResizeBefore();
+            if (resizebefore) {
+              if (this.isVertical()) {
+                var height = SBDataGetStringValue( root + "before.height" );
+                if ( height != "" ) {
+                  resizebefore.height = height;
+                  resizebefore.setAttribute("flex", "0");
+                }
+              } else {
+                var width = SBDataGetStringValue( root + "before.width" );
+                if ( width != "" ) {
+                  resizebefore.width = width;
+                  resizebefore.setAttribute("flex", "0");
+                }
+              }
+            }
+          } else {
+            var resizeafter = this.getResizeAfter();
+            if (resizeafter) {
+              if (this.isVertical()) {
+                var height = SBDataGetStringValue( root + "after.height" );
+                if ( height != "" ) {
+                  resizeafter.height = height;
+                  resizeafter.setAttribute("flex", "0");
+                }
+              } else {
+                var width = SBDataGetStringValue( root + "after.width" );
+                if ( width != "" ) {
+                  resizeafter.width = width;
+                  resizeafter.setAttribute("flex", "0");
+                }
+              }
+            }
+          }
+          if (!sizeonly) {
+            this.setAttribute( "state", SBDataGetBoolValue( root + "collapsed" ) ? "collapsed" : "open" );
+            this.doAutoShowHide();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="isVertical">
+      <body>
+        <![CDATA[
+          // The orient attribute is automatically set to 
+          // "vertical" when the sb-smart-splitter is placed in 
+          // a vbox
+          var or = this.getAttribute("orient");
+          if (or == "vert" || or == "vertical") return true;
+          return false;
+        ]]>
+      </body>
+    </method>
+
+    <method name="isTargetBefore">
+      <body>
+        <![CDATA[
+          var ret;
+          var target = this.getAttribute("target");
+          if (target == "after") ret = false;
+          else ret=true;
+          return ret;
+        ]]>
+      </body>
+    </method>
+    
+   </implementation>
+ 
+  </binding>
+
+</bindings>
+
