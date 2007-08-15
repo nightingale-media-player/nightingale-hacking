@@ -1,0 +1,510 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  
+  
+  <!-- AUTOSCROLL CONTAINER -->
+
+  <binding id="autoscroll">
+
+    <content>
+    
+      <xul:bulletinboard pack="center" style="overflow: hidden;" sid="parent">
+        <xul:hbox sid="hbox">
+          <children/>
+        </xul:hbox>
+        <xul:hbox sid="overlay" flex="1"/>
+      </xul:bulletinboard>
+
+    </content>
+
+   <implementation type="application/x-javascript">
+
+     <constructor>
+       <![CDATA[
+        // mutation event callback
+        this.mutationevent = { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.onMutationEvent(); } 
+        }; this.mutationevent._that = this; 
+        
+        // adjust orientation
+        if (this.isVertical()) {
+          this.setAttribute("style", "-moz-box-orient: horizontal"); 
+        }
+        else {
+          this.setAttribute("style", "-moz-box-orient: vertical");
+        }
+        
+        // deferred initialization
+        setTimeout(function(obj) { obj.start(); }, 0, this);
+       ]]>
+     </constructor>
+     
+     <destructor>
+       <![CDATA[
+         // cleanup
+         this.stopAnimation();
+         this.stopCheckScrollTimer();
+         this.removeMutationListeners();
+       ]]>
+     </destructor>
+     
+     <method name="reset">
+       <body>
+       <![CDATA[
+          this.m_skipCount = 0;
+          this.m_checkScrollInterval = null;
+          this.m_scrollingInterval = null;
+          this.m_onMouseUp = null;
+          this.m_onMouseMove = null;
+          this.m_scrollingOffset = 0;
+          this.hbox = document.getAnonymousElementByAttribute(this, "sid", "hbox");
+          this.parent = document.getAnonymousElementByAttribute(this, "sid", "parent");
+          this.overlay = document.getAnonymousElementByAttribute(this, "sid", "overlay");
+          this.m_contentClone = null;
+          this.setAlignment();
+          this.m_anchorX = 0;
+          this.m_anchorY = 0;
+          this.m_anchorO = 0;
+        ]]>
+       </body>
+     </method>
+
+     <method name="start">
+       <body>
+        <![CDATA[
+         // deferred startup, because we need to wait till our children are initialized
+         // before we can initialize
+         this.reset();
+         this.addMutationListeners();
+         this.startCheckScrollTimer();
+        ]]>
+       </body>
+     </method>
+     
+     <method name="addMutationListeners">
+       <body>
+         <![CDATA[
+          // listen for changes to our children dom attribs (mutation event) so that we know
+          // to reset the scrolling, offsets and timers
+          var children = this.childNodes;
+          for (var i=0;i<children.length;i++) {
+            children[i].addEventListener("DOMAttrModified", this.mutationevent, true);
+          }
+         ]]>
+       </body>
+     </method>
+
+     <method name="removeMutationListeners">
+       <body>
+         <![CDATA[
+          // stop listening for changes to the children dom attribs (mutation event)
+          var children = this.childNodes;
+          for (var i=0;i<children.length;i++) {
+            children[i].removeEventListener("DOMAttrModified", this.mutationevent, true);
+          }
+          this.mutationevent._that = null;
+          this.mutationevent = null;
+         ]]>
+       </body>
+     </method>
+
+     <method name="cloneChildren">
+       <body>
+        <![CDATA[
+          // clone children so that we can scroll them (ie, see their left/top side when they scroll beyond our box)
+          if (!this.m_contentClone) {
+            this.m_contentClone = document.createElement("hbox");
+            var children = this.childNodes;
+            for (var i=0;i<children.length;i++) {
+              var object = children[i].cloneNode(true);
+              this.m_contentClone.appendChild(object);
+            }
+            this.parent.insertBefore(this.m_contentClone, this.overlay);
+            // actualize the offset so that the clones get their correct position
+            this.setOffset(this.m_scrollingOffset);
+          }
+        ]]>
+       </body>
+     </method>
+
+     <method name="deleteClonedChildren">
+       <body>
+         <![CDATA[
+         // delete cloned children
+         if (this.m_contentClone) {
+           this.m_contentClone.parentNode.removeChild(this.m_contentClone);
+           this.m_contentClone = null;
+         }
+         ]]>
+      </body>
+     </method>
+
+     <method name="startCheckScrollTimer">
+       <body>
+        <![CDATA[
+          // start timer to detect whether we need scrolling or not.
+          // this timer is also used when resuming autoscrolling after a manual scroll
+          if (this.m_checkScrollInterval) this.stopCheckScrollTimer();
+          this.m_skipCount = 0;
+          this.m_checkScrollInterval = setInterval(function(obj) { obj.checkScroll(); }, 1000, this);
+        ]]>
+       </body>
+     </method>
+
+     <method name="stopCheckScrollTimer">
+       <body>
+        <![CDATA[
+         // stop timer to detect whether we need scrolling or not
+         if (this.m_checkScrollInterval) {
+           clearInterval(this.m_checkScrollInterval);
+           this.m_checkScrollInterval = null;
+         }
+         this.m_skipCount = 0;
+        ]]>
+       </body>
+     </method>
+
+     <method name="needScroll">
+       <body>
+        <![CDATA[
+          // returns false if the children fit in our content box, true if it doesnt and we need to scroll
+          if (this.isVertical()) {
+            var height = this.hbox.boxObject.height;
+            return (height > this.boxObject.height);
+          } else {
+            var width = this.hbox.boxObject.width;
+            return (width > this.boxObject.width);
+          }
+        ]]>
+       </body>
+     </method>
+
+     <method name="startAnimationTimer">
+       <body>
+        <![CDATA[
+         // start the scrolling timer
+         this.m_lastAnimationTimer = new Date().getTime();
+         // if it was started already, stop it first
+         if (this.m_scrollingInterval) this.stopAnimationTimer();
+         // read the speed settings, apply defaults if needed
+         var speed = SBDataGetIntValue("autoscroll.timerdelay");
+         if (!speed) speed = 250;
+         this.m_pixelsPerSecond = SBDataGetIntValue("autoscroll.pixelspersecond");
+         if (!this.m_pixelsPerSecond) this.m_pixelsPerSecond = 20;
+         this.m_accum = 0;
+         // start the actual timer
+         this.m_scrollingInterval = setInterval(function(obj) { obj.onAnimationTimer(); }, speed, this);
+        ]]>
+       </body>
+     </method>
+
+     <method name="stopAnimationTimer">
+       <body>
+        <![CDATA[
+         // stop the scrolling timer
+         if (!this.m_scrollingInterval) return;
+         clearInterval(this.m_scrollingInterval);
+         this.m_scrollingInterval = null;
+        ]]>
+       </body>
+     </method>
+     
+     <method name="startAnimation">
+       <body>
+        <![CDATA[
+         // get ready for scrolling by cloning the children and changing the alignment.
+         // also change the cursor to indicate that the user may drag the content
+         // and start the animation timer
+         this.cloneChildren();
+         this.setAlignment();
+         this.setCursor();
+         this.startAnimationTimer();
+         this.setAttribute("mousethrough", "never");
+        ]]>
+       </body>
+     </method>
+
+     <method name="stopAnimation">
+       <body>
+        <![CDATA[
+         // we dont need scrolling anymore, so delete the cloned children, reset the offset and alignment,
+         // change the cursor back to normal, and stop the animation
+         this.deleteClonedChildren();
+         this.setOffset(0);
+         this.setAlignment();
+         this.setCursor();
+         this.stopAnimationTimer();
+         this.removeAttribute("mousethrough");
+        ]]>
+       </body>
+     </method>
+
+    <method name="setAlignment">
+      <body>
+        <![CDATA[
+          // change the alignment when the children fit the content box
+          // use the 'fitalign' attribute and assign it to ourselves as an 'align' attribute instead when the content fits,
+          // remove the align attribute when the content does not fit
+          var fa = this.getAttribute("fitalign");
+          if (fa && fa != "") {
+            if (this.needScroll()) {
+              this.removeAttribute("align");
+            } else {
+              this.setAttribute("align", fa);
+              this.hbox.removeAttribute("left");
+              this.hbox.removeAttribute("top");
+            }
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="setCursor">
+      <body>
+        <![CDATA[
+          // set the cursor according to whether the user can scroll or not
+          if (this.needScroll()) {
+            var cursor;
+            if (this.isVertical()) cursor = "n-resize"; else cursor = "w-resize";
+            this.overlay.setAttribute("style", "overflow: hidden; cursor: " + cursor + ";");
+          } else {
+            this.overlay.setAttribute("style", "overflow: hidden;");
+          }
+        ]]>
+      </body>
+    </method>
+
+     <method name="setOffset">
+       <parameter name="offset"/>
+       <body>
+        <![CDATA[
+         // change the contents offset (this is what actually scrolls the content).
+         // rollover when needed, and move the cloned children to the right/bottom of the normal children
+         this.m_scrollingOffset = offset;
+         if (this.isVertical()) {
+           this.m_scrollingOffset %= (this.hbox.boxObject.height + this.getSpacing());
+           this.hbox.setAttribute("top", -this.m_scrollingOffset);
+           if (this.m_scrollingOffset > 0) {
+             if (this.m_contentClone) this.m_contentClone.setAttribute("top", this.hbox.boxObject.height - this.m_scrollingOffset + this.getSpacing());
+           } else {
+             if (this.m_contentClone) this.m_contentClone.setAttribute("top", -this.hbox.boxObject.height - this.m_scrollingOffset - this.getSpacing());
+           }
+         } else {
+           this.m_scrollingOffset %= (this.hbox.boxObject.width + this.getSpacing());
+           this.hbox.setAttribute("left", -this.m_scrollingOffset);
+           if (this.m_scrollingOffset > 0) {
+             if (this.m_contentClone) this.m_contentClone.setAttribute("left", this.hbox.boxObject.width - this.m_scrollingOffset + this.getSpacing());
+           } else {
+             if (this.m_contentClone) this.m_contentClone.setAttribute("left", -this.hbox.boxObject.width - this.m_scrollingOffset - this.getSpacing());
+           }
+         }
+        ]]>
+       </body>
+     </method>
+
+     <method name="getOffset">
+       <body>
+        <![CDATA[
+         // return current position in scrolling
+         return this.m_scrollingOffset;
+        ]]>
+       </body>
+     </method>
+
+    <method name="onAnimationTimer">
+      <body>
+       <![CDATA[
+         // check whether scrolling is really needed (ie, because our box was resized up, or because
+         // the content changed [although this is supposed to be detected by the mutation event listener])
+         var dimension = this.isVertical() ? this.hbox.boxObject.width : this.hbox.boxObject.height;
+         if (dimension == 0) return;
+         if (!this.needScroll()) {
+           // scolling no longer needed, stop it and restart the checkScroll timer
+           this.stopAnimation();
+           this.startCheckScrollTimer();
+           return;
+         }
+         // advances scroller by as much as needed in order to obey the specified amount of pixels per second
+         var now = new Date().getTime();
+         var amount = 0;
+         if (this.m_lastAnimationTimer) {
+           var elapsed = now - this.m_lastAnimationTimer;
+           var c = 1000 / elapsed;
+           amount = this.m_pixelsPerSecond / c;
+           // if we have to scroll by less than 1 pixel (ie, m_pixelsPerSecond == 1, elapsed < 1000), 
+           // use an accumulator so we dont scroll more than necessary, nor do we not scroll at all.
+           if (amount < 1) {
+             this.m_accum += amount;
+             amount = 0;
+             if (this.m_accum >= 1) {
+               amount++;
+               this.m_accum--;
+             }
+           }
+         }
+         if (amount > 0) this.setOffset(this.getOffset()+amount);
+         this.m_lastAnimationTimer = now;
+       ]]>
+      </body>
+    </method>
+    
+    <method name="onMutationEvent">
+      <body>
+       <![CDATA[
+         // our content changed ! stop animation, reset offset, and restart checkScroll timer
+         // (which means the scrolling will not start until after a short pause)
+         this.stopAnimation();
+         this.stopCheckScrollTimer();
+         this.startCheckScrollTimer();
+       ]]>
+      </body>
+    </method>
+ 
+    <method name="checkScroll">
+      <parameter name="reset"/>
+      <body>
+       <![CDATA[
+        // check whether we need scrolling now (ie, because of a resize down of our box,
+        // or because the content changed [although this is supposed to be detected
+        // the mutation event listener])
+        this.setAlignment();
+        var dimension = this.isVertical() ? this.hbox.boxObject.width : this.hbox.boxObject.height;
+        if (this.needScroll() && ++this.m_skipCount == 2 && dimension != 0) {
+          this.stopCheckScrollTimer();
+          this.startAnimation();
+        } 
+       ]]>
+      </body>
+    </method>
+
+    <method name="beginManualMove">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          // start scrolling the content manually
+          if (this.needScroll()) {
+            if (this.m_onMouseUp) this.endManualMove();
+            this.stopAnimationTimer();
+            this.stopCheckScrollTimer();
+            // if for some reason the clones arent there, go and create them (although this 
+            // should not happen, it doesnt cost us anything to check)
+            if (!this.m_contentClone) {
+              this.cloneChildren();
+              this.setAlignment();
+              this.setCursor();
+            }
+            // start listening to the mouse events
+            this.m_onMouseUp = { 
+              _that: null, 
+              handleEvent: function( event ) { this._that.endManualMove(event); } 
+            }; this.m_onMouseUp._that = this; 
+            document.addEventListener("mouseup", this.m_onMouseUp, true);
+            this.m_onMouseMove = { 
+              _that: null, 
+              handleEvent: function( event ) { this._that.doManualMove(event); } 
+            }; this.m_onMouseMove._that = this; 
+            document.addEventListener("mousemove", this.m_onMouseMove, true);
+            // remember mouse anchor
+            this.m_anchorX = event.screenX;
+            this.m_anchorY = event.screenY;
+            this.m_anchorO = this.getOffset();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="endManualMove">
+      <parameter name="event"/>
+      <body>
+       <![CDATA[
+        // end scrolling the content manually
+        document.removeEventListener("mouseup", this.m_onMouseUp, true);
+        document.removeEventListener("mousemove", this.m_onMouseMove, true);
+        this.m_onMouseUp = null;
+        this.m_onMouseMove = null;
+        this.startCheckScrollTimer();
+       ]]>
+      </body>
+    </method>
+
+    <method name="doManualMove">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          // scroll the content according to mouse event position
+          if (this.isVertical()) {
+            var dy = event.screenY - this.m_anchorY;
+            this.setOffset(this.m_anchorO - dy);
+          } else {
+            var dx = event.screenX - this.m_anchorX;
+            this.setOffset(this.m_anchorO - dx);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="getSpacing">
+      <body>
+        <![CDATA[
+          return parseInt(this.getAttribute("spacing"));
+        ]]>
+      </body>
+    </method>
+
+    <method name="isVertical">
+      <body>
+        <![CDATA[
+          return (this.getAttribute("orientation") == "vertical");
+        ]]>
+      </body>
+    </method>
+
+    </implementation>
+
+   <handlers>
+     <handler event="mousedown" phase="capturing">
+      <![CDATA[
+       this.beginManualMove(event);
+      ]]>
+     </handler>
+   </handlers>
+    
+  </binding>
+
+</bindings>
+
+
+
