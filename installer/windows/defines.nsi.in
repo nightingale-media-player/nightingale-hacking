@@ -27,7 +27,6 @@
 #if _MSC_VER==1310
 !define CRuntime              "msvcr71d.dll"
 !define CPPRuntime            "msvcp71d.dll"
-!define CRuntimeManifest      ""
 #elif _MSC_VER==1400
 !define CRuntime              "msvcr80d.dll"
 !define CPPRuntime            "msvcp80d.dll"
@@ -38,7 +37,6 @@
 #if _MSC_VER==1310
 !define CRuntime              "msvcr71.dll"
 !define CPPRuntime            "msvcp71.dll"
-!define CRuntimeManifest      ""
 #elif _MSC_VER==1400
 !define CRuntime              "msvcr80.dll"
 !define CPPRuntime            "msvcp80.dll"

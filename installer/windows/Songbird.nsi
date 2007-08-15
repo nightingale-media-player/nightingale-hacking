@@ -232,7 +232,7 @@ Section "-Application" Section1
   
   ; With VC8, we need the CRT and the manifests all over the place due to SxS
   ; until BMO 350616 gets fixed
-  ${If} ${CRuntimeManifest} != ""
+  !ifdef CRuntimeManifest
     SetOutPath $INSTDIR
     File ${CRuntime}
     File ${CPPRuntime}
@@ -241,7 +241,7 @@ Section "-Application" Section1
     File ${CRuntime}
     File ${CPPRuntime}
     File ${CRuntimeManifest}
-  ${EndIf}
+  !endif
 
   ; Register DLLs
   ; XXXrstrong - AccessibleMarshal.dll can be used by multiple applications but
