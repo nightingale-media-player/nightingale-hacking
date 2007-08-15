@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="sbextensions" extends="chrome://songbird/content/bindings/drawer.xml#drawer-single">
+
+    <implementation>
+
+     <constructor>
+       this.header.setAttribute("hidden", "true");
+     </constructor>
+
+      <field name="bundleInterface">null</field>
+
+      <method name="createDrawerContent">
+        <body>
+          <![CDATA[
+          try
+          {
+            // Make the extension droplist
+            var listbox = document.createElement( "richlistbox" );
+            listbox.setAttribute( "sbid", "extensions_list" );
+            listbox.setAttribute("suppressonselect", "true");
+            listbox.setAttribute("class", "sb-extensions-list");
+            listbox.setAttribute("flex", "1");
+            
+            return listbox;
+          }
+          catch ( err )
+          {
+            alert( "createDrawerContent - " + err );
+          }
+          return null;
+          ]]>
+        </body>
+      </method>
+
+      <method name="onContentInserted">
+        <body>
+          <![CDATA[
+            this.insertListItems();
+          ]]>
+        </body>
+      </method>
+
+      <method name="insertListItems">
+        <body>
+          <![CDATA[
+          try
+          {
+            var listbox = document.getAnonymousElementByAttribute( this, 'sbid', 'extensions_list' );
+            var n = this.bundleInterface.bundleExtensionCount; 
+            for (var i=0;i<n;i++)
+            {
+              var item = document.createElement( "richlistitem" );
+              var checkbox = document.createElement( "checkbox" );
+              checkbox.setAttribute("checked", this.bundleInterface.getExtensionInstallFlag(i)); 
+              item.appendChild(checkbox);
+              item.setAttribute("url", this.bundleInterface.getExtensionAttribute(i, "url")); 
+              var oncommand = { 
+                _that: null, 
+                _checkbox: null,
+                _index: 0,
+                handleEvent: function( event ) { this._that.onToggle(this._index, this._checkbox); } 
+              } oncommand._that = this; oncommand._checkbox = checkbox; oncommand._index = i;
+              checkbox.addEventListener("command", oncommand, true);
+              checkbox.setAttribute("label", this.bundleInterface.getExtensionAttribute(i, "name") /*+ " - " + this.bundleInterface.getExtensionAttribute(i, "desc")*/); 
+              listbox.appendChild(item);
+            }
+          }
+          catch ( err )
+          {
+            alert( "insertListItems - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="onToggle">
+        <parameter name="index"/>
+        <parameter name="checkbox"/>
+        <body>
+          if (this.bundleInterface) this.bundleInterface.setExtensionInstallFlag(index, checkbox.checked); 
+        </body>
+      </method>
+
+      <method name="getContentSize">
+      <body>
+        <![CDATA[
+          var n_ext = this.bundleInterface.bundleExtensionCount; 
+          return Math.min(4, n_ext) * 20 + ((n_ext <= 4) ? 4 : 0);
+        ]]>
+      </body>
+      </method>
+      
+    </implementation>
+ 
+  </binding>
+
+</bindings>
