@@ -25,25 +25,27 @@
  */
 
 #include "sbRemoteSiteLibrary.h"
-#include <sbClassInfoUtils.h>
 
-#include <nsComponentManagerUtils.h>
-#include <nsIProgrammingLanguage.h>
-#include <nsMemory.h>
-#include <prlog.h>
-#include <sbLocalDatabaseCID.h>
-
-#include <nsHashKeys.h>
-#include <nsIWritablePropertyBag2.h>
-#include <sbILibraryFactory.h>
-#include <sbILibraryManager.h>
+#include <nsINetUtil.h>
 #include <nsIPrefService.h>
+#include <nsIProgrammingLanguage.h>
 #include <nsIProperties.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
+#include <nsIWritablePropertyBag2.h>
+#include <sbILibraryFactory.h>
+#include <sbILibraryManager.h>
+
+#include <nsComponentManagerUtils.h>
+#include <nsHashKeys.h>
+#include <nsMemory.h>
+#include <nsNetCID.h>
 #include <nsServiceManagerUtils.h>
+#include <prlog.h>
 #include <prnetdb.h>
+#include <sbClassInfoUtils.h>
+#include <sbLocalDatabaseCID.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -216,7 +218,7 @@ sbRemoteSiteLibrary::ConnectToSiteLibrary( const nsAString &aDomain,
   rv = GetGuid(guid);
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // put the guid in a supports string for the pref system 
+  // put the guid in a supports string for the pref system
   nsCOMPtr<nsISupportsString> supportsString =
                        do_CreateInstance( NS_SUPPORTS_STRING_CONTRACTID, &rv );
   NS_ENSURE_SUCCESS( rv, rv );
@@ -245,7 +247,7 @@ sbRemoteSiteLibrary::ConnectToSiteLibrary( const nsAString &aDomain,
   NS_ASSERTION( NS_SUCCEEDED(rv), "Failed to register library" );
 
   return NS_OK;
-} 
+}
 
 
 // ----------------------------------------------------------------------------
@@ -289,28 +291,45 @@ sbRemoteSiteLibrary::GetSiteLibraryFile( const nsAString &aDomain,
          NS_LossyConvertUTF16toASCII(aPath).get() ));
   NS_ENSURE_ARG_POINTER(aSiteDBFile);
 
-  nsresult rv;
-  nsCOMPtr<nsIURI> siteURI;
-  rv = GetURI( getter_AddRefs(siteURI) );
-  if ( NS_FAILED(rv) || !siteURI ) {
-    // GetURI can return true even if there was no siteURI
+  nsCOMPtr<nsIURI> siteURI = GetURI();
+  if (!siteURI) {
     LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED to get URI"));
-    return rv;
+    return NS_ERROR_FAILURE;
   }
 
-  nsAutoString domain(aDomain);
-  rv = CheckDomain( domain, siteURI );
+  nsString domain(aDomain);
+  nsresult rv = CheckDomain( domain, siteURI );
   if ( NS_FAILED(rv) ) {
     LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED domain Check"));
     return rv;
   }
 
-  nsAutoString path(aPath);
+  nsString path(aPath);
   rv = CheckPath( path, siteURI );
   if ( NS_FAILED(rv) ) {
     LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED path Check"));
     return rv;
   }
+
+  // Do some character escaping
+  nsCOMPtr<nsINetUtil> netUtil = do_GetService( NS_NETUTIL_CONTRACTID, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsCString escapedDomain;
+  rv = netUtil->EscapeString( NS_ConvertUTF16toUTF8(domain),
+                              nsINetUtil::ESCAPE_XALPHAS,
+                              escapedDomain );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsCString escapedPath;
+  rv = netUtil->EscapeString( NS_ConvertUTF16toUTF8(path),
+                              nsINetUtil::ESCAPE_XALPHAS,
+                              escapedPath );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsString filename = NS_ConvertUTF8toUTF16(escapedDomain);
+  filename.Append( NS_ConvertUTF8toUTF16(escapedPath) );
+  filename.AppendLiteral(".db");
 
   // get the directory service
   nsCOMPtr<nsIProperties> directoryService(
@@ -324,48 +343,35 @@ sbRemoteSiteLibrary::GetSiteLibraryFile( const nsAString &aDomain,
                               getter_AddRefs(siteDBFile) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  nsAutoString filename = domain;
-  filename.Append(path);
-
-  // hash it and smack the extension on
-  nsAutoString hashedFile;
-  hashedFile.AppendInt(HashString(filename));
-  hashedFile.AppendLiteral(".db");
-  LOG(( "sbRemoteSiteLibrary::GetSiteLibraryFile() -- hashed \n\t from: %s \n\t to: %s",
-         NS_LossyConvertUTF16toASCII(filename).get(),
-         NS_LossyConvertUTF16toASCII(hashedFile).get() ));
-
   // extend the path and add the file
   siteDBFile->Append( NS_LITERAL_STRING("db") );
-  siteDBFile->Append(hashedFile);
+  siteDBFile->Append(filename);
 
   // Save the filename locally
-  mFilename.Assign(hashedFile);
+  mFilename = filename;
 
-  NS_IF_ADDREF( *aSiteDBFile = siteDBFile );
+  siteDBFile.swap(*aSiteDBFile);
   return NS_OK;
 }
 
-nsresult
-sbRemoteSiteLibrary::GetURI( nsIURI **aSiteURI )
+already_AddRefed<nsIURI>
+sbRemoteSiteLibrary::GetURI()
 {
-  NS_ENSURE_ARG_POINTER(aSiteURI);
   LOG(("sbRemoteSiteLibrary::GetURI()"));
 
   nsresult rv;
   nsCOMPtr<sbISecurityMixin> mixin( do_QueryInterface( mSecurityMixin, &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, nsnull );
 
-  nsCOMPtr<nsIURI> siteURI; 
-  rv = mixin->GetCodebase( getter_AddRefs(siteURI) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  nsIURI* siteURI;
+  rv = mixin->GetCodebase( &siteURI );
+  NS_ENSURE_SUCCESS( rv, nsnull );
 
-  NS_IF_ADDREF( *aSiteURI = siteURI );
-  return NS_OK;
+  return siteURI;
 }
 
 nsresult
-sbRemoteSiteLibrary::CheckDomain( nsAString &aDomain,  nsIURI *aSiteURI )
+sbRemoteSiteLibrary::CheckDomain( nsAString &aDomain, nsIURI *aSiteURI )
 {
   NS_ENSURE_ARG_POINTER(aSiteURI);
   LOG(( "sbRemoteSiteLibrary::CheckDomain(%s)",
@@ -439,7 +445,7 @@ sbRemoteSiteLibrary::CheckDomain( nsAString &aDomain,  nsIURI *aSiteURI )
         LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED, user domain is superset"));
         return NS_ERROR_FAILURE;
       }
-     
+
       // remove the leading dot we added
       aDomain.Trim( ".", PR_TRUE, PR_FALSE );
     }
@@ -513,4 +519,3 @@ sbRemoteSiteLibrary::CheckPath( nsAString &aPath, nsIURI *aSiteURI )
 
   return NS_OK;
 }
-

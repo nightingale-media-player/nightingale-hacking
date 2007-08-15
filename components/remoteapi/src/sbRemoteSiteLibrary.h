@@ -31,6 +31,10 @@
 #include "sbRemoteLibraryBase.h"
 #include <sbIRemoteLibrary.h>
 
+#include <nsCOMPtr.h>
+
+class nsIURI;
+
 #define SONGBIRD_REMOTESITELIBRARY_CONTRACTID           \
   "@songbirdnest.com/remoteapi/remotesitelibrary;1"
 #define SONGBIRD_REMOTESITELIBRARY_CLASSNAME            \
@@ -60,7 +64,7 @@ protected:
   virtual nsresult InitInternalMediaList();
 
   // fetches the URI from the security mixin
-  nsresult GetURI( nsIURI **aSiteURI );
+  already_AddRefed<nsIURI> GetURI();
   // validates aPath against aSiteURI, setting aPath if empty
   nsresult CheckPath( nsAString &aPath, nsIURI *aSiteURI );
   // validates aDomain against aSiteURI, setting aDomain if empty
