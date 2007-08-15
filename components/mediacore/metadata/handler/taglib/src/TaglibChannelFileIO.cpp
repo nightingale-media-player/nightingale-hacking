@@ -24,7 +24,7 @@
 //
 */
 
-/*******************************************************************************
+/* *****************************************************************************
  *******************************************************************************
  *
  * TagLib nsIChannel file IO.
@@ -37,7 +37,7 @@
 * \brief Songbird TagLib nsIChannel file I/O implementation.
 */
 
-/*******************************************************************************
+/* *****************************************************************************
  *
  * TagLib nsIChannel file I/O imported services.
  *
@@ -54,7 +54,7 @@
 #include "SeekableChannel.h"
 
 
-/*******************************************************************************
+/* *****************************************************************************
  *
  * TagLib nsIChannel file I/O logging services.
  *
@@ -68,7 +68,7 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("TagLibChannelFileIO");
 #endif
 
 
-/*******************************************************************************
+/* *****************************************************************************
  *
  * TagLib nsIChannel file I/O FileIOTypeResolver interface public
  * implementation.
@@ -119,7 +119,7 @@ FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
 }
 
 
-/*******************************************************************************
+/* *****************************************************************************
  *
  * TagLib nsIChannel file I/O FileIO interface public implementation.
  *
@@ -369,7 +369,7 @@ long TagLibChannelFileIO::length()
 }
 
 
-/*******************************************************************************
+/* *****************************************************************************
  *
  * TagLib nsIChannel file I/O FileIO interface protected implementation.
  *
@@ -386,7 +386,7 @@ void TagLibChannelFileIO::truncate(
 }
 
 
-/*******************************************************************************
+/* *****************************************************************************
  *
  * Public TagLib nsIChannel file I/O services.
  *
@@ -438,7 +438,7 @@ TagLibChannelFileIO::~TagLibChannelFileIO()
 }
 
 
-/*******************************************************************************
+/* *****************************************************************************
  *
  * Public TagLib nsIChannel file I/O class services.
  *
@@ -466,7 +466,7 @@ nsresult TagLibChannelFileIO::AddChannel(
     nsString                    channelID,
     sbISeekableChannel*         pSeekableChannel)
 {
-    nsAutoPtr<TagLibChannelFileIO::Channel> pChannel;
+    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
     nsresult                                result = NS_OK;
 
     /* Validate parameters. */
@@ -488,7 +488,7 @@ nsresult TagLibChannelFileIO::AddChannel(
 
     /* Add the channel to the channel map. */
     if (NS_SUCCEEDED(result))
-        mChannelMap[channelID] = pChannel.forget();
+        mChannelMap[channelID] = pChannel;
 
     return (result);
 }
@@ -506,19 +506,10 @@ nsresult TagLibChannelFileIO::AddChannel(
 nsresult TagLibChannelFileIO::RemoveChannel(
     nsString                    channelID)
 {
-    TagLibChannelFileIO::Channel
-                                *pChannel = nsnull;
     nsresult                    result = NS_OK;
-
-    /* Get the channel map entry. */
-    GetChannel(channelID, &pChannel);
 
     /* Erase the channel map entry. */
     mChannelMap.erase(channelID);
-
-    /* Delete the channel. */
-    if (pChannel)
-        delete (pChannel);
 
     return (result);
 }
@@ -545,10 +536,9 @@ nsresult TagLibChannelFileIO::GetChannel(
 {
     NS_ASSERTION(ppChannel, "ppChannel is null");
 
-    ChannelMap::iterator        mapEntry;
-    TagLibChannelFileIO::Channel
-                                *pChannel = NULL;
-    nsresult                    result = NS_OK;
+    ChannelMap::iterator                    mapEntry;
+    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
+    nsresult                                result = NS_OK;
 
     /* Search for the channel in the channel map. */
     mapEntry = mChannelMap.find(channelID);
@@ -558,7 +548,8 @@ nsresult TagLibChannelFileIO::GetChannel(
         result = NS_ERROR_NOT_AVAILABLE;
 
     /* Return results. */
-    *ppChannel = pChannel;
+    if (NS_SUCCEEDED(result))
+        pChannel.swap(*ppChannel);
 
     return (result);
 }
@@ -585,15 +576,13 @@ nsresult TagLibChannelFileIO::GetChannel(
 {
     NS_ASSERTION(ppSeekableChannel, "ppSeekableChannel is null");
 
-    ChannelMap::iterator        mapEntry;
-    TagLibChannelFileIO::Channel
-                                *pChannel;
-    nsCOMPtr<sbISeekableChannel>
-                                pSeekableChannel;
-    nsresult                    result = NS_OK;
+    ChannelMap::iterator                    mapEntry;
+    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
+    nsCOMPtr<sbISeekableChannel>            pSeekableChannel;
+    nsresult                                result = NS_OK;
 
     /* Get the metadata channel. */
-    result = GetChannel(channelID, &pChannel);
+    result = GetChannel(channelID, getter_AddRefs(pChannel));
     if (NS_SUCCEEDED(result))
         pSeekableChannel = pChannel->pSeekableChannel;
 
@@ -629,14 +618,13 @@ nsresult TagLibChannelFileIO::GetSize(
 {
     NS_ASSERTION(pSize, "pSize is null");
 
-    ChannelMap::iterator        mapEntry;
-    TagLibChannelFileIO::Channel
-                                *pChannel;
-    PRUint64                    size = 0;
-    nsresult                    result = NS_OK;
+    ChannelMap::iterator                    mapEntry;
+    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
+    PRUint64                                size = 0;
+    nsresult                                result = NS_OK;
 
     /* Get the channel size. */
-    result = GetChannel(channelID, &pChannel);
+    result = GetChannel(channelID, getter_AddRefs(pChannel));
     if (NS_SUCCEEDED(result))
         size = pChannel->size;
 
@@ -669,13 +657,12 @@ nsresult TagLibChannelFileIO::GetSize(
 PRBool TagLibChannelFileIO::GetChannelRestart(
     nsString                    channelID)
 {
-    TagLibChannelFileIO::Channel
-                                *pChannel;
-    PRBool                      restart = PR_FALSE;
-    nsresult                    result = NS_OK;
+    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
+    PRBool                                  restart = PR_FALSE;
+    nsresult                                result = NS_OK;
 
     /* Get the channel restart flag. */
-    result = GetChannel(channelID, &pChannel);
+    result = GetChannel(channelID, getter_AddRefs(pChannel));
     if (NS_SUCCEEDED(result))
         restart = pChannel->restart;
 
@@ -697,14 +684,22 @@ void TagLibChannelFileIO::SetChannelRestart(
     nsString                    channelID,
     PRBool                      restart)
 {
-    TagLibChannelFileIO::Channel
-                                *pChannel;
-    nsresult                    result = NS_OK;
+    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
+    nsresult                                result = NS_OK;
 
     /* Set the channel restart flag. */
-    result = GetChannel(channelID, &pChannel);
+    result = GetChannel(channelID, getter_AddRefs(pChannel));
     if (NS_SUCCEEDED(result))
         pChannel->restart = restart;
 }
+
+
+/* *****************************************************************************
+ *
+ * TagLib nsIChannel file I/O channel nsISupports implementation.
+ *
+ ******************************************************************************/
+
+NS_IMPL_ISUPPORTS0(TagLibChannelFileIO::Channel)
 
 

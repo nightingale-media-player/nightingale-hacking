@@ -147,12 +147,14 @@ public:
     /*
      * Private taglib metadata handler class services.
      *
-     *   mInitialized           True if the class services have been
+     *   sInitialized           True if the class services have been
      *                          initialized.
+     *   sNextChannelID         Next channel ID to use.
      */
 
 private:
-    static PRBool               mInitialized;
+    static PRBool               sInitialized;
+    static PRUint32             sNextChannelID;
 
     static nsresult InitializeClass();
 

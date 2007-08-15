@@ -50,6 +50,7 @@
 #include <map>
 
 /* Mozilla imports. */
+#include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -72,7 +73,7 @@ using namespace TagLib;
  * TagLibChannelFileIO class
  */
 
-class TagLibChannelFileIO : public TagLib::FileIO 
+class TagLibChannelFileIO : public TagLib::FileIO
 {
     /*
      * Public TagLib nsIChannel file I/O services.
@@ -149,7 +150,7 @@ protected:
      */
 
 private:
-    class Channel
+    class Channel : public nsISupports
     {
         /*
          * pSeekableChannel         Seekable channel component.
@@ -159,6 +160,9 @@ private:
          */
 
     public:
+        /* Inherited interfaces. */
+        NS_DECL_ISUPPORTS
+
         nsCOMPtr<sbISeekableChannel>
                                     pSeekableChannel;
         PRUint64                    size;
@@ -207,7 +211,7 @@ public:
 
 private:
     class ChannelMap :
-        public std::map<nsString, TagLibChannelFileIO::Channel *> {};
+        public std::map<nsString, nsRefPtr<TagLibChannelFileIO::Channel> > {};
     static ChannelMap mChannelMap;
 };
 

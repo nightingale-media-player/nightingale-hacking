@@ -275,14 +275,20 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
             do_CreateInstance("@songbirdnest.com/Songbird/SeekableChannel;1",
                               &result);
 
-        /* Add the metadata channel for use with the TagLib nsIChannel  */
-        /* file I/O services using the metadata path as the channel ID. */
+        /* Add the metadata channel for use with the */
+        /* TagLib nsIChannel  file I/O services.     */
         if (NS_SUCCEEDED(result))
         {
-            mMetadataPath = urlSpec;
+            /* Allocate a metadata channel ID    */
+            /* and use it for the metadata path. */
+            sNextChannelID++;
+            mMetadataPath.AssignLiteral("metadata_channel://");
+            mMetadataPath.AppendInt(sNextChannelID);
             mMetadataChannelID = NS_ConvertUTF8toUTF16(mMetadataPath);
-            TagLibChannelFileIO::AddChannel(mMetadataChannelID,
-                                            mpSeekableChannel);
+
+            /* Add the metadata channel. */
+            result = TagLibChannelFileIO::AddChannel(mMetadataChannelID,
+                                                     mpSeekableChannel);
         }
 
         /* Open the metadata channel to start reading. */
@@ -545,7 +551,8 @@ sbMetadataHandlerTaglib::~sbMetadataHandlerTaglib()
  * Static field initializers.
  */
 
-PRBool sbMetadataHandlerTaglib::mInitialized = PR_FALSE;
+PRBool sbMetadataHandlerTaglib::sInitialized = PR_FALSE;
+PRUint32 sbMetadataHandlerTaglib::sNextChannelID = 0;
 
 
 /*
@@ -560,7 +567,7 @@ nsresult sbMetadataHandlerTaglib::InitializeClass()
     nsresult                        result = NS_OK;
 
     /* Do nothing if already initialized. */
-    if (mInitialized)
+    if (sInitialized)
         return (result);
 
     /* Add nsIChannel file I/O type resolver. */
@@ -572,7 +579,7 @@ nsresult sbMetadataHandlerTaglib::InitializeClass()
 
     /* Class is now initialized. */
     if (NS_SUCCEEDED(result))
-        mInitialized = PR_TRUE;
+        sInitialized = PR_TRUE;
 
     return (result);
 }
