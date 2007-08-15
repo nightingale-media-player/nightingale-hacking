@@ -1,0 +1,312 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- If you change the box model around, remember to fix the custom columnpicker!! -->
+  <binding id="filterlist">
+    <content>
+      <xul:hbox id="sb-filterlist" class="filterlist" flex="1" xbl:inherits="class">
+        <xul:tree
+          id="sb-filterlist-tree"
+          class="sb-filterlist-tree"
+          sbid="filter_tree"
+          flex="1"
+          onselect="_onFilterListSelect(event);"
+          xbl:inherits="class,enableColumnDrag,hidecolumnpicker"
+        >
+          <xul:treecols sbid="treeColumns" xbl:inherits="class"/>
+          <xul:treechildren/>
+        </xul:tree>
+      </xul:hbox>
+    </content>
+
+    <implementation type="application/x-javascript" name="songbird_filterlist" implements="sbICascadeFilterSetListener">
+
+      <constructor>
+      </constructor>
+
+      <destructor>
+<![CDATA[
+  if (this._isBound) {
+    this.cfs.removeListener(this);
+  }
+]]>
+      </destructor>
+
+      <field name="tree">document.getAnonymousElementByAttribute(this, 'sbid', 'filter_tree');</field>
+
+      <!-- The filter set this filter is part of -->
+      <field name="cfs">null</field>
+
+      <!-- The index of the filter within the set -->
+      <field name="index">null</field>
+
+      <!-- Property and property info this filter list is filtering -->
+      <field name="_property">null</field>
+      <field name="_propertyInfo">null</field>
+
+      <!-- If this filterlist is bound to anything -->
+      <field name="_isBound">false</field>
+
+      <field name="_XUL_NS" readonly="true">
+        "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      </field>
+      <field name="_Cc"     readonly="true">Components.classes</field>
+      <field name="_Ci"     readonly="true">Components.interfaces</field>
+      <field name="_Cr"     readonly="true">Components.results</field>
+
+      <method name="bind">
+        <parameter name="cfs"/>
+        <parameter name="index"/>
+        <body>
+<![CDATA[
+  if (this._isBound) {
+    throw new Error("already bound");
+  }
+  this.cfs = cfs;
+  this.index = index;
+  this._property = cfs.getProperty(index);
+  this.tree.view = cfs.getTreeView(index);
+
+  // Get the property info for the property
+  var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                   .getService(this._Ci.sbIPropertyManager);
+  this._propertyInfo = pm.getPropertyInfo(this._property);
+
+  // Add the column for the property to the tree
+  var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
+  
+  while (treeColumns.lastChild) 
+    treeColumns.removeChild(treeColumns.lastChild);
+
+  var treecol = document.createElementNS(this._XUL_NS, "treecol");
+  treecol.setAttribute("bind", this._property);
+  treecol.setAttribute("flex", "1");
+  treeColumns.appendChild(treecol);
+  this.treecol = treecol;
+
+  this._updateColumnLabel(this.index);
+  
+  // Remove our selection if we are updated
+  this.cfs.addListener(this);
+  this._isBound = true;
+]]>
+        </body>
+      </method>
+
+      <method name="changeProperty">
+        <parameter name="property"/>
+        <body>
+          <![CDATA[
+            this.cfs.changeFilter(this.index, property);
+            this.tree.view = this.cfs.getTreeView(this.index);
+            this._property = property;
+
+            // Get the property info for the property
+            var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                            .getService(this._Ci.sbIPropertyManager);
+            this._propertyInfo = pm.getPropertyInfo(this._property);
+
+            var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
+
+            // Remove old column
+            while (treeColumns.lastChild) 
+              treeColumns.removeChild(treeColumns.lastChild);
+
+            // Add the column for the property to the tree
+            var treecol = document.createElementNS(this._XUL_NS, "treecol");
+            treecol.setAttribute("bind", this._property);
+            treecol.setAttribute("flex", "1");
+            treeColumns.appendChild(treecol);
+            this.treecol = treecol;
+
+            this._updateColumnLabel(this.index);
+            this._saveCascadeFilterState();
+            
+            // Force sort, update the display
+            this.tree.view.cycleHeader( this.tree.treeBoxObject.columns.getColumnFor( this.treecol ) );
+          ]]>
+        </body>
+      </method>
+
+      <method name="_saveCascadeFilterState">
+        <body>
+          <![CDATA[
+            var array = [];
+            for ( var i = 0, end = this.cfs.length; i < end; i++ ) {
+              var property = this.cfs.getProperty(i);
+              if ( property.length > 0 )
+                array.push( property );
+            }
+            var serialize = array.join(";");
+            SBDataSetStringValue( "library.filterset", serialize );
+          ]]>
+        </body>
+      </method>
+
+      <method name="_updateColumnLabel">
+        <body>
+          <![CDATA[
+            var n = this.cfs.getValueCount(this.index); 
+            var itemsstr;
+            switch (n) {
+              case 0:
+                itemsstr = SBString("library.noitem", "no items");
+                break;
+              case 1:
+                itemsstr = n + " " + SBString("library.oneitem", "item");
+                break;
+              default:
+                itemsstr = n + " " + SBString("library.manyitem", "items");
+                break;
+            }
+            this.treecol.setAttribute("label", this._propertyInfo.displayName + " (" + itemsstr + ")");
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_onFilterListSelect">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  var ldbtv = this.tree.view.QueryInterface(this._Ci.sbILocalDatabaseTreeView);
+  if (ldbtv.selectionChanging) {
+    return;
+  }
+
+  var sel = this.tree.view.selection;
+  var values = [];
+  var rangeCount = sel.getRangeCount();
+  for (var i = 0; i < rangeCount; i++) {
+    var min = {};
+    var max = {};
+    sel.getRangeAt(i, min, max);
+
+    // If the "all" row is selected, clear the values for this filter
+    if (min.value == 0) {
+      this.cfs.set(this.index, [], 0);
+      return;
+    }
+
+    for (var j = min.value; j <= max.value; j++) {
+      var value = this.cfs.getValueAt(this.index, j - 1);
+      values.push(value);
+    }
+  }
+  this.cfs.set(this.index, values, values.length);
+]]>
+        </body>
+      </method>
+
+      <method name="onChange">
+        <body>
+<![CDATA[
+  // do nothing
+]]>
+        </body>
+      </method>
+
+      <method name="onValuesChanged">
+        <parameter name="aIndex"/>
+        <body>
+<![CDATA[
+  if (aIndex == this.index) {
+    this._updateColumnLabel();
+    this.tree.view.selection.clearSelection();
+  }
+]]>
+        </body>
+      </method>
+
+    </implementation>
+
+  </binding>
+
+  <binding id="columnpicker" display="xul:button"
+           extends="chrome://global/content/bindings/tree.xml#tree-base">
+    <content>
+      <xul:image class="tree-columnpicker-icon"/>
+      <xul:menupopup anonid="popup">
+      </xul:menupopup>
+    </content>
+    <implementation>
+      <method name="buildPopup">
+        <parameter name="aPopup"/>
+        <body>
+          <![CDATA[
+            while (aPopup.childNodes.length)
+              aPopup.removeChild(aPopup.firstChild);
+
+            var refChild = aPopup.firstChild;
+            var filterlist = this.parentNode.parentNode.parentNode;
+
+            // Get the property info for the property
+            var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                            .getService(Components.interfaces.sbIPropertyManager);
+            var propEnumerator = pm.propertyNames;
+            while (propEnumerator.hasMore()) {
+              var propertyName = propEnumerator.getNext();
+              var propertyInfo = pm.getPropertyInfo(propertyName);
+              var popupChild = document.createElement("menuitem");
+              popupChild.setAttribute("type", "checkbox");
+              popupChild.setAttribute("label", propertyInfo.displayName);
+              popupChild.setAttribute("property", propertyName);
+              if (propertyName == filterlist._property)
+                  popupChild.setAttribute("checked", "true");
+              aPopup.insertBefore(popupChild, refChild);
+            }
+          ]]>
+        </body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <handler event="command">
+        <![CDATA[
+          if (event.originalTarget == this) {
+            var popup = document.getAnonymousElementByAttribute(this, "anonid", "popup");
+            this.buildPopup(popup);
+            popup.showPopup(this, -1, -1, "popup", "bottomright", "topright");
+          }
+          else {
+            var filterlist = this.parentNode.parentNode.parentNode.parentNode;
+            filterlist.changeProperty(event.originalTarget.getAttribute("property"));
+          }
+        ]]>
+      </handler>
+    </handlers>
+
+  </binding>
+
+</bindings>
+
+
