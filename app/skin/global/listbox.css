@@ -147,26 +147,17 @@ listheader[sortable="true"]:hover:active {
 
 /* ::::: listcell checkbox ::::: */
 
-/** TODO Test the following rules **/
+/* ..... checkmark image ..... */
 
 .listcell-check {
-  -moz-appearance: checkbox;
-  -moz-box-align: center;
-  margin: 0px 2px;
-  border: 1px solid -moz-DialogText;
-  min-width: 13px;
-  min-height: 13px;
-  background: -moz-Field url("chrome://global/skin/checkbox/cbox.gif") no-repeat 50% 50%;
+  width: 13px;
+  height: 13px;
+  background: -moz-Field no-repeat 50% 50%;
 }
 
-.listcell-check[checked="true"] {
-  background-image: url("chrome://global/skin/checkbox/cbox-check.gif");
-}
+/* ..... checked state ..... */
 
-.listcell-check[disabled="true"] {
-  border-color: GrayText;
-}
-
-.listcell-check[disabled="true"][checked="true"] {
-  background-image: url("chrome://global/skin/checkbox/cbox-check-dis.gif");
+listitem[checked="true"] .listcell-check 
+{
+  background-image: url("chrome://songbird/skin/checkbox/check_fff.png");
 }

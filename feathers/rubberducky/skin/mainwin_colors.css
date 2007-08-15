@@ -1339,7 +1339,11 @@ listbox
   -moz-border-radius: 5px !important;
 }
 
+/* ..... disabled state ..... */
 
+listbox[disabled="true"] {
+  opacity: 0.5;
+}
 
 listitem[selected="true"] > listcell > .listcell-label
 {
@@ -1365,6 +1369,16 @@ richlistitem[selected="true"] > label,
 richlistitem[selected="true"] > checkbox > hbox > label /** for the first run */
 {
   color: #202220; /** Button Shadow */ 
+}
+
+/* ::::: checkmark image ::::: */
+
+.listcell-check {
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #313131; /** color of the Main Window */  
 }
 
 /** 
