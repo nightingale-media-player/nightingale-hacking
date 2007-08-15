@@ -28,10 +28,11 @@
  * \brief Test file
  */
 function runTest () {
-
-  setRapiPref("disable_binding", false);
-  setRapiPref("disable_controls", false);
-  setRapiPref("disable_metadata", false);
+  setRapiPref("playback_control_disable", false);
+  setRapiPref("playback_read_disable", false);
+  setRapiPref("library_read_disable", false);
+  setRapiPref("library_write_disable", false);
+  setRapiPref("library_create_disable", false);
 
   beginRemoteAPITest("test_remotemedialist_page.html", startTesting);
 }

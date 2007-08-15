@@ -32,10 +32,11 @@
 var dest;
 
 function runTest () {
-
-  setRapiPref("disable_binding", false);
-  setRapiPref("disable_controls", false);
-  setRapiPref("disable_metadata", false);
+  setRapiPref("playback_control_disable", false);
+  setRapiPref("playback_read_disable", false);
+  setRapiPref("library_read_disable", false);
+  setRapiPref("library_write_disable", false);
+  setRapiPref("library_create_disable", false);
 
   dest = Cc["@mozilla.org/file/directory_service;1"]
              .getService(Ci.nsIProperties)

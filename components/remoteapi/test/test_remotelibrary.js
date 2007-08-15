@@ -28,13 +28,6 @@
  * \brief Test file
  */
 function runTest () {
-
-  // old prefs
-  setRapiPref("disable_binding", false);
-  setRapiPref("disable_controls", false);
-  setRapiPref("disable_metadata", false);
-  
-  // new prefs
   setRapiPref("playback_control_disable", false);
   setRapiPref("playback_read_disable", false);
   setRapiPref("library_read_disable", false);
