@@ -1,0 +1,687 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  <!-- 
+    FACEPLATE 
+    
+    A container widget that displays faceplate pane bindings one at a time.  
+        
+    This widget listens to notifications from the FaceplateManager service
+    and instantiates/removes/shows panes accordingly.
+    
+    For an example of how to display a pane in all faceplates, see #progress-pane
+    in this file, as well as sbFaceplateManager.js and sbIFaceplateManager.idl.
+    -->
+  <binding id="faceplate">
+
+    <content>
+      <xul:hbox id="sb-player-faceplate" flex="1" xbl:inherits="currentIndex,currentId,class">
+        <xul:spacer id="sb-player-faceplate-left" class="faceplate-left-spacer" xbl:inherits="currentIndex,currentId"/>
+        <xul:deck id="sb-player-faceplate-deck" anonid="faceplate-deck" selectedIndex="0" class="faceplate-bkgd-box" flex="1" xbl:inherits="currentIndex,currentId">
+          <!--  All faceplate panes are added programmatically via sbIFaceplateManager -->
+        </xul:deck>
+        <xul:spacer id="sb-player-faceplate-right" class="faceplate-right-spacer" xbl:inherits="currentIndex,currentId"/>
+      </xul:hbox>
+    </content>
+
+    <implementation type="application/x-javascript" 
+                    implements="sbIFaceplateManagerListener">
+
+      <constructor>
+       <![CDATA[
+       
+          // Listen for faceplate pane messages from the faceplate manager
+          this._manager =
+             Components.classes["@songbirdnest.com/faceplate/manager;1"]
+                       .getService(Components.interfaces.sbIFaceplateManager);    
+          this._manager.addListener(this);
+          
+          // Instantiate all existing faceplate panes
+          var panes = this._manager.getPanes();
+          while (panes.hasMoreElements()) {
+            var pane = panes.getNext().QueryInterface(
+                         Components.interfaces.sbIFaceplatePane);
+            this.onCreatePane(pane);
+          }
+          this.currentIndex = 0;
+       ]]>
+      </constructor>
+      
+      <destructor>
+       <![CDATA[
+         this._manager.removeListener(this);
+         this._manager = null;
+       ]]>
+      </destructor>
+
+      <field name="_deck">document.getAnonymousElementByAttribute(this,
+          "anonid", "faceplate-deck");</field>
+      <field name="_paneCount">0</field>
+      <field name="_manager">null</field>              
+
+      <property name="currentIndex">
+        <getter>
+          <![CDATA[
+            // Run everything off the deck's selectedIndex.
+            var index = parseInt(this._deck.selectedIndex);
+            this.setAttribute("currentIndex", index);
+            var paneid = this._findPaneAtIndex(index);
+            this.setAttribute("currentId", paneid);
+            return index;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            var index = parseInt(val);
+            this._deck.selectedIndex = index;
+            this.setAttribute("currentIndex", index);
+            var paneid = this._findPaneAtIndex(index);
+            this.setAttribute("currentId", paneid);
+          ]]>
+        </setter>
+      </property>
+      
+      <property name="currentId">
+        <getter>
+          <![CDATA[
+            // Run everything off the deck's selectedIndex.
+            var index = parseInt(this._deck.selectedIndex);
+            this.setAttribute("currentIndex", index);
+            var paneid = this._findPaneAtIndex(index);
+            this.setAttribute("currentId", paneid);
+            return paneid;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            var index = parseInt(this._findPaneIndex(val));
+            this._deck.selectedIndex = index;
+            this.setAttribute("currentIndex", index);
+            var paneid = this._findPaneAtIndex(index);
+            this.setAttribute("currentId", paneid);
+          ]]>
+        </setter>
+      </property>
+      
+      <!-- sbIFaceplateManagerListener support -->
+      
+      <!-- Add the given pane to the deck -->      
+      <method name="onCreatePane">
+        <parameter name="pane"/>      
+        <body>
+          <![CDATA[
+            this._paneCount += 1;
+            var element = document.createElement("xul:hbox");
+            element.setAttribute("paneid", pane.id);
+            element.setAttribute("flex", "1");            
+            this._applyBinding(element, pane.bindingURL);
+            this._deck.appendChild(element);          
+          ]]>
+        </body>
+      </method> 
+      
+      <!-- Show the given pane at the top of the deck -->
+      <method name="onShowPane">
+        <parameter name="pane"/>      
+        <body>
+          <![CDATA[
+            this.switchToPane(pane.id);
+          ]]>
+        </body>
+      </method> 
+      
+      <!-- Remove the given pane from the deck -->      
+      <method name="onDestroyPane">
+        <parameter name="pane"/>      
+        <body>
+          <![CDATA[
+           var element = this._findPaneElement(pane.id);
+           if (element) {
+             var index = this._findPaneIndex(pane.id);
+
+             // You can't delete the first pane.
+             if (index == 0) {
+               dump("faceplate.xml: onDestroyPane: cannot destroy the first pane!\n");
+               return;
+             }
+
+             // If this pane is currently showing then we need to 
+             // select something else  (or else the pane stays on 
+             // screen until repaint)
+             // Select the previous pane (fine, since we can't remove pane 0)
+             if (this.currentIndex == index) {
+               this.currentIndex = --index;
+             }
+             
+             this._paneCount--;
+             this._deck.removeChild(element);
+           }
+          ]]>
+        </body>
+      </method>                  
+
+      <method name="switchToPane">
+        <parameter name="id"/>
+        <body>
+          <![CDATA[
+            var index = this._findPaneIndex(id);
+            if (index >= 0) {
+              this.currentIndex = index;
+            }
+          ]]>
+        </body>
+      </method>
+      
+      <method name="switchToNextPane">
+        <body>
+          <![CDATA[
+            var newIndex = (this.currentIndex + 1) % this._paneCount;
+            this.currentIndex = newIndex; 
+          ]]>
+        </body>
+      </method>  
+      
+      <method name="switchToPreviousPane">
+        <body>
+          <![CDATA[
+            if (this.currentIndex == 0) {
+              this.currentIndex = this._paneCount - 1; 
+            } else {
+              this.currentIndex = this.currentIndex - 1; 
+            }
+          ]]>
+        </body>
+      </method>
+      
+      <method name="getCurrentPaneID">
+        <body>
+          <![CDATA[
+            return this._findPaneAtIndex(this.currentIndex);
+          ]]>
+        </body>
+      </method>          
+
+
+      <!-- Instantiate the binding at the given url on top of the given element
+           (because document.addBinding does not work) 
+        -->
+      <method name="_applyBinding">
+        <parameter name="element"/>
+        <parameter name="url"/>      
+        <body>
+          <![CDATA[
+            var style = "";
+            if (element.hasAttribute("style")) {
+              style = element.getAttribute("style");
+            }
+            style += " -moz-binding:url(" + url + ");";
+            element.setAttribute("style", style);
+          ]]>
+        </body>
+      </method>
+
+      <!-- Find the deck element with the given paneid attribute -->
+      <method name="_findPaneElement">
+        <parameter name="id"/>
+        <body>
+          <![CDATA[
+            var elements = this._deck.childNodes;
+            for (var i = 0; i < elements.length; i++) {
+              if (elements[i].nodeType == Node.ELEMENT_NODE &&
+                  id == elements[i].getAttribute("paneid")) {
+                return elements[i];
+              }
+            }
+            return null;
+          ]]>
+        </body>
+      </method>  
+      
+      <!-- Find the deck index for the pane with the given id -->
+      <method name="_findPaneIndex">
+        <parameter name="id"/>
+        <body>
+          <![CDATA[
+            var index = -1;
+            var elements = this._deck.childNodes;
+            for (var i = 0; i < elements.length; i++) {
+              if (elements[i].nodeType != Node.ELEMENT_NODE) {
+                continue;
+              }
+              if (elements[i].hasAttribute("paneid")) {
+                index++;
+                if (id == elements[i].getAttribute("paneid")) {
+                  return index;
+                }
+              }            
+            }
+            return -1;
+          ]]>
+        </body>
+      </method> 
+
+      <!-- Find pane id for the given deck index -->
+      <method name="_findPaneAtIndex">
+        <parameter name="index"/>
+        <body>
+          <![CDATA[
+            var counter = -1;
+            var elements = this._deck.childNodes;
+            for (var i = 0; i < elements.length; i++) {
+              if (elements[i].nodeType != Node.ELEMENT_NODE) {
+                continue;
+              }
+              if (elements[i].hasAttribute("paneid")) {
+                counter++;
+                if (index == counter) {
+                  return elements[i].getAttribute("paneid");
+                }
+              }            
+            }
+            return null;
+          ]]>
+        </body>
+      </method>                         
+    
+    </implementation>
+  </binding>  
+  
+  
+  <!-- 
+    BASE PANE IMPLEMENTATION
+  
+    Base prototype for faceplate pane bindings. Extend this
+    if you want to make your own faceplate pane.
+       
+    Replace _onDataChanged with a function that updates your UI.
+    -->
+  <binding id="base-pane">
+    <implementation type="application/x-javascript" 
+                    implements="nsIObserver">
+
+      <constructor>
+       <![CDATA[
+         this._initPaneInterface();
+       ]]>
+      </constructor>
+      
+      <destructor>
+       <![CDATA[
+         this._uninitPaneInterface();
+       ]]>
+      </destructor>
+
+      <field name="_pane">null</field>
+
+      <!-- nsIObserver -->
+      <method name="observe">
+        <parameter name="subject"/>      
+        <parameter name="topic"/>      
+        <parameter name="data"/>                      
+        <body>
+          <![CDATA[  
+            this._onDataChanged(topic);
+          ]]>
+        </body>
+      </method>  
+
+      <!-- Gets and observes the sbIFaceplatePane for this instance -->
+      <method name="_initPaneInterface">
+        <body>
+          <![CDATA[            
+            var id = this.getAttribute("paneid");
+            if (!id) {
+              throw new Error("Faceplate pane bindings must be given a 'paneid' attribute");
+            }
+            
+            // Get the faceplate pane interface for this instance
+            var manager =
+               Components.classes["@songbirdnest.com/faceplate/manager;1"]
+                         .getService(Components.interfaces.sbIFaceplateManager);    
+            this._pane = manager.getPane(id);
+            
+            if (!this._pane) {
+              throw new Error("Faceplate 'paneid' attribute does not correspond " + 
+                              " to an sbIFaceplatePane in sbIFaceplateManager");
+            }
+            
+            // Register this instance as an observer for faceplate data changes
+            this._pane.addObserver(this);
+            
+            // Now fire initial _onDataChanged events for each key already in
+            // the pane data
+            var keys = this._pane.getKeys();
+            while (keys.hasMore()) {
+              this._onDataChanged(keys.getNext());
+            }
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Stops observing the sbIFaceplatePane for this instance -->
+      <method name="_uninitPaneInterface">
+        <body>
+          <![CDATA[
+            if (this._pane) {
+              this._pane.removeObserver(this);
+            }
+            this._pane = null;
+          ]]>
+        </body>
+      </method>      
+      
+      <!-- Called when the data in the sbIFaceplatePane for this
+           instance is modified.  Override this method in your 
+           faceplate binding and use the data to update your UI.
+        -->
+      <method name="_onDataChanged">
+        <parameter name="key"/>      
+        <body>
+          <![CDATA[
+            dump("faceplate-binding-base._onDataChanged:");
+            dump(" key:" + key);
+            dump(" value:" + this._pane.getData(key) + "\n"); 
+          ]]>
+        </body>
+      </method>      
+    </implementation>    
+  </binding>    
+    
+    
+  <!-- 
+    DEFAULT INTRO PANE
+
+    A faceplate pane that shows a single image.
+    
+    This pane is set up by the FaceplateManager, and the image is applied 
+    via CSS.
+    -->
+  <binding id="default-pane" 
+           extends="chrome://songbird/content/bindings/faceplate.xml#base-pane">
+    <content>
+        <xul:hbox pack="center" align="center" flex="1">
+          <xul:image class="faceplate-intro-image"/>
+        </xul:hbox>
+    </content>
+  </binding>    
+  
+  
+  <!-- 
+    PLAYBACK DASHBOARD PANE
+
+    A faceplate pane that shows metadata for the current playing track, and 
+    as well as a position seekbar.
+    
+    This pane is set up by the FaceplateManager, and displayed when playback
+    begins for the first time in a session.
+    -->
+  <binding id="playback-pane"
+           extends="chrome://songbird/content/bindings/faceplate.xml#base-pane">
+    <content>
+        <xul:vbox flex="1" pack="center">
+          <!-- SONG ARTIST DISPLAY -->
+          <xul:hbox class="faceplate-artist-box" pack="center" align="center">
+            <xul:sb-player-artist-label crop="end" class="faceplate-text" />
+          </xul:hbox>
+          <!-- SONG ALBUM DISPLAY -->
+          <xul:hbox class="faceplate-album-box" pack="center" align="center" >
+            <xul:sb-player-title-label align="center"  crop="end"  class="faceplate-text" />
+            <xul:label anonid="slash_label" value=" / "  crop="end" hidden="true"  class="faceplate-text"  />
+            <xul:sb-player-album-label value=""  crop="end"  class="faceplate-text" />
+          </xul:hbox>
+          <!-- SEEK BAR -->
+          <xul:hbox class="faceplate-seekbar-box" align="center" pack="center">
+            <xul:sb-player-shuffle-button class="faceplate-shuffle" />
+            <xul:sb-player-timeelapsed-label   class="faceplate-text" />
+            <xul:sb-player-seek-slider class="faceplate-seekbar" flex="1" orient="horizontal"  maxpos="100"/>
+            <xul:sb-player-totaltime-label class="faceplate-text" />
+            <xul:sb-player-repeat-button class="faceplate-repeat" />
+          </xul:hbox>
+        </xul:vbox>
+    </content>
+    
+    <implementation type="application/x-javascript" 
+                    implements="nsIObserver">
+
+      <constructor>
+       <![CDATA[
+        var binding = this;
+        var observer = {
+          observe: function(s,t,d) { binding._onMetadataChange(); } 
+        }
+
+        this._titleDataremote = SB_NewDataRemote( "metadata.title", null );
+        this._titleDataremote.bindObserver( observer, true );
+        this._albumDataremote = SB_NewDataRemote( "metadata.album", null ); 
+        this._albumDataremote.bindObserver( observer, true );
+        
+        // Note: Since the UI is updated by dataremotes and not the
+        // sbIFaceplatePane we do not bother calling _initPaneInterface.
+       ]]>
+      </constructor>
+      
+      <destructor>
+       <![CDATA[
+        this._titleDataremote.unbind();
+        this._titleDataremote = null;
+        this._albumDataremote.unbind();
+        this._albumDataremote = null;
+       ]]>
+      </destructor>
+
+      <field name="_slashLabel">document.getAnonymousElementByAttribute(this,
+          "anonid", "slash_label");</field>
+      
+      <method name="_onMetadataChange">
+        <body>
+         <![CDATA[ 
+          var title = this._titleDataremote.stringValue;
+          var album = this._albumDataremote.stringValue;          
+
+          this._slashLabel.hidden = !(album && title);
+         ]]>
+        </body>
+      </method>
+    </implementation>      
+  </binding>
+
+
+ <!--
+   GENERIC PROGRESS DISPLAY PANE
+        
+   Features two labels and a progressmeter.
+
+   Usage example:
+   
+      var manager =  Components.classes["@songbirdnest.com/faceplate/manager;1"]
+                        .getService(Components.interfaces.sbIFaceplateManager);  
+      var pane = manager.createPane("test", "test", 
+                   "chrome://songbird/content/bindings/faceplate.xml#progress-pane");
+      pane.setData("label1", "This is a demo of the");
+      pane.setData("label2", "progress faceplate");
+      pane.setData("progress-mode", "determined"); 
+      pane.setData("progress-value", 60);         
+      pane.setData("label1-hidden", false);      
+      pane.setData("label2-hidden", false);      
+      pane.setData("progress-hidden", false);
+      
+      manager.showPane(pane);
+   -->
+  <binding id="progress-pane" 
+           extends="chrome://songbird/content/bindings/faceplate.xml#base-pane">
+    <content>
+      <xul:vbox flex="1" align="center" pack="center">
+        <xul:label anonid="label1"   class="faceplate-text" />
+        <xul:label anonid="label2"   class="faceplate-text" />
+        <xul:progressmeter anonid="progressmeter" mode="undetermined" class="faceplate-progressmeter" />
+      </xul:vbox>   
+    </content>
+    <implementation type="application/x-javascript">
+
+      <field name="_label1">document.getAnonymousElementByAttribute(this,
+          "anonid", "label1");</field>
+      <field name="_label2">document.getAnonymousElementByAttribute(this,
+          "anonid", "label2");</field>
+      <field name="_progressmeter">document.getAnonymousElementByAttribute(this,
+          "anonid", "progressmeter");</field>
+
+      <method name="_onDataChanged">
+        <parameter name="key"/>
+        <body>
+          <![CDATA[
+            var value = this._pane.getData(key);
+            
+            switch (key) {
+              case "label1":
+                this._label1.value = value;
+                break;
+              case "label2":
+                this._label2.value = value;  
+                break;    
+              case "label1-hidden":
+                this._label1.hidden = !!value;
+                break;              
+              case "label2-hidden":
+                this._label2.hidden = !!value;
+                break;
+              case "progress-value":
+                this._progressmeter.value = value;
+                break;
+              case "progress-mode":
+                this._progressmeter.mode = value;              
+                break;                
+              case "progress-hidden":
+                this._progressmeter.hidden = !!value;   
+                break;                           
+              default:
+                dump("faceplate-progress-pane._onDataChanged:");
+                dump("Unknown data key:" + key + "\n");
+                break;
+            }
+            ]]>
+        </body>
+      </method>
+                
+    
+    </implementation>    
+  </binding>    
+
+
+  <!-- 
+   CYCLE FACEPLATE
+   
+   Used to advance to the next (or previous) faceplate pane, or jump to 
+   a specific pane using a clickhold menupopup.
+   
+   Must be provided with the ID of a faceplate that is accessible from the 
+   current document.
+   -->
+  <binding id="cyclefaceplate">
+    <content>
+      <xul:sb-clickhold-button sbid="button" 
+                           popupanchor="topleft" 
+                           popupalign="bottomleft" 
+                           onmenushowing="buildMenu();" 
+                           oncommand="onMenu(event.target)" 
+                           class="sb-player-cyclefaceplate-button-cycle sb-player-button" 
+                           xbl:inherits="position,popupanchor,popupalign"/>    
+    </content>
+  
+    <implementation>
+      
+      <field name="button">document.getAnonymousElementByAttribute(this, 'sbid', 'button');</field>
+      <field name="faceplate">document.getElementById(this.getAttribute("faceplate"));</field>
+      
+      <method name="buildMenu">
+        <body>
+          <![CDATA[
+            if (!this.faceplate) {
+              return;
+            }
+          
+            // Clear the existing menu
+            while (this.button.firstChild) {
+              this.button.removeChild(this.button.firstChild);
+            }
+            
+            // Add a menu item for each registered faceplate
+            var faceplateManager = Components.classes["@songbirdnest.com/faceplate/manager;1"]
+                                     .getService(Components.interfaces.sbIFaceplateManager);    
+            var enumerator = faceplateManager.getPanes();
+            while (enumerator.hasMoreElements()) {
+              var pane = enumerator.getNext().QueryInterface(
+                                Components.interfaces.sbIFaceplatePane);
+              var item = document.createElement("menuitem");
+              item.setAttribute("paneid", pane.id);
+              item.setAttribute("label", pane.name);
+              item.setAttribute("type", "radio");
+              if (this.faceplate.getCurrentPaneID() == pane.id) {
+                item.setAttribute("checked", "true");
+              } 
+              this.button.appendChild(item);
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="onMenu">
+        <parameter name="element"/>
+        <body>
+          <![CDATA[
+            var faceplate = this.faceplate;
+            if (faceplate) {
+              var id = element.getAttribute("paneid");
+              if (element == this.button) {
+                var direction = this.getAttribute("cycle");
+                if (direction == "previous") {
+                  faceplate.switchToPreviousPane();
+                } else {
+                  faceplate.switchToNextPane(); // "next" is default
+                }
+              } else {
+                faceplate.switchToPane(id);
+              }
+            }
+          ]]>
+        </body>
+      </method>
+    </implementation>
+  </binding>
+
+    
+</bindings>
+
+
