@@ -1,0 +1,553 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  
+  
+  <!-- DB CONTROLS -->
+
+  
+  
+  
+  <binding id="base">
+
+  <implementation>
+
+    <constructor>
+      <![CDATA[
+        // generated menuitems.
+        var stringBundleService =
+            Components.classes["@mozilla.org/intl/stringbundle;1"]
+                      .getService(Components.interfaces.nsIStringBundleService);
+        var sb = stringBundleService.createBundle( 
+                    "chrome://songbird/locale/songbird.properties" );
+        try {
+          this.notsetstring = sb.GetStringFromName("trackeditor.notset");
+        } catch (e) { 
+          this.notsetstring = "*Not Set*";
+        }
+        if (this.checkbox) {
+          var oncommand = { 
+            _that: null, 
+            handleEvent: function( event ) { this._that.onToggleMultiEdition(); } 
+          } oncommand._that = this; 
+          this.checkbox.addEventListener("command", oncommand, true);
+        }
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+    
+    <field name="ml">null</field>
+    <field name="query">null</field>
+    <field name="guids">null</field>
+    <field name="ismultiedit">false</field>
+    <field name="multieditdisabled">false</field>
+    <field name="dirtyobject">null</field>
+    <field name="playlist">null</field>
+    <field name="originalvalue">""</field>
+
+    <property name="readonly">
+      <getter>
+        return this.getAttribute("readonly");
+      </getter>
+      <setter>
+        this.setAttribute("readonly", val);
+        return val;
+      </setter>
+    </property>
+
+    <property name="column">
+      <getter>
+        return this.getAttribute("column");
+      </getter>
+      <setter>
+        this.setAttribute("column", val);
+        this.undo();
+        return val;
+      </setter>
+    </property>
+    
+    <method name="onToggleMultiEdition">
+      <body>
+        <![CDATA[
+          if (this.checkbox && !this.isSingleEdition())
+          {
+            if (this.checkbox.getAttribute("checked")) {
+              this.enableMultiEdition();
+            } else {
+             this.disableMultiEdition();
+             var value = this.getValueFromDatabase(false);
+             this.hasvalue = (value != null);
+             this.originalvalue = value;
+             this.setValueToControl(value);
+            }
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="setSingleEdition">
+      <body>
+        <![CDATA[
+          this.ismultiedit = false;
+          try {
+            if (this.checkbox) this.checkbox.setAttribute("hidden", "true");
+            if (this.spacer) this.spacer.setAttribute("hidden", "true");
+            if (this.editcontrol) this.editcontrol.removeAttribute("disabled");
+            this.onSetSingleEdition();
+          } catch (e) {}
+        ]]>
+      </body>
+    </method>
+
+    <method name="isSingleEdition">
+      <body>
+        <![CDATA[
+          return !this.ismultiedit;
+        ]]>
+      </body>
+    </method>
+
+    <method name="setMultiEdition">
+      <body>
+        <![CDATA[
+          this.ismultiedit = true;
+          try {
+            if (this.checkbox) this.checkbox.setAttribute("hidden", "false");
+            if (this.spacer) this.spacer.setAttribute("hidden", "false");
+            this.onSetMultiEdition();
+          } catch (e) {}
+        ]]>
+      </body>
+    </method>
+
+    <method name="enableMultiEdition">
+      <body>
+        <![CDATA[
+          this.multieditdisabled = false;
+          try {
+            if (this.checkbox) this.checkbox.setAttribute("checked", "true");
+            if (this.editcontrol) this.editcontrol.removeAttribute("disabled");
+            this.onEnableMultiEdition();
+          } catch (e) {}
+        ]]>
+      </body>
+    </method>
+
+    <method name="disableMultiEdition">
+      <body>
+        <![CDATA[
+          this.multieditdisabled = true;
+          try {
+            if (this.checkbox) this.checkbox.setAttribute("checked", "false");
+            if (this.editcontrol) this.editcontrol.setAttribute("disabled", "true");
+            this.onDisableMultiEdition();
+          } catch (e) {}
+        ]]>
+      </body>
+    </method>
+
+    <method name="isMultiEditionEnabled">
+      <body>
+        <![CDATA[
+          return !this.multieditdisabled;
+        ]]>
+      </body>
+    </method>
+
+    <method name="getValueFromDatabase">
+      <parameter name="setmultistate"/>
+      <body>
+        <![CDATA[
+          try {
+            var value;
+            if (setmultistate)
+            {
+              if (this.guids.length == 1) 
+              {
+                this.setSingleEdition(); 
+              }
+              else 
+              {
+                this.setMultiEdition();
+                this.enableMultiEdition();
+              }
+            }
+            for (var i=0;i<this.guids.length;i++)
+            {
+              var thisval;
+              try {
+                var item = this.playlist.mediaListView.mediaList.getItemByGuid(this.guids[i]);
+                thisval = item.getProperty(this.column);
+              } catch (e) {
+                if (this.column == "http://songbirdnest.com/data/1.0#guid") thisval = this.guids[i];
+                // else thisval stays null;
+              }
+              if (i==0) 
+              {
+                value = thisval;
+              }
+              else 
+              {
+                if (thisval != value)
+                {
+                  if (setmultistate) this.disableMultiEdition();
+                  // should it return the first found (value), or reset ? reset seems good
+                  value = "";
+                  break;
+                }
+              }
+            }
+            return value;
+          } catch (e) {
+            alert("db_controls - getValueFromDatabase - " + e);
+          }
+          return null;
+        ]]>
+      </body>
+    </method>
+    
+    <method name="validateValue">
+      <body>
+        <![CDATA[
+	      var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+					      .getService(Components.interfaces.sbIPropertyManager);
+	      var info = pm.getPropertyInfo(this.column);
+	      return info.validate(this.getValueFromControl());
+        ]]>
+      </body>
+    </method>
+
+    <method name="setValueToDatabase">
+      <parameter name="value"/>
+      <body>
+        <![CDATA[
+          try {
+            var ro = this.getAttribute("readonly");
+            if (ro == "1" || ro == "true") return;
+            if (this.isSingleEdition() || this.isMultiEditionEnabled())
+            {
+              for (var i=0;i<this.guids.length;i++)
+              {
+                var item = this.playlist.mediaListView.mediaList.getItemByGuid(this.guids[i]);
+                try {
+                  if (!this.hasvalue) {
+                    //XXXlone> THIS IS WRONG ! WE SHOULD SET NULL INSTEAD, or call removeProperty(), or something.
+                    item.setProperty(this.column, "");
+                  } else {
+                    item.setProperty(this.column, value);
+                  }
+                } catch (e) {
+                  // do not care
+                }
+              }
+            }
+          } catch (e) {
+            alert("db-controls - setValueToDatabase - " + e);
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="apply">
+      <body>
+        <![CDATA[
+          var ro = this.getAttribute("readonly");
+          if (ro == "1" || ro == "true") return;
+          this.setValueToDatabase(this.getValueFromControl());
+        ]]>
+      </body>
+    </method>
+    
+    <method name="undo">
+      <body>
+        var value = this.getValueFromDatabase(true);
+        this.hasvalue = (value != null);
+        this.originalvalue = value;
+        this.setValueToControl(value);
+      </body>
+    </method>
+
+    <method name="setDirty">
+      <body>
+        <![CDATA[
+          if (this.dirtyobject) this.dirtyobject.setDirty(true);
+        ]]>
+      </body>
+    </method>
+
+    <method name="checkForChange">
+      <body>
+        <![CDATA[
+         var value = this.getValueFromControl();
+         if (value != this.originalvalue) this.setDirty();
+        ]]>
+      </body>
+    </method>
+
+
+  </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- DB LABEL CONTROL -->
+
+
+
+
+  <binding id="label" extends="chrome://songbird/content/bindings/db_controls.xml#base">
+
+  <content>
+    <xul:textbox flex="1" sid="dbedit.label"  readonly="true"/>
+  </content>
+
+  <implementation>
+
+    <constructor>
+      this.setAttribute("readonly", "1");
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <field name="label">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.label');</field>
+
+    <method name="setValueToControl">
+      <parameter name="value"/>
+      <body>
+        if (!this.hasvalue) value = this.notsetstring;
+        this.label.setAttribute("value", value);
+      </body>
+    </method>
+    
+    <method name="getValueFromControl">
+      <body>
+        if (!this.hasvalue) return null;
+        return this.label.getAttribute("value");
+      </body>
+    </method>
+    
+    
+    
+   </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- DB TEXTBOX CONTROL -->
+
+
+
+
+  <binding id="textbox" extends="chrome://songbird/content/bindings/db_controls.xml#base">
+
+  <content>
+    <xul:checkbox sid="dbedit.checkbox" hidden="true"/>
+    <xul:spacer sid="dbedit.spacer" width="2" hidden="true"/>
+    <xul:textbox flex="1" sid="dbedit.textbox"  xbl:inherits="readonly=readonly" />
+  </content>
+
+  <implementation>
+
+    <constructor>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <field name="editcontrol">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.textbox');</field>
+    <field name="checkbox">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.checkbox');</field>
+    <field name="spacer">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.spacer');</field>
+
+    <method name="setValueToControl">
+      <parameter name="value"/>
+      <body>
+        if (!this.hasvalue) value = this.notsetstring;
+        this.editcontrol.value = value;
+      </body>
+    </method>
+    
+    <method name="getValueFromControl">
+      <body>
+        if (!this.hasvalue) return null;
+        return this.editcontrol.value;
+      </body>
+    </method>
+    
+   </implementation>
+
+    <handlers>
+      <handler event="keypress">
+        <![CDATA[
+          setTimeout(function(obj) { 
+                        if (obj.editcontrol.value != "") {
+                          if (!obj.hasvalue) {
+                            obj.hasvalue = true;
+                            obj.editcontrol.value = "";
+                          } 
+                        } else {
+                          if (obj.hasvalue) {
+                            obj.hasvalue = false;
+                            obj.editcontrol.value = obj.notsetstring;
+                          }
+                        }
+                        obj.checkForChange(); 
+                      }, 
+                     0, 
+                     this); 
+        ]]>
+      </handler>
+    </handlers>
+  </binding>
+
+
+
+
+  <!-- DB COMBOBOX CONTROL -->
+
+
+
+
+  <binding id="menulist" extends="chrome://songbird/content/bindings/db_controls.xml#base">
+
+  <content>
+    <xul:checkbox sid="dbedit.checkbox" hidden="true"/>
+    <xul:spacer sid="dbedit.spacer" width="2" hidden="true"/>
+    <xul:menulist 
+      sid="dbedit.list"
+      flex="1"
+      xbl:inherits="editable=editable,id=listid"
+      
+      onpopupshowing="onPopup();"
+    >
+      <children/>
+    </xul:menulist>
+  </content>
+
+  <implementation>
+
+    <constructor>
+    </constructor>
+    <destructor>
+    </destructor>
+    
+    <property name="populateuniques">
+      <setter>
+         return this.setAttribute("populateuniques", val);
+      </setter>
+      <getter>
+         return this.getAttribute("populateuniques");
+      </getter>
+    </property>
+
+    <field name="editcontrol">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.list');</field>
+    <field name="checkbox">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.checkbox');</field>
+    <field name="spacer">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.spacer');</field>
+
+    <method name="setValueToControl">
+      <parameter name="value"/>
+      <body>
+        if (!this.hasvalue) value = this.notsetstring;
+        this.editcontrol.selectedIndex = -1;
+        this.editcontrol.value = value;
+      </body>
+    </method>
+    
+    <method name="getValueFromControl">
+      <body>
+        if (!this.hasvalue) return null;
+        return this.editcontrol.value;
+      </body>
+    </method>
+    
+    <method name="onPopup">
+      <body>
+         this.fillList();
+      </body>
+    </method>
+    
+    <method name="fillList">
+      <body>
+        <![CDATA[
+          if (this.populateuniques) {
+            this.editcontrol.removeAllItems();
+            var enum = this.playlist.mediaListView.mediaList.getDistinctValuesForProperty(this.column);
+            while (enum.hasMore()) { 
+              var prop = enum.getNext();
+              this.editcontrol.appendItem(prop, null, null);
+            }
+          }
+      ]]>
+      </body>
+    </method>
+    
+   </implementation>
+
+    <handlers>
+      <handler event="keypress">
+        <![CDATA[
+          setTimeout(function(obj) { 
+                        if (obj.editcontrol.value != "") {
+                          if (!obj.hasvalue) {
+                            obj.hasvalue = true;
+                            obj.editcontrol.value = "";
+                          } 
+                        } else {
+                          if (obj.hasvalue) {
+                            obj.hasvalue = false;
+                            obj.editcontrol.value = obj.notsetstring;
+                          }
+                        }
+                       obj.checkForChange(); 
+                     }, 
+                     0, 
+                     this); 
+        ]]>
+      </handler>
+      <handler event="popuphidden">
+        <![CDATA[
+          setTimeout(function(obj) { obj.checkForChange(); }, 0, this); 
+        ]]>
+      </handler>
+    </handlers>
+
+  </binding>
+
+</bindings>
+
