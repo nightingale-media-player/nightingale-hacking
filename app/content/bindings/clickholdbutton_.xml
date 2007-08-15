@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  <!--
+  /**
+   * A normal button, except that clicking and holding triggers a popup menu.
+   */
+  -->
+  <binding id="clickhold-button">
+
+    <content>
+        <xul:button sbid="button" class="clickhold-button" xbl:inherits="label,flex,disabled,tooltiptext" />
+        <xul:menupopup sbid="popup" class="clickhold-menupopup" xbl:inherits="position,popupanchor,popupalign,type=menupopuptype,onpopupshowing=onmenushowing,onpopupshown=onmenushown,onpopuphiding=onmenuhiding">
+          <children includes="menuitem|menupopup|menu"/>
+        </xul:menupopup>        
+        <children/>
+    </content>
+
+   <implementation type="application/x-javascript">
+
+     <constructor>
+       <![CDATA[
+       this.popupInterval = null;
+       this.popup = document.getAnonymousElementByAttribute(this, 'sbid', 'popup');
+       this.button = document.getAnonymousElementByAttribute(this, 'sbid', 'button');
+
+       this.popupShowing = false;
+       ]]>
+     </constructor>
+
+     <destructor>
+       <![CDATA[
+       // Ah what the hell, why not
+       clearInterval(this.popupInterval);
+       ]]>
+     </destructor>
+
+     <method name="showPopup">
+       <body>
+         <![CDATA[
+         if (!this.popupShowing) 
+         {
+          var anchor = this.popup.getAttribute("popupanchor");
+          var align = this.popup.getAttribute("popupalign");
+          // anchor = 'topleft';
+          // align = 'bottomleft';
+          this.popup.showPopup(this, -1, -1, 'popup', anchor, align);
+         }
+         ]]>
+       </body>
+     </method>
+
+     <method name="delayPopup">
+       <parameter name="delay"/>
+       <body>
+         <![CDATA[
+         this.popupInterval = setTimeout(function(obj) { obj.showPopup(); }, delay, this);
+         ]]>
+       </body>
+     </method>
+
+   </implementation>
+
+
+   <handlers>
+     <handler event="popupshown">
+       <![CDATA[
+       // Note that if the menuitems were built by a binding then they will show up
+       // as the originalTarget, not the target of the event.
+       var target = (event.originalTarget) ? event.originalTarget : event.target;
+
+       // If this popupshown event comes from a sub-popupmenu
+       // then ignore it.
+       if (target != this.popup) {
+         return;
+       }
+       
+    
+       // If the menupopup does not contain any items, then we should not show it.
+       // we cannot cancel the menu earlier (for instance, in delayPopup, or showPopup) 
+       // because some menus only add their menuitems in onpopupshowing.
+       try {
+         // Ugh, dig into menupopup > arrowscrollbox > scrollbox > box to count children
+         if (target.childNodes[0].childNodes[1].childNodes[0].length == 0) {
+           this.popup.hidePopup();
+         }
+       } catch (e) {}
+
+       // Centered?
+       // If we want to use anchoring (which we do) then we can only
+       // position via css.
+       
+       //var offset = (this.button.boxObject.width - this.popup.boxObject.width) / 2;
+       //this.popup.style.marginLeft = offset + "px";
+       //this.popup.style.visibility = "visible";
+       
+       // While the popup is showing we want to disable the tooltiptext
+       // on the clickhold button.  If we don't then the tooltip will
+       // appear beside each menu item.
+       var tooltip = this.getAttribute("tooltiptext");
+       if (tooltip != "") {
+         this.originalTooltip = tooltip;
+         this.setAttribute("tooltiptext", "");
+       }
+       
+       this.popupShowing = true;
+        ]]>
+     </handler>
+     <handler event="popuphiding">
+       <![CDATA[
+       
+       // Note that if the menuitems were built by a binding then they will show up
+       // as the originalTarget, not the target of the event.
+       var target = (event.originalTarget) ? event.originalTarget : event.target;
+
+       // If this popuphiding event comes from a sub-popupmenu
+       // then ignore it.
+       if (target != this.popup) {
+         return;
+       }
+
+       // When the menupopup hides we need to restore the tooltip
+       if (this.originalTooltip) {
+         this.setAttribute("tooltiptext", this.originalTooltip);
+       }
+
+       this.popupShowing = false;
+        ]]>
+     </handler>
+     
+     <handler event="mousedown">
+       <![CDATA[
+       clearInterval(this.popupInterval);
+       this.delayPopup(300);
+       ]]>
+     </handler>
+     <handler event="mouseup">
+       <![CDATA[
+       clearInterval(this.popupInterval);
+       ]]>
+     </handler>
+     <handler event="mouseout">
+       <![CDATA[
+       clearInterval(this.popupInterval);
+       ]]>
+     </handler>
+     
+     <handler event="command" phase="capturing">
+       <![CDATA[
+       // Suppress button command if the popup was just triggered.
+       // Note that event.originalTarget is needed since event.target will
+       // always be this XBL widget for any anon content.
+       if (event.originalTarget == this.button && this.popupShowing )  event.stopPropagation();
+       ]]>
+     </handler>
+
+     
+   </handlers> 
+  </binding>  
+</bindings>
+
+
