@@ -1,0 +1,824 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl" 
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+  
+  <binding id="servicepane">
+    <content>
+      <xul:vbox id="sb-servicepane" class="servicepane_box" flex="1">
+        <xul:vbox id="sb-servicepane-box" flex="1">
+          <xul:vbox id="sb-servicepane-treepane" 
+                style="-moz-binding:url(#treepane)" flex="1"
+                anonid="treepane" 
+                mousethrough="never"
+                xbl:inherits="browser"/>
+          <xul:vbox id="sb-servicepane-toolbar" 
+                style="-moz-binding:url(#toolbar)"
+                anonid="toolbar" />
+        </xul:vbox>
+        <!--
+        <xul:sb-smart-splitter>
+          <xul:grippy/>
+        </xul:sb-smart-splitter>
+        <xul:vbox style="-moz-binding:url(#extensions)" flex="1"
+              anonid="extensions" />
+        -->
+      </xul:vbox>
+    </content>
+    <implementation>
+      <constructor><![CDATA[
+        this.mTreePane = document.getAnonymousElementByAttribute(this, 'anonid', 'treepane');
+        this.mToolbar = document.getAnonymousElementByAttribute(this, 'anonid', 'toolbar');
+        /*
+        this.mExtensions = document.getAnonymousElementByAttribute(this, 'anonid', 'extensions');
+        */
+      ]]></constructor>
+      <property name="onPlaylistDefaultCommand"
+            onget="return this.mTreePane.onPlaylistDefaultCommand;"
+            onset="this.mTreePane.onPlaylistDefaultCommand = val;" />
+      <method name="loadURL">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          // FIXME: deprecate?
+          this.mTreePane.loadURL(aURL);
+        ]]></body>
+      </method>
+      
+      
+      <method name="getSelectedNode">
+        <body><![CDATA[return this.mTreePane.getSelectedNode();]]></body>
+      </method>  
+
+      <method name="startEditingNode">
+        <parameter name="aNode"/>
+        <body><![CDATA[return this.mTreePane.startEditingNode(aNode);]]></body>
+      </method>
+      
+      <method name="getURLName">
+        <parameter name="aURL"/>
+        <body><![CDATA[return this.mTreePane.getURLName(aURL);]]></body>
+      </method>
+      
+      <method name="getURLImage">
+        <parameter name="aURL"/>
+        <body><![CDATA[return this.mTreePane.getURLImage(aURL);]]></body>
+      </method>
+      
+      <field name="doneInit">false</field>
+    </implementation>
+   </binding>
+  
+  
+  
+  <binding id="treepane">
+    <content>
+      <xul:tree class="servicepane_tree" anonid="tree" flex="1"
+            datasources="rdf:null" ref="SB:Root"
+            hidecolumnpicker="true" seltype="single"
+            mousethrough="never"
+            >
+        <!-- hide the column header - is there a better way? -->
+        <xul:treecols style="height:0px">
+          <xul:treecol primary="true" flex="1"
+                 hideheader="true"
+                 />
+        </xul:treecols>
+        <xul:template>
+          <xul:rule>
+            <xul:conditions>
+              <xul:content uri="?start" />
+              <xul:member container="?start" child="?node" />
+              <xul:triple subject="?node"
+                    predicate="http://home.netscape.com/NC-rdf#Name"
+                    object="?name" />
+              <xul:triple subject="?node"
+                    predicate="http://songbirdnest.com/rdf/servicepane#Hidden"
+                    object="false" />                    
+            </xul:conditions>
+            <xul:bindings>
+              <xul:binding subject="?node"
+                     predicate="http://home.netscape.com/NC-rdf#Icon"
+                     object="?icon" />
+              <xul:binding subject="?node"
+                     predicate="http://songbirdnest.com/rdf/servicepane#Open"
+                     object="?open" />
+              <xul:binding subject="?node"
+                     predicate="http://songbirdnest.com/rdf/servicepane#Properties"
+                     object="?properties" />                                
+            </xul:bindings>
+            <xul:action>
+              <xul:treechildren flex="1" properties="dropOn">
+                <xul:treeitem open="?open" uri="?node" nodeid="?node">
+                  <xul:treerow>
+                    <xul:treecell label="?name" src="?icon" properties="?properties"/>
+                  </xul:treerow>
+                </xul:treeitem>
+              </xul:treechildren>
+            </xul:action>
+          </xul:rule>
+        </xul:template>
+      </xul:tree>
+      <xul:popupset>
+        <xul:popup anonid="popup"  onpopupshown="onPopupShown(event);" />
+      </xul:popupset>
+    </content>
+    <implementation implements="nsIWebProgressListener">
+      <constructor><![CDATA[
+        // get the tree node
+        this.mTree = document.getAnonymousElementByAttribute(this, 'anonid', 'tree');
+        // get the popup node
+        this.mPopup = document.getAnonymousElementByAttribute(this, 'anonid', 'popup');
+        // clear out the old datasources from the tree
+
+        this.mService =
+          Components.classes['@songbirdnest.com/servicepane/service;1']
+          .getService(Components.interfaces.sbIServicePaneService);
+
+        while (this.mTree.database.GetDataSources().hasMoreElements()) {
+          this.mTree.database.RemoveDataSource(
+              this.mTree.database.GetDataSources().getNext());
+        }
+
+        // add the datasource from the service
+        this.mTree.database.AddDataSource(this.mService.dataSource);
+        this.mTree.ref = this.mService.root.id;
+
+        // and force a rebuild
+        this.mTree.builder.rebuild();
+        
+        var sp = this;
+        // this is evil. really. i feel guilty.
+        // let's replace the tree's stopEditing function with our own
+        // that actually saves off the data
+        this.mTree._stopEditing = this.mTree.stopEditing;
+        this.mTree.stopEditing = function evilStopEditing(accept) {
+          /* debugging output - really useful for debugging:
+          dump('accept: '+accept+'\n');
+          dump('this._editingColumn: '+this._editingColumn+'\n');
+          dump('this._editingRow: '+this._editingRow+'\n');
+          dump('this.inputField.value: '+this.inputField.value+'\n');
+          dump('this.inputField.hidden: '+this.inputField.hidden+'\n');
+          dump('this.hasAttribute("editing"): '+this.hasAttribute("editing")+'\n');
+          */
+
+          if (!this._editingColumn)
+            return;
+          
+          var node = null;
+          var newName = null;
+          
+          if (accept && this._editingRow != -1 &&
+              this._editingColumn && !this.inputField.hidden &&
+              this.hasAttribute('editing')) {
+            node = sp.getNodeForRow(this._editingRow);
+            newName = this.inputField.value;            
+          }
+          
+          // Always set accept to false, since we leave it 
+          // up to the service pane service to determine 
+          // what changes
+          this._stopEditing(false);
+          
+          // Give the new name to the service pane.
+          if (node) {
+            sp._service.onRename(node.id, newName);
+          }            
+        }
+        
+        this.mCurrentURL = null;
+        
+        /* we want to do some initialization after the window has loaded */
+        function windowOnLoad() {
+          sp.browser.addProgressListener(sp,
+              Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
+          
+          var start = SBDataGetStringValue("servicetree.selected_url");
+          if (!start) {
+            start = sp.browser.homePage;
+          }
+          sp.loadURL(start);
+
+          gServicePane.doneInit = true;
+          window.removeEventListener('load', windowOnLoad, false);
+        }
+        window.addEventListener('load', windowOnLoad, false);
+        
+        // xbl slight of hand
+        this.mTree._changeOpenState = this.mTree.changeOpenState;
+        this.mTree.changeOpenState = function (row, openState) {
+          this._changeOpenState(row, openState);
+          sp.getNodeForRow(row).isOpen = sp.mTree.view.isContainerOpen(row);
+        }
+      ]]></constructor>
+      <destructor><![CDATA[
+        this.mService.onSelectionChanged(null, this.mTree, window);
+        // remove the progress listener
+        this.browser.removeProgressListener(this);
+
+        this.mTree.stopEditing = this.mTree._stopEditing;
+        this.mTree._stopEditing = null;
+
+        this.mTree.changeOpenState = this.mTree._changeOpenState;
+        this.mTree._changeOpenState = null;
+
+        this.mTree.database.RemoveDataSource(this.mService.dataSource);
+      ]]></destructor>
+      
+      <field name="_dragService"><![CDATA[
+        Components.classes['@mozilla.org/widget/dragservice;1']
+            .getService(Components.interfaces.nsIDragService);
+      ]]></field>
+
+      <method name="getURLName">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var node = this.mService.getNodeForURL(aURL);
+          return (node) ? node.name : aURL;
+        ]]></body>
+      </method>
+      
+      <method name="getURLImage">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var node = this.mService.getNodeForURL(aURL);
+          return node ? node.image : null;
+        ]]></body>
+      </method>
+      
+      <method name="getSelectedNode">
+        <body><![CDATA[
+          return this.getNodeForRow(this.mTree.currentIndex);
+        ]]></body>
+      </method>  
+
+      <!-- Attempt to trigger in-cell editing on the cell
+           corresponding to the given sbIServicePaneNode 
+        -->
+      <method name="startEditingNode">
+        <parameter name="aNode"/>
+        <body><![CDATA[
+          aNode.parentNode.isOpen = true;
+          // TODO: do we need to scroll to the row?
+          
+          var index = this.getRowForNode(aNode);
+          if (index >= 0 && aNode.editable) {
+            this.mTree.startEditing(index, this.mTree.columns[0]);
+            return true;
+          }
+          return false;
+        ]]></body>
+      </method>      
+      
+      <method name="getNodeForRow">
+        <parameter name="row" />
+        <body><![CDATA[
+          if (row < 0) {
+            return null;
+          }
+
+          // If this is a dont-build-content tree, use this:
+          //var id = this.mTree.builderView.getResourceAtIndex(row).Value;
+
+          var element = this.mTree.contentView.getItemAtIndex(row);
+          if (element && element.hasAttribute('nodeid')) {
+            return this.mService.getNode(element.getAttribute('nodeid'));
+          } else {
+            return null;
+          }
+        ]]></body>
+      </method>
+      
+      <method name="getRowForNode">
+        <parameter name="node" />
+        <body><![CDATA[
+          if (!node) {
+            return -1;
+          }
+
+          // If this is a dont-build-content tree, use this:
+          //return this.mTree.builderView.getIndexOfResource(node.resource);
+
+          var element = document.getAnonymousElementByAttribute(this, 'nodeid', node.id);
+          return this.mTree.view.getIndexOfItem(element);
+        ]]></body>
+      </method>
+      
+      <!-- the element we're currently dragging over -->
+      <field name="_dragOverElement">null</field>
+      
+      <field name="_browser">null</field>
+      <property name="browser">
+        <getter><![CDATA[
+          if (!this._browser) {
+            this._browser = document.getElementById(this.getAttribute('browser'));
+          }
+          return this._browser;
+        ]]></getter>
+      </property>
+      <field name="onPlaylistDefaultCommand">null</field>
+      
+
+      <method name="highlightURL">
+        <parameter name="aURL" />
+        <body><![CDATA[
+          if (!aURL) {
+            return;
+          }
+          // we're going to try to highlight the bookmark in the
+          // sidebar
+          var node = this.mService.getNode(aURL);
+          if (node) {
+            // yep, there's a sidebar node for the URL,
+            // how about a DOM element for that node
+            var row = this.getRowForNode(node);
+            if (row >= 0) {
+              // yeah, looks like it - let's select it
+              this.mTree.view.selection.select(row);
+            }
+          }
+          
+          this.mCurrentURL = aURL;
+          SBDataSetStringValue("servicetree.selected_url", aURL);
+        ]]></body>
+      </method>
+      
+      <method name="loadURL">
+        <parameter name="aURL" />
+        <parameter name="aEvent" />
+        <body><![CDATA[
+          dump('(loadURL?)\n');
+          if (!aURL ||
+            !aURL.indexOf ||
+            !aURL.length) 
+          {
+            // if no URL was supplied there's nothing for us to do
+            return;
+          }
+          
+          dump('loadURL: '+aURL+'\n');
+
+          if (this.browser) {
+            try {
+              this.browser.stop();
+              this.browser.loadURI(aURL, null, null, aEvent);
+              
+            }
+            catch (err) {
+              dump('error: '+err+'\n');
+              var err_url = "chrome://songbird/content/html/cannot_load.html";
+              if (aURL != err_url) {
+                this.loadURL(err_url);
+              }
+            }
+          }
+        ]]></body>
+       </method>
+      
+      <!-- implementation of nsIWebProgressListener -->
+      <method name="onStateChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aStateFlags" />
+        <parameter name="aStatus" />
+        <body />
+      </method>
+      <method name="onProgressChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aCurSelfProgress" />
+        <parameter name="aMaxSelfProgress" />
+        <parameter name="aCurTotalProgress" />
+        <parameter name="aMaxTotalProgress" />
+        <body />
+      </method>
+      <method name="onLocationChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aLocation" />
+        <body><![CDATA[
+          /* the browser has just loaded a new url. If it's not
+           * one we requested then we should deselect the tree.
+           */
+          dump('onLocationChange\n');
+          this.highlightURL(aLocation.spec);
+        ]]></body>
+      </method>
+      <method name="onStatusChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aStatus" />
+        <parameter name="aMessage" />
+        <body />
+      </method>
+      <method name="onSecurityChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <body />
+      </method>
+
+      <!-- somewhat inspired by nsTreeBodyFrame::ComputeDropPosition -->
+      <method name="computeEventPosition">
+        <parameter name="event" />
+        <body><![CDATA[
+        // what cell are we over?
+        var row = { }, col = { }, child = { };
+        this.mTree.treeBoxObject.getCellAt(event.pageX, event.pageY, row, col, child);
+        
+        // what node is that?
+        var node = this.getNodeForRow(row.value);
+        
+        // where is that cell?
+        var x = { }, y = { }, width = { }, height = { };
+        this.mTree.treeBoxObject.getCoordsForCellItem(row.value, col.value,
+            'cell', x, y, width, height);
+        
+        // what element is that?
+        var element = this.mTree.contentView.getItemAtIndex(row.value);
+        
+        // where in the cell are we?
+        var position = (event.pageY - y.value -
+            this.mTree.treeBoxObject.treeBody.boxObject.y);
+        position = position / height.value;
+        
+        // so lets work out the orientation. the rules the real tree drag and
+        // drop uses is:
+        //   isContainer:
+        //     <0.25: before
+        //     >0.75: after
+        //     else: on
+        //   else:
+        //     <0.5: before
+        //     >0.5: after
+        var orientation;
+        if (node.isContainer) {
+          if (position <= 0.25) {
+            orientation = -1;
+          } else if (position >= 0.75) {
+            orientation = 1;
+          } else {
+            orientation = 0;
+          }
+        } else {
+          if (position <= 0.5) {
+            orientation = -1;
+          } else {
+            orientation = 1;
+          }
+        }
+        
+        return { row: row.value,
+            node: node,
+            orientation: orientation,
+            element: element };
+        ]]></body>
+      </method>
+      <method name="onPopupShown">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+          var gotstuff = false;
+          for (var i=0;i<this.mPopup.childNodes.length;i++) {
+            var e = this.mPopup.childNodes[i];
+            if (e.hidden) continue;
+            gotstuff = true;
+          }
+          if (!gotstuff)
+            this.mPopup.hidePopup();
+          ]]>
+        </body>
+      </method>
+    </implementation>
+    <handlers>
+      <handler event="contextmenu"><![CDATA[
+      // work out what tree node was clicked on 
+      var obj={}, row={}, col={};
+      this.mTree.treeBoxObject.getCellAt(event.clientX, event.clientY,
+                         row, col, obj);
+      if (row.value < 0) {
+        // oh, you must be clicking the header
+        // we hid the header so this shouldn't happen, but still...
+        return;
+      }
+      var node = this.getNodeForRow(row.value);
+      
+      if (node) {
+        // clear the popup menu
+        while (this.mPopup.lastChild) {
+          this.mPopup.removeChild(this.mPopup.lastChild);
+        }
+        
+        // ask the service to fill in the popup for this node
+        this.mService.fillContextMenu(node.id, this.mPopup, window);
+        
+        // ask the service to add new item menus
+        this.mService.fillNewItemMenu(node.id, this.mPopup, window);
+
+        // show the popup menu
+        document.popupNode = null;
+        this.mPopup.showPopup(document.documentElement,
+                    event.screenX+5, event.screenY,
+                    'context', null, null, null);
+
+        // Setup a one-shot event listener to force the popup closed 
+        // on the next click in the document                    
+        var pop = this.mPopup;
+        function doclistener() {
+          pop.hidePopup();
+          document.removeEventListener( "click", doclistener, false );
+        }
+        document.addEventListener( "click", doclistener, false );
+      }
+      
+      event.stopPropagation();
+      event.preventBubble();
+      event.preventDefault();
+      
+      ]]></handler>
+      <handler event="select"><![CDATA[
+        var node = this.getNodeForRow(this.mTree.currentIndex);
+        // ask the service to notify the modules about selection changes
+        this.mService.onSelectionChanged(node?node.id:null, this.mTree, window);
+      ]]></handler>
+      <handler event="click" clickcount="1"><![CDATA[
+        var node = this.getNodeForRow(this.mTree.currentIndex);
+        if (node && node.url) {
+          this.highlightURL(node.url);
+          
+          this.loadURL(node.url, event);
+          
+          // Bookmarks keep the http url in the id
+          if ( node.id.indexOf("http://") != 0 ) { 
+            // This is not good, node.id is of the form urn:library:<guid> or 
+            // urn:item:<guid> for all medialist nodes, and node.name is localized.
+            // We could set a namespaced attribute for the customtype of the
+            // parent library, but then we cannot recognize the download node
+            // (which is a medialist of the 'local' library). Oh my, what should
+            // we do ??
+            metrics_inc("app.servicepane.click", node.id, null);
+          }
+        } else {
+          /* FIXME: implement non-go-to-url behaviour */
+        }
+      ]]></handler>
+      <handler event="click" clickcount="2"><![CDATA[
+        var node = this.getNodeForRow(this.mTree.currentIndex);
+        if (node && node.editable) {
+          this.startEditingNode(node);
+        }
+      ]]></handler>
+      
+      <!-- drag and drop handling -->
+      <handler event="draggesture"><![CDATA[
+        var row = { }
+        var col = { }
+        var child = { }
+        this.mTree.treeBoxObject.getCellAt(event.pageX, event.pageY, row, col, child);
+        if (col.value == null) {
+          // not a valid column; e.g., the scrollbar
+          return;
+        }
+        var node = this.getNodeForRow(row.value);
+        
+        var transferable = {};
+        if (node && this.mService.onDragGesture(node.id, transferable)) {
+          transferable = transferable.value;
+          var transArray = Components.classes["@mozilla.org/supports-array;1"].
+              createInstance(Components.interfaces.nsISupportsArray);
+          transArray.AppendElement(transferable);
+          this._dragService.invokeDragSession(event.target, transArray,
+              null, this._dragService.DRAGDROP_ACTION_COPY +
+              this._dragService.DRAGDROP_ACTION_MOVE);
+          event.preventDefault();
+        }
+      ]]></handler>
+      <handler event="dragover"><![CDATA[
+        var position = this.computeEventPosition(event);
+        var element = position.element;
+        // actually we want the treerow element which is the child
+        element = element.childNodes[0];
+        var node = position.node;
+        var orientation = position.orientation;
+        
+        // make sure we're tracking the right element
+        if (this._dragOverElement != element) {
+          if (this._dragOverElement) {
+            // we're now over another element - let's restore its properties
+            this._dragOverElement.setAttribute('properties', 
+                this._dragOverElement.getAttribute('savedproperties'));
+            this._dragOverElement.removeAttribute('savedproperties');
+          }
+          // save the new element
+          this._dragOverElement = element;
+          // and save its properties
+          element.setAttribute('savedproperties',
+              element.getAttribute('properties'));
+        }
+        
+        // set the property based on the orientation
+        // the properties are chosen based on:
+        //   http://developer.mozilla.org/en/docs/XUL_Tutorial:Styling_a_Tree
+        var properties = ''; 
+        if (orientation == -1) {
+          properties = 'dropBefore';
+        } else if (orientation == 1) {
+          properties = 'dropAfter';
+        } else {
+          properties = 'dropOn';
+        }
+
+        // ask the backend if we're allowed to drop here
+        if (!this.mService.canDrop(node.id,
+            this._dragService.getCurrentSession(), orientation)) {
+          // if not, don't set any visual properties
+          properties = '';
+          this._dragService.canDrop = false;
+        } else {
+          this._dragService.canDrop = true;
+        }
+        
+        element.setAttribute('properties',
+            element.getAttribute('savedproperties') + ' ' + properties);
+      ]]></handler>
+      <handler event="dragenter"><![CDATA[
+      ]]></handler>
+      <handler event="dragexit"><![CDATA[
+        // if there's a highlighted element let's restore its state
+        if (this._dragOverElement) {
+          this._dragOverElement.setAttribute('properties',
+              this._dragOverElement.getAttribute('oldproperties'));
+          this._dragOverElement.removeAttribute('savedproperties');
+          this._dragOverElement = null;
+        }
+      ]]></handler>
+      <handler event="dragdrop"><![CDATA[
+        var position = this.computeEventPosition(event);
+        var node = position.node;
+        var orientation = position.orientation;
+        var session = this._dragService.getCurrentSession();
+        if (this.mService.canDrop(node.id, session, orientation)) {
+          this.mService.onDrop(node.id, session, orientation);
+        }
+        this._dragService.endDragSession();
+      ]]></handler>
+    </handlers>
+  </binding>
+  
+  
+  
+  <binding id="toolbar">
+    <content>
+      <!-- Service Pane Button Bar, Buttons for adding a new service or playlist-->
+      <!-- For now just hijacking the file menu implementation.. -->
+      <!-- TODO: over state, up arrow, remove periods from all IDs -->
+      <xul:hbox id="frame_service_buttonbar">
+        <xul:sb-clickhold-button anonid='clickhold' flex="1" popupanchor="topleft" popupalign="bottomleft" />
+      </xul:hbox>
+    </content>
+    <implementation>
+      <constructor><![CDATA[
+        var service = Components.classes['@songbirdnest.com/servicepane/service;1']
+          .getService(Components.interfaces.sbIServicePaneService);
+        this._clickHold =
+            document.getAnonymousElementByAttribute(this, 'anonid', 'clickhold');
+        service.fillNewItemMenu(null, this._clickHold, window);
+        var item = this._clickHold.firstChild;
+        if (!item) {
+          // bad news
+          return;
+        }
+        this._clickHold.setAttribute('label', item.getAttribute('label'));
+        // FIXME: this is needed for styling but sucks
+        this._clickHold.setAttribute('id', item.getAttribute('id'));
+
+      ]]></constructor>
+      <field name="_clickHold">null</field>
+    </implementation>
+    <handlers>
+      <handler event="command"><![CDATA[
+        for (var item = this._clickHold.firstChild;
+             item; item = item.nextSibling) {
+          if (event.originalTarget == item) {
+            // the event was heading for a menu item
+            return;
+          }
+        }
+        // this wasn't heading to any of our children - let's do the first one
+        this._clickHold.firstChild.doCommand();
+      ]]></handler>
+    </handlers>
+  </binding>
+  
+  
+  
+  <binding id="extensions">
+    <content>
+      <xul:vbox class="servicepane_buttonbar" flex="1">
+        <xul:button label="extension picker" type="menu"
+              datasources="rdf:null" ref="SB:Extensions"
+              anonid="button">
+          <xul:template>
+            <!-- FIXME: no recursion, please -->
+            <xul:rule>
+              <xul:conditions>
+                <xul:content uri="?start" />
+                <xul:member container="?start" child="?node" />
+                <xul:triple subject="?node"
+                      predicate="http://home.netscape.com/NC-rdf#Name"
+                      object="?name" />
+              </xul:conditions>
+              <xul:action>
+                <xul:menupopup anonid="menupopup">
+                  <xul:menuitem uri="?node"
+                          label="?name"
+                          oncommand="extmenu(event)"
+                          />
+                </xul:menupopup>
+              </xul:action>
+            </xul:rule>
+          </xul:template>
+        </xul:button>
+        <xul:iframe anonid="iframe" flex="1" src="about:blank" />
+      </xul:vbox>
+    </content>
+    <implementation>
+      <constructor>
+      <![CDATA[
+      // get the button node
+      this.mButton = document.getAnonymousElementByAttribute(this, 'anonid', 'button');
+      // get the popup node
+      this.mMenuPopup = document.getAnonymousElementByAttribute(this, 'anonid', 'menupopup');
+      // get the iframe node
+      this.mIframe = document.getAnonymousElementByAttribute(this, 'anonid', 'iframe');
+      
+      // get the service pane service
+      this.mService =
+        Components.classes['@songbirdnest.com/servicepane/service;1']
+        .getService(Components.interfaces.sbIServicePaneService);
+        
+      
+      // clear out the old datasources from the button
+      while (this.mButton.database.GetDataSources().hasMoreElements()) {
+        this.mButton.database.RemoveDataSource(
+            this.mButton.database.GetDataSources().getNext());
+      }
+      // add the datasource from the service to the button
+      this.mButton.database.AddDataSource(this.mService.dataSource);
+      
+      // rebuild
+      this.mButton.builder.rebuild();
+      
+      // FIXME: we should persist the last open extension pane with pick(id)
+      
+      ]]>
+      </constructor>
+      <method name="extmenu">
+        <parameter name="event" />
+        <body><![CDATA[
+          dump('extension menu clicked: '+event+'\n');
+          this.pick(event.target.getAttribute('id'));
+        ]]></body>
+      </method>
+      
+      <method name="pick">
+        <parameter name="id" />
+        <body><![CDATA[
+          var node = this.mService.getNode(id);
+          this.mButton.setAttribute('label', node.name);
+          this.mIframe.setAttribute('src', node.url);
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+
+</bindings>
