@@ -60,8 +60,6 @@
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/windowUtils.js"/> 
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/kPlaylistCommands.js"/> 
-  <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/playerOpen.js"/> 
 
   <!-- Local hardcoded sample js -->
@@ -76,6 +74,12 @@ if (typeof(SBProperties) == "undefined") {
   Components.utils.import("resource://app/components/sbProperties.jsm");
   if (!SBProperties)
     throw new Error("Import of sbProperties module failed!");
+}
+
+if (typeof(kPlaylistCommands) == "undefined") {
+  Components.utils.import("resource://app/components/kPlaylistCommands.jsm");
+  if (!SBProperties)
+    throw new Error("Import of kPlaylistCommands module failed!");
 }
 
 try
@@ -221,7 +225,7 @@ try
           
           var playlist = document.getElementById("sb-library-page-playlist");
           var mgr = new sbIPlaylistCommandsManager();
-          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_DEFAULT);
+          var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
           playlist.bind(view, cmds);
         }
         else

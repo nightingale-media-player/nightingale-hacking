@@ -45,6 +45,11 @@
           if (!SBProperties)
             throw new Error("Import of sbProperties module failed");
         }
+        if (typeof(kPlaylistCommands) == "undefined") {
+          Components.utils.import("resource://app/components/kPlaylistCommands.jsm");
+          if (!SBProperties)
+            throw new Error("Import of kPlaylistCommands module failed!");
+        }
 
         this.addProgressListener(this,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
@@ -1520,7 +1525,7 @@
           //SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
 
           var mgr = new sbIPlaylistCommandsManager();
-          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_WEBPLAYLIST);
+          var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST);
           
           this.outerPlaylist.outerWindow = window;
           this.outerPlaylist.bind(view, cmds,
@@ -1684,7 +1689,7 @@
           }
 
           var mgr = new sbIPlaylistCommandsManager();
-          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_WEBPLAYLIST);
+          var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST);
 
           this.outerPlaylist.bind(view, cmds/*SBWebPlaylistCommands*/,
                                   SBDataGetIntValue("browser.playlist.height"),
@@ -1696,19 +1701,8 @@
         <body><![CDATA[
           // Make sure the download device has been added to the commands object.
           var mgr = new sbIPlaylistCommandsManager();
-          var cmds = mgr.request(kSONGBIRD_PLAYLIST_COMMANDS_MEDIAITEM_DOWNLOADPLAYLIST);
+          var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DOWNLOADPLAYLIST);
 
-          if (!cmds.getProperty("m_Device")) {
-            var deviceManager =
-              Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"]
-                        .getService(Components.interfaces.sbIDeviceManager);
-            
-            downloadDevice =
-              deviceManager.getDeviceByCategory("Songbird Download Device");
-            
-            cmds.setProperty("m_Device", downloadDevice);
-          }
-          
           // Save this for later if we swap back.
           this._swappedPlaylistView = this.outerPlaylist.mediaListView;
           

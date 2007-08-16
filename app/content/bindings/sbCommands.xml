@@ -293,6 +293,7 @@
                 medialist: this.medialist,
                 playlist: this.playlist,
                 window: wnd,
+                commands: null,
                 QueryInterface: function(iid) {
                   if (iid.equals(Components.interfaces.sbIPlaylistCommandsContext) || 
                       iid.equals(Components.interfaces.nsISupports))
@@ -301,6 +302,7 @@
                 }
               };
               for (var i in this.commands) {
+                context.commands = this.commands[i];
                 this.commands[i].setContext( context );
               }
             }
