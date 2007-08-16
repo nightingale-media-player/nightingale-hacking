@@ -37,7 +37,7 @@
 
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/main_overlay.js" />
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/mainOverlay.js" />
 
   <stringbundle id="bundlePreferences"
                 src="chrome://songbird/locale/songbird.properties"/>

@@ -34,7 +34,7 @@
             onpaneload="AddonsPrefPane.load();">
 
     <script type="application/x-javascript"
-            src="chrome://songbird/content/scripts/preferences/addons.js"/>
+            src="chrome://songbird/content/scripts/preferences/addOns.js"/>
 
     <browser id="addonsFrame" style="height:300px;" type="chrome"
             src="chrome://mozapps/content/extensions/extensions.xul"/>

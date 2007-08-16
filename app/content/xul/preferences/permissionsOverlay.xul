@@ -33,7 +33,7 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
   <window id="PermissionsDialog">
-    <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/permissions_overlay.js"/>
+    <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/permissionsOverlay.js"/>
   </window>
 
 </overlay>

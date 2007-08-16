@@ -36,7 +36,7 @@
 
   <prefpane id="paneHotkeys" onpaneload="gHotkeysPane.init();">
 
-    <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/hotkeys.js"/>
+    <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/hotKeys.js"/>
 
     <groupbox> 
       <checkbox id="hotkeys.enabled" label="&hotkeys.useglobalhotkeys;" accesskey="&hotkeys.useglobalhotkeys.accesskey;" oncommand="gHotkeysPane.onEnableDisable();"/>
