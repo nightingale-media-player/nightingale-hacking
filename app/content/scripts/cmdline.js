@@ -87,7 +87,7 @@ try
 }
 catch(e)
 {
-  dump("cmdline.js - " + e + "\n");
+  dump("commandLine.js - " + e + "\n");
 }
 
 
