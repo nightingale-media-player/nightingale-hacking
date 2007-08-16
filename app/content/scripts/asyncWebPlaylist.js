@@ -98,7 +98,7 @@ try
       function webPlaylist_bodyEval() {
         try  {
         
-          // Check if clearInterval has been called (see sbIAsyncForLoop.js:66)
+          // Check if clearInterval has been called (see asyncForLoop.js:66)
           if (!this.m_Interval) {
             return true;
           }

@@ -84,13 +84,13 @@
   
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
+   src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+  <!--script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/watchFolders.js" /-->
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/watch_folders.js" />
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/media_scan.js" />
+   src="chrome://songbird/content/scripts/mediaScan.js" />
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/window_utils.js" />
+   src="chrome://songbird/content/scripts/windowUtils.js" />
 </window>

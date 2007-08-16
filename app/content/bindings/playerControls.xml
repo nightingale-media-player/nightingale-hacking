@@ -1675,13 +1675,13 @@
         <body>
           <![CDATA[
             // At this point there isn't much we can do other than hope that
-            // jumptofile.js has been included in the window
+            // jumpToFile.js has been included in the window
             // TODO this will need to change once jumptofile has been refactored
             try {
               toggleJumpTo();
             } catch (e) {
               var msg = "sb-player-jumpto-button: unable to call toggleJumpTo.\n" +
-                        "Please make sure this window includes jumptofile.js.\n";
+                        "Please make sure this window includes jumpToFile.js.\n";
               dump(msg);
               Components.utils.reportError(msg);
             }

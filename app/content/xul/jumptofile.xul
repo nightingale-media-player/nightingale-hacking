@@ -98,12 +98,12 @@
   </keyset>
   
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird_interfaces.js" />
+   src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/window_utils.js" />
+   src="chrome://songbird/content/scripts/windowUtils.js" />
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/jumptofile.js" />
+   src="chrome://songbird/content/scripts/jumpToFile.js" />
 
 </window>

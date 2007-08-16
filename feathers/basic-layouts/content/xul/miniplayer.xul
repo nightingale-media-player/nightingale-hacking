@@ -89,23 +89,23 @@
 
   <!-- Load the interface code -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
+   src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/mousewheel_volume.js"/>
+   src="chrome://songbird/content/scripts/mouseWheelVolume.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/player_open.js"/>
+   src="chrome://songbird/content/scripts/playerOpen.js"/>
    
   <!-- This should be put in the menubarOverlay.xul? -->
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/menubar_xbl_temp.js" />
+   src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
 
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/miniplayer.js" />
+   src="chrome://songbird/content/scripts/miniPlayer.js" />
 
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/jumptofile.js" />
+   src="chrome://songbird/content/scripts/jumpToFile.js" />
   
   <!-- Drag and drop -->
   <script type="application/x-javascript" 
@@ -121,7 +121,7 @@
 
   <!-- Helpers -->
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/window_utils.js" />
+   src="chrome://songbird/content/scripts/windowUtils.js" />
    
   <!-- Extension Overlay Support -->
   <script type="application/x-javascript" 

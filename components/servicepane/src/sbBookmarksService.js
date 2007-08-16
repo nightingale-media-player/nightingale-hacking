@@ -342,7 +342,7 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
   function bookmark_edit_oncommand (event) {
     dump ('edit properties of: '+aNode.name+'\n');
     aParentWindow.QueryInterface(Ci.nsIDOMWindowInternal);
-    /* begin code stolen from window_utils.js:SBOpenModalDialog */
+    /* begin code stolen from windowUtils.js:SBOpenModalDialog */
     /* FIXME: what's that BackscanPause stuff? */
     var chromeFeatures = "chrome,centerscreen,modal=yes,resizable=no";
     var accessibility = SB_NewDataRemote('accessibility.enabled', null).boolValue;

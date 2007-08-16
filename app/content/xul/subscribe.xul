@@ -84,9 +84,9 @@
   </sb-sys-outer-frame>
  
   <!-- SCRIPTS -->
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/window_utils.js" />
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/windowUtils.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird_interfaces.js" />
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
 
   <script>
   <![CDATA[

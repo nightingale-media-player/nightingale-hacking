@@ -35,7 +35,7 @@
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird_interfaces.js" />
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/main_overlay.js" />
 

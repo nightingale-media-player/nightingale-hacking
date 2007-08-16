@@ -185,19 +185,19 @@
 
   <!-- Load the interface code -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
+   src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/mousewheel_volume.js"/>
+   src="chrome://songbird/content/scripts/mouseWheelVolume.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/player_open.js"/>
+   src="chrome://songbird/content/scripts/playerOpen.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
+   src="chrome://songbird/content/scripts/asyncForLoop.js"/>
 
   <!-- Load the Songbird stuff -->
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/window_utils.js" />
+   src="chrome://songbird/content/scripts/windowUtils.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/kPlaylistCommands.js" />
   <script type="application/x-javascript"   
@@ -215,9 +215,9 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/playlist_xbl_temp.js" />
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/servicetree_xbl_temp.js" />
+   src="chrome://songbird/content/scripts/serviceTreeXBLTEMP.js" />
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/menubar_xbl_temp.js" />
+   src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/dndDefaultHandler.js" />
 
@@ -228,19 +228,19 @@
 
   <!-- Load the locale switcher -->
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/switch_locale.js" />
+   src="chrome://songbird/content/scripts/switchLocale.js" />
 
   <!-- Generic message box -->
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/messagebox.js" />
+   src="chrome://songbird/content/scripts/messageBox.js" />
   <!-- Generic restart box -->
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/restartbox.js" />
+   src="chrome://songbird/content/scripts/restartBox.js" />
   <!-- Metrics functions -->
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/metrics.js" />
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/jumptofile.js" />
+   src="chrome://songbird/content/scripts/jumpToFile.js" />
 
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/json.js" />

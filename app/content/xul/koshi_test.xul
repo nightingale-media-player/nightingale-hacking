@@ -59,7 +59,7 @@
   </sb-sys-outer-frame>
   
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/window_utils.js" />
+   src="chrome://songbird/content/scripts/windowUtils.js" />
   <script>
   <![CDATA[
     function doLoad() 

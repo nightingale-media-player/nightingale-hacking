@@ -98,7 +98,7 @@ try
 }
 catch (err)
 {
-  dump("mousewheel_volume.js - " + err);
+  dump("mouseWheelVolume.js - " + err);
 }
 
 

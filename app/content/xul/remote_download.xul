@@ -57,7 +57,7 @@
 
   <!-- Load the sbPlaylistsource helper -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
+   src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
 

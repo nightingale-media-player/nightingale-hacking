@@ -73,7 +73,7 @@ function checkJSProps() {
   var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                          .getService(Components.interfaces.mozIJSSubScriptLoader);
   var context = {};
-  loader.loadSubScript("chrome://songbird/content/scripts/songbird_interfaces.js", context);
+  loader.loadSubScript("chrome://songbird/content/scripts/songbirdInterfaces.js", context);
   var props = {};
   for (i in context) {
     if (i == "SB_PROPERTY_PREFACE") {

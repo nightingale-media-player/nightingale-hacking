@@ -52,7 +52,7 @@
       {
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
 
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDOMEval.js", this );
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/DOMEval.js", this );
 
         var element = this;
         document.__multistatebutton__ = this;

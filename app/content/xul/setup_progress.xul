@@ -46,11 +46,11 @@
   <progressmeter flex="1" id="setupprogress_progress"/>
   
   <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/songbird_interfaces.js" />
+    src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
   <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/window_utils.js" />
+    src="chrome://songbird/content/scripts/windowUtils.js" />
   <script type="application/x-javascript" 
-    src="chrome://songbird/content/scripts/setup_progress.js" />
+    src="chrome://songbird/content/scripts/setupProgress.js" />
     
 
   

@@ -78,7 +78,7 @@ function SBInitialize()
     // todo: see if that detects the situation
     dump("diffw = " + diffw + "\n");
     dump("diffh = " + diffh + "\n");
-    // todo: resize the window accordingly (same method as window_utils.js: 448 to 455)
+    // todo: resize the window accordingly (same method as windowUtils.js: 448 to 455)
     */
     
     setMinMaxCallback();

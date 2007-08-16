@@ -31,9 +31,9 @@
 
 /*
  * Songbird Dependencies:
- *    getPlatformString() from window_utils.js
+ *    getPlatformString() from windowUtils.js
  *    gBrowser
- *    About() in player_open.js
+ *    About() in playerOpen.js
  */
 
 if (typeof(Ci) == "undefined")

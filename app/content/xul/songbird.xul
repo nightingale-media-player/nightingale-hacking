@@ -50,14 +50,14 @@
 >
   <!-- Sometimes we need to convince the DTD files to not be stupid
   <script type="application/x-javascript"   
-  src="chrome://songbird/content/scripts/language_scan.js" />
+  src="chrome://songbird/content/scripts/languageScan.js" />
    -->
 
   <!-- Scripts needed by the inline js that loads/runs before onload() -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
+   src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/window_utils.js"/>
+   src="chrome://songbird/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"   
@@ -105,9 +105,9 @@
 
   <!-- Load the interface code -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
+   src="chrome://songbird/content/scripts/asyncForLoop.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/player_open.js"/>
+   src="chrome://songbird/content/scripts/playerOpen.js"/>
    
   <!-- Load the core wrappers (GREET THE NEW BOSS) -->
   <script type="application/x-javascript" 
@@ -115,9 +115,9 @@
 
   <!-- XXXX TODO: Migrate the "background scripts" -->
   <!--script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/dynamic_playlist_updater.js"/-->
+   src="chrome://songbird/content/scripts/dynamicPlaylistUpdater.js"/-->
   <!--script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/watch_folders.js"/-->
+   src="chrome://songbird/content/scripts/watchFolders.js"/-->
 
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/kPlaylistCommands.js" />
@@ -129,10 +129,10 @@
    src="chrome://songbird/content/scripts/playlistCommands.js" />
 
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/globalhotkeys.js" />
+   src="chrome://songbird/content/scripts/globalHotKeys.js" />
 
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/window_utils.js"/>
+   src="chrome://songbird/content/scripts/windowUtils.js"/>
 
    
 </window>

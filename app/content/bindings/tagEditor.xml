@@ -48,7 +48,7 @@
     <constructor>
       <![CDATA[
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/window_utils.js", this );
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/windowUtils.js", this );
       ]]>
     </constructor>
     <destructor>
