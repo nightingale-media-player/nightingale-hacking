@@ -130,7 +130,7 @@
             this.defaultcommands = commands ? commands.duplicate() : null; 
             this.rescanCommands();
           } catch (e) {
-              alert( "sb-commands.xml - bind - " + e );
+              alert( "sbCommands.xml - bind - " + e );
           }
         ]]>
         </body>
@@ -206,7 +206,7 @@
             }
             catch( err )
             {
-              alert( "sb-commands.xml - setDeferRefresh - " + err );
+              alert( "sbCommands.xml - setDeferRefresh - " + err );
             }
           ]]>
         </body>
@@ -223,7 +223,7 @@
             }
             catch( err )
             {
-              alert( "sb-commands.xml - clearDeferRefresh - " + err );
+              alert( "sbCommands.xml - clearDeferRefresh - " + err );
             }
           ]]>
         </body>
@@ -309,7 +309,7 @@
           }
           catch( err )
           {
-            alert( "sb-commands.xml - refreshCommands - " + this.hoststring + " - " + err );
+            alert( "sbCommands.xml - refreshCommands - " + this.hoststring + " - " + err );
           }
           ]]>
         </body>
@@ -321,7 +321,7 @@
           try {
             this.doRemoveCommands();
           } catch (e) {
-            alert( "sb-commands.xml - doRemoveCommands not implemented ? - " + e );
+            alert( "sbCommands.xml - doRemoveCommands not implemented ? - " + e );
           }
         ]]>
         </body>
@@ -389,7 +389,7 @@
 
 
 
-  <binding id="commands-toolbar" extends="chrome://songbird/content/bindings/sb-commands.xml#commands-base">
+  <binding id="commands-toolbar" extends="chrome://songbird/content/bindings/sbCommands.xml#commands-base">
   
     <content>
       <xul:hbox id="sb-commands-toolbar-bkg" class="sb-commands-toolbar-bkg" sbid="background" flex="1">
@@ -431,7 +431,7 @@
         }
         catch( err )
         {
-          alert( "sb-commands.xml - toolbar - doRefreshCommands - " + err );
+          alert( "sbCommands.xml - toolbar - doRefreshCommands - " + err );
         }
         ]]>
       </body>
@@ -660,7 +660,7 @@
               }
             }
           } catch (e) {
-            alert("sb-commands.xml - toolbar - " + e);
+            alert("sbCommands.xml - toolbar - " + e);
           }
         ]]>
       </body>
@@ -680,7 +680,7 @@
             }
             this.toolbarbuttons.length = 0; // clear the array??
           } catch (e) {
-            alert("sb-commands.xml - toolbar - " + e);
+            alert("sbCommands.xml - toolbar - " + e);
           }
         ]]>
       </body>
@@ -713,7 +713,7 @@
         }
         catch( err )
         {
-          alert( "sb-commands.xml - toolbar - onToolbarCommand - " + err );
+          alert( "sbCommands.xml - toolbar - onToolbarCommand - " + err );
         }
       ]]>
       </body>
@@ -764,7 +764,7 @@
 
 
 
-  <binding id="commands-menuitems" extends="chrome://songbird/content/bindings/sb-commands.xml#commands-base">
+  <binding id="commands-menuitems" extends="chrome://songbird/content/bindings/sbCommands.xml#commands-base">
 
     <implementation type="application/x-javascript">
     
@@ -858,7 +858,7 @@
         }
         catch( err )
         {
-          alert( "sb-commands.xml - popup - doRefreshCommands - " + err );
+          alert( "sbCommands.xml - popup - doRefreshCommands - " + err );
         }
         ]]>
       </body>
@@ -995,7 +995,7 @@
               }
             }
           } catch (e) {
-            alert("sb-commands.xml - popup - refreshCommandItems " + e);
+            alert("sbCommands.xml - popup - refreshCommandItems " + e);
           }
         ]]>
       </body>
@@ -1017,7 +1017,7 @@
               this.menuitems.length = 0; // clear the array??
             }
           } catch (e) {
-            alert("sb-commands.xml - popup - " + e);
+            alert("sbCommands.xml - popup - " + e);
           }
         ]]>
       </body>
@@ -1047,7 +1047,7 @@
         }
         catch( err )
         {
-          alert( "sb-commands.xml - menu - onMenuCommand - " + err );
+          alert( "sbCommands.xml - menu - onMenuCommand - " + err );
         }
       ]]>
       </body>
@@ -1066,7 +1066,7 @@
 
 
 
-  <binding id="commands-shortcuts" extends="chrome://songbird/content/bindings/sb-commands.xml#commands-base">
+  <binding id="commands-shortcuts" extends="chrome://songbird/content/bindings/sbCommands.xml#commands-base">
 
     <content>
       <xul:sb-dynamic-keyset sbid="keyset"/>
@@ -1113,7 +1113,7 @@
         }
         catch( err )
         {
-          alert( "sb-commands.xml - shortcuts - doRefreshCommands - " + err );
+          alert( "sbCommands.xml - shortcuts - doRefreshCommands - " + err );
         }
         ]]>
       </body>
@@ -1241,7 +1241,7 @@
               }
             }
           } catch (e) {
-            alert("sb-commands.xml - shortcuts - refreshCommandItems " + e);
+            alert("sbCommands.xml - shortcuts - refreshCommandItems " + e);
           }
         ]]>
       </body>
@@ -1278,7 +1278,7 @@
         }
         catch( err )
         {
-          alert( "sb-commands.xml - shortcuts - onMenuCommand - " + err );
+          alert( "sbCommands.xml - shortcuts - onMenuCommand - " + err );
         }
       ]]>
       </body>

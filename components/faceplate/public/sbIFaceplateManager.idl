@@ -47,7 +47,7 @@ interface nsISimpleEnumerator;
  *         var manager =  Components.classes["@songbirdnest.com/faceplate/manager;1"]
  *                           .getService(Components.interfaces.sbIFaceplateManager);  
  *         var pane = manager.createPane("test", "test", 
- *                      "chrome://songbird/content/bindings/faceplate.xml#progress-pane");
+ *                      "chrome://songbird/content/bindings/facePlate.xml#progress-pane");
  *         pane.setData("label1", "This is a demo of the");
  *         pane.setData("label2", "progress faceplate");
  *         pane.setData("progress-mode", "determined"); 
@@ -57,12 +57,12 @@ interface nsISimpleEnumerator;
  *         pane.setData("progress-hidden", false); 
  * \endcode
  *
- * To make a custom faceplate, see the faceplate.xml. Create a binding to act as
+ * To make a custom faceplate, see the facePlate.xml. Create a binding to act as
  * a pane, register it using sbIFaceplateManager.createPane, communicate with it
  * via sbIFaceplatePane, and then remove it via sbIFaceplateManager.destroyPane
  * when finished.
  *
- * \sa sbIFaceplatePane faceplate.xml
+ * \sa sbIFaceplatePane facePlate.xml
  */ 
 [scriptable, uuid(17dbf13e-ff78-11db-8314-0800200c9a66)]
 interface sbIFaceplateManager : nsISupports

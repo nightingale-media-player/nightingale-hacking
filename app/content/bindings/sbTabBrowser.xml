@@ -37,7 +37,7 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser">
+  <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser">
     <implementation implements="nsIWebProgressListener,sbITabBrowser">
       <constructor><![CDATA[
         if (typeof(SBProperties) == "undefined") {
@@ -203,7 +203,7 @@
       </method>
 
       <!-- the public interface for loading URLs.
-           this overrides the implementation in tabbrowser.xml#tabbrowser
+           this overrides the implementation in tabBrowser.xml#tabbrowser
            it takes the existing aURI, aReferrerURI and aCharset arguments
            and optionally an aEvent and aMediaListView.  
            
@@ -1175,7 +1175,7 @@
 
 
   <!-- these are from globalBindings.xml -->
-  <binding id="tabbrowser-tab" extends="chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser-tab">
+  <binding id="tabbrowser-tab" extends="chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser-tab">
     <content closetabtext="&tabs.closeTab;" mousethrough="never">
       <xul:hbox class="tab-image-left" xbl:inherits="selected"/>
       <xul:hbox flex="1" class="tab-image-middle" align="center" xbl:inherits="selected">
@@ -2053,7 +2053,7 @@
   </binding>
   
    <binding id="tabbrowser-tabs"  
-            extends="chrome://songbird/content/bindings/tabbrowser.xml#tabbrowser-tabs">
+            extends="chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser-tabs">
     <content>
       <xul:stack flex="1" class="tabs-stack">
         <xul:vbox>

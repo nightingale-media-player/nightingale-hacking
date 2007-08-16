@@ -15,7 +15,7 @@
      Note that engines with songbird:internal are hidden on startup, and need to 
      be programmatically shown.     
      
-     See searchHandler.js and sb-search.xml for more information.
+     See searchHandler.js and sbSearch.xml for more information.
   -->
 <Url type="text/html" method="GET" template="http://songbirdnest.com/"/>
 <!-- Engines tagged with songbird:internal are not sent to the web browser. -->

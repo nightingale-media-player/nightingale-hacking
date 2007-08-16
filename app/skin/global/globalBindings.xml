@@ -12,7 +12,7 @@
    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
    xmlns:xbl="http://www.mozilla.org/xbl">
 
-  <binding id="tabbrowser-tab" extends="chrome://global/content/bindings/tabbrowser.xml#tabbrowser-tab">
+  <binding id="tabbrowser-tab" extends="chrome://global/content/bindings/tabBrowser.xml#tabbrowser-tab">
     <content chromedir="&locale.dir;"
              closetabtext="&closeTab.label;">
       <xul:hbox class="tab-image-left" xbl:inherits="selected"/>
@@ -29,7 +29,7 @@
   </binding>
   
    <binding id="tabbrowser-tabs"  
-            extends="chrome://global/content/bindings/tabbrowser.xml#tabbrowser-tabs">
+            extends="chrome://global/content/bindings/tabBrowser.xml#tabbrowser-tabs">
     <content>
       <xul:stack flex="1" class="tabs-stack">
         <xul:vbox>

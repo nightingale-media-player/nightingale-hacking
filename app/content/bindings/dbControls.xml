@@ -331,7 +331,7 @@
 
 
 
-  <binding id="label" extends="chrome://songbird/content/bindings/db_controls.xml#base">
+  <binding id="label" extends="chrome://songbird/content/bindings/dbControls.xml#base">
 
   <content>
     <xul:textbox flex="1" sid="dbedit.label"  readonly="true"/>
@@ -376,7 +376,7 @@
 
 
 
-  <binding id="textbox" extends="chrome://songbird/content/bindings/db_controls.xml#base">
+  <binding id="textbox" extends="chrome://songbird/content/bindings/dbControls.xml#base">
 
   <content>
     <xul:checkbox sid="dbedit.checkbox" hidden="true"/>
@@ -444,7 +444,7 @@
 
 
 
-  <binding id="menulist" extends="chrome://songbird/content/bindings/db_controls.xml#base">
+  <binding id="menulist" extends="chrome://songbird/content/bindings/dbControls.xml#base">
 
   <content>
     <xul:checkbox sid="dbedit.checkbox" hidden="true"/>

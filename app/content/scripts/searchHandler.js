@@ -110,7 +110,7 @@ const gSearchHandler = {
    */
   onLinkAdded: function SearchHandler_onLinkAdded(event) {
     // XXX this event listener can/should probably be combined with the onLinkAdded
-    // listener in tabbrowser.xml.  See comments in FeedHandler.onLinkAdded().
+    // listener in tabBrowser.xml.  See comments in FeedHandler.onLinkAdded().
     const target = event.target;
     var etype = target.type;
     const searchRelRegex = /(^|\s)search($|\s)/i;

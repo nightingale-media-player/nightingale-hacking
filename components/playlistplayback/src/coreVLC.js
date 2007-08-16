@@ -240,6 +240,9 @@ CoreVLC.prototype._applyPreferences = function ()
   }
   
   //Turn on volume normalization.
+  //XXXAus: Disabled this based on user feedback. Will be possible to enable
+  //when there is a pref for it.
+  /*
   try {
     //XXXAus: Read these values from prefs (bug #699)
     config.setConfigString("main", "audio-filter", "volnorm");
@@ -249,6 +252,7 @@ CoreVLC.prototype._applyPreferences = function ()
   catch(e) {
     this.LOG("normvol module is missing, can't set config item.");
   }
+  */
   
   //Set user agent, read from moz prefs.
   //config.setConfigString("access_http", "http-user-agent", "Songbird");

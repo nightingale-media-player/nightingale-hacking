@@ -431,7 +431,7 @@ interface sbIPlaylistCommandsManager : nsISupports
   *
   * The sbIPlaylistCommands interface is used to algorithmically define a set
   * of commands to be rendered arbitrarily by a service tree ui object (currently,
-  * servicepane.xml).
+  * servicePane.xml).
   *
   * Commands can be registered for a spcific playlist, or for any "type" characteristic.
   *

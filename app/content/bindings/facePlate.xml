@@ -174,7 +174,7 @@
 
              // You can't delete the first pane.
              if (index == 0) {
-               dump("faceplate.xml: onDestroyPane: cannot destroy the first pane!\n");
+               dump("facePlate.xml: onDestroyPane: cannot destroy the first pane!\n");
                return;
              }
 
@@ -430,7 +430,7 @@
     via CSS.
     -->
   <binding id="default-pane" 
-           extends="chrome://songbird/content/bindings/faceplate.xml#base-pane">
+           extends="chrome://songbird/content/bindings/facePlate.xml#base-pane">
     <content>
         <xul:hbox pack="center" align="center" flex="1">
           <xul:image class="faceplate-intro-image"/>
@@ -449,7 +449,7 @@
     begins for the first time in a session.
     -->
   <binding id="playback-pane"
-           extends="chrome://songbird/content/bindings/faceplate.xml#base-pane">
+           extends="chrome://songbird/content/bindings/facePlate.xml#base-pane">
     <content>
         <xul:vbox flex="1" pack="center">
           <!-- SONG ARTIST DISPLAY -->
@@ -529,7 +529,7 @@
       var manager =  Components.classes["@songbirdnest.com/faceplate/manager;1"]
                         .getService(Components.interfaces.sbIFaceplateManager);  
       var pane = manager.createPane("test", "test", 
-                   "chrome://songbird/content/bindings/faceplate.xml#progress-pane");
+                   "chrome://songbird/content/bindings/facePlate.xml#progress-pane");
       pane.setData("label1", "This is a demo of the");
       pane.setData("label2", "progress faceplate");
       pane.setData("progress-mode", "determined"); 
@@ -541,7 +541,7 @@
       manager.showPane(pane);
    -->
   <binding id="progress-pane" 
-           extends="chrome://songbird/content/bindings/faceplate.xml#base-pane">
+           extends="chrome://songbird/content/bindings/facePlate.xml#base-pane">
     <content>
       <xul:vbox flex="1" align="center" pack="center">
         <xul:label anonid="label1"   class="faceplate-text" />

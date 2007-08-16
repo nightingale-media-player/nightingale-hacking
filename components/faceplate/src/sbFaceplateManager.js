@@ -35,8 +35,8 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Ce = Components.Exception;
 
-const URL_BINDING_DEFAULT_PANE = "chrome://songbird/content/bindings/faceplate.xml#default-pane";
-const URL_BINDING_DASHBOARD_PANE = "chrome://songbird/content/bindings/faceplate.xml#playback-pane"; 
+const URL_BINDING_DEFAULT_PANE = "chrome://songbird/content/bindings/facePlate.xml#default-pane";
+const URL_BINDING_DASHBOARD_PANE = "chrome://songbird/content/bindings/facePlate.xml#playback-pane"; 
 
 const DATAREMOTE_PLAYBACK = "faceplate.playing";
 
