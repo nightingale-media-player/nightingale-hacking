@@ -67,6 +67,17 @@ duplicate: function() {
 interface sbIPlaylistCommands : nsISupports 
 {
   /**
+  * \brief Return the visible state for the entire command object.
+  *
+  * Returning false from this method removes the entire set of commands
+  * from the specified host.
+  *
+  * \param aHost The type of object hosting the command
+  * \return Whether to instantiate the commands for this host or not
+  */
+  PRBool getVisible( in AString aHost );
+  
+  /**
   * \brief Be informed when a set of commands are attached to a playlist element.
   *
   * When a playlist element is about to use an sbIPlaylistCommands instance,

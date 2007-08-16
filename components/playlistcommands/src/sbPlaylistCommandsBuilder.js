@@ -84,6 +84,7 @@ PlaylistCommandsBuilder.prototype = {
   
   m_menus             : null,
   m_root_commands     : null,
+  m_VisibleCallback   : null,
 
 /**
  * ----------------------------------------------------------------------------
@@ -616,6 +617,11 @@ PlaylistCommandsBuilder.prototype = {
     return this._setCommandProperties(aParentSubMenuId, aCommandId, props);
   },                             
 
+  setVisibleCallback: function(aVisibleCallback)
+  {
+    this.m_VisibleCallback = aVisibleCallback;
+  },                             
+
 // ----------------------------------------------------------------------------  
 
   removeCommand: function(aParentSubMenuId,
@@ -879,6 +885,16 @@ PlaylistCommandsBuilder.prototype = {
  * ----------------------------------------------------------------------------
  */
  
+  getVisible: function( aHost )
+  {
+    if (this.m_VisibleCallback &&
+        typeof(this.m_VisibleCallback) == "object" && 
+        this.m_VisibleCallback.handleCallback) {
+      return this.m_VisibleCallback.handleCallback(this.m_Context, aHost);
+    }
+    return true;
+  },
+
   getNumCommands: function( aSubMenuId, aHost )
   {
     var menu = this._getMenu(aSubMenuId);

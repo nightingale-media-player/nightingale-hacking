@@ -77,6 +77,13 @@ interface sbIPlaylistCommandsBuilderInstantiationCallback : nsISupports
                                     in AString aHost);
 };
 
+[scriptable, function, uuid(d64965a8-f890-4b51-bee2-09dcc987bba9)]
+interface sbIPlaylistCommandsBuilderHostCallback : nsISupports
+{
+  PRBool handleCallback(in sbIPlaylistCommandsContext aContext, 
+                               in AString aHost);
+};
+
 
 [scriptable, uuid(4a0c2d37-762b-4480-8d2b-f169430a98ea)]
 interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands 
@@ -276,6 +283,7 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
                                    in AString aCommandId, 
                                    in sbIPlaylistCommandsBuilderGetBoolCallback aVisibleCallback);
 
+  PRBool setVisibleCallback(in sbIPlaylistCommandsBuilderHostCallback aVisibleCallback);
 
   PRBool removeCommand(in AString aParentSubMenuId,
                        in AString aCommandId);

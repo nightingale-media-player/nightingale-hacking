@@ -109,6 +109,11 @@ var SBPlaylistCommand_AddToPlaylist =
     return cmds;
   },
 
+  getVisible: function( aHost )
+  {
+    return true;
+  },
+
   getNumCommands: function( aSubMenu, aHost )
   {
     var cmds = this._getMenu(aSubMenu);

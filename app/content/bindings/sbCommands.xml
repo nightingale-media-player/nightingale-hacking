@@ -429,6 +429,10 @@
             for (var i in this.commands) {
               this.refreshCommandItems(this.commands[i], stateonly, null, this.parent, null, 0, false);
             }
+            if (this.toolbarbuttons.length) {
+              // If we have items, show the toolbar
+              this.hidden = false;
+            }
           }
         }
         catch( err )
@@ -451,6 +455,7 @@
       <body>
         <![CDATA[
           try {
+            if (!cmdobject.getVisible(this.hoststring)) return;
             // And make all the new stuff
             var num = cmdobject.getNumCommands(menu, this.hoststring);
             if (stateonly) num = this.toolbarbuttons.length;
@@ -461,14 +466,11 @@
                 //alert("toolbar - item " + i + " not visible: " + cmdobject.getCommandId( menu, i, this.hoststring ));
                 continue;
               }
-
+              
               var obj_type;
               var toolbarbutton;
               if (!stateonly)
               {
-                // If we get here, show the toolbar
-                this.hidden = false;
-                
                 if (radioitems) obj_type = "choiceitem";
                 else obj_type = cmdobject.getCommandType( menu, i, this.hoststring );
 

@@ -252,6 +252,14 @@ sbRemoteCommands::SetContext( sbIPlaylistCommandsContext *aContext)
 }
 
 NS_IMETHODIMP
+sbRemoteCommands::GetVisible( const nsAString &aHost, PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbRemoteCommands::GetNumCommands( const nsAString &aSubMenu,
                                   const nsAString &aHost,
                                   PRInt32 *_retval )

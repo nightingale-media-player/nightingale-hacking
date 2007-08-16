@@ -578,6 +578,8 @@ PublicPlaylistCommands.prototype = {
                                                   "library_cmdobj_device",
                                                   this.m_cmd_CopyToDevice);
 
+    this.m_defaultCommands.setVisibleCallback(plCmd_HideForToolbarCheck);
+    
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
 
     // --------------------------------------------------------------------------
@@ -612,6 +614,8 @@ PublicPlaylistCommands.prototype = {
                                                       "library_cmdobj_showdlplaylist",
                                                       this.m_cmd_ShowDownloadPlaylist);
 
+    this.m_webPlaylistCommands.setVisibleCallback(plCmd_HideForToolbarCheck);
+
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST, this.m_webPlaylistCommands);
 
     // Register these commands to the web playlist
@@ -641,6 +645,8 @@ PublicPlaylistCommands.prototype = {
     this.m_downloadCommands.appendPlaylistCommands(null, 
                                                    "library_cmdobj_showwebplaylist",
                                                    this.m_cmd_ShowWebPlaylist);
+
+    this.m_downloadCommands.setVisibleCallback(plCmd_HideForToolbarCheck);
 
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DOWNLOADPLAYLIST, this.m_downloadCommands);
 
@@ -1182,6 +1188,14 @@ function getDownloadDevice() {
   } catch(e) {
   }
   return null;
+}
+
+function plCmd_HideForToolbarCheck(aContext, aHost) {
+  if (aHost == "toolbar") {
+    if (dataRemote("commands.showdefaultintoolbar", null).boolValue) return true;
+    return false;
+  }
+  return true;
 }
 
 var g_dataRemoteService = null;

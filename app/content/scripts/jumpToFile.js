@@ -63,6 +63,11 @@ try
       m_Playlist: null,
       m_Window: null
     },
+    
+    getVisible: function( aHost )
+    {
+      return true;
+    },
 
     getNumCommands: function( aSubMenu, aHost )
     {
