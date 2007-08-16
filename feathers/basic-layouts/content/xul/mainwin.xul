@@ -181,7 +181,7 @@
 
   <!-- Command line -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/cmdline.js"/>
+   src="chrome://songbird/content/scripts/commandLine.js"/>
 
   <!-- Load the interface code -->
   <script type="application/x-javascript" 
@@ -201,9 +201,9 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/kPlaylistCommands.js" />
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/async_webplaylist.js" />
+   src="chrome://songbird/content/scripts/asyncWebPlaylist.js" />
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/device_temp.js" />
+   src="chrome://songbird/content/scripts/deviceTemp.js" />
 
   <!-- Firefox compatibility functions -->
   <script type="application/x-javascript"   
@@ -247,7 +247,7 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/bookmarks.js" />
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/bookmarks_proxy.js" />
+   src="chrome://songbird/content/scripts/bookmarksProxy.js" />
 
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/balloonTip.js" />
