@@ -395,7 +395,7 @@
             }
             catch (err) {
               dump('error: '+err+'\n');
-              var err_url = "chrome://songbird/content/html/cannot_load.html";
+              var err_url = "chrome://songbird/content/html/cannotLoad.html";
               if (aURL != err_url) {
                 this.loadURL(err_url);
               }
