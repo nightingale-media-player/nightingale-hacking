@@ -68,10 +68,7 @@ function PublicPlaylistCommands() {
   this.m_mgr = Components.
     classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
     .getService(Components.interfaces.sbIPlaylistCommandsManager);
-
-  var obs = Components.classes["@mozilla.org/observer-service;1"]
-                      .getService(Components.interfaces.nsIObserverService);
-  obs.addObserver(this, "final-ui-startup", false);
+  this.initCommands();
 }
 
 PublicPlaylistCommands.prototype.constructor = PublicPlaylistCommands;
@@ -718,6 +715,8 @@ PublicPlaylistCommands.prototype = {
                                                    "",
                                                    this.m_downloadCommands);
     
+    g_downloadDevice = null;
+    
     // Un-register web playlist commands
     
     var webListGUID =
@@ -745,9 +744,6 @@ PublicPlaylistCommands.prototype = {
     switch (aTopic) {
       case "quit-application":
         this.shutdownCommands();
-        break;
-      case "final-ui-startup":
-        this.initCommands();
         break;
     }
   },
@@ -1186,8 +1182,7 @@ function LOG(str) {
   dump(str+"\n");
 };
 
-function NSGetModule(compPlaylistCommands, fileSpec) {
+function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([PublicPlaylistCommands]);
 }
 
-var publicPlaylistCommands = new PublicPlaylistCommands();
