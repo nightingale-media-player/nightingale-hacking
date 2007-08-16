@@ -47,9 +47,6 @@ create table resource_properties (
 );
 create index idx_resource_properties_property_id_obj on resource_properties (property_id, obj);
 create index idx_resource_properties_obj_sortable on resource_properties (obj_sortable);
-/* don't think i need this
-create index idx_resource_properties_property_id_obj_sortable on resource_properties (property_id, obj_sortable);
-*/
 create index idx_resource_properties_guid_property_id_obj_sortable on resource_properties (guid, property_id, obj_sortable);
 create index idx_resource_properties_property_id_obj_sortable_guid on resource_properties (property_id, obj_sortable, guid);
 
