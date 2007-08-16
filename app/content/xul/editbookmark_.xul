@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<window
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="edit_bookmark"
+ title="&bookmarks.edit.title;"
+ hidechrome="true"
+ buttons="none"
+ onkeydown="handleKeyDown(event);"
+ onload="initFocus();"
+ onunload=""
+>
+  
+  <sb-sys-outer-frame resizers="none" flex="1">
+    <sb-sys-dialog-titlebar/>
+    <spacer height="8"/>
+    <hbox align="center">
+      <label  id="bookmark.label.label" width="36" value="&bookmarks.edit.label;" flex="1"/>
+      <textbox  id="bookmark.label" flex="1"/>
+    </hbox>
+    <spacer height="5"/>
+    <hbox align="center">
+      <label  id="bookmark.url.label" width="36" value="&bookmarks.edit.url;" flex="1"/>
+      <textbox  id="bookmark.url" flex="1" oninput="validate()"/>
+    </hbox>
+    <spacer height="5"/>
+    <hbox align="center">
+      <label  id="bookmark.icon.label" width="36" value="&bookmarks.edit.icon;" flex="1"/>
+      <textbox  id="bookmark.icon" flex="1" oninput="validate()"/>
+      <button  id="bookmark.icon.default" label="Default" oncommand="onSetDefaultIcon(event);" />
+    </hbox>
+    <spacer height="5"/> 
+    <hbox>
+      <spacer flex="1"/>           
+      <button id="button_ok" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
+      <spacer width="5"/>
+      <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/>
+      <spacer flex="1"/>
+    </hbox>
+  </sb-sys-outer-frame>
+  
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/windowUtils.js" />
+  
+  <script>
+  <![CDATA[
+    const VK_ESCAPE = 27;
+    const VK_ENTER = 13;
+    
+    var IOSERVICE = Components.classes['@mozilla.org/network/io-service;1']
+        .getService(Components.interfaces.nsIIOService);
+  
+    try
+    {
+      /* initialize the UI with the values from the node that was passed in */
+      var node = window.arguments[0];
+      document.getElementById("bookmark.label").value = node.name;
+      document.getElementById("bookmark.url").value = node.url;
+      document.getElementById("bookmark.icon").value = node.image;
+    }
+    catch (err)
+    {
+      alert("editbookmark.xul - init - " + err);
+    }
+    
+    function initFocus()
+    {
+      var edit = document.getElementById("bookmark.label");
+      if (edit != null) { 
+        edit.focus(); 
+        edit.selectionStart = 0;
+        edit.selectionEnd = edit.value.length;
+      }
+    }
+    
+    function validate() {
+      // okay, let's check to see if the two URLs we have are valid,
+      // and if not disable ok
+      var url = document.getElementById("bookmark.url").value;
+      var image = document.getElementById("bookmark.icon").value;
+      var valid = true;
+      try {
+        if (IOSERVICE.newURI(url, null, null) == null) {
+          valid = false;
+        }
+        if (IOSERVICE.newURI(image, null, null) == null) {
+          valid = false;
+        }
+      } catch (e) {
+        valid = false;
+      }
+      
+      document.getElementById('button_ok').setAttribute('disabled', valid?"false":"true");
+    }
+   
+    function doOK()
+    {
+      // by this stage, thanks to the validate() function above, '
+      // everything should be peachy.
+      var node = window.arguments[0];
+      node.name = document.getElementById("bookmark.label").value;
+      node.url = document.getElementById("bookmark.url").value;
+      node.image = document.getElementById("bookmark.icon").value;
+      return true;
+    }
+    function doCancel()
+    {
+      return true;
+    }
+    
+    function handleKeyDown(event) 
+    {
+      switch (event.keyCode)
+      {
+        case VK_ESCAPE:
+          document.getElementById("button_cancel").doCommand();
+          break;
+        case VK_ENTER:
+          document.getElementById("button_ok").doCommand();
+          break;
+      }
+    }
+    
+    function onSetDefaultIcon(evt) {
+      var icon = document.getElementById("bookmark.icon");
+      icon.value = "chrome://songbird/skin/icons/icon_bookmark.ico";
+      validate();
+    }
+    
+  ]]>
+  </script>
+
+</window>
