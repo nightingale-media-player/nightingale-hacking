@@ -97,7 +97,7 @@
       }
       catch (err)
       {
-        alert("watch_folders.xul - doLoad - " + err);
+        alert("watchFolders.xul - doLoad - " + err);
       }
     }
     
@@ -124,7 +124,7 @@
       }
       catch(err)
       {
-        alert( "watch_folders.xul - doOk - " + err );
+        alert( "watchFolders.xul - doOk - " + err );
       }
       return true;      
     }

@@ -79,7 +79,7 @@
       }
       catch (err)
       {
-        alert("watch_folders.xul - doLoad - " + err);
+        alert("watchFolders.xul - doLoad - " + err);
       }
     }
     
