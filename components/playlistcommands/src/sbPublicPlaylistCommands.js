@@ -913,7 +913,7 @@ function plCmd_ShowDownloadPlaylist_TriggerCallback(aContext, aSubMenuId, aComma
   var browser = window.gBrowser;
   if (browser) {
     if (window.location.pathname ==
-        '/content/xul/sb-library-page.xul') {
+        '/content/xul/sbLibraryPage.xul') {
       // we're in the web library / inner playlist view
       browser.loadMediaList(browser.downloadList);
     } else {
