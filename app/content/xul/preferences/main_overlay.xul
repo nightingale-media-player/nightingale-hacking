@@ -46,12 +46,12 @@
   <prefpane id="paneHotkeys"
             label="&hotkeys.prefpane;"
             insertafter="paneContent"
-            src="chrome://songbird/content/xul/preferences/hotkeys.xul" />
+            src="chrome://songbird/content/xul/preferences/hotKeys.xul" />
   <prefpane id="paneAddons"
             label="&prefpane.addons.label;"
             insertafter="paneTabs"
             image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
-            src="chrome://songbird/content/xul/preferences/addons.xul" />
+            src="chrome://songbird/content/xul/preferences/addOns.xul" />
   <prefpane id="paneRemoteAPI" 
             label="&rapi.prefpane.title;" 
             insertafter="paneAddons"
