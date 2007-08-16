@@ -33,6 +33,7 @@
 
 #include <nsCOMPtr.h>
 
+class nsIFile;
 class nsIURI;
 
 #define SONGBIRD_REMOTESITELIBRARY_CONTRACTID           \
@@ -66,18 +67,19 @@ protected:
   // fetches the URI from the security mixin
   already_AddRefed<nsIURI> GetURI();
   // validates aPath against aSiteURI, setting aPath if empty
-  nsresult CheckPath( nsAString &aPath, nsIURI *aSiteURI );
+  nsresult CheckPath( nsACString &aPath, nsIURI *aSiteURI );
   // validates aDomain against aSiteURI, setting aDomain if empty
-  nsresult CheckDomain( nsAString &aDomain, nsIURI *aSiteURI );
+  nsresult CheckDomain( nsACString &aDomain, nsIURI *aSiteURI );
   // builds a path to the db file for the passed in domain and path
-  nsresult GetSiteLibraryFile( const nsAString &aDomain,
-                               const nsAString &aPath,
-                               nsIFile **aSiteDBFile );
+  already_AddRefed<nsIFile> GetSiteLibraryFile( const nsACString &aDomain,
+                                                const nsACString &aPath );
 
   nsRefPtr<sbRemoteSiteMediaList> mRemSiteMediaList;
 
   // Only set in debug builds - used for validating library creation
+#ifdef DEBUG
   nsString mFilename;
+#endif
 };
 
 #endif // __SB_REMOTE_SITELIBRARY_H__

@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -37,15 +37,15 @@ interface sbIMediaItem;
 /*
 Class: Library
 
-A <Library> is a collection of <MediaItems> and <MediaLists>. 
-It is possible to create a <Library> using the <Songbird::siteLibrary> 
+A <Library> is a collection of <MediaItems> and <MediaLists>.
+It is possible to create a <Library> using the <Songbird::siteLibrary>
 function.
 
 Example:
   (start code)
   //Create or get a library.
   var library = songbird.siteLibrary("", "");
-  
+
   //Create a medialist using the library.
   var mediaList = songbird.createMediaList("simple");
 
@@ -110,14 +110,14 @@ interface sbIRemoteLibrary : nsISupports
   /*
   Prop: scanMediaOnCreation
 
-  Set this property to true if you wish all new <MediaItems> 
+  Set this property to true if you wish all new <MediaItems>
   created to be scanned for metadata.
 
-  Set this property to false if you wish to skip scanning 
+  Set this property to false if you wish to skip scanning
   for metadata when <MediaItems> are created.
 
   If you are attempting to set all of your own metadata for <MediaItems>
-  you create, you may set this to false to prevent your metadata 
+  you create, you may set this to false to prevent your metadata
   from being overwritten.
 
   Note:
@@ -142,7 +142,7 @@ interface sbIRemoteLibrary : nsISupports
   /*
   Func: createMediaItem()
 
-  Create a <MediaItem> from a URL. You may pass in 
+  Create a <MediaItem> from a URL. You may pass in
   http and https URLs. Local file URLs are not permitted.
 
   Prototype:
@@ -155,14 +155,14 @@ interface sbIRemoteLibrary : nsISupports
     The newly created <MediaItem>.
 
   Throws:
-    Invalid Argument (Components.results.NS_ERROR_INVALID_ARG) 
+    Invalid Argument (Components.results.NS_ERROR_INVALID_ARG)
     if the URL isn't http or https.
 
   Example:
     (start code)
     //Create or get a library.
     var library = songbird.siteLibrary("", "");
-    
+
     //Create the mediaitem from a url pointing to a media file.
     var mediaItem = null;
 
@@ -217,7 +217,7 @@ interface sbIRemoteLibrary : nsISupports
     (start code)
     //Create or get a library.
     var library = songbird.siteLibrary("", "");
-    
+
     //Create an empty medialist.
     var mediaList = library.createMediaList("simple");
     (end)
@@ -264,7 +264,7 @@ interface sbIRemoteLibrary : nsISupports
     (start code)
     //Create or get a library.
     var library = songbird.siteLibrary("", "");
-    
+
     //Create the medialist from a url pointing to a file.
     var mediaList = library.createMediaListFromURL("http://path/to/file.m3u");
     (end)
@@ -277,7 +277,7 @@ interface sbIRemoteLibrary : nsISupports
 
   /**
    * \brief Connect the remote library to the main or web library
-   * 
+   *
    * This method retrieves the internal data model's library for use by
    *   the webpage.
    *
@@ -330,7 +330,7 @@ interface sbIRemoteLibrary : nsISupports
  * \brief An interface for a sandbox library created by the website.
  *
  * This interface is used by the player to connect a library to a specific
- *   library for a website. The library serves as an area a website can 
+ *   library for a website. The library serves as an area a website can
  *   use to create the media items and lists needed to populate web playlists
  *   and to transfer into the user's main library. The restrictions on the
  *   site library are lighter allowing a website to do more with the limited
@@ -355,8 +355,8 @@ interface sbIRemoteSiteLibrary : sbIRemoteLibrary
    *   RFC 2109.
    * In the case of a bad match, the method fails and no library is hooked
    *   up. Any further attempt to access the library will fail.
-   * 
-   * \param aDomain - The domain, or subdomain for the site library. The 
+   *
+   * \param aDomain - The domain, or subdomain for the site library. The
    *        requesting website must be on this domain. A site on foo.bar.com
    *        may pass in bar.com, but not the other way around.
    * \param aPath - The path or subpath for the site library. The requesting
@@ -368,7 +368,8 @@ interface sbIRemoteSiteLibrary : sbIRemoteLibrary
    *        not passing any path (''). Currently the trailing slash is
    *        important, while this will succeed with or without the slash you
    *        will get different libraries as a result. This will be fixed --
-   *        bug 4176 
+   *        bug 4176
    */
-  [noscript] void connectToSiteLibrary(in AString aDomain, in AString aPath);
+  [noscript] void connectToSiteLibrary(in AUTF8String aDomain,
+                                       in AUTF8String aPath);
 };

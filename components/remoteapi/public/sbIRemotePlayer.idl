@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -44,17 +44,17 @@ interface sbIRemoteWebPlaylist;
 /*
 Class: Songbird
 
-The Songbird object provides several pieces of functionality to your web page: playback, 
+The Songbird object provides several pieces of functionality to your web page: playback,
 download, listener adding and removing and library creation and retrieval.
 
-This object provides you with functions that enable you to initiate playback 
+This object provides you with functions that enable you to initiate playback
 of URL's, <MediaLists> and <WebPlaylists>. Basic playback control functions are also
-provided. 
+provided.
 
 The Songbird object provides download functionality as well. You may use it to download
 <MediaItems>, <MediaLists> and user selected items present in the <WebPlaylist>.
 
-The Songbird object is accessible (from Javascript) using the "songbird" global variable attached 
+The Songbird object is accessible (from Javascript) using the "songbird" global variable attached
 to the currently loaded document. See the example below.
 
 Example:
@@ -105,10 +105,10 @@ interface sbIRemotePlayer : nsISupports
 
   /*
   Prop: name
-  
+
   The name of the player.
-  
-  Type: 
+
+  Type:
     String
   */
   readonly attribute AString name;
@@ -119,10 +119,10 @@ interface sbIRemotePlayer : nsISupports
 
   /*
   Prop: currentArtist
-  
+
   The name of the artist for the currently playing track.
-  
-  Type: 
+
+  Type:
     String
   */
   readonly attribute AString currentArtist;
@@ -133,10 +133,10 @@ interface sbIRemotePlayer : nsISupports
 
   /*
   Prop: currentAlbum
-  
+
   The name of the album for the currently playing media item.
 
-  Type: 
+  Type:
     String
   */
   readonly attribute AString currentAlbum;
@@ -144,20 +144,20 @@ interface sbIRemotePlayer : nsISupports
   /**
    * \brief The name of the currently playing track
    */
-   
+
   /*
   Prop: currentTrack
-  
+
   The track name of the currently playing media item.
 
-  Type: 
+  Type:
     String
   */
   readonly attribute AString currentTrack;
 
   /**
    * \brief The playing state of the application
-   * 
+   *
    * \returns false if the application is stopped
    * \returns true if the application is playing or paused
    */
@@ -282,7 +282,7 @@ interface sbIRemotePlayer : nsISupports
 
   /*
   Prop: commands
-  
+
   The collection of <Commands> associated with the current page.
 
   Type:
@@ -296,10 +296,10 @@ interface sbIRemotePlayer : nsISupports
 
   /*
   Prop: webPlaylist
-  
+
   The current <WebPlaylist> object associated with this <Player> instance.
-  
-  Type: 
+
+  Type:
     <WebPlaylist>
   */
   readonly attribute sbIRemoteWebPlaylist webPlaylist;
@@ -310,31 +310,31 @@ interface sbIRemotePlayer : nsISupports
 
   /*
   Func: addListener()
-  
+
   Add a listener to get notified of changes to Songbird metadata and state.
-  
+
   Prototype:
     addListener(String key, Object listener)
 
   Parameters:
     key - The key for the metadata or state value.
     listener - The listener that will get called when the metadata or state value specified by the key changes.
-  
+
   Example:
     (start code)
     //Make a listener object. The listener must always have at least this function.
-    
+
     //You may add any number of functions and properties to it for your own use.
-    
+
     //Make sure to save this object somewhere so you may unregister it when you are done
     //listening for changes.
     var listener = {
       observer: function(subject, topic, data) {
       }
     }
-    
+
     var key = "metadata.genre";
-    
+
     songbird.addListener(key, listener);
 
     ...
@@ -342,11 +342,11 @@ interface sbIRemotePlayer : nsISupports
     songbird.removeListener(key, listener);
     (end)
 
-  See Also: 
+  See Also:
     <removeListener()>
 
     Visit <http://some/other/part/of/documentation/> for a list of keys for metadata and state.
-    
+
     Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsIObserver.html> for nsIObserver interface reference.
   */
   void addListener( in AString aKey,
@@ -358,9 +358,9 @@ interface sbIRemotePlayer : nsISupports
 
   /*
   Func: removeListener()
-  
+
   Remove a listener that was previously added using <addListener>.
-  
+
   Prototype:
     removeListener(String key, Object listener)
 
@@ -372,14 +372,14 @@ interface sbIRemotePlayer : nsISupports
     (start code)
     //This example assumes there was a listener object named 'listener' that was previously
     //created and added using the key 'metadata.genre'.
-    
+
     ...
 
     var key = "metadata.genre";
     songbird.removeListener(key, listener);
     (end)
-  
-  See Also: 
+
+  See Also:
     <addListener()>
 
     Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsIObserver.html> for nsIObserver interface reference.
@@ -392,9 +392,9 @@ interface sbIRemotePlayer : nsISupports
    */
   /*
   Func: downloadItem()
-  
+
   Download a <MediaItem>. <MediaList>s and <Library>ies not allowed.
-  
+
   Prototype:
     downloadItem(<MediaItem> mediaItem)
 
@@ -408,7 +408,7 @@ interface sbIRemotePlayer : nsISupports
 
     //Create the mediaitem.
     var mediaItem = library.createMediaItem("http://path/to/item.mp3");
-    
+
     //Download the mediaitem to the users local machine.
     songbird.downloadItem(mediaItem);
     (end)
@@ -418,17 +418,17 @@ interface sbIRemotePlayer : nsISupports
     <downloadSelected()>
   */
   void downloadItem( in sbIMediaItem aItem );
- 
+
   /**
    * \brief Download all items in a MediaList
    */
 
   /*
   Func: downloadList()
-  
+
   Download a <MediaList>. As <Library>ies are <MediaList>s they are
   allowed here.
-  
+
   Prototype:
     downloadList(<MediaList> mediaList)
 
@@ -462,12 +462,12 @@ interface sbIRemotePlayer : nsISupports
   /**
    * \brief Download only the selected elements from a WebPlaylist
    */
-  
+
   /*
   Func: downloadSelected()
 
   Download the <MediaItems> selected by the user in a <WebPlaylist>.
-  
+
   Prototype:
     downloadSelected(<WebPlaylist> webPlaylist)
 
@@ -476,7 +476,7 @@ interface sbIRemotePlayer : nsISupports
 
   Example:
     (start code)
-    //Download the mediaitems currently selected by the user in 
+    //Download the mediaitems currently selected by the user in
     //the current webplaylist.
 
     songbird.downloadSelected(songbird.webPlaylist);
@@ -514,7 +514,7 @@ interface sbIRemotePlayer : nsISupports
     <next()>
   */
   void play();
-  
+
   /*
   Func: playMediaList()
 
@@ -523,7 +523,7 @@ interface sbIRemotePlayer : nsISupports
   Prototype:
     playMediaList(<MediaList> mediaList, Number index)
 
-  Parameters: 
+  Parameters:
     mediaList - The <MediaList> to play.
     index - Where to start playing in the list. Index starts at 0.
 
@@ -552,13 +552,13 @@ interface sbIRemotePlayer : nsISupports
 
   /*
   Func: playURL()
-  
+
   Begin playback of a URL.
 
   Prototype:
     playURL(String url)
-  
-  Parameters: 
+
+  Parameters:
     url - The URL to play.
 
   Example:
@@ -579,10 +579,10 @@ interface sbIRemotePlayer : nsISupports
   /**
    * \brief Stop playback. Sets position to beginning.
    */
-  
+
   /*
   Func: stop()
-  
+
   Stop playback.
 
   Prototype:
@@ -606,10 +606,10 @@ interface sbIRemotePlayer : nsISupports
   /**
    * \brief Stop playback, leaves position at current location.
    */
-   
+
   /*
   Func: pause()
-  
+
   Pause playback.
 
   Prototype:
@@ -633,13 +633,13 @@ interface sbIRemotePlayer : nsISupports
   /**
    * \brief Skip to the next track and begin playing
    */
-  
+
   /*
   Func: next()
-  
+
   Skip to the next item, if there is one, and begin playing.
-  
-  If there is no next item playback will continue until the 
+
+  If there is no next item playback will continue until the
   end of the current item.
 
   Prototype:
@@ -666,9 +666,9 @@ interface sbIRemotePlayer : nsISupports
 
   /*
   Func: previous
-  
+
   Skip to the previous item, if there is one, and begin playing.
-  
+
   If there is no previous item playback will continue until the of the current item.
 
   Prototype:
@@ -692,20 +692,20 @@ interface sbIRemotePlayer : nsISupports
 
   /*
   Func: siteLibrary()
-  
+
   Access to a sitelibrary for the given domain and path. If you wish to create
   your library with the default domain and path (which reflect your page's current domain and path)
   use an empty string for the domain and the path.
 
   If a library was already created for the domain and path, the existing library will be returned.
-  
+
   Prototype:
     siteLibrary(String domain, String path)
 
   Parameters:
     domain - The domain name of the library. This may be an empty string.
     path - The path within the domain for the library. This may be an empty string.
-  
+
   Returns:
     The requested <Library> object or null.
 
@@ -715,17 +715,17 @@ interface sbIRemotePlayer : nsISupports
      var library = songbird.siteLibrary("", "");
     (end)
   */
-  sbIRemoteLibrary siteLibrary(in AString aDomain, in AString aPath);
+  sbIRemoteLibrary siteLibrary(in AUTF8String aDomain, in AUTF8String aPath);
 
   /*
   Func: libraries ()
-  
+
   Access to any library in the system via path or 'magic' keyword.
-  
+
   Prototype:
     libraries(String libraryID)
 
-  Parameters: 
+  Parameters:
     libraryID - Library ID you wish to access, this can be a path or 'magic' keyword.
 
   Example:
@@ -750,6 +750,3 @@ interface sbIRemotePlayer : nsISupports
   [noscript] void onCommandsChanged();
 
 };
-
-
-

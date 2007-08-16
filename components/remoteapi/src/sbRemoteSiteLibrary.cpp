@@ -41,7 +41,9 @@
 #include <nsHashKeys.h>
 #include <nsMemory.h>
 #include <nsNetCID.h>
+#include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
+#include <nsXPCOMCIDInternal.h>
 #include <prlog.h>
 #include <prnetdb.h>
 #include <sbClassInfoUtils.h>
@@ -180,76 +182,48 @@ sbRemoteSiteLibrary::GetFilename( nsAString &aFilename )
 }
 
 NS_IMETHODIMP
-sbRemoteSiteLibrary::ConnectToSiteLibrary( const nsAString &aDomain,
-                                           const nsAString &aPath )
+sbRemoteSiteLibrary::ConnectToSiteLibrary( const nsACString &aDomain,
+                                           const nsACString &aPath )
 {
   LOG(( "sbRemoteSiteLibrary::ConnectToSiteLibrary(domain:%s path:%s)",
-        NS_LossyConvertUTF16toASCII(aDomain).get(),
-        NS_LossyConvertUTF16toASCII(aPath).get() ));
+        aDomain.BeginReading(), aPath.BeginReading() ));
+
+  nsCOMPtr<nsIFile> siteDBFile = GetSiteLibraryFile( aDomain, aPath );
+  if (!siteDBFile) {
+    LOG(("sbRemoteSiteLibrary::ConnectToSiteLibrary() - no site db file "));
+    return NS_ERROR_FAILURE;
+  }
 
   nsresult rv;
-  nsCOMPtr<nsIFile> siteDBFile;
-  rv = GetSiteLibraryFile( aDomain, aPath, getter_AddRefs(siteDBFile) );
-  if ( NS_FAILED(rv) ) {
-    LOG(("sbRemoteSiteLibrary::ConnectToSiteLibrary() - no site db file "));
-    return rv;
-  }
+
+#ifdef DEBUG
+  rv = siteDBFile->GetLeafName(mFilename);
+  NS_ENSURE_SUCCESS( rv, rv );
+#endif
 
   // Get the library factory to create a new instance from the file
   nsCOMPtr<sbILibraryFactory> libFactory(
-        do_CreateInstance( SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID, &rv ) );
-  NS_ENSURE_SUCCESS(rv, rv);
+    do_CreateInstance( SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   // Get a propertybag to pass in the filename
   nsCOMPtr<nsIWritablePropertyBag2> propBag(
-                do_CreateInstance( "@mozilla.org/hash-property-bag;1", &rv ) );
-  NS_ENSURE_SUCCESS(rv, rv);
-  propBag->SetPropertyAsInterface( NS_LITERAL_STRING("databaseFile"),
-                                   siteDBFile );
+    do_CreateInstance( NS_HASH_PROPERTY_BAG_CONTRACTID, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = propBag->SetPropertyAsInterface( NS_LITERAL_STRING("databaseFile"),
+                                        siteDBFile );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   // Create the library
-  libFactory->CreateLibrary( propBag, getter_AddRefs(mLibrary) );
-  NS_ENSURE_STATE(mLibrary);
+  rv = libFactory->CreateLibrary( propBag, getter_AddRefs(mLibrary) );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   rv = InitInternalMediaList();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // Library has been created, store a pref key to point to the guid
-  nsAutoString guid;
-  rv = GetGuid(guid);
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // put the guid in a supports string for the pref system
-  nsCOMPtr<nsISupportsString> supportsString =
-                       do_CreateInstance( NS_SUPPORTS_STRING_CONTRACTID, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-  rv = supportsString->SetData(guid);
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  nsCOMPtr<nsIPrefBranch> prefService =
-                               do_GetService( NS_PREFSERVICE_CONTRACTID, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  // the key includes the filename so we can get the guid back reliably
-  nsAutoString key;
-  key.AssignLiteral("songbird.library.site.");
-  key.Append(mFilename);
-
-  rv = prefService->SetComplexValue( NS_LossyConvertUTF16toASCII(key).get(),
-                                     NS_GET_IID(nsISupportsString),
-                                     supportsString );
-
-  // Register the library with the library manager so it shows up in servicepane
-  nsCOMPtr<sbILibraryManager> libManager(
-        do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  rv = libManager->RegisterLibrary( mLibrary, false );
-  NS_ASSERTION( NS_SUCCEEDED(rv), "Failed to register library" );
-
   return NS_OK;
 }
-
 
 // ----------------------------------------------------------------------------
 //
@@ -282,51 +256,47 @@ sbRemoteSiteLibrary::InitInternalMediaList()
   return rv;
 }
 
-nsresult
-sbRemoteSiteLibrary::GetSiteLibraryFile( const nsAString &aDomain,
-                                         const nsAString &aPath,
-                                         nsIFile **aSiteDBFile )
+already_AddRefed<nsIFile>
+sbRemoteSiteLibrary::GetSiteLibraryFile( const nsACString &aDomain,
+                                         const nsACString &aPath )
 {
   LOG(( "sbRemoteSiteLibrary::GetSiteLibraryFile(domain:%s path:%s)",
-         NS_LossyConvertUTF16toASCII(aDomain).get(),
-         NS_LossyConvertUTF16toASCII(aPath).get() ));
-  NS_ENSURE_ARG_POINTER(aSiteDBFile);
+         aDomain.BeginReading(),
+         aPath.BeginReading() ));
 
   nsCOMPtr<nsIURI> siteURI = GetURI();
   if (!siteURI) {
     LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED to get URI"));
-    return NS_ERROR_FAILURE;
+    return nsnull;
   }
 
-  nsString domain(aDomain);
+  nsCString domain(aDomain);
   nsresult rv = CheckDomain( domain, siteURI );
   if ( NS_FAILED(rv) ) {
     LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED domain Check"));
-    return rv;
+    return nsnull;
   }
 
-  nsString path(aPath);
+  nsCString path(aPath);
   rv = CheckPath( path, siteURI );
   if ( NS_FAILED(rv) ) {
     LOG(("sbRemoteSiteLibrary::GetSiteLibraryFile() -- FAILED path Check"));
-    return rv;
+    return nsnull;
   }
 
   // Do some character escaping
   nsCOMPtr<nsINetUtil> netUtil = do_GetService( NS_NETUTIL_CONTRACTID, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, nsnull );
 
   nsCString escapedDomain;
-  rv = netUtil->EscapeString( NS_ConvertUTF16toUTF8(domain),
-                              nsINetUtil::ESCAPE_XALPHAS,
+  rv = netUtil->EscapeString( domain, nsINetUtil::ESCAPE_XALPHAS,
                               escapedDomain );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, nsnull );
 
   nsCString escapedPath;
-  rv = netUtil->EscapeString( NS_ConvertUTF16toUTF8(path),
-                              nsINetUtil::ESCAPE_XALPHAS,
+  rv = netUtil->EscapeString( path, nsINetUtil::ESCAPE_XALPHAS,
                               escapedPath );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, nsnull );
 
   nsString filename = NS_ConvertUTF8toUTF16(escapedDomain);
   filename.Append( NS_ConvertUTF8toUTF16(escapedPath) );
@@ -334,25 +304,23 @@ sbRemoteSiteLibrary::GetSiteLibraryFile( const nsAString &aDomain,
 
   // get the directory service
   nsCOMPtr<nsIProperties> directoryService(
-                       do_GetService( NS_DIRECTORY_SERVICE_CONTRACTID, &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
+    do_GetService( NS_DIRECTORY_SERVICE_CONTRACTID, &rv ) );
+  NS_ENSURE_SUCCESS( rv, nsnull );
 
   // get the users profile directory
   nsCOMPtr<nsIFile> siteDBFile;
-  rv = directoryService->Get( "ProfD",
-                              NS_GET_IID(nsIFile),
+  rv = directoryService->Get( "ProfD", NS_GET_IID(nsIFile),
                               getter_AddRefs(siteDBFile) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  NS_ENSURE_SUCCESS( rv, nsnull );
 
   // extend the path and add the file
   siteDBFile->Append( NS_LITERAL_STRING("db") );
   siteDBFile->Append(filename);
 
-  // Save the filename locally
-  mFilename = filename;
+  nsIFile* outFile = nsnull;
+  siteDBFile.swap(outFile);
 
-  siteDBFile.swap(*aSiteDBFile);
-  return NS_OK;
+  return outFile;
 }
 
 already_AddRefed<nsIURI>
@@ -364,6 +332,7 @@ sbRemoteSiteLibrary::GetURI()
   nsCOMPtr<sbISecurityMixin> mixin( do_QueryInterface( mSecurityMixin, &rv ) );
   NS_ENSURE_SUCCESS( rv, nsnull );
 
+  // GetCodebase AddRef's for us here.
   nsIURI* siteURI;
   rv = mixin->GetCodebase( &siteURI );
   NS_ENSURE_SUCCESS( rv, nsnull );
@@ -372,29 +341,31 @@ sbRemoteSiteLibrary::GetURI()
 }
 
 nsresult
-sbRemoteSiteLibrary::CheckDomain( nsAString &aDomain, nsIURI *aSiteURI )
+sbRemoteSiteLibrary::CheckDomain( nsACString &aDomain, nsIURI *aSiteURI )
 {
   NS_ENSURE_ARG_POINTER(aSiteURI);
-  LOG(( "sbRemoteSiteLibrary::CheckDomain(%s)",
-         NS_LossyConvertUTF16toASCII(aDomain).get() ));
+  LOG(( "sbRemoteSiteLibrary::CheckDomain(%s)", aDomain.BeginReading() ));
 
   // get host from URI, remove leading/trailing dots, lowercase it
-  nsCAutoString uriCHost;
-  aSiteURI->GetHost(uriCHost);
-  uriCHost.Trim(".");
-  ToLowerCase(uriCHost);
+  nsCAutoString host;
+  nsresult rv = aSiteURI->GetHost(host);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  host.Trim(".");
+  ToLowerCase(host);
 
   if ( !aDomain.IsEmpty() ) {
     LOG(("sbRemoteSiteLibrary::CheckDomain() -- Have a domain from the user"));
-    // remove trailing dots - there is no ToLowerCase for AStrings
+    // remove trailing dots, lowercase it
     aDomain.Trim(".");
+    ToLowerCase(aDomain);
 
     // Deal first with numerical ip addresses
     PRNetAddr addr;
-    if ( PR_StringToNetAddr( uriCHost.get(), &addr ) == PR_SUCCESS ) {
+    if ( PR_StringToNetAddr( host.get(), &addr ) == PR_SUCCESS ) {
       // numerical ip address
       LOG(("sbRemoteSiteLibrary::CheckDomain() -- Numerical Address "));
-      if ( !aDomain.EqualsLiteral( uriCHost.get() ) ) {
+      if ( !aDomain.Equals(host) ) {
         LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED ip address check"));
         return NS_ERROR_FAILURE;
       }
@@ -410,14 +381,23 @@ sbRemoteSiteLibrary::CheckDomain( nsAString &aDomain, nsIURI *aSiteURI )
       }
 
       // prepend a dot so bar.com doesn't match foobar.com but does foo.bar.com
-      aDomain.Insert( NS_LITERAL_STRING("."), 0 );
+      aDomain.Insert( NS_LITERAL_CSTRING("."), 0 );
 
       PRInt32 domainLength = aDomain.Length();
-      PRInt32 lengthDiff = uriCHost.Length() - domainLength;
-      if ( lengthDiff == 0 ) {
+      PRInt32 lengthDiff = host.Length() - domainLength;
+      if ( lengthDiff == -1 ) {
+        LOG(("sbRemoteSiteLibrary::CheckDomain() -- long domain check"));
+        // special case:  from user: .bar.com   vs. from URI:  bar.com
+        // XXXredfive - I actually think we'll see this most often because
+        //             of the prepending of the dot to the user supplied domain
+        if ( !Substring( aDomain, 1, domainLength - 1 ).Equals( host ) ) {
+          LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED long domain check"));
+          return NS_ERROR_FAILURE;
+        }
+      } else if ( lengthDiff == 0 ) {
         LOG(("sbRemoteSiteLibrary::CheckDomain() -- same length check"));
         // same length better be the same strings
-        if ( !aDomain.LowerCaseEqualsLiteral( uriCHost.get() ) ) {
+        if ( !aDomain.Equals(host) ) {
           LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED same length check"));
           return NS_ERROR_FAILURE;
         }
@@ -425,19 +405,8 @@ sbRemoteSiteLibrary::CheckDomain( nsAString &aDomain, nsIURI *aSiteURI )
         LOG(("sbRemoteSiteLibrary::CheckDomain() -- parent domain check"));
         // normal case URI host is longer that host from user
         //   from user: .bar.com   from URI:  foo.bar.com
-        nsCAutoString subHost( Substring( uriCHost, lengthDiff, domainLength ) );
-        if ( !aDomain.EqualsLiteral( subHost.get() ) ) {
+        if ( !aDomain.Equals( Substring( host, lengthDiff, domainLength ) ) ) {
           LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED parent domain check"));
-          return NS_ERROR_FAILURE;
-        }
-      } else if ( lengthDiff == -1 ) {
-        LOG(("sbRemoteSiteLibrary::CheckDomain() -- long domain check"));
-        // special case:  from user: .bar.com   vs. from URI:  bar.com
-        // XXXredfive - I actually think we'll see this most often because
-        //             of the prepending of the dot to the user supplied domain
-        if ( !Substring( aDomain, 1, domainLength - 1 )
-                .LowerCaseEqualsLiteral( uriCHost.get() ) ) {
-          LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED long domain check"));
           return NS_ERROR_FAILURE;
         }
       } else {
@@ -448,15 +417,17 @@ sbRemoteSiteLibrary::CheckDomain( nsAString &aDomain, nsIURI *aSiteURI )
       }
 
       // remove the leading dot we added
-      aDomain.Trim( ".", PR_TRUE, PR_FALSE );
+      aDomain.Cut( 0, 1 );
     }
   } else {
     LOG(( "sbRemoteSiteLibrary::CheckDomain() -- NO domain from the user"));
     // If the user didn't specify a host
     // if the URI host is empty, make sure we're file://
-    if ( uriCHost.IsEmpty() ) {
-      PRBool isFileURI = PR_FALSE;
-      aSiteURI->SchemeIs( "file", &isFileURI );
+    if ( host.IsEmpty() ) {
+      PRBool isFileURI;
+      rv = aSiteURI->SchemeIs( "file", &isFileURI );
+      NS_ENSURE_SUCCESS( rv, rv );
+
       if (!isFileURI) {
         // non-file URI without a host!!!
         LOG(("sbRemoteSiteLibrary::CheckDomain() -- FAILED file scheme check"));
@@ -464,8 +435,7 @@ sbRemoteSiteLibrary::CheckDomain( nsAString &aDomain, nsIURI *aSiteURI )
       }
     } else {
       // no domain from the user but there is a domain from the URI
-      aDomain.Truncate();
-      aDomain.AppendLiteral( uriCHost.get() );
+      aDomain.Assign(host);
     }
   }
 
@@ -474,49 +444,104 @@ sbRemoteSiteLibrary::CheckDomain( nsAString &aDomain, nsIURI *aSiteURI )
 }
 
 nsresult
-sbRemoteSiteLibrary::CheckPath( nsAString &aPath, nsIURI *aSiteURI )
+sbRemoteSiteLibrary::CheckPath( nsACString &aPath, nsIURI *aSiteURI )
 {
   NS_ENSURE_ARG_POINTER(aSiteURI);
-  LOG(( "sbRemoteSiteLibrary::CheckPath(%s)",
-         NS_LossyConvertUTF16toASCII(aPath).get() ));
+  LOG(( "sbRemoteSiteLibrary::CheckPath(%s)", aPath.BeginReading() ));
 
-  nsCAutoString uriCPath;
+  nsresult rv;
+  NS_NAMED_LITERAL_CSTRING( slashString, "/" );
 
-  // if the user didn't specify a path, use the full path, minus the filename
+  // Build a URI object to use for easy directory checking. This avoids manual
+  // string parsing and works when aPath is empty and also when it is not.
+  nsCOMPtr<nsIURI> uri;
+
   if ( aPath.IsEmpty() ) {
-    nsCOMPtr<nsIURL> siteURL = do_QueryInterface(aSiteURI);
-    if (siteURL) {
-      LOG(("sbRemoteSiteLibrary::CheckPath() -- IS URL"));
-      siteURL->GetDirectory(uriCPath);
-    } else {
-      LOG(("sbRemoteSiteLibrary::CheckPath() -- NOT URL"));
-      aSiteURI->GetPath(uriCPath);
-      PRInt32 slash = uriCPath.RFindChar('/');
-      if ( slash != kNotFound ) {
-        // cut the filename from the path
-        uriCPath.Cut( slash+1, uriCPath.Length()-slash );
-      }
+    // If the path was empty we use aSiteURI that was retrieved from the system.
+    uri = aSiteURI;
+  }
+  else {
+    // Construct a dummy URL that incorporates the path that the user passed in.
+    nsCString dummyURL("http://www.dummy.com");
+
+    // Make sure that aPath begins with a slash. Otherwise we could end up with
+    // something like "foo.combar" rather than "foo.com/bar".
+    if ( !StringBeginsWith( aPath, slashString ) ) {
+      dummyURL.Append(slashString);
     }
 
-    // path matches URI for sure, set it and return ok
-    aPath = NS_ConvertUTF8toUTF16(uriCPath);
+    dummyURL.Append(aPath);
+
+    rv = NS_NewURI( getter_AddRefs(uri), dummyURL );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+
+  // At this point uri contains the location we will use for the path. It will
+  // be compared to aSiteURI later for validation if it was constructed from
+  // aPath.
+
+  nsCOMPtr<nsIURL> url( do_QueryInterface( uri, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = url->GetDirectory(aPath);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  NS_ASSERTION( StringEndsWith( aPath, slashString ),
+                "GetDirectory returned a string with no trailing slash!" );
+
+  // According to nsIURL the directory will always have a trailing slash (???).
+  // However, if the spec from aSiteURI did *not* have a trailing slash then the
+  // fileName attribute of url may be set. If it is then we assume it is
+  // actually a directory as long as the fileExtension is empty. Thus the
+  // following transformations will result:
+  //
+  //    Original spec from aSiteURI -----> aPath
+  //
+  //    http://www.foo.com/bar/baz/ -----> /bar/baz/
+  //    http://www.foo.com/bar/baz ------> /bar/baz
+  //    http://www.foo.com/bar/baz.ext --> /bar/
+
+  nsCString fileName;
+  rv = url->GetFileName(fileName);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  if (!fileName.IsEmpty()) {
+    nsCString fileExt;
+    rv = url->GetFileExtension(fileExt);
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    if (fileExt.IsEmpty()) {
+      // If there is no file extension then assume it is actually a directory
+      // and append a trailing slash.
+      aPath.Append(fileName);
+      aPath.Append(slashString);
+    }
+  }
+
+  // The rest of this function will ensure that the path is actually a subpath
+  // of aSiteURI. If nothing was passed in aPath then we already know that this
+  // is true because we constructed aPath from aSiteURI. Therefore we're done
+  // and can go ahead and return. We waited until this point to return early so
+  // that we are sure that aPath both begins and ends with a slash (unless it is
+  // only a single slash).
+  if (uri == aSiteURI) {
     return NS_OK;
   }
 
-  // Get the path from the URI
-  aSiteURI->GetPath(uriCPath);
-  nsAutoString uriPath = NS_ConvertUTF8toUTF16(uriCPath);
+  // Verify that this path is indeed part of the site URI.
+  nsCString sitePath;
+  rv = aSiteURI->GetPath(sitePath);
+  NS_ENSURE_SUCCESS( rv, rv );
 
-  // Path passed in must be a prefix of the URI's path
-  LOG(("sbRemoteSiteLibrary::CheckPath() -- Path Prefix Check"));
-  if ( !StringBeginsWith( uriPath, aPath ) ) {
+  // We know that aPath has a trailing slash but sitePath may not have one. Make
+  // sure that we ignore the trailing slash in the following comparison.
+  nsDependentCSubstring headPath( aPath, 0, aPath.Length() - 1 );
+
+  if ( !StringBeginsWith( sitePath, headPath ) ) {
     LOG(("sbRemoteSiteLibrary::CheckPath() -- FAILED Path Prefix Check"));
     return NS_ERROR_FAILURE;
   }
 
-  LOG(( "sbRemoteSiteLibrary::CheckPath( user: %s URI: %s ) PASSED Path Check",
-         NS_LossyConvertUTF16toASCII(aPath).get(),
-         NS_LossyConvertUTF16toASCII(uriPath).get() ));
-
+  LOG(("sbRemoteSiteLibrary::CheckPath() -- PASSED Path Prefix Check"));
   return NS_OK;
 }

@@ -254,7 +254,7 @@ sbRemotePlayer::Init()
         do_CreateInstance("@songbirdnest.com/remoteapi/security-mixin;1", &rv);
   if (NS_FAILED(rv)) {
     LOG(("sbRemotePlayer::Init() -- ERROR creating mixin"));
-    return NS_ERROR_OUT_OF_MEMORY; 
+    return NS_ERROR_OUT_OF_MEMORY;
   }
 
   // Get the list of IIDs to pass to the security mixin
@@ -317,7 +317,7 @@ sbRemotePlayer::Init()
 
   LOG(("sbRemotePlayer::Init() -- registering PlaylistCellClick listener"));
   eventTarget->AddEventListener( NS_LITERAL_STRING("PlaylistCellClick"), this , PR_TRUE );
-  
+
   mInitialized = PR_TRUE;
 
   return NS_OK;
@@ -329,7 +329,7 @@ sbRemotePlayer::Init()
 //
 // ---------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetName( nsAString &aName )
 {
   LOG(("sbRemotePlayer::GetName()"));
@@ -359,12 +359,11 @@ sbRemotePlayer::Libraries( const nsAString &aLibraryID,
 }
 
 NS_IMETHODIMP
-sbRemotePlayer::SiteLibrary( const nsAString &aDomain,
-                             const nsAString &aPath,
+sbRemotePlayer::SiteLibrary( const nsACString &aDomain,
+                             const nsACString &aPath,
                              sbIRemoteLibrary **aSiteLibrary )
 {
-  LOG(( "sbRemotePlayer::SiteLibrary(%s)",
-        NS_LossyConvertUTF16toASCII(aPath).get()));
+  LOG(( "sbRemotePlayer::SiteLibrary(%s)", aPath.BeginReading() ));
 
   nsresult rv;
   if (!mSiteLibrary) {
@@ -418,7 +417,7 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
   mUseDefaultCommands = aUseDefaultCommands;
 
   // Get the PlaylistCommandsManager object and register commands with it.
-  nsCOMPtr<sbIPlaylistCommandsManager> mgr( 
+  nsCOMPtr<sbIPlaylistCommandsManager> mgr(
          do_GetService( "@songbirdnest.com/Songbird/PlaylistCommandsManager;1", &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -468,7 +467,7 @@ sbRemotePlayer::OnCommandsChanged()
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetWebPlaylist( sbIRemoteWebPlaylist **aWebPlaylist )
 {
   LOG(("sbRemotePlayer::GetWebPlaylist()"));
@@ -488,7 +487,7 @@ sbRemotePlayer::GetWebPlaylist( sbIRemoteWebPlaylist **aWebPlaylist )
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
 {
   LOG(("sbRemotePlayer::DownloadItem()"));
@@ -504,11 +503,11 @@ sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
   NS_ENSURE_TRUE( downloadList, rv );
 
   downloadList->Add(aItem);
- 
+
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::DownloadList( sbIRemoteMediaList *aList )
 {
   LOG(("sbRemotePlayer::DownloadList()"));
@@ -527,8 +526,8 @@ sbRemotePlayer::DownloadList( sbIRemoteMediaList *aList )
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbRemotePlayer::DownloadSelected( sbIRemoteWebPlaylist *aWebPlaylist ) 
+NS_IMETHODIMP
+sbRemotePlayer::DownloadSelected( sbIRemoteWebPlaylist *aWebPlaylist )
 {
   LOG(("sbRemotePlayer::DownloadSelected()"));
 
@@ -620,7 +619,7 @@ sbRemotePlayer::LaunchDownloadDialog( nsAString &aLocation )
   ioParamBlock->GetInt( 0, &buttonPressed );
   ioParamBlock->GetString( 0, getter_Copies(location) );
   aLocation = location;
-  return ( buttonPressed ? PR_TRUE : PR_FALSE ); 
+  return ( buttonPressed ? PR_TRUE : PR_FALSE );
 }
 
 // Moving to download device in bug 3521 - will remove in follow-up bug
@@ -684,7 +683,7 @@ sbRemotePlayer::GetDownloadList( sbIMediaList **aMediaList ) {
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetCurrentArtist( nsAString &aCurrentArtist )
 {
   LOG(("sbRemotePlayer::GetCurrentArtist()"));
@@ -700,7 +699,7 @@ sbRemotePlayer::GetCurrentArtist( nsAString &aCurrentArtist )
   return mdrCurrentArtist->GetStringValue(aCurrentArtist);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetCurrentAlbum( nsAString &aCurrentAlbum )
 {
   LOG(("sbRemotePlayer::GetCurrentAlbum()"));
@@ -716,13 +715,13 @@ sbRemotePlayer::GetCurrentAlbum( nsAString &aCurrentAlbum )
   return mdrCurrentAlbum->GetStringValue(aCurrentAlbum);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetCurrentTrack( nsAString &aCurrentTrack )
 {
   LOG(("sbRemotePlayer::GetCurrentTrack()"));
   if (!mdrCurrentTrack) {
     nsresult rv;
-    mdrCurrentTrack = 
+    mdrCurrentTrack =
            do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     rv = mdrCurrentTrack->Init( NS_LITERAL_STRING("metadata.title"),
@@ -732,7 +731,7 @@ sbRemotePlayer::GetCurrentTrack( nsAString &aCurrentTrack )
   return mdrCurrentTrack->GetStringValue(aCurrentTrack);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetPlaying( PRBool *aPlaying )
 {
   LOG(("sbRemotePlayer::GetPlaying()"));
@@ -749,7 +748,7 @@ sbRemotePlayer::GetPlaying( PRBool *aPlaying )
   return mdrPlaying->GetBoolValue(aPlaying);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetPaused( PRBool *aPaused )
 {
   LOG(("sbRemotePlayer::GetPaused()"));
@@ -766,7 +765,7 @@ sbRemotePlayer::GetPaused( PRBool *aPaused )
   return mdrPaused->GetBoolValue(aPaused);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetRepeat( PRInt64 *aRepeat )
 {
   LOG(("sbRemotePlayer::GetRepeat()"));
@@ -783,7 +782,7 @@ sbRemotePlayer::GetRepeat( PRInt64 *aRepeat )
   return mdrRepeat->GetIntValue(aRepeat);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetShuffle( PRBool *aShuffle )
 {
   LOG(("sbRemotePlayer::GetShuffle()"));
@@ -800,7 +799,7 @@ sbRemotePlayer::GetShuffle( PRBool *aShuffle )
   return mdrShuffle->GetBoolValue(aShuffle);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetPosition( PRInt64 *aPosition )
 {
   LOG(("sbRemotePlayer::GetPosition()"));
@@ -817,7 +816,7 @@ sbRemotePlayer::GetPosition( PRInt64 *aPosition )
   return mdrPosition->GetIntValue(aPosition);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetVolume( PRInt64 *aVolume )
 {
   LOG(("sbRemotePlayer::GetVolume()"));
@@ -834,7 +833,7 @@ sbRemotePlayer::GetVolume( PRInt64 *aVolume )
   return mdrVolume->GetIntValue(aVolume);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::GetMute( PRBool *aMute )
 {
   LOG(("sbRemotePlayer::GetMute()"));
@@ -850,7 +849,7 @@ sbRemotePlayer::GetMute( PRBool *aMute )
   return mdrMute->GetBoolValue(aMute);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::AddListener( const nsAString &aKey,
                              nsIObserver *aObserver )
 {
@@ -912,7 +911,7 @@ sbRemotePlayer::RemoveListener( const nsAString &aKey,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::Play()
 {
   LOG(("sbRemotePlayer::Play()"));
@@ -945,7 +944,7 @@ sbRemotePlayer::Play()
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
 {
   LOG(("sbRemotePlayer::PlayMediaList()"));
@@ -975,7 +974,7 @@ sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::PlayURL( const nsAString &aURL )
 {
   LOG(("sbRemotePlayer::PlayURL()"));
@@ -985,7 +984,7 @@ sbRemotePlayer::PlayURL( const nsAString &aURL )
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::Stop()
 {
   LOG(("sbRemotePlayer::Stop()"));
@@ -995,7 +994,7 @@ sbRemotePlayer::Stop()
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::Pause()
 {
   LOG(("sbRemotePlayer::Pause()"));
@@ -1005,7 +1004,7 @@ sbRemotePlayer::Pause()
   return retval ? NS_OK : NS_ERROR_FAILURE;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::Next()
 {
   LOG(("sbRemotePlayer::Next()"));
@@ -1015,7 +1014,7 @@ sbRemotePlayer::Next()
   return ( retval > -1 ) ? NS_OK : NS_ERROR_FAILURE;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemotePlayer::Previous()
 {
   LOG(("sbRemotePlayer::Previous()"));
@@ -1081,25 +1080,25 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     nsCOMPtr<nsIDOMEventTarget> srcEventTarget;
     rv = srcEvent->GetOriginalTarget( getter_AddRefs(srcEventTarget) );
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     nsCOMPtr<sbIPlaylistWidget> playlist( do_QueryInterface(srcEventTarget, &rv) );
     // this recurses because we see the event targeted at the content document
     // bubble up, so just gracefully ignore it if the event wasn't from a playlist
     if (NS_FAILED(rv))
       return NS_OK;
-    
+
     nsCOMPtr<sbIPlaylistClickEvent> playlistClickEvent;
     rv = playlist->GetLastClickEvent( getter_AddRefs(playlistClickEvent) );
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     // make a mouse event
     nsCOMPtr<nsIDOMDocumentEvent> docEvent( do_QueryInterface(mContentDoc, &rv) );
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     nsCOMPtr<nsIDOMEvent> newEvent;
     rv = docEvent->CreateEvent( NS_LITERAL_STRING("mouseevent"), getter_AddRefs(newEvent) );
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     PRBool ctrlKey = PR_FALSE, altKey = PR_FALSE,
            shiftKey = PR_FALSE, metaKey = PR_FALSE;
     PRUint16 button = 0;
@@ -1113,7 +1112,7 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     } else {
       LOG(("sbRemotePlayer::HandleEvent() - no mouse event for PlaylistCellClick"));
     }
-    
+
     nsCOMPtr<nsIDOMMouseEvent> newMouseEvent( do_QueryInterface(newEvent, &rv) );
     NS_ENSURE_SUCCESS(rv, rv);
     rv = newMouseEvent->InitMouseEvent( NS_LITERAL_STRING("PlaylistCellClick"),
@@ -1140,7 +1139,7 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     // make our custom wrapper event
     nsRefPtr<sbRemotePlaylistClickEvent> remoteEvent( new sbRemotePlaylistClickEvent() );
     NS_ENSURE_TRUE(remoteEvent, NS_ERROR_OUT_OF_MEMORY);
-    
+
     rv = remoteEvent->Init();
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1166,7 +1165,7 @@ sbRemotePlayer::UnregisterCommands()
 
   // Get the PlaylistCommandsManager object to unregister the commands
   nsresult rv;
-  nsCOMPtr<sbIPlaylistCommandsManager> mgr( 
+  nsCOMPtr<sbIPlaylistCommandsManager> mgr(
          do_GetService( "@songbirdnest.com/Songbird/PlaylistCommandsManager;1", &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -1184,7 +1183,7 @@ sbRemotePlayer::UnregisterCommands()
                                                  commands );
   NS_ASSERTION( NS_SUCCEEDED(rv),
                 "Failed to unregister commands from playlistcommandsmanager" );
-  
+
   return NS_OK;
 }
 
@@ -1238,12 +1237,12 @@ sbRemotePlayer::GetWindowFromJS() {
   // to the correct window, but for now this works.
   nsCOMPtr<nsIJSContextStack> stack =
                            do_GetService("@mozilla.org/js/xpc/ContextStack;1");
- 
+
   if (!stack) {
     LOG(("sbRemotePlayer::GetWindowFromJS() -- NO STACK!!!"));
     return nsnull;
   }
- 
+
   JSContext *cx;
   if (NS_FAILED(stack->Peek(&cx)) || !cx) {
     LOG(("sbRemotePlayer::GetWindowFromJS() -- NO CONTEXT!!!"));
@@ -1251,7 +1250,7 @@ sbRemotePlayer::GetWindowFromJS() {
   }
 
   // Get the script context from the js context
-  nsCOMPtr<nsIScriptContext> scCx = GetScriptContextFromJSContext(cx); 
+  nsCOMPtr<nsIScriptContext> scCx = GetScriptContextFromJSContext(cx);
   NS_ENSURE_TRUE(scCx, nsnull);
 
   // Get the DOMWindow from the script global via the script context
@@ -1407,4 +1406,3 @@ sbRemotePlayer::Unregister( nsIComponentManager* aCompMgr,
                                     PR_TRUE );   /* delete persisted data */
   return rv;
 }
-
