@@ -788,7 +788,7 @@ try
     }
     catch (err) {
       // No component
-      dump("Error. jumptofile.js:setMinMaxCallback() \n " + err + "\n");
+      dump("Error. jumpToFile.js:setMinMaxCallback() \n " + err + "\n");
     }
   }
   
