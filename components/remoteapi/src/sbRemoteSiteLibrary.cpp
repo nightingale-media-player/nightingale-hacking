@@ -96,6 +96,7 @@ const static char* sPublicMethods[] =
     "site:createMediaListFromURL",
     "site:createMediaItem",
     "site:addMediaListByURL",
+    "site:getMediaList",
 
     // sbIRemoteMediaList
     "site:addItemByURL",

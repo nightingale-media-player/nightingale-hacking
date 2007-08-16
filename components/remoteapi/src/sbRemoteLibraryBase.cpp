@@ -40,7 +40,9 @@
 #include <sbIPlaylistReader.h>
 #include <sbIWrappedMediaItem.h>
 #include <sbIWrappedMediaList.h>
+#include <sbStandardProperties.h>
 
+#include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsEventDispatcher.h>
 #include <nsICategoryManager.h>
@@ -126,6 +128,38 @@ public:
   }
 };
 NS_IMPL_ISUPPORTS1( sbRemoteMetadataScanLauncher, nsIObserver )
+
+class sbRemoteLibraryEnumCallback : public sbIMediaListEnumerationListener
+{
+  public:
+    NS_DECL_ISUPPORTS
+    
+    sbRemoteLibraryEnumCallback( nsCOMArray<sbIMediaItem>& aArray ) :
+      mArray(aArray) { }
+
+    NS_IMETHODIMP OnEnumerationBegin( sbIMediaList*, PRBool* _retval )
+    {
+      NS_ENSURE_ARG(_retval);
+      *_retval = PR_TRUE;
+      return NS_OK;
+    }
+    NS_IMETHODIMP OnEnumerationEnd( sbIMediaList*, nsresult )
+    {
+      return NS_OK;
+    }
+    NS_IMETHODIMP OnEnumeratedItem( sbIMediaList*, sbIMediaItem* aItem, PRBool* _retval )
+    {
+      NS_ENSURE_ARG(_retval);
+      *_retval = PR_TRUE;
+      
+      mArray.AppendObject( aItem );
+      
+      return NS_OK;
+    }
+  private:
+    nsCOMArray<sbIMediaItem>& mArray;
+};
+NS_IMPL_ISUPPORTS1( sbRemoteLibraryEnumCallback, sbIMediaListEnumerationListener )
 
 NS_IMPL_ISUPPORTS8( sbRemoteLibraryBase,
                     nsISecurityCheckedComponent,
@@ -269,7 +303,7 @@ sbRemoteLibraryBase::CreateMediaList( const nsAString& aType,
 
 NS_IMETHODIMP
 sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
-                                              sbIRemoteMediaList** _retval )
+                                             sbIRemoteMediaList** _retval )
 {
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mLibrary);
@@ -324,6 +358,52 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
 
   // This will wrap in the appropriate site/regular RemoteMediaList
   return SB_WrapMediaList(mediaList, _retval);
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetMediaList( const nsAString & aName,
+                                   sbIRemoteMediaList **_retval )
+{
+  NS_ENSURE_ARG(_retval);
+  
+  nsresult rv;
+  nsCOMPtr<sbIMediaList> libList = do_QueryInterface( mLibrary, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsCOMArray<sbIMediaItem> items;
+  nsRefPtr<sbRemoteLibraryEnumCallback> listener =
+    new sbRemoteLibraryEnumCallback(items);
+  if ( !listener )
+    return NS_ERROR_OUT_OF_MEMORY;
+  
+  rv = libList->EnumerateItemsByProperty( NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                                          aName,
+                                          listener,
+                                          sbIMediaList::ENUMERATIONTYPE_SNAPSHOT );
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  for ( PRInt32 i = 0; i < items.Count(); ++i ) {
+    nsCOMPtr<sbILibraryResource> res = do_QueryInterface( items[i], &rv );
+    if ( NS_FAILED(rv) )
+      continue;
+    nsString prop;
+    rv = res->GetProperty( NS_LITERAL_STRING(SB_PROPERTY_ISLIST), prop );
+    if ( NS_FAILED(rv) )
+      continue;
+    if ( prop.EqualsLiteral("1") ) {
+      nsCOMPtr<sbIMediaList> list = do_QueryInterface( res, &rv );
+      if ( NS_FAILED(rv) )
+        continue;
+      rv = SB_WrapMediaList( list, _retval );
+      if ( NS_SUCCEEDED(rv) )
+        return NS_OK;
+    }
+  }
+  
+  // if we reach this point, we did not find the media list
+  // not an exception, so still return NS_OK
+  *_retval = nsnull;
+  return NS_OK;
 }
 
 // ---------------------------------------------------------------------------

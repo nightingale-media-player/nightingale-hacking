@@ -78,6 +78,7 @@ const static char* sPublicMethods[] =
     "library:connectToMediaLibrary",
     "library:connectToDefaultLibrary",
     "library:createMediaListFromURL",
+    "library:getMediaList",
      // different from the ones in sbILibrary
     "library:createMediaList",
     "library:createMediaItem",

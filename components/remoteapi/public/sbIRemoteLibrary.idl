@@ -284,6 +284,45 @@ interface sbIRemoteLibrary : nsISupports
    * \param aLibName - Only accepted values are 'main' or 'web'
    */
   [noscript] void connectToDefaultLibrary(in AString aLibName);
+
+  /**
+   * \brief Get the media list with the given name.
+   * \param aName - The name of the media list to fetch
+   * \return The corresponding media list, or null if not found
+   * \sa createMediaList
+   */
+  /*
+  Func: getMediaList()
+  
+  Get the site media list with the given name.  Note that to compare for
+  identity one must compare the guid (instead of JS object comparisions).
+  
+  Prototype:
+    <MediaList> getMediaList(String name)
+  
+  Paramters:
+    name - The name of the media list to fetch
+  
+  Returns:
+    The corresponding media list, or null if not found
+  
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+    
+    //Fetch the shopping cart media list
+    var mediaList = library.getMediaList("Shopping Cart");
+    
+    // comparisons for equality must be done on the guid
+    var cart = library.getMediaList("Shopping Cart");
+    alert(mediaList.guid == cart.guid);
+    (end)
+
+  See Also:
+    <createMediaList()>
+  */
+  sbIRemoteMediaList getMediaList( in AString aName );
 };
 
 /**
