@@ -171,6 +171,21 @@ function onPollScan()
   }
 }
 
+var gMediaScanMetadataJob = null;
+function appendToMetadataQueue( aItemArray ) {
+  // If we need to, make a new job.
+  if ( gMediaScanMetadataJob == null || gMediaScanMetadataJob.complete ) {
+    // Create and submit a metadata job for the new items
+    var metadataJobManager =
+      Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                .getService(Components.interfaces.sbIMetadataJobManager);
+    gMediaScanMetadataJob = metadataJobManager.newJob(aItemArray, 5);
+  } else {
+    // Otherwise, just append.
+    gMediaScanMetadataJob.append(aItemArray);
+  }
+}
+
 function sbBatchCreateListener(aArray) {
   this._array = aArray;
   this._length = aArray.length;
@@ -186,12 +201,8 @@ function sbBatchCreateListener_onComplete(aItemArray)
 {
   batchLoadsPending--;
 
-  // Create and submit a metadata job for the
-  // new items
-  var metadataJobManager =
-    Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-              .getService(Components.interfaces.sbIMetadataJobManager);
-  var metadataJob = metadataJobManager.newJob(aItemArray, 5);
+  // New items to be sent for metadata scanning.
+  appendToMetadataQueue( aItemArray );
 
   if (closePending && batchLoadsPending == 0) {
     onExit();
