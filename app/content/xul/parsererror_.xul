@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Warning: this file MUST NOT load songbird.dtd !! -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<dialog
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="parsererror"
+ title="Parser Error"
+ buttons="extra1,extra2"
+ onload="return doInit();"
+ ondialogextra1="return doClose('switch');"
+ ondialogextra2="return doClose('quit');"
+ ondialogcancel="return false;"
+>
+
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/windowUtils.js" />
+
+  <hbox>
+    <label id="label1"/>
+    <label id="label2" class="text-link" onclick="showDetails();"/>
+    <label id="label3"/>
+  </hbox>
+  <label id="label4"/>
+  <label id="label5"/>
+  <spacer height="8"/>
+
+  <script>
+
+   <![CDATA[
+    
+    function doInit() {
+      document.getElementById("label1").
+               setAttribute("value", 
+                 SBString("parsererror.label.errorparsingfile", 
+                          "An error occurred while parsing a file."));
+      document.getElementById("label2").
+               setAttribute("value", 
+                 SBString("parsererror.label.details", 
+                          "(See details)."));
+      document.getElementById("label3").
+               setAttribute("value", 
+                 SBString("parsererror.label.mustquit", 
+                          "Songbird must quit."));
+      document.getElementById("label4").
+               setAttribute("value", 
+                 SBString("parsererror.label.maybecausedbylocale", 
+                          "This error may be caused by your current language setting."));
+      document.getElementById("label5").
+               setAttribute("value", 
+                 SBString("parsererror.label.switchtofix", 
+                          "Switching to English may fix the problem."));
+      var dialog = document.documentElement;
+      dialog.getButton("extra1").
+               setAttribute("label", 
+                 SBString("parsererror.button.reload-en-us", 
+                          "Reload in english"));
+      dialog.getButton("extra2").
+               setAttribute("label", 
+                 SBString("parsererror.button.quit", 
+                          "Quit"));
+      setTimeout(dialog.centerWindowOnScreen, 0);
+    }
+    
+    function doClose(ret) {
+ 
+      var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
+      switch (ret) {
+        case "switch": 
+          var prefs = Components.classes["@mozilla.org/preferences-service;1"].
+                                getService(Components.interfaces.nsIPrefBranch);
+          prefs.setCharPref("general.useragent.locale", "en-US");
+
+          if (as) {
+            as.quit(Components.interfaces.nsIAppStartup.eRestart | 
+                    Components.interfaces.nsIAppStartup.eAttemptQuit);
+          }
+          break;
+
+        case "quit":
+
+          if (as) {
+            as.quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+          }
+          break;
+      }
+      return true;
+    }
+    
+    function showDetails() {
+      var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                    .getService(Components.interfaces.nsIPromptService);
+      promptService.alert(null,
+                          "Error Details",
+                          window.arguments[0].QueryInterface(Components.interfaces.nsIConsoleMessage).message);
+    }
+
+   ]]>
+
+  </script>
+
+</dialog>
