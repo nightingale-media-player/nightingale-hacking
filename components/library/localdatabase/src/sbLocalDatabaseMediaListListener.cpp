@@ -172,7 +172,7 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
     }
   }
 
-  sbListenerInfoRefPtr info(new sbListenerInfo());
+  sbListenerInfoAutoPtr info(new sbListenerInfo());
   NS_ENSURE_TRUE(info, NS_ERROR_OUT_OF_MEMORY);
 
   if (aOwnsWeak) {
@@ -186,7 +186,7 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  sbListenerInfoRefPtr* added = mListenerArray.AppendElement(info);
+  sbListenerInfoAutoPtr* added = mListenerArray.AppendElement(info.forget());
   NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
 
   // If this list is in a batch, the newly added listener should be notified
@@ -272,19 +272,19 @@ sbLocalDatabaseMediaListListener::SnapshotListenerArray(sbMediaListListenersArra
 }
 
 void
-sbLocalDatabaseMediaListListener::SweepListenerArray(sbIndexArray& aStopNotifying)
+sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNotifying)
 {
   nsAutoLock lock(mListenerArrayLock);
 
   PRUint32 length = mListenerArray.Length();
   for (PRInt32 i = length - 1; i >= 0; --i) {
-    if (mListenerArray[i]->mIsGone) {
+    if (aStopNotifying[i].isGone) {
       mListenerArray.RemoveElementAt(i);
     }
 
     else {
-      if (aStopNotifying[i] > 0) {
-        mListenerArray[i]->SetShouldStopNotifying(aStopNotifying[i]);
+      if (aStopNotifying[i].listenerFlags > 0) {
+        mListenerArray[i]->SetShouldStopNotifying(aStopNotifying[i].listenerFlags);
       }
     }
   }
@@ -335,7 +335,7 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbIndexArray& aStopNotifyin
 
 #define SB_NOTIFY_LISTENERS_TAIL(method, call, flag)                      \
   SB_ENSURE_TRUE_VOID(NS_SUCCEEDED(rv));                                  \
-  sbIndexArray stopNotifying(mListenerArray.Length());                    \
+  sbStopNotifyArray stopNotifying(mListenerArray.Length());               \
   PRBool success = stopNotifying.SetLength(mListenerArray.Length());      \
   SB_ENSURE_TRUE_VOID(success);                                           \
                                                                           \
@@ -347,8 +347,10 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbIndexArray& aStopNotifyin
     rv = snapshot[i].listener->call;                                      \
     SB_NOTIFY_LOG_STOP_TIMER                                              \
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), #call " returned a failure code"); \
+    if (rv == NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA)                      \
+      stopNotifying[snapshot[i].index].isGone = PR_TRUE;                  \
     if (noMoreForBatch) {                                                 \
-      stopNotifying[snapshot[i].index] = sbIMediaList::flag;              \
+      stopNotifying[snapshot[i].index].listenerFlags = sbIMediaList::flag;\
     }                                                                     \
     SB_NOTIFY_LOG_REMEMBER_NOTIFIED;                                      \
   }                                                                       \
@@ -522,9 +524,6 @@ sbListenerInfo::~sbListenerInfo()
   MOZ_COUNT_DTOR(sbListenerInfo);
 }
 
-NS_IMPL_THREADSAFE_ADDREF(sbListenerInfo)
-NS_IMPL_THREADSAFE_RELEASE(sbListenerInfo)
-
 nsresult
 sbListenerInfo::Init(sbIMediaListListener* aListener,
                      PRUint32 aCurrentBatchDepth,
@@ -582,7 +581,7 @@ sbListenerInfo::Init(nsIWeakReference* aWeakListener,
   InitPropertyFilter(aPropertyFilter);
 
   nsCOMPtr<sbIMediaListListener> wrapped =
-    new sbWeakMediaListListenerWrapper(this);
+    new sbWeakMediaListListenerWrapper(mWeak);
   NS_ENSURE_TRUE(wrapped, NS_ERROR_OUT_OF_MEMORY);
 
   rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
@@ -720,10 +719,10 @@ sbListenerInfo::InitPropertyFilter(sbIPropertyArray* aPropertyFilter)
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbWeakMediaListListenerWrapper,
                               sbIMediaListListener)
 
-sbWeakMediaListListenerWrapper::sbWeakMediaListListenerWrapper(sbListenerInfo* aListenerInfo) :
-  mListenerInfo(aListenerInfo)
+sbWeakMediaListListenerWrapper::sbWeakMediaListListenerWrapper(nsIWeakReference* aWeakListener) :
+  mWrappedWeak(aWeakListener)
 {
-  NS_ASSERTION(mListenerInfo, "aListenerInfo is null");
+  NS_ASSERTION(mWrappedWeak, "aWeakListener is null");
   MOZ_COUNT_CTOR(sbWeakMediaListListenerWrapper);
 }
 
@@ -735,12 +734,10 @@ sbWeakMediaListListenerWrapper::~sbWeakMediaListListenerWrapper()
 already_AddRefed<sbIMediaListListener>
 sbWeakMediaListListenerWrapper::GetListener()
 {
-  nsCOMPtr<sbIMediaListListener> strongListener =
-    do_QueryReferent(mListenerInfo->mWeak);
+  nsCOMPtr<sbIMediaListListener> strongListener = do_QueryReferent(mWrappedWeak); 
   if (!strongListener) {
     LOG(("sbWeakMediaListListenerWrapper[0x%.8x] - Weak listener is gone",
          this));
-    mListenerInfo->mIsGone = PR_TRUE;
     return nsnull;
   }
 
@@ -749,12 +746,15 @@ sbWeakMediaListListenerWrapper::GetListener()
   return listenerPtr;
 }
 
+// Try to notify the listener if it still exists.  If it no longer exists,
+// return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA as a sentinel to report this
+// situation (see SB_NOTIFY_LISTENERS_TAIL)
 #define SB_TRY_NOTIFY(call)                                \
   nsCOMPtr<sbIMediaListListener> listener = GetListener(); \
   if (listener) {                                          \
     return listener->call;                                 \
   }                                                        \
-  return NS_OK;
+  return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnItemAdded(sbIMediaList* aMediaList,

@@ -46,7 +46,6 @@ class sbLocalDatabaseMediaListBase;
 
 class sbListenerInfo
 {
-friend class sbWeakMediaListListenerWrapper;
 friend class sbLocalDatabaseMediaListListener;
 public:
   sbListenerInfo();
@@ -61,19 +60,12 @@ public:
                 PRUint32 aFlags,
                 sbIPropertyArray* aPropertyFilter);
   
-  NS_IMETHOD_(nsrefcnt) AddRef(void);
-  NS_IMETHOD_(nsrefcnt) Release(void);
-
   PRBool ShouldNotify(PRUint32 aFlag, sbIPropertyArray* aProperties = nsnull);
 
   void BeginBatch();
   void EndBatch();
   void SetShouldStopNotifying(PRUint32 aFlag);
   void GetDebugAddress(nsAString& mDebugAddress);
-
-protected:
-  nsAutoRefCnt mRefCnt;
-  NS_DECL_OWNINGTHREAD
 
 private:
 
@@ -96,13 +88,13 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTLISTENER
 
-  sbWeakMediaListListenerWrapper(sbListenerInfo* aListenerInfo);
+  sbWeakMediaListListenerWrapper(nsIWeakReference* aWeakListener);
   ~sbWeakMediaListListenerWrapper();
 
 private:
   already_AddRefed<sbIMediaListListener> GetListener();
 
-  nsRefPtr<sbListenerInfo> mListenerInfo;
+  nsCOMPtr<nsIWeakReference> mWrappedWeak;
 };
 
 class sbLocalDatabaseMediaListListener
@@ -118,10 +110,20 @@ class sbLocalDatabaseMediaListListener
     nsCOMPtr<sbIMediaListListener> listener;
     PRUint32 index;
   };
+  
+  // This is used to mark things to stop notifying for the sweep
+  struct StopNotifyFlags {
+    StopNotifyFlags() :
+      listenerFlags(0),
+      isGone(PR_FALSE)
+    {}
+    PRUint32 listenerFlags;
+    PRBool isGone;
+  };
 
   typedef nsTArray<ListenerAndIndex> sbMediaListListenersArray;
-  typedef nsTArray<PRUint32> sbIndexArray;
-  typedef nsRefPtr<sbListenerInfo> sbListenerInfoRefPtr;
+  typedef nsTArray<StopNotifyFlags> sbStopNotifyArray;
+  typedef nsAutoPtr<sbListenerInfo> sbListenerInfoAutoPtr; 
 
 public:
   sbLocalDatabaseMediaListListener();
@@ -175,9 +177,9 @@ private:
   nsresult SnapshotListenerArray(sbMediaListListenersArray& aArray,
                                  PRUint32 aFlags,
                                  sbIPropertyArray* aPropertyFilter = nsnull);
-  void SweepListenerArray(sbIndexArray& aStopNotifying);
+  void SweepListenerArray(sbStopNotifyArray& aStopNotifying);
 
-  nsTArray<sbListenerInfoRefPtr> mListenerArray;
+  nsTArray<sbListenerInfoAutoPtr> mListenerArray; 
 
   PRLock* mListenerArrayLock;
 
