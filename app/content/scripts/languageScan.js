@@ -107,7 +107,7 @@ try
   }
   catch ( err )   
   {
-    alert( "language_scan.js\n\n" + err );
+    alert( "languageScan.js\n\n" + err );
   }
   
   }

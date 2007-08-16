@@ -50,7 +50,7 @@ var gMiniplayer = {
     // Note, most listeners are hardcoded in miniplayer.xul
 
     // Hook up the jumpto hotkey. Note that this function is
-    // defined in jumptofile.js
+    // defined in jumpToFile.js
     initJumpToFileHotkey();
     
     // Prevent window from being resized inappropriately

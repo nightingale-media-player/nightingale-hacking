@@ -44,7 +44,7 @@ var gHotkeysPane = {
   init: function ()
   {
     var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-    jsLoader.loadSubScript( "chrome://songbird/content/scripts/messagebox.js", this );
+    jsLoader.loadSubScript( "chrome://songbird/content/scripts/messageBox.js", this );
     
     document.defaultView.addEventListener("unload", onHotkeysUnload, true);
     
