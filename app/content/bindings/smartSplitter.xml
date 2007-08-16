@@ -134,8 +134,9 @@
             var metricsid = this.getAttribute("metricsid");
             var metricscategory = this.getAttribute("metricscategory");
             if (metricsid && metricscategory ) {
-              // if we changed our collapsed state - record it.
-              if (collapsed != SBDataGetBoolValue(root + "collapsed"))
+              // if we are now collapsed, and we were not collapsed before,
+              // increment the corresponding metrics key.
+              if (collapsed && !SBDataGetBoolValue(root + "collapsed"))
                 metrics_inc(metricscategory, metricsid, null);
             }
             
@@ -268,4 +269,6 @@
   </binding>
 
 </bindings>
+
+
 
