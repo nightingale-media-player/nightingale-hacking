@@ -1,0 +1,312 @@
+﻿<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<window
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="track_editor"
+ title="&trackeditor.title;"
+ hidechrome="true"
+ buttons="none"
+ onkeydown="handleKeyDown(event);"
+ onload="onLoadTrackEditor();"
+ onunload="onUnloadTrackEditor();"
+ windowtype="track_editor"
+ onfocus="onFocus()"
+ onblur="onBlur()"
+>
+  
+  <windowregion/>
+
+  <sb-sys-outer-frame id="trackeditor_frame" resizers="horiz" overflow="true" flex="1">
+    <sb-sys-dialog-titlebar/>
+    <menubar id="trackeditor_menu" hidden="false"  oncommand="onMenu(event.target)"/>
+    
+    <spacer height="3"/>
+    
+    <description>
+      &trackeditor.disclaimer;
+    </description>
+    
+    <spacer height="8"/>
+    
+    <hbox id="trackeditor.hflex">
+      <sb-trackeditor-drawer id="trackeditor.trackeditor" hflex="trackeditor.hflex" title="&trackeditor.trackdata;" flex="1" />
+    </hbox>
+    
+    <hbox id="exttrackeditor.hflex">
+      <sb-exttrackeditor-drawer id="trackeditor.exttrackeditor" hflex="exttrackeditor.hflex" title="&trackeditor.exttrackdata;" flex="1" 
+        exclude="http://songbirdnest.com/data/1.0#GUID;http://songbirdnest.com/data/1.0#contentURL;http://songbirdnest.com/data/1.0#trackName;http://songbirdnest.com/data/1.0#artistName;http://songbirdnest.com/data/1.0#albumName;http://songbirdnest.com/data/1.0#genre"/>
+    </hbox>
+<!--
+    <hbox id="tageditor.hflex">
+      <sb-tageditor-drawer id="trackeditor.tageditor" hflex="tageditor.hflex" title="&trackeditor.tags;" flex="1" />
+    </hbox>
+-->          
+    <spacer height="5"/>
+    <hbox>
+      <spacer flex="1"/>           
+      <button id="button_ok" label="&window.ok;"  oncommand="if ( doOK() ) onExit( );"/>
+      <spacer width="5"/>
+      <button id="button_undo" label="&window.undo;"  oncommand="doUndo();"/> 
+      <spacer width="5"/>
+      <button id="button_cancel" label="&window.cancel;"  oncommand="if ( doCancel() ) onExit( );"/> 
+    </hbox>
+  </sb-sys-outer-frame>
+
+  
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/songbirdInterfaces.js" />
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/windowUtils.js" />
+  
+  <script>
+
+  <![CDATA[
+
+  const VK_ESCAPE = 27;
+  const VK_ENTER = 13;
+  
+  var playlist = null;
+  
+  var dirty = {
+    value: false,
+    setDirty: function(val) {
+      this.value = val;
+      enableUndo();
+    },
+    isDirty: function() {
+      return this.value;
+    }
+  };
+  
+  var _focus = {
+    value: false,
+    setIsFocused : function(val) {
+      this.value = val;
+    },
+    isFocused: function() {
+      return this.value;
+    }
+  };
+  
+  function onLoadTrackEditor() {
+    var playlist = window.arguments[0];
+    var _trackeditor = document.getElementById("trackeditor.trackeditor");
+    _trackeditor.setPlaylist(playlist);
+    _trackeditor.setDirtyObject(dirty);
+    _trackeditor.setMainFocusObject(_focus);
+    var _exttrackeditor = document.getElementById("trackeditor.exttrackeditor");
+    _exttrackeditor.setPlaylist(playlist);
+    _exttrackeditor.setDirtyObject(dirty);
+    _exttrackeditor.setMainFocusObject(_focus);
+    //var _tageditor = document.getElementById("trackeditor.tageditor");
+    //_tageditor.setPlaylist(playlist);
+    //_tageditor.setDirtyObject(dirty);
+    //_tageditor.setMainFocusObject(_focus);
+    
+    disableUndo();
+    
+    if (playlist)
+    {
+      playlist.addEventListener("playlist-destroy", onDestroyPlaylist, false);
+    }
+
+    onWindowLoadPosition();
+    setTimeout('document.getElementById("trackeditor.trackeditor").openDrawer();', 0);
+    setTrackeditorMinMaxCallback();
+  }
+  
+  function onDestroyPlaylist() {
+    onExit();
+  }
+  
+  function onUnloadTrackEditor() {
+    if (playlist)
+    {
+      playlist.removeEventListener("playlist-destroy", onDestroyPlaylist, false);
+    }
+    
+    onWindowSavePosition();
+  }
+  
+  function enableUndo() {
+    document.getElementById("button_undo").removeAttribute("disabled");
+  }
+  
+  function disableUndo() {
+    document.getElementById("button_undo").setAttribute("disabled", "true");
+  }
+  
+  function doOK() {
+    //if (playlist) playlist.deselectAll();
+    var trackeditor = document.getElementById("trackeditor.trackeditor");
+    var exttrackeditor = document.getElementById("trackeditor.exttrackeditor");
+    //var tageditor = document.getElementById("trackeditor.tageditor");
+    var err = trackeditor.checkFormatErrors();
+    if (!err) err = exttrackeditor.checkFormatErrors();
+    //if (!err) err = tageditor.checkFormatErrors();
+    
+    // XXXlone> ugh :(
+    if (1) { //!err) {
+      try {
+        trackeditor.apply();
+        exttrackeditor.apply();
+        //tageditor.apply();
+      } catch (e) {
+      }
+    } else {
+        gPrompt.alert( window, 
+                      SBString( "trackeditor.formaterror.title", "Format Error" ),
+                      SBString( "trackeditor.formaterror.msg", "Error in format for property" ) + " " + err );
+        return false;
+    }
+    return true;
+  }
+
+  function doUndo() {
+    document.getElementById("trackeditor.trackeditor").undo();
+    document.getElementById("trackeditor.exttrackeditor").undo();
+    //document.getElementById("trackeditor.tageditor").undo();
+    dirty.setDirty(false);
+    disableUndo();
+  }
+  
+  function doCancel() {
+    return true;
+  }
+  
+  function handleKeyDown(event) 
+  {
+    switch (event.keyCode)
+    {
+      case VK_ESCAPE:
+        document.getElementById("button_cancel").doCommand();
+        break;
+      case VK_ENTER:
+        document.getElementById("button_ok").doCommand();
+        break;
+    }
+  }
+  
+  function onFocus() {
+    _focus.setIsFocused(true);
+  }
+
+  function onBlur() {
+    _focus.setIsFocused(false);
+  }
+
+  function setTrackeditorMinMaxCallback()
+  {
+    try {
+      var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+      if (windowMinMax) {
+        var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+        if (service)
+          service.setCallback(document, SBTrackeditorWindowMinMaxCB);
+      }
+    }
+    catch (err) {
+      // No component
+      dump("Error. trackeditor.xul:setMinMaxCallback() \n " + err + "\n");
+    }
+  }
+
+  var SBTrackeditorWindowMinMaxCB = 
+  {
+    // Shrink until the box doesn't match the window, then stop.
+    _minwidth: -1,
+    _cssminwidth: -1,
+    GetMinWidth: function()
+    {
+      if (this._cssminwidth == -1) {
+        this._cssminwidth = parseInt(getStyle(document.documentElement, "min-width"));
+      }
+      // If min size is not yet known and if the window size is different from the document's box object, 
+      if (this._minwidth == -1 && window.innerWidth != document.getElementById('trackeditor_frame').boxObject.width)
+      { 
+        // Then we know we've hit the minimum width, record it. Because you can't query it directly.
+        this._minwidth = document.getElementById('trackeditor_frame').boxObject.width + 1;
+      }
+      return Math.max(this._minwidth, this._cssminwidth);
+    },
+
+    GetMinHeight: function()
+    {
+      return -1;
+    },
+
+    GetMaxWidth: function()
+    {
+      return -1;
+    },
+
+    GetMaxHeight: function()
+    {
+      return -1;
+    },
+
+    OnWindowClose: function()
+    {
+      setTimeout(onExit, 0);
+    },
+
+    QueryInterface : function(aIID)
+    {
+      if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
+          !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+          !aIID.equals(Components.interfaces.nsISupports)) 
+      {
+        throw Components.results.NS_ERROR_NO_INTERFACE;
+      }
+      
+      return this;
+    }
+  }
+
+  function getStyle(el,styleProp)
+  {
+    var v;
+    if (el) {
+      var s = document.defaultView.getComputedStyle(el,null);
+      v = s.getPropertyValue(styleProp);
+    }
+    return v;
+  }
+  
+  ]]>
+  </script>
+
+</window>
