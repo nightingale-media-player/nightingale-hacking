@@ -2,7 +2,12 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird-dialogs/skin/firstrun.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
 <window
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -28,18 +33,27 @@
       <image class="firstrun-image" />
     </hbox>
     
-    <groupbox id="error_noupdate_vbox" width="&setup.groupbox.width;" class="error-box" hidden="true">
-      <description class="error-text">&setup.noupdate;</description>
+    <groupbox id="error_noupdate_vbox" width="&setup.groupbox.width;" hidden="true">
+      <hbox>
+        <vbox>
+          <image id="error_noupdate_image" />
+        </vbox>
+        <vbox flex="1" id="error_noupdate_text_box">
+          <description id="error_noupdate_header">&setup.noupdate.header;</description>
+          <description id="error_noupdate_text">&setup.noupdate.description;</description>
+          <label id="error_noupdate_link" class="text-link" value="&setup.noupdate.link_label;" href="&releaseNotesURL;" mousethrough="never"/>
+        </vbox>
+      </hbox>
     </groupbox>
       
     <groupbox width="&setup.groupbox.width;">
       <label value="&setup.defaultlanguage;" />
-	    <menulist id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
-	      <menupopup/>
-	    </menulist>
+      <menulist id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
+        <menupopup/>
+      </menulist>
     </groupbox>
       
-    <groupbox flex="1" minheight="&setup.flexbox.height;" width="&setup.groupbox.width;">
+    <groupbox flex="1" width="&setup.groupbox.width;">
       <label value="&setup.optionalextensions;" />
       <spacer id="extensions.replacedcontent.top" height="0"/>
       <vbox id="error_message" hidden="true">
