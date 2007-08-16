@@ -347,7 +347,7 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
     var chromeFeatures = "chrome,centerscreen,modal=yes,resizable=no";
     var accessibility = SB_NewDataRemote('accessibility.enabled', null).boolValue;
     chromeFeatures += (',titlebar='+accessibility?'yes':'no');
-    aParentWindow.openDialog('chrome://songbird/content/xul/editbookmark.xul',
+    aParentWindow.openDialog('chrome://songbird/content/xul/editBookmark.xul',
                  'edit_bookmark', chromeFeatures, aNode);
   }, false);
   aContextMenu.appendChild(item);

@@ -203,7 +203,7 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/asyncWebPlaylist.js" />
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/deviceTemp.js" />
+   src="chrome://songbird/content/scripts/deviceTEMP.js" />
 
   <!-- Firefox compatibility functions -->
   <script type="application/x-javascript"   
@@ -212,8 +212,6 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/searchHandler.js" />
 
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/playlist_xbl_temp.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/serviceTreeXBLTEMP.js" />
   <script type="application/x-javascript"   

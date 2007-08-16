@@ -223,7 +223,7 @@ Bundle.prototype = {
                             
     // TODO: do the install !
     this._installresult = "";
-    windowWatcherService.openWindow(aWindow, "chrome://songbird/content/xul/setup_progress.xul", "_blank", "chrome,dialog=yes,centerscreen,alwaysRaised,close=no,modal", this);
+    windowWatcherService.openWindow(aWindow, "chrome://songbird/content/xul/setupProgress.xul", "_blank", "chrome,dialog=yes,centerscreen,alwaysRaised,close=no,modal", this);
     return this._installresult;
   },
   

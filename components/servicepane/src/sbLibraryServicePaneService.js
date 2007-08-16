@@ -49,7 +49,7 @@ const URL_ICON_PLAYLIST = 'chrome://songbird/skin/icons/icon_playlist_16x16.png'
 const URL_ICON_LIBRARY = 'chrome://songbird/skin/icons/icon_lib_16x16.png';
 
 // TODO: Remove this
-const URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sb-library-page.xul?"
+const URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sbLibraryPage.xul?"
 
 const LSP='http://songbirdnest.com/rdf/library-servicepane#';
 
@@ -147,7 +147,7 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
         var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
                         .getService(Ci.nsIWindowWatcher);
         watcher.openWindow(null,
-                          "chrome://songbird/content/xul/smart_playlist.xul",
+                          "chrome://songbird/content/xul/smartPlaylist.xul",
                           "_blank",
                           "chrome,dialog=yes",
                           list);

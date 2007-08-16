@@ -59,7 +59,7 @@ var consoleListener = {
           var mainWindow = wMediator.getMostRecentWindow("Songbird:Main");
 
           wWatcher.openWindow(mainWindow,
-                    "chrome://songbird/content/xul/parsererror.xul",
+                    "chrome://songbird/content/xul/parserError.xul",
                     "_blank",
                     "chrome,modal=yes,centerscreen,resizable=no",
                     msg);

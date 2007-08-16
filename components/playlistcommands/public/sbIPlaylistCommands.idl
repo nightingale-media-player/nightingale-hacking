@@ -61,7 +61,7 @@ duplicate: function() {
 },
 * \endcode
 * 
-* \sa playlist.xml, sb-library-page.xul
+* \sa playlist.xml, sbLibraryPage.xul
 */
 [scriptable, uuid(fdb73942-56e8-406e-a587-e7e1715d921f)]
 interface sbIPlaylistCommands : nsISupports 
