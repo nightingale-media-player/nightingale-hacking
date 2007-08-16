@@ -836,7 +836,7 @@
         <body>
           <![CDATA[
             // optional connection
-            if (window.gBrowser) gBrowser.loadURI("chrome://songbird/content/xul/sb-library-page.xul?library" );
+            if (window.gBrowser) gBrowser.loadURI("chrome://songbird/content/xul/sbLibraryPage.xul?library" );
           ]]>
         </body>
       </method>
@@ -1642,7 +1642,7 @@
             gBrowser.selectedTab = tab;
           } else {
             var mediaList = gPPS.playingView.mediaList;
-            gBrowser.loadURI("chrome://songbird/content/xul/sb-library-page.xul?" +
+            gBrowser.loadURI("chrome://songbird/content/xul/sbLibraryPage.xul?" +
                              'library,' + mediaList.library.guid, 
                              null, null, null, null,
                              gPPS.playingView);

@@ -139,7 +139,7 @@
         <![CDATA[
           var new_tag_data = new Object();
           // Open the modal dialog
-          var retval = SBOpenModalDialog( "chrome://songbird/content/xul/add_tag.xul", "add_tag", "chrome,centerscreen", new_tag_data ); 
+          var retval = SBOpenModalDialog( "chrome://songbird/content/xul/addTag.xul", "add_tag", "chrome,centerscreen", new_tag_data ); 
           if ( new_tag_data.retval == "ok" )
           {
             var tagname = new_tag_data.tagname;

@@ -78,7 +78,7 @@
     <method name="createDrawerContent">
      <body>
        var ret = document.createElement("iframe");
-       ret.setAttribute("src", "chrome://songbird/content/xul/trackeditor_form.xul");
+       ret.setAttribute("src", "chrome://songbird/content/xul/trackEditorForm.xul");
        return ret;
      </body>
     </method>

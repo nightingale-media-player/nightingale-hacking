@@ -283,7 +283,7 @@
         <parameter name="aMediaListView"/>
         <body>
           <![CDATA[
-            var uri = 'chrome://songbird/content/xul/sb-library-page.xul?';
+            var uri = 'chrome://songbird/content/xul/sbLibraryPage.xul?';
             if (aMediaList.guid != aMediaList.library.guid) {
               uri = uri + aMediaList.guid;
             } else {
@@ -1876,7 +1876,7 @@
             if (theTE) {
               theTE.focus();
             } else {
-              const TEURL = "chrome://songbird/content/xul/trackeditor.xul";
+              const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
               const TEFEATURES = "chrome,dialog=no,resizable=no";
               SBOpenWindow(TEURL, "track_editor", TEFEATURES, playlist); 
             }
