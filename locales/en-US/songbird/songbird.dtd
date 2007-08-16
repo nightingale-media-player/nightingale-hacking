@@ -196,9 +196,12 @@
 <!ENTITY setup.defaultlanguage    "Default Language">
 <!ENTITY setup.privacy            "Privacy">
 <!ENTITY setupprogress.pleasewait "Please wait..." >
-<!ENTITY setup.noupdate "We're sorry, but Songbird is unable to update your old library to the new database format.  Please reimport your media.">
+
+<!ENTITY setup.noupdate.header "This version of Songbird is not compatible with your existing media library.">
+<!ENTITY setup.noupdate.description "Songbird has created a new, empty media library.  Your existing library has not been deleted, but it cannot be imported into or used by this version of Songbird.">
+<!ENTITY setup.noupdate.link_label "Details">
+
 <!ENTITY setup.groupbox.width "386">
-<!ENTITY setup.flexbox.height "110">
 
 <!ENTITY menu.file.accesskey          "F" >
 <!ENTITY menu.file.new.accesskey      "N" >

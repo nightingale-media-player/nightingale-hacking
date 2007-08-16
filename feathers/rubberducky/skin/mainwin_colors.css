@@ -735,7 +735,8 @@ PREFERENCES
 
 label.addonName,
 label.addonVersion,
-label.descriptionWrap
+label.descriptionWrap,
+#error_noupdate_header
 {
   color: #feffff !important; 
 }

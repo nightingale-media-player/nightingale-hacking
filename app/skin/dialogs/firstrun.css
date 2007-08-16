@@ -42,7 +42,28 @@ Additional styles imported directly by the first run dialog.
 
 .firstrun-image
 {
-	margin-top:5px;
-	list-style-image: url(chrome://songbird-branding/skin/firstrun.png);
+  margin-top:5px;
+  list-style-image: url(chrome://songbird-branding/skin/firstrun.png);
 }
 
+#error_noupdate_image
+{
+  padding: 5px;
+  list-style-image: url(chrome://songbird/skin/icons/info.png);
+}
+
+#error_noupdate_text_box
+{
+  padding: 5px;
+}
+
+#error_noupdate_header 
+{ 
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+#error_noupdate_link 
+{
+  text-align: right;
+}

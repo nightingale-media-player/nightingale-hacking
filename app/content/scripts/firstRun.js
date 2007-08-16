@@ -117,8 +117,8 @@ function initFirstRun()
     }
     
     // If there's an old library file and we haven't shown the error, yet, show it.
-    if (oldLibrary) {
-      document.getElementById("error_noupdate_vbox").removeAttribute("hidden");      
+    if ( oldLibrary) {
+      showUpdateMessage();    
     }
   } catch ( err ) {
     SB_LOG("initFirstRun - library error box", "" + err );
@@ -285,7 +285,10 @@ function openExtensionsList()
     hidePleaseWait();
     hideErrorMessage();
 
-    extlist.openDrawer(false, replacedheight);
+    // Make the drawer open immediately instead of animating.
+    // This is so that the drawer doesn't interfere with 
+    // showing/hiding other elements in the window.
+    extlist.openDrawer(true, replacedheight);
   }
 }
 
@@ -509,6 +512,7 @@ function isLanguageInstalled(locale) {
 function showErrorMessage() 
 {
   document.getElementById("error_message").removeAttribute("hidden");
+  fixWindowHeight();
 }
 
 function hideErrorMessage()
@@ -526,3 +530,11 @@ function hidePleaseWait()
   document.getElementById("please_wait").setAttribute("hidden", "true");
 }
 
+function showUpdateMessage() {
+  document.getElementById("error_noupdate_vbox").removeAttribute("hidden");
+  fixWindowHeight();
+}
+
+function fixWindowHeight() {
+  setTimeout(function() { window.sizeToContent(); }, 100); 
+}
