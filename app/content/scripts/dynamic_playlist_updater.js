@@ -24,7 +24,7 @@
 //
  */
 
-alert("XXXX - migrate 'dynamic_playlist_updater.js' to new API");
+alert("XXXX - migrate 'dynamicPlaylistUpdater.js' to new API");
 return;     
  
 const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
