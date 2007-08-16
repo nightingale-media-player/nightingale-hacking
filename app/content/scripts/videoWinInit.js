@@ -391,10 +391,3 @@ function SBMediaCoreCheck() {
   return;
 }
 
-// Force instantation of the public playlist commands, these get exposed
-// to the world and can be requested by using the PlaylistCommandsManager.
-// The module automatically shuts down when the application quits.
-const PublicPlaylistCommands = new Components.
-  Constructor("@songbirdnest.com/Songbird/PublicPlaylistCommands;1", 
-              "nsISupports");
-var SBPublicCommands = new PublicPlaylistCommands();

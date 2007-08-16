@@ -68,7 +68,10 @@ function PublicPlaylistCommands() {
   this.m_mgr = Components.
     classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
     .getService(Components.interfaces.sbIPlaylistCommandsManager);
-  this.initCommands();
+
+  var obs = Components.classes["@mozilla.org/observer-service;1"]
+                      .getService(Components.interfaces.nsIObserverService);
+  obs.addObserver(this, "final-ui-startup", false);
 }
 
 PublicPlaylistCommands.prototype.constructor = PublicPlaylistCommands;
@@ -121,6 +124,7 @@ PublicPlaylistCommands.prototype = {
 
     var obs = Components.classes["@mozilla.org/observer-service;1"]
                         .getService(Components.interfaces.nsIObserverService);
+    obs.removeObserver(this, "final-ui-startup");
     obs.addObserver(this, "quit-application", false);
 
     // --------------------------------------------------------------------------
@@ -573,7 +577,7 @@ PublicPlaylistCommands.prototype = {
     this.m_defaultCommands.appendPlaylistCommands(null, 
                                                   "library_cmdobj_device",
                                                   this.m_cmd_CopyToDevice);
-    
+
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
 
     // --------------------------------------------------------------------------
@@ -737,11 +741,20 @@ PublicPlaylistCommands.prototype = {
                                           "smart",
                                           this.m_serviceTreeDefaultCommands);
 
+    g_dataRemoteService = null;
+
+    var obs = Components.classes["@mozilla.org/observer-service;1"]
+                        .getService(Components.interfaces.nsIObserverService);
+
+    obs.removeObserver(this, "quit-application");
   },
   
   // nsIObserver
   observe: function(aSubject, aTopic, aData) {
     switch (aTopic) {
+      case "final-ui-startup":
+        this.initCommands();
+        break;
       case "quit-application":
         this.shutdownCommands();
         break;
@@ -1096,10 +1109,6 @@ function onBrowserTransfer(mediaItems, parentWindow)
             var downloadCategory = 'Songbird Download Device';
             if (deviceManager.hasDeviceForCategory(downloadCategory))
             {
-                 var dataRemote = new Components.
-                   Constructor( "@songbirdnest.com/Songbird/DataRemote;1", 
-                                Ci.sbIDataRemote, 
-                                "init");
                  var downloadDevice =
                   deviceManager.getDeviceByCategory(downloadCategory);
                 
@@ -1175,6 +1184,17 @@ function getDownloadDevice() {
   return null;
 }
 
+var g_dataRemoteService = null;
+function dataRemote(aKey, aRoot) {
+  if (!g_dataRemoteService) {
+    g_dataRemoteService = new Components.
+      Constructor( "@songbirdnest.com/Songbird/DataRemote;1", 
+                  Ci.sbIDataRemote, 
+                  "init");
+  }
+  return g_dataRemoteService(aKey, aRoot);
+}
+
 function LOG(str) {
   var consoleService = Components.classes['@mozilla.org/consoleservice;1']
                           .getService(Components.interfaces.nsIConsoleService);
@@ -1183,6 +1203,15 @@ function LOG(str) {
 };
 
 function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([PublicPlaylistCommands]);
+  return XPCOMUtils.generateModule([PublicPlaylistCommands],
+  function(aCompMgr, aFileSpec, aLocation) {
+    XPCOMUtils.categoryManager.addCategoryEntry(
+      "app-startup",
+      PublicPlaylistCommands.prototype.classDescription,
+      "service," + PublicPlaylistCommands.prototype.contractID,
+      true,
+      true);
+  });
 }
+
 
