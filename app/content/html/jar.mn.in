@@ -5,13 +5,7 @@ songbird.jar:
 % content  songbird  jar:songbird.jar!/content/songbird/
 #endif
   content/songbird/html/about.html          (about.html)
-  content/songbird/html/cannot_load.html    (cannot_load.html)
+  content/songbird/html/cannotLoad.html     (cannotLoad.html)
   content/songbird/html/eula.html           (eula.html)
-  content/songbird/html/flash.html          (flash.html)
-  content/songbird/html/flashcore.swd				(flashcore.swd)
-  content/songbird/html/flashcore.swf				(flashcore.swf)
-  content/songbird/html/mplayer.html				(mplayer.html)
-  content/songbird/html/not_connected.html  (not_connected.html)
-  content/songbird/html/qt.html             (qt.html)
-  content/songbird/html/wm.html							(wm.html)
-
+  content/songbird/html/notConnected.html   (notConnected.html)
+  
