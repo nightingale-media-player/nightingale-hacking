@@ -330,7 +330,7 @@ function plCmd_ShowDownloadPlaylist_TriggerCallback(aContext, aSubMenuId, aComma
   var browser = aContext.m_Window.gBrowser;
   if (browser) {
     if (aContext.m_Window.location.pathname ==
-        '/content/xul/sb-library-page.xul') {
+        '/content/xul/sbLibraryPage.xul') {
       // we're in the web library / inner playlist view
       browser.loadMediaList(browser.downloadList);
     } else {
@@ -345,7 +345,7 @@ function plCmd_ShowWebPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandId,
   var browser = aContext.m_Window.gBrowser;
   if (browser) {
     if (aContext.m_Window.location.pathname ==
-        '/content/xul/sb-library-page.xul') {
+        '/content/xul/sbLibraryPage.xul') {
       // we're in the download library / inner playlist view
       browser.loadMediaList(browser.webLibrary);
     } else {

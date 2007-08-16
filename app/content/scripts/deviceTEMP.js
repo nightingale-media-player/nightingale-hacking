@@ -860,7 +860,7 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
   }
   else
   {
-    gBrowser.loadURI( "chrome://songbird/content/xul/sb-library-page.xul?" + table + "," + guid);
+    gBrowser.loadURI( "chrome://songbird/content/xul/sbLibraryPage.xul?" + table + "," + guid);
   }
 }
 

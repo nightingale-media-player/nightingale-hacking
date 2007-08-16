@@ -549,7 +549,7 @@ const gSearchHandler = {
       var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                                      .getService(Components.interfaces.sbILibraryManager);
       // TODO make a const or helper function?
-      var url = "chrome://songbird/content/xul/sb-library-page.xul?library," +
+      var url = "chrome://songbird/content/xul/sbLibraryPage.xul?library," +
                 libraryManager.mainLibrary.guid + 
                 "&search=" + 
                 escape(query);

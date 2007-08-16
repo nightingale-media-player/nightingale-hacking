@@ -334,7 +334,7 @@ function doFirstRun()
       data.document = document;
 
       // This cannot be modal it will block the download of extensions
-      window.openDialog( "chrome://songbird/content/xul/firstrun.xul",
+      window.openDialog( "chrome://songbird/content/xul/firstRun.xul",
                          "firstrun", 
                          "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
                          data );

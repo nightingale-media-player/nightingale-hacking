@@ -31,7 +31,7 @@
 try
 {
   // TODO: Remove this
-  var URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sb-library-page.xul?"
+  var URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sbLibraryPage.xul?"
 
   function SBFileOpen( )
   {
@@ -109,7 +109,7 @@ try
     url_open_data.URL = URL.stringValue;
     url_open_data.retval = "";
     // Open the modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/open_url.xul", "open_url", "chrome,centerscreen", url_open_data, parentWindow ); 
+    SBOpenModalDialog( "chrome://songbird/content/xul/openURL.xul", "open_url", "chrome,centerscreen", url_open_data, parentWindow ); 
     if ( url_open_data.retval == "ok" )
     {
       var library = SBGetWebLibrary();
@@ -325,7 +325,7 @@ function SBSetDownloadFolder(parentWindow)
 
 function SBWatchFolders( parentWindow )
 {
-  SBOpenModalDialog( "chrome://songbird/content/xul/watch_folders.xul", "", "chrome,centerscreen", null, parentWindow ); 
+  SBOpenModalDialog( "chrome://songbird/content/xul/watchFolders.xul", "", "chrome,centerscreen", null, parentWindow ); 
 }
 
 var theFileScanIsOpen = SB_NewDataRemote( "media_scan.open", null );
@@ -360,7 +360,7 @@ function SBScanMedia( parentWindow )
     media_scan_data.URL = fp.file.path;
     media_scan_data.retval = "";
     // Open the modal dialog
-    SBOpenWindow( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
+    SBOpenWindow( "chrome://songbird/content/xul/mediaScan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
   }
   theFileScanIsOpen.boolValue = false;
 }
@@ -456,7 +456,7 @@ function SBKoshiOpen( parentWindow )
   var koshi_data = new Object();
   koshi_data.retval = "";
   // Open the window
-  SBOpenModalDialog( "chrome://songbird/content/xul/koshi_test.xul", "", "chrome,centerscreen", koshi_data, parentWindow ); 
+  SBOpenModalDialog( "chrome://songbird/content/xul/koshiTest.xul", "", "chrome,centerscreen", koshi_data, parentWindow ); 
 }
 
 function SBExtensionsManagerOpen( parentWindow )
@@ -485,7 +485,7 @@ function SBTrackEditorOpen( parentWindow )
   if (theTE) {
     theTE.focus();
   } else {
-    const TEURL = "chrome://songbird/content/xul/trackeditor.xul";
+    const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
     const TEFEATURES = "chrome,dialog=no,resizable=no";
     SBOpenWindow(TEURL, "track_editor", TEFEATURES, gBrowser.currentPlaylist, parentWindow); 
   }
