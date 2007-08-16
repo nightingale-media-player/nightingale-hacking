@@ -165,7 +165,7 @@ try
     },
 
     initCommands: function(aHost) {},
-    shutdownCommands: function() {},
+    shutdownCommands: function() { this.m_Context = null; },
     
     setContext: function( context )
     {
@@ -443,7 +443,7 @@ try
     playlist.bind(jumpto_view, SBEmptyPlaylistCommands);
     
     if (search) source_search = search; else source_search = "";
-    if (filters.length) source_filters = filters; else filters = [];
+    if (filters.length) source_filters = filters; else source_filters = [];
     var textbox = document.getElementById("jumpto.textbox");
     if (!nofocus) {
       window.focus();

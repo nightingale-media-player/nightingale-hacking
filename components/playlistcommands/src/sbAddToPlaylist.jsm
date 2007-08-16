@@ -23,7 +23,6 @@
 // END SONGBIRD GPL
 //
  */
-Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
 
 const ADDTOPLAYLIST_MENU_TYPE      = "submenu";
 const ADDTOPLAYLIST_MENU_ID        = "library_cmd_addtoplaylist";
@@ -36,6 +35,9 @@ const ADDTOPLAYLIST_MENU_MODIFIERS = "&command.shortcut.modifiers.addtoplaylist"
 
 const ADDTOPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist:";
 const ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist_createnew";
+
+EXPORTED_SYMBOLS = [ "addToPlaylistHelper", 
+                     "SBPlaylistCommand_AddToPlaylist" ]; 
 
 // ----------------------------------------------------------------------------
 // The "Add to playlist" dynamic command object
@@ -249,6 +251,7 @@ var SBPlaylistCommand_AddToPlaylist =
     }
     this.m_addToPlaylist.shutdown(); 
     this.m_addToPlaylist = null;
+    this.m_Context = null;
   },
   
   setContext: function( context )
@@ -291,6 +294,7 @@ addToPlaylistHelper.prototype = {
   m_listofplaylists: null,
   m_commands: null,
   m_reglist: null,
+  m_libraryManager: null,
 
   LOG: function(str) {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
@@ -298,18 +302,17 @@ addToPlaylistHelper.prototype = {
     consoleService.logStringMessage(str);
   },
   init: function(aCommands) {
-    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                        .getService(Components.interfaces.sbILibraryManager);
-    libraryManager.addListener(this);
+    this.m_libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                            .getService(Components.interfaces.sbILibraryManager);
+    this.m_libraryManager.addListener(this);
     this.m_commands = aCommands;
     this.makeListOfPlaylists();
   },
 
   shutdown: function() {
-    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                        .getService(Components.interfaces.sbILibraryManager);
-    libraryManager.removeListener(this);
+    this.m_libraryManager.removeListener(this);
     this.removeLibraryListeners();
+    this.m_libraryManager = null;
   },
   
   removeLibraryListeners: function() {
@@ -338,10 +341,7 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_Keycodes = new Array();
     this.m_listofplaylists.m_PlaylistCommands = new Array();
     
-    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                        .getService(Components.interfaces.sbILibraryManager);
-    
-    var libs = libraryManager.getLibraries();
+    var libs = this.m_libraryManager.getLibraries();
     while (libs.hasMoreElements()) {
       var library = libs.getNext();
       library.addListener(this, false);
@@ -468,10 +468,7 @@ addToPlaylistHelper.prototype = {
   },
   
   addToPlaylist: function(libraryguid, playlistguid, sourceplaylist) {
-    var libraryManager =
-      Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                .getService(Components.interfaces.sbILibraryManager);
-    var library = libraryManager.getLibrary(libraryguid);
+    var library = this.m_libraryManager.getLibrary(libraryguid);
     var medialist;
     if (libraryguid == playlistguid) medialist = library;
     else medialist = library.getMediaItem(playlistguid);
@@ -508,7 +505,7 @@ addToPlaylistHelper.prototype = {
   },
   
   //-----------------------------------------------------------------------------
-  _batch         : new BatchHelper(),
+  _inbatch       : false,
   _deferredevent : false,
   
   refreshCommands: function() {
@@ -522,7 +519,7 @@ addToPlaylistHelper.prototype = {
 
   onUpdateEvent: function(item) {
     if (item instanceof Components.interfaces.sbIMediaList) {
-      if (this._batch.isActive()) {
+      if (this._inbatch) {
         // if we are in a batch, remember that we saw a playlist event in it
         this._deferredevent = true;
       } else {
@@ -542,7 +539,7 @@ addToPlaylistHelper.prototype = {
 
   onItemAdded: function onItemAdded(list, item) {
     // If we are in a batch, ignore future notifications
-    if (this._batch.isActive()) {
+    if (this._inbatch) {
       return true;
     }
     this.onUpdateEvent(item);
@@ -553,7 +550,7 @@ addToPlaylistHelper.prototype = {
   
   onAfterItemRemoved: function onAfterItemRemoved(list, item) {
     // If we are in a batch, ignore future notifications
-    if (this._batch.isActive()) {
+    if (this._inbatch) {
       return true;
     }
     this.onUpdateEvent(item);
@@ -561,7 +558,7 @@ addToPlaylistHelper.prototype = {
   
   onItemUpdated: function onItemUpdated(list, item, properties) {
     // If we are in a batch, ignore future notifications
-    if (this._batch.isActive()) {
+    if (this._inbatch) {
       return true;
     }
     this.onUpdateEvent(item);
@@ -569,7 +566,7 @@ addToPlaylistHelper.prototype = {
 
   onListCleared: function onListCleared(list) {
     // If we are in a batch, ignore future notifications
-    if (this._batch.isActive()) {
+    if (this._inbatch) {
       return true;
     }
     this.onUpdateEvent(list);
@@ -577,15 +574,15 @@ addToPlaylistHelper.prototype = {
 
   onBatchBegin: function onBatchBegin(list) {
     // start deferring the events
-    this._batch.begin();
+    this._inbatch = true;
     this._deferredevent = false;
   },
   
   onBatchEnd: function onBatchEnd(list) {
     // stop deferring the events
-    this._batch.end();
+    this._inbatch = false;
     // if an event was deferred, handle it
-    if (!this._batch.isActive() && this._deferredevent) {
+    if (this._deferredevent) {
       // since we're no longer in a batch, this does call refreshCommands
       this.onUpdateEvent(list); 
     }

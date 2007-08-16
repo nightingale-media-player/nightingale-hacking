@@ -199,8 +199,6 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/windowUtils.js" />
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/kPlaylistCommands.js" />
-  <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/asyncWebPlaylist.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/deviceTEMP.js" />

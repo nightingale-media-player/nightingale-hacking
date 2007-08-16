@@ -345,9 +345,6 @@ interface sbIPlaylistCommands : nsISupports
   * before removing it from its internal lists.
   */
   void shutdownCommands( );
-
-  void setProperty(in AString aPropertyName, in AString aPropertyValue);
-  AString getProperty(in AString aPropertyName);
 };
 
 /**
@@ -371,6 +368,11 @@ interface sbIPlaylistCommandsContext : nsISupports
   * \brief The outer window containing the playlist against which the commands are acting.
   */
   readonly attribute nsIDOMWindow window;   
+
+  /**
+  * \brief The commands object itself.
+  */
+  readonly attribute sbIPlaylistCommands commands;   
 };
 
 /**

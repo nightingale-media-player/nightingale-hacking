@@ -25,6 +25,13 @@
 //
  */
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
+const SONGBIRD_PLAYLISTCOMMANDSBUILDER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistCommandsBuilder;1";
+const SONGBIRD_PLAYLISTCOMMANDSBUILDER_CLASSNAME = "Songbird Playlist Commands Builder";
+const SONGBIRD_PLAYLISTCOMMANDSBUILDER_CID = Components.ID("{18c4b63c-d5b4-4aa2-918f-a31304d254ec}");
+const SONGBIRD_PLAYLISTCOMMANDSBUILDER_IID = Components.interfaces.sbIPlaylistCommandsBuilder;
+
 const SONGBIRD_PLAYLISTCOMMANDS_TYPE_ACTION     = "action";
 const SONGBIRD_PLAYLISTCOMMANDS_TYPE_SEPARATOR  = "separator";
 const SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU       = "submenu";
@@ -42,7 +49,7 @@ const SONGBIRD_PLAYLISTCOMMANDSBUILDER_AFTER  = 2;
 // ----------------------------------------------------------------------------  
 
 function PlaylistCommandsBuilder() {
-  this.m_Context.m_Commands = this;
+  this.m_Context.commands = this;
   this.m_root_commands = new Array();
   this.m_menus = new Array();
   var menuitem = {  m_Id      : null,
@@ -58,17 +65,25 @@ PlaylistCommandsBuilder.prototype.constructor = PlaylistCommandsBuilder;
 // ----------------------------------------------------------------------------  
 
 PlaylistCommandsBuilder.prototype = {
+  classDescription: SONGBIRD_PLAYLISTCOMMANDSBUILDER_CLASSNAME,
+  classID:          SONGBIRD_PLAYLISTCOMMANDSBUILDER_CID,
+  contractID:       SONGBIRD_PLAYLISTCOMMANDSBUILDER_CONTRACTID,
 
-  m_Context: {
-    m_Playlist  : null,
-    m_Window    : null,
-    m_Commands  : null
+  m_Context : {
+    medialist       : null,
+    playlist        : null,
+    window          : null,
+    commands        : null,
+    QueryInterface  : function(iid) {
+      if (iid.equals(Components.interfaces.sbIPlaylistCommandsContext) || 
+          iid.equals(Components.interfaces.nsISupports))
+        return this;
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
   },
   
   m_menus             : null,
   m_root_commands     : null,
-  m_public_props       : {},
-  
 
 /**
  * ----------------------------------------------------------------------------
@@ -240,7 +255,7 @@ PlaylistCommandsBuilder.prototype = {
     var props = { m_Name            : aLabel,
                   m_Tooltip         : aTooltipText,
                   m_TriggerCallback : aTriggerCallback,
-                  m_Value           : aValueCallback    };
+                  m_ValueCallback   : aValueCallback    };
                        
     return this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_APPEND,
                                null,
@@ -262,7 +277,7 @@ PlaylistCommandsBuilder.prototype = {
     var props = { m_Name            : aLabel,
                   m_Tooltip         : aTooltipText,
                   m_TriggerCallback : aTriggerCallback,
-                  m_Value           : aValueCallback    };
+                  m_ValueCallback   : aValueCallback    };
 
     return this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_BEFORE,
                                aBeforeId,
@@ -283,7 +298,7 @@ PlaylistCommandsBuilder.prototype = {
     var props = { m_Name            : aLabel,
                   m_Tooltip         : aTooltipText,
                   m_TriggerCallback : aTriggerCallback,
-                  m_Value           : aValueCallback    };
+                  m_ValueCallback   : aValueCallback    };
 
     return this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_AFTER,
                                aAfterId,
@@ -307,7 +322,7 @@ PlaylistCommandsBuilder.prototype = {
     var props = { m_Name            : aLabel,
                   m_Tooltip         : aTooltipText,
                   m_TriggerCallback : aTriggerCallback,
-                  m_Value           : aValueCallback    };
+                  m_ValueCallback   : aValueCallback    };
 
     return this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_APPEND,
                                null,
@@ -328,7 +343,7 @@ PlaylistCommandsBuilder.prototype = {
     var props = { m_Name            : aLabel,
                   m_Tooltip         : aTooltipText,
                   m_TriggerCallback : aTriggerCallback,
-                  m_Value           : aValueCallback    };
+                  m_ValueCallback   : aValueCallback    };
                        
     return this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_BEFORE,
                                aBeforeId,
@@ -349,7 +364,7 @@ PlaylistCommandsBuilder.prototype = {
     var props = { m_Name            : aLabel,
                   m_Tooltip         : aTooltipText,
                   m_TriggerCallback : aTriggerCallback,
-                  m_Value           : aValueCallback    };
+                  m_ValueCallback   : aValueCallback    };
 
     return this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_AFTER,
                                aAfterId,
@@ -583,15 +598,6 @@ PlaylistCommandsBuilder.prototype = {
     return this._setCommandProperties(aParentSubMenuId, aCommandId, props);
   },                             
 
-  setCommandValueCallback: function(aParentSubMenuId, 
-                                    aCommandId, 
-                                    aValueCallback)
-  {
-    var props = { m_ValueCallback : aValueCallback };
-
-    return this._setCommandProperties(aParentSubMenuId, aCommandId, props);
-  },                             
-
   setCommandEnabledCallback: function(aParentSubMenuId, 
                                       aCommandId, 
                                       aEnabledCallback)
@@ -626,6 +632,7 @@ PlaylistCommandsBuilder.prototype = {
     for (var i=0;i<this.m_root_commands.length;i++) {
       this._removeCommandTree(this.m_root_commands, i);
     }
+    return true;
   },
 
 
@@ -811,7 +818,6 @@ PlaylistCommandsBuilder.prototype = {
                                 aIndex, 
                                 aHost, 
                                 aProperty, 
-                                aIsCallback, 
                                 aDefault)
   {
     try {
@@ -820,35 +826,39 @@ PlaylistCommandsBuilder.prototype = {
       if (aIndex >= menu.length) return aDefault;
       var prop = menu[aIndex][aProperty];
       if (prop === undefined) return aDefault;
-      if (aIsCallback) {
-        if (typeof(prop) == "function") return prop(this.m_Context,
-                                                    aSubMenuId, 
-                                                    menu[aIndex].m_Id, 
-                                                    aHost, 
-                                                    aProperty.substr(2));
-        return eval(prop);
+      if (typeof(prop) == "object" && prop.handleCallback) {
+        return prop.handleCallback(this.m_Context,
+                                   aSubMenuId, 
+                                   menu[aIndex].m_Id, 
+                                   aHost, 
+                                   aProperty.substr(2));
       }
       return prop;
     } catch (e) {
-      alert("_getCommandProperty(" + aSubMenuId + ", " + aIndex + ", " + aHost +
+      this.LOG("_getCommandProperty(" + aSubMenuId + ", " + aIndex + ", " + aHost +
             ", " + aProperty + ", " + aDefault + ") - " + e);
     }
     return aDefault;
   },
   
-  _getMenuProperty: function(aMenu, aHost, aProperty, aIsCallback, aDefault)
+  _getMenuProperty: function(aMenu, aHost, aProperty, aDefault)
   {
-    var prop = aMenu[aProperty];
-    if (prop === undefined) return aDefault;
-    if (aIsCallback) {
-      if (typeof(prop) == "function") return prop(this.m_Context,
-                                                  aMenu.m_ParentMenu,
-                                                  aMenu.m_Id,
-                                                  aHost, 
-                                                  aProperty.substr(2));
-      return eval(prop);
+    try {
+      var prop = aMenu[aProperty];
+      if (prop === undefined) return aDefault;
+      if (typeof(prop) == "object" && prop.handleCallback) {
+        return prop.handleCallback(this.m_Context,
+                                  aMenu.m_ParentMenu,
+                                  aMenu.m_Id,
+                                  aHost, 
+                                  aProperty.substr(2));
+      }
+      return prop;
+    } catch (e) {
+      this.LOG("_getMenuProperty(" + aMenu.m_Id + ", " + aHost +
+            ", " + aProperty + ", " + aDefault + ") - " + e);
     }
-    return prop;
+    return aDefault;
   },
 
   _setCommandProperties: function(aSubMenuId, aCommandId, aPropArray)
@@ -861,16 +871,6 @@ PlaylistCommandsBuilder.prototype = {
       menu[index][i] = aPropArray[i];
     }
     return 1;
-  },
-
-  setProperty: function(aProperty, aValue)
-  {
-    this.m_public_props[aProperty] = aValue;
-  },
-
-  getProperty: function(aProperty, aValue)
-  {
-    return this.m_public_props[aProperty];
   },
 
 /**
@@ -892,7 +892,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_Id", 
-                                    false, 
                                     "");
   },
   
@@ -902,7 +901,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_Type", 
-                                    false, 
                                     "");
   },
 
@@ -912,7 +910,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_Name", 
-                                    false, 
                                     "");
   },
 
@@ -922,7 +919,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_Flex", 
-                                    false, 
                                     false);
   },
 
@@ -932,7 +928,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_Tooltip", 
-                                    false, 
                                     "");
   },
 
@@ -942,7 +937,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_ValueCallback", 
-                                    true, 
                                     "");
   },
 
@@ -952,10 +946,10 @@ PlaylistCommandsBuilder.prototype = {
     if (!menu) return null;
     if (aIndex >= menu.length) return null;
     var cb = menu[aIndex].m_InstantiationCallback;
-    if (cb) return cb(this.m_Context,
-                      menu[aIndex].m_ParentMenu,
-                      menu[aIndex].m_Id,
-                      aHost);
+    if (cb) return cb.handleCallback(this.m_Context,
+                                     menu[aIndex].m_ParentMenu,
+                                     menu[aIndex].m_Id,
+                                     aHost);
     return null;
   },
 
@@ -965,10 +959,10 @@ PlaylistCommandsBuilder.prototype = {
     if (!menu) return;
     if (aIndex >= menu.length) return;
     var cb = menu[aIndex].m_RefreshCallback;
-    if (cb) return cb(this.m_Context,
-                      menu[aIndex].m_ParentMenu,
-                      menu[aIndex].m_Id,
-                      aHost);
+    if (cb) cb.handleCallback(this.m_Context,
+                              menu[aIndex].m_ParentMenu,
+                              menu[aIndex].m_Id,
+                              aHost);
   },
 
   getCommandVisible: function( aSubMenuId, aIndex, aHost )
@@ -977,7 +971,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_VisibleCallback", 
-                                    true, 
                                     true);
   },
 
@@ -987,7 +980,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_ValueCallback", 
-                                    true, 
                                     false);
   },
 
@@ -1005,7 +997,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_EnabledCallback", 
-                                    true,
                                     true);
   },
 
@@ -1015,7 +1006,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_ShortcutModifiers", 
-                                    false, 
                                     "");
   },
 
@@ -1025,7 +1015,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_ShortcutKey", 
-                                    false, 
                                     "");
   },
 
@@ -1035,7 +1024,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_ShortcutKeycode", 
-                                    false, 
                                     "");
   },
 
@@ -1045,7 +1033,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_ShortcutIsLocal", 
-                                    false, 
                                     "");
   },
 
@@ -1055,7 +1042,6 @@ PlaylistCommandsBuilder.prototype = {
                                     aIndex, 
                                     aHost, 
                                     "m_CommandSubObject", 
-                                    false, 
                                     null);
   },
 
@@ -1076,15 +1062,13 @@ PlaylistCommandsBuilder.prototype = {
         this.LOG("No callback defined for command " + id);
         return;
       }
-      if (typeof(cb) == "function") return cb(this.m_Context,
-                                              aSubMenuId, 
-                                              menu[aIndex].m_Id, 
-                                              aHost, 
-                                              value,
-                                              menu[aIndex]);
-      return eval(prop);
+      if (cb.handleCallback) cb.handleCallback(this.m_Context,
+                                               aSubMenuId, 
+                                               menu[aIndex].m_Id, 
+                                               aHost, 
+                                               value);
     }
-    return 0;
+    return;
   },
   
   duplicate: function()
@@ -1141,6 +1125,7 @@ PlaylistCommandsBuilder.prototype = {
         }
       }
     }
+    this.m_Context = null;
   },
   
   setContext: function( context )
@@ -1152,25 +1137,11 @@ PlaylistCommandsBuilder.prototype = {
         }
       }
     }
-
-    var playlist = context.playlist;
-    var medialist = context.medialist;
-    var window = context.window;
     
-    // Ah.  Sometimes, things are being secure.
-    
-    if ( playlist && playlist.wrappedJSObject )
-      playlist = playlist.wrappedJSObject;
-    
-    if ( window && window.wrappedJSObject )
-      window = window.wrappedJSObject;
-
-    if ( medialist && medialist.wrappedJSObject )
-      medialist = medialist.wrappedJSObject;
-    
-    this.m_Context.m_Playlist = playlist;
-    this.m_Context.m_Medialist = medialist;
-    this.m_Context.m_Window = window;
+    this.m_Context.playlist = context.playlist;
+    this.m_Context.medialist = context.medialist;
+    this.m_Context.window = context.window;
+    this.m_Context.commands = this;
   },
   
     
@@ -1189,10 +1160,15 @@ PlaylistCommandsBuilder.prototype = {
    */
   QueryInterface: function(iid) {
     if (!iid.equals(Components.interfaces.sbIPlaylistCommands) &&
+        !iid.equals(Components.interfaces.sbIPlaylistCommandsBuilder) &&
         !iid.equals(Components.interfaces.nsISupports))
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   }
 }; // PlaylistCommandsBuilder.prototype
 
+
+function NSGetModule(compMgr, fileSpec) {
+  return XPCOMUtils.generateModule([PlaylistCommandsBuilder]);
+}
 

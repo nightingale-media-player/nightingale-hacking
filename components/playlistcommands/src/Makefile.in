@@ -73,6 +73,10 @@ endif
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
+                      $(srcdir)/sbPlaylistCommandsBuilder.js \
+                      $(srcdir)/sbPublicPlaylistCommands.js \
+                      $(srcdir)/sbAddToPlaylist.jsm \
+                      $(srcdir)/kPlaylistCommands.jsm
 
 include $(topsrcdir)/build/rules.mk

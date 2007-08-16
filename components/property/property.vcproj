@@ -88,7 +88,7 @@
 				RelativePath=".\src\sbProgressPropertyInfo.h">
 			</File>
 			<File
-				RelativePath=".\src\sbProperties.jsm">
+				RelativePath=".\src\sbProperties.jsm.in">
 			</File>
 			<File
 				RelativePath=".\src\sbPropertiesCID.h">

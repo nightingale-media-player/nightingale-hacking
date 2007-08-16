@@ -481,25 +481,7 @@ sbRemoteCommands::InitCommands( const nsAString &aHost )
 NS_IMETHODIMP
 sbRemoteCommands::ShutdownCommands( )
 {
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::SetProperty(const nsAString &aPropertyName,
-                              const nsAString &aValue)
-{
-  nsString prop(aPropertyName);
-  nsString value(aValue);
-  mProperties[prop] = value;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::GetProperty(const nsAString &aPropertyName,
-                              nsAString &_retval)
-{
-  nsString prop(aPropertyName);
-  _retval = mProperties[prop];
+  mContext = NULL;
   return NS_OK;
 }
 

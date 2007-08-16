@@ -277,9 +277,11 @@ CPlaylistCommandsManager::Request(const nsAString      &aCommandsGUID,
                                   sbIPlaylistCommands  **_retval)
 {
   nsString guid(aCommandsGUID);
+  sbIPlaylistCommands *dup = NULL;
   sbIPlaylistCommands *cmds;
-  m_publishedCommands[guid]->Duplicate(&cmds);
-  *_retval = cmds;
+  cmds = m_publishedCommands[guid];
+  if (cmds) cmds->Duplicate(&dup);
+  *_retval = dup;
   return NS_OK;
 }
 
