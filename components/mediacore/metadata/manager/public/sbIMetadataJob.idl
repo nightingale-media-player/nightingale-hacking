@@ -50,7 +50,9 @@ interface sbIMetadataJob : nsISupports
   readonly attribute AString tableName;
 
   /**
-   * \brief Total number of items to be scanned.
+   * \brief True if it has shutdown its timer and thread.
+   *
+   * Appending to a completed job will throw an error.
    */
   readonly attribute boolean completed;
 
@@ -60,11 +62,26 @@ interface sbIMetadataJob : nsISupports
    * The metadata task will track its progress through a database table 
    * so it can depend on its information always available upon app restart.
    *
+   * There is a window of time while it is copying the given array into the 
+   * database that a crash or shutdown will lose the enqueueing of the task.
+   *
    * \param aTableName The table name assigned to this task.
    * \param aMediaItemsArray An array filled with media items to be scanned.
    * \param aSleepMS How much of an interval/sleep per loop in and out of thread.
    */
   void init( in AString aTableName, in nsIArray aMediaItemsArray, in unsigned long aSleepMS );
+
+  /**
+   * \brief Add some more media items to the job's queue.
+   *
+   * There is a window of time while it is copying the given array into the 
+   * database that a crash or shutdown will lose the enqueueing of the task.
+   *
+   * Appending to a completed job will throw an error.
+   *
+   * \param aMediaItemsArray An array filled with media items to be scanned.
+   */
+  void append( in nsIArray aMediaItemsArray );
 
   /**
    * \brief Cancel a task 

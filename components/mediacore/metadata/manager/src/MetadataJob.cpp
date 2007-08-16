@@ -330,18 +330,7 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   // Append any new items in the array to the task table
   if ( aMediaItemsArray != nsnull )
   {
-    // How many Media Items?
-    PRUint32 length;
-    rv = aMediaItemsArray->GetLength(&length);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    for (PRUint32 i = 0; i < length; i++) {
-      // Break out the media item
-      nsCOMPtr<sbIMediaItem> mediaItem = do_QueryElementAt(aMediaItemsArray, i, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      PRBool success = mInitArray.AppendObject( mediaItem );
-      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-    }
+    Append( aMediaItemsArray );
   }
 
   // Launch the timer to complete initialization.
@@ -359,6 +348,33 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   IncrementDataRemote();
 
   // Phew!  We're done!
+  return NS_OK;
+}
+
+/* void append (in nsIArray aMediaItemsArray); */
+NS_IMETHODIMP sbMetadataJob::Append(nsIArray *aMediaItemsArray)
+{
+  NS_ENSURE_ARG_POINTER( aMediaItemsArray );
+  nsresult rv;
+
+  if (mCompleted)
+    return NS_ERROR_UNEXPECTED;
+
+  // How many Media Items?
+  PRUint32 length;
+  rv = aMediaItemsArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < length; i++) {
+    // Break out the media item
+    nsCOMPtr<sbIMediaItem> mediaItem = do_QueryElementAt(aMediaItemsArray, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    PRBool success = mInitArray.AppendObject( mediaItem );
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  mInitCompleted = PR_FALSE;
+
   return NS_OK;
 }
 
@@ -1274,92 +1290,106 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
 
   // Set the properties (eventually iterate when the sbIMetadataValue have the correct keystrings).
   NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
+  nsAutoString oldName;
+  rv = item->GetProperty( trackNameKey, oldName );
   nsAutoString trackName;
   rv = values->GetValue( NS_LITERAL_STRING("title"), trackName );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If the metadata read can't even find a song name, cook one up off the url.
-  if ( trackName.IsEmpty() ) {
+  // If the metadata read can't even find a song name, 
+  // AND THERE ISN'T ALREADY A TRACK NAME, cook one up off the url.
+  if ( trackName.IsEmpty() && oldName.IsEmpty() ) {
     rv = CreateDefaultItemName( aItem->url, trackName );
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = AppendIfValid( propMan, properties, trackNameKey, trackName);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! trackName.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, trackNameKey, trackName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_NAMED_LITERAL_STRING( artistKey, SB_PROPERTY_ARTISTNAME );
   nsAutoString artist;
   rv = values->GetValue( NS_LITERAL_STRING("artist"), artist );
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AppendIfValid( propMan, properties, artistKey, artist );
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! artist.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, artistKey, artist );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_NAMED_LITERAL_STRING( albumKey, SB_PROPERTY_ALBUMNAME );
   nsAutoString album;
   rv = values->GetValue( NS_LITERAL_STRING("album"), album );
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AppendIfValid( propMan, properties, albumKey, album );
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! album.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, albumKey, album );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_NAMED_LITERAL_STRING( durationKey, SB_PROPERTY_DURATION );
   nsAutoString duration;
   rv = values->GetValue( NS_LITERAL_STRING("length"), duration );
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AppendIfValid( propMan, properties, durationKey, duration );
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! duration.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, durationKey, duration );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_NAMED_LITERAL_STRING( genreKey, SB_PROPERTY_GENRE );
   nsAutoString genre;
   rv = values->GetValue( NS_LITERAL_STRING("genre"), genre );
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AppendIfValid( propMan, properties, genreKey, genre );
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! genre.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, genreKey, genre );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_NAMED_LITERAL_STRING( yearKey, SB_PROPERTY_YEAR );
   nsAutoString year;
   rv = values->GetValue( NS_LITERAL_STRING("year"), year );
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AppendIfValid( propMan, properties, yearKey, year );
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! year.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, yearKey, year );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_NAMED_LITERAL_STRING( trackKey, SB_PROPERTY_TRACKNUMBER );
   nsAutoString track;
   rv = values->GetValue( NS_LITERAL_STRING("track_no"), track );
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AppendIfValid( propMan, properties, trackKey, track );
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! track.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, trackKey, track );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_NAMED_LITERAL_STRING( discNumberKey, SB_PROPERTY_DISCNUMBER );
   nsAutoString discNumber;
   rv = values->GetValue( NS_LITERAL_STRING("disc_no"), discNumber );
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AppendIfValid( propMan, properties, discNumberKey, discNumber );
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! discNumber.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, discNumberKey, discNumber );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_NAMED_LITERAL_STRING( totalTracksKey, SB_PROPERTY_TOTALTRACKS );
   nsAutoString totalTracks;
   rv = values->GetValue( NS_LITERAL_STRING("track_total"), totalTracks );
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AppendIfValid( propMan, properties, totalTracksKey, totalTracks );
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! totalTracks.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, totalTracksKey, totalTracks );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   NS_NAMED_LITERAL_STRING( totalDiscsKey, SB_PROPERTY_TOTALDISCS );
   nsAutoString totalDiscs;
   rv = values->GetValue( NS_LITERAL_STRING("disc_total"), totalDiscs );
   NS_ENSURE_SUCCESS(rv, rv);
+  if ( ! totalDiscs.IsEmpty() ) {
+    rv = AppendIfValid( propMan, properties, totalDiscsKey, totalDiscs );
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = AppendIfValid( propMan, properties, totalDiscsKey, totalDiscs );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt64 fileSize;
+  PRInt64 fileSize = 0;
   rv = aURIMetadataHelper->GetFileSize(aItem->url, &fileSize);
   if (NS_SUCCEEDED(rv)) {
     nsAutoString contentLength;
@@ -1472,5 +1502,6 @@ void sbMetadataJob::DecrementDataRemote()
   // Set to the decremented value
   mDataCurrentMetadataJobs->SetIntValue( --current );
 }
+
 
 
