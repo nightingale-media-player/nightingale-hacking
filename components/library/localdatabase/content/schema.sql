@@ -82,6 +82,7 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#totalTracks');
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#lastPlayTime');
 insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#playCount');
+insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#customType');
 
 insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
 

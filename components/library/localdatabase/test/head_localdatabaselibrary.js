@@ -530,7 +530,8 @@ function loadMockDatabase() {
     "http://songbirdnest.com/data/1.0#totalDiscs",
     "http://songbirdnest.com/data/1.0#totalTracks",
     "http://songbirdnest.com/data/1.0#lastPlayTime",
-    "http://songbirdnest.com/data/1.0#playCount"
+    "http://songbirdnest.com/data/1.0#playCount",
+    "http://songbirdnest.com/data/1.0#customType"
   ];
 
   data = readFile("resource_properties.txt");
