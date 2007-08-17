@@ -351,4 +351,8 @@
 <!ENTITY tabs.listAllTabs "List all tabs">
 <!ENTITY tabs.enabled.label "Enable tabs">
 
+<!ENTITY window.browser.titledefault       "" >
+<!ENTITY window.browser.titlemodifier      "Songbird" >
+<!ENTITY window.browser.titlemenuseparator " - " >
+<!ENTITY window.browser.titlepreface       "" >
 

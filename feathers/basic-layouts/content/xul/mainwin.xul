@@ -53,6 +53,10 @@
   onclose="/*return false;*/ quitApp();" 
   title="&window.dev.title;"
   windowtype="Songbird:Main"
+  titlemenuseparator="&window.browser.titlemenuseparator;"
+  titlemodifier="&window.browser.titlemodifier;"
+  titlepreface="&window.browser.titlepreface;"
+  titledefault="&window.browser.titledefault;"
 
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"

@@ -591,6 +591,8 @@
             }
             newTitle += modifier;
 
+/* Disabled (http://bugzilla.songbirdnest.com/show_bug.cgi?id=4274)
+
             // If location bar is hidden and the URL type supports a host,
             // add the scheme and host to the title to prevent spoofing.
             // XXX https://bugzilla.mozilla.org/show_bug.cgi?id=22183#c239
@@ -603,6 +605,7 @@
                   newTitle = uri.prePath + sep + newTitle;
               }
             } catch (e) {}
+*/
 
             this.ownerDocument.title = newTitle;
           ]]>
