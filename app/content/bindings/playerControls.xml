@@ -382,8 +382,14 @@
           var _this = document.__SKIPLOOPOBJECT__;
           if ( _this.skip )
           {
-            _this.seen_skip = true;
-            _this.gPPS.position = _this.gPPS.position + 15000;
+            // If we're allowed to skip
+            if ( _this.gPPS.length > 0 )
+            {
+              _this.seen_skip = true;
+              var target = _this.gPPS.position + 15000;
+              var max = _this.gPPS.length - 1000;
+              _this.gPPS.position = ( max < target ) ? max : target;
+            }
           }
           else
           {
@@ -497,7 +503,8 @@
           if ( _this.skip )
           {
             _this.seen_skip = true;
-            _this.gPPS.position = _this.gPPS.position - 15000;
+            var target = _this.gPPS.position - 15000;
+            _this.gPPS.position = ( target > 1 ) ? target : 1;
           }
           else
           {
