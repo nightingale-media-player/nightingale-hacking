@@ -394,3 +394,8 @@ sb-browser-stopreload-button {
 draggable {
   -moz-binding: url("chrome://songbird/content/bindings/draggable.xml#draggable") !important;
 }
+
+/* Replacement text-link label */
+label.text-link {
+  -moz-binding: url("chrome://songbird/content/bindings/textLink.xml#text-link") !important;
+}

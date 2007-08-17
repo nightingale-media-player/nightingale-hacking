@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  
+  <!-- Replacement for the toolkit <label class="text-link"/> binding.  
+       Text links in Songbird need to be launched via gBrowser
+       or the OS default handler.
+    -->
+  <binding id="text-link" extends="chrome://global/content/bindings/text.xml#text-link">
+    <implementation implements="nsIAccessibleProvider">
+      <method name="open">
+        <parameter name="aEvent"/>
+        <body>
+        <![CDATA[
+          var href = this.href;
+          if (!href || this.disabled || aEvent.getPreventDefault())
+            return;
+
+          var uri = null;
+          try {
+            const nsISSM = Components.interfaces.nsIScriptSecurityManager;
+            const secMan =
+                     Components.classes["@mozilla.org/scriptsecuritymanager;1"]
+                               .getService(nsISSM);
+
+            const ioService =
+                     Components.classes["@mozilla.org/network/io-service;1"]
+                               .getService(Components.interfaces.nsIIOService);
+
+            uri = ioService.newURI(href, null, null);
+
+            var nullPrincipal =
+              Components.classes["@mozilla.org/nullprincipal;1"]
+                        .createInstance(Components.interfaces.nsIPrincipal);
+            try {
+              secMan.checkLoadURIWithPrincipal(nullPrincipal, uri,
+                                               nsISSM.DISALLOW_INHERIT_PRINCIPAL)
+            }
+            catch (ex) {
+              var msg = "Error: Cannot open a " + uri.scheme + ": link using " +
+                         "the text-link binding.";
+              Components.utils.reportError(msg);
+              return;
+            }
+
+            const cID = "@mozilla.org/uriloader/external-protocol-service;1";
+            const nsIEPS = Components.interfaces.nsIExternalProtocolService;
+            var protocolSvc = Components.classes[cID].getService(nsIEPS);
+
+            // If this is an exposed internal protocol, try 
+            // to use the Songbird browser window to open it
+            if (protocolSvc.isExposedProtocol(uri.scheme)) {
+
+              var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                             .getService(Components.interfaces.nsIWindowMediator);
+
+              var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main");  
+              
+              if (songbirdWindow && songbirdWindow.gBrowser) {
+                songbirdWindow.gBrowser.loadURI(uri.spec);
+                aEvent.preventDefault()
+                return;
+              }
+            }
+            
+            // Otherwise open it with the default handler
+            protocolSvc.loadUrl(uri);
+            aEvent.preventDefault()
+            return;
+
+          }
+          catch (ex) {
+            Components.utils.reportError(ex);
+            dump(ex);
+          }
+
+          Components.utils.reportError("The Songbird text-link binding was " + 
+                                       "unable to open " + href);
+
+          aEvent.preventDefault();
+        ]]>
+        </body>
+      </method>
+    </implementation>
+  </binding>
+
+</bindings>
+
+
+
+
