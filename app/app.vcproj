@@ -1093,7 +1093,28 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\clickholdbutton.xml">
+					RelativePath=".\content\bindings\browserControls.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\clickHoldButton.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1135,7 +1156,28 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\db_controls.xml">
+					RelativePath=".\content\bindings\dbControls.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\draggable.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1198,7 +1240,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\faceplate.xml">
+					RelativePath=".\content\bindings\facePlate.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1240,7 +1282,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\filterlist.xml">
+					RelativePath=".\content\bindings\filterList.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1282,7 +1324,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\hotkey.xml">
+					RelativePath=".\content\bindings\hotKey.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1304,6 +1346,24 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</File>
 				<File
 					RelativePath=".\content\bindings\jar.mn.in">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\localKey.xml">
@@ -1328,6 +1388,24 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 				</File>
 				<File
 					RelativePath=".\content\bindings\Makefile.in">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\miniPlayer.xml">
@@ -1351,7 +1429,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\multistatebutton.xml">
+					RelativePath=".\content\bindings\multiStateButton.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1372,7 +1450,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\observesDataremote.xml">
+					RelativePath=".\content\bindings\observesDataRemote.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1477,7 +1555,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\sb-commands.xml">
+					RelativePath=".\content\bindings\sbCommands.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1498,7 +1576,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\sb-locationbar-textbox.xml">
+					RelativePath=".\content\bindings\sbExtensions.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1519,7 +1597,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\sb-search.xml">
+					RelativePath=".\content\bindings\sbSearch.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1540,7 +1618,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\sb-tabbrowser.xml">
+					RelativePath=".\content\bindings\sbTabBrowser.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1561,7 +1639,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\sbextensions.xml">
+					RelativePath=".\content\bindings\servicePane.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1582,7 +1660,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\servicepane.xml">
+					RelativePath=".\content\bindings\smartSplitter.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1603,49 +1681,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\smartsplitter.xml">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\content\bindings\spinner.xml">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)
-"
-							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\bindings\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\content\bindings\statusbar.xml">
+					RelativePath=".\content\bindings\statusBar.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1687,7 +1723,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\tabbrowser.xml">
+					RelativePath=".\content\bindings\tabBrowser.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1708,7 +1744,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\tageditor.xml">
+					RelativePath=".\content\bindings\tagEditor.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1729,7 +1765,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\trackeditor.xml">
+					RelativePath=".\content\bindings\trackEditor.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1750,7 +1786,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\windowregion.xml">
+					RelativePath=".\content\bindings\windowRegion.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool

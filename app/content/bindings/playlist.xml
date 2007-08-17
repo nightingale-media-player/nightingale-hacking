@@ -1405,20 +1405,9 @@
     showContextItems(false);
   }
 
-
-  // XXX: The coords given to the showPopup() method are sometimes relative to
-  // the browser iframe ! so compute the difference.  This may be a bug, possibly related to bmo 362403
-  
-  // if we are inside a browser, tweak the coords
-  if (window != this.outerWindow) {
-    var bo = document.getBoxObjectFor(document.documentElement);
-    this._context_x = evt.screenX - bo.screenX;
-    this._context_y = evt.screenY - bo.screenY;
-  } else {
-    // otherwise (ie, webplaylist) keep original coords
-    this._context_x = evt.screenX;
-    this._context_y = evt.screenY;
-  }
+  // HEY LOOK!  WE CAN TRUST THE EVENT DATA!!!  WOW!!!!!
+  this._context_x = evt.screenX;
+  this._context_y = evt.screenY;
   
   // XXXlone -- there is still a bug when opening the context menu in webplaylists 
   // inside tabs, when another tab has a playlist opened inside a browser (for instance, 
