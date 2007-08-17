@@ -94,7 +94,7 @@ See Also:
  *   may fail based on the permissions set by the user.
  *
  */
-[scriptable, uuid(22dbb456-1269-408d-abd5-3cb2c00370fc)]
+[scriptable, uuid(a8193c8e-4f9a-4b31-ae7b-4f4ee07f4efb)]
 interface sbIRemoteLibrary : nsISupports
 {
   /**
@@ -292,13 +292,13 @@ interface sbIRemoteLibrary : nsISupports
    * \sa createMediaList
    */
   /*
-  Func: getMediaList()
+  Func: getMediaListByName()
   
   Get the site media list with the given name.  Note that to compare for
   identity one must compare the guid (instead of JS object comparisions).
   
   Prototype:
-    <MediaList> getMediaList(String name)
+    <MediaList> getMediaListByName(String name)
   
   Paramters:
     name - The name of the media list to fetch
@@ -312,17 +312,17 @@ interface sbIRemoteLibrary : nsISupports
     var library = songbird.siteLibrary("", "");
     
     //Fetch the shopping cart media list
-    var mediaList = library.getMediaList("Shopping Cart");
+    var mediaList = library.getMediaListByName("Shopping Cart");
     
     // comparisons for equality must be done on the guid
-    var cart = library.getMediaList("Shopping Cart");
+    var cart = library.getMediaListByName("Shopping Cart");
     alert(mediaList.guid == cart.guid);
     (end)
 
   See Also:
     <createMediaList()>
   */
-  sbIRemoteMediaList getMediaList( in AString aName );
+  sbIRemoteMediaList getMediaListByName( in AString aName );
 };
 
 /**

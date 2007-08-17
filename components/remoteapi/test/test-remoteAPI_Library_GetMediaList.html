@@ -42,7 +42,7 @@
       dummy2 = siteLib.createMediaList("simple");
       playlist.setProperty("http://songbirdnest.com/data/1.0#mediaListName", "Hello World");
       
-      var list2 = siteLib.getMediaList("Hello World");
+      var list2 = siteLib.getMediaListByName("Hello World");
       output.innerHTML += "<br>" + playlist.guid;
       output.innerHTML += "<br>" + list2.guid;
       output.innerHTML += "<br>" + ((playlist.guid == list2.guid) ? "pass" : "FAIL");

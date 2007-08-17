@@ -361,8 +361,8 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
 }
 
 NS_IMETHODIMP
-sbRemoteLibraryBase::GetMediaList( const nsAString & aName,
-                                   sbIRemoteMediaList **_retval )
+sbRemoteLibraryBase::GetMediaListByName( const nsAString & aName,
+                                         sbIRemoteMediaList **_retval )
 {
   NS_ENSURE_ARG(_retval);
   
