@@ -24,6 +24,16 @@
 //
 */
 
+/**
+ * \file updateOverlay.js
+ * \brief Contains all support functions required by the overlay applied to the auto update dialog.
+ * \internal
+ */
+ 
+/**
+ * \brief Make text links use openURLExternal instead of the default action.
+ * \internal 
+ */
 function fixTextLink(evt) {
   var node = evt.target;
   var nodeClass = node.getAttribute("class");
@@ -34,6 +44,10 @@ function fixTextLink(evt) {
   }
 }
 
+/**
+ * \brief Open a URL in the default OS web browser.
+ * \internal
+ */
 function openURLExternal(url) {
   try {
     var externalLoader = (Components

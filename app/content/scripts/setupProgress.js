@@ -24,6 +24,17 @@
 //
 */
 
+/**
+ * \file setupProgress.js
+ * \brief This file contains support functions and objects for setupProgress.xul 
+ *        which downloads XPIs during first run.
+ *
+ * setupProgress.xul and setupProgress.js are responsible for downloading XPIs during first run.
+ * setupProgress.js contains all the support code required to download XPIs and install them.
+ *
+ * \internal
+ */
+
 var label;
 var progressmeter;
 var bundle,pbundle;
@@ -39,6 +50,10 @@ const VK_ENTER = 13;
 const VK_ESCAPE = 27;
 
 
+/**
+ * \brief Initialize the setupProgress dialog.
+ * \internal
+ */
 function init()
 {
   label = document.getElementById("setupprogress_label");
@@ -52,6 +67,10 @@ function init()
   setTimeout(installNextXPI, 0);
 }
 
+/**
+ * \brief Install the next XPI in the list of XPIs to install.
+ * \internal
+ */
 function installNextXPI()
 {
   cur_ext++;
@@ -84,12 +103,20 @@ function installNextXPI()
   destFile = downloadFile(bundle.getExtensionAttribute(cur_ext, "url"));
 }
 
+/**
+ * \brief Listener function used to track progress of XPIs being downloaded.
+ * \internal
+ */
 function onExtensionDownloadProgress(aCurrentProgress, aMaxProgress) {
   progressmeter.setAttribute("value", aCurrentProgress/aMaxProgress*100);
   for (var i=0; i < pbundle.installListenerCount; i++) 
     pbundle.getInstallListener(i).onExtensionDownloadProgress(pbundle, cur_ext, aCurrentProgress, aMaxProgress);
 }
-  
+
+/**
+ * \brief Listener function used to trigger installation of XPI when download is complete.
+ * \internal
+ */  
 function onExtensionDownloadComplete() {
   for (var i=0;i<pbundle.installListenerCount;i++) 
     pbundle.getInstallListener(i).onDownloadComplete(pbundle, cur_ext);
@@ -107,6 +134,10 @@ function onExtensionDownloadComplete() {
   setTimeout(installNextXPI, 0);
 }
 
+/**
+ * \brief Listener function used to recover from any errors that occur during the download of an XPI.
+ * \internal
+ */
 function onExtensionDownloadError() {
   gPrompt.alert( window, "Error",
                 SBString( "setupprogress.couldnotdownload", "Downloading" ) + " " +
@@ -119,6 +150,11 @@ function onExtensionDownloadError() {
   setTimeout(installNextXPI, 0);
 }
 
+/**
+ * \brief Handler function used to prevent bubbling of escape 
+ *        and enter key events while the progressSetup dialog is active.
+ * \internal
+ */
 function handleKeyDown(event) 
 {
   if (event.keyCode == VK_ESCAPE ||
@@ -129,6 +165,10 @@ function handleKeyDown(event)
 
 // -------------------
 
+/**
+ * \brief Download listener object used to track progress of XPI downloads.
+ * \internal
+ */
 var _downloadListener = {
   onLocationChange: function(aWebProgress, aRequest, aLocation)
   {
@@ -180,6 +220,13 @@ var _filename;
 var _browser;
 var _file;
 
+/**
+ * \brief Download an XPI file from a URL.
+ * Downloads an XPI file from a URL to a temporary file on disk.
+ * \param url The url of the file to download.
+ * \return The destination filename.
+ * \internal
+ */
 function downloadFile(url) {
   _url = url;
 
@@ -207,6 +254,10 @@ function downloadFile(url) {
   return destFile;
 }
 
+/**
+ * \brief Delete the last downloaded XPI file.
+ * \internal
+ */
 function deleteLastDownloadedFile() {
   if (_file) {
     try {
@@ -217,6 +268,10 @@ function deleteLastDownloadedFile() {
   }
 }
 
+/**
+ * \brief Get a temporary file name.
+ * \internal
+ */
 function getTempFilename() {
   var strTempFile = "";
   
@@ -233,18 +288,34 @@ function getTempFilename() {
   return aTempFolder.path;
 }
 
+/**
+ * \brief Generate a UUID.
+ * \return The generated UUID.
+ * \internal
+ */
 function generateUUID() {
   var aUUIDGenerator = (Components.classes["@mozilla.org/uuid-generator;1"]).createInstance();
   aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
   return aUUIDGenerator.generateUUID();
 }
 
+/**
+ * \brief Generate a random URL parameter.
+ * \return The generated random URL parameter.
+ * \internal
+ */
 function getRandomParameter() {
   return "?randomguid=" + escape(generateUUID());
 }
 
-// This method will install the XPI without asking the user's permission.
-// Use "installXPI()" to involve the user in the install process.
+/**
+ * \brief Force installation of an XPI. 
+ * This method will install the XPI without asking the user's permission.
+ * Use "installXPI()" to involve the user in the install process.
+ * \param localFilename The filename of the XPI to install.
+ * \return Non-zero on success.
+ * \internal
+ */
 function forceInstallXPI(localFilename)
 {
   var file = Components.classes["@mozilla.org/file/local;1"]

@@ -40,9 +40,21 @@
 //
 // Mainwin Initialization
 //
+
+/**
+ * \file mainWinInit.js
+ * \brief Main window initialization functions and objects.
+ * \internal
+ */
+
 var thePollPlaylistService = null;
 
 var gServicePane = null;
+
+/**
+ * \brief Get the tabbed browser.
+ * \return The tabbed browser.
+ */
 function getBrowser() {
   if (!window.gBrowser) {
     window.gBrowser = document.getElementById("frame_main_pane");
@@ -50,6 +62,11 @@ function getBrowser() {
   return window.gBrowser;
 }
 
+/**
+ * \brief Initialize the main window.
+ * \note Do not call more than once.
+ * \internal
+ */
 function SBInitialize()
 {
 
@@ -114,6 +131,11 @@ function SBInitialize()
   }
 }
 
+/**
+ * \brief Uninitialize the main window.
+ * \note Do not call more than once.
+ * \internal
+ */
 function SBUninitialize()
 {
   window.removeEventListener("keydown", checkAltF4, true);

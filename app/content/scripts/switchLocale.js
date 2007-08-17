@@ -24,9 +24,14 @@
 //
  */
 
-const MENUBAR_LOCALESBUNDLE_TIMEOUT = 15000;
+/**
+ * \file switchLocale.js
+ * \brief Locales switching function implementations.
+ * \note Based on Firefox Locale Switcher, by Benjamin Smedberg (http://benjamin.smedbergs.us/blog/2005-11-29/locale-switcher-15/)
+ * \internal
+ */
 
-// based on Firefox Locale Switcher, by Benjamin Smedberg (http://benjamin.smedbergs.us/blog/2005-11-29/locale-switcher-15/)
+const MENUBAR_LOCALESBUNDLE_TIMEOUT = 15000;
 
 try {
   // Module specific global for auto-init/deinit support
@@ -55,6 +60,10 @@ try {
  
   var menubar_locales_installed = null;
 
+  /**
+   * \brief Initialize the Locales Bundle.
+   * \internal
+   */
   function initLocalesBundle() {
     try {
       var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
@@ -67,11 +76,20 @@ try {
     }
   }
 
+  /**
+   * \brief Reset the Locales Bundle to an uninitialized state.
+   * \internal
+   */
   function resetLocalesBundle() {
     if (menubar_locales_bundle) menubar_locales_bundle.removeBundleDataListener(menubarLocalesBundleCB);
     menubar_locales_bundle = null;
   }
 
+  /**
+   * \brief Locales Bundle listener.
+   * Handles download completion and errors.
+   * \internal
+   */
   var menubarLocalesBundleCB = 
   {
     onDownloadComplete: function(bundle) { menubarLocalesBundleDataReady(); },
@@ -87,12 +105,20 @@ try {
     }
   }
 
+  /**
+   * \brief Listener for Locales bundle data availability.
+   * \internal
+   */
   function menubarLocalesBundleDataReady() {
     if (menubar_locales_bundle.bundleExtensionCount > 0) {
       if (_lastmenu) fillLocaleList(_lastmenu);
     }
   }
 
+  /**
+   * \brief Build the Locales menu.
+   * \internal
+   */
   function menubarLoadBundledLocales(menu) {
     if (menubar_locales_bundle && menubar_locales_bundle.bundleExtensionCount > 0) {
       var className = menu.parentNode.getAttribute("class");
@@ -152,6 +178,12 @@ try {
   }
 
 
+  /**
+   * \brief Switch to a different Locale.
+   * \param locale The local to switch to (ie. "en-US").
+   * \param wantmessagebox Flag enabling warning messaging about locale switch.
+   * \internal
+   */
   function switchLocale(locale, wantmessagebox) {
     try 
     {
@@ -177,6 +209,10 @@ try {
 
   var _lastmenu = null;
 
+  /**
+   * \brief Fill the Locales menu with all available Locales.
+   * \internal
+   */
   function fillLocaleList(menu) {
     try 
     {
@@ -260,6 +296,12 @@ try {
     }
   }
   
+  /**
+   * \brief Get the flag icon URL for a Locales from the Locales bundle.
+   * \param locale The locale.
+   * \return The flag icon URL or null on error.
+   * \internal
+   */
   function getFlagFromBundle(locale) {
     for (var i=0; i < menubar_locales_bundle.bundleExtensionCount; i++) {
       var name = menubar_locales_bundle.getExtensionAttribute(i, "name");
@@ -269,6 +311,10 @@ try {
     return null;
   } 
 
+  /**
+   * \brief Determine if a Locale is marked installed in the Locales menu.
+   * \internal
+   */
   function menubarIsLanguageInstalled(locale) {
     for (var i=0;i<menubar_locales_installed.length;i++) {
       if (menubar_locales_installed[i] == locale) return true;
@@ -276,6 +322,10 @@ try {
     return false;
   }
 
+  /**
+   * \brief Sort Locale language names.
+   * \internal
+   */
   function sortLanguages(a, b) 
   {
     var aname = a.getAttribute("label");
@@ -285,6 +335,12 @@ try {
     return 1;
   }
   
+  /**
+   * \brief Install a Locale from the Locales Bundle.
+   * \param locale The locale to install (ie. "en-US").
+   * \param bundleindex The index of the locale within the bundle. Index starts at 0.
+   * \internal
+   */
   function installLocaleFromBundle(locale, bundleindex) {
     if (gPrompt.confirm( window, 
                         SBString( "locales.installconfirm.title", "Language Download" ),

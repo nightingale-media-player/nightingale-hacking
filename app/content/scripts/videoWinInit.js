@@ -24,6 +24,12 @@
 //
  */
 
+/**
+ * \file videoWinInit.js
+ * \brief Video window initialization and shutdown functions.
+ * \internal
+ */
+
 //
 // Module specific auto-init/deinit support
 //
@@ -51,6 +57,12 @@ window.addEventListener("unload", videoWinInit.onUnload, false);
 //
 var songbird_playingVideo; // global for DataRemote
 const sb_playing_video_changed = { observe: function ( aSubject, aTopic, aData ) { SBPlayingVideoChanged(aData); } } // observer for DataRemote
+
+/**
+ * \brief Initialize the Video window.
+ * \note Do not call this more than once.
+ * \internal
+ */
 function SBVideoInitialize()
 {
   dump("SBVideoInitialize\n");
@@ -174,6 +186,11 @@ function SBVideoInitialize()
   }
 }
 
+/**
+ * \brief Deinitialize the Video window.
+ * \note Do not call this more than once.
+ * \internal
+ */
 function SBVideoDeinitialize()
 {
   // Stop trapping altf4
@@ -187,6 +204,10 @@ function SBVideoDeinitialize()
   onWindowSaveSizeAndPosition();
 }
 
+/**
+ * \brief Contains logic that needs to be applied when the currently playing video changes.
+ * \internal
+ */
 function SBPlayingVideoChanged(value)
 {
   var windowCloak =
@@ -207,7 +228,10 @@ function SBPlayingVideoChanged(value)
   }
 }
 
-// Handler for the specific UI event from the video window
+/**
+ * \brief Handler for the specific UI event from the video window.
+ * \internal
+ */
 function onHideButtonClick()
 {
   // Stop video playback
@@ -219,7 +243,11 @@ function onHideButtonClick()
   SBHideCoreWindow();
 }
 
-// Function that does the work
+/**
+ * \brief Save Video window position and hide it.
+ * \deprecated Does not work anymore.
+ * \internal
+ */
 function SBHideCoreWindow()
 {
   // Save position before cloaking, because if we close the app after the window has been cloaked, we can't record its position
@@ -283,6 +311,10 @@ var SBVideoMinMaxCB =
   }
 }
 
+/**
+ * \brief Set Video window Min/Max width and height window listener.
+ * \internal
+ */
 function setVideoMinMaxCallback()
 {
   try {
@@ -299,6 +331,10 @@ function setVideoMinMaxCallback()
   }
 }
 
+/**
+ * \brief Reset the Video window Min/Max width and height window listener to the default listener.
+ * \internal
+ */
 function resetVideoMinMaxCallback() {
   try {
     var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
@@ -314,6 +350,9 @@ function resetVideoMinMaxCallback() {
   }
 }
 
+/**
+ * \brief Check for ALT+F4 key combo, close window.
+ */
 function videoCheckAltF4(evt)
 {
   if (evt.keyCode == VK_F4 && evt.altKey) 
@@ -322,6 +361,15 @@ function videoCheckAltF4(evt)
   }
 }
 
+/**
+ * \brief Check state of media core initialization.
+ * This function attempts to detect media core initialization failures 
+ * by asking the sbIPlaylistPlayback service if an empty URL is a media url.
+ * 
+ * Upon failure, this function pops open a message box indicating failure 
+ * of media core initialization. It also provides a link to documentation
+ * that may help the user remedy this problem.
+ */
 function SBMediaCoreCheck() {
   var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                 .getService(Components.interfaces.sbIPlaylistPlayback);

@@ -24,6 +24,12 @@
 //
  */
 
+/**
+ * \file watchFolders.js
+ * \deprecated This file will be deleted.
+ * \internal
+ */
+
 var wfMediaLibrary = null;
 var wfFileScan = null;
 var wfFileScanQuery = null;

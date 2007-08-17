@@ -23,12 +23,14 @@
 // 
 // END SONGBIRD GPL
 //
+*/
+
+/**
+ * \file serviceTreeXBLTEMP.js
+ * \brief This is a temporary file to house methods that need to roll into
+ * our Servicetree XBL object when it is cleaned up for 0.3
+ * \deprecated This file will be removed.
  */
-
-// This is a temporary file to house methods that need to roll into
-// our Servicetree XBL object when it is cleaned up for 0.3
-
-
 
 function onServiceTreeCommand( theEvent )
 {

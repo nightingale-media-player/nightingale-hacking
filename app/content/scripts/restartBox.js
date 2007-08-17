@@ -24,6 +24,11 @@
 //
  */
  
+/**
+ * \file restartBox.js
+ * \brief A reusable restart box.
+ */
+ 
 //
 //  sbIRestartBox
 //
@@ -32,6 +37,16 @@ const SB_RESTARTBOX_RESTARTLATER = 0;
 const SB_RESTARTBOX_RESTARTNOW   = 1;
 const SB_RESTARTBOX_RESTARTEOP   = 2;
 
+/**
+ * \brief Display a restart message box with a title and message.
+ * \param title The title of the restart message box.
+ * \param message The message for the restart message box.
+ * \return Success code: -1, 0, 1, or 2.
+ * \retval -1 Error.
+ * \retval 0 Restart later.
+ * \retval 1 Restart now.
+ * \retval 2 Restart at end of playback.
+ */
 function sbRestartBox( title, message )
 {
   try
@@ -65,6 +80,19 @@ function sbRestartBox( title, message )
   return -1;
 }
 
+/**
+ * \brief Display a restart message box using strings from the songbird.properties locale file.
+ * \param titlestring The title string key.
+ * \param msgstring The message string key.
+ * \param defaulttitle The default title.
+ * \param defaultmsg The default message.
+ * \return Success code: -1, 0, 1, or 2.
+ * \retval -1 Error.
+ * \retval 0 Restart later.
+ * \retval 1 Restart now.
+ * \retval 2 Restart at end of playback.
+ * \internal
+ */
 function sbRestartBox_strings(titlestring, msgstring, defaulttitle, defaultmsg) {
   var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
   var prop = sbs.createBundle("chrome://songbird/locale/songbird.properties");

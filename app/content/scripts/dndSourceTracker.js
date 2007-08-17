@@ -24,9 +24,18 @@
 //
  */
 
-// This keeps a list of objects that can act as drag and drop sources, so a string representing the index of the object
-// in the tracker can be passed into a TransferData object for Drag and Drop operations. This is necessary until someone
-// either documents or is able to explain how it is possible to pass arbitrary objects instead of strings.
+/**
+ * \file dndSourceTracker.js
+ * \brief Contains the drag and drop source tracker implementation.
+ */
+
+/**
+ * \brief Keeps track of drag and drop sources.
+ * This keeps a list of objects that can act as drag and drop sources, so a string representing the index of the object
+ * in the tracker can be passed into a TransferData object for Drag and Drop operations. This is necessary until someone
+ * either documents or is able to explain how it is possible to pass arbitrary objects instead of strings.
+ * \internal
+ */
 var sbDnDSourceTracker = {
 
   m_list : null,

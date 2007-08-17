@@ -23,6 +23,12 @@
 // END SONGBIRD GPL
 //
  */
+
+/**
+ * \file searchHandler.js
+ * \brief Search Handler object.
+ * \internal
+ */
  
 // Searches using engines tagged with "songbird:internal" are not
 // sent to the browser
@@ -31,8 +37,9 @@ const SEARCHENGINE_TAG_INTERNAL = "songbird:internal";
 // Alias identifying the Songbird search engine
 const SEARCHENGINE_ALIAS_SONGBIRD = "songbird-internal-search";
 
-
-/************************************************************************************
+/**
+ * \brief Songbird Search Handler.
+ *
  * Songbird Search Handler
  * Responsible for:
  *   - Switching between standard web search mode and Songbird's internal 
@@ -43,7 +50,8 @@ const SEARCHENGINE_ALIAS_SONGBIRD = "songbird-internal-search";
  *
  * This object is based on the Firefox BrowserSearch object.
  * See http://lxr.mozilla.org/seamonkey/source/browser/base/content/browser.js
- ***********************************************************************************/
+ * \internal
+ */
 const gSearchHandler = {
 
 

@@ -24,13 +24,13 @@
 //
  */
 
-//
-//  sbIDOMEval 
-//
-//  This object scans a DOM tree for attributes containing references to
-//  pre-registered variables and later changes the value of all these attributes 
-//  according to changes in the values of the variables.
-//  ---------------------------------------------------------------------------
+/**
+ * \brief DOM attribute evaluation and automatic replacement.
+ * This object scans a DOM tree for attributes containing references to
+ * pre-registered variables and later changes the value of all these attributes 
+ * according to changes in the values of the variables.
+ * \internal
+ */
 
 function sbIDOMEval( domNode )
 {

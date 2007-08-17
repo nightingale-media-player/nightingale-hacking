@@ -24,15 +24,25 @@
 //
  */
 
-
-
-/*
- * Contains functions common to all windows
+/**
+ * \file windowUtils.js
+ * \brief Window Utility constants, functions and objects that are common
+ * to all windows.
  */
 
-// Useful constants
+/**
+ * \brief The Songbird Core Window Type.
+ */
 var CORE_WINDOWTYPE         = "Songbird:Core";
+
+/**
+ * \brief Maximized State value.
+ */
 var STATE_MAXIMIZED         = Components.interfaces.nsIDOMChromeWindow.STATE_MAXIMIZED;
+
+/**
+ * \brief Minimized State value.
+ */
 var STATE_MINIMIZED         = Components.interfaces.nsIDOMChromeWindow.STATE_MINIMIZED;
 
 // Lots of things assume the playlist playback service is a global
@@ -49,6 +59,7 @@ var theSongbirdStrings = document.getElementById( "songbird_strings" );
 var gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
 var gConsole = Components.classes["@mozilla.org/consoleservice;1"]
                .getService(Components.interfaces.nsIConsoleService);
+
 // log to JS console AND to the command line (in case of crashes)
 function SB_LOG (scopeStr, msg) {
   msg = msg ? msg : ""; 
@@ -57,10 +68,16 @@ function SB_LOG (scopeStr, msg) {
   gConsole.logStringMessage( scopeStr + " : " + msg );
   dump( scopeStr + " : " + msg + "\n");
 }
+
 var PREFS_SERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
 var nsIPrefBranch2 = Components.interfaces.nsIPrefBranch2;
 /**
+ * \brief Get a preference.
  * Adapted from nsUpdateService.js.in. Need to replace with dataremotes.
+ * \param aFunc Function to used to retrieve the pref.
+ * \param aPreference The name of the pref to retrieve.
+ * \param aDefaultValue The default value to return if it is impossible to read the pref or it does not exist.
+ * \internal
  */
 function getPref(aFunc, aPreference, aDefaultValue) {
   var prefs = 
@@ -71,25 +88,44 @@ function getPref(aFunc, aPreference, aDefaultValue) {
   catch (e) { }
   return aDefaultValue;
 }
+
+/**
+ * \brief Set a preference.
+ * \param aFunc Function to used to set the pref.
+ * \param aPreference The name of the pref to set.
+ * \param aValue The value of the pref.
+ * \return The return value of the function used to set the pref.
+ * \internal
+ */
 function setPref(aFunc, aPreference, aValue) {
   var prefs = 
     Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
   return prefs[aFunc](aPreference, aValue);
 }
 
-// Shorthand, hammerable 
+/**
+ * \brief Prevent bubbling of an event. Shorthand.
+ * \param evt The event to eat.
+ * \internal
+ */
 function eatEvent(evt)
 {
   evt.preventBubble();
 }
 
-// Minimize
+/**
+ * \brief onMinimize handler, minimizes the window in the current context.
+ * \internal
+ */
 function onMinimize()
 {
   document.defaultView.minimize();
 }
 
-// Maximize
+/**
+ * \brief onMaximize handler, maximizes the window in the current context.
+ * \internal
+ */
 function onMaximize()
 {
   if ( isMaximized() )
@@ -104,14 +140,28 @@ function onMaximize()
   syncResizers();
 }
 
+/**
+ * \brief Is the window in the current context maximized?
+ * \return true or false.
+ * \internal
+ */
 function isMaximized() {
   return (window.windowState == STATE_MAXIMIZED);
 }
 
+/**
+ * \brief Is the window in the current context minimized?
+ * \return true or false.
+ * \internal
+ */
 function isMinimized() {
   return (window.windowState == STATE_MINIMIZED);
 }
 
+/**
+ * \brief Synchronize the maximize button with the current window state.
+ * \internal
+ */
 function syncMaxButton() 
 {
   var maxButton = document.getElementById("sysbtn_maximize");
@@ -122,12 +172,20 @@ function syncMaxButton()
   }
 }
 
+/**
+ * \brief Synchronize the resizers with the current window state.
+ * \internal
+ */
 function syncResizers() 
 {
   if (isMaximized()) disableResizers();
   else enableResizers();
 }
-	
+
+/**
+ * \brief Restore the window in the current context to unmaximized state.
+ * \internal
+ */	
 function restoreWindow()
 {
   if ( isMaximized() )
@@ -138,7 +196,11 @@ function restoreWindow()
   syncResizers();
 }
 
-// Exit
+/**
+ * \brief onExit handler, saves window size and position before closing the window.
+ * \param skipSave Skip saving window size and position before closing.
+ * \internal
+ */
 function onExit( skipSave )
 {
   try
@@ -153,7 +215,10 @@ function onExit( skipSave )
   document.defaultView.close();
 }
 
-// Hide
+/**
+ * \brief onHide handler, handles hiding the window in the current context.
+ * \internal
+ */
 function onHide()
 {
   var windowCloak =
@@ -222,11 +287,17 @@ function onMinimumWindowSize()
 */  
 }
 
+/**
+ * \brief Handles completion of resizing of the window in the current context.
+ */
 function onWindowResizeComplete() {
   onMinimumWindowSize();
   onWindowSaveSizeAndPosition();
 }
 
+/**
+ * \brief Handles completion of dragging of the window in the current context.
+ */
 function onWindowDragComplete() {
   onWindowSavePosition();
 }
@@ -265,6 +336,9 @@ function onWindowSavePosition()
   }
 }
 
+/**
+ * \brief Focus the window in the current context.
+ */
 function windowFocus()
 {
   // Try to activate the window if it isn't cloaked.
@@ -280,12 +354,19 @@ function windowFocus()
   }
 }
 
+/**
+ * \brief Delayed focus of the window in the current context.
+ */
 function delayedActivate()
 {
   setTimeout( windowFocus, 50 );
 }
 
 // No forseen need to load _just_ size without position
+
+/**
+ * \brief 
+ */
 function onWindowLoadSizeAndPosition()
 {
   delayedActivate();
@@ -363,11 +444,20 @@ function onWindowLoadSizeAndPosition()
   setTimeout(delayedMaximize, 50);
 }
 
+/**
+ * \brief Delayed maximize of the window in the current context.
+ */
 function delayedMaximize() {
   var root = "window." + document.documentElement.id;
   if (SBDataGetBoolValue(root + ".maximized")) onMaximize();
 }
 
+/**
+ * \brief Get a style property from an element in the window in the current context.
+ * \param el The element.
+ * \param styleProp The style property.
+ * \return The computed style value.
+ */
 function getStyle(el,styleProp)
 {
   var v;
@@ -378,6 +468,11 @@ function getStyle(el,styleProp)
   return v;
 }
 
+/**
+ * \brief Get a XULWindow (nsIXULWindow) from a regular window.
+ * \param win The window for which you want the nsIXULWindow
+ * \return The XULWindow for the window or null.
+ */
 function getXULWindowFromWindow(win) // taken from venkman source
 {
     var rv;
@@ -397,6 +492,9 @@ function getXULWindowFromWindow(win) // taken from venkman source
     return rv;
 }
 
+/**
+ * \brief Loading of position for the window in the current context.
+ */
 function onWindowLoadPosition()
 {
   var root = "window." + document.documentElement.id;
@@ -445,8 +543,10 @@ function onWindowLoadPosition()
     window.moveTo( rootX - diffX, rootY - diffY );
 }
 
-
-
+/**
+ * \brief Open a modal dialog.
+ * Opens a modal dialog and ensures proper accessibility for this modal dialog.
+ */
 function SBOpenModalDialog( url, param1, param2, param3, parentWindow )
 {
   if (!parentWindow) parentWindow = window;
@@ -460,6 +560,10 @@ function SBOpenModalDialog( url, param1, param2, param3, parentWindow )
   return retval;
 }
 
+/**
+ * \brief Open a window.
+ * Opens a window and ensures proper accessibility.
+ */
 function SBOpenWindow( url, param1, param2, param3, parentWindow )
 {
   if (!parentWindow) parentWindow = window;
@@ -490,6 +594,10 @@ function SBOpenWindow( url, param1, param2, param3, parentWindow )
   return retval;
 }
 
+/**
+ * \brief Quit the application.
+ * \param skipSave Skip saving window size and position.
+ */
 function quitApp( skipSave )
 {
   onExit(skipSave); // Don't always save the window position.
@@ -505,6 +613,9 @@ function quitApp( skipSave )
   }
 }
 
+/**
+ * \brief Hide the real resizers
+ */
 function hideRealResizers() {
   var resizers = document.getElementsByTagName("resizer");
   for (var i=0;i<resizers.length;i++) {
@@ -512,6 +623,9 @@ function hideRealResizers() {
   }
 }
 
+/**
+ * \brief Show the real resizers.
+ */
 function showRealResizers() {
   var resizers = document.getElementsByTagName("resizer");
   for (var i=0;i<resizers.length;i++) {
@@ -519,6 +633,9 @@ function showRealResizers() {
   }
 }
 
+/**
+ * \brief Hide fake resizers.
+ */
 function hideFakeResizers() {
   var xresizers = document.getElementsByTagName("x_resizer");
   for (var i=0;i<xresizers.length;i++) {
@@ -526,6 +643,9 @@ function hideFakeResizers() {
   }
 }
 
+/**
+ * \brief Show fake resizers.
+ */
 function showFakeResizers() {
   var xresizers = document.getElementsByTagName("x_resizer");
   for (var i=0;i<xresizers.length;i++) {
@@ -533,23 +653,37 @@ function showFakeResizers() {
   }
 }
 
+/**
+ * \brief Disable the real resizers.
+ */
 function disableResizers() {
   if (SBDataGetBoolValue("accessibility.enabled")) return;
   hideRealResizers();
   showFakeResizers();
 }
-	
+
+/**
+ * \brief Enable the real resizers.
+ */	
 function enableResizers() {
   if (SBDataGetBoolValue("accessibility.enabled")) return;
   hideFakeResizers();
   showRealResizers();
 }
 
+/**
+ * \brief Hide an element in the window in the current context.
+ * \param e The element to hide.
+ */
 function hideElement(e) {
   var element = document.getElementById(e);
   if (element) element.setAttribute("hidden", "true");
 }
 
+/**
+ * \brief Move an element before another element in the window in the current context.
+ * \param e The element to hide.
+ */
 function moveElement(e, before) {
   var element = document.getElementById(e);
   var beforeElement = document.getElementById(before);
@@ -559,6 +693,13 @@ function moveElement(e, before) {
   }
 }
 
+/**
+ * \brief Get the name of the platform we are running on.
+ * \return The name of the OS platform. (ie. Windows).
+ * \retval Windows_NT Running under Windows.
+ * \retval Darwin Running under Darwin/OS X.
+ * \retval Linux Running under Linux.
+ */
 function getPlatformString()
 {
   try {
@@ -580,6 +721,10 @@ function getPlatformString()
   }
 }
 
+/**
+ * \brief Verify if a key event is an ALT-F4 key event.
+ * \param evt Key event.
+ */
 function checkAltF4(evt)
 {
   if (evt.keyCode == 0x73 && evt.altKey) 
@@ -593,6 +738,11 @@ var SBStringBundleBundle = Components.classes["@mozilla.org/intl/stringbundle;1"
                                      .getService(Components.interfaces.nsIStringBundleService)
                                      .createBundle("chrome://songbird/locale/songbird.properties");
 
+/**
+ * \brief Lookup a string in the songbird.properties locale file.
+ * \param key The key for the string.
+ * \param dflt The 
+ */ 
 function SBString( key, dflt )
 {
   // If there is no default, the key is the default.
@@ -604,8 +754,10 @@ function SBString( key, dflt )
 }
 
 /**
-* Convert a string containing binary values to hex.
-*/
+ * \brief Convert a string containing binary values to hex.
+ * \param input Input string to convert to hex.
+ * \return The hex encoded string.
+ */
 function binaryToHex(input)
 {
   var result = "";
@@ -624,7 +776,9 @@ function binaryToHex(input)
 }
 
 /**
- * Makes a new URI from a url string
+ * \brief Makes a new URI from a url string
+ * \param aURLString String URL.
+ * \return nsIURI object.
  */
 function newURI(aURLString)
 {
@@ -640,7 +794,11 @@ function newURI(aURLString)
   return null;
 }
 
-// Debugging Tool
+/** 
+ * \brief List all properties on an object and display them in a message box.
+ * \param obj The object.
+ * \param objName The readable name of the object, helps format the output.
+ */
 function listProperties(obj, objName) 
 {
     var columns = 3;

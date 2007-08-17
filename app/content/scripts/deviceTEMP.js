@@ -25,14 +25,16 @@
 //
  */
 
-// ...and now I get to start cleaning up my mess...
+/**
+ * \file deviceTEMP.js
+ * \deprecated This file will be deleted.
+ * \internal
+ */
 
+// ...and now I get to start cleaning up my mess...
 
 try
 {
-
-
-
 
 //
 // XUL Event Methods
