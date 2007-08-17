@@ -251,7 +251,10 @@ sbRemotePlayer::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool success = mRemObsHash.Init();
-  NS_ASSERTION(success, "sbPropertyManager::mRemObsHash failed to initialize!");
+  NS_ENSURE_TRUE( success, NS_ERROR_FAILURE );
+
+  success = mCachedLibraries.Init(2);
+  NS_ENSURE_TRUE( success, NS_ERROR_FAILURE );
 
   nsCOMPtr<sbISecurityMixin> mixin =
         do_CreateInstance("@songbirdnest.com/remoteapi/security-mixin;1", &rv);
@@ -361,45 +364,26 @@ sbRemotePlayer::Libraries( const nsAString &aLibraryID,
         NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
   nsresult rv;
 
+  // Go ahead and return the cached copy if we have it. This Get call will take
+  // care of AddRef'ing for us.
+  if ( mCachedLibraries.Get( aLibraryID, aLibrary ) ) {
+    return NS_OK;
+  }
+
   // for a newly created library
   nsRefPtr<sbRemoteLibrary> library;
 
-  // to know where to cache the library
-  nsCOMPtr<sbIRemoteLibrary>* memberLibrary;
-
   if ( aLibraryID.EqualsLiteral(SB_LIB_NAME_MAIN) ) {
-    if (mMainLibrary) {
-      // We've created the main library already, use the cached version
-      LOG(("sbRemotePlayer::Libraries() - using existing main library"));
-      NS_ADDREF( *aLibrary = mMainLibrary );
-      return NS_OK;
-    }
-
     // No cached main library create a new one.
     LOG(("sbRemotePlayer::Libraries() - creating main library"));
     library = new sbRemoteLibrary();
     NS_ENSURE_TRUE( library, NS_ERROR_OUT_OF_MEMORY );
-
-    // save a handle to the main member variable so we know where to store
-    // the library if initialization completes successfully.
-    memberLibrary = &mMainLibrary;
   }
   else if ( aLibraryID.EqualsLiteral(SB_LIB_NAME_WEB) ) {
-    if (mWebLibrary) {
-      // We've created the web library already, use the cached version
-      LOG(("sbRemotePlayer::Libraries() - using existing web library"));
-      NS_ADDREF( *aLibrary = mWebLibrary );
-      return NS_OK;
-    }
-
     // No cached web library create a new one.
     LOG(("sbRemotePlayer::Libraries() - creating web library"));
     library = new sbRemoteWebLibrary();
     NS_ENSURE_TRUE( library, NS_ERROR_OUT_OF_MEMORY );
-
-    // save a handle to the web member variable so we know where to store
-    // the library if initialization completes successfully.
-    memberLibrary = &mWebLibrary;
   }
   else {
     // we don't handle anything but "main" and "web" yet.
@@ -408,19 +392,21 @@ sbRemotePlayer::Libraries( const nsAString &aLibraryID,
 
   rv = library->Init();
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   rv = library->ConnectToDefaultLibrary( aLibraryID );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // Now that initialization and library connection has succeeded cache
-  // the created library in the appropriate member variable pointed to by
-  // our handy dandy nsCOMPtr*. 
-  *memberLibrary = do_QueryInterface( NS_ISUPPORTS_CAST( sbIRemoteLibrary*,
-                                                         library ), &rv );
+  nsCOMPtr<sbIRemoteLibrary> remoteLibrary =
+    do_QueryInterface( NS_ISUPPORTS_CAST( sbIRemoteLibrary*, library ), &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  NS_ADDREF( *aLibrary = *memberLibrary );
+  // Now that initialization and library connection has succeeded cache
+  // the created library in the hashtable.
+  if ( !mCachedLibraries.Put( aLibraryID, remoteLibrary ) ) {
+    NS_WARNING("Failed to cache remoteLibrary!");
+  }
 
+  NS_ADDREF( *aLibrary = remoteLibrary );
   return NS_OK;
 }
 
@@ -432,28 +418,29 @@ sbRemotePlayer::SiteLibrary( const nsACString &aDomain,
   LOG(( "sbRemotePlayer::SiteLibrary(%s)", aPath.BeginReading() ));
 
   nsresult rv;
+
+  // Recycle the old site library if possible.
   if (mSiteLibrary) {
     rv = mSiteLibrary->ConnectToSiteLibrary( aDomain, aPath );
-    if ( NS_FAILED(rv) ) {
-      NS_WARNING("Existing mSiteLibrary failed to connect to internal library");
-      mSiteLibrary = nsnull;
-      return NS_ERROR_FAILURE; 
+    if ( NS_SUCCEEDED(rv) ) {
+      NS_ADDREF( *aSiteLibrary = mSiteLibrary );
+      return NS_OK;
     }
-  } else {
-    nsRefPtr<sbRemoteSiteLibrary> library;
-    library = new sbRemoteSiteLibrary();
-    NS_ENSURE_TRUE( library, NS_ERROR_OUT_OF_MEMORY );
-
-    rv = library->Init();
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    rv = library->ConnectToSiteLibrary( aDomain, aPath );
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    mSiteLibrary = do_QueryInterface( NS_ISUPPORTS_CAST( sbIRemoteSiteLibrary*,
-                                                         library ), &rv );
-    NS_ENSURE_SUCCESS( rv, rv );
   }
+
+  nsRefPtr<sbRemoteSiteLibrary> library;
+  library = new sbRemoteSiteLibrary();
+  NS_ENSURE_TRUE( library, NS_ERROR_OUT_OF_MEMORY );
+
+  rv = library->Init();
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = library->ConnectToSiteLibrary( aDomain, aPath );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  mSiteLibrary = do_QueryInterface( NS_ISUPPORTS_CAST( sbIRemoteSiteLibrary*,
+                                                       library ), &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   NS_ADDREF( *aSiteLibrary = mSiteLibrary );
   return NS_OK;

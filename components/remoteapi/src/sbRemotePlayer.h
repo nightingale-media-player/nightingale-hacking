@@ -40,6 +40,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
+#include <nsInterfaceHashtable.h>
 #include <nsIClassInfo.h>
 #include <nsIDOMEventListener.h>
 #include <nsIGenericFactory.h>
@@ -138,12 +139,10 @@ protected:
   //    so this will probably have to grow to be a hashtable.
   nsCOMPtr<sbIRemoteSiteLibrary> mSiteLibrary;
 
-  // Cache these for repetitive access
-  nsCOMPtr<sbIRemoteLibrary> mMainLibrary;
-  nsCOMPtr<sbIRemoteLibrary> mWebLibrary;
-
   // Hashtable to hold the observers registered by the webpage
   nsDataHashtable<nsStringHashKey, sbRemoteObserver> mRemObsHash;
+
+  nsInterfaceHashtable<nsStringHashKey, sbIRemoteLibrary> mCachedLibraries;
 
   // stash these for quick reference
   nsCOMPtr<sbIDataRemote> mdrCurrentArtist;
@@ -162,4 +161,3 @@ protected:
 };
 
 #endif // __SB_REMOTE_PLAYER_H__
-
