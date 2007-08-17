@@ -586,6 +586,8 @@
             if (docTitle) {
               newTitle += docElement.getAttribute("titlepreface");
               newTitle += docTitle;
+              if (navigator.userAgent.indexOf("Mac OS X") != -1)
+                modifier = "";
               if (modifier)
                 newTitle += sep;
             }
