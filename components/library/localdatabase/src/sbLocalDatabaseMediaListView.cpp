@@ -1306,24 +1306,27 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration()
       rv = property->GetValue(value);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbIPropertyInfo> info;
-      rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
-      NS_ENSURE_SUCCESS(rv, rv);
+      // Treat a search with an emtpy search as if it wasn't there
+      if (!value.IsEmpty()) {
+        nsCOMPtr<sbIPropertyInfo> info;
+        rv = mPropMan->GetPropertyInfo(propertyName, getter_AddRefs(info));
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      nsAutoString sortableValue;
-      rv = info->MakeSortable(value, sortableValue);
-      NS_ENSURE_SUCCESS(rv, rv);
+        nsAutoString sortableValue;
+        rv = info->MakeSortable(value, sortableValue);
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      sbStringArray valueArray(1);
-      nsString* successString = valueArray.AppendElement(sortableValue);
-      NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
+        sbStringArray valueArray(1);
+        nsString* successString = valueArray.AppendElement(sortableValue);
+        NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
 
-      nsCOMPtr<nsIStringEnumerator> valueEnum =
-        new sbTArrayStringEnumerator(&valueArray);
-      NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
+        nsCOMPtr<nsIStringEnumerator> valueEnum =
+          new sbTArrayStringEnumerator(&valueArray);
+        NS_ENSURE_TRUE(valueEnum, NS_ERROR_OUT_OF_MEMORY);
 
-      rv = mArray->AddFilter(propertyName, valueEnum, PR_TRUE);
-      NS_ENSURE_SUCCESS(rv, rv);
+        rv = mArray->AddFilter(propertyName, valueEnum, PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 
