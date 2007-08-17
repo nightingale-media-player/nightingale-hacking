@@ -2,9 +2,12 @@
 <!ENTITY brandFullName         "Songbird Web Player">            
 <!ENTITY vendorShortName       "POTI, Inc.">
 
-<!ENTITY window.main.title     "Songbird 0.3pre">
-<!ENTITY window.dev.title      "Songbird 0.3pre">
 
 <!ENTITY bugzillaURL           "http://bugzilla.songbirdnest.com/">
 <!ENTITY supportURL            "http://www.songbirdnest.com/support">
+
+
+<!-- Update the following prior to every release -->
 <!ENTITY releaseNotesURL       "http://www.songbirdnest.com/releasenotes">
+<!ENTITY window.main.title     "Songbird 0.3pre">
+<!ENTITY window.dev.title      "Songbird 0.3pre">
