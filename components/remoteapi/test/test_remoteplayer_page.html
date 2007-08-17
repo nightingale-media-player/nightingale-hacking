@@ -100,6 +100,10 @@ function runTest(tester) {
     //songbird.stop();
     //songbird.next();
     //songbird.previous();
+
+    // We need to do this to give the web browser persists component a chance
+    // to tidy up, otherwise it will leak
+    tester.sleep(2000);
   }
   catch(e) {
     tester.endRemoteAPITest(e);

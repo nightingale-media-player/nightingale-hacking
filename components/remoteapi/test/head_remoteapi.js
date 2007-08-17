@@ -195,3 +195,6 @@ function setTempDownloadDir() {
   dlFolder.stringValue = dest.path;
   dlAlways.boolValue = true;
 }
+
+initMockCore();
+

@@ -245,10 +245,7 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
  * sbDownloadSession class.
  */
 
-class sbDownloadSession : public nsIWebProgressListener,
-                          public nsIInterfaceRequestor,
-                          public nsIProgressEventSink,
-                          public nsIHttpEventSink
+class sbDownloadSession : public nsIWebProgressListener
 {
     /* *************************************************************************
      *
@@ -271,10 +268,6 @@ class sbDownloadSession : public nsIWebProgressListener,
 
     NS_DECL_ISUPPORTS
     NS_DECL_NSIWEBPROGRESSLISTENER
-    NS_DECL_NSIINTERFACEREQUESTOR
-    NS_DECL_NSIPROGRESSEVENTSINK
-    NS_DECL_NSIHTTPEVENTSINK
-
 
     /*
      * Public download session services.
@@ -326,7 +319,7 @@ class sbDownloadSession : public nsIWebProgressListener,
                                 mpFileProtocolHandler;
     nsCOMPtr<nsIWebBrowserPersist>
                                 mpWebBrowser;
-    nsCOMPtr<nsIChannel>        mpChannel;
+    nsCOMPtr<nsIRequest>        mpRequest;
     nsCOMPtr<nsIFile>           mpTmpFile;
     nsCOMPtr<sbILibrary>        mpDstLibrary;
     nsCOMPtr<nsIFile>           mpDstFile;
@@ -340,7 +333,7 @@ class sbDownloadSession : public nsIWebProgressListener,
      * Private download session services.
      */
 
-    nsresult CompleteTransfer();
+    nsresult CompleteTransfer(nsIRequest* aRequest);
 
     nsresult UpdateDstLibraryMetadata();
 

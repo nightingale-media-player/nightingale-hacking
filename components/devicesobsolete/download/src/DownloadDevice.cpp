@@ -1829,6 +1829,7 @@ sbDownloadSession::sbDownloadSession(
     mShutdown(PR_FALSE),
     mSuspended(PR_FALSE)
 {
+  MOZ_COUNT_CTOR(sbDownloadSession);
 }
 
 
@@ -1843,6 +1844,7 @@ sbDownloadSession::~sbDownloadSession()
     /* Dispose of the session lock. */
     if (mpSessionLock)
         nsAutoLock::DestroyLock(mpSessionLock);
+  MOZ_COUNT_DTOR(sbDownloadSession);
 }
 
 
@@ -1953,14 +1955,9 @@ nsresult sbDownloadSession::Initiate()
     if (NS_SUCCEEDED(result))
         result = pLibraryManager->GetMainLibrary(getter_AddRefs(mpDstLibrary));
 
-    /* Get a channel for the source. */
+    /* Get a URI for the source. */
     if (NS_SUCCEEDED(result))
         result = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
-    if (NS_SUCCEEDED(result))
-    {
-        result = mpIOService->NewChannelFromURI(pSrcURI,
-                                                getter_AddRefs(mpChannel));
-    }
 
     /* Create a persistent download web browser. */
     if (NS_SUCCEEDED(result))
@@ -1970,15 +1967,18 @@ nsresult sbDownloadSession::Initiate()
                              &result);
     }
 
-    /* Set up the listeners and callbacks. */
+    /* Set up the listener. */
     if (NS_SUCCEEDED(result))
         result = mpWebBrowser->SetProgressListener(this);
-    if (NS_SUCCEEDED(result))
-        result = mpChannel->SetNotificationCallbacks(this);
 
     /* Initiate the download. */
     if (NS_SUCCEEDED(result))
-        result = mpWebBrowser->SaveChannel(mpChannel, mpTmpFile);
+        result = mpWebBrowser->SaveURI(pSrcURI,
+                                       nsnull,
+                                       nsnull,
+                                       nsnull,
+                                       nsnull,
+                                       mpTmpFile);
 
     return (result);
 }
@@ -1992,20 +1992,18 @@ nsresult sbDownloadSession::Initiate()
 
 nsresult sbDownloadSession::Suspend()
 {
-    nsCOMPtr<nsIRequest>        pRequest;
     nsresult                    result = NS_OK;
 
     /* Lock the session. */
     nsAutoLock lock(mpSessionLock);
 
-    /* Get the download channel request. */
-    pRequest = do_QueryInterface(mpChannel, &result);
-
-    /* Suspend the request. */
-    if (NS_SUCCEEDED(result))
-        result = pRequest->Suspend();
-    if (NS_SUCCEEDED(result))
-        mSuspended = PR_TRUE;
+    if (mpRequest) {
+      /* Suspend the request. */
+      if (NS_SUCCEEDED(result))
+          result = mpRequest->Suspend();
+      if (NS_SUCCEEDED(result))
+          mSuspended = PR_TRUE;
+    }
 
     return (result);
 }
@@ -2019,20 +2017,18 @@ nsresult sbDownloadSession::Suspend()
 
 nsresult sbDownloadSession::Resume()
 {
-    nsCOMPtr<nsIRequest>        pRequest;
     nsresult                    result = NS_OK;
 
     /* Lock the session. */
     nsAutoLock lock(mpSessionLock);
 
-    /* Get the download channel request. */
-    pRequest = do_QueryInterface(mpChannel, &result);
-
-    /* Resume the request. */
-    if (NS_SUCCEEDED(result))
-        result = pRequest->Resume();
-    if (NS_SUCCEEDED(result))
-        mSuspended = PR_FALSE;
+    if (mpRequest) {
+      /* Resume the request. */
+      if (NS_SUCCEEDED(result))
+          result = mpRequest->Resume();
+      if (NS_SUCCEEDED(result))
+          mSuspended = PR_FALSE;
+    }
 
     return (result);
 }
@@ -2046,21 +2042,19 @@ nsresult sbDownloadSession::Resume()
 
 void sbDownloadSession::Shutdown()
 {
-    nsCOMPtr<nsIRequest>        pRequest;
-    nsresult                    result = NS_OK;
-
     /* Lock the session. */
     nsAutoLock lock(mpSessionLock);
 
     /* Mark session for shutdown. */
     mShutdown = PR_TRUE;
 
-    /* Get the download channel request. */
-    pRequest = do_QueryInterface(mpChannel, &result);
+    mpRequest = nsnull;
 
-    /* Cancel the request. */
-    if (NS_SUCCEEDED(result))
-        result = pRequest->Cancel(NS_ERROR_ABORT);
+    if (mpWebBrowser) {
+      mpWebBrowser->CancelSave();
+      mpWebBrowser->SetProgressListener(nsnull);
+      mpWebBrowser = nsnull;
+    }
 }
 
 
@@ -2070,12 +2064,8 @@ void sbDownloadSession::Shutdown()
  *
  ******************************************************************************/
 
-NS_IMPL_THREADSAFE_ISUPPORTS4(sbDownloadSession,
-                              nsIWebProgressListener,
-                              nsIInterfaceRequestor,
-                              nsIProgressEventSink,
-                              nsIHttpEventSink)
-
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDownloadSession,
+                              nsIWebProgressListener)
 
 /* *****************************************************************************
  *
@@ -2112,6 +2102,10 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
     PRUint32                    aStateFlags,
     nsresult                    aStatus)
 {
+    LOG(("sbDownloadSession[0x%.8x] - OnStateChange "
+         "aWebProgress 0x%.8x aRequest 0x%.8x aStateFlags 0x%.8x aStatus 0x%.8x",
+         this, aWebProgress, aRequest, aStateFlags, aStatus));
+
     nsString                    currentProgressStr;
     nsString                    progressModeStr;
     nsresult                    status = aStatus;
@@ -2139,13 +2133,15 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
             PRBool                      requestSucceeded;
 
             /* Try to get HTTP channel. */
-            pHttpChannel = do_QueryInterface(mpChannel, &result);
+            pHttpChannel = do_QueryInterface(aRequest, &result);
 
             /* Check if request succeeded. */
             if (NS_SUCCEEDED(result))
                 result = pHttpChannel->GetRequestSucceeded(&requestSucceeded);
-            if (NS_SUCCEEDED(result) && !requestSucceeded)
-                status = NS_ERROR_UNEXPECTED;
+            if (NS_SUCCEEDED(result) && !requestSucceeded) {
+              status = NS_ERROR_UNEXPECTED;
+              LOG(("sbDownloadSession[0x%.8x] - Download stopped but failed"));
+            }
 
             /* Don't propagate errors from here. */
             result = NS_OK;
@@ -2153,7 +2149,7 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
 
         /* Complete the transfer on success. */
         if (NS_SUCCEEDED(result) && NS_SUCCEEDED(status))
-            result = CompleteTransfer();
+            result = CompleteTransfer(aRequest);
 
         /* Set the progress to complete. */
         mCurrentProgress = 101;
@@ -2209,6 +2205,10 @@ NS_IMETHODIMP sbDownloadSession::OnProgressChange(
     PRInt32                     aCurTotalProgress,
     PRInt32                     aMaxTotalProgress)
 {
+    if (!mpRequest) {
+        mpRequest = aRequest;
+    }
+
     /* Update progress. */
     UpdateProgress(aCurSelfProgress, aMaxSelfProgress);
 
@@ -2265,6 +2265,9 @@ NS_IMETHODIMP sbDownloadSession::OnStatusChange(
     nsresult                    aStatus,
     const PRUnichar             *aMessage)
 {
+    LOG(("sbDownloadSession[0x%.8x] - OnStatusChange "
+         "aWebProgress 0x%.8x aRequest 0x%.8x aStatus 0x%.8x aMessage '%s'",
+         this, aWebProgress, aRequest, aStatus, aMessage));
     return (NS_OK);
 }
 
@@ -2296,141 +2299,6 @@ NS_IMETHODIMP sbDownloadSession::OnSecurityChange(
     return (NS_OK);
 }
 
-
-/* *****************************************************************************
- *
- * Download session nsIInterfaceRequestor services.
- *
- ******************************************************************************/
-
-/**
- * Retrieves the specified interface pointer.
- *
- * @param uuid The IID of the interface being requested.
- * @param aResult [out] The interface pointer to be filled in if
- *                the interface is accessible.
- * @return NS_OK - interface was successfully returned.
- *         NS_NOINTERFACE - interface not accessible.
- *         NS_ERROR* - method failure.
- */
-
-NS_IMETHODIMP sbDownloadSession::GetInterface(
-    const nsIID                 &uuid,
-    void                        **aResult)
-{
-    nsresult                    result = NS_OK;
-
-    /* Validate parameters. */
-    NS_ENSURE_ARG_POINTER(aResult);
-
-    /* Query for the requested interface. */
-    result = QueryInterface(uuid, aResult);
-
-    return (result);
-}
-
-
-/* *****************************************************************************
- *
- * Download session nsIProgressEventSink services.
- *
- ******************************************************************************/
-
-/**
- * Called to notify the event sink that progress has occurred for the
- * given request.
- *
- * @param aRequest
- *        the request being observed (may QI to nsIChannel).
- * @param aContext
- *        if aRequest is a channel, then this parameter is the listener
- *        context passed to nsIChannel::asyncOpen.
- * @param aProgress
- *        numeric value in the range 0 to aProgressMax indicating the
- *        number of bytes transfered thus far.
- * @param aProgressMax
- *        numeric value indicating maximum number of bytes that will be
- *        transfered (or 0xFFFFFFFFFFFFFFFF if total is unknown).
- */
-
-NS_IMETHODIMP sbDownloadSession::OnProgress(
-    nsIRequest                  *aRequest,
-    nsISupports                 *aContext,
-    PRUint64                    aProgress,
-    PRUint64                    aProgressMax)
-{
-    /* Update progress. */
-    UpdateProgress(aProgress, aProgressMax);
-
-    return (NS_OK);
-}
-
-
-/**
- * Called to notify the event sink with a status message for the given
- * request.
- *
- * @param aRequest
- *        the request being observed (may QI to nsIChannel).
- * @param aContext
- *        if aRequest is a channel, then this parameter is the listener
- *        context passed to nsIChannel::asyncOpen.
- * @param aStatus
- *        status code (not necessarily an error code) indicating the
- *        state of the channel (usually the state of the underlying
- *        transport).  see nsISocketTransport for socket specific status
- *        codes.
- * @param aStatusArg
- *        status code argument to be used with the string bundle service
- *        to convert the status message into localized, human readable
- *        text.  the meaning of this parameter is specific to the value
- *        of the status code.  for socket status codes, this parameter
- *        indicates the host:port associated with the status code.
- */
-
-NS_IMETHODIMP sbDownloadSession::OnStatus(
-    nsIRequest                  *aRequest,
-    nsISupports                 *aContext,
-    nsresult                    aStatus,
-    const PRUnichar             *aStatusArg)
-{
-    return (NS_OK);
-}
-
-
-/* *****************************************************************************
- *
- * Download session nsIHttpEventSink services.
- *
- ******************************************************************************/
-
-/**
- * Called when a redirect occurs due to a HTTP response like 302.  The
- * redirection may be to a non-http channel.
- *
- * @return failure cancels redirect
- */
-
-NS_IMETHODIMP sbDownloadSession::OnRedirect(
-    nsIHttpChannel              *httpChannel,
-    nsIChannel                  *newChannel)
-{
-    nsresult                    result = NS_OK;
-
-    /* Lock the session. */
-    nsAutoLock lock(mpSessionLock);
-
-    /* Get the new channel. */
-    mpChannel = newChannel;
-
-    /* If session is suspended, suspend channel. */
-    if (mSuspended)
-        mpChannel->Suspend();
-
-    return (result);
-}
-
-
 /* *****************************************************************************
  *
  * Private download session services.
@@ -2444,7 +2312,7 @@ NS_IMETHODIMP sbDownloadSession::OnRedirect(
  * library.
  */
 
-nsresult sbDownloadSession::CompleteTransfer()
+nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
 {
     nsCOMPtr<nsIFile>           pFileDir;
     nsString                    fileName;
@@ -2463,7 +2331,11 @@ nsresult sbDownloadSession::CompleteTransfer()
         // based on the actual source URL now that we know the actual
         // channel used
         nsCOMPtr<nsIURI> pFinalSrcURI;
-        result = mpChannel->GetURI(getter_AddRefs(pFinalSrcURI));
+
+        nsCOMPtr<nsIChannel> channel = do_QueryInterface(aRequest, &result);
+        NS_ENSURE_SUCCESS(result, result);
+
+        result = channel->GetURI(getter_AddRefs(pFinalSrcURI));
         NS_ENSURE_SUCCESS(result, result);
         
         /* convert the uri into a URL */
