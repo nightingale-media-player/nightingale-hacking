@@ -365,15 +365,20 @@ NS_IMETHODIMP sbMetadataJob::Append(nsIArray *aMediaItemsArray)
   rv = aMediaItemsArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Break out the media items into a useful array
+  nsCOMArray<sbIMediaItem> appendArray;
   for (PRUint32 i = 0; i < length; i++) {
-    // Break out the media item
     nsCOMPtr<sbIMediaItem> mediaItem = do_QueryElementAt(aMediaItemsArray, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    PRBool success = mInitArray.AppendObject( mediaItem );
+    PRBool success = appendArray.AppendObject( mediaItem );
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
-  mInitCompleted = PR_FALSE;
+  // Run the loop to send all of these items onto our work queue in the database
+  PRUint32 start = 0;
+  ProcessInit(appendArray, start, length);
+
+//  mInitCompleted = PR_FALSE;
 
   return NS_OK;
 }
@@ -421,6 +426,48 @@ nsresult sbMetadataJob::RunTimer()
   return NS_OK;
 }
 
+nsresult sbMetadataJob::ProcessInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &aStart, PRUint32 aEnd)
+{
+  nsresult rv;
+
+  nsCOMPtr<sbILibraryManager> libraryManager =
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbILibrary> library;
+  rv = libraryManager->GetMainLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(library, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXsteve This assumes that we are loading into the main library,
+  // but I think we make this assumption all over :(
+  sbMetadataBatchHelper batchHelper(list);
+
+  rv = mMainThreadQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("begin"));
+  NS_ENSURE_SUCCESS(rv, rv);
+  for ( ; aStart < aEnd; aStart++ ) 
+  {
+    // Place the item info on the query to track in our own database, get back a temporary job item.
+    nsRefPtr<jobitem_t> tempItem;
+    AddItemToJobTableQuery( mMainThreadQuery, mTableName, aArray[ aStart ], getter_AddRefs(tempItem) );
+
+    // Use the temporary item to stuff a default title value in the properties cache (don't flush to library database, yet)
+    AddDefaultMetadataToItem( tempItem, aArray[ aStart ] );
+  }
+  rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("commit"));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRInt32 error;
+  rv = mMainThreadQuery->Execute( &error );
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
 nsresult sbMetadataJob::ProcessTimer()
 {
   nsresult rv;
@@ -430,6 +477,7 @@ nsresult sbMetadataJob::ProcessTimer()
   if ( ! mInitCompleted )
   {
     PRUint32 total = mInitArray.Count(), max = mInitCount + NUM_ITEMS_PER_INIT_LOOP;
+    PRUint32 end = (total < max) ? max : total;
 
     // First we're adding items from the array.
     if ( mInitCount < total )
@@ -441,44 +489,8 @@ nsresult sbMetadataJob::ProcessTimer()
       // the enqueueing of the metadata item-jobs into the database.  We should figure
       // out some way to prevent shutdown, but it is NOT crashproof while in this loop.
       //
-
-      // Add them to our database table so we don't lose context if the app goes away.
-      {
-        nsCOMPtr<sbILibraryManager> libraryManager =
-          do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-        nsCOMPtr<sbILibrary> library;
-        rv = libraryManager->GetMainLibrary(getter_AddRefs(library));
-        NS_ENSURE_SUCCESS(rv, rv);
-        nsCOMPtr<sbIMediaList> list = do_QueryInterface(library, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // XXXsteve This assumes that we are loading into the main library,
-        // but I think we make this assumption all over :(
-        sbMetadataBatchHelper batchHelper(list);
-
-        rv = mMainThreadQuery->ResetQuery();
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("begin"));
-        NS_ENSURE_SUCCESS(rv, rv);
-        for ( ; mInitCount < max && mInitCount < total; mInitCount++ ) 
-        {
-          // Place the item info on the query to track in our own database, get back a temporary job item.
-          nsRefPtr<jobitem_t> tempItem;
-          AddItemToJobTableQuery( mMainThreadQuery, mTableName, mInitArray[ mInitCount ], getter_AddRefs(tempItem) );
-
-          // Use the temporary item to stuff a default title value in the properties cache (don't flush to library database, yet)
-          AddDefaultMetadataToItem( tempItem, mInitArray[ mInitCount ] );
-        }
-        rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("commit"));
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
-        NS_ENSURE_SUCCESS(rv, rv);
-        PRInt32 error;
-        rv = mMainThreadQuery->Execute( &error );
-        NS_ENSURE_SUCCESS(rv, rv);
-        NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
-      }
+      rv = ProcessInit( mInitArray, mInitCount, end );
+      NS_ENSURE_SUCCESS(rv, rv);
 
       // Relaunch the thread if it has completed and we add new task items.
       if ( mThreadCompleted )

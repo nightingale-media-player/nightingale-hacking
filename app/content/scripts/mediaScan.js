@@ -51,7 +51,7 @@ var theTargetInsertIndex = -1;
 // Init the text box to the last url played (shrug).
 var polling_interval;
 
-var CHUNK_SIZE = 500;
+var CHUNK_SIZE = 200;
 var nextStartIndex = 0;
 var batchLoadsPending = 0;
 var closePending = false;

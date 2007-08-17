@@ -147,6 +147,7 @@ protected:
   };
 
   nsresult RunTimer();
+  nsresult ProcessInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &aStart, PRUint32 aEnd);
   nsresult ProcessTimer();
   nsresult CancelTimer();
   nsresult RunThread( PRBool * bShutdown );

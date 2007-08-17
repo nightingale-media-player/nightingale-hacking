@@ -74,10 +74,10 @@ interface sbIMetadataJob : nsISupports
   /**
    * \brief Add some more media items to the job's queue.
    *
-   * There is a window of time while it is copying the given array into the 
-   * database that a crash or shutdown will lose the enqueueing of the task.
-   *
    * Appending to a completed job will throw an error.
+   *
+   * THIS METHOD APPENDS ALL THE ITEMS TO THE DATABASE QUEUE, BLOCKING UNTIL COMPLETE.
+   * Try to only give it small (< 500 items) arrays in batches.
    *
    * \param aMediaItemsArray An array filled with media items to be scanned.
    */
