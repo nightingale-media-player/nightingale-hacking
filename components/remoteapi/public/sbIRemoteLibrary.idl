@@ -32,6 +32,8 @@
 #include "nsISupports.idl"
 #include "sbIRemoteMediaList.idl"
 
+interface nsISimpleEnumerator;
+interface nsIStringEnumerator;
 interface sbIMediaItem;
 
 /*
@@ -293,27 +295,27 @@ interface sbIRemoteLibrary : nsISupports
    */
   /*
   Func: getMediaListByName()
-  
+
   Get the site media list with the given name.  Note that to compare for
   identity one must compare the guid (instead of JS object comparisions).
-  
+
   Prototype:
     <MediaList> getMediaListByName(String name)
-  
+
   Paramters:
     name - The name of the media list to fetch
-  
+
   Returns:
     The corresponding media list, or null if not found
-  
+
   Example:
     (start code)
     //Create or get a library.
     var library = songbird.siteLibrary("", "");
-    
+
     //Fetch the shopping cart media list
     var mediaList = library.getMediaListByName("Shopping Cart");
-    
+
     // comparisons for equality must be done on the guid
     var cart = library.getMediaListByName("Shopping Cart");
     alert(mediaList.guid == cart.guid);
@@ -323,6 +325,13 @@ interface sbIRemoteLibrary : nsISupports
     <createMediaList()>
   */
   sbIRemoteMediaList getMediaListByName( in AString aName );
+
+  nsIStringEnumerator getArtists();
+  nsIStringEnumerator getAlbums();
+  nsIStringEnumerator getGenres();
+  nsIStringEnumerator getYears();
+
+  nsISimpleEnumerator getPlaylists();
 };
 
 /**

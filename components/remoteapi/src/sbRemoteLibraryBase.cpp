@@ -24,25 +24,8 @@
 //
  */
 
-#include "sbRemoteAPIUtils.h"
 #include "sbRemoteLibraryBase.h"
-#include "sbRemoteMediaItem.h"
-#include "sbRemoteMediaList.h"
-#include "sbRemoteSiteMediaList.h"
 
-#include <sbILibrary.h>
-#include <sbILibraryManager.h>
-#include <sbIMediaList.h>
-#include <sbIMediaListView.h>
-#include <sbIMetadataJob.h>
-#include <sbIMetadataJobManager.h>
-#include <sbIPlaylistReader.h>
-#include <sbIWrappedMediaItem.h>
-#include <sbIWrappedMediaList.h>
-#include <sbStandardProperties.h>
-
-#include <nsCOMArray.h>
-#include <nsEventDispatcher.h>
 #include <nsICategoryManager.h>
 #include <nsIDocument.h>
 #include <nsIDOMDocument.h>
@@ -55,14 +38,35 @@
 #include <nsIObserver.h>
 #include <nsIPrefService.h>
 #include <nsIPresShell.h>
+#include <nsISimpleEnumerator.h>
+#include <nsIStringEnumerator.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIWindowWatcher.h>
+#include <sbILibrary.h>
+#include <sbILibraryManager.h>
+#include <sbIMediaList.h>
+#include <sbIMediaListView.h>
+#include <sbIMetadataJob.h>
+#include <sbIMetadataJobManager.h>
+#include <sbIPlaylistReader.h>
+#include <sbIWrappedMediaItem.h>
+#include <sbIWrappedMediaList.h>
+
+#include <nsArrayEnumerator.h>
+#include <nsCOMArray.h>
+#include <nsEnumeratorUtils.h>
+#include <nsEventDispatcher.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringEnumerator.h>
 #include <nsStringGlue.h>
 #include <nsTHashtable.h>
 #include <prlog.h>
+#include "sbRemoteMediaItem.h"
+#include "sbRemoteMediaList.h"
+#include "sbRemoteSiteMediaList.h"
+#include "sbRemoteAPIUtils.h"
+#include <sbStandardProperties.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -126,7 +130,7 @@ class sbRemoteLibraryEnumCallback : public sbIMediaListEnumerationListener
 {
   public:
     NS_DECL_ISUPPORTS
-    
+
     sbRemoteLibraryEnumCallback( nsCOMArray<sbIMediaItem>& aArray ) :
       mArray(aArray) { }
 
@@ -144,9 +148,9 @@ class sbRemoteLibraryEnumCallback : public sbIMediaListEnumerationListener
     {
       NS_ENSURE_ARG(_retval);
       *_retval = PR_TRUE;
-      
+
       mArray.AppendObject( aItem );
-      
+
       return NS_OK;
     }
   private:
@@ -165,7 +169,9 @@ NS_IMPL_ISUPPORTS9( sbRemoteLibraryBase,
                     sbILibraryResource,
                     sbIRemoteLibrary )
 
-sbRemoteLibraryBase::sbRemoteLibraryBase() : mShouldScan(PR_TRUE)
+sbRemoteLibraryBase::sbRemoteLibraryBase() :
+  mShouldScan(PR_TRUE),
+  mEnumerationResult(NS_ERROR_NOT_INITIALIZED)
 {
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
@@ -318,7 +324,7 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
   nsCOMPtr<nsIURI> uri;
   rv = NS_NewURI(getter_AddRefs(uri), aURL);
   NS_ENSURE_SUCCESS(rv, rv);
- 
+
   // Only allow the creation of media lists with http(s) schemes
   PRBool validScheme;
   uri->SchemeIs("http", &validScheme);
@@ -359,23 +365,23 @@ sbRemoteLibraryBase::GetMediaListByName( const nsAString & aName,
                                          sbIRemoteMediaList **_retval )
 {
   NS_ENSURE_ARG(_retval);
-  
+
   nsresult rv;
   nsCOMPtr<sbIMediaList> libList = do_QueryInterface( mLibrary, &rv );
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   nsCOMArray<sbIMediaItem> items;
   nsRefPtr<sbRemoteLibraryEnumCallback> listener =
     new sbRemoteLibraryEnumCallback(items);
   if ( !listener )
     return NS_ERROR_OUT_OF_MEMORY;
-  
+
   rv = libList->EnumerateItemsByProperty( NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
                                           aName,
                                           listener,
                                           sbIMediaList::ENUMERATIONTYPE_SNAPSHOT );
   NS_ENSURE_SUCCESS( rv, rv );
-  
+
   for ( PRInt32 i = 0; i < items.Count(); ++i ) {
     nsCOMPtr<sbILibraryResource> res = do_QueryInterface( items[i], &rv );
     if ( NS_FAILED(rv) )
@@ -393,11 +399,89 @@ sbRemoteLibraryBase::GetMediaListByName( const nsAString & aName,
         return NS_OK;
     }
   }
-  
+
   // if we reach this point, we did not find the media list
   // not an exception, so still return NS_OK
   *_retval = nsnull;
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetArtists( nsIStringEnumerator** _retval )
+{
+  LOG(("sbRemoteLibraryBase::GetArtists()"));
+  return GetListEnumForProperty( NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                                 _retval );
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetAlbums( nsIStringEnumerator** _retval )
+{
+  LOG(("sbRemoteLibraryBase::GetAlbums()"));
+
+  return GetListEnumForProperty( NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                 _retval );
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetGenres( nsIStringEnumerator** _retval )
+{
+  LOG(("sbRemoteLibraryBase::GetGenres()"));
+
+  return GetListEnumForProperty( NS_LITERAL_STRING(SB_PROPERTY_GENRE),
+                                 _retval );
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetYears( nsIStringEnumerator** _retval )
+{
+  LOG(("sbRemoteLibraryBase::GetYears()"));
+
+  return GetListEnumForProperty( NS_LITERAL_STRING(SB_PROPERTY_YEAR),
+                                 _retval );
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
+{
+  LOG(("sbRemoteLibraryBase::GetPlaylists()"));
+
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_STATE(mLibrary);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface( mLibrary, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  rv = mediaList->EnumerateItemsByProperty( NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                            NS_LITERAL_STRING("1"),
+                                            this,
+                                            sbIMediaList::ENUMERATIONTYPE_SNAPSHOT );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  if ( NS_SUCCEEDED(mEnumerationResult) ) {
+    // Make an enumerator for the contents of mEnumerationArray.
+    if ( mEnumerationArray.Count() ) {
+      rv = NS_NewArrayEnumerator( _retval, mEnumerationArray );
+    }
+    else {
+      rv = NS_NewEmptyEnumerator( _retval );
+    }
+
+    if ( NS_FAILED(rv) ) {
+      NS_WARNING("Failed to make array enumerator");
+    }
+  }
+  else {
+    NS_WARNING("Item enumeration failed!");
+    rv = mEnumerationResult;
+  }
+
+  // Reset the array and result codes for next time.
+  mEnumerationArray.Clear();
+  mEnumerationResult = NS_ERROR_NOT_INITIALIZED;
+
+  return rv;
 }
 
 // ---------------------------------------------------------------------------
@@ -416,6 +500,47 @@ NS_IMETHODIMP_(already_AddRefed<sbIMediaList>)
 sbRemoteLibraryBase::GetMediaList()
 {
   return mRemMediaList->GetMediaList();
+}
+
+// ---------------------------------------------------------------------------
+//
+//                     sbIMediaListEnumerationListener
+//
+// ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::OnEnumerationBegin( sbIMediaList *aMediaList,
+                                         PRBool *_retval )
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  NS_ASSERTION( mEnumerationArray.Count() == 0,
+                "Someone forgot to clear mEnumerationArray!" );
+  NS_ASSERTION( mEnumerationResult == NS_ERROR_NOT_INITIALIZED,
+                "Someone forgot to reset mEnumerationResult!" );
+
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::OnEnumeratedItem( sbIMediaList *aMediaList,
+                                       sbIMediaItem *aMediaItem,
+                                       PRBool *_retval )
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  *_retval = mEnumerationArray.AppendObject(aMediaItem);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteLibraryBase::OnEnumerationEnd( sbIMediaList *aMediaList,
+                                       nsresult aStatusCode )
+{
+  mEnumerationResult = aStatusCode;
+  return NS_OK;
 }
 
 // ---------------------------------------------------------------------------
@@ -456,8 +581,8 @@ sbRemoteLibraryBase::GetLibraryGUID( const nsAString &aLibraryID,
     LOG(("sbRemoteLibraryBase::GetLibraryGUID() -- not a default library"));
     // ultimately we need to be able to get the GUID for non-default libraries
     //   if we are going to allow the library manager to manage them.
-    // We might want to do the string hashing here and add keys for 
-    //   songbird.library.site.hashkey 
+    // We might want to do the string hashing here and add keys for
+    //   songbird.library.site.hashkey
     return NS_ERROR_FAILURE;
   }
 
@@ -481,3 +606,23 @@ sbRemoteLibraryBase::GetLibraryGUID( const nsAString &aLibraryID,
   return NS_OK;
 }
 
+nsresult
+sbRemoteLibraryBase::GetListEnumForProperty( const nsAString& aProperty,
+                                             nsIStringEnumerator** _retval )
+{
+  NS_ASSERTION( !aProperty.IsEmpty(), "Don't send empty property names here!" );
+
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_STATE(mLibrary);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface( mLibrary, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsIStringEnumerator* enumerator;
+  rv = mediaList->GetDistinctValuesForProperty( aProperty, &enumerator );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  *_retval = enumerator;
+  return NS_OK;
+}

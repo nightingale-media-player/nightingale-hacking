@@ -33,6 +33,8 @@
 #include "sbRemoteSiteMediaList.h"
 #include "sbRemoteSiteMediaItem.h"
 
+#include <nsIFile.h>
+#include <nsISecurityCheckedComponent.h>
 #include <sbILibrary.h>
 #include <sbILibraryResource.h>
 #include <sbIMediaList.h>
@@ -46,10 +48,12 @@
 #include <sbIWrappedMediaList.h>
 
 #include <nsAutoPtr.h>
-#include <nsIFile.h>
-#include <nsISecurityCheckedComponent.h>
-#include <nsStringGlue.h>
+#include <nsCOMArray.h>
 #include <nsCOMPtr.h>
+#include <nsStringGlue.h>
+
+class nsIStringEnumerator;
+class sbIMediaItem;
 
 // PURE VIRTUAL: Inherits but doesn't impl nsIClassInfo
 //               derived classes must impl.
@@ -59,12 +63,14 @@ class sbRemoteLibraryBase : public nsIClassInfo,
                             public sbIRemoteLibrary,
                             public sbIRemoteMediaList,
                             public sbIWrappedMediaList,
-                            public sbIMediaList
+                            public sbIMediaList,
+                            public sbIMediaListEnumerationListener
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBISECURITYAGGREGATOR
   NS_DECL_SBIREMOTELIBRARY
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
   NS_FORWARD_SAFE_SBIREMOTEMEDIALIST(mRemMediaList)
   NS_FORWARD_SAFE_SBIMEDIALIST(mRemMediaList)
@@ -83,18 +89,24 @@ public:
                                   nsAString &aLibraryGUID );
 protected:
   virtual ~sbRemoteLibraryBase();
-  PRBool mShouldScan;
-  nsCOMPtr<sbILibrary> mLibrary;
-  nsRefPtr<sbRemoteMediaListBase> mRemMediaList;
 
   // PURE VIRTUAL: Needs to be implemented by derived class
   // on connection to a library, set the internal remote medialist
   virtual nsresult InitInternalMediaList() = 0;
 
+  nsresult GetListEnumForProperty( const nsAString& aProperty,
+                                   nsIStringEnumerator** _retval );
+
+  PRBool mShouldScan;
+  nsCOMPtr<sbILibrary> mLibrary;
+  nsRefPtr<sbRemoteMediaListBase> mRemMediaList;
+
+  // For holding the results of sbIMediaList enumeration methods..
+  nsCOMArray<sbIMediaItem> mEnumerationArray;
+  nsresult mEnumerationResult;
+
   // SecurityCheckedComponent stuff
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
-
 };
 
 #endif // __SB_REMOTE_LIBRARYBASE_H__
-
