@@ -391,8 +391,10 @@
         0: undefined
         1: "contentSpec" property on the medialist
         2: "defaultColumnSpec" property on the medialist
-        3: XUL "columnSpec" attribute
-        4: Our last-ditch hardcoded list
+        3: "contentSpec" property on the medialist library
+        4: "defaultColumnSpec" property on the medialist library
+        5: XUL "columnSpec" attribute
+        6: Our last-ditch hardcoded list
       -->
       <field name="_columnSpecOrigin">0</field>
 
@@ -650,43 +652,29 @@
   var columnMap = [];
   var medialist = this.mediaListView.mediaList;
   
-  var columnSpec = medialist.getProperty(SBProperties.columnSpec);
-  if (columnSpec) {
-    try {
-      columnMap = this._parseColumnSpec(columnSpec);
-      this._columnSpecOrigin = 1;
-    }
-    catch (e) {
-      this._reportError("Failed to parse columnSpec(1): \"" + columnSpec + "\"", e);
-    }
+  columnMap = this._getColumnMap(medialist.getProperty(SBProperties.columnSpec),
+                                 1);
+  
+  if (!columnMap.length) {
+    columnMap = this._getColumnMap
+                        (medialist.getProperty(SBProperties.defaultColumnSpec),
+                         2);
   }
   
   if (!columnMap.length) {
-    columnSpec =
-      medialist.getProperty(SBProperties.defaultColumnSpec);
-    if (columnSpec) {
-      try {
-        columnMap = this._parseColumnSpec(columnSpec);
-        this._columnSpecOrigin = 2;
-      }
-      catch (e) {
-        this._reportError("Failed to parse columnSpec(2): \"" + columnSpec + "\"", e);
-      }
-    }
+    columnMap = this._getColumnMap
+                        (medialist.library.getProperty(SBProperties.columnSpec),
+                         3);
   }
   
   if (!columnMap.length) {
-    columnSpec = this.getAttribute("columnSpec");
-    if (columnSpec) {
-      try {
-        columnMap = this._parseColumnSpec(columnSpec);
-        this._columnSpecOrigin = 3;
-      }
-      catch (e) {
-        this._reportError("Failed to parse columnSpec(3): \"" + columnSpec + "\"", e);
-        columnSpec = "";
-      }
-    }
+    columnMap = this._getColumnMap
+                (medialist.library.getProperty(SBProperties.defaultColumnSpec),
+                 4);
+  }
+  
+  if (!columnMap.length) {
+    columnMap = this._getColumnMap(this.getAttribute("columnSpec"), 5);
   }
   
   if (!columnMap.length) {
@@ -697,7 +685,7 @@
                             SBProperties.artistName + " 222 " +
                             SBProperties.albumName + " 222 " +
                             SBProperties.genre + " 70");
-    this._columnSpecOrigin = 4;
+    this._columnSpecOrigin = 6;
   }
   
   if (!columnMap.length) {
@@ -755,6 +743,28 @@
     this.tree.columns.invalidateColumns();
   }
 ]]>
+        </body>
+      </method>
+
+      <method name="_getColumnMap">
+        <parameter name="columnSpec"/>
+        <parameter name="columnSpecOrigin"/>
+        <body>
+          <![CDATA[
+            var columnMap = [];
+
+            if (columnSpec) {
+              try {
+                columnMap = this._parseColumnSpec(columnSpec);
+                this._columnSpecOrigin = columnSpecOrigin;
+              }
+              catch (e) {
+                this._reportError("Failed to parse columnSpec(" + columnSpecOrigin + "): \"" + columnSpec + "\"", e);
+              }
+            }
+
+            return columnMap;
+          ]]>
         </body>
       </method>
 
@@ -1009,14 +1019,13 @@
     throw new Error("No columns enumerated");
   }
   
-  if (this._columnSpecOrigin == 3) {
-    // Write the changes back to XUL
-    this.setAttribute("columnSpec", columnSpec);
-  }
-  
   var mediaList = this.mediaListView.mediaList;
-  mediaList.setProperty("http://songbirdnest.com/data/1.0#columnSpec",
-                        columnSpec);
+  mediaList.setProperty(SBProperties.columnSpec, columnSpec);
+
+  // Write library column spec to use as default for media lists without column
+  // specs.  This was previously done by writing back to the XUL columnSpec
+  // attribute, but that caused bug #4220.
+  mediaList.library.setProperty(SBProperties.columnSpec, columnSpec);
 ]]>
         </body>
       </method>
