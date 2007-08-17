@@ -542,7 +542,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SUBSCRIBE, this.m_cmd_Subscribe);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOLIBRARY, this.m_cmd_AddToLibrary);
-    this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, this.m_cmd_AddToPlaylist);
+    this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SHOWDOWNLOADPLAYLIST, this.m_cmd_ShowDownloadPlaylist);
     this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SHOWWEBPLAYLIST, this.m_cmd_ShowWebPlaylist);
@@ -602,7 +602,7 @@ PublicPlaylistCommands.prototype = {
                                                       this.m_cmd_Subscribe);
     this.m_webPlaylistCommands.appendPlaylistCommands(null, 
                                                       "library_cmdobj_addtoplaylist",
-                                                      this.m_cmd_AddToPlaylist);
+                                                      SBPlaylistCommand_AddToPlaylist);
     this.m_webPlaylistCommands.appendPlaylistCommands(null, 
                                                       "library_cmdobj_addtolibrary",
                                                       this.m_cmd_AddToLibrary);
@@ -697,7 +697,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SUBSCRIBE, this.m_cmd_Subscribe);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOLIBRARY, this.m_cmd_AddToLibrary);
-    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, this.m_cmd_AddToPlaylist);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SHOWDOWNLOADPLAYLIST, this.m_cmd_ShowDownloadPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SHOWWEBPLAYLIST, this.m_cmd_ShowWebPlaylist);

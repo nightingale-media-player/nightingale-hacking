@@ -879,6 +879,7 @@
       <body>
         <![CDATA[
           try {
+            if (!cmdobject.getVisible(this.hoststring)) return;
             // And make all the new stuff
             var num = cmdobject.getNumCommands(menu, this.hoststring);
             if (stateonly) num = this.menuitems.length;
@@ -1135,6 +1136,7 @@
         <![CDATA[
           try {
             // And make all the new stuff
+            if (!cmdobject.getVisible(this.hoststring)) return;
             var num = cmdobject.getNumCommands(menu, this.hoststring);
             if (stateonly) num = this.keys.length;
             for ( var i = 0; i < num; i++ )
