@@ -54,7 +54,7 @@ const FOLDER_IMAGE = 'chrome://songbird/skin/icons/icon_folder.png';
 const BOOKMARK_IMAGE = 'chrome://songbird/skin/icons/icon_bookmark.ico';
 const BOOKMARK_DRAG_TYPE = 'text/x-sb-bookmark';
 const MOZ_URL_DRAG_TYPE = 'text/x-moz-url';
-
+const BSP = 'http://songbirdnest.com/rdf/bookmarks#';
 
 function SB_NewDataRemote(a,b) {
   return (new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
@@ -120,7 +120,7 @@ function sbBookmarks_servicePaneInit(sps) {
         
         fnode.isOpen = (folder.getAttribute('open') == 'true');
         
-        if (fnode && fnode.getAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported')) {
+        if (fnode && fnode.getAttributeNS(BSP, 'Imported')) {
           // don't reimport a folder that's already been imported
           continue;
         }
@@ -152,9 +152,12 @@ function sbBookmarks_servicePaneInit(sps) {
           bnode = service.addBookmarkAt(bookmark.getAttribute('url'),
               bookmark.getAttribute('name'), bookmark.getAttribute('image'),
               fnode, null);
+
+          // remember we imported it.
+          bnode.setAttributeNS(BSP, 'Imported', 'true');
         }
         
-        fnode.setAttributeNS('http://songbirdnest.com/rdf/bookmarks#', 'Imported', 'true');
+        fnode.setAttributeNS(BSP, 'Imported', 'true');
       }
       
       // try to import json bookmarks from 0.2.5

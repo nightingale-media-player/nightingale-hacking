@@ -56,7 +56,8 @@
       </xul:vbox>
     </content>
     <implementation>
-      <constructor><![CDATA[
+      <constructor>
+          <![CDATA[
         this.mTreePane = document.getAnonymousElementByAttribute(this, 'anonid', 'treepane');
         this.mToolbar = document.getAnonymousElementByAttribute(this, 'anonid', 'toolbar');
         /*
@@ -153,7 +154,8 @@
       </xul:popupset>
     </content>
     <implementation implements="nsIWebProgressListener">
-      <constructor><![CDATA[
+      <constructor>
+            <![CDATA[
         // get the tree node
         this.mTree = document.getAnonymousElementByAttribute(this, 'anonid', 'tree');
         // get the popup node
@@ -211,7 +213,7 @@
           
           // Give the new name to the service pane.
           if (node) {
-            sp._service.onRename(node.id, newName);
+            sp.mService.onRename(node.id, newName);
           }            
         }
         
@@ -239,6 +241,13 @@
           this._changeOpenState(row, openState);
           sp.getNodeForRow(row).isOpen = sp.mTree.view.isContainerOpen(row);
         }
+        
+        // Namespace for LibraryServicePaneService attributes.
+        this.LSP = 'http://songbirdnest.com/rdf/library-servicepane#';
+        
+        // Namespace for BookmarksServicePaneService attributes.
+        this.BSP = 'http://songbirdnest.com/rdf/bookmarks#';
+
       ]]></constructor>
       <destructor><![CDATA[
         this.mService.onSelectionChanged(null, this.mTree, window);
@@ -570,8 +579,10 @@
         // ask the service to notify the modules about selection changes
         this.mService.onSelectionChanged(node?node.id:null, this.mTree, window);
       ]]></handler>
-      <handler event="click" clickcount="1"><![CDATA[
+      <handler event="click" clickcount="1">
+            <![CDATA[
         var node = this.getNodeForRow(this.mTree.currentIndex);
+        
         if (node && node.url) {
           this.highlightURL(node.url);
           
@@ -579,13 +590,20 @@
           
           // Bookmarks keep the http url in the id
           if ( node.id.indexOf("http://") != 0 ) { 
-            // This is not good, node.id is of the form urn:library:<guid> or 
-            // urn:item:<guid> for all medialist nodes, and node.name is localized.
-            // We could set a namespaced attribute for the customtype of the
-            // parent library, but then we cannot recognize the download node
-            // (which is a medialist of the 'local' library). Oh my, what should
-            // we do ??
-            metrics_inc("app.servicepane.click", node.id, null);
+            //See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
+            
+            var key = "app.servicepane.playlists.click." + 
+                      node.getAttributeNS(this.LSP, "LibraryCustomType");
+                      
+            metrics_inc(key, node.getAttributeNS(this.LSP, "ListCustomType"), null);
+          } 
+          else if( node.getAttributeNS(this.BSP, "Imported") == 'true' ) {
+          
+            //This enables us to know if we're packaging bookmarks 
+            //that people like or hate while not tracking any bookmarks they create.
+            //See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
+            
+            metrics_inc("app.servicepane.bookmarks.click", node.url, null);
           }
         } else {
           /* FIXME: implement non-go-to-url behaviour */

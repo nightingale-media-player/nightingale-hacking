@@ -51,7 +51,7 @@ const URL_ICON_LIBRARY = 'chrome://songbird/skin/icons/icon_lib_16x16.png';
 // TODO: Remove this
 const URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sbLibraryPage.xul?"
 
-const LSP='http://songbirdnest.com/rdf/library-servicepane#';
+const LSP = 'http://songbirdnest.com/rdf/library-servicepane#';
 
 
 const TYPE_X_SB_TRANSFER_MEDIA_ITEM = "application/x-sb-transfer-media-item";
@@ -972,6 +972,10 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   node.setAttributeNS(LSP, "LibraryGUID", aLibrary.guid);
   // and save it as the list guid
   node.setAttributeNS(LSP, "ListGUID", aLibrary.guid);
+  // Save the customType for use by metrics.
+  node.setAttributeNS(LSP, "ListCustomType", aLibrary.getProperty(SBProperties.customType));
+  // Save the customType for use by metrics.
+  node.setAttributeNS(LSP, "LibraryCustomType", aLibrary.getProperty(SBProperties.customType));
 
   if (newnode) {
     // Position the node in the tree
@@ -1019,6 +1023,11 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   node.setAttributeNS(LSP, "LibraryGUID", aMediaList.library.guid);
   // and the guid of this list
   node.setAttributeNS(LSP, "ListGUID", aMediaList.guid);
+  // Save the parent library custom type for this list.
+  node.setAttributeNS(LSP, "LibraryCustomType", aMediaList.library.getProperty(SBProperties.customType));
+  // Save the list customType for use by metrics.
+  node.setAttributeNS(LSP, "ListCustomType", aMediaList.getProperty(SBProperties.customType));
+
   if (aMediaList.library == this._libraryManager.mainLibrary) {
     // a playlist in the main library is considered a toplevel node
     node.dndDragTypes = 'text/x-sb-toplevel';

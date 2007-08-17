@@ -36,7 +36,10 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseSimpleMediaList.h"
 
+#include <sbStandardProperties.h>
+
 #define SB_SIMPLE_MEDIALIST_FACTORY_TYPE "simple"
+#define SB_SIMPLE_MEDIALIST_METRICS_TYPE "simple"
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseSimpleMediaListFactory, sbIMediaListFactory)
 
@@ -92,6 +95,10 @@ sbLocalDatabaseSimpleMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
 
   rv = newMediaList->Init(localLibraryPtr, guid);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  //Set customType for use by metrics.
+  rv = newMediaList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                                 NS_LITERAL_STRING(SB_SIMPLE_MEDIALIST_METRICS_TYPE));
 
   NS_ADDREF(*_retval = newMediaList);
   return NS_OK;

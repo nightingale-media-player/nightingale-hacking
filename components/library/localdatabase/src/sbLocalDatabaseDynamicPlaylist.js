@@ -28,6 +28,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/components/ArrayConverter.jsm");
 Components.utils.import("resource://app/components/sbProperties.jsm");
 Components.utils.import("resource://app/components/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/components/sbProperties.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -673,6 +674,11 @@ sbLocalDatabaseDynamicMediaListFactory.prototype = {
                  .getService(Ci.sbIMediaListFactory);
     var list = smlf.createMediaList(aInner);
     list.setProperty(SB_PROP_ISSUBSCRIPTION, "1");
+    
+    //Set customType for use by metrics.
+    list.setProperty(SBProperties.customType,
+                     "dynamic");
+    
     return list;
   },
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListFactory])
