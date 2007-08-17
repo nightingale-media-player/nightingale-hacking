@@ -38,6 +38,8 @@ function runTest(tester) {
     var siteLib = songbird.siteLibrary("127.0.0.1", "/");
     var mainLib = songbird.libraries("main");
     var webLib = songbird.libraries("web");
+    mainLib = songbird.mainLibrary;
+    webLib = songbird.webLibrary;
 
     // Need the mainpage UI for this one
     //var webpl = songbird.webPlaylist;

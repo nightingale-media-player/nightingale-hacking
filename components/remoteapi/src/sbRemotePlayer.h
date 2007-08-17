@@ -27,6 +27,8 @@
 #ifndef __SB_REMOTE_PLAYER_H__
 #define __SB_REMOTE_PLAYER_H__
 
+#include "sbRemoteAPI.h"
+
 #include <sbIDataRemote.h>
 #include <sbIMediaList.h>
 #include <sbIPlaylistPlayback.h>
@@ -135,6 +137,10 @@ protected:
   // Theoretically there _could_ be more than one library requested by the page
   //    so this will probably have to grow to be a hashtable.
   nsCOMPtr<sbIRemoteSiteLibrary> mSiteLibrary;
+
+  // Cache these for repetitive access
+  nsCOMPtr<sbIRemoteLibrary> mMainLibrary;
+  nsCOMPtr<sbIRemoteLibrary> mWebLibrary;
 
   // Hashtable to hold the observers registered by the webpage
   nsDataHashtable<nsStringHashKey, sbRemoteObserver> mRemObsHash;

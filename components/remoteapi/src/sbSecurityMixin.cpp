@@ -31,9 +31,7 @@
 #include <nsIConsoleService.h>
 #include <nsIPermissionManager.h>
 #include <nsIPrefBranch.h>
-#include <nsIProgrammingLanguage.h>
 #include <nsIScriptSecurityManager.h>
-#include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
@@ -332,7 +330,7 @@ sbSecurityMixin::GetCodebase(nsIURI **aCodebase) {
     *aCodebase = nsnull;
     return NS_OK;
   }
-  LOG(("SecurityMixin::GetCodebase -- Have Subject Principal."));
+  LOG(("sbSecurityMixin::GetCodebase -- Have Subject Principal."));
 
 #ifdef PR_LOGGING
   nsCOMPtr<nsIPrincipal> systemPrincipal;

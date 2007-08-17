@@ -181,3 +181,17 @@ function setRapiPref(name, value) {
   prefs.setBoolPref(name, value);
 }
 
+var dest;
+function setTempDownloadDir() {
+  dest = Cc["@mozilla.org/file/directory_service;1"]
+             .getService(Ci.nsIProperties)
+             .get("TmpD", Ci.nsIFile);
+
+  dest.append("remoteapi_test");
+
+  var drCtor = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
+  var dlFolder = new drCtor("download.folder", null);
+  var dlAlways = new drCtor("download.always", null);
+  dlFolder.stringValue = dest.path;
+  dlAlways.boolValue = true;
+}

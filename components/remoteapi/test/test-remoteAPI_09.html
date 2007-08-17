@@ -51,13 +51,13 @@
         siteLib = songbird.siteLibrary("", "/");
 
         try {
-          mainLib = songbird.libraries("main");
+          mainLib = songbird.mainLibrary;
         } catch (e) {
           dump("XXXredfive - no access to main library\n");
         }
 
         try {
-          webLib = songbird.libraries("web");
+          webLib = songbird.webLibrary;
         } catch (e) {
           dump("XXXredfive - no access to web library\n");
         }

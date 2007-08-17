@@ -24,28 +24,26 @@
 //
  */
 
-#ifndef __SB_REMOTE_LIBRARY_H__
-#define __SB_REMOTE_LIBRARY_H__
+#ifndef __SB_REMOTE_WEB_LIBRARY_H__
+#define __SB_REMOTE_WEB_LIBRARY_H__
 
 #include "sbRemoteAPI.h"
-#include "sbRemoteLibraryBase.h"
-
+#include "sbRemoteLibrary.h"
 #include <nsIClassInfo.h>
 
-class sbRemoteLibrary : public sbRemoteLibraryBase
+class sbRemoteWebLibrary : public sbRemoteLibrary
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_NSICLASSINFO
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
-  sbRemoteLibrary();
+  sbRemoteWebLibrary();
 
 protected:
-  virtual ~sbRemoteLibrary();
-
-  // on connection to a library, set the internal remote medialist
+  virtual ~sbRemoteWebLibrary();
   virtual nsresult InitInternalMediaList();
+
 };
 
-#endif // __SB_REMOTE_LIBRARY_H__
+#endif // __SB_REMOTE_WEB_LIBRARY_H__

@@ -24,15 +24,10 @@
 //
  */
 
-#include "sbRemoteAPI.h"
 #include "sbRemoteMediaList.h"
 
-#include <sbClassInfoUtils.h>
-
-#include <nsComponentManagerUtils.h>
-#include <nsIProgrammingLanguage.h>
-#include <nsMemory.h>
 #include <prlog.h>
+#include <sbClassInfoUtils.h>
 
 /*
  * To log this module, set the following environment variable:

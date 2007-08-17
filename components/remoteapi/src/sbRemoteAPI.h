@@ -29,7 +29,10 @@
 
 #include <sbISecurityAggregator.h>
 #include <sbISecurityMixin.h>
-#include "sbRemotePlayer.h"
+
+#ifndef LOG
+#define LOG(args) /* nothing */
+#endif
 
 #define SB_DECL_SECURITYCHECKEDCOMP_INIT virtual nsresult Init();
 
@@ -37,6 +40,7 @@
 nsresult                                                                      \
 _class::Init()                                                                \
 {                                                                             \
+  LOG(( "%s::Init()", #_class ));                                             \
   nsresult rv;                                                                \
   nsCOMPtr<sbISecurityMixin> mixin =                                          \
      do_CreateInstance( "@songbirdnest.com/remoteapi/security-mixin;1", &rv );\
@@ -63,6 +67,7 @@ _class::Init()                                                                \
 NS_IMETHODIMP                                                                 \
 _class::CanCreateWrapper( const nsIID *aIID, char **_retval )                 \
 {                                                                             \
+  LOG(( "%s::CanCreateWrapper()", #_class ));                                 \
   NS_ENSURE_ARG_POINTER(aIID);                                                \
   NS_ENSURE_ARG_POINTER(_retval);                                             \
   if ( !mInitialized && NS_FAILED( Init() ) ) {                               \
@@ -82,6 +87,8 @@ _class::CanCallMethod( const nsIID *aIID,                                     \
   NS_ENSURE_ARG_POINTER(aIID);                                                \
   NS_ENSURE_ARG_POINTER(aMethodName);                                         \
   NS_ENSURE_ARG_POINTER(_retval);                                             \
+  LOG(( "%s::CanCallMethod(%s)", #_class,                                     \
+        NS_LossyConvertUTF16toASCII(aMethodName).get() ));                    \
   if ( !mInitialized && NS_FAILED( Init() ) ) {                               \
     return NS_ERROR_FAILURE;                                                  \
   }                                                                           \
@@ -99,6 +106,8 @@ _class::CanGetProperty( const nsIID *aIID,                                    \
   NS_ENSURE_ARG_POINTER(aIID);                                                \
   NS_ENSURE_ARG_POINTER(aPropertyName);                                       \
   NS_ENSURE_ARG_POINTER(_retval);                                             \
+  LOG(( "%s::CanGetProperty(%s)", #_class,                                    \
+        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));                  \
   if ( !mInitialized && NS_FAILED( Init() ) ) {                               \
     return NS_ERROR_FAILURE;                                                  \
   }                                                                           \
@@ -116,6 +125,8 @@ _class::CanSetProperty( const nsIID *aIID,                                    \
   NS_ENSURE_ARG_POINTER(aIID);                                                \
   NS_ENSURE_ARG_POINTER(aPropertyName);                                       \
   NS_ENSURE_ARG_POINTER(_retval);                                             \
+  LOG(( "%s::CanSetProperty(%s)", #_class,                                    \
+        NS_LossyConvertUTF16toASCII(aPropertyName).get() ));                  \
   if ( !mInitialized && NS_FAILED( Init() ) ) {                               \
     return NS_ERROR_FAILURE;                                                  \
   }                                                                           \

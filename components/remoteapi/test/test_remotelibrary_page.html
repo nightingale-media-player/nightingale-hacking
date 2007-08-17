@@ -28,7 +28,61 @@
 <html>
   <head>
     <script>
-this.songbird = songbird;
+function runTest(tester) {
+  try {
+    // access to libraries
+    var siteLib = songbird.siteLibrary("127.0.0.1", "/");
+    var mainLib = songbird.libraries("main");
+    var webLib = songbird.libraries("web");
+    mainLib = songbird.mainLibrary;
+    webLib = songbird.webLibrary;
+
+    // access within the mainLibrary
+    mainLib.name;
+    mainLib.type;
+    mainLib.length;
+    mainLib.scanMediaOnCreation;
+
+    // media creation in the mainLibrary
+    mainLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u");
+    mainLib.createMediaList("simple");
+    mainLib.createMediaList("dynamic");
+    mainLib.createMediaItem(
+              "http://www.jgaunt.com/uploads/sheryl_crow_soak_up_the_sun.mp3");
+
+    // property access/modification in the mainLibrary
+    var dummyGuid = "ffffffff-ffff-ffff-ffff-ffffffffffff";
+    mainLib.setProperty("http://songbirdnest.com/data/1.0#storageGUID", dummyGuid);
+    var propVal = mainLib.getProperty("http://songbirdnest.com/data/1.0#storageGUID");
+
+    tester.assertTrue(propVal == dummyGuid, "PropVal not equal to dummyGuid");
+
+    // access within the webLibrary
+    webLib.name;
+    webLib.type;
+    webLib.length;
+
+    try {
+      webLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u");
+      tester.fail("did not throw: createMediaListFromURL('')");
+    } catch (e) {}
+
+    // access within the siteLibrary
+    siteLib.name;
+    siteLib.type;
+    siteLib.length;
+
+    siteLib.createMediaListFromURL("http://www.jgaunt.com/uploads/uploads.m3u");
+
+  } catch (e) {
+    tester.endRemoteAPITest(e);
+  }
+  tester.endRemoteAPITest();
+}
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
     </script>
   </head>
   <body>test_remotelibrary_page.html</body>

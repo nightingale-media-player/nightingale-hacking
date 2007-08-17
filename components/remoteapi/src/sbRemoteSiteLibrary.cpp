@@ -57,27 +57,26 @@
 static PRLogModuleInfo* gSiteLibraryLog = nsnull;
 #endif
 
-#define LOG(args) PR_LOG(gSiteLibraryLog, 1, args)
-
-static NS_DEFINE_CID(kRemoteSiteLibraryCID, SONGBIRD_REMOTESITELIBRARY_CID);
+#define LOG(args) PR_LOG(gSiteLibraryLog, PR_LOG_WARN, args)
 
 const static char* sPublicWProperties[] =
-  {
+  { // sbIMediaList
     "site:name",
+
+    // sbIRemoteLibrary
     "site:scanMediaOnCreation"
   };
 
 const static char* sPublicRProperties[] =
-  { //
-    "site:artists",
-    "site:albums",
+  { // sbIMediaList
     "site:name",
     "site:type",
     "site:length",
 
     // sbIRemoteLibrary
-    "site:selection",
     "site:scanMediaOnCreation",
+
+    // sbIRemoteSiteLibrary
 #ifdef DEBUG
     "site:filename",
 #endif
@@ -92,16 +91,10 @@ const static char* sPublicRProperties[] =
 
 const static char* sPublicMethods[] =
   { // sbIRemoteLibrary
-    "site:connectToMediaLibrary",
-    "site:connectToDefaultLibrary",
     "site:createMediaList",
     "site:createMediaListFromURL",
     "site:createMediaItem",
-    "site:addMediaListByURL",
     "site:getMediaListByName",
-
-    // sbIRemoteMediaList
-    "site:addItemByURL",
 
     // sbIMediaList
     "site:getItemByGuid",
@@ -138,12 +131,7 @@ NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteSiteLibrary,
                               sbIMediaItem,
                               nsISecurityCheckedComponent )
 
-SB_IMPL_CLASSINFO( sbRemoteSiteLibrary,
-                   SONGBIRD_REMOTESITELIBRARY_CONTRACTID,
-                   SONGBIRD_REMOTESITELIBRARY_CLASSNAME,
-                   nsIProgrammingLanguage::CPLUSPLUS,
-                   0,
-                   kRemoteSiteLibraryCID )
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteSiteLibrary)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteSiteLibrary)
 

@@ -739,6 +739,9 @@ interface sbIRemotePlayer : nsISupports
   */
   sbIRemoteLibrary libraries(in AString aLibraryID);
 
+  readonly attribute sbIRemoteLibrary mainLibrary;
+  readonly attribute sbIRemoteLibrary webLibrary;
+
   /**
    * \brief Fires the event to the webpage
    */

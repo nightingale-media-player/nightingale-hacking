@@ -27,9 +27,6 @@
 #include "sbRemoteSiteMediaItem.h"
 #include <sbClassInfoUtils.h>
 
-#include <nsComponentManagerUtils.h>
-#include <nsIProgrammingLanguage.h>
-#include <nsMemory.h>
 #include <prlog.h>
 
 /*

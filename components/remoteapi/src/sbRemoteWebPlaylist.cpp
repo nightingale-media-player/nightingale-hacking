@@ -36,14 +36,9 @@
 #include <sbPropertiesCID.h>
 
 #include <nsAutoPtr.h>
-#include <nsComponentManagerUtils.h>
 #include <nsIDOMElement.h>
-#include <nsIProgrammingLanguage.h>
-#include <nsIScriptNameSpaceManager.h>
-#include <nsIScriptSecurityManager.h>
 #include <nsITreeSelection.h>
 #include <nsITreeView.h>
-#include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>

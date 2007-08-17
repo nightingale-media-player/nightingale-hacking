@@ -24,7 +24,6 @@
 //
  */
 
-#include "sbRemoteAPI.h"
 #include "sbRemoteAPIUtils.h"
 #include "sbRemoteLibraryBase.h"
 #include "sbRemoteMediaItem.h"
@@ -43,7 +42,6 @@
 #include <sbStandardProperties.h>
 
 #include <nsCOMArray.h>
-#include <nsComponentManagerUtils.h>
 #include <nsEventDispatcher.h>
 #include <nsICategoryManager.h>
 #include <nsIDocument.h>
@@ -55,15 +53,10 @@
 #include <nsIFile.h>
 #include <nsIMutableArray.h>
 #include <nsIObserver.h>
-#include <nsIPermissionManager.h>
 #include <nsIPrefService.h>
 #include <nsIPresShell.h>
-#include <nsIProgrammingLanguage.h>
-#include <nsIScriptNameSpaceManager.h>
-#include <nsIScriptSecurityManager.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIWindowWatcher.h>
-#include <nsMemory.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringEnumerator.h>
@@ -73,7 +66,7 @@
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteLibraryBase:<5|4|3|2|1>
+ *   NSPR_LOG_MODULES=sbRemoteLibraryBase:5
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gLibraryLog = nsnull;
@@ -161,7 +154,7 @@ class sbRemoteLibraryEnumCallback : public sbIMediaListEnumerationListener
 };
 NS_IMPL_ISUPPORTS1( sbRemoteLibraryEnumCallback, sbIMediaListEnumerationListener )
 
-NS_IMPL_ISUPPORTS8( sbRemoteLibraryBase,
+NS_IMPL_ISUPPORTS9( sbRemoteLibraryBase,
                     nsISecurityCheckedComponent,
                     sbISecurityAggregator,
                     sbIRemoteMediaList,
@@ -169,6 +162,7 @@ NS_IMPL_ISUPPORTS8( sbRemoteLibraryBase,
                     sbIWrappedMediaList,
                     sbIWrappedMediaItem,
                     sbIMediaItem,
+                    sbILibraryResource,
                     sbIRemoteLibrary )
 
 sbRemoteLibraryBase::sbRemoteLibraryBase() : mShouldScan(PR_TRUE)

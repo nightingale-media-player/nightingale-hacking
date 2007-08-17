@@ -28,10 +28,6 @@
 #include "sbRemoteLibrary.h"
 #include "sbRemoteWrappingStringEnumerator.h"
 
-#include <nsComponentManagerUtils.h>
-#include <nsIProgrammingLanguage.h>
-#include <nsMemory.h>
-
 const static char* sPublicWProperties[] =
 {
   // Need this empty string to make VC happy

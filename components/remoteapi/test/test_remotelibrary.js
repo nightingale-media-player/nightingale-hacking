@@ -34,19 +34,14 @@ function runTest () {
   setRapiPref("library_write_disable", false);
   setRapiPref("library_create_disable", false);
 
+  setTempDownloadDir();
+
   beginRemoteAPITest("test_remotelibrary_page.html", startTesting);
 }
 
 function startTesting() {
 
-  try {
-    //var songbird = testBrowserWindow.songbird;
-    //var library = songbird.siteLibrary("127.0.0.1", "/");
-  }
-  catch(e) {
-    endRemoteAPITest(e);
-  }
+  testBrowserWindow.runPageTest(this);
 
-  endRemoteAPITest();
 }
 

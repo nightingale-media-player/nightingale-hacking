@@ -28,8 +28,12 @@
 #ifndef __SB_CLASSINFO_UTILS_H__
 #define __SB_CLASSINFO_UTILS_H__
 
+#include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
-#include <nsStringAPI.h>
+#include <nsIProgrammingLanguage.h>
+#include <nsMemory.h>
+#include <nsStringGlue.h>
+
 
 #define SB_IMPL_CLASSINFO( _class,                                           \
                            _contractID,                                      \

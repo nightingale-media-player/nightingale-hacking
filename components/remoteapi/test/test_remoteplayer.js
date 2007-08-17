@@ -28,9 +28,6 @@
  * \brief Test file
  */
 
-// declared globally so it can be removed in the tail_ file
-var dest;
-
 function runTest () {
   setRapiPref("playback_control_disable", false);
   setRapiPref("playback_read_disable", false);
@@ -38,17 +35,7 @@ function runTest () {
   setRapiPref("library_write_disable", false);
   setRapiPref("library_create_disable", false);
 
-  dest = Cc["@mozilla.org/file/directory_service;1"]
-             .getService(Ci.nsIProperties)
-             .get("TmpD", Ci.nsIFile);
-
-  dest.append("remoteplayer_test");
-
-  var drCtor = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
-  var dlFolder = new drCtor("download.folder", null);
-  var dlAlways = new drCtor("download.always", null);
-  dlFolder.stringValue = dest.path;
-  dlAlways.boolValue = true;
+  setTempDownloadDir();
 
   beginRemoteAPITest("test_remoteplayer_page.html", startTesting);
 

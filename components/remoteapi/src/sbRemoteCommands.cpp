@@ -28,7 +28,6 @@
 #include "sbSecurityMixin.h"
 #include <sbClassInfoUtils.h>
 
-#include <nsComponentManagerUtils.h>
 #include <nsICategoryManager.h>
 #include <nsIDOMElement.h>
 #include <nsIDocument.h>
@@ -36,12 +35,7 @@
 #include <nsIDOMEvent.h>
 #include <nsIDOMEventTarget.h>
 #include <nsIDOMWindow.h>
-#include <nsIPermissionManager.h>
-#include <nsIProgrammingLanguage.h>
-#include <nsIScriptNameSpaceManager.h>
-#include <nsIScriptSecurityManager.h>
 #include <nsIURI.h>
-#include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>

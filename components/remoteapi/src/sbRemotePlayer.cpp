@@ -24,11 +24,14 @@
 //
  */
 
-#include "sbRemoteAPI.h"
 #include "sbRemotePlayer.h"
+
 #include "sbRemoteCommands.h"
+#include "sbRemoteLibrary.h"
 #include "sbRemoteLibraryBase.h"
 #include "sbRemotePlaylistClickEvent.h"
+#include "sbRemoteSiteLibrary.h"
+#include "sbRemoteWebLibrary.h"
 #include "sbRemoteWebPlaylist.h"
 #include <sbClassInfoUtils.h>
 #include <sbILibrary.h>
@@ -40,7 +43,6 @@
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 
-#include <nsComponentManagerUtils.h>
 #include <nsDOMJSUtils.h>
 #include <nsIArray.h>
 #include <nsICategoryManager.h>
@@ -62,19 +64,15 @@
 #include <nsIDOMXULDocument.h>
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIJSContextStack.h>
-#include <nsIPermissionManager.h>
 #include <nsIPrefBranch.h>
 #include <nsIPresShell.h>
 #include <nsIPrivateDOMEvent.h>
-#include <nsIProgrammingLanguage.h>
 #include <nsIScriptGlobalObject.h>
 #include <nsIScriptNameSpaceManager.h>
-#include <nsIScriptSecurityManager.h>
 #include <nsITreeSelection.h>
 #include <nsITreeView.h>
 #include <nsIURI.h>
 #include <nsIWindowMediator.h>
-#include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
@@ -111,6 +109,8 @@ const static char* sPublicRProperties[] =
     "site:mute",
     "library:name",
     "library:playlists",
+    "library:webLibrary",
+    "library:mainLibrary",
     "site:webPlaylist",
     "metadata:currentArtist",
     "metadata:currentAlbum",
@@ -162,6 +162,9 @@ const static char* sPublicMetadata[] =
 #define SB_PREFS_ROOT         NS_LITERAL_STRING("songbird.")
 #define SB_EVENT_CMNDS_UP     NS_LITERAL_STRING("playlist-commands-updated")
 #define SB_WEB_TABBROWSER_ID  NS_LITERAL_STRING("frame_main_pane")
+
+#define SB_LIB_NAME_MAIN      "main"
+#define SB_LIB_NAME_WEB       "web"
 
 // callback for destructor to clear out the observer hashtable
 PR_STATIC_CALLBACK(PLDHashOperator)
@@ -338,23 +341,86 @@ sbRemotePlayer::GetName( nsAString &aName )
 }
 
 NS_IMETHODIMP
+sbRemotePlayer::GetMainLibrary( sbIRemoteLibrary **aMainLibrary )
+{
+  return Libraries( NS_LITERAL_STRING(SB_LIB_NAME_MAIN), aMainLibrary );
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::GetWebLibrary( sbIRemoteLibrary **aWebLibrary )
+{
+  return Libraries( NS_LITERAL_STRING(SB_LIB_NAME_WEB), aWebLibrary );
+}
+
+NS_IMETHODIMP
 sbRemotePlayer::Libraries( const nsAString &aLibraryID,
                            sbIRemoteLibrary **aLibrary )
 {
+  NS_ENSURE_ARG_POINTER(aLibrary);
   LOG(( "sbRemotePlayer::Libraries(%s)",
         NS_LossyConvertUTF16toASCII(aLibraryID).get() ));
   nsresult rv;
-  nsCOMPtr<sbIRemoteLibrary> library =
-       do_CreateInstance( "@songbirdnest.com/remoteapi/remotelibrary;1", &rv );
+
+  // for a newly created library
+  nsRefPtr<sbRemoteLibrary> library;
+
+  // to know where to cache the library
+  nsCOMPtr<sbIRemoteLibrary>* memberLibrary;
+
+  if ( aLibraryID.EqualsLiteral(SB_LIB_NAME_MAIN) ) {
+    if (mMainLibrary) {
+      // We've created the main library already, use the cached version
+      LOG(("sbRemotePlayer::Libraries() - using existing main library"));
+      NS_ADDREF( *aLibrary = mMainLibrary );
+      return NS_OK;
+    }
+
+    // No cached main library create a new one.
+    LOG(("sbRemotePlayer::Libraries() - creating main library"));
+    library = new sbRemoteLibrary();
+    NS_ENSURE_TRUE( library, NS_ERROR_OUT_OF_MEMORY );
+
+    // save a handle to the main member variable so we know where to store
+    // the library if initialization completes successfully.
+    memberLibrary = &mMainLibrary;
+  }
+  else if ( aLibraryID.EqualsLiteral(SB_LIB_NAME_WEB) ) {
+    if (mWebLibrary) {
+      // We've created the web library already, use the cached version
+      LOG(("sbRemotePlayer::Libraries() - using existing web library"));
+      NS_ADDREF( *aLibrary = mWebLibrary );
+      return NS_OK;
+    }
+
+    // No cached web library create a new one.
+    LOG(("sbRemotePlayer::Libraries() - creating web library"));
+    library = new sbRemoteWebLibrary();
+    NS_ENSURE_TRUE( library, NS_ERROR_OUT_OF_MEMORY );
+
+    // save a handle to the web member variable so we know where to store
+    // the library if initialization completes successfully.
+    memberLibrary = &mWebLibrary;
+  }
+  else {
+    // we don't handle anything but "main" and "web" yet.
+    return NS_ERROR_INVALID_ARG;
+  }
+
+  rv = library->Init();
+  NS_ENSURE_SUCCESS( rv, rv );
+  
+  rv = library->ConnectToDefaultLibrary( aLibraryID );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // Library is going to hash the ID passed in, if necessary
-  rv = library->ConnectToDefaultLibrary( aLibraryID );
-  if (NS_SUCCEEDED(rv)) {
-    NS_ADDREF( *aLibrary = library );
-  } else {
-    *aLibrary = nsnull;
-  }
+  // Now that initialization and library connection has succeeded cache
+  // the created library in the appropriate member variable pointed to by
+  // our handy dandy nsCOMPtr*. 
+  *memberLibrary = do_QueryInterface( NS_ISUPPORTS_CAST( sbIRemoteLibrary*,
+                                                         library ), &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  NS_ADDREF( *aLibrary = *memberLibrary );
+
   return NS_OK;
 }
 
@@ -366,21 +432,30 @@ sbRemotePlayer::SiteLibrary( const nsACString &aDomain,
   LOG(( "sbRemotePlayer::SiteLibrary(%s)", aPath.BeginReading() ));
 
   nsresult rv;
-  if (!mSiteLibrary) {
-    mSiteLibrary =
-       do_CreateInstance( "@songbirdnest.com/remoteapi/remotesitelibrary;1", &rv );
+  if (mSiteLibrary) {
+    rv = mSiteLibrary->ConnectToSiteLibrary( aDomain, aPath );
+    if ( NS_FAILED(rv) ) {
+      NS_WARNING("Existing mSiteLibrary failed to connect to internal library");
+      mSiteLibrary = nsnull;
+      return NS_ERROR_FAILURE; 
+    }
+  } else {
+    nsRefPtr<sbRemoteSiteLibrary> library;
+    library = new sbRemoteSiteLibrary();
+    NS_ENSURE_TRUE( library, NS_ERROR_OUT_OF_MEMORY );
+
+    rv = library->Init();
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    rv = library->ConnectToSiteLibrary( aDomain, aPath );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    mSiteLibrary = do_QueryInterface( NS_ISUPPORTS_CAST( sbIRemoteSiteLibrary*,
+                                                         library ), &rv );
     NS_ENSURE_SUCCESS( rv, rv );
   }
 
-  // Library is going to hash the ID passed in
-  rv = mSiteLibrary->ConnectToSiteLibrary( aDomain, aPath );
-  if (NS_SUCCEEDED(rv)) {
-    nsCOMPtr<sbIRemoteLibrary> library (do_QueryInterface(mSiteLibrary, &rv) );
-    NS_ENSURE_SUCCESS( rv, rv );
-    NS_ADDREF( *aSiteLibrary = library );
-  } else {
-    *aSiteLibrary = nsnull;
-  }
+  NS_ADDREF( *aSiteLibrary = mSiteLibrary );
   return NS_OK;
 }
 

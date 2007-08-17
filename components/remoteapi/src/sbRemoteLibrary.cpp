@@ -28,14 +28,11 @@
 #include <sbClassInfoUtils.h>
 #include <sbIMediaList.h>
 
-#include <nsComponentManagerUtils.h>
-#include <nsIProgrammingLanguage.h>
-#include <nsMemory.h>
 #include <prlog.h>
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteLibrary:<5|4|3|2|1>
+ *   NSPR_LOG_MODULES=sbRemoteLibrary:5
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gLibraryLog = nsnull;
@@ -43,27 +40,19 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 
 #define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
 
-static NS_DEFINE_CID(kRemoteLibraryCID, SONGBIRD_REMOTELIBRARY_CID);
-
 const static char* sPublicWProperties[] =
   {
     "library:scanMediaOnCreation"
   };
 
 const static char* sPublicRProperties[] =
-  { //
-    "library:artists",
-    "library:albums",
+  { // sbIMediaList
     "library:name",
     "library:type",
     "library:length",
 
     // sbIRemoteLibrary
-    "library:selection",
     "library:scanMediaOnCreation",
-#ifdef DEBUG
-    "library:filename",
-#endif
 
     // nsIClassInfo
     "classinfo:classDescription",
@@ -75,8 +64,6 @@ const static char* sPublicRProperties[] =
 
 const static char* sPublicMethods[] =
   { // sbIRemoteLibrary
-    "library:connectToMediaLibrary",
-    "library:connectToDefaultLibrary",
     "library:createMediaListFromURL",
     "library:getMediaList",
      // different from the ones in sbILibrary
@@ -94,8 +81,6 @@ const static char* sPublicMethods[] =
     "library:add",
     "library:addAll",
     "library:addSome",
-    "library:remove",
-    "library:removeByIndex",
     "library:getDistinctValuesForProperty",
 
     // sbILibraryResource
@@ -116,12 +101,7 @@ NS_IMPL_CI_INTERFACE_GETTER6( sbRemoteLibrary,
                               sbIMediaItem,
                               nsISecurityCheckedComponent )
 
-SB_IMPL_CLASSINFO( sbRemoteLibrary,
-                   SONGBIRD_REMOTELIBRARY_CONTRACTID,
-                   SONGBIRD_REMOTELIBRARY_CLASSNAME,
-                   nsIProgrammingLanguage::CPLUSPLUS,
-                   0,
-                   kRemoteLibraryCID )
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteLibrary)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteLibrary)
 
@@ -159,14 +139,14 @@ sbRemoteLibrary::InitInternalMediaList()
   NS_ENSURE_TRUE( mediaList, NS_ERROR_FAILURE );
 
   nsCOMPtr<sbIMediaListView> mediaListView;
-  nsresult rv = mediaList->CreateView(getter_AddRefs(mediaListView));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv = mediaList->CreateView( getter_AddRefs(mediaListView) );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   mRemMediaList = new sbRemoteMediaList( mediaList, mediaListView );
   NS_ENSURE_TRUE( mRemMediaList, NS_ERROR_OUT_OF_MEMORY );
 
   rv = mRemMediaList->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS( rv, rv );
 
   return rv;
 }

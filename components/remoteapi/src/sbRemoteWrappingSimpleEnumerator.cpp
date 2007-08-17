@@ -31,13 +31,6 @@
 #include <sbIMediaItem.h>
 
 #include <nsAutoPtr.h>
-#include <nsComponentManagerUtils.h>
-#include <nsICategoryManager.h>
-#include <nsIProgrammingLanguage.h>
-#include <nsIScriptNameSpaceManager.h>
-#include <nsIScriptSecurityManager.h>
-#include <nsMemory.h>
-#include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 
 const static char* sPublicWProperties[] =

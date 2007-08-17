@@ -28,8 +28,9 @@
  * \brief Tail file
  */
 
-// dest is a nsIFile object declared in the test_ file
+// dest is a nsIFile object declared in the head_ file
 try {
-  dest.remove(true);
+  if (dest)
+    dest.remove(true);
 } catch (e) { }
 

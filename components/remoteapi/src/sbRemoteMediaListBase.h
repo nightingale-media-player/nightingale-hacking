@@ -37,6 +37,7 @@
 #include <sbISecurityMixin.h>
 #include <sbIWrappedMediaList.h>
 
+#include <nsIClassInfo.h>
 #include <nsISimpleEnumerator.h>
 #include <nsISecurityCheckedComponent.h>
 #include <nsStringGlue.h>

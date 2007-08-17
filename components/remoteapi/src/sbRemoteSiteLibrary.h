@@ -36,18 +36,6 @@
 class nsIFile;
 class nsIURI;
 
-#define SONGBIRD_REMOTESITELIBRARY_CONTRACTID           \
-  "@songbirdnest.com/remoteapi/remotesitelibrary;1"
-#define SONGBIRD_REMOTESITELIBRARY_CLASSNAME            \
-  "Songbird Remote Site Library"
-#define SONGBIRD_REMOTESITELIBRARY_CID                  \
-{ /* 76e695a5-a9dc-435e-a06a-a9bec0c39afa */            \
-  0x76e695a5,                                           \
-  0xa9dc,                                               \
-  0x435e,                                               \
-  {0xa0, 0x6a, 0xa9, 0xbe, 0xc0, 0xc3, 0x9a, 0xfa}      \
-}
-
 class sbRemoteSiteLibrary : public sbRemoteLibraryBase,
                             public sbIRemoteSiteLibrary
 {

@@ -37,23 +37,24 @@ target_name = sbBrowserAPI
 moz_utils = sbMozStringUtils
 endif
 
-CPP_SRCS = sbSecurityMixin.cpp \
-           sbRemoteLibrary.cpp \
-           sbRemotePlayer.cpp \
+CPP_SRCS = sbRemoteAPIModule.cpp \
            sbRemoteCommands.cpp \
            sbRemoteIndexedMediaItem.cpp \
-           sbRemoteMediaList.cpp \
+           sbRemoteLibrary.cpp \
+           sbRemoteLibraryBase.cpp \
+           sbRemotePlayer.cpp \
+           sbRemotePlaylistClickEvent.cpp \
            sbRemoteMediaItem.cpp \
-           sbRemoteAPIModule.cpp \
+           sbRemoteMediaList.cpp \
+           sbRemoteMediaListBase.cpp \
            sbRemoteWebPlaylist.cpp \
            sbRemoteWrappingSimpleEnumerator.cpp \
            sbRemoteWrappingStringEnumerator.cpp \
-           sbRemoteMediaListBase.cpp \
-           sbRemoteLibraryBase.cpp \
            sbRemoteSiteLibrary.cpp \
            sbRemoteSiteMediaItem.cpp \
            sbRemoteSiteMediaList.cpp \
-           sbRemotePlaylistClickEvent.cpp \
+           sbRemoteWebLibrary.cpp \
+           sbSecurityMixin.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \

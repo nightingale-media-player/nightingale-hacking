@@ -24,18 +24,12 @@
 //
  */
 
-#include "sbRemoteAPI.h"
 #include "sbRemoteAPIUtils.h"
 #include "sbRemoteIndexedMediaItem.h"
 
 #include <sbClassInfoUtils.h>
 #include <sbIMediaItem.h>
 
-#include <nsComponentManagerUtils.h>
-#include <nsIProgrammingLanguage.h>
-#include <nsIScriptNameSpaceManager.h>
-#include <nsIScriptSecurityManager.h>
-#include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 
 const static char* sPublicWProperties[] = { "" };
