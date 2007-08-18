@@ -2052,7 +2052,6 @@ void sbDownloadSession::Shutdown()
 
     if (mpWebBrowser) {
       mpWebBrowser->CancelSave();
-      mpWebBrowser->SetProgressListener(nsnull);
       mpWebBrowser = nsnull;
     }
 }
