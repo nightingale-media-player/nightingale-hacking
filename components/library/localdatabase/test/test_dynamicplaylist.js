@@ -114,51 +114,55 @@ function testUpdate() {
   var server = Cc["@mozilla.org/server/jshttp;1"]
              .createInstance(Ci.nsIHttpServer);
 
-  server.start(PORT_NUMBER);
-  server.registerDirectory("/", getFile("."));
+  try {
+    server.start(PORT_NUMBER);
+    server.registerDirectory("/", getFile("."));
 
-  var dps = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicPlaylistService;1"]
-              .getService(Ci.sbILocalDatabaseDynamicPlaylistService);
+    var dps = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicPlaylistService;1"]
+                .getService(Ci.sbILocalDatabaseDynamicPlaylistService);
 
-  var dest = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("TmpD", Ci.nsIFile);
+    var dest = Cc["@mozilla.org/file/directory_service;1"]
+                 .getService(Ci.nsIProperties)
+                 .get("TmpD", Ci.nsIFile);
 
-  var url = "http://localhost:" + PORT_NUMBER +
-            "/test_dynamicplaylist_playlist.m3u";
+    var url = "http://localhost:" + PORT_NUMBER +
+              "/test_dynamicplaylist_playlist.m3u";
 
-  var list = dps.createList(library1, newURI(url), 60, dest);
+    var list = dps.createList(library1, newURI(url), 60, dest);
 
-  // Write the first playlist and then update the subscription
-  writeFile(playlistFile, playlist1);
+    // Write the first playlist and then update the subscription
+    writeFile(playlistFile, playlist1);
 
-  dps.updateNow(list);
+    dps.updateNow(list);
 
-  sleep(3000);
+    sleep(3000);
 
-  // Check the contents of the list
-  assertEqual(list.length, 2);
-  // XXXsteve These seem a bit too time sensitive right now
-  //assertEqual(list.getItemByIndex(0).getProperty(SB_PROP_TRACKNAME), "test1 title");
-  //assertEqual(list.getItemByIndex(1).getProperty(SB_PROP_TRACKNAME), "test2 title");
+    // Check the contents of the list
+    assertEqual(list.length, 2);
+    // XXXsteve These seem a bit too time sensitive right now
+    //assertEqual(list.getItemByIndex(0).getProperty(SB_PROP_TRACKNAME), "test1 title");
+    //assertEqual(list.getItemByIndex(1).getProperty(SB_PROP_TRACKNAME), "test2 title");
 
-  // Updat the playlist file and update again
-  writeFile(playlistFile, playlist2);
-  dps.updateNow(list);
+    // Updat the playlist file and update again
+    writeFile(playlistFile, playlist2);
+    dps.updateNow(list);
 
-  sleep(15000);
+    sleep(15000);
 
-  // Check the contents of the list
-  assertEqual(list.length, 3);
-  // XXXsteve These seem a bit too time sensitive right now
-  //assertEqual(list.getItemByIndex(0).getProperty(SB_PROP_TRACKNAME), "test1 title");
-  //assertEqual(list.getItemByIndex(1).getProperty(SB_PROP_TRACKNAME), "test2 title");
-  //assertEqual(list.getItemByIndex(2).getProperty(SB_PROP_TRACKNAME), "test3 title");
+    // Check the contents of the list
+    assertEqual(list.length, 3);
+    // XXXsteve These seem a bit too time sensitive right now
+    //assertEqual(list.getItemByIndex(0).getProperty(SB_PROP_TRACKNAME), "test1 title");
+    //assertEqual(list.getItemByIndex(1).getProperty(SB_PROP_TRACKNAME), "test2 title");
+    //assertEqual(list.getItemByIndex(2).getProperty(SB_PROP_TRACKNAME), "test3 title");
 
-  // TODO: How can we check to see if these files were downloaded?
-  server.stop();
+    // TODO: How can we check to see if these files were downloaded?
+  }
+  finally {
+    server.stop();
 
-  libraryManager.unregisterLibrary(library1);
+    libraryManager.unregisterLibrary(library1);
+  }
 }
 
 function writeFile(file, data) {
