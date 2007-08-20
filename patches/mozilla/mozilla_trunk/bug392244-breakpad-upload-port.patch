@@ -1,18 +1,21 @@
 Index: toolkit/crashreporter/tools/upload_symbols.sh
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/crashreporter/tools/upload_symbols.sh,v
-retrieving revision 1.7
-diff -u -8 -p -r1.7 upload_symbols.sh
---- toolkit/crashreporter/tools/upload_symbols.sh	25 Jul 2007 01:06:15 -0000	1.7
-+++ toolkit/crashreporter/tools/upload_symbols.sh	14 Aug 2007 20:55:04 -0000
-@@ -38,25 +38,28 @@
+retrieving revision 1.8
+diff -u -8 -p -r1.8 upload_symbols.sh
+--- toolkit/crashreporter/tools/upload_symbols.sh	20 Aug 2007 20:37:06 -0000	1.8
++++ toolkit/crashreporter/tools/upload_symbols.sh	20 Aug 2007 21:02:15 -0000
+@@ -36,27 +36,30 @@
+ #
+ # ***** END LICENSE BLOCK *****
  #
  # This script expects the following environment variables to be set:
  # SYMBOL_SERVER_HOST    : host to upload symbols to
  # SYMBOL_SERVER_USER    : username on that host
  # SYMBOL_SERVER_PATH    : path on that host to put symbols in
  #
- # And will use the following optional environment variable if set:
+-# And will use the following optional environment variable if set:
++# And will use the following optional environment variables if set:
  # SYMBOL_SERVER_SSH_KEY : path to a ssh private key to use
 +# SYMBOL_SERVER_PORT    : port to use for ssh
  #
@@ -21,14 +24,14 @@ diff -u -8 -p -r1.7 upload_symbols.sh
  : ${SYMBOL_SERVER_HOST?} ${SYMBOL_SERVER_USER?} ${SYMBOL_SERVER_PATH?} ${1?"You must specify a symbol archive to upload"}
  archive=`basename $1`
  echo "Transferring symbols... $1"
--scp -v ${SYMBOL_SERVER_SSH_KEY:+-i $SYMBOL_SERVER_SSH_KEY} $1 \
+-scp -v ${SYMBOL_SERVER_SSH_KEY:+-i "$SYMBOL_SERVER_SSH_KEY"} $1 \
 +scp -v ${SYMBOL_SERVER_PORT:+-P $SYMBOL_SERVER_PORT} \
-+  ${SYMBOL_SERVER_SSH_KEY:+-i $SYMBOL_SERVER_SSH_KEY} $1 \
++  ${SYMBOL_SERVER_SSH_KEY:+-i "$SYMBOL_SERVER_SSH_KEY"} $1 \
    ${SYMBOL_SERVER_USER}@${SYMBOL_SERVER_HOST}:${SYMBOL_SERVER_PATH}/
  echo "Unpacking symbols on remote host..."
--ssh -2 ${SYMBOL_SERVER_SSH_KEY:+-i $SYMBOL_SERVER_SSH_KEY} \
+-ssh -2 ${SYMBOL_SERVER_SSH_KEY:+-i "$SYMBOL_SERVER_SSH_KEY"} \
 +ssh -2 ${SYMBOL_SERVER_PORT:+-p $SYMBOL_SERVER_PORT} \
-+  ${SYMBOL_SERVER_SSH_KEY:+-i $SYMBOL_SERVER_SSH_KEY} \
++  ${SYMBOL_SERVER_SSH_KEY:+-i "$SYMBOL_SERVER_SSH_KEY"} \
    -l ${SYMBOL_SERVER_USER} ${SYMBOL_SERVER_HOST} \
    "set -e;
     umask 0022;
