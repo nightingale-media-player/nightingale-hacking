@@ -35,6 +35,9 @@
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
+#include <plstr.h>
+
+#include "sbRemotePlayer.h"
 
 #define PERM_TYPE_PLAYBACK_CONTROL "rapi.playback_control"
 #define PERM_TYPE_PLAYBACK_READ    "rapi.playback_read"
@@ -57,16 +60,83 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 
 #define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
 
-static NS_DEFINE_CID(kSecurityMixinCID, SONGBIRD_SECURITYMIXIN_CID);
+static const char* sNotificationNone = "none";
+static const char* sNotificationHat = "hat";
+static const char* sNotificationAlert = "alert";
+static const char* sNotificationStatus = "status";
 
-NS_IMPL_ISUPPORTS3(sbSecurityMixin,
-                   nsIClassInfo,
-                   nsISecurityCheckedComponent,
-                   sbISecurityMixin)
 
-NS_IMPL_CI_INTERFACE_GETTER2(sbSecurityMixin,
-                             nsISecurityCheckedComponent,
-                             sbISecurityMixin)
+struct Scope {
+  const char* name;
+  const char* prefix;
+  const char* permission;
+  const char* blocked_pref;
+  const char* notify_pref;
+  const char* blocked_notification;
+  const char* allowed_notification;
+};
+
+static const Scope sScopes[] = {
+  {
+    "playback_control",
+    "controls:",
+    "rapi.playback_control",
+    "playback_control_disable",
+    "songbird.rapi.playback_control_notify",
+    sNotificationHat,
+    sNotificationNone,
+  },
+  {
+    "playback_read",
+    "binding:",
+    "rapi.playback_read",
+    "playback_read_disable",
+    "songbird.rapi.playback_read_notify",
+    sNotificationHat,
+    sNotificationNone,
+  },
+  {
+    "library_read",
+    "metadata:",
+    "rapi.library_read",
+    "library_read_disable",
+    "songbird.rapi.library_read_notify",
+    sNotificationHat,
+    sNotificationNone,
+  },
+  {
+    "library_write",
+    "library:",
+    "rapi.library_write",
+    "library_write_disable",
+    "songbird.rapi.library_write_notify",
+    sNotificationAlert,
+    sNotificationStatus,
+  },
+  {
+    "library_create",
+    "library_create:",
+    "rapi.library_create",
+    "library_create_disable",
+    "songbird.rapi.library_create_notify",
+    sNotificationAlert,
+    sNotificationStatus,
+  },
+};
+
+#define RAPI_EVENT_CLASS      NS_LITERAL_STRING("Events")
+#define RAPI_EVENT_TYPE       NS_LITERAL_STRING("remoteapi")
+
+static NS_DEFINE_CID( kSecurityMixinCID, SONGBIRD_SECURITYMIXIN_CID );
+
+NS_IMPL_ISUPPORTS3( sbSecurityMixin,
+                    nsIClassInfo,
+                    nsISecurityCheckedComponent,
+                    sbISecurityMixin )
+
+NS_IMPL_CI_INTERFACE_GETTER2( sbSecurityMixin,
+                              nsISecurityCheckedComponent,
+                              sbISecurityMixin )
 
 SB_IMPL_CLASSINFO( sbSecurityMixin,
                    SONGBIRD_SECURITYMIXIN_CONTRACTID,
@@ -79,7 +149,7 @@ sbSecurityMixin::sbSecurityMixin() : mInterfacesCount(0)
 {
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
-    gLibraryLog = PR_NewLogModule("sbSecurityMixin");
+    gLibraryLog = PR_NewLogModule( "sbSecurityMixin" );
   }
 #endif
 }
@@ -88,7 +158,7 @@ sbSecurityMixin::~sbSecurityMixin()
 {
   if (mInterfacesCount) {
     for (PRUint32 index = 0; index < mInterfacesCount; ++index)
-      nsMemory::Free(mInterfaces[index]);
+      nsMemory::Free( mInterfaces[index] );
     nsMemory::Free(mInterfaces);
   }
 }
@@ -111,12 +181,12 @@ sbSecurityMixin::Init(sbISecurityAggregator *aOuter,
   mOuter = aOuter; // no refcount
 
   // do interfaces last so we know when to free the allocation there
-  if ( NS_FAILED(CopyStrArray(aMethodsArrayLength, aMethodsArray, &mMethods)) ||
-       NS_FAILED(CopyStrArray(aRPropsArrayLength, aRPropsArray, &mRProperties)) ||
-       NS_FAILED(CopyStrArray(aWPropsArrayLength, aWPropsArray, &mWProperties)) ||
-       NS_FAILED(CopyIIDArray(aInterfacesArrayLength,
-                              aInterfacesArray,
-                              &mInterfaces)) )
+  if ( NS_FAILED( CopyStrArray( aMethodsArrayLength, aMethodsArray, &mMethods ) ) ||
+       NS_FAILED( CopyStrArray( aRPropsArrayLength, aRPropsArray, &mRProperties ) ) ||
+       NS_FAILED( CopyStrArray( aWPropsArrayLength, aWPropsArray, &mWProperties ) ) ||
+       NS_FAILED( CopyIIDArray( aInterfacesArrayLength,
+                                aInterfacesArray,
+                                &mInterfaces ) ) )
     return NS_ERROR_OUT_OF_MEMORY;
 
   // set this only if we've succeeded
@@ -134,12 +204,12 @@ sbSecurityMixin::Init(sbISecurityAggregator *aOuter,
 NS_IMETHODIMP
 sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
 {
-  LOG(("sbSecurityMixin::CanCreateWrapper()"));
+  LOG(( "sbSecurityMixin::CanCreateWrapper()" ));
   NS_ENSURE_ARG_POINTER(aIID);
   NS_ENSURE_ARG_POINTER(_retval);
 
   if (!mOuter) {
-    LOG(("sbSecurityMixin::CanCreateWrapper() - ERROR, no outer"));
+    LOG(( "sbSecurityMixin::CanCreateWrapper() - ERROR, no outer" ));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -148,7 +218,7 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   PRBool canCreate = PR_FALSE;
   for ( PRUint32 index = 0; index < mInterfacesCount; index++ ) {
     const nsIID* ifaceIID = mInterfaces[index];
-    if (aIID->Equals(*ifaceIID)) {
+    if ( aIID->Equals(*ifaceIID) ) {
       canCreate = PR_TRUE;
       break;
     }
@@ -185,13 +255,13 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   //   if ANY of these are allowed we need to let the object get created since
   //   we don't know at this point what the request on the object is actually
   //   going to be.
-  if ( GetPermission(codebase, PERM_TYPE_PLAYBACK_CONTROL, PREF_PLAYBACK_CONTROL) ||
-       GetPermission(codebase, PERM_TYPE_PLAYBACK_READ, PREF_PLAYBACK_READ) ||
-       GetPermission(codebase, PERM_TYPE_LIBRARY_READ, PREF_LIBRARY_READ) ) {
-    LOG(("sbSecurityMixin::CanCreateWrapper - Permission GRANTED!!!"));
+  if ( GetPermission( codebase, PERM_TYPE_PLAYBACK_CONTROL, PREF_PLAYBACK_CONTROL ) ||
+       GetPermission( codebase, PERM_TYPE_PLAYBACK_READ, PREF_PLAYBACK_READ ) ||
+       GetPermission( codebase, PERM_TYPE_LIBRARY_READ, PREF_LIBRARY_READ ) ) {
+    LOG(( "sbSecurityMixin::CanCreateWrapper - Permission GRANTED!!!" ));
     *_retval = SB_CloneAllAccess();
   } else {
-    LOG(("sbSecurityMixin::CanCreateWrapper - Permission DENIED (looser)!!!"));
+    LOG(( "sbSecurityMixin::CanCreateWrapper - Permission DENIED (looser)!!!" ));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -215,8 +285,8 @@ sbSecurityMixin::CanCallMethod(const nsIID *aIID, const PRUnichar *aMethodName, 
   nsAutoString method; 
   nsDependentString inMethodName(aMethodName);
 
-  GetScopedName(mMethods, inMethodName, method); 
-  if (method.IsEmpty()) {
+  GetScopedName( mMethods, inMethodName, method ); 
+  if ( method.IsEmpty() ) {
     LOG(( "sbSecurityMixin::CanCallMethod(%s) - DENIED, unapproved method",
           NS_LossyConvertUTF16toASCII(aMethodName).get() ));
     *_retval = nsnull;
@@ -224,10 +294,10 @@ sbSecurityMixin::CanCallMethod(const nsIID *aIID, const PRUnichar *aMethodName, 
   }
 
   if ( GetPermissionForScopedName(method) ) {
-    LOG(("sbSecurityMixin::CanCallMethod - Permission GRANTED!!!"));
+    LOG(( "sbSecurityMixin::CanCallMethod - Permission GRANTED!!!" ));
     *_retval = SB_CloneAllAccess();
   } else {
-    LOG(("sbSecurityMixin::CanCallMethod - Permission DENIED (looser)!!!"));
+    LOG(( "sbSecurityMixin::CanCallMethod - Permission DENIED (looser)!!!" ));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -252,8 +322,8 @@ sbSecurityMixin::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   nsAutoString prop; 
   nsDependentString inPropertyName(aPropertyName);
 
-  GetScopedName(mRProperties, inPropertyName, prop); 
-  if (prop.IsEmpty()) {
+  GetScopedName( mRProperties, inPropertyName, prop ); 
+  if ( prop.IsEmpty() ) {
     LOG(( "sbSecurityMixin::CanGetProperty(%s) - DENIED, unapproved property",
           NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
     *_retval = nsnull;
@@ -261,10 +331,10 @@ sbSecurityMixin::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   }
 
   if ( GetPermissionForScopedName(prop) ) {
-    LOG(("sbSecurityMixin::CanGetProperty - Permission GRANTED!!!"));
+    LOG(( "sbSecurityMixin::CanGetProperty - Permission GRANTED!!!" ));
     *_retval = SB_CloneAllAccess();
   } else {
-    LOG(("sbSecurityMixin::CanGetProperty - Permission DENIED (looser)!!!"));
+    LOG(( "sbSecurityMixin::CanGetProperty - Permission DENIED (looser)!!!" ));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -289,7 +359,7 @@ sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   nsAutoString prop; 
   nsDependentString inPropertyName(aPropertyName);
 
-  GetScopedName(mWProperties, inPropertyName, prop); 
+  GetScopedName( mWProperties, inPropertyName, prop ); 
   if (prop.IsEmpty()) {
     LOG(( "sbSecurityMixin::CanSetProperty(%s) - DENIED, unapproved property",
           NS_LossyConvertUTF16toASCII(aPropertyName).get() ));
@@ -298,10 +368,10 @@ sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   }
 
   if ( GetPermissionForScopedName(prop) ) {
-    LOG(("sbSecurityMixin::CanSetProperty - Permission GRANTED!!!"));
+    LOG(( "sbSecurityMixin::CanSetProperty - Permission GRANTED!!!" ));
     *_retval = SB_CloneAllAccess();
   } else {
-    LOG(("sbSecurityMixin::CanSetProperty - Permission DENIED (looser)!!!"));
+    LOG(( "sbSecurityMixin::CanSetProperty - Permission DENIED (looser)!!!" ));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -320,35 +390,35 @@ sbSecurityMixin::GetCodebase(nsIURI **aCodebase) {
 
   // Get the current domain.
   nsresult rv;
-  nsCOMPtr<nsIScriptSecurityManager> secman(do_GetService(NS_SCRIPTSECURITYMANAGER_CONTRACTID, &rv));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIScriptSecurityManager> secman( do_GetService( NS_SCRIPTSECURITYMANAGER_CONTRACTID, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
   nsCOMPtr<nsIPrincipal> principal;
-  secman->GetSubjectPrincipal(getter_AddRefs(principal));
+  secman->GetSubjectPrincipal( getter_AddRefs(principal) );
 
   if (!principal) {
-    LOG(("sbSecurityMixin::GetCodebase -- Error: No Subject Principal."));
+    LOG(( "sbSecurityMixin::GetCodebase -- Error: No Subject Principal." ));
     *aCodebase = nsnull;
     return NS_OK;
   }
-  LOG(("sbSecurityMixin::GetCodebase -- Have Subject Principal."));
+  LOG(( "sbSecurityMixin::GetCodebase -- Have Subject Principal." ));
 
 #ifdef PR_LOGGING
   nsCOMPtr<nsIPrincipal> systemPrincipal;
-  secman->GetSystemPrincipal(getter_AddRefs(systemPrincipal));
+  secman->GetSystemPrincipal( getter_AddRefs(systemPrincipal) );
 
   if (principal == systemPrincipal) {
-    LOG(("sbSecurityMixin::GetCodebase -- System Principal."));
+    LOG(( "sbSecurityMixin::GetCodebase -- System Principal." ));
   } else {
-    LOG(("sbSecurityMixin::GetCodebase -- Not System Principal."));
+    LOG(( "sbSecurityMixin::GetCodebase -- Not System Principal." ));
   }
 #endif
 
   nsCOMPtr<nsIURI> codebase;
-  principal->GetDomain(getter_AddRefs(codebase));
+  principal->GetDomain( getter_AddRefs(codebase) );
 
   if (!codebase) {
-    LOG(("sbSecurityMixin::GetCodebase -- no codebase from domain, getting it from URI."));
-    principal->GetURI(getter_AddRefs(codebase));
+    LOG(( "sbSecurityMixin::GetCodebase -- no codebase from domain, getting it from URI." ));
+    principal->GetURI( getter_AddRefs(codebase) );
   }
 
   *aCodebase = codebase;
@@ -366,11 +436,11 @@ sbSecurityMixin::GetScopedName(nsTArray<nsCString> &aStringArray,
   nsAutoString method; 
 
   nsCOMPtr<nsIStringEnumerator> methods = new sbTArrayStringEnumerator(&aStringArray);
-  NS_ENSURE_TRUE(methods, PR_FALSE);
+  NS_ENSURE_TRUE( methods, PR_FALSE );
 
   while ( NS_SUCCEEDED(methods->GetNext(method)) ) {
-    LOG(("    -- checking method: %s", NS_ConvertUTF16toUTF8(method).get() ));
-    if ( StringEndsWith(method, aMethodName) ) {
+    LOG(( "    -- checking method: %s", NS_ConvertUTF16toUTF8(method).get() ));
+    if ( StringEndsWith( method, aMethodName ) ) {
       aScopedName = method;
       approved = PR_TRUE;
       break;
@@ -386,9 +456,9 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
   PRBool allowed = PR_FALSE;
 
   nsCOMPtr<nsIURI> codebase;
-  GetCodebase(getter_AddRefs(codebase));
+  GetCodebase( getter_AddRefs(codebase) );
 
-  if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("internal:"))) {
+  if ( StringBeginsWith( aScopedName, NS_LITERAL_STRING("internal:") ) ) {
     if (!codebase) {
       // internal stuff always allowed, should never be called from insecure code.
       allowed = PR_TRUE;
@@ -404,49 +474,87 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
   // without a codebase we're either calling internal stuff or wrong.
   if (!codebase)
     return allowed;
-
-  if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("controls:"))) {
-    allowed = GetPermission(codebase, PERM_TYPE_PLAYBACK_CONTROL, PREF_PLAYBACK_CONTROL);
+  
+  // look up information about the scope
+  const struct Scope* scope = GetScopeForScopedName( aScopedName );
+  
+  if (scope) {
+    // if the current scope is in the table then use the values in the table
+    // to get permission
+    allowed = GetPermission( codebase, scope->permission, scope->blocked_pref );
   }
-  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("binding:"))) {
-    allowed = GetPermission(codebase, PERM_TYPE_PLAYBACK_READ, PREF_PLAYBACK_READ);
-  }
-  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("metadata:"))) {
-    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY_READ, PREF_LIBRARY_READ);
-  }
-  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("library:"))) {
-    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY_WRITE, PREF_LIBRARY_WRITE);
-  }
-  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("library_create:"))) {
-    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY_CREATE, PREF_LIBRARY_CREATE);
-  }
-  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("download:"))) {
+  else if ( StringBeginsWith( aScopedName, NS_LITERAL_STRING("download:") ) ) {
     // XXXredfive - use the library prefs for downloads for now. Larger
     //              re-ordering of which pref goes with which call is planned
     //              for soon. This will do for now.
-    allowed = GetPermission(codebase, PERM_TYPE_LIBRARY_WRITE, PREF_LIBRARY_WRITE);
+    allowed = GetPermission( codebase, PERM_TYPE_LIBRARY_WRITE, PREF_LIBRARY_WRITE );
   }
-  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("site:"))) {
+  else if ( StringBeginsWith( aScopedName, NS_LITERAL_STRING("site:") ) ) {
     // site library methods are always cleared
     allowed = PR_TRUE;
   }
-  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("helper:"))) {
+  else if ( StringBeginsWith( aScopedName, NS_LITERAL_STRING("helper:") ) ) {
     // helper classes always allowed
     allowed = PR_TRUE;
   }
-  else if (StringBeginsWith(aScopedName, NS_LITERAL_STRING("classinfo:"))) {
+  else if ( StringBeginsWith( aScopedName, NS_LITERAL_STRING("classinfo:") ) ) {
     // class info stuff always allowed - this might need to move above the codebase check.
     allowed = PR_TRUE;
   }
+  
+  // if we found additional info about the scope, work out if there's a
+  // notification to fire
+  if ( scope ) {
+    const char* notification =
+        allowed ? scope->allowed_notification : scope->blocked_notification;
+    LOG(( "sbSecurityMixin::GetPermissionsForScopedName() notification=%s notify_pref=%s",
+          notification, scope->notify_pref ));
+    if ( PL_strcmp(notification, sNotificationNone) ) {
+      // notification is not "none"
+      
+      // we want to fire a notification, but does the user want a notification?
+      
+      // get the prefs service
+      nsresult rv;
+      nsCOMPtr<nsIPrefBranch> prefService =
+        do_GetService( "@mozilla.org/preferences-service;1", &rv );
+      NS_ENSURE_SUCCESS( rv, allowed );
+      
+      PRBool notify;
+      // look up the pref
+      rv = prefService->GetBoolPref( scope->notify_pref, &notify );
+      NS_ENSURE_SUCCESS( rv, allowed );
+      
+      LOG(( "sbSecurityMixin::GetPermissionsForScopedName() pref value: %s",
+           notify?"true":"false" ));
+      
+      // if the pref is true we should notify
+      if (notify) {
+        DispatchNotificationEvent(notification);
+      }
+    }
+  }
+  
   return allowed;
+}
+
+const struct Scope*
+sbSecurityMixin::GetScopeForScopedName(const nsAString &aScopedName) {
+  for (unsigned i=0; i<NS_ARRAY_LENGTH(sScopes); i++) {
+    nsAutoString prefix( NS_ConvertUTF8toUTF16( sScopes[i].prefix ) );
+    if( StringBeginsWith( aScopedName, prefix ) ) {
+      return &sScopes[i];
+    }
+  }
+  return NULL;
 }
 
 PRBool
 sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAPIPref )
 {
-  NS_ENSURE_TRUE(aURI, PR_FALSE);
-  NS_ENSURE_TRUE(aType, PR_FALSE);
-  NS_ENSURE_TRUE(aRAPIPref, PR_FALSE);
+  NS_ENSURE_TRUE( aURI, PR_FALSE );
+  NS_ENSURE_TRUE( aType, PR_FALSE );
+  NS_ENSURE_TRUE( aRAPIPref, PR_FALSE );
 
 #ifdef PR_LOGGING
   if (aURI) {
@@ -458,8 +566,8 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAP
 
   nsresult rv;
   nsCOMPtr<nsIPrefBranch> prefService =
-    do_GetService("@mozilla.org/preferences-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+    do_GetService( "@mozilla.org/preferences-service;1", &rv );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
   // build the pref key to check
   PRBool prefBlocked = PR_TRUE;
@@ -468,15 +576,15 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAP
 
   // get the pref value
   LOG(( "sbSecurityMixin::GetPermission() - asking for pref: %s", prefKey.get() ));
-  rv = prefService->GetBoolPref(prefKey.get(), &prefBlocked);
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+  rv = prefService->GetBoolPref( prefKey.get(), &prefBlocked );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
   // get the permission for the domain
-  nsCOMPtr<nsIPermissionManager> permMgr(do_GetService(NS_PERMISSIONMANAGER_CONTRACTID, &rv));
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+  nsCOMPtr<nsIPermissionManager> permMgr( do_GetService( NS_PERMISSIONMANAGER_CONTRACTID, &rv ) );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
   PRUint32 perms = nsIPermissionManager::UNKNOWN_ACTION;
-  rv = permMgr->TestPermission(aURI, aType, &perms);
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+  rv = permMgr->TestPermission( aURI, aType, &perms );
+  NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
   // check to see if the action is allowed for the domain
   if (prefBlocked) {
@@ -490,15 +598,61 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAP
     LOG(( "sbSecurityMixin::GetPermission() - action not blocked" ));
     // action not blocked, make sure domain isn't blocked explicitly
     if ( perms != nsIPermissionManager::DENY_ACTION ) {
-      LOG(("sbSecurityMixin::GetPermission - Permission GRANTED!!!"));
+      LOG(( "sbSecurityMixin::GetPermission - Permission GRANTED!!!" ));
       return PR_TRUE;
     }
   }
 
   // Negative Ghostrider, pattern is full.
-  LOG(("sbSecurityMixin::GetPermission - Permission DENIED (looooooser)!!!"));
+  LOG(( "sbSecurityMixin::GetPermission - Permission DENIED (looooooser)!!!" ));
   return PR_FALSE;
 }
+
+
+nsresult
+sbSecurityMixin::DispatchNotificationEvent(const char* aNotificationType)
+{
+  // NOTE: This method only /tries/ to dispatch the notification event.
+  // If there's no notification document then it fails mostly silently.
+  // This is intentional since there might be cases where this mixin is
+  // used when no notification document is available.
+  
+  // TODO: we need to add the notification type to the event eventually
+  // get it? event eventually...
+  
+  LOG(( "sbSecurityMixin::DispatchNotificationEvent(%s)", aNotificationType ));
+  
+  // see if we've got a document to dispatch events to
+  if ( mNotificationDocument ) {
+    LOG(( "sbSecurityMixin::DispatchNotificationEvent - dispatching event" ));
+    return sbRemotePlayer::DispatchEvent( mNotificationDocument,
+                                         RAPI_EVENT_CLASS,
+                                         RAPI_EVENT_TYPE,
+                                         PR_TRUE );
+  } else {
+    LOG(( "sbSecurityMixin::DispatchNotificationEvent - not dispatching event" ));
+    NS_WARNING( "sbSecurityMixin::DispatchNotificationEvent didn't have a notification document to dispatch to" );
+  }
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSecurityMixin::GetNotificationDocument(nsIDOMDocument **aNotificationDocument)
+{
+  NS_ENSURE_ARG_POINTER(aNotificationDocument);
+  
+  *aNotificationDocument = mNotificationDocument;
+  return NS_OK;
+}
+NS_IMETHODIMP sbSecurityMixin::SetNotificationDocument(nsIDOMDocument * aNotificationDocument)
+{
+  NS_ENSURE_ARG_POINTER(aNotificationDocument);
+
+  mNotificationDocument = aNotificationDocument;
+  return NS_OK;
+}
+
 
 // ---------------------------------------------------------------------------
 //
@@ -527,17 +681,17 @@ sbSecurityMixin::CopyIIDArray(PRUint32 aCount, const nsIID **aSourceArray, nsIID
 
   *aDestArray = 0;
 
-  nsIID **iids = static_cast<nsIID**>(nsMemory::Alloc(aCount * sizeof(nsIID*)));
+  nsIID **iids = static_cast<nsIID**>( nsMemory::Alloc( aCount * sizeof(nsIID*) ) );
   if (!iids) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
 
   for (PRUint32 index = 0; index < aCount; ++index) {
-    iids[index] = static_cast<nsIID*>(nsMemory::Clone(aSourceArray[index], sizeof(nsIID)));
+    iids[index] = static_cast<nsIID*>( nsMemory::Clone( aSourceArray[index], sizeof(nsIID) ) );
 
     if (!iids[index]) {
       for (PRUint32 alloc_index = 0; alloc_index < index; ++alloc_index)
-        nsMemory::Free(iids[alloc_index]);
+        nsMemory::Free( iids[alloc_index] );
       nsMemory::Free(iids);
       return NS_ERROR_OUT_OF_MEMORY;
     }
@@ -549,6 +703,6 @@ sbSecurityMixin::CopyIIDArray(PRUint32 aCount, const nsIID **aSourceArray, nsIID
 
 inline char* SB_CloneAllAccess()
 {
-  return ToNewCString(NS_LITERAL_CSTRING("AllAccess"));
+  return ToNewCString( NS_LITERAL_CSTRING("AllAccess") );
 }
 

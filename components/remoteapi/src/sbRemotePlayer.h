@@ -80,7 +80,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIDOMEVENTLISTENER
-  NS_DECL_NSISECURITYCHECKEDCOMPONENT
+  NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
   NS_DECL_SBISECURITYAGGREGATOR
 
   sbRemotePlayer();
@@ -95,17 +95,16 @@ public:
                               nsIFile* aPath,
                               const char *aLoaderStr,
                               const nsModuleComponentInfo *aInfo);
-
-protected:
-  virtual ~sbRemotePlayer();
-
-  static PRBool ShouldNotifyUser( PRBool aResult );
-  static already_AddRefed<nsPIDOMWindow> GetWindowFromJS();
-  static nsresult FireRemoteAPIAccessedEvent( nsIDOMDocument *aContentDocument );
   static nsresult DispatchEvent( nsIDOMDocument *aDocument,
                                  const nsAString &aClass,
                                  const nsAString &aType,
                                  PRBool aIsTrusted );
+  
+protected:
+  virtual ~sbRemotePlayer();
+
+  static already_AddRefed<nsPIDOMWindow> GetWindowFromJS();
+  static nsresult FireRemoteAPIAccessedEvent( nsIDOMDocument *aContentDocument );
 
   // These three methods should wind up on the download device
   nsresult GetDownloadList( sbIMediaList **aMediaList );

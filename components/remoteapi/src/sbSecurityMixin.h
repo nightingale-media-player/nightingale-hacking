@@ -36,6 +36,7 @@
 #include <nsIURI.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <nsIDOMDocument.h>
 
 #define SONGBIRD_SECURITYMIXIN_CONTRACTID                 \
   "@songbirdnest.com/remoteapi/security-mixin;1"
@@ -50,6 +51,8 @@
 }
 
 extern char* SB_CloneAllAccess();
+
+struct Scope;
 
 class sbSecurityMixin : public nsISecurityCheckedComponent,
                         public nsIClassInfo,
@@ -72,6 +75,11 @@ protected:
   PRBool GetScopedName(nsTArray<nsCString> &aStringArray,
                        const nsAString &aMethodName,
                        nsAString &aScopedName);
+  
+  const struct Scope* GetScopeForScopedName(const nsAString &aScopedName);
+  
+  // helpers for dispatching notification events
+  nsresult DispatchNotificationEvent(const char* aNotificationType);
 
   // helper function for allocating IID array 
   nsresult CopyIIDArray(PRUint32 aCount, const nsIID **aSourceArray, nsIID ***aDestArray);
@@ -89,6 +97,7 @@ protected:
   nsTArray<nsCString> mMethods;
   nsTArray<nsCString> mRProperties;
   nsTArray<nsCString> mWProperties;
+  nsCOMPtr<nsIDOMDocument> mNotificationDocument;
 };
 
 #endif // __SB_SECURITY_MIXIN_H__

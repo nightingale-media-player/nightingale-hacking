@@ -37,6 +37,7 @@
 #include "sbISecurityAggregator.idl"
 
 interface nsIURI;
+interface nsIDOMDocument;
 
 /**
  * \interface sbISecurityMixin
@@ -74,5 +75,10 @@ interface sbISecurityMixin : nsISupports
    *                 URI is set.
    */
   [noscript] nsIURI getCodebase();
+  
+  /**
+   * \brief the DOM document to send notification events to
+   */
+  [noscript] attribute nsIDOMDocument notificationDocument;
 };
 

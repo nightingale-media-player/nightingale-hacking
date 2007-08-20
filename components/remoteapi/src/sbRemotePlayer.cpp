@@ -203,8 +203,6 @@ SB_IMPL_CLASSINFO( sbRemotePlayer,
                    0,
                    kRemotePlayerCID )
 
-SB_IMPL_SECURITYCHECKEDCOMP_WITH_INIT( sbRemotePlayer )
-
 sbRemotePlayer*
 sbRemotePlayer::GetInstance()
 {
@@ -293,6 +291,13 @@ sbRemotePlayer::Init()
   //
   privWindow->GetDocument( getter_AddRefs(mContentDoc) );
   NS_ENSURE_STATE(mContentDoc);
+  
+  //
+  // Set the content document on our mixin so that it knows where to send
+  // notification events
+  //
+  rv = mixin->SetNotificationDocument( mContentDoc );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   //
   // Get the Chrome Document
@@ -1247,41 +1252,6 @@ sbRemotePlayer::UnregisterCommands()
                 "Failed to unregister commands from playlistcommandsmanager" );
 
   return NS_OK;
-}
-
-// ---------------------------------------------------------------------------
-//
-//                        nsISecurityCheckedComponent
-//
-// ---------------------------------------------------------------------------
-
-PRBool
-sbRemotePlayer::ShouldNotifyUser( PRBool aPassedSecurityCheck )
-{
-  LOG(("sbRemotePlayer::ShouldNotifyUser()"));
-  nsresult rv;
-  nsCOMPtr<nsIPrefBranch> prefService =
-    do_GetService("@mozilla.org/preferences-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
-
-  // build the pref key to check
-  nsCAutoString prefKey("songbird.rapi.notify.");
-
-  PRBool notify;
-  if ( aPassedSecurityCheck ) {
-    // check the pref for 'always notify me'
-    prefKey += "always";
-  } else {
-    // check the pref for 'notify if denied'
-    prefKey += "denied";
-  }
-
-  // get the pref value
-  LOG(( "sbRemotePlayer::ShouldNotifyUser() - asking for pref: %s", prefKey.get() ));
-  rv = prefService->GetBoolPref(prefKey.get(), &notify);
-  NS_ENSURE_SUCCESS(rv, PR_TRUE);
-
-  return notify;
 }
 
 
