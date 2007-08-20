@@ -509,7 +509,7 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
         allowed ? scope->allowed_notification : scope->blocked_notification;
     LOG(( "sbSecurityMixin::GetPermissionsForScopedName() notification=%s notify_pref=%s",
           notification, scope->notify_pref ));
-    if ( PL_strcmp(notification, sNotificationNone) ) {
+    if ( strcmp(notification, sNotificationNone) ) {
       // notification is not "none"
       
       // we want to fire a notification, but does the user want a notification?
