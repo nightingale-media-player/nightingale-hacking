@@ -29,6 +29,8 @@
 
 #include <sbISecurityAggregator.h>
 #include <sbISecurityMixin.h>
+#include <nsAutoPtr.h>
+#include "sbSecurityMixin.h"
 
 #ifndef LOG
 #define LOG(args) /* nothing */
@@ -42,9 +44,8 @@ _class::Init()                                                                \
 {                                                                             \
   LOG(( "%s::Init()", #_class ));                                             \
   nsresult rv;                                                                \
-  nsCOMPtr<sbISecurityMixin> mixin =                                          \
-     do_CreateInstance( "@songbirdnest.com/remoteapi/security-mixin;1", &rv );\
-  NS_ENSURE_SUCCESS(rv, rv);                                                  \
+  nsRefPtr<sbSecurityMixin> mixin = new sbSecurityMixin();                    \
+  NS_ENSURE_TRUE( mixin, NS_ERROR_OUT_OF_MEMORY );                            \
   /* Get the list of IIDs to pass to the security mixin */                    \
   nsIID **iids;                                                               \
   PRUint32 iidCount;                                                          \
@@ -56,7 +57,8 @@ _class::Init()                                                                \
                     sPublicRProperties, NS_ARRAY_LENGTH(sPublicRProperties),  \
                     sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties) );\
   NS_ENSURE_SUCCESS( rv, rv );                                                \
-  mSecurityMixin = do_QueryInterface( mixin, &rv );                           \
+  mSecurityMixin = do_QueryInterface(                                         \
+    NS_ISUPPORTS_CAST( sbISecurityMixin*, mixin ), &rv );                     \
   NS_ENSURE_SUCCESS( rv, rv );                                                \
   return NS_OK;                                                               \
 }

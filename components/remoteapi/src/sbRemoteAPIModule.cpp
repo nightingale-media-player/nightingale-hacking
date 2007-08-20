@@ -24,16 +24,12 @@
 //
  */
 
-#include "sbRemoteCommands.h"
 #include "sbRemotePlayer.h"
 #include "sbSecurityMixin.h"
 
 #include <nsIClassInfoImpl.h>
 
 #define SONGBIRD_REMOTEAPI_MODULENAME "Songbird Remote API Module"
-
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRemoteCommands, Init)
-NS_DECL_CI_INTERFACE_GETTER(sbRemoteCommands)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbSecurityMixin)
 NS_DECL_CI_INTERFACE_GETTER(sbSecurityMixin)
@@ -44,16 +40,6 @@ NS_DECL_CI_INTERFACE_GETTER(sbRemotePlayer)
 // fill out data struct to register with component system
 static const nsModuleComponentInfo components[] =
 {
-  {
-    SONGBIRD_REMOTECOMMANDS_CLASSNAME,
-    SONGBIRD_REMOTECOMMANDS_CID,
-    SONGBIRD_REMOTECOMMANDS_CONTRACTID,
-    sbRemoteCommandsConstructor,
-    NULL,
-    NULL,
-    NULL,
-    NS_CI_INTERFACE_GETTER_NAME(sbRemoteCommands)
-  },
   {
     SONGBIRD_REMOTEPLAYER_CLASSNAME,
     SONGBIRD_REMOTEPLAYER_CID,

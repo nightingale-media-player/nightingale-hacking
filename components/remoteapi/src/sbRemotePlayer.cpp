@@ -33,6 +33,7 @@
 #include "sbRemoteSiteLibrary.h"
 #include "sbRemoteWebLibrary.h"
 #include "sbRemoteWebPlaylist.h"
+#include "sbSecurityMixin.h"
 #include <sbClassInfoUtils.h>
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
@@ -43,6 +44,7 @@
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 
+#include <nsAutoPtr.h>
 #include <nsDOMJSUtils.h>
 #include <nsIArray.h>
 #include <nsICategoryManager.h>
@@ -254,12 +256,8 @@ sbRemotePlayer::Init()
   success = mCachedLibraries.Init(2);
   NS_ENSURE_TRUE( success, NS_ERROR_FAILURE );
 
-  nsCOMPtr<sbISecurityMixin> mixin =
-        do_CreateInstance("@songbirdnest.com/remoteapi/security-mixin;1", &rv);
-  if (NS_FAILED(rv)) {
-    LOG(("sbRemotePlayer::Init() -- ERROR creating mixin"));
-    return NS_ERROR_OUT_OF_MEMORY;
-  }
+  nsRefPtr<sbSecurityMixin> mixin = new sbSecurityMixin();
+  NS_ENSURE_TRUE( mixin, NS_ERROR_OUT_OF_MEMORY );
 
   // Get the list of IIDs to pass to the security mixin
   nsIID ** iids;
@@ -274,7 +272,8 @@ sbRemotePlayer::Init()
                     sPublicWProperties, NS_ARRAY_LENGTH(sPublicWProperties) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  mSecurityMixin = do_QueryInterface(mixin, &rv);
+  mSecurityMixin = do_QueryInterface(
+                          NS_ISUPPORTS_CAST( sbISecurityMixin*, mixin ), &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
   //

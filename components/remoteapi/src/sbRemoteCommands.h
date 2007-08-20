@@ -42,18 +42,6 @@
 #include <nsCOMPtr.h>
 #include <map>
 
-#define SONGBIRD_REMOTECOMMANDS_CONTRACTID              \
-  "@songbirdnest.com/remoteapi/remotecommands;1"
-#define SONGBIRD_REMOTECOMMANDS_CLASSNAME               \
-  "Songbird Remote Command"
-#define SONGBIRD_REMOTECOMMANDS_CID                     \
-{ /* 624f6f24-1f9a-449a-87f1-a8a8449b16b5 */            \
-  0x624f6f24,                                           \
-  0x1f9a,                                               \
-  0x449a,                                               \
-  {0x87, 0xf1, 0xa8, 0xa8, 0x44, 0x9b, 0x16, 0xb5}      \
-}
-
 class nsIDOMNode;
 class nsIWeakReference;
 

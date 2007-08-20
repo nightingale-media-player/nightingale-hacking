@@ -28,7 +28,7 @@
 #include "sbSecurityMixin.h"
 #include <sbClassInfoUtils.h>
 
-#include <nsICategoryManager.h>
+#include <nsAutoPtr.h>
 #include <nsIDOMElement.h>
 #include <nsIDocument.h>
 #include <nsIDOMDocument.h>
@@ -49,8 +49,6 @@ static PRLogModuleInfo* gRemoteCommandsLog = nsnull;
 #endif
 
 #define LOG(args) PR_LOG(gRemoteCommandsLog, PR_LOG_WARN, args)
-
-static NS_DEFINE_CID(kRemoteCommandsCID, SONGBIRD_REMOTECOMMANDS_CID);
 
 const static char* sPublicWProperties[] = { "" };
 
@@ -97,12 +95,7 @@ NS_IMPL_CI_INTERFACE_GETTER4( sbRemoteCommands,
                               sbIPlaylistCommands,
                               sbISecurityAggregator )
 
-SB_IMPL_CLASSINFO( sbRemoteCommands,
-                   SONGBIRD_REMOTECOMMANDS_CONTRACTID,
-                   SONGBIRD_REMOTECOMMANDS_CLASSNAME,
-                   nsIProgrammingLanguage::CPLUSPLUS,
-                   0,
-                   kRemoteCommandsCID )
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteCommands)
 
 SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteCommands)
 
@@ -492,9 +485,11 @@ sbRemoteCommands::Duplicate( sbIPlaylistCommands **_retval )
 {
   NS_ENSURE_ARG_POINTER(_retval);
   LOG(("sbRemoteCommands::Duplicate()"));
-  nsresult rv;
-  nsCOMPtr<sbIRemoteCommands> copy =
-      do_CreateInstance( "@songbirdnest.com/remoteapi/remotecommands;1", &rv );
+
+  nsRefPtr<sbRemoteCommands> copy = new sbRemoteCommands();
+  NS_ENSURE_TRUE( copy, NS_ERROR_OUT_OF_MEMORY );
+
+  nsresult rv = copy->Init();
   NS_ENSURE_SUCCESS( rv, rv );
 
   PRUint32 num = mCommands.Length();
@@ -511,7 +506,8 @@ sbRemoteCommands::Duplicate( sbIPlaylistCommands **_retval )
   NS_ENSURE_SUCCESS( rv, rv );
   rv = copy->SetOwner(owner);
   NS_ENSURE_SUCCESS( rv, rv );
-  nsCOMPtr<sbIPlaylistCommands> plCommands( do_QueryInterface( copy, &rv ) );
+  nsCOMPtr<sbIPlaylistCommands> plCommands(
+     do_QueryInterface( NS_ISUPPORTS_CAST( sbIRemoteCommands*, copy ), &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
   NS_ADDREF( *_retval = plCommands );
   return NS_OK;
