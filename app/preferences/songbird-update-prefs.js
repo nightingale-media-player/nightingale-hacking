@@ -21,8 +21,9 @@ pref("app.update.mode", 1);
 pref("app.update.silent", false);
 
 // Update service URL:
-// XXXben Remove hardcoded 'en-US' once locales are fixed properly. See bug 994.
-pref("app.update.url", "https://updates.songbirdnest.com/update/1/%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/en-US/%CHANNEL%/update.xml");
+// XXXben Hardcoded 'en-US'. See bug 994.
+// XXXaus Hardcoded 'Songbird' to ensure auto update support. See bug 4344.
+pref("app.update.url", "https://updates.songbirdnest.com/update/1/Songbird/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/en-US/%CHANNEL%/update.xml");
 
 // URL user can browse to manually if for some reason all update installation
 // attempts fail.  TODO: Change this URL

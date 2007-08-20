@@ -65,12 +65,14 @@ SB_BRANCHNAME := $(shell $(CMD) Branch)
 SB_BUILD_ID := $(shell $(CMD) BuildID)
 SB_MILESTONE := $(shell $(CMD) Milestone)
 SB_MILESTONE_WINDOWS := $(shell $(CMD) MilestoneWindows)
+SB_PROFILE_VERSION := $(shell $(CMD) ProfileVersion)
 
 PPDEFINES += -DSB_APPNAME="$(SB_APPNAME)" \
              -DSB_BRANCHNAME="$(SB_BRANCHNAME)" \
              -DSB_BUILD_ID="$(SB_BUILD_ID)" \
              -DSB_MILESTONE="$(SB_MILESTONE)" \
              -DSB_MILESTONE_WINDOWS="$(SB_MILESTONE_WINDOWS)" \
+             -DSB_PROFILE_VERSION="$(SB_PROFILE_VERSION)" \
              $(NULL)
 
 endif

@@ -1,7 +1,7 @@
 #filter substitution
 [App]
 #Vendor=POTI
-Name=@SB_APPNAME@
+Name=@SB_APPNAME@@SB_PROFILE_VERSION@
 Version=@SB_MILESTONE@
 BuildID=@SB_BUILD_ID@
 Copyright=Copyright(c) 2005-2007 POTI, Inc.
