@@ -52,6 +52,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsIDOMWindow.h>
 #include <nsILocalFile.h>
+#include <nsINetUtil.h>
 #include <nsIPrefService.h>
 #include <nsIProperties.h>
 #include <nsIStandardURL.h>
@@ -384,7 +385,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
                                     (NS_LITERAL_STRING(SB_DOWNLOAD_DEVICE_ID),
                                      getter_AddRefs(pMediaListListener));
         if (NS_SUCCEEDED(result))
-	{
+        {
             mpDeviceLibraryListener =
                                 static_cast<sbDeviceBaseLibraryListener *>(
                                                pMediaListListener.get());
@@ -1704,12 +1705,12 @@ nsresult sbDownloadDevice::QueryUserForDestination(
     if (NS_SUCCEEDED(result))
     {
         if (okPressed)
-	{
+        {
             *apCancelDownload = PR_FALSE;
             aDstDir = dstDir;
         }
         else
-	{
+        {
             *apCancelDownload = PR_TRUE;
         }
     }
@@ -2470,9 +2471,17 @@ nsresult sbDownloadSession::CompleteTransfer()
         nsCOMPtr<nsIURL> pFinalSrcURL = do_QueryInterface(pFinalSrcURI, &result);
         NS_ENSURE_SUCCESS(result, result);
 
-        /* Get the file name from the URL. */
+        /* Get the unescaped file name from the URL. */
+        nsCString escFileName;
+        result = pFinalSrcURL->GetFileName(escFileName);
+        NS_ENSURE_SUCCESS(result, result);
+        nsCOMPtr<nsINetUtil> netUtil;
+        netUtil = do_GetService("@mozilla.org/network/util;1", &result);
+        NS_ENSURE_SUCCESS(result, result);
         nsCString fileName;
-        result = pFinalSrcURL->GetFileName(fileName);
+        result = netUtil->UnescapeString(escFileName,
+                                         nsINetUtil::ESCAPE_ALL,
+                                         fileName);
         NS_ENSURE_SUCCESS(result, result);
 
         /* append to the path */
