@@ -39,10 +39,12 @@ NS_IMPL_ISUPPORTS1(sbTestHarnessConsoleListener, nsIConsoleListener)
 
 sbTestHarnessConsoleListener::sbTestHarnessConsoleListener()
 {
+  MOZ_COUNT_CTOR(sbTestHarnessConsoleListener);
 }
 
 sbTestHarnessConsoleListener::~sbTestHarnessConsoleListener()
 {
+  MOZ_COUNT_DTOR(sbTestHarnessConsoleListener);
 }
 
 NS_IMETHODIMP sbTestHarnessConsoleListener::Observe(nsIConsoleMessage *aMessage)
