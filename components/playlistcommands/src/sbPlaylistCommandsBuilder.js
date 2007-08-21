@@ -107,7 +107,7 @@ PlaylistCommandsBuilder.prototype = {
     return this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_APPEND,
                                null,
                                aParentSubMenuId,
-                               SONGBIRD_PLAYLISTCOMMANDS_TYPE_SUBMENU,
+                               SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU,
                                aSubMenuId,
                                props);
   },
@@ -124,7 +124,7 @@ PlaylistCommandsBuilder.prototype = {
     return this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_BEFORE,
                                aBeforeId, 
                                eParentSubMenuId,
-                               SONGBIRD_PLAYLISTCOMMANDS_TYPE_SUBMENU,
+                               SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU,
                                aSubMenuId,
                                props);
   },
@@ -141,7 +141,7 @@ PlaylistCommandsBuilder.prototype = {
     return this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_AFTER,
                                aAfterId, 
                                eParentSubMenuId,
-                               SONGBIRD_PLAYLISTCOMMANDS_TYPE_SUBMENU,
+                               SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU,
                                aSubMenuId,
                                props);
   },

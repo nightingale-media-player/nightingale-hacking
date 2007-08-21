@@ -370,7 +370,7 @@ interface sbIPlaylistCommandsContext : nsISupports
   */
   readonly attribute nsIDOMNode playlist;   
 
-    /**
+  /**
   * \brief The medialist against which the commands are acting.
   */
   readonly attribute sbIMediaItem medialist;
