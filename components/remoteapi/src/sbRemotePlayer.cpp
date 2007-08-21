@@ -95,6 +95,7 @@
 static PRLogModuleInfo* gRemotePlayerLog = nsnull;
 #endif
 
+#undef LOG
 #define LOG(args) PR_LOG(gRemotePlayerLog, PR_LOG_WARN, args)
 
 static NS_DEFINE_CID(kRemotePlayerCID, SONGBIRD_REMOTEPLAYER_CID);
@@ -290,7 +291,7 @@ sbRemotePlayer::Init()
   //
   privWindow->GetDocument( getter_AddRefs(mContentDoc) );
   NS_ENSURE_STATE(mContentDoc);
-  
+
   //
   // Set the content document on our mixin so that it knows where to send
   // notification events
@@ -423,13 +424,14 @@ sbRemotePlayer::SiteLibrary( const nsACString &aDomain,
 
   nsresult rv;
 
-  // Recycle the old site library if possible.
-  if (mSiteLibrary) {
-    rv = mSiteLibrary->ConnectToSiteLibrary( aDomain, aPath );
-    if ( NS_SUCCEEDED(rv) ) {
-      NS_ADDREF( *aSiteLibrary = mSiteLibrary );
-      return NS_OK;
-    }
+  nsString siteLibraryFilename;
+  rv = sbRemoteSiteLibrary::GetFilenameForSiteLibrary( aDomain,
+                                                       aPath,
+                                                       siteLibraryFilename );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  if ( mCachedLibraries.Get( siteLibraryFilename, aSiteLibrary ) ) {
+    return NS_OK;
   }
 
   nsRefPtr<sbRemoteSiteLibrary> library;
@@ -442,11 +444,15 @@ sbRemotePlayer::SiteLibrary( const nsACString &aDomain,
   rv = library->ConnectToSiteLibrary( aDomain, aPath );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  mSiteLibrary = do_QueryInterface( NS_ISUPPORTS_CAST( sbIRemoteSiteLibrary*,
-                                                       library ), &rv );
+  nsCOMPtr<sbIRemoteLibrary> remoteLibrary(
+    do_QueryInterface( NS_ISUPPORTS_CAST( sbIRemoteSiteLibrary*, library ),
+                       &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  NS_ADDREF( *aSiteLibrary = mSiteLibrary );
+  PRBool success = mCachedLibraries.Put( siteLibraryFilename, remoteLibrary );
+  NS_ENSURE_TRUE( success, NS_ERROR_FAILURE );
+
+  NS_ADDREF( *aSiteLibrary = remoteLibrary );
   return NS_OK;
 }
 

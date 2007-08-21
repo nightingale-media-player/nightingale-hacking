@@ -50,6 +50,8 @@
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
+#include <nsCOMArray.h>
+#include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
 class nsIStringEnumerator;

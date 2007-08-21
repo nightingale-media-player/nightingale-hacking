@@ -57,6 +57,7 @@
 static PRLogModuleInfo* gSiteLibraryLog = nsnull;
 #endif
 
+#undef LOG
 #define LOG(args) PR_LOG(gSiteLibraryLog, PR_LOG_WARN, args)
 
 const static char* sPublicWProperties[] =
@@ -272,23 +273,9 @@ sbRemoteSiteLibrary::GetSiteLibraryFile( const nsACString &aDomain,
     return nsnull;
   }
 
-  // Do some character escaping
-  nsCOMPtr<nsINetUtil> netUtil = do_GetService( NS_NETUTIL_CONTRACTID, &rv );
+  nsString filename;
+  rv = GetFilenameForSiteLibraryInternal( domain, path, PR_FALSE, filename );
   NS_ENSURE_SUCCESS( rv, nsnull );
-
-  nsCString escapedDomain;
-  rv = netUtil->EscapeString( domain, nsINetUtil::ESCAPE_XALPHAS,
-                              escapedDomain );
-  NS_ENSURE_SUCCESS( rv, nsnull );
-
-  nsCString escapedPath;
-  rv = netUtil->EscapeString( path, nsINetUtil::ESCAPE_XALPHAS,
-                              escapedPath );
-  NS_ENSURE_SUCCESS( rv, nsnull );
-
-  nsString filename = NS_ConvertUTF8toUTF16(escapedDomain);
-  filename.Append( NS_ConvertUTF8toUTF16(escapedPath) );
-  filename.AppendLiteral(".db");
 
   // get the directory service
   nsCOMPtr<nsIProperties> directoryService(
@@ -334,19 +321,25 @@ sbRemoteSiteLibrary::CheckDomain( nsACString &aDomain, nsIURI *aSiteURI )
   NS_ENSURE_ARG_POINTER(aSiteURI);
   LOG(( "sbRemoteSiteLibrary::CheckDomain(%s)", aDomain.BeginReading() ));
 
-  // get host from URI, remove leading/trailing dots, lowercase it
-  nsCAutoString host;
+  // get host from URI
+  nsCString host;
   nsresult rv = aSiteURI->GetHost(host);
   NS_ENSURE_SUCCESS( rv, rv );
 
-  host.Trim(".");
-  ToLowerCase(host);
+  nsCString fixedHost;
+  rv = sbRemoteSiteLibrary::FixupDomain( host, fixedHost );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  host.Assign(fixedHost);
 
   if ( !aDomain.IsEmpty() ) {
     LOG(("sbRemoteSiteLibrary::CheckDomain() -- Have a domain from the user"));
     // remove trailing dots, lowercase it
-    aDomain.Trim(".");
-    ToLowerCase(aDomain);
+    nsCString fixedDomain;
+    rv = sbRemoteSiteLibrary::FixupDomain( aDomain, fixedDomain );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    aDomain.Assign(fixedDomain);
 
     // Deal first with numerical ip addresses
     PRNetAddr addr;
@@ -438,98 +431,178 @@ sbRemoteSiteLibrary::CheckPath( nsACString &aPath, nsIURI *aSiteURI )
   LOG(( "sbRemoteSiteLibrary::CheckPath(%s)", aPath.BeginReading() ));
 
   nsresult rv;
-  NS_NAMED_LITERAL_CSTRING( slashString, "/" );
 
-  // Build a URI object to use for easy directory checking. This avoids manual
-  // string parsing and works when aPath is empty and also when it is not.
-  nsCOMPtr<nsIURI> uri;
+  nsCString fixedSitePath;
+  rv = sbRemoteSiteLibrary::FixupPath( aSiteURI, fixedSitePath );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   if ( aPath.IsEmpty() ) {
     // If the path was empty we use aSiteURI that was retrieved from the system.
-    uri = aSiteURI;
-  }
-  else {
-    // Construct a dummy URL that incorporates the path that the user passed in.
-    nsCString dummyURL("http://www.dummy.com");
+    aPath.Assign(fixedSitePath);
 
-    // Make sure that aPath begins with a slash. Otherwise we could end up with
-    // something like "foo.combar" rather than "foo.com/bar".
-    if ( !StringBeginsWith( aPath, slashString ) ) {
-      dummyURL.Append(slashString);
-    }
-
-    dummyURL.Append(aPath);
-
-    rv = NS_NewURI( getter_AddRefs(uri), dummyURL );
-    NS_ENSURE_SUCCESS( rv, rv );
-  }
-
-  // At this point uri contains the location we will use for the path. It will
-  // be compared to aSiteURI later for validation if it was constructed from
-  // aPath.
-
-  nsCOMPtr<nsIURL> url( do_QueryInterface( uri, &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  rv = url->GetDirectory(aPath);
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  NS_ASSERTION( StringEndsWith( aPath, slashString ),
-                "GetDirectory returned a string with no trailing slash!" );
-
-  // According to nsIURL the directory will always have a trailing slash (???).
-  // However, if the spec from aSiteURI did *not* have a trailing slash then the
-  // fileName attribute of url may be set. If it is then we assume it is
-  // actually a directory as long as the fileExtension is empty. Thus the
-  // following transformations will result:
-  //
-  //    Original spec from aSiteURI -----> aPath
-  //
-  //    http://www.foo.com/bar/baz/ -----> /bar/baz/
-  //    http://www.foo.com/bar/baz ------> /bar/baz
-  //    http://www.foo.com/bar/baz.ext --> /bar/
-
-  nsCString fileName;
-  rv = url->GetFileName(fileName);
-  NS_ENSURE_SUCCESS( rv, rv );
-
-  if (!fileName.IsEmpty()) {
-    nsCString fileExt;
-    rv = url->GetFileExtension(fileExt);
-    NS_ENSURE_SUCCESS( rv, rv );
-
-    if (fileExt.IsEmpty()) {
-      // If there is no file extension then assume it is actually a directory
-      // and append a trailing slash.
-      aPath.Append(fileName);
-      aPath.Append(slashString);
-    }
-  }
-
-  // The rest of this function will ensure that the path is actually a subpath
-  // of aSiteURI. If nothing was passed in aPath then we already know that this
-  // is true because we constructed aPath from aSiteURI. Therefore we're done
-  // and can go ahead and return. We waited until this point to return early so
-  // that we are sure that aPath both begins and ends with a slash (unless it is
-  // only a single slash).
-  if (uri == aSiteURI) {
+    // The rest of this function will ensure that the path is actually a subpath
+    // of aURI. If nothing was passed in aPath then we already know that this
+    // is true because we constructed aPath from aURI. Therefore we're done and
+    // can go ahead and return.
     return NS_OK;
   }
 
-  // Verify that this path is indeed part of the site URI.
-  nsCString sitePath;
-  rv = aSiteURI->GetPath(sitePath);
+  // Compare fixedPath to fixedSitePath to make sure that fixedPath is within
+  // fixedSitePath.
+  nsCString fixedPath;
+  rv = sbRemoteSiteLibrary::FixupPath( aPath, fixedPath );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // We know that aPath has a trailing slash but sitePath may not have one. Make
-  // sure that we ignore the trailing slash in the following comparison.
-  nsDependentCSubstring headPath( aPath, 0, aPath.Length() - 1 );
-
-  if ( !StringBeginsWith( sitePath, headPath ) ) {
+  // Verify that this path is indeed part of the site URI.
+  if ( !StringBeginsWith( fixedSitePath, fixedPath ) ) {
     LOG(("sbRemoteSiteLibrary::CheckPath() -- FAILED Path Prefix Check"));
     return NS_ERROR_FAILURE;
   }
 
   LOG(("sbRemoteSiteLibrary::CheckPath() -- PASSED Path Prefix Check"));
+
+  aPath.Assign(fixedPath);
+  return NS_OK;
+}
+
+/* static */
+nsresult
+sbRemoteSiteLibrary::FixupDomain( const nsACString& aDomain,
+                                  nsACString& _retval )
+{
+  NS_ENSURE_ARG( !aDomain.IsEmpty() );
+
+  nsCString domain(aDomain);
+
+  domain.Trim("./");
+  ToLowerCase(domain);
+
+  _retval.Assign(domain);
+  return NS_OK;
+}
+
+/* static */
+nsresult
+sbRemoteSiteLibrary::FixupPath( nsIURI* aURI,
+                                nsACString& _retval )
+{
+  NS_ASSERTION( aURI, "Don't you dare pass me a null pointer!" );
+
+  nsresult rv;
+  nsCOMPtr<nsIURL> url( do_QueryInterface( aURI, &rv ) );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // According to nsIURL the directory will always have a trailing slash (???).
+  // However, if the spec from aURI did *not* have a trailing slash then the
+  // fileName attribute of url may be set. If it is then we assume it is
+  // actually a directory as long as the fileExtension is empty. Thus the
+  // following transformations will result:
+  //
+  //    Original spec from aURI ---------> path
+  //
+  //    http://www.foo.com/bar/baz/ -----> /bar/baz/
+  //    http://www.foo.com/bar/baz ------> /bar/baz
+  //    http://www.foo.com/bar/baz.ext --> /bar/
+
+  nsCString path;
+  rv = url->GetDirectory(path);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  nsCString fileName;
+  rv = url->GetFileName(fileName);
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  if ( !fileName.IsEmpty() ) {
+    nsCString fileExt;
+    rv = url->GetFileExtension(fileExt);
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    if ( fileExt.IsEmpty() ) {
+      // If there is no file extension then assume it is actually a directory
+      // and append a trailing slash.
+      path.Append(fileName);
+      path.AppendLiteral("/");
+    }
+  }
+
+  _retval.Assign(path);
+  return NS_OK;
+}
+
+/* static */
+nsresult
+sbRemoteSiteLibrary::FixupPath( const nsACString& aPath,
+                                nsACString& _retval )
+{
+  NS_ASSERTION( !aPath.IsEmpty(), "Passed an empty path! Bad bad bad!" );
+
+  NS_NAMED_LITERAL_CSTRING( slashString, "/" );
+
+  // Construct a dummy URL that incorporates the path that the user passed in.
+  nsCString dummyURL("http://dummy.com");
+
+  // Make sure that aPath begins with a slash. Otherwise we could end up with
+  // something like "foo.combar" rather than "foo.com/bar".
+  if ( !StringBeginsWith( aPath, slashString ) ) {
+    dummyURL.Append(slashString);
+  }
+
+  dummyURL.Append(aPath);
+
+  nsCOMPtr<nsIURI> uri;
+  nsresult rv = NS_NewURI( getter_AddRefs(uri), dummyURL );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // Hand off.
+  return sbRemoteSiteLibrary::FixupPath( uri, _retval );
+}
+
+/* static */
+nsresult
+sbRemoteSiteLibrary::GetFilenameForSiteLibraryInternal( const nsACString& aDomain,
+                                                        const nsACString& aPath,
+                                                        PRBool aDoFixup,
+                                                        nsAString& _retval )
+{
+  NS_ENSURE_ARG( !aDomain.IsEmpty() );
+  NS_ENSURE_ARG( !aPath.IsEmpty() );
+
+  nsresult rv;
+
+  nsCString domain, path;
+  if (aDoFixup) {
+    // External callers will need to have these arguments validated.
+    rv = sbRemoteSiteLibrary::FixupDomain( aDomain, domain );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    rv = sbRemoteSiteLibrary::FixupPath( aPath, path );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  else {
+    // Internal callers should have already performed a more rigorous validation
+    // of the arguments so we don't need to do anything special here.
+    domain.Assign(aDomain);
+    path.Assign(aPath);
+  }
+
+  // Do some character escaping
+  nsCOMPtr<nsINetUtil> netUtil = do_GetService( NS_NETUTIL_CONTRACTID, &rv );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  nsCString escapedDomain;
+  rv = netUtil->EscapeString( domain, nsINetUtil::ESCAPE_XALPHAS,
+                              escapedDomain );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  nsCString escapedPath;
+  rv = netUtil->EscapeString( path, nsINetUtil::ESCAPE_XALPHAS,
+                              escapedPath );
+  NS_ENSURE_SUCCESS( rv, nsnull );
+
+  nsString filename = NS_ConvertUTF8toUTF16(escapedDomain);
+  filename.Append( NS_ConvertUTF8toUTF16(escapedPath) );
+  filename.AppendLiteral(".db");
+
+  _retval.Assign(filename);
   return NS_OK;
 }

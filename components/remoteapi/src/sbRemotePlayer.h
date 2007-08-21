@@ -99,7 +99,7 @@ public:
                                  const nsAString &aClass,
                                  const nsAString &aType,
                                  PRBool aIsTrusted );
-  
+
 protected:
   virtual ~sbRemotePlayer();
 
@@ -133,14 +133,10 @@ protected:
   // The commands registered by the page.
   nsRefPtr<sbRemoteCommands> mCommandsObject;
 
-  // Site library for the page that has been loaded
-  // Theoretically there _could_ be more than one library requested by the page
-  //    so this will probably have to grow to be a hashtable.
-  nsCOMPtr<sbIRemoteSiteLibrary> mSiteLibrary;
-
   // Hashtable to hold the observers registered by the webpage
   nsDataHashtable<nsStringHashKey, sbRemoteObserver> mRemObsHash;
 
+  // Hashtable to hold all the libraries that we generate
   nsInterfaceHashtable<nsStringHashKey, sbIRemoteLibrary> mCachedLibraries;
 
   // stash these for quick reference

@@ -48,6 +48,13 @@ public:
 
   sbRemoteSiteLibrary();
 
+  static nsresult GetFilenameForSiteLibrary( const nsACString& aDomain,
+                                             const nsACString& aPath,
+                                             nsAString& _retval )
+  {
+    return GetFilenameForSiteLibraryInternal( aDomain, aPath, PR_TRUE, _retval );
+  }
+
 protected:
   virtual ~sbRemoteSiteLibrary();
   virtual nsresult InitInternalMediaList();
@@ -61,6 +68,17 @@ protected:
   // builds a path to the db file for the passed in domain and path
   already_AddRefed<nsIFile> GetSiteLibraryFile( const nsACString &aDomain,
                                                 const nsACString &aPath );
+  static nsresult FixupDomain( const nsACString& aDomain,
+                               nsACString& _retval );
+  static nsresult FixupPath( nsIURI* aURI,
+                             nsACString& _retval );
+  // calls the other version of FixupPath with a generated dummy URI
+  static nsresult FixupPath( const nsACString& aPath,
+                             nsACString& _retval );
+  static nsresult GetFilenameForSiteLibraryInternal( const nsACString& aDomain,
+                                                     const nsACString& aPath,
+                                                     PRBool aDoFixup,
+                                                     nsAString& _retval );
 
   nsRefPtr<sbRemoteSiteMediaList> mRemSiteMediaList;
 
