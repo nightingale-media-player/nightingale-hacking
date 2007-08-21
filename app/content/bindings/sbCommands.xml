@@ -242,6 +242,7 @@
             if (!this.medialist) skip = true;
             if (this.playlist) {
               if (this.playlist.getAttribute("hidden") == "true" ||
+                  !this.playlist.mediaListView ||
                   !this.playlist.mediaListView.treeView) {
                 skip = true;
               }
