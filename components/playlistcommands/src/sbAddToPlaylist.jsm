@@ -384,7 +384,8 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_PlaylistCommands.push(null);
   },
   
-    makePlaylistsForLibrary: function(aLibrary, typearray) {
+  makePlaylistsForLibrary: function(aLibrary, typearray) {
+    this._makingList = true;
     var listener = {
       obj: this,
       items: [],
@@ -432,6 +433,7 @@ addToPlaylistHelper.prototype = {
     aLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1",
                                     listener,
                                     Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+    this._makingList = false;
   },
 
   handleGetMenu: function(aSubMenu) {
@@ -512,6 +514,7 @@ addToPlaylistHelper.prototype = {
   //-----------------------------------------------------------------------------
   _inbatch       : false,
   _deferredevent : false,
+  _makingList    : false,
   
   refreshCommands: function() {
     if (this.m_commands) {
@@ -523,6 +526,7 @@ addToPlaylistHelper.prototype = {
   },
 
   onUpdateEvent: function(item) {
+    if (this._makingList) return;
     if (item instanceof Components.interfaces.sbIMediaList) {
       if (this._inbatch) {
         // if we are in a batch, remember that we saw a playlist event in it
