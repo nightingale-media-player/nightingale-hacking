@@ -165,6 +165,7 @@
                   // Hack: remove the extra checked state.
                   // (We may want this back later) 
                   item.removeAttribute("type");
+                  item.removeAttribute("checked");                  
                   skinMenu.firstChild.appendChild(item);
                 }
                 

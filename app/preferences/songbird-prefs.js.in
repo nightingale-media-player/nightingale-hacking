@@ -125,10 +125,6 @@ pref("browser.preferences.instantApply", true);
 
 #ifdef XP_MACOSX
 pref("browser.preferences.animateFadeIn", true);
-
-// TEMP HACK - Mac windows without chrome do not receive events
-// so am forcing accessibility mode until this bug is fixed.
-pref("songbird.accessibility.enabled", "1");
 #else
 pref("browser.preferences.animateFadeIn", false);
 #endif

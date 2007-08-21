@@ -232,27 +232,7 @@ function doMainwinStart()
 
   var feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
                                    .getService(Components.interfaces.sbIFeathersManager);
-  var mainwinURL = feathersManager.currentLayoutURL;
-  var showChrome = feathersManager.isChromeEnabled(mainwinURL, feathersManager.currentSkinName);
-
-  // TEMP fix for the Mac to enable the titlebar on the main window.
-  var sysInfo = Components.classes["@mozilla.org/system-info;1"]
-                          .getService(Components.interfaces.nsIPropertyBag2);
-  var platform = sysInfo.getProperty("name");
-  
-  if (platform == "Darwin") {
-    showChrome = true;
-  }
-  
-  var chromeFeatures = "chrome,modal=no,toolbar=yes,popup=no";
-  if (showChrome) {
-    chromeFeatures += ",resizable=yes"; 
-  } else  {
-    chromeFeatures += ",titlebar=no";
-  }
-  
-  var mainWin = window.open(mainwinURL, "", chromeFeatures);
-  mainWin.focus();
+  feathersManager.openPlayerWindow();
 }
 
 // doEULA

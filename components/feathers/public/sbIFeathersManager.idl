@@ -234,6 +234,15 @@ interface sbIFeathersManager : nsISupports
   void switchFeathers(in AString aLayoutURL, 
                       in AString aInternalName);
 
+  /**
+   * \brief Launch the player window for the current feathers
+   *
+   * Attempts to open the XUL player window layout for the
+   * current feathers.  If the current layout or skin
+   * is invalid, the default feathers will be loaded instead.
+   */
+  void openPlayerWindow();
+
 
   /**
    * \brief Register to receive modification callbacks

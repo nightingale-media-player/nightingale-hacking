@@ -888,6 +888,17 @@ FeathersManager.prototype = {
    */
   isChromeEnabled: function isChromeEnabled(layoutURL, internalName) {
     this._init();
+    
+    // TEMP fix for the Mac to enable the titlebar on the main window.
+    // See Bug 4363
+    var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                            .getService(Components.interfaces.nsIPropertyBag2);
+    var platform = sysInfo.getProperty("name");
+    
+    if (platform == "Darwin") {
+      return true;
+    }
+    
     if (this._mappings[layoutURL]) {
       return this._mappings[layoutURL][internalName] == true;
     }
@@ -978,6 +989,56 @@ FeathersManager.prototype = {
     timer.initWithCallback(callback, 0, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
   },
   
+  
+  /**
+   * \sa sbIFeathersManager
+   * Relaunch the main window
+   */
+  openPlayerWindow: function openPlayerWindow() {
+    
+    // First, check to make sure the current
+    // feathers are valid
+    var layoutDescription = this.getLayoutDescription(this.currentLayoutURL);
+    var skinDescription = this.getSkinDescription(this.currentSkinName);
+    if (layoutDescription == null || skinDescription == null) {
+      // The current feathers are invalid. Switch to the defaults.
+      this.switchFeathers(DEFAULT_MAIN_LAYOUT_URL, DEFAULT_SKIN_NAME);
+      return;
+    }
+    
+    
+    var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                   .getService(Components.interfaces.nsIWindowMediator);
+
+    // The core window (plugin host) is the only window which cannot be shut down
+    var coreWindow = windowMediator.getMostRecentWindow(WINDOWTYPE_SONGBIRD_CORE);  
+
+    // If no core window exists, then we are probably in test mode.
+    // Therefore do nothing.
+    if (coreWindow == null) {
+      dump("FeathersManager.openPlayerWindow: unable to find window of type Songbird:Core. Test mode?\n");
+      return;
+    }
+
+    // Determine window features.  If chrome is enabled, make resizable.
+    // Otherwise remove the titlebar.
+    var chromeFeatures = "chrome,modal=no,toolbar=yes,popup=no";    
+    var showChrome = this.isChromeEnabled(this.currentLayoutURL, this.currentSkinName);
+    if (showChrome) {
+       chromeFeatures += ",resizable=yes";
+    } else {
+       chromeFeatures += ",titlebar=no";
+    }
+    
+    // Set the global chrome (window border and title) flag
+    this._setChromeEnabled(showChrome);
+    
+    // Open the new player window
+    var newMainWin = coreWindow.open(this.currentLayoutURL, "", chromeFeatures);
+    newMainWin.focus();
+  },
+  
+  
   /**
    * \sa sbIFeathersManager
    */  
@@ -1045,41 +1106,6 @@ FeathersManager.prototype = {
         }
       }
     }
-  },
-
-  /**
-   * Relaunch the main window
-   */
-  _openPlayerWindow: function _openPlayerWindow() {
-    var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                                   .getService(Components.interfaces.nsIWindowMediator);
-
-    // The core window (plugin host) is the only window which cannot be shut down
-    var coreWindow = windowMediator.getMostRecentWindow(WINDOWTYPE_SONGBIRD_CORE);  
-
-    // If no core window exists, then we are probably in test mode.
-    // Therefore do nothing.
-    if (coreWindow == null) {
-      dump("FeathersManager._closePlayerWindow: unable to find window of type Songbird:Core. Test mode?\n");
-      return;
-    }
-
-    // Determine window features.  If chrome is enabled, make resizable.
-    // Otherwise remove the titlebar.
-    var chromeFeatures = "chrome,modal=no,toolbar=yes,popup=no";    
-    var showChrome = this.isChromeEnabled(this.currentLayoutURL, this.currentSkinName);
-    if (showChrome) {
-       chromeFeatures += ",resizable=yes";
-    } else {
-       chromeFeatures += ",titlebar=no";
-    }
-    
-    // Set the global chrome (window border and title) flag
-    this._setChromeEnabled(showChrome);
-    
-    // Open the new player window
-    var newMainWin = coreWindow.open(this.currentLayoutURL, "", chromeFeatures);
-    newMainWin.focus();
   },
 
       
@@ -1205,7 +1231,7 @@ FeathersManager_switchFeathers_callback.prototype = {
     this.feathersManager._skinDataRemote.stringValue = this.internalName;
 
     this.feathersManager._flushXULPrototypeCache();
-    this.feathersManager._openPlayerWindow();
+    this.feathersManager.openPlayerWindow();
     this.feathersManager = null;
   }
 }; // FeathersManager_switchFeathers_callback.prototype
