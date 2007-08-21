@@ -1194,7 +1194,7 @@ NS_IMETHODIMP sbDownloadDevice::GetDeviceCategory(
 }
 
 NS_IMETHODIMP sbDownloadDevice::GetDeviceIdentifiers(
-    nsIArray                    **aDeviceIdentifiers)
+    nsIStringEnumerator         **aDeviceIdentifiers)
 {
     LOG(("1: GetDeviceIdentifiers\n"));
 

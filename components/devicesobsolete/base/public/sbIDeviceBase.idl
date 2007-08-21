@@ -36,6 +36,7 @@
  * Forward references
  */
 interface nsIArray;
+interface nsIStringEnumerator;
 interface nsIURI;
 
 interface sbILibrary;
@@ -202,7 +203,7 @@ interface sbIDeviceBase : nsISupports
    * \brief Contains nsISupportsStrings representing the device unique identifiers 
    * for all connected devices of this category.
    */
-	readonly attribute nsIArray deviceIdentifiers;
+	readonly attribute nsIStringEnumerator deviceIdentifiers;
 
   /**
    * \brief Get the number of devices currently connected.
