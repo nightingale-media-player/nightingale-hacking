@@ -79,6 +79,7 @@
           return currentEngine || {name:"", uri:null};
         ]]></getter>
         <setter><![CDATA[
+          var isChanging = (this.searchService.currentEngine != val);
           this.searchService.currentEngine = val; 
 
           // Set the live search indicator attribute
@@ -86,13 +87,14 @@
           this.updateLiveSearchAttribute();
 
           // If there was a query, then run it immediately
-          if (this.value != "" & this.getAttribute("empty") != "true") 
+          if (this.value != "" && this.getAttribute("empty") != "true" && isChanging) 
           {
             // Pretend the user hit enter
             this.handleSearchCommand(null);
           }
-          
-          return val;
+
+          // JMC - Don't return just val in case it's null
+          return this.searchService.currentEngine;
         ]]></setter>        
       </property>      
       
@@ -237,7 +239,8 @@
                     
           // Add your eggs here...
           if ( textValue == "migmigmig" )  { alert( ".gge retsaE" ); } 
-          else if ( textValue == "mattmattmatt" )  { alert( "Eggstereast." ); } 
+          else if ( textValue == "mattmattmatt" )  { alert( "Eggstereast." ); }
+          else if ( textValue == "joshuajoshua" )  { alert( "basket'o'eggz" ); }
                               
           this._sendSearchEvent();
         ]]></body>
