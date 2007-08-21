@@ -70,7 +70,7 @@
  ******************************************************************************/
 
 /* Local imports. */
-#include <TagLibChannelFileIO.h>
+#include <TaglibChannelFileIO.h>
 #include <sbITagLibChannelFileIOManager.h>
 
 /* Songbird imports. */
