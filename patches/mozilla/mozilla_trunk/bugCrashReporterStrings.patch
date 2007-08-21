@@ -1,0 +1,34 @@
+Index: toolkit/xre/nsAppRunner.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/xre/nsAppRunner.cpp,v
+retrieving revision 1.189
+diff -u -8 -p -r1.189 nsAppRunner.cpp
+--- toolkit/xre/nsAppRunner.cpp	20 Aug 2007 05:09:07 -0000	1.189
++++ toolkit/xre/nsAppRunner.cpp	20 Aug 2007 23:29:16 -0000
+@@ -2516,22 +2516,20 @@ XRE_main(int argc, char* argv[], const n
+     appData.flags |= NS_XRE_ENABLE_CRASH_REPORTER;
+   }
+ 
+   if ((appData.flags & NS_XRE_ENABLE_CRASH_REPORTER) &&
+       NS_SUCCEEDED(
+          CrashReporter::SetExceptionHandler(appData.xreDirectory,
+                                             appData.crashReporterURL))) {
+     // pass some basic info from the app data
+-    if (appData.vendor)
+-      CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("Vendor"),
+-                                     nsDependentCString(appData.vendor));
+-    if (appData.name)
+-      CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("ProductName"),
+-                                     nsDependentCString(appData.name));
++    CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("Vendor"),
++                                       NS_LITERAL_CSTRING("Songbird"));
++    CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("ProductName"),
++                                       NS_LITERAL_CSTRING("Songbird"));
+     if (appData.version)
+       CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("Version"),
+                                      nsDependentCString(appData.version));
+     if (appData.buildID)
+       CrashReporter::AnnotateCrashReport(NS_LITERAL_CSTRING("BuildID"),
+                                      nsDependentCString(appData.buildID));
+     CrashReporter::SetRestartArgs(argc, argv);
+ 
