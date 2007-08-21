@@ -121,8 +121,8 @@ sbDeviceManager::Initialize()
                                     PR_FALSE);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to add library manager observer");
 
-  // "profile-before-change" is sent before a profile is unloaded
-  rv = observerService->AddObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID,
+  // Since we depend on the library, we need to shut down with it
+  rv = observerService->AddObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
                                     PR_FALSE);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                    "Failed to add profile shutdown observer");
@@ -408,7 +408,7 @@ sbDeviceManager::Observe(nsISupports* aSubject,
                                           nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  else if (strcmp(aTopic, NS_PROFILE_SHUTDOWN_OBSERVER_ID) == 0) {
+  else if (strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC) == 0) {
     // The profile is about to be unloaded so finalize our devices
     rv = Finalize();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -420,9 +420,9 @@ sbDeviceManager::Observe(nsISupports* aSubject,
                      "Failed to remove library manager observer");
 
     rv = observerService->RemoveObserver(this,
-                                         NS_PROFILE_SHUTDOWN_OBSERVER_ID);
+                                         SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "Failed to remove profile shutdown observer");
+                     "Failed to remove library manager before shutdown observer");
 
     rv = observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
