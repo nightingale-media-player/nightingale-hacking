@@ -60,6 +60,12 @@ var previousSkinDataRemote = createDataRemote("feathers.previousSkin", null);
 
 var originalDataRemoteValues = [];
 
+// TEMP fix for the Mac to enable the titlebar on the main window.
+// See Bug 4363
+var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+var isMac = sysInfo.getProperty("name") == "Darwin";
+
 
 /**
  * Store the original values of all FeathersManager dataremotes
@@ -209,7 +215,7 @@ function testAddonMetadataReader()
   assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
   
   // Verify showChrome
-  assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[0]), false );
+  assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[0]), false || isMac);
 }
 
 
@@ -389,9 +395,9 @@ function runTest () {
   
   // ------------------------
   // Verify showChrome
-  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[2].internalName), true );
-  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[1].internalName), false );
-  assertEqual( feathersManager.isChromeEnabled(layouts[1].url, skins[1].internalName), false );
+  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[2].internalName), true || isMac);
+  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[1].internalName), false || isMac);
+  assertEqual( feathersManager.isChromeEnabled(layouts[1].url, skins[1].internalName), false || isMac);
 
 
   // ------------------------
