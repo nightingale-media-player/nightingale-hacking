@@ -30,29 +30,27 @@
 /*******************************************************************************
  *******************************************************************************
  *
- * TagLib nsIChannel file IO.
+ * TagLib sbISeekableChannel file IO.
  *
  *******************************************************************************
  ******************************************************************************/
 
 /**
 * \file  TagLibChannelFileIO.h
-* \brief Songbird TagLib nsIChannel file IO class.
+* \brief Songbird TagLib sbISeekableChannel file IO class.
 */
 
 /*******************************************************************************
  *
- * TagLib nsIChannel file IO imported services.
+ * TagLib sbISeekableChannel file IO imported services.
  *
  ******************************************************************************/
-
-/* C++ std imports. */
-#include <map>
 
 /* Mozilla imports. */
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
+#include <sbITagLibChannelFileIOManager.h>
 
 /* Songbird imports. */
 #include <sbISeekableChannel.h>
@@ -65,7 +63,7 @@ using namespace TagLib;
 
 /*******************************************************************************
  *
- * TagLib nsIChannel file IO classes.
+ * TagLib sbISeekableChannel file IO classes.
  *
  ******************************************************************************/
 
@@ -76,7 +74,7 @@ using namespace TagLib;
 class TagLibChannelFileIO : public TagLib::FileIO
 {
     /*
-     * Public TagLib nsIChannel file I/O services.
+     * Public TagLib sbISeekableChannel file I/O services.
      */
 
 public:
@@ -86,12 +84,16 @@ public:
 
     virtual ~TagLibChannelFileIO();
 
+    nsresult Initialize();
+
 
     /*
-     * Private TagLib nsIChannel file I/O services.
+     * Private TagLib sbISeekable file I/O services.
      *
      *   mChannelID             ID for metadata channel.
      *   mpSeekableChannel      Channel for accessing metadata.
+     *   mpTagLibChannelFileIOManager
+     *                          TagLib sbISeekableChannel file IO manager.
      *   mChannelSize           Size of channel in bytes.
      *   mChannelRestart        True if channel needs to be restarted.
      */
@@ -100,6 +102,8 @@ private:
     nsString                    mChannelID;
     nsCOMPtr<sbISeekableChannel>
                                 mpSeekableChannel;
+    nsCOMPtr<sbITagLibChannelFileIOManager>
+                                mpTagLibChannelFileIOManager;
     PRUint32                    mChannelSize;
     PRBool                      mChannelRestart;
 
@@ -143,88 +147,6 @@ public:
 protected:
     virtual void truncate(
         long                        length);
-
-
-    /*
-     * Private TagLib nsIChannel file I/O internal classes.
-     */
-
-private:
-    class Channel : public nsISupports
-    {
-        /*
-         * pSeekableChannel         Seekable channel component.
-         * size                     Size of channel media.
-         * restart                  Flag indicating that the channel needs to be
-         *                          restarted.
-         */
-
-    public:
-        /* Inherited interfaces. */
-        NS_DECL_ISUPPORTS
-
-        nsCOMPtr<sbISeekableChannel>
-                                    pSeekableChannel;
-        PRUint64                    size;
-        PRBool                      restart;
-    };
-
-
-    /*
-     * Public TagLib nsIChannel file I/O class services.
-     */
-
-public:
-    static nsresult AddChannel(
-        nsString                    channelID,
-        sbISeekableChannel*         pSeekableChannel);
-
-    static nsresult RemoveChannel(
-        nsString                    channelID);
-
-    static nsresult GetChannel(
-        nsString                    channelID,
-        TagLibChannelFileIO::Channel
-                                    **ppChannel);
-
-    static nsresult GetChannel(
-        nsString                    channelID,
-        sbISeekableChannel          **ppSeekableChannel);
-
-    static nsresult GetSize(
-        nsString                    channelID,
-        PRUint64                    *pSize);
-
-    static PRBool GetChannelRestart(
-        nsString                    channelID);
-
-    static void SetChannelRestart(
-        nsString                    channelID,
-        PRBool                      restart);
-
-
-    /*
-     * Private TagLib nsIChannel file I/O class services.
-     *
-     *   mChannelMap            TagLib channel map.
-     */
-
-private:
-    class ChannelMap :
-        public std::map<nsString, nsRefPtr<TagLibChannelFileIO::Channel> > {};
-    static ChannelMap mChannelMap;
-};
-
-
-/*
- * TagLibChannelFileIOTypeResolver class
- */
-
-class TagLibChannelFileIOTypeResolver : public File::FileIOTypeResolver
-{
-public:
-    virtual FileIO *createFileIO(
-        const char                  *fileName) const;
 };
 
 

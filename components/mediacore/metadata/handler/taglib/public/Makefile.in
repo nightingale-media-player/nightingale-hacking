@@ -29,7 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbISeekableChannel.idl \
+XPIDL_SRCS = sbITagLibChannelFileIOManager.idl \
+             sbISeekableChannel.idl \
              $(NULL)
 
 XPIDL_MODULE = sbMetadataHandlerTaglib.xpt

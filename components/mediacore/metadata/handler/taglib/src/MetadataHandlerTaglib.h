@@ -27,7 +27,7 @@
 #ifndef __METADATA_HANDLER_TAGLIB_H__
 #define __METADATA_HANDLER_TAGLIB_H__
 
-/*******************************************************************************
+/* *****************************************************************************
  *******************************************************************************
  *
  * Taglib metadata handler.
@@ -40,7 +40,7 @@
 * \brief Songbird MetadataHandlerTaglib Component Definition.
 */
 
-/*******************************************************************************
+/* *****************************************************************************
  *
  * Taglib metadata handler configuration.
  *
@@ -63,7 +63,7 @@
 }
 
 
-/*******************************************************************************
+/* *****************************************************************************
  *
  * Taglib metadata handler imported services.
  *
@@ -80,6 +80,7 @@
 #include <sbIMetadataHandler.h>
 #include <sbIMetadataValues.h>
 #include <sbISeekableChannel.h>
+#include <sbITagLibChannelFileIOManager.h>
 
 /* TagLib imports. */
 #include <id3v2tag.h>
@@ -89,7 +90,7 @@
 #include <xiphcomment.h>
 
 
-/*******************************************************************************
+/* *****************************************************************************
  *
  * Taglib metadata handler classes.
  *
@@ -103,6 +104,8 @@ class sbMetadataHandlerTaglib : public sbIMetadataHandler,
                                 public sbISeekableChannelListener
 {
     /*
+     * mpTagLibChannelFileIOManager
+     *                          TagLib sbISeekableChannel file IO manager.
      * mpFileProtocolHandler    File protocol handler instance.
      * mpMetadataValues         Read metadata values.
      * mpChannel                Metadata file channel.
@@ -115,6 +118,8 @@ class sbMetadataHandlerTaglib : public sbIMetadataHandler,
      */
 
 private:
+    nsCOMPtr<sbITagLibChannelFileIOManager>
+                                mpTagLibChannelFileIOManager;
     nsCOMPtr<nsIFileProtocolHandler>
                                 mpFileProtocolHandler;
     nsCOMPtr<sbIMetadataValues> mpMetadataValues;
@@ -143,20 +148,17 @@ public:
 
     virtual ~sbMetadataHandlerTaglib();
 
+    nsresult FactoryInit();
+
 
     /*
      * Private taglib metadata handler class services.
      *
-     *   sInitialized           True if the class services have been
-     *                          initialized.
      *   sNextChannelID         Next channel ID to use.
      */
 
 private:
-    static PRBool               sInitialized;
     static PRUint32             sNextChannelID;
-
-    static nsresult InitializeClass();
 
 
     /*

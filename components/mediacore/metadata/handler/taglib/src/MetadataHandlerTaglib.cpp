@@ -54,6 +54,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
 #include <nsIStandardURL.h>
+#include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
 #include <prprf.h>
@@ -219,10 +220,19 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     PRInt32                     readCount = 0;
     nsresult                    result = NS_OK;
 
+    /* Get the TagLib sbISeekableChannel file IO manager. */
+    mpTagLibChannelFileIOManager =
+            do_GetService
+                ("@songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1",
+                 &result);
+
     /* Initialize the metadata values. */
-    mpMetadataValues =
+    if (NS_SUCCEEDED(result))
+    {
+        mpMetadataValues =
                 do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1",
                                   &result);
+    }
 
     /* Get the channel URL info. */
     if (NS_SUCCEEDED(result))
@@ -281,14 +291,15 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
         {
             /* Allocate a metadata channel ID    */
             /* and use it for the metadata path. */
-            sNextChannelID++;
+            PR_AtomicIncrement((PRInt32 *) &sNextChannelID);
             mMetadataPath.AssignLiteral("metadata_channel://");
             mMetadataPath.AppendInt(sNextChannelID);
             mMetadataChannelID = NS_ConvertUTF8toUTF16(mMetadataPath);
 
             /* Add the metadata channel. */
-            result = TagLibChannelFileIO::AddChannel(mMetadataChannelID,
-                                                     mpSeekableChannel);
+            result = mpTagLibChannelFileIOManager->AddChannel
+                                                            (mMetadataChannelID,
+                                                             mpSeekableChannel);
         }
 
         /* Open the metadata channel to start reading. */
@@ -374,7 +385,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Close()
     /* use with the TagLib nsIChannel file I/O services.   */
     if (!mMetadataChannelID.IsEmpty())
     {
-        TagLibChannelFileIO::RemoveChannel(mMetadataChannelID);
+        mpTagLibChannelFileIOManager->RemoveChannel(mMetadataChannelID);
         mMetadataChannelID.Truncate();
     }
 
@@ -509,22 +520,6 @@ sbMetadataHandlerTaglib::sbMetadataHandlerTaglib()
     mMetadataChannelRestart(PR_FALSE),
     mCompleted(PR_FALSE)
 {
-    nsresult                    result = NS_OK;
-
-    /* Ensure that the class is initialized. */
-    result = InitializeClass();
-
-    /* Create a file protocol handler instance. */
-    if (NS_SUCCEEDED(result))
-    {
-        mpFileProtocolHandler =
-                do_CreateInstance("@mozilla.org/network/protocol;1?name=file",
-                                  &result);
-    }
-
-    /* Check for success. */
-    NS_ASSERTION(NS_SUCCEEDED(result),
-                 "Failed to construct the taglib metadata handler.");
 }
 
 
@@ -541,6 +536,26 @@ sbMetadataHandlerTaglib::~sbMetadataHandlerTaglib()
 }
 
 
+/*
+ * FactoryInit
+ *
+ *   This function is called by the component factory to initialize the
+ * component.
+ */
+
+nsresult sbMetadataHandlerTaglib::FactoryInit()
+{
+    nsresult                    rv;
+
+    /* Create a file protocol handler instance. */
+    mpFileProtocolHandler =
+            do_CreateInstance("@mozilla.org/network/protocol;1?name=file", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return (NS_OK);
+}
+
+
 /*******************************************************************************
  *
  * Private taglib metadata handler class services.
@@ -551,38 +566,7 @@ sbMetadataHandlerTaglib::~sbMetadataHandlerTaglib()
  * Static field initializers.
  */
 
-PRBool sbMetadataHandlerTaglib::sInitialized = PR_FALSE;
 PRUint32 sbMetadataHandlerTaglib::sNextChannelID = 0;
-
-
-/*
- * InitializeClass
- *
- *   This function initializes the sbMetadataHandlerTaglib class.
- */
-
-nsresult sbMetadataHandlerTaglib::InitializeClass()
-{
-    TagLibChannelFileIOTypeResolver *pResolver;
-    nsresult                        result = NS_OK;
-
-    /* Do nothing if already initialized. */
-    if (sInitialized)
-        return (result);
-
-    /* Add nsIChannel file I/O type resolver. */
-    pResolver = new TagLibChannelFileIOTypeResolver();
-    if (pResolver)
-        File::addFileIOTypeResolver(pResolver);
-    else
-        result = NS_ERROR_UNEXPECTED;
-
-    /* Class is now initialized. */
-    if (NS_SUCCEEDED(result))
-        sInitialized = PR_TRUE;
-
-    return (result);
-}
 
 
 /*******************************************************************************
@@ -971,16 +955,27 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
     const char                  *filePath)
 {
     TagLib::FLAC::File          *pTagFile = NULL;
+    PRBool                      restart;
     PRBool                      isValid = PR_TRUE;
+    nsresult                    result = NS_OK;
 
     /* Open the metadata file. */
     pTagFile = new TagLib::FLAC::File(filePath);
 
     /* Check for channel restart. */
-    mMetadataChannelRestart =
-                    TagLibChannelFileIO::GetChannelRestart(mMetadataChannelID);
-    if (mMetadataChannelRestart)
+    result = mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &restart);
+    if (NS_SUCCEEDED(result))
+    {
+        mMetadataChannelRestart = restart;
+        if (mMetadataChannelRestart)
+            isValid = PR_FALSE;
+    }
+    else
+    {
         isValid = PR_FALSE;
+        result = NS_OK;
+    }
 
     /* Read the base file metadata. */
     if (isValid)
@@ -1013,16 +1008,27 @@ PRBool sbMetadataHandlerTaglib::ReadMPCFile(
     const char                  *filePath)
 {
     TagLib::MPC::File           *pTagFile = NULL;
+    PRBool                      restart;
     PRBool                      isValid = PR_TRUE;
+    nsresult                    result = NS_OK;
 
     /* Open the metadata file. */
     pTagFile = new TagLib::MPC::File(filePath);
 
     /* Check for channel restart. */
-    mMetadataChannelRestart =
-                    TagLibChannelFileIO::GetChannelRestart(mMetadataChannelID);
-    if (mMetadataChannelRestart)
+    result = mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &restart);
+    if (NS_SUCCEEDED(result))
+    {
+        mMetadataChannelRestart = restart;
+        if (mMetadataChannelRestart)
+            isValid = PR_FALSE;
+    }
+    else
+    {
         isValid = PR_FALSE;
+        result = NS_OK;
+    }
 
     /* Read the base file metadata. */
     if (isValid)
@@ -1051,16 +1057,27 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
     const char                  *filePath)
 {
     TagLib::MPEG::File          *pTagFile = NULL;
+    PRBool                      restart;
     PRBool                      isValid = PR_TRUE;
+    nsresult                    result = NS_OK;
 
     /* Open the metadata file. */
     pTagFile = new TagLib::MPEG::File(filePath);
 
     /* Check for channel restart. */
-    mMetadataChannelRestart =
-                    TagLibChannelFileIO::GetChannelRestart(mMetadataChannelID);
-    if (mMetadataChannelRestart)
+    result = mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &restart);
+    if (NS_SUCCEEDED(result))
+    {
+        mMetadataChannelRestart = restart;
+        if (mMetadataChannelRestart)
+            isValid = PR_FALSE;
+    }
+    else
+    {
         isValid = PR_FALSE;
+        result = NS_OK;
+    }
 
     /* Read the base file metadata. */
     if (isValid)
@@ -1093,16 +1110,27 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File(
     const char                  *filePath)
 {
     TagLib::MP4::File           *pTagFile = NULL;
+    PRBool                      restart;
     PRBool                      isValid = PR_TRUE;
+    nsresult                    result = NS_OK;
 
     /* Open the metadata file. */
     pTagFile = new TagLib::MP4::File(filePath);
 
     /* Check for channel restart. */
-    mMetadataChannelRestart =
-                    TagLibChannelFileIO::GetChannelRestart(mMetadataChannelID);
-    if (mMetadataChannelRestart)
+    result = mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &restart);
+    if (NS_SUCCEEDED(result))
+    {
+        mMetadataChannelRestart = restart;
+        if (mMetadataChannelRestart)
+            isValid = PR_FALSE;
+    }
+    else
+    {
         isValid = PR_FALSE;
+        result = NS_OK;
+    }
 
     /* Read the base file metadata. */
     if (isValid)
@@ -1135,16 +1163,27 @@ PRBool sbMetadataHandlerTaglib::ReadOGGFile(
     const char                  *filePath)
 {
     TagLib::Vorbis::File        *pTagFile = NULL;
+    PRBool                      restart;
     PRBool                      isValid = PR_TRUE;
+    nsresult                    result = NS_OK;
 
     /* Open the metadata file. */
     pTagFile = new TagLib::Vorbis::File(filePath);
 
     /* Check for channel restart. */
-    mMetadataChannelRestart =
-                    TagLibChannelFileIO::GetChannelRestart(mMetadataChannelID);
-    if (mMetadataChannelRestart)
+    result = mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &restart);
+    if (NS_SUCCEEDED(result))
+    {
+        mMetadataChannelRestart = restart;
+        if (mMetadataChannelRestart)
+            isValid = PR_FALSE;
+    }
+    else
+    {
         isValid = PR_FALSE;
+        result = NS_OK;
+    }
 
     /* Read the base file metadata. */
     if (isValid)

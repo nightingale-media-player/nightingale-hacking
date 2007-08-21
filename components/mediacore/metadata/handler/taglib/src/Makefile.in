@@ -36,9 +36,10 @@ target_name := $(addsuffix _d,$(target_name))
 endif
 
 CPP_SRCS = MetadataHandlerTaglib.cpp \
-           TaglibChannelFileIO.cpp \
            MetadataHandlerTaglibComponent.cpp \
            SeekableChannel.cpp \
+           TaglibChannelFileIO.cpp \
+           TaglibChannelFileIOManager.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \

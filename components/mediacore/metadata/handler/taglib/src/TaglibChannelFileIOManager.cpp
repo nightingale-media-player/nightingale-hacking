@@ -1,0 +1,484 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/* *****************************************************************************
+ *******************************************************************************
+ *
+ * TagLib sbISeekableChannel file IO manager.
+ *
+ *******************************************************************************
+ ******************************************************************************/
+
+/**
+* \file  TagLibChannelFileIOManager.cpp
+* \brief Songbird TagLib sbISeekableChannel file I/O manager implementation.
+*/
+
+/* *****************************************************************************
+ *
+ * TagLib sbISeekable file I/O manager imported services.
+ *
+ ******************************************************************************/
+
+/* Self imports. */
+#include <TaglibChannelFileIOManager.h>
+
+/* Mozilla imports. */
+#include <nsServiceManagerUtils.h>
+#include <prlog.h>
+
+
+/* *****************************************************************************
+ *
+ * TagLib sbISeekable file I/O manager logging services.
+ *
+ ******************************************************************************/
+
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gLog = PR_NewLogModule("sbTagLibChannelFileIOManager");
+#define TRACE(args) PR_LOG(gLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
+
+
+/*******************************************************************************
+ *
+ * TagLib sbISeekableChannel file I/O manager nsISupports implementation.
+ *
+ ******************************************************************************/
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbTagLibChannelFileIOManager,
+                              sbITagLibChannelFileIOManager)
+
+
+/*******************************************************************************
+ *
+ * TagLib sbISeekableChannel file I/O manager sbITagLibChannelFileIOManager
+ * implementation.
+ *
+ ******************************************************************************/
+
+/**
+* \brief Add an sbISeekableChannel to be used for TagLib file IO.
+*
+* \param aChannelID Channel identifier.
+* \param aChannel Metadata channel.
+*/
+
+NS_IMETHODIMP sbTagLibChannelFileIOManager::AddChannel(
+    const nsAString             &aChannelID,
+    sbISeekableChannel          *aChannel)
+{
+    nsAutoPtr<sbTagLibChannelFileIOManager::Channel> pChannel;
+    PRBool                                           success;
+
+    /* Validate parameters. */
+    NS_ENSURE_FALSE(aChannelID.IsEmpty(), NS_ERROR_INVALID_ARG);
+    NS_ENSURE_ARG_POINTER(aChannel);
+
+    /* Create a new channel object. */
+    pChannel = new sbTagLibChannelFileIOManager::Channel(aChannel);
+    NS_ENSURE_TRUE(pChannel, NS_ERROR_OUT_OF_MEMORY);
+
+    /* Add the channel to the channel map. */
+    success = mChannelMap.Put(aChannelID, pChannel);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+    pChannel.forget();
+
+    return (NS_OK);
+}
+
+
+/**
+* \brief Remove an sbISeekableChannel used for TagLib file IO.
+*
+* \param aChannelID Identifier for channel to be removed.
+*/
+
+NS_IMETHODIMP sbTagLibChannelFileIOManager::RemoveChannel(
+    const nsAString             &aChannelID)
+{
+    /* Validate parameters. */
+    NS_ENSURE_FALSE(aChannelID.IsEmpty(), NS_ERROR_INVALID_ARG);
+
+    /* Remove the channel map entry. */
+    mChannelMap.Remove(aChannelID);
+
+    return (NS_OK);
+}
+
+
+/**
+* \brief Get an sbISeekableChannel used for TagLib file IO.
+*
+* \param aChannelID Identifier for channel to get.
+* \return The sbISeekableChannel for the specified identifier.
+*/
+
+NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannel(
+    const nsAString             &aChannelID,
+    sbISeekableChannel          **_retval)
+{
+    sbTagLibChannelFileIOManager::Channel   *pChannel;
+    nsresult                                rv;
+
+    /* Validate parameters. */
+    NS_ENSURE_FALSE(aChannelID.IsEmpty(), NS_ERROR_INVALID_ARG);
+    NS_ENSURE_ARG_POINTER(_retval);
+
+    /* Get the metadata channel. */
+    rv = GetChannel(aChannelID, &pChannel);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Return results. */
+    NS_ADDREF(*_retval = pChannel->pSeekableChannel);
+
+    return (NS_OK);
+}
+
+
+/**
+* \brief Get the size of the channel media.
+*
+* \param aChannelID Identifier for channel for which to get size.
+* \return The channel media size.
+*
+*   Because the channel size information is not always available at the time of
+* the TagLib channel creation, this function reads the channel size if it
+* hasn't been read yet.
+*/
+
+NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannelSize(
+    const nsAString             &aChannelID,
+    PRUint64                    *_retval)
+{
+    sbTagLibChannelFileIOManager::Channel   *pChannel;
+    PRUint64                                size = 0;
+    nsresult                                rv;
+
+    /* Validate parameters. */
+    NS_ENSURE_FALSE(aChannelID.IsEmpty(), NS_ERROR_INVALID_ARG);
+    NS_ENSURE_ARG_POINTER(_retval);
+
+    /* Get the channel size. */
+    rv = GetChannel(aChannelID, &pChannel);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = pChannel->pSeekableChannel->GetSize(&size);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Return results. */
+    *_retval = size;
+
+    return (NS_OK);
+}
+
+
+/**
+* \brief Get the restart flag for the channel.
+*
+* \param aChannelID Identifier for channel for which to get restart flag.
+* \return Restart flag value.
+*/
+
+NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannelRestart(
+    const nsAString             &aChannelID,
+    PRBool                      *_retval)
+{
+    sbTagLibChannelFileIOManager::Channel   *pChannel;
+    PRBool                                  restart;
+    nsresult                                rv;
+
+    /* Validate parameters. */
+    NS_ENSURE_FALSE(aChannelID.IsEmpty(), NS_ERROR_INVALID_ARG);
+    NS_ENSURE_ARG_POINTER(_retval);
+
+    /* Get the channel restart flag. */
+    rv = GetChannel(aChannelID, &pChannel);
+    NS_ENSURE_SUCCESS(rv, rv);
+    restart = pChannel->restart;
+
+    /* Return results. */
+    *_retval = restart;
+
+    return (NS_OK);
+}
+
+
+/**
+* \brief Set the restart flag for the channel.
+*
+* \param aChannelID Identifier for channel for which to set restart flag.
+* \param aRestart Restart flag value.
+*/
+
+NS_IMETHODIMP sbTagLibChannelFileIOManager::SetChannelRestart(
+    const nsAString             &aChannelID,
+    PRBool                      aRestart)
+{
+    sbTagLibChannelFileIOManager::Channel   *pChannel;
+    nsresult                                rv;
+
+    /* Validate parameters. */
+    NS_ENSURE_FALSE(aChannelID.IsEmpty(), NS_ERROR_INVALID_ARG);
+
+    /* Set the channel restart flag. */
+    rv = GetChannel(aChannelID, &pChannel);
+    NS_ENSURE_SUCCESS(rv, rv);
+    pChannel->restart = aRestart;
+
+    return (NS_OK);
+}
+
+
+/*******************************************************************************
+ *
+ * Public TagLib sbISeekableChannel file I/O manager services.
+ *
+ ******************************************************************************/
+
+/*
+ * sbTagLibChannelFileIOManager
+ *
+ *   This function constructs a TagLib sbISeekable file I/O manager object.
+ */
+
+sbTagLibChannelFileIOManager::sbTagLibChannelFileIOManager()
+{
+}
+
+
+/*
+ * ~TagLibChannelFileIO
+ *
+ *   This function is the destructor for TagLib sbISeekable file I/O manager
+ * objects.
+ */
+
+sbTagLibChannelFileIOManager::~sbTagLibChannelFileIOManager()
+{
+}
+
+
+/*
+ * FactoryInit
+ *
+ *   This function is called by the component factory to initialize the
+ * component.
+ */
+
+nsresult sbTagLibChannelFileIOManager::FactoryInit()
+{
+    TagLibChannelFileIOTypeResolver *pResolver;
+    PRBool                          success;
+
+    /* Add nsIChannel file I/O type resolver. */
+    pResolver = new TagLibChannelFileIOTypeResolver();
+    NS_ENSURE_TRUE(pResolver, NS_ERROR_OUT_OF_MEMORY);
+    File::addFileIOTypeResolver(pResolver);
+
+    /* Initialize the channel map. */
+    success = mChannelMap.Init();
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+    return (NS_OK);
+}
+
+
+/*******************************************************************************
+ *
+ * Private TagLib sbISeekableChannel file I/O manager services.
+ *
+ ******************************************************************************/
+
+/*
+ * Channel
+ *
+ *   This function constructs a TagLib sbISeekable file I/O manager channel
+ * object.
+ */
+
+sbTagLibChannelFileIOManager::Channel::Channel(
+    nsCOMPtr<sbISeekableChannel>    apSeekableChannel)
+:
+    pSeekableChannel(apSeekableChannel),
+    restart(PR_FALSE)
+{
+    MOZ_COUNT_CTOR(sbTagLibChannelFileIOManager::Channel);
+    TRACE(("sbTagLibChannelFileIOManager::Channel[0x%.8x] - ctor", this));
+}
+
+
+/*
+ * ~Channel
+ *
+ *   This function is the destructor for TagLib sbISeekable file I/O manager
+ * channel objects.
+ */
+
+sbTagLibChannelFileIOManager::Channel::~Channel()
+{
+    MOZ_COUNT_DTOR(sbTagLibChannelFileIOManager::Channel);
+    TRACE(("sbTagLibChannelFileIOManager::Channel[0x%.8x] - dtor", this));
+}
+
+
+/*
+ * GetChannel
+ *
+ *   --> aChannelID             Channel identifier.
+ *   <-- appChannel             TagLib channel.
+ *
+ *   <-- NS_ERROR_NOT_AVAILABLE No channel with the specified identifier is
+ *                              available.
+ *
+ *   This function returns in appChannel a TagLib channel corresponding to the
+ * channel identifier specified by aChannelID.  If no channels can be found,
+ * this function returns NS_ERROR_NOT_AVAILABLE.
+ */
+
+nsresult sbTagLibChannelFileIOManager::GetChannel(
+    const nsAString             &aChannelID,
+    sbTagLibChannelFileIOManager::Channel
+                                **appChannel)
+{
+    sbTagLibChannelFileIOManager::Channel   *pChannel;
+    PRBool                                  success;
+
+    /* Validate parameters. */
+    NS_ASSERTION(!aChannelID.IsEmpty(), "aChannelID is empty");
+    NS_ASSERTION(appChannel, "appChannel is null");
+
+    /* Get the channel from the channel map. */
+    success = mChannelMap.Get(aChannelID, &pChannel);
+    NS_ENSURE_TRUE(success, NS_ERROR_NOT_AVAILABLE);
+
+    /* Return results. */
+    *appChannel = pChannel;
+
+    return (NS_OK);
+}
+
+
+/* *****************************************************************************
+ *
+ * TagLib sbISeekable file I/O manager File::FileIOTypeResolver interface
+ * implementation.
+ *
+ ******************************************************************************/
+
+/*
+ * TagLibChannelFileIOTypeResolver
+ *
+ *   This function constructs a TagLib sbISeekable file I/O manager
+ * File::FileIOTypeResolver object.
+ */
+
+TagLibChannelFileIOTypeResolver::TagLibChannelFileIOTypeResolver()
+{
+    MOZ_COUNT_CTOR(TagLibChannelFileIOTypeResolver);
+    TRACE(("TagLibChannelFileIOTypeResolver[0x%.8x] - ctor", this));
+}
+
+
+/*
+ * ~TagLibChannelFileIOTypeResolver
+ *
+ *   This function is the destructor for TagLib sbISeekable file I/O manager
+ * File::FileIOTypeResolver objects.
+ */
+
+TagLibChannelFileIOTypeResolver::~TagLibChannelFileIOTypeResolver()
+{
+    MOZ_COUNT_DTOR(TagLibChannelFileIOTypeResolver);
+    TRACE(("TagLibChannelFileIOTypeResolver[0x%.8x] - dtor", this));
+}
+
+
+/*!
+ * This method must be overriden to provide an additional file I/O type
+ * resolver.  If the resolver is able to determine the file I/O type it
+ * should return a valid File I/O object; if not it should return 0.
+ *
+ * \note The created file I/O is then owned by the File and should not be
+ * deleted.  Deletion will happen automatically when the File passes out
+ * of scope.
+ */
+
+FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
+    const char                  *fileName) const
+{
+    NS_ASSERTION(fileName, "fileName is null");
+
+    nsCOMPtr<sbITagLibChannelFileIOManager>
+                                   pTagLibChannelFileIOManager;
+    nsCOMPtr<sbISeekableChannel>   pSeekableChannel;
+    nsString                       channelID;
+    nsAutoPtr<TagLibChannelFileIO> pTagLibChannelFileIO;
+    nsresult                       result = NS_OK;
+
+    /* Assume the file name is a channel ID. */
+    channelID = NS_ConvertUTF8toUTF16(fileName);
+
+    /* Get the TagLib sbISeekableChannel file IO manager. */
+    pTagLibChannelFileIOManager =
+            do_GetService
+                ("@songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1",
+                 &result);
+
+    /* Get the metadata channel from the channel ID.  An error result */
+    /* indicates that either the file name was not a channel ID or no */
+    /* matching channels are available.                               */
+    if (NS_SUCCEEDED(result))
+    {
+        result = pTagLibChannelFileIOManager->GetChannel
+                                            (channelID,
+                                             getter_AddRefs(pSeekableChannel));
+    }
+
+    /* Create a channel file I/O object. */
+    if (NS_SUCCEEDED(result))
+    {
+        pTagLibChannelFileIO = new TagLibChannelFileIO(channelID,
+                                                       pSeekableChannel);
+        if (!pTagLibChannelFileIO)
+            result = NS_ERROR_UNEXPECTED;
+    }
+    if (NS_SUCCEEDED(result))
+        result = pTagLibChannelFileIO->Initialize();
+    if (NS_SUCCEEDED(result))
+        result = pTagLibChannelFileIO->seek(0);
+
+    /* Clean up on error. */
+    if (NS_FAILED(result))
+        pTagLibChannelFileIO = nsnull;
+
+    return (pTagLibChannelFileIO.forget());
+}
+
+

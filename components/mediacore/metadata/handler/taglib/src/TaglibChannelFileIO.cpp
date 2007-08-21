@@ -27,36 +27,37 @@
 /* *****************************************************************************
  *******************************************************************************
  *
- * TagLib nsIChannel file IO.
+ * TagLib sbISeekableChannel file IO.
  *
  *******************************************************************************
  ******************************************************************************/
 
 /**
 * \file  TagLibChannelFileIO.cpp
-* \brief Songbird TagLib nsIChannel file I/O implementation.
+* \brief Songbird TagLib sbISeekableChannel file I/O implementation.
 */
 
 /* *****************************************************************************
  *
- * TagLib nsIChannel file I/O imported services.
+ * TagLib sbISeekable file I/O imported services.
  *
  ******************************************************************************/
 
 /* Local imports. */
-#include "TaglibChannelFileIO.h"
+#include <TaglibChannelFileIO.h>
+
+/* Songbird imports. */
+#include <nsServiceManagerUtils.h>
+#include <SeekableChannel.h>
 
 /* Mozilla imports. */
 #include <prlog.h>
 #include <nsAutoPtr.h>
 
-/* Songbird imports. */
-#include "SeekableChannel.h"
-
 
 /* *****************************************************************************
  *
- * TagLib nsIChannel file I/O logging services.
+ * TagLib sbISeekable file I/O logging services.
  *
  ******************************************************************************/
 
@@ -70,58 +71,7 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("TagLibChannelFileIO");
 
 /* *****************************************************************************
  *
- * TagLib nsIChannel file I/O FileIOTypeResolver interface public
- * implementation.
- *
- ******************************************************************************/
-
-/*!
- * This method must be overriden to provide an additional file I/O type
- * resolver.  If the resolver is able to determine the file I/O type it
- * should return a valid File I/O object; if not it should return 0.
- *
- * \note The created file I/O is then owned by the File and should not be
- * deleted.  Deletion will happen automatically when the File passes out
- * of scope.
- */
-
-FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
-    const char                  *fileName) const
-{
-    NS_ASSERTION(fileName, "fileName is null");
-
-    nsCOMPtr<sbISeekableChannel>   pSeekableChannel;
-    nsString                       channelID;
-    nsAutoPtr<TagLibChannelFileIO> pTagLibChannelFileIO;
-    nsresult                       result = NS_OK;
-
-    /* Assume the file name is a channel ID. */
-    channelID = NS_ConvertUTF8toUTF16(fileName);
-
-    /* Get the metadata channel from the channel ID.  An error result */
-    /* indicates that either the file name was not a channel ID or no */
-    /* matching channels are available.                               */
-    result = TagLibChannelFileIO::GetChannel(channelID,
-                                             getter_AddRefs(pSeekableChannel));
-
-    /* Create a channel file I/O object. */
-    if (NS_SUCCEEDED(result))
-    {
-        pTagLibChannelFileIO = new TagLibChannelFileIO(channelID,
-                                                       pSeekableChannel);
-        if (!pTagLibChannelFileIO)
-            result = NS_ERROR_UNEXPECTED;
-    }
-    if (NS_SUCCEEDED(result))
-        result = pTagLibChannelFileIO->seek(0);
-
-    return (pTagLibChannelFileIO.forget());
-}
-
-
-/* *****************************************************************************
- *
- * TagLib nsIChannel file I/O FileIO interface public implementation.
+ * TagLib sbISeekable file I/O FileIO interface public implementation.
  *
  ******************************************************************************/
 
@@ -172,8 +122,12 @@ ByteVector TagLibChannelFileIO::readBlock(
     /* Check for channel restart. */
     if (result == NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART)
     {
-        SetChannelRestart(mChannelID, PR_TRUE);
-        mChannelRestart = PR_TRUE;
+        nsresult                    _result = NS_OK;
+
+        _result = mpTagLibChannelFileIOManager->SetChannelRestart(mChannelID,
+                                                                  PR_TRUE);
+        if (NS_SUCCEEDED(_result))
+            mChannelRestart = PR_TRUE;
     }
 
     /* Clear read data on error. */
@@ -315,7 +269,7 @@ int TagLibChannelFileIO::seek(
     /* Check for channel restart. */
     if (result == NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART)
     {
-        SetChannelRestart(mChannelID, PR_TRUE);
+        mpTagLibChannelFileIOManager->SetChannelRestart(mChannelID, PR_TRUE);
         mChannelRestart = PR_TRUE;
     }
 
@@ -371,7 +325,7 @@ long TagLibChannelFileIO::length()
 
 /* *****************************************************************************
  *
- * TagLib nsIChannel file I/O FileIO interface protected implementation.
+ * TagLib sbISeekable file I/O FileIO interface protected implementation.
  *
  ******************************************************************************/
 
@@ -388,7 +342,7 @@ void TagLibChannelFileIO::truncate(
 
 /* *****************************************************************************
  *
- * Public TagLib nsIChannel file I/O services.
+ * Public TagLib sbISeekable file I/O services.
  *
  ******************************************************************************/
 
@@ -398,7 +352,7 @@ void TagLibChannelFileIO::truncate(
  *   --> channelID              Channel identifier.
  *   --> pSeekableChannel       Channel to use to access metadata.
  *
- *   This function constructs a TagLib nsIChannel file I/O object that uses
+ *   This function constructs a TagLib sbISeekable file I/O object that uses
  * the metadata channel specified by pSeekableChannel with the ID specified by
  * channelID to acccess metadata.
  */
@@ -411,26 +365,15 @@ TagLibChannelFileIO::TagLibChannelFileIO(
     mpSeekableChannel(pSeekableChannel),
     mChannelSize(0)
 {
+    /* Validate parameters. */
     NS_ASSERTION(pSeekableChannel, "pSeekableChannel is null");
-
-    PRUint64                    channelSize;
-    nsresult                    result = NS_OK;
-
-    /* Initialize the channel restart status. */
-    SetChannelRestart(mChannelID, PR_FALSE);
-    mChannelRestart = PR_FALSE;
-
-    /* Get the channel size. */
-    result = GetSize(channelID, &channelSize);
-    if (NS_SUCCEEDED(result))
-        mChannelSize = channelSize;
 }
 
 
 /*
  * ~TagLibChannelFileIO
  *
- *   This function is the destructor for TagLib nsIChannel file I/O objects.
+ *   This function is the destructor for TagLib sbISeekable file I/O objects.
  */
 
 TagLibChannelFileIO::~TagLibChannelFileIO()
@@ -438,268 +381,40 @@ TagLibChannelFileIO::~TagLibChannelFileIO()
 }
 
 
-/* *****************************************************************************
- *
- * Public TagLib nsIChannel file I/O class services.
- *
- ******************************************************************************/
-
 /*
- * Static field initializers.
+ * Initialize
+ *
+ *   This function initializes the TagLib sbISeekable file I/O object.
  */
 
-TagLibChannelFileIO::ChannelMap TagLibChannelFileIO::mChannelMap;
-
-
-/*
- * AddChannel
- *
- *   --> channelID              Channel identifier.
- *   --> pSeekableChannel       Metadata channel.
- *
- *   This function adds the metadata channel component instance specified by
- * pSeekableChannel for use by TagLib nsIChannel file I/O objects.  The channel
- * may be retrieved by using the channel identifier specified by channelID.
- */
-
-nsresult TagLibChannelFileIO::AddChannel(
-    nsString                    channelID,
-    sbISeekableChannel*         pSeekableChannel)
+nsresult TagLibChannelFileIO::Initialize()
 {
-    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
-    nsresult                                result = NS_OK;
-
-    /* Validate parameters. */
-    NS_ASSERTION(pSeekableChannel, "pSeekableChannel is null");
-
-    /* Create and initialize a new channel object.          */
-    /* Initialize size to 0 because it's not available yet. */
-    pChannel = new TagLibChannelFileIO::Channel();
-    if (pChannel)
-    {
-        pChannel->pSeekableChannel = pSeekableChannel;
-        pChannel->size = 0;
-        pChannel->restart = PR_FALSE;
-    }
-    else
-    {
-        result = NS_ERROR_UNEXPECTED;
-    }
-
-    /* Add the channel to the channel map. */
-    if (NS_SUCCEEDED(result))
-        mChannelMap[channelID] = pChannel;
-
-    return (result);
-}
-
-
-/*
- * RemoveChannel
- *
- *   --> channelID              Channel identifier.
- *
- *   This function removes the metadata channel component instance specified by
- * channelID from use by TagLib nsIChannel file I/O objects.
- */
-
-nsresult TagLibChannelFileIO::RemoveChannel(
-    nsString                    channelID)
-{
+    PRUint64                    channelSize;
     nsresult                    result = NS_OK;
 
-    /* Erase the channel map entry. */
-    mChannelMap.erase(channelID);
+    /* Get the TagLib sbISeekableChannel file IO manager. */
+    mpTagLibChannelFileIOManager =
+            do_GetService
+                ("@songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1",
+                 &result);
 
-    return (result);
-}
-
-
-/*
- * GetChannel
- *
- *   --> channelID              Channel identifier.
- *   <-- ppChannel              TagLib channel.
- *
- *   <-- NS_ERROR_NOT_AVAILABLE No channel with the specified identifier is
- *                              available.
- *
- *   This function returns in ppChannel a TagLib channel corresponding to the
- * channel identifier specified by channelID.  If no channels can be found, this
- * function returns NS_ERROR_NOT_AVAILABLE.
- */
-
-nsresult TagLibChannelFileIO::GetChannel(
-    nsString                    channelID,
-    TagLibChannelFileIO::Channel
-                                **ppChannel)
-{
-    NS_ASSERTION(ppChannel, "ppChannel is null");
-
-    ChannelMap::iterator                    mapEntry;
-    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
-    nsresult                                result = NS_OK;
-
-    /* Search for the channel in the channel map. */
-    mapEntry = mChannelMap.find(channelID);
-    if (mapEntry != mChannelMap.end())
-        pChannel = mapEntry->second;
-    else
-        result = NS_ERROR_NOT_AVAILABLE;
-
-    /* Return results. */
+    /* Initialize the channel restart status. */
     if (NS_SUCCEEDED(result))
-        pChannel.swap(*ppChannel);
-
-    return (result);
-}
-
-
-/*
- * GetChannel
- *
- *   --> channelID              Channel identifier.
- *   <-- ppSeekableChannel      Metadata channel.
- *
- *   <-- NS_ERROR_NOT_AVAILABLE No metadata channel with the specified
- *                              identifier is available.
- *
- *   This function returns in ppSeekableChannel a metadata channel component
- * instance corresponding to the channel identifier specified by channelID.  If
- * no metadata channels can be found, this function returns
- * NS_ERROR_NOT_AVAILABLE.
- */
-
-nsresult TagLibChannelFileIO::GetChannel(
-    nsString                    channelID,
-    sbISeekableChannel          **ppSeekableChannel)
-{
-    NS_ASSERTION(ppSeekableChannel, "ppSeekableChannel is null");
-
-    ChannelMap::iterator                    mapEntry;
-    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
-    nsCOMPtr<sbISeekableChannel>            pSeekableChannel;
-    nsresult                                result = NS_OK;
-
-    /* Get the metadata channel. */
-    result = GetChannel(channelID, getter_AddRefs(pChannel));
-    if (NS_SUCCEEDED(result))
-        pSeekableChannel = pChannel->pSeekableChannel;
-
-    /* Return results. */
-    if (NS_SUCCEEDED(result))
-        NS_ADDREF(*ppSeekableChannel = pSeekableChannel);
-
-    return (result);
-}
-
-
-/*
- * GetSize
- *
- *   --> channelID              Channel identifier.
- *   <-- pSize                  Channel size.
- *
- *   <-- NS_ERROR_NOT_AVAILABLE No channel with the specified identifier is
- *                              available.
- *
- *   This function returns in pSize the size of the channel media corresponding
- * to the channel identifier specified by channelID.  If no matching channels
- * can be found, this function returns NS_ERROR_NOT_AVAILABLE.
- *
- *   Because the channel size information is not always available at the time of
- * the TagLib channel creation, this function reads the channel size if it
- * hasn't been read yet.
- */
-
-nsresult TagLibChannelFileIO::GetSize(
-    nsString                    channelID,
-    PRUint64                    *pSize)
-{
-    NS_ASSERTION(pSize, "pSize is null");
-
-    ChannelMap::iterator                    mapEntry;
-    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
-    PRUint64                                size = 0;
-    nsresult                                result = NS_OK;
-
-    /* Get the channel size. */
-    result = GetChannel(channelID, getter_AddRefs(pChannel));
-    if (NS_SUCCEEDED(result))
-        size = pChannel->size;
-
-    /* If the size is uninitialized, read it from the metadata channel. */
-    if (NS_SUCCEEDED(result) && (size == 0))
     {
-        result = pChannel->pSeekableChannel->GetSize(&size);
-        if (NS_SUCCEEDED(result))
-            pChannel->size = size;
+        mpTagLibChannelFileIOManager->SetChannelRestart(mChannelID, PR_FALSE);
+        mChannelRestart = PR_FALSE;
     }
 
-    /* Return results. */
-    *pSize = size;
+    /* Get the channel size. */
+    if (NS_SUCCEEDED(result))
+    {
+        result = mpTagLibChannelFileIOManager->GetChannelSize(mChannelID,
+                                                              &channelSize);
+    }
+    if (NS_SUCCEEDED(result))
+        mChannelSize = channelSize;
 
     return (result);
 }
-
-
-/*
- * GetChannelRestart
- *
- *   --> channelID              Channel identifier.
- *
- *   <--                        Channel restart flag.
- *
- *   This function returns the restart flag for the metadata channel specified
- * by channelID.
- */
-
-PRBool TagLibChannelFileIO::GetChannelRestart(
-    nsString                    channelID)
-{
-    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
-    PRBool                                  restart = PR_FALSE;
-    nsresult                                result = NS_OK;
-
-    /* Get the channel restart flag. */
-    result = GetChannel(channelID, getter_AddRefs(pChannel));
-    if (NS_SUCCEEDED(result))
-        restart = pChannel->restart;
-
-    return (restart);
-}
-
-
-/*
- * SetChannelRestart
- *
- *   --> channelID              Channel identifier.
- *   --> restart                Channel restart status.
- *
- *   This function sets the channel restart status for the channel specified by
- * channelID to the value specified by restart.
- */
-
-void TagLibChannelFileIO::SetChannelRestart(
-    nsString                    channelID,
-    PRBool                      restart)
-{
-    nsRefPtr<TagLibChannelFileIO::Channel>  pChannel;
-    nsresult                                result = NS_OK;
-
-    /* Set the channel restart flag. */
-    result = GetChannel(channelID, getter_AddRefs(pChannel));
-    if (NS_SUCCEEDED(result))
-        pChannel->restart = restart;
-}
-
-
-/* *****************************************************************************
- *
- * TagLib nsIChannel file I/O channel nsISupports implementation.
- *
- ******************************************************************************/
-
-NS_IMPL_ISUPPORTS0(TagLibChannelFileIO::Channel)
 
 

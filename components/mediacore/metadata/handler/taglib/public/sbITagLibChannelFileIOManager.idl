@@ -1,0 +1,93 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+* \file  sbITagLibChannelFileIOManager.idl
+* \brief A service for providing sbISeekableChannel file IO support in TagLib.
+*/
+
+#include "nsISupports.idl"
+
+interface sbISeekableChannel;
+
+/**
+* \interface sbITagLibChannelFileIOManager sbITagLibChannelFileIOManager.h
+* \brief A service for providing sbISeekableChannel file IO support in TagLib
+*
+* \sa sbITagLibChannelFileIOManager
+*/
+
+[uuid(BE6B6802-122A-4DA9-A49E-3D2A614F4F18)]
+
+interface sbITagLibChannelFileIOManager : nsISupports
+{
+    /**
+    * \brief Add an sbISeekableChannel to be used for TagLib file IO.
+    *
+    * \param aChannelID Channel identifier.
+    * \param aChannel Metadata channel.
+    */
+    void addChannel( in AString aChannelID, in sbISeekableChannel aChannel );
+
+    /**
+    * \brief Remove an sbISeekableChannel used for TagLib file IO.
+    *
+    * \param aChannelID Identifier for channel to be removed.
+    */
+    void removeChannel( in AString aChannelID );
+
+    /**
+    * \brief Get an sbISeekableChannel used for TagLib file IO.
+    *
+    * \param aChannelID Identifier for channel to get.
+    * \return The sbISeekableChannel for the specified identifier.
+    */
+    sbISeekableChannel getChannel( in AString aChannelID );
+
+    /**
+    * \brief Get the size of the channel media.
+    *
+    * \param aChannelID Identifier for channel for which to get size.
+    * \return The channel media size.
+    */
+    unsigned long long getChannelSize( in AString aChannelID );
+
+    /**
+    * \brief Get the restart flag for the channel.
+    *
+    * \param aChannelID Identifier for channel for which to get restart flag.
+    * \return Restart flag value.
+    */
+    boolean getChannelRestart( in AString aChannelID );
+
+    /**
+    * \brief Set the restart flag for the channel.
+    *
+    * \param aChannelID Identifier for channel for which to set restart flag.
+    * \param aRestart Restart flag value.
+    */
+    void setChannelRestart( in AString aChannelID, in PRBool aRestart );
+};
