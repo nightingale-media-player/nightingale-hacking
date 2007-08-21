@@ -50,8 +50,6 @@ const Cr = Components.results;
 
 const CONTRACTID = "@songbirdnest.com/servicepane/bookmarks;1"
 const ROOTNODE = "SB:Bookmarks"
-const FOLDER_IMAGE = 'chrome://songbird/skin/icons/icon_folder.png';
-const BOOKMARK_IMAGE = 'chrome://songbird/skin/icons/icon_bookmark.ico';
 const BOOKMARK_DRAG_TYPE = 'text/x-sb-bookmark';
 const MOZ_URL_DRAG_TYPE = 'text/x-moz-url';
 const BSP = 'http://songbirdnest.com/rdf/bookmarks#';
@@ -221,7 +219,7 @@ function sbBookmarks_migrateLegacyBookmarks() {
               node.name = bm.label;
             } else {
               // the bookmark does not exist. We need to create it
-              var icon = BOOKMARK_IMAGE;
+              var icon = null;
               // only import the icon if its from the web
               if (bm.icon.match(/^http/)) {
                 icon = bm.icon;
@@ -259,32 +257,33 @@ function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
   
   bnode.url = aURL;
   bnode.name = aTitle;
-  bnode.image = aIconURL ? aIconURL : BOOKMARK_IMAGE;
   if (aBefore) {
     aBefore.parentNode.insertBefore(bnode, aBefore);
   }
+  bnode.properties = "bookmark " + aTitle;
   bnode.hidden = false;
   bnode.contractid = CONTRACTID;
   bnode.dndDragTypes = BOOKMARK_DRAG_TYPE;
   bnode.dndAcceptNear = BOOKMARK_DRAG_TYPE;
   bnode.editable = true;
   
-  if (bnode.image.match(/^https?:/)) {
+  if (aIconURL && aIconURL.match(/^https?:/)) {
     // check that the supplied image url works, otherwise use the default
     var checker = Components.classes["@mozilla.org/network/urichecker;1"]
       .createInstance(Components.interfaces.nsIURIChecker);
     var uri = Components.classes["@mozilla.org/network/standard-url;1"]
       .createInstance(Components.interfaces.nsIURI);
-    uri.spec = bnode.image;
+    uri.spec = aIconURL;
     checker.init(uri);
-    checker.asyncCheck(new ImageUriCheckerObserver(bnode), null);
+    checker.asyncCheck(new ImageUriCheckerObserver(bnode, aIconURL), null);
   }
 
   return bnode;
 }
 
-function ImageUriCheckerObserver(bnode) {
+function ImageUriCheckerObserver(bnode, icon) {
   this._bnode = bnode;
+  this._icon = icon;
 }
 ImageUriCheckerObserver.prototype.onStartRequest =
 function ImageUriCheckerObserver_onStartRequest(aRequest, aContext)
@@ -293,9 +292,11 @@ function ImageUriCheckerObserver_onStartRequest(aRequest, aContext)
 ImageUriCheckerObserver.prototype.onStopRequest =
 function ImageUriCheckerObserver_onStopRequest(aRequest, aContext, aStatusCode)
 {
-  if (aStatusCode != 0) {
-    this._bnode.image = BOOKMARK_IMAGE;
+  // If the requested image exists, set it as the icon.
+  if (aStatusCode == 0) {
+    this._bnode.image = this._icon;
   }
+  // Otherwise, we don't set the image property and we get the default from the skin.
 }
 
 sbBookmarks.prototype.addFolder =
@@ -307,10 +308,13 @@ sbBookmarks.prototype.addFolderAt =
 function sbBookmarks_addFolderAt(aId, aTitle, aIconURL, aParent, aBefore) {
   var  fnode = this._servicePane.addNode(aId, aParent, true);  
   fnode.name = aTitle;
-  fnode.image = aIconURL ? aIconURL : FOLDER_IMAGE;
+  if (aIconURL != null) {
+    fnode.image = aIconURL;
+  }
   if (aBefore) {
     aBefore.parentNode.insertBefore(fnode, aBefore);
   }
+  fnode.properties = "folder " + aTitle;
   fnode.hidden = false;
   fnode.contractid = CONTRACTID;
   fnode.dndDragTypes = 'text/x-sb-toplevel';
@@ -435,7 +439,7 @@ function sbBookmarks_onDrop(aNode, aDragSession, aOrientation) {
         before = aNode.nextSibling;
       }
     }
-    this.addBookmarkAt(url, text, BOOKMARK_IMAGE, parent, before);
+    this.addBookmarkAt(url, text, null, parent, before);
   }
 }
 sbBookmarks.prototype._addDragData =

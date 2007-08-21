@@ -44,10 +44,6 @@ const PROP_ISHIDDEN = "http://songbirdnest.com/data/1.0#hidden";
 const URN_PREFIX_ITEM = 'urn:item:';
 const URN_PREFIX_LIBRARY = 'urn:library:';
 
-// TODO: Remove these... expose property so that images can be added via css?
-const URL_ICON_PLAYLIST = 'chrome://songbird/skin/icons/icon_playlist_16x16.png';
-const URL_ICON_LIBRARY = 'chrome://songbird/skin/icons/icon_lib_16x16.png';
-
 // TODO: Remove this
 const URL_PLAYLIST_DISPLAY = "chrome://songbird/content/xul/sbLibraryPage.xul?"
 
@@ -953,10 +949,11 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     newnode = true;
   }
   
+  var customType = aLibrary.getProperty(SBProperties.customType);
+  
   // Refresh the information just in case it is supposed to change
   node.name = aLibrary.name;  
   node.url = this._getDisplayURL(aLibrary);
-  node.image = URL_ICON_LIBRARY;
   node.contractid = CONTRACTID;
   node.dndDragTypes = 'text/x-sb-toplevel';
   node.dndAcceptNear = 'text/x-sb-toplevel';
@@ -965,7 +962,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
   }
   // Set properties for styling purposes
-  node.properties = "library libraryguid-" + aLibrary.guid;
+  node.properties = "library libraryguid-" + aLibrary.guid + " " + aLibrary.type + " " + customType;
   // Save the type of media list so that we can group by type
   node.setAttributeNS(LSP, "ListType", aLibrary.type)
   // Save the guid of the library
@@ -973,9 +970,9 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   // and save it as the list guid
   node.setAttributeNS(LSP, "ListGUID", aLibrary.guid);
   // Save the customType for use by metrics.
-  node.setAttributeNS(LSP, "ListCustomType", aLibrary.getProperty(SBProperties.customType));
+  node.setAttributeNS(LSP, "ListCustomType", customType);
   // Save the customType for use by metrics.
-  node.setAttributeNS(LSP, "LibraryCustomType", aLibrary.getProperty(SBProperties.customType));
+  node.setAttributeNS(LSP, "LibraryCustomType", customType);
 
   if (newnode) {
     // Position the node in the tree
@@ -1007,6 +1004,9 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     newnode = true;
   }
   
+  var customType = aMediaList.getProperty(SBProperties.customType);
+  var libCustomType = aMediaList.library.getProperty(SBProperties.customType);
+  
   // Refresh the information just in case it is supposed to change
   node.name = aMediaList.name;  
   node.url = this._getDisplayURL(aMediaList);
@@ -1017,6 +1017,8 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     node.properties = "medialist medialisttype-dynamic";
   else
     node.properties = "medialist medialisttype-" + aMediaList.type;
+  // Add the customType to the properties to encourage people to set it for CSS
+  node.properties += " " + customType;
   // Save the type of media list so that we can group by type
   node.setAttributeNS(LSP, "ListType", aMediaList.type);
   // Save the guid of the library that owns this media list
@@ -1024,9 +1026,9 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   // and the guid of this list
   node.setAttributeNS(LSP, "ListGUID", aMediaList.guid);
   // Save the parent library custom type for this list.
-  node.setAttributeNS(LSP, "LibraryCustomType", aMediaList.library.getProperty(SBProperties.customType));
+  node.setAttributeNS(LSP, "LibraryCustomType", libCustomType);
   // Save the list customType for use by metrics.
-  node.setAttributeNS(LSP, "ListCustomType", aMediaList.getProperty(SBProperties.customType));
+  node.setAttributeNS(LSP, "ListCustomType", customType);
 
   if (aMediaList.library == this._libraryManager.mainLibrary) {
     // a playlist in the main library is considered a toplevel node

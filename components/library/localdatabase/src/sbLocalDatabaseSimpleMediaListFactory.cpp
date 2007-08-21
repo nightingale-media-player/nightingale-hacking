@@ -96,9 +96,14 @@ sbLocalDatabaseSimpleMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
   rv = newMediaList->Init(localLibraryPtr, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Set customType for use by metrics.
-  rv = newMediaList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
-                                 NS_LITERAL_STRING(SB_SIMPLE_MEDIALIST_METRICS_TYPE));
+  // Get customType so we don't overwrite it.  Grrrr.
+  nsAutoString customType;
+  rv = newMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), customType );
+  if (customType.IsEmpty()) {
+    // Set new customType for use by metrics.
+    rv = newMediaList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                                   NS_LITERAL_STRING(SB_SIMPLE_MEDIALIST_METRICS_TYPE));
+  }
 
   NS_ADDREF(*_retval = newMediaList);
   return NS_OK;

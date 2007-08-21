@@ -125,9 +125,15 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
   rv = newSmartList->Init(aInner);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Set customType for use by metrics.
-  rv = newSmartList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
-                                 NS_LITERAL_STRING(SB_SMART_MEDIALIST_METRICS_TYPE));
+
+  // Get customType so we don't overwrite it.  Grrrr.
+  nsAutoString customType;
+  rv = newSmartList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), customType );
+  if (customType.IsEmpty()) {
+    // Set new customType for use by metrics.
+    rv = newSmartList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                                   NS_LITERAL_STRING(SB_SMART_MEDIALIST_METRICS_TYPE));
+  }
 
   NS_ADDREF(*_retval = newSmartList);
   return NS_OK;

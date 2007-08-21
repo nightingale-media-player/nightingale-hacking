@@ -23,7 +23,6 @@
 // END SONGBIRD GPL
 //
 */
-
 /* *****************************************************************************
  *******************************************************************************
  *
@@ -113,7 +112,7 @@
                              SB_PROPERTY_PROGRESSVALUE
 #define SB_PREF_DOWNLOAD_MEDIALIST "songbird.library.download"
 #define SB_PREF_WEB_LIBRARY     "songbird.library.web"
-
+#define SB_DOWNLOAD_CUSTOM_TYPE "download"
 
 /* *****************************************************************************
  *
@@ -410,6 +409,17 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         result = mpDownloadMediaList->SetProperty
                               (NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
                               downloadColSpec);
+    }
+
+    /* Set the download device playlist custom type. */
+    if (NS_SUCCEEDED(result))
+    {
+        nsString                    customType;
+
+        customType.AppendLiteral(SB_DOWNLOAD_CUSTOM_TYPE);
+        result = mpDownloadMediaList->SetProperty
+                              (NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                              customType);
     }
 
     /* Create the device transfer queue. */

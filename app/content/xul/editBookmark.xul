@@ -136,7 +136,13 @@
       var node = window.arguments[0];
       node.name = document.getElementById("bookmark.label").value;
       node.url = document.getElementById("bookmark.url").value;
-      node.image = document.getElementById("bookmark.icon").value;
+      
+      // A blank value means we want the default value.
+      // We get the default value by NOT setting the image property on node.
+      var image = document.getElementById("bookmark.icon").value;
+      if (image.length > 0)
+        node.image = image;
+        
       return true;
     }
     function doCancel()
@@ -159,7 +165,7 @@
     
     function onSetDefaultIcon(evt) {
       var icon = document.getElementById("bookmark.icon");
-      icon.value = "chrome://songbird/skin/icons/icon_bookmark.ico";
+      icon.value = "";
       validate();
     }
     

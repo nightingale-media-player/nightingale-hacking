@@ -414,19 +414,15 @@ ServicesourceProxy.prototype = {
       
       // Perform lookup to see what this item is..
       item = item.QueryInterface(Components.interfaces.nsIRDFResource);
-      
-      
-      var icon = this.mInner.GetTarget(item, NC_ICON, true);
 
-      // If it has an icon, we may not want to keep it
-      if (icon != null && this.filtering) {
-        icon = icon.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
-        
-        // If icon is a folder, then we don't want to display it
-        if (icon != "chrome://songbird/skin/icons/icon_folder.png") {
+      var properties = this.mInner.GetTarget(item, NC_PROPS, true);
+      if (properties != null && this.filtering) {
+        properties = properties.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+        // If we're filtering, and the properties say we're a folder, skip it.
+        if (properties.indexOf("folder") == -1) {
           selectedItems.push(item);
-        } 
-      // No icon.. probably a playlist
+        }
+      // No filtering or no properties, just add it.
       } else {
         selectedItems.push(item);
       }
