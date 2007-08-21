@@ -62,9 +62,6 @@
         <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
           <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />
         </menu>
-        <menu id="songbird_menu_feathers" label="&menu.feathers;" class="menuitem-iconic" accesskey="&menu.feathers.accesskey;">
-          <menupopup type="feathers"/>
-        </menu>
         <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="menuitem-iconic"/> -->
         <!-- ID changed for OS X nsMenuBarX::AquifyMenuBar -->
 
@@ -106,6 +103,10 @@
         <menuseparator/>
         <menuitem id="control.jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" observes="controlJumpTo" accesskey="&menu.control.jumpto.accesskey;" />
       </menupopup>
+    </menu>
+
+    <menu id="songbird_menu_feathers" label="&menu.feathers;" accesskey="&menu.feathers.accesskey;">
+      <menupopup type="feathers"/>
     </menu>
 
     <menu id="tools-menu" label="&menu.tools;"  accesskey="&menu.tools.accesskey;">

@@ -35,9 +35,6 @@
 
   <!--
     A menupopup that allows selection of feathers skin and layout
-    
-    TODO:
-    * Indicate selected layout at top level using CSS
   -->
   <binding id="feathers-menupopup" 
            extends="chrome://global/content/bindings/popup.xml#popup">
@@ -140,30 +137,38 @@
               this._currentSkin = this._feathersManager.currentSkinName;
 
               var className = this.parentNode.getAttribute("class");
-                            
-              // Add a menu for each layout
-              var layouts = this._enumToArray(this._feathersManager.getLayoutDescriptions(), 
-                                    Components.interfaces.sbILayoutDescription);
-              for (var i=0; i < layouts.length; i++) {
-                var layout = layouts[i];
+              
+              // Add a section with the layouts available for the current skin
+              this._appendSelectedFeathersSection();
+              
+              
+              // Add a menu for each skin
+              var skins = this._enumToArray(this._feathersManager.getSkinDescriptions(), 
+                                             Components.interfaces.sbISkinDescription);              
+              
+              for (var i=0; i < skins.length; i++) {
+                var skin = skins[i];
                 
-                // Get all skins for this layout
-                var skins = this._enumToArray(this._feathersManager.getSkinsForLayout(layout.url), 
-                                        Components.interfaces.sbISkinDescription);
+                // Get all layouts for this skin
+                var layouts = this._enumToArray(this._feathersManager.getLayoutsForSkin(skin.internalName), 
+                                                 Components.interfaces.sbILayoutDescription);
 
-                // Skip layouts with no compatible skins
-                if (skins.length == 0) continue;
+                // Skip skins with no compatible layouts
+                if (layouts.length == 0) continue;
                 
-                // Build a menu for this layout
-                var layoutMenu = this._makeLayoutMenu(layout);
+                // Build a menu for this skin
+                var skinMenu = this._makeSkinMenu(skin);
                 
-                // Attach a menuitem for each compatible skin
-                for (var j = 0; j < skins.length; j++) {
-                  var item = this._makeSkinMenuItem(layout, skins[j]);
-                  layoutMenu.firstChild.appendChild(item);
+                // Attach a menuitem for each compatible layout
+                for (var j = 0; j < layouts.length; j++) {
+                  var item = this._makeLayoutMenuItem(skin, layouts[j]);
+                  // Hack: remove the extra checked state.
+                  // (We may want this back later) 
+                  item.removeAttribute("type");
+                  skinMenu.firstChild.appendChild(item);
                 }
                 
-                this.appendChild(layoutMenu);
+                this.appendChild(skinMenu);
               }
               
               // If the current window has a browser/servicepane, then add a link
@@ -181,25 +186,14 @@
 
 
       <!-- Return a menu with menupopup for the given layout -->
-      <method name="_makeLayoutMenu">
-        <parameter name="layout"/>
+      <method name="_makeSkinMenu">
+        <parameter name="skin"/>
         <body>
           <![CDATA[
             var menu = document.createElement("menu");
-            menu.setAttribute("label", layout.name);
-            menu.setAttribute("layoutURL", layout.url);
+            menu.setAttribute("label", skin.name);
+            menu.setAttribute("internalName", skin.internalName);
 
-            // TODO: Should probably indicate which 
-            // layout is currently selected.  This will
-            // have to be done via an attribute and CSS,
-            // as "checked" doesn't seem to work for menu
-            // elements
-            /*
-            menu.setAttribute("type", "checkbox");
-            if (this._currentLayout == layout.url) {
-              menu.setAttribute("checked", "true");
-            }
-            */
             var menupopup = document.createElement("menupopup");
             menu.appendChild(menupopup);
 
@@ -210,13 +204,13 @@
 
 
       <!-- Return a menuitem element for the given skin-layout pair -->
-      <method name="_makeSkinMenuItem">
-        <parameter name="layout"/>
+      <method name="_makeLayoutMenuItem">
         <parameter name="skin"/>
+        <parameter name="layout"/>
         <body>
           <![CDATA[
             var item = document.createElement("menuitem");
-            item.setAttribute("label", skin.name);
+            item.setAttribute("label", layout.name);
             item.setAttribute("name", "feathers.item");
             item.setAttribute("skinName", skin.internalName);
             item.setAttribute("layoutURL", layout.url);
@@ -227,6 +221,40 @@
               item.setAttribute("checked", "true");
             }
             return item;
+          ]]>
+        </body>
+      </method>
+
+
+      <!-- Append a section with the layouts available for the current skin -->
+      <method name="_appendSelectedFeathersSection">
+        <body>
+          <![CDATA[
+            // Get the current skin
+            var skin = this._feathersManager.getSkinDescription(
+                                this._feathersManager.currentSkinName);
+            
+            // Make a disabled menuitem to act as a label above 
+            // the layouts
+            var item = document.createElement("menuitem");
+            item.setAttribute("label", skin.name);
+            item.setAttribute("name", "feathers.item");
+            item.setAttribute("disabled", "true");
+            item.setAttribute("class", "feathers-menu-selected-skin-title");
+            
+            this.appendChild(item);
+            
+            var layouts = this._enumToArray(this._feathersManager.getLayoutsForSkin(skin.internalName), 
+                                             Components.interfaces.sbILayoutDescription);
+          
+            // Attach a menuitem for each compatible layout
+            for (var j = 0; j < layouts.length; j++) {
+              var item = this._makeLayoutMenuItem(skin, layouts[j]);
+              item.setAttribute("class", "feathers-menu-selected-skin");
+              this.appendChild(item);
+            }         
+            
+            this.appendChild(document.createElement("menuseparator"));
           ]]>
         </body>
       </method>
@@ -308,8 +336,9 @@
 
 
   <!--
-   Clickhold button that embeds the feathers-menupopup menu. When clicked
-   it will attempt to revert to the previously selected feathers.
+   Clickhold button that embeds the feathers-menupopup menu. 
+   When clicked will cycle through layouts available for the
+   current skin
   -->
   <binding id="feathers-togglebutton">
     <content>
@@ -335,30 +364,70 @@
           this._feathersManager = null;      
         ]]>
       </destructor>
-
+      
+      
       <!--
         Called when the clickhold button is clicked.  
       -->
-      <method name="switchFeathers">
-        <parameter name="layoutURL"/>
-        <parameter name="skinName"/>
+      <method name="switchToNextLayout">
         <body>
           <![CDATA[            
-            // Attempt to switch feathers
+            // Attempt to switch to the next layout available
+            // for the current skin
             try {
-              this._feathersManager.switchFeathers(layoutURL, skinName);
+              var skinName = this._feathersManager.currentSkinName;
+              var layoutURL = this._feathersManager.currentLayoutURL;
+              var nextLayout = this._getNextLayout();;                           
+              
+              // If it is actually going to do anything, switch to the
+              // next layout
+              if (nextLayout.url != layoutURL) {
+                this._feathersManager.switchFeathers(nextLayout.url, skinName);
+              } else {
+                var clickhold = document.getAnonymousElementByAttribute(this,
+                                                       'anonid', 'clickhold');
+                clickhold.showPopup();
+              }
             } catch (e) {
-              dump("feathers.xml#feathers-togglebutton: Unable to revert to the " +
-                   "fallback feathers [" + layoutURL + "], [" + skinName +
-                   "].  This should never happen. Someone modified the " +
-                   " default feathers and forgot to change sbFeathersManager.js\n" +
+              dump("feathers.xml#feathers-togglebutton: Unable to switch to the " +
+                   "next layout for the current skin.\n\n" +
                    " Error: " + e.toString() + "\n");  
             }
              
           ]]>
         </body>
       </method>
-            
+      
+
+      <!--
+        Determine the next available layout for the current skin 
+      -->
+      <method name="_getNextLayout">
+        <body>
+          <![CDATA[            
+            var skinName = this._feathersManager.currentSkinName;
+            var layoutURL = this._feathersManager.currentLayoutURL;
+              
+            // Find the layout that comes after the current layout
+            var layouts = this._enumToArray(this._feathersManager.getLayoutsForSkin(skinName), 
+                                               Components.interfaces.sbILayoutDescription);
+            var nextLayout;                           
+            for (var i = 0; i < layouts.length; i++) {
+              if (layouts[i].url == layoutURL) {
+                if (i >= layouts.length - 1) {
+                  nextLayout = layouts[0];
+                } else {
+                  nextLayout = layouts[i+1];
+                }
+              }
+            }
+              
+            return nextLayout;                       
+          ]]>
+        </body>
+      </method>
+      
+      
       <!--
         Creates a tooltip for the clickhold button.
       -->
@@ -390,56 +459,43 @@
             // Now add to the tooltip the feathers that will be selected
             // when the button is pressed.
 
-            // Requesting the previous feathers will trigger the FeathersManager's
+            // Requesting the next layout will trigger the FeathersManager's
             // lazily metadata loading.
             // We do not want to block the UI from appearing, so we delay the final  
             // tooltip creation step until after the binding is constructed.
-            
-            var finishClickholdTooltip = function finishClickholdTooltip(feathersManager) {
-              // Figure out which feathers were previously active
-              var skin = feathersManager.getSkinDescription(
-                              feathersManager.previousSkinName);
-              var layout = feathersManager.getLayoutDescription(
-                              feathersManager.previousLayoutURL);
-              tooltip += " (" + layout.name + " / " + skin.name + ")";
-              clickhold.setAttribute("tooltiptext", tooltip);  
+            var finishClickholdTooltip = function finishClickholdTooltip(widget) {
+              var layout = widget._getNextLayout();
+              if (layout.url != widget._feathersManager.currentLayoutURL) { 
+                tooltip += " - " + layout.name;
+              }
+              clickhold.setAttribute("tooltiptext", tooltip);
             };
-            setTimeout(finishClickholdTooltip, 1000, this._feathersManager);
+            setTimeout(finishClickholdTooltip, 1000, this);
           ]]>
         </body>
       </method>
 
 
+      <!-- Helper to convert an nsISimpleEnumerator into a js array -->
+      <method name="_enumToArray">
+        <parameter name="enumerator"/>
+        <parameter name="iface"/>
+        <body>
+          <![CDATA[
+            var results = [];
+            while (enumerator.hasMoreElements()) {
+              results.push(enumerator.getNext().QueryInterface(iface));
+            }
+            return results;
+          ]]>
+        </body>
+      </method>
+
     </implementation>
     <handlers>
       <handler event="command">
         <![CDATA[
-                    
-          // Special hack to reload the current window.
-          // This is to make CSS testing a bit easier.
-          if (event.altKey || event.ctrlKey | event.metaKey | event.shiftKey) {
-            var layoutURL = this._feathersManager.currentLayoutURL;
-            var skinName = this._feathersManager.currentSkinName;
-            var chromeFeatures = "chrome,modal=no,toolbar=yes,popup=no";    
-            var showChrome = this._feathersManager.isChromeEnabled(layoutURL, skinName);
-            if (showChrome) {
-               chromeFeatures += ",resizable=yes";
-            } else {
-               chromeFeatures += ",titlebar=no";
-            }
-            // Open the new player window
-            var newMainWin = window.open(layoutURL, "", chromeFeatures);
-            window.close();
-            newMainWin.focus();
-            
-          // Otherwise just restore the previous feathers
-          } else {
-						// Get the previously active (or default) skin and layout
-						var layoutURL = this._feathersManager.previousLayoutURL;
-						var skinName = this._feathersManager.previousSkinName;
-						  
-						this.switchFeathers(layoutURL, skinName);
-          }
+            this.switchToNextLayout();
         ]]>
       </handler>
     </handlers>

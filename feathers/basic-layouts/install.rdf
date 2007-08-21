@@ -26,7 +26,7 @@
       <Description>
         <songbird:layout>
           <Description>
-            <songbird:name>Basic Player</songbird:name>
+            <songbird:name>Full Media Web Player</songbird:name>
             <songbird:url>chrome://songbird/content/feathers/basic-layouts/xul/mainwin.xul</songbird:url>
             <songbird:compatibleSkin>
               <Description>
@@ -38,7 +38,7 @@
         </songbird:layout>
         <songbird:layout>
           <Description>
-            <songbird:name>Mini Player</songbird:name>
+            <songbird:name>Mini Media Player</songbird:name>
             <songbird:url>chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul</songbird:url>
             <songbird:compatibleSkin>
               <Description>

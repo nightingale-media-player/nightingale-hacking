@@ -44,14 +44,10 @@ sb-sys-icon
 }
 
 /*  Switch Feathers */
-.sb-feathers-toggle-button
+.sb-feathers-toggle-button > .clickhold-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/sysbtns_win.png);
   -moz-image-region: rect(0px 9px 9px 0px);
-}
-
-.sb-feathers-toggle-button > .clickhold-button
-{
   -moz-appearance: none;
   border: none;
   margin: 0px;
@@ -61,9 +57,14 @@ sb-sys-icon
   border-width: 0px;
 }
 
+.feathers-menu-selected-skin > .menu-iconic-left {
+  margin-left: 16px !important;
+}
+
+
 sb-sys-titlebar > menubar 
 {
-	margin-left: 15px;
+  margin-left: 15px;
 }
 
 

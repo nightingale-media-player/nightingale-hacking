@@ -70,6 +70,7 @@ prefwindow,
 playlist
 {
   background-color: #313131; /* color of the Main Window **/
+  color: #B3BAAC; /* Light Color 1 */
 }
 
 toolbar
@@ -561,6 +562,7 @@ button
   border-bottom-color: #202220; /** Button Shadow */ 
   border-right-color: #202220; /** Button Shadow */ 
   -moz-border-radius: 5px;
+  color: #B3BAAC; /* Light Color 1 */
 }
 button:active
 {
@@ -623,18 +625,18 @@ MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
 */
 
 /* The Top Menu (File, Edit, Etc...) **/
-#songbird_menu > menu > label
+menu > label
 {
   background-color: transparent !important;
   color: #8A8F84; /** Light Color 2 */
 }
 
-#songbird_menu > menu:hover,
-#songbird_menu > menu:hover > label,
-#songbird_menu > menu[open],
-#songbird_menu > menu[open] > label,
-#songbird_menu > menu[_moz-menuactive="true"],
-#songbird_menu > menu[_moz-menuactive="true"] > label
+menu:hover,
+menu:hover > label,
+menu[open],
+menu[open] > label,
+menu[_moz-menuactive="true"],
+menu[_moz-menuactive="true"] > label
 {
   background-color: #8A8F84; /** Light Color 2 */
   color: #feffff; /** Light Color Brightest */
@@ -655,30 +657,30 @@ menuseparator
 }
 
 menuitem[disabled="true"],
-menuitem[disabled="true"]:hover
+menuitem[disabled="true"]:hover,
+menuitem[disabled="true"] > label,
+menuitem[disabled="true"]:hover > label
 {
-  color: #202220; /** Button Shadow */
+  color: #5c5f58 !important; /** Selected Focus Row */
 }
-menuitem,
-menupopup > menu,
-popup > menu
+menuitem > label,
+menupopup > menu > label,
+popup > menu > label
 {
-  color: #B3BAAC; /** Light Color 1 */
+  color: #B3BAAC !important; /** Light Color 1 */
 }
+
 menuitem:hover,
+menuitem:hover > label,
 menupopup > menu:hover,
-popup > menu:hover
+menupopup > menu:hover > label,
+popup > menu:hover,
+popup > menu:hover > label
 {
   background-color: #8A8F84; /** Light Color 2 */
   color: #feffff !important; /** Light Color Brightest */ 
 }
 
-menuitem:hover > label,
-menupopup > menu:hover > label,
-popup > menu:hover > label
-{
-  color: #feffff !important; /** Light Color Brightest */ 
-}
 
 /** 
 ***************************************************************************************************
