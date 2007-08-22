@@ -457,7 +457,7 @@ case "$SB_PLATFORM" in
     MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
     XULRUNNERDIR="/XUL.framework"
 
-    GCC_COMPILER_FLAGS="-g -c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
+    GCC_COMPILER_FLAGS="-gstabs+ -c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline -O1"
     else
