@@ -954,47 +954,40 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
 PRBool sbMetadataHandlerTaglib::ReadFLACFile(
     const char                  *filePath)
 {
-    nsAutoPtr<TagLib::FLAC::File>   pTagFile;
-    PRBool                          restart;
-    PRBool                          isValid = PR_TRUE;
-    nsresult                        result = NS_OK;
+    TagLib::FLAC::File          *pTagFile = NULL;
+    PRBool                      restart;
+    PRBool                      isValid = PR_TRUE;
+    nsresult                    result = NS_OK;
 
-    /* Open and read the metadata file. */
-    pTagFile = new TagLib::FLAC::File();
-    if (!pTagFile)
-        result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-    if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    /* Open the metadata file. */
+    pTagFile = new TagLib::FLAC::File(filePath);
 
     /* Check for channel restart. */
-    if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
+    result = mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &restart);
+    if (NS_SUCCEEDED(result))
     {
-        result =
-            mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
-                                                            &restart);
-        if (NS_SUCCEEDED(result))
-        {
-            mMetadataChannelRestart = restart;
-            if (mMetadataChannelRestart)
-                isValid = PR_FALSE;
-        }
+        mMetadataChannelRestart = restart;
+        if (mMetadataChannelRestart)
+            isValid = PR_FALSE;
+    }
+    else
+    {
+        isValid = PR_FALSE;
+        result = NS_OK;
     }
 
     /* Read the base file metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (isValid)
         isValid = ReadFile(pTagFile);
 
     /* Read the ID3v2 metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (isValid)
         ReadID3v2Tags(pTagFile->ID3v2Tag());
 
-    /* File is invalid on any error. */
-    if (NS_FAILED(result))
-        isValid = PR_FALSE;
+    /* Clean up. */
+    if (pTagFile)
+        delete(pTagFile);
 
     return (isValid);
 }
@@ -1014,43 +1007,36 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
 PRBool sbMetadataHandlerTaglib::ReadMPCFile(
     const char                  *filePath)
 {
-    nsAutoPtr<TagLib::MPC::File>    pTagFile;
-    PRBool                          restart;
-    PRBool                          isValid = PR_TRUE;
-    nsresult                        result = NS_OK;
+    TagLib::MPC::File           *pTagFile = NULL;
+    PRBool                      restart;
+    PRBool                      isValid = PR_TRUE;
+    nsresult                    result = NS_OK;
 
-    /* Open and read the metadata file. */
-    pTagFile = new TagLib::MPC::File();
-    if (!pTagFile)
-        result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-    if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    /* Open the metadata file. */
+    pTagFile = new TagLib::MPC::File(filePath);
 
     /* Check for channel restart. */
-    if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
+    result = mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &restart);
+    if (NS_SUCCEEDED(result))
     {
-        result =
-            mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
-                                                            &restart);
-        if (NS_SUCCEEDED(result))
-        {
-            mMetadataChannelRestart = restart;
-            if (mMetadataChannelRestart)
-                isValid = PR_FALSE;
-        }
+        mMetadataChannelRestart = restart;
+        if (mMetadataChannelRestart)
+            isValid = PR_FALSE;
+    }
+    else
+    {
+        isValid = PR_FALSE;
+        result = NS_OK;
     }
 
     /* Read the base file metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (isValid)
         isValid = ReadFile(pTagFile);
 
-    /* File is invalid on any error. */
-    if (NS_FAILED(result))
-        isValid = PR_FALSE;
+    /* Clean up. */
+    if (pTagFile)
+        delete(pTagFile);
 
     return (isValid);
 }
@@ -1070,47 +1056,40 @@ PRBool sbMetadataHandlerTaglib::ReadMPCFile(
 PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
     const char                  *filePath)
 {
-    nsAutoPtr<TagLib::MPEG::File>   pTagFile;
-    PRBool                          restart;
-    PRBool                          isValid = PR_TRUE;
-    nsresult                        result = NS_OK;
+    TagLib::MPEG::File          *pTagFile = NULL;
+    PRBool                      restart;
+    PRBool                      isValid = PR_TRUE;
+    nsresult                    result = NS_OK;
 
-    /* Open and read the metadata file. */
-    pTagFile = new TagLib::MPEG::File();
-    if (!pTagFile)
-        result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-    if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    /* Open the metadata file. */
+    pTagFile = new TagLib::MPEG::File(filePath);
 
     /* Check for channel restart. */
-    if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
+    result = mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &restart);
+    if (NS_SUCCEEDED(result))
     {
-        result =
-            mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
-                                                            &restart);
-        if (NS_SUCCEEDED(result))
-        {
-            mMetadataChannelRestart = restart;
-            if (mMetadataChannelRestart)
-                isValid = PR_FALSE;
-        }
+        mMetadataChannelRestart = restart;
+        if (mMetadataChannelRestart)
+            isValid = PR_FALSE;
+    }
+    else
+    {
+        isValid = PR_FALSE;
+        result = NS_OK;
     }
 
     /* Read the base file metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (isValid)
         isValid = ReadFile(pTagFile);
 
     /* Read the ID3v2 metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (isValid)
         ReadID3v2Tags(pTagFile->ID3v2Tag());
 
-    /* File is invalid on any error. */
-    if (NS_FAILED(result))
-        isValid = PR_FALSE;
+    /* Clean up. */
+    if (pTagFile)
+        delete(pTagFile);
 
     return (isValid);
 }
@@ -1130,47 +1109,40 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
 PRBool sbMetadataHandlerTaglib::ReadMP4File(
     const char                  *filePath)
 {
-    nsAutoPtr<TagLib::MP4::File>    pTagFile;
-    PRBool                          restart;
-    PRBool                          isValid = PR_TRUE;
-    nsresult                        result = NS_OK;
+    TagLib::MP4::File           *pTagFile = NULL;
+    PRBool                      restart;
+    PRBool                      isValid = PR_TRUE;
+    nsresult                    result = NS_OK;
 
-    /* Open and read the metadata file. */
-    pTagFile = new TagLib::MP4::File();
-    if (!pTagFile)
-        result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-    if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    /* Open the metadata file. */
+    pTagFile = new TagLib::MP4::File(filePath);
 
     /* Check for channel restart. */
-    if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
+    result = mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &restart);
+    if (NS_SUCCEEDED(result))
     {
-        result =
-            mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
-                                                            &restart);
-        if (NS_SUCCEEDED(result))
-        {
-            mMetadataChannelRestart = restart;
-            if (mMetadataChannelRestart)
-                isValid = PR_FALSE;
-        }
+        mMetadataChannelRestart = restart;
+        if (mMetadataChannelRestart)
+            isValid = PR_FALSE;
+    }
+    else
+    {
+        isValid = PR_FALSE;
+        result = NS_OK;
     }
 
     /* Read the base file metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (isValid)
         isValid = ReadFile(pTagFile);
 
     /* Read the MP4 specific metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (isValid)
         ReadMP4Tags(static_cast<TagLib::MP4::Tag *>(pTagFile->tag()));
 
-    /* File is invalid on any error. */
-    if (NS_FAILED(result))
-        isValid = PR_FALSE;
+    /* Clean up. */
+    if (pTagFile)
+        delete(pTagFile);
 
     return (isValid);
 }
@@ -1190,47 +1162,40 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File(
 PRBool sbMetadataHandlerTaglib::ReadOGGFile(
     const char                  *filePath)
 {
-    nsAutoPtr<TagLib::Vorbis::File> pTagFile;
-    PRBool                          restart;
-    PRBool                          isValid = PR_TRUE;
-    nsresult                        result = NS_OK;
+    TagLib::Vorbis::File        *pTagFile = NULL;
+    PRBool                      restart;
+    PRBool                      isValid = PR_TRUE;
+    nsresult                    result = NS_OK;
 
-    /* Open and read the metadata file. */
-    pTagFile = new TagLib::Vorbis::File();
-    if (!pTagFile)
-        result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-    if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    /* Open the metadata file. */
+    pTagFile = new TagLib::Vorbis::File(filePath);
 
     /* Check for channel restart. */
-    if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
+    result = mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &restart);
+    if (NS_SUCCEEDED(result))
     {
-        result =
-            mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
-                                                            &restart);
-        if (NS_SUCCEEDED(result))
-        {
-            mMetadataChannelRestart = restart;
-            if (mMetadataChannelRestart)
-                isValid = PR_FALSE;
-        }
+        mMetadataChannelRestart = restart;
+        if (mMetadataChannelRestart)
+            isValid = PR_FALSE;
+    }
+    else
+    {
+        isValid = PR_FALSE;
+        result = NS_OK;
     }
 
     /* Read the base file metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (isValid)
         isValid = ReadFile(pTagFile);
 
     /* Read the Xiph metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (isValid)
         ReadXiphTags(pTagFile->tag());
 
-    /* File is invalid on any error. */
-    if (NS_FAILED(result))
-        isValid = PR_FALSE;
+    /* Clean up. */
+    if (pTagFile)
+        delete(pTagFile);
 
     return (isValid);
 }
