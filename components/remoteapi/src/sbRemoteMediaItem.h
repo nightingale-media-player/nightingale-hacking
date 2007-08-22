@@ -59,7 +59,7 @@ public:
   // sbIWrappedMediaItem interface
   NS_IMETHOD_(already_AddRefed<sbIMediaItem>) GetMediaItem();
 
-  sbRemoteMediaItem(sbIMediaItem* aMediaItem);
+  sbRemoteMediaItem( sbIMediaItem *aMediaItem );
 
 protected:
 

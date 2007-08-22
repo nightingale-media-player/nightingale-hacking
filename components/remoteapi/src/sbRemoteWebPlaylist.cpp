@@ -51,6 +51,7 @@
 static PRLogModuleInfo* gRemoteWebPlaylistLog = nsnull;
 #endif
 
+#undef LOG
 #define LOG(args) PR_LOG(gRemoteWebPlaylistLog, PR_LOG_WARN, args)
 
 const static char* sPublicWProperties[] =

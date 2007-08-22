@@ -25,9 +25,9 @@
  */
 
 #include "sbRemoteMediaItem.h"
-#include <sbClassInfoUtils.h>
 
 #include <prlog.h>
+#include <sbClassInfoUtils.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -37,6 +37,7 @@
 static PRLogModuleInfo* gRemoteMediaItemLog = nsnull;
 #endif
 
+#undef LOG
 #define LOG(args) PR_LOG(gRemoteMediaItemLog, PR_LOG_WARN, args)
 
 const static char* sPublicWProperties[] = { "" };

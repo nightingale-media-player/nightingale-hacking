@@ -24,25 +24,24 @@
 //
  */
 
-#ifndef __SB_REMOTE_SITEMEDIAITEM_H__
-#define __SB_REMOTE_SITEMEDIAITEM_H__
+#ifndef __SB_REMOTE_WEB_MEDIAITEM_H__
+#define __SB_REMOTE_WEB_MEDIAITEM_H__
 
 #include "sbRemoteAPI.h"
 #include "sbRemoteMediaItem.h"
 #include <sbIMediaItem.h>
 
-class sbRemoteSiteMediaItem : public sbRemoteMediaItem
+class sbRemoteWebMediaItem : public sbRemoteMediaItem
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_NSICLASSINFO
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
-  sbRemoteSiteMediaItem( sbIMediaItem *aMediaItem );
+  sbRemoteWebMediaItem( sbIMediaItem *aMediaItem );
 
 protected:
-  virtual ~sbRemoteSiteMediaItem();
+  virtual ~sbRemoteWebMediaItem();
 };
 
-#endif // __SB_REMOTE_SITEMEDIAITEM_H__
-
+#endif // __SB_REMOTE_WEB_MEDIAITEM_H__

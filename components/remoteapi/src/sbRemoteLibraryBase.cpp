@@ -76,6 +76,7 @@
 static PRLogModuleInfo* gLibraryLog = nsnull;
 #endif
 
+#undef LOG
 #define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
 
 // Observer for the PlaylistReader that launches a metadata job when the

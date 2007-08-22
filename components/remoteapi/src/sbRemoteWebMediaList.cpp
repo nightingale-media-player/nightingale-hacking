@@ -24,38 +24,31 @@
 //
  */
 
-#include "sbRemoteSiteMediaList.h"
-#include <sbClassInfoUtils.h>
+#include "sbRemoteWebMediaList.h"
 
 #include <prlog.h>
+#include <sbClassInfoUtils.h>
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteSiteMediaList:5
+ *   NSPR_LOG_MODULES=sbRemoteWebMediaList:5
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gRemoteMediaListLog = nsnull;
+static PRLogModuleInfo* gRemoteWebMediaListLog = nsnull;
 #endif
 
 #undef LOG
-#define LOG(args) PR_LOG(gRemoteMediaListLog, PR_LOG_WARN, args)
+#define LOG(args) PR_LOG(gRemoteWebMediaListLog, PR_LOG_WARN, args)
 
-const static char* sPublicWProperties[] =
-{
-  // sbIMediaList
-  "site:name"
-};
+const static char* sPublicWProperties[] = { "" };
 
 const static char* sPublicRProperties[] =
-{
-  // sbILibraryResource
+{ // sbILibraryResource
   "site:guid",
   "site:created",
   "site:updated",
 
   // sbIMediaItem
-  // omitting library since we don't want the user to get back
-  // to the original library
   "site:isMutable",
   "site:mediaCreated",
   "site:mediaUpdated",
@@ -80,17 +73,7 @@ const static char* sPublicRProperties[] =
 };
 
 const static char* sPublicMethods[] =
-{ 
-  // sbILibraryResource
-  "site:getProperty",
-  "site:setProperty",
-  "site:equals",
-
-  // sbIMediaItem
-  // none applicable
-
-  // sbIMediaList
-  // omitting createView, listeners, and batching
+{ // sbIMediaList
   "site:getItemByGuid",
   "site:getItemByIndex",
   "site:enumerateAllItems",
@@ -98,22 +81,21 @@ const static char* sPublicMethods[] =
   "site:indexOf",
   "site:lastIndexOf",
   "site:contains",
-  "site:add",
-  "site:addAll",
-  "site:remove",
-  "site:removeByIndex",
-  "site:clear",
   "site:getDistinctValuesForProperty",
+
+  // sbILibraryResource
+  "site:getProperty",
+  "site:equals",
 
   // sbIRemoteMediaList
   "internal:getView"
 };
 
-NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteSiteMediaList,
+NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteWebMediaList,
                               sbRemoteMediaList,
                               nsIClassInfo )
 
-NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteSiteMediaList,
+NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteWebMediaList,
                               nsISupports,
                               sbISecurityAggregator,
                               sbIRemoteMediaList,
@@ -122,24 +104,24 @@ NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteSiteMediaList,
                               sbILibraryResource,
                               nsISecurityCheckedComponent )
 
-SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteSiteMediaList)
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteWebMediaList)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteSiteMediaList)
+SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteWebMediaList)
 
-sbRemoteSiteMediaList::sbRemoteSiteMediaList( sbIMediaList* aMediaList,
-                                              sbIMediaListView* aMediaListView ) :
+sbRemoteWebMediaList::sbRemoteWebMediaList( sbIMediaList* aMediaList,
+                                            sbIMediaListView* aMediaListView ) :
   sbRemoteMediaList( aMediaList, aMediaListView )
 {
 #ifdef PR_LOGGING
-  if (!gRemoteMediaListLog) {
-    gRemoteMediaListLog = PR_NewLogModule("sbRemoteSiteMediaList");
+  if (!gRemoteWebMediaListLog) {
+    gRemoteWebMediaListLog = PR_NewLogModule("sbRemoteWebMediaList");
   }
-  LOG(("sbRemoteSiteMediaList::sbRemoteSiteMediaList()"));
+  LOG(("sbRemoteWebMediaList::sbRemoteWebMediaList()"));
 #endif
 }
 
-sbRemoteSiteMediaList::~sbRemoteSiteMediaList()
+sbRemoteWebMediaList::~sbRemoteWebMediaList()
 {
-  LOG(("sbRemoteSiteMediaList::~sbRemoteSiteMediaList()"));
+  LOG(("sbRemoteWebMediaList::~sbRemoteWebMediaList()"));
 }
 

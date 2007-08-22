@@ -24,21 +24,21 @@
 //
  */
 
-#include "sbRemoteSiteMediaItem.h"
-#include <sbClassInfoUtils.h>
+#include "sbRemoteWebMediaItem.h"
 
 #include <prlog.h>
+#include <sbClassInfoUtils.h>
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbRemoteSiteMediaItem:5
+ *   NSPR_LOG_MODULES=sbRemoteWebMediaItem:5
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gRemoteSiteMediaItemLog = nsnull;
+static PRLogModuleInfo* gRemoteWebMediaItemLog = nsnull;
 #endif
 
 #undef LOG
-#define LOG(args) PR_LOG(gRemoteSiteMediaItemLog, PR_LOG_WARN, args)
+#define LOG(args) PR_LOG(gRemoteWebMediaItemLog, PR_LOG_WARN, args)
 
 const static char* sPublicWProperties[] = {""};
 
@@ -77,34 +77,34 @@ const static char* sPublicMethods[] =
   // none applicable
 };
 
-NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteSiteMediaItem,
+NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteWebMediaItem,
                               sbRemoteMediaItem,
                               nsIClassInfo )
 
-NS_IMPL_CI_INTERFACE_GETTER5(sbRemoteSiteMediaItem,
-                             nsISupports,
-                             sbISecurityAggregator,
-                             sbIMediaItem,
-                             sbILibraryResource,
-                             nsISecurityCheckedComponent)
+NS_IMPL_CI_INTERFACE_GETTER5( sbRemoteWebMediaItem,
+                              nsISupports,
+                              sbISecurityAggregator,
+                              sbIMediaItem,
+                              sbILibraryResource,
+                              nsISecurityCheckedComponent )
 
-SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteSiteMediaItem)
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteWebMediaItem)
 
-SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteSiteMediaItem)
+SB_IMPL_SECURITYCHECKEDCOMP_INIT(sbRemoteWebMediaItem)
 
-sbRemoteSiteMediaItem::sbRemoteSiteMediaItem(sbIMediaItem* aMediaItem) :
-                       sbRemoteMediaItem(aMediaItem)
+sbRemoteWebMediaItem::sbRemoteWebMediaItem( sbIMediaItem* aMediaItem ) :
+  sbRemoteMediaItem(aMediaItem)
 {
 #ifdef PR_LOGGING
-  if (!gRemoteSiteMediaItemLog) {
-    gRemoteSiteMediaItemLog = PR_NewLogModule("sbRemoteSiteMediaItem");
+  if (!gRemoteWebMediaItemLog) {
+    gRemoteWebMediaItemLog = PR_NewLogModule("sbRemoteWebMediaItem");
   }
-  LOG(("sbRemoteSiteMediaItem::sbRemoteSiteMediaItem()"));
+  LOG(("sbRemoteWebMediaItem::sbRemoteWebMediaItem()"));
 #endif
 }
 
-sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()
+sbRemoteWebMediaItem::~sbRemoteWebMediaItem()
 {
-  LOG(("sbRemoteSiteMediaItem::~sbRemoteSiteMediaItem()"));
+  LOG(("sbRemoteWebMediaItem::~sbRemoteWebMediaItem()"));
 }
 

@@ -39,6 +39,14 @@ function runTest () {
   beginRemoteAPITest("test_remotelibrary_page.html", startTesting);
 }
 
+function lockDown() {
+  setRapiPref("playback_control_disable", true);
+  setRapiPref("playback_read_disable", true);
+  setRapiPref("library_read_disable", true);
+  setRapiPref("library_write_disable", true);
+  setRapiPref("library_create_disable", true);
+}
+
 function startTesting() {
 
   testBrowserWindow.runPageTest(this);

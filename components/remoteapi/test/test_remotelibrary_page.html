@@ -77,6 +77,25 @@ function runTest(tester) {
   } catch (e) {
     tester.endRemoteAPITest(e);
   }
+
+  tester.lockDown();
+
+  try {
+    var siteLib = songbird.siteLibrary("127.0.0.1", "/");
+
+    try {
+      var mainLib = songbird.mainLibrary;
+      tester.fail("did not throw: songbird.mainLibrary;");
+    } catch (e) {}
+
+    try {
+      var webLib = songbird.webLibrary;
+      tester.fail("did not throw: songbird.webLibrary;");
+    } catch (e) {}
+  } catch (e) {
+    tester.endRemoteAPITest(e);
+  }
+  
   tester.endRemoteAPITest();
 }
 

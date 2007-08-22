@@ -53,6 +53,7 @@
 static PRLogModuleInfo* gRemoteMediaListLog = nsnull;
 #endif
 
+#undef LOG
 #define LOG(args) PR_LOG(gRemoteMediaListLog, PR_LOG_WARN, args)
 
 // derived classes must impl nsIClassInfo

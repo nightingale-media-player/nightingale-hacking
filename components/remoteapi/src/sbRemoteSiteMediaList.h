@@ -28,20 +28,20 @@
 #define __SB_REMOTE_SITEMEDIALIST_H__
 
 #include "sbRemoteAPI.h"
-#include "sbRemoteMediaListBase.h"
+#include "sbRemoteMediaList.h"
 
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
 
-class sbRemoteSiteMediaList : public sbRemoteMediaListBase
+class sbRemoteSiteMediaList : public sbRemoteMediaList
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_NSICLASSINFO
   SB_DECL_SECURITYCHECKEDCOMP_INIT
 
-  sbRemoteSiteMediaList( sbIMediaList* aMediaList,
-                         sbIMediaListView* aMediaListView );
+  sbRemoteSiteMediaList( sbIMediaList *aMediaList,
+                         sbIMediaListView *aMediaListView );
 
 protected:
   virtual ~sbRemoteSiteMediaList();

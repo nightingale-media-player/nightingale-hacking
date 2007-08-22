@@ -25,6 +25,7 @@
  */
 
 #include "sbRemoteWebLibrary.h"
+#include "sbRemoteWebMediaList.h"
 
 #include <prlog.h>
 #include <sbClassInfoUtils.h>
@@ -37,6 +38,7 @@
 static PRLogModuleInfo* gWebLibraryLog = nsnull;
 #endif
 
+#undef LOG
 #define LOG(args) PR_LOG( gWebLibraryLog, PR_LOG_WARN, args )
 
 const static char* sPublicWProperties[] = { "" };
@@ -122,8 +124,7 @@ sbRemoteWebLibrary::InitInternalMediaList()
   nsresult rv = mediaList->CreateView( getter_AddRefs(mediaListView) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // XXXredfive this needs to become a sbRemoteWebMediaList I think
-  mRemMediaList = new sbRemoteMediaList( mediaList, mediaListView );
+  mRemMediaList = new sbRemoteWebMediaList( mediaList, mediaListView );
   NS_ENSURE_TRUE( mRemMediaList, NS_ERROR_OUT_OF_MEMORY );
 
   rv = mRemMediaList->Init();

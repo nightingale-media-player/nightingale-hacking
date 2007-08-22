@@ -43,6 +43,7 @@
 static PRLogModuleInfo* gRemoteEventLog = nsnull;
 #endif
 
+#undef LOG
 #define LOG(args) PR_LOG(gRemoteEventLog, PR_LOG_WARN, args)
 
 const static char* sPublicWProperties[] = { "" };

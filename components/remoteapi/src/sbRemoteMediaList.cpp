@@ -37,6 +37,7 @@
 static PRLogModuleInfo* gRemoteMediaListLog = nsnull;
 #endif
 
+#undef LOG
 #define LOG(args) PR_LOG(gRemoteMediaListLog, PR_LOG_WARN, args)
 
 const static char* sPublicWProperties[] =

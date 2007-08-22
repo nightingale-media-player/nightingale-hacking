@@ -58,6 +58,7 @@
 static PRLogModuleInfo* gLibraryLog = nsnull;
 #endif
 
+#undef LOG
 #define LOG(args) PR_LOG(gLibraryLog, PR_LOG_WARN, args)
 
 static const char* sNotificationNone = "none";
