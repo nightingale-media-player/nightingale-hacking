@@ -48,8 +48,6 @@
 <window
   id="frame_outer"
   class="mainwin"
-  onload="SBInitialize();"
-  onunload="SBUninitialize();"
   onclose="/*return false;*/ quitApp();" 
   title="&window.dev.title;"
   windowtype="Songbird:Main"

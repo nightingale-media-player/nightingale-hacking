@@ -26,18 +26,6 @@
  */
 
 //
-//  Yes, I know this file is a mess.
-//
-//  Yes, I know we have to clean it up.
-//
-//  Yes, this will happen soon.
-//
-//  I promise.  Or something.
-//
-//                  - mig
-//
-
-//
 // Mainwin Initialization
 //
 
@@ -50,6 +38,33 @@
 var thePollPlaylistService = null;
 
 var gServicePane = null;
+
+
+
+//
+// Module specific auto-init/deinit support
+//
+var mainWinInit = {};
+mainWinInit.init_once = 0;
+mainWinInit.deinit_once = 0;
+mainWinInit.onLoad = function()
+{
+  if (mainWinInit.init_once++) { dump("WARNING: mainWinInit double init!!\n"); return; }
+  SBInitialize();
+}
+mainWinInit.onUnload = function()
+{
+  if (mainWinInit.deinit_once++) { dump("WARNING: mainWinInit double deinit!!\n"); return; }
+  window.removeEventListener("load", mainWinInit.onLoad, false);
+  window.removeEventListener("unload", mainWinInit.onUnload, false);
+  document.removeEventListener("sb-overlay-load", SBPostOverlayLoad, false);
+  SBUninitialize();
+}
+window.addEventListener("load", mainWinInit.onLoad, false);
+window.addEventListener("unload", mainWinInit.onUnload, false);
+document.addEventListener("sb-overlay-load", SBPostOverlayLoad, false);
+
+
 
 /**
  * \brief Get the tabbed browser.
@@ -97,7 +112,6 @@ function SBInitialize()
     dump("diffh = " + diffh + "\n");
     // todo: resize the window accordingly (same method as windowUtils.js: 448 to 455)
     */
-    
     setMinMaxCallback();
 
     // Initalize gBrowser
@@ -108,22 +122,10 @@ function SBInitialize()
     if (window.addEventListener)
       window.addEventListener("keydown", checkAltF4, true);
       
-    // On firstrun, popup the scan for media dialog.
-    // So, now you can't force the dialog by deleting all your databasey files.  Oh well.
-    var dataScan = SBDataGetBoolValue("firstrun.scancomplete");
-    if (dataScan != true)
-    {
-      theFileScanIsOpen.boolValue = true;  // We don't use this anymore, I should pull it.
-                                            // But it's everywhere, so after 0.2 release.
-      setTimeout( SBScanMedia, 1000 );
-      SBDataSetBoolValue("firstrun.scancomplete", true);
-    }
-       
     // Look at all these ugly hacks that need to go away.  (sigh)
     window.gServicePane = document.getElementById('servicepane');
     
     gServicePane.onPlaylistDefaultCommand = onServiceTreeCommand;
-    
   }
   catch(err)
   {
@@ -226,11 +228,22 @@ function setMinMaxCallback()
     if (windowMinMax) {
       var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
       if (service)
-        service.setCallback(document, SBWindowMinMaxCB);
+        service.setCallback(window, SBWindowMinMaxCB);
     }
   }
   catch (err) {
     // No component
     dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
+  }
+}
+
+function SBPostOverlayLoad()
+{
+  // After the overlays load, launch the scan for media loop if we haven't.
+  var dataScan = SBDataGetBoolValue("firstrun.scancomplete");
+  if (dataScan != true)
+  {
+    setTimeout( SBScanMedia, 1000 );
+    SBDataSetBoolValue("firstrun.scancomplete", true);
   }
 }

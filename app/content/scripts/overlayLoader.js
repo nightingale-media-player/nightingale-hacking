@@ -47,7 +47,6 @@ var OverlayLoader = {
    * of this file.
    */
   loadRuntimeOverlays: function loadRuntimeOverlays() {
-
     // Get overlays that are intended for all windows
     var overlays = this.getOverlaysForTarget("windowtype:*"); 
      
@@ -61,9 +60,21 @@ var OverlayLoader = {
     // If there are overlays to load, get started
     if (overlays.length > 0) {
       this.loadOverlayList(overlays);
+    } else {
+      // Or send the event because there was nothing to do
+      this.sendOverlayEvent();
     }
   },
 
+
+  /**
+   * Send the event to let everyone know we're done
+   */
+  sendOverlayEvent: function sendOverlayEvent() {
+    var e = document.createEvent("Events");
+    e.initEvent("sb-overlay-load", false, true);
+    document.dispatchEvent(e);
+  },
 
   /**
    * Sequentially loads the given list of string URLs as overlays
@@ -116,6 +127,9 @@ var OverlayLoader = {
           dump("\nOverlayLoader.loadPlayerOverlays() finished loading overlays\n");
           document.loadOverlay = document._loadOverlayInUse;
           OverlayLoader.loadInProgress = false;
+          
+          // Send out an event to let people know it's safe to go modal.
+          setTimeout( this.sendOverlayEvent, 0 );
         }
       }
     }
@@ -133,6 +147,9 @@ var OverlayLoader = {
               "you have isolated which extension is causing the problem.\n"+
               "Please report this error to the extension author, or\n" +
               "http://bugzilla.songbirdnest.com.");
+
+        // Then send the event that we're done              
+        this.sendOverlayEvent();
       }
     }
     setTimeout(checkCompleted, 3000);
