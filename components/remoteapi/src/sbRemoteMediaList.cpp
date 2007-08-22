@@ -42,30 +42,30 @@ static PRLogModuleInfo* gRemoteMediaListLog = nsnull;
 const static char* sPublicWProperties[] =
 {
   // sbIMediaList
-  "library:name"
+  "library_create:name"
 };
 
 const static char* sPublicRProperties[] =
 {
   // sbILibraryResource
-  "library:guid",
-  "library:created",
-  "library:updated",
+  "library_read:guid",
+  "library_read:created",
+  "library_read:updated",
 
   // sbIMediaItem
   // omitting library since we don't want the user to get back
   // to the original library
-  "library:isMutable",
-  "library:mediaCreated",
-  "library:mediaUpdated",
-  "library:contentLength",
-  "library:contentType",
+  "library_read:isMutable",
+  "library_read:mediaCreated",
+  "library_read:mediaUpdated",
+  "library_read:contentLength",
+  "library_read:contentType",
 
   // sbIMediaList
-  "library:name",
-  "library:type",
-  "library:length",
-  "library:isEmpty",
+  "library_read:name",
+  "library_read:type",
+  "library_read:length",
+  "library_read:isEmpty",
 
   // sbIRemoteMediaList
   "library:selection",
@@ -81,28 +81,28 @@ const static char* sPublicRProperties[] =
 const static char* sPublicMethods[] =
 { 
   // sbILibraryResource
-  "library:getProperty",
-  "library:setProperty",
-  "library:equals",
+  "library_read:getProperty",
+  "library_create:setProperty",
+  "library_read:equals",
 
   // sbIMediaItem
   // none applicable
 
   // sbIMediaList
   // omitting createView, listeners, and batching
-  "library:getItemByGuid",
-  "library:getItemByIndex",
-  "library:enumerateAllItems",
-  "library:enumerateItemsByProperty",
-  "library:indexOf",
-  "library:lastIndexOf",
-  "library:contains",
-  "library:add",
-  "library:addAll",
-  "library:remove",
-  "library:removeByIndex",
-  "library:clear",
-  "library:getDistinctValuesForProperty",
+  "library_read:getItemByGuid",
+  "library_read:getItemByIndex",
+  "library_read:enumerateAllItems",
+  "library_read:enumerateItemsByProperty",
+  "library_read:indexOf",
+  "library_read:lastIndexOf",
+  "library_read:contains",
+  "library_create:add",
+  "library_create:addAll",
+  "library_create:remove",
+  "library_create:removeByIndex",
+  "library_create:clear",
+  "library_read:getDistinctValuesForProperty",
 
   // sbIRemoteMediaList
   "internal:getView"

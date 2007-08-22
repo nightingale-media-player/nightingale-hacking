@@ -47,12 +47,12 @@ const static char* sPublicWProperties[] =
 
 const static char* sPublicRProperties[] =
   { // sbIMediaList
-    "library:name",
-    "library:type",
-    "library:length",
+    "library_read:name",
+    "library_read:type",
+    "library_read:length",
 
     // sbIRemoteLibrary
-    "library:scanMediaOnCreation",
+    "library_read:scanMediaOnCreation",
 
     // nsIClassInfo
     "classinfo:classDescription",
@@ -64,29 +64,29 @@ const static char* sPublicRProperties[] =
 
 const static char* sPublicMethods[] =
   { // sbIRemoteLibrary
-    "library:createMediaListFromURL",
-    "library:getMediaList",
+    "library_create:createMediaListFromURL",
+    "library_read:getMediaList",
      // different from the ones in sbILibrary
-    "library:createMediaList",
-    "library:createMediaItem",
+    "library_create:createMediaList",
+    "library_write:createMediaItem",
 
     // sbIMediaList
-    "library:getItemByGuid",
-    "library:getItemByIndex",
-    "library:enumerateAllItems",
-    "library:enumerateItemsByProperty",
-    "library:indexOf",
-    "library:lastIndexOf",
-    "library:contains",
-    "library:add",
-    "library:addAll",
-    "library:addSome",
-    "library:getDistinctValuesForProperty",
+    "library_read:getItemByGuid",
+    "library_read:getItemByIndex",
+    "library_read:enumerateAllItems",
+    "library_read:enumerateItemsByProperty",
+    "library_read:indexOf",
+    "library_read:lastIndexOf",
+    "library_read:contains",
+    "library_write:add",
+    "library_write:addAll",
+    "library_write:addSome",
+    "library_read:getDistinctValuesForProperty",
 
     // sbILibraryResource
-    "library:getProperty",
-    "library:setProperty",
-    "library:equals"
+    "library_read:getProperty",
+    "library_write:setProperty",
+    "library_read:equals"
   };
 
 NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteLibrary,

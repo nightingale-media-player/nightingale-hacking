@@ -44,18 +44,18 @@ const static char* sPublicWProperties[] = { "" };
 const static char* sPublicRProperties[] =
 {
   // sbILibraryResource
-  "library:guid",
-  "library:created",
-  "library:updated",
+  "library_read:guid",
+  "library_read:created",
+  "library_read:updated",
 
   // sbIMediaItem
   // omitting library since we don't want the user to get back
   // to the original library
-  "library:isMutable",
-  "library:mediaCreated",
-  "library:mediaUpdated",
-  "library:contentLength",
-  "library:contentType",
+  "library_read:isMutable",
+  "library_read:mediaCreated",
+  "library_read:mediaUpdated",
+  "library_read:contentLength",
+  "library_read:contentType",
 
   // nsIClassInfo
   "classinfo:classDescription",
@@ -68,9 +68,9 @@ const static char* sPublicRProperties[] =
 const static char* sPublicMethods[] =
 { 
   // sbILibraryResource
-  "library:getProperty",
-  "library:setProperty",
-  "library:equals"
+  "library_read:getProperty",
+  "library_write:setProperty",
+  "library_read:equals"
 
   // sbIMediaItem
   // none applicable

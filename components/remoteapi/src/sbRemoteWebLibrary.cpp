@@ -43,12 +43,12 @@ const static char* sPublicWProperties[] = { "" };
 
 const static char* sPublicRProperties[] =
   { // sbIMediaList
-    "site:name",
-    "site:type",
-    "site:length",
+    "library_read:name",
+    "library_read:type",
+    "library_read:length",
 
     // sbIRemoteLibrary
-    "site:scanMediaOnCreation",
+    "library_read:scanMediaOnCreation",
 
     // nsIClassInfo
     "classinfo:classDescription",
@@ -60,18 +60,18 @@ const static char* sPublicRProperties[] =
 
 const static char* sPublicMethods[] =
   { // sbIMediaList
-    "site:getItemByGuid",
-    "site:getItemByIndex",
-    "site:enumerateAllItems",
-    "site:enumerateItemsByProperty",
-    "site:indexOf",
-    "site:lastIndexOf",
-    "site:contains",
-    "site:getDistinctValuesForProperty",
+    "library_read:getItemByGuid",
+    "library_read:getItemByIndex",
+    "library_read:enumerateAllItems",
+    "library_read:enumerateItemsByProperty",
+    "library_read:indexOf",
+    "library_read:lastIndexOf",
+    "library_read:contains",
+    "library_read:getDistinctValuesForProperty",
 
     // sbILibraryResource
-    "site:getProperty",
-    "site:equals"
+    "library_read:getProperty",
+    "library_read:equals"
   };
 
 NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteWebLibrary,

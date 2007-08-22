@@ -68,7 +68,6 @@ static const char* sNotificationStatus = "status";
 
 struct Scope {
   const char* name;
-  const char* prefix;
   const char* permission;
   const char* blocked_pref;
   const char* notify_pref;
@@ -79,7 +78,6 @@ struct Scope {
 static const Scope sScopes[] = {
   {
     "playback_control",
-    "controls:",
     "rapi.playback_control",
     "playback_control_disable",
     "songbird.rapi.playback_control_notify",
@@ -88,7 +86,6 @@ static const Scope sScopes[] = {
   },
   {
     "playback_read",
-    "binding:",
     "rapi.playback_read",
     "playback_read_disable",
     "songbird.rapi.playback_read_notify",
@@ -97,7 +94,6 @@ static const Scope sScopes[] = {
   },
   {
     "library_read",
-    "metadata:",
     "rapi.library_read",
     "library_read_disable",
     "songbird.rapi.library_read_notify",
@@ -106,7 +102,6 @@ static const Scope sScopes[] = {
   },
   {
     "library_write",
-    "library:",
     "rapi.library_write",
     "library_write_disable",
     "songbird.rapi.library_write_notify",
@@ -115,7 +110,6 @@ static const Scope sScopes[] = {
   },
   {
     "library_create",
-    "library_create:",
     "rapi.library_create",
     "library_create_disable",
     "songbird.rapi.library_create_notify",
@@ -186,7 +180,7 @@ sbSecurityMixin::Init(sbISecurityAggregator *aOuter,
        NS_FAILED( CopyStrArray( aWPropsArrayLength, aWPropsArray, &mWProperties ) ) ||
        NS_FAILED( CopyIIDArray( aInterfacesArrayLength,
                                 aInterfacesArray,
-                                &mInterfaces ) ) )
+                                &mInterfaces)) )
     return NS_ERROR_OUT_OF_MEMORY;
 
   // set this only if we've succeeded
@@ -204,12 +198,12 @@ sbSecurityMixin::Init(sbISecurityAggregator *aOuter,
 NS_IMETHODIMP
 sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
 {
-  LOG(( "sbSecurityMixin::CanCreateWrapper()" ));
+  LOG(("sbSecurityMixin::CanCreateWrapper()"));
   NS_ENSURE_ARG_POINTER(aIID);
   NS_ENSURE_ARG_POINTER(_retval);
 
   if (!mOuter) {
-    LOG(( "sbSecurityMixin::CanCreateWrapper() - ERROR, no outer" ));
+    LOG(("sbSecurityMixin::CanCreateWrapper() - ERROR, no outer"));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -258,10 +252,10 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   if ( GetPermission( codebase, PERM_TYPE_PLAYBACK_CONTROL, PREF_PLAYBACK_CONTROL ) ||
        GetPermission( codebase, PERM_TYPE_PLAYBACK_READ, PREF_PLAYBACK_READ ) ||
        GetPermission( codebase, PERM_TYPE_LIBRARY_READ, PREF_LIBRARY_READ ) ) {
-    LOG(( "sbSecurityMixin::CanCreateWrapper - Permission GRANTED!!!" ));
+    LOG(("sbSecurityMixin::CanCreateWrapper - Permission GRANTED!!!"));
     *_retval = SB_CloneAllAccess();
   } else {
-    LOG(( "sbSecurityMixin::CanCreateWrapper - Permission DENIED (looser)!!!" ));
+    LOG(("sbSecurityMixin::CanCreateWrapper - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -294,10 +288,10 @@ sbSecurityMixin::CanCallMethod(const nsIID *aIID, const PRUnichar *aMethodName, 
   }
 
   if ( GetPermissionForScopedName(method) ) {
-    LOG(( "sbSecurityMixin::CanCallMethod - Permission GRANTED!!!" ));
+    LOG(("sbSecurityMixin::CanCallMethod - Permission GRANTED!!!"));
     *_retval = SB_CloneAllAccess();
   } else {
-    LOG(( "sbSecurityMixin::CanCallMethod - Permission DENIED (looser)!!!" ));
+    LOG(("sbSecurityMixin::CanCallMethod - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -331,10 +325,10 @@ sbSecurityMixin::CanGetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   }
 
   if ( GetPermissionForScopedName(prop) ) {
-    LOG(( "sbSecurityMixin::CanGetProperty - Permission GRANTED!!!" ));
+    LOG(("sbSecurityMixin::CanGetProperty - Permission GRANTED!!!"));
     *_retval = SB_CloneAllAccess();
   } else {
-    LOG(( "sbSecurityMixin::CanGetProperty - Permission DENIED (looser)!!!" ));
+    LOG(("sbSecurityMixin::CanGetProperty - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -368,10 +362,10 @@ sbSecurityMixin::CanSetProperty(const nsIID *aIID, const PRUnichar *aPropertyNam
   }
 
   if ( GetPermissionForScopedName(prop) ) {
-    LOG(( "sbSecurityMixin::CanSetProperty - Permission GRANTED!!!" ));
+    LOG(("sbSecurityMixin::CanSetProperty - Permission GRANTED!!!"));
     *_retval = SB_CloneAllAccess();
   } else {
-    LOG(( "sbSecurityMixin::CanSetProperty - Permission DENIED (looser)!!!" ));
+    LOG(("sbSecurityMixin::CanSetProperty - Permission DENIED (looser)!!!"));
     *_retval = nsnull;
     return NS_ERROR_FAILURE;
   }
@@ -396,20 +390,20 @@ sbSecurityMixin::GetCodebase(nsIURI **aCodebase) {
   secman->GetSubjectPrincipal( getter_AddRefs(principal) );
 
   if (!principal) {
-    LOG(( "sbSecurityMixin::GetCodebase -- Error: No Subject Principal." ));
+    LOG(("sbSecurityMixin::GetCodebase -- Error: No Subject Principal."));
     *aCodebase = nsnull;
     return NS_OK;
   }
-  LOG(( "sbSecurityMixin::GetCodebase -- Have Subject Principal." ));
+  LOG(("sbSecurityMixin::GetCodebase -- Have Subject Principal."));
 
 #ifdef PR_LOGGING
   nsCOMPtr<nsIPrincipal> systemPrincipal;
   secman->GetSystemPrincipal( getter_AddRefs(systemPrincipal) );
 
   if (principal == systemPrincipal) {
-    LOG(( "sbSecurityMixin::GetCodebase -- System Principal." ));
+    LOG(("sbSecurityMixin::GetCodebase -- System Principal."));
   } else {
-    LOG(( "sbSecurityMixin::GetCodebase -- Not System Principal." ));
+    LOG(("sbSecurityMixin::GetCodebase -- Not System Principal."));
   }
 #endif
 
@@ -417,7 +411,7 @@ sbSecurityMixin::GetCodebase(nsIURI **aCodebase) {
   principal->GetDomain( getter_AddRefs(codebase) );
 
   if (!codebase) {
-    LOG(( "sbSecurityMixin::GetCodebase -- no codebase from domain, getting it from URI." ));
+    LOG(("sbSecurityMixin::GetCodebase -- no codebase from domain, getting it from URI."));
     principal->GetURI( getter_AddRefs(codebase) );
   }
 
@@ -438,7 +432,7 @@ sbSecurityMixin::GetScopedName(nsTArray<nsCString> &aStringArray,
   nsCOMPtr<nsIStringEnumerator> methods = new sbTArrayStringEnumerator(&aStringArray);
   NS_ENSURE_TRUE( methods, PR_FALSE );
 
-  while ( NS_SUCCEEDED(methods->GetNext(method)) ) {
+  while ( NS_SUCCEEDED( methods->GetNext(method) ) ) {
     LOG(( "    -- checking method: %s", NS_ConvertUTF16toUTF8(method).get() ));
     if ( StringEndsWith( method, aMethodName ) ) {
       aScopedName = method;
@@ -482,12 +476,6 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
     // if the current scope is in the table then use the values in the table
     // to get permission
     allowed = GetPermission( codebase, scope->permission, scope->blocked_pref );
-  }
-  else if ( StringBeginsWith( aScopedName, NS_LITERAL_STRING("download:") ) ) {
-    // XXXredfive - use the library prefs for downloads for now. Larger
-    //              re-ordering of which pref goes with which call is planned
-    //              for soon. This will do for now.
-    allowed = GetPermission( codebase, PERM_TYPE_LIBRARY_WRITE, PREF_LIBRARY_WRITE );
   }
   else if ( StringBeginsWith( aScopedName, NS_LITERAL_STRING("site:") ) ) {
     // site library methods are always cleared
@@ -541,7 +529,8 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
 const struct Scope*
 sbSecurityMixin::GetScopeForScopedName(const nsAString &aScopedName) {
   for (unsigned i=0; i<NS_ARRAY_LENGTH(sScopes); i++) {
-    nsAutoString prefix( NS_ConvertUTF8toUTF16( sScopes[i].prefix ) );
+    NS_ConvertUTF8toUTF16 prefix( sScopes[i].name );
+    prefix.AppendLiteral(":");
     if( StringBeginsWith( aScopedName, prefix ) ) {
       return &sScopes[i];
     }
@@ -598,13 +587,13 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAP
     LOG(( "sbSecurityMixin::GetPermission() - action not blocked" ));
     // action not blocked, make sure domain isn't blocked explicitly
     if ( perms != nsIPermissionManager::DENY_ACTION ) {
-      LOG(( "sbSecurityMixin::GetPermission - Permission GRANTED!!!" ));
+      LOG(("sbSecurityMixin::GetPermission - Permission GRANTED!!!"));
       return PR_TRUE;
     }
   }
 
   // Negative Ghostrider, pattern is full.
-  LOG(( "sbSecurityMixin::GetPermission - Permission DENIED (looooooser)!!!" ));
+  LOG(("sbSecurityMixin::GetPermission - Permission DENIED (looooooser)!!!"));
   return PR_FALSE;
 }
 
@@ -626,9 +615,9 @@ sbSecurityMixin::DispatchNotificationEvent(const char* aNotificationType)
   if ( mNotificationDocument ) {
     LOG(( "sbSecurityMixin::DispatchNotificationEvent - dispatching event" ));
     return sbRemotePlayer::DispatchEvent( mNotificationDocument,
-                                         RAPI_EVENT_CLASS,
-                                         RAPI_EVENT_TYPE,
-                                         PR_TRUE );
+                                          RAPI_EVENT_CLASS,
+                                          RAPI_EVENT_TYPE,
+                                          PR_TRUE );
   } else {
     LOG(( "sbSecurityMixin::DispatchNotificationEvent - not dispatching event" ));
     NS_WARNING( "sbSecurityMixin::DispatchNotificationEvent didn't have a notification document to dispatch to" );
