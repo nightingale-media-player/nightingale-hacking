@@ -165,7 +165,7 @@ CPlaylistReaderManager.prototype =
       // Remember the original url.
       this.originalURI = aURI;
 
-      var browser = Cc["@mozilla.org/embedding/browser/nsWebBrowser;1"]
+      var browser = Cc["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
                       .createInstance(Ci.nsIWebBrowserPersist);
 
       if(!browser) return -1;
