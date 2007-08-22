@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<html lang="en">
+<head>
+  <title>Remote API Test: free state</title>
+</head>
+<body>
+  <h1>Excercise the Remote Library API</h1>
+  <script type="text/javascript"><!--
+    function getstate() {
+      var ta = document.getElementById('ta');
+      ta.innerHTML = '';
+      var props = ['playing', 'paused', 'repeat', 'shuffle', 'position', 'volume', 'mute'];
+      for (var i=0; i<props.length; i++) {
+        ta.innerHTML = ta.innerHTML +
+            'songbird.' + props[i] + '=' + songbird[props[i]] + '\n';
+      }
+    }
+  // --> </script>
+  <p>Songbird should expose a bunch of state to any web page out there.</p>
+  <p><button onclick="getstate()">Get State</button></p>
+  <p><textarea id="ta" style="width:100%;height:50%">click the button</textarea></p>
+</body>
+</html>

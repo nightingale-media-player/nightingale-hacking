@@ -100,16 +100,17 @@ static PRLogModuleInfo* gRemotePlayerLog = nsnull;
 
 static NS_DEFINE_CID(kRemotePlayerCID, SONGBIRD_REMOTEPLAYER_CID);
 
-const static char* sPublicWProperties[] = {""};
+const static char* sPublicWProperties[] =
+  { "playback_control:position" };
 
 const static char* sPublicRProperties[] =
-  { "playback_read:playing",
-    "playback_read:paused",
-    "playback_read:repeat",
-    "playback_read:shuffle",
-    "playback_read:position",
-    "playback_read:volume",
-    "playback_read:mute",
+  { "site:playing",
+    "site:paused",
+    "site:repeat",
+    "site:shuffle",
+    "site:position",
+    "site:volume",
+    "site:mute",
     "site:name",
     "library_read:playlists",
     "library_read:webLibrary",
@@ -886,6 +887,23 @@ sbRemotePlayer::GetPosition( PRInt64 *aPosition )
     NS_ENSURE_SUCCESS( rv, rv );
   }
   return mdrPosition->GetIntValue(aPosition);
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::SetPosition( PRInt64 aPosition )
+{
+  LOG(("sbRemotePlayer::SetPosition()"));
+  NS_ENSURE_ARG_POINTER(aPosition);
+  if (!mdrPosition) {
+    nsresult rv;
+    mdrPosition = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+                                     &rv );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = mdrPosition->Init( NS_LITERAL_STRING("metadata.position"),
+                            SB_PREFS_ROOT );
+    NS_ENSURE_SUCCESS( rv, rv );
+  }
+  return mdrPosition->SetIntValue(aPosition);
 }
 
 NS_IMETHODIMP
