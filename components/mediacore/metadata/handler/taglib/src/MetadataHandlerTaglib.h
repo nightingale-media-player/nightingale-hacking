@@ -104,6 +104,21 @@ class sbMetadataHandlerTaglib : public sbIMetadataHandler,
                                 public sbISeekableChannelListener
 {
     /*
+     * Taglib metadata handler configuration.
+     *
+     *   MAX_SCAN_BYTES         Maximum number of bytes to scan for tags.
+     *
+     *   The taglib library scans files looking for various markers such as tag
+     * markers and frame markers.  In order to prevent scanning the entirety of
+     * files that are corrupt or not of the expected format, the number of
+     * scanned bytes is limited to the value specified by MAX_SCAN_BYTES.  If
+     * this value is set to 0, the entire file will be scanned until a valid
+     * marker is found.
+     */
+
+    static const long MAX_SCAN_BYTES = 100000;
+
+    /*
      * mpTagLibChannelFileIOManager
      *                          TagLib sbISeekableChannel file IO manager.
      * mpFileProtocolHandler    File protocol handler instance.
