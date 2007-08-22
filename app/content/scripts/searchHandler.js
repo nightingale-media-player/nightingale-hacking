@@ -540,7 +540,7 @@ const gSearchHandler = {
    */
   _isPlaylistShowing: function SearchHandler__isPlaylistShowing() {
     var url = gBrowser.mCurrentBrowser.currentURI.spec;
-    return url.indexOf("sb-library-page") >= 0;
+    return url.indexOf("sbLibraryPage") >= 0;
   },  
    
    

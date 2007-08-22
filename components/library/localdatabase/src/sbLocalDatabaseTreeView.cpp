@@ -2721,7 +2721,9 @@ sbLocalDatabaseTreeSelection::CheckIsSelectAll(PRBool* _retval)
   // no rows, or only the first row, this is an all selection
   if (mAllRow) {
     if (isSelectAll || rangeCount == 0 || isFirstRowSelected) {
+      mTreeView->mSelectionChanging = PR_TRUE;
       rv = mSelection->Select(0);
+      mTreeView->mSelectionChanging = PR_FALSE;
       NS_ENSURE_SUCCESS(rv, rv);
 
       isSelectAll = PR_TRUE;

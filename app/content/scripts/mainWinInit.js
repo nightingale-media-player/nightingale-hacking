@@ -39,7 +39,7 @@ var thePollPlaylistService = null;
 
 var gServicePane = null;
 
-
+window.gBrowser = document.getElementById("frame_main_pane");
 
 //
 // Module specific auto-init/deinit support

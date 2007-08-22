@@ -97,11 +97,12 @@ function runTest () {
                   new StringArrayEnumerator(["ac"]),
                   true);
   assertEqual(array.length, 47);
+
   // Add another search
   array.addFilter("http://songbirdnest.com/data/1.0#albumName",
-                  new StringArrayEnumerator(["back"]),
+                  new StringArrayEnumerator(["high"]),
                   true);
-  assertEqual(array.length, 10);
+  assertEqual(array.length, 57);
   array.clearFilters();
 
   // Full library, mixed property filter and search
@@ -167,6 +168,7 @@ function runTest () {
                   new StringArrayEnumerator(["ac"]),
                   true);
   assertEqual(array.length, 10);
+
   // Add another search
   array.addFilter("http://songbirdnest.com/data/1.0#albumName",
                   new StringArrayEnumerator(["back"]),

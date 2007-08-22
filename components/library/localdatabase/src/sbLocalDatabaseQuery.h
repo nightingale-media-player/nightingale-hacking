@@ -60,15 +60,14 @@ public:
 
 private:
   struct sbAddJoinInfo {
-    sbAddJoinInfo(sbISQLSelectBuilder* aBuilder, PRUint32* aJoinNum) :
-      builder(aBuilder),
-      joinNum(aJoinNum)
-    {};
+    sbAddJoinInfo(sbISQLSelectBuilder* aBuilder) :
+      builder(aBuilder)
+    {
+      NS_ASSERTION(aBuilder, "aBuilder is null");
+    };
 
-    // No nsCOMPtr here since builder will stick around for the lifetime of
-    // the struct
-    sbISQLSelectBuilder* builder;
-    PRUint32* joinNum;
+    nsCOMPtr<sbISQLSelectBuilder> builder;
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
   };
 
   nsresult AddCountColumns();
@@ -105,6 +104,7 @@ private:
   nsCOMPtr<sbISQLSelectBuilder> mBuilder;
   PRBool mIsFullLibrary;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
+  PRBool mHasSearch;
 };
 
 #endif /* __SBLOCALDATABASEQUERY_H__ */
