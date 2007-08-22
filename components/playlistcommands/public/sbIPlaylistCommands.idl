@@ -33,6 +33,10 @@ interface sbIPlaylistCommandsContext;
 interface sbIMediaItem;
 interface nsISimpleEnumerator;
 
+/** \addtogroup playlistcommands Playlist Commands 
+ * \@{
+ */
+
 /**
 * \interface sbIPlaylistCommands sbIPlaylistCommands.h
 * \brief An interface that represents the set of command buttons and context menu items available on a displayed playlist.
@@ -408,6 +412,8 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \param aPlaylistType The arbitrary type string to register against
   * \param aCommandObj The command object instance to be used for these playlists
   * \sa sbIPlaylistCommands, unregisterPlaylistCommands, playlist.xml
+  * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154
+  * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627
   */
   void registerPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
   
@@ -418,6 +424,8 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \param aPlaylistType The type string that was used to register the sbIPlaylistCommand
   * \param aCommandObj The command object that was registered
   * \sa sbIPlaylistCommands, registerPlaylistCommands, playlist.xml
+  * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L194
+  * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L736
   */
   void unregisterPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
   
@@ -452,6 +460,7 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \param aPlaylistType The arbitrary type string to register against
   * \param aCommandObj The command object instance to be used for these playlists
   * \sa sbIPlaylistCommands, unregisterPlaylistCommands, playlist.xml
+  * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L681
   */
   void registerPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
   
@@ -462,6 +471,7 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \param aPlaylistType The type string that was used to register the sbIPlaylistCommand
   * \param aCommandObj The command object that was registered
   * \sa sbIPlaylistCommands, registerPlaylistCommands, playlist.xml
+  * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L741
   */
   void unregisterPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
   
@@ -482,9 +492,45 @@ interface sbIPlaylistCommandsManager : nsISupports
   */
   nsISimpleEnumerator getPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType );
 
+  /**
+  * \brief Publish an sbIPlaylistCommands interface for public consumption
+  *
+  * An sbIPlaylistCommands interface may be published so that third party code
+  * may reuse them in their own command sets.
+  *
+  * \param aCommandGUID The GUID identifying this command interface
+  * \param aCommandObj The interface to publish
+  * \sa request, withdraw, kPlaylistCommands.jsm, sbIPlaylistCommands
+  * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L539
+  */
   void publish( in AString aCommandGUID, in sbIPlaylistCommands aCommandObj );
+
+  /**
+  * \brief Withdraw a previously published sbIPlaylistCommands interface
+  *
+  * Note that the original interface must be passed to this function for the
+  * call to succeed. Since calling request() returns a copy of the interface
+  * rather than the original interface itself, it means that you cannot withdraw 
+  * someone else's interface unless you have access to it directly.
+  *
+  * \param aCommandGUID The GUID identifying this command interface
+  * \param aCommandObj The interface to withdraw
+  * \sa publish, request, kPlaylistCommands.jsm, sbIPlaylistCommands
+  * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L694
+  */
   void withdraw( in AString aCommandGUID, in sbIPlaylistCommands aCommandObj );
+
+  /**
+  * \brief Request a copy of a published sbIPlaylistCommands interface
+  *
+  * \param aCommandGUID The GUID identifying this command interface
+  * \return A copy of the requested interface, or null if that interface is not
+  * in the manager's repository.
+  * \sa publish, withdraw, kPlaylistCommands.jsm, sbIPlaylistCommands
+  * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L130
+  */
   sbIPlaylistCommands request( in AString aContextGUID );
 };
 
+/** @} */ // end of playlistcommands group
 
