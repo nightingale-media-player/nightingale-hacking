@@ -30,7 +30,7 @@
  * \sa sbILibraryFactory.idl, sbILibraryManager.idl
  */
 
-#include "sbIMediaList.idl"
+#include "sbILibraryResource.idl"
 
 interface nsIArray;
 interface nsIChannel;
@@ -40,6 +40,7 @@ interface nsIURI;
 interface sbIDevice;
 interface sbILibraryFactory;
 interface sbIMediaItem;
+interface sbIMediaList;
 interface sbIMediaListFactory;
 
 /**
@@ -74,8 +75,8 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(ab5b8231-bb9d-4c24-9457-c0ddaba2efc0)]
-interface sbILibrary : sbIMediaList
+[scriptable, uuid(3e6f268a-0eb7-4c3a-bcfa-075058141ca5)]
+interface sbILibrary : sbILibraryResource
 {
   /**
    * \brief Reference to the device that this library is stored on
@@ -130,7 +131,7 @@ interface sbILibrary : sbIMediaList
    *
    * \param aType - The type of media list to create.
    * \param aSource - A media list whose items and properties are to be copied.
-   *
+   * 
    * \return A new media list.
    */
   sbIMediaList copyMediaList(in AString aType,
@@ -199,3 +200,4 @@ interface sbILibrary : sbIMediaList
                                   in nsIArray aURIArray,
                                   [optional] in nsIArray aPropertyArrayArray);
 };
+

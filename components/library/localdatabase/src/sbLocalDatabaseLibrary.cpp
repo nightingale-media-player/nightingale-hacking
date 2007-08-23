@@ -124,6 +124,82 @@ static char* kInsertQueryColumns[] = {
   "media_list_type_id"
 };
 
+/* static */ PLDHashOperator PR_CALLBACK
+NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType aKey,
+                             sbMediaItemArray* aEntry,
+                             void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  nsCOMPtr<sbIMediaList> list = static_cast<sbIMediaList*>(aUserData);
+  NS_ENSURE_TRUE(list, PL_DHASH_STOP);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  PRUint32 count = aEntry->Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(aEntry->ObjectAt(i), &rv);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    rv = simple->NotifyListenersBeforeItemRemoved(list, item);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  }
+
+  return PL_DHASH_NEXT;
+}
+
+/* static */ PLDHashOperator PR_CALLBACK
+NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
+                            sbMediaItemArray* aEntry,
+                            void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  nsCOMPtr<sbIMediaList> list = static_cast<sbIMediaList*>(aUserData);
+  NS_ENSURE_TRUE(list, PL_DHASH_STOP);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  PRUint32 count = aEntry->Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(aEntry->ObjectAt(i), &rv);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    rv = simple->NotifyListenersAfterItemRemoved(list, item);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  }
+
+  return PL_DHASH_NEXT;
+}
+
+/* static */ PLDHashOperator PR_CALLBACK
+EntriesToMediaListArray(nsISupportsHashKey* aEntry,
+                        void* aUserData)
+{
+  NS_ASSERTION(aEntry, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null entry in the hash?!");
+
+  sbMediaListArray* array =
+    static_cast<sbMediaListArray*>(aUserData);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aEntry->GetKey(), &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  PRBool success = array->AppendObject(list);
+  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
 NS_IMPL_ISUPPORTS1(sbLibraryInsertingEnumerationListener,
                    sbIMediaListEnumerationListener)
 
@@ -275,8 +351,7 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   rv = mFriendLibrary->GetContainingLists(&mNotificationList, &lists, &map);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  map.EnumerateRead(sbLocalDatabaseLibrary::NotifyListsBeforeItemRemoved,
-                    libraryList);
+  map.EnumerateRead(NotifyListsBeforeItemRemoved, libraryList);
 
   PRUint32 count = mNotificationList.Count();
   for (PRUint32 i = 0; i < count; i++) {
@@ -324,8 +399,7 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   }
 
   // Notify simple media lists after removal
-  map.EnumerateRead(sbLocalDatabaseLibrary::NotifyListsAfterItemRemoved,
-                    libraryList);
+  map.EnumerateRead(NotifyListsAfterItemRemoved, libraryList);
 
   // Notify our listeners of after removal
   for (PRUint32 i = 0; i < count; i++) {
@@ -1678,8 +1752,7 @@ sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem,
   nsresult rv = GetContainingLists(&singleItem, &lists, &map);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  map.EnumerateRead(sbLocalDatabaseLibrary::NotifyListsItemUpdated,
-                    aProperties);
+  map.EnumerateRead(NotifyListsItemUpdated, aProperties);
 
   // Also notify explicity registered listeners
   sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(this,
@@ -1720,83 +1793,6 @@ sbLocalDatabaseLibrary::NotifyListsItemUpdated(nsISupportsHashKey::KeyType aKey,
 
   return PL_DHASH_NEXT;
 }
-
-/* static */ PLDHashOperator PR_CALLBACK
-sbLocalDatabaseLibrary::NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType aKey,
-                                                     sbMediaItemArray* aEntry,
-                                                     void* aUserData)
-{
-  NS_ASSERTION(aEntry, "Null entry in the hash?!");
-  NS_ASSERTION(aUserData, "Null userData!");
-
-  nsCOMPtr<sbIMediaList> list = static_cast<sbIMediaList*>(aUserData);
-  NS_ENSURE_TRUE(list, PL_DHASH_STOP);
-
-  nsresult rv;
-  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-  PRUint32 count = aEntry->Count();
-  for (PRUint32 i = 0; i < count; i++) {
-    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
-      do_QueryInterface(aEntry->ObjectAt(i), &rv);
-    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-    rv = simple->NotifyListenersBeforeItemRemoved(list, item);
-    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-  }
-
-  return PL_DHASH_NEXT;
-}
-
-/* static */ PLDHashOperator PR_CALLBACK
-sbLocalDatabaseLibrary::NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
-                                                    sbMediaItemArray* aEntry,
-                                                    void* aUserData)
-{
-  NS_ASSERTION(aEntry, "Null entry in the hash?!");
-  NS_ASSERTION(aUserData, "Null userData!");
-
-  nsCOMPtr<sbIMediaList> list = static_cast<sbIMediaList*>(aUserData);
-  NS_ENSURE_TRUE(list, PL_DHASH_STOP);
-
-  nsresult rv;
-  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-  PRUint32 count = aEntry->Count();
-  for (PRUint32 i = 0; i < count; i++) {
-    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
-      do_QueryInterface(aEntry->ObjectAt(i), &rv);
-    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-    rv = simple->NotifyListenersAfterItemRemoved(list, item);
-    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-  }
-
-  return PL_DHASH_NEXT;
-}
-
-/* static */ PLDHashOperator PR_CALLBACK
-sbLocalDatabaseLibrary::EntriesToMediaListArray(nsISupportsHashKey* aEntry,
-                                                void* aUserData)
-{
-  NS_ASSERTION(aEntry, "Null entry in the hash?!");
-  NS_ASSERTION(aUserData, "Null entry in the hash?!");
-
-  sbMediaListArray* array =
-    static_cast<sbMediaListArray*>(aUserData);
-
-  nsresult rv;
-  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aEntry->GetKey(), &rv);
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-  PRBool success = array->AppendObject(list);
-  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
-
-  return PL_DHASH_NEXT;
-}
-
 
 /**
  * See sbILibrary
@@ -2677,37 +2673,6 @@ sbLocalDatabaseLibrary::GetNativeLibrary(sbLocalDatabaseLibrary** aLocalDatabase
   NS_ENSURE_ARG_POINTER(aLocalDatabaseLibrary);
   *aLocalDatabaseLibrary = this;
   return NS_OK;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::GetContentSrc(nsIURI** aContentSrc)
-{
-  NS_ENSURE_ARG_POINTER(aContentSrc);
-
-  if (!mContentSrc) {
-    nsString guid;
-    nsresult rv = GetGuid(guid);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCString url("songbird-library://");
-    url.Append(NS_ConvertUTF16toUTF8(guid));
-
-    rv = NS_NewURI(getter_AddRefs(mContentSrc), url);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_ADDREF(*aContentSrc = mContentSrc);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::SetContentSrc(nsIURI* aContentSrc)
-{
-  // The contentSrc attribute cannot be modified on a library.
-  return NS_ERROR_FAILURE;
 }
 
 /**
