@@ -61,20 +61,6 @@ typedef nsCOMArray<sbIMediaList> sbMediaListArray;
 typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
         sbMediaItemToListsMap;
 
-static PLDHashOperator PR_CALLBACK
-  NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType aKey,
-                               sbMediaItemArray* aEntry,
-                               void* aUserData);
-
-static PLDHashOperator PR_CALLBACK
-  NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
-                              sbMediaItemArray* aEntry,
-                              void* aUserData);
-
-static PLDHashOperator PR_CALLBACK
-  EntriesToMediaListArray(nsISupportsHashKey* aEntry,
-                          void* aUserData);
-
 // These are the methods from sbLocalDatabaseMediaListBase that we're going to
 // override in sbLocalDatabaseLibrary. Most of them are from sbIMediaList.
 #define SB_DECL_MEDIALISTBASE_OVERRIDES                                         \
@@ -90,6 +76,45 @@ static PLDHashOperator PR_CALLBACK
   NS_IMETHOD Clear();                                                           \
   NS_IMETHOD CreateView(sbIMediaListView** _retval);                            \
   /* nothing */
+
+#define SB_DECL_SBIMEDIAITEM_OVERRIDES                                          \
+  NS_IMETHOD GetContentSrc(nsIURI** aContentSrc);                               \
+  NS_IMETHOD SetContentSrc(nsIURI* aContentSrc);                                \
+  /* nothing */
+
+#define SB_FORWARD_SBIMEDIAITEM(_to) \
+  NS_IMETHOD GetLibrary(sbILibrary * *aLibrary) { return _to GetLibrary(aLibrary); } \
+  NS_IMETHOD GetIsMutable(PRBool *aIsMutable) { return _to GetIsMutable(aIsMutable); } \
+  NS_IMETHOD GetMediaCreated(PRInt64 *aMediaCreated) { return _to GetMediaCreated(aMediaCreated); } \
+  NS_IMETHOD SetMediaCreated(PRInt64 aMediaCreated) { return _to SetMediaCreated(aMediaCreated); } \
+  NS_IMETHOD GetMediaUpdated(PRInt64 *aMediaUpdated) { return _to GetMediaUpdated(aMediaUpdated); } \
+  NS_IMETHOD SetMediaUpdated(PRInt64 aMediaUpdated) { return _to SetMediaUpdated(aMediaUpdated); } \
+  NS_IMETHOD GetContentLength(PRInt64 *aContentLength) { return _to GetContentLength(aContentLength); } \
+  NS_IMETHOD SetContentLength(PRInt64 aContentLength) { return _to SetContentLength(aContentLength); } \
+  NS_IMETHOD GetContentType(nsAString & aContentType) { return _to GetContentType(aContentType); } \
+  NS_IMETHOD SetContentType(const nsAString & aContentType) { return _to SetContentType(aContentType); } \
+  NS_IMETHOD TestIsAvailable(nsIObserver *aObserver) { return _to TestIsAvailable(aObserver); } \
+  NS_IMETHOD OpenInputStreamAsync(nsIStreamListener *aListener, nsISupports *aContext, nsIChannel **_retval) { return _to OpenInputStreamAsync(aListener, aContext, _retval); } \
+  NS_IMETHOD OpenInputStream(nsIInputStream **_retval) { return _to OpenInputStream(_retval); } \
+  NS_IMETHOD OpenOutputStream(nsIOutputStream **_retval) { return _to OpenOutputStream(_retval); } \
+  NS_IMETHOD ToString(nsAString & _retval) { return _to ToString(_retval); }
+
+#define SB_FORWARD_SBIMEDIALIST(_to) \
+  NS_IMETHOD GetName(nsAString & aName) { return _to GetName(aName); } \
+  NS_IMETHOD SetName(const nsAString & aName) { return _to SetName(aName); } \
+  NS_IMETHOD GetLength(PRUint32 *aLength) { return _to GetLength(aLength); } \
+  NS_IMETHOD GetIsEmpty(PRBool *aIsEmpty) { return _to GetIsEmpty(aIsEmpty); } \
+  NS_IMETHOD GetItemByIndex(PRUint32 aIndex, sbIMediaItem **_retval) { return _to GetItemByIndex(aIndex, _retval); } \
+  NS_IMETHOD EnumerateAllItems(sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return _to EnumerateAllItems(aEnumerationListener, aEnumerationType); } \
+  NS_IMETHOD EnumerateItemsByProperty(const nsAString & aPropertyName, const nsAString & aPropertyValue, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return _to EnumerateItemsByProperty(aPropertyName, aPropertyValue, aEnumerationListener, aEnumerationType); } \
+  NS_IMETHOD EnumerateItemsByProperties(sbIPropertyArray *aProperties, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return _to EnumerateItemsByProperties(aProperties, aEnumerationListener, aEnumerationType); } \
+  NS_IMETHOD IndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return _to IndexOf(aMediaItem, aStartFrom, _retval); } \
+  NS_IMETHOD LastIndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return _to LastIndexOf(aMediaItem, aStartFrom, _retval); } \
+  NS_IMETHOD AddListener(sbIMediaListListener *aListener, PRBool aOwnsWeak, PRUint32 aFlags, sbIPropertyArray *aPropertyFilter) { return _to AddListener(aListener, aOwnsWeak, aFlags, aPropertyFilter); } \
+  NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return _to RemoveListener(aListener); } \
+  NS_IMETHOD BeginUpdateBatch(void) { return _to BeginUpdateBatch(); } \
+  NS_IMETHOD EndUpdateBatch(void) { return _to EndUpdateBatch(); } \
+  NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyName, nsIStringEnumerator **_retval) { return _to GetDistinctValuesForProperty(aPropertyName, _retval); }
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
                                public sbIDatabaseSimpleQueryCallback,
@@ -144,10 +169,14 @@ public:
   NS_DECL_SBILOCALDATABASELIBRARY
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
+
   NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaListBase::)
+  SB_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaListBase::)
+  SB_FORWARD_SBIMEDIALIST(sbLocalDatabaseMediaListBase::)
 
   // Include our overrides.
   SB_DECL_MEDIALISTBASE_OVERRIDES
+  SB_DECL_SBIMEDIAITEM_OVERRIDES
 
   sbLocalDatabaseLibrary();
   ~sbLocalDatabaseLibrary();
@@ -199,6 +228,20 @@ private:
                            sbMediaItemArray* aEntry,
                            void* aUserData);
 
+  static PLDHashOperator PR_CALLBACK
+    NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType aKey,
+                                 sbMediaItemArray* aEntry,
+                                 void* aUserData);
+
+  static PLDHashOperator PR_CALLBACK
+    NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
+                                sbMediaItemArray* aEntry,
+                                void* aUserData);
+
+  static PLDHashOperator PR_CALLBACK
+    EntriesToMediaListArray(nsISupportsHashKey* aEntry,
+                            void* aUserData);
+
   nsresult RegisterDefaultMediaListFactories();
 
   nsresult DeleteDatabaseItem(const nsAString& aGuid);
@@ -228,6 +271,9 @@ private:
   // Location of the database file. This may be null to indicate that the file
   // lives in the default DBEngine database store.
   nsCOMPtr<nsIURI> mDatabaseLocation;
+
+  // A dummy uri that holds a special 'songbird-library://' url.
+  nsCOMPtr<nsIURI> mContentSrc;
 
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
@@ -403,4 +449,3 @@ private:
 };
 
 #endif /* __SBLOCALDATABASELIBRARY_H__ */
-

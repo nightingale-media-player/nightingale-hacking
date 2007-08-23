@@ -681,7 +681,7 @@ sbLocalDatabaseMediaItem::GetLibrary(sbILibrary** aLibrary)
 {
   nsresult rv;
   nsCOMPtr<sbILibrary> library =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbILibrary*, mLibrary), &rv);
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseLibrary*, mLibrary), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_IF_ADDREF(*aLibrary = library);
