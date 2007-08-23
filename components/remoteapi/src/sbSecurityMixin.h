@@ -70,7 +70,7 @@ protected:
   virtual ~sbSecurityMixin();
 
   // helpers for resolving the prefs and permissions
-  PRBool GetPermission(nsIURI *aURI, const char *aType, const char *aRAPIPref);
+  PRBool GetPermission(nsIURI *aURI, const struct Scope* aScope);
   PRBool GetPermissionForScopedName(const nsAString &aScopedName);
   PRBool GetScopedName(nsTArray<nsCString> &aStringArray,
                        const nsAString &aMethodName,

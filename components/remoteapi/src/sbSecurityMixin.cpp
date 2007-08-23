@@ -69,54 +69,16 @@ static const char* sNotificationStatus = "status";
 
 struct Scope {
   const char* name;
-  const char* permission;
-  const char* blocked_pref;
-  const char* notify_pref;
   const char* blocked_notification;
   const char* allowed_notification;
 };
 
 static const Scope sScopes[] = {
-  {
-    "playback_control",
-    "rapi.playback_control",
-    "playback_control_disable",
-    "songbird.rapi.playback_control_notify",
-    sNotificationHat,
-    sNotificationNone,
-  },
-  {
-    "playback_read",
-    "rapi.playback_read",
-    "playback_read_disable",
-    "songbird.rapi.playback_read_notify",
-    sNotificationHat,
-    sNotificationNone,
-  },
-  {
-    "library_read",
-    "rapi.library_read",
-    "library_read_disable",
-    "songbird.rapi.library_read_notify",
-    sNotificationHat,
-    sNotificationNone,
-  },
-  {
-    "library_write",
-    "rapi.library_write",
-    "library_write_disable",
-    "songbird.rapi.library_write_notify",
-    sNotificationAlert,
-    sNotificationStatus,
-  },
-  {
-    "library_create",
-    "rapi.library_create",
-    "library_create_disable",
-    "songbird.rapi.library_create_notify",
-    sNotificationAlert,
-    sNotificationStatus,
-  },
+  { "playback_control", sNotificationHat, sNotificationNone, },
+  { "playback_read", sNotificationHat, sNotificationNone, },
+  { "library_read", sNotificationHat, sNotificationNone, },
+  { "library_write", sNotificationAlert, sNotificationStatus, },
+  { "library_create", sNotificationAlert, sNotificationStatus, },
 };
 
 #define RAPI_EVENT_CLASS      NS_LITERAL_STRING("Events")
@@ -476,7 +438,7 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
   if (scope) {
     // if the current scope is in the table then use the values in the table
     // to get permission
-    allowed = GetPermission( codebase, scope->permission, scope->blocked_pref );
+    allowed = GetPermission( codebase, scope );
   }
   else if ( StringBeginsWith( aScopedName, NS_LITERAL_STRING("site:") ) ) {
     // site library methods are always cleared
@@ -496,8 +458,8 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
   if ( scope ) {
     const char* notification =
         allowed ? scope->allowed_notification : scope->blocked_notification;
-    LOG(( "sbSecurityMixin::GetPermissionsForScopedName() notification=%s notify_pref=%s",
-          notification, scope->notify_pref ));
+    LOG(( "sbSecurityMixin::GetPermissionsForScopedName() notification=%s",
+          notification ));
     if ( strcmp(notification, sNotificationNone) ) {
       // notification is not "none"
       
@@ -511,7 +473,10 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName)
       
       PRBool notify;
       // look up the pref
-      rv = prefService->GetBoolPref( scope->notify_pref, &notify );
+      nsCString prefKey("songbird.rapi.");
+      prefKey.Append(scope->name);
+      prefKey.AppendLiteral("_notify");
+      rv = prefService->GetBoolPref( prefKey.get(), &notify );
       NS_ENSURE_SUCCESS( rv, allowed );
       
       LOG(( "sbSecurityMixin::GetPermissionsForScopedName() pref value: %s",
@@ -540,17 +505,17 @@ sbSecurityMixin::GetScopeForScopedName(const nsAString &aScopedName) {
 }
 
 PRBool
-sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAPIPref )
+sbSecurityMixin::GetPermission(nsIURI *aURI, const struct Scope *aScope )
 {
   NS_ENSURE_TRUE( aURI, PR_FALSE );
-  NS_ENSURE_TRUE( aType, PR_FALSE );
-  NS_ENSURE_TRUE( aRAPIPref, PR_FALSE );
+  NS_ENSURE_TRUE( aScope, PR_FALSE );
+  NS_ENSURE_TRUE( aScope->name, PR_FALSE );
 
 #ifdef PR_LOGGING
   if (aURI) {
     nsCAutoString spec;
     aURI->GetSpec(spec);
-    LOG(( "sbSecurityMixin::GetPermission( %s, %s, %s)", spec.get(), aType, aRAPIPref ));
+    LOG(( "sbSecurityMixin::GetPermission( %s, %s)", spec.get(), aScope->name ));
   }
 #endif
 
@@ -561,8 +526,9 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAP
 
   // build the pref key to check
   PRBool prefBlocked = PR_TRUE;
-  nsCAutoString prefKey("songbird.rapi.");
-  prefKey += aRAPIPref;
+  nsCString prefKey("songbird.rapi.");
+  prefKey.Append(aScope->name);
+  prefKey.AppendLiteral("_disable");
 
   // get the pref value
   LOG(( "sbSecurityMixin::GetPermission() - asking for pref: %s", prefKey.get() ));
@@ -570,10 +536,12 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const char *aType, const char *aRAP
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
   // get the permission for the domain
+  nsCString permission_name("rapi.");
+  permission_name.Append(aScope->name);
   nsCOMPtr<nsIPermissionManager> permMgr( do_GetService( NS_PERMISSIONMANAGER_CONTRACTID, &rv ) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
   PRUint32 perms = nsIPermissionManager::UNKNOWN_ACTION;
-  rv = permMgr->TestPermission( aURI, aType, &perms );
+  rv = permMgr->TestPermission( aURI, permission_name.get(), &perms );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
   // check to see if the action is allowed for the domain
