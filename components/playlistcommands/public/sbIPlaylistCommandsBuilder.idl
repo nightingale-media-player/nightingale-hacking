@@ -99,9 +99,9 @@ var builder = new PlaylistCommandsBuilder();
 * function before application shutdown. Commands published using the publish() function 
 * should be withdrawn using the withdraw() function before application shutdown.
 *
-* All instantiated sbIPlaylistCommandsBuilder should have their shutdownCommands()
-* method called before application shutdown to ensure that no external reference
-* remains in their internal arrays.
+* All instantiated sbIPlaylistCommandsBuilder should have their shutdown() method 
+* called before application shutdown to ensure that no external reference remains 
+* in their internal arrays.
 *
 * Note that text parameters (labels, tooltiptexts) as well as keyboard shortcut
 * strings (key, keycode, modifiers) may take values such as "&value", which
@@ -109,7 +109,7 @@ var builder = new PlaylistCommandsBuilder();
 *
 * \sa sbIPlaylistCommands sbIPlaylistCommandsManager
 */
-[scriptable, uuid(9457e946-a41d-43ed-a558-b84d35bf6719)]
+[scriptable, uuid(a25dc598-5b2f-4570-8949-c6cc12ec7549)]
 interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands 
 {
   /**
@@ -639,6 +639,12 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   */
   void removeAllCommands();
 
+  /**
+  * \brief Shutdown the builder object, ensure that no external reference remains in its internal arrays
+  *
+  * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L200
+  */
+  void shutdown();
 };
 
 // ----------------------------------------------------------------------------

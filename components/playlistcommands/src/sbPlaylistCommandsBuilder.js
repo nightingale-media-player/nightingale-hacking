@@ -642,6 +642,17 @@ PlaylistCommandsBuilder.prototype = {
     }
   },
 
+  shutdown: function()
+  {
+    // empty arrays, remove any remaining sbIPlaylistCommands reference
+    // this also removes all references to item callback functions
+    this.removeAllCommands();
+    // but one callback function reference remains, the one for the entire 
+    // command set, reset it too
+    this.m_VisibleCallback = null;
+    // and forget context
+    this.m_Context = null;
+  },
 
 // ----------------------------------------------------------------------------  
 
@@ -1139,14 +1150,7 @@ PlaylistCommandsBuilder.prototype = {
         }
       }
     }
-    // empty arrays, remove any remaining sbIPlaylistCommands reference
-    // this also removes all references to item callback functions
-    this.removeAllCommands();
-    // but one callback function reference remains, the one for the entire 
-    // command set, reset it too
-    this.m_VisibleCallback = null;
-    // and forget context
-    this.m_Context = null;
+    this.shutdown();
   },
   
   setContext: function( context )
