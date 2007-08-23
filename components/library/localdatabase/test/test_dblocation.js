@@ -65,8 +65,8 @@ function runTest () {
   loadData(dbGUID, location);
   
   var testURI = newURI("file:///testitem");
-  var item1 = library.createMediaItem(testURI);
-  var item2 = library.createMediaItem(testURI);
+  var item1 = library.createMediaItem(testURI, null, true);
+  var item2 = library.createMediaItem(testURI, null, true);
   assertNotEqual(item1.guid, item2.guid);
 
   // Test that they items were added to the library

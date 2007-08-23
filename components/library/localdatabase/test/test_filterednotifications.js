@@ -193,7 +193,7 @@ function doSomethingThatFiresAllEvents(library) {
 
   library.beginUpdateBatch();
   library.endUpdateBatch();
-  var item = library.createMediaItem(newURI("http://foo.com/"));
+  var item = library.createMediaItem(newURI("http://foo.com/"), null, true);
   item.setProperty(SB_NS + "albumName", "foo");
   library.remove(item);
   library.clear();

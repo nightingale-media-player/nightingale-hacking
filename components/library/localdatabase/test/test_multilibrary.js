@@ -40,7 +40,7 @@ function runTest () {
   
   var uri = newURI("http://www.poot.com");
   
-  var item = one.createMediaItem(uri);
+  var item = one.createMediaItem(uri, null, true);
   assertTrue(one.length == 1);
   
   two.add(item);
@@ -52,7 +52,7 @@ function runTest () {
   
   var items = [];
   for (var i = 0; i < 10; i++) {
-    items.push(one.createMediaItem(uri));
+    items.push(one.createMediaItem(uri, null, true));
   }
   assertTrue(one.length == 10);
 

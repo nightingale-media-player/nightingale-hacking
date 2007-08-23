@@ -55,6 +55,8 @@ var CHUNK_SIZE = 200;
 var nextStartIndex = 0;
 var batchLoadsPending = 0;
 var closePending = false;
+var scanIsDone = false;
+var totalAdded = 0;
 
 function onLoad()
 {
@@ -118,7 +120,7 @@ function onPollScan()
   // Check to see if the scan is complete or if it has progressed past our
   // chunk size
   var count = aFileScanQuery.getFileCount();
-  var scanIsDone = !aFileScanQuery.isScanning();
+  scanIsDone = !aFileScanQuery.isScanning();
   if (count > 0 && (count - nextStartIndex > CHUNK_SIZE || scanIsDone)) {
 
     // Grab the next chunk of scanned tracks from the query
@@ -152,18 +154,6 @@ function onPollScan()
 
   if (scanIsDone) {
     clearInterval(polling_interval);
-    if (count > 0) {
-      theTitle.value = count + " " + SBString("media_scan.added", "Added");
-    }
-    else {
-      theTitle.value = SBString("media_scan.none", "Nothing");
-    }
-    theLabel.value = SBString("media_scan.complete", "Complete");
-    theProgress.removeAttribute( "mode" );
-    document.getElementById("button_ok").removeAttribute( "hidden" );
-    document.getElementById("button_ok").setAttribute( "disabled", "false" );
-    document.getElementById("button_ok").focus();
-    document.getElementById("button_cancel").setAttribute( "hidden", "true" );
   }
   else {
     var value = aFileScanQuery.getLastFileFound();
@@ -200,9 +190,27 @@ sbBatchCreateListener.prototype.onComplete =
 function sbBatchCreateListener_onComplete(aItemArray)
 {
   batchLoadsPending--;
+  totalAdded += aItemArray.length;
 
   // New items to be sent for metadata scanning.
-  appendToMetadataQueue( aItemArray );
+  if (aItemArray.length > 0) {
+    appendToMetadataQueue( aItemArray );
+  }
+
+  if (batchLoadsPending == 0 && scanIsDone) {
+    if (totalAdded > 0) {
+      theTitle.value = totalAdded + " " + SBString("media_scan.added", "Added");
+    }
+    else {
+      theTitle.value = SBString("media_scan.none", "Nothing");
+    }
+    theLabel.value = SBString("media_scan.complete", "Complete");
+    theProgress.removeAttribute( "mode" );
+    document.getElementById("button_ok").removeAttribute( "hidden" );
+    document.getElementById("button_ok").setAttribute( "disabled", "false" );
+    document.getElementById("button_ok").focus();
+    document.getElementById("button_cancel").setAttribute( "hidden", "true" );
+  }
 
   if (closePending && batchLoadsPending == 0) {
     onExit();

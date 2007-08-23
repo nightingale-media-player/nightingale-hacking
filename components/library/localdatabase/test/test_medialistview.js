@@ -55,13 +55,13 @@ function runTest () {
   var item1 = library.createMediaItem(newURI("file:///foo/1.mp3"));
   item1.setProperty("http://songbirdnest.com/data/1.0#artistName", "The Fall");
 
-  var item2 = library.createMediaItem(newURI("file:///foo/1.mp3"));
+  var item2 = library.createMediaItem(newURI("file:///foo/2.mp3"));
   item2.setProperty("http://songbirdnest.com/data/1.0#artistName", "The Dirtbombs");
 
-  var item3 = library.createMediaItem(newURI("file:///foo/1.mp3"));
+  var item3 = library.createMediaItem(newURI("file:///foo/3.mp3"));
   item3.setProperty("http://songbirdnest.com/data/1.0#artistName", "The Dirtbombs");
 
-  var item4 = library.createMediaItem(newURI("file:///foo/1.mp3"));
+  var item4 = library.createMediaItem(newURI("file:///foo/4.mp3"));
   item4.setProperty("http://songbirdnest.com/data/1.0#artistName", "Air");
 
   list = library.createMediaList("simple");

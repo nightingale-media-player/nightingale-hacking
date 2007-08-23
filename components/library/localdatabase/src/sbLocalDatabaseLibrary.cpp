@@ -225,7 +225,7 @@ NS_IMETHODIMP
 sbLibraryRemovingEnumerationListener::OnEnumerationBegin(sbIMediaList* aMediaList,
                                                          PRBool* _retval)
 {
-  // Prep the queryÄ
+  // Prep the query
   nsresult rv = mFriendLibrary->MakeStandardQuery(getter_AddRefs(mDBQuery));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -767,7 +767,7 @@ sbLocalDatabaseLibrary::CreateQueries()
   rv = insert->AddValueParameter();
   NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = insert->AddColumn(NS_LITERAL_STRING("obj"));
+  rv = insert->AddColumn(NS_LITERAL_STRING("obj"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = insert->AddValueParameter();
@@ -780,6 +780,29 @@ sbLocalDatabaseLibrary::CreateQueries()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = insert->ToString(mInsertPropertyQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Build mGetGuidsFromContentUrl
+  rv = builder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(),
+                          NS_LITERAL_STRING("guid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionParameter(EmptyString(),
+                                              NS_LITERAL_STRING("content_url"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mGetGuidsFromContentUrl);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1215,7 +1238,10 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
   // use a member variable because CreateMediaItem is an IDL method and
   // additional (optional) parameters are not allowed.
   mPreventAddedNotification = PR_TRUE;
-  rv = CreateMediaItem(contentUri, properties, getter_AddRefs(newItem));
+  rv = CreateMediaItem(contentUri,
+                       properties,
+                       PR_TRUE,
+                       getter_AddRefs(newItem));
   mPreventAddedNotification = PR_FALSE;
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1481,6 +1507,188 @@ sbLocalDatabaseLibrary::GetAllListsByType(const nsAString& aType,
 }
 
 nsresult
+sbLocalDatabaseLibrary::FilterExistingURIs(nsIArray* aURIs,
+                                           nsIArray** aFilteredURIs)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - FilterExistingURIs()", this));
+
+  NS_ASSERTION(aURIs, "aURIs is null");
+  NS_ASSERTION(aFilteredURIs, "aFilteredURIs is null");
+
+  nsresult rv;
+
+  PRUint32 length;
+  rv = aURIs->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIMutableArray> filtered =
+    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the incoming array is empty, do nothing
+  if (length == 0) {
+    NS_ADDREF(*aFilteredURIs = filtered);
+    return NS_OK;
+  }
+
+  nsInterfaceHashtable<nsCStringHashKey, nsIURI> uniques;
+  PRBool success = uniques.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query), PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLSelectBuilder> builder =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("content_url"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
+  rv = builder->CreateMatchCriterionIn(EmptyString(),
+                                       NS_LITERAL_STRING("content_url"),
+                                       getter_AddRefs(inCriterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(inCriterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 incount = 0;
+  for (PRUint32 i = 0; i < length; i++) {
+
+    nsCOMPtr<nsIURI> uri = do_QueryElementAt(aURIs, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCString spec;
+    rv = uri->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // We want to build a list of unique URIs, and also only add these unique
+    // URIs to the query
+    if (!uniques.Get(spec, nsnull)) {
+
+      success = uniques.Put(spec, uri);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+      rv = inCriterion->AddString(NS_ConvertUTF8toUTF16(spec));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      incount++;
+    }
+
+    if (incount > MAX_IN_LENGTH || i + 1 == length) {
+      nsAutoString sql;
+      rv = builder->ToString(sql);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = query->AddQuery(sql);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = inCriterion->Clear();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      incount = 0;
+    }
+
+  }
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Remove any found URIs from the unique list since they are duplicates
+  for (PRUint32 i = 0; i < rowCount; i++) {
+    nsString existingSpec;
+    rv = result->GetRowCell(i, 0, existingSpec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    uniques.Remove(NS_ConvertUTF16toUTF8(existingSpec));
+  }
+
+  // Finally, add the remaning URIs to the output array
+  uniques.EnumerateRead(AddValuesToArrayCallback, filtered);
+
+  NS_ADDREF(*aFilteredURIs = filtered);
+  return NS_OK;
+}
+
+/* static */ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseLibrary::AddValuesToArrayCallback(nsCStringHashKey::KeyType aKey,
+                                                 nsIURI* aEntry,
+                                                 void* aUserData)
+{
+  NS_ASSERTION(aEntry, "aEntry is null");
+  NS_ASSERTION(aUserData, "aUserData is null");
+
+  nsIMutableArray* array = static_cast<nsIMutableArray*>(aUserData);
+  NS_ENSURE_TRUE(array, PL_DHASH_STOP);
+
+  nsresult rv = array->AppendElement(aEntry, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+nsresult
+sbLocalDatabaseLibrary::GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID)
+{
+  NS_ASSERTION(aURI, "aURIs is null");
+
+  nsresult rv;
+
+  nsCString spec;
+  rv = aURI->GetSpec(spec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mGetGuidsFromContentUrl);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, NS_ConvertUTF8toUTF16(spec));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, dbresult);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (rowCount == 0) {
+    // The URI was not found
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  rv = result->GetRowCell(0, 0, aGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbLocalDatabaseLibrary::Shutdown()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
@@ -1685,6 +1893,8 @@ sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem,
   map.EnumerateRead(sbLocalDatabaseLibrary::NotifyListsItemUpdated,
                     aProperties);
 
+
+
   // Also notify explicity registered listeners
   sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(SB_IMEDIALIST_CAST(this),
                                                                aItem,
@@ -1874,12 +2084,11 @@ sbLocalDatabaseLibrary::Resolve(nsIURI* aUri,
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
                                         sbIPropertyArray* aProperties,
+                                        PRBool aAllowDuplicates,
                                         sbIMediaItem** _retval)
 {
   NS_ENSURE_ARG_POINTER(aUri);
   NS_ENSURE_ARG_POINTER(_retval);
-
-  // TODO: Check for duplicates?
 
   nsCAutoString spec;
   nsresult rv = aUri->GetSpec(spec);
@@ -1887,6 +2096,39 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
 
   TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateMediaItem(%s)", this,
          spec.get()));
+
+
+  // If we don't allow duplicates, check to see if there is already a media
+  // item with this uri.  If so, return it.
+  if (!aAllowDuplicates) {
+    nsresult rv;
+    nsCOMPtr<nsIMutableArray> array =
+      do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = array->AppendElement(aUri, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIArray> filtered;
+    rv = FilterExistingURIs(array, getter_AddRefs(filtered));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 length;
+    rv = filtered->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // The uri was filtered out, therefore it exists.  Get it and return it
+    if (length == 0) {
+      nsString guid;
+      rv = GetGuidFromContentURI(aUri, guid);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = GetMediaItem(guid, _retval);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_OK;
+    }
+  }
 
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = MakeStandardQuery(getter_AddRefs(query));
@@ -2328,20 +2570,29 @@ sbLocalDatabaseLibrary::Sync()
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::BatchCreateMediaItems(nsIArray* aURIArray,
                                               nsIArray* aPropertyArrayArray,
+                                              PRBool aAllowDuplicates,
                                               nsIArray** _retval)
 {
   NS_ENSURE_ARG_POINTER(aURIArray);
   NS_ENSURE_ARG_POINTER(_retval);
 
+  nsresult rv;
+
+  nsCOMPtr<nsIArray> filteredArray = aURIArray;
+  if (!aAllowDuplicates) {
+    rv = FilterExistingURIs(aURIArray, getter_AddRefs(filteredArray));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbBatchCreateHelper> helper(new sbBatchCreateHelper(this));
   NS_ENSURE_TRUE(helper, NS_ERROR_OUT_OF_MEMORY);
 
   // Set up the batch add query
-  rv = helper->InitQuery(query, aURIArray, aPropertyArrayArray);
+  rv = helper->InitQuery(query, filteredArray, aPropertyArrayArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Run the async query
@@ -2367,15 +2618,24 @@ sbLocalDatabaseLibrary::BatchCreateMediaItems(nsIArray* aURIArray,
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListener* aListener,
                                                    nsIArray* aURIArray,
-                                                   nsIArray* aPropertyArrayArray)
+                                                   nsIArray* aPropertyArrayArray,
+                                                   PRBool aAllowDuplicates)
 {
   NS_ENSURE_ARG_POINTER(aListener);
   NS_ENSURE_ARG_POINTER(aURIArray);
 
   TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsAsync()", this));
 
+  nsresult rv;
+
+  nsCOMPtr<nsIArray> filteredArray = aURIArray;
+  if (!aAllowDuplicates) {
+    rv = FilterExistingURIs(aURIArray, getter_AddRefs(filteredArray));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = query->SetAsyncQuery(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2392,7 +2652,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListe
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set up the batch add query
-  rv = helper->InitQuery(query, aURIArray, aPropertyArrayArray);
+  rv = helper->InitQuery(query, filteredArray, aPropertyArrayArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Run the async query

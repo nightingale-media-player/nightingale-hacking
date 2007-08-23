@@ -74,7 +74,7 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(ab5b8231-bb9d-4c24-9457-c0ddaba2efc0)]
+[scriptable, uuid(a1ae0a35-b86a-42e8-b1ba-e4807ac745c2)]
 interface sbILibrary : sbIMediaList
 {
   /**
@@ -109,10 +109,16 @@ interface sbILibrary : sbIMediaList
    * \brief Creates a new media item
    * \prarm aContentUri The URI pointing to the content of the new media item
    * \param aProperties Optional initial properties for this new item
+   * \param aAllowDuplicates If false, an attempt to create a new media item
+   *        with a content URI that already exists in the library will simply
+   *        return the existing item rather than creating a new one.  If true,
+   *        a new media item will be created with the specified content URI
+   *        regardless if it is a duplicate.  The default is false.
    * \return A new, persisted media item
    */
   sbIMediaItem createMediaItem(in nsIURI aContentUri,
-                               [optional] in sbIPropertyArray aProperties);
+                               [optional] in sbIPropertyArray aProperties,
+                               [optional] in boolean aAllowDuplicates);
 
   /**
    * \brief Creates a new media list
@@ -182,10 +188,15 @@ interface sbILibrary : sbIMediaList
    * \param aPropertyArrayArray Optional array of sbIPropertyArray.  If
    *        specified, the properties specified at each array index will be
    *        used in the creation of the new media item at the same array index.
+   * \param aAllowDuplicates If false, URIs specified in aURIArray that
+   *        already exist in the library will not be created and not returned.
+   *        If true, media items will be created for all of the URIs specified
+   *        regardless if they already exist.  The default is false.
    * \return nsIArray of the new sbIMediaItem objects
    */
   nsIArray batchCreateMediaItems(in nsIArray aURIArray,
-                                 [optional] in nsIArray aPropertyArrayArray);
+                                 [optional] in nsIArray aPropertyArrayArray,
+                                 [optional] in boolean aAllowDuplicates);
 
   /**
    * \brief Asychronously create many media items from a list of URIs
@@ -194,8 +205,13 @@ interface sbILibrary : sbIMediaList
    * \param aPropertyArrayArray Optional array of sbIPropertyArray.  If
    *        specified, the properties specified at each array index will be
    *        used in the creation of the new media item at the same array index.
+   * \param aAllowDuplicates If false, URIs specified in aURIArray that
+   *        already exist in the library will not be created and not returned.
+   *        If true, media items will be created for all of the URIs specified
+   *        regardless if they already exist.  The default is false.
    */
   void batchCreateMediaItemsAsync(in sbIBatchCreateMediaItemsListener aListener,
                                   in nsIArray aURIArray,
-                                  [optional] in nsIArray aPropertyArrayArray);
+                                  [optional] in nsIArray aPropertyArrayArray,
+                                  [optional] in boolean aAllowDuplicates);
 };

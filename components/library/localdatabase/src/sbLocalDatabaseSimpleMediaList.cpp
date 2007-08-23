@@ -260,6 +260,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
     nsCOMPtr<nsIArray> newItems;
     rv = mListLibrary->BatchCreateMediaItems(oldURIs,
                                              propertyArrayArray,
+                                             PR_TRUE,
                                              getter_AddRefs(newItems));
     NS_ENSURE_SUCCESS(rv, rv);
 

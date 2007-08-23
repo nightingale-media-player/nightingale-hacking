@@ -136,7 +136,7 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
       uris.appendElement(e.uri, false);
     });
 
-    var added = aMediaList.library.batchCreateMediaItems(uris);
+    var added = aMediaList.library.batchCreateMediaItems(uris, null, true);
     for (var i = 0; i < added.length; i++) {
       aItems[i].item = added.queryElementAt(i, Ci.sbIMediaItem);
     }

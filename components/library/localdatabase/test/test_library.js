@@ -53,7 +53,7 @@ function runTest () {
   assertEqual(now - updated < 5000, true);
 
   // Make sure we are getting different guids
-  var item2 = library.createMediaItem(uri);
+  var item2 = library.createMediaItem(uri, null, true);
   assertNotEqual(item1.guid, item2.guid);
 
   // Test that they items were added to the library view the view list
@@ -64,7 +64,7 @@ function runTest () {
   library.addListener(listListener, false);
 
   var uri2 = ios.newURI("file:///bar", null, null);
-  var item3 = library.createMediaItem(uri2);
+  var item3 = library.createMediaItem(uri2, null, true);
 
   assertEqual(listListener.addedItem, item3);
   
@@ -163,7 +163,7 @@ function runTest () {
   assertEqual(item4.getProperty(SB_NS + "contentLength"), "123");
 
   // Make sure that items can't be resurrected once removed.
-  var newItem = library.createMediaItem(uri);
+  var newItem = library.createMediaItem(uri, null, true);
   var guid = newItem.guid;
 
   library.remove(newItem);

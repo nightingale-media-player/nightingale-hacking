@@ -258,7 +258,10 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   }
 
   nsCOMPtr<sbIMediaItem> mediaItem;
-  rv = mLibrary->CreateMediaItem(uri, nsnull, getter_AddRefs(mediaItem));
+  rv = mLibrary->CreateMediaItem(uri,
+                                 nsnull,
+                                 PR_TRUE,
+                                 getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mShouldScan) {
@@ -318,8 +321,8 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aURL,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPlaylistReaderManager> manager =
-       do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
-                          &rv );
+       do_GetService( "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
+                      &rv );
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIURI> uri;

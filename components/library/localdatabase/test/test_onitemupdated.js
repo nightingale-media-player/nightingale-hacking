@@ -32,7 +32,7 @@ function runTest () {
 
   var SB_PROP_ARTISTNAME = "http://songbirdnest.com/data/1.0#artistName";
 
-  var library = createLibrary("test_onitemupdated", null, false);
+  var library = createLibrary("test_onitemupdated", null, true);
 
   var listener = {
     properties: null,

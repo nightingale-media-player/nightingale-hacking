@@ -35,7 +35,7 @@ function runTest () {
   var SB_NS = "http://songbirdnest.com/data/1.0#";
 
   var databaseGUID = "test_bulkproperties";
-  var library = createLibrary(databaseGUID, null, false);
+  var library = createLibrary(databaseGUID, null, true);
 
   var listener = new TestMediaListListener();
   library.addListener(listener, false);
