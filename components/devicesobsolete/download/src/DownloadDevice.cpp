@@ -136,7 +136,7 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbDownloadDevice");
  *
  ******************************************************************************/
 
-NS_IMPL_ISUPPORTS2(sbDownloadDevice, sbIDeviceBase, sbIDownloadDevice)
+NS_IMPL_ISUPPORTS3(sbDownloadDevice, nsIObserver, sbIDeviceBase, sbIDownloadDevice)
 
 
 /* *****************************************************************************
@@ -170,6 +170,39 @@ sbDownloadDevice::~sbDownloadDevice()
 {
 }
 
+
+/* *****************************************************************************
+ *
+ * Download device nsIObserver implementation.
+ *
+ ******************************************************************************/
+
+/**
+ * \brief watch for the app quitting to cancel the downloads
+ */
+
+NS_IMETHODIMP sbDownloadDevice::Observe(nsISupports *aSubject, const char *aTopic, const PRUnichar *aData)
+{
+    nsresult rv;
+    if (!strcmp("quit-application-granted", aTopic)) {
+        /* Shutdown the session. */
+        if (mpDownloadSession)
+        {
+            mpDownloadSession->Shutdown();
+            mpDownloadSession = nsnull;
+        }
+
+        // remember to remove the observer too
+        nsCOMPtr<nsIObserverService> obsSvc =
+              do_GetService("@mozilla.org/observer-service;1", &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = obsSvc->RemoveObserver(this, aTopic);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        return NS_OK;
+    }
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
 
 /* *****************************************************************************
  *
@@ -519,6 +552,16 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
                                               permissions);
         }
     }
+
+    /* watch for the app quitting so we can gracefully abort */
+    if (NS_SUCCEEDED(result))
+    {
+      nsCOMPtr<nsIObserverService> obsSvc =
+            do_GetService("@mozilla.org/observer-service;1", &result);
+      if (NS_SUCCEEDED(result))
+        result = obsSvc->AddObserver(this, "quit-application-granted", PR_FALSE);
+    }
+    
 
     /* Resume incomplete transfers. */
     if (NS_SUCCEEDED(result))
@@ -1842,7 +1885,6 @@ sbDownloadSession::sbDownloadSession(
     mShutdown(PR_FALSE),
     mSuspended(PR_FALSE)
 {
-    MOZ_COUNT_CTOR(sbDownloadSession);
     TRACE(("sbDownloadSession[0x%.8x] - ctor", this));
 }
 
@@ -1855,14 +1897,13 @@ sbDownloadSession::sbDownloadSession(
 
 sbDownloadSession::~sbDownloadSession()
 {
+    /* clean up any active downloads, if we still manage to have them */
+    this->Shutdown();
+
     /* Dispose of the session lock. */
     if (mpSessionLock)
         nsAutoLock::DestroyLock(mpSessionLock);
 
-    if (mpWebBrowser)
-        mpWebBrowser->SetProgressListener(nsnull);
-
-    MOZ_COUNT_DTOR(sbDownloadSession);
     TRACE(("sbDownloadSession[0x%.8x] - dtor", this));
 }
 
@@ -2205,8 +2246,10 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
 
     // Clean up
     mpRequest = nsnull;
-    if (mpWebBrowser)
+    if (mpWebBrowser) {
+        mpWebBrowser->CancelSave();
         mpWebBrowser->SetProgressListener(nsnull);
+    }
     mpWebBrowser = nsnull;
     mpMediaItem = nsnull;
 

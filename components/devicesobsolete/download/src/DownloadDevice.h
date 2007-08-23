@@ -77,6 +77,7 @@
 #include <nsCOMPtr.h>
 #include <nsIDialogParamBlock.h>
 #include <nsIIOService.h>
+#include <nsIObserverService.h>
 #include <nsIStringBundle.h>
 #include <prmon.h>
 
@@ -98,7 +99,9 @@
 
 class sbDownloadSession;
 
-class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
+class sbDownloadDevice : public nsIObserver,
+                         public sbIDownloadDevice,
+                         public sbDeviceBase
 {
     /* *************************************************************************
      *
@@ -122,6 +125,7 @@ class sbDownloadDevice : public sbIDownloadDevice, public sbDeviceBase
      */
 
     NS_DECL_ISUPPORTS
+    NS_DECL_NSIOBSERVER
     NS_DECL_SBIDEVICEBASE
     NS_DECL_SBIDOWNLOADDEVICE
 
