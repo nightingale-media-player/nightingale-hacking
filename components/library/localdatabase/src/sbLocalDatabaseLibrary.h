@@ -61,20 +61,6 @@ typedef nsCOMArray<sbIMediaList> sbMediaListArray;
 typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
         sbMediaItemToListsMap;
 
-static PLDHashOperator PR_CALLBACK
-  NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType aKey,
-                               sbMediaItemArray* aEntry,
-                               void* aUserData);
-
-static PLDHashOperator PR_CALLBACK
-  NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
-                              sbMediaItemArray* aEntry,
-                              void* aUserData);
-
-static PLDHashOperator PR_CALLBACK
-  EntriesToMediaListArray(nsISupportsHashKey* aEntry,
-                          void* aUserData);
-
 // These are the methods from sbLocalDatabaseMediaListBase that we're going to
 // override in sbLocalDatabaseLibrary. Most of them are from sbIMediaList.
 #define SB_DECL_MEDIALISTBASE_OVERRIDES                                         \
@@ -89,6 +75,11 @@ static PLDHashOperator PR_CALLBACK
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);                      \
   NS_IMETHOD Clear();                                                           \
   NS_IMETHOD CreateView(sbIMediaListView** _retval);                            \
+  /* nothing */
+
+#define SB_DECL_SBIMEDIAITEM_OVERRIDES                                          \
+  NS_IMETHOD GetContentSrc(nsIURI** aContentSrc);                               \
+  NS_IMETHOD SetContentSrc(nsIURI* aContentSrc);                                \
   /* nothing */
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
@@ -144,10 +135,12 @@ public:
   NS_DECL_SBILOCALDATABASELIBRARY
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
+
   NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaListBase::)
 
   // Include our overrides.
   SB_DECL_MEDIALISTBASE_OVERRIDES
+  SB_DECL_SBIMEDIAITEM_OVERRIDES
 
   sbLocalDatabaseLibrary();
   ~sbLocalDatabaseLibrary();
@@ -199,6 +192,20 @@ private:
                            sbMediaItemArray* aEntry,
                            void* aUserData);
 
+  static PLDHashOperator PR_CALLBACK
+    NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType aKey,
+                                 sbMediaItemArray* aEntry,
+                                 void* aUserData);
+
+  static PLDHashOperator PR_CALLBACK
+    NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
+                                sbMediaItemArray* aEntry,
+                                void* aUserData);
+
+  static PLDHashOperator PR_CALLBACK
+    EntriesToMediaListArray(nsISupportsHashKey* aEntry,
+                            void* aUserData);
+
   nsresult RegisterDefaultMediaListFactories();
 
   nsresult DeleteDatabaseItem(const nsAString& aGuid);
@@ -228,6 +235,9 @@ private:
   // Location of the database file. This may be null to indicate that the file
   // lives in the default DBEngine database store.
   nsCOMPtr<nsIURI> mDatabaseLocation;
+
+  // A dummy uri that holds a special 'songbird-library://' url.
+  nsCOMPtr<nsIURI> mContentSrc;
 
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
@@ -403,4 +413,3 @@ private:
 };
 
 #endif /* __SBLOCALDATABASELIBRARY_H__ */
-
