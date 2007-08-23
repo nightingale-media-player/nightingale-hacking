@@ -637,8 +637,8 @@ PlaylistCommandsBuilder.prototype = {
 
   removeAllCommands: function()
   {
-    for (var i=0;i<this.m_root_commands.length;i++) {
-      this._removeCommandTree(this.m_root_commands, i);
+    while (this.m_root_commands.length) {
+      this._removeCommandTree(this.m_root_commands, 0);
     }
   },
 
@@ -780,7 +780,7 @@ PlaylistCommandsBuilder.prototype = {
     aMenu[aIndex].m_EnabledCallback = null;
     aMenu[aIndex].m_VisibleCallback = null;
     aMenu[aIndex].m_TriggerCallback = null;
-    menu.splice(index, 1);
+    aMenu.splice(aIndex, 1);
   },
 
   _getMenu: function(aSubMenuId)
@@ -808,7 +808,7 @@ PlaylistCommandsBuilder.prototype = {
   
   _getCommandIndex: function(aSubMenu, aCommandId)
   {
-    if (!aSubMenu) -1;
+    if (!aSubMenu) return -1;
     for (var i=0;i<aSubMenu.length;i++) {
       if (aSubMenu[i].m_Id == aCommandId) {
         return i;
@@ -1139,6 +1139,13 @@ PlaylistCommandsBuilder.prototype = {
         }
       }
     }
+    // empty arrays, remove any remaining sbIPlaylistCommands reference
+    // this also removes all references to item callback functions
+    this.removeAllCommands();
+    // but one callback function reference remains, the one for the entire 
+    // command set, reset it too
+    this.m_VisibleCallback = null;
+    // and forget context
     this.m_Context = null;
   },
   

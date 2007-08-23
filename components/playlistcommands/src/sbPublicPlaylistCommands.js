@@ -747,6 +747,28 @@ PublicPlaylistCommands.prototype = {
                                           "smart",
                                           this.m_serviceTreeDefaultCommands);
 
+    // Shutdown all command objects, this ensures that no external reference 
+    // remains in their internal arrays
+    this.m_cmd_Play.shutdownCommands();
+    this.m_cmd_Remove.shutdownCommands();
+    this.m_cmd_Edit.shutdownCommands();
+    this.m_cmd_Download.shutdownCommands();
+    this.m_cmd_Subscribe.shutdownCommands();
+    this.m_cmd_AddToLibrary.shutdownCommands();
+    SBPlaylistCommand_AddToPlaylist.shutdownCommands();
+    this.m_cmd_CopyTrackLocation.shutdownCommands();
+    this.m_cmd_ShowDownloadPlaylist.shutdownCommands();
+    this.m_cmd_ShowWebPlaylist.shutdownCommands();
+    this.m_cmd_PauseResumeDownload.shutdownCommands();
+    this.m_cmd_BurnToCD.shutdownCommands();
+    this.m_cmd_CopyToDevice.shutdownCommands();
+    this.m_cmd_list_Remove.shutdownCommands();
+    this.m_cmd_list_Rename.shutdownCommands();
+    this.m_defaultCommands.shutdownCommands();
+    this.m_webPlaylistCommands.shutdownCommands();
+    this.m_downloadCommands.shutdownCommands();
+    this.m_serviceTreeDefaultCommands.shutdownCommands();
+
     g_dataRemoteService = null;
 
     var obs = Components.classes["@mozilla.org/observer-service;1"]
