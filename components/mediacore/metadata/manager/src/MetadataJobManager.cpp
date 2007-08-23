@@ -156,11 +156,16 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray, PRUint32 aSleepMS, sbIM
 
 NS_IMETHODIMP sbMetadataJobManager::Stop()
 {
-  for ( PRInt32 i = mJobArray.Count() - 1; i >= 0; i-- )
-  {
+  // the act of cancelling jobs may get us more jobs as the threads shut down.
+  // so we have to keep checking the number of jobs outstanding.
+  while (1) {
+    PRInt32 i = mJobArray.Count() - 1;
+    if (i < 0)
+      break;
     mJobArray[ i ]->Cancel();
     mJobArray.RemoveObjectAt(i);
   }
+  NS_ASSERTION(0 == mJobArray.Count(), "Metadata jobs remaining after stopping the manager");
   return NS_OK;
 }
 
