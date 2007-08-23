@@ -61,7 +61,7 @@ function runTest () {
     }
   };
 
-  library.batchCreateMediaItemsAsync(listener, toAdd, propertyArray);
+  library.batchCreateMediaItemsAsync(listener, toAdd, propertyArray, true);
   testPending();
 }
 
