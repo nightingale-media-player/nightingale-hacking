@@ -1,32 +1,32 @@
 /*
  //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 
 /**
  * \file FileScan.cpp
- * \brief 
+ * \brief
  */
 
 // INCLUDES ===================================================================
@@ -280,7 +280,12 @@ NS_IMETHODIMP sbFileScanQuery::GetLastFileFound(nsAString &_retval)
 {
   PR_Lock(m_pFileStackLock);
   PRInt32 nIndex = (PRInt32)m_FileStack.size() - 1;
-  _retval = m_FileStack[nIndex];
+  if (nIndex >= 0) {
+    _retval = m_FileStack[nIndex];
+  }
+  else {
+    _retval.Truncate();
+  }
   PR_Unlock(m_pFileStackLock);
   return NS_OK;
 } //GetLastFileFound
@@ -379,7 +384,7 @@ PRBool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension)
       break;
     }
   }
-  
+
   if(extCount == 0)
     isValid = PR_TRUE;
   PR_Unlock(m_pExtensionsLock);
@@ -442,7 +447,7 @@ sbFileScan::~sbFileScan()
     nsAutoMonitor::DestroyMonitor(m_pThreadMonitor);
 } //dtor
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbFileScan::Observe(nsISupports *aSubject,
                     const char *aTopic,
                     const PRUnichar *aData)
@@ -463,8 +468,8 @@ sbFileScan::Observe(nsISupports *aSubject,
   return observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
 }
 
-nsresult 
-sbFileScan::Shutdown() 
+nsresult
+sbFileScan::Shutdown()
 {
   nsresult rv = NS_OK;
 
@@ -556,12 +561,12 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
           if(NS_SUCCEEDED(rv))
           {
             nsCOMPtr<nsIFile> pEntry = do_QueryInterface(pDirEntry, &rv);
-            
+
             if(NS_SUCCEEDED(rv))
             {
               PRBool bIsFile, bIsDirectory, bIsHidden;
 
-              // Don't scan hidden things.  
+              // Don't scan hidden things.
               // Otherwise we wind up in places that can crash the app?
               if (NS_SUCCEEDED(pEntry->IsHidden(&bIsHidden)) && bIsHidden)
               {
@@ -622,8 +627,8 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
   }
   else
   {
-    if(NS_SUCCEEDED(pFile->IsFile(&bFlag)) && 
-       bFlag && 
+    if(NS_SUCCEEDED(pFile->IsFile(&bFlag)) &&
+       bFlag &&
        pCallback)
     {
       *_retval = 1;
@@ -693,10 +698,10 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
   PRBool bSearchHidden = PR_FALSE;
   pQuery->GetSearchHidden(&bSearchHidden);
-  
+
   PRBool bRecurse = PR_FALSE;
   pQuery->GetRecurse(&bRecurse);
-  
+
   nsString strTheDirectory;
   pQuery->GetDirectory(strTheDirectory);
 
@@ -781,7 +786,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
                     dirStack.push_back(pDirEntries);
                     fileEntryStack.push_back(pEntry);
                     entryStack.push_back(pDirEntry);
-                    
+
                     pDirEntries = pMoreEntries;
                   }
                 }
@@ -796,7 +801,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
             NS_IF_RELEASE(pDirEntries);
 
             pDirEntries = dirStack.back();
-            
+
             dirStack.pop_back();
             fileEntryStack.pop_back();
             entryStack.pop_back();
@@ -814,7 +819,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
             return NS_OK;
           }
         }
-        
+
         PR_Sleep(PR_MillisecondsToInterval(1));
       }
     }
@@ -830,10 +835,10 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
   }
 
   NS_IF_RELEASE(pCallback);
-  
+
   dirStack.clear();
   fileEntryStack.clear();
   entryStack.clear();
-  
+
   return NS_OK;
 } //ScanDirectory
