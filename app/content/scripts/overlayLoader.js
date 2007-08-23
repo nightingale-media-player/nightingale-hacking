@@ -129,7 +129,7 @@ var OverlayLoader = {
           OverlayLoader.loadInProgress = false;
           
           // Send out an event to let people know it's safe to go modal.
-          setTimeout( this.sendOverlayEvent, 0 );
+          setTimeout( OverlayLoader.sendOverlayEvent, 0 );
         }
       }
     }
@@ -149,7 +149,7 @@ var OverlayLoader = {
               "http://bugzilla.songbirdnest.com.");
 
         // Then send the event that we're done              
-        this.sendOverlayEvent();
+        OverlayLoader.sendOverlayEvent();
       }
     }
     setTimeout(checkCompleted, 3000);
