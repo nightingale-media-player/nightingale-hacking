@@ -30,10 +30,12 @@
 
 function runTest () {
 
+  var port = getTestServerPortNumber();
+
   var server = Cc["@mozilla.org/server/jshttp;1"]
                  .createInstance(Ci.nsIHttpServer);
 
-  server.start(8080);
+  server.start(port);
   server.registerDirectory("/", getFile("."));
 
   var library = createLibrary("test_playlistmanager");
@@ -45,7 +47,7 @@ function runTest () {
 
   listener.observer = {
     observe: function(aSubject, aTopic, aData) {
-      assertMediaList(mediaList, getFile("absolute_remote_localhost_result.xml"));
+      assertMediaList(mediaList, getFile("absolute_remote_localhost_result.xml"), port);
       server.stop();
       // Prevent closure from leaking
       listener.observer = null;
@@ -54,7 +56,7 @@ function runTest () {
   }
 
   var mediaList = library.createMediaList("simple");
-  var uri = newURI("http://localhost:8080/absolute_remote.m3u");
+  var uri = newURI("http://localhost:" + port + "/absolute_remote.m3u");
   manager.loadPlaylist(uri, mediaList, null, false, listener);
 
   testPending();

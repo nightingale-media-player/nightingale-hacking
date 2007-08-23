@@ -72,7 +72,7 @@ function newURI(spec) {
   return ioService.newURI(spec, null, null);
 }
 
-function assertMediaList(aMediaList, aItemTestsFile) {
+function assertMediaList(aMediaList, aItemTestsFile, aPort) {
 
   var xmlReader = Cc["@mozilla.org/saxparser/xmlreader;1"]
                     .createInstance(Ci.nsISAXXMLReader);
@@ -93,10 +93,12 @@ function assertMediaList(aMediaList, aItemTestsFile) {
 
       if (localName == "item-test") {
         var prop  = attributes.getValueFromName("", "property");
-        var value = attributes.getValueFromName("", "value");
         if (prop.indexOf("#") == 0) {
           prop = "http://songbirdnest.com/data/1.0" + prop;
         }
+
+        var value = attributes.getValueFromName("", "value");
+        value = value.replace("%PORT%", aPort);
 
         this._item = getFirstItemByProperty(aMediaList, prop, value);
         if (!this._item) {
@@ -106,10 +108,13 @@ function assertMediaList(aMediaList, aItemTestsFile) {
 
       if (localName == "assert-property-value" && this._item) {
         var prop  = attributes.getValueFromName("", "name");
-        var value = attributes.getValueFromName("", "value");
         if (prop.indexOf("#") == 0) {
           prop = "http://songbirdnest.com/data/1.0" + prop;
         }
+
+        var value = attributes.getValueFromName("", "value");
+        value = value.replace("%PORT%", aPort);
+
         var itemValue = this._item.getProperty(prop);
 
         if (itemValue != value) {

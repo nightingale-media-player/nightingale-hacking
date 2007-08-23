@@ -3,11 +3,11 @@
   <item-test property="#contentURL" value="http://www.foo.com/mp3/file1.mp3">
     <assert-property-value name="#contentURL" value="http://www.foo.com/mp3/file1.mp3"/>
   </item-test>
-  <item-test property="#contentURL" value="http://localhost:8080/mp3/file2.mp3">
-    <assert-property-value name="#contentURL" value="http://localhost:8080/mp3/file2.mp3"/>
+  <item-test property="#contentURL" value="http://localhost:%PORT%/mp3/file2.mp3">
+    <assert-property-value name="#contentURL" value="http://localhost:%PORT%/mp3/file2.mp3"/>
   </item-test>
-  <item-test property="#contentURL" value="http://localhost:8080/file3.mp3">
-    <assert-property-value name="#contentURL" value="http://localhost:8080/file3.mp3"/>
+  <item-test property="#contentURL" value="http://localhost:%PORT%/file3.mp3">
+    <assert-property-value name="#contentURL" value="http://localhost:%PORT%/file3.mp3"/>
   </item-test>
 </item-tests>
 
