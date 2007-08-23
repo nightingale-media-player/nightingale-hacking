@@ -72,7 +72,7 @@ CPlaylistReaderListener.prototype =
       this.state = "STATE_STOP";
 
       var playlistReaderMngr = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
-                                 .createInstance(Ci.sbIPlaylistReaderManager);
+                                 .getService(Ci.sbIPlaylistReaderManager);
       var pps = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                   .getService(Ci.sbIPlaylistPlayback);
 

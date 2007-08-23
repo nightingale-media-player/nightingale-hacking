@@ -40,7 +40,6 @@ function runTest () {
   var mimeTypesCount = {};
   var mimeTypes = manager.supportedMIMETypes(mimeTypesCount);
   var expected = ["audio/mpegurl", "audio/x-mpegurl", "audio/x-scpls", "text/html", "application/rss+xml", "application/atom+xml"];
-  log(mimeTypes);
   assertEqual(mimeTypesCount.value, expected.length);
   for (var i = 0; i < mimeTypesCount.value; i++) {
     expected = removeFromArray(expected, mimeTypes[i]);

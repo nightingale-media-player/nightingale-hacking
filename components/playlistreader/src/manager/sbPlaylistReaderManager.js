@@ -27,14 +27,11 @@
 //
 // sbIPlaylistReaderManager Object
 //
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
-
-const SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistReaderManager;1";
-const SONGBIRD_PLAYLISTREADERMANAGER_CLASSNAME = "Songbird Playlist Reader Manager Interface"
-const SONGBIRD_PLAYLISTREADERMANAGER_CID = Components.ID("{ced5902c-bd90-4099-acee-77487a5b1d13}");
-const SONGBIRD_PLAYLISTREADERMANAGER_IID = Components.interfaces.sbIPlaylistReaderManager;
 
 function CPlaylistReaderManager()
 {
@@ -75,6 +72,10 @@ CPlaylistReaderManager.prototype.constructor = CPlaylistReaderManager;
 
 CPlaylistReaderManager.prototype =
 {
+  classDescription: "Songbird Playlist Reader Manager Interface",
+  classID:          Components.ID("{ced5902c-bd90-4099-acee-77487a5b1d13}"),
+  contractID:       "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
+
   originalURI: null,
 
   m_rootContractID: "@songbirdnest.com/Songbird/Playlist/Reader/",
@@ -344,81 +345,14 @@ CPlaylistReaderManager.prototype =
     }
   },
 
-  QueryInterface: function(aIID) {
-    if (!aIID.equals(Components.interfaces.sbIPlaylistReaderManager) &&
-        !aIID.equals(Components.interfaces.nsIObserver) &&
-        !aIID.equals(Components.interfaces.nsISupports))
-    {
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-
-    return this;
-  }
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIPlaylistReaderManager])
 };
-
-/**
- * \class sbPlaylistReaderManagerModule
- * \brief
- */
-var sbPlaylistReaderManagerModule =
-{
-  registerSelf: function(compMgr, fileSpec, location, type)
-  {
-      compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-      compMgr.registerFactoryLocation(SONGBIRD_PLAYLISTREADERMANAGER_CID,
-                                      SONGBIRD_PLAYLISTREADERMANAGER_CLASSNAME,
-                                      SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID,
-                                      fileSpec,
-                                      location,
-                                      type);
-  },
-
-  getClassObject: function(compMgr, cid, iid)
-  {
-      if (!cid.equals(SONGBIRD_PLAYLISTREADERMANAGER_CID))
-          throw Components.results.NS_ERROR_NO_INTERFACE;
-
-      if (!iid.equals(Components.interfaces.nsIFactory))
-          throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-
-      return sbPlaylistReaderManagerFactory;
-  },
-
-  canUnload: function(compMgr)
-  {
-    return true;
-  }
-}; //sbPlaylistReaderManagerModule
 
 function SB_ArrayContains(a, v) {
   return a.some(function(e) { return e == v; } );
 }
 
-/**
- * \class sbPlaylistReaderManagerFactory
- * \brief
- */
-var sbPlaylistReaderManagerFactory =
-{
-    createInstance: function(outer, iid)
-    {
-        if (outer != null)
-            throw Components.results.NS_ERROR_NO_AGGREGATION;
-
-        if (!iid.equals(SONGBIRD_PLAYLISTREADERMANAGER_IID) &&
-            !iid.equals(Components.interfaces.nsISupports))
-            throw Components.results.NS_ERROR_INVALID_ARG;
-
-        return (new CPlaylistReaderManager()).QueryInterface(iid);
-    }
-}; //sbPlaylistReaderManagerFactory
-
-/**
- * \function NSGetModule
- * \brief
- */
-function NSGetModule(comMgr, fileSpec)
-{
-  return sbPlaylistReaderManagerModule;
-} //NSGetModule
+function NSGetModule(compMgr, fileSpec) {
+  return XPCOMUtils.generateModule([CPlaylistReaderManager]);
+}
 
