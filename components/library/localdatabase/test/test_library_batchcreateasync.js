@@ -34,7 +34,7 @@ function runTest () {
   var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
   var databaseGUID = "test_batchcreateasync";
-  var library = createLibrary(databaseGUID, null, false);
+  var library = createLibrary(databaseGUID, null, true);
 
   var toAdd = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
   var propertyArray = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
