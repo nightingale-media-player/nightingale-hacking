@@ -128,7 +128,7 @@ sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
 {
   // Free this here in case we hold the last reference to the library below.
   mPropertyCache = nsnull;
-  
+
   if(mPropertyCacheLock) {
     nsAutoLock::DestroyLock(mPropertyCacheLock);
   }
@@ -136,7 +136,7 @@ sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
   if(mPropertyBagLock) {
     nsAutoLock::DestroyLock(mPropertyBagLock);
   }
-  
+
   // If we've kept an owning reference to the library, release it here
   if (mLibrary && mOwnsLibrary) {
     NS_RELEASE(mLibrary);
@@ -331,7 +331,7 @@ sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
   nsAutoString str;
   nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropCreated].mName), str);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   PRInt32 convertedItems = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
                                      aCreated);
   NS_ENSURE_TRUE(convertedItems > 0, NS_ERROR_FAILURE);
@@ -387,7 +387,7 @@ sbLocalDatabaseMediaItem::GetPropertyNames(nsIStringEnumerator** _retval)
  * See sbILibraryResource
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName, 
+sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName,
                                       nsAString& _retval)
 {
   NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
@@ -408,7 +408,7 @@ sbLocalDatabaseMediaItem::GetProperty(const nsAString& aName,
  * See sbILibraryResource
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName, 
+sbLocalDatabaseMediaItem::SetProperty(const nsAString& aName,
                                       const nsAString& aValue)
 {
   NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
@@ -614,7 +614,7 @@ sbLocalDatabaseMediaItem::Equals(sbILibraryResource* aOtherLibraryResource,
  */
 //XXXAus: This method is junk if we don't have a LDBRP base class anymore.
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::InitResourceProperty(sbILocalDatabasePropertyCache* aPropertyCache, 
+sbLocalDatabaseMediaItem::InitResourceProperty(sbILocalDatabasePropertyCache* aPropertyCache,
                                                const nsAString& aGuid)
 {
   NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
@@ -623,7 +623,7 @@ sbLocalDatabaseMediaItem::InitResourceProperty(sbILocalDatabasePropertyCache* aP
   NS_ENSURE_ARG_POINTER(aPropertyCache);
 
   nsAutoLock lock(mPropertyCacheLock);
-  
+
   mPropertyCache = aPropertyCache;
   mGuid = aGuid;
 
@@ -719,7 +719,7 @@ sbLocalDatabaseMediaItem::GetMediaCreated(PRInt64* aMediaCreated)
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CREATED), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ASSERTION(!str.IsVoid(), "This should never be void!");
+  NS_ENSURE_FALSE(str.IsVoid(), NS_ERROR_UNEXPECTED);
 
   PRInt32 itemsConverted = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
                                      aMediaCreated);
@@ -829,7 +829,7 @@ sbLocalDatabaseMediaItem::GetContentLength(PRInt64* aContentLength)
   nsAutoString str;
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH), str);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   PRInt32 itemsConverted = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
                                      aContentLength);
   NS_ENSURE_TRUE(itemsConverted > 0, NS_ERROR_FAILURE);
@@ -861,7 +861,7 @@ sbLocalDatabaseMediaItem::GetContentType(nsAString& aContentType)
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE),
                             aContentType);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -874,7 +874,7 @@ sbLocalDatabaseMediaItem::SetContentType(const nsAString& aContentType)
   nsresult rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE),
                             aContentType);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -952,7 +952,7 @@ sbLocalDatabaseMediaItem::OpenOutputStream(nsIOutputStream** _retval)
 
   // Why are these private functions on web browser persist not static inline methods somewhere?
 
-  // From nsWebBrowserPersist.cpp#1160 - nsWebBrowserPersist::GetLocalFileFromURI( 
+  // From nsWebBrowserPersist.cpp#1160 - nsWebBrowserPersist::GetLocalFileFromURI(
   nsCOMPtr<nsILocalFile> localFile;
   nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(pURI, &rv);
   if (NS_SUCCEEDED(rv)) {
@@ -963,20 +963,20 @@ sbLocalDatabaseMediaItem::OpenOutputStream(nsIOutputStream** _retval)
   }
 
   if (localFile) {
-    // From nsWebBrowserPersist.cpp#2282 - nsWebBrowserPersist::MakeOutputStreamFromFile( 
+    // From nsWebBrowserPersist.cpp#2282 - nsWebBrowserPersist::MakeOutputStreamFromFile(
     nsCOMPtr<nsIFileOutputStream> fileOutputStream =
         do_CreateInstance(NS_LOCALFILEOUTPUTSTREAM_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-    
+
     rv = fileOutputStream->Init(localFile, -1, -1, 0);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     NS_ENSURE_SUCCESS(CallQueryInterface(fileOutputStream, _retval), NS_ERROR_FAILURE);
     (*_retval)->AddRef();
   }
   else {
 #if 0
-    // From nsWebBrowserPersist.cpp#2311 - nsWebBrowserPersist::MakeOutputStreamFromURI( 
+    // From nsWebBrowserPersist.cpp#2311 - nsWebBrowserPersist::MakeOutputStreamFromURI(
     PRUint32 segsize = 8192;
     PRUint32 maxsize = PRUint32(-1);
     nsCOMPtr<nsIStorageStream> storStream;
@@ -990,7 +990,7 @@ sbLocalDatabaseMediaItem::OpenOutputStream(nsIOutputStream** _retval)
     *_retval = nsnull;
 #endif
   }
-  
+
   return rv;
 }
 
@@ -1058,7 +1058,7 @@ sbLocalDatabaseMediaItem::OnStopRequest( nsIRequest *aRequest, nsISupports *aCon
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Tell it whether we succeed or fail
-  nsAutoString data = ( aStatus == NS_BINDING_SUCCEEDED ) ? 
+  nsAutoString data = ( aStatus == NS_BINDING_SUCCEEDED ) ?
     NS_LITERAL_STRING( "true" ) : NS_LITERAL_STRING( "false" );
   observer->Observe( aRequest, "available", data.get() );
 
@@ -1142,4 +1142,3 @@ sbLocalDatabaseIndexedMediaItem::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
 }
-
