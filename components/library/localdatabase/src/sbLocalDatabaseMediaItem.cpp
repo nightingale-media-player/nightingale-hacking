@@ -755,7 +755,7 @@ sbLocalDatabaseMediaItem::GetMediaUpdated(PRInt64* aMediaUpdated)
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ASSERTION(!str.IsVoid(), "This should never be void!");
+  NS_ENSURE_FALSE(str.IsVoid(), NS_ERROR_UNEXPECTED);
 
   PRInt32 itemsConverted = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
                                      aMediaUpdated);
