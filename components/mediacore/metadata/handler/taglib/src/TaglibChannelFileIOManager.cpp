@@ -154,7 +154,8 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannel(
 
     /* Get the metadata channel. */
     rv = GetChannel(aChannelID, &pChannel);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_FAILED(rv))
+        return (rv);
 
     /* Return results. */
     NS_ADDREF(*_retval = pChannel->pSeekableChannel);
@@ -269,6 +270,8 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::SetChannelRestart(
  */
 
 sbTagLibChannelFileIOManager::sbTagLibChannelFileIOManager()
+:
+    mpResolver(nsnull)
 {
 }
 
@@ -282,6 +285,13 @@ sbTagLibChannelFileIOManager::sbTagLibChannelFileIOManager()
 
 sbTagLibChannelFileIOManager::~sbTagLibChannelFileIOManager()
 {
+    /* Dispose of the nsIChannel file I/O type resolver. */
+    if (mpResolver)
+    {
+        File::removeFileIOTypeResolver(mpResolver);
+        delete(mpResolver);
+        mpResolver = nsnull;
+    }
 }
 
 
@@ -294,13 +304,12 @@ sbTagLibChannelFileIOManager::~sbTagLibChannelFileIOManager()
 
 nsresult sbTagLibChannelFileIOManager::FactoryInit()
 {
-    TagLibChannelFileIOTypeResolver *pResolver;
     PRBool                          success;
 
     /* Add nsIChannel file I/O type resolver. */
-    pResolver = new TagLibChannelFileIOTypeResolver();
-    NS_ENSURE_TRUE(pResolver, NS_ERROR_OUT_OF_MEMORY);
-    File::addFileIOTypeResolver(pResolver);
+    mpResolver = new TagLibChannelFileIOTypeResolver();
+    NS_ENSURE_TRUE(mpResolver, NS_ERROR_OUT_OF_MEMORY);
+    File::addFileIOTypeResolver(mpResolver);
 
     /* Initialize the channel map. */
     success = mChannelMap.Init();
@@ -376,7 +385,8 @@ nsresult sbTagLibChannelFileIOManager::GetChannel(
 
     /* Get the channel from the channel map. */
     success = mChannelMap.Get(aChannelID, &pChannel);
-    NS_ENSURE_TRUE(success, NS_ERROR_NOT_AVAILABLE);
+    if (!success)
+        return (NS_ERROR_NOT_AVAILABLE);
 
     /* Return results. */
     *appChannel = pChannel;

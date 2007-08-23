@@ -94,6 +94,22 @@ using namespace TagLib;
  ******************************************************************************/
 
 /*
+ * TagLibChannelFileIOTypeResolver class
+ */
+
+class TagLibChannelFileIOTypeResolver : public File::FileIOTypeResolver
+{
+public:
+    TagLibChannelFileIOTypeResolver();
+
+    virtual ~TagLibChannelFileIOTypeResolver();
+
+    virtual FileIO *createFileIO(
+        const char                  *fileName) const;
+};
+
+
+/*
  * sbTagLibChannelFileIOManager class
  */
 
@@ -173,27 +189,13 @@ class sbTagLibChannelFileIOManager : public sbITagLibChannelFileIOManager
      * Private TagLib sbISeekableChannel file I/O class services.
      *
      *   mChannelMap            TagLib channel map.
+     *   mpResolver             sbISeekableChannel file I/O type resolver.
      */
 
 private:
     nsClassHashtableMT<nsStringHashKey,
                        sbTagLibChannelFileIOManager::Channel> mChannelMap;
-};
-
-
-/*
- * TagLibChannelFileIOTypeResolver class
- */
-
-class TagLibChannelFileIOTypeResolver : public File::FileIOTypeResolver
-{
-public:
-    TagLibChannelFileIOTypeResolver();
-
-    virtual ~TagLibChannelFileIOTypeResolver();
-
-    virtual FileIO *createFileIO(
-        const char                  *fileName) const;
+    TagLibChannelFileIOTypeResolver *mpResolver;
 };
 
 
