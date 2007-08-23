@@ -231,7 +231,7 @@ PlaylistCommandsBuilder.prototype = {
                         aId);
   },
   
-  insertActionAfter: function(aParentSubMenuId, 
+  insertSeparatorAfter: function(aParentSubMenuId, 
                               aAfterId,
                               aId)
   {
