@@ -183,8 +183,8 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString url = NS_ConvertUTF8toUTF16(u8Url);
-  if (!m_ContractList.size())
-    throw;
+  
+  NS_ENSURE_TRUE(m_ContractList.size() > 0, NS_ERROR_FAILURE);
 
   // Go through the list of contract ids, and make them vote on the url
   for (contractlist_t::iterator i = m_ContractList.begin(); i != m_ContractList.end(); i++ )
