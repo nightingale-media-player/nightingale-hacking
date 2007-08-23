@@ -39,8 +39,6 @@ var thePollPlaylistService = null;
 
 var gServicePane = null;
 
-window.gBrowser = document.getElementById("frame_main_pane");
-
 //
 // Module specific auto-init/deinit support
 //
@@ -71,8 +69,9 @@ document.addEventListener("sb-overlay-load", SBPostOverlayLoad, false);
  * \return The tabbed browser.
  */
 function getBrowser() {
+  // Ah, no browser registered itself?  Freak out and try getByTagName().
   if (!window.gBrowser) {
-    window.gBrowser = document.getElementById("frame_main_pane");
+    window.gBrowser = document.getElementsByTagName("sb-tabbrowser")[0];
   }
   return window.gBrowser;
 }
@@ -142,8 +141,6 @@ function SBUninitialize()
 {
   window.removeEventListener("keydown", checkAltF4, true);
   
-  var mainPane = document.getElementById("frame_main_pane");
-
   window.gServicePane = null;
   window.gBrowser = null;
 

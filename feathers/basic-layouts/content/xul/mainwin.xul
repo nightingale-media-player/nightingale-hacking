@@ -167,6 +167,10 @@
   <broadcasterset id="mainBroadcasterSet" />
   <keyset id="mainKeyset" />
 
+  <!-- Load the main window data bindings -->
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/mainWinInit.js" />
+
   <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript"   
    src="chrome://global/content/dialogOverlay.js" />
@@ -218,11 +222,6 @@
    src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/dndDefaultHandler.js" />
-
-
-  <!-- Load the main window data bindings -->
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/mainWinInit.js" />
 
   <!-- Load the locale switcher -->
   <script type="application/x-javascript"   

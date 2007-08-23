@@ -83,7 +83,18 @@
       <property name="browser" readonly="true">
         <getter><![CDATA[
           if (!this._browser) {
-            this._browser = document.getElementById(this.getAttribute('browser'));
+            // Try different possible methods of getting a browser.
+            var browserId = this.getAttribute('browser');
+            if (browserId.length > 0 ) {
+              // Specifiy an explicit browser (DEPRECATED)
+              this._browser = document.getElementById(browserId);
+            } else if (window.gBrowser != null) {
+              // Use the gBrowser
+              this._browser = window.gBrowser;
+            } else {
+              // Find one in the document
+              this._browser = document.getElementsByTagName("sb-tabbrowser")[0];
+            }
           }
           return this._browser;
         ]]></getter>

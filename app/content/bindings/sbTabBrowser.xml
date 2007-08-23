@@ -40,6 +40,8 @@
   <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser">
     <implementation implements="nsIWebProgressListener,sbITabBrowser">
       <constructor><![CDATA[
+        window.gBrowser = this;
+      
         if (typeof(SBProperties) == "undefined") {
           Components.utils.import("resource://app/components/sbProperties.jsm");
           if (!SBProperties)

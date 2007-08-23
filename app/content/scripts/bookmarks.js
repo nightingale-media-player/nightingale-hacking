@@ -1,4 +1,4 @@
-﻿/*
+/*
 //
 // BEGIN SONGBIRD GPL
 // 
@@ -30,7 +30,7 @@ var bmManager = {
   svc: Components.classes['@songbirdnest.com/servicepane/bookmarks;1']
                          .getService(Components.interfaces.sbIBookmarks),
   addBookmark : function() {
-    var browser = document.getElementById("frame_main_pane");
+    var browser = getBrowser();
     if (browser) {
       var theurl = browser.currentURI.spec;
       

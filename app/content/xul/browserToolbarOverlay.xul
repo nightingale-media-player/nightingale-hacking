@@ -102,8 +102,7 @@
       <toolbaritem id="urlbar-container" align="center" flex="6"
                    title="URL">
         <sb-locationbar-textbox id="location_bar"
-                                flex="1" align="center"
-                                browser="frame_main_pane" />  
+                                flex="1" align="center" />  
       </toolbaritem>
       
       <splitter id="search_splitter">
