@@ -36,7 +36,7 @@ interface sbIPlaylistCommandsBuilderInstantiationCallback;
 interface sbIPlaylistCommandsBuilderPCCallback;
 
 /** \addtogroup playlistcommands
- * \@{
+ * @{
  */
 
 // ----------------------------------------------------------------------------
@@ -814,6 +814,6 @@ interface sbIPlaylistCommandsBuilderPCCallback : nsISupports
 };
 
 
-/** @} */ // end of playlistcommands group
+/*! @} */ // end of playlistcommands group
 
 

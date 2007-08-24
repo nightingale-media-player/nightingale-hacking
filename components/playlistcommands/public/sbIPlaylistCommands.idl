@@ -34,7 +34,7 @@ interface sbIMediaItem;
 interface nsISimpleEnumerator;
 
 /** \addtogroup playlistcommands Playlist Commands 
- * \@{
+ * @{
  */
 
 /**
@@ -532,5 +532,5 @@ interface sbIPlaylistCommandsManager : nsISupports
   sbIPlaylistCommands request( in AString aContextGUID );
 };
 
-/** @} */ // end of playlistcommands group
+/*! @} */ // end of playlistcommands group
 
