@@ -1535,6 +1535,8 @@ sbLocalDatabaseLibrary::FilterExistingURIs(nsIArray* aURIs,
   PRBool success = uniques.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
+  nsTArray<nsCString> originalOrder;
+
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = MakeStandardQuery(getter_AddRefs(query), PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1567,6 +1569,9 @@ sbLocalDatabaseLibrary::FilterExistingURIs(nsIArray* aURIs,
     nsCString spec;
     rv = uri->GetSpec(spec);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCString* appended = originalOrder.AppendElement(spec);
+    NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
 
     // We want to build a list of unique URIs, and also only add these unique
     // URIs to the query
@@ -1619,28 +1624,22 @@ sbLocalDatabaseLibrary::FilterExistingURIs(nsIArray* aURIs,
     uniques.Remove(NS_ConvertUTF16toUTF8(existingSpec));
   }
 
-  // Finally, add the remaning URIs to the output array
-  uniques.EnumerateRead(AddValuesToArrayCallback, filtered);
+  // Finally, add the remaning URIs to the output array.  Use the original
+  // order as a reference so we don't scramble things up
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<nsIURI> uri;
+    if (uniques.Get(originalOrder[i], getter_AddRefs(uri))) {
+      rv = filtered->AppendElement(uri, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Remove them as we find them so we don't include duplicates from the
+      // original array
+      uniques.Remove(originalOrder[i]);
+    }
+  }
 
   NS_ADDREF(*aFilteredURIs = filtered);
   return NS_OK;
-}
-
-/* static */ PLDHashOperator PR_CALLBACK
-sbLocalDatabaseLibrary::AddValuesToArrayCallback(nsCStringHashKey::KeyType aKey,
-                                                 nsIURI* aEntry,
-                                                 void* aUserData)
-{
-  NS_ASSERTION(aEntry, "aEntry is null");
-  NS_ASSERTION(aUserData, "aUserData is null");
-
-  nsIMutableArray* array = static_cast<nsIMutableArray*>(aUserData);
-  NS_ENSURE_TRUE(array, PL_DHASH_STOP);
-
-  nsresult rv = array->AppendElement(aEntry, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-  return PL_DHASH_NEXT;
 }
 
 nsresult

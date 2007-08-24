@@ -261,11 +261,6 @@ private:
 
   nsresult FilterExistingURIs(nsIArray* aURIs, nsIArray** aFilteredURIs);
 
-  static PLDHashOperator PR_CALLBACK
-    AddValuesToArrayCallback(nsCStringHashKey::KeyType aKey,
-                             nsIURI* aEntry,
-                             void* aUserData);
-
   nsresult GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID);
 
   nsresult Shutdown();
