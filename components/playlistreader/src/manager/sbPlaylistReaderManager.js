@@ -133,7 +133,7 @@ CPlaylistReaderManager.prototype =
           aContentType == "application/xhtml" ||
           aContentType == "application/xhtml+xml" ||
           aContentType == "application/xml") {
-        var aContentType = this.guessMimeType(file);
+        aContentType = this.guessMimeType(file);
         if (!aContentType) {
           return -1;
         }
@@ -355,4 +355,3 @@ function SB_ArrayContains(a, v) {
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([CPlaylistReaderManager]);
 }
-
