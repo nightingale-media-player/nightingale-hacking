@@ -16,6 +16,7 @@ EnableExtensionManager=true
 
 [Crash Reporter]
 #if SB_ENABLE_BREAKPAD
-Enabled=1
+#Uncomment when bug 4258 is fixed and server is ready to accept reports
+#Enabled=1
 #endif
 ServerURL=https://crash-reports.songbirdnest.com/submit
